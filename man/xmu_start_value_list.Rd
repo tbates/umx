@@ -14,7 +14,9 @@ xmu_start_value_list(mean = 1, sd = NA, n = 1)
 \item{n}{how many to generate}
 }
 \value{
-- start value list
+\itemize{
+\item start value list
+}
 }
 \description{
 Purpose: Create startvalues for OpenMx paths

@@ -7,12 +7,14 @@
 umx_is_exogenous(model, manifests_only = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} from which to get exogenous variables}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} from which to get exogenous variables}
 
 \item{manifests_only}{Whether to check only manifests (default = TRUE)}
 }
 \value{
-- list of exogenous variables
+\itemize{
+\item list of exogenous variables
+}
 }
 \description{
 Return a list of all the exogenous variables (variables with no incoming single-arrow path) in a model.
@@ -29,22 +31,15 @@ umx_is_exogenous(m1, manifests_only = TRUE)
 umx_is_exogenous(m1, manifests_only = FALSE)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-Other Test: \code{\link{umx_check_OS}},
-  \code{\link{umx_check_model}},
-  \code{\link{umx_check_names}},
-  \code{\link{umx_check_parallel}},
-  \code{\link{umx_check}}, \code{\link{umx_has_CIs}},
-  \code{\link{umx_has_been_run}},
-  \code{\link{umx_has_means}},
-  \code{\link{umx_has_square_brackets}},
-  \code{\link{umx_is_MxData}},
-  \code{\link{umx_is_MxMatrix}},
-  \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}},
+Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_class}},
   \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_ordered}}
+  \code{\link{umx_is_numeric}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }
-\concept{Test}
+\concept{Check or test}

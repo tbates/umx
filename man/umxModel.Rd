@@ -10,7 +10,9 @@ umxModel(...)
 \item{...}{Anything. We're just going to throw an error.}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Catches a common typo, moving from mxModel to umx.
@@ -21,10 +23,14 @@ umxModel()
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxRAM}}, \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=mxModel]{mxModel()}}
+}
 
 Other xmu internal not for end user: \code{\link{umx}},
   \code{\link{xmuHasSquareBrackets}},

@@ -29,7 +29,7 @@ umx_trim("xlsx dog.xlsx", "\\\\.?xlsx ?") # "dog"
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

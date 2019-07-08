@@ -72,7 +72,7 @@ wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygo
 }
 \seealso{
 \itemize{
-\item \code{\link{merge}}
+\item \code{\link[=merge]{merge()}}
 }
 
 Other Twin Data functions: \code{\link{umx_make_TwinData}},

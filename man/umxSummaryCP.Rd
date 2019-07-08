@@ -11,7 +11,7 @@ umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE,
   ...)
 }
 \arguments{
-\item{model}{A fitted \code{\link{umxCP}} model to summarize}
+\item{model}{A fitted \code{\link[=umxCP]{umxCP()}} model to summarize}
 
 \item{digits}{Round to how many digits (default = 2)}
 
@@ -34,10 +34,12 @@ umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE,
 \item{...}{Optional additional parameters}
 }
 \value{
-- optional \code{\link{mxModel}}
+\itemize{
+\item optional \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Summarizes a Common-Pathway model, as returned by \code{\link{umxCP}}
+Summarizes a Common-Pathway model, as returned by \code{\link[=umxCP]{umxCP()}}
 }
 \examples{
 \dontrun{
@@ -70,10 +72,14 @@ umxSummary(m1, CIs = TRUE, file = NA);
 
 }
 \references{
-- \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\itemize{
+\item \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

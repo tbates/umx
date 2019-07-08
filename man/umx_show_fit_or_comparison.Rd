@@ -7,14 +7,16 @@
 umx_show_fit_or_comparison(model, comparison = NULL, digits = 2)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to report on}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to report on}
 
 \item{comparison}{If not NULL, used as comparison model}
 
 \item{digits}{(default = 2)}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Just a helper to show the logLik of a model or print a comparison table is a function which
@@ -26,7 +28,9 @@ umx_show_fit_or_comparison(model, comparison, digits=3)
 
 }
 \seealso{
-- \code{\link{umxSummary}}
+\itemize{
+\item \code{\link[=umxSummary]{umxSummary()}}
+}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},

@@ -35,9 +35,6 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_has_square_brackets}},
   \code{\link{umx_is_MxMatrix}},
   \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_ordered}}
+  \code{\link{umx_is_cov}}, \code{\link{umx_is_ordered}}
 }
 \concept{Test}

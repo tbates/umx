@@ -66,7 +66,7 @@ umxACE(name = "ACE", selDVs, selCovs = NULL, dzData = NULL,
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}} of subclass mxModel.ACE
+\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.ACE
 }
 }
 \description{
@@ -339,7 +339,7 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 }
 \seealso{
 \itemize{
-\item \code{\link{umxPlotACE}}, \code{\link{umxSummaryACE}}, \code{\link{umxModify}}
+\item \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxSummaryACE]{umxSummaryACE()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

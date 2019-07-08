@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxExpMeans}
 \alias{umxExpMeans}
-\title{Extract the expected means matrix from an \code{\link{mxModel}}}
+\title{Extract the expected means matrix from an \code{\link[=mxModel]{mxModel()}}}
 \usage{
 umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get the means from}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to get the means from}
 
 \item{manifests}{Whether to select the manifest variables (defaults to TRUE)}
 
@@ -16,10 +16,12 @@ umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 \item{digits}{precision of reporting. Default (NULL) will not round at all.}
 }
 \value{
-- expected means
+\itemize{
+\item expected means
+}
 }
 \description{
-Extract the expected means matrix from an \code{\link{mxModel}}
+Extract the expected means matrix from an \code{\link[=mxModel]{mxModel()}}
 }
 \examples{
 require(umx)
@@ -35,7 +37,9 @@ umxExpMeans(m1)
 umxExpMeans(m1, digits = 3)
 }
 \references{
-- \url{https://openmx.ssri.psu.edu/thread/2598}
+\itemize{
+\item \url{https://openmx.ssri.psu.edu/thread/2598}
+}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

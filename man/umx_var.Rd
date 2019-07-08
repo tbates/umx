@@ -14,7 +14,7 @@ umx_var(df, format = c("full", "diag", "lower"),
 
 \item{format}{to return: options are c("full", "diag", "lower"). Defaults to full, but this is not implemented yet.}
 
-\item{use}{Passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).}
+\item{use}{Passed to \code{\link[=cov]{cov()}} - defaults to "complete.obs" (see param default for other options).}
 
 \item{ordVar}{The value to return at any ordinal columns (defaults to 1).}
 
@@ -23,7 +23,9 @@ umx_var(df, format = c("full", "diag", "lower"),
 \item{strict}{Whether to allow non-ordered factors to be processed (default = FALSE (no)).}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 Pass in any dataframe and get variances despite some non-numeric columns.
@@ -39,7 +41,9 @@ umx_var(tmp2, format = "diag")
 umx_var(tmp2, format = "full")
 }
 \references{
-- \url{https://tbates.github.io}
+\itemize{
+\item \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{oddsratio}},

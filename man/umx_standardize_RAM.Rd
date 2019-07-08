@@ -7,7 +7,7 @@
 umx_standardize_RAM(model, ...)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} you wish to standardize}
+\item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to standardize}
 
 \item{...}{Other options}
 }
@@ -30,7 +30,9 @@ m1 = umx_standardize(m1)
 umxSummary(m1)
 }
 \references{
-- \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

@@ -7,13 +7,13 @@
 umx_standardize_SexLim(model, ...)
 }
 \arguments{
-\item{model}{an \code{\link{umxSexLim}} model to standardize}
+\item{model}{an \code{\link[=umxSexLim]{umxSexLim()}} model to standardize}
 
 \item{...}{Other options}
 }
 \value{
 \itemize{
-\item standardized \code{\link{umxSexLim}} model
+\item standardized \code{\link[=umxSexLim]{umxSexLim()}} model
 }
 }
 \description{

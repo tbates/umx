@@ -26,7 +26,9 @@ umxAlgebra(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 \item{verbose}{Quiet of informative}
 }
 \value{
-- \code{\link{mxAlgebra}}
+\itemize{
+\item \code{\link[=mxAlgebra]{mxAlgebra()}}
+}
 }
 \description{
 umxAlgebra is a wrapper for mxAlgebra which has the name parameter first in order.
@@ -39,7 +41,9 @@ class(x$formula) # "call"
 
 }
 \seealso{
-- \code{\link{umxMatrix}}
+\itemize{
+\item \code{\link[=umxMatrix]{umxMatrix()}}
+}
 
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxMatrix}},

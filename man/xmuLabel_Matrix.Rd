@@ -30,13 +30,15 @@ xmuLabel_Matrix(mx_matrix = NA, baseName = NA, setfree = FALSE,
 \item{overRideExisting}{Whether to overRideExisting (Default FALSE)}
 }
 \value{
-- The labeled \code{\link{mxMatrix}}
+\itemize{
+\item The labeled \code{\link[=mxMatrix]{mxMatrix()}}
+}
 }
 \description{
-This function will label all the free parameters in an \code{\link{mxMatrix}}
+This function will label all the free parameters in an \code{\link[=mxMatrix]{mxMatrix()}}
 }
 \details{
-End users should just call \code{\link{umxLabel}}
+End users should just call \code{\link[=umxLabel]{umxLabel()}}
 
 Purpose: label the cells of an mxMatrix
 Detail: Defaults to the handy "name_r1c1" where name is the matrix name, and r1c1 = row 1 col 1.

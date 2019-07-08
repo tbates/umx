@@ -12,7 +12,9 @@ umx_set_plot_file_suffix(umx.plot.suffix = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx.plot.suffix setting
+\itemize{
+\item Current umx.plot.suffix setting
+}
 }
 \description{
 Set output file suffix (default = "gv", alternative is "dot"). If you call this with no
@@ -26,7 +28,9 @@ umx_set_plot_file_suffix("gv")
 umx_set_plot_file_suffix(old) # reinstate
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

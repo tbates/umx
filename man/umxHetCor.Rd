@@ -9,7 +9,7 @@ umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
   return = c("correlations", "hetcor object"), std.err = FALSE)
 }
 \arguments{
-\item{data}{A \code{\link{data.frame}} of columns for which to compute heterochoric correlations. OR an existing covariance matrix.}
+\item{data}{A \code{\link[=data.frame]{data.frame()}} of columns for which to compute heterochoric correlations. OR an existing covariance matrix.}
 
 \item{ML}{Whether to use Maximum likelihood computation of correlations (default = FALSE)}
 
@@ -24,19 +24,25 @@ umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
 \item{std.err}{Compute the SEs? (default = FALSE)}
 }
 \value{
-- A matrix of correlations
+\itemize{
+\item A matrix of correlations
+}
 }
 \description{
-umxHetCor is a helper to 
-1. return just the correlations from John Fox's polycor::hetcor function
-2. If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
+umxHetCor is a helper to
+\enumerate{
+\item return just the correlations from John Fox's polycor::hetcor function
+\item If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
+}
 }
 \examples{
 umxHetCor(mtcars[,c("mpg", "am")])
 umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
 }
 \references{
--
+\itemize{
+\item 
+}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

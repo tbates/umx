@@ -14,16 +14,20 @@ loadings(x, ...)
 \item{...}{additional parameters}
 }
 \value{
-- matrix of loadings
+\itemize{
+\item matrix of loadings
+}
 }
 \description{
 See \code{\link[umx]{loadings.MxModel}} to access the loadings of OpenMx EFA models.
 }
 \details{
-Base \code{\link[stats]{loadings}} handles \code{\link{factanal}} objects.
+Base \code{\link[stats]{loadings}} handles \code{\link[=factanal]{factanal()}} objects.
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

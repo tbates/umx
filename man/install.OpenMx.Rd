@@ -20,18 +20,18 @@ or open the travis list of builds on the web to view/pick a url.}
 \item{repos}{Which repository to use (ignored currently).}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 You can install OpenMx, including the latest parallel/NPSOL enabled build of OpenMx. Options are:
-
-1. "NPSOL": Install from our repository (default: This is where we maintain binaries supporting parallel processing and NPSOL).
-
-2. "travis": Install the latest travis built (currently MacOS only).
-
-3. "CRAN": Install from CRAN.
-
-4. "open travis build page": Open the list of travis builds in a browser window.
+\enumerate{
+\item "NPSOL": Install from our repository (default: This is where we maintain binaries supporting parallel processing and NPSOL).
+\item "travis": Install the latest travis built (currently MacOS only).
+\item "CRAN": Install from CRAN.
+\item "open travis build page": Open the list of travis builds in a browser window.
+}
 }
 \examples{
 \dontrun{
@@ -42,10 +42,12 @@ install.OpenMx("open travis build page") # Open web page of travis builds
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-\code{\link{umxVersion}}
+\code{\link[=umxVersion]{umxVersion()}}
 
 Other Miscellaneous Utility Functions: \code{\link{qm}},
   \code{\link{umxBrownie}}, \code{\link{umxFactor}},

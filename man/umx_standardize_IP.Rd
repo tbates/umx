@@ -7,12 +7,14 @@
 umx_standardize_IP(model, ...)
 }
 \arguments{
-\item{model}{an \code{\link{umxIP}} model to standardize}
+\item{model}{an \code{\link[=umxIP]{umxIP()}} model to standardize}
 
 \item{...}{Other options}
 }
 \value{
-- standardized IP \code{\link{umxIP}} model
+\itemize{
+\item standardized IP \code{\link[=umxIP]{umxIP()}} model
+}
 }
 \description{
 This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
@@ -23,7 +25,9 @@ model = umx_standardize_IP(model)
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

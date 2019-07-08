@@ -7,12 +7,14 @@
 umx_standardize_ACE(model, ...)
 }
 \arguments{
-\item{model}{an \code{\link{umxACE}} model to standardize}
+\item{model}{an \code{\link[=umxACE]{umxACE()}} model to standardize}
 
 \item{...}{Other options}
 }
 \value{
-- Standardized ACE \code{\link{umxACE}} model
+\itemize{
+\item Standardized ACE \code{\link[=umxACE]{umxACE()}} model
+}
 }
 \description{
 Standardize an ACE model
@@ -27,7 +29,9 @@ m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 std = umx_standardize_ACE(m1)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

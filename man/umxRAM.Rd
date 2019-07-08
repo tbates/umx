@@ -20,7 +20,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
 
 \item{...}{umxPaths, mxThreshold objects, etc.}
 
-\item{data}{data for the model. Can be an \code{\link{mxData}} or a data.frame}
+\item{data}{data for the model. Can be an \code{\link[=mxData]{mxData()}} or a data.frame}
 
 \item{name}{A friendly name for the model}
 

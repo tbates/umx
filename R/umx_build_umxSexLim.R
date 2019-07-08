@@ -59,7 +59,7 @@
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
-#' @return - \code{\link{mxModel}} of subclass mxModel.CFSexLim
+#' @return - [mxModel()] of subclass mxModel.CFSexLim
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Neale et al. (2006). 
@@ -427,14 +427,14 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 #' Shows a compact, publication-style, summary of a umx Sex Limitation model
 #'
-#' Summarize a fitted Cholesky model returned by \code{\link{umxSexLim}}. Can control digits, report comparison model fits,
+#' Summarize a fitted Cholesky model returned by [umxSexLim()]. Can control digits, report comparison model fits,
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. The report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
-#' See documentation for other umx models summary here: \code{\link{umxSummary}}.
+#' See documentation for other umx models summary here: [umxSummary()].
 #'
 #' @aliases umxSummary.MxModelSexLim
-#' @param model a \code{\link{umxSexLim}} model to summarize
+#' @param model a [umxSexLim()] model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
 #' Defaults to NA = do not create plot output
@@ -447,11 +447,11 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @param extended how much to report (FALSE)
 #' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary
-#' @return - optional \code{\link{mxModel}}
+#' @return - optional [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxSexLim}} 
+#' @seealso - [umxSexLim()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -739,7 +739,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' Options include digits (rounding), showing means or not, and which output format is desired.
 #'
 #' # @aliases plot.MxModelCP
-#' @param x \code{\link{mxModel}} to display graphically
+#' @param x [mxModel()] to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
@@ -751,7 +751,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @return - Optionally return the dot code
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @seealso - \code{\link{umxCP}}
+#' @seealso - [umxCP()]
 #' @family Plotting functions
 #' @references - <https://tbates.github.io>
 #' @md

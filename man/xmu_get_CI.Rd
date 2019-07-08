@@ -8,7 +8,7 @@ xmu_get_CI(model, label, prefix = "top.", suffix = "_std",
   digits = 2, SEstyle = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to get CIs from}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to get CIs from}
 
 \item{label}{the label of the cell to interrogate for a CI, e.g. "ai_r1c1"}
 
@@ -18,12 +18,14 @@ xmu_get_CI(model, label, prefix = "top.", suffix = "_std",
 
 \item{digits}{= 2}
 
-\item{SEstyle}{If TRUE, report "b(se)" instead of b CI95[l,u] (default = FALSE)}
+\item{SEstyle}{If TRUE, report "b(se)" instead of b CI95\link{l,u} (default = FALSE)}
 
 \item{verbose}{= FALSE}
 }
 \value{
-- the CI string, e.g. ".73[-.20, .98]" or .73(.10)
+\itemize{
+\item the CI string, e.g. ".73\link{-.20, .98}" or .73(.10)
+}
 }
 \description{
 Look up CIs for free parameters in a model, and return as APA-formatted text string.
@@ -52,7 +54,9 @@ xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = 
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Reporting Functions: \code{\link{FishersMethod}},

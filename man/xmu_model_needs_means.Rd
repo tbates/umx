@@ -8,14 +8,16 @@ xmu_model_needs_means(data, type = c("Auto", "FIML", "cov", "cor", "WLS",
   "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"))
 }
 \arguments{
-\item{data}{\code{\link{mxData}} to check.}
+\item{data}{\code{\link[=mxData]{mxData()}} to check.}
 
 \item{type}{of the data requested by the model.}
 
 \item{allContinuousMethod}{How data will be processed if used for WLS.}
 }
 \value{
-- T/F
+\itemize{
+\item T/F
+}
 }
 \description{
 Check data to see if model needs means.
@@ -54,7 +56,9 @@ xmu_model_needs_means(tmp, allContinuousMethod= "cumulants") # TRUE
 xmu_model_needs_means(tmp, allContinuousMethod= "marginals") # TRUE - always has means
 }
 \seealso{
-- \code{\link{xmu_make_mxData}}
+\itemize{
+\item \code{\link[=xmu_make_mxData]{xmu_make_mxData()}}
+}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},

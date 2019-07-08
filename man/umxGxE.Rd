@@ -41,7 +41,7 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 }
 \value{
 \itemize{
-\item GxE \code{\link{mxModel}}
+\item GxE \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
@@ -92,7 +92,7 @@ umxReduce(m1)
 }
 \seealso{
 \itemize{
-\item \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
+\item \code{\link{plot}()}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

@@ -33,7 +33,7 @@ anyNA(tmp$disp) # column repaired
 }
 \seealso{
 \itemize{
-\item \code{\link{within}}
+\item \code{\link[=within]{within()}}
 }
 
 Other Data Functions: \code{\link{umxCovData}},

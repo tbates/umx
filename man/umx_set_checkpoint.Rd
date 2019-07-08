@@ -21,7 +21,9 @@ A value of zero sets always to 'No' (i.e., do not checkpoint all models during o
 \item{model}{(optional) model to set options in (default = NULL)}
 }
 \value{
-- mxModel if provided
+\itemize{
+\item mxModel if provided
+}
 }
 \description{
 Set the checkpoint status for a model or global options
@@ -45,7 +47,9 @@ m1 = mxRun(m1)
 umx_checkpoint(0)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

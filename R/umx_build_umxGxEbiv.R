@@ -28,11 +28,11 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
-#' @return - GxEbiv \code{\link{mxModel}}
+#' @return - GxEbiv [mxModel()]
 #' @export
 #' @md
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
+#' @seealso - \code{\link{plot}()}, [umxSummary()], [umxReduce()]
 #' @references
 #' - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, 
 #' \strong{6}, 554-571. doi:[10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554).
@@ -293,10 +293,10 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 
 #' Summarize a bivariate GxE twin model
 #'
-#' umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by \code{\link{umxGxEbiv}}.
+#' umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by [umxGxEbiv()].
 #'
 #' @aliases umxSummary.MxModelGxEbiv
-#' @param model A fitted \code{\link{umxGxEbiv}} model to summarize
+#' @param model A fitted [umxGxEbiv()] model to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
@@ -309,7 +309,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @param separateGraphs Std and raw plots in separate graphs? (default = FALSE)
 #' @param report markdown or html (html opens in browser)
 #' @param ... Optional additional parameters
-#' @return - optional \code{\link{mxModel}}
+#' @return - optional [mxModel()]
 #' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxGxEbiv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
@@ -401,7 +401,7 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 #' You can also set the label for the x axis (xlab), and choose the location of the legend.
 #'
 #' @aliases plot.MxModelGxEbiv
-#' @param x A fitted \code{\link{umxGxEbiv}} model to plot
+#' @param x A fitted [umxGxEbiv()] model to plot
 #' @param xlab String to use for the x label (default = NA, which will use the variable name)
 #' @param location Where to plot the legend (default = "topleft")
 #' see ?legend for alternatives like bottomright
@@ -411,7 +411,7 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 #' @family Plotting functions
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @seealso - \code{\link{umxGxEbiv}}
+#' @seealso - [umxGxEbiv()]
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples

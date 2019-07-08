@@ -12,7 +12,9 @@ xmuMakeOneHeadedPathsFromPathList(sourceList, destinationList)
 \item{destinationList}{A destinationList}
 }
 \value{
-- added items
+\itemize{
+\item added items
+}
 }
 \description{
 Make one-headed paths

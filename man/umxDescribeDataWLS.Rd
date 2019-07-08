@@ -8,14 +8,16 @@ umxDescribeDataWLS(data, allContinuousMethod = c("cumulants",
   "marginals"), verbose = FALSE)
 }
 \arguments{
-\item{data}{the (currently raw) data being used in a \code{\link{mxFitFunctionWLS}} model.}
+\item{data}{the (currently raw) data being used in a \code{\link[=mxFitFunctionWLS]{mxFitFunctionWLS()}} model.}
 
 \item{allContinuousMethod}{the method used to process data when all columns are continuous.}
 
 \item{verbose}{logical. Whether to report diagnostics.}
 }
 \value{
-- list describing the data.
+\itemize{
+\item list describing the data.
+}
 }
 \description{
 Given either a data.frame or an mxData of type raw, this function determines whether \code{mxFitFunctionWLS}
@@ -55,7 +57,9 @@ umxDescribeDataWLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
 
 }
 \seealso{
-- \code{\link{mxFitFunctionWLS}}, \code{\link{omxAugmentDataWithWLSSummary}}
+\itemize{
+\item \code{\link[=mxFitFunctionWLS]{mxFitFunctionWLS()}}, \code{\link[=omxAugmentDataWithWLSSummary]{omxAugmentDataWithWLSSummary()}}
+}
 
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxHetCor}},

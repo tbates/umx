@@ -15,11 +15,13 @@ umx_default_option(x, option_list, check = TRUE)
 \item{check}{Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE)}
 }
 \value{
-- one validated option
+\itemize{
+\item one validated option
+}
 }
 \description{
-Like a smart version of \code{\link{match.arg}}: Handles selecting parameter options when default is a list.
-Unlike  x = \code{\link{match.arg}}(x) this allows items not in the list.
+Like a smart version of \code{\link[=match.arg]{match.arg()}}: Handles selecting parameter options when default is a list.
+Unlike  x = \href{x}{match.arg()} this allows items not in the list.
 }
 \examples{
 option_list = c("default", "par.observed", "empirical")
@@ -40,10 +42,14 @@ option_list = c(TRUE, FALSE, NA)
 umx_default_option(option_list, option_list) # works with non character
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{match.arg}}
+\itemize{
+\item \code{\link[=match.arg]{match.arg()}}
+}
 
 Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_get_options}},

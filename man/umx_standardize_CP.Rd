@@ -7,12 +7,14 @@
 umx_standardize_CP(model, ...)
 }
 \arguments{
-\item{model}{an \code{\link{umxCP}} model to standardize}
+\item{model}{an \code{\link[=umxCP]{umxCP()}} model to standardize}
 
 \item{...}{Other options}
 }
 \value{
-- standardized \code{\link{umxCP}} model
+\itemize{
+\item standardized \code{\link[=umxCP]{umxCP()}} model
+}
 }
 \description{
 This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
@@ -23,7 +25,9 @@ model = umx_standardize_CP(model)
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

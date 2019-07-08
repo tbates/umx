@@ -23,7 +23,7 @@ Helper to make a graphviz rank string is a function which.
 umx_dot_define_shapes(c("as1"), c("E", "N"))
 }
 \seealso{
-- \code{\link{umx_dot_rank}}
+- [umx_dot_rank()]
 
 Other Graphviz: \code{\link{umx_dot_mat2dot}},
   \code{\link{umx_dot_rank}},

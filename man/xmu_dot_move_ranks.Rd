@@ -21,7 +21,9 @@ xmu_dot_move_ranks(min = NULL, same = NULL, max = NULL, old_min,
 \item{old_max}{vars to group at bottom of plot}
 }
 \value{
-- list(min=min, same=same, max=max)
+\itemize{
+\item list(min=min, same=same, max=max)
+}
 }
 \description{
 xmu_dot_move_ranks (not for end users)

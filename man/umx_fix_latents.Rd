@@ -7,7 +7,7 @@
 umx_fix_latents(model, latents = NULL, exogenous.only = TRUE, at = 1)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to set}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to set}
 
 \item{latents}{(If NULL then all latentVars)}
 
@@ -16,11 +16,12 @@ umx_fix_latents(model, latents = NULL, exogenous.only = TRUE, at = 1)
 \item{at}{(Default = 1)}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
-# TODO: umx_fix_latents is deprecated - likely of no use.
+Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.TODO: umx_fix_latents is deprecated - likely of no use.
 }
 \examples{
 require(umx)
@@ -38,7 +39,9 @@ m1 = umx_fix_latents(m1)
 tmx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

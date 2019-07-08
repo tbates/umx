@@ -12,10 +12,12 @@ umxWeightedAIC(models, digits = 2)
 \item{digits}{(default 2)}
 }
 \value{
-- Best model
+\itemize{
+\item Best model
+}
 }
 \description{
-Returns the best model by AIC, and computes the probabilities 
+Returns the best model by AIC, and computes the probabilities
 according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 2004).
 }
 \examples{
@@ -24,10 +26,14 @@ l2 = lm(mpg~ wt, data=mtcars)
 umxWeightedAIC(models = list(l1, l2))
 }
 \references{
-- Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+\itemize{
+\item Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}. \strong{11}, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+}
 }
 \seealso{
-- \code{\link{AIC}}
+\itemize{
+\item \code{\link[=AIC]{AIC()}}
+}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},

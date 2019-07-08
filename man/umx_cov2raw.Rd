@@ -14,7 +14,9 @@ umx_cov2raw(myCovariance, n, means = 0)
 \item{means}{the means of the raw data (defaults to 0)}
 }
 \value{
-- data.frame
+\itemize{
+\item data.frame
+}
 }
 \description{
 Turns a covariance matrix into comparable raw data :-)
@@ -30,10 +32,14 @@ data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
 myData = umx_cov2raw(covData, n = 100, means = 1:6)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{cov2cor}}
+\itemize{
+\item \code{\link[=cov2cor]{cov2cor()}}
+}
 
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxDescribeDataWLS}},

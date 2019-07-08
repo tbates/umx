@@ -73,7 +73,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}
+\item \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
@@ -99,7 +99,7 @@ Features include the ability to include more than one common pathway, to use ord
 \strong{note}: The function \code{umx_set_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
 It defaults to .001. You might find that '0.01' works better for ordinal models.
 
-Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+Like the \code{\link[=umxACE]{umxACE()}} model, the CP model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or
 non-additive genetic effects (D).
@@ -228,8 +228,8 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 }
 \seealso{
 \itemize{
-\item \code{\link{umxSummaryCP}}, \code{\link{umxPlotCP}}. See \code{\link{umxACE}} for more examples of twin modeling.
-\code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link{xmu_make_top_twin}}
+\item \code{\link[=umxSummaryCP]{umxSummaryCP()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}. See \code{\link[=umxACE]{umxACE()}} for more examples of twin modeling.
+\code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link[=xmu_make_top_twin]{xmu_make_top_twin()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

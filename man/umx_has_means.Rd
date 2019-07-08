@@ -7,13 +7,15 @@
 umx_has_means(model)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} to check for presence of means}
+\item{model}{The \code{\link[=mxModel]{mxModel()}} to check for presence of means}
 }
 \value{
-- TRUE or FALSE
+\itemize{
+\item TRUE or FALSE
+}
 }
 \description{
-A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have a means model?"
+A utility function to return a binary answer to the question "does this \code{\link[=mxModel]{mxModel()}} have a means model?"
 }
 \examples{
 require(umx)
@@ -36,7 +38,9 @@ m1 = mxRun(m1)
 umx_has_means(m1)
 }
 \references{
-- https://www.github.com/tbates/umx/
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},
@@ -49,9 +53,6 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_is_MxData}},
   \code{\link{umx_is_MxMatrix}},
   \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_ordered}}
+  \code{\link{umx_is_cov}}, \code{\link{umx_is_ordered}}
 }
 \concept{Test}

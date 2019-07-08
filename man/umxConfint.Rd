@@ -10,7 +10,7 @@ umxConfint(object, parm = c("existing", "smart", "all",
   "SLSQP"))
 }
 \arguments{
-\item{object}{An \code{\link{mxModel}}, possibly already containing \code{\link{mxCI}}s that have been \code{\link{mxRun}} with intervals = TRUE))}
+\item{object}{An \code{\link[=mxModel]{mxModel()}}, possibly already containing \code{\link[=mxCI]{mxCI()}}s that have been \code{\link[=mxRun]{mxRun()}} with intervals = TRUE))}
 
 \item{parm}{Which parameters to get confidence intervals. Can be "existing", "smart", "all", or a vector of names.}
 
@@ -28,7 +28,7 @@ umxConfint(object, parm = c("existing", "smart", "all",
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}
+\item \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
@@ -38,7 +38,7 @@ Implements confidence interval function for umx models.
 Note: By default, requesting new CIs wipes the existing ones.
 To keep these, set wipeExistingRequests = FALSE.
 
-\emph{Note}: \code{\link{confint}} is an OpenMx function which will return SE-based CIs.
+\emph{Note}: \code{\link[=confint]{confint()}} is an OpenMx function which will return SE-based CIs.
 
 Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
 If parm is empty, and run = FALSE, a message will alert you to add run = TRUE.
@@ -89,7 +89,7 @@ m2 =  umxConfint(m1, "smart")
 }
 \seealso{
 \itemize{
-\item \code{\link[stats]{confint}}, \code{\link{umxCI}}
+\item \code{\link[stats]{confint}}, \code{\link[=umxCI]{umxCI()}}
 }
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

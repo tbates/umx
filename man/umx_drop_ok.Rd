@@ -14,11 +14,13 @@ umx_drop_ok(model1, model2, text = "parameter")
 \item{text}{name of the thing being tested, i.e., "Extraversion" or "variances"}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
-merged with \code{\link{umxCompare}}() :-)
+merged with \url{umxCompare()} :-)
 }
 \examples{
 require(umx)
@@ -35,7 +37,9 @@ m2 = umxModify(m1, update = "g_to_x1", name = "no effect on x1")
 umx_drop_ok(m1, m2, text = "the path to x1")
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

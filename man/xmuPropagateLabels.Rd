@@ -14,10 +14,12 @@ xmuPropagateLabels(model, suffix = "", verbose = TRUE)
 \item{verbose}{whether to say what is being done}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-You should be calling \code{\link{umxLabel}}.
+You should be calling \code{\link[=umxLabel]{umxLabel()}}.
 This function is called by xmuLabel_MATRIX_Model
 }
 \examples{

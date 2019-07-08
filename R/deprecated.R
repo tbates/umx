@@ -23,67 +23,67 @@
 #' @param ... the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)
 #' @description 
 #' 
-#' xmuMakeThresholdsMatrices should be replaced with \code{\link{umxThresholdMatrix}}
+#' xmuMakeThresholdsMatrices should be replaced with [umxThresholdMatrix()]
 #' 
-#' umxSaturated should be replaced with \code{\link{mxRefModels}}
+#' umxSaturated should be replaced with [mxRefModels()]
 #' 
-#' umx_grep_labels should be replaced with \code{\link{umx_grep}}
+#' umx_grep_labels should be replaced with [umx_grep()]
 #' 
-#' grepSPSS_labels should be replaced with \code{\link{umx_grep}}
+#' grepSPSS_labels should be replaced with [umx_grep()]
 #' 
-#' umxStart should be replaced with \code{\link{umxValues}}
+#' umxStart should be replaced with [umxValues()]
 #' 
-#' umxTryHard is deprecated: use \code{\link{umxRun}} instead
+#' umxTryHard is deprecated: use [umxRun()] instead
 #'
-#' genEpi_Jiggle is deprecated: use \code{\link{umxJiggle}} instead
+#' genEpi_Jiggle is deprecated: use [umxJiggle()] instead
 #' 
-#' umxLabels Is deprecated: use \code{\link{umxLabel}} instead
+#' umxLabels Is deprecated: use [umxLabel()] instead
 #' 
-#' umxLabels Is deprecated: use \code{\link{umxLabel}} instead
+#' umxLabels Is deprecated: use [umxLabel()] instead
 #' 
-#' umxPath is deprecated: Use \code{\link{mxPath}} and \code{\link{umxLabel}} instead
+#' umxPath is deprecated: Use [mxPath()] and [umxLabel()] instead
 #' 
-#' umxReportFit is deprecated: use \code{\link{umxSummary}} instead
+#' umxReportFit is deprecated: use [umxSummary()] instead
 #' 
-#' umxGetLabels is deprecated: use \code{\link{umxGetParameters}} instead
+#' umxGetLabels is deprecated: use [umxGetParameters()] instead
 #'
-#' stringToMxAlgebra is deprecated: please use \code{\link{umx_string_to_algebra}} instead
+#' stringToMxAlgebra is deprecated: please use [umx_string_to_algebra()] instead
 #'
-#' genEpi_EvalQuote is deprecated: please use \code{\link{mxEvalByName}} instead
+#' genEpi_EvalQuote is deprecated: please use [mxEvalByName()] instead
 #'
-#' umxReportCIs is deprecated: please use \code{\link{umxCI}} instead
+#' umxReportCIs is deprecated: please use [umxCI()] instead
 #'
-#' hasSquareBrackets is deprecated: please use \code{\link{umx_has_square_brackets}} instead
+#' hasSquareBrackets is deprecated: please use [umx_has_square_brackets()] instead
 #' 
-#' xmuHasSquareBrackets is deprecated: please use \code{\link{umx_has_square_brackets}} instead
+#' xmuHasSquareBrackets is deprecated: please use [umx_has_square_brackets()] instead
 #' 
-#' replace umxReportFit with \code{\link{umxSummary}}
+#' replace umxReportFit with [umxSummary()]
 #' 
-#' Replace umxGraph_RAM with \code{\link{plot}}
+#' Replace umxGraph_RAM with [plot()]
 #'
-#' Replace tryHard with \code{\link{mxTryHard}}
+#' Replace tryHard with [mxTryHard()]
 #'
-#' Replace genEpi_ReRun with \code{\link{umxModify}}
+#' Replace genEpi_ReRun with [umxModify()]
 #'
-#' Replace mxStart with \code{\link{umxValues}}
+#' Replace mxStart with [umxValues()]
 #'
-#' Replace umxLabeler with \code{\link{umxLabel}}
+#' Replace umxLabeler with [umxLabel()]
 #'
-#' Replace standardizeRAM with \code{\link{umx_standardize_RAM}}
+#' Replace standardizeRAM with [umx_standardize_RAM()]
 #'
-#' Replace genEpi_equate with \code{\link{umxEquate}}
+#' Replace genEpi_equate with [umxEquate()]
 #'
-#' Replace genEpi_Path with \code{\link{umxPath}}
+#' Replace genEpi_Path with [umxPath()]
 #'
-#' Replace genEpiCompare with \code{\link{umxCompare}}
+#' Replace genEpiCompare with [umxCompare()]
 #'
-#' Replace mxLatent with \code{\link{umxLatent}}
+#' Replace mxLatent with [umxLatent()]
 #' 
-#' Change col.as.numeric to \code{\link{umx_as_numeric}}
+#' Change col.as.numeric to [umx_as_numeric()]
 #' 
-#' Change cor.prob to \code{\link{umx_cor}}
+#' Change cor.prob to [umx_cor()]
 #' 
-#' Change umx_u_APA_pval to \code{\link{umx_APA_pval}}
+#' Change umx_u_APA_pval to [umx_APA_pval()]
 #' 
 #'
 #' @name umx-deprecated

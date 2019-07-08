@@ -12,7 +12,7 @@ umx_merge_CIs(m1, m2)
 \item{m2}{second copy of the model}
 }
 \value{
-- \code{\link{mxModel}}
+- [mxModel()]
 }
 \description{
 if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),

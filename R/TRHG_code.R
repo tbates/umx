@@ -4,7 +4,7 @@
 #' This is the example code used in our Twin Research and Human Genetics Paper on `umx`
 #'
 #' @export
-#' @seealso - \code{\link{umx}}
+#' @seealso - [umx()]
 #' @references - Bates, T. C., Neale, M. C., & Maes, H. H. (2019). 
 #' umx: A library for Structural Equation and Twin Modelling in R. 
 #' *Twin Research and Human Genetics*, **22**, 27-41. DOI: [https://doi.org/10.1017/thg.2019.2](https://doi.org/10.1017/thg.2019.2)

@@ -14,15 +14,17 @@ xmuLabel_MATRIX_Model(model, suffix = "", verbose = TRUE)
 \item{verbose}{how much feedback to give}
 }
 \value{
-- The labeled \code{\link{mxModel}}
+\itemize{
+\item The labeled \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-This function will label all the free parameters in a (non-RAM) OpenMx \code{\link{mxModel}}
+This function will label all the free parameters in a (non-RAM) OpenMx \code{\link[=mxModel]{mxModel()}}
 nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 i.e., matrix-name + _ + r + rowNumber + c + colNumber
 }
 \details{
-End users should just call \code{\link{umxLabel}}
+End users should just call \code{\link[=umxLabel]{umxLabel()}}
 }
 \examples{
 require(umx)

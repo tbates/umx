@@ -9,7 +9,7 @@ umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, strip_zero = TRUE, ...)
 }
 \arguments{
-\item{x}{\code{\link{mxModel}} to plot (created by umxACE in order to inherit the MxModelACE class)}
+\item{x}{\code{\link[=mxModel]{mxModel()}} to plot (created by umxACE in order to inherit the MxModelACE class)}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
@@ -24,7 +24,9 @@ umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
 \item{...}{Additional (optional) parameters}
 }
 \value{
-- optionally return the dot code
+\itemize{
+\item optionally return the dot code
+}
 }
 \description{
 Make a graphical display of an ACE model
@@ -39,12 +41,18 @@ m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\itemize{
+\item \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+}
 
-- \code{\link{umxACE}}
+\itemize{
+\item \code{\link[=umxACE]{umxACE()}}
+}
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},

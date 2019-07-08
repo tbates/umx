@@ -7,7 +7,7 @@
 umxSummary(model, ...)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} whose fit will be reported}
+\item{model}{The \code{\link[=mxModel]{mxModel()}} whose fit will be reported}
 
 \item{...}{Other parameters to control model summary}
 }
@@ -17,15 +17,15 @@ in a compact form suitable for reporting in a journal.
 
 See documentation for RAM models summary here: \code{\link[=umxSummary.MxModel]{umxSummary.MxModel()}}.
 
-View documentation on the ACE model subclass here: \code{\link{umxSummaryACE}}.
+View documentation on the ACE model subclass here: \code{\link[=umxSummaryACE]{umxSummaryACE()}}.
 
-View documentation on the ACEv model subclass here: \code{\link{umxSummaryACEv}}.
+View documentation on the ACEv model subclass here: \code{\link[=umxSummaryACEv]{umxSummaryACEv()}}.
 
-View documentation on the IP model subclass here: \code{\link{umxSummaryIP}}.
+View documentation on the IP model subclass here: \code{\link[=umxSummaryIP]{umxSummaryIP()}}.
 
-View documentation on the CP model subclass here: \code{\link{umxSummaryCP}}.
+View documentation on the CP model subclass here: \code{\link[=umxSummaryCP]{umxSummaryCP()}}.
 
-View documentation on the GxE model subclass here: \code{\link{umxSummaryGxE}}.
+View documentation on the GxE model subclass here: \code{\link[=umxSummaryGxE]{umxSummaryGxE()}}.
 }
 \seealso{
 Other Reporting Functions: \code{\link{FishersMethod}},

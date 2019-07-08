@@ -11,7 +11,7 @@
   matrixAddresses = FALSE, std = "deprecated", ...)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} whose fit will be reported}
+\item{model}{The [mxModel()] whose fit will be reported}
 
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
@@ -43,7 +43,7 @@ Report the fit of a model in a compact form suitable for a journal. Emits a "war
 when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 }
 \details{
-Note: For some (multi-group) models, you will need to fall back on \code{\link{summary}}
+Note: For some (multi-group) models, you will need to fall back on [summary()]
 
 CIs and Identification
 This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
@@ -51,7 +51,7 @@ These are used to derive confidence intervals based on the formula 95%CI = estim
 
 Sometimes they appear NA. This often indicates a model which is not identified (see\url{http://davidakenny.net/cm/identify.htm}).
 This can include empirical under-identification - for instance two factors
-that are essentially identical in structure. use \code{\link{mxCheckIdentification}} to check identification.
+that are essentially identical in structure. use [mxCheckIdentification()] to check identification.
 
 One or more paths estimated at or close to zero suggests that fixing one or two of 
 these to zero may fix the standard error calculation, 
@@ -98,7 +98,7 @@ umxSummary(m1, show = "std", filter = "NS")
 \url{https://tbates.github.io}
 }
 \seealso{
-- \code{\link{umxRun}}
+- [umxRun()]
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

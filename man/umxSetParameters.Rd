@@ -9,7 +9,7 @@ umxSetParameters(model, labels, free = NULL, values = NULL,
   strict = TRUE, name = NULL, regex = FALSE, test = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to WITH}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to WITH}
 
 \item{labels}{= labels to find}
 
@@ -34,18 +34,20 @@ umxSetParameters(model, labels, free = NULL, values = NULL,
 \item{test}{just show what you would do? (defaults to FALSE)}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Free or fix parameters in an \code{\link{mxModel}}.
-This allows similar actions that \code{\link{update}} enables
+Free or fix parameters in an \code{\link[=mxModel]{mxModel()}}.
+This allows similar actions that \code{\link[=update]{update()}} enables
 for lm models.
-Updating can create duplicate labels, so this function also calls \code{\link{omxAssignFirstParameters}}
+Updating can create duplicate labels, so this function also calls \code{\link[=omxAssignFirstParameters]{omxAssignFirstParameters()}}
 to equate the start values for parameters which now have identical labels.
 }
 \details{
 It also supports regular expressions to select labels. In this respect,
-it is similar to \code{\link{umxModify}} without running the model.
+it is similar to \code{\link[=umxModify]{umxModify()}} without running the model.
 }
 \examples{
 require(umx)
@@ -63,10 +65,14 @@ m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
 parameters(m2)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxModify}}, \code{\link{umxLabel}}
+\itemize{
+\item \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxLabel]{umxLabel()}}
+}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},

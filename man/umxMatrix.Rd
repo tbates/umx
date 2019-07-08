@@ -47,7 +47,9 @@ umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
 \item{jiggle}{= NA passed to umxLabel to jiggle start values (default does nothing)}
 }
 \value{
-- \code{\link{mxMatrix}}
+\itemize{
+\item \code{\link[=mxMatrix]{mxMatrix()}}
+}
 }
 \description{
 umxMatrix is a wrapper for mxMatrix which labels cells buy default, and has the name parameter first in order.
@@ -77,10 +79,14 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{xmu_simplex_corner}}, \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
+\itemize{
+\item \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}}, \code{\link[=mxMatrix]{mxMatrix()}}, \code{\link[=umxLabel]{umxLabel()}}, \code{\link[=umxRAM]{umxRAM()}}
+}
 
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},

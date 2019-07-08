@@ -8,7 +8,7 @@ umx_fix_first_loadings(model, latents = NULL, at = 1,
   freeFixedLatent = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} to set.}
+\item{model}{An \code{\link[=mxModel]{mxModel()}} to set.}
 
 \item{latents}{Which latents to fix from (NULL = all).}
 
@@ -18,7 +18,7 @@ umx_fix_first_loadings(model, latents = NULL, at = 1,
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}
+\item \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
@@ -42,7 +42,7 @@ tmx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

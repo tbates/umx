@@ -15,7 +15,9 @@ umx_set_optimizer(opt = NA, model = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Set the optimizer in OpenMx
@@ -28,7 +30,9 @@ umx_set_optimizer("SLSQP") # update globally
 umx_set_optimizer(old) # set back
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

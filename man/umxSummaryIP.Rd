@@ -10,7 +10,7 @@ umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
   CIs = FALSE, show = NULL, ...)
 }
 \arguments{
-\item{model}{A fitted \code{\link{umxIP}} model to summarize}
+\item{model}{A fitted \code{\link[=umxIP]{umxIP()}} model to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
 
@@ -31,10 +31,12 @@ umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
 \item{...}{Optional additional parameters}
 }
 \value{
-- optional \code{\link{mxModel}}
+\itemize{
+\item optional \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Summarize a Independent Pathway model, as returned by \code{\link{umxIP}}
+Summarize a Independent Pathway model, as returned by \code{\link[=umxIP]{umxIP()}}
 }
 \examples{
 require(umx)
@@ -50,10 +52,14 @@ umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\itemize{
+\item \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

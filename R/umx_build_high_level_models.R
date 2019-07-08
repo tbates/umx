@@ -21,7 +21,7 @@
 #'
 #' Perform full-information maximum-likelihood factor analysis on a data matrix.
 #' 
-#' As in \code{\link{factanal}}, you need only specify the number of factors and offer up
+#' As in [factanal()], you need only specify the number of factors and offer up
 #' some manifest data, e.g:
 #'                                                              
 #' \code{umxEFA(factors = 2, data = mtcars)}
@@ -73,11 +73,11 @@
 #' @param return by default, the resulting MxModel is returned. Say "loadings" to get a fact.anal object.
 #' @param report Report as markdown to the console, or open a table in browser ("html")
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
-#' @return - EFA \code{\link{mxModel}}
+#' @return - EFA [mxModel()]
 #' @family Super-easy helpers
 #' @export
 #' @md
-#' @seealso - \code{\link{factanal}}, \code{\link{mxFactorScores}}
+#' @seealso - [factanal()], [mxFactorScores()]
 #' @references - \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
@@ -236,7 +236,7 @@ umxFactanal <- umxEFA
 #' @return - dataframe of scores.
 #' @export
 #' @family Reporting Functions
-#' @seealso - \code{\link{mxFactorScores}}
+#' @seealso - [mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -285,7 +285,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @return - 
 #' @export
 #' @family Super-easy helpers
-#' @seealso - \code{\link{umx_make_MR_data}}, \code{\link[sem]{tsls}}, \code{\link{umxRAM}}
+#' @seealso - [umx_make_MR_data()], \code{\link[sem]{tsls}}, [umxRAM()]
 #' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
 #' In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass., 
 #' Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.

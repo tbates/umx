@@ -37,7 +37,7 @@ umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
 }
 \value{
 \itemize{
-\item GxEbiv \code{\link{mxModel}}
+\item GxEbiv \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
@@ -92,7 +92,7 @@ power in G x E modelling of twin data. \emph{Behavior Genetics},
 }
 \seealso{
 \itemize{
-\item \code{\link{plot}()}, \code{\link{umxSummary}}, \code{\link{umxReduce}}
+\item \code{\link{plot}()}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

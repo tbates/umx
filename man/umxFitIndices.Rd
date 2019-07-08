@@ -7,7 +7,7 @@
 umxFitIndices(model, refModels = mxRefModels(model, run = TRUE))
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} for which you want fit indices.}
+\item{model}{The \code{\link[=mxModel]{mxModel()}} for which you want fit indices.}
 
 \item{refModels}{Independence and saturated models. default mxRefModels(model, run = TRUE)}
 }
@@ -17,12 +17,12 @@ Table of fit statistics
 \description{
 A list of fit indices. Originated in this thread: https://openmx.ssri.psu.edu/thread/765
 note: This is not a full-fat fit reporter. It is not robust across multi-group designs,
-definition variables. It is primarily designed to add less-often reported fit indices for 
+definition variables. It is primarily designed to add less-often reported fit indices for
 RAM models where reviewer 2 wants something other than CFA/TLI/RMSEA :-).
 }
 \details{
-Fit information reported includes: N, deviance, N.parms, Chi, df, p.Chi, Chi.df, AICchi, AICdev, BCCchi, BCCdev, BICchi, BICdev, 
-CAICchi, CAICdev, RMSEA, SRMR, RMR, SMAR, MAR, SMAR.nodiag, MAR.nodiag, GFI, AGFI, PGFI, 
+Fit information reported includes: N, deviance, N.parms, Chi, df, p.Chi, Chi.df, AICchi, AICdev, BCCchi, BCCdev, BICchi, BICdev,
+CAICchi, CAICdev, RMSEA, SRMR, RMR, SMAR, MAR, SMAR.nodiag, MAR.nodiag, GFI, AGFI, PGFI,
 NFI, RFI, IFI, NNFI.TLI, CFI, PRATIO, PNFI, PCFI, NCP, ECVIchi, ECVIdev, MECVIchi, MECVIdev, MFI, GH
 
 Want more? File a report at github
@@ -49,7 +49,9 @@ umxFitIndices(m1)
 umxAPA(umxFitIndices(m1), digits = 3)
 }
 \references{
--
+\itemize{
+\item 
+}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

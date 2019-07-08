@@ -8,7 +8,7 @@ umx_is_ordered(df, names = FALSE, strict = TRUE, binary.only = FALSE,
   ordinal.only = FALSE, continuous.only = FALSE)
 }
 \arguments{
-\item{df}{A \code{\link{data.frame}} to look in for ordinal variables (if you offer a
+\item{df}{A \code{\link[=data.frame]{data.frame()}} to look in for ordinal variables (if you offer a
 matrix or vector, it will be upgraded to a dataframe)}
 
 \item{names}{whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)}
@@ -22,7 +22,9 @@ matrix or vector, it will be upgraded to a dataframe)}
 \item{continuous.only}{use with names = TRUE to get the names of the continuous variables}
 }
 \value{
-- vector of variable names or Booleans
+\itemize{
+\item vector of variable names or Booleans
+}
 }
 \description{
 Return the names of any ordinal variables in a dataframe
@@ -46,7 +48,9 @@ umx_is_ordered(tmp, names=TRUE)
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},
@@ -60,8 +64,6 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_is_MxData}},
   \code{\link{umx_is_MxMatrix}},
   \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}}
+  \code{\link{umx_is_cov}}
 }
 \concept{Test}

@@ -19,10 +19,10 @@ service by providing your key one time
 }
 \details{
 If you supply auth_key, It will be written to "~/.pushbulletkey"
-\code{\link{umx_pb_note}}(auth_key="mykeystring")
+\href{auth_key="mykeystring"}{umx_pb_note()}
 once it exists there, you do not need to store it in code, so code is sharable.
 
-You can get your authorization key at \url{https://www.pushbullet.com} in 
+You can get your authorization key at \url{https://www.pushbullet.com} in
 the "account" section.
 
 \strong{Note}: You can show the existing stored key using "GET"
@@ -33,10 +33,14 @@ umx_pb_note("done!", umx_time(m1))
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umx_msg}}
+\itemize{
+\item \code{\link[=umx_msg]{umx_msg()}}
+}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},

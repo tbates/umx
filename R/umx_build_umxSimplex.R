@@ -74,7 +74,7 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
@@ -194,14 +194,14 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 
 #' Shows a compact, publication-style, summary of a Simplex model.
 #'
-#' Summarize a fitted Simplex model returned by \code{\link{umxSimplex}}. Can control digits, report comparison model fits,
+#' Summarize a fitted Simplex model returned by [umxSimplex()]. Can control digits, report comparison model fits,
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
-#' See documentation for other umx models here: \code{\link{umxSummary}}.
+#' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases umxSummary.MxModelSimplex
-#' @param model an \code{\link{mxModel}} to summarize
+#' @param model an [mxModel()] to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
 #' Defaults to NA = no plot.
@@ -214,11 +214,11 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @param extended how much to report (default = FALSE)
 #' @param zero.print How to show zeros (default = ".")
 #' @param ... Other parameters to control model summary
-#' @return - optional \code{\link{mxModel}}
+#' @return - optional [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxSimplex}}
+#' @seealso - [umxSimplex()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -427,7 +427,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' Options include digits (rounding), showing means or not, and which output format is desired.
 #'
 #' @aliases plot.MxModelSimplex
-#' @param x The \code{\link{umxSimplex}} model to display graphically
+#' @param x The [umxSimplex()] model to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
@@ -438,7 +438,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @return - Optionally return the dot code
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, simplex, ACEv, or ACE model.
-#' @seealso - \code{\link{umxSimplex}}
+#' @seealso - [umxSimplex()]
 #' @family Plotting functions
 #' @md
 #' @examples
@@ -540,9 +540,9 @@ plot.MxModelSimplex <- umxPlotSimplex
 #'
 #' umx_standardize_Simplex
 #'
-#' @param model an \code{\link{umxSimplex}} model to standardize
+#' @param model an [umxSimplex()] model to standardize
 #' @param ... Other options
-#' @return - Standardized Simplex \code{\link{umxSimplex}} model
+#' @return - Standardized Simplex [umxSimplex()] model
 #' @export
 #' @family zAdvanced Helpers
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>

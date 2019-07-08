@@ -11,7 +11,7 @@
 #'
 #' Want more? File a report at github
 #' 
-#' @param model The \code{\link{mxModel}} for which you want fit indices.
+#' @param model The [mxModel()] for which you want fit indices.
 #' @param refModels Independence and saturated models. default mxRefModels(model, run = TRUE)
 #' @return Table of fit statistics
 #' @export

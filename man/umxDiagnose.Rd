@@ -7,7 +7,7 @@
 umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to diagnose}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to diagnose}
 
 \item{tryHard}{whether I should try and fix it? (defaults to FALSE)}
 
@@ -53,7 +53,7 @@ umxDiagnose(m1)
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
 \concept{Teaching and Testing functions}

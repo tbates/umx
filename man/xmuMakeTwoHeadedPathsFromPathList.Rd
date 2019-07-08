@@ -10,7 +10,9 @@ xmuMakeTwoHeadedPathsFromPathList(pathList)
 \item{pathList}{A list of paths}
 }
 \value{
-- added items
+\itemize{
+\item added items
+}
 }
 \description{
 Make two-headed paths

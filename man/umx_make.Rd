@@ -22,7 +22,9 @@ umx_make(what = c("quick_install", "install_full", "spell",
 \item{spelling}{Whether to check spelling before release (default = "en_US": set NULL to not check).}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Easily  run devtools "install", "release", "win", "examples" etc.
@@ -39,7 +41,9 @@ umx_make(what = "release"))  # Release to CRAN
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},

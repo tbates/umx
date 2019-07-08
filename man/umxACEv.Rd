@@ -65,17 +65,19 @@ umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 }
 \value{
-- \code{\link{mxModel}} of subclass mxModel.ACE
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.ACE
+}
 }
 \description{
-A common task in twin modeling involves using the genetic and environmental differences 
+A common task in twin modeling involves using the genetic and environmental differences
 between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of one, or, typically, several phenotypes
 (measured behaviors).
 }
 \details{
 The ACE variance-based model decomposes phenotypic variance into additive genetic (A),
-unique environmental (E) and, optionally, either common environment (shared-environment, C) or 
+unique environmental (E) and, optionally, either common environment (shared-environment, C) or
 non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
 and multiple examples.
 
@@ -87,18 +89,17 @@ The following figure shows the A components of a trivariate ACEv model:
 \emph{NOTE}: This function does not use the Cholesky decomposition. Instead it directly models variance.
 This ensures unbiased type-I error rates. It means that occasionally
 estimates of variance may be negative. This should be used as an occasion to inspect you model
-choices and data. `umxACEv` can be used as a base model to validate the ACE Cholesky model, 
+choices and data. \code{umxACEv} can be used as a base model to validate the ACE Cholesky model,
 a core model in behavior genetics (Neale and Cardon, 1992).
 
-
 \strong{Data Input}
-The function flexibly accepts raw data, and also summary covariance data 
+The function flexibly accepts raw data, and also summary covariance data
 (in which case the user must also supple numbers of observations for the two input data sets).
 
 \strong{Ordinal Data}
 In an important capability, the model transparently handles ordinal (binary or multi-level
 ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
-data in any combination. 
+data in any combination.
 
 The function also supports weighting of individual data rows. In this case,
 the model is estimated for each row individually, then each row likelihood
@@ -269,8 +270,10 @@ umxSummary(m1, std = FALSE)
 
 }
 \references{
-- Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+\itemize{
+\item Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
 to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+}
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

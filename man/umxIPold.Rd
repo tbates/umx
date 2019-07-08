@@ -56,7 +56,9 @@ omit suffixes in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model)
@@ -81,10 +83,14 @@ plot(m1)
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{umxIP}}, \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\itemize{
+\item \code{\link[=umxIP]{umxIP()}}, \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

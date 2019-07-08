@@ -12,10 +12,12 @@ umx_is_numeric(df, all = TRUE)
 \item{all}{Whether to return a single all() Boolean or each column individually.}
 }
 \value{
-- Boolean or Boolean vector
+\itemize{
+\item Boolean or Boolean vector
+}
 }
 \description{
-Checks across columns of a dataframe, return a vector of TRUE and FALSE, 
+Checks across columns of a dataframe, return a vector of TRUE and FALSE,
 or, if all ==TRUE, a single binary (the default).
 }
 \examples{
@@ -23,13 +25,19 @@ umx_is_numeric(mtcars) # TRUE
 umx_is_numeric(mtcars, all=FALSE) # vector of TRUE
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umx_is_class}}
+\itemize{
+\item \code{\link[=umx_is_class]{umx_is_class()}}
+}
 
 Other Check or test: \code{\link{umx_check_names}},
-  \code{\link{umx_is_class}}, \code{\link{umx}},
+  \code{\link{umx_is_class}},
+  \code{\link{umx_is_endogenous}},
+  \code{\link{umx_is_exogenous}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }
 \concept{Check or test}

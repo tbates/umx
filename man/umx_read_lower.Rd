@@ -18,10 +18,12 @@ Defaults to as.character(paste("X", 1:n, sep=""))}
 \item{ensurePD}{Whether to coerce the resultant matrix to positive definite (Defaults to FALSE)}
 }
 \value{
-- \code{\link{matrix}}
+\itemize{
+\item \code{\link[=matrix]{matrix()}}
+}
 }
 \description{
-umx_read_lower will read a lower triangle of data, either from the 
+umx_read_lower will read a lower triangle of data, either from the
 console, or from file, and return a full matrix, optionally coerced to
 positive definite. This is useful, especially when copying data from a paper
 that includes just the lower triangle of a correlation matrix.
@@ -66,7 +68,9 @@ summary(m1)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

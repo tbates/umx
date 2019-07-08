@@ -24,7 +24,9 @@ e.g. "{rank=same; as1};"
 umx_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
 }
 \seealso{
-- \code{\link{umx_dot_define_shapes}}
+\itemize{
+\item \code{\link[=umx_dot_define_shapes]{umx_dot_define_shapes()}}
+}
 
 Other Graphviz: \code{\link{umx_dot_define_shapes}},
   \code{\link{umx_dot_mat2dot}},

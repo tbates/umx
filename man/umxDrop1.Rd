@@ -7,7 +7,7 @@
 umxDrop1(model, regex = NULL, maxP = 1)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} to drop parameters from}
+\item{model}{An \code{\link[=mxModel]{mxModel()}} to drop parameters from}
 
 \item{regex}{A string to select parameters to drop. leave empty to try all.
 This is regular expression enabled. i.e., "^a_" will drop parameters beginning with "a_"}
@@ -18,8 +18,8 @@ This is regular expression enabled. i.e., "^a_" will drop parameters beginning w
 a table of model comparisons
 }
 \description{
-Drops each free parameter (selected via regex), returning an \code{\link{mxCompare}}
-table comparing the effects. A great way to quickly determine which of several 
+Drops each free parameter (selected via regex), returning an \code{\link[=mxCompare]{mxCompare()}}
+table comparing the effects. A great way to quickly determine which of several
 parameters can be dropped without excessive cost
 }
 \examples{
@@ -30,7 +30,9 @@ umxDrop1(model, regex="a_r1c1|a_r1c2")
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Modify or Compare Models: \code{\link{umxAdd1}},

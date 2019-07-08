@@ -289,6 +289,6 @@ umx: A library for Structural Equation and Twin Modelling in R.
 }
 \seealso{
 \itemize{
-\item \code{\link{umx}}
+\item \code{\link[=umx]{umx()}}
 }
 }

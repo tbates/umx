@@ -10,7 +10,7 @@ umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
   showErrorCodes = TRUE)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} you wish to report \code{\link{mxCI}}s on}
+\item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to report \code{\link[=mxCI]{mxCI()}}s on}
 
 \item{which}{What CIs to add: c("ALL", NA, "list of your making")}
 
@@ -26,10 +26,12 @@ umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
 \item{showErrorCodes}{Whether to show errors (default == TRUE)}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-umxCI adds mxCI() calls for requested (default all) parameters in a model, 
+umxCI adds mxCI() calls for requested (default all) parameters in a model,
 runs these CIs if necessary, and reports them in a neat summary.
 }
 \details{
@@ -82,10 +84,14 @@ m1 = umxCI(m1, "a_r1c1", run = "yes")
 }
 }
 \references{
-- https://www.github.com/tbates/umx/
+\itemize{
+\item https://www.github.com/tbates/umx/
+}
 }
 \seealso{
-- \code{\link[stats]{confint}}, \code{\link{umxConfint}}, \code{\link{umxCI}}, \code{\link{umxModify}}
+\itemize{
+\item \code{\link[stats]{confint}}, \code{\link[=umxConfint]{umxConfint()}}, \code{\link[=umxCI]{umxCI()}}, \code{\link[=umxModify]{umxModify()}}
+}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

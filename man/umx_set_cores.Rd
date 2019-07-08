@@ -14,7 +14,9 @@ umx_set_cores(cores = NA, model = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- number of cores
+\itemize{
+\item number of cores
+}
 }
 \description{
 set the number of cores (threads) used by OpenMx
@@ -37,7 +39,9 @@ umx_set_cores(model = m1)  # show new value for m1
 umx_set_cores(oldCores)    # reinstate old global value
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

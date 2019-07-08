@@ -7,10 +7,12 @@
 umx_is_RAM(obj)
 }
 \arguments{
-\item{obj}{an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}}
+\item{obj}{an object to be tested to see if it is an OpenMx RAM \code{\link[=mxModel]{mxModel()}}}
 }
 \value{
-- Boolean
+\itemize{
+\item Boolean
+}
 }
 \description{
 Utility function returning a binary answer to the question "Is this a RAM model?"
@@ -34,7 +36,9 @@ if(!umx_is_RAM(m1)){
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},
@@ -48,8 +52,6 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_is_MxData}},
   \code{\link{umx_is_MxMatrix}},
   \code{\link{umx_is_MxModel}}, \code{\link{umx_is_cov}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}},
   \code{\link{umx_is_ordered}}
 }
 \concept{Test}

@@ -10,7 +10,9 @@ umx_object_as_str(x)
 \item{x}{an object}
 }
 \value{
-- name as string
+\itemize{
+\item name as string
+}
 }
 \description{
 Utility to return an object's name as a string
@@ -19,7 +21,9 @@ Utility to return an object's name as a string
 umx_object_as_str(mtcars) # "mtcars"
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other String Functions: \code{\link{umx_explode_twin_names}},

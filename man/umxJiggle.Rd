@@ -7,7 +7,7 @@
 umxJiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
 }
 \arguments{
-\item{matrixIn}{an \code{\link{mxMatrix}} to jiggle the values of}
+\item{matrixIn}{an \code{\link[=mxMatrix]{mxMatrix()}} to jiggle the values of}
 
 \item{mean}{the mean value to add to each value}
 
@@ -16,7 +16,9 @@ umxJiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
 \item{dontTouch}{A value, which, if found, will be left as-is (defaults to 0)}
 }
 \value{
-- \code{\link{mxMatrix}}
+\itemize{
+\item \code{\link[=mxMatrix]{mxMatrix()}}
+}
 }
 \description{
 umxJiggle takes values in a matrix and jiggles them
@@ -27,7 +29,9 @@ mat1 = umxJiggle(mat1)
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxLabel}},

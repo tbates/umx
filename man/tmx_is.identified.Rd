@@ -12,11 +12,13 @@ tmx_is.identified(nVariables, nFactors)
 \item{nFactors}{the number of factors posited.}
 }
 \value{
-- Binary
+\itemize{
+\item Binary
+}
 }
 \description{
 Test if a factor model is identified by establishing if the number of variables is equal too or grater than
-the number of model parameters. See also \code{\link{mxCheckIdentification}} for checking actual models.
+the number of model parameters. See also \code{\link[=mxCheckIdentification]{mxCheckIdentification()}} for checking actual models.
 }
 \examples{
 tmx_is.identified(nVariables = 2, nFactors = 1) # FALSE
@@ -25,10 +27,14 @@ tmx_is.identified(nVariables = 4, nFactors = 2) # FALSE
 tmx_is.identified(nVariables = 5, nFactors = 2) # TRUE
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{mxCheckIdentification}}
+\itemize{
+\item \code{\link[=mxCheckIdentification]{mxCheckIdentification()}}
+}
 
 Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},
   \code{\link{umx}}

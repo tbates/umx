@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_get_bracket_addresses}
 \alias{umx_get_bracket_addresses}
-\title{Get mat[r,c] style cell address from an mxMatrix}
+\title{Get mat\link{r,c} style cell address from an mxMatrix}
 \usage{
 umx_get_bracket_addresses(mat, free = NA, newName = NA)
 }
@@ -14,7 +14,9 @@ umx_get_bracket_addresses(mat, free = NA, newName = NA)
 \item{newName}{= NA}
 }
 \value{
-- a list of bracket style labels
+\itemize{
+\item a list of bracket style labels
+}
 }
 \description{
 Sometimes you want these :-) This also allows you to change the matrix name: useful for using mxMatrix addresses in an mxAlgebra.
@@ -33,7 +35,9 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

@@ -8,7 +8,7 @@ umx_stash_CIs(model, digits = 3, dropZeros = FALSE,
   stdAlg2mat = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} to get CIs from.}
+\item{model}{An \code{\link[=mxModel]{mxModel()}} to get CIs from.}
 
 \item{digits}{rounding.}
 
@@ -17,21 +17,25 @@ umx_stash_CIs(model, digits = 3, dropZeros = FALSE,
 \item{stdAlg2mat}{treat std as algebra: stash in non std matrix.}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Stash formatted CIs (e.g. ".1 [-.1, .3]") as strings overwriting the parameter values of the model.
+Stash formatted CIs (e.g. ".1 \link{-.1, .3}") as strings overwriting the parameter values of the model.
 }
 \details{
 I might change this to a lookup-function that gets a CI string if one exists.
 }
 \references{
-- \url{https://github.com/tbates/umx}
-CIname = top.cp_loadings_std[1,1]
-thisSub = top; thisMat = cp_loadings_std; thisRow = 1; thisCol = 1
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{umxConfint}}, \code{\link{xmu_get_CI}}
+\itemize{
+\item \code{\link[=umxConfint]{umxConfint()}}, \code{\link[=xmu_get_CI]{xmu_get_CI()}}
+}
 
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
   \code{\link{umx_standardize_ACEcov}},

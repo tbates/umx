@@ -14,9 +14,9 @@ umxTwoStage(formula, instruments, data, subset, weights,
 
 \item{data}{data.frame containing the variables in the model.}
 
-\item{subset}{[optional] vector specifying a subset of observations to be used in fitting the model.}
+\item{subset}{\link{optional} vector specifying a subset of observations to be used in fitting the model.}
 
-\item{weights}{[optional] vector of weights to be used in the fitting process;
+\item{weights}{\link{optional} vector of weights to be used in the fitting process;
 If specified should be a non-negative numeric vector with one entry for each observation,
 to be used to compute weighted 2SLS estimates.}
 
@@ -27,14 +27,16 @@ to be used to compute weighted 2SLS estimates.}
 \item{...}{arguments to be passed down.}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 umxTwoStage implements 2-stage least squares regression in Structural Equation Modeling.
 For ease of learning, the function is modeled closely on the \code{\link[sem]{tsls}}.
 }
 \details{
-The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization} 
+The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization}
 analysis to show the utility of two-stage regression.
 }
 \examples{
@@ -71,12 +73,16 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 }
 \references{
-- Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
-In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass., 
+\itemize{
+\item Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
+In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass.,
 Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
 }
+}
 \seealso{
-- \code{\link{umx_make_MR_data}}, \code{\link[sem]{tsls}}, \code{\link{umxRAM}}
+\itemize{
+\item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[sem]{tsls}}, \code{\link[=umxRAM]{umxRAM()}}
+}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
   \code{\link{umxLav2RAM}}, \code{\link{umx}}

@@ -12,7 +12,9 @@ umx_set_auto_run(autoRun = NA, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx_auto_run setting
+\itemize{
+\item Current umx_auto_run setting
+}
 }
 \description{
 Set autoRun default for models like umxACE umxGxE etc.
@@ -25,7 +27,9 @@ umx_set_auto_run(FALSE)  # set to FALSE
 umx_set_auto_run(old)    # reinstate
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

@@ -12,7 +12,9 @@ umx_set_plot_format(umx.plot.format = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx.plot.format setting
+\itemize{
+\item Current umx.plot.format setting
+}
 }
 \description{
 Set output format of plots (default = "DiagrammeR", alternative is "graphviz"). If you call this with no
@@ -27,7 +29,9 @@ umx_set_plot_format("DiagrammeR")
 umx_set_plot_format(old) # reinstate
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

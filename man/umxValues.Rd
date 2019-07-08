@@ -7,20 +7,22 @@
 umxValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 }
 \arguments{
-\item{obj}{The RAM or matrix \code{\link{mxModel}}, or \code{\link{mxMatrix}} that you want to set start values for.}
+\item{obj}{The RAM or matrix \code{\link[=mxModel]{mxModel()}}, or \code{\link[=mxMatrix]{mxMatrix()}} that you want to set start values for.}
 
 \item{sd}{Optional Standard Deviation for start values}
 
 \item{n}{Optional Mean for start values}
 
-\item{onlyTouchZeros}{Don't alter parameters that appear to have already been started (useful for speeding \code{\link{umxModify}})}
+\item{onlyTouchZeros}{Don't alter parameters that appear to have already been started (useful for speeding \code{\link[=umxModify]{umxModify()}})}
 }
 \value{
-- \code{\link{mxModel}} with updated start values
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}} with updated start values
+}
 }
 \description{
 For models to be estimated, it is essential that path values start at credible values. umxValues takes on that task for you.
-umxValues can set start values for the free parameters in both RAM and Matrix \code{\link{mxModel}}s. It can also take an mxMatrix as input.
+umxValues can set start values for the free parameters in both RAM and Matrix \code{\link[=mxModel]{mxModel()}}s. It can also take an mxMatrix as input.
 It tries to be smart in guessing starts from the values in your data and the model type.
 }
 \details{
@@ -49,10 +51,14 @@ umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
 }
 \references{
-- \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- Core functions:
+\itemize{
+\item Core functions:
+}
 
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},

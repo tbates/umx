@@ -10,7 +10,9 @@ xmuHasSquareBrackets(input)
 \item{input}{an input to test}
 }
 \value{
-- TRUE/FALSE
+\itemize{
+\item TRUE/FALSE
+}
 }
 \description{
 Tests if an input has square brackets

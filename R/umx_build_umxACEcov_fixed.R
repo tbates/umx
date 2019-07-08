@@ -16,9 +16,9 @@
 #' Run a Cholesky with covariates  ("fixed" / definition variables in the means style)
 #'
 #' Often, it is appropriate to include covariates in models.
-#' A simple method is to regress covariates from the data using \code{\link{lm}}.
+#' A simple method is to regress covariates from the data using [lm()].
 #' This is a 'fixed' effects approach.
-#' \code{\link{umx_residualize}} makes this easier, even on twin data, and with complex regression formulas.
+#' [umx_residualize()] makes this easier, even on twin data, and with complex regression formulas.
 #' 
 #' While these estimates are unbiased, modeling this regression in the means element of the twin model
 #' allows correct tests for significance. Also, if DVs are not continuous, the lm-based approach
@@ -35,7 +35,7 @@
 #' covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
 #' This is wasteful of data, but often cannot be avoided (though see note below).
 #' 
-#' \emph{note}: An alternative is the \code{\link{umxACEcov}} 'random' option. This model adds covariates to
+#' \emph{note}: An alternative is the [umxACEcov()] 'random' option. This model adds covariates to
 #' the expected covariance matrix, thus allowing all data to be preserved.
 #' The (BIG) downside is that this method has a strong assumption of multivariate normality.
 #' Covariates like age, which are perfectly correlated in twins cannot be used.
@@ -59,7 +59,7 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer (optionally) set the optimizer. Default (NULL) does nothing.
-#' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
+#' @return - [mxModel()] of subclass mxModel.ACEcov
 #' @seealso umx_residualize umxACE
 #' @family Twin Modeling Functions
 #' @export

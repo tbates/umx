@@ -12,7 +12,7 @@ umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
   report = c("markdown", "html"), ...)
 }
 \arguments{
-\item{model}{A fitted \code{\link{umxGxEbiv}} model to summarize}
+\item{model}{A fitted \code{\link[=umxGxEbiv]{umxGxEbiv()}} model to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
 
@@ -39,10 +39,12 @@ umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
 \item{...}{Optional additional parameters}
 }
 \value{
-- optional \code{\link{mxModel}}
+\itemize{
+\item optional \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by \code{\link{umxGxEbiv}}.
+umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by \code{\link[=umxGxEbiv]{umxGxEbiv()}}.
 }
 \examples{
 data(twinData) 
@@ -62,10 +64,14 @@ umxSummary(m1, separateGraphs = FALSE)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxGxEbiv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+\itemize{
+\item \code{\link{umxGxEbiv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

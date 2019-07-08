@@ -12,23 +12,30 @@
 \item{...}{Other parameters (currently unused)}
 }
 \value{
-- loadings matrix
+\itemize{
+\item loadings matrix
+}
 }
 \description{
 loadings extracts the factor loadings from an EFA (factor analysis) model.
-It behaves equivalently to stats::loadings, returning the loadings from an 
+It behaves equivalently to stats::loadings, returning the loadings from an
 EFA (factor analysis). However it does not store the rotation matrix.
 }
 \examples{
 myVars <- c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(name = "test", factors = 2, data = mtcars[, myVars])
 loadings(m1)
+
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{factanal}}, \code{\link{loadings}}
+\itemize{
+\item \code{\link[=factanal]{factanal()}}, \code{\link[=loadings]{loadings()}}
+}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},

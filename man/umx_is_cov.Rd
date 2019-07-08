@@ -42,8 +42,6 @@ Other Test: \code{\link{umx_check_OS}},
   \code{\link{umx_is_MxData}},
   \code{\link{umx_is_MxMatrix}},
   \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}},
   \code{\link{umx_is_ordered}}
 }
 \concept{Test}

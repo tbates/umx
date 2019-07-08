@@ -35,7 +35,9 @@ umxSummarizeTwinData(data = NULL, selVars = "wt", sep = "_T",
 \item{digits}{Rounding precision of the report (default 2).}
 }
 \value{
-- formatted table, e.g. in markdown.
+\itemize{
+\item formatted table, e.g. in markdown.
+}
 }
 \description{
 Produce a summary of wide-format twin data, showing the number of individuals, the mean and SD for each trait, and the correlation for each twin-type.
@@ -49,10 +51,14 @@ MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
 }
 \references{
-- \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{umxAPA}}
+\itemize{
+\item \code{\link[=umxAPA]{umxAPA()}}
+}
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}},
   \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},

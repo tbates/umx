@@ -25,12 +25,12 @@
 #' 
 #' When data are not all continuous, allContinuousMethod is ignored, and means are modeled.
 #'
-#' @param data the (currently raw) data being used in a \code{\link{mxFitFunctionWLS}} model.
+#' @param data the (currently raw) data being used in a [mxFitFunctionWLS()] model.
 #' @param allContinuousMethod the method used to process data when all columns are continuous.
 #' @param verbose logical. Whether to report diagnostics.
 #' @return - list describing the data.
 #' @family Data Functions
-#' @seealso - \code{\link{mxFitFunctionWLS}}, \code{\link{omxAugmentDataWithWLSSummary}}
+#' @seealso - [mxFitFunctionWLS()], [omxAugmentDataWithWLSSummary()]
 #' @export
 #' @md
 #' @examples
@@ -169,10 +169,10 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @param c which column the cell is in.
 #' @param where the location (any, diag, lower or upper (or _inc) or left).
 #' @param mat (optionally) provide matrix to check dimensions against r and c.
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{umxLabel}}
+#' @seealso - [umxLabel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -1010,11 +1010,11 @@ umx_check_parallel <- function(nCores = c(1, parallel::detectCores()/2), testScr
 #'
 #' umxJiggle takes values in a matrix and jiggles them
 #'
-#' @param matrixIn an \code{\link{mxMatrix}} to jiggle the values of
+#' @param matrixIn an [mxMatrix()] to jiggle the values of
 #' @param mean the mean value to add to each value
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
-#' @return - \code{\link{mxMatrix}}
+#' @return - [mxMatrix()]
 #' @family Advanced Model Building Functions
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @export
@@ -1038,7 +1038,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #'
 #' Return a list of all the exogenous variables (variables with no incoming single-arrow path) in a model. 
 #'
-#' @param model an \code{\link{mxModel}} from which to get exogenous variables
+#' @param model an [mxModel()] from which to get exogenous variables
 #' @param manifests_only Whether to check only manifests (default = TRUE)
 #' @return - list of exogenous variables
 #' @export
@@ -1079,7 +1079,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #'
 #' Return a list of all the endogenous variables (variables with at least one incoming single-arrow path) in a model.
 #'
-#' @param model an \code{\link{mxModel}} from which to get endogenous variables
+#' @param model an [mxModel()] from which to get endogenous variables
 #' @param manifests_only Whether to check only manifests (default = TRUE)
 #' @return - list of endogenous variables
 #' @export
@@ -1122,11 +1122,11 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #'
 #' Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
 #' # TODO: umx_fix_latents is deprecated - likely of no use.
-#' @param model an \code{\link{mxModel}} to set
+#' @param model an [mxModel()] to set
 #' @param latents (If NULL then all latentVars)
 #' @param exogenous.only only touch exogenous latents (default = TRUE)
 #' @param at (Default = 1)
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -1166,11 +1166,11 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' Fix the loading of the first path from each latent at selected value. Seldom used; might be useful to show students
 #' how to scale models with fixed latent or fixed first path...
 #' *Note*: latents with fixed variance are toggled by default (change made in 2019).
-#' @param model An \code{\link{mxModel}} to set.
+#' @param model An [mxModel()] to set.
 #' @param latents Which latents to fix from (NULL = all).
 #' @param at The value to fix the first path at (Default = 1).
 #' @param freeFixedLatent Whether to free a latent if it is fixed (default = TRUE)
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @md
 #' @export
 #' @family Advanced Model Building Functions
@@ -1229,7 +1229,7 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLaten
 #' umx_drop_ok
 #'
 #' Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
-#' merged with \code{\link{umxCompare}}() :-)
+#' merged with [umxCompare()]() :-)
 #'
 #' @param model1 the base code{\link{mxModel}}
 #' @param model2 the nested code{\link{mxModel}}
@@ -1329,24 +1329,24 @@ umx_explode_twin_names <- function(df, sep = "_T") {
 
 #' umxFactor
 #'
-#' A convenient version of \code{\link{mxFactor}} supporting the common 
+#' A convenient version of [mxFactor()] supporting the common 
 #' case in which the factor levels are those in the variable.
 #'
 #' @aliases umx_factor
-#' @param x A variable to recode as an mxFactor (see \code{\link{mxFactor}})
-#' @param levels (default NULL). Like \code{\link{factor}} but UNLIKE \code{\link{mxFactor}}, 
+#' @param x A variable to recode as an mxFactor (see [mxFactor()])
+#' @param levels (default NULL). Like [factor()] but UNLIKE [mxFactor()], 
 #' unique values will be used if levels not specified.
-#' @param labels = levels (see \code{\link{mxFactor}})
-#' @param exclude = NA (see \code{\link{mxFactor}})
+#' @param labels = levels (see [mxFactor()])
+#' @param exclude = NA (see [mxFactor()])
 #' @param ordered = TRUE By default return an ordered mxFactor
-#' @param collapse = FALSE (see \code{\link{mxFactor}})
+#' @param collapse = FALSE (see [mxFactor()])
 #' @param verbose Whether to tell user about such things as coercing to factor
 #' @param sep If twin data are being used, the string that separates the base from twin index
 #' # will try and ensure factor levels same across all twins.
-#' @return - \code{\link{mxFactor}}
+#' @return - [mxFactor()]
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{umxFactanal}}
+#' @seealso - [umxFactanal()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -1453,7 +1453,7 @@ umx_factor <- umxFactor
 #'
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{omxBrownie}}
+#' @seealso - [omxBrownie()]
 #' @references - [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087)
 #' @examples
 #' umxBrownie()
@@ -1476,10 +1476,10 @@ umxBrownie <- function() {
 #' @param min Optional minimum version string to test for, e.g. '2.7.0' (Default = NULL).
 #' @param verbose = TRUE
 #' @param return Which package (umx or OpenMx) to 'return' version info for (Default = umx).
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{packageVersion}}, \code{\link{install.OpenMx}}
+#' @seealso - [packageVersion()], [install.OpenMx()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -1595,7 +1595,7 @@ umx_pad <- function(x, n) {
 #'
 #' Tries to make apply more readable. so "mean of x by columns", instead of "of x, by 2, mean"
 #' Other functions to think of include:
-#' \code{\link{cumsum}}, \code{\link{rowSums}}, \code{\link{colMeans}}, etc.
+#' [cumsum()], [rowSums()], [colMeans()], etc.
 #'
 #' @param FUN The function to apply.
 #' @param of The dataframe to work with.
@@ -1603,7 +1603,7 @@ umx_pad <- function(x, n) {
 #' @param ... optional arguments to FUN, e.g., na.rm = TRUE.
 #' @return - object
 #' @export
-#' @seealso - \code{\link{umx_aggregate}} 
+#' @seealso - [umx_aggregate()] 
 #' @family Miscellaneous Stats Helpers
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1625,7 +1625,7 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' 
 #' Convert each column of a dataframe to numeric
 #'
-#' @param df A \code{\link{data.frame}} to convert
+#' @param df A [data.frame()] to convert
 #' @param which which columns to convert (default (null) selects all)
 #' @param force Whether to force conversion to numeric for non-numeric columns (defaults to FALSE)
 #' @return - data.frame
@@ -1995,7 +1995,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #' service by providing your key one time
 #'
 #' If you supply auth_key, It will be written to "~/.pushbulletkey"
-#' \code{\link{umx_pb_note}}(auth_key="mykeystring")
+#' [umx_pb_note()](auth_key="mykeystring")
 #' once it exists there, you do not need to store it in code, so code is sharable.
 #' 
 #' You can get your authorization key at \url{https://www.pushbullet.com} in 
@@ -2008,7 +2008,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #' @param auth_key optional authkey (default = NA, set to value of your key to store key.
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - \code{\link{umx_msg}}
+#' @seealso - [umx_msg()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -2383,7 +2383,7 @@ print.result_oddsratio <- function(x, digits = 3, ...) {
 #'
 #' For reporting correlations and their p-values in a compact table. Handles rounding, and skipping non-numeric columns.
 #' 
-#' To compute heterochoric correlations, see \code{\link{umxHetCor}}.
+#' To compute heterochoric correlations, see [umxHetCor()].
 #'
 #' note: The Hmisc package has a more robust function called rcorr 
 #'
@@ -2452,7 +2452,7 @@ rowMin <- function(df, na.rm= TRUE) {
 #' @param df a dataframe to round in
 #' @param digits how many digits to round to (defaults to getOption("digits"))
 #' @param coerce whether to make the column numeric if it is not (default = FALSE)
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - \url{https://www.github.com/tbates/umx}
@@ -2498,13 +2498,13 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 #' @description
 #' Just a helper to show the logLik of a model or print a comparison table is a function which 
 #'
-#' @param model an \code{\link{mxModel}} to report on
+#' @param model an [mxModel()] to report on
 #' @param comparison If not NULL, used as comparison model
 #' @param digits (default = 2)
 #' @return - 
 #' @export
 #' @family Reporting Functions
-#' @seealso - \code{\link{umxSummary}}
+#' @seealso - [umxSummary()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -2615,7 +2615,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @param lib Where to install the package.
 #' @return - 
 #' @export
-#' @seealso \code{\link{umxVersion}}
+#' @seealso [umxVersion()]
 #' @family Miscellaneous Utility Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -2792,7 +2792,7 @@ umx_msg <- function(x) {
 #'
 #' *Working with covariates*
 #' 
-#' If you are using \code{\link{umxACEcov}}, you **need** to keep all the covariates at the end of the list.
+#' If you are using [umxACEcov()], you **need** to keep all the covariates at the end of the list.
 #' Here's how:
 #' 
 #'     umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
@@ -2808,7 +2808,7 @@ umx_msg <- function(x) {
 #' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
 #' @export
 #' @family String Functions
-#' @seealso \code{\link{namez}}
+#' @seealso [namez()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -2847,7 +2847,7 @@ tvars <- umx_paste_names
 #'
 #' @param m1 first copy of the model
 #' @param m2 second copy of the model
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @family zAdvanced Helpers
 #' @export
 #' @references - \url{https://www.github.com/tbates/umx}
@@ -2894,7 +2894,7 @@ umx_merge_CIs <- function(m1, m2) {
 #' @param df the dataframe to covert to an mxData type cov object.
 #' @param columns = Which columns to keep (default is all).
 #' @param use = Default is "complete.obs".
-#' @return - \code{\link{mxData}} of type = cov
+#' @return - [mxData()] of type = cov
 #' @export
 #' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -2922,13 +2922,13 @@ umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "
 
 #' Convert a covariance matrix into a correlation matrix
 #'
-#' A version of \code{\link{cov2cor}} that forces upper and lower triangles to be *identical* (rather than nearly identical)
+#' A version of [cov2cor()] that forces upper and lower triangles to be *identical* (rather than nearly identical)
 #'
 #' @param x something that cov2cor can work on (matrix, df, etc.)
 #' @return - a correlation matrix
 #' @export
 #' @family Miscellaneous Stats Helpers
-#' @seealso \code{\link{cov2cor}}
+#' @seealso [cov2cor()]
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @examples
 #' umxCov2cor(cov(mtcars[,1:5]))
@@ -2955,7 +2955,7 @@ umxCov2cor <- function(x) {
 #' @return string
 #' @export
 #' @family Graphviz
-#' @seealso - \code{\link{umx_dot_rank}}
+#' @seealso - [umx_dot_rank()]
 #' @examples
 #' umx_dot_define_shapes(c("as1"), c("E", "N"))
 umx_dot_define_shapes <- function(latents, manifests, preOut= "") {
@@ -2987,7 +2987,7 @@ umx_dot_define_shapes <- function(latents, manifests, preOut= "") {
 #' @return string
 #' @export
 #' @family Graphviz
-#' @seealso - \code{\link{umx_dot_define_shapes}}
+#' @seealso - [umx_dot_define_shapes()]
 #' @md
 #' @examples
 #' umx_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
@@ -3019,7 +3019,7 @@ umx_dot_rank <- function(vars, pattern, rank) {
 #' 
 #' Finally, you can pass in previous output and new paths will be concatenated to these.
 #' 
-#' @param x a \code{\link{umxMatrix}} to make paths from.
+#' @param x a [umxMatrix()] to make paths from.
 #' @param from one of "rows", "columns"
 #' @param cells which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
 #' @param arrows "forward" "both" or "back"
@@ -3035,7 +3035,7 @@ umx_dot_rank <- function(vars, pattern, rank) {
 #' @return - list(str = "", latents = c(), manifests = c())
 #' @export
 #' @family Graphviz
-#' @seealso - \code{\link{plot}}
+#' @seealso - [plot()]
 #' @md
 #' @examples
 #'
@@ -3196,7 +3196,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' 
 #' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
 #'
-#' @param model an \code{\link{mxModel}} from which to show parameters.
+#' @param model an [mxModel()] from which to show parameters.
 #' @param what legal options are "values" (default), "free", or "labels").
 #' @param show filter on what to show c("all", "free", "fixed").
 #' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta.
@@ -3312,7 +3312,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' 
 #' If a model has not been run, umx_time will run it for you.
 #'
-#' @param x A \code{\link{mxModel}} or list of models for which to display elapsed time, or 'start' or 'stop'
+#' @param x A [mxModel()] or list of models for which to display elapsed time, or 'start' or 'stop'
 #' @param formatStr A format string, defining how to show the time (defaults to human readable)
 #' @param tz time zone in which the model was executed (defaults to "GMT")
 #' @param autoRun If TRUE (default), run the model if it appears not to have been.
@@ -3435,7 +3435,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 
 
 
-#' Print tables in a range of formats (markdown default, see \code{\link{umx_set_table_format}} for other formats)
+#' Print tables in a range of formats (markdown default, see [umx_set_table_format()] for other formats)
 #' or as a web browser table.
 #'
 #' To aid interpretability of printed tables from OpenMx (and elsewhere)
@@ -3453,7 +3453,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @param ... Optional parameters for print
 #' @return - A dataframe of text
 #' @export
-#' @seealso \code{\link{umx_msg}}, \code{\link{umx_set_table_format}} 
+#' @seealso [umx_msg()], [umx_set_table_format()] 
 #' @family Miscellaneous Utility Functions
 #' @family Reporting Functions
 #' @md
@@ -3512,7 +3512,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #'
 #' check if an mxModel has been run or not
 #'
-#' @param model The \code{\link{mxModel}} you want to check has been run
+#' @param model The [mxModel()] you want to check has been run
 #' @param stop  Whether to stop if the model has not been run (defaults to FALSE)
 #' @return - boolean
 #' @export
@@ -3675,11 +3675,11 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #'
 #' @param df A dataframe of raw data from which to get variances.
 #' @param format to return: options are c("full", "diag", "lower"). Defaults to full, but this is not implemented yet.
-#' @param use Passed to \code{\link{cov}} - defaults to "complete.obs" (see param default for other options).
+#' @param use Passed to [cov()] - defaults to "complete.obs" (see param default for other options).
 #' @param ordVar The value to return at any ordinal columns (defaults to 1).
 #' @param digits digits to round output to (Ignored if NULL). Set for easy printing.
 #' @param strict Whether to allow non-ordered factors to be processed (default = FALSE (no)).
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @references - <https://tbates.github.io>
@@ -3794,7 +3794,7 @@ umx_is_MxData <- function(x) {
 #'
 #' Return the names of any ordinal variables in a dataframe
 #'
-#' @param df A \code{\link{data.frame}} to look in for ordinal variables (if you offer a
+#' @param df A [data.frame()] to look in for ordinal variables (if you offer a
 #' matrix or vector, it will be upgraded to a dataframe)
 #' @param names whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)
 #' @param strict whether to stop when unordered factors are found (default = TRUE)
@@ -3892,7 +3892,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #'
 #' Utility function returning a binary answer to the question "Is this a RAM model?"
 #'
-#' @param obj an object to be tested to see if it is an OpenMx RAM \code{\link{mxModel}}
+#' @param obj an object to be tested to see if it is an OpenMx RAM [mxModel()]
 #' @return - Boolean
 #' @export
 #' @family Test
@@ -3930,7 +3930,7 @@ umx_is_RAM <- function(obj) {
 #'
 #' Utility function returning a binary answer to the question "Is this an OpenMx model?"
 #'
-#' @param obj An object to be tested to see if it is an OpenMx \code{\link{mxModel}}
+#' @param obj An object to be tested to see if it is an OpenMx [mxModel()]
 #' @param listOK Is it acceptable to pass in a list of models? (Default = FALSE)
 #' @return - Boolean
 #' @export
@@ -3970,7 +3970,7 @@ umx_is_MxModel <- function(obj, listOK = FALSE) {
 #'
 #' Utility function returning a binary answer to the question "Is this an OpenMx mxMatrix?"
 #'
-#' @param obj an object to be tested to see if it is an OpenMx \code{\link{mxMatrix}}
+#' @param obj an object to be tested to see if it is an OpenMx [mxMatrix()]
 #' @return - Boolean
 #' @export
 #' @family Test
@@ -4041,9 +4041,9 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 
 #' umx_has_means
 #'
-#' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have a means model?" 
+#' A utility function to return a binary answer to the question "does this [mxModel()] have a means model?" 
 #'
-#' @param model The \code{\link{mxModel}} to check for presence of means
+#' @param model The [mxModel()] to check for presence of means
 #' @return - TRUE or FALSE
 #' @export
 #' @family Test
@@ -4078,9 +4078,9 @@ umx_has_means <- function(model) {
 
 #' umx_has_CIs
 #'
-#' A utility function to return a binary answer to the question "does this \code{\link{mxModel}} have confidence intervals?" 
+#' A utility function to return a binary answer to the question "does this [mxModel()] have confidence intervals?" 
 #'
-#' @param model The \code{\link{mxModel}} to check for presence of CIs
+#' @param model The [mxModel()] to check for presence of CIs
 #' @param check What to check for: "intervals" requested, "output" present, or "both". Defaults to "both"
 #' @return - TRUE or FALSE
 #' @export
@@ -4240,7 +4240,7 @@ umx_reorder <- function(old, newOrder) {
 #' umx_cont_2_quantiles
 #'
 #' Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
-#' It returns an \code{\link{mxFactor}}, with the levels labeled with the max value
+#' It returns an [mxFactor()], with the levels labeled with the max value
 #' in each quantile (i.e., open on the left-side). quantiles are labeled "quantile1"
 #' "quantile2" etc.
 #' 
@@ -4253,7 +4253,7 @@ umx_reorder <- function(old, newOrder) {
 #' @param type what to return (Default is "mxFactor") options: "ordered" and "unordered")
 #' @param verbose report the min, max, and decile cuts used (default = FALSE)
 #' @param returnCutpoints just return the cutpoints, for use directly
-#' @return - recoded variable as an \code{\link{mxFactor}}
+#' @return - recoded variable as an [mxFactor()]
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -4360,7 +4360,7 @@ umx_has_square_brackets <- function (input) {
 #' @param algString a string to turn into an algebra
 #' @param name of the returned algebra
 #' @param dimnames of the returned algebra
-#' @return - \code{\link{mxAlgebra}}
+#' @return - [mxAlgebra()]
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - \url{https://www.github.com/tbates/umx}
@@ -4395,7 +4395,7 @@ umx_object_as_str<- function(x) {
 #' # TODO umxEval Currently broken... delete submit as update to OpenMx?
 #'
 #' @param expstring an expression string, i.e, "a + b"
-#' @param model an \code{\link{mxModel}} to evaluate in
+#' @param model an [mxModel()] to evaluate in
 #' @param compute Whether to compute the result or not (default = FALSE)
 #' @param show Whether to show??? (default = FALSE)
 #' @return - an openmx algebra (formula)
@@ -4492,7 +4492,7 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 #' @return - Boolean or Boolean vector
 #' @export
 #' @family Check or test
-#' @seealso - \code{\link{umx_is_numeric}}
+#' @seealso - [umx_is_numeric()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -4549,7 +4549,7 @@ umx_is_class <- function(df, classes=NULL, all = TRUE){
 #' @return - Boolean or Boolean vector
 #' @export
 #' @family Check or test
-#' @seealso - \code{\link{umx_is_class}}
+#' @seealso - [umx_is_class()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -4591,7 +4591,7 @@ umx_is_numeric <- function(df, all = TRUE){
 #' wide data, expanding the var name using a set of variable-name suffixes.
 #' 
 #' @param var The base name of the variable you want to residualize. Alternatively, a 
-#' regression \code{\link{formula}} containing var on the lhs, and covs on the rhs
+#' regression [formula()] containing var on the lhs, and covs on the rhs
 #' @param covs Covariates to residualize on.
 #' @param suffixes Suffixes that identify the variable for each twin, i.e. c("_T1", "_T2")
 #' Up to you to check all variables are present!
@@ -4742,8 +4742,8 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 
 #' Select first item in list of options, while being flexible about choices.
 #'
-#' Like a smart version of \code{\link{match.arg}}: Handles selecting parameter options when default is a list.
-#' Unlike  x = \code{\link{match.arg}}(x) this allows items not in the list.
+#' Like a smart version of [match.arg()]: Handles selecting parameter options when default is a list.
+#' Unlike  x = [match.arg()](x) this allows items not in the list.
 #'
 #' @aliases umx_match.arg
 #' @param x the value chosen (may be the default option list)
@@ -4752,7 +4752,7 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' @return - one validated option
 #' @export
 #' @family Get and set
-#' @seealso - \code{\link{match.arg}}
+#' @seealso - [match.arg()]
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @md
 #' @examples
@@ -4893,8 +4893,8 @@ qm <- function(..., rowMarker = "|") {
 #' @return - a vector of strings, e.g. c("d", "o", "g")
 #' @export
 #' @family String Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md, \url{http://php.net/manual/en/function.explode.php}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>, <http://php.net/manual/en/function.explode.php>
+#' @md
 #' @examples
 #' umx_explode("", "dog") # "d" "o" "g"
 #' umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
@@ -4932,8 +4932,8 @@ umx_explode <- function(delimiter = character(), string) {
 #' @param collapse "as.is" leaves alone. as.vector formats as pasteable code, i.e., "c('a', 'b')", not "a"  "b" (default NULL), etc.
 #' @return - vector of matches
 #' @export
-#' @seealso - Base-R pattern matching functions: \code{\link{grep}}.
-#' And \code{\link{umx_check_names}} to check for existence of names in a dataframe. 
+#' @seealso - Base-R pattern matching functions: [grep()].
+#' And [umx_check_names()] to check for existence of names in a dataframe. 
 #' @family Reporting Functions
 #' @family String Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -5085,7 +5085,7 @@ umx_trim <- function(string, removeThis = NULL) {
 #' `umx_rot` rotates the items of a vector (1 place, by default). So: c(1,2,3) -> c(2,3,1)
 #'
 #' @param vec vector to rotate
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family String Functions
 #' @references - <https://tbates.github.io>
@@ -5126,7 +5126,7 @@ umx_rot <- function(vec){
 #' @return - dataframe in wide format
 #' @export
 #' @family Twin Data functions
-#' @seealso - \code{\link{merge}}
+#' @seealso - [merge()]
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @md
 #' @examples
@@ -5291,7 +5291,7 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 #' Stack data like stack() does, with more control.
 #'
 #' @description
-#' Operates like \code{\link{stack}}, but can preserve ("passalong") other variables on each row,
+#' Operates like [stack()], but can preserve ("passalong") other variables on each row,
 #' and allows the user control over the values and group column names for ease of use.
 #'
 #' @param x a dataframe containing twin data.
@@ -5361,7 +5361,7 @@ umx_array_shift <- function(x){
 #' @return - dataframe
 #' @family Data Functions
 #' @export
-#' @seealso - \code{\link{subset}}
+#' @seealso - [subset()]
 #' @md
 #' @examples
 #' test = data.frame(
@@ -5393,7 +5393,7 @@ umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - Updated dataframe
 #' @export
 #' @family Data Functions
-#' @seealso - \code{\link{within}}
+#' @seealso - [within()]
 #' @md
 #' @examples
 #' tmp = mtcars
@@ -5483,7 +5483,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @export
 #' @family Twin Data functions
 #' @family Data Functions
-#' @seealso - \code{\link{umxACE}}, \code{\link{umxGxE}}, \code{\link{umxGxEbiv}}
+#' @seealso - [umxACE()], [umxGxE()], [umxGxEbiv()]
 #' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @md
 #' @examples
@@ -6108,7 +6108,7 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #' @param means the means of the raw data (defaults to 0)
 #' @return - data.frame
 #' @export
-#' @seealso - \code{\link{cov2cor}}
+#' @seealso - [cov2cor()]
 #' @family Data Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -6155,7 +6155,7 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' @param names The default names for the variables.
 #' Defaults to as.character(paste("X", 1:n, sep=""))
 #' @param ensurePD Whether to coerce the resultant matrix to positive definite (Defaults to FALSE)
-#' @return - \code{\link{matrix}}
+#' @return - [matrix()]
 #' @export
 #' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -6239,7 +6239,7 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 #'    the variable is below the minimum and NA otherwise.
 #' 2. In each existing variable, it sets all instances of min for that var to NA
 #' 
-#' @param data A \code{\link{data.frame}} to convert
+#' @param data A [data.frame()] to convert
 #' @param vars The variables to process
 #' @param suffixes Suffixes if the data are family (wide, more than one persona on a row)
 #' @return - copy of the dataframe with new binary variables and censoring
@@ -6306,7 +6306,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' 1. return just the correlations from John Fox's polycor::hetcor function
 #' 2. If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
 #'
-#' @param data A \code{\link{data.frame}} of columns for which to compute heterochoric correlations. OR an existing covariance matrix.
+#' @param data A [data.frame()] of columns for which to compute heterochoric correlations. OR an existing covariance matrix.
 #' @param ML Whether to use Maximum likelihood computation of correlations (default = FALSE)
 #' @param use How to handle missing data: Default= "pairwise.complete.obs". Alternative ="complete.obs".
 #' @param treatAllAsFactor Whether to treat all columns as factors, whether they are or not (Default = FALSE)
@@ -6346,18 +6346,18 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' Convert lower-only matrix data to full (or enforce symmetry on a full matrix)
 #'
 #' Takes a vector of the lower-triangle of cells in a matrix as you might read-in
-#' from a journal article), OR a matrix (for instance from a "lower" \code{\link{mxMatrix}}, 
+#' from a journal article), OR a matrix (for instance from a "lower" [mxMatrix()], 
 #' and returns a full matrix, copying the lower triangle into the upper.
 #' 
 #' *note*: Can also take lower data presented in the form of a data.frame. Note also, if 
 #' presented with a full matrix, the function will return a matrix with  symmetry enforced. Can be
 #' handy when you have a "nearly-symmetrical" matrix (with differences in the tenth decimal place).
 #' 
-#' @param lower.data An \code{\link{mxMatrix}}
+#' @param lower.data An [mxMatrix()]
 #' @param diag A boolean specifying whether the lower.data includes the diagonal
 #' @param byrow Whether the matrix is to be filled by row or by column (default = TRUE)
 #' @param dimnames Optional dimnames for the matrix (defaults to NULL)
-#' @return - \code{\link{mxMatrix}}
+#' @return - [mxMatrix()]
 #' @family Data Functions
 #' @export
 #' @references - \url{https://www.github.com/tbates/umx}
@@ -6641,7 +6641,7 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #'
 #' Versions exist for RAM, ACE, ACEv, ACEcov, IP, CP and GxE models.
 #'
-#' @param model The \code{\link{mxModel}} whose fit will be reported.
+#' @param model The [mxModel()] whose fit will be reported.
 #' @param ... Other parameters.
 #' @family Advanced Model Building Functions
 #' @md
@@ -6659,7 +6659,7 @@ umx_standardize.default <- function(model, ...){
 #'
 #' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
 #'
-#' @param model The \code{\link{mxModel}} you wish to standardize
+#' @param model The [mxModel()] you wish to standardize
 #' @param ... Other options
 #' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}
@@ -6733,9 +6733,9 @@ umx_standardize.MxModel <- umx_standardize_RAM
 #'
 #' Standardize an ACE model
 #'
-#' @param model an \code{\link{umxACE}} model to standardize
+#' @param model an [umxACE()] model to standardize
 #' @param ... Other options
-#' @return - Standardized ACE \code{\link{umxACE}} model
+#' @return - Standardized ACE [umxACE()] model
 #' @export
 #' @family zAdvanced Helpers
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -6788,9 +6788,9 @@ umx_standardize.MxModelACE <- umx_standardize_ACE
 #'
 #' Standardize an ACE model with covariates
 #'
-#' @param model an \code{\link{umxACEcov}} model to standardize
+#' @param model an [umxACEcov()] model to standardize
 #' @param ... Other options
-#' @return - Standardized \code{\link{umxACEcov}} model
+#' @return - Standardized [umxACEcov()] model
 #' @export
 #' @family zAdvanced Helpers
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -6840,9 +6840,9 @@ umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
 #'
 #' `umx_standardize_SexLim` would move standardized Sexlim values into raw cells, but can't as these are algebras.
 #'
-#' @param model an \code{\link{umxSexLim}} model to standardize
+#' @param model an [umxSexLim()] model to standardize
 #' @param ... Other options
-#' @return - standardized \code{\link{umxSexLim}} model
+#' @return - standardized [umxSexLim()] model
 #' @export
 #' @family zAdvanced Helpers
 #' @md
@@ -6885,9 +6885,9 @@ umx_standardize.MxModelSexLim <- umx_standardize_SexLim
 #'
 #' This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
 #'
-#' @param model an \code{\link{umxIP}} model to standardize
+#' @param model an [umxIP()] model to standardize
 #' @param ... Other options
-#' @return - standardized IP \code{\link{umxIP}} model
+#' @return - standardized IP [umxIP()] model
 #' @export
 #' @family zAdvanced Helpers
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -6918,9 +6918,9 @@ umx_standardize.MxModelIP <- umx_standardize_IP
 #'
 #' This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
 #'
-#' @param model an \code{\link{umxCP}} model to standardize
+#' @param model an [umxCP()] model to standardize
 #' @param ... Other options
-#' @return - standardized \code{\link{umxCP}} model
+#' @return - standardized [umxCP()] model
 #' @export
 #' @family zAdvanced Helpers
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>

@@ -10,10 +10,12 @@ umx_array_shift(x)
 \item{x}{the vector to shift}
 }
 \value{
-- first item of x
+\itemize{
+\item first item of x
+}
 }
 \description{
-Returns x[1]. Has the SIDE EFFECT of assigning x to x[2:end] in the container environment.
+Returns x\link{1}. Has the SIDE EFFECT of assigning x to x\link{2:end} in the container environment.
 }
 \examples{
 x = c("Alice", "Bob", "Carol")

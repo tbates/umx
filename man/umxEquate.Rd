@@ -10,7 +10,7 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA),
   comparison = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} within which to equate parameters}
+\item{model}{An \code{\link[=mxModel]{mxModel()}} within which to equate parameters}
 
 \item{master}{A list of "master" labels to which slave labels will be equated}
 
@@ -29,12 +29,14 @@ umxEquate(model, master, slave, free = c(TRUE, FALSE, NA),
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 In addition to dropping or adding parameters, a second common task in modeling
-is to equate parameters. umx provides a convenience function to equate parameters 
-by setting one or more parameters (the "slave" set) equal to one or more "master" 
+is to equate parameters. umx provides a convenience function to equate parameters
+by setting one or more parameters (the "slave" set) equal to one or more "master"
 parameters. These parameters are picked out via their labels, and setting two or more
 parameters to have the same value is accomplished by setting the slave(s) to have
 the same label(s) as the master parameters, thus constraining them to take the same
@@ -42,13 +44,13 @@ value during model fitting.
 }
 \details{
 \emph{note}: In addition to using this method to equating parameters, you can
-also equate one parameter to another by setting its label to the 
-"square bracket" address of the master, e.g. "a[r,c]".
+also equate one parameter to another by setting its label to the
+"square bracket" address of the master, e.g. "a\link{r,c}".
 
-\emph{Tip}: To find labels of free parameters use \code{\link{umxGetParameters}} 
+\emph{Tip}: To find labels of free parameters use \code{\link[=umxGetParameters]{umxGetParameters()}}
 with free = TRUE
 
-\emph{Tip}: To find labels by name, use the regex parameter of \code{\link{umxGetParameters}}
+\emph{Tip}: To find labels by name, use the regex parameter of \code{\link[=umxGetParameters]{umxGetParameters()}}
 }
 \examples{
 require(umx)
@@ -68,10 +70,12 @@ m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq x1 x2",
 )
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-\code{\link{umxModify}}, \code{\link{umxCompare}}
+\code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxFixAll}},

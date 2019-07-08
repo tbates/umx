@@ -13,7 +13,9 @@ umx_check_OS(target = c("OSX", "SunOS", "Linux", "Windows"),
 \item{action}{What to do on failure of the test: nothing (default), warn or die}
 }
 \value{
-- TRUE if on the specified OS (else FALSE)
+\itemize{
+\item TRUE if on the specified OS (else FALSE)
+}
 }
 \description{
 Check what OS we are running on (current default is OS X). Returns a boolean.
@@ -23,7 +25,9 @@ Optionally warn or die on failure of the test
 umx_check_OS()
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Test: \code{\link{umx_check_model}},
@@ -36,9 +40,6 @@ Other Test: \code{\link{umx_check_model}},
   \code{\link{umx_is_MxData}},
   \code{\link{umx_is_MxMatrix}},
   \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}},
-  \code{\link{umx_is_endogenous}},
-  \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_ordered}}
+  \code{\link{umx_is_cov}}, \code{\link{umx_is_ordered}}
 }
 \concept{Test}

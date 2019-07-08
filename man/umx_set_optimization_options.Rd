@@ -18,7 +18,9 @@ umx_set_optimization_options(opt = c("mvnRelEps", "mvnMaxPointsA"),
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Set options that affect optimization in OpenMx. For mvnRelEps,  values between .0001 to .01 are conventional.
@@ -32,7 +34,9 @@ umx_set_optimization_options("mvnRelEps", .01) # update globally
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

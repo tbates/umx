@@ -12,7 +12,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
   show = NULL, ...)
 }
 \arguments{
-\item{model}{A fitted \code{\link{umxGxE}} model to summarize}
+\item{model}{A fitted \code{\link[=umxGxE]{umxGxE()}} model to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
 
@@ -39,10 +39,12 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
 \item{...}{Optional additional parameters}
 }
 \value{
-- optional \code{\link{mxModel}}
+\itemize{
+\item optional \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Summarize a Moderation model, as returned by \code{\link{umxGxE}}
+Summarize a Moderation model, as returned by \code{\link[=umxGxE]{umxGxE()}}
 }
 \examples{
 # The total sample has been subdivided into a young cohort, 
@@ -69,10 +71,14 @@ umxSummaryGxE(m1, separateGraphs = FALSE)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+\itemize{
+\item \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

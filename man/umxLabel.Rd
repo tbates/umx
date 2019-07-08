@@ -9,7 +9,7 @@ umxLabel(obj, suffix = "", baseName = NA, setfree = FALSE,
   verbose = FALSE, overRideExisting = FALSE, name = NULL)
 }
 \arguments{
-\item{obj}{An \code{\link{mxModel}} (RAM or matrix based), \code{\link{mxPath}}, or \code{\link{mxMatrix}}}
+\item{obj}{An \code{\link[=mxModel]{mxModel()}} (RAM or matrix based), \code{\link[=mxPath]{mxPath()}}, or \code{\link[=mxMatrix]{mxMatrix()}}}
 
 \item{suffix}{String to append to each label (might be used to distinguish, say male and female submodels in a model)}
 
@@ -32,11 +32,13 @@ umxLabel(obj, suffix = "", baseName = NA, setfree = FALSE,
 \item{name}{Optional new name if given a model. Default (NULL) does not rename model.}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-umxLabel adds labels to things, be it an: \code{\link{mxModel}} (RAM or matrix based), an \code{\link{mxPath}}, or an \code{\link{mxMatrix}}
-This is a core function in umx: Adding labels to paths opens the door to \code{\link{umxEquate}}, as well as \code{\link{omxSetParameters}}
+umxLabel adds labels to things, be it an: \code{\link[=mxModel]{mxModel()}} (RAM or matrix based), an \code{\link[=mxPath]{mxPath()}}, or an \code{\link[=mxMatrix]{mxMatrix()}}
+This is a core function in umx: Adding labels to paths opens the door to \code{\link[=umxEquate]{umxEquate()}}, as well as \code{\link[=omxSetParameters]{omxSetParameters()}}
 }
 \examples{
 # ==============================================================
@@ -78,7 +80,9 @@ umxLabel(a, verbose = TRUE, overRideExisting = FALSE)
 umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

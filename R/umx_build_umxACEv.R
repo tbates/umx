@@ -85,7 +85,7 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @return - \code{\link{mxModel}} of subclass mxModel.ACE
+#' @return - [mxModel()] of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
@@ -368,14 +368,14 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 
 #' Shows a compact, publication-style, summary of a variance-based Cholesky ACE model.
 #'
-#' Summarize a fitted Cholesky model returned by \code{\link{umxACEv}}. Can control digits, report comparison model fits,
+#' Summarize a fitted Cholesky model returned by [umxACEv()]. Can control digits, report comparison model fits,
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
-#' See documentation for other umx models here: \code{\link{umxSummary}}.
+#' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases umxSummary.MxModelACEv
-#' @param model an \code{\link{mxModel}} to summarize
+#' @param model an [mxModel()] to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
 #' Defaults to NA = no plot.
@@ -388,11 +388,11 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @param extended how much to report (FALSE)
 #' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary
-#' @return - optional \code{\link{mxModel}}
+#' @return - optional [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @family Reporting functions
-#' @seealso - \code{\link{umxACEv}} 
+#' @seealso - [umxACEv()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -609,7 +609,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' Plots an ACE model graphically, opening the result in the browser (or a graphviz application).
 #'
 #' @aliases plot.MxModelACEv
-#' @param x \code{\link{umxACEv}} model to plot.
+#' @param x [umxACEv()] model to plot.
 #' @param file The name of the dot file to write: Default ("name") = use the name of the model. NA = don't plot.
 #' @param digits How many decimals to include in path loadings (default = 2)
 #' @param means Whether to show means paths (default = FALSE)
@@ -713,9 +713,9 @@ plot.MxModelACEv <- umxPlotACEv
 #'
 #' umx_standardize_ACE allows umx_standardize to standardize an ACE variance components model.
 #'
-#' @param model An \code{\link{umxACEv}} model to standardize.
+#' @param model An [umxACEv()] model to standardize.
 #' @param ... Other parameters.
-#' @return - A standardized \code{\link{umxACEv}} model.
+#' @return - A standardized [umxACEv()] model.
 #' @export
 #' @family zAdvanced Helpers
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>

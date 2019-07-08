@@ -9,7 +9,7 @@ umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL,
   ...)
 }
 \arguments{
-\item{object}{an \code{\link{mxModel}} to get the covariance matrix from}
+\item{object}{an \code{\link[=mxModel]{mxModel()}} to get the covariance matrix from}
 
 \item{latents}{Whether to select the latent variables (defaults to TRUE)}
 
@@ -17,13 +17,15 @@ umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL,
 
 \item{digits}{precision of reporting. NULL (Default) = no rounding.}
 
-\item{...}{extra parameters (to match \code{\link{vcov}})}
+\item{...}{extra parameters (to match \code{\link[=vcov]{vcov()}})}
 }
 \value{
-- expected covariance matrix
+\itemize{
+\item expected covariance matrix
+}
 }
 \description{
-Extract the expected covariance matrix from an \code{\link{mxModel}}
+Extract the expected covariance matrix from an \code{\link[=mxModel]{mxModel()}}
 }
 \examples{
 require(umx)
@@ -40,11 +42,15 @@ vcov(m1) # supplied by OpenMx
 umxExpCov(m1, digits = 3)
 }
 \references{
-- \url{https://openmx.ssri.psu.edu/thread/2598}
+\itemize{
+\item \url{https://openmx.ssri.psu.edu/thread/2598}
 Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 }
+}
 \seealso{
-- \code{\link{umxRun}}, \code{\link{umxCI_boot}}
+\itemize{
+\item \code{\link[=umxRun]{umxRun()}}, \code{\link[=umxCI_boot]{umxCI_boot()}}
+}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

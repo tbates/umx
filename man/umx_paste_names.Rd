@@ -49,7 +49,7 @@ This is then suffixed with e.g. "1", "2".\preformatted{umx_paste_names(c("var1",
 
 \emph{Working with covariates}
 
-If you are using \code{\link{umxACEcov}}, you \strong{need} to keep all the covariates at the end of the list.
+If you are using \code{\link[=umxACEcov]{umxACEcov()}}, you \strong{need} to keep all the covariates at the end of the list.
 Here's how:\preformatted{umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
 }
 
@@ -68,11 +68,11 @@ tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
 \seealso{
-\code{\link{namez}}
+\code{\link[=namez]{namez()}}
 
 Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_grep}},

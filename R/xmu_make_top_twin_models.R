@@ -74,7 +74,7 @@
 #' @param numObsDZ Number of DZ observations contributing (for summary data only)
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param verbose (default = FALSE)
-#' @return - \code{\link{mxModel}}s for top, MZ and DZ.
+#' @return - [mxModel()]s for top, MZ and DZ.
 #' @export
 #' @family xmu internal not for end user
 #' @md
@@ -486,7 +486,7 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 #' @param top the top model
 #' @param mzWeightMatrix if bVector, then use this as the MZ weights matrix
 #' @param dzWeightMatrix if bVector, then use this as the DZ weights matrix
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
 #' @md

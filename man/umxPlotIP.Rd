@@ -10,7 +10,7 @@ umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
   SEstyle = FALSE, strip_zero = TRUE, ...)
 }
 \arguments{
-\item{x}{The \code{\link{umxIP}} model to plot}
+\item{x}{The \code{\link[=umxIP]{umxIP()}} model to plot}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
@@ -22,14 +22,16 @@ umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
+\item{SEstyle}{report "b (se)" instead of "b \link{lower, upper}" (Default)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
 \item{...}{Optional additional parameters}
 }
 \value{
-- optionally return the dot code
+\itemize{
+\item optionally return the dot code
+}
 }
 \description{
 Options include digits (rounding), showing means or not, standardization, and which output format is desired.
@@ -41,12 +43,18 @@ umxPlotIP(model, file = NA)
 }
 }
 \references{
-- \url{https://tbates.github.io}
+\itemize{
+\item \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\itemize{
+\item \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+}
 
-- \code{\link{umxIP}}
+\itemize{
+\item \code{\link[=umxIP]{umxIP()}}
+}
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},

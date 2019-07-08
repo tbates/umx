@@ -12,7 +12,7 @@ umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
   "mxTryHardWideSearch"))
 }
 \arguments{
-\item{lastFit}{The \code{\link{mxModel}} you wish to update and run.}
+\item{lastFit}{The \code{\link[=mxModel]{mxModel()}} you wish to update and run.}
 
 \item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.}
 
@@ -33,7 +33,7 @@ overrides the contents of update, and sets regex to TRUE.}
 
 \item{verbose}{How much feedback to give}
 
-\item{intervals}{Whether to run confidence intervals (see \code{\link{mxRun}})}
+\item{intervals}{Whether to run confidence intervals (see \code{\link[=mxRun]{mxRun()}})}
 
 \item{comparison}{Whether to run umxCompare() on the new and old models.}
 
@@ -42,10 +42,12 @@ overrides the contents of update, and sets regex to TRUE.}
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-umxModify allows you to modify, re-run and summarize an \code{\link{mxModel}},
+umxModify allows you to modify, re-run and summarize an \code{\link[=mxModel]{mxModel()}},
 all in one line of script.
 }
 \details{
@@ -55,7 +57,7 @@ As an example, this one-liner drops a path labelled "Cs", and returns the update
 \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
 
 Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
-fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
+fit2 = umxModify(fit1, regex = "C\link{sr}", name = "drop_Cs_and_Cr", comparison = TRUE)
 
 You may find it easier to be more explicit. Like this:
 
@@ -63,8 +65,7 @@ fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "n
 fit2 = mxRun(fit2)
 summary(fit2)
 
-
-\emph{Note}: A (minor) limitation is that you cannot simultaneously set value to 0 
+\emph{Note}: A (minor) limitation is that you cannot simultaneously set value to 0
 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 }
 \examples{
@@ -116,7 +117,9 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 
 }
 \references{
-- \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},

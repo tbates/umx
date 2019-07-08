@@ -12,7 +12,9 @@ umx_set_auto_plot(autoPlot = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx_auto_plot setting
+\itemize{
+\item Current umx_auto_plot setting
+}
 }
 \description{
 Set autoPlot default for models like umxACE umxGxE etc.
@@ -26,7 +28,9 @@ umx_set_auto_plot(FALSE)  # set to off (internally stored as NA)
 umx_set_auto_plot(old)    # reinstate
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

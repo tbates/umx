@@ -14,11 +14,13 @@ umx_string_to_algebra(algString, name = NA, dimnames = NA)
 \item{dimnames}{of the returned algebra}
 }
 \value{
-- \code{\link{mxAlgebra}}
+\itemize{
+\item \code{\link[=mxAlgebra]{mxAlgebra()}}
+}
 }
 \description{
 This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), then parse the string as an mxAlgebra argument.
-A use case is including a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent.
+A use case is including a matrix exponent (that is A %\emph{% A %}% A %*% A...) with a variable exponent.
 }
 \examples{
 \dontrun{
@@ -26,7 +28,9 @@ alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " \%*\% "), name =
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},

@@ -10,7 +10,9 @@ umx_msg(x)
 \item{x}{the thing you want to pretty-print}
 }
 \value{
-- NULL
+\itemize{
+\item NULL
+}
 }
 \description{
 Helper function to ease debugging with console notes like:  "ObjectName = <object value>".
@@ -25,7 +27,9 @@ umx_msg(b)
 umx_msg(mtcars)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},

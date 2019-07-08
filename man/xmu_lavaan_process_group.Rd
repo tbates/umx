@@ -27,7 +27,7 @@ xmu_lavaan_process_group(tab, groupNum = 0)
 }
 \seealso{
 \itemize{
-\item \code{\link{umxLav2RAM}}
+\item \code{\link[=umxLav2RAM]{umxLav2RAM()}}
 }
 
 Other xmu internal not for end user: \code{\link{umxModel}},

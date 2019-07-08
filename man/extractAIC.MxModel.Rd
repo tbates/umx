@@ -7,7 +7,7 @@
 \method{extractAIC}{MxModel}(fit, scale, k, ...)
 }
 \arguments{
-\item{fit}{an fitted \code{\link{mxModel}} from which to get the AIC}
+\item{fit}{an fitted \code{\link[=mxModel]{mxModel()}} from which to get the AIC}
 
 \item{scale}{not used}
 
@@ -16,7 +16,9 @@
 \item{...}{any other parameters (not used)}
 }
 \value{
-- AIC value
+\itemize{
+\item AIC value
+}
 }
 \description{
 Returns the AIC for an OpenMx model.
@@ -37,10 +39,14 @@ extractAIC(m1)
 AIC(m1)
 }
 \references{
-- \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
+\itemize{
+\item \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
+}
 }
 \seealso{
-- \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik}}
+\itemize{
+\item \code{\link[=AIC]{AIC()}}, \code{\link[=umxCompare]{umxCompare()}}, \code{\link[=logLik]{logLik()}}
+}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

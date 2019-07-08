@@ -16,7 +16,7 @@
 #' It defaults to .001. You might find that '0.01' works better for ordinal models.
 #' 
 #' @details
-#' Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+#' Like the [umxACE()] model, the CP model decomposes phenotypic variance
 #' into Additive genetic, unique environmental (E) and, optionally, either
 #' common or shared-environment (C) or 
 #' non-additive genetic effects (D).
@@ -97,7 +97,7 @@
 #' @param freeLowerA ignore: Whether to leave the lower triangle of A free (default = FALSE).
 #' @param freeLowerC ignore: Whether to leave the lower triangle of C free (default = FALSE).
 #' @param freeLowerE ignore: Whether to leave the lower triangle of E free (default = FALSE).
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.

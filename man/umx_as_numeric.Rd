@@ -7,7 +7,7 @@
 umx_as_numeric(df, which = NULL, force = FALSE)
 }
 \arguments{
-\item{df}{A \code{\link{data.frame}} to convert}
+\item{df}{A [data.frame()] to convert}
 
 \item{which}{which columns to convert (default (null) selects all)}
 

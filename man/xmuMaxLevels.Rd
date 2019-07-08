@@ -12,7 +12,9 @@ xmuMaxLevels(df, what = c("value", "name"))
 \item{what}{Either "value" or "name" ( of the max-level column)}
 }
 \value{
-- max number of levels in frame
+\itemize{
+\item max number of levels in frame
+}
 }
 \description{
 Get the max levels from df

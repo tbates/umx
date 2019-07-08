@@ -14,7 +14,9 @@ umx_is_class(df, classes = NULL, all = TRUE)
 \item{all}{Whether to return a single all() Boolean or each column individually.}
 }
 \value{
-- Boolean or Boolean vector
+\itemize{
+\item Boolean or Boolean vector
+}
 }
 \description{
 Checks the class of each column in a dataframe, seeing if they are %in% a list of classes.
@@ -34,12 +36,18 @@ umx_is_class(mtcars, c("character", "numeric"))
 umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umx_is_numeric}}
+\itemize{
+\item \code{\link[=umx_is_numeric]{umx_is_numeric()}}
+}
 
 Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_endogenous}},
+  \code{\link{umx_is_exogenous}},
   \code{\link{umx_is_numeric}}, \code{\link{umx}},
   \code{\link{xmu_twin_check}}
 }

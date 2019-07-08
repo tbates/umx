@@ -17,7 +17,9 @@ umx_cell_is_on(r, c, where = c("diag", "lower", "lower_inc", "upper",
 \item{mat}{(optionally) provide matrix to check dimensions against r and c.}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 Helper to determine is a cell is in a set location of a matrix or not.
@@ -39,10 +41,14 @@ umx_cell_is_on(r=4,c = 3, "any", mat = a_cp)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxLabel}}
+\itemize{
+\item \code{\link[=umxLabel]{umxLabel()}}
+}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},

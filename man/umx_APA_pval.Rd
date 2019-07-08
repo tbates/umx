@@ -16,12 +16,14 @@ umx_APA_pval(p, min = 0.001, digits = 3, addComparison = NA)
 \item{addComparison}{Whether to add '=' '<' etc. (NA adds when needed)}
 }
 \value{
-- p-value formatted in APA style
+\itemize{
+\item p-value formatted in APA style
+}
 }
 \description{
-`umx_APA_pval` formats p-values, rounded in APA style. So you get '< .001' instead of .000000002 or 1.00E-09.
+\code{umx_APA_pval} formats p-values, rounded in APA style. So you get '< .001' instead of .000000002 or 1.00E-09.
 
-You probably would be better off using [umxAPA](umxAPA), which this, but handles many more object types.
+You probably would be better off using \url{umxAPA}, which this, but handles many more object types.
 
 You set the precision with digits. Optionally, you can add '=' '<' etc. The default for addComparison (NA) adds these when needed.
 }
@@ -33,7 +35,9 @@ umx_APA_pval(c(1.23E-3, .5))
 umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 }
 \seealso{
-- \code{\link{umxAPA}}, \code{\link{round}}
+\itemize{
+\item \code{\link[=umxAPA]{umxAPA()}}, \code{\link[=round]{round()}}
+}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},

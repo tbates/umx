@@ -7,7 +7,7 @@
 xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link{mxModel}} to get the name from}
+\item{model}{An \code{\link[=mxModel]{mxModel()}} to get the name from}
 
 \item{file}{Either "name" (use model name) or a file name}
 
@@ -16,7 +16,9 @@ xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 \item{strip_zero}{Whether to remove the leading "0." in digits in the diagram}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Helper to print a digraph to file and open it

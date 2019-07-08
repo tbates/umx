@@ -10,7 +10,7 @@ umxPlotGxE(x, xlab = NA, location = "topleft",
   ...)
 }
 \arguments{
-\item{x}{A fitted \code{\link{umxGxE}} model to plot}
+\item{x}{A fitted \code{\link[=umxGxE]{umxGxE()}} model to plot}
 
 \item{xlab}{String to use for the x label (default = NA, which will use the variable name)}
 
@@ -24,7 +24,9 @@ see ?legend for alternatives like bottomright}
 \item{...}{Optional additional parameters}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Plot GxE results (univariate environmental moderation of ACE components).
@@ -45,12 +47,18 @@ plot(m1)
 umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 }
 \references{
-- \url{https://tbates.github.io}
+\itemize{
+\item \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\itemize{
+\item \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+}
 
-- \code{\link{umxGxE}}
+\itemize{
+\item \code{\link[=umxGxE]{umxGxE()}}
+}
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},

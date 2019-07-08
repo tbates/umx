@@ -12,13 +12,13 @@ parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
   b = NULL, pattern = ".*", std = FALSE, digits = 2)
 }
 \arguments{
-\item{x}{an \code{\link{mxModel}} or model summary from which to report parameter estimates.}
+\item{x}{an \code{\link[=mxModel]{mxModel()}} or model summary from which to report parameter estimates.}
 
 \item{thresh}{optional: Filter out estimates 'below' or 'above' a certain value (default = "all").}
 
 \item{b}{Combine with thresh to set a minimum or maximum for which estimates to show.}
 
-\item{pattern}{Optional string to match in the parameter names. Default '.*' matches all. \code{\link{regex}} allowed!}
+\item{pattern}{Optional string to match in the parameter names. Default '.*' matches all. \code{\link[=regex]{regex()}} allowed!}
 
 \item{std}{Standardize output: NOT IMPLEMENTED YET}
 
@@ -31,7 +31,7 @@ parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
 }
 \description{
 Often you want to see the estimates from a model, and often you don't want all of them.
-\code{\link{umxParameters}} helps in this case, allowing you to select parameters matching a name filter,
+\code{\link[=umxParameters]{umxParameters()}} helps in this case, allowing you to select parameters matching a name filter,
 and also to only show parameters above or below a certain value.
 
 If pattern is a vector, each regular expression is matched, and all unique matches to the whole vector are returned.
@@ -62,7 +62,7 @@ umxParameters(m1, "below", .1, "_to_")
 }
 \seealso{
 \itemize{
-\item \code{\link{umxGetParameters}}, \code{\link{umxSummary}}, \code{\link{namez}}
+\item \code{\link[=umxGetParameters]{umxGetParameters()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=namez]{namez()}}
 }
 
 Other Reporting Functions: \code{\link{FishersMethod}},

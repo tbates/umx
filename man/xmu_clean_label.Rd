@@ -12,7 +12,9 @@ xmu_clean_label(label, replace = "_")
 \item{replace}{character to replace . with (default = _)}
 }
 \value{
-- legal label string
+\itemize{
+\item legal label string
+}
 }
 \description{
 Replaces . with _ in labels - e.g. from lavaan where . is common.
@@ -22,7 +24,9 @@ xmu_clean_label("data.var", replace = "_")
 xmu_clean_label("my.var.lab", replace = "_")
 }
 \seealso{
-- \code{\link{umxLabel}}
+\itemize{
+\item \code{\link[=umxLabel]{umxLabel()}}
+}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},

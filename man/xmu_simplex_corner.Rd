@@ -7,12 +7,14 @@
 xmu_simplex_corner(x, start = 0.9)
 }
 \arguments{
-\item{x}{size of matrix, or an \code{\link{umxMatrix}} of which to free the bottom triangle.}
+\item{x}{size of matrix, or an \code{\link[=umxMatrix]{umxMatrix()}} of which to free the bottom triangle.}
 
 \item{start}{a default start value for the freed items.}
 }
 \value{
-- \code{\link{umxMatrix}}
+\itemize{
+\item \code{\link[=umxMatrix]{umxMatrix()}}
+}
 }
 \description{
 internal function to help building simplex models is a function which
@@ -24,7 +26,9 @@ xmu_simplex_corner(x, start = .9)
 umx_print( xmu_simplex_corner(x, start = .9)$values, zero=".")
 }
 \seealso{
-- \code{\link{umxMatrix}}
+\itemize{
+\item \code{\link[=umxMatrix]{umxMatrix()}}
+}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},

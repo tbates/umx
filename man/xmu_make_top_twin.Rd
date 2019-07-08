@@ -39,7 +39,7 @@ xmu_make_top_twin(mzData, dzData, selDVs, sep = NULL, type = c("Auto",
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}s for top, MZ and DZ.
+\item \code{\link[=mxModel]{mxModel()}}s for top, MZ and DZ.
 }
 }
 \description{

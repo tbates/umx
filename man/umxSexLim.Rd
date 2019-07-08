@@ -44,7 +44,7 @@ umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}} of subclass mxModel.CFSexLim
+\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.CFSexLim
 }
 }
 \description{

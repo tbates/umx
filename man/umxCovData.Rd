@@ -15,7 +15,9 @@ umxCovData(df, columns = NA, use = c("complete.obs", "everything",
 \item{use}{= Default is "complete.obs".}
 }
 \value{
-- \code{\link{mxData}} of type = cov
+\itemize{
+\item \code{\link[=mxData]{mxData()}} of type = cov
+}
 }
 \description{
 umxCovData converts a dataframe into an mxData, taking the covariance, defaulting to nrow as the numObs,
@@ -25,7 +27,9 @@ and optionally adding means.
 umxCovData(mtcars, c("mpg", "hp"))
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Data Functions: \code{\link{umxDescribeDataWLS}},

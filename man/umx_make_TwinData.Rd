@@ -206,7 +206,7 @@ str(tmp)
 }
 \seealso{
 \itemize{
-\item \code{\link{umxACE}}, \code{\link{umxGxE}}, \code{\link{umxGxEbiv}}
+\item \code{\link[=umxACE]{umxACE()}}, \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxGxEbiv]{umxGxEbiv()}}
 }
 
 Other Twin Data functions: \code{\link{umx_long2wide}},

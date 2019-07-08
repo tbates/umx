@@ -7,13 +7,13 @@
 xmuMI(model, vector = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to derive modification indices for}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to derive modification indices for}
 
 \item{vector}{= Whether to report the results as a vector default = TRUE}
 }
 \description{
 A function to compute and report modifications which would improve fit.
-You will probably use \code{\link{umxMI}} instead
+You will probably use \code{\link[=umxMI]{umxMI()}} instead
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

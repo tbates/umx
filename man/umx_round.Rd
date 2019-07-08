@@ -14,7 +14,9 @@ umx_round(df, digits = getOption("digits"), coerce = FALSE)
 \item{coerce}{whether to make the column numeric if it is not (default = FALSE)}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 A version of round() which works on dataframes that contain non-numeric data (or data that cannot be coerced to numeric)
@@ -26,7 +28,9 @@ head(umx_round(mtcars, coerce = TRUE))
 
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{oddsratio}},

@@ -14,7 +14,9 @@ umxRAM2Ordinal(model, verbose = TRUE, name = NULL)
 \item{name}{= A new name for the modified model. Default (NULL) = leave it as is).}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
@@ -42,7 +44,9 @@ m1 = umxRAM("tim", data = mzData,
 }
 }
 \seealso{
-- \code{\link{umxRAM}}
+\itemize{
+\item \code{\link[=umxRAM]{umxRAM()}}
+}
 
 Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umxLabel}}, \code{\link{umxLatent}},

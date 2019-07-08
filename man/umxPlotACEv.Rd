@@ -9,7 +9,7 @@ umxPlotACEv(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, strip_zero = TRUE, ...)
 }
 \arguments{
-\item{x}{\code{\link{umxACEv}} model to plot.}
+\item{x}{\code{\link[=umxACEv]{umxACEv()}} model to plot.}
 
 \item{file}{The name of the dot file to write: Default ("name") = use the name of the model. NA = don't plot.}
 
@@ -24,7 +24,9 @@ umxPlotACEv(x = NA, file = "name", digits = 2, means = FALSE,
 \item{...}{Additional (optional) parameters}
 }
 \value{
-- optionally return the dot code
+\itemize{
+\item optionally return the dot code
+}
 }
 \description{
 Plots an ACE model graphically, opening the result in the browser (or a graphviz application).
@@ -39,7 +41,9 @@ m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},

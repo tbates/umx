@@ -53,12 +53,12 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}} of subclass mxModel.ACEcov
+\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.ACEcov
 }
 }
 \description{
-Often, researchers include covariates in 2-group Cholesky \code{\link{umxACE}} twin models.
-A simple method is to regressing covariates from the data (see \code{\link{umx_residualize}}).
+Often, researchers include covariates in 2-group Cholesky \code{\link[=umxACE]{umxACE()}} twin models.
+A simple method is to regressing covariates from the data (see \code{\link[=umx_residualize]{umx_residualize()}}).
 A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
 'fixed' option for covariates models them in the mean as definition variables.
 On the plus side, there is no distributional assumption for this method. A downside of this approach is that all

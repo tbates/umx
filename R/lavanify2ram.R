@@ -324,7 +324,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 #' @return - list(plist=plist, latents = latents, manifests = manifests)
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{umxLav2RAM}}
+#' @seealso - [umxLav2RAM()]
 #' @md
 #' @examples
 #' tab = lavaan::lavaanify("y~x")

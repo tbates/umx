@@ -8,7 +8,7 @@ xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
   "WLS", "DWLS", "ULS"), manifests = NULL, verbose = FALSE)
 }
 \arguments{
-\item{data}{A \code{\link{data.frame}} or \code{\link{mxData}}}
+\item{data}{A \code{\link[=data.frame]{data.frame()}} or \code{\link[=mxData]{mxData()}}}
 
 \item{type}{What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')}
 
@@ -17,12 +17,14 @@ xmu_make_mxData(data = NULL, type = c("Auto", "FIML", "cov", "cor",
 \item{verbose}{If verbose, report on columns kept and dropped (default FALSE)}
 }
 \value{
-- \code{\link{mxData}}
+\itemize{
+\item \code{\link[=mxData]{mxData()}}
+}
 }
 \description{
-`xmu_make_mxData` is an internal function to upgrade a dataframe to `mxData`. It can also drop variables from the dataframe.
+\code{xmu_make_mxData} is an internal function to upgrade a dataframe to \code{mxData}. It can also drop variables from the dataframe.
 
-The most common use will be to give it a dataframe, and get back an `mxData` object of type raw, cov, cor (WLS is just raw).
+The most common use will be to give it a dataframe, and get back an \code{mxData} object of type raw, cov, cor (WLS is just raw).
 }
 \examples{
 # =========================

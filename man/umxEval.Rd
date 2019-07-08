@@ -9,18 +9,19 @@ umxEval(expstring, model, compute = FALSE, show = FALSE)
 \arguments{
 \item{expstring}{an expression string, i.e, "a + b"}
 
-\item{model}{an \code{\link{mxModel}} to evaluate in}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to evaluate in}
 
 \item{compute}{Whether to compute the result or not (default = FALSE)}
 
 \item{show}{Whether to show??? (default = FALSE)}
 }
 \value{
-- an openmx algebra (formula)
+\itemize{
+\item an openmx algebra (formula)
+}
 }
 \description{
-Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.
-# TODO umxEval Currently broken... delete submit as update to OpenMx?
+Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.TODO umxEval Currently broken... delete submit as update to OpenMx?
 }
 \examples{
 m1 = mxModel("fit",
@@ -34,7 +35,9 @@ m1 = mxRun(m1)
 mxEval(list(ab = ab), m1)
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Reporting Functions: \code{\link{FishersMethod}},

@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_print}
 \alias{umx_print}
-\title{Print tables in a range of formats (markdown default, see \code{\link{umx_set_table_format}} for other formats)
+\title{Print tables in a range of formats (markdown default, see \code{\link[=umx_set_table_format]{umx_set_table_format()}} for other formats)
 or as a web browser table.}
 \usage{
 umx_print(x, digits = getOption("digits"), quote = FALSE,
@@ -29,7 +29,9 @@ umx_print(x, digits = getOption("digits"), quote = FALSE,
 \item{...}{Optional parameters for print}
 }
 \value{
-- A dataframe of text
+\itemize{
+\item A dataframe of text
+}
 }
 \description{
 To aid interpretability of printed tables from OpenMx (and elsewhere)
@@ -44,7 +46,7 @@ umx_print(mtcars[1:10,], file = "tmp.html")
 }
 }
 \seealso{
-\code{\link{umx_msg}}, \code{\link{umx_set_table_format}}
+\code{\link[=umx_msg]{umx_msg()}}, \code{\link[=umx_set_table_format]{umx_set_table_format()}}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},

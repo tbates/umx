@@ -15,7 +15,7 @@ umxCov2cor(x)
 }
 }
 \description{
-A version of \code{\link{cov2cor}} that forces upper and lower triangles to be \emph{identical} (rather than nearly identical)
+A version of \code{\link[=cov2cor]{cov2cor()}} that forces upper and lower triangles to be \emph{identical} (rather than nearly identical)
 }
 \examples{
 umxCov2cor(cov(mtcars[,1:5]))
@@ -26,7 +26,7 @@ umxCov2cor(cov(mtcars[,1:5]))
 }
 }
 \seealso{
-\code{\link{cov2cor}}
+\code{\link[=cov2cor]{cov2cor()}}
 
 Other Miscellaneous Stats Helpers: \code{\link{oddsratio}},
   \code{\link{reliability}}, \code{\link{umxHetCor}},

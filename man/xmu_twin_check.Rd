@@ -28,7 +28,9 @@ xmu_twin_check(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 \item{optimizer}{Set by name (if you want to change it).}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Check that DVs are in the data, that the data have rows, set the optimizer if requested.
@@ -58,7 +60,9 @@ xmu_twin_check(selDVs = c("wt", "ht"), dzData = dzData, mzData = mzData, enforce
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
@@ -77,8 +81,10 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 
 Other Check or test: \code{\link{umx_check_names}},
-  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
-  \code{\link{umx}}
+  \code{\link{umx_is_class}},
+  \code{\link{umx_is_endogenous}},
+  \code{\link{umx_is_exogenous}},
+  \code{\link{umx_is_numeric}}, \code{\link{umx}}
 }
 \concept{Check or test}
 \concept{Twin Modeling Functions}

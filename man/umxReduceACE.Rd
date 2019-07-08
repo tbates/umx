@@ -8,7 +8,7 @@ umxReduceACE(model, report = c("markdown", "inline", "html", "report"),
   baseFileName = "tmp", intervals = TRUE, ...)
 }
 \arguments{
-\item{model}{an ACE or ADE \code{\link{mxModel}} to reduce}
+\item{model}{an ACE or ADE \code{\link[=mxModel]{mxModel()}} to reduce}
 
 \item{report}{How to report the results. "html" = open in browser}
 
@@ -22,7 +22,7 @@ umxReduceACE(model, report = c("markdown", "inline", "html", "report"),
 Best fitting model
 }
 \description{
-This function can perform model reduction on \code{\link{umxACE}} models,
+This function can perform model reduction on \code{\link[=umxACE]{umxACE()}} models,
 testing dropping A and C, as well as an ADE or ACE model, displaying the results
 in a table, and returning the best model.
 }
@@ -47,7 +47,7 @@ m2 = umxReduce(m1)
 }
 }
 \seealso{
-\code{\link{umxReduceGxE}}, \code{\link{umxReduce}}
+\code{\link[=umxReduceGxE]{umxReduceGxE()}}, \code{\link[=umxReduce]{umxReduce()}}
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}},
   \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},

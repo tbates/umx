@@ -10,7 +10,9 @@ umx_get_checkpoint(model = NULL)
 \item{model}{an optional model to get options from}
 }
 \value{
-- NULL
+\itemize{
+\item NULL
+}
 }
 \description{
 get the checkpoint status for a model or global options
@@ -30,7 +32,9 @@ m1 = umx_set_checkpoint(interval = 2, model = m1)
 umx_get_checkpoint(model = m1)
 }
 \references{
-- \url{https://tbates.github.io}
+\itemize{
+\item \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

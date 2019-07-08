@@ -48,13 +48,15 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
-- \code{\link{mxModel}} of subclass mxModel.ACEcov
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.ACEcov
+}
 }
 \description{
 Often, it is appropriate to include covariates in models.
-A simple method is to regress covariates from the data using \code{\link{lm}}.
+A simple method is to regress covariates from the data using \code{\link[=lm]{lm()}}.
 This is a 'fixed' effects approach.
-\code{\link{umx_residualize}} makes this easier, even on twin data, and with complex regression formulas.
+\code{\link[=umx_residualize]{umx_residualize()}} makes this easier, even on twin data, and with complex regression formulas.
 }
 \details{
 While these estimates are unbiased, modeling this regression in the means element of the twin model
@@ -67,12 +69,11 @@ The following figure shows how the ACE model with fixed covariates appears as a 
 \if{html}{\figure{ACEcovOnMeans.png}{options: width="50\%" alt="Figure: ACEcovOnMeans.png"}}
 \if{latex}{\figure{ACEcovOnMeans.pdf}{options: width=7cm}}
 
-
-On the plus side, there is no distributional assumption for this method. A downside of this approach is that all 
+On the plus side, there is no distributional assumption for this method. A downside of this approach is that all
 covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
 This is wasteful of data, but often cannot be avoided (though see note below).
 
-\emph{note}: An alternative is the \code{\link{umxACEcov}} 'random' option. This model adds covariates to
+\emph{note}: An alternative is the \code{\link[=umxACEcov]{umxACEcov()}} 'random' option. This model adds covariates to
 the expected covariance matrix, thus allowing all data to be preserved.
 The (BIG) downside is that this method has a strong assumption of multivariate normality.
 Covariates like age, which are perfectly correlated in twins cannot be used.

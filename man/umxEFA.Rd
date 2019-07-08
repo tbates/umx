@@ -38,14 +38,14 @@ umxEFA(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 }
 \value{
 \itemize{
-\item EFA \code{\link{mxModel}}
+\item EFA \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
 Perform full-information maximum-likelihood factor analysis on a data matrix.
 }
 \details{
-As in \code{\link{factanal}}, you need only specify the number of factors and offer up
+As in \code{\link[=factanal]{factanal()}}, you need only specify the number of factors and offer up
 some manifest data, e.g:
 
 \code{umxEFA(factors = 2, data = mtcars)}
@@ -109,7 +109,7 @@ x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regr
 }
 \seealso{
 \itemize{
-\item \code{\link{factanal}}, \code{\link{mxFactorScores}}
+\item \code{\link[=factanal]{factanal()}}, \code{\link[=mxFactorScores]{mxFactorScores()}}
 }
 
 Other Super-easy helpers: \code{\link{umxLav2RAM}},

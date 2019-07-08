@@ -16,7 +16,9 @@ umx_swap_a_block(theData, rowSelector, T1Names, T2Names)
 \item{T2Names}{The second set of columns.}
 }
 \value{
-- dataframe
+\itemize{
+\item dataframe
+}
 }
 \description{
 Swap a block of rows of a dataset between two sets of variables (typically twin 1 and twin 2)
@@ -32,7 +34,9 @@ umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names =
 
 }
 \seealso{
-- \code{\link{subset}}
+\itemize{
+\item \code{\link[=subset]{subset()}}
+}
 
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxDescribeDataWLS}},

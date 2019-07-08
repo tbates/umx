@@ -68,7 +68,7 @@ umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a =
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}
+\item \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
@@ -87,7 +87,7 @@ of pathways for a, c, and e, as well the ability to use ordinal data, and differ
 It defaults to .001. You might find that '0.01' works better for ordinal models.
 }
 \details{
-Like the \code{\link{umxACE}} model, the CP model decomposes phenotypic variance
+Like the \code{\link[=umxACE]{umxACE()}} model, the CP model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or
 non-additive genetic effects (D).

@@ -17,7 +17,9 @@ umxVersion(model = NULL, min = NULL, verbose = TRUE,
 \item{return}{Which package (umx or OpenMx) to 'return' version info for (Default = umx).}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 umxVersion returns the version information for umx, and for OpenMx and R.
@@ -27,10 +29,14 @@ Essential for bug-reports! This function can also test for a minimum version.
 x = umxVersion(); x
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{packageVersion}}, \code{\link{install.OpenMx}}
+\itemize{
+\item \code{\link[=packageVersion]{packageVersion()}}, \code{\link[=install.OpenMx]{install.OpenMx()}}
+}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},

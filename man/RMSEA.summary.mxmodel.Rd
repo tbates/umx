@@ -8,7 +8,7 @@
   digits = 3)
 }
 \arguments{
-\item{x}{an \code{\link{mxModel}} summary from which to get RMSEA}
+\item{x}{an [mxModel()] summary from which to get RMSEA}
 
 \item{ci.lower}{the lower CI to compute}
 

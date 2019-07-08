@@ -2,14 +2,14 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxCompare}
 \alias{umxCompare}
-\title{Print a comparison table of one or more \code{\link{mxModel}}s, formatted nicely.}
+\title{Print a comparison table of one or more \code{\link[=mxModel]{mxModel()}}s, formatted nicely.}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
   report = c("markdown", "inline", "html", "report"),
   compareWeightedAIC = FALSE, file = "tmp.html")
 }
 \arguments{
-\item{base}{The base \code{\link{mxModel}} for comparison}
+\item{base}{The base \code{\link[=mxModel]{mxModel()}} for comparison}
 
 \item{comparison}{The model (or list of models) which will be compared for fit with the base model (can be empty)}
 
@@ -26,17 +26,14 @@ create a web table and open your default browser.
 \item{file}{file to write html too if report = "html" (defaults to "tmp.html")}
 }
 \description{
-umxCompare compares two or more \code{\link{mxModel}}s. It has several nice features:
-
-1. It supports direct control of rounding, and reports p-values rounded to APA style.
-
-2. It reports the table in your preferred format (default is markdown, options include latex)
-
-3. Table columns are arranged to make for easy comparison for readers.
-
-4. report = 'inline', will provide an English sentence suitable for a paper.
-
-5. report = "html" opens a web table in your browser to paste into a word processor.
+umxCompare compares two or more \code{\link[=mxModel]{mxModel()}}s. It has several nice features:
+\enumerate{
+\item It supports direct control of rounding, and reports p-values rounded to APA style.
+\item It reports the table in your preferred format (default is markdown, options include latex)
+\item Table columns are arranged to make for easy comparison for readers.
+\item report = 'inline', will provide an English sentence suitable for a paper.
+\item report = "html" opens a web table in your browser to paste into a word processor.
+}
 
 \emph{Note}: If you leave comparison blank, it will just give fit info for the base model
 }
@@ -62,10 +59,14 @@ umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 }
 \references{
-- \url{https://www.github.com/tbates/umx/}
+\itemize{
+\item \url{https://www.github.com/tbates/umx/}
+}
 }
 \seealso{
-- \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},
+\itemize{
+\item \code{\link[=mxCompare]{mxCompare()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},
+}
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},

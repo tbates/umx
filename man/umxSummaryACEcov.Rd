@@ -11,7 +11,7 @@ umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
   "2", "html"), ...)
 }
 \arguments{
-\item{model}{a \code{\link{umxACEcov}} model to summarize}
+\item{model}{a \code{\link[=umxACEcov]{umxACEcov()}} model to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
 
@@ -36,10 +36,12 @@ umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
 \item{...}{Other parameters to control model summary}
 }
 \value{
-- optional \code{\link{mxModel}}
+\itemize{
+\item optional \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Summarize a Cholesky model with covariates, as returned by \code{\link{umxACEcov}}
+Summarize a Cholesky model with covariates, as returned by \code{\link[=umxACEcov]{umxACEcov()}}
 }
 \examples{
 require(umx)
@@ -57,10 +59,14 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{umxACEcov}}
+\itemize{
+\item \code{\link[=umxACEcov]{umxACEcov()}}
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

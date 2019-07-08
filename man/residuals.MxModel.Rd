@@ -7,7 +7,7 @@
 \method{residuals}{MxModel}(object, digits = 2, suppress = NULL, ...)
 }
 \arguments{
-\item{object}{An fitted \code{\link{mxModel}} from which to get residuals}
+\item{object}{An fitted \code{\link[=mxModel]{mxModel()}} from which to get residuals}
 
 \item{digits}{round to how many digits (default = 2)}
 
@@ -16,10 +16,12 @@
 \item{...}{Optional parameters}
 }
 \value{
-- matrix of residuals
+\itemize{
+\item matrix of residuals
+}
 }
 \description{
-Return the \code{\link{residuals}} from an OpenMx RAM model. You can format these (with digits), and suppress small values.
+Return the \code{\link[=residuals]{residuals()}} from an OpenMx RAM model. You can format these (with digits), and suppress small values.
 }
 \examples{
 require(umx)
@@ -52,7 +54,9 @@ residuals(m1, digits = 3, suppress = .005)
 a = residuals(m1); a
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

@@ -11,7 +11,7 @@ umxSummarySexLim(model, digits = 2, file = getOption("umx_auto_plot"),
   extended = FALSE, zero.print = ".", ...)
 }
 \arguments{
-\item{model}{a \code{\link{umxSexLim}} model to summarize}
+\item{model}{a \code{\link[=umxSexLim]{umxSexLim()}} model to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
 
@@ -37,15 +37,17 @@ Defaults to NA = do not create plot output}
 \item{...}{Other parameters to control model summary}
 }
 \value{
-- optional \code{\link{mxModel}}
+\itemize{
+\item optional \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Summarize a fitted Cholesky model returned by \code{\link{umxSexLim}}. Can control digits, report comparison model fits,
+Summarize a fitted Cholesky model returned by \code{\link[=umxSexLim]{umxSexLim()}}. Can control digits, report comparison model fits,
 optionally show the Rg (genetic and environmental correlations), and show confidence intervals. The report parameter allows
 drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
 \details{
-See documentation for other umx models summary here: \code{\link{umxSummary}}.
+See documentation for other umx models summary here: \code{\link[=umxSummary]{umxSummary()}}.
 }
 \examples{
 \dontrun{
@@ -102,10 +104,14 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "C", tryHard = "yes",
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{umxSexLim}}
+\itemize{
+\item \code{\link[=umxSexLim]{umxSexLim()}}
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

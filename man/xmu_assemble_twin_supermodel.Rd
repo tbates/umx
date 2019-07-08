@@ -21,7 +21,9 @@ xmu_assemble_twin_supermodel(name, MZ, DZ, top, mzWeightMatrix = NULL,
 \item{dzWeightMatrix}{if bVector, then use this as the DZ weights matrix}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 Assemble top, MZ and DZ into a supermodel: Also copes with weighted analyses.

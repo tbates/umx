@@ -5,16 +5,17 @@
 #'
 #' @details I might change this to a lookup-function that gets a CI string if one exists.
 #'
-#' @param model An \code{\link{mxModel}} to get CIs from.
+#' @param model An [mxModel()] to get CIs from.
 #' @param digits rounding.
 #' @param dropZeros makes strings for failed CIs?
 #' @param stdAlg2mat treat std as algebra: stash in non std matrix.
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family zAdvanced Helpers
-#' @seealso - \code{\link{umxConfint}}, \code{\link{xmu_get_CI}}
-#' @references - \url{https://github.com/tbates/umx}
+#' @seealso - [umxConfint()], [xmu_get_CI()]
+#' @references - <https://github.com/tbates/umx>
 #' @md
+#'
 umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
 	# TODO rationalize with xmu_get_CI

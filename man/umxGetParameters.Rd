@@ -9,7 +9,7 @@ umxGetParameters(inputTarget, regex = NA, free = NA,
   verbose = FALSE)
 }
 \arguments{
-\item{inputTarget}{An object to get parameters from: could be a RAM \code{\link{mxModel}}}
+\item{inputTarget}{An object to get parameters from: could be a RAM \code{\link[=mxModel]{mxModel()}}}
 
 \item{regex}{A regular expression to filter the labels. Default (NA) returns all labels. If vector, treated as raw labels to find.}
 
@@ -20,7 +20,7 @@ umxGetParameters(inputTarget, regex = NA, free = NA,
 \item{verbose}{How much feedback to give}
 }
 \description{
-umxGetParameters retrieves parameter labels from a model, like \code{\link{omxGetParameters}}.
+umxGetParameters retrieves parameter labels from a model, like \code{\link[=omxGetParameters]{omxGetParameters()}}.
 However, it is supercharged with regular expressions, so you can get labels that match a pattern.
 }
 \details{

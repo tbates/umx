@@ -10,7 +10,7 @@
 All core functions are organized into families, so they are easier to find (see "families" below under \strong{See Also})
 
 All the functions have full-featured and well commented examples, some even have \emph{figures}, so use the help, even if you think it won't help :-)
-Have a look, for example at \code{\link{umxRAM}}
+Have a look, for example at \code{\link[=umxRAM]{umxRAM()}}
 
 Check out NEWS about new features at \code{news(package = "umx")}
 }
@@ -164,7 +164,10 @@ Other Get and set: \code{\link{umx_default_option}},
   \code{\link{umx_set_table_format}}
 
 Other Check or test: \code{\link{umx_check_names}},
-  \code{\link{umx_is_class}}, \code{\link{umx_is_numeric}},
+  \code{\link{umx_is_class}},
+  \code{\link{umx_is_endogenous}},
+  \code{\link{umx_is_exogenous}},
+  \code{\link{umx_is_numeric}},
   \code{\link{xmu_twin_check}}
 
 Other Data Functions: \code{\link{umxCovData}},

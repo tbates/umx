@@ -21,7 +21,9 @@ umxPadAndPruneForDefVars(df, varNames, defNames, suffixes,
 \item{rm}{= how to handle missing values in the varNames. Default is "drop_missing_def", "pad_with_mean")}
 }
 \value{
-- dataframe
+\itemize{
+\item dataframe
+}
 }
 \description{
 Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin
@@ -34,7 +36,9 @@ df = umxPadAndPruneForDefVars(twinData, varNames = "ht", defNames = "wt", c("1",
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

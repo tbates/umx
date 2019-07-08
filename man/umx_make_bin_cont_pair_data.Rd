@@ -7,7 +7,7 @@
 umx_make_bin_cont_pair_data(data, vars = NULL, suffixes = NULL)
 }
 \arguments{
-\item{data}{A \code{\link{data.frame}} to convert}
+\item{data}{A [data.frame()] to convert}
 
 \item{vars}{The variables to process}
 
@@ -33,7 +33,7 @@ df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"
 df[order(df$mpg), 12:15]
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{https://openmx.ssri.psu.edu}
+- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

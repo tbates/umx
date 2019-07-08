@@ -12,7 +12,7 @@ umx_dot_mat2dot(x, cells = c("diag", "lower", "lower_inc", "upper",
   p = list(str = "", latents = c(), manifests = c()))
 }
 \arguments{
-\item{x}{a \code{\link{umxMatrix}} to make paths from.}
+\item{x}{a \code{\link[=umxMatrix]{umxMatrix()}} to make paths from.}
 
 \item{cells}{which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)}
 
@@ -130,7 +130,7 @@ cat(out$str)
 }
 \seealso{
 \itemize{
-\item \code{\link{plot}}
+\item \code{\link[=plot]{plot()}}
 }
 
 Other Graphviz: \code{\link{umx_dot_define_shapes}},

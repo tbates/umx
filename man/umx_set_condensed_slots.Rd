@@ -12,7 +12,9 @@ umx_set_condensed_slots(state = NA, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- current value of condensed slots
+\itemize{
+\item current value of condensed slots
+}
 }
 \description{
 Sets whether newly-created mxMatrices are to be condensed (set to NULL if not being used) or not.
@@ -25,7 +27,9 @@ umx_set_condensed_slots(TRUE) # update globally
 umx_set_condensed_slots(old) # set back
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

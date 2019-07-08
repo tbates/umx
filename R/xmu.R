@@ -81,10 +81,10 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "
 #' @param summary Whether to print model summary (default = autoRun).
 #' @param show What to print in summary (default "none") (alternatives: "raw", "std", "list of column names")
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{mxTryHard}}
+#' @seealso - [mxTryHard()]
 #' @md
 #' @examples
 #' m1 = umxRAM("tim", data = mtcars,
@@ -193,13 +193,13 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 #' @description
 #' Check data to see if model needs means.
 #'
-#' @param data \code{\link{mxData}} to check.
+#' @param data [mxData()] to check.
 #' @param type of the data requested by the model.
 #' @param allContinuousMethod How data will be processed if used for WLS.
 #' @return - T/F
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{xmu_make_mxData}}
+#' @seealso - [xmu_make_mxData()]
 #' @md
 #' @examples
 #' xmu_model_needs_means(mtcars, type = "Auto")
@@ -313,11 +313,11 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #'
 #' The most common use will be to give it a dataframe, and get back an `mxData` object of type raw, cov, cor (WLS is just raw).
 #'
-#' @param data A \code{\link{data.frame}} or \code{\link{mxData}}
+#' @param data A [data.frame()] or [mxData()]
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
-#' @return - \code{\link{mxData}}
+#' @return - [mxData()]
 #' @export
 #' @family xmu internal not for end user
 #' @md
@@ -686,17 +686,17 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 
 #' xmuLabel_MATRIX_Model (not a user function)
 #'
-#' This function will label all the free parameters in a (non-RAM) OpenMx \code{\link{mxModel}}
+#' This function will label all the free parameters in a (non-RAM) OpenMx [mxModel()]
 #' nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 #' i.e., matrix-name + _ + r + rowNumber + c + colNumber
 #' 
-#' End users should just call \code{\link{umxLabel}}
+#' End users should just call [umxLabel()]
 #' 
 #'
 #' @param model a matrix-style mxModel to label
 #' @param suffix a string to append to each label
 #' @param verbose how much feedback to give
-#' @return - The labeled \code{\link{mxModel}}
+#' @return - The labeled [mxModel()]
 #' @family xmu internal not for end user
 #' @export
 #' @md
@@ -728,9 +728,9 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 
 #' xmuLabel_RAM_Model (not a user function)
 #'
-#' This function will label all the free parameters in a RAM \code{\link{mxModel}}
+#' This function will label all the free parameters in a RAM [mxModel()]
 #' 
-#' End users should just call \code{\link{umxLabel}}
+#' End users should just call [umxLabel()]
 #'
 #' @param model a RAM mxModel to label
 #' @param suffix a string to append to each label
@@ -738,7 +738,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @param overRideExisting Whether to overRideExisting (Default FALSE)
 #' @param verbose how much feedback to give
 #' @param name Add optional name parameter to rename returned model (default = leave it along)
-#' @return - The labeled \code{\link{mxModel}}
+#' @return - The labeled [mxModel()]
 #' @family xmu internal not for end user
 #' @export
 #' @md
@@ -832,12 +832,12 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 # 0 ,.9, 0, 0,
 # 0 , 0,.9, 0
 #'
-#' @param x size of matrix, or an \code{\link{umxMatrix}} of which to free the bottom triangle.
+#' @param x size of matrix, or an [umxMatrix()] of which to free the bottom triangle.
 #' @param start a default start value for the freed items.
-#' @return - \code{\link{umxMatrix}}
+#' @return - [umxMatrix()]
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{umxMatrix}}
+#' @seealso - [umxMatrix()]
 #' @md
 #' @examples
 #' x = umxMatrix('test', 'Full', nrow = 4, ncol = 4)
@@ -863,9 +863,9 @@ xmu_simplex_corner <- function(x, start = .9) {
 
 #' xmuLabel_Matrix (not a user function)
 #'
-#' This function will label all the free parameters in an \code{\link{mxMatrix}}
+#' This function will label all the free parameters in an [mxMatrix()]
 #' 
-#' End users should just call \code{\link{umxLabel}}
+#' End users should just call [umxLabel()]
 #'
 #' Purpose: label the cells of an mxMatrix
 #' Detail: Defaults to the handy "name_r1c1" where name is the matrix name, and r1c1 = row 1 col 1.
@@ -888,7 +888,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 #' @param verbose how much feedback to give
 #' @param labelFixedCells = FALSE
 #' @param overRideExisting Whether to overRideExisting (Default FALSE)
-#' @return - The labeled \code{\link{mxMatrix}}
+#' @return - The labeled [mxMatrix()]
 #' @family xmu internal not for end user
 #' @md
 #' @export
@@ -1073,13 +1073,13 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 
 #' xmuPropagateLabels (not a user function)
 #'
-#' You should be calling \code{\link{umxLabel}}.
+#' You should be calling [umxLabel()].
 #' This function is called by xmuLabel_MATRIX_Model
 #'
 #' @param model a model to label
 #' @param suffix a string to append to each label
 #' @param verbose whether to say what is being done
-#' @return - \code{\link{mxModel}}
+#' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
 #' @md
@@ -1105,9 +1105,9 @@ xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
 #' xmuMI
 #'
 #' A function to compute and report modifications which would improve fit.
-#' You will probably use \code{\link{umxMI}} instead
+#' You will probably use [umxMI()] instead
 #'
-#' @param model an \code{\link{mxModel}} to derive modification indices for
+#' @param model an [mxModel()] to derive modification indices for
 #' @param vector = Whether to report the results as a vector default = TRUE
 #' @family xmu internal not for end user
 #' @export
@@ -1329,7 +1329,7 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' @return - legal label string
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - \code{\link{umxLabel}}
+#' @seealso - [umxLabel()]
 #' @md
 #' @examples
 #' xmu_clean_label("data.var", replace = "_")
@@ -1403,7 +1403,7 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #'
 #' @description
 #' Helper to print a digraph to file and open it
-#' @param model An \code{\link{mxModel}} to get the name from 
+#' @param model An [mxModel()] to get the name from 
 #' @param file Either "name" (use model name) or a file name
 #' @param digraph Graphviz code for a model
 #' @param strip_zero Whether to remove the leading "0." in digits in the diagram
@@ -1715,7 +1715,7 @@ xmu_string2path <- function(from) {
 #' Look up CIs for free parameters in a model, and return as APA-formatted text string.
 #' If std are available then they are reported.
 #'
-#' @param model an \code{\link{mxModel}} to get CIs from
+#' @param model an [mxModel()] to get CIs from
 #' @param label the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
 #' @param prefix The submodel to look in (default = "top.")
 #' @param suffix The suffix for algebras when standardized (default = "_std")

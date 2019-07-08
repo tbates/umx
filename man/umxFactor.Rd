@@ -10,29 +10,30 @@ umxFactor(x = character(), levels = NULL, labels = levels,
   sep = NA)
 }
 \arguments{
-\item{x}{A variable to recode as an mxFactor (see \code{\link{mxFactor}})}
+\item{x}{A variable to recode as an mxFactor (see \code{\link[=mxFactor]{mxFactor()}})}
 
-\item{levels}{(default NULL). Like \code{\link{factor}} but UNLIKE \code{\link{mxFactor}}, 
+\item{levels}{(default NULL). Like \code{\link[=factor]{factor()}} but UNLIKE \code{\link[=mxFactor]{mxFactor()}},
 unique values will be used if levels not specified.}
 
-\item{labels}{= levels (see \code{\link{mxFactor}})}
+\item{labels}{= levels (see \code{\link[=mxFactor]{mxFactor()}})}
 
-\item{exclude}{= NA (see \code{\link{mxFactor}})}
+\item{exclude}{= NA (see \code{\link[=mxFactor]{mxFactor()}})}
 
 \item{ordered}{= TRUE By default return an ordered mxFactor}
 
-\item{collapse}{= FALSE (see \code{\link{mxFactor}})}
+\item{collapse}{= FALSE (see \code{\link[=mxFactor]{mxFactor()}})}
 
 \item{verbose}{Whether to tell user about such things as coercing to factor}
 
-\item{sep}{If twin data are being used, the string that separates the base from twin index
-# will try and ensure factor levels same across all twins.}
+\item{sep}{If twin data are being used, the string that separates the base from twin indexwill try and ensure factor levels same across all twins.}
 }
 \value{
-- \code{\link{mxFactor}}
+\itemize{
+\item \code{\link[=mxFactor]{mxFactor()}}
+}
 }
 \description{
-A convenient version of \code{\link{mxFactor}} supporting the common 
+A convenient version of \code{\link[=mxFactor]{mxFactor()}} supporting the common
 case in which the factor levels are those in the variable.
 }
 \examples{
@@ -61,10 +62,14 @@ df  = data.frame(x = x, y = y)
 jnk = umxFactor(df); str(jnk)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umxFactanal}}
+\itemize{
+\item \code{\link[=umxFactanal]{umxFactanal()}}
+}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},

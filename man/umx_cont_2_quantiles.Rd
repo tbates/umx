@@ -20,11 +20,13 @@ umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
 \item{returnCutpoints}{just return the cutpoints, for use directly}
 }
 \value{
-- recoded variable as an \code{\link{mxFactor}}
+\itemize{
+\item recoded variable as an \code{\link[=mxFactor]{mxFactor()}}
+}
 }
 \description{
 Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
-It returns an \code{\link{mxFactor}}, with the levels labeled with the max value
+It returns an \code{\link[=mxFactor]{mxFactor()}}, with the levels labeled with the max value
 in each quantile (i.e., open on the left-side). quantiles are labeled "quantile1"
 "quantile2" etc.
 }
@@ -61,7 +63,9 @@ x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more levels than integ
 x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},

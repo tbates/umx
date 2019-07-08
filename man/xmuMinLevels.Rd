@@ -12,7 +12,9 @@ xmuMinLevels(df, what = c("value", "name"))
 \item{what}{Either "value" or "name" (of the min-level column)}
 }
 \value{
-- min number of levels in frame
+\itemize{
+\item min number of levels in frame
+}
 }
 \description{
 Get the min levels from df

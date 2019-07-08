@@ -27,7 +27,7 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 }
 \value{
 \itemize{
-\item \code{\link{mxModel}}
+\item \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
@@ -62,7 +62,7 @@ xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", compa
 }
 \seealso{
 \itemize{
-\item \code{\link{mxTryHard}}
+\item \code{\link[=mxTryHard]{mxTryHard()}}
 }
 
 Other xmu internal not for end user: \code{\link{umxModel}},

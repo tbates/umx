@@ -7,7 +7,7 @@
 umxFixAll(model, name = "_fixed", run = FALSE, verbose = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} within which to fix free parameters}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} within which to fix free parameters}
 
 \item{name}{optional new name for the model. if you begin with a _ it will be made a suffix}
 
@@ -16,7 +16,9 @@ umxFixAll(model, name = "_fixed", run = FALSE, verbose = FALSE)
 \item{verbose}{whether to mention how many paths were fixed (default is FALSE)}
 }
 \value{
-- the fixed \code{\link{mxModel}}
+\itemize{
+\item the fixed \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 Fix all free parameters in a model using omxGetParameters()
@@ -35,7 +37,9 @@ m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 mxCompare(m1, m2)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Modify or Compare Models: \code{\link{umxAdd1}},

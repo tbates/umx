@@ -19,10 +19,12 @@ umx_stack(x, select, passalong, valuesName = "values",
 \item{groupName}{The name for the column containing the grouping variable (default = "ind")}
 }
 \value{
-- long-format dataframe
+\itemize{
+\item long-format dataframe
+}
 }
 \description{
-Operates like \code{\link{stack}}, but can preserve ("passalong") other variables on each row,
+Operates like \code{\link[=stack]{stack()}}, but can preserve ("passalong") other variables on each row,
 and allows the user control over the values and group column names for ease of use.
 }
 \examples{

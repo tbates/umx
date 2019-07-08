@@ -27,7 +27,7 @@ umxBrownie()
 }
 \seealso{
 \itemize{
-\item \code{\link{omxBrownie}}
+\item \code{\link[=omxBrownie]{omxBrownie()}}
 }
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},

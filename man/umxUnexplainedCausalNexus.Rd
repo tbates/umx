@@ -24,10 +24,14 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 }
 }
 \references{
-- https://www.github.com/tbates/umx/
+\itemize{
+\item https://www.github.com/tbates/umx/
+}
 }
 \seealso{
-- \code{\link{mxCheckIdentification}}, \code{\link{mxCompare}}
+\itemize{
+\item \code{\link[=mxCheckIdentification]{mxCheckIdentification()}}, \code{\link[=mxCompare]{mxCompare()}}
+}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},

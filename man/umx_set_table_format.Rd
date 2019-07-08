@@ -12,10 +12,12 @@ umx_set_table_format(knitr.table.format = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current knitr.table.format setting
+\itemize{
+\item Current knitr.table.format setting
+}
 }
 \description{
-Set knitr.table.format default (output style for tables). Legal values are 
+Set knitr.table.format default (output style for tables). Legal values are
 "latex", "html", "markdown", "pandoc", and "rst".
 }
 \examples{
@@ -29,7 +31,9 @@ umx_set_table_format("") # get available options
 umx_set_table_format(old)    # reinstate
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Get and set: \code{\link{umx_default_option}},

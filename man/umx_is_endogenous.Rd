@@ -2,17 +2,19 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_is_endogenous}
 \alias{umx_is_endogenous}
-\title{umx_is_endogenous}
+\title{List endogenous variables in a model}
 \usage{
 umx_is_endogenous(model, manifests_only = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} from which to get endogenous variables}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} from which to get endogenous variables}
 
 \item{manifests_only}{Whether to check only manifests (default = TRUE)}
 }
 \value{
-- list of endogenous variables
+\itemize{
+\item list of endogenous variables
+}
 }
 \description{
 Return a list of all the endogenous variables (variables with at least one incoming single-arrow path) in a model.
@@ -29,21 +31,15 @@ umx_is_endogenous(m1, manifests_only = TRUE)
 umx_is_endogenous(m1, manifests_only = FALSE)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+\itemize{
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-Other Test: \code{\link{umx_check_OS}},
-  \code{\link{umx_check_model}},
-  \code{\link{umx_check_names}},
-  \code{\link{umx_check_parallel}},
-  \code{\link{umx_check}}, \code{\link{umx_has_CIs}},
-  \code{\link{umx_has_been_run}},
-  \code{\link{umx_has_means}},
-  \code{\link{umx_has_square_brackets}},
-  \code{\link{umx_is_MxData}},
-  \code{\link{umx_is_MxMatrix}},
-  \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}}, \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_ordered}}
+Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_class}},
+  \code{\link{umx_is_exogenous}},
+  \code{\link{umx_is_numeric}}, \code{\link{umx}},
+  \code{\link{xmu_twin_check}}
 }
-\concept{Test}
+\concept{Check or test}

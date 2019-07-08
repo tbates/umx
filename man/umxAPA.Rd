@@ -13,8 +13,8 @@ umxAPA(obj = .Last.value, se = NULL, std = FALSE, digits = 2,
 \arguments{
 \item{obj}{A model (e.g. \link{lm}, lme, glm, t-test), beta-value, or data.frame}
 
-\item{se}{If obj is a beta, se treated as standard-error (returning a CI). 
-If obj is a model, used to select effect of interest (blank for all effects). 
+\item{se}{If obj is a beta, se treated as standard-error (returning a CI).
+If obj is a model, used to select effect of interest (blank for all effects).
 Finally, set se to the CI c(lower, upper), to back out the SE.}
 
 \item{std}{Whether to report std betas (re-runs model on standardized data).}
@@ -38,33 +38,37 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \item{means}{Whether or not to show means in a correlation table (Default TRUE)}
 }
 \value{
-- string
+\itemize{
+\item string
+}
 }
 \description{
 umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
-
-1. Given an lm, will return a formatted effect, including 95\% CI 
+\enumerate{
+\item Given an lm, will return a formatted effect, including 95\% CI
 in square brackets, for one of the effects (specified by name in se). e.g.:
-\code{\link{umxAPA}}(m1, "wt") yields:
+\href{m1,}{umxAPA()} yields:
+}
 
-\eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
-
-2. Given a dataframe, summaryAPA will return a table of correlations, with
-the mean and SD of each variable as the last row. So, 
-\code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )])} yields a table of 
+\eqn{\beta} = -5.344 \link{-6.486, -4.203}, p< 0.001
+\enumerate{
+\item Given a dataframe, summaryAPA will return a table of correlations, with
+the mean and SD of each variable as the last row. So,
+\code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )])} yields a table of
 correlations, means and SDs thus:
+}
 
 \tabular{lccc}{
-        \tab cyl         \tab  wt          \tab mpg          \cr
+\tab cyl         \tab  wt          \tab mpg          \cr
 cyl     \tab 1           \tab  0.78        \tab -0.85        \cr
 wt      \tab 0.78        \tab  1           \tab -0.87        \cr
 mpg     \tab -0.85       \tab  -0.87       \tab 1            \cr
 mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
 }
-
-3. Given obj and se, umxAPA returns a CI based on 1.96 times the se.
-
-4. Given only a number as obj will be treated as a p-value as returned in APA format.
+\enumerate{
+\item Given obj and se, umxAPA returns a CI based on 1.96 times the se.
+\item Given only a number as obj will be treated as a p-value as returned in APA format.
+}
 }
 \examples{
 
@@ -122,7 +126,9 @@ umxAPA(x)
 
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://my.ilstu.edu/~jhkahn/apastats.html}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://my.ilstu.edu/~jhkahn/apastats.html}
+}
 }
 \seealso{
 Other Reporting Functions: \code{\link{FishersMethod}},

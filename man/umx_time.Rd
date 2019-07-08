@@ -8,7 +8,7 @@ umx_time(x = NA, formatStr = c("simple", "std",
   "custom \%H \%M \%OS3"), tz = "GMT", autoRun = TRUE)
 }
 \arguments{
-\item{x}{A \code{\link{mxModel}} or list of models for which to display elapsed time, or 'start' or 'stop'}
+\item{x}{A \code{\link[=mxModel]{mxModel()}} or list of models for which to display elapsed time, or 'start' or 'stop'}
 
 \item{formatStr}{A format string, defining how to show the time (defaults to human readable)}
 
@@ -17,7 +17,9 @@ umx_time(x = NA, formatStr = c("simple", "std",
 \item{autoRun}{If TRUE (default), run the model if it appears not to have been.}
 }
 \value{
-- invisible time string
+\itemize{
+\item invisible time string
+}
 }
 \description{
 A function to compactly report how long a model took to execute. Comes with some preset styles
@@ -56,7 +58,9 @@ umx_time('stop') # report the time since timer was restarted.
 
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Reporting Functions: \code{\link{FishersMethod}},

@@ -7,12 +7,14 @@
 umx_standardize_Simplex(model, ...)
 }
 \arguments{
-\item{model}{an \code{\link{umxSimplex}} model to standardize}
+\item{model}{an \code{\link[=umxSimplex]{umxSimplex()}} model to standardize}
 
 \item{...}{Other options}
 }
 \value{
-- Standardized Simplex \code{\link{umxSimplex}} model
+\itemize{
+\item Standardized Simplex \code{\link[=umxSimplex]{umxSimplex()}} model
+}
 }
 \description{
 umx_standardize_Simplex
@@ -29,7 +31,9 @@ std = umx_standardize_Simplex(m1)
 
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

@@ -7,12 +7,14 @@
 umx_standardize_ACEcov(model, ...)
 }
 \arguments{
-\item{model}{an \code{\link{umxACEcov}} model to standardize}
+\item{model}{an \code{\link[=umxACEcov]{umxACEcov()}} model to standardize}
 
 \item{...}{Other options}
 }
 \value{
-- Standardized \code{\link{umxACEcov}} model
+\itemize{
+\item Standardized \code{\link[=umxACEcov]{umxACEcov()}} model
+}
 }
 \description{
 Standardize an ACE model with covariates
@@ -31,7 +33,9 @@ m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzD
 fit = umx_standardize_ACEcov(m1)
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},

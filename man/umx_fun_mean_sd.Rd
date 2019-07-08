@@ -14,7 +14,9 @@ umx_fun_mean_sd(x, na.rm = TRUE, digits = 2)
 \item{digits}{Rounding (default = 2)}
 }
 \value{
-- function result
+\itemize{
+\item function result
+}
 }
 \description{
 Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
@@ -22,8 +24,8 @@ to craft a custom nameless functions. e.g.
 }
 \details{
 \itemize{
-  \item \code{\link{umx_fun_mean_sd}}: returns "mean (SD)" of x.
-  \item Second item
+\item \code{\link[=umx_fun_mean_sd]{umx_fun_mean_sd()}}: returns "mean (SD)" of x.
+\item Second item
 }
 note: if a factor is given, then the mode is returned instead of the mean and SD.
 }
@@ -31,7 +33,9 @@ note: if a factor is given, then the mode is returned instead of the mean and SD
 umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other Miscellaneous Stats Helpers: \code{\link{oddsratio}},

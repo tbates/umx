@@ -20,14 +20,16 @@ umx_aggregate(formula = DV ~ condition, data = df,
 \item{report}{Format for the table: Default is markdown.}
 }
 \value{
-- table
+\itemize{
+\item table
+}
 }
 \description{
 A common task is preparing summary tables, aggregating over some grouping factor.
-Like mean and sd of age, by sex. R's \code{\link{aggregate}} function is useful and powerful, allowing
+Like mean and sd of age, by sex. R's \code{\link[=aggregate]{aggregate()}} function is useful and powerful, allowing
 xtabs based on a formula.
 
-umx_aggregate makes using it a bit easier. In particular, it has some common functions 
+umx_aggregate makes using it a bit easier. In particular, it has some common functions
 for summarizing data built-in, like "mean (sd)" (the default).
 
 \code{umx_aggregate(mpg ~ cyl, data = mtcars, what = "mean_sd")}
@@ -67,10 +69,14 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{umx_apply}}, \code{\link{aggregate}}
+\itemize{
+\item \code{\link[=umx_apply]{umx_apply()}}, \code{\link[=aggregate]{aggregate()}}
+}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},

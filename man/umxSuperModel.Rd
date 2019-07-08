@@ -18,11 +18,13 @@ umxSuperModel(name = "top", ..., autoRun = getOption("umx_auto_run"),
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
-- \code{\link{mxModel}}
+\itemize{
+\item \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
 umxSuperModel takes 1 or more models and wraps them in a supermodel with a
-\code{\link{mxFitFunctionMultigroup}} fit function that minimizes the sum of the
+\code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}} fit function that minimizes the sum of the
 fits of the sub-models.
 }
 \examples{
@@ -73,10 +75,14 @@ summary(m3)
 
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
-- \code{\link{mxFitFunctionMultigroup}}, \code{\link{umxRAM}}
+\itemize{
+\item \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
+}
 
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},

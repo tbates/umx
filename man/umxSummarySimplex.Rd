@@ -11,7 +11,7 @@ umxSummarySimplex(model, digits = 2, file = getOption("umx_auto_plot"),
   extended = FALSE, zero.print = ".", ...)
 }
 \arguments{
-\item{model}{an \code{\link{mxModel}} to summarize}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
 
@@ -37,15 +37,17 @@ Defaults to NA = no plot.}
 \item{...}{Other parameters to control model summary}
 }
 \value{
-- optional \code{\link{mxModel}}
+\itemize{
+\item optional \code{\link[=mxModel]{mxModel()}}
+}
 }
 \description{
-Summarize a fitted Simplex model returned by \code{\link{umxSimplex}}. Can control digits, report comparison model fits,
+Summarize a fitted Simplex model returned by \code{\link[=umxSimplex]{umxSimplex()}}. Can control digits, report comparison model fits,
 optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
 drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
 \details{
-See documentation for other umx models here: \code{\link{umxSummary}}.
+See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary()}}.
 }
 \examples{
 \dontrun{
@@ -60,10 +62,14 @@ umxSummary(m1, file = NA);
 }
 }
 \references{
-- \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\itemize{
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{umxSimplex}}
+\itemize{
+\item \code{\link[=umxSimplex]{umxSimplex()}}
+}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

@@ -97,13 +97,13 @@ namez(umxMatrix("bob", "Full", 3,3)$labels)
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
 \seealso{
 \itemize{
-\item Base-R pattern matching functions: \code{\link{grep}}.
-And \code{\link{umx_check_names}} to check for existence of names in a dataframe.
+\item Base-R pattern matching functions: \code{\link[=grep]{grep()}}.
+And \code{\link[=umx_check_names]{umx_check_names()}} to check for existence of names in a dataframe.
 }
 
 Other Reporting Functions: \code{\link{FishersMethod}},
