@@ -3,7 +3,7 @@
 \name{umxSummaryGxE}
 \alias{umxSummaryGxE}
 \alias{umxSummary.MxModelGxE}
-\title{umxSummaryGxE}
+\title{Summarize a GxE model}
 \usage{
 umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
   location = "topleft", separateGraphs = FALSE,
@@ -44,7 +44,10 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
 }
 }
 \description{
-Summarize a Moderation model, as returned by \code{\link[=umxGxE]{umxGxE()}}
+Summarize a genetic moderation model, as returned by \code{\link[=umxGxE]{umxGxE()}}. Prints graphs of A, C, and E, standardized and raw.
+}
+\details{
+Note: see also \code{\link[=umxReduce]{umxReduce()}} which knows how to reduce a GxE model.
 }
 \examples{
 # The total sample has been subdivided into a young cohort, 
@@ -77,8 +80,10 @@ umxSummaryGxE(m1, separateGraphs = FALSE)
 }
 \seealso{
 \itemize{
-\item \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+\item \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxReduce]{umxReduce()}}, \code{\link[=plot]{plot()}}, [umxSummary)] all work for IP, CP, GxE, and ACE models.
 }
+
+[umxSummary)]: R:umxSummary)
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},

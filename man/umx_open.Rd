@@ -22,7 +22,7 @@ NOTE: Your filepath is \code{\link[=shQuote]{shQuote()}}'d by this function.
 }
 \examples{
 \dontrun{
-umx_open() # default is to open wordking directory getwd()
+umx_open() # Default is to open working directory getwd()
 umx_open("~/bin/umx/R/misc_and_utility copy.r")
 }
 }

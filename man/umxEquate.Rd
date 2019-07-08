@@ -45,7 +45,7 @@ value during model fitting.
 \details{
 \emph{note}: In addition to using this method to equating parameters, you can
 also equate one parameter to another by setting its label to the
-"square bracket" address of the master, e.g. "a\link{r,c}".
+"square bracket" address of the master, e.g. "a[r,c]".
 
 \emph{Tip}: To find labels of free parameters use \code{\link[=umxGetParameters]{umxGetParameters()}}
 with free = TRUE

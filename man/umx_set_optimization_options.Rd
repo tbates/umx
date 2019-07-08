@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_set_optimization_options}
 \alias{umx_set_optimization_options}
-\title{umx_set_optimization_options}
+\title{Set options that affect optimization in OpenMx}
 \usage{
 umx_set_optimization_options(opt = c("mvnRelEps", "mvnMaxPointsA"),
   value = NULL, model = NULL, silent = FALSE)
@@ -19,11 +19,14 @@ umx_set_optimization_options(opt = c("mvnRelEps", "mvnMaxPointsA"),
 }
 \value{
 \itemize{
-\item 
+\item current values if no value set.
 }
 }
 \description{
-Set options that affect optimization in OpenMx. For mvnRelEps,  values between .0001 to .01 are conventional.
+\code{umx_set_optimization_options} provides access to get and set options affecting optimization.
+}
+\details{
+\emph{note}: For \code{mvnRelEps},  values between .0001 to .01 are conventional.
 Smaller values slow optimization.
 }
 \examples{

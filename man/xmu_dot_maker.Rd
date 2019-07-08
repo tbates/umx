@@ -17,7 +17,7 @@ xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 }
 \value{
 \itemize{
-\item 
+\item optionally returns the digraph text.
 }
 }
 \description{

@@ -29,7 +29,7 @@ umxHetCor(data, ML = FALSE, use = c("pairwise.complete.obs",
 }
 }
 \description{
-umxHetCor is a helper to
+\code{umxHetCor} is a helper to:
 \enumerate{
 \item return just the correlations from John Fox's polycor::hetcor function
 \item If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
@@ -38,11 +38,6 @@ umxHetCor is a helper to
 \examples{
 umxHetCor(mtcars[,c("mpg", "am")])
 umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
-}
-\references{
-\itemize{
-\item 
-}
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

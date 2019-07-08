@@ -22,7 +22,7 @@ umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of "b \link{lower, upper}" (Default)}
+\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 

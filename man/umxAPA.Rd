@@ -50,11 +50,11 @@ in square brackets, for one of the effects (specified by name in se). e.g.:
 \href{m1,}{umxAPA()} yields:
 }
 
-\eqn{\beta} = -5.344 \link{-6.486, -4.203}, p< 0.001
+\eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 \enumerate{
 \item Given a dataframe, summaryAPA will return a table of correlations, with
 the mean and SD of each variable as the last row. So,
-\code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )])} yields a table of
+\code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
 correlations, means and SDs thus:
 }
 

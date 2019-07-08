@@ -15,7 +15,7 @@ umx_array_shift(x)
 }
 }
 \description{
-Returns x\link{1}. Has the SIDE EFFECT of assigning x to x\link{2:end} in the container environment.
+Returns x[1]. Has the SIDE EFFECT of assigning x to x[2:end] in the container environment.
 }
 \examples{
 x = c("Alice", "Bob", "Carol")

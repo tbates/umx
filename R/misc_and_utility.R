@@ -1905,7 +1905,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
 #' @family File Functions
-#' @return
+#' @return -
 #' @export
 #' @md
 #' @references - <https://www.github.com/tbates/umx>
@@ -2055,7 +2055,7 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 #' @param destFolder Folder to move files into
 #' @param test Boolean determining whether to change the names, or just report on what would have happened
 #' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe))
-#' @return
+#' @return -
 #' @family File Functions
 #' @md
 #' @export
@@ -2111,7 +2111,7 @@ umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, dest
 #'
 #' NOTE: Your filepath is [shQuote()]'d by this function.
 #' @param filepath The file to open
-#' @return
+#' @return -
 #' @export
 #' @family File Functions
 #' @md
@@ -2503,7 +2503,7 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 #' @param model an [mxModel()] to report on
 #' @param comparison If not NULL, used as comparison model
 #' @param digits (default = 2)
-#' @return
+#' @return -
 #' @export
 #' @family Reporting Functions
 #' @seealso - [umxSummary()]
@@ -2680,7 +2680,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
-#' @return
+#' @return -
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -3203,7 +3203,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
 #' @param report How to report the results. "html" = open in browser.
-#' @return
+#' @return -
 #' @export
 #' @family Reporting Functions
 #' @references - <https://tbates.github.io>

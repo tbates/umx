@@ -44,18 +44,16 @@ umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
 }
 }
 \description{
-umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by \code{\link[=umxGxEbiv]{umxGxEbiv()}}.
+\code{umxSummaryGxEbiv} summarizes a bivariate moderation model, as returned by \code{\link[=umxGxEbiv]{umxGxEbiv()}}.
 }
 \examples{
-data(twinData) 
-selDVs  = "wt"
-selDefs = "ht"
+data(twinData)
 df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "")
 mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
 dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
 
 \dontrun{
-m1 = umxGxEbiv(selDVs = selDVs, selDefs = selDefs, 
+m1 = umxGxEbiv(selDVs = "wt", selDefs = "ht", 
 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 # Plot Moderation
 umxSummary(m1)

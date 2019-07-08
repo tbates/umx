@@ -2,25 +2,25 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_drop_ok}
 \alias{umx_drop_ok}
-\title{umx_drop_ok}
+\title{A meaningful sentence about a model comparison}
 \usage{
 umx_drop_ok(model1, model2, text = "parameter")
 }
 \arguments{
-\item{model1}{the base code{\link{mxModel}}}
+\item{model1}{the base \code{\link[=mxModel]{mxModel()}}}
 
-\item{model2}{the nested code{\link{mxModel}}}
+\item{model2}{the nested \code{\link[=mxModel]{mxModel()}}}
 
 \item{text}{name of the thing being tested, i.e., "Extraversion" or "variances"}
 }
 \value{
 \itemize{
-\item 
+\item T/F
 }
 }
 \description{
 Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
-merged with \url{umxCompare()} :-)
+merged with \code{\link[=umxCompare]{umxCompare()}} :-)
 }
 \examples{
 require(umx)

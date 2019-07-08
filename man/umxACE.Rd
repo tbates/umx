@@ -168,8 +168,8 @@ data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 
 # 2. umxACE picks the variables it needs from the data.
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 
 # 3. umxACE can figure out variable names using sep: 
 #    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"

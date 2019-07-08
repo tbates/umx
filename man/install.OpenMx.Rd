@@ -10,7 +10,7 @@ install.OpenMx(loc = c("NPSOL", "travis", "CRAN",
   repos = getOption("repos"))
 }
 \arguments{
-\item{loc}{Which install to get: "UVa" (the default), "travis" (latest build),
+\item{loc}{Which install to get: e.g., "NPSOL" (the default), "travis" (latest build),
 or open the travis list of builds on the web to view/pick a url.}
 
 \item{url}{A custom URL if you have/need one (probably not). If you're on a Mac, you can set this to "Finder" and the package selected in the Finder will be installed. Overrides other settings.}
@@ -25,7 +25,7 @@ or open the travis list of builds on the web to view/pick a url.}
 }
 }
 \description{
-You can install OpenMx, including the latest parallel/NPSOL enabled build of OpenMx. Options are:
+You can install OpenMx, including the latest NPSOL-enabled build of OpenMx. Options are:
 \enumerate{
 \item "NPSOL": Install from our repository (default: This is where we maintain binaries supporting parallel processing and NPSOL).
 \item "travis": Install the latest travis built (currently MacOS only).

@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_set_optimizer}
 \alias{umx_set_optimizer}
-\title{umx_set_optimizer}
+\title{Set the optimizer in OpenMx}
 \usage{
 umx_set_optimizer(opt = NA, model = NULL, silent = FALSE)
 }
@@ -16,11 +16,11 @@ umx_set_optimizer(opt = NA, model = NULL, silent = FALSE)
 }
 \value{
 \itemize{
-\item 
+\item current optimizer if nothing requested to be set.
 }
 }
 \description{
-Set the optimizer in OpenMx
+\code{umx_set_optimizer} privdes an easy way to get and set the default optimizer.
 }
 \examples{
 library(umx)

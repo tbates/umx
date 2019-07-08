@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmu_get_CI}
 \alias{xmu_get_CI}
-\title{xmu_get_CI}
+\title{Look up and report CIs for free parameters}
 \usage{
 xmu_get_CI(model, label, prefix = "top.", suffix = "_std",
   digits = 2, SEstyle = FALSE, verbose = FALSE)
@@ -18,18 +18,18 @@ xmu_get_CI(model, label, prefix = "top.", suffix = "_std",
 
 \item{digits}{= 2}
 
-\item{SEstyle}{If TRUE, report "b(se)" instead of b CI95\link{l,u} (default = FALSE)}
+\item{SEstyle}{If TRUE, report "b(se)" instead of b CI95[l,u] (default = FALSE)}
 
 \item{verbose}{= FALSE}
 }
 \value{
 \itemize{
-\item the CI string, e.g. ".73\link{-.20, .98}" or .73(.10)
+\item the CI string, e.g. ".73[-.20, .98]" or .73(.10)
 }
 }
 \description{
 Look up CIs for free parameters in a model, and return as APA-formatted text string.
-If std are available then they are reported.
+If std are available, then these are reported.
 }
 \examples{
 require(umx); data(demoOneFactor)

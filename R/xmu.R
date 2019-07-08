@@ -511,7 +511,7 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' @param numObsDZ set if data are not raw.
 #' @param enforceSep Whether to require sep to be set, or just warn if it is not (Default = TRUE: enforce).
 #' @param optimizer Set by name (if you want to change it).
-#' @return
+#' @return -
 #' @export
 #' @family Twin Modeling Functions
 #' @family Check or test

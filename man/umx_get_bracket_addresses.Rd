@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_get_bracket_addresses}
 \alias{umx_get_bracket_addresses}
-\title{Get mat\link{r,c} style cell address from an mxMatrix}
+\title{Get bracket-style addresses from an mxMatrix}
 \usage{
 umx_get_bracket_addresses(mat, free = NA, newName = NA)
 }

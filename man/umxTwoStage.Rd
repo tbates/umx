@@ -2,21 +2,21 @@
 % Please edit documentation in R/umx_build_high_level_models.R
 \name{umxTwoStage}
 \alias{umxTwoStage}
-\title{umxTwoStage}
+\title{Build a SEM implementing 2-stage least squares regression}
 \usage{
 umxTwoStage(formula, instruments, data, subset, weights,
   contrasts = NULL, name = "tsls", ...)
 }
 \arguments{
-\item{formula}{The structural equation to be estimated; a regression constant is implied if not explicitly omitted.}
+\item{formula}{The structural equation to be estimated; Y ~ X A regression constant is implied if not explicitly deleted.}
 
 \item{instruments}{A one-sided formula specifying instrumental variables.}
 
 \item{data}{data.frame containing the variables in the model.}
 
-\item{subset}{\link{optional} vector specifying a subset of observations to be used in fitting the model.}
+\item{subset}{(optional) vector specifying a subset of observations to be used in fitting the model.}
 
-\item{weights}{\link{optional} vector of weights to be used in the fitting process;
+\item{weights}{(optional) vector of weights to be used in the fitting process;
 If specified should be a non-negative numeric vector with one entry for each observation,
 to be used to compute weighted 2SLS estimates.}
 
@@ -28,11 +28,11 @@ to be used to compute weighted 2SLS estimates.}
 }
 \value{
 \itemize{
-\item 
+\item \code{\link[=mxModel]{mxModel()}}
 }
 }
 \description{
-umxTwoStage implements 2-stage least squares regression in Structural Equation Modeling.
+\code{umxTwoStage} implements 2-stage least squares regression in Structural Equation Modeling.
 For ease of learning, the function is modeled closely on the \code{\link[sem]{tsls}}.
 }
 \details{

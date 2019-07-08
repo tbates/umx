@@ -48,11 +48,6 @@ m1 <- umxRAM("m1", data = demoOneFactor,
 umxFitIndices(m1)
 umxAPA(umxFitIndices(m1), digits = 3)
 }
-\references{
-\itemize{
-\item 
-}
-}
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
