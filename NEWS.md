@@ -1,7 +1,39 @@
 # umx 3.0.0
-* July 2019, R 3.6.0 "Planting of a Tree"
+* July 2019 R 3.6.1 "Action of the Toes"
 * ALPHA: `umxRAM` lavaan string syntax support.
 * ALPHA: `umxRAM` multi-group models.
+* FIX: `mxPath` `v0m0` , `v.m0` now use labels (if two provided)
+* NEW: `power.ACE.test` and examples
+* NEW: `xmu_safe_run_summary` can listen to `silent` to turn off summary and progress from models - use when running big simulation loops
+* NEW: `umx_set_silent` preference (option) for other functions to listen too and choose how much junk to print to console. Like a global verbose.
+* NEW: `umx_select_valid` to replace values in one column with those in another, if first column is NA.
+* NEW: `FishersMethod` To combine p-values
+* NEW: `oddsratio`
+* IMPROVED: `umxReduce.ModelGxE` more rational set of reductions - means obey principle of marginality.
+* IMPROVED: `umx_move_file` supports wildcards (closes #83)
+* IMPROVED: `plot` for `umxIP` supports `means=TRUE`
+* IMPROVED: `umxReduce.GxE` Don't try and drop means moderation.
+* IMPROVED: `xmu_make_mxData` drop duplicates from manifests list
+* IMPROVED: `xmu_make_mxData` handles manipulating a 1-column mxData input
+* IMPROVED: `umx_make_TwinData` can now simulate D i.e., A, C, D & E
+* IMPROVED: `umx_make_TwinData` bivariate parameters (e.g., `aMod`) --> `bivAmod` for more clarity (closes #78)
+* IMPROVED: `umx_make_TwinData` More robust
+* IMPROVED: `umx_scale_wide_data` gains twins parameter
+* IMPROVED: `plot`: can do pathLabels = "labels" to show the labels for paths
+* IMPROVED: `umx_rename` reorder parameters, call x-> `data`, deprecate `grep` in favour of `regex` for consistency,
+* IMPROVED: `umx_rename` examples
+* IMPROVED: @md links
+* IMPROVED: `namez` has a better default action (call `names` )
+* CONVENIENCE: `umxCP` and `umxIP` can take `data` and create `MZ` and `DZ` datasets.
+  * Preparation for expansion to 5-group models.
+* HELP: `NEWS` layout improved for R 3.6.0
+* HELP: `Rd` doi link, spell-check,
+* HELP: `umxEFA` notes it can use formulas, e.g. umxEFA(~v1+v2+v3, data)
+* HELP: `NEWS` updated
+* HELP: `GxEbiv` Improved help page
+* CHANGE: `umx_aggregate` now uses df as default data.
+* CHANGED: `showEstimates` -> `show` across all functions: makes learning/usage more consistent.
+* CHANGED: `umxGetParameters` doesn't anchor search strings to front of label, nor suffix with digit label.
 
 # umx 2.15.0
 * May 2019, R 3.6.0 "Planting of a Tree"
