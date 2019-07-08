@@ -256,7 +256,8 @@ methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{umxRAM}}, \code{\link{mxModel}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' umxModel()
@@ -768,7 +769,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @export
 #' @family Core Modeling Functions
 #' @seealso - \code{\link{mxFitFunctionMultigroup}}, \code{\link{umxRAM}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' library(umx)
 #' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
@@ -884,6 +886,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' @family Modify or Compare Models
 #' @references - \url{https://github.com/tbates/umx}
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' 
@@ -1922,6 +1925,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @return - \code{\link{mxModel}} of subclass mxModel.ACEcov
 #' @export
 #' @family Twin Modeling Functions
+#' @md
 #' @references 
 #' Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
@@ -2588,6 +2592,7 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxIP}}, \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2794,6 +2799,7 @@ umxIPold <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a
 #' @export
 #' @family Advanced Model Building Functions
 #' @seealso - \code{\link{umxRAM}}
+#' @md
 #' @examples
 #' \dontrun{
 #' data(twinData)
@@ -2844,6 +2850,7 @@ umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' @seealso - Core functions:
 #' @family Advanced Model Building Functions
 #' @references - \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3003,7 +3010,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - \url{https://www.github.com/tbates/umx}
-#' @export
+#' @md
 #' @examples
 #' # ==============================================================
 #' # = Show how OpenMx models are not labeled, and then add labels =
@@ -3096,7 +3103,8 @@ umxLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @export
 #' @family Core Modeling Functions
 #' @seealso - \code{\link{xmu_simplex_corner}}, \code{\link{mxMatrix}}, \code{\link{umxLabel}}, \code{\link{umxRAM}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' # ==================================================================================
 #' # = 1. Showing how name is first parameter, and how cells are labelled by default. =
@@ -3159,6 +3167,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @export
 #' @family Core Modeling Functions
 #' @seealso - \code{\link{umxMatrix}}
+#' @md
 #' @examples
 #' x = umxAlgebra("circ", 2 * pi)
 #' class(x$formula)
@@ -3302,7 +3311,8 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @export
 #' @family Modify or Compare Models
 #' @seealso - \code{\link{umxModify}}, \code{\link{umxLabel}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3377,6 +3387,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @seealso \code{\link{umxModify}}, \code{\link{umxCompare}}
 #' @family Modify or Compare Models
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3445,7 +3456,8 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' @return - the fixed \code{\link{mxModel}}
 #' @export
 #' @family Modify or Compare Models
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3494,6 +3506,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @export
 #' @family Modify or Compare Models
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
 #' umxDrop1(fit3) # try dropping each free parameters (default)  
@@ -3550,6 +3563,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @export
 #' @family Modify or Compare Models
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
 #' model = umxAdd1(model)
@@ -3864,7 +3878,7 @@ umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL,
 #' @return - list of thresholds matrix, deviations, lowerOnes
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' # ============================
@@ -4379,7 +4393,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @export
 #' @family Core Modeling Functions
 #' @seealso - \code{\link{mxPath}}
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' # A worked example
 #' data(demoOneFactor)

@@ -234,7 +234,8 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 #' @family Teaching and testing Functions
 #' @family Reporting Functions
 #' @seealso - \code{\link{mxCheckIdentification}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' tmx_is.identified(nVariables = 2, nFactors = 1) # FALSE
 #' tmx_is.identified(nVariables = 3, nFactors = 1) # TRUE

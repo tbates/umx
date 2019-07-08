@@ -79,6 +79,7 @@
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -218,7 +219,8 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @family Twin Modeling Functions
 #' @family Reporting functions
 #' @seealso - \code{\link{umxSimplex}}
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' \dontrun{
 #' # 4 time model
@@ -438,6 +440,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, simplex, ACEv, or ACE model.
 #' @seealso - \code{\link{umxSimplex}}
 #' @family Plotting functions
+#' @md
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -542,7 +545,8 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' @return - Standardized Simplex \code{\link{umxSimplex}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' \dontrun{
 #' data(iqdat)

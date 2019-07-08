@@ -237,7 +237,8 @@ umxFactanal <- umxEFA
 #' @export
 #' @family Reporting Functions
 #' @seealso - \code{\link{mxFactorScores}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' m1 = umxEFA(mtcars, factors = 2)
 #' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
@@ -288,6 +289,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
 #' In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass., 
 #' Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
+#' @md
 #' @examples
 #' library(umx)
 #' 

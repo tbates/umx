@@ -200,6 +200,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{xmu_make_mxData}}
+#' @md
 #' @examples
 #' xmu_model_needs_means(mtcars, type = "Auto")
 #' xmu_model_needs_means(mtcars, type = "FIML")
@@ -319,6 +320,7 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' @return - \code{\link{mxData}}
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' # =========================
 #' # = Continuous ML example =
@@ -513,7 +515,8 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' @export
 #' @family Twin Modeling Functions
 #' @family Check or test
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' library(umx)
 #' data(twinData)
@@ -696,6 +699,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #' @return - The labeled \code{\link{mxModel}}
 #' @family xmu internal not for end user
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -737,6 +741,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @return - The labeled \code{\link{mxModel}}
 #' @family xmu internal not for end user
 #' @export
+#' @md
 #' @examples
 #' require(umx); data(demoOneFactor)
 #' # raw but no means
@@ -833,6 +838,7 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{umxMatrix}}
+#' @md
 #' @examples
 #' x = umxMatrix('test', 'Full', nrow = 4, ncol = 4)
 #' xmu_simplex_corner(x, start = .9)
@@ -884,6 +890,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 #' @param overRideExisting Whether to overRideExisting (Default FALSE)
 #' @return - The labeled \code{\link{mxMatrix}}
 #' @family xmu internal not for end user
+#' @md
 #' @export
 xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE, labelFixedCells = FALSE, overRideExisting = FALSE) {
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
@@ -1052,6 +1059,7 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' @return - start value list
 #' @export
 #' @family xmu internal not for end user
+#' @md
 xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 	# nb: bivariate length = n-1 recursive 1=0, 2=1, 3=3, 4=7 i.e., 
 	if(is.na(sd)){
@@ -1074,6 +1082,7 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1102,6 +1111,7 @@ xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
 #' @param vector = Whether to report the results as a vector default = TRUE
 #' @family xmu internal not for end user
 #' @export
+#' @md
 xmuMI <- function(model, vector = TRUE) {
 	# modification indices
 	# v0.9: written Michael Culbertson
@@ -1222,6 +1232,7 @@ xmuMI <- function(model, vector = TRUE) {
 #' @return - TRUE/FALSE
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' xmuHasSquareBrackets("A[1,2]")
 xmuHasSquareBrackets <- function (input) {
@@ -1243,6 +1254,7 @@ xmuHasSquareBrackets <- function (input) {
 #' @return - max number of levels in frame
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' xmuMaxLevels(mtcars) # NA = no ordinal vars
 #' xmuMaxLevels(umxFactor(mtcars))
@@ -1277,6 +1289,7 @@ xmuMaxLevels <- function(df, what = c("value", "name")) {
 #' @return - min number of levels in frame
 #' @export
 #' @family xmu internal not for end user
+#' @md
 #' @examples
 #' xmuMinLevels(mtcars) # NA = no ordinal vars
 #' xmuMinLevels(umxFactor(mtcars))
@@ -1317,6 +1330,7 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - \code{\link{umxLabel}}
+#' @md
 #' @examples
 #' xmu_clean_label("data.var", replace = "_")
 #' xmu_clean_label("my.var.lab", replace = "_")
@@ -1337,6 +1351,7 @@ xmu_clean_label <- function(label, replace = "_") {
 #' @return - added items
 #' @export
 #' @family xmu internal not for end user
+#' @md
 xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 	a       = combn(pathList, 2)
 	nVar    = dim(a)[2]
@@ -1365,6 +1380,7 @@ xmuMakeTwoHeadedPathsFromPathList <- function(pathList) {
 #' @return - added items
 #' @export
 #' @family xmu internal not for end user
+#' @md
 xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 	toAdd   = rep(NA, length(sourceList) * length(destinationList))
 	n       = 1
@@ -1394,6 +1410,7 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #' @return -
 #' @family xmu internal not for end user
 #' @family Graphviz
+#' @md
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	if(strip_zero){
 		# strip leading "0." (pad "0.5" to "50")
@@ -1444,6 +1461,7 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 #' @export
 #' @family xmu internal not for end user
 #' @family Graphviz
+#' @md
 #' @examples
 #' # Add L1 to min
 #' old_min = c("min1", "min2")
@@ -1707,7 +1725,8 @@ xmu_string2path <- function(from) {
 #' @return - the CI string, e.g. ".73[-.20, .98]" or .73(.10)
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx); data(demoOneFactor)
 #' latents = c("g"); manifests = names(demoOneFactor)

@@ -17,6 +17,7 @@
 #' @export
 #' @family Reporting functions
 #' @references - 
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)

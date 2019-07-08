@@ -32,6 +32,7 @@
 #' @family Data Functions
 #' @seealso - \code{\link{mxFitFunctionWLS}}, \code{\link{omxAugmentDataWithWLSSummary}}
 #' @export
+#' @md
 #' @examples
 #'
 #' # ====================================
@@ -172,7 +173,8 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{umxLabel}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' umx_cell_is_on(r = 3, c = 3, "lower")
 #' umx_cell_is_on(r = 3, c = 3, "lower_inc")
@@ -279,7 +281,8 @@ umx_get_options <- function() {
 #' @return - Current umx.plot.suffix setting
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' umx_set_plot_file_suffix() # print current state
 #' old = umx_set_plot_file_suffix(silent = TRUE) # store current value
@@ -320,7 +323,8 @@ umx_set_plot_file_suffix <- function(umx.plot.suffix = NULL, silent = FALSE) {
 #' @return - Current umx.plot.format setting
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' library(umx)
 #' umx_set_plot_format() # print current state
@@ -389,7 +393,8 @@ umx_set_separator <- function( umx_default_separator = NULL, silent = FALSE) {
 #' @return - Current knitr.table.format setting
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' library(umx)
 #' umx_set_table_format() # show current state
@@ -427,7 +432,8 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' @return - Current umx_auto_plot setting
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' library(umx)
 #' umx_set_auto_plot() # print current state
@@ -542,7 +548,8 @@ umx_set_silent <- function(value = NA, silent = FALSE) {
 #' @return - Current umx_auto_run setting
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' library(umx)
 #' umx_set_auto_run() # print existing value
@@ -574,7 +581,8 @@ umx_set_auto_run <- function(autoRun = NA, silent = FALSE) {
 #' @return - current value of condensed slots
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' library(umx)
 #' umx_set_condensed_slots() # print
@@ -613,7 +621,8 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 #' @return - 
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' umx_set_optimization_options() # print the existing state(s)
 #' umx_set_optimization_options("mvnRelEps") # show this one
@@ -660,7 +669,8 @@ umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA"), 
 #' @return - 
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' library(umx)
 #' umx_set_optimizer() # print the existing state
@@ -703,7 +713,8 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' @return - number of cores
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' library(umx)
 #' manifests = c("mpg", "disp", "gear")
@@ -759,7 +770,8 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' @return - mxModel if provided
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
 #' # turn off checkpointing with interval = 0
@@ -824,7 +836,8 @@ umx_checkpoint <- umx_set_checkpoint
 #' @return - NULL
 #' @export
 #' @family Get and set
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' umx_get_checkpoint() # current global default
 #' require(umx)
@@ -879,7 +892,8 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @return - NULL
 #' @export
 #' @family Test
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' \dontrun{
 #' # On a fast machine, takes a minute with 1 core
@@ -1004,6 +1018,7 @@ umx_check_parallel <- function(nCores = c(1, parallel::detectCores()/2), testScr
 #' @family Advanced Model Building Functions
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @export
+#' @md
 #' @examples
 #' \dontrun{
 #' mat1 = umxJiggle(mat1)
@@ -1027,8 +1042,9 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @param manifests_only Whether to check only manifests (default = TRUE)
 #' @return - list of exogenous variables
 #' @export
-#' @family Test
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+#' @family Check or test
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1059,7 +1075,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 	return(exog)
 }
 
-#' umx_is_endogenous
+#' List endogenous variables in a model
 #'
 #' Return a list of all the endogenous variables (variables with at least one incoming single-arrow path) in a model.
 #'
@@ -1067,8 +1083,9 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @param manifests_only Whether to check only manifests (default = TRUE)
 #' @return - list of endogenous variables
 #' @export
-#' @family Test
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+#' @family Check or test
+#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1112,7 +1129,8 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1156,7 +1174,8 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' @md
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1218,7 +1237,8 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLaten
 #' @return - 
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1327,7 +1347,8 @@ umx_explode_twin_names <- function(df, sep = "_T") {
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{umxFactanal}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' umxFactor(letters)
 #' umxFactor(letters, verbose = TRUE) # report coercions
@@ -1459,7 +1480,8 @@ umxBrownie <- function() {
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{packageVersion}}, \code{\link{install.OpenMx}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' x = umxVersion(); x
 umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx") {
@@ -1583,7 +1605,8 @@ umx_pad <- function(x, n) {
 #' @export
 #' @seealso - \code{\link{umx_aggregate}} 
 #' @family Miscellaneous Stats Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' umx_apply(mean, mtcars, by = "columns")
 #' umx_apply(mean, of = mtcars, by = "columns")
@@ -1890,7 +1913,6 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
 #' }
 umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", listPattern = NA, test = TRUE, overwrite = FALSE) {
-	# TODO: umx_rename_file: Add recursive support
 	if(is.na(replaceStr)){
 		stop("Please set a replacement string")
 	}
@@ -1987,7 +2009,8 @@ dl_from_dropbox <- function(x, key=NULL){
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - \code{\link{umx_msg}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' umx_pb_note("done!", umx_time(m1))
@@ -2122,7 +2145,8 @@ umx_open <- function(filepath = getwd()) {
 #' @return - TRUE if on the specified OS (else FALSE)
 #' @export
 #' @family Test
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' umx_check_OS()
 umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = c("ignore", "warn", "die")) {
@@ -2432,6 +2456,7 @@ rowMin <- function(df, na.rm= TRUE) {
 #' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' head(umx_round(mtcars, coerce = FALSE))
 #' head(umx_round(mtcars, coerce = TRUE))
@@ -2480,6 +2505,7 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 #' @export
 #' @family Reporting Functions
 #' @seealso - \code{\link{umxSummary}}
+#' @md
 #' @examples
 #' \dontrun{
 #' umx_show_fit_or_comparison(model, comparison, digits=3)
@@ -2591,7 +2617,8 @@ print.reliability <- function (x, digits = 4, ...){
 #' @export
 #' @seealso \code{\link{umxVersion}}
 #' @family Miscellaneous Utility Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' install.OpenMx() # gets the NPSOL version
@@ -2657,7 +2684,8 @@ umx_update_OpenMx <- install.OpenMx
 #' @return - 
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' umx_make(what = "q"))        # Quick install
@@ -2710,7 +2738,8 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 #' @return - NULL
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' a = "brian"
 #' umx_msg(a)
@@ -2780,7 +2809,8 @@ umx_msg <- function(x) {
 #' @export
 #' @family String Functions
 #' @seealso \code{\link{namez}}
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' # two styles doing the same thing: first is more general
 #' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
@@ -2867,7 +2897,8 @@ umx_merge_CIs <- function(m1, m2) {
 #' @return - \code{\link{mxData}} of type = cov
 #' @export
 #' @family Data Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' umxCovData(mtcars, c("mpg", "hp"))
 umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
@@ -2957,6 +2988,7 @@ umx_dot_define_shapes <- function(latents, manifests, preOut= "") {
 #' @export
 #' @family Graphviz
 #' @seealso - \code{\link{umx_dot_define_shapes}}
+#' @md
 #' @examples
 #' umx_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
 umx_dot_rank <- function(vars, pattern, rank) {
@@ -3175,7 +3207,8 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @return - 
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3287,6 +3320,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' umx_time('stop') # alert user stop called when not yet started... 
@@ -3422,6 +3456,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @seealso \code{\link{umx_msg}}, \code{\link{umx_set_table_format}} 
 #' @family Miscellaneous Utility Functions
 #' @family Reporting Functions
+#' @md
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
@@ -3483,6 +3518,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @export
 #' @family Test
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3646,7 +3682,8 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family Miscellaneous Stats Helpers
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' tmp     = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
@@ -3768,6 +3805,7 @@ umx_is_MxData <- function(x) {
 #' @export
 #' @family Test
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' tmp = mtcars
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
@@ -3859,6 +3897,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @export
 #' @family Test
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3897,6 +3936,7 @@ umx_is_RAM <- function(obj) {
 #' @export
 #' @family Test
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' m1 = mxModel("test")
 #' if(umx_is_MxModel(m1)){
@@ -3935,6 +3975,7 @@ umx_is_MxModel <- function(obj, listOK = FALSE) {
 #' @export
 #' @family Test
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' x = mxMatrix(name = "eg", type = "Full", nrow = 3, ncol = 3, values = .3)
 #' if(umx_is_MxMatrix(x)){
@@ -4006,7 +4047,8 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' @return - TRUE or FALSE
 #' @export
 #' @family Test
-#' @references - https://www.github.com/tbates/umx/
+#' @references - <https://www.github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -4043,7 +4085,8 @@ umx_has_means <- function(model) {
 #' @return - TRUE or FALSE
 #' @export
 #' @family Test
-#' @references - https://www.github.com/tbates/umx/
+#' @references - <https://www.github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -4213,7 +4256,8 @@ umx_reorder <- function(old, newOrder) {
 #' @return - recoded variable as an \code{\link{mxFactor}}
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
 #' x = data.frame(x)
@@ -4320,6 +4364,7 @@ umx_has_square_brackets <- function (input) {
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' \dontrun{
 #' alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " %*% "), name = "test_case")
@@ -4337,6 +4382,7 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @export
 #' @family String Functions
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' umx_object_as_str(mtcars) # "mtcars"
 umx_object_as_str<- function(x) {
@@ -4356,6 +4402,7 @@ umx_object_as_str<- function(x) {
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' m1 = mxModel("fit",
 #'		mxMatrix("Full", nrow = 1, ncol = 1, free = TRUE, values = 1, name = "a"), 
@@ -4446,7 +4493,8 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 #' @export
 #' @family Check or test
 #' @seealso - \code{\link{umx_is_numeric}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' umx_is_class(mtcars) # report class list
 #' # Are the variables in mtcars type character?
@@ -4502,7 +4550,8 @@ umx_is_class <- function(df, classes=NULL, all = TRUE){
 #' @export
 #' @family Check or test
 #' @seealso - \code{\link{umx_is_class}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' umx_is_numeric(mtcars) # TRUE
 #' umx_is_numeric(mtcars, all=FALSE) # vector of TRUE
@@ -4550,7 +4599,8 @@ umx_is_numeric <- function(df, all = TRUE){
 #' @return - dataframe with var residualized in place (i.e under its original column name)
 #' @export
 #' @family Twin Data functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' # Residualize mpg on cylinders and displacement
 #' r1 = umx_residualize("mpg", c("cyl", "disp"), data = mtcars)
@@ -4704,6 +4754,7 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' @family Get and set
 #' @seealso - \code{\link{match.arg}}
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' option_list = c("default", "par.observed", "empirical")
 #' umx_default_option("par.observed", option_list)
@@ -4842,7 +4893,8 @@ qm <- function(..., rowMarker = "|") {
 #' @return - a vector of strings, e.g. c("d", "o", "g")
 #' @export
 #' @family String Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{http://php.net/manual/en/function.explode.php}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md, \url{http://php.net/manual/en/function.explode.php}
 #' @examples
 #' umx_explode("", "dog") # "d" "o" "g"
 #' umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
@@ -4884,7 +4936,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' And \code{\link{umx_check_names}} to check for existence of names in a dataframe. 
 #' @family Reporting Functions
 #' @family String Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' # Names from a dataframe, with character matching
@@ -5007,7 +5059,7 @@ namez <- umx_names
 #' @export
 #' @seealso [base::trimws()]
 #' @family String Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' umx_trim(" dog") # "dog"
@@ -5028,15 +5080,16 @@ umx_trim <- function(string, removeThis = NULL) {
 	}
 }
 
-#' umx_rot
+#' Rotate a vector
 #'
-#' rotate a vector (default, rotate by 1)
+#' `umx_rot` rotates the items of a vector (1 place, by default). So: c(1,2,3) -> c(2,3,1)
 #'
 #' @param vec vector to rotate
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family String Functions
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' umx_rot(1:10)
 #' umx_rot(c(3,4,5,6,7))
@@ -5249,6 +5302,7 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 #' @return - long-format dataframe
 #' @export
 #' @family Data Functions
+#' @md
 #' @examples
 #' 
 #' # Base-R stack function
@@ -5285,6 +5339,7 @@ umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "
 #' @return - first item of x
 #' @export
 #' @family Miscellaneous Utility Functions
+#' @md
 #' @examples
 #' x = c("Alice", "Bob", "Carol")
 #' umx_array_shift(x) # returns "Alice"
@@ -5307,6 +5362,7 @@ umx_array_shift <- function(x){
 #' @family Data Functions
 #' @export
 #' @seealso - \code{\link{subset}}
+#' @md
 #' @examples
 #' test = data.frame(
 #' a = paste0("a", 1:10),
@@ -6054,7 +6110,8 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #' @export
 #' @seealso - \code{\link{cov2cor}}
 #' @family Data Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), paste0("v", 1:6)),
 #' data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
@@ -6101,7 +6158,8 @@ umx_cov2raw <- function(myCovariance, n, means = 0) {
 #' @return - \code{\link{matrix}}
 #' @export
 #' @family Data Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' require(umx) # for umxRAM
@@ -6187,7 +6245,7 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
 #' @family Data Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}, \url{https://openmx.ssri.psu.edu}
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 #' @examples
 #' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
 #' str(df)
@@ -6260,6 +6318,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - 
+#' @md
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
 #' umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
@@ -6436,7 +6495,8 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 #' @return - dataframe
 #' @export
 #' @family Data Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' \dontrun{
 #' data(twinData)
@@ -6502,7 +6562,8 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 #' @return - a list of bracket style labels
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -6583,6 +6644,7 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @param model The \code{\link{mxModel}} whose fit will be reported.
 #' @param ... Other parameters.
 #' @family Advanced Model Building Functions
+#' @md
 #' @export
 umx_standardize <- function(model, ...){
 	UseMethod("umx_standardize", model)
@@ -6602,6 +6664,7 @@ umx_standardize.default <- function(model, ...){
 #' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx}
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -6675,7 +6738,8 @@ umx_standardize.MxModel <- umx_standardize_RAM
 #' @return - Standardized ACE \code{\link{umxACE}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -6729,7 +6793,8 @@ umx_standardize.MxModelACE <- umx_standardize_ACE
 #' @return - Standardized \code{\link{umxACEcov}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -6825,7 +6890,8 @@ umx_standardize.MxModelSexLim <- umx_standardize_SexLim
 #' @return - standardized IP \code{\link{umxIP}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' \dontrun{
 #' model = umx_standardize_IP(model)
@@ -6857,7 +6923,8 @@ umx_standardize.MxModelIP <- umx_standardize_IP
 #' @return - standardized \code{\link{umxCP}} model
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' \dontrun{
 #' model = umx_standardize_CP(model)

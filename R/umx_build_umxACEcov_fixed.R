@@ -63,6 +63,7 @@
 #' @seealso umx_residualize umxACE
 #' @family Twin Modeling Functions
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.

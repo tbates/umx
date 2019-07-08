@@ -452,7 +452,8 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @family Twin Modeling Functions
 #' @family Reporting functions
 #' @seealso - \code{\link{umxSexLim}} 
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' \dontrun{
 #' # ======================================================
@@ -752,7 +753,8 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxCP}}
 #' @family Plotting functions
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' require(umx)

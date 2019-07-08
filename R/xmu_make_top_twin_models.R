@@ -489,6 +489,7 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 #' @return - \code{\link{mxModel}}
 #' @export
 #' @family xmu internal not for end user
+#' @md
 xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, mzWeightMatrix = NULL, dzWeightMatrix = NULL) {
 	# TODO: xmu_assemble_twin_supermodel: Add working example.
 	# TODO: xmu_assemble_twin_supermodel: Add a check that MZ & DZ models have vector=TRUE selected if the mzWeightMatrix's is !NULL

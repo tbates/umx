@@ -90,6 +90,7 @@
 #' @family Twin Modeling Functions
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+#' @md
 #' @examples
 #' 
 #' # ==============================
@@ -392,7 +393,8 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @family Twin Modeling Functions
 #' @family Reporting functions
 #' @seealso - \code{\link{umxACEv}} 
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -619,6 +621,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @family Plotting functions
 #' @family Reporting functions
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -715,7 +718,8 @@ plot.MxModelACEv <- umxPlotACEv
 #' @return - A standardized \code{\link{umxACEv}} model.
 #' @export
 #' @family zAdvanced Helpers
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)

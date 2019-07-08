@@ -88,5 +88,6 @@
 #'
 #' @name umx-deprecated
 #' @family umx deprecated
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}, \url{https://openmx.ssri.psu.edu}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 NULL

@@ -14,6 +14,7 @@
 #' @family zAdvanced Helpers
 #' @seealso - \code{\link{umxConfint}}, \code{\link{xmu_get_CI}}
 #' @references - \url{https://github.com/tbates/umx}
+#' @md
 umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
 	# TODO rationalize with xmu_get_CI

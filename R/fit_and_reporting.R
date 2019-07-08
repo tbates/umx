@@ -42,7 +42,7 @@
 #' @return - helpful messages and perhaps a modified model
 #' @export
 #' @family Teaching and Testing functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -84,6 +84,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @family Reporting Functions
 #' @seealso - \code{\link{AIC}}
 #' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+#' @md
 #' @examples
 #' l1 = lm(mpg~ wt + disp, data=mtcars)
 #' l2 = lm(mpg~ wt, data=mtcars)
@@ -347,7 +348,8 @@ umxReduce.MxModelACE <- umxReduceACE
 #' @return - matrix of residuals
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -407,7 +409,8 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 #' @return - matrix of loadings
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 loadings <- function(x, ...) UseMethod("loadings")
 #' @export
 loadings.default <- function(x, ...) stats::loadings(x, ...) 
@@ -426,11 +429,13 @@ loadings.default <- function(x, ...) stats::loadings(x, ...)
 #' @export
 #' @family Reporting Functions
 #' @seealso - \code{\link{factanal}}, \code{\link{loadings}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
 #' m1 = umxEFA(name = "test", factors = 2, data = mtcars[, myVars])
 #' loadings(m1)
+#'
 loadings.MxModel <- function(x, ...) {
 	x$A$values[x@manifestVars, x@latentVars, drop = FALSE]
 }
@@ -667,6 +672,7 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 #' @seealso - \code{\link[stats]{confint}}, \code{\link{umxConfint}}, \code{\link{umxCI}}, \code{\link{umxModify}}
 #' @references - https://www.github.com/tbates/umx/
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1060,7 +1066,8 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' @family Twin Modeling Functions
 #' @family Reporting functions
 #' @seealso - \code{\link{umxACE}}, \code{\link{plot.MxModelACE}}, \code{\link{umxModify}}
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -1289,7 +1296,8 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxACEcov}} 
-#' @references - \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -1494,6 +1502,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @references - \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -1653,7 +1662,8 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' require(umx)
 #' data(GFF) # family function and well-being data
@@ -1773,7 +1783,8 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' # The total sample has been subdivided into a young cohort, 
 #' # aged 18-30 years, and an older cohort aged 31 and above.
@@ -1851,6 +1862,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @seealso - \code{\link{mxCompare}}, \code{\link{umxSummary}}, \code{\link{umxRAM}},
 #' @references - \url{https://www.github.com/tbates/umx/}
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1995,6 +2007,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 #' @seealso - \code{\link{umxExpMeans}}, \code{\link{umxExpCov}}
 #' @family Reporting functions
+#' @md
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2116,6 +2129,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @family Core Modeling Functions
 #' @family Plotting functions
 #' @references - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
+#' @md
 #' @examples
 #' # plot()
 #' # TODO get LISREL example model
@@ -2164,6 +2178,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @family Core Modeling Functions
 #' @family Plotting functions
 #' @references - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -2361,6 +2376,7 @@ plot.MxRAMModel <- plot.MxModel
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxACE}}
 #' @references - \url{https://www.github.com/tbates/umx}
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -2455,7 +2471,8 @@ plot.MxModelACE <- umxPlotACE
 #' @family Plotting functions
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxACE}}
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' require(umx)
 #' # BMI ?twinData from Australian twins. 
@@ -2559,7 +2576,8 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' @export
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxGxE}}
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' require(umx)
 #' data(twinData) 
@@ -2648,7 +2666,8 @@ plot.MxModelGxE <- umxPlotGxE
 #' @seealso - \code{\link{umxCP}}
 #' @family Plotting functions
 #' @family Twin Reporting Functions
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2752,7 +2771,8 @@ plot.MxModelCP <- umxPlotCP
 #' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - \code{\link{umxIP}}
 #' @family Plotting functions
-#' @references - \url{https://tbates.github.io}
+#' @references - <https://tbates.github.io>
+#' @md
 #' @examples
 #' \dontrun{
 #' plot(model)
@@ -2866,6 +2886,7 @@ plot.MxModelIP <- umxPlotIP
 #' @family Modify or Compare Models
 #' @references - \url{https://www.github.com/tbates/umx}
 #' @export
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -2929,6 +2950,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' @family Modify or Compare Models
 #' @references - https://www.github.com/tbates/umx/
 #' @export
+#' @md
 #' @examples
 #' \dontrun{
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
@@ -3183,7 +3205,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @export
 #' @family Reporting Functions
 #' @seealso - \code{\link{umxGetParameters}}, \code{\link{umxSummary}}, \code{\link{namez}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' require(umx)
@@ -3380,6 +3402,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 #' @seealso - \code{\link{AIC}}, \code{\link{umxCompare}}, \code{\link{logLik}}
 #' @family Reporting functions
 #' @references - \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3414,6 +3437,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @references - \url{https://openmx.ssri.psu.edu/thread/2598}
 #' Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 #' @seealso - \code{\link{umxRun}}, \code{\link{umxCI_boot}}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3487,6 +3511,7 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 #' @export
 #' @family Reporting functions
 #' @references - \url{https://openmx.ssri.psu.edu/thread/2598}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3555,6 +3580,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @family Reporting functions
 #' @references - \url{https://github.com/tbates/umx},
 #' \url{https://github.com/simsem/semTools/wiki/Functions}
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3651,7 +3677,8 @@ FishersMethod <- function(pvalues) {
 #' @return - function result
 #' @export
 #' @family Miscellaneous Stats Helpers
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
@@ -3693,7 +3720,8 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @export
 #' @family Reporting Functions
 #' @seealso - \code{\link{umx_apply}}, \code{\link{aggregate}}
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
 #' @examples
 #' # =====================================
 #' # = Basic use, compare with aggregate =
@@ -3786,6 +3814,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 #' @return - p-value formatted in APA style
 #' @export
 #' @seealso - \code{\link{umxAPA}}, \code{\link{round}}
+#' @md
 #' @examples
 #' umx_APA_pval(.052347)
 #' umx_APA_pval(1.23E-3)
@@ -3877,6 +3906,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @export
 #' @family Reporting Functions
 #' @references - \url{https://github.com/tbates/umx}, \url{https://my.ilstu.edu/~jhkahn/apastats.html}
+#' @md
 #' @examples
 #' 
 #' # ========================================
@@ -4099,6 +4129,7 @@ summaryAPA <- umxAPA
 #' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxAPA}}
 #' @references - \url{https://github.com/tbates/umx}
+#' @md
 #' @examples
 #' data(twinData)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
