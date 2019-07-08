@@ -1873,7 +1873,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' Rename files. On OS X, the function can access the current front-most Finder window.
 #' The file renaming is fast and, because you can use regular expressions, powerful.
 #'
-#' @param findStr The (regex) string to find, i.e., "c[ao]t"
+#' @param findStr The (regex) string to find, i.e., "cat"
 #' @param replaceStr The (regex) replacement string "\1 are not dogs"
 #' @param baseFolder The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
 #' @param listPattern A pre-filter for files
@@ -2039,7 +2039,8 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 #' base = "~/Desktop/"
 #' dest = "~/Music/iTunes/iTunes Music/Music/"
 #' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= TRUE)
-#' umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", destFolder = "~/Desktop/", test= TRUE)
+#' umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", 
+#'		destFolder = "~/Desktop/", test= TRUE)
 #' }
 #'
 umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, destFolder = NA, test = TRUE, overwrite = FALSE) {
@@ -2083,7 +2084,7 @@ umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, dest
 #'
 #' Open a file or folder. Works on OS X, mostly on windows, and hopefully on unix.
 #'
-#' NOTE: Your filepath is [shQuot()]'ed by this function.
+#' NOTE: Your filepath is [shQuote()]'d by this function.
 #' @param filepath The file to open
 #' @return - 
 #' @export

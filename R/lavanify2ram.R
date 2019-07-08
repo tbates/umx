@@ -144,9 +144,11 @@
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #'
-#' # TODO support group.equal Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
-#'
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std", "list of column names"), printTab = TRUE){
+	# TODO: make groups independent
+	# TODO: support group.equal Equality constraints across multiple
+	# groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
+	# 
 	type                = match.arg(type)
 	tryHard             = match.arg(tryHard)
 	show       = umx_default_option(show, c("none", "raw", "std", "list of column names"), check = FALSE)

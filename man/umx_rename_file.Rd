@@ -8,7 +8,7 @@ umx_rename_file(findStr = NA, replaceStr = NA, baseFolder = "Finder",
   listPattern = NA, test = TRUE, overwrite = FALSE)
 }
 \arguments{
-\item{findStr}{The (regex) string to find, i.e., "c\link{ao}t"}
+\item{findStr}{The (regex) string to find, i.e., "cat"}
 
 \item{replaceStr}{The (regex) replacement string "\1 are not dogs"}
 

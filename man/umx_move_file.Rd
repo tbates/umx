@@ -34,7 +34,8 @@ The file moves are fast and, because you can use regular expressions, powerful.
 base = "~/Desktop/"
 dest = "~/Music/iTunes/iTunes Music/Music/"
 umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= TRUE)
-umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", destFolder = "~/Desktop/", test= TRUE)
+umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", 
+	destFolder = "~/Desktop/", test= TRUE)
 }
 
 }

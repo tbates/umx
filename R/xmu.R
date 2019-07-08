@@ -410,7 +410,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				# At least one non-continuous variable
 			} else if(anyNA(data)){
 				# All continuous and, some NA
-				message("Polite note from xmu_make_mxData: Missing data can't be handled in continuous-variable WLS.\n You might want to remove rows with missing values")
+				# message("Polite note from xmu_make_mxData: Missing data can't be handled in continuous-variable WLS.\n You might want to remove rows with missing values")
 				# oldRows = nrow(data)
 				# data = na.omit(data)
 				# message("polite note from xmu_make_mxData: Missing data can't be handled in continuous-variable WLS.\n You might want to remove ", (nrow(data) - oldRows), " rows with missing values")

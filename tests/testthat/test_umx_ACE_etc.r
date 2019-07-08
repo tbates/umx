@@ -23,10 +23,5 @@ test_that("testing umx twin models", {
 	dzD = na.omit(dzData[, tvars(selDVs, "_T")])
 	mzD = na.omit(dzData[, tvars(selDVs, "_T")])
 	m4 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzD, mzData = mzD, type = "DWLS")
-
-	expect_warning(umx_lower2full(tmp, diag = TRUE), NA) # NA = no warning
-	x = umx_lower2full(tmp, diag = TRUE)
-	expect_true(isSymmetric(x), TRUE)
-
 	
 })

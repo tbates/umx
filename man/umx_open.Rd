@@ -18,7 +18,7 @@ umx_open(filepath = getwd())
 Open a file or folder. Works on OS X, mostly on windows, and hopefully on unix.
 }
 \details{
-NOTE: Your filepath is \code{\link[=shQuot]{shQuot()}}'ed by this function.
+NOTE: Your filepath is \code{\link[=shQuote]{shQuote()}}'d by this function.
 }
 \examples{
 \dontrun{

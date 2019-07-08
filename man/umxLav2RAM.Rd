@@ -173,8 +173,6 @@ m1 = umxRAM(lav)
 # Formative factor
 # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 
-# TODO support group.equal Equality constraints across multiple groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
-
 }
 \seealso{
 \itemize{
