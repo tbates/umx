@@ -8,33 +8,35 @@
 umxSummaryACE(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
   report = c("markdown", "html"), returnStd = FALSE,
-  extended = FALSE, zero.print = ".", ...)
+  extended = FALSE, zero.print = ".", show, ...)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize.}
 
-\item{digits}{round to how many digits (default = 2)}
+\item{digits}{round to how many digits (default = 2).}
 
 \item{file}{The name of the dot file to write: "name" = use the name of the model.
-Defaults to NA = do not create plot output}
+Defaults to NA = do not create plot output.}
 
-\item{comparison}{you can run mxCompare on a comparison model (NULL)}
+\item{comparison}{you can run mxCompare on a comparison model (NULL).}
 
-\item{std}{Whether to standardize the output (default = TRUE)}
+\item{std}{Whether to standardize the output (default = TRUE).}
 
-\item{showRg}{= whether to show the genetic correlations (FALSE)}
+\item{showRg}{= whether to show the genetic correlations (FALSE).}
 
-\item{CIs}{Whether to show Confidence intervals if they exist (T)}
+\item{CIs}{Whether to show Confidence intervals if they exist (TRUE).}
 
-\item{report}{If "html", then open an html table of the results}
+\item{report}{If "html", then open an html table of the results.}
 
-\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
+\item{returnStd}{Whether to return the standardized form of the model (default = FALSE).}
 
-\item{extended}{how much to report (FALSE)}
+\item{extended}{how much to report (FALSE).}
 
 \item{zero.print}{How to show zeros (".")}
 
-\item{...}{Other parameters to control model summary}
+\item{show}{std, raw etc. Not implemented for umxACE yet.}
+
+\item{...}{Other parameters to control model summary.}
 }
 \value{
 \itemize{

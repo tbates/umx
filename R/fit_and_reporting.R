@@ -874,7 +874,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "
 	report = match.arg(report)
 	filter = match.arg(filter)
 	show = match.arg(show)
-	show = umx_default_option(show, c("raw", "std", "none"), check = FALSE)
+	# show = umx_default_option(show, c("raw", "std", "none"), check = FALSE)
 	
 	message("?umxSummary show='raw|std', digits, report= 'html', filter= 'NS' & more")
 	
@@ -1048,19 +1048,20 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases umxSummary.MxModelACE
-#' @param model an [mxModel()] to summarize
-#' @param digits round to how many digits (default = 2)
+#' @param model an [mxModel()] to summarize.
+#' @param digits round to how many digits (default = 2).
 #' @param file The name of the dot file to write: "name" = use the name of the model.
-#' Defaults to NA = do not create plot output
-#' @param comparison you can run mxCompare on a comparison model (NULL)
-#' @param std Whether to standardize the output (default = TRUE)
-#' @param showRg = whether to show the genetic correlations (FALSE)
-#' @param CIs Whether to show Confidence intervals if they exist (T)
-#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
-#' @param report If "html", then open an html table of the results
-#' @param extended how much to report (FALSE)
+#' Defaults to NA = do not create plot output.
+#' @param comparison you can run mxCompare on a comparison model (NULL).
+#' @param std Whether to standardize the output (default = TRUE).
+#' @param showRg = whether to show the genetic correlations (FALSE).
+#' @param CIs Whether to show Confidence intervals if they exist (TRUE).
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE).
+#' @param report If "html", then open an html table of the results.
+#' @param extended how much to report (FALSE).
 #' @param zero.print How to show zeros (".")
-#' @param ... Other parameters to control model summary
+#' @param ... Other parameters to control model summary.
+#' @param show std, raw etc. Not implemented for umxACE yet.
 #' @return - optional [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
@@ -1081,7 +1082,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' umxSummaryACE(m1, file = "name", std = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show, ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	# depends on R2HTML::HTML
