@@ -432,7 +432,7 @@
 
 # umx 1.2.8
 * R 3.3.0 companion: "Very compatible" May 2016
-* NEW: `umxRAM` can now build and run Joint Continuous Ordinal models. Ta da!!
+* NEW: `umxRAM` can now build and run Joint Continuous Ordinal models!!
 * NEW: `umx_show_options` function to help users learn the options available
 * BETA: `umxACE` can now implement a form of left-censoring.
 * BETA: `umxThresholdMatrix` can now implement a form of left-censoring.

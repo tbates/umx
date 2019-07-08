@@ -79,7 +79,7 @@ xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param summary Whether to print model summary (default = autoRun).
-#' @param show What to print in summary (deafult "none") (alternatives: "raw", "std", "list of column names")
+#' @param show What to print in summary (default "none") (alternatives: "raw", "std", "list of column names")
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @return - \code{\link{mxModel}}
 #' @export
