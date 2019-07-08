@@ -24,7 +24,7 @@ umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+- <https://www.github.com/tbates/umx>
 }
 \seealso{
 Other Data Functions: \code{\link{umxCovData}},

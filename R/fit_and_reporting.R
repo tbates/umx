@@ -465,7 +465,7 @@ loadings.MxModel <- function(x, ...) {
 #' @return - [mxModel()]
 #' @family Reporting functions
 #' @seealso - \code{\link[stats]{confint}}, [umxCI()] 
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -835,7 +835,7 @@ umxSummary.default <- function(model, ...){
 #'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
 #'  Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
 #' 
-#' \url{https://tbates.github.io}
+#' <https://tbates.github.io>
 #' 
 #' @export
 #' @import OpenMx
@@ -1501,8 +1501,8 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @return - optional [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @seealso - \code{\link{umxCP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
+#' @references - <https://www.github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' \dontrun{
@@ -1662,7 +1662,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @return - optional [mxModel()]
 #' @family Twin Modeling Functions
 #' @export
-#' @seealso - \code{\link{umxIP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - \code{\link{umxIP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -1841,16 +1841,12 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' umxCompare compares two or more [mxModel()]s. It has several nice features:
 #' 
 #' 1. It supports direct control of rounding, and reports p-values rounded to APA style.
-#' 
-#' 2. It reports the table in your preferred format (default is markdown, options include latex)
-#' 
+#' 2. It reports the table in your preferred format (default is markdown, options include latex).
 #' 3. Table columns are arranged to make for easy comparison for readers.
-#' 
 #' 4. report = 'inline', will provide an English sentence suitable for a paper.
-#' 
 #' 5. report = "html" opens a web table in your browser to paste into a word processor.
 #' 
-#' \emph{Note}: If you leave comparison blank, it will just give fit info for the base model
+#' *Note*: If you leave comparison blank, it will just give fit info for the base model
 #'
 #' @param base The base [mxModel()] for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
@@ -1863,7 +1859,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @family Reporting functions
 #' @seealso - [mxCompare()], [umxSummary()], [umxRAM()],
-#' @references - \url{https://www.github.com/tbates/umx/}
+#' @references - <https://www.github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -2131,7 +2127,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
 #' @family Core Modeling Functions
 #' @family Plotting functions
-#' @references - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
+#' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md
 #' @examples
 #' # plot()
@@ -2180,7 +2176,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
 #' @family Core Modeling Functions
 #' @family Plotting functions
-#' @references - \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
+#' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md
 #' @examples
 #' require(umx)
@@ -2376,9 +2372,9 @@ plot.MxRAMModel <- plot.MxModel
 #' @return - optionally return the dot code
 #' @export
 #' @family Plotting functions
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxACE()]
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -2472,7 +2468,7 @@ plot.MxModelACE <- umxPlotACE
 #' @return - optionally return the dot code
 #' @export
 #' @family Plotting functions
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxACE()]
 #' @references - <https://tbates.github.io>
 #' @md
@@ -2577,7 +2573,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' @return None 
 #' @family Plotting functions
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxGxE()]
 #' @references - <https://tbates.github.io>
 #' @md
@@ -2665,7 +2661,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxCP()]
 #' @family Plotting functions
 #' @family Twin Reporting Functions
@@ -2771,7 +2767,7 @@ plot.MxModelCP <- umxPlotCP
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxIP()]
 #' @family Plotting functions
 #' @references - <https://tbates.github.io>
@@ -2887,7 +2883,7 @@ plot.MxModelIP <- umxPlotIP
 #' @param decreasing How to sort (default = TRUE, decreasing)
 #' @seealso - [mxMI()]
 #' @family Modify or Compare Models
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -3314,7 +3310,7 @@ parameters <- umxParameters
 #' @export
 #' @seealso [omxGetParameters()], [parameters()]
 #' @family Reporting Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -3581,7 +3577,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @rdname RMSEA.MxModel
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx},
+#' @references - <https://github.com/tbates/umx>,
 #' \url{https://github.com/simsem/semTools/wiki/Functions}
 #' @md
 #' @examples
@@ -3612,7 +3608,8 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' @rdname RMSEA.summary.mxmodel
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
+#' @references - <https://github.com/simsem/semTools/wiki/Functions>, <https://github.com/tbates/umx>
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -3908,7 +3905,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @return - string
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://my.ilstu.edu/~jhkahn/apastats.html}
+#' @references - <https://github.com/tbates/umx>, \url{https://my.ilstu.edu/~jhkahn/apastats.html}
 #' @md
 #' @examples
 #' 
@@ -4131,7 +4128,7 @@ summaryAPA <- umxAPA
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - [umxAPA()]
-#' @references - \url{https://github.com/tbates/umx}
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' data(twinData)

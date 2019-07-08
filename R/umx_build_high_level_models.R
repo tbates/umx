@@ -78,7 +78,7 @@
 #' @export
 #' @md
 #' @seealso - [factanal()], [mxFactorScores()]
-#' @references - \url{https://github.com/tbates/umx}
+#' @references - <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
@@ -267,7 +267,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' Build a SEM implementing 2-stage least squares regression
 #'
 #' `umxTwoStage` implements 2-stage least squares regression in Structural Equation Modeling.
-#' For ease of learning, the function is modeled closely on the \code{\link[sem]{tsls}}.
+#' For ease of learning, the function is modeled closely on the [sem::tsls()].
 #' 
 #' The example is a Mendelian Randomization <https://en.wikipedia.org/wiki/Mendelian_randomization>
 #' analysis to show the utility of two-stage regression.
@@ -285,7 +285,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @return - [mxModel()]
 #' @export
 #' @family Super-easy helpers
-#' @seealso - [umx_make_MR_data()], \code{\link[sem]{tsls}}, [umxRAM()]
+#' @seealso - [umx_make_MR_data()], [sem::tsls()], [umxRAM()]
 #' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
 #' In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass., 
 #' Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.

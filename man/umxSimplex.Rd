@@ -132,7 +132,7 @@ m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3),
 }
 \seealso{
 \itemize{
-\item \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\item \code{\link{umxACE}()} for more examples of twin modeling, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

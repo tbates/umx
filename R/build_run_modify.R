@@ -884,7 +884,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' @return - [mxModel()]
 #' @family Core Modeling Functions
 #' @family Modify or Compare Models
-#' @references - \url{https://github.com/tbates/umx}
+#' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -1471,7 +1471,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @return - GxE [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plot}()}, [umxSummary()], [umxReduce()]
+#' @seealso - [plot()], [umxSummary()], [umxReduce()]
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
 #'  **6**, 554-571. DOI: [https://doi.org/10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
 #' @md
@@ -1929,11 +1929,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @references 
 #' Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
-#' *Behavior Genetics*, **19**, 63-78. doi:\url{https://doi.org/10.1007/BF01065884}.
+#' *Behavior Genetics*, **19**, 63-78. doi:<https://doi.org/10.1007/BF01065884>.
 #' 
 #' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 #' to Handle Missing Covariate Data in Twin Research : With an Application to
-#' Educational Achievement Data. *Behavior Genetics*, **46**, 583-95. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
+#' Educational Achievement Data. *Behavior Genetics*, **46**, 583-95. doi:<https://doi.org/10.1007/s10519-015-9771-1>.
 #'
 #' @examples
 #' # ============================================
@@ -2321,7 +2321,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @family Twin Modeling Functions
 #' @seealso - [umxSummaryCP()], [umxPlotCP()]. See [umxACE()] for more examples of twin modeling. 
 #' \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see [xmu_make_top_twin()]
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -2590,8 +2590,8 @@ umxCP <- function(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1, typ
 #' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxIP()], \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @seealso - [umxIP()], [plot()] and [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -2849,7 +2849,7 @@ umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' @export
 #' @seealso - Core functions:
 #' @family Advanced Model Building Functions
-#' @references - \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://www.github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' require(umx)
@@ -3009,7 +3009,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @return - [mxModel()]
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' # ==============================================================
@@ -3203,7 +3203,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @return - [mxModel()]
 #' @family Core Modeling Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -3386,7 +3386,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @export
 #' @seealso [umxModify()], [umxCompare()]
 #' @family Modify or Compare Models
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -3505,7 +3505,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @return a table of model comparisons
 #' @export
 #' @family Modify or Compare Models
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -3562,7 +3562,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @return a table of fit changes
 #' @export
 #' @family Modify or Compare Models
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -3685,7 +3685,7 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' @return - path list
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' library(umx)
 #' data(demoOneFactor)
@@ -4830,7 +4830,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' Introductory working examples are below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
-#' There is a helpful blog at \url{https://tbates.github.io}
+#' There is a helpful blog at <https://tbates.github.io>
 #' 
 #' If you want the bleeding-edge version:
 #' 
@@ -4856,7 +4856,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Advanced Model Building Functions
 #' @family zAdvanced Helpers
 #' @family xmu internal not for end user
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require("umx")

@@ -95,7 +95,7 @@ umxSummary(m1, show = "std", filter = "NS")
  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
  Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
 
-\url{https://tbates.github.io}
+<https://tbates.github.io>
 }
 \seealso{
 - [umxRun()]

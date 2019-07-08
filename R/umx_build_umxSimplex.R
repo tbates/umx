@@ -77,8 +77,8 @@
 #' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -437,7 +437,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, simplex, ACEv, or ACE model.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, simplex, ACEv, or ACE model.
 #' @seealso - [umxSimplex()]
 #' @family Plotting functions
 #' @md

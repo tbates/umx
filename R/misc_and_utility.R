@@ -1018,7 +1018,7 @@ umx_check_parallel <- function(nCores = c(1, parallel::detectCores()/2), testScr
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
 #' @return - [mxMatrix()]
 #' @family Advanced Model Building Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -1634,7 +1634,7 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' @return - data.frame
 #' @family Data Functions
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' df = mtcars
 #' # make mpg into string
@@ -2211,7 +2211,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' @family File Functions
 #' @return None 
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -2400,7 +2400,7 @@ print.result_oddsratio <- function(x, digits = 3, ...) {
 #' @seealso umxHetCor
 #' @family Miscellaneous Stats Helpers
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' umx_cor(myFADataRaw[1:8,])
 umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2, type= c("r and p-value", "smart")) {
@@ -2459,7 +2459,7 @@ rowMin <- function(df, na.rm= TRUE) {
 #' @return - [mxModel()]
 #' @family Miscellaneous Stats Helpers
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' head(umx_round(mtcars, coerce = FALSE))
@@ -2851,7 +2851,7 @@ tvars <- umx_paste_names
 #' @return - [mxModel()]
 #' @family zAdvanced Helpers
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' umx_merge_CIs(m1, m2)
@@ -2930,7 +2930,7 @@ umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso [cov2cor()]
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' umxCov2cor(cov(mtcars[,1:5]))
 #' @md
@@ -3320,7 +3320,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' @return - invisible time string
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -3518,7 +3518,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @return - boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -3580,7 +3580,7 @@ umxCheckModel <- function(model){
 #' @return - boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' umx_check(length(1:3)==3, "stop", "item must have length == 3")
 umx_check <- function(boolean.test, action = c("stop", "warning", "message"), message = "check failed"){
@@ -3610,7 +3610,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' @family Test
 #' @export
 #' @family Check or test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' require(umx)
 #' data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
@@ -3777,7 +3777,7 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' @return - Boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' umx_is_MxData(mtcars)
 #' umx_is_MxData(mxData(mtcars, type= "raw"))
@@ -3805,7 +3805,7 @@ umx_is_MxData <- function(x) {
 #' @return - vector of variable names or Booleans
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' tmp = mtcars
@@ -3897,7 +3897,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @return - Boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -3936,7 +3936,7 @@ umx_is_RAM <- function(obj) {
 #' @return - Boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' m1 = mxModel("test")
@@ -3975,7 +3975,7 @@ umx_is_MxModel <- function(obj, listOK = FALSE) {
 #' @return - Boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' x = mxMatrix(name = "eg", type = "Full", nrow = 3, ncol = 3, values = .3)
@@ -3995,7 +3995,7 @@ umx_is_MxMatrix <- function(obj) {
 #' @return - "raw", "cor", or "cov", (or if boolean, then T | F)
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' df = cov(mtcars)
 #' umx_is_cov(df)
@@ -4145,7 +4145,7 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @return - boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -4213,7 +4213,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' @return - the re-ordered/resized matrix
 #' @export
 #' @family Data Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' oldMatrix = cov(mtcars)
 #' umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
@@ -4342,7 +4342,8 @@ umx2ord <- umx_cont_2_quantiles
 #' @return - boolean
 #' @export
 #' @family Test
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
+#' @md
 #' @examples
 #' umx_has_square_brackets("[hello]")
 #' umx_has_square_brackets("goodbye")
@@ -4364,7 +4365,7 @@ umx_has_square_brackets <- function (input) {
 #' @return - [mxAlgebra()]
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -4382,7 +4383,7 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @return - name as string
 #' @export
 #' @family String Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' umx_object_as_str(mtcars) # "mtcars"
@@ -4402,7 +4403,7 @@ umx_object_as_str<- function(x) {
 #' @return - an openmx algebra (formula)
 #' @export
 #' @family Reporting Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' m1 = mxModel("fit",
@@ -4439,7 +4440,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @export
 #' @seealso umx_scale_wide_twin_data scale
 #' @family Miscellaneous Utility Functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' data(twinData) 
@@ -4755,7 +4756,7 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' @export
 #' @family Get and set
 #' @seealso - [match.arg()]
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' option_list = c("default", "par.observed", "empirical")
@@ -5129,7 +5130,7 @@ umx_rot <- function(vec){
 #' @export
 #' @family Twin Data functions
 #' @seealso - [merge()]
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' # ================================================================
@@ -5486,7 +5487,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @family Twin Data functions
 #' @family Data Functions
 #' @seealso - [umxACE()], [umxGxE()], [umxGxEbiv()]
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' # =====================================================================
@@ -6247,7 +6248,7 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
 #' @family Data Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
 #' str(df)
@@ -6361,7 +6362,7 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' @return - [mxMatrix()]
 #' @family Data Functions
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' 
 #' # 1. Test with a vector in byrow = TRUE order) 
@@ -6663,7 +6664,7 @@ umx_standardize.default <- function(model, ...){
 #' @param model The [mxModel()] you wish to standardize
 #' @param ... Other options
 #' @family Reporting functions
-#' @references - \url{https://github.com/tbates/umx}
+#' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples

@@ -33,7 +33,7 @@ to be used to compute weighted 2SLS estimates.}
 }
 \description{
 \code{umxTwoStage} implements 2-stage least squares regression in Structural Equation Modeling.
-For ease of learning, the function is modeled closely on the \code{\link[sem]{tsls}}.
+For ease of learning, the function is modeled closely on the \code{\link[sem:tsls]{sem::tsls()}}.
 }
 \details{
 The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization}
@@ -81,7 +81,7 @@ Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
 }
 \seealso{
 \itemize{
-\item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[sem]{tsls}}, \code{\link[=umxRAM]{umxRAM()}}
+\item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[sem:tsls]{sem::tsls()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Super-easy helpers: \code{\link{umxEFA}},

@@ -77,7 +77,7 @@ plot(m1) # no need to remember a special name: plot works fine!
 }
 \seealso{
 \itemize{
-\item \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
 \itemize{

@@ -29,7 +29,7 @@ create a web table and open your default browser.
 umxCompare compares two or more \code{\link[=mxModel]{mxModel()}}s. It has several nice features:
 \enumerate{
 \item It supports direct control of rounding, and reports p-values rounded to APA style.
-\item It reports the table in your preferred format (default is markdown, options include latex)
+\item It reports the table in your preferred format (default is markdown, options include latex).
 \item Table columns are arranged to make for easy comparison for readers.
 \item report = 'inline', will provide an English sentence suitable for a paper.
 \item report = "html" opens a web table in your browser to paste into a word processor.
@@ -60,7 +60,7 @@ umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 }
 \references{
 \itemize{
-\item \url{https://www.github.com/tbates/umx/}
+\item \url{https://www.github.com/tbates/umx}
 }
 }
 \seealso{

@@ -22,7 +22,7 @@ umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
 umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+- <https://www.github.com/tbates/umx>
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

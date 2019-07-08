@@ -750,7 +750,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxCP()]
 #' @family Plotting functions
 #' @references - <https://tbates.github.io>

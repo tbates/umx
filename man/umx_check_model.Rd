@@ -50,7 +50,7 @@ umx_check_model(m1, beenRun = FALSE)
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+- <https://www.github.com/tbates/umx>
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

@@ -24,7 +24,7 @@ umx_merge_CIs(m1, m2)
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+- <https://www.github.com/tbates/umx>
 }
 \seealso{
 Other zAdvanced Helpers: \code{\link{umx_standardize_ACEcov}},

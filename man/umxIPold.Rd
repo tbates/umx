@@ -89,7 +89,7 @@ plot(m1)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxIP]{umxIP()}}, \code{\link{plot}()} and \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\item \code{\link[=umxIP]{umxIP()}}, \code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

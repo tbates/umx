@@ -89,7 +89,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
-#' to the analysis of human behaviour. Heredity, 41(3), 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
 #' @md
 #' @examples
 #' 
@@ -620,7 +620,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @export
 #' @family Plotting functions
 #' @family Reporting functions
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)

@@ -10,17 +10,21 @@ umx_has_square_brackets(input)
 \item{input}{The label to check for square brackets (string input)}
 }
 \value{
-- boolean
+\itemize{
+\item boolean
+}
 }
 \description{
-Helper function to check if a label has square brackets, e.g. "A[1,1]"
+Helper function to check if a label has square brackets, e.g. "A\link{1,1}"
 }
 \examples{
 umx_has_square_brackets("[hello]")
 umx_has_square_brackets("goodbye")
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test: \code{\link{umx_check_OS}},

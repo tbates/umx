@@ -78,7 +78,7 @@ umxSummary(m1, CIs = TRUE, file = NA);
 }
 \seealso{
 \itemize{
-\item \code{\link{umxCP}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+\item \code{\link{umxCP}()}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

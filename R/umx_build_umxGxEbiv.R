@@ -32,7 +32,7 @@
 #' @export
 #' @md
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{plot}()}, [umxSummary()], [umxReduce()]
+#' @seealso - [plot()], [umxSummary()], [umxReduce()]
 #' @references
 #' - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, 
 #' \strong{6}, 554-571. doi:[10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554).
@@ -312,7 +312,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @return - optional [mxModel()]
 #' @family Twin Modeling Functions
 #' @export
-#' @seealso - \code{\link{umxGxEbiv}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+#' @seealso - \code{\link{umxGxEbiv}()}, [plot()], [umxSummary()] work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -408,7 +408,7 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 #' @return - 
 #' @family Plotting functions
 #' @export
-#' @seealso - \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxGxEbiv()]
 #' @references - <https://tbates.github.io>
 #' @md

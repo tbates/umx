@@ -92,7 +92,7 @@ umxReduce(m1)
 }
 \seealso{
 \itemize{
-\item \code{\link{plot}()}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
+\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
