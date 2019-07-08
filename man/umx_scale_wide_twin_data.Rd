@@ -2,22 +2,28 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_scale_wide_twin_data}
 \alias{umx_scale_wide_twin_data}
-\title{umx_scale_wide_twin_data}
+\title{Scale wide data}
 \usage{
-umx_scale_wide_twin_data(varsToScale, sep, data)
+umx_scale_wide_twin_data(varsToScale, sep, data, twins = 1:2)
 }
 \arguments{
 \item{varsToScale}{The base names of the variables ("weight" etc.)}
 
 \item{sep}{The suffix that distinguishes each case, e.g. "_T")}
 
-\item{data}{a wide dataframe}
+\item{data}{A wide dataframe}
+
+\item{twins}{Legal digits following sep (default 1:2)}
 }
 \value{
-- new dataframe with variables scaled in place
+\itemize{
+\item dataframe with varsToScale standardized
+}
 }
 \description{
-Scale wide data across all cases: currently 2 twins.
+Scale wide data across all twins. You offer up \code{varsToScale}, e.g. c("DEP", "bmi")
+and the sep (e.g. "_T") and twins e.g. (1:2) that paste together to make
+complete variable names: e.g. "DEP_T1" and "DEP_T2".
 }
 \examples{
 data(twinData) 
@@ -25,7 +31,9 @@ df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep 
 plot(wt1 ~ wt2, data = df)
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 umx_scale

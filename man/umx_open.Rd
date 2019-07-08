@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_open}
 \alias{umx_open}
-\title{umx_open}
+\title{Open a file or folder}
 \usage{
 umx_open(filepath = getwd())
 }
@@ -10,22 +10,26 @@ umx_open(filepath = getwd())
 \item{filepath}{The file to open}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
 Open a file or folder. Works on OS X, mostly on windows, and hopefully on unix.
 }
 \details{
-NOTE: Your filepath is shQuoted by this function.
+NOTE: Your filepath is \code{\link[=shQuot]{shQuot()}}'ed by this function.
 }
 \examples{
 \dontrun{
-umx_open(getwd())
+umx_open() # default is to open wordking directory getwd()
 umx_open("~/bin/umx/R/misc_and_utility copy.r")
 }
 }
 \references{
-- \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\itemize{
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
 }
 \seealso{
 Other File Functions: \code{\link{dl_from_dropbox}},

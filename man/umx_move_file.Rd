@@ -10,7 +10,7 @@ umx_move_file(baseFolder = NA, regex = NULL, fileNameList = NA,
 \arguments{
 \item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
 
-\item{regex}{= regex string select files to move (WARNING: NOT IMPLEMENTED YET)}
+\item{regex}{= regex string select files to move (NOT IMPLEMENTED YET)}
 
 \item{fileNameList}{List of files to move}
 
@@ -21,18 +21,22 @@ umx_move_file(baseFolder = NA, regex = NULL, fileNameList = NA,
 \item{overwrite}{Boolean determining whether to overwrite files or not (default = FALSE (safe))}
 }
 \value{
--
+\itemize{
+\item 
+}
 }
 \description{
-On OS X, umx_move_file can access the current front-most Finder window.
+On OS X, \code{umx_move_file} can access the current front-most Finder window.
 The file moves are fast and, because you can use regular expressions, powerful.
 }
 \examples{
 \dontrun{
-base = "/Users/tim/Music/iTunes/iTunes Music/"
-dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
-umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= FALSE)
+base = "~/Desktop/"
+dest = "~/Music/iTunes/iTunes Music/Music/"
+umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= TRUE)
+umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", destFolder = "~/Desktop/", test= TRUE)
 }
+
 }
 \seealso{
 Other File Functions: \code{\link{dl_from_dropbox}},

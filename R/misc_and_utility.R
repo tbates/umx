@@ -1868,21 +1868,22 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 # = File handling functions =
 # ===========================
 
-#' umx_rename_file
+#' Rename files
 #'
-#' rename files. On OS X, the function can access the current front-most Finder window.
-#' The file renaming is fast and, because you can use regular expressions, powerful
+#' Rename files. On OS X, the function can access the current front-most Finder window.
+#' The file renaming is fast and, because you can use regular expressions, powerful.
 #'
 #' @param findStr The (regex) string to find, i.e., "c[ao]t"
 #' @param replaceStr The (regex) replacement string "\1 are not dogs"
-#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param baseFolder The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
 #' @param listPattern A pre-filter for files
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
 #' @family File Functions
 #' @return - 
 #' @export
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @md
+#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
@@ -2006,7 +2007,7 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 		writeLines(auth_key, fileConn)
 		close(fileConn)
 		if(title=="test" && body=="default body"){
-			title = "sucessfully setup umx_pb_note!"
+			title = "successfully setup umx_pb_note!"
 			body = paste0("auth key is in ", omxQuotes(auth_key_file))
 		}
 	}
@@ -2020,28 +2021,34 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 
 #' Move files
 #'
-#' On OS X, umx_move_file can access the current front-most Finder window.
+#' On OS X, `umx_move_file` can access the current front-most Finder window.
 #' The file moves are fast and, because you can use regular expressions, powerful.
 #'
 #' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
-#' @param regex = regex string select files to move (WARNING: NOT IMPLEMENTED YET)
+#' @param regex = regex string select files to move (NOT IMPLEMENTED YET)
 #' @param fileNameList List of files to move
 #' @param destFolder Folder to move files into
 #' @param test Boolean determining whether to change the names, or just report on what would have happened
 #' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe))
 #' @return - 
 #' @family File Functions
+#' @md
 #' @export
 #' @examples
 #' \dontrun{
-#' base = "/Users/tim/Music/iTunes/iTunes Music/"
-#' dest = "/Users/tim/Music/iTunes/iTunes Music/Music/"
-#' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= FALSE)
+#' base = "~/Desktop/"
+#' dest = "~/Music/iTunes/iTunes Music/Music/"
+#' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= TRUE)
+#' umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", destFolder = "~/Desktop/", test= TRUE)
 #' }
+#'
 umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, destFolder = NA, test = TRUE, overwrite = FALSE) {
-	# TODO umx_move_file: implement regular expressions to find files to move
 	if(!is.null(regex)){
-		stop("Have not implemented regex yet")
+		if(!is.na(fileNameList)){
+			stop("Can't use regex and a fileNameList")
+		} else {
+			fileNameList = list.files(baseFolder, pattern = regex)
+		}
 	}
 
 	if(is.na(destFolder)){
@@ -2059,31 +2066,33 @@ umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, dest
 		if(test){
 			message("would move ", fn, " to ", destFolder)	
 			moved = moved + 1;
+			message("Would have moved ", moved)
 		} else {
 			if((!overwrite) & file.exists(paste0(destFolder, fn))){
-				message("moving ", fn, "to", destFolder, "failed as already exists. To overwrite set T")
+				message("moving ", fn, "to", destFolder, "failed as already exists. To overwrite set overwrite= TRUE")
 			} else {
 				file.rename(paste0(baseFolder, fn), paste0(destFolder, fn))
 				moved = moved + 1;
 			}
 		}
+		message("Moved ", moved)
 	}
-	message("moved (or would have moved)", moved)
 }
 
-#' umx_open
+#' Open a file or folder
 #'
 #' Open a file or folder. Works on OS X, mostly on windows, and hopefully on unix.
 #'
-#' NOTE: Your filepath is shQuoted by this function.
+#' NOTE: Your filepath is [shQuot()]'ed by this function.
 #' @param filepath The file to open
 #' @return - 
 #' @export
 #' @family File Functions
-#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @md
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' \dontrun{
-#' umx_open(getwd())
+#' umx_open() # default is to open wordking directory getwd()
 #' umx_open("~/bin/umx/R/misc_and_utility copy.r")
 #' }
 umx_open <- function(filepath = getwd()) {
@@ -3280,6 +3289,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' @examples
 #' require(umx)
 #' umx_time('stop') # alert user stop called when not yet started... 
+#' umx_time('stop')
 #' umx_time('start')
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -3295,7 +3305,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' umx_time(c(m1, m2)) # print comparison table
 #' umx_time('stop') # report the time since timer last started, and restart
 #' umx_time('stop') # report the time since timer was restarted.
-#' # elapsed time: .3 seconds
+#'
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if(is.list(x)){
@@ -3316,7 +3326,6 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		stop("You must set the first parameter to 'start', 'stop', 'now', a model, or a list of models.\nYou offered up a", class(x))
 	}
 	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
-	# TODO umx_time: Improve table formating
 	for(i in 1:length(x)) {			
 		if(length(x) > 1) {
 			thisX = x[[i]]

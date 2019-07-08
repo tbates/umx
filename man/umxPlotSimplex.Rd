@@ -34,7 +34,6 @@ Options include digits (rounding), showing means or not, and which output format
 }
 \examples{
 \dontrun{
-# TODO Add example from umxSimplex help
 data(iqdat)
 mzData = subset(iqdat, zygosity == "MZ")
 dzData = subset(iqdat, zygosity == "DZ")

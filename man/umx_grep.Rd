@@ -2,32 +2,36 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_grep}
 \alias{umx_grep}
-\title{umx_grep}
+\title{Search for text}
 \usage{
 umx_grep(df, grepString, output = c("both", "label", "name"),
   ignore.case = TRUE, useNames = FALSE)
 }
 \arguments{
-\item{df}{The \code{\link{data.frame}} or string to search}
+\item{df}{The \code{\link[=data.frame]{data.frame()}} or string to search.}
 
-\item{grepString}{the search string}
+\item{grepString}{the search string.}
 
-\item{output}{the column name, the label, or both (default)}
+\item{output}{the column name, the label, or both (default).}
 
-\item{ignore.case}{whether to be case sensitive or not (default TRUE = ignore case)}
+\item{ignore.case}{whether to be case sensitive or not (default TRUE = ignore case).}
 
-\item{useNames}{whether to search the names as well as the labels (for SPSS files with label metadata)}
+\item{useNames}{whether to search the names as well as the labels (for SPSS files with label metadata).}
 }
 \value{
-- list of matched column names and/or labels
+\itemize{
+\item list of matched column names and/or labels.
+}
 }
 \description{
-Search for text. Will search names if given a data.frame, or strings if given a vector of strings. 
-NOTE: Handy feature is that this can search the labels of data imported from SPSS
+Search names if given a data.frame, or strings if given a vector of strings.
 }
 \details{
-To simply grep for a pattern in a string just use R built-in grep* functions, e.g.:
- grepl("^NA\\[0-9]", "NA.3")
+The namez function is more flexible. A handy feature of \code{umx_grep} is that it can
+search the labels of data imported from SPSS.
+
+\emph{nb:} To simply grep for a pattern in a string use R's built-in \code{\link[=grep]{grep()}} functions, e.g.:
+\code{grepl("^NA\\[0-9]", "NA.3")}
 }
 \examples{
 umx_grep(mtcars, "hp", output="both", ignore.case= TRUE)
@@ -39,10 +43,14 @@ umx_grep(spss_df, "labeltext", output = "name")
 }
 }
 \references{
-- \url{https://www.github.com/tbates/umx}
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
-- \code{\link{grep}} \code{\link{umx_names}} \code{\link{umx_aggregate}}
+\itemize{
+\item \code{\link[=namez]{namez()}}, \code{\link[=umx_aggregate]{umx_aggregate()}}, \code{\link[=grep]{grep()}}
+}
 
 Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_explode}}, \code{\link{umx_names}},
