@@ -16,7 +16,6 @@
 #' @return Table of fit statistics
 #' @export
 #' @family Reporting functions
-#' @references - 
 #' @md
 #' @examples
 #' require(umx)

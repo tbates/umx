@@ -732,7 +732,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 #' @export
 umxSummary.MxModelSexLim <- umxSummarySexLim
 
-# TODO: umxPlotSexLim Add SEstyle code from plotCP
+# TODO: umxPlotSexLim Add SE-style code from plotCP
 
 #' Draw and display a graphical figure of a Sex limitation model
 #'
@@ -745,7 +745,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR") 
-#' @param SEstyle report "b (se)" instead of "b [lower, upper]" (Default)
+#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code

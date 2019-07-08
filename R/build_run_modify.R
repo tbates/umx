@@ -252,7 +252,7 @@ methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 #' Catches a common typo, moving from mxModel to umx.
 #'
 #' @param ... Anything. We're just going to throw an error.
-#' @return - 
+#' @return
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxRAM()], [mxModel()]
@@ -853,7 +853,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
 #' 
 #' Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
-#' fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
+#' fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
 #' 
 #' You may find it easier to be more explicit. Like this: 
 #' 
@@ -1134,7 +1134,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @family Twin Modeling Functions
 #' @seealso - [umxPlotACE()], [umxSummaryACE()], [umxModify()]
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
-#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
 #' @md
 #' @examples
 #' # ============================
@@ -1148,8 +1148,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 #' 
 #' # 2. umxACE picks the variables it needs from the data.
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' 
 #' # 3. umxACE can figure out variable names using sep: 
 #' #    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
@@ -1436,7 +1436,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 		# Trundle through and make sure values with the same label have the same start value... means for instance.
 		model = omxAssignFirstParameters(model)
 		model = as(model, "MxModelACE") # set class so that S3 plot() dispatches
-		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
+		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, show = "std")
 		return(model)
 	}
 } # end umxACE
@@ -3366,7 +3366,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 
 #' \emph{note}: In addition to using this method to equating parameters, you can
 #' also equate one parameter to another by setting its label to the 
-#' "square bracket" address of the master, e.g. "a[r,c]".
+#' "square bracket" address of the master, e.g. "a\[r,c\]".
 #' 
 #' \emph{Tip}: To find labels of free parameters use [umxGetParameters()] 
 #' with free = TRUE

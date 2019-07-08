@@ -22,7 +22,7 @@ umx_stash_CIs(model, digits = 3, dropZeros = FALSE,
 }
 }
 \description{
-Stash formatted CIs (e.g. ".1 \link{-.1, .3}") as strings overwriting the parameter values of the model.
+Stash formatted CIs (e.g. ".1 \link{-.1, .3}") as strings, \emph{overwriting} the parameter values of the model.
 }
 \details{
 I might change this to a lookup-function that gets a CI string if one exists.
@@ -31,6 +31,9 @@ I might change this to a lookup-function that gets a CI string if one exists.
 \itemize{
 \item \url{https://github.com/tbates/umx}
 }
+
+CIname = top.cp_loadings_std\link{1,1}
+thisSub = top; thisMat = cp_loadings_std; thisRow = 1; thisCol = 1
 }
 \seealso{
 \itemize{

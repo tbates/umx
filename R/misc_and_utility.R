@@ -608,9 +608,11 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 
 
 
-#' umx_set_optimization_options
+#' Set options that affect optimization in OpenMx
 #'
-#' Set options that affect optimization in OpenMx. For mvnRelEps,  values between .0001 to .01 are conventional.
+#' `umx_set_optimization_options` provides access to get and set options affecting optimization.
+#' 
+#' *note*: For `mvnRelEps`,  values between .0001 to .01 are conventional.
 #' Smaller values slow optimization.
 #'
 #' @param opt default returns current values of the options listed. Currently
@@ -618,7 +620,7 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 #' @param value If not NULL, the value to set the opt to (can be a list of length(opt))
 #' @param silent If TRUE, no message will be printed.
 #' @param model A model for which to set the optimizer. Default (NULL) sets the optimizer globally.
-#' @return - 
+#' @return - current values if no value set.
 #' @export
 #' @family Get and set
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -658,15 +660,15 @@ umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA"), 
 	}
 }
 
-#' umx_set_optimizer
-#'
 #' Set the optimizer in OpenMx
+#'
+#' `umx_set_optimizer` privdes an easy way to get and set the default optimizer.
 #'
 #' @param opt default (NA) returns current value. Current alternatives are
 #' "NPSOL" "SLSQP" and "CSOLNP".
 #' @param model A model for which to set the optimizer. Default (NULL) sets the optimizer globally.
 #' @param silent If TRUE, no message will be printed.
-#' @return - 
+#' @return - current optimizer if nothing requested to be set.
 #' @export
 #' @family Get and set
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -1226,15 +1228,15 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLaten
 	return(model)
 }
 
-#' umx_drop_ok
+#' A meaningful sentence about a model comparison
 #'
 #' Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
-#' merged with [umxCompare()]() :-)
+#' merged with [umxCompare()] :-)
 #'
-#' @param model1 the base code{\link{mxModel}}
-#' @param model2 the nested code{\link{mxModel}}
+#' @param model1 the base [mxModel()]
+#' @param model2 the nested [mxModel()]
 #' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
-#' @return - 
+#' @return - T/F
 #' @export
 #' @family Reporting functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -1903,7 +1905,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
 #' @family File Functions
-#' @return - 
+#' @return
 #' @export
 #' @md
 #' @references - <https://www.github.com/tbates/umx>
@@ -2053,7 +2055,7 @@ umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) 
 #' @param destFolder Folder to move files into
 #' @param test Boolean determining whether to change the names, or just report on what would have happened
 #' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe))
-#' @return - 
+#' @return
 #' @family File Functions
 #' @md
 #' @export
@@ -2109,14 +2111,14 @@ umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, dest
 #'
 #' NOTE: Your filepath is [shQuote()]'d by this function.
 #' @param filepath The file to open
-#' @return - 
+#' @return
 #' @export
 #' @family File Functions
 #' @md
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' \dontrun{
-#' umx_open() # default is to open wordking directory getwd()
+#' umx_open() # Default is to open working directory getwd()
 #' umx_open("~/bin/umx/R/misc_and_utility copy.r")
 #' }
 umx_open <- function(filepath = getwd()) {
@@ -2496,12 +2498,12 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 #' Show model logLik of model or print comparison table
 #'
 #' @description
-#' Just a helper to show the logLik of a model or print a comparison table is a function which 
+#' Just a helper to show the logLik of a model or print a comparison table. 
 #'
 #' @param model an [mxModel()] to report on
 #' @param comparison If not NULL, used as comparison model
 #' @param digits (default = 2)
-#' @return - 
+#' @return
 #' @export
 #' @family Reporting Functions
 #' @seealso - [umxSummary()]
@@ -2597,18 +2599,15 @@ print.reliability <- function (x, digits = 4, ...){
 #' Install OpenMx, with choice of builds
 #'
 #' @description
-#' You can install OpenMx, including the latest parallel/NPSOL enabled build of OpenMx. Options are:
+#' You can install OpenMx, including the latest NPSOL-enabled build of OpenMx. Options are:
 #' 
 #' 1. "NPSOL": Install from our repository (default: This is where we maintain binaries supporting parallel processing and NPSOL).
-#' 
 #' 2. "travis": Install the latest travis built (currently MacOS only).
-#' 
 #' 3. "CRAN": Install from CRAN.
-#' 
 #' 4. "open travis build page": Open the list of travis builds in a browser window.
 #'
 #' @aliases umx_update_OpenMx
-#' @param loc Which install to get: "UVa" (the default), "travis" (latest build),
+#' @param loc Which install to get: e.g., "NPSOL" (the default), "travis" (latest build),
 #' or open the travis list of builds on the web to view/pick a url.
 #' @param url A custom URL if you have/need one (probably not). If you're on a Mac, you can set this to "Finder" and the package selected in the Finder will be installed. Overrides other settings.
 #' @param repos Which repository to use (ignored currently).
@@ -2681,7 +2680,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
-#' @return - 
+#' @return
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -3204,7 +3203,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
 #' @param report How to report the results. "html" = open in browser.
-#' @return - 
+#' @return
 #' @export
 #' @family Reporting Functions
 #' @references - <https://tbates.github.io>
@@ -4719,8 +4718,8 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 	if(length(sep) != 1){
 		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
-	if(twins != 1:2){
-		stop("I only support two twins at present. email Tim to work on arbitrary widths.")
+	if(identical(twins, 1:2)){
+		stop("I only support two twins at present. e-mail Tim to work on arbitrary family members.")
 	}
 	# TODO umx_scale_wide_twin_data: Discover suffixes as unique digits following suffix (could be 1:6)
 	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = twins)
@@ -5333,7 +5332,7 @@ umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "
 
 #' Like the php array_shift function: shifts an item off the beginning of a list
 #' 
-#' Returns x[1]. Has the SIDE EFFECT of assigning x to x[2:end] in the container environment.
+#' Returns x\[1\]. Has the SIDE EFFECT of assigning x to x\[2:end\] in the container environment.
 #'
 #' @param x the vector to shift
 #' @return - first item of x
@@ -6302,7 +6301,7 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 
 #' Create a matrix of correlations for variables of diverse types (binary, ordinal, continuous)
 #'
-#' umxHetCor is a helper to 
+#' `umxHetCor` is a helper to:
 #' 1. return just the correlations from John Fox's polycor::hetcor function
 #' 2. If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
 #'
@@ -6317,7 +6316,6 @@ umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @family Data Functions
 #' @family Miscellaneous Stats Helpers
 #' @export
-#' @references - 
 #' @md
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
@@ -6552,7 +6550,7 @@ umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefVa
 	return(df)
 }
 
-#' Get mat[r,c] style cell address from an mxMatrix
+#' Get bracket-style addresses from an mxMatrix
 #'
 #' Sometimes you want these :-) This also allows you to change the matrix name: useful for using mxMatrix addresses in an mxAlgebra.
 #'

@@ -264,31 +264,31 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 }
 
 
-#' umxTwoStage
+#' Build a SEM implementing 2-stage least squares regression
 #'
-#' umxTwoStage implements 2-stage least squares regression in Structural Equation Modeling.
+#' `umxTwoStage` implements 2-stage least squares regression in Structural Equation Modeling.
 #' For ease of learning, the function is modeled closely on the \code{\link[sem]{tsls}}.
 #' 
-#' The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization} 
+#' The example is a Mendelian Randomization <https://en.wikipedia.org/wiki/Mendelian_randomization>
 #' analysis to show the utility of two-stage regression.
 #'
-#' @param formula	The structural equation to be estimated; a regression constant is implied if not explicitly omitted.
-#' @param instruments	A one-sided formula specifying instrumental variables.
+#' @param formula The structural equation to be estimated; Y ~ X A regression constant is implied if not explicitly deleted.
+#' @param instruments A one-sided formula specifying instrumental variables.
 #' @param data data.frame containing the variables in the model.
-#' @param subset [optional] vector specifying a subset of observations to be used in fitting the model.
-#' @param weights [optional] vector of weights to be used in the fitting process;
+#' @param subset (optional) vector specifying a subset of observations to be used in fitting the model.
+#' @param weights (optional) vector of weights to be used in the fitting process;
 #' If specified should be a non-negative numeric vector with one entry for each observation,
 #' to be used to compute weighted 2SLS estimates.
 #' @param contrasts	an optional list. See the contrasts.arg argument of model.matrix.default.
 #' @param name for the model (defaults to "tsls")
 #' @param ...	arguments to be passed down.
-#' @return - 
+#' @return - [mxModel()]
 #' @export
 #' @family Super-easy helpers
 #' @seealso - [umx_make_MR_data()], \code{\link[sem]{tsls}}, [umxRAM()]
 #' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
-#' In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass., 
-#' Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
+#' In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass., 
+#' Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' @md
 #' @examples
 #' library(umx)

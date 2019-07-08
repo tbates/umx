@@ -1761,9 +1761,11 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 #' @export
 umxSummary.MxModelIP <- umxSummaryIP
 
-#' umxSummaryGxE
+#' Summarize a GxE model
 #'
-#' Summarize a Moderation model, as returned by [umxGxE()]
+#' Summarize a genetic moderation model, as returned by [umxGxE()]. Prints graphs of A, C, and E, standardized and raw.
+#'
+#' Note: see also [umxReduce()] which knows how to reduce a GxE model.
 #'
 #' @aliases umxSummary.MxModelGxE
 #' @param model A fitted [umxGxE()] model to summarize
@@ -1782,7 +1784,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @return - optional [mxModel()]
 #' @family Twin Modeling Functions
 #' @export
-#' @seealso - \code{\link{umxGxE}()}, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, and ACE models.
+#' @seealso - [umxGxE()], [umxReduce()], [plot()], [umxSummary)] all work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -2657,7 +2659,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR") 
-#' @param SEstyle report "b (se)" instead of "b [lower, upper]" (Default)
+#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
@@ -2763,7 +2765,7 @@ plot.MxModelCP <- umxPlotCP
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR")
-#' @param SEstyle report "b (se)" instead of "b [lower, upper]" (Default)
+#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
@@ -3868,11 +3870,11 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
 #' [umxAPA()](m1, "wt") yields:
 #' 
-#' \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
+#' \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001
 #' 
 #' 2. Given a dataframe, summaryAPA will return a table of correlations, with
 #' the mean and SD of each variable as the last row. So, 
-#' \code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )])} yields a table of 
+#' `umxAPA(mtcars[,c("cyl", "wt", "mpg", )]` yields a table of 
 #' correlations, means and SDs thus:
 #' 
 #'\tabular{lccc}{

@@ -293,7 +293,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 
 #' Summarize a bivariate GxE twin model
 #'
-#' umxSummaryGxEbiv summarizes a bivariate moderation model, as returned by [umxGxEbiv()].
+#' `umxSummaryGxEbiv` summarizes a bivariate moderation model, as returned by [umxGxEbiv()].
 #'
 #' @aliases umxSummary.MxModelGxEbiv
 #' @param model A fitted [umxGxEbiv()] model to summarize
@@ -316,15 +316,13 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' data(twinData) 
-#' selDVs  = "wt"
-#' selDefs = "ht"
+#' data(twinData)
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "")
 #' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
 #' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
 #'
 #' \dontrun{
-#' m1 = umxGxEbiv(selDVs = selDVs, selDefs = selDefs, 
+#' m1 = umxGxEbiv(selDVs = "wt", selDefs = "ht", 
 #' 	dzData = dzData, mzData = mzData, sep = "", dropMissingDef = TRUE)
 #' # Plot Moderation
 #' umxSummary(m1)

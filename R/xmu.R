@@ -511,7 +511,7 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' @param numObsDZ set if data are not raw.
 #' @param enforceSep Whether to require sep to be set, or just warn if it is not (Default = TRUE: enforce).
 #' @param optimizer Set by name (if you want to change it).
-#' @return -
+#' @return
 #' @export
 #' @family Twin Modeling Functions
 #' @family Check or test
@@ -1407,7 +1407,7 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #' @param file Either "name" (use model name) or a file name
 #' @param digraph Graphviz code for a model
 #' @param strip_zero Whether to remove the leading "0." in digits in the diagram
-#' @return -
+#' @return - optionally returns the digraph text.
 #' @family xmu internal not for end user
 #' @family Graphviz
 #' @md
@@ -1710,19 +1710,19 @@ xmu_string2path <- function(from) {
 	}
 }
 
-#' xmu_get_CI
+#' Look up and report CIs for free parameters
 #'
 #' Look up CIs for free parameters in a model, and return as APA-formatted text string.
-#' If std are available then they are reported.
+#' If std are available, then these are reported.
 #'
 #' @param model an [mxModel()] to get CIs from
 #' @param label the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
 #' @param prefix The submodel to look in (default = "top.")
 #' @param suffix The suffix for algebras when standardized (default = "_std")
-#' @param SEstyle If TRUE, report "b(se)" instead of b CI95[l,u] (default = FALSE)
+#' @param SEstyle If TRUE, report "b(se)" instead of b CI95\[l,u\] (default = FALSE)
 #' @param digits = 2
 #' @param verbose = FALSE
-#' @return - the CI string, e.g. ".73[-.20, .98]" or .73(.10)
+#' @return - the CI string, e.g. ".73\[-.20, .98\]" or .73(.10)
 #' @export
 #' @family Reporting Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>

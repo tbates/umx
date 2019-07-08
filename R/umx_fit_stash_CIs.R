@@ -1,7 +1,7 @@
 #' Stash the CI values of a model as strings in the values of the model
 #'
 #' @description
-#' Stash formatted CIs (e.g. ".1 [-.1, .3]") as strings overwriting the parameter values of the model.
+#' Stash formatted CIs (e.g. `.1 [-.1, .3]`) as strings, *overwriting* the parameter values of the model.
 #'
 #' @details I might change this to a lookup-function that gets a CI string if one exists.
 #'
@@ -13,8 +13,8 @@
 #' @export
 #' @family zAdvanced Helpers
 #' @seealso - [umxConfint()], [xmu_get_CI()]
-#' @references - <https://github.com/tbates/umx>
 #' @md
+#' @references - <https://github.com/tbates/umx>
 #'
 umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
