@@ -31,25 +31,23 @@
 \item{...}{Optional parameters}
 }
 \description{
-plot() produces SEM diagrams using \code{\link[=DiagrammeR]{DiagrammeR()}} (or a
-graphviz application) to create the image.
-The commercial application \dQuote{OmniGraffle} is great for editing these images.
+\code{plot.MxLISRELModel} produces SEM diagrams using \code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} (or a graphviz application) to create the image.
 }
 \details{
-If you use umx_set_plot_format("graphviz"), figures will open in a graphviz helper app (if installed).
+\emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
+
+\strong{Opening in an external editor/app}
+
+The underlying format is graphviz.
+If you use \code{umx_set_plot_format("graphviz")}, figures will open in a graphviz helper app (if installed).
 If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
 
-On OS X we try and open an app: you may need to associate the \sQuote{.gv}
-extension with the graphviz app.
+On MacOS, you may need to associate the \sQuote{.gv} extension with your graphviz app.
 Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with},
 select graphviz.app (or OmniGraffle professional),
 then set \dQuote{change all}.
 
-On unix \url{plot()} will create a pdf and open it in your default pdf reader.
-
-\emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
-
-The underlying format is graphviz.
+The commercial application \dQuote{OmniGraffle} is great for editing these images.
 }
 \examples{
 # plot()
@@ -63,7 +61,7 @@ The underlying format is graphviz.
 }
 \seealso{
 \itemize{
-\item \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=plot.MxModel]{plot.MxModel()}}, \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, \code{\link[=umxPlotIP]{umxPlotIP()}}, \code{\link[=umxPlotGxE]{umxPlotGxE()}}
+\item \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=umx_set_auto_plot]{umx_set_auto_plot()}}, \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=plot.MxModel]{plot.MxModel()}}, \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, \code{\link[=umxPlotIP]{umxPlotIP()}}, \code{\link[=umxPlotGxE]{umxPlotGxE()}}
 }
 
 Other Core Modeling Functions: \code{\link{plot.MxModel}},

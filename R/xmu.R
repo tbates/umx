@@ -1503,7 +1503,9 @@ xmu_dot_move_ranks <- function(min = NULL, same = NULL, max = NULL, old_min, old
 #' @export
 #' @family xmu internal not for end user
 #' @family Graphviz
+#' @examples
 #' xmu_dot_rank_str(min = "L1", same = c("x1", "x2"), max = paste0("e", 1:3))
+#' 
 xmu_dot_rank_str <- function(min = NULL, same = NULL, max = NULL) {
 	rankVariables = paste0("\t{rank=min; ", paste(min, collapse = "; "), "};\n")
 	rankVariables = paste0(rankVariables, "\t{rank=same; ", paste(same, collapse = " "), "};\n")

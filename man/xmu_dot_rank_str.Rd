@@ -19,6 +19,10 @@ xmu_dot_rank_str(min = NULL, same = NULL, max = NULL)
 \description{
 xmu_dot_rank_str (not for end users)
 }
+\examples{
+xmu_dot_rank_str(min = "L1", same = c("x1", "x2"), max = paste0("e", 1:3))
+
+}
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
@@ -47,7 +51,14 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}
+
+Other Graphviz: \code{\link{umx_dot_define_shapes}},
+  \code{\link{umx_dot_mat2dot}},
+  \code{\link{umx_dot_rank}},
+  \code{\link{xmu_dot_make_paths}},
+  \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_dot_maker}},
+  \code{\link{xmu_dot_move_ranks}}
 }
-\concept{Graphviz
-xmu_dot_rank_str(min = "L1", same = c("x1", "x2"), max = paste0("e", 1:3))}
+\concept{Graphviz}
 \concept{xmu internal not for end user}

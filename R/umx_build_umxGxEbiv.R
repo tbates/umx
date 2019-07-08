@@ -405,7 +405,7 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 #' see ?legend for alternatives like bottomright
 #' @param separateGraphs (default = FALSE)
 #' @param ... Optional additional parameters
-#' @return - 
+#' @return None
 #' @family Plotting functions
 #' @export
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.

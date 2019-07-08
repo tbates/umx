@@ -23,7 +23,7 @@ umx_APA_pval(p, min = 0.001, digits = 3, addComparison = NA)
 \description{
 \code{umx_APA_pval} formats p-values, rounded in APA style. So you get '< .001' instead of .000000002 or 1.00E-09.
 
-You probably would be better off using \url{umxAPA}, which this, but handles many more object types.
+You probably would be better off using \code{\link[=umxAPA]{umxAPA()}}, which handles many more object types.
 
 You set the precision with digits. Optionally, you can add '=' '<' etc. The default for addComparison (NA) adds these when needed.
 }

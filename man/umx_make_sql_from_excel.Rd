@@ -24,7 +24,7 @@ On MacOS, the function can access the current front-most Finder window.
 
 The file name should be the name of the test.
 Columns should be headed:
-itemText	direction	scale	type	\link{optional	response	options}
+itemText	direction	scale	type	[optional	response	options]
 
 The SQL fields generated are:
 itemID, test, native_item_number, item_text, direction, scale, format, author

@@ -21,7 +21,7 @@ umx_default_option(x, option_list, check = TRUE)
 }
 \description{
 Like a smart version of \code{\link[=match.arg]{match.arg()}}: Handles selecting parameter options when default is a list.
-Unlike  x = \href{x}{match.arg()} this allows items not in the list.
+Unlike  \code{\link[=match.arg]{match.arg()}} \code{umx_match.arg} allows items not in the list.
 }
 \examples{
 option_list = c("default", "par.observed", "empirical")

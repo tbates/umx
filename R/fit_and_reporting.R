@@ -2092,25 +2092,23 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 
 #' Create and display a graphical path diagram for a LISREL model.
 #'
-#' plot() produces SEM diagrams using [DiagrammeR()] (or a 
-#' graphviz application) to create the image. 
-#' The commercial application \dQuote{OmniGraffle} is great for editing these images.
+#' `plot.MxLISRELModel` produces SEM diagrams using [DiagrammeR::DiagrammeR()] (or a graphviz application) to create the image. 
 #' 
-#'
-#' If you use umx_set_plot_format("graphviz"), figures will open in a graphviz helper app (if installed).
+#' \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
+#' 
+#' **Opening in an external editor/app**
+#' 
+#' The underlying format is graphviz.
+#' If you use `umx_set_plot_format("graphviz")`, figures will open in a graphviz helper app (if installed).
 #' If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
 #' 
-#' On OS X we try and open an app: you may need to associate the \sQuote{.gv}
-#' extension with the graphviz app.
+#' On MacOS, you may need to associate the \sQuote{.gv} extension with your graphviz app.
 #' Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
 #' select graphviz.app (or OmniGraffle professional),
 #' then set \dQuote{change all}.
 #' 
-#' On unix [plot()]() will create a pdf and open it in your default pdf reader.
 #' 
-#' \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
-#' 
-#' The underlying format is graphviz.
+#' The commercial application \dQuote{OmniGraffle} is great for editing these images.
 #'
 #' @rdname plot.MxLISRELModel
 #' @param x A LISREL [mxModel()] from which to make a path diagram
@@ -2124,7 +2122,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional parameters
 #' @export
-#' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
+#' @seealso - [umx_set_plot_format()], [umx_set_auto_plot()], [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
 #' @family Core Modeling Functions
 #' @family Plotting functions
 #' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
@@ -3802,7 +3800,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 #' @description
 #' `umx_APA_pval` formats p-values, rounded in APA style. So you get '< .001' instead of .000000002 or 1.00E-09.
 #' 
-#' You probably would be better off using [umxAPA](umxAPA), which this, but handles many more object types.
+#' You probably would be better off using [umxAPA()], which handles many more object types.
 #' 
 #' You set the precision with digits. Optionally, you can add '=' '<' etc. The default for addComparison (NA) adds these when needed.
 #'
@@ -3864,13 +3862,13 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @description
 #' umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
 #' 
-#' 1. Given an lm, will return a formatted effect, including 95\% CI 
+#' 1. Given an `lm`, `umxAPA` will return a formatted effect, including 95\% CI 
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
-#' [umxAPA()](m1, "wt") yields:
+#' `umxAPA(m1, "wt")` yields:
 #' 
 #' \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001
 #' 
-#' 2. Given a dataframe, summaryAPA will return a table of correlations, with
+#' 2. Given a dataframe, `umxAPA` will return a table of correlations, with
 #' the mean and SD of each variable as the last row. So, 
 #' `umxAPA(mtcars[,c("cyl", "wt", "mpg", )]` yields a table of 
 #' correlations, means and SDs thus:
@@ -3888,7 +3886,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' 4. Given only a number as obj will be treated as a p-value as returned in APA format.
 #' 
 #' @aliases summaryAPA
-#' @param obj A model (e.g. \link{lm}, lme, glm, t-test), beta-value, or data.frame
+#' @param obj A model (e.g. [lm()], [lme()], [glm()], [t.test()]), beta-value, or [data.frame]
 #' @param se If obj is a beta, se treated as standard-error (returning a CI). 
 #' If obj is a model, used to select effect of interest (blank for all effects). 
 #' Finally, set se to the CI c(lower, upper), to back out the SE.
@@ -3905,7 +3903,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @return - string
 #' @export
 #' @family Reporting Functions
-#' @references - <https://github.com/tbates/umx>, \url{https://my.ilstu.edu/~jhkahn/apastats.html}
+#' @references - <https://github.com/tbates/umx>, <https://my.ilstu.edu/~jhkahn/apastats.html>
 #' @md
 #' @examples
 #' 

@@ -142,6 +142,8 @@ cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
+\dontrun{
+
 # ===============
 # = GxE Example =
 # ===============
@@ -198,6 +200,7 @@ str(tmp)
 # m1 = lm(var_T1~ M_T1, data = x); 
 # x = rbind(tmp[[1]], tmp[[2]])
 # plot(residuals(m1)~ x$M_T1, data=x)
+}
 }
 \references{
 \itemize{

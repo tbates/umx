@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_pb_note}
 \alias{umx_pb_note}
-\title{umx_pb_note}
+\title{Use the pushbullet service to push a note}
 \usage{
 umx_pb_note(title = "test", body = "body", auth_key = c(NA, "GET"))
 }
@@ -19,7 +19,7 @@ service by providing your key one time
 }
 \details{
 If you supply auth_key, It will be written to "~/.pushbulletkey"
-\href{auth_key="mykeystring"}{umx_pb_note()}
+\code{umx_pb_note(auth_key="mykeystring")}
 once it exists there, you do not need to store it in code, so code is sharable.
 
 You can get your authorization key at \url{https://www.pushbullet.com} in

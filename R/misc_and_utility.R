@@ -1992,13 +1992,13 @@ dl_from_dropbox <- function(x, key=NULL){
 	message(noquote(paste(x, "read into", getwd())))
 }
 
-#' umx_pb_note
+#' Use the pushbullet service to push a note
 #'
 #' Use the pushbullet service to push a note. You can also initialise this
 #' service by providing your key one time
 #'
 #' If you supply auth_key, It will be written to "~/.pushbulletkey"
-#' [umx_pb_note()](auth_key="mykeystring")
+#' `umx_pb_note(auth_key="mykeystring")`
 #' once it exists there, you do not need to store it in code, so code is sharable.
 #' 
 #' You can get your authorization key at \url{https://www.pushbullet.com} in 
@@ -2192,7 +2192,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' 
 #' The file name should be the name of the test.
 #' Columns should be headed:
-#' itemText	direction	scale	type	[optional	response	options]
+#' itemText	direction	scale	type	\[optional	response	options\]
 #' 
 #' The SQL fields generated are:
 #' itemID, test, native_item_number, item_text, direction, scale, format, author
@@ -3205,7 +3205,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
 #' @param report How to report the results. "html" = open in browser.
-#' @return -
+#' @return None
 #' @export
 #' @family Reporting Functions
 #' @references - <https://tbates.github.io>
@@ -4336,7 +4336,7 @@ umx2ord <- umx_cont_2_quantiles
 
 #' Check if a label contains square brackets
 #'
-#' Helper function to check if a label has square brackets, e.g. "A[1,1]"
+#' Helper function to check if a label has square brackets, e.g. "A\[1,1\]"
 #'
 #' @param input The label to check for square brackets (string input)
 #' @return - boolean
@@ -4746,7 +4746,7 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' Select first item in list of options, while being flexible about choices.
 #'
 #' Like a smart version of [match.arg()]: Handles selecting parameter options when default is a list.
-#' Unlike  x = [match.arg()](x) this allows items not in the list.
+#' Unlike  [match.arg()] `umx_match.arg` allows items not in the list.
 #'
 #' @aliases umx_match.arg
 #' @param x the value chosen (may be the default option list)
@@ -5543,6 +5543,8 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
 #' cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 #'
+#' \dontrun{
+#' 
 #' # ===============
 #' # = GxE Example =
 #' # ===============
@@ -5599,6 +5601,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # m1 = lm(var_T1~ M_T1, data = x); 
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
+#' }
 umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  DD = NULL,  varNames = "var", MZr= NULL, DZr= MZr, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL, seed = NULL, empirical = FALSE) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)

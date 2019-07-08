@@ -27,9 +27,7 @@ tmx_show(model, what = c("values", "free", "labels", "nonzero_or_free"),
 \item{zero.print}{How to display 0 values (default = ".")}
 }
 \value{
-\itemize{
-\item 
-}
+None
 }
 \description{
 A great way to learn about models is to look at the matrix contents. \code{tmx_show} is designed to

@@ -11,7 +11,7 @@ umxAPA(obj = .Last.value, se = NULL, std = FALSE, digits = 2,
   "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE)
 }
 \arguments{
-\item{obj}{A model (e.g. \link{lm}, lme, glm, t-test), beta-value, or data.frame}
+\item{obj}{A model (e.g. \code{\link[=lm]{lm()}}, \code{\link[=lme]{lme()}}, \code{\link[=glm]{glm()}}, \code{\link[=t.test]{t.test()}}), beta-value, or \link{data.frame}}
 
 \item{se}{If obj is a beta, se treated as standard-error (returning a CI).
 If obj is a model, used to select effect of interest (blank for all effects).
@@ -45,14 +45,14 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \description{
 umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
 \enumerate{
-\item Given an lm, will return a formatted effect, including 95\% CI
+\item Given an \code{lm}, \code{umxAPA} will return a formatted effect, including 95\% CI
 in square brackets, for one of the effects (specified by name in se). e.g.:
-\href{m1,}{umxAPA()} yields:
+\code{umxAPA(m1, "wt")} yields:
 }
 
 \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 \enumerate{
-\item Given a dataframe, summaryAPA will return a table of correlations, with
+\item Given a dataframe, \code{umxAPA} will return a table of correlations, with
 the mean and SD of each variable as the last row. So,
 \code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
 correlations, means and SDs thus:

@@ -15,7 +15,7 @@ umx_has_square_brackets(input)
 }
 }
 \description{
-Helper function to check if a label has square brackets, e.g. "A\link{1,1}"
+Helper function to check if a label has square brackets, e.g. "A[1,1]"
 }
 \examples{
 umx_has_square_brackets("[hello]")
