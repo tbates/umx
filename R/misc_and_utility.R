@@ -4720,8 +4720,9 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 	if(length(sep) != 1){
 		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
-	if(identical(twins, 1:2)){
-		stop("I only support two twins at present. e-mail Tim to work on arbitrary family members.")
+	if(!identical(twins, 1:2)){
+		stop("I only support two twins at present, but you asked for:", omxQuotes(twins)," \n",
+		"e-mail Tim to work on arbitrary family members.")
 	}
 	# TODO umx_scale_wide_twin_data: Discover suffixes as unique digits following suffix (could be 1:6)
 	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = twins)

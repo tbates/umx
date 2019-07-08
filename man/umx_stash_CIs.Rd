@@ -22,7 +22,7 @@ umx_stash_CIs(model, digits = 3, dropZeros = FALSE,
 }
 }
 \description{
-Stash formatted CIs (e.g. \code{.1 [-.1, .3]}) as strings, \emph{overwriting} the parameter values of the model.
+Stash formatted CIs (e.g. ".1 [-.1, .3]") as strings, \emph{overwriting} the parameter values of the model.
 }
 \details{
 I might change this to a lookup-function that gets a CI string if one exists.

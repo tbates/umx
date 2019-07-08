@@ -1080,28 +1080,28 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' the model-likelihood, which is to be minimized.
 #' This feature is used in the non-linear GxE model functions.
 #' 
-#' \strong{Additional features}
+#' **Additional features**
 #' The umxACE function supports varying the DZ genetic association (defaulting to .5)
 #' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
 #' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 #' to .25 to model dominance effects.
 #'
-#' \strong{Matrices and Labels in ACE model}
+#' **Matrices and Labels in ACE model**
 #' 
 #' Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
 #' 
-#' So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
+#' So, labels relevant to modifying the model are of the form `"a_r1c1", "c_r1c1"` etc.
 #'
-#' Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say
+#' Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say:
 #'
-#'     \code{m2 = umxModify(m1, update = "c_r3c2")}
+#'     `m2 = umxModify(m1, update = "c_r3c2")`
 #'	
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for 
 #' each variable for twin 1, followed by each variable for twin 2.
 #' 
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
 #'
-#' \code{m1$top$expMean$labels[1, 4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+#' `m1$top$expMean$labels[1, 4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
 #' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
@@ -1184,7 +1184,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # Things to note:
 #' 
 #' # 1. Weight has a large variance, and this makes solution finding very hard.
-#' # We'll scale wt to make the Optimizer's task easier.
+#' # Here, we scale wt to make the Optimizer's task easier.
 #'
 #' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]

@@ -1,7 +1,7 @@
 #' Stash the CI values of a model as strings in the values of the model
 #'
 #' @description
-#' Stash formatted CIs (e.g. `.1 [-.1, .3]`) as strings, *overwriting* the parameter values of the model.
+#' Stash formatted CIs (e.g. ".1 \[-.1, .3\]") as strings, *overwriting* the parameter values of the model.
 #'
 #' @details I might change this to a lookup-function that gets a CI string if one exists.
 #'

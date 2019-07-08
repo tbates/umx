@@ -143,7 +143,7 @@ Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor 
 
 So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
 
-Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say\preformatted{\code{m2 = umxModify(m1, update = "c_r3c2")}
+Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say:\preformatted{`m2 = umxModify(m1, update = "c_r3c2")`
 }
 
 Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 row, and the columns are laid out for
@@ -204,7 +204,7 @@ m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData,
 # Things to note:
 
 # 1. Weight has a large variance, and this makes solution finding very hard.
-# We'll scale wt to make the Optimizer's task easier.
+# Here, we scale wt to make the Optimizer's task easier.
 
 twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
