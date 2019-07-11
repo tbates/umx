@@ -20,21 +20,28 @@ umx_cor(X, df = nrow(X) - 2, use = c("pairwise.complete.obs",
 \item{type}{Unused argument for future directions}
 }
 \value{
-- Matrix of correlations and p-values
+\itemize{
+\item Matrix of correlations and p-values
+}
 }
 \description{
 For reporting correlations and their p-values in a compact table. Handles rounding, and skipping non-numeric columns.
 }
 \details{
-To compute heterochoric correlations, see [umxHetCor()].
+To compute heterochoric correlations, see \code{\link[=umxHetCor]{umxHetCor()}}.
 
-note: The Hmisc package has a more robust function called rcorr
+\emph{note}: The Hmisc package has a more robust function called \code{rcorr}.
 }
 \examples{
-umx_cor(myFADataRaw[1:8,])
+tmp = myFADataRaw[1:8,1:8]
+umx_cor(tmp)
+tmp$x1 = letters[1:8] # make one column non-numeric
+umx_cor(tmp)
 }
 \references{
-- <https://www.github.com/tbates/umx>
+\itemize{
+\item \url{https://www.github.com/tbates/umx}
+}
 }
 \seealso{
 umxHetCor

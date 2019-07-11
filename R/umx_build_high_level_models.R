@@ -264,45 +264,54 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 }
 
 
-#' Build a SEM implementing 2-stage least squares regression
+#' Build a SEM implementing the equivalent of 2-stage least squares regression
 #'
-#' `umxTwoStage` implements 2-stage least squares regression in Structural Equation Modeling.
+#' `umxTwoStage` implementing the Structural Equation Model equivalent of a 2SLS regression.
 #' For ease of learning, the function is modeled closely on the [sem::tsls()].
 #' 
-#' The example is a Mendelian Randomization <https://en.wikipedia.org/wiki/Mendelian_randomization>
-#' analysis to show the utility of two-stage regression.
+#' The example is a [Mendelian Randomization](https://en.wikipedia.org/wiki/Mendelian_randomization)
+#' analysis showing the utility of SEM over two-stage regression.
+#' 
+#' The following figure shows how the ACE model appears as a path diagram:
+#' 
+#' \if{html}{\figure{TSLS.png}{options: width="50\%" alt="Figure: Mendelian Randomisation analysis.png"}}
+#' \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
+
 #'
-#' @param formula The structural equation to be estimated; Y ~ X A regression constant is implied if not explicitly deleted.
-#' @param instruments A one-sided formula specifying instrumental variables.
-#' @param data data.frame containing the variables in the model.
+#' @aliases umxMendelianRandomization
+#' @param formula The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.
+#' @param instruments A one-sided formula specifying instrumental variables (default = qtl).
+#' @param data Frame containing the variables in the model.
 #' @param subset (optional) vector specifying a subset of observations to be used in fitting the model.
-#' @param weights (optional) vector of weights to be used in the fitting process;
+#' @param weights (optional) vector of weights to be used in the fitting process (not supported)
 #' If specified should be a non-negative numeric vector with one entry for each observation,
 #' to be used to compute weighted 2SLS estimates.
-#' @param contrasts	an optional list. See the contrasts.arg argument of model.matrix.default.
-#' @param name for the model (defaults to "tsls")
-#' @param ...	arguments to be passed down.
+#' @param contrasts	an optional list (not supported)
+#' @param name for the model (default = "tsls")
+#' @param ...	arguments to be passed along. (not supported)
 #' @return - [mxModel()]
 #' @export
 #' @family Super-easy helpers
 #' @seealso - [umx_make_MR_data()], [sem::tsls()], [umxRAM()]
-#' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
-#' In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass., 
-#' Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
+#' @references - * Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
+#' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' @md
 #' @examples
 #' library(umx)
 #' 
 #' 
 #' # ====================================
-#' # = Mendelian randomization analysis =
+#' # = Mendelian Randomization analysis =
 #' # ====================================
 #' 
 #' # Note: in practice: many more subjects are desirable - this just to let example run fast
 #' df = umx_make_MR_data(1000) 
 #' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 #' parameters(m1)
-#' plot(m1)
+#' plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
+#' m2 = umxModify(m1, "qtl_to_X", comparison=TRUE, tryHard="yes", name="QTL_affects_X") # yip
+#' m3 = umxModify(m1, "X_to_Y"  , comparison=TRUE, tryHard="yes", name="X_affects_Y") # nope
+#' plot(m3, means = FALSE)
 #' 
 #' # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
 #' m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
@@ -312,18 +321,18 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' \dontrun{
 #' df = umx_make_MR_data(1e5) 
 #' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
+#' coef(m1)
 #' 
 #' # ======================
 #' # = Now with sem::tsls =
 #' # ======================
-#' # library(sem) # will require you to install X11
+#' # library(sem) # may require you to install X11
 #' m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
-#' coef(m1)
 #' coef(m2)
 # # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
-umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
+umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer to prioritize")	
 	# formula = Y ~ X; instruments ~ qtl; data = umx_make_MR_data(10000)
 	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
@@ -361,6 +370,5 @@ umxTwoStage <- function(formula, instruments, data, subset, weights, contrasts= 
 	return(IVModel)
 }
 
-# load(file = "~/Dropbox/shared folders/OpenMx_binaries/shared data/bad_CFI.Rda", verbose =T)
-# ref <- mxRefModels(IVModel, run=TRUE)
-# summary(IVModel, refModels=ref)
+@export
+umxMendelianRandomization <- umxTSLS

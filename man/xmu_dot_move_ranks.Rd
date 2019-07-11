@@ -26,17 +26,21 @@ xmu_dot_move_ranks(min = NULL, same = NULL, max = NULL, old_min,
 }
 }
 \description{
-xmu_dot_move_ranks (not for end users)
+Variables will be moved from any existing rank to the new one. Setting a rank to "" will clear it.
 }
 \examples{
-# Add L1 to min
 old_min = c("min1", "min2")
 old_same = c("s1", "s2")
 old_max = paste0("x", 1:3)
+
+# Add L1 to min
 xmu_dot_move_ranks(min = "L1", old_min= old_min, old_same= old_same, old_max= old_max)
 
 # Move min1 to max
 xmu_dot_move_ranks(max = "min1", old_min= old_min, old_same= old_same, old_max= old_max)
+
+# Clear min
+xmu_dot_move_ranks(min = "", old_min= old_min, old_same= old_same, old_max= old_max)
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},

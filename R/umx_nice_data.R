@@ -6,7 +6,6 @@
 #' 1. zygosity is stored in a column called "zygosity".
 #' 2. sep is set to "_T"
 # #' @details
-#'
 #' @param data a [data.frame()] to check/convert.
 #' @param sep existing separator string (updated to "_T").
 #' @param zygosity existing zygosity column name (updated to `zygosity`).

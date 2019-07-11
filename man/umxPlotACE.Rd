@@ -3,7 +3,7 @@
 \name{umxPlotACE}
 \alias{umxPlotACE}
 \alias{plot.MxModelACE}
-\title{umxPlotACE}
+\title{Make a graphical display of an ACE model}
 \usage{
 umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
   std = TRUE, strip_zero = TRUE, ...)
@@ -29,7 +29,7 @@ umxPlotACE(x = NA, file = "name", digits = 2, means = FALSE,
 }
 }
 \description{
-Make a graphical display of an ACE model
+plot method for \code{\link[=umxACE]{umxACE()}} models. Make a graphical display of an ACE model
 }
 \examples{
 require(umx)

@@ -85,10 +85,9 @@ Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},
 
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
-  \code{\link{umxMatrix}}, \code{\link{umxModify}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSummary}},
-  \code{\link{umxSuperModel}}
+  \code{\link{umxMatrix}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxSummary}}, \code{\link{umxSuperModel}}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},
@@ -106,7 +105,7 @@ Other Reporting Functions: \code{\link{FishersMethod}},
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
   \code{\link{umxFixAll}}, \code{\link{umxMI}},
-  \code{\link{umxModify}}, \code{\link{umxSetParameters}},
+  \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}}
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},

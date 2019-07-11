@@ -2,29 +2,29 @@
 % Please edit documentation in R/umx_build_high_level_models.R
 \name{umxTwoStage}
 \alias{umxTwoStage}
-\title{Build a SEM implementing 2-stage least squares regression}
+\title{Build a SEM implementing the equivalent of 2-stage least squares regression}
 \usage{
-umxTwoStage(formula, instruments, data, subset, weights,
+umxTwoStage(formula = Y ~ X, instruments = ~qtl, data, subset, weights,
   contrasts = NULL, name = "tsls", ...)
 }
 \arguments{
-\item{formula}{The structural equation to be estimated; Y ~ X A regression constant is implied if not explicitly deleted.}
+\item{formula}{The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.}
 
-\item{instruments}{A one-sided formula specifying instrumental variables.}
+\item{instruments}{A one-sided formula specifying instrumental variables (default = qtl).}
 
-\item{data}{data.frame containing the variables in the model.}
+\item{data}{Frame containing the variables in the model.}
 
 \item{subset}{(optional) vector specifying a subset of observations to be used in fitting the model.}
 
-\item{weights}{(optional) vector of weights to be used in the fitting process;
+\item{weights}{(optional) vector of weights to be used in the fitting process (not supported)
 If specified should be a non-negative numeric vector with one entry for each observation,
 to be used to compute weighted 2SLS estimates.}
 
-\item{contrasts}{an optional list. See the contrasts.arg argument of model.matrix.default.}
+\item{contrasts}{an optional list (not supported)}
 
-\item{name}{for the model (defaults to "tsls")}
+\item{name}{for the model (default = "tsls")}
 
-\item{...}{arguments to be passed down.}
+\item{...}{arguments to be passed along. (not supported)}
 }
 \value{
 \itemize{
@@ -32,26 +32,34 @@ to be used to compute weighted 2SLS estimates.}
 }
 }
 \description{
-\code{umxTwoStage} implements 2-stage least squares regression in Structural Equation Modeling.
+\code{umxTwoStage} implementing the Structural Equation Model equivalent of a 2SLS regression.
 For ease of learning, the function is modeled closely on the \code{\link[sem:tsls]{sem::tsls()}}.
 }
 \details{
-The example is a Mendelian Randomization \url{https://en.wikipedia.org/wiki/Mendelian_randomization}
-analysis to show the utility of two-stage regression.
+The example is a \href{https://en.wikipedia.org/wiki/Mendelian_randomization}{Mendelian Randomization}
+analysis showing the utility of SEM over two-stage regression.
+
+The following figure shows how the ACE model appears as a path diagram:
+
+\if{html}{\figure{TSLS.png}{options: width="50\%" alt="Figure: Mendelian Randomisation analysis.png"}}
+\if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
 }
 \examples{
 library(umx)
 
 
 # ====================================
-# = Mendelian randomization analysis =
+# = Mendelian Randomization analysis =
 # ====================================
 
 # Note: in practice: many more subjects are desirable - this just to let example run fast
 df = umx_make_MR_data(1000) 
 m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
 parameters(m1)
-plot(m1)
+plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
+m2 = umxModify(m1, "qtl_to_X", comparison=TRUE, tryHard="yes", name="QTL_affects_X") # yip
+m3 = umxModify(m1, "X_to_Y"  , comparison=TRUE, tryHard="yes", name="X_affects_Y") # nope
+plot(m3, means = FALSE)
 
 # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
 m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
@@ -61,22 +69,26 @@ m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 bet
 \dontrun{
 df = umx_make_MR_data(1e5) 
 m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
+coef(m1)
 
 # ======================
 # = Now with sem::tsls =
 # ======================
-# library(sem) # will require you to install X11
+# library(sem) # may require you to install X11
 m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
-coef(m1)
 coef(m2)
 m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 }
 \references{
 \itemize{
-\item Fox, J. (1979) Simultaneous equation models and two-stage least-squares.
-In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass.,
-Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
+\item 
+\itemize{
+\item Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass.
+}
+}
+\itemize{
+\item Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
 }
 }
 \seealso{

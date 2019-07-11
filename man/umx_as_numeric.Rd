@@ -21,14 +21,17 @@ Convert each column of a dataframe to numeric
 }
 \examples{
 df = mtcars
-# make mpg into string
+# make mpg into string, and cyl into a factor
 df$mpg = as.character(df$mpg)
 df$cyl = factor(df$cyl)
-df = umx_as_numeric(df); str(df)
+
+df = umx_as_numeric(df); str(df) # mpg not touched
+df = umx_as_numeric(df, force=TRUE); str(df) # mpg coerced back to numeric
+\dontrun{
+# coercing a real string will cause NAs
+df$mpg = c(letters[1:16]); str(df) # replace mpg with letters.
 df = umx_as_numeric(df, force=TRUE); str(df)
-# Make one variable alpha
-df$mpg = c(letters,letters[1:6]); str(df)
-df = umx_as_numeric(df, force=TRUE); str(df)
+}
 }
 \references{
 - <https://www.github.com/tbates/umx>

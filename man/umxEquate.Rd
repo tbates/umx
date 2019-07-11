@@ -79,8 +79,7 @@ m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq x1 x2",
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxFixAll}},
-  \code{\link{umxMI}}, \code{\link{umxModify}},
-  \code{\link{umxSetParameters}},
+  \code{\link{umxMI}}, \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }

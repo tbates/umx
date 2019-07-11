@@ -90,9 +90,8 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+  \code{\link{umxPath}}, \code{\link{umxRAM}},
+  \code{\link{umxRun}}, \code{\link{umxSummary}},
+  \code{\link{umxSuperModel}}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}
