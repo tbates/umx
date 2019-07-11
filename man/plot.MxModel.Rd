@@ -97,9 +97,10 @@ plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 
 Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSummary}},
-  \code{\link{umxSuperModel}}, \code{\link{umx}}
+  \code{\link{umxModify}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},

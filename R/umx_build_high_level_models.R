@@ -370,5 +370,5 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weight
 	return(IVModel)
 }
 
-@export
-umxMendelianRandomization <- umxTSLS
+#' @export
+umxMendelianRandomization <- umxTwoStage

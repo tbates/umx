@@ -59,7 +59,8 @@ umxMI(m1, full=FALSE)
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
-  \code{\link{umxFixAll}}, \code{\link{umxSetParameters}},
+  \code{\link{umxFixAll}}, \code{\link{umxModify}},
+  \code{\link{umxSetParameters}},
   \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }

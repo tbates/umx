@@ -66,9 +66,10 @@ The commercial application \dQuote{OmniGraffle} is great for editing these image
 
 Other Core Modeling Functions: \code{\link{plot.MxModel}},
   \code{\link{umxAlgebra}}, \code{\link{umxMatrix}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSummary}},
-  \code{\link{umxSuperModel}}, \code{\link{umx}}
+  \code{\link{umxModify}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 
 Other Plotting functions: \code{\link{plot.MxModel}},
   \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},

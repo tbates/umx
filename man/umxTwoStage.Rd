@@ -2,6 +2,7 @@
 % Please edit documentation in R/umx_build_high_level_models.R
 \name{umxTwoStage}
 \alias{umxTwoStage}
+\alias{umxMendelianRandomization}
 \title{Build a SEM implementing the equivalent of 2-stage least squares regression}
 \usage{
 umxTwoStage(formula = Y ~ X, instruments = ~qtl, data, subset, weights,
