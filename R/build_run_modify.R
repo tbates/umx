@@ -914,7 +914,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' m3 = umxModify(m1, umxPath("G", with = "x1"), name= "addedPath")
 #' 
 #' # Use regular expression to drop multiple paths: e.g. G to x3, x4, x5
-#' m2 = umxModify(m1, regex = "^G_to_x[3-5]", name = "no_G_to_x3_5", comp = TRUE)
+#' m3 = umxModify(m1, regex = "^G_to_x[3-5]", name = "tried_hard", comp = TRUE, tryHard="yes")
 #' 
 #' # Same, but don't autoRun
 #' m2 = umxModify(m1, regex  = "^G_to_x[3-5]", name = "no_G_to_x3_5", autoRun = FALSE) 
