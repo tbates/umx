@@ -1637,14 +1637,17 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' df = mtcars
-#' # make mpg into string
+#' # make mpg into string, and cyl into a factor
 #' df$mpg = as.character(df$mpg)
 #' df$cyl = factor(df$cyl)
-#' df = umx_as_numeric(df); str(df)
+#' 
+#' df = umx_as_numeric(df); str(df) # mpg not touched
+#' df = umx_as_numeric(df, force=TRUE); str(df) # mpg coerced back to numeric
+#' \dontrun{
+#' # coercing a real string will cause NAs
+#' df$mpg = c(letters[1:16]); str(df) # replace mpg with letters.
 #' df = umx_as_numeric(df, force=TRUE); str(df)
-#' # Make one variable alpha
-#' df$mpg = c(letters,letters[1:6]); str(df)
-#' df = umx_as_numeric(df, force=TRUE); str(df)
+#' }
 umx_as_numeric <- function(df, which = NULL, force = FALSE) {
 	# TODO umx_as_numeric: Handle matrices, vectors...
 	if(is.null(which)){
@@ -2389,7 +2392,7 @@ print.result_oddsratio <- function(x, digits = 3, ...) {
 #' 
 #' To compute heterochoric correlations, see [umxHetCor()].
 #'
-#' note: The Hmisc package has a more robust function called rcorr 
+#' *note*: The Hmisc package has a more robust function called `rcorr`.
 #'
 #' @param X a matrix or dataframe
 #' @param df the degrees of freedom for the test
@@ -2401,16 +2404,20 @@ print.result_oddsratio <- function(x, digits = 3, ...) {
 #' @family Miscellaneous Stats Helpers
 #' @export
 #' @references - <https://www.github.com/tbates/umx>
+#' @md
 #' @examples
-#' umx_cor(myFADataRaw[1:8,])
+#' tmp = myFADataRaw[1:8,1:8]
+#' umx_cor(tmp)
+#' tmp$x1 = letters[1:8] # make one column non-numeric
+#' umx_cor(tmp)
 umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2, type= c("r and p-value", "smart")) {
 	# see also
-	# hmisc::rcorr( )
+	# hmisc::rcorr()
 	use = match.arg(use)
-	warning("TODO: umx_cor assumes no missing data, n is just nrow() !!")
-	# nvar    = dim(x)[2]
-	# nMatrix = diag(NA, nrow= nvar)
-	# for (i in 1:nvar) {
+	message("TODO: umx_cor assumes no missing data, n is just nrow() !!")
+	# nVar    = dim(x)[2]
+	# nMatrix = diag(NA, nrow= nVar)
+	# for (i in 1:nVar) {
 	# 	x[,i]
 	# }
 	numericCols = rep(FALSE, ncol(X))
@@ -2418,7 +2425,7 @@ umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "comp
 		numericCols[i] = is.numeric(X[,i])
 	}
 	if(ncol(X) > sum(numericCols)){
-		message("dropped ", ncol(X) - sum(numericCols), " non-numeric columns.")
+		message("dropped ", ncol(X) - sum(numericCols), " non-numeric column(s).")
 	}
 	
 	R <- cor(X[,numericCols], use = use)
