@@ -1451,7 +1451,7 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 
 #' xmu_dot_move_ranks (not for end users)
 #'
-#'
+#' Variables will be moved from any existing rank to the new one. Setting a rank to "" will clear it.
 #' @param min vars to group at top of plot
 #' @param same vars to group at the same level
 #' @param max vars to group at bottom of plot
@@ -1464,24 +1464,34 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 #' @family Graphviz
 #' @md
 #' @examples
-#' # Add L1 to min
 #' old_min = c("min1", "min2")
 #' old_same = c("s1", "s2")
 #' old_max = paste0("x", 1:3)
+#'
+#' # Add L1 to min
 #' xmu_dot_move_ranks(min = "L1", old_min= old_min, old_same= old_same, old_max= old_max)
 #'
 #' # Move min1 to max
 #' xmu_dot_move_ranks(max = "min1", old_min= old_min, old_same= old_same, old_max= old_max)
+#'
+#' # Clear min
+#' xmu_dot_move_ranks(min = "", old_min= old_min, old_same= old_same, old_max= old_max)
 xmu_dot_move_ranks <- function(min = NULL, same = NULL, max = NULL, old_min, old_same, old_max) {
+	# clear rank if set to ""
+	if(identical(min , "")){ old_min  = c(); min  = c() }
+	if(identical(same, "")){ old_same = c(); same = c() }
+	if(identical(max , "")){ old_max  = c(); max  = c() }
+
 	# Remove items in user's "max" from other lists...
 	old_min  = setdiff(old_min,  max)
 	old_max  = setdiff(old_max,  max)
 	old_same = setdiff(old_same, max)
-	# Remove items in user's "max" from other lists...
+	# Remove items in user's "min" from other lists...
 	old_min  = setdiff(old_min,  min)
 	old_max  = setdiff(old_max,  min)
 	old_same = setdiff(old_same, min)
 
+	# Remove items in user's "same" from other lists...
 	old_min  = setdiff(old_min,  same)
 	old_max  = setdiff(old_max,  same)
 	old_same = setdiff(old_same, same)
