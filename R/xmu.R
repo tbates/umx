@@ -16,53 +16,40 @@
 # = Fns not used directly by users subject to arbitrary change and deprecation !!  =
 # ==================================================================================
 
-#' Find name for model
+
+# ==========================
+# = Run and Report helpers =
+# ==========================
+
+#' Show model logLik of model or print comparison table
 #'
 #' @description
-#' Use name if provided. If first line contains a #, uses this line as name. Else use default.
+#' Just a helper to show the logLik of a model or print a comparison table. 
 #'
-#' @param lavaanString A model string, possibly with # model name on line 1.
-#' @param name A desired model name (optional).
-#' @param default A default name if nothing else found.
-#' @return - A name string
+#' @param model an [mxModel()] to report on
+#' @param comparison If not NULL, used as comparison model
+#' @param digits (default = 2)
+#' @return None
 #' @export
-#' @family xmu internal not for end user
-#' @seealso - [umxRAM()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @family Reporting Functions
+#' @seealso - [umxSummary()]
 #' @md
 #' @examples
-#' "m1" == xmu_name_from_lavaan_str("x~~x")
-#' "bob" == xmu_name_from_lavaan_str(name = "bob")
-#' "my_model" == xmu_name_from_lavaan_str("# my model")
+#' \dontrun{
+#' xmu_show_fit_or_comparison(model, comparison, digits=3)
+#' }
 #'
-xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "m1") {
-	# Assume `name` should be used if !is.null(name)
-	if(is.na(name)){
-		# If first line contains a #, assume user wants it to be a name for the model
-		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
-		if(grepl(x = line1, pattern = "#")){
-			# line1 = "## my model ##"
-			pat = "\\h*#+\\h*([^\\n#;]+).*" # remove leading #, trim
-			name = gsub(x = line1, pattern = pat, replacement = "\\1", perl = TRUE);
-			name = trimws(name)
-			# Replace white space with  "_"
-			name = gsub("(\\h+)", "_", name, perl = TRUE)
-			# Delete illegal characters
-			name = as.character(mxMakeNames(name))
-		}else{
-			# No name given in name or comment: use a default name
-			name = default
-		}
-	}else{
-		name = name
-	}
-	return(name)
+xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
+	if(is.null(comparison)){
+		# \u00d7 = times sign
+		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
+			round(-2 * logLik(model), digits = digits))
+		)
+	} else {
+		message("Comparison of model with parent model:")
+		umxCompare(comparison, model, digits = digits)
+	}		
 }
-
-
-# =====================
-# = Reporting helpers =
-# =====================
 
 #' Safely run and summarize a model
 #'
@@ -475,6 +462,49 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 # ==========================
 # = Model building helpers =
 # ==========================
+
+#' Find name for model
+#'
+#' @description
+#' Use name if provided. If first line contains a #, uses this line as name. Else use default.
+#'
+#' @param lavaanString A model string, possibly with # model name on line 1.
+#' @param name A desired model name (optional).
+#' @param default A default name if nothing else found.
+#' @return - A name string
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [umxRAM()]
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' "m1" == xmu_name_from_lavaan_str("x~~x")
+#' "bob" == xmu_name_from_lavaan_str(name = "bob")
+#' "my_model" == xmu_name_from_lavaan_str("# my model")
+#'
+xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "m1") {
+	# Assume `name` should be used if !is.null(name)
+	if(is.na(name)){
+		# If first line contains a #, assume user wants it to be a name for the model
+		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
+		if(grepl(x = line1, pattern = "#")){
+			# line1 = "## my model ##"
+			pat = "\\h*#+\\h*([^\\n#;]+).*" # remove leading #, trim
+			name = gsub(x = line1, pattern = pat, replacement = "\\1", perl = TRUE);
+			name = trimws(name)
+			# Replace white space with  "_"
+			name = gsub("(\\h+)", "_", name, perl = TRUE)
+			# Delete illegal characters
+			name = as.character(mxMakeNames(name))
+		}else{
+			# No name given in name or comment: use a default name
+			name = default
+		}
+	}else{
+		name = name
+	}
+	return(name)
+}
 
 #' Just a helper to cope with deprecated suffix lying around.
 #'

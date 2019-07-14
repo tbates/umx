@@ -341,7 +341,7 @@ umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "to
 		message("umxSummaryGxEbiv calls plot.MxModelGxEbiv for a twin moderation plot. A use example is:\n umxSummaryGxEbiv(model, location = \"topright\")")
 		stop();
 	}
-	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selDVs = model$MZm$expectation$dims
 	nVar <- length(selDVs)/2;
 	# TODO umxSummaryACE these already exist if a_std exists..

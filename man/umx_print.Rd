@@ -69,10 +69,9 @@ Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{umxParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_names}},
-  \code{\link{umx_show_fit_or_comparison}},
-  \code{\link{umx_time}}, \code{\link{umx}},
-  \code{\link{xmu_get_CI}}
+  \code{\link{umx_names}}, \code{\link{umx_time}},
+  \code{\link{umx}}, \code{\link{xmu_get_CI}},
+  \code{\link{xmu_show_fit_or_comparison}}
 }
 \concept{Miscellaneous Utility Functions}
 \concept{Reporting Functions}

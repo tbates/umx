@@ -418,7 +418,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
-	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
 	nVar   = length(selDVs)/2;
 

@@ -1093,7 +1093,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		}
 	} else {
 		umx_has_been_run(model, stop = TRUE)
-		umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar <- length(selDVs)/2;
 		# TODO umxSummaryACE these already exist if a_std exists..
@@ -1325,7 +1325,7 @@ umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
-	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selDVs = dimnames(model$top$a)[[1]]
 	# selDVs = dimnames(model$top.expCovMZ)[[1]]
 	nDV <- length(selDVs);
@@ -1545,7 +1545,7 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 		}
 	} else {
 		umx_check_model(model, "MxModelCP", beenRun = TRUE, callingFn = "umxSummaryCP")
-		umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2
 		nFac   = dim(model$top$matrices$a_cp)[[1]]	
@@ -1679,7 +1679,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' }
 umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, show = NULL, ...) {
 	umx_check_model(model, "MxModelIP", beenRun = TRUE, callingFn = "umxSummaryIP")
-	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
 	stdFit = model; # If we want to output a model with the standardized values (perhaps for drawing a path diagram)

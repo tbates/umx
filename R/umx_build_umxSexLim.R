@@ -529,7 +529,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
-	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	selVars = model$MZm$expectation$dims
 	selDVs  = dimnames(model$top$Vm)[[1]]
 	nVar    = length(selDVs)

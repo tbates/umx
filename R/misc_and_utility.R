@@ -2504,35 +2504,6 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 	return(df)
 }
 
-#' Show model logLik of model or print comparison table
-#'
-#' @description
-#' Just a helper to show the logLik of a model or print a comparison table. 
-#'
-#' @param model an [mxModel()] to report on
-#' @param comparison If not NULL, used as comparison model
-#' @param digits (default = 2)
-#' @return None
-#' @export
-#' @family Reporting Functions
-#' @seealso - [umxSummary()]
-#' @md
-#' @examples
-#' \dontrun{
-#' umx_show_fit_or_comparison(model, comparison, digits=3)
-#' }
-#'
-umx_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
-	if(is.null(comparison)){
-		# \u00d7 = times sign
-		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-			round(-2 * logLik(model), digits = digits))
-		)
-	} else {
-		message("Comparison of model with parent model:")
-		umxCompare(comparison, model, digits = digits)
-	}		
-}
 
 specify_decimal <- function(x, k){
 	format(round(x, k), nsmall = k)

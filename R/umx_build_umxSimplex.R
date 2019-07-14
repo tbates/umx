@@ -242,7 +242,7 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 		}
 	} else {
 	umx_has_been_run(model, stop = TRUE)
-	umx_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 	# Starting Values
 	selDVs = model$MZ$expectation$dims
 	nVar   = length(selDVs)/2;
