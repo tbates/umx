@@ -2504,6 +2504,53 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 	return(df)
 }
 
+#' Compute an SE from a beta and p value
+#'
+#' @description
+#' `SE_from_p` takes beta and p, and returns an SE.
+#'
+#' @param beta The effect size
+#' @param p The p-value for the effect
+#' @param SE Standard error
+#' @param lower Lower CI
+#' @param upper Upper CI
+#' @return - Standard error
+#' @export
+#' @family Miscellaneous Stats Helpers
+#' @seealso - [umxAPA()]
+#' @md
+#' @examples
+#' SE_from_p(beta = .0020, p = .780)
+#' SE_from_p(beta = .0020, p = .01)
+#' SE_from_p(beta = .0020, SE = 0.01)
+#' umxAPA(.0020, p = .01)
+SE_from_p <- function(beta = NULL, p = NULL, SE = NULL, lower = NULL, upper = NULL) {
+	if(is.null(beta)){
+		stop("beta must be given")
+	}
+	if (!is.null(p)){ # compute SE from beta and p
+		beta_over_SE = -log(p) * (416 * log(p) + 717)/1000
+		SE = abs(beta/beta_over_SE) # 3 = 5/(5/3) a/(a/b) = b
+		return(c(SE = SE))
+		# p = exp(−0.717×(beta/SE) − 0.416×(beta/SE)^2)
+		# p = .780
+		# x = log(p)
+
+		# "Of all tyrannies, a tyranny sincerely exercised for the good of its victims may be 
+		# the most oppressive. It would be better to live under robber barons than
+		# under omnipotent moral busybodies." C.S. Lewis.
+	}else{ # compute p from beta and CI or SE
+		if (is.null(SE)){
+			if(is.null(upper) || is.null(lower)){
+				stop("SE_from_p: upper and lower, or SE must be provided to compute p")
+			}
+			SE = (upper - lower)/(2*1.96)
+		}
+	 	z = beta/SE
+	 	p_value = exp(-0.717 * z - 0.416 * z^2)
+		return(c(p_value = p_value))
+	}
+}
 
 specify_decimal <- function(x, k){
 	format(round(x, k), nsmall = k)

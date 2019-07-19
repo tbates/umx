@@ -5,7 +5,8 @@
 \title{Reduce a GxE model.}
 \usage{
 umxReduceGxE(model, report = c("markdown", "inline", "html", "report"),
-  baseFileName = "tmp_gxe", ...)
+  baseFileName = "tmp_gxe", tryHard = c("no", "yes", "mxTryHard",
+  "mxTryHardOrdinal", "mxTryHardWideSearch"), ...)
 }
 \arguments{
 \item{model}{An \code{\link[=mxModel]{mxModel()}} to reduce.}
@@ -13,6 +14,8 @@ umxReduceGxE(model, report = c("markdown", "inline", "html", "report"),
 \item{report}{How to report the results. "html" = open in browser.}
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp").}
+
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
 \item{...}{Other parameters to control model summary.}
 }

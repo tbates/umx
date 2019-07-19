@@ -5,8 +5,8 @@
 \alias{summaryAPA}
 \title{Creates nicely formatted journal style summaries of lm models, p-values, data-frames etc.}
 \usage{
-umxAPA(obj = .Last.value, se = NULL, std = FALSE, digits = 2,
-  use = "complete", min = 0.001, addComparison = NA,
+umxAPA(obj = .Last.value, se = NULL, p = NULL, std = FALSE,
+  digits = 2, use = "complete", min = 0.001, addComparison = NA,
   report = c("markdown", "html"), lower = TRUE, test = c("Chisq",
   "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE)
 }
@@ -16,6 +16,8 @@ umxAPA(obj = .Last.value, se = NULL, std = FALSE, digits = 2,
 \item{se}{If obj is a beta, se treated as standard-error (returning a CI).
 If obj is a model, used to select effect of interest (blank for all effects).
 Finally, set se to the CI c(lower, upper), to back out the SE.}
+
+\item{p}{If obj is a beta, use p-value to compute SE (returning a CI).}
 
 \item{std}{Whether to report std betas (re-runs model on standardized data).}
 
