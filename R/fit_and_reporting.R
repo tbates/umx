@@ -174,6 +174,8 @@ umxReduce.default <- function(model, ...){
 #' @param model An [mxModel()] to reduce.
 #' @param report How to report the results. "html" = open in browser.
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp").
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
+
 #' @param ... Other parameters to control model summary.
 #' @return best model
 #' @export
@@ -186,26 +188,26 @@ umxReduce.default <- function(model, ...){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp_gxe", ...) {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp_gxe", tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), ...) {
 	report = match.arg(report)
 	umx_is_MxModel(model)
 	if(class(model) == "MxModelGxE"){		
 		# Reduce GxE Model
 
-		noAmod = umxModify(model, update = "am_r1c1", name = "No_mod_on_A")
-		noCmod = umxModify(model, update = "cm_r1c1", name = "No_mod_on_C")
-		noEmod = umxModify(model, update = "em_r1c1", name = "No_mod_on_E")
+		noAmod = umxModify(model, update = "am_r1c1", name = "No_mod_on_A", tryHard= tryHard)
+		noCmod = umxModify(model, update = "cm_r1c1", name = "No_mod_on_C", tryHard= tryHard)
+		noEmod = umxModify(model, update = "em_r1c1", name = "No_mod_on_E", tryHard= tryHard)
 
-		noACEmod     = umxModify(model, regex  = "[ace]m_r1c1" , name = "No_moderation")
+		noACEmod     = umxModify(model, regex  = "[ace]m_r1c1" , name = "No_moderation", tryHard= tryHard)
 
-		no_a_no_am  = umxModify(noAmod , update = "a_r1c1", name = "No_A_no_mod_on_A")
-		no_c_no_cm  = umxModify(noCmod , update = "c_r1c1", name = "No_C_no_mod_on_C")
-		no_c_no_cem = umxModify(no_c_no_cm, update = "em_r1c1", name = "No_c_no_ce_mod")
-		no_c_no_mod = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation")
+		no_a_no_am  = umxModify(noAmod     , update = "a_r1c1" , name = "No_A_no_mod_on_A"  , tryHard= tryHard)
+		no_c_no_cm  = umxModify(noCmod     , update = "c_r1c1" , name = "No_C_no_mod_on_C"  , tryHard= tryHard)
+		no_c_no_cem = umxModify(no_c_no_cm , update = "em_r1c1", name = "No_c_no_ce_mod"    , tryHard= tryHard)
+		no_c_no_mod = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation", tryHard= tryHard)
 
-		no_lin_mean = umxModify(noACEmod, update = "lin11" , name = "No_mod_no_lin_mean" )
-		no_sq_mean  = umxModify(noACEmod, update = "quad11" , name = "No_mod_no_quad_mean")
-		nomeans     = umxModify(noACEmod, regex = "lin|quad", name = "No_mod_no_means_mod")
+		no_lin_mean = umxModify(noACEmod, update = "lin11"  , name = "No_mod_no_lin_mean" , tryHard= tryHard)
+		no_sq_mean  = umxModify(noACEmod, update = "quad11" , name = "No_mod_no_quad_mean", tryHard= tryHard)
+		nomeans     = umxModify(noACEmod, regex = "lin|quad", name = "No_mod_no_means_mod", tryHard= tryHard)
 
 		# comparisons = c(
 		# 	noAmod, noCmod, noEmod, noACEmod,
@@ -3889,6 +3891,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param se If obj is a beta, se treated as standard-error (returning a CI). 
 #' If obj is a model, used to select effect of interest (blank for all effects). 
 #' Finally, set se to the CI c(lower, upper), to back out the SE.
+#' @param p If obj is a beta, use p-value to compute SE (returning a CI).
 #' @param std Whether to report std betas (re-runs model on standardized data).
 #' @param digits How many digits to round output.
 #' @param use If obj is a data.frame, how to handle NAs (default = "complete")
@@ -3958,7 +3961,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' x = cor.test(~ wt1 + wt2, data = mzData)
 #' umxAPA(x)
 #'
-umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
+umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
 	test = match.arg(test)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
@@ -4086,8 +4089,13 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 	} else {
 		if(is.null(se)){
 			# p-value
-			umx_APA_pval(obj, min = min, digits = digits, addComparison = addComparison)
-		} else if(length(se)==2){
+			if(is.null(p)){
+				umx_APA_pval(obj, min = min, digits = digits, addComparison = addComparison)
+			} else {
+				se = SE_from_p(beta = obj, p = p)
+				print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))				
+			}
+		} else if(length(se) == 2){
 			# beta and CI
 			# lower = b - (1.96 * se)
 			# upper = b + (1.96 * se)
@@ -4096,6 +4104,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, std = FALSE, digits = 2, use = 
 			# obj = beta and SE
 			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))
 		}
+
 	}
 }
 
