@@ -6,8 +6,8 @@
 \usage{
 umxConfint(object, parm = c("existing", "all", "or one or more labels",
   "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE,
-  showErrorCodes = FALSE, optimizer = c("current", "SLSQP", "NPSOL",
-  "CSOLNP"))
+  showErrorCodes = FALSE, optimizer = c("SLSQP", "NPSOL", "CSOLNP",
+  "current"))
 }
 \arguments{
 \item{object}{An \code{\link[=mxModel]{mxModel()}}, possibly already containing \code{\link[=mxCI]{mxCI()}}s that have been \code{\link[=mxRun]{mxRun()}} with intervals = TRUE))}

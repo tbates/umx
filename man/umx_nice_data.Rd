@@ -41,4 +41,4 @@ namez(tmp)
 \item \code{\link[=umx_wide2long]{umx_wide2long()}}, \code{\link[=umx_long2wide]{umx_long2wide()}},
 }
 }
-\concept{Twin Data functions Data Functions,}
+\concept{Twin Data functions, Data functions}
