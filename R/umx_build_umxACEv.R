@@ -107,8 +107,8 @@
 #' #    Function generates: "wt" -> "wt1" "wt2"
 #' # 2. umxACEv picks the variables it needs from the data.
 #' 
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEv(selDVs = "wt", sep = "", dzData = dzData, mzData = mzData)
 #' 
 #' # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
@@ -387,6 +387,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @param report If "html", then open an html table of the results
 #' @param extended how much to report (FALSE)
 #' @param zero.print How to show zeros (".")
+#' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
@@ -398,8 +399,8 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACEv(selDVs = "bmi", sep = "", dzData = dzData, mzData = mzData)
 #' umxSummary(m1, std = FALSE)
 #' \dontrun{
@@ -407,7 +408,12 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' umxSummary(m1, file = "name", std = TRUE)
 #' stdFit = umxSummary(m1, returnStd = TRUE)
 #' }
-umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
+	show = match.arg(show, c("std", "raw"))
+	if(show != "std"){
+		std = FALSE
+		# message("Polite message: in next version, show= will be replaced with std=TRUE/FALSE/NULL")
+	}
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	# depends on R2HTML::HTML
