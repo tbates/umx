@@ -8,7 +8,7 @@
 umxSummaryACEv(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
   report = c("markdown", "html"), returnStd = FALSE,
-  extended = FALSE, zero.print = ".", ...)
+  extended = FALSE, zero.print = ".", show = c("std", "raw"), ...)
 }
 \arguments{
 \item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize}
@@ -34,6 +34,8 @@ Defaults to NA = no plot.}
 
 \item{zero.print}{How to show zeros (".")}
 
+\item{show}{Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")}
+
 \item{...}{Other parameters to control model summary}
 }
 \value{
@@ -52,8 +54,8 @@ See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary
 \examples{
 require(umx)
 data(twinData)
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACEv(selDVs = "bmi", sep = "", dzData = dzData, mzData = mzData)
 umxSummary(m1, std = FALSE)
 \dontrun{

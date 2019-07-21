@@ -7,9 +7,9 @@
 \usage{
 umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
   location = "topleft", separateGraphs = FALSE,
-  file = getOption("umx_auto_plot"), returnStd = NULL,
-  comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL,
-  report = c("markdown", "html"), ...)
+  file = getOption("umx_auto_plot"), comparison = FALSE, std = NULL,
+  reduce = FALSE, CIs = NULL, report = c("markdown", "html"),
+  returnStd = NULL, show = c("std", "raw"), ...)
 }
 \arguments{
 \item{model}{A fitted \code{\link[=umxGxEbiv]{umxGxEbiv()}} model to summarize}
@@ -24,9 +24,7 @@ umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
-\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
-
-\item{comparison}{mxCompare model with comparison (default = NULL).}
+\item{comparison}{mxCompare model with comparison (default = FALSE).}
 
 \item{std}{Whether to show the standardized model (not implemented! TRUE)}
 
@@ -35,6 +33,10 @@ umxSummaryGxEbiv(model = NULL, digits = 2, xlab = NA,
 \item{CIs}{Confidence intervals (FALSE)}
 
 \item{report}{markdown or html (html opens in browser)}
+
+\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
+
+\item{show}{Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")}
 
 \item{...}{Optional additional parameters}
 }

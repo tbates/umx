@@ -132,8 +132,8 @@ data(twinData) # ?twinData from Australian twins.
 #    Function generates: "wt" -> "wt1" "wt2"
 # 2. umxACEv picks the variables it needs from the data.
 
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACEv(selDVs = "wt", sep = "", dzData = dzData, mzData = mzData)
 
 # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:

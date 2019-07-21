@@ -29,7 +29,7 @@ umxSummaryCP(model, digits = 2, std = TRUE, CIs = FALSE,
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
-\item{show}{parameter used in all summary functions. currently ignored here.}
+\item{show}{parameter used in all summary functions. Not sure which of show and std will be supported long term: sing out if you have an opinion.}
 
 \item{...}{Optional additional parameters}
 }

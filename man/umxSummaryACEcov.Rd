@@ -5,21 +5,15 @@
 \alias{umxSummary.MxModelACEcov}
 \title{Present results of a twin ACE-model with covariates in table and graphical forms.}
 \usage{
-umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
-  returnStd = FALSE, extended = FALSE, showRg = FALSE, std = TRUE,
-  comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1",
-  "2", "html"), ...)
+umxSummaryACEcov(model, digits = 2, showRg = FALSE, std = TRUE,
+  comparison = NULL, CIs = TRUE, zero.print = ".",
+  report = c("markdown", "html"), file = getOption("umx_auto_plot"),
+  returnStd = FALSE, extended = FALSE, show = c("std", "raw"), ...)
 }
 \arguments{
 \item{model}{a \code{\link[=umxACEcov]{umxACEcov()}} model to summarize}
 
 \item{digits}{round to how many digits (default = 2)}
-
-\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
-
-\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
-
-\item{extended}{how much to report (FALSE)}
 
 \item{showRg}{= whether to show the genetic correlations (FALSE)}
 
@@ -32,6 +26,14 @@ umxSummaryACEcov(model, digits = 2, file = getOption("umx_auto_plot"),
 \item{zero.print}{How to show zeros (".")}
 
 \item{report}{If "html", then open an html table of the results.}
+
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+
+\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
+
+\item{extended}{how much to report (FALSE)}
+
+\item{show}{Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")}
 
 \item{...}{Other parameters to control model summary}
 }

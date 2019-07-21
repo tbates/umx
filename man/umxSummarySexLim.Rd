@@ -7,8 +7,8 @@
 \usage{
 umxSummarySexLim(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
-  report = c("markdown", "html"), returnStd = FALSE,
-  extended = FALSE, zero.print = ".", ...)
+  report = c("markdown", "html"), extended = FALSE, zero.print = ".",
+  show = c("std", "raw"), returnStd = FALSE, ...)
 }
 \arguments{
 \item{model}{a \code{\link[=umxSexLim]{umxSexLim()}} model to summarize}
@@ -28,11 +28,13 @@ Defaults to NA = do not create plot output}
 
 \item{report}{If "html", then open an html table of the results}
 
-\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
-
 \item{extended}{how much to report (FALSE)}
 
 \item{zero.print}{How to show zeros (".")}
+
+\item{show}{Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")}
+
+\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
 \item{...}{Other parameters to control model summary}
 }

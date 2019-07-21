@@ -871,7 +871,12 @@ umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if(std != "deprecated"){
-		stop("use show = 'std', not std = TRUE")
+		if(std){
+			show= "std"
+		} else {
+			show= "raw"
+		}
+		# stop("use show = 'std', not std = TRUE")
 	}
 	report = match.arg(report)
 	filter = match.arg(filter)
@@ -1294,6 +1299,7 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @param CIs Whether to show Confidence intervals if they exist (TRUE)
 #' @param zero.print How to show zeros (".")
 #' @param report If "html", then open an html table of the results.
+#' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
@@ -1315,7 +1321,12 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' umxSummaryACE(m1, file = "name", std = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACEcov <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, showRg = FALSE, std = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("1", "2", "html"), ...) {
+umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, show = c("std", "raw"), ...) {
+	show = match.arg(show)
+	if(show != "std"){
+		std = FALSE
+		# message("Polite message: in next version, show= will be replaced with std=TRUE/FALSE/NULL  or vice versa...")
+	}
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	
@@ -1498,7 +1509,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
-#' @param show parameter used in all summary functions. currently ignored here.
+#' @param show parameter used in all summary functions. Not sure which of show and std will be supported long term: sing out if you have an opinion.
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @export
@@ -1537,8 +1548,15 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' }
 #'
 umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, show = NULL, ...) {
-	report = match.arg(report)
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
+	report = match.arg(report)
+	if(!is.null(show)){
+		if(show == "std"){
+			std = TRUE
+		} else {
+			std = FALSE
+		}
+	}
 
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
@@ -1773,15 +1791,15 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @aliases umxSummary.MxModelGxE
 #' @param model A fitted [umxGxE()] model to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param std Whether to show the standardized model (not implemented! TRUE)
 #' @param CIs Confidence intervals (FALSE)
 #' @param xlab label for the x-axis of plot
 #' @param location default = "topleft"
 #' @param reduce  Whether run and tabulate a complete model reduction...(Defaults to FALSE)
-#' @param separateGraphs default = F
-#' @param report "1" = regular, "2" = add descriptive sentences; "html" = open a browser and copyable tables
+#' @param separateGraphs If TRUE, both std and raw plots in one figure (default FALSE)
+#' @param report "markdown" or "html" = open a browser for copyable tables
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param show not doing anything yet (required for all summary functions)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
@@ -1814,8 +1832,16 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show=NULL, ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL, ...) {
 	report = match.arg(report)
+	# if(!is.null(show){
+	# 	if(show == "std"){
+	# 		std = TRUE
+	# 	} else {
+	# 		std = FALSE
+	# 	}
+	# }
+	
 	umx_has_been_run(model, stop = TRUE)
 	
 	if(any(!is.null(c(returnStd, std, CIs) ))){
@@ -1826,6 +1852,15 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 		message("umxSummaryGxE calls plot.MxModelGxE for a twin moderation plot. A use example is:\n umxSummaryGxE(model, location = \"topright\")")
 		stop();
 	}
+	tablePub = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]
+	if(report == "html"){
+		print(xtable::xtable(tablePub), type = "HTML", file = file, sanitize.text.function = function(x){x})
+		umx_open(file)
+	} else {
+		# markdown
+		umx_print(tablePub)
+	}
+	
 	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
 
 	if(reduce){

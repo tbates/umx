@@ -20,7 +20,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
 
 \item{location}{default = "topleft"}
 
-\item{separateGraphs}{default = F}
+\item{separateGraphs}{If TRUE, both std and raw plots in one figure (default FALSE)}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
@@ -32,7 +32,7 @@ umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
 
 \item{CIs}{Confidence intervals (FALSE)}
 
-\item{report}{"1" = regular, "2" = add descriptive sentences; "html" = open a browser and copyable tables}
+\item{report}{"markdown" or "html" = open a browser for copyable tables}
 
 \item{show}{not doing anything yet (required for all summary functions)}
 

@@ -8,7 +8,7 @@
 umxSummarySimplex(model, digits = 2, file = getOption("umx_auto_plot"),
   comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
   report = c("markdown", "html"), returnStd = FALSE,
-  extended = FALSE, zero.print = ".", ...)
+  extended = FALSE, zero.print = ".", show = c("std", "raw"), ...)
 }
 \arguments{
 \item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize}
@@ -33,6 +33,8 @@ Defaults to NA = no plot.}
 \item{extended}{how much to report (default = FALSE)}
 
 \item{zero.print}{How to show zeros (default = ".")}
+
+\item{show}{Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")}
 
 \item{...}{Other parameters to control model summary}
 }
