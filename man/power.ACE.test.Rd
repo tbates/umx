@@ -28,7 +28,7 @@ power.ACE.test(MZ_DZ_ratio = 1, drop = c("a_r1c1"), value = 0,
 
 \item{sig.level}{alpha (p-value) Default = 0.05}
 
-\item{power}{Default (1- TypeII) = .8 (80 percent power)}
+\item{power}{Default = .8 (80 percent power, equal to 1 - Type II rate)}
 
 \item{type}{Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)}
 

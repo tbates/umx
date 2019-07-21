@@ -27,7 +27,7 @@
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param n  If provided, solve for power /sig.level at the given n (Default NULL)
 #' @param sig.level alpha (p-value) Default = 0.05
-#' @param power Default (1- TypeII) = .8 (80 percent power)
+#' @param power Default = .8 (80 percent power, equal to 1 - Type II rate)
 #' @param type Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
 #' @param tryHard Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)

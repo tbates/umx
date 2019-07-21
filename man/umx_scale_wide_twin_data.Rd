@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_scale_wide_twin_data}
 \alias{umx_scale_wide_twin_data}
-\title{Scale wide data}
+\title{Scale wide twin data}
 \usage{
 umx_scale_wide_twin_data(varsToScale, sep, data, twins = 1:2)
 }
@@ -21,8 +21,8 @@ umx_scale_wide_twin_data(varsToScale, sep, data, twins = 1:2)
 }
 }
 \description{
-Scale wide data across all twins. You offer up \code{varsToScale}, e.g. c("DEP", "bmi")
-and the sep (e.g. "_T") and twins e.g. (1:2) that paste together to make
+Scale wide data across all twins. You offer up a list of variables to scale, e.g. c("DEP", "bmi")
+and the separator (e.g. "_T") and twins e.g. (1:2) that paste together to make
 complete variable names: e.g. "DEP_T1" and "DEP_T2".
 }
 \examples{

@@ -20,7 +20,7 @@ umx_set_optimizer(opt = NA, model = NULL, silent = FALSE)
 }
 }
 \description{
-\code{umx_set_optimizer} privdes an easy way to get and set the default optimizer.
+\code{umx_set_optimizer} provides an easy way to get and set the default optimizer.
 }
 \examples{
 library(umx)

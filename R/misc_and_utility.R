@@ -662,7 +662,7 @@ umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA"), 
 
 #' Set the optimizer in OpenMx
 #'
-#' `umx_set_optimizer` privdes an easy way to get and set the default optimizer.
+#' `umx_set_optimizer` provides an easy way to get and set the default optimizer.
 #'
 #' @param opt default (NA) returns current value. Current alternatives are
 #' "NPSOL" "SLSQP" and "CSOLNP".
@@ -4723,10 +4723,10 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	}
 }
 
-#' Scale wide data
+#' Scale wide twin data
 #'
-#' Scale wide data across all twins. You offer up `varsToScale`, e.g. c("DEP", "bmi")
-#' and the sep (e.g. "_T") and twins e.g. (1:2) that paste together to make 
+#' Scale wide data across all twins. You offer up a list of variables to scale, e.g. c("DEP", "bmi")
+#' and the separator (e.g. "_T") and twins e.g. (1:2) that paste together to make 
 #' complete variable names: e.g. "DEP_T1" and "DEP_T2".
 #' @param varsToScale The base names of the variables ("weight" etc.)
 #' @param sep The suffix that distinguishes each case, e.g. "_T")
