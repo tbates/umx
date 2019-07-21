@@ -460,7 +460,7 @@ loadings.MxModel <- function(x, ...) {
 #' @param level The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
 #' @param wipeExistingRequests Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').
-#' @param optimizer defaults to "current". CIs often require other optimizers!
+#' @param optimizer For difficult CIs, trying other optimizers can help!
 #' @param showErrorCodes (default = FALSE)
 #' @param ... Additional argument(s) for umxConfint.
 #' @export
@@ -472,12 +472,12 @@ loadings.MxModel <- function(x, ...) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents = c("G")
+#' 
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	umxPath(from = latents, to = manifests),
+#' m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
+#' 	umxPath(from = "G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' 
 #' m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
@@ -508,11 +508,12 @@ loadings.MxModel <- function(x, ...) {
 #' }
 #'
 umxConfint <- function(object, parm = c("existing", "all", "or one or more labels", "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("SLSQP", "NPSOL", "CSOLNP", "current")) {
+	# optimizer is sent to omxRunCI
 	optimizer = match.arg(optimizer)
 	if(optimizer == "current"){
 		optimizer = umx_set_optimizer(silent = TRUE)
 	}
-	parm = umx_default_option(parm, c("existing", "smart", "all", "or one or more labels"), check = FALSE)
+	parm = umx_default_option(parm, c("existing", "all", "or one or more labels", "smart"), check = FALSE)
 
 	# upgrade "all" to "smart" for CP
 	if(class(object) == "MxModelCP" && parm == "all"){
@@ -524,8 +525,6 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 		if(length(object$intervals)){
 			object = mxModel(object, remove = TRUE, object$intervals)
 			message("Removed existing CIs")
-			# TODO rationalise umxConfint and umxCI (priority!)
-			# object = umxCI(object, which = "ALL", remove=TRUE)
 		}
 	}
 	

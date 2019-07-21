@@ -22,7 +22,7 @@ umxConfint(object, parm = c("existing", "all", "or one or more labels",
 
 \item{showErrorCodes}{(default = FALSE)}
 
-\item{optimizer}{defaults to "current". CIs often require other optimizers!}
+\item{optimizer}{For difficult CIs, trying other optimizers can help!}
 
 \item{...}{Additional argument(s) for umxConfint.}
 }
@@ -46,12 +46,12 @@ If parm is empty, and run = FALSE, a message will alert you to add run = TRUE.
 \examples{
 require(umx)
 data(demoOneFactor)
-latents = c("G")
+
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	umxPath(from = latents, to = manifests),
+m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
+	umxPath(from = "G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
+	umxPath(var = "G", fixedAt = 1)
 )
 
 m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
