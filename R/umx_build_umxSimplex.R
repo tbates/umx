@@ -213,6 +213,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @param report If "html", then open an html table of the results (default = 'markdown')
 #' @param extended how much to report (default = FALSE)
 #' @param zero.print How to show zeros (default = ".")
+#' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
@@ -232,8 +233,14 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "mxTryHard")
 #' umxSummary(m1, file = NA);
 #' }
-umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
 	# Depends on R2HTML::HTML
+	show = match.arg(show)
+	if(show != "std"){
+		std = FALSE
+		# message("Polite message: in next version, show= will be replaced with std=TRUE/FALSE/NULL  or vice versa...")
+	}
+	
 	report = match.arg(report)
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
