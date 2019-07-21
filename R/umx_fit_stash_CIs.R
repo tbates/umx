@@ -41,7 +41,7 @@ umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRU
 	for(n in 1:nCIs) { # n = 4
 		thisCI = CIlist[n, ]
 			# lbound    estimate  ubound     name
-			# 0.4473444 0.5850266 0.6878915 top.a_cp[1,1]
+			# 0.4473444 0.5850266 0.6878915 top.a_cp\[1,1\]
 		CIname = thisCI$name # CIname = "top.a_cp[1,1]" ; CIname = "cp_loadings_r1c1"
 
 		# Make a CI report string "x[a,b]"
@@ -69,7 +69,7 @@ umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRU
 		}
 		# umx_msg(CIname); # umx_msg(thisSub); umx_msg(thisMat); umx_msg(thisRow); umx_msg(thisCol)
 		# thisMat = "cp_loadings_std"
-		if(stdAlg2mat && sub(".*_(std)$", replacement = "\\1", x = thisMat)=="std"){
+		if(stdAlg2mat && sub(".*_(std)$", replacement = "\\1", x = thisMat) == "std"){
 			# Assume _std is an algebra
 			baseMat = sub("(.*)_std$", replacement = "\\1", x = thisMat)
 			model@submodels[thisSub][[1]]@matrices[baseMat][[1]]$values[thisRow, thisCol] = CIString

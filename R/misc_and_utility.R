@@ -776,7 +776,7 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' @md
 #' @examples
 #' umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
-#' # turn off checkpointing with interval = 0
+#' # Turn off checkpointing with interval = 0
 #' umx_set_checkpoint(interval = 0)
 #' umx_set_checkpoint(2, "evaluations", prefix="SNP_1")
 #' require(umx)

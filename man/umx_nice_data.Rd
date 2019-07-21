@@ -4,7 +4,7 @@
 \alias{umx_nice_data}
 \title{Convert a twin dataset into umx standard format.}
 \usage{
-umx_nice_data(data, sep, zyg)
+umx_nice_data(data, sep, zygosity)
 }
 \arguments{
 \item{data}{a \code{\link[=data.frame]{data.frame()}} to check/convert.}

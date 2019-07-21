@@ -4,15 +4,15 @@
 \alias{umxConfint}
 \title{Get confidence intervals from a umx model}
 \usage{
-umxConfint(object, parm = c("existing", "smart", "all",
-  "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95,
-  run = FALSE, showErrorCodes = FALSE, optimizer = c("current",
-  "SLSQP"))
+umxConfint(object, parm = c("existing", "all", "or one or more labels",
+  "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE,
+  showErrorCodes = FALSE, optimizer = c("current", "SLSQP", "NPSOL",
+  "CSOLNP"))
 }
 \arguments{
 \item{object}{An \code{\link[=mxModel]{mxModel()}}, possibly already containing \code{\link[=mxCI]{mxCI()}}s that have been \code{\link[=mxRun]{mxRun()}} with intervals = TRUE))}
 
-\item{parm}{Which parameters to get confidence intervals. Can be "existing", "smart", "all", or a vector of names.}
+\item{parm}{Which parameters to get confidence intervals for. Can be "existing", "all", or one or more parameter names.}
 
 \item{wipeExistingRequests}{Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').}
 
@@ -22,7 +22,7 @@ umxConfint(object, parm = c("existing", "smart", "all",
 
 \item{showErrorCodes}{(default = FALSE)}
 
-\item{optimizer}{defaults to "SLSQP". Might try "NelderMead"}
+\item{optimizer}{defaults to "current". CIs often require other optimizers!}
 
 \item{...}{Additional argument(s) for umxConfint.}
 }
@@ -76,9 +76,9 @@ tmp = umxConfint(m1, parm = "A", run = TRUE)
 tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 
 \dontrun{
-# For complex twin models, where algebras have parameters in some cells, smart might help
+# For complex twin models, where algebras have parameters in some cells, we're implementing a "smart" mode
 # note: only implemented for umxCP so far
-m2 =  umxConfint(m1, "smart")
+m2 =  umxConfint(m1, "all")
 }
 
 }
@@ -89,7 +89,7 @@ m2 =  umxConfint(m1, "smart")
 }
 \seealso{
 \itemize{
-\item \code{\link[stats]{confint}}, \code{\link[=umxCI]{umxCI()}}
+\item \code{\link[stats:confint]{stats::confint()}}, \code{\link[=umxCI]{umxCI()}}
 }
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}},

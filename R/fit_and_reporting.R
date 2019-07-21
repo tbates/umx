@@ -456,17 +456,17 @@ loadings.MxModel <- function(x, ...) {
 #' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
 #'
 #' @param object An [mxModel()], possibly already containing [mxCI()]s that have been [mxRun()] with intervals = TRUE))
-#' @param parm	Which parameters to get confidence intervals. Can be "existing", "smart", "all", or a vector of names.
-#' @param level	The confidence level required (default = .95)
+#' @param parm	Which parameters to get confidence intervals for. Can be "existing", "all", or one or more parameter names.
+#' @param level The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
 #' @param wipeExistingRequests Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').
-#' @param optimizer defaults to "SLSQP". Might try "NelderMead"
+#' @param optimizer defaults to "current". CIs often require other optimizers!
 #' @param showErrorCodes (default = FALSE)
 #' @param ... Additional argument(s) for umxConfint.
 #' @export
 #' @return - [mxModel()]
 #' @family Reporting functions
-#' @seealso - \code{\link[stats]{confint}}, [umxCI()] 
+#' @seealso - [stats::confint()], [umxCI()] 
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -502,17 +502,23 @@ loadings.MxModel <- function(x, ...) {
 #' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 #' 
 #' \dontrun{
-#' # For complex twin models, where algebras have parameters in some cells, smart might help
+#' # For complex twin models, where algebras have parameters in some cells, we're implementing a "smart" mode
 #' # note: only implemented for umxCP so far
-#' m2 =  umxConfint(m1, "smart")
+#' m2 =  umxConfint(m1, "all")
 #' }
 #'
-umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or more labels"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("current", "SLSQP")) {
+umxConfint <- function(object, parm = c("existing", "all", "or one or more labels", "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("SLSQP", "NPSOL", "CSOLNP", "current")) {
 	optimizer = match.arg(optimizer)
-	if(optimizer=="current"){
-		optimizer = umx_set_optimizer(silent=TRUE)
+	if(optimizer == "current"){
+		optimizer = umx_set_optimizer(silent = TRUE)
 	}
 	parm = umx_default_option(parm, c("existing", "smart", "all", "or one or more labels"), check = FALSE)
+
+	# upgrade "all" to "smart" for CP
+	if(class(object) == "MxModelCP" && parm == "all"){
+		parm = "smart"
+	}
+
 	# 1. remove existing CIs if requested to
 	if(wipeExistingRequests && (parm != "existing")){
 		if(length(object$intervals)){
@@ -522,7 +528,8 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 			# object = umxCI(object, which = "ALL", remove=TRUE)
 		}
 	}
-	# 1. Add CIs if requested
+	
+	# 2. Add CIs if requested
 	if (length(parm) >1){
 		# Add requested CIs to model
 		# TODO umxConfint: Check that these are valid and not duplicates
@@ -564,12 +571,12 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 	} else if (parm == "existing"){
 		# nothing to do
 	} else {
-		# user requesting 1 new CI
+		# User requesting 1 new CI
 		# TODO umxConfint: Check that these are valid and not duplicates
 		object = mxModel(object, mxCI(parm, interval = level))
 	}
 
-	# 2. Run CIs if requested
+	# 3. Run CIs if requested
 	if(run) {
 		# Check there are some in existence
 		if(!umx_has_CIs(object, "intervals")) {
@@ -579,7 +586,7 @@ umxConfint <- function(object, parm = c("existing", "smart", "all", "or one or m
 			object = omxRunCI(object, optimizer = optimizer)
 		}
 	}
-	# 3. Report CIs
+	# 4. Report CIs
 	if(!umx_has_CIs(object, "both")) {
 		if(run == FALSE){
 			message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your umxConfint() call to run them.\n",
