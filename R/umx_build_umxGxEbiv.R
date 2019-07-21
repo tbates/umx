@@ -297,17 +297,18 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #'
 #' @aliases umxSummary.MxModelGxEbiv
 #' @param model A fitted [umxGxEbiv()] model to summarize
-#' @param digits round to how many digits (default = 2)
-#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param std Whether to show the standardized model (not implemented! TRUE)
 #' @param CIs Confidence intervals (FALSE)
 #' @param xlab label for the x-axis of plot
 #' @param location default = "topleft"
-#' @param comparison mxCompare model with comparison (default = NULL).
+#' @param comparison mxCompare model with comparison (default = FALSE).
 #' @param reduce  Whether to run and tabulate a complete model reduction...(Defaults to FALSE)
 #' @param separateGraphs Std and raw plots in separate graphs? (default = FALSE)
 #' @param report markdown or html (html opens in browser)
+#' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
+#' @param digits round to how many digits (default = 2)
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @family Twin Modeling Functions
@@ -329,7 +330,12 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), ...) {
+umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), comparison = FALSE, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), returnStd = NULL, show = c("std", "raw"),...) {
+	show = match.arg(show, c("std", "raw"))
+	if(show != "std"){
+		std = FALSE
+		# message("Polite message: in next version, show= will be replaced with std=TRUE/FALSE/NULL")
+	}
 	report = match.arg(report)
 	umx_has_been_run(model, stop = TRUE)
 	
