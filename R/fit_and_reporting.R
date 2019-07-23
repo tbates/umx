@@ -1796,10 +1796,10 @@ umxSummary.MxModelIP <- umxSummaryIP
 #'
 #' @aliases umxSummary.MxModelGxE
 #' @param model A fitted [umxGxE()] model to summarize
-#' @param digits round to how many digits (default = 2)
 #' @param std Whether to show the standardized model (not implemented! TRUE)
 #' @param CIs Confidence intervals (FALSE)
 #' @param xlab label for the x-axis of plot
+#' @param digits round to how many digits (default = 2)
 #' @param location default = "topleft"
 #' @param reduce  Whether run and tabulate a complete model reduction...(Defaults to FALSE)
 #' @param separateGraphs If TRUE, both std and raw plots in one figure (default FALSE)
@@ -1829,8 +1829,8 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' mzData  = subset(twinData, zygosity == "MZFF", selVars)
 #' dzData  = subset(twinData, zygosity == "DZMM", selVars)
 #' # Exclude cases with missing Def
-#' mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
-#' dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
+#' mzData = mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
+#' dzData = dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
 #' \dontrun{
 #' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
 #' # Plot Moderation
@@ -1838,7 +1838,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL, ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL,...) {
 	report = match.arg(report)
 	# if(!is.null(show){
 	# 	if(show == "std"){
@@ -1860,11 +1860,11 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	}
 	tablePub = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]
 	if(report == "html"){
-		print(xtable::xtable(tablePub), type = "HTML", file = file, sanitize.text.function = function(x){x})
+		print(xtable::xtable(tablePub), type = "HTML", file = file, sanitize.text.function = function(x){x}, digits=3)
 		umx_open(file)
 	} else {
 		# markdown
-		umx_print(tablePub)
+		umx_print(tablePub, digits=digits)
 	}
 	
 	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
@@ -2666,17 +2666,21 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	
 	if(separateGraphs){
 		print("Outputting two graphs")
+		# graphics::par(cex = cex) # Font mag
 	}else{
 		graphics::par(mfrow = c(1, 2)) # one row, two columns for raw and std variance
+		# graphics::par(cex = cex) # Font mag
 		# par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
 	}
 	# acergb = c("red", "green", "blue", "black")
 	graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
-	graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb)
+	graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb, bty = "n")
 	# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = acergb)
+	
 	graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
+	graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
 	# legend(location, legend= c("Va", "Vc", "Ve"), lty = 1:4, col = acergb)
-	graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb)
+
 	graphics::par(mfrow = c(1, 1)) # back to black
 }
 

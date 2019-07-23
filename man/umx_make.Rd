@@ -5,8 +5,9 @@
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
 umx_make(what = c("quick_install", "install_full", "spell",
-  "run_examples", "check", "win", "rhub", "release"), pkg = "~/bin/umx",
-  check = TRUE, run = FALSE, start = NULL, spelling = "en_US")
+  "run_examples", "check", "win", "rhub", "release", "travisCI"),
+  pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL,
+  spelling = "en_US")
 }
 \arguments{
 \item{what}{whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))}
