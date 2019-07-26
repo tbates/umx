@@ -2248,7 +2248,6 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
-
 	# loop over submodels
 	if(length(x@submodels)){
 		n = 1
