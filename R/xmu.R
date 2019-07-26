@@ -68,6 +68,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param summary Whether to print model summary (default = autoRun).
 #' @param show What to print in summary (default "none") (alternatives: "raw", "std", "list of column names")
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
+#' @param digits Rounding precision in tables and plots
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
@@ -94,7 +95,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", comparison= FALSE)
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), show = c("none", "raw", "std", "list of column names"), comparison = TRUE) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), show = c("none", "raw", "std", "list of column names"), comparison = TRUE, digits = 3) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	show = umx_default_option(show, c("none", "raw", "std", "list of column names"), check = FALSE)
 	tryHard = match.arg(tryHard)
@@ -142,7 +143,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		# Didn't get run... don't try and summarize it (will error)
 	} else if(summary){
 		tryCatch({
-			umxSummary(model1, show = show)
+			umxSummary(model1, show = show, digits = digits)
 		# }, warning = function(w) {
 		# 	message("Warning incurred trying to run umxSummary")
 		# 	message(w)
@@ -154,9 +155,9 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		tryCatch({
 			if(!is.null(model2) && comparison){
 				if(length(coef(model2)) > length(coef(model1))){
-					umxCompare(model2, model1)
+					umxCompare(model2, model1, digits = digits)
 				} else {
-					umxCompare(model1, model2)
+					umxCompare(model1, model2, digits = digits)
 				}
 			}
 		# }, warning = function(w) {

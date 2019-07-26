@@ -63,8 +63,8 @@ selVars = c(selDVs, selDefs)
 mzData  = subset(twinData, zygosity == "MZFF", selVars)
 dzData  = subset(twinData, zygosity == "DZMM", selVars)
 # Exclude cases with missing Def
-mzData <- mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
-dzData <- dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
+mzData = mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
+dzData = dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
 \dontrun{
 m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
 # Plot Moderation

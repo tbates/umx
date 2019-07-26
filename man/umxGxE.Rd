@@ -5,10 +5,11 @@
 \title{umxGxE: Implements ACE models with moderation of paths, e.g. by SES.}
 \usage{
 umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
-  data = NULL, zyg = "zygosity", lboundACE = NA, lboundM = NA,
-  dropMissingDef = TRUE, autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), optimizer = NULL)
+  data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA,
+  lboundM = NA, dropMissingDef = TRUE,
+  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL)
 }
 \arguments{
 \item{name}{The name of the model (default= "G_by_E")}
@@ -26,6 +27,8 @@ umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 \item{data}{If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)}
 
 \item{zyg}{If data provided, this column is used to select rows by zygosity (Default = "zygosity")}
+
+\item{digits}{Rounding precision for tables (default 3)}
 
 \item{lboundACE}{If not NA, then lbound the main effects at this value (default = NA, can help to set this to 0)}
 

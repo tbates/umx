@@ -2,13 +2,21 @@
 * July 2019 R 3.6.1 "Action of the Toes"
 * ALPHA: `umxRAM` lavaan string syntax support.
 * ALPHA: `umxRAM` multi-group models.
-* FIX: `mxPath` `v0m0` , `v.m0` now use labels (if two provided)
 * NEW: `power.ACE.test` and examples
 * NEW: `xmu_safe_run_summary` can listen to `silent` to turn off summary and progress from models - use when running big simulation loops
 * NEW: `umx_set_silent` preference (option) for other functions to listen too and choose how much junk to print to console. Like a global verbose.
 * NEW: `umx_select_valid` to replace values in one column with those in another, if first column is NA.
 * NEW: `FishersMethod` To combine p-values
 * NEW: `oddsratio`
+* DEPRECATED: `show` no longer works: replace it with std=TRUE/FALSE/NULL
+* CHANGED: `umx_show` -> `tmx_show`
+* FIX: `mxPath` `v0m0` , `v.m0` now use labels (if two provided)
+* NEW: `SE_from_p` helper to get SE from b and p, or get a p from CI
+* NEW: `umx_nice_data` converts your twinData to the standard format (zyg in zygosity, _T1 _T2 suffixing)
+* NEW: `umxMendelianRandomization` alias to umxTwoStage
+* IMPROVED: `umxReduceGxE` gains a `tryHard` option
+* IMPROVED: `umxSummaryGxE` prints parameter table and SEs as well as the interaction plot.
+* IMPROVED: `umxConfint` uses smart confidence intervals (just the free standardized parameters) for umxCP models.
 * IMPROVED: `umxReduce.ModelGxE` more rational set of reductions - means obey principle of marginality.
 * IMPROVED: `umx_move_file` supports wildcards (closes #83)
 * IMPROVED: `plot` for `umxIP` supports `means=TRUE`
@@ -22,10 +30,15 @@
 * IMPROVED: `plot`: can do pathLabels = "labels" to show the labels for paths
 * IMPROVED: `umx_rename` reorder parameters, call x-> `data`, deprecate `grep` in favour of `regex` for consistency,
 * IMPROVED: `umx_rename` examples
+* IMPROVED: `umx_cor` quieter, more informative
+* IMPROVED: `xmu_dot_move_ranks` set min, max or same to "" to take these ranks out of the diagram - Aids tricky layouts. (closes #84)
 * IMPROVED: @md links
 * IMPROVED: `namez` has a better default action (call `names` )
 * CONVENIENCE: `umxCP` and `umxIP` can take `data` and create `MZ` and `DZ` datasets.
   * Preparation for expansion to 5-group models.
+* HELP `plot` Better explanation of graphing: can still be improved
+* HELP `umx_as_numeric`:better examples
+* HELP: `umxMendelianRandomization` nice figure
 * HELP: `NEWS` layout improved for R 3.6.0
 * HELP: `Rd` doi link, spell-check,
 * HELP: `umxEFA` notes it can use formulas, e.g. umxEFA(~v1+v2+v3, data)

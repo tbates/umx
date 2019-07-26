@@ -8,7 +8,7 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), summary = !umx_set_silent(silent = TRUE),
   show = c("none", "raw", "std", "list of column names"),
-  comparison = TRUE)
+  comparison = TRUE, digits = 3)
 }
 \arguments{
 \item{model1}{The model to attempt to run and summarize.}
@@ -24,6 +24,8 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 \item{show}{What to print in summary (default "none") (alternatives: "raw", "std", "list of column names")}
 
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
+
+\item{digits}{Rounding precision in tables and plots}
 }
 \value{
 \itemize{

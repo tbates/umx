@@ -33,14 +33,11 @@ You can also set the label for the x axis (xlab), and choose the location of the
 }
 \examples{
 require(umx)
-data(twinData) 
+data(twinData)
 twinData$age1 = twinData$age2 = twinData$age
-selDVs  = "bmi"
-selDefs = "age"
-mzData  = subset(twinData, zygosity == "MZFF")
-dzData  = subset(twinData, zygosity == "DZFF")
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
- 	dzData = dzData, mzData = mzData, sep= "", dropMissing = TRUE)
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
+m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", try=yes)
 plot(m1)
 umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 }
