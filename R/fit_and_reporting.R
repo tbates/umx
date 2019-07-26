@@ -2619,14 +2619,11 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' @md
 #' @examples
 #' require(umx)
-#' data(twinData) 
+#' data(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
-#' selDVs  = "bmi"
-#' selDefs = "age"
-#' mzData  = subset(twinData, zygosity == "MZFF")
-#' dzData  = subset(twinData, zygosity == "DZFF")
-#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, 
-#'  	dzData = dzData, mzData = mzData, sep= "", dropMissing = TRUE)
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
+#' m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", try=yes)
 #' plot(m1)
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), ...) {
@@ -2634,13 +2631,14 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
 	}
 	model = x # to remind us that x has to be a umxGxE model
-	# get unique values of moderator
 	mzData = model$MZ$data$observed
 	dzData = model$DZ$data$observed
 	selDefs = names(mzData)[3:4]
 	if(is.na(xlab)){
 		xlab = selDefs[1]
 	}
+
+	# Get unique values of moderator
 	mz1 = as.vector(mzData[,selDefs[1]])
 	mz2 = as.vector(mzData[,selDefs[2]])
 	dz1 = as.vector(dzData[,selDefs[1]])
