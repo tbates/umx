@@ -33,9 +33,10 @@ require(umx)
 data(demoOneFactor)
 latents = c("G")
 manifests = names(demoOneFactor)
-# =========================================================================
-# = Make an base OpenMx model (which will lack start values and labels..) =
-# =========================================================================
+
+# ====================================================================
+# = Make an OpenMx model (which will lack start values and labels..) =
+# ====================================================================
 m1 = mxModel("One Factor", type = "RAM", 
 	manifestVars = manifests, latentVars = latents, 
 	mxPath(from = latents, to = manifests),

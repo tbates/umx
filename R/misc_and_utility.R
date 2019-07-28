@@ -3720,23 +3720,49 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' tmp2 = tmp[, c(1, 3)]
 #' umx_var(tmp2, format = "diag")
 #' umx_var(tmp2, format = "full")
-umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), ordVar = 1, digits = NULL, strict = TRUE){
+#'
+#' data(myFADataRaw)
+#' df = myFADataRaw[,c("z1", "z2", "z3")]
+#' df$z1 = mxFactor(df$z1, levels = c(0, 1))
+#' df$z2 = mxFactor(df$z2, levels = c(0, 1))
+#' df$z3 = mxFactor(df$z3, levels = c(0, 1, 2))    
+#' umx_var(df, format = "diag")
+#' umx_var(df, format = "full", allowCorForFactorCovs=TRUE)
+#'
+umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), ordVar = 1, digits = NULL, strict = TRUE, allowCorForFactorCovs= FALSE){
 	format = match.arg(format)
 	use    = match.arg(use)
 	if(any(umx_is_ordered(df, strict = strict))){
 		nCol = dim(df)[2]
-		out  = diag(ordVar, nCol, nCol)
+		# set to ordVar defaults
+		if(allowCorForFactorCovs){
+			out = umxHetCor(df)
+		}else{
+			out = diag(ordVar, nCol, nCol)
+		}
 		cont = umx_is_ordered(df, continuous.only = TRUE)
+		# insert continuous var variances
 		if(any(cont)){
 			for(i in which(cont)) {
+				for(j in which(cont)) {
+					out[i,j] = cov(df[, c(i,j)], use = use)
+				}
 				out[i,i] = var(df[,i], use = use)
 			}
 		}
 		if(format == "diag"){
-			return(diag(out))
+			out = diag(out)
 		} else {
-			stop("umx_var: Only format='diag' supported for data with factors")
-			return(out)	
+			if(allowCorForFactorCovs){
+				if(format == "full"){
+					out = out
+				} else {
+					# "lower"
+					out = out[lower.tri(out)]
+				}
+			} else {
+				stop("umx_var: Only format = 'diag' supported for data with factors: set allowCorForFactorCovs = TRUE to use correlations instead")
+			}
 		}
 	} else {
 		full = var(df, use = use)
@@ -3746,13 +3772,13 @@ umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.o
 			out = diag(full)
 		} else {
 		 # "lower"
-			out = diag(full)
+			out = full[lower.tri(full)]
 		}
-		if(!is.null(digits)){
-			return(round(out, digits))
-		} else {
-			return(out)
-		}
+	}
+	if(!is.null(digits)){
+		return(round(out, digits))
+	} else {
+		return(out)
 	}
 }
 

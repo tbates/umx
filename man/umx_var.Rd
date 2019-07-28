@@ -7,7 +7,7 @@
 umx_var(df, format = c("full", "diag", "lower"),
   use = c("complete.obs", "pairwise.complete.obs", "everything",
   "all.obs", "na.or.complete"), ordVar = 1, digits = NULL,
-  strict = TRUE)
+  strict = TRUE, allowCorForFactorCovs = FALSE)
 }
 \arguments{
 \item{df}{A dataframe of raw data from which to get variances.}
@@ -39,6 +39,15 @@ umx_var(tmp, format = "diag", ordVar = 1, use = "pair")
 tmp2 = tmp[, c(1, 3)]
 umx_var(tmp2, format = "diag")
 umx_var(tmp2, format = "full")
+
+data(myFADataRaw)
+df = myFADataRaw[,c("z1", "z2", "z3")]
+df$z1 = mxFactor(df$z1, levels = c(0, 1))
+df$z2 = mxFactor(df$z2, levels = c(0, 1))
+df$z3 = mxFactor(df$z3, levels = c(0, 1, 2))    
+umx_var(df, format = "diag")
+umx_var(df, format = "full", allowCorForFactorCovs=TRUE)
+
 }
 \references{
 \itemize{
