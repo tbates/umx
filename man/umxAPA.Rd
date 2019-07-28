@@ -3,7 +3,7 @@
 \name{umxAPA}
 \alias{umxAPA}
 \alias{summaryAPA}
-\title{Creates nicely formatted journal style summaries of lm models, p-values, data-frames etc.}
+\title{Creates nicely formatted journal-style summaries of models, p-values, data-frames and much more.}
 \usage{
 umxAPA(obj = .Last.value, se = NULL, p = NULL, std = FALSE,
   digits = 2, use = "complete", min = 0.001, addComparison = NA,
@@ -45,21 +45,19 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 }
 }
 \description{
-umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
+\code{umxAPA} creates summaries from a range of inputs. Use it for reporting \code{lm} models, effects, and summarizing data.
 \enumerate{
 \item Given an \code{lm}, \code{umxAPA} will return a formatted effect, including 95\% CI
 in square brackets, for one of the effects (specified by name in se). e.g.:
-\code{umxAPA(m1, "wt")} yields:
-}
-
-\eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
-\enumerate{
+\code{umxAPA(lm(mpg~wt, data=mtcars), "wt")} yields: \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
+\item This also works for \code{\link[=t.test]{t.test()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[=cor.test]{cor.test()}}, and others as I come across them.
+\item get a CI from obj=beta and se=se : \code{umxAPA(-0.30, .03) # β = -0.3 [-0.36, -0.24]}
+\item Back out an SE from b and CI: \code{umxAPA(-0.030, c(-0.073, 0.013)) # β = -0.03, se =0.02}
+\item Given only a number as obj, will be treated as a p-value as returned in APA format.
 \item Given a dataframe, \code{umxAPA} will return a table of correlations, with
 the mean and SD of each variable as the last row. So,
 \code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
 correlations, means and SDs thus:
-}
-
 \tabular{lccc}{
 \tab cyl         \tab  wt          \tab mpg          \cr
 cyl     \tab 1           \tab  0.78        \tab -0.85        \cr
@@ -67,9 +65,6 @@ wt      \tab 0.78        \tab  1           \tab -0.87        \cr
 mpg     \tab -0.85       \tab  -0.87       \tab 1            \cr
 mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
 }
-\enumerate{
-\item Given obj and se, umxAPA returns a CI based on 1.96 times the se.
-\item Given only a number as obj will be treated as a p-value as returned in APA format.
 }
 }
 \examples{

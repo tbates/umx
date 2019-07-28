@@ -3901,34 +3901,30 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 	}
 }
 
-#' Creates nicely formatted journal style summaries of lm models, p-values, data-frames etc.
+#' Creates nicely formatted journal-style summaries of models, p-values, data-frames and much more.
 #'
 #' @description
-#' umxAPA creates summaries from a range of inputs. Use it for reporting lm models, effects, and summarizing data.
+#' `umxAPA` creates summaries from a range of inputs. Use it for reporting `lm` models, effects, and summarizing data.
 #' 
 #' 1. Given an `lm`, `umxAPA` will return a formatted effect, including 95\% CI 
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
-#' `umxAPA(m1, "wt")` yields:
-#' 
-#' \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001
-#' 
-#' 2. Given a dataframe, `umxAPA` will return a table of correlations, with
+#' `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001
+#' 2. This also works for [t.test()], [stats::glm()], [cor.test()], and others as I come across them.
+#' 3. get a CI from obj=beta and se=se : `umxAPA(-0.30, .03) # β = -0.3 [-0.36, -0.24]`
+#' 4. Back out an SE from b and CI: `umxAPA(-0.030, c(-0.073, 0.013)) # β = -0.03, se =0.02`
+#' 5. Given only a number as obj, will be treated as a p-value as returned in APA format.
+#' 6. Given a dataframe, `umxAPA` will return a table of correlations, with
 #' the mean and SD of each variable as the last row. So, 
 #' `umxAPA(mtcars[,c("cyl", "wt", "mpg", )]` yields a table of 
 #' correlations, means and SDs thus:
-#' 
-#'\tabular{lccc}{
-#'         \tab cyl         \tab  wt          \tab mpg          \cr
-#' cyl     \tab 1           \tab  0.78        \tab -0.85        \cr
-#' wt      \tab 0.78        \tab  1           \tab -0.87        \cr
-#' mpg     \tab -0.85       \tab  -0.87       \tab 1            \cr
-#' mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
-#'}
+#'   \tabular{lccc}{
+#'            \tab cyl         \tab  wt          \tab mpg          \cr
+#'    cyl     \tab 1           \tab  0.78        \tab -0.85        \cr
+#'    wt      \tab 0.78        \tab  1           \tab -0.87        \cr
+#'    mpg     \tab -0.85       \tab  -0.87       \tab 1            \cr
+#'    mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
+#'   }
 #'
-#' 3. Given obj and se, umxAPA returns a CI based on 1.96 times the se.
-#' 
-#' 4. Given only a number as obj will be treated as a p-value as returned in APA format.
-#' 
 #' @aliases summaryAPA
 #' @param obj A model (e.g. [lm()], [lme()], [glm()], [t.test()]), beta-value, or [data.frame]
 #' @param se If obj is a beta, se treated as standard-error (returning a CI). 
