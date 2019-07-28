@@ -48,7 +48,7 @@
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
 #' @param group = Column to use for multi-group (default = NULL)
 #' @param group.equal = what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")
-#' @param show Whether to print estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param std Whether to print estimates. Defaults to FALSE ("raw"), TRUE = "std", for no parameter table use NULL.
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
@@ -144,14 +144,13 @@
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #'
-umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std", "list of column names"), printTab = TRUE){
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE){
 	# TODO: make groups independent
 	# TODO: support group.equal Equality constraints across multiple
 	# groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
 	# 
 	type                = match.arg(type)
 	tryHard             = match.arg(tryHard)
-	show       = umx_default_option(show, c("none", "raw", "std", "list of column names"), check = FALSE)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	lavaanMode          = match.arg(lavaanMode)
 	
@@ -308,7 +307,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 		return(model)
 	}else{
 		model = omxAssignFirstParameters(model)
-		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, show = show)
+		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std= std)
 		return(model)
 	}
 }

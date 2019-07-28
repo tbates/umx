@@ -7,8 +7,7 @@
 xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
   "mxTryHardWideSearch"), summary = !umx_set_silent(silent = TRUE),
-  show = c("none", "raw", "std", "list of column names"),
-  comparison = TRUE, digits = 3)
+  std = FALSE, comparison = TRUE, digits = 3, show = "deprecated")
 }
 \arguments{
 \item{model1}{The model to attempt to run and summarize.}
@@ -21,11 +20,13 @@ xmu_safe_run_summary(model1, model2 = NULL, autoRun = TRUE,
 
 \item{summary}{Whether to print model summary (default = autoRun).}
 
-\item{show}{What to print in summary (default "none") (alternatives: "raw", "std", "list of column names")}
+\item{std}{What to print in summary (default FALSE) means raw, TRUE = standardize, null = omit parameter table.}
 
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 
 \item{digits}{Rounding precision in tables and plots}
+
+\item{show}{= "deprecated"}
 }
 \value{
 \itemize{
@@ -38,7 +39,7 @@ The main benefit is that it returns the model, even if it can't be run.
 The function will run the model if requested, wrapped in \code{\link[=tryCatch]{tryCatch()}} to avoid throwing an error.
 If summary = TRUE then \code{\link[=umxSummary]{umxSummary()}} is requested (again, wrapped in try).
 
-\emph{note}: If autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
+\emph{note}: If \code{autoRun} is logical, then it over-rides \code{summary} to match \code{autoRun}. This is useful for easy use \code{\link[=umxRAM]{umxRAM()}} and twin models.
 }
 \examples{
 m1 = umxRAM("tim", data = mtcars,
@@ -55,11 +56,11 @@ xmu_safe_run_summary(m1, autoRun = TRUE, summary = FALSE)
 # Default summary is just fit string
 xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE)
 # Show std parameters
-xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, show = "std")
+xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, std = TRUE)
 # Run + Summary + comparison
 xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
 # Run + Summary + no comparison
-xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", comparison= FALSE)
+xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
 
 }
 \seealso{

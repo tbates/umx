@@ -11,8 +11,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL,
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
   "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  verbose = FALSE, optimizer = NULL, show = c("none", "raw", "std",
-  "list of column names"), printTab = TRUE)
+  verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}
@@ -45,7 +44,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL,
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing)}
 
-\item{show}{Whether to print estimates. Defaults to no (alternatives = "raw", "std", etc.)}
+\item{std}{Whether to print estimates. Defaults to FALSE ("raw"), TRUE = "std", for no parameter table use NULL.}
 
 \item{printTab}{= TRUE (more for debugging)}
 }

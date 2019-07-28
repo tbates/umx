@@ -502,7 +502,7 @@ loadings.MxModel <- function(x, ...) {
 #' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 #' 
 #' \dontrun{
-#' # For complex twin models, where algebras have parameters in some cells, we're implementing a "smart" mode
+#' # For some twin models, "all" uses a "smart" mode
 #' # note: only implemented for umxCP so far
 #' m2 =  umxConfint(m1, "all")
 #' }
@@ -857,21 +857,21 @@ umxSummary.default <- function(model, ...){
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
-#' umxSummary(m1, std= TRUE)
+#' umxSummary(m1, std = TRUE)
 #' # output as latex
 #' umx_set_table_format("latex")
 #' umxSummary(m1, std = TRUE)
 #' umx_set_table_format("markdown")
 #' # output as raw
-#' umxSummary(m1, std= FALSE)
+#' umxSummary(m1, std = FALSE)
 #' 
 #' # switch to a raw data model
-#' m1 = umxRAM("One Factor", data = demoOneFactor[1:100,],
+#' m1 = umxRAM("One Factor", data = demoOneFactor[1:100, ],
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = "G")
 #' )
-#' umxSummary(m1, std=TRUE, filter = "NS")
+#' umxSummary(m1, std = TRUE, filter = "NS")
 umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, show = c("deprecated", "raw", "std", "none"), ...){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
@@ -936,7 +936,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		#          name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
 		# 1  Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
 		# Raw.SE is new
-		names(parameterTable) <- c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
+		names(parameterTable) = c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
 
 		if(matrixAddresses){
 			nameing = c("name", "matrix", "row", "col")
@@ -2623,7 +2623,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' twinData$age1 = twinData$age2 = twinData$age
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
-#' m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", try=yes)
+#' m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", tryHard="yes")
 #' plot(m1)
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), ...) {

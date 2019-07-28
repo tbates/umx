@@ -59,16 +59,17 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' The function will run the model if requested, wrapped in [tryCatch()] to avoid throwing an error.
 #' If summary = TRUE then [umxSummary()] is requested (again, wrapped in try).
 #' 
-#' *note*: If autoRun is logical, then it over-rides summary to match autoRun. This is useful for easy use umxRAM and twin models.
+#' *note*: If `autoRun` is logical, then it over-rides `summary` to match `autoRun`. This is useful for easy use [umxRAM()] and twin models.
 #'
 #' @param model1 The model to attempt to run and summarize.
 #' @param model2 Optional second model to compare with model1.
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param summary Whether to print model summary (default = autoRun).
-#' @param show What to print in summary (default "none") (alternatives: "raw", "std", "list of column names")
+#' @param std What to print in summary (default FALSE) means raw, TRUE = standardize, null = omit parameter table.
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
+#' @param show = "deprecated"
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
@@ -89,16 +90,19 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' # Default summary is just fit string
 #' xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE)
 #' # Show std parameters
-#' xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, show = "std")
+#' xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, std = TRUE)
 #' # Run + Summary + comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
 #' # Run + Summary + no comparison
-#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, show = "std", comparison= FALSE)
+#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), show = c("none", "raw", "std", "list of column names"), comparison = TRUE, digits = 3) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), std = FALSE, comparison = TRUE, digits = 3, show = "deprecated") {
 	# TODO xmu_safe_run_summary: Activate test examples
-	show = umx_default_option(show, c("none", "raw", "std", "list of column names"), check = FALSE)
 	tryHard = match.arg(tryHard)
+	if(show != "deprecated"){
+		stop("would be good is show was not passed to xmu_safe_run_summary")
+	}
+
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
 	}
@@ -143,7 +147,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		# Didn't get run... don't try and summarize it (will error)
 	} else if(summary){
 		tryCatch({
-			umxSummary(model1, show = show, digits = digits)
+			umxSummary(model1, std = std, digits = digits)
 		# }, warning = function(w) {
 		# 	message("Warning incurred trying to run umxSummary")
 		# 	message(w)

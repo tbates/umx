@@ -70,21 +70,21 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
 )
-umxSummary(m1, std= TRUE)
+umxSummary(m1, std = TRUE)
 # output as latex
 umx_set_table_format("latex")
 umxSummary(m1, std = TRUE)
 umx_set_table_format("markdown")
 # output as raw
-umxSummary(m1, std= FALSE)
+umxSummary(m1, std = FALSE)
 
 # switch to a raw data model
-m1 = umxRAM("One Factor", data = demoOneFactor[1:100,],
+m1 = umxRAM("One Factor", data = demoOneFactor[1:100, ],
 	umxPath("G", to = manifests),
 	umxPath(v.m. = manifests),
 	umxPath(v1m0 = "G")
 )
-umxSummary(m1, std=TRUE, filter = "NS")
+umxSummary(m1, std = TRUE, filter = "NS")
 }
 \references{
 - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 

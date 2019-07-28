@@ -31,9 +31,6 @@ I might change this to a lookup-function that gets a CI string if one exists.
 \itemize{
 \item \url{https://github.com/tbates/umx}
 }
-
-CIname = top.cp_loadings_std\link{1,1}
-thisSub = top; thisMat = cp_loadings_std; thisRow = 1; thisCol = 1
 }
 \seealso{
 \itemize{

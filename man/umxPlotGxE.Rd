@@ -37,7 +37,7 @@ data(twinData)
 twinData$age1 = twinData$age2 = twinData$age
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
-m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", try=yes)
+m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", tryHard="yes")
 plot(m1)
 umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 }

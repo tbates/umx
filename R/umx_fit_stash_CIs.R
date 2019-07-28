@@ -64,8 +64,8 @@ umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRU
 			thisMat = tmp[1, "matrix"]
 			thisRow = tmp[1, "row"]
 			thisCol = tmp[1, "col"]
-			#' CIname = top.cp_loadings_std[1,1]
-			#' thisSub = top; thisMat = cp_loadings_std; thisRow = 1; thisCol = 1
+			# CIname = top.cp_loadings_std[1,1]
+			# thisSub = top; thisMat = cp_loadings_std; thisRow = 1; thisCol = 1
 		}
 		# umx_msg(CIname); # umx_msg(thisSub); umx_msg(thisMat); umx_msg(thisRow); umx_msg(thisCol)
 		# thisMat = "cp_loadings_std"

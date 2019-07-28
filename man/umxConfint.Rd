@@ -76,7 +76,7 @@ tmp = umxConfint(m1, parm = "A", run = TRUE)
 tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 
 \dontrun{
-# For complex twin models, where algebras have parameters in some cells, we're implementing a "smart" mode
+# For some twin models, "all" uses a "smart" mode
 # note: only implemented for umxCP so far
 m2 =  umxConfint(m1, "all")
 }
