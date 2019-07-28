@@ -5,10 +5,10 @@
 \alias{umxSummary.MxRAMModel}
 \title{Shows a compact, publication-style, summary of a RAM model}
 \usage{
-\method{umxSummary}{MxModel}(model, refModels = NULL, show = c("raw",
-  "std", "none"), digits = 2, report = c("markdown", "html"),
-  filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE,
-  matrixAddresses = FALSE, std = "deprecated", ...)
+\method{umxSummary}{MxModel}(model, refModels = NULL, std = FALSE,
+  digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS",
+  "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE,
+  show = c("deprecated", "raw", "std", "none"), ...)
 }
 \arguments{
 \item{model}{The [mxModel()] whose fit will be reported}
@@ -16,8 +16,7 @@
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
 
-\item{show}{What estimates to show. By default, the raw estimates are shown 
-(Options = c("raw", "std", "none").}
+\item{std}{deprecated: use show = "std" instead!}
 
 \item{digits}{How many decimal places to report (default = 2)}
 
@@ -31,7 +30,8 @@ If NULL will be competed on demand. If FALSE will not be computed. Only needed f
 
 \item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
 
-\item{std}{deprecated: use show = "std" instead!}
+\item{show}{What estimates to show. By default, the raw estimates are shown 
+(Options = c("raw", "std", "none").}
 
 \item{...}{Other parameters to control model summary}
 }
@@ -64,28 +64,27 @@ Fixing a factor loading to 1 and estimating factor variances can help here.
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor",
-	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	umxPath(latents, to = manifests),
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
+	umxPath(var = "G", fixedAt = 1)
 )
-umxSummary(m1, show = "std")
+umxSummary(m1, std= TRUE)
 # output as latex
 umx_set_table_format("latex")
-umxSummary(m1, show = "std")
+umxSummary(m1, std = TRUE)
 umx_set_table_format("markdown")
 # output as raw
-umxSummary(m1, show = "raw")
-m1 <- mxModel(m1,
-  mxData(demoOneFactor[1:100,], type = "raw"),
-  umxPath(mean = manifests),
-  umxPath(mean = latents, fixedAt = 0)
+umxSummary(m1, std= FALSE)
+
+# switch to a raw data model
+m1 = umxRAM("One Factor", data = demoOneFactor[1:100,],
+	umxPath("G", to = manifests),
+	umxPath(v.m. = manifests),
+	umxPath(v1m0 = "G")
 )
-m1 <- mxRun(m1)
-umxSummary(m1, show = "std", filter = "NS")
+umxSummary(m1, std=TRUE, filter = "NS")
 }
 \references{
 - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 

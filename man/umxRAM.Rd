@@ -9,11 +9,11 @@ umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  show = c("none", "raw", "std", "list of column names"),
+  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), std = FALSE,
   refModels = NULL, remove_unused_manifests = TRUE, independent = NA,
   setValues = TRUE, optimizer = NULL, verbose = FALSE,
-  std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE)
+  std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE,
+  show = c("deprecated", "raw", "std"))
 }
 \arguments{
 \item{model}{A model to update (or set to string to use as name for new model)}
@@ -40,7 +40,7 @@ umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 
-\item{show}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
+\item{std}{Whether to show standardized estimates, raw (NULL print fit only)}
 
 \item{refModels}{pass in reference models if available. Use FALSE to suppress computing these if not provided.}
 
@@ -59,6 +59,8 @@ umxRAM(model = NA, ..., data = NULL, name = NA, group = NULL,
 \item{lavaanMode}{Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)}
 
 \item{printTab}{(for string input, whether to output a table of paths (FALSE)}
+
+\item{show}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
 }
 \value{
 \itemize{
@@ -153,7 +155,7 @@ m1 = umxRAM("tim", data = mtcars,
 parameters(m1)
 
 # And umxSummary to get standardized parameters, CIs etc from the run model.
-umxSummary(m1, show = "std")
+umxSummary(m1, std=TRUE)
 # |name           | Std.Estimate| Std.SE|CI                   |
 # |:--------------|------------:|------:|:--------------------|
 # |wt_to_mpg      |        -0.54|   0.17|-0.54 [-0.89, -0.2]  |

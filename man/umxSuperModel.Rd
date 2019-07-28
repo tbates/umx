@@ -6,7 +6,7 @@
 \usage{
 umxSuperModel(name = "top", ..., autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"))
+  "mxTryHardWideSearch"), std = FALSE)
 }
 \arguments{
 \item{name}{The name for the container model (default = 'top')}
@@ -16,6 +16,8 @@ umxSuperModel(name = "top", ..., autoRun = getOption("umx_auto_run"),
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+
+\item{std}{Show standardized parameters, raw (default), or just the fit indices (null)}
 }
 \value{
 \itemize{

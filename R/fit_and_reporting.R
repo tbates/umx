@@ -515,7 +515,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 	}
 	parm = umx_default_option(parm, c("existing", "all", "or one or more labels", "smart"), check = FALSE)
 
-	# upgrade "all" to "smart" for CP
+	# Upgrade "all" to "smart" for CP
 	if(class(object) == "MxModelCP" && parm == "all"){
 		parm = "smart"
 	}
@@ -851,50 +851,52 @@ umxSummary.default <- function(model, ...){
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor",
-#' 	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	umxPath(latents, to = manifests),
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
-#' umxSummary(m1, show = "std")
+#' umxSummary(m1, std= TRUE)
 #' # output as latex
 #' umx_set_table_format("latex")
-#' umxSummary(m1, show = "std")
+#' umxSummary(m1, std = TRUE)
 #' umx_set_table_format("markdown")
 #' # output as raw
-#' umxSummary(m1, show = "raw")
-#' m1 <- mxModel(m1,
-#'   mxData(demoOneFactor[1:100,], type = "raw"),
-#'   umxPath(mean = manifests),
-#'   umxPath(mean = latents, fixedAt = 0)
+#' umxSummary(m1, std= FALSE)
+#' 
+#' # switch to a raw data model
+#' m1 = umxRAM("One Factor", data = demoOneFactor[1:100,],
+#' 	umxPath("G", to = manifests),
+#' 	umxPath(v.m. = manifests),
+#' 	umxPath(v1m0 = "G")
 #' )
-#' m1 <- mxRun(m1)
-#' umxSummary(m1, show = "std", filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "none"), digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, std = "deprecated", ...){
+#' umxSummary(m1, std=TRUE, filter = "NS")
+umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, show = c("deprecated", "raw", "std", "none"), ...){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
-	if(std != "deprecated"){
-		if(std){
-			show= "std"
-		} else {
-			show= "raw"
+	show   = match.arg(show)
+	if(show != "deprecated"){
+		message("Polite note: In umx 3, all functions will use std=T|F|NULL) in place of  show = 'raw|std|none")
+		if(show == "std"){
+			std = TRUE
+		} else if (show == "raw"){
+			std = FALSE
+		}else{
+			std = NULL
 		}
-		# stop("use show = 'std', not std = TRUE")
 	}
+
 	report = match.arg(report)
 	filter = match.arg(filter)
-	show = match.arg(show)
 	# show = umx_default_option(show, c("raw", "std", "none"), check = FALSE)
 	
-	message("?umxSummary show='raw|std', digits, report= 'html', filter= 'NS' & more")
+	message("?umxSummary std=T|F', digits, report= 'html', filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
-	if( filter != "ALL" & show == "none") {
-		show = "raw"
-	}else if(show == "std" && SE == FALSE){
+	if( filter != "ALL" & is.null(std) ) {
+		std = FALSE
+	}else if(std && SE == FALSE){
 		# message("SE must be TRUE to show std, overriding to set SE = TRUE")
 		SE = TRUE
 	}
@@ -903,13 +905,14 @@ umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "
 		# SaturatedModels not passed in from outside, so get them from the model
 		# TODO umxSummary Improve efficiency: Compute summary only once by detecting when SaturatedLikelihood is missing
 		modelSummary = summary(model)
-		if(is.null(model$data)){
-			# TODO model with no data - no saturated solution?
-			message("Top model doesn't contain data. You might want to use summary() instead of umxSummary() for this model.")
-		} else if(is.na(modelSummary$SaturatedLikelihood)){
+		if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
 			refModels = mxRefModels(model, run = TRUE)
 			modelSummary = summary(model, refModels = refModels)
+		}
+		if(is.null(model$data)){
+			# TODO model with no data - no saturated solution?
+			# message("Top model doesn't contain data. You may get extra information from summary() rather than umxSummary()")
 		}
 	} else if (refModels == FALSE){
 		modelSummary = summary(model) # Don't use or generate refModels		
@@ -917,8 +920,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "
 		modelSummary = summary(model, refModels = refModels) # Use user-supplied refModels		
 	}
 
-	# DisplayColumns
-	if(show != "none"){
+	# DisplayColumns show
+	if(!is.null(std)){
 		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
 		nSubModels = length(model$submodels)
 		if(nSubModels > 0){
@@ -943,13 +946,13 @@ umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "
 		# TODO: umxSummary add p value, perhaps CI?
 		# TODO: umxSummary block table into latents/resid/means etc.
 		
-		if(show == "both") {
-			namesToShow = c(nameing, "Estimate", "SE", "Std.Estimate", "Std.SE")
-		} else if(show == "std"){
+		if(std == TRUE){
+			# TODO: should CI be here?
 			namesToShow = c(nameing, "Std.Estimate", "Std.SE", "CI")
 		}else{ # must be raw
 			namesToShow = c(nameing, "Estimate", "SE")					
 		}
+
 		if("CI" %in% namesToShow){
 			parameterTable$sig = TRUE
 			parameterTable$CI  = ""
@@ -985,8 +988,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "
 		} else {
 			umx_print(toShow, digits = digits, na.print = "", zero.print = "0", justify = "none")
 		}
-	} else {
-		# message("For estimates, umxSummary(..., show = 'std', 'raw', or 'both')")
 	}
 	with(modelSummary, {
 		if(!is.finite(TLI)){
@@ -1037,7 +1038,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, show = c("raw", "std", "
 	if(!is.null(model$output$confidenceIntervals)){
 		print(model$output$confidenceIntervals)
 	}
-	if(show != "none"){ # return these as  invisible for the user to filer, sort etc.
+	if(!is.null(std)){ # return these as  invisible for the user to filer, sort etc.
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
 		}else if(filter == "SIG"){
