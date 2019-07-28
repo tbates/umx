@@ -121,6 +121,9 @@ mzData <- subset(twinData, zygosity \%in\% c("MZFF", "MZMM"))
 x = cor.test(~ wt1 + wt2, data = mzData)
 umxAPA(x)
 
+# Report a hypothesis test
+m1 = t.test(extra ~ group, data = sleep)
+umxAPA(m1)
 }
 \references{
 \itemize{
