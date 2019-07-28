@@ -3992,15 +3992,16 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' umxAPA(.000182613,  addComparison=FALSE)
 #' 
 #' # ========================
-#' # = report a correlation =
+#' # = Report a correlation =
 #' # ========================
 #' data(twinData)
-#' selDVs = c("wt1", "wt2")
-#' mzData <- subset(twinData, zygosity %in% c("MZFF", "MZMM"))
-#' x = cor.test(~ wt1 + wt2, data = mzData)
+#' tmp = subset(twinData, zygosity %in% c("MZFF", "MZMM"))
+#' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(x)
 #'
-#' # Report a hypothesis test
+#' # ===================
+#' # = Report a t-test =
+#' # ===================
 #' m1 = t.test(extra ~ group, data = sleep)
 #' umxAPA(m1)
 umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
@@ -4008,12 +4009,16 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	test = match.arg(test)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	if("htest" == class(obj)[[1]]){
-		o = paste0("Means were ", omxQuotes(obj$estimate),
+		# t.test
+		if(obj$method ==  "Pearson's product-moment correlation"){
+			# cor.test
+			o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), commaSep, round(obj$conf.int[2], digits), "]")
+			o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
+		} else {
+			o = paste0("Means were ", omxQuotes(obj$estimate),
 			". CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "]. ",
 			"t(", round(obj$parameter, 2), ") = ", round(obj$statistic, 2), ", p = ", umxAPA(obj$p.value))
-
-		# o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), commaSep, round(obj$conf.int[2], digits), "]")
-		# o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
+		}
 		return(o)
 	}else if("data.frame" == class(obj)[[1]]){
 		# Generate a summary of correlation and means
