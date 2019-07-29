@@ -41,17 +41,39 @@ data(twinData)
 selDVs = c("wt", "ht")
 mzData = twinData[twinData$zygosity \%in\%  "MZFF", ] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF", ]
+
 round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
+
 tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
 	equateMeans = TRUE, varForm = "Cholesky")
 tmp
+
 round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
 tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
-	equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+
 tmp
+
 # one variable
 tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
 	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+
+# Ordinal/continuous mix
+data(twinData)
+twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
+# Cut BMI column to form ordinal obesity variables
+obLevels   = c('normal', 'overweight', 'obese')
+cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
+twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+# Make the ordinal variables into mxFactors
+ordDVs = c("obese1", "obese2")
+twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+mzData = twinData[twinData$zygosity \%in\% "MZFF",] 
+dzData = twinData[twinData$zygosity \%in\% "DZFF",]
+tmp = xmu_starts(mzData, dzData, selVars = c("wt","obese"), sep= "", 
+	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},
@@ -66,12 +88,13 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuPropagateLabels}},
   \code{\link{xmu_assemble_twin_supermodel}},
   \code{\link{xmu_check_levels_identical}},
+  \code{\link{xmu_check_variance}},
   \code{\link{xmu_clean_label}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_dot_maker}},
   \code{\link{xmu_dot_move_ranks}},
-  \code{\link{xmu_dot_rank_str}},
+  \code{\link{xmu_dot_rank_str}}, \code{\link{xmu_get_CI}},
   \code{\link{xmu_lavaan_process_group}},
   \code{\link{xmu_make_mxData}},
   \code{\link{xmu_make_top_twin}},
@@ -79,7 +102,9 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_name_from_lavaan_str}},
   \code{\link{xmu_safe_run_summary}},
   \code{\link{xmu_set_sep_from_suffix}},
+  \code{\link{xmu_show_fit_or_comparison}},
   \code{\link{xmu_simplex_corner}},
-  \code{\link{xmu_start_value_list}}
+  \code{\link{xmu_start_value_list}},
+  \code{\link{xmu_twin_check}}
 }
 \concept{xmu internal not for end user}

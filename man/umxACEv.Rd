@@ -288,7 +288,6 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxSummaryGxEbiv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

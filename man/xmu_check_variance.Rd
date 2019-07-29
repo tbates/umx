@@ -28,16 +28,34 @@ twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")] * 100
 xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
-  \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxVersion}},
-  \code{\link{umx_array_shift}},
-  \code{\link{umx_cell_is_on}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_scale}},
-  \code{\link{umx_score_scale}}, \code{\link{umx}}
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
+  \code{\link{xmuLabel_MATRIX_Model}},
+  \code{\link{xmuLabel_Matrix}},
+  \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},
+  \code{\link{xmuMakeDeviationThresholdsMatrices}},
+  \code{\link{xmuMakeOneHeadedPathsFromPathList}},
+  \code{\link{xmuMakeTwoHeadedPathsFromPathList}},
+  \code{\link{xmuMaxLevels}}, \code{\link{xmuMinLevels}},
+  \code{\link{xmuPropagateLabels}},
+  \code{\link{xmu_assemble_twin_supermodel}},
+  \code{\link{xmu_check_levels_identical}},
+  \code{\link{xmu_clean_label}},
+  \code{\link{xmu_dot_make_paths}},
+  \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_dot_maker}},
+  \code{\link{xmu_dot_move_ranks}},
+  \code{\link{xmu_dot_rank_str}}, \code{\link{xmu_get_CI}},
+  \code{\link{xmu_lavaan_process_group}},
+  \code{\link{xmu_make_mxData}},
+  \code{\link{xmu_make_top_twin}},
+  \code{\link{xmu_model_needs_means}},
+  \code{\link{xmu_name_from_lavaan_str}},
+  \code{\link{xmu_safe_run_summary}},
+  \code{\link{xmu_set_sep_from_suffix}},
+  \code{\link{xmu_show_fit_or_comparison}},
+  \code{\link{xmu_simplex_corner}},
+  \code{\link{xmu_start_value_list}},
+  \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }
-\concept{Miscellaneous Utility Functions}
+\concept{xmu internal not for end user}

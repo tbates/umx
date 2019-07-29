@@ -122,8 +122,7 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 }
 }
 \seealso{
-Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxPath}},
   \code{\link{umxRAM}}, \code{\link{umxRun}},
   \code{\link{umxSummary}}, \code{\link{umxSuperModel}},

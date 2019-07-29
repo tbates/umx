@@ -38,11 +38,9 @@ Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
   \code{\link{umx_aggregate}}, \code{\link{umx_names}},
   \code{\link{umx_print}}, \code{\link{umx_time}},
-  \code{\link{umx}}, \code{\link{xmu_get_CI}},
-  \code{\link{xmu_show_fit_or_comparison}}
+  \code{\link{umx}}
 
-Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
   \code{\link{umxRun}}, \code{\link{umxSuperModel}},

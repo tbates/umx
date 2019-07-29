@@ -57,8 +57,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_find_object}}, \code{\link{umx_make}},
   \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
   \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_scale}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}, \code{\link{xmu_check_variance}}
+  \code{\link{umx_score_scale}}, \code{\link{umx}}
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},
@@ -70,8 +69,7 @@ Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_names}}, \code{\link{umx_time}},
-  \code{\link{umx}}, \code{\link{xmu_get_CI}},
-  \code{\link{xmu_show_fit_or_comparison}}
+  \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}
 \concept{Reporting Functions}

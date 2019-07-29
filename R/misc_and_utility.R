@@ -3707,6 +3707,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' @param ordVar The value to return at any ordinal columns (defaults to 1).
 #' @param digits digits to round output to (Ignored if NULL). Set for easy printing.
 #' @param strict Whether to allow non-ordered factors to be processed (default = FALSE (no)).
+#' @param allowCorForFactorCovs When ordinal data are present, use heterochoic correlations in affected cells, in place of covariances. 
 #' @return - [mxModel()]
 #' @export
 #' @family Miscellaneous Stats Helpers
@@ -3729,15 +3730,30 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' umx_var(df, format = "diag")
 #' umx_var(df, format = "full", allowCorForFactorCovs=TRUE)
 #'
+#' # Ordinal/continuous mix
+#' data(twinData)
+#' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
+#' # Cut BMI column to form ordinal obesity variables
+#' obLevels   = c('normal', 'overweight', 'obese')
+#' cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
+#' twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' # Make the ordinal variables into mxFactors
+#' ordDVs = c("obese1", "obese2")
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#' varStarts = umx_var(mzData[, c(ordDVs, "wt1", "wt2")], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+#'
+df = mzData[, c(ordDVs, "wt1", "wt2")]
 umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), ordVar = 1, digits = NULL, strict = TRUE, allowCorForFactorCovs= FALSE){
 	format = match.arg(format)
 	use    = match.arg(use)
 	if(any(umx_is_ordered(df, strict = strict))){
 		nCol = dim(df)[2]
-		# set to ordVar defaults
+		# Set to ordVar defaults
 		if(allowCorForFactorCovs){
 			out = umxHetCor(df)
 		}else{
+			# zero off diagonal
 			out = diag(ordVar, nCol, nCol)
 		}
 		cont = umx_is_ordered(df, continuous.only = TRUE)
@@ -3745,9 +3761,13 @@ umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.o
 		if(any(cont)){
 			for(i in which(cont)) {
 				for(j in which(cont)) {
-					out[i,j] = cov(df[, c(i,j)], use = use)
+					if(i==j){
+						# This is a variance
+						out[i,i] = var(df[,i], use = use)
+					} else {
+						out[i,j] = cov(df[, c(i,j)], use = use)[1,2]
+					}
 				}
-				out[i,i] = var(df[,i], use = use)
 			}
 		}
 		if(format == "diag"){

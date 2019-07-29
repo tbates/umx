@@ -278,7 +278,7 @@ umxSummary(m1)
 # = Bivariate continuous and ordinal example =
 # ============================================
 data(twinData)
-twinData=umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
+twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
 # Cut BMI column to form ordinal obesity variables
 obLevels   = c('normal', 'overweight', 'obese')
 cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
@@ -354,7 +354,6 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxSummaryGxEbiv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

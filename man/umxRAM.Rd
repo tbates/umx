@@ -280,8 +280,7 @@ parameters(m1)
 \seealso{
 \code{\link[=umxPath]{umxPath()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=plot]{plot()}}, \code{\link[=parameters]{parameters()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}, \code{\link[=umxLav2RAM]{umxLav2RAM()}}
 
-Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxPath}}, \code{\link{umxRun}},
   \code{\link{umxSummary}}, \code{\link{umxSuperModel}},

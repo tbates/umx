@@ -409,17 +409,39 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 #' selDVs = c("wt", "ht")
 #' mzData = twinData[twinData$zygosity %in%  "MZFF", ] 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF", ]
+#' 
 #' round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
+#' 
 #' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
 #'		equateMeans = TRUE, varForm = "Cholesky")
 #' tmp
+#' 
 #' round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
 #' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
-#'		equateMeans = TRUE, varForm = "Cholesky", SD=FALSE)
+#'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+#' 
 #' tmp
+#' 
 #' # one variable
 #' tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
 #'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+#' 
+#' # Ordinal/continuous mix
+#' data(twinData)
+#' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
+#' # Cut BMI column to form ordinal obesity variables
+#' obLevels   = c('normal', 'overweight', 'obese')
+#' cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
+#' twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' # Make the ordinal variables into mxFactors
+#' ordDVs = c("obese1", "obese2")
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#' mzData = twinData[twinData$zygosity %in% "MZFF",] 
+#' dzData = twinData[twinData$zygosity %in% "DZFF",]
+#' tmp = xmu_starts(mzData, dzData, selVars = c("wt","obese"), sep= "", 
+#'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+#'
 xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
 	# Make mxData, dropping any unused columns
 	if(!is.null(sep)){
@@ -455,6 +477,8 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 		het_mz = umx_reorder(mzData, selVars)		
 		het_dz = umx_reorder(dzData, selVars)
 		varStarts = (diag(het_mz)[1:nVar]+ diag(het_dz)[1:nVar])/2
+	}else{
+		stop("xmu_starts can only handle raw and cov/cor data types. You gave me ", omxQuotes(dataType))
 	}
 	# Covariance matrix, 1/3 allocated to each of A=C=E.
 	varStarts = varStarts/divideBy

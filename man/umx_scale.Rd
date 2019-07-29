@@ -47,16 +47,12 @@ plot(wt1 ~ wt2, data = df)
 \seealso{
 umx_scale_wide_twin_data scale
 
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
-  \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxVersion}},
-  \code{\link{umx_array_shift}},
-  \code{\link{umx_cell_is_on}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}, \code{\link{xmu_check_variance}}
+Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}},
+  \code{\link{df}}, \code{\link{oddsratio}},
+  \code{\link{reliability}}, \code{\link{umxCov2cor}},
+  \code{\link{umxHetCor}}, \code{\link{umx_apply}},
+  \code{\link{umx_cor}}, \code{\link{umx_fun_mean_sd}},
+  \code{\link{umx_means}}, \code{\link{umx_r_test}},
+  \code{\link{umx_round}}, \code{\link{umx}}
 }
-\concept{Miscellaneous Utility Functions}
+\concept{Miscellaneous Stats Helpers}

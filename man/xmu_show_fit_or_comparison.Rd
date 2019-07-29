@@ -30,17 +30,34 @@ xmu_show_fit_or_comparison(model, comparison, digits=3)
 \item \code{\link[=umxSummary]{umxSummary()}}
 }
 
-Other Reporting Functions: \code{\link{FishersMethod}},
-  \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxEval}},
-  \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}},
-  \code{\link{umxParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_names}}, \code{\link{umx_print}},
-  \code{\link{umx_time}}, \code{\link{umx}},
-  \code{\link{xmu_get_CI}}
+Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
+  \code{\link{xmuLabel_MATRIX_Model}},
+  \code{\link{xmuLabel_Matrix}},
+  \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},
+  \code{\link{xmuMakeDeviationThresholdsMatrices}},
+  \code{\link{xmuMakeOneHeadedPathsFromPathList}},
+  \code{\link{xmuMakeTwoHeadedPathsFromPathList}},
+  \code{\link{xmuMaxLevels}}, \code{\link{xmuMinLevels}},
+  \code{\link{xmuPropagateLabels}},
+  \code{\link{xmu_assemble_twin_supermodel}},
+  \code{\link{xmu_check_levels_identical}},
+  \code{\link{xmu_check_variance}},
+  \code{\link{xmu_clean_label}},
+  \code{\link{xmu_dot_make_paths}},
+  \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_dot_maker}},
+  \code{\link{xmu_dot_move_ranks}},
+  \code{\link{xmu_dot_rank_str}}, \code{\link{xmu_get_CI}},
+  \code{\link{xmu_lavaan_process_group}},
+  \code{\link{xmu_make_mxData}},
+  \code{\link{xmu_make_top_twin}},
+  \code{\link{xmu_model_needs_means}},
+  \code{\link{xmu_name_from_lavaan_str}},
+  \code{\link{xmu_safe_run_summary}},
+  \code{\link{xmu_set_sep_from_suffix}},
+  \code{\link{xmu_simplex_corner}},
+  \code{\link{xmu_start_value_list}},
+  \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }
-\concept{Reporting Functions}
+\concept{xmu internal not for end user}

@@ -1260,7 +1260,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # = Bivariate continuous and ordinal example =
 #' # ============================================
 #' data(twinData)
-#' twinData=umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
+#' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
 #' # Cut BMI column to form ordinal obesity variables
 #' obLevels   = c('normal', 'overweight', 'obese')
 #' cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)

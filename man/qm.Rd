@@ -39,8 +39,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_find_object}}, \code{\link{umx_make}},
   \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
   \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_scale}},
-  \code{\link{umx_score_scale}}, \code{\link{umx}},
-  \code{\link{xmu_check_variance}}
+  \code{\link{umx_print}}, \code{\link{umx_score_scale}},
+  \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}

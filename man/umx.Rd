@@ -83,8 +83,7 @@ plot(m1, std = TRUE, file = NA)
 Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}},
   \code{\link{tmx_is.identified}}
 
-Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
   \code{\link{umxRun}}, \code{\link{umxSummary}},
@@ -100,8 +99,7 @@ Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
   \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
   \code{\link{umx_names}}, \code{\link{umx_print}},
-  \code{\link{umx_time}}, \code{\link{xmu_get_CI}},
-  \code{\link{xmu_show_fit_or_comparison}}
+  \code{\link{umx_time}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
@@ -132,8 +130,7 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxSummaryGxEbiv}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umxSummarySimplex}}
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}},
   \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
@@ -202,12 +199,12 @@ Other String Functions: \code{\link{umx_explode_twin_names}},
   \code{\link{umx_write_to_clipboard}}
 
 Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}},
-  \code{\link{oddsratio}}, \code{\link{reliability}},
-  \code{\link{umxCov2cor}}, \code{\link{umxHetCor}},
-  \code{\link{umx_apply}}, \code{\link{umx_cor}},
-  \code{\link{umx_fun_mean_sd}}, \code{\link{umx_means}},
-  \code{\link{umx_r_test}}, \code{\link{umx_round}},
-  \code{\link{umx_var}}
+  \code{\link{df}}, \code{\link{oddsratio}},
+  \code{\link{reliability}}, \code{\link{umxCov2cor}},
+  \code{\link{umxHetCor}}, \code{\link{umx_apply}},
+  \code{\link{umx_cor}}, \code{\link{umx_fun_mean_sd}},
+  \code{\link{umx_means}}, \code{\link{umx_r_test}},
+  \code{\link{umx_round}}, \code{\link{umx_scale}}
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
@@ -218,9 +215,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{umx_find_object}}, \code{\link{umx_make}},
   \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
   \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_scale}},
-  \code{\link{umx_score_scale}},
-  \code{\link{xmu_check_variance}}
+  \code{\link{umx_print}}, \code{\link{umx_score_scale}}
 
 Other datasets: \code{\link{Fischbein_wt}},
   \code{\link{GFF}}, \code{\link{iqdat}},
@@ -259,12 +254,13 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuPropagateLabels}},
   \code{\link{xmu_assemble_twin_supermodel}},
   \code{\link{xmu_check_levels_identical}},
+  \code{\link{xmu_check_variance}},
   \code{\link{xmu_clean_label}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_dot_maker}},
   \code{\link{xmu_dot_move_ranks}},
-  \code{\link{xmu_dot_rank_str}},
+  \code{\link{xmu_dot_rank_str}}, \code{\link{xmu_get_CI}},
   \code{\link{xmu_lavaan_process_group}},
   \code{\link{xmu_make_mxData}},
   \code{\link{xmu_make_top_twin}},
@@ -272,9 +268,10 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_name_from_lavaan_str}},
   \code{\link{xmu_safe_run_summary}},
   \code{\link{xmu_set_sep_from_suffix}},
+  \code{\link{xmu_show_fit_or_comparison}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_start_value_list}},
-  \code{\link{xmu_starts}}
+  \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }
 \concept{Advanced Model Building Functions}
 \concept{Check or test}

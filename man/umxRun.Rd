@@ -64,8 +64,7 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 }
 \seealso{
-Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
   \code{\link{umxSummary}}, \code{\link{umxSuperModel}},

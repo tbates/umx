@@ -200,8 +200,7 @@ umxPath(v0m0 = "W", label = c(NA, "data.W"))
 \item \code{\link[=mxPath]{mxPath()}}
 }
 
-Other Core Modeling Functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxAlgebra}},
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxRAM}}, \code{\link{umxRun}},
   \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
