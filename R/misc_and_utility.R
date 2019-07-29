@@ -3741,9 +3741,8 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' # Make the ordinal variables into mxFactors
 #' ordDVs = c("obese1", "obese2")
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
-#' varStarts = umx_var(mzData[, c(ordDVs, "wt1", "wt2")], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+#' varStarts = umx_var(twinData[, c(ordDVs, "wt1", "wt2")], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 #'
-df = mzData[, c(ordDVs, "wt1", "wt2")]
 umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), ordVar = 1, digits = NULL, strict = TRUE, allowCorForFactorCovs= FALSE){
 	format = match.arg(format)
 	use    = match.arg(use)
