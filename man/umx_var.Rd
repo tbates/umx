@@ -61,7 +61,8 @@ twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
 # Make the ordinal variables into mxFactors
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
-varStarts = umx_var(twinData[, c(ordDVs, "wt1", "wt2")], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+varStarts = umx_var(twinData[, c(ordDVs, "wt1", "wt2")], 
+		format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 
 }
 \references{

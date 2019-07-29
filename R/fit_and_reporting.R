@@ -3997,7 +3997,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' data(twinData)
 #' tmp = subset(twinData, zygosity %in% c("MZFF", "MZMM"))
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
-#' umxAPA(x)
+#' umxAPA(m1)
 #'
 #' # ===================
 #' # = Report a t-test =

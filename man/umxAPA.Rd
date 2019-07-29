@@ -118,7 +118,7 @@ umxAPA(.000182613,  addComparison=FALSE)
 data(twinData)
 tmp = subset(twinData, zygosity \%in\% c("MZFF", "MZMM"))
 m1 = cor.test(~ wt1 + wt2, data = tmp)
-umxAPA(x)
+umxAPA(m1)
 
 # ===================
 # = Report a t-test =
