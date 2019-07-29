@@ -4492,7 +4492,7 @@ umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
 #' @return - new dataframe with scaled variables
 #' @export
 #' @seealso umx_scale_wide_twin_data scale
-#' @family Miscellaneous Utility Functions
+#' @family Miscellaneous Stats Helpers
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples

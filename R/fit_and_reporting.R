@@ -2167,7 +2167,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [umx_set_auto_plot()], [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
-#' @family Core Modeling Functions
+#' @family umx S3 functions
 #' @family Plotting functions
 #' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md
@@ -2215,7 +2215,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
-#' @family Core Modeling Functions
+#' @family umx S3 functions
 #' @family Plotting functions
 #' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md

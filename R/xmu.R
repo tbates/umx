@@ -31,7 +31,7 @@
 #' @param digits (default = 2)
 #' @return None
 #' @export
-#' @family Reporting Functions
+#' @family xmu internal not for end user
 #' @seealso - [umxSummary()]
 #' @md
 #' @examples
@@ -272,7 +272,7 @@ xmu_model_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 #' @param maxVarRatio Maximum allowed ratio of variance in data before warning user variances differ too much.
 #' @return None 
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family xmu internal not for end user
 #' @examples
 #' data(twinData)
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
@@ -548,7 +548,7 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' @param optimizer Set by name (if you want to change it).
 #' @return None
 #' @export
-#' @family Twin Modeling Functions
+#' @family xmu internal not for end user
 #' @family Check or test
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -1772,7 +1772,7 @@ xmu_string2path <- function(from) {
 #' @param verbose = FALSE
 #' @return - the CI string, e.g. ".73\[-.20, .98\]" or .73(.10)
 #' @export
-#' @family Reporting Functions
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
