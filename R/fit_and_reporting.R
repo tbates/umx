@@ -3910,8 +3910,8 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
 #' `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001
 #' 2. This also works for [t.test()], [stats::glm()], [cor.test()], and others as I come across them.
-#' 3. get a CI from obj=beta and se=se : `umxAPA(-0.30, .03) # β = -0.3 [-0.36, -0.24]`
-#' 4. Back out an SE from b and CI: `umxAPA(-0.030, c(-0.073, 0.013)) # β = -0.03, se =0.02`
+#' 3. get a CI from obj=beta and se=se : `umxAPA(-0.30, .03) # \eqn{\beta} = -0.3 [-0.36, -0.24]`
+#' 4. Back out an SE from b and CI: `umxAPA(-0.030, c(-0.073, 0.013)) # \eqn{\beta} = -0.03, se =0.02`
 #' 5. Given only a number as obj, will be treated as a p-value as returned in APA format.
 #' 6. Given a dataframe, `umxAPA` will return a table of correlations, with
 #' the mean and SD of each variable as the last row. So, 
