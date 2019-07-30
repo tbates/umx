@@ -2929,7 +2929,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			# We are in a RAM model, so the data must be mxData: check the type, rather than guessing.
 			# need to handle raw data that will be treated as WLS and not end up with means
 			if(type == "raw"){
-				covData = umx_var(df, theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs", allowCorForFactorCovs=TRUE)
+				covData = umx_var(df = theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs", allowCorForFactorCovs=TRUE)
 			}else if (type == "acov"){
 				covData = as.matrix(theData)
 			}else if (type %in% c("cov", "cor")){
@@ -2943,7 +2943,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
 			obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
 			# covData = cov(theData, )
-			covData = umx_var(theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs", allowCorForFactorCovs=TRUE)
+			covData = umx_var(df = theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs", allowCorForFactorCovs=TRUE)
 		}
 
 		# ==========================================================
