@@ -115,7 +115,8 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotSexLim}}, \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxLav2RAM}}, \code{\link{umxTwoStage}}
+  \code{\link{umxLav2RAM}},
+  \code{\link{umxMendelianRandomization}}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
@@ -123,7 +124,12 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
   \code{\link{umxIPold}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}}
+
+Other Twin Reporting Functions: \code{\link{umxPlotCP}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
+  \code{\link{umxReduce}},
+  \code{\link{umxSummarizeTwinData}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
@@ -131,11 +137,6 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
   \code{\link{umxSummarySexLim}},
   \code{\link{umxSummarySimplex}}
-
-Other Twin Reporting Functions: \code{\link{umxPlotCP}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
-  \code{\link{umxReduce}},
-  \code{\link{umxSummarizeTwinData}}
 
 Other Twin Data functions: \code{\link{umx_long2wide}},
   \code{\link{umx_make_TwinData}},
@@ -164,8 +165,7 @@ Other Check or test: \code{\link{umx_check_names}},
   \code{\link{umx_is_class}},
   \code{\link{umx_is_endogenous}},
   \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_numeric}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umx_is_numeric}}
 
 Other Data Functions: \code{\link{umxCovData}},
   \code{\link{umxDescribeDataWLS}},
@@ -232,15 +232,8 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_standardize}},
   \code{\link{umx_string_to_algebra}}
 
-Other zAdvanced Helpers: \code{\link{umx_merge_CIs}},
-  \code{\link{umx_standardize_ACEcov}},
-  \code{\link{umx_standardize_ACEv}},
-  \code{\link{umx_standardize_ACE}},
-  \code{\link{umx_standardize_CP}},
-  \code{\link{umx_standardize_IP}},
-  \code{\link{umx_standardize_SexLim}},
-  \code{\link{umx_standardize_Simplex}},
-  \code{\link{umx_stash_CIs}}
+Other zAdvanced Helpers: \code{\link{umx_standardize_SexLim}},
+  \code{\link{umx_standardize_Simplex}}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuHasSquareBrackets}},
@@ -252,6 +245,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuMakeTwoHeadedPathsFromPathList}},
   \code{\link{xmuMaxLevels}}, \code{\link{xmuMinLevels}},
   \code{\link{xmuPropagateLabels}},
+  \code{\link{xmu_CI_merge}}, \code{\link{xmu_CI_stash}},
   \code{\link{xmu_assemble_twin_supermodel}},
   \code{\link{xmu_check_levels_identical}},
   \code{\link{xmu_check_variance}},
@@ -270,6 +264,11 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_set_sep_from_suffix}},
   \code{\link{xmu_show_fit_or_comparison}},
   \code{\link{xmu_simplex_corner}},
+  \code{\link{xmu_standardize_ACEcov}},
+  \code{\link{xmu_standardize_ACEc}},
+  \code{\link{xmu_standardize_ACE}},
+  \code{\link{xmu_standardize_CP}},
+  \code{\link{xmu_standardize_IP}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }

@@ -81,13 +81,10 @@ umxSummary(m1, CIs = TRUE, file = NA);
 \item \code{\link{umxCP}()}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPold}}, \code{\link{umxIP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Reporting Functions: \code{\link{umxPlotCP}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
+  \code{\link{umxReduce}},
+  \code{\link{umxSummarizeTwinData}},
   \code{\link{umxSummaryACEcov}},
   \code{\link{umxSummaryACEv}},
   \code{\link{umxSummaryACE}},
@@ -96,4 +93,4 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxSummarySexLim}},
   \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
-\concept{Twin Modeling Functions}
+\concept{Twin Reporting Functions}

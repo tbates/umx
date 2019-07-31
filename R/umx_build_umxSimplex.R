@@ -217,8 +217,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Modeling Functions
-#' @family Reporting functions
+#' @family Twin Reporting Functions
 #' @seealso - [umxSimplex()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -257,7 +256,7 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 	if(std){
 		# Calculate standardized variance components
 		message("Standardized solution (note: std is alpha quality)")
-		model = umx_standardize_Simplex(model)
+		model = xmu_standardize_Simplex(model)
 	} else {
 		message("Raw solution")
 	}
@@ -467,7 +466,7 @@ umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std
 	model = x # Just to emphasise that x has to be a model 
 	if(std){
 		message("std is beta for simplex plot")
-		model = umx_standardize_Simplex(model)
+		model = xmu_standardize_Simplex(model)
 	}
 	parameterKeyList = omxGetParameters(model)
 
@@ -545,7 +544,7 @@ plot.MxModelSimplex <- umxPlotSimplex
 
 #' Standardize a Simplex twin model
 #'
-#' umx_standardize_Simplex
+#' xmu_standardize_Simplex
 #'
 #' @param model an [umxSimplex()] model to standardize
 #' @param ... Other options
@@ -561,10 +560,10 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' dzData = subset(iqdat, zygosity == "DZ")
 #' m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", 
 #' 			dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
-#' std = umx_standardize_Simplex(m1)
+#' std = xmu_standardize_Simplex(m1)
 #' }
 #' 
-umx_standardize_Simplex <- function(model, ...) {
+xmu_standardize_Simplex <- function(model, ...) {
 	if(typeof(model) == "list"){ # Call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
@@ -611,10 +610,10 @@ umx_standardize_Simplex <- function(model, ...) {
 		return(model)
 	}
 }
-#' @export
-umx_standardize.MxModelSimplex <- umx_standardize_Simplex
+#' # @export
+# xmu_standardize.MxModelSimplex <- xmu_standardize_Simplex
 
-# umx_standardize_Simplex <- function(model, ...) {
+# xmu_standardize_Simplex <- function(model, ...) {
 # 	if(typeof(model) == "list"){ # Call self recursively
 # 		for(thisFit in model) {
 # 			message("Output for Model: ", thisFit$name)
@@ -667,4 +666,4 @@ umx_standardize.MxModelSimplex <- umx_standardize_Simplex
 # 	}
 # }
 # #' @export
-# umx_standardize.MxModelSimplex <- umx_standardize_Simplex
+# umx_standardize.MxModelSimplex <- xmu_standardize_Simplex

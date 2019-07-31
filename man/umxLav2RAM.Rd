@@ -179,6 +179,7 @@ m1 = umxRAM(lav)
 }
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxTwoStage}}, \code{\link{umx}}
+  \code{\link{umxMendelianRandomization}},
+  \code{\link{umx}}
 }
 \concept{Super-easy helpers}

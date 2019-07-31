@@ -22,7 +22,7 @@ umx_scale_wide_twin_data(varsToScale, sep, data, twins = 1:2)
 }
 \description{
 Scale wide data across all twins. You offer up a list of variables to scale, e.g. c("DEP", "bmi")
-and the separator (e.g. "_T") and twins e.g. (1:2) that paste together to make
+and the separator (e.g. \code{sep = "_T"}) and twin suffizes e.g. 1:2 that paste together to make
 complete variable names: e.g. "DEP_T1" and "DEP_T2".
 }
 \examples{

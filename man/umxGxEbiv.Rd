@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_umxGxEbiv.R
 \name{umxGxEbiv}
 \alias{umxGxEbiv}
-\title{Bivariate GxE models where twins differ on the moderator}
+\title{Purcalle (2002) Bivariate GxE model: Suitable when twins differ on the moderator.}
 \usage{
 umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
   lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
@@ -42,21 +42,25 @@ umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
 }
 \description{
 GxE interaction models test the hypothesis that the strength of genetic
-(or environmental) influence varies parametrically across levels of environment.
-\link{umxGxEbiv} supports testing, and visualizing GxE bivariate (or C or E x E) interactions.
+and environmental influences vary parametrically across levels of a mesaured environment.
 }
 \details{
-Whereas \link[=umxGxE]{univariate} models assume the twins share the moderator,
-\link{umxGxEbiv} allows testing moderation in cases where twins differ on the moderator,
-(Purcell, 2002; van der Sluis et al., 2012).
+Whereas univariate \code{\link[=umxGxE]{umxGxE()}} models assume the twins share the moderator,
+or have zero correlation on the moderator, \code{\link[=umxGxEbiv]{umxGxEbiv()}} allows testing moderation in
+cases where members of a twin pair differ on the moderator, (Purcell, 2002; van der Sluis et al., 2012).
 
-The following figure shows the GxE model as a path diagram (Twin 1 shown).
+This is the same model we teach at Boulder.
+
+The following figure shows this bivariate GxE model as a path diagram (Twin 1 shown). Whereas
+the univariate model incorporates the moderator in the means model, the bivariate model incorporates
+the moderator as a first class variable, with its own ACE structure, shared pathways to the trait of interest,
+and the ability to moderate both specific and shared A, C, and E, influences on the trait of interest.
+
+\figure{GxEbiv.png}{}
 
 Twin 1 and twin 2 A, C, and E latent traits are connected in the standard fashion, with the
 covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
 For the sake of clarity, C, and E paths are omitted here. These mirror those for A.
-
-\figure{GxEbiv.png}{}
 }
 \examples{
 require(umx)
@@ -101,12 +105,6 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxE}}, \code{\link{umxIPold}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxEbiv}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+  \code{\link{umxSimplex}}, \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

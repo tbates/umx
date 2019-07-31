@@ -391,8 +391,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Modeling Functions
-#' @family Reporting functions
+#' @family Twin Reporting Functions
 #' @seealso - [umxACEv()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -517,7 +516,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 			# 4. for tables, that’s it: just print them out
 			# 5. for plots, tag labels with type+name of from- and to- vars
 			# 	* This requires some custom code for each model type.
-			# 6. Hence the umx_stash_CIs idea... if it would generalize.
+			# 6. Hence the xmu_CI_stash idea... if it would generalize.
 
 			message("Creating CI-based report!")
 			# CIs exist, get lower and upper CIs as a dataframe
@@ -717,13 +716,13 @@ plot.MxModelACEv <- umxPlotACEv
 
 #' Standardize an ACE variance components model (ACEv)
 #'
-#' umx_standardize_ACE allows umx_standardize to standardize an ACE variance components model.
+#' xmu_standardize_ACE allows umx_standardize to standardize an ACE variance components model.
 #'
 #' @param model An [umxACEv()] model to standardize.
 #' @param ... Other parameters.
 #' @return - A standardized [umxACEv()] model.
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -734,7 +733,7 @@ plot.MxModelACEv <- umxPlotACEv
 #' dzData <- twinData[twinData$zygosity %in% "DZFF",][1:80,]
 #' m1  = umxACEv(selDVs = selDVs, sep="", dzData = dzData, mzData = mzData)
 #' std = umx_standardize(m1)
-umx_standardize_ACEv <- function(model, ...) {
+xmu_standardize_ACEc <- function(model, ...) {
 	# TODO umxSummaryACEv these already exist if a_std exists..
 	message("Standardized variance-based models may yield negative variances...")
 	if(typeof(model) == "list"){ # call self recursively
@@ -772,4 +771,4 @@ umx_standardize_ACEv <- function(model, ...) {
 	}
 }
 #' @export
-umx_standardize.MxModelACEv <- umx_standardize_ACEv
+umx_standardize.MxModelACEv <- xmu_standardize_ACEc

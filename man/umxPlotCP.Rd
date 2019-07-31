@@ -75,7 +75,14 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
 
 Other Twin Reporting Functions: \code{\link{umxReduceACE}},
   \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
-  \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
+  \code{\link{umxSummarizeTwinData}},
+  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxSummaryACEv}},
+  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxEbiv}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umxSummarySexLim}},
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
 \concept{Plotting functions}
 \concept{Twin Reporting Functions}

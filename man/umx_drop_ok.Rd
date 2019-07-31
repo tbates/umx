@@ -19,7 +19,7 @@ umx_drop_ok(model1, model2, text = "parameter")
 }
 }
 \description{
-Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
+Print a meaningful sentence about a model comparison. If you use this, please email maintainer("umx") and ask to have it
 merged with \code{\link[=umxCompare]{umxCompare()}} :-)
 }
 \examples{
@@ -51,10 +51,6 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}},
   \code{\link{umx_standardize_RAM}}
 }
 \concept{Reporting functions}

@@ -1078,8 +1078,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' @param show std, raw etc. Not implemented for umxACE yet.
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Modeling Functions
-#' @family Reporting functions
+#' @family Twin Reporting Functions
 #' @seealso - [umxACE()], [plot.MxModelACE()], [umxModify()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1283,7 +1282,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		if(CIs){
 			message("If you asked for CIs, returned model is not runnable (contains CIs not parameter values)")
 		}
-		umx_standardize_ACE(model)
+		xmu_standardize_ACE(model)
 	}
 }
 
@@ -1310,7 +1309,7 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Modeling Functions
+#' @family Twin Reporting Functions
 #' @seealso - [umxACEcov()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1520,7 +1519,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Modeling Functions
+#' @family Twin Reporting Functions
 #' @seealso - \code{\link{umxCP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://www.github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -1579,9 +1578,9 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 
 		if(CIs){
 			oldModel = model # Cache this in case we need it (CI stash model has string where values should be).
-			model = umx_stash_CIs(model, digits = digits, dropZeros = TRUE, stdAlg2mat = TRUE)
+			model = xmu_CI_stash(model, digits = digits, dropZeros = TRUE, stdAlg2mat = TRUE)
 		} else if(any(c(std, returnStd))) {
-			model = umx_standardize_CP(model) # Make a standardized copy of model
+			model = xmu_standardize_CP(model) # Make a standardized copy of model
 		}
 
 		message("## Common Factor paths")
@@ -1687,7 +1686,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @param show parameter used in all summary functions. currently ignored here.
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Modeling Functions
+#' @family Twin Reporting Functions
 #' @export
 #' @seealso - \code{\link{umxIP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -1810,7 +1809,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @param show not doing anything yet (required for all summary functions)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Modeling Functions
+#' @family Twin Reporting Functions
 #' @export
 #' @seealso - [umxGxE()], [umxReduce()], [plot()], [umxSummary)] all work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -2430,7 +2429,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	}
 	model = x # just to be clear that x is a model
 	if(std){
-		model = umx_standardize_ACE(model)
+		model = xmu_standardize_ACE(model)
 	}
 	out = "";
 	latents = c();
@@ -2542,7 +2541,7 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		# selDVs = dimnames(model$MZ$data$observed)[[1]]
 	}
 	if(std){
-		model = umx_standardize_ACEcov(model)
+		model = xmu_standardize_ACEcov(model)
 	}
 	out = "";
 	latents = c();
@@ -2737,7 +2736,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	model = x # just to emphasize that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
 
-	if(std){ model = umx_standardize_CP(model) }
+	if(std){ model = xmu_standardize_CP(model) }
 
 	facCount = dim(model$top$a_cp$labels)[[1]]
 	varCount = dim(model$top$as$values)[[1]]
@@ -2827,7 +2826,7 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	
 	model = x # to emphasise that x has to be an umxIP model
 	if(std){
-		model = umx_standardize_IP(model)
+		model = xmu_standardize_CP(model)
 	}
 	# TODO Check I am handling nFac > 1 properly!!
 	varCount = dim(model$top$ai$values)[[1]]
@@ -3315,9 +3314,9 @@ or specify all arguments:\n
 	} else if(thresh == "all"){
 		filter = x$name %in% parList
 	} else if(thresh == "NS"){
-		stop("NS and Sig not implemented yet: email tim to get this done.")
+		stop("NS and Sig not implemented yet: email maintainer('umx') to get this done.")
 	} else if(thresh == "sig"){
-		stop("NS and Sig not implemented yet: email tim to get this done.")
+		stop("NS and Sig not implemented yet: email maintainer('umx') to get this done.")
 	}
 
 	if(sum(filter) == 0){

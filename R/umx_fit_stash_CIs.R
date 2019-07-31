@@ -11,12 +11,12 @@
 #' @param stdAlg2mat treat std as algebra: stash in non std matrix.
 #' @return - [mxModel()]
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @seealso - [umxConfint()], [xmu_get_CI()]
 #' @md
 #' @references - <https://github.com/tbates/umx>
 #'
-umx_stash_CIs <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
+xmu_CI_stash <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
 	# TODO rationalize with xmu_get_CI
 	if(!umx_has_CIs(model, "output")) {

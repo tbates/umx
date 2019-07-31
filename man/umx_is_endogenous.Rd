@@ -39,7 +39,6 @@ umx_is_endogenous(m1, manifests_only = FALSE)
 Other Check or test: \code{\link{umx_check_names}},
   \code{\link{umx_is_class}},
   \code{\link{umx_is_exogenous}},
-  \code{\link{umx_is_numeric}}, \code{\link{umx}},
-  \code{\link{xmu_twin_check}}
+  \code{\link{umx_is_numeric}}, \code{\link{umx}}
 }
 \concept{Check or test}

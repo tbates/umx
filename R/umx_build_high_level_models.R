@@ -278,7 +278,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
 
 #'
-#' @aliases umxMendelianRandomization
+#' @aliases umxTwoStage
 #' @param formula The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.
 #' @param instruments A one-sided formula specifying instrumental variables (default = qtl).
 #' @param data Frame containing the variables in the model.
@@ -320,7 +320,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' #
 #' \dontrun{
 #' df = umx_make_MR_data(1e5) 
-#' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
+#' m1 = umxMendelianRandomization(Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' 
 #' # ======================
@@ -332,8 +332,8 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 # # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
-umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
-	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer to prioritize")	
+umxMendelianRandomization <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
+	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer('umx') to prioritize")	
 	# formula = Y ~ X; instruments ~ qtl; data = umx_make_MR_data(10000)
 	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 	# summary(sem::tsls(Q ~ P + D, ~ D + F + A, data=Kmenta))
@@ -371,4 +371,4 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weight
 }
 
 #' @export
-umxMendelianRandomization <- umxTwoStage
+umxTwoStage <- umxMendelianRandomization

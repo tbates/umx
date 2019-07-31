@@ -4,10 +4,11 @@
 \alias{umxCP}
 \title{umxCP: Build and run a Common pathway twin model}
 \usage{
-umxCP(name = "CP", selDVs, dzData, mzData, sep = NULL, nFac = 1,
-  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants",
-  "marginals"), correlatedA = FALSE, dzAr = 0.5, dzCr = 1,
+umxCP(name = "CP", selDVs, dzData = NULL, mzData = NULL,
+  sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS",
+  "DWLS", "ULS"), data = NULL, zyg = "zygosity",
+  allContinuousMethod = c("cumulants", "marginals"),
+  correlatedA = FALSE, dzAr = 0.5, dzCr = 1,
   autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
   "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   optimizer = NULL, equateMeans = TRUE, weightVar = NULL,
@@ -164,7 +165,7 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
 		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
 
 # Shortcut using "data ="
-m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zygosity="zyg_2grp")
+m1 = umxCP(selDVs = c("gff", "fc", "qol", "hap", "sat", "AD"), nFac = 3, data=GFF, zyg="zyg_2grp")
 
 # ===================
 # = Do it using WLS =
@@ -238,12 +239,6 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
   \code{\link{umxGxE}}, \code{\link{umxIPold}},
   \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxEbiv}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+  \code{\link{umxSimplex}}, \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

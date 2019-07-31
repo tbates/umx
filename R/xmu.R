@@ -549,7 +549,6 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' @return None
 #' @export
 #' @family xmu internal not for end user
-#' @family Check or test
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples

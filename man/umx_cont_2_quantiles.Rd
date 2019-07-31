@@ -9,7 +9,7 @@ umx_cont_2_quantiles(x, nlevels = NULL, type = c("mxFactor", "ordered",
   "unordered"), verbose = FALSE, returnCutpoints = FALSE)
 }
 \arguments{
-\item{x}{a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)}
+\item{x}{a variable to recode as ordinal (email maintainer("umx") if you'd like this upgraded to handle df input)}
 
 \item{nlevels}{How many bins or levels (at most) to use (i.e., 10 = deciles)}
 

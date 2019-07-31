@@ -51,6 +51,13 @@ m2 = umxReduce(m1)
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}},
   \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
-  \code{\link{umxSummarizeTwinData}}, \code{\link{umx}}
+  \code{\link{umxSummarizeTwinData}},
+  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxSummaryACEv}},
+  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxEbiv}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umxSummarySexLim}},
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

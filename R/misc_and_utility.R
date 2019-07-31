@@ -1230,7 +1230,7 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLaten
 
 #' A meaningful sentence about a model comparison
 #'
-#' Print a meaningful sentence about a model comparison. If you use this, please email me and ask to have it
+#' Print a meaningful sentence about a model comparison. If you use this, please email maintainer("umx") and ask to have it
 #' merged with [umxCompare()] :-)
 #'
 #' @param model1 the base [mxModel()]
@@ -2868,7 +2868,7 @@ umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 #' @export
 tvars <- umx_paste_names
 
-#' umx_merge_CIs
+#' xmu_CI_merge
 #'
 #' if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),
 #' this is a simple helper to kludge them together.
@@ -2876,15 +2876,15 @@ tvars <- umx_paste_names
 #' @param m1 first copy of the model
 #' @param m2 second copy of the model
 #' @return - [mxModel()]
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @export
 #' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' \dontrun{
-#' umx_merge_CIs(m1, m2)
+#' xmu_CI_merge(m1, m2)
 #' }
-umx_merge_CIs <- function(m1, m2) {
-	# TODO umx_merge_CIs has 5 things todo :-(
+xmu_CI_merge <- function(m1, m2) {
+	# TODO xmu_CI_merge has 5 things todo :-(
 	# 1. remove duplicates...
 	# 2. (check they are the same as well!)
 	# 3. Support arbitrarily long list of input models with ...
@@ -4322,7 +4322,7 @@ umx_reorder <- function(old, newOrder) {
 #' all deciles up to the fourth, then these will be merged into one bin, labeled "quantile4".
 #'
 #' @aliases umx2ord
-#' @param x a variable to recode as ordinal (email me if you'd like this upgraded to handle df input)
+#' @param x a variable to recode as ordinal (email maintainer("umx") if you'd like this upgraded to handle df input)
 #' @param nlevels How many bins or levels (at most) to use (i.e., 10 = deciles)
 #' @param type what to return (Default is "mxFactor") options: "ordered" and "unordered")
 #' @param verbose report the min, max, and decile cuts used (default = FALSE)
@@ -4363,7 +4363,7 @@ umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordere
 	# TODO: umx_cont_2_quantiles: Check if is.data.frame(x) && dim(x)[2] > 1, and if so, proceed column-wise
 	type = match.arg(type)
 	if(is.data.frame(x) && dim(x)[2] > 1){
-		stop("I can only handle single vectors: email tim and rip him a new one")
+		stop("I can only handle single vectors: email maintainer('umx') and rip him a new one")
 	}
 	if(!is.numeric(x) ){
 		stop("This is for numeric variables. you gave me a ", typeof(x))
@@ -4774,8 +4774,9 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' Scale wide twin data
 #'
 #' Scale wide data across all twins. You offer up a list of variables to scale, e.g. c("DEP", "bmi")
-#' and the separator (e.g. "_T") and twins e.g. (1:2) that paste together to make 
+#' and the separator (e.g. `sep = "_T"`) and twin suffizes e.g. 1:2 that paste together to make 
 #' complete variable names: e.g. "DEP_T1" and "DEP_T2".
+#' 
 #' @param varsToScale The base names of the variables ("weight" etc.)
 #' @param sep The suffix that distinguishes each case, e.g. "_T")
 #' @param data A wide dataframe
@@ -6807,7 +6808,7 @@ umx_standardize_RAM <- function(model, ...) {
 #' @export
 umx_standardize.MxModel <- umx_standardize_RAM
 
-#' umx_standardize_ACE
+#' xmu_standardize_ACE
 #'
 #' Standardize an ACE model
 #'
@@ -6815,7 +6816,7 @@ umx_standardize.MxModel <- umx_standardize_RAM
 #' @param ... Other options
 #' @return - Standardized ACE [umxACE()] model
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -6825,8 +6826,8 @@ umx_standardize.MxModel <- umx_standardize_RAM
 #' mzData <- twinData[twinData$zygosity %in% "MZFF", selDVs][1:80,] # 80 pairs for speed
 #' dzData <- twinData[twinData$zygosity %in% "DZFF", selDVs][1:80,]
 #' m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' std = umx_standardize_ACE(m1)
-umx_standardize_ACE <- function(model, ...) {
+#' std = xmu_standardize_ACE(m1)
+xmu_standardize_ACE <- function(model, ...) {
 	if(typeof(model) == "list"){ # Call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
@@ -6859,10 +6860,10 @@ umx_standardize_ACE <- function(model, ...) {
 	}
 }
 #' @export
-umx_standardize.MxModelACE <- umx_standardize_ACE
+umx_standardize.MxModelACE <- xmu_standardize_ACE
 
 
-#' umx_standardize_ACEcov
+#' xmu_standardize_ACEcov
 #'
 #' Standardize an ACE model with covariates
 #'
@@ -6870,7 +6871,7 @@ umx_standardize.MxModelACE <- umx_standardize_ACE
 #' @param ... Other options
 #' @return - Standardized [umxACEcov()] model
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -6884,8 +6885,8 @@ umx_standardize.MxModelACE <- umx_standardize_ACE
 #' dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 #' 	 sep = "", autoRun = TRUE)
-#' fit = umx_standardize_ACEcov(m1)
-umx_standardize_ACEcov <- function(model, ...) {
+#' fit = xmu_standardize_ACEcov(m1)
+xmu_standardize_ACEcov <- function(model, ...) {
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ",thisFit$name)
@@ -6909,14 +6910,14 @@ umx_standardize_ACEcov <- function(model, ...) {
 }
 
 #' @export
-umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
+umx_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 
 
 
 
 #' Standardize a SexLim model
 #'
-#' `umx_standardize_SexLim` would move standardized Sexlim values into raw cells, but can't as these are algebras.
+#' `xmu_standardize_SexLim` would move standardized Sexlim values into raw cells, but can't as these are algebras.
 #'
 #' @param model an [umxSexLim()] model to standardize
 #' @param ... Other options
@@ -6926,10 +6927,10 @@ umx_standardize.MxModelACEcov <- umx_standardize_ACEcov
 #' @md
 #' @examples
 #' \dontrun{
-#' model = umx_standardize_IP(model)
+#' model = xmu_standardize_CP(model)
 #' }
-umx_standardize_SexLim <- function(model, ...){
-	stop("umx_standardize_SexLim can't work as Am etc. are algebras")
+xmu_standardize_SexLim <- function(model, ...){
+	stop("xmu_standardize_SexLim doesn't work as Am etc. are algebras")
 	# 'AmStd', 'CmStd', 'EmStd',
 	# 'AfStd', 'CfStd', 'EfStd',
 	# 'Am', 'Cm', 'Em',
@@ -6955,11 +6956,11 @@ umx_standardize_SexLim <- function(model, ...){
 	}
 	return(model)
 }
-#' @export
-umx_standardize.MxModelSexLim <- umx_standardize_SexLim
+#' # @export
+# umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
-#' umx_standardize_IP
+#' xmu_standardize_CP
 #'
 #' This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
 #'
@@ -6967,14 +6968,14 @@ umx_standardize.MxModelSexLim <- umx_standardize_SexLim
 #' @param ... Other options
 #' @return - standardized IP [umxIP()] model
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
-#' model = umx_standardize_IP(model)
+#' model = xmu_standardize_IP(model)
 #' }
-umx_standardize_IP <- function(model, ...){
+xmu_standardize_IP <- function(model, ...){
 	if(!is.null(model$top$ai_std)){
 		# Standardized general path components
 		model$top$ai$values = model$top$ai_std$result # standardized ai
@@ -6989,10 +6990,10 @@ umx_standardize_IP <- function(model, ...){
 	}
 	return(model)
 }
-#' @export
-umx_standardize.MxModelIP <- umx_standardize_IP
+#' # @export
+# xmu_standardize.MxModelIP <- xmu_standardize_IP
 
-#' umx_standardize_CP
+#' xmu_standardize_CP
 #'
 #' This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
 #'
@@ -7000,14 +7001,15 @@ umx_standardize.MxModelIP <- umx_standardize_IP
 #' @param ... Other options
 #' @return - standardized [umxCP()] model
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
-#' model = umx_standardize_CP(model)
+#' m1 = umxCP(selDVs = c("gff", "fc", "qol", "hap", "sat", "AD"), nFac = 3, data=GFF, zyg="zyg_2grp")	
+#' m2 = xmu_standardize_CP(m1)
 #' }
-umx_standardize_CP <- function(model, ...){
+xmu_standardize_CP <- function(model, ...){
 	if(!is.null(model$top$as_std)){
 		# Standardized general path components
 		# Standardized cp loadings
@@ -7048,8 +7050,10 @@ umx_standardize_CP <- function(model, ...){
 		return(model)
 	}
 }
-#' @export
-umx_standardize.MxModelCP <- umx_standardize_CP
+# TODO	not sure S3 makes any sense: called in exactly one place...
+#' # @export
+# xmu_standardize.MxModelCP <- xmu_standardize_CP
+
 
 # Poems one should know by heart:
 
