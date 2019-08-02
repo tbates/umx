@@ -6862,7 +6862,6 @@ xmu_standardize_ACE <- function(model, ...) {
 #' @export
 umx_standardize.MxModelACE <- xmu_standardize_ACE
 
-
 #' xmu_standardize_ACEcov
 #'
 #' Standardize an ACE model with covariates
@@ -6912,9 +6911,6 @@ xmu_standardize_ACEcov <- function(model, ...) {
 #' @export
 umx_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 
-
-
-
 #' Standardize a SexLim model
 #'
 #' `xmu_standardize_SexLim` would move standardized Sexlim values into raw cells, but can't as these are algebras.
@@ -6927,7 +6923,7 @@ umx_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 #' @md
 #' @examples
 #' \dontrun{
-#' model = xmu_standardize_CP(model)
+#' model = xmu_standardize_SexLim(model)
 #' }
 xmu_standardize_SexLim <- function(model, ...){
 	stop("xmu_standardize_SexLim doesn't work as Am etc. are algebras")
@@ -6956,8 +6952,8 @@ xmu_standardize_SexLim <- function(model, ...){
 	}
 	return(model)
 }
-#' # @export
-# umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
+# @export
+umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
 #' xmu_standardize_CP
@@ -6991,9 +6987,9 @@ xmu_standardize_IP <- function(model, ...){
 	return(model)
 }
 #' # @export
-# xmu_standardize.MxModelIP <- xmu_standardize_IP
+umx_standardize.MxModelIP <- xmu_standardize_IP
 
-#' xmu_standardize_CP
+#' Function to standardize a common pathway model
 #'
 #' This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
 #'
@@ -7051,9 +7047,8 @@ xmu_standardize_CP <- function(model, ...){
 	}
 }
 # TODO	not sure S3 makes any sense: called in exactly one place...
-#' # @export
-# xmu_standardize.MxModelCP <- xmu_standardize_CP
-
+#' @export
+umx_standardize.MxModelCP <- xmu_standardize_CP
 
 # Poems one should know by heart:
 

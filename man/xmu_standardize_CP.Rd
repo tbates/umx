@@ -2,9 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_standardize_CP}
 \alias{xmu_standardize_CP}
-\title{@export
-
-xmu_standardize_CP}
+\title{Function to standardize a common pathway model}
 \usage{
 xmu_standardize_CP(model, ...)
 }
@@ -23,6 +21,7 @@ This function simply inserts the standardized CP components into the ai ci ei an
 }
 \examples{
 \dontrun{
+m1 = umxCP(selDVs = c("gff", "fc", "qol", "hap", "sat", "AD"), nFac = 3, data=GFF, zyg="zyg_2grp")	
 m2 = xmu_standardize_CP(m1)
 }
 }
@@ -62,7 +61,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_show_fit_or_comparison}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_standardize_ACEcov}},
-  \code{\link{xmu_standardize_ACEc}},
+  \code{\link{xmu_standardize_ACEv}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_IP}},
   \code{\link{xmu_start_value_list}},
