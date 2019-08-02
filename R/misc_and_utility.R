@@ -6986,7 +6986,7 @@ xmu_standardize_IP <- function(model, ...){
 	}
 	return(model)
 }
-#' # @export
+#' @export
 umx_standardize.MxModelIP <- xmu_standardize_IP
 
 #' Function to standardize a common pathway model
