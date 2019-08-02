@@ -232,8 +232,8 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_standardize}},
   \code{\link{umx_string_to_algebra}}
 
-Other zAdvanced Helpers: \code{\link{umx_standardize_SexLim}},
-  \code{\link{umx_standardize_Simplex}}
+Other zAdvanced Helpers: \code{\link{xmu_standardize_SexLim}},
+  \code{\link{xmu_standardize_Simplex}}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuHasSquareBrackets}},

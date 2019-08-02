@@ -23,6 +23,7 @@ This function simply inserts the standardized CP components into the ai ci ei an
 }
 \examples{
 \dontrun{
+m1 = umxCP(selDVs = c("gff", "fc", "qol", "hap", "sat", "AD"), nFac = 3, data=GFF, zyg="zyg_2grp")	
 m2 = xmu_standardize_CP(m1)
 }
 }

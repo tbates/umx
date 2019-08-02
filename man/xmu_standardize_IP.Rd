@@ -2,7 +2,9 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_standardize_IP}
 \alias{xmu_standardize_IP}
-\title{xmu_standardize_CP}
+\title{@export
+
+xmu_standardize_CP}
 \usage{
 xmu_standardize_IP(model, ...)
 }
