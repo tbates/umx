@@ -4233,9 +4233,14 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' umx_check_model(m1) # TRUE, this is a model
 #' umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 #' umx_check_model(m1, hasData = TRUE)
+#' 
+#' 
 #' \dontrun{
 #' umx_check_model(m1, hasMeans = TRUE)
 #' umx_check_model(m1, beenRun = FALSE)
+#' # Model with no data
+#' m1 = umxRAM("x ~~ .3*y", autoRun = FALSE)
+#' umx_check_model(m1, hasData = TRUE)
 #' }
 umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE, callingFn = "a function") {
 	# TODO umx_check_model check hasSubmodels = FALSE
