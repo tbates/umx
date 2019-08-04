@@ -21,7 +21,7 @@ xmu_standardize_SexLim(model, ...)
 }
 \examples{
 \dontrun{
-model = xmu_standardize_CP(model)
+model = xmu_standardize_SexLim(model)
 }
 }
 \seealso{

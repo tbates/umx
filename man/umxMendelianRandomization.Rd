@@ -98,6 +98,6 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxLav2RAM}}, \code{\link{umx}}
+  \code{\link{umx}}
 }
 \concept{Super-easy helpers}

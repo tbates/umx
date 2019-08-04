@@ -115,7 +115,6 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}},
   \code{\link{umxPlotSexLim}}, \code{\link{umxPlotSimplex}}
 
 Other Super-easy helpers: \code{\link{umxEFA}},
-  \code{\link{umxLav2RAM}},
   \code{\link{umxMendelianRandomization}}
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
@@ -208,8 +207,8 @@ Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}},
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxVersion}},
-  \code{\link{umx_array_shift}},
+  \code{\link{umxFactor}}, \code{\link{umxLav2RAM}},
+  \code{\link{umxVersion}}, \code{\link{umx_array_shift}},
   \code{\link{umx_cell_is_on}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}}, \code{\link{umx_make}},
@@ -264,7 +263,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_show_fit_or_comparison}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_standardize_ACEcov}},
-  \code{\link{xmu_standardize_ACEc}},
+  \code{\link{xmu_standardize_ACEv}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_CP}},
   \code{\link{xmu_standardize_IP}},

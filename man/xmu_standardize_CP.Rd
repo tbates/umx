@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_standardize_CP}
 \alias{xmu_standardize_CP}
-\title{xmu_standardize_CP}
+\title{Function to standardize a common pathway model}
 \usage{
 xmu_standardize_CP(model, ...)
 }
@@ -62,7 +62,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_show_fit_or_comparison}},
   \code{\link{xmu_simplex_corner}},
   \code{\link{xmu_standardize_ACEcov}},
-  \code{\link{xmu_standardize_ACEc}},
+  \code{\link{xmu_standardize_ACEv}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_IP}},
   \code{\link{xmu_standardize}},

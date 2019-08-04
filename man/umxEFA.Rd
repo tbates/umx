@@ -112,8 +112,7 @@ x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regr
 \item \code{\link[=factanal]{factanal()}}, \code{\link[=mxFactorScores]{mxFactorScores()}}
 }
 
-Other Super-easy helpers: \code{\link{umxLav2RAM}},
-  \code{\link{umxMendelianRandomization}},
+Other Super-easy helpers: \code{\link{umxMendelianRandomization}},
   \code{\link{umx}}
 }
 \concept{Super-easy helpers}

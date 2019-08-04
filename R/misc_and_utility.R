@@ -4233,9 +4233,14 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' umx_check_model(m1) # TRUE, this is a model
 #' umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 #' umx_check_model(m1, hasData = TRUE)
+#' 
+#' 
 #' \dontrun{
 #' umx_check_model(m1, hasMeans = TRUE)
 #' umx_check_model(m1, beenRun = FALSE)
+#' # Model with no data
+#' m1 = umxRAM("x ~~ .3*y", autoRun = FALSE)
+#' umx_check_model(m1, hasData = TRUE)
 #' }
 umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, hasMeans = NULL, checkSubmodels = FALSE, callingFn = "a function") {
 	# TODO umx_check_model check hasSubmodels = FALSE
@@ -6862,7 +6867,6 @@ xmu_standardize_ACE <- function(model, ...) {
 #' @export
 xmu_standardize.MxModelACE <- xmu_standardize_ACE
 
-
 #' xmu_standardize_ACEcov
 #'
 #' Standardize an ACE model with covariates
@@ -6912,7 +6916,6 @@ xmu_standardize_ACEcov <- function(model, ...) {
 #' @export
 xmu_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 
-
 #' Standardize a SexLim model
 #'
 #' `xmu_standardize_SexLim` would move standardized Sexlim values into raw cells, but can't as these are algebras.
@@ -6925,7 +6928,7 @@ xmu_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 #' @md
 #' @examples
 #' \dontrun{
-#' model = xmu_standardize_CP(model)
+#' model = xmu_standardize_SexLim(model)
 #' }
 xmu_standardize_SexLim <- function(model, ...){
 	stop("xmu_standardize_SexLim doesn't work as Am etc. are algebras")
@@ -6954,7 +6957,7 @@ xmu_standardize_SexLim <- function(model, ...){
 	}
 	return(model)
 }
-#' # @export
+# @export
 xmu_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
@@ -6992,7 +6995,7 @@ xmu_standardize_IP <- function(model, ...){
 #' @export
 xmu_standardize.MxModelIP <- xmu_standardize_IP
 
-#' xmu_standardize_CP
+#' Function to standardize a common pathway model
 #'
 #' This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
 #'

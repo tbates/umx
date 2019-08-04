@@ -73,7 +73,8 @@ jnk = umxFactor(df); str(jnk)
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxVersion}}, \code{\link{umx_array_shift}},
+  \code{\link{umxLav2RAM}}, \code{\link{umxVersion}},
+  \code{\link{umx_array_shift}},
   \code{\link{umx_cell_is_on}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}}, \code{\link{umx_make}},

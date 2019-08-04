@@ -2826,7 +2826,7 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	
 	model = x # to emphasise that x has to be an umxIP model
 	if(std){
-		model = xmu_standardize_CP(model)
+		model = xmu_standardize_IP(model)
 	}
 	# TODO Check I am handling nFac > 1 properly!!
 	varCount = dim(model$top$ai$values)[[1]]

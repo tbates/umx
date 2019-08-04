@@ -44,9 +44,14 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 umx_check_model(m1) # TRUE, this is a model
 umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 umx_check_model(m1, hasData = TRUE)
+
+
 \dontrun{
 umx_check_model(m1, hasMeans = TRUE)
 umx_check_model(m1, beenRun = FALSE)
+# Model with no data
+m1 = umxRAM("x ~~ .3*y", autoRun = FALSE)
+umx_check_model(m1, hasData = TRUE)
 }
 }
 \references{

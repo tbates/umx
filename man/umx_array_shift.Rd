@@ -25,8 +25,8 @@ x # now only 2 items (altered in containing environment)
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
   \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxVersion}},
-  \code{\link{umx_cell_is_on}},
+  \code{\link{umxFactor}}, \code{\link{umxLav2RAM}},
+  \code{\link{umxVersion}}, \code{\link{umx_cell_is_on}},
   \code{\link{umx_cont_2_quantiles}},
   \code{\link{umx_find_object}}, \code{\link{umx_make}},
   \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},

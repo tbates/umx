@@ -332,20 +332,23 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 xmu_lavaan_process_group <- function(tab, groupNum){
 	constraintOps = c("==", "<", ">")
 	handledOps = c("=~", "~", "~1", "~~", ":=", constraintOps)
+
 	# groupNum = 1
 	grpRows = tab[tab$group == groupNum, ]
+
 	# handle none exist
-	if(nrow(grpRows)==0){
-		return(list(plist= list(), latents = c(), manifests = c()))
+	if(nrow(grpRows) == 0){
+		return(list(plist = list(), latents = c(), manifests = c()))
 	}
 	latents = unique(grpRows$lhs[grpRows$op == "=~" | grpRows$op == "<~"])
 	all = unique(c(grpRows$lhs[! (grpRows$op %in% constraintOps)], grpRows$rhs[! (grpRows$op %in% constraintOps)]))
 	manifests = setdiff(all, latents)
+	manifests = setdiff(manifests, '') # Operations with no rhs can generate empty labels...
 
+	# Process rows
 	plist = list()
 	for (r in 1:nrow(grpRows)) {
 		# r= 1
-		# umx_msg(r)
 		thisRow = grpRows[r, ]
 
 		lhs   = thisRow$lhs
@@ -385,10 +388,10 @@ xmu_lavaan_process_group <- function(tab, groupNum){
 				message("Scaling factors ('~*~' for Delta parameterized multi-group models with categorical indicators) not yet implemented for lavaan-2-umx translation")
 			}else{
 				# e.g. formative op = "<-" latent on rhs
-				stop("Haven't implemented op = ", omxQuotes(op), " yet. tell Tim")
+				stop("Haven't implemented op = ", omxQuotes(op), " yet. email maintainer('umx')")
 			}
 		}
 		# path processed
 	}
-	return(list(plist=plist, latents = latents, manifests = manifests))
+	return(list(plist= plist, latents = latents, manifests = manifests))
 }

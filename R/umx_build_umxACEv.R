@@ -733,7 +733,7 @@ plot.MxModelACEv <- umxPlotACEv
 #' dzData <- twinData[twinData$zygosity %in% "DZFF",][1:80,]
 #' m1  = umxACEv(selDVs = selDVs, sep="", dzData = dzData, mzData = mzData)
 #' std = umx_standardize(m1)
-xmu_standardize_ACEc <- function(model, ...) {
+xmu_standardize_ACEv <- function(model, ...) {
 	# TODO umxSummaryACEv these already exist if a_std exists..
 	message("Standardized variance-based models may yield negative variances...")
 	if(typeof(model) == "list"){ # call self recursively
@@ -771,4 +771,4 @@ xmu_standardize_ACEc <- function(model, ...) {
 	}
 }
 #' @export
-xmu_standardize.MxModelACEv <- xmu_standardize_ACEc
+xmu_standardize.MxModelACEv <- xmu_standardize_ACEv
