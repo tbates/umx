@@ -771,4 +771,4 @@ xmu_standardize_ACEc <- function(model, ...) {
 	}
 }
 #' @export
-umx_standardize.MxModelACEv <- xmu_standardize_ACEc
+xmu_standardize.MxModelACEv <- xmu_standardize_ACEc

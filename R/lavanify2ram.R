@@ -61,7 +61,7 @@
 #' @param printTab = TRUE (more for debugging)
 #' @return - list of [umxPath()]s
 #' @export
-#' @family Super-easy helpers
+#' @family Miscellaneous Utility Functions
 #' @seealso - [umxRAM()]
 #' @md
 #' @examples

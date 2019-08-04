@@ -2,9 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_standardize_CP}
 \alias{xmu_standardize_CP}
-\title{@export
-
-xmu_standardize_CP}
+\title{xmu_standardize_CP}
 \usage{
 xmu_standardize_CP(model, ...)
 }
@@ -23,6 +21,8 @@ This function simply inserts the standardized CP components into the ai ci ei an
 }
 \examples{
 \dontrun{
+selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
+m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zyg="zyg_2grp")
 m2 = xmu_standardize_CP(m1)
 }
 }
@@ -65,6 +65,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_standardize_ACEc}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_IP}},
+  \code{\link{xmu_standardize}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }

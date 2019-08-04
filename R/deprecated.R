@@ -69,7 +69,7 @@
 #'
 #' Replace umxLabeler with [umxLabel()]
 #'
-#' Replace standardizeRAM with [umx_standardize_RAM()]
+#' Replace standardizeRAM with [xmu_standardize_RAM()]
 #'
 #' Replace genEpi_equate with [umxEquate()]
 #'

@@ -53,7 +53,7 @@ Replace mxStart with \code{\link[=umxValues]{umxValues()}}
 
 Replace umxLabeler with \code{\link[=umxLabel]{umxLabel()}}
 
-Replace standardizeRAM with \code{\link[=umx_standardize_RAM]{umx_standardize_RAM()}}
+Replace standardizeRAM with \code{\link[=xmu_standardize_RAM]{xmu_standardize_RAM()}}
 
 Replace genEpi_equate with \code{\link[=umxEquate]{umxEquate()}}
 

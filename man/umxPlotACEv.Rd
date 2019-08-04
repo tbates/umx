@@ -63,7 +63,7 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxFitIndices}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umx_drop_ok}},
-  \code{\link{umx_standardize_RAM}}
+  \code{\link{xmu_standardize_RAM}}
 }
 \concept{Plotting functions}
 \concept{Reporting functions}

@@ -666,4 +666,4 @@ xmu_standardize_Simplex <- function(model, ...) {
 # 	}
 # }
 # #' @export
-# umx_standardize.MxModelSimplex <- xmu_standardize_Simplex
+# xmu_standardize.MxModelSimplex <- xmu_standardize_Simplex

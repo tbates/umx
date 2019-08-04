@@ -165,7 +165,8 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
 		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
 
 # Shortcut using "data ="
-m1 = umxCP(selDVs = c("gff", "fc", "qol", "hap", "sat", "AD"), nFac = 3, data=GFF, zyg="zyg_2grp")
+selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
+m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zyg="zyg_2grp")
 
 # ===================
 # = Do it using WLS =

@@ -6712,7 +6712,7 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 
 #' Return a standardized version of a Structural Model
 #'
-#' umx_standardize takes umx models, including RAM and twin models, and returns a standardized version.
+#' xmu_standardize takes umx models, including RAM and twin models, and returns a standardized version.
 #'
 #'
 #' @description
@@ -6722,21 +6722,21 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #'
 #' @param model The [mxModel()] whose fit will be reported.
 #' @param ... Other parameters.
-#' @family Advanced Model Building Functions
+#' @family xmu internal not for end user
 #' @md
 #' @export
-umx_standardize <- function(model, ...){
-	UseMethod("umx_standardize", model)
+xmu_standardize <- function(model, ...){
+	UseMethod("xmu_standardize", model)
 }
 
 #' @export
-umx_standardize.default <- function(model, ...){
-	stop("umx_standardize is not defined for objects of class:", class(model))
+xmu_standardize.default <- function(model, ...){
+	stop("xmu_standardize is not defined for objects of class:", class(model))
 }
 
 #' Return a standardized version of a Structural Model
 #'
-#' umx_standardize_RAM takes a RAM-style model, and returns standardized version.
+#' xmu_standardize_RAM takes a RAM-style model, and returns standardized version.
 #'
 #' @param model The [mxModel()] you wish to standardize
 #' @param ... Other options
@@ -6755,10 +6755,10 @@ umx_standardize.default <- function(model, ...){
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #'
-#' m1 = umx_standardize_RAM(m1)
-#' m1 = umx_standardize(m1)
+#' m1 = xmu_standardize_RAM(m1)
+#' m1 = xmu_standardize(m1)
 #' umxSummary(m1)
-umx_standardize_RAM <- function(model, ...) {
+xmu_standardize_RAM <- function(model, ...) {
 	if (!umx_is_RAM(model)){
 		stop("I need a RAM model")
 	}
@@ -6806,7 +6806,7 @@ umx_standardize_RAM <- function(model, ...) {
 	invisible(model)
 }
 #' @export
-umx_standardize.MxModel <- umx_standardize_RAM
+xmu_standardize.MxModel <- xmu_standardize_RAM
 
 #' xmu_standardize_ACE
 #'
@@ -6860,7 +6860,7 @@ xmu_standardize_ACE <- function(model, ...) {
 	}
 }
 #' @export
-umx_standardize.MxModelACE <- xmu_standardize_ACE
+xmu_standardize.MxModelACE <- xmu_standardize_ACE
 
 
 #' xmu_standardize_ACEcov
@@ -6910,9 +6910,7 @@ xmu_standardize_ACEcov <- function(model, ...) {
 }
 
 #' @export
-umx_standardize.MxModelACEcov <- xmu_standardize_ACEcov
-
-
+xmu_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 
 
 #' Standardize a SexLim model
@@ -6957,7 +6955,7 @@ xmu_standardize_SexLim <- function(model, ...){
 	return(model)
 }
 #' # @export
-# umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
+xmu_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
 #' xmu_standardize_CP
@@ -6990,8 +6988,9 @@ xmu_standardize_IP <- function(model, ...){
 	}
 	return(model)
 }
-#' # @export
-# xmu_standardize.MxModelIP <- xmu_standardize_IP
+
+#' @export
+xmu_standardize.MxModelIP <- xmu_standardize_IP
 
 #' xmu_standardize_CP
 #'
@@ -7006,7 +7005,8 @@ xmu_standardize_IP <- function(model, ...){
 #' @md
 #' @examples
 #' \dontrun{
-#' m1 = umxCP(selDVs = c("gff", "fc", "qol", "hap", "sat", "AD"), nFac = 3, data=GFF, zyg="zyg_2grp")	
+#' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
+#' m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zyg="zyg_2grp")
 #' m2 = xmu_standardize_CP(m1)
 #' }
 xmu_standardize_CP <- function(model, ...){
@@ -7051,9 +7051,8 @@ xmu_standardize_CP <- function(model, ...){
 	}
 }
 # TODO	not sure S3 makes any sense: called in exactly one place...
-#' # @export
-# xmu_standardize.MxModelCP <- xmu_standardize_CP
-
+#' @export
+xmu_standardize.MxModelCP <- xmu_standardize_CP
 
 # Poems one should know by heart:
 

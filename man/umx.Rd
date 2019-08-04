@@ -229,11 +229,10 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_fix_first_loadings}},
   \code{\link{umx_fix_latents}},
   \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_standardize}},
   \code{\link{umx_string_to_algebra}}
 
-Other zAdvanced Helpers: \code{\link{umx_standardize_SexLim}},
-  \code{\link{umx_standardize_Simplex}}
+Other zAdvanced Helpers: \code{\link{xmu_standardize_SexLim}},
+  \code{\link{xmu_standardize_Simplex}}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmuHasSquareBrackets}},
@@ -269,6 +268,7 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_CP}},
   \code{\link{xmu_standardize_IP}},
+  \code{\link{xmu_standardize}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }

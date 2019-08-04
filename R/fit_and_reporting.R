@@ -1110,7 +1110,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar <- length(selDVs)/2;
 		# TODO umxSummaryACE these already exist if a_std exists..
-		# TODO replace all this with umx_standardizeACE
+		# TODO replace all this with xmu_standardizeACE
 		# Calculate standardized variance components
 		a  <- mxEval(top.a, model); # Path coefficients
 		c  <- mxEval(top.c, model);
@@ -2279,7 +2279,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			model$M$values = mxEval(M, model, compute = TRUE)
 		}
 	
-		if(std){ model = umx_standardize_RAM(model, return = "model") }
+		if(std){ model = xmu_standardize_RAM(model, return = "model") }
 
 		# ========================
 		# = Get Symmetric & Asymmetric Paths =

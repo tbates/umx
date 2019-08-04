@@ -646,7 +646,7 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 	format = match.arg(format)
 	model = x # just to emphasise that x has to be a model 
 	if(std){
-		model = umx_standardize_CP(model)
+		model = xmu_standardize_CP(model)
 	}
 	facCount = dim(model$top$a_cp$labels)[[1]]
 	varCount = dim(model$top$as$values)[[1]]

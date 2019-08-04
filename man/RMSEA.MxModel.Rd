@@ -52,6 +52,6 @@ Other Reporting functions: \code{\link{RMSEA.summary.mxmodel}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{umx_drop_ok}},
-  \code{\link{umx_standardize_RAM}}
+  \code{\link{xmu_standardize_RAM}}
 }
 \concept{Reporting functions}
