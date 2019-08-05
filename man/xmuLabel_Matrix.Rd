@@ -53,7 +53,8 @@ See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value =
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}},
-  \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
+  \code{\link{umx_standardize}}, \code{\link{umx}},
+  \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},
   \code{\link{xmuMakeDeviationThresholdsMatrices}},
@@ -85,7 +86,6 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_CP}},
   \code{\link{xmu_standardize_IP}},
-  \code{\link{xmu_standardize}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }

@@ -26,7 +26,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 )
 
 m1 = xmu_standardize_RAM(m1)
-m1 = xmu_standardize(m1)
+m1 = umx_standardize(m1)
 umxSummary(m1)
 }
 \references{

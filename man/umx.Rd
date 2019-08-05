@@ -234,6 +234,7 @@ Other zAdvanced Helpers: \code{\link{xmu_standardize_SexLim}},
   \code{\link{xmu_standardize_Simplex}}
 
 Other xmu internal not for end user: \code{\link{umxModel}},
+  \code{\link{umx_standardize}},
   \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
@@ -267,7 +268,6 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_CP}},
   \code{\link{xmu_standardize_IP}},
-  \code{\link{xmu_standardize}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }

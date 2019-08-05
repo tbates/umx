@@ -6717,7 +6717,7 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 
 #' Return a standardized version of a Structural Model
 #'
-#' xmu_standardize takes umx models, including RAM and twin models, and returns a standardized version.
+#' umx_standardize takes umx models, including RAM and twin models, and returns a standardized version.
 #'
 #'
 #' @description
@@ -6730,13 +6730,13 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @family xmu internal not for end user
 #' @md
 #' @export
-xmu_standardize <- function(model, ...){
-	UseMethod("xmu_standardize", model)
+umx_standardize <- function(model, ...){
+	UseMethod("umx_standardize", model)
 }
 
 #' @export
-xmu_standardize.default <- function(model, ...){
-	stop("xmu_standardize is not defined for objects of class:", class(model))
+umx_standardize.default <- function(model, ...){
+	stop("umx_standardize is not defined for objects of class:", class(model))
 }
 
 #' Return a standardized version of a Structural Model
@@ -6761,7 +6761,7 @@ xmu_standardize.default <- function(model, ...){
 #' )
 #'
 #' m1 = xmu_standardize_RAM(m1)
-#' m1 = xmu_standardize(m1)
+#' m1 = umx_standardize(m1)
 #' umxSummary(m1)
 xmu_standardize_RAM <- function(model, ...) {
 	if (!umx_is_RAM(model)){
@@ -6811,7 +6811,7 @@ xmu_standardize_RAM <- function(model, ...) {
 	invisible(model)
 }
 #' @export
-xmu_standardize.MxModel <- xmu_standardize_RAM
+umx_standardize.MxModel <- xmu_standardize_RAM
 
 #' xmu_standardize_ACE
 #'
@@ -6865,7 +6865,7 @@ xmu_standardize_ACE <- function(model, ...) {
 	}
 }
 #' @export
-xmu_standardize.MxModelACE <- xmu_standardize_ACE
+umx_standardize.MxModelACE <- xmu_standardize_ACE
 
 #' xmu_standardize_ACEcov
 #'
@@ -6914,7 +6914,7 @@ xmu_standardize_ACEcov <- function(model, ...) {
 }
 
 #' @export
-xmu_standardize.MxModelACEcov <- xmu_standardize_ACEcov
+umx_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 
 #' Standardize a SexLim model
 #'
@@ -6958,7 +6958,7 @@ xmu_standardize_SexLim <- function(model, ...){
 	return(model)
 }
 # @export
-xmu_standardize.MxModelSexLim <- xmu_standardize_SexLim
+umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
 #' xmu_standardize_CP
@@ -6993,7 +6993,7 @@ xmu_standardize_IP <- function(model, ...){
 }
 
 #' @export
-xmu_standardize.MxModelIP <- xmu_standardize_IP
+umx_standardize.MxModelIP <- xmu_standardize_IP
 
 #' Function to standardize a common pathway model
 #'
@@ -7055,7 +7055,7 @@ xmu_standardize_CP <- function(model, ...){
 }
 # TODO	not sure S3 makes any sense: called in exactly one place...
 #' @export
-xmu_standardize.MxModelCP <- xmu_standardize_CP
+umx_standardize.MxModelCP <- xmu_standardize_CP
 
 # Poems one should know by heart:
 

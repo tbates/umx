@@ -30,8 +30,8 @@ umxModel()
 \item \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=mxModel]{mxModel()}}
 }
 
-Other xmu internal not for end user: \code{\link{umx}},
-  \code{\link{xmuHasSquareBrackets}},
+Other xmu internal not for end user: \code{\link{umx_standardize}},
+  \code{\link{umx}}, \code{\link{xmuHasSquareBrackets}},
   \code{\link{xmuLabel_MATRIX_Model}},
   \code{\link{xmuLabel_Matrix}},
   \code{\link{xmuLabel_RAM_Model}}, \code{\link{xmuMI}},
@@ -64,7 +64,6 @@ Other xmu internal not for end user: \code{\link{umx}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_CP}},
   \code{\link{xmu_standardize_IP}},
-  \code{\link{xmu_standardize}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }

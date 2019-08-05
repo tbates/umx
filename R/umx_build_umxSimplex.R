@@ -571,7 +571,7 @@ xmu_standardize_Simplex <- function(model, ...) {
 		}
 	} else {
 		if(!umx_has_been_run(model)){
-			stop("I can only standardize Simplex models that have been run. Just do\n",
+			stop("I can only standardize Simplex models that have been run. First do\n",
 			"yourModel = mxRun(yourModel)")
 		}
 		selDVs = model$MZ$expectation$dims
@@ -610,8 +610,8 @@ xmu_standardize_Simplex <- function(model, ...) {
 		return(model)
 	}
 }
-#' # @export
-# xmu_standardize.MxModelSimplex <- xmu_standardize_Simplex
+#' @export
+umx_standardize.MxModelSimplex <- xmu_standardize_Simplex
 
 # xmu_standardize_Simplex <- function(model, ...) {
 # 	if(typeof(model) == "list"){ # Call self recursively
@@ -665,5 +665,5 @@ xmu_standardize_Simplex <- function(model, ...) {
 # 		return(model)
 # 	}
 # }
-# #' @export
-# xmu_standardize.MxModelSimplex <- xmu_standardize_Simplex
+#' # @export
+# umx_standardize.MxModelSimplex <- xmu_standardize_Simplex
