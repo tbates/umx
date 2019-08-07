@@ -8,13 +8,17 @@ umxPower(trueModel, update = NULL, n = NULL, power = NULL,
   sig.level = 0.05, method = c("empirical", "ncp"))
 }
 \arguments{
-\item{power}{.8}
+\item{trueModel}{The model with the parameters at values you expect in the population.}
 
-\item{sig.level}{.05}
+\item{update}{The parameter(s) to drop}
+
+\item{n}{How many subjects? (Default = NULL)}
+
+\item{power}{Default = NULL (conventional level = .8)}
+
+\item{sig.level}{Default = .05}
 
 \item{method}{"empirical" or "ncp"}
-
-\item{update=}{"engine_litres_to_mpg"}
 }
 \value{
 empty
@@ -35,25 +39,31 @@ m1 = umxRAM("corXY", data = tmp,
    umxPath("X", with = "Y"),
    umxPath(var = c("X", "Y"))
 )
-# 2. Test power to detect .3 versus 0
-umxPower(m1, "X_with_Y", method="ncp")
+# 2. Test power to detect .3 versus 0, with n= 90 subjects
+umxPower(m1, "X_with_Y", n= 90, method="ncp")
 
-# Search n:power relationship for 'X_with_Y'
-#    method = empirical              
-#         n = 82.41632
-#     power = 0.8
-#    probes = 300
+# ####################
+# # Estimating power #
+# ####################
+# 
+#    method = ncp
+#         n = 90
+#     power = 0.829
 # sig.level = 0.05
+# statistic = LRT
 
-umxPower(m1, "X_with_Y", method="ncp")
+\dontrun{
+# Use method = empirical 
+umxPower(m1, "X_with_Y", n = 90)
+}
 
 \dontrun{
 # Test power for a cor.test doing the same thing..
-pwr::pwr.r.test(n=200,r=.3)
-#           n = 200
+pwr::pwr.r.test(r=.3, n=90)
+#           n = 90
 #           r = 0.3
 #   sig.level = 0.05
-#       power = 0.9916727
+#       power = 0.827
 # alternative = two.sided
 }
 

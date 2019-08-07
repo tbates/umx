@@ -4,7 +4,7 @@
 \alias{power.ACE.test}
 \title{Test the power of an ACE model to detect paths of interest.}
 \usage{
-power.ACE.test(AA = 0.5, CC = 0, EE = NULL, drop = c("a_r1c1"),
+power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a_r1c1"),
   value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05,
   power = 0.8, type = c("univariate", "bivariate", "GxE"),
   method = c("ncp", "empirical"), search = FALSE, tryHard = c("no",
@@ -17,8 +17,6 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, drop = c("a_r1c1"),
 \item{CC}{Shared environment variance (Default 0)}
 
 \item{EE}{Unique environment variance. Leave NULL to compute an amount summing to 1}
-
-\item{drop}{Path(s) to drop (Default "a_r1c1", i.e., drop a)}
 
 \item{value}{Value to set drop path(s) to (Default 0)}
 
@@ -41,6 +39,8 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, drop = c("a_r1c1"),
 \item{optimizer}{If set, will switch the optimizer.}
 
 \item{nSim}{Total number of pairs to simulate in the models (default = 4000)}
+
+\item{drop}{Path(s) to drop (Default "a_r1c1", i.e., drop a)}
 }
 \value{
 mxPower object
@@ -72,7 +72,7 @@ If you have few subjects and desired adequate power, you should raise the p-valu
 # ===============================================
 # = Power to detect a^2=.5 with equal MZ and DZ =
 # ===============================================
-power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0) 
+power.ACE.test(AA= .5, CC= 0, drop = "a_r1c1") 
 # Suggests n = 84 MZ and 94 DZ pairs.
 
 # ================================
@@ -92,7 +92,7 @@ power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
 # =====================
 
 # 102 of each of MZ and DZ pairs for 80\% power.
-power.ACE.test(drop = "c_r1c1", AA= .5, CC= .3, tryHard="yes")
+power.ACE.test(AA= .5, CC= .3, drop = "c_r1c1", tryHard="yes")
 
 # ========================================
 # = Set 'a' to a fixed, but non-zero value =

@@ -49,7 +49,7 @@
 #' # ===============================================
 #' # = Power to detect a^2=.5 with equal MZ and DZ =
 #' # ===============================================
-#' power.ACE.test(drop = "a_r1c1", AA= .5, CC= 0) 
+#' power.ACE.test(AA= .5, CC= 0, drop = "a_r1c1") 
 #' # Suggests n = 84 MZ and 94 DZ pairs.
 #'
 #' # ================================
@@ -69,7 +69,7 @@
 #' # =====================
 #' 
 #' # 102 of each of MZ and DZ pairs for 80% power.
-#' power.ACE.test(drop = "c_r1c1", AA= .5, CC= .3, tryHard="yes")
+#' power.ACE.test(AA= .5, CC= .3, drop = "c_r1c1", tryHard="yes")
 #'
 #' # ========================================
 #' # = Set 'a' to a fixed, but non-zero value =
@@ -143,7 +143,7 @@
 #' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
 #' # }
 #'
-power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, drop = c("a_r1c1"), value = 0,  n = NULL, MZ_DZ_ratio= 1, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, nSim=4000){
+power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value = 0,  n = NULL, MZ_DZ_ratio= 1, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, nSim=4000){
 	# decimalplaces <- function(x) {
 	#     if (abs(x - round(x)) > .Machine$double.eps^0.5) {
 	#         nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed = TRUE)[[1]][[2]])
@@ -179,7 +179,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, drop = c("a_r1c1"), value = 
 	# = Build the "true" and "false" (null) models =
 	# ==============================================
 	ace = umxACE(selDVs = "var", sep= "_T", mzData = mzData, dzData= dzData, tryHard = tryHard, optimizer = optimizer)
-	nullModel = umxModify(ace, regex = drop, value = value, name= as.character(mxMakeNames(paste0("drop_", drop[1]))), tryHard= tryHard)
+	nullModel = umxModify(ace, regex = update, value = value, name= as.character(mxMakeNames(paste0("drop_", update[1]))), tryHard= tryHard)
 
 	# return plot to old value
 	umx_set_auto_plot(oldPlot)
@@ -207,10 +207,11 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, drop = c("a_r1c1"), value = 
 #' `umxPower` takes an input model (the model of the true data), and tests power (or determines n)
 #' to detect dropping (or changing the value) a path in this true model.
 #'
-#' @param trueModel=m1
-#' @param update= "engine_litres_to_mpg"
-#' @param sig.level .05
-#' @param power .8
+#' @param trueModel The model with the parameters at values you expect in the population.
+#' @param update The parameter(s) to drop
+#' @param n How many subjects? (Default = NULL)
+#' @param power Default = NULL (conventional level = .8)
+#' @param sig.level Default = .05
 #' @param method "empirical" or "ncp"
 #' @return empty
 #' @export
@@ -230,37 +231,53 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, drop = c("a_r1c1"), value = 
 #'    umxPath("X", with = "Y"),
 #'    umxPath(var = c("X", "Y"))
 #' )
-#' # 2. Test power to detect .3 versus 0
-#' umxPower(m1, "X_with_Y", method="ncp")
+#' # 2. Test power to detect .3 versus 0, with n= 90 subjects
+#' umxPower(m1, "X_with_Y", n= 90, method="ncp")
 #' 
-#' # Search n:power relationship for 'X_with_Y'
-#' #    method = empirical              
-#' #         n = 82.41632
-#' #     power = 0.8
-#' #    probes = 300
+#' # ####################
+#' # # Estimating power #
+#' # ####################
+#' # 
+#' #    method = ncp
+#' #         n = 90
+#' #     power = 0.829
 #' # sig.level = 0.05
-#' 
-#' umxPower(m1, "X_with_Y", method="ncp")
+#' # statistic = LRT
+#'
+#' \dontrun{
+#' # Use method = empirical 
+#' umxPower(m1, "X_with_Y", n = 90)
+#' }
 #' 
 #' \dontrun{
 #' # Test power for a cor.test doing the same thing..
-#' pwr::pwr.r.test(n=200,r=.3)
-#' #           n = 200
+#' pwr::pwr.r.test(r=.3, n=90)
+#' #           n = 90
 #' #           r = 0.3
 #' #   sig.level = 0.05
-#' #       power = 0.9916727
+#' #       power = 0.827
 #' # alternative = two.sided
 #' }
 #'
 umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, method= c("empirical", "ncp")){
-	method = match.arg(method)
-	howMany = sum(is.null(n, power, sig.level))
-	if(howMany == 3){
-		stop("You filled in all three of n, power, and sig.level: I've got nothing to estimate...")
-	} else if (howMany == 1){
-		stop("You only filled in one of n, power, and sig.level: you need to fix two for me to be able to estimate the remaining one...")
+	method   = match.arg(method)
+	n_null   = is.null(n)
+	pwr_null = is.null(power)
+	sig_null = is.null(sig.level)
+	setList = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
+	nulls     = sum(n_null, pwr_null, sig_null)
+	if(nulls == 0){
+		stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these three to null. Probably n")
+	} else if (nulls == 1){
+		# great!
+	} else if (nulls == 2){
+		stop("You only set ", setList, ". I need two of n, power, and sig.level set by you to allow me to estimate the remaining one...")
+	} else if (nulls == 3){
+		stop("You didn't set any of ", setList, ": You need to fix two of these for me to be able to estimate the remaining one...")
 	}
 	m2 = umxModify(m1, update, name= paste0("drop_", update))
+	message("\n####################\n# Estimating ", 	c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))], " #
+####################\n")
 	mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
 }
 
