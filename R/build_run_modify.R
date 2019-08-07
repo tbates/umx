@@ -77,7 +77,7 @@
 # Used in umxAPA
 #' @importFrom nlme intervals
 
-# Used in umx_make_fake_data
+# Used in umxHetCor
 #' @importFrom polycor hetcor
 
 # Used in umx_set_cores
@@ -703,7 +703,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ==========================
 	# Note: WLS data will be mxData(..., type = "raw") at this stage.
 	# Add means if data are raw and means not requested by user
-	needsMeans = xmu_model_needs_means(data = data, type = type, allContinuousMethod = allContinuousMethod)
+	needsMeans = xmu_check_needs_means(data = data, type = type, allContinuousMethod = allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
 		message("You have raw data, but no means model. I added\n",
 		"mxPath('one', to = manifestVars)")

@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
-# utility naming convention: "umx_" prefix, lowercase, and "_" (not camel case) e.g. umx_swap_a_block()
+# utility naming convention: "umx_" prefix, lowercase, and "_" (not camel case) e.g. xmu_data_swap_a_block()
 
 #' Determine whether a dataset will have weights and summary statistics for the means if used with mxFitFunctionWLS
 #'
@@ -25,11 +25,11 @@
 #' 
 #' When data are not all continuous, allContinuousMethod is ignored, and means are modeled.
 #'
-#' @param data the (currently raw) data being used in a [mxFitFunctionWLS()] model.
-#' @param allContinuousMethod the method used to process data when all columns are continuous.
-#' @param verbose logical. Whether to report diagnostics.
+#' @param data The raw data being used in a [mxFitFunctionWLS()] model.
+#' @param allContinuousMethod the method used to process data when all columns are continuous (default = "cumulants")
+#' @param verbose Whether or not to report diagnostics.
 #' @return - list describing the data.
-#' @family Data Functions
+#' @family xmu internal not for end user
 #' @seealso - [mxFitFunctionWLS()], [omxAugmentDataWithWLSSummary()]
 #' @export
 #' @md
@@ -39,34 +39,34 @@
 #' # = All continuous, data.frame input =
 #' # ====================================
 #'
-#' tmp = umxDescribeDataWLS(mtcars, allContinuousMethod= "cumulants", verbose = TRUE)
+#' tmp =xmu_describe_data_WLS(mtcars, allContinuousMethod= "cumulants", verbose = TRUE)
 #' tmp$hasMeans # FALSE - no means with cumulants
-#' tmp = umxDescribeDataWLS(mtcars, allContinuousMethod= "marginals") 
+#' tmp =xmu_describe_data_WLS(mtcars, allContinuousMethod= "marginals") 
 #' tmp$hasMeans # TRUE we get means with marginals
 #'
 #' # ==========================
 #' # = mxData object as input =
 #' # ==========================
 #' tmp = mxData(mtcars, type="raw")
-#' umxDescribeDataWLS(tmp, allContinuousMethod= "cumulants", verbose = TRUE)$hasMeans # FALSE
-#' umxDescribeDataWLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
+#'xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants", verbose = TRUE)$hasMeans # FALSE
+#'xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
 #'
 #' # =======================================
 #' # = One var is a factor: Means modeled =
 #' # =======================================
 #' tmp = mtcars
 #' tmp$cyl = factor(tmp$cyl)
-#' umxDescribeDataWLS(tmp, allContinuousMethod= "cumulants")$hasMeans # TRUE - always has means
-#' umxDescribeDataWLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
+#'xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants")$hasMeans # TRUE - always has means
+#'xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
 #' 
-umxDescribeDataWLS <- function(data, allContinuousMethod = c("cumulants", "marginals"), verbose=FALSE){
+xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "marginals"), verbose=FALSE){
 	allContinuousMethod = match.arg(allContinuousMethod)
 	if(class(data) == "data.frame"){
 		# all good
 	} else if(class(data) == "MxDataStatic" && data$type == "raw"){
 		data = data$observed
 	}else{
-		message("mxDescribeDataWLS currently only knows how to process dataframes and mxData of type = 'raw'.\n",
+		message("xmu_describe_data_WLS currently only knows how to process dataframes and mxData of type = 'raw'.\n",
 		"You offered up an object of class: ", omxQuotes(class(data)))
 	}
 
@@ -2916,7 +2916,7 @@ xmu_CI_merge <- function(m1, m2) {
 
 #' Convert a dataframe into a cov mxData object
 #'
-#' umxCovData converts a dataframe into an mxData, taking the covariance, defaulting to nrow as the numObs,
+#' xmu_DF_to_mxData_TypeCov converts a dataframe into an mxData, taking the covariance, defaulting to nrow as the numObs,
 #' and optionally adding means.
 #'
 #' @param df the dataframe to covert to an mxData type cov object.
@@ -2924,13 +2924,13 @@ xmu_CI_merge <- function(m1, m2) {
 #' @param use = Default is "complete.obs".
 #' @return - [mxData()] of type = cov
 #' @export
-#' @family Data Functions
+#' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' umxCovData(mtcars, c("mpg", "hp"))
-umxCovData <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
-	# TODO umxCovData: Use 'use' to compute numObs in umxCovData
+#' xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
+xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
+	# TODO xmu_DF_to_mxData_TypeCov: Use 'use' to compute numObs in xmu_DF_to_mxData_TypeCov
 	use = match.arg(use)
 	if(anyNA(columns)){
 		columns = names(df)
@@ -5432,7 +5432,7 @@ umx_array_shift <- function(x){
 	return(item1)
 }
 
-#' umx_swap_a_block
+#' Data helper function to swap blocks of data from one set of columns to another.
 #'
 #' Swap a block of rows of a dataset between two sets of variables (typically twin 1 and twin 2)
 #'
@@ -5451,10 +5451,10 @@ umx_array_shift <- function(x){
 #' b = paste0("b", 1:10),
 #' c = paste0("c", 1:10),
 #' d = paste0("d", 1:10), stringsAsFactors = FALSE)
-#' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
-#' umx_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
+#' xmu_data_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
+#' xmu_data_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
 #'
-umx_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
+xmu_data_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	theRows = theData[rowSelector,]
 	old_BlockTwo = theRows[,T2Names]
 	theRows[,T1Names] -> theRows[, T2Names]
@@ -6053,6 +6053,7 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 #' @param het.suppress Passed to hetcor (default = TRUE)
 #' @return - new dataframe
 #' @family Data Functions
+#' @seealso 
 #' @export
 #' @examples
 #' fakeCars = umx_make_fake_data(mtcars)
@@ -6184,29 +6185,32 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
   return(fake)
 }
 
-#' Turn a cov matrix into raw data with umx_cov2raw
+#' Turn a cov matrix into raw data with umx_make_raw_from_cov
 #'
-#' Turns a covariance matrix into comparable raw data :-)
+#' A wrapper for [MASS::mvrnorm()] to simplyfy turning a covariance matrix into matching raw data.
 #'
 #' @param myCovariance a covariance matrix
 #' @param n how many rows of data to return
-#' @param means the means of the raw data (defaults to 0)
+#' @param means the means of the raw data (default = 0)
 #' @return - data.frame
 #' @export
-#' @seealso - [cov2cor()]
+#' @seealso - [cov2cor()], [MASS::mvrnorm()]
 #' @family Data Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), paste0("v", 1:6)),
-#' data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
+#'   data = c(0.9223099, 0.1862938, 0.4374359, 0.8959973, 0.9928430, 0.5320662,
 #'            0.1862938, 0.2889364, 0.3927790, 0.3321639, 0.3371594, 0.4476898,
 #'            0.4374359, 0.3927790, 1.0069552, 0.6918755, 0.7482155, 0.9013952,
 #'            0.8959973, 0.3321639, 0.6918755, 1.8059956, 1.6142005, 0.8040448,
 #'            0.9928430, 0.3371594, 0.7482155, 1.6142005, 1.9223567, 0.8777786,
-#'            0.5320662, 0.4476898, 0.9013952, 0.8040448, 0.8777786, 1.3997558))
-#' myData = umx_cov2raw(covData, n = 100, means = 1:6)
-umx_cov2raw <- function(myCovariance, n, means = 0) {
+#'            0.5320662, 0.4476898, 0.9013952, 0.8040448, 0.8777786, 1.3997558)
+#' )
+#' 
+#' myData = umx_make_raw_from_cov(covData, n = 100, means = 1:6)
+#' umxAPA(myData)
+umx_make_raw_from_cov <- function(myCovariance, n, means = 0) {
 	# depends on MASS::mvrnorm
 	if(!umx_is_cov(myCovariance, boolean = TRUE)){
 		stop("myCovariance must be a covariance matrix")
@@ -6329,18 +6333,17 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 #' @param suffixes Suffixes if the data are family (wide, more than one persona on a row)
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
-#' @family Data Functions
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @family xmu internal not for end user
 #' @examples
-#' df = umx_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
+#' df = xmu_make_bin_cont_pair_data(mtcars, vars = c("mpg"))
 #' str(df)
 #' df[order(df$mpg), c(1,12)]
 #' # Introduce a floor effect
 #' tmp = mtcars; tmp$mpg[tmp$mpg<=15]=15
 #' tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
-#' df = umx_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
+#' df = xmu_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
 #' df[order(df$mpg), 12:15]
-umx_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
+xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 	if(!is.null(suffixes)){
 		umx_check(length(suffixes) < 3, "stop", "suffixes must have length == 2")
 		longVars = umx_paste_names(vars, suffixes = suffixes)
@@ -6566,11 +6569,11 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 	return(mat)
 }
 
-#' umxPadAndPruneForDefVars
+#' Where all data are missing for a twin, add default values for defVar to allow the row to be kept
 #'
 #' Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin
 #'
-#' @param df the dataframe to process
+#' @param df The dataframe to process
 #' @param varNames list of names of the variables being analysed
 #' @param defNames list of covariates
 #' @param suffixes that map names on columns in df (i.e., c("T1", "T2"))
@@ -6578,16 +6581,15 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 #' @param rm = how to handle missing values in the varNames. Default is "drop_missing_def", "pad_with_mean")
 #' @return - dataframe
 #' @export
-#' @family Data Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @family xmu internal not for end user
 #' @md
 #' @examples
 #' \dontrun{
 #' data(twinData)
 #' sum(is.na(twinData$ht1))
-#' df = umxPadAndPruneForDefVars(twinData, varNames = "ht", defNames = "wt", c("1", "2"))
+#' df = xmu_PadAndPruneForDefVars(twinData, varNames = "ht", defNames = "wt", c("1", "2"))
 #' }
-umxPadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefValue = 99, rm = c("drop_missing_def", "pad_with_mean")) {
+xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefValue = 99, rm = c("drop_missing_def", "pad_with_mean")) {
 	# df = twinData
 	# varNames = varNames
 	# defNames = covNames
