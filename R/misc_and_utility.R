@@ -6185,9 +6185,9 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
   return(fake)
 }
 
-#' Turn a cov matrix into raw data with umx_make_raw_from_cov
+#' Turn a cov matrix into raw data
 #'
-#' A wrapper for [MASS::mvrnorm()] to simplyfy turning a covariance matrix into matching raw data.
+#' A wrapper for [MASS::mvrnorm()] to simplify turning a covariance matrix into matching raw data.
 #'
 #' @param myCovariance a covariance matrix
 #' @param n how many rows of data to return

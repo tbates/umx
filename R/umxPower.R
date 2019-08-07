@@ -200,7 +200,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value 
 }
 
 
-#' Test power to detect path in a umxRAM model.
+#' Test power to detect path in a model.
 #'
 #' @description
 #' `umxPower` takes an input model (the model of the true data), and tests power (or determines n)
@@ -211,8 +211,10 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value 
 #' @param n How many subjects? (Default = NULL)
 #' @param power Default = NULL (conventional level = .8)
 #' @param sig.level Default = .05
-#' @param method "empirical" or "ncp"
-#' @return empty
+#' @param value Value of dropped parameter (default = 0)
+#' @param method "ncp" (default) or "empirical"
+#' @param tabulatePower Whether to show a spread of n and corresponding power (Default = FALSE)
+#' @return power table
 #' @export
 #' @family Teaching and Testing functions
 #' @seealso - [umxRAM()]
@@ -250,7 +252,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value 
 #' 
 #' \dontrun{
 #' # Test power for a cor.test doing the same thing..
-#' pwr::pwr.r.test(r=.3, n=90)
+#' pwr::pwr.r.test(r = .3, n = 90)
 #' #           n = 90
 #' #           r = 0.3
 #' #   sig.level = 0.05
@@ -258,25 +260,33 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value 
 #' # alternative = two.sided
 #' }
 #'
-umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, method= c("empirical", "ncp")){
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), tabulatePower= FALSE){
 	method   = match.arg(method)
 	n_null   = is.null(n)
 	pwr_null = is.null(power)
 	sig_null = is.null(sig.level)
 	setList = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
 	nulls     = sum(n_null, pwr_null, sig_null)
-	if(nulls == 0){
-		stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these three to null. Probably n")
-	} else if (nulls == 1){
-		# great!
-	} else if (nulls == 2){
-		stop("You only set ", setList, ". I need two of n, power, and sig.level set by you to allow me to estimate the remaining one...")
-	} else if (nulls == 3){
-		stop("You didn't set any of ", setList, ": You need to fix two of these for me to be able to estimate the remaining one...")
-	}
-	m2 = umxModify(m1, update, name= paste0("drop_", update))
-	message("\n####################\n# Estimating ", 	c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))], " #
+	if(tabulatePower){
+		if(!is.null(power)){
+			stop("Ignoring power: when searching, I search for suitable n to get power")
+		}
+		mxPowerSearch(trueModel, falseModel = m2, n = n, sig.level = sig.level, method = method)
+	} else {
+		if(nulls == 0){
+			stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these three to null. Probably n")
+		} else if (nulls == 1){
+			# great!
+		} else if (nulls == 2){
+			stop("You only set ", setList, ". I need two of n, power, and sig.level set by you to allow me to estimate the remaining one...")
+		} else if (nulls == 3){
+			stop("You didn't set any of ", setList, ": You need to fix two of these for me to be able to estimate the remaining one...")
+		}
+		m2 = umxModify(m1, update, value = value, name= paste0("drop_", update))
+		message("\n####################\n# Estimating ", 	c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))], " #
 ####################\n")
-	mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
+		mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
+		# rockchalk::lazyCor(.3,2)
+	}
 }
 

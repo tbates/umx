@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_make_raw_from_cov}
 \alias{umx_make_raw_from_cov}
-\title{Turn a cov matrix into raw data with umx_make_raw_from_cov}
+\title{Turn a cov matrix into raw data}
 \usage{
 umx_make_raw_from_cov(myCovariance, n, means = 0, varNames = NULL,
   empirical = FALSE)
@@ -20,7 +20,7 @@ umx_make_raw_from_cov(myCovariance, n, means = 0, varNames = NULL,
 }
 }
 \description{
-A wrapper for \code{\link[MASS:mvrnorm]{MASS::mvrnorm()}} to simplyfy turning a covariance matrix into matching raw data.
+A wrapper for \code{\link[MASS:mvrnorm]{MASS::mvrnorm()}} to simplify turning a covariance matrix into matching raw data.
 }
 \examples{
 covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), paste0("v", 1:6)),

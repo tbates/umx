@@ -5,7 +5,8 @@
 \title{Test power to detect path in a umxRAM model.}
 \usage{
 umxPower(trueModel, update = NULL, n = NULL, power = NULL,
-  sig.level = 0.05, method = c("empirical", "ncp"))
+  sig.level = 0.05, value = 0, method = c("empirical", "ncp"),
+  search = FALSE)
 }
 \arguments{
 \item{trueModel}{The model with the parameters at values you expect in the population.}
@@ -18,10 +19,14 @@ umxPower(trueModel, update = NULL, n = NULL, power = NULL,
 
 \item{sig.level}{Default = .05}
 
+\item{value}{Value of dropped parameter (default = 0)}
+
 \item{method}{"empirical" or "ncp"}
+
+\item{search}{Whether to show a spread of values (Default = FALSE)}
 }
 \value{
-empty
+power table
 }
 \description{
 \code{umxPower} takes an input model (the model of the true data), and tests power (or determines n)
