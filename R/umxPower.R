@@ -18,16 +18,16 @@
 #' If you have few subjects and desired adequate power, you should raise the p-value. Be aware that consumers will be skeptical.
 #'
 #'
-#' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
 #' @param AA Additive genetic variance (Default .5)
 #' @param CC Shared environment variance (Default 0)
 #' @param EE  Unique environment variance. Leave NULL to compute an amount summing to 1
 #' @param drop Path(s) to drop (Default "a_r1c1", i.e., drop a)
 #' @param value Value to set drop path(s) to (Default 0)
-#' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param n  If provided, solve for power /sig.level at the given n (Default NULL)
+#' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
 #' @param sig.level alpha (p-value) Default = 0.05
 #' @param power Default = .8 (80 percent power, equal to 1 - Type II rate)
+#' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param type Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
 #' @param tryHard Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)
@@ -143,7 +143,7 @@
 #' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
 #' # }
 #'
-power.ACE.test <- function(MZ_DZ_ratio= 1, drop = c("a_r1c1"), value = 0, AA= .5, CC= 0, EE= NULL, n = NULL, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, nSim=4000){
+power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, drop = c("a_r1c1"), value = 0,  n = NULL, MZ_DZ_ratio= 1, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, nSim=4000){
 	# decimalplaces <- function(x) {
 	#     if (abs(x - round(x)) > .Machine$double.eps^0.5) {
 	#         nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed = TRUE)[[1]][[2]])
@@ -199,3 +199,68 @@ power.ACE.test <- function(MZ_DZ_ratio= 1, drop = c("a_r1c1"), value = 0, AA= .5
 	}
 	return(tmp)
 }
+
+
+#' Test power to detect path in a umxRAM model.
+#'
+#' @description
+#' `umxPower` takes an input model (the model of the true data), and tests power (or determines n)
+#' to detect dropping (or changing the value) a path in this true model.
+#'
+#' @param trueModel=m1
+#' @param update= "engine_litres_to_mpg"
+#' @param sig.level .05
+#' @param power .8
+#' @param method "empirical" or "ncp"
+#' @return empty
+#' @export
+#' @family Teaching and Testing functions
+#' @seealso - [umxRAM()]
+#' @references - [tutorials](https://tbates.github.io)
+#' @md
+#' @examples
+#' # ===================================================
+#' # = Power to detect correlation of .3 in 200 people =
+#' # ===================================================
+#'
+#' tmp = umx_make_raw_from_cov(qm(1, .3| .3, 1), n=200, varNames= c("X", "Y"), empirical= TRUE)
+#' 
+#' # 1. Make model with true correlation of X & Y = .3
+#' m1 = umxRAM("corXY", data = tmp,
+#'    umxPath("X", with = "Y"),
+#'    umxPath(var = c("X", "Y"))
+#' )
+#' # 2. Test power to detect .3 versus 0
+#' umxPower(m1, "X_with_Y", method="ncp")
+#' 
+#' # Search n:power relationship for 'X_with_Y'
+#' #    method = empirical              
+#' #         n = 82.41632
+#' #     power = 0.8
+#' #    probes = 300
+#' # sig.level = 0.05
+#' 
+#' umxPower(m1, "X_with_Y", method="ncp")
+#' 
+#' \dontrun{
+#' # Test power for a cor.test doing the same thing..
+#' pwr::pwr.r.test(n=200,r=.3)
+#' #           n = 200
+#' #           r = 0.3
+#' #   sig.level = 0.05
+#' #       power = 0.9916727
+#' # alternative = two.sided
+#' }
+#'
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, method= c("empirical", "ncp")){
+	method = match.arg(method)
+	howMany = sum(is.null(n, power, sig.level))
+	if(howMany == 3){
+		stop("You filled in all three of n, power, and sig.level: I've got nothing to estimate...")
+	} else if (howMany == 1){
+		stop("You only filled in one of n, power, and sig.level: you need to fix two for me to be able to estimate the remaining one...")
+	}
+	m2 = umxModify(m1, update, name= paste0("drop_", update))
+	mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
+}
+

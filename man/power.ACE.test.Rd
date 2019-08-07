@@ -4,27 +4,27 @@
 \alias{power.ACE.test}
 \title{Test the power of an ACE model to detect paths of interest.}
 \usage{
-power.ACE.test(MZ_DZ_ratio = 1, drop = c("a_r1c1"), value = 0,
-  AA = 0.5, CC = 0, EE = NULL, n = NULL, sig.level = 0.05,
+power.ACE.test(AA = 0.5, CC = 0, EE = NULL, drop = c("a_r1c1"),
+  value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05,
   power = 0.8, type = c("univariate", "bivariate", "GxE"),
   method = c("ncp", "empirical"), search = FALSE, tryHard = c("no",
   "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   optimizer = NULL, nSim = 4000)
 }
 \arguments{
-\item{MZ_DZ_ratio}{MZ pairs per DZ pair (Default 1 = equal numbers.)}
-
-\item{drop}{Path(s) to drop (Default "a_r1c1", i.e., drop a)}
-
-\item{value}{Value to set drop path(s) to (Default 0)}
-
 \item{AA}{Additive genetic variance (Default .5)}
 
 \item{CC}{Shared environment variance (Default 0)}
 
 \item{EE}{Unique environment variance. Leave NULL to compute an amount summing to 1}
 
+\item{drop}{Path(s) to drop (Default "a_r1c1", i.e., drop a)}
+
+\item{value}{Value to set drop path(s) to (Default 0)}
+
 \item{n}{If provided, solve for power /sig.level at the given n (Default NULL)}
+
+\item{MZ_DZ_ratio}{MZ pairs per DZ pair (Default 1 = equal numbers.)}
 
 \item{sig.level}{alpha (p-value) Default = 0.05}
 

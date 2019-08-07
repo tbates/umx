@@ -56,4 +56,7 @@ umxDiagnose(m1)
 \item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
+\seealso{
+Other Teaching and Testing functions: \code{\link{umxPower}}
+}
 \concept{Teaching and Testing functions}
