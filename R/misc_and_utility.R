@@ -6053,7 +6053,7 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 #' @param het.suppress Passed to hetcor (default = TRUE)
 #' @return - new dataframe
 #' @family Data Functions
-#' @seealso 
+#' @seealso [OpenMx::mxGenerateData()]
 #' @export
 #' @examples
 #' fakeCars = umx_make_fake_data(mtcars)
@@ -6210,8 +6210,19 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #' 
 #' myData = umx_make_raw_from_cov(covData, n = 100, means = 1:6)
 #' umxAPA(myData)
-umx_make_raw_from_cov <- function(myCovariance, n, means = 0) {
+#' umx_make_raw_from_cov(matrix(c(1, .3, .3, 1), nrow=2), n=10, varNames= c("x", "y"))
+#'
+umx_make_raw_from_cov <- function(myCovariance, n, means = 0, varNames=NULL) {
 	# depends on MASS::mvrnorm
+	if(is.null(varNames)){
+		if(is.null(dimnames(myCovariance))){
+			varNames = letters[1:dim(myCovariance)]
+		}else{
+			varNames = dimnames(myCovariance)[[1]]
+		}
+	} else if(length(varNames) != dim(myCovariance)[2]){
+		stop("varNames length doesn't match cov data dimensions\nYou gave me",  length(varNames), "but I need ", dim(myCovariance)[2])
+	}
 	if(!umx_is_cov(myCovariance, boolean = TRUE)){
 		stop("myCovariance must be a covariance matrix")
 	}
@@ -6224,7 +6235,7 @@ umx_make_raw_from_cov <- function(myCovariance, n, means = 0) {
 		}
 	}
 	out = MASS::mvrnorm (n = n, mu = means, Sigma = myCovariance);
-	out = data.frame(out);  names(out) <- colnames(myCovariance);
+	out = data.frame(out);  names(out) <- varNames;
 	return(out)
 }
 

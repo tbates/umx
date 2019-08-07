@@ -4,7 +4,7 @@
 \alias{umx_make_raw_from_cov}
 \title{Turn a cov matrix into raw data with umx_make_raw_from_cov}
 \usage{
-umx_make_raw_from_cov(myCovariance, n, means = 0)
+umx_make_raw_from_cov(myCovariance, n, means = 0, varNames = NULL)
 }
 \arguments{
 \item{myCovariance}{a covariance matrix}
@@ -33,6 +33,8 @@ covData <- matrix(nrow=6, ncol=6, byrow=TRUE, dimnames=list(paste0("v", 1:6), pa
 
 myData = umx_make_raw_from_cov(covData, n = 100, means = 1:6)
 umxAPA(myData)
+umx_make_raw_from_cov(matrix(c(1, .3, .3, 1), nrow=2), n=10, varNames= c("x", "y"))
+
 }
 \references{
 \itemize{

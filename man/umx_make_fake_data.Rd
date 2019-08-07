@@ -46,6 +46,8 @@ the polycor::hetcor function are suppressed.
 fakeCars = umx_make_fake_data(mtcars)
 }
 \seealso{
+[OpenMx::mxGenerateData()]
+
 Other Data Functions: \code{\link{umxHetCor}},
   \code{\link{umx_as_numeric}},
   \code{\link{umx_lower2full}},
