@@ -6215,7 +6215,7 @@ umx_make_raw_from_cov <- function(myCovariance, n, means = 0) {
 	if(!umx_is_cov(myCovariance, boolean = TRUE)){
 		stop("myCovariance must be a covariance matrix")
 	}
-	if(length(means) == 0){
+	if(length(means) == 1){
 		means = rep(means, dim(myCovariance)[2])
 	} else {
 		if(length(means) != dim(myCovariance)[2]){
