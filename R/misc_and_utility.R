@@ -6210,9 +6210,13 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #' 
 #' myData = umx_make_raw_from_cov(covData, n = 100, means = 1:6)
 #' umxAPA(myData)
-#' umx_make_raw_from_cov(matrix(c(1, .3, .3, 1), nrow=2), n=10, varNames= c("x", "y"))
-#'
-umx_make_raw_from_cov <- function(myCovariance, n, means = 0, varNames=NULL) {
+#' tmp= umx_make_raw_from_cov(matrix(c(1, .3, .3, 1), nrow=2), n=10, varNames= c("x", "y"), empirical= FALSE)
+#' cov(tmp)
+#' tmp= umx_make_raw_from_cov(matrix(c(1, .3, .3, 1), nrow=2), n=10, varNames= c("x", "y"), empirical= TRUE)
+#' cov(tmp)
+#' tmp= umx_make_raw_from_cov(qm(1, .3| .3, 1), n=10, varNames= c("x", "y"), empirical= FALSE)
+#' cov(tmp)
+umx_make_raw_from_cov <- function(myCovariance, n, means = 0, varNames=NULL, empirical = FALSE) {
 	# depends on MASS::mvrnorm
 	if(is.null(varNames)){
 		if(is.null(dimnames(myCovariance))){
@@ -6234,7 +6238,7 @@ umx_make_raw_from_cov <- function(myCovariance, n, means = 0, varNames=NULL) {
 			 " columns of cov matrix, but ", length(means), " means.")
 		}
 	}
-	out = MASS::mvrnorm (n = n, mu = means, Sigma = myCovariance);
+	out = MASS::mvrnorm (n = n, mu = means, Sigma = myCovariance, empirical = empirical);
 	out = data.frame(out);  names(out) <- varNames;
 	return(out)
 }
