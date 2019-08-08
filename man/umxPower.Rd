@@ -2,11 +2,11 @@
 % Please edit documentation in R/umxPower.R
 \name{umxPower}
 \alias{umxPower}
-\title{Test power to detect path in a umxRAM model.}
+\title{Test power to detect path in a model.}
 \usage{
 umxPower(trueModel, update = NULL, n = NULL, power = NULL,
-  sig.level = 0.05, value = 0, method = c("empirical", "ncp"),
-  search = FALSE)
+  sig.level = 0.05, value = 0, method = c("ncp", "empirical"),
+  tabulatePower = FALSE)
 }
 \arguments{
 \item{trueModel}{The model with the parameters at values you expect in the population.}
@@ -21,9 +21,9 @@ umxPower(trueModel, update = NULL, n = NULL, power = NULL,
 
 \item{value}{Value of dropped parameter (default = 0)}
 
-\item{method}{"empirical" or "ncp"}
+\item{method}{"ncp" (default) or "empirical"}
 
-\item{search}{Whether to show a spread of values (Default = FALSE)}
+\item{tabulatePower}{Whether to show a spread of n and corresponding power (Default = FALSE)}
 }
 \value{
 power table
@@ -64,7 +64,7 @@ umxPower(m1, "X_with_Y", n = 90)
 
 \dontrun{
 # Test power for a cor.test doing the same thing..
-pwr::pwr.r.test(r=.3, n=90)
+pwr::pwr.r.test(r = .3, n = 90)
 #           n = 90
 #           r = 0.3
 #   sig.level = 0.05

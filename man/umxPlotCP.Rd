@@ -5,24 +5,26 @@
 \alias{plot.MxModelCP}
 \title{Draw and display a graphical figure of Common Pathway model}
 \usage{
-umxPlotCP(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
-  SEstyle = FALSE, strip_zero = TRUE, ...)
+umxPlotCP(x = NA, means = FALSE, std = TRUE, digits = 2,
+  showFixed = TRUE, file = "name", format = c("current", "graphviz",
+  "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link[=mxModel]{mxModel()}} to display graphically}
-
-\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
-
-\item{digits}{How many decimals to include in path loadings (defaults to 2)}
 
 \item{means}{Whether to show means paths (defaults to FALSE)}
 
 \item{std}{Whether to standardize the model (defaults to TRUE)}
 
+\item{digits}{How many decimals to include in path loadings (defaults to 2)}
+
+\item{showFixed}{Whether to graph paths that are fixed but != 0 (default = TRUE)}
+
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
+\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" when CIs are found (Default FALSE)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
