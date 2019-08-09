@@ -5,7 +5,7 @@
 \title{Generic SEM factor model loading rotation function}
 \usage{
 umxRotate(model, rotation = c("varimax", "promax"), tryHard = "yes",
-  freeLoadingsAfter = TRUE)
+  freeLoadingsAfter = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{model}{a model to rotate}
@@ -13,6 +13,10 @@ umxRotate(model, rotation = c("varimax", "promax"), tryHard = "yes",
 \item{rotation}{name of the rotation.}
 
 \item{tryHard}{Default ("yes") is to tryHard}
+
+\item{freeLoadingsAfter}{Whether to keep the roated loadings fixed (Default, free them again)}
+
+\item{verbose}{print detail about the rotation}
 }
 \value{
 \itemize{

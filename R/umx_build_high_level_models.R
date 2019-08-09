@@ -154,7 +154,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 				data = as.data.frame(x)
 			}
 		} else if(is.null(data)){
-			stop("You need to provide a data.frame to analyse: This can be in x, or data, or covmat")
+			stop("You need to provide a data.frame to analyze: This can be in x, or data, or covmat")
 		}
 		name = "EFA"
 	}
@@ -208,6 +208,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 		print(loadings(m1))
 	}
 	umxSummary(m1, digits = digits, report = report);
+	
 	if(scores != "none"){
 		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
 	} else {

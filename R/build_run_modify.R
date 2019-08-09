@@ -2328,7 +2328,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxSummaryCP()], [umxPlotCP()]. See [umxACE()] for more examples of twin modeling. 
-#' \code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see [xmu_make_top_twin()]
+#' [plot()] and [umxSummary()] work for all twin models, e.g., [umxIP()], [umxCP()], [umxGxE()], and [umxACE()]. For a deep-dive, see [xmu_make_top_twin()]
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -2574,17 +2574,18 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 #' @param model a model to rotate
 #' @param rotation name of the rotation.
 #' @param tryHard Default ("yes") is to tryHard
-#' @param freeLoadingsAfter
+#' @param freeLoadingsAfter Whether to keep the roated loadings fixed (Default, free them again)
+#' @param verbose print detail about the rotation
 #' @return - Rotated solution
 #' @family Reporting functions
 #' @export
 #' @md
-umxRotate <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE){
-  UseMethod("RMSEA", model)
+umxRotate <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE, verbose = TRUE){
+  UseMethod("umxRotate", model)
 } 
 
 #' @export
-umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE){
+umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE, verbose = TRUE){
 	stop("umxRotate is not defined for objects of class:", class(model))
 }
 
@@ -2599,6 +2600,7 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' @param rotation name of the rotation.
 #' @param tryHard Default ("yes") is to tryHard.
 #' @param freeLoadingsAfter return the model with factor loadings free (default) or fixed in the new locations.
+#' @param verbose print detail about the rotation
 #' @return - Rotated solution.
 #' @export
 #' @family Twin Modeling Functions
@@ -2616,22 +2618,24 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' m2 = umxRotate(m1, rotation = "varimax",  tryHard = "yes")
 #' 
 #' }
-umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE) {
-	# todo: Check nFac > 1)
+umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE, verbose = TRUE) {
+	rotation = match.arg(rotation)
+	# TODO: Check nFac > 1)
+
 	# 1. get loadings
-	loadings = model$top$cp_loadings$values
+	x = model$top$cp_loadings$values
 
 	# 2. rotate matrix
-	rotated = eval(parse(paste0(rotation, "(loadings)")))
+	rotated = eval(parse(text = paste0(rotation, "(x)")))
 
 	# 3. fix loadings at their new rotated values
-	model$top = omxSetParameters(model$top, labels= modeltop$cp_loadings$labels, values = rotated$loadings, free = FALSE)
+	model$top = omxSetParameters(model$top, labels= model$top$cp_loadings$labels, values = rotated$loadings, free = FALSE)
 	# run the model to re-estimate common and residual loadings given the (fixed) rotated loadings
 	model = xmu_safe_run_summary(model, autoRun = TRUE, tryHard = tryHard, comparison = TRUE, digits = 3)
 
 	# free the values so mxCompare gets the right answers
 	if(freeLoadingsAfter){
-		model$top = omxSetParameters(model$top, labels= modeltop$cp_loadings$labels, free = TRUE)
+		model$top = omxSetParameters(model$top, labels= model$top$cp_loadings$labels, free = TRUE)
 	}
 	if(verbose){
 		print("Rotation results")

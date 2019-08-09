@@ -231,7 +231,7 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 \seealso{
 \itemize{
 \item \code{\link[=umxSummaryCP]{umxSummaryCP()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}. See \code{\link[=umxACE]{umxACE()}} for more examples of twin modeling.
-\code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link[=xmu_make_top_twin]{xmu_make_top_twin()}}
+\code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}} work for all twin models, e.g., \code{\link[=umxIP]{umxIP()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=umxGxE]{umxGxE()}}, and \code{\link[=umxACE]{umxACE()}}. For a deep-dive, see \code{\link[=xmu_make_top_twin]{xmu_make_top_twin()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},

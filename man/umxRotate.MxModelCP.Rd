@@ -5,7 +5,7 @@
 \title{Rotate a CP solution}
 \usage{
 \method{umxRotate}{MxModelCP}(model, rotation = c("varimax", "promax"),
-  tryHard = "yes", freeLoadingsAfter = TRUE)
+  tryHard = "yes", freeLoadingsAfter = TRUE, verbose = TRUE)
 }
 \arguments{
 \item{model}{a \code{\link[=umxCP]{umxCP()}} model to rotate.}
@@ -15,6 +15,8 @@
 \item{tryHard}{Default ("yes") is to tryHard.}
 
 \item{freeLoadingsAfter}{return the model with factor loadings free (default) or fixed in the new locations.}
+
+\item{verbose}{print detail about the rotation}
 }
 \value{
 \itemize{
