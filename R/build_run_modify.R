@@ -849,22 +849,28 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' umxModify allows you to modify, re-run and summarize an [mxModel()],
 #' all in one line of script.
 #' 
+#' @details
 #' You can add paths, or other model elements, set path values (default is 0), or replace labels.
 #' As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
 #' 
 #' \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
 #' 
 #' Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
+#' for instance, this would match labels containing either "Cs" or "Cr":
+#' 
+#' ```
 #' fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
+#' ```
 #' 
-#' You may find it easier to be more explicit. Like this: 
+#' You may find it easier to be more explicit. Like this:
 #' 
-#' fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
+#' ```R
+#' fit2 = umxSetParameters(fit1, labels = c("Cs", "Cr"), values = 0, free = FALSE, name = "newName")
 #' fit2 = mxRun(fit2)
 #' summary(fit2)
-#' 
-#' @details
-#' \emph{Note}: A (minor) limitation is that you cannot simultaneously set value to 0 
+#' ```
+#'
+#' *Note*: A (minor) limitation is that you cannot simultaneously set value to 0 
 #' AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 #' 
 #' @aliases umxModify
@@ -3289,16 +3295,25 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 # = Label and equate functions =
 # ==============================
 
-#' umxSetParameters: Set parameters in an mxModel
+#' Change or fix parameters (e.g. their values, labels, bounds, ..) in a model. 
 #'
-#' Free or fix parameters in an [mxModel()].
-#' This allows similar actions that [update()] enables
-#' for lm models.
-#' Updating can create duplicate labels, so this function also calls [omxAssignFirstParameters()]
-#' to equate the start values for parameters which now have identical labels.
+#' `umxSetParameters` is used to alter values, and other parameter properties in an [mxModel()].
+#' A common use is setting new values and changing parameters from free to false. 
+#' *Note*: If you just want to modify and re-run a model, you probably want [umxModify()].
 #' 
-#' It also supports regular expressions to select labels. In this respect,
-#' it is similar to [umxModify()] without running the model.
+#' Using `umxSetParameters`, you use `labels=` to select the parameters you want to update. 
+#' You can set their free/fixed state with `free=`, and set new values with `values = `. Likewise 
+#' for bounds. 
+#' 
+#' `umxSetParameters` supports pattern matching (regular expressions) to select labels. Set `regex=`
+#' to a regular expression matching the labels you want to select. e.g. "G_to_.*" would match
+#' "G_to_anything".
+#' 
+#' **Details**
+#' Internally, `umxSetParameters` is equivalent to a call to `omxSetParameters` where you 
+#' have the ability to generate a pattern-based label list, 
+#' and, because this can create duplicate labels, we also call [omxAssignFirstParameters()]
+#' to equate the start values for parameters which now have identical labels.
 #' 
 #' @param model an [mxModel()] to WITH
 #' @param labels = labels to find
@@ -3310,8 +3325,8 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param indep = whether to look in indep models
 #' @param strict whether to complain if labels not found
 #' @param name = new name for the returned model
-#' @param regex Is labels a regular expression (defaults to FALSE)
-#' @param test just show what you would do? (defaults to FALSE)
+#' @param regex patterns to match for labels (or if TRUE, use labels as regular expressions)
+#' @param test Just show what you would do? (defaults to FALSE)
 #' @return - [mxModel()]
 #' @export
 #' @family Modify or Compare Models
@@ -3329,9 +3344,12 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' 	umxPath(v1m0 = latents)
 #' )
 #' parameters(m1)
+#' # Match all labels
+#  # Test run, showing all updated with an "m1_" in front
 #' umxSetParameters(m1, regex = "^", newlabels= "m1_", test = TRUE)
+#' # Change path to x1 to x2, equating these two paths
 #' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
-#' parameters(m2)
+#' parameters(m2) 
 umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE, strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
 	if(is.character(regex)){
 		labels = regex
@@ -3344,7 +3362,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 	if(regex){
 		oldLabels = umxGetParameters(model, regex = labels)
 		if(!is.null(newlabels)){
-			newlabels = gsub(labels, newlabels, oldLabels, ignore.case = F)
+			newlabels = gsub(labels, newlabels, oldLabels, ignore.case = FALSE)
 		}
 		labels = oldLabels
 	}

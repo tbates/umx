@@ -2688,13 +2688,14 @@ plot.MxModelGxE <- umxPlotGxE
 #'
 #' @aliases plot.MxModelCP
 #' @param x The Common Pathway [mxModel()] to display graphically
-#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
-#' @param format = c("current", "graphviz", "DiagrammeR") 
-#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" (Default)
+#' @param digits How many decimals to include in path loadings (defaults to 2)
+#' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
+#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" when CIs are found (Default FALSE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param format = c("current", "graphviz", "DiagrammeR") 
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
@@ -2720,7 +2721,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' umxPlotCP(m1)
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
 	# 1. a_cp_matrix = A latent (and correlations among latents)
 	# 	* These go from a_cp n=row TO common n= row
@@ -2729,7 +2730,7 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	# 3. cp_loadings common factor loadings
 
 	format = match.arg(format)
-	model = x # just to emphasize that x has to be a model 
+	model = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
 
 	if(std){ model = xmu_standardize_CP(model) }
@@ -2745,32 +2746,32 @@ umxPlotCP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	# 1. Collect latents on the diag
 	# from = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
+	out = umx_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
+	out = umx_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
 
 	# 2. Factor correlations on the lower
 	# from = "<name><rowNum>"; target = "<name><colNum>"
-	out = umx_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = umx_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
+	out = umx_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
+	out = umx_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
 
 	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", p= out)
+	out = umx_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", showFixed = showFixed, p= out)
 	# from    = "common<c>"
 	# target  = selDVs[row]
 	# latents = append(latents, from)
 
 	# Process "as" matrix
-	out = umx_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
+	out = umx_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = umx_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = umx_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
 
 	# Process "expMean" 1 * nVar matrix
 	if(means){
 		# from = "one"; target = selDVs[c]
-		out = umx_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", p = out)
+		out = umx_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
 	}
 	preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
 	top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")

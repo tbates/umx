@@ -59,11 +59,10 @@ As an example, this one-liner drops a path labelled "Cs", and returns the update
 Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
 fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
 
-You may find it easier to be more explicit. Like this:
-
-fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
+You may find it easier to be more explicit. Like this:\preformatted{fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
 fit2 = mxRun(fit2)
 summary(fit2)
+}
 
 \emph{Note}: A (minor) limitation is that you cannot simultaneously set value to 0
 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
