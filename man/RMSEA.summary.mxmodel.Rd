@@ -29,7 +29,7 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)
@@ -50,7 +50,6 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umx_drop_ok}},
   \code{\link{xmu_standardize_RAM}}
 }
 \concept{Reporting functions}

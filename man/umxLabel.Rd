@@ -53,7 +53,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+	demoOneFactor, type = "cov",
 )
 umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 m1 = umxLabel(m1)

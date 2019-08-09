@@ -5,8 +5,8 @@
 \title{Print a comparison table of one or more \code{\link[=mxModel]{mxModel()}}s, formatted nicely.}
 \usage{
 umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = c("markdown", "inline", "html", "report"),
-  compareWeightedAIC = FALSE, file = "tmp.html")
+  report = c("markdown", "inline", "html"), compareWeightedAIC = FALSE,
+  file = "tmp.html")
 }
 \arguments{
 \item{base}{The base \code{\link[=mxModel]{mxModel()}} for comparison}
@@ -42,14 +42,14 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
 m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
-umxCompare(m1, m2, report = "report") # Add English-sentence descriptions
+umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
 \dontrun{
 umxCompare(m1, m2, report = "html") # Open table in browser
 }
@@ -77,7 +77,6 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
   \code{\link{umxPlotACEv}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umx_drop_ok}},
   \code{\link{xmu_standardize_RAM}}
 }
 \concept{Reporting functions}

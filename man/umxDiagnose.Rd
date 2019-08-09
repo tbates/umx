@@ -41,7 +41,7 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+myData = demoOneFactor, type = "cov",
 m1 <- umxRAM("OneFactor", data = myData,
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),

@@ -745,7 +745,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #' 	mxAlgebra(A %*% L %*% t(A) + U, name = "R"), 
 #' 	mxExpectationNormal("R", dimnames = names(demoOneFactor)),
 #' 	mxFitFunctionML(),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' 	demoOneFactor, type = "cov",
 #' )
 #' m3 = umx:::xmuLabel_MATRIX_Model(m2)
 #' m4 = umx:::xmuLabel_MATRIX_Model(m2, suffix = "male")
@@ -1128,7 +1128,7 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' 	mxPath(from = latents, to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' 	demoOneFactor, type = "cov",
 #' )
 #' m1 = umx:::xmuPropagateLabels(m1, suffix = "MZ")
 xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {

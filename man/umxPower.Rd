@@ -2,11 +2,11 @@
 % Please edit documentation in R/umxPower.R
 \name{umxPower}
 \alias{umxPower}
-\title{Test power to detect path in a umxRAM model.}
+\title{Test power to detect specified path values in a model.}
 \usage{
 umxPower(trueModel, update = NULL, n = NULL, power = NULL,
-  sig.level = 0.05, value = 0, method = c("empirical", "ncp"),
-  search = FALSE)
+  sig.level = 0.05, value = 0, method = c("ncp", "empirical"),
+  tabulatePower = FALSE)
 }
 \arguments{
 \item{trueModel}{The model with the parameters at values you expect in the population.}
@@ -21,9 +21,9 @@ umxPower(trueModel, update = NULL, n = NULL, power = NULL,
 
 \item{value}{Value of dropped parameter (default = 0)}
 
-\item{method}{"empirical" or "ncp"}
+\item{method}{"ncp" (default) or "empirical"}
 
-\item{search}{Whether to show a spread of values (Default = FALSE)}
+\item{tabulatePower}{Whether to show a spread of n and corresponding power (Default = FALSE)}
 }
 \value{
 power table
@@ -31,6 +31,18 @@ power table
 \description{
 \code{umxPower} takes an input model (the model of the true data), and tests power (or determines n)
 to detect dropping (or changing the value) a path in this true model.
+
+A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
+of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
+discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
+But even with zero power, the Type-I error rate remains a nominal 5% (and with any researcher degrees of freedom, perhaps much more than that).
+Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
+This sounds silly, but empirical rates are often as low as 20% (Button, et al., 2013).
+
+Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
+
+\if{html}{\figure{power.png}{options: width="50\%" alt="Figure: power.png"}}
+\if{latex}{\figure{power.pdf}{options: width=7cm}}
 }
 \examples{
 # ===================================================
@@ -64,7 +76,7 @@ umxPower(m1, "X_with_Y", n = 90)
 
 \dontrun{
 # Test power for a cor.test doing the same thing..
-pwr::pwr.r.test(r=.3, n=90)
+pwr::pwr.r.test(r = .3, n = 90)
 #           n = 90
 #           r = 0.3
 #   sig.level = 0.05

@@ -97,7 +97,7 @@ As can be seen, each phenotype also by default has A, C, and E influences specif
 
 Features include the ability to include more than one common pathway, to use ordinal data.
 
-\strong{note}: The function \code{umx_set_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
+\strong{note}: The function \code{umx_set_mvn_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
 It defaults to .001. You might find that '0.01' works better for ordinal models.
 
 Like the \code{\link[=umxACE]{umxACE()}} model, the CP model decomposes phenotypic variance
@@ -203,7 +203,7 @@ mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 
 # umx_set_optimizer("NPSOL")
-# umx_set_optimization_options("mvnRelEps", .01)
+# umx_set_mvn_optimization_options("mvnRelEps", .01)
 m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 

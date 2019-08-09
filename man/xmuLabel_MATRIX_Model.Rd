@@ -36,7 +36,7 @@ m2 <- mxModel("One Factor",
 	mxAlgebra(A \%*\% L \%*\% t(A) + U, name = "R"), 
 	mxExpectationNormal("R", dimnames = names(demoOneFactor)),
 	mxFitFunctionML(),
-	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+	demoOneFactor, type = "cov",
 )
 m3 = umx:::xmuLabel_MATRIX_Model(m2)
 m4 = umx:::xmuLabel_MATRIX_Model(m2, suffix = "male")

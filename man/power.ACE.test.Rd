@@ -56,13 +56,16 @@ significant result given certain study characteristics such as sample size (N), 
 and the criterion for statistical significance (\eqn{\alpha}).
 
 A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
-of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth want to
-discourage running of studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
-At the same time, the Type-I error rate is a nominal 5%, and with any researcher degrees of freedom, perhaps much more than that.
+of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
+discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
+But even with zero power, the Type-I error rate remains a nominal 5% (and with any researcher degrees of freedom, perhaps much more than that).
 Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
-This sounds silly, but empirical rates are often as low as 20% (# TODO cite Button).
+This sounds silly, but empirical rates are often as low as 20% (Button, et al., 2013).
 
-If you have few subjects and desired adequate power, you should raise the p-value. Be aware that consumers will be skeptical.
+Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
+
+\if{html}{\figure{power.png}{options: width="50\%" alt="Figure: power.png"}}
+\if{latex}{\figure{power.pdf}{options: width=7cm}}
 }
 \examples{
 
@@ -171,6 +174,9 @@ power.ACE.test(update = "a_r1c1", AA= .5, CC= 0, nSim= 20)
 revisited: II detection of common environmental variance. \emph{Twin Res Hum Genet}, \strong{11}: 48-54.
 \href{https://doi.org/10.1375/twin.11.1.48}{doi}
 }
+
+Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., & Munafo, M. R. (2013).
+Power failure: why small sample size undermines the reliability of neuroscience. \emph{Nat Rev Neurosci}, \strong{14}, 365-376. \href{https://doi.org/10.1038/nrn3475}{doi}
 }
 \seealso{
 \itemize{

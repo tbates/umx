@@ -21,7 +21,7 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
@@ -35,20 +35,20 @@ umx_get_checkpoint(model = m1)
 }
 }
 \seealso{
-Other Get and set: \code{\link{umx_default_option}},
-  \code{\link{umx_get_options}},
+Other Get and set: \code{\link{umx_get_options}},
   \code{\link{umx_set_auto_plot}},
   \code{\link{umx_set_auto_run}},
   \code{\link{umx_set_checkpoint}},
   \code{\link{umx_set_condensed_slots}},
   \code{\link{umx_set_cores}},
   \code{\link{umx_set_data_variance_check}},
-  \code{\link{umx_set_optimization_options}},
+  \code{\link{umx_set_mvn_optimization_options}},
   \code{\link{umx_set_optimizer}},
   \code{\link{umx_set_plot_file_suffix}},
   \code{\link{umx_set_plot_format}},
   \code{\link{umx_set_separator}},
   \code{\link{umx_set_silent}},
-  \code{\link{umx_set_table_format}}, \code{\link{umx}}
+  \code{\link{umx_set_table_format}}, \code{\link{umx}},
+  \code{\link{xmu_match.arg}}
 }
 \concept{Get and set}
