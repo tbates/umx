@@ -19,14 +19,12 @@ Get the checkpoint status for a model or global options
 umx_get_checkpoint() # current global default
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
-)
-m1 = umx_set_checkpoint(interval = 2, model = m1)
+	umxPath(var = "G", fixedAt = 1)
+)#' m1 = umx_set_checkpoint(interval = 2, model = m1)
 umx_get_checkpoint(model = m1)
 }
 \references{

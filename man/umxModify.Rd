@@ -74,13 +74,12 @@ require(umx)
 # First we'll just build a 1-factor model
 umx_set_optimizer("SLSQP")
 data(demoOneFactor)
-latents  = c("G")
 manifests = names(demoOneFactor)
 
 m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
+	umxPath(var = "G", fixedAt = 1)
 )
 
 # 1. Drop the path to x1 (also updating the name so it's

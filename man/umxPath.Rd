@@ -144,13 +144,11 @@ Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
 \examples{
 # A worked example
 data(demoOneFactor)
-latents  = c("G")
 manifests = names(demoOneFactor)
-myData = demoOneFactor, type = "cov",
-m1 <- umxRAM("One Factor", data = myData,
-	umxPath(latents, to = manifests),
+m1 <- umxRAM("One Factor", data = myData, type= "cov",
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = "G", fixedAt = 1.0)
 )
 umxSummary(m1, show = "std")
 require(umx)

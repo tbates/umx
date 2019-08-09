@@ -26,12 +26,12 @@ Fix all free parameters in a model using omxGetParameters()
 \examples{
 require(umx)
 data(demoOneFactor)
-latents = c("G")
 manifests = names(demoOneFactor)
+
 m1 <- umxRAM("OneFactor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
+	umxPath(var = "G", fixedAt = 1)
 )
 m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 mxCompare(m1, m2)

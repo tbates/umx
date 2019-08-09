@@ -41,12 +41,12 @@ with replacement from your data and then computing the statistic for each redraw
 \dontrun{
 require(umx)
 data(demoOneFactor)
-latents  = c("g")
 manifests = names(demoOneFactor)
+
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = "G", fixedAt = 1.0)
 )
 
 umxCI_boot(m1, type = "par.expected")

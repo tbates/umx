@@ -901,13 +901,12 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' # First we'll just build a 1-factor model
 #' umx_set_optimizer("SLSQP")
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
 #' 
 #' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' 
 #' # 1. Drop the path to x1 (also updating the name so it's
@@ -3246,12 +3245,11 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' # By default, umxEquate just equates master and slave labels
 #' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Eq x1 x2 loadings")
@@ -3316,12 +3314,12 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents = c("G")
 #' manifests = names(demoOneFactor)
+#' 
 #' m1 <- umxRAM("OneFactor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 #' mxCompare(m1, m2)
@@ -4253,13 +4251,12 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @examples
 #' # A worked example
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' myData = demoOneFactor, type = "cov",
-#' m1 <- umxRAM("One Factor", data = myData,
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 <- umxRAM("One Factor", data = myData, type= "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
 #' umxSummary(m1, show = "std")
 #' require(umx)
@@ -4718,7 +4715,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #' m1 <- umxRAM("One Factor", data = demoOneFactor, type="cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G"  , fixedAt= 1)
 #' )

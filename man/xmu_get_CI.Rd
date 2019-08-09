@@ -33,11 +33,12 @@ If std are available, then these are reported.
 }
 \examples{
 require(umx); data(demoOneFactor)
-latents = c("g"); manifests = names(demoOneFactor)
+manifests = names(demoOneFactor)
+
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = "G", fixedAt = 1.0)
 )
 m1 = umxCI(m1, run= "yes")
 

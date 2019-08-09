@@ -24,14 +24,12 @@ Sometimes you want these :-) This also allows you to change the matrix name: use
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("g")
 manifests = names(demoOneFactor)
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
-)
-
+	umxPath(var = "G", fixedAt = 1)
+)#'
 umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 }
 \references{

@@ -20,20 +20,19 @@
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor",
-#' 	data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#'
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' umxFitIndices(m1)
 #' # And with raw data
 #' m1 <- umxRAM("m1", data = demoOneFactor,
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(v.m. = manifests),
-#' 	umxPath(v1m0 = latents)
+#' 	umxPath(v1m0 = "G")
 #' )
 #' umxFitIndices(m1)
 # Round to 3 places, and report as a markdown table

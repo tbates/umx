@@ -781,12 +781,12 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' umx_set_checkpoint(2, "evaluations", prefix="SNP_1")
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m1 = umx_set_checkpoint(model = m1)
 #' m1 = mxRun(m1)
@@ -844,14 +844,13 @@ umx_checkpoint <- umx_set_checkpoint
 #' umx_get_checkpoint() # current global default
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
-#' )
-#' m1 = umx_set_checkpoint(interval = 2, model = m1)
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#' m1 = umx_set_checkpoint(interval = 2, model = m1)
 #' umx_get_checkpoint(model = m1)
 umx_get_checkpoint <- function(model = NULL) {
 	message("Always Checkpoint: "    , mxOption(model, "Always Checkpoint") )
@@ -1136,14 +1135,13 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' tmx_show(m1, what = "free", matrices = "S") # variance of g is not set
 #' m1 = umx_fix_latents(m1)
 #' tmx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
@@ -3198,14 +3196,13 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' tmx_show(m1)
 #' tmx_show(m1, digits = 3)
 #' tmx_show(m1, matrices = "S")
@@ -3508,14 +3505,13 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_has_been_run(m1)
 umx_has_been_run <- function(model, stop = FALSE) {
 	output <- model$output
@@ -3933,14 +3929,13 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
@@ -4084,14 +4079,13 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_has_means(m1)
 #' m1 <- mxModel(m1,
 #' 	mxPath(from = "one", to = manifests),
@@ -4180,14 +4174,13 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_check_model(m1) # TRUE, this is a model
 #' umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 #' umx_check_model(m1, hasData = TRUE)
@@ -6596,14 +6589,13 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 # "stdA[1,6]" "stdA[2,6]" "stdA[3,6]" "stdA[4,6]" "stdA[5,6]"
 umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
@@ -6697,12 +6689,12 @@ umx_standardize.default <- function(model, ...){
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#'
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
 #'
 #' m1 = xmu_standardize_RAM(m1)

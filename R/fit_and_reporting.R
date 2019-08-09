@@ -47,13 +47,12 @@
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' myData = demoOneFactor, type = "cov",
-#' m1 <- umxRAM("OneFactor", data = myData,
-#' 	umxPath(latents, to = manifests),
+#' 
+#' m1 = umxRAM("OneFactor", data = demoOneFactor, type= "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m1 = mxRun(m1)
 #' umxSummary(m1, show = "std")
@@ -355,12 +354,12 @@ umxReduce.MxModelACE <- umxReduceACE
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#'
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
 #'
 #'# ===================================
@@ -684,12 +683,12 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
+#'
 #' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m1$intervals # none yet - empty list()
 #' m1 = umxCI(m1)
@@ -1908,13 +1907,14 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
+#'
 #' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
+#'
 #' m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
 #' umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
@@ -2050,12 +2050,12 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#'
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
 #'
 #' umxCI_boot(m1, type = "par.expected")
@@ -2217,12 +2217,12 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
@@ -2927,15 +2927,13 @@ plot.MxModelIP <- umxPlotIP
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
-#' manifests = names(demoOneFactor)[1:3]
-#' df = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
-#' m1 <- umxRAM("One Factor", data = df,
-#' 	umxPath(latents, to = manifests),
+#' manifests = names(demoOneFactor)
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
-#' )
-#' umxMI(m1, full=FALSE)
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#' umxMI(m1, full=FALSE)
 umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToShow = "both", decreasing = TRUE) {
 	if(typeToShow != "both"){
 		message("Only showing both add and remove is supported so far")
@@ -3443,14 +3441,13 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
-#' )
-#' extractAIC(m1)
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#' extractAIC(m1)
 #' # -2.615998
 #' AIC(m1)
 extractAIC.MxModel <- function(fit, scale, k, ...) {
@@ -3478,14 +3475,13 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' vcov(m1) # supplied by OpenMx
 #' umxExpCov(m1, digits = 3)
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
@@ -3552,13 +3548,14 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
-#' m1 = umxRAM("One Factor", data = demoOneFactor,
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
+#'
 #' umxExpMeans(m1)
 #' umxExpMeans(m1, digits = 3)
 umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
@@ -3621,12 +3618,12 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#'
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' RMSEA(m1)
 RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
@@ -3651,13 +3648,14 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
+#'
 #' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
+#'
 #' RMSEA(m1)
 RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3){
 	if(ci.lower != .05 | ci.upper != .95){
