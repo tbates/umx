@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.R
 \name{umxSetParameters}
 \alias{umxSetParameters}
-\title{umxSetParameters: Set parameters in an mxModel}
+\title{Change or fix parameters (e.g. their values, labels, bounds, ..) in a model.}
 \usage{
 umxSetParameters(model, labels, free = NULL, values = NULL,
   newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
@@ -29,9 +29,9 @@ umxSetParameters(model, labels, free = NULL, values = NULL,
 
 \item{name}{= new name for the returned model}
 
-\item{regex}{Is labels a regular expression (defaults to FALSE)}
+\item{regex}{patterns to match for labels (or if TRUE, use labels as regular expressions)}
 
-\item{test}{just show what you would do? (defaults to FALSE)}
+\item{test}{Just show what you would do? (defaults to FALSE)}
 }
 \value{
 \itemize{
@@ -39,15 +39,24 @@ umxSetParameters(model, labels, free = NULL, values = NULL,
 }
 }
 \description{
-Free or fix parameters in an \code{\link[=mxModel]{mxModel()}}.
-This allows similar actions that \code{\link[=update]{update()}} enables
-for lm models.
-Updating can create duplicate labels, so this function also calls \code{\link[=omxAssignFirstParameters]{omxAssignFirstParameters()}}
-to equate the start values for parameters which now have identical labels.
+\code{umxSetParameters} is used to alter values, and other parameter properties in an \code{\link[=mxModel]{mxModel()}}.
+A common use is setting new values and changing parameters from free to false.
+\emph{Note}: If you just want to modify and re-run a model, you probably want \code{\link[=umxModify]{umxModify()}}.
 }
 \details{
-It also supports regular expressions to select labels. In this respect,
-it is similar to \code{\link[=umxModify]{umxModify()}} without running the model.
+Using \code{umxSetParameters}, you use \code{labels=} to select the parameters you want to update.
+You can set their free/fixed state with \code{free=}, and set new values with \code{values = }. Likewise
+for bounds.
+
+\code{umxSetParameters} supports pattern matching (regular expressions) to select labels. Set \code{regex=}
+to a regular expression matching the labels you want to select. e.g. "G_to_.*" would match
+"G_to_anything".
+
+\strong{Details}
+Internally, \code{umxSetParameters} is equivalent to a call to \code{omxSetParameters} where you
+have the ability to generate a pattern-based label list,
+and, because this can create duplicate labels, we also call \code{\link[=omxAssignFirstParameters]{omxAssignFirstParameters()}}
+to equate the start values for parameters which now have identical labels.
 }
 \examples{
 require(umx)
@@ -60,9 +69,11 @@ m1 <- umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
 	umxPath(v1m0 = latents)
 )
 parameters(m1)
+# Match all labels
 umxSetParameters(m1, regex = "^", newlabels= "m1_", test = TRUE)
+# Change path to x1 to x2, equating these two paths
 m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
-parameters(m2)
+parameters(m2) 
 }
 \references{
 \itemize{
