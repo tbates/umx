@@ -176,7 +176,7 @@ revisited: II detection of common environmental variance. \emph{Twin Res Hum Gen
 }
 
 Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., & Munafo, M. R. (2013).
-Power failure: why small sample size undermines the reliability of neuroscience. \emph{Nat Rev Neurosci}, \strong{14}, 365-376. \href{https://doi.org/10.1038/nrn3475}{doi}
+Power failure: why small sample size undermines the reliability of neuroscience. \emph{Nature Reviews Neuroscience}, \strong{14}, 365-376. \href{https://doi.org/10.1038/nrn3475}{doi}
 }
 \seealso{
 \itemize{

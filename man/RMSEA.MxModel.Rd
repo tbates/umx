@@ -22,7 +22,7 @@
 }
 }
 \description{
-Compute the confidence interval on RMSEA
+Return RMSEA and its confidence interval on a model.
 }
 \examples{
 require(umx)
@@ -50,6 +50,7 @@ Other Reporting functions: \code{\link{RMSEA.summary.mxmodel}},
   \code{\link{umxCompare}}, \code{\link{umxConfint}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
+  \code{\link{umxRotate}},
   \code{\link{umxSummary.MxModel}},
   \code{\link{xmu_standardize_RAM}}
 }

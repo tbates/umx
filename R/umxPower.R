@@ -45,7 +45,7 @@
 #' [doi](https://doi.org/10.1375/twin.11.1.48)
 #' 
 #' Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., & Munafo, M. R. (2013).
-#' Power failure: why small sample size undermines the reliability of neuroscience. *Nat Rev Neurosci*, **14**, 365-376. [doi](https://doi.org/10.1038/nrn3475)
+#' Power failure: why small sample size undermines the reliability of neuroscience. *Nature Reviews Neuroscience*, **14**, 365-376. [doi](https://doi.org/10.1038/nrn3475)
 #'
 #' @md
 #' @examples

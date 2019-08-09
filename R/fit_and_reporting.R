@@ -149,7 +149,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @export
 #' @md
-umxReduce <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", ...){
+umxReduce <- function(model, report = c("markdown", "inline", "html"), baseFileName = "tmp", ...){
 	UseMethod("umxReduce", model)
 }
 
@@ -3589,27 +3589,28 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 # define generic RMSEA...
 #' Generic RMSEA function
 #'
-#' See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
+#' See [RMSEA.MxModel()] to access the RMSEA of MxModels
 #'
 #' @param x an object from which to get the RMSEA 
 #' @param ci.lower the lower CI to compute
 #' @param ci.upper the upper CI to compute
 #' @param digits digits to show
 #' @return - RMSEA object containing value (and perhaps a CI)
+#' @md
 #' @export
 #' @family Reporting functions
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 
 #' RMSEA function for MxModels
 #'
-#' Compute the confidence interval on RMSEA
+#' Return RMSEA and its confidence interval on a model.
 #'
+#' @rdname RMSEA.MxModel
 #' @param x an [mxModel()] from which to get RMSEA
 #' @param ci.lower the lower CI to compute
 #' @param ci.upper the upper CI to compute
 #' @param digits digits to show (defaults to 3)
 #' @return - object containing the RMSEA and lower and upper bounds
-#' @rdname RMSEA.MxModel
 #' @export
 #' @family Reporting functions
 #' @references - <https://github.com/tbates/umx>,
@@ -3650,7 +3651,7 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)

@@ -28,7 +28,7 @@
 * IMPROVED: `umx_make_TwinData` More robust
 * IMPROVED: `umx_scale_wide_data` gains twins parameter
 * IMPROVED: `plot`: can do pathLabels = "labels" to show the labels for paths
-* IMPROVED: `umx_rename` reorder parameters, call x-> `data`, deprecate `grep` in favour of `regex` for consistency,
+* IMPROVED: `umx_rename` reorder parameters, call x-> `data`, deprecate `grep` in favor of `regex` for consistency,
 * IMPROVED: `umx_rename` examples
 * IMPROVED: `umx_cor` quieter, more informative
 * IMPROVED: `xmu_dot_move_ranks` set min, max or same to "" to take these ranks out of the diagram - Aids tricky layouts. (closes #84)

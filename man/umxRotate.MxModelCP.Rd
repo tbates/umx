@@ -4,11 +4,13 @@
 \alias{umxRotate.MxModelCP}
 \title{Rotate a CP solution}
 \usage{
-umxRotate.MxModelCP(x, rotation = c("varimax", "promax"),
+\method{umxRotate}{MxModelCP}(x, rotation = c("varimax", "promax"),
   tryHard = "yes", freeLoadingsAfter = TRUE)
 }
 \arguments{
 \item{tryHard}{Default ("yes") is to tryHard}
+
+\item{freeLoadingsAfter}{return the model with factor loadings free or fixed}
 
 \item{param}{a \code{\link[=umxCP]{umxCP()}} model to rotate}
 

@@ -3661,7 +3661,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' @param ordVar The value to return at any ordinal columns (defaults to 1).
 #' @param digits digits to round output to (Ignored if NULL). Set for easy printing.
 #' @param strict Whether to allow non-ordered factors to be processed (default = FALSE (no)).
-#' @param allowCorForFactorCovs When ordinal data are present, use heterochoic correlations in affected cells, in place of covariances. 
+#' @param allowCorForFactorCovs When ordinal data are present, use heterochoric correlations in affected cells, in place of covariances. 
 #' @return - [mxModel()]
 #' @export
 #' @family Miscellaneous Stats Helpers
@@ -4704,7 +4704,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' Scale wide twin data
 #'
 #' Scale wide data across all twins. You offer up a list of variables to scale, e.g. c("DEP", "bmi")
-#' and the separator (e.g. `sep = "_T"`) and twin suffizes e.g. 1:2 that paste together to make 
+#' and the separator (e.g. `sep = "_T"`) and twin suffixes e.g. 1:2 that paste together to make 
 #' complete variable names: e.g. "DEP_T1" and "DEP_T2".
 #' 
 #' @param varsToScale The base names of the variables ("weight" etc.)

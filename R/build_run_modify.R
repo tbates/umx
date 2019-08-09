@@ -2567,6 +2567,27 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 	return(model)
 } # end umxCP
 
+#' Generic SEM factor model loading rotation function
+#'
+#' See [umxRotate.MxModelCP()] to rotate the factor loadings of a [umxCP()] model
+#'
+#' @param model a model to rotate
+#' @param rotation name of the rotation.
+#' @param tryHard Default ("yes") is to tryHard
+#' @param freeLoadingsAfter
+#' @return - Rotated solution
+#' @family Reporting functions
+#' @export
+#' @md
+umxRotate <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE){
+  UseMethod("RMSEA", model)
+} 
+
+#' @export
+umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE){
+	stop("umxRotate is not defined for objects of class:", class(model))
+}
+
 #' Rotate a CP solution
 #'
 #' @description
@@ -2574,9 +2595,10 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 #'
 #' @details Need to free afterwards
 #'
-#' @param param a [umxCP()] model to rotate
-#' @param rotate name of the rotation.
-#' @param tryHard Default ("yes") is to tryHard
+#' @param model a [umxCP()] model to rotate.
+#' @param rotation name of the rotation.
+#' @param tryHard Default ("yes") is to tryHard.
+#' @param freeLoadingsAfter return the model with factor loadings free (default) or fixed in the new locations.
 #' @return - Rotated solution.
 #' @export
 #' @family Twin Modeling Functions
@@ -2589,16 +2611,13 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 #' library(umx)
 #' # Fit 3 factor CPM
 #' data(GFF)
-#' mzData = subset(GFF, zyg_2grp == "MZ")
-#' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 2, optimizer = "SLSQP", dzData = dzData, mzData = mzData, tryHard = c("yes", "no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"))
+#' m1 = umxCP(selDVs = selDVs, nFac = 2, data = data, tryHard = "yes")
 #' m2 = umxRotate(m1, rotation = "varimax",  tryHard = "yes")
 #' 
 #' }
-umxRotate.MxModelCP <- function(x, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE) {
-	# Check nFac > 1)
-	model = x
+umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE) {
+	# todo: Check nFac > 1)
 	# 1. get loadings
 	loadings = model$top$cp_loadings$values
 
@@ -2621,7 +2640,7 @@ umxRotate.MxModelCP <- function(x, rotation = c("varimax", "promax"),  tryHard =
 		print("Factor Correlation Matrix")
 		print(solve(t(rotmat) %*% rotmat))
 	}
-
+	return(model)
 }
 
 

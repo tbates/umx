@@ -1,7 +1,7 @@
-#' Purcalle (2002) Bivariate GxE model: Suitable when twins differ on the moderator.
+#' Purcell (2002) Bivariate GxE model: Suitable when twins differ on the moderator.
 #'
 #' GxE interaction models test the hypothesis that the strength of genetic 
-#' and environmental influences vary parametrically across levels of a mesaured environment.
+#' and environmental influences vary parametrically across levels of a measured environment.
 #' 
 #' Whereas univariate [umxGxE()] models assume the twins share the moderator,
 #' or have zero correlation on the moderator, [umxGxEbiv()] allows testing moderation in 

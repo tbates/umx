@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_umxGxEbiv.R
 \name{umxGxEbiv}
 \alias{umxGxEbiv}
-\title{Purcalle (2002) Bivariate GxE model: Suitable when twins differ on the moderator.}
+\title{Purcell (2002) Bivariate GxE model: Suitable when twins differ on the moderator.}
 \usage{
 umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
   lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
@@ -42,7 +42,7 @@ umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
 }
 \description{
 GxE interaction models test the hypothesis that the strength of genetic
-and environmental influences vary parametrically across levels of a mesaured environment.
+and environmental influences vary parametrically across levels of a measured environment.
 }
 \details{
 Whereas univariate \code{\link[=umxGxE]{umxGxE()}} models assume the twins share the moderator,
