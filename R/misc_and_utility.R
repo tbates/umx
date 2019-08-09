@@ -783,7 +783,7 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
@@ -846,7 +846,7 @@ umx_checkpoint <- umx_set_checkpoint
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
@@ -1050,7 +1050,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = names(demoOneFactor)),
 #' 	umxPath(var = "g", fixedAt = 1),
 #' 	umxPath(var = names(demoOneFactor))
@@ -1091,7 +1091,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = names(demoOneFactor)),
 #' 	umxPath(var = "g", fixedAt = 1),
 #' 	umxPath(var = names(demoOneFactor))

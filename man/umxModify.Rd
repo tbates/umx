@@ -57,9 +57,10 @@ As an example, this one-liner drops a path labelled "Cs", and returns the update
 \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
 
 Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
-fit2 = umxModify(fit1, regex = "C[sr]", name = "drop_Cs_and_Cr", comparison = TRUE)
+for instance, this would match labels containing either "Cs" or "Cr":\preformatted{fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
+}
 
-You may find it easier to be more explicit. Like this:\preformatted{fit2 = omxSetParameters(fit1, labels = "Cs", values = 0, free = FALSE, name = "newModelName")
+You may find it easier to be more explicit. Like this:\preformatted{fit2 = umxSetParameters(fit1, labels = c("Cs", "Cr"), values = 0, free = FALSE, name = "newName")
 fit2 = mxRun(fit2)
 summary(fit2)
 }
@@ -76,7 +77,7 @@ data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
 
-m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)

@@ -32,12 +32,12 @@ power table
 \code{umxPower} takes an input model (the model of the true data), and tests power (or determines n)
 to detect dropping (or changing the value) a path in this true model.
 
-A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
+A typical target for power is 80\%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
 of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
-discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
-But even with zero power, the Type-I error rate remains a nominal 5% (and with any researcher degrees of freedom, perhaps much more than that).
+discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80\% of the time.
+But even with zero power, the Type-I error rate remains a nominal 5\% (and with any researcher degrees of freedom, perhaps much more than that).
 Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
-This sounds silly, but empirical rates are often as low as 20% (Button, et al., 2013).
+This sounds silly, but empirical rates are often as low as 20\% (Button, et al., 2013).
 
 Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 

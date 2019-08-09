@@ -227,7 +227,7 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPold}}, \code{\link{umxIP}},
+  \code{\link{umxIP}}, \code{\link{umxRotate.MxModelCP}},
   \code{\link{umxSimplex}}, \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

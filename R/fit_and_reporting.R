@@ -686,7 +686,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
@@ -2219,7 +2219,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
@@ -3445,7 +3445,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
@@ -3623,7 +3623,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
@@ -3653,7 +3653,7 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",,
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)

@@ -24,7 +24,7 @@
 #' @param AA Additive genetic variance (Default .5)
 #' @param CC Shared environment variance (Default 0)
 #' @param EE  Unique environment variance. Leave NULL to compute an amount summing to 1
-#' @param drop Path(s) to drop (Default "a_r1c1", i.e., drop a)
+#' @param update Path(s) to drop (Default "a_r1c1", i.e., drop a)
 #' @param value Value to set drop path(s) to (Default 0)
 #' @param n  If provided, solve for power /sig.level at the given n (Default NULL)
 #' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
