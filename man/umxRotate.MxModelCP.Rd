@@ -4,17 +4,17 @@
 \alias{umxRotate.MxModelCP}
 \title{Rotate a CP solution}
 \usage{
-\method{umxRotate}{MxModelCP}(x, rotation = c("varimax", "promax"),
+\method{umxRotate}{MxModelCP}(model, rotation = c("varimax", "promax"),
   tryHard = "yes", freeLoadingsAfter = TRUE)
 }
 \arguments{
-\item{tryHard}{Default ("yes") is to tryHard}
+\item{model}{a \code{\link[=umxCP]{umxCP()}} model to rotate.}
 
-\item{freeLoadingsAfter}{return the model with factor loadings free or fixed}
+\item{rotation}{name of the rotation.}
 
-\item{param}{a \code{\link[=umxCP]{umxCP()}} model to rotate}
+\item{tryHard}{Default ("yes") is to tryHard.}
 
-\item{rotate}{name of the rotation.}
+\item{freeLoadingsAfter}{return the model with factor loadings free (default) or fixed in the new locations.}
 }
 \value{
 \itemize{
@@ -34,10 +34,8 @@ Need to free afterwards
 library(umx)
 # Fit 3 factor CPM
 data(GFF)
-mzData = subset(GFF, zyg_2grp == "MZ")
-dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 2, optimizer = "SLSQP", dzData = dzData, mzData = mzData, tryHard = c("yes", "no", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"))
+m1 = umxCP(selDVs = selDVs, nFac = 2, data = data, tryHard = "yes")
 m2 = umxRotate(m1, rotation = "varimax",  tryHard = "yes")
 
 }

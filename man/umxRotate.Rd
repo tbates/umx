@@ -4,21 +4,19 @@
 \alias{umxRotate}
 \title{Generic SEM factor model loading rotation function}
 \usage{
-umxRotate(x, rotation = c("varimax", "promax"), tryHard = "yes",
+umxRotate(model, rotation = c("varimax", "promax"), tryHard = "yes",
   freeLoadingsAfter = TRUE)
 }
 \arguments{
-\item{x}{an object for which to rotate factor loadings}
+\item{model}{a model to rotate}
+
+\item{rotation}{name of the rotation.}
 
 \item{tryHard}{Default ("yes") is to tryHard}
-
-\item{param}{a \code{\link[=umxCP]{umxCP()}} model to rotate}
-
-\item{rotate}{name of the rotation.}
 }
 \value{
 \itemize{
-\item Rotated solution.
+\item Rotated solution
 }
 }
 \description{
