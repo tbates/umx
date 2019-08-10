@@ -2746,36 +2746,36 @@ umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed =
 	# 1. Collect latents on the diag
 	# from = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
-	out = umx_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
-	out = umx_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
 
 	# 2. Factor correlations on the lower
 	# from = "<name><rowNum>"; target = "<name><colNum>"
-	out = umx_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
-	out = umx_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
-	out = umx_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
 
 	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", showFixed = showFixed, p= out)
+	out = xmu_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", showFixed = showFixed, p= out)
 	# from    = "common<c>"
 	# target  = selDVs[row]
 	# latents = append(latents, from)
 
 	# Process "as" matrix
-	out = umx_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = umx_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = umx_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
 
 	# Process "expMean" 1 * nVar matrix
 	if(means){
 		# from = "one"; target = selDVs[c]
-		out = umx_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
+		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
 	}
-	preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
-	top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
-	bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
+	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	if(format != "current"){
 		umx_set_plot_format(format)

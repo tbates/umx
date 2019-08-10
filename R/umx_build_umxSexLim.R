@@ -845,36 +845,36 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# Process diag (a|c|e)(mf) matrices
 	# Am cells are Am1 -> selDVs[1]; Am2 -> selDVs[2], etc.
 	# TODO need a plain-matrix substitute here...(because sexlim uses algebras for most or what we need)
-	out = umx_dot_mat2dot(Am, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
-	out = umx_dot_mat2dot(Cm, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
-	out = umx_dot_mat2dot(Em, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
+	out = xmu_dot_mat2dot(Am, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
+	out = xmu_dot_mat2dot(Cm, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
+	out = xmu_dot_mat2dot(Em, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
 
 	# 2. On the lower
 	# from = "<name><rowNum>"; target = "<name><colNum>"
-	out = umx_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = umx_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = xmu_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = xmu_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
+	out = xmu_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
 
 	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
 	# out = list(str = "", latents = c(), manifests = c())
-	out = umx_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", p= out)
+	out = xmu_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", p= out)
 	# from    = "common<c>"
 	# target  = selDVs[row]
 	# latents = append(latents, from)
 
 	# Process "as" matrix
-	out = umx_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = umx_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
+	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
+	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
+	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
 
 	# Process "expMean" 1 * nVar matrix
 	if(means){
 		# from = "one"; target = selDVs[c]
-		out = umx_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", p = out)
+		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", p = out)
 	}
-	preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
-	top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
-	bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
+	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
+	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	if(format != "current"){
 		umx_set_plot_format(format)

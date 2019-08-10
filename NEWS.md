@@ -80,7 +80,7 @@
 * NEW: `umxPlotCP` Supports CIs on the diagram!
 * NEW: `umx_make_top_twin_models` increases the robustness and improve-ability of all twin scripts.
 * NEW: umx_set_data_variance_check to set the criteria for warning users about excessively small variance or divergence of variance.
-* NEW: `umx_dot_define_shapes` builds the latents and manifest shape definitions (should be xmu_)
+* NEW: `xmu_dot_define_shapes` builds the latents and manifest shape definitions (should be xmu_)
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` get/set variance tolerance.
 * NEW: `umx` is checked on [travis](https://travis-ci.org/tbates/umx/builds).
@@ -104,8 +104,8 @@
 * IMPROVED: `xmu_model_needs_means`
 * IMPROVED: `umxDescribeDataWLS` to check whether the form of WLS requested will have means of not.
 * IMPROVED: `umx_make`: use check_win_devel; set working director for release; spelling check
-* IMPROVED: `umx_dot_mat2dot` add `model`, `toLabel` and `fromLabel` + `fromType` & `toType`
-* IMPROVED: `umx_dot_mat2dot` example
+* IMPROVED: `xmu_dot_mat2dot` add `model`, `toLabel` and `fromLabel` + `fromType` & `toType`
+* IMPROVED: `xmu_dot_mat2dot` example
 * IMPROVED: `xmu_safe_run_summary` now copes with warnings in models, summary, compare etc. (as it should have)
 * IMPROVED: `umxModify` now supports find and replace labels with grep (not just find with grep and set free/value)
 * IMPROVED: `xmu_assemble_twin_supermodel` no longer take bVector (uses existence of weights instead)
@@ -119,14 +119,14 @@
 * IMPROVED: `umxModify` now obeys verbose.
 * IMPROVED: `umxValues` and elsewhere more robust to new data types.
 * IMPROVED: `umx_read_lower` examples and input checking.
-* IMPROVED: `umx_cell_is_on` now has lower and upper triangle with or without diagonal included
-* IMPROVED: `umx_dot_mat2dot` now can get parameter values with CIs
+* IMPROVED: `xmu_cell_is_on` now has lower and upper triangle with or without diagonal included
+* IMPROVED: `xmu_dot_mat2dot` now can get parameter values with CIs
 * IMPROVED: `umxRAM` feedback when no data provided
 * RENAME: `xmu_make_top_twin` lose "models" for shorter name.
 * RENAME: `tmx_show` (was `umx_show` - it is mostly a teaching function
-* RENAME: `umx_dot_define_shapes`
-* RENAME: `umx_dot_rank`
-* RENAME: `umx_mat2dot` --> `umx_dot_mat2dot`
+* RENAME: `xmu_dot_define_shapes`
+* RENAME: `xmu_dot_rank`
+* RENAME: `umx_mat2dot` --> `xmu_dot_mat2dot`
 * RENAME: `umx_APA_model_CI` --> `xmu_get_CI`
 * REMOVED: `umx_add_variances` old function not used and not very safe.
 * CLEANUP: Removed `thresholds` option from several functions (always doing deviation-based, WLS isn't thresholds, and left-censored will be implemented differently)

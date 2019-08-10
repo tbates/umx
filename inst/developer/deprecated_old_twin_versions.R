@@ -707,7 +707,7 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 			out = paste0(out, ";\n", from, " -> ", target, " [label=\"", val, "\"]")
 		}
 	}
-	preOut  = umx_dot_define_shapes(latents = latents, manifests = selDVs[1:varCount])
+	preOut  = xmu_dot_define_shapes(latents = latents, manifests = selDVs[1:varCount])
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");

@@ -176,20 +176,20 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' umx_cell_is_on(r = 3, c = 3, "lower")
-#' umx_cell_is_on(r = 3, c = 3, "lower_inc")
-#' umx_cell_is_on(r = 3, c = 3, "upper")
-#' umx_cell_is_on(r = 3, c = 3, "upper_inc")
-#' umx_cell_is_on(r = 3, c = 3, "diag")
-#' umx_cell_is_on(r = 2, c = 3, "diag")
-#' umx_cell_is_on(r = 3, c = 3, "any")
+#' xmu_cell_is_on(r = 3, c = 3, "lower")
+#' xmu_cell_is_on(r = 3, c = 3, "lower_inc")
+#' xmu_cell_is_on(r = 3, c = 3, "upper")
+#' xmu_cell_is_on(r = 3, c = 3, "upper_inc")
+#' xmu_cell_is_on(r = 3, c = 3, "diag")
+#' xmu_cell_is_on(r = 2, c = 3, "diag")
+#' xmu_cell_is_on(r = 3, c = 3, "any")
 #' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-#' umx_cell_is_on(r = 3, c = 3, "left", mat = a_cp)
+#' xmu_cell_is_on(r = 3, c = 3, "left", mat = a_cp)
 #' \dontrun{
 #' # test stopping
-#' umx_cell_is_on(r=4,c = 3, "any", mat = a_cp)
+#' xmu_cell_is_on(r=4,c = 3, "any", mat = a_cp)
 #' }
-umx_cell_is_on <- function(r, c, where=c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), mat= NULL) {
+xmu_cell_is_on <- function(r, c, where=c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), mat= NULL) {
 	where = match.arg(where)
 	if(!is.null(mat)){
 		# check r and c in bounds.
@@ -2939,10 +2939,10 @@ umxCov2cor <- function(x) {
 #' @return string
 #' @export
 #' @family Graphviz
-#' @seealso - [umx_dot_rank()]
+#' @seealso - [xmu_dot_rank()]
 #' @examples
-#' umx_dot_define_shapes(c("as1"), c("E", "N"))
-umx_dot_define_shapes <- function(latents, manifests, preOut= "") {
+#' xmu_dot_define_shapes(c("as1"), c("E", "N"))
+xmu_dot_define_shapes <- function(latents, manifests, preOut= "") {
 	latents   = unique(latents)
 	manifests = unique(manifests)
 	preOut    = paste0(preOut, "\n# Latents\n")
@@ -2971,11 +2971,11 @@ umx_dot_define_shapes <- function(latents, manifests, preOut= "") {
 #' @return string
 #' @export
 #' @family Graphviz
-#' @seealso - [umx_dot_define_shapes()]
+#' @seealso - [xmu_dot_define_shapes()]
 #' @md
 #' @examples
-#' umx_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
-umx_dot_rank <- function(vars, pattern, rank) {
+#' xmu_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
+xmu_dot_rank <- function(vars, pattern, rank) {
 	formatted = paste(namez(vars, pattern), collapse = "; ")
 	ranks = paste0("{rank=", rank, "; ", formatted, "};\n")
 	return(ranks)
@@ -3027,35 +3027,35 @@ umx_dot_rank <- function(vars, pattern, rank) {
 #' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
 #'
 #' # Get dot strings for lower triangle (default from and to based on row and column number)
-#' out = umx_dot_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
+#' out = xmu_dot_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
 #' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
 #'
 #' # one arrow (the default = "forward")
-#' out = umx_dot_mat2dot(a_cp, cells = "lower", from = "cols")
+#' out = xmu_dot_mat2dot(a_cp, cells = "lower", from = "cols")
 #' cat(out$str) # a_cp1 -> a_cp2 [dir = forward label="2"];
 #'
 #' # label to (rows) using var names
 #'
-#' out = umx_dot_mat2dot(a_cp, toLabel= paste0("v", 1:3), cells = "lower", from = "cols")
+#' out = xmu_dot_mat2dot(a_cp, toLabel= paste0("v", 1:3), cells = "lower", from = "cols")
 #' umx_msg(out$str) # a_cp1 -> v2 [dir = forward label="2"] ...
 #' 
 #' # First call also inits the plot struct
-#' out = umx_dot_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
-#' out = umx_dot_mat2dot(a_cp, from = "rows", cells = "diag", 
+#' out = xmu_dot_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
+#' out = xmu_dot_mat2dot(a_cp, from = "rows", cells = "diag", 
 #' 		toLabel= "common", toType = "manifest", p = out)
 #' umx_msg(out$str); umx_msg(out$manifests); umx_msg(out$latents)
 #' 
 #' # ================================
 #' # = Add found sinks to manifests =
 #' # ================================
-#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+#' out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
 #' 		toLabel= c('a','b','c'), toType= "manifest");
 #' umx_msg(out$manifests)
 #'
 #' # ================================
 #' # = Add found sources to latents =
 #' # ================================
-#' out = umx_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+#' out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
 #' 		toLabel= c('a','b','c'), fromType= "latent");
 #' umx_msg(out$latents)
 #' 
@@ -3070,7 +3070,7 @@ umx_dot_rank <- function(vars, pattern, rank) {
 #' 	umxPath(var = latents, fixedAt = 1.0)
 #' )
 #' m1 = umxCI(m1, run= "yes")
-#' out = umx_dot_mat2dot(m1$A, from = "cols", cells = "any", 
+#' out = xmu_dot_mat2dot(m1$A, from = "cols", cells = "any", 
 #'       toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
 #' umx_msg(out$str); umx_msg(out$latents)
 #' 
@@ -3079,12 +3079,12 @@ umx_dot_rank <- function(vars, pattern, rank) {
 #' # ========================
 #' 
 #' tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
-#' out = umx_dot_mat2dot(tmp, cells = "left", from = "rows",
+#' out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
 #' 	fromLabel= "one", toLabel= c("v1", "v2")
 #' )
 #' cat(out$str)
 #'
-umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
+xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
 	from   = match.arg(from)
 	cells  = match.arg(cells)
 	arrows = match.arg(arrows)
@@ -3100,7 +3100,7 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 
 	for (r in 1:nRows) {
 		for (c in 1:nCols) {
-			if(umx_cell_is_on(r= r, c = c, where = cells, mat = x)){
+			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){
 				# cell is in the target zone
 				if(!is.null(model)){
 					# Model available - look for CIs

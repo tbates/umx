@@ -637,10 +637,10 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	# TODO umxPlotACEv: update to matrix version instead of label hunting
-	# TODO umxPlotACEv: use umx_dot_define_shapes etc.?
-	# preOut  = umx_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
-	# top     = umx_dot_rank(out$latents, "^[ace]_cp", "min")
-	# bottom  = umx_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	# TODO umxPlotACEv: use xmu_dot_define_shapes etc.?
+	# preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	# top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
+	# bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	# digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	if(!class(x) == "MxModelACEv"){
 		stop("The first parameter of umxPlotACE must be an ACEv model, you gave me a ", class(x))
