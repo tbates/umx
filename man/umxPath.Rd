@@ -164,6 +164,7 @@ umxPath(var = LETTERS[1:5], fixedAt = 1)
 umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
 umxPath(v1m0 = "A") # Give "A" variance and a mean, fixed at 1 and 0 respectively
 umxPath(v.m. = "A") # Give "A" variance and a mean, leaving both free.
+umxPath(v0m0 = "W", label = c(NA, "data.W"))
 umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
 umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
 umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
@@ -179,14 +180,14 @@ umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 \dontrun{
 latents   = paste0("A", 1:3)
 manifests = names(demoOneFactor)
-myData = demoOneFactor, type = "cov",
+myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
 m1 <- umxRAM("Chol", data = myData,
 	umxPath(Cholesky = latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)
 )
 }
-umxPath(v0m0 = "W", label = c(NA, "data.W"))
+
 }
 \references{
 \itemize{

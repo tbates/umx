@@ -3312,7 +3312,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' myData = demoOneFactor, type = "cov",
+#' myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
 #' m1 <- umxRAM("One Factor", data = myData,
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(var = manifests),
