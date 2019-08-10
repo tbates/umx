@@ -46,13 +46,13 @@ g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(gr
 
 
 # Model 1 (could add auto=FALSE if you don't want to run this as it is being built)
-m1 <- umxRAM("m1", data = g1Data,
+m1 = umxRAM("m1", data = g1Data,
 	umxPath("x", to = "y", labels = "beta"),
 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 )
 # Model 2
-m2 <- umxRAM("m2", data = g2Data,
+m2 = umxRAM("m2", data = g2Data,
 	umxPath("x", to = "y", labels = "beta"),
 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))

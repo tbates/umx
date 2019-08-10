@@ -22,7 +22,7 @@ Return a list of all the exogenous variables (variables with no incoming single-
 \examples{
 require(umx)
 data(demoOneFactor)
-m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath("g", to = names(demoOneFactor)),
 	umxPath(var = "g", fixedAt = 1),
 	umxPath(var = names(demoOneFactor))

@@ -145,7 +145,7 @@ Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
 # A worked example
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = myData, type= "cov",
+m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1.0)
@@ -181,7 +181,7 @@ umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 latents   = paste0("A", 1:3)
 manifests = names(demoOneFactor)
 myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
-m1 <- umxRAM("Chol", data = myData,
+m1 = umxRAM("Chol", data = myData,
 	umxPath(Cholesky = latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)
