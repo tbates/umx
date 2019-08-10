@@ -4278,7 +4278,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = myData, type= "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
