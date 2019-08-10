@@ -1,23 +1,34 @@
 # umx 3.0.0
-* July 2019 R 3.6.1 "Action of the Toes"
-* ALPHA: `umxRAM` lavaan string syntax support.
-* ALPHA: `umxRAM` multi-group models.
-* NEW: `power.ACE.test` and examples
-* NEW: `xmu_safe_run_summary` can listen to `silent` to turn off summary and progress from models - use when running big simulation loops
+* August 2019 R 3.6.1 "Action of the Toes"
+* This release has major new features in beta: like support for lavaan syntax, AND a big cleanout/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.
+* ALPHA: `umxRAM` lavaan string syntax support!
+* ALPHA: `umxRAM` multi-group models with `group="column"`!
+* NEW: `umxPower` and examples.
+* NEW: `power.ACE.test` and examples.
+* NEW: `umxRotate` Rotate the factor loadings in `umxCP` models.
+* NEW: `xmu_safe_run_summary` can listen to `silent` to turn off summary and progress from models - use when running big simulation loops.
 * NEW: `umx_set_silent` preference (option) for other functions to listen too and choose how much junk to print to console. Like a global verbose.
 * NEW: `umx_select_valid` to replace values in one column with those in another, if first column is NA.
-* NEW: `FishersMethod` To combine p-values
-* NEW: `oddsratio`
-* DEPRECATED: `show` no longer works: replace it with std=TRUE/FALSE/NULL
-* CHANGED: `umx_show` -> `tmx_show`
-* FIX: `mxPath` `v0m0` , `v.m0` now use labels (if two provided)
-* NEW: `SE_from_p` helper to get SE from b and p, or get a p from CI
-* NEW: `umx_nice_data` converts your twinData to the standard format (zyg in zygosity, _T1 _T2 suffixing)
-* NEW: `umxMendelianRandomization` alias to umxTwoStage
+* NEW: `FishersMethod` To combine p-values.
+* NEW: `oddsratio`.
+* NEW: `SE_from_p` helper to get SE from b and p, or get a p from CI.
+* NEW: `umx_nice_data` converts your twinData to the standard format (zyg in zygosity, _T1 _T2 suffixing).
+* NEW: `umxMendelianRandomization` alias to umxTwoStage.
+* CONVENIENCE: `umxCP` and `umxIP` can take `data` and create `MZ` and `DZ` datasets.
+  * Preparation for expansion to 5-group models.
+* IMPROVED: `umxGxE` removed border from legend (obscures plot to no benefit)
+* IMPROVED: `umxGxE` supports digits (rounding for tables)
 * IMPROVED: `umxReduceGxE` gains a `tryHard` option
+* IMPROVED: `umxReduceGxE` more rational set of reductions - means obey principle of marginality.
 * IMPROVED: `umxSummaryGxE` prints parameter table and SEs as well as the interaction plot.
 * IMPROVED: `umxConfint` uses smart confidence intervals (just the free standardized parameters) for umxCP models.
-* IMPROVED: `umxReduce.ModelGxE` more rational set of reductions - means obey principle of marginality.
+* IMPROVED: `umx_var` robustness + support ordinal variables.
+* IMPROVED: `xmu_safe_run_summary` supports digits (rounding for tables)
+* IMPROVED: `umxAPA` supports `cor.test` and `t.test`
+* IMPROVED: `umx_set_data_variance_check`: set default `minvar` to .1
+* IMPROVED: `umxlav2RAM` catch means
+* IMPROVED: `umx_make_raw_from_cov` can add names to generated data
+* IMPROVED: ` umxPlotCP` can show (non-zero) fixed paths closes #97
 * IMPROVED: `umx_move_file` supports wildcards (closes #83)
 * IMPROVED: `plot` for `umxIP` supports `means=TRUE`
 * IMPROVED: `umxReduce.GxE` Don't try and drop means moderation.
@@ -34,8 +45,25 @@
 * IMPROVED: `xmu_dot_move_ranks` set min, max or same to "" to take these ranks out of the diagram - Aids tricky layouts. (closes #84)
 * IMPROVED: @md links
 * IMPROVED: `namez` has a better default action (call `names` )
-* CONVENIENCE: `umxCP` and `umxIP` can take `data` and create `MZ` and `DZ` datasets.
-  * Preparation for expansion to 5-group models.
+* DEPRECATED: The parameter to show standardized parameters is universally `std=TRUE` (`show = ` no longer works).
+* REMOVE: `umxIPold`
+* CHANGED: `umx_show` -> `tmx_show`.
+* CHANGED: `umx_set_optimization_options` to `umx_set_mvn_optimization_options` for user clarity.
+* CHANGED: `umx_default_option` to `xmu_match.arg` as programming aids are moved into xmu space.
+* CHANGE: `umx_aggregate` now uses df as default data.
+* CHANGED: `showEstimates` -> `show` across all functions: makes learning/usage more consistent.
+* CHANGED: `umxGetParameters` doesn't anchor search strings to front of label, nor suffix with digit label.
+* DROPPED: `umx_drop_ok` - orphan function - just use `umxCompare`
+* DROPPED: `umxEval` - broken anyway - just use `mxEval`
+* FIX: `mxPath` `v0m0` , `v.m0` now use labels (if two provided)
+* NAMESPACE clean up to make it easier for users to focus on functions they (rather than devs) will use
+  * umxCovData -> xmu_DF_to_mxData_TypeCov
+  * xmu_model_needs_means -> xmu_check_needs_means
+  * umx_swap_a_block -> xmu_data_swap_a_block
+  * umxDescribeDataWLS -> xmu_describe_data_WLS
+  * umx_cov2raw -> umx_make_raw_from_cov
+  * umx_make_bin_cont_pair_data -> xmu_make_bin_cont_pair_data
+  * umxPadAndPruneForDefVars -> xmu_PadAndPruneForDefVars
 * HELP `plot` Better explanation of graphing: can still be improved
 * HELP `umx_as_numeric`:better examples
 * HELP: `umxMendelianRandomization` nice figure
@@ -44,9 +72,8 @@
 * HELP: `umxEFA` notes it can use formulas, e.g. umxEFA(~v1+v2+v3, data)
 * HELP: `NEWS` updated
 * HELP: `GxEbiv` Improved help page
-* CHANGE: `umx_aggregate` now uses df as default data.
-* CHANGED: `showEstimates` -> `show` across all functions: makes learning/usage more consistent.
-* CHANGED: `umxGetParameters` doesn't anchor search strings to front of label, nor suffix with digit label.
+* HELP: `umxPower` gains text and a nice figure
+
 
 # umx 2.15.0
 * May 2019, R 3.6.0 "Planting of a Tree"
