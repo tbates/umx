@@ -83,7 +83,7 @@ As can be seen, each phenotype also by default has A, C, and E influences specif
 Features of the model include the ability to include add more one set of independent pathways, different numbers
 of pathways for a, c, and e, as well the ability to use ordinal data, and different fit functions, e.g. WLS.
 
-\strong{note}: The function \code{umx_set_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
+\strong{note}: The function \code{umx_set_mvn_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
 It defaults to .001. You might find that '0.01' works better for ordinal models.
 }
 \details{
@@ -184,7 +184,8 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPold}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umx}}
+  \code{\link{umxRotate.MxModelCP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

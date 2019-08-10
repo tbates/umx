@@ -16,10 +16,12 @@ RMSEA(x, ci.lower, ci.upper, digits)
 \item{digits}{digits to show}
 }
 \value{
-- RMSEA object containing value (and perhaps a CI)
+\itemize{
+\item RMSEA object containing value (and perhaps a CI)
+}
 }
 \description{
-See \code{\link[umx]{RMSEA.MxModel}} to access the RMSEA of MxModels
+See \code{\link[=RMSEA.MxModel]{RMSEA.MxModel()}} to access the RMSEA of MxModels
 }
 \seealso{
 Other Reporting functions: \code{\link{RMSEA.MxModel}},
@@ -30,8 +32,8 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxCompare}}, \code{\link{umxConfint}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
   \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
+  \code{\link{umxRotate}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umx_drop_ok}},
   \code{\link{xmu_standardize_RAM}}
 }
 \concept{Reporting functions}

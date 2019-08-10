@@ -26,14 +26,12 @@ Fix the variance of all, or selected, exogenous latents at selected values. This
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("g")
 manifests = names(demoOneFactor)
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-	umxPath(latents, to = manifests),
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
-)
-
+	umxPath(var = "G", fixedAt = 1)
+)#'
 tmx_show(m1, what = "free", matrices = "S") # variance of g is not set
 m1 = umx_fix_latents(m1)
 tmx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1

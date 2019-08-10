@@ -20,7 +20,7 @@ umx_string_to_algebra(algString, name = NA, dimnames = NA)
 }
 \description{
 This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), then parse the string as an mxAlgebra argument.
-A use case is including a matrix exponent (that is A %\emph{% A %}% A %*% A...) with a variable exponent.
+A use case is including a matrix exponent (that is A \%\emph{\% A \%}\% A \%*\% A...) with a variable exponent.
 }
 \examples{
 \dontrun{

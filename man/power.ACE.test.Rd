@@ -18,6 +18,8 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a_r1c1"),
 
 \item{EE}{Unique environment variance. Leave NULL to compute an amount summing to 1}
 
+\item{update}{Path(s) to drop (Default "a_r1c1", i.e., drop a)}
+
 \item{value}{Value to set drop path(s) to (Default 0)}
 
 \item{n}{If provided, solve for power /sig.level at the given n (Default NULL)}
@@ -39,8 +41,6 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a_r1c1"),
 \item{optimizer}{If set, will switch the optimizer.}
 
 \item{nSim}{Total number of pairs to simulate in the models (default = 4000)}
-
-\item{drop}{Path(s) to drop (Default "a_r1c1", i.e., drop a)}
 }
 \value{
 mxPower object
@@ -55,14 +55,17 @@ Statistical power is the proportion of studies that, over the long run, one shou
 significant result given certain study characteristics such as sample size (N), the expected effect size (\eqn{\beta}),
 and the criterion for statistical significance (\eqn{\alpha}).
 
-A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
-of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth want to
-discourage running of studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
-At the same time, the Type-I error rate is a nominal 5%, and with any researcher degrees of freedom, perhaps much more than that.
+A typical target for power is 80\%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
+of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
+discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80\% of the time.
+But even with zero power, the Type-I error rate remains a nominal 5\% (and with any researcher degrees of freedom, perhaps much more than that).
 Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
-This sounds silly, but empirical rates are often as low as 20% (# TODO cite Button).
+This sounds silly, but empirical rates are often as low as 20\% (Button, et al., 2013).
 
-If you have few subjects and desired adequate power, you should raise the p-value. Be aware that consumers will be skeptical.
+Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
+
+\if{html}{\figure{power.png}{options: width="50\%" alt="Figure: power.png"}}
+\if{latex}{\figure{power.pdf}{options: width=7cm}}
 }
 \examples{
 
@@ -171,6 +174,9 @@ power.ACE.test(update = "a_r1c1", AA= .5, CC= 0, nSim= 20)
 revisited: II detection of common environmental variance. \emph{Twin Res Hum Genet}, \strong{11}: 48-54.
 \href{https://doi.org/10.1375/twin.11.1.48}{doi}
 }
+
+Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., & Munafo, M. R. (2013).
+Power failure: why small sample size undermines the reliability of neuroscience. \emph{Nature Reviews Neuroscience}, \strong{14}, 365-376. \href{https://doi.org/10.1038/nrn3475}{doi}
 }
 \seealso{
 \itemize{
@@ -181,8 +187,9 @@ Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
   \code{\link{umxACEcov}}, \code{\link{umxACEv}},
   \code{\link{umxACE}}, \code{\link{umxCP}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIPold}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umx}}
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxRotate.MxModelCP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

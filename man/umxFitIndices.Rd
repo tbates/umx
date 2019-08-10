@@ -30,20 +30,19 @@ Want more? File a report at github
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor",
-	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	umxPath(latents, to = manifests),
+
+m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
+	umxPath(var = "G", fixedAt = 1)
 )
 umxFitIndices(m1)
 # And with raw data
 m1 <- umxRAM("m1", data = demoOneFactor,
-	umxPath(latents, to = manifests),
+	umxPath("G", to = manifests),
 	umxPath(v.m. = manifests),
-	umxPath(v1m0 = latents)
+	umxPath(v1m0 = "G")
 )
 umxFitIndices(m1)
 umxAPA(umxFitIndices(m1), digits = 3)
@@ -56,9 +55,8 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxCI_boot}}, \code{\link{umxCI}},
   \code{\link{umxCompare}}, \code{\link{umxConfint}},
   \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
-  \code{\link{umxPlotACEv}},
+  \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
   \code{\link{umxSummary.MxModel}},
-  \code{\link{umx_drop_ok}},
   \code{\link{xmu_standardize_RAM}}
 }
 \concept{Reporting functions}

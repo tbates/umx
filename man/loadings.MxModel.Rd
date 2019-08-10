@@ -39,8 +39,7 @@ loadings(m1)
 
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxEval}},
-  \code{\link{umxFactorScores}},
+  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}},
   \code{\link{umxParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},

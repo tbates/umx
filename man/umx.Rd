@@ -27,13 +27,11 @@ devtools::install_github("tbates/umx")
 \examples{
 require("umx")
 data(demoOneFactor)
-myData = mxData(cov(demoOneFactor), type = "cov", numObs = nrow(demoOneFactor))
-latents = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = myData,
-	umxPath(latents, to = manifests),
+m1 <- umxRAM("One Factor", data = demoOneFactor, type="cov",
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents  , fixedAt=1)
+	umxPath(var = "G"  , fixedAt= 1)
 )
 
 # umx added informative labels, created starting values, 
@@ -92,8 +90,7 @@ Other Core Modeling Functions: \code{\link{umxAlgebra}},
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxEval}},
-  \code{\link{umxFactorScores}},
+  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}},
   \code{\link{umxParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
@@ -122,7 +119,7 @@ Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxCP}}, \code{\link{umxGxE_window}},
   \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIPold}}, \code{\link{umxIP}},
+  \code{\link{umxIP}}, \code{\link{umxRotate.MxModelCP}},
   \code{\link{umxSexLim}}, \code{\link{umxSimplex}}
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}},
@@ -143,8 +140,7 @@ Other Twin Data functions: \code{\link{umx_long2wide}},
   \code{\link{umx_scale_wide_twin_data}},
   \code{\link{umx_wide2long}}
 
-Other Get and set: \code{\link{umx_default_option}},
-  \code{\link{umx_get_checkpoint}},
+Other Get and set: \code{\link{umx_get_checkpoint}},
   \code{\link{umx_get_options}},
   \code{\link{umx_set_auto_plot}},
   \code{\link{umx_set_auto_run}},
@@ -152,13 +148,14 @@ Other Get and set: \code{\link{umx_default_option}},
   \code{\link{umx_set_condensed_slots}},
   \code{\link{umx_set_cores}},
   \code{\link{umx_set_data_variance_check}},
-  \code{\link{umx_set_optimization_options}},
+  \code{\link{umx_set_mvn_optimization_options}},
   \code{\link{umx_set_optimizer}},
   \code{\link{umx_set_plot_file_suffix}},
   \code{\link{umx_set_plot_format}},
   \code{\link{umx_set_separator}},
   \code{\link{umx_set_silent}},
-  \code{\link{umx_set_table_format}}
+  \code{\link{umx_set_table_format}},
+  \code{\link{xmu_match.arg}}
 
 Other Check or test: \code{\link{umx_check_names}},
   \code{\link{umx_is_class}},

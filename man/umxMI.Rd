@@ -37,15 +37,12 @@ You are almost certainly doing better science when testing competing models rath
 \examples{
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
-manifests = names(demoOneFactor)[1:3]
-df = mxData(cov(demoOneFactor[,manifests]), type = "cov", numObs = 500)
-m1 <- umxRAM("One Factor", data = df,
-	umxPath(latents, to = manifests),
+manifests = names(demoOneFactor)
+m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
-)
-umxMI(m1, full=FALSE)
+	umxPath(var = "G", fixedAt = 1)
+)#' umxMI(m1, full=FALSE)
 }
 \references{
 \itemize{

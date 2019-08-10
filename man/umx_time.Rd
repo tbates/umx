@@ -44,7 +44,7 @@ umx_time('start')
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+myData = demoOneFactor, type = "cov",
 m1 <- umxRAM("One Factor", data = myData,
 	umxPath(from = latents, to = manifests),
 	umxPath(var = manifests),
@@ -66,8 +66,7 @@ umx_time('stop') # report the time since timer was restarted.
 Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{loadings.MxModel}},
   \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxEval}},
-  \code{\link{umxFactorScores}},
+  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}},
   \code{\link{umxParameters}}, \code{\link{umxReduce}},
   \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},

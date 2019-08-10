@@ -610,7 +610,7 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 
 #' Set options that affect optimization in OpenMx
 #'
-#' `umx_set_optimization_options` provides access to get and set options affecting optimization.
+#' `umx_set_mvn_optimization_options` provides access to get and set options affecting optimization.
 #' 
 #' *note*: For `mvnRelEps`,  values between .0001 to .01 are conventional.
 #' Smaller values slow optimization.
@@ -626,12 +626,12 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
-#' umx_set_optimization_options() # print the existing state(s)
-#' umx_set_optimization_options("mvnRelEps") # show this one
+#' umx_set_mvn_optimization_options() # print the existing state(s)
+#' umx_set_mvn_optimization_options("mvnRelEps") # show this one
 #' \dontrun{
-#' umx_set_optimization_options("mvnRelEps", .01) # update globally
+#' umx_set_mvn_optimization_options("mvnRelEps", .01) # update globally
 #' }
-umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA"), value = NULL, model = NULL, silent = FALSE) {
+umx_set_mvn_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA"), value = NULL, model = NULL, silent = FALSE) {
 	if(is.null(value)){
 		# print current values for each item in opt
 		for (this in opt) {			
@@ -781,12 +781,12 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' umx_set_checkpoint(2, "evaluations", prefix="SNP_1")
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m1 = umx_set_checkpoint(model = m1)
 #' m1 = mxRun(m1)
@@ -844,14 +844,13 @@ umx_checkpoint <- umx_set_checkpoint
 #' umx_get_checkpoint() # current global default
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-#' 	umxPath(latents, to = manifests),
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
-#' )
-#' m1 = umx_set_checkpoint(interval = 2, model = m1)
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#' m1 = umx_set_checkpoint(interval = 2, model = m1)
 #' umx_get_checkpoint(model = m1)
 umx_get_checkpoint <- function(model = NULL) {
 	message("Always Checkpoint: "    , mxOption(model, "Always Checkpoint") )
@@ -1050,7 +1049,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = names(demoOneFactor)),
 #' 	umxPath(var = "g", fixedAt = 1),
 #' 	umxPath(var = names(demoOneFactor))
@@ -1091,7 +1090,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = names(demoOneFactor)),
 #' 	umxPath(var = "g", fixedAt = 1),
 #' 	umxPath(var = names(demoOneFactor))
@@ -1136,14 +1135,13 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' tmx_show(m1, what = "free", matrices = "S") # variance of g is not set
 #' m1 = umx_fix_latents(m1)
 #' tmx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
@@ -1226,48 +1224,6 @@ umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLaten
 		}
 	}
 	return(model)
-}
-
-#' A meaningful sentence about a model comparison
-#'
-#' Print a meaningful sentence about a model comparison. If you use this, please email maintainer("umx") and ask to have it
-#' merged with [umxCompare()] :-)
-#'
-#' @param model1 the base [mxModel()]
-#' @param model2 the nested [mxModel()]
-#' @param text name of the thing being tested, i.e., "Extraversion" or "variances"
-#' @return - TRUE/FALSE
-#' @export
-#' @family Reporting functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' latents   = c("g")
-#' manifests = names(demoOneFactor)
-#' myData    = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
-#' m1 <- umxRAM("OneFactor", data = myData,
-#' 	umxPath(latents, to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1)
-#' )
-#' m2 = umxModify(m1, update = "g_to_x1", name = "no effect on x1")
-#' umx_drop_ok(m1, m2, text = "the path to x1")
-umx_drop_ok <- function(model1, model2, text = "parameter") {
-	a = mxCompare(model1, model2)
-	if(a$diffdf[2] > 1){
-		are = "are"
-	}else{
-		are = "is"
-	}
-	if(a$p[2] < .05){
-		if(!is.null(text)){ print(paste0("The ", text, " ", are, " significant and should be kept (p = ", umx_APA_pval(a$p[2]), ")")) }
-		return(FALSE)
-	} else {
-		if(!is.null(text)){ print(paste0("The ", text, " ", are, " non-significant and can be dropped (p = ", umx_APA_pval(a$p[2]), ")")) }
-		return(TRUE)
-	}
 }
 
 # ====================
@@ -3240,14 +3196,13 @@ umx_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' tmx_show(m1)
 #' tmx_show(m1, digits = 3)
 #' tmx_show(m1, matrices = "S")
@@ -3357,7 +3312,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' myData = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+#' myData = demoOneFactor, type = "cov",
 #' m1 <- umxRAM("One Factor", data = myData,
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(var = manifests),
@@ -3388,7 +3343,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	}else{
 		stop("You must set the first parameter to 'start', 'stop', 'now', a model, or a list of models.\nYou offered up a", class(x))
 	}
-	formatStr = umx_default_option(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
+	formatStr = xmu_match.arg(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	for(i in 1:length(x)) {			
 		if(length(x) > 1) {
 			thisX = x[[i]]
@@ -3493,7 +3448,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' }
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
-	file = umx_default_option(file, c(NA,"tmp.html"), check = FALSE)
+	file = xmu_match.arg(file, c(NA,"tmp.html"), check = FALSE)
 	if(class(x)=="character"){
 		print(x)
 	}else if(class(x)!= "data.frame"){
@@ -3550,14 +3505,13 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_has_been_run(m1)
 umx_has_been_run <- function(model, stop = FALSE) {
 	output <- model$output
@@ -3707,7 +3661,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' @param ordVar The value to return at any ordinal columns (defaults to 1).
 #' @param digits digits to round output to (Ignored if NULL). Set for easy printing.
 #' @param strict Whether to allow non-ordered factors to be processed (default = FALSE (no)).
-#' @param allowCorForFactorCovs When ordinal data are present, use heterochoic correlations in affected cells, in place of covariances. 
+#' @param allowCorForFactorCovs When ordinal data are present, use heterochoric correlations in affected cells, in place of covariances. 
 #' @return - [mxModel()]
 #' @export
 #' @family Miscellaneous Stats Helpers
@@ -3975,14 +3929,13 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
@@ -4126,14 +4079,13 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_has_means(m1)
 #' m1 <- mxModel(m1,
 #' 	mxPath(from = "one", to = manifests),
@@ -4181,7 +4133,7 @@ umx_has_means <- function(model) {
 #' umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 #' umxSummary(m1)
 umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
-	check = umx_default_option(check, c("both", "intervals", "output"), check=F)
+	check = xmu_match.arg(check, c("both", "intervals", "output"), check=F)
 	if(is.null(model$intervals)){
 		thisModelHasIntervals = FALSE
 	}else{
@@ -4222,14 +4174,13 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_check_model(m1) # TRUE, this is a model
 #' umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 #' umx_check_model(m1, hasData = TRUE)
@@ -4435,7 +4386,7 @@ umx_has_square_brackets <- function (input) {
 #' Convert a string to an OpenMx algebra
 #'
 #' This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), then parse the string as an mxAlgebra argument.
-#' A use case is including a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. 
+#' A use case is including a matrix exponent (that is A \%*\% A \%*\% A \%*\% A...) with a variable exponent. 
 #'
 #' @param algString a string to turn into an algebra
 #' @param name of the returned algebra
@@ -4464,38 +4415,12 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
-#' umx_object_as_str(mtcars) # "mtcars"
+#' umx_object_as_str(mtcars)
+#' # "mtcars"
 umx_object_as_str<- function(x) {
   deparse(substitute(x))
 }
 
-#' umxEval
-#'
-#' Takes an expression as a string, and evaluates it as an expression in model, optionally computing the result.
-#' # TODO umxEval Currently broken... delete submit as update to OpenMx?
-#'
-#' @param expstring an expression string, i.e, "a + b"
-#' @param model an [mxModel()] to evaluate in
-#' @param compute Whether to compute the result or not (default = FALSE)
-#' @param show Whether to show??? (default = FALSE)
-#' @return - an openmx algebra (formula)
-#' @export
-#' @family Reporting Functions
-#' @references - <https://www.github.com/tbates/umx>
-#' @md
-#' @examples
-#' m1 = mxModel("fit",
-#'		mxMatrix("Full", nrow = 1, ncol = 1, free = TRUE, values = 1, name = "a"), 
-#'		mxMatrix("Full", nrow = 1, ncol = 1, free = TRUE, values = 2, name = "b"), 
-#'		mxAlgebra(a %*% b, name = "ab"), 
-#'		mxConstraint(ab == 35, name = "maxHours"), 
-#'		mxFitFunctionAlgebra(algebra = "ab", numObs= NA, numStats = NA)
-#'	)
-#' m1 = mxRun(m1)
-#' mxEval(list(ab = ab), m1)
-umxEval <- function(expstring, model, compute = FALSE, show = FALSE) {
-	return(eval(substitute(mxEval(x, model, compute, show), list(x = parse(text=expstring)[[1]]))))
-}
 
 #' Scale data columns, skipping non-scalable columns
 #'
@@ -4779,7 +4704,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' Scale wide twin data
 #'
 #' Scale wide data across all twins. You offer up a list of variables to scale, e.g. c("DEP", "bmi")
-#' and the separator (e.g. `sep = "_T"`) and twin suffizes e.g. 1:2 that paste together to make 
+#' and the separator (e.g. `sep = "_T"`) and twin suffixes e.g. 1:2 that paste together to make 
 #' complete variable names: e.g. "DEP_T1" and "DEP_T2".
 #' 
 #' @param varsToScale The base names of the variables ("weight" etc.)
@@ -4825,9 +4750,9 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' Select first item in list of options, while being flexible about choices.
 #'
 #' Like a smart version of [match.arg()]: Handles selecting parameter options when default is a list.
-#' Unlike  [match.arg()] `umx_match.arg` allows items not in the list.
+#' Unlike  [match.arg()] `xmu_match.arg` allows items not in the list.
 #'
-#' @aliases umx_match.arg
+#' @aliases xmu_match.arg
 #' @param x the value chosen (may be the default option list)
 #' @param option_list  A vector of valid options
 #' @param check Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE) 
@@ -4839,22 +4764,22 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' @md
 #' @examples
 #' option_list = c("default", "par.observed", "empirical")
-#' umx_default_option("par.observed", option_list)
 #' 
-#' # An example of checking a bad item and stopping
-#' \dontrun{
-#' umx_default_option("bad", option_list)
-#' }
-#' umx_default_option("allow me", option_list, check = FALSE)
-#' umx_default_option(option_list, option_list)
+#' xmu_match.arg("par.observed", option_list)
+#' xmu_match.arg("allow me", option_list, check = FALSE)
+#' xmu_match.arg(option_list, option_list)
 #' option_list = c(NULL, "par.observed", "empirical")
 #'  # fails with NULL!!!!!
-#' umx_default_option(option_list, option_list)
+#' xmu_match.arg(option_list, option_list)
 #' option_list = c(NA, "par.observed", "empirical")
-#' umx_default_option(option_list, option_list) # use NA instead
+#' xmu_match.arg(option_list, option_list) # use NA instead
 #' option_list = c(TRUE, FALSE, NA)
-#' umx_default_option(option_list, option_list) # works with non character
-umx_default_option <- function(x, option_list, check = TRUE){
+#' xmu_match.arg(option_list, option_list) # works with non character
+#' # An example of checking a bad item and stopping
+#' \dontrun{
+#' xmu_match.arg("bad", option_list)
+#' }
+xmu_match.arg <- function(x, option_list, check = TRUE){
 	# Often Rs match.arg  will work...
 	# filter = match.arg(filter)
 	if (identical(x, option_list)) {
@@ -4872,10 +4797,6 @@ umx_default_option <- function(x, option_list, check = TRUE){
 		}
 	}
 }
-
-#' @export
-umx_match.arg <- umx_default_option
-
 
 #' qm
 #'
@@ -6668,14 +6589,13 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#'
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )#'
 #' umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 # "stdA[1,6]" "stdA[2,6]" "stdA[3,6]" "stdA[4,6]" "stdA[5,6]"
 umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
@@ -6769,12 +6689,12 @@ umx_standardize.default <- function(model, ...){
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' latents  = c("g")
 #' manifests = names(demoOneFactor)
+#'
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
+#' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
 #'
 #' m1 = xmu_standardize_RAM(m1)

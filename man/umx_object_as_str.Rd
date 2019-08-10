@@ -18,7 +18,8 @@ umx_object_as_str(x)
 Utility to return an object's name as a string
 }
 \examples{
-umx_object_as_str(mtcars) # "mtcars"
+umx_object_as_str(mtcars)
+# "mtcars"
 }
 \references{
 \itemize{

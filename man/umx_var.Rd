@@ -22,7 +22,7 @@ umx_var(df, format = c("full", "diag", "lower"),
 
 \item{strict}{Whether to allow non-ordered factors to be processed (default = FALSE (no)).}
 
-\item{allowCorForFactorCovs}{When ordinal data are present, use heterochoic correlations in affected cells, in place of covariances.}
+\item{allowCorForFactorCovs}{When ordinal data are present, use heterochoric correlations in affected cells, in place of covariances.}
 }
 \value{
 \itemize{

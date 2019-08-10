@@ -97,7 +97,7 @@ As can be seen, each phenotype also by default has A, C, and E influences specif
 
 Features include the ability to include more than one common pathway, to use ordinal data.
 
-\strong{note}: The function \code{umx_set_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
+\strong{note}: The function \code{umx_set_mvn_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
 It defaults to .001. You might find that '0.01' works better for ordinal models.
 
 Like the \code{\link[=umxACE]{umxACE()}} model, the CP model decomposes phenotypic variance
@@ -203,7 +203,7 @@ mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 
 # umx_set_optimizer("NPSOL")
-# umx_set_optimization_options("mvnRelEps", .01)
+# umx_set_mvn_optimization_options("mvnRelEps", .01)
 m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 
@@ -231,15 +231,16 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 \seealso{
 \itemize{
 \item \code{\link[=umxSummaryCP]{umxSummaryCP()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}. See \code{\link[=umxACE]{umxACE()}} for more examples of twin modeling.
-\code{link{plot}} and \code{link{umxSummary}} work for IP, CP, GxE, SAT, and ACE models. For a deep dive, see \code{\link[=xmu_make_top_twin]{xmu_make_top_twin()}}
+\code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}} work for all twin models, e.g., \code{\link[=umxIP]{umxIP()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=umxGxE]{umxGxE()}}, and \code{\link[=umxACE]{umxACE()}}. For a deep-dive, see \code{\link[=xmu_make_top_twin]{xmu_make_top_twin()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},
   \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIPold}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umx}}
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxRotate.MxModelCP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+  \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

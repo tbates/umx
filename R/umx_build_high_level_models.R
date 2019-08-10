@@ -106,7 +106,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 	scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
 	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, return = c("model", "loadings"), report = c("markdown", "html"), covmat = NULL){
 	# TODO: umxEFA: Detect ordinal items and switch to DWLS?
-	rotation = umx_default_option(rotation, c("varimax", "promax", "none"), check = FALSE)
+	rotation = xmu_match.arg(rotation, c("varimax", "promax", "none"), check = FALSE)
 	scores   = match.arg(scores)
 	return   = match.arg(return)
 
@@ -154,7 +154,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 				data = as.data.frame(x)
 			}
 		} else if(is.null(data)){
-			stop("You need to provide a data.frame to analyse: This can be in x, or data, or covmat")
+			stop("You need to provide a data.frame to analyze: This can be in x, or data, or covmat")
 		}
 		name = "EFA"
 	}
@@ -208,6 +208,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 		print(loadings(m1))
 	}
 	umxSummary(m1, digits = digits, report = report);
+	
 	if(scores != "none"){
 		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
 	} else {

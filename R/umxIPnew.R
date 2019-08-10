@@ -12,7 +12,7 @@
 #' Features of the model include the ability to include add more one set of independent pathways, different numbers
 #' of pathways for a, c, and e, as well the ability to use ordinal data, and different fit functions, e.g. WLS.
 #' 
-#' **note**: The function `umx_set_optimization_options`() allow users to see and set `mvnRelEps` and `mvnMaxPointsA`
+#' **note**: The function `umx_set_mvn_optimization_options`() allow users to see and set `mvnRelEps` and `mvnMaxPointsA`
 #' It defaults to .001. You might find that '0.01' works better for ordinal models.
 #' 
 #' @details

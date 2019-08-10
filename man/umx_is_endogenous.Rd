@@ -22,7 +22,7 @@ Return a list of all the endogenous variables (variables with at least one incom
 \examples{
 require(umx)
 data(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath("g", to = names(demoOneFactor)),
 	umxPath(var = "g", fixedAt = 1),
 	umxPath(var = names(demoOneFactor))
