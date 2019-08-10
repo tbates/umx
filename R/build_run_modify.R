@@ -790,13 +790,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' 
 #' 
 #' # Model 1 (could add auto=FALSE if you don't want to run this as it is being built)
-#' m1 <- umxRAM("m1", data = g1Data,
+#' m1 = umxRAM("m1", data = g1Data,
 #' 	umxPath("x", to = "y", labels = "beta"),
 #' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
 #' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 #' )
 #' # Model 2
-#' m2 <- umxRAM("m2", data = g2Data,
+#' m2 = umxRAM("m2", data = g2Data,
 #' 	umxPath("x", to = "y", labels = "beta"),
 #' 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
 #' 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
@@ -903,7 +903,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #' 
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -3194,7 +3194,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
+#' m1 = umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = latents)
@@ -3271,7 +3271,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -3341,7 +3341,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #' 
-#' m1 <- umxRAM("OneFactor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -4278,7 +4278,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 <- umxRAM("One Factor", data = myData, type= "cov",
+#' m1 = umxRAM("One Factor", data = myData, type= "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
@@ -4314,7 +4314,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' latents   = paste0("A", 1:3)
 #' manifests = names(demoOneFactor)
 #' myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
-#' m1 <- umxRAM("Chol", data = myData,
+#' m1 = umxRAM("Chol", data = myData,
 #' 	umxPath(Cholesky = latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
@@ -4739,7 +4739,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' require("umx")
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type="cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G"  , fixedAt= 1)

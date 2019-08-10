@@ -685,7 +685,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -1909,7 +1909,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -3246,7 +3246,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
+#' m1 = umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
 #' 	umxPath(from = "G", to = manifests),
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = "G")
@@ -3352,7 +3352,7 @@ parameters <- umxParameters
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)

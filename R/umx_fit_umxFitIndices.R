@@ -22,14 +22,14 @@
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' umxFitIndices(m1)
 #' # And with raw data
-#' m1 <- umxRAM("m1", data = demoOneFactor,
+#' m1 = umxRAM("m1", data = demoOneFactor,
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = "G")
