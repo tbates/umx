@@ -178,14 +178,17 @@ umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 # = Cholesky example =
 # ====================
 \dontrun{
-latents   = paste0("A", 1:3)
+# ======================================================================
+# = 3-factor Cholesky (A component of a 5-variable 3-factor ACE model) =
+# ======================================================================
+latents = paste0("A", 1:3)
 manifests = names(demoOneFactor)
-myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
-m1 = umxRAM("Chol", data = myData,
+m1 = umxRAM("Chol", data = demoOneFactor, type = "cov",
 	umxPath(Cholesky = latents, to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1.0)
+	umxPath(var = latents, fixedAt = 1)
 )
+plot(m1, splines= FALSE)
 }
 
 }

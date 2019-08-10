@@ -4311,14 +4311,17 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # = Cholesky example =
 #' # ====================
 #' \dontrun{
-#' latents   = paste0("A", 1:3)
+#' # ======================================================================
+#' # = 3-factor Cholesky (A component of a 5-variable 3-factor ACE model) =
+#' # ======================================================================
+#' latents = paste0("A", 1:3)
 #' manifests = names(demoOneFactor)
-#' myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
-#' m1 = umxRAM("Chol", data = myData,
+#' m1 = umxRAM("Chol", data = demoOneFactor, type = "cov",
 #' 	umxPath(Cholesky = latents, to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
+#' plot(m1, splines= FALSE)
 #' }
 #'
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
