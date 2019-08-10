@@ -39,12 +39,12 @@ manifests = names(demoOneFactor)
 # ====================================================================
 m1 = mxModel("One Factor", type = "RAM", 
 	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents, to = manifests),
+	mxPath(from = latents  , to = manifests),
 	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-	demoOneFactor, type = "cov",
+	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1.0),
+	mxData(cov(demoOneFactor), type = "cov", numObs=500)
 )
-mxEval(S, m1) # default variances are 0
+mxEval(S, m1) # default variances are jiggled away from near-zero
 # Add start values to the model
 m1 = umxValues(m1)
 mxEval(S, m1) # plausible variances

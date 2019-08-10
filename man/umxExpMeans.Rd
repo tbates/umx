@@ -27,7 +27,7 @@ Extract the expected means matrix from an \code{\link[=mxModel]{mxModel()}}
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("One Factor", data = demoOneFactor,
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)

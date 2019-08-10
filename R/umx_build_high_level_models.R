@@ -171,7 +171,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 	# TODO umxEFA: Adapt to input datatype, i.e., add cov handler
 	# umx_print(factors)
 	manifests <- names(data)
-	m1 <- umxRAM(model = name, data = data, autoRun = FALSE,
+	m1 = umxRAM(model = name, data = data, autoRun = FALSE,
 		umxPath(factors, to = manifests, connect = "unique.bivariate"),
 		umxPath(v.m. = manifests),
 		umxPath(v1m0 = factors)
@@ -355,7 +355,7 @@ umxMendelianRandomization <- function(formula= Y ~ X, instruments = ~qtl, data, 
 	latentErr <- paste0("e", allForm) # latentErr   <- c("eX", "eY")
 	umx_check_names(manifests, data = data, die = TRUE)
 
-	IVModel <- umxRAM("IV Model", data = data,
+	IVModel = umxRAM("IV Model", data = data,
 		# Causal and confounding paths
 		umxPath(inst , to = Xvars), # beta of SNP effect          :  X ~ b1 x inst
 		umxPath(Xvars, to = DV),    # Causal effect of Xvars on DV: DV ~ b2 x X

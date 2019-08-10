@@ -43,7 +43,7 @@ It is on my TODO list to implement filtering by significance, and to add standar
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
+m1 = umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
 	umxPath(from = "G", to = manifests),
 	umxPath(v.m. = manifests),
 	umxPath(v1m0 = "G")

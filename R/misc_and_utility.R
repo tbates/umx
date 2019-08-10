@@ -1049,7 +1049,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = names(demoOneFactor)),
 #' 	umxPath(var = "g", fixedAt = 1),
 #' 	umxPath(var = names(demoOneFactor))
@@ -1090,7 +1090,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = names(demoOneFactor)),
 #' 	umxPath(var = "g", fixedAt = 1),
 #' 	umxPath(var = names(demoOneFactor))
@@ -3312,8 +3312,8 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' myData = demoOneFactor, type = "cov",
-#' m1 <- umxRAM("One Factor", data = myData,
+#' myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
+#' m1 = umxRAM("One Factor", data = myData,
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)

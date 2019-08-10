@@ -790,13 +790,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' 
 #' 
 #' # Model 1 (could add auto=FALSE if you don't want to run this as it is being built)
-#' m1 <- umxRAM("m1", data = g1Data,
+#' m1 = umxRAM("m1", data = g1Data,
 #' 	umxPath("x", to = "y", labels = "beta"),
 #' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
 #' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 #' )
 #' # Model 2
-#' m2 <- umxRAM("m2", data = g2Data,
+#' m2 = umxRAM("m2", data = g2Data,
 #' 	umxPath("x", to = "y", labels = "beta"),
 #' 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
 #' 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
@@ -903,7 +903,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #' 
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -2726,12 +2726,12 @@ umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' # ====================================================================
 #' m1 = mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = latents  , to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	demoOneFactor, type = "cov",
+#' 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs=500)
 #' )
-#' mxEval(S, m1) # default variances are 0
+#' mxEval(S, m1) # default variances are jiggled away from near-zero
 #' # Add start values to the model
 #' m1 = umxValues(m1)
 #' mxEval(S, m1) # plausible variances
@@ -2884,13 +2884,14 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM",
+#' m1 = mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = latents  , to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1),
-#' 	demoOneFactor, type = "cov",
+#' 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs=500)
 #' )
+#'
 #' umxGetParameters(m1) # Default "matrix address" labels, i.e "One Factor.S[2,2]"
 #' m1 = umxLabel(m1)
 #' umxGetParameters(m1, free = TRUE) # Informative labels: "G_to_x1", "x4_with_x4", etc.
@@ -3076,13 +3077,14 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- mxModel("One Factor", type = "RAM", 
+#' m1 = mxModel("One Factor", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents, to = manifests),
+#' 	mxPath(from = latents  , to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents, arrows = 2, free = FALSE, values = 1.0),
-#' 	demoOneFactor, type = "cov",
+#' 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1.0),
+#' 	mxData(cov(demoOneFactor), type = "cov", numObs=500)
 #' )
+#'
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
 #' m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE) # set start values and label all parameters
 #' umxSummary(m1, show = "std")
@@ -3132,7 +3134,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 	}
 	if(umx_is_RAM(model)){
 		if(model$data$type == "raw"){
-			# If we have a RAM model with raw data, compute the satuarted and independence models
+			# If we have a RAM model with raw data, compute the saturated and independence models
 			# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
 			ref_models = mxRefModels(model, run = TRUE)
 			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
@@ -3192,7 +3194,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
+#' m1 = umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(v.m. = manifests),
 #' 	umxPath(v1m0 = latents)
@@ -3269,7 +3271,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -3339,7 +3341,7 @@ umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose =
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #' 
-#' m1 <- umxRAM("OneFactor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -4276,7 +4278,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 <- umxRAM("One Factor", data = myData, type= "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
@@ -4295,6 +4297,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath(means = c("A","B")) # Create a means model for A: from = "one", to = "A"
 #' umxPath(v1m0 = "A") # Give "A" variance and a mean, fixed at 1 and 0 respectively
 #' umxPath(v.m. = "A") # Give "A" variance and a mean, leaving both free.
+#' umxPath(v0m0 = "W", label = c(NA, "data.W"))
 #' umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
 #' umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
 #' umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
@@ -4308,17 +4311,19 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' # = Cholesky example =
 #' # ====================
 #' \dontrun{
-#' latents   = paste0("A", 1:3)
+#' # ======================================================================
+#' # = 3-factor Cholesky (A component of a 5-variable 3-factor ACE model) =
+#' # ======================================================================
+#' latents = paste0("A", 1:3)
 #' manifests = names(demoOneFactor)
-#' myData = demoOneFactor, type = "cov",
-#' m1 <- umxRAM("Chol", data = myData,
+#' m1 = umxRAM("Chol", data = demoOneFactor, type = "cov",
 #' 	umxPath(Cholesky = latents, to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
+#' 	umxPath(var = latents, fixedAt = 1)
 #' )
+#' plot(m1, splines= FALSE)
 #' }
-#'umxPath(v0m0 = "W", label = c(NA, "data.W"))
-
+#'
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
 	xmu_string2path(from)
@@ -4737,7 +4742,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' require("umx")
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 <- umxRAM("One Factor", data = demoOneFactor, type="cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G"  , fixedAt= 1)

@@ -44,8 +44,8 @@ umx_time('start')
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-myData = demoOneFactor, type = "cov",
-m1 <- umxRAM("One Factor", data = myData,
+myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
+m1 = umxRAM("One Factor", data = myData,
 	umxPath(from = latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)

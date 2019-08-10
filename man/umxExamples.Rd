@@ -46,7 +46,7 @@ manifests = paste0("x", 1:5) # 'x1', 'x2', ...'x5'
 
 # Create model cfa1, with name 'CFA', data demoOneFactor, and the CFA paths.
 
-cfa1 <- umxRAM("CFA", data = demoOneFactor,
+cfa1 = umxRAM("CFA", data = demoOneFactor,
 	# Create latent variable 'G', with fixed variance of 1 and mean of 0
 	umxPath(v1m0 = "G"),
 	# Create 5 manifest variables, x1:x5, with free variance and mean

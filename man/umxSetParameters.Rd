@@ -63,7 +63,7 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 <- umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
+m1 = umxRAM("One Factor", data = mxData(demoOneFactor[1:80,], type = "raw"),
 	umxPath(from = latents, to = manifests),
 	umxPath(v.m. = manifests),
 	umxPath(v1m0 = latents)
