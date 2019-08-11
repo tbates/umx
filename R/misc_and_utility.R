@@ -2291,8 +2291,8 @@ umx_write_to_clipboard <- function(x) {
 #'           OR = 3.857 CI99\[0.159, 93.646\]
 #' 
 #'
-#' @param grp1 cases and total N for group 1
-#' @param grp2 cases and total N for group 2
+#' @param grp1 cases and total N for group 1, e.g c(n=3, N=10)
+#' @param grp2 cases and total N for group 2, e.g c(n=1, N=20)
 #' @param alpha for CI (default = 0.05)
 #' @return - List of odds in group 1 and group2, and the resulting OR and CI
 #' @export
@@ -2337,7 +2337,7 @@ print.result_oddsratio <- function(x, digits = 3, ...) {
 	LowerCI = round(x[[ "LowerCI" ]], digits=digits)
 	UpperCI = round(x[[ "UpperCI" ]], digits=digits)
 	alpha   = x[[ "alpha" ]]
-	ORstring = paste0(OR, " CI", 100-(alpha*100), "[", LowerCI, ", ", UpperCI, "]")
+	ORstring = paste0(OR, " CI", 100-(alpha*100), " [", LowerCI, ", ", UpperCI, "]")
 	cat(sprintf(paste0("%", charLen, "s = ", ORstring), "OR"), fill= TRUE)
 }
 
