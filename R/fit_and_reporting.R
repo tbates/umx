@@ -3674,7 +3674,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 }
 
 # ===================================
-# = summary Stats and table helpers =
+# = Summary Stats and table helpers =
 # ===================================
 
 #' Fishers Method of combining p-values.
@@ -3694,8 +3694,8 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' @md
 #' @examples
 #' FishersMethod(c(.041, .378))
-FishersMethod <- function(pvalues) {
-	pchisq( -2 * sum(log(pvalues)), df=(2*length(pvalues)), lower.tail = FALSE)
+FishersMethod <- function(pvalues){
+	pchisq( -2 * sum(log(pvalues)), df= (2 * length(pvalues)), lower.tail = FALSE)
 }
 
 #' umx_fun

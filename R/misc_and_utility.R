@@ -2328,15 +2328,6 @@ oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
 	return(ret)
 }
 
-#' S3 method to print oddsratio results
-#' @param x an oddsratio object to print
-#' @param digits for rounding.
-#' @param ... other parameters passed to print
-#' @return NA
-#' @export
-#' @family Miscellaneous Stats Helpers
-#' @seealso - [umx_r_test()]
-#'
 print.result_oddsratio <- function(x, digits = 3, ...) {
 	# x = list(odds1= odds1, odds2= odds2, OR= OR, LowerCI = OR_CI_lo, UpperCI = OR_CI_hi, alpha = alpha)
 	charLen = nchar("Group 1 odds")
