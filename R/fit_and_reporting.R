@@ -4134,21 +4134,22 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		}
 	} else {
 		if(is.null(se)){
-			# p-value
 			if(is.null(p)){
-				umx_APA_pval(obj, min = min, digits = digits, addComparison = addComparison)
+				# obj is likely a p value (p not provided separately which is what SE_from_p expects...)
+				return(umx_APA_pval(obj, min = min, digits = digits, addComparison = addComparison))
 			} else {
+				# p-value provided but not SE
 				se = SE_from_p(beta = obj, p = p)
-				print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))				
+				return(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))				
 			}
 		} else if(length(se) == 2){
 			# beta and CI
 			# lower = b - (1.96 * se)
 			# upper = b + (1.96 * se)
-			print(paste0("\u03B2 = ", round(obj, digits), ", se =", round((se[2] - se[1])/(1.96 * 2), digits)))
+			return(paste0("\u03B2 = ", round(obj, digits), ", se =", round((se[2] - se[1])/(1.96 * 2), digits)))
 		} else {
 			# obj = beta and SE
-			print(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))
+			return(paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]"))
 		}
 
 	}
