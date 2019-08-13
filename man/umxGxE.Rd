@@ -90,7 +90,7 @@ umxReduce(m1)
 \references{
 \itemize{
 \item Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
-\strong{6}, 554-571. DOI: \url{https://doi.org/10.1375/twin.5.6.554}
+\strong{6}, 554-571. DOI: \href{https://doi.org/10.1375/twin.5.6.554}{10.1375/twin.5.6.554}
 }
 }
 \seealso{

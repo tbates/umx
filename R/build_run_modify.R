@@ -1481,7 +1481,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @family Twin Modeling Functions
 #' @seealso - [plot()], [umxSummary()], [umxReduce()]
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
-#'  **6**, 554-571. DOI: [https://doi.org/10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
+#'  **6**, 554-571. DOI: [10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
 #' @md
 #' @examples
 #' require(umx)
@@ -2592,9 +2592,16 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' Rotate a CP solution
 #'
 #' @description
-#' Rotate a CP solution
+#' Rotate a CP solution.
+#' Should work with rotations provided in `library("GPArotation")` and `library("psych")`, e.g
+#' 
+#' **Orthogonal**: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
+#' 
+#' **Oblique**: "Promax", "promax", "oblimin", "simplimax", "bentlerQ", "geominQ", "biquartimin" and "cluster"
 #'
-#' @details Need to free afterwards
+#'
+#' @details This works by taking the common-pathways loadings matrix from a solved [umxCP()] model, rotating these, placing
+#' them back into the loadings matrix, re-estimating the model with the parameters fixed at this rotation, then return the new model.
 #'
 #' @param model a [umxCP()] model to rotate.
 #' @param rotation name of the rotation.

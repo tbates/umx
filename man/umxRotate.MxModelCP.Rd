@@ -24,10 +24,16 @@
 }
 }
 \description{
-Rotate a CP solution
+Rotate a CP solution.
+Should work with rotations provided in \code{library("GPArotation")} and \code{library("psych")}, e.g
+
+\strong{Orthogonal}: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
+
+\strong{Oblique}: "Promax", "promax", "oblimin", "simplimax", "bentlerQ", "geominQ", "biquartimin" and "cluster"
 }
 \details{
-Need to free afterwards
+This works by taking the common-pathways loadings matrix from a solved \code{\link[=umxCP]{umxCP()}} model, rotating these, placing
+them back into the loadings matrix, re-estimating the model with the parameters fixed at this rotation, then return the new model.
 }
 \examples{
 # Rotate a CP solution(param)
