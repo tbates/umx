@@ -41,7 +41,7 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a", "c",
 \item{nSim}{Total number of pairs to simulate in the models (default = 4000)}
 }
 \value{
-\code{\link[=mxPower]{mxPower()}} or \code{\link[=mxPowerSearch]{mxPowerSearch()}} object
+\code{\link[OpenMx:mxPower]{OpenMx::mxPower()}} or \code{\link[OpenMx:mxPowerSearch]{OpenMx::mxPowerSearch()}} object
 }
 \description{
 \code{power.ACE.test} simulates a univariate ACE model (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins. It

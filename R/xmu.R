@@ -100,7 +100,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
 	if(show != "deprecated"){
-		stop("would be good if show was not passed to xmu_safe_run_summary")
+		stop("somehow show got passed to xmu_safe_run_summary: use std=T/F instead")
 	}
 
 	if(tryHard == "yes"){
