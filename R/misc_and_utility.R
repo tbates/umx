@@ -6110,9 +6110,11 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #'
 #' A wrapper for [MASS::mvrnorm()] to simplify turning a covariance matrix into matching raw data.
 #'
-#' @param myCovariance a covariance matrix
-#' @param n how many rows of data to return
+#' @param covMat A covariance matrix
+#' @param n How many rows of data to return
 #' @param means the means of the raw data (default = 0)
+#' @param varNames default uses "var1", "var2"
+#' @param empirical (passed to mvrnorm) Default = FALSE
 #' @return - data.frame
 #' @export
 #' @seealso - [cov2cor()], [MASS::mvrnorm()]
@@ -6137,29 +6139,29 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #' cov(tmp)
 #' tmp= umx_make_raw_from_cov(qm(1, .3| .3, 1), n=10, varNames= c("x", "y"), empirical= FALSE)
 #' cov(tmp)
-umx_make_raw_from_cov <- function(myCovariance, n, means = 0, names=NULL, empirical = FALSE) {
+umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empirical = FALSE) {
 	# depends on MASS::mvrnorm
 	if(is.null(varNames)){
-		if(is.null(dimnames(myCovariance))){
-			varNames = letters[1:dim(myCovariance)]
+		if(is.null(dimnames(covMat))){
+			varNames = letters[1:dim(covMat)]
 		}else{
-			varNames = dimnames(myCovariance)[[1]]
+			varNames = dimnames(covMat)[[1]]
 		}
-	} else if(length(varNames) != dim(myCovariance)[2]){
-		stop("varNames length doesn't match cov data dimensions\nYou gave me",  length(varNames), "but I need ", dim(myCovariance)[2])
+	} else if(length(varNames) != dim(covMat)[2]){
+		stop("varNames length doesn't match cov data dimensions\nYou gave me",  length(varNames), "but I need ", dim(covMat)[2])
 	}
-	if(!umx_is_cov(myCovariance, boolean = TRUE)){
-		stop("myCovariance must be a covariance matrix")
+	if(!umx_is_cov(covMat, boolean = TRUE)){
+		stop("covMat must be a covariance matrix")
 	}
 	if(length(means) == 1){
-		means = rep(means, dim(myCovariance)[2])
+		means = rep(means, dim(covMat)[2])
 	} else {
-		if(length(means) != dim(myCovariance)[2]){
-			stop("means must have length 1 or the number of columns in the matrix. You gave me ", dim(myCovariance)[2], 
+		if(length(means) != dim(covMat)[2]){
+			stop("means must have length 1 or the number of columns in the matrix. You gave me ", dim(covMat)[2], 
 			 " columns of cov matrix, but ", length(means), " means.")
 		}
 	}
-	out = MASS::mvrnorm (n = n, mu = means, Sigma = myCovariance, empirical = empirical);
+	out = MASS::mvrnorm (n = n, mu = means, Sigma = covMat, empirical = empirical);
 	out = data.frame(out);  names(out) <- varNames;
 	return(out)
 }

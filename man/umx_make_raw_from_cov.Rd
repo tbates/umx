@@ -4,15 +4,19 @@
 \alias{umx_make_raw_from_cov}
 \title{Turn a cov matrix into raw data}
 \usage{
-umx_make_raw_from_cov(myCovariance, n, means = 0, names = NULL,
+umx_make_raw_from_cov(covMat, n, means = 0, varNames = NULL,
   empirical = FALSE)
 }
 \arguments{
-\item{myCovariance}{a covariance matrix}
+\item{covMat}{A covariance matrix}
 
-\item{n}{how many rows of data to return}
+\item{n}{How many rows of data to return}
 
 \item{means}{the means of the raw data (default = 0)}
+
+\item{varNames}{default uses "var1", "var2"}
+
+\item{empirical}{(passed to mvrnorm) Default = FALSE}
 }
 \value{
 \itemize{

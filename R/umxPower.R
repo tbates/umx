@@ -124,7 +124,7 @@
 #' # ====================
 #' # = Show off options =
 #' # ====================
-#' # 1. tryHardsource("../../OpenMx/inst/models/nightly/Power2.R", chdir = TRUE)
+#' # 1. tryHard
 #' 
 #' power.ACE.test(update = "a", AA= .5, CC= 0, tryHard= "yes")
 #'
@@ -136,14 +136,6 @@
 #' power.ACE.test(update = "a", AA= .5, CC= 0, nSim= 20)
 #'
 #' }
-#'
-#' # ===================================
-#' # = Test dropping a series of paths =
-#' # ===================================
-#' # droplist = c("a_r1c1", "c_r1c1")
-#' # for (dropWhat in dropList) {
-#' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
-#' # }
 #'
 power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_after_dropping_c"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, nSim=4000){
 	# # TODO why not equivalent to this?
@@ -183,7 +175,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	# ==============================================
 	# = Build the "true" and "false" (null) models =
 	# ==============================================
-	#' Make, don't run yet
+	# Make, don't run yet
 	trueModel = umxACE(selDVs = "var", sep = "_T", mzData = mzData, dzData= dzData, autoRun = FALSE, optimizer = optimizer)
 
 	# update = c("a", "c", "a_after_dropping_c")
@@ -269,7 +261,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'    umxPath(var = c("X", "Y"))
 #' )
 #' # 2. Test power to detect .3 versus 0, with n= 90 subjects
-#' umxPower(m1, "X_with_Y", n= 90, method="ncp")
+#' umxPower(m1, "X_with_Y", n= 90)
 #' 
 #' # ####################
 #' # # Estimating power #
@@ -283,10 +275,9 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' \dontrun{
 #' # Use method = empirical 
-#' umxPower(m1, "X_with_Y", n = 90)
-#' }
+#' umxPower(m1, "X_with_Y", n = 90. method = "empirical")
+#'
 #' 
-#' \dontrun{
 #' # Test power for a cor.test doing the same thing..
 #' pwr::pwr.r.test(r = .3, n = 90)
 #' #           n = 90

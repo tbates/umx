@@ -57,7 +57,7 @@ m1 = umxRAM("corXY", data = tmp,
    umxPath(var = c("X", "Y"))
 )
 # 2. Test power to detect .3 versus 0, with n= 90 subjects
-umxPower(m1, "X_with_Y", n= 90, method="ncp")
+umxPower(m1, "X_with_Y", n= 90)
 
 # ####################
 # # Estimating power #
@@ -71,10 +71,9 @@ umxPower(m1, "X_with_Y", n= 90, method="ncp")
 
 \dontrun{
 # Use method = empirical 
-umxPower(m1, "X_with_Y", n = 90)
-}
+umxPower(m1, "X_with_Y", n = 90. method = "empirical")
 
-\dontrun{
+
 # Test power for a cor.test doing the same thing..
 pwr::pwr.r.test(r = .3, n = 90)
 #           n = 90

@@ -143,18 +143,20 @@ Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor 
 
 So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
 
-Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say:\preformatted{`m2 = umxModify(m1, update = "c_r3c2")`
-}
+Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say:
+
+\code{m2 = umxModify(m1, update = "c_r3c2")}
 
 Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 row, and the columns are laid out for
 each variable for twin 1, followed by each variable for twin 2.
 
-So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you
+could make them independent again with this script:
 
 \code{m1$top$expMean$labels[1, 4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
 
 \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
+of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978, p267).
 }
 \examples{
 # ============================
