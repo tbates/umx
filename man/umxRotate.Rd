@@ -14,7 +14,7 @@ umxRotate(model, rotation = c("varimax", "promax"), tryHard = "yes",
 
 \item{tryHard}{Default ("yes") is to tryHard}
 
-\item{freeLoadingsAfter}{Whether to keep the roated loadings fixed (Default, free them again)}
+\item{freeLoadingsAfter}{Whether to keep the rotated loadings fixed (Default, free them again)}
 
 \item{verbose}{print detail about the rotation}
 }

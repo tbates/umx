@@ -27,7 +27,7 @@ umx_grep(df, grepString, output = c("both", "label", "name"),
 Search names if given a data.frame, or strings if given a vector of strings.
 }
 \details{
-The namez function is more flexible. A handy feature of \code{umx_grep} is that it can
+The \code{namez} function is more flexible. A handy feature of \code{umx_grep} is that it can
 search the labels of data imported from SPSS.
 
 \emph{nb:} To simply grep for a pattern in a string use R's built-in \code{\link[=grep]{grep()}} functions, e.g.:

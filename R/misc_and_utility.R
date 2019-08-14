@@ -1783,7 +1783,7 @@ umx_rename <- function(data, old = NULL, replace = NULL, regex = NULL, test = FA
 #'
 #' Search names if given a data.frame, or strings if given a vector of strings. 
 #'
-#' The namez function is more flexible. A handy feature of `umx_grep` is that it can 
+#' The `namez` function is more flexible. A handy feature of `umx_grep` is that it can 
 #' search the labels of data imported from SPSS.
 #' 
 #' *nb:* To simply grep for a pattern in a string use R's built-in [grep()] functions, e.g.:

@@ -1,6 +1,6 @@
 # umx 3.0.0
 * August 2019 R 3.6.1 "Action of the Toes"
-* This release has major new features in beta: like support for lavaan syntax, AND a big cleanout/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.
+* This release has major new features in beta: like support for lavaan syntax, AND a big clean-out/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.
 * ALPHA: `umxRAM` lavaan string syntax support!
 * ALPHA: `umxRAM` multi-group models with `group="column"`!
 * NEW: `umxPower` and examples.

@@ -2576,7 +2576,7 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 #' @param model a model to rotate
 #' @param rotation name of the rotation.
 #' @param tryHard Default ("yes") is to tryHard
-#' @param freeLoadingsAfter Whether to keep the roated loadings fixed (Default, free them again)
+#' @param freeLoadingsAfter Whether to keep the rotated loadings fixed (Default, free them again)
 #' @param verbose print detail about the rotation
 #' @return - Rotated solution
 #' @family Reporting functions
