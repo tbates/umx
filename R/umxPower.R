@@ -288,6 +288,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' }
 #'
 umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), tabulatePower= FALSE){
+	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
 	n_null   = is.null(n)
 	pwr_null = is.null(power)
@@ -312,8 +313,9 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		m2 = umxModify(m1, update, value = value, name= paste0("drop_", update))
 		message("\n####################\n# Estimating ", 	c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))], " #
 ####################\n")
-		mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
-		# rockchalk::lazyCor(.3,2)
+		tmp = mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
+		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, 3)
+		return(tmp)
 	}
 }
 
