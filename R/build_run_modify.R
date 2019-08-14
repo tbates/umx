@@ -1101,17 +1101,19 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #'
 #' Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say:
 #'
-#'     `m2 = umxModify(m1, update = "c_r3c2")`
+#' `m2 = umxModify(m1, update = "c_r3c2")`
 #'	
 #' Less commonly-modified matrices are the mean matrix `expMean`. This has 1 row, and the columns are laid out for 
 #' each variable for twin 1, followed by each variable for twin 2.
 #' 
-#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this script:
+#' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you 
+#' could make them independent again with this script:
 #'
 #' `m1$top$expMean$labels[1, 4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
 #'
 #' \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
-#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
+#' of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978, p267).
+#' 
 #' @param name The name of the model (defaults to"ACE").
 #' @param selDVs The variables to include from the data: preferably, just "dep" not c("dep_T1", "dep_T2").
 #' @param selCovs (optional) covariates to include from the data (do not include sep in names)
