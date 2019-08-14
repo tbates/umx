@@ -6137,7 +6137,7 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #' cov(tmp)
 #' tmp= umx_make_raw_from_cov(qm(1, .3| .3, 1), n=10, varNames= c("x", "y"), empirical= FALSE)
 #' cov(tmp)
-umx_make_raw_from_cov <- function(myCovariance, n, means = 0, varNames=NULL, empirical = FALSE) {
+umx_make_raw_from_cov <- function(myCovariance, n, means = 0, names=NULL, empirical = FALSE) {
 	# depends on MASS::mvrnorm
 	if(is.null(varNames)){
 		if(is.null(dimnames(myCovariance))){

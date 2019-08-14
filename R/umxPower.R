@@ -23,86 +23,82 @@
 #'
 #' @param AA Additive genetic variance (Default .5)
 #' @param CC Shared environment variance (Default 0)
-#' @param EE  Unique environment variance. Leave NULL to compute an amount summing to 1
-#' @param update Path(s) to drop (Default "a_r1c1", i.e., drop a)
-#' @param value Value to set drop path(s) to (Default 0)
-#' @param n  If provided, solve for power /sig.level at the given n (Default NULL)
+#' @param EE Unique environment variance. Leave NULL to compute an amount summing to 1
+#' @param update Component to drop (Default "a", i.e., drop a)
+#' @param n If provided, solve for power /sig.level at the given n (Default NULL)
 #' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
 #' @param sig.level alpha (p-value) Default = 0.05
 #' @param power Default = .8 (80 percent power, equal to 1 - Type II rate)
+#' @param value Value to set dropped path to (Default 0)
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
-#' @param type Type of model c("univariate", "bivariate", "GxE") (EXPERIMENTAL MAY GO AWAY OR CHANGE)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
 #' @param tryHard Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)
 #' @param optimizer If set, will switch the optimizer.
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
-#' @return mxPower object
-#' @export
+#' @return [OpenMx::mxPower()] or [OpenMx::mxPowerSearch()] object
 #' @family Twin Modeling Functions
 #' @seealso - [OpenMx::mxPower()]
-#' @references - Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
+#' @references -
+#' * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 #' revisited: II detection of common environmental variance. *Twin Res Hum Genet*, **11**: 48-54.
-#' [doi](https://doi.org/10.1375/twin.11.1.48)
-#' 
-#' Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., & Munafo, M. R. (2013).
-#' Power failure: why small sample size undermines the reliability of neuroscience. *Nature Reviews Neuroscience*, **14**, 365-376. [doi](https://doi.org/10.1038/nrn3475)
-#'
+#' doi: [10.1375/twin.11.1.48](https://doi.org/10.1375/twin.11.1.48)
+#' * Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., and Munafo, M. R. (2013).
+#' Power failure: why small sample size undermines the reliability of neuroscience. 
+#' *Nature Reviews Neuroscience*, **14**, 365-376. doi: [10.1038/nrn3475](https://doi.org/10.1038/nrn3475)
+#' @export
 #' @md
 #' @examples
-#'
-#' # TODO why not equivalent to this?
-#' # https://genepi.qimr.edu.au//general/TwinPowerCalculator/twinpower.cgi
 #'
 #' # ===============================================
 #' # = Power to detect a^2=.5 with equal MZ and DZ =
 #' # ===============================================
-#' power.ACE.test(AA= .5, CC= 0, update = "a_r1c1") 
+#' power.ACE.test(AA = .5, CC = 0, update = "a") 
 #' # Suggests n = 84 MZ and 94 DZ pairs.
 #'
 #' # ================================
 #' # = Show power across range of N =
 #' # ================================
-#' power.ACE.test(AA= .5, CC= 0, update = "a_r1c1", search = TRUE)
+#' power.ACE.test(AA= .5, CC= 0, update = "a", search = TRUE)
 #'
 #' # Salutary note: You need well fitting models with correct betas in the data
 #' # for power to be valid.
 #' # tryHard helps ensure this, as does the default nSim= 4000 pair data.
 #' # Power is important to get right, so I recommend using tryHard = "yes"
-#' power.ACE.test(AA= .5, CC= 0, update = "a_r1c1", tryHard= "yes")
+#' power.ACE.test(AA= .5, CC= 0, update = "a", tryHard= "yes")
 #' 
 #' # =====================
 #' # = Power to detect C =
 #' # =====================
 #' 
 #' # 102 of each of MZ and DZ pairs for 80% power.
-#' power.ACE.test(AA= .5, CC= .3, update = "c_r1c1", tryHard= "yes")
+#' power.ACE.test(AA= .5, CC= .3, update = "c", tryHard= "yes")
 #'
 #' # ========================================
 #' # = Set 'a' to a fixed, but non-zero value =
 #' # ========================================
 #' 
-#' power.ACE.test(update= "a_r1c1", value= sqrt(.2), AA= .5, CC= 0)
+#' power.ACE.test(update= "a", value= sqrt(.2), AA= .5, CC= 0)
 #' # TODO get power.ACE.test to print the value of A in the null model.
 #'
 #' # ========================================
 #' # = Drop More than one parameter (A & C) =
 #' # ========================================
-#' # rather improbable hypothesis that twins show no familial similarity
-#' power.ACE.test(update = "^[ac]_r1c1", AA= .5, CC= .3)
+#' # E vs AE: the hypothesis that twins show no familial similarity.
+#' power.ACE.test(update = "a_after_dropping_c", AA= .5, CC= .3)
 #'
 #' # ===================================================
 #' # = More power to detect A > 0 when more C present  =
 #' # ===================================================
 #' 
-#' power.ACE.test(update = "a_r1c1", AA= .5, CC= .0)
-#' power.ACE.test(update = "a_r1c1", AA= .5, CC= .3)
+#' power.ACE.test(update = "a", AA= .5, CC= .0)
+#' power.ACE.test(update = "a", AA= .5, CC= .3)
 #'
 #' # ====================================================
 #' # = More power to detect C > 0 when more A present?  =
 #' # ====================================================
 #' 
-#' power.ACE.test(update = "c_r1c1", AA= .0, CC= .5)
-#' power.ACE.test(update = "c_r1c1", AA= .3, CC= .5)
+#' power.ACE.test(update = "c", AA= .0, CC= .5)
+#' power.ACE.test(update = "c", AA= .3, CC= .5)
 #'
 #'
 #' # ===============================================
@@ -110,8 +106,8 @@
 #' # ===============================================
 #'
 #' # Power about the same: total pairs with 2 MZs per DZ = 692, vs. 707
-#' power.ACE.test(MZ_DZ_ratio= 2/1, update= "a_r1c1", AA= .3, CC= 0, method="ncp", tryHard="yes")
-#' power.ACE.test(MZ_DZ_ratio= 1/2, update= "a_r1c1", AA= .3, CC= 0, method="ncp", tryHard="yes")
+#' power.ACE.test(MZ_DZ_ratio= 2/1, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
+#' power.ACE.test(MZ_DZ_ratio= 1/2, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 #'
 #' \dontrun{
 #' 
@@ -120,24 +116,24 @@
 #' # =====================================
 #' # Compare to empirical mode: suggests 83.6 MZ and 83.6 DZ pairs
 #'
-#' power.ACE.test(update= "a_r1c1", AA= .5, CC= 0, method= "empirical")
+#' power.ACE.test(update= "a", AA= .5, CC= 0, method= "empirical")
 #' # method= "empirical": For 80% power, you need 76 MZ and 76 DZ pairs
-#' power.ACE.test(update= "a_r1c1", AA= .5, CC= 0, method = "ncp")
+#' power.ACE.test(update= "a", AA= .5, CC= 0, method = "ncp")
 #' # method = "ncp": For 80% power, you need 83.5 MZ and 83.5 DZ pairs
 #'
 #' # ====================
 #' # = Show off options =
 #' # ====================
 #' # 1. tryHardsource("../../OpenMx/inst/models/nightly/Power2.R", chdir = TRUE)
-
-#' power.ACE.test(update = "a_r1c1", AA= .5, CC= 0, tryHard= "yes")
+#' 
+#' power.ACE.test(update = "a", AA= .5, CC= 0, tryHard= "yes")
 #'
 #' # 2. toggle optimizer
-#' power.ACE.test(update= "a_r1c1", AA= .5, CC= 0, optimizer= "SLSQP")
+#' power.ACE.test(update= "a", AA= .5, CC= 0, optimizer= "SLSQP")
 #'
 #' # 3. How many twin pairs in the base simulated data?
-#' power.ACE.test(update = "a_r1c1", AA= .5, CC= 0)
-#' power.ACE.test(update = "a_r1c1", AA= .5, CC= 0, nSim= 20)
+#' power.ACE.test(update = "a", AA= .5, CC= 0)
+#' power.ACE.test(update = "a", AA= .5, CC= 0, nSim= 20)
 #'
 #' }
 #'
@@ -149,7 +145,11 @@
 #' # 	power.ACE.test(nMZpairs= 2000, nDZpairs= 1000, drop = dropWhat, AA= .5, CC= 0)
 #' # }
 #'
-power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value = 0,  n = NULL, MZ_DZ_ratio= 1, sig.level = 0.05, power = .8, type = c("univariate", "bivariate", "GxE"), method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, nSim=4000){
+power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_after_dropping_c"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL, nSim=4000){
+	# # TODO why not equivalent to this?
+	# # https://genepi.qimr.edu.au//general/TwinPowerCalculator/twinpower.cgi
+	#
+	# type = c("univariate", "bivariate", "GxE")
 	# decimalplaces <- function(x) {
 	#     if (abs(x - round(x)) > .Machine$double.eps^0.5) {
 	#         nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed = TRUE)[[1]][[2]])
@@ -157,15 +157,14 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value 
 	#         return(0)
 	#     }
 	# }
-	message("This is beta code!")	
-	method = match.arg(method)
+	message("This is beta code: I likely will alter the interface!")	
+	method  = match.arg(method)
 	tryHard = match.arg(tryHard)
-	if(!all.equal(type, c("univariate", "bivariate", "GxE"))){
-		stop("type = ", omxQuotes(type), " not used yet. Likely never will be as these become separate functions")
-	}else{
-		type = match.arg(type)
+	update  = match.arg(update)
+	falseModelName = paste0("drop_", update)
+	if(method=="ncp" & !is.null(n) ){
+		stop("method = 'ncp' does not work for fixed n. Use method = 'empirical' instead.")
 	}
-
 	# nSim = 4000
 	# MZ_DZ_ratio is an odds & pMZ = odds/(1+odds)
 	pMZ = MZ_DZ_ratio/(1 + MZ_DZ_ratio)
@@ -184,8 +183,22 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value 
 	# ==============================================
 	# = Build the "true" and "false" (null) models =
 	# ==============================================
-	ace = umxACE(selDVs = "var", sep= "_T", mzData = mzData, dzData= dzData, tryHard = tryHard, optimizer = optimizer)
-	nullModel = umxModify(ace, regex = update, value = value, name= as.character(mxMakeNames(paste0("drop_", update[1]))), tryHard= tryHard)
+	#' Make, don't run yet
+	trueModel = umxACE(selDVs = "var", sep = "_T", mzData = mzData, dzData= dzData, autoRun = FALSE, optimizer = optimizer)
+
+	# update = c("a", "c", "a_after_dropping_c")
+	if(update == "a"){
+		update = "a_r1c1"
+	} else if(update == "c"){
+		update = "c_r1c1"
+	} else if(update == "a_after_dropping_c"){
+		trueModel = umxModify(trueModel, update="c_r1c1", value = value, autoRun = FALSE)
+		update = "a_r1c1"
+	}
+	# run the true Model
+	trueModel = xmu_safe_run_summary(trueModel, autoRun = TRUE, summary = FALSE, std = TRUE, tryHard = tryHard, comparison= FALSE)
+	# make and run the falseModel
+	nullModel = umxModify(trueModel, update = update, value = value, name = falseModelName, tryHard = tryHard)
 
 	# return plot to old value
 	umx_set_auto_plot(oldPlot)
@@ -193,15 +206,19 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a_r1c1"), value 
 	
 	if(search){
 		# power is not an input to mxPowerSearch
-		tmp = mxPowerSearch(trueModel=ace, falseModel= nullModel, n = n, sig.level = sig.level, method = method)
+		tmp = mxPowerSearch(trueModel= trueModel, falseModel= nullModel, n = n, sig.level = sig.level, method = method)
 		plot(power ~ N, data = tmp)
-		abline(h= power)
+		abline(h = power)
 	} else {
-		tmp = mxPower(trueModel=ace, falseModel= nullModel, n= n, sig.level = sig.level, power = power, method = method)
+		tmp = mxPower(trueModel=trueModel, falseModel= nullModel, n= n, sig.level = sig.level, power = power, method = method)
 		nFound = attributes(tmp)$detail$n
-		message(paste0("For ", power*100, "% power, you need ", 
-			round(nFound * pMZ), " MZ and ",
-		 	round(nFound * (1 - pMZ)), " DZ pairs"))
+		pairsUsed = paste0(round(nFound * pMZ), " MZ and ",round(nFound * (1 - pMZ)), " DZ pairs")
+		if(!is.null(n)){
+			paramSize = attributes(tmp)$detail$parameterDiff
+			message(paste0("With ", pairsUsed, ", you have ", power * 100, "% power to detect a parameter of ", round(paramSize, 3)))
+		} else {
+			message(paste0("For ", power * 100, "% power, you need ", pairsUsed))
+		}
 	}
 	return(tmp)
 }

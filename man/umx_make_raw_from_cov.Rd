@@ -4,7 +4,7 @@
 \alias{umx_make_raw_from_cov}
 \title{Turn a cov matrix into raw data}
 \usage{
-umx_make_raw_from_cov(myCovariance, n, means = 0, varNames = NULL,
+umx_make_raw_from_cov(myCovariance, n, means = 0, names = NULL,
   empirical = FALSE)
 }
 \arguments{
