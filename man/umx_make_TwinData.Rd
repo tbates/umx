@@ -213,6 +213,7 @@ str(tmp)
 }
 
 Other Twin Data functions: \code{\link{umx_long2wide}},
+  \code{\link{umx_nice_data}},
   \code{\link{umx_residualize}},
   \code{\link{umx_scale_wide_twin_data}},
   \code{\link{umx_wide2long}}, \code{\link{umx}}

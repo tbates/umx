@@ -275,10 +275,10 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' \dontrun{
 #' # Use method = empirical 
-#' umxPower(m1, "X_with_Y", n = 90. method = "empirical")
-#'
+#' umxPower(m1, "X_with_Y", n = 90, method = "empirical")
+#' # power is .823
 #' 
-#' # Test power for a cor.test doing the same thing..
+#' # Test power for cor.test doing the same thing.
 #' pwr::pwr.r.test(r = .3, n = 90)
 #' #           n = 90
 #' #           r = 0.3
@@ -293,7 +293,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 	n_null   = is.null(n)
 	pwr_null = is.null(power)
 	sig_null = is.null(sig.level)
-	setList = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
+	setList = omxQuotes(c("n", "power", "sig.level")[which(!c(n_null, pwr_null, sig_null))])
 	nulls     = sum(n_null, pwr_null, sig_null)
 	if(tabulatePower){
 		if(!is.null(power)){
@@ -310,10 +310,10 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		} else if (nulls == 3){
 			stop("You didn't set any of ", setList, ": You need to fix two of these for me to be able to estimate the remaining one...")
 		}
-		m2 = umxModify(m1, update, value = value, name= paste0("drop_", update))
+		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
 		message("\n####################\n# Estimating ", 	c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))], " #
 ####################\n")
-		tmp = mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
+		tmp = mxPower(trueModel, nullModel, n= n, power=power, sig.level = sig.level, method= method)	
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, 3)
 		return(tmp)
 	}
