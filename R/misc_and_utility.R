@@ -6136,11 +6136,12 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 #' 
 #' myData = umx_make_raw_from_cov(covData, n = 100, means = 1:6)
 #' umxAPA(myData)
-#' tmp= umx_make_raw_from_cov(matrix(c(1, .3, .3, 1), nrow=2), n=10, varNames= c("x", "y"), empirical= FALSE)
+#' covMat = matrix(c(1, .3, .3, 1), nrow=2)
+#' tmp= umx_make_raw_from_cov(covMat, n=10, varNames= c("x", "y"))
 #' cov(tmp)
-#' tmp= umx_make_raw_from_cov(matrix(c(1, .3, .3, 1), nrow=2), n=10, varNames= c("x", "y"), empirical= TRUE)
+#' tmp= umx_make_raw_from_cov(covMat, n=10, varNames= c("x", "y"), empirical= TRUE)
 #' cov(tmp)
-#' tmp= umx_make_raw_from_cov(qm(1, .3| .3, 1), n=10, varNames= c("x", "y"), empirical= FALSE)
+#' tmp= umx_make_raw_from_cov(qm(1, .3| .3, 1), n=10, varNames= c("x", "y"))
 #' cov(tmp)
 umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empirical = FALSE) {
 	# depends on MASS::mvrnorm

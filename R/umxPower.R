@@ -241,7 +241,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' @param sig.level Default = .05
 #' @param value Value of dropped parameter (default = 0)
 #' @param method "ncp" (default) or "empirical"
-#' @param tabulatePower Whether to show a spread of n and corresponding power (Default = FALSE)
+#' @param tabulatePower Whether to tabulate the range of power across n or effect size (if n specified). Default = FALSE.
 #' @return power table
 #' @export
 #' @family Teaching and Testing functions
@@ -253,14 +253,15 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' # = Power to detect correlation of .3 in 200 people =
 #' # ===================================================
 #'
+#' # 1 Make some data
 #' tmp = umx_make_raw_from_cov(qm(1, .3| .3, 1), n=200, varNames= c("X", "Y"), empirical= TRUE)
 #' 
-#' # 1. Make model with true correlation of X & Y = .3
+#' # 2. Make model with true correlation of X & Y = .3
 #' m1 = umxRAM("corXY", data = tmp,
 #'    umxPath("X", with = "Y"),
 #'    umxPath(var = c("X", "Y"))
 #' )
-#' # 2. Test power to detect .3 versus 0, with n= 90 subjects
+#' # 3. Test power to detect .3 versus 0, with n= 90 subjects
 #' umxPower(m1, "X_with_Y", n= 90)
 #' 
 #' # ####################
@@ -269,22 +270,57 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' # 
 #' #    method = ncp
 #' #         n = 90
-#' #     power = 0.829
+#' #     power = 0.83
 #' # sig.level = 0.05
 #' # statistic = LRT
 #'
-#' \dontrun{
-#' # Use method = empirical 
-#' umxPower(m1, "X_with_Y", n = 90. method = "empirical")
+#' # =================================================
+#' # = Tabulate Power across a range of values of  n =
+#' # =================================================
+#' umxPower(m1, "X_with_Y", tabulatePower = TRUE)
 #'
+#' \dontrun{
 #' 
-#' # Test power for a cor.test doing the same thing..
+#' # =====================================
+#' # = Examples with method = empirical  =
+#' # =====================================
+#' 
+#' umxPower(m1, "X_with_Y", n = 90, method = "empirical")
+#' # power is .823
+#' # Test using cor.test doing the same thing.
 #' pwr::pwr.r.test(r = .3, n = 90)
 #' #           n = 90
 #' #           r = 0.3
 #' #   sig.level = 0.05
 #' #       power = 0.827
 #' # alternative = two.sided
+#' 
+#' umxPower(m1, "X_with_Y", n= 90, method = "empirical", tabulatePower = TRUE)
+#'
+#' # Search X_with_Y:power relationship for n=90
+#' |    | X_with_Y   | power     | lower     | upper     |
+#' |:---|:-----------|:----------|:----------|:----------|
+#' | 1  | 0.08800859 | 0.2689414 | 0.1596095 | 0.4160855 |
+#' | 2  | 0.10066598 | 0.3236951 | 0.2117817 | 0.4602180 |
+#' | 3  | 0.11332337 | 0.3837446 | 0.2747536 | 0.5058168 |
+#' | 4  | 0.12598077 | 0.4475620 | 0.3469889 | 0.5526166 |
+#' | 5  | 0.13863816 | 0.5131549 | 0.4249318 | 0.6005657 |
+#' | 6  | 0.15129555 | 0.5782978 | 0.5032166 | 0.6499256 |
+#' | 7  | 0.16395294 | 0.6408252 | 0.5758201 | 0.7010404 |
+#' | 8  | 0.17661033 | 0.6989084 | 0.6383710 | 0.7532292 |
+#' | 9  | 0.18926773 | 0.7512450 | 0.6901890 | 0.8036907 |
+#' | 10 | 0.20192512 | 0.7971249 | 0.7332804 | 0.8488375 |
+#' | 11 | 0.21458251 | 0.8363858 | 0.7698677 | 0.8865116 |
+#' | 12 | 0.22723990 | 0.8692947 | 0.8014434 | 0.9163789 |
+#' | 13 | 0.23989729 | 0.8964042 | 0.8289134 | 0.9392231 |
+#' | 14 | 0.25255468 | 0.9184186 | 0.8528663 | 0.9562632 |
+#' | 15 | 0.26521208 | 0.9360885 | 0.8737344 | 0.9687514 |
+#' | 16 | 0.27786947 | 0.9501390 | 0.8918717 | 0.9777896 |
+#' | 17 | 0.29052686 | 0.9612285 | 0.9075880 | 0.9842729 |
+#' | 18 | 0.30318425 | 0.9699297 | 0.9211637 | 0.9888940 |
+#' | 19 | 0.31584164 | 0.9767254 | 0.9328545 | 0.9921728 |
+#' | 20 | 0.32849904 | 0.9820138 | 0.9428939 | 0.9944916 |
+#'
 #' }
 #'
 umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), tabulatePower= FALSE){
@@ -293,13 +329,15 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 	n_null   = is.null(n)
 	pwr_null = is.null(power)
 	sig_null = is.null(sig.level)
-	setList = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
+	setList = omxQuotes(c("n", "power", "sig.level")[which(!c(n_null, pwr_null, sig_null))])
+	beingEstimated = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
 	nulls     = sum(n_null, pwr_null, sig_null)
+	nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
 	if(tabulatePower){
 		if(!is.null(power)){
-			stop("Ignoring power: when searching, I search for suitable n to get power")
+			stop("Ignoring power: when searching, I estimate power across a range of ns or effect sizes")
 		}
-		mxPowerSearch(trueModel, falseModel = m2, n = n, sig.level = sig.level, method = method)
+		mxPowerSearch(trueModel, falseModel = nullModel, n = n, sig.level = sig.level, method = method)
 	} else {
 		if(nulls == 0){
 			stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these three to null. Probably n")
@@ -310,10 +348,9 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		} else if (nulls == 3){
 			stop("You didn't set any of ", setList, ": You need to fix two of these for me to be able to estimate the remaining one...")
 		}
-		m2 = umxModify(m1, update, value = value, name= paste0("drop_", update))
-		message("\n####################\n# Estimating ", 	c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))], " #
-####################\n")
-		tmp = mxPower(trueModel, m2, n= n, power=power, sig.level = sig.level, method= method)	
+		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
+		message("\n####################\n# Estimating ", beingEstimated, " #\n####################\n")
+		tmp = mxPower(trueModel, nullModel, n= n, power=power, sig.level = sig.level, method= method)	
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, 3)
 		return(tmp)
 	}

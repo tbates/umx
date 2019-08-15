@@ -11,7 +11,7 @@
 #' @param zygosity existing zygosity column name (updated to `zygosity`).
 #' @return - [data.frame()]
 #' @export
-#' @family Twin Data functions, Data functions
+#' @family Twin Data functions
 #' @seealso - [umx_wide2long()], [umx_long2wide()], 
 #' @references - [tutorials](https://tbates.github.io), [tbates/umx](https://github.com/tbates/umx)
 #' @md

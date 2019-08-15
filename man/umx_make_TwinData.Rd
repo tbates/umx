@@ -93,14 +93,17 @@ Emod = list(Beta_e1 = .025, Beta_e2 = .025)
 # = Basic Example, with all elements of std univariate data specified =
 # =====================================================================
 tmp = umx_make_TwinData(nMZpairs = 10000, AA = .30, CC = .00, EE = .70)
-# Show list of 2 data sets
+# Show dataframe with 20,000 rows and 3 variables: var_T1, var_T2, and zygosity
 str(tmp)
+
+# =====================================
 # = How to consume the built datasets =
+# =====================================
 mzData = tmp[tmp$zygosity == "MZ", ]
 dzData = tmp[tmp$zygosity == "DZ", ]
 str(mzData); str(dzData); 
-cov(mzData[,c("var_T1","var_T2")])
-cov(dzData[,c("var_T1","var_T2")])
+cov(mzData[, c("var_T1","var_T2")])
+cov(dzData[, c("var_T1","var_T2")])
 umxAPA(mzData[,c("var_T1","var_T2")])
 
 # Prefer to work in path coefficient values? (little a?)
@@ -213,6 +216,7 @@ str(tmp)
 }
 
 Other Twin Data functions: \code{\link{umx_long2wide}},
+  \code{\link{umx_nice_data}},
   \code{\link{umx_residualize}},
   \code{\link{umx_scale_wide_twin_data}},
   \code{\link{umx_wide2long}}, \code{\link{umx}}

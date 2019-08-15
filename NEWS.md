@@ -3,16 +3,16 @@
 * This release has major new features in beta: like support for lavaan syntax, AND a big clean-out/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.
 * ALPHA: `umxRAM` lavaan string syntax support!
 * ALPHA: `umxRAM` multi-group models with `group="column"`!
-* NEW: `umxPower` and examples.
-* NEW: `power.ACE.test` and examples.
-* NEW: `umxRotate` Rotate the factor loadings in `umxCP` models.
+* BETA: `umxPower` and examples (beta)
+* BETA: `power.ACE.test` and examples. (beta)
+* BETA: `umxRotate` Rotate the factor loadings in `umxCP` models.
 * NEW: `xmu_safe_run_summary` can listen to `silent` to turn off summary and progress from models - use when running big simulation loops.
 * NEW: `umx_set_silent` preference (option) for other functions to listen too and choose how much junk to print to console. Like a global verbose.
 * NEW: `umx_select_valid` to replace values in one column with those in another, if first column is NA.
 * NEW: `FishersMethod` To combine p-values.
 * NEW: `oddsratio`.
 * NEW: `SE_from_p` helper to get SE from b and p, or get a p from CI.
-* NEW: `umx_nice_data` converts your twinData to the standard format (zyg in zygosity, _T1 _T2 suffixing).
+* NEW: `umx_nice_data` converts your twinData to the standard format (zyg = zygosity, "_T1" , "_T2" suffixing of twin variable names).
 * NEW: `umxMendelianRandomization` alias to umxTwoStage.
 * CONVENIENCE: `umxCP` and `umxIP` can take `data` and create `MZ` and `DZ` datasets.
   * Preparation for expansion to 5-group models.
