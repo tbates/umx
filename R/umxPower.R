@@ -154,9 +154,11 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	tryHard = match.arg(tryHard)
 	update  = match.arg(update)
 	falseModelName = paste0("drop_", update)
+
 	if(method=="ncp" & !is.null(n) ){
-		stop("method = 'ncp' does not work for fixed n. Use method = 'empirical' instead.")
+		stop("method = 'ncp' does not work for fixed n. Use method = 'empirical' instead, or specify power to estimate in place of n")
 	}
+
 	# nSim = 4000
 	# MZ_DZ_ratio is an odds & pMZ = odds/(1+odds)
 	pMZ = MZ_DZ_ratio/(1 + MZ_DZ_ratio)
