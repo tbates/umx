@@ -509,7 +509,6 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 	invisible(list(minVar = minVar, maxVarRatio = maxVarRatio))
 }
 
-
 #' Print anything when running a model?
 #'
 #' Sets a umx property "silent" to `TRUE` or `FALSE`. This is fed to [OpenMx::mxRun()] inside functions like [umxRAM()].
@@ -526,8 +525,8 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 #' library(umx)
 #' umx_set_silent() # print existing value
 #' old = umx_set_silent(silent = TRUE) # store existing value
-#' umx_set_silent(FALSE)  # set to FALSE
-#' umx_set_silent(old)    # reinstate
+#' umx_set_silent(FALSE) # set to FALSE
+#' umx_set_silent(old)   # reinstate
 umx_set_silent <- function(value = NA, silent = FALSE) {
 	oldValue = getOption("umx_silent")
 	# initialize if needed

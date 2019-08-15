@@ -6,7 +6,7 @@
 \usage{
 umxPower(trueModel, update = NULL, n = NULL, power = NULL,
   sig.level = 0.05, value = 0, method = c("ncp", "empirical"),
-  explore = FALSE, digits = 3, silent = TRUE)
+  explore = FALSE, digits = 2, silent = TRUE)
 }
 \arguments{
 \item{trueModel}{The model with the parameters at values you expect in the population.}

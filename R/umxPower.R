@@ -328,7 +328,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' }
 #'
-umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 3, silent = TRUE){
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
 	oldSilent = umx_set_silent(silent, silent = TRUE) # set silent and store existing value
@@ -350,7 +350,11 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 			stop("Can't set power when exploring: I can only explore FOR power or effect size across a range of ns or effect sizes")
 		}
 		tmp = mxPowerSearch(trueModel, falseModel = nullModel, n = n, sig.level = sig.level, method = method)
-		tmp = (umx_round(tmp, digits=digits))
+		tmp = (umx_round(tmp, digits = digits))
+		if(method=="ncp"){
+			# delete the unused lower-upper columns
+			tmp = tmp[,	1:2]
+		}
 	} else {
 		if(nulls == 0){
 			stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these three to null. Probably n")
@@ -362,7 +366,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 			stop("You didn't set any of ", setList, ": You need to fix two of these for me to be able to estimate the remaining one...")
 		}
 		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
-		message("\n####################\n# Estimating ", beingEstimated, " #\n####################\n")
+		message("\n#####################\n# Estimating ", beingEstimated, " #\n#####################\n")
 		tmp = mxPower(trueModel, nullModel, n= n, power=power, sig.level = sig.level, method= method)	
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, digits)
 	}

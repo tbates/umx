@@ -24,8 +24,8 @@ If TRUE, then the progress messages from model runs are suppressed. Useful for p
 library(umx)
 umx_set_silent() # print existing value
 old = umx_set_silent(silent = TRUE) # store existing value
-umx_set_silent(FALSE)  # set to FALSE
-umx_set_silent(old)    # reinstate
+umx_set_silent(FALSE) # set to FALSE
+umx_set_silent(old)   # reinstate
 }
 \references{
 \itemize{
