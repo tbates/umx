@@ -432,38 +432,38 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' @return - Current umx_auto_plot setting
 #' @export
 #' @family Get and set
+#' @return - existing AutoPlot value
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' library(umx)
 #' umx_set_auto_plot() # print current state
 #' old = umx_set_auto_plot(silent = TRUE) # store existing value
+#' old
 #' umx_set_auto_plot(TRUE)   # set to on (internally stored as "name")
 #' umx_set_auto_plot(FALSE)  # set to off (internally stored as NA)
 #' umx_set_auto_plot(old)    # reinstate
 umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
+	
+	if(is.na(getOption("umx_auto_plot"))){
+		oldAutoPlot = FALSE
+	} else {
+		oldAutoPlot = TRUE
+	}
 	if(is.null(autoPlot)){
+		# just asking...
 		if(!silent){
-			message("Current plot format is ", omxQuotes(getOption("umx_auto_plot")),
-				". 'name' means auto-plot is on (defaulting to the name of the model).", 
-				" Use TRUE to turn on, FALSE to turn off."
-			)
-		}
-		if(is.na(getOption("umx_auto_plot"))){
-			autoPlot = FALSE
-		} else {
-			autoPlot = TRUE
+			message("Current plot format is ", omxQuotes(oldAutoPlot), "\n Use TRUE to turn on, FALSE to turn off.")
 		}
 	}else{
 		if(is.na(autoPlot) || autoPlot %in% FALSE){
+			# Set to NA (which is interpreted as FALSE
 			options("umx_auto_plot" = NA)		
-			autoPlot = FALSE
 		} else if(autoPlot == 'name' || autoPlot){
 			options("umx_auto_plot" = "name")
-			autoPlot = TRUE
 		}
 	}
-	invisible(autoPlot)
+	invisible(oldAutoPlot)
 }
 
 #' umx_set_data_variance_check
@@ -525,6 +525,7 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 #' umx_set_silent(old)    # reinstate
 umx_set_silent <- function(value = NA, silent = FALSE) {
 	if(is.na(value)) {
+		# get value
 		if(!silent){
 			message(
 				"Current silent setting is ", 

@@ -15,6 +15,10 @@ umx_set_auto_plot(autoPlot = NULL, silent = FALSE)
 \itemize{
 \item Current umx_auto_plot setting
 }
+
+\itemize{
+\item existing AutoPlot value
+}
 }
 \description{
 Set autoPlot default for models like umxACE umxGxE etc.
@@ -23,6 +27,7 @@ Set autoPlot default for models like umxACE umxGxE etc.
 library(umx)
 umx_set_auto_plot() # print current state
 old = umx_set_auto_plot(silent = TRUE) # store existing value
+old
 umx_set_auto_plot(TRUE)   # set to on (internally stored as "name")
 umx_set_auto_plot(FALSE)  # set to off (internally stored as NA)
 umx_set_auto_plot(old)    # reinstate

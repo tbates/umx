@@ -165,8 +165,9 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	nMZpairs = round(nSim * pMZ)
 	nDZpairs = round(nSim * (1 - pMZ))
 	# Turn off plotting
-	umx_set_silent(TRUE)
-	oldPlot = umx_set_auto_plot(silent=TRUE); umx_set_auto_plot(FALSE)
+	oldSilent = umx_set_silent(TRUE)
+	oldPlot = umx_set_auto_plot(silent=TRUE);
+	umx_set_auto_plot(FALSE)
 
 	# 1. Generate data and run model 1
 	# tmp = umx_make_TwinData(nMZpairs= 500, nDZpairs = 500, AA= .5, CC= 0, EE= NULL, varNames= "var", mean= 0, empirical= TRUE)
@@ -196,7 +197,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 
 	# return plot to old value
 	umx_set_auto_plot(oldPlot)
-	umx_set_silent(FALSE)
+	umx_set_silent(oldSilent)    # reinstate
 	
 	if(search){
 		# power is not an input to mxPowerSearch
@@ -243,7 +244,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' @param sig.level Default = .05
 #' @param value Value of dropped parameter (default = 0)
 #' @param method "ncp" (default) or "empirical"
-#' @param tabulatePower Whether to tabulate the range of power across n or effect size (if n specified). Default = FALSE.
+#' @param explore Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.
 #' @return power table
 #' @export
 #' @family Teaching and Testing functions
@@ -256,9 +257,9 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' # ===================================================
 #'
 #' # 1 Make some data
-#' tmp = umx_make_raw_from_cov(qm(1, .3| .3, 1), n=200, varNames= c("X", "Y"), empirical= TRUE)
+#' tmp = umx_make_raw_from_cov(qm(1, .2| .2, 1), n=2000, varNames= c("X", "Y"), empirical= TRUE)
 #' 
-#' # 2. Make model with true correlation of X & Y = .3
+#' # 2. Make model of true XY correlation of .3
 #' m1 = umxRAM("corXY", data = tmp,
 #'    umxPath("X", with = "Y"),
 #'    umxPath(var = c("X", "Y"))
@@ -279,7 +280,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' # =================================================
 #' # = Tabulate Power across a range of values of  n =
 #' # =================================================
-#' umxPower(m1, "X_with_Y", tabulatePower = TRUE)
+#' umxPower(m1, "X_with_Y", explore = TRUE)
 #'
 #' \dontrun{
 #' 
@@ -287,6 +288,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' # = Examples with method = empirical  =
 #' # =====================================
 #' 
+#' # Power to detect r = .3 given n=90
 #' umxPower(m1, "X_with_Y", n = 90, method = "empirical")
 #' # power is .823
 #' # Test using cor.test doing the same thing.
@@ -297,7 +299,8 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' #       power = 0.827
 #' # alternative = two.sided
 #' 
-#' umxPower(m1, "X_with_Y", n= 90, method = "empirical", tabulatePower = TRUE)
+#' # Power search for detectable effect size, given n = 90
+#' umxPower(m1, "X_with_Y", n= 90, method = "empirical", explore = TRUE)
 #'
 #' # Search X_with_Y:power relationship for n=90
 #' |    | X_with_Y   | power     | lower     | upper     |
@@ -325,21 +328,30 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' }
 #'
-umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), tabulatePower= FALSE){
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 3, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
-	n_null   = is.null(n)
-	pwr_null = is.null(power)
-	sig_null = is.null(sig.level)
-	setList = omxQuotes(c("n", "power", "sig.level")[which(!c(n_null, pwr_null, sig_null))])
+	oldSilent = umx_set_silent(silent = TRUE) # store existing value
+	umx_set_silent(TRUE)  # set to FALSE
+	
+	if(explore & method=="ncp" & !is.null(n) ){
+		stop("method = 'ncp' does not work for searching with fixed n. Use method = 'empirical' instead, or specify power to estimate in place of n")
+	}
+
+	n_null         = is.null(n)
+	pwr_null       = is.null(power)
+	sig_null       = is.null(sig.level)
+	nulls          = sum(n_null, pwr_null, sig_null)
+	setList        = omxQuotes(c("n", "power", "sig.level")[which(!c(n_null, pwr_null, sig_null))])
 	beingEstimated = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
-	nulls     = sum(n_null, pwr_null, sig_null)
+
 	nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
-	if(tabulatePower){
+	if(explore){
 		if(!is.null(power)){
-			stop("Ignoring power: when searching, I estimate power across a range of ns or effect sizes")
+			stop("Can't set power when exploring: I can only explore FOR power or effect size across a range of ns or effect sizes")
 		}
-		mxPowerSearch(trueModel, falseModel = nullModel, n = n, sig.level = sig.level, method = method)
+		tmp = mxPowerSearch(trueModel, falseModel = nullModel, n = n, sig.level = sig.level, method = method)
+		tmp = (umx_round(tmp, digits=digits))
 	} else {
 		if(nulls == 0){
 			stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these three to null. Probably n")
@@ -353,8 +365,9 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
 		message("\n####################\n# Estimating ", beingEstimated, " #\n####################\n")
 		tmp = mxPower(trueModel, nullModel, n= n, power=power, sig.level = sig.level, method= method)	
-		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, 3)
-		return(tmp)
+		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, digits)
 	}
+	umx_set_silent(oldSilent)    # reinstate
+	return(tmp)
 }
 

@@ -6,7 +6,7 @@
 \usage{
 umxPower(trueModel, update = NULL, n = NULL, power = NULL,
   sig.level = 0.05, value = 0, method = c("ncp", "empirical"),
-  tabulatePower = FALSE)
+  explore = FALSE, digits = 3, silent = TRUE)
 }
 \arguments{
 \item{trueModel}{The model with the parameters at values you expect in the population.}
@@ -23,7 +23,7 @@ umxPower(trueModel, update = NULL, n = NULL, power = NULL,
 
 \item{method}{"ncp" (default) or "empirical"}
 
-\item{tabulatePower}{Whether to tabulate the range of power across n or effect size (if n specified). Default = FALSE.}
+\item{explore}{Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.}
 }
 \value{
 power table
@@ -50,9 +50,9 @@ Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 # ===================================================
 
 # 1 Make some data
-tmp = umx_make_raw_from_cov(qm(1, .3| .3, 1), n=200, varNames= c("X", "Y"), empirical= TRUE)
+tmp = umx_make_raw_from_cov(qm(1, .2| .2, 1), n=2000, varNames= c("X", "Y"), empirical= TRUE)
 
-# 2. Make model with true correlation of X & Y = .3
+# 2. Make model of true XY correlation of .3
 m1 = umxRAM("corXY", data = tmp,
    umxPath("X", with = "Y"),
    umxPath(var = c("X", "Y"))
@@ -73,7 +73,7 @@ umxPower(m1, "X_with_Y", n= 90)
 # =================================================
 # = Tabulate Power across a range of values of  n =
 # =================================================
-umxPower(m1, "X_with_Y", tabulatePower = TRUE)
+umxPower(m1, "X_with_Y", explore = TRUE)
 
 \dontrun{
 
@@ -81,6 +81,7 @@ umxPower(m1, "X_with_Y", tabulatePower = TRUE)
 # = Examples with method = empirical  =
 # =====================================
 
+# Power to detect r = .3 given n=90
 umxPower(m1, "X_with_Y", n = 90, method = "empirical")
 # power is .823
 # Test using cor.test doing the same thing.
@@ -91,7 +92,8 @@ pwr::pwr.r.test(r = .3, n = 90)
 #       power = 0.827
 # alternative = two.sided
 
-umxPower(m1, "X_with_Y", n= 90, method = "empirical", tabulatePower = TRUE)
+# Power search for detectable effect size, given n = 90
+umxPower(m1, "X_with_Y", n= 90, method = "empirical", explore = TRUE)
 
 # Search X_with_Y:power relationship for n=90
 |    | X_with_Y   | power     | lower     | upper     |
