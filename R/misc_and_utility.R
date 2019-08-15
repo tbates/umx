@@ -443,9 +443,14 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' umx_set_auto_plot(TRUE)   # set to on (internally stored as "name")
 #' umx_set_auto_plot(FALSE)  # set to off (internally stored as NA)
 #' umx_set_auto_plot(old)    # reinstate
-umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {
-	
-	if(is.na(getOption("umx_auto_plot"))){
+umx_set_auto_plot <- function(autoPlot = NULL, silent = FALSE) {	
+	oldAutoPlot = getOption("umx_auto_plot")
+	if(is.null(oldAutoPlot)){
+		# not initialised yet
+		options("umx_auto_plot" = NA)
+		oldAutoPlot = NA
+	}
+	if(is.na(oldAutoPlot)){
 		oldAutoPlot = FALSE
 	} else {
 		oldAutoPlot = TRUE
@@ -524,20 +529,22 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 #' umx_set_silent(FALSE)  # set to FALSE
 #' umx_set_silent(old)    # reinstate
 umx_set_silent <- function(value = NA, silent = FALSE) {
+	oldValue = getOption("umx_silent")
+	# initialize if needed
+	if(is.null(oldValue)) {
+		oldValue = FALSE
+		options("umx_silent" = FALSE)
+	}
 	if(is.na(value)) {
 		# get value
 		if(!silent){
-			message(
-				"Current silent setting is ", 
-				omxQuotes(getOption("umx_silent")),
-				". Valid options are TRUE or FALSE."
-			)
+			message("Current silent setting is ", omxQuotes(oldValue),".\nValid options are TRUE or FALSE.")
 		}
-		invisible(getOption("umx_silent"))
 	} else {
 		umx_check(value %in% c(TRUE, FALSE), "stop")
 		options("umx_silent" = value)
 	}
+	invisible(oldValue)
 }
 
 #' umx_set_auto_run

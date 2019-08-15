@@ -166,8 +166,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	nDZpairs = round(nSim * (1 - pMZ))
 	# Turn off plotting
 	oldSilent = umx_set_silent(TRUE)
-	oldPlot = umx_set_auto_plot(silent=TRUE);
-	umx_set_auto_plot(FALSE)
+	oldPlot = umx_set_auto_plot(FALSE, silent=TRUE);
 
 	# 1. Generate data and run model 1
 	# tmp = umx_make_TwinData(nMZpairs= 500, nDZpairs = 500, AA= .5, CC= 0, EE= NULL, varNames= "var", mean= 0, empirical= TRUE)
@@ -245,6 +244,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' @param value Value of dropped parameter (default = 0)
 #' @param method "ncp" (default) or "empirical"
 #' @param explore Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.
+#' @param silent Supress model runs printouts to console (TRUE)
 #' @return power table
 #' @export
 #' @family Teaching and Testing functions
@@ -257,7 +257,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' # ===================================================
 #'
 #' # 1 Make some data
-#' tmp = umx_make_raw_from_cov(qm(1, .2| .2, 1), n=2000, varNames= c("X", "Y"), empirical= TRUE)
+#' tmp = umx_make_raw_from_cov(qm(1, .3| .3, 1), n=2000, varNames= c("X", "Y"), empirical= TRUE)
 #' 
 #' # 2. Make model of true XY correlation of .3
 #' m1 = umxRAM("corXY", data = tmp,
@@ -331,8 +331,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 3, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
-	oldSilent = umx_set_silent(silent = TRUE) # store existing value
-	umx_set_silent(TRUE)  # set to FALSE
+	oldSilent = umx_set_silent(silent, silent = TRUE) # set silent and store existing value
 	
 	if(explore & method=="ncp" & !is.null(n) ){
 		stop("method = 'ncp' does not work for searching with fixed n. Use method = 'empirical' instead, or specify power to estimate in place of n")
@@ -367,7 +366,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		tmp = mxPower(trueModel, nullModel, n= n, power=power, sig.level = sig.level, method= method)	
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, digits)
 	}
-	umx_set_silent(oldSilent)    # reinstate
+	umx_set_silent(oldSilent) # reinstate
 	return(tmp)
 }
 

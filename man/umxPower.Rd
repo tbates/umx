@@ -24,6 +24,8 @@ umxPower(trueModel, update = NULL, n = NULL, power = NULL,
 \item{method}{"ncp" (default) or "empirical"}
 
 \item{explore}{Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.}
+
+\item{silent}{Supress model runs printouts to console (TRUE)}
 }
 \value{
 power table
@@ -50,7 +52,7 @@ Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 # ===================================================
 
 # 1 Make some data
-tmp = umx_make_raw_from_cov(qm(1, .2| .2, 1), n=2000, varNames= c("X", "Y"), empirical= TRUE)
+tmp = umx_make_raw_from_cov(qm(1, .3| .3, 1), n=2000, varNames= c("X", "Y"), empirical= TRUE)
 
 # 2. Make model of true XY correlation of .3
 m1 = umxRAM("corXY", data = tmp,
