@@ -34,6 +34,7 @@ umx_is_class(mtcars, "numeric") # TRUE
 umx_is_class(mtcars, c("character", "numeric"))
 # Is zygosity a factor (note we don't drop = F to keep as dataframe)
 umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
+umx_is_class(mtcars$mpg) # report class of this column (same as class(mpg))
 }
 \references{
 \itemize{

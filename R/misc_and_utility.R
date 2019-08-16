@@ -4519,6 +4519,7 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 #' umx_is_class(mtcars, c("character", "numeric"))
 #' # Is zygosity a factor (note we don't drop = F to keep as dataframe)
 #' umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
+#' umx_is_class(mtcars$mpg) # report class of this column (same as class(mpg))
 umx_is_class <- function(df, classes=NULL, all = TRUE){
 	if(!is.data.frame(df)){
 		if(is.null(classes)){
@@ -4532,7 +4533,7 @@ umx_is_class <- function(df, classes=NULL, all = TRUE){
 	i = 1
 	if(is.null(classes)){
 		for (n in colNames) {
-			bIsOK[i] = class(df[, n])[1]
+			bIsOK[i] = class(df[, n, drop = TRUE])[1]
 			i = i + 1
 		}
 		return(bIsOK)
