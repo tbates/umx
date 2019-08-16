@@ -523,13 +523,13 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 #' @md
 #' @examples
 #' library(umx)
-#' umx_set_silent() # print existing value
-#' old = umx_set_silent(silent = TRUE) # store existing value
-#' umx_set_silent(FALSE) # set to FALSE
+#' old = umx_set_silent() # print & store existing value
+#' umx_set_silent(FALSE, silent = TRUE) # set to FALSE
 #' umx_set_silent(old)   # reinstate
+#' umx_set_silent() # print existing value
 umx_set_silent <- function(value = NA, silent = FALSE) {
-	oldValue = getOption("umx_silent")
 	# initialize if needed
+	oldValue = getOption("umx_silent")
 	if(is.null(oldValue)) {
 		oldValue = FALSE
 		options("umx_silent" = FALSE)
@@ -564,13 +564,15 @@ umx_set_silent <- function(value = NA, silent = FALSE) {
 #' umx_set_auto_run(FALSE)  # set to FALSE
 #' umx_set_auto_run(old)    # reinstate
 umx_set_auto_run <- function(autoRun = NA, silent = FALSE) {
+	oldValue = getOption("umx_auto_run")
+	if(is.null(oldValue)) {
+		oldValue = FALSE
+		options("umx_auto_run" = TRUE)
+	}
+	
 	if(is.na(autoRun)) {
 		if(!silent){
-			message(
-				"Current auto-run setting is ", 
-				omxQuotes(getOption("umx_auto_run")),
-				". Valid options are TRUE or FALSE."
-			)
+			message("Current auto-run setting is ", omxQuotes(oldValue),".\nValid options are TRUE or FALSE.")
 		}
 		invisible(getOption("umx_auto_run"))
 	} else {
@@ -612,8 +614,6 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 		}
 	}
 }
-
-
 
 #' Set options that affect optimization in OpenMx
 #'
@@ -6154,7 +6154,7 @@ umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empiric
 	# depends on MASS::mvrnorm
 	if(is.null(varNames)){
 		if(is.null(dimnames(covMat))){
-			varNames = letters[1:dim(covMat)]
+			varNames = letters[1:dim(covMat)[1]]
 		}else{
 			varNames = dimnames(covMat)[[1]]
 		}
