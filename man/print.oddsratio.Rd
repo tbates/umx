@@ -21,6 +21,11 @@ print.oddsratio(x, digits = 3, ...)
 \description{
 Print method for the \code{\link[umx:oddsratio]{umx::oddsratio()}} function.
 }
+\examples{
+oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
+oddsratio(grp1 = c(3, 10), grp2 = c(1, 10))
+oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
+}
 \seealso{
 \itemize{
 \item \code{\link[=print]{print()}}, \code{\link[umx:oddsratio]{umx::oddsratio()}},

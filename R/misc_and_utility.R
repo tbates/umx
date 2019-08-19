@@ -2298,8 +2298,8 @@ umx_write_to_clipboard <- function(x) {
 #'           OR = 3.857 CI99\[0.159, 93.646\]
 #' 
 #'
-#' @param grp1 cases and total N for group 1, e.g c(n=3, N=10)
-#' @param grp2 cases and total N for group 2, e.g c(n=1, N=20)
+#' @param grp1 either odds for group 1, or cases and total N , e.g c(n=3, N=10)
+#' @param grp2 either odds for group 2, or cases and total N , e.g c(n=1, N=20)
 #' @param alpha for CI (default = 0.05)
 #' @return - List of odds in group 1 and group2, and the resulting OR and CI
 #' @export
@@ -2313,23 +2313,35 @@ umx_write_to_clipboard <- function(x) {
 #' oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 #'
 oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
-	nGrp1 = grp1[1]
-	nGrp2 = grp2[1]
-
-	NGrp1 = grp1[2]
-	NGrp2 = grp2[2]
-
 	# nGrp1 = 1; nGrp2 = 2; NGrp1 = 3; NGrp2 = 4
-	
-	# odds = n/(N-n)
-	odds1 = nGrp1/(NGrp1-nGrp1)
-	odds2 = nGrp2/(NGrp2-nGrp2)
-	OR    = odds1/odds2	
+	if(length(grp1) == 2){
+		nGrp1 = grp1[1]
+		NGrp1 = grp1[2]
+		# odds = n/(N-n)
+		odds1 = nGrp1/(NGrp1-nGrp1)
+	} else {
+		odds1 = grp1
+	}
+	if(length(grp2) == 2){
+		nGrp2 = grp2[1]
+		NGrp2 = grp2[2]
+		odds2 = nGrp2/(NGrp2-nGrp2)
+	} else {
+		odds2 = grp2
+	}
+
+	OR = odds1/odds2	
+
+	if(length(grp1) == 2 & length(grp1) == 2){
+		siglog  = sqrt((1/nGrp1) + (1/NGrp1) + (1/nGrp2) + (1/NGrp2))
+		zalph   = qnorm(1 - alpha/2)
+		LowerCI = exp(log(OR) - zalph * siglog)
+		UpperCI = exp(log(OR) + zalph * siglog)
+	}else{
+		LowerCI = NA
+		UpperCI = NA
+	}
 	# CI
-	siglog  = sqrt((1/nGrp1) + (1/NGrp1) + (1/nGrp2) + (1/NGrp2))
-	zalph   = qnorm(1 - alpha/2)
-	LowerCI = exp(log(OR) - zalph * siglog)
-	UpperCI = exp(log(OR) + zalph * siglog)
 	result  = list(odds1= odds1, odds2= odds2, OR= OR, LowerCI = LowerCI, UpperCI = UpperCI, alpha = alpha)
 	class(result) = 'oddsratio'	
 	result
@@ -2356,12 +2368,18 @@ print.oddsratio <- function(x, digits = 3, ...) {
 	charLen = nchar("Group 1 odds")
 	cat(sprintf(paste0("%", charLen, "s = ", format(x[["odds1"]], digits = digits)), "Group 1 odds"), fill= TRUE)
 	cat(sprintf(paste0("%", charLen, "s = ", format(x[["odds2"]], digits = digits)), "Group 2 odds"), fill= TRUE)
-	OR      = round(x[[ "OR" ]], digits=digits)
-	LowerCI = round(x[[ "LowerCI" ]], digits=digits)
-	UpperCI = round(x[[ "UpperCI" ]], digits=digits)
-	alpha   = x[[ "alpha" ]]
-	ORstring = paste0(OR, " CI", 100-(alpha*100), " [", LowerCI, ", ", UpperCI, "]")
+
+	OR = round(x[[ "OR" ]], digits = digits)
+	if(is.na(x[[ "UpperCI" ]])){
+		ORstring = paste0(OR, " (input odds as c(n=, N=) to compute CI)")
+	} else {
+		LowerCI  = round(x[[ "LowerCI" ]], digits=digits)
+		UpperCI  = round(x[[ "UpperCI" ]], digits=digits)
+		alpha    = x[[ "alpha" ]]
+		ORstring = paste0(OR, " CI", 100-(alpha*100), " [", LowerCI, ", ", UpperCI, "]")
+	}
 	cat(sprintf(paste0("%", charLen, "s = ", ORstring), "OR"), fill= TRUE)
+	cat("note: When base rates differ, a given odds ratio can represent very different degrees of association/correlation")
     invisible(x)
 }
 
@@ -2909,6 +2927,44 @@ xmu_CI_merge <- function(m1, m2) {
 # =====================
 # = Statistical tools =
 # =====================
+#' 
+#' Convert Radians to Degrees
+#'
+#' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
+#' 
+#' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are 2\eqn{x} \eqn{\pi} 
+#' radians in a circle.
+#'
+#' @param rad The value in Radians you wish to convert
+#' @return - value in degrees
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [deg2rad()], [sin()]
+#' @md
+#' @examples
+#' rad2deg(pi) #180 degrees
+rad2deg <- function(rad) {
+	rad * 180/pi
+}
+
+#' Convert Degrees to Degrees 
+#'
+#' @description Just a helper to multiply degrees by \eqn{\pi} and divide by 180 to get radians.
+#' 
+#' *note*: R's trig functions, e.g. [sin()] use Radians for input! 180 Degrees is equal to 
+#' 2\eqn{x \pi} radians.
+#'
+#' @param rad The value in Radians you wish to convert
+#' @return - value in degrees
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [rad2deg()], [sin()]
+#' @md
+#' @examples
+#' deg2rad(180) # pi!
+deg2rad <- function(deg) {
+	deg * pi/ 180
+}
 
 #' Convert a dataframe into a cov mxData object
 #'

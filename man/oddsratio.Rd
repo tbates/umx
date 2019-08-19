@@ -8,9 +8,9 @@ oddsratio(grp1 = c(n = 3, N = 10), grp2 = c(n = 1, N = 10),
   alpha = 0.05)
 }
 \arguments{
-\item{grp1}{cases and total N for group 1, e.g c(n=3, N=10)}
+\item{grp1}{either odds for group 1, or cases and total N , e.g c(n=3, N=10)}
 
-\item{grp2}{cases and total N for group 2, e.g c(n=1, N=20)}
+\item{grp2}{either odds for group 2, or cases and total N , e.g c(n=1, N=20)}
 
 \item{alpha}{for CI (default = 0.05)}
 }
@@ -31,9 +31,9 @@ Group 2 odds = 0.111
 OR = 3.857 CI99[0.159, 93.646]
 }
 \examples{
-oddsratio(c(1, 10), c(3, 10))
-oddsratio(c(3, 10), c(1, 10))
-oddsratio(c(3, 10), c(1, 10), alpha = .01)
+oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
+oddsratio(grp1 = c(3, 10), grp2 = c(1, 10))
+oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 
 }
 \references{
