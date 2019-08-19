@@ -2308,9 +2308,9 @@ umx_write_to_clipboard <- function(x) {
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' oddsratio(c(1, 10), c(3, 10))
-#' oddsratio(c(3, 10), c(1, 10))
-#' oddsratio(c(3, 10), c(1, 10), alpha = .01)
+#' oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
+#' oddsratio(grp1 = c(3, 10), grp2 = c(1, 10))
+#' oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 #'
 oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
 	nGrp1 = grp1[1]
@@ -2326,16 +2326,32 @@ oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
 	odds2 = nGrp2/(NGrp2-nGrp2)
 	OR    = odds1/odds2	
 	# CI
-	siglog = sqrt((1/nGrp1) + (1/NGrp1) + (1/nGrp2) + (1/NGrp2))
-	zalph  = qnorm(1 - alpha/2)
+	siglog  = sqrt((1/nGrp1) + (1/NGrp1) + (1/nGrp2) + (1/NGrp2))
+	zalph   = qnorm(1 - alpha/2)
 	LowerCI = exp(log(OR) - zalph * siglog)
 	UpperCI = exp(log(OR) + zalph * siglog)
-	ret = list(odds1= odds1, odds2= odds2, OR= OR, LowerCI = LowerCI, UpperCI = UpperCI, alpha = alpha)
-	class(ret) <- 'result_oddsratio'	
-	return(ret)
+	result  = list(odds1= odds1, odds2= odds2, OR= OR, LowerCI = LowerCI, UpperCI = UpperCI, alpha = alpha)
+	class(result) = 'oddsratio'	
+	result
 }
 
-print.result_oddsratio <- function(x, digits = 3, ...) {
+#' Print a scale "oddsratio" object
+#'
+#' Print method for the [umx::oddsratio()] function.
+#'
+#' @param x A [umx::oddsratio()] result.
+#' @param digits The rounding precision.
+#' @param ... further arguments passed to or from other methods.
+#' @return - invisible oddsratio object (x).
+#' @export
+#' @family Miscellaneous Stats Helpers
+#' @seealso - [print()], [umx::oddsratio()], 
+#' @md
+#' @examples
+#' oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
+#' oddsratio(grp1 = c(3, 10), grp2 = c(1, 10))
+#' oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
+print.oddsratio <- function(x, digits = 3, ...) {
 	# x = list(odds1= odds1, odds2= odds2, OR= OR, LowerCI = OR_CI_lo, UpperCI = OR_CI_hi, alpha = alpha)
 	charLen = nchar("Group 1 odds")
 	cat(sprintf(paste0("%", charLen, "s = ", format(x[["odds1"]], digits = digits)), "Group 1 odds"), fill= TRUE)
@@ -2346,6 +2362,7 @@ print.result_oddsratio <- function(x, digits = 3, ...) {
 	alpha   = x[[ "alpha" ]]
 	ORstring = paste0(OR, " CI", 100-(alpha*100), " [", LowerCI, ", ", UpperCI, "]")
 	cat(sprintf(paste0("%", charLen, "s = ", ORstring), "OR"), fill= TRUE)
+    invisible(x)
 }
 
 
@@ -2573,6 +2590,22 @@ reliability <-function (S){
      result
 }
 
+#' Print a scale "reliability" object
+#'
+#' Print method for the [ums::reliability()] function.
+#'
+#' @param x A [umx::reliability()] result.
+#' @param digits The rounding precision.
+#' @param ... further arguments passed to or from other methods
+#' @return - invisible reliability object (x)
+#' @export
+#' @family Miscellaneous Stats Helpers
+#' @seealso - [print()], [umx::reliability()], 
+#' @md
+#' @examples
+#' # treat vehicle aspects as items of a test
+#' data(mtcars)
+#' reliability(cov(mtcars))
 print.reliability <- function (x, digits = 4, ...){
      cat(paste("Alpha reliability = ", round(x$alpha, digits), "\n"))
      cat(paste("Standardized alpha = ", round(x$st.alpha, digits), "\n"))
