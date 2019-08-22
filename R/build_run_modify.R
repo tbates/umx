@@ -4267,9 +4267,9 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param forms Build a formative variable. 'from' variables form the latent.
 #' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.
 #' @param Cholesky Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.
-#' @param defn Makes a latent variable, var@0 mean fixed, set label to 'data.<defn>'
-#' @param connect as in mxPath - nb: Only used when using from and to
-#' @param arrows as in mxPath - nb: Only used when using from and to
+#' @param defn Makes a latent variable, var@0 mean fixed, set label to 'data.defVarName'
+#' @param connect as in mxPath - nb: from and to must also be set.
+#' @param arrows as in mxPath - nb: from and to must also be set.
 #' @param free whether the value is free to be optimised
 #' @param values default value list
 #' @param labels labels for each path

@@ -61,7 +61,7 @@ If data are provided, a \code{\link[=umxRAM]{umxRAM()}} model is returned.
 If more than one group is found, a \code{\link[=umxSuperModel]{umxSuperModel()}} is returned.
 
 This function is at the alpha quality stage, and \strong{should be expected to have bugs}.
-Several features are not yet supported. Let me know if you'd like them.
+Several features are not yet supported. Let me know if you would like them.
 }
 \details{
 Uses the defaults of \code{lavaan::sem}
@@ -75,7 +75,7 @@ Uses the defaults of \code{lavaan::sem}
 \item auto.th         = TRUE
 \item auto.delta      = TRUE
 \item auto.cov.y      = TRUE
-\item fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
+\item fixed.x         = FALSE (not standard in \code{lavaan::sem}, but needed for RAM)
 }
 
 Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
@@ -87,10 +87,7 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 \tab "~ 1"  \tab lhs has mean\cr
 \tab ":="   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})\cr
 \tab "=="   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
-}Naming of multiple groups
-
-When multiple groups are found the groups are named "<name>\emph{<group level>"
-White space is replaced with "}" and illegal characters are replaced with "x"
+}
 }
 \examples{
 # auto-data, print table, return umxRAM model

@@ -32,9 +32,8 @@ Best diagnostics are:
 
 Try
 * diagonalizeExpCov diagonal.
-* umx_any_ordinal()
-
-more tricky - we should really report the variances and the standardized thresholds.
+* umx_any_ordinal()\preformatted{more tricky - we should really report the variances and the standardized thresholds.
+}
 }
 \examples{
 require(umx)

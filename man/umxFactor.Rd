@@ -25,7 +25,8 @@ unique values will be used if levels not specified.}
 
 \item{verbose}{Whether to tell user about such things as coercing to factor}
 
-\item{sep}{If twin data are being used, the string that separates the base from twin indexwill try and ensure factor levels same across all twins.}
+\item{sep}{If twin data are being used, the string that separates the base from twin index
+will try and ensure factor levels same across all twins.}
 }
 \value{
 \itemize{

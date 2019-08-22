@@ -190,7 +190,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		update = "a_r1c1"
 	}
 	# run the true Model
-	trueModel = xmu_safe_run_summary(trueModel, autoRun = TRUE, summary = FALSE, std = TRUE, tryHard = tryHard, comparison= FALSE)
+	trueModel = xmu_safe_run_summary(trueModel, summary = FALSE, std = TRUE, tryHard = tryHard, comparison= FALSE)
 	# make and run the falseModel
 	nullModel = umxModify(trueModel, update = update, value = value, name = falseModelName, tryHard = tryHard)
 
@@ -244,7 +244,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' @param value Value of dropped parameter (default = 0)
 #' @param method "ncp" (default) or "empirical"
 #' @param explore Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.
-#' @param silent Supress model runs printouts to console (TRUE)
+#' @param silent Suppress model runs printouts to console (TRUE)
 #' @return power table
 #' @export
 #' @family Teaching and Testing functions

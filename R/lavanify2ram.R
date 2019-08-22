@@ -1,4 +1,5 @@
 # Any goal of which you are capable of each tiny step, you can attain.
+
 #' Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)
 #'
 #' @description
@@ -9,7 +10,7 @@
 #' If more than one group is found, a [umxSuperModel()] is returned.
 #' 
 #' This function is at the alpha quality stage, and **should be expected to have bugs**.
-#' Several features are not yet supported. Let me know if you'd like them.
+#' Several features are not yet supported. Let me know if you would like them.
 #'
 #' @details
 #'
@@ -24,10 +25,9 @@
 #' * auto.th         = TRUE
 #' * auto.delta      = TRUE
 #' * auto.cov.y      = TRUE
-#' * fixed.x         = FALSE (not standard in lavaan::sem, but needed for RAM)
+#' * fixed.x         = FALSE (not standard in `lavaan::sem`, but needed for RAM)
 #'
 #' Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
-#' 
 #'
 #' \tabular{rlll}{
 #'   \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
@@ -38,8 +38,8 @@
 #'   \tab "=="   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
 #' }
 #'
-#' ## Naming of multiple groups
-#' When multiple groups are found the groups are named "<name>_<group level>"
+#' @section Naming of multiple groups
+#' When multiple groups are found the groups are named "name_grouplevel"
 #' White space is replaced with "_" and illegal characters are replaced with "x"
 #' 
 #' @param model A lavaan syntax string, e.g. "A~~B"

@@ -17,11 +17,11 @@
 
 #' Determine whether a dataset will have weights and summary statistics for the means if used with mxFitFunctionWLS
 #'
-#' Given either a data.frame or an mxData of type raw, this function determines whether \code{mxFitFunctionWLS}
+#' Given either a data.frame or an mxData of type raw, this function determines whether [mxFitFunctionWLS()]
 #' will generate expectations for means.
 #' 
-#' All-continuous data processed using the "cumulants" method lack means, while
-#' all continuous data processed with allContinuousMethod = "marginals" will have means.
+#' All-continuous models processed using the "cumulants" method lack means, while
+#' all continuous processed with allContinuousMethod = "marginals" will have means.
 #' 
 #' When data are not all continuous, allContinuousMethod is ignored, and means are modeled.
 #'
@@ -48,8 +48,8 @@
 #' # = mxData object as input =
 #' # ==========================
 #' tmp = mxData(mtcars, type="raw")
-#'xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants", verbose = TRUE)$hasMeans # FALSE
-#'xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
+#' xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants", verbose = TRUE)$hasMeans # FALSE
+#' xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
 #'
 #' # =======================================
 #' # = One var is a factor: Means modeled =
@@ -87,9 +87,9 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' Score a psychometric scale by summing normal and reversed items
 #'
 #' @description
-#' use this function to generate scores as the sum of the responses to the normal and reversed items in a scale.
+#' Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 #' 
-#' Items must be named on the pattern <base><n>. `base` is the string common to all item names (variable names).
+#' Items must be named on the pattern \<base\>\<n\>, where `base` is the string common to all item (column) names.
 #' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers.
 #' To reverse items, the function uses `itemMax` is the high score (to compute how to reverse items).
 #' `min` defaults to 1.
@@ -101,7 +101,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @param max Max possible score for an item (to compute how to reverse items).
 #' @param data The data frame
 #' @param score = Totals or Mean (default = "totals")
-#' @param name = name of the scale to be returned. Defaults to "<base>_score"
+#' @param name = name of the scale to be returned. Defaults to "base_score"
 #' @return - scores
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -1307,7 +1307,7 @@ umx_explode_twin_names <- function(df, sep = "_T") {
 #' @param collapse = FALSE (see [mxFactor()])
 #' @param verbose Whether to tell user about such things as coercing to factor
 #' @param sep If twin data are being used, the string that separates the base from twin index
-#' # will try and ensure factor levels same across all twins.
+#' will try and ensure factor levels same across all twins.
 #' @return - [mxFactor()]
 #' @export
 #' @family Miscellaneous Utility Functions

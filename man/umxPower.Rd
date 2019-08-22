@@ -25,7 +25,7 @@ umxPower(trueModel, update = NULL, n = NULL, power = NULL,
 
 \item{explore}{Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.}
 
-\item{silent}{Supress model runs printouts to console (TRUE)}
+\item{silent}{Suppress model runs printouts to console (TRUE)}
 }
 \value{
 power table

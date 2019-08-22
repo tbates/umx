@@ -52,11 +52,11 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 
 \item{Cholesky}{Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.}
 
-\item{defn}{Makes a latent variable, var@0 mean fixed, set label to 'data.<defn>'}
+\item{defn}{Makes a latent variable, var@0 mean fixed, set label to 'data.defVarName'}
 
-\item{connect}{as in mxPath - nb: Only used when using from and to}
+\item{connect}{as in mxPath - nb: from and to must also be set.}
 
-\item{arrows}{as in mxPath - nb: Only used when using from and to}
+\item{arrows}{as in mxPath - nb: from and to must also be set.}
 
 \item{free}{whether the value is free to be optimised}
 

@@ -1,9 +1,11 @@
+# TODO sexlim: This k scalar heterogeneity model is not yet implemented in umx.
+
 #' Multivariate sex limitation twin model
 #'
 #' @description
 #' Multivariate twin analysis allowing for sex limitation (factors operate differently in males 
 #' vs. females) based on a correlated factors model. With 5-groups of twins, this model allows
-#' for both Quantitative & Qualitative Sex-Limitation.
+#' for both Quantitative and Qualitative Sex-Limitation.
 #'
 #' *Quantitative* differences refer to different amounts of phenotypic variance produced by 
 #' the same A, C, or E components when operating in one sex compared to the other sex.
@@ -15,14 +17,13 @@
 #' of the model to account for DZOS data.
 #' 
 #' @details
-#' 
 #' **A or C**
 #' 
 #' Due to limitations on the degrees of freedom allowed by the twin model, we can model 
 #' qualitative sex differences for only one of A or C at a time.
 #' 
 #' 
-#' ** 1. Nonscalar Sex Limitation **
+#' **1. Nonscalar Sex Limitation**
 #' 
 #' Allow quantitative (distinct male and female paths) and qualitative sex differences 
 #' on A or C. Allows distinct between variable correlations (`Ra`, `Rc` and `Re`)
@@ -38,9 +39,9 @@
 #' This is the model assumed by the basic ACE model: equal variance components in both sexes. 
 #' Different means may be allowed for males and females.
 #' 
-#' *notes*:
-#' There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a 
-#' scalar constant in one sex. # TODO sexlim: This k scalar heterogeneity model is not yet implemented in umx.
+#' *notes*: There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a 
+#' scalar constant in one sex.
+#' 
 #' 
 #' *General restrictions*: Assumes means and variances can be equated across birth order within zygosity groups.
 #'
@@ -63,8 +64,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Neale et al. (2006). 
-#' Multivariate genetic analysis of sex-lim and GxE interaction.
-#' \emph{Twin Research & Human Genetics}, \bold{9}, pp. 481--489.
+#' Multivariate genetic analysis of sex-lim and GxE interaction. *Twin Research & Human Genetics*, **9**, pp. 481--489.
 #' @md
 #' @examples
 #  # =============================================
@@ -123,7 +123,7 @@
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
-#')
+#') 
 #'
 #' # Show our manual drop of qualitative is the same as umxSexLim with sexlim= "scalar"s
 #' umxCompare(m1a, m2)
@@ -136,7 +136,7 @@
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
-#')
+#' )
 #' umxCompare(m1, c(m2, m3))
 #'
 #' # ===========================================
@@ -146,7 +146,7 @@
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
-#')
+#' )
 #' 
 #' # Scalar sex limitation (same correlation among components for m and f)
 #' m2 = umxSexLim(selDVs = c("bic", "tri"), sep = "_T", 
@@ -154,7 +154,7 @@
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
-#')
+#' )
 #' # Drop qualitative sex limitation
 #' #  Distinct af and am (& c & e), but shared Ra (& Rc & Re) between variables
 #' #  	i.e., same correlations for males and females.
@@ -173,21 +173,21 @@
 #' m2c = umxModify(m2b, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
 #' umxCompare(m1, c(m1a, m1b, m1c, m1d))
 #'
-#'# =============================
-#'# = Run multi-variate example =
-#'# =============================
+#' # =============================
+#' # = Run multi-variate example =
+#' # =============================
 #' # Variables for Analysis
 #' selDVs = c('ssc','sil','caf','tri','bic')
 #' selDVs = c('ssc','tri','bic')
 #' m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", tryHard = "mxTryHard",
-#'		mzmData = mzmData, dzmData = dzmData, 
-#'    mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
+#'	mzmData = mzmData, dzmData = dzmData, 
+#'  mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 #')
 #'
 #' m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
 #' 	tryHard = "mxTryHard",
-#'		mzmData = mzmData, dzmData = dzmData, 
-#'    mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
+#'	mzmData = mzmData, dzmData = dzmData, 
+#'  mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 #')
 #'
 #' # umxSummary(m1)

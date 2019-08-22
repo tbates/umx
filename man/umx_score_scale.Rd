@@ -23,7 +23,7 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
 
 \item{score}{= Totals or Mean (default = "totals")}
 
-\item{name}{= name of the scale to be returned. Defaults to "<base>_score"}
+\item{name}{= name of the scale to be returned. Defaults to "base_score"}
 }
 \value{
 \itemize{
@@ -31,9 +31,9 @@ umx_score_scale(base = NULL, pos = NULL, rev = NULL, min = 1,
 }
 }
 \description{
-use this function to generate scores as the sum of the responses to the normal and reversed items in a scale.
+Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 
-Items must be named on the pattern <base><n>. \code{base} is the string common to all item names (variable names).
+Items must be named on the pattern <base><n>, where \code{base} is the string common to all item (column) names.
 \code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers.
 To reverse items, the function uses \code{itemMax} is the high score (to compute how to reverse items).
 \code{min} defaults to 1.

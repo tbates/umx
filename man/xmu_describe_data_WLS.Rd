@@ -20,12 +20,12 @@ xmu_describe_data_WLS(data, allContinuousMethod = c("cumulants",
 }
 }
 \description{
-Given either a data.frame or an mxData of type raw, this function determines whether \code{mxFitFunctionWLS}
+Given either a data.frame or an mxData of type raw, this function determines whether \code{\link[=mxFitFunctionWLS]{mxFitFunctionWLS()}}
 will generate expectations for means.
 }
 \details{
-All-continuous data processed using the "cumulants" method lack means, while
-all continuous data processed with allContinuousMethod = "marginals" will have means.
+All-continuous models processed using the "cumulants" method lack means, while
+all continuous processed with allContinuousMethod = "marginals" will have means.
 
 When data are not all continuous, allContinuousMethod is ignored, and means are modeled.
 }
