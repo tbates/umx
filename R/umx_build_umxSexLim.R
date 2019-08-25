@@ -741,7 +741,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 
 #' Draw and display a graphical figure of a Sex limitation model
 #'
-#' Options include digits (rounding), showing means or not, and which output format is desired.
+#' Options include `digits` (rounding), showing `means` or not, and which output `format` is desired.
 #'
 #' # @aliases plot.MxModelCP
 #' @param x [mxModel()] to display graphically

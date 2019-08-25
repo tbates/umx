@@ -2,7 +2,7 @@
 % Please edit documentation in R/lavanify2ram.R
 \name{xmu_lavaan_process_group}
 \alias{xmu_lavaan_process_group}
-\title{lavaan parameter table rows to model}
+\title{Process table of paths to model}
 \usage{
 xmu_lavaan_process_group(tab, groupNum)
 }

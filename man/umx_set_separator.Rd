@@ -15,7 +15,7 @@ umx_set_separator(umx_default_separator = NULL, silent = FALSE)
 - Current umx_default_separator
 }
 \description{
-Set umx_default_separator (used in CI[low sep high] ). Default = ","
+Set umx_default_separator (used in CI\[low sep high\] ). Default = ","
 }
 \examples{
 library(umx)

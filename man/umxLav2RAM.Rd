@@ -2,7 +2,7 @@
 % Please edit documentation in R/lavanify2ram.R
 \name{umxLav2RAM}
 \alias{umxLav2RAM}
-\title{Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)}
+\title{Convert lavaan string to a umxRAM model}
 \usage{
 umxLav2RAM(model = NA, data = "auto", group = NULL,
   group.equal = NULL, name = NA, lavaanMode = c("sem", "lavaan"),
@@ -54,7 +54,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL,
 }
 }
 \description{
-Takes a lavaan syntax string and creates the matching one or more umxRAM models.
+Takes a lavaan syntax string and creates the matching one or more \code{\link[=umxRAM]{umxRAM()}} models.
 
 If data are provided, a \code{\link[=umxRAM]{umxRAM()}} model is returned.
 

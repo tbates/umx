@@ -1,9 +1,9 @@
 # Any goal of which you are capable of each tiny step, you can attain.
 
-#' Convert a lavaan syntax string to a umxRAM model (or umxSuperModel)
+#' Convert lavaan string to a umxRAM model
 #'
 #' @description
-#' Takes a lavaan syntax string and creates the matching one or more umxRAM models.
+#' Takes a lavaan syntax string and creates the matching one or more [umxRAM()] models.
 #' 
 #' If data are provided, a [umxRAM()] model is returned. 
 #' 
@@ -312,7 +312,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	}
 }
 
-#' lavaan parameter table rows to model
+#' Process table of paths to model
 #'
 #' @description
 #' Process a set of lavaan tables rows forming a group (Model).

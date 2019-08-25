@@ -33,7 +33,7 @@ umxPlotSexLim(x = NA, file = "name", digits = 2, means = FALSE,
 }
 }
 \description{
-Options include digits (rounding), showing means or not, and which output format is desired.
+Options include \code{digits} (rounding), showing \code{means} or not, and which output \code{format} is desired.
 }
 \details{
 @aliases plot.MxModelCP

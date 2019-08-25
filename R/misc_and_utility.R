@@ -358,7 +358,7 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 
 #' Set the separator
 #'
-#' Set umx_default_separator (used in CI[low sep high] ). Default = ","
+#' Set umx_default_separator (used in CI\[low sep high\] ). Default = ","
 #'
 #' @param umx_default_separator separator for CIs etc. (if empty, returns the current value)
 #' @param silent If TRUE, no message will be printed.
