@@ -15,7 +15,34 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # utility naming convention: "umx_" prefix, lowercase, and "_" (not camel case) e.g. xmu_data_swap_a_block()
 
-#' Determine whether a dataset will have weights and summary statistics for the means if used with mxFitFunctionWLS
+# Poems one should know by heart:
+
+# William Shakespeare
+# [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
+# [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
+# [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
+#  * "How far that little candle throws his beams! So shines a good deed in a weary world."
+#  * The quality of mercy is not strained.
+#  * "One half of me is yours, the other half is yours,
+#    Mine own, I would say; but if mine, then yours,
+#    And so all yours."
+#  * If to do were as easy as to know what were good to do, chapels 
+#    had been churches, and poor men's cottages princes’ palaces.
+# * “This above all: to thine own self be true,
+
+# # PERCY BYSSHE SHELLEY
+# [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
+
+# Brevia
+#  * [Invictus](https://en.wikipedia.org/wiki/Invictus)
+#  * [Abou ben Adhem](https://www.poetryfoundation.org/poems/44433/abou-ben-adhem)
+#  * [Odi et amo](https://en.wikipedia.org/wiki/Catullus_85)
+
+# # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
+#  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
+
+
+#' Determine whether a dataset will need weights and summary statistics for the means if used with mxFitFunctionWLS
 #'
 #' Given either a data.frame or an mxData of type raw, this function determines whether [mxFitFunctionWLS()]
 #' will generate expectations for means.
@@ -4984,16 +5011,16 @@ qm <- function(..., rowMarker = "|") {
 # ================================
 # = string and php-style helpers =
 # ================================
-#' umx_explode - like the php function `explode` 
+#' Explode a string (Like the php function `explode`)
 #'
-#' Takes a string and returns an array of delimited strings (by default, each character)
+#' Takes a string and returns an array of delimited strings (by default, each single character)
 #'
 #' @param delimiter what to break the string on. Default is empty string ""
 #' @param string an character string, e.g. "dog"
 #' @return - a vector of strings, e.g. c("d", "o", "g")
 #' @export
 #' @family String Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>, <http://php.net/manual/en/function.explode.php>
+#' @references - <https://tbates.github.io>, <http://php.net/manual/en/function.explode.php>
 #' @md
 #' @examples
 #' umx_explode("", "dog") # "d" "o" "g"
@@ -5014,7 +5041,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' 
 #' In addition, `umx_names` can do [replacement][grep] of a found string (see examples). It can also collapse the result (using [paste0])
 #' 
-#' *Note*: `namez` (with a z) is a shortcut for `umx_names`, which makes it easy to replace where you'd otherwise use [names].
+#' *Note*: `namez` (with a z) is a shortcut for `umx_names`, which makes it easy to replace where you would otherwise use [names].
 #' 
 #' You can learn more about the matching options (like inverting the selection etc.) in the help for base-R [grep].
 #'
@@ -7097,28 +7124,3 @@ xmu_standardize_CP <- function(model, ...){
 #' @export
 umx_standardize.MxModelCP <- xmu_standardize_CP
 
-# Poems one should know by heart:
-
-# William Shakespeare
-# [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
-# [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
-# [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
-#  * "How far that little candle throws his beams! So shines a good deed in a weary world."
-#  * The quality of mercy is not strained.
-#  * "One half of me is yours, the other half is yours,
-#    Mine own, I would say; but if mine, then yours,
-#    And so all yours."
-#  * If to do were as easy as to know what were good to do, chapels 
-#    had been churches, and poor men's cottages princes’ palaces.
-# * “This above all: to thine own self be true,
-
-# # PERCY BYSSHE SHELLEY
-# [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
-
-# Brevia
-#  * [Invictus](https://en.wikipedia.org/wiki/Invictus)
-#  * [Abou ben Adhem](https://www.poetryfoundation.org/poems/44433/abou-ben-adhem)
-#  * [Odi et amo](https://en.wikipedia.org/wiki/Catullus_85)
-
-# # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
-#  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
