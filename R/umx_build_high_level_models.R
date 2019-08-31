@@ -205,18 +205,20 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	if(rotation != "none" && nFac > 1){
 		x = loadings.MxModel(m1)
 		x = eval(parse(text = paste0(rotation, "(x)")))
-		print("Rotation results")
-		print(x) # print out the nice rotation result
-		rm = x$rotmat
-		print("Factor Correlation Matrix")
-		print(solve(t(rm) %*% rm))
-
+		if(!umx_set_silent(silent=TRUE)){
+			print("Rotation results")
+			print(x) # print out the nice rotation result
+			rm = x$rotmat
+			print("Factor Correlation Matrix")
+			print(solve(t(rm) %*% rm))
+		}
 		# stash the rotated result in the model A matrix
 		m1$A$values[manifests, factors] = x$loadings[1:nManifests, 1:nFac] 
-	} else {
+	} else if(!umx_set_silent(silent=TRUE)){
 		print("Results")
 		print(loadings(m1))
 	}
+
 	if(summary){
 		umxSummary(m1, digits = digits, report = report);
 	}
