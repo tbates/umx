@@ -5,11 +5,11 @@
 \alias{umxFactanal}
 \title{FIML-based Exploratory Factor Analysis (EFA)}
 \usage{
-umxEFA(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
-  scores = c("none", "ML", "WeightedML", "Regression"),
-  minManifests = NA, rotation = c("varimax", "promax", "none"),
-  name = "efa", digits = 2, return = c("model", "loadings"),
-  report = c("markdown", "html"), covmat = NULL)
+umxEFA(x = NULL, factors = NULL, data = NULL, scores = c("none",
+  "ML", "WeightedML", "Regression"), minManifests = NA,
+  rotation = c("varimax", "promax", "none"), return = c("model",
+  "loadings"), report = c("markdown", "html"), summary = FALSE,
+  name = "efa", digits = 2, n.obs = NULL, covmat = NULL)
 }
 \arguments{
 \item{x}{Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.}
@@ -18,21 +18,23 @@ umxEFA(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 
 \item{data}{A dataframe you are modeling.}
 
-\item{n.obs}{Number of observations in covmat (if provided, default = NA)}
-
 \item{scores}{Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.}
 
 \item{minManifests}{The least number of variables required to return a score for a participant (Default = NA).}
 
 \item{rotation}{A rotation to perform on the loadings (default  = "varimax" (orthogonal))}
 
-\item{name}{A name for your model}
-
-\item{digits}{rounding (default = 2)}
-
 \item{return}{by default, the resulting MxModel is returned. Say "loadings" to get a fact.anal object.}
 
 \item{report}{Report as markdown to the console, or open a table in browser ("html")}
+
+\item{summary}{run \code{\link[=umxSummary]{umxSummary()}} on the underlying umxRAM model? (Default = FALSE)}
+
+\item{name}{A name for your model (default = efa)}
+
+\item{digits}{rounding (default = 2)}
+
+\item{n.obs}{Number of observations in if covmat provided (default = NA)}
 
 \item{covmat}{Covariance matrix of data you are modeling (not implemented)}
 }

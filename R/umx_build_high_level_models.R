@@ -68,14 +68,15 @@
 #' @param x Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.
 #' @param factors Either number of factors to request or a vector of factor names.
 #' @param data A dataframe you are modeling.
-#' @param n.obs Number of observations in covmat (if provided, default = NA)
 #' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
 #' @param scores Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.
 #' @param minManifests The least number of variables required to return a score for a participant (Default = NA).
-#' @param name A name for your model
-#' @param digits rounding (default = 2)
 #' @param return by default, the resulting MxModel is returned. Say "loadings" to get a fact.anal object.
 #' @param report Report as markdown to the console, or open a table in browser ("html")
+#' @param summary  run [umxSummary()] on the underlying umxRAM model? (Default = FALSE)
+#' @param name A name for your model (default = efa)
+#' @param digits rounding (default = 2)
+#' @param n.obs Number of observations in if covmat provided (default = NA)
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
 #' @return - EFA [mxModel()]
 #' @family Super-easy helpers
@@ -112,9 +113,8 @@
 #' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
 #' x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 #' }
-umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL, 
-	scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
-	rotation = c("varimax", "promax", "none"), name = "efa", digits = 2, return = c("model", "loadings"), report = c("markdown", "html"), covmat = NULL){
+umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
+	rotation = c("varimax", "promax", "none"), return = c("model", "loadings"), report = c("markdown", "html"), summary = FALSE, name = "efa", digits = 2, n.obs = NULL, covmat = NULL){
 	# TODO: umxEFA: Detect ordinal items and switch to DWLS?
 	rotation = xmu_match.arg(rotation, c("varimax", "promax", "none"), check = FALSE)
 	scores   = match.arg(scores)
@@ -217,18 +217,17 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, n.obs = NULL,
 		print("Results")
 		print(loadings(m1))
 	}
-	umxSummary(m1, digits = digits, report = report);
+	if(summary){
+		umxSummary(m1, digits = digits, report = report);
+	}
 	
 	if(scores != "none"){
 		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
-	} else {
-		if(return == "loadings"){
-			invisible(x)
-		}else if(return == "model"){
-			invisible(m1)
-		}else{
-			message(omxQuotes(return), " is not a legal option for 'return'")
-		}
+	}
+	if(return == "loadings"){
+		invisible(x)
+	}else if(return == "model"){
+		invisible(m1)
 	}
 }
 

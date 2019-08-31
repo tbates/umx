@@ -20,7 +20,7 @@ umxLav2RAM(model = NA, data = "auto", group = NULL,
 
 \item{group}{= Column to use for multi-group (default = NULL)}
 
-\item{group.equal}{= what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")}
+\item{group.equal}{= what to equate across groups. Default (NULL) means no equates. See details for what we might implement in future.}
 
 \item{name}{Model name (can also add name in # commented first line)}
 

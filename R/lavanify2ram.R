@@ -39,15 +39,24 @@
 #' }
 #'
 #' @section Naming of multiple groups
+#' 
 #' When multiple groups are found the groups are named "name_grouplevel"
 #' White space is replaced with "_" and illegal characters are replaced with "x"
+#' 
+#' *note*: Options for  group.equal. In future, we might implement (but have not as yet):
+#' 1. c("loadings"
+#' 1. "intercepts"
+#' 1. "means"
+#' 1. "regressions"
+#' 1. "residuals"
+#' 1. "covariances"
 #' 
 #' @param model A lavaan syntax string, e.g. "A~~B"
 #' @param data Data to add to model (defaults to auto, which is just sketch mode)
 #' @param lavaanMode Auto-magical path settings for cfa/sem (default) or no-defaults ("lavaan")
 #' @param std.lv = FALSE Whether to set var of latents to 1 (default FALSE). nb. Toggles fix first.
 #' @param group = Column to use for multi-group (default = NULL)
-#' @param group.equal = what to equate across groups. Default (NULL) means no equates. Options that might be implemented (but not yet: c("loadings", "intercepts", "means", "regressions", "residuals", "covariances")
+#' @param group.equal = what to equate across groups. Default (NULL) means no equates. See details for what we might implement in future.
 #' @param std Whether to print estimates. Defaults to FALSE ("raw"), TRUE = "std", for no parameter table use NULL.
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
@@ -144,7 +153,11 @@
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #'
-umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE){
+umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, 
+	lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, 
+	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), 
+	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), 
+	verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE){
 	# TODO: make groups independent
 	# TODO: support group.equal Equality constraints across multiple
 	# groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"

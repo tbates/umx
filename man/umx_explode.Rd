@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_explode}
 \alias{umx_explode}
-\title{umx_explode - like the php function \code{explode}}
+\title{Explode a string (Like the php function \code{explode})}
 \usage{
 umx_explode(delimiter = character(), string)
 }
@@ -17,7 +17,7 @@ umx_explode(delimiter = character(), string)
 }
 }
 \description{
-Takes a string and returns an array of delimited strings (by default, each character)
+Takes a string and returns an array of delimited strings (by default, each single character)
 }
 \examples{
 umx_explode("", "dog") # "d" "o" "g"
@@ -25,7 +25,7 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}, \url{http://php.net/manual/en/function.explode.php}
+\item \url{https://tbates.github.io}, \url{http://php.net/manual/en/function.explode.php}
 }
 }
 \seealso{

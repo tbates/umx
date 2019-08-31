@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_describe_data_WLS}
 \alias{xmu_describe_data_WLS}
-\title{Determine whether a dataset will have weights and summary statistics for the means if used with mxFitFunctionWLS}
+\title{Determine whether a dataset will need weights and summary statistics for the means if used with mxFitFunctionWLS}
 \usage{
 xmu_describe_data_WLS(data, allContinuousMethod = c("cumulants",
   "marginals"), verbose = FALSE)

@@ -48,7 +48,7 @@ the literal string values themselves respectively.
 
 In addition, \code{umx_names} can do \link[=grep]{replacement} of a found string (see examples). It can also collapse the result (using \link{paste0})
 
-\emph{Note}: \code{namez} (with a z) is a shortcut for \code{umx_names}, which makes it easy to replace where you'd otherwise use \link{names}.
+\emph{Note}: \code{namez} (with a z) is a shortcut for \code{umx_names}, which makes it easy to replace where you would otherwise use \link{names}.
 
 You can learn more about the matching options (like inverting the selection etc.) in the help for base-R \link{grep}.
 }
