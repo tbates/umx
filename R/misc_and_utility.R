@@ -459,7 +459,7 @@ umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
 #' @return - Current umx_auto_plot setting
 #' @export
 #' @family Get and set
-#' @return - existing AutoPlot value
+#' @return - existing value
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -6635,9 +6635,9 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 	return(mat)
 }
 
-#' Where all data are missing for a twin, add default values for defVar to allow the row to be kept
+#' Where all data are missing for a twin, add default values for definition variables, allowing the row to be kept
 #'
-#' Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin
+#' Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin.
 #'
 #' @param df The dataframe to process
 #' @param varNames list of names of the variables being analysed

@@ -1,52 +1,59 @@
 # umx 3.0.0
 * August 2019 R 3.6.1 "Action of the Toes"
-* This release has major new features in beta: like support for lavaan syntax, AND a big clean-out/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.
+* This release has major new features in beta: like support for lavaan syntax, AND a over 80 additional improvements clean-out/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.
+
 * ALPHA: `umxRAM` lavaan string syntax support!
 * ALPHA: `umxRAM` multi-group models with `group="column"`!
-* BETA: `umxPower` and examples (beta)
 * BETA: `power.ACE.test` and examples. (beta)
+* BETA: `umxPower` and examples (beta).
 * BETA: `umxRotate` Rotate the factor loadings in `umxCP` models.
-* NEW: `xmu_safe_run_summary` can listen to `silent` to turn off summary and progress from models - use when running big simulation loops.
-* NEW: `umx_set_silent` preference (option) for other functions to listen too and choose how much junk to print to console. Like a global verbose.
-* NEW: `umx_select_valid` to replace values in one column with those in another, if first column is NA.
+* NEW: `umxCP` and `umxIP` can take `data` and create `MZ` and `DZ` datasets.
+  * Preparation for expansion to 5-group models.
+* NEW: `deg2rad` `rad2deg` utility  functions
 * NEW: `FishersMethod` To combine p-values.
 * NEW: `oddsratio`.
 * NEW: `SE_from_p` helper to get SE from b and p, or get a p from CI.
-* NEW: `umx_nice_data` converts your twinData to the standard format (zyg = zygosity, "_T1" , "_T2" suffixing of twin variable names).
 * NEW: `umxMendelianRandomization` alias to umxTwoStage.
-* CONVENIENCE: `umxCP` and `umxIP` can take `data` and create `MZ` and `DZ` datasets.
-  * Preparation for expansion to 5-group models.
+* NEW: `umx_nice_data` converts your twinData to the standard format (zyg = zygosity, "_T1" , "_T2" suffixing of twin variable names).
+* NEW: `umx_select_valid` to replace values in one column with those in another, if first column is NA.
+* NEW: `umx_set_silent` preference (option) for other functions to listen too and choose how much junk to print to console. Like a global verbose.
+* NEW: `xmu_safe_run_summary` can listen to `silent` to turn off summary and progress from models - use when running big simulation loops.
+* IMPROVED: `namez` has a better default action (call `names` )
+* IMPROVED: `oddsratio` teaches about limitations; supports odds-format as input (closes #102)
+* IMPROVED: `plot` can do `pathLabels = "labels"` to show the labels for paths
+* IMPROVED: `plot` for `umxIP` supports `means=TRUE`
+* IMPROVED: `power.ACE.test` now reports searches with fixed n nicely
+* IMPROVED: `umxAPA` now returns its output, rather than printing it. makes for easier consumption in programmatic uses.
+* IMPROVED: `umxAPA` supports `cor.test` and `t.test`
+* IMPROVED: `umxConfint` uses smart confidence intervals (just the free standardized parameters) for umxCP models.
+* IMPROVED: `umxEFA` can suppress printing when `umx_set_silent(TRUE)` #103
+* IMPROVED: `umxEFA` now has an option about reporting the summary fit statistics of a model (default is FALSE) see #103
 * IMPROVED: `umxGxE` removed border from legend (obscures plot to no benefit)
 * IMPROVED: `umxGxE` supports digits (rounding for tables)
+* IMPROVED: `umxlav2RAM` catch means
+* IMPROVED: `umxPlotCP` can show (non-zero) fixed paths closes #97
+* IMPROVED: `umxReduce.GxE` Don't try and drop means moderation.
 * IMPROVED: `umxReduceGxE` gains a `tryHard` option
 * IMPROVED: `umxReduceGxE` more rational set of reductions - means obey principle of marginality.
 * IMPROVED: `umxSummaryGxE` prints parameter table and SEs as well as the interaction plot.
-* IMPROVED: `umxConfint` uses smart confidence intervals (just the free standardized parameters) for umxCP models.
-* IMPROVED: `umx_var` robustness + support ordinal variables.
-* IMPROVED: `xmu_safe_run_summary` supports digits (rounding for tables)
-* IMPROVED: `umxAPA` supports `cor.test` and `t.test`
-* IMPROVED: `umx_set_data_variance_check`: set default `minvar` to .1
-* IMPROVED: `umxlav2RAM` catch means
+* IMPROVED: `umx_cor` quieter, more informative
+* IMPROVED: `umx_is_class` robust to being given a tibble (closes #101 Might need to re-open if there are more cases of where toggling drop from TRUE to FALSE interferes with data types)
 * IMPROVED: `umx_make_raw_from_cov` can add names to generated data
-* IMPROVED: ` umxPlotCP` can show (non-zero) fixed paths closes #97
+* IMPROVED: `umx_make_TwinData` bivariate parameters (e.g., `aMod`) --> `bivAmod` for more clarity (closes #78)
+* IMPROVED: `umx_make_TwinData` can now simulate D i.e., A, C, D & E
+* IMPROVED: `umx_make_TwinData` More robust
 * IMPROVED: `umx_move_file` supports wildcards (closes #83)
-* IMPROVED: `plot` for `umxIP` supports `means=TRUE`
-* IMPROVED: `umxReduce.GxE` Don't try and drop means moderation.
+* IMPROVED: `umx_rename` examples
+* IMPROVED: `umx_rename` reorder parameters, call x-> `data`, deprecate `grep` in favor of `regex` for consistency,
+* IMPROVED: `umx_scale_wide_data` gains twins parameter
+* IMPROVED: `umx_set_data_variance_check`: set default `minvar` to .1
+* IMPROVED: `umx_set_silent` returns old value
+* IMPROVED: `umx_var` robustness + support ordinal variables.
+* IMPROVED: `xmu_dot_move_ranks` set min, max or same to "" to take these ranks out of the diagram - Aids tricky layouts. (closes #84)
 * IMPROVED: `xmu_make_mxData` drop duplicates from manifests list
 * IMPROVED: `xmu_make_mxData` handles manipulating a 1-column mxData input
-* IMPROVED: `umx_make_TwinData` can now simulate D i.e., A, C, D & E
-* IMPROVED: `umx_make_TwinData` bivariate parameters (e.g., `aMod`) --> `bivAmod` for more clarity (closes #78)
-* IMPROVED: `umx_make_TwinData` More robust
-* IMPROVED: `umx_scale_wide_data` gains twins parameter
-* IMPROVED: `plot`: can do pathLabels = "labels" to show the labels for paths
-* IMPROVED: `umx_rename` reorder parameters, call x-> `data`, deprecate `grep` in favor of `regex` for consistency,
-* IMPROVED: `umx_rename` examples
-* IMPROVED: `umx_cor` quieter, more informative
-* IMPROVED: `xmu_dot_move_ranks` set min, max or same to "" to take these ranks out of the diagram - Aids tricky layouts. (closes #84)
-* IMPROVED: @md links
-* IMPROVED: `namez` has a better default action (call `names` )
-* DEPRECATED: The parameter to show standardized parameters is universally `std=TRUE` (`show = ` no longer works).
-* REMOVE: `umxIPold`
+* IMPROVED: `xmu_safe_run_summary` supports digits (rounding for tables)
+* CHANGED: `power.ACE.test` now uses semantic labels ("a", "c" ) and can test a dropped after c. Better feedback for boundDiag
 * CHANGED: `umx_show` -> `tmx_show`.
 * CHANGED: `umx_set_optimization_options` to `umx_set_mvn_optimization_options` for user clarity.
 * CHANGED: `umx_default_option` to `xmu_match.arg` as programming aids are moved into xmu space.
@@ -56,6 +63,9 @@
 * DROPPED: `umx_drop_ok` - orphan function - just use `umxCompare`
 * DROPPED: `umxEval` - broken anyway - just use `mxEval`
 * FIX: `mxPath` `v0m0` , `v.m0` now use labels (if two provided)
+* FIXED: `umxACE` standardizes model in summary
+* DEPRECATED: The parameter to show standardized parameters is universally `std=TRUE` (`show = ` no longer works).
+* REMOVE: `umxIPold`
 * NAMESPACE clean up to make it easier for users to focus on functions they (rather than devs) will use
   * umxCovData -> xmu_DF_to_mxData_TypeCov
   * xmu_model_needs_means -> xmu_check_needs_means
@@ -64,6 +74,7 @@
   * umx_cov2raw -> umx_make_raw_from_cov
   * umx_make_bin_cont_pair_data -> xmu_make_bin_cont_pair_data
   * umxPadAndPruneForDefVars -> xmu_PadAndPruneForDefVars
+* HELP: @md links
 * HELP `plot` Better explanation of graphing: can still be improved
 * HELP `umx_as_numeric`:better examples
 * HELP: `umxMendelianRandomization` nice figure
