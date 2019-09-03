@@ -17,7 +17,7 @@ umx_set_auto_plot(autoPlot = NULL, silent = FALSE)
 }
 
 \itemize{
-\item existing AutoPlot value
+\item existing value
 }
 }
 \description{

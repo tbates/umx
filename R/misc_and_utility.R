@@ -2981,8 +2981,8 @@ rad2deg <- function(rad) {
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! 180 Degrees is equal to 
 #' 2\eqn{x \pi} radians.
 #'
-#' @param rad The value in Radians you wish to convert
-#' @return - value in degrees
+#' @param deg The value in degrees you wish to convert to radians
+#' @return - value in radians
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [rad2deg()], [sin()]

@@ -244,6 +244,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' @param value Value of dropped parameter (default = 0)
 #' @param method "ncp" (default) or "empirical"
 #' @param explore Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.
+#' @param digits Rounding precision for reporting result.
 #' @param silent Suppress model runs printouts to console (TRUE)
 #' @return power table
 #' @export
