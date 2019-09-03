@@ -2382,10 +2382,11 @@ oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
 #' @param digits The rounding precision.
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible oddsratio object (x).
-#' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso - [print()], [umx::oddsratio()], 
 #' @md
+#' @method print reliability
+#' @export
 #' @examples
 #' oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
 #' oddsratio(grp1 = c(3, 10), grp2 = c(1, 10))
@@ -2643,10 +2644,11 @@ reliability <-function (S){
 #' @param digits The rounding precision.
 #' @param ... further arguments passed to or from other methods
 #' @return - invisible reliability object (x)
-#' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso - [print()], [umx::reliability()], 
 #' @md
+#' @method print reliability
+#' @export
 #' @examples
 #' # treat vehicle aspects as items of a test
 #' data(mtcars)

@@ -4,7 +4,7 @@
 \alias{print.reliability}
 \title{Print a scale "reliability" object}
 \usage{
-print.reliability(x, digits = 4, ...)
+\method{print}{reliability}(x, digits = 4, ...)
 }
 \arguments{
 \item{x}{A \code{\link[umx:reliability]{umx::reliability()}} result.}
