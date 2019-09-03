@@ -7,11 +7,11 @@
 deg2rad(deg)
 }
 \arguments{
-\item{rad}{The value in Radians you wish to convert}
+\item{deg}{The value in degrees you wish to convert to radians}
 }
 \value{
 \itemize{
-\item value in degrees
+\item value in radians
 }
 }
 \description{
