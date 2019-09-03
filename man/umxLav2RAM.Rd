@@ -88,6 +88,21 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 \tab ":="   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})\cr
 \tab "=="   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
 }
+
+\strong{Naming of multiple groups}
+
+When multiple groups are found the groups are named "name_grouplevel"
+White space is replaced with "_" and illegal characters are replaced with "x"
+
+\emph{note}: Options for  group.equal. In future, we might implement (but have not as yet):
+\enumerate{
+\item c("loadings"
+\item "intercepts"
+\item "means"
+\item "regressions"
+\item "residuals"
+\item "covariances"
+}
 }
 \examples{
 # auto-data, print table, return umxRAM model

@@ -15,9 +15,9 @@ umx_msg(x)
 }
 }
 \description{
-Helper function to ease debugging with console notes like:  "ObjectName = <object value>".
-This is primarily useful for inline debugging, where seeing "nVar = NULL" can be useful.
-The ability to say \code{umxMsg(nVar)} makes this easy.
+Helper function to ease debugging with console notes like:  "ObjectName = <Object Value>".
+This is primarily useful for inline debugging, where seeing, e.g., "nVar = 3" can be useful.
+The ability to say \code{umx_msg(nVar)} makes this easy.
 }
 \examples{
 a = "brian"

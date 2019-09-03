@@ -2194,7 +2194,7 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 #' 
 #' tabbedVertPlus: tabbed, but vertical lay-out 
 #' 
-#' number	2+2<itemBreak>min='0' max='7' step='1'
+#' number	2+2\<itemBreak\>min='0' max='7' step='1'
 #' 
 #' 5fm Scored 1-5, anchored: Strongly Disagree | Disagree  | Neutral | Agree | Strongly Agree
 #' 
@@ -2799,9 +2799,9 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 
 #' Print the name and compact contents of variable.
 #'
-#' Helper function to ease debugging with console notes like:  "ObjectName = <object value>".
-#' This is primarily useful for inline debugging, where seeing "nVar = NULL" can be useful.
-#' The ability to say \code{umxMsg(nVar)} makes this easy.
+#' Helper function to ease debugging with console notes like:  "ObjectName = \<Object Value\>".
+#' This is primarily useful for inline debugging, where seeing, e.g., "nVar = 3" can be useful.
+#' The ability to say \code{umx_msg(nVar)} makes this easy.
 #'
 #' @param  x the thing you want to pretty-print
 #' @return - NULL

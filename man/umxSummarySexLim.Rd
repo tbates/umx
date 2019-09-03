@@ -49,7 +49,7 @@ optionally show the Rg (genetic and environmental correlations), and show confid
 drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 }
 \details{
-See documentation for other umx models summary here: \code{\link[=umxSummary]{umxSummary()}}.
+See documentation for summary functions for other types of umx model here: \code{\link[=umxSummary]{umxSummary()}}.
 }
 \examples{
 \dontrun{
@@ -112,7 +112,7 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "C", tryHard = "yes",
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxSexLim]{umxSexLim()}}
+\item \code{\link[=umxSexLim]{umxSexLim()}}, \code{\link[=umxPlotSexLim]{umxPlotSexLim()}}
 }
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}},

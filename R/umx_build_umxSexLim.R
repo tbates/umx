@@ -16,13 +16,6 @@
 #' The correlation approach ensures that variable order does not affect the ability
 #' of the model to account for DZOS data.
 #' 
-#' @details
-#' **A or C**
-#' 
-#' Due to limitations on the degrees of freedom allowed by the twin model, we can model 
-#' qualitative sex differences for only one of A or C at a time.
-#' 
-#' 
 #' **1. Nonscalar Sex Limitation**
 #' 
 #' Allow quantitative (distinct male and female paths) and qualitative sex differences 
@@ -38,6 +31,12 @@
 #'
 #' This is the model assumed by the basic ACE model: equal variance components in both sexes. 
 #' Different means may be allowed for males and females.
+#' 
+#' @details
+#' **A or C**
+#' 
+#' Due to limitations on the degrees of freedom allowed by the twin model, we can model 
+#' qualitative sex differences for only one of A or C at a time.
 #' 
 #' *notes*: There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a 
 #' scalar constant in one sex.
@@ -61,7 +60,8 @@
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - [mxModel()] of subclass mxModel.CFSexLim
-#' @export
+#' @export 
+#' @seealso [umxSummarySexLim()], [umxPlotSexLim()]
 #' @family Twin Modeling Functions
 #' @references - Neale et al. (2006). 
 #' Multivariate genetic analysis of sex-lim and GxE interaction. *Twin Research & Human Genetics*, **9**, pp. 481--489.
@@ -431,7 +431,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. The report parameter allows
 #' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
 #'
-#' See documentation for other umx models summary here: [umxSummary()].
+#' See documentation for summary functions for other types of umx model here: [umxSummary()].
 #'
 #' @aliases umxSummary.MxModelSexLim
 #' @param model a [umxSexLim()] model to summarize
@@ -451,7 +451,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @return - optional [mxModel()]
 #' @export
 #' @family Twin Reporting Functions
-#' @seealso - [umxSexLim()] 
+#' @seealso - [umxSexLim()], [umxPlotSexLim()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -741,9 +741,10 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 
 #' Draw and display a graphical figure of a Sex limitation model
 #'
+#' Will plot a graphical figure for a sex limitation model.
 #' Options include `digits` (rounding), showing `means` or not, and which output `format` is desired.
 #'
-#' # @aliases plot.MxModelCP
+#' @aliases plot.MxModelSexLim
 #' @param x [mxModel()] to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
@@ -755,8 +756,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
-#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @seealso - [umxCP()]
+#' @seealso - [umxSexLim()], [umxSummarySexLim()]
 #' @family Plotting functions
 #' @references - <https://tbates.github.io>
 #' @md

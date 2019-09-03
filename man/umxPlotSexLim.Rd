@@ -2,6 +2,7 @@
 % Please edit documentation in R/umx_build_umxSexLim.R
 \name{umxPlotSexLim}
 \alias{umxPlotSexLim}
+\alias{plot.MxModelSexLim}
 \title{Draw and display a graphical figure of a Sex limitation model}
 \usage{
 umxPlotSexLim(x = NA, file = "name", digits = 2, means = FALSE,
@@ -33,10 +34,8 @@ umxPlotSexLim(x = NA, file = "name", digits = 2, means = FALSE,
 }
 }
 \description{
+Will plot a graphical figure for a sex limitation model.
 Options include \code{digits} (rounding), showing \code{means} or not, and which output \code{format} is desired.
-}
-\details{
-@aliases plot.MxModelCP
 }
 \examples{
 \dontrun{
@@ -77,11 +76,7 @@ plot(m1) # no need to remember a special name: plot works fine!
 }
 \seealso{
 \itemize{
-\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
-}
-
-\itemize{
-\item \code{\link[=umxCP]{umxCP()}}
+\item \code{\link[=umxSexLim]{umxSexLim()}}, \code{\link[=umxSummarySexLim]{umxSummarySexLim()}}
 }
 
 Other Plotting functions: \code{\link{plot.MxLISRELModel}},

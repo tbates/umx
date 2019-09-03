@@ -38,7 +38,7 @@
 #'   \tab "=="   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
 #' }
 #'
-#' @section Naming of multiple groups
+#' **Naming of multiple groups**
 #' 
 #' When multiple groups are found the groups are named "name_grouplevel"
 #' White space is replaced with "_" and illegal characters are replaced with "x"

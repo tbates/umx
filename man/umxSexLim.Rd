@@ -60,12 +60,6 @@ component which operates in one sex one but not in the other.
 
 The correlation approach ensures that variable order does not affect the ability
 of the model to account for DZOS data.
-}
-\details{
-\strong{A or C}
-
-Due to limitations on the degrees of freedom allowed by the twin model, we can model
-qualitative sex differences for only one of A or C at a time.
 
 \strong{1. Nonscalar Sex Limitation}
 
@@ -82,6 +76,12 @@ Just one set of Ra, Rc and Re between variables (same for males and females)
 
 This is the model assumed by the basic ACE model: equal variance components in both sexes.
 Different means may be allowed for males and females.
+}
+\details{
+\strong{A or C}
+
+Due to limitations on the degrees of freedom allowed by the twin model, we can model
+qualitative sex differences for only one of A or C at a time.
 
 \emph{notes}: There is a half-way house model of heterogeneity in which a, c, and e components are scaled by a
 scalar constant in one sex.
@@ -220,6 +220,8 @@ Multivariate genetic analysis of sex-lim and GxE interaction. \emph{Twin Researc
 }
 }
 \seealso{
+\code{\link[=umxSummarySexLim]{umxSummarySexLim()}}, \code{\link[=umxPlotSexLim]{umxPlotSexLim()}}
+
 Other Twin Modeling Functions: \code{\link{power.ACE.test}},
   \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
   \code{\link{umxACEv}}, \code{\link{umxACE}},

@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_PadAndPruneForDefVars}
 \alias{xmu_PadAndPruneForDefVars}
-\title{Where all data are missing for a twin, add default values for defVar to allow the row to be kept}
+\title{Where all data are missing for a twin, add default values for definition variables, allowing the row to be kept}
 \usage{
 xmu_PadAndPruneForDefVars(df, varNames, defNames, suffixes,
   highDefValue = 99, rm = c("drop_missing_def", "pad_with_mean"))
@@ -26,7 +26,7 @@ xmu_PadAndPruneForDefVars(df, varNames, defNames, suffixes,
 }
 }
 \description{
-Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin
+Replaces NAs in definition slots with the mean for that variable ONLY where all data are missing for that twin.
 }
 \examples{
 \dontrun{
