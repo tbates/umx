@@ -2385,7 +2385,7 @@ oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
 #' @family Miscellaneous Stats Helpers
 #' @seealso - [print()], [umx::oddsratio()], 
 #' @md
-#' @method print reliability
+#' @method print oddsratio
 #' @export
 #' @examples
 #' oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))

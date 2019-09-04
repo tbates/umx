@@ -4,7 +4,7 @@
 \alias{print.oddsratio}
 \title{Print a scale "oddsratio" object}
 \usage{
-print.oddsratio(x, digits = 3, ...)
+\method{print}{oddsratio}(x, digits = 3, ...)
 }
 \arguments{
 \item{x}{A \code{\link[umx:oddsratio]{umx::oddsratio()}} result.}
