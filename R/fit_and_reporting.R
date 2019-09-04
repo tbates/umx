@@ -20,22 +20,23 @@
 
 #' Diagnose problems in a model - this is a work in progress.
 #'
-#' The goal of this function is to diagnose problems in a model and return suggestions to the user.
+#' The goal of this function **WILL BE** (not currentl;y functional) is to diagnose problems in
+#' a model and return suggestions to the user.
 #' It is a work in progress, and of no use as yet.
 #'
 #' Best diagnostics are:
 #' 
-#' 1. observed data variances and means
-#' 2. expected variances and means
-#' 3 Difference of these?
+#' 1. Observed data variances and means
+#' 2. Expected variances and means
+#' 3. Difference of these?
 #' 	
 #' Try
 #' 	* diagonalizeExpCov diagonal.
-#' 	* umx_any_ordinal()
+#' 	* [umx_any_ordinal()]
 #'
 #' 	more tricky - we should really report the variances and the standardized thresholds.
-# The guidance would be to try starting with unit variances and thresholds that are within +/- 2SD of the mean.
-# [bivariate outliers %p](https://openmx.ssri.psu.edu/thread/3899)
+#' The guidance would be to try starting with unit variances and thresholds that are within
+#'  +/- 2SD of the mean. [bivariate outliers \%p option](https://openmx.ssri.psu.edu/thread/3899)
 #' @param model an [mxModel()] to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov

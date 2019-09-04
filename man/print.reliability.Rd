@@ -19,7 +19,7 @@
 }
 }
 \description{
-Print method for the \code{\link[ums:reliability]{ums::reliability()}} function.
+Print method for the \code{\link[umx:reliability]{umx::reliability()}} function.
 }
 \examples{
 # treat vehicle aspects as items of a test

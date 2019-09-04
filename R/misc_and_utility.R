@@ -2320,10 +2320,11 @@ umx_write_to_clipboard <- function(x) {
 #' @details
 #' Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:
 #'
-#' Group 1 odds = 0.429
-#' Group 2 odds = 0.111
-#'           OR = 3.857 CI99\[0.159, 93.646\]
-#' 
+#' ```R
+#' Group 1 odds = 0.43
+#' Group 2 odds = 0.11
+#'           OR = 3.86 CI95[0.160, 3.64]
+#' ```
 #'
 #' @param grp1 either odds for group 1, or cases and total N , e.g c(n=3, N=10)
 #' @param grp2 either odds for group 2, or cases and total N , e.g c(n=1, N=20)
@@ -2638,7 +2639,7 @@ reliability <-function (S){
 
 #' Print a scale "reliability" object
 #'
-#' Print method for the [ums::reliability()] function.
+#' Print method for the [umx::reliability()] function.
 #'
 #' @param x A [umx::reliability()] result.
 #' @param digits The rounding precision.

@@ -19,22 +19,25 @@ umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 }
 }
 \description{
-The goal of this function is to diagnose problems in a model and return suggestions to the user.
+The goal of this function \strong{WILL BE} (not currentl;y functional) is to diagnose problems in
+a model and return suggestions to the user.
 It is a work in progress, and of no use as yet.
 }
 \details{
 Best diagnostics are:
 \enumerate{
-\item observed data variances and means
-\item expected variances and means
-3 Difference of these?
+\item Observed data variances and means
+\item Expected variances and means
+\item Difference of these?
 }
 
 Try
 * diagonalizeExpCov diagonal.
-* umx_any_ordinal()
+* \code{\link[=umx_any_ordinal]{umx_any_ordinal()}}\preformatted{more tricky - we should really report the variances and the standardized thresholds.
+}
 
-more tricky - we should really report the variances and the standardized thresholds.
+The guidance would be to try starting with unit variances and thresholds that are within
++/- 2SD of the mean. \href{https://openmx.ssri.psu.edu/thread/3899}{bivariate outliers \%p option}
 }
 \examples{
 require(umx)
