@@ -32,7 +32,7 @@
 #' 	
 #' Try
 #' 	* diagonalizeExpCov diagonal.
-#' 	* [umx_any_ordinal()]
+#' 	* [umx_is_ordered()]
 #'
 #' 	more tricky - we should really report the variances and the standardized thresholds.
 #' The guidance would be to try starting with unit variances and thresholds that are within
