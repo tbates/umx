@@ -1,6 +1,6 @@
 ## Changes
 
-New features
+Over 80 new features and improvements
 
 ## Test environments
 * OS X 10.14.0, R version  3.6.1 (2019-07-05)
