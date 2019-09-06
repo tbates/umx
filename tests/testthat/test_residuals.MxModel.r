@@ -11,12 +11,11 @@
 
 require(OpenMx)
 data(demoOneFactor)
-latents  = c("g")
 manifests = names(demoOneFactor)
 m1 <- umxRAM("test", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
-	umxPath(latents, to = manifests),
+	umxPath("g", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = latents, fixedAt = 1)
+	umxPath(var = "g", fixedAt = 1)
 )
 
 test_that("residuals.MxModel works", {
