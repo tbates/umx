@@ -27,7 +27,7 @@ Fix the variance of all, or selected, exogenous latents at selected values. This
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("fix_latents", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)

@@ -316,6 +316,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # = Mendelian Randomization analysis =
 #' # ====================================
 #' 
+#' \dontrun{
 #' # Note: in practice: many more subjects are desirable - this just to let example run fast
 #' df = umx_make_MR_data(1000) 
 #' m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
@@ -330,7 +331,6 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
 #' #
 #' #
-#' \dontrun{
 #' df = umx_make_MR_data(1e5) 
 #' m1 = umxMendelianRandomization(Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)

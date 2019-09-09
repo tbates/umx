@@ -23,7 +23,7 @@ check if an mxModel has been run or not
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("has_been_run_example", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)

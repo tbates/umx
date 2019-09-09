@@ -60,6 +60,7 @@ select graphviz.app (or OmniGraffle professional),
 then set \dQuote{change all}.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -82,6 +83,7 @@ m1 = umxRAM("grow", data = myGrowthMixtureData,
 )
 
 plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
+} # end dontrun
 
 }
 \references{

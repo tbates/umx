@@ -91,15 +91,6 @@
 
 
 # Not used?
-# @importFrom numDeriv jacobian
-# @importFrom sfsmisc nearcor
-
-# Used in umx_make
-# @importFrom spelling spell_check_package
-
-# Old
-# @importFrom Hmisc escapeRegex
-# @importFrom cocor cocor.dep.groups.nonoverlap
 NULL
 
 utils::globalVariables(c(
@@ -469,6 +460,8 @@ umxModel <- function(...) {
 #'      umxPath(var = c("wt", "disp", "mpg"))
 #'  )
 #'
+#' \dontrun{
+#' 
 #' # ===============================
 #' # = Using umxRAM in Sketch mode =
 #' # ===============================
@@ -491,6 +484,7 @@ umxModel <- function(...) {
 #' 	umxPath(var = paste0("x", 1:4)),
 #' 	umxPath(v1m0 = "g")
 #' )
+#' }
 #'
 #' 
 #' # =================================================
@@ -1946,6 +1940,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' Educational Achievement Data. *Behavior Genetics*, **46**, 583-95. doi:<https://doi.org/10.1007/s10519-015-9771-1>.
 #'
 #' @examples
+#' \dontrun{
 #' # ============================================
 #' # = BMI, can't use Age as a random covariate =
 #' # ============================================
@@ -1953,20 +1948,13 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' data(twinData)
 #' # Replicate age to age1 & age2
 #' twinData$age1 = twinData$age2 = twinData$age
-#' # 80 rows so example runs fast for CRAN
-#' mzData = subset(twinData, zygosity == "MZFF")[1:80, ]
-#' dzData = subset(twinData, zygosity == "DZFF")[1:80, ]
-#' \dontrun{
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
-#' }
 #'
 #' # =====================================================================
 #' # = Trying to use identical var (like age) as a random cov is ILLEGAL =
 #' # =====================================================================
-#' \dontrun{
 #' m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
-#' }
 #'
 #' # ========================================================
 #' # = Use an lm-based age-residualisation approach instead =
@@ -1982,7 +1970,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' 
-#' \dontrun{
 #' # ===========================================================================
 #' # = A bivariate example (need a dataset with a VIABLE COVARIATE to do this) =
 #' # ===========================================================================
@@ -3584,9 +3571,9 @@ umxAdd1 <- function(model, pathList1 = NULL, pathList2 = NULL, arrows = 2, maxP 
 #' 	umxLatent("G", forms = manifests, type = "exogenous", data = theData)
 #' )
 #' umxSummary(m1, show="std")
+#' \dontrun{
 #' plot(m1, std = TRUE)
 #' 
-#' \dontrun{
 #' # I don't recommend using umxLatent at present: It's not a direction I am moving umx in
 #' m2 = umxRAM("formative", data = df,
 #'	umxLatent("G", formedBy = manifests, data = df, fixManifestVariances=TRUE)

@@ -77,6 +77,7 @@ The following figure shows how the ACE model with random covariates appears as a
 \if{latex}{\figure{ACEcovVarianceModel.pdf}{options: width=7cm}}
 }
 \examples{
+\dontrun{
 # ============================================
 # = BMI, can't use Age as a random covariate =
 # ============================================
@@ -84,20 +85,13 @@ require(umx)
 data(twinData)
 # Replicate age to age1 & age2
 twinData$age1 = twinData$age2 = twinData$age
-# 80 rows so example runs fast for CRAN
-mzData = subset(twinData, zygosity == "MZFF")[1:80, ]
-dzData = subset(twinData, zygosity == "DZFF")[1:80, ]
-\dontrun{
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
-}
 
 # =====================================================================
 # = Trying to use identical var (like age) as a random cov is ILLEGAL =
 # =====================================================================
-\dontrun{
 m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
-}
 
 # ========================================================
 # = Use an lm-based age-residualisation approach instead =
@@ -113,7 +107,6 @@ mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 
-\dontrun{
 # ===========================================================================
 # = A bivariate example (need a dataset with a VIABLE COVARIATE to do this) =
 # ===========================================================================

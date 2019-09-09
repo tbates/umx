@@ -32,7 +32,7 @@ require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
 
-m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("fit_ex", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)

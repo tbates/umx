@@ -157,7 +157,9 @@ hiCN := a * b1 + ab3 * 0.5
 "
 tmp = umxRAM(lav)
 # plot showing ability to influence layout with max min same groupings
+\dontrun{
 plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
+}
 
 # Algebra: e.g. b1^2
 m1 = umxRAM("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
@@ -174,12 +176,6 @@ tmp = umxLav2RAM(lav)
 namedStr = " 	# my name
 	y ~x"
 m1 = umxRAM(namedStr) 
-
-# test for removal of bad chars from name
-lav = " # Model 14 PROCESS Hayes + - '~', ':', and '= moderated mediation
-gnt ~ a*cb
-" 
-m1 = umxRAM(lav) 
 
 # Formative factor
 # lavaanify("f5 <~ z1 + z2 + z3 + z4")

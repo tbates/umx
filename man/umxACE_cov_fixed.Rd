@@ -80,6 +80,7 @@ Covariates like age, which are perfectly correlated in twins cannot be used.
 Covariates like sex, which are ordinal, violate the normality assumption.
 }
 \examples{
+\dontrun{
 require(umx)
 data(twinData) # ?twinData from Australian twins.
 # Pick the variables
@@ -94,8 +95,8 @@ m2 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 # = lm-based equivalent =
 # =======================
 df_res = umx_residualize(ht ~ age, suffixes = c("1", "2"), data = twinData)
-mzData <- df_res[df_res$zygosity \%in\% "MZFF", ]
-dzData <- df_res[df_res$zygosity \%in\% "DZFF", ]
+mzData = df_res[df_res$zygosity \%in\% "MZFF", ]
+dzData = df_res[df_res$zygosity \%in\% "DZFF", ]
 m3 = umxACE("lm_based", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 # ===============================
 # = Example with two covariates =
@@ -108,6 +109,7 @@ dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, sep = "",
 	     dzData = dzData, mzData = mzData)
 m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+}
 }
 \seealso{
 umx_residualize umxACE

@@ -29,7 +29,7 @@ End users should just call \code{\link[=umxLabel]{umxLabel()}}
 \examples{
 require(umx)
 data(demoOneFactor)
-m2 <- mxModel("One Factor",
+m2 <- mxModel("label_ex",
 	mxMatrix("Full", 5, 1, values = 0.2, free = TRUE, name = "A"), 
 	mxMatrix("Symm", 1, 1, values = 1.0, free = FALSE, name = "L"), 
 	mxMatrix("Diag", 5, 5, values = 1.0, free = TRUE, name = "U"), 

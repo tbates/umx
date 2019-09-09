@@ -29,6 +29,8 @@ A value of zero sets always to 'No' (i.e., do not checkpoint all models during o
 Set the checkpoint status for a model or global options
 }
 \examples{
+
+\dontrun{
 umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
 # Turn off checkpointing with interval = 0
 umx_set_checkpoint(interval = 0)
@@ -44,6 +46,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 m1 = umx_set_checkpoint(model = m1)
 m1 = mxRun(m1)
 umx_checkpoint(0)
+}
 }
 \references{
 \itemize{

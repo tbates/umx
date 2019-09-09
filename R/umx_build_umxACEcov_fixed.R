@@ -65,6 +65,7 @@
 #' @export
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(twinData) # ?twinData from Australian twins.
 #' # Pick the variables
@@ -79,8 +80,8 @@
 #' # = lm-based equivalent =
 #' # =======================
 #' df_res = umx_residualize(ht ~ age, suffixes = c("1", "2"), data = twinData)
-#' mzData <- df_res[df_res$zygosity %in% "MZFF", ]
-#' dzData <- df_res[df_res$zygosity %in% "DZFF", ]
+#' mzData = df_res[df_res$zygosity %in% "MZFF", ]
+#' dzData = df_res[df_res$zygosity %in% "DZFF", ]
 #' m3 = umxACE("lm_based", selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 #' # ===============================
 #' # = Example with two covariates =
@@ -93,6 +94,7 @@
 #' m1 = umxACE_cov_fixed(selDVs = selDVs, selCovs = selCovs, sep = "",
 #' 	     dzData = dzData, mzData = mzData)
 #' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
+#' }
 umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
 		tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){

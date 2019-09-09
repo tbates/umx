@@ -738,7 +738,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m2 <- mxModel("One Factor",
+#' m2 <- mxModel("label_ex",
 #' 	mxMatrix("Full", 5, 1, values = 0.2, free = TRUE, name = "A"), 
 #' 	mxMatrix("Symm", 1, 1, values = 1.0, free = FALSE, name = "L"), 
 #' 	mxMatrix("Diag", 5, 5, values = 1.0, free = TRUE, name = "U"), 
@@ -780,7 +780,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @examples
 #' require(umx); data(demoOneFactor)
 #' # raw but no means
-#' m1 <- mxModel("One Factor", mxData(demoOneFactor, type = "raw"), type="RAM",
+#' m1 <- mxModel("label_ex", mxData(demoOneFactor, type = "raw"), type="RAM",
 #' 	manifestVars = "x1", latentVars= "G",
 #' 	umxPath("G", to = "x1"),
 #' 	umxPath(var = "x1"),
@@ -1123,7 +1123,7 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 = mxModel("One Factor", type = "RAM", 
+#' m1 = mxModel("propage_example", type = "RAM", 
 #' 	manifestVars = manifests, latentVars = latents, 
 #' 	mxPath(from = latents  , to = manifests),
 #' 	mxPath(from = manifests, arrows = 2),
@@ -1779,7 +1779,7 @@ xmu_string2path <- function(from) {
 #' require(umx); data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)

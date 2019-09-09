@@ -62,9 +62,9 @@ m1 = umxRAM("reflective", data = df,
 	umxLatent("G", forms = manifests, type = "exogenous", data = theData)
 )
 umxSummary(m1, show="std")
+\dontrun{
 plot(m1, std = TRUE)
 
-\dontrun{
 # I don't recommend using umxLatent at present: It's not a direction I am moving umx in
 m2 = umxRAM("formative", data = df,
 umxLatent("G", formedBy = manifests, data = df, fixManifestVariances=TRUE)

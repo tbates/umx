@@ -32,7 +32,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
-)#' extractAIC(m1)
+)
+extractAIC(m1)
 # -2.615998
 AIC(m1)
 }

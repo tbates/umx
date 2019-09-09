@@ -230,6 +230,8 @@ m1 = umxRAM("tim", data = myCov,
      umxPath(var = c("wt", "disp", "mpg"))
  )
 
+\dontrun{
+
 # ===============================
 # = Using umxRAM in Sketch mode =
 # ===============================
@@ -252,6 +254,7 @@ m1 = umxRAM("CFA_sketch", data = paste0("x", 1:4),
 	umxPath(var = paste0("x", 1:4)),
 	umxPath(v1m0 = "g")
 )
+}
 
 
 # =================================================

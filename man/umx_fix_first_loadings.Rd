@@ -30,7 +30,7 @@ how to scale models with fixed latent or fixed first path...
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("fix_first", data = demoOneFactor, type = "cov",
 	umxPath("g", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "g", fixedAt = 1.0)

@@ -23,7 +23,7 @@ A utility function to return a binary answer to the question "does this \code{\l
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("_has_CI_ex", data = demoOneFactor, type = "cov",
 	umxPath("g", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "g", fixedAt = 1.0)

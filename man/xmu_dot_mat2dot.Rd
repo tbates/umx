@@ -107,7 +107,7 @@ umx_msg(out$latents)
 # ==============================================
 data(demoOneFactor)
 latents = c("g"); manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+m1 = umxRAM("xmu_dot", data = demoOneFactor, type = "cov",
 	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1.0)

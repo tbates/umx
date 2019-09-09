@@ -809,6 +809,8 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' umx_set_checkpoint(interval = 1, "evaluations", dir = "~/Desktop/")
 #' # Turn off checkpointing with interval = 0
 #' umx_set_checkpoint(interval = 0)
@@ -825,6 +827,7 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' m1 = umx_set_checkpoint(model = m1)
 #' m1 = mxRun(m1)
 #' umx_checkpoint(0)
+#' }
 umx_set_checkpoint <- function(interval = 1, units = c("evaluations", "iterations", "minutes"), prefix = "", directory = getwd(), model = NULL) {
 	if(umx_is_MxModel(interval)){
 		stop("You passed in a model as the first parameter. You probably want:\n",
@@ -1124,7 +1127,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("umx_is_endogenous", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = names(demoOneFactor)),
 #' 	umxPath(var = "g", fixedAt = 1),
 #' 	umxPath(var = names(demoOneFactor))
@@ -1171,7 +1174,7 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("fix_latents", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -1214,7 +1217,7 @@ umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("fix_first", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "g", fixedAt = 1.0)
@@ -3190,7 +3193,7 @@ xmu_dot_rank <- function(vars, pattern, rank) {
 #' # ==============================================
 #' data(demoOneFactor)
 #' latents = c("g"); manifests = names(demoOneFactor)
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("xmu_dot", data = demoOneFactor, type = "cov",
 #' 	umxPath(latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1.0)
@@ -3324,7 +3327,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -3439,7 +3442,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
 #' myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
-#' m1 = umxRAM("One Factor", data = myData,
+#' m1 = umxRAM("umx_time_example", data = myData,
 #' 	umxPath(from = latents, to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
@@ -3633,7 +3636,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("has_been_run_example", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -4057,7 +4060,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("is_RAM_ex", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -4207,7 +4210,7 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("has_means_ex", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -4243,7 +4246,7 @@ umx_has_means <- function(model) {
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("_has_CI_ex", data = demoOneFactor, type = "cov",
 #' 	umxPath("g", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "g", fixedAt = 1.0)
@@ -4302,7 +4305,7 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("check_model_ex", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -6724,7 +6727,7 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("get_add_ex", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
@@ -6824,7 +6827,7 @@ umx_standardize.default <- function(model, ...){
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("std_ex", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)

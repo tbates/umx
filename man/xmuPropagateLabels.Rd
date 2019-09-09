@@ -27,7 +27,7 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 = mxModel("One Factor", type = "RAM", 
+m1 = mxModel("propage_example", type = "RAM", 
 	manifestVars = manifests, latentVars = latents, 
 	mxPath(from = latents  , to = manifests),
 	mxPath(from = manifests, arrows = 2),
