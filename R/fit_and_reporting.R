@@ -20,7 +20,7 @@
 
 #' Diagnose problems in a model - this is a work in progress.
 #'
-#' The goal of this function **WILL BE** (not currentl;y functional) is to diagnose problems in
+#' The goal of this function **WILL BE** (not currently functional) is to diagnose problems in
 #' a model and return suggestions to the user.
 #' It is a work in progress, and of no use as yet.
 #'
