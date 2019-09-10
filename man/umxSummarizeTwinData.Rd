@@ -7,7 +7,7 @@
 umxSummarizeTwinData(data = NULL, selVars = "wt", sep = "_T",
   zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF = "MZFF",
   DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS",
-  digits = 2)
+  digits = 2, report = c("markdown", "html"))
 }
 \arguments{
 \item{data}{The twin data.}
@@ -33,6 +33,8 @@ umxSummarizeTwinData(data = NULL, selVars = "wt", sep = "_T",
 \item{DZOS}{The level in zyg corresponding to DZ OS pairs: e.g., "DZOS".}
 
 \item{digits}{Rounding precision of the report (default 2).}
+
+\item{report}{What to return (default = 'markdown'). Use 'html' to open a web table.}
 }
 \value{
 \itemize{

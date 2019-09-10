@@ -4181,6 +4181,7 @@ summaryAPA <- umxAPA
 #' @param DZMM The level in zyg corresponding to DZ MM pairs: e.g., "DZMM".
 #' @param DZOS The level in zyg corresponding to DZ OS pairs: e.g., "DZOS".
 #' @param digits Rounding precision of the report (default 2).
+#' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
 #' @return - formatted table, e.g. in markdown.
 #' @export
 #' @family Twin Reporting Functions
@@ -4192,7 +4193,8 @@ summaryAPA <- umxAPA
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
 #' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
-umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2) {
+umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2, report = c("markdown", "html")) {
+	report = match.arg(report)
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
 	selDVs = tvars(selVars, sep)
@@ -4244,7 +4246,12 @@ umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = 
 		names(df) = namez(df, "(rMZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% MZ,"Freq"]),")"))
 		names(df) = namez(df, "(rDZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% DZ,"Freq"]),")"))
 	}
-	umx_print(df)
+	if(report == "html"){
+		umx_print(df, digits=digits, file = "tmp.html")
+	} else {
+		umx_print(df, digits=digits)
+	}
+	
 	# return(df)
 	# Calculate Mean Age and SD for men and women
 	# umx_aggregate(value ~ Sex, data = longformat, what = "mean_sd")
