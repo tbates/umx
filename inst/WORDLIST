@@ -591,7 +591,6 @@ umxJiggle
 umxLabel
 umxLabeler
 umxLabels
-umxLatent
 umxMakeThresholdMatrix
 umxMatrix
 umxModel
