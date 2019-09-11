@@ -76,8 +76,6 @@
 #' Replace genEpi_Path with [umxPath()]
 #'
 #' Replace genEpiCompare with [umxCompare()]
-#'
-#' Replace mxLatent with [umxLatent()]
 #' 
 #' Change col.as.numeric to [umx_as_numeric()]
 #' 

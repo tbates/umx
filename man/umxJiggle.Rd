@@ -35,7 +35,7 @@ mat1 = umxJiggle(mat1)
 }
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxLabel}},
-  \code{\link{umxLatent}}, \code{\link{umxRAM2Ordinal}},
+  \code{\link{umxRAM2Ordinal}},
   \code{\link{umxThresholdMatrix}},
   \code{\link{umxValues}},
   \code{\link{umx_fix_first_loadings}},

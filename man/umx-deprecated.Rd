@@ -61,8 +61,6 @@ Replace genEpi_Path with \code{\link[=umxPath]{umxPath()}}
 
 Replace genEpiCompare with \code{\link[=umxCompare]{umxCompare()}}
 
-Replace mxLatent with \code{\link[=umxLatent]{umxLatent()}}
-
 Change col.as.numeric to \code{\link[=umx_as_numeric]{umx_as_numeric()}}
 
 Change cor.prob to \code{\link[=umx_cor]{umx_cor()}}

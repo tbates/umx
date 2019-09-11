@@ -105,6 +105,8 @@ White space is replaced with "_" and illegal characters are replaced with "x"
 }
 }
 \examples{
+
+\dontrun{
 # auto-data, print table, return umxRAM model
 m1 = umxLav2RAM("y ~ x", printTab= TRUE)
 
@@ -142,7 +144,7 @@ m1 = umxRAM(HS, data = umx_scale(HS.ability.data))
 # Multiple groups
 m1 = umxRAM(HS, data = umx_scale(HS.ability.data), group = "school")
 
-# More complex:
+# More examples
 
 lav = " # Moderated mediation
 gnt ~ a*cb
@@ -157,9 +159,7 @@ hiCN := a * b1 + ab3 * 0.5
 "
 tmp = umxRAM(lav)
 # plot showing ability to influence layout with max min same groupings
-\dontrun{
 plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
-}
 
 # Algebra: e.g. b1^2
 m1 = umxRAM("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
@@ -179,7 +179,7 @@ m1 = umxRAM(namedStr)
 
 # Formative factor
 # lavaanify("f5 <~ z1 + z2 + z3 + z4")
-
+}
 }
 \seealso{
 \itemize{

@@ -1,3 +1,185 @@
+#' umxLatent: Helper to ease making formative and reflective latent variables
+#'
+#' Helper to ease the creation of latent variables including formative and reflective variables (see below)
+#' For formative variables, the manifests define (form) the latent.
+#' This function takes care of intercorrelating manifests for formatives, and fixing variances correctly
+#' 
+#' The following figures show how a reflective and a formative variable look as path diagrams:
+#' 
+#' Note, a reflective latent on its own is not identified as a complete model.
+#' Fixing manifest variances at their observed values can allow this case.
+#' 
+#' Reflective (manifests reflect the value of the latent variable)
+#' 
+#' \if{html}{\figure{reflective.png}{options: width="50\%" alt="Figure: reflective.png"}}
+#' \if{latex}{\figure{reflective.pdf}{options: width=7cm}}
+#' 
+#' Formative (manifests provide the value of the latent variable)
+#' 
+#' \if{html}{\figure{formative.png}{options: width="50\%" alt="Figure: formative.png"}}
+#' \if{latex}{\figure{formative.pdf}{options: width=7cm}}
+#'
+#' @param latent the name of the latent variable (string)
+#' @param formedBy the list of manifest variables which latent reflects.
+#' @param forms the list of variables which this latent forms (leave blank if using formedBy)
+#' @param data the dataframe being used in this model
+#' @param type of the latent variable: "exogenous" or "endogenous"
+#' @param fixManifestVariances defaults to FALSE. Allows a model consisting of just a reflective latent to be identified.
+#' @param name A name for the path NULL
+#' @param labelSuffix a suffix string to append to each label
+#' @param verbose  Default is TRUE as this function does quite a lot
+#' @return - path list
+#' @export
+#' @family Advanced Model Building Functions
+#' @references - <https://www.github.com/tbates/umx>
+#' @examples
+#' library(umx)
+#' data(demoOneFactor)
+#' manifests = names(demoOneFactor) # x1-5
+#' theData = cov(demoOneFactor)
+#' df = mxData(theData, type = "cov", numObs = nrow(demoOneFactor))
+#' m1 = umxRAM("reflective", data = df,
+#' 	umxLatent("G", forms = manifests, type = "exogenous", data = theData)
+#' )
+#' \dontrun{
+#' plot(m1, std = TRUE)
+#' }
+#' 
+#' # I don't recommend using umxLatent at present: It's not a direction I am moving umx in
+#' m2 = umxRAM("formative", data = df, tryHard="yes",
+#'		umxLatent("G", formedBy = manifests, data = df, fixManifestVariances=TRUE)
+#' )
+#' \dontrun{
+#' plot(m2, std = TRUE)
+#' }
+umxLatent <- function(latent = NULL, formedBy = NULL, forms = NULL, data = NULL, type = NULL,  fixManifestVariances = FALSE, name = NULL, labelSuffix = "", verbose = TRUE) {
+	# Purpose: make a latent variable formed/or formed by some manifests
+	# Use: umxLatent(latent = NA, formedBy = manifestsOrigin, data = df)
+	if(is.null(latent)) { stop("Error in mxLatent: you have to provide the name of the latent variable you want to create") }
+	# Check both forms and formedBy are not defined
+	if( is.null(formedBy) &&  is.null(forms)) { stop("Error in mxLatent: Must define one of forms or formedBy") }
+	if(!is.null(formedBy) && !is.null(forms)) { stop("Error in mxLatent: Only one of forms or formedBy can be set") }
+	if(is.null(data)){ stop("Error in mxLatent: you have to provide the data that will be used in the model") }
+	# ==========================================================
+	# = NB: If any variables are ordinal, a call to umxMakeThresholdsMatrices will be made
+	
+	# unpack data from mxData if detected as input
+	if(class(data) == "MxDataStatic"){
+		data = data@observed
+	}
+	isCov = umx_is_cov(data, boolean = TRUE)
+
+	if(any(!is.null(forms))) {
+		manifests <- forms
+	}else{
+		manifests <- formedBy
+	}
+
+	if(isCov) {
+		variances = diag(data[manifests, manifests])
+	} else {
+		manifestOrdVars = umx_is_ordered(data[,manifests])
+		if(any(manifestOrdVars)) {
+			means         = rep(0, times = length(manifests))
+			variances     = rep(1, times = length(manifests))
+			contMeans     = colMeans(data[,manifests[!manifestOrdVars], drop = FALSE], na.rm = TRUE)
+			contVariances = diag(cov(data[,manifests[!manifestOrdVars], drop = FALSE], use = "complete"))
+			if( any(!is.null(forms)) ) {
+				contVariances = contVariances * .1 # hopefully residuals are modest, at least for start values
+			}
+			means[!manifestOrdVars] = contMeans				
+			variances[!manifestOrdVars] = contVariances				
+		}else{
+			if(verbose){
+				message("No ordinal variables")
+			}
+			means     = colMeans(data[, manifests], na.rm = TRUE)
+			variances = diag(cov(data[, manifests], use = "complete"))
+		}
+	}
+
+	if( any(!is.null(forms)) ) {
+		# Handle forms case
+		# p1 = Residual variance on manifests
+		# p2 = Fix latent variance @1
+		# p3 = Add paths from latent to manifests
+		p1 = mxPath(from = manifests, arrows = 2, free = TRUE, values = variances)
+		if(is.null(type)){ stop("Error in mxLatent: You must set type to either exogenous or endogenous when creating a latent variable with an outgoing path") }
+		if(type == "endogenous"){
+			# Free latent variance so it can do more than just redirect what comes in
+			if(verbose){
+				message(paste("latent '", latent, "' is free (treated as a source of variance)", sep=""))
+			}
+			p2 = mxPath(from = latent, connect = "single", arrows = 2, free = TRUE, values = .5)
+		} else {
+			# fix variance at 1 - no inputs
+			if(verbose){
+				message(paste("latent '", latent, "' has variance fixed @1"))
+			}
+			p2 = mxPath(from = latent, connect = "single", arrows = 2, free = FALSE, values = 1)
+		}
+		p3 = mxPath(from = latent, to = manifests, connect = "single", free = TRUE, values = variances)
+		if(isCov) {
+			# Nothing to do: covariance data don't need means...
+			paths = list(p1, p2, p3)
+		}else{
+			# Add means: fix latent mean @0, and add freely estimated means to manifests
+			p4 = umxPath(means = latent, fixedAt=0)
+			p5 = umxPath(means = manifests, values = means)
+			paths = list(p1, p2, p3, p4, p5)
+		}
+	} else {
+		# Handle formedBy case.
+		# Add paths from manifests to the latent.
+		p1 = umxPath(manifests, to = latent, connect = "single", free = TRUE, values = umxValues(.6, n = manifests))
+		# In general, manifest variance should be left free...
+		# TODO If the data were correlations... we can inspect for that, and fix the variance to 1.
+		if(fixManifestVariances){
+			p2 = umxPath(var = manifests, fixedAt = variances)
+		} else {
+			p2 = umxPath(var = manifests, values = variances)
+		}
+		# Allow manifests to intercorrelate.
+		p3 = umxPath(unique.bivariate = manifests, free = TRUE, values = umxValues(.3, n = manifests))
+		p4 = umxPath(var = latent, fixedAt = 0)
+		if(isCov) {
+			paths = list(p1, p2, p3, p4)
+		}else{
+			# Add means (latent @ 0, manifests free)
+			p5 = umxPath(means = latent, fixedAt = 0)
+			p6 = umxPath(means = manifests, free = TRUE, values = means)
+			paths = list(p1, p2, p3, p4, p5, p6)
+		}
+	}
+	if(!is.null(name)) {
+		m1 <- mxModel(name, type="RAM", manifestVars = manifests, latentVars = latent, paths)
+		if(isCov){
+			m1 <- mxModel(m1, mxData(cov(df), type="cov", numObs = 100))
+			message("\n\nIMPORTANT: you need to set numObs in the mxData() statement\n\n\n")
+		} else {
+			if(any(manifestOrdVars)){
+				stop("Sorry, I can't yet handle ordinal manifests automatically :-(.")
+				# m1 <- mxModel(m1, umxThresholdRAMObjective(data, deviationBased = TRUE, droplevels = TRUE, verbose = TRUE))
+			} else {
+				m1 <- mxModel(m1, mxData(data, type = "raw"))
+			}
+		}
+		return(m1)
+	} else {
+		return(paths)
+	}
+	# TODO: umxLatent: shift this to a test file
+	# readMeasures = paste("test", 1:3, sep="")
+	# bad usages
+	# mxLatent("Read") # no too defined
+	# mxLatent("Read", forms=manifestsRead, formedBy=manifestsRead) #both defined
+	# m1 = mxLatent("Read", formedBy = manifestsRead, model.name="base"); umxPlot(m1, std = FALSE, file="name")
+	# m2 = mxLatent("Read", forms = manifestsRead, as.model="base"); 
+	# m2 <- mxModel(m2, mxData(cov(df), type="cov", numObs=100))
+	# plot(m2, std=FALSE, file="name")
+	# mxLatent("Read", forms = manifestsRead)
+}
+
 #' Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)
 #'
 #' @description

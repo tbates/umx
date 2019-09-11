@@ -74,6 +74,8 @@
 #' @seealso - [umxRAM()]
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' # auto-data, print table, return umxRAM model
 #' m1 = umxLav2RAM("y ~ x", printTab= TRUE)
 #' 
@@ -93,7 +95,7 @@
 #' 
 #' tmp = umxLav2RAM("L =~ X1 + X2; L ~ Y")
 #' plot(tmp, min=c("L", "Y"))
-#' 
+#'
 #' # Factor model showing auto-addition of correlations among exogenous latents
 #' # and auto-residuals on manifests
 #' data("HS.ability.data", package = "OpenMx")
@@ -111,7 +113,7 @@
 #' # Multiple groups
 #' m1 = umxRAM(HS, data = umx_scale(HS.ability.data), group = "school")
 #'
-#' # More complex:
+#' # More examples
 #'
 #' lav = " # Moderated mediation
 #' gnt ~ a*cb
@@ -126,9 +128,7 @@
 #' "
 #' tmp = umxRAM(lav)
 #' # plot showing ability to influence layout with max min same groupings
-#' \dontrun{
 #' plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
-#' }
 #' 
 #' # Algebra: e.g. b1^2
 #' m1 = umxRAM("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
@@ -148,7 +148,8 @@
 #'
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
-#' 
+#' }
+
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, 
 	lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, 
 	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), 
