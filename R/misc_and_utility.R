@@ -6820,7 +6820,7 @@ umx_standardize.default <- function(model, ...){
 #'
 #' @param model The [mxModel()] you wish to standardize
 #' @param ... Other options
-#' @family Reporting functions
+#' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
@@ -6999,7 +6999,7 @@ umx_standardize.MxModelACEcov <- xmu_standardize_ACEcov
 #' @param ... Other options
 #' @return - standardized [umxSexLim()] model
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @md
 #' @examples
 #' \dontrun{

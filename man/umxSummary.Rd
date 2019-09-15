@@ -28,17 +28,6 @@ View documentation on the CP model subclass here: \code{\link[=umxSummaryCP]{umx
 View documentation on the GxE model subclass here: \code{\link[=umxSummaryGxE]{umxSummaryGxE()}}.
 }
 \seealso{
-Other Reporting Functions: \code{\link{FishersMethod}},
-  \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}},
-  \code{\link{umxParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
-  \code{\link{umx_print}}, \code{\link{umx_time}},
-  \code{\link{umx}}
-
 Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umxMatrix}}, \code{\link{umxModify}},
   \code{\link{umxPath}}, \code{\link{umxRAM}},
@@ -46,4 +35,3 @@ Other Core Modeling Functions: \code{\link{umxAlgebra}},
   \code{\link{umx}}
 }
 \concept{Core Modeling Functions}
-\concept{Reporting Functions}

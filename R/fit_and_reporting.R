@@ -784,7 +784,6 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #'
 #' @param model The [mxModel()] whose fit will be reported
 #' @param ... Other parameters to control model summary
-#' @family Reporting Functions
 #' @family Core Modeling Functions
 #' @md
 #' @export

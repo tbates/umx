@@ -550,7 +550,7 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' @param ... Other options
 #' @return - Standardized Simplex [umxSimplex()] model
 #' @export
-#' @family zAdvanced Helpers
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples

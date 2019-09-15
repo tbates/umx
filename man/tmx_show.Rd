@@ -65,9 +65,9 @@ Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}},
   \code{\link{umxParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_names}}, \code{\link{umx_print}},
-  \code{\link{umx_time}}, \code{\link{umx}}
+  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
+  \code{\link{umx_print}}, \code{\link{umx_time}},
+  \code{\link{umx}}
 }
 \concept{Reporting Functions}

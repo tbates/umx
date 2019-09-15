@@ -50,7 +50,6 @@ Other Reporting functions: \code{\link{RMSEA.MxModel}},
   \code{\link{umxCompare}}, \code{\link{umxConfint}},
   \code{\link{umxExpCov}}, \code{\link{umxFitIndices}},
   \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
-  \code{\link{umxSummary.MxModel}},
-  \code{\link{xmu_standardize_RAM}}
+  \code{\link{umxSummary.MxModel}}
 }
 \concept{Reporting functions}

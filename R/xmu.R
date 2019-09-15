@@ -1496,7 +1496,6 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 #' @return - list(min=min, same=same, max=max)
 #' @export
 #' @family xmu internal not for end user
-#' @family Graphviz
 #' @md
 #' @examples
 #' old_min = c("min1", "min2")
@@ -1547,7 +1546,6 @@ xmu_dot_move_ranks <- function(min = NULL, same = NULL, max = NULL, old_min, old
 #' @return - GraphViz rank string
 #' @export
 #' @family xmu internal not for end user
-#' @family Graphviz
 #' @examples
 #' xmu_dot_rank_str(min = "L1", same = c("x1", "x2"), max = paste0("e", 1:3))
 #' 

@@ -32,8 +32,6 @@ Other Graphviz: \code{\link{xmu_dot_define_shapes}},
   \code{\link{xmu_dot_make_paths}},
   \code{\link{xmu_dot_make_residuals}},
   \code{\link{xmu_dot_maker}},
-  \code{\link{xmu_dot_mat2dot}},
-  \code{\link{xmu_dot_move_ranks}},
-  \code{\link{xmu_dot_rank_str}}
+  \code{\link{xmu_dot_mat2dot}}
 }
 \concept{Graphviz}

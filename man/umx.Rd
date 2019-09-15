@@ -93,10 +93,9 @@ Other Reporting Functions: \code{\link{FishersMethod}},
   \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
   \code{\link{umxGetParameters}},
   \code{\link{umxParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxSummary}}, \code{\link{umxWeightedAIC}},
-  \code{\link{umx_APA_pval}}, \code{\link{umx_aggregate}},
-  \code{\link{umx_names}}, \code{\link{umx_print}},
-  \code{\link{umx_time}}
+  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
+  \code{\link{umx_print}}, \code{\link{umx_time}}
 
 Other Modify or Compare Models: \code{\link{umxAdd1}},
   \code{\link{umxDrop1}}, \code{\link{umxEquate}},
@@ -226,9 +225,6 @@ Other Advanced Model Building Functions: \code{\link{umxJiggle}},
   \code{\link{umx_get_bracket_addresses}},
   \code{\link{umx_string_to_algebra}}
 
-Other zAdvanced Helpers: \code{\link{xmu_standardize_SexLim}},
-  \code{\link{xmu_standardize_Simplex}}
-
 Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{umx_standardize}},
   \code{\link{xmuHasSquareBrackets}},
@@ -268,6 +264,9 @@ Other xmu internal not for end user: \code{\link{umxModel}},
   \code{\link{xmu_standardize_ACE}},
   \code{\link{xmu_standardize_CP}},
   \code{\link{xmu_standardize_IP}},
+  \code{\link{xmu_standardize_RAM}},
+  \code{\link{xmu_standardize_SexLim}},
+  \code{\link{xmu_standardize_Simplex}},
   \code{\link{xmu_start_value_list}},
   \code{\link{xmu_starts}}, \code{\link{xmu_twin_check}}
 }
