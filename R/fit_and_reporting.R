@@ -2370,15 +2370,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		# ===================================
 		# = Assemble full text to write out =
 		# ===================================
-		if(is.na(file)){
-			label = model$name
-		}else{
-			if(file == "name"){
-				label = model$name
-			} else {
-				label = paste0(file, " ", model$name)
-			}
-		}
+		label = model$name
 		digraph = paste0(
 			"digraph G {\n    ", 
 			'label="', label, '";\n',
