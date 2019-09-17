@@ -1457,13 +1457,20 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 		# a1 -> ht1 [label = "0.92"];
 	}
 
+	umx_set_plot_file_suffix() # 'gv' or 'dot'
+	umx_set_plot_format() # 'graphviz' or 'DiagrammeR'
+
 	if(!is.na(file)){
 		if(file == "name"){
-			file = paste0(model$name, ".", umx_set_plot_file_suffix(silent = TRUE))
+			# maybe:
+			if (umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
+				file = tempfile(fileext = paste0(".", umx_set_plot_file_suffix(silent = TRUE)) )
+			} else { # leave in the users current directory?
+				file = paste0(model$name, ".", umx_set_plot_file_suffix(silent = TRUE))
+			}
 		}
 		cat(digraph, file = file) # write to file
 		if(umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
-				# message("attempting plot")
 				print(DiagrammeR::DiagrammeR(diagram = file, type = "grViz"))
 		} else {
 			if(umx_check_OS("OSX")){

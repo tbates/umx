@@ -2411,7 +2411,7 @@ plot.MxRAMModel <- plot.MxModel
 #' selDVs = "bmi"
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' m1 = umxACE("plotACEexample", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	if(!class(x) == "MxModelACE"){
