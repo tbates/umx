@@ -1156,10 +1156,11 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	return(endog)
 }
 
+# TODO: umx_fix_latents is deprecated - likely of no use.
 #' umx_fix_latents
 #'
-#' Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.
-#' # TODO: umx_fix_latents is deprecated - likely of no use.
+#' Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance 
+#' to the factor if it does not exist.
 #' @param model an [mxModel()] to set
 #' @param latents (If NULL then all latentVars)
 #' @param exogenous.only only touch exogenous latents (default = TRUE)
@@ -3003,7 +3004,7 @@ deg2rad <- function(deg) {
 
 #' Convert a dataframe into a cov mxData object
 #'
-#' xmu_DF_to_mxData_TypeCov converts a dataframe into an mxData, taking the covariance, defaulting to nrow as the numObs,
+#' `xmu_DF_to_mxData_TypeCov` converts a dataframe into [mxData()] with `type="cov"` and `nrow = numObs`
 #' and optionally adding means.
 #'
 #' @param df the dataframe to covert to an mxData type cov object.
@@ -4516,8 +4517,10 @@ umx_has_square_brackets <- function (input) {
 
 #' Convert a string to an OpenMx algebra
 #'
-#' This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), then parse the string as an mxAlgebra argument.
-#' A use case is including a matrix exponent (that is A \%*\% A \%*\% A \%*\% A...) with a variable exponent. 
+#' This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), 
+#' then parse the string as an mxAlgebra argument.
+#' 
+#' A use case is including a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. 
 #'
 #' @param algString a string to turn into an algebra
 #' @param name of the returned algebra

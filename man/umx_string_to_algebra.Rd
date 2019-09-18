@@ -19,7 +19,10 @@ umx_string_to_algebra(algString, name = NA, dimnames = NA)
 }
 }
 \description{
-This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), then parse the string as an mxAlgebra argument.
+This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.),
+then parse the string as an mxAlgebra argument.
+}
+\details{
 A use case is including a matrix exponent (that is A \%\emph{\% A \%}\% A \%*\% A...) with a variable exponent.
 }
 \examples{
@@ -33,13 +36,13 @@ alg = umx_string_to_algebra(paste(rep("A", nReps), collapse = " \%*\% "), name =
 }
 }
 \seealso{
-Other Advanced Model Building Functions: \code{\link{umxJiggle}},
-  \code{\link{umxLabel}}, \code{\link{umxRAM2Ordinal}},
-  \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}},
-  \code{\link{umx_fix_first_loadings}},
-  \code{\link{umx_fix_latents}},
-  \code{\link{umx_get_bracket_addresses}},
+Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
+  \code{\link{umxLabel}()}, \code{\link{umxRAM2Ordinal}()},
+  \code{\link{umxThresholdMatrix}()},
+  \code{\link{umxValues}()},
+  \code{\link{umx_fix_first_loadings}()},
+  \code{\link{umx_fix_latents}()},
+  \code{\link{umx_get_bracket_addresses}()},
   \code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

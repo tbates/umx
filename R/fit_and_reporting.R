@@ -36,7 +36,7 @@
 #'
 #' 	more tricky - we should really report the variances and the standardized thresholds.
 #' The guidance would be to try starting with unit variances and thresholds that are within
-#'  +/- 2SD of the mean. [bivariate outliers \%p option](https://openmx.ssri.psu.edu/thread/3899)
+#'  +/- 2SD of the mean. [bivariate outliers %p option](https://openmx.ssri.psu.edu/thread/3899)
 #' @param model an [mxModel()] to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
@@ -453,7 +453,7 @@ loadings.MxModel <- function(x, ...) {
 #' @details *Note*: [confint()] is an OpenMx function which will return SE-based CIs.
 #' 
 #' Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
-#' If parm is empty, and run = FALSE, a message will alert you to add run = TRUE. 
+#' If `parm` is empty, and `run = FALSE`, a message will alert you to set `run = TRUE`. 
 #'
 #' @param object An [mxModel()], possibly already containing [mxCI()]s that have been [mxRun()] with intervals = TRUE))
 #' @param parm	Which parameters to get confidence intervals for. Can be "existing", "all", or one or more parameter names.
@@ -651,11 +651,11 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 
 #' Add (and, optionally, run) confidence intervals to a structural model.
 #'
-#' umxCI adds mxCI() calls for requested (default all) parameters in a model, 
+#' `umxCI` adds [OpenMx::mxCI()] calls for requested (default all) parameters in a model, 
 #' runs these CIs if necessary, and reports them in a neat summary.
 #'
 #' @details 
-#' umxCI also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
+#' `umxCI` also reports if any problems were encountered. The codes are standard OpenMx errors and warnings
 #' \itemize{
 #' \item 1: The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)
 #' \item 2: The linear constraints and bounds could not be satisfied. The problem has no feasible solution.
@@ -663,8 +663,9 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' \item 4: The major iteration limit was reached (Mx status BLUE).
 #' \item 6: The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)
 #' \item 7: The function derivatives returned by funcon or funobj appear to be incorrect.
-#' \item 9: An input parameter was invalid
+#' \item 9: An input parameter was invalid.
 #' }
+#' If `run = "no"`, the function simply adds the CI requests, but returns the model without running them.
 #' 
 #' @param model The [mxModel()] you wish to report [mxCI()]s on
 #' @param which What CIs to add: c("ALL", NA, "list of your making")
@@ -674,11 +675,10 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' @param interval The interval for newly added CIs (defaults to 0.95)
 #' @param type The type of CI (defaults to "both", options are "lower" and  "upper")
 #' @param showErrorCodes Whether to show errors (default == TRUE)
-#' @details If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
 #' @return - [mxModel()]
 #' @family Reporting functions
-#' @seealso - \code{\link[stats]{confint}}, [umxConfint()], [umxCI()], [umxModify()]
-#' @references - https://www.github.com/tbates/umx/
+#' @seealso - [stats::confint()], [umxConfint()], [umxCI()], [umxModify()]
+#' @references - <https://www.github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -3896,7 +3896,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @description
 #' `umxAPA` creates summaries from a range of inputs. Use it for reporting `lm` models, effects, and summarizing data.
 #' 
-#' 1. Given an `lm`, `umxAPA` will return a formatted effect, including 95\% CI 
+#' 1. Given an `lm`, `umxAPA` will return a formatted effect, including 95% CI 
 #' in square brackets, for one of the effects (specified by name in se). e.g.:
 #' `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001
 #' 2. This also works for [t.test()], [stats::glm()], [cor.test()], and others as I come across them.
@@ -4259,18 +4259,20 @@ umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = 
 #' `umx_r_test` is a wrapper around the cocor test of difference between correlations.
 #'
 #' @details
-#' Currently it handles the test of whether `r.jk` and `r.hm` differ in magnitude.
+#' Currently `umx_r_test` handles the test of whether `r.jk` and `r.hm` differ in magnitude.
 #' i.e, two non-overlapping (no variable in common) correlations in the same dataset.
 #' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
 #'
-#' @param data The dataset
-#' @param vars Names of the two pairs of columns: "j & k" and "h & m"
-#' @param alternative two (default) or one-sided (greater less) test
+#' @param data The dataset.
+#' @param vars Four variables forming the two pairs of columns: "j & k" and "h & m".
+#' @param alternative A two (default) or one-sided (greater less) test.
 #' @return cocor result.
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @md
 #' @examples
+#' # Is the correlation of mpg with cylinder count different from that 
+#' # obtaining between disp and hp?
 #' vars = c("mpg", "cyl", "disp", "hp")
 #' umx_r_test(mtcars, vars)
 umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "greater", "less")) {

@@ -35,11 +35,11 @@ model = umxAdd1(model)
 }
 }
 \seealso{
-Other Modify or Compare Models: \code{\link{umxDrop1}},
-  \code{\link{umxEquate}}, \code{\link{umxFixAll}},
-  \code{\link{umxMI}}, \code{\link{umxModify}},
-  \code{\link{umxSetParameters}},
-  \code{\link{umxUnexplainedCausalNexus}},
+Other Modify or Compare Models: \code{\link{umxDrop1}()},
+  \code{\link{umxEquate}()}, \code{\link{umxFixAll}()},
+  \code{\link{umxMI}()}, \code{\link{umxModify}()},
+  \code{\link{umxSetParameters}()},
+  \code{\link{umxUnexplainedCausalNexus}()},
   \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

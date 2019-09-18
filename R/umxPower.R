@@ -8,12 +8,12 @@
 #' significant result given certain study characteristics such as sample size (N), the expected effect size (\eqn{\beta}),
 #' and the criterion for statistical significance (\eqn{\alpha}).
 #' 
-#' A typical target for power is 80\%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
+#' A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
 #' of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
-#' discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80\% of the time.
-#' But even with zero power, the Type-I error rate remains a nominal 5\\% (and with any researcher degrees of freedom, perhaps much more than that).
+#' discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
+#' But even with zero power, the Type-I error rate remains a nominal 5% (and with any researcher degrees of freedom, perhaps much more than that).
 #' Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
-#' This sounds silly, but empirical rates are often as low as 20\% (Button, et al., 2013).
+#' This sounds silly, but empirical rates are often as low as 20% (Button, et al., 2013).
 #'
 #' Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 #' 
@@ -25,7 +25,7 @@
 #' @param CC Shared environment variance (Default 0)
 #' @param EE Unique environment variance. Leave NULL to compute an amount summing to 1
 #' @param update Component to drop (Default "a", i.e., drop a)
-#' @param n If provided, solve for power /sig.level at the given n (Default NULL)
+#' @param n If provided, solve at the given n (Default NULL)
 #' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
 #' @param sig.level alpha (p-value) Default = 0.05
 #' @param power Default = .8 (80 percent power, equal to 1 - Type II rate)
@@ -224,12 +224,12 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' `umxPower` takes an input model (the model of the true data), and tests power (or determines n)
 #' to detect dropping (or changing the value) a path in this true model.
 #' 
-#' A typical target for power is 80\%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
+#' A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
 #' of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
-#' discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80\% of the time.
-#' But even with zero power, the Type-I error rate remains a nominal 5\% (and with any researcher degrees of freedom, perhaps much more than that).
+#' discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
+#' But even with zero power, the Type-I error rate remains a nominal 5% (and with any researcher degrees of freedom, perhaps much more than that).
 #' Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
-#' This sounds silly, but empirical rates are often as low as 20\% (Button, et al., 2013).
+#' This sounds silly, but empirical rates are often as low as 20% (Button, et al., 2013).
 #'
 #' Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 #' 

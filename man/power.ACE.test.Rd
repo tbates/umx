@@ -22,7 +22,7 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a", "c",
 
 \item{value}{Value to set dropped path to (Default 0)}
 
-\item{n}{If provided, solve for power /sig.level at the given n (Default NULL)}
+\item{n}{If provided, solve at the given n (Default NULL)}
 
 \item{MZ_DZ_ratio}{MZ pairs per DZ pair (Default 1 = equal numbers.)}
 
@@ -45,7 +45,7 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a", "c",
 }
 \description{
 \code{power.ACE.test} simulates a univariate ACE model (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins. It
-computes power to detect dropping one or more paths specified in \code{drop=}.
+computes power to detect dropping one or more paths specified in \verb{drop=}.
 The interface and functionality of this service are experimental and subject to change.
 }
 \details{
@@ -174,13 +174,13 @@ Power failure: why small sample size undermines the reliability of neuroscience.
 \item \code{\link[OpenMx:mxPower]{OpenMx::mxPower()}}
 }
 
-Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

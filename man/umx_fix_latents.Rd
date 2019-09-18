@@ -21,7 +21,8 @@ umx_fix_latents(model, latents = NULL, exogenous.only = TRUE, at = 1)
 }
 }
 \description{
-Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance to the factor if it does not exist.TODO: umx_fix_latents is deprecated - likely of no use.
+Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance
+to the factor if it does not exist.
 }
 \examples{
 require(umx)
@@ -42,12 +43,12 @@ tmx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
 }
 }
 \seealso{
-Other Advanced Model Building Functions: \code{\link{umxJiggle}},
-  \code{\link{umxLabel}}, \code{\link{umxRAM2Ordinal}},
-  \code{\link{umxThresholdMatrix}},
-  \code{\link{umxValues}},
-  \code{\link{umx_fix_first_loadings}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
+Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
+  \code{\link{umxLabel}()}, \code{\link{umxRAM2Ordinal}()},
+  \code{\link{umxThresholdMatrix}()},
+  \code{\link{umxValues}()},
+  \code{\link{umx_fix_first_loadings}()},
+  \code{\link{umx_get_bracket_addresses}()},
+  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

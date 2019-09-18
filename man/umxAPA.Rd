@@ -56,7 +56,7 @@ in square brackets, for one of the effects (specified by name in se). e.g.:
 \item Given only a number as obj, will be treated as a p-value as returned in APA format.
 \item Given a dataframe, \code{umxAPA} will return a table of correlations, with
 the mean and SD of each variable as the last row. So,
-\code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
+\verb{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
 correlations, means and SDs thus:
 \tabular{lccc}{
 \tab cyl         \tab  wt          \tab mpg          \cr
@@ -132,15 +132,17 @@ umxAPA(m1)
 }
 }
 \seealso{
-Other Reporting Functions: \code{\link{FishersMethod}},
-  \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}},
-  \code{\link{umxParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
-  \code{\link{umx_print}}, \code{\link{umx_time}},
+Other Reporting Functions: \code{\link{FishersMethod}()},
+  \code{\link{loadings.MxModel}()},
+  \code{\link{tmx_is.identified}()},
+  \code{\link{tmx_show}()},
+  \code{\link{umxFactorScores}()},
+  \code{\link{umxGetParameters}()},
+  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
+  \code{\link{umxWeightedAIC}()},
+  \code{\link{umx_APA_pval}()},
+  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
+  \code{\link{umx_print}()}, \code{\link{umx_time}()},
   \code{\link{umx}}
 }
 \concept{Reporting Functions}

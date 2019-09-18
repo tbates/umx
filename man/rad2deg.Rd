@@ -28,6 +28,6 @@ rad2deg(pi) #180 degrees
 \item \code{\link[=deg2rad]{deg2rad()}}, \code{\link[=sin]{sin()}}
 }
 
-Other Miscellaneous Functions: \code{\link{deg2rad}}
+Other Miscellaneous Functions: \code{\link{deg2rad}()}
 }
 \concept{Miscellaneous Functions}

@@ -31,11 +31,11 @@ umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
 }
 }
 \description{
-umxCI adds mxCI() calls for requested (default all) parameters in a model,
+\code{umxCI} adds \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}} calls for requested (default all) parameters in a model,
 runs these CIs if necessary, and reports them in a neat summary.
 }
 \details{
-umxCI also reports any problems computing a CI. The codes are standard OpenMx errors and warnings
+\code{umxCI} also reports if any problems were encountered. The codes are standard OpenMx errors and warnings
 \itemize{
 \item 1: The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)
 \item 2: The linear constraints and bounds could not be satisfied. The problem has no feasible solution.
@@ -43,10 +43,9 @@ umxCI also reports any problems computing a CI. The codes are standard OpenMx er
 \item 4: The major iteration limit was reached (Mx status BLUE).
 \item 6: The model does not satisfy the first-order optimality conditions to the required accuracy, and no improved point for the merit function could be found during the final linesearch (Mx status RED)
 \item 7: The function derivatives returned by funcon or funobj appear to be incorrect.
-\item 9: An input parameter was invalid
+\item 9: An input parameter was invalid.
 }
-
-If runCIs is FALSE, the function simply adds CIs to be computed and returns the model.
+If \code{run = "no"}, the function simply adds the CI requests, but returns the model without running them.
 }
 \examples{
 require(umx)
@@ -85,22 +84,25 @@ m1 = umxCI(m1, "a_r1c1", run = "yes")
 }
 \references{
 \itemize{
-\item https://www.github.com/tbates/umx/
+\item \url{https://www.github.com/tbates/umx}
 }
 }
 \seealso{
 \itemize{
-\item \code{\link[stats]{confint}}, \code{\link[=umxConfint]{umxConfint()}}, \code{\link[=umxCI]{umxCI()}}, \code{\link[=umxModify]{umxModify()}}
+\item \code{\link[stats:confint]{stats::confint()}}, \code{\link[=umxConfint]{umxConfint()}}, \code{\link[=umxCI]{umxCI()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCompare}},
-  \code{\link{umxConfint}}, \code{\link{umxExpCov}},
-  \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
-  \code{\link{umxSummary.MxModel}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCompare}()},
+  \code{\link{umxConfint}()}, \code{\link{umxExpCov}()},
+  \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}
