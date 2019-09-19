@@ -54,11 +54,11 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 \item \code{\link[=mxMI]{mxMI()}}
 }
 
-Other Modify or Compare Models: \code{\link{umxAdd1}()},
-  \code{\link{umxDrop1}()}, \code{\link{umxEquate}()},
-  \code{\link{umxFixAll}()}, \code{\link{umxModify}()},
-  \code{\link{umxSetParameters}()},
-  \code{\link{umxUnexplainedCausalNexus}()},
+Other Modify or Compare Models: \code{\link{umxAdd1}},
+  \code{\link{umxDrop1}}, \code{\link{umxEquate}},
+  \code{\link{umxFixAll}}, \code{\link{umxModify}},
+  \code{\link{umxSetParameters}},
+  \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

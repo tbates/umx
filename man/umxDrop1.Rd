@@ -35,11 +35,11 @@ umxDrop1(model, regex="a_r1c1|a_r1c2")
 }
 }
 \seealso{
-Other Modify or Compare Models: \code{\link{umxAdd1}()},
-  \code{\link{umxEquate}()}, \code{\link{umxFixAll}()},
-  \code{\link{umxMI}()}, \code{\link{umxModify}()},
-  \code{\link{umxSetParameters}()},
-  \code{\link{umxUnexplainedCausalNexus}()},
+Other Modify or Compare Models: \code{\link{umxAdd1}},
+  \code{\link{umxEquate}}, \code{\link{umxFixAll}},
+  \code{\link{umxMI}}, \code{\link{umxModify}},
+  \code{\link{umxSetParameters}},
+  \code{\link{umxUnexplainedCausalNexus}},
   \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

@@ -34,9 +34,9 @@ umx_is_numeric(mtcars, all=FALSE) # vector of TRUE
 \item \code{\link[=umx_is_class]{umx_is_class()}}
 }
 
-Other Check or test: \code{\link{umx_check_names}()},
-  \code{\link{umx_is_class}()},
-  \code{\link{umx_is_endogenous}()},
-  \code{\link{umx_is_exogenous}()}, \code{\link{umx}}
+Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_class}},
+  \code{\link{umx_is_endogenous}},
+  \code{\link{umx_is_exogenous}}, \code{\link{umx}}
 }
 \concept{Check or test}

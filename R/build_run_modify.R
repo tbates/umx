@@ -1240,22 +1240,21 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale=c("wt"),sep="")
 #' # Cut BMI column to form ordinal obesity variables
 #' obLevels = c('normal', 'overweight', 'obese')
-#' cuts <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' cuts = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
 #' twinData$obese1=cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels)
 #' twinData$obese2=cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels)
 #' # Make the ordinal variables into umxFactors
 #' ordDVs = c("obese1", "obese2")
-#' twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obLevels)
+#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obLevels)
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' mzData = mzData[1:80, ] # Just top 80 pairs to run fast
 #' dzData = dzData[1:80, ]
 #' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 #' 
-#' # Data-prep done - here's where the model starts:
-#' selDVs = c("obese")
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-#' umxSummary(m1)
+#' # Data-prep done - here's the model and summary!:
+#' m1 = umxACE(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
+#' # umxSummary(m1)
 #'
 #' # ============================================
 #' # = Bivariate continuous and ordinal example =
@@ -1272,8 +1271,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in% "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
-#' mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
-#' dzData <- dzData[1:80,]
+#' mzData = mzData[1:80,] # just top 80 so example runs in a couple of secs
+#' dzData = dzData[1:80,]
 #' m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
 #' 
 #' # =======================================

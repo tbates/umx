@@ -134,14 +134,14 @@ This feature is used in the non-linear GxE model functions.
 \strong{Additional features}
 The umxACE function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modeling family-level effects shared 100\% by twins in a pair),
+from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
 
 \strong{Matrices and Labels in ACE model}
 
 Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
 
-So, labels relevant to modifying the model are of the form \verb{"a_r1c1", "c_r1c1"} etc.
+So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
 
 Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say:
 
@@ -259,22 +259,21 @@ data(twinData)
 twinData= umx_scale_wide_twin_data(data=twinData,varsToScale=c("wt"),sep="")
 # Cut BMI column to form ordinal obesity variables
 obLevels = c('normal', 'overweight', 'obese')
-cuts <- quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+cuts = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
 twinData$obese1=cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels)
 twinData$obese2=cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels)
 # Make the ordinal variables into umxFactors
 ordDVs = c("obese1", "obese2")
-twinData[, ordDVs] <- mxFactor(twinData[, ordDVs], levels = obLevels)
+twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obLevels)
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 mzData = mzData[1:80, ] # Just top 80 pairs to run fast
 dzData = dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 
-# Data-prep done - here's where the model starts:
-selDVs = c("obese")
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-umxSummary(m1)
+# Data-prep done - here's the model and summary!:
+m1 = umxACE(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
+# umxSummary(m1)
 
 # ============================================
 # = Bivariate continuous and ordinal example =
@@ -291,8 +290,8 @@ ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\% "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
-mzData <- mzData[1:80,] # just top 80 so example runs in a couple of secs
-dzData <- dzData[1:80,]
+mzData = mzData[1:80,] # just top 80 so example runs in a couple of secs
+dzData = dzData[1:80,]
 m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
 
 # =======================================
@@ -344,14 +343,13 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 \item \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxSummaryACE]{umxSummaryACE()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
-  \code{\link{umxACE_cov_fixed}()},
-  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
-  \code{\link{umxCP}()}, \code{\link{umxGxE_window}()},
-  \code{\link{umxGxEbiv}()}, \code{\link{umxGxE}()},
-  \code{\link{umxIP}()},
-  \code{\link{umxRotate.MxModelCP}()},
-  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
+  \code{\link{umxACEv}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxRotate.MxModelCP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

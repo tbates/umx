@@ -28,10 +28,10 @@ xmu_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
 \item \code{\link[=xmu_dot_define_shapes]{xmu_dot_define_shapes()}}
 }
 
-Other Graphviz: \code{\link{xmu_dot_define_shapes}()},
-  \code{\link{xmu_dot_make_paths}()},
-  \code{\link{xmu_dot_make_residuals}()},
-  \code{\link{xmu_dot_maker}()},
-  \code{\link{xmu_dot_mat2dot}()}
+Other Graphviz: \code{\link{xmu_dot_define_shapes}},
+  \code{\link{xmu_dot_make_paths}},
+  \code{\link{xmu_dot_make_residuals}},
+  \code{\link{xmu_dot_maker}},
+  \code{\link{xmu_dot_mat2dot}}
 }
 \concept{Graphviz}

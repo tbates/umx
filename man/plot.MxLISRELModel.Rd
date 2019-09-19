@@ -64,15 +64,14 @@ The commercial application \dQuote{OmniGraffle} is great for editing these image
 \item \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=umx_set_auto_plot]{umx_set_auto_plot()}}, \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=plot.MxModel]{plot.MxModel()}}, \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, \code{\link[=umxPlotIP]{umxPlotIP()}}, \code{\link[=umxPlotGxE]{umxPlotGxE()}}
 }
 
-Other umx S3 functions: \code{\link{plot.MxModel}()}
+Other umx S3 functions: \code{\link{plot.MxModel}}
 
-Other Plotting functions: \code{\link{plot.MxModel}()},
-  \code{\link{umxPlotACEcov}()},
-  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
-  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
-  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
-  \code{\link{umxPlotSexLim}()},
-  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxModel}},
+  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
+  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
+  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
+  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
+  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
 }
 \concept{Plotting functions}
 \concept{umx S3 functions}
