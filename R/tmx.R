@@ -15,7 +15,7 @@
 #' @description
 #' `tmx_genotypic_effect` allows you to explore the concept of genotypic effect at a locus. With it,
 #' you can interactively explore the effects of allele frequency, additive variance, and 
-#' dominance.
+#' [dominance](https://en.wikipedia.org/wiki/Dominance_(genetics)).
 #' 
 #' This function lets you explore the simplest two–allele system (`B` and `b`), with three possible 
 #' genotypes, `BB`, `Bb`, and `bb`.

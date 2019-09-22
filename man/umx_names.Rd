@@ -106,22 +106,24 @@ namez(umxMatrix("bob", "Full", 3,3)$labels)
 And \code{\link[=umx_check_names]{umx_check_names()}} to check for existence of names in a dataframe.
 }
 
-Other Reporting Functions: \code{\link{FishersMethod}},
-  \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}},
-  \code{\link{umxParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_print}},
-  \code{\link{umx_time}}, \code{\link{umx}}
+Other Reporting Functions: \code{\link{FishersMethod}()},
+  \code{\link{loadings.MxModel}()},
+  \code{\link{tmx_is.identified}()},
+  \code{\link{tmx_show}()}, \code{\link{umxAPA}()},
+  \code{\link{umxFactorScores}()},
+  \code{\link{umxGetParameters}()},
+  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
+  \code{\link{umxWeightedAIC}()},
+  \code{\link{umx_APA_pval}()},
+  \code{\link{umx_aggregate}()}, \code{\link{umx_print}()},
+  \code{\link{umx_time}()}, \code{\link{umx}}
 
-Other String Functions: \code{\link{umx_explode_twin_names}},
-  \code{\link{umx_explode}}, \code{\link{umx_grep}},
-  \code{\link{umx_object_as_str}},
-  \code{\link{umx_paste_names}}, \code{\link{umx_rot}},
-  \code{\link{umx_trim}},
-  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
+Other String Functions: \code{\link{umx_explode_twin_names}()},
+  \code{\link{umx_explode}()}, \code{\link{umx_grep}()},
+  \code{\link{umx_object_as_str}()},
+  \code{\link{umx_paste_names}()}, \code{\link{umx_rot}()},
+  \code{\link{umx_trim}()},
+  \code{\link{umx_write_to_clipboard}()}, \code{\link{umx}}
 }
 \concept{Reporting Functions}
 \concept{String Functions}

@@ -152,12 +152,12 @@ tmp[[3]]$formula
 }
 }
 \seealso{
-Other Advanced Model Building Functions: \code{\link{umxJiggle}},
-  \code{\link{umxLabel}}, \code{\link{umxRAM2Ordinal}},
-  \code{\link{umxValues}},
-  \code{\link{umx_fix_first_loadings}},
-  \code{\link{umx_fix_latents}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}}
+Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
+  \code{\link{umxLabel}()}, \code{\link{umxRAM2Ordinal}()},
+  \code{\link{umxValues}()},
+  \code{\link{umx_fix_first_loadings}()},
+  \code{\link{umx_fix_latents}()},
+  \code{\link{umx_get_bracket_addresses}()},
+  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

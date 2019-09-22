@@ -44,21 +44,28 @@ wide data, expanding the var name using a set of variable-name suffixes.
 r1 = umx_residualize("mpg", c("cyl", "disp"), data = mtcars)
 r2 = residuals(lm(mpg ~ cyl + disp, data = mtcars, na.action = na.exclude))
 all(r1$mpg == r2)
-# =====================
-# = formula interface =
-# =====================
+
+# =============================
+# = Use the formula interface =
+# =============================
 r1 = umx_residualize(mpg ~ cyl + I(cyl^2) + disp, data = mtcars)
+
+# validate against using lm
 r2 = residuals(lm(mpg ~ cyl + I(cyl^2) + disp, data = mtcars, na.action = na.exclude))
 all(r1$mpg == r2)
 
-# ========================================================================
-# = Demonstrate ability to residualize WIDE data (i.e. 1 family per row) =
-# ========================================================================
+# ===========================================================
+# = Residualize twin data (i.e. wide or "1 family per row") =
+# ===========================================================
+# Make some toy "twin" data to demonstrate with
 tmp = mtcars
 tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
 tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl
 tmp$disp_T1 = tmp$disp_T2 = tmp$disp
-umx_residualize("mpg", c("cyl", "disp"), c("_T1", "_T2"), data = tmp)[1:5,12:17]
+
+covs = c("cyl", "disp")
+tmp= umx_residualize(var="mpg", covs=covs, suffixes=c("_T1","_T2"), data = tmp)
+str(tmp[1:5, 12:17])
 
 # ===================================
 # = Residualize several DVs at once =
@@ -73,10 +80,10 @@ all(df1$hp == df2)
 }
 }
 \seealso{
-Other Twin Data functions: \code{\link{umx_long2wide}},
-  \code{\link{umx_make_TwinData}},
-  \code{\link{umx_nice_data}},
-  \code{\link{umx_scale_wide_twin_data}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+Other Twin Data functions: \code{\link{umx_long2wide}()},
+  \code{\link{umx_make_TwinData}()},
+  \code{\link{umx_nice_data}()},
+  \code{\link{umx_scale_wide_twin_data}()},
+  \code{\link{umx_wide2long}()}, \code{\link{umx}}
 }
 \concept{Twin Data functions}

@@ -97,7 +97,7 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 \item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[sem:tsls]{sem::tsls()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Super-easy helpers: \code{\link{umxEFA}},
+Other Super-easy helpers: \code{\link{umxEFA}()},
   \code{\link{umx}}
 }
 \concept{Super-easy helpers}
