@@ -2666,6 +2666,8 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 	what = match.arg(what)
 	if(what == "install_full"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
+		# system("sleep 5; open /Applications/R.app &")
+		
 	} else if(what == "quick_install"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);				
 	} else if(what == "run_examples"){

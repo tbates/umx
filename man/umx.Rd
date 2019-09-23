@@ -99,8 +99,7 @@ Other Reporting Functions: \code{\link{FishersMethod}()},
   \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
   \code{\link{umx_print}()}, \code{\link{umx_time}()}
 
-Other Modify or Compare Models: \code{\link{umxAdd1}()},
-  \code{\link{umxDrop1}()}, \code{\link{umxEquate}()},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
   \code{\link{umxFixAll}()}, \code{\link{umxMI}()},
   \code{\link{umxModify}()},
   \code{\link{umxSetParameters}()},
@@ -202,12 +201,10 @@ Other String Functions: \code{\link{umx_explode_twin_names}()},
   \code{\link{umx_write_to_clipboard}()}
 
 Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
-  \code{\link{oddsratio}()},
-  \code{\link{print.oddsratio}()},
-  \code{\link{print.reliability}()},
-  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
-  \code{\link{umxHetCor}()}, \code{\link{umx_apply}()},
-  \code{\link{umx_cor}()}, \code{\link{umx_fun_mean_sd}()},
+  \code{\link{oddsratio}()}, \code{\link{reliability}()},
+  \code{\link{umxCov2cor}()}, \code{\link{umxHetCor}()},
+  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
+  \code{\link{umx_fun_mean_sd}()},
   \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
   \code{\link{umx_round}()}, \code{\link{umx_scale}()},
   \code{\link{umx_var}()}
@@ -231,13 +228,12 @@ Other datasets: \code{\link{Fischbein_wt}},
   \code{\link{us_skinfold_data}}
 
 Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
-  \code{\link{umxLabel}()}, \code{\link{umxRAM2Ordinal}()},
+  \code{\link{umxLabel}()},
   \code{\link{umxThresholdMatrix}()},
   \code{\link{umxValues}()},
-  \code{\link{umx_fix_first_loadings}()},
-  \code{\link{umx_fix_latents}()},
   \code{\link{umx_get_bracket_addresses}()},
-  \code{\link{umx_string_to_algebra}()}
+  \code{\link{umx_string_to_algebra}()},
+  \code{\link{xmuRAM2Ordinal}()}
 
 Other xmu internal not for end user: \code{\link{umxModel}()},
   \code{\link{umx_standardize}()},

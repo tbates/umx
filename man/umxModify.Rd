@@ -127,8 +127,7 @@ Other Core Modeling Functions: \code{\link{umxAlgebra}()},
   \code{\link{umxSummary}()},
   \code{\link{umxSuperModel}()}, \code{\link{umx}}
 
-Other Modify or Compare Models: \code{\link{umxAdd1}()},
-  \code{\link{umxDrop1}()}, \code{\link{umxEquate}()},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
   \code{\link{umxFixAll}()}, \code{\link{umxMI}()},
   \code{\link{umxSetParameters}()},
   \code{\link{umxUnexplainedCausalNexus}()},

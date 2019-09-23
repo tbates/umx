@@ -85,8 +85,7 @@ parameters(m2)
 \item \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxLabel]{umxLabel()}}
 }
 
-Other Modify or Compare Models: \code{\link{umxAdd1}()},
-  \code{\link{umxDrop1}()}, \code{\link{umxEquate}()},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
   \code{\link{umxFixAll}()}, \code{\link{umxMI}()},
   \code{\link{umxModify}()},
   \code{\link{umxUnexplainedCausalNexus}()},

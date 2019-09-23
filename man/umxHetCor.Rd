@@ -56,12 +56,9 @@ Other Data Functions: \code{\link{umx_as_numeric}()},
   \code{\link{xmu_data_swap_a_block}()}
 
 Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
-  \code{\link{oddsratio}()},
-  \code{\link{print.oddsratio}()},
-  \code{\link{print.reliability}()},
-  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
-  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
-  \code{\link{umx_fun_mean_sd}()},
+  \code{\link{oddsratio}()}, \code{\link{reliability}()},
+  \code{\link{umxCov2cor}()}, \code{\link{umx_apply}()},
+  \code{\link{umx_cor}()}, \code{\link{umx_fun_mean_sd}()},
   \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
   \code{\link{umx_round}()}, \code{\link{umx_scale}()},
   \code{\link{umx_var}()}, \code{\link{umx}}

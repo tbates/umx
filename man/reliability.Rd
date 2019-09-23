@@ -16,7 +16,7 @@ None
 Compute and report Coefficient alpha (extracted from Rcmdr to avoid its dependencies)
 }
 \examples{
-# treat vehicle aspects as items of a test
+# treat car data as items of a test
 data(mtcars)
 reliability(cov(mtcars))
 }
@@ -24,13 +24,12 @@ reliability(cov(mtcars))
 - \url{https://cran.r-project.org/package=Rcmdr}
 }
 \seealso{
+- [umx::print.reliability()],
+
 Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
-  \code{\link{oddsratio}()},
-  \code{\link{print.oddsratio}()},
-  \code{\link{print.reliability}()},
-  \code{\link{umxCov2cor}()}, \code{\link{umxHetCor}()},
-  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
-  \code{\link{umx_fun_mean_sd}()},
+  \code{\link{oddsratio}()}, \code{\link{umxCov2cor}()},
+  \code{\link{umxHetCor}()}, \code{\link{umx_apply}()},
+  \code{\link{umx_cor}()}, \code{\link{umx_fun_mean_sd}()},
   \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
   \code{\link{umx_round}()}, \code{\link{umx_scale}()},
   \code{\link{umx_var}()}, \code{\link{umx}}
