@@ -709,7 +709,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	}
 
 	if(any(umx_is_ordered(data$observed))){
-		newModel = umxRAM2Ordinal(newModel, verbose = TRUE)
+		newModel = xmuRAM2Ordinal(newModel, verbose = TRUE)
 	}
 
 	# ==============================
@@ -2647,9 +2647,9 @@ umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHa
 # = Advanced Build and Modify helpers =
 # =====================================
 
-#' umxRAM2Ordinal 
+#' xmuRAM2Ordinal 
 #'
-#' umxRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
+#' xmuRAM2Ordinal: Convert a RAM model whose data contain ordinal variables to a threshold-based model
 #'
 #' @param model An RAM model to add thresholds too.
 #' @param name = A new name for the modified model. Default (NULL) = leave it as is).
@@ -2680,9 +2680,9 @@ umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHa
 #' 	umxPath(v.m.= c("obese1", "obese2"))
 #' )
 #' }
-umxRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
+xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 	if(!umx_is_RAM(model)){
-		stop("umxRAM2Ordinal only works with RAM models, sorry.")
+		stop("xmuRAM2Ordinal only works with RAM models, sorry.")
 	}
 	if(!is.null(name)){
 		model = mxRename(model, name)

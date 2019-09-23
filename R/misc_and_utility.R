@@ -1156,113 +1156,6 @@ umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	return(endog)
 }
 
-# TODO: umx_fix_latents is deprecated - likely of no use.
-#' umx_fix_latents
-#'
-#' Fix the variance of all, or selected, exogenous latents at selected values. This function adds a variance 
-#' to the factor if it does not exist.
-#' @param model an [mxModel()] to set
-#' @param latents (If NULL then all latentVars)
-#' @param exogenous.only only touch exogenous latents (default = TRUE)
-#' @param at (Default = 1)
-#' @return - [mxModel()]
-#' @export
-#' @family Advanced Model Building Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' manifests = names(demoOneFactor)
-#
-#' m1 = umxRAM("fix_latents", data = demoOneFactor, type = "cov",
-#' 	umxPath("G", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
-#' tmx_show(m1, what = "free", matrices = "S") # variance of g is not set
-#' m1 = umx_fix_latents(m1)
-#' tmx_show(m1, what = "free", matrices = "S") # variance of g is fixed at 1
-umx_fix_latents <- function(model, latents = NULL, exogenous.only = TRUE, at = 1) {
-	if(is.null(latents)){
-		latenVarList = model@latentVars
-	} else {
-		latenVarList = latents
-	}
-	exogenous_list = umx_is_exogenous(model, manifests_only = FALSE)
-	for (i in latenVarList) {
-		if(!exogenous.only | i %in% exogenous_list){
-			model$S@free[i, i]   = FALSE
-			model$S@values[i, i] = at
-		}
-	}
-	return(model)
-}
-
-#' umx_fix_first_loadings
-#'
-#' Fix the loading of the first path from each latent at selected value. Seldom used; might be useful to show students
-#' how to scale models with fixed latent or fixed first path...
-#' *Note*: latents with fixed variance are toggled by default (change made in 2019).
-#' @param model An [mxModel()] to set.
-#' @param latents Which latents to fix from (NULL = all).
-#' @param at The value to fix the first path at (Default = 1).
-#' @param freeFixedLatent Whether to free a latent if it is fixed (default = TRUE)
-#' @return - [mxModel()]
-#' @md
-#' @export
-#' @family Advanced Model Building Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' manifests = names(demoOneFactor)
-#' m1 = umxRAM("fix_first", data = demoOneFactor, type = "cov",
-#' 	umxPath("g", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "g", fixedAt = 1.0)
-#' )
-#'
-#' m1 = umx_fix_first_loadings(m1, latents = "g")
-#' tmx_show(m1, "free", matrices="A") # path from g to var1 fixed @ 1.
-#' # note, in practice, you would now need to free the variance of g
-umx_fix_first_loadings <- function(model, latents = NULL, at = 1, freeFixedLatent = TRUE) {
-	umx_check_model(model, type = "RAM")
-	if(is.null(latents)){
-		latentVarList = model@latentVars
-	} else {
-		latentVarList = latents
-	}
-	if(length(latentVarList)==0){
-		stop("You appear to have no latents in this model...")
-	}
-
-	for (thisLatent in latentVarList) {
-		# thisLatent = "ind60"
-		latentIsFree = model$A$free[thisLatent, thisLatent]
-		
-		if(!latentIsFree | freeFixedLatent){
-			firstFreeRow = which(model$A$free[, thisLatent])[1]
-			# check that there is not already a factor fixed prior to this one
-			if(firstFreeRow == 1){
-				# must be ok
-				model$A$free[thisLatent, thisLatent] = TRUE
-				model$A@free[firstFreeRow, thisLatent]   = FALSE
-				model$A@values[firstFreeRow, thisLatent] = at
-			} else {
-				if(any(model$matrices$A$values[1:(firstFreeRow-1), thisLatent] == at)){
-					message("I skipped factor '", thisLatent, "'. It looks like it already has a loading fixed at ", at)
-				} else {
-					model$A$free[thisLatent, thisLatent] = TRUE
-					model$A@free[firstFreeRow, thisLatent]   = FALSE
-					model$A@values[firstFreeRow, thisLatent] = at				
-				}
-			}
-		}
-	}
-	return(model)
-}
 
 # ====================
 # = Parallel Helpers =
@@ -2387,7 +2280,6 @@ oddsratio <- function(grp1= c(n=3, N=10), grp2= c(n=1, N=10), alpha = 0.05) {
 #' @param digits The rounding precision.
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible oddsratio object (x).
-#' @family Miscellaneous Stats Helpers
 #' @seealso - [print()], [umx::oddsratio()], 
 #' @md
 #' @method print oddsratio
@@ -2595,9 +2487,10 @@ specify_decimal <- function(x, k){
 #' @return None 
 #' @export
 #' @family Miscellaneous Stats Helpers
+#' @seealso - [umx::print.reliability()], 
 #' @references - \url{https://cran.r-project.org/package=Rcmdr}
 #' @examples
-#' # treat vehicle aspects as items of a test
+#' # treat car data as items of a test
 #' data(mtcars)
 #' reliability(cov(mtcars))
 reliability <-function (S){
@@ -2649,7 +2542,6 @@ reliability <-function (S){
 #' @param digits The rounding precision.
 #' @param ... further arguments passed to or from other methods
 #' @return - invisible reliability object (x)
-#' @family Miscellaneous Stats Helpers
 #' @seealso - [print()], [umx::reliability()], 
 #' @md
 #' @method print reliability
