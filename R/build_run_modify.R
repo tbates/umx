@@ -614,14 +614,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 	nLatent = length(latentVars)
 	# Report which latents were created
-	if(nLatent == 0 && verbose){
-		# message("No latent variables were created.\n")
-		# latentVars = NA
-	} else if (nLatent == 1){
-		message("A latent variable '", latentVars[1], "' was created. ")
-	} else {
-		message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
-	}
+  if (verbose) {
+    if(nLatent == 0){
+      # message("No latent variables were created.\n")
+      # latentVars = NA
+    } else if (nLatent == 1){
+      message("A latent variable '", latentVars[1], "' was created. ")
+    } else {
+      message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
+    }
+  }
 
 	# ===========================================================
 	# = TODO handle user adding an mxThreshold object to umxRAM =
