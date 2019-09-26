@@ -92,17 +92,14 @@ m2 =  umxConfint(m1, "all")
 \item \code{\link[stats:confint]{stats::confint()}}, \code{\link[=umxCI]{umxCI()}}
 }
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}()},
-  \code{\link{RMSEA.summary.mxmodel}()},
-  \code{\link{RMSEA}()},
-  \code{\link{extractAIC.MxModel}()},
-  \code{\link{loadings}()},
-  \code{\link{residuals.MxModel}()},
-  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
-  \code{\link{umxCompare}()}, \code{\link{umxExpCov}()},
-  \code{\link{umxExpMeans}()},
-  \code{\link{umxFitIndices}()},
-  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
-  \code{\link{umxSummary.MxModel}()}
+Other Reporting functions: \code{\link{RMSEA.MxModel}},
+  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
+  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
+  \code{\link{residuals.MxModel}},
+  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
+  \code{\link{umxCompare}}, \code{\link{umxExpCov}},
+  \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
+  \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
+  \code{\link{umxSummary.MxModel}}
 }
 \concept{Reporting functions}

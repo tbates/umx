@@ -33,9 +33,9 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 \item \code{\link[=mxCheckIdentification]{mxCheckIdentification()}}, \code{\link[=mxCompare]{mxCompare()}}
 }
 
-Other Modify or Compare Models: \code{\link{umxEquate}()},
-  \code{\link{umxFixAll}()}, \code{\link{umxMI}()},
-  \code{\link{umxModify}()},
-  \code{\link{umxSetParameters}()}, \code{\link{umx}}
+Other Modify or Compare Models: \code{\link{umxEquate}},
+  \code{\link{umxFixAll}}, \code{\link{umxMI}},
+  \code{\link{umxModify}}, \code{\link{umxSetParameters}},
+  \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

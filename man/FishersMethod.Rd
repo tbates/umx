@@ -30,16 +30,14 @@ Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Willi
 }
 }
 \seealso{
-Other Reporting Functions: \code{\link{loadings.MxModel}()},
-  \code{\link{tmx_is.identified}()},
-  \code{\link{tmx_show}()}, \code{\link{umxAPA}()},
-  \code{\link{umxFactorScores}()},
-  \code{\link{umxGetParameters}()},
-  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
-  \code{\link{umxWeightedAIC}()},
-  \code{\link{umx_APA_pval}()},
-  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
-  \code{\link{umx_print}()}, \code{\link{umx_time}()},
+Other Reporting Functions: \code{\link{loadings.MxModel}},
+  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
+  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
+  \code{\link{umxGetParameters}},
+  \code{\link{umxParameters}}, \code{\link{umxReduce}},
+  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
+  \code{\link{umx_print}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
 \concept{Reporting Functions}

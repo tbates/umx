@@ -70,17 +70,15 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 \item \code{\link[=umxACEcov]{umxACEcov()}}
 }
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxReduceACE}()},
-  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
-  \code{\link{umxSummarizeTwinData}()},
-  \code{\link{umxSummaryACEv}()},
-  \code{\link{umxSummaryACE}()},
-  \code{\link{umxSummaryCP}()},
-  \code{\link{umxSummaryGxEbiv}()},
-  \code{\link{umxSummaryGxE}()},
-  \code{\link{umxSummaryIP}()},
-  \code{\link{umxSummarySexLim}()},
-  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxPlotCP}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
+  \code{\link{umxReduce}},
+  \code{\link{umxSummarizeTwinData}},
+  \code{\link{umxSummaryACEv}},
+  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxEbiv}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umxSummarySexLim}},
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

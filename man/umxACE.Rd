@@ -134,14 +134,14 @@ This feature is used in the non-linear GxE model functions.
 \strong{Additional features}
 The umxACE function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modeling family-level effects shared 100\% by twins in a pair),
+from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
 to .25 to model dominance effects.
 
 \strong{Matrices and Labels in ACE model}
 
 Matrices 'a', 'c', and 'e' contain the path loadings of the Cholesky ACE factor model.
 
-So, labels relevant to modifying the model are of the form \verb{"a_r1c1", "c_r1c1"} etc.
+So, labels relevant to modifying the model are of the form \code{"a_r1c1", "c_r1c1"} etc.
 
 Variables are in rows, and factors are in columns. So to drop the influence of factor 2 on variable 3, you would say:
 
@@ -343,14 +343,13 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 \item \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxSummaryACE]{umxSummaryACE()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
-  \code{\link{umxACE_cov_fixed}()},
-  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
-  \code{\link{umxCP}()}, \code{\link{umxGxE_window}()},
-  \code{\link{umxGxEbiv}()}, \code{\link{umxGxE}()},
-  \code{\link{umxIP}()},
-  \code{\link{umxRotate.MxModelCP}()},
-  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
+  \code{\link{umxACEv}}, \code{\link{umxCP}},
+  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
+  \code{\link{umxGxE}}, \code{\link{umxIP}},
+  \code{\link{umxRotate.MxModelCP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}
