@@ -3998,6 +3998,11 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	report = match.arg(report)
 	test = match.arg(test)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
+	if(std){
+		betaSymbol = " \u03B2 = "
+	} else {
+		betaSymbol = " B = "
+	}
 	if("htest" == class(obj)[[1]]){
 		# t.test
 		if(obj$method ==  "Pearson's product-moment correlation"){
@@ -4068,7 +4073,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			b       = b_and_p["Estimate"]
 			tval    = b_and_p["t value"]
 			pval    = b_and_p["Pr(>|t|)"]
-			print(paste0(i, " \u03B2 = ", round(b, digits), 
+			print(paste0(i, betaSymbol, round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))		
@@ -4098,7 +4103,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			b       = b_and_p["Estimate"]
 			testStat    = b_and_p["z value"]
 			pval    = b_and_p["Pr(>|z|)"]
-			print(paste0(i, " \u03B2 = ", round(b, digits), 
+			print(paste0(i, betaSymbol, round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))
@@ -4122,7 +4127,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			tval    = model_coefficients[i, "t-value"]
 			numDF   = model_coefficients[i, "DF"]
 			pval    = model_coefficients[i, "p-value"]
-			print(paste0(i, " \u03B2 = ", round(b, digits), 
+			print(paste0(i, betaSymbol, round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
 			))
