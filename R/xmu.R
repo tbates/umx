@@ -1457,9 +1457,6 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 		# a1 -> ht1 [label = "0.92"];
 	}
 
-	umx_set_plot_file_suffix() # 'gv' or 'dot'
-	umx_set_plot_format() # 'graphviz' or 'DiagrammeR'
-
 	if(!is.na(file)){
 		if(file == "name"){
 			# maybe:

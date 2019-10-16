@@ -121,16 +121,16 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 }
 }
 \seealso{
-Other Core Modeling Functions: \code{\link{umxAlgebra}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxAlgebra}()},
+  \code{\link{umxMatrix}()}, \code{\link{umxPath}()},
+  \code{\link{umxRAM}()}, \code{\link{umxRun}()},
+  \code{\link{umxSummary}()},
+  \code{\link{umxSuperModel}()}, \code{\link{umx}}
 
-Other Modify or Compare Models: \code{\link{umxEquate}},
-  \code{\link{umxFixAll}}, \code{\link{umxMI}},
-  \code{\link{umxSetParameters}},
-  \code{\link{umxUnexplainedCausalNexus}},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
+  \code{\link{umxFixAll}()}, \code{\link{umxMI}()},
+  \code{\link{umxSetParameters}()},
+  \code{\link{umxUnexplainedCausalNexus}()},
   \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

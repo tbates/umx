@@ -23,6 +23,22 @@ The goal of this function \strong{WILL BE} (not currently functional) is to diag
 a model and return suggestions to the user.
 It is a work in progress, and of no use as yet.
 }
+\details{
+Best diagnostics are:
+\enumerate{
+\item Observed data variances and means
+\item Expected variances and means
+\item Difference of these?
+}
+
+Try
+* diagonalizeExpCov diagonal.
+* \code{\link[=umx_is_ordered]{umx_is_ordered()}}\preformatted{more tricky - we should really report the variances and the standardized thresholds.
+}
+
+The guidance would be to try starting with unit variances and thresholds that are within
++/- 2SD of the mean. \href{https://openmx.ssri.psu.edu/thread/3899}{bivariate outliers \%p option}
+}
 \examples{
 require(umx)
 data(demoOneFactor)
@@ -43,6 +59,6 @@ umxDiagnose(m1)
 }
 }
 \seealso{
-Other Teaching and Testing functions: \code{\link{umxPower}}
+Other Teaching and Testing functions: \code{\link{umxPower}()}
 }
 \concept{Teaching and Testing functions}
