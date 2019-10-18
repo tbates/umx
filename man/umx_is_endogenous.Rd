@@ -36,9 +36,9 @@ umx_is_endogenous(m1, manifests_only = FALSE)
 }
 }
 \seealso{
-Other Check or test: \code{\link{umx_check_names}()},
-  \code{\link{umx_is_class}()},
-  \code{\link{umx_is_exogenous}()},
-  \code{\link{umx_is_numeric}()}, \code{\link{umx}}
+Other Check or test: \code{\link{umx_check_names}},
+  \code{\link{umx_is_class}},
+  \code{\link{umx_is_exogenous}},
+  \code{\link{umx_is_numeric}}, \code{\link{umx}}
 }
 \concept{Check or test}

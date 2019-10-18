@@ -33,7 +33,7 @@ tabbedPlus: list scored from 0 to n-1
 
 tabbedVertPlus: tabbed, but vertical lay-out
 
-number	2+2\<itemBreak\>min='0' max='7' step='1'
+number	2+2<itemBreak>min='0' max='7' step='1'
 
 5fm Scored 1-5, anchored: Strongly Disagree | Disagree  | Neutral | Agree | Strongly Agree
 
@@ -57,9 +57,9 @@ umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 }
 }
 \seealso{
-Other File Functions: \code{\link{dl_from_dropbox}()},
-  \code{\link{umx_move_file}()}, \code{\link{umx_open}()},
-  \code{\link{umx_rename_file}()},
-  \code{\link{umx_write_to_clipboard}()}, \code{\link{umx}}
+Other File Functions: \code{\link{dl_from_dropbox}},
+  \code{\link{umx_move_file}}, \code{\link{umx_open}},
+  \code{\link{umx_rename_file}},
+  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
 }
 \concept{File Functions}
