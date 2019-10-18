@@ -264,8 +264,8 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 		}
 		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 		
-		if(dzCr == .25 & name == "ACE"){
-			name = "ADE"
+		if(dzCr == .25 & name == "ACEv"){
+			name = "ADEv"
 		}
 		# If given covariates, call umxACEvcov
 		if(!is.null(selCovs)){
