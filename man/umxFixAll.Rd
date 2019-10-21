@@ -42,10 +42,10 @@ mxCompare(m1, m2)
 }
 }
 \seealso{
-Other Modify or Compare Models: \code{\link{umxEquate}},
-  \code{\link{umxMI}}, \code{\link{umxModify}},
-  \code{\link{umxSetParameters}},
-  \code{\link{umxUnexplainedCausalNexus}},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
+  \code{\link{umxMI}()}, \code{\link{umxModify}()},
+  \code{\link{umxSetParameters}()},
+  \code{\link{umxUnexplainedCausalNexus}()},
   \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

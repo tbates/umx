@@ -133,9 +133,10 @@ cat(out$str)
 \item \code{\link[=plot]{plot()}}
 }
 
-Other Graphviz: \code{\link{xmu_dot_define_shapes}},
-  \code{\link{xmu_dot_make_paths}},
-  \code{\link{xmu_dot_make_residuals}},
-  \code{\link{xmu_dot_maker}}, \code{\link{xmu_dot_rank}}
+Other Graphviz: \code{\link{xmu_dot_define_shapes}()},
+  \code{\link{xmu_dot_make_paths}()},
+  \code{\link{xmu_dot_make_residuals}()},
+  \code{\link{xmu_dot_maker}()},
+  \code{\link{xmu_dot_rank}()}
 }
 \concept{Graphviz}

@@ -375,10 +375,11 @@ umxModel <- function(...) {
 #' # ============================================
 #' # = 1. Here's a simple example with raw data =
 #' # ============================================
+#' mtcars$litres = mtcars$disp/61.02
 #' m1 = umxRAM("tim", data = mtcars,
-#' 	umxPath(c("wt", "disp"), to = "mpg"),
-#' 	umxPath("wt", with = "disp"),
-#' 	umxPath(v.m. = c("wt", "disp", "mpg"))
+#' 	umxPath(c("wt", "litres"), to = "mpg"),
+#' 	umxPath("wt", with = "litres"),
+#' 	umxPath(v.m. = c("wt", "litres", "mpg"))
 #' )
 #'
 #' # 2. Use parameters to see the parameter estimates and labels
@@ -406,6 +407,17 @@ umxModel <- function(...) {
 #' m1 = umxRAM(data = mtcars, "#modelName
 #'  mpg ~ wt + disp")
 #' 
+#'
+#' # =======================
+#' # = A multi-group model =
+#' # =======================
+#'
+#' m1 = umxRAM("tim", data = mtcars, group = "am",
+#' 	umxPath(c("wt", "litres"), to = "mpg"),
+#' 	umxPath("wt", with = "litres"),
+#' 	umxPath(v.m. = c("wt", "litres", "mpg"))
+#' )
+#' # In this model, all parameters are equated across the two groups.
 #'
 #' # ====================================
 #' # = A cov model, with steps laid out =
@@ -507,35 +519,39 @@ umxModel <- function(...) {
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE, show = c("deprecated", "raw", "std")) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
-	type = match.arg(type)
-	tryHard = match.arg(tryHard)
-	show = match.arg(show)
-	allContinuousMethod = match.arg(allContinuousMethod)
+	type       = match.arg(type)
+	show       = match.arg(show)
+	tryHard    = match.arg(tryHard)
 	lavaanMode = match.arg(lavaanMode)
+	allContinuousMethod = match.arg(allContinuousMethod)
 	# =================
 	# = Set optimizer =
 	# =================
 	if(!is.null(optimizer)){
 		umx_set_optimizer(optimizer)
 	}
+	if(!is.null(group)){
+		if(class(data) != "data.frame"){
+			stop("Currently, for multiple groups, data must be a raw data.frame so I can subset it into multiple groups. You gave me a ", omxQuotes(class(mtcars)))
+		}
+	}
 
 	# lavaan string style model
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
 		# Process lavaanString: need to modify so that all the RAM options are processed: 
-		# suffix
-		# comparison
-		# show
-		# refModels = NULL
-		# remove_unused_manifests
 		# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
+		# show
+		# suffix
+		# refModels = NULL
+		# comparison
 		# allContinuousMethod
+		# remove_unused_manifests
 		model = umxLav2RAM(model = model, data = data, group = group, group.equal = group.equal, std.lv = std.lv, name = name, 
 					lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
 		return(model)
 	}
 
 	umx_check(!is.null(data), "stop", "In umxRAM, you must set 'data = '. If you're building a model with no data, use mxModel")
-
 
 	# umxPath-based model
 	if(typeof(model) == "character"){
@@ -630,40 +646,19 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ===========================================================
 	# This will be a model where things are not in the data and are not latent...
 	
-	# =================================
-	# = List up any un-used Manifests =
-	# =================================
-	if (class(data) == "character"){
-		# User is just running in sketch mode, with no data, but provided names.
-		unusedManifests = c()
-	}else{
-		unusedManifests = setdiff(manifestVars, foundNames)
-	}
+	# ======================================
+	# = List up used and un-used Manifests =
+	# ======================================
 	# Used = all data columns present in found and not reserved, e.g. "one"
-	usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
+	unusedManifests = setdiff(manifestVars, foundNames)
 
 	if(remove_unused_manifests & length(unusedManifests) > 0){
-		data = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests, defnNames))
+		usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
+		myData = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests, defnNames), verbose = verbose)
 	} else {
 		# keep everything
-		data = xmu_make_mxData(data= data, type = type)
 		usedManifests = manifestVars
-	}
-	if(verbose){
-		msg_str = ""
-		if(length(unusedManifests) > 0){
-			if(length(unusedManifests) > 10){
-				varList = paste0("First 10 were: ", paste(unusedManifests[1:10], collapse = ", "))
-				msg_str = paste0(length(unusedManifests), " unused variables (", varList)
-			} else if(length(unusedManifests) > 1){
-				varList = paste(unusedManifests, collapse = ", ")
-				msg_str = paste0(length(unusedManifests), " unused variables (", varList)
-			} else {
-				varList = unusedManifests
-				msg_str = paste0(length(unusedManifests), " unused variable (", varList)
-			}
-		}
-		message("ManifestVars set to: ", paste(usedManifests, collapse = ", "), ". ", msg_str)
+		myData = xmu_make_mxData(data= data, type = type, verbose = verbose)
 	}
 	# ==================
 	# = Assemble model =
@@ -676,8 +671,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ============
 	# = Add data =
 	# ============
-	if (class(data) == "character"){
-		# umx_msg(data)
+	if (class(myData) == "character"){
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = umxLabel(newModel, suffix = suffix)
 		if(is.null(group)){
@@ -689,7 +683,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 			# will be added to a super model, but no data needed/available to subset
 		}
 	}else{
-		newModel = mxModel(newModel, data)
+		newModel = mxModel(newModel, myData)
 		# will be re-processed with the required data below...
 		# except should not do this if lavaan... i.e., subset here with level of group...
 	}
@@ -699,7 +693,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ==========================
 	# Note: WLS data will be mxData(..., type = "raw") at this stage.
 	# Add means if data are raw and means not requested by user
-	needsMeans = xmu_check_needs_means(data = data, type = type, allContinuousMethod = allContinuousMethod)
+	needsMeans = xmu_check_needs_means(data = myData, type = type, allContinuousMethod = allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
 		message("You have raw data, but no means model. I added\n",
 		"mxPath('one', to = manifestVars)")
@@ -710,7 +704,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		newModel = umxValues(newModel, onlyTouchZeros = TRUE)
 	}
 
-	if(any(umx_is_ordered(data$observed))){
+	if(any(umx_is_ordered(myData$observed))){
 		newModel = xmuRAM2Ordinal(newModel, verbose = TRUE)
 	}
 
@@ -738,10 +732,19 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		if(!is.null(group.equal)){
 			message("sorry, haven't implemented group.equal yet")
 		}
+		# already computed above
+		# unusedManifests = setdiff(manifestVars, foundNames)
+		# usedManifests   = setdiff(intersect(manifestVars, foundNames), "one")
+		# usedManifests = manifestVars
 		for (thisLevelOfGroup in levelsOfGroup) {
 			thisSubset = data[groupCol == thisLevelOfGroup, ]
-			newModel   = mxModel(newModel, name= paste0(name, "_", thisLevelOfGroup))
-			modelList  = c(modelList, newModel)
+			if(remove_unused_manifests & length(unusedManifests) > 0){
+				myData = xmu_make_mxData(data = thisSubset, type = type, manifests = c(usedManifests, defnNames), verbose = FALSE)
+			} else {
+				myData = xmu_make_mxData(data= thisSubset, type = type, verbose = FALSE)
+			}
+			thisModel = mxModel(newModel, myData, name= paste0(name, "_", thisLevelOfGroup))
+			modelList = c(modelList, thisModel)
 		}
 		newModel = umxSuperModel(name = name, modelList)
 	}
