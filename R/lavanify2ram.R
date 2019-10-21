@@ -132,7 +132,8 @@
 #' 
 #' # Algebra: e.g. b1^2
 #' m1 = umxRAM("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
-#' 
+#' m1$B1_sq$result # = 0.47
+#'
 #' # Model with constraints and labeled parameters
 #' lav = "
 #'	y ~ b1*x1 + b2*x2 + b3*x3
@@ -149,7 +150,7 @@
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 #' }
-
+#'
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, 
 	lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, 
 	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), 
