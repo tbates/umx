@@ -357,7 +357,7 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, verbose = FALSE) {
 	type = match.arg(type)
 	if(is.null(data)){
-		message("You must set data: either data = dataframe or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
+		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
 	}else if(class(data) == "character"){
 		# Pass strings through

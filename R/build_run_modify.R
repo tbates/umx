@@ -623,10 +623,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# Get names from data (forms pool of potential usedManifests)
 	manifestVars = unique(na.omit(umx_names(data)))
 
-	# Omit NAs from found names as empty to = can generate these spuriously
+	# Omit NAs from found names (empty "to =" can generate these spuriously)
 	foundNames = unique(na.omit(foundNames))
 	defnNames  = unique(na.omit(defnNames))
-	# Anything used as a path, but not found in the data (and not a key word like "one") must be a latent
+	umx_check_names(defnNames, data = data, message = "note: used as definition variable, but not present in data")
+
+	# Anything else used as a path, but not found in the data (and not a key word like "one") must be a latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 	nLatent = length(latentVars)
 	# Report which latents were created
@@ -650,7 +652,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# = List up used and un-used Manifests =
 	# ======================================
 	# Used = all data columns present in found and not reserved, e.g. "one"
-	unusedManifests = setdiff(manifestVars, foundNames)
+	unusedManifests = setdiff(manifestVars, c(foundNames, defnNames))
 
 	if(remove_unused_manifests & length(unusedManifests) > 0){
 		usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
@@ -3990,7 +3992,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
 	connect = match.arg(connect) # set to single if not overridden by user.
-	xmu_string2path(from)
+	# xmu_string2path(from)
 	n = 0
 	for (i in list(with, cov, var, forms, means, fromEach, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, v.m0, defn, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
@@ -4014,12 +4016,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 
 	if(!is.null(defn)){
-		if(is.na(labels)){
+		if(anyNA(labels)){
 			stop("You must provide the name of the data source for your definition variable in labels! e.g. \"age\"
 			I'll convert that into \"data.age\" ")
-		} else if(length(labels) > 1){
-			stop("Labels must consist of just one data variable (data source) name!")			
+		} else if(length(labels) != length(defn)){
+			stop("Number of labels must match number of definition variables (data source)!\n",
+			"You can gave me ", omxQuotes(labels), "labels and ", omxQuotes(defn), " defn vars")
 		}else if (length(grep("data\\.", labels, value = FALSE))==0){
+			# if user hasn't prepended with "data." then add it for them
 			labels = paste0("data.", labels)
 		}
 		a = umxPath(var = defn, fixedAt = 0)

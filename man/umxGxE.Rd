@@ -98,14 +98,13 @@ umxReduce(m1)
 \item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
-  \code{\link{umxACE_cov_fixed}()},
-  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
-  \code{\link{umxACE}()}, \code{\link{umxCP}()},
-  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
-  \code{\link{umxIP}()},
-  \code{\link{umxRotate.MxModelCP}()},
-  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}},
+  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
+  \code{\link{umxACEv}}, \code{\link{umxACE}},
+  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
+  \code{\link{umxGxEbiv}}, \code{\link{umxIP}},
+  \code{\link{umxRotate.MxModelCP}},
+  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

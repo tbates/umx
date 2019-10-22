@@ -39,16 +39,15 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 \item \code{\link[=umxAPA]{umxAPA()}}, \code{\link[=round]{round()}}
 }
 
-Other Reporting Functions: \code{\link{FishersMethod}()},
-  \code{\link{loadings.MxModel}()},
-  \code{\link{tmx_is.identified}()},
-  \code{\link{tmx_show}()}, \code{\link{umxAPA}()},
-  \code{\link{umxFactorScores}()},
-  \code{\link{umxGetParameters}()},
-  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
-  \code{\link{umxWeightedAIC}()},
-  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
-  \code{\link{umx_print}()}, \code{\link{umx_time}()},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
+  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
+  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
+  \code{\link{umxGetParameters}},
+  \code{\link{umxParameters}}, \code{\link{umxReduce}},
+  \code{\link{umxWeightedAIC}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
+  \code{\link{umx_print}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
 \concept{Reporting Functions}

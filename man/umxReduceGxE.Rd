@@ -24,7 +24,7 @@ best model
 }
 \description{
 This function can perform model reduction for \code{\link[=umxGxE]{umxGxE()}} models,
-testing dropping a\verb{,c} & e\verb{, as well as c & c}, a & a` etc.
+testing dropping a\code{,c} & e\code{, as well as c & c}, a & a` etc.
 
 It reports the results in a table. Set the format of the table with
 \code{\link[=umx_set_table_format]{umx_set_table_format()}}. Or set \code{report = "html"} to open a
@@ -46,17 +46,15 @@ model = umxReduce(model)
 \seealso{
 \code{\link[=umxReduceACE]{umxReduceACE()}}, \code{\link[=umxReduce]{umxReduce()}}
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxReduceACE}()}, \code{\link{umxReduce}()},
-  \code{\link{umxSummarizeTwinData}()},
-  \code{\link{umxSummaryACEcov}()},
-  \code{\link{umxSummaryACEv}()},
-  \code{\link{umxSummaryACE}()},
-  \code{\link{umxSummaryCP}()},
-  \code{\link{umxSummaryGxEbiv}()},
-  \code{\link{umxSummaryGxE}()},
-  \code{\link{umxSummaryIP}()},
-  \code{\link{umxSummarySexLim}()},
-  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxPlotCP}},
+  \code{\link{umxReduceACE}}, \code{\link{umxReduce}},
+  \code{\link{umxSummarizeTwinData}},
+  \code{\link{umxSummaryACEcov}},
+  \code{\link{umxSummaryACEv}},
+  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
+  \code{\link{umxSummaryGxEbiv}},
+  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
+  \code{\link{umxSummarySexLim}},
+  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

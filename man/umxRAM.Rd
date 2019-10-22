@@ -80,7 +80,7 @@ using the widely used \code{mtcars} data set.\preformatted{m1 = umxRAM("tim", da
 )
 }
 
-As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} just wraps these paths up, takes the \verb{data =} input, and
+As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} just wraps these paths up, takes the \code{data =} input, and
 then internally sets up all the labels and start values for the model, runs it, displays a summary, and a plot!
 
 Try it, or one of the several models in the examples at the bottom of this page.
@@ -117,7 +117,7 @@ umxRAM differs from mxModel in the following ways:
 \item You don't need to list manifestVars (they are detected from path usage).
 \item You don't need to list latentVars (detected as anything in paths but not in \code{mxData}).
 \item You don't need to create mxData when you already have a data.frame.
-\item You add data with \verb{data = } (as elsewhere in R, e.g. \code{\link[=lm]{lm()}}).
+\item You add data with \code{data = } (as elsewhere in R, e.g. \code{\link[=lm]{lm()}}).
 \item You don't need to add labels: paths are automatically labelled "a_to_b" etc.
 \item You don't need to set start values, they will be done for you.
 \item You don't need to \code{mxRun} the model: it will run automatically, and print a summary.
@@ -129,7 +129,7 @@ umxRAM differs from mxModel in the following ways:
 
 \strong{Comparison with other software}
 
-\strong{Start values}. Currently, manifest variable means are set to the observed means, residual variances are set to 80\%
+\strong{Start values}. Currently, manifest variable means are set to the observed means, residual variances are set to 80%
 of the observed variance of each variable,
 and single-headed paths are set to a positive starting value (currently .9).
 \emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for \code{\link[=umxRAM]{umxRAM()}}.
@@ -295,10 +295,10 @@ parameters(m1)
 \seealso{
 \code{\link[=umxPath]{umxPath()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=plot]{plot()}}, \code{\link[=parameters]{parameters()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}, \code{\link[=umxLav2RAM]{umxLav2RAM()}}
 
-Other Core Modeling Functions: \code{\link{umxAlgebra}()},
-  \code{\link{umxMatrix}()}, \code{\link{umxModify}()},
-  \code{\link{umxPath}()}, \code{\link{umxRun}()},
-  \code{\link{umxSummary}()},
-  \code{\link{umxSuperModel}()}, \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxAlgebra}},
+  \code{\link{umxMatrix}}, \code{\link{umxModify}},
+  \code{\link{umxPath}}, \code{\link{umxRun}},
+  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

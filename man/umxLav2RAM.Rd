@@ -163,6 +163,7 @@ plot(tmp, max = c("cb", "cn", "cngn"), same = "gnt", min= "INT")
 
 # Algebra: e.g. b1^2
 m1 = umxRAM("x1~b1*x2; B1_sq := b1^2", data = demoOneFactor)
+m1$B1_sq$result # = 0.47
 
 # Model with constraints and labeled parameters
 lav = "
@@ -180,23 +181,22 @@ m1 = umxRAM(namedStr)
 # Formative factor
 # lavaanify("f5 <~ z1 + z2 + z3 + z4")
 }
+
 }
 \seealso{
 \itemize{
 \item \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
-  \code{\link{qm}()}, \code{\link{umxBrownie}()},
-  \code{\link{umxFactor}()}, \code{\link{umxVersion}()},
-  \code{\link{umx_array_shift}()},
-  \code{\link{umx_cont_2_quantiles}()},
-  \code{\link{umx_find_object}()},
-  \code{\link{umx_make}()}, \code{\link{umx_msg}()},
-  \code{\link{umx_open_CRAN_page}()},
-  \code{\link{umx_pad}()}, \code{\link{umx_pb_note}()},
-  \code{\link{umx_print}()},
-  \code{\link{umx_score_scale}()}, \code{\link{umx}},
-  \code{\link{xmu_cell_is_on}()}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
+  \code{\link{qm}}, \code{\link{umxBrownie}},
+  \code{\link{umxFactor}}, \code{\link{umxVersion}},
+  \code{\link{umx_array_shift}},
+  \code{\link{umx_cont_2_quantiles}},
+  \code{\link{umx_find_object}}, \code{\link{umx_make}},
+  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
+  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
+  \code{\link{umx_print}}, \code{\link{umx_score_scale}},
+  \code{\link{umx}}, \code{\link{xmu_cell_is_on}}
 }
 \concept{Miscellaneous Utility Functions}

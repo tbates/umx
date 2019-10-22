@@ -45,10 +45,10 @@ class(x$formula) # "call"
 \item \code{\link[=umxMatrix]{umxMatrix()}}
 }
 
-Other Core Modeling Functions: \code{\link{umxMatrix}()},
-  \code{\link{umxModify}()}, \code{\link{umxPath}()},
-  \code{\link{umxRAM}()}, \code{\link{umxRun}()},
-  \code{\link{umxSummary}()},
-  \code{\link{umxSuperModel}()}, \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxMatrix}},
+  \code{\link{umxModify}}, \code{\link{umxPath}},
+  \code{\link{umxRAM}}, \code{\link{umxRun}},
+  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
+  \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

@@ -35,7 +35,7 @@ Unlike similar functions in other packages, it checks that the variables exist, 
 
 Importantly, it also supports \link[=regex]{regular expressions}. This allows you to find and replace
 text based on patterns and replacements. so to change "replacement" to "in place",
-\verb{grep=re(place)ment}, \verb{replace= in \\\\1}.
+\code{grep=re(place)ment}, \code{replace= in \\1}.
 
 \emph{note}:To use replace list, you must say c(old = "new"), not c(old -> "new")
 }
@@ -66,20 +66,18 @@ umx_names(tmp, "^d") # all names beginning with a d
 \seealso{
 \link{namez} to filter (and replace) names, Also \link{umx_check_names} to check for existence of names in a dataframe.
 
-Other Data Functions: \code{\link{umxHetCor}()},
-  \code{\link{umx_as_numeric}()},
-  \code{\link{umx_lower2full}()},
-  \code{\link{umx_make_MR_data}()},
-  \code{\link{umx_make_TwinData}()},
-  \code{\link{umx_make_fake_data}()},
-  \code{\link{umx_make_raw_from_cov}()},
-  \code{\link{umx_polychoric}()},
-  \code{\link{umx_polypairwise}()},
-  \code{\link{umx_polytriowise}()},
-  \code{\link{umx_read_lower}()},
-  \code{\link{umx_reorder}()},
-  \code{\link{umx_select_valid}()},
-  \code{\link{umx_stack}()}, \code{\link{umx}},
-  \code{\link{xmu_data_swap_a_block}()}
+Other Data Functions: \code{\link{umxHetCor}},
+  \code{\link{umx_as_numeric}},
+  \code{\link{umx_lower2full}},
+  \code{\link{umx_make_MR_data}},
+  \code{\link{umx_make_TwinData}},
+  \code{\link{umx_make_fake_data}},
+  \code{\link{umx_make_raw_from_cov}},
+  \code{\link{umx_polychoric}},
+  \code{\link{umx_polypairwise}},
+  \code{\link{umx_polytriowise}},
+  \code{\link{umx_read_lower}}, \code{\link{umx_reorder}},
+  \code{\link{umx_select_valid}}, \code{\link{umx_stack}},
+  \code{\link{umx}}, \code{\link{xmu_data_swap_a_block}}
 }
 \concept{Data Functions}

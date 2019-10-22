@@ -47,7 +47,7 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \description{
 \code{umxAPA} creates summaries from a range of inputs. Use it for reporting \code{lm} models, effects, and summarizing data.
 \enumerate{
-\item Given an \code{lm}, \code{umxAPA} will return a formatted effect, including 95\% CI
+\item Given an \code{lm}, \code{umxAPA} will return a formatted effect, including 95% CI
 in square brackets, for one of the effects (specified by name in se). e.g.:
 \code{umxAPA(lm(mpg~wt, data=mtcars), "wt")} yields: \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
 \item This also works for \code{\link[=t.test]{t.test()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[=cor.test]{cor.test()}}, and others as I come across them.
@@ -56,7 +56,7 @@ in square brackets, for one of the effects (specified by name in se). e.g.:
 \item Given only a number as obj, will be treated as a p-value as returned in APA format.
 \item Given a dataframe, \code{umxAPA} will return a table of correlations, with
 the mean and SD of each variable as the last row. So,
-\verb{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
+\code{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
 correlations, means and SDs thus:
 \tabular{lccc}{
 \tab cyl         \tab  wt          \tab mpg          \cr
@@ -132,17 +132,15 @@ umxAPA(m1)
 }
 }
 \seealso{
-Other Reporting Functions: \code{\link{FishersMethod}()},
-  \code{\link{loadings.MxModel}()},
-  \code{\link{tmx_is.identified}()},
-  \code{\link{tmx_show}()},
-  \code{\link{umxFactorScores}()},
-  \code{\link{umxGetParameters}()},
-  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
-  \code{\link{umxWeightedAIC}()},
-  \code{\link{umx_APA_pval}()},
-  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
-  \code{\link{umx_print}()}, \code{\link{umx_time}()},
+Other Reporting Functions: \code{\link{FishersMethod}},
+  \code{\link{loadings.MxModel}},
+  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
+  \code{\link{umxFactorScores}},
+  \code{\link{umxGetParameters}},
+  \code{\link{umxParameters}}, \code{\link{umxReduce}},
+  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
+  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
+  \code{\link{umx_print}}, \code{\link{umx_time}},
   \code{\link{umx}}
 }
 \concept{Reporting Functions}

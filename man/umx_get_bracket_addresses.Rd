@@ -38,11 +38,10 @@ umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 }
 }
 \seealso{
-Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
-  \code{\link{umxLabel}()},
-  \code{\link{umxThresholdMatrix}()},
-  \code{\link{umxValues}()},
-  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}},
-  \code{\link{xmuRAM2Ordinal}()}
+Other Advanced Model Building Functions: \code{\link{umxJiggle}},
+  \code{\link{umxLabel}}, \code{\link{umxThresholdMatrix}},
+  \code{\link{umxValues}},
+  \code{\link{umx_string_to_algebra}}, \code{\link{umx}},
+  \code{\link{xmuRAM2Ordinal}}
 }
 \concept{Advanced Model Building Functions}
