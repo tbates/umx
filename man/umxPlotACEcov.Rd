@@ -5,8 +5,15 @@
 \alias{plot.MxModelACEcov}
 \title{Make a graphical display of an ACE model with covariates.}
 \usage{
-umxPlotACEcov(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, strip_zero = TRUE, ...)
+umxPlotACEcov(
+  x = NA,
+  file = "name",
+  digits = 2,
+  means = FALSE,
+  std = TRUE,
+  strip_zero = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link[=mxModel]{mxModel()}} to plot (created by umxACE in order to inherit the MxModelACE class)}
@@ -62,11 +69,12 @@ plot(m1, std = FALSE) # don't standardize
 \item \code{\link[=umxACE]{umxACE()}}
 }
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
-  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
+  \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}

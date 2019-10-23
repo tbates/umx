@@ -4,9 +4,13 @@
 \alias{umx_aggregate}
 \title{Convenient formula-based cross-tabs & built-in summary functions}
 \usage{
-umx_aggregate(formula = DV ~ condition, data = df,
-  what = c("mean_sd", "n"), digits = 2, report = c("markdown",
-  "html", "txt"))
+umx_aggregate(
+  formula = DV ~ condition,
+  data = df,
+  what = c("mean_sd", "n"),
+  digits = 2,
+  report = c("markdown", "html", "txt")
+)
 }
 \arguments{
 \item{formula}{The aggregation formula. e.g., DV ~ condition.}
@@ -78,14 +82,16 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 \item \code{\link[=umx_apply]{umx_apply()}}, \code{\link[=aggregate]{aggregate()}}
 }
 
-Other Reporting Functions: \code{\link{FishersMethod}},
-  \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}},
-  \code{\link{umxParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_names}}, \code{\link{umx_print}},
-  \code{\link{umx_time}}, \code{\link{umx}}
+Other Reporting Functions: \code{\link{FishersMethod}()},
+  \code{\link{loadings.MxModel}()},
+  \code{\link{tmx_is.identified}()},
+  \code{\link{tmx_show}()}, \code{\link{umxAPA}()},
+  \code{\link{umxFactorScores}()},
+  \code{\link{umxGetParameters}()},
+  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
+  \code{\link{umxWeightedAIC}()},
+  \code{\link{umx_APA_pval}()}, \code{\link{umx_names}()},
+  \code{\link{umx_print}()}, \code{\link{umx_time}()},
+  \code{\link{umx}}
 }
 \concept{Reporting Functions}

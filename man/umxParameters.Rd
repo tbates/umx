@@ -5,11 +5,23 @@
 \alias{parameters}
 \title{Display path estimates from a model, filtering by name and value.}
 \usage{
-umxParameters(x, thresh = c("all", "above", "below", "NS", "sig"),
-  b = NULL, pattern = ".*", std = FALSE, digits = 2)
+umxParameters(
+  x,
+  thresh = c("all", "above", "below", "NS", "sig"),
+  b = NULL,
+  pattern = ".*",
+  std = FALSE,
+  digits = 2
+)
 
-parameters(x, thresh = c("all", "above", "below", "NS", "sig"),
-  b = NULL, pattern = ".*", std = FALSE, digits = 2)
+parameters(
+  x,
+  thresh = c("all", "above", "below", "NS", "sig"),
+  b = NULL,
+  pattern = ".*",
+  std = FALSE,
+  digits = 2
+)
 }
 \arguments{
 \item{x}{an \code{\link[=mxModel]{mxModel()}} or model summary from which to report parameter estimates.}
@@ -65,14 +77,17 @@ umxParameters(m1, "below", .1, "_to_")
 \item \code{\link[=umxGetParameters]{umxGetParameters()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=namez]{namez()}}
 }
 
-Other Reporting Functions: \code{\link{FishersMethod}},
-  \code{\link{loadings.MxModel}},
-  \code{\link{tmx_is.identified}}, \code{\link{tmx_show}},
-  \code{\link{umxAPA}}, \code{\link{umxFactorScores}},
-  \code{\link{umxGetParameters}}, \code{\link{umxReduce}},
-  \code{\link{umxWeightedAIC}}, \code{\link{umx_APA_pval}},
-  \code{\link{umx_aggregate}}, \code{\link{umx_names}},
-  \code{\link{umx_print}}, \code{\link{umx_time}},
+Other Reporting Functions: \code{\link{FishersMethod}()},
+  \code{\link{loadings.MxModel}()},
+  \code{\link{tmx_is.identified}()},
+  \code{\link{tmx_show}()}, \code{\link{umxAPA}()},
+  \code{\link{umxFactorScores}()},
+  \code{\link{umxGetParameters}()},
+  \code{\link{umxReduce}()},
+  \code{\link{umxWeightedAIC}()},
+  \code{\link{umx_APA_pval}()},
+  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
+  \code{\link{umx_print}()}, \code{\link{umx_time}()},
   \code{\link{umx}}
 }
 \concept{Reporting Functions}

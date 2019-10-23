@@ -5,9 +5,14 @@
 \alias{plot.MxModelGxE}
 \title{Plot the results of a GxE univariate test for moderation of ACE components.}
 \usage{
-umxPlotGxE(x, xlab = NA, location = "topleft",
-  separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"),
-  ...)
+umxPlotGxE(
+  x,
+  xlab = NA,
+  location = "topleft",
+  separateGraphs = FALSE,
+  acergb = c("red", "green", "blue", "black"),
+  ...
+)
 }
 \arguments{
 \item{x}{A fitted \code{\link[=umxGxE]{umxGxE()}} model to plot}
@@ -55,11 +60,12 @@ umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 \item \code{\link[=umxGxE]{umxGxE()}}
 }
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
-  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotIP}()}, \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}

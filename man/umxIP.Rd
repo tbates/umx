@@ -4,16 +4,33 @@
 \alias{umxIP}
 \title{umxIP: Build and run an Independent pathway twin model}
 \usage{
-umxIP(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a =
-  1, c = 1, e = 1), data = NULL, zyg = "zygosity", type = c("Auto",
-  "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  allContinuousMethod = c("cumulants", "marginals"), dzAr = 0.5,
-  dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  optimizer = NULL, equateMeans = TRUE, weightVar = NULL,
-  addStd = TRUE, addCI = TRUE, freeLowerA = FALSE,
-  freeLowerC = FALSE, freeLowerE = FALSE)
+umxIP(
+  name = "IP",
+  selDVs,
+  dzData,
+  mzData,
+  sep = NULL,
+  nFac = c(a = 1, c = 1, e = 1),
+  data = NULL,
+  zyg = "zygosity",
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals"),
+  dzAr = 0.5,
+  dzCr = 1,
+  correlatedA = FALSE,
+  numObsDZ = NULL,
+  numObsMZ = NULL,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL,
+  equateMeans = TRUE,
+  weightVar = NULL,
+  addStd = TRUE,
+  addCI = TRUE,
+  freeLowerA = FALSE,
+  freeLowerC = FALSE,
+  freeLowerE = FALSE
+)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "IP").}
@@ -110,7 +127,7 @@ data in any combination.
 
 \code{umxIP} supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
+from 1 (the default for modeling family-level effects shared 100\% by twins in a pair),
 to .25 to model dominance effects.
 
 \strong{Matrices and Labels in CP model}
@@ -179,13 +196,14 @@ umxCompare(m1, m2)
 \item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

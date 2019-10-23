@@ -4,14 +4,25 @@
 \alias{umxLav2RAM}
 \title{Convert lavaan string to a umxRAM model}
 \usage{
-umxLav2RAM(model = NA, data = "auto", group = NULL,
-  group.equal = NULL, name = NA, lavaanMode = c("sem", "lavaan"),
-  std.lv = FALSE, suffix = "", comparison = TRUE, type = c("Auto",
-  "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+umxLav2RAM(
+  model = NA,
+  data = "auto",
+  group = NULL,
+  group.equal = NULL,
+  name = NA,
+  lavaanMode = c("sem", "lavaan"),
+  std.lv = FALSE,
+  suffix = "",
+  comparison = TRUE,
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   allContinuousMethod = c("cumulants", "marginals"),
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE)
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  verbose = FALSE,
+  optimizer = NULL,
+  std = FALSE,
+  printTab = TRUE
+)
 }
 \arguments{
 \item{model}{A lavaan syntax string, e.g. "A~~B"}
@@ -188,15 +199,17 @@ m1 = umxRAM(namedStr)
 \item \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
-  \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxVersion}},
-  \code{\link{umx_array_shift}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}, \code{\link{xmu_cell_is_on}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
+  \code{\link{qm}()}, \code{\link{umxBrownie}()},
+  \code{\link{umxFactor}()}, \code{\link{umxVersion}()},
+  \code{\link{umx_array_shift}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_find_object}()},
+  \code{\link{umx_make}()}, \code{\link{umx_msg}()},
+  \code{\link{umx_open_CRAN_page}()},
+  \code{\link{umx_pad}()}, \code{\link{umx_pb_note}()},
+  \code{\link{umx_print}()},
+  \code{\link{umx_score_scale}()}, \code{\link{umx}},
+  \code{\link{xmu_cell_is_on}()}
 }
 \concept{Miscellaneous Utility Functions}

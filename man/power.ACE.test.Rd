@@ -4,12 +4,22 @@
 \alias{power.ACE.test}
 \title{Test the power of an ACE model to detect paths of interest.}
 \usage{
-power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a", "c",
-  "a_after_dropping_c"), value = 0, n = NULL, MZ_DZ_ratio = 1,
-  sig.level = 0.05, power = 0.8, method = c("ncp", "empirical"),
-  search = FALSE, tryHard = c("no", "yes", "mxTryHard",
-  "mxTryHardOrdinal", "mxTryHardWideSearch"), optimizer = NULL,
-  nSim = 4000)
+power.ACE.test(
+  AA = 0.5,
+  CC = 0,
+  EE = NULL,
+  update = c("a", "c", "a_after_dropping_c"),
+  value = 0,
+  n = NULL,
+  MZ_DZ_ratio = 1,
+  sig.level = 0.05,
+  power = 0.8,
+  method = c("ncp", "empirical"),
+  search = FALSE,
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL,
+  nSim = 4000
+)
 }
 \arguments{
 \item{AA}{Additive genetic variance (Default .5)}
@@ -45,7 +55,7 @@ power.ACE.test(AA = 0.5, CC = 0, EE = NULL, update = c("a", "c",
 }
 \description{
 \code{power.ACE.test} simulates a univariate ACE model (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins. It
-computes power to detect dropping one or more paths specified in \code{drop=}.
+computes power to detect dropping one or more paths specified in \verb{drop=}.
 The interface and functionality of this service are experimental and subject to change.
 }
 \details{
@@ -53,12 +63,12 @@ Statistical power is the proportion of studies that, over the long run, one shou
 significant result given certain study characteristics such as sample size (N), the expected effect size (\eqn{\beta}),
 and the criterion for statistical significance (\eqn{\alpha}).
 
-A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
+A typical target for power is 80\%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
 of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
-discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
-But even with zero power, the Type-I error rate remains a nominal 5% (and with any researcher degrees of freedom, perhaps much more than that).
+discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80\% of the time.
+But even with zero power, the Type-I error rate remains a nominal 5\% (and with any researcher degrees of freedom, perhaps much more than that).
 Low powered research, then, fails to detect true effects, and generates support for random false theories about as often.
-This sounds silly, but empirical rates are often as low as 20% (Button, et al., 2013).
+This sounds silly, but empirical rates are often as low as 20\% (Button, et al., 2013).
 
 Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 
@@ -174,13 +184,13 @@ Power failure: why small sample size undermines the reliability of neuroscience.
 \item \code{\link[OpenMx:mxPower]{OpenMx::mxPower()}}
 }
 
-Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}},
-  \code{\link{umxACEcov}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Modeling Functions: \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

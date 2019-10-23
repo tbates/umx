@@ -4,12 +4,22 @@
 \alias{umxModify}
 \title{umxModify: Add, set, or drop model paths by label.}
 \usage{
-umxModify(lastFit, update = NULL, master = NULL, regex = FALSE,
-  free = FALSE, value = 0, newlabels = NULL, freeToStart = NA,
-  name = NULL, verbose = FALSE, intervals = FALSE,
-  comparison = FALSE, autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"))
+umxModify(
+  lastFit,
+  update = NULL,
+  master = NULL,
+  regex = FALSE,
+  free = FALSE,
+  value = 0,
+  newlabels = NULL,
+  freeToStart = NA,
+  name = NULL,
+  verbose = FALSE,
+  intervals = FALSE,
+  comparison = FALSE,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+)
 }
 \arguments{
 \item{lastFit}{The \code{\link[=mxModel]{mxModel()}} you wish to update and run.}
@@ -60,10 +70,10 @@ Regular expressions are a powerful feature: they let you drop collections of pat
 for instance, this would match labels containing either "Cs" or "Cr":\preformatted{fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
 }
 
-You may find it easier to be more explicit. Like this:\preformatted{fit2 = umxSetParameters(fit1, labels = c("Cs", "Cr"), values = 0, free = FALSE, name = "newName")
+You may find it easier to be more explicit. Like this:\if{html}{\out{<div class="R">}}\preformatted{fit2 = umxSetParameters(fit1, labels = c("Cs", "Cr"), values = 0, free = FALSE, name = "newName")
 fit2 = mxRun(fit2)
 summary(fit2)
-}
+}\if{html}{\out{</div>}}
 
 \emph{Note}: A (minor) limitation is that you cannot simultaneously set value to 0
 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
@@ -121,16 +131,16 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 }
 }
 \seealso{
-Other Core Modeling Functions: \code{\link{umxAlgebra}},
-  \code{\link{umxMatrix}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxAlgebra}()},
+  \code{\link{umxMatrix}()}, \code{\link{umxPath}()},
+  \code{\link{umxRAM}()}, \code{\link{umxRun}()},
+  \code{\link{umxSummary}()},
+  \code{\link{umxSuperModel}()}, \code{\link{umx}}
 
-Other Modify or Compare Models: \code{\link{umxEquate}},
-  \code{\link{umxFixAll}}, \code{\link{umxMI}},
-  \code{\link{umxSetParameters}},
-  \code{\link{umxUnexplainedCausalNexus}},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
+  \code{\link{umxFixAll}()}, \code{\link{umxMI}()},
+  \code{\link{umxSetParameters}()},
+  \code{\link{umxUnexplainedCausalNexus}()},
   \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

@@ -4,10 +4,15 @@
 \alias{umx_make}
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
-umx_make(what = c("quick_install", "install_full", "spell",
-  "run_examples", "check", "win", "rhub", "release", "travisCI", "sitrep"),
-  pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL,
-  spelling = "en_US")
+umx_make(
+  what = c("quick_install", "install_full", "spell", "run_examples", "check", "win",
+    "rhub", "release", "travisCI", "sitrep"),
+  pkg = "~/bin/umx",
+  check = TRUE,
+  run = FALSE,
+  start = NULL,
+  spelling = "en_US"
+)
 }
 \arguments{
 \item{what}{whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))}
@@ -45,15 +50,17 @@ umx_make(what = "release"))  # Release to CRAN
 }
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
-  \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxLav2RAM}},
-  \code{\link{umxVersion}}, \code{\link{umx_array_shift}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_msg}},
-  \code{\link{umx_open_CRAN_page}}, \code{\link{umx_pad}},
-  \code{\link{umx_pb_note}}, \code{\link{umx_print}},
-  \code{\link{umx_score_scale}}, \code{\link{umx}},
-  \code{\link{xmu_cell_is_on}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
+  \code{\link{qm}()}, \code{\link{umxBrownie}()},
+  \code{\link{umxFactor}()}, \code{\link{umxLav2RAM}()},
+  \code{\link{umxVersion}()},
+  \code{\link{umx_array_shift}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_find_object}()}, \code{\link{umx_msg}()},
+  \code{\link{umx_open_CRAN_page}()},
+  \code{\link{umx_pad}()}, \code{\link{umx_pb_note}()},
+  \code{\link{umx_print}()},
+  \code{\link{umx_score_scale}()}, \code{\link{umx}},
+  \code{\link{xmu_cell_is_on}()}
 }
 \concept{Miscellaneous Utility Functions}

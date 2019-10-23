@@ -5,9 +5,17 @@
 \alias{plot.MxModelSexLim}
 \title{Draw and display a graphical figure of a Sex limitation model}
 \usage{
-umxPlotSexLim(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
-  SEstyle = FALSE, strip_zero = TRUE, ...)
+umxPlotSexLim(
+  x = NA,
+  file = "name",
+  digits = 2,
+  means = FALSE,
+  std = TRUE,
+  format = c("current", "graphviz", "DiagrammeR"),
+  SEstyle = FALSE,
+  strip_zero = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link[=mxModel]{mxModel()}} to display graphically}
@@ -79,11 +87,12 @@ plot(m1) # no need to remember a special name: plot works fine!
 \item \code{\link[=umxSexLim]{umxSexLim()}}, \code{\link[=umxSummarySexLim]{umxSummarySexLim()}}
 }
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}

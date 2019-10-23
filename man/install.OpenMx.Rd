@@ -5,9 +5,12 @@
 \alias{umx_update_OpenMx}
 \title{Install OpenMx, with choice of builds}
 \usage{
-install.OpenMx(loc = c("NPSOL", "travis", "CRAN",
-  "open travis build page", "UVa"), url = NULL, lib,
-  repos = getOption("repos"))
+install.OpenMx(
+  loc = c("NPSOL", "travis", "CRAN", "open travis build page", "UVa"),
+  url = NULL,
+  lib,
+  repos = getOption("repos")
+)
 }
 \arguments{
 \item{loc}{Version to get default is "NPSOL". "travis" (latest build),CRAN, list of builds.}
@@ -46,15 +49,17 @@ install.OpenMx("open travis build page") # Open web page of travis builds
 \seealso{
 \code{\link[=umxVersion]{umxVersion()}}
 
-Other Miscellaneous Utility Functions: \code{\link{qm}},
-  \code{\link{umxBrownie}}, \code{\link{umxFactor}},
-  \code{\link{umxLav2RAM}}, \code{\link{umxVersion}},
-  \code{\link{umx_array_shift}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}, \code{\link{xmu_cell_is_on}}
+Other Miscellaneous Utility Functions: \code{\link{qm}()},
+  \code{\link{umxBrownie}()}, \code{\link{umxFactor}()},
+  \code{\link{umxLav2RAM}()}, \code{\link{umxVersion}()},
+  \code{\link{umx_array_shift}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_find_object}()},
+  \code{\link{umx_make}()}, \code{\link{umx_msg}()},
+  \code{\link{umx_open_CRAN_page}()},
+  \code{\link{umx_pad}()}, \code{\link{umx_pb_note}()},
+  \code{\link{umx_print}()},
+  \code{\link{umx_score_scale}()}, \code{\link{umx}},
+  \code{\link{xmu_cell_is_on}()}
 }
 \concept{Miscellaneous Utility Functions}

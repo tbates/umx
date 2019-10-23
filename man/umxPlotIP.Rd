@@ -5,9 +5,17 @@
 \alias{plot.MxModelIP}
 \title{Draw a graphical figure for a Independent Pathway model}
 \usage{
-umxPlotIP(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
-  SEstyle = FALSE, strip_zero = TRUE, ...)
+umxPlotIP(
+  x = NA,
+  file = "name",
+  digits = 2,
+  means = FALSE,
+  std = TRUE,
+  format = c("current", "graphviz", "DiagrammeR"),
+  SEstyle = FALSE,
+  strip_zero = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{The \code{\link[=umxIP]{umxIP()}} model to plot}
@@ -56,11 +64,13 @@ umxPlotIP(model, file = NA)
 \item \code{\link[=umxIP]{umxIP()}}
 }
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotSexLim}},
-  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()},
+  \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}

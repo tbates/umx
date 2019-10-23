@@ -5,9 +5,18 @@
 \alias{umxSummary.MxModelIP}
 \title{Present the results of an independent-pathway twin model in table and graphical form}
 \usage{
-umxSummaryIP(model, digits = 2, file = getOption("umx_auto_plot"),
-  returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL,
-  CIs = FALSE, show = NULL, ...)
+umxSummaryIP(
+  model,
+  digits = 2,
+  file = getOption("umx_auto_plot"),
+  returnStd = FALSE,
+  std = TRUE,
+  showRg = FALSE,
+  comparison = NULL,
+  CIs = FALSE,
+  show = NULL,
+  ...
+)
 }
 \arguments{
 \item{model}{A fitted \code{\link[=umxIP]{umxIP()}} model to summarize}
@@ -61,16 +70,17 @@ umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 \item \code{\link{umxIP}()}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
-  \code{\link{umxReduce}},
-  \code{\link{umxSummarizeTwinData}},
-  \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxEbiv}},
-  \code{\link{umxSummaryGxE}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
+  \code{\link{umxReduceACE}()},
+  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
+  \code{\link{umxSummarizeTwinData}()},
+  \code{\link{umxSummaryACEcov}()},
+  \code{\link{umxSummaryACEv}()},
+  \code{\link{umxSummaryACE}()},
+  \code{\link{umxSummaryCP}()},
+  \code{\link{umxSummaryGxEbiv}()},
+  \code{\link{umxSummaryGxE}()},
+  \code{\link{umxSummarySexLim}()},
+  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

@@ -4,8 +4,15 @@
 \alias{umx_make_MR_data}
 \title{Simulate Mendelian Randomization data}
 \usage{
-umx_make_MR_data(nSubjects = 1000, Vqtl = 0.02, bXY = 0.1,
-  bUX = 0.5, bUY = 0.5, pQTL = 0.5, seed = 123)
+umx_make_MR_data(
+  nSubjects = 1000,
+  Vqtl = 0.02,
+  bXY = 0.1,
+  bUX = 0.5,
+  bUY = 0.5,
+  pQTL = 0.5,
+  seed = 123
+)
 }
 \arguments{
 \item{nSubjects}{Number of subjects in sample}
@@ -43,18 +50,19 @@ plot(m1)
 \seealso{
 umx_make_TwinData
 
-Other Data Functions: \code{\link{umxHetCor}},
-  \code{\link{umx_as_numeric}},
-  \code{\link{umx_lower2full}},
-  \code{\link{umx_make_TwinData}},
-  \code{\link{umx_make_fake_data}},
-  \code{\link{umx_make_raw_from_cov}},
-  \code{\link{umx_polychoric}},
-  \code{\link{umx_polypairwise}},
-  \code{\link{umx_polytriowise}},
-  \code{\link{umx_read_lower}}, \code{\link{umx_rename}},
-  \code{\link{umx_reorder}},
-  \code{\link{umx_select_valid}}, \code{\link{umx_stack}},
-  \code{\link{umx}}, \code{\link{xmu_data_swap_a_block}}
+Other Data Functions: \code{\link{umxHetCor}()},
+  \code{\link{umx_as_numeric}()},
+  \code{\link{umx_lower2full}()},
+  \code{\link{umx_make_TwinData}()},
+  \code{\link{umx_make_fake_data}()},
+  \code{\link{umx_make_raw_from_cov}()},
+  \code{\link{umx_polychoric}()},
+  \code{\link{umx_polypairwise}()},
+  \code{\link{umx_polytriowise}()},
+  \code{\link{umx_read_lower}()},
+  \code{\link{umx_rename}()}, \code{\link{umx_reorder}()},
+  \code{\link{umx_select_valid}()},
+  \code{\link{umx_stack}()}, \code{\link{umx}},
+  \code{\link{xmu_data_swap_a_block}()}
 }
 \concept{Data Functions}

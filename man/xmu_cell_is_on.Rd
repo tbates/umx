@@ -4,8 +4,12 @@
 \alias{xmu_cell_is_on}
 \title{Return whether a cell is in a set location of a matrix}
 \usage{
-xmu_cell_is_on(r, c, where = c("diag", "lower", "lower_inc", "upper",
-  "upper_inc", "any", "left"), mat = NULL)
+xmu_cell_is_on(
+  r,
+  c,
+  where = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"),
+  mat = NULL
+)
 }
 \arguments{
 \item{r}{which row the cell is on.}
@@ -50,15 +54,17 @@ xmu_cell_is_on(r=4,c = 3, "any", mat = a_cp)
 \item \code{\link[=umxLabel]{umxLabel()}}
 }
 
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
-  \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxLav2RAM}},
-  \code{\link{umxVersion}}, \code{\link{umx_array_shift}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
+  \code{\link{qm}()}, \code{\link{umxBrownie}()},
+  \code{\link{umxFactor}()}, \code{\link{umxLav2RAM}()},
+  \code{\link{umxVersion}()},
+  \code{\link{umx_array_shift}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_find_object}()},
+  \code{\link{umx_make}()}, \code{\link{umx_msg}()},
+  \code{\link{umx_open_CRAN_page}()},
+  \code{\link{umx_pad}()}, \code{\link{umx_pb_note}()},
+  \code{\link{umx_print}()},
+  \code{\link{umx_score_scale}()}, \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}

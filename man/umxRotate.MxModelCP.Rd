@@ -4,8 +4,13 @@
 \alias{umxRotate.MxModelCP}
 \title{Rotate a CP solution}
 \usage{
-\method{umxRotate}{MxModelCP}(model, rotation = c("varimax", "promax"),
-  tryHard = "yes", freeLoadingsAfter = TRUE, verbose = TRUE)
+\method{umxRotate}{MxModelCP}(
+  model,
+  rotation = c("varimax", "promax"),
+  tryHard = "yes",
+  freeLoadingsAfter = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{model}{a \code{\link[=umxCP]{umxCP()}} model to rotate.}
@@ -53,12 +58,13 @@ m2 = umxRotate(m1, rotation = "varimax",  tryHard = "yes")
 \item \code{\link[=umxCP]{umxCP()}}
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxSexLim}},
-  \code{\link{umxSimplex}}, \code{\link{umx}}
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
+  \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

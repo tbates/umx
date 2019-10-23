@@ -5,8 +5,13 @@
 \alias{umx_checkpoint}
 \title{umx_set_checkpoint}
 \usage{
-umx_set_checkpoint(interval = 1, units = c("evaluations", "iterations",
-  "minutes"), prefix = "", directory = getwd(), model = NULL)
+umx_set_checkpoint(
+  interval = 1,
+  units = c("evaluations", "iterations", "minutes"),
+  prefix = "",
+  directory = getwd(),
+  model = NULL
+)
 }
 \arguments{
 \item{interval}{How many units between checkpoints: Default =  1.
@@ -54,20 +59,20 @@ umx_checkpoint(0)
 }
 }
 \seealso{
-Other Get and set: \code{\link{umx_get_checkpoint}},
-  \code{\link{umx_get_options}},
-  \code{\link{umx_set_auto_plot}},
-  \code{\link{umx_set_auto_run}},
-  \code{\link{umx_set_condensed_slots}},
-  \code{\link{umx_set_cores}},
-  \code{\link{umx_set_data_variance_check}},
-  \code{\link{umx_set_mvn_optimization_options}},
-  \code{\link{umx_set_optimizer}},
-  \code{\link{umx_set_plot_file_suffix}},
-  \code{\link{umx_set_plot_format}},
-  \code{\link{umx_set_separator}},
-  \code{\link{umx_set_silent}},
-  \code{\link{umx_set_table_format}}, \code{\link{umx}},
-  \code{\link{xmu_match.arg}}
+Other Get and set: \code{\link{umx_get_checkpoint}()},
+  \code{\link{umx_get_options}()},
+  \code{\link{umx_set_auto_plot}()},
+  \code{\link{umx_set_auto_run}()},
+  \code{\link{umx_set_condensed_slots}()},
+  \code{\link{umx_set_cores}()},
+  \code{\link{umx_set_data_variance_check}()},
+  \code{\link{umx_set_mvn_optimization_options}()},
+  \code{\link{umx_set_optimizer}()},
+  \code{\link{umx_set_plot_file_suffix}()},
+  \code{\link{umx_set_plot_format}()},
+  \code{\link{umx_set_separator}()},
+  \code{\link{umx_set_silent}()},
+  \code{\link{umx_set_table_format}()}, \code{\link{umx}},
+  \code{\link{xmu_match.arg}()}
 }
 \concept{Get and set}

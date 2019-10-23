@@ -4,11 +4,20 @@
 \alias{umxGxEbiv}
 \title{Purcell (2002) Bivariate GxE model: Suitable when twins differ on the moderator.}
 \usage{
-umxGxEbiv(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL,
-  lboundACE = NA, lboundM = NA, dropMissingDef = FALSE,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  optimizer = NULL)
+umxGxEbiv(
+  name = "GxEbiv",
+  selDVs,
+  selDefs,
+  dzData,
+  mzData,
+  sep = NULL,
+  lboundACE = NA,
+  lboundM = NA,
+  dropMissingDef = FALSE,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL
+)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "GxEbiv")}
@@ -99,13 +108,14 @@ power in G x E modelling of twin data. \emph{Behavior Genetics},
 \item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxE}()},
+  \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

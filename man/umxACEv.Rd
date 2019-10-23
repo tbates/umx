@@ -4,16 +4,32 @@
 \alias{umxACEv}
 \title{Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).}
 \usage{
-umxACEv(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData,
-  mzData, dzAr = 0.5, dzCr = 1, type = c("Auto", "FIML", "cov",
-  "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants",
-  "marginals"), data = NULL, zyg = "zygosity", weightVar = NULL,
-  numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE,
-  boundDiag = NULL, equateMeans = TRUE, bVector = FALSE,
+umxACEv(
+  name = "ACEv",
+  selDVs,
+  selCovs = NULL,
+  sep = NULL,
+  dzData,
+  mzData,
+  dzAr = 0.5,
+  dzCr = 1,
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals"),
+  data = NULL,
+  zyg = "zygosity",
+  weightVar = NULL,
+  numObsDZ = NULL,
+  numObsMZ = NULL,
+  addStd = TRUE,
+  addCI = TRUE,
+  boundDiag = NULL,
+  equateMeans = TRUE,
+  bVector = FALSE,
   covMethod = c("fixed", "random"),
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  optimizer = NULL)
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL
+)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -110,7 +126,7 @@ This feature is used in the non-linear GxE model functions.
 \strong{Additional features}
 The umxACEv function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
+from 1 (the default for modeling family-level effects shared 100\% by twins in a pair),
 to .25 to model dominance effects.
 
 \emph{note}: Only one of C or D may be estimated simultaneously. This restriction reflects the lack
@@ -276,13 +292,14 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 }
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACE}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACE}()},
+  \code{\link{umxCP}()}, \code{\link{umxGxE_window}()},
+  \code{\link{umxGxEbiv}()}, \code{\link{umxGxE}()},
+  \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

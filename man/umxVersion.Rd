@@ -4,8 +4,7 @@
 \alias{umxVersion}
 \title{Get or print the version of umx, along with detail from OpenMx and general system info.}
 \usage{
-umxVersion(model = NULL, min = NULL, verbose = TRUE,
-  return = "umx")
+umxVersion(model = NULL, min = NULL, verbose = TRUE, return = "umx")
 }
 \arguments{
 \item{model}{Optional to show optimizer in this model}
@@ -38,15 +37,17 @@ x = umxVersion(); x
 \item \code{\link[=packageVersion]{packageVersion()}}, \code{\link[=install.OpenMx]{install.OpenMx()}}
 }
 
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}},
-  \code{\link{qm}}, \code{\link{umxBrownie}},
-  \code{\link{umxFactor}}, \code{\link{umxLav2RAM}},
-  \code{\link{umx_array_shift}},
-  \code{\link{umx_cont_2_quantiles}},
-  \code{\link{umx_find_object}}, \code{\link{umx_make}},
-  \code{\link{umx_msg}}, \code{\link{umx_open_CRAN_page}},
-  \code{\link{umx_pad}}, \code{\link{umx_pb_note}},
-  \code{\link{umx_print}}, \code{\link{umx_score_scale}},
-  \code{\link{umx}}, \code{\link{xmu_cell_is_on}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
+  \code{\link{qm}()}, \code{\link{umxBrownie}()},
+  \code{\link{umxFactor}()}, \code{\link{umxLav2RAM}()},
+  \code{\link{umx_array_shift}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_find_object}()},
+  \code{\link{umx_make}()}, \code{\link{umx_msg}()},
+  \code{\link{umx_open_CRAN_page}()},
+  \code{\link{umx_pad}()}, \code{\link{umx_pb_note}()},
+  \code{\link{umx_print}()},
+  \code{\link{umx_score_scale}()}, \code{\link{umx}},
+  \code{\link{xmu_cell_is_on}()}
 }
 \concept{Miscellaneous Utility Functions}

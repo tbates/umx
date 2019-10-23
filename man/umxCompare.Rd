@@ -4,9 +4,15 @@
 \alias{umxCompare}
 \title{Print a comparison table of one or more \code{\link[=mxModel]{mxModel()}}s, formatted nicely.}
 \usage{
-umxCompare(base = NULL, comparison = NULL, all = TRUE, digits = 3,
-  report = c("markdown", "inline", "html"), compareWeightedAIC = FALSE,
-  file = "tmp.html")
+umxCompare(
+  base = NULL,
+  comparison = NULL,
+  all = TRUE,
+  digits = 3,
+  report = c("markdown", "inline", "html"),
+  compareWeightedAIC = FALSE,
+  file = "tmp.html"
+)
 }
 \arguments{
 \item{base}{The base \code{\link[=mxModel]{mxModel()}} for comparison}
@@ -69,14 +75,17 @@ umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 \item \code{\link[=mxCompare]{mxCompare()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},
 }
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
-  \code{\link{umxConfint}}, \code{\link{umxExpCov}},
-  \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
-  \code{\link{umxSummary.MxModel}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
+  \code{\link{umxConfint}()}, \code{\link{umxExpCov}()},
+  \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

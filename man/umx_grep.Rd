@@ -4,8 +4,13 @@
 \alias{umx_grep}
 \title{Search for text}
 \usage{
-umx_grep(df, grepString, output = c("both", "label", "name"),
-  ignore.case = TRUE, useNames = FALSE)
+umx_grep(
+  df,
+  grepString,
+  output = c("both", "label", "name"),
+  ignore.case = TRUE,
+  useNames = FALSE
+)
 }
 \arguments{
 \item{df}{The \code{\link[=data.frame]{data.frame()}} or string to search.}
@@ -31,7 +36,7 @@ The \code{namez} function is more flexible. A handy feature of \code{umx_grep} i
 search the labels of data imported from SPSS.
 
 \emph{nb:} To simply grep for a pattern in a string use R's built-in \code{\link[=grep]{grep()}} functions, e.g.:
-\code{grepl("^NA\\[0-9]", "NA.3")}
+\verb{grepl("^NA\\\[0-9]", "NA.3")}
 }
 \examples{
 umx_grep(mtcars, "hp", output="both", ignore.case= TRUE)
@@ -52,11 +57,11 @@ umx_grep(spss_df, "labeltext", output = "name")
 \item \code{\link[=namez]{namez()}}, \code{\link[=umx_aggregate]{umx_aggregate()}}, \code{\link[=grep]{grep()}}
 }
 
-Other String Functions: \code{\link{umx_explode_twin_names}},
-  \code{\link{umx_explode}}, \code{\link{umx_names}},
-  \code{\link{umx_object_as_str}},
-  \code{\link{umx_paste_names}}, \code{\link{umx_rot}},
-  \code{\link{umx_trim}},
-  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
+Other String Functions: \code{\link{umx_explode_twin_names}()},
+  \code{\link{umx_explode}()}, \code{\link{umx_names}()},
+  \code{\link{umx_object_as_str}()},
+  \code{\link{umx_paste_names}()}, \code{\link{umx_rot}()},
+  \code{\link{umx_trim}()},
+  \code{\link{umx_write_to_clipboard}()}, \code{\link{umx}}
 }
 \concept{String Functions}

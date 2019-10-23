@@ -5,9 +5,18 @@
 \alias{plot.MxModelCP}
 \title{Draw and display a graphical figure of Common Pathway model}
 \usage{
-umxPlotCP(x = NA, means = FALSE, std = TRUE, digits = 2,
-  showFixed = TRUE, file = "name", format = c("current", "graphviz",
-  "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...)
+umxPlotCP(
+  x = NA,
+  means = FALSE,
+  std = TRUE,
+  digits = 2,
+  showFixed = TRUE,
+  file = "name",
+  format = c("current", "graphviz", "DiagrammeR"),
+  SEstyle = FALSE,
+  strip_zero = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{The Common Pathway \code{\link[=mxModel]{mxModel()}} to display graphically}
@@ -68,23 +77,27 @@ plot(m1) # No need to remember a special name: plot works fine!
 \item \code{\link[=umxCP]{umxCP()}}
 }
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
-  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
+  \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 
-Other Twin Reporting Functions: \code{\link{umxReduceACE}},
-  \code{\link{umxReduceGxE}}, \code{\link{umxReduce}},
-  \code{\link{umxSummarizeTwinData}},
-  \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxEbiv}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxReduceACE}()},
+  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
+  \code{\link{umxSummarizeTwinData}()},
+  \code{\link{umxSummaryACEcov}()},
+  \code{\link{umxSummaryACEv}()},
+  \code{\link{umxSummaryACE}()},
+  \code{\link{umxSummaryCP}()},
+  \code{\link{umxSummaryGxEbiv}()},
+  \code{\link{umxSummaryGxE}()},
+  \code{\link{umxSummaryIP}()},
+  \code{\link{umxSummarySexLim}()},
+  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}
 \concept{Twin Reporting Functions}

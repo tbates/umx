@@ -4,9 +4,17 @@
 \alias{umx_make_fake_data}
 \title{umx_make_fake_data}
 \usage{
-umx_make_fake_data(dataset, digits = 2, n = NA, use.names = TRUE,
-  use.levels = TRUE, use.miss = TRUE, mvt.method = "eigen",
-  het.ML = FALSE, het.suppress = TRUE)
+umx_make_fake_data(
+  dataset,
+  digits = 2,
+  n = NA,
+  use.names = TRUE,
+  use.levels = TRUE,
+  use.miss = TRUE,
+  mvt.method = "eigen",
+  het.ML = FALSE,
+  het.suppress = TRUE
+)
 }
 \arguments{
 \item{dataset}{The original dataset of which to make a simulacrum}
@@ -48,18 +56,19 @@ fakeCars = umx_make_fake_data(mtcars)
 \seealso{
 [OpenMx::mxGenerateData()]
 
-Other Data Functions: \code{\link{umxHetCor}},
-  \code{\link{umx_as_numeric}},
-  \code{\link{umx_lower2full}},
-  \code{\link{umx_make_MR_data}},
-  \code{\link{umx_make_TwinData}},
-  \code{\link{umx_make_raw_from_cov}},
-  \code{\link{umx_polychoric}},
-  \code{\link{umx_polypairwise}},
-  \code{\link{umx_polytriowise}},
-  \code{\link{umx_read_lower}}, \code{\link{umx_rename}},
-  \code{\link{umx_reorder}},
-  \code{\link{umx_select_valid}}, \code{\link{umx_stack}},
-  \code{\link{umx}}, \code{\link{xmu_data_swap_a_block}}
+Other Data Functions: \code{\link{umxHetCor}()},
+  \code{\link{umx_as_numeric}()},
+  \code{\link{umx_lower2full}()},
+  \code{\link{umx_make_MR_data}()},
+  \code{\link{umx_make_TwinData}()},
+  \code{\link{umx_make_raw_from_cov}()},
+  \code{\link{umx_polychoric}()},
+  \code{\link{umx_polypairwise}()},
+  \code{\link{umx_polytriowise}()},
+  \code{\link{umx_read_lower}()},
+  \code{\link{umx_rename}()}, \code{\link{umx_reorder}()},
+  \code{\link{umx_select_valid}()},
+  \code{\link{umx_stack}()}, \code{\link{umx}},
+  \code{\link{xmu_data_swap_a_block}()}
 }
 \concept{Data Functions}

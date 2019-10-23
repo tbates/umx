@@ -6,11 +6,22 @@
 \alias{umxPlot}
 \title{Create and display a graphical path diagram for a model.}
 \usage{
-\method{plot}{MxModel}(x = NA, std = FALSE, fixed = TRUE,
-  means = TRUE, digits = 2, file = "name", labels = c("none",
-  "labels", "both"), resid = c("circle", "line", "none"),
-  strip_zero = FALSE, splines = TRUE, min = NULL, same = NULL,
-  max = NULL, ...)
+\method{plot}{MxModel}(
+  x = NA,
+  std = FALSE,
+  fixed = TRUE,
+  means = TRUE,
+  digits = 2,
+  file = "name",
+  labels = c("none", "labels", "both"),
+  resid = c("circle", "line", "none"),
+  strip_zero = FALSE,
+  splines = TRUE,
+  min = NULL,
+  same = NULL,
+  max = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{\link[=mxModel]{mxModel()}} from which to make a path diagram}
@@ -96,14 +107,15 @@ plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 \item \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=plot.MxModel]{plot.MxModel()}}, \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, \code{\link[=umxPlotIP]{umxPlotIP()}}, \code{\link[=umxPlotGxE]{umxPlotGxE()}}
 }
 
-Other umx S3 functions: \code{\link{plot.MxLISRELModel}}
+Other umx S3 functions: \code{\link{plot.MxLISRELModel}()}
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{umxPlotACEcov}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxPlotACE}}, \code{\link{umxPlotCP}},
-  \code{\link{umxPlotGxEbiv}}, \code{\link{umxPlotGxE}},
-  \code{\link{umxPlotIP}}, \code{\link{umxPlotSexLim}},
-  \code{\link{umxPlotSimplex}}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
+  \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}
 \concept{umx S3 functions}

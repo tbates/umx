@@ -5,10 +5,19 @@
 \alias{umxSummary.MxRAMModel}
 \title{Shows a compact, publication-style, summary of a RAM model}
 \usage{
-\method{umxSummary}{MxModel}(model, refModels = NULL, std = FALSE,
-  digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS",
-  "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE,
-  show = c("deprecated", "raw", "std", "none"), ...)
+\method{umxSummary}{MxModel}(
+  model,
+  refModels = NULL,
+  std = FALSE,
+  digits = 2,
+  report = c("markdown", "html"),
+  filter = c("ALL", "NS", "SIG"),
+  SE = TRUE,
+  RMSEA_CI = FALSE,
+  matrixAddresses = FALSE,
+  show = c("deprecated", "raw", "std", "none"),
+  ...
+)
 }
 \arguments{
 \item{model}{The [mxModel()] whose fit will be reported}
@@ -99,14 +108,16 @@ umxSummary(m1, std = TRUE, filter = "NS")
 \seealso{
 - [umxRun()]
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
-  \code{\link{umxCompare}}, \code{\link{umxConfint}},
-  \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
-  \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxRotate}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
+  \code{\link{umxCompare}()}, \code{\link{umxConfint}()},
+  \code{\link{umxExpCov}()}, \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()}
 }
 \concept{Reporting functions}

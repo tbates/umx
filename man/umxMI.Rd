@@ -4,8 +4,14 @@
 \alias{umxMI}
 \title{Report modifications which would improve fit.}
 \usage{
-umxMI(model = NA, matrices = NA, full = TRUE, numInd = NA,
-  typeToShow = "both", decreasing = TRUE)
+umxMI(
+  model = NA,
+  matrices = NA,
+  full = TRUE,
+  numInd = NA,
+  typeToShow = "both",
+  decreasing = TRUE
+)
 }
 \arguments{
 \item{model}{An \code{\link[=mxModel]{mxModel()}} for which to report modification indices}
@@ -54,10 +60,10 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 \item \code{\link[=mxMI]{mxMI()}}
 }
 
-Other Modify or Compare Models: \code{\link{umxEquate}},
-  \code{\link{umxFixAll}}, \code{\link{umxModify}},
-  \code{\link{umxSetParameters}},
-  \code{\link{umxUnexplainedCausalNexus}},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
+  \code{\link{umxFixAll}()}, \code{\link{umxModify}()},
+  \code{\link{umxSetParameters}()},
+  \code{\link{umxUnexplainedCausalNexus}()},
   \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

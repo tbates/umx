@@ -4,8 +4,7 @@
 \alias{tmx_genotypic_effect}
 \title{Graphical display of genotypic effects.}
 \usage{
-tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0,
-  m = 0, show = TRUE)
+tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0, m = 0, show = TRUE)
 }
 \arguments{
 \item{p}{The frequency of the B allele (Default .5)}
@@ -92,7 +91,7 @@ p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE);
 }
 }
 \seealso{
-Other Teaching and testing Functions: \code{\link{tmx_is.identified}},
+Other Teaching and testing Functions: \code{\link{tmx_is.identified}()},
   \code{\link{umx}}
 }
 \concept{Teaching and testing Functions}

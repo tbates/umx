@@ -4,12 +4,23 @@
 \alias{umxGxE}
 \title{umxGxE: Implements ACE models with moderation of paths, e.g. by SES.}
 \usage{
-umxGxE(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
-  data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA,
-  lboundM = NA, dropMissingDef = TRUE,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  optimizer = NULL)
+umxGxE(
+  name = "G_by_E",
+  selDVs,
+  selDefs,
+  dzData,
+  mzData,
+  sep = NULL,
+  data = NULL,
+  zyg = "zygosity",
+  digits = 3,
+  lboundACE = NA,
+  lboundM = NA,
+  dropMissingDef = TRUE,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL
+)
 }
 \arguments{
 \item{name}{The name of the model (default= "G_by_E")}
@@ -98,13 +109,14 @@ umxReduce(m1)
 \item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxEbiv}}, \code{\link{umxIP}},
-  \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

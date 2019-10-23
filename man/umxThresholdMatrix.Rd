@@ -4,9 +4,16 @@
 \alias{umxThresholdMatrix}
 \title{Create the threshold matrix needed for modeling ordinal data.}
 \usage{
-umxThresholdMatrix(df, selDVs = NULL, sep = NULL, method = c("auto",
-  "Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA,
-  NA), droplevels = FALSE, verbose = FALSE)
+umxThresholdMatrix(
+  df,
+  selDVs = NULL,
+  sep = NULL,
+  method = c("auto", "Mehta", "allFree"),
+  threshMatName = "threshMat",
+  l_u_bound = c(NA, NA),
+  droplevels = FALSE,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{df}{The data being modeled (to allow access to the factor levels and quantiles within these for each variable)}
@@ -152,10 +159,10 @@ tmp[[3]]$formula
 }
 }
 \seealso{
-Other Advanced Model Building Functions: \code{\link{umxJiggle}},
-  \code{\link{umxLabel}}, \code{\link{umxValues}},
-  \code{\link{umx_get_bracket_addresses}},
-  \code{\link{umx_string_to_algebra}}, \code{\link{umx}},
-  \code{\link{xmuRAM2Ordinal}}
+Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
+  \code{\link{umxLabel}()}, \code{\link{umxValues}()},
+  \code{\link{umx_get_bracket_addresses}()},
+  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}},
+  \code{\link{xmuRAM2Ordinal}()}
 }
 \concept{Advanced Model Building Functions}

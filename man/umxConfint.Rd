@@ -4,10 +4,15 @@
 \alias{umxConfint}
 \title{Get confidence intervals from a umx model}
 \usage{
-umxConfint(object, parm = c("existing", "all", "or one or more labels",
-  "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE,
-  showErrorCodes = FALSE, optimizer = c("SLSQP", "NPSOL", "CSOLNP",
-  "current"))
+umxConfint(
+  object,
+  parm = c("existing", "all", "or one or more labels", "smart"),
+  wipeExistingRequests = TRUE,
+  level = 0.95,
+  run = FALSE,
+  showErrorCodes = FALSE,
+  optimizer = c("SLSQP", "NPSOL", "CSOLNP", "current")
+)
 }
 \arguments{
 \item{object}{An \code{\link[=mxModel]{mxModel()}}, possibly already containing \code{\link[=mxCI]{mxCI()}}s that have been \code{\link[=mxRun]{mxRun()}} with intervals = TRUE))}
@@ -92,14 +97,17 @@ m2 =  umxConfint(m1, "all")
 \item \code{\link[stats:confint]{stats::confint()}}, \code{\link[=umxCI]{umxCI()}}
 }
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
-  \code{\link{umxCompare}}, \code{\link{umxExpCov}},
-  \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
-  \code{\link{umxSummary.MxModel}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
+  \code{\link{umxCompare}()}, \code{\link{umxExpCov}()},
+  \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

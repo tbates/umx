@@ -4,8 +4,14 @@
 \alias{umx_move_file}
 \title{Move files}
 \usage{
-umx_move_file(baseFolder = NA, regex = NULL, fileNameList = NA,
-  destFolder = NA, test = TRUE, overwrite = FALSE)
+umx_move_file(
+  baseFolder = NA,
+  regex = NULL,
+  fileNameList = NA,
+  destFolder = NA,
+  test = TRUE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
@@ -38,9 +44,10 @@ umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg",
 
 }
 \seealso{
-Other File Functions: \code{\link{dl_from_dropbox}},
-  \code{\link{umx_make_sql_from_excel}},
-  \code{\link{umx_open}}, \code{\link{umx_rename_file}},
-  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
+Other File Functions: \code{\link{dl_from_dropbox}()},
+  \code{\link{umx_make_sql_from_excel}()},
+  \code{\link{umx_open}()},
+  \code{\link{umx_rename_file}()},
+  \code{\link{umx_write_to_clipboard}()}, \code{\link{umx}}
 }
 \concept{File Functions}

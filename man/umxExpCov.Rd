@@ -5,8 +5,7 @@
 \alias{vcov.MxModel}
 \title{Get the expected vcov matrix}
 \usage{
-umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL,
-  ...)
+umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL, ...)
 }
 \arguments{
 \item{object}{an \code{\link[=mxModel]{mxModel()}} to get the covariance matrix from}
@@ -50,14 +49,17 @@ Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 \item \code{\link[=umxRun]{umxRun()}}, \code{\link[=umxCI_boot]{umxCI_boot()}}
 }
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
-  \code{\link{umxCompare}}, \code{\link{umxConfint}},
-  \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
-  \code{\link{umxSummary.MxModel}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
+  \code{\link{umxCompare}()}, \code{\link{umxConfint}()},
+  \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

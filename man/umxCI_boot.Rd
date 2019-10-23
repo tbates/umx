@@ -4,9 +4,16 @@
 \alias{umxCI_boot}
 \title{umxCI_boot}
 \usage{
-umxCI_boot(model, rawData = NULL, type = c("par.expected",
-  "par.observed", "empirical"), std = TRUE, rep = 1000, conf = 95,
-  dat = FALSE, digits = 3)
+umxCI_boot(
+  model,
+  rawData = NULL,
+  type = c("par.expected", "par.observed", "empirical"),
+  std = TRUE,
+  rep = 1000,
+  conf = 95,
+  dat = FALSE,
+  digits = 3
+)
 }
 \arguments{
 \item{model}{is an optimized mxModel}
@@ -63,13 +70,16 @@ Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 \item \code{\link[=umxExpMeans]{umxExpMeans()}}, \code{\link[=umxExpCov]{umxExpCov()}}
 }
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}}, \code{\link{umxCI}},
-  \code{\link{umxCompare}}, \code{\link{umxConfint}},
-  \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
-  \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxRotate}}, \code{\link{umxSummary.MxModel}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()}, \code{\link{umxCI}()},
+  \code{\link{umxCompare}()}, \code{\link{umxConfint}()},
+  \code{\link{umxExpCov}()}, \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

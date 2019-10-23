@@ -626,7 +626,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# Omit NAs from found names (empty "to =" can generate these spuriously)
 	foundNames = unique(na.omit(foundNames))
 	defnNames  = unique(na.omit(defnNames))
-	umx_check_names(defnNames, data = data, message = "note: used as definition variable, but not present in data")
+	if(length(defnNames)>0){
+		# check'm if you've got'm
+		umx_check_names(defnNames, data = data, message = "note: used as definition variable, but not present in data")
+	}
 
 	# Anything else used as a path, but not found in the data (and not a key word like "one") must be a latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
@@ -3924,7 +3927,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param forms Build a formative variable. 'from' variables form the latent.
 #' Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate between 'from' variables.
 #' @param Cholesky Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.
-#' @param defn Makes a latent variable, var@0 mean fixed, set label to 'data.defVarName'
+#' @param defn Implements a definition variable as a latent with zero variance & mean and labeled 'data.defVar'
 #' @param connect as in mxPath - nb: from and to must also be set.
 #' @param arrows as in mxPath - nb: from and to must also be set.
 #' @param free whether the value is free to be optimised
@@ -4017,13 +4020,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 
 	if(!is.null(defn)){
 		if(anyNA(labels)){
-			stop("You must provide the name of the data source for your definition variable in labels! e.g. \"age\"
-			I'll convert that into \"data.age\" ")
+			labels = paste0("data.", defn)
+			defn   = paste0("def_" , defn)
+			message(length(defn), " definition variables created: refer to them/it as: ", omxQuotes(defn))
 		} else if(length(labels) != length(defn)){
 			stop("Number of labels must match number of definition variables (data source)!\n",
 			"You can gave me ", omxQuotes(labels), "labels and ", omxQuotes(defn), " defn vars")
 		}else if (length(grep("data\\.", labels, value = FALSE))==0){
-			# if user hasn't prepended with "data." then add it for them
+			# if user hasn't prepended labels with "data." then add it for them
 			labels = paste0("data.", labels)
 		}
 		a = umxPath(var = defn, fixedAt = 0)

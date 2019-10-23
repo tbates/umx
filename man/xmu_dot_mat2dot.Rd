@@ -4,12 +4,21 @@
 \alias{xmu_dot_mat2dot}
 \title{Return dot code for paths in a matrix}
 \usage{
-xmu_dot_mat2dot(x, cells = c("diag", "lower", "lower_inc", "upper",
-  "upper_inc", "any", "left"), from = c("rows", "cols"),
-  fromLabel = NULL, toLabel = NULL, showFixed = FALSE,
-  arrows = c("forward", "both", "back"), fromType = NULL,
-  toType = NULL, digits = 2, model = NULL, SEstyle = FALSE,
-  p = list(str = "", latents = c(), manifests = c()))
+xmu_dot_mat2dot(
+  x,
+  cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"),
+  from = c("rows", "cols"),
+  fromLabel = NULL,
+  toLabel = NULL,
+  showFixed = FALSE,
+  arrows = c("forward", "both", "back"),
+  fromType = NULL,
+  toType = NULL,
+  digits = 2,
+  model = NULL,
+  SEstyle = FALSE,
+  p = list(str = "", latents = c(), manifests = c())
+)
 }
 \arguments{
 \item{x}{a \code{\link[=umxMatrix]{umxMatrix()}} to make paths from.}
@@ -133,9 +142,10 @@ cat(out$str)
 \item \code{\link[=plot]{plot()}}
 }
 
-Other Graphviz: \code{\link{xmu_dot_define_shapes}},
-  \code{\link{xmu_dot_make_paths}},
-  \code{\link{xmu_dot_make_residuals}},
-  \code{\link{xmu_dot_maker}}, \code{\link{xmu_dot_rank}}
+Other Graphviz: \code{\link{xmu_dot_define_shapes}()},
+  \code{\link{xmu_dot_make_paths}()},
+  \code{\link{xmu_dot_make_residuals}()},
+  \code{\link{xmu_dot_maker}()},
+  \code{\link{xmu_dot_rank}()}
 }
 \concept{Graphviz}

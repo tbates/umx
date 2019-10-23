@@ -4,8 +4,14 @@
 \alias{umx_is_ordered}
 \title{Test if one or more variables in a dataframe are ordered}
 \usage{
-umx_is_ordered(df, names = FALSE, strict = TRUE, binary.only = FALSE,
-  ordinal.only = FALSE, continuous.only = FALSE)
+umx_is_ordered(
+  df,
+  names = FALSE,
+  strict = TRUE,
+  binary.only = FALSE,
+  ordinal.only = FALSE,
+  continuous.only = FALSE
+)
 }
 \arguments{
 \item{df}{A \code{\link[=data.frame]{data.frame()}} to look in for ordinal variables (if you offer a
@@ -53,17 +59,17 @@ umx_is_ordered(tmp, names=TRUE)
 }
 }
 \seealso{
-Other Test: \code{\link{umx_check_OS}},
-  \code{\link{umx_check_model}},
-  \code{\link{umx_check_names}},
-  \code{\link{umx_check_parallel}},
-  \code{\link{umx_check}}, \code{\link{umx_has_CIs}},
-  \code{\link{umx_has_been_run}},
-  \code{\link{umx_has_means}},
-  \code{\link{umx_has_square_brackets}},
-  \code{\link{umx_is_MxData}},
-  \code{\link{umx_is_MxMatrix}},
-  \code{\link{umx_is_MxModel}}, \code{\link{umx_is_RAM}},
-  \code{\link{umx_is_cov}}
+Other Test: \code{\link{umx_check_OS}()},
+  \code{\link{umx_check_model}()},
+  \code{\link{umx_check_names}()},
+  \code{\link{umx_check_parallel}()},
+  \code{\link{umx_check}()}, \code{\link{umx_has_CIs}()},
+  \code{\link{umx_has_been_run}()},
+  \code{\link{umx_has_means}()},
+  \code{\link{umx_has_square_brackets}()},
+  \code{\link{umx_is_MxData}()},
+  \code{\link{umx_is_MxMatrix}()},
+  \code{\link{umx_is_MxModel}()},
+  \code{\link{umx_is_RAM}()}, \code{\link{umx_is_cov}()}
 }
 \concept{Test}

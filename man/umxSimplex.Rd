@@ -4,11 +4,21 @@
 \alias{umxSimplex}
 \title{Build and run a simplex twin model (not ready for use!)}
 \usage{
-umxSimplex(name = "simplex", selDVs, dzData, mzData, sep = NULL,
-  equateMeans = TRUE, dzAr = 0.5, dzCr = 1, addStd = TRUE,
-  addCI = TRUE, autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), optimizer = NULL)
+umxSimplex(
+  name = "simplex",
+  selDVs,
+  dzData,
+  mzData,
+  sep = NULL,
+  equateMeans = TRUE,
+  dzAr = 0.5,
+  dzCr = 1,
+  addStd = TRUE,
+  addCI = TRUE,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL
+)
 }
 \arguments{
 \item{name}{The name of the model (defaults to "simplex")}
@@ -79,7 +89,7 @@ data in any combination.
 \strong{Additional features}
 The \code{umxSimplex} function supports varying the DZ genetic association (defaulting to .5)
 to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
+from 1 (the default for modeling family-level effects shared 100\% by twins in a pair),
 to .25 to model dominance effects.
 
 \strong{Matrices and Labels in the simplex model}
@@ -135,12 +145,13 @@ m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3),
 \item \code{\link{umxACE}()} for more examples of twin modeling, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umx}}
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

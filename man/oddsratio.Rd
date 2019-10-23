@@ -4,8 +4,7 @@
 \alias{oddsratio}
 \title{Compute odds ratio (OR)}
 \usage{
-oddsratio(grp1 = c(n = 3, N = 10), grp2 = c(n = 1, N = 10),
-  alpha = 0.05)
+oddsratio(grp1 = c(n = 3, N = 10), grp2 = c(n = 1, N = 10), alpha = 0.05)
 }
 \arguments{
 \item{grp1}{either odds for group 1, or cases and total N , e.g c(n=3, N=10)}
@@ -24,10 +23,10 @@ Returns the odds in each group, and the odds ratio. Takes the cases (n) and tota
 of two numbers for each of two groups.
 }
 \details{
-Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:\preformatted{Group 1 odds = 0.43
+Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:\if{html}{\out{<div class="R">}}\preformatted{Group 1 odds = 0.43
 Group 2 odds = 0.11
           OR = 3.86 CI95[0.160, 3.64]
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
@@ -45,12 +44,12 @@ oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 \item \code{\link[=umx_r_test]{umx_r_test()}}
 }
 
-Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}},
-  \code{\link{reliability}}, \code{\link{umxCov2cor}},
-  \code{\link{umxHetCor}}, \code{\link{umx_apply}},
-  \code{\link{umx_cor}}, \code{\link{umx_fun_mean_sd}},
-  \code{\link{umx_means}}, \code{\link{umx_r_test}},
-  \code{\link{umx_round}}, \code{\link{umx_scale}},
-  \code{\link{umx_var}}, \code{\link{umx}}
+Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
+  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
+  \code{\link{umxHetCor}()}, \code{\link{umx_apply}()},
+  \code{\link{umx_cor}()}, \code{\link{umx_fun_mean_sd}()},
+  \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
+  \code{\link{umx_round}()}, \code{\link{umx_scale}()},
+  \code{\link{umx_var}()}, \code{\link{umx}}
 }
 \concept{Miscellaneous Stats Helpers}

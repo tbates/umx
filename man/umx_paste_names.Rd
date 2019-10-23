@@ -5,8 +5,13 @@
 \alias{tvars}
 \title{Concatenate base variable names with suffixes to create wide-format variable names (i.e twin-format)}
 \usage{
-umx_paste_names(varNames, sep = "", suffixes = 1:2, covNames = NULL,
-  prefix = NULL)
+umx_paste_names(
+  varNames,
+  sep = "",
+  suffixes = 1:2,
+  covNames = NULL,
+  prefix = NULL
+)
 }
 \arguments{
 \item{varNames}{a list of \emph{base} names, e.g c("bmi", "IQ")}
@@ -74,10 +79,11 @@ tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 \seealso{
 \code{\link[=namez]{namez()}}
 
-Other String Functions: \code{\link{umx_explode_twin_names}},
-  \code{\link{umx_explode}}, \code{\link{umx_grep}},
-  \code{\link{umx_names}}, \code{\link{umx_object_as_str}},
-  \code{\link{umx_rot}}, \code{\link{umx_trim}},
-  \code{\link{umx_write_to_clipboard}}, \code{\link{umx}}
+Other String Functions: \code{\link{umx_explode_twin_names}()},
+  \code{\link{umx_explode}()}, \code{\link{umx_grep}()},
+  \code{\link{umx_names}()},
+  \code{\link{umx_object_as_str}()},
+  \code{\link{umx_rot}()}, \code{\link{umx_trim}()},
+  \code{\link{umx_write_to_clipboard}()}, \code{\link{umx}}
 }
 \concept{String Functions}

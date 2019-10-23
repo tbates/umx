@@ -5,11 +5,21 @@
 \alias{umxSummary.MxModelGxE}
 \title{Summarize a GxE model}
 \usage{
-umxSummaryGxE(model = NULL, digits = 2, xlab = NA,
-  location = "topleft", separateGraphs = FALSE,
-  file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL,
-  reduce = FALSE, CIs = NULL, report = c("markdown", "html"),
-  show = NULL, ...)
+umxSummaryGxE(
+  model = NULL,
+  digits = 2,
+  xlab = NA,
+  location = "topleft",
+  separateGraphs = FALSE,
+  file = getOption("umx_auto_plot"),
+  returnStd = NULL,
+  std = NULL,
+  reduce = FALSE,
+  CIs = NULL,
+  report = c("markdown", "html"),
+  show = NULL,
+  ...
+)
 }
 \arguments{
 \item{model}{A fitted \code{\link[=umxGxE]{umxGxE()}} model to summarize}
@@ -85,16 +95,17 @@ umxSummaryGxE(m1, separateGraphs = FALSE)
 
 [umxSummary)]: R:umxSummary)
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
-  \code{\link{umxReduce}},
-  \code{\link{umxSummarizeTwinData}},
-  \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxEbiv}},
-  \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
+  \code{\link{umxReduceACE}()},
+  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
+  \code{\link{umxSummarizeTwinData}()},
+  \code{\link{umxSummaryACEcov}()},
+  \code{\link{umxSummaryACEv}()},
+  \code{\link{umxSummaryACE}()},
+  \code{\link{umxSummaryCP}()},
+  \code{\link{umxSummaryGxEbiv}()},
+  \code{\link{umxSummaryIP}()},
+  \code{\link{umxSummarySexLim}()},
+  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

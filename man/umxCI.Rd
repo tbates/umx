@@ -4,10 +4,15 @@
 \alias{umxCI}
 \title{Add (and, optionally, run) confidence intervals to a structural model.}
 \usage{
-umxCI(model = NULL, which = c("ALL", NA, "list of your making"),
-  remove = FALSE, run = c("no", "yes", "if necessary", "show"),
-  interval = 0.95, type = c("both", "lower", "upper"),
-  showErrorCodes = TRUE)
+umxCI(
+  model = NULL,
+  which = c("ALL", NA, "list of your making"),
+  remove = FALSE,
+  run = c("no", "yes", "if necessary", "show"),
+  interval = 0.95,
+  type = c("both", "lower", "upper"),
+  showErrorCodes = TRUE
+)
 }
 \arguments{
 \item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to report \code{\link[=mxCI]{mxCI()}}s on}
@@ -92,14 +97,17 @@ m1 = umxCI(m1, "a_r1c1", run = "yes")
 \item \code{\link[stats:confint]{stats::confint()}}, \code{\link[=umxConfint]{umxConfint()}}, \code{\link[=umxCI]{umxCI()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCompare}},
-  \code{\link{umxConfint}}, \code{\link{umxExpCov}},
-  \code{\link{umxExpMeans}}, \code{\link{umxFitIndices}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxRotate}},
-  \code{\link{umxSummary.MxModel}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCompare}()},
+  \code{\link{umxConfint}()}, \code{\link{umxExpCov}()},
+  \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

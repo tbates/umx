@@ -4,9 +4,13 @@
 \alias{umxSuperModel}
 \title{Make a multi-group model}
 \usage{
-umxSuperModel(name = "top", ..., autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal",
-  "mxTryHardWideSearch"), std = FALSE)
+umxSuperModel(
+  name = "top",
+  ...,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  std = FALSE
+)
 }
 \arguments{
 \item{name}{The name for the container model (default = 'top')}
@@ -86,10 +90,10 @@ summary(m3)
 \item \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Core Modeling Functions: \code{\link{umxAlgebra}},
-  \code{\link{umxMatrix}}, \code{\link{umxModify}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxRun}}, \code{\link{umxSummary}},
+Other Core Modeling Functions: \code{\link{umxAlgebra}()},
+  \code{\link{umxMatrix}()}, \code{\link{umxModify}()},
+  \code{\link{umxPath}()}, \code{\link{umxRAM}()},
+  \code{\link{umxRun}()}, \code{\link{umxSummary}()},
   \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

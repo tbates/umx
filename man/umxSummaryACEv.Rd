@@ -5,10 +5,21 @@
 \alias{umxSummary.MxModelACEv}
 \title{Shows a compact, publication-style, summary of a variance-based Cholesky ACE model.}
 \usage{
-umxSummaryACEv(model, digits = 2, file = getOption("umx_auto_plot"),
-  comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE,
-  report = c("markdown", "html"), returnStd = FALSE,
-  extended = FALSE, zero.print = ".", show = c("std", "raw"), ...)
+umxSummaryACEv(
+  model,
+  digits = 2,
+  file = getOption("umx_auto_plot"),
+  comparison = NULL,
+  std = TRUE,
+  showRg = FALSE,
+  CIs = TRUE,
+  report = c("markdown", "html"),
+  returnStd = FALSE,
+  extended = FALSE,
+  zero.print = ".",
+  show = c("std", "raw"),
+  ...
+)
 }
 \arguments{
 \item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize}
@@ -74,15 +85,17 @@ stdFit = umxSummary(m1, returnStd = TRUE)
 \item \code{\link[=umxACEv]{umxACEv()}}
 }
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
-  \code{\link{umxReduce}},
-  \code{\link{umxSummarizeTwinData}},
-  \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxEbiv}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
+  \code{\link{umxReduceACE}()},
+  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
+  \code{\link{umxSummarizeTwinData}()},
+  \code{\link{umxSummaryACEcov}()},
+  \code{\link{umxSummaryACE}()},
+  \code{\link{umxSummaryCP}()},
+  \code{\link{umxSummaryGxEbiv}()},
+  \code{\link{umxSummaryGxE}()},
+  \code{\link{umxSummaryIP}()},
+  \code{\link{umxSummarySexLim}()},
+  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

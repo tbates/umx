@@ -4,10 +4,21 @@
 \alias{umxSummarizeTwinData}
 \title{Summarize twin data}
 \usage{
-umxSummarizeTwinData(data = NULL, selVars = "wt", sep = "_T",
-  zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF = "MZFF",
-  DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS",
-  digits = 2, report = c("markdown", "html"))
+umxSummarizeTwinData(
+  data = NULL,
+  selVars = "wt",
+  sep = "_T",
+  zyg = "zygosity",
+  MZ = NULL,
+  DZ = NULL,
+  MZFF = "MZFF",
+  DZFF = "DZFF",
+  MZMM = "MZMM",
+  DZMM = "DZMM",
+  DZOS = "DZOS",
+  digits = 2,
+  report = c("markdown", "html")
+)
 }
 \arguments{
 \item{data}{The twin data.}
@@ -62,14 +73,17 @@ umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ =
 \item \code{\link[=umxAPA]{umxAPA()}}
 }
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}},
-  \code{\link{umxReduceACE}}, \code{\link{umxReduceGxE}},
-  \code{\link{umxReduce}}, \code{\link{umxSummaryACEcov}},
-  \code{\link{umxSummaryACEv}},
-  \code{\link{umxSummaryACE}}, \code{\link{umxSummaryCP}},
-  \code{\link{umxSummaryGxEbiv}},
-  \code{\link{umxSummaryGxE}}, \code{\link{umxSummaryIP}},
-  \code{\link{umxSummarySexLim}},
-  \code{\link{umxSummarySimplex}}, \code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
+  \code{\link{umxReduceACE}()},
+  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
+  \code{\link{umxSummaryACEcov}()},
+  \code{\link{umxSummaryACEv}()},
+  \code{\link{umxSummaryACE}()},
+  \code{\link{umxSummaryCP}()},
+  \code{\link{umxSummaryGxEbiv}()},
+  \code{\link{umxSummaryGxE}()},
+  \code{\link{umxSummaryIP}()},
+  \code{\link{umxSummarySexLim}()},
+  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

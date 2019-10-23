@@ -4,9 +4,20 @@
 \alias{umxSetParameters}
 \title{Change or fix parameters (e.g. their values, labels, bounds, ..) in a model.}
 \usage{
-umxSetParameters(model, labels, free = NULL, values = NULL,
-  newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE,
-  strict = TRUE, name = NULL, regex = FALSE, test = FALSE)
+umxSetParameters(
+  model,
+  labels,
+  free = NULL,
+  values = NULL,
+  newlabels = NULL,
+  lbound = NULL,
+  ubound = NULL,
+  indep = FALSE,
+  strict = TRUE,
+  name = NULL,
+  regex = FALSE,
+  test = FALSE
+)
 }
 \arguments{
 \item{model}{an \code{\link[=mxModel]{mxModel()}} to WITH}
@@ -44,11 +55,11 @@ A common use is setting new values and changing parameters from free to false.
 \emph{Note}: If you just want to modify and re-run a model, you probably want \code{\link[=umxModify]{umxModify()}}.
 }
 \details{
-Using \code{umxSetParameters}, you use \code{labels=} to select the parameters you want to update.
-You can set their free/fixed state with \code{free=}, and set new values with \code{values = }. Likewise
+Using \code{umxSetParameters}, you use \verb{labels=} to select the parameters you want to update.
+You can set their free/fixed state with \verb{free=}, and set new values with \verb{values = }. Likewise
 for bounds.
 
-\code{umxSetParameters} supports pattern matching (regular expressions) to select labels. Set \code{regex=}
+\code{umxSetParameters} supports pattern matching (regular expressions) to select labels. Set \verb{regex=}
 to a regular expression matching the labels you want to select. e.g. "G_to_.*" would match
 "G_to_anything".
 
@@ -85,10 +96,10 @@ parameters(m2)
 \item \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxLabel]{umxLabel()}}
 }
 
-Other Modify or Compare Models: \code{\link{umxEquate}},
-  \code{\link{umxFixAll}}, \code{\link{umxMI}},
-  \code{\link{umxModify}},
-  \code{\link{umxUnexplainedCausalNexus}},
+Other Modify or Compare Models: \code{\link{umxEquate}()},
+  \code{\link{umxFixAll}()}, \code{\link{umxMI}()},
+  \code{\link{umxModify}()},
+  \code{\link{umxUnexplainedCausalNexus}()},
   \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

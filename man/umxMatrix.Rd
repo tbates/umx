@@ -4,12 +4,25 @@
 \alias{umxMatrix}
 \title{Make a mxMatrix with automatic labels. Also takes name as the first parameter for more readable code.}
 \usage{
-umxMatrix(name = NA, type = "Full", nrow = NA, ncol = NA,
-  free = FALSE, values = NA, labels = TRUE, lbound = NA,
-  ubound = NA, byrow = getOption("mxByrow"), baseName = NA,
-  dimnames = NA, condenseSlots = getOption("mxCondenseMatrixSlots"),
-  ..., joinKey = as.character(NA), joinModel = as.character(NA),
-  jiggle = NA)
+umxMatrix(
+  name = NA,
+  type = "Full",
+  nrow = NA,
+  ncol = NA,
+  free = FALSE,
+  values = NA,
+  labels = TRUE,
+  lbound = NA,
+  ubound = NA,
+  byrow = getOption("mxByrow"),
+  baseName = NA,
+  dimnames = NA,
+  condenseSlots = getOption("mxCondenseMatrixSlots"),
+  ...,
+  joinKey = as.character(NA),
+  joinModel = as.character(NA),
+  jiggle = NA
+)
 }
 \arguments{
 \item{name}{The name of the matrix (Default = NA). Note the different order compared to mxMatrix!}
@@ -88,10 +101,10 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 \item \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}}, \code{\link[=mxMatrix]{mxMatrix()}}, \code{\link[=umxLabel]{umxLabel()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Core Modeling Functions: \code{\link{umxAlgebra}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxAlgebra}()},
+  \code{\link{umxModify}()}, \code{\link{umxPath}()},
+  \code{\link{umxRAM}()}, \code{\link{umxRun}()},
+  \code{\link{umxSummary}()},
+  \code{\link{umxSuperModel}()}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

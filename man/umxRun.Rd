@@ -4,9 +4,16 @@
 \alias{umxRun}
 \title{umxRun: Run an mxModel}
 \usage{
-umxRun(model, n = 1, calc_SE = TRUE, calc_sat = TRUE,
-  setValues = FALSE, setLabels = FALSE, intervals = FALSE,
-  comparison = NULL)
+umxRun(
+  model,
+  n = 1,
+  calc_SE = TRUE,
+  calc_sat = TRUE,
+  setValues = FALSE,
+  setLabels = FALSE,
+  intervals = FALSE,
+  comparison = NULL
+)
 }
 \arguments{
 \item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to run.}
@@ -65,10 +72,10 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 }
 \seealso{
-Other Core Modeling Functions: \code{\link{umxAlgebra}},
-  \code{\link{umxMatrix}}, \code{\link{umxModify}},
-  \code{\link{umxPath}}, \code{\link{umxRAM}},
-  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxAlgebra}()},
+  \code{\link{umxMatrix}()}, \code{\link{umxModify}()},
+  \code{\link{umxPath}()}, \code{\link{umxRAM}()},
+  \code{\link{umxSummary}()},
+  \code{\link{umxSuperModel}()}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

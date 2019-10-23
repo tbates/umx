@@ -4,9 +4,14 @@
 \alias{umx_cor}
 \title{Report correlations and their p-values}
 \usage{
-umx_cor(X, df = nrow(X) - 2, use = c("pairwise.complete.obs",
-  "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2,
-  type = c("r and p-value", "smart"))
+umx_cor(
+  X,
+  df = nrow(X) - 2,
+  use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs",
+    "na.or.complete"),
+  digits = 2,
+  type = c("r and p-value", "smart")
+)
 }
 \arguments{
 \item{X}{a matrix or dataframe}
@@ -46,12 +51,13 @@ umx_cor(tmp)
 \seealso{
 umxHetCor
 
-Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}},
-  \code{\link{oddsratio}}, \code{\link{reliability}},
-  \code{\link{umxCov2cor}}, \code{\link{umxHetCor}},
-  \code{\link{umx_apply}}, \code{\link{umx_fun_mean_sd}},
-  \code{\link{umx_means}}, \code{\link{umx_r_test}},
-  \code{\link{umx_round}}, \code{\link{umx_scale}},
-  \code{\link{umx_var}}, \code{\link{umx}}
+Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
+  \code{\link{oddsratio}()}, \code{\link{reliability}()},
+  \code{\link{umxCov2cor}()}, \code{\link{umxHetCor}()},
+  \code{\link{umx_apply}()},
+  \code{\link{umx_fun_mean_sd}()},
+  \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
+  \code{\link{umx_round}()}, \code{\link{umx_scale}()},
+  \code{\link{umx_var}()}, \code{\link{umx}}
 }
 \concept{Miscellaneous Stats Helpers}

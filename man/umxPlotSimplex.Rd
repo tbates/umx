@@ -5,9 +5,16 @@
 \alias{plot.MxModelSimplex}
 \title{Draw and display a graphical figure of a simplex model}
 \usage{
-umxPlotSimplex(x = NA, file = "name", digits = 2, means = FALSE,
-  std = TRUE, format = c("current", "graphviz", "DiagrammeR"),
-  strip_zero = TRUE, ...)
+umxPlotSimplex(
+  x = NA,
+  file = "name",
+  digits = 2,
+  means = FALSE,
+  std = TRUE,
+  format = c("current", "graphviz", "DiagrammeR"),
+  strip_zero = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{The \code{\link[=umxSimplex]{umxSimplex()}} model to display graphically}
@@ -53,11 +60,12 @@ m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 \item \code{\link[=umxSimplex]{umxSimplex()}}
 }
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}},
-  \code{\link{plot.MxModel}}, \code{\link{umxPlotACEcov}},
-  \code{\link{umxPlotACEv}}, \code{\link{umxPlotACE}},
-  \code{\link{umxPlotCP}}, \code{\link{umxPlotGxEbiv}},
-  \code{\link{umxPlotGxE}}, \code{\link{umxPlotIP}},
-  \code{\link{umxPlotSexLim}}, \code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
+  \code{\link{umxPlotSexLim}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}

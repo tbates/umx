@@ -4,12 +4,23 @@
 \alias{umxSexLim}
 \title{Multivariate sex limitation twin model}
 \usage{
-umxSexLim(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData,
-  dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar",
-  "Scalar", "Homogeneity"), dzAr = 0.5, dzCr = 1,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  optimizer = NULL)
+umxSexLim(
+  name = "sexlim",
+  selDVs,
+  mzmData,
+  dzmData,
+  mzfData,
+  dzfData,
+  dzoData,
+  sep = NA,
+  A_or_C = c("A", "C"),
+  sexlim = c("Nonscalar", "Scalar", "Homogeneity"),
+  dzAr = 0.5,
+  dzCr = 1,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL
+)
 }
 \arguments{
 \item{name}{The name of the model (Default = "sexlim")}
@@ -222,12 +233,13 @@ Multivariate genetic analysis of sex-lim and GxE interaction. \emph{Twin Researc
 \seealso{
 \code{\link[=umxSummarySexLim]{umxSummarySexLim()}}, \code{\link[=umxPlotSexLim]{umxPlotSexLim()}}
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEcov}},
-  \code{\link{umxACEv}}, \code{\link{umxACE}},
-  \code{\link{umxCP}}, \code{\link{umxGxE_window}},
-  \code{\link{umxGxEbiv}}, \code{\link{umxGxE}},
-  \code{\link{umxIP}}, \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSimplex}}, \code{\link{umx}}
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSimplex}()}, \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

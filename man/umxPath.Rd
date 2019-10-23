@@ -4,14 +4,36 @@
 \alias{umxPath}
 \title{Easier (and powerful) specification of paths in SEM.}
 \usage{
-umxPath(from = NULL, to = NULL, with = NULL, var = NULL,
-  cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL,
-  v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL,
-  firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL,
-  fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL,
+umxPath(
+  from = NULL,
+  to = NULL,
+  with = NULL,
+  var = NULL,
+  cov = NULL,
+  means = NULL,
+  v1m0 = NULL,
+  v.m. = NULL,
+  v0m0 = NULL,
+  v.m0 = NULL,
+  fixedAt = NULL,
+  freeAt = NULL,
+  firstAt = NULL,
+  unique.bivariate = NULL,
+  unique.pairs = NULL,
+  fromEach = NULL,
+  forms = NULL,
+  Cholesky = NULL,
+  defn = NULL,
   connect = c("single", "all.pairs", "all.bivariate", "unique.pairs",
-  "unique.bivariate"), arrows = 1, free = TRUE, values = NA,
-  labels = NA, lbound = NA, ubound = NA, hasMeans = NULL)
+    "unique.bivariate"),
+  arrows = 1,
+  free = TRUE,
+  values = NA,
+  labels = NA,
+  lbound = NA,
+  ubound = NA,
+  hasMeans = NULL
+)
 }
 \arguments{
 \item{from}{One or more source variables e.g "A" or c("A","B")}
@@ -52,7 +74,7 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 
 \item{Cholesky}{Treat \strong{Cholesky} variables as latent and \strong{to} as measured, and connect as in an ACE model.}
 
-\item{defn}{Makes a latent variable, var@0 mean fixed, set label to 'data.defVarName'}
+\item{defn}{Implements a definition variable as a latent with zero variance & mean and labeled 'data.defVar'}
 
 \item{connect}{as in mxPath - nb: from and to must also be set.}
 
@@ -202,10 +224,10 @@ plot(m1, splines= FALSE)
 \item \code{\link[=mxPath]{mxPath()}}
 }
 
-Other Core Modeling Functions: \code{\link{umxAlgebra}},
-  \code{\link{umxMatrix}}, \code{\link{umxModify}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxAlgebra}()},
+  \code{\link{umxMatrix}()}, \code{\link{umxModify}()},
+  \code{\link{umxRAM}()}, \code{\link{umxRun}()},
+  \code{\link{umxSummary}()},
+  \code{\link{umxSuperModel}()}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}

@@ -5,8 +5,16 @@
 \alias{umxTwoStage}
 \title{Build a SEM implementing the equivalent of 2-stage least squares regression}
 \usage{
-umxMendelianRandomization(formula = Y ~ X, instruments = ~qtl, data,
-  subset, weights, contrasts = NULL, name = "tsls", ...)
+umxMendelianRandomization(
+  formula = Y ~ X,
+  instruments = ~qtl,
+  data,
+  subset,
+  weights,
+  contrasts = NULL,
+  name = "tsls",
+  ...
+)
 }
 \arguments{
 \item{formula}{The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.}
@@ -97,7 +105,7 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 \item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[sem:tsls]{sem::tsls()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Super-easy helpers: \code{\link{umxEFA}},
+Other Super-easy helpers: \code{\link{umxEFA}()},
   \code{\link{umx}}
 }
 \concept{Super-easy helpers}

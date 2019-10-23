@@ -4,8 +4,15 @@
 \alias{umx_long2wide}
 \title{Take a long twin-data file and make it wide (one family per row)}
 \usage{
-umx_long2wide(data, famID = NA, twinID = NA, zygosity = NA,
-  vars2keep = NA, passalong = NA, twinIDs2keep = NA)
+umx_long2wide(
+  data,
+  famID = NA,
+  twinID = NA,
+  zygosity = NA,
+  vars2keep = NA,
+  passalong = NA,
+  twinIDs2keep = NA
+)
 }
 \arguments{
 \item{data}{The original (long-format) data file}
@@ -75,10 +82,10 @@ wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygo
 \item \code{\link[=merge]{merge()}}
 }
 
-Other Twin Data functions: \code{\link{umx_make_TwinData}},
-  \code{\link{umx_nice_data}},
-  \code{\link{umx_residualize}},
-  \code{\link{umx_scale_wide_twin_data}},
-  \code{\link{umx_wide2long}}, \code{\link{umx}}
+Other Twin Data functions: \code{\link{umx_make_TwinData}()},
+  \code{\link{umx_nice_data}()},
+  \code{\link{umx_residualize}()},
+  \code{\link{umx_scale_wide_twin_data}()},
+  \code{\link{umx_wide2long}()}, \code{\link{umx}}
 }
 \concept{Twin Data functions}

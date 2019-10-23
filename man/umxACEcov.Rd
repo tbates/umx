@@ -4,14 +4,26 @@
 \alias{umxACEcov}
 \title{Run a Cholesky with covariates, either fixed (def var in the means) or random (in the expected covariance matrix)}
 \usage{
-umxACEcov(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL,
+umxACEcov(
+  name = "ACEcov",
+  selDVs,
+  selCovs,
+  dzData,
+  mzData,
+  sep = NULL,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-  allContinuousMethod = c("cumulants", "marginals"), dzAr = 0.5,
-  dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0,
-  equateMeans = TRUE, bVector = FALSE,
-  autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes",
-  "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
-  optimizer = NULL)
+  allContinuousMethod = c("cumulants", "marginals"),
+  dzAr = 0.5,
+  dzCr = 1,
+  addStd = TRUE,
+  addCI = TRUE,
+  boundDiag = 0,
+  equateMeans = TRUE,
+  bVector = FALSE,
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  optimizer = NULL
+)
 }
 \arguments{
 \item{name}{The name of the model (defaults to"ACE").}
@@ -131,13 +143,14 @@ to Handle Missing Covariate Data in Twin Research : With an Application to
 Educational Achievement Data. \emph{Behavior Genetics}, \strong{46}, 583-95. doi:\url{https://doi.org/10.1007/s10519-015-9771-1}.
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{power.ACE.test}},
-  \code{\link{umxACE_cov_fixed}}, \code{\link{umxACEv}},
-  \code{\link{umxACE}}, \code{\link{umxCP}},
-  \code{\link{umxGxE_window}}, \code{\link{umxGxEbiv}},
-  \code{\link{umxGxE}}, \code{\link{umxIP}},
-  \code{\link{umxRotate.MxModelCP}},
-  \code{\link{umxSexLim}}, \code{\link{umxSimplex}},
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEv}()}, \code{\link{umxACE}()},
+  \code{\link{umxCP}()}, \code{\link{umxGxE_window}()},
+  \code{\link{umxGxEbiv}()}, \code{\link{umxGxE}()},
+  \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

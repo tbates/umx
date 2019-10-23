@@ -21,14 +21,14 @@ A dataframe containing correlations of weight for 66 females measured 6 times at
 \item Weight6: Weight at time 6 (t0 + 32 months)
 }
 
-Created as follows:\preformatted{Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
+Created as follows:\if{html}{\out{<div class="R">}}\preformatted{Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
 1.000
 0.985	1.000
 0.968	0.981	1.000
 0.957	0.970	0.985	1.000
 0.932	0.940	0.964	0.975	1.000
 0.890	0.897	0.927	0.949	0.973	1.000
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 data(Fischbein_wt) # load the data

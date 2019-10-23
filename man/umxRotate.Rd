@@ -4,8 +4,13 @@
 \alias{umxRotate}
 \title{Generic SEM factor model loading rotation function}
 \usage{
-umxRotate(model, rotation = c("varimax", "promax"), tryHard = "yes",
-  freeLoadingsAfter = TRUE, verbose = TRUE)
+umxRotate(
+  model,
+  rotation = c("varimax", "promax"),
+  tryHard = "yes",
+  freeLoadingsAfter = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{model}{a model to rotate}
@@ -27,14 +32,17 @@ umxRotate(model, rotation = c("varimax", "promax"), tryHard = "yes",
 See \code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}} to rotate the factor loadings of a \code{\link[=umxCP]{umxCP()}} model
 }
 \seealso{
-Other Reporting functions: \code{\link{RMSEA.MxModel}},
-  \code{\link{RMSEA.summary.mxmodel}}, \code{\link{RMSEA}},
-  \code{\link{extractAIC.MxModel}}, \code{\link{loadings}},
-  \code{\link{residuals.MxModel}},
-  \code{\link{umxCI_boot}}, \code{\link{umxCI}},
-  \code{\link{umxCompare}}, \code{\link{umxConfint}},
-  \code{\link{umxExpCov}}, \code{\link{umxExpMeans}},
-  \code{\link{umxFitIndices}}, \code{\link{umxPlotACEv}},
-  \code{\link{umxSummary.MxModel}}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()},
+  \code{\link{extractAIC.MxModel}()},
+  \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
+  \code{\link{umxCompare}()}, \code{\link{umxConfint}()},
+  \code{\link{umxExpCov}()}, \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

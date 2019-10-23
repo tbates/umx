@@ -4,9 +4,16 @@
 \alias{umxAlgebra}
 \title{A simple wrapper for mxAlgebra with name as the first parameter for more readable compact code.}
 \usage{
-umxAlgebra(name = NA, expression, dimnames = NA, ..., fixed = FALSE,
-  joinKey = as.character(NA), joinModel = as.character(NA),
-  verbose = 0L)
+umxAlgebra(
+  name = NA,
+  expression,
+  dimnames = NA,
+  ...,
+  fixed = FALSE,
+  joinKey = as.character(NA),
+  joinModel = as.character(NA),
+  verbose = 0L
+)
 }
 \arguments{
 \item{name}{The name of the matrix (Default = NA). Note the different order compared to mxMatrix!}
@@ -45,10 +52,10 @@ class(x$formula) # "call"
 \item \code{\link[=umxMatrix]{umxMatrix()}}
 }
 
-Other Core Modeling Functions: \code{\link{umxMatrix}},
-  \code{\link{umxModify}}, \code{\link{umxPath}},
-  \code{\link{umxRAM}}, \code{\link{umxRun}},
-  \code{\link{umxSummary}}, \code{\link{umxSuperModel}},
-  \code{\link{umx}}
+Other Core Modeling Functions: \code{\link{umxMatrix}()},
+  \code{\link{umxModify}()}, \code{\link{umxPath}()},
+  \code{\link{umxRAM}()}, \code{\link{umxRun}()},
+  \code{\link{umxSummary}()},
+  \code{\link{umxSuperModel}()}, \code{\link{umx}}
 }
 \concept{Core Modeling Functions}
