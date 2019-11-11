@@ -346,6 +346,7 @@ umxReduce.MxModelACE <- umxReduceACE
 #' @param object An fitted [mxModel()] from which to get residuals
 #' @param digits round to how many digits (default = 2)
 #' @param suppress smallest deviation to print out (default = NULL = show all)
+#' @param reorder optionally reorder the variables in the residuals matrix to show patterns
 #' @param ... Optional parameters
 #' @return - matrix of residuals
 #' @export
@@ -381,7 +382,7 @@ umxReduce.MxModelACE <- umxReduceACE
 #' residuals(m1, digits = 3, suppress = .005)
 #' # residuals are returned as an invisible object you can capture in a variable
 #' a = residuals(m1); a
-residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
+residuals.MxModel <- function(object, digits = 2, suppress = NULL, reorder=NULL...){
 	umx_check_model(object, type = NULL, hasData = TRUE)
 	expCov = umxExpCov(object, latents = FALSE)
 	if(object$data$type == "raw"){
@@ -390,6 +391,9 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, ...){
 		obsCov = object$data$observed
 	}
 	resid = cov2cor(obsCov) - cov2cor(expCov)
+	if(!is.null(reorder)){
+		resid = umx_reorder(resid, newOrder = reorder, force = TRUE)
+	}
 	umx_print(data.frame(resid), digits = digits, zero.print = ".", suppress = suppress)
 	if(is.null(suppress)){
 		print("nb: You can zoom in on bad values with, e.g. suppress = .01, which will hide values smaller than this. Use digits = to round")
