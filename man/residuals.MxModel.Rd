@@ -4,7 +4,7 @@
 \alias{residuals.MxModel}
 \title{Get residuals from an MxModel}
 \usage{
-\method{residuals}{MxModel}(object, digits = 2, suppress = NULL, reorder = NULL...)
+\method{residuals}{MxModel}(object, digits = 2, suppress = NULL, reorder = NULL, ...)
 }
 \arguments{
 \item{object}{An fitted \code{\link[=mxModel]{mxModel()}} from which to get residuals}

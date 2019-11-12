@@ -382,7 +382,7 @@ umxReduce.MxModelACE <- umxReduceACE
 #' residuals(m1, digits = 3, suppress = .005)
 #' # residuals are returned as an invisible object you can capture in a variable
 #' a = residuals(m1); a
-residuals.MxModel <- function(object, digits = 2, suppress = NULL, reorder=NULL...){
+residuals.MxModel <- function(object, digits = 2, suppress = NULL, reorder=NULL, ...){
 	umx_check_model(object, type = NULL, hasData = TRUE)
 	expCov = umxExpCov(object, latents = FALSE)
 	if(object$data$type == "raw"){

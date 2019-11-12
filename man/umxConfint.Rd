@@ -94,7 +94,7 @@ m2 =  umxConfint(m1, "all")
 }
 \seealso{
 \itemize{
-\item \code{\link[stats:confint]{stats::confint()}}, \code{\link[=umxCI]{umxCI()}}
+\item \code{\link[stats:confint]{stats::confint()}}, \code{\link[OpenMx:mxSE]{OpenMx::mxSE()}}, \code{\link[=umxCI]{umxCI()}}, \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}}
 }
 
 Other Reporting functions: \code{\link{RMSEA.MxModel}()},

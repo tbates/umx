@@ -532,7 +532,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	}
 	if(!is.null(group)){
 		if(class(data) != "data.frame"){
-			stop("Currently, for multiple groups, data must be a raw data.frame so I can subset it into multiple groups. You gave me a ", omxQuotes(class(mtcars)))
+			stop("Currently, for multiple groups, data must be a raw data.frame so I can subset it into multiple groups. You gave me a ", omxQuotes(class(data)))
 		}
 	}
 
