@@ -43,6 +43,5 @@ Suggests:
     rmarkdown,
 	psych
 BugReports: https://github.com/tbates/umx/issues
-Roxygen: list(wrap = FALSE)
 LazyData: true
 RoxygenNote: 6.1.99.9001

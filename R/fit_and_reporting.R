@@ -466,7 +466,7 @@ loadings.MxModel <- function(x, ...) {
 #' @export
 #' @return - [mxModel()]
 #' @family Reporting functions
-#' @seealso - [stats::confint()], [umxCI()] 
+#' @seealso - [stats::confint()], [OpenMx::mxSE()], [umxCI()], [OpenMx::mxCI()]
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -647,7 +647,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 	invisible(object)
 }
 
-# 1789(liberty+terror), 1815 (liberty+inequality)
+# 1776(liberty), 1789(liberty+terror), 1815 (liberty+inequality)
 
 #' Add (and, optionally, run) confidence intervals to a structural model.
 #'

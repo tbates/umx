@@ -3865,14 +3865,16 @@ umx_is_MxData <- function(x) {
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$vs = ordered(mtcars$vs) # binary factor
 #' umx_is_ordered(tmp) # numeric indices
+#' umx_is_ordered(tmp, strict=FALSE) # numeric indices
 #' umx_is_ordered(tmp, names = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, binary.only = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
 #' umx_is_ordered(tmp, continuous.only = TRUE)
+#' umx_is_ordered(tmp$cyl)
 #' isContinuous = !umx_is_ordered(tmp)
 #' tmp$gear = factor(mtcars$gear) # unordered factor
-#' # nb: Factors are not necessarily ordered! By default unordered factors cause an message...
+#' # nb: Factors are not necessarily ordered! By default unordered factors cause a message...
 #' \dontrun{
 #' tmp$cyl = factor(mtcars$cyl)
 #' umx_is_ordered(tmp, names=TRUE)
@@ -3884,10 +3886,10 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 	if(!is.data.frame(df)){
 		if(is.matrix(df)){
 			df = data.frame(df)
-			# stop("df argument to umx_is_ordered must be a dataframe. You gave me a matrix")
+			# stop("df argument to umx_is_ordered must be a data.frame. You gave me a matrix")
 		} else {
 			# df = data.frame(df)
-			stop("Argument df must be a dataframe. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+			stop("Argument df must be a data.frame. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
 	nVar = ncol(df);
@@ -3895,7 +3897,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 	isFactor  = rep(FALSE, nVar)
 	isOrdered = rep(FALSE, nVar)
 	for(n in 1:nVar) {
-		if(is.ordered(df[, n])) {
+		if(is.ordered(df[, n, drop= FALSE])) {
 			thisLevels  = length(levels(df[, n]))
 			if(binary.only & (2 == thisLevels) ){
 				isOrdered[n] = TRUE
