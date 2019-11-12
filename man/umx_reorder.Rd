@@ -4,12 +4,14 @@
 \alias{umx_reorder}
 \title{Reorder or drop variables from a correlation/covariance matrix.}
 \usage{
-umx_reorder(old, newOrder)
+umx_reorder(old, newOrder, force = FALSE)
 }
 \arguments{
 \item{old}{a square matrix of correlation or covariances to reorder}
 
 \item{newOrder}{Variables you want in the order you wish to have}
+
+\item{force}{Just assume input is value (default = FALSE)}
 }
 \value{
 - the re-ordered/resized matrix

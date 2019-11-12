@@ -4267,6 +4267,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #'
 #' @param old a square matrix of correlation or covariances to reorder
 #' @param newOrder Variables you want in the order you wish to have
+#' @param force Just assume input is value (default = FALSE)
 #' @return - the re-ordered/resized matrix
 #' @export
 #' @family Data Functions
@@ -4276,13 +4277,13 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 #' umx_reorder(oldMatrix, newOrder = c("mpg", "cyl", "disp")) # first 3
 #' umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 #' umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
-umx_reorder <- function(old, newOrder) {
-	if(!umx_is_cov(old, boolean = TRUE)){
+umx_reorder <- function(old, newOrder, force=FALSE) {
+	if(!force && !umx_is_cov(old, boolean = TRUE)){
 		stop("You don't appear to have offered up a covariance matrix.")
 	}
 	dim_names = dimnames(old)[[1]]
 	if(!all(newOrder %in% dim_names)){
-		stop("All variable names must appear in the matrix being umx_reorder'd")
+		stop("All variable names must appear in the dimnames of the matrix you are umx_reorder-ing")
 	}
 	numVarsToRetain = length(newOrder)
 	new = old[1:numVarsToRetain, 1:numVarsToRetain, drop = FALSE]
