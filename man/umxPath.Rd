@@ -191,7 +191,7 @@ umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
 umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 umxPath(cov = c("A", "B"))  # Covariance A <-> B
 umxPath(defn = "mpg") # create latent called def_mpg, with 0 mean * var, and label = "data.mpg"
-umxPath(fromEach = c('a','b'), c('c','d')) # a->c, a<->d, b<->c, b<->d
+umxPath(fromEach = c('a','b'), to = c('c','d')) # a->c, a<->d, b<->c, b<->d
 umxPath(unique.bivariate = c('a','b','c')) # bivariate paths a<->b, a<->c, b<->c etc.
 umxPath(unique.pairs = letters[1:4]) # bivariate paths a<->b, a<->c, a<->d, b<->c etc.
 umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
