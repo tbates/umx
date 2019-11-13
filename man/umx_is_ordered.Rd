@@ -46,14 +46,13 @@ umx_is_ordered(tmp, names = TRUE, binary.only = TRUE)
 umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
 umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
 umx_is_ordered(tmp, continuous.only = TRUE)
-umx_is_ordered(tmp$cyl)
 isContinuous = !umx_is_ordered(tmp)
 \dontrun{
-# nb: Factors are not necessarily ordered! By default unordered factors cause a message...
+# nb: By default, unordered factors cause a message...
 tmp$gear = factor(mtcars$gear) # UNordered factor
 umx_is_ordered(tmp)
 
-# not designed to work on single variables...
+# also: not designed to work on single variables...
 umx_is_ordered(tmp$cyl)
 # Do this instead...
 umx_is_ordered(tmp[, "cyl", drop=FALSE])
