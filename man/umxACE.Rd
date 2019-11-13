@@ -280,7 +280,7 @@ twinData$obese1=cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels)
 twinData$obese2=cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels)
 # Make the ordinal variables into umxFactors
 ordDVs = c("obese1", "obese2")
-twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obLevels)
+twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 mzData = mzData[1:80, ] # Just top 80 pairs to run fast

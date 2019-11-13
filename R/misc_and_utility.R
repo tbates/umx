@@ -3864,8 +3864,8 @@ umx_is_MxData <- function(x) {
 #' tmp = mtcars
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
 #' tmp$vs = ordered(mtcars$vs) # binary factor
-#' umx_is_ordered(tmp) # numeric indices
-#' umx_is_ordered(tmp, strict=FALSE) # numeric indices
+#' umx_is_ordered(tmp) # true/false
+#' umx_is_ordered(tmp, strict=FALSE)
 #' umx_is_ordered(tmp, names = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, binary.only = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
@@ -3873,11 +3873,15 @@ umx_is_MxData <- function(x) {
 #' umx_is_ordered(tmp, continuous.only = TRUE)
 #' umx_is_ordered(tmp$cyl)
 #' isContinuous = !umx_is_ordered(tmp)
-#' tmp$gear = factor(mtcars$gear) # unordered factor
-#' # nb: Factors are not necessarily ordered! By default unordered factors cause a message...
 #' \dontrun{
-#' tmp$cyl = factor(mtcars$cyl)
-#' umx_is_ordered(tmp, names=TRUE)
+#' # nb: Factors are not necessarily ordered! By default unordered factors cause a message...
+#' tmp$gear = factor(mtcars$gear) # UNordered factor
+#' umx_is_ordered(tmp)
+#' 
+#' # not designed to work on single variables...
+#' umx_is_ordered(tmp$cyl)
+#' # Do this instead...
+#' umx_is_ordered(tmp[, "cyl", drop=FALSE])
 #' }
 umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE) {
 	if(sum(c(binary.only, ordinal.only, continuous.only)) > 1){
@@ -3897,8 +3901,8 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 	isFactor  = rep(FALSE, nVar)
 	isOrdered = rep(FALSE, nVar)
 	for(n in 1:nVar) {
-		if(is.ordered(df[, n, drop= FALSE])) {
-			thisLevels  = length(levels(df[, n]))
+		if(is.ordered(df[, n, drop=TRUE])) {
+			thisLevels  = length(levels(df[, n, drop=TRUE]))
 			if(binary.only & (2 == thisLevels) ){
 				isOrdered[n] = TRUE
 			} else if(ordinal.only & (thisLevels > 2) ){
@@ -3907,8 +3911,8 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 				isOrdered[n] = TRUE
 			}
 		}
-		if(is.factor(df[,n])) {
-			thisLevels = length(levels(df[,n]))
+		if(is.factor(df[,n, drop=TRUE])) {
+			thisLevels = length(levels(df[,n, drop=TRUE]))
 			if(binary.only & (2 == thisLevels) ){
 				isFactor[n] = TRUE
 			} else if(ordinal.only & (thisLevels > 2) ){

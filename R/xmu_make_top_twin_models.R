@@ -462,6 +462,7 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 		longData = rbind(T1, T2)[, selVars[1:nVar], drop = FALSE]
 		# Mean starts (used across all raw solutions
 		meanStarts = umx_means(longData, ordVar = 0, na.rm = TRUE)
+
 		# Make wide again
 		meanStarts = c(meanStarts, meanStarts)
 		if(equateMeans){
@@ -470,7 +471,7 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 		} else {
 			meanLabels = paste0("expMean_", selVars)
 		}
-		varStarts = umx_var(longData, format= "diag", ordVar = 1, use = "pairwise.complete.obs")
+		varStarts = umx_var(longData, format= "diag", ordVar = 1, use = "pairwise.complete.obs", strict = FALSE)
 	} else if(dataType %in% c("cov", "cor")){
 		meanStarts = NA # Not used for summary data
 		meanLabels = NA
