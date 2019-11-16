@@ -276,6 +276,8 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 	# Only need score from [nrow, nfac, c("Scores", "StandardErrors")]
 	out = scores[ , , return, drop = FALSE]
 	out = data.frame(out)
+	# make names always "F1", not "F1.Scores" "F1.StandardErrors"
+	names(out) <- dimnames(scores)[[2]]
 	return(out)
 
 	# if(dim(scores)[2] == 1){
