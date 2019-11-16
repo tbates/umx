@@ -7,15 +7,18 @@
 umxFactorScores(
   model,
   type = c("ML", "WeightedML", "Regression"),
-  minManifests = NA
+  minManifests = NA,
+  return = c("Scores", "StandardErrors")
 )
 }
 \arguments{
-\item{model}{The model to generate scores from.}
+\item{model}{The model from which to generate scores.}
 
-\item{type}{The method used to compute the score ('ML', 'WeightedML', or 'Regression').}
+\item{type}{Method of computing the score ('ML', 'WeightedML', or 'Regression').}
 
-\item{minManifests}{The least number of variables required to return a score for a participant (Default = NA).}
+\item{minManifests}{The minimum number of variables not NA to return a score for a participant (Default = ask).}
+
+\item{return}{What to return (defaults to "Scores", which is what most users want, but can return "StandardErrors" on each score.}
 }
 \value{
 \itemize{
@@ -30,10 +33,17 @@ variables allowed for a score (subjects with fewer than minManifests will return
 }
 \examples{
 m1 = umxEFA(mtcars, factors = 2)
-x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
+
+# =========================================================================
+# = histogram of F1 and plot of F1 against F2 showing they are orthogonal =
+# =========================================================================
+hist(x$F1)
+plot(F1 ~ F2, data = x)
+
 \dontrun{
 m1 = umxEFA(mtcars, factors = 1)
-x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 x
 }
 }

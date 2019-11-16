@@ -242,9 +242,10 @@ umxFactanal <- umxEFA
 #' of 'ML', 'WeightedML', or 'Regression')
 #' It is a simple wrapper around mxFactorScores. For missing data, you must specify the least number of 
 #' variables allowed for a score (subjects with fewer than minManifests will return a score of NA.
-#' @param model The model to generate scores from.
-#' @param type  The method used to compute the score ('ML', 'WeightedML', or 'Regression').
-#' @param minManifests The least number of variables required to return a score for a participant (Default = NA).
+#' @param model The model from which to generate scores.
+#' @param type  Method of computing the score ('ML', 'WeightedML', or 'Regression').
+#' @param minManifests The minimum number of variables not NA to return a score for a participant (Default = ask).
+#' @param return What to return (defaults to "Scores", which is what most users want, but can return "StandardErrors" on each score.
 #' @return - dataframe of scores.
 #' @export
 #' @family Reporting Functions
@@ -253,26 +254,39 @@ umxFactanal <- umxEFA
 #' @md
 #' @examples
 #' m1 = umxEFA(mtcars, factors = 2)
-#' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+#' x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
+#' 
+#' # =========================================================================
+#' # = histogram of F1 and plot of F1 against F2 showing they are orthogonal =
+#' # =========================================================================
+#' hist(x$F1)
+#' plot(F1 ~ F2, data = x)
+#' 
 #' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 1)
-#' x = umxFactorScores(m1, type = c('Regression'), minManifests = 3)
+#' x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 #' x
 #' }
-umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), minManifests = NA) {
+umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), minManifests = NA, return = c("Scores", "StandardErrors")) {
+	type = match.arg(type)
+	return = match.arg(return)
 	suppressMessages({
 		scores = mxFactorScores(model, type = type, minManifests = minManifests)
 	})
 	# Only need score from [nrow, nfac, c("Scores", "StandardErrors")]
-	if(dim(scores)[2] == 1){
-		# drop = FALSE if only 1 factor
-		out = scores[ , 1, "Scores"]
-		out = data.frame(out)
-		names(out) <- dimnames(scores)[[2]]
-		return(out)
-	} else {
-		return(scores[ , , 1])
-	}
+	out = scores[ , , return, drop = FALSE]
+	out = data.frame(out)
+	return(out)
+
+	# if(dim(scores)[2] == 1){
+	# 	# simulate drop = FALSE if only 1 factor
+	# 	out = scores[ , 1, return]
+	# 	out = data.frame(out)
+	# 	names(out) <- dimnames(scores)[[2]]
+	# 	return(out)
+	# } else {
+	# 	return(scores[ , , return])
+	# }
 }
 
 
