@@ -3363,7 +3363,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 			stop(paste("In umx_time, pass models as a list, i.e., umx_time(c(m1, m2)), not umx_time(m1, m2)"))
 		}
 	}else if(is.character(x)){
-		umx_check(x %in% c('start', 'stop', "now"), "stop", "Valid time strings are 'start', 'stop', 'now', (or a model or list of models)")
+		umx_check(x %in% c('start', 'stop', "lap", "now"), "stop", "Valid time strings are 'start', 'stop', 'lap', (or a model or list of models). Leave blank for 'now'")
 	}else if(is.na(x)){
 		cat("Current time is ", format(Sys.time(), "%X, %a %d %b %Y"), "\nTry me with a list of models, or 'start', 'stop'")
 		return()
@@ -3385,7 +3385,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 			if(thisX == "start"){
 				options("umx_last_time" = proc.time())
 				return(invisible())
-			} else if (thisX == "stop") {
+			} else if (thisX == "stop" || thisX == "lap" ) {
 					tmp = getOption("umx_last_time")
 					if(is.null(tmp)){
 						message("Timer was not yet started: I started it now...")
@@ -3393,7 +3393,9 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 						return(invisible())
 					} else {
 						thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
-						options("umx_last_time" = proc.time())
+						if(thisX =="stop"){
+							options("umx_last_time" = proc.time())
+						}
 					}
 			}else if(thisX =="now"){
 				return(format(Sys.time(), "%X, %a %d %b %Y"))				
