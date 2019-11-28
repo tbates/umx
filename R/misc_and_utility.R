@@ -161,26 +161,22 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		stop("You must set 'name' (the name for the new column")
 	}
 	if(is.null(max)){
-		stop("You must set 'max' (the highest possible score for an item) in umx_score_scale")
-	}
-	if(min != 1){
-		stop("umx_score_scale doesn't handle min !=1")
+		stop("You must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 	}
 
 	if(is.null(name)){
 		name = paste0(base, "_score")
 	}
 	if(!is.null(pos)){
-		pos_sum = rowSums(data[,paste0(base, pos)])
+		pos_sum = rowSums(data[,paste0(base, pos), drop = FALSE])
 	} else {
 		pos_sum = 0
 	}
 	if(is.null(rev)){
+		# no reverse items
 		data[,name] = pos_sum
-	} else if (length(rev)==1){
-		data[,name] = pos_sum + (max+1-rev)
 	}else{
-		neg_sum = ((max+1)*length(rev))- rowSums(data[,paste0(base, rev)])		
+		neg_sum = ((max+min)*length(rev))- rowSums(data[,paste0(base, rev), drop= FALSE])		
 		data[,name] = (pos_sum + neg_sum)
 	}
 	return(data)
