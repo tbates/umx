@@ -3194,113 +3194,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 	p
 }
 
-#' Show matrices of RAM models in a easy-to-learn-from format. 
-#'
-#' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
-#' do this in a way that makes it easy to process for users: The matrix contents are formatted as 
-#' tables, and can even be displayed as tables in a web browser.
-#' 
-#' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
-#'
-#' @param model an [mxModel()] from which to show parameters.
-#' @param what legal options are "values" (default), "free", or "labels").
-#' @param show filter on what to show c("all", "free", "fixed").
-#' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta.
-#' @param digits precision to report. Default = round to 2 decimal places.
-#' @param na.print How to display NAs (default = "")
-#' @param zero.print How to display 0 values (default = ".")
-#' @param report How to report the results. "html" = open in browser.
-#' @return None
-#' @export
-#' @family Reporting Functions
-#' @references - <https://tbates.github.io>
-#' @md
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' manifests = names(demoOneFactor)
-#
-#' m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
-#' 	umxPath("G", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
-#' tmx_show(m1)
-#' tmx_show(m1, digits = 3)
-#' tmx_show(m1, matrices = "S")
-#' tmx_show(m1, what = "free")
-#' tmx_show(m1, what = "labels")
-#' tmx_show(m1, what = "free", matrices = "A")
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
-	if(!umx_is_RAM(model)){
-		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
-	}
-	report = match.arg(report)
-	what = match.arg(what)
-	show = match.arg(show)
-	
-	if("thresholds" %in% matrices){
-		# TODO tmx_show: Threshold printing not yet finalized
-		if(!is.null(model$deviations_for_thresh)){
-			dev = TRUE
-			x = model$deviations_for_thresh
-		} else {
-			dev = FALSE
-			x = model$threshMat
-		}
-		if(what == "values"){
-			if(dev){
-				v = model$lowerOnes_for_thresh$values %*% x$values
-			} else {
-				v = x$values
-			}
-			if(show == "free"){
-				v[x$free == FALSE] = NA
-			} else if (show == "fixed") {
-				v[x$free == TRUE] = NA
-			}
-			umx_print(v, zero.print = zero.print, na.print = na.print, digits = digits)
-		}else if(what == "free"){
-			umx_print(data.frame(x$free) , zero.print = zero.print, na.print = na.print, digits = digits)
-		}else if(what == "labels"){
-			l = x$labels
-			if(show == "free"){
-				l[x$free == FALSE] = ""
-			} else if (show=="fixed") {
-				l[x$free == TRUE] = ""
-			}
-			umx_print(l, zero.print = ".", na.print = na.print, digits = digits)
-		}
-	} else {
-		for (w in matrices) {
-			if(report == "html"){ file = paste0(what, w, ".html") } else { file = NA}
-			if(what == "values"){
-				tmp = data.frame(model$matrices[[w]]$values)
-				message("\n", "Values of ", w, " matrix (0 shown as .):", appendLF = FALSE)
-			}else if(what == "free"){
-				tmp = model$matrices[[w]]$free
-				message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
-			}else if(what == "labels"){
-				x = model$matrices[[w]]$labels
-				if(show=="free"){
-					x[model$matrices[[w]]$free!=TRUE] = ""
-				} else if (show=="fixed") {
-					x[model$matrices[[w]]$free==TRUE] = ""
-				}
-				tmp = x
-				message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
-			}else if(what == "nonzero_or_free"){
-				message("99 means parameter is fixed at a non-zero value")
-				values = model$matrices[[w]]$values
-				Free   = model$matrices[[w]]$free
-				values[!Free & values !=0] = 99
-				tmp = data.frame(values)
-				message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
-			}
-			umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
-		}
-	}
-}
+
 
 #' umx_time
 #'
@@ -3965,7 +3859,8 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
+#' )
+#'
 #' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
@@ -3975,11 +3870,11 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 umx_is_RAM <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 	if(!umx_is_MxModel(obj)){
-		return(F)
-	} else if(class(obj)[1] == "MxRAMModel"){
-		return(T)
+		return(FALSE)
+	} else if(class(obj)[[1]] == "MxRAMModel"){
+		return(TRUE)
 	} else {
-		return(class(obj$objective)[1] == "MxRAMObjective")
+		return(class(obj$objective)[[1]] == "MxRAMObjective")
 	}
 }
 
