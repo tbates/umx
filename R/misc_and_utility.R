@@ -3367,15 +3367,15 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' }
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
-	file = xmu_match.arg(file, c(NA,"tmp.html"), check = FALSE)
-	if(class(x)=="character"){
+	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
+	if(class(x)[[1]] == "character"){
 		print(x)
-	}else if(class(x)!= "data.frame"){
-		if(class(x)=="matrix" |class(x)=="numeric"){
+	}else if(class(x)[[1]] != "data.frame"){
+		if(class(x)[[1]] == "matrix" | class(x)[[1]] == "numeric"){
 			x = data.frame(x)
 		} else {
 			message("Sorry, umx_print currently only prints data.frames, matrices, and vectors.\n
-			File a request to print '", class(x), "' objects\n or perhaps you want umx_msg?")
+			File a request to print '", class(x)[[1]], "' objects\n or perhaps you want umx_msg?")
 			return()
 		}
 	}
@@ -4925,7 +4925,7 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	if(fixed){
 		ignore.case = FALSE
 	}
-	if(class(df) %in%  c("summary.mxmodel", "data.frame")){
+	if(class(df)[[1]] %in%  c("summary.mxmodel", "data.frame")){
 		nameVector = names(df)
 	}else if(umx_is_MxData(df)) {
 			if(df$type == "raw"){
@@ -4938,15 +4938,15 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 			if(is.null(nameVector)){
 				stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
 			}
-	} else if(class(df) == "list"){
+	} else if(class(df)[[1]] == "list"){
 		# Assume it's a list of mxModels and we want the MODEL names (not parameters... see below)
 		nameVector = c()
 		for (i in df) {
 				nameVector = c(nameVector, i$name)
 		}
-	} else if(class(df) == "character"){
+	} else if(class(df)[[1]] == "character"){
 		nameVector = df
-	} else if(class(df) == "matrix"){
+	} else if(class(df)[[1]] == "matrix"){
 		nameVector = as.vector(df)
 	} else if(umx_is_MxModel(df)){
 		# Assume it's one model, and we want the parameter names

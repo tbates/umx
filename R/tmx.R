@@ -287,12 +287,12 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	if(!umx_is_RAM(model)){
 		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
 	}
+	what   = match.arg(what)
+	show   = match.arg(show)
 	report = match.arg(report)
-	what = match.arg(what)
-	show = match.arg(show)
 	
 	if("thresholds" %in% matrices){
-		# TODO tmx_show: Threshold printing not yet finalized
+		# TODO tmx_show: Threshold printing not yet finalised
 		if(!is.null(model$deviations_for_thresh)){
 			dev = TRUE
 			x = model$deviations_for_thresh
