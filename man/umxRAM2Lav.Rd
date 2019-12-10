@@ -16,32 +16,27 @@ A lavaan syntax string, e.g. "A~~B"
 Takes an OpenMx RAM model and creates the corresponding lavaan syntax string.
 
 This function is at the alpha quality stage, and **should be expected to have bugs**.
-Several features are not yet supported. Let me know if you would like them.
+Also likely to change functionality and even parameters as new features are supported (e.g. groups)
+and lavaan-style strings exported. Several features are not yet supported. Let me know if you would like them.
 }
 \examples{
-umxRAM2Lav(umxLav2RAM("x ~ y", autoRun=FALSE, printTab=FALSE, lavaanMode="lavaan"))
+umxRAM2Lav(umxLav2RAM("x ~ y", autoRun = FALSE, printTab = FALSE, lavaanMode = "lavaan"))
 }
 \seealso{
-- [umxRAM()]
+- [umxLav2RAM()], [umxRAM()]
 
-Other Miscellaneous Utility Functions: 
-\code{\link{install.OpenMx}()},
-\code{\link{qm}()},
-\code{\link{umxBrownie}()},
-\code{\link{umxFactor}()},
-\code{\link{umxLav2RAM}()},
-\code{\link{umxVersion}()},
-\code{\link{umx_array_shift}()},
-\code{\link{umx_cont_2_quantiles}()},
-\code{\link{umx_find_object}()},
-\code{\link{umx_make}()},
-\code{\link{umx_msg}()},
-\code{\link{umx_open_CRAN_page}()},
-\code{\link{umx_pad}()},
-\code{\link{umx_pb_note}()},
-\code{\link{umx_print}()},
-\code{\link{umx_score_scale}()},
-\code{\link{umx}},
-\code{\link{xmu_cell_is_on}()}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
+  \code{\link{qm}()}, \code{\link{umxBrownie}()},
+  \code{\link{umxFactor}()}, \code{\link{umxLav2RAM}()},
+  \code{\link{umxVersion}()},
+  \code{\link{umx_array_shift}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_find_object}()},
+  \code{\link{umx_make}()}, \code{\link{umx_msg}()},
+  \code{\link{umx_open_CRAN_page}()},
+  \code{\link{umx_pad}()}, \code{\link{umx_pb_note}()},
+  \code{\link{umx_print}()},
+  \code{\link{umx_score_scale}()}, \code{\link{umx}},
+  \code{\link{xmu_cell_is_on}()}
 }
 \concept{Miscellaneous Utility Functions}

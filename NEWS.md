@@ -1,3 +1,5 @@
+# umx 3.1.0
+
 # umx 3.0.5
 * December 2019 R 4.0.0 compatibility
 * BUGFIXED: `umx_is_ordered` was broken by previous fix to support the un-tidyverse mucking with dataframes... Now fixed
