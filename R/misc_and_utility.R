@@ -5051,6 +5051,14 @@ umx_rot <- function(vec){
 #' 
 #' *Note*: Not all data sets have an order column, but it is essential to rank subjects correctly.
 #' 
+#' You might start off with a TWID which is a concatenation of a familyID and a 2 digit twinID
+#' 
+#' **Generating famID and twinID as used by this function**
+#' 
+#' You can capture the last 2 digits with the `mod` function: `twinID = df$TWID %% 100`
+#' 
+#' You can *drop* the last 2 digits with integer div: `famID = df$TWID %/% 100`
+#' 
 #' *Note*: The functions assumes that if zygosity or any passalong variables are NA in the first
 #' family member, they are NA everywhere. i.e., it does not hunt for values that
 #' are present elsewhere to try and self-heal missing data.
@@ -5172,6 +5180,11 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @description
 #' Just detects the data columns for twin 1, and twin 2, then returns them stacked
 #' on top of each other (rbind) with the non-twin specific columns copied for each as well.
+#' 
+#' *Note*, zygosity codings differ among labs. One scheme uses 1 = MZFF, 2 = MZMM, 3 = DZFF, 4 = DZMM, 
+#' 5 = DZOS or DZFM, 6 = DZMF, with 9 = unknown, and then 50, 51,... for siblings.
+#' 
+#' Typically, OS twins are ordered Female/Male.
 #'
 #' @param data a dataframe containing twin data.
 #' @param sep the string between the var name and twin suffix, i.e., var_T1 = _T
