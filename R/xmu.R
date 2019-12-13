@@ -583,7 +583,7 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	if(is.null(sep)){
 		if(enforceSep){
 			message("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and I will create the full variable names from that.")
-			# strip the numbers off the ends
+			# Strip the numbers off the ends
 			namez(selDVs, "(_.)[0-9]$", replacement = "")
 			nodigits = namez(selDVs, "[0-9]$", replacement = "")
 			nodigits = unique(nodigits)
@@ -610,7 +610,6 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	# 4. Check all names in the data
 	umx_check_names(selVars, mzData)
 	umx_check_names(selVars, dzData)
-
 
 	# 6. Look for name conflicts
 	badNames = umx_grep(selVars, grepString = "^[ACDEacde][0-9]*$")
