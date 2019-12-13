@@ -19,6 +19,11 @@ umx_wide2long(data, sep = "_T", verbose = FALSE)
 \description{
 Just detects the data columns for twin 1, and twin 2, then returns them stacked
 on top of each other (rbind) with the non-twin specific columns copied for each as well.
+
+*Note*, zygosity codings differ among labs. One scheme uses 1 = MZFF, 2 = MZMM, 3 = DZFF, 4 = DZMM, 
+5 = DZOS or DZFM, 6 = DZMF, with 9 = unknown, and then 50, 51,... for siblings.
+
+Typically, OS twins are ordered Female/Male.
 }
 \examples{
 long = umx_wide2long(data = twinData, sep = "")

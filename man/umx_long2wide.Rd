@@ -41,6 +41,14 @@ twinID is equivalent to birth order. Up to 10 twinIDs are allowed (family order)
 
 \emph{Note}: Not all data sets have an order column, but it is essential to rank subjects correctly.
 
+You might start off with a TWID which is a concatenation of a familyID and a 2 digit twinID
+
+\strong{Generating famID and twinID as used by this function}
+
+You can capture the last 2 digits with the \code{mod} function: \code{twinID = df$TWID \%\% 100}
+
+You can \emph{drop} the last 2 digits with integer div: \code{famID = df$TWID \%/\% 100}
+
 \emph{Note}: The functions assumes that if zygosity or any passalong variables are NA in the first
 family member, they are NA everywhere. i.e., it does not hunt for values that
 are present elsewhere to try and self-heal missing data.

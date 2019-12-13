@@ -575,6 +575,10 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' # 3. stop on a factor with sep = NULL
 #' }
 xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL, enforceSep = TRUE, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, optimizer = NULL) {
+	if(umx_is_MxData(dataMZ)){
+		mzData = mzData$observed
+		dzData = dzData$observed
+	}
 	# 1. Check data has rows
 	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
@@ -583,7 +587,8 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	if(is.null(sep)){
 		if(enforceSep){
 			message("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and I will create the full variable names from that.")
-			# Strip the numbers off the ends
+			# compute a guess as to what would be needed
+			# Strip the numbers off the ends of names
 			namez(selDVs, "(_.)[0-9]$", replacement = "")
 			nodigits = namez(selDVs, "[0-9]$", replacement = "")
 			nodigits = unique(nodigits)
@@ -625,7 +630,7 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	# 5. Check data are legal
 		if(!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric", "factor", "ordered"), all = TRUE)) {
 			bad = selVars[!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric","factor", "ordered"), all = FALSE)]
-			stop("variables must be integer, numeric or (possibly ordered) factor. The following are not: ", omxQuotes(bad))
+			stop("variables must be integer, numeric or (usually ordered) factor. The following are not: ", omxQuotes(bad))
 		}
 		# Drop unused columns from mzData and dzData
 		mzData = mzData[, selVars]
@@ -651,7 +656,7 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	if(nFactors > 0 & is.null(sep)){
 		stop("Please set 'sep'. e.g.: sep = '_T' \n",
 		"Why: Your data include ordinal or binary variables.\n
-		So I need to know which variables are for twin 1 and which for twin2.\n",
+		Building this model, I need to know which variables are for twin 1 and which for twin2.\n",
 		"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
 		" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACE with:\n",
 		"selDVs = c('obesity','dep'), sep = '_T' \n",
