@@ -17,13 +17,14 @@ umx_is_cov(data = NULL, boolean = FALSE, verbose = FALSE)
 - "raw", "cor", or "cov", (or if boolean, then T | F)
 }
 \description{
-test if a data frame or matrix is cov or cor data, or is likely to be raw...
+test if a data frame, matrix or mxData is type cov or cor, or is likely to be raw...
 }
 \examples{
 df = cov(mtcars)
 umx_is_cov(df)
 df = cor(mtcars)
 umx_is_cov(df)
+umx_is_cov(mxData(df[1:3,1:3], type="cov", nobs=200))
 umx_is_cov(df, boolean = TRUE)
 umx_is_cov(mtcars, boolean = TRUE)
 }

@@ -159,9 +159,10 @@
 #'
 xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	# **TODO list for xmu_make_top_twin**
-	# TODO: xmu_make_top_twin Add selCovs
-	# TODO: xmu_make_top_twin Add covMethod == "fixed"
-	# TODO: xmu_make_top_twin Add beta matrix for fixed covariates in means.
+	# TODO: 1. xmu_make_top_twin Support mxData input
+	# TODO: 2. xmu_make_top_twin Add selCovs
+	# TODO: 3. xmu_make_top_twin Add beta matrix for fixed covariates in means.
+	# TODO: 4. xmu_make_top_twin Add covMethod == "fixed"
 	# TODO: xmu_make_top_twin more tests in a test page
 	# TODO: Improve the start guesses based on input model type (ACE, CP, IP etc.)
 
@@ -179,7 +180,7 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 	# ====================================================
 	if(is.null(sep)){
 		selVars = selDVs
-		message("Polite note: It's better to use 'sep' - in future, this might become compulsory as it helps manage the variable names.")
+		message("Polite note: It's better to use 'sep'. This might become compulsory as it helps manage the variable names.")
 		# stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
 	}else{
 		selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
@@ -200,22 +201,29 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		if(!all(is.null(c(numObsMZ, numObsDZ)))){
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
+		if(umx_is_MxData(mzData)){
+			tmpMZData = mzData$observed
+			tmpDZData = dzData$observed
+		}else{
+			tmpMZData = mzData
+			tmpDZData = dzData
+		}
 		# Find ordinal variables
-		if(any(umx_is_ordered(mzData[,selVars]))){
+		if(any(umx_is_ordered(tmpMZData[, selVars]))){
 			if(is.null(sep)){
 				stop("With ordinal data in twins, I have to have a separator to figure out which twin is which. Please set selDVs to the base names, and sep='_T' or whatever you used (see ?umxACE)")
 			}
-			isFactor = umx_is_ordered(mzData[, selVars])                      # T/F list of factor columns
-			isOrd    = umx_is_ordered(mzData[, selVars], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
-			isBin    = umx_is_ordered(mzData[, selVars], binary.only  = TRUE) # T/F list of binary columns
+			isFactor = umx_is_ordered(tmpMZData[, selVars])                      # T/F list of factor columns
+			isOrd    = umx_is_ordered(tmpMZData[, selVars], ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+			isBin    = umx_is_ordered(tmpMZData[, selVars], binary.only  = TRUE) # T/F list of binary columns
 			nFactors = sum(isFactor)
 			nOrdVars = sum(isOrd) # total number of ordinal columns
 			nBinVars = sum(isBin) # total number of binary columns
 
-			factorVarNames = names(mzData[, selVars])[isFactor]
-			ordVarNames    = names(mzData[, selVars])[isOrd]
-			binVarNames    = names(mzData[, selVars])[isBin]
-			contVarNames   = names(mzData[, selVars])[!isFactor]
+			factorVarNames = names(tmpMZData[, selVars])[isFactor]
+			ordVarNames    = names(tmpMZData[, selVars])[isOrd]
+			binVarNames    = names(tmpMZData[, selVars])[isBin]
+			contVarNames   = names(tmpMZData[, selVars])[!isFactor]
 		}else{
 			# Summary data
 			isFactor = isOrd    = isBin    = c()
@@ -224,16 +232,16 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		}
 		if(!is.null(weightVar)){
 			# Weight variable provided: check it exists in each frame.
-			if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
+			if(!umx_check_names(weightVar, data = tmpMZData, die = FALSE) | !umx_check_names(weightVar, data = tmpDZData, die = FALSE)){
 				stop("The weight variable must be included in the mzData and dzData",
 					 "\n frames passed into this twin model when \"weightVar\" is specified",
-					 "\n mzData contained:", paste(names(mzData), collapse = ", "),
-					 "\n and dzData contain:", paste(names(dzData), collapse = ", "),
+					 "\n mzData contained:", paste(names(tmpMZData), collapse = ", "),
+					 "\n and dzData contain:", paste(names(tmpDZData), collapse = ", "),
 					 "\n but I was looking for ", weightVar, " as the moderator."
 				)
 			}
-			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(mzData), ncol = 1, free = FALSE, values = mzData[, weightVar])
-			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(dzData), ncol = 1, free = FALSE, values = dzData[, weightVar])
+			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(tmpMZData), ncol = 1, free = FALSE, values = tmpMZData[, weightVar])
+			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(tmpDZData), ncol = 1, free = FALSE, values = tmpDZData[, weightVar])
 			bVector = TRUE
 		} else {
 			# No weights bVector stays whatever it was.
@@ -245,7 +253,7 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		# ===================================================================
 		# = NOTE: selVars is expanded by the time we get to here... no sep. =
 		# ===================================================================
-		tmp = xmu_starts(mzData= mzData, dzData= dzData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
+		tmp = xmu_starts(mzData= tmpMZData, dzData= tmpDZData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
 		varStarts  = tmp$varStarts
 		meanStarts = tmp$meanStarts
 		meanLabels = tmp$meanLabels
@@ -253,10 +261,9 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		# ============================================
 		# = Make mxData, dropping any unused columns =
 		# ============================================
-		allData = rbind(mzData, dzData)
+		allData = rbind(tmpMZData, tmpDZData)
 		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars)
 		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars)
-
 		# =====================================
 		# = Add means and var matrices to top =
 		# =====================================
@@ -363,6 +370,7 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 	} else {
 		stop("Datatype \"", dataType, "\" not understood")
 	}
+
 	# ==============================
 	# = Add mxFitFunction to model =
 	# ==============================
@@ -381,7 +389,7 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix))
 	} else {
 		return(list(top = top, MZ = MZ, DZ = DZ, bVector = bVector, mzWeightMatrix = NULL, dzWeightMatrix = NULL))
-	}	
+	}
 }                                           
 
 
@@ -448,14 +456,18 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 		# sep = ""; nSib = 2; selVars = c("wt", "ht")
 		selVars = umx_paste_names(selVars, sep = sep, suffixes = 1:nSib)
 	}
-
 	nVar = length(selVars)/nSib
 	dataType = umx_is_cov(dzData, boolean = FALSE)
 	if(dataType == "raw") {
 		if(is.null(equateMeans)){
 			stop("you have to tell xmu_starts whether to equate the means or not")
 		}
-		allData = rbind(mzData, dzData)[,selVars]
+		if(umx_is_MxData(mzData)){
+			allData = rbind(mzData$observed, dzData$observed)[,selVars]
+		}else{
+			allData = rbind(mzData, dzData)[,selVars]
+		}
+
 		T1 = allData[, 1:nVar, drop = FALSE]
 		T2 = allData[, (nVar+1):(nVar*2), drop = FALSE];
 		names(T2) = names(T1)
@@ -475,8 +487,13 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 	} else if(dataType %in% c("cov", "cor")){
 		meanStarts = NA # Not used for summary data
 		meanLabels = NA
-		het_mz = umx_reorder(mzData, selVars)		
-		het_dz = umx_reorder(dzData, selVars)
+		if(umx_is_MxData(mzData)){
+			het_mz = umx_reorder(mzData$observed, selVars)		
+			het_dz = umx_reorder(dzData$observed, selVars)
+		}else{
+			het_mz = umx_reorder(mzData, selVars)		
+			het_dz = umx_reorder(dzData, selVars)
+		}
 		varStarts = (diag(het_mz)[1:nVar]+ diag(het_dz)[1:nVar])/2
 	}else{
 		stop("xmu_starts can only handle raw and cov/cor data types. You gave me ", omxQuotes(dataType))

@@ -17,6 +17,8 @@ umxGxE(
   lboundACE = NA,
   lboundM = NA,
   dropMissingDef = TRUE,
+  dzAr = 0.5,
+  dzCr = 1,
   autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
   optimizer = NULL
@@ -46,6 +48,10 @@ umxGxE(
 \item{lboundM}{If not NA, then lbound the moderator effects at this value (default = NA, can help to set this to 0)}
 
 \item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.}
+
+\item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
+
+\item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
 
 \item{autoRun}{Optionally run the model (default), or just to create it and return without running.}
 
@@ -77,11 +83,9 @@ umx_set_optimizer("SLSQP")
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = "bmi"
 selDefs = "age"
-mzData  = subset(twinData, zygosity == "MZFF")[100,]
-dzData  = subset(twinData, zygosity == "DZFF")[100,]
-umx_time("start")
+mzData  = subset(twinData, zygosity == "MZFF")[1:100,]
+dzData  = subset(twinData, zygosity == "DZFF")[1:100,]
 m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
-umx_time("stop")
 
 \dontrun{
 # Select the data on the fly with data= and zygosity levels

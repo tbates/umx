@@ -575,7 +575,7 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' # 3. stop on a factor with sep = NULL
 #' }
 xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL, enforceSep = TRUE, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, optimizer = NULL) {
-	if(umx_is_MxData(dataMZ)){
+	if(umx_is_MxData(mzData)){
 		mzData = mzData$observed
 		dzData = dzData$observed
 	}

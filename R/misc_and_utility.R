@@ -3939,7 +3939,7 @@ umx_is_MxMatrix <- function(obj) {
 
 #' umx_is_cov
 #'
-#' test if a data frame or matrix is cov or cor data, or is likely to be raw...
+#' test if a data frame, matrix or mxData is type cov or cor, or is likely to be raw...
 #' @param data dataframe to test
 #' @param boolean whether to return the type ("cov") or a boolean (default = string)
 #' @param verbose How much feedback to give (default = FALSE)
@@ -3952,6 +3952,7 @@ umx_is_MxMatrix <- function(obj) {
 #' umx_is_cov(df)
 #' df = cor(mtcars)
 #' umx_is_cov(df)
+#' umx_is_cov(mxData(df[1:3,1:3], type="cov", nobs=200))
 #' umx_is_cov(df, boolean = TRUE)
 #' umx_is_cov(mtcars, boolean = TRUE)
 umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
@@ -3959,7 +3960,12 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 		stop("Error in umx_is_cov: You have to provide the data = that you want to check...\n",
 		"Or as Jack Nicholson says in The Departed: 'No ticky... no laundry' ") 
 	}
-	if( nrow(data) == ncol(data)) {
+	if(umx_is_MxData(data)){
+		isCov = data$type
+		if(verbose){
+			message("mxData type = ", isCov)
+		}
+	} else	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
 			if(all(diag(data) == 1)){
 				isCov = "cor"
