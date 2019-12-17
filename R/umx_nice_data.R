@@ -4,14 +4,14 @@
 #' `umx_make_twin_data_nice` is a function to convert your twin data into a format used across `umx`. Specifically:
 #'
 #' 1. Existing column for zygosity is renamed to "zygosity".
-#' 2. sep is set to "_T"
-#' 3. The twinID is is set to a seuqential digit 1,2,3.
-
+#' 2. `sep` is set to "_T"
+#' 3. The twinID is is set to sequential digits, i.e. 1,2...
+#' 
 # #' @details
 #' @param data a [data.frame()] to check/convert.
 #' @param sep existing separator string (will be updated to "_T").
-#' @param numbering existing twin sequence string (will be updated to _T1, _T2, _T3).
 #' @param zygosity existing zygosity column name (will be renamed `zygosity`).
+#' @param numbering existing twin sequence string (will be updated to _T1, _T2, _T3).
 #' @return - [data.frame()]
 #' @export
 #' @family Twin Data functions

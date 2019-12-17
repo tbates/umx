@@ -24,8 +24,8 @@ umx_make_twin_data_nice(data, sep, zygosity, numbering)
 \code{umx_make_twin_data_nice} is a function to convert your twin data into a format used across \code{umx}. Specifically:
 \enumerate{
 \item Existing column for zygosity is renamed to "zygosity".
-\item sep is set to "_T"
-\item The twinID is is set to a seuqential digit 1,2,3.
+\item \code{sep} is set to "_T"
+\item The twinID is is set to sequential digits, i.e. 1,2...
 }
 }
 \examples{

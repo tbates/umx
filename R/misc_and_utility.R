@@ -142,9 +142,9 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' # ==============================
 #' 
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
-#' tmp[1,namez(tmp, "A",ignore.case=F)]
-#'   A1 A2 A3 A4 A5  A
-#'   2  4  3  4  4  20
+#' tmp[1, namez(tmp, "A",ignore.case=FALSE)]
+#' #  A1 A2 A3 A4 A5  A
+#' #  2  4  3  4  4  20
 #' 
 #' # Handscore subject 1
 #' # A2 + A3 + A4 + A5 + A1(Reversed)
