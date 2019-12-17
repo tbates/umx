@@ -91,7 +91,7 @@ wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygo
 }
 
 Other Twin Data functions: \code{\link{umx_make_TwinData}()},
-  \code{\link{umx_nice_data}()},
+  \code{\link{umx_make_twin_data_nice}()},
   \code{\link{umx_residualize}()},
   \code{\link{umx_scale_wide_twin_data}()},
   \code{\link{umx_wide2long}()}, \code{\link{umx}}

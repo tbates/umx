@@ -127,16 +127,35 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @param min Min possible score (default = 1). Not implemented for values other than 1 so far...
 #' @param max Max possible score for an item (to compute how to reverse items).
 #' @param data The data frame
-#' @param score = Totals or Mean (default = "totals")
+#' @param score Whether to compute the score totals, mean, or max (default = "totals")
 #' @param name = name of the scale to be returned. Defaults to "base_score"
+#' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @return - scores
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @md
 #' @examples
 #' library(psych)
+#' 
+#' # ==============================
+#' # = Score Agreeableness totals =
+#' # ==============================
+#' 
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
-#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp, name = "E")
+#' tmp[1,namez(tmp, "A",ignore.case=F)]
+#'   A1 A2 A3 A4 A5  A
+#'   2  4  3  4  4  20
+#' 
+#' # Handscore subject 1
+#' # A2 + A3 + A4 + A5 + A1(Reversed)
+#' # 4  + 3  + 4  + 4 + (6+1)-2 = 20
+#' 
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
+#' tmp$A[1] # subject 1 mean = 4
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
+#' tmp$A[1] # subject 1 max = 5 (the reversed item 1)
+#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp)
+#' tmp$E_score[1] # default scale name
 #' 
 #' # Using @BillRevelle's psych package: More diagnostics, including alpha
 #' scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
@@ -144,41 +163,47 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #'		A = c( "-A1", "A2", "A3", "A4", "A5"))
 #' )
 #' summary(scores)
-#' print(scores)
+#' scores$scores[1,]
+#' #  E   A 
+#' # 3.8 4.0 
 #' 
 #' # Compare output
 #' # (note, by default psych::scoreItems replaces NAs with the sample median...)
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL,  score = c("totals", "mean"), name = NULL) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
 	score = match.arg(score)
 	
-	if(score!="totals"){
-		stop("Tim hasn't implemented means as a score yet... sorry :-(")
-	}
-	if(is.null(name)){
-		stop("You must set 'name' (the name for the new column")
-	}
-	if(is.null(max)){
-		stop("You must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
-	}
-
 	if(is.null(name)){
 		name = paste0(base, "_score")
 	}
-	if(!is.null(pos)){
-		pos_sum = rowSums(data[,paste0(base, pos), drop = FALSE])
-	} else {
-		pos_sum = 0
+	if(!is.null(rev) && is.null(max)){
+		stop("If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 	}
-	if(is.null(rev)){
-		# no reverse items
-		data[,name] = pos_sum
+
+	# ==================================
+	# = Reverse any items needing this =
+	# ==================================
+	if(!is.null(rev)){
+		revItems = data[,paste0(base, rev), drop= FALSE]
+		revItems = (max+min) - revItems
+		data[,paste0(base, rev)] = revItems
+	}
+	allColNames = paste0(base, c(pos, rev))
+	if(score=="max"){
+		df = data[ , allColNames, drop = FALSE]
+		score = rep(NA, nrow(df))
+		for (i in 1:nrow(df)) {
+			score[i] = max(df[i,])
+		}
+	}else if(score=="totals"){
+		score = rowSums(data[ , allColNames, drop = FALSE], na.rm = na.rm)
 	}else{
-		neg_sum = ((max+min)*length(rev))- rowSums(data[,paste0(base, rev), drop= FALSE])		
-		data[,name] = (pos_sum + neg_sum)
+		# score = means
+		score = rowMeans(data[ , allColNames, drop = FALSE], na.rm = na.rm)
 	}
+	data[, name] = score
 	return(data)
 }
 

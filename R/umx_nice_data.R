@@ -1,14 +1,17 @@
 #' Convert a twin dataset into umx standard format.
 #'
 #' @description
-#' `umx_nice_data` is a function to convert your twin data into a format used across `umx`. Specifically:
+#' `umx_make_twin_data_nice` is a function to convert your twin data into a format used across `umx`. Specifically:
 #'
-#' 1. zygosity is stored in a column called "zygosity".
+#' 1. Existing column for zygosity is renamed to "zygosity".
 #' 2. sep is set to "_T"
+#' 3. The twinID is is set to a seuqential digit 1,2,3.
+
 # #' @details
 #' @param data a [data.frame()] to check/convert.
-#' @param sep existing separator string (updated to "_T").
-#' @param zygosity existing zygosity column name (updated to `zygosity`).
+#' @param sep existing separator string (will be updated to "_T").
+#' @param numbering existing twin sequence string (will be updated to _T1, _T2, _T3).
+#' @param zygosity existing zygosity column name (will be renamed `zygosity`).
 #' @return - [data.frame()]
 #' @export
 #' @family Twin Data functions
@@ -16,17 +19,18 @@
 #' @references - [tutorials](https://tbates.github.io), [tbates/umx](https://github.com/tbates/umx)
 #' @md
 #' @examples
-#' tmp = umx_nice_data(twinData, sep="", zyg="zygosity")
+#' tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zyg="zygosity")
 #' namez(tmp)
 #' # m1 = umxACE("wt")
 #'
-umx_nice_data <- function(data, sep, zygosity){	
+umx_make_twin_data_nice <- function(data, sep, zygosity, numbering){	
 	if(zygosity != "zygosity"){
 		if(!is.null(data$zygosity)){
 			stop("A column called 'zygosity' already exists. please rename that column first, e.g. with\n",
-			"data = umx_rename(data, old='zygosity', replace='old_zyg'")
+			"data = umx_rename(data, old='zygosity', replace='old_zyg')")
 		} else {
-			data$zygosity = data[, zygosity]
+			data = umx_rename(data, old=zygosity, replace='zygosity')
+			# data$zygosity = data[, zygosity]
 		}
 	}
 	# Update twin names with new separator.
