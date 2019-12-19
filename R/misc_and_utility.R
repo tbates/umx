@@ -159,9 +159,9 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' 
 #' # Using @BillRevelle's psych package: More diagnostics, including alpha
 #' scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
-#'		E = c("-E1","-E2", "E3",  "E4", "E5"),
-#'		A = c( "-A1", "A2", "A3", "A4", "A5"))
-#' )
+#'		E = c("-E1","-E2", "E3", "E4", "E5"),
+#'		A = c("-A1", "A2", "A3", "A4", "A5")
+#' ))
 #' summary(scores)
 #' scores$scores[1,]
 #' #  E   A 

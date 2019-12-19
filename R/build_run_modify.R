@@ -363,7 +363,7 @@ umxModel <- function(...) {
 #' @param std.lv Whether to auto standardize latent variables when using string syntax (default = FALSE)
 #' @param lavaanMode Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)
 #' @param printTab (for string input, whether to output a table of paths (FALSE)
-#' @param show Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param show Deprecated
 #' @return - [mxModel()]
 #' @export 
 #' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]

@@ -75,7 +75,7 @@ umxRAM(
 
 \item{printTab}{(for string input, whether to output a table of paths (FALSE)}
 
-\item{show}{Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)}
+\item{show}{Deprecated}
 }
 \value{
 \itemize{

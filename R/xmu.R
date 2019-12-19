@@ -66,7 +66,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
 #' @param summary Whether to print model summary (default = autoRun).
-#' @param std What to print in summary (default FALSE) means raw, TRUE = standardize, null = omit parameter table.
+#' @param std What to print in summary. "default" = the object's summary default. FALSE = raw, TRUE = standardize, NULL = omit parameter table.
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
 #' @param show = "deprecated"
@@ -96,11 +96,11 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), std = FALSE, comparison = TRUE, digits = 3, show = "deprecated") {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, show = "deprecated") {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
 	if(show != "deprecated"){
-		stop("somehow show got passed to xmu_safe_run_summary: use std=T/F instead")
+		stop("somehow 'show' got passed to xmu_safe_run_summary: use std=T/F instead")
 	}
 
 	if(tryHard == "yes"){
@@ -147,7 +147,13 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		# Didn't get run... don't try and summarize it (will error)
 	} else if(summary){
 		tryCatch({
-			umxSummary(model1, std = std, digits = digits)
+			if(is.null(std)) {
+				umxSummary(model1, std = NULL, digits = digits)	
+			} else if(std == "default"){
+				umxSummary(model1, digits = digits)
+			} else {
+				umxSummary(model1, std = std, digits = digits)
+			}
 		# }, warning = function(w) {
 		# 	message("Warning incurred trying to run umxSummary")
 		# 	message(w)
