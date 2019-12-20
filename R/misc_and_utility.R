@@ -152,8 +152,10 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' 
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
 #' tmp$A[1] # subject 1 mean = 4
+#' 
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
 #' tmp$A[1] # subject 1 max = 5 (the reversed item 1)
+#' 
 #' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp)
 #' tmp$E_score[1] # default scale name
 #' 
@@ -170,7 +172,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' # Compare output
 #' # (note, by default psych::scoreItems replaces NAs with the sample median...)
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
-#' all(RevelleE == tmp[,"E"], na.rm = TRUE)
+#' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
 	score = match.arg(score)
