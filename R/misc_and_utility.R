@@ -3977,7 +3977,7 @@ umx_is_MxMatrix <- function(obj) {
 #' umx_is_cov(df)
 #' df = cor(mtcars)
 #' umx_is_cov(df)
-#' umx_is_cov(mxData(df[1:3,1:3], type="cov", nobs=200))
+#' umx_is_cov(mxData(df[1:3,1:3], type= "cov", numObs = 200))
 #' umx_is_cov(df, boolean = TRUE)
 #' umx_is_cov(mtcars, boolean = TRUE)
 umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
