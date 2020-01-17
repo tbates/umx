@@ -32,7 +32,8 @@ umxBrownie()
 
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
   \code{\link{qm}()}, \code{\link{umxFactor}()},
-  \code{\link{umxLav2RAM}()}, \code{\link{umxVersion}()},
+  \code{\link{umxLav2RAM}()}, \code{\link{umxRAM2Lav}()},
+  \code{\link{umxVersion}()},
   \code{\link{umx_array_shift}()},
   \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_find_object}()},

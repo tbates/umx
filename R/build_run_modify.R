@@ -363,7 +363,7 @@ umxModel <- function(...) {
 #' @param std.lv Whether to auto standardize latent variables when using string syntax (default = FALSE)
 #' @param lavaanMode Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)
 #' @param printTab (for string input, whether to output a table of paths (FALSE)
-#' @param show Whether to show estimates. Defaults to no (alternatives = "raw", "std", etc.)
+#' @param show Deprecated
 #' @return - [mxModel()]
 #' @export 
 #' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]
@@ -1184,9 +1184,9 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # nb: Although summary is smart enough to print d, the underlying 
 #' #     matrices are still called a, c & e.
 #'
-#' # ================
-#' # = WLS analysis =
-#' # ================
+#' # ===================================================
+#' # = WLS example using diagonal weight least squares =
+#' # ===================================================
 #' m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, 
 #' 	type = "DWLS", allContinuousMethod='marginals'
 #' )
@@ -1223,25 +1223,22 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
 #' # nb: You can see names of free parameters with parameters(m2)
 #'
+#' # =========================================================
+#' # = Well done! Now you can make modify twin models in umx =
+#' # =========================================================
+#'
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================
 #' data(twinData)
-#' selDVs = c("ht", "wt") # umx will add sep (in this case "") + "1" or '2'
+#' # We'll scale height (ht1 and ht2) and weight
 #' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 #' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
 #' mzData = mzData[1:80,] # quicker run to keep CRAN happy
 #' dzData = dzData[1:80,]
-#' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-#' m2 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '',
-#' 	type = "DWLS", allContinuousMethod='marginals')
+#' m1 = umxACE(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
-#'
-#' # =========================================================
-#' # = Well done! Now you can make modify twin models in umx =
-#' # =========================================================
-#'
 #'
 #' # ===================
 #' # = Ordinal example =
@@ -1390,7 +1387,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 				umxMatrix("a", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("c", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
 				umxMatrix("e", type = "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
-		
+
 				umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 				umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 				# Multiply by each path coefficient by its inverse to get variance component
@@ -1476,9 +1473,11 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
 #' @param digits Rounding precision for tables (default 3)
+#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note. 
+#' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
+#' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param lboundACE If not NA, then lbound the main effects at this value (default = NA, can help to set this to 0)
 #' @param lboundM   If not NA, then lbound the moderator effects at this value (default = NA, can help to set this to 0)
-#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note. 
 #' @param autoRun Optionally run the model (default), or just to create it and return without running.
 #' @param tryHard Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "ordinal", "search".
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
@@ -1496,11 +1495,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"
-#' mzData  = subset(twinData, zygosity == "MZFF")[100,]
-#' dzData  = subset(twinData, zygosity == "DZFF")[100,]
-#' umx_time("start")
+#' mzData  = subset(twinData, zygosity == "MZFF")[1:100,]
+#' dzData  = subset(twinData, zygosity == "DZFF")[1:100,]
 #' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
-#' umx_time("stop")
 #' 
 #' \dontrun{
 #' # Select the data on the fly with data= and zygosity levels
@@ -1517,7 +1514,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' # reporting these in a nice table.
 #' umxReduce(m1)
 #' }
-umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -1530,6 +1527,9 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		}
 		mzData = data[data[,zyg] %in% mzData, ]
 		dzData = data[data[,zyg] %in% dzData, ]
+	}
+	if(dzCr == .25 & (name == "G_by_E")){
+		name = "G_by_E_ADE"
 	}
 	
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
@@ -1585,7 +1585,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	}
 
 	model = mxModel(name,
-		mxModel("top",
+		mxModel("top",		
 			# Matrices a, c, and e to store a, c, and e path coefficients
 			umxMatrix("a", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[1]),
 			umxMatrix("c", "Lower", nrow = nVar, ncol = nVar, free = TRUE, values = startMain[2]),
@@ -1656,7 +1656,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 			# Algebra for expected variance/covariance matrix and expected mean vector in MZ
 			mxAlgebra(name = "expCovMZ", rbind(
-						cbind(A11+C11+E11, A12+C12),
+				  cbind(A11+C11+E11, A12+C12),
 			      cbind(A21+C21    , A22+C22+E22))
 			),
 			# Data & Objective
@@ -1668,36 +1668,37 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			umxMatrix("Def1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # twin1  c("data.divorce1")
 			umxMatrix("Def2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # twin2  c("data.divorce2")
 			# Compute ACE variance components
-			mxAlgebra((top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def1), name="A11"),
-			mxAlgebra((top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def1), name="C11"),
-			mxAlgebra((top.e+ top.em%*% Def1) %*% t(top.e+ top.em%*% Def1), name="E11"),
+			mxAlgebra(name= "A11", (top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def1)),
+			mxAlgebra(name= "C11", (top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def1)),
+			mxAlgebra(name= "E11", (top.e+ top.em%*% Def1) %*% t(top.e+ top.em%*% Def1)),
 
-			mxAlgebra((top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def2), name="A12"),
-			mxAlgebra((top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def2), name="C12"),
+			mxAlgebra(name= "A12", (top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def2)),
+			mxAlgebra(name= "C12", (top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def2)),
 
-			mxAlgebra((top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def1), name="A21"),
-			mxAlgebra((top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def1), name="C21"),
+			mxAlgebra(name= "A21", (top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def1)),
+			mxAlgebra(name= "C21", (top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def1)),
 
-			mxAlgebra((top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def2), name="A22"),
-			mxAlgebra((top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def2), name="C22"),
-			mxAlgebra((top.e+ top.em%*% Def2) %*% t(top.e+ top.em%*% Def2), name="E22"),
+			mxAlgebra(name= "A22", (top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def2)),
+			mxAlgebra(name= "C22", (top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def2)),
+			mxAlgebra(name= "E22", (top.e+ top.em%*% Def2) %*% t(top.e+ top.em%*% Def2)),
 
 			# Expected DZ variance/covariance matrix
-			mxAlgebra(rbind(cbind(A11+C11+E11  , 0.5%x%A12+C12),
-			                cbind(0.5%x%A21+C21, A22+C22+E22) ), name="expCovDZ"),
-			# mxAlgebra(rbind(cbind(A11+C11+E11  , 0.5%x%A21+C21),
-			#                 cbind(0.5%x%A12+C12, A22+C22+E22) ), name="expCov"),
+			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
+
+			mxAlgebra(rbind(cbind(A11+C11+E11   , dzAr%x%A12+dzCr%x%C12),
+			                cbind(dzAr%x%A21+dzCr%x%C21, A22+C22+E22) ), name= "expCovDZ"),
 			# Algebra for expected mean vector
-			mxAlgebra(top.betaLin %*% Def1  , name = "Def1Rlin"),
-			mxAlgebra(top.betaQuad%*% Def1^2, name = "Def1Rquad"),
-			mxAlgebra(top.betaLin %*% Def2  , name = "Def2Rlin"),
-			mxAlgebra(top.betaQuad%*% Def2^2, name = "Def2Rquad"),
+			mxAlgebra(name = "Def1Rlin" , top.betaLin %*% Def1  ),
+			mxAlgebra(name = "Def1Rquad", top.betaQuad%*% Def1^2),
+			mxAlgebra(name = "Def2Rlin" , top.betaLin %*% Def2  ),
+			mxAlgebra(name = "Def2Rquad", top.betaQuad%*% Def2^2),
 			mxAlgebra(cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeanDZ"),
-			# mxAlgebra(top.betas%*%rbind(Def1, Def1^2), name="Def1R"),
-			# mxAlgebra(top.betas%*%rbind(Def2, Def2^2), name="Def2R"),
-			# mxAlgebra( cbind(top.Means+Def1R, top.Means+Def2R), name="expMeans"),
+			# mxAlgebra(name="Def1R", top.betas%*%rbind(Def1, Def1^2)),
+			# mxAlgebra(name="Def2R", top.betas%*%rbind(Def2, Def2^2)),
+			# mxAlgebra(name="expMeans", cbind(top.Means+Def1R, top.Means+Def2R)),
 			# Data & Objective
-	    mxData(dzData, type = "raw"),
+	    	mxData(dzData, type = "raw"),
 			mxExpectationNormal("expCovDZ", means = "expMeanDZ", dimnames = selDVs),
 			mxFitFunctionML()
 	    ),

@@ -113,8 +113,8 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 	
 	selVars   = c(selDVs, selDefs)
 	# drop any unused variables
-	dzData = dzData[,selVars]
-	mzData = mzData[,selVars]
+	dzData = dzData[ , selVars]
+	mzData = mzData[ , selVars]
 	
 	if(any(is.na(mzData[,selDefs]))){
 		if(dropMissingDef){

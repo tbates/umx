@@ -41,6 +41,14 @@ twinID is equivalent to birth order. Up to 10 twinIDs are allowed (family order)
 
 \emph{Note}: Not all data sets have an order column, but it is essential to rank subjects correctly.
 
+You might start off with a TWID which is a concatenation of a familyID and a 2 digit twinID
+
+\strong{Generating famID and twinID as used by this function}
+
+You can capture the last 2 digits with the \code{mod} function: \code{twinID = df$TWID \%\% 100}
+
+You can \emph{drop} the last 2 digits with integer div: \code{famID = df$TWID \%/\% 100}
+
 \emph{Note}: The functions assumes that if zygosity or any passalong variables are NA in the first
 family member, they are NA everywhere. i.e., it does not hunt for values that
 are present elsewhere to try and self-heal missing data.
@@ -83,7 +91,7 @@ wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygo
 }
 
 Other Twin Data functions: \code{\link{umx_make_TwinData}()},
-  \code{\link{umx_nice_data}()},
+  \code{\link{umx_make_twin_data_nice}()},
   \code{\link{umx_residualize}()},
   \code{\link{umx_scale_wide_twin_data}()},
   \code{\link{umx_wide2long}()}, \code{\link{umx}}

@@ -1,3 +1,26 @@
+# umx 3.1.0
+
+# umx 3.0.5
+* December 2019 R 4.0.0 compatibility
+* BUGFIXED: `umx_is_ordered` was broken by previous fix to support the un-tidyverse mucking with dataframes... Now fixed
+* BETA: `umxRAM` supports multi-group via `group = "column"
+* IMPROVED: `umx_score_scale` now works with binary (0-1) items
+* IMPROVED: `umx_time` gains "lap" (report elapsed time without restarting timer)
+* IMPROVED: `umx_time` behavior with no input - now prints the current time and date
+* IMPROVED: `umxFactorScores` can now `return` SEs
+* IMPROVED: `umxFactorScores` allows abbreviated type names
+* IMPROVED: `umx_reorder` can operate without verifying data (ignore precision digits in triangles of cov matrices)
+* IMPROVED: `residuals` can re-order variables for ease of checking patterns of residuals
+* IMPROVED: `umxPath(defn=` Definition vars now auto-named if labels not given closes #107
+* IMPROVED: `umxACEv` uses default name "ADEv" (instead of "ACEv") if user sets `dzCr = .25`
+* IMPROVED: `umxAPA` only uses italic Beta when std = TRUE
+* IMPROVED: `umxRAM` now respects `umx_set_silent`
+* CLEANUP: More removal of unused and obscure functions: 
+* CLEANUP: `umxRAM2Ordinal` to `xmuRAM2Ordinal`
+* CLEANUP: `umx_fix_latents` and `umx_fix_first_loadings` to encourage user to be more explicit in their modeling.
+* CLEANUP: Reorganized function groupings to be easier to navigate.
+
+
 # umx 3.0.0
 * August 2019 R 3.6.1 "Action of the Toes"
 * This release has major new features in beta including support for lavaan syntax, AND a over 80 additional improvements clean-out/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.

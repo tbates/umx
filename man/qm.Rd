@@ -33,7 +33,8 @@ qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
   \code{\link{umxBrownie}()}, \code{\link{umxFactor}()},
-  \code{\link{umxLav2RAM}()}, \code{\link{umxVersion}()},
+  \code{\link{umxLav2RAM}()}, \code{\link{umxRAM2Lav}()},
+  \code{\link{umxVersion}()},
   \code{\link{umx_array_shift}()},
   \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_find_object}()},

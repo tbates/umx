@@ -26,7 +26,7 @@ x # now only 2 items (altered in containing environment)
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
   \code{\link{qm}()}, \code{\link{umxBrownie}()},
   \code{\link{umxFactor}()}, \code{\link{umxLav2RAM}()},
-  \code{\link{umxVersion}()},
+  \code{\link{umxRAM2Lav}()}, \code{\link{umxVersion}()},
   \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_find_object}()},
   \code{\link{umx_make}()}, \code{\link{umx_msg}()},

@@ -1,5 +1,101 @@
 # Any goal of which you are capable of each tiny step, you can attain.
 
+xmu_lav_add_regression <- function(spec, Amat, op, m1, m2) {
+	if (op == "=~") {  # e.g. "L =~ m1" is like "L -> m1"
+	  p1 = m2; p2 = m1
+	} else {
+	  # assume m1 to m2
+	  p1 = m1; p2 = m2
+	}
+	if (Amat$free[m2, m1]) {
+		if (Amat$labels[m2, m1] != paste0(m1, "_to_", m2)) {
+			spec = c(spec, paste(p2, op, Amat$labels[m2,m1], "*", p1))
+		} else {
+			spec = c(spec, paste(p2, op, p1))
+		}
+	} else if (Amat$values[m2,m1] != 0) {
+		spec = c(spec, paste(p2, op, Amat$values[m2,m1], "*", p1))
+	}
+	spec  
+}
+
+#' Convert a RAM model to a lavaan string
+#'
+#' @description
+#' Takes an OpenMx RAM model and creates the corresponding lavaan syntax string.
+#' 
+#' This function is at the alpha quality stage, and **should be expected to have bugs**.
+#' Also likely to change functionality and even parameters as new features are supported (e.g. groups)
+#' and lavaan-style strings exported. Several features are not yet supported. Let me know if you would like them.
+#'
+#' @param model an OpenMx RAM model
+#' @return A lavaan syntax string, e.g. "A~~B"
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - [umxLav2RAM()], [umxRAM()]
+#' @examples
+#' umxRAM2Lav(umxLav2RAM("x ~ y", autoRun = FALSE, printTab = FALSE, lavaanMode = "lavaan"))
+umxRAM2Lav <- function(model) {
+	# umx_is_RAM()
+	ex = model$expectation
+	if (!is(ex, "MxExpectationRAM")) {
+		stop("Model was not a RAM model (expectation not type 'MxExpectationRAM'). Instead it was a: ", omxQuotes(class(ex)))
+	}
+	Fmat = model[[ex$F]]
+	Amat = model[[ex$A]]
+	Smat = model[[ex$S]]
+	Mmat = NULL
+	if (!is.na(ex$M)){
+	  Mmat = model[[ex$M]]
+	}
+
+	fdn       = dimnames(Fmat)
+	manifests = fdn[[1]]
+	latents   = setdiff(fdn[[2]], fdn[[1]])
+	pars      = fdn[[2]]
+	spec      = c()
+	for (l1 in latents){
+		for (m1 in manifests){
+			spec = xmu_lav_add_regression(spec, Amat, "=~", l1, m1)
+		}
+	}
+	for (m1 in manifests) {
+		for (m2 in pars) {
+			if (m1 == m2) next
+				spec = xmu_lav_add_regression(spec, Amat, "~", m1, m2)
+		}
+	}
+	for (m1 in latents) {
+		for (m2 in latents) {
+			if (m1 == m2) next
+				if (!Amat$free[m2,m1]) next
+					spec = c(spec, paste(m2, "~", m1))
+		}
+	}
+	if (!is.null(Mmat)) {
+	for (m1 in manifests) {
+		if (!Mmat$free[1,m1]) next
+			spec = c(spec, paste(m1,"~",1))
+		}
+	}
+	for (m1x in 2:length(pars)) {
+		for (m2x in 1:(m1x-1)) {
+			m1 = pars[m1x]
+			m2 = pars[m2x]
+			if (!Smat$free[m2,m1]) next
+				spec = c(spec, paste(m2, "~~", m1))
+		}
+	}
+	for (a1 in names(model$algebras)) {
+		spec = c(spec, paste(a1, ":=", deparse(model[[a1]]$formula)))
+	}
+	for (c1 in names(model$constraints)) {
+		spec = c(spec, deparse(model[[c1]]$formula))
+	}
+	spec = c(spec, sapply(pars[diag(Smat$free)], function(p1) paste(p1, "~~", p1)))
+	paste0(spec, collapse = "\n")
+}
+
 #' Convert lavaan string to a umxRAM model
 #'
 #' @description

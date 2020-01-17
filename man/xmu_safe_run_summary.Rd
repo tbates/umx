@@ -10,7 +10,7 @@ xmu_safe_run_summary(
   autoRun = TRUE,
   tryHard = c("no", "yes", "ordinal", "search"),
   summary = !umx_set_silent(silent = TRUE),
-  std = FALSE,
+  std = "default",
   comparison = TRUE,
   digits = 3,
   show = "deprecated"
@@ -27,7 +27,7 @@ xmu_safe_run_summary(
 
 \item{summary}{Whether to print model summary (default = autoRun).}
 
-\item{std}{What to print in summary (default FALSE) means raw, TRUE = standardize, null = omit parameter table.}
+\item{std}{What to print in summary. "default" = the object's summary default. FALSE = raw, TRUE = standardize, NULL = omit parameter table.}
 
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 

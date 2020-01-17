@@ -66,7 +66,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param autoRun Whether to run or not (default = TRUE) Options are FALSE and "if needed".
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param summary Whether to print model summary (default = autoRun).
-#' @param std What to print in summary (default FALSE) means raw, TRUE = standardize, null = omit parameter table.
+#' @param std What to print in summary. "default" = the object's summary default. FALSE = raw, TRUE = standardize, NULL = omit parameter table.
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
 #' @param show = "deprecated"
@@ -96,11 +96,11 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = FALSE, comparison = TRUE, digits = 3, show = "deprecated") {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, show = "deprecated") {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
 	if(show != "deprecated"){
-		stop("somehow show got passed to xmu_safe_run_summary: use std=T/F instead")
+		stop("somehow 'show' got passed to xmu_safe_run_summary: use std=T/F instead")
 	}
 
 	if(tryHard == "yes"){
@@ -151,7 +151,13 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		# Didn't get run... don't try and summarize it (will error)
 	} else if(summary){
 		tryCatch({
-			umxSummary(model1, std = std, digits = digits)
+			if(is.null(std)) {
+				umxSummary(model1, std = NULL, digits = digits)	
+			} else if(std == "default"){
+				umxSummary(model1, digits = digits)
+			} else {
+				umxSummary(model1, std = std, digits = digits)
+			}
 		# }, warning = function(w) {
 		# 	message("Warning incurred trying to run umxSummary")
 		# 	message(w)
@@ -579,6 +585,10 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' # 3. stop on a factor with sep = NULL
 #' }
 xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL, enforceSep = TRUE, nSib = 2, numObsMZ = NULL, numObsDZ = NULL, optimizer = NULL) {
+	if(umx_is_MxData(mzData)){
+		mzData = mzData$observed
+		dzData = dzData$observed
+	}
 	# 1. Check data has rows
 	if(nrow(dzData) == 0){ stop("Your DZ dataset has no rows!") }
 	if(nrow(mzData) == 0){ stop("Your MZ dataset has no rows!") }
@@ -587,7 +597,8 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	if(is.null(sep)){
 		if(enforceSep){
 			message("Please use sep. e.g. sep = '_T'. Set `selDVs` to the base variable names, and I will create the full variable names from that.")
-			# strip the numbers off the ends
+			# compute a guess as to what would be needed
+			# Strip the numbers off the ends of names
 			namez(selDVs, "(_.)[0-9]$", replacement = "")
 			nodigits = namez(selDVs, "[0-9]$", replacement = "")
 			nodigits = unique(nodigits)
@@ -615,7 +626,6 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	umx_check_names(selVars, mzData)
 	umx_check_names(selVars, dzData)
 
-
 	# 6. Look for name conflicts
 	badNames = umx_grep(selVars, grepString = "^[ACDEacde][0-9]*$")
 	if(!identical(character(0), badNames)){
@@ -630,7 +640,7 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	# 5. Check data are legal
 		if(!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric", "factor", "ordered"), all = TRUE)) {
 			bad = selVars[!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric","factor", "ordered"), all = FALSE)]
-			stop("variables must be integer, numeric or (possibly ordered) factor. The following are not: ", omxQuotes(bad))
+			stop("variables must be integer, numeric or (usually ordered) factor. The following are not: ", omxQuotes(bad))
 		}
 		# Drop unused columns from mzData and dzData
 		mzData = mzData[, selVars]
@@ -656,7 +666,7 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	if(nFactors > 0 & is.null(sep)){
 		stop("Please set 'sep'. e.g.: sep = '_T' \n",
 		"Why: Your data include ordinal or binary variables.\n
-		So I need to know which variables are for twin 1 and which for twin2.\n",
+		Building this model, I need to know which variables are for twin 1 and which for twin2.\n",
 		"The way I do this is enforcing some naming rules. For example, if you have 2 variables:\n",
 		" obesity and depression called: 'obesity_T1', 'dep_T1', 'obesity_T2' and 'dep_T2', you should call umxACE with:\n",
 		"selDVs = c('obesity','dep'), sep = '_T' \n",

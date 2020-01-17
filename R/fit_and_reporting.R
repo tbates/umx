@@ -892,16 +892,17 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 
 	report = match.arg(report)
 	filter = match.arg(filter)
-	# show = xmu_match.arg(show, c("raw", "std", "none"), check = FALSE)
 	
 	message("?umxSummary std=T|F', digits, report= 'html', filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
 	if( filter != "ALL" & is.null(std) ) {
 		std = FALSE
-	}else if(std && SE == FALSE){
-		# message("SE must be TRUE to show std, overriding to set SE = TRUE")
-		SE = TRUE
+	}else if(!is.null(std)){
+		 if(SE == FALSE){
+			 # message("SE must be TRUE to show std, overriding to set SE = TRUE")
+			 SE = TRUE
+		 }
 	}
 	umx_has_been_run(model, stop = TRUE)
 	if(is.null(refModels)) {

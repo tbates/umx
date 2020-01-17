@@ -40,6 +40,7 @@ x = umxVersion(); x
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
   \code{\link{qm}()}, \code{\link{umxBrownie}()},
   \code{\link{umxFactor}()}, \code{\link{umxLav2RAM}()},
+  \code{\link{umxRAM2Lav}()},
   \code{\link{umx_array_shift}()},
   \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_find_object}()},

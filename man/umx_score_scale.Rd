@@ -11,8 +11,9 @@ umx_score_scale(
   min = 1,
   max = NULL,
   data = NULL,
-  score = c("totals", "mean"),
-  name = NULL
+  score = c("totals", "mean", "max"),
+  name = NULL,
+  na.rm = FALSE
 )
 }
 \arguments{
@@ -28,9 +29,11 @@ umx_score_scale(
 
 \item{data}{The data frame}
 
-\item{score}{= Totals or Mean (default = "totals")}
+\item{score}{Whether to compute the score totals, mean, or max (default = "totals")}
 
 \item{name}{= name of the scale to be returned. Defaults to "base_score"}
+
+\item{na.rm}{Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!}
 }
 \value{
 \itemize{
@@ -47,28 +50,50 @@ To reverse items, the function uses \code{itemMax} is the high score (to compute
 }
 \examples{
 library(psych)
+
+# ==============================
+# = Score Agreeableness totals =
+# ==============================
+
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
-tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp, name = "E")
+tmp[1, namez(tmp, "A",ignore.case=FALSE)]
+#  A1 A2 A3 A4 A5  A
+#  2  4  3  4  4  20
+
+# Handscore subject 1
+# A2 + A3 + A4 + A5 + A1(Reversed)
+# 4  + 3  + 4  + 4 + (6+1)-2 = 20
+
+tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
+tmp$A[1] # subject 1 mean = 4
+
+tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
+tmp$A[1] # subject 1 max = 5 (the reversed item 1)
+
+tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp)
+tmp$E_score[1] # default scale name
 
 # Using @BillRevelle's psych package: More diagnostics, including alpha
 scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
-	E = c("-E1","-E2", "E3",  "E4", "E5"),
-	A = c( "-A1", "A2", "A3", "A4", "A5"))
-)
+	E = c("-E1","-E2", "E3", "E4", "E5"),
+	A = c("-A1", "A2", "A3", "A4", "A5")
+))
 summary(scores)
-print(scores)
+scores$scores[1,]
+#  E   A 
+# 3.8 4.0 
 
 # Compare output
 # (note, by default psych::scoreItems replaces NAs with the sample median...)
 RevelleE = as.numeric(scores$scores[,"E"]) * 5
-all(RevelleE == tmp[,"E"], na.rm = TRUE)
+all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 
 }
 \seealso{
 Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
   \code{\link{qm}()}, \code{\link{umxBrownie}()},
   \code{\link{umxFactor}()}, \code{\link{umxLav2RAM}()},
-  \code{\link{umxVersion}()},
+  \code{\link{umxRAM2Lav}()}, \code{\link{umxVersion}()},
   \code{\link{umx_array_shift}()},
   \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_find_object}()},

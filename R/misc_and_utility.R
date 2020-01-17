@@ -127,58 +127,85 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @param min Min possible score (default = 1). Not implemented for values other than 1 so far...
 #' @param max Max possible score for an item (to compute how to reverse items).
 #' @param data The data frame
-#' @param score = Totals or Mean (default = "totals")
+#' @param score Whether to compute the score totals, mean, or max (default = "totals")
 #' @param name = name of the scale to be returned. Defaults to "base_score"
+#' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @return - scores
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @md
 #' @examples
 #' library(psych)
+#' 
+#' # ==============================
+#' # = Score Agreeableness totals =
+#' # ==============================
+#' 
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
-#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp, name = "E")
+#' tmp[1, namez(tmp, "A",ignore.case=FALSE)]
+#' #  A1 A2 A3 A4 A5  A
+#' #  2  4  3  4  4  20
+#' 
+#' # Handscore subject 1
+#' # A2 + A3 + A4 + A5 + A1(Reversed)
+#' # 4  + 3  + 4  + 4 + (6+1)-2 = 20
+#' 
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
+#' tmp$A[1] # subject 1 mean = 4
+#' 
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
+#' tmp$A[1] # subject 1 max = 5 (the reversed item 1)
+#' 
+#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp)
+#' tmp$E_score[1] # default scale name
 #' 
 #' # Using @BillRevelle's psych package: More diagnostics, including alpha
 #' scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
-#'		E = c("-E1","-E2", "E3",  "E4", "E5"),
-#'		A = c( "-A1", "A2", "A3", "A4", "A5"))
-#' )
+#'		E = c("-E1","-E2", "E3", "E4", "E5"),
+#'		A = c("-A1", "A2", "A3", "A4", "A5")
+#' ))
 #' summary(scores)
-#' print(scores)
+#' scores$scores[1,]
+#' #  E   A 
+#' # 3.8 4.0 
 #' 
 #' # Compare output
 #' # (note, by default psych::scoreItems replaces NAs with the sample median...)
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
-#' all(RevelleE == tmp[,"E"], na.rm = TRUE)
+#' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL,  score = c("totals", "mean"), name = NULL) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
 	score = match.arg(score)
 	
-	if(score!="totals"){
-		stop("Tim hasn't implemented means as a score yet... sorry :-(")
-	}
-	if(is.null(name)){
-		stop("You must set 'name' (the name for the new column")
-	}
-	if(is.null(max)){
-		stop("You must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
-	}
-
 	if(is.null(name)){
 		name = paste0(base, "_score")
 	}
-	if(!is.null(pos)){
-		pos_sum = rowSums(data[,paste0(base, pos), drop = FALSE])
-	} else {
-		pos_sum = 0
+	if(!is.null(rev) && is.null(max)){
+		stop("If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 	}
-	if(is.null(rev)){
-		# no reverse items
-		data[,name] = pos_sum
+
+	# ==================================
+	# = Reverse any items needing this =
+	# ==================================
+	if(!is.null(rev)){
+		revItems = data[,paste0(base, rev), drop= FALSE]
+		revItems = (max+min) - revItems
+		data[,paste0(base, rev)] = revItems
+	}
+	allColNames = paste0(base, c(pos, rev))
+	if(score=="max"){
+		df = data[ , allColNames, drop = FALSE]
+		score = rep(NA, nrow(df))
+		for (i in 1:nrow(df)) {
+			score[i] = max(df[i,])
+		}
+	}else if(score=="totals"){
+		score = rowSums(data[ , allColNames, drop = FALSE], na.rm = na.rm)
 	}else{
-		neg_sum = ((max+min)*length(rev))- rowSums(data[,paste0(base, rev), drop= FALSE])		
-		data[,name] = (pos_sum + neg_sum)
+		# score = means
+		score = rowMeans(data[ , allColNames, drop = FALSE], na.rm = na.rm)
 	}
+	data[, name] = score
 	return(data)
 }
 
@@ -3194,113 +3221,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 	p
 }
 
-#' Show matrices of RAM models in a easy-to-learn-from format. 
-#'
-#' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
-#' do this in a way that makes it easy to process for users: The matrix contents are formatted as 
-#' tables, and can even be displayed as tables in a web browser.
-#' 
-#' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
-#'
-#' @param model an [mxModel()] from which to show parameters.
-#' @param what legal options are "values" (default), "free", or "labels").
-#' @param show filter on what to show c("all", "free", "fixed").
-#' @param matrices to show  (default is c("S", "A")). "Thresholds" in beta.
-#' @param digits precision to report. Default = round to 2 decimal places.
-#' @param na.print How to display NAs (default = "")
-#' @param zero.print How to display 0 values (default = ".")
-#' @param report How to report the results. "html" = open in browser.
-#' @return None
-#' @export
-#' @family Reporting Functions
-#' @references - <https://tbates.github.io>
-#' @md
-#' @examples
-#' require(umx)
-#' data(demoOneFactor)
-#' manifests = names(demoOneFactor)
-#
-#' m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
-#' 	umxPath("G", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
-#' tmx_show(m1)
-#' tmx_show(m1, digits = 3)
-#' tmx_show(m1, matrices = "S")
-#' tmx_show(m1, what = "free")
-#' tmx_show(m1, what = "labels")
-#' tmx_show(m1, what = "free", matrices = "A")
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
-	if(!umx_is_RAM(model)){
-		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
-	}
-	report = match.arg(report)
-	what = match.arg(what)
-	show = match.arg(show)
-	
-	if("thresholds" %in% matrices){
-		# TODO tmx_show: Threshold printing not yet finalized
-		if(!is.null(model$deviations_for_thresh)){
-			dev = TRUE
-			x = model$deviations_for_thresh
-		} else {
-			dev = FALSE
-			x = model$threshMat
-		}
-		if(what == "values"){
-			if(dev){
-				v = model$lowerOnes_for_thresh$values %*% x$values
-			} else {
-				v = x$values
-			}
-			if(show == "free"){
-				v[x$free == FALSE] = NA
-			} else if (show == "fixed") {
-				v[x$free == TRUE] = NA
-			}
-			umx_print(v, zero.print = zero.print, na.print = na.print, digits = digits)
-		}else if(what == "free"){
-			umx_print(data.frame(x$free) , zero.print = zero.print, na.print = na.print, digits = digits)
-		}else if(what == "labels"){
-			l = x$labels
-			if(show == "free"){
-				l[x$free == FALSE] = ""
-			} else if (show=="fixed") {
-				l[x$free == TRUE] = ""
-			}
-			umx_print(l, zero.print = ".", na.print = na.print, digits = digits)
-		}
-	} else {
-		for (w in matrices) {
-			if(report == "html"){ file = paste0(what, w, ".html") } else { file = NA}
-			if(what == "values"){
-				tmp = data.frame(model$matrices[[w]]$values)
-				message("\n", "Values of ", w, " matrix (0 shown as .):", appendLF = FALSE)
-			}else if(what == "free"){
-				tmp = model$matrices[[w]]$free
-				message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
-			}else if(what == "labels"){
-				x = model$matrices[[w]]$labels
-				if(show=="free"){
-					x[model$matrices[[w]]$free!=TRUE] = ""
-				} else if (show=="fixed") {
-					x[model$matrices[[w]]$free==TRUE] = ""
-				}
-				tmp = x
-				message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
-			}else if(what == "nonzero_or_free"){
-				message("99 means parameter is fixed at a non-zero value")
-				values = model$matrices[[w]]$values
-				Free   = model$matrices[[w]]$free
-				values[!Free & values !=0] = 99
-				tmp = data.frame(values)
-				message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
-			}
-			umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
-		}
-	}
-}
+
 
 #' umx_time
 #'
@@ -3473,15 +3394,15 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' }
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
 	# depends on R2HTML::HTML and knitr::kable
-	file = xmu_match.arg(file, c(NA,"tmp.html"), check = FALSE)
-	if(class(x)=="character"){
+	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
+	if(class(x)[[1]] == "character"){
 		print(x)
-	}else if(class(x)!= "data.frame"){
-		if(class(x)=="matrix" |class(x)=="numeric"){
+	}else if(class(x)[[1]] != "data.frame"){
+		if(class(x)[[1]] == "matrix" | class(x)[[1]] == "numeric"){
 			x = data.frame(x)
 		} else {
 			message("Sorry, umx_print currently only prints data.frames, matrices, and vectors.\n
-			File a request to print '", class(x), "' objects\n or perhaps you want umx_msg?")
+			File a request to print '", class(x)[[1]], "' objects\n or perhaps you want umx_msg?")
 			return()
 		}
 	}
@@ -3965,7 +3886,8 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
+#' )
+#'
 #' if(umx_is_RAM(m1)){
 #' 	message("nice RAM model!")
 #' }
@@ -3975,11 +3897,11 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 umx_is_RAM <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 	if(!umx_is_MxModel(obj)){
-		return(F)
-	} else if(class(obj)[1] == "MxRAMModel"){
-		return(T)
+		return(FALSE)
+	} else if(class(obj)[[1]] == "MxRAMModel"){
+		return(TRUE)
 	} else {
-		return(class(obj$objective)[1] == "MxRAMObjective")
+		return(class(obj$objective)[[1]] == "MxRAMObjective")
 	}
 }
 
@@ -4044,7 +3966,7 @@ umx_is_MxMatrix <- function(obj) {
 
 #' umx_is_cov
 #'
-#' test if a data frame or matrix is cov or cor data, or is likely to be raw...
+#' test if a data frame, matrix or mxData is type cov or cor, or is likely to be raw...
 #' @param data dataframe to test
 #' @param boolean whether to return the type ("cov") or a boolean (default = string)
 #' @param verbose How much feedback to give (default = FALSE)
@@ -4057,6 +3979,7 @@ umx_is_MxMatrix <- function(obj) {
 #' umx_is_cov(df)
 #' df = cor(mtcars)
 #' umx_is_cov(df)
+#' umx_is_cov(mxData(df[1:3,1:3], type= "cov", numObs = 200))
 #' umx_is_cov(df, boolean = TRUE)
 #' umx_is_cov(mtcars, boolean = TRUE)
 umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
@@ -4064,7 +3987,12 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 		stop("Error in umx_is_cov: You have to provide the data = that you want to check...\n",
 		"Or as Jack Nicholson says in The Departed: 'No ticky... no laundry' ") 
 	}
-	if( nrow(data) == ncol(data)) {
+	if(umx_is_MxData(data)){
+		isCov = data$type
+		if(verbose){
+			message("mxData type = ", isCov)
+		}
+	} else	if( nrow(data) == ncol(data)) {
 		if(all(data[lower.tri(data)] == t(data)[lower.tri(t(data))])){
 			if(all(diag(data) == 1)){
 				isCov = "cor"
@@ -5030,7 +4958,7 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	if(fixed){
 		ignore.case = FALSE
 	}
-	if(class(df) %in%  c("summary.mxmodel", "data.frame")){
+	if(class(df)[[1]] %in%  c("summary.mxmodel", "data.frame")){
 		nameVector = names(df)
 	}else if(umx_is_MxData(df)) {
 			if(df$type == "raw"){
@@ -5043,15 +4971,15 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 			if(is.null(nameVector)){
 				stop("There's something wrong with the mxData - I couldn't get the variable names from it. Did you set type correctly?")
 			}
-	} else if(class(df) == "list"){
+	} else if(class(df)[[1]] == "list"){
 		# Assume it's a list of mxModels and we want the MODEL names (not parameters... see below)
 		nameVector = c()
 		for (i in df) {
 				nameVector = c(nameVector, i$name)
 		}
-	} else if(class(df) == "character"){
+	} else if(class(df)[[1]] == "character"){
 		nameVector = df
-	} else if(class(df) == "matrix"){
+	} else if(class(df)[[1]] == "matrix"){
 		nameVector = as.vector(df)
 	} else if(umx_is_MxModel(df)){
 		# Assume it's one model, and we want the parameter names
@@ -5155,6 +5083,14 @@ umx_rot <- function(vec){
 #' twinID is equivalent to birth order. Up to 10 twinIDs are allowed (family order).
 #' 
 #' *Note*: Not all data sets have an order column, but it is essential to rank subjects correctly.
+#' 
+#' You might start off with a TWID which is a concatenation of a familyID and a 2 digit twinID
+#' 
+#' **Generating famID and twinID as used by this function**
+#' 
+#' You can capture the last 2 digits with the `mod` function: `twinID = df$TWID %% 100`
+#' 
+#' You can *drop* the last 2 digits with integer div: `famID = df$TWID %/% 100`
 #' 
 #' *Note*: The functions assumes that if zygosity or any passalong variables are NA in the first
 #' family member, they are NA everywhere. i.e., it does not hunt for values that
@@ -5277,6 +5213,11 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @description
 #' Just detects the data columns for twin 1, and twin 2, then returns them stacked
 #' on top of each other (rbind) with the non-twin specific columns copied for each as well.
+#' 
+#' *Note*, zygosity codings differ among labs. One scheme uses 1 = MZFF, 2 = MZMM, 3 = DZFF, 4 = DZMM, 
+#' 5 = DZOS or DZFM, 6 = DZMF, with 9 = unknown, and then 50, 51,... for siblings.
+#' 
+#' Typically, OS twins are ordered Female/Male.
 #'
 #' @param data a dataframe containing twin data.
 #' @param sep the string between the var name and twin suffix, i.e., var_T1 = _T
