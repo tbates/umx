@@ -21,7 +21,7 @@ umxIP(
   numObsDZ = NULL,
   numObsMZ = NULL,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  tryHard = c("no", "yes", "ordinal", "search"),
   optimizer = NULL,
   equateMeans = TRUE,
   weightVar = NULL,

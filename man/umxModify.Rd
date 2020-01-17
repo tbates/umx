@@ -18,7 +18,7 @@ umxModify(
   intervals = FALSE,
   comparison = FALSE,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+  tryHard = c("no", "yes", "ordinal", "search")
 )
 }
 \arguments{
@@ -49,7 +49,7 @@ overrides the contents of update, and sets regex to TRUE.}
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 }
 \value{
 \itemize{

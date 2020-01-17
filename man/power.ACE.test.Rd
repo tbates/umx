@@ -16,7 +16,7 @@ power.ACE.test(
   power = 0.8,
   method = c("ncp", "empirical"),
   search = FALSE,
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  tryHard = c("no", "yes", "ordinal", "search"),
   optimizer = NULL,
   nSim = 4000
 )

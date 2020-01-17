@@ -18,7 +18,7 @@
 #' x$polychorics
 #' cor(mtcars[, c("am", "vs")])
 #' 
-umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -225,7 +225,7 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 #' x$R
 #' cov2cor(x$R)
 #' cor(mtcars[, c("hp", "mpg", "am", "vs")])
-umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any", tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any", tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
 
     nVar = dim(data)[[2]]
@@ -297,7 +297,7 @@ umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "
 #' x$R
 #' cor(mtcars[, c("hp", "mpg", "am", "vs")])
 #'
-umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use = "any", tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use = "any", tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
 	nVar = dim(data)[[2]]
 	if(nVar < 3) {

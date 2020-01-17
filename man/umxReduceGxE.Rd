@@ -8,7 +8,7 @@ umxReduceGxE(
   model,
   report = c("markdown", "inline", "html", "report"),
   baseFileName = "tmp_gxe",
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  tryHard = c("no", "yes", "ordinal", "search"),
   ...
 )
 }
@@ -19,7 +19,7 @@ umxReduceGxE(
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp").}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{...}{Other parameters to control model summary.}
 }

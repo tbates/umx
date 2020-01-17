@@ -8,7 +8,7 @@ xmu_safe_run_summary(
   model1,
   model2 = NULL,
   autoRun = TRUE,
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  tryHard = c("no", "yes", "ordinal", "search"),
   summary = !umx_set_silent(silent = TRUE),
   std = FALSE,
   comparison = TRUE,
@@ -23,7 +23,7 @@ xmu_safe_run_summary(
 
 \item{autoRun}{Whether to run or not (default = TRUE) Options are FALSE and "if needed".}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{summary}{Whether to print model summary (default = autoRun).}
 

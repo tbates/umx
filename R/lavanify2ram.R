@@ -64,7 +64,7 @@
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param name Model name (can also add name in # commented first line)
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param verbose Whether to tell the user what latents and manifests were created etc. (Default = FALSE)
 #' @param printTab = TRUE (more for debugging)
@@ -154,7 +154,7 @@
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, 
 	lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, 
 	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), 
-	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), 
+	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), 
 	verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE){
 	# TODO: make groups independent
 	# TODO: support group.equal Equality constraints across multiple
