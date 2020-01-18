@@ -359,9 +359,9 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
   \code{\link{umxACE_cov_fixed}()},
   \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
-  \code{\link{umxCP}()}, \code{\link{umxGxE_window}()},
-  \code{\link{umxGxEbiv}()}, \code{\link{umxGxE}()},
-  \code{\link{umxIP}()},
+  \code{\link{umxCP}()}, \code{\link{umxDoC}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
   \code{\link{umxRotate.MxModelCP}()},
   \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
   \code{\link{umx}}

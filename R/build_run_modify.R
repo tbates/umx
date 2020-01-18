@@ -225,9 +225,10 @@ utils::globalVariables(c(
 # ===================================================================
 methods::setClass("MxModelACE"    , contains = "MxModel")
 methods::setClass("MxModelACEv"   , contains = "MxModel")
-methods::setClass("MxModelCP"     , contains = "MxModel")
-methods::setClass("MxModelGxE"    , contains = "MxModel")
 methods::setClass("MxModelIP"     , contains = "MxModel")
+methods::setClass("MxModelCP"     , contains = "MxModel")
+methods::setClass("MxModelDoC"    , contains = "MxModel")
+methods::setClass("MxModelGxE"    , contains = "MxModel")
 methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
 methods::setClass("MxModelACEcov" , contains = "MxModelACE")
