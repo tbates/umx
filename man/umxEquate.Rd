@@ -12,7 +12,7 @@ umxEquate(
   verbose = FALSE,
   name = NULL,
   autoRun = FALSE,
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  tryHard = c("no", "yes", "ordinal", "search"),
   comparison = TRUE
 )
 }
@@ -31,7 +31,7 @@ umxEquate(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 }

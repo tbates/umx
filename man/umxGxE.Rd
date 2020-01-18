@@ -20,7 +20,7 @@ umxGxE(
   dzAr = 0.5,
   dzCr = 1,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  tryHard = c("no", "yes", "ordinal", "search"),
   optimizer = NULL
 )
 }
@@ -55,7 +55,7 @@ umxGxE(
 
 \item{autoRun}{Optionally run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch".}
+\item{tryHard}{Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "ordinal", "search".}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing)}
 }

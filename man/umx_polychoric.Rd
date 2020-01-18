@@ -7,7 +7,7 @@
 umx_polychoric(
   data,
   useDeviations = TRUE,
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+  tryHard = c("no", "yes", "ordinal", "search")
 )
 }
 \arguments{

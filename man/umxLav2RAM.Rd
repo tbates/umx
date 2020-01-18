@@ -17,7 +17,7 @@ umxLav2RAM(
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"),
+  tryHard = c("no", "yes", "ordinal", "search"),
   verbose = FALSE,
   optimizer = NULL,
   std = FALSE,
@@ -49,7 +49,7 @@ umxLav2RAM(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{verbose}{Whether to tell the user what latents and manifests were created etc. (Default = FALSE)}
 

@@ -57,7 +57,7 @@
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param weightVar (optional) Variable containing the weights to apply to data.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "mxTryHardOrdinal", "mxTryHardWideSearch"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer (optionally) set the optimizer. Default (NULL) does nothing.
 #' @return - [mxModel()] of subclass mxModel.ACEcov
 #' @seealso umx_residualize umxACE
@@ -95,7 +95,7 @@
 #' 	     dzData = dzData, mzData = mzData)
 #' m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 #' }
-umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")) {
+umxACE_cov_fixed <- function(name = "ACEcov", selDVs, selCovs = NULL, dzData, mzData, sep = NULL, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, weightVar = NULL, equateMeans = TRUE, bVector = FALSE, optimizer = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search")) {
 		tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"

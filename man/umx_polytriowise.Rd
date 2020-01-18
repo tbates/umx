@@ -9,7 +9,7 @@ umx_polytriowise(
   useDeviations = TRUE,
   printFit = FALSE,
   use = "any",
-  tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch")
+  tryHard = c("no", "yes", "ordinal", "search")
 )
 }
 \arguments{
