@@ -824,11 +824,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' 
 #' summary(m3)
 #' 
+# # TODO replace tryHard with briefer c("no", "yes", "ordinal", "wideSearch")
 umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "mxTryHard", "mxTryHardOrdinal", "mxTryHardWideSearch"), std = FALSE) {
 	tryHard = match.arg(tryHard)
-	umx_check(boolean.test= is.character(name), action="stop", message="You need to set the name for the supermodel with: name = 'modelName' ")
+	umx_check(boolean.test= is.character(name), action="stop", message="You need to set the name for the supermodel, i.e. add name = 'modelName' ")
 	dot.items = list(...) # grab all the dot items: models...	
-   dot.items = unlist(dot.items)
+	dot.items = unlist(dot.items)
 	nModels   = length(dot.items)
 	
 	# Get list of model names
@@ -836,7 +837,12 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 	for(modelIndex in 1:nModels) {
 		thisModel = dot.items[[modelIndex]]
 		if(umx_is_MxModel(thisModel)){
-			modelNames[modelIndex] = thisModel$name
+			if(is.null(thisModel$expectation)){
+				# umx_msg("hello")
+				# ignore model... no objective to optimize
+			} else {
+				modelNames = c(modelNames, thisModel$name)
+			}
 		} else {
 		 	stop("Only mxModels can be included in a group, item ", thisModel, " was a ", class(dot.items[[thisModel]]))
 		}
