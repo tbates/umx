@@ -16,7 +16,7 @@ power.ACE.test(
   power = 0.8,
   method = c("ncp", "empirical"),
   search = FALSE,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search"),
   optimizer = NULL,
   nSim = 4000
 )
@@ -91,15 +91,15 @@ power.ACE.test(AA= .5, CC= 0, update = "a", search = TRUE)
 # Salutary note: You need well fitting models with correct betas in the data
 # for power to be valid.
 # tryHard helps ensure this, as does the default nSim= 4000 pair data.
-# Power is important to get right, so I recommend using tryHard = "yes"
-power.ACE.test(AA= .5, CC= 0, update = "a", tryHard= "yes")
+# Power is important to get right, so I recommend using tryHard = "yes" (the default)
+power.ACE.test(AA= .5, CC= 0, update = "a")
 
 # =====================
 # = Power to detect C =
 # =====================
 
 # 102 of each of MZ and DZ pairs for 80\% power.
-power.ACE.test(AA= .5, CC= .3, update = "c", tryHard= "yes")
+power.ACE.test(AA= .5, CC= .3, update = "c")
 
 # ========================================
 # = Set 'a' to a fixed, but non-zero value =
@@ -154,7 +154,7 @@ power.ACE.test(update= "a", AA= .5, CC= 0, method = "ncp")
 # ====================
 # 1. tryHard
 
-power.ACE.test(update = "a", AA= .5, CC= 0, tryHard= "yes")
+power.ACE.test(update = "a", AA= .5, CC= 0, tryHard= "no")
 
 # 2. toggle optimizer
 power.ACE.test(update= "a", AA= .5, CC= 0, optimizer= "SLSQP")
