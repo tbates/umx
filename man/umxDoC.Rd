@@ -82,12 +82,13 @@ varNames = paste0(rep(c("a", "b"), each= 3), c(1:3))
 names(mzData) = c("X", paste0(varNames, "_T1"), paste0(varNames, "_T2"), "sex_T1", "sex_T2")
 names(dzData) = c("X", paste0(varNames, "_T1"), paste0(varNames, "_T2"), "sex_T1", "sex_T2")
 
+Chol  = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3), mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE)
 DoC   = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3), mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
 A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B")            ; summary(A2B)
 B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A")            ; summary(B2A)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 
-umxCompare(CholModel, c(A2BModel, B2AModel, RecipMod))
+umxCompare(Chol, c(A2B, B2A, Recip))
 }
 
 }
