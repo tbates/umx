@@ -82,11 +82,19 @@ varNames = paste0(rep(c("a", "b"), each= 3), c(1:3))
 names(mzData) = c("X", paste0(varNames, "_T1"), paste0(varNames, "_T2"), "sex_T1", "sex_T2")
 names(dzData) = c("X", paste0(varNames, "_T1"), paste0(varNames, "_T2"), "sex_T1", "sex_T2")
 
-Chol  = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3), mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE)
-DoC   = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3), mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
-A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B")            ; summary(A2B)
-B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A")            ; summary(B2A)
+Chol  = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3), 
+			mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE)
+DoC   = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
+		mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
+A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B"); summary(A2B)
+B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A"); summary(B2A)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
+
+Chol  = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10), mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE, auto=F); Chol = mxRun(Chol)
+DoC   = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10), mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE, auto=F); DoC = mxRun(DoC)
+A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B", auto=F); A2B = mxRun(A2B)
+B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A", auto=F); B2A = mxRun(B2A)
+Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip", auto=F); Recip = mxRun(Recip)
 
 umxCompare(Chol, c(A2B, B2A, Recip))
 }

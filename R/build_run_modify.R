@@ -175,6 +175,7 @@ utils::globalVariables(c(
 
 	'Iden',
 	'nDv',
+	
 
 	'meanDZ', 'meanMZ',
 
@@ -189,6 +190,10 @@ utils::globalVariables(c(
 	'binLabels', 'Unit_nBinx1',
 	
 	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z',
+
+	# umxDOC
+	"dzAr",
+	"Unit",
 	
 	# Used in tmx_genotypic_effect
 	"x1", "y1", "y2", "dose", "value", "freq", "Frequency", 
