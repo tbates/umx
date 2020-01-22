@@ -59,15 +59,6 @@ drawing the tables to a web browser where they may readily be copied into non-ma
 \details{
 See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary()}}.
 }
-\examples{
-require(umx)
-data(twinData)
-selDVs = c("bmi1", "bmi2")
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
-m1 = umxDoC(selDVs = selDVs, dzData = dzData, mzData = mzData)
-umxSummary(m1)
-}
 \references{
 \itemize{
 \item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}

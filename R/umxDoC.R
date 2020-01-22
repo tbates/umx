@@ -67,10 +67,10 @@
 #' B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A"); summary(B2A)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 #'
-#' Chol  = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10),
-#' 			mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE, auto=F); Chol = mxRun(Chol)
-#' DoC   = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10),
-#' 			mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE, auto=F); DoC = mxRun(DoC)
+#' Chol = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10),mzData= mzData, dzData= dzData, 
+#' 			sep = "_T", causal= FALSE, auto=FALSE); Chol = mxRun(Chol)
+#' DoC = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10), mzData= mzData, dzData= dzData,
+#' 			sep = "_T", causal= TRUE, auto=FALSE); DoC = mxRun(DoC)
 #' A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B", auto=F); A2B = mxRun(A2B)
 #' B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A", auto=F); B2A = mxRun(B2A)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip", auto=F); Recip = mxRun(Recip)
@@ -215,13 +215,15 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
-#' require(umx)
-#' data(twinData)
-#' selDVs = c("bmi1", "bmi2")
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxDoC(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' umxSummary(m1)
+# #' require(umx)
+# #' data(twinData)
+# #' selDVs = c("bmi1", "bmi2")
+# #' mzData <- subset(twinData, zygosity == "MZFF")
+# #' dzData <- subset(twinData, zygosity == "DZFF")
+# #' DoC   = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
+# #'			mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
+# #' A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B"); summary(A2B)
+# #' umxSummary(m1)
 umxSummaryDoC <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
