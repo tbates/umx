@@ -1517,7 +1517,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' umxSummary(m1, separateGraphs = TRUE)
 #' 
 # # Test dropping moderation on a path
-#' m2 = umxModify(m1, regex = "am_.*", comparison = TRUE, tryHard = "mxTryHard")
+#' m2 = umxModify(m1, regex = "am_.*", comparison = TRUE, tryHard = "yes")
 #' 
 #' # umxReduce knows how to test all relevant hypotheses for GxE models,
 #' # reporting these in a nice table.

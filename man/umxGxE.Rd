@@ -95,7 +95,7 @@ umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = TRUE)
 
-m2 = umxModify(m1, regex = "am_.*", comparison = TRUE, tryHard = "mxTryHard")
+m2 = umxModify(m1, regex = "am_.*", comparison = TRUE, tryHard = "yes")
 
 # umxReduce knows how to test all relevant hypotheses for GxE models,
 # reporting these in a nice table.
