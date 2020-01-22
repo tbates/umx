@@ -86,7 +86,8 @@ Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
   \code{\link{umxPlotSexLim}()},
   \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 
-Other Twin Reporting Functions: \code{\link{umxReduceACE}()},
+Other Twin Reporting Functions: \code{\link{umxPlotDoC}()},
+  \code{\link{umxReduceACE}()},
   \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
   \code{\link{umxSummarizeTwinData}()},
   \code{\link{umxSummaryACEcov}()},

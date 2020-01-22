@@ -192,8 +192,11 @@ utils::globalVariables(c(
 	'correlatedA', 'minCor', 'pos1by6', 'varList', 'Im1', 'IZ', 'ZI', 'Z',
 
 	# umxDOC
-	"dzAr",
-	"Unit",
+	"dzAr", "Vmz", "Vdz",
+	"Unit", "FacLoadtw", "cause",
+	"Asmz", "Asdz", "Cstw", "Estw",
+	"specCovMZ", "specCovDZ", "FacCovMZ", "FacCovDZ",
+	
 	
 	# Used in tmx_genotypic_effect
 	"x1", "y1", "y2", "dose", "value", "freq", "Frequency", 
@@ -1525,9 +1528,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' }
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
-	if(tryHard == "yes"){
-		tryHard = "mxTryHard"
-	}
 	nSib = 2;
 	if(!is.null(data)){
 		if(is.null(dzData)){
@@ -3306,9 +3306,6 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' )
 umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no", "yes", "ordinal", "search"), comparison = TRUE) {
 	tryHard = match.arg(tryHard)
-	if(tryHard == "yes"){
-		tryHard = "mxTryHard"
-	}
 	free = xmu_match.arg(free, c(TRUE, FALSE, NA)) # match.arg can't handle Boolean as options?
 	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])

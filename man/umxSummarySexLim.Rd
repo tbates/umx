@@ -127,7 +127,7 @@ m1 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "C", tryHard = "yes",
 }
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxReduceACE}()},
+  \code{\link{umxPlotDoC}()}, \code{\link{umxReduceACE}()},
   \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
   \code{\link{umxSummarizeTwinData}()},
   \code{\link{umxSummaryACEcov}()},

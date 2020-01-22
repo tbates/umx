@@ -85,7 +85,7 @@ umxSummary(m1, file = NA);
 }
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxReduceACE}()},
+  \code{\link{umxPlotDoC}()}, \code{\link{umxReduceACE}()},
   \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
   \code{\link{umxSummarizeTwinData}()},
   \code{\link{umxSummaryACEcov}()},

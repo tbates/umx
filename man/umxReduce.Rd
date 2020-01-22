@@ -60,7 +60,7 @@ Other Reporting Functions: \code{\link{FishersMethod}()},
   \code{\link{umx}}
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxReduceACE}()},
+  \code{\link{umxPlotDoC}()}, \code{\link{umxReduceACE}()},
   \code{\link{umxReduceGxE}()},
   \code{\link{umxSummarizeTwinData}()},
   \code{\link{umxSummaryACEcov}()},

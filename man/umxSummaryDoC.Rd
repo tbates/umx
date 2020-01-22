@@ -17,7 +17,6 @@ umxSummaryDoC(
   returnStd = FALSE,
   extended = FALSE,
   zero.print = ".",
-  show,
   ...
 )
 }
@@ -80,7 +79,7 @@ umxSummary(m1)
 }
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxReduceACE}()},
+  \code{\link{umxPlotDoC}()}, \code{\link{umxReduceACE}()},
   \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
   \code{\link{umxSummarizeTwinData}()},
   \code{\link{umxSummaryACEcov}()},

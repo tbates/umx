@@ -67,8 +67,10 @@
 #' B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A"); summary(B2A)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 #'
-#' Chol  = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10), mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE, auto=F); Chol = mxRun(Chol)
-#' DoC   = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10), mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE, auto=F); DoC = mxRun(DoC)
+#' Chol  = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10),
+#' 			mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE, auto=F); Chol = mxRun(Chol)
+#' DoC   = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10),
+#' 			mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE, auto=F); DoC = mxRun(DoC)
 #' A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B", auto=F); A2B = mxRun(A2B)
 #' B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A", auto=F); B2A = mxRun(B2A)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip", auto=F); Recip = mxRun(Recip)
@@ -113,12 +115,12 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 		umxMatrix("e", type="Lower", nrow=nLat, ncol=nLat, free= c(FALSE,TRUE,FALSE), values= 1), # Non-shared env effects on Latent Variables 
 
 		# 4x4 Matrices for A, C, and E
-		mxAlgebra(name="Amz", Unit  %x% (a %*% t(a))),
-		mxAlgebra(name="Adz", dzAr   %x% (a %*% t(a))),
+		mxAlgebra(name="A"  , Unit  %x% (a %*% t(a))),
+		mxAlgebra(name="Adz", dzAr  %x% (a %*% t(a))),
 		mxAlgebra(name="C"  , Unit  %x% (c %*% t(c))),
-		mxAlgebra(name="E"  , Iden %x% (e %*% t(e))),
-		mxAlgebra(name="Vmz", (Amz + C + E)),
-		mxAlgebra(name="Vdz", (Adz + C + E)),
+		mxAlgebra(name="E"  , Iden  %x% (e %*% t(e))),
+		mxAlgebra(name="Vmz", A   + C + E),
+		mxAlgebra(name="Vdz", Adz + C + E),
 
 		### Generate the Asymmetric Matrix
 		# Non-shared env effects on Latent Variables 
@@ -137,12 +139,12 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 		umxMatrix(name= "as", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		umxMatrix(name= "cs", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		umxMatrix(name= "es", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
-		mxAlgebra(name= "specAmz", Unit %x% as),
-		mxAlgebra(name= "specAdz", dzAr %x% as),
-		mxAlgebra(name= "specCtw", Unit %x% cs),
-		mxAlgebra(name= "specEtw", Iden %x% es),
-		mxAlgebra(name= "specCovMZ", specAmz + specCtw + specEtw),
-		mxAlgebra(name= "specCovDZ", specAdz + specCtw + specEtw),
+		mxAlgebra(name= "Asmz", Unit %x% as),
+		mxAlgebra(name= "Asdz", dzAr %x% as),
+		mxAlgebra(name= "Cstw", Unit %x% cs),
+		mxAlgebra(name= "Estw", Iden %x% es),
+		mxAlgebra(name= "specCovMZ", Asmz + Cstw + Estw),
+		mxAlgebra(name= "specCovDZ", Asdz + Cstw + Estw),
 		# Expected Covariance Matrices for MZ and DZ
 		mxAlgebra(name= "expCovMZ", FacCovMZ + specCovMZ),
 		mxAlgebra(name= "expCovDZ", FacCovDZ + specCovDZ),
@@ -220,7 +222,7 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxDoC(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
-umxSummaryDoC <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show, ...) {
+umxSummaryDoC <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	# depends on R2HTML::HTML
@@ -394,3 +396,39 @@ umxSummaryDoC <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 
 #' @export
 umxSummary.MxModelDoC <- umxSummaryDoC
+
+#' Plot a Direction of Causation Model.
+#'
+#' Summarize a fitted model returned by [umxDoC()]. Can control digits, report comparison model fits,
+#' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+#' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
+#'
+#' See documentation for other umx models here: [umxSummary()].
+#' 
+#' @aliases plot.MxModelDoC
+#' @param model a [umxDOC()] to summarize.
+# #' @param digits round to how many digits (default = 2).
+# #' @param comparison you can run mxCompare on a comparison model (NULL).
+# #' @param file The name of the dot file to write: "name" = use the name of the model.
+# #' Defaults to NA = do not create plot output.
+# #' @param std Whether to standardize the output (default = TRUE).
+# #' @param showRg = whether to show the genetic correlations (FALSE).
+# #' @param CIs Whether to show Confidence intervals if they exist (TRUE).
+# #' @param returnStd Whether to return the standardized form of the model (default = FALSE).
+# #' @param report If "html", then open an html table of the results.
+# #' @param extended how much to report (FALSE).
+# #' @param zero.print How to show zeros (".")
+#' @param ... Other parameters to control model summary.
+#' @return - optional [mxModel()]
+#' @export
+#' @family Twin Reporting Functions
+#' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()]
+#' @md
+#' @examples
+#' #
+umxPlotDoC <- function(model, ...) {
+	message("I'm sorry Dave, no plot for doc yet ;-(")
+}
+
+#' @export
+plot.MxModelDoC <- umxPlotDoC

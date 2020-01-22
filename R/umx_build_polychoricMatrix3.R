@@ -164,13 +164,13 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 	# Run the job
 	if(tryHard == "no"){
 		model = mxRun(model)
-	} else if (tryHard == "mxTryHard"){
+	} else if (tryHard == "yes"){
 		model = mxTryHard(model)
 		model = mxRun(model)
-	} else if (tryHard == "mxTryHardOrdinal"){
+	} else if (tryHard == "ordinal"){
 		model = mxTryHardOrdinal(model)
 		model = mxRun(model)
-	} else if (tryHard == "mxTryHardWideSearch"){
+	} else if (tryHard == "search"){
 		model = mxTryHardWideSearch(model)
 		model = mxRun(model)
 	}

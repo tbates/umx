@@ -199,9 +199,6 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	A_or_C  = match.arg(A_or_C)
 	sexlim  = match.arg(sexlim)
 	tryHard = match.arg(tryHard)
-	if(tryHard == "yes"){
-		tryHard = "mxTryHard"
-	}
 
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
