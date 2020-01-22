@@ -47,18 +47,15 @@ umxDoC(
 }
 }
 \description{
-Scientific theory makes claims about causation, but in social science, testing causal claims is often difficult due to an inability to
-conduct experimental randomization of traits and situations to people. When twins are available, even when measured on a single occasion,
-the pattern of cross-twin cross-trait correlations can (given distinct modes of inheritance) falsify causal hypotheses
-
-Classical twin modeling uses the genetic and environmental differences
-among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
+Testing causal claims is often difficult due to an inability to conduct experimental randomization of traits and situations to people.
+When twins are available, even when measured on a single occasion, the pattern of cross-twin cross-trait correlations
+can (given distinguishable modes of inheritance for the two traits) falsify causal hypotheses.
 
 \code{umxDoC} implements a 2-group model to form latent variables for each of two traits, and allows testing whether
 trait 1 causes trait 2, vice-versa, or even reciprocal causation.
 
 The following figure shows how the DoC model appears as a path diagram (for two latent variables X and Y,
-each with three indicators), with model shown only for 1 twin, and only one DoC pathway drawn.
+each with three indicators). Note: For pedagoical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.
 
 \if{html}{\figure{DoC.png}{options: width="50\%" alt="Figure: Direction of Causation"}}
 \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
@@ -110,7 +107,7 @@ In \emph{Encyclopedia of Statistics in Behavioral Science}, Volume 1 pp. 496–4
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxPlotDOC]{umxPlotDOC()}}, \code{\link[=umxSummaryDOC]{umxSummaryDOC()}}, \code{\link[=umxModify]{umxModify()}}
+\item \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxSummary.MxModelDoC]{umxSummary.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
 Other Twin Modeling Functions: \code{\link{power.ACE.test}()},

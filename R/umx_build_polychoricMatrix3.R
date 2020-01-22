@@ -19,10 +19,7 @@
 #' cor(mtcars[, c("am", "vs")])
 #' 
 umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", "ordinal", "search")) {
-	tryHard = match.arg(tryHard)
-	if(tryHard == "yes"){
-		tryHard = "mxTryHard"
-	}
+	tryHard      = match.arg(tryHard)
 	nVar         = ncol(data)
 	nameList     = names(data)
 	nThresh      = vector(mode = "integer", nVar)
@@ -163,17 +160,19 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 
 	# Run the job
 	if(tryHard == "no"){
-		model = mxRun(model)
+		# model = mxRun(model)
 	} else if (tryHard == "yes"){
 		model = mxTryHard(model)
-		model = mxRun(model)
+		# model = mxRun(model)
 	} else if (tryHard == "ordinal"){
 		model = mxTryHardOrdinal(model)
-		model = mxRun(model)
+		# model = mxRun(model)
 	} else if (tryHard == "search"){
 		model = mxTryHardWideSearch(model)
-		model = mxRun(model)
+	}else{
+		stop("tryHard = ", omxQuotes(tryHard), " not known: use no, yes, ordinal, or search")
 	}
+	model = mxRun(model)
 
 	# Populate seMatrix for return
 	seMatrix = matrix(NA, nVar, nVar)

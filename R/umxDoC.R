@@ -7,18 +7,15 @@
 #' Build and run a 2-group Direction of Causation twin models.
 #'
 #' @description
-#' Scientific theory makes claims about causation, but in social science, testing causal claims is often difficult due to an inability to 
-#' conduct experimental randomization of traits and situations to people. When twins are available, even when measured on a single occasion, 
-#' the pattern of cross-twin cross-trait correlations can (given distinct modes of inheritance) falsify causal hypotheses
-#' 
-#' Classical twin modeling uses the genetic and environmental differences 
-#' among pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together.
+#' Testing causal claims is often difficult due to an inability to conduct experimental randomization of traits and situations to people.  
+#' When twins are available, even when measured on a single occasion, the pattern of cross-twin cross-trait correlations 
+#' can (given distinguishable modes of inheritance for the two traits) falsify causal hypotheses.
 #' 
 #' `umxDoC` implements a 2-group model to form latent variables for each of two traits, and allows testing whether 
 #' trait 1 causes trait 2, vice-versa, or even reciprocal causation.
 #' 
 #' The following figure shows how the DoC model appears as a path diagram (for two latent variables X and Y,
-#' each with three indicators), with model shown only for 1 twin, and only one DoC pathway drawn.
+#' each with three indicators). Note: For pedagoical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.
 #' 
 #' \if{html}{\figure{DoC.png}{options: width="50\%" alt="Figure: Direction of Causation"}}
 #' \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
@@ -39,7 +36,7 @@
 #' @return - [mxModel()] of subclass mxModel.DOC
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxPlotDOC()], [umxSummaryDOC()], [umxModify()]
+#' @seealso - [plot.MxModelDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @references - N.A. Gillespie and N.G. Marting (2005). Direction of Causation Models. 
 #' In *Encyclopedia of Statistics in Behavioral Science*, Volume 1 pp. 496–499. Eds. Brian S. Everitt & David C. Howell
 #' @md
@@ -215,8 +212,8 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
-# #' require(umx)
-# #' data(twinData)
+#' require(umx)
+#' data(twinData)
 # #' selDVs = c("bmi1", "bmi2")
 # #' mzData <- subset(twinData, zygosity == "MZFF")
 # #' dzData <- subset(twinData, zygosity == "DZFF")
@@ -402,13 +399,13 @@ umxSummary.MxModelDoC <- umxSummaryDoC
 #' Plot a Direction of Causation Model.
 #'
 #' Summarize a fitted model returned by [umxDoC()]. Can control digits, report comparison model fits,
-#' optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
-#' drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
+#' optionally show the *Rg* (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+#' drawing the tables to a web browser where they may readily be pasted into, e.g. Word.
 #'
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases plot.MxModelDoC
-#' @param model a [umxDOC()] to summarize.
+#' @param model a [umxDoC()] to summarize.
 # #' @param digits round to how many digits (default = 2).
 # #' @param comparison you can run mxCompare on a comparison model (NULL).
 # #' @param file The name of the dot file to write: "name" = use the name of the model.
@@ -428,7 +425,7 @@ umxSummary.MxModelDoC <- umxSummaryDoC
 #' @md
 #' @examples
 #' #
-umxPlotDoC <- function(model, ...) {
+umxPlotDoC <- function(x, ...) {
 	message("I'm sorry Dave, no plot for doc yet ;-(")
 }
 

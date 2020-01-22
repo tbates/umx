@@ -5,12 +5,12 @@
 \alias{plot.MxModelDoC}
 \title{Plot a Direction of Causation Model.}
 \usage{
-umxPlotDoC(model, ...)
+umxPlotDoC(x, ...)
 }
 \arguments{
-\item{model}{a \code{\link[=umxDOC]{umxDOC()}} to summarize.}
-
 \item{...}{Other parameters to control model summary.}
+
+\item{model}{a \code{\link[=umxDoC]{umxDoC()}} to summarize.}
 }
 \value{
 \itemize{
@@ -19,8 +19,8 @@ umxPlotDoC(model, ...)
 }
 \description{
 Summarize a fitted model returned by \code{\link[=umxDoC]{umxDoC()}}. Can control digits, report comparison model fits,
-optionally show the Rg (genetic and environmental correlations), and show confidence intervals. the report parameter allows
-drawing the tables to a web browser where they may readily be copied into non-markdown programs like Word.
+optionally show the \emph{Rg} (genetic and environmental correlations), and show confidence intervals. the report parameter allows
+drawing the tables to a web browser where they may readily be pasted into, e.g. Word.
 }
 \details{
 See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary()}}.
