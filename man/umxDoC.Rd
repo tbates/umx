@@ -55,7 +55,7 @@ can (given distinguishable modes of inheritance for the two traits) falsify caus
 trait 1 causes trait 2, vice-versa, or even reciprocal causation.
 
 The following figure shows how the DoC model appears as a path diagram (for two latent variables X and Y,
-each with three indicators). Note: For pedagoical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.
+each with three indicators). Note: For pedagogical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.
 
 \if{html}{\figure{DoC.png}{options: width="50\%" alt="Figure: Direction of Causation"}}
 \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
