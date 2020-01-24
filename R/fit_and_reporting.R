@@ -81,7 +81,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @param digits (default 2)
 #' @return - Best model
 #' @export
-#' @family Reporting Functions
+#' @family Miscellaneous Stats Helpers
 #' @seealso - [AIC()]
 #' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
 #' @md
@@ -3686,7 +3686,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' @param pvalues A vector of p-values, e.g. c(.041, .183)
 #' @return - A meta-analytic p-value
 #' @export
-#' @family Reporting Functions
+#' @family Miscellaneous Stats Helpers
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
 #' Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi:10.2307/2681650. JSTOR 2681650.
 #' See also Stouffer's method for combining Z scores, which allow weighting.
@@ -3847,7 +3847,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 #' @param min Values below min will be reported as "< min"
 #' @param digits Number of decimals to which to round (default = 3)
 #' @param addComparison Whether to add '=' '<' etc. (NA adds when needed)
-#' @family Reporting Functions
+#' @family xmu internal not for end user
 #' @return - p-value formatted in APA style
 #' @export
 #' @seealso - [umxAPA()], [round()]

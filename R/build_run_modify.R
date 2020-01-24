@@ -2677,7 +2677,7 @@ umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHa
 #' @param verbose Tell the user what was added and why (Default = TRUE).
 #' @return - [mxModel()]
 #' @export
-#' @family Advanced Model Building Functions
+#' @family xmu internal not for end user
 #' @seealso - [umxRAM()]
 #' @md
 #' @examples

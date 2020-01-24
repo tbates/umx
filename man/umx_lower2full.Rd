@@ -99,7 +99,8 @@ umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
 - <https://www.github.com/tbates/umx>
 }
 \seealso{
-Other Data Functions: \code{\link{umxHetCor}()},
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umxHetCor}()},
   \code{\link{umx_as_numeric}()},
   \code{\link{umx_make_MR_data}()},
   \code{\link{umx_make_TwinData}()},

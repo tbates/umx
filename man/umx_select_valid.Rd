@@ -36,7 +36,8 @@ anyNA(tmp$disp) # column repaired
 \item \code{\link[=within]{within()}}
 }
 
-Other Data Functions: \code{\link{umxHetCor}()},
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umxHetCor}()},
   \code{\link{umx_as_numeric}()},
   \code{\link{umx_lower2full}()},
   \code{\link{umx_make_MR_data}()},

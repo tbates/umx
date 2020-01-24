@@ -24,17 +24,9 @@ umx_write_to_clipboard("hello")
 }
 }
 \seealso{
-Other String Functions: \code{\link{umx_explode_twin_names}()},
-  \code{\link{umx_explode}()}, \code{\link{umx_grep}()},
-  \code{\link{umx_names}()},
-  \code{\link{umx_object_as_str}()},
-  \code{\link{umx_paste_names}()}, \code{\link{umx_rot}()},
-  \code{\link{umx_trim}()}, \code{\link{umx}}
-
 Other File Functions: \code{\link{dl_from_dropbox}()},
   \code{\link{umx_make_sql_from_excel}()},
   \code{\link{umx_move_file}()}, \code{\link{umx_open}()},
   \code{\link{umx_rename_file}()}, \code{\link{umx}}
 }
 \concept{File Functions}
-\concept{String Functions}

@@ -44,10 +44,12 @@ oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 \item \code{\link[=umx_r_test]{umx_r_test()}}
 }
 
-Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
-  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
-  \code{\link{umxHetCor}()}, \code{\link{umx_apply}()},
-  \code{\link{umx_cor}()}, \code{\link{umx_fun_mean_sd}()},
+Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
+  \code{\link{SE_from_p}()}, \code{\link{reliability}()},
+  \code{\link{umxCov2cor}()}, \code{\link{umxHetCor}()},
+  \code{\link{umxWeightedAIC}()},
+  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
+  \code{\link{umx_fun_mean_sd}()},
   \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
   \code{\link{umx_round}()}, \code{\link{umx_scale}()},
   \code{\link{umx_var}()}, \code{\link{umx}}

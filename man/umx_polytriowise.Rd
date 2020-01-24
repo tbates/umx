@@ -43,7 +43,8 @@ cor(mtcars[, c("hp", "mpg", "am", "vs")])
 - \url{https://doi.org/10.3389/fpsyg.2016.00528}
 }
 \seealso{
-Other Data Functions: \code{\link{umxHetCor}()},
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umxHetCor}()},
   \code{\link{umx_as_numeric}()},
   \code{\link{umx_lower2full}()},
   \code{\link{umx_make_MR_data}()},

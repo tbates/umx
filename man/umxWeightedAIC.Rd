@@ -35,16 +35,13 @@ umxWeightedAIC(models = list(l1, l2))
 \item \code{\link[=AIC]{AIC()}}
 }
 
-Other Reporting Functions: \code{\link{FishersMethod}()},
-  \code{\link{loadings.MxModel}()},
-  \code{\link{tmx_is.identified}()},
-  \code{\link{tmx_show}()}, \code{\link{umxAPA}()},
-  \code{\link{umxFactorScores}()},
-  \code{\link{umxGetParameters}()},
-  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
-  \code{\link{umx_APA_pval}()},
-  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
-  \code{\link{umx_print}()}, \code{\link{umx_time}()},
-  \code{\link{umx}}
+Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
+  \code{\link{SE_from_p}()}, \code{\link{oddsratio}()},
+  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
+  \code{\link{umxHetCor}()}, \code{\link{umx_apply}()},
+  \code{\link{umx_cor}()}, \code{\link{umx_fun_mean_sd}()},
+  \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
+  \code{\link{umx_round}()}, \code{\link{umx_scale}()},
+  \code{\link{umx_var}()}, \code{\link{umx}}
 }
-\concept{Reporting Functions}
+\concept{Miscellaneous Stats Helpers}

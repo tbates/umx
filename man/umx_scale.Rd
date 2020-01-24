@@ -52,9 +52,11 @@ plot(wt1 ~ wt2, data = df)
 \seealso{
 umx_scale_wide_twin_data scale
 
-Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
-  \code{\link{oddsratio}()}, \code{\link{reliability}()},
-  \code{\link{umxCov2cor}()}, \code{\link{umxHetCor}()},
+Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
+  \code{\link{SE_from_p}()}, \code{\link{oddsratio}()},
+  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
+  \code{\link{umxHetCor}()},
+  \code{\link{umxWeightedAIC}()},
   \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
   \code{\link{umx_fun_mean_sd}()},
   \code{\link{umx_means}()}, \code{\link{umx_r_test}()},

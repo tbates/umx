@@ -232,7 +232,6 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 #' @return - Binary
 #' @export
 #' @family Teaching and testing Functions
-#' @family Reporting Functions
 #' @seealso - [mxCheckIdentification()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -264,7 +263,7 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @param report How to report the results. "html" = open in browser.
 #' @return None
 #' @export
-#' @family Reporting Functions
+#' @family Teaching and Testing functions
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples

@@ -221,7 +221,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @param mat (optionally) provide matrix to check dimensions against r and c.
 #' @return - [mxModel()]
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family xmu internal not for end user
 #' @seealso - [umxLabel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -1257,8 +1257,8 @@ umx_explode_twin_names <- function(df, sep = "_T") {
 #' will try and ensure factor levels same across all twins.
 #' @return - [mxFactor()]
 #' @export
-#' @family Miscellaneous Utility Functions
-#' @seealso - [umxFactanal()]
+#' @family Data Functions
+#' @seealso - [umxFactanal()], [mxFactor()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -1905,58 +1905,6 @@ dl_from_dropbox <- function(x, key=NULL){
 	message(noquote(paste(x, "read into", getwd())))
 }
 
-#' Use the pushbullet service to push a note
-#'
-#' Use the pushbullet service to push a note. You can also initialise this
-#' service by providing your key one time
-#'
-#' If you supply auth_key, It will be written to "~/.pushbulletkey"
-#' `umx_pb_note(auth_key="mykeystring")`
-#' once it exists there, you do not need to store it in code, so code is sharable.
-#' 
-#' You can get your authorization key at \url{https://www.pushbullet.com} in 
-#' the "account" section.
-#' 
-#' \strong{Note}: You can show the existing stored key using "GET"
-#'
-#' @param title of the note
-#' @param body of the note
-#' @param auth_key optional authkey (default = NA, set to value of your key to store key.
-#' @export
-#' @family Miscellaneous Utility Functions
-#' @seealso - [umx_msg()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
-#' @examples
-#' \dontrun{
-#' umx_pb_note("done!", umx_time(m1))
-#' }
-umx_pb_note <- function(title = "test", body = "body", auth_key = c(NA, "GET")) {
-	auth_key = match.arg(auth_key)
-	auth_key_file = "~/.pushbulletkey"
-	helpMsg = "auth_key not found. You need to call umx_pb_note one time with auth_key set. See ?umx_pb_note"
-	if(is.na(auth_key)){
-		umx_check(file.exists(auth_key_file), "message", helpMsg)
-		auth_key = read.table(auth_key_file, stringsAsFactors=FALSE)[1,1]
-	} else if(auth_key == "GET"){
-		umx_check(file.exists(auth_key_file), "message", helpMsg)
-		return(read.table(auth_key_file, stringsAsFactors=FALSE)[1,1])
-	}else {
-		fileConn <- file(auth_key_file)
-		writeLines(auth_key, fileConn)
-		close(fileConn)
-		if(title=="test" && body=="default body"){
-			title = "successfully setup umx_pb_note!"
-			body = paste0("auth key is in ", omxQuotes(auth_key_file))
-		}
-	}
-	cmd = paste0("curl -s --header 'Authorization: Bearer ", auth_key, "'", 
-	" -X POST https://api.pushbullet.com/v2/pushes ",
-	"--header 'Content-Type: application/json' ",
-    "--data-binary '{\"type\": \"note\", \"title\": \"",title, "\", \"body\": \"", body, "\"}'"
-	)
-	invisible(system(cmd, intern=TRUE))
-}
 
 #' Move files
 #'
@@ -2208,7 +2156,6 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #' @param x something to put on the clipboard
 #' @return None 
 #' @export
-#' @family String Functions
 #' @family File Functions
 #' @examples
 #' \dontrun{
@@ -2672,7 +2619,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @return None
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -4727,7 +4674,7 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' @param check Whether to check that single items are in the list. Set false to accept abbreviations (defaults to TRUE) 
 #' @return - one validated option
 #' @export
-#' @family Get and set
+#' @family xmu internal not for end user
 #' @seealso - [match.arg()]
 #' @references - <https://www.github.com/tbates/umx>
 #' @md

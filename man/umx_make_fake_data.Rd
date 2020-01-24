@@ -56,7 +56,8 @@ fakeCars = umx_make_fake_data(mtcars)
 \seealso{
 [OpenMx::mxGenerateData()]
 
-Other Data Functions: \code{\link{umxHetCor}()},
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umxHetCor}()},
   \code{\link{umx_as_numeric}()},
   \code{\link{umx_lower2full}()},
   \code{\link{umx_make_MR_data}()},

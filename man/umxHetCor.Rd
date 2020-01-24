@@ -46,7 +46,8 @@ umxHetCor(mtcars[,c("mpg", "am")])
 umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
 }
 \seealso{
-Other Data Functions: \code{\link{umx_as_numeric}()},
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umx_as_numeric}()},
   \code{\link{umx_lower2full}()},
   \code{\link{umx_make_MR_data}()},
   \code{\link{umx_make_TwinData}()},
@@ -61,10 +62,12 @@ Other Data Functions: \code{\link{umx_as_numeric}()},
   \code{\link{umx_stack}()}, \code{\link{umx}},
   \code{\link{xmu_data_swap_a_block}()}
 
-Other Miscellaneous Stats Helpers: \code{\link{SE_from_p}()},
-  \code{\link{oddsratio}()}, \code{\link{reliability}()},
-  \code{\link{umxCov2cor}()}, \code{\link{umx_apply}()},
-  \code{\link{umx_cor}()}, \code{\link{umx_fun_mean_sd}()},
+Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
+  \code{\link{SE_from_p}()}, \code{\link{oddsratio}()},
+  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
+  \code{\link{umxWeightedAIC}()},
+  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
+  \code{\link{umx_fun_mean_sd}()},
   \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
   \code{\link{umx_round}()}, \code{\link{umx_scale}()},
   \code{\link{umx_var}()}, \code{\link{umx}}

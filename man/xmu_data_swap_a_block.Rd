@@ -38,7 +38,8 @@ xmu_data_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Na
 \item \code{\link[=subset]{subset()}}
 }
 
-Other Data Functions: \code{\link{umxHetCor}()},
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umxHetCor}()},
   \code{\link{umx_as_numeric}()},
   \code{\link{umx_lower2full}()},
   \code{\link{umx_make_MR_data}()},
