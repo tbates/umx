@@ -2,7 +2,7 @@
 
 # umx 3.0.5
 * December 2019 R 4.0.0 compatibility
-* BUGFIXED: `umx_is_ordered` was broken by previous fix to support the un-tidyverse mucking with dataframes... Now fixed
+* BUG FIXED: `umx_is_ordered` was broken by previous fix to support the un-tidyverse mucking with dataframes... Now fixed
 * BETA: `umxRAM` supports multi-group via `group = "column"
 * IMPROVED: `umx_score_scale` now works with binary (0-1) items
 * IMPROVED: `umx_time` gains "lap" (report elapsed time without restarting timer)

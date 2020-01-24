@@ -8,9 +8,9 @@
 umxPlotDoC(x, ...)
 }
 \arguments{
-\item{...}{Other parameters to control model summary.}
+\item{x}{a \code{\link[=umxDoC]{umxDoC()}} model to summarize.}
 
-\item{model}{a \code{\link[=umxDoC]{umxDoC()}} to summarize.}
+\item{...}{Other parameters to control model summary.}
 }
 \value{
 \itemize{

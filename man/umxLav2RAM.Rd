@@ -102,7 +102,7 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 
 \strong{Naming of multiple groups}
 
-When multiple groups are found the groups are named "name_grouplevel"
+When multiple groups are found the groups are named \code{name_grouplevel}
 White space is replaced with "_" and illegal characters are replaced with "x"
 
 \emph{note}: Options for  group.equal. In future, we might implement (but have not as yet):

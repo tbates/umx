@@ -136,7 +136,7 @@ umxRAM2Lav <- function(model) {
 #'
 #' **Naming of multiple groups**
 #' 
-#' When multiple groups are found the groups are named "name_grouplevel"
+#' When multiple groups are found the groups are named `name_grouplevel`
 #' White space is replaced with "_" and illegal characters are replaced with "x"
 #' 
 #' *note*: Options for  group.equal. In future, we might implement (but have not as yet):
