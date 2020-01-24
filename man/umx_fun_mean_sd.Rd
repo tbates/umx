@@ -25,9 +25,9 @@ to craft a custom nameless functions. e.g.
 \details{
 \itemize{
 \item \code{\link[=umx_fun_mean_sd]{umx_fun_mean_sd()}}: returns "mean (SD)" of x.
-\item Second item
 }
-note: if a factor is given, then the mode is returned instead of the mean and SD.
+
+\emph{note}: if a factor is given, then the mode is returned instead of the mean and SD.
 }
 \examples{
 umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
@@ -38,14 +38,61 @@ umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 }
 }
 \seealso{
-Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
-  \code{\link{SE_from_p}()}, \code{\link{oddsratio}()},
-  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
-  \code{\link{umxHetCor}()},
-  \code{\link{umxWeightedAIC}()},
-  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
-  \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
-  \code{\link{umx_round}()}, \code{\link{umx_scale}()},
-  \code{\link{umx_var}()}, \code{\link{umx}}
+Other xmu internal not for end user: \code{\link{umxModel}()},
+  \code{\link{umx_APA_pval}()},
+  \code{\link{umx_get_bracket_addresses}()},
+  \code{\link{umx_make}()},
+  \code{\link{umx_standardize}()},
+  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}},
+  \code{\link{xmuHasSquareBrackets}()},
+  \code{\link{xmuLabel_MATRIX_Model}()},
+  \code{\link{xmuLabel_Matrix}()},
+  \code{\link{xmuLabel_RAM_Model}()},
+  \code{\link{xmuMI}()},
+  \code{\link{xmuMakeDeviationThresholdsMatrices}()},
+  \code{\link{xmuMakeOneHeadedPathsFromPathList}()},
+  \code{\link{xmuMakeTwoHeadedPathsFromPathList}()},
+  \code{\link{xmuMaxLevels}()},
+  \code{\link{xmuMinLevels}()},
+  \code{\link{xmuPropagateLabels}()},
+  \code{\link{xmuRAM2Ordinal}()},
+  \code{\link{xmu_CI_merge}()},
+  \code{\link{xmu_CI_stash}()},
+  \code{\link{xmu_DF_to_mxData_TypeCov}()},
+  \code{\link{xmu_PadAndPruneForDefVars}()},
+  \code{\link{xmu_assemble_twin_supermodel}()},
+  \code{\link{xmu_cell_is_on}()},
+  \code{\link{xmu_check_levels_identical}()},
+  \code{\link{xmu_check_needs_means}()},
+  \code{\link{xmu_check_variance}()},
+  \code{\link{xmu_clean_label}()},
+  \code{\link{xmu_describe_data_WLS}()},
+  \code{\link{xmu_dot_make_paths}()},
+  \code{\link{xmu_dot_make_residuals}()},
+  \code{\link{xmu_dot_maker}()},
+  \code{\link{xmu_dot_move_ranks}()},
+  \code{\link{xmu_dot_rank_str}()},
+  \code{\link{xmu_get_CI}()},
+  \code{\link{xmu_lavaan_process_group}()},
+  \code{\link{xmu_make_bin_cont_pair_data}()},
+  \code{\link{xmu_make_mxData}()},
+  \code{\link{xmu_make_top_twin}()},
+  \code{\link{xmu_match.arg}()},
+  \code{\link{xmu_name_from_lavaan_str}()},
+  \code{\link{xmu_safe_run_summary}()},
+  \code{\link{xmu_set_sep_from_suffix}()},
+  \code{\link{xmu_show_fit_or_comparison}()},
+  \code{\link{xmu_simplex_corner}()},
+  \code{\link{xmu_standardize_ACEcov}()},
+  \code{\link{xmu_standardize_ACEv}()},
+  \code{\link{xmu_standardize_ACE}()},
+  \code{\link{xmu_standardize_CP}()},
+  \code{\link{xmu_standardize_IP}()},
+  \code{\link{xmu_standardize_RAM}()},
+  \code{\link{xmu_standardize_SexLim}()},
+  \code{\link{xmu_standardize_Simplex}()},
+  \code{\link{xmu_start_value_list}()},
+  \code{\link{xmu_starts}()},
+  \code{\link{xmu_twin_check}()}
 }
-\concept{Miscellaneous Stats Helpers}
+\concept{xmu internal not for end user}

@@ -119,8 +119,8 @@ Other Reporting Functions: \code{\link{loadings.MxModel}()},
   \code{\link{umxAPA}()}, \code{\link{umxFactorScores}()},
   \code{\link{umxGetParameters}()},
   \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
-  \code{\link{umx_aggregate}()}, \code{\link{umx_print}()},
-  \code{\link{umx_time}()}, \code{\link{umx}}
+  \code{\link{umx_aggregate}()}, \code{\link{umx_time}()},
+  \code{\link{umx}}
 
 Other String Functions: \code{\link{umx_explode_twin_names}()},
   \code{\link{umx_explode}()}, \code{\link{umx_grep}()},

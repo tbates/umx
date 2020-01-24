@@ -36,8 +36,6 @@ mat1 = umxJiggle(mat1)
 \seealso{
 Other Advanced Model Building Functions: \code{\link{umxLabel}()},
   \code{\link{umxThresholdMatrix}()},
-  \code{\link{umxValues}()},
-  \code{\link{umx_get_bracket_addresses}()},
-  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}}
+  \code{\link{umxValues}()}, \code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

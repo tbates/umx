@@ -1578,7 +1578,7 @@ umx_as_numeric <- function(df, which = NULL, force = FALSE) {
 
 #' umx_find_object
 #'
-#' Find objects a certain class, whose name matches a search string.
+#' Find objects of a given class, whose name matches a search string.
 #' The string (pattern) is grep-enabled, so you can match wild-cards
 #'
 #' @param pattern the pattern that matching objects must contain
@@ -3331,7 +3331,6 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @export
 #' @seealso [umx_msg()], [umx_set_table_format()] 
 #' @family Miscellaneous Utility Functions
-#' @family Reporting Functions
 #' @md
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
@@ -4191,7 +4190,7 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 #' @param returnCutpoints just return the cutpoints, for use directly
 #' @return - recoded variable as an [mxFactor()]
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -4301,7 +4300,7 @@ umx_has_square_brackets <- function (input) {
 #' @param dimnames of the returned algebra
 #' @return - [mxAlgebra()]
 #' @export
-#' @family Advanced Model Building Functions
+#' @family xmu internal not for end user
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -6518,7 +6517,7 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' @param newName = NA
 #' @return - a list of bracket style labels
 #' @export
-#' @family Advanced Model Building Functions
+#' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples

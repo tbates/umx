@@ -44,8 +44,12 @@ m4 = umx:::xmuLabel_MATRIX_Model(m2, suffix = "male")
 }
 \seealso{
 Other xmu internal not for end user: \code{\link{umxModel}()},
-  \code{\link{umx_APA_pval}()}, \code{\link{umx_make}()},
-  \code{\link{umx_standardize}()}, \code{\link{umx}},
+  \code{\link{umx_APA_pval}()},
+  \code{\link{umx_fun_mean_sd}()},
+  \code{\link{umx_get_bracket_addresses}()},
+  \code{\link{umx_make}()},
+  \code{\link{umx_standardize}()},
+  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}},
   \code{\link{xmuHasSquareBrackets}()},
   \code{\link{xmuLabel_Matrix}()},
   \code{\link{xmuLabel_RAM_Model}()},

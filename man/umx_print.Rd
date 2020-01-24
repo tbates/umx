@@ -61,18 +61,9 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
   \code{\link{umxLav2RAM}()}, \code{\link{umxRAM2Lav}()},
   \code{\link{umxVersion}()},
   \code{\link{umx_array_shift}()},
-  \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_find_object}()}, \code{\link{umx_msg}()},
   \code{\link{umx_open_CRAN_page}()},
   \code{\link{umx_pad}()}, \code{\link{umx_score_scale}()},
   \code{\link{umx}}
-
-Other Reporting Functions: \code{\link{loadings.MxModel}()},
-  \code{\link{umxAPA}()}, \code{\link{umxFactorScores}()},
-  \code{\link{umxGetParameters}()},
-  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
-  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
-  \code{\link{umx_time}()}, \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}
-\concept{Reporting Functions}

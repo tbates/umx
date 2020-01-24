@@ -3703,17 +3703,15 @@ FishersMethod <- function(pvalues){
 #' Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
 #' to craft a custom nameless functions. e.g.
 #' 
-#' \itemize{
-#'   \item [umx_fun_mean_sd()]: returns "mean (SD)" of x.
-#'   \item Second item
-#' }
-#' note: if a factor is given, then the mode is returned instead of the mean and SD.
+#' * [umx_fun_mean_sd()]: returns "mean (SD)" of x.
+#'
+#' *note*: if a factor is given, then the mode is returned instead of the mean and SD.
 #' @param x input
 #' @param na.rm How to handle missing (default = TRUE = remove)
 #' @param digits Rounding (default = 2)
 #' @return - function result
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples

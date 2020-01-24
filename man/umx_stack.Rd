@@ -42,6 +42,7 @@ ggplot2::qplot(x = mpg, y= values, group="ind", data = df)
 Other Data Functions: \code{\link{umxFactor}()},
   \code{\link{umxHetCor}()},
   \code{\link{umx_as_numeric}()},
+  \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_lower2full}()},
   \code{\link{umx_make_MR_data}()},
   \code{\link{umx_make_TwinData}()},

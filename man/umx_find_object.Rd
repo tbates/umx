@@ -15,7 +15,7 @@ umx_find_object(pattern = ".*", requiredClass = "MxModel")
 - a list of objects matching the class and name
 }
 \description{
-Find objects a certain class, whose name matches a search string.
+Find objects of a given class, whose name matches a search string.
 The string (pattern) is grep-enabled, so you can match wild-cards
 }
 \examples{
@@ -32,9 +32,7 @@ Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
   \code{\link{qm}()}, \code{\link{umxBrownie}()},
   \code{\link{umxLav2RAM}()}, \code{\link{umxRAM2Lav}()},
   \code{\link{umxVersion}()},
-  \code{\link{umx_array_shift}()},
-  \code{\link{umx_cont_2_quantiles}()},
-  \code{\link{umx_msg}()},
+  \code{\link{umx_array_shift}()}, \code{\link{umx_msg}()},
   \code{\link{umx_open_CRAN_page}()},
   \code{\link{umx_pad}()}, \code{\link{umx_print}()},
   \code{\link{umx_score_scale}()}, \code{\link{umx}}

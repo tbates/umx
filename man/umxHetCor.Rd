@@ -48,6 +48,7 @@ umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
 \seealso{
 Other Data Functions: \code{\link{umxFactor}()},
   \code{\link{umx_as_numeric}()},
+  \code{\link{umx_cont_2_quantiles}()},
   \code{\link{umx_lower2full}()},
   \code{\link{umx_make_MR_data}()},
   \code{\link{umx_make_TwinData}()},
@@ -67,7 +68,6 @@ Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
   \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
   \code{\link{umxWeightedAIC}()},
   \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
-  \code{\link{umx_fun_mean_sd}()},
   \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
   \code{\link{umx_round}()}, \code{\link{umx_scale}()},
   \code{\link{umx_var}()}, \code{\link{umx}}

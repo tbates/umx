@@ -73,14 +73,21 @@ x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 }
 }
 \seealso{
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
-  \code{\link{qm}()}, \code{\link{umxBrownie}()},
-  \code{\link{umxLav2RAM}()}, \code{\link{umxRAM2Lav}()},
-  \code{\link{umxVersion}()},
-  \code{\link{umx_array_shift}()},
-  \code{\link{umx_find_object}()}, \code{\link{umx_msg}()},
-  \code{\link{umx_open_CRAN_page}()},
-  \code{\link{umx_pad}()}, \code{\link{umx_print}()},
-  \code{\link{umx_score_scale}()}, \code{\link{umx}}
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umxHetCor}()},
+  \code{\link{umx_as_numeric}()},
+  \code{\link{umx_lower2full}()},
+  \code{\link{umx_make_MR_data}()},
+  \code{\link{umx_make_TwinData}()},
+  \code{\link{umx_make_fake_data}()},
+  \code{\link{umx_make_raw_from_cov}()},
+  \code{\link{umx_polychoric}()},
+  \code{\link{umx_polypairwise}()},
+  \code{\link{umx_polytriowise}()},
+  \code{\link{umx_read_lower}()},
+  \code{\link{umx_rename}()}, \code{\link{umx_reorder}()},
+  \code{\link{umx_select_valid}()},
+  \code{\link{umx_stack}()}, \code{\link{umx}},
+  \code{\link{xmu_data_swap_a_block}()}
 }
-\concept{Miscellaneous Utility Functions}
+\concept{Data Functions}

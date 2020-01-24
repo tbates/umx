@@ -148,7 +148,6 @@ Other Reporting Functions: \code{\link{loadings.MxModel}()},
   \code{\link{umxGetParameters}()},
   \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
   \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
-  \code{\link{umx_print}()}, \code{\link{umx_time}()},
-  \code{\link{umx}}
+  \code{\link{umx_time}()}, \code{\link{umx}}
 }
 \concept{Reporting Functions}

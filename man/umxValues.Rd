@@ -63,8 +63,6 @@ umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 
 Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
   \code{\link{umxLabel}()},
-  \code{\link{umxThresholdMatrix}()},
-  \code{\link{umx_get_bracket_addresses}()},
-  \code{\link{umx_string_to_algebra}()}, \code{\link{umx}}
+  \code{\link{umxThresholdMatrix}()}, \code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}
