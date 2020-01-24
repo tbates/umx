@@ -405,7 +405,7 @@ umxSummary.MxModelDoC <- umxSummaryDoC
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases plot.MxModelDoC
-#' @param model a [umxDoC()] to summarize.
+#' @param x a [umxDoC()] model to summarize.
 # #' @param digits round to how many digits (default = 2).
 # #' @param comparison you can run mxCompare on a comparison model (NULL).
 # #' @param file The name of the dot file to write: "name" = use the name of the model.
