@@ -30,11 +30,9 @@ Imports:
 	MuMIn,
     mvtnorm,
     nlme,
-    numDeriv,
     polycor,
     R2HTML,
     RCurl,
-    sfsmisc,
     utils,
     xtable
 Suggests: 
