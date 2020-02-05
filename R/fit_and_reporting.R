@@ -466,7 +466,6 @@ loadings.MxModel <- function(x, ...) {
 #' @param wipeExistingRequests Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').
 #' @param optimizer For difficult CIs, trying other optimizers can help!
 #' @param showErrorCodes (default = FALSE)
-#' @param ... Additional argument(s) for umxConfint.
 #' @export
 #' @return - [mxModel()]
 #' @family Reporting functions

@@ -28,8 +28,6 @@ umxConfint(
 \item{showErrorCodes}{(default = FALSE)}
 
 \item{optimizer}{For difficult CIs, trying other optimizers can help!}
-
-\item{...}{Additional argument(s) for umxConfint.}
 }
 \value{
 \itemize{
