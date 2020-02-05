@@ -1,4 +1,17 @@
-# umx 3.1.0
+# umx 3.0.6
+* Feb 2020 R 4.0.0 compatibility
+* BETA: `umxDoc` example but summary and plot TODO
+* NEW: `umxRAM2Lav` export umx to lavaan
+* IMPROVED: `xmu_safe_run_summary` has smarter default for `std` (model summary default)
+* IMPROVED: `umx_score_scale`: implemented score = "mean" and score = "max" 
+* IMPROVED: `umx_score_scale`: better documentation 
+* IMPROVED: `umxGxE` gains dzAr and dzCr control so ADE is possible as well as assortative mating
+* IMPROVED: `xmu_twin_check` works with mxData * IMPROVED: `xmu_twin_starts` works with mxData
+* IMPROVED: `xmu_make_top_twin` works with mxData
+* IMPROVED: `xmu_twin_check` support mxData (was just data.frame input)
+* IMPROVED: `umx_long_2_wide`: gains some notes on processing TWIND into famID and twinID
+* REPAIR: `umxSummary` handles std=NULL as documented (don't show parameter table)
+* RENAME:  `umx_nice_data` --> `umx_make_twin_data_nice` with future improvements planned to cope with non numeric twin schemes.
 
 # umx 3.0.5
 * December 2019 R 4.0.0 compatibility
