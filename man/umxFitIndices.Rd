@@ -41,7 +41,7 @@ Noncentrality-based indices:
 Comparative fit indices:
   TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
 
-Residual-based indices (with and without mean  structures):
+Residual-based indices:
   RMR, SRMR, SRMR_mplus, CRMR,
   MAR, SMAR, SMAR_mplus, CMAR
 
@@ -56,7 +56,7 @@ LISREL and other early fit indices (we recommend not reporting these)
 Want more? Open an Issue at GitHub.
 }
 \examples{
-require(umx)
+library(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)

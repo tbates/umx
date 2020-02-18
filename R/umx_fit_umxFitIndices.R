@@ -25,7 +25,7 @@
 #' Comparative fit indices:
 #'   TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
 #'
-#' Residual-based indices (with and without mean  structures):
+#' Residual-based indices:
 #'   RMR, SRMR, SRMR_mplus, CRMR,
 #'   MAR, SMAR, SMAR_mplus, CMAR
 #'
@@ -47,7 +47,7 @@
 #' @author Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer
 #' @references -
 #' @examples
-#' require(umx)
+#' library(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
