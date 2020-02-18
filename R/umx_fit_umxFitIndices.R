@@ -538,10 +538,10 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
 
   rownames(x$informationCriteria$Chi) =
     rownames(x$informationCriteria$deviance) =
-    c('AIC (Akaike information criterion):',
-      'BIC (Bayesian information criterion):',
+    c('AIC  (Akaike information criterion):',
+      'BIC  (Bayesian information criterion):',
       'CAIC (Consistent AIC):',
-      'BCC (Browne-Cudeck criterion):'
+      'BCC  (Browne-Cudeck criterion):'
     )
   
   if (!is.na(x$Chi)) {
@@ -566,7 +566,7 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
   cat('LISREL and other early fit indices\n')
   cat('==================================\n')
   cat('** These indices are strongly discouraged due to numerous problems.',
-      '\n   It is recommended that you do not report them.\n')
+      '\n   We recommend that you do not report them.\n')
   cat('GFI (Goodness of fit index): ', round(x$GFI,  digits), '\n')
   cat('AGFI (Adjusted GFI):         ', round(x$AGFI, digits), '\n')
   cat('PGFI (Parsimonious GFI):     ', round(x$PGFI, digits), '\n')
@@ -586,7 +586,8 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
   
   if (is.na(x$Chi)) {
     cat('\n\nFor additional fit indices, specify reference models using:', 
-        '\n  mxRefModels(', objectName, ', run = TRUE)', sep="")
+        '\n  umxFitIndices(', objectName, 
+        ', refModels = mxRefModels(', objectName, ', run = TRUE))', sep="")
   }
 
 
