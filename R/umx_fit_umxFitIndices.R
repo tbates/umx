@@ -346,50 +346,41 @@ xmuResidualIndices = function(obsCov, obsCor, obsMeans,
   # SRMR_mplus/SMAR_mplus = residuals standardized using the MPlus approach (Information=Observed; http://www.statmodel.com/download/SRMR.pdf)
   # CRMR/CMAR = residuals standardized using the Bollen approach (residual correlations)
 
-  if(!(length(obsCov) == 1 && is.na(obsCov))) {
-    RMR        = sqrt(mean(    c(vech(resMat$raw$Cov),         resMat$raw$Means)^2))
-    SRMR       = sqrt(mean(    c(vech(resMat$cor.bentler$Cov), resMat$cor.bentler$Means)^2))
-    SRMR_mplus = sqrt(mean(    c(vech(resMat$cor.mplus$Cov),   resMat$cor.mplus$Means)^2))
-    MAR        =      mean(abs(c(vech(resMat$raw$Cov),         resMat$raw$Means)))
-    SMAR       =      mean(abs(c(vech(resMat$cor.bentler$Cov), resMat$cor.bentler$Means)))
-    SMAR_mplus =      mean(abs(c(vech(resMat$cor.mplus$Cov),   resMat$cor.mplus$Means)))
-
-    RMR_nomean        = sqrt(mean(    c(vech(resMat$raw$Cov))^2))
-    SRMR_nomean       = sqrt(mean(    c(vech(resMat$cor.bentler$Cov))^2))
-    SRMR_mplus_nomean = sqrt(mean(    c(vech(resMat$cor.mplus$Cov))^2))
-    MAR_nomean        =      mean(abs(c(vech(resMat$raw$Cov))))
-    SMAR_nomean       =      mean(abs(c(vech(resMat$cor.bentler$Cov))))
-    SMAR_mplus_nomean =      mean(abs(c(vech(resMat$cor.mplus$Cov))))
-  } else {
-    RMR = SRMR = SRMR_mplus = MAR = SMAR = SMAR_mplus =
-      RMR_nomean = SRMR_nomean = SRMR_mplus_nomean = MAR_nomean = SMAR_nomean =
-      NA
-  }
-  CRMR = sqrt(mean(    c(vech(resMat$cor.bollen$Cov), resMat$cor.bollen$Means)^2))
-  CMAR =      mean(abs(c(vech(resMat$cor.bollen$Cov), resMat$cor.bollen$Means)))
-
-  CRMR_nomean = sqrt(mean(    c(vech(resMat$cor.bollen$Cov))^2))
-  CMAR_nomean =      mean(abs(c(vech(resMat$cor.bollen$Cov))))
-
   if(length(obsMeans) == 1 && is.na(obsMeans)) {
-    RMR = RMR_nomean
-    SRMR = SRMR_nomean
-    SRMR_mplus = SRMR_mplus_nomean
-    MAR = MAR_nomean
-    SMAR = SMAR_nomean
-    SMAR_mplus = SMAR_mplus_nomean
-    CRMR = CRMR_nomean
-    CMAR = CMAR_nomean
+    
+    if (!(length(obsCov) == 1 && is.na(obsCov))) {
+      RMR        = sqrt(mean(    c(vech(resMat$raw$Cov))^2))
+      SRMR       = sqrt(mean(    c(vech(resMat$cor.bentler$Cov))^2))
+      SRMR_mplus = sqrt(mean(    c(vech(resMat$cor.mplus$Cov))^2))
+      MAR        =      mean(abs(c(vech(resMat$raw$Cov))))
+      SMAR       =      mean(abs(c(vech(resMat$cor.bentler$Cov))))
+      SMAR_mplus =      mean(abs(c(vech(resMat$cor.mplus$Cov))))
+    } else {
+      RMR = SRMR = SRMR_mplus = MAR = SMAR = SMAR_mplus = NA
+    }
+    CRMR = sqrt(mean(    c(vech(resMat$cor.bollen$Cov))^2))
+    CMAR =      mean(abs(c(vech(resMat$cor.bollen$Cov))))
+
+  } else {
+    if (!(length(obsCov) == 1 && is.na(obsCov))) {
+      RMR        = sqrt(mean(    c(vech(resMat$raw$Cov),         resMat$raw$Means)^2))
+      SRMR       = sqrt(mean(    c(vech(resMat$cor.bentler$Cov), resMat$cor.bentler$Means)^2))
+      SRMR_mplus = sqrt(mean(    c(vech(resMat$cor.mplus$Cov),   resMat$cor.mplus$Means)^2))
+      MAR        =      mean(abs(c(vech(resMat$raw$Cov),         resMat$raw$Means)))
+      SMAR       =      mean(abs(c(vech(resMat$cor.bentler$Cov), resMat$cor.bentler$Means)))
+      SMAR_mplus =      mean(abs(c(vech(resMat$cor.mplus$Cov),   resMat$cor.mplus$Means)))
+    } else {
+      RMR = SRMR = SRMR_mplus = MAR = SMAR = SMAR_mplus = NA
+    }
+    CRMR = sqrt(mean(    c(vech(resMat$cor.bollen$Cov), resMat$cor.bollen$Means)^2))
+    CMAR =      mean(abs(c(vech(resMat$cor.bollen$Cov), resMat$cor.bollen$Means)))
   }
 
+  # Return valus structure in preparation for confidence intervals and SEs
   return(
     list(
-      RMR = RMR, SRMR = SRMR, SRMR_mplus = SRMR_mplus, CRMR = CRMR,
-      MAR = MAR, SMAR = SMAR, SMAR_mplus = SMAR_mplus, CMAR = CMAR,
-      RMR_nomean = RMR_nomean, SRMR_nomean = SRMR_nomean,
-      SRMR_mplus_nomean = SRMR_mplus_nomean, CRMR_nomean = CRMR_nomean,
-      MAR_nomean = MAR_nomean, SMAR_nomean = SMAR_nomean,
-      SMAR_mplus_nomean = SMAR_mplus_nomean, CMAR_nomean = CMAR_nomean
+      estimate = c(RMR = RMR, SRMR = SRMR, SRMR_mplus = SRMR_mplus, CRMR = CRMR,
+                   MAR = MAR, SMAR = SMAR, SMAR_mplus = SMAR_mplus, CMAR = CMAR)
     )
   )
 }
@@ -414,14 +405,15 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
     cat('Chi squared test\n')
     cat('================\n')
     if (x$Chi <= 0) {
-      cat("chi-square:  ", "\u03C7\u00B2 ( df=", x$ChiDoF, " ) = ",
+      cat("chi-square: ", "\u03C7\u00B2 (df=", x$ChiDoF, ") = ",
           round(x$Chi, digits),
-          ",  p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
+          ", p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
     } else {
-      cat("chi-square:  ", "\u03C7\u00B2 ( df=", x$ChiDoF, " ) = ",
+      cat("chi-square: ", "\u03C7\u00B2 (df=", x$ChiDoF, ") = ",
           format(round(x$Chi, max(0, digits - log10(x$Chi)))),
-          ",  p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
+          ", p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
     }
+    cat('\n')
     cat('chi-square per df (\u03C7\u00B2 / df):', round(x$ChiPerDoF, digits), '\n')
     cat('\n\n')
     
@@ -435,102 +427,87 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
         round(x$RMSEACI[2], digits), ')]', '\n', sep = "")
     cat('  Prob(RMSEA <= ', round(x$RMSEANull, digits), "): ",
         format.pval(x$RMSEAClose, digits, eps = 0), "\n", sep = "")
-    cat('RMSEA of independence (null or baseline) model:  ', round(x$independenceRMSEA, digits), '\n')
+    cat('\n')
+    cat('RMSEA of independence model:        ', 
+        rep(' ', nchar(round(x$NCP, digits)) - nchar(round(x$independenceRMSEA, digits))),
+        round(x$independenceRMSEA, digits), '\n', sep = "")
     cat('Noncentrality parameter (NCP or d): ', round(x$NCP, digits),
         '  [95% CI (', round(x$NCPCI[1], digits), ', ',
         round(x$NCPCI[2], digits), ')]', '\n', sep = "")
-    cat('Rescaled NCP (F0 or t):             ', round(x$F0,  digits),
+    cat('Rescaled NCP (F0 or t):             ', 
+        rep(' ', nchar(round(x$NCP, digits)) - nchar(round(x$F0, digits))),
+        round(x$F0,  digits),
         '  [95% CI (', round(x$F0CI[1], digits), ', ',
         round(x$F0CI[2], digits), ')]', '\n', sep = "")
-    cat('Mc (McDonald centrality index): ', round(x$Mc, digits), '\n')
-    cat('   [Also called MFI (McDonald fit index) or NCI (Noncentrality index)]\n')
+    cat('Mc (McDonald centrality index):     ', 
+        rep(' ', nchar(round(x$NCP, digits)) - nchar(round(x$Mc, digits))),
+        round(x$Mc, digits), 
+        '  [Also called MFI (McDonald fit index)\n',
+        rep(' ', 46), 'or NCI (Noncentrality index)]\n', sep = "")
     cat('\n\n')
     
     cat('Incremental fit indices\n')
     cat('=======================\n')
-    cat('CFI (Comparative fit index):', round(x$CFI, digits), '\n')
-    cat('   [Also called RNI (Relative noncentrality index)]\n')
-    cat('TLI (Tucker-Lewis index):   ', round(x$TLI, digits), '\n')
-    cat('   [Also called NNFI (Non-normed fit index)]\n')
+    cat('CFI (Comparative fit index):', round(x$CFI, digits), '  [Also called RNI (Relative noncentrality index)]\n')
+    cat('TLI (Tucker-Lewis index):   ', round(x$TLI, digits), '  [Also called NNFI (Non-normed fit index)]\n')
+    cat('IFI (Incremental fit index):', round(x$IFI, digits), '  [Also called BL89 (Bollen, 1989, fit index)]\n')
+
     cat('\n')
     cat('Parsimony ratio (df / df_indepedence):', round(x$PRATIO, digits), '\n')
-    cat('PCFI (Parsimonious CFI):           ', round(x$PCFI,      digits), '\n')
-    cat('IFI (Incremental fit index):       ', round(x$IFI,       digits), '\n')
-    cat('   [Also called BL89 (Bollen, 1989, fit index)]\n')
+    cat('PCFI (Parsimonious CFI):    ', round(x$PCFI,      digits), '\n')
     
-    if(!is.na(x$independenceRMSEA) && x$independenceRMSEA <= .158) {
-      message(paste0("\nNote: Independence (Null) model has RMSEA = ",
+    
+    if (!is.na(x$independenceRMSEA) && x$independenceRMSEA <= .158) {
+      message(paste0('\nNote: Independence (Null) model has RMSEA = ',
                      round(x$independenceRMSEA, digits),
-                     ".\nIf the model shows good fit (RMSEA <= .05), TLI has a maximum value <= .90.",
-                     "\nInterpret incremental fit indices (TLI, CFI, etc.) with caution.\n"))
+                     '.\nIf the model shows good fit (RMSEA <= .05), TLI has a maximum value <= .90.',
+                     '\nInterpret incremental fit indices (TLI, CFI, etc.) with caution.\n'))
     }
     cat('\n\n')
   }
+  
+  squaredResisualIndices = data.frame(
+    Estimate = round(x$residualIndices$estimate[c('RMR', 'SRMR', 'SRMR_mplus', 'CRMR')], digits)
+  )
+  rownames(squaredResisualIndices) = 
+    c('RMR  (Root mean squared residual):',
+      'SRMR (Standardized root mean squared residual):',
+      '     (MPlus method):',
+      'CRMR (Correlation root mean squared residual):'
+    )
+  
+  absoluteResisualIndices = data.frame(
+    Estimate = round(x$residualIndices$estimate[c('MAR', 'SMAR', 'SMAR_mplus', 'CMAR')], digits)
+  )
+  rownames(absoluteResisualIndices) = 
+    c('MAR  (Mean absolute residual):',
+      'SMAR (Standardized mean absolute residual):',
+      '     (MPlus method): ',
+      'CMAR (Correlation mean absolute residual):'
+    )
 
   cat('Residuals-based indices\n')
   cat('=======================\n')
-
-  if (is.na(x$residualIndices$SRMR)) {
-    cat("Observed values are correlations",
-        "  Use CRMR instead of RMR or SRMR.",
-        "  Use CMAR instead of MAR or SMAR.",
-        "\n")
-    cat('CRMR (Correlation root mean squared residual):  ',
-        round(x$residualIndices$CRMR, digits),
-        if(!is.na(x$residualIndices$CRMR_nomean)) {c('(with mean structure)\n',
-                                                     ' [Bollen method SRMR]', rep(' ', 13), round(x$residualIndices$CRMR_nomean, digits),
-                                                     '(without mean structure)\n\n')} else {'\n   [Bollen method SRMR]\n'} )
-    cat('CMAR (Correlation mean absolute residual): ',
-        round(x$residualIndices$CMAR, digits),
-        if(!is.na(x$residualIndices$CMAR_nomean)) {c('(with mean structure)\n ',
-                                                     ' [Bollen method SMAR]', rep(' ', 2), round(x$residualIndices$CMAR_nomean, digits),
-                                                     '(without mean structure)\n\n')} else {'\n   [Bollen method SMAR]\n'} )
+  
+  if (is.na(x$residualIndices$estimate['SRMR'])) {
+    cat('Observed values are correlations',
+        '  Use CRMR instead of RMR or SRMR.',
+        '  Use CMAR instead of MAR or SMAR.',
+        '\n')
+    print(rbind(squaredResisualIndices[4,], ` ` = ""))
+    cat('\n')
+    cat('CRMR, CMAR:\n    Residuals standaridzed using the Bollen method.\n')
   } else {
-    cat('RMR (Root mean squared residual):               ',
-        round(x$residualIndices$RMR, digits),
-        if(!is.na(x$residualIndices$RMR_nomean)) {c('(with mean structure)\n',
-                                                    rep(' ', 24), round(x$residualIndices$RMR_nomean, digits),
-                                                    '(without mean structure)')}, '\n')
-    cat('SRMR (Standardized root mean squared residual):\n')
-    cat('  Bentler method (lavaan, sem, EQS, AMOS):      ',
-        round(x$residualIndices$SRMR, digits),
-        if(!is.na(x$residualIndices$SRMR_nomean)) {c('(with mean structure)\n',
-                                                     rep(' ', 24), round(x$residualIndices$SRMR_nomean, digits),
-                                                     '(without mean structure)')}, '\n')
-    cat('  MPlus method:                                 ',
-        round(x$residualIndices$SRMR_mplus, digits),
-        if(!is.na(x$residualIndices$SRMR_mplus_nomean)) {c('(with mean structure)\n',
-                                                           rep(' ', 24), round(x$residualIndices$SRMR_mplus_nomean, digits),
-                                                           '(without mean structure)')}, '\n')
-    cat('CRMR (Correlation root mean squared residual):  ',
-        round(x$residualIndices$CRMR, digits),
-        if(!is.na(x$residualIndices$CRMR_nomean)) {c('(with mean structure)\n',
-                                                     ' [Bollen method SRMR]', rep(' ', 13), round(x$residualIndices$CRMR_nomean, digits),
-                                                     '(without mean structure)\n\n')} else {'\n   [Bollen method SRMR]\n'} )
-
-    cat('MAR (Mean absolute residual):                   ',
-        round(x$residualIndices$MAR,  digits),
-        if(!is.na(x$residualIndices$MAR_nomean)) {c('(with mean structure)\n',
-                                                    rep(' ', 24), round(x$residualIndices$MAR_nomean, digits),
-                                                    '(without mean structure)')}, '\n')
-    cat('SMAR (Standardized mean absolute residual):\n')
-    cat('  Bentler method (lavaan, sem, EQS, AMOS):      ',
-        round(x$residualIndices$SMAR, digits),
-        if(!is.na(x$residualIndices$SMAR_nomean)) {c('(with mean structure)\n',
-                                                     rep(' ', 24), round(x$residualIndices$SMAR_nomean, digits),
-                                                     '(without mean structure)')}, '\n')
-    cat('  MPlus method:                                 ',
-        round(x$residualIndices$SMAR_mplus, digits),
-        if(!is.na(x$residualIndices$SMAR_mplus_nomean)) {c('(with mean structure)\n',
-                                                           rep(' ', 24), round(x$residualIndices$SMAR_mplus_nomean, digits),
-                                                           '(without mean structure)')}, '\n')
-    cat('CMAR (Correlation mean absolute residual):      ',
-        round(x$residualIndices$CMAR, digits),
-        if(!is.na(x$residualIndices$CMAR_nomean)) {c('(with mean structure)\n',
-                                                     ' [Bollen method SMAR]', rep(' ', 13), round(x$residualIndices$CMAR_nomean, digits),
-                                                     '(without mean structure)\n\n')} else {'\n   [Bollen method SMAR]\n'} )
+    print(rbind(squaredResisualIndices, ` ` = "", absoluteResisualIndices))
+    cat('\n')
+    cat(
+      '  SRMR, SMAR: Residuals standardized using the Bentler method (used by lavaan, sem, EQS, AMOS).\n',
+      '     (MPlus): Residuals standardized using the MPlus "observed information" method.\n',
+      '  CRMR, CMAR: Residuals standaridzed using the Bollen method.\n',
+        sep = ""
+        )
   }
-  cat('\n')
+  cat('\n\n')
 
   colnames(x$informationCriteria$Chi) =
     colnames(x$informationCriteria$deviance) =
@@ -549,7 +526,7 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
     cat('=================================================\n')
     print(round(x$informationCriteria$Chi, digits))
     cat("\n")
-    cat('ECVI (Expected cross-validation index): ', round(x$ECVI, digits),
+    cat('ECVI  (Expected cross-validation index): ', round(x$ECVI, digits),
         '  [95% CI (', round(x$ECVICI[1], digits), ', ',
         round(x$ECVICI[2], digits), ')]', '\n', sep = "")
     cat('MECVI (Modified ECVI): ', round(x$ECVI, digits),
@@ -567,16 +544,14 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
   cat('==================================\n')
   cat('** These indices are strongly discouraged due to numerous problems.',
       '\n   We recommend that you do not report them.\n')
-  cat('GFI (Goodness of fit index): ', round(x$GFI,  digits), '\n')
+  cat('GFI  (Goodness of fit index):', round(x$GFI,  digits), '\n')
   cat('AGFI (Adjusted GFI):         ', round(x$AGFI, digits), '\n')
   cat('PGFI (Parsimonious GFI):     ', round(x$PGFI, digits), '\n')
   if (!is.na(x$Chi)) {
-    cat('NFI (Normed fit index):      ', round(x$NFI,  digits), '\n')
-    cat('PNFI (Parsimonious NFI):     ', round(x$PNFI, digits), '\n')
-    cat('   [Also called PFI (Parsimonious fit index)]\n')
-    cat('RFI (Relative fit index):    ', round(x$RFI,  digits), '\n')
-    cat('GH (Gamma hat):              ', round(x$GH,   digits), '\n')
-    cat('   [Estimated population GFI]')
+    cat('NFI  (Normed fit index):     ', round(x$NFI,  digits), '\n')
+    cat('PNFI (Parsimonious NFI):     ', round(x$PNFI, digits), '  [Also called PFI (Parsimonious fit index)]\n')
+    cat('RFI  (Relative fit index):   ', round(x$RFI,  digits), '\n')
+    cat('GH   (Gamma hat):            ', round(x$GH,   digits), '  [Estimated population GFI]\n')
   }
   
   objectName = regmatches(attr(x, "call"), 
@@ -589,7 +564,6 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
         '\n  umxFitIndices(', objectName, 
         ', refModels = mxRefModels(', objectName, ', run = TRUE))', sep="")
   }
-
 
   invisible(x)
 

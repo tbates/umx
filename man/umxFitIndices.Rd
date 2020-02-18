@@ -4,60 +4,100 @@
 \alias{umxFitIndices}
 \title{Get additional fit-indices for a model with umxFitIndices}
 \usage{
-umxFitIndices(model, refModels = mxRefModels(model, run = TRUE))
+umxFitIndices(model, ...)
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} for which you want fit indices.}
+\item{model}{The \code{\link{mxModel}} for which you want fit indices.}
 
-\item{refModels}{Independence and saturated models. default mxRefModels(model, run = TRUE)}
+\item{...}{Additional parameters passed to \code{\link{summary.MxModel}}.}
 }
 \value{
-Table of fit statistics
+List of fit statistics
 }
 \description{
-A list of fit indices. Originated in this thread: https://openmx.ssri.psu.edu/thread/765
-note: This is not a full-fat fit reporter. It is not robust across multi-group designs,
-definition variables. It is primarily designed to add less-often reported fit indices for
-RAM models where reviewer 2 wants something other than CFA/TLI/RMSEA :-).
+Computes a variety of fit indices. Originated in this thread: http://openmx.ssri.psu.edu/thread/765
 }
 \details{
-Fit information reported includes: N, deviance, N.parms, Chi, df, p.Chi, Chi.df, AICchi, AICdev, BCCchi, BCCdev, BICchi, BICdev,
-CAICchi, CAICdev, RMSEA, SRMR, RMR, SMAR, MAR, SMAR.nodiag, MAR.nodiag, GFI, AGFI, PGFI,
-NFI, RFI, IFI, NNFI.TLI, CFI, PRATIO, PNFI, PCFI, NCP, ECVIchi, ECVIdev, MECVIchi, MECVIdev, MFI, GH
+Note: This function is currently not robust across multi-group designs or
+definition variables. It is designed to provide residual-based fit indices
+(SRMR, CRMR, SMAR, CMAR, etc.) and less-often reported fit indices where
+Reviewer 2 wants something other than CFA/TLI/RMSEA.
 
-Want more? File a report at github
+
+Fit information reported includes:
+
+Model characterstics:
+  numObs, estimatedParameters,
+  observedStatistics, observedSummaryStatistics,
+  Minus2LogLikelihood, degreesOfFreedom
+
+Chi-squared test:
+  Chi, ChiDoF, p (of Chi), ChiPerDoF,
+
+Noncentrality-based indices:
+  RMSEA, RMSEACI, RMSEANull, RMSEAClose (p value), independenceRMSEA,
+  NCP, NCPCI, F0, F0CI, Mc (aka NCI, MFI)
+
+Comparative fit indices:
+  TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
+
+Residual-based indices (with and without mean  structures):
+  RMR, SRMR, SRMR_mplus, CRMR,
+  MAR, SMAR, SMAR_mplus, CMAR
+
+Information-theory criteria (computed using chi-square or -2LL; df or paramters penalties)
+  AIC, AICc, BIC, SABIC, CAIC, BCC
+  ECVI, ECVICI, MECVI, MECVICI
+
+LISREL and other early fit indices (we recommend not reporting these)
+  GFI, AGFI, PGFI, GH, NFI, PNFI, RFI
+
+
+Want more? Open an Issue at GitHub.
 }
 \examples{
 require(umx)
 data(demoOneFactor)
+latents  = c("G")
 manifests = names(demoOneFactor)
-
-m1 = umxRAM("fit_ex", data = demoOneFactor, type = "cov",
-	umxPath("G", to = manifests),
+m1 = umxRAM("One Factor",
+	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
+	umxPath(latents, to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = "G", fixedAt = 1)
+	umxPath(var = latents, fixedAt = 1)
 )
 umxFitIndices(m1)
+
 # And with raw data
-m1 = umxRAM("m1", data = demoOneFactor,
-	umxPath("G", to = manifests),
+m2 = umxRAM("m1", data = demoOneFactor,
+	umxPath(latents, to = manifests),
 	umxPath(v.m. = manifests),
-	umxPath(v1m0 = "G")
+	umxPath(v1m0 = latents)
 )
-umxFitIndices(m1)
-umxAPA(umxFitIndices(m1), digits = 3)
+umxFitIndices(m1, refModels = mxRefModels(m2, run = TRUE))
+}
+\references{
+-
 }
 \seealso{
-Other Reporting functions: \code{\link{RMSEA.MxModel}()},
-  \code{\link{RMSEA.summary.mxmodel}()},
-  \code{\link{RMSEA}()},
-  \code{\link{extractAIC.MxModel}()},
-  \code{\link{loadings}()},
-  \code{\link{residuals.MxModel}()},
-  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
-  \code{\link{umxCompare}()}, \code{\link{umxConfint}()},
-  \code{\link{umxExpCov}()}, \code{\link{umxExpMeans}()},
-  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
-  \code{\link{umxSummary.MxModel}()}
+Other Reporting functions: 
+\code{\link{RMSEA.MxModel}()},
+\code{\link{RMSEA.summary.mxmodel}()},
+\code{\link{RMSEA}()},
+\code{\link{extractAIC.MxModel}()},
+\code{\link{loadings}()},
+\code{\link{residuals.MxModel}()},
+\code{\link{umxCI_boot}()},
+\code{\link{umxCI}()},
+\code{\link{umxCompare}()},
+\code{\link{umxConfint}()},
+\code{\link{umxExpCov}()},
+\code{\link{umxExpMeans}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxRotate}()},
+\code{\link{umxSummary.MxModel}()}
+}
+\author{
+Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer
 }
 \concept{Reporting functions}
