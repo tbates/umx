@@ -67,7 +67,13 @@
 #' )
 #' umxFitIndices(m1, refModels = mxRefModels(m2, run = TRUE))
 umxFitIndices = function(model, ...) {
-  if(!umx_is_RAM(model)){
+  if (is.list(model)) {
+    stop("Lists of models not supported in `umxFitIndices()`.\nSpecify one model at a time.", call. = FALSE)
+  }
+  if (!umx_is_MxModel(model)) {
+    stop("`model` must be an MxModel.", call. = FALSE)
+  }
+  if (!umx_is_RAM(model)) {
     message("Not fully tested against non-RAM models...")
   }
   modSumm      = summary(model, ...)
@@ -144,12 +150,12 @@ umxFitIndices = function(model, ...) {
                                 Fvalue + (2 * numObs / (numObs - nManifest - 1)) * nParam,
                                 NA)
   )
-  if (Fvalue == Chi) {
-    infoCritChi = infoCrit
-    infoCritDev = infoCrit - Chi + deviance
-  } else {
+  if (Fvalue == deviance) {
     infoCritDev = infoCrit
     infoCritChi = infoCrit - deviance + Chi
+  } else {
+    infoCritChi = infoCrit
+    infoCritDev = infoCrit - Chi + deviance
   }
   informationCriteria = list(Chi = infoCritChi,
                              deviance = infoCritDev)
@@ -214,7 +220,9 @@ umxFitIndices = function(model, ...) {
       informationCriteria = informationCriteria,
       ECVI = ECVI, ECVICI = ciECVI, MECVI = MECVI, MECVICI = ciMECVI
     )
-  class(indices) = c("umxFitIndices", class(indices))
+  class(indices) = c("umxFitIndices", "list")
+  attr(indices, "name") <- attr(model, "name")
+  attr(indices, "call") <- deparse(sys.call())
   return(indices)
 }
 
@@ -391,7 +399,7 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
     stop(gettextf("'x' must inherit from class %s", dQuote("umxFitIndices")),
          domain = NA)
   }
-  cat('\n')
+  cat('\nFit indices for', attr(x, "name"), "\n\n")
   cat('Model characteristics\n')
   cat('=====================\n')
   cat('Number of observations (sample size):  ', round(x$numObs, digits), '\n')
@@ -401,61 +409,63 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
   cat('   (means, variances, covariances)\n')
   cat('Deviance (-2 * LogLikelihood):         ', round(x$Minus2LogLikelihood, digits), '\n')
   cat('\n\n')
-
-  cat('Chi squared test\n')
-  cat('================\n')
-  if (x$Chi <= 0) {
-    cat("chi-square:  ", "\u03C7\u00B2 ( df=", x$ChiDoF, " ) = ",
-        round(x$Chi, digits),
-        ",  p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
-  } else {
-    cat("chi-square:  ", "\u03C7\u00B2 ( df=", x$ChiDoF, " ) = ",
-        format(round(x$Chi, max(0, digits - log10(x$Chi)))),
-        ",  p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
+  
+  if (!is.na(x$Chi)) {
+    cat('Chi squared test\n')
+    cat('================\n')
+    if (x$Chi <= 0) {
+      cat("chi-square:  ", "\u03C7\u00B2 ( df=", x$ChiDoF, " ) = ",
+          round(x$Chi, digits),
+          ",  p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
+    } else {
+      cat("chi-square:  ", "\u03C7\u00B2 ( df=", x$ChiDoF, " ) = ",
+          format(round(x$Chi, max(0, digits - log10(x$Chi)))),
+          ",  p = ", format.pval(x$p, digits, eps = 0), "\n", sep = "")
+    }
+    cat('chi-square per df (\u03C7\u00B2 / df):', round(x$ChiPerDoF, digits), '\n')
+    cat('\n\n')
+    
+    cat('Noncentrality-based indices\n')
+    cat('===========================\n')
+    if (length(x$RMSEASquared) == 1 && !is.na(x$RMSEASquared) && x$RMSEASquared < 0) {
+      cat('** (Non-centrality parameter is negative)')
+    }
+    cat('RMSEA (root mean squared error of approximation): ', round(x$RMSEA, digits),
+        '  [95% CI (', round(x$RMSEACI[1], digits), ', ',
+        round(x$RMSEACI[2], digits), ')]', '\n', sep = "")
+    cat('  Prob(RMSEA <= ', round(x$RMSEANull, digits), "): ",
+        format.pval(x$RMSEAClose, digits, eps = 0), "\n", sep = "")
+    cat('RMSEA of independence (null or baseline) model:  ', round(x$independenceRMSEA, digits), '\n')
+    cat('Noncentrality parameter (NCP or d): ', round(x$NCP, digits),
+        '  [95% CI (', round(x$NCPCI[1], digits), ', ',
+        round(x$NCPCI[2], digits), ')]', '\n', sep = "")
+    cat('Rescaled NCP (F0 or t):             ', round(x$F0,  digits),
+        '  [95% CI (', round(x$F0CI[1], digits), ', ',
+        round(x$F0CI[2], digits), ')]', '\n', sep = "")
+    cat('Mc (McDonald centrality index): ', round(x$Mc, digits), '\n')
+    cat('   [Also called MFI (McDonald fit index) or NCI (Noncentrality index)]\n')
+    cat('\n\n')
+    
+    cat('Incremental fit indices\n')
+    cat('=======================\n')
+    cat('CFI (Comparative fit index):', round(x$CFI, digits), '\n')
+    cat('   [Also called RNI (Relative noncentrality index)]\n')
+    cat('TLI (Tucker-Lewis index):   ', round(x$TLI, digits), '\n')
+    cat('   [Also called NNFI (Non-normed fit index)]\n')
+    cat('\n')
+    cat('Parsimony ratio (df / df_indepedence):', round(x$PRATIO, digits), '\n')
+    cat('PCFI (Parsimonious CFI):           ', round(x$PCFI,      digits), '\n')
+    cat('IFI (Incremental fit index):       ', round(x$IFI,       digits), '\n')
+    cat('   [Also called BL89 (Bollen, 1989, fit index)]\n')
+    
+    if(!is.na(x$independenceRMSEA) && x$independenceRMSEA <= .158) {
+      message(paste0("\nNote: Independence (Null) model has RMSEA = ",
+                     round(x$independenceRMSEA, digits),
+                     ".\nIf the model shows good fit (RMSEA <= .05), TLI has a maximum value <= .90.",
+                     "\nInterpret incremental fit indices (TLI, CFI, etc.) with caution.\n"))
+    }
+    cat('\n\n')
   }
-  cat('chi-square per df (\u03C7\u00B2 / df):', round(x$ChiPerDoF, digits), '\n')
-  cat('\n\n')
-
-  cat('Noncentrality-based indices\n')
-  cat('===========================\n')
-  if (length(x$RMSEASquared) == 1 && !is.na(x$RMSEASquared) && x$RMSEASquared < 0) {
-    cat('** (Non-centrality parameter is negative)')
-  }
-  cat('RMSEA (root mean squared error of approximation): ', round(x$RMSEA, digits),
-      '  [95% CI (', round(x$RMSEACI[1], digits), ', ',
-      round(x$RMSEACI[2], digits), ')]', '\n', sep = "")
-  cat('  Prob(RMSEA <= ', round(x$RMSEANull, digits), "): ",
-      format.pval(x$RMSEAClose, digits, eps = 0), "\n", sep = "")
-  cat('RMSEA of independence (null or baseline) model:  ', round(x$independenceRMSEA, digits), '\n')
-  cat('Noncentrality parameter (NCP or d): ', round(x$NCP, digits),
-      '  [95% CI (', round(x$NCPCI[1], digits), ', ',
-      round(x$NCPCI[2], digits), ')]', '\n', sep = "")
-  cat('Rescaled NCP (F0 or t):             ', round(x$F0,  digits),
-      '  [95% CI (', round(x$F0CI[1], digits), ', ',
-      round(x$F0CI[2], digits), ')]', '\n', sep = "")
-  cat('Mc (McDonald centrality index): ', round(x$Mc, digits), '\n')
-  cat('   [Also called MFI (McDonald fit index) or NCI (Noncentrality index)]\n')
-  cat('\n\n')
-
-  cat('Incremental fit indices\n')
-  cat('=======================\n')
-  cat('CFI (Comparative fit index):', round(x$CFI, digits), '\n')
-  cat('   [Also called RNI (Relative noncentrality index)]\n')
-  cat('TLI (Tucker-Lewis index):   ', round(x$TLI, digits), '\n')
-  cat('   [Also called NNFI (Non-normed fit index)]\n')
-  cat('\n')
-  cat('Parsimony ratio (df / df_indepedence):', round(x$PRATIO, digits), '\n')
-  cat('PCFI (Parsimonious CFI):           ', round(x$PCFI,      digits), '\n')
-  cat('IFI (Incremental fit index):       ', round(x$IFI,       digits), '\n')
-  cat('   [Also called BL89 (Bollen, 1989, fit index)]\n')
-
-  if(!is.na(x$independenceRMSEA) && x$independenceRMSEA <= .158) {
-    message(paste0("\nNote: Independence (Null) model has RMSEA = ",
-                   round(x$independenceRMSEA, digits),
-                   ".\nIf the model shows good fit (RMSEA <= .05), TLI has a maximum value <= .90.",
-                   "\nInterpret incremental fit indices (TLI, CFI, etc.) with caution.\n"))
-  }
-  cat('\n\n')
 
   cat('Residuals-based indices\n')
   cat('=======================\n')
@@ -533,18 +543,20 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
       'CAIC (Consistent AIC):',
       'BCC (Browne-Cudeck criterion):'
     )
-
-  cat('Information-based fit indices (computed using \u03C7\u00B2)\n')
-  cat('=================================================\n')
-  print(round(x$informationCriteria$Chi, digits))
-  cat("\n")
-  cat('ECVI (Expected cross-validation index): ', round(x$ECVI, digits),
-      '  [95% CI (', round(x$ECVICI[1], digits), ', ',
-      round(x$ECVICI[2], digits), ')]', '\n', sep = "")
-  cat('MECVI (Modified ECVI): ', round(x$ECVI, digits),
-      '  [95% CI (', round(x$MECVICI[1], digits), ', ',
-      round(x$MECVICI[2], digits), ')]', '\n', sep = "")
-  cat('\n\n')
+  
+  if (!is.na(x$Chi)) {
+    cat('Information-based fit indices (computed using \u03C7\u00B2)\n')
+    cat('=================================================\n')
+    print(round(x$informationCriteria$Chi, digits))
+    cat("\n")
+    cat('ECVI (Expected cross-validation index): ', round(x$ECVI, digits),
+        '  [95% CI (', round(x$ECVICI[1], digits), ', ',
+        round(x$ECVICI[2], digits), ')]', '\n', sep = "")
+    cat('MECVI (Modified ECVI): ', round(x$ECVI, digits),
+        '  [95% CI (', round(x$MECVICI[1], digits), ', ',
+        round(x$MECVICI[2], digits), ')]', '\n', sep = "")
+    cat('\n\n')
+  }
 
   cat('Information-based fit indices (computed using -2lnL)\n')
   cat('====================================================\n')
@@ -558,12 +570,25 @@ print.umxFitIndices = function(x, digits = max(1L, getOption("digits") - 3L), ..
   cat('GFI (Goodness of fit index): ', round(x$GFI,  digits), '\n')
   cat('AGFI (Adjusted GFI):         ', round(x$AGFI, digits), '\n')
   cat('PGFI (Parsimonious GFI):     ', round(x$PGFI, digits), '\n')
-  cat('NFI (Normed fit index):      ', round(x$NFI,  digits), '\n')
-  cat('PNFI (Parsimonious NFI):     ', round(x$PNFI, digits), '\n')
-  cat('   [Also called PFI (Parsimonious fit index)]\n')
-  cat('RFI (Relative fit index):    ', round(x$RFI,  digits), '\n')
-  cat('GH (Gamma hat):              ', round(x$GH,   digits), '\n')
-  cat('   [Estimated population GFI]')
+  if (!is.na(x$Chi)) {
+    cat('NFI (Normed fit index):      ', round(x$NFI,  digits), '\n')
+    cat('PNFI (Parsimonious NFI):     ', round(x$PNFI, digits), '\n')
+    cat('   [Also called PFI (Parsimonious fit index)]\n')
+    cat('RFI (Relative fit index):    ', round(x$RFI,  digits), '\n')
+    cat('GH (Gamma hat):              ', round(x$GH,   digits), '\n')
+    cat('   [Estimated population GFI]')
+  }
+  
+  objectName = regmatches(attr(x, "call"), 
+                          regexec("umxFitIndices\\((?:model *= *)?([^,)]+)", 
+                                  attr(x, "call"))
+                          )[[1]][[2]]
+  
+  if (is.na(x$Chi)) {
+    cat('\n\nFor additional fit indices, specify reference models using:', 
+        '\n  mxRefModels(', objectName, ', run = TRUE)', sep="")
+  }
+
 
   invisible(x)
 
