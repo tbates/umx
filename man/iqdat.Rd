@@ -38,8 +38,8 @@ TODO
 }
 \seealso{
 Other datasets: \code{\link{Fischbein_wt}},
-  \code{\link{GFF}}, \code{\link{umx}},
-  \code{\link{us_skinfold_data}}
+  \code{\link{GFF}}, \code{\link{docData}},
+  \code{\link{umx}}, \code{\link{us_skinfold_data}}
 }
 \concept{datasets}
 \keyword{datasets}

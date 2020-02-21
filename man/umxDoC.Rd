@@ -10,7 +10,7 @@ umxDoC(
   var2Indicators,
   mzData = NULL,
   dzData = NULL,
-  sep = NULL,
+  sep = "_T",
   causal = TRUE,
   autoRun = getOption("umx_auto_run"),
   intervals = FALSE,
@@ -25,11 +25,11 @@ umxDoC(
 
 \item{var2Indicators}{variables defining latent trait 2}
 
-\item{mzData}{The MZ dataframe.}
+\item{mzData}{The MZ dataframe}
 
-\item{dzData}{The DZ dataframe.}
+\item{dzData}{The DZ dataframe}
 
-\item{sep}{The separator in twin variable names, often "_T", e.g. "dep_T1". Simplifies selDVs.}
+\item{sep}{The separator in twin variable names, deafult = "_T", e.g. "dep_T1".}
 
 \item{causal}{whether to add the causal paths (default TRUE)}
 
@@ -43,7 +43,7 @@ umxDoC(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.DOC
+\item \code{\link[=mxModel]{mxModel()}} of subclass MxModelDoC
 }
 }
 \description{
@@ -64,38 +64,46 @@ each with three indicators). Note: For pedagogical reasons, only the model for 1
 To be added.
 }
 \examples{
-\dontrun{
 # ========================
 # = Does Rain cause Mud? =
 # ========================
 
 # ================
-# = Prepare Data =
+# = 1. Load Data =
 # ================
-mzData = read.csv("~/Desktop/DOC/MZdata.csv")
-dzData = read.csv("~/Desktop/DOC/DZdata.csv")
-varNames = paste0(rep(c("a", "b"), each= 3), c(1:3))
+load(docData)
+mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 
-names(mzData) = c("X", paste0(varNames, "_T1"), paste0(varNames, "_T2"), "sex_T1", "sex_T2")
-names(dzData) = c("X", paste0(varNames, "_T1"), paste0(varNames, "_T2"), "sex_T1", "sex_T2")
+# =======================================
+# = 2. Define manifests for var 1 and 2 =
+# =======================================
+var1 = paste0("a", 1:3)
+var2 = paste0("b", 1:3)
 
-Chol  = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3), 
-			mzData= mzData, dzData= dzData, sep = "_T", causal= FALSE)
-DoC   = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
-		mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
+# =======================================================
+# = 2. Make the non-causal (Cholesky) and causal models =
+# =======================================================
+Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+DoC = umxDoC(var1= var1, var2= var1, mzData= mzData, dzData= dzData, causal= TRUE)
+
+# ================================================
+# = Make the directional models by modifying DoC =
+# ================================================
 A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B"); summary(A2B)
 B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A"); summary(B2A)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 
-Chol = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10),mzData= mzData, dzData= dzData, 
-			sep = "_T", causal= FALSE, auto=FALSE); Chol = mxRun(Chol)
-DoC = umxDoC(var1= paste0("SOS", 1:8), var2= paste0("Vocab", 1:10), mzData= mzData, dzData= dzData,
-			sep = "_T", causal= TRUE, auto=FALSE); DoC = mxRun(DoC)
-A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B", auto=F); A2B = mxRun(A2B)
-B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A", auto=F); B2A = mxRun(B2A)
-Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip", auto=F); Recip = mxRun(Recip)
-
+\dontrun{
+var1 = paste0("SOS", 1:8)
+var2 = paste0("Vocab", 1:10)
+Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
+DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+A2B  = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
+B2A  = umxModify(DoC, "b2a", free = TRUE, name = "B2A")
+Recip= umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip")
 umxCompare(Chol, c(A2B, B2A, Recip))
+
 }
 
 }

@@ -19,61 +19,60 @@ vs. pathology. It assesses problem solving, communication, roles within the hous
 affection, and control. GFF was assessed with a Dutch translation of the General Functioning
 sub-scale of the McMaster Family Assessment Device (FAD) (Epstein et al., 1983).
 
-Family Conflict (FC) refers to adolescents' evaluations of the amount of openly 
+Family Conflict (FC) refers to adolescents' evaluations of the amount of openly
 expressed anger, aggression, and conflict among family members. Conflict
 sub-scale of the Family Environment Scale (FES) (Moos, 1974)
 
 Quality of life in general (QLg) was assessed with the 10-step Cantril
 Ladder from best- to worst-possible life (Cantril, 1965).
-
-\describe{
-  \item{zyg_6grp}{Six-level zygosity: MZMM, DZMM, MZFF, DZFF, DZMF, DZFM}
-  \item{zyg_2grp}{Two-level zygosity measure: 'MZ', 'DZ'}
-  \item{divorce}{Parental divorce status: 0 = No, 1 = Yes}
-  \item{sex_T1}{Sex of twin 1: 0 = "male", 1 = "female"}
-  \item{age_T1}{Age of twin 1 (years)}
-  \item{gff_T1}{General family functioning for twin 1}
-  \item{fc_T1}{Family conflict sub-scale of the FES}
-  \item{qol_T1}{Quality of life for twin 1}
-  \item{hap_T1}{General happiness for twin 1}
-  \item{sat_T1}{Satisfaction with life for twin 1}
-  \item{AD_T1}{Anxiety and Depression for twin 1}
-  \item{SOMA_T1}{Somatic complaints for twin 1}
-  \item{SOC_T1}{Social problems for twin 1}
-  \item{THOU_T1}{Thought disorder problems for twin 1}
-  \item{sex_T2}{Sex of twin 2}
-  \item{age_T2}{Age of twin 2}
-  \item{gff_T2}{General family functioning for twin 2}
-  \item{fc_T2}{Family conflict sub-scale of the FES}
-  \item{qol_T2}{Quality of life for twin 2}
-  \item{hap_T2}{General happiness for twin 2}
-  \item{sat_T2}{Satisfaction with life for twin 2}
-  \item{AD_T2}{Anxiety and Depression for twin 2}
-  \item{SOMA_T2}{Somatic complaints for twin 2}
-  \item{SOC_T2}{Social problems for twin 2}
-  \item{THOU_T2}{Thought disorder problems for twin 2}
-  \item{sex_Ta}{Sex of sib 1}
-  \item{age_Ta}{Age of sib 1}
-  \item{gff_Ta}{General family functioning for sib 1}
-  \item{fc_Ta}{Family conflict sub-scale of the FES}
-  \item{qol_Ta}{Quality of life for sib 1}
-  \item{hap_Ta}{General happiness for sib 1}
-  \item{sat_Ta}{Satisfaction with life for sib 1}
-  \item{AD_Ta}{Anxiety and Depression for sib 1}
-  \item{SOMA_Ta}{Somatic complaints for sib 1}
-  \item{SOC_Ta}{Social problems for sib 1}
-  \item{THOU_Ta}{Thought disorder problems for sib 1}
-  \item{sex_Ts}{Sex of sib 2}
-  \item{age_Ts}{Age of sib 2}
-  \item{gff_Ts}{General family functioning for sib 2}
-  \item{fc_Ts}{Family conflict sub-scale of the FES}
-  \item{qol_Ts}{Quality of life for sib 2}
-  \item{hap_Ts}{General happiness for sib 2}
-  \item{sat_Ts}{Satisfaction with life for sib 2}
-  \item{AD_Ts}{Anxiety and Depression for sib 2}
-  \item{SOMA_Ts}{Somatic complaints for sib 2}
-  \item{SOC_Ts}{Social problems for sib 2}
-  \item{THOU_Ts}{Thought disorder problems for sib 2}
+\itemize{
+\item \emph{zyg_6grp}: Six-level zygosity: MZMM, DZMM, MZFF, DZFF, DZMF, DZFM
+\item \emph{zyg_2grp}: Two-level zygosity measure: 'MZ', 'DZ'
+\item \emph{divorce}: Parental divorce status: 0 = No, 1 = Yes
+\item \emph{sex_T1}: Sex of twin 1: 0 = "male", 1 = "female"
+\item \emph{age_T1}: Age of twin 1 (years)
+\item \emph{gff_T1}: General family functioning for twin 1
+\item \emph{fc_T1}: Family conflict sub-scale of the FES
+\item \emph{qol_T1}: Quality of life for twin 1
+\item \emph{hap_T1}: General happiness for twin 1
+\item \emph{sat_T1}: Satisfaction with life for twin 1
+\item \emph{AD_T1}: Anxiety and Depression for twin 1
+\item \emph{SOMA_T1}: Somatic complaints for twin 1
+\item \emph{SOC_T1}: Social problems for twin 1
+\item \emph{THOU_T1}: Thought disorder problems for twin 1
+\item \emph{sex_T2}: Sex of twin 2
+\item \emph{age_T2}: Age of twin 2
+\item \emph{gff_T2}: General family functioning for twin 2
+\item \emph{fc_T2}: Family conflict sub-scale of the FES
+\item \emph{qol_T2}: Quality of life for twin 2
+\item \emph{hap_T2}: General happiness for twin 2
+\item \emph{sat_T2}: Satisfaction with life for twin 2
+\item \emph{AD_T2}: Anxiety and Depression for twin 2
+\item \emph{SOMA_T2}: Somatic complaints for twin 2
+\item \emph{SOC_T2}: Social problems for twin 2
+\item \emph{THOU_T2}: Thought disorder problems for twin 2
+\item \emph{sex_Ta}: Sex of sib 1
+\item \emph{age_Ta}: Age of sib 1
+\item \emph{gff_Ta}: General family functioning for sib 1
+\item \emph{fc_Ta}: Family conflict sub-scale of the FES
+\item \emph{qol_Ta}: Quality of life for sib 1
+\item \emph{hap_Ta}: General happiness for sib 1
+\item \emph{sat_Ta}: Satisfaction with life for sib 1
+\item \emph{AD_Ta}: Anxiety and Depression for sib 1
+\item \emph{SOMA_Ta}: Somatic complaints for sib 1
+\item \emph{SOC_Ta}: Social problems for sib 1
+\item \emph{THOU_Ta}: Thought disorder problems for sib 1
+\item \emph{sex_Ts}: Sex of sib 2
+\item \emph{age_Ts}: Age of sib 2
+\item \emph{gff_Ts}: General family functioning for sib 2
+\item \emph{fc_Ts}: Family conflict sub-scale of the FES
+\item \emph{qol_Ts}: Quality of life for sib 2
+\item \emph{hap_Ts}: General happiness for sib 2
+\item \emph{sat_Ts}: Satisfaction with life for sib 2
+\item \emph{AD_Ts}: Anxiety and Depression for sib 2
+\item \emph{SOMA_Ts}: Somatic complaints for sib 2
+\item \emph{SOC_Ts}: Social problems for sib 2
+\item \emph{THOU_Ts}: Thought disorder problems for sib 2
 }
 }
 \examples{
@@ -89,15 +88,15 @@ m1 = umxACE(selDVs= "gff", sep = "_T",
 
 }
 \references{
-van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels, 
-M. (2010). Moderation of genetic factors by parental divorce in adolescents' 
-evaluations of family functioning and subjective wellbeing. Twin Research 
+van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels,
+M. (2010). Moderation of genetic factors by parental divorce in adolescents'
+evaluations of family functioning and subjective wellbeing. Twin Research
 and Human Genetics, 13(2), 143-162. doi:10.1375/twin.13.2.143
 }
 \seealso{
 Other datasets: \code{\link{Fischbein_wt}},
-  \code{\link{iqdat}}, \code{\link{umx}},
-  \code{\link{us_skinfold_data}}
+  \code{\link{docData}}, \code{\link{iqdat}},
+  \code{\link{umx}}, \code{\link{us_skinfold_data}}
 }
 \concept{datasets}
 \keyword{datasets}

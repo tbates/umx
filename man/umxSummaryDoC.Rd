@@ -8,27 +8,23 @@
 umxSummaryDoC(
   model,
   digits = 2,
-  file = getOption("umx_auto_plot"),
   comparison = NULL,
   std = TRUE,
   showRg = FALSE,
   CIs = TRUE,
   report = c("markdown", "html"),
+  file = getOption("umx_auto_plot"),
   returnStd = FALSE,
-  extended = FALSE,
   zero.print = ".",
   ...
 )
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize.}
+\item{model}{a fitted \code{\link[=umxDoC]{umxDoC()}} model to summarize.}
 
 \item{digits}{round to how many digits (default = 2).}
 
-\item{file}{The name of the dot file to write: "name" = use the name of the model.
-Defaults to NA = do not create plot output.}
-
-\item{comparison}{you can run mxCompare on a comparison model (NULL).}
+\item{comparison}{Run mxCompare on a comparison model (default NULL)}
 
 \item{std}{Whether to standardize the output (default = TRUE).}
 
@@ -36,11 +32,12 @@ Defaults to NA = do not create plot output.}
 
 \item{CIs}{Whether to show Confidence intervals if they exist (TRUE).}
 
-\item{report}{If "html", then open an html table of the results.}
+\item{report}{Print tables to the console (as 'markdown'), or open in browser ('html')}
+
+\item{file}{The name of the dot file to write: "name" = use the name of the model.
+Defaults to NA = do not create plot output.}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE).}
-
-\item{extended}{how much to report (FALSE).}
 
 \item{zero.print}{How to show zeros (".")}
 
@@ -62,15 +59,17 @@ See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary
 \examples{
 require(umx)
 data(twinData)
-}
-\references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
+mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
+DoC = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
+		mzData= mzData, dzData= dzData, causal= TRUE)
+A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
+umxSummary(A2B)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}
+\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
 Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
