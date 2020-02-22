@@ -193,10 +193,9 @@ utils::globalVariables(c(
 
 	# umxDOC
 	"dzAr", "Vmz", "Vdz",
-	"Unit", "FacLoadtw", "cause",
+	"FacLoadtw", "cause", "Diag1", "Ones",
 	"Asmz", "Asdz", "Cstw", "Estw",
 	"specCovMZ", "specCovDZ", "FacCovMZ", "FacCovDZ",
-	
 	
 	# Used in tmx_genotypic_effect
 	"x1", "y1", "y2", "dose", "value", "freq", "Frequency", 

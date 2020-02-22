@@ -85,7 +85,7 @@ var2 = paste0("b", 1:3)
 # = 2. Make the non-causal (Cholesky) and causal models =
 # =======================================================
 Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
-DoC = umxDoC(var1= var1, var2= var1, mzData= mzData, dzData= dzData, causal= TRUE)
+DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
 
 # ================================================
 # = Make the directional models by modifying DoC =

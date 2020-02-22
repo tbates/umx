@@ -62,7 +62,7 @@
 #' # = 2. Make the non-causal (Cholesky) and causal models =
 #' # =======================================================
 #' Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
-#' DoC = umxDoC(var1= var1, var2= var1, mzData= mzData, dzData= dzData, causal= TRUE)
+#' DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
 #'
 #' # ================================================
 #' # = Make the directional models by modifying DoC =
@@ -85,6 +85,7 @@
 #' 
 umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
+	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
 	nSib    = 2 # Number of siblings in a twin pair.
 	nLat    = 2 # 2 latent variables
 
@@ -175,9 +176,9 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 		# Replace lower ace Matrices with diag.
 		# Because covariance between the traits is "caused", theses matrices are diagonal instead of lower
 		top = mxModel(top,
-			umxMatrix("a", "Diag", nrow=nLat, ncol=nLat, free=TRUE, values=0.2), # Genetic effects on Latent Variables 
-			umxMatrix("c", "Diag", nrow=nLat, ncol=nLat, free=TRUE, values=0.2), # Common env effects on Latent Variables
-			umxMatrix("e", "Diag", nrow=nLat, ncol=nLat, free=FALSE,values=1)    # Non-shared env effects on Latent Variables 
+			umxMatrix("a", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values=0.2), # Genetic effects on Latent Variables 
+			umxMatrix("c", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values=0.2), # Common env effects on Latent Variables
+			umxMatrix("e", "Diag", nrow=nLat, ncol=nLat, free=FALSE, values=1)    # Non-shared env effects on Latent Variables 
 		)
 		model = mxModel("DOC", top, MZ, DZ, mxFitFunctionMultigroup(c("MZ", "DZ")) )		
 	}
@@ -322,11 +323,15 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		colnames(means) = selDVs[1:nVar]
 		umx_print(means)
 		
+		message("## Causal paths")
+		betaNames  = as.vector(model$top$beta$labels)
+		betaValues = as.vector(model$top$beta$values)
+		umx_print(data.frame(beta = betaNames, value = betaValues))
+
+		message("## Parameter list")
 		ptable = summary(model)$parameters
 		umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 
-		betaNames  = as.vector(model$top$beta$labels)
-		betaValues = as.vector(model$top$beta$values)
 		return()
 		# model$top$beta$labels[model$top$beta$free]
 		# umx_print(ptable[, c("name", "Estimate", "Std.Error")])
