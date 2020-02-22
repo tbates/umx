@@ -288,6 +288,8 @@ plot.MxModelDoC <- umxPlotDoC
 #' A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 #' umxSummary(A2B)
 umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, zero.print = ".", ...) {
+	message("Summary support for DoC models not complete yet")
+
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
@@ -325,6 +327,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 
 		betaNames  = as.vector(model$top$beta$labels)
 		betaValues = as.vector(model$top$beta$values)
+		return()
 		# model$top$beta$labels[model$top$beta$free]
 		# umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 

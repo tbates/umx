@@ -48,12 +48,14 @@
 #' @examples
 #' data(docData)
 #' str(docData)
+#' mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
+#' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
 #' par(mfrow = c(1, 2))  # 1 rows and 3 columns
-#' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = subset(docData, zygosity %in% c("MZFF", "MZMM")), main="MZ")
-#' tmp = round(cor.test(~a1_T1 + a1_T2, data = subset(docData, zygosity %in% c("MZMM", "MZFF")))$estimate, 2)
+#' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = mzData, main="MZ")
+#' tmp = round(cor.test(~a1_T1 + a1_T2, data = mzData)$estimate, 2)
 #' text(x=-4, y=3, labels = paste0("r = ", tmp))
-#' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = subset(docData, zygosity %in% c("DZFF", "DZMM")), main="DZ")
-#' tmp = round(cor.test(~a1_T1 + a1_T2, data = subset(docData, zygosity %in% c("DZMM", "DZFF")))$estimate, 2)
+#' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = dzData, main="DZ")
+#' tmp = round(cor.test(~a1_T1 + a1_T2, data = dzData)$estimate, 2)
 #' text(x=-4, y=3, labels = paste0("r = ", tmp))
 #' par(mfrow = c(1, 1))  # back to as it was
 NULL
