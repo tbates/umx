@@ -4,7 +4,7 @@
 \name{Fischbein_wt}
 \alias{Fischbein_wt}
 \title{Weight data across time.}
-\format{A 6*6 correlation matrix based on n = 66 females}
+\format{A 6*6 correlation matrix based on n = 66 female subjects.}
 \usage{
 data(Fischbein_wt)
 }
@@ -36,8 +36,8 @@ str(Fischbein_wt) # data.frame
 as.matrix(Fischbein_wt) # convert to matrix
 }
 \references{
-Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty. \emph{Annals of Human Biology}, \strong{4}. 417-430.
-\url{https://doi.org/10.1080/03014467700002401}
+Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty.
+\emph{Annals of Human Biology}, \strong{4}. 417-430. \url{https://doi.org/10.1080/03014467700002401}
 }
 \seealso{
 Other datasets: \code{\link{GFF}}, \code{\link{docData}},

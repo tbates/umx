@@ -19,21 +19,21 @@
 #'
 #' A dataset containing indicators for two traits `a` and `b`, each measureed in MZ and DZ twins.
 #'
-#' It's designed for testing hypotheses about whether a causes b, b causes a, both cause each other.
+#' It's designed for testing hypotheses about whether `a` causes `b`, `b` causes `a`, both cause each other.
 #' 
-#' * *zygosity* Zygosity: "MZFF", "DZFF", "MZMM", or "DZMM".
-#' * *a1_T1* manifest 1 for trait a
-#' * *a2_T1* manifest 2 for trait a
-#' * *a3_T1* manifest 3 for trait a
-#' * *b1_T1* manifest 1 for trait b
-#' * *b2_T1* manifest 2 for trait b
-#' * *b3_T1* manifest 3 for trait b
-#' * *a1_T2* manifest 1 for trait a
-#' * *a2_T2* manifest 2 for trait a
-#' * *a3_T2* manifest 3 for trait a
-#' * *b1_T2* manifest 1 for trait b
-#' * *b2_T2* manifest 2 for trait b
-#' * *b3_T2* manifest 3 for trait b
+#' * *zygosity* "MZFF", "DZFF", "MZMM", or "DZMM"
+#' * *a1_T1* Twin one's manifest 1 for trait a
+#' * *a2_T1* Twin one's manifest 2 for trait a
+#' * *a3_T1* Twin one's manifest 3 for trait a
+#' * *b1_T1* Twin one's manifest 1 for trait b
+#' * *b2_T1* Twin one's manifest 2 for trait b
+#' * *b3_T1* Twin one's manifest 3 for trait b
+#' * *a1_T2* Twin two's manifest 1 for trait a
+#' * *a2_T2* Twin two's manifest 2 for trait a
+#' * *a3_T2* Twin two's manifest 3 for trait a
+#' * *b1_T2* Twin two's manifest 1 for trait b
+#' * *b2_T2* Twin two's manifest 2 for trait b
+#' * *b3_T2* Twin two's manifest 3 for trait b
 #' 
 #' @docType data
 #' @keywords datasets
@@ -49,8 +49,12 @@
 #' data(docData)
 #' str(docData)
 #' par(mfrow = c(1, 2))  # 1 rows and 3 columns
-#' plot(a1_T1 ~a1_T2, ylim = c(130, 165), data = subset(docData, zygosity %in% "MZFF"))
-#' plot(a1_T1 ~a1_T2, ylim = c(130, 165), data = subset(docData, zygosity %in% "DZFF"))
+#' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = subset(docData, zygosity %in% c("MZFF", "MZMM")), main="MZ")
+#' tmp = round(cor.test(~a1_T1 + a1_T2, data = subset(docData, zygosity %in% c("MZMM", "MZFF")))$estimate, 2)
+#' text(x=-4, y=3, labels = paste0("r = ", tmp))
+#' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = subset(docData, zygosity %in% c("DZFF", "DZMM")), main="DZ")
+#' tmp = round(cor.test(~a1_T1 + a1_T2, data = subset(docData, zygosity %in% c("DZMM", "DZFF")))$estimate, 2)
+#' text(x=-4, y=3, labels = paste0("r = ", tmp))
 #' par(mfrow = c(1, 1))  # back to as it was
 NULL
 
@@ -172,7 +176,7 @@ NULL
 #' @family datasets
 #' @name GFF
 #' @usage data(GFF)
-#' @format A data frame with 1000 rows and 8 variables:
+#' @format A data frame with 1000 rows of twin-family data columns.
 #' @references van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels, 
 #' M. (2010). Moderation of genetic factors by parental divorce in adolescents' 
 #' evaluations of family functioning and subjective wellbeing. Twin Research 
@@ -233,7 +237,7 @@ NULL
 #' *Archives of Pediatrics and Adolescent Medicine*, **153**, 446-453.
 #' <https://www.ncbi.nlm.nih.gov/pubmed/10323623>
 #' @usage data(us_skinfold_data)
-#' @format A data frame with 53940 rows and 10 variables
+#' @format A data frame with 53940 twin families (1 per row) each twin measured on 10 variables.
 #' @md
 #' @examples
 #' data(us_skinfold_data)
@@ -258,9 +262,11 @@ NULL
 # ==============================
 # = IQ measured longitudinally =
 # ==============================
-#' Twin data: IQ measured longitudinally
+#' Twin data: IQ measured longitudinally across 4 ages.
 #'
-#' Measures of IQ across four ages in 261 pairs of identical twins and 301 pairs of fraternal (DZ) twins. (see details)
+#' Measures of IQ across four ages in 261 pairs of identical twins and 301 pairs of fraternal (DZ) twins. (see details).
+#' It is used as data for the [umxSimplex()] examples.
+#' 
 #' @details
 #' \itemize{
 #'   \item zygosity Zygosity (MZ or DZ)
@@ -278,9 +284,12 @@ NULL
 #' @keywords datasets
 #' @family datasets
 #' @name iqdat
-#' @references TODO
+#' @references Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for repeated measures: 
+#' application to two psychomotor measures of alcohol sensitivity in twins. *Behavior Genetics*, **19**, 79-96.
+#' Retrieved from <https://www.ncbi.nlm.nih.gov/pubmed/2712815>
 #' @usage data(iqdat)
-#' @format A data frame with 562 rows and 9 variables
+#' @format A data frame with 562 rows (twin families). Nine measures on each twin.
+#' @seealso [umxSimplex()] 
 #' @examples
 #' data(iqdat)
 #' str(iqdat)
@@ -324,10 +333,10 @@ NULL
 #' @keywords datasets
 #' @family datasets
 #' @name Fischbein_wt
-#' @references Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty. *Annals of Human Biology*, **4**. 417-430.
-#' \url{https://doi.org/10.1080/03014467700002401}
+#' @references Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty. 
+#' *Annals of Human Biology*, **4**. 417-430. <https://doi.org/10.1080/03014467700002401>
 #' @usage data(Fischbein_wt)
-#' @format A 6*6 correlation matrix based on n = 66 females
+#' @format A 6*6 correlation matrix based on n = 66 female subjects.
 #' @md
 #' @examples
 #' data(Fischbein_wt) # load the data

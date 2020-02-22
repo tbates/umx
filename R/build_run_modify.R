@@ -2509,10 +2509,16 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 			mxAlgebra(name = "ACE", A + C + E),
 			mxAlgebra(name = "AC" , A + C),
 			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
-			mxAlgebra(rbind (cbind(ACE, AC), 
-			                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name= "expCovMZ"),
-			mxAlgebra(rbind (cbind(ACE, hAC),
-			                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name= "expCovDZ")
+			mxAlgebra(name= "expCovMZ", dimnames = list(selVars, selVars), 
+						rbind(
+							 cbind(ACE, AC), 
+			                 cbind(AC , ACE))
+						),
+			mxAlgebra(name= "expCovDZ", dimnames = list(selVars, selVars), 
+						rbind(
+							cbind(ACE, hAC),
+			                cbind(hAC, ACE))
+						),
 		),
 		MZ, DZ,
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
@@ -2540,7 +2546,7 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 			mxAlgebra(name = "cs_std", SD %*% cs), # standardized c
 			mxAlgebra(name = "es_std", SD %*% es), # standardized e
 			# Standardize loadings on Common factors
-			mxAlgebra(SD %*% cp_loadings, name = "cp_loadings_std") # Standardized path coefficients (general factor(s))
+			mxAlgebra(name = "cp_loadings_std", SD %*% cp_loadings) # Standardized path coefficients (general factor(s))
 		)
 		model = mxModel(model, newTop)
 		if(addCI){

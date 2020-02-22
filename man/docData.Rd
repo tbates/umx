@@ -12,29 +12,33 @@ data(docData)
 A dataset containing indicators for two traits \code{a} and \code{b}, each measureed in MZ and DZ twins.
 }
 \details{
-It's designed for testing hypotheses about whether a causes b, b causes a, both cause each other.
+It's designed for testing hypotheses about whether \code{a} causes \code{b}, \code{b} causes \code{a}, both cause each other.
 \itemize{
-\item \emph{zygosity} Zygosity: "MZFF", "DZFF", "MZMM", or "DZMM".
-\item \emph{a1_T1} manifest 1 for trait a
-\item \emph{a2_T1} manifest 2 for trait a
-\item \emph{a3_T1} manifest 3 for trait a
-\item \emph{b1_T1} manifest 1 for trait b
-\item \emph{b2_T1} manifest 2 for trait b
-\item \emph{b3_T1} manifest 3 for trait b
-\item \emph{a1_T2} manifest 1 for trait a
-\item \emph{a2_T2} manifest 2 for trait a
-\item \emph{a3_T2} manifest 3 for trait a
-\item \emph{b1_T2} manifest 1 for trait b
-\item \emph{b2_T2} manifest 2 for trait b
-\item \emph{b3_T2} manifest 3 for trait b
+\item \emph{zygosity} "MZFF", "DZFF", "MZMM", or "DZMM"
+\item \emph{a1_T1} Twin one's manifest 1 for trait a
+\item \emph{a2_T1} Twin one's manifest 2 for trait a
+\item \emph{a3_T1} Twin one's manifest 3 for trait a
+\item \emph{b1_T1} Twin one's manifest 1 for trait b
+\item \emph{b2_T1} Twin one's manifest 2 for trait b
+\item \emph{b3_T1} Twin one's manifest 3 for trait b
+\item \emph{a1_T2} Twin two's manifest 1 for trait a
+\item \emph{a2_T2} Twin two's manifest 2 for trait a
+\item \emph{a3_T2} Twin two's manifest 3 for trait a
+\item \emph{b1_T2} Twin two's manifest 1 for trait b
+\item \emph{b2_T2} Twin two's manifest 2 for trait b
+\item \emph{b3_T2} Twin two's manifest 3 for trait b
 }
 }
 \examples{
 data(docData)
 str(docData)
 par(mfrow = c(1, 2))  # 1 rows and 3 columns
-plot(a1_T1 ~a1_T2, ylim = c(130, 165), data = subset(docData, zygosity \%in\% "MZFF"))
-plot(a1_T1 ~a1_T2, ylim = c(130, 165), data = subset(docData, zygosity \%in\% "DZFF"))
+plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = subset(docData, zygosity \%in\% c("MZFF", "MZMM")), main="MZ")
+tmp = round(cor.test(~a1_T1 + a1_T2, data = subset(docData, zygosity \%in\% c("MZMM", "MZFF")))$estimate, 2)
+text(x=-4, y=3, labels = paste0("r = ", tmp))
+plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = subset(docData, zygosity \%in\% c("DZFF", "DZMM")), main="DZ")
+tmp = round(cor.test(~a1_T1 + a1_T2, data = subset(docData, zygosity \%in\% c("DZMM", "DZFF")))$estimate, 2)
+text(x=-4, y=3, labels = paste0("r = ", tmp))
 par(mfrow = c(1, 1))  # back to as it was
 }
 \references{

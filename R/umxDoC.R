@@ -38,7 +38,7 @@
 #' @family Twin Modeling Functions
 #' @seealso - [plot.MxModelDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @references - N.A. Gillespie and N.G. Marting (2005). Direction of Causation Models. 
-#' In *Encyclopedia of Statistics in Behavioral Science*, Volume 1 pp. 496–499. Eds. Brian S. Everitt & David C. Howell
+#' In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496–499. Eds. Brian S. Everitt & David C. Howell.
 #' @md
 #' @examples
 #' # ========================
@@ -48,7 +48,7 @@
 #' # ================
 #' # = 1. Load Data =
 #' # ================
-#' load(docData)
+#' data(docData)
 #' mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
 #' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
 #' 
@@ -97,12 +97,12 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 	mzData = xmu_make_mxData(mzData, manifests = selVars)
 	dzData = xmu_make_mxData(dzData, manifests = selVars)
 
-	# ================
-	# = Make FacLoad =
-	# ================
-	# 1. make matrix, initialised to fixed @ 0
+	# ========================
+	# = Make Factor Loadings =
+	# ========================
+	# 1. Make matrix, initialised to fixed @ 0
 	FacLoad = umxMatrix(name="FacLoad", "Full", nrow=nVar, ncol=nLat, free= FALSE, values = 0)
-	# 2. set FacLoad manifest loadings to pattern of 0 and 1
+	# 2. Set FacLoad manifest loadings to pattern of 0 and 1
 	FacLoad$free[1:nLat1                  ,1] = TRUE
 	FacLoad$values[1:nLat1                ,1] = 1
 	FacLoad$free[(nLat1+1):(nLat1+nLat2)  ,2] = TRUE
@@ -110,8 +110,8 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 
 
 	top = mxModel("top", # (was "ACE")
-		umxMatrix("dzAr", "Full", nrow=nLat, ncol=nLat, free=FALSE, values= c(1,.5,.5,1) ), # Heredity Matrix for DZ
-		umxMatrix("Ones", "Full", nrow=nLat, ncol=nLat, free=FALSE, values= 1 ),            # Unit Matrix - For Com Env and MZ
+		umxMatrix("dzAr" , "Full", nrow=nLat, ncol=nLat, free=FALSE, values= c(1,.5,.5,1) ), # Heredity Matrix for DZ
+		umxMatrix("Ones" , "Full", nrow=nLat, ncol=nLat, free=FALSE, values= 1 ),            # Unit Matrix - For Com Env and MZ
 		umxMatrix("Diag1", "Iden", nrow=nSib, ncol=nSib),                                   # Identity matrix (2by2: 1s on diag, 0 off diag)
 
 		# Matrices for Cholesky (swapped out after if causal)
@@ -139,23 +139,23 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 		## Covariance between the items due to the latent factors
 		mxAlgebra(name= "FacCovMZ", FacLoadtw %&% (cause %&% Vmz)),
 		mxAlgebra(name= "FacCovDZ", FacLoadtw %&% (cause %&% Vdz)),
-		# Matrices to store  a, c, and e "specific" path coefficients (residuals of manifest phenotypes)
+		# Matrices to store  a, c, and e "specific" path coefficients (residuals of each manifest)
 		# TODO smart var starts here
 		umxMatrix(name= "as", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		umxMatrix(name= "cs", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		umxMatrix(name= "es", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
-		mxAlgebra(name= "Asmz", Ones %x% as),
-		mxAlgebra(name= "Asdz", dzAr %x% as),
-		mxAlgebra(name= "Cstw", Ones %x% cs),
+		mxAlgebra(name= "Asmz", Ones  %x% as),
+		mxAlgebra(name= "Asdz", dzAr  %x% as),
+		mxAlgebra(name= "Cstw", Ones  %x% cs),
 		mxAlgebra(name= "Estw", Diag1 %x% es),
 		mxAlgebra(name= "specCovMZ", Asmz + Cstw + Estw),
 		mxAlgebra(name= "specCovDZ", Asdz + Cstw + Estw),
 		# Expected Covariance Matrices for MZ and DZ
-		mxAlgebra(name= "expCovMZ", FacCovMZ + specCovMZ),
-		mxAlgebra(name= "expCovDZ", FacCovDZ + specCovDZ),
-
+		mxAlgebra(name= "expCovMZ", FacCovMZ + specCovMZ, dimnames = list(selVars, selVars)),
+		mxAlgebra(name= "expCovDZ", FacCovDZ + specCovDZ, dimnames = list(selVars, selVars)),
+		
 		# Means for the Manifest Variables # TODO Better starts for means... (easy)
-		umxMatrix(name="Means", "Full", nrow= 1, ncol= nVar, free= TRUE, values= .1),
+		umxMatrix(name= "Means", "Full", nrow= 1, ncol= nVar, free= TRUE, values= .1),
 		mxAlgebra(name= "expMean", cbind(top.Means, top.Means))
 		# TODO Why not just make ncol = nCol*2 and allow label repeats the equate means? Alg might be more efficient?
 	)
@@ -172,8 +172,7 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 		# ===================
 		# = DOC-based model =
 		# ===================
-
-		# Replace lower ace Matrices with diag for DOC script.
+		# Replace lower ace Matrices with diag.
 		# Because covariance between the traits is "caused", theses matrices are diagonal instead of lower
 		top = mxModel(top,
 			umxMatrix("a", "Diag", nrow=nLat, ncol=nLat, free=TRUE, values=0.2), # Genetic effects on Latent Variables 
@@ -223,6 +222,29 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 #' #
 umxPlotDoC <- function(x, ...) {
 	message("I'm sorry Dave, no plot for doc yet ;-(")
+	# 1. draw latents
+	# 2. draw manifests,
+	# 3. draw ace to latents
+	# 4. draw specifics to manifests (? or omit?)
+	# 5. connect latents to manifests using free elements of columns of FacLoad
+	# 6. add causal paths between latents
+
+	# Chol$top$FacLoad
+	# $free
+	#       [,1]  [,2]
+	# [1,]  TRUE FALSE
+	# [2,]  TRUE FALSE
+	# [3,]  TRUE FALSE
+	# [4,] FALSE  TRUE
+	# [5,] FALSE  TRUE
+	# [6,] FALSE  TRUE
+
+	# betas are in 
+	# model$top$beta
+	# $labels
+	#      [,1]  [,2]
+	# [1,] "a2a" "b2a"
+	# [2,] "a2b" "b2b"		
 }
 
 #' @export
@@ -276,18 +298,35 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 			umxSummaryDoC(thisFit, digits = digits, file = file, returnStd = returnStd, showRg = showRg, comparison = comparison, std = std, CIs = CIs)
 		}
 	} else {
-		umx_check_model(model, "MxModelDoc", beenRun = TRUE, callingFn = "umxSummaryDoC")
+		umx_check_model(model, "MxModelDoC", beenRun = TRUE, callingFn = "umxSummaryDoC")
 		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = dimnames(model$top.expCovMZ)[[1]]
 		nVar   = length(selDVs)/2
 		nFac   = 2; # TODO look this up in the model
 
 		if(CIs){
-			oldModel = model # Cache this in case we need it (CI stash model has string where values should be).
-			model = xmu_CI_stash(model, digits = digits, dropZeros = TRUE, stdAlg2mat = TRUE)
+			message("CIs not supported for DoC models yet")
+			# oldModel = model # Cache this in case we need it (CI stash model has string where values should be).
+			# model = xmu_CI_stash(model, digits = digits, dropZeros = TRUE, stdAlg2mat = TRUE)
 		} else if(any(c(std, returnStd))) {
-			model = xmu_standardize_CP(model) # Make a standardized copy of model
+			message("Std not support for DoC models yet")
+			# model = xmu_standardize_Doc(model) # Make a standardized copy of model
 		}
+
+		# Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE, auto=F); Chol = mxRun(Chol)
+
+		message("## Means")
+		means = model$top$Means$values
+		colnames(means) = selDVs[1:nVar]
+		umx_print(means)
+		
+		ptable = summary(model)$parameters
+		umx_print(ptable[, c("name", "Estimate", "Std.Error")])
+
+		betaNames  = as.vector(model$top$beta$labels)
+		betaValues = as.vector(model$top$beta$values)
+		# model$top$beta$labels[model$top$beta$free]
+		# umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 
 		message("## Common Factor paths")
 		a_cp = model$top$a_cp$values # nFac * nFac matrix of path coefficients flowing into cp_loadings
@@ -365,7 +404,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 			
 		}
 		if(!is.na(file)){
-			umxPlotCP(model, file = file, digits = digits, std = FALSE, means = FALSE)
+			# umxPlotCP(model, file = file, digits = digits, std = FALSE, means = FALSE)
 		}
 		if(returnStd) {
 			invisible(model)
@@ -375,5 +414,4 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 
 #' @export
 umxSummary.MxModelDoC <- umxSummaryDoC
-
 

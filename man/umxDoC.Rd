@@ -71,7 +71,7 @@ To be added.
 # ================
 # = 1. Load Data =
 # ================
-load(docData)
+data(docData)
 mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
 dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 
@@ -110,7 +110,7 @@ umxCompare(Chol, c(A2B, B2A, Recip))
 \references{
 \itemize{
 \item N.A. Gillespie and N.G. Marting (2005). Direction of Causation Models.
-In \emph{Encyclopedia of Statistics in Behavioral Science}, Volume 1 pp. 496–499. Eds. Brian S. Everitt & David C. Howell
+In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496–499. Eds. Brian S. Everitt & David C. Howell.
 }
 }
 \seealso{

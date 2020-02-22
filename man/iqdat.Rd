@@ -3,13 +3,14 @@
 \docType{data}
 \name{iqdat}
 \alias{iqdat}
-\title{Twin data: IQ measured longitudinally}
-\format{A data frame with 562 rows and 9 variables}
+\title{Twin data: IQ measured longitudinally across 4 ages.}
+\format{A data frame with 562 rows (twin families). Nine measures on each twin.}
 \usage{
 data(iqdat)
 }
 \description{
-Measures of IQ across four ages in 261 pairs of identical twins and 301 pairs of fraternal (DZ) twins. (see details)
+Measures of IQ across four ages in 261 pairs of identical twins and 301 pairs of fraternal (DZ) twins. (see details).
+It is used as data for the [umxSimplex()] examples.
 }
 \details{
 \itemize{
@@ -34,9 +35,13 @@ plot(IQ_age1_T1 ~ IQ_age4_T2, data = subset(iqdat, zygosity == "MZ"))
 par(mfrow = c(1, 1))  # back to as it was
 }
 \references{
-TODO
+Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for repeated measures: 
+application to two psychomotor measures of alcohol sensitivity in twins. *Behavior Genetics*, **19**, 79-96.
+Retrieved from <https://www.ncbi.nlm.nih.gov/pubmed/2712815>
 }
 \seealso{
+[umxSimplex()]
+
 Other datasets: \code{\link{Fischbein_wt}},
   \code{\link{GFF}}, \code{\link{docData}},
   \code{\link{umx}}, \code{\link{us_skinfold_data}}
