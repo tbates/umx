@@ -45,24 +45,25 @@
 #' # = Does Rain cause Mud? =
 #' # ========================
 #'
+#' # =======================================
+#' # = 2. Define manifests for var 1 and 2 =
+#' # =======================================
+#' var1 = paste0("varA", 1:3)
+#' var2 = paste0("varB", 1:3)
+#'
 #' # ================
 #' # = 1. Load Data =
 #' # ================
 #' data(docData)
-#' mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
-#' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
-#' 
-#' # =======================================
-#' # = 2. Define manifests for var 1 and 2 =
-#' # =======================================
-#' var1 = paste0("a", 1:3)
-#' var2 = paste0("b", 1:3)
+#' docData = umx_scale_wide_twin_data(c(var1, var2), docData, sep= "_T")
+#' mzData  = subset(docData, zygosity %in% c("MZFF", "MZMM"))
+#' dzData  = subset(docData, zygosity %in% c("DZFF", "DZMM"))
 #'
 #' # =======================================================
 #' # = 2. Make the non-causal (Cholesky) and causal models =
 #' # =======================================================
-#' Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
-#' DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+#' Chol = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+#' DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
 #'
 #' # ================================================
 #' # = Make the directional models by modifying DoC =
@@ -83,7 +84,15 @@
 #'
 #' }
 #' 
-umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+	# TODO: umxDoC add some name checking to avoid variables like "a1"
+	if(name == "DoC"){
+		if(causal){
+			name = "DoC"
+		} else {
+			name = "Chol"
+		}
+	}
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
 	nSib    = 2 # Number of siblings in a twin pair.
@@ -113,18 +122,18 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 	top = mxModel("top", # (was "ACE")
 		umxMatrix("dzAr" , "Full", nrow=nLat, ncol=nLat, free=FALSE, values= c(1,.5,.5,1) ), # Heredity Matrix for DZ
 		umxMatrix("Ones" , "Full", nrow=nLat, ncol=nLat, free=FALSE, values= 1 ),            # Unit Matrix - For Com Env and MZ
-		umxMatrix("Diag1", "Iden", nrow=nSib, ncol=nSib),                                   # Identity matrix (2by2: 1s on diag, 0 off diag)
+		umxMatrix("Diag1", "Iden", nrow=nSib, ncol=nSib),                                    # Identity matrix (2by2: 1s on diag, 0 off diag)
 
 		# Matrices for Cholesky (swapped out after if causal)
-		umxMatrix("a", type="Lower", nrow=nLat, ncol=nLat, free=TRUE, values= .2),                # Genetic effects on Latent Variables 
-		umxMatrix("c", type="Lower", nrow=nLat, ncol=nLat, free=TRUE, values= .2),                # Common env effects on Latent Variables
+		umxMatrix("a", type="Lower", nrow=nLat, ncol=nLat, free= TRUE, values= .2),               # Genetic effects on Latent Variables 
+		umxMatrix("c", type="Lower", nrow=nLat, ncol=nLat, free= TRUE, values= .2),               # Common env effects on Latent Variables
 		umxMatrix("e", type="Lower", nrow=nLat, ncol=nLat, free= c(FALSE,TRUE,FALSE), values= 1), # Non-shared env effects on Latent Variables 
 
 		# 4x4 Matrices for A, C, and E
 		mxAlgebra(name="A"  , Ones  %x% (a %*% t(a))),
 		mxAlgebra(name="Adz", dzAr  %x% (a %*% t(a))),
 		mxAlgebra(name="C"  , Ones  %x% (c %*% t(c))),
-		mxAlgebra(name="E"  , Diag1  %x% (e %*% t(e))),
+		mxAlgebra(name="E"  , Diag1 %x% (e %*% t(e))),
 		mxAlgebra(name="Vmz", A   + C + E),
 		mxAlgebra(name="Vdz", Adz + C + E),
 
@@ -164,24 +173,20 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 	MZ = mxModel("MZ", mzData, mxExpectationNormal("top.expCovMZ", means= "top.expMean", dimnames= selVars), mxFitFunctionML() )
 	DZ = mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", means= "top.expMean", dimnames= selVars), mxFitFunctionML() )
 
-	if(!causal){
-		# ========================
-		# = Cholesky-based model =
-		# ========================
-		model = mxModel("Chol", top, MZ, DZ, mxFitFunctionMultigroup(c("MZ", "DZ"))	)
-	}else{
+	if(causal){
 		# ===================
 		# = DOC-based model =
 		# ===================
 		# Replace lower ace Matrices with diag.
 		# Because covariance between the traits is "caused", theses matrices are diagonal instead of lower
 		top = mxModel(top,
-			umxMatrix("a", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values=0.2), # Genetic effects on Latent Variables 
-			umxMatrix("c", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values=0.2), # Common env effects on Latent Variables
-			umxMatrix("e", "Diag", nrow=nLat, ncol=nLat, free=FALSE, values=1)    # Non-shared env effects on Latent Variables 
+			umxMatrix("a", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values= 0.2), # Genetic effects on Latent Variables 
+			umxMatrix("c", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values= 0.2), # Common env effects on Latent Variables
+			umxMatrix("e", "Diag", nrow=nLat, ncol=nLat, free=FALSE, values= 1.0)  # E@1 
 		)
-		model = mxModel("DOC", top, MZ, DZ, mxFitFunctionMultigroup(c("MZ", "DZ")) )		
 	}
+	model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ", "DZ")) )
+
 	# Factor loading matrix of Intercept and Slope on observed phenotypes
 	# SDt = mxAlgebra(name= "SDt", solve(sqrt(Diag1 *Rt))) # Standardized deviations (inverse)
 	model = omxAssignFirstParameters(model)
@@ -219,9 +224,33 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @md
 #' @examples
-#' #
-umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	message("I'm sorry Dave, no plot for doc yet ;-(")
+#'
+#' # ================
+#' # = 1. Load Data =
+#' # ================
+#' data(docData)
+#' mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
+#' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
+#' 
+#' # =======================================
+#' # = 2. Define manifests for var 1 and 2 =
+#' # =======================================
+#' var1 = paste0("varA", 1:3)
+#' var2 = paste0("varB", 1:3)
+#'
+#' # =======================================================
+#' # = 2. Make the non-causal (Cholesky) and causal models =
+#' # =======================================================
+#' Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+#' DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+#'
+#' # ================================================
+#' # = Make the directional models by modifying DoC =
+#' # ================================================
+#' a2b = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
+#' plot(a2b)
+umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
+	message("I'm sorry Dave, no plot for DoC yet ;-(")
 	# 1. ✓ draw latents
 	# 2. ✓ draw manifests,
 	# 3. ✓ draw ace to latents
@@ -234,25 +263,27 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	umx_check_model(model, "MxModelDoC", callingFn = "umxPlotDoC")
 	
 	if(std){
-		model = xmu_standardize_DoC(model)
+		message("I'm sorry Dave, no std for DoC yet ;-(")
+		# model = xmu_standardize_DoC(model)
 	}
 
-	nFac = dim(model$top$a_cp$labels)[[1]]
-	nVar = dim(model$top$as$values)[[1]]
-	selDVs   = dimnames(model$MZ$data$observed)[[2]]
-	selDVs   = selDVs[1:(nVar)]
-	selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
-
-	out = list(str = "", latents = c(), manifests = c())
+	nFac   = dim(model$top$a_cp$labels)[[1]]
+	nVar   = dim(model$top$as$values)[[1]]
+	selDVs = dimnames(model$MZ$data$observed)[[2]]
+	selDVs = selDVs[1:(nVar)]
+	selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+	out    = list(str = "", latents = c(), manifests = c())
+	selLat = c("a", "b")
 
 	# Process [ace] matrices
 	# 1. Collect latents
-	out = xmu_dot_mat2dot(model$top$a, cells = "diag", from = "rows", toLabel = c("a", "b"), fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$c, cells = "diag", from = "rows", toLabel = c("a", "b"), fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$e, cells = "diag", from = "rows", toLabel = c("a", "b"), fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$a, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$c, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$e, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
 
 	# 2. Process "FacLoad" nVar * nFac matrix: latents into common paths.
-	out = xmu_dot_mat2dot(model$top$FacLoad, cells= "any", toLabel= selDVs, from= "cols", fromLabel= c("a", "b"), fromType= "latent", showFixed = showFixed, p= out)
+	out = xmu_dot_mat2dot(model$top$FacLoad, cells= "any", toLabel= selDVs, from= "cols", fromLabel= selLat, fromType= "latent", showFixed = showFixed, p= out)
+
 	# 3. Process "as" matrix
 	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
 	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
@@ -264,7 +295,7 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	#      [,1]  [,2]
 	# [1,] "a2a" "b2a"
 	# [2,] "a2b" "b2b"
-
+	out = xmu_dot_mat2dot(model$top$beta, cells = "any", toLabel = selLat, from = "cols", fromType = "latent", showFixed = showFixed, p = out, fromLabel=selLat)
 	# Process "expMean" 1 * nVar matrix
 	if(means){
 		# from = "one"; target = selDVs[c]
@@ -314,13 +345,30 @@ plot.MxModelDoC <- umxPlotDoC
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @md
 #' @examples
-#' require(umx)
-#' data(twinData)
+#' # ================
+#' # = 1. Load Data =
+#' # ================
 #' umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
+#' data(docData)
 #' mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
 #' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
-#' DoC = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
-#'			mzData= mzData, dzData= dzData, causal= TRUE)
+#' 
+#' # =======================================
+#' # = 2. Define manifests for var 1 and 2 =
+#' # =======================================
+#' var1 = paste0("varA", 1:3)
+#' var2 = paste0("varB", 1:3)
+#'
+#' # =======================================================
+#' # = 2. Make the non-causal (Cholesky) and causal models =
+#' # =======================================================
+#' Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+#' DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+#'
+#' # ================================================
+#' # = Make the directional models by modifying DoC =
+#' # ================================================
+#' A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 #' A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B", comp=TRUE)
 #' B2A = umxModify(DoC, "b2a", free = TRUE, name = "B2A", comp=TRUE)
 #' umxCompare(B2A, A2B)

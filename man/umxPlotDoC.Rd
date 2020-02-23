@@ -14,7 +14,7 @@ umxPlotDoC(
   file = "name",
   format = c("current", "graphviz", "DiagrammeR"),
   SEstyle = FALSE,
-  strip_zero = TRUE,
+  strip_zero = FALSE,
   ...
 )
 }
@@ -37,7 +37,31 @@ drawing the tables to a web browser where they may readily be pasted into, e.g. 
 See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary()}}.
 }
 \examples{
-#
+
+# ================
+# = 1. Load Data =
+# ================
+data(docData)
+mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
+
+# =======================================
+# = 2. Define manifests for var 1 and 2 =
+# =======================================
+var1 = paste0("varA", 1:3)
+var2 = paste0("varB", 1:3)
+
+# =======================================================
+# = 2. Make the non-causal (Cholesky) and causal models =
+# =======================================================
+Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+
+# ================================================
+# = Make the directional models by modifying DoC =
+# ================================================
+a2b = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
+plot(a2b)
 }
 \references{
 \itemize{

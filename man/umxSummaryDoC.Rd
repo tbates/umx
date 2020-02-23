@@ -57,13 +57,30 @@ drawing the tables to a web browser where they may readily be copied into non-ma
 See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary()}}.
 }
 \examples{
-require(umx)
-data(twinData)
+# ================
+# = 1. Load Data =
+# ================
 umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
+data(docData)
 mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
 dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
-DoC = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
-		mzData= mzData, dzData= dzData, causal= TRUE)
+
+# =======================================
+# = 2. Define manifests for var 1 and 2 =
+# =======================================
+var1 = paste0("varA", 1:3)
+var2 = paste0("varB", 1:3)
+
+# =======================================================
+# = 2. Make the non-causal (Cholesky) and causal models =
+# =======================================================
+Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+
+# ================================================
+# = Make the directional models by modifying DoC =
+# ================================================
+A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B", comp=TRUE)
 B2A = umxModify(DoC, "b2a", free = TRUE, name = "B2A", comp=TRUE)
 umxCompare(B2A, A2B)

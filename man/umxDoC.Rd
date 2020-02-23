@@ -5,7 +5,7 @@
 \title{Build and run a 2-group Direction of Causation twin models.}
 \usage{
 umxDoC(
-  name = "DOC",
+  name = "DoC",
   var1Indicators,
   var2Indicators,
   mzData = NULL,
@@ -68,24 +68,25 @@ To be added.
 # = Does Rain cause Mud? =
 # ========================
 
+# =======================================
+# = 2. Define manifests for var 1 and 2 =
+# =======================================
+var1 = paste0("varA", 1:3)
+var2 = paste0("varB", 1:3)
+
 # ================
 # = 1. Load Data =
 # ================
 data(docData)
-mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
-dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
-
-# =======================================
-# = 2. Define manifests for var 1 and 2 =
-# =======================================
-var1 = paste0("a", 1:3)
-var2 = paste0("b", 1:3)
+docData = umx_scale_wide_twin_data(c(var1, var2), docData, sep= "_T")
+mzData  = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData  = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 
 # =======================================================
 # = 2. Make the non-causal (Cholesky) and causal models =
 # =======================================================
-Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
-DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+Chol = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
 
 # ================================================
 # = Make the directional models by modifying DoC =

@@ -17,23 +17,23 @@
 # ==================================================
 #' Twin data for Direction of causation modelling
 #'
-#' A dataset containing indicators for two traits `a` and `b`, each measureed in MZ and DZ twins.
+#' A dataset containing indicators for two traits `varA` and `varB`, each measureed in MZ and DZ twins.
 #'
-#' It's designed for testing hypotheses about whether `a` causes `b`, `b` causes `a`, both cause each other.
+#' It is designed to show off [umxDoC()] testing the hypothesis `varA` causes `varB`, `varB` causes `varA`, both cause each other.
 #' 
 #' * *zygosity* "MZFF", "DZFF", "MZMM", or "DZMM"
-#' * *a1_T1* Twin one's manifest 1 for trait a
-#' * *a2_T1* Twin one's manifest 2 for trait a
-#' * *a3_T1* Twin one's manifest 3 for trait a
-#' * *b1_T1* Twin one's manifest 1 for trait b
-#' * *b2_T1* Twin one's manifest 2 for trait b
-#' * *b3_T1* Twin one's manifest 3 for trait b
-#' * *a1_T2* Twin two's manifest 1 for trait a
-#' * *a2_T2* Twin two's manifest 2 for trait a
-#' * *a3_T2* Twin two's manifest 3 for trait a
-#' * *b1_T2* Twin two's manifest 1 for trait b
-#' * *b2_T2* Twin two's manifest 2 for trait b
-#' * *b3_T2* Twin two's manifest 3 for trait b
+#' * *varA1_T1* Twin one's manifest 1 for varA
+#' * *varA2_T1* Twin one's manifest 2 for varA
+#' * *varA3_T1* Twin one's manifest 3 for varA
+#' * *varB1_T1* Twin one's manifest 1 for varB
+#' * *varB2_T1* Twin one's manifest 2 for varB
+#' * *varB3_T1* Twin one's manifest 3 for varB
+#' * *varA1_T2* Twin two's manifest 1 for varA
+#' * *varA2_T2* Twin two's manifest 2 for varA
+#' * *varA3_T2* Twin two's manifest 3 for varA
+#' * *varB1_T2* Twin two's manifest 1 for varB
+#' * *varB2_T2* Twin two's manifest 2 for varB
+#' * *varB3_T2* Twin two's manifest 3 for varB
 #' 
 #' @docType data
 #' @keywords datasets
@@ -52,55 +52,13 @@
 #' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
 #' par(mfrow = c(1, 2))  # 1 rows and 3 columns
 #' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = mzData, main="MZ")
-#' tmp = round(cor.test(~a1_T1 + a1_T2, data = mzData)$estimate, 2)
+#' tmp = round(cor.test(~varA1_T1 + varA1_T2, data = mzData)$estimate, 2)
 #' text(x=-4, y=3, labels = paste0("r = ", tmp))
-#' plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = dzData, main="DZ")
-#' tmp = round(cor.test(~a1_T1 + a1_T2, data = dzData)$estimate, 2)
+#' plot(varA1_T2 ~varA1_T1, ylim = c(-4, 4), data = dzData, main="DZ")
+#' tmp = round(cor.test(~varA1_T1 + varA1_T2, data = dzData)$estimate, 2)
 #' text(x=-4, y=3, labels = paste0("r = ", tmp))
 #' par(mfrow = c(1, 1))  # back to as it was
 NULL
-
-# How I coded this data from the Boulder example
-#
-# GFF = read.table("~/bin/umx/data/DHBQ_bs.dat", header = TRUE, sep = "\t", as.is = c(T), na.strings = -999)
-# x   = umx_rename(GFF, old = "zyg2"     , replace = "zyg_2grp"); names(x)
-# x   = umx_rename(x  , old = "zyg"      , replace = "zyg_6grp"); names(x)
-# x   = umx_rename(x , grep = "([12bs])$", replace = "_T\\1")   ; names(x)
-# x$sex_T1 = factor(x$sex_T1, levels = 0:1, labels = c("male", "female"))
-# x$sex_T2 = factor(x$sex_T2, levels = 0:1, labels = c("male", "female"))
-# x$sex_Tb = factor(x$sex_Tb, levels = 0:1, labels = c("male", "female"))
-# x$sex_Ts = factor(x$sex_Ts, levels = 0:1, labels = c("male", "female"))
-# x$zyg_6grp = factor(x$zyg_6grp, levels = 1:6, labels = c("MZMM", "DZMM", "MZFF", "DZFF", "DZFM", "DZMF"))
-# GFF$zyg_2grp = factor(GFF$zyg_2grp, levels = 1:2, labels = c("MZ", "DZ"))
-
-# GFF = GFF[, c("zyg_6grp", "zyg_2grp", "divorce", "sex_T1", "age_T1", "gff_T1", "fc_T1", "qol_T1", "hap_T1", "sat_T1", "AD_T1", "SOMA_T1", "SOC_T1", "THOU_T1", "sex_T2", "age_T2", "gff_T2", "fc_T2", "qol_T2", "hap_T2", "sat_T2", "AD_T2", "SOMA_T2", "SOC_T2", "THOU_T2", "sex_Tb", "age_Tb", "gff_Tb", "fc_Tb","qol_Tb", "hap_Tb", "sat_Tb", "AD_Tb","SOMA_Tb","SOC_Tb", "THOU_Tb","sex_Ts", "age_Ts", "gff_Ts", "fc_Ts", "qol_Ts", "hap_Ts", "sat_Ts", "AD_Ts","SOMA_Ts","SOC_Ts", "THOU_Ts")]
-
-# save("GFF", file = "GFF.rda")
-# system(paste("open ",shQuote(getwd(), type = "csh")))
-# update_wordlist get_wordlist(pkg = "~/bin/umx")
-
-# 1. Figure out what things are.
-
-# table(x$sex_Tb) # all 0 so male = 0
-# table(x$sex_Ts) # all 1 so female = 1
-# umx_aggregate(sex_T2 ~ zyg_6grp, data = x)
-# |zyg_6grp    |sex_T2             |
-# |:-----------|:------------------|
-# |1 (n = 448) |male 448; female 0 |
-# |2 (n = 389) |male 389; female 0 |
-# |3 (n = 668) |male 0; female 668 |
-# |4 (n = 484) |male 0; female 484 |
-# |5 (n = 504) |male 0; female 504 |
-# |6 (n = 407) |male 407; female 0 |
-# umx_aggregate(sex_T1 ~ zyg_6grp, data = x)
-# |zyg_6grp    |sex_T1             |
-# |:-----------|:------------------|
-# |1 (n = 457) |male 457; female 0 |
-# |2 (n = 391) |male 391; female 0 |
-# |3 (n = 661) |male 0; female 661 |
-# |4 (n = 478) |male 0; female 478 |
-# |5 (n = 426) |male 426; female 0 |
-# |6 (n = 460) |male 0; female 460 |
 
 # ===================================
 # = General Family Functioning data =
