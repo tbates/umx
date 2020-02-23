@@ -68,8 +68,8 @@
 #' # ================================================
 #' # = Make the directional models by modifying DoC =
 #' # ================================================
-#' A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B"); summary(A2B)
-#' B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A"); summary(B2A)
+#' a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(A2B)
+#' b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(B2A)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 #'
 #' \dontrun{
@@ -77,10 +77,10 @@
 #' var2 = paste0("Vocab", 1:10)
 #' Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
 #' DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
-#' A2B  = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
-#' B2A  = umxModify(DoC, "b2a", free = TRUE, name = "B2A")
+#' a2b  = umxModify(DoC, "a2b", free = TRUE, name = "a2b")
+#' b2a  = umxModify(DoC, "b2a", free = TRUE, name = "b2a")
 #' Recip= umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip")
-#' umxCompare(Chol, c(A2B, B2A, Recip))
+#' umxCompare(Chol, c(a2b, b2a, Recip))
 #'
 #' }
 #' 
@@ -149,22 +149,25 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		## Covariance between the items due to the latent factors
 		mxAlgebra(name= "FacCovMZ", FacLoadtw %&% (cause %&% Vmz)),
 		mxAlgebra(name= "FacCovDZ", FacLoadtw %&% (cause %&% Vdz)),
-		# Matrices to store  a, c, and e "specific" path coefficients (residuals of each manifest)
-		# TODO smart var starts here
-		umxMatrix(name= "as", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
-		umxMatrix(name= "cs", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
-		umxMatrix(name= "es", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
+
+		# Matrices for specific a, c, and e path coefficients (residuals for each manifest)
+		# TODO: smart var starts here
+		umxMatrix("as", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
+		umxMatrix("cs", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
+		umxMatrix("es", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		mxAlgebra(name= "Asmz", Ones  %x% as),
 		mxAlgebra(name= "Asdz", dzAr  %x% as),
 		mxAlgebra(name= "Cstw", Ones  %x% cs),
 		mxAlgebra(name= "Estw", Diag1 %x% es),
 		mxAlgebra(name= "specCovMZ", Asmz + Cstw + Estw),
 		mxAlgebra(name= "specCovDZ", Asdz + Cstw + Estw),
+
 		# Expected Covariance Matrices for MZ and DZ
 		mxAlgebra(name= "expCovMZ", FacCovMZ + specCovMZ, dimnames = list(selVars, selVars)),
 		mxAlgebra(name= "expCovDZ", FacCovDZ + specCovDZ, dimnames = list(selVars, selVars)),
 		
-		# Means for the Manifest Variables # TODO Better starts for means... (easy)
+		# Means model
+		# TODO: Better starts for means... (easy)
 		umxMatrix(name= "Means", "Full", nrow= 1, ncol= nVar, free= TRUE, values= .1),
 		mxAlgebra(name= "expMean", cbind(top.Means, top.Means))
 		# TODO Why not just make ncol = nCol*2 and allow label repeats the equate means? Alg might be more efficient?
@@ -178,7 +181,8 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		# = DOC-based model =
 		# ===================
 		# Replace lower ace Matrices with diag.
-		# Because covariance between the traits is "caused", theses matrices are diagonal instead of lower
+		# Now that covariance between the traits is "caused", theses matrices are diagonal
+		# (no cross paths = no need for lower)
 		top = mxModel(top,
 			umxMatrix("a", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values= 0.2), # Genetic effects on Latent Variables 
 			umxMatrix("c", "Diag", nrow=nLat, ncol=nLat, free=TRUE,  values= 0.2), # Common env effects on Latent Variables
@@ -190,11 +194,10 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 	# Factor loading matrix of Intercept and Slope on observed phenotypes
 	# SDt = mxAlgebra(name= "SDt", solve(sqrt(Diag1 *Rt))) # Standardized deviations (inverse)
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModelDoC") # set class so that S3 plot() dispatches
+	model = as(model, "MxModelDoC") # set class so that S3s dispatch e.g. plot()
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE)
 	return(model)
 }
-
 
 
 #' Plot a Direction of Causation Model.
@@ -250,7 +253,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' a2b = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 #' plot(a2b)
 umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
-	message("I'm sorry Dave, no plot for DoC yet ;-(")
+	message("beta code")
 	# 1. ✓ draw latents
 	# 2. ✓ draw manifests,
 	# 3. ✓ draw ace to latents
@@ -281,7 +284,7 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	out = xmu_dot_mat2dot(model$top$c, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
 	out = xmu_dot_mat2dot(model$top$e, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
 
-	# 2. Process "FacLoad" nVar * nFac matrix: latents into common paths.
+	# 2. Process "FacLoad" nVar * nFac matrix of common latents onto manifests.
 	out = xmu_dot_mat2dot(model$top$FacLoad, cells= "any", toLabel= selDVs, from= "cols", fromLabel= selLat, fromType= "latent", showFixed = showFixed, p= out)
 
 	# 3. Process "as" matrix
@@ -289,9 +292,7 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
 	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
 
-	# betas are in 
-	# model$top$beta
-	# $labels
+	# betas are in model$top$beta$labels
 	#      [,1]  [,2]
 	# [1,] "a2a" "b2a"
 	# [2,] "a2b" "b2b"
@@ -302,16 +303,14 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
 	}
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
-	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
-	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
-	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
-	if(format != "current"){
-		umx_set_plot_format(format)
-	}
+	top     = xmu_dot_rank(out$latents, "^[ace][1-2]$"  , "min")
+	same    = xmu_dot_rank(out$latents, "^[ab]$"        , "same")
+	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max") # specifics
+	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, same, bottom, out$str, "\n}");
+
+	if(format != "current"){ umx_set_plot_format(format) }
+
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
-	# TODO umxPlotCP could tabulate thresholds?
-	# Process "_dev" (where are these?)
-	# cat(out$str)
 }
 
 #' @export

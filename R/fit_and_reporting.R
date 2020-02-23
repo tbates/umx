@@ -2418,33 +2418,29 @@ plot.MxRAMModel <- plot.MxModel
 #' m1 = umxACE("plotACEexample", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
+	# TODO: umxPlotACE Replace label-parsing with code that walks across the known matrices...
+	# Obviates problems with arbitrary names.
 	if(!class(x) == "MxModelACE"){
 		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
 	}
 	model = x # just to be clear that x is a model
-	if(std){
-		model = xmu_standardize_ACE(model)
-	}
-	out = "";
+	if(std){model = xmu_standardize_ACE(model)}
+
+	selDVs = dimnames(model$MZ$data$observed)[[2]]
+	nVar   = length(selDVs)/2;
+	selDVs = selDVs[1:(nVar)]
+	selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+
+
+	out     = "" ;
 	latents = c();
-	if(model$MZ$data$type == "raw"){
-		selDVs = names(model$MZ$data$observed)
-	}else{
-		selDVs = dimnames(model$MZ$data$observed)[[1]]
-	}
-	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
-	# TODO: umxPlotACE Replace label-parsing with code that walks across the known matrices...
-	# would obviate problems with arbitrary names.
-	# 1. Could add dimnames() to A, C, E?
 	
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
 		if(class(value) == "numeric") {
 			value = round(value, digits)
 		}
-		# omxLocateParameters(model=model, labels=thisParam)
-
 		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
 			from    = sub('([ace])_r([0-9]+)c([0-9]+)'           , '\\1\\3', thisParam, perl = TRUE);  # a c or e
 			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2'   , thisParam, perl = TRUE));
@@ -2471,11 +2467,11 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	}
 
 	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(var in selDVs[1:varCount]) {
+	for(var in selDVs) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
 
-	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
+	rankVariables = paste("\t{rank = same; ", paste(selDVs, collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
 	# grep('a', latents, value=T)
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}

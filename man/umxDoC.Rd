@@ -91,8 +91,8 @@ DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TR
 # ================================================
 # = Make the directional models by modifying DoC =
 # ================================================
-A2B   = umxModify(DoC, "a2b", free = TRUE, name = "A2B"); summary(A2B)
-B2A   = umxModify(DoC, "b2a", free = TRUE, name = "B2A"); summary(B2A)
+a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(A2B)
+b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(B2A)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 
 \dontrun{
@@ -100,10 +100,10 @@ var1 = paste0("SOS", 1:8)
 var2 = paste0("Vocab", 1:10)
 Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
 DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
-A2B  = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
-B2A  = umxModify(DoC, "b2a", free = TRUE, name = "B2A")
+a2b  = umxModify(DoC, "a2b", free = TRUE, name = "a2b")
+b2a  = umxModify(DoC, "b2a", free = TRUE, name = "b2a")
 Recip= umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip")
-umxCompare(Chol, c(A2B, B2A, Recip))
+umxCompare(Chol, c(a2b, b2a, Recip))
 
 }
 
