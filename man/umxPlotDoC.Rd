@@ -5,16 +5,27 @@
 \alias{plot.MxModelDoC}
 \title{Plot a Direction of Causation Model.}
 \usage{
-umxPlotDoC(x, ...)
+umxPlotDoC(
+  x = NA,
+  means = FALSE,
+  std = TRUE,
+  digits = 2,
+  showFixed = TRUE,
+  file = "name",
+  format = c("current", "graphviz", "DiagrammeR"),
+  SEstyle = FALSE,
+  strip_zero = TRUE,
+  ...
+)
 }
 \arguments{
-\item{x}{a \code{\link[=umxDoC]{umxDoC()}} model to summarize.}
+\item{x}{a \code{\link[=umxDoC]{umxDoC()}} model to display graphically}
 
 \item{...}{Other parameters to control model summary.}
 }
 \value{
 \itemize{
-\item optional \code{\link[=mxModel]{mxModel()}}
+\item Optionally return the dot code
 }
 }
 \description{
@@ -27,6 +38,11 @@ See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary
 }
 \examples{
 #
+}
+\references{
+\itemize{
+\item \url{https://tbates.github.io}
+}
 }
 \seealso{
 \itemize{

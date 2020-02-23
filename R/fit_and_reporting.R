@@ -2720,23 +2720,17 @@ plot.MxModelGxE <- umxPlotGxE
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
-	# 1. a_cp_matrix = A latent (and correlations among latents)
-	# 	* These go from a_cp n=row TO common n= row
-	# 	* Or for off diag, from a_cp n=col TO a_cp n= row
-	# 2. Same again for c_cp_matrix, e_cp_matrix
-	# 3. cp_loadings common factor loadings
-
+	# upgraded from label-based to cell-based plot building
 	format = match.arg(format)
 	model = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
 
 	if(std){ model = xmu_standardize_CP(model) }
 
-	facCount = dim(model$top$a_cp$labels)[[1]]
-	varCount = dim(model$top$as$values)[[1]]
+	nFac = dim(model$top$a_cp$labels)[[1]]
+	nVar = dim(model$top$as$values)[[1]]
 	selDVs   = dimnames(model$MZ$data$observed)[[2]]
-	selDVs   = selDVs[1:(varCount)]
+	selDVs   = selDVs[1:(nVar)]
 	selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 
 	out = list(str = "", latents = c(), manifests = c())
@@ -2771,7 +2765,7 @@ umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed =
 		# from = "one"; target = selDVs[c]
 		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
 	}
-	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
+	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
 	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
@@ -2814,29 +2808,35 @@ plot.MxModelCP <- umxPlotCP
 #' umxPlotIP(model, file = NA)
 #' }
 umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+	# TODO umxPlotIP: convert to matrix-search (rather than label-dependent) path finding
+	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
+	# 1. a_cp_matrix = A latent (and correlations among latents)
+	# 	* These go from a_cp n=row TO common n= row
+	# 	* Or for off diag, from a_cp n=col TO a_cp n= row
+	# 2. Same again for c_cp_matrix, e_cp_matrix
+	# 3. cp_loadings common factor loadings
+
 	format = match.arg(format)
-	if(!class(x) == "MxModelIP"){
-		stop("The first parameter of umxPlotIP must be an IP model, you gave me a ", class(x))
-	}
+	model = x # just to emphasise that x has to be a model 
+	umx_check_model(model, "MxModelIP", callingFn = "umxPlotIP")
 	
-	model = x # to emphasise that x has to be an umxIP model
 	if(std){
 		model = xmu_standardize_IP(model)
 	}
 	# TODO Check I am handling nFac > 1 properly!!
-	varCount = dim(model$top$ai$values)[[1]]
+	nVar = dim(model$top$ai$values)[[1]]
 	selDVs   = dimnames(model$MZ$data$observed)[[2]]
-	selDVs   = selDVs[1:(varCount)]
+	selDVs   = selDVs[1:(nVar)]
+	selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+	
 	parameterKeyList = omxGetParameters(model, free = TRUE);
-	out = "";
 	cSpecifics = c();
 	latents = c()
-	
+	out = "";
 	for(thisParam in names(parameterKeyList) ) {
 		if( grepl("^[ace]i_r[0-9]", thisParam)) {
 			# top level a c e
 			# "ai_r1c1" note: c1 = factor1, r1 = variable 1
-			# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin");
 			grepStr = '^([ace]i)_r([0-9]+)c([0-9]+)'
 			from    = sub(grepStr, '\\1_\\3', thisParam, perl = TRUE);
 			targetindex = as.numeric(sub(grepStr, '\\2', thisParam, perl=T));
@@ -2884,7 +2884,7 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		}
 	}
 	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(n in c(1:varCount)) {
+	for(n in c(1:nVar)) {
 	   preOut = paste0(preOut, "\n", selDVs[n], " [shape=square];\n")
 	}
 

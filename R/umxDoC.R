@@ -201,51 +201,86 @@ umxDoC <- function(name = "DOC", var1Indicators, var2Indicators, mzData= NULL, d
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases plot.MxModelDoC
-#' @param x a [umxDoC()] model to summarize.
-# #' @param digits round to how many digits (default = 2).
-# #' @param comparison you can run mxCompare on a comparison model (NULL).
-# #' @param file The name of the dot file to write: "name" = use the name of the model.
-# #' Defaults to NA = do not create plot output.
-# #' @param std Whether to standardize the output (default = TRUE).
-# #' @param showRg = whether to show the genetic correlations (FALSE).
+#' @param x a [umxDoC()] model to display graphically
+# #' @param digits How many decimals to include in path loadings (defaults to 2)
+# #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+# #' @param std Whether to standardize the model (defaults to TRUE)
 # #' @param CIs Whether to show Confidence intervals if they exist (TRUE).
-# #' @param returnStd Whether to return the standardized form of the model (default = FALSE).
-# #' @param report If "html", then open an html table of the results.
-# #' @param extended how much to report (FALSE).
-# #' @param zero.print How to show zeros (".")
+# #' @param format = c("current", "graphviz", "DiagrammeR") 
+# #' @param means Whether to show means paths (defaults to FALSE)
+# #' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
+# #' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" when CIs are found (Default FALSE)
+# #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Other parameters to control model summary.
-#' @return - optional [mxModel()]
+#' @references - <https://tbates.github.io>
+#' @return - Optionally return the dot code
 #' @export
 #' @family Twin Reporting Functions
 #' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @md
 #' @examples
 #' #
-umxPlotDoC <- function(x, ...) {
+umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	message("I'm sorry Dave, no plot for doc yet ;-(")
-	# 1. draw latents
-	# 2. draw manifests,
-	# 3. draw ace to latents
-	# 4. draw specifics to manifests (? or omit?)
-	# 5. connect latents to manifests using free elements of columns of FacLoad
+	# 1. ✓ draw latents
+	# 2. ✓ draw manifests,
+	# 3. ✓ draw ace to latents
+	# 4. ✓ draw specifics to manifests (? or omit?)
+	# 5. ✓ connect latents to manifests using free elements of columns of FacLoad
 	# 6. add causal paths between latents
 
-	# Chol$top$FacLoad
-	# $free
-	#       [,1]  [,2]
-	# [1,]  TRUE FALSE
-	# [2,]  TRUE FALSE
-	# [3,]  TRUE FALSE
-	# [4,] FALSE  TRUE
-	# [5,] FALSE  TRUE
-	# [6,] FALSE  TRUE
+	format = match.arg(format)
+	model = x # just to emphasise that x has to be a model 
+	umx_check_model(model, "MxModelDoC", callingFn = "umxPlotDoC")
+	
+	if(std){
+		model = xmu_standardize_DoC(model)
+	}
+
+	nFac = dim(model$top$a_cp$labels)[[1]]
+	nVar = dim(model$top$as$values)[[1]]
+	selDVs   = dimnames(model$MZ$data$observed)[[2]]
+	selDVs   = selDVs[1:(nVar)]
+	selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+
+	out = list(str = "", latents = c(), manifests = c())
+
+	# Process [ace] matrices
+	# 1. Collect latents
+	out = xmu_dot_mat2dot(model$top$a, cells = "diag", from = "rows", toLabel = c("a", "b"), fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$c, cells = "diag", from = "rows", toLabel = c("a", "b"), fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$e, cells = "diag", from = "rows", toLabel = c("a", "b"), fromType = "latent", showFixed = showFixed, p = out)
+
+	# 2. Process "FacLoad" nVar * nFac matrix: latents into common paths.
+	out = xmu_dot_mat2dot(model$top$FacLoad, cells= "any", toLabel= selDVs, from= "cols", fromLabel= c("a", "b"), fromType= "latent", showFixed = showFixed, p= out)
+	# 3. Process "as" matrix
+	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
 
 	# betas are in 
 	# model$top$beta
 	# $labels
 	#      [,1]  [,2]
 	# [1,] "a2a" "b2a"
-	# [2,] "a2b" "b2b"		
+	# [2,] "a2b" "b2b"
+
+	# Process "expMean" 1 * nVar matrix
+	if(means){
+		# from = "one"; target = selDVs[c]
+		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
+	}
+	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
+	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
+	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
+	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
+	if(format != "current"){
+		umx_set_plot_format(format)
+	}
+	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+	# TODO umxPlotCP could tabulate thresholds?
+	# Process "_dev" (where are these?)
+	# cat(out$str)
 }
 
 #' @export
@@ -286,11 +321,13 @@ plot.MxModelDoC <- umxPlotDoC
 #' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
 #' DoC = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
 #'			mzData= mzData, dzData= dzData, causal= TRUE)
-#' A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
-#' umxSummary(A2B)
+#' A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B", comp=TRUE)
+#' B2A = umxModify(DoC, "b2a", free = TRUE, name = "B2A", comp=TRUE)
+#' umxCompare(B2A, A2B)
 umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, zero.print = ".", ...) {
 	message("Summary support for DoC models not complete yet")
 
+	# TODO: Allow "a2b" in place of causal to avoid the make/modify 2-step
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
@@ -303,9 +340,12 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 	} else {
 		umx_check_model(model, "MxModelDoC", beenRun = TRUE, callingFn = "umxSummaryDoC")
 		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
-		selDVs = dimnames(model$top.expCovMZ)[[1]]
-		nVar   = length(selDVs)/2
-		nFac   = 2; # TODO look this up in the model
+		
+		nFac     = dim(model$top$a$labels)[[1]]
+		nVar     = dim(model$top$as$values)[[1]]
+		selDVs   = dimnames(model$MZ$data$observed)[[2]]
+		selDVs   = selDVs[1:(nVar)]
+		selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 
 		if(CIs){
 			message("CIs not supported for DoC models yet")

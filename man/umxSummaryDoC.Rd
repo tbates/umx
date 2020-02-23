@@ -64,8 +64,9 @@ mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
 dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 DoC = umxDoC(var1= paste0("a", 1:3), var2 = paste0("b", 1:3),
 		mzData= mzData, dzData= dzData, causal= TRUE)
-A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
-umxSummary(A2B)
+A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B", comp=TRUE)
+B2A = umxModify(DoC, "b2a", free = TRUE, name = "B2A", comp=TRUE)
+umxCompare(B2A, A2B)
 }
 \seealso{
 \itemize{

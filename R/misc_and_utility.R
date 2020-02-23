@@ -3084,11 +3084,19 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 	from   = match.arg(from)
 	cells  = match.arg(cells)
 	arrows = match.arg(arrows)
-	nRows  = nrow(x)
-	nCols  = ncol(x)
-	# Allow from and to labels other than the matrix name (default)
+	# Get custom from and to labels if set
 	if(is.null(fromLabel)){ fromLabel = x$name }
 	if(is.null(toLabel))  { toLabel   = x$name }
+
+	if(class(x) == "MxAlgebra"){
+		# convert to a matrix
+		tmp = x$result
+		x = umxMatrix(x$name, "Full", dim(tmp)[1], dim(tmp)[2], free = TRUE, values = tmp)
+		
+	}
+
+	nRows  = nrow(x)
+	nCols  = ncol(x)
  
 	# Get parameter value and make the plot string
 	# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
@@ -3099,7 +3107,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){
 				# cell is in the target zone
 				if(!is.null(model)){
-					# Model available - look for CIs
+					# Model available - look for CIs by label...
 					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
 					if(is.na(CIstr)){
 						value = umx_round(x$values[r,c], digits)
