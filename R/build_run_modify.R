@@ -4115,7 +4115,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 				b = mxPath(from = "one", to = v1m0, free = FALSE, values = 0, labels = labels[2], lbound = lbound, ubound = ubound)
 			} else {
 				stop("Managing which labels apply to the variances and which to the means is error prone:\n",
-				"I suggest you call: umxPath(var) and umxPath(means=) separately"
+				"I suggest you call: umxPath(var=) and umxPath(means=) separately"
 				)
 			}
 		} else {
@@ -4164,9 +4164,11 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 
 	if(!is.null(v.m0)){
+		# use values, if provided, to start variance
+		values = ifelse(is.na(values), 1, values)
 		if(any(!is.na(labels))){
 			if(length(labels)==2){
-				a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = 1, labels=labels[1])
+				a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = values, labels=labels[1])
 				b = mxPath(from = "one", to = v.m0, free = FALSE, values = 0, labels=labels[2])
 			} else {
 				stop("Managing which labels apply to the variances and which to the means is error prone:\n",
@@ -4174,7 +4176,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 				)
 			}
 		} else {
-			a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = 1)
+			a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = values)
 			b = mxPath(from = "one", to = v.m0, free = FALSE, values = 0)
 		}
 		return(list(a, b))

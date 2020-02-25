@@ -140,7 +140,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		### Generate the Asymmetric Matrix
 		# Non-shared env effects on Latent Variables 
 		umxMatrix("beta", "Full", nrow=nLat, ncol=nLat, free=FALSE, labels = c("a2a", "a2b", "b2a", "b2b"), values= 0),
-		mxAlgebra(name= "cause", Diag1 %x% solve(Diag1 - beta)),
+		mxAlgebra(name= "cause", Diag1 %x% solve(Diag1 - beta)), 	
 
 		### Generate the Factor Loading Matrix
 		FacLoad,
@@ -155,6 +155,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		umxMatrix("as", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		umxMatrix("cs", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		umxMatrix("es", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
+
 		mxAlgebra(name= "Asmz", Ones  %x% as),
 		mxAlgebra(name= "Asdz", dzAr  %x% as),
 		mxAlgebra(name= "Cstw", Ones  %x% cs),
