@@ -21,6 +21,22 @@ umxPlotDoC(
 \arguments{
 \item{x}{a \code{\link[=umxDoC]{umxDoC()}} model to display graphically}
 
+\item{means}{Whether to show means paths (defaults to FALSE)}
+
+\item{std}{Whether to standardize the model (defaults to TRUE)}
+
+\item{digits}{How many decimals to include in path loadings (defaults to 2)}
+
+\item{showFixed}{Whether to graph paths that are fixed but != 0 (default = TRUE)}
+
+\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
+
+\item{format}{= c("current", "graphviz", "DiagrammeR")}
+
+\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" when CIs are found (Default FALSE)}
+
+\item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
+
 \item{...}{Other parameters to control model summary.}
 }
 \value{

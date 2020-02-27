@@ -35,7 +35,7 @@ str(docData)
 mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
 dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 par(mfrow = c(1, 2))  # 1 rows and 3 columns
-plot(a1_T2 ~a1_T1, ylim = c(-4, 4), data = mzData, main="MZ")
+plot(varA1_T2 ~varA1_T1, ylim = c(-4, 4), data = mzData, main="MZ")
 tmp = round(cor.test(~varA1_T1 + varA1_T2, data = mzData)$estimate, 2)
 text(x=-4, y=3, labels = paste0("r = ", tmp))
 plot(varA1_T2 ~varA1_T1, ylim = c(-4, 4), data = dzData, main="DZ")

@@ -211,10 +211,6 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' 
 #' @aliases plot.MxModelDoC
 #' @param x a [umxDoC()] model to display graphically
-
-Undocumented arguments in documentation object 'umxPlotDoC'
-293  ‘means’ ‘std’ ‘digits’ ‘showFixed’ ‘file’ ‘format’ ‘SEstyle’
-294  ‘strip_zero’
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param digits How many decimals to include in path loadings (defaults to 2)
