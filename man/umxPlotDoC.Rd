@@ -73,19 +73,22 @@ plot(a2b)
 \item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxSummary.MxModelDoC]{umxSummary.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxReduceACE}()},
-  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
-  \code{\link{umxSummarizeTwinData}()},
-  \code{\link{umxSummaryACEcov}()},
-  \code{\link{umxSummaryACEv}()},
-  \code{\link{umxSummaryACE}()},
-  \code{\link{umxSummaryCP}()},
-  \code{\link{umxSummaryDoC}()},
-  \code{\link{umxSummaryGxEbiv}()},
-  \code{\link{umxSummaryGxE}()},
-  \code{\link{umxSummaryIP}()},
-  \code{\link{umxSummarySexLim}()},
-  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
+Other Twin Reporting Functions: 
+\code{\link{umxPlotCP}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

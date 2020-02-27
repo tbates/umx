@@ -58,10 +58,15 @@ umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 \seealso{
 \code{\link[=omxGetParameters]{omxGetParameters()}}, \code{\link[=parameters]{parameters()}}
 
-Other Reporting Functions: \code{\link{loadings.MxModel}()},
-  \code{\link{umxAPA}()}, \code{\link{umxFactorScores}()},
-  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
-  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
-  \code{\link{umx_time}()}, \code{\link{umx}}
+Other Reporting Functions: 
+\code{\link{loadings.MxModel}()},
+\code{\link{umxAPA}()},
+\code{\link{umxFactorScores}()},
+\code{\link{umxParameters}()},
+\code{\link{umxReduce}()},
+\code{\link{umx_aggregate}()},
+\code{\link{umx_names}()},
+\code{\link{umx_time}()},
+\code{\link{umx}}
 }
 \concept{Reporting Functions}

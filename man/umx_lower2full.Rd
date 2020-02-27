@@ -99,21 +99,24 @@ umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
 - <https://www.github.com/tbates/umx>
 }
 \seealso{
-Other Data Functions: \code{\link{umxFactor}()},
-  \code{\link{umxHetCor}()},
-  \code{\link{umx_as_numeric}()},
-  \code{\link{umx_cont_2_quantiles}()},
-  \code{\link{umx_make_MR_data}()},
-  \code{\link{umx_make_TwinData}()},
-  \code{\link{umx_make_fake_data}()},
-  \code{\link{umx_make_raw_from_cov}()},
-  \code{\link{umx_polychoric}()},
-  \code{\link{umx_polypairwise}()},
-  \code{\link{umx_polytriowise}()},
-  \code{\link{umx_read_lower}()},
-  \code{\link{umx_rename}()}, \code{\link{umx_reorder}()},
-  \code{\link{umx_select_valid}()},
-  \code{\link{umx_stack}()}, \code{\link{umx}},
-  \code{\link{xmu_data_swap_a_block}()}
+Other Data Functions: 
+\code{\link{umxFactor}()},
+\code{\link{umxHetCor}()},
+\code{\link{umx_as_numeric}()},
+\code{\link{umx_cont_2_quantiles}()},
+\code{\link{umx_make_MR_data}()},
+\code{\link{umx_make_TwinData}()},
+\code{\link{umx_make_fake_data}()},
+\code{\link{umx_make_raw_from_cov}()},
+\code{\link{umx_polychoric}()},
+\code{\link{umx_polypairwise}()},
+\code{\link{umx_polytriowise}()},
+\code{\link{umx_read_lower}()},
+\code{\link{umx_rename}()},
+\code{\link{umx_reorder}()},
+\code{\link{umx_select_valid}()},
+\code{\link{umx_stack}()},
+\code{\link{umx}},
+\code{\link{xmu_data_swap_a_block}()}
 }
 \concept{Data Functions}

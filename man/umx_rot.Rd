@@ -28,11 +28,14 @@ umx_rot(c(3,4,5,6,7))
 }
 }
 \seealso{
-Other String Functions: \code{\link{umx_explode_twin_names}()},
-  \code{\link{umx_explode}()}, \code{\link{umx_grep}()},
-  \code{\link{umx_names}()},
-  \code{\link{umx_object_as_str}()},
-  \code{\link{umx_paste_names}()},
-  \code{\link{umx_trim}()}, \code{\link{umx}}
+Other String Functions: 
+\code{\link{umx_explode_twin_names}()},
+\code{\link{umx_explode}()},
+\code{\link{umx_grep}()},
+\code{\link{umx_names}()},
+\code{\link{umx_object_as_str}()},
+\code{\link{umx_paste_names}()},
+\code{\link{umx_trim}()},
+\code{\link{umx}}
 }
 \concept{String Functions}

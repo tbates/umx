@@ -119,14 +119,21 @@ In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496–49
 \item \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxSummary.MxModelDoC]{umxSummary.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
-  \code{\link{umxACE_cov_fixed}()},
-  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
-  \code{\link{umxACE}()}, \code{\link{umxCP}()},
-  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
-  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
-  \code{\link{umxRotate.MxModelCP}()},
-  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
-  \code{\link{umx}}
+Other Twin Modeling Functions: 
+\code{\link{power.ACE.test}()},
+\code{\link{umxACE_cov_fixed}()},
+\code{\link{umxACEcov}()},
+\code{\link{umxACEv}()},
+\code{\link{umxACE}()},
+\code{\link{umxCP}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxGxE_window}()},
+\code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
+\code{\link{umxIP}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
+\code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

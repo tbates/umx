@@ -36,7 +36,8 @@ tmx_is.identified(nVariables = 5, nFactors = 2) # TRUE
 \item \code{\link[=mxCheckIdentification]{mxCheckIdentification()}}
 }
 
-Other Teaching and testing Functions: \code{\link{tmx_genotypic_effect}()},
-  \code{\link{umx}}
+Other Teaching and testing Functions: 
+\code{\link{tmx_genotypic_effect}()},
+\code{\link{umx}}
 }
 \concept{Teaching and testing Functions}

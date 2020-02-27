@@ -34,8 +34,10 @@ mat1 = umxJiggle(mat1)
 }
 }
 \seealso{
-Other Advanced Model Building Functions: \code{\link{umxLabel}()},
-  \code{\link{umxThresholdMatrix}()},
-  \code{\link{umxValues}()}, \code{\link{umx}}
+Other Advanced Model Building Functions: 
+\code{\link{umxLabel}()},
+\code{\link{umxThresholdMatrix}()},
+\code{\link{umxValues}()},
+\code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

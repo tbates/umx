@@ -292,14 +292,21 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 }
 }
 \seealso{
-Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
-  \code{\link{umxACE_cov_fixed}()},
-  \code{\link{umxACEcov}()}, \code{\link{umxACE}()},
-  \code{\link{umxCP}()}, \code{\link{umxDoC}()},
-  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
-  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
-  \code{\link{umxRotate.MxModelCP}()},
-  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
-  \code{\link{umx}}
+Other Twin Modeling Functions: 
+\code{\link{power.ACE.test}()},
+\code{\link{umxACE_cov_fixed}()},
+\code{\link{umxACEcov}()},
+\code{\link{umxACE}()},
+\code{\link{umxCP}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxDoC}()},
+\code{\link{umxGxE_window}()},
+\code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
+\code{\link{umxIP}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
+\code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

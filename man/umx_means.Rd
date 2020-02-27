@@ -27,14 +27,20 @@ tmp$hp  = ordered(mtcars$hp)  # binary factor
 umx_means(tmp, ordVar = 0, na.rm = TRUE)
 }
 \seealso{
-Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
-  \code{\link{SE_from_p}()}, \code{\link{oddsratio}()},
-  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
-  \code{\link{umxHetCor}()},
-  \code{\link{umxWeightedAIC}()},
-  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
-  \code{\link{umx_r_test}()}, \code{\link{umx_round}()},
-  \code{\link{umx_scale}()}, \code{\link{umx_var}()},
-  \code{\link{umx}}
+Other Miscellaneous Stats Helpers: 
+\code{\link{FishersMethod}()},
+\code{\link{SE_from_p}()},
+\code{\link{oddsratio}()},
+\code{\link{reliability}()},
+\code{\link{umxCov2cor}()},
+\code{\link{umxHetCor}()},
+\code{\link{umxWeightedAIC}()},
+\code{\link{umx_apply}()},
+\code{\link{umx_cor}()},
+\code{\link{umx_r_test}()},
+\code{\link{umx_round}()},
+\code{\link{umx_scale}()},
+\code{\link{umx_var}()},
+\code{\link{umx}}
 }
 \concept{Miscellaneous Stats Helpers}

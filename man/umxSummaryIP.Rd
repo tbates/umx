@@ -70,18 +70,22 @@ umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 \item \code{\link{umxIP}()}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
-  \code{\link{umxPlotDoC}()}, \code{\link{umxReduceACE}()},
-  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
-  \code{\link{umxSummarizeTwinData}()},
-  \code{\link{umxSummaryACEcov}()},
-  \code{\link{umxSummaryACEv}()},
-  \code{\link{umxSummaryACE}()},
-  \code{\link{umxSummaryCP}()},
-  \code{\link{umxSummaryDoC}()},
-  \code{\link{umxSummaryGxEbiv}()},
-  \code{\link{umxSummaryGxE}()},
-  \code{\link{umxSummarySexLim}()},
-  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
+Other Twin Reporting Functions: 
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

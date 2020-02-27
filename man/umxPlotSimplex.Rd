@@ -60,12 +60,17 @@ m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 \item \code{\link[=umxSimplex]{umxSimplex()}}
 }
 
-Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
-  \code{\link{plot.MxModel}()},
-  \code{\link{umxPlotACEcov}()},
-  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
-  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
-  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
-  \code{\link{umxPlotSexLim}()}, \code{\link{umx}}
+Other Plotting functions: 
+\code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModel}()},
+\code{\link{umxPlotACEcov}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxPlotACE}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotGxEbiv}()},
+\code{\link{umxPlotGxE}()},
+\code{\link{umxPlotIP}()},
+\code{\link{umxPlotSexLim}()},
+\code{\link{umx}}
 }
 \concept{Plotting functions}
