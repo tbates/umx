@@ -211,15 +211,18 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' 
 #' @aliases plot.MxModelDoC
 #' @param x a [umxDoC()] model to display graphically
-# #' @param digits How many decimals to include in path loadings (defaults to 2)
-# #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-# #' @param std Whether to standardize the model (defaults to TRUE)
-# #' @param CIs Whether to show Confidence intervals if they exist (TRUE).
-# #' @param format = c("current", "graphviz", "DiagrammeR") 
-# #' @param means Whether to show means paths (defaults to FALSE)
-# #' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
-# #' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" when CIs are found (Default FALSE)
-# #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+
+Undocumented arguments in documentation object 'umxPlotDoC'
+293  ‘means’ ‘std’ ‘digits’ ‘showFixed’ ‘file’ ‘format’ ‘SEstyle’
+294  ‘strip_zero’
+#' @param means Whether to show means paths (defaults to FALSE)
+#' @param std Whether to standardize the model (defaults to TRUE)
+#' @param digits How many decimals to include in path loadings (defaults to 2)
+#' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param format = c("current", "graphviz", "DiagrammeR")
+#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" when CIs are found (Default FALSE)
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Other parameters to control model summary.
 #' @references - <https://tbates.github.io>
 #' @return - Optionally return the dot code

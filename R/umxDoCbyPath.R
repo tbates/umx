@@ -17,8 +17,9 @@
 # Rule2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
 # To avoid clashes, variables must not match "^[ace]0-9_[1-5]$": theses are reserved for ace.
 #' 
-#' @param paths A vector of [umxPaths()] using base variable names
-#' @param t1_t2links = c('a'=c(1,.5), 'c'=c(1,1), 'e'=c(0,0))
+#' @param name The name for the [superModel()] (Default "m1")
+#' @param paths A vector of [umxPath()]s describing one person
+#' @param t1_t2links base name (and values) of paths that covary between T1 and T2. Default: c('a'=c(1,.5), 'c'=c(1,1), 'e'=c(0,0))
 #' @param mzData Data for MZ twins
 #' @param dzData Data for DZ twins
 #' @param sep The separator used to create twin 1 and 2 names (Default "_T")
@@ -32,23 +33,32 @@
 #' # ================
 #' # = An ACE model =
 #' # ================
+#' mzData = subset(twinData, zyg == 1)
+#' dzData = subset(twinData, zyg == 3)
+#'
 #' twin1PathList = c(
 #'	umxPath(v1m0 = c("a1", 'c1', "e1")),
 #'	umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
 #')
-#' mzData = subset(twinData, zyg == 1)
-#' dzData = subset(twinData, zyg == 3)
 #' tmp= umxTwinMaker(paths= twin1PathList, mzData = mzData, dzData= dzData, sep = "")
 #' plot(tmp, means=FALSE)
+#'
+#' bivPaths = c(
+#'	umxPath(v1m0 = c("a1", 'c1', "e1")),
+#'	umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
+#')
+#' tmp= umxTwinMaker(paths= bivPaths, mzData = mzData, dzData= dzData, sep = "")
+#' plot(tmp, means=FALSE)
+#'
 umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
 	# TODO 
 	# 1. check no variables match "^[ace][0-9]_T[01]$"
 
 	# Check all paths are paths
-	for (i in length(twin1PathList)) {
-		if(!class(twin1PathList[[i]]) == "MxPath"){
+	for (i in length(paths)) {
+		if(!class(paths[[i]]) == "MxPath"){
 			stop("all elements of paths must be a umxPath. Item ", i, "seems to be class ", 
-				omxQuotes(class(twin1PathList[[i]]) )
+				omxQuotes(class(paths[[i]]) )
 			)
 		}
 	}
@@ -64,8 +74,8 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 		# TODO be smarter in here: use namez to pull what we will need: 
 		thisSearch = paste0("^", varComponent, "[0-9]+_T1$")
 		allPathsOfComponent = namez(varNames, thisSearch)
-		# strip component and T1/2,
-		allPathsOfComponent = namez(allPathsOfComponent, patt = paste0("^", varComponent, "([0-9]+)_T[0-9]$"), rep= "\\1")
+		# strip a/c/e (varComponent) and _T1/2 suffix
+		allPathsOfComponent = namez(allPathsOfComponent, pattern = paste0("^", varComponent, "([0-9]+)_T[0-9]$"), replacement= "\\1")
 		allPathsOfComponent = as.numeric(allPathsOfComponent)
 		# parse to build i list,
 		# iterate over it
@@ -83,7 +93,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 	# TODO: check bug where one is in manifestVars?
 }
 
-#' Re-name variables umxPaths to twin versions
+#' Re-name variables in umxPaths to twin versions
 #'
 #' @description
 #' `xmu_path2twin` takes a collectionn of paths that use base variable names, 
@@ -120,8 +130,8 @@ xmu_path2twin <- function(paths, thisTwin = 1, sep = "_T"){
 #' Re-name variables umxPaths to twin versions
 #'
 #' @description
-#' `xmu_path2twin` takes a collectionn of paths that use base variable names, 
-#' and returns a model with twin names.
+#' `xmu_path2twin` takes a collection of [umxPath()]s (use base variable names), 
+#' and returns a model for both twins (and using the expanded variable names).
 #'
 #' @details
 #' A path like `a to b` will be returned as `a_T1 to b_T1`.
@@ -201,6 +211,7 @@ umxDoCp <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, 
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
 	if(name == "DoC"){ name = ifelse(TRUE, "DoC", "Chol") }
 
+	nSib    = 2
 	nLat1   = length(var1Indicators) # measures for factor 1
 	nLat2   = length(var2Indicators)
 	nVar    = nLat1 + nLat2
@@ -293,6 +304,6 @@ umxDoCp <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, 
 		# TODO: add C<->C covariance
 	)
 
-	model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ", "DZ")) )
+	# model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ", "DZ")) )
 
 }
