@@ -46,4 +46,4 @@ Suggests:
 	psych
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
-RoxygenNote: 6.1.99.9001
+RoxygenNote: 7.0.2
