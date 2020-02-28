@@ -36,16 +36,20 @@ umxTwinMaker(
 and returns a completed twin model. This consists of a \code{\link[=umxSuperModel]{umxSuperModel()}} containing
 \code{MZ} and \code{DZ} \code{\link[=umxRAM]{umxRAM()}} models.
 
-Pass into umxTwinMaker:
+Pass into \code{umxTwinMaker}:
 \enumerate{
-\item A list of paths making up the twin 1 model
-\item A list of paths connecting twin 1 to twin2 (The default here is 1 and.5 for the a, and
-c and e are 1 and 0 in both groups, respectively.
+\item A list of \code{paths} making up the twin 1 model
+\item In \code{t1_t2links}, a vector describing the component realtionships connecting twin 1 to twin2 (The default here is 1 and .5 for the a, and,
+for c and e are 1 and 0 in both groups, respectively.
 }
-}
-\details{
+
+\emph{Details}
+
 Some rules. All labels are expanded with a twin suffix: so "var1" -> "var1_T1" etc. so you
 provide the person-model using just the base name (and tell umxTwinMaker how to expand it by providing a separator string).
+
+Rule 2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
+To avoid clashes, variables must not match the numbered variables in \code{t1_t2links}  - by default names like "a1" are reserved for ace.
 }
 \examples{
 # ================
@@ -61,11 +65,14 @@ umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
 tmp= umxTwinMaker(paths= twin1PathList, mzData = mzData, dzData= dzData, sep = "")
 plot(tmp, means=FALSE)
 
-bivPaths = c(
-umxPath(v1m0 = c("a1", 'c1', "e1")),
-umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
+latents = paste0(rep(c("a", "c", "e"), each = 2), 1:2)
+biv = c(
+umxPath(v1m0 = latents),
+umxPath(mean = c("wt", "ht")),
+umxPath(fromEach = c("a1", 'c1', "e1"), to = c("ht", "wt")),
+umxPath(c("a2", 'c2', "e2"), to = "wt")
 )
-tmp= umxTwinMaker(paths= bivPaths, mzData = mzData, dzData= dzData, sep = "")
+tmp= umxTwinMaker(paths= biv, mzData = mzData, dzData= dzData, sep = "")
 plot(tmp, means=FALSE)
 
 }

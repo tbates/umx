@@ -5,17 +5,19 @@
 #' and returns a completed twin model. This consists of a [umxSuperModel()] containing
 #' `MZ` and `DZ` [umxRAM()] models.
 #'
-#' Pass into umxTwinMaker:
+#' Pass into `umxTwinMaker`:
 #'
-#' 1. A list of paths making up the twin 1 model
-#' 2. A list of paths connecting twin 1 to twin2 (The default here is 1 and.5 for the a, and 
-#' 	c and e are 1 and 0 in both groups, respectively.
-#' @details
+#' 1. A list of `paths` making up the twin 1 model
+#' 2. In `t1_t2links`, a vector describing the component realtionships connecting twin 1 to twin2 (The default here is 1 and .5 for the a, and, 
+#' 	for c and e are 1 and 0 in both groups, respectively.
+#'
+#' *Details*
+#'
 #' Some rules. All labels are expanded with a twin suffix: so "var1" -> "var1_T1" etc. so you
 #' provide the person-model using just the base name (and tell umxTwinMaker how to expand it by providing a separator string).
-# 
-# Rule2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
-# To avoid clashes, variables must not match "^[ace]0-9_[1-5]$": theses are reserved for ace.
+#' 
+#' Rule 2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
+#' To avoid clashes, variables must not match the numbered variables in `t1_t2links`  - by default names like "a1" are reserved for ace.
 #' 
 #' @param name The name for the [superModel()] (Default "m1")
 #' @param paths A vector of [umxPath()]s describing one person
@@ -33,8 +35,10 @@
 #' # ================
 #' # = An ACE model =
 #' # ================
-#' mzData = subset(twinData, zyg == 1)
-#' dzData = subset(twinData, zyg == 3)
+#' # Make the built-in twin data into a nice parsable set of names (with sep = "_T")
+#' tmp= umx_make_twin_data_nice(data=twinData, sep="", zygosity="zygosity", numbering=1:2)
+#' mzData = subset(tmp, zyg == 1)
+#' dzData = subset(tmp, zyg == 3)
 #'
 #' twin1PathList = c(
 #'	umxPath(v1m0 = c("a1", 'c1', "e1")),
@@ -43,16 +47,21 @@
 #' tmp= umxTwinMaker(paths= twin1PathList, mzData = mzData, dzData= dzData, sep = "")
 #' plot(tmp, means=FALSE)
 #'
-#' bivPaths = c(
-#'	umxPath(v1m0 = c("a1", 'c1', "e1")),
-#'	umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
+#' latents = paste0(rep(c("a", "c", "e"), each = 2), 1:2)
+#' biv = c(
+#'	umxPath(v1m0 = latents),
+#'	umxPath(mean = c("wt", "ht")),
+#'	umxPath(fromEach = c("a1", 'c1', "e1"), to = c("ht", "wt")),
+#'	umxPath(c("a2", 'c2', "e2"), to = "wt")
 #')
-#' tmp= umxTwinMaker(paths= bivPaths, mzData = mzData, dzData= dzData, sep = "")
+#' tmp= umxTwinMaker(paths= biv, mzData = mzData, dzData= dzData, sep = "")
 #' plot(tmp, means=FALSE)
 #'
 umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
 	# TODO 
-	# 1. check no variables match "^[ace][0-9]_T[01]$"
+	# Ensure labels that might need equating of freeing across MZ/DZ or T1 T2
+	# Check no manifests match the t1_t2links?
+	# Check t1_t2links looks sane (list of 2-number objects)
 
 	# Check all paths are paths
 	for (i in length(paths)) {
@@ -62,28 +71,31 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 			)
 		}
 	}
-	
+	# 1. make twin 1 twin 2 versions of the paths
 	Twin1Paths = xmu_path2twin(paths = paths, thisTwin = 1, sep = sep)	
 	Twin2Paths = xmu_path2twin(paths = paths, thisTwin = 2, sep = sep)	
+
+	# 2. Make MZ and DZ models with these paths and the right data
 	MZ = umxRAM("MZ", c(Twin1Paths, Twin2Paths), data = mzData, autoRun=FALSE)
 	DZ = umxRAM("DZ", c(Twin1Paths, Twin2Paths), data = dzData, autoRun=FALSE)
-	varNames = dimnames(MZ$S$values)[[1]]
+
 	# 3. Add a/c/e twin-covariance path(s)
+	varNames = dimnames(MZ$S$values)[[1]]
 	for (varComponent in names(t1_t2links)) {
 		# varComponent = names(t1_t2links)[1]
 		# TODO be smarter in here: use namez to pull what we will need: 
-		thisSearch = paste0("^", varComponent, "[0-9]+_T1$")
+		thisSearch = paste0("^", varComponent, "[0-9]+",sep, "1$")
 		allPathsOfComponent = namez(varNames, thisSearch)
-		# strip a/c/e (varComponent) and _T1/2 suffix
-		allPathsOfComponent = namez(allPathsOfComponent, pattern = paste0("^", varComponent, "([0-9]+)_T[0-9]$"), replacement= "\\1")
+		# strip a/c/e (varComponent) and suffix
+		allPathsOfComponent = namez(allPathsOfComponent, pattern = paste0("^", varComponent, "([0-9]+)", sep, "[0-9]$"), replacement= "\\1")
 		allPathsOfComponent = as.numeric(allPathsOfComponent)
 		# parse to build i list,
 		# iterate over it
 		MZvalue = t1_t2links[[varComponent]][1]
 		DZvalue = t1_t2links[[varComponent]][2]
 		for (i in allPathsOfComponent) {
-			T1 = paste0(varComponent, i, "_T1")
-			T2 = paste0(varComponent, i, "_T2")
+			T1 = paste0(varComponent, i, sep, "1")
+			T2 = paste0(varComponent, i, sep, "2")
 			MZ = mxModel(MZ, umxPath(T1, with = T2, free=FALSE, values = MZvalue))
 			DZ = mxModel(DZ, umxPath(T1, with = T2, free=FALSE, values = DZvalue))
 		}		
