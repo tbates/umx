@@ -824,18 +824,17 @@ umxSummary.default <- function(model, ...){
 #'
 #' @aliases umxSummary.MxModel umxSummary.MxRAMModel
 #' @param model The [mxModel()] whose fit will be reported
-#' @param refModels Saturated models if needed for fit indices (see example below:
-#' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
-#' @param show What estimates to show. By default, the raw estimates are shown 
-#' (Options = c("raw", "std", "none").
+#' @param std If TRUE, model is standardized (Defaul = FALSE) NULL means don't show.
 #' @param digits How many decimal places to report (default = 2)
 #' @param report If "html", then show results in browser (alternative = "markdown")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
-#' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
-#' @param std deprecated: use show = "std" instead!
+#' @param refModels Saturated models if needed for fit indices (see example below:
+#' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
 #' @param ... Other parameters to control model summary
+#' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
+#' @param show Deprecated: use std = TRUE.
 #' @family Reporting functions
 #' @seealso - [umxRun()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
@@ -874,7 +873,7 @@ umxSummary.default <- function(model, ...){
 #' 	umxPath(v1m0 = "G")
 #' )
 #' umxSummary(m1, std = TRUE, filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, matrixAddresses = FALSE, show = c("deprecated", "raw", "std", "none"), ...){
+umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, ..., matrixAddresses = FALSE, show = c("deprecated", "raw", "std", "none")){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	show   = match.arg(show)

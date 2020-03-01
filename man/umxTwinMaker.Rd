@@ -25,6 +25,8 @@ umxTwinMaker(
 \item{dzData}{Data for DZ twins}
 
 \item{sep}{The separator used to create twin 1 and 2 names (Default "_T")}
+
+\item{manifests}{Base names for the manifest variables in the model}
 }
 \value{
 \itemize{
@@ -52,19 +54,33 @@ Rule 2: The latent a, c, and e latent variables must be labelled to match the ba
 To avoid clashes, variables must not match the numbered variables in \code{t1_t2links}  - by default names like "a1" are reserved for ace.
 }
 \examples{
+# We'll make some ACE models, but first, let's clean up the twinData 
+# set for analysis
+# 1. Add a separator to the twin variable names (with sep = "_T")
+# 2. Scale the data so it's easier for the optimizer.
+data(twinData)
+tmp = umx_make_twin_data_nice(data=twinData, sep="", zygosity="zygosity", numbering=1:2)
+tmp = umx_scale_wide_twin_data(varsToScale= c("wt", "ht"), sep= "_T", data= tmp)
+mzData = subset(tmp, zygosity \%in\%  c("MZFF", "MZMM"))
+dzData = subset(tmp, zygosity \%in\%  c("DZFF", "DZMM"))
+
 # ================
 # = An ACE model =
 # ================
-mzData = subset(twinData, zyg == 1)
-dzData = subset(twinData, zyg == 3)
-
-twin1PathList = c(
+# Define paths: You only need the paths for one person:
+paths = c(
 umxPath(v1m0 = c("a1", 'c1', "e1")),
+umxPath(means = c("wt")),
 umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
 )
-tmp= umxTwinMaker(paths= twin1PathList, mzData = mzData, dzData= dzData, sep = "")
-plot(tmp, means=FALSE)
+m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData)
+plot(m1, std= TRUE, means= FALSE)
+m2 = umxACE(selDVs="wt", mzData = mzData, dzData=dzData, sep="_T")
 
+
+# =====================
+# = Bivariate example =
+# =====================
 latents = paste0(rep(c("a", "c", "e"), each = 2), 1:2)
 biv = c(
 umxPath(v1m0 = latents),
@@ -72,8 +88,16 @@ umxPath(mean = c("wt", "ht")),
 umxPath(fromEach = c("a1", 'c1', "e1"), to = c("ht", "wt")),
 umxPath(c("a2", 'c2', "e2"), to = "wt")
 )
-tmp= umxTwinMaker(paths= biv, mzData = mzData, dzData= dzData, sep = "")
+tmp= umxTwinMaker(paths= biv, mzData = mzData, dzData= dzData)
 plot(tmp, means=FALSE)
+
+# How to use latents other than a, c, and e: define in t1_t2links
+paths = c(
+umxPath(v1m0 = c("as1", 'c1', "e1")),
+umxPath(means = c("wt")),
+umxPath(c("as1", 'c1', "e1"), to = "wt", values=.2)
+)
+m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)))
 
 }
 \references{

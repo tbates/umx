@@ -5,13 +5,13 @@
 \title{Make a direction of causation model based on umxPath statements}
 \usage{
 umxDoCp(
-  name = "DoC",
   var1Indicators,
   var2Indicators,
   mzData = NULL,
   dzData = NULL,
   sep = "_T",
   causal = TRUE,
+  name = "DoC",
   autoRun = getOption("umx_auto_run"),
   intervals = FALSE,
   tryHard = c("no", "yes", "ordinal", "search"),
@@ -19,8 +19,6 @@ umxDoCp(
 )
 }
 \arguments{
-\item{name}{= "DoC"}
-
 \item{var1Indicators}{The indicators of trait 1}
 
 \item{var2Indicators}{The indicators of trait 2}
@@ -32,6 +30,8 @@ umxDoCp(
 \item{sep}{(Default "_T")}
 
 \item{causal}{(Default TRUE)}
+
+\item{name}{= "DoC"}
 
 \item{autoRun}{Default: getOption("umx_auto_run")_}
 
@@ -58,12 +58,12 @@ See also \code{\link[=umxDoC]{umxDoC()}}
 # = 1. Load Data =
 # ================
 data(docData)
-mzData  = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
-dzData  = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
+mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 var1 = paste0("varA", 1:3)
 var2 = paste0("varB", 1:3)
 
-umxDoCp(var1, var2, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE)
+m1 = umxDoCp(var1, var2, mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
 
 }
 }

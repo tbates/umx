@@ -28,11 +28,6 @@ and returns a model for both twins (and using the expanded variable names).
 A path like \verb{a to b} will be returned as \verb{a_T1 to b_T1}.
 }
 \examples{
-twin1PathList = c(
-umxPath(v1m0 = c("a1", 'c1', "e1")),
-umxPath(fromEach = c("a1", 'c1', "e1"), to = "NFC3", values=.2)
-)
-
 xmu_path_regex(c("a", "one", "b"), pattern = "$", replacement = "_T1")
 # "a_T1" "one"  "b_T1"
 }

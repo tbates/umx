@@ -14,9 +14,9 @@
   filter = c("ALL", "NS", "SIG"),
   SE = TRUE,
   RMSEA_CI = FALSE,
+  ...,
   matrixAddresses = FALSE,
-  show = c("deprecated", "raw", "std", "none"),
-  ...
+  show = c("deprecated", "raw", "std", "none")
 )
 }
 \arguments{
@@ -25,7 +25,7 @@
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
 
-\item{std}{deprecated: use show = "std" instead!}
+\item{std}{If TRUE, model is standardized (Defaul = FALSE) NULL means don't show.}
 
 \item{digits}{How many decimal places to report (default = 2)}
 
@@ -37,12 +37,11 @@ If NULL will be competed on demand. If FALSE will not be computed. Only needed f
 
 \item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to FALSE)}
 
+\item{...}{Other parameters to control model summary}
+
 \item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
 
-\item{show}{What estimates to show. By default, the raw estimates are shown 
-(Options = c("raw", "std", "none").}
-
-\item{...}{Other parameters to control model summary}
+\item{show}{Deprecated: use std = TRUE.}
 }
 \value{
 - parameterTable returned invisibly, if estimates requested
