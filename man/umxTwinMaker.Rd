@@ -25,8 +25,6 @@ umxTwinMaker(
 \item{dzData}{Data for DZ twins}
 
 \item{sep}{The separator used to create twin 1 and 2 names (Default "_T")}
-
-\item{manifests}{Base names for the manifest variables in the model}
 }
 \value{
 \itemize{
@@ -97,7 +95,9 @@ umxPath(v1m0 = c("as1", 'c1', "e1")),
 umxPath(means = c("wt")),
 umxPath(c("as1", 'c1', "e1"), to = "wt", values=.2)
 )
-m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)))
+m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, 
+	t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0))
+)
 
 }
 \references{

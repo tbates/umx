@@ -58,10 +58,15 @@ See also \code{\link[=umxDoC]{umxDoC()}}
 # = 1. Load Data =
 # ================
 data(docData)
-mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
-dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 var1 = paste0("varA", 1:3)
 var2 = paste0("varB", 1:3)
+tmp = umx_scale_wide_twin_data(varsToScale= c(var1, var2), sep= "_T", data= docData)
+mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
+# DZ.data' row 672
+dzData = dzData[-672, ]
+dzData = dzData[-540, ]
+dzData = dzData[-128, ]
 
 m1 = umxDoCp(var1, var2, mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
 

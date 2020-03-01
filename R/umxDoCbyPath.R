@@ -114,7 +114,6 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' 
 #' @param name The name for the [superModel()] (Default "m1")
 #' @param paths A vector of [umxPath()]s describing one person
-#' @param manifests Base names for the manifest variables in the model
 #' @param t1_t2links base name (and values) of paths that covary between T1 and T2. Default: c('a'=c(1,.5), 'c'=c(1,1), 'e'=c(0,0))
 #' @param mzData Data for MZ twins
 #' @param dzData Data for DZ twins
@@ -169,7 +168,9 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #'	umxPath(means = c("wt")),
 #'	umxPath(c("as1", 'c1', "e1"), to = "wt", values=.2)
 #')
-#' m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)))
+#' m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, 
+#' 	t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0))
+#' )
 #'
 umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
 	# TODO
