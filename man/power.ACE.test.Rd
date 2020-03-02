@@ -17,6 +17,7 @@ power.ACE.test(
   method = c("ncp", "empirical"),
   search = FALSE,
   tryHard = c("yes", "no", "ordinal", "search"),
+  digits = 2,
   optimizer = NULL,
   nSim = 4000
 )
@@ -26,7 +27,7 @@ power.ACE.test(
 
 \item{CC}{Shared environment variance (Default 0)}
 
-\item{EE}{Unique environment variance. Leave NULL to compute an amount summing to 1}
+\item{EE}{Unique environment variance. Leave NULL (default) to compute an amount summing to 1}
 
 \item{update}{Component to drop (Default "a", i.e., drop a)}
 
@@ -44,7 +45,9 @@ power.ACE.test(
 
 \item{search}{Whether to return a search across power or just a point estimate (Default FALSE = point)}
 
-\item{tryHard}{Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)}
+\item{tryHard}{Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)}
+
+\item{digits}{Rouding for reporting parameters (default 2)}
 
 \item{optimizer}{If set, will switch the optimizer.}
 

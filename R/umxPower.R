@@ -23,7 +23,7 @@
 #'
 #' @param AA Additive genetic variance (Default .5)
 #' @param CC Shared environment variance (Default 0)
-#' @param EE Unique environment variance. Leave NULL to compute an amount summing to 1
+#' @param EE Unique environment variance. Leave NULL (default) to compute an amount summing to 1
 #' @param update Component to drop (Default "a", i.e., drop a)
 #' @param n If provided, solve at the given n (Default NULL)
 #' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
@@ -32,7 +32,8 @@
 #' @param value Value to set dropped path to (Default 0)
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
-#' @param tryHard Whether to tryHard to find a solution (default = "no", alternatives are "yes"...)
+#' @param tryHard Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)
+#' @param digits Rouding for reporting parameters (default 2)
 #' @param optimizer If set, will switch the optimizer.
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
 #' @return [OpenMx::mxPower()] or [OpenMx::mxPowerSearch()] object
@@ -136,7 +137,7 @@
 #'
 #' }
 #'
-power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_after_dropping_c"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("yes", "no", "ordinal", "search"), optimizer = NULL, nSim=4000){
+power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_after_dropping_c"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("yes", "no", "ordinal", "search"), digits = 2, optimizer = NULL, nSim=4000){
 	# # TODO why not equivalent to this?
 	# # https://genepi.qimr.edu.au//general/TwinPowerCalculator/twinpower.cgi
 	#
@@ -210,9 +211,10 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		nFound = attributes(tmp)$detail$n
 		pairsUsed = paste0(round(nFound * pMZ), " MZ and ",round(nFound * (1 - pMZ)), " DZ pairs")
 		if(!is.null(n)){
-			message(paste0("With ", pairsUsed, ", you have ", power * 100, "% power to detect a parameter of ", round(paramSize, 3)))
+			empiricalPower = attributes(tmp)$detail$power
+			message(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect a parameter of ", round(paramSize, 3)))
 		} else {
-			message(paste0("For ", power * 100, "% power, you need ", pairsUsed))
+			message(paste0("For ", round(power * 100, digits), "% power, you need ", pairsUsed))
 		}
 	}
 	return(tmp)
