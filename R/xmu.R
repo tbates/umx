@@ -820,11 +820,18 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 		for(toRow in seq_along(theseNames)) {
 			if(labelFixedCells | freeA[toRow, fromCol]){
 			   thisLabel = paste0(theseNames[fromCol], "_to_", theseNames[toRow], suffix)			 	
-				if(overRideExisting | is.na(model$A$labels[toRow,fromCol])){
-					model$A$labels[toRow,fromCol] = thisLabel
-			 	}
-			}
-		}
+			   if(model@matrices$A@.condenseSlots){
+				   if(overRideExisting | is.na(model$A$labels[toRow,fromCol])){
+					   model$A$labels[toRow,fromCol] = thisLabel
+				   }
+			   } else {
+				   # safe to hammer it direct
+				   if(overRideExisting | is.na(model@matrices$A@labels[toRow,fromCol])){
+					   model@matrices$A@labels[toRow,fromCol] = thisLabel
+				   }
+			   }
+		   }
+	   }
 	}
 
 	# =========================
@@ -835,30 +842,53 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 	for(fromCol in seq_along(theseNames)) {
 		for(toRow in seq_along(theseNames)) {
 			if(labelFixedCells | freeS[toRow, fromCol]) {
-			   orderedNames = sort(c(theseNames[fromCol], theseNames[toRow]))
-			   thisLabel = paste0(orderedNames[1], "_with_", orderedNames[2], suffix)
- 				if(overRideExisting | is.na(model$S$labels[toRow,fromCol])){
-			   	 model$S$labels[toRow,fromCol] = thisLabel
- 			 	}
+				orderedNames = sort(c(theseNames[fromCol], theseNames[toRow]))
+				thisLabel = paste0(orderedNames[1], "_with_", orderedNames[2], suffix)
+				if(model@matrices$S@.condenseSlots){
+					if(overRideExisting | is.na(model$S$labels[toRow,fromCol])){
+						model$S$labels[toRow,fromCol] = thisLabel
+					}
+				} else {
+					# safe to hammer it direct
+					if(overRideExisting | is.na(model@matrices$S@labels[toRow,fromCol])){
+						model@matrices$S@labels[toRow,fromCol] = thisLabel
+					}
+			   }
 			}
 		}
 	}
-	model$S$labels[lower.tri(model$S$labels)] = t(model$S$labels[upper.tri(t(model$S$labels))])
-	toGet = model$S$labels
-	transpose_toGet = t(toGet)
-	model$S$labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
+	if(model@matrices$S@.condenseSlots){
+		model$S$labels[lower.tri(model$S$labels)] = t(model$S$labels[upper.tri(t(model$S$labels))])
+		toGet = model$S$labels
+		transpose_toGet = t(toGet)
+		model$S$labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
+	}else{
+		model@matrices$S@labels[lower.tri(model@matrices$S@labels)] = t(model@matrices$S@labels[upper.tri(t(model@matrices$S@labels))])		
+		toGet = model@matrices$S@labels
+		transpose_toGet = t(toGet)
+		model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
+	}
 
 	# ==============================
 	# = Add means labels if needed =
 	# ==============================
 
 	if(!is.null(model$M)){
-		meanLabels = paste0("one_to_", colnames(model$M$values), suffix)
-		if(overRideExisting){
-			model$M$labels[] = meanLabels
-	 	}else{
-			model$M$labels[is.na(model$M$labels)] = meanLabels[is.na(model$M$labels)]
-	 	}
+		if(model@matrices$M@.condenseSlots){
+			meanLabels = paste0("one_to_", colnames(model$M$values), suffix)
+			if(overRideExisting){
+				model$M$labels[] = meanLabels
+		 	}else{
+				model$M$labels[is.na(model$M$labels)] = meanLabels[is.na(model$M$labels)]
+		 	}
+		}else{
+			meanLabels = paste0("one_to_", colnames(model@matrices$M@values), suffix)
+			if(overRideExisting){
+				model@matrices$M@labels[] = meanLabels
+		 	}else{
+				model@matrices$M@labels[is.na(model@matrices$M@labels)] = meanLabels[is.na(model@matrices$M@labels)]
+		 	}
+		}
 	}
 	if(!is.null(name)){
 		model = mxModel(model, name= name)

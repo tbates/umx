@@ -5,14 +5,14 @@
 \title{Check if OpenMx is using OpenMP, test cores, and get timings}
 \usage{
 umx_check_parallel(
-  nCores = c(1, parallel::detectCores()/2),
+  nCores = c(1, parallel::detectCores()),
   testScript = NULL,
   rowwiseParallel = TRUE,
   nSubjects = 1000
 )
 }
 \arguments{
-\item{nCores}{How many cores to run (defaults to c(1, max/2). -1 = all available.}
+\item{nCores}{How many cores to run (defaults to c(1, max). -1 = all available.}
 
 \item{testScript}{A user-provided script to run (NULL)}
 

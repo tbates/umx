@@ -946,7 +946,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #'	2017-09-07 \tab TRAVIS          \tab 4    \tab 00 min, 21.10 sec \tab \eqn{\Delta}: -45.00   \cr
 #' }
 #' 
-#' @param nCores How many cores to run (defaults to c(1, max/2). -1 = all available.
+#' @param nCores How many cores to run (defaults to c(1, max). -1 = all available.
 #' @param testScript A user-provided script to run (NULL)
 #' @param rowwiseParallel Whether to parallel-ize rows (default) or gradient computation 
 #' @param nSubjects Number of rows to model (Default = 1000) Reduce for quicker runs.
@@ -960,7 +960,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' # On a fast machine, takes a minute with 1 core
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = c(1, parallel::detectCores()/2), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
+umx_check_parallel <- function(nCores = c(1, parallel::detectCores()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
 	if(!is.null(testScript)){
 		stop("test script not implemented yet - beat on tim to do it!")
 	}

@@ -32,11 +32,6 @@
 #' tmp = umx_scale_wide_twin_data(varsToScale= c(var1, var2), sep= "_T", data= docData)
 #' mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
 #' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
-#' # DZ.data' row 672
-#' dzData = dzData[-672, ]
-#' dzData = dzData[-540, ]
-#' dzData = dzData[-128, ]
-#' 
 #' m1 = umxDoCp(var1, var2, mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
 #' 
 #' }
@@ -61,24 +56,24 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 	paths = c(
 		# 1. ✓ Make latent ace, as and l1 &l2
 		# ac and e & specifics
-		umxPath(v.m0 = c("a1", "a2", "c1", "c2"), values=.2), # free
+		umxPath(v.m0 = c("a1", "a2", "c1", "c2"), values=0), # free
 		umxPath(v1m0 = c("e1", "e2")), # @1 to scale trait latents
 		umxPath(v1m0 = c(as, cs, es)),
 		# trait latent variables
 		umxPath(v0m0 = c("l1", "l2")), # Get all their variance from ace
 
 		# 3. ✓ Load ace paths onto each latent
-		umxPath(c("a1", "c1", "e1"), to = "l1"),
-		umxPath(c("a2", "c2", "e2"), to = "l2"),
+		umxPath(c("a1", "c1", "e1"), to = "l1", lbound = c(NA, NA, 1e-5)),
+		umxPath(c("a2", "c2", "e2"), to = "l2", lbound = c(NA, NA, 1e-5)),
 
 		# 4. ✓ Add factor loadings from l1 and l2 onto manifests
 		umxPath("l1", to = var1Indicators),
 		umxPath("l2", to = var2Indicators),
 
 		# 5. ✓ Load specifics onto var1 and var2 indicators
-		umxPath(as, to = c(var1Indicators, var2Indicators), values = .2),
-		umxPath(cs, to = c(var1Indicators, var2Indicators), values = .2),
-		umxPath(es, to = c(var1Indicators, var2Indicators), values = .2),
+		umxPath(as, to = c(var1Indicators, var2Indicators), values = .6),
+		umxPath(cs, to = c(var1Indicators, var2Indicators), values = .6),
+		umxPath(es, to = c(var1Indicators, var2Indicators), values = .6, lbound=1e-5),
 
 		# 7. Generate the causal beta paths
 		umxPath("l1", to = "l2", free=FALSE, labels = "a2b", values= 0),
@@ -172,11 +167,11 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' )
 #'
 umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
+	verbose = FALSE
 	# TODO
 	# Ensure labels that might need equating of freeing across MZ/DZ or T1 T2
 	# Check no manifests match the t1_t2links?
 	# Check t1_t2links looks sane (list of 2-number objects)
-
 	# Ensure sep is not ""
 	umx_check(sep != "", "stop", "umxTwinData needs a separator like '_T' in the variable names.\nUse umx_make_twin_data_nice() to do this.")
 
@@ -193,7 +188,9 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 
 	# 2. Make MZ and DZ models with these paths, labelled, and with the right data
 	MZ = umxRAM("MZ", c(Twin1Paths, Twin2Paths), data = mzData, autoRun=FALSE)
+	if(verbose){message("made MZ model") }
 	DZ = umxRAM("DZ", c(Twin1Paths, Twin2Paths), data = dzData, autoRun=FALSE)
+	if(verbose){message("made DZ model") }
 
 	# At this point, the paths are in the A/S/M matrices BUT T1 and T2 have different labels...
 	# TODO: equate free Asymmetric paths running from a latent to a manifest for T1 and T2 
@@ -233,9 +230,11 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 		}
 	}
 	m1 = umxSuperModel(name, MZ, DZ)
+	if(verbose){message("made supermodel") }
+	
 	# TODO: equate means: "wt_T1_with_wt_T1" "wt_T2_with_wt_T2"
 	# 4. Equate means in auto-added means model
-
+	return(m1)
 }
 
 #' Re-name variables in umxPaths to twin versions
