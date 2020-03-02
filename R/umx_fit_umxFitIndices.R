@@ -50,7 +50,7 @@
 #' @examples
 #' library(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")https://github.com/tbates/umx/issues
+#' latents = c("G")
 #' manifests = names(demoOneFactor)
 #' m1 = umxRAM("One Factor",
 #' 	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
