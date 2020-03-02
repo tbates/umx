@@ -9,7 +9,7 @@
 data(docData)
 }
 \description{
-A dataset containing indicators for two traits \code{varA} and \code{varB}, each measureed in MZ and DZ twins.
+A dataset containing indicators for two traits \code{varA} and \code{varB}, each measured in MZ and DZ twins.
 }
 \details{
 It is designed to show off \code{\link[=umxDoC]{umxDoC()}} testing the hypothesis \code{varA} causes \code{varB}, \code{varB} causes \code{varA}, both cause each other.

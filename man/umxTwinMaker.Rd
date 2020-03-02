@@ -14,7 +14,7 @@ umxTwinMaker(
 )
 }
 \arguments{
-\item{name}{The name for the \code{\link[=superModel]{superModel()}} (Default "m1")}
+\item{name}{The name for the resulting \code{\link[=umxSuperModel]{umxSuperModel()}} (Default "m1")}
 
 \item{paths}{A vector of \code{\link[=umxPath]{umxPath()}}s describing one person}
 
@@ -39,8 +39,8 @@ and returns a completed twin model. This consists of a \code{\link[=umxSuperMode
 Pass into \code{umxTwinMaker}:
 \enumerate{
 \item A list of \code{paths} making up the twin 1 model
-\item In \code{t1_t2links}, a vector describing the component realtionships connecting twin 1 to twin2 (The default here is 1 and .5 for the a, and,
-for c and e are 1 and 0 in both groups, respectively.
+\item In \code{t1_t2links}, a vector describing the component relationships connecting twin 1 to twin 2
+(The default here is 1 and .5 for the a, and, for c and e are 1 and 0 in both groups, respectively.
 }
 
 \emph{Details}

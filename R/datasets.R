@@ -17,7 +17,7 @@
 # ==================================================
 #' Twin data for Direction of causation modelling
 #'
-#' A dataset containing indicators for two traits `varA` and `varB`, each measureed in MZ and DZ twins.
+#' A dataset containing indicators for two traits `varA` and `varB`, each measured in MZ and DZ twins.
 #'
 #' It is designed to show off [umxDoC()] testing the hypothesis `varA` causes `varB`, `varB` causes `varA`, both cause each other.
 #' 

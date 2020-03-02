@@ -19,7 +19,7 @@ xmu_path2twin(paths, thisTwin = 1, sep = "_T")
 }
 }
 \description{
-\code{xmu_path2twin} takes a collectionn of paths that use base variable names,
+\code{xmu_path2twin} takes a collection of paths that use base variable names,
 and returns a model with twin names.
 }
 \details{

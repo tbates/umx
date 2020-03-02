@@ -37,7 +37,7 @@ umxDoCp(
 
 \item{intervals}{Whether to run intervals (Default FALSE)}
 
-\item{tryHard}{Defauly "no" (valid = "yes", "ordinal", "search")}
+\item{tryHard}{Default "no" (valid = "yes", "ordinal", "search")}
 
 \item{optimizer}{Whether to set this for this run (Default no))}
 }

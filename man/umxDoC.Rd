@@ -29,7 +29,7 @@ umxDoC(
 
 \item{dzData}{The DZ dataframe}
 
-\item{sep}{The separator in twin variable names, deafult = "_T", e.g. "dep_T1".}
+\item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
 
 \item{causal}{whether to add the causal paths (default TRUE)}
 
@@ -91,8 +91,8 @@ DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TR
 # ================================================
 # = Make the directional models by modifying DoC =
 # ================================================
-a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(A2B)
-b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(B2A)
+a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
+b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 
 \dontrun{
@@ -110,7 +110,7 @@ umxCompare(Chol, c(a2b, b2a, Recip))
 }
 \references{
 \itemize{
-\item N.A. Gillespie and N.G. Marting (2005). Direction of Causation Models.
+\item N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models.
 In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496–499. Eds. Brian S. Everitt & David C. Howell.
 }
 }

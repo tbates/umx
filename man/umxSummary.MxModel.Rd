@@ -25,9 +25,9 @@
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
 
-\item{std}{If TRUE, model is standardized (Defaul = FALSE) NULL means don't show.}
+\item{std}{If TRUE, model is standardized (Default FALSE) NULL means don't show.}
 
-\item{digits}{How many decimal places to report (default = 2)}
+\item{digits}{How many decimal places to report (Default 2)}
 
 \item{report}{If "html", then show results in browser (alternative = "markdown")}
 

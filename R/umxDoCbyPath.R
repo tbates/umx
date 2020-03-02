@@ -1,4 +1,3 @@
-
 #' Make a direction of causation model based on umxPath statements
 #'
 #' @description
@@ -15,7 +14,7 @@
 #' @param name = "DoC"
 #' @param autoRun Default: getOption("umx_auto_run")_
 #' @param intervals Whether to run intervals (Default FALSE)
-#' @param tryHard  Defauly "no" (valid = "yes", "ordinal", "search")
+#' @param tryHard  Default "no" (valid = "yes", "ordinal", "search")
 #' @param optimizer Whether to set this for this run (Default no))
 #' @return - [A direction of causation model with [umxPath()] statements.
 #' @export
@@ -101,8 +100,8 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' Pass into `umxTwinMaker`:
 #'
 #' 1. A list of `paths` making up the twin 1 model
-#' 2. In `t1_t2links`, a vector describing the component realtionships connecting twin 1 to twin2 (The default here is 1 and .5 for the a, and, 
-#' 	for c and e are 1 and 0 in both groups, respectively.
+#' 2. In `t1_t2links`, a vector describing the component relationships connecting twin 1 to twin 2 
+#'  (The default here is 1 and .5 for the a, and, for c and e are 1 and 0 in both groups, respectively.
 #'
 #' *Details*
 #'
@@ -112,7 +111,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' Rule 2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
 #' To avoid clashes, variables must not match the numbered variables in `t1_t2links`  - by default names like "a1" are reserved for ace.
 #' 
-#' @param name The name for the [superModel()] (Default "m1")
+#' @param name The name for the resulting [umxSuperModel()] (Default "m1")
 #' @param paths A vector of [umxPath()]s describing one person
 #' @param t1_t2links base name (and values) of paths that covary between T1 and T2. Default: c('a'=c(1,.5), 'c'=c(1,1), 'e'=c(0,0))
 #' @param mzData Data for MZ twins
@@ -242,7 +241,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' Re-name variables in umxPaths to twin versions
 #'
 #' @description
-#' `xmu_path2twin` takes a collectionn of paths that use base variable names, 
+#' `xmu_path2twin` takes a collection of paths that use base variable names, 
 #' and returns a model with twin names.
 #'
 #' @details

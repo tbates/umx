@@ -1,6 +1,6 @@
 #' Get additional fit-indices for a model with umxFitIndices
 #'
-#' Computes a variety of fit indices. Originated in this thread: http://openmx.ssri.psu.edu/thread/765
+#' Computes a variety of fit indices. Originated in this thread: <http://openmx.ssri.psu.edu/thread/765>
 #'
 #' Note: This function is currently not robust across multi-group designs or
 #' definition variables. It is designed to provide residual-based fit indices
@@ -10,34 +10,34 @@
 #'
 #' Fit information reported includes:
 #'
-#' Model characterstics:
-#'   numObs, estimatedParameters,
-#'   observedStatistics, observedSummaryStatistics,
-#'   Minus2LogLikelihood, degreesOfFreedom
+#' **Model characteristics**:
+#'   numObs, estimated parameters,
+#'   observed statistics, observed summary statistics,
+#'   -2*log(Likelihood), degrees of freedom
 #'
-#' Chi-squared test:
+#' **Chi-squared test**:
 #'   Chi, ChiDoF, p (of Chi), ChiPerDoF,
 #'
-#' Noncentrality-based indices:
+#' **Noncentrality-based indices**:
 #'   RMSEA, RMSEACI, RMSEANull, RMSEAClose (p value), independenceRMSEA,
 #'   NCP, NCPCI, F0, F0CI, Mc (aka NCI, MFI)
 #'
-#' Comparative fit indices:
+#' **Comparative fit indices**:
 #'   TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
 #'
-#' Residual-based indices:
+#' **Residual-based indices**:
 #'   RMR, SRMR, SRMR_mplus, CRMR,
 #'   MAR, SMAR, SMAR_mplus, CMAR
 #'
-#' Information-theory criteria (computed using chi-square or -2LL; df or paramters penalties)
+#' **Information-theory criteria** (computed using chi-square or -2LL; df or parameters penalties)
 #'   AIC, AICc, BIC, SABIC, CAIC, BCC
 #'   ECVI, ECVICI, MECVI, MECVICI
 #'
-#' LISREL and other early fit indices (we recommend not reporting these)
+#' **LISREL and other early fit indices** (we recommend not reporting these)
 #'   GFI, AGFI, PGFI, GH, NFI, PNFI, RFI
 #'
 #'
-#' Want more? Open an Issue at GitHub.
+#' Want more? *Open an Issue* at [GitHub](https://github.com/tbates/umx/issues).
 #'
 #' @param model The \code{\link{mxModel}} for which you want fit indices.
 #' @param ... Additional parameters passed to \code{\link{summary.MxModel}}.
@@ -46,10 +46,11 @@
 #' @family Reporting functions
 #' @author Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer
 #' @references -
+#' @md
 #' @examples
 #' library(umx)
 #' data(demoOneFactor)
-#' latents  = c("G")
+#' latents  = c("G")https://github.com/tbates/umx/issues
 #' manifests = names(demoOneFactor)
 #' m1 = umxRAM("One Factor",
 #' 	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),

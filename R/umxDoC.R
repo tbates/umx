@@ -28,7 +28,7 @@
 #' @param causal whether to add the causal paths (default TRUE)
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param sep The separator in twin variable names, deafult = "_T", e.g. "dep_T1".
+#' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
@@ -37,7 +37,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [plot.MxModelDoC()], [umxSummary.MxModelDoC()], [umxModify()]
-#' @references - N.A. Gillespie and N.G. Marting (2005). Direction of Causation Models. 
+#' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. 
 #' In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496–499. Eds. Brian S. Everitt & David C. Howell.
 #' @md
 #' @examples
@@ -68,8 +68,8 @@
 #' # ================================================
 #' # = Make the directional models by modifying DoC =
 #' # ================================================
-#' a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(A2B)
-#' b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(B2A)
+#' a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
+#' b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 #'
 #' \dontrun{
@@ -86,13 +86,7 @@
 #' 
 umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
-	if(name == "DoC"){
-		if(causal){
-			name = "DoC"
-		} else {
-			name = "Chol"
-		}
-	}
+	if(name == "DoC"){name = ifelse(causal, "DoC", "Chol")}
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
 	nSib    = 2 # Number of siblings in a twin pair.

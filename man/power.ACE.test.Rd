@@ -168,9 +168,6 @@ power.ACE.test(update = "a", AA= .5, CC= 0, nSim= 20)
 }
 \references{
 \itemize{
-\item 
-}
-\itemize{
 \item Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 revisited: II detection of common environmental variance. \emph{Twin Res Hum Genet}, \strong{11}: 48-54.
 doi: \href{https://doi.org/10.1375/twin.11.1.48}{10.1375/twin.11.1.48}

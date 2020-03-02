@@ -15,7 +15,7 @@ umxFitIndices(model, ...)
 List of fit statistics
 }
 \description{
-Computes a variety of fit indices. Originated in this thread: http://openmx.ssri.psu.edu/thread/765
+Computes a variety of fit indices. Originated in this thread: \url{http://openmx.ssri.psu.edu/thread/765}
 }
 \details{
 Note: This function is currently not robust across multi-group designs or
@@ -23,42 +23,40 @@ definition variables. It is designed to provide residual-based fit indices
 (SRMR, CRMR, SMAR, CMAR, etc.) and less-often reported fit indices where
 Reviewer 2 wants something other than CFA/TLI/RMSEA.
 
-
 Fit information reported includes:
 
-Model characterstics:
-  numObs, estimatedParameters,
-  observedStatistics, observedSummaryStatistics,
-  Minus2LogLikelihood, degreesOfFreedom
+\strong{Model characteristics}:
+numObs, estimated parameters,
+observed statistics, observed summary statistics,
+-2*log(Likelihood), degrees of freedom
 
-Chi-squared test:
-  Chi, ChiDoF, p (of Chi), ChiPerDoF,
+\strong{Chi-squared test}:
+Chi, ChiDoF, p (of Chi), ChiPerDoF,
 
-Noncentrality-based indices:
-  RMSEA, RMSEACI, RMSEANull, RMSEAClose (p value), independenceRMSEA,
-  NCP, NCPCI, F0, F0CI, Mc (aka NCI, MFI)
+\strong{Noncentrality-based indices}:
+RMSEA, RMSEACI, RMSEANull, RMSEAClose (p value), independenceRMSEA,
+NCP, NCPCI, F0, F0CI, Mc (aka NCI, MFI)
 
-Comparative fit indices:
-  TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
+\strong{Comparative fit indices}:
+TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
 
-Residual-based indices:
-  RMR, SRMR, SRMR_mplus, CRMR,
-  MAR, SMAR, SMAR_mplus, CMAR
+\strong{Residual-based indices}:
+RMR, SRMR, SRMR_mplus, CRMR,
+MAR, SMAR, SMAR_mplus, CMAR
 
-Information-theory criteria (computed using chi-square or -2LL; df or paramters penalties)
-  AIC, AICc, BIC, SABIC, CAIC, BCC
-  ECVI, ECVICI, MECVI, MECVICI
+\strong{Information-theory criteria} (computed using chi-square or -2LL; df or parameters penalties)
+AIC, AICc, BIC, SABIC, CAIC, BCC
+ECVI, ECVICI, MECVI, MECVICI
 
-LISREL and other early fit indices (we recommend not reporting these)
-  GFI, AGFI, PGFI, GH, NFI, PNFI, RFI
+\strong{LISREL and other early fit indices} (we recommend not reporting these)
+GFI, AGFI, PGFI, GH, NFI, PNFI, RFI
 
-
-Want more? Open an Issue at GitHub.
+Want more? \emph{Open an Issue} at \href{https://github.com/tbates/umx/issues}{GitHub}.
 }
 \examples{
 library(umx)
 data(demoOneFactor)
-latents  = c("G")
+latents  = c("G")https://github.com/tbates/umx/issues
 manifests = names(demoOneFactor)
 m1 = umxRAM("One Factor",
 	data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),
@@ -77,7 +75,9 @@ m2 = umxRAM("m1", data = demoOneFactor,
 umxFitIndices(m1, refModels = mxRefModels(m2, run = TRUE))
 }
 \references{
--
+\itemize{
+\item 
+}
 }
 \seealso{
 Other Reporting functions: 

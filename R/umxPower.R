@@ -38,8 +38,7 @@
 #' @return [OpenMx::mxPower()] or [OpenMx::mxPowerSearch()] object
 #' @family Twin Modeling Functions
 #' @seealso - [OpenMx::mxPower()]
-#' @references -
-#' * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
+#' @references * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 #' revisited: II detection of common environmental variance. *Twin Res Hum Genet*, **11**: 48-54.
 #' doi: [10.1375/twin.11.1.48](https://doi.org/10.1375/twin.11.1.48)
 #' * Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., and Munafo, M. R. (2013).

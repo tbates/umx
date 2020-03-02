@@ -824,8 +824,8 @@ umxSummary.default <- function(model, ...){
 #'
 #' @aliases umxSummary.MxModel umxSummary.MxRAMModel
 #' @param model The [mxModel()] whose fit will be reported
-#' @param std If TRUE, model is standardized (Defaul = FALSE) NULL means don't show.
-#' @param digits How many decimal places to report (default = 2)
+#' @param std If TRUE, model is standardized (Default FALSE) NULL means don't show.
+#' @param digits How many decimal places to report (Default 2)
 #' @param report If "html", then show results in browser (alternative = "markdown")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
