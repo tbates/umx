@@ -148,7 +148,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	#         return(0)
 	#     }
 	# }
-	message("This is beta code: I likely will alter the interface!")	
+	# message("This is beta code: I likely will alter the interface!")
 	method  = match.arg(method)
 	tryHard = match.arg(tryHard)
 	update  = match.arg(update)
@@ -182,11 +182,14 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	# update = c("a", "c", "a_after_dropping_c")
 	if(update == "a"){
 		update = "a_r1c1"
+		paramSize = AA
 	} else if(update == "c"){
 		update = "c_r1c1"
+		paramSize = CC
 	} else if(update == "a_after_dropping_c"){
 		trueModel = umxModify(trueModel, update="c_r1c1", value = value, autoRun = FALSE)
 		update = "a_r1c1"
+		paramSize = AA
 	}
 	# run the true Model
 	trueModel = xmu_safe_run_summary(trueModel, summary = FALSE, std = TRUE, tryHard = tryHard, comparison= FALSE)
@@ -207,7 +210,6 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		nFound = attributes(tmp)$detail$n
 		pairsUsed = paste0(round(nFound * pMZ), " MZ and ",round(nFound * (1 - pMZ)), " DZ pairs")
 		if(!is.null(n)){
-			paramSize = attributes(tmp)$detail$parameterDiff
 			message(paste0("With ", pairsUsed, ", you have ", power * 100, "% power to detect a parameter of ", round(paramSize, 3)))
 		} else {
 			message(paste0("For ", power * 100, "% power, you need ", pairsUsed))

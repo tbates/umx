@@ -503,4 +503,3 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 
 #' @export
 umxSummary.MxModelDoC <- umxSummaryDoC
-
