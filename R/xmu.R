@@ -1682,8 +1682,8 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
 	mxMat_labels = mxMat$labels
-	mxMat_rows = dimnames(mxMat_free)[[1]]
-	mxMat_cols = dimnames(mxMat_free)[[2]]
+	mxMat_rows   = dimnames(mxMat_free)[[1]]
+	mxMat_cols   = dimnames(mxMat_free)[[2]]
 	if(!is.null(comment)){
 		stringIn = paste0(stringIn, "\n\t# ", comment, "\n")
 	}
@@ -1693,13 +1693,8 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 				thisPathLabel = mxMat_labels[target, source]
 				thisPathFree  = mxMat_free[target, source]
 				thisPathVal   = round(mxMat_vals[target, source], digits)
-
-				labelStub = ' [label="'
-				if(thisPathFree){
-					prefix = "" 
-				} else {
-					prefix = "@"
-				}
+				labelStub     = ' [label="'
+				prefix        = ifelse(thisPathFree, "", "@")
 
 				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
 					# stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathVal, '"];\n')

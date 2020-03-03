@@ -121,7 +121,7 @@ data(iqdat)
 mzData = subset(iqdat, zygosity == "MZ")
 dzData = subset(iqdat, zygosity == "DZ")
 baseVars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-m1= umxSimplex(selDVs= baseVars, dzData= dzData, mzData= mzData, sep= "_T", tryHard= "mxTryHard")
+m1= umxSimplex(selDVs= baseVars, dzData= dzData, mzData= mzData, sep= "_T", tryHard= "yes")
 
 umxSummary(m1)
 parameters(m1, patt = "^s")
@@ -132,7 +132,7 @@ umxCompare(m1, m2)
 # = Test a 3 time-point model =
 # =============================
 m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), 
-			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "mxTryHard")
+			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "yes")
 }
 }
 \references{

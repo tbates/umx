@@ -230,6 +230,7 @@ utils::globalVariables(c(
 # = Define some class containers to allow specialised model objects =
 # = plot, etc. can then operate on these                             =
 # ===================================================================
+methods::setClass("MxModelTwinMaker" , contains = "MxModel")
 methods::setClass("MxModelACE"    , contains = "MxModel")
 methods::setClass("MxModelACEv"   , contains = "MxModel")
 methods::setClass("MxModelIP"     , contains = "MxModel")
@@ -240,6 +241,7 @@ methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
 methods::setClass("MxModelACEcov" , contains = "MxModelACE")
 methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
+
 
 # ============================
 # = Core Modeling Functions =
@@ -2345,13 +2347,14 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' # = Run a 3-factor Common pathway twin model of 6 traits =
 #' # ========================================================
 #' require(umx)
+#' umx_set_optimizer("SLSQP")
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #  # These will be expanded into "gff_T1" "gff_T2" etc.
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
-#' 		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
+#' m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3,
+#' 		dzData = dzData, mzData = mzData, tryHard = "yes")
 #'
 #' # Shortcut using "data ="
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
@@ -2361,8 +2364,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' # = Do it using WLS =
 #' # ===================
 #' m2 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
-#' 		dzData = dzData, mzData = mzData,
-#'			tryHard = "mxTryHardOrdinal", type= "DWLS", allContinuousMethod='marginals'
+#' 		dzData = dzData, mzData = mzData, tryHard = "ordinal", 
+#'		type= "DWLS", allContinuousMethod='marginals'
 #' )
 #' 
 #' # =================================================
@@ -2399,7 +2402,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' # Do it using WLS
 #' m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData,
-#'			tryHard = "mxTryHardOrdinal", type= "DWLS")
+#'			tryHard = "ordinal", type= "DWLS")
 #'	# TODO umxCPL fix WLS here
 #'	# label at row 1 and column 1 of matrix 'top.binLabels'' in model 'CP3fac' : object 'Vtot'
 #'
@@ -2409,7 +2412,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
 #' m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-#' 	nFac = 3, correlatedA = TRUE, tryHard = "mxTryHard")
+#' 	nFac = 3, correlatedA = TRUE, tryHard = "yes")
 #' }
 #'
 umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {

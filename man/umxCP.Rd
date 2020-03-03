@@ -175,12 +175,13 @@ So, in a model where the means for twin 1 and twin 2 had been equated (set = to 
 # = Run a 3-factor Common pathway twin model of 6 traits =
 # ========================================================
 require(umx)
+umx_set_optimizer("SLSQP")
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
-		dzData = dzData, mzData = mzData, tryHard = "mxTryHardOrdinal")
+m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3,
+		dzData = dzData, mzData = mzData, tryHard = "yes")
 
 # Shortcut using "data ="
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
@@ -190,8 +191,8 @@ m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zyg="zyg_2grp")
 # = Do it using WLS =
 # ===================
 m2 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, optimizer = "SLSQP",
-		dzData = dzData, mzData = mzData,
-		tryHard = "mxTryHardOrdinal", type= "DWLS", allContinuousMethod='marginals'
+		dzData = dzData, mzData = mzData, tryHard = "ordinal", 
+	type= "DWLS", allContinuousMethod='marginals'
 )
 
 # =================================================
@@ -227,7 +228,7 @@ m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 
 # Do it using WLS
 m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData,
-		tryHard = "mxTryHardOrdinal", type= "DWLS")
+		tryHard = "ordinal", type= "DWLS")
 # TODO umxCPL fix WLS here
 # label at row 1 and column 1 of matrix 'top.binLabels'' in model 'CP3fac' : object 'Vtot'
 
@@ -237,7 +238,7 @@ mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
 m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	nFac = 3, correlatedA = TRUE, tryHard = "mxTryHard")
+	nFac = 3, correlatedA = TRUE, tryHard = "yes")
 }
 
 }

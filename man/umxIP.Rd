@@ -130,7 +130,7 @@ to allow exploring assortative mating effects, as well as varying the DZ \dQuote
 from 1 (the default for modeling family-level effects shared 100\% by twins in a pair),
 to .25 to model dominance effects.
 
-\strong{Matrices and Labels in CP model}
+\strong{Matrices and Labels in IP model}
 
 A good way to see which matrices are used in umxIP is to run an example model and plot it.
 
@@ -167,9 +167,8 @@ mzData <- subset(GFF, zyg_2grp == "MZ")
 dzData <- subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff","fc","qol","hap","sat","AD") # These will be expanded into "gff_T1" "gff_T2" etc.
 m1 =    umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-m2 = umxIPold(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 
-# Use "marginals" method to enable all continuous data with missingness.
+# WLS example: Use "marginals" method to enable all continuous data with missingness.
 m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
 	type = "DWLS", allContinuousMethod='marginals')
 # omit missing to enable default WLS method to work on all continuous data
@@ -182,7 +181,7 @@ m4 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzD, mzData = mzD, type = "DWLS
 # ====================================================================
 nFac = c(a = 2, c = 1, e = 1)
 m2 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = nFac, 
-	tryHard = "mxTryHard")
+	tryHard = "yes")
 umxCompare(m1, m2)
 }
 }

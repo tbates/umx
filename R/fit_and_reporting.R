@@ -2231,10 +2231,10 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1)
 #' plot(m1, std = TRUE, resid = "line", digits = 3, strip_zero = FALSE)
 #' 
-# ============================================================
-# = With a growth model, demonstrate splines= false to force =
-# = straight lines, and move "rank" of intercept object      =
-# ============================================================
+#' # ============================================================
+#' # = With a growth model, demonstrate splines= false to force =
+#' # = straight lines, and move "rank" of intercept object      =
+#' # ============================================================
 #' 
 #' m1 = umxRAM("grow", data = myGrowthMixtureData,
 #'		umxPath(var = manifests, free = TRUE), 

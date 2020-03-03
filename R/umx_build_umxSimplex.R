@@ -86,7 +86,7 @@
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
 #' baseVars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-#' m1= umxSimplex(selDVs= baseVars, dzData= dzData, mzData= mzData, sep= "_T", tryHard= "mxTryHard")
+#' m1= umxSimplex(selDVs= baseVars, dzData= dzData, mzData= mzData, sep= "_T", tryHard= "yes")
 #' 
 #' umxSummary(m1)
 #' parameters(m1, patt = "^s")
@@ -97,7 +97,7 @@
 #' # = Test a 3 time-point model =
 #' # =============================
 #' m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), 
-#' 			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "mxTryHard")
+#' 			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "yes")
 #' }
 #' @md
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
@@ -556,7 +556,7 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' mzData = subset(iqdat, zygosity == "MZ")
 #' dzData = subset(iqdat, zygosity == "DZ")
 #' m1  = umxSimplex(selDVs = paste0("IQ_age", 1:4), sep = "_T", 
-#' 			dzData = dzData, mzData = mzData, tryHard = "mxTryHard")
+#' 			dzData = dzData, mzData = mzData, tryHard = "yes")
 #' std = xmu_standardize_Simplex(m1)
 #' }
 #' 

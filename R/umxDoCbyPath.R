@@ -87,7 +87,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 	model = umxTwinMaker(name=name, paths= paths, mzData= mzData, dzData= dzData, 
 		sep =sep, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0), 'as'=c(1, .5), 'cs'=c(1, 1), 'es'=c(0, 0))
 	)
-	# model = as(model, "MxModelDoCp") # set class so that S3 plot() dispatches
+	
 	return(model)
 }
 
@@ -173,7 +173,6 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' )
 #'
 umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
-	verbose = FALSE
 	# TODO
 	# Ensure labels that might need equating of freeing across MZ/DZ or T1 T2
 	# Check no manifests match the t1_t2links?
@@ -194,9 +193,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 
 	# 2. Make MZ and DZ models with these paths, labelled, and with the right data
 	MZ = umxRAM("MZ", c(Twin1Paths, Twin2Paths), data = mzData, autoRun=FALSE)
-	if(verbose){message("made MZ model") }
 	DZ = umxRAM("DZ", c(Twin1Paths, Twin2Paths), data = dzData, autoRun=FALSE)
-	if(verbose){message("made DZ model") }
 
 	# At this point, the paths are in the A/S/M matrices BUT T1 and T2 have different labels...
 	# TODO: equate free Asymmetric paths running from a latent to a manifest for T1 and T2 
@@ -235,13 +232,212 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 			DZ = mxModel(DZ, umxPath(T1, with = T2, free=FALSE, values = DZvalue, labels=paste0(T1, "_DZr_", T2)))
 		}
 	}
-	m1 = umxSuperModel(name, MZ, DZ)
-	if(verbose){message("made supermodel") }
+	model = umxSuperModel(name, MZ, DZ)
 	
 	# TODO: equate means: "wt_T1_with_wt_T1" "wt_T2_with_wt_T2"
 	# 4. Equate means in auto-added means model
-	return(m1)
+	model = as(model, "MxModelTwinMaker") # set class so that S3 plot() dispatches
+	return(model)
 }
+
+
+#' Create and display a graphical path diagram for a path-based twin model.
+#'
+#' Assumes the model has a group called "MZ" inside.
+#' 
+#' If you use umx_set_plot_format("graphviz"), they will open in a graphviz helper app (if installed).
+#' The commercial application \dQuote{OmniGraffle} is great for editing these images.
+#' On unix and windows, [plot()] will create a pdf and open it in your default pdf reader.
+#' 
+#'
+#' @aliases plot umxPlotMxModelTwinMaker
+#' @rdname plot.MxModel
+#' @param x A [umxTwinMaker()] model from which to make a path diagram
+#' @param std Whether to standardize the model (default = FALSE).
+#' @param fixed Whether to show fixed paths (defaults to TRUE)
+#' @param means Whether to show means or not (default = TRUE)
+#' @param digits The number of decimal places to add to the path coefficients
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param labels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
+#' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)
+#' @param splines Whether to allow lines to curve: defaults to TRUE (nb: some models look better with FALSE)
+#' @param min optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.
+#' @param same optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.
+#' @param max optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.
+#' @param ... Optional parameters
+#' @export
+#' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
+#' @family umx S3 functions
+#' @family Plotting functions
+#' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
+#' @md
+#' @examples
+#' \dontrun{
+#' require(umx)
+#' # 
+#' # =====================
+#' # = Make an ACE model =
+#' # =====================
+#' # 1. Clean data: Add separator and scale
+#' data(twinData)
+#' tmp = umx_make_twin_data_nice(data=twinData, sep="", zygosity="zygosity", numbering=1:2)
+#' tmp = umx_scale_wide_twin_data(varsToScale= c("wt", "ht"), sep= "_T", data= tmp)
+#' mzData = subset(tmp, zygosity %in%  c("MZFF", "MZMM"))
+#' dzData = subset(tmp, zygosity %in%  c("DZFF", "DZMM"))
+#' 
+#' # 2. Define paths: You only need the paths for one person:
+#' paths = c(
+#'	umxPath(v1m0 = c("a1", 'c1', "e1")),
+#'	umxPath(means = c("wt")),
+#'	umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
+#')
+#' m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData)
+#' plot(m1, std= TRUE, means= FALSE)
+#' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
+#' } # end dontrun
+#'
+plot.MxModelTwinMaker <- function(x = NA, std = FALSE, oneTwin = TRUE, sep= "_T", fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
+	# loop over submodels
+	if(length(x@submodels) && !oneTwin){
+		n = 1
+		for (sub in x@submodels) {
+			if(file == "name"){
+				thisFile = file
+			} else {
+				thisFile = paste0(file, "_group_", n)
+			}
+			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
+			n = n + 1
+		}
+	}else{	
+		# ==========
+		# = Setup  =
+		# ==========
+		model   = x$MZ # just to be clear that x is a model
+		resid   = match.arg(resid)
+		labels  = match.arg(labels)
+		latents = model@latentVars # 'vis', 'math', and 'text' 
+		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+	
+		# Update values using compute = T to capture labels with [] references.
+		# TODO: !!! Needs more work to sync with confidence intervals and SEs
+		model$S$values = mxEval(S, model, compute = TRUE)
+		model$A$values = mxEval(A, model, compute = TRUE)
+		if(!is.null(model$M)){
+			model$M$values = mxEval(M, model, compute = TRUE)
+		}
+	
+		if(std){ model = xmu_standardize_RAM(model, return = "model") }
+
+		# ========================
+		# = Get Symmetric & Asymmetric Paths =
+		# ========================
+		out = "";
+		# TODO Code to delete rows & columns from A, S & M where dimnames() contain "_T2", i.e., suffix 2
+		# And then delete 1 from the dimnames?
+		
+		mxMat_rows = dimnames(mxMat_free)[[1]]
+		mxMat_cols = dimnames(mxMat_free)[[2]]
+		
+		
+		out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "Single arrow paths", digits = digits)
+		if(resid == "circle"){
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "Covariances", digits = digits)
+		} else if(resid == "line"){
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)
+		}else{
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)		
+		}
+		# TODO should xmu_dot_make_residuals handle fixed or not necessary?
+		tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
+		variances     = tmp$variances     # either "var_var textbox" or "var -> var port circles"
+		varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
+		return(out)
+		# =================
+		# = Define shapes =
+		# =================
+		if(splines){
+			preOut = '\tsplines="TRUE";\n\t# Latents\n'
+		} else {
+			preOut = '\tsplines="FALSE";\n\t# Latents\n'
+		}
+		for(var in latents) {
+		   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		}
+
+		preOut = paste0(preOut, "\n\t# Manifests\n")
+		for(var in selDVs) {
+		   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+		}
+
+		# ================
+		# = handle means =
+		# ================
+		if(umx_has_means(model) & means){
+			out = paste0(out, "\n\t# Means paths\n")
+			# Add a triangle to the list of shapes
+			preOut = paste0(preOut, "\t one [shape = triangle];\n")
+			mxMat        = model$matrices$M
+			mxMat_vals   = mxMat$values
+			mxMat_free   = mxMat$free
+			mxMat_labels = mxMat$labels
+			meanVars = colnames(mxMat$values)
+			for(to in meanVars) {
+				thisPathLabel = mxMat_labels[1, to]
+				thisPathFree  = mxMat_free[1, to]
+				thisPathVal   = round(mxMat_vals[1, to], digits)
+				labelStart    = ifelse(thisPathFree, ' [label="', ' [label="@')
+
+				# TODO plot.MxModel: Find way to show means fixed @0
+				if(thisPathFree || fixed ) {
+					# if(thisPathFree | (fixed & thisPathVal != 0) ) {
+					out = paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n')
+				}else{
+					# cat(paste0(out, "\tone -> ", to, labelStart, thisPathVal, '"];\n'))
+					# return(thisPathVal != 0)
+				}
+			}
+		}
+
+		# ===========================
+		# = Make the variance lines =
+		# ===========================
+		# x1_var [label="0.21", shape = plaintext];
+		# or (circles)
+		# x1 -> x1 [label="0.21", direction = both];
+		preOut = paste0(preOut, "\n\t#Variances/residuals\n")
+		for(var in variances) {
+		   preOut = paste0(preOut, "\t", var, ";\n")
+		}
+		# ======================
+		# = Set the ranks e.g. =
+		# ======================
+		# {rank=same; x1 x2 x3 x4 x5 };
+		# TODO more intelligence possible in plot() perhaps hints like "MIMIC" or "ACE"
+		if(umx_has_means(model)){ append(varianceNames, "one")}
+
+		# min = latents; same = selDVs; max = varianceNames
+		x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
+		rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
+
+		# ===================================
+		# = Assemble full text to write out =
+		# ===================================
+		label = model$name
+		digraph = paste0(
+			"digraph G {\n    ", 
+			'label="', label, '";\n',
+			preOut, "\n",
+			out, "\n",
+			rankVariables, "\n}"
+		)
+		print("?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F, min=, max =, same = , fixed, resid= 'circle|line|none'")
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+	}
+} # end plot.MxModelTwinMaker
+
+
 
 #' Re-name variables in umxPaths to twin versions
 #'

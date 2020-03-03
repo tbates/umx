@@ -71,7 +71,7 @@
 umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
 	if(tryHard == "yes"){
-		tryHard = "mxTryHard"
+		tryHard = "yes"
 	}
 	nSib = 2;
 	# =================
