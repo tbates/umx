@@ -36,6 +36,8 @@
 #' 
 #' }
 umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, name = "DoC", autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+	# TODO: set class MxModelDoCp
+	# TODO: make plot.MxModelDoC which ignores T2, and DZ group and covariance stuff?
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
@@ -56,15 +58,17 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 	paths = c(
 		# 1. ✓ Make latent ace, as and l1 &l2
 		# ac and e & specifics
-		umxPath(v.m0 = c("a1", "a2", "c1", "c2"), values=0), # free
-		umxPath(v1m0 = c("e1", "e2")), # @1 to scale trait latents
+		umxPath(v1m0 = c("a1", "a2", "c1", "c2", "e1", "e2")), 
+		# TODO: might want to fix ace to 1, AND fix LOADING of e @ 1
 		umxPath(v1m0 = c(as, cs, es)),
 		# trait latent variables
 		umxPath(v0m0 = c("l1", "l2")), # Get all their variance from ace
 
 		# 3. ✓ Load ace paths onto each latent
-		umxPath(c("a1", "c1", "e1"), to = "l1", lbound = c(NA, NA, 1e-5)),
-		umxPath(c("a2", "c2", "e2"), to = "l2", lbound = c(NA, NA, 1e-5)),
+		umxPath(c("a1", "c1"), to = "l1"),
+		umxPath(c("a2", "c2"), to = "l2"),
+		umxPath("e1", free = FALSE, values = 1, to = "l1", lbound = 1e-5),
+		umxPath("e2", free = FALSE, values = 1, to = "l2", lbound = 1e-5),
 
 		# 4. ✓ Add factor loadings from l1 and l2 onto manifests
 		umxPath("l1", to = var1Indicators),
@@ -80,9 +84,11 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 		umxPath("l2", to = "l1", free=FALSE, labels = "b2a", values= 0)
 	)
 
-	m1 = umxTwinMaker(name=name, paths= paths, mzData= mzData, dzData= dzData, 
+	model = umxTwinMaker(name=name, paths= paths, mzData= mzData, dzData= dzData, 
 		sep =sep, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0), 'as'=c(1, .5), 'cs'=c(1, 1), 'es'=c(0, 0))
 	)
+	# model = as(model, "MxModelDoCp") # set class so that S3 plot() dispatches
+	return(model)
 }
 
 #' Make a twin model from the model describing just one person
