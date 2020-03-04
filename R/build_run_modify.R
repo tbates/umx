@@ -2445,7 +2445,6 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 	top       = bits$top
 	MZ        = bits$MZ
 	DZ        = bits$DZ
-	
 
 	if(bVector){
 		mzWeightMatrix = bits$mzWeightMatrix
@@ -2493,9 +2492,9 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 			a_cp_matrix, c_cp_matrix, e_cp_matrix,
 			# Constrain variance of latent phenotype factor to 1.0
 			# Multiply by each path coefficient by its inverse to get variance component
-			mxAlgebra(name = "A_cp", a_cp %*% t(a_cp)), # A_cp variance
-			mxAlgebra(name = "C_cp", c_cp %*% t(c_cp)), # C_cp variance
-			mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)), # E_cp variance
+			mxAlgebra(name = "A_cp", a_cp %*% t(a_cp)  ), # A_cp variance
+			mxAlgebra(name = "C_cp", c_cp %*% t(c_cp)  ), # C_cp variance
+			mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)  ), # E_cp variance
 			mxAlgebra(name = "L"   , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
 			mxAlgebra(name = "diagL", diag2vec(L)),
 			mxConstraint(name = "fix_CP_variances_to_1", diagL == nFac_Unit),
@@ -2515,12 +2514,12 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 						rbind(
 							 cbind(ACE, AC), 
 			                 cbind(AC , ACE))
-						),
+			),
 			mxAlgebra(name= "expCovDZ", dimnames = list(selVars, selVars), 
 						rbind(
 							cbind(ACE, hAC),
 			                cbind(hAC, ACE))
-						),
+			)
 		),
 		MZ, DZ,
 		mxFitFunctionMultigroup(c("MZ", "DZ"))

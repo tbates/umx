@@ -12,8 +12,7 @@ dzData = subset(GFF, zyg_2grp == "DZ")
 
 # These will be expanded into "gff_T1" "gff_T2" etc.
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3,
-		dzData = dzData, mzData = mzData, tryHard = "yes")
+m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData, tryHard = "yes")
 
 # Shortcut using "data ="
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
