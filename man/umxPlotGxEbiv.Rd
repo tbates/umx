@@ -59,6 +59,7 @@ umxPlotGxEbiv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},

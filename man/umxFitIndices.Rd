@@ -74,11 +74,6 @@ m2 = umxRAM("m1", data = demoOneFactor,
 )
 umxFitIndices(m1, refModels = mxRefModels(m2, run = TRUE))
 }
-\references{
-\itemize{
-\item 
-}
-}
 \seealso{
 Other Reporting functions: 
 \code{\link{RMSEA.MxModel}()},

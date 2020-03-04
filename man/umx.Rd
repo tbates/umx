@@ -112,6 +112,7 @@ Other Modify or Compare Models:
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},

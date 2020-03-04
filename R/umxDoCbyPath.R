@@ -251,11 +251,12 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' 
 #'
 #' @aliases plot umxPlotMxModelTwinMaker
-#' @rdname plot.MxModel
 #' @param x A [umxTwinMaker()] model from which to make a path diagram
-#' @param std Whether to standardize the model (default = FALSE).
+#' @param std Whether to standardize the model (default = FALSE)
 #' @param fixed Whether to show fixed paths (defaults to TRUE)
 #' @param means Whether to show means or not (default = TRUE)
+#' @param oneTwin (whether to plot a pair of twins, or just one (default = TRUE)
+#' @param sep= The separator for twin variables ("_T")
 #' @param digits The number of decimal places to add to the path coefficients
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param labels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
@@ -297,8 +298,8 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #' } # end dontrun
 #'
-plot.MxModelTwinMaker <- function(x = NA, std = FALSE, oneTwin = TRUE, sep= "_T", fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
-	# loop over submodels
+plot.MxModelTwinMaker <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, oneTwin = TRUE, sep= "_T", digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
+	# loop over submodels	
 	if(length(x@submodels) && !oneTwin){
 		n = 1
 		for (sub in x@submodels) {
@@ -307,7 +308,7 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, oneTwin = TRUE, sep= "_T"
 			} else {
 				thisFile = paste0(file, "_group_", n)
 			}
-			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
+			plot.MxModelTwinMaker(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
 			n = n + 1
 		}
 	}else{	
@@ -317,8 +318,6 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, oneTwin = TRUE, sep= "_T"
 		model   = x$MZ # just to be clear that x is a model
 		resid   = match.arg(resid)
 		labels  = match.arg(labels)
-		latents = model@latentVars # 'vis', 'math', and 'text' 
-		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
 		# Update values using compute = T to capture labels with [] references.
 		# TODO: !!! Needs more work to sync with confidence intervals and SEs
@@ -336,24 +335,33 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, oneTwin = TRUE, sep= "_T"
 		out = "";
 		# TODO Code to delete rows & columns from A, S & M where dimnames() contain "_T2", i.e., suffix 2
 		# And then delete 1 from the dimnames?
+		if(oneTwin){
+			rowsToKeep = namez(dimnames(model$matrices$A)[[1]], paste0(sep, "1$"))
+			# colsToDelete = namez(dimnames(model$matrices$A)[[2]], paste0(sep, "[2-9]$")
+			latents = model@latentVars[model@latentVars %in% rowsToKeep]    # 'vis', 'math', and 'text' 
+			selDVs  = model@manifestVars[model@manifestVars  %in% rowsToKeep] # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+			A       = model$matrices$A[rowsToKeep, rowsToKeep]
+			S       = model$matrices$S[rowsToKeep, rowsToKeep]			
+		} else {
+			latents = model@latentVars # 'vis', 'math', and 'text' 
+			selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
+			A       = model$matrices$A
+			S       = model$matrices$S
+		}
 		
-		mxMat_rows = dimnames(mxMat_free)[[1]]
-		mxMat_cols = dimnames(mxMat_free)[[2]]
-		
-		
-		out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "Single arrow paths", digits = digits)
+		out = xmu_dot_make_paths(A, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "Single arrow paths", digits = digits)
 		if(resid == "circle"){
-			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "Covariances", digits = digits)
+			out = xmu_dot_make_paths(S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "Covariances", digits = digits)
 		} else if(resid == "line"){
-			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)
+			out = xmu_dot_make_paths(S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)
 		}else{
-			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)		
+			out = xmu_dot_make_paths(S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)		
 		}
 		# TODO should xmu_dot_make_residuals handle fixed or not necessary?
-		tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
+		tmp = xmu_dot_make_residuals(S, latents = latents, digits = digits, resid = resid)
 		variances     = tmp$variances     # either "var_var textbox" or "var -> var port circles"
 		varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
-		return(out)
+
 		# =================
 		# = Define shapes =
 		# =================
@@ -378,7 +386,7 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, oneTwin = TRUE, sep= "_T"
 			out = paste0(out, "\n\t# Means paths\n")
 			# Add a triangle to the list of shapes
 			preOut = paste0(preOut, "\t one [shape = triangle];\n")
-			mxMat        = model$matrices$M
+			mxMat        = model$matrices$M[,rowsToKeep]
 			mxMat_vals   = mxMat$values
 			mxMat_free   = mxMat$free
 			mxMat_labels = mxMat$labels
@@ -418,6 +426,8 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, oneTwin = TRUE, sep= "_T"
 		if(umx_has_means(model)){ append(varianceNames, "one")}
 
 		# min = latents; same = selDVs; max = varianceNames
+
+		# TODO separate [ace]1 (top) from "[ace]s" (bottom)
 		x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
 		rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
 

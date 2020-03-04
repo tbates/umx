@@ -79,6 +79,7 @@ plot(m1) # No need to remember a special name: plot works fine!
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
