@@ -256,7 +256,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' @param fixed Whether to show fixed paths (defaults to TRUE)
 #' @param means Whether to show means or not (default = TRUE)
 #' @param oneTwin (whether to plot a pair of twins, or just one (default = TRUE)
-#' @param sep= The separator for twin variables ("_T")
+#' @param sep The separator for twin variables ("_T")
 #' @param digits The number of decimal places to add to the path coefficients
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param labels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
