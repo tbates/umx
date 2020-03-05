@@ -1,3 +1,29 @@
+# umx 3.1.0
+* March 2020 R 4.0.0 compatibility
+* BETA: `umxTwinMaker` Make twin models by specifying just 1 person in `umxPaths`!!
+* BETA: `plot` for `umxTwinMaker` models!!
+* NEW: `umxDoCp` Path-based Direction of causation model
+
+* NEW: `umxTwinMaker`: Make twin models just by specifying the within-twin paths for one twin: This makes twin2, adds covariances for variance components, creates the MZ and DZ groups, and makes and runs a `umxSuperModel` plot() and std= TRUE work for any model now! 
+* NEW: `xmu_path2twin`  twin model helper for `umxPath` users 
+* NEW: `xmu_path_regex` helper for making twin models for `umxPath` users
+* NEW: data for example with direction of causation work on umxSummary for DoC
+* IMPROVED: `umxFitIndices` Many new indices! @bwiernik
+* IMPROVED: `umxTwinMaker` 
+* IMPROVED: `umxPath(v.m0 = )` now uses values (if provided) to set starts for variance
+* IMPROVED: `umx_check_parallel` use all cores (instead of half) by default
+* IMPROVED: `umxPlotACE` variable labels (trimmed off _T1 like umxPlotCP does
+* IMPROVED: `umxDoCp` bound e/es above zero
+* IMPROVED: `umxDoCp` start with all variance as specific
+* IMPROVED: `power.ACE.test`
+* IMPROVED: `umxLabel` 100x speedup for RAM and Matrix model labelling
+* IMPROVED: `xmuLabel_RAM_Model` 100x speedup
+* IMPROVED: `xmu_safe_run_summary` has smarter default for `std` (model summary default)
+* IMPROVED: `xmu_dot_mat2dot` now accepts algebra input begin umxPlot for DoC
+* BUGFIX: `power.ACE.test` no longer fails when estimating power at a fixed n
+* HELP: `umxSummary`: Improve Rd file
+
+
 # umx 3.0.6
 * Feb 2020 R 4.0.0 compatibility
 * BETA: `umxDoc` example but summary and plot TODO
