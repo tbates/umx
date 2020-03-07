@@ -5298,7 +5298,7 @@ umx_array_shift <- function(x){
 #' @param T1Names The first set of columns.
 #' @param T2Names The second set of columns.
 #' @return - dataframe
-#' @family Data Functions
+#' @family xmu internal not for end user
 #' @export
 #' @seealso - [subset()]
 #' @md
@@ -6109,6 +6109,47 @@ umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empiric
 # =============
 # = Read data =
 # =============
+
+#' Read in files from pseudocons.
+#' @description
+#' Read in PRS scored files from [pseudocons](https://www.staff.ncl.ac.uk/richard.howey/pseudocons/example.html).
+#' 
+#' 1. Read the file
+#' 2. Break it into pseudo and real rows
+#' 3. Clean-up by deleting the pseduo suffix
+#' 4. Rename NT vars with a suffix
+#' 5. Merge files on ID and return
+#'
+#'                  ID   FID  BMIS1  BMIS2   BMIS3   BMIS4 ...
+#'  1          1234501 12345 -0.032  -0.77   -0.40  -3.87  ...
+#'  2 1234501-pseudo-1 12345  0.117  -0.66   -0.33  -4.08  ...
+#'
+#' @param param fn The filename
+#' @param param bp The path to the folder containing the file
+#' @param param sep  suffix for the NT columns (Default = "_NT")
+#' @return - list of pseudo and real PRS dataframes.
+#' @export
+#' @family File Functions
+#' @md
+#' @examples
+#' \dontrun{
+#' path2018 = "~/Dropbox/2016 (1). project EA/2018/"
+#' tmp = umx_file_load_pseudo("EA3/PRS_EA3_R9_autosomes_HRC1.1_pseudo.txt", bp = path2018)
+#' str(tmp)
+#' # EA3real   = tmp$real
+#' # EA3pseudo = tmp$pseudo
+#' }
+umx_file_load_pseudo <- function(fn, bp, suffix = "_NT") {
+	ps = read.table(paste0(bp, fn), header = TRUE, sep = "", as.is = c(TRUE))
+	pseudo = ps[ps$ID %in% namez(ps$ID, "pseudo"), ]
+	real   = ps[ps$ID %in% namez(ps$ID, "pseudo", invert= TRUE),]
+	# a. Clean up ID (remove "-pseudo-1" suffix)
+	pseudo$ID = namez(pseudo$ID, "-pseudo-1", replacement = "") # remove "-pseudo-1" from ID column
+	tmp = merge(real, pseudo, by.x = c("ID"), by.y = c("ID"), all.x = TRUE, all.y = TRUE, suffixes = c("", suffix))
+	return(tmp)
+	# names(pseudo) = namez(pseudo, "(^.*S[1-9].*$)", replacement = paste0("\\1", suffix)) # suffix the measure columns with '_NT' "
+	# return(list(pseudo = pseudo, real = real))
+}
 
 #' Read lower-triangle of data matrix from console or file
 #'

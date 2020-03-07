@@ -224,14 +224,21 @@ m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData,
 # 1. Weight has a large variance, and this makes solution finding very hard.
 # Here, we scale wt to make the Optimizer's task easier.
 
-twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
-mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
-dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
+data(twinData)
+tmp = umx_residualize(c("wt", "ht"), cov = "age", suffixes= c(1, 2), data = twinData)
+mzData = tmp[tmp$zygosity \%in\% "MZFF", ]
+dzData = tmp[tmp$zygosity \%in\% "DZFF", ]
+
+# You might also want to explore re-scaling the variable
+# tmp = twinData$wt1[!is.na(twinData$wt1)]
+# car::powerTransform(tmp, family="bcPower"); hist(tmp^-0.6848438)
+# twinData$wt1 = twinData$wt1^-0.6848438
+# twinData$wt2 = twinData$wt2^-0.6848438
 
 # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0.
 #    Prevents mirror-solutions. If not desired: set boundDiag = NULL.
 
-m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
+m2 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
 
 # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
 m1 = umxACE(selDVs = "wt", sep = "", data = twinData,

@@ -12,15 +12,17 @@ umxAlgebra(
   fixed = FALSE,
   joinKey = as.character(NA),
   joinModel = as.character(NA),
-  verbose = 0L
+  verbose = 0L,
+  initial = matrix(as.numeric(NA), 1, 1),
+  recompute = c("always", "onDemand")
 )
 }
 \arguments{
-\item{name}{The name of the matrix (Default = NA). Note the different order compared to mxMatrix!}
+\item{name}{The name of the algebra (Default = NA). Note the different order compared to mxAlgebra!}
 
-\item{expression}{The algebra.}
+\item{expression}{The algebra}
 
-\item{dimnames}{= Dimnames}
+\item{dimnames}{Dimnames of the algebra}
 
 \item{...}{Other parameters}
 
@@ -30,7 +32,11 @@ umxAlgebra(
 
 \item{joinModel}{See mxAlgebra documentation}
 
-\item{verbose}{Quiet of informative}
+\item{verbose}{Quiet or informative}
+
+\item{initial}{See mxAlgebra documentation}
+
+\item{recompute}{See mxAlgebra documentation}
 }
 \value{
 \itemize{

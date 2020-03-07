@@ -63,8 +63,7 @@ Other Data Functions:
 \code{\link{umx_reorder}()},
 \code{\link{umx_select_valid}()},
 \code{\link{umx_stack}()},
-\code{\link{umx}},
-\code{\link{xmu_data_swap_a_block}()}
+\code{\link{umx}}
 
 Other Miscellaneous Stats Helpers: 
 \code{\link{FishersMethod}()},

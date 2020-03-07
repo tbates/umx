@@ -1213,14 +1213,21 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # 1. Weight has a large variance, and this makes solution finding very hard.
 #' # Here, we scale wt to make the Optimizer's task easier.
 #'
-#' twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("wt"), sep = "")
-#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' data(twinData)
+#' tmp = umx_residualize(c("wt", "ht"), cov = "age", suffixes= c(1, 2), data = twinData)
+#' mzData = tmp[tmp$zygosity %in% "MZFF", ]
+#' dzData = tmp[tmp$zygosity %in% "DZFF", ]
+#' 
+#' # You might also want to explore re-scaling the variable
+#' # tmp = twinData$wt1[!is.na(twinData$wt1)]
+#' # car::powerTransform(tmp, family="bcPower"); hist(tmp^-0.6848438)
+#' # twinData$wt1 = twinData$wt1^-0.6848438
+#' # twinData$wt2 = twinData$wt2^-0.6848438
 #' 
 #' # 4. note: the default boundDiag = 0 lower-bounds a, c, and e at 0.
 #' #    Prevents mirror-solutions. If not desired: set boundDiag = NULL.
 #'
-#' m1 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
+#' m2 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
 #'
 #' # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
 #' m1 = umxACE(selDVs = "wt", sep = "", data = twinData,
@@ -3050,14 +3057,16 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @description
 #' umxAlgebra is a wrapper for mxAlgebra which has the name parameter first in order. 
 #'
-#' @param name The name of the matrix (Default = NA). Note the different order compared to mxMatrix!
-#' @param expression The algebra.
-#' @param dimnames = Dimnames
+#' @param name The name of the algebra (Default = NA). Note the different order compared to mxAlgebra!
+#' @param expression The algebra
+#' @param dimnames Dimnames of the algebra
 #' @param ... Other parameters
 #' @param fixed = See mxAlgebra documentation
 #' @param joinKey See mxAlgebra documentation
 #' @param joinModel See mxAlgebra documentation
-#' @param verbose Quiet of informative
+#' @param verbose Quiet or informative
+#' @param initial See mxAlgebra documentation
+#' @param recompute See mxAlgebra documentation
 #' @return - [mxAlgebra()]
 #' @export
 #' @family Core Modeling Functions
@@ -3069,11 +3078,11 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' x = mxAlgebra(name = "circ", 2 * pi)
 #' class(x$formula) # "call"
 #'
-umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE, joinKey=as.character(NA), joinModel=as.character(NA), verbose=0L) {
+umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE, joinKey=as.character(NA), joinModel=as.character(NA), verbose=0L, initial=matrix(as.numeric(NA),1,1), recompute=c('always','onDemand')) {
 	if(class(name) != "character"){
 		stop("In umxAlgebra, name comes first, not expression.")
 	}
-	x = mxAlgebra(expression, name = name, dimnames = dimnames, ..., fixed = fixed, joinKey=joinKey, joinModel=joinModel, verbose=verbose)
+	x = mxAlgebra(expression, name = name, dimnames = dimnames, ..., fixed = fixed, joinKey=joinKey, joinModel=joinModel, verbose=verbose, initial=initial, recompute = recompute)
 	return(x)
 }
 

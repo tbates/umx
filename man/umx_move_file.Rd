@@ -46,6 +46,7 @@ umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg",
 \seealso{
 Other File Functions: 
 \code{\link{dl_from_dropbox}()},
+\code{\link{umx_file_load_pseudo}()},
 \code{\link{umx_make_sql_from_excel}()},
 \code{\link{umx_open}()},
 \code{\link{umx_rename_file}()},

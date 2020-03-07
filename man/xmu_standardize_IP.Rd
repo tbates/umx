@@ -62,6 +62,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},
 \code{\link{xmu_dot_make_residuals}()},

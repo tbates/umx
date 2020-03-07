@@ -46,7 +46,6 @@ Other Data Functions:
 \code{\link{umx_rename}()},
 \code{\link{umx_select_valid}()},
 \code{\link{umx_stack}()},
-\code{\link{umx}},
-\code{\link{xmu_data_swap_a_block}()}
+\code{\link{umx}}
 }
 \concept{Data Functions}

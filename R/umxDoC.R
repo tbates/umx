@@ -95,11 +95,10 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 	nLat1   = length(var1Indicators) # measures for factor 1
 	nLat2   = length(var2Indicators)
 	nVar    = nLat1 + nLat2
-
 	selVars = tvars(c(var1Indicators, var2Indicators), sep=sep)
-	xmu_twin_check(selDVs= c(var1Indicators,var2Indicators), sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 	mzData = xmu_make_mxData(mzData, manifests = selVars)
 	dzData = xmu_make_mxData(dzData, manifests = selVars)
+	xmu_twin_check(selDVs= c(var1Indicators,var2Indicators), sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 
 	# ========================
 	# = Make Factor Loadings =
@@ -148,7 +147,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		# TODO: smart var starts here
 		umxMatrix("as", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
 		umxMatrix("cs", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
-		umxMatrix("es", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3),
+		umxMatrix("es", "Diag", nrow=nVar, ncol=nVar, free=TRUE, values=0.3, lbound=1e-5),
 
 		mxAlgebra(name= "Asmz", Ones  %x% as),
 		mxAlgebra(name= "Asdz", dzAr  %x% as),

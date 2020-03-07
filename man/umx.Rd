@@ -212,11 +212,11 @@ Other Data Functions:
 \code{\link{umx_rename}()},
 \code{\link{umx_reorder}()},
 \code{\link{umx_select_valid}()},
-\code{\link{umx_stack}()},
-\code{\link{xmu_data_swap_a_block}()}
+\code{\link{umx_stack}()}
 
 Other File Functions: 
 \code{\link{dl_from_dropbox}()},
+\code{\link{umx_file_load_pseudo}()},
 \code{\link{umx_make_sql_from_excel}()},
 \code{\link{umx_move_file}()},
 \code{\link{umx_open}()},
@@ -308,6 +308,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},
 \code{\link{xmu_dot_make_residuals}()},

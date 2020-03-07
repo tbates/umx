@@ -36,6 +36,8 @@
 
 \item{oneTwin}{(whether to plot a pair of twins, or just one (default = TRUE)}
 
+\item{sep}{The separator for twin variables ("_T")}
+
 \item{digits}{The number of decimal places to add to the path coefficients}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
@@ -55,8 +57,6 @@
 \item{max}{optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.}
 
 \item{...}{Optional parameters}
-
-\item{sep=}{The separator for twin variables ("_T")}
 }
 \description{
 Assumes the model has a group called "MZ" inside.
