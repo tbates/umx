@@ -6120,35 +6120,46 @@ umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empiric
 #' 4. Rename NT vars with a suffix
 #' 5. Merge files on ID and return
 #'
-#'                  ID   FID  BMIS1  BMIS2   BMIS3   BMIS4 ...
-#'  1          1234501 12345 -0.032  -0.77   -0.40  -3.87  ...
-#'  2 1234501-pseudo-1 12345  0.117  -0.66   -0.33  -4.08  ...
+#' |   | ID               | FID   | BMIS1  | BMIS2 | BMIS3 | BMIS4 | ... |
+#' |:--|:-----------------|------:|-------:|------:|------:|------:|:----|
+#' | 1 | 1234501          | 12345 | -0.032 | -0.77 | -0.40 | -3.87 | ... |
+#' | 2 | 1234501-pseudo-1 | 12345 |  0.117 | -0.66 | -0.33 | -4.08 | ... |
 #'
-#' @param param fn The filename
-#' @param param bp The path to the folder containing the file
-#' @param param sep  suffix for the NT columns (Default = "_NT")
-#' @return - list of pseudo and real PRS dataframes.
+#' @param fn The filename
+#' @param bp The path to the folder containing the file
+#' @param sep  suffix for the NT columns (Default = "_NT")
+#' @param chosenp The suffix (pvalue) we desire to use (Default = "S5")
+#' @return - dataframe of real and pseudo PRS columns
 #' @export
 #' @family File Functions
 #' @md
 #' @examples
 #' \dontrun{
-#' path2018 = "~/Dropbox/2016 (1). project EA/2018/"
-#' tmp = umx_file_load_pseudo("EA3/PRS_EA3_R9_autosomes_HRC1.1_pseudo.txt", bp = path2018)
+#' basepath = "~/Dropbox/2016 (1). project EA/2018/EA3/"
+#' tmp = umx_file_load_pseudo("PRS_EA3_R9_autosomes_HRC1.1_pseudo.txt", bp = bp)
 #' str(tmp)
-#' # EA3real   = tmp$real
-#' # EA3pseudo = tmp$pseudo
+#' head(tmp[, c("BMIS4", "BMIS4_NT")]
 #' }
-umx_file_load_pseudo <- function(fn, bp, suffix = "_NT") {
+umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
+	
+	# 1.  Read the file
 	ps = read.table(paste0(bp, fn), header = TRUE, sep = "", as.is = c(TRUE))
+
+	# 2.  Put the pseudo and real lines into separate frames
 	pseudo = ps[ps$ID %in% namez(ps$ID, "pseudo"), ]
 	real   = ps[ps$ID %in% namez(ps$ID, "pseudo", invert= TRUE),]
-	# a. Clean up ID (remove "-pseudo-1" suffix)
+
+	# 3. Clean up ID column in pseudo frame (remove "-pseudo-1" suffix)
 	pseudo$ID = namez(pseudo$ID, "-pseudo-1", replacement = "") # remove "-pseudo-1" from ID column
+
+	# 4. Merge by ID column to put each subjects real and pseudo ("_NT") scores in one frame.
 	tmp = merge(real, pseudo, by.x = c("ID"), by.y = c("ID"), all.x = TRUE, all.y = TRUE, suffixes = c("", suffix))
+	# rename the chosen column to remove the p-value suffix
+	# tmp = umx_rename(data=tmp, regex=paste0("^.*", chosenp, suffix, "$"), replace=)
+	# tmp = umx_rename(data=tmp, regex=paste0("^.*", chosenp, suffix, "$"), replace=)
+	#
+	# "EA3S5"
 	return(tmp)
-	# names(pseudo) = namez(pseudo, "(^.*S[1-9].*$)", replacement = paste0("\\1", suffix)) # suffix the measure columns with '_NT' "
-	# return(list(pseudo = pseudo, real = real))
 }
 
 #' Read lower-triangle of data matrix from console or file

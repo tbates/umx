@@ -21,20 +21,20 @@ Read in PRS scored files from \href{https://www.staff.ncl.ac.uk/richard.howey/ps
 \item Break it into pseudo and real rows
 \item Clean-up by deleting the pseduo suffix
 \item Rename NT vars with a suffix
-\item Merge files on ID and return\preformatted{          ID   FID  BMIS1  BMIS2   BMIS3   BMIS4 ...
+\item Merge files on ID and return
+}\tabular{llrrrrrl}{
+    \tab ID \tab FID \tab BMIS1 \tab BMIS2 \tab BMIS3 \tab BMIS4 \tab ... \cr
+   1 \tab 1234501 \tab 12345 \tab -0.032 \tab -0.77 \tab -0.40 \tab -3.87 \tab ... \cr
+   2 \tab 1234501-pseudo-1 \tab 12345 \tab 0.117 \tab -0.66 \tab -0.33 \tab -4.08 \tab ... \cr
 }
-}
-
-1          1234501 12345 -0.032  -0.77   -0.40  -3.87  ...
-2 1234501-pseudo-1 12345  0.117  -0.66   -0.33  -4.08  ...
 }
 \examples{
 \dontrun{
-path2018 = "~/Dropbox/2016 (1). project EA/2018/"
-tmp = umx_file_load_pseudo("EA3/PRS_EA3_R9_autosomes_HRC1.1_pseudo.txt", bp = path2018)
+basepath = "~/Dropbox/2016 (1). project EA/2018/EA3/"
+tmp = umx_file_load_pseudo("PRS_EA3_R9_autosomes_HRC1.1_pseudo.txt", bp = bp)
 str(tmp)
-# EA3real   = tmp$real
-# EA3pseudo = tmp$pseudo
+EA3real   = tmp$real
+EA3pseudo = tmp$pseudo
 }
 }
 \seealso{
