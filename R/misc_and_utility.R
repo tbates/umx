@@ -1617,13 +1617,14 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' *note*:To use replace list, you must say c(old = "new"), not c(old -> "new")
 #' 
 #' @param data The dataframe in which to rename variables
-#' @param old List of old names that will be found and replaced by the contents of replace. (optional: Defaults to NULL).
-#' @param replace If used alone, a named collection of c(oldName = "newName") pairs.
-#'   OR, if "old" is a list of existing names, the list of new names)
+#' @param from List of existing names that will be found and replaced by the contents of replace. (optional: Defaults to NULL).
+#' @param to If used alone, a named collection of c(oldName = "newName") pairs.
+#'   OR, if "from" is a list of existing names, the list of new names)
 #'   OR, if "regex" is a regular expression, the replace string)
 #' @param regex Regular expression with matches will be replaced using replace as the replace string. (Optional: Defaults to NULL).
 #' @param test Whether to report a "dry run", not changing anything. (Default = FALSE).
-#' @param grep deprecated: use regex
+#' @param old deprecated: use from
+#' @param replace deprecated: use to
 #' @return - dataframe with columns renamed.
 #' @export
 #' @seealso [namez] to filter (and replace) names, Also [umx_check_names] to check for existence of names in a dataframe.
@@ -1632,44 +1633,50 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' @examples
 #' tmp = mtcars
 #'
-#' tmp = umx_rename(tmp, replace = c(cyl = "cylinder"))
-#' # let's check...
+#' tmp = umx_rename(tmp, to = c(cyl = "cylinder"))
+#' # let's check cyl has been changed to cylinder...
 #' namez(tmp, "c")
 #' 
-#' # Alternate style: old<-replace, first with a test-run
+#' # Alternate style: from->to, first with a test-run
 #' # Dry run
-#' tmp = umx_rename(tmp, old = c("disp"), replace = c("displacement"), test= TRUE)
-#' tmp = umx_rename(tmp, old = c("disp"), replace = c("displacement"))
+#' tmp = umx_rename(tmp, from = "disp", to = "displacement", test= TRUE)
+#' # Actually do it
+#' tmp = umx_rename(tmp, from = c("disp"), to = c("displacement"))
 #' umx_check_names("displacement", data = tmp, die = TRUE)
+#' namez(tmp, "disp")
 #'
 #' # This will warn that "disp" does not exist (anymore)
-#' new = c("displacement", "auto", "rear_axle_ratio")
-#' tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
+#' new = c("auto", "displacement", "rear_axle_ratio")
+#' tmp = umx_rename(tmp, from = c("am", "disp", "drat"), to = new)
 #' namez(tmp, "a") # still updated am to auto (and rear_axle_ratio)
 #'
 #' # Test using regex (in this case to revert "displacement" to "disp")
-#' tmp = umx_rename(tmp, regex = "lacement", replace = "", test= TRUE) 
-#' tmp = umx_rename(tmp, regex = "lacement", replace = "") # revert to disp
+#' tmp = umx_rename(tmp, regex = "lacement", to = "", test= TRUE) 
+#' tmp = umx_rename(tmp, regex = "lacement", to = "") # revert to disp
 #' umx_names(tmp, "^d") # all names beginning with a d
 #'
-umx_rename <- function(data, old = NULL, replace = NULL, regex = NULL, test = FALSE, grep = "deprecated") {
+umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE, old = "deprecated", replace= "deprecated") {
 	# See also gdata::rename.vars(data, from, to)	
-	if(grep != "deprecated"){
-		regex = grep
+	if(old     != "deprecated"){from = old; message("Please use 'from' instead of 'old' in umx_rename()") }
+	if(replace != "deprecated"){to = replace; message("Please use 'to' instead of 'replace' in umx_rename()") }
+
+	if(!is.null(attributes(from)$names)){
+		stop("You gave a list to from in umx_rename(). Lists (old='new') only allowed in to")
 	}
-	if(!is.null(old) && !is.null(regex)){
-		stop("Only one of old and regex can be used")
+
+	if(!is.null(from) && !is.null(regex)){
+		stop("Only one of from and regex can be used")
 	}
 	if(!is.null(regex)){
-		if(is.null(replace)){
-			stop("Please set replace to a valid replacement string!")
+		if(is.null(to)){
+			stop("Please set to to a valid replacement string!")
 		}
 	    nameVector = umx_names(data)
 	    if (is.null(nameVector)) {
 	        stop(paste0("umx_rename requires a dataframe or something else with names(), ", 
 	            umx_object_as_str(data), " is a ", typeof(data)))
 	    }
-		new_names = gsub(regex, replace, nameVector)
+		new_names = gsub(regex, to, nameVector)
 		if(test){
 			message("The following changes would be made (set test =FALSE to actually make them)")
 			message(length(nameVector), " names found. ",
@@ -1687,23 +1694,23 @@ umx_rename <- function(data, old = NULL, replace = NULL, regex = NULL, test = FA
 		invisible(data)		
 	} else {
 		# Not regex
-		if(!is.null(old)){
-			# message("replacing old with replace")
-			if(length(old) != length(replace)){
-				stop("You are trying to replace ", length(old), " old names with ", length(replace), " new names: Lengths must match")
+		if(!is.null(from)){
+			# message("replacing from with to")
+			if(length(from) != length(to)){
+				stop("You are trying to replace ", length(from), " old names with ", length(to), " new names: Lengths must match")
 			}
-			names_to_replace = old
-			new_names_to_try = replace
+			names_to_replace = from
+			new_names_to_try = to
 		} else {
-			# Replace is a key-value list of names and replacements
-			names_to_replace = names(replace)
-			new_names_to_try = unname(replace)
+			# to is a key-value list of names and replacements
+			names_to_replace = unlist(names(to))
+			new_names_to_try = unlist(unname(to))
 		}
-		old_names = names(data)
+		from_names = names(data)
 
-		if(!all(names_to_replace %in% old_names)) {
+		if(!all(names_to_replace %in% from_names)) {
 			warning("The following names did not appear in the dataframe:", 
-			paste(names_to_replace[!names_to_replace %in% old_names], collapse= ", "), "\nPerhaps you already updated them")
+			paste(names_to_replace[!names_to_replace %in% from_names], collapse= ", "), "\nPerhaps you already updated them")
 		}
 
 		if(anyDuplicated(names_to_replace)) {
@@ -1713,12 +1720,12 @@ umx_rename <- function(data, old = NULL, replace = NULL, regex = NULL, test = FA
 		}
 
 		if(anyDuplicated(new_names_to_try)) {
-		  err = paste("You have the following duplicates in your replace list:", 
+		  err = paste("You have the following duplicates in your to list:", 
 		         	paste(new_names_to_try[duplicated(new_names_to_try)], collapse = ", ")
 		)
 		  stop(err)
 		}
-		new_names = new_names_to_try[match(old_names, names_to_replace)]
+		new_names = new_names_to_try[match(from_names, names_to_replace)]
 		if(test){
 			message("The following changes would be made (set test =FALSE to actually make them")
 			message("Names to be replaced")
@@ -1728,7 +1735,7 @@ umx_rename <- function(data, old = NULL, replace = NULL, regex = NULL, test = FA
 			invisible(data)
 		} else {
 			names(data) = new_names
-			setNames(data, ifelse(is.na(new_names), old_names, new_names)) # Also returns the new object
+			setNames(data, ifelse(is.na(new_names), from_names, new_names)) # Also returns the new object
 		}
 	}
 }
@@ -6127,7 +6134,7 @@ umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empiric
 #'
 #' @param fn The filename
 #' @param bp The path to the folder containing the file
-#' @param sep  suffix for the NT columns (Default = "_NT")
+#' @param suffix to add to the NT columns (Default = "_NT")
 #' @param chosenp The suffix (pvalue) we desire to use (Default = "S5")
 #' @return - dataframe of real and pseudo PRS columns
 #' @export
@@ -6140,8 +6147,7 @@ umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empiric
 #' str(tmp)
 #' head(tmp[, c("BMIS4", "BMIS4_NT")]
 #' }
-umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
-	
+umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {	
 	# 1.  Read the file
 	ps = read.table(paste0(bp, fn), header = TRUE, sep = "", as.is = c(TRUE))
 

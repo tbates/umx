@@ -250,7 +250,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' On unix and windows, [plot()] will create a pdf and open it in your default pdf reader.
 #' 
 #'
-#' @aliases plot umxPlotMxModelTwinMaker
+#' @aliases umxPlotMxModelTwinMaker
 #' @param x A [umxTwinMaker()] model from which to make a path diagram
 #' @param std Whether to standardize the model (default = FALSE)
 #' @param fixed Whether to show fixed paths (defaults to TRUE)

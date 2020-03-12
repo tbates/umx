@@ -6,7 +6,7 @@ Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
 	person(c("Joshua", "N.") , "Pritikin", role = c("ctb"), email = "jpritikin@pobox.com"),
 	person(c("Michael", "C."), "Neale"   , role = c("ctb"), email = "neale@vcu.edu"),
-	person("Hermine"         , "Maes"    , role = c("ctb"), email = "hmeaes@vcu.edu")
+	person("Hermine"         , "Maes"    , role = c("ctb"), email = "hmeaes@vcu.edu"),
 	person("Brenton"         , "Wiernik" , role = c("ctb"), email = "wiernik@umn.edu")
 	)
 Maintainer: Timothy C. Bates <timothy.c.bates@gmail.com>

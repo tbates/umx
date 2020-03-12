@@ -3078,11 +3078,11 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' x = mxAlgebra(name = "circ", 2 * pi)
 #' class(x$formula) # "call"
 #'
-umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., fixed = FALSE, joinKey=as.character(NA), joinModel=as.character(NA), verbose=0L, initial=matrix(as.numeric(NA),1,1), recompute=c('always','onDemand')) {
+umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.character(NA), joinModel=as.character(NA), verbose=0L, initial=matrix(as.numeric(NA),1,1), recompute=c('always','onDemand'), fixed = "deprecated_use_recompute") {
 	if(class(name) != "character"){
 		stop("In umxAlgebra, name comes first, not expression.")
 	}
-	x = mxAlgebra(expression, name = name, dimnames = dimnames, ..., fixed = fixed, joinKey=joinKey, joinModel=joinModel, verbose=verbose, initial=initial, recompute = recompute)
+	x = mxAlgebra(expression, name = name, dimnames = dimnames, ..., joinKey=joinKey, joinModel=joinModel, verbose=verbose, initial=initial, recompute = recompute)
 	return(x)
 }
 

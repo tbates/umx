@@ -11,9 +11,9 @@ umx_file_load_pseudo(fn, bp, suffix = "_NT", chosenp = "S5")
 
 \item{bp}{The path to the folder containing the file}
 
-\item{chosenp}{The suffix (pvalue) we desire to use (Default = "S5")}
+\item{suffix}{to add to the NT columns (Default = "_NT")}
 
-\item{sep}{suffix for the NT columns (Default = "_NT")}
+\item{chosenp}{The suffix (pvalue) we desire to use (Default = "S5")}
 }
 \value{
 \itemize{

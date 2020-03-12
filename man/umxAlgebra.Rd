@@ -9,12 +9,12 @@ umxAlgebra(
   expression,
   dimnames = NA,
   ...,
-  fixed = FALSE,
   joinKey = as.character(NA),
   joinModel = as.character(NA),
   verbose = 0L,
   initial = matrix(as.numeric(NA), 1, 1),
-  recompute = c("always", "onDemand")
+  recompute = c("always", "onDemand"),
+  fixed = "deprecated_use_recompute"
 )
 }
 \arguments{
@@ -26,8 +26,6 @@ umxAlgebra(
 
 \item{...}{Other parameters}
 
-\item{fixed}{= See mxAlgebra documentation}
-
 \item{joinKey}{See mxAlgebra documentation}
 
 \item{joinModel}{See mxAlgebra documentation}
@@ -37,6 +35,8 @@ umxAlgebra(
 \item{initial}{See mxAlgebra documentation}
 
 \item{recompute}{See mxAlgebra documentation}
+
+\item{fixed}{= See mxAlgebra documentation}
 }
 \value{
 \itemize{

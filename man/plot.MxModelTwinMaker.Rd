@@ -2,7 +2,6 @@
 % Please edit documentation in R/umxDoCbyPath.R
 \name{plot.MxModelTwinMaker}
 \alias{plot.MxModelTwinMaker}
-\alias{plot}
 \alias{umxPlotMxModelTwinMaker}
 \title{Create and display a graphical path diagram for a path-based twin model.}
 \usage{
