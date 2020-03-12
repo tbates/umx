@@ -1,15 +1,13 @@
 # umx 3.1.0
 * March 2020 R 4.0.0 compatibility
-* BETA: `umxTwinMaker` Make twin models by specifying just 1 person in `umxPaths`!!
+* BETA: `umxTwinMaker`: Make twin models by specifying *just the within-twin paths for one twin*: This makes twin2, adds covariances for variance components, creates the MZ and DZ groups, and makes and runs a `umxSuperModel` plot() and std= TRUE work for any model now! 
 * BETA: `plot` for `umxTwinMaker` models!!
 * NEW: `umxDoCp` Path-based Direction of causation model
-
-* NEW: `umxTwinMaker`: Make twin models just by specifying the within-twin paths for one twin: This makes twin2, adds covariances for variance components, creates the MZ and DZ groups, and makes and runs a `umxSuperModel` plot() and std= TRUE work for any model now! 
+* NEW: data for example with direction of causation work on umxSummary for DoC
 * NEW: `xmu_path2twin`  twin model helper for `umxPath` users 
 * NEW: `xmu_path_regex` helper for making twin models for `umxPath` users
-* NEW: data for example with direction of causation work on umxSummary for DoC
+* NEW: `umx_file_load_pseudo` to load and process non-transmitted genome files for the method we developed in Bates, ... Gillespie, N. A. (2018). The Nature of Nurture: Using a Virtual-Parent Design to Test Parenting Effects on Children's Educational Attainment in Genotyped Families. Twin Res Hum Genet, 21(2), 73-83. doi:10.1017/thg.2018.11
 * IMPROVED: `umxFitIndices` Many new indices! @bwiernik
-* IMPROVED: `umxTwinMaker` 
 * IMPROVED: `umxPath(v.m0 = )` now uses values (if provided) to set starts for variance
 * IMPROVED: `umx_check_parallel` use all cores (instead of half) by default
 * IMPROVED: `umxPlotACE` variable labels (trimmed off _T1 like umxPlotCP does
