@@ -4,14 +4,20 @@
 \alias{umx_file_load_pseudo}
 \title{Read in files from pseudocons.}
 \usage{
-umx_file_load_pseudo(fn, bp, suffix = "_NT")
+umx_file_load_pseudo(fn, bp, suffix = "_NT", chosenp = "S5")
 }
 \arguments{
-\item{param}{sep  suffix for the NT columns (Default = "_NT")}
+\item{fn}{The filename}
+
+\item{bp}{The path to the folder containing the file}
+
+\item{chosenp}{The suffix (pvalue) we desire to use (Default = "S5")}
+
+\item{sep}{suffix for the NT columns (Default = "_NT")}
 }
 \value{
 \itemize{
-\item list of pseudo and real PRS dataframes.
+\item dataframe of real and pseudo PRS columns
 }
 }
 \description{
@@ -33,8 +39,7 @@ Read in PRS scored files from \href{https://www.staff.ncl.ac.uk/richard.howey/ps
 basepath = "~/Dropbox/2016 (1). project EA/2018/EA3/"
 tmp = umx_file_load_pseudo("PRS_EA3_R9_autosomes_HRC1.1_pseudo.txt", bp = bp)
 str(tmp)
-EA3real   = tmp$real
-EA3pseudo = tmp$pseudo
+head(tmp[, c("BMIS4", "BMIS4_NT")]
 }
 }
 \seealso{
