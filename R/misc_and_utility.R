@@ -1655,10 +1655,12 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' tmp = umx_rename(tmp, regex = "lacement", to = "") # revert to disp
 #' umx_names(tmp, "^d") # all names beginning with a d
 #'
+#' # advanced: checking deprecated format handled...
+#' tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
 umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE, old = "deprecated", replace= "deprecated") {
 	# See also gdata::rename.vars(data, from, to)	
-	if(old     != "deprecated"){from = old; message("Please use 'from' instead of 'old' in umx_rename()") }
-	if(replace != "deprecated"){to = replace; message("Please use 'to' instead of 'replace' in umx_rename()") }
+	if(any(old     != "deprecated")){from = old; message("Polite message: Please use 'from' instead of 'old' in umx_rename()") }
+	if(any(replace != "deprecated")){to = replace; message("Polite message: Please use 'to' instead of 'replace' in umx_rename()") }
 
 	if(!is.null(attributes(from)$names)){
 		stop("You gave a list to from in umx_rename(). Lists (old='new') only allowed in to")

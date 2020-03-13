@@ -27,14 +27,14 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering){
 	if(zygosity != "zygosity"){
 		if(!is.null(data$zygosity)){
 			stop("A column called 'zygosity' already exists. please rename that column first, e.g. with\n",
-			"data = umx_rename(data, old='zygosity', replace='old_zyg')")
+			"data = umx_rename(data, from='zygosity', to='old_zyg')")
 		} else {
-			data = umx_rename(data, old=zygosity, replace='zygosity')
+			data = umx_rename(data, from= zygosity, to= 'zygosity')
 			# data$zygosity = data[, zygosity]
 		}
 	}
 	# Update twin names with new separator.
 	oldNames = namez(data, paste0(sep, "[0-9]$"))
 	newNames = namez(oldNames, pattern = paste0(sep, "([0-9])$"), replacement = "_T\\1")
-	data = umx_rename(data=data, old = oldNames, replace = newNames)
+	data = umx_rename(data=data, from = oldNames, to = newNames)
 }

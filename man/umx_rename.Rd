@@ -73,6 +73,8 @@ tmp = umx_rename(tmp, regex = "lacement", to = "", test= TRUE)
 tmp = umx_rename(tmp, regex = "lacement", to = "") # revert to disp
 umx_names(tmp, "^d") # all names beginning with a d
 
+# advanced: checking deprecated format handled...
+tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
 }
 \seealso{
 \link{namez} to filter (and replace) names, Also \link{umx_check_names} to check for existence of names in a dataframe.
