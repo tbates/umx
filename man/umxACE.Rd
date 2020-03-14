@@ -258,6 +258,7 @@ m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
 # = Well done! Now you can make modify twin models in umx =
 # =========================================================
 
+\dontrun{
 # =====================================
 # = Bivariate height and weight model =
 # =====================================
@@ -332,10 +333,8 @@ twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 selDVs = c("wt", "obese")
 mzData = twinData[twinData$zygosity \%in\% "MZFF",]
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
-\dontrun{
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
-}
 
 # ===================================
 # Example with covariance data only =
@@ -350,6 +349,7 @@ dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", selDVs], use = "complete")
 m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=569, numObsMZ=351)
 umxSummary(m1)
 plot(m1)
+}
 
 }
 \references{

@@ -1,5 +1,6 @@
 ## Changes
-Features and improvements.
+Reduced run time for examples following CRAN feedback
+Features and improvements. 
 
 ## Test environments
 * OS X 10.14.0, R version 3.6.3
