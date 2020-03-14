@@ -1247,6 +1247,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # = Well done! Now you can make modify twin models in umx =
 #' # =========================================================
 #'
+#' \dontrun{
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================
@@ -1321,10 +1322,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' selDVs = c("wt", "obese")
 #' mzData = twinData[twinData$zygosity %in% "MZFF",]
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
-#' \dontrun{
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
-#' }
 #'
 #' # ===================================
 #' # Example with covariance data only =
@@ -1339,6 +1338,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
+#' }
 #'
 umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, covMethod = c("fixed", "random"), dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 		tryHard             = match.arg(tryHard)

@@ -1123,15 +1123,15 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 
 		if(std){
 			message("Standardized solution")
-			Vtot = A + C + E;         # Total variance
-			I  <- diag(nVar);         # nVar Identity matrix
+			Vtot = A + C + E; # Total variance
+			I  <- diag(nVar); # nVar Identity matrix
 			SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
 			# (same as "(\sqrt(I.Vtot))~"
 
 			# Standardized _path_ coefficients ready to be stacked together
-			a_std <- SD %*% a; # Standardized path coefficients
-			c_std <- SD %*% c;
-			e_std <- SD %*% e;
+			a_std  = SD %*% a; # Standardized path coefficients
+			c_std  = SD %*% c;
+			e_std  = SD %*% e;
 			aClean = a_std
 			cClean = c_std
 			eClean = e_std
@@ -4164,15 +4164,15 @@ summaryAPA <- umxAPA
 #' 
 #' @param data The twin data.
 #' @param selVars Collection of variables to report on, e.g. c("wt", "ht").
-#' @param sep  The separator string that will turn a variable name into a twin variable name, e.g. "_T" for wt_T1 and wt_T2.
-#' @param zyg  The zygosity variable in the dataset, e.g. "zygosity".
+#' @param sep  The separator string that will turn a variable name into a twin variable name, default= "_T" for wt_T1 and wt_T2.
+#' @param zyg  The zygosity variable in the dataset, default = "zygosity".
 #' @param MZ Set level in zyg corresponding to MZ for two group case (defaults to using 5-group case).
 #' @param DZ Set level in zyg corresponding to DZ for two group case (defaults to using 5-group case).
-#' @param MZFF The level in zyg corresponding to MZ FF pairs: e.g., "MZFF".
-#' @param DZFF The level in zyg corresponding to DZ FF pairs: e.g., "DZFF".
-#' @param MZMM The level in zyg corresponding to MZ MM pairs: e.g., "MZMM".
-#' @param DZMM The level in zyg corresponding to DZ MM pairs: e.g., "DZMM".
-#' @param DZOS The level in zyg corresponding to DZ OS pairs: e.g., "DZOS".
+#' @param MZFF The level of zyg corresponding to MZ FF pairs: default= "MZFF".
+#' @param DZFF The level of zyg corresponding to DZ FF pairs: default= "DZFF".
+#' @param MZMM The level of zyg corresponding to MZ MM pairs: default= "MZMM".
+#' @param DZMM The level of zyg corresponding to DZ MM pairs: default= "DZMM".
+#' @param DZOS The level of zyg corresponding to DZ OS pairs: default= "DZOS".
 #' @param digits Rounding precision of the report (default 2).
 #' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
 #' @return - formatted table, e.g. in markdown.
@@ -4186,7 +4186,7 @@ summaryAPA <- umxAPA
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
 #' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
-umxSummarizeTwinData <- function(data = NULL, selVars = "wt", sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2, report = c("markdown", "html")) {
+umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2, report = c("markdown", "html")) {
 	report = match.arg(report)
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
