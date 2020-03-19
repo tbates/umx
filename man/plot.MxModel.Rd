@@ -112,12 +112,10 @@ plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 }
 
 Other umx S3 functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()}
+\code{\link{plot.MxLISRELModel}()}
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
 \code{\link{umxPlotACE}()},

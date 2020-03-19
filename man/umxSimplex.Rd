@@ -146,6 +146,7 @@ m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3),
 }
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},

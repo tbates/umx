@@ -103,6 +103,7 @@ Nonparametric Estimates of Gene x Environment Interaction Using Local Structural
 }
 \seealso{
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},

@@ -73,11 +73,9 @@ The commercial application \dQuote{OmniGraffle} is great for editing these image
 }
 
 Other umx S3 functions: 
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()}
 
 Other Plotting functions: 
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},

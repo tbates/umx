@@ -364,6 +364,7 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 }
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},

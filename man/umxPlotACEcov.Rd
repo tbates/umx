@@ -71,7 +71,6 @@ plot(m1, std = FALSE) # don't standardize
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEv}()},
 \code{\link{umxPlotACE}()},

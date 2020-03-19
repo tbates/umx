@@ -144,6 +144,7 @@ Educational Achievement Data. \emph{Behavior Genetics}, \strong{46}, 583-95. doi
 }
 \seealso{
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEv}()},

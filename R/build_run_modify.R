@@ -1068,7 +1068,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' 
 #' \if{html}{\figure{ACEmatrix.png}{options: width="50\%" alt="Figure: ACE matrix.png"}}
 #' \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
-#' 
+#'
 #' In this model, the variance-covariance matrix of the raw data
 #' is recovered as the product of the lower Cholesky and its transform.
 #' 
@@ -3430,19 +3430,24 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' a latent variable driving binary data, in order to estimate its one-free parameter: where to place the single threshold
 #' separating low from high cases.
 #' 
+#' The function returns a 3-item list consisting of:
+#' 
+#' 1. A thresholdsAlgebra (named `threshMatName`)
+#' 2. A matrix of deviations for the thresholds (`deviations_for_thresh`)
+#' 3. A lower matrix of ones (`lowerOnes_for_thresh`)
+#'
 #' *Twin Data*
+#'
+#' With twin data, make sure to provide the **full names** for twin data... this is not standard I know...
+#' 
 #' For twins (the function currently handles only pairs), the thresholds are equated for both twins using labels:
+#'
 #' $labels
 #' 
-#'       obese1         obese2
+#'       obese_T1         obese_T2
 #' 
 #' dev_1 "obese_dev1"   "obese_dev1"
 #' 
-#' The function returns a 3-item list consisting of:
-#' 
-#' 1. A thresholdsAlgebra (named threshMatName)
-#' 2. A matrix of deviations for the thresholds (deviations_for_thresh)
-#' 3. A lower matrix of 1s (lowerOnes_for_thresh)
 #'
 #' @param df The data being modeled (to allow access to the factor levels and quantiles within these for each variable)
 #' @param selDVs The variable names. Note for twin data, just the base names, which sep will be used to fill out.
@@ -3552,7 +3557,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 	method = match.arg(method)
 	
 	if(is.null(selDVs)){
-		warning("Just a polite message, but for coding safety, I recommend calling umxThresholdMatrix with the names of the variables in the model. Next time, please include selDVs (AND you MUST include sep if this is a twin model!!)")
+		warning("Polite message: For coding safety, when calling umxThresholdMatrix, use selDVs to list the FULL names of all the variables in the model (AND you MUST include sep if this is a twin model!!)")
 		selVars = names(df)
 		nSib = 1
 	} else if(is.null(sep)){
@@ -3563,7 +3568,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 		# sep provided: Assume this is twin data (already expanded... no way currently to tell if sep was intended to build or decompose vars - see TODO above!!)
 		# Set nSib, and break down names into base and suffix if necessary
 		selVars = selDVs
-		msg = paste0("For twin data, the names umxThresholdMatrix expects in selDVs are the FULL names (and a sep to break them apart)... 
+		msg = paste0("umxThresholdMatrix needs the _FULL_ name of each variable (in addition to the `sep` used to break them down to base names)... 
 			you provided: ", omxQuotes(selDVs))
 		umx_check_names(namesNeeded = selVars, data = df, die = TRUE, message = msg)
 		tmp         = umx_explode_twin_names(selVars, sep = sep)

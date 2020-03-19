@@ -234,6 +234,7 @@ Multivariate genetic analysis of sex-lim and GxE interaction. \emph{Twin Researc
 \code{\link[=umxSummarySexLim]{umxSummarySexLim()}}, \code{\link[=umxPlotSexLim]{umxPlotSexLim()}}
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},

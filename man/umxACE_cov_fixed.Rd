@@ -128,6 +128,7 @@ m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 umx_residualize umxACE
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},

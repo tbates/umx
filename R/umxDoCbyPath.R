@@ -269,9 +269,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
-#' @family umx S3 functions
-#' @family Plotting functions
-#' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
+#' @family Twin Modeling Functions
 #' @md
 #' @examples
 #' \dontrun{
@@ -297,6 +295,16 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' plot(m1, std= TRUE, means= FALSE)
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #' } # end dontrun
+#'
+#' paths = c(
+#'	umxPath(v1m0 = c("A1", 'C1', "E1")),
+#'	umxPath(v1m0 = c("A2", 'C2', "E2")),
+#'	umxPath(v.m0 = c("l1", 'l2')),
+#'	umxPath(v.m. = c("wt", "ht")),
+#'	umxPath(c("A1", 'C1', "E1"), to = "l1", values= .2),
+#'	umxPath(c("A2", 'C2', "E2"), to = "l2", values= .2),
+#'	umxPath(c("l1", 'l2'), to = c("wt", "ht"), values= .2),
+#' )
 #'
 plot.MxModelTwinMaker <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, oneTwin = TRUE, sep= "_T", digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
 	# loop over submodels	

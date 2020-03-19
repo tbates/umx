@@ -212,9 +212,12 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		pairsUsed = paste0(round(nFound * pMZ), " MZ and ",round(nFound * (1 - pMZ)), " DZ pairs")
 		if(!is.null(n)){
 			empiricalPower = attributes(tmp)$detail$power
-			message(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect a parameter of ", round(paramSize, 3)))
+			update = "a_r1c1"
+			paramSize = AA
+			
+			message(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect an ", update, " parameter of ", round(paramSize, 3)))
 		} else {
-			message(paste0("For ", round(power * 100, digits), "% power, you need ", pairsUsed))
+			message(paste0("For ", round(power * 100, digits), "% power to detect ", omxQuotes(update), " of size ", paramSize, ", you need ", pairsUsed))
 		}
 	}
 	return(tmp)

@@ -59,6 +59,7 @@ m2 = umxRotate(m1, rotation = "varimax",  tryHard = "yes")
 }
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},

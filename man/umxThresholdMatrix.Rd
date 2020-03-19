@@ -51,19 +51,23 @@ Making this work can require fixing the first 2 thresholds of ordinal data, or f
 a latent variable driving binary data, in order to estimate its one-free parameter: where to place the single threshold
 separating low from high cases.
 
+The function returns a 3-item list consisting of:
+\enumerate{
+\item A thresholdsAlgebra (named \code{threshMatName})
+\item A matrix of deviations for the thresholds (\code{deviations_for_thresh})
+\item A lower matrix of ones (\code{lowerOnes_for_thresh})
+}
+
 \emph{Twin Data}
+
+With twin data, make sure to provide the \strong{full names} for twin data... this is not standard I know...
+
 For twins (the function currently handles only pairs), the thresholds are equated for both twins using labels:
-$labels\preformatted{  obese1         obese2
+
+$labels\preformatted{  obese_T1         obese_T2
 }
 
 dev_1 "obese_dev1"   "obese_dev1"
-
-The function returns a 3-item list consisting of:
-\enumerate{
-\item A thresholdsAlgebra (named threshMatName)
-\item A matrix of deviations for the thresholds (deviations_for_thresh)
-\item A lower matrix of 1s (lowerOnes_for_thresh)
-}
 }
 \examples{
 # ============================
