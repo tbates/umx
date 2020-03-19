@@ -3239,10 +3239,10 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 = umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
-#' 	umxPath(from = "G", to = manifests),
-#' 	umxPath(v.m. = manifests),
-#' 	umxPath(v1m0 = "G")
+#' m1 = umxRAM("OneFactor", data = demoOneFactor,
+#' 	umxPath(from = "G", to = manifests), # factor loadings
+#' 	umxPath(v.m. = manifests),           # residual variance
+#' 	umxPath(v1m0 = "G")                  # standardized latent
 #' )
 #' # Parameters with values below .1
 #' umxParameters(m1, "below", .1)
@@ -3250,16 +3250,13 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umxParameters(m1, "above", .5)
 #' # Parameters with values below .1 and containing "_to_" in their label
 #' umxParameters(m1, "below", .1, "_to_")
-umxParameters <- function(x, thresh = c("all", "above", "below", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
+umxParameters <- function(x, thresh = c("all", "above", "below", ">", "<", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
 	# TODO clarify when to use parameters vs. umxGetParameters
 	# TODO Add filtering by significance (based on SEs)
 	# TODO Offer a method to handle sub-models
 	# 	model$aSubmodel$matrices$aMatrix$labels
 	# 	model$MZ$matrices
 	
-	if(std){
-		stop("Sorry, std not implemented yet: Standardize the model and provide this or the summary as input.")
-	}
 	# x = cp4
 	if(class(thresh) == "numeric"){
 		stop("You might not have specified the parameter value (b) by name. e.g.:\n
@@ -3268,11 +3265,16 @@ or specify all arguments:\n
 	parameters(cp4, 'below', .1, '_cp_')
 		")
 	}
-	thresh <- match.arg(thresh)
+	thresh = match.arg(thresh)
 
 	if(!is.null(b) && (thresh == "all")){
 		message("Ignoring b (cutoff) and thresh = all. Set above or below to pick a beta to cut on.")
 	}
+
+	if(std){
+		x = umx_standardize(x)
+	}
+
 	if(class(x) != "summary.mxmodel"){
 		if(umx_has_been_run(x)){
 			x = summary(x)
@@ -3295,16 +3297,16 @@ or specify all arguments:\n
 	}
 	parList = unique(parList)
 	
-	if(thresh == "above"){
+	if(thresh %in%  c("above", ">") ){
 		filter = x$name %in% parList & abs(x$Estimate) > b
-	} else if(thresh == "below"){
+	} else if(thresh %in% c("below", "<")){
 		filter = x$name %in% parList & abs(x$Estimate) < b
 	} else if(thresh == "all"){
 		filter = x$name %in% parList
 	} else if(thresh == "NS"){
-		stop("NS and Sig not implemented yet: email maintainer('umx') to get this done.")
+		stop("NS not yet implemented in 'parameters' : email maintainer('umx') to get this done.")
 	} else if(thresh == "sig"){
-		stop("NS and Sig not implemented yet: email maintainer('umx') to get this done.")
+		stop("sig not yet implemented in 'parameters': email maintainer('umx') to get this done.")
 	}
 
 	if(sum(filter) == 0){

@@ -133,8 +133,7 @@ Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor anal
 \item \code{\link[=factanal]{factanal()}}, \code{\link[=mxFactorScores]{mxFactorScores()}}
 }
 
-Other Super-easy helpers: 
-\code{\link{umxMendelianRandomization}()},
-\code{\link{umx}}
+Other Super-easy helpers: \code{\link{umxMendelianRandomization}()},
+  \code{\link{umx}}
 }
 \concept{Super-easy helpers}

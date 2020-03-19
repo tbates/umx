@@ -79,23 +79,20 @@ jnk = umxFactor(df); str(jnk)
 \item \code{\link[=umxFactanal]{umxFactanal()}}, \code{\link[=mxFactor]{mxFactor()}}
 }
 
-Other Data Functions: 
-\code{\link{umxHetCor}()},
-\code{\link{umx_as_numeric}()},
-\code{\link{umx_cont_2_quantiles}()},
-\code{\link{umx_lower2full}()},
-\code{\link{umx_make_MR_data}()},
-\code{\link{umx_make_TwinData}()},
-\code{\link{umx_make_fake_data}()},
-\code{\link{umx_make_raw_from_cov}()},
-\code{\link{umx_polychoric}()},
-\code{\link{umx_polypairwise}()},
-\code{\link{umx_polytriowise}()},
-\code{\link{umx_read_lower}()},
-\code{\link{umx_rename}()},
-\code{\link{umx_reorder}()},
-\code{\link{umx_select_valid}()},
-\code{\link{umx_stack}()},
-\code{\link{umx}}
+Other Data Functions: \code{\link{umxHetCor}()},
+  \code{\link{umx_as_numeric}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_lower2full}()},
+  \code{\link{umx_make_MR_data}()},
+  \code{\link{umx_make_TwinData}()},
+  \code{\link{umx_make_fake_data}()},
+  \code{\link{umx_make_raw_from_cov}()},
+  \code{\link{umx_polychoric}()},
+  \code{\link{umx_polypairwise}()},
+  \code{\link{umx_polytriowise}()},
+  \code{\link{umx_read_lower}()},
+  \code{\link{umx_rename}()}, \code{\link{umx_reorder}()},
+  \code{\link{umx_select_valid}()},
+  \code{\link{umx_stack}()}, \code{\link{umx}}
 }
 \concept{Data Functions}

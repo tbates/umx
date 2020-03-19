@@ -96,10 +96,8 @@ umxLabel(a, verbose = TRUE, overRideExisting = TRUE)
 }
 }
 \seealso{
-Other Advanced Model Building Functions: 
-\code{\link{umxJiggle}()},
-\code{\link{umxThresholdMatrix}()},
-\code{\link{umxValues}()},
-\code{\link{umx}}
+Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
+  \code{\link{umxThresholdMatrix}()},
+  \code{\link{umxValues}()}, \code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

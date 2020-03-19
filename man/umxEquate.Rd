@@ -83,12 +83,10 @@ m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq x1 x2",
 \seealso{
 \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
 
-Other Modify or Compare Models: 
-\code{\link{umxFixAll}()},
-\code{\link{umxMI}()},
-\code{\link{umxModify}()},
-\code{\link{umxSetParameters}()},
-\code{\link{umxUnexplainedCausalNexus}()},
-\code{\link{umx}}
+Other Modify or Compare Models: \code{\link{umxFixAll}()},
+  \code{\link{umxMI}()}, \code{\link{umxModify}()},
+  \code{\link{umxSetParameters}()},
+  \code{\link{umxUnexplainedCausalNexus}()},
+  \code{\link{umx}}
 }
 \concept{Modify or Compare Models}

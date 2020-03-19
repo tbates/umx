@@ -55,12 +55,9 @@ the MCV Twin Study. Medical College of Virginia.
 \url{https://www.ncbi.nlm.nih.gov/pubmed/10323623}
 }
 \seealso{
-Other datasets: 
-\code{\link{Fischbein_wt}},
-\code{\link{GFF}},
-\code{\link{docData}},
-\code{\link{iqdat}},
-\code{\link{umx}}
+Other datasets: \code{\link{Fischbein_wt}},
+  \code{\link{GFF}}, \code{\link{docData}},
+  \code{\link{iqdat}}, \code{\link{umx}}
 }
 \concept{datasets}
 \keyword{datasets}
