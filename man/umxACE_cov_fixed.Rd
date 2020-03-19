@@ -127,21 +127,14 @@ m1 = umxACE(selDVs = selDVs, sep = "", dzData = dzData, mzData = mzData)
 \seealso{
 umx_residualize umxACE
 
-Other Twin Modeling Functions: 
-\code{\link{power.ACE.test}()},
-\code{\link{umxACEcov}()},
-\code{\link{umxACEv}()},
-\code{\link{umxACE}()},
-\code{\link{umxCP}()},
-\code{\link{umxDoCp}()},
-\code{\link{umxDoC}()},
-\code{\link{umxGxE_window}()},
-\code{\link{umxGxEbiv}()},
-\code{\link{umxGxE}()},
-\code{\link{umxIP}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umx}}
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxDoCp}()}, \code{\link{umxDoC}()},
+  \code{\link{umxGxE_window}()}, \code{\link{umxGxEbiv}()},
+  \code{\link{umxGxE}()}, \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
+  \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

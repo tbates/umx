@@ -111,23 +111,17 @@ plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 \item \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=plot.MxModel]{plot.MxModel()}}, \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, \code{\link[=umxPlotIP]{umxPlotIP()}}, \code{\link[=umxPlotGxE]{umxPlotGxE()}}
 }
 
-Other umx S3 functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()}
+Other umx S3 functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModelTwinMaker}()}
 
-Other Plotting functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotACE}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()},
-\code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModelTwinMaker}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
+  \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}
 \concept{umx S3 functions}

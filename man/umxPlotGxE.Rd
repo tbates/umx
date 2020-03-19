@@ -60,18 +60,13 @@ umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 \item \code{\link[=umxGxE]{umxGxE()}}
 }
 
-Other Plotting functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
-\code{\link{plot.MxModel}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotACE}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()},
-\code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModelTwinMaker}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotACE}()},
+  \code{\link{umxPlotCP}()}, \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotIP}()}, \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}

@@ -46,11 +46,9 @@ umx_is_class(mtcars$mpg) # report class of this column (same as class(mpg))
 \item \code{\link[=umx_is_numeric]{umx_is_numeric()}}
 }
 
-Other Check or test: 
-\code{\link{umx_check_names}()},
-\code{\link{umx_is_endogenous}()},
-\code{\link{umx_is_exogenous}()},
-\code{\link{umx_is_numeric}()},
-\code{\link{umx}}
+Other Check or test: \code{\link{umx_check_names}()},
+  \code{\link{umx_is_endogenous}()},
+  \code{\link{umx_is_exogenous}()},
+  \code{\link{umx_is_numeric}()}, \code{\link{umx}}
 }
 \concept{Check or test}

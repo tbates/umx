@@ -47,21 +47,15 @@ AIC(m1)
 \item \code{\link[=AIC]{AIC()}}, \code{\link[=umxCompare]{umxCompare()}}, \code{\link[=logLik]{logLik()}}
 }
 
-Other Reporting functions: 
-\code{\link{RMSEA.MxModel}()},
-\code{\link{RMSEA.summary.mxmodel}()},
-\code{\link{RMSEA}()},
-\code{\link{loadings}()},
-\code{\link{residuals.MxModel}()},
-\code{\link{umxCI_boot}()},
-\code{\link{umxCI}()},
-\code{\link{umxCompare}()},
-\code{\link{umxConfint}()},
-\code{\link{umxExpCov}()},
-\code{\link{umxExpMeans}()},
-\code{\link{umxFitIndices}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxRotate}()},
-\code{\link{umxSummary.MxModel}()}
+Other Reporting functions: \code{\link{RMSEA.MxModel}()},
+  \code{\link{RMSEA.summary.mxmodel}()},
+  \code{\link{RMSEA}()}, \code{\link{loadings}()},
+  \code{\link{residuals.MxModel}()},
+  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
+  \code{\link{umxCompare}()}, \code{\link{umxConfint}()},
+  \code{\link{umxExpCov}()}, \code{\link{umxExpMeans}()},
+  \code{\link{umxFitIndices}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
+  \code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

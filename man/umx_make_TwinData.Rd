@@ -231,32 +231,27 @@ str(tmp)
 \item \code{\link[=umxACE]{umxACE()}}, \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxGxEbiv]{umxGxEbiv()}}
 }
 
-Other Twin Data functions: 
-\code{\link{umx_long2wide}()},
-\code{\link{umx_make_twin_data_nice}()},
-\code{\link{umx_residualize}()},
-\code{\link{umx_scale_wide_twin_data}()},
-\code{\link{umx_wide2long}()},
-\code{\link{umx}}
+Other Twin Data functions: \code{\link{umx_long2wide}()},
+  \code{\link{umx_make_twin_data_nice}()},
+  \code{\link{umx_residualize}()},
+  \code{\link{umx_scale_wide_twin_data}()},
+  \code{\link{umx_wide2long}()}, \code{\link{umx}}
 
-Other Data Functions: 
-\code{\link{umxFactor}()},
-\code{\link{umxHetCor}()},
-\code{\link{umx_as_numeric}()},
-\code{\link{umx_cont_2_quantiles}()},
-\code{\link{umx_lower2full}()},
-\code{\link{umx_make_MR_data}()},
-\code{\link{umx_make_fake_data}()},
-\code{\link{umx_make_raw_from_cov}()},
-\code{\link{umx_polychoric}()},
-\code{\link{umx_polypairwise}()},
-\code{\link{umx_polytriowise}()},
-\code{\link{umx_read_lower}()},
-\code{\link{umx_rename}()},
-\code{\link{umx_reorder}()},
-\code{\link{umx_select_valid}()},
-\code{\link{umx_stack}()},
-\code{\link{umx}}
+Other Data Functions: \code{\link{umxFactor}()},
+  \code{\link{umxHetCor}()},
+  \code{\link{umx_as_numeric}()},
+  \code{\link{umx_cont_2_quantiles}()},
+  \code{\link{umx_lower2full}()},
+  \code{\link{umx_make_MR_data}()},
+  \code{\link{umx_make_fake_data}()},
+  \code{\link{umx_make_raw_from_cov}()},
+  \code{\link{umx_polychoric}()},
+  \code{\link{umx_polypairwise}()},
+  \code{\link{umx_polytriowise}()},
+  \code{\link{umx_read_lower}()},
+  \code{\link{umx_rename}()}, \code{\link{umx_reorder}()},
+  \code{\link{umx_select_valid}()},
+  \code{\link{umx_stack}()}, \code{\link{umx}}
 }
 \concept{Data Functions}
 \concept{Twin Data functions}

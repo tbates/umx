@@ -61,18 +61,14 @@ plot(m1, std = FALSE) # don't standardize
 \item \code{\link[=umxACE]{umxACE()}}
 }
 
-Other Plotting functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
-\code{\link{plot.MxModel}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()},
-\code{\link{umx}}
+Other Plotting functions: \code{\link{plot.MxLISRELModel}()},
+  \code{\link{plot.MxModelTwinMaker}()},
+  \code{\link{plot.MxModel}()},
+  \code{\link{umxPlotACEcov}()},
+  \code{\link{umxPlotACEv}()}, \code{\link{umxPlotCP}()},
+  \code{\link{umxPlotGxEbiv}()},
+  \code{\link{umxPlotGxE}()}, \code{\link{umxPlotIP}()},
+  \code{\link{umxPlotSexLim}()},
+  \code{\link{umxPlotSimplex}()}, \code{\link{umx}}
 }
 \concept{Plotting functions}

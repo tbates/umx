@@ -145,8 +145,7 @@ umxPower(m1, "X_with_Y", n= 90, method = "empirical", explore = TRUE)
 \item \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Teaching and Testing functions: 
-\code{\link{tmx_show}()},
-\code{\link{umxDiagnose}()}
+Other Teaching and Testing functions: \code{\link{tmx_show}()},
+  \code{\link{umxDiagnose}()}
 }
 \concept{Teaching and Testing functions}

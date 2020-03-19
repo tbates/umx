@@ -91,8 +91,7 @@ p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE);
 }
 }
 \seealso{
-Other Teaching and testing Functions: 
-\code{\link{tmx_is.identified}()},
-\code{\link{umx}}
+Other Teaching and testing Functions: \code{\link{tmx_is.identified}()},
+  \code{\link{umx}}
 }
 \concept{Teaching and testing Functions}

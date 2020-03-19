@@ -253,21 +253,15 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 \code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}} work for all twin models, e.g., \code{\link[=umxIP]{umxIP()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=umxGxE]{umxGxE()}}, and \code{\link[=umxACE]{umxACE()}}. For a deep-dive, see \code{\link[=xmu_make_top_twin]{xmu_make_top_twin()}}
 }
 
-Other Twin Modeling Functions: 
-\code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
-\code{\link{umxACEcov}()},
-\code{\link{umxACEv}()},
-\code{\link{umxACE}()},
-\code{\link{umxDoCp}()},
-\code{\link{umxDoC}()},
-\code{\link{umxGxE_window}()},
-\code{\link{umxGxEbiv}()},
-\code{\link{umxGxE}()},
-\code{\link{umxIP}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umx}}
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxDoCp}()},
+  \code{\link{umxDoC}()}, \code{\link{umxGxE_window}()},
+  \code{\link{umxGxEbiv}()}, \code{\link{umxGxE}()},
+  \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
+  \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

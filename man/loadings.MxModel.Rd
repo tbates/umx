@@ -37,15 +37,11 @@ loadings(m1)
 \item \code{\link[=factanal]{factanal()}}, \code{\link[=loadings]{loadings()}}
 }
 
-Other Reporting Functions: 
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umxReduce}()},
-\code{\link{umx_aggregate}()},
-\code{\link{umx_names}()},
-\code{\link{umx_time}()},
-\code{\link{umx}}
+Other Reporting Functions: \code{\link{umxAPA}()},
+  \code{\link{umxFactorScores}()},
+  \code{\link{umxGetParameters}()},
+  \code{\link{umxParameters}()}, \code{\link{umxReduce}()},
+  \code{\link{umx_aggregate}()}, \code{\link{umx_names}()},
+  \code{\link{umx_time}()}, \code{\link{umx}}
 }
 \concept{Reporting Functions}

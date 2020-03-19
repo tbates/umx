@@ -5,6 +5,7 @@
 # test_package("umx")
 
 test_that("testing umx twin models", {
+	testthat::skip_on_cran() 
 
 	# 1. Test sep enforcement
 	require(umx)
@@ -18,7 +19,7 @@ test_that("testing umx twin models", {
 	# expect_error(m1 = umxIP(selDVs = selDVs, dzData = dzData, mzData = mzData),"Please use sep")
 	
 	# Use "marginals" method to enable all continuous data with missingness.
-	m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod='marginals')
+	m3 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod= 'marginals')
 	# omit missing to enable default WLS method to work on all continuous data
 	dzD = na.omit(dzData[, tvars(selDVs, "_T")])
 	mzD = na.omit(dzData[, tvars(selDVs, "_T")])

@@ -31,19 +31,13 @@ qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
 \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
 }
 \seealso{
-Other Miscellaneous Utility Functions: 
-\code{\link{install.OpenMx}()},
-\code{\link{umxBrownie}()},
-\code{\link{umxLav2RAM}()},
-\code{\link{umxRAM2Lav}()},
-\code{\link{umxVersion}()},
-\code{\link{umx_array_shift}()},
-\code{\link{umx_find_object}()},
-\code{\link{umx_msg}()},
-\code{\link{umx_open_CRAN_page}()},
-\code{\link{umx_pad}()},
-\code{\link{umx_print}()},
-\code{\link{umx_score_scale}()},
-\code{\link{umx}}
+Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
+  \code{\link{umxBrownie}()}, \code{\link{umxLav2RAM}()},
+  \code{\link{umxRAM2Lav}()}, \code{\link{umxVersion}()},
+  \code{\link{umx_array_shift}()},
+  \code{\link{umx_find_object}()}, \code{\link{umx_msg}()},
+  \code{\link{umx_open_CRAN_page}()},
+  \code{\link{umx_pad}()}, \code{\link{umx_print}()},
+  \code{\link{umx_score_scale}()}, \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}

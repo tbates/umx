@@ -86,22 +86,18 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 \item \code{\link[=umxACE]{umxACE()}}, \code{\link[=plot.MxModelACE]{plot.MxModelACE()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Twin Reporting Functions: 
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
-\code{\link{umxReduceACE}()},
-\code{\link{umxReduceGxE}()},
-\code{\link{umxReduce}()},
-\code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACEcov}()},
-\code{\link{umxSummaryACEv}()},
-\code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryDoC}()},
-\code{\link{umxSummaryGxEbiv}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
-\code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()},
-\code{\link{umx}}
+Other Twin Reporting Functions: \code{\link{umxPlotCP}()},
+  \code{\link{umxPlotDoC}()}, \code{\link{umxReduceACE}()},
+  \code{\link{umxReduceGxE}()}, \code{\link{umxReduce}()},
+  \code{\link{umxSummarizeTwinData}()},
+  \code{\link{umxSummaryACEcov}()},
+  \code{\link{umxSummaryACEv}()},
+  \code{\link{umxSummaryCP}()},
+  \code{\link{umxSummaryDoC}()},
+  \code{\link{umxSummaryGxEbiv}()},
+  \code{\link{umxSummaryGxE}()},
+  \code{\link{umxSummaryIP}()},
+  \code{\link{umxSummarySexLim}()},
+  \code{\link{umxSummarySimplex}()}, \code{\link{umx}}
 }
 \concept{Twin Reporting Functions}

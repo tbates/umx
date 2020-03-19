@@ -102,21 +102,15 @@ Nonparametric Estimates of Gene x Environment Interaction Using Local Structural
 \emph{Behavior Genetics}, \strong{45}, 581-96. doi 10.1007/s10519-015-9732-8
 }
 \seealso{
-Other Twin Modeling Functions: 
-\code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
-\code{\link{umxACEcov}()},
-\code{\link{umxACEv}()},
-\code{\link{umxACE}()},
-\code{\link{umxCP}()},
-\code{\link{umxDoCp}()},
-\code{\link{umxDoC}()},
-\code{\link{umxGxEbiv}()},
-\code{\link{umxGxE}()},
-\code{\link{umxIP}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umx}}
+Other Twin Modeling Functions: \code{\link{power.ACE.test}()},
+  \code{\link{umxACE_cov_fixed}()},
+  \code{\link{umxACEcov}()}, \code{\link{umxACEv}()},
+  \code{\link{umxACE}()}, \code{\link{umxCP}()},
+  \code{\link{umxDoCp}()}, \code{\link{umxDoC}()},
+  \code{\link{umxGxEbiv}()}, \code{\link{umxGxE}()},
+  \code{\link{umxIP}()},
+  \code{\link{umxRotate.MxModelCP}()},
+  \code{\link{umxSexLim}()}, \code{\link{umxSimplex}()},
+  \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}
