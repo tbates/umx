@@ -2861,10 +2861,6 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		}
 		diag(obj$S@values)[freePaths] = diag(covData)[freePaths]
 
-		# umx_msg(covData)
-		# umx_msg(freePaths)
-		# umx_msg(obj$S@values)
-
 		# =======================
 		# = Set off-diag values =
 		# =======================

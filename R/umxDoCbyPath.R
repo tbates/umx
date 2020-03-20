@@ -36,8 +36,6 @@
 #' 
 #' }
 umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, name = "DoC", autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
-	# TODO: set class MxModelDoCp
-	# TODO: make plot.MxModelDoC which ignores T2, and DZ group and covariance stuff?
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")

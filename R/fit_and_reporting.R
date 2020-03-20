@@ -101,7 +101,6 @@ umxWeightedAIC <- function(models, digits= 2) {
 	bestModel = models[[whichBest]]
 	aic.weights = round(MuMIn::Weights(AIClist), 2)
 	if(isS4(models[[1]]) & is(models[[1]], "MxModel")){
-		# TODO: this should work with  umx_is_MxModel(models[[1]])
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
@@ -3782,9 +3781,8 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt")) {
 	report = match.arg(report)
 	what = xmu_match.arg(what, c("mean_sd", "n"), check = FALSE)
-	# TODO Add more aggregating functions?
-	# 	output odds or odds ratios for binary?
 	# TODO: add summaryBy ability to handle more than var on the left hand side
+	# 	output odds or odds ratios for binary?
 	# doBy::summaryBy(Sex_T1 + Sex_T2 ~ zyg, data = twinData, FUN = function(x) { round(c(
 	# 	n    = length(x),
 	# 	mean = mean(x, na.rm = T),
