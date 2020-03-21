@@ -47,20 +47,26 @@ test_that("residuals.MxModel works", {
 	          x~1")
 	roundtrip("#mytest
 	y~1
-	x~1"
-	)
+	x~1")
+
 	roundtrip("y~~x")
 	roundtrip("y =~ a + b + c")
 	roundtrip("y =~ a + b + c
 	          x =~ d + e + f
 	          x~y")
+
 	roundtrip("y ~ x1 + 2.4*x2 + x3")
+
 	roundtrip("x1 ~ x3_loading*x3")
+
 	roundtrip("y ~ x1 + 2.4*x2; s =~ 1*y12 + 2*y13 + 3*y14")
+
 	roundtrip("L =~ X1 + X2; L ~ Y")
+
 	roundtrip("spatial =~ visual   + cubes    + flags
 	       verbal  =~ paragrap + sentence + wordm
 	       speed   =~ addition + counting + straight")
+
 	roundtrip(" # Moderated mediation
 	 gnt ~ a*cb
 	 INT ~ b1*gnt + b2*cn + b3*cngn + c*cb
@@ -71,23 +77,28 @@ test_that("residuals.MxModel works", {
 	 ab3 := a * b3
 	 loCN := a * b1 + ab3 * -0.5
 	 hiCN := a * b1 + ab3 * 0.5")
+	 
 	roundtrip("x1~b1*x2; B1_sq := b1^2")
+
 	roundtrip("
 		y ~ b1*x1 + b2*x2 + b3*x3
 		# constraints
 		b1 == (b2 + b3)^2
 		b1 > exp(b2 + b3)")
+
 	roundtrip("e1~~n1; e2~~n2; e2+n2 ~ e1; n2 ~ n1")
 
 	if (0) {
-	  #debugging
-	  modelStr = "
+		#debugging
+		modelStr = "
 		y ~ b1*x1 + b2*x2 + b3*x3
 		# constraints
 		b1 == (b2 + b3)^2
 		b1 > exp(b2 + b3)"
-	  m1 <- umxLav2RAM(modelStr, autoRun=FALSE, printTab=FALSE, lavaanMode="lavaan")
-	  lavaan::lavaanify(modelStr, ngroups = 1, group.equal = NULL, std.lv = FALSE, auto.fix.first = TRUE, fixed.x = FALSE)
-	  debug(umxRAM2Lav)
-	  debug(roundtrip)
+
+		m1 = umxLav2RAM(modelStr, autoRun=FALSE, printTab=FALSE, lavaanMode= "lavaan")
+		lavaan::lavaanify(modelStr, ngroups = 1, group.equal = NULL, std.lv = FALSE, auto.fix.first = TRUE, fixed.x = FALSE)
+		debug(umxRAM2Lav)
+		debug(roundtrip)
+  	}
 }
