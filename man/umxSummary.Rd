@@ -28,10 +28,14 @@ View documentation on the CP model subclass here: \code{\link[=umxSummaryCP]{umx
 View documentation on the GxE model subclass here: \code{\link[=umxSummaryGxE]{umxSummaryGxE()}}.
 }
 \seealso{
-Other Core Modeling Functions: \code{\link{umxAlgebra}()},
-  \code{\link{umxMatrix}()}, \code{\link{umxModify}()},
-  \code{\link{umxPath}()}, \code{\link{umxRAM}()},
-  \code{\link{umxRun}()}, \code{\link{umxSuperModel}()},
-  \code{\link{umx}}
+Other Core Modeling Functions: 
+\code{\link{umxAlgebra}()},
+\code{\link{umxMatrix}()},
+\code{\link{umxModify}()},
+\code{\link{umxPath}()},
+\code{\link{umxRAM}()},
+\code{\link{umxRun}()},
+\code{\link{umxSuperModel}()},
+\code{\link{umx}}
 }
 \concept{Core Modeling Functions}

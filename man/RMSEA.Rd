@@ -24,16 +24,21 @@ RMSEA(x, ci.lower, ci.upper, digits)
 See \code{\link[=RMSEA.MxModel]{RMSEA.MxModel()}} to access the RMSEA of MxModels
 }
 \seealso{
-Other Reporting functions: \code{\link{RMSEA.MxModel}()},
-  \code{\link{RMSEA.summary.mxmodel}()},
-  \code{\link{extractAIC.MxModel}()},
-  \code{\link{loadings}()},
-  \code{\link{residuals.MxModel}()},
-  \code{\link{umxCI_boot}()}, \code{\link{umxCI}()},
-  \code{\link{umxCompare}()}, \code{\link{umxConfint}()},
-  \code{\link{umxExpCov}()}, \code{\link{umxExpMeans}()},
-  \code{\link{umxFitIndices}()},
-  \code{\link{umxPlotACEv}()}, \code{\link{umxRotate}()},
-  \code{\link{umxSummary.MxModel}()}
+Other Reporting functions: 
+\code{\link{RMSEA.MxModel}()},
+\code{\link{RMSEA.summary.mxmodel}()},
+\code{\link{extractAIC.MxModel}()},
+\code{\link{loadings}()},
+\code{\link{residuals.MxModel}()},
+\code{\link{umxCI_boot}()},
+\code{\link{umxCI}()},
+\code{\link{umxCompare}()},
+\code{\link{umxConfint}()},
+\code{\link{umxExpCov}()},
+\code{\link{umxExpMeans}()},
+\code{\link{umxFitIndices}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxRotate}()},
+\code{\link{umxSummary.MxModel}()}
 }
 \concept{Reporting functions}

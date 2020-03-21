@@ -104,12 +104,11 @@ power.ACE.test(AA= .5, CC= 0, update = "a")
 # 102 of each of MZ and DZ pairs for 80\% power.
 power.ACE.test(AA= .5, CC= .3, update = "c")
 
-# ========================================
+# ==========================================
 # = Set 'a' to a fixed, but non-zero value =
-# ========================================
+# ==========================================
 
 power.ACE.test(update= "a", value= sqrt(.2), AA= .5, CC= 0)
-# TODO get power.ACE.test to print the value of A in the null model.
 
 # ========================================
 # = Drop More than one parameter (A & C) =

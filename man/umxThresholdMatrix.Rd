@@ -163,8 +163,10 @@ tmp[[3]]$formula
 }
 }
 \seealso{
-Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
-  \code{\link{umxLabel}()}, \code{\link{umxValues}()},
-  \code{\link{umx}}
+Other Advanced Model Building Functions: 
+\code{\link{umxJiggle}()},
+\code{\link{umxLabel}()},
+\code{\link{umxValues}()},
+\code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

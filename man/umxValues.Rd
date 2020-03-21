@@ -61,8 +61,10 @@ umxValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 \item Core functions:
 }
 
-Other Advanced Model Building Functions: \code{\link{umxJiggle}()},
-  \code{\link{umxLabel}()},
-  \code{\link{umxThresholdMatrix}()}, \code{\link{umx}}
+Other Advanced Model Building Functions: 
+\code{\link{umxJiggle}()},
+\code{\link{umxLabel}()},
+\code{\link{umxThresholdMatrix}()},
+\code{\link{umx}}
 }
 \concept{Advanced Model Building Functions}

@@ -46,30 +46,40 @@ umxHetCor(mtcars[,c("mpg", "am")])
 umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
 }
 \seealso{
-Other Data Functions: \code{\link{umxFactor}()},
-  \code{\link{umx_as_numeric}()},
-  \code{\link{umx_cont_2_quantiles}()},
-  \code{\link{umx_lower2full}()},
-  \code{\link{umx_make_MR_data}()},
-  \code{\link{umx_make_TwinData}()},
-  \code{\link{umx_make_fake_data}()},
-  \code{\link{umx_make_raw_from_cov}()},
-  \code{\link{umx_polychoric}()},
-  \code{\link{umx_polypairwise}()},
-  \code{\link{umx_polytriowise}()},
-  \code{\link{umx_read_lower}()},
-  \code{\link{umx_rename}()}, \code{\link{umx_reorder}()},
-  \code{\link{umx_select_valid}()},
-  \code{\link{umx_stack}()}, \code{\link{umx}}
+Other Data Functions: 
+\code{\link{umxFactor}()},
+\code{\link{umx_as_numeric}()},
+\code{\link{umx_cont_2_quantiles}()},
+\code{\link{umx_lower2full}()},
+\code{\link{umx_make_MR_data}()},
+\code{\link{umx_make_TwinData}()},
+\code{\link{umx_make_fake_data}()},
+\code{\link{umx_make_raw_from_cov}()},
+\code{\link{umx_polychoric}()},
+\code{\link{umx_polypairwise}()},
+\code{\link{umx_polytriowise}()},
+\code{\link{umx_read_lower}()},
+\code{\link{umx_rename}()},
+\code{\link{umx_reorder}()},
+\code{\link{umx_select_valid}()},
+\code{\link{umx_stack}()},
+\code{\link{umx}}
 
-Other Miscellaneous Stats Helpers: \code{\link{FishersMethod}()},
-  \code{\link{SE_from_p}()}, \code{\link{oddsratio}()},
-  \code{\link{reliability}()}, \code{\link{umxCov2cor}()},
-  \code{\link{umxWeightedAIC}()},
-  \code{\link{umx_apply}()}, \code{\link{umx_cor}()},
-  \code{\link{umx_means}()}, \code{\link{umx_r_test}()},
-  \code{\link{umx_round}()}, \code{\link{umx_scale}()},
-  \code{\link{umx_var}()}, \code{\link{umx}}
+Other Miscellaneous Stats Helpers: 
+\code{\link{FishersMethod}()},
+\code{\link{SE_from_p}()},
+\code{\link{oddsratio}()},
+\code{\link{reliability}()},
+\code{\link{umxCov2cor}()},
+\code{\link{umxWeightedAIC}()},
+\code{\link{umx_apply}()},
+\code{\link{umx_cor}()},
+\code{\link{umx_means}()},
+\code{\link{umx_r_test}()},
+\code{\link{umx_round}()},
+\code{\link{umx_scale}()},
+\code{\link{umx_var}()},
+\code{\link{umx}}
 }
 \concept{Data Functions}
 \concept{Miscellaneous Stats Helpers}

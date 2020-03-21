@@ -25,17 +25,20 @@ umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
 - <https://www.github.com/tbates/umx>
 }
 \seealso{
-Other Test: \code{\link{umx_check_OS}()},
-  \code{\link{umx_check_model}()},
-  \code{\link{umx_check_names}()},
-  \code{\link{umx_check_parallel}()},
-  \code{\link{umx_check}()}, \code{\link{umx_has_CIs}()},
-  \code{\link{umx_has_been_run}()},
-  \code{\link{umx_has_means}()},
-  \code{\link{umx_has_square_brackets}()},
-  \code{\link{umx_is_MxMatrix}()},
-  \code{\link{umx_is_MxModel}()},
-  \code{\link{umx_is_RAM}()}, \code{\link{umx_is_cov}()},
-  \code{\link{umx_is_ordered}()}
+Other Test: 
+\code{\link{umx_check_OS}()},
+\code{\link{umx_check_model}()},
+\code{\link{umx_check_names}()},
+\code{\link{umx_check_parallel}()},
+\code{\link{umx_check}()},
+\code{\link{umx_has_CIs}()},
+\code{\link{umx_has_been_run}()},
+\code{\link{umx_has_means}()},
+\code{\link{umx_has_square_brackets}()},
+\code{\link{umx_is_MxMatrix}()},
+\code{\link{umx_is_MxModel}()},
+\code{\link{umx_is_RAM}()},
+\code{\link{umx_is_cov}()},
+\code{\link{umx_is_ordered}()}
 }
 \concept{Test}

@@ -56,14 +56,19 @@ umx_print(mtcars[1:10,], file = "tmp.html")
 \seealso{
 \code{\link[=umx_msg]{umx_msg()}}, \code{\link[=umx_set_table_format]{umx_set_table_format()}}
 
-Other Miscellaneous Utility Functions: \code{\link{install.OpenMx}()},
-  \code{\link{qm}()}, \code{\link{umxBrownie}()},
-  \code{\link{umxLav2RAM}()}, \code{\link{umxRAM2Lav}()},
-  \code{\link{umxVersion}()},
-  \code{\link{umx_array_shift}()},
-  \code{\link{umx_find_object}()}, \code{\link{umx_msg}()},
-  \code{\link{umx_open_CRAN_page}()},
-  \code{\link{umx_pad}()}, \code{\link{umx_score_scale}()},
-  \code{\link{umx}}
+Other Miscellaneous Utility Functions: 
+\code{\link{install.OpenMx}()},
+\code{\link{qm}()},
+\code{\link{umxBrownie}()},
+\code{\link{umxLav2RAM}()},
+\code{\link{umxRAM2Lav}()},
+\code{\link{umxVersion}()},
+\code{\link{umx_array_shift}()},
+\code{\link{umx_find_object}()},
+\code{\link{umx_msg}()},
+\code{\link{umx_open_CRAN_page}()},
+\code{\link{umx_pad}()},
+\code{\link{umx_score_scale}()},
+\code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}

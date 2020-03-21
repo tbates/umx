@@ -77,11 +77,15 @@ umxParameters(m1, "below", .1, "_to_")
 \item \code{\link[=umxGetParameters]{umxGetParameters()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=namez]{namez()}}
 }
 
-Other Reporting Functions: \code{\link{loadings.MxModel}()},
-  \code{\link{umxAPA}()}, \code{\link{umxFactorScores}()},
-  \code{\link{umxGetParameters}()},
-  \code{\link{umxReduce}()}, \code{\link{umx_aggregate}()},
-  \code{\link{umx_names}()}, \code{\link{umx_time}()},
-  \code{\link{umx}}
+Other Reporting Functions: 
+\code{\link{loadings.MxModel}()},
+\code{\link{umxAPA}()},
+\code{\link{umxFactorScores}()},
+\code{\link{umxGetParameters}()},
+\code{\link{umxReduce}()},
+\code{\link{umx_aggregate}()},
+\code{\link{umx_names}()},
+\code{\link{umx_time}()},
+\code{\link{umx}}
 }
 \concept{Reporting Functions}

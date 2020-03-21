@@ -30,19 +30,21 @@ umx_set_data_variance_check(minVar = old$minVar, maxVarRatio = old$maxVarRatio) 
 \seealso{
 xmu_check_variance which uses these to check sanity in the variances of a data frame.
 
-Other Get and set: \code{\link{umx_get_checkpoint}()},
-  \code{\link{umx_get_options}()},
-  \code{\link{umx_set_auto_plot}()},
-  \code{\link{umx_set_auto_run}()},
-  \code{\link{umx_set_checkpoint}()},
-  \code{\link{umx_set_condensed_slots}()},
-  \code{\link{umx_set_cores}()},
-  \code{\link{umx_set_mvn_optimization_options}()},
-  \code{\link{umx_set_optimizer}()},
-  \code{\link{umx_set_plot_file_suffix}()},
-  \code{\link{umx_set_plot_format}()},
-  \code{\link{umx_set_separator}()},
-  \code{\link{umx_set_silent}()},
-  \code{\link{umx_set_table_format}()}, \code{\link{umx}}
+Other Get and set: 
+\code{\link{umx_get_checkpoint}()},
+\code{\link{umx_get_options}()},
+\code{\link{umx_set_auto_plot}()},
+\code{\link{umx_set_auto_run}()},
+\code{\link{umx_set_checkpoint}()},
+\code{\link{umx_set_condensed_slots}()},
+\code{\link{umx_set_cores}()},
+\code{\link{umx_set_mvn_optimization_options}()},
+\code{\link{umx_set_optimizer}()},
+\code{\link{umx_set_plot_file_suffix}()},
+\code{\link{umx_set_plot_format}()},
+\code{\link{umx_set_separator}()},
+\code{\link{umx_set_silent}()},
+\code{\link{umx_set_table_format}()},
+\code{\link{umx}}
 }
 \concept{Get and set}
