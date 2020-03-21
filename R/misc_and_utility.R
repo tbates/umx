@@ -6900,7 +6900,7 @@ xmu_standardize_SexLim <- function(model, ...){
 umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
-#' xmu_standardize_CP
+#' non-user: Standardize an IP model
 #'
 #' This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
 #'
@@ -6992,7 +6992,7 @@ xmu_standardize_CP <- function(model, ...){
 		return(model)
 	}
 }
-# TODO	not sure S3 makes any sense: called in exactly one place...
+
 #' @export
 umx_standardize.MxModelCP <- xmu_standardize_CP
 
