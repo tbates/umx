@@ -4,10 +4,12 @@
 \alias{umx_rot}
 \title{Rotate a vector}
 \usage{
-umx_rot(vec)
+umx_rot(vec, na.last = FALSE)
 }
 \arguments{
 \item{vec}{vector to rotate}
+
+\item{na.last}{Whether to set the last value to NA (default = FALSE)}
 }
 \value{
 \itemize{

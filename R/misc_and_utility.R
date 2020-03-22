@@ -5020,6 +5020,7 @@ umx_trim <- function(string, removeThis = NULL) {
 #' `umx_rot` rotates the items of a vector (1 place, by default). So: c(1,2,3) -> c(2,3,1)
 #'
 #' @param vec vector to rotate
+#' @param na.last Whether to set the last value to NA (default = FALSE)
 #' @return - [mxModel()]
 #' @export
 #' @family String Functions
@@ -5029,9 +5030,13 @@ umx_trim <- function(string, removeThis = NULL) {
 #' umx_rot(1:10)
 #' umx_rot(c(3,4,5,6,7))
 #' # [1] 4 5 6 7 3
-umx_rot <- function(vec){
+umx_rot <- function(vec, na.last=FALSE){
 	ind = (1:length(vec) %% length(vec)) + 1
-	vec[ind]
+	vec = vec[ind]
+	if(na.last){
+		vec[length(vec)]=NA
+	}
+	return(vec)
 } 
 
 

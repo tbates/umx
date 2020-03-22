@@ -271,14 +271,11 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		# ===============================
 		# = Notes: Ordinal requires:    =
 		# ===============================
-		# 1. Set to mxFactor
+		# 1. Variable set to mxFactor
 		# 2. For Binary variables:
-		#   1. Means of binary variables fixedAt 0
-		#   2. A + C + E for binary variables is constrained to 1 
-		# 4. For Ordinal variables, first 2 thresholds fixed
-		# TODO:
-		#  1. Simple test if results are similar for an ACE model of 1 variable
-		# [] select mxFitFunctionML() of bVector as param
+		#   1. Latent means of binary variables fixedAt 0 (or by data.def?)
+		#   2. Latent variance (A + C + E) constrained == 1 
+		# 3. For Ordinal variables, first 2 thresholds fixed
 		
 		if(nFactors == 0){
 			# ===========================================================================
