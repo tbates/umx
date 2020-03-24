@@ -257,7 +257,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 				mzData = "MZ"
 			}
 			if(is.null(sep)){
-				sep="_T"
+				sep= "_T"
 			}
 			mzData = data[data[,zyg] %in% mzData, ]
 			dzData = data[data[,zyg] %in% dzData, ]

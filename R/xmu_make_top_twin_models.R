@@ -152,9 +152,9 @@
 #' # = Cov data =
 #' # ============
 #' data(twinData)
-#' mz = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-#' dz = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2)
+#' mzData = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
+#' dzData = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
 #' class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 #' names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 #'
@@ -169,6 +169,10 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 	# *Note*: If dropping this into an existing model, it replaces all code setting: nVar, selVars, used, 
 	# Also any code figuring out data-type
 	
+	if(!is.null(selCovs)){
+		stop("covs not implemented in xmu_make_top_twin yet")
+	}
+
 	# ===================
 	# = match arguments =
 	# ===================
@@ -192,7 +196,10 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 		usedVars = selVars
 	}
 	dataType = umx_is_cov(dzData, boolean = FALSE)
-	
+	if(verbose){
+		umx_msg(dataType)
+	}
+
 	if(type %in% c("cov", "cor") && !dataType %in% c("cov", "cor")){
 		stop("You've requested type= cov or cor, but the provided dataType is ", omxQuotes(dataType), " I don't support that yet. Please pass in cov data.")
 	}
@@ -262,8 +269,8 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 		# = Make mxData, dropping any unused columns =
 		# ============================================
 		allData = rbind(tmpMZData, tmpDZData) # stash possibly raw data for working out starts etc.
-		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars)
-		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars)
+		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars, numObs = numObsMZ)
+		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars, numObs = numObsDZ)
 		
 		# ========================================
 		# = 3. Add means and var matrices to top =
@@ -368,8 +375,8 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 		het_mz = umx_reorder(mzData, selVars)		
 		het_dz = umx_reorder(dzData, selVars)
 
-		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars)
-		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars)
+		mzData = xmu_make_mxData(mzData, type = dataType, manifests = selVars, numObs = numObsMZ)
+		dzData = xmu_make_mxData(dzData, type = dataType, manifests = selVars, numObs = numObsDZ)
 
 		top = mxModel("top")
 		MZ  = mxModel("MZ", mxExpectationNormal("top.expCovMZ"), mxData(het_mz, type = "cov", numObs = numObsMZ) )

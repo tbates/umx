@@ -26,9 +26,11 @@ xmu_make_top_twin(
 
 \item{dzData}{Dataframe containing the DZ data}
 
-\item{selDVs}{List of base (e.g. age) (i.e., NOT 'age_T1') covariate names (OR, you don't set "sep", the full variable names)}
+\item{selDVs}{List of manifest base names (e.g. BMI, NOT 'BMI_T1') (OR, you don't set "sep", the full variable names)}
 
-\item{sep}{(optional but desirable) string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
+\item{selCovs}{List of covariate base names (e.g. age, NOT 'age_T1') (OR, you don't set "sep", the full variable names)}
+
+\item{sep}{string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2 (optional but STRONGLY encouraged)}
 
 \item{type}{One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto tries to react to the incoming mxData type (raw/cov).}
 
@@ -125,6 +127,7 @@ dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
 bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 names(bits) # "top" "MZ"  "DZ" "bVector" "mzWeightMatrix" "dzWeightMatrix"
 class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionML"
+
 bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, 
 	selDVs= selDVs, sep= "", type = "WLS")
 class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
@@ -181,9 +184,9 @@ bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= ""
 # = Cov data =
 # ============
 data(twinData)
-mz = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-dz = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2)
+mzData = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
+dzData = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
+bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
 class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 

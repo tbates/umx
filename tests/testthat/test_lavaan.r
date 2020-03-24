@@ -3,7 +3,7 @@ library(testthat)
 
 umx_set_silent(TRUE)
 
-test_that("residuals.MxModel works", {
+test_that("umxLav2RAM and umxRAM2Lav work", {
 	testthat::skip_on_cran() 
 	roundtrip <- function(modelStr, verbose=FALSE) {
 		m1 = umxLav2RAM(modelStr, autoRun=FALSE, printTab=FALSE, lavaanMode="lavaan")
@@ -84,7 +84,8 @@ test_that("residuals.MxModel works", {
 		y ~ b1*x1 + b2*x2 + b3*x3
 		# constraints
 		b1 == (b2 + b3)^2
-		b1 > exp(b2 + b3)")
+		b1 > exp(b2 + b3)"
+	)
 
 	roundtrip("e1~~n1; e2~~n2; e2+n2 ~ e1; n2 ~ n1")
 
@@ -101,4 +102,4 @@ test_that("residuals.MxModel works", {
 		debug(umxRAM2Lav)
 		debug(roundtrip)
   	}
-}
+})
