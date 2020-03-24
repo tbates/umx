@@ -318,6 +318,7 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' @param data A [data.frame()] or [mxData()]
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
+#' @param numObs Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
 #' @return - [mxData()]
 #' @export
@@ -348,23 +349,32 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' # ==========================
 #' # = already mxData example =
 #' # ==========================
-#'m1 = umxRAM("auto", data = mxData(mtcars, type = "raw"),
+#' m1 = umxRAM("auto", data = mxData(mtcars, type = "raw"),
 #'	umxPath(var= "wt"),
 #'	umxPath(mean=  "wt")
-#')
+#' )
 #'
 #' # ========================
 #' # = Cov and cor examples =
 #' # ========================
-#' tmp = xmu_make_mxData(data= mtcars, type = "cov")
-#' tmp = xmu_make_mxData(data= mtcars, type = "cor")
+#' tmp = xmu_make_mxData(data= mtcars, type = "cov", manifests = c("mpg", "cyl"))
+#' tmp = xmu_make_mxData(data= mtcars, type = "cor", manifests = c("mpg", "cyl"))
+#' tmp = xmu_make_mxData(data= cov(mtcars[, c("mpg", "cyl")]), 
+#'         type = "cov", manifests = c("mpg", "cyl"), numObs=200)
+#' 
+#' # mxData input examples
+#' tmp = mxData(cov(mtcars[, c("mpg", "cyl")]), type = "cov", numObs= 100)
+#' xmu_make_mxData(data= tmp, type = "cor", manifests = c("mpg", "cyl")) # consume mxData
+#' xmu_make_mxData(data= tmp, type = "cor", manifests = c("mpg"))        # trim existing mxData
+#' xmu_make_mxData(data= tmp, type = "cor") # no manifests specified (use all)
+#' xmu_make_mxData(data= tmp, manifests = c("mpg", "cyl")) # auto
 #'
 #' # =======================
 #' # = Pass string through =
 #' # =======================
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, verbose = FALSE) {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, verbose = FALSE) {
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
@@ -403,10 +413,10 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		# Upgrade data.frame to mxData of desired type
 		if(type %in% c("Auto", "FIML")){
 			data = mxData(observed = data, type = "raw")
-		}else	if(type == "cov"){
+		}else if(type == "cov"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
 			data = mxData(observed = cov(data), type = type, numObs = nrow(data))
-		}else	if(type == "cor"){
+		}else if(type == "cor"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
 			data = mxData(observed = cor(data), type = type, numObs = nrow(data))
 		} else if(type %in% c('WLS', 'DWLS', 'ULS')){
@@ -437,11 +447,14 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			}
 		}
 	}else if (class(data) == "matrix"){
-		message("You gave me a matrix. umx needs to know the N for cov data. Rather than me assemble it,
-			the easiest and least error-prone method is for you to pass in raw data, or else\n
-			data = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
+		if(is.null(numObs)){
+			stop("You gave me a cov matrix. umx needs the numObs for this.\nNote easiest and least error-prone method is
+for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
+		} else {
+			data = mxData(data, type= type, numObs= numObs)
+		}
 	}else{
-		stop("I was expecting a data frame or mxData  you gave me a ", omxQuotes(class(data)))	
+		stop("I was expecting a data.frame, mxData or cov matrix.\nYou gave me a ", omxQuotes(class(data)))	
 	}
 	if(verbose){
 		msg_str = ""

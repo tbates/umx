@@ -63,8 +63,9 @@
 #'
 #' @param mzData Dataframe containing the MZ data 
 #' @param dzData Dataframe containing the DZ data 
-#' @param selDVs List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names (OR, you don't set "sep", the full variable names)
-#' @param sep (optional but desirable) string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2
+#' @param selDVs List of manifest base names (e.g. BMI, NOT 'BMI_T1') (OR, you don't set "sep", the full variable names)
+#' @param selCovs List of covariate base names (e.g. age, NOT 'age_T1') (OR, you don't set "sep", the full variable names)
+#' @param sep string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2 (optional but STRONGLY encouraged) 
 #' @param type	One of 'Auto','FIML','cov', 'cor', 'WLS','DWLS', or 'ULS'. Auto tries to react to the incoming mxData type (raw/cov).
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param nSib Number of members per family (default = 2)
@@ -92,7 +93,7 @@
 #' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 #' names(bits) # "top" "MZ"  "DZ" "bVector" "mzWeightMatrix" "dzWeightMatrix"
 #' class(bits$MZ$fitfunction)[[1]] == "MxFitFunctionML"
-
+#'
 # WLS example
 #' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, 
 #'		selDVs= selDVs, sep= "", type = "WLS")
@@ -157,9 +158,8 @@
 #' class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 #' names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 #'
-xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
+xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	# **TODO list for xmu_make_top_twin**
-	# TODO: 1. xmu_make_top_twin Support mxData input
 	# TODO: 2. xmu_make_top_twin Add selCovs
 	# TODO: 3. xmu_make_top_twin Add beta matrix for fixed covariates in means.
 	# TODO: 4. xmu_make_top_twin Add covMethod == "fixed"
@@ -261,12 +261,17 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		# ============================================
 		# = Make mxData, dropping any unused columns =
 		# ============================================
-		allData = rbind(tmpMZData, tmpDZData)
+		allData = rbind(tmpMZData, tmpDZData) # stash possibly raw data for working out starts etc.
 		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars)
 		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars)
-		# =====================================
-		# = Add means and var matrices to top =
-		# =====================================
+		
+		# ========================================
+		# = 3. Add means and var matrices to top =
+		# ========================================
+
+		# ===========================================
+		# = 3. Add mxExpectationNormal to MZ and DZ =
+		# ===========================================
 
 		# ===============================
 		# = Notes: Ordinal requires:    =
@@ -356,11 +361,15 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, sep = NULL, type = c("Auto
 		if(!is.null(weightVar)){
 			stop("You can't set weightVar when you give cov data - use cov.wt to create weighted cov matrices, or pass in raw data")
 		}
+		# As for raw, we check the data and get it into shape
 		umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with ", dataType, " data"))
 		umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
 		# Drop unused variables from matrix
 		het_mz = umx_reorder(mzData, selVars)		
 		het_dz = umx_reorder(dzData, selVars)
+
+		mzData = xmu_make_mxData(mzData, type = type, manifests = selVars)
+		dzData = xmu_make_mxData(dzData, type = type, manifests = selVars)
 
 		top = mxModel("top")
 		MZ  = mxModel("MZ", mxExpectationNormal("top.expCovMZ"), mxData(het_mz, type = "cov", numObs = numObsMZ) )

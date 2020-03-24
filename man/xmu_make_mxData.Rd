@@ -8,6 +8,7 @@ xmu_make_mxData(
   data = NULL,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   manifests = NULL,
+  numObs = NULL,
   verbose = FALSE
 )
 }
@@ -17,6 +18,8 @@ xmu_make_mxData(
 \item{type}{What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')}
 
 \item{manifests}{If set, only these variables will be retained.}
+
+\item{numObs}{Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData}
 
 \item{verbose}{If verbose, report on columns kept and dropped (default FALSE)}
 }
@@ -63,8 +66,17 @@ umxPath(mean=  "wt")
 # ========================
 # = Cov and cor examples =
 # ========================
-tmp = xmu_make_mxData(data= mtcars, type = "cov")
-tmp = xmu_make_mxData(data= mtcars, type = "cor")
+tmp = xmu_make_mxData(data= mtcars, type = "cov", manifests = c("mpg", "cyl"))
+tmp = xmu_make_mxData(data= mtcars, type = "cor", manifests = c("mpg", "cyl"))
+tmp = xmu_make_mxData(data= cov(mtcars[, c("mpg", "cyl")]), 
+        type = "cov", manifests = c("mpg", "cyl"), numObs=200)
+
+# mxData input examples
+tmp = mxData(cov(mtcars[, c("mpg", "cyl")]), type = "cov", numObs= 100)
+xmu_make_mxData(data= tmp, type = "cor", manifests = c("mpg", "cyl")) # consume mxData
+xmu_make_mxData(data= tmp, type = "cor", manifests = c("mpg"))        # trim existing mxData
+xmu_make_mxData(data= tmp, type = "cor") # no manifests specified (use all)
+xmu_make_mxData(data= tmp, manifests = c("mpg", "cyl")) # auto
 
 # =======================
 # = Pass string through =

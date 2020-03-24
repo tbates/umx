@@ -8,6 +8,7 @@ xmu_make_top_twin(
   mzData,
   dzData,
   selDVs,
+  selCovs = NULL,
   sep = NULL,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   allContinuousMethod = c("cumulants", "marginals"),
@@ -25,7 +26,7 @@ xmu_make_top_twin(
 
 \item{dzData}{Dataframe containing the DZ data}
 
-\item{selDVs}{List of base (e.g. BMI) (i.e., NOT 'BMI_T1') variable names (OR, you don't set "sep", the full variable names)}
+\item{selDVs}{List of base (e.g. age) (i.e., NOT 'age_T1') covariate names (OR, you don't set "sep", the full variable names)}
 
 \item{sep}{(optional but desirable) string used to expand selDVs into selVars, i.e., "_T" to expand BMI into BMI_T1 and BMI_T2}
 
