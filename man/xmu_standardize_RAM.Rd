@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_standardize_RAM}
 \alias{xmu_standardize_RAM}
-\title{Return a standardized version of a Structural Model}
+\title{Standardize a Structural Model (not for end users)}
 \usage{
 xmu_standardize_RAM(model, ...)
 }
@@ -12,7 +12,10 @@ xmu_standardize_RAM(model, ...)
 \item{...}{Other options}
 }
 \description{
-xmu_standardize_RAM takes a RAM-style model, and returns standardized version.
+You probably want \code{\link[=umx_standardize]{umx_standardize()}}, not this.
+}
+\details{
+\code{xmu_standardize_RAM} takes a RAM-style model, and returns standardized version.
 }
 \examples{
 require(umx)
@@ -45,6 +48,8 @@ Other xmu internal not for end user:
 \code{\link{umx_standardize}()},
 \code{\link{umx_string_to_algebra}()},
 \code{\link{umx}},
+\code{\link{xmuDefBetas}()},
+\code{\link{xmuDefMean}()},
 \code{\link{xmuHasSquareBrackets}()},
 \code{\link{xmuLabel_MATRIX_Model}()},
 \code{\link{xmuLabel_Matrix}()},

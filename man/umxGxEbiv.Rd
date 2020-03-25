@@ -65,7 +65,7 @@ the univariate model incorporates the moderator in the means model, the bivariat
 the moderator as a first class variable, with its own ACE structure, shared pathways to the trait of interest,
 and the ability to moderate both specific and shared A, C, and E, influences on the trait of interest.
 
-\figure{GxEbiv.png}{}
+\figure{GxEbiv.png}
 
 Twin 1 and twin 2 A, C, and E latent traits are connected in the standard fashion, with the
 covariance of the T1 and T2 latent genetic traits set to .5 for DZ and 1.0 for MZ pairs.
@@ -124,6 +124,7 @@ Other Twin Modeling Functions:
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxTwinAddMeansModel}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

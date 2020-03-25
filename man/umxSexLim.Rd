@@ -249,6 +249,7 @@ Other Twin Modeling Functions:
 \code{\link{umxIP}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxTwinAddMeansModel}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

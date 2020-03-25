@@ -4,7 +4,9 @@
 \name{docData}
 \alias{docData}
 \title{Twin data for Direction of causation modelling}
-\format{A data frame 6 manifests for each of two twins in 1400 families of MZ and DZ twins}
+\format{
+A data frame 6 manifests for each of two twins in 1400 families of MZ and DZ twins
+}
 \usage{
 data(docData)
 }

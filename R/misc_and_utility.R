@@ -1,4 +1,4 @@
-#   Copyright 2007-2019 Timothy C. Bates
+#   Copyright 2007-2020 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -6683,9 +6683,11 @@ umx_standardize.default <- function(model, ...){
 	stop("umx_standardize is not defined for objects of class:", class(model))
 }
 
-#' Return a standardized version of a Structural Model
+#' Standardize a Structural Model (not for end users)
 #'
-#' xmu_standardize_RAM takes a RAM-style model, and returns standardized version.
+#' You probably want [umx_standardize()], not this.
+#' 
+#' `xmu_standardize_RAM` takes a RAM-style model, and returns standardized version.
 #'
 #' @param model The [mxModel()] you wish to standardize
 #' @param ... Other options
@@ -6759,7 +6761,7 @@ umx_standardize.MxModel <- xmu_standardize_RAM
 
 #' xmu_standardize_ACE
 #'
-#' Standardize an ACE model
+#' Standardize an ACE model *BUT* you probably want [umx_standardize()].
 #'
 #' @param model an [umxACE()] model to standardize
 #' @param ... Other options
@@ -6907,7 +6909,7 @@ umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 #' non-user: Standardize an IP model
 #'
-#' This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
+#' You probably want [umx_standardize()]. This function simply copies the standardized IP components into the ai ci ei and as cs es matrices
 #'
 #' @param model an [umxIP()] model to standardize
 #' @param ... Other options
@@ -6941,7 +6943,7 @@ umx_standardize.MxModelIP <- xmu_standardize_IP
 
 #' Function to standardize a common pathway model
 #'
-#' This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
+#' You probably want [umx_standardize()]. This function simply inserts the standardized CP components into the ai ci ei and as cs es matrices
 #'
 #' @param model an [umxCP()] model to standardize
 #' @param ... Other options

@@ -4,7 +4,9 @@
 \name{Fischbein_wt}
 \alias{Fischbein_wt}
 \title{Weight data across time.}
-\format{A 6*6 correlation matrix based on n = 66 female subjects.}
+\format{
+A 6*6 correlation matrix based on n = 66 female subjects.
+}
 \usage{
 data(Fischbein_wt)
 }

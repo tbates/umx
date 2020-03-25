@@ -143,6 +143,7 @@ Other Twin Modeling Functions:
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxTwinAddMeansModel}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

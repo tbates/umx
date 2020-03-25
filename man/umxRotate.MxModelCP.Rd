@@ -74,6 +74,7 @@ Other Twin Modeling Functions:
 \code{\link{umxIP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxTwinAddMeansModel}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

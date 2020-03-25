@@ -143,7 +143,8 @@ Other Twin Modeling Functions:
 \code{\link{umxIP}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()}
+\code{\link{umxSimplex}()},
+\code{\link{umxTwinAddMeansModel}()}
 
 Other Twin Reporting Functions: 
 \code{\link{umxPlotCP}()},
@@ -286,6 +287,8 @@ Other xmu internal not for end user:
 \code{\link{umx_make}()},
 \code{\link{umx_standardize}()},
 \code{\link{umx_string_to_algebra}()},
+\code{\link{xmuDefBetas}()},
+\code{\link{xmuDefMean}()},
 \code{\link{xmuHasSquareBrackets}()},
 \code{\link{xmuLabel_MATRIX_Model}()},
 \code{\link{xmuLabel_Matrix}()},
