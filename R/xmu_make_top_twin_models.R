@@ -386,7 +386,6 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 				top = mxModel("top",
 					umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars))
 				)
-				 
 				MZ  = mxModel("MZ", mzData, mxExpectationNormal("top.expCovMZ", "top.expMean") )
 				DZ  = mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", "top.expMean") )			
 			}
@@ -436,7 +435,7 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 			top = mxModel("top", 
 				umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = meanStarts, labels = meanLabels, dimnames = list("means", selVars)),
 				umxThresholdMatrix(allData, selDVs = selVars, sep = sep, verbose = verbose),
-				
+				# NOTE: Assumes A+C+E is Vtot (i.e., these are the three and only components forming expCov)
 				mxAlgebra(name = "Vtot", A + C + E), # Total variance (also added by models with std = TRUE, but is OK to add twice)
 				umxMatrix("binLabels"  , "Full", nrow = (nBinVars/nSib), ncol = 1, labels = binBracketLabels),
 				umxMatrix("Unit_nBinx1", "Unit", nrow = (nBinVars/nSib), ncol = 1),
@@ -475,7 +474,7 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
 		message("data treated as ", type)
 		# Still mxExpectationNormal (`top` is not affected - either has or lacks means matrix already).
-		# Replace the MZ and DZ model fit functions
+		# Replace the MZ and DZ model FitFunctions
 		MZ = mxModel(MZ, mxFitFunctionWLS(type= type, allContinuousMethod= allContinuousMethod) )
 		DZ = mxModel(DZ, mxFitFunctionWLS(type= type, allContinuousMethod= allContinuousMethod) )
 	}else{
