@@ -59,14 +59,14 @@ Other Test:
 \code{\link{umx_is_MxMatrix}()},
 \code{\link{umx_is_MxModel}()},
 \code{\link{umx_is_RAM}()},
-\code{\link{umx_is_cov}()},
-\code{\link{umx_is_ordered}()}
+\code{\link{umx_is_cov}()}
 
 Other Check or test: 
 \code{\link{umx_is_class}()},
 \code{\link{umx_is_endogenous}()},
 \code{\link{umx_is_exogenous}()},
 \code{\link{umx_is_numeric}()},
+\code{\link{umx_is_ordered}()},
 \code{\link{umx}}
 }
 \concept{Check or test}

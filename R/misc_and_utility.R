@@ -3738,9 +3738,10 @@ umx_is_MxData <- function(x) {
 #' @param binary.only only count binary factors (2-levels) (default = FALSE)
 #' @param ordinal.only only count ordinal factors (3 or more levels) (default = FALSE)
 #' @param continuous.only use with names = TRUE to get the names of the continuous variables
+#' @param summaryObject whether to return a nice summary object. Overrides othere settings (FALSE)
 #' @return - vector of variable names or Booleans
 #' @export
-#' @family Test
+#' @family Check or test
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -3754,18 +3755,49 @@ umx_is_MxData <- function(x) {
 #' umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
 #' umx_is_ordered(tmp, continuous.only = TRUE)
+#'
+#' x = umx_is_ordered(tmp, summaryObject= TRUE)
+#'
 #' isContinuous = !umx_is_ordered(tmp)
 #' \dontrun{
 #' # nb: By default, unordered factors cause a message...
-#' tmp$gear = factor(mtcars$gear) # UNordered factor
+#' tmp$gear = factor(mtcars$gear) # Unordered factor
 #' umx_is_ordered(tmp)
+#' umx_is_ordered(tmp, strict = FALSE) # compare: no warning
 #' 
 #' # also: not designed to work on single variables...
 #' umx_is_ordered(tmp$cyl)
 #' # Do this instead...
-#' umx_is_ordered(tmp[, "cyl", drop=FALSE])
+#' umx_is_ordered(tmp[, "cyl", drop= FALSE])
 #' }
-umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE) {
+umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE, summaryObject= FALSE) {
+
+	if(summaryObject){
+		if(any(umx_is_ordered(df))){
+			isFactor = umx_is_ordered(df)                      # T/F list of factor columns
+			isOrd    = umx_is_ordered(df, ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+			isBin    = umx_is_ordered(df, binary.only  = TRUE) # T/F list of binary columns
+			nFactors = sum(isFactor)
+			nOrdVars = sum(isOrd) # total number of ordinal columns
+			nBinVars = sum(isBin) # total number of binary columns
+
+			factorVarNames = names(df)[isFactor]
+			ordVarNames    = names(df)[isOrd]
+			binVarNames    = names(df)[isBin]
+			contVarNames   = names(df)[!isFactor]
+		}else{
+			# Summary data
+			isFactor = isOrd    = isBin    = c()
+			nFactors = nOrdVars = nBinVars = 0			
+			factorVarNames = ordVarNames = binVarNames = contVarNames = c()
+		}
+		return(list(isFactor = isFactor, isOrd = isOrd, isBin = isBin, 
+			nFactors = nFactors, nOrdVars = nOrdVars, nBinVars = nBinVars, 
+			factorVarNames = factorVarNames, ordVarNames = ordVarNames, binVarNames = binVarNames, contVarNames = contVarNames)
+		)
+	}
+
+
 	if(sum(c(binary.only, ordinal.only, continuous.only)) > 1){
 		stop("Only one of binary.only ordinal.only and continuous.only can be TRUE")
 	}
