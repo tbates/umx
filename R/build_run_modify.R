@@ -3443,7 +3443,6 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #'       obese_T1         obese_T2
 #' 
 #' dev_1 "obese_dev1"   "obese_dev1"
-#' 
 #'
 #' @param df The data being modeled (to allow access to the factor levels and quantiles within these for each variable)
 #' @param selDVs The variable names. Note for twin data, just the base names, which sep will be used to fill out.
@@ -3486,6 +3485,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' x = data.frame(ordered(x)); names(x) <- c("x")
 #' tmp = umxThresholdMatrix(x, selDVs = "x")
 #' 
+#' tmp = umxThresholdMatrix(x, selDVs = "x", l_u_bound= c(-1,1))
 #' # =================================
 #' # = Binary example with twin data =
 #' # =================================

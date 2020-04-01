@@ -2,6 +2,8 @@
 #'
 #' @description
 #' `xmu_make_TwinSuperModel` makes basic `top`, `MZ`, and `DZ` models. It includes thresholds matrices in the twin models if needed.
+#' 
+#' It's the replacement for the older `xmu_assemble_twin_supermodel` approach.
 #'
 #' This is used in  [umxCP()], and [umxACE()] and [umxACEv()] and will be added to the other models: [umxGxE()], [umxIP()], 
 #' simplifying code maintenance.
@@ -255,11 +257,11 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		# = 3. Add mxExpectationNormal, means and var matrices to top, MZ and DZ =
 		# ========================================================================
 		if(colTypes$nFactors == 0){
-			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, type=type, allContinuousMethod=allContinuousMethod, nVar = nVar, nSib = nSib, starts = starts, sep = "_T")
+			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, type=type          , starts = starts, nSib = nSib, nVar = nVar, sep = "_T", allContinuousMethod=allContinuousMethod)
 		} else if(sum(colTypes$isBin) == 0){
-			model = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, nVar=nVar, colTypes = colTypes, starts = starts, nSib= 2)
+			model   = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, colTypes = colTypes, starts = starts, nSib = nSib, nVar = nVar)
 		} else if(sum(colTypes$isBin) > 0){
-			model = xmuTwinSuper_SomeBinary(name= name, selVars= selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = "_T", colTypes = colTypes, nVar = nVar, nVar = nSib, starts = starts, verbose = verbose)
+			model = xmuTwinSuper_SomeBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, colTypes = colTypes, starts = starts, nSib = nSib, nVar = nVar, sep = "_T", verbose = verbose)
 		} else {
 			stop("You appear to have something other than I expected in terms of WLS, or binary, ordinal and continuous variable mix")
 		}
