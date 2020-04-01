@@ -50,7 +50,7 @@ umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
 umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
 umx_is_ordered(tmp, continuous.only = TRUE)
 
-umx_is_ordered(tmp, summaryObject= TRUE)
+x = umx_is_ordered(tmp, summaryObject= TRUE)
 
 isContinuous = !umx_is_ordered(tmp)
 \dontrun{
@@ -62,7 +62,7 @@ umx_is_ordered(tmp, strict = FALSE) # compare: no warning
 # also: not designed to work on single variables...
 umx_is_ordered(tmp$cyl)
 # Do this instead...
-umx_is_ordered(tmp[, "cyl", drop=FALSE])
+umx_is_ordered(tmp[, "cyl", drop= FALSE])
 }
 }
 \references{
