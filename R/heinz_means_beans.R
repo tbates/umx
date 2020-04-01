@@ -241,28 +241,25 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		# = NOTE: selVars is expanded by the time we get to here... no sep. =
 		# ===================================================================
 		starts = xmu_starts(mzData= tmpMZData, dzData= tmpDZData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
-		varStarts  = starts$varStarts
-		meanStarts = starts$meanStarts
-		meanLabels = starts$meanLabels # Equated across twins if requested
+		# Contains starts$varStarts; starts$meanStarts; starts$meanLabels # (Equated across twins if requested)
 
 		# ============================================
 		# = Make mxData, dropping any unused columns =
 		# ============================================
 		usedVars = c(selVars, selCovs)
-
-		allData = rbind(tmpMZData, tmpDZData) # Stash possibly raw data for working out starts etc.
-		mzData  = xmu_make_mxData(mzData, type = type, manifests = usedVars, numObs = numObsMZ)
-		dzData  = xmu_make_mxData(dzData, type = type, manifests = usedVars, numObs = numObsDZ)
+		allData  = rbind(tmpMZData, tmpDZData) # Stash possibly raw data for working out starts etc.
+		mzData   = xmu_make_mxData(mzData, type = type, manifests = usedVars, numObs = numObsMZ)
+		dzData   = xmu_make_mxData(dzData, type = type, manifests = usedVars, numObs = numObsDZ)
 
 		# ========================================================================
 		# = 3. Add mxExpectationNormal, means and var matrices to top, MZ and DZ =
 		# ========================================================================
 		if(colTypes$nFactors == 0){
-			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, type=type, allContinuousMethod=allContinuousMethod, nVar = nVar, nSib = nSib, starts = starts, sep = "_T")
+			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, type=type, allContinuousMethod=allContinuousMethod, nVar = nVar, nSib = nSib, starts = starts, sep = "_T")
 		} else if(sum(colTypes$isBin) == 0){
-			model = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, nVar=nVar, colTypes = colTypes, starts = starts, nSib= 2)
+			model = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, nVar=nVar, colTypes = colTypes, starts = starts, nSib= 2)
 		} else if(sum(colTypes$isBin) > 0){
-			model = xmuTwinSuper_SomeBinary(name= name, selVars= selVars, defVars = defVars, mzData = mzData, dzData = dzData, sep = "_T", colTypes = colTypes, nVar = nVar, nVar = nSib, starts = starts, verbose = verbose)
+			model = xmuTwinSuper_SomeBinary(name= name, selVars= selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = "_T", colTypes = colTypes, nVar = nVar, nVar = nSib, starts = starts, verbose = verbose)
 		} else {
 			stop("You appear to have something other than I expected in terms of WLS, or binary, ordinal and continuous variable mix")
 		}
