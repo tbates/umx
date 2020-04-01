@@ -3449,7 +3449,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @param selDVs The variable names. Note for twin data, just the base names, which sep will be used to fill out.
 #' @param sep (e.g. "_T") Required for wide (twin) data. It is used to break the base names our from their numeric suffixes.
 #' @param method How to implement the thresholds: auto (the default), Mehta, which fixes the first two (auto chooses this for ordinal) or "allFree" (auto chooses this for binary)
-#' @param l_u_bound c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.
+#' @param l_u_bound c(NA, NA) by default, you can use this to bound the first (base) threshold.
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
 #' @param threshMatName name of the matrix which is returned. Defaults to "threshMat" - best not to change it.
 #' @param verbose How much to say about what was done. (defaults to FALSE)
@@ -3663,6 +3663,8 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 		free     = free, 
 		values   = rep(NA, (maxThresh * nFactors)),
 		labels   = labels,
+		# note: these are thrown away now the thresholds are implemented in an algebra
+		# note: and reimplemented as bounds instead on the first threshold.
 		lbound   = l_u_bound[1],
 		ubound   = l_u_bound[2],
 		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
@@ -3765,7 +3767,7 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 			stop("The thresholds for ", thisVarName, " are not in order... oops: that's my fault :-(")
 		}
 	
-		# Already labeled, and all free initialized to TRUE (out of range = FALSE)
+		# Already labeled, and all free initialised to TRUE (out of range = FALSE)
 		if(nThreshThisVar > 1){ # fix the first 2
 			threshMat$free[1:2,   thisVarName] = FALSE
 		}	
@@ -3843,7 +3845,9 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 		ubound   = NA,
 		dimnames = list(paste0("dev_", 1:maxThresh), factorVarNames)
 	)
-	deviations_for_thresh$lbound[1,] = NA # don't lbound the first deviation, because it it's the base, not a deviation.
+
+	deviations_for_thresh$lbound[1,] =  l_u_bound[1] # First deviation is special, because it it's the base, not a deviation.
+	deviations_for_thresh$ubound[1,] =  l_u_bound[2] # First deviation is special, because it it's the base, not a deviation.
 	# 3: Create the lowerOnes matrix
 	lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThresh, free = FALSE, values = 1)
 	# 4: Create thresholdsAlgebra named threshMatName

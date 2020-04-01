@@ -26,7 +26,7 @@ umxThresholdMatrix(
 
 \item{threshMatName}{name of the matrix which is returned. Defaults to "threshMat" - best not to change it.}
 
-\item{l_u_bound}{c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.}
+\item{l_u_bound}{c(NA, NA) by default, you can use this to bound the first (base) threshold.}
 
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
 
