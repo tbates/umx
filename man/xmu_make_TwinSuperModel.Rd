@@ -190,9 +190,10 @@ m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= selDVs, sep
 # = Cov data =
 # ============
 data(twinData)
-mzData = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-dzData = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
+mzData =cov(twinData[twinData$zygosity \%in\% "MZFF", tvars(c("wt","ht"), sep="")], use="complete")
+dzData =cov(twinData[twinData$zygosity \%in\% "DZFF", tvars(c("wt","ht"), sep="")], use="complete")
+m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", 
+	nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
 class(m1$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 names(m1$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 
@@ -208,8 +209,6 @@ Other xmu internal not for end user:
 \code{\link{umx_standardize}()},
 \code{\link{umx_string_to_algebra}()},
 \code{\link{umx}},
-\code{\link{xmuDefBetasInTop}()},
-\code{\link{xmuDefMeanInDataGroup}()},
 \code{\link{xmuHasSquareBrackets}()},
 \code{\link{xmuLabel_MATRIX_Model}()},
 \code{\link{xmuLabel_Matrix}()},
@@ -222,6 +221,9 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinMeanModelParts_top}()},
+\code{\link{xmuTwinMeans_MZDZ}()},
+\code{\link{xmuTwinSuper_Continuous}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},

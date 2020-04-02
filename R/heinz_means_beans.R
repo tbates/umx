@@ -462,7 +462,7 @@ xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, defVars = NULL, mzData, 
 }
 
 # xmuTwinSuper_CovCor(name=name, selVars = selVars, mzData= mzData, dzData = dzData, numObsMZ = numObsMZ, numObsDZ = numObsDZ, sep = "_T")
-xmuTwinSuper_CovCor <- function(name=NULL, selVars = selVars, mzData= mzData, dzData = dzData, numObsMZ, numObsDZ, sep = "_T")
+xmuTwinSuper_CovCor <- function(name=NULL, selVars = selVars, mzData= mzData, dzData = dzData, numObsMZ, numObsDZ, sep = "_T"){
 	umx_msg("xmuTwinSuper_CovCor")
 	# Check the data and get it into shape
 	umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with summary data"))
