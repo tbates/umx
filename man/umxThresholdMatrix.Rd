@@ -97,6 +97,7 @@ x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
 x = data.frame(ordered(x)); names(x) <- c("x")
 tmp = umxThresholdMatrix(x, selDVs = "x")
 
+tmp = umxThresholdMatrix(x, selDVs = "x", l_u_bound= c(-1,1))
 # =================================
 # = Binary example with twin data =
 # =================================

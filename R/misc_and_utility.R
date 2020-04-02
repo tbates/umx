@@ -3771,7 +3771,6 @@ umx_is_MxData <- function(x) {
 #' umx_is_ordered(tmp[, "cyl", drop= FALSE])
 #' }
 umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE, summaryObject= FALSE) {
-
 	if(summaryObject){
 		if(any(umx_is_ordered(df))){
 			isFactor = umx_is_ordered(df)                      # T/F list of factor columns
@@ -3805,9 +3804,10 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 		if(is.matrix(df)){
 			df = data.frame(df)
 			# stop("df argument to umx_is_ordered must be a data.frame. You gave me a matrix")
+		}else if(umx_is_MxData((df))){
+			df = df$observed
 		} else {
-			# df = data.frame(df)
-			stop("Argument df must be a data.frame. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+			stop("Argument df must be a data.frame, matrix, or mxData. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
 	nVar = ncol(df);
