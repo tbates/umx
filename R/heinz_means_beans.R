@@ -156,9 +156,10 @@
 #' # = Cov data =
 #' # ============
 #' data(twinData)
-#' mzData = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-#' dzData = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-#' m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
+#' mzData =cov(twinData[twinData$zygosity %in% "MZFF", tvars(c("wt","ht"), sep="")], use="complete")
+#' dzData =cov(twinData[twinData$zygosity %in% "DZFF", tvars(c("wt","ht"), sep="")], use="complete")
+#' m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", 
+#' 	nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
 #' class(m1$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 #' names(m1$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 #'
@@ -208,28 +209,28 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 			stop("You should not be setting numObsMZ or numObsDZ with ", omxQuotes(dataType), " data...")
 		}
 
-		if(umx_is_MxData(mzData)){
-			tmpMZData = mzData$observed
-			tmpDZData = dzData$observed
-		}else{
-			tmpMZData = mzData
-			tmpDZData = dzData
-		}
 
 		# Find ordinal variables
-		colTypes = umx_is_ordered(tmpMZData[, selVars], summaryObject= TRUE)
+		colTypes = umx_is_ordered(mzData[, selVars], summaryObject= TRUE)
 		# We use colTypes$isBin, colTypes$nFactors, colTypes$nOrdVars, colTypes$nBinVars, colTypes$ordVarNames, colTypes$binVarNames
 		# colTypes$contVarNames
 
 		if(!is.null(weightVar)){
 			# Weight variable provided: check it exists in each frame.
-			if(!umx_check_names(weightVar, data = tmpMZData, die = FALSE) | !umx_check_names(weightVar, data = tmpDZData, die = FALSE)){
+			if(!umx_check_names(weightVar, data = mzData, die = FALSE) | !umx_check_names(weightVar, data = dzData, die = FALSE)){
 				stop("The weight variable must be included in the mzData and dzData",
 					 "\n frames passed into this twin model when \"weightVar\" is specified",
-					 "\n mzData contained:", paste(names(tmpMZData), collapse = ", "),
-					 "\n and dzData contain:", paste(names(tmpDZData), collapse = ", "),
+					 "\n mzData contained:", paste(namez(mzData), collapse = ", "),
+					 "\n and dzData contain:", paste(namez(dzData), collapse = ", "),
 					 "\n but I was looking for ", weightVar, " as the moderator."
 				)
+			}
+			if(umx_is_MxData(mzData)){
+				tmpMZData = mzData$observed
+				tmpDZData = dzData$observed
+			}else{
+				tmpMZData = mzData
+				tmpDZData = dzData
 			}
 			mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(tmpMZData), ncol = 1, free = FALSE, values = tmpMZData[, weightVar])
 			dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(tmpDZData), ncol = 1, free = FALSE, values = tmpDZData[, weightVar])
@@ -242,7 +243,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		# = Figure out start values  =
 		# = NOTE: selVars is expanded by the time we get to here... no sep. =
 		# ===================================================================
-		starts = xmu_starts(mzData= tmpMZData, dzData= tmpDZData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
+		starts = xmu_starts(mzData= mzData, dzData= dzData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
 		# Contains starts$varStarts; starts$meanStarts; starts$meanLabels # (Equated across twins if requested)
 
 		# ============================================
@@ -257,11 +258,11 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		# = 3. Add mxExpectationNormal, means and var matrices to top, MZ and DZ =
 		# ========================================================================
 		if(colTypes$nFactors == 0){
-			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, type=type          , starts = starts, nSib = nSib, nVar = nVar, sep = "_T", allContinuousMethod=allContinuousMethod)
+			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, starts = starts, nSib = nSib, nVar = nVar, type=type, sep = "_T", allContinuousMethod=allContinuousMethod)
 		} else if(sum(colTypes$isBin) == 0){
-			model   = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, colTypes = colTypes, starts = starts, nSib = nSib, nVar = nVar)
+			model   = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, starts = starts, nSib = nSib, nVar = nVar)
 		} else if(sum(colTypes$isBin) > 0){
-			model = xmuTwinSuper_SomeBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, colTypes = colTypes, starts = starts, nSib = nSib, nVar = nVar, sep = "_T", verbose = verbose)
+			model = xmuTwinSuper_SomeBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, starts = starts, nSib = nSib, nVar = nVar, sep = "_T", verbose = verbose)
 		} else {
 			stop("You appear to have something other than I expected in terms of WLS, or binary, ordinal and continuous variable mix")
 		}
@@ -270,7 +271,10 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		if(!is.null(weightVar)){
 			stop("You can't set weightVar when you give cov data - use cov.wt to create weighted cov matrices, or pass in raw data")
 		}
-		model = xmuTwinSuper_CovCor(name=name, defVars = defVars, mzData= mzData, dzData= dzData, numObsMZ = numObsMZ, numObsDZ = numObsDZ, sep = "_T")
+		if(!is.null(defVars)){
+			stop("You can't set defVars (covariates) when you have cov data: needs raw data to estimate on each row")
+		}
+		model = xmuTwinSuper_CovCor(name=name, mzData= mzData, dzData= dzData, numObsMZ = numObsMZ, numObsDZ = numObsDZ, sep = "_T")
 	} else {
 		stop("Datatype \"", dataType, "\" not understood")
 	}
@@ -319,7 +323,33 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 # = raw twin-assembly helpers =
 # =============================
 
-# xmuTwinSuper_ContinuousMeans(name=name, selVars = selVars, defVars = defVars, mzData= mzData, dzData = dzData, type= type, allContinuousMethod = allContinuousMethod, nVar = nVar, nSib= nSib, starts=starts, sep = "_T")
+#' xmuTwinSuper_ContinuousMeans
+#'
+#' @description
+#' myfunc is a function which
+#'
+#' @param name=name
+#' @param selVars  selVars
+#' @param defVars  defVars
+#' @param mzData An mxData object containing the MZ data
+#' @param dzData An mxData object containing the DZ data 
+#' @param type type
+#' @param allContinuousMethod  allContinuousMethod
+#' @param nVar  nVar
+#' @param nSib nSib
+#' @param starts starts
+#' @param sep  "_T")
+#' @return - A twin model
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [xmu_make_TwinSuperModel]
+#' @md
+#' @examples
+#' print("param")
+#' \dontrun{
+#' xmuTwinSuper_ContinuousMeans(name=name, selVars = selVars, defVars = defVars, mzData= mzData, dzData = dzData, type= type, allContinuousMethod = allContinuousMethod, nVar = nVar, nSib= nSib, starts=starts, sep = "_T")
+#' 
+#' }
 xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_T", mzData, dzData, type, allContinuousMethod, nVar, nSib, starts){
 	# ===========================================================================
 	# = Handle all continuous as special case (for WLS, can affect mean or not) =
@@ -348,7 +378,7 @@ xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_
 
 # xmuTwinSuper_NoBinary(name=name, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, allData = allData, nSib=2, nVar = nVar, starts = starts)
 
-xmuTwinSuper_NoBinary <- function(name=NULL, defVars = NULL, mzData, dzData, sep = "_T", allData, colTypes, nSib, nVar, starts, selVars, verbose=FALSE){
+xmuTwinSuper_NoBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep = "_T", nSib, nVar, starts, verbose=FALSE){
 	umx_msg("xmuTwinSuper_NoBinary")
 	# ============================
 	# = Notes: Ordinal requires: =
@@ -365,7 +395,8 @@ xmuTwinSuper_NoBinary <- function(name=NULL, defVars = NULL, mzData, dzData, sep
 	# Means ordinal, but no binary
 	# Means: all free, start cont at the measured value, ordinals @0
 	umx_check(!is.null(name), "stop", "I need a name for the super model")
-	
+	colTypes = umx_is_ordered(mzData[, selVars], summaryObject= TRUE)
+
 	message("Found ", (colTypes$nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(colTypes$ordVarNames), " (No binary)")
 	if(length(colTypes$contVarNames) > 0){
 		message(length(colTypes$colTypes$contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(colTypes$contVarNames[1:(length(colTypes$contVarNames)/nSib)]))
@@ -382,9 +413,10 @@ xmuTwinSuper_NoBinary <- function(name=NULL, defVars = NULL, mzData, dzData, sep
 	return(model)
 }
 
-# xmuTwinSuper_SomeBinary(name=NULL, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, allData = allData, colTypes = colTypes, nVar = nVar, nSib, starts= starts, sep = "_T", verbose = verbose)
-xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep = "_T", allData=NULL, colTypes, nVar, nSib, starts, verbose = verbose){
+# xmuTwinSuper_SomeBinary(name=NULL, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, nVar = nVar, nSib, starts= starts, sep = "_T", verbose = verbose)
+xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep = "_T", nVar, nSib, starts, verbose = verbose){
 	umx_msg("xmuTwinSuper_SomeBinary")
+	colTypes = umx_is_ordered(mzData[, selVars], summaryObject= TRUE)
 
 	# =============================================
 	# = Handle case of at least 1 binary variable =
@@ -429,15 +461,15 @@ xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, defVars = NULL, mzData, 
 	return(model)
 }
 
-# xmuTwinSuper_CovCor(name=name, selVars = selVars, mzData= mzData, dzData = dzData, sep = "_T")
-xmuTwinSuper_CovCor <- function(name=NULL, selVars = selVars, mzData= mzData, dzData = dzData, sep = "_T"){
+# xmuTwinSuper_CovCor(name=name, selVars = selVars, mzData= mzData, dzData = dzData, numObsMZ = numObsMZ, numObsDZ = numObsDZ, sep = "_T")
+xmuTwinSuper_CovCor <- function(name=NULL, selVars = selVars, mzData= mzData, dzData = dzData, numObsMZ, numObsDZ, sep = "_T")
 	umx_msg("xmuTwinSuper_CovCor")
-	# As for raw, we check the data and get it into shape
-	umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with ", dataType, " data"))
-	umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with ", dataType, " data"))
+	# Check the data and get it into shape
+	umx_check(!is.null(numObsMZ), "stop", paste0("You must set numObsMZ with summary data"))
+	umx_check(!is.null(numObsDZ), "stop", paste0("You must set numObsDZ with summary data"))
 
-	mzData = xmu_make_mxData(mzData, type = dataType, manifests = selVars, numObs = numObsMZ)
-	dzData = xmu_make_mxData(dzData, type = dataType, manifests = selVars, numObs = numObsDZ)
+	# mzData = xmu_make_mxData(mzData, type = dataType, manifests = selVars, numObs = numObsMZ)
+	# dzData = xmu_make_mxData(dzData, type = dataType, manifests = selVars, numObs = numObsDZ)
 
 	model = mxModel(name, 
 		mxModel("top"),

@@ -25,9 +25,9 @@ umxTwinAddMeansModel <- function(model, defVars = NULL, sep = "_T"){
 	umx_check(all(c("MZ", "DZ", "top") %in% names(model)), message="need a model with top, MZ and DZ submodels")	
 	if(!is.null(defVars)){
 		# 1. Stick means and betas into top and Stick alg and def matrices into MZ and DZ
-		newTop = mxModel(model$top, xmuDefBetasInTop(defVars = defVars, sep= sep))
-		newMZ  = mxModel(model$MZ , xmuDefMeanInDataGroup(defVars = defVars, sep=sep))
-		newDZ  = mxModel(model$DZ , xmuDefMeanInDataGroup(defVars = defVars, sep=sep))
+		newTop = mxModel(model$top, xmuTwinMeanModelParts_top(defVars = defVars, sep= sep))
+		newMZ  = mxModel(model$MZ , xmuTwinMeans_MZDZ(defVars = defVars, sep=sep))
+		newDZ  = mxModel(model$DZ , xmuTwinMeans_MZDZ(defVars = defVars, sep=sep))
 		model  = mxModel(model, newTop, newMZ, newDZ)
 	} else {
 		# no need to change MZ DZ models... all in top.
@@ -47,12 +47,12 @@ umxTwinAddMeansModel <- function(model, defVars = NULL, sep = "_T"){
 #' @return - two def matrices and the means algebra which live in `model$MZ`
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [xmuDefBetasInTop()], [umxTwinAddMeansModel()]
+#' @seealso - [xmuTwinMeans_top()], [umxTwinAddMeansModel()]
 #' @md
 #' @examples
-#' xmuDefMeanInDataGroup(defVars = c("a", "b"))
+#' xmuTwinMeans_MZDZ(defVars = c("a", "b"))
 #'
-xmuDefMeanInDataGroup <- function(defVars = NULL, sep="_T", expMeanAlgName = "expMean") {
+xmuTwinMeans_MZDZ <- function(defVars = NULL, sep="_T", expMeanAlgName = "expMean") {
 	nVar = length(defVars)
 	T1defLabels = paste0("data.", defVars, sep, 1)
 	T2defLabels = paste0("data.", defVars, sep, 2)
@@ -69,15 +69,16 @@ xmuDefMeanInDataGroup <- function(defVars = NULL, sep="_T", expMeanAlgName = "ex
 #'
 #' @param nVar how many variables you have
 #' @param defVars the names of definition variables
+#' @param sep The twin number separator.
 #' @return - two matrices "Mean" and "betaDef"
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [xmuDefMeanInDataGroup()], [umxTwinAddMeansModel()]
 #' @md
 #' @examples
-#' xmuDefBetasInTop(nVar=3, defVars = c("a", "b"), sep="_T")
+#' xmuTwinMeanModelParts_top(nVar=3, defVars = c("a", "b"), sep="_T")
 #'
-xmuDefBetasInTop <- function(nVar, defVars = NULL, sep="_T") {
+xmuTwinMeanModelParts_top <- function(nVar, defVars = NULL, sep="_T") {
 	betaLabels = paste0("beta_", defVars, (1:length(defVars)))
 	a = mxMatrix(name="Mean"   , type="Zero", nrow=1, ncol=nVar)
 	b = mxMatrix(name="betaDef", type="Full", nrow=1, ncol=nVar, free=TRUE, labels= betaLabels, values = 0, lbound=-2,ubound=2)
@@ -674,5 +675,3 @@ xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, mzWeightMatrix = NUL
 	}
 	return(model)
 }
-
-

@@ -3731,7 +3731,7 @@ umx_is_MxData <- function(x) {
 #'
 #' Return the names of any ordinal variables in a dataframe
 #'
-#' @param df A [data.frame()] to look in for ordinal variables (if you offer a
+#' @param df A [data.frame()] or [mxData()] to look in for ordinal variables (if you offer a
 #' matrix or vector, it will be upgraded to a dataframe)
 #' @param names whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)
 #' @param strict whether to stop when unordered factors are found (default = TRUE)
