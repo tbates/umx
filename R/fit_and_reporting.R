@@ -800,7 +800,7 @@ umxSummary.default <- function(model, ...){
 
 #' Shows a compact, publication-style, summary of a RAM model
 #'
-#' Report the fit of a model in a compact form suitable for a journal. Emits a "warning" 
+#' Report the fit of a model in a compact form suitable for a journal. Alerts you
 #' when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
@@ -809,7 +809,7 @@ umxSummary.default <- function(model, ...){
 #' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 #' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 #' 
-#' Sometimes they appear NA. This often indicates a model which is not identified (see\url{http://davidakenny.net/cm/identify.htm}).
+#' Sometimes they appear NA. This often indicates a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
 #' This can include empirical under-identification - for instance two factors
 #' that are essentially identical in structure. use [mxCheckIdentification()] to check identification.
 #' 
@@ -837,17 +837,18 @@ umxSummary.default <- function(model, ...){
 #' @family Reporting functions
 #' @seealso - [umxRun()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
-#'  structure analysis: Conventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+#'  structure analysis: Conventional criteria versus new alternatives. *Structural Equation Modeling*, **6**, 1-55. 
 #'
 #'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
 #'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
-#'  Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
+#'  Retrieved from <https://www.statmodel.com/download/Yudissertation.pdf>
 #' 
 #' <https://tbates.github.io>
 #' 
 #' @export
 #' @import OpenMx
 #' @return - parameterTable returned invisibly, if estimates requested
+#' @md
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -918,11 +919,12 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	} else if (refModels == FALSE){
 		modelSummary = summary(model) # Don't use or generate refModels		
 	}else{
-		modelSummary = summary(model, refModels = refModels) # Use user-supplied refModels		
+		modelSummary = summary(model, refModels = refModels) # Using refModels supplied by user
 	}
 
 	# DisplayColumns show
 	if(!is.null(std)){
+		# nb: mxStandardizeRAMpaths returns the raw paths as well, so two birds, one stone.
 		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
 		nSubModels = length(model$submodels)
 		if(nSubModels > 0){
@@ -931,6 +933,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			if(nSubModels > 1){
 				for (i in 2:nSubModels) {
 					parameterTable = rbind(parameterTable, tmp[[i]])
+					# TODO: vertical merge, or show only model 1?
 				}			
 			}
 		}
@@ -1035,7 +1038,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 				}
 			}
 	})
-	
+	# TODO: umxSummary.MxRAMModel integrate interval printing into summary table
 	if(!is.null(model$output$confidenceIntervals)){
 		print(model$output$confidenceIntervals)
 	}
