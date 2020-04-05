@@ -620,6 +620,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @param means Whether to show means paths (default = FALSE)
 #' @param std Whether to standardize the model (default = FALSE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param splines Allow curved lines or not (FALSE)
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -635,7 +636,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
+umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, splines=FALSE...) {
 	# TODO umxPlotACEv: update to matrix version instead of label hunting
 	# TODO umxPlotACEv: use xmu_dot_define_shapes etc.?
 	# preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
@@ -702,11 +703,25 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	   l_to_v_at_1 = paste0(l_to_v_at_1, "\t ", l, "-> ", selDVs[var], " [label = \"@1\"];\n")
 	}
 
-	rankVars = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
+	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
 	# grep('a', latents, value= T)
 	rankA   = paste("\t{rank = min; ", paste(grep('A'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
-	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, l_to_v_at_1, rankVars, rankA, rankCE, "\n}");
+	
+	label = model$name
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut,
+		out,
+		l_to_v_at_1,
+		rankVariables,
+		rankA, 
+		rankCE, "\n}"
+	)
+	
+	print("?umxPlotACE options: std=, means=, digits=, strip_zero=, splines=, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACE
 

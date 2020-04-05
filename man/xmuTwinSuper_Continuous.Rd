@@ -14,7 +14,6 @@ xmuTwinSuper_Continuous(
   equateMeans,
   type,
   allContinuousMethod,
-  nVar,
   nSib,
   starts
 )
@@ -38,8 +37,6 @@ xmuTwinSuper_Continuous(
 
 \item{allContinuousMethod}{allContinuousMethod}
 
-\item{nVar}{nVar}
-
 \item{nSib}{nSib}
 }
 \value{
@@ -51,7 +48,7 @@ xmuTwinSuper_Continuous(
 Add the ...
 }
 \examples{
-# xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, allContinuousMethod = allContinuousMethod, nVar = nVar, nSib= nSib, sep = "_T")
+# xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T")
 }
 \seealso{
 \itemize{

@@ -175,27 +175,30 @@ could make them independent again with this script:
 of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978, p267).
 }
 \examples{
+require(umx)
 # ============================
 # = How heritable is height? =
 # ============================
-require(umx)
-data(twinData) # ?twinData from Australian twins.
-# Pick the variables
+
 # 1. Height has a tiny variance, and this makes solution finding very hard.
-# We'll scale height up by 10x to make the Optimizer's task easier.
+#    We'll scale it by 10x to make the Optimizer's task easier.
+data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 
-# 2. umxACE picks the variables it needs from the data.
+# 2. Make the mz & dz data.frames (note no need to picks the variables: umx will figure this out)
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 
-# 3. umxACE can figure out variable names using sep: 
-#    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
+# 3. Built & run the model 
 m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 
-# tip: with report = "html", umxSummary can print the table to your browser!
+# sidebar: umxACE figures out variable names using sep: 
+#    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
+
 umxSummary(m1, std = FALSE) # un-standardized
-# tip: plot gives a figure of the model and parameters
+
+# tip 1: set report = "html" and umxSummary prints the table to your browser!
+# tip 2: plot works for umx: Get a figure of the model and parameters
 # plot(m1)
 
 
@@ -208,9 +211,12 @@ umxSummary(m2, comparison = m1)
 # nb: Although summary is smart enough to print d, the underlying 
 #     matrices are still called a, c & e.
 
+# tip: try umxReduce(m1) !
+
 # ===================================================
 # = WLS example using diagonal weight least squares =
 # ===================================================
+
 m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, 
 	type = "DWLS", allContinuousMethod='marginals'
 )
@@ -222,14 +228,14 @@ m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData,
 # Things to note:
 
 # 1. Weight has a large variance, and this makes solution finding very hard.
-# Here, we scale wt to make the Optimizer's task easier.
+# Here, we residualize the data for age, which also scales weight and height.
 
 data(twinData)
 tmp = umx_residualize(c("wt", "ht"), cov = "age", suffixes= c(1, 2), data = twinData)
 mzData = tmp[tmp$zygosity \%in\% "MZFF", ]
 dzData = tmp[tmp$zygosity \%in\% "DZFF", ]
 
-# You might also want to explore re-scaling the variable
+# tip: You might also want transform variables
 # tmp = twinData$wt1[!is.na(twinData$wt1)]
 # car::powerTransform(tmp, family="bcPower"); hist(tmp^-0.6848438)
 # twinData$wt1 = twinData$wt1^-0.6848438
@@ -247,7 +253,11 @@ m1 = umxACE(selDVs = "wt", sep = "", data = twinData,
 # |:--|----:|:--|----:|
 # |wt | 0.93|.  | 0.38|
 
-# MODEL MODIFICATION
+# tip: umx_make_twin_data_nice() will make data into this nice format for you!
+
+# ======================
+# = MODEL MODIFICATION =
+# ======================
 # We can modify this model, e.g. test shared environment. 
 # Set comparison to modify, and show effect in one step.
 

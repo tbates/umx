@@ -13,9 +13,9 @@ xmu_make_TwinSuperModel(
   sep = NULL,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   allContinuousMethod = c("cumulants", "marginals"),
-  nSib = 2,
   numObsMZ = NULL,
   numObsDZ = NULL,
+  nSib = 2,
   equateMeans = TRUE,
   weightVar = NULL,
   bVector = FALSE,
@@ -39,11 +39,11 @@ xmu_make_TwinSuperModel(
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
-\item{nSib}{Number of members per family (default = 2)}
-
 \item{numObsMZ}{Number of MZ observations contributing (for summary data only)}
 
 \item{numObsDZ}{Number of DZ observations contributing (for summary data only)}
+
+\item{nSib}{Number of members per family (default = 2)}
 
 \item{equateMeans}{Whether to equate T1 and T2 means (default = TRUE).}
 
@@ -190,6 +190,7 @@ m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= selDVs, sep
 # ========================================
 # = Cov data (calls xmuTwinSuper_CovCor) =
 # ========================================
+
 data(twinData)
 mzData =cov(twinData[twinData$zygosity \%in\% "MZFF", tvars(c("wt","ht"), sep="")], use="complete")
 dzData =cov(twinData[twinData$zygosity \%in\% "DZFF", tvars(c("wt","ht"), sep="")], use="complete")

@@ -86,10 +86,6 @@
 # # TODO add tests with numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
 # # TODO add tests with weightVar = NULL,  bVector = FALSE, 
 
-# =======================================
-# = test dataType %in% c("cov", "cor")) =
-# =======================================
-# model = xmuTwinSuper_CovCor(name=name, mzData= mzData, dzData= dzData, numObsMZ = numObsMZ, numObsDZ = numObsDZ, sep = "_T")
 
 #' # ==============
 #' # = Continuous =
@@ -161,6 +157,7 @@
 #' # ========================================
 #' # = Cov data (calls xmuTwinSuper_CovCor) =
 #' # ========================================
+#'
 #' data(twinData)
 #' mzData =cov(twinData[twinData$zygosity %in% "MZFF", tvars(c("wt","ht"), sep="")], use="complete")
 #' dzData =cov(twinData[twinData$zygosity %in% "DZFF", tvars(c("wt","ht"), sep="")], use="complete")
@@ -169,7 +166,7 @@
 #' class(m1$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 #' names(m1$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 #'
-xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, selCovs= NULL, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), nSib = 2, numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
+xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, selCovs= NULL, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsMZ = NULL, numObsDZ = NULL, nSib = 2, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, verbose= FALSE) {
 	# TODO for xmu_make_TwinSuperModel
 	# TODO: 1. xmu_make_TwinSuperModel Add selCovs
 	# TODO: 2. xmu_make_TwinSuperModel Add beta matrix for fixed covariates in means.
@@ -201,7 +198,6 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		selCovs = tvars(selCovs, sep = sep, suffixes= 1:nSib)
 	}
 
-	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	dataType = umx_is_cov(dzData, boolean = FALSE); if(verbose){ umx_msg(dataType)}
 
 	if(type %in% c("cov", "cor") && !dataType %in% c("cov", "cor")){
@@ -235,11 +231,11 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		colTypes = umx_is_ordered(xmu_extract_column(mzData, selVars), summaryObject= TRUE)
 
 		if(colTypes$nFactors == 0){
-			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib, nVar = nVar, type= type, allContinuousMethod= allContinuousMethod)
+			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib, type= type, allContinuousMethod= allContinuousMethod)
 		} else if(sum(colTypes$isBin) == 0){
-			model = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib, nVar = nVar)
+			model = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib)
 		} else if(sum(colTypes$isBin) > 0){
-			model = xmuTwinSuper_SomeBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans,  nSib = nSib, nVar = nVar, verbose = verbose)
+			model = xmuTwinSuper_SomeBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans,  nSib = nSib, verbose = verbose)
 		} else {
 			stop("You appear to have something other than I expected in terms of WLS, or binary, ordinal and continuous variable mix")
 		}
@@ -293,7 +289,6 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' @param type type
 #' @param allContinuousMethod  allContinuousMethod
 #' @param equateMeans whether to equate the means across twins (default TRUE)
-#' @param nVar  nVar
 #' @param nSib nSib
 #' @param sep  default "_T"
 #' @return - A twin model
@@ -302,12 +297,13 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' @seealso - [xmu_make_TwinSuperModel]
 #' @md
 #' @examples
-#' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, allContinuousMethod = allContinuousMethod, nVar = nVar, nSib= nSib, sep = "_T")
-xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_T", mzData, dzData, equateMeans, type, allContinuousMethod, nVar, nSib, starts){
+#' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T")
+xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_T", mzData, dzData, equateMeans, type, allContinuousMethod, nSib, starts){
 	# ===========================================================================
 	# = Handle all continuous as special case (for WLS, can affect mean or not) =
 	# ===========================================================================
 	umx_check(!is.null(name), "stop", "I need a name for the super model")
+	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
 	if(type %in% c('WLS', 'DWLS', 'ULS') & allContinuousMethod == "cumulants"){
 		# Raw data, mo means (WLS with cumulants
@@ -336,8 +332,8 @@ xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_
 	return(model)
 }
 
-# xmuTwinSuper_NoBinary(name=name, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans= equateMeans, nSib=2, nVar = nVar)
-xmuTwinSuper_NoBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep, nSib, nVar, equateMeans= TRUE, verbose=FALSE){
+# xmuTwinSuper_NoBinary(name=name, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans= equateMeans, nSib=2)
+xmuTwinSuper_NoBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
 	# ============================
 	# = Notes: Ordinal requires: =
 	# ============================
@@ -346,6 +342,7 @@ xmuTwinSuper_NoBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dz
 	#   1. Latent means of binary variables fixedAt 0 (or by data.def?)
 	#   2. Latent variance (A + C + E) constrained == 1 
 	# 3. For Ordinal variables, first 2 thresholds fixed
+	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
 	# ==================================================
 	# = Handle 1 or more ordinal variables (no binary) =
@@ -378,9 +375,10 @@ xmuTwinSuper_NoBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dz
 	return(model)
 }
 
-# xmuTwinSuper_SomeBinary(name=NULL, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, nVar = nVar, nSib, equateMeans= equateMeans, sep = "_T", verbose = verbose)
-xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep, nVar, nSib, equateMeans= equateMeans, verbose = verbose){
+# xmuTwinSuper_SomeBinary(name=NULL, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, nSib, equateMeans= equateMeans, sep = "_T", verbose = verbose)
+xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep, nSib, equateMeans= equateMeans, verbose = verbose){
 	colTypes = umx_is_ordered(xmu_extract_column(mzData, selVars), summaryObject= TRUE)
+	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
 	# =============================================
 	# = Handle case of at least 1 binary variable =
