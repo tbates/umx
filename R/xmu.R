@@ -400,6 +400,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		# Manifests specified: mark all others as un-used
 		# remove duplicates (e.g. caused by var in manifests and definition vars lists
 		manifests = unique(manifests)
+		umx_check_names(namesNeeded=manifests, data= data)
 		unusedManifests = setdiff(umx_names(data), manifests)
 		dropColumns = TRUE
 	}
@@ -451,7 +452,8 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			stop("You gave me a cov matrix. umx needs the numObs for this.\nNote easiest and least error-prone method is
 for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
 		} else {
-			data = mxData(data, type= type, numObs= numObs)
+			# Drop unused variables from matrix
+			data = mxData(umx_reorder(data, manifests), type= type, numObs= numObs)
 		}
 	}else{
 		stop("I was expecting a data.frame, mxData or cov matrix.\nYou gave me a ", omxQuotes(class(data)))	

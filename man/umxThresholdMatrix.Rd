@@ -26,7 +26,7 @@ umxThresholdMatrix(
 
 \item{threshMatName}{name of the matrix which is returned. Defaults to "threshMat" - best not to change it.}
 
-\item{l_u_bound}{c(NA, NA) by default, you can use this to bound the thresholds. Careful you don't set bounds too close if you do.}
+\item{l_u_bound}{c(NA, NA) by default, you can use this to bound the first (base) threshold.}
 
 \item{droplevels}{Whether to drop levels with no observed data (defaults to FALSE)}
 
@@ -97,6 +97,7 @@ x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
 x = data.frame(ordered(x)); names(x) <- c("x")
 tmp = umxThresholdMatrix(x, selDVs = "x")
 
+tmp = umxThresholdMatrix(x, selDVs = "x", l_u_bound= c(-1,1))
 # =================================
 # = Binary example with twin data =
 # =================================
@@ -151,7 +152,6 @@ tmp[[2]]$values
 tmp[[2]]$labels # note labels are equated across twins
 # Check to be sure twin-1 column labels same as twin-2
 tmp[[2]]$labels[,2]==tmp[[2]]$labels[,4]
-
 
 # The algebra that assembles these into thresholds:
 tmp[[3]]$formula

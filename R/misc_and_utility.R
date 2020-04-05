@@ -2770,21 +2770,22 @@ umx_msg <- function(x) {
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 #' # For quick-typing, tvars is an alias for umx_paste_names
-#' tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+#' tvars(c("IQ", "C"), cov = "age", sep = "_T", prefix= "mean_")
+#' tvars("IQ")
 #' @md
 umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
 	nameList = c()
-	for (ID in suffixes) {
-		nameList = c(nameList, paste0(varNames, sep, ID))
+	if(is.null(varNames)){
+		nameList = NULL
+	}else{
+		for (ID in suffixes) {
+			nameList = c(nameList, paste0(prefix, varNames, sep, ID))
+		}
 	}
 	if(!is.null(covNames)){
 		for (ID in suffixes) {
-			nameList = c(nameList, paste0(covNames, sep, ID))
+			nameList = c(nameList, paste0(prefix, covNames, sep, ID))
 		}
-	}
-
-	if(!is.null(prefix)){
-		nameList = paste0(prefix, nameList)
 	}
 	return(nameList)
 }
@@ -3487,14 +3488,15 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 	return(boolean.test)
 }
 
-#' umx_check_names
+#' Check if a request name exists in a datafram or related object
 #'
-#' Check if a list of names are in the names() of a dataframe (or the of a matrix)
+#' Check if a list of names are in the [namez()] of a dataframe (or the [dimnames()] of a matrix), or the names of 
+#' the observed data of an [mzData()]
 #'
 #' @param namesNeeded list of variable names to find (a dataframe is also allowed)
-#' @param data data.frame (or matrix) to search in for names (default = NA)
-#' @param die whether to die if the check fails (defaults to TRUE)
-#' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)
+#' @param data data.frame, matrix, or mxData to search in for names (default NA)
+#' @param die whether to die if the check fails (default TRUE)
+#' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (default FALSE)
 #' @param intersection Show the intersection of names
 #' @param message Some helpful text to append when dieing.
 #' @family Test
@@ -3507,6 +3509,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' umx_check_names(c("x1", "x2"), demoOneFactor)
 #' umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
 #' umx_check_names(c("x1", "x2"), cov(demoOneFactor[, c("x1","x2")]))
+#' umx_check_names(c("x1", "x2"), mxData(demoOneFactor, type="raw"))
 #' umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 #' umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 #' umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
@@ -3523,10 +3526,13 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	} else{
 		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded))
 	}
+
 	if(is.data.frame(data)){
 		namesInData = names(data)
 	}else if(is.matrix(data)){
 		namesInData = dimnames(data)[[2]]
+	}else if(umx_is_MxData(data)){
+		namesInData = namez(data)
 	} else if (!typeof(data) == "character"){
 		namesInData = data
 	} else {
@@ -3731,16 +3737,17 @@ umx_is_MxData <- function(x) {
 #'
 #' Return the names of any ordinal variables in a dataframe
 #'
-#' @param df A [data.frame()] to look in for ordinal variables (if you offer a
+#' @param df A [data.frame()] or [mxData()] to look in for ordinal variables (if you offer a
 #' matrix or vector, it will be upgraded to a dataframe)
 #' @param names whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)
 #' @param strict whether to stop when unordered factors are found (default = TRUE)
 #' @param binary.only only count binary factors (2-levels) (default = FALSE)
 #' @param ordinal.only only count ordinal factors (3 or more levels) (default = FALSE)
 #' @param continuous.only use with names = TRUE to get the names of the continuous variables
+#' @param summaryObject whether to return a nice summary object. Overrides othere settings (FALSE)
 #' @return - vector of variable names or Booleans
 #' @export
-#' @family Test
+#' @family Check or test
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -3754,18 +3761,48 @@ umx_is_MxData <- function(x) {
 #' umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
 #' umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
 #' umx_is_ordered(tmp, continuous.only = TRUE)
+#'
+#' x = umx_is_ordered(tmp, summaryObject= TRUE)
+#'
 #' isContinuous = !umx_is_ordered(tmp)
 #' \dontrun{
 #' # nb: By default, unordered factors cause a message...
-#' tmp$gear = factor(mtcars$gear) # UNordered factor
+#' tmp$gear = factor(mtcars$gear) # Unordered factor
 #' umx_is_ordered(tmp)
+#' umx_is_ordered(tmp, strict = FALSE) # compare: no warning
 #' 
 #' # also: not designed to work on single variables...
 #' umx_is_ordered(tmp$cyl)
 #' # Do this instead...
-#' umx_is_ordered(tmp[, "cyl", drop=FALSE])
+#' umx_is_ordered(tmp[, "cyl", drop= FALSE])
 #' }
-umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE) {
+umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE, ordinal.only = FALSE, continuous.only = FALSE, summaryObject= FALSE) {
+	if(summaryObject){
+		if(any(umx_is_ordered(df))){
+			isFactor = umx_is_ordered(df)                      # T/F list of factor columns
+			isOrd    = umx_is_ordered(df, ordinal.only = TRUE) # T/F list of ordinal (excluding binary)
+			isBin    = umx_is_ordered(df, binary.only  = TRUE) # T/F list of binary columns
+			nFactors = sum(isFactor)
+			nOrdVars = sum(isOrd) # total number of ordinal columns
+			nBinVars = sum(isBin) # total number of binary columns
+
+			factorVarNames = names(df)[isFactor]
+			ordVarNames    = names(df)[isOrd]
+			binVarNames    = names(df)[isBin]
+			contVarNames   = names(df)[!isFactor]
+		}else{
+			# Summary data
+			isFactor = isOrd    = isBin    = c()
+			nFactors = nOrdVars = nBinVars = 0			
+			factorVarNames = ordVarNames = binVarNames = contVarNames = c()
+		}
+		return(list(isFactor = isFactor, isOrd = isOrd, isBin = isBin, 
+			nFactors = nFactors, nOrdVars = nOrdVars, nBinVars = nBinVars, 
+			factorVarNames = factorVarNames, ordVarNames = ordVarNames, binVarNames = binVarNames, contVarNames = contVarNames)
+		)
+	}
+
+
 	if(sum(c(binary.only, ordinal.only, continuous.only)) > 1){
 		stop("Only one of binary.only ordinal.only and continuous.only can be TRUE")
 	}
@@ -3773,9 +3810,10 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 		if(is.matrix(df)){
 			df = data.frame(df)
 			# stop("df argument to umx_is_ordered must be a data.frame. You gave me a matrix")
+		}else if(umx_is_MxData((df))){
+			df = df$observed
 		} else {
-			# df = data.frame(df)
-			stop("Argument df must be a data.frame. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
+			stop("Argument df must be a data.frame, matrix, or mxData. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
 	nVar = ncol(df);

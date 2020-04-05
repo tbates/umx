@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_check_names}
 \alias{umx_check_names}
-\title{umx_check_names}
+\title{Check if a request name exists in a datafram or related object}
 \usage{
 umx_check_names(
   namesNeeded,
@@ -16,18 +16,19 @@ umx_check_names(
 \arguments{
 \item{namesNeeded}{list of variable names to find (a dataframe is also allowed)}
 
-\item{data}{data.frame (or matrix) to search in for names (default = NA)}
+\item{data}{data.frame, matrix, or mxData to search in for names (default NA)}
 
-\item{die}{whether to die if the check fails (defaults to TRUE)}
+\item{die}{whether to die if the check fails (default TRUE)}
 
-\item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)}
+\item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (default FALSE)}
 
 \item{intersection}{Show the intersection of names}
 
 \item{message}{Some helpful text to append when dieing.}
 }
 \description{
-Check if a list of names are in the names() of a dataframe (or the of a matrix)
+Check if a list of names are in the [namez()] of a dataframe (or the [dimnames()] of a matrix), or the names of 
+the observed data of an [mzData()]
 }
 \examples{
 require(umx)
@@ -35,6 +36,7 @@ data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
 umx_check_names(c("x1", "x2"), demoOneFactor)
 umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
 umx_check_names(c("x1", "x2"), cov(demoOneFactor[, c("x1","x2")]))
+umx_check_names(c("x1", "x2"), mxData(demoOneFactor, type="raw"))
 umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
@@ -59,14 +61,14 @@ Other Test:
 \code{\link{umx_is_MxMatrix}()},
 \code{\link{umx_is_MxModel}()},
 \code{\link{umx_is_RAM}()},
-\code{\link{umx_is_cov}()},
-\code{\link{umx_is_ordered}()}
+\code{\link{umx_is_cov}()}
 
 Other Check or test: 
 \code{\link{umx_is_class}()},
 \code{\link{umx_is_endogenous}()},
 \code{\link{umx_is_exogenous}()},
 \code{\link{umx_is_numeric}()},
+\code{\link{umx_is_ordered}()},
 \code{\link{umx}}
 }
 \concept{Check or test}

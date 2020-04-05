@@ -2402,6 +2402,7 @@ plot.MxRAMModel <- plot.MxModel
 #' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param splines Whether to allow curves or not (FALSE)
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -2418,7 +2419,7 @@ plot.MxRAMModel <- plot.MxModel
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE("plotACEexample", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
+umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, splines= FALSE, ...) {
 	# TODO: umxPlotACE Replace label-parsing with code that walks across the known matrices...
 	# Obviates problems with arbitrary names.
 	if(!class(x) == "MxModelACE"){
@@ -2476,7 +2477,19 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	# grep('a', latents, value=T)
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
-	digraph = paste0("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}"); 
+	label = model$name
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut,
+		out,
+		rankVariables,
+		rankA, 
+		rankCE, "\n}"
+	)
+	
+	print("?umxPlotACE options: std, means, digits, strip_zero, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACE
 

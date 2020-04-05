@@ -39,8 +39,6 @@ Other xmu internal not for end user:
 \code{\link{umx_standardize}()},
 \code{\link{umx_string_to_algebra}()},
 \code{\link{umx}},
-\code{\link{xmuDefBetas}()},
-\code{\link{xmuDefMean}()},
 \code{\link{xmuHasSquareBrackets}()},
 \code{\link{xmuLabel_MATRIX_Model}()},
 \code{\link{xmuLabel_Matrix}()},
@@ -53,6 +51,9 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinMeanModelParts_top}()},
+\code{\link{xmuTwinMeans_MZDZ}()},
+\code{\link{xmuTwinSuper_Continuous}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
@@ -70,8 +71,10 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
+\code{\link{xmu_make_TwinSuperModel}()},
 \code{\link{xmu_make_bin_cont_pair_data}()},
 \code{\link{xmu_make_mxData}()},
 \code{\link{xmu_make_top_twin}()},
@@ -93,6 +96,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
+\code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()}
 }
 \concept{xmu internal not for end user}

@@ -10,11 +10,12 @@ umx_is_ordered(
   strict = TRUE,
   binary.only = FALSE,
   ordinal.only = FALSE,
-  continuous.only = FALSE
+  continuous.only = FALSE,
+  summaryObject = FALSE
 )
 }
 \arguments{
-\item{df}{A \code{\link[=data.frame]{data.frame()}} to look in for ordinal variables (if you offer a
+\item{df}{A \code{\link[=data.frame]{data.frame()}} or \code{\link[=mxData]{mxData()}} to look in for ordinal variables (if you offer a
 matrix or vector, it will be upgraded to a dataframe)}
 
 \item{names}{whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)}
@@ -26,6 +27,8 @@ matrix or vector, it will be upgraded to a dataframe)}
 \item{ordinal.only}{only count ordinal factors (3 or more levels) (default = FALSE)}
 
 \item{continuous.only}{use with names = TRUE to get the names of the continuous variables}
+
+\item{summaryObject}{whether to return a nice summary object. Overrides othere settings (FALSE)}
 }
 \value{
 \itemize{
@@ -46,16 +49,20 @@ umx_is_ordered(tmp, names = TRUE, binary.only = TRUE)
 umx_is_ordered(tmp, names = TRUE, ordinal.only = TRUE)
 umx_is_ordered(tmp, names = TRUE, continuous.only = TRUE)
 umx_is_ordered(tmp, continuous.only = TRUE)
+
+x = umx_is_ordered(tmp, summaryObject= TRUE)
+
 isContinuous = !umx_is_ordered(tmp)
 \dontrun{
 # nb: By default, unordered factors cause a message...
-tmp$gear = factor(mtcars$gear) # UNordered factor
+tmp$gear = factor(mtcars$gear) # Unordered factor
 umx_is_ordered(tmp)
+umx_is_ordered(tmp, strict = FALSE) # compare: no warning
 
 # also: not designed to work on single variables...
 umx_is_ordered(tmp$cyl)
 # Do this instead...
-umx_is_ordered(tmp[, "cyl", drop=FALSE])
+umx_is_ordered(tmp[, "cyl", drop= FALSE])
 }
 }
 \references{
@@ -64,20 +71,12 @@ umx_is_ordered(tmp[, "cyl", drop=FALSE])
 }
 }
 \seealso{
-Other Test: 
-\code{\link{umx_check_OS}()},
-\code{\link{umx_check_model}()},
+Other Check or test: 
 \code{\link{umx_check_names}()},
-\code{\link{umx_check_parallel}()},
-\code{\link{umx_check}()},
-\code{\link{umx_has_CIs}()},
-\code{\link{umx_has_been_run}()},
-\code{\link{umx_has_means}()},
-\code{\link{umx_has_square_brackets}()},
-\code{\link{umx_is_MxData}()},
-\code{\link{umx_is_MxMatrix}()},
-\code{\link{umx_is_MxModel}()},
-\code{\link{umx_is_RAM}()},
-\code{\link{umx_is_cov}()}
+\code{\link{umx_is_class}()},
+\code{\link{umx_is_endogenous}()},
+\code{\link{umx_is_exogenous}()},
+\code{\link{umx_is_numeric}()},
+\code{\link{umx}}
 }
-\concept{Test}
+\concept{Check or test}

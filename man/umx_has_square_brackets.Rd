@@ -40,7 +40,6 @@ Other Test:
 \code{\link{umx_is_MxMatrix}()},
 \code{\link{umx_is_MxModel}()},
 \code{\link{umx_is_RAM}()},
-\code{\link{umx_is_cov}()},
-\code{\link{umx_is_ordered}()}
+\code{\link{umx_is_cov}()}
 }
 \concept{Test}
