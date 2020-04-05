@@ -12,7 +12,7 @@ umxPlotACEv(
   means = FALSE,
   std = TRUE,
   strip_zero = TRUE,
-  splines = FALSE...
+  ...
 )
 }
 \arguments{
@@ -27,8 +27,6 @@ umxPlotACEv(
 \item{std}{Whether to standardize the model (default = FALSE)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
-
-\item{splines}{Allow curved lines or not (FALSE)}
 
 \item{...}{Additional (optional) parameters}
 }

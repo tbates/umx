@@ -33,7 +33,7 @@ m1 = umxTwinAddMeansModel(m1, defVars = c("a", "b"))
 }
 \seealso{
 \itemize{
-\item \code{\link[=xmuDefBetas]{xmuDefBetas()}}, \code{\link[=xmuDefMean]{xmuDefMean()}}
+\item \code{\link[=xmuDefBetasInTop]{xmuDefBetasInTop()}}, \code{\link[=xmuDefMeanInDataGroup]{xmuDefMeanInDataGroup()}}
 }
 
 Other Twin Modeling Functions: 

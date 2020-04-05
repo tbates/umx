@@ -85,8 +85,7 @@
 #' @examples
 # # TODO add tests with numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
 # # TODO add tests with weightVar = NULL,  bVector = FALSE, 
-
-
+#
 #' # ==============
 #' # = Continuous =
 #' # ==============
@@ -256,19 +255,17 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 	# = Add mxFitFunction to model =
 	# ==============================
 	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
-		message("data treated as ", type)
+		message("Data treated as ", type)
 		# Still mxExpectationNormal (`top` is not affected - either has or lacks means matrix already).
 		# Replace the MZ and DZ model FitFunctions
-		model$MZ = mxModel(model$MZ, mxFitFunctionWLS(type= type, allContinuousMethod= allContinuousMethod) )
-		model$DZ = mxModel(model$DZ, mxFitFunctionWLS(type= type, allContinuousMethod= allContinuousMethod) )
+		model$MZ = mxModel(model$MZ, mxFitFunctionWLS(type = type, allContinuousMethod = allContinuousMethod) )
+		model$DZ = mxModel(model$DZ, mxFitFunctionWLS(type = type, allContinuousMethod = allContinuousMethod) )
 	}else{
 		model$MZ = mxModel(model$MZ, mxFitFunctionML(vector = bVector) )
 		model$DZ = mxModel(model$DZ, mxFitFunctionML(vector = bVector) )
 	}
 
-	if(!is.null(weightVar)){
-		model = xmu_twin_add_WeightMatricesfunction(model, mzWeightMatrix = mzWeightData, dzWeightMatrix = dzWeightData)
-	}
+	if(!is.null(weightVar)){ model = xmu_twin_add_WeightMatrices(model, mzWeightMatrix = mzWeightData, dzWeightMatrix = dzWeightData) }
 	return(model)
 }                                           
 
@@ -297,8 +294,11 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' @seealso - [xmu_make_TwinSuperModel]
 #' @md
 #' @examples
-#' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T")
-xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_T", mzData, dzData, equateMeans, type, allContinuousMethod, nSib, starts){
+#' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, 
+#' #    mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
+#' #    allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T"
+#' # )
+xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_T", mzData, dzData, equateMeans, type, allContinuousMethod, nSib){
 	# ===========================================================================
 	# = Handle all continuous as special case (for WLS, can affect mean or not) =
 	# ===========================================================================

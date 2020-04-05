@@ -85,7 +85,7 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @return - [mxModel()] of subclass mxModel.ACE
+#' @return - [mxModel()] subclass `mxModel.ACE`
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
@@ -247,122 +247,98 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 	data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, 
 	boundDiag = NULL, equateMeans = TRUE, bVector = FALSE,  covMethod = c("fixed", "random"), 
 	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
-		nSib                = 2 # number of siblings in a twin pair
-		type                = match.arg(type)
-		covMethod           = match.arg(covMethod)
-		allContinuousMethod = match.arg(allContinuousMethod)
-		if(!is.null(data)){
-			if(is.null(dzData)){
-				dzData = "DZ"
-				mzData = "MZ"
-			}
-			if(is.null(sep)){
-				sep= "_T"
-			}
-			mzData = data[data[,zyg] %in% mzData, ]
-			dzData = data[data[,zyg] %in% dzData, ]
+	nSib                = 2 # number of siblings in a twin pair
+	type                = match.arg(type)
+	covMethod           = match.arg(covMethod)
+	allContinuousMethod = match.arg(allContinuousMethod)
+	if(dzCr == .25 & name == "ACEv"){ name = "ADEv" }
+	if(!is.null(data)){
+		if(is.null(sep)){ sep = "_T" }
+		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
+		dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
+	}
+	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
+	
+	# If given covariates, call umxACEvcov
+	if(!is.null(selCovs)){
+		if(covMethod == "fixed"){
+			stop("Implementing fixed means effects for version 2.0")
+			# TODO add allContinuousMethod = allContinuousMethod and type
+			# umxACEvdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
+		} else if(covMethod == "random") {
+			message("umxACEvcov not yet implemented")
+			# TODO implement umxACEvcov or refactor
+			# TODO add allContinuousMethod = allContinuousMethod and type
+			# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
 		}
-		xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
-		
-		if(dzCr == .25 & name == "ACEv"){
-			name = "ADEv"
-		}
-		# If given covariates, call umxACEvcov
-		if(!is.null(selCovs)){
-			if(covMethod == "fixed"){
-				stop("Implementing fixed means effects for version 2.0")
-				# TODO add allContinuousMethod = allContinuousMethod and type
-				# umxACEvdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
-			} else if(covMethod == "random") {
-				message("umxACEvcov not yet implemented")
-				# TODO implement umxACEvcov or refactor
-				# TODO add allContinuousMethod = allContinuousMethod and type
-				# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
-			}
-		} else {
-			# nSib = 2, equateMeans = TRUE, verbose = verbose
-			selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
-			nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
-
-			bits = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
-			top  = bits$top
-			MZ   = bits$MZ
-			DZ   = bits$DZ
-			if(bVector){
-				mzWeightMatrix = bits$mzWeightMatrix
-				dzWeightMatrix = bits$dzWeightMatrix
-			}else{
-				mzWeightMatrix = dzWeightMatrix = NULL
-			}
-
-			# Define varStarts ...
-			tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
-			varStarts = tmp$varStarts
-
-		# Finish building top
-		top = mxModel(top,
-			# "top" defines the algebra of the twin model, which MZ and DZ slave off of
-			# NB: top already has the means model and thresholds matrix added if necessary  - see above
-			# Additive, Common, and Unique variance components
-			umxMatrix("A", type = "Symm", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
-			umxMatrix("C", type = "Symm", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE),
-			umxMatrix("E", type = "Symm", nrow = nVar, ncol = nVar, free = TRUE, values = varStarts, byrow = TRUE), 
-		
-			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
-			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
-			# Quadratic multiplication to add common_loadings
-			mxAlgebra(name = "ACE", A+C+E),
-			mxAlgebra(name = "AC" , A+C  ),
-			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
-			mxAlgebra(rbind (cbind(ACE, AC),
-			                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
-			mxAlgebra(rbind (cbind(ACE, hAC),
-			                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
-		)
-
-		# =======================================
-		# = 		Assemble models into supermodel =
-		# =======================================
-		model = xmu_assemble_twin_supermodel(name, MZ, DZ, top, mzWeightMatrix, dzWeightMatrix)
-		
-		if(!is.null(boundDiag)){
-			if(!is.numeric(boundDiag)){
-				stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
-			} else {				
-				newLbound = model$top$matrices$A@lbound
-				if(length(boundDiag) > 1 ){
-					if(length(boundDiag) != length(diag(newLbound)) ){
-						stop("Typically boundDiag is 1 digit: if more, must be size of diag(A)")
-					}
-				}
-				diag(newLbound) = boundDiag; 
-				model$top$A$lbound = newLbound
-				model$top$C$lbound = newLbound
-				model$top$E$lbound = newLbound
-			}
-		}
-		if(addStd){
-			newTop = mxModel(model$top,
-				mxMatrix(name  = "I", "Iden", nVar, nVar),   # nVar Identity matrix
-				mxAlgebra(name = "Vtot", A + C+ E),          # Total variance
-				mxAlgebra(name = "InvSD", sqrt(solve(I * Vtot))), # 1/variance
-
-				# Standardised _variance_ coefficients ready to be stacked together
-				mxAlgebra(name = "A_std", InvSD %&% A), # standardized A
-				mxAlgebra(name = "C_std", InvSD %&% C), # standardized C
-				mxAlgebra(name = "E_std", InvSD %&% E)  # standardized E
-			)
-			model = mxModel(model, newTop)
-			if(addCI){
-				model = mxModel(model, mxCI(c('top.A_std', 'top.C_std', 'top.E_std')))
-			}
-		}
-		# Trundle through and make sure values with the same label have the same start value... means for instance.
-		model = omxAssignFirstParameters(model)
-		model = as(model, "MxModelACEv") # Set class so that S3 plot() dispatches.
-		model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, summary = TRUE, comparison = FALSE)
 		return(model)
 	}
+	# nSib = 2, equateMeans = TRUE, verbose = verbose
+	selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
+	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
+
+	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= NULL, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar)
+	tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+
+	# Finish building top
+	top = mxModel(model$top,
+		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
+		# NB: top already has the means model and thresholds matrix added if necessary  - see above
+		# Additive, Common, and Unique variance components
+		umxMatrix("A", type = "Symm", nrow = nVar, ncol = nVar, free = TRUE, values = tmp$varStarts, byrow = TRUE),
+		umxMatrix("C", type = "Symm", nrow = nVar, ncol = nVar, free = TRUE, values = tmp$varStarts, byrow = TRUE),
+		umxMatrix("E", type = "Symm", nrow = nVar, ncol = nVar, free = TRUE, values = tmp$varStarts, byrow = TRUE), 
+	
+		umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+		umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
+		# Quadratic multiplication to add common_loadings
+		mxAlgebra(name = "ACE", A+C+E),
+		mxAlgebra(name = "AC" , A+C  ),
+		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
+		mxAlgebra(rbind (cbind(ACE, AC),
+		                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
+		mxAlgebra(rbind (cbind(ACE, hAC),
+		                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+	)
+	model = mxModel(model, top) 
+	
+	if(!is.null(boundDiag)){
+		if(!is.numeric(boundDiag)){
+			stop("boundDiag must be a digit or vector of numbers. You gave me a ", class(boundDiag))
+		} else {				
+			newLbound = model$top$matrices$A@lbound
+			if(length(boundDiag) > 1 ){
+				if(length(boundDiag) != length(diag(newLbound)) ){
+					stop("Typically boundDiag is 1 digit: if more, must be size of diag(A)")
+				}
+			}
+			diag(newLbound) = boundDiag; 
+			model$top$A$lbound = newLbound
+			model$top$C$lbound = newLbound
+			model$top$E$lbound = newLbound
+		}
+	}
+	if(addStd){
+		newTop = mxModel(model$top,
+			mxMatrix(name  = "I", "Iden", nVar, nVar),   # nVar Identity matrix
+			mxAlgebra(name = "Vtot", A + C+ E),          # Total variance
+			mxAlgebra(name = "InvSD", sqrt(solve(I * Vtot))), # 1/variance
+
+			# Standardised _variance_ coefficients ready to be stacked together
+			mxAlgebra(name = "A_std", InvSD %&% A), # standardized A
+			mxAlgebra(name = "C_std", InvSD %&% C), # standardized C
+			mxAlgebra(name = "E_std", InvSD %&% E)  # standardized E
+		)
+		model = mxModel(model, newTop)
+		if(addCI){
+			model = mxModel(model, mxCI(c('top.A_std', 'top.C_std', 'top.E_std')))
+		}
+	}
+	# Trundle through and make sure values with the same label have the same start value... means for instance.
+	model = omxAssignFirstParameters(model)
+	model = as(model, "MxModelACEv") # Set class so that S3 plot() dispatches.
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, summary = TRUE, comparison = FALSE)
+	return(model)
 } # end umxACEv
 
 
@@ -620,7 +596,6 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @param means Whether to show means paths (default = FALSE)
 #' @param std Whether to standardize the model (default = FALSE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
-#' @param splines Allow curved lines or not (FALSE)
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -636,7 +611,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, splines=FALSE...) {
+umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	# TODO umxPlotACEv: update to matrix version instead of label hunting
 	# TODO umxPlotACEv: use xmu_dot_define_shapes etc.?
 	# preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
@@ -709,6 +684,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	
 	label = model$name
+	splines = "FALSE"
 	digraph = paste0(
 		"digraph G {\n\t",
 		'label="', label, '";\n\t',
@@ -721,7 +697,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 		rankCE, "\n}"
 	)
 	
-	print("?umxPlotACE options: std=, means=, digits=, strip_zero=, splines=, file=, min=, max =")
+	print("?umxPlotACE options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACE
 

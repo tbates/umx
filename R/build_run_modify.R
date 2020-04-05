@@ -272,7 +272,7 @@ umxModel <- function(...) {
 #' @description
 #' `umxRAM` expedites creation of structural equation models, still without doing invisible things to the model. It 
 #' supports [umxPath()] but also lavaan-style string specification of models: lavaan's scripting language has become a 
-#' lingua franca for SEM books, so supporting across apps makes a lot of sense.
+#' lingua franca for SEM books, so supporting this improves science learning.
 #' 
 #' Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
 #' using the widely used `mtcars` data set.
@@ -284,25 +284,28 @@ umxModel <- function(...) {
 #' 	umxPath(v.m. = c("wt", "disp", "mpg"))
 #' )
 #' ```
-#' As you can see, most of the work is done by [umxPath()]. `umxRAM` just wraps these paths up, takes the `data =` input, and 
-#' then internally sets up all the labels and start values for the model, runs it, displays a summary, and a plot!
+#'
+#' As you can see, most of the work is done by [umxPath()]. `umxRAM` wraps these paths up, takes the `data =` input, and 
+#' then internally sets up all the labels and start values for the model, runs it, and calls [umxSummary()], and [plot.MxModel()].
 #' 
 #' Try it, or one of the several models in the examples at the bottom of this page.
 #' 
 #' A common error is to include data in the main list, a bit like
-#' saying `lm(y ~ x + df)` instead of `lm(y ~ x, data = dd)`.
+#' saying `lm(y ~ x + df)` instead of `lm(y ~ x, data = df)`.
 #' 
-#' **nb**: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
+#' **nb**: Because it uses the presence of a variable in the data to detect if a variable is latent or not, `umxRAM` needs data at build time.
 #'
 #' **String Syntax**
 #' 
-#' Here's the same example using lavaan syntax (for more examples, see [umxLav2RAM()])
+#' Here is an example using lavaan syntax (for more, see [umxLav2RAM()])
 #' 
 #' ```Rsplus
 #' m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
 #' ```
 #'
-#' *note*: If you are at the "sketching" stage of theory consideration, `umxRAM` supports
+#' **Sketch mode**
+#'
+#' If you are at the "sketching" stage of theory consideration, `umxRAM` supports
 #' a simple vector of manifest names to work with.
 #' 
 #' ```Rsplus
@@ -336,20 +339,17 @@ umxModel <- function(...) {
 #' 11. Less typing: [umxPath()] offers powerful verbs to describe paths.
 #' 12. Supports a subset of lavaan string input.
 #'
-#' 
-#' \strong{Comparison with other software}
-#' 
 #' **Start values**. Currently, manifest variable means are set to the observed means, residual variances are set to 80% 
 #' of the observed variance of each variable, 
 #' and single-headed paths are set to a positive starting value (currently .9).
 #' *note*: The start-value strategy is subject to improvement, and will be documented in the help for [umxRAM()].
 #' 
-#' **Black-box software, defaults, and automatic addition of paths**.
-#' Some SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored 
-#' similar features (like auto-creating error and exogenous variances using `endog.variances = TRUE`
-#' and `exog.variances = TRUE`). Also identification helpers like `fix = "latents"` 
-#' and `fix = "firstLoadings"`. If you want this, I'd say use `umxRAM` with lavaan string input.
+#' **Comparison with other software**
 #' 
+#' **Black-box software, defaults, and automatic addition of paths**.
+#' 
+#' Some SEM software does a lot of behind-the-scenes defaulting and path addition. 
+#' If you want this, I'd say use `umxRAM` with lavaan string input.
 #' 
 #' @param model A model to update (or set to string to use as name for new model)
 #' @param data data for the model. Can be an [mxData()] or a data.frame
@@ -1378,12 +1378,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 	# nSib = 2, equateMeans = TRUE, verbose = verbose
 
 	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
-	if(is.null(sep)){
-		selVars = selDVs # full names passed in... gosh I wish I'd not allowed this early on...
-	}else{
-		selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
-	}
-	nVar = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	# full names passed in... gosh I wish I'd not allowed this early on...
+	selVars = ifelse(is.null(sep), selDVs, tvars(selDVs, sep = sep, suffixes = 1:nSib) )
+	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 
 	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= NULL, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, bVector = FALSE, verbose= FALSE)
 	tmp   = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)

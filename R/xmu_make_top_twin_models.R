@@ -9,7 +9,7 @@
 #' @return - model with means model added.
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [xmuDefBetas()], [xmuDefMean()]
+#' @seealso - [xmuDefBetasInTop()], [xmuDefMeanInDataGroup()]
 #' @md
 #' @examples
 #' defVars = c("VETSA1_age","VETSA2_age", "VETSA3_age")
@@ -53,6 +53,7 @@ umxTwinAddMeansModel <- function(model, defVars = NULL, sep = "_T"){
 #' xmuTwinMeans_MZDZ(defVars = c("a", "b"))
 #'
 xmuTwinMeans_MZDZ <- function(defVars = NULL, sep="_T", expMeanAlgName = "expMean") {
+	# top.Mean top.betaDef Def_T1 top.Mean top.betaDef Def_T2 need to be added to 
 	nVar = length(defVars)
 	T1defLabels = paste0("data.", defVars, sep, 1)
 	T2defLabels = paste0("data.", defVars, sep, 2)
@@ -239,9 +240,11 @@ xmuTwinMeanModelParts_top <- function(nVar, defVars = NULL, sep="_T") {
 #' # = Cov data =
 #' # ============
 #' data(twinData)
-#' mzData = cov(twinData[twinData$zygosity %in%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-#' dzData = cov(twinData[twinData$zygosity %in%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
+#' varNames = tvars(c("wt", "ht"), sep="")
+#' mzData = cov(twinData[twinData$zygosity %in%  "MZFF", varNames], use = "complete")
+#' dzData = cov(twinData[twinData$zygosity %in%  "DZFF", varNames], use = "complete")
+#' bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", 
+#'   nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose= TRUE)
 #' class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 #' names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 #'
@@ -671,14 +674,20 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' @family xmu internal not for end user
 #' @md
 #' @examples
-#' # xmu_twin_add_WeightMatrices(model, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix)
+#' # xmu_twin_add_WeightMatrices(model, 
+#' #	mzWeightMatrix = mzWeightMatrix, 
+#' #    dzWeightMatrix = dzWeightMatrix
+#' # )
 xmu_twin_add_WeightMatrices <- function(model, mzWeightMatrix = NULL, dzWeightMatrix = NULL) {
 	if(!model$MZ$fitfunction$vector){
 		stop("xmu_twin_add_WeightMatrix: You need to set the fitFunction to vector mode... but it appears I haven't")
 	}
-	mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(tmpMZData), ncol = 1, free = FALSE, values = mzWeightMatrix)
-	dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(tmpDZData), ncol = 1, free = FALSE, values = dzWeightMatrix)
 
+	if(!name(mzWeightMatrix) == "mzWeightMatrix"){
+		stop(
+			paste0("xmu_twin_add_WeightMatrices expects name of mzWeightMatrix to be 'mzWeightMatrix'. It was ", omxQuotes(name(mzWeightMatrix)))
+		)
+	}
 
 	# Weighted model with vector objective
 	# To weight objective functions in OpenMx, you specify a container model that applies the weights

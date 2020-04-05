@@ -26,7 +26,10 @@ xmu_twin_add_WeightMatrices(
 Add weight matrices to a twin model.
 }
 \examples{
-# xmu_twin_add_WeightMatrices(model, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix)
+# xmu_twin_add_WeightMatrices(model, 
+#	mzWeightMatrix = mzWeightMatrix, 
+#    dzWeightMatrix = dzWeightMatrix
+# )
 }
 \seealso{
 Other xmu internal not for end user: 

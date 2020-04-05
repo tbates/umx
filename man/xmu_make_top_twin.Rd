@@ -184,9 +184,11 @@ bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= ""
 # = Cov data =
 # ============
 data(twinData)
-mzData = cov(twinData[twinData$zygosity \%in\%  "MZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-dzData = cov(twinData[twinData$zygosity \%in\%  "DZFF", tvars(c("wt", "ht"), sep="")], use = "complete")
-bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
+varNames = tvars(c("wt", "ht"), sep="")
+mzData = cov(twinData[twinData$zygosity \%in\%  "MZFF", varNames], use = "complete")
+dzData = cov(twinData[twinData$zygosity \%in\%  "DZFF", varNames], use = "complete")
+bits = xmu_make_top_twin(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", 
+  nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose= TRUE)
 class(bits$MZ$fitfunction)[[1]] =="MxFitFunctionML"
 names(bits$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
 

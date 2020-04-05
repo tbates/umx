@@ -20,7 +20,7 @@
 )
 }
 \arguments{
-\item{model}{The [mxModel()] whose fit will be reported}
+\item{model}{The \code{\link[=mxModel]{mxModel()}} whose fit will be reported}
 
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
@@ -44,28 +44,30 @@ If NULL will be competed on demand. If FALSE will not be computed. Only needed f
 \item{show}{Deprecated: use std = TRUE.}
 }
 \value{
-- parameterTable returned invisibly, if estimates requested
+\itemize{
+\item parameterTable returned invisibly, if estimates requested
+}
 }
 \description{
-Report the fit of a model in a compact form suitable for a journal. Emits a "warning" 
+Report the fit of a model in a compact form suitable for a journal. Alerts you
 when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 }
 \details{
-Note: For some (multi-group) models, you will need to fall back on [summary()]
+Note: For some (multi-group) models, you will need to fall back on \code{\link[=summary]{summary()}}
 
 CIs and Identification
 This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
-These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
+These are used to derive confidence intervals based on the formula 95\%CI = estimate +/- 1.96*SE)
 
-Sometimes they appear NA. This often indicates a model which is not identified (see\url{http://davidakenny.net/cm/identify.htm}).
+Sometimes they appear NA. This often indicates a model which is not identified (see \url{http://davidakenny.net/cm/identify.htm}).
 This can include empirical under-identification - for instance two factors
-that are essentially identical in structure. use [mxCheckIdentification()] to check identification.
+that are essentially identical in structure. use \code{\link[=mxCheckIdentification]{mxCheckIdentification()}} to check identification.
 
-One or more paths estimated at or close to zero suggests that fixing one or two of 
-these to zero may fix the standard error calculation, 
+One or more paths estimated at or close to zero suggests that fixing one or two of
+these to zero may fix the standard error calculation,
 and alleviate the need to estimate likelihood-based or bootstrap CIs
 
-If factor loadings can flip sign and provide identical fit, this creates another form of 
+If factor loadings can flip sign and provide identical fit, this creates another form of
 under-identification and can break confidence interval estimation.
 Fixing a factor loading to 1 and estimating factor variances can help here.
 }
@@ -95,17 +97,20 @@ m1 = umxRAM("One Factor", data = demoOneFactor[1:100, ],
 umxSummary(m1, std = TRUE, filter = "NS")
 }
 \references{
-- Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
- structure analysis: Conventional criteria versus new alternatives. Structural Equation Modeling, 6, 1-55. 
+\itemize{
+\item Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance
+structure analysis: Conventional criteria versus new alternatives. \emph{Structural Equation Modeling}, \strong{6}, 1-55.
+\item Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
+with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
+Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
+}
 
- - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
- with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
- Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
-
-<https://tbates.github.io>
+\url{https://tbates.github.io}
 }
 \seealso{
-- [umxRun()]
+\itemize{
+\item \code{\link[=umxRun]{umxRun()}}
+}
 
 Other Reporting functions: 
 \code{\link{RMSEA.MxModel}()},

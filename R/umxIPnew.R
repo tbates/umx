@@ -140,16 +140,11 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	if(correlatedA){ message("Sorry, I haven't implemented correlated A yet...") }
 
 	if(!is.null(data)){
-		if(is.null(dzData)){
-			dzData = "DZ"
-			mzData = "MZ"
-		}
-		if(is.null(sep)){
-			sep = "_T"
-		}			
-		mzData = data[data[,zyg] %in% mzData, ]
-		dzData = data[data[,zyg] %in% dzData, ]
+		if(is.null(sep)){ sep = "_T" }
+		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
+		dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
 	}
+	
 	# TODO umxIP: check covariates
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 
@@ -171,24 +166,15 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	}
 
 	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
-	bits      = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar)
-	tmp       = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans = equateMeans, SD = TRUE, divideBy = 3)
-	selVars   = tvars(selDVs, sep = sep, suffixes = 1:nSib)
-	nVar      = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	varStarts = tmp$varStarts
-	top       = bits$top
-	MZ        = bits$MZ
-	DZ        = bits$DZ
-
-	if(!is.null(weightVar)){
-		mzWeightMatrix = bits$mzWeightMatrix
-		dzWeightMatrix = bits$dzWeightMatrix
-	}else{
-		mzWeightMatrix = dzWeightMatrix = NULL
-	}
+	selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	nVar    = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	model   = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= NULL, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, verbose= FALSE)
 
 	# TODO: umxIP improve start values (hard coded at std type values)
-	top = mxModel(top,
+	# tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+	# varStarts = tmp$varStarts
+
+	top = mxModel(model$top,
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above
 		# Additive, Common, and Unique environmental paths
@@ -222,11 +208,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 		mxMatrix("Iden", nrow = nVar, name = "I"),
 		mxAlgebra(solve(sqrt(I * ACE)), name = "iSD")
 	)
-
-	# =====================================
-	# =  Assemble models into supermodel  =
-	# =====================================
-	model = xmu_assemble_twin_supermodel(name= name, MZ= MZ, DZ= DZ, top = top, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix)
+	model = mxModel(model, top) 
 
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
