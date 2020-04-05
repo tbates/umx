@@ -551,17 +551,21 @@ xmu_make_top_twin <- function(mzData, dzData, selDVs, selCovs= NULL, sep = NULL,
 #' data(twinData)
 #' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
 #' # Cut BMI column to form ordinal obesity variables
-#' obLevels   = c('normal', 'overweight', 'obese')
-#' cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
-#' twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
-#' twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' obLevels = c('normal', 'overweight', 'obese')
+#' cuts     = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
+#' twinData$obese1= cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+#' twinData$obese2= cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
 #' # Make the ordinal variables into mxFactors
 #' ordDVs = c("obese1", "obese2")
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' mzData = twinData[twinData$zygosity %in% "MZFF",] 
 #' dzData = twinData[twinData$zygosity %in% "DZFF",]
 #' tmp = xmu_starts(mzData, dzData, selVars = c("wt","obese"), sep= "", 
-#'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+#'	 nSib= 2, equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+#' 
+#' tmp = xmu_starts(mxData(mzData, type="raw"), mxData(mzData, type="raw"), 
+#'    selVars = c("wt","obese"), sep= "", nSib= 2, equateMeans = TRUE, 
+#'	  varForm = "Cholesky", SD= FALSE)
 #'
 xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
 	# Make mxData, dropping any unused columns
@@ -628,6 +632,79 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 	return(list(varStarts=varStarts, meanStarts= meanStarts, meanLabels= meanLabels))
 }
 
+#' Get on or more columns from mzData or regular data.frame
+#'
+#' @description
+#' same effect as `df[, col]` but works for [mxData()] and check the names are present
+#'
+#' @param data mxData or data.frame
+#' @param col the name(s) of the column(s) to extract
+#' @param drop whether to drop the structure of the data.frame when extracting one column
+#' @return - column of data
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' xmu_extract_column(mtcars, "wt")
+#' xmu_extract_column(mxData(mtcars, type = "raw"), "wt")
+#' xmu_extract_column(mxData(mtcars, type = "raw"), "wt", drop=TRUE)
+#' xmu_extract_column(mxData(mtcars, type = "raw"), c("wt", "mpg"))
+xmu_extract_column <- function(data, col, drop= FALSE) {
+	umx_check_names(col, data)
+	if(umx_is_MxData(data)){
+		return(data$observed[ , col, drop = drop])
+	}else{
+		return(data[ , col, drop = drop])
+	}
+}
+
+#' Add weight matrices to twin models.
+#'
+#' @description
+#' Add weight matrices to a twin model.
+#'
+#' @param model twin model
+#' @param mzWeightMatrix data for MZ weights matrix
+#' @param dzWeightMatrix data for DZ weights matrix
+#' @return - [umxModel()]
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' # xmu_twin_add_WeightMatrices(model, mzWeightMatrix = mzWeightMatrix, dzWeightMatrix = dzWeightMatrix)
+xmu_twin_add_WeightMatrices <- function(model, mzWeightMatrix = NULL, dzWeightMatrix = NULL) {
+	if(!model$MZ$fitfunction$vector){
+		stop("xmu_twin_add_WeightMatrix: You need to set the fitFunction to vector mode... but it appears I haven't")
+	}
+	mzWeightMatrix = mxMatrix(name = "mzWeightMatrix", type = "Full", nrow = nrow(tmpMZData), ncol = 1, free = FALSE, values = mzWeightMatrix)
+	dzWeightMatrix = mxMatrix(name = "dzWeightMatrix", type = "Full", nrow = nrow(tmpDZData), ncol = 1, free = FALSE, values = dzWeightMatrix)
+
+
+	# Weighted model with vector objective
+	# To weight objective functions in OpenMx, you specify a container model that applies the weights
+	# m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.
+	# This option makes FIML return individual likelihoods for each row of the data (rather than a single -2LL value for the model)
+	# You then optimize weighted versions of these likelihoods by building additional models containing 
+	# weight data and an algebra that multiplies the likelihoods from the first model by the weight vector
+	model = mxModel(model,
+		mxModel("MZw", mzWeightMatrix,
+			mxAlgebra(-2 * sum(mzWeightMatrix * log(MZ.objective) ), name = "mzWeightedCov"),
+			mxFitFunctionAlgebra("mzWeightedCov")
+		),
+		mxModel("DZw", dzWeightMatrix,
+			mxAlgebra(-2 * sum(dzWeightMatrix * log(DZ.objective) ), name = "dzWeightedCov"),
+			mxFitFunctionAlgebra("dzWeightedCov")
+		),
+		mxFitFunctionMultigroup(c("MZw", "DZw"))
+	)
+	return(model)
+}
+
+
+
+# ===============
+# = Delete this =
+# ===============
 
 
 #' Assemble top, MZ and DZ into a supermodel

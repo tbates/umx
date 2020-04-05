@@ -400,6 +400,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		# Manifests specified: mark all others as un-used
 		# remove duplicates (e.g. caused by var in manifests and definition vars lists
 		manifests = unique(manifests)
+		umx_check_names(namesNeeded=manifests, data= data)
 		unusedManifests = setdiff(umx_names(data), manifests)
 		dropColumns = TRUE
 	}

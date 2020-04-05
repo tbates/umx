@@ -69,7 +69,8 @@ varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 # For quick-typing, tvars is an alias for umx_paste_names
-tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+tvars(c("IQ", "C"), cov = "age", sep = "_T", prefix= "mean_")
+tvars("IQ")
 }
 \references{
 \itemize{

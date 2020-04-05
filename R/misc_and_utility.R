@@ -2770,21 +2770,22 @@ umx_msg <- function(x) {
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 #' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 #' # For quick-typing, tvars is an alias for umx_paste_names
-#' tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+#' tvars(c("IQ", "C"), cov = "age", sep = "_T", prefix= "mean_")
+#' tvars("IQ")
 #' @md
 umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
 	nameList = c()
-	for (ID in suffixes) {
-		nameList = c(nameList, paste0(varNames, sep, ID))
+	if(is.null(varNames)){
+		nameList = NULL
+	}else{
+		for (ID in suffixes) {
+			nameList = c(nameList, paste0(prefix, varNames, sep, ID))
+		}
 	}
 	if(!is.null(covNames)){
 		for (ID in suffixes) {
-			nameList = c(nameList, paste0(covNames, sep, ID))
+			nameList = c(nameList, paste0(prefix, covNames, sep, ID))
 		}
-	}
-
-	if(!is.null(prefix)){
-		nameList = paste0(prefix, nameList)
 	}
 	return(nameList)
 }
@@ -3487,14 +3488,15 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 	return(boolean.test)
 }
 
-#' umx_check_names
+#' Check if a request name exists in a datafram or related object
 #'
-#' Check if a list of names are in the names() of a dataframe (or the of a matrix)
+#' Check if a list of names are in the [namez()] of a dataframe (or the [dimnames()] of a matrix), or the names of 
+#' the observed data of an [mzData()]
 #'
 #' @param namesNeeded list of variable names to find (a dataframe is also allowed)
-#' @param data data.frame (or matrix) to search in for names (default = NA)
-#' @param die whether to die if the check fails (defaults to TRUE)
-#' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (defaults to FALSE)
+#' @param data data.frame, matrix, or mxData to search in for names (default NA)
+#' @param die whether to die if the check fails (default TRUE)
+#' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (default FALSE)
 #' @param intersection Show the intersection of names
 #' @param message Some helpful text to append when dieing.
 #' @family Test
@@ -3507,6 +3509,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' umx_check_names(c("x1", "x2"), demoOneFactor)
 #' umx_check_names(c("x1", "x2"), as.matrix(demoOneFactor))
 #' umx_check_names(c("x1", "x2"), cov(demoOneFactor[, c("x1","x2")]))
+#' umx_check_names(c("x1", "x2"), mxData(demoOneFactor, type="raw"))
 #' umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 #' umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 #' umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
@@ -3523,10 +3526,13 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	} else{
 		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded))
 	}
+
 	if(is.data.frame(data)){
 		namesInData = names(data)
 	}else if(is.matrix(data)){
 		namesInData = dimnames(data)[[2]]
+	}else if(umx_is_MxData(data)){
+		namesInData = namez(data)
 	} else if (!typeof(data) == "character"){
 		namesInData = data
 	} else {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/heinz_means_beans.R
 \name{xmuTwinSuper_Continuous}
 \alias{xmuTwinSuper_Continuous}
-\title{xmuTwinSuper_ContinuousMeans}
+\title{xmuTwinSuper_Continuous}
 \usage{
 xmuTwinSuper_Continuous(
   name = NULL,
@@ -11,6 +11,7 @@ xmuTwinSuper_Continuous(
   sep = "_T",
   mzData,
   dzData,
+  equateMeans,
   type,
   allContinuousMethod,
   nVar,
@@ -19,15 +20,19 @@ xmuTwinSuper_Continuous(
 )
 }
 \arguments{
+\item{name}{The name of the supermodel}
+
 \item{selVars}{selVars}
 
 \item{defVars}{defVars}
 
-\item{sep}{"_T")}
+\item{sep}{default "_T"}
 
 \item{mzData}{An mxData object containing the MZ data}
 
 \item{dzData}{An mxData object containing the DZ data}
+
+\item{equateMeans}{whether to equate the means across twins (default TRUE)}
 
 \item{type}{type}
 
@@ -36,8 +41,6 @@ xmuTwinSuper_Continuous(
 \item{nVar}{nVar}
 
 \item{nSib}{nSib}
-
-\item{starts}{starts}
 }
 \value{
 \itemize{
@@ -45,14 +48,10 @@ xmuTwinSuper_Continuous(
 }
 }
 \description{
-myfunc is a function which
+Add the ...
 }
 \examples{
-print("param")
-\dontrun{
-xmuTwinSuper_ContinuousMeans(name=name, selVars = selVars, defVars = defVars, mzData= mzData, dzData = dzData, type= type, allContinuousMethod = allContinuousMethod, nVar = nVar, nSib= nSib, starts=starts, sep = "_T")
-
-}
+# xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, allContinuousMethod = allContinuousMethod, nVar = nVar, nSib= nSib, sep = "_T")
 }
 \seealso{
 \itemize{
@@ -100,6 +99,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
 \code{\link{xmu_make_TwinSuperModel}()},
@@ -124,6 +124,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
+\code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()}
 }
 \concept{xmu internal not for end user}

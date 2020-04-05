@@ -3037,10 +3037,11 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 
 	if(isTRUE(labels)){
 		setLabels = TRUE
-		labels = NA
+		labels    = NA
 	} else {
 		setLabels = FALSE
-	} 
+	}
+
 	x = mxMatrix(type = type, nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = byrow, dimnames = dimnames, name = name, condenseSlots = condenseSlots, joinKey = joinKey, joinModel = joinModel, ...)
 	if(setLabels){
 		x = umxLabel(x, baseName = baseName, jiggle = jiggle)
@@ -3541,7 +3542,6 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' # Check to be sure twin-1 column labels same as twin-2
 #' tmp[[2]]$labels[,2]==tmp[[2]]$labels[,4]
 #' 
-#' 
 #' # The algebra that assembles these into thresholds:
 #' tmp[[3]]$formula
 #' 
@@ -3599,7 +3599,8 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("auto",
 	} else if(nSib == 1){
 		# df is fine as is.		
 	} else {
-		stop("I can only handle 1 and 2 sib models. Your data looked like they have", nSib, " family members (using separator ", omxQuotes(sep), "). email maintainer('umx') to get this expanded.")
+		stop("I can only handle 1 and 2 sib models. The way you called umxThresholdMatrix, I've guessed nSib is ", omxQuotes(nSib), 
+			" and separator ", omxQuotes(sep), "\n selVars were: ", omxQuotes(selVars),	". email maintainer('umx') to get this expanded.")
 	}
 	minLevels = xmuMinLevels(df)
 	maxLevels = xmuMaxLevels(df)

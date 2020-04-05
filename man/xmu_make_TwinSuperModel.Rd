@@ -127,28 +127,29 @@ If you pass in raw data, you can't request type cov/cor yet. Will work on this i
 library(umx)
 data(twinData)
 twinData = umx_scale(twinData, varsToScale= c('ht1','ht2'))
-selDVs = c("wt", "ht")
 mzData = twinData[twinData$zygosity \%in\%  "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF",]
-m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
+m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs=c("wt","ht"), sep="", nSib=2)
 names(m1) # "top" "MZ"  "DZ"
 class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionML"
 
-m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, 
-	selDVs= selDVs, sep= "", type = "WLS")
+# ===============
+# = WLS example =
+# ===============
+m1=xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData,selDVs=c("wt","ht"),sep="",type="WLS")
 class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
 m1$MZ$fitfunction$type =="WLS"
 m1$MZ$fitfunction$continuousType == "cumulants"
 
 # Choose non-default type (DWLS)
-m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData,
-	selDVs = selDVs, sep= "", type = "DWLS")
+m1= xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData,
+	selDVs= c("wt","ht"), sep="", type="DWLS")
 m1$MZ$fitfunction$type =="DWLS"
 class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
 
-# Switch continuous method
-m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "",
-	type = "WLS", allContinuousMethod = "marginals")
+# Switch WLS method
+m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= c("wt","ht"), sep= "",
+  type = "WLS", allContinuousMethod = "marginals")
 m1$MZ$fitfunction$continuousType == "marginals"
 class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
 
@@ -186,9 +187,9 @@ mzData = twinData[twinData$zygosity \%in\% "MZFF",]
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= selDVs, sep= "", nSib= 2)
 
-# ============
-# = Cov data =
-# ============
+# ========================================
+# = Cov data (calls xmuTwinSuper_CovCor) =
+# ========================================
 data(twinData)
 mzData =cov(twinData[twinData$zygosity \%in\% "MZFF", tvars(c("wt","ht"), sep="")], use="complete")
 dzData =cov(twinData[twinData$zygosity \%in\% "DZFF", tvars(c("wt","ht"), sep="")], use="complete")
@@ -241,6 +242,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
 \code{\link{xmu_make_bin_cont_pair_data}()},
@@ -264,6 +266,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
+\code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()}
 }
 \concept{xmu internal not for end user}

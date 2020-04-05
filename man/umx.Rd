@@ -320,6 +320,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
 \code{\link{xmu_make_TwinSuperModel}()},
@@ -344,6 +345,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
+\code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()}
 }
 \concept{Advanced Model Building Functions}
