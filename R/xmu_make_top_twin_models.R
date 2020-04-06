@@ -664,7 +664,8 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' Add weight matrices to twin models.
 #'
 #' @description
-#' Add weight matrices to a twin model.
+#' Add weight models (MZw, DZw) with matrices (e.g. mzWeightMatrix) to a twin model, and 
+#' update `mxFitFunctionMultigroup`.
 #'
 #' @param model twin model
 #' @param mzWeightMatrix data for MZ weights matrix
@@ -682,10 +683,10 @@ xmu_twin_add_WeightMatrices <- function(model, mzWeightMatrix = NULL, dzWeightMa
 	if(!model$MZ$fitfunction$vector){
 		stop("xmu_twin_add_WeightMatrix: You need to set the fitFunction to vector mode... but it appears I haven't")
 	}
-
-	if(!name(mzWeightMatrix) == "mzWeightMatrix"){
+	if(mzWeightMatrix$name) == "mzWeightMatrix"){
 		stop(
-			paste0("xmu_twin_add_WeightMatrices expects name of mzWeightMatrix to be 'mzWeightMatrix'. It was ", omxQuotes(name(mzWeightMatrix)))
+			paste0("xmu_twin_add_WeightMatrices expects name of mzWeightMatrix to be 'mzWeightMatrix'.\n",
+			"It was ", omxQuotes(mzWeightMatrix$name)))
 		)
 	}
 
