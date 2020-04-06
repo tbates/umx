@@ -766,7 +766,7 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #'
 #' set the number of cores (threads) used by OpenMx
 #'
-#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to detectCores().
+#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to imxGetNumThreads().
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
 #' @param silent If TRUE, no message will be printed.
 #' @return - number of cores
@@ -785,17 +785,16 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' )
 #' umx_set_cores() # print current value
 #' oldCores <- umx_set_cores(silent = TRUE)  # store existing value
-#' umx_set_cores(parallel::detectCores()) # set to max
+#' umx_set_cores(imxGetNumThreads()) # set to max
 #' umx_set_cores(-1); umx_set_cores() # set to max
-#' m1 = umx_set_cores(1, m1)  # set m1 useage to 1 core
+#' m1 = umx_set_cores(1, m1)  # set m1 usage to 1 core
 #' umx_set_cores(model = m1)  # show new value for m1
 #' umx_set_cores(oldCores)    # reinstate old global value
 umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
-	# depends on parallel::detectCores
 	if(is.na(cores)){
 		n = mxOption(model, "Number of Threads") # get the old value
 		if(!silent){
-			message(n, "/", parallel::detectCores() )
+			message(n, "/", imxGetNumThreads() )
 		}
 		return(n)
 	} else if(umx_is_MxModel(cores)) {
@@ -805,11 +804,11 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 			stop("cores must be a number. You gave me ", cores)
 		}
 		umx_check(isTRUE(all.equal(cores, as.integer(cores))), message = paste0("cores must be an integer. You gave me: ", cores))
-		if(cores > detectCores() ){
-			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", detectCores() )
-			cores = detectCores()
+		if(cores > imxGetNumThreads() ){
+			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", imxGetNumThreads() )
+			cores = imxGetNumThreads()
 		} else if (cores < 1){
-			cores = detectCores()
+			cores = imxGetNumThreads()
 		}
 		mxOption(model, "Number of Threads", cores)		
 	}
@@ -960,15 +959,15 @@ umx_get_checkpoint <- function(model = NULL) {
 #' # On a fast machine, takes a minute with 1 core
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = c(1, parallel::detectCores()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
+umx_check_parallel <- function(nCores = c(1, imxGetNumThreads()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
 	if(!is.null(testScript)){
 		stop("test script not implemented yet - beat on tim to do it!")
 	}
 	oldCores = umx_set_cores()
 	if( (length(nCores) == 1) && (nCores == -1)){
-		nCores = detectCores()
+		nCores = imxGetNumThreads()
 	}
-	message("You have been using ", oldCores, " of ", parallel::detectCores(), " available cores (0 means max - 1)")
+	message("You have been using ", oldCores, " of ", imxGetNumThreads(), " available cores (0 means max - 1)")
 	message("I will now set cores to ", omxQuotes(nCores), " (they will be reset after) and run a script that hits that many cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
 	set.seed(10)

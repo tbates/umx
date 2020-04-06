@@ -5,7 +5,7 @@
 \title{Check if OpenMx is using OpenMP, test cores, and get timings}
 \usage{
 umx_check_parallel(
-  nCores = c(1, parallel::detectCores()),
+  nCores = c(1, imxGetNumThreads()),
   testScript = NULL,
   rowwiseParallel = TRUE,
   nSubjects = 1000
