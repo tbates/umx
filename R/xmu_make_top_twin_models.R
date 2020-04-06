@@ -3,7 +3,7 @@
 #' @description
 #' Add simple or definition based means model to a twin model (i.e., which contains top MZ and DZ models)
 #'
-#' @param model The model we are modifying (myst have MZ DZ and top submodels)
+#' @param model The model we are modifying (must have MZ DZ and top submodels)
 #' @param defVars the names of definition variables
 #' @param sep How twin variable names are expanded (default "_T")
 #' @return - model with means model added.

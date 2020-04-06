@@ -28,7 +28,7 @@ matrix or vector, it will be upgraded to a dataframe)}
 
 \item{continuous.only}{use with names = TRUE to get the names of the continuous variables}
 
-\item{summaryObject}{whether to return a nice summary object. Overrides othere settings (FALSE)}
+\item{summaryObject}{whether to return a nice summary object. Overrides other settings (FALSE)}
 }
 \value{
 \itemize{

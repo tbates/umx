@@ -7,7 +7,7 @@
 umxTwinAddMeansModel(model, defVars = NULL, sep = "_T")
 }
 \arguments{
-\item{model}{The model we are modifying (myst have MZ DZ and top submodels)}
+\item{model}{The model we are modifying (must have MZ DZ and top submodels)}
 
 \item{defVars}{the names of definition variables}
 

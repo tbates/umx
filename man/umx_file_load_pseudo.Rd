@@ -25,7 +25,7 @@ Read in PRS scored files from \href{https://www.staff.ncl.ac.uk/richard.howey/ps
 \enumerate{
 \item Read the file
 \item Break it into pseudo and real rows
-\item Clean-up by deleting the pseduo suffix
+\item Clean-up by deleting the pseudo suffix
 \item Rename NT vars with a suffix
 \item Merge files on ID and return
 }\tabular{llrrrrrl}{
