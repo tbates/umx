@@ -21,6 +21,32 @@
 # = Run and Report helpers =
 # ==========================
 
+#' Upgrade selDvs to SelVars
+#'
+#' @description
+#' Just a helper to go from "wt" to "wt_T1" contingent on sep not being null
+#'
+#' @param selDVs with wt or wt_T1
+#' @param sep either "" etc., or NULL
+#' @param nSib  wideness of data
+#' @return list of wt_T1 wt_T2 etc.
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [umx]
+#' @md
+#' @examples
+#' xmu_twin_upgrade_selDvs2SelVars("wt", NULL, 2)
+#'
+xmu_twin_upgrade_selDvs2SelVars <- function(selDVs, sep, nSib) {
+	if(is.null(sep)){
+		selVars = selDVs
+	}else{
+		selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	}
+	return(selVars)
+}
+
+
 #' Show model logLik of model or print comparison table
 #'
 #' @description

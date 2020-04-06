@@ -105,6 +105,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
 \code{\link{xmu_twin_add_WeightMatrices}()},
-\code{\link{xmu_twin_check}()}
+\code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}
