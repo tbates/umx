@@ -12,7 +12,6 @@ umxPlotACE(
   means = FALSE,
   std = TRUE,
   strip_zero = TRUE,
-  splines = FALSE,
   ...
 )
 }
@@ -28,8 +27,6 @@ umxPlotACE(
 \item{std}{Whether to standardize the model (default is TRUE)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
-
-\item{splines}{Whether to allow curves or not (FALSE)}
 
 \item{...}{Additional (optional) parameters}
 }

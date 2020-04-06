@@ -3743,7 +3743,7 @@ umx_is_MxData <- function(x) {
 #' @param binary.only only count binary factors (2-levels) (default = FALSE)
 #' @param ordinal.only only count ordinal factors (3 or more levels) (default = FALSE)
 #' @param continuous.only use with names = TRUE to get the names of the continuous variables
-#' @param summaryObject whether to return a nice summary object. Overrides othere settings (FALSE)
+#' @param summaryObject whether to return a nice summary object. Overrides other settings (FALSE)
 #' @return - vector of variable names or Booleans
 #' @export
 #' @family Check or test
@@ -6167,7 +6167,7 @@ umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empiric
 #' 
 #' 1. Read the file
 #' 2. Break it into pseudo and real rows
-#' 3. Clean-up by deleting the pseduo suffix
+#' 3. Clean-up by deleting the pseudo suffix
 #' 4. Rename NT vars with a suffix
 #' 5. Merge files on ID and return
 #'

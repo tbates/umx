@@ -2402,7 +2402,6 @@ plot.MxRAMModel <- plot.MxModel
 #' @param means Whether to show means paths (default is FALSE)
 #' @param std Whether to standardize the model (default is TRUE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
-#' @param splines Whether to allow curves or not (FALSE)
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -2419,7 +2418,7 @@ plot.MxRAMModel <- plot.MxModel
 #' dzData <- subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE("plotACEexample", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
-umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, splines= FALSE, ...) {
+umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	# TODO: umxPlotACE Replace label-parsing with code that walks across the known matrices...
 	# Obviates problems with arbitrary names.
 	if(!class(x) == "MxModelACE"){
@@ -2478,6 +2477,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
 	label = model$name
+	splines = "FALSE"
 	digraph = paste0(
 		"digraph G {\n\t",
 		'label="', label, '";\n\t',
@@ -2778,10 +2778,20 @@ umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed =
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
 	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
-	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
-	if(format != "current"){
-		umx_set_plot_format(format)
-	}
+	
+	label = model$name
+	splines = "FALSE"
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut, 
+		top, 
+		bottom, 
+		out$str, "\n}"
+	)
+	
+	if(format != "current"){ umx_set_plot_format(format) }
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	# TODO umxPlotCP could tabulate thresholds?
 	# Process "_dev" (where are these?)
@@ -2900,10 +2910,19 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 
 	ranks = paste(cSpecifics, collapse = "; ");
 	ranks = paste0("{rank=sink; ", ranks, "}");
-	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, ranks, out, "\n}");
-	if(format != "current"){
-		umx_set_plot_format(format)
-	}
+
+	label = model$name
+	splines = "FALSE"
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut,
+		ranks,
+		out, "\n}"
+	)
+
+	if(format != "current"){ umx_set_plot_format(format) }
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
 

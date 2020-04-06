@@ -47,7 +47,7 @@ power.ACE.test(
 
 \item{tryHard}{Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)}
 
-\item{digits}{Rouding for reporting parameters (default 2)}
+\item{digits}{Rounding for reporting parameters (default 2)}
 
 \item{optimizer}{If set, will switch the optimizer.}
 

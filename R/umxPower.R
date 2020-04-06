@@ -33,7 +33,7 @@
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
 #' @param tryHard Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)
-#' @param digits Rouding for reporting parameters (default 2)
+#' @param digits Rounding for reporting parameters (default 2)
 #' @param optimizer If set, will switch the optimizer.
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
 #' @return [OpenMx::mxPower()] or [OpenMx::mxPowerSearch()] object

@@ -14,7 +14,7 @@
 * IMPROVED: `umxDoCp` bound e/es above zero
 * IMPROVED: `umxDoCp` start with all variance as specific
 * IMPROVED: `power.ACE.test`
-* IMPROVED: `umxLabel` 100x speedup for RAM and Matrix model labelling
+* IMPROVED: `umxLabel` 100x speedup for RAM and Matrix model labeling!
 * IMPROVED: `xmuLabel_RAM_Model` 100x speedup
 * IMPROVED: `xmu_safe_run_summary` has smarter default for `std` (model summary default)
 * IMPROVED: `xmu_dot_mat2dot` now accepts algebra input begin umxPlot for DoC
@@ -33,7 +33,7 @@
 * IMPROVED: `xmu_twin_check` works with mxData * IMPROVED: `xmu_twin_starts` works with mxData
 * IMPROVED: `xmu_make_top_twin` works with mxData
 * IMPROVED: `xmu_twin_check` support mxData (was just data.frame input)
-* IMPROVED: `umx_long_2_wide`: gains some notes on processing TWIND into famID and twinID
+* IMPROVED: `umx_long_2_wide`: gains some notes on processing TWINID into famID and twinID
 * REPAIR: `umxSummary` handles std=NULL as documented (don't show parameter table)
 * RENAME:  `umx_nice_data` --> `umx_make_twin_data_nice` with future improvements planned to cope with non numeric twin schemes.
 
