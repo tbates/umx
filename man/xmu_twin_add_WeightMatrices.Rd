@@ -23,7 +23,8 @@ xmu_twin_add_WeightMatrices(
 }
 }
 \description{
-Add weight matrices to a twin model.
+Add weight models (MZw, DZw) with matrices (e.g. mzWeightMatrix) to a twin model, and
+update \code{mxFitFunctionMultigroup}.
 }
 \examples{
 # xmu_twin_add_WeightMatrices(model, 

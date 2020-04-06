@@ -683,10 +683,10 @@ xmu_twin_add_WeightMatrices <- function(model, mzWeightMatrix = NULL, dzWeightMa
 	if(!model$MZ$fitfunction$vector){
 		stop("xmu_twin_add_WeightMatrix: You need to set the fitFunction to vector mode... but it appears I haven't")
 	}
-	if(mzWeightMatrix$name) == "mzWeightMatrix"){
+	if(mzWeightMatrix$name == "mzWeightMatrix"){
 		stop(
 			paste0("xmu_twin_add_WeightMatrices expects name of mzWeightMatrix to be 'mzWeightMatrix'.\n",
-			"It was ", omxQuotes(mzWeightMatrix$name)))
+			"It was ", omxQuotes(mzWeightMatrix$name))
 		)
 	}
 
