@@ -2532,19 +2532,22 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	if(!class(x) == "MxModelACEcov"){
 		stop("The first parameter of umxPlotACEcov must be an ACEcov model, you gave me a ", class(x))
 	}
+
 	model = x # just to be clear that x is a model
+	if(std){model = xmu_standardize_ACE(model)}
+
 	# relies on 'a' not having its dimnames stripped off...
 	if(model$MZ$data$type == "raw"){
 		selDVs = dimnames(model$top$a)[[1]]
-		# selDVs = names(model$MZ$data$observed)
+		# selDVs = dimnames(model$MZ$data$observed)[[2]]
+		nVar   = length(selDVs)/2;
+		selDVs = selDVs[1:(nVar)]
+		selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 	}else{
 		stop("ACEcov has to have raw data...")
-		# selDVs = dimnames(model$MZ$data$observed)[[1]]
 	}
-	if(std){
-		model = xmu_standardize_ACEcov(model)
-	}
-	out = "";
+
+	out     = "";
 	latents = c();
 
 	varCount = length(selDVs)
