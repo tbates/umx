@@ -3473,15 +3473,18 @@ umxCheckModel <- function(model){
 #' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' umx_check(length(1:3)==3, "stop", "item must have length == 3")
-umx_check <- function(boolean.test, action = c("stop", "warning", "message"), message = "check failed"){
+umx_check <- function(boolean.test, action = c("stop", "warning", "message"), message = "check failed", ...){
+	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
+	
 	action = match.arg(action)
 	if(!boolean.test){
 		if(action == "stop"){
-			stop(message, call. = FALSE)
+			stop(paste0(message, dot.items), call. = FALSE)
 		} else if(action == "warning"){
-			warning(message, call. = FALSE)
+			warning(paste0(message, dot.items), call. = FALSE)
 		}else{
-			message(message)			
+			message(paste0("Polite message: ", message, dot.items))
 		}
 	}
 	return(boolean.test)

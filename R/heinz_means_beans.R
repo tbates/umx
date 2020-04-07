@@ -3,7 +3,7 @@
 #' @description
 #' `xmu_make_TwinSuperModel` makes basic `top`, `MZ`, and `DZ` models. It includes thresholds matrices in the twin models if needed.
 #' 
-#' It's the replacement for the older `xmu_assemble_twin_supermodel` approach.
+#' It's the replacement for `xmu_assemble_twin_supermodel` approach.
 #'
 #' This is used in  [umxCP()], and [umxACE()] and [umxACEv()] and will be added to the other models: [umxGxE()], [umxIP()], 
 #' simplifying code maintenance.

@@ -61,7 +61,7 @@ xmu_make_TwinSuperModel(
 \description{
 \code{xmu_make_TwinSuperModel} makes basic \code{top}, \code{MZ}, and \code{DZ} models. It includes thresholds matrices in the twin models if needed.
 
-It's the replacement for the older \code{xmu_assemble_twin_supermodel} approach.
+It's the replacement for \code{xmu_assemble_twin_supermodel} approach.
 
 This is used in  \code{\link[=umxCP]{umxCP()}}, and \code{\link[=umxACE]{umxACE()}} and \code{\link[=umxACEv]{umxACEv()}} and will be added to the other models: \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxIP]{umxIP()}},
 simplifying code maintenance.

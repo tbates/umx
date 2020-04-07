@@ -7,7 +7,8 @@
 umx_check(
   boolean.test,
   action = c("stop", "warning", "message"),
-  message = "check failed"
+  message = "check failed",
+  ...
 )
 }
 \arguments{

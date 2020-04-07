@@ -617,7 +617,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	# preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
 	# top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
 	# bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
-	# digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
+	# digraph = paste0("digraph G {\n	splines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	if(!class(x) == "MxModelACEv"){
 		stop("The first parameter of umxPlotACE must be an ACEv model, you gave me a ", class(x))
 	}
