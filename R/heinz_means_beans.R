@@ -33,7 +33,7 @@
 #'
 #' For binary, a constraint and algebras are included to constrain `Vtot` (A+C+E) to 1.
 #' 
-#' If a `weightVar` is detected, this column is added to  mzWeightMatrix/mzWeightMatrix.
+#' If a `weightVar` is detected, these columns are used to create a row-weighted MZ and DZ models.
 #' 
 #' If `equateMeans` is `TRUE`, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 #'
@@ -265,7 +265,8 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		model$DZ = mxModel(model$DZ, mxFitFunctionML(vector = bVector) )
 	}
 
-	if(!is.null(weightVar)){ model = xmu_twin_add_WeightMatrices(model, mzWeightMatrix = mzWeightData, dzWeightMatrix = dzWeightData) }
+	if(!is.null(weightVar)){ model = xmu_twin_add_WeightMatrices(model, mzWeights = mzWeightData, dzWeights = dzWeightData) }
+
 	return(model)
 }                                           
 

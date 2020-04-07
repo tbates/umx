@@ -4,33 +4,41 @@
 \alias{xmu_twin_add_WeightMatrices}
 \title{Add weight matrices to twin models.}
 \usage{
-xmu_twin_add_WeightMatrices(
-  model,
-  mzWeightMatrix = NULL,
-  dzWeightMatrix = NULL
-)
+xmu_twin_add_WeightMatrices(model, mzWeights = NULL, dzWeights = NULL)
 }
 \arguments{
-\item{model}{twin model}
+\item{model}{umx-style twin model}
 
-\item{mzWeightMatrix}{data for MZ weights matrix}
+\item{mzWeights}{data for MZ weights matrix}
 
-\item{dzWeightMatrix}{data for DZ weights matrix}
+\item{dzWeights}{data for DZ weights matrix}
 }
 \value{
 \itemize{
-\item \code{\link[=umxModel]{umxModel()}}
+\item model
 }
 }
 \description{
 Add weight models (MZw, DZw) with matrices (e.g. mzWeightMatrix) to a twin model, and
-update \code{mxFitFunctionMultigroup}.
+update \code{mxFitFunctionMultigroup}. This yileds a weighted model with vector objective.
+
+To weight objective functions in OpenMx, you specify a container model that applies the weights
+m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.
+This option makes FIML return individual likelihoods for each row of the data (rather than a single
+-2LL value for the model)
+You then optimize weighted versions of these likelihoods by building additional models containing
+weight data and an algebra that multiplies the likelihoods from the first model by the weight vector.
 }
 \examples{
-# xmu_twin_add_WeightMatrices(model, 
-#	mzWeightMatrix = mzWeightMatrix, 
-#    dzWeightMatrix = dzWeightMatrix
-# )
+tmp = umx_make_twin_data_nice(data=twinData, sep="", zygosity="zygosity", numbering= 1:2)
+m1  = umxACE(selDVs = "wt", data = tmp, dzData = "DZFF", mzData = "MZFF", autoRun= FALSE)
+m1$MZ$fitfunction$vector= TRUE
+
+tmp = xmu_twin_add_WeightMatrices(m1,
+	mzWeights= rnorm(nrow(m1$MZ$data$observed)), 
+	dzWeights= rnorm(nrow(m1$DZ$data$observed))
+ )
+
 }
 \seealso{
 Other xmu internal not for end user: 

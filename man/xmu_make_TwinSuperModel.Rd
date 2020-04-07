@@ -90,7 +90,7 @@ For WLS these the fit function is switched to \code{\link[OpenMx:mxFitFunctionWL
 
 For binary, a constraint and algebras are included to constrain \code{Vtot} (A+C+E) to 1.
 
-If a \code{weightVar} is detected, this column is added to  mzWeightMatrix/mzWeightMatrix.
+If a \code{weightVar} is detected, these columns are used to create a row-weighted MZ and DZ models.
 
 If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 

@@ -168,6 +168,8 @@ Less commonly-modified matrices are the mean matrix \code{expMean}. This has 1 r
 So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this line:
 
 \code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
+
+For a deep-dive, see \code{\link[=xmu_make_TwinSuperModel]{xmu_make_TwinSuperModel()}}
 }
 \examples{
 \dontrun{
@@ -249,8 +251,8 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxSummaryCP]{umxSummaryCP()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}. See \code{\link[=umxACE]{umxACE()}} for more examples of twin modeling.
-\code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}} work for all twin models, e.g., \code{\link[=umxIP]{umxIP()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=umxGxE]{umxGxE()}}, and \code{\link[=umxACE]{umxACE()}}. For a deep-dive, see \code{\link[=xmu_make_top_twin]{xmu_make_top_twin()}}
+\item \code{\link[=umxSummaryCP]{umxSummaryCP()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}. See \code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}} to rotate the factor loadings of a \code{\link[=umxCP]{umxCP()}} model. See \code{\link[=umxACE]{umxACE()}} for more examples of twin modeling.
+\code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}} work for all twin models, e.g., \code{\link[=umxIP]{umxIP()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=umxGxE]{umxGxE()}}, and \code{\link[=umxACE]{umxACE()}}.
 }
 
 Other Twin Modeling Functions: 

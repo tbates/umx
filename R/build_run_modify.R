@@ -2291,7 +2291,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' So, in a model where the means for twin 1 and twin 2 had been equated (set = to T1), you could make them independent again with this line:
 #'
 #' `m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
-#'
+#' 
+#' For a deep-dive, see [xmu_make_TwinSuperModel()]
+#' 
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
 #' omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
@@ -2323,8 +2325,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxSummaryCP()], [umxPlotCP()]. See [umxACE()] for more examples of twin modeling. 
-#' [plot()] and [umxSummary()] work for all twin models, e.g., [umxIP()], [umxCP()], [umxGxE()], and [umxACE()]. For a deep-dive, see [xmu_make_top_twin()]
+#' @seealso - [umxSummaryCP()], [umxPlotCP()]. See [umxRotate.MxModelCP()] to rotate the factor loadings of a [umxCP()] model. See [umxACE()] for more examples of twin modeling. 
+#' [plot()] and [umxSummary()] work for all twin models, e.g., [umxIP()], [umxCP()], [umxGxE()], and [umxACE()].
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -2407,40 +2409,23 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 	type                = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	nSib                = 2 # Number of siblings in a twin pair.
+	# Add nFac to base name if no user-set name provided.
+	if(name == "CP"){ name = paste0(name, nFac, "fac") }
+
 	if(!is.null(data)){
-		if(is.null(dzData)){
-			dzData = "DZ"
-			mzData = "MZ"
-		}
-		if(is.null(sep)){
-			sep = "_T"
-		}			
-		mzData = data[data[,zyg] %in% mzData, ]
-		dzData = data[data[,zyg] %in% dzData, ]
+		if(is.null(sep)){ sep = "_T" }
+		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
+		dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
 	}
-
 	xmu_twin_check(selDVs= selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
-
-	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
-	bits      = xmu_make_top_twin(mzData = mzData, dzData = dzData, selDVs= selDVs, sep = sep, equateMeans = equateMeans, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, weightVar = weightVar, bVector = bVector)
 	
-	tmp       = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
-	selVars   = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
+	selVars   = xmu_twin_upgrade_selDvs2SelVars(selDVs = selDVs, sep = sep, nSib= nSib)
 	nVar      = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
+	model     = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= NULL, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, bVector = FALSE, verbose= FALSE)
+	tmp       = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 	varStarts = tmp$varStarts
-	top       = bits$top
-	MZ        = bits$MZ
-	DZ        = bits$DZ
 
-	if(bVector){
-		mzWeightMatrix = bits$mzWeightMatrix
-		dzWeightMatrix = bits$dzWeightMatrix
-	}else{
-		mzWeightMatrix = dzWeightMatrix = NULL
-	}
-
-
-	# TODO umxCP: [Improve start values](https://github.com/tbates/umx/issues/51)
 	if(correlatedA){
 		# nFac = 3
 		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # Latent common factor
@@ -2464,52 +2449,43 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 		c_cp_matrix = umxMatrix("c_cp", "Diag" , nFac, nFac, free = TRUE, values = .0)
 		e_cp_matrix = umxMatrix("e_cp", "Diag" , nFac, nFac, free = TRUE, values = .7)
 	}
-	if(name == "CP"){
-		# Add nFac to base name if no user-set name provided.
-		name = paste0(name, nFac, "fac")
-	}
-	model = mxModel(name,
-		# Update top
-		mxModel(top,
-			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
-			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
-			umxMatrix("nFac_Unit", "Unit", nrow = nFac, ncol = 1),
-			# Latent common factor genetic paths
-			a_cp_matrix, c_cp_matrix, e_cp_matrix,
-			# Constrain variance of latent phenotype factor to 1.0
-			# Multiply by each path coefficient by its inverse to get variance component
-			mxAlgebra(name = "A_cp", a_cp %*% t(a_cp)  ), # A_cp variance
-			mxAlgebra(name = "C_cp", c_cp %*% t(c_cp)  ), # C_cp variance
-			mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)  ), # E_cp variance
-			mxAlgebra(name = "L"   , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
-			mxAlgebra(name = "diagL", diag2vec(L)),
-			mxConstraint(name = "fix_CP_variances_to_1", diagL == nFac_Unit),
+	# Finish building top
+	top = mxModel(model$top,
+		umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
+		umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
+		umxMatrix("nFac_Unit", "Unit", nrow = nFac, ncol = 1),
+		# Latent common factor genetic paths
+		a_cp_matrix, c_cp_matrix, e_cp_matrix,
+		# Constrain variance of latent phenotype factor to 1.0
+		# Multiply by each path coefficient by its inverse to get variance component
+		mxAlgebra(name = "A_cp", a_cp %*% t(a_cp)  ), # A_cp variance
+		mxAlgebra(name = "C_cp", c_cp %*% t(c_cp)  ), # C_cp variance
+		mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)  ), # E_cp variance
+		mxAlgebra(name = "L"   , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
+		mxAlgebra(name = "diagL", diag2vec(L)),
+		mxConstraint(name = "fix_CP_variances_to_1", diagL == nFac_Unit),
 
-			umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5), # Additive gen path 
-			umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1), # Common env path 
-			umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .5), # Unique env path
-			umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .5), # loadings on latent phenotype
-			# Quadratic multiplication to add cp_loading effects
-			mxAlgebra(name = "A"  , cp_loadings %&% A_cp + as %*% t(as)), # Additive genetic variance
-			mxAlgebra(name = "C"  , cp_loadings %&% C_cp + cs %*% t(cs)), # Common environmental variance
-			mxAlgebra(name = "E"  , cp_loadings %&% E_cp + es %*% t(es)), # Unique environmental variance
-			mxAlgebra(name = "ACE", A + C + E),
-			mxAlgebra(name = "AC" , A + C),
-			mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
-			mxAlgebra(name= "expCovMZ", dimnames = list(selVars, selVars), 
-						rbind(
-							 cbind(ACE, AC), 
-			                 cbind(AC , ACE))
-			),
-			mxAlgebra(name= "expCovDZ", dimnames = list(selVars, selVars), 
-						rbind(
-							cbind(ACE, hAC),
-			                cbind(hAC, ACE))
-			)
+		umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5), # Additive gen path 
+		umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1), # Common env path 
+		umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .5), # Unique env path
+		umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .5), # loadings on latent phenotype
+		# Quadratic multiplication to add cp_loading effects
+		mxAlgebra(name = "A"  , cp_loadings %&% A_cp + as %*% t(as)), # Additive genetic variance
+		mxAlgebra(name = "C"  , cp_loadings %&% C_cp + cs %*% t(cs)), # Common environmental variance
+		mxAlgebra(name = "E"  , cp_loadings %&% E_cp + es %*% t(es)), # Unique environmental variance
+		mxAlgebra(name = "ACE", A + C + E),
+		mxAlgebra(name = "AC" , A + C),
+		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
+		mxAlgebra(name= "expCovMZ", dimnames = list(selVars, selVars), 
+					rbind( cbind(ACE, AC), 
+		                   cbind(AC , ACE))
 		),
-		MZ, DZ,
-		mxFitFunctionMultigroup(c("MZ", "DZ"))
+		mxAlgebra(name= "expCovDZ", dimnames = list(selVars, selVars), 
+					rbind( cbind(ACE, hAC),
+		                   cbind(hAC, ACE))
+		)
 	)
+
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]
 		model = omxSetParameters(model, labels = toset, free = FALSE, values = 0)
