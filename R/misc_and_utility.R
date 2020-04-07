@@ -3464,9 +3464,10 @@ umxCheckModel <- function(model){
 #'
 #' Check that a test evaluates to TRUE. If not, stop, warn, or message the user
 #'
-#' @param boolean.test test evaluating to TRUE or FALSE
-#' @param action One of "stop" (the default), "warning", or "message"
-#' @param message what to tell the user when boolean.test is FALSE
+#' @param boolean.test test evaluating to TRUE or FALSE.
+#' @param action One of "stop" (the default), "warning", or "message".
+#' @param message what to tell the user when boolean.test is FALSE.
+#' @param ... extra text will be pasted after the messages.
 #' @return - boolean
 #' @export
 #' @family Test

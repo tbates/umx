@@ -2413,7 +2413,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 	nFac = 3, correlatedA = TRUE, tryHard = "yes")
 #' }
 #'
-umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
+umxCP <- function(name = "CP", selDVs, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO umxCP: Add covariates to means model: Will involve xmu_make_top_twin? also means model?
 	tryHard             = match.arg(tryHard)
 	type                = match.arg(type)
@@ -2495,6 +2495,7 @@ umxCP <- function(name = "CP", selDVs, dzData=NULL, mzData=NULL, sep = NULL, nFa
 		                   cbind(hAC, ACE))
 		)
 	)
+	model = mxModel(model, top) 
 
 	if(!freeLowerA){
 		toset  = model$top$matrices$as$labels[lower.tri(model$top$matrices$as$labels)]

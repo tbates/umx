@@ -618,14 +618,10 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	# top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
 	# bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	# digraph = paste0("digraph G {\n	splines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
-	if(!class(x) == "MxModelACEv"){
-		stop("The first parameter of umxPlotACE must be an ACEv model, you gave me a ", class(x))
-	}
+	umx_check(!class(x) == "MxModelACEv", "stop", "The first parameter of umxPlotACE must be an ACEv model, you gave me a ", omxQuotes(class(x)) )
 	model = x # Just to be clear that x is a model
-	if(std){
-		model = umx_standardize(model)
-	}
-	out = "";
+	if(std){ model = umx_standardize(model) }
+	out     = "" ;
 	latents = c();
 	if(model$MZ$data$type == "raw"){
 		selDVs = names(model$MZ$data$observed)

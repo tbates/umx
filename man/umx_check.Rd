@@ -12,11 +12,13 @@ umx_check(
 )
 }
 \arguments{
-\item{boolean.test}{test evaluating to TRUE or FALSE}
+\item{boolean.test}{test evaluating to TRUE or FALSE.}
 
-\item{action}{One of "stop" (the default), "warning", or "message"}
+\item{action}{One of "stop" (the default), "warning", or "message".}
 
-\item{message}{what to tell the user when boolean.test is FALSE}
+\item{message}{what to tell the user when boolean.test is FALSE.}
+
+\item{...}{extra text will be pasted after the messages.}
 }
 \value{
 - boolean

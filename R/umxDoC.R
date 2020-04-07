@@ -299,10 +299,23 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	top     = xmu_dot_rank(out$latents, "^[ace][1-2]$"  , "min")
 	same    = xmu_dot_rank(out$latents, "^[ab]$"        , "same")
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max") # specifics
-	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, same, bottom, out$str, "\n}");
 
+	label = model$name
+	splines = "FALSE"
+
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut,
+		top, 
+		same,
+		bottom,
+		out, "\n}"
+	)
+	
+	print("?umxPlotACE options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	if(format != "current"){ umx_set_plot_format(format) }
-
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
 
