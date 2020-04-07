@@ -41,10 +41,9 @@ Plots an ACE model graphically, opening the result in the browser (or a graphviz
 \examples{
 require(umx)
 data(twinData)
-selDVs = "bmi"
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")
-m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+m1 = umxACEv(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
 }
 \references{

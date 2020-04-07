@@ -233,7 +233,7 @@ utils::globalVariables(c(
 # ===================================================================
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
 methods::setClass("MxModelACE"    , contains = "MxModel")
-methods::setClass("MxModelACEv"   , contains = "MxModel")
+methods::setClass("MxModelACEv"   , contains = "MxModelACE")
 methods::setClass("MxModelIP"     , contains = "MxModel")
 methods::setClass("MxModelCP"     , contains = "MxModel")
 methods::setClass("MxModelDoC"    , contains = "MxModel")

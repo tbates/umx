@@ -606,10 +606,9 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' selDVs = "bmi"
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' m1 = umxACEv(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	# TODO umxPlotACEv: update to matrix version instead of label hunting
@@ -618,11 +617,9 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	# top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
 	# bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	# digraph = paste0("digraph G {\n	splines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
-	umx_check(!class(x) == "MxModelACEv", "stop", "The first parameter of umxPlotACE must be an ACEv model, you gave me a ", omxQuotes(class(x)) )
 	model = x # Just to be clear that x is a model
 	if(std){ model = umx_standardize(model) }
-	out     = "" ;
-	latents = c();
+
 	if(model$MZ$data$type == "raw"){
 		selDVs = names(model$MZ$data$observed)
 	}else{
@@ -631,6 +628,9 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	varCount = length(selDVs)/2;
 	parameterKeyList = omxGetParameters(model);
 	# e.g. expMean_r1c1  A_r1c1  C_r1c1  E_r1c1
+
+	out     = "" ;
+	latents = c();
 
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]

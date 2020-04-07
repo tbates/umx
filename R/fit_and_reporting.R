@@ -2413,17 +2413,14 @@ plot.MxRAMModel <- plot.MxModel
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' selDVs = "bmi"
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
-#' m1 = umxACE("plotACEexample", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
+#' m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	# TODO: umxPlotACE Replace label-parsing with code that walks across the known matrices...
 	# Obviates problems with arbitrary names.
-	if(!class(x) == "MxModelACE"){
-		stop("The first parameter of umxPlotACE must be an ACE model, you gave me a ", class(x))
-	}
+
 	model = x # just to be clear that x is a model
 	if(std){model = xmu_standardize_ACE(model)}
 
@@ -2592,7 +2589,19 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	# grep('a', latents, value=T)
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = T), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = T), collapse = "; "), "};\n") # {rank=min; c1; e1}
-	digraph = paste("digraph G {\n\tsplines = \"FALSE\";\n", preOut, out, rankVariables, rankA, rankCE, "\n}", sep="");
+	label = model$name
+	splines = "FALSE"
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut,
+		out,
+		rankVariables,
+		rankA,
+		rankCE, "\n}", sep=""
+	)
+	print("?umxPlotACEcov options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACEcov
 
