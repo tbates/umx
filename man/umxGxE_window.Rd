@@ -9,7 +9,7 @@ umxGxE_window(
   moderator = NULL,
   mzData = mzData,
   dzData = dzData,
-  sep = NA,
+  sep = NULL,
   weightCov = FALSE,
   target = NULL,
   width = 1,
@@ -61,9 +61,9 @@ library(umx);
 # ==============================
 # = 1. Open and clean the data =
 # ==============================
-# umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin.
+# umxGxE_window takes a data.frame consisting of a moderator and two DV columns: one for each twin.
 # The model assumes two groups (MZ and DZ). Moderator can't be missing
-mod = "age" # The name of the moderator column in the dataset
+mod = "age" # The full name of the moderator column in the dataset
 selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 data(twinData) # Dataset of Australian twins, built into OpenMx
 # The twinData consist of two cohorts: "younger" and "older".
@@ -99,7 +99,7 @@ of measurement invariance. \emph{Review of Psychology}, \strong{16}, 87--107.
 
 Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
 Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
-\emph{Behavior Genetics}, \strong{45}, 581-96. doi 10.1007/s10519-015-9732-8
+\emph{Behavior Genetics}, \strong{45}, 581-96. doi \href{https://link.springer.com/article/10.1007/s10519-015-9732-8}{10.1007/s10519-015-9732-8}
 }
 \seealso{
 Other Twin Modeling Functions: 

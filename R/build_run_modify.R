@@ -1743,9 +1743,9 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' # ==============================
 #' # = 1. Open and clean the data =
 #' # ==============================
-#' # umxGxE_window takes a dataframe consisting of a moderator and two DV columns: one for each twin.
+#' # umxGxE_window takes a data.frame consisting of a moderator and two DV columns: one for each twin.
 #' # The model assumes two groups (MZ and DZ). Moderator can't be missing
-#' mod = "age" # The name of the moderator column in the dataset
+#' mod = "age" # The full name of the moderator column in the dataset
 #' selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 #' data(twinData) # Dataset of Australian twins, built into OpenMx
 #' # The twinData consist of two cohorts: "younger" and "older".
@@ -1759,16 +1759,16 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' # = 2. Run the analyses! =
 #' # ========================
 #' # Run and plot for specified windows (in this case just 1927)
-#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
+#' umxGxE_window(selDVs = selDVs, sep="", moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		target = 40, plotWindow = TRUE)
 #' 
 #' \dontrun{
 #' # Run with FIML (default) uses all information
-#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
+#' umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
 #' 
 #' # Run creating weighted covariance matrices (excludes missing data)
-#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
-#' 		weightCov = TRUE); 
+#' umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
+#' 		weightCov = TRUE)
 #' }
 #' 
 #' @family Twin Modeling Functions
@@ -1778,27 +1778,32 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' 
 #' Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
 #' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
-#' *Behavior Genetics*, **45**, 581-96. doi 10.1007/s10519-015-9732-8
+#' *Behavior Genetics*, **45**, 581-96. doi [10.1007/s10519-015-9732-8](https://link.springer.com/article/10.1007/s10519-015-9732-8)
 #' @md
-umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NA, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
-	if(!is.na(sep)){
-		selDVs    = umx_paste_names(selDVs, sep = sep, 1:2)
-		moderator = umx_paste_names(moderator, sep = sep, 1:2)
-	}
-	# TODO umxGxE_window: allow missing moderator?
-	# Check moderator is set and exists in mzData and dzData
+umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
 	return = match.arg(return)
-	if(is.null(moderator)){
-		stop("Moderator must be set to the name of the moderator column, e.g, moderator = \"birth_year\"")
+	nSib   = 2 # Number of siblings in a twin pair.
+	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib)
+
+	umx_check(!is.null(moderator), "stop", "Moderator must be set to the name of the moderator column, e.g, moderator = 'birth_year'")
+	
+	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
+	if(!is.null(sep)){
+		selVars   = umx_paste_names(selDVs, sep = sep, 1:2)
+		# moderator = umx_paste_names(moderator, sep = sep, 1:2)
+	}else{
+		selVars = selDVs
 	}
+
+	# TODO umxGxE_window: allow missing moderator?
 	# Check DVs exists in mzData and dzData (and nothing else apart from the moderator)
-	umx_check_names(c(selDVs, moderator), data = mzData, die = TRUE, no_others = TRUE)
-	umx_check_names(c(selDVs, moderator), data = dzData, die = TRUE, no_others = TRUE)
+	umx_check_names(c(selVars, moderator), data = mzData, die = TRUE, no_others = TRUE)
+	umx_check_names(c(selVars, moderator), data = dzData, die = TRUE, no_others = TRUE)
 
 	# Add a zygosity column (that way we know what it's called)
 	mzData$ZYG = "MZ";
 	dzData$ZYG = "DZ"
-	# If using cov.wt, remove missings
+	# If using cov.wt, remove missing
 	if(weightCov){
 		dz.complete = complete.cases(dzData)
 		if(sum(dz.complete) != nrow(dzData)){
@@ -1811,7 +1816,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 			mzData = mzData[mz.complete, ]
 		}
 	}
-	# bind the MZ nd DZ data into one frame so we can work with it repeatedly over weight iterations
+	# bind the MZ and DZ data into one frame so we can work with it repeatedly over weight iterations
 	allData = rbind(mzData, dzData)
 
 	# Create range of moderator values to iterate over (using the incoming moderator variable name)
@@ -1839,7 +1844,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	moderatorSD  = sd(modVar, na.rm = TRUE)
 	bw           = 2 * numPairs^(-.2) * moderatorSD *  width # -.2 == -1/5 
 
-	ACE = c("A", "C", "E")
 	tmp = rep(NA, length(targetLevels))
 	out = data.frame(modLevel = targetLevels, Astd = tmp, Cstd = tmp, Estd = tmp, A = tmp, C = tmp, E = tmp)
 	n   = 1
@@ -1849,28 +1853,30 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		zx = (modVar - i)/bw
 		k = (1 / (2 * pi)^.5) * exp((-(zx)^2) / 2)
 		# ===========================================================
-		# = Insert the weights variable into dataframes as "weight" =
+		# = Insert the weights variable into data.frames as "weight" =
 		# ===========================================================
 		allData$weight = k/.399
-		mzData = allData[allData$ZYG == "MZ", c(selDVs, "weight")]
-		dzData = allData[allData$ZYG == "DZ", c(selDVs, "weight")]
+		mzData = allData[allData$ZYG == "MZ", c(selVars, "weight")]
+		dzData = allData[allData$ZYG == "DZ", c(selVars, "weight")]
 		if(weightCov){
-			mz.wt = cov.wt(mzData[, selDVs], mzData$weight)
-			dz.wt = cov.wt(dzData[, selDVs], dzData$weight)
-			m1 = umxACE(selDVs = selDVs, dzData = dz.wt$cov, mzData = mz.wt$cov, numObsDZ = dz.wt$n.obs, numObsMZ = mz.wt$n.obs)
+			mz.wt = cov.wt(mzData[, selVars], mzData$weight)
+			dz.wt = cov.wt(dzData[, selVars], dzData$weight)
+			m1 = umxACE(selDVs = selDVs, sep=sep, dzData = dz.wt$cov, mzData = mz.wt$cov, numObsDZ = dz.wt$n.obs, numObsMZ = mz.wt$n.obs, autoRun = FALSE)
 		} else {
-			m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, weightVar = "weight")
+			m1 = umxACE(selDVs = selDVs, sep=sep, dzData = dzData, mzData = mzData, weightVar = "weight", autoRun = FALSE)
 		}
-		m1  = mxRun(m1); 
+		m1 = mxRun(m1); 
 		if(plotWindow){
 			plot(allData[,moderator], allData$weight) # normal-curve yumminess
 			umxSummaryACE(m1)
 		}
-		out[n, ] = mxEval(c(i, top.a_std[1,1], top.c_std[1,1],top.e_std[1,1], top.a[1,1], top.c[1,1], top.e[1,1]), m1)
+		out[n, ] = mxEval(c(i, top.a_std[1,1], top.c_std[1,1], top.e_std[1,1], top.a[1,1], top.c[1,1], top.e[1,1]), m1)
 		n = n + 1
 	}
+
+	ACE = c("A", "C", "E")
 	# Squaring paths to produce variances
-	out[,ACE] <- out[,ACE]^2
+	out[,ACE] = out[,ACE]^2
 	# plotting variance components
 	with(out,{
 		plot(A ~ modLevel, main = paste0(selDVs[1], " variance"), ylab = "Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
@@ -1878,7 +1884,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		lines(modLevel, E, col = 'blue')
 		legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)
 
-		plot(Astd ~ modLevel, main = paste0(selDVs[1], "std variance"), ylab = "Std Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
+		plot(Astd ~ modLevel, main = paste0(selDVs[1], " std variance"), ylab = "Std Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
 		lines(modLevel, Cstd, col = 'green')
 		lines(modLevel, Estd, col = 'blue')
 		legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)

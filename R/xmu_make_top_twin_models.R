@@ -289,11 +289,11 @@ xmu_twin_add_WeightMatrices <- function(model, mzWeights = NULL, dzWeights = NUL
 
 	model = mxModel(model,
 		mxModel("MZw", mzWeights,
-			mxAlgebra(-2 * sum(mzWeights * log(MZ.objective) ), name = "mzWeightedCov"),
+			mxAlgebra(-2 * sum(mzWeightMatrix * log(MZ.objective) ), name = "mzWeightedCov"),
 			mxFitFunctionAlgebra("mzWeightedCov")
 		),
 		mxModel("DZw", dzWeights,
-			mxAlgebra(-2 * sum(dzWeights * log(DZ.objective) ), name = "dzWeightedCov"),
+			mxAlgebra(-2 * sum(dzWeightMatrix * log(DZ.objective) ), name = "dzWeightedCov"),
 			mxFitFunctionAlgebra("dzWeightedCov")
 		),
 		mxFitFunctionMultigroup(c("MZw", "DZw"))
