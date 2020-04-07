@@ -12,17 +12,17 @@
 #' @seealso - [xmuDefBetasInTop()], [xmuDefMeanInDataGroup()]
 #' @md
 #' @examples
+#' \dontrun{
 #' defVars = c("VETSA1_age","VETSA2_age", "VETSA3_age")
-#' umxAddMeansModel(m1, defVars = defVars)
+#' umxTwinAddMeansModel(m1, defVars = defVars, sep = "_T")
 #' xmuDefBetasInTop(defVars = defVars)
 #' xmuDefMeanInDataGroup(defVars = defVars, expMeanAlgName = "expMean")
-#' \dontrun{
 #' m1 = umxTwinAddMeansModel(m1, defVars = c("a", "b"))
 #' }
 #'
 umxTwinAddMeansModel <- function(model, defVars = NULL, sep = "_T"){
 	# need to check the def vars are still in the dataset at this point...?
-	umx_check(all(c("MZ", "DZ", "top") %in% names(model)), message="need a model with top, MZ and DZ submodels")	
+	umx_check(all(c("MZ", "DZ", "top") %in% names(model)), "stop", message="need a model with top, MZ and DZ submodels")	
 	if(!is.null(defVars)){
 		# 1. Stick means and betas into top and Stick alg and def matrices into MZ and DZ
 		newTop = mxModel(model$top, xmuTwinMeanModelParts_top(defVars = defVars, sep= sep))

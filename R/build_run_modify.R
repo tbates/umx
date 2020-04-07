@@ -219,9 +219,13 @@ utils::globalVariables(c(
 	# Used in xmu_lavaan_process_group
 	"constraintOps", "handledOps",
 	# Used in power.ACE.test
-	"zygosity"
-	 )
-)
+	"zygosity",
+	
+	# xmu_twin_add_WeightMatrices
+	"mzWeightMatrix",
+	"dzWeightMatrix"
+	
+))
 
 # ===================================================================
 # = Define some class containers to allow specialised model objects =
@@ -1759,7 +1763,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' # = 2. Run the analyses! =
 #' # ========================
 #' # Run and plot for specified windows (in this case just 1927)
-#' umxGxE_window(selDVs = selDVs, sep="", moderator = mod, mzData = mzData, dzData = dzData, 
+#' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		target = 40, plotWindow = TRUE)
 #' 
 #' \dontrun{

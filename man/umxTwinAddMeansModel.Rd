@@ -22,11 +22,11 @@ umxTwinAddMeansModel(model, defVars = NULL, sep = "_T")
 Add simple or definition based means model to a twin model (i.e., which contains top MZ and DZ models)
 }
 \examples{
+\dontrun{
 defVars = c("VETSA1_age","VETSA2_age", "VETSA3_age")
-umxAddMeansModel(m1, defVars = defVars)
+umxTwinAddMeansModel(m1, defVars = defVars, sep = "_T")
 xmuDefBetasInTop(defVars = defVars)
 xmuDefMeanInDataGroup(defVars = defVars, expMeanAlgName = "expMean")
-\dontrun{
 m1 = umxTwinAddMeansModel(m1, defVars = c("a", "b"))
 }
 

@@ -82,11 +82,11 @@ umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData
 
 \dontrun{
 # Run with FIML (default) uses all information
-umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData);
+umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
 
 # Run creating weighted covariance matrices (excludes missing data)
-umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
-		weightCov = TRUE); 
+umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
+		weightCov = TRUE)
 }
 
 }
