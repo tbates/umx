@@ -9,7 +9,7 @@
 #' @return - model with means model added.
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [xmuDefBetasInTop()], [xmuDefMeanInDataGroup()]
+#' @seealso - [xmuTwinMeanModelParts_top()], [xmuTwinMeans_MZDZ()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -47,7 +47,6 @@ umxTwinAddMeansModel <- function(model, defVars = NULL, sep = "_T"){
 #' @return - two def matrices and the means algebra which live in `model$MZ`
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [xmuTwinMeans_top()], [umxTwinAddMeansModel()]
 #' @md
 #' @examples
 #' xmuTwinMeans_MZDZ(defVars = c("a", "b"))
@@ -74,7 +73,6 @@ xmuTwinMeans_MZDZ <- function(defVars = NULL, sep="_T", expMeanAlgName = "expMea
 #' @return - two matrices "Mean" and "betaDef"
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [xmuDefMeanInDataGroup()], [umxTwinAddMeansModel()]
 #' @md
 #' @examples
 #' xmuTwinMeanModelParts_top(nVar=3, defVars = c("a", "b"), sep="_T")
