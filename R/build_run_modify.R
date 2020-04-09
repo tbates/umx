@@ -231,17 +231,19 @@ utils::globalVariables(c(
 # = Define some class containers to allow specialised model objects =
 # = plot, etc. can then operate on these                             =
 # ===================================================================
+methods::setClass("MxModelDoC"    , contains = "MxModel")
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
+
 methods::setClass("MxModelACE"    , contains = "MxModel")
 methods::setClass("MxModelACEv"   , contains = "MxModelACE")
+methods::setClass("MxModelACEcov" , contains = "MxModel")
+
 methods::setClass("MxModelIP"     , contains = "MxModel")
 methods::setClass("MxModelCP"     , contains = "MxModel")
-methods::setClass("MxModelDoC"    , contains = "MxModel")
 methods::setClass("MxModelGxE"    , contains = "MxModel")
+methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
-methods::setClass("MxModelACEcov" , contains = "MxModelACE")
-methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 
 
 # ============================

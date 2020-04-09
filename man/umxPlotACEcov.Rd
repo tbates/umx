@@ -43,6 +43,7 @@ require(umx)
 # BMI ?twinData from Australian twins. 
 # Cohort 1 Zygosity 1 == MZ females 3 == DZ females
 data(twinData)
+
 # Pick the variables. We will use base names (i.e., "bmi") and set suffix.
 selDVs  = c("bmi")
 selCovs = c("ht")
