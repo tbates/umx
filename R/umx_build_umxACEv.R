@@ -620,17 +620,13 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	model = x # Just to be clear that x is a model
 	if(std){ model = umx_standardize(model) }
 
-	if(model$MZ$data$type == "raw"){
-		selDVs = names(model$MZ$data$observed)
-	}else{
-		selDVs = dimnames(model$MZ$data$observed)[[1]]
-	}
-	varCount = length(selDVs)/2;
-	parameterKeyList = omxGetParameters(model);
-	# e.g. expMean_r1c1  A_r1c1  C_r1c1  E_r1c1
+	selDVs = xmu_twin_get_var_names(model)
+	nVar   = length(selDVs)/2 # assumes 2 siblings
+	selDVs = selDVs[1:(nVar)]
 
-	out     = "" ;
-	latents = c();
+	parameterKeyList = omxGetParameters(model) # e.g. expMean_r1c1  A_r1c1  C_r1c1  E_r1c1
+	out     = "" 
+	latents = c()
 
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
@@ -663,18 +659,18 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	# = list manifests and draw them as squares =
 	# ===========================================
 	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(var in selDVs[1:varCount]) {
+	for(var in selDVs[1:nVar]) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
 
-	selDVs[1:varCount]
+	selDVs[1:nVar]
 	l_to_v_at_1 = ""
 	for(l in latents) {
 		var  = as.numeric(sub('([ACE])([0-9]+)', '\\2', l, perl = TRUE)); # target is [ACE]n		
 	   l_to_v_at_1 = paste0(l_to_v_at_1, "\t ", l, "-> ", selDVs[var], " [label = \"@1\"];\n")
 	}
 
-	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
+	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:nVar], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
 	# grep('a', latents, value= T)
 	rankA   = paste("\t{rank = min; ", paste(grep('A'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}

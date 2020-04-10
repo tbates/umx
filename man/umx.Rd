@@ -347,6 +347,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_starts}()},
 \code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_get_var_names}()},
 \code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{Advanced Model Building Functions}

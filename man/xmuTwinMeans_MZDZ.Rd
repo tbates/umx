@@ -26,10 +26,6 @@ xmuTwinMeans_MZDZ(defVars = c("a", "b"))
 
 }
 \seealso{
-\itemize{
-\item \code{\link[=xmuTwinMeans_top]{xmuTwinMeans_top()}}, \code{\link[=umxTwinAddMeansModel]{umxTwinAddMeansModel()}}
-}
-
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxTwinMaker}()},
@@ -98,6 +94,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_starts}()},
 \code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_get_var_names}()},
 \code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}

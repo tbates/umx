@@ -2424,11 +2424,9 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	model = x # just to be clear that x is a model
 	if(std){model = xmu_standardize_ACE(model)}
 
-	selDVs = dimnames(model$MZ$data$observed)[[2]]
+	selDVs = xmu_twin_get_var_names(model)
 	nVar   = length(selDVs)/2;
 	selDVs = selDVs[1:(nVar)]
-	selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
-
 
 	out     = "" ;
 	latents = c();
@@ -2525,30 +2523,30 @@ plot.MxModelACE <- umxPlotACE
 #' # Just top few pairs so example runs quickly
 #' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:100, ]
 #' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:100, ]
-#' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
-#' 	 sep = "", autoRun = TRUE)
+#' m1 = umxACEcov(selDVs= selDVs, selCovs= selCovs, dzData= dzData, mzData= mzData, sep= "")
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
+	model = x # just to be clear that x is a model
+
 	if(!class(x) == "MxModelACEcov"){
 		stop("The first parameter of umxPlotACEcov must be an ACEcov model, you gave me a ", class(x))
 	}
 
-	model = x # just to be clear that x is a model
-	if(std){model = xmu_standardize_ACE(model)}
+	if(std){model = umx_standardize(model)}
 
-	# relies on 'a' not having its dimnames stripped off...
+	# Relies on 'a' not having its dimnames stripped off...
 	if(model$MZ$data$type == "raw"){
 		selDVs = dimnames(model$top$a)[[1]]
 		# selDVs = dimnames(model$MZ$data$observed)[[2]]
-		nVar   = length(selDVs)/2;
-		selDVs = selDVs[1:(nVar)]
 		selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 	}else{
 		stop("ACEcov has to have raw data...")
 	}
 
-	out     = "";
+	nVar    = length(selDVs)/2;
+	selDVs  = selDVs[1:(nVar)]
+	out     = "" ;
 	latents = c();
 
 	varCount = length(selDVs)
@@ -2743,18 +2741,18 @@ plot.MxModelGxE <- umxPlotGxE
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	# upgraded from label-based to cell-based plot building
+	# Upgraded from label-based to cell-based plot building
 	format = match.arg(format)
-	model = x # just to emphasise that x has to be a model 
+	model  = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
 
 	if(std){ model = xmu_standardize_CP(model) }
 
-	nFac = dim(model$top$a_cp$labels)[[1]]
-	nVar = dim(model$top$as$values)[[1]]
-	selDVs   = dimnames(model$MZ$data$observed)[[2]]
-	selDVs   = selDVs[1:(nVar)]
-	selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+	nFac   = dim(model$top$a_cp$labels)[[1]]
+	nVar   = dim(model$top$as$values)[[1]]
+	selDVs = dimnames(model$MZ$data$observed)[[2]]
+	selDVs = selDVs[1:(nVar)]
+	selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 
 	out = list(str = "", latents = c(), manifests = c())
 	# Process x_cp matrices

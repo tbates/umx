@@ -17,6 +17,25 @@
 # ==================================================================================
 
 
+#' Not for user: pull variable names from a twin model
+#'
+#' @description
+#' Barely useful, but jutified perhaps by centralizing trimming the "_T1" off
+#'
+#' @param model A model to get the variables from
+#' @param trim Whether to trim the suffix off (TRUE)
+#' @return - variable names from twin model
+#' @export
+#' @family xmu internal not for end user
+#' @md
+xmu_twin_get_var_names <- function(model, trim= TRUE) {
+	selDVs = dimnames(model$MZ$data$observed)[[2]]
+	if(trim){
+		selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+	}
+	selDVs
+}
+
 # ==========================
 # = Run and Report helpers =
 # ==========================
