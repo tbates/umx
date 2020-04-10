@@ -324,7 +324,9 @@ xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_
 		starts = xmu_starts(mzData= mzData, dzData= dzData, selVars= selVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
 		# Contains starts$varStarts; starts$meanStarts; starts$meanLabels # (Equated across twins if requested)
 		model = mxModel(name,
-			mxModel("top", umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = starts$meanStarts, labels = starts$meanLabels, dimnames = list("means", selVars)) ),
+			mxModel("top", 
+				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = starts$meanStarts, labels = starts$meanLabels, dimnames = list("means", selVars))
+			),
 			mxModel("MZ", mzData, mxExpectationNormal("top.expCovMZ", "top.expMean") ),
 			mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", "top.expMean") ),			
 			mxFitFunctionMultigroup(c("MZ", "DZ"))

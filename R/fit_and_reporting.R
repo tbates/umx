@@ -2437,6 +2437,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 		if(class(value) == "numeric") {
 			value = round(value, digits)
 		}
+
 		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
 			from    = sub('([ace])_r([0-9]+)c([0-9]+)'           , '\\1\\3', thisParam, perl = TRUE);  # a c or e
 			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2'   , thisParam, perl = TRUE));
