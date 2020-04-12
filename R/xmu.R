@@ -17,23 +17,117 @@
 # ==================================================================================
 
 
+#' Get on or more columns from mzData or regular data.frame
+#'
+#' @description
+#' same effect as `df[, col]` but works for [mxData()] and check the names are present
+#'
+#' @param data mxData or data.frame
+#' @param col the name(s) of the column(s) to extract
+#' @param drop whether to drop the structure of the data.frame when extracting one column
+#' @return - column of data
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' xmu_extract_column(mtcars, "wt")
+#' xmu_extract_column(mxData(mtcars, type = "raw"), "wt")
+#' xmu_extract_column(mxData(mtcars, type = "raw"), "wt", drop=TRUE)
+#' xmu_extract_column(mxData(mtcars, type = "raw"), c("wt", "mpg"))
+xmu_extract_column <- function(data, col, drop= FALSE) {
+	umx_check_names(col, data)
+	if(umx_is_MxData(data)){
+		return(data$observed[ , col, drop = drop])
+	}else{
+		return(data[ , col, drop = drop])
+	}
+}
+
+
+#' Rename a umxMatrix (in a model)
+#'
+#' @description
+#' Rename a umxMatrix, including updating its labels
+#'
+#' @param model A model or matrix
+#' @param matrixName Name of the matrix
+#' @param name The new name
+#' @return - updated matrix or model with updated matrix in it.
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' data(twinData) # ?twinData from Australian twins.
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+#' tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
+#' umx_check(tmp$hello$labels == "hello_r1c1") # new is there
+#' umx_check(is.null(tmp$a))                   # old is gone
+umxRenameMatrix <- function(x, matrixName, name) {
+	if(umx_is_MxModel(x)){
+		# 1. Grab a copy of the matrix
+		tmp = x[[matrixName]]
+		# 2. Update the new copy
+		tmp$name   = name
+		tmp$labels = namez(tmp$labels, pattern = paste0(matrixName), replacement = paste0(name))
+
+		# 2. Delete the old one from the model
+		x = mxModel(x, matrixName, remove= TRUE)
+		# 4. Add back to top
+		x = mxModel(x, tmp)
+		return(x)
+	} else {
+		stop("Haven't implemented umxRenameMatrix for matrices")
+	}
+}
+
+
 #' Not for user: pull variable names from a twin model
 #'
 #' @description
-#' Barely useful, but jutified perhaps by centralizing trimming the "_T1" off
+#' Barely useful, but justified perhaps by centralizing trimming the "_T1" off, and returning just twin 1.
 #'
 #' @param model A model to get the variables from
-#' @param trim Whether to trim the suffix off (TRUE)
+#' @param source Whether to access the dimnames of the "expCovMZ" or the names of the "observed" data (will includee covariates) 
+#' @param trim Whether to trim the suffix (TRUE)
+#' @param twinOneOnly Whether to return on the names for twin 1 (i.e., unique names)
 #' @return - variable names from twin model
 #' @export
 #' @family xmu internal not for end user
 #' @md
-xmu_twin_get_var_names <- function(model, trim= TRUE) {
-	selDVs = dimnames(model$MZ$data$observed)[[2]]
+#' @examples
+#' data(twinData) # ?twinData from Australian twins.
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+#' selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
+#' umx_check(selVars == "ht")
+#' xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) #"ht1" "ht2"
+#' selVars = xmu_twin_get_var_names(m1, source= "observed", trim= TRUE, twinOneOnly= TRUE)# "ht"
+#' nVar = length(selVars)
+#' umx_check(nVar==1)
+#' 
+xmu_twin_get_var_names <- function(model, source = c("expCovMZ", "observed"), trim = TRUE, twinOneOnly = TRUE) {
+	# TODO if a model has covariates, we should exclude these from the list: they will be included in observed
+	source = match.arg(source)
+	if(source == "observed"){
+		selDVs = dimnames(model$MZ$data$observed)[[2]]
+	} else {
+		# expCovMZ used in umxSummaryACE and also umxSummaryACEcov
+		# It will exclude covariates (data.vars appearing only in the means model)
+		# Note however, matrix often lacks dimnames...
+		selDVs = dimnames(model$top$expCovMZ)[[1]]
+	}
 	if(trim){
 		selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 	}
-	selDVs
+	if(twinOneOnly){
+		selDVs = unique(selDVs)
+	}
+	return(selDVs)
 }
 
 # ==========================

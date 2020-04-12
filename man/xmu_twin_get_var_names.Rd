@@ -4,12 +4,21 @@
 \alias{xmu_twin_get_var_names}
 \title{Not for user: pull variable names from a twin model}
 \usage{
-xmu_twin_get_var_names(model, trim = TRUE)
+xmu_twin_get_var_names(
+  model,
+  source = c("expCovMZ", "observed"),
+  trim = TRUE,
+  twinOneOnly = TRUE
+)
 }
 \arguments{
 \item{model}{A model to get the variables from}
 
-\item{trim}{Whether to trim the suffix off (TRUE)}
+\item{source}{Whether to access the dimnames of the "expCovMZ" or the names of the "observed" data (will includee covariates)}
+
+\item{trim}{Whether to trim the suffix (TRUE)}
+
+\item{twinOneOnly}{Whether to return on the names for twin 1 (i.e., unique names)}
 }
 \value{
 \itemize{
@@ -17,11 +26,26 @@ xmu_twin_get_var_names(model, trim = TRUE)
 }
 }
 \description{
-Barely useful, but jutified perhaps by centralizing trimming the "_T1" off
+Barely useful, but justified perhaps by centralizing trimming the "_T1" off, and returning just twin 1.
+}
+\examples{
+data(twinData) # ?twinData from Australian twins.
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
+m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
+umx_check(selVars == "ht")
+xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) #"ht1" "ht2"
+selVars = xmu_twin_get_var_names(m1, source= "observed", trim= TRUE, twinOneOnly= TRUE)# "ht"
+nVar = length(selVars)
+umx_check(nVar==1)
+
 }
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
@@ -42,8 +66,6 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
-\code{\link{xmuTwinMeanModelParts_top}()},
-\code{\link{xmuTwinMeans_MZDZ}()},
 \code{\link{xmuTwinSuper_Continuous}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},

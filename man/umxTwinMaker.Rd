@@ -112,6 +112,7 @@ m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData,
 
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
@@ -131,8 +132,6 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
-\code{\link{xmuTwinMeanModelParts_top}()},
-\code{\link{xmuTwinMeans_MZDZ}()},
 \code{\link{xmuTwinSuper_Continuous}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},

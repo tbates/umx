@@ -41,6 +41,7 @@ Makes graphviz paths
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
@@ -61,8 +62,6 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
-\code{\link{xmuTwinMeanModelParts_top}()},
-\code{\link{xmuTwinMeans_MZDZ}()},
 \code{\link{xmuTwinSuper_Continuous}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},

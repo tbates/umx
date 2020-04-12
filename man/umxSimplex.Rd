@@ -161,7 +161,7 @@ Other Twin Modeling Functions:
 \code{\link{umxIP}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
-\code{\link{umxTwinAddMeansModel}()},
+\code{\link{umxTwinUpgradeMeansToCovariateModel}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}
