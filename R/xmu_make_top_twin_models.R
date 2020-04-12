@@ -493,18 +493,20 @@ umxTwinUpgradeMeansToCovariateModel <- function(model, defVars = NULL, sep = "_T
 	# TODO re-write this to check for covariates..
 	umx_check(!is.null(model$top$expMean), "You need to have defVars")
 
-	# defVars = c("age", "sex");
-	# selVars = c("IQ", "Grit");
 	selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
+	# selVars = c("IQ", "Grit", "Openness");
+	# selCovs = c("age", "sex");
 	nVar = length(selVars)
-
-	# TODO check that this is in the data..
-	nDef = length(defVars)
+	nCov = length(selCovs)
 
 	# 1. Make a betaDef matrix
-	betaLabels = paste0("cov", rep(1:nCov, times=nVar), "_beta_Var", rep(1:nVar, each=nCov) )
-	meansBetas = umxMatrix("meansBetas", "Full", nrow = nCov, ncol = nVar, free = TRUE, labels=betaLabels, values = 0, lbound = -2, ubound = 2) )
-	dimnames(meansBetas)=list(defVars, selVars))
+	betaLabels = paste0("cov", rep(1:nCov, times=nVar), "_b_Var", rep(1:nVar, each=nCov) )
+	meansBetas = umxMatrix("meansBetas", "Full", nrow = nCov, ncol = nVar, free = TRUE, labels=betaLabels, values = 0, lbound = -2, ubound = 2)
+	dimnames(meansBetas)=list(selCovs, selVars)
+	# meansBetas$labels
+	# age  "age_b_Var1" "age_b_Var2" "age_b_Var3"
+	# sex  "sex_b_Var1" "sex_b_Var2" "sex_b_Var3"
+
 
 	# =============================================================================================================
 	# = 1. Add the betaDef matrix to top and replace top.expMean with top.intercept 
@@ -516,20 +518,20 @@ umxTwinUpgradeMeansToCovariateModel <- function(model, defVars = NULL, sep = "_T
 
 	# 2. Upgrade MZ and DZ groups with local Def Vars and new expMean algebra
 	MZ  = mxModel(model$MZ, 
-		mxMatrix(name= "T1DefVars", type= "Full", nrow= 1, ncol= nDef, free= FALSE, labels= paste0("data.", defVars, sep, 1)),
-		mxMatrix(name= "T2DefVars", type= "Full", nrow= 1, ncol= nDef, free= FALSE, labels= paste0("data.", defVars, sep, 2)),
+		mxMatrix(name= "T1DefVars", type= "Full", nrow= 1, ncol= nCov, free= FALSE, labels= paste0("data.", selCovs, sep, 1)),
+		mxMatrix(name= "T2DefVars", type= "Full", nrow= 1, ncol= nCov, free= FALSE, labels= paste0("data.", selCovs, sep, 2)),
 		# mxAlgebra(name= "expMean", cbind(top.intercept + top.meansBetas*T1DefVars, top.intercept + top.meansBetas*T2DefVars)),
 		# intercept is full width
-		mxAlgebra(name= "expMean", top.intercept + cbind(top.meansBetas*T1DefVars, top.meansBetas*T2DefVars) ),
+		mxAlgebra(name= "expMean", top.intercept + cbind(T1DefVars %*% top.meansBetas, T2DefVars %*% top.meansBetas) ),
 		mxExpectationNormal("top.expCovMZ", "expMean")
 	)
 
 	# c(sex_T1, sex_T2) %x% beta_Sex == c(sex_T1, sex_T2) * c(beta_Sex, beta_Sex)
 	
 	DZ  = mxModel(model$DZ, 
-		mxMatrix(name= "T1DefVars", type= "Full", nrow= 1, ncol= nDef, free= FALSE, labels= paste0("data.", defVars, sep, 1)),
-		mxMatrix(name= "T2DefVars", type= "Full", nrow= 1, ncol= nDef, free= FALSE, labels= paste0("data.", defVars, sep, 2)),
-		mxAlgebra(name= "expMean", cbind(top.intercept + top.meansBetas*T1DefVars, top.intercept + top.meansBetas*T2DefVars)),
+		mxMatrix(name= "T1DefVars", type= "Full", nrow= 1, ncol= nCov, free= FALSE, labels= paste0("data.", selCovs, sep, 1)),
+		mxMatrix(name= "T2DefVars", type= "Full", nrow= 1, ncol= nCov, free= FALSE, labels= paste0("data.", selCovs, sep, 2)),
+		mxAlgebra(name= "expMean", top.intercept + cbind(T1DefVars %*% top.meansBetas, T2DefVars %*% top.meansBetas) ),
 		mxExpectationNormal("top.expCovMZ", "expMean")
 	)
 	return(mxModel(model, top, MZ, DZ))
@@ -727,21 +729,16 @@ xmu_twin_add_WeightMatrices <- function(model, mzWeights = NULL, dzWeights = NUL
 }
 
 
-one_by_nCov = umxMatrix("T1DefVars", "Full", nrow = 1, ncol = nCov, values = c(exp(1), pi))
-meansBetas  = umxMatrix("meansBetas", "Full", nrow = nCov, ncol = nVar, free = TRUE, labels=betaLabels, values = 1:6, lbound = -2, ubound = 2)
-one_by_nCov = qm(1, 57) # qm(sex=1, age=57)
-# a beta for each covariate for each variable: nCov * nVar (product has nVar columns)
-meansBetas  = qm(
-	.1, .2, .3|
-	.4, .5, .6)
-dimnames(meansBetas)=list(c("sex", "age"), c("var1","var2","var3"))
+# one_by_nCov = umxMatrix("T1DefVars", "Full", nrow = 1, ncol = nCov, values = c(exp(1), pi))
+# meansBetas  = umxMatrix("meansBetas", "Full", nrow = nCov, ncol = nVar, free = TRUE, labels=betaLabels, values = 1:6, lbound = -2, ubound = 2)
+# one_by_nCov = qm(1, 57) # qm(sex=1, age=57)
+# # a beta for each covariate for each variable: nCov * nVar (product has nVar columns)
+# meansBetas  = qm(
+# 	.1, .2, .3|
+# 	.4, .5, .6)
+# dimnames(meansBetas)=list(c("sex", "age"), c("var1","var2","var3"))
 #     var1 var2 var3
 # sex  0.1  0.2  0.3
 # age  0.4  0.5  0.6
 
-one_by_nCov %*% meansBetas
-     [,1] [,2] [,3]
-[1,] 22.9 28.7 34.5
-
-
-expMean       <- mxAlgebra( expression = intercept + bS*Sex + bA*Age , name="expMean" )
+# one_by_nCov %*% meansBetas

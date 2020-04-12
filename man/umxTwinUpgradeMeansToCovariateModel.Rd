@@ -25,16 +25,6 @@ Add simple or definition based means model to a twin model (i.e., which contains
 Not for end-users: Create matrices and algebra for means in twin models
 Returns two def matrices and the means algebra which live in \code{model$MZ}
 }
-\examples{
-\dontrun{
-defVars = c("VETSA1_age","VETSA2_age", "VETSA3_age")
-umxTwinAddMeansModel(m1, defVars = defVars, sep = "_T")
-xmuDefBetasInTop(defVars = defVars)
-xmuDefMeanInDataGroup(defVars = defVars, expMeanAlgName = "expMean")
-m1 = umxTwinAddMeansModel(m1, defVars = c("a", "b"))
-}
-
-}
 \seealso{
 \itemize{
 \item \code{\link[=xmuTwinMeanModelParts_top]{xmuTwinMeanModelParts_top()}}, \code{\link[=xmuTwinMeans_MZDZ]{xmuTwinMeans_MZDZ()}}

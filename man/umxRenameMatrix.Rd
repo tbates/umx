@@ -28,7 +28,8 @@ mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
-tmp$hello
+umx_check(tmp$hello$labels == "hello_r1c1") # new is there
+umx_check(is.null(tmp$a))                   # old is gone
 }
 \seealso{
 Other xmu internal not for end user: 
