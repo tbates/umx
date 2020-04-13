@@ -98,6 +98,8 @@
 #' names(m1) # "top" "MZ"  "DZ"
 #' class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionML"
 #'
+#' m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs=c("wt"), selCovs= "age", sep="", nSib=2)
+#' 
 #' # ===============
 #' # = WLS example =
 #' # ===============
@@ -174,9 +176,9 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 	# *Note*: If dropping this into an existing model, it replaces all code setting: nVar, selVars, used, 
 	# Also any code figuring out data-type
 	
-	if(!is.null(selCovs)){
-		stop("covariates not implemented in xmu_make_TwinSuperModel yet: use umx_residualize() in the mean time")
-	}
+	# if(!is.null(selCovs)){
+	# 	stop("covariates not implemented in xmu_make_TwinSuperModel yet: use umx_residualize() in the mean time")
+	# }
 
 	# ===================
 	# = match arguments =
@@ -276,11 +278,12 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 # = raw twin-assembly helpers =
 # =============================
 
-#' xmuTwinSuper_Continuous
+#' Create core of twin model for all-continuous data.
 #'
 #' @description
-#' Add the ...
-#'
+#' Sets up top, MZ and DZ submodels with a means model, data, and expectation for all-continuous data.
+#' called by [xmu_make_TwinSuperModel()].
+#' 
 #' @param name The name of the supermodel
 #' @param selVars  selVars
 #' @param selCovs  selCovs
@@ -294,7 +297,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' @return - A twin model
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [xmu_make_TwinSuperModel]
+#' @seealso - [xmu_make_TwinSuperModel()]
 #' @md
 #' @examples
 #' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
@@ -307,8 +310,6 @@ xmuTwinSuper_Continuous <- function(name=NULL, selVars, selCovs = NULL, sep = "_
 	# ==============================
 
 	# = Special case (for WLS, can affect mean or not)
-	# m1 = umxTwinUpgradeMeansToCovariateModel(m1, selCovs = c("age", "sex"), sep = "_T") {
-
 	umx_check(!is.null(name), "stop", "I need a name for the super model")
 	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times nSib for a family)**
 
@@ -332,12 +333,15 @@ xmuTwinSuper_Continuous <- function(name=NULL, selVars, selCovs = NULL, sep = "_
 		# Contains starts$varStarts; starts$meanStarts; starts$meanLabels # (Equated across twins if requested)
 		model = mxModel(name,
 			mxModel("top", 
-				umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar * nSib), free = TRUE, values = starts$meanStarts, labels = starts$meanLabels, dimnames = list("means", selVars))
+				umxMatrix("expMean", "Full", nrow= 1, ncol= nVar*nSib, free= TRUE, values= starts$meanStarts, labels= starts$meanLabels, dimnames= list("means", selVars))
 			),
 			mxModel("MZ", mzData, mxExpectationNormal("top.expCovMZ", "top.expMean") ),
 			mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", "top.expMean") ),			
 			mxFitFunctionMultigroup(c("MZ", "DZ"))
 		)
+		if(!is.null(selCovs)){
+			model = umxTwinUpgradeMeansToCovariateModel(model, selCovs = selCovs, sep = sep)
+		}
 	}
 	return(model)
 }
@@ -468,12 +472,11 @@ xmuTwinSuper_CovCor <- function(name=NULL, selVars, mzData, dzData, type, numObs
 	return(model)
 }
 
-#' Add a means model to a twin model
+#' Not for end-users: Add a means model with covariates to a twin model
 #'
 #' @description
-#' Add simple or definition based means model to a twin model (i.e., which contains top MZ and DZ models)
-#' Not for end-users: Create matrices and algebra for means in twin models
-#' Returns two def matrices and the means algebra which live in `model$MZ`
+#' Add intercept and covariate (definition-based) means model to a twin model 
+#' (i.e., a umx top/MZ/DZ supermodel).
 #'
 #' @param model The model we are modifying (must have MZ DZ and top submodels)
 #' @param selCovs the names of definition variables
@@ -482,7 +485,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, selVars, mzData, dzData, type, numObs
 #' @return - model with means model added.
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [xmuTwinMeanModelParts_top()], [xmuTwinMeans_MZDZ()]
+#' @seealso - [xmuTwinSuper_Continuous()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -492,7 +495,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, selVars, mzData, dzData, type, numObs
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #  # TODO won't work as umxACE drops the covs from the data...
 #' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
-#' m1 = umxTwinUpgradeMeansToCovariateModel(m1, selCovs = c("age", "sex"), sep = "_T") {
+#' m1 = umxTwinUpgradeMeansToCovariateModel(m1, selCovs = c("age", "sex"), sep = "_T")
 #' }
 #'
 umxTwinUpgradeMeansToCovariateModel <- function(model, selCovs = NULL, sep = "_T") {

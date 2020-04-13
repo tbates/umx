@@ -133,6 +133,8 @@ m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs=c("wt","ht"), s
 names(m1) # "top" "MZ"  "DZ"
 class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionML"
 
+m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs=c("wt"), selCovs= "age", sep="", nSib=2)
+
 # ===============
 # = WLS example =
 # ===============

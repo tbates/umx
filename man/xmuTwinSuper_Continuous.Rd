@@ -2,12 +2,12 @@
 % Please edit documentation in R/xmu_make_top_twin_models.R
 \name{xmuTwinSuper_Continuous}
 \alias{xmuTwinSuper_Continuous}
-\title{xmuTwinSuper_Continuous}
+\title{Create core of twin model for all-continuous data.}
 \usage{
 xmuTwinSuper_Continuous(
   name = NULL,
   selVars,
-  defVars = NULL,
+  selCovs = NULL,
   sep = "_T",
   mzData,
   dzData,
@@ -22,7 +22,7 @@ xmuTwinSuper_Continuous(
 
 \item{selVars}{selVars}
 
-\item{defVars}{defVars}
+\item{selCovs}{selCovs}
 
 \item{sep}{default "_T"}
 
@@ -44,17 +44,18 @@ xmuTwinSuper_Continuous(
 }
 }
 \description{
-Add the ...
+Sets up top, MZ and DZ submodels with a means model, data, and expectation for all-continuous data.
+called by \code{\link[=xmu_make_TwinSuperModel]{xmu_make_TwinSuperModel()}}.
 }
 \examples{
-# xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, 
+# xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
 #    mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
 #    allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T"
 # )
 }
 \seealso{
 \itemize{
-\item \link{xmu_make_TwinSuperModel}
+\item \code{\link[=xmu_make_TwinSuperModel]{xmu_make_TwinSuperModel()}}
 }
 
 Other xmu internal not for end user: 

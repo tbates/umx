@@ -2,14 +2,14 @@
 % Please edit documentation in R/xmu_make_top_twin_models.R
 \name{umxTwinUpgradeMeansToCovariateModel}
 \alias{umxTwinUpgradeMeansToCovariateModel}
-\title{Add a means model to a twin model}
+\title{Not for end-users: Add a means model with covariates to a twin model}
 \usage{
-umxTwinUpgradeMeansToCovariateModel(model, defVars = NULL, sep = "_T")
+umxTwinUpgradeMeansToCovariateModel(model, selCovs = NULL, sep = "_T")
 }
 \arguments{
 \item{model}{The model we are modifying (must have MZ DZ and top submodels)}
 
-\item{defVars}{the names of definition variables}
+\item{selCovs}{the names of definition variables}
 
 \item{sep}{How twin variable names are expanded (default "_T")}
 
@@ -21,13 +21,23 @@ umxTwinUpgradeMeansToCovariateModel(model, defVars = NULL, sep = "_T")
 }
 }
 \description{
-Add simple or definition based means model to a twin model (i.e., which contains top MZ and DZ models)
-Not for end-users: Create matrices and algebra for means in twin models
-Returns two def matrices and the means algebra which live in \code{model$MZ}
+Add intercept and covariate (definition-based) means model to a twin model
+(i.e., a umx top/MZ/DZ supermodel).
+}
+\examples{
+\dontrun{
+data(twinData) # ?twinData from Australian twins.
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
+m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+m1 = umxTwinUpgradeMeansToCovariateModel(m1, selCovs = c("age", "sex"), sep = "_T")
+}
+
 }
 \seealso{
 \itemize{
-\item \code{\link[=xmuTwinMeanModelParts_top]{xmuTwinMeanModelParts_top()}}, \code{\link[=xmuTwinMeans_MZDZ]{xmuTwinMeans_MZDZ()}}
+\item \code{\link[=xmuTwinSuper_Continuous]{xmuTwinSuper_Continuous()}}
 }
 
 Other Twin Modeling Functions: 
