@@ -265,7 +265,9 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		model$DZ = mxModel(model$DZ, mxFitFunctionML(vector = bVector) )
 	}
 
-	if(!is.null(weightVar)){ model = xmu_twin_add_WeightMatrices(model, mzWeights = mzWeightData, dzWeights = dzWeightData) }
+	if(!is.null(weightVar)){
+		model = xmu_twin_add_WeightMatrices(model, mzWeights = mzWeightData, dzWeights = dzWeightData) 
+	}
 
 	return(model)
 }                                           
