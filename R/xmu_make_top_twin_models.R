@@ -230,11 +230,11 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		colTypes = umx_is_ordered(xmu_extract_column(mzData, selVars), summaryObject= TRUE)
 
 		if(colTypes$nFactors == 0){
-			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib, type= type, allContinuousMethod= allContinuousMethod)
+			model = xmuTwinSuper_Continuous(name= name, selVars = selVars, selCovs = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib, type= type, allContinuousMethod= allContinuousMethod)
 		} else if(sum(colTypes$isBin) == 0){
-			model = xmuTwinSuper_NoBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib)
+			model = xmuTwinSuper_NoBinary(name= name, selVars = selVars, selCovs = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans, nSib = nSib)
 		} else if(sum(colTypes$isBin) > 0){
-			model = xmuTwinSuper_SomeBinary(name= name, selVars = selVars, defVars = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans,  nSib = nSib, verbose = verbose)
+			model = xmuTwinSuper_SomeBinary(name= name, selVars = selVars, selCovs = selCovs, mzData = mzData, dzData = dzData, sep = sep, equateMeans= equateMeans,  nSib = nSib, verbose = verbose)
 		} else {
 			stop("You appear to have something other than I expected in terms of WLS, or binary, ordinal and continuous variable mix")
 		}
@@ -244,7 +244,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 			stop("You can't set weightVar when you give cov data - use cov.wt to create weighted cov matrices, or pass in raw data")
 		}
 		if(!is.null(selCovs)){
-			stop("You can't set defVars (covariates) when you have cov data: needs raw data to estimate on each row")
+			stop("You can't set selCovs (covariates) when you have cov data: needs raw data to estimate on each row")
 		}
 		model = xmuTwinSuper_CovCor(name=name, selVars = selVars, mzData= mzData, dzData= dzData, type = dataType, numObsMZ = numObsMZ, numObsDZ = numObsDZ)
 	} else {
@@ -283,7 +283,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #'
 #' @param name The name of the supermodel
 #' @param selVars  selVars
-#' @param defVars  defVars
+#' @param selCovs  selCovs
 #' @param mzData An mxData object containing the MZ data
 #' @param dzData An mxData object containing the DZ data 
 #' @param type type
@@ -297,20 +297,24 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' @seealso - [xmu_make_TwinSuperModel]
 #' @md
 #' @examples
-#' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, defVars = defVars, 
+#' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
 #' #    mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
 #' #    allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T"
 #' # )
-xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_T", mzData, dzData, equateMeans, type, allContinuousMethod, nSib){
-	# ===========================================================================
-	# = Handle all continuous as special case (for WLS, can affect mean or not) =
-	# ===========================================================================
+xmuTwinSuper_Continuous <- function(name=NULL, selVars, selCovs = NULL, sep = "_T", mzData, dzData, equateMeans, type, allContinuousMethod, nSib){
+	# ==============================
+	# = Handle all continuous case =
+	# ==============================
+
+	# = Special case (for WLS, can affect mean or not)
+	# m1 = umxTwinUpgradeMeansToCovariateModel(m1, selCovs = c("age", "sex"), sep = "_T") {
+
 	umx_check(!is.null(name), "stop", "I need a name for the super model")
 	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times nSib for a family)**
 
 	if(type %in% c('WLS', 'DWLS', 'ULS') & allContinuousMethod == "cumulants"){
 		# Raw data, mo means (WLS with cumulants
-		umx_check(!is.null(defVars), "warning", "covariates not allowed in all-continuous WLS with method = cumulants. Switch to other method")
+		umx_check(!is.null(selCovs), "warning", "covariates not allowed in all-continuous WLS with method = cumulants. Switch to other method")
 		model = mxModel(name,
 			mxModel("top"),
 			mxModel("MZ", mzData, mxExpectationNormal("top.expCovMZ") ),
@@ -338,8 +342,8 @@ xmuTwinSuper_Continuous <- function(name=NULL, selVars, defVars = NULL, sep = "_
 	return(model)
 }
 
-# xmuTwinSuper_NoBinary(name=name, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, equateMeans= equateMeans, nSib=2)
-xmuTwinSuper_NoBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
+# xmuTwinSuper_NoBinary(name=name, selVars = selVars, selCovs = selCovs, mzData = mzData, dzData = dzData, equateMeans= equateMeans, nSib=2)
+xmuTwinSuper_NoBinary <- function(name=NULL, selVars, selCovs = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
 	# ============================
 	# = Notes: Ordinal requires: =
 	# ============================
@@ -381,12 +385,12 @@ xmuTwinSuper_NoBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dz
 	return(model)
 }
 
-# xmuTwinSuper_SomeBinary(name=NULL, selVars = selVars, defVars = defVars, mzData = mzData, dzData = dzData, nSib, equateMeans= equateMeans, sep = "_T", verbose = verbose)
-xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, defVars = NULL, mzData, dzData, sep, nSib, equateMeans= equateMeans, verbose = verbose){
+# xmuTwinSuper_SomeBinary(name=NULL, selVars = selVars, selCovs = selCovs, mzData = mzData, dzData = dzData, nSib, equateMeans= equateMeans, sep = "_T", verbose = verbose)
+xmuTwinSuper_SomeBinary <- function(name=NULL, selVars, selCovs = NULL, mzData, dzData, sep, nSib, equateMeans= equateMeans, verbose = verbose){
 	colTypes = umx_is_ordered(xmu_extract_column(mzData, selVars), summaryObject= TRUE)
 	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
-	if(!is.null(defVars)){
+	if(!is.null(selCovs)){
 		warning("Covariates not handled in xmuTwinSuper_SomeBinary yet!")
 	}
 
@@ -472,7 +476,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, selVars, mzData, dzData, type, numObs
 #' Returns two def matrices and the means algebra which live in `model$MZ`
 #'
 #' @param model The model we are modifying (must have MZ DZ and top submodels)
-#' @param defVars the names of definition variables
+#' @param selCovs the names of definition variables
 #' @param sep How twin variable names are expanded (default "_T")
 #' @param expMeanAlgName The name we expect for the algebra (leave set to "expMean")
 #' @return - model with means model added.
@@ -482,18 +486,24 @@ xmuTwinSuper_CovCor <- function(name=NULL, selVars, mzData, dzData, type, numObs
 #' @md
 #' @examples
 #' \dontrun{
-#' m1 = umxTwinUpgradeMeansToCovariateModel(m1, defVars = c("age", "sex"), sep = "_T") {
+#' data(twinData) # ?twinData from Australian twins.
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#  # TODO won't work as umxACE drops the covs from the data...
+#' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+#' m1 = umxTwinUpgradeMeansToCovariateModel(m1, selCovs = c("age", "sex"), sep = "_T") {
 #' }
 #'
-umxTwinUpgradeMeansToCovariateModel <- function(model, defVars = NULL, sep = "_T") {
+umxTwinUpgradeMeansToCovariateModel <- function(model, selCovs = NULL, sep = "_T") {
 	# TODO Check the def vars are still in the dataset at this point...
 	# top.Mean top.betaDef Def_T1 top.Mean top.betaDef Def_T2 need to be added to  
 	umx_check(all(c("MZ", "DZ", "top") %in% names(model)), "stop", message="need a model with top, MZ and DZ submodels")	
-	umx_check(!is.null(defVars), "You need to have defVars")
+	umx_check(!is.null(selCovs), "You need to have selCovs")
 	umx_check(TRUE, "Model must have means")
 
 	# TODO re-write this to check for covariates..
-	umx_check(!is.null(model$top$expMean), "You need to have defVars")
+	umx_check(!is.null(model$top$expMean), "You need to have selCovs")
 
 	selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
 	# selVars = c("IQ", "Grit", "Openness");
