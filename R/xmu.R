@@ -61,7 +61,7 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
-#' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+#' m1  = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 #' tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
 #' umx_check(tmp$hello$labels == "hello_r1c1") # new is there
 #' umx_check(is.null(tmp$a))                   # old is gone
@@ -69,6 +69,7 @@ umxRenameMatrix <- function(x, matrixName, name) {
 	if(umx_is_MxModel(x)){
 		# 1. Grab a copy of the matrix
 		tmp = x[[matrixName]]
+		umx_check(!is.null(tmp), "stop", paste0("matrix ", matrixName, " not found (calling umxRenameMatrix in model ", omxQuotes(x$name), ")"))
 		# 2. Update the new copy
 		tmp$name   = name
 		tmp$labels = namez(tmp$labels, pattern = paste0(matrixName), replacement = paste0(name))
@@ -447,17 +448,57 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 
 }
 
+
+#' Drop rows with missing definition variables
+#'
+#' @description
+#' Definition variables can't be missing. This function helps with that.
+#'
+#' @details
+#'
+#' @param data The dataframe to check for missing variables
+#' @param selVars The variables to check for missingness
+#' @param sep A sep if this is twin data and selVars are baseNames (default NULL)
+#' @param dropMissingDef Whether to drop the rows, or just stop (TRUE)
+#' @return - data with missing rows dropped
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [complete.cases()]
+#' @md
+#' @examples
+#' tmp = mtcars; tmp[1, "wt"] = NA
+#' xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissing = FALSE)
+#' 
+xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE) {
+	selVars = ifelse(is.null(sep), selVars, tvars(selVars, sep))
+	umx_check_names(selVars, data)
+	OK = complete.cases(data[, selVars])
+	if(sum(!OK) == 0){
+		return(data)
+	}else{
+		if(dropMissingDef){
+			message(sum(!OK), " row(s) dropped due to missing definition variable(s)")
+			return(data[OK, ])
+		} else {
+			stop(sum(!OK), " rows of data have NA definition variables. Set dropMissing = TRUE, or remove these yourself with
+data[complete.cases(data[,selVars]),]")
+		}
+	}
+}
+
 #' Upgrade a dataframe to an mxData type.
 #'
 #' @description
-#' `xmu_make_mxData` is an internal function to upgrade a dataframe to `mxData`. It can also drop variables from the dataframe.
-#'
+#' `xmu_make_mxData` is an internal function to upgrade a dataframe to `mxData`. It can also drop variables and rows
+#' from the dataframe.
 #' The most common use will be to give it a dataframe, and get back an `mxData` object of type raw, cov, cor (WLS is just raw).
 #'
 #' @param data A [data.frame()] or [mxData()]
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
 #' @param numObs Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData
+#' @param fullCovs Covariate names if any (NULL = none) Can be dropped if necessary
+#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
 #' @return - [mxData()]
 #' @export
@@ -513,7 +554,8 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' # =======================
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, verbose = FALSE) {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE) {
+
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
@@ -545,11 +587,18 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	}
 
 	if (class(data)[1] == "data.frame") {
+		# check variance, excluding covariates
+		xmu_check_variance(data[, setdiff(manifests, fullCovs)])
+
 		if(dropColumns){
-			# Trim down the data to include only the requested columns
+			# Trim down the data to include only the requested columns 
 			data = data[, manifests, drop = FALSE]
-			xmu_check_variance(data)
 		}
+		if(!is.null(fullCovs)){
+			# drop rows with missing def vars or stop
+			data = xmu_data_missing(data, selVars = fullCovs, dropMissingDef = dropMissingDef)
+		}
+
 		# Upgrade data.frame to mxData of desired type
 		if(type %in% c("Auto", "FIML")){
 			data = mxData(observed = data, type = "raw")
@@ -582,15 +631,19 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			} else if (data$type == "raw"){
 				# Might be worth doing data = mxData(data = data$observed[, manifests], type=‘raw’)
 				data$observed = data$observed[, manifests, drop = FALSE]
+				if(!is.null(fullCovs)){
+					data$observed = xmu_data_missing(data$observed, selVars = fullCovs, dropMissingDef = dropMissingDef)
+				}
 			} else {
 				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
 			}
 		}
-	}else if (class(data) == "matrix"){
+	}else if(class(data) == "matrix"){
 		if(is.null(numObs)){
 			stop("You gave me a cov matrix. umx needs the numObs for this.\nNote easiest and least error-prone method is
 for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
 		} else {
+			umx_check(is.null(fullCovs), "stop", "covariates make no sense for summary data")
 			# Drop unused variables from matrix
 			data = mxData(umx_reorder(data, manifests), type= type, numObs= numObs)
 		}

@@ -6,9 +6,9 @@
 \usage{
 xmuTwinSuper_Continuous(
   name = NULL,
-  selVars,
-  selCovs = NULL,
-  sep = "_T",
+  fullVars,
+  fullCovs = NULL,
+  sep,
   mzData,
   dzData,
   equateMeans,
@@ -20,9 +20,9 @@ xmuTwinSuper_Continuous(
 \arguments{
 \item{name}{The name of the supermodel}
 
-\item{selVars}{selVars}
+\item{fullVars}{Full Varaiable names (wt_T1)}
 
-\item{selCovs}{selCovs}
+\item{fullCovs}{Full Covariate names (age_T1)}
 
 \item{sep}{default "_T"}
 
@@ -30,7 +30,7 @@ xmuTwinSuper_Continuous(
 
 \item{dzData}{An mxData object containing the DZ data}
 
-\item{equateMeans}{whether to equate the means across twins (default TRUE)}
+\item{equateMeans}{Whether to equate the means across twins (default TRUE)}
 
 \item{type}{type}
 
@@ -81,6 +81,7 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
@@ -91,6 +92,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},

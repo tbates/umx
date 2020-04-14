@@ -143,8 +143,7 @@ Other Twin Modeling Functions:
 \code{\link{umxIP}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umxTwinUpgradeMeansToCovariateModel}()}
+\code{\link{umxSimplex}()}
 
 Other Twin Reporting Functions: 
 \code{\link{umxPlotCP}()},
@@ -302,6 +301,7 @@ Other xmu internal not for end user:
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
 \code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
@@ -312,6 +312,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},

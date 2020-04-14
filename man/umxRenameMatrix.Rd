@@ -26,7 +26,7 @@ data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+m1  = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
 umx_check(tmp$hello$labels == "hello_r1c1") # new is there
 umx_check(is.null(tmp$a))                   # old is gone
@@ -55,6 +55,7 @@ Other xmu internal not for end user:
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
 \code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
@@ -65,6 +66,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},

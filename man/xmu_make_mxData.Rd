@@ -9,6 +9,8 @@ xmu_make_mxData(
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   manifests = NULL,
   numObs = NULL,
+  fullCovs = NULL,
+  dropMissingDef = TRUE,
   verbose = FALSE
 )
 }
@@ -21,6 +23,10 @@ xmu_make_mxData(
 
 \item{numObs}{Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData}
 
+\item{fullCovs}{Covariate names if any (NULL = none) Can be dropped if necessary}
+
+\item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.}
+
 \item{verbose}{If verbose, report on columns kept and dropped (default FALSE)}
 }
 \value{
@@ -29,8 +35,8 @@ xmu_make_mxData(
 }
 }
 \description{
-\code{xmu_make_mxData} is an internal function to upgrade a dataframe to \code{mxData}. It can also drop variables from the dataframe.
-
+\code{xmu_make_mxData} is an internal function to upgrade a dataframe to \code{mxData}. It can also drop variables and rows
+from the dataframe.
 The most common use will be to give it a dataframe, and get back an \code{mxData} object of type raw, cov, cor (WLS is just raw).
 }
 \examples{
@@ -109,6 +115,7 @@ Other xmu internal not for end user:
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
 \code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
@@ -119,6 +126,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},

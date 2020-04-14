@@ -19,6 +19,7 @@ xmu_make_TwinSuperModel(
   equateMeans = TRUE,
   weightVar = NULL,
   bVector = FALSE,
+  dropMissingDef = TRUE,
   verbose = FALSE
 )
 }
@@ -50,6 +51,8 @@ xmu_make_TwinSuperModel(
 \item{weightVar}{If provided, a vector objective will be used to weight the data. (default = NULL).}
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
+
+\item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.}
 
 \item{verbose}{(default = FALSE)}
 }
@@ -133,7 +136,13 @@ m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs=c("wt","ht"), s
 names(m1) # "top" "MZ"  "DZ"
 class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionML"
 
-m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs=c("wt"), selCovs= "age", sep="", nSib=2)
+# ====================
+# = With a covariate =
+# ====================
+
+m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs= "wt", selCovs= "age", sep="", nSib=2)
+m1$top$intercept$labels
+m1$MZ$expMean
 
 # ===============
 # = WLS example =
@@ -141,6 +150,7 @@ m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs=c("wt"), selCov
 m1=xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData,selDVs=c("wt","ht"),sep="",type="WLS")
 class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionWLS"
 m1$MZ$fitfunction$type =="WLS"
+# Check default all-continuous method
 m1$MZ$fitfunction$continuousType == "cumulants"
 
 # Choose non-default type (DWLS)
@@ -227,6 +237,7 @@ Other xmu internal not for end user:
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
 \code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
@@ -237,6 +248,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},

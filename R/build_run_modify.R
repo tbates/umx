@@ -1172,16 +1172,16 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # = How heritable is height? =
 #' # ============================
 #' 
-#' # 1. Height has a tiny variance, and this makes solution finding very hard.
+#' # 1. Height in metres has a tiny variance, and this makes optimising hard.
 #' #    We'll scale it by 10x to make the Optimizer's task easier.
 #' data(twinData) # ?twinData from Australian twins.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
-#' 
+#'
 #' # 2. Make the mz & dz data.frames (note no need to picks the variables: umx will figure this out)
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' 
-#' # 3. Built & run the model 
+#' # 3. Built & run the model
 #' m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 #'
 #' # sidebar: umxACE figures out variable names using sep: 
@@ -1191,7 +1191,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #'
 #' # tip 1: set report = "html" and umxSummary prints the table to your browser!
 #' # tip 2: plot works for umx: Get a figure of the model and parameters
-#' # plot(m1)
+#' # plot(m1) # Also, look at the options for ?plot.MxModel.
 #' 
 #'
 #' # =============================================================
@@ -1203,7 +1203,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # nb: Although summary is smart enough to print d, the underlying 
 #' #     matrices are still called a, c & e.
 #'
-#' # tip: try umxReduce(m1) !
+#' # tip: try umxReduce(m1) to automatically build and compare ACE, ADE, AE, CE
+#' # including conditional probabilities!
 #'
 #' # ===================================================
 #' # = WLS example using diagonal weight least squares =
@@ -1212,6 +1213,25 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, 
 #' 	type = "DWLS", allContinuousMethod='marginals'
 #' )
+#'
+#' # ==========================
+#' # = Model, with covariates =
+#' # ==========================
+#'
+#' # Create another covariate: cohort
+#' twinData$cohort1 = twinData$cohort2 =twinData$part
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+
+#' # 1. def var approach
+#' ma = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
+#' ma = umxACE(selDVs = "ht", selCovs = c("age", "cohort"), sep = "", dzData = dzData, mzData = mzData)
+#'
+#' # 2. residualized approach
+#' tmp = umx_residualize("ht", "age", suffixes = 1:2, data = twinData)
+#' mzData = tmp[tmp$zygosity %in% "MZFF", ]
+#' dzData = tmp[tmp$zygosity %in% "DZFF", ]
+#' mb = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 #'
 #' # ==============================
 #' # = Univariate model of weight =
@@ -1357,9 +1377,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 	tryHard             = match.arg(tryHard)
 	covMethod           = match.arg(covMethod)
 	type                = match.arg(type)
-	allContinuousMethod = match.arg(allContinuousMethod)
 	nSib                = 2 # Number of siblings in a twin pair.
+	allContinuousMethod = match.arg(allContinuousMethod)
 	if(dzCr == .25 & (name == "ACE")){ name = "ADE" }
+
 	if(!is.null(data)){
 		if(is.null(sep)){ sep = "_T" }
 		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
@@ -1369,13 +1390,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 	
 	# If given covariates, call umxACEcov
 	if(!is.null(selCovs)){
-		if(covMethod == "fixed"){
-			stop("Fixed covariates are on the road map for umx in 2020. Until then, use umx_residualize on the data first.")
-			# umxACEdefcov(name = name, selDVs= selDVs, selCovs = selCovs, dzData= dzData, mzData= mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)
-		} else if(covMethod == "random"){
+		if(covMethod == "random"){
 			model = umxACEcov(name = name, selDVs= selDVs, selCovs= selCovs, sep = sep, dzData= dzData, mzData= mzData,  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, autoRun = autoRun, tryHard = tryHard)
+			return(model)
 		}
-		return(model)
 	}
 	
 	# nSib = 2, equateMeans = TRUE, verbose = verbose
@@ -1383,9 +1401,10 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
 	# full names passed in... gosh I wish I'd not allowed this early on...
 	selVars = xmu_twin_upgrade_selDvs2SelVars(selDVs = selDVs, sep = sep, nSib= nSib)
-	nVar  = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= NULL, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, bVector = FALSE, verbose= FALSE)
+
+	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= selCovs, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, bVector = FALSE, verbose= FALSE)
 	tmp   = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+	nVar  = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 	
 	# Finish building top
 	top = mxModel(model$top,
@@ -1565,26 +1584,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	dzData = dzData[,selVars]
 	mzData = mzData[,selVars]
 	
-	if(any(is.na(mzData[,selDefs]))){
-		if(dropMissingDef){
-			missingT1 = is.na(mzData[,selDefs[1]])
-			missingT2 = is.na(mzData[,selDefs[2]])
-			missDef = (missingT1 | missingT2)
-			message(sum(missDef), " mz rows dropped due to missing def var for Twin 1 or Twin 2 or both")
-			mzData = mzData[!missDef, ]
-		} else {
-			stop("Some rows of mzData have NA definition variables. Remove these yourself, or set dropMissing = TRUE")
-		}
-	}
-	if(any(is.na(dzData[,selDefs]))){
-		if(dropMissingDef){
-			missDef = is.na(dzData[,selDefs[1]]) | is.na(dzData[,selDefs[2]])
-			message(sum(missDef), " dz rows dropped due to missing def var for Twin 1 or Twin 2 or both")
-			dzData = dzData[!missDef, ]
-		} else {
-			stop("Some rows of dzData have NA definition variables. Remove these yourself, or set dropMissing = TRUE")
-		}
-	}
+	mzData = xmu_data_missing(mzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef)
+	dzData = xmu_data_missing(dzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef)
 
 	model = mxModel(name,
 		mxModel("top",		

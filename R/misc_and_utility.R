@@ -1205,6 +1205,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param sep text constant separating name from numeric 1:2 twin index.
 #' @return - list(baseNames, sep, twinIndexes)
 #' @export
+#' @seealso [umx_paste_names()]
 #' @family String Functions
 #' @examples
 #' require(umx)
@@ -1218,6 +1219,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' x[x < 0] = 0; y[y < 0] = 0
 #' umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
 #' umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
+#' umx_explode_twin_names(c("x_T11" "x_T22")), sep = "_T")
 umx_explode_twin_names <- function(df, sep = "_T") {
 	if(is.data.frame(df)){
 		names_in_df = names(df)
@@ -2758,7 +2760,7 @@ umx_msg <- function(x) {
 #' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
 #' @export
 #' @family String Functions
-#' @seealso [namez()]
+#' @seealso [namez()] [umx_explode_twin_names()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -3471,13 +3473,12 @@ umxCheckModel <- function(model){
 #' @return - boolean
 #' @export
 #' @family Test
-#' @references - <https://www.github.com/tbates/umx>
 #' @examples
-#' umx_check(length(1:3)==3, "stop", "item must have length == 3")
+#' umx_check(length(1:3)==3, "message", "item must have length == 3", "another comment", "and another")
+#' umx_check(1==2, "message", "one must be 2", ". Another comment", "and another")
 umx_check <- function(boolean.test, action = c("stop", "warning", "message"), message = "check failed", ...){
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
-	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
-	
+	dot.items = paste(unlist(dot.items), collapse =" ") # concatenate any dot items
 	action = match.arg(action)
 	if(!boolean.test){
 		if(action == "stop"){

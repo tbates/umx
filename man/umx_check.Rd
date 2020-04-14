@@ -27,10 +27,8 @@ umx_check(
 Check that a test evaluates to TRUE. If not, stop, warn, or message the user
 }
 \examples{
-umx_check(length(1:3)==3, "stop", "item must have length == 3")
-}
-\references{
-- <https://www.github.com/tbates/umx>
+umx_check(length(1:3)==3, "message", "item must have length == 3", "another comment", "and another")
+umx_check(1==2, "message", "one must be 2", ". Another comment", "and another")
 }
 \seealso{
 Other Test: 

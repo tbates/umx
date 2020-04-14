@@ -180,7 +180,7 @@ require(umx)
 # = How heritable is height? =
 # ============================
 
-# 1. Height has a tiny variance, and this makes solution finding very hard.
+# 1. Height in metres has a tiny variance, and this makes optimising hard.
 #    We'll scale it by 10x to make the Optimizer's task easier.
 data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
@@ -189,7 +189,7 @@ twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 
-# 3. Built & run the model 
+# 3. Built & run the model
 m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 
 # sidebar: umxACE figures out variable names using sep: 
@@ -199,7 +199,7 @@ umxSummary(m1, std = FALSE) # un-standardized
 
 # tip 1: set report = "html" and umxSummary prints the table to your browser!
 # tip 2: plot works for umx: Get a figure of the model and parameters
-# plot(m1)
+# plot(m1) # Also, look at the options for ?plot.MxModel.
 
 
 # =============================================================
@@ -211,7 +211,8 @@ umxSummary(m2, comparison = m1)
 # nb: Although summary is smart enough to print d, the underlying 
 #     matrices are still called a, c & e.
 
-# tip: try umxReduce(m1) !
+# tip: try umxReduce(m1) to automatically build and compare ACE, ADE, AE, CE
+# including conditional probabilities!
 
 # ===================================================
 # = WLS example using diagonal weight least squares =
@@ -220,6 +221,24 @@ umxSummary(m2, comparison = m1)
 m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, 
 	type = "DWLS", allContinuousMethod='marginals'
 )
+
+# ==========================
+# = Model, with covariates =
+# ==========================
+
+# Create another covariate: cohort
+twinData$cohort1 = twinData$cohort2 =twinData$part
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
+# 1. def var approach
+ma = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
+ma = umxACE(selDVs = "ht", selCovs = c("age", "cohort"), sep = "", dzData = dzData, mzData = mzData)
+
+# 2. residualized approach
+tmp = umx_residualize("ht", "age", suffixes = 1:2, data = twinData)
+mzData = tmp[tmp$zygosity \%in\% "MZFF", ]
+dzData = tmp[tmp$zygosity \%in\% "DZFF", ]
+mb = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 
 # ==============================
 # = Univariate model of weight =
@@ -389,7 +408,6 @@ Other Twin Modeling Functions:
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
-\code{\link{umxTwinUpgradeMeansToCovariateModel}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

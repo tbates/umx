@@ -78,7 +78,7 @@ tvars("IQ")
 }
 }
 \seealso{
-\code{\link[=namez]{namez()}}
+\code{\link[=namez]{namez()}} \code{\link[=umx_explode_twin_names]{umx_explode_twin_names()}}
 
 Other String Functions: 
 \code{\link{umx_explode_twin_names}()},
