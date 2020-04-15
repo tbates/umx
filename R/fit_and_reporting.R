@@ -1309,7 +1309,6 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @param CIs Whether to show Confidence intervals if they exist (TRUE)
 #' @param zero.print How to show zeros (".")
 #' @param report If "html", then open an html table of the results.
-#' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
@@ -1511,7 +1510,6 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
-#' @param show parameter used in all summary functions. Not sure which of show and std will be supported long term: sing out if you have an opinion.
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @export

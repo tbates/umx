@@ -103,7 +103,8 @@
 #' # = With a covariate =
 #' # ====================
 #'
-#' m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs= "wt", selCovs= "age", sep="", nSib=2)
+#' m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, 
+#' 		selDVs= "wt", selCovs= "age", sep="", nSib=2)
 #' m1$top$intercept$labels
 #' m1$MZ$expMean
 #' 
@@ -251,7 +252,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		if(!is.null(fullCovs)){
 			stop("You can't set covariates when you have cov data: needs raw data to estimate on each row")
 		}
-		model = xmuTwinSuper_CovCor(name=name, selVars = fullVars, mzData= mzData, dzData= dzData, type = dataType, numObsMZ = numObsMZ, numObsDZ = numObsDZ)
+		model = xmuTwinSuper_CovCor(name=name, fullVars = fullVars, mzData= mzData, dzData= dzData, type = dataType, numObsMZ = numObsMZ, numObsDZ = numObsDZ)
 	} else {
 		stop("Datatype \"", dataType, "\" not understood")
 	}
@@ -491,7 +492,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #'
 #' @param model The model we are modifying (must have MZ DZ and top submodels)
 #' @param fullVars the FULL names of manifest variables
-#' @param selCovs the FULL names of definition variables
+#' @param fullCovs the FULL names of definition variables
 #' @param sep How twin variable names have been expanded (default "_T")
 #' @return - model with means model extended to covariates.
 #' @export
@@ -506,7 +507,8 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #  # TODO won't work as umxACE drops the covs from the data...
 #' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
-#' m1 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"), fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
+#' m1 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
+	 fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
 #' }
 #'
 xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) {

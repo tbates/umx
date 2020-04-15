@@ -1219,7 +1219,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' x[x < 0] = 0; y[y < 0] = 0
 #' umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
 #' umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
-#' umx_explode_twin_names(c("x_T11" "x_T22")), sep = "_T")
+#' umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
 umx_explode_twin_names <- function(df, sep = "_T") {
 	if(is.data.frame(df)){
 		names_in_df = names(df)

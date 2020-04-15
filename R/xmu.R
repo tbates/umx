@@ -49,7 +49,7 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' @description
 #' Rename a umxMatrix, including updating its labels
 #'
-#' @param model A model or matrix
+#' @param x A model or matrix
 #' @param matrixName Name of the matrix
 #' @param name The new name
 #' @return - updated matrix or model with updated matrix in it.
@@ -209,7 +209,6 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param std What to print in summary. "default" = the object's summary default. FALSE = raw, TRUE = standardize, NULL = omit parameter table.
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
-#' @param show = "deprecated"
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
@@ -236,12 +235,9 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, show = "deprecated") {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
-	if(show != "deprecated"){
-		stop("somehow 'show' got passed to xmu_safe_run_summary: use std=T/F instead")
-	}
 
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -453,8 +449,6 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #'
 #' @description
 #' Definition variables can't be missing. This function helps with that.
-#'
-#' @details
 #'
 #' @param data The dataframe to check for missing variables
 #' @param selVars The variables to check for missingness
