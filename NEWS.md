@@ -1,5 +1,6 @@
 # umx 3.1.0
-* March 2020 R 4.0.0 compatibility
+* April 2020 R 4.0.0 compatibility
+* NEW: Arbitrary covariates in twin models working for continuous data!
 * BETA: `umxTwinMaker`: Make twin models by specifying *just the within-twin paths for one twin*: This makes twin2, adds covariances for variance components, creates the MZ and DZ groups, and makes and runs a `umxSuperModel` plot() and std= TRUE work for any model now! 
 * BETA: `plot` for `umxTwinMaker` models!!
 * NEW: `umxDoCp` Path-based Direction of causation model
@@ -7,6 +8,8 @@
 * NEW: `xmu_path2twin`  twin model helper for `umxPath` users 
 * NEW: `xmu_path_regex` helper for making twin models for `umxPath` users
 * NEW: `umx_file_load_pseudo` to load and process non-transmitted genome files for the method we developed in Bates, ... Gillespie, N. A. (2018). The Nature of Nurture: Using a Virtual-Parent Design to Test Parenting Effects on Children's Educational Attainment in Genotyped Families. Twin Res Hum Genet, 21(2), 73-83. doi:10.1017/thg.2018.11
+* NEW: `xmu_data_missing` helper to drop rows with missing def vars or stop and alert the user to do this
+* NEW: `xmu_make_TwinSuperModel` handles selCovs
 * IMPROVED: `umxFitIndices` Many new indices! @bwiernik
 * IMPROVED: `umxPath(v.m0 = )` now uses values (if provided) to set starts for variance
 * IMPROVED: `umx_check_parallel` use all cores (instead of half) by default
@@ -18,8 +21,12 @@
 * IMPROVED: `xmuLabel_RAM_Model` 100x speedup
 * IMPROVED: `xmu_safe_run_summary` has smarter default for `std` (model summary default)
 * IMPROVED: `xmu_dot_mat2dot` now accepts algebra input begin umxPlot for DoC
+* IMPROVED: `umx_check` handles ... items better
+* IMPROVED: `xmu_make_mxData` handles dropping rows, alerting about variance ratios
 * BUGFIX: `power.ACE.test` no longer fails when estimating power at a fixed n
 * HELP: `umxSummary`: Improve Rd file
+* HELP: `umxACE` covariate examples
+* HELP: `umx_explode_twin_names` links for findability
 
 
 # umx 3.0.6

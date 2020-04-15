@@ -369,9 +369,11 @@ xmuTwinSuper_NoBinary <- function(name=NULL, fullVars, fullCovs = NULL, mzData, 
 	colTypes = umx_is_ordered(xmu_extract_column(mzData, fullVars), summaryObject= TRUE)
 
 	message("Found ", (colTypes$nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(colTypes$ordVarNames), " (No binary)")
+
 	if(length(colTypes$contVarNames) > 0){
 		message(length(colTypes$contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(colTypes$contVarNames[1:(length(colTypes$contVarNames)/nSib)]))
 	}
+
 	# =============================
 	# = Figure out start values  =
 	# = NOTE: fullVars is expanded by the time we get to here... no sep. =
@@ -388,6 +390,10 @@ xmuTwinSuper_NoBinary <- function(name=NULL, fullVars, fullCovs = NULL, mzData, 
 		mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat") ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
+	if(!is.null(fullCovs)){			
+		model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, sep = sep)
+	}
+	
 	return(model)
 }
 
@@ -534,6 +540,17 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 	# Add meansBetas to top, and rename expMean to intercept
 	top = mxModel(top, meansBetas)
 	top = umxRenameMatrix(top, matrixName = "expMean", name="intercept")
+	
+	# New expectation to point to expMean in the local data group 
+	if(is.na(model$MZ$expectation$thresholds)){
+		# no thresholds found, don't add any
+		MZexpectation = mxExpectationNormal("top.expCovMZ", "expMean")
+		DZexpectation = mxExpectationNormal("top.expCovDZ", "expMean")
+	} else {
+		# had thresholds, keep them
+		MZexpectation = mxExpectationNormal("top.expCovMZ", "expMean", thresholds = "top.threshMat")
+		DZexpectation = mxExpectationNormal("top.expCovDZ", "expMean", thresholds = "top.threshMat")
+	}
 
 	# 2. Upgrade MZ and DZ groups with local Def Vars and new expMean algebra
 	MZ = mxModel(model$MZ, 
@@ -541,7 +558,7 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 		mxMatrix(name= "T2DefVars", type= "Full", nrow= 1, ncol= nCov, free= FALSE, labels= paste0("data.", baseCovs, sep, 2)),
 		# note: intercept is full width
 		mxAlgebra(name= "expMean", top.intercept + cbind(T1DefVars %*% top.meansBetas, T2DefVars %*% top.meansBetas), dimnames= list("means", fullVars) ),
-		mxExpectationNormal("top.expCovMZ", "expMean")
+		MZexpectation
 	)
 
 	# c(sex_T1, sex_T2) %x% beta_Sex == c(sex_T1, sex_T2) * c(beta_Sex, beta_Sex)
@@ -550,7 +567,7 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 		mxMatrix(name= "T1DefVars", type= "Full", nrow= 1, ncol= nCov, free= FALSE, labels= paste0("data.", baseCovs, sep, 1)),
 		mxMatrix(name= "T2DefVars", type= "Full", nrow= 1, ncol= nCov, free= FALSE, labels= paste0("data.", baseCovs, sep, 2)),
 		mxAlgebra(name= "expMean", top.intercept + cbind(T1DefVars %*% top.meansBetas, T2DefVars %*% top.meansBetas), dimnames= list("means", fullVars) ),
-		mxExpectationNormal("top.expCovDZ", "expMean")
+		DZexpectation
 	)
 	return(mxModel(model, top, MZ, DZ))
 }

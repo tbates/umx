@@ -281,13 +281,14 @@ m1 = umxACE(selDVs = "wt", sep = "", data = twinData,
 # Set comparison to modify, and show effect in one step.
 
 m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
-# nb: You can see names of free parameters with parameters(m2)
+#*tip* call umxModify(m1) with no parameters, and it will print the labels available to fix!
+# nb: You can see parameters of any model with parameters(m1)
 
 # =========================================================
 # = Well done! Now you can make modify twin models in umx =
 # =========================================================
 
-\dontrun{
+\donttest{
 # =====================================
 # = Bivariate height and weight model =
 # =====================================
@@ -296,8 +297,6 @@ data(twinData)
 twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 mzData = twinData[twinData$zygosity \%in\% c("MZFF", "MZMM"),]
 dzData = twinData[twinData$zygosity \%in\% c("DZFF", "DZMM", "DZOS"), ]
-mzData = mzData[1:80,] # quicker run to keep CRAN happy
-dzData = dzData[1:80,]
 m1 = umxACE(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
 umxSummary(m1)
 
@@ -317,8 +316,6 @@ ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
-mzData = mzData[1:80, ] # Just top 80 pairs to run fast
-dzData = dzData[1:80, ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 
 # Data-prep done - here's the model and summary!:
