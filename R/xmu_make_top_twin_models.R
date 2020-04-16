@@ -350,7 +350,7 @@ xmuTwinSuper_Continuous <- function(name=NULL, fullVars, fullCovs = NULL, sep, m
 }
 
 # xmuTwinSuper_NoBinary(name=name, fullVars = fullVars, fullCovs = fullCovs, mzData = mzData, dzData = dzData, equateMeans= equateMeans, nSib=2)
-xmuTwinSuper_NoBinary <- function(name=NULL, fullVars, fullCovs = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
+xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
 	# ============================
 	# = Notes: Ordinal requires: =
 	# ============================
@@ -505,12 +505,12 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
-#  # TODO won't work as umxACE drops the covs from the data...
-#' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
-#' m1 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
-	 fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
-#' }
-#'
+#' # m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+#  # TODO non-working output as umxACE drops the covs from the data...
+#' # m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
+#' # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
+#' # }
+#' # Error: 'age1' not in data (needed by 'MZ.data.age1' in 'MZ.T1DefVars')
 xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) {
 	# TODO Check the def vars are still in the dataset at this point...
 	umx_check(all(c("MZ", "DZ", "top") %in% names(model)), "stop", message= "need a model with top, MZ and DZ sub-models")	
@@ -550,8 +550,8 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 		DZexpectation = mxExpectationNormal("top.expCovDZ", "expMean")
 	} else {
 		# had thresholds, keep them
-		MZexpectation = mxExpectationNormal("top.expCovMZ", "expMean", thresholds = "top.threshMat")
-		DZexpectation = mxExpectationNormal("top.expCovDZ", "expMean", thresholds = "top.threshMat")
+		MZexpectation = mxExpectationNormal("top.expCovMZ", "expMean", thresholds = model$MZ$expectation$thresholds) # "top.threshMat"
+		DZexpectation = mxExpectationNormal("top.expCovDZ", "expMean", thresholds = model$DZ$expectation$thresholds) # "top.threshMat"
 	}
 
 	# 2. Upgrade MZ and DZ groups with local Def Vars and new expMean algebra

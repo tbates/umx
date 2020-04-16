@@ -7,11 +7,11 @@
 umxRenameMatrix(x, matrixName, name)
 }
 \arguments{
+\item{x}{A model or matrix}
+
 \item{matrixName}{Name of the matrix}
 
 \item{name}{The new name}
-
-\item{model}{A model or matrix}
 }
 \value{
 \itemize{

@@ -318,8 +318,11 @@ mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 
-# Data-prep done - here's the model and summary!:
+# Data-prep done - here's the model and summary!
 m1 = umxACE(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
+
+# And controlling age (otherwise manifests appearance as latent C)
+m1 = umxACE(selDVs = "obese", selCov= "age", dzData = dzData, mzData = mzData, sep = '')
 # umxSummary(m1)
 
 # ============================================
@@ -340,6 +343,9 @@ dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 mzData = mzData[1:80,] # just top 80 so example runs in a couple of secs
 dzData = dzData[1:80,]
 m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
+
+# And controlling age
+m1 = umxACE(selDVs = c("wt","obese"), selCov= "age", dzData = dzData, mzData = mzData, sep = '')
 
 # =======================================
 # = Mixed continuous and binary example =

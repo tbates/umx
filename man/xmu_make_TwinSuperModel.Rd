@@ -140,7 +140,8 @@ class(m1$MZ$fitfunction)[[1]] == "MxFitFunctionML"
 # = With a covariate =
 # ====================
 
-m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, selDVs= "wt", selCovs= "age", sep="", nSib=2)
+m1= xmu_make_TwinSuperModel(mzData=mzData, dzData=dzData, 
+		selDVs= "wt", selCovs= "age", sep="", nSib=2)
 m1$top$intercept$labels
 m1$MZ$expMean
 

@@ -11,9 +11,9 @@ xmuTwinUpgradeMeansToCovariateModel(model, fullVars, fullCovs, sep)
 
 \item{fullVars}{the FULL names of manifest variables}
 
-\item{sep}{How twin variable names have been expanded (default "_T")}
+\item{fullCovs}{the FULL names of definition variables}
 
-\item{selCovs}{the FULL names of definition variables}
+\item{sep}{How twin variable names have been expanded (default "_T")}
 }
 \value{
 \itemize{
@@ -33,9 +33,10 @@ data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
-m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
-m1 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"), fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
-}
+# m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+# m1 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
+# 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
+# }
 
 }
 \seealso{

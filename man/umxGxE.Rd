@@ -109,9 +109,7 @@ umxReduce(m1)
 }
 }
 \seealso{
-\itemize{
-\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
-}
+\code{\link[=umxGxE_window]{umxGxE_window()}}, \code{\link[=umxReduce]{umxReduce()}}, \code{\link[=umxSummary]{umxSummary()}}
 
 Other Twin Modeling Functions: 
 \code{\link{plot.MxModelTwinMaker}()},

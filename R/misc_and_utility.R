@@ -4978,9 +4978,18 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 			}
 	} else if(class(df)[[1]] == "list"){
 		# Assume it's a list of mxModels and we want the MODEL names (not parameters... see below)
-		nameVector = c()
-		for (i in df) {
+		if(umx_is_MxModel(df[[1]])){
+			nameVector = c()
+			for (i in df) {
 				nameVector = c(nameVector, i$name)
+			}
+		} else {
+			# try applying names
+			result = tryCatch({
+				nameVector = names(df)
+			}, error = function() {
+				stop("namez doesn't know how to handle objects of class", omxQuotes(class(df)))
+			})
 		}
 	} else if(class(df)[[1]] == "character"){
 		nameVector = df

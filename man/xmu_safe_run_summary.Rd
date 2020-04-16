@@ -12,8 +12,7 @@ xmu_safe_run_summary(
   summary = !umx_set_silent(silent = TRUE),
   std = "default",
   comparison = TRUE,
-  digits = 3,
-  show = "deprecated"
+  digits = 3
 )
 }
 \arguments{
@@ -32,8 +31,6 @@ xmu_safe_run_summary(
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 
 \item{digits}{Rounding precision in tables and plots}
-
-\item{show}{= "deprecated"}
 }
 \value{
 \itemize{

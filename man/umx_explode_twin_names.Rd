@@ -32,7 +32,7 @@ y = round(5 * rnorm(1000))
 x[x < 0] = 0; y[y < 0] = 0
 umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
 umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
-umx_explode_twin_names(c("x_T11" "x_T22")), sep = "_T")
+umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
 }
 \seealso{
 [umx_paste_names()]

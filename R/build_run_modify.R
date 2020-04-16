@@ -1182,7 +1182,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' data(twinData) # ?twinData from Australian twins.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 #'
-#' # 2. Make the mz & dz data.frames (note no need to picks the variables: umx will figure this out)
+#' # 2. Make mz & dz data.frames (no need to select variables: umx will do this)
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' 
@@ -1515,8 +1515,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxE [mxModel()]
 #' @export
+#' @seealso [umxGxE_window()], [umxReduce()], [umxSummary()]
 #' @family Twin Modeling Functions
-#' @seealso - [plot()], [umxSummary()], [umxReduce()]
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
 #'  **6**, 554-571. DOI: [10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
 #' @md
@@ -1753,6 +1753,16 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' @param return  whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")
 #' @return - Table of estimates of ACE along the moderator
 #' @export
+#' @seealso [umxGxE()]
+#' @family Twin Modeling Functions
+#' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
+#' Complementary and competing factor analytic approaches for the investigation 
+#' of measurement invariance. *Review of Psychology*, **16**, 87--107. 
+#' 
+#' Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
+#' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
+#' *Behavior Genetics*, **45**, 581-96. doi [10.1007/s10519-015-9732-8](https://link.springer.com/article/10.1007/s10519-015-9732-8)
+#' @md
 #' @examples
 #' library(umx);
 #' # ==============================
@@ -1786,15 +1796,6 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' 		weightCov = TRUE)
 #' }
 #' 
-#' @family Twin Modeling Functions
-#' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
-#' Complementary and competing factor analytic approaches for the investigation 
-#' of measurement invariance. *Review of Psychology*, **16**, 87--107. 
-#' 
-#' Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
-#' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
-#' *Behavior Genetics*, **45**, 581-96. doi [10.1007/s10519-015-9732-8](https://link.springer.com/article/10.1007/s10519-015-9732-8)
-#' @md
 umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
 	return = match.arg(return)
 	nSib   = 2 # Number of siblings in a twin pair.

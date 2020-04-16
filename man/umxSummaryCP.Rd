@@ -38,8 +38,6 @@ umxSummaryCP(
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
 \item{...}{Optional additional parameters}
-
-\item{show}{parameter used in all summary functions. Not sure which of show and std will be supported long term: sing out if you have an opinion.}
 }
 \value{
 \itemize{

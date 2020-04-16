@@ -23,9 +23,6 @@ xmu_data_missing(data, selVars, sep = NULL, dropMissingDef = TRUE)
 \description{
 Definition variables can't be missing. This function helps with that.
 }
-\details{
-
-}
 \examples{
 tmp = mtcars; tmp[1, "wt"] = NA
 xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissing = FALSE)

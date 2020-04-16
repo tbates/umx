@@ -44,8 +44,6 @@ umxSummaryACEcov(
 \item{extended}{how much to report (FALSE)}
 
 \item{...}{Other parameters to control model summary}
-
-\item{show}{Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")}
 }
 \value{
 \itemize{

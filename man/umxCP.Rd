@@ -7,6 +7,7 @@
 umxCP(
   name = "CP",
   selDVs,
+  selCovs = NULL,
   dzData = NULL,
   mzData = NULL,
   sep = NULL,

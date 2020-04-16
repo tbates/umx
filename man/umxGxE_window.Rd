@@ -102,6 +102,8 @@ Nonparametric Estimates of Gene x Environment Interaction Using Local Structural
 \emph{Behavior Genetics}, \strong{45}, 581-96. doi \href{https://link.springer.com/article/10.1007/s10519-015-9732-8}{10.1007/s10519-015-9732-8}
 }
 \seealso{
+\code{\link[=umxGxE]{umxGxE()}}
+
 Other Twin Modeling Functions: 
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
