@@ -185,7 +185,7 @@ require(umx)
 data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 
-# 2. Make the mz & dz data.frames (note no need to picks the variables: umx will figure this out)
+# 2. Make mz & dz data.frames (no need to select variables: umx will do this)
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 

@@ -34,10 +34,10 @@ twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 # m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
-# m1 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
+# m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
 # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
 # }
-
+# Error: 'age1' not in data (needed by 'MZ.data.age1' in 'MZ.T1DefVars')
 }
 \seealso{
 \itemize{

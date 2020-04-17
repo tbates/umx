@@ -2408,7 +2408,8 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	model = x # just to be clear that x is a model
 	if(std){model = xmu_standardize_ACE(model)}
 
-	selDVs = xmu_twin_get_var_names(model)
+	# selDVs = xmu_twin_get_var_names(model)
+	selDVs = xmu_twin_get_var_names(model, trim=F)
 	nVar   = length(selDVs)/2;
 	selDVs = selDVs[1:(nVar)]
 
@@ -2468,7 +2469,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 		rankA, 
 		rankCE, "\n}"
 	)
-	
+
 	print("?umxPlotACE options: std, means, digits, strip_zero, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACE
