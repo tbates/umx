@@ -545,7 +545,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 
 	if(show != "deprecated"){
 		message("polite note: In future, replace show with std = T/F/NULL ")
-		if(show =="raw" )){
+		if(show =="raw" ){
 			std=FALSE
 		} else {
 			std= TRUE
@@ -2329,6 +2329,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param name The name of the model (defaults to "CP").
 #' @param selDVs The variables to include.
 #' omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").
+#' @param selCovs basenames for covariates
 #' @param sep (required) The suffix for twin 1 and twin 2, often "_T".
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.

@@ -3,7 +3,6 @@ library(testthat)
 
 test_that("umxCP works", {
 	testthat::skip_on_cran() 
-
 	# ========================================================
 	# = Run a 3-factor Common pathway twin model of 6 traits =
 	# ========================================================
@@ -72,4 +71,4 @@ test_that("umxCP works", {
 	dzData = subset(GFF, zyg_2grp == "DZ")
 	selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
 	m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = 3, correlatedA = TRUE, tryHard = "yes")
-}
+})
