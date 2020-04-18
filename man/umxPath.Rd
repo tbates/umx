@@ -172,7 +172,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1.0)
 )
-umxSummary(m1, show = "std")
+umxSummary(m1, show = std = TRUE)
 require(umx)
 #
 # Examples of each path type, and option

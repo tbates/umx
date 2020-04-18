@@ -40,7 +40,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 # Let's get some journal-ready fit information
 
 umxSummary(m1) 
-umxSummary(m1, show = "std") #also display parameter estimates 
+umxSummary(m1, std = TRUE) #also display parameter estimates 
 # You can get the coefficients of an MxModel with coef(), just like for lm etc.
 coef(m1)
 

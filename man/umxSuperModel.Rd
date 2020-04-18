@@ -66,7 +66,7 @@ m2 = umxRAM("m2", data = g2Data,
 # and report multiple groups correctly.
 m3 = umxSuperModel('top', m1, m2)
 
-umxSummary(m3, show = "std")
+umxSummary(m3, std= TRUE)
 
 # |name         | Std.Estimate| Std.SE|CI                |
 # |:------------|------------:|------:|:-----------------|
