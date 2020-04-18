@@ -3977,7 +3977,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
-#' umxSummary(m1, show = std = TRUE)
+#' umxSummary(m1, std = TRUE)
 #' require(umx)
 #' #
 #' # Examples of each path type, and option
