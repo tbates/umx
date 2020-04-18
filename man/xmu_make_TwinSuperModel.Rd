@@ -62,28 +62,32 @@ xmu_make_TwinSuperModel(
 }
 }
 \description{
-\code{xmu_make_TwinSuperModel} makes basic \code{top}, \code{MZ}, and \code{DZ} models. It includes thresholds matrices in the twin models if needed.
+\code{xmu_make_TwinSuperModel} makes basic twin model containing \code{top}, \code{MZ}, and \code{DZ} models. It intelligently handles thresholds for
+ordinal data, and means model for covariates matrices in the twin models if needed.
 
 It's the replacement for \code{xmu_assemble_twin_supermodel} approach.
-
-This is used in  \code{\link[=umxCP]{umxCP()}}, and \code{\link[=umxACE]{umxACE()}} and \code{\link[=umxACEv]{umxACEv()}} and will be added to the other models: \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxIP]{umxIP()}},
+}
+\details{
+\code{xmu_make_TwinSuperModel} is used in twin models (e.g.\code{\link[=umxCP]{umxCP()}}, \code{\link[=umxACE]{umxACE()}} and \code{\link[=umxACEv]{umxACEv()}} and will be added to the other models: \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxIP]{umxIP()}},
 simplifying code maintenance.
 
-\code{xmu_make_TwinSuperModel} takes \code{mzData} and \code{dzData}, a list of the \code{selDVs} to analyse (as well as \code{sep} and \code{nSib}), along with other
+It takes \code{mzData} and \code{dzData}, a list of the \code{selDVs} to analyse and optional \code{selCovs} (as well as \code{sep} and \code{nSib}), along with other
 relevant information such as whether the user wants to \code{equateMeans}.
 It can also handle a \code{weightVar}.
 
-\code{varStarts} is computed as \code{sqrt(variance)/3} of the DVs and \code{meanStarts} as the variable means.
-For raw data, a check is made for ordered variables. For Binary variables, means are fixed at 0 and
-total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresholds are fixed.
+If covariates are passed in these are included in the means model (via a call to \code{xmuTwinUpgradeMeansToCovariateModel}.
 
 \strong{Modeling}
 
+\strong{Matrices created}
+
 \emph{top model}
 
-For raw and WLS data, \code{top} contains a means matrix (if needed). For summary data, the top model contains only a name.
+For raw and WLS data, \code{top} contains a \code{expMeans} matrix (if needed). For summary data, the top model contains only a name.
 
 For ordinal data, \code{top} gains \code{top.threshMat} (from a call to \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}}).
+
+For covariates, top stores the \code{intercepts} matrix and a \code{betaDef} matrix. These are then used to make expMeans in \code{MZ} and \code{DZ}.
 
 \emph{MZ and DZ models}
 
@@ -97,9 +101,11 @@ If a \code{weightVar} is detected, these columns are used to create a row-weight
 
 If \code{equateMeans} is \code{TRUE}, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 
-\strong{Matrices created}
-
 Decent starts are guessed from the data.
+\code{varStarts} is computed as \code{sqrt(variance)/3} of the DVs and \code{meanStarts} as the variable means.
+For raw data, a check is made for ordered variables. For Binary variables, means are fixed at 0 and
+total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresholds are fixed.
+
 Where needed, e.g. continuous raw data, top adds a means matrix "expMean".
 For ordinal data, top adds a \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}}.
 
@@ -210,7 +216,7 @@ dzData =cov(twinData[twinData$zygosity \%in\% "DZFF", tvars(c("wt","ht"), sep=""
 m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", 
 	nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
 class(m1$MZ$fitfunction)[[1]] =="MxFitFunctionML"
-names(m1$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
+dimnames(m1$MZ$data$observed)[[1]]==c("wt1", "wt2")
 
 }
 \seealso{

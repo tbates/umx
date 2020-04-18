@@ -1,28 +1,33 @@
 #' Helper to make a basic top, MZ, and DZ model.
 #'
 #' @description
-#' `xmu_make_TwinSuperModel` makes basic `top`, `MZ`, and `DZ` models. It includes thresholds matrices in the twin models if needed.
+#' `xmu_make_TwinSuperModel` makes basic twin model containing `top`, `MZ`, and `DZ` models. It intelligently handles thresholds for 
+#' ordinal data, and means model for covariates matrices in the twin models if needed.
 #' 
 #' It's the replacement for `xmu_assemble_twin_supermodel` approach.
 #'
-#' This is used in  [umxCP()], and [umxACE()] and [umxACEv()] and will be added to the other models: [umxGxE()], [umxIP()], 
+#' @details
+#' `xmu_make_TwinSuperModel` is used in twin models (e.g.[umxCP()], [umxACE()] and [umxACEv()] and will be added to the other models: [umxGxE()], [umxIP()], 
 #' simplifying code maintenance.
 #' 
-#' `xmu_make_TwinSuperModel` takes `mzData` and `dzData`, a list of the `selDVs` to analyse (as well as `sep` and `nSib`), along with other 
+#' It takes `mzData` and `dzData`, a list of the `selDVs` to analyse and optional `selCovs` (as well as `sep` and `nSib`), along with other 
 #' relevant information such as whether the user wants to `equateMeans`.
 #' It can also handle a `weightVar`.
 #' 
-#' `varStarts` is computed as `sqrt(variance)/3` of the DVs and `meanStarts` as the variable means.
-#' For raw data, a check is made for ordered variables. For Binary variables, means are fixed at 0 and 
-#' total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresholds are fixed.
+#' If covariates are passed in these are included in the means model (via a call to `xmuTwinUpgradeMeansToCovariateModel`.
+#' 
 #' 
 #' **Modeling**
 #' 
+#' **Matrices created**
+#'
 #' *top model*
 #' 
-#' For raw and WLS data, `top` contains a means matrix (if needed). For summary data, the top model contains only a name.
+#' For raw and WLS data, `top` contains a `expMeans` matrix (if needed). For summary data, the top model contains only a name.
 #' 
 #' For ordinal data, `top` gains `top.threshMat` (from a call to [umxThresholdMatrix()]).
+#' 
+#' For covariates, top stores the `intercepts` matrix and a `betaDef` matrix. These are then used to make expMeans in `MZ` and `DZ`.
 #' 
 #' *MZ and DZ models*
 #' 
@@ -37,9 +42,12 @@
 #' 
 #' If `equateMeans` is `TRUE`, then the Twin-2 vars in the mean matrix are equated by label with Twin-1.
 #'
-#' **Matrices created**
 #' 
 #' Decent starts are guessed from the data.
+#' `varStarts` is computed as `sqrt(variance)/3` of the DVs and `meanStarts` as the variable means.
+#' For raw data, a check is made for ordered variables. For Binary variables, means are fixed at 0 and 
+#' total variance (A+C+E) is fixed at 1. For ordinal variables, the first 2 thresholds are fixed.
+#' 
 #' Where needed, e.g. continuous raw data, top adds a means matrix "expMean". 
 #' For ordinal data, top adds a [umxThresholdMatrix()]. 
 #' 
@@ -173,7 +181,7 @@
 #' m1 = xmu_make_TwinSuperModel(mzData= mzData, dzData= dzData, selDVs= "wt", sep= "", 
 #' 	nSib= 2, numObsMZ = 100, numObsDZ = 100, verbose=TRUE)
 #' class(m1$MZ$fitfunction)[[1]] =="MxFitFunctionML"
-#' names(m1$MZ$data$observed) == c("wt1", "wt2") # height columns dropped
+#' dimnames(m1$MZ$data$observed)[[1]]==c("wt1", "wt2")
 #'
 xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, selCovs= NULL, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsMZ = NULL, numObsDZ = NULL, nSib = 2, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, dropMissingDef = TRUE, verbose= FALSE) {
 	# TODO for xmu_make_TwinSuperModel
@@ -308,7 +316,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' #    mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
 #' #    allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T"
 #' # )
-xmuTwinSuper_Continuous <- function(name=NULL, fullVars, fullCovs = NULL, sep, mzData, dzData, equateMeans, type, allContinuousMethod, nSib){
+xmuTwinSuper_Continuous <- function(name= NULL, fullVars, fullCovs = NULL, sep, mzData, dzData, equateMeans, type, allContinuousMethod, nSib){
 	# ==============================
 	# = Handle all continuous case =
 	# ==============================
