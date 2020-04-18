@@ -193,29 +193,34 @@ umxPath(cov = c("A", "B"))  # Covariance A <-> B
 umxPath(defn = "mpg") # create latent called def_mpg, with 0 mean * var, and label = "data.mpg"
 umxPath(fromEach = c('a','b'), to = c('c','d')) # a->c, a<->d, b<->c, b<->d
 umxPath(unique.bivariate = c('a','b','c')) # bivariate paths a<->b, a<->c, b<->c etc.
-umxPath(unique.pairs = letters[1:3]) # all distinct pairs: a<->a, a<->b, a<->c, b<->b,etc.
+umxPath(unique.pairs = letters[1:3]) # all distinct pairs: a<->a, a<->b, a<->c, b<->b, etc.
 umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
-# ===============================
-# = Definition variable example =
-# ===============================
+
+# =========================================================
+# = Definition variable example.Not much use at present,  =
+# = as def vars are not readily used in RAM models...     =
+# = Working on something rational and intuitive.          =
+# =========================================================
+data(mtcars)
 m1 = umxRAM("manifest", data = mtcars,
 umxPath(v.m. = "mpg"),
 umxPath(defn = "mpg")
 )
+
 # ====================
 # = Cholesky example =
 # ====================
-\dontrun{
 # ======================================================================
 # = 3-factor Cholesky (A component of a 5-variable 3-factor ACE model) =
 # ======================================================================
-latents = paste0("A", 1:3)
+latents   = paste0("A", 1:3)
 manifests = names(demoOneFactor)
 m1 = umxRAM("Chol", data = demoOneFactor, type = "cov",
 	umxPath(Cholesky = latents, to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
+\dontrun{
 plot(m1, splines= FALSE)
 }
 
