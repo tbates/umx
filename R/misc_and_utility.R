@@ -3620,6 +3620,9 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), ordVar = 1, digits = NULL, strict = TRUE, allowCorForFactorCovs= FALSE){
 	format = match.arg(format)
 	use    = match.arg(use)
+	if(!class(df)=="data.frame"){
+		df = data.frame(df)
+	}
 	if(any(umx_is_ordered(df, strict = strict))){
 		nCol = dim(df)[2]
 		# Set to ordVar defaults
@@ -3817,6 +3820,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 		}else if(umx_is_MxData((df))){
 			df = df$observed
 		} else {
+			umx_msg(df)
 			stop("Argument df must be a data.frame, matrix, or mxData. You gave me a ", class(df), ". Perhaps this is one column selected from a data frame without [r,c, drop=FALSE]? ")
 		}
 	}
