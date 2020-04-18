@@ -351,6 +351,13 @@ xmuTwinSuper_Continuous <- function(name=NULL, fullVars, fullCovs = NULL, sep, m
 
 # xmuTwinSuper_NoBinary(name=name, fullVars = fullVars, fullCovs = fullCovs, mzData = mzData, dzData = dzData, equateMeans= equateMeans, nSib=2)
 xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
+	umx_check(!is.null(name), "stop", "I need a name for the super model")
+	# ==================================================
+	# = Handle 1 or more ordinal variables (no binary) =
+	# ==================================================
+	# Means ordinal, but no binary
+	# Means: all free, start cont at the measured value, ordinals @0
+
 	# ============================
 	# = Notes: Ordinal requires: =
 	# ============================
@@ -359,26 +366,21 @@ xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData
 	#   1. Latent means of binary variables fixedAt 0 (or by data.def?)
 	#   2. Latent variance (A + C + E) constrained == 1 
 	# 3. For Ordinal variables, first 2 thresholds fixed
-	nVar = length(fullVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 
-	# ==================================================
-	# = Handle 1 or more ordinal variables (no binary) =
-	# ==================================================
-	# Means ordinal, but no binary
-	# Means: all free, start cont at the measured value, ordinals @0
-	umx_check(!is.null(name), "stop", "I need a name for the super model")
+	nVar = length(fullVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	colTypes = umx_is_ordered(xmu_extract_column(mzData, fullVars), summaryObject= TRUE)
 
+	# ===============
+	# = Inform user =
+	# ===============
 	message("Found ", (colTypes$nOrdVars/nSib), " pair(s) of ordinal variables:", omxQuotes(colTypes$ordVarNames), " (No binary)")
-
 	if(length(colTypes$contVarNames) > 0){
 		message(length(colTypes$contVarNames)/nSib, " pair(s) of continuous variables:", omxQuotes(colTypes$contVarNames[1:(length(colTypes$contVarNames)/nSib)]))
 	}
 
-	# =============================
-	# = Figure out start values  =
-	# = NOTE: fullVars is expanded by the time we get to here... no sep. =
-	# ===================================================================
+	# ===========================
+	# = Figure out start values =
+	# ===========================
 	starts = xmu_starts(mzData= mzData, dzData= dzData, selVars= fullVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
 	# Contains starts$varStarts; starts$meanStarts; starts$meanLabels # (Equated across twins if requested)
 
@@ -391,7 +393,7 @@ xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData
 		mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat") ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
-	if(!is.null(fullCovs)){			
+	if(!is.null(fullCovs)){
 		model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, sep = sep)
 	}
 	
@@ -399,17 +401,24 @@ xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData
 }
 
 # xmuTwinSuper_SomeBinary(name=NULL, fullVars = fullVars, fullCovs = fullCovs, mzData = mzData, dzData = dzData, nSib, equateMeans= equateMeans, sep = "_T", verbose = verbose)
-xmuTwinSuper_SomeBinary <- function(name=NULL, fullVars, selCovs = NULL, mzData, dzData, sep, nSib, equateMeans= equateMeans, verbose = verbose){
-	colTypes = umx_is_ordered(xmu_extract_column(mzData, fullVars), summaryObject= TRUE)
-	nVar = length(fullVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-
-	if(!is.null(selCovs)){
-		warning("Covariates not handled in xmuTwinSuper_SomeBinary yet!")
-	}
-
+xmuTwinSuper_SomeBinary <- function(name=NULL, fullVars, fullCovs = NULL, mzData, dzData, sep, nSib, equateMeans= equateMeans, verbose = verbose){
 	# =============================================
 	# = Handle case of at least 1 binary variable =
 	# =============================================
+	# ===========================================================================
+	# = Means: bin fixed, others free, start cont at the measured value, ord @0 =
+	# ===========================================================================
+	# ===================================
+	# = Constrain Ordinal variance @1   =
+	# ===================================
+
+	umx_check(!is.null(name), "stop", "I need a name for the super model")
+	nVar = length(fullVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
+	colTypes = umx_is_ordered(xmu_extract_column(mzData, fullVars), summaryObject= TRUE)
+
+	# ===============
+	# = Inform user =
+	# ===============
 	message("Found ", sum(colTypes$isBin)/nSib, " pairs of binary variables:", omxQuotes(colTypes$binVarNames))
 	message("\nI am fixing the latent means and variances of these variables to 0 and 1")
 	if(colTypes$nOrdVars > 0){
@@ -421,12 +430,6 @@ xmuTwinSuper_SomeBinary <- function(name=NULL, fullVars, selCovs = NULL, mzData,
 		message("No continuous variables")
 	}
 
-	# ===========================================================================
-	# = Means: bin fixed, others free, start cont at the measured value, ord @0 =
-	# ===========================================================================
-	# ===================================
-	# = Constrain Ordinal variance @1   =
-	# ===================================
 	# Algebra to pick out the ordinal variables.
 	# TODO check using twin 1 to pick where the bin variables are is robust...
 	# Fill with zeros: default for ordinals and binary...
@@ -460,6 +463,10 @@ xmuTwinSuper_SomeBinary <- function(name=NULL, fullVars, selCovs = NULL, mzData,
 		mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", "top.expMean", thresholds = "top.threshMat") ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
+
+	if(!is.null(fullCovs)){
+		model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, sep = sep)
+	}
 	return(model)
 }
 

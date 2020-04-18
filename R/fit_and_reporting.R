@@ -2409,9 +2409,9 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	if(std){model = xmu_standardize_ACE(model)}
 
 	# selDVs = xmu_twin_get_var_names(model)
-	selDVs = xmu_twin_get_var_names(model, trim=F)
-	nVar   = length(selDVs)/2;
-	selDVs = selDVs[1:(nVar)]
+	selDVs = xmu_twin_get_var_names(model)
+	nVar   = length(selDVs);
+	# selDVs = selDVs[1:(nVar)]
 
 	out     = "" ;
 	latents = c();

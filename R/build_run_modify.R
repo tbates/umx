@@ -534,7 +534,7 @@ umxModel <- function(...) {
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' parameters(m1)
 #'
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE, show = c("deprecated", "raw", "std")) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE, show = "deprecated") {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	type       = match.arg(type)
@@ -542,6 +542,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	tryHard    = match.arg(tryHard)
 	lavaanMode = match.arg(lavaanMode)
 	allContinuousMethod = match.arg(allContinuousMethod)
+
+	if(show != "deprecated"){
+		message("polite note: In future, replace show with std = T/F/NULL ")
+		if(show =="raw" )){
+			std=FALSE
+		} else {
+			std= TRUE
+		}
+	}
+
 	# =================
 	# = Set optimizer =
 	# =================
@@ -774,7 +784,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	}
 
 	newModel = omxAssignFirstParameters(newModel)
-	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std, show = show)
+	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std)
 	invisible(newModel)
 }
 
