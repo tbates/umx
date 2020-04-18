@@ -839,7 +839,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' # and report multiple groups correctly.
 #' m3 = umxSuperModel('top', m1, m2)
 #' 
-#' umxSummary(m3, show = "std")
+#' umxSummary(m3, std= TRUE)
 #' 
 #' # |name         | Std.Estimate| Std.SE|CI                |
 #' # |:------------|------------:|------:|:-----------------|
@@ -3111,7 +3111,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #'
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
 #' m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE) # set start values and label all parameters
-#' umxSummary(m1, show = "std")
+#' umxSummary(m1, std = TRUE)
 #' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
 #' m1 = mxRun(m1, intervals = TRUE)
 #' residuals(m1, run = TRUE) # get CIs on all free parameters
@@ -3977,7 +3977,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
-#' umxSummary(m1, show = "std")
+#' umxSummary(m1, show = std = TRUE)
 #' require(umx)
 #' #
 #' # Examples of each path type, and option
@@ -4461,7 +4461,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # Let's get some journal-ready fit information
 #' 
 #' umxSummary(m1) 
-#' umxSummary(m1, show = "std") #also display parameter estimates 
+#' umxSummary(m1, std = TRUE) #also display parameter estimates 
 #' # You can get the coefficients of an MxModel with coef(), just like for lm etc.
 #' coef(m1)
 #' 

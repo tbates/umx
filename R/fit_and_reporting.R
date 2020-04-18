@@ -56,7 +56,7 @@
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m1 = mxRun(m1)
-#' umxSummary(m1, show = "std")
+#' umxSummary(m1, std = TRUE)
 #' umxDiagnose(m1)
 umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 	# 1. First thing to check is whether the covariance matrix is positive definite.
