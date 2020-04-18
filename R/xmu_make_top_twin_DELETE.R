@@ -20,9 +20,6 @@
 #' @md
 xmu_assemble_twin_supermodel <- function(name, MZ, DZ, top, mzWeightMatrix = NULL, dzWeightMatrix = NULL) {
 	# TODO: xmu_assemble_twin_supermodel: Add working example.
-	if(!model$m1$MZ$fitfunction$vector){
-		stop("If you set bVector, I need to set fitFunction to vector mode... but it appears I haven't")
-	}
 	if(is.null(mzWeightMatrix)){
 		model = mxModel(name, MZ, DZ, top,
 			mxFitFunctionMultigroup(c("MZ", "DZ"))
