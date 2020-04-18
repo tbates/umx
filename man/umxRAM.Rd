@@ -27,7 +27,7 @@ umxRAM(
   std.lv = FALSE,
   lavaanMode = c("sem", "lavaan"),
   printTab = FALSE,
-  show = c("deprecated", "raw", "std")
+  show = "deprecated"
 )
 }
 \arguments{

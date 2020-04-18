@@ -41,6 +41,8 @@ umxCP(
 \item{selDVs}{The variables to include.
 omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
+\item{selCovs}{basenames for covariates}
+
 \item{dzData}{The DZ dataframe.}
 
 \item{mzData}{The MZ dataframe.}
