@@ -233,8 +233,13 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		# = Make mxData, dropping any unused columns =
 		# ============================================
 		usedVars = c(fullVars, fullCovs)
-		mzData = xmu_make_mxData(mzData, type = type, manifests = usedVars, numObs = numObsMZ, fullCovs = fullCovs, dropMissingDef = dropMissingDef)
-		dzData = xmu_make_mxData(dzData, type = type, manifests = usedVars, numObs = numObsDZ, fullCovs = fullCovs, dropMissingDef = dropMissingDef)
+		umx_msg(usedVars)
+		umx_msg(fullVars)
+		umx_msg(fullCovs)
+		umx_msg(type)
+
+		mzData = xmu_make_mxData(mzData, type = type, manifests = usedVars, fullCovs = fullCovs, numObs = numObsMZ, dropMissingDef = dropMissingDef)
+		dzData = xmu_make_mxData(dzData, type = type, manifests = usedVars, fullCovs = fullCovs, numObs = numObsDZ, dropMissingDef = dropMissingDef)
 
 		# ========================================================================
 		# = 3. Add mxExpectationNormal, means and var matrices to top, MZ and DZ =

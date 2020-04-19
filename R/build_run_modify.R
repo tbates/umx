@@ -1196,8 +1196,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' 
-#' # 3. Built & run the model
-#' m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
+#' # 3. Built & run the model, controlling for age in the means model
+#' m1 = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
 #'
 #' # sidebar: umxACE figures out variable names using sep: 
 #' #    e.g. selVars = "wt" + sep= "_T" -> "wt_T1" "wt_T2"
@@ -1208,6 +1208,24 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # tip 2: plot works for umx: Get a figure of the model and parameters
 #' # plot(m1) # Also, look at the options for ?plot.MxModel.
 #' 
+#' \donttest{
+#' # ============================
+#' # = Model, with 2 covariates =
+#' # ============================
+#'
+#' # Create another covariate: cohort
+#' twinData$cohort1 = twinData$cohort2 =twinData$part
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#'
+#' # 1. def var approach
+#' m2 = umxACE(selDVs = "ht", selCovs = c("age", "cohort"), sep = "", dzData = dzData, mzData = mzData)
+#'
+#' # 2. residualized approach: remove ht variance accounted for by age
+#' tmp = umx_residualize("ht", "age", suffixes = 1:2, data = twinData)
+#' mzData = tmp[tmp$zygosity %in% "MZFF", ]
+#' dzData = tmp[tmp$zygosity %in% "DZFF", ]
+#' m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 #'
 #' # =============================================================
 #' # = ADE: Evidence for dominance ? (DZ correlation set to .25) =
@@ -1229,24 +1247,6 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' 	type = "DWLS", allContinuousMethod='marginals'
 #' )
 #'
-#' # ==========================
-#' # = Model, with covariates =
-#' # ==========================
-#'
-#' # Create another covariate: cohort
-#' twinData$cohort1 = twinData$cohort2 =twinData$part
-#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
-
-#' # 1. def var approach
-#' ma = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
-#' ma = umxACE(selDVs = "ht", selCovs = c("age", "cohort"), sep = "", dzData = dzData, mzData = mzData)
-#'
-#' # 2. residualized approach
-#' tmp = umx_residualize("ht", "age", suffixes = 1:2, data = twinData)
-#' mzData = tmp[tmp$zygosity %in% "MZFF", ]
-#' dzData = tmp[tmp$zygosity %in% "DZFF", ]
-#' mb = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 #'
 #' # ==============================
 #' # = Univariate model of weight =
@@ -1296,7 +1296,6 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # = Well done! Now you can make modify twin models in umx =
 #' # =========================================================
 #'
-#' \donttest{
 #' # =====================================
 #' # = Bivariate height and weight model =
 #' # =====================================

@@ -1159,10 +1159,12 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
 		if(report == "html"){
 			# depends on R2HTML::HTML
-			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
+			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE); 
 			umx_open("tmp.html")
 		}
-	
+
+		xmu_twin_print_means(model = model, report= report)
+
 		if(extended == TRUE) {
 			message("Unstandardized path coefficients")
 			aClean = a
@@ -1176,101 +1178,102 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
 		}
 
-	# Pre & post multiply covariance matrix by inverse of standard deviations
-	if(showRg) {
-		message("Genetic correlations")
-		NAmatrix <- matrix(NA, nVar, nVar);
-		rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); # genetic correlations
-		rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # C correlations
-		rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # E correlations
-		rAClean = rA
-		rCClean = rC
-		rEClean = rE
-		rAClean[upper.tri(rAClean)] = NA
-		rCClean[upper.tri(rCClean)] = NA
-		rEClean[upper.tri(rEClean)] = NA
-		genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = selDVs);
-		names(genetic_correlations) <- selDVs
-	 	# Make a nice table.
-		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-		umx_print(genetic_correlations, digits = digits, zero.print = zero.print)
-	}
-	hasCIs = umx_has_CIs(model)
-	if(hasCIs & CIs) {
-		# TODO umxACE CI code: Need to refactor into some function calls...
-		# TODO and then add to umxSummaryIP and CP
-		message("Creating CI-based report!")
-		# CIs exist, get lower and upper CIs as a dataframe
-		CIlist = data.frame(model$output$confidenceIntervals)
-		# Drop rows fixed to zero
-		CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
-		# Discard rows named NA
-		CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
-		# TODO fix for singleton CIs
-		# THIS IS NOT NEEDED: confidenceIntervals come with estimate in the middle now...
-		# These can be names ("top.a_std[1,1]") or labels ("a_r1c1")
-		# imxEvalByName finds them both
-		# outList = c();
-		# for(aName in row.names(CIlist)) {
-		# 	outList <- append(outList, imxEvalByName(aName, model))
-		# }
-		# # Add estimates into the CIlist
-		# CIlist$estimate = outList
-		# reorder to match summary
-		# CIlist <- CIlist[, c("lbound", "estimate", "ubound")]
-		CIlist$fullName = row.names(CIlist)
-		# Initialise empty matrices for the CI results
-		rows = dim(model$top$matrices$a$labels)[1]
-		cols = dim(model$top$matrices$a$labels)[2]
-		a_CI = c_CI = e_CI = matrix(NA, rows, cols)
-
-		# iterate over each CI
-		labelList = imxGenerateLabels(model)	
-		rowCount = dim(CIlist)[1]
-		# return(CIlist)
-		for(n in 1:rowCount) { # n = 1
-			thisName = row.names(CIlist)[n] # thisName = "a11"
-				# convert labels to [bracket] style
-				if(!umx_has_square_brackets(thisName)) {
-				nameParts = labelList[which(row.names(labelList) == thisName),]
-				CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
-			}
-			fullName = CIlist$fullName[n]
-
-			thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
-			thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
-			thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
-			CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-			thisString = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
-
-			if(grepl("^a", thisMatrixName)) {
-				a_CI[thisMatrixRow, thisMatrixCol] = thisString
-			} else if(grepl("^c", thisMatrixName)){
-				c_CI[thisMatrixRow, thisMatrixCol] = thisString
-			} else if(grepl("^e", thisMatrixName)){
-				e_CI[thisMatrixRow, thisMatrixCol] = thisString
-			} else{
-				stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
-			}
+		if(showRg) {
+			# Pre & post multiply covariance matrix by inverse of standard deviations
+			message("Genetic correlations")
+			NAmatrix <- matrix(NA, nVar, nVar);
+			rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); # genetic correlations
+			rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # C correlations
+			rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # E correlations
+			rAClean = rA
+			rCClean = rC
+			rEClean = rE
+			rAClean[upper.tri(rAClean)] = NA
+			rCClean[upper.tri(rCClean)] = NA
+			rEClean[upper.tri(rEClean)] = NA
+			genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = selDVs);
+			names(genetic_correlations) <- selDVs
+		 	# Make a nice table.
+			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
+			umx_print(genetic_correlations, digits = digits, zero.print = zero.print)
 		}
-		# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
-		# TODO umxSummaryACE: Add option to use mxSE
-		# print(a_CI)
-		# print(c_CI)
-		# print(e_CI)
-		Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = selDVs, stringsAsFactors = FALSE)
-		names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-		if(report == "html"){
-			# depends on R2HTML::HTML
-			R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
-			umx_open("tmpCI.html")
-		}
-		CI_Fit = model
-		CI_Fit$top$a$values = a_CI
-		CI_Fit$top$c$values = c_CI
-		CI_Fit$top$e$values = e_CI
-	} # end Use CIs
+		hasCIs = umx_has_CIs(model)
+		if(hasCIs & CIs) {
+			# TODO umxACE CI code: Need to refactor into some function calls...
+			# TODO and then add to umxSummaryIP and CP
+			message("Creating CI-based report!")
+			# CIs exist, get lower and upper CIs as a dataframe
+			CIlist = data.frame(model$output$confidenceIntervals)
+			# Drop rows fixed to zero
+			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+			# Discard rows named NA
+			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
+			# TODO fix for singleton CIs
+			# THIS IS NOT NEEDED: confidenceIntervals come with estimate in the middle now...
+			# These can be names ("top.a_std[1,1]") or labels ("a_r1c1")
+			# imxEvalByName finds them both
+			# outList = c();
+			# for(aName in row.names(CIlist)) {
+			# 	outList <- append(outList, imxEvalByName(aName, model))
+			# }
+			# # Add estimates into the CIlist
+			# CIlist$estimate = outList
+			# reorder to match summary
+			# CIlist <- CIlist[, c("lbound", "estimate", "ubound")]
+			CIlist$fullName = row.names(CIlist)
+			# Initialise empty matrices for the CI results
+			rows = dim(model$top$matrices$a$labels)[1]
+			cols = dim(model$top$matrices$a$labels)[2]
+			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
+
+			# iterate over each CI
+			labelList = imxGenerateLabels(model)	
+			rowCount = dim(CIlist)[1]
+			# return(CIlist)
+			for(n in 1:rowCount) { # n = 1
+				thisName = row.names(CIlist)[n] # thisName = "a11"
+					# convert labels to [bracket] style
+					if(!umx_has_square_brackets(thisName)) {
+					nameParts = labelList[which(row.names(labelList) == thisName),]
+					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
+				}
+				fullName = CIlist$fullName[n]
+
+				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
+				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
+				thisString = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
+
+				if(grepl("^a", thisMatrixName)) {
+					a_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^c", thisMatrixName)){
+					c_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^e", thisMatrixName)){
+					e_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else{
+					stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
+				}
+			}
+			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
+			# TODO umxSummaryACE: Add option to use mxSE
+			# print(a_CI)
+			# print(c_CI)
+			# print(e_CI)
+			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = selDVs, stringsAsFactors = FALSE)
+			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
+			if(report == "html"){
+				# depends on R2HTML::HTML
+				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
+				umx_open("tmpCI.html")
+			}
+			xmu_twin_print_means(model, digits = digits, report = report)
+			CI_Fit = model
+			CI_Fit$top$a$values = a_CI
+			CI_Fit$top$c$values = c_CI
+			CI_Fit$top$e$values = e_CI
+		} # end Use CIs
 	} # end list catcher?
 	
 	
@@ -1387,7 +1390,8 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE);
 			umx_open("tmp.html")
 		}
-
+		xmu_twin_print_means(model, digits = digits, report = report)
+		
 		if(extended == TRUE) {
 			message("Unstandardized path coefficients")
 			aClean = a
@@ -1622,7 +1626,8 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 		} else {
 			umx_print(specifics, digits = digits, zero.print = ".")
 		}
-		
+		xmu_twin_print_means(model, digits = digits, report = report)
+
 		if(showRg) {
 			message("Genetic Correlations")
 			# Pre & post multiply covariance matrix by inverse of standard deviations
@@ -1751,6 +1756,8 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 	names(std_Specifics) = rowNames;
 	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
 
+	xmu_twin_print_means(model, digits = digits, report = report)
+	
 	if(showRg) {
 		# Pre & post multiply covariance matrix by inverse of standard deviations
 		NAmatrix <- matrix(NA, nVar, nVar);  
@@ -1948,7 +1955,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 	tablePub = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
 	# names(tablePub)   <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	names(tablePub)     <- c("Model"     , "EP", "\u2206 -2LL", "\u2206 df", "p", "AIC", "Compare with Model")
+	names(tablePub)     <- c("Model"     , "EP", "\u0394 -2LL", "\u0394 df", "p", "AIC", "Compare with Model")
 	# U+2206 = math delta
 	# Fix problem where base model has compare set to its own name, and name set to NA
 	nRows = dim(tablePub)[1]
