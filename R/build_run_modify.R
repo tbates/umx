@@ -2249,6 +2249,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 
 #' umxCP: Build and run a Common pathway twin model
 #'
+#' @description
 #' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
 #' 
 #' The common-pathway model provides a powerful tool for theory-based decomposition of genetic
@@ -2267,8 +2268,8 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' Features include the ability to include more than one common pathway, to use ordinal data.
 #' 
-#' **note**: The function `umx_set_mvn_optimization_options`() allow users to see and set `mvnRelEps` and `mvnMaxPointsA`
-#' It defaults to .001. You might find that '0.01' works better for ordinal models.
+#' **note**: The function [umx_set_mvn_optimization_options()] allows users to see and set `mvnRelEps` and `mvnMaxPointsA`
+#' mvnRelEps defaults to .005. For ordinal models, you might find that '0.01' works better.
 #' 
 #' @details
 #' Like the [umxACE()] model, the CP model decomposes phenotypic variance

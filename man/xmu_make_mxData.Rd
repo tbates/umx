@@ -43,9 +43,10 @@ The most common use will be to give it a dataframe, and get back an \code{mxData
 # =========================
 # = Continuous ML example =
 # =========================
-manVars = c("mpg", "cyl", "disp")
+data(mtcars)
 tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
 # names(tmp$observed) # "mpg"  "cyl"  "disp"
+manVars = c("mpg", "cyl", "disp")
 tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); 
 tmp$type == "raw" # TRUE
 

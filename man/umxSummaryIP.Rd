@@ -9,12 +9,12 @@ umxSummaryIP(
   model,
   digits = 2,
   file = getOption("umx_auto_plot"),
-  returnStd = FALSE,
   std = TRUE,
   showRg = FALSE,
   comparison = NULL,
   CIs = FALSE,
-  show = NULL,
+  returnStd = FALSE,
+  report = c("markdown", "html"),
   ...
 )
 }
@@ -25,8 +25,6 @@ umxSummaryIP(
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
-\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
-
 \item{std}{= Whether to show the standardized model (TRUE)}
 
 \item{showRg}{= whether to show the genetic correlations (FALSE)}
@@ -35,7 +33,9 @@ umxSummaryIP(
 
 \item{CIs}{Confidence intervals (F)}
 
-\item{show}{parameter used in all summary functions. currently ignored here.}
+\item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
+
+\item{report}{how to display the results ("html" will open in browser as table)}
 
 \item{...}{Optional additional parameters}
 }

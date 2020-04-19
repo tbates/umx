@@ -535,9 +535,10 @@ data[complete.cases(data[,selVars]),]")
 #' # =========================
 #' # = Continuous ML example =
 #' # =========================
-#' manVars = c("mpg", "cyl", "disp")
+#' data(mtcars)
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
 #' # names(tmp$observed) # "mpg"  "cyl"  "disp"
+#' manVars = c("mpg", "cyl", "disp")
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); 
 #' tmp$type == "raw" # TRUE
 #'
@@ -603,6 +604,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			unusedManifests = c()
 			dropColumns = FALSE
 		}
+		namesNeeded = manifests
 	}else{
 		# Manifests specified: mark all others as un-used
 		# remove duplicates (e.g. caused by var in manifests and definition vars lists
@@ -653,7 +655,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		if(dropColumns){
 			if(data$type %in% c("cov", "cor")){
 				# Trim down the data to include only the requested columns				
-				data$observed = umx_reorder(data$observed, manifests)
+				data$observed = umx_reorder(data$observed, namesNeeded)
 			} else if (data$type == "raw"){
 				# Might be worth doing data = mxData(data = data$observed[, manifests], type=‘raw’)
 				xmu_check_variance(data[, setdiff(namesNeeded, fullCovs)])

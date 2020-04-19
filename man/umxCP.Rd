@@ -100,8 +100,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 }
 \description{
 Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
-}
-\details{
+
 The common-pathway model provides a powerful tool for theory-based decomposition of genetic
 and environmental differences.
 
@@ -118,9 +117,10 @@ As can be seen, each phenotype also by default has A, C, and E influences specif
 
 Features include the ability to include more than one common pathway, to use ordinal data.
 
-\strong{note}: The function \code{umx_set_mvn_optimization_options}() allow users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
-It defaults to .001. You might find that '0.01' works better for ordinal models.
-
+\strong{note}: The function \code{\link[=umx_set_mvn_optimization_options]{umx_set_mvn_optimization_options()}} allows users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
+mvnRelEps defaults to .005. For ordinal models, you might find that '0.01' works better.
+}
+\details{
 Like the \code{\link[=umxACE]{umxACE()}} model, the CP model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or

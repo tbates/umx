@@ -1670,13 +1670,13 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @aliases umxSummary.MxModelIP
 #' @param model A fitted [umxIP()] model to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
-#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
-#' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param std = Whether to show the standardized model (TRUE)
+#' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
 #' @param CIs Confidence intervals (F)
-#' @param show parameter used in all summary functions. currently ignored here.
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
+#' @param report how to display the results ("html" will open in browser as table)
+#' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @family Twin Reporting Functions
@@ -1696,7 +1696,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' \dontrun{
 #' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
-umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), returnStd = FALSE, std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, show = NULL, ...) {
+umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), std = TRUE, showRg = FALSE, comparison = NULL, CIs = FALSE, returnStd = FALSE, report = c("markdown", "html"), ...) {
 	umx_check_model(model, "MxModelIP", beenRun = TRUE, callingFn = "umxSummaryIP")
 	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 
