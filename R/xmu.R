@@ -444,6 +444,36 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 
 }
 
+# xmu_twin_print_means(model, digits = digits, report = report)
+xmu_twin_print_means <- function(model, digits = 3, report){
+	int = model$top$intercept$values
+	if(!is.null(int)){
+		# means and betas
+		msg = message("Means: Intercept and (raw) betas from model$top$intercept and model$top$meansBetas")
+		row.names(int) = "intercept"
+		b = model$top$meansBetas$values
+		bvals = b[,1:dim(b)[[2]], drop = FALSE]
+		int = rbind(int, cbind(bvals, bvals))
+	} else {
+		int = model$top$expMean$values
+		if(!is.null(int)){
+			# expMeans
+			msg = "Means: Intercepts from model$top$expMeans"
+			row.names(int) = "intercept"
+		}else{
+			# no means
+		}
+	}
+	if(!is.null(int)){
+		message(msg) 
+		umx_print(int, digits = digits)
+		if(report == "html"){
+			# depends on R2HTML::HTML
+			R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE); 
+			umx_open("tmp.html")
+		}
+	}		
+}
 
 #' Drop rows with missing definition variables
 #'
@@ -465,7 +495,9 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' tmp = xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissingDef = TRUE)
 #' tmp[1,]
 xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE) {
-	selVars = ifelse(is.null(sep), selVars, tvars(selVars, sep))
+	if(!is.null(sep)){
+		selVars = tvars(selVars, sep)
+	}
 	umx_check_names(selVars, data)
 	OK = complete.cases(data[, selVars])
 	if(sum(!OK) == 0){
@@ -475,7 +507,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE) {
 			message(sum(!OK), " row(s) dropped due to missing definition variable(s)")
 			return(data[OK, ])
 		} else {
-			stop(sum(!OK), " rows of data have NA definition variables. Set dropMissing = TRUE, or remove these yourself with
+			stop(sum(!OK), " rows of data have NA definition variables. Set dropMissingDef = TRUE, or remove these yourself with
 data[complete.cases(data[,selVars]),]")
 		}
 	}
@@ -492,7 +524,7 @@ data[complete.cases(data[,selVars]),]")
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
 #' @param numObs Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData
-#' @param fullCovs Covariate names if any (NULL = none) Can be dropped if necessary
+#' @param fullCovs Covariate names if any (NULL = none) These are checked by `dropMissingDef`
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
 #' @return - [mxData()]
@@ -550,7 +582,6 @@ data[complete.cases(data[,selVars]),]")
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
 xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE) {
-
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
@@ -575,25 +606,25 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	}else{
 		# Manifests specified: mark all others as un-used
 		# remove duplicates (e.g. caused by var in manifests and definition vars lists
-		manifests = unique(manifests)
-		umx_check_names(namesNeeded=manifests, data= data)
-		unusedManifests = setdiff(umx_names(data), manifests)
+		namesNeeded = unique(c(manifests, fullCovs))
+		umx_check_names(namesNeeded= namesNeeded, data= data)
+		unusedManifests = setdiff(umx_names(data), namesNeeded)
 		dropColumns = TRUE
 	}
 
 	if (class(data)[1] == "data.frame") {
 		# check variance, excluding covariates
-		xmu_check_variance(data[, setdiff(manifests, fullCovs)])
+		xmu_check_variance(data[, setdiff(namesNeeded, fullCovs)])
 
 		if(dropColumns){
 			# Trim down the data to include only the requested columns 
-			data = data[, manifests, drop = FALSE]
+			data = data[, namesNeeded, drop = FALSE]
 		}
 		if(!is.null(fullCovs)){
 			# drop rows with missing def vars or stop
 			data = xmu_data_missing(data, selVars = fullCovs, dropMissingDef = dropMissingDef)
 		}
-
+		
 		# Upgrade data.frame to mxData of desired type
 		if(type %in% c("Auto", "FIML")){
 			data = mxData(observed = data, type = "raw")
@@ -625,10 +656,14 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				data$observed = umx_reorder(data$observed, manifests)
 			} else if (data$type == "raw"){
 				# Might be worth doing data = mxData(data = data$observed[, manifests], type=‘raw’)
-				data$observed = data$observed[, manifests, drop = FALSE]
-				if(!is.null(fullCovs)){
-					data$observed = xmu_data_missing(data$observed, selVars = fullCovs, dropMissingDef = dropMissingDef)
-				}
+				xmu_check_variance(data[, setdiff(namesNeeded, fullCovs)])
+
+				# Trim down the data to include only the requested columns 
+				data$observed = data$observed[, namesNeeded, drop = FALSE]
+			}
+			if(!is.null(fullCovs)){
+				# drop rows with missing def vars or stop
+				data$observed = xmu_data_missing(data$observed, selVars = fullCovs, dropMissingDef = dropMissingDef)
 			} else {
 				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
 			}
@@ -660,17 +695,6 @@ for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= '
 			}
 		}
 		
-		# TODO clean up notes from old-style WLS
-		# if("preferredFit" %in% names(data)){
-		# 	message("Preferred fit for data = ", data$preferredFit)
-		# } else {
-		# 	message("Data type = ", data$type)
-		# }
-		# if(is.na(data$means)){
-			# message("No means")
-		# } else {
-			# message("Has means")
-		# }
 		message("ManifestVars set to: ", paste(manifests, collapse = ", "), ". ", msg_str)
 	}
 	return(data)

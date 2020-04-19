@@ -595,6 +595,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE); 
 		umx_open("tmp.html")
 	}
+	xmu_twin_print_means(model, digits = digits, report = report)
 	
 	if(extended == TRUE) {
 		opposite = !std

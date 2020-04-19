@@ -1159,29 +1159,11 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
 		if(report == "html"){
 			# depends on R2HTML::HTML
-			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = F, sortableDF = T); 
+			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE); 
 			umx_open("tmp.html")
 		}
 
-		int = model$top$intercept$values
-		if(!is.null(int)){
-			# means and betas
-			message("Means: Intercept and (raw) betas from model$top$intercept and model$top$meansBetas")
-			row.names(int) = "intercept"
-			b = model$top$meansBetas$values
-			bvals = b[,1:dim(b)[[2]], drop = FALSE]
-			umx_print(rbind(int, cbind(bvals, bvals)), digits = digits)
-		} else {
-			int = model$top$expMean$values
-			if(!is.null(int)){
-				# expMeans
-				message("Means: Intercepts from model$top$expMeans")
-				row.names(int) = "intercept"
-				umx_print(int, digits = digits)
-			}else{
-				# no means				
-			}
-		}
+		xmu_twin_print_means(model = model, report= report)
 
 		if(extended == TRUE) {
 			message("Unstandardized path coefficients")
@@ -1286,6 +1268,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
 				umx_open("tmpCI.html")
 			}
+			xmu_twin_print_means(model, digits = digits, report = report)
 			CI_Fit = model
 			CI_Fit$top$a$values = a_CI
 			CI_Fit$top$c$values = c_CI
@@ -1407,7 +1390,8 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE);
 			umx_open("tmp.html")
 		}
-
+		xmu_twin_print_means(model, digits = digits, report = report)
+		
 		if(extended == TRUE) {
 			message("Unstandardized path coefficients")
 			aClean = a
@@ -1642,7 +1626,8 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 		} else {
 			umx_print(specifics, digits = digits, zero.print = ".")
 		}
-		
+		xmu_twin_print_means(model, digits = digits, report = report)
+
 		if(showRg) {
 			message("Genetic Correlations")
 			# Pre & post multiply covariance matrix by inverse of standard deviations
@@ -1771,6 +1756,8 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), r
 	names(std_Specifics) = rowNames;
 	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
 
+	xmu_twin_print_means(model, digits = digits, report = report)
+	
 	if(showRg) {
 		# Pre & post multiply covariance matrix by inverse of standard deviations
 		NAmatrix <- matrix(NA, nVar, nVar);  

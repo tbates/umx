@@ -23,7 +23,7 @@ xmu_make_mxData(
 
 \item{numObs}{Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData}
 
-\item{fullCovs}{Covariate names if any (NULL = none) Can be dropped if necessary}
+\item{fullCovs}{Covariate names if any (NULL = none) These are checked by \code{dropMissingDef}}
 
 \item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.}
 
