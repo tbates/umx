@@ -5478,6 +5478,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @param DD value for E variance.
 #' @param MZr If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.
 #' @param DZr NULL
+#' @param dzAr DZ Ar (default .5)
 #' @param scale Whether to scale output to var=1 mean=0 (Default FALSE)
 #' @param bivAmod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
 #' @param bivCmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
@@ -5612,7 +5613,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
 #' }
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  DD = NULL,  varNames = "var", MZr= NULL, DZr= MZr, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL, seed = NULL, empirical = FALSE) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  DD = NULL,  varNames = "var", MZr= NULL, DZr= MZr, dzAr=.5, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL, seed = NULL, empirical = FALSE) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -5688,7 +5689,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		
 		ACDE = AA + CC + DD + EE
 		ACD  = AA + CC + DD
-		hACqD = (.5 * AA) + CC  + (.25 * DD)
+		hACqD = (dzAr * AA) + CC  + (.25 * DD)
 		mzCov = matrix(nrow = 2, byrow = TRUE, c(
 			ACDE, ACD,
 			ACD, ACDE)
@@ -5746,7 +5747,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		diag(sMZtmp) = 1
 		sDZtmp = sMZtmp
 		sMZtmp[4, 1] = sMZtmp[1, 4] = 1.0 # A
-		sDZtmp[4, 1] = sDZtmp[1, 4] = 0.5 # A
+		sDZtmp[4, 1] = sDZtmp[1, 4] = dzAr # A
 		sMZtmp[5, 2] = sMZtmp[2, 5] = sDZtmp[5, 2] = sDZtmp[2, 5] = 1 # C
 
 		# varNames = c('defm_T1', 'defm_T2', 't_T1', 'm_T1', 'm_T2', 't_T2')
@@ -5861,7 +5862,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		for (thisSES in SESlist) {
 			# thisSES = -5
 			AA = max(0, (avgA + (thisSES * SES_2_A_beta)))
-			hAC = (.5 * AA) + CC
+			hAC = (dzAr * AA) + CC
 			ACE = AA + CC + EE
 			dzCov = matrix(nrow = 2, byrow = TRUE, c(
 				ACE, hAC,
