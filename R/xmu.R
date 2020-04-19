@@ -460,9 +460,10 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' @seealso - [complete.cases()]
 #' @md
 #' @examples
-#' tmp = mtcars; tmp[1, "wt"] = NA
-#' xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissing = FALSE)
-#' 
+#' tmp = mtcars; 
+#' tmp[1,]; tmp[1, "wt"] = NA
+#' tmp = xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissingDef = TRUE)
+#' tmp[1,]
 xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE) {
 	selVars = ifelse(is.null(sep), selVars, tvars(selVars, sep))
 	umx_check_names(selVars, data)
@@ -554,7 +555,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
-	}else if(class(data) == "character"){
+	}else if(class(data)[[1]] == "character"){
 		# Pass strings through
 		return(data)
 	}

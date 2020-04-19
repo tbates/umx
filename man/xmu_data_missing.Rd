@@ -24,9 +24,10 @@ xmu_data_missing(data, selVars, sep = NULL, dropMissingDef = TRUE)
 Definition variables can't be missing. This function helps with that.
 }
 \examples{
-tmp = mtcars; tmp[1, "wt"] = NA
-xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissing = FALSE)
-
+tmp = mtcars; 
+tmp[1,]; tmp[1, "wt"] = NA
+tmp = xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissingDef = TRUE)
+tmp[1,]
 }
 \seealso{
 \itemize{

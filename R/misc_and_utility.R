@@ -1688,7 +1688,7 @@ umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE,
 			message("New:")
 			print(new_names[!(nameVector == new_names)])
 		} else {
-			if(class(data) == "character"){
+			if(class(data)[[1]] == "character"){
 				data = new_names
 			} else {
 				names(data) = new_names
@@ -3295,7 +3295,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 				timeDelta = ""
 				percentDelta = ""
 			} else {
-				timeDelta = paste0("(\u2206: ", round(thisTime - lastTime, 3), ")")
+				timeDelta = paste0("(\u0394: ", round(thisTime - lastTime, 3), ")")
 				percentDelta = paste0(round(as.numeric(thisTime) / as.numeric(lastTime)*100, 3), "%")
 			}
 		}
