@@ -530,7 +530,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #' # m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
 #' # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
 #' # }
-#' # Error: 'age1' not in data (needed by 'MZ.data.age1' in 'MZ.T1DefVars')
+#'
 xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) {
 	# TODO Check the def vars are still in the dataset at this point...
 	umx_check(all(c("MZ", "DZ", "top") %in% names(model)), "stop", message= "need a model with top, MZ and DZ sub-models")	
