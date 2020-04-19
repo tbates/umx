@@ -3492,7 +3492,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 	return(boolean.test)
 }
 
-#' Check if a request name exists in a datafram or related object
+#' Check if a request name exists in a dataframe or related object
 #'
 #' Check if a list of names are in the [namez()] of a dataframe (or the [dimnames()] of a matrix), or the names of 
 #' the observed data of an [mzData()]

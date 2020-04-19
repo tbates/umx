@@ -14,7 +14,7 @@ xmu_twin_get_var_names(
 \arguments{
 \item{model}{A model to get the variables from}
 
-\item{source}{Whether to access the dimnames of the "expCovMZ" or the names of the "observed" data (will includee covariates)}
+\item{source}{Whether to access the dimnames of the "expCovMZ" or the names of the "observed" data (will include covariates)}
 
 \item{trim}{Whether to trim the suffix (TRUE)}
 

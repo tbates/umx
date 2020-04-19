@@ -20,7 +20,7 @@ xmuTwinSuper_Continuous(
 \arguments{
 \item{name}{The name of the supermodel}
 
-\item{fullVars}{Full Varaiable names (wt_T1)}
+\item{fullVars}{Full Variable names (wt_T1)}
 
 \item{fullCovs}{Full Covariate names (age_T1)}
 

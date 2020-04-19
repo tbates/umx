@@ -20,7 +20,7 @@ xmu_twin_add_WeightMatrices(model, mzWeights = NULL, dzWeights = NULL)
 }
 \description{
 Add weight models (MZw, DZw) with matrices (e.g. mzWeightMatrix) to a twin model, and
-update \code{mxFitFunctionMultigroup}. This yileds a weighted model with vector objective.
+update \code{mxFitFunctionMultigroup}. This yields a weighted model with vector objective.
 
 To weight objective functions in OpenMx, you specify a container model that applies the weights
 m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.

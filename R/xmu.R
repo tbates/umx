@@ -91,7 +91,7 @@ umxRenameMatrix <- function(x, matrixName, name) {
 #' Barely useful, but justified perhaps by centralizing trimming the "_T1" off, and returning just twin 1.
 #'
 #' @param model A model to get the variables from
-#' @param source Whether to access the dimnames of the "expCovMZ" or the names of the "observed" data (will includee covariates) 
+#' @param source Whether to access the dimnames of the "expCovMZ" or the names of the "observed" data (will include covariates) 
 #' @param trim Whether to trim the suffix (TRUE)
 #' @param twinOneOnly Whether to return on the names for twin 1 (i.e., unique names)
 #' @return - variable names from twin model

@@ -297,7 +297,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' called by [xmu_make_TwinSuperModel()].
 #' 
 #' @param name The name of the supermodel
-#' @param fullVars Full Varaiable names (wt_T1)
+#' @param fullVars Full Variable names (wt_T1)
 #' @param fullCovs Full Covariate names (age_T1)
 #' @param mzData An mxData object containing the MZ data
 #' @param dzData An mxData object containing the DZ data 
@@ -722,7 +722,7 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 #'
 #' @description
 #' Add weight models (MZw, DZw) with matrices (e.g. mzWeightMatrix) to a twin model, and 
-#' update `mxFitFunctionMultigroup`. This yileds a weighted model with vector objective.
+#' update `mxFitFunctionMultigroup`. This yields a weighted model with vector objective.
 #' 
 #' To weight objective functions in OpenMx, you specify a container model that applies the weights
 #' m1 is the model with no weights, but with "vector = TRUE" option added to the FIML objective.

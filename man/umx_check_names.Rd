@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_check_names}
 \alias{umx_check_names}
-\title{Check if a request name exists in a datafram or related object}
+\title{Check if a request name exists in a dataframe or related object}
 \usage{
 umx_check_names(
   namesNeeded,

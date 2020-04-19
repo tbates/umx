@@ -26,7 +26,7 @@
 * BUGFIX: `power.ACE.test` no longer fails when estimating power at a fixed n
 * HELP: `umxSummary`: Improve Rd file
 * HELP: `umxACE` covariate examples
-* HELP: `umx_explode_twin_names` links for findability
+* HELP: `umx_explode_twin_names` links for find-ability
 
 
 # umx 3.0.6
