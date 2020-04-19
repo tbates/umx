@@ -3521,16 +3521,6 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 #' }
 umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALSE, intersection = FALSE, message = ""){
-	if(is.data.frame(namesNeeded)){
-		namesNeeded = names(namesNeeded)
-	}else if(is.matrix(namesNeeded)){
-		namesNeeded = dimnames(namesNeeded)[[2]]
-	} else if (typeof(namesNeeded)=="character"){
-		namesNeeded = namesNeeded
-	} else{
-		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded))
-	}
-
 	if(is.data.frame(data)){
 		namesInData = names(data)
 	}else if(is.matrix(data)){
@@ -3542,6 +3532,18 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	} else {
 		stop("data has to be a dataframe or matrix. You gave me a ", typeof(data))
 	}
+
+	if(is.data.frame(namesNeeded)){
+		namesNeeded = names(namesNeeded)
+	}else if(is.matrix(namesNeeded)){
+		namesNeeded = dimnames(namesNeeded)[[2]]
+	} else if (typeof(namesNeeded)=="character"){
+		namesNeeded = namesNeeded
+	} else{
+		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded), "\n",
+		"PS: names in data were: ", namesInData)
+	}
+
 	if(intersection){
 		namesFound = intersect(namesNeeded, namesInData)
 		message(paste(namesFound, ", "))

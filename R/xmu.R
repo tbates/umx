@@ -616,7 +616,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 
 	if (class(data)[1] == "data.frame") {
 		# check variance, excluding covariates
-		xmu_check_variance(data[, setdiff(namesNeeded, fullCovs)])
+		xmu_check_variance(data[, setdiff(namesNeeded, fullCovs), drop = FALSE])
 
 		if(dropColumns){
 			# Trim down the data to include only the requested columns 
@@ -657,17 +657,13 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				# Trim down the data to include only the requested columns				
 				data$observed = umx_reorder(data$observed, namesNeeded)
 			} else if (data$type == "raw"){
-				# Might be worth doing data = mxData(data = data$observed[, manifests], type=‘raw’)
-				xmu_check_variance(data[, setdiff(namesNeeded, fullCovs)])
-
+				xmu_check_variance(data$observed[, setdiff(namesNeeded, fullCovs), drop = FALSE])
 				# Trim down the data to include only the requested columns 
 				data$observed = data$observed[, namesNeeded, drop = FALSE]
 			}
 			if(!is.null(fullCovs)){
 				# drop rows with missing def vars or stop
 				data$observed = xmu_data_missing(data$observed, selVars = fullCovs, dropMissingDef = dropMissingDef)
-			} else {
-				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
 			}
 		}
 	}else if(class(data) == "matrix"){
