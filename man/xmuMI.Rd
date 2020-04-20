@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmuMI}
 \alias{xmuMI}
-\title{xmuMI (not for end users - you want umxMI! )}
+\title{xmuMI (not for end users)}
 \usage{
 xmuMI(model, vector = TRUE)
 }

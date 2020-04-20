@@ -44,7 +44,7 @@ umx_make_TwinData(
 
 \item{MZr}{If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.}
 
-\item{DZr}{NULL}
+\item{DZr}{Set to return dataframe using MZr and Dzr (Default NULL)}
 
 \item{dzAr}{DZ Ar (default .5)}
 

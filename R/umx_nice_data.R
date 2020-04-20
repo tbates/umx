@@ -12,7 +12,7 @@
 #' @param sep existing separator string (will be updated to "_T").
 #' @param zygosity existing zygosity column name (will be renamed `zygosity`).
 #' @param numbering existing twin sequence string (will be updated to _T1, _T2, _T3).
-#' @param labelNumericZygosity If TRUE numeric zygosity will be set to labelMapping.
+#' @param labelNumericZygosity If TRUE numeric zygosity levels will be set to labels.
 #' @param levels legal levels of zygosity (ignored if labelNumericZygosity = FALSE (default 1:5)
 #' @param labels labels for each zyg level c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS").
 #' @return - [data.frame()]

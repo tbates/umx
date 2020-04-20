@@ -614,7 +614,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		dropColumns = TRUE
 	}
 
-	if (class(data)[1] == "data.frame") {
+	if (class(data)[[1]] == "data.frame") {
 		# check variance, excluding covariates
 		xmu_check_variance(data[, setdiff(namesNeeded, fullCovs), drop = FALSE])
 
@@ -666,7 +666,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				data$observed = xmu_data_missing(data$observed, selVars = fullCovs, dropMissingDef = dropMissingDef)
 			}
 		}
-	}else if(class(data) == "matrix"){
+	}else if(class(data)[[1]] == "matrix"){
 		if(is.null(numObs)){
 			stop("You gave me a cov matrix. umx needs the numObs for this.\nNote easiest and least error-prone method is
 for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
@@ -1406,7 +1406,7 @@ xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
 	return(model)
 }
 
-#' xmuMI (not for end users - you want umxMI! )
+#' xmuMI (not for end users)
 #'
 #' A function to compute and report modifications which would improve fit.
 #' You will probably use [umxMI()] instead

@@ -2893,7 +2893,6 @@ deg2rad <- function(deg) {
 #' @examples
 #' xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
 xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
-	# TODO xmu_DF_to_mxData_TypeCov: Use 'use' to compute numObs in xmu_DF_to_mxData_TypeCov
 	use = match.arg(use)
 	if(anyNA(columns)){
 		columns = names(df)

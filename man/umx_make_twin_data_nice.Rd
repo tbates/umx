@@ -23,7 +23,7 @@ umx_make_twin_data_nice(
 
 \item{numbering}{existing twin sequence string (will be updated to _T1, _T2, _T3).}
 
-\item{labelNumericZygosity}{If TRUE numeric zygosity will be set to labelMapping.}
+\item{labelNumericZygosity}{If TRUE numeric zygosity levels will be set to labels.}
 
 \item{levels}{legal levels of zygosity (ignored if labelNumericZygosity = FALSE (default 1:5)}
 
@@ -47,8 +47,8 @@ data(twinData)
 tmp = twinData
 tmp$zygosity=NULL
 tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zyg="zygosity")
-namez(tmp)
-# m1 = umxACE("wt")
+namez(tmp, "zyg")
+levels(tmp$zygosity)
 
 }
 \references{
