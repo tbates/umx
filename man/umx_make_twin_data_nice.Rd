@@ -47,8 +47,8 @@ data(twinData)
 tmp = twinData
 tmp$zygosity=NULL
 tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zyg="zygosity")
-namez(tmp)
-# m1 = umxACE("wt")
+namez(tmp, "zyg")
+levels(tmp$zygosity)
 
 }
 \references{
