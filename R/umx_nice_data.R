@@ -12,6 +12,9 @@
 #' @param sep existing separator string (will be updated to "_T").
 #' @param zygosity existing zygosity column name (will be renamed `zygosity`).
 #' @param numbering existing twin sequence string (will be updated to _T1, _T2, _T3).
+#' @param labelNumericZygosity If TRUE numeric zygosity will be set to labelMapping.
+#' @param levels legal levels of zygosity (ignored if labelNumericZygosity = FALSE (default 1:5)
+#' @param labels labels for each zyg level c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS").
 #' @return - [data.frame()]
 #' @export
 #' @family Twin Data functions
@@ -19,11 +22,14 @@
 #' @references - [tutorials](https://tbates.github.io), [tbates/umx](https://github.com/tbates/umx)
 #' @md
 #' @examples
+#' data(twinData)
+#' tmp = twinData
+#' tmp$zygosity=NULL
 #' tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zyg="zygosity")
-#' namez(tmp)
-#' # m1 = umxACE("wt")
+#' namez(tmp, "zyg")
+#' levels(tmp$zygosity)
 #'
-umx_make_twin_data_nice <- function(data, sep, zygosity, numbering){	
+umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumericZygosity = FALSE, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")){
 	if(zygosity != "zygosity"){
 		if(!is.null(data$zygosity)){
 			stop("A column called 'zygosity' already exists. please rename that column first, e.g. with\n",
@@ -37,4 +43,8 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering){
 	oldNames = namez(data, paste0(sep, "[0-9]$"))
 	newNames = namez(oldNames, pattern = paste0(sep, "([0-9])$"), replacement = "_T\\1")
 	data = umx_rename(data=data, from = oldNames, to = newNames)
+	if(labelNumericZygosity){
+		data$zygosity = factor(data$zygosity, levels= levels, labels = labels)
+	}
+	return(data)
 }
