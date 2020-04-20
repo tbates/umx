@@ -3360,7 +3360,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' umx_print(mtcars[1:10,], file = "html")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 #' }
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, append = FALSE, sortableDF= TRUE, both = TRUE...){
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, append = FALSE, sortableDF= TRUE, both = TRUE, ...){
 	# depends on R2HTML::HTML and knitr::kable
 	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
 	if(class(x)[[1]] == "character"){
@@ -3382,24 +3382,30 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 			x[abs(x) < suppress] = 0
 			zero.print = "."
 		}
-		x = umx_round(x, digits = digits, coerce = FALSE)
-		ina = is.na(x)
-		if (any(ina)){
-			x[ina] = na.print
-			i0 = !ina & x == 0	    	
-	    } 
-	    if (zero.print != "0" && any(i0)){
-			x[i0] = zero.print
+		x    = umx_round(x, digits = digits, coerce = FALSE)
+		isNA = is.na(x)
+		if (any(isNA)){
+			x[isNA] = na.print
+			isZero  = !isNA & x == 0	 	
+	    }else{
+	    	isZero = FALSE
+	    }
+	    if (zero.print != "0" && any(isZero)){
+			x[isZero] = zero.print
 	    } 
 	    if (is.numeric(x) || is.complex(x)){
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(!is.na(file)){
 			# from report = html
-			if(file =="html") file = "tmp.html"
-			R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF); 
+			if(file == "html"){
+				file = "tmp.html"
+			}
+			R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF)
 			system(paste0("open ", file))
 			print("Table opened in browser")
-			if(both) print(knitr::kable(x))
+			if(both){
+				print(knitr::kable(x))
+			}
 
 	    }else{
 			print(knitr::kable(x))

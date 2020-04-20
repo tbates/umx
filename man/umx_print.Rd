@@ -16,7 +16,8 @@ umx_print(
   suppress = NULL,
   append = FALSE,
   sortableDF = TRUE,
-  both = TRUE...
+  both = TRUE,
+  ...
 )
 }
 \arguments{
