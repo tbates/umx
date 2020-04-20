@@ -445,7 +445,8 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 }
 
 # xmu_twin_print_means(model, digits = digits, report = report)
-xmu_twin_print_means <- function(model, digits = 3, report){
+xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html")){
+	report = match.arg(report)
 	int = model$top$intercept$values
 	if(!is.null(int)){
 		# means and betas
