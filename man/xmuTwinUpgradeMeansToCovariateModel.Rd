@@ -37,7 +37,7 @@ dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 # m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
 # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
 # }
-# Error: 'age1' not in data (needed by 'MZ.data.age1' in 'MZ.T1DefVars')
+
 }
 \seealso{
 \itemize{

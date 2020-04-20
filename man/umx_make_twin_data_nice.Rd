@@ -4,7 +4,15 @@
 \alias{umx_make_twin_data_nice}
 \title{Convert a twin dataset into umx standard format.}
 \usage{
-umx_make_twin_data_nice(data, sep, zygosity, numbering)
+umx_make_twin_data_nice(
+  data,
+  sep,
+  zygosity,
+  numbering,
+  labelNumericZygosity = FALSE,
+  levels = 1:5,
+  labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")
+)
 }
 \arguments{
 \item{data}{a \code{\link[=data.frame]{data.frame()}} to check/convert.}
@@ -14,6 +22,12 @@ umx_make_twin_data_nice(data, sep, zygosity, numbering)
 \item{zygosity}{existing zygosity column name (will be renamed \code{zygosity}).}
 
 \item{numbering}{existing twin sequence string (will be updated to _T1, _T2, _T3).}
+
+\item{labelNumericZygosity}{If TRUE numeric zygosity will be set to labelMapping.}
+
+\item{levels}{legal levels of zygosity (ignored if labelNumericZygosity = FALSE (default 1:5)}
+
+\item{labels}{labels for each zyg level c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS").}
 }
 \value{
 \itemize{
@@ -29,6 +43,9 @@ umx_make_twin_data_nice(data, sep, zygosity, numbering)
 }
 }
 \examples{
+data(twinData)
+tmp = twinData
+tmp$zygosity=NULL
 tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zyg="zygosity")
 namez(tmp)
 # m1 = umxACE("wt")
