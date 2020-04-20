@@ -3338,13 +3338,16 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 #'
 #' @param x A data.frame to print (matrices will be coerced to data.frame)
-#' @param digits  The number of decimal places to print (defaults to getOption("digits")
-#' @param quote  Parameter passed to print (defaults to FALSE)
-#' @param na.print String to replace NA with (default to blank "")
-#' @param zero.print String to replace 0.000 with  (defaults to "0")
+#' @param digits  The number of decimal places to print (getOption("digits"))
+#' @param quote  Parameter passed to print (FALSE)
+#' @param na.print String to replace NA with ("")
+#' @param zero.print String to replace 0.000 with  ("0")
 #' @param justify Parameter passed to print (defaults to "none")
 #' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open table in browser.
-#' @param suppress minimum numeric value to print (default =  NULL, print all values, no matter how small)
+#' @param suppress minimum numeric value to print (NULL = print all values, no matter how small)
+#' @param append If html, is this appended to file? (FALSE)
+#' @param sortableDF If html, is table sortable? (TRUE)
+#' @param both If html, is table also printed as markdown? (TRUE)
 #' @param ... Optional parameters for print
 #' @return - A dataframe of text
 #' @export
@@ -3355,9 +3358,10 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
 #' \dontrun{
+#' umx_print(mtcars[1:10,], file = "html")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 #' }
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, ...){
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, append = FALSE, sortableDF= TRUE, both = TRUE...){
 	# depends on R2HTML::HTML and knitr::kable
 	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
 	if(class(x)[[1]] == "character"){
@@ -3379,20 +3383,27 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 			x[abs(x) < suppress] = 0
 			zero.print = "."
 		}
-		x <- umx_round(x, digits = digits, coerce = FALSE)
-	    if (any(ina <- is.na(x))) 
-	        x[ina] <- na.print
-			i0 <- !ina & x == 0
-	    if (zero.print != "0" && any(i0)) 
-	        x[i0] <- zero.print
+		x = umx_round(x, digits = digits, coerce = FALSE)
+		ina = is.na(x)
+		if (any(ina)){
+			x[ina] = na.print
+			i0 = !ina & x == 0	    	
+	    } 
+	    if (zero.print != "0" && any(i0)){
+			x[i0] = zero.print
+	    } 
 	    if (is.numeric(x) || is.complex(x)){
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(!is.na(file)){
-				R2HTML::HTML(x, file = file, Border = 0, append = FALSE, sortableDF= TRUE); 
-				system(paste0("open ", file))
-				print("Table opened in browser")
+			# from report = html
+			if(file =="html") file = "tmp.html"
+			R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF); 
+			system(paste0("open ", file))
+			print("Table opened in browser")
+			if(both) print(knitr::kable(x))
+
 	    }else{
-				print(knitr::kable(x))
+			print(knitr::kable(x))
 	    }
 	    invisible(x)
 	}
