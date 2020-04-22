@@ -331,8 +331,8 @@ umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use 
 				proportions = tabmatrix/sum(tabmatrix)
 				logliks = (log(proportions)*tabmatrix)
 				if(printFit){
-					cat(paste("\n -2 times saturated log-likelihood", minus2SatLogLik = -2*sum(logliks[!is.na(logliks)])))
 					sumres = summary(tempResult$estimatedModel)
+					cat(paste("\n -2 times saturated log-likelihood", minus2SatLogLik = -2*sum(logliks[!is.na(logliks)])))
 					cat(paste("\n -2 times fitted log-likelihood", sumres$Minus2LogLikelihood))
 					cat(paste("\n Difference in -2lnL units", diffchi = sumres$Minus2LogLikelihood - minus2SatLogLik))
 					cat(paste("\n Number of parameters of fitted model",sumres$estimatedParameters))

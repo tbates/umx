@@ -113,7 +113,6 @@ umxPath(c("l1", 'l2'), to = c("wt", "ht"), values= .2)
 
 Other Twin Modeling Functions: 
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},

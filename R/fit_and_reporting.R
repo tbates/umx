@@ -1733,9 +1733,9 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 	rowNames = sub("(_T)?1$", "", selDVs[1:nVar])
 	std_Estimates = data.frame(cbind(ai_std, ci_std, ei_std), row.names = rowNames, stringsAsFactors = FALSE);
 	message("## General IP path loadings")
-	x = sapply(FUN=seq_len, nFac)
+	x = sapply(FUN = seq_len, nFac)
 	names(std_Estimates) = c(paste0("ai", 1:nFac["a"]), paste0("ci", 1:nFac["c"]), paste0("ei", 1:nFac["e"]))
-	umx_print(std_Estimates, digits = digits, zero.print = ".")
+	umx_print(std_Estimates, digits = digits, zero.print = ".", report = report)
 
 	# Standard specific path coefficients ready to be stacked together
 	as_std = SD %*% as; # Standardized path coefficients (nVar specific factors matrices)
@@ -1754,7 +1754,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 		)
 	)
 	names(std_Specifics) = rowNames;
-	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
+	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".", report = report)
 
 	xmu_twin_print_means(model, digits = digits, report = report)
 	
@@ -1767,7 +1767,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 		genetic_correlations = data.frame(cbind(rA, rC, rE), row.names = rowNames);
 		# Make a table
 		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-		umx_print(genetic_correlations, digits = digits, zero.print = ".")
+		umx_print(genetic_correlations, digits = digits, zero.print = ".", report = report)
 	}
 	if(CIs){
 		message("Showing CIs in output not implemented yet. In the mean time, use summary(model) to view them.")
