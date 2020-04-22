@@ -3638,7 +3638,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.obs", "pairwise.complete.obs", "everything", "all.obs", "na.or.complete"), ordVar = 1, digits = NULL, strict = TRUE, allowCorForFactorCovs= FALSE){
 	format = match.arg(format)
 	use    = match.arg(use)
-	if(!class(df)=="data.frame"){
+	if(!class(df)[[1]]=="data.frame"){
 		df = data.frame(df)
 	}
 	if(any(umx_is_ordered(df, strict = strict))){

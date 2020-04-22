@@ -3063,7 +3063,7 @@ umxValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			obj$S@values[lats, lats][offDiag & freePaths] = newOffDiags			
 		}
 		
-		if(nVar ==0){
+		if(nVar == 0){
 			# model with no manifests... nothing to set. Maybe it's a model with only defVars or something.
 			return(obj)
 		}
