@@ -4734,7 +4734,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' coef(m1)
 #' 
 #' # But with more control using parameters
-#' parameters(m1, thresh="above", b=.3, pat = "G_to.*", digits = 3)
+#' parameters(m1, thresh="above", b=.3, pattern = "G_to.*", digits = 2)
 #'
 #' # ==================
 #' # = Model updating =
@@ -4754,11 +4754,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' confint(m1) # OpenMx's SE-based confidence intervals
 #' umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 #' 
-#' # And make a Figure in dot (.gv) format!
+#' # And make a Figure and open in browser
+#' \dontrun{
+#' 
 #' plot(m1, std = TRUE)
 #' 
 #' # If you just want the .dot code returned set file = NA
 #' plot(m1, std = TRUE, file = NA)
+#' }
 #' @docType package
 #' @name umx
 NULL
