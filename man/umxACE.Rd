@@ -66,6 +66,8 @@ umxACE(
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
+\item{residualizeContinuousVars}{Not yet implemented.}
+
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
 \item{dzCr}{The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).}
@@ -77,8 +79,6 @@ umxACE(
 \item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
 
 \item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
-
-\item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
 }
 \value{
 \itemize{
