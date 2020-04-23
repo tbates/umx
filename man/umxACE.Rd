@@ -22,7 +22,7 @@ umxACE(
   intervals = FALSE,
   tryHard = c("no", "yes", "ordinal", "search"),
   optimizer = NULL,
-  covMethod = c("fixed", "random"),
+  residualizeContinuousVars = FALSE,
   dzAr = 0.5,
   dzCr = 1,
   weightVar = NULL,
@@ -66,7 +66,7 @@ umxACE(
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
-\item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
+\item{residualizeContinuousVars}{Not yet implemented.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -124,6 +124,12 @@ read the "Matrices and Labels in ACE model" section in details below...
 and multiple examples.
 }
 \details{
+\strong{Covariates}
+umxACE handles covariates by modelling them in the means.
+On the plus side, there is no distributional assumption for this method. A downside of this approach is that all
+covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
+This can waste data. See also \code{\link[=umx_residualize]{umx_residualize()}}).
+
 \strong{Data Input}
 The function flexibly accepts raw data, and also summary covariance data
 (in which case the user must also supple numbers of observations for the two input data sets).
@@ -189,6 +195,11 @@ twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 
+\dontshow{
+mzData[1:80, ]
+dzData[1:80, ]
+}
+	
 # 3. Built & run the model, controlling for age in the means model
 m1 = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
 
@@ -398,7 +409,6 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 Other Twin Modeling Functions: 
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxCP}()},

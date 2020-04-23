@@ -261,7 +261,6 @@ m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData,
 Other Twin Modeling Functions: 
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},

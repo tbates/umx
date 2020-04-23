@@ -1733,9 +1733,9 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 	rowNames = sub("(_T)?1$", "", selDVs[1:nVar])
 	std_Estimates = data.frame(cbind(ai_std, ci_std, ei_std), row.names = rowNames, stringsAsFactors = FALSE);
 	message("## General IP path loadings")
-	x = sapply(FUN=seq_len, nFac)
+	x = sapply(FUN = seq_len, nFac)
 	names(std_Estimates) = c(paste0("ai", 1:nFac["a"]), paste0("ci", 1:nFac["c"]), paste0("ei", 1:nFac["e"]))
-	umx_print(std_Estimates, digits = digits, zero.print = ".")
+	umx_print(std_Estimates, digits = digits, zero.print = ".", report = report)
 
 	# Standard specific path coefficients ready to be stacked together
 	as_std = SD %*% as; # Standardized path coefficients (nVar specific factors matrices)
@@ -1754,7 +1754,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 		)
 	)
 	names(std_Specifics) = rowNames;
-	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".")
+	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".", report = report)
 
 	xmu_twin_print_means(model, digits = digits, report = report)
 	
@@ -1767,7 +1767,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 		genetic_correlations = data.frame(cbind(rA, rC, rE), row.names = rowNames);
 		# Make a table
 		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-		umx_print(genetic_correlations, digits = digits, zero.print = ".")
+		umx_print(genetic_correlations, digits = digits, zero.print = ".", report = report)
 	}
 	if(CIs){
 		message("Showing CIs in output not implemented yet. In the mean time, use summary(model) to view them.")
@@ -1954,45 +1954,49 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 	tablePub = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
-	# names(tablePub)   <- c("Model"     , "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
-	names(tablePub)     <- c("Model"     , "EP", "\u0394 -2LL", "\u0394 df", "p", "AIC", "Compare with Model")
+	tablePub$deltaAIC = tablePub[, "AIC"] - tablePub[1, "AIC"]
+	# rearrange
+	tablePub = tablePub[,c("comparison", "ep", "diffLL", "diffdf", "p", "AIC", "deltaAIC", "base")]
+
+	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	# U+2206 = math delta
 	# Fix problem where base model has compare set to its own name, and name set to NA
 	nRows = dim(tablePub)[1]
 	for (i in 1:nRows) {
-		if(is.na(tablePub[i, "Model"])){
-			tablePub[i, "Model"] = tablePub[i, "Compare with Model"] 
-			tablePub[i, "Compare with Model"] = NA
+		if(is.na(tablePub[i, "comparison"])){
+			tablePub[i, "comparison"] = tablePub[i, "base"] 
+			tablePub[i, "base"] = NA
 		}
-		# TODO umxCompare: Could delete lines where model is compared to itself
 	}
 	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^3), digits = digits, addComparison = NA)
-	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	if(report == "inline"){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
-			thisPValue = tableOut[i, 9]
+			thisPValue = tableOut[i,"p"]
 			if(!is.na(thisPValue) && !is.nan(thisPValue)){
-				if(tableOut[i, 9] < .05){
-					did_didnot = ". This caused a significant loss of fit "
+				if(tableOut[i, "p"] < .05){
+					this = ". This caused a significant loss of fit "
 				} else {
-					did_didnot = ". This did not lower fit significantly "
+					this = ". This did not lower fit significantly "
 				}
 				message(
-				"The hypothesis that ", tablePub[i,"Model"], 
-				" was tested by dropping ", tablePub[i,"Model"],
-				" from ", tablePub[i,"Compare with Model"], 
-				did_didnot, 
-				"(\u03C7\u00B2(", tablePub[i, 4], ") = ", round(tablePub[i, 3], 2), # \u03A7 = Chi \u00B2 = superscript 2
-				", p = ", tablePub[i,"p"], ": AIC = ", round(tablePub[i,"AIC"], digits), ")."
+				"The hypothesis that ", omxQuotes(tablePub[i,"comparison"]), 
+				" was tested by dropping ", tablePub[i,"comparison"],
+				" from ", omxQuotes(tablePub[i, "base"]), 
+				this, "(\u03C7\u00B2(", tablePub[i, "diffdf"], ") = ", round(tablePub[i, "diffLL"], 2), # \u03A7 = Chi \u00B2 = superscript 2
+				", p = ", tablePub[i,"p"], ": AIC = ", round(tablePub[i,"AIC"], digits), " change in AIC = ", round(tablePub[i,"deltaAIC"], digits), ")."
 				)
 			}
 		}
 	}
+
+	# rename for printing to console
+	names(tablePub) = c("Model", "EP", "\u0394 -2LL" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model")
+	htmlNames       = c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "&Delta AIC", "Compare with Model")
 	
 	if(report == "html"){
 		tableHTML = tablePub
-		names(tableHTML) <- c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "Compare with Model")
+		names(tableHTML) = htmlNames
 		print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function = function(x){x})
 		# digitList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
 		# nsmallList        =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)

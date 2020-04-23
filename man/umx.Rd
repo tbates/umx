@@ -45,7 +45,7 @@ umxSummary(m1, std = TRUE) #also display parameter estimates
 coef(m1)
 
 # But with more control using parameters
-parameters(m1, thresh="above", b=.3, pat = "G_to.*", digits = 3)
+parameters(m1, thresh="above", b=.3, pattern = "G_to.*", digits = 2)
 
 # ==================
 # = Model updating =
@@ -65,11 +65,14 @@ umxCompare(m1, m2)
 confint(m1) # OpenMx's SE-based confidence intervals
 umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 
-# And make a Figure in dot (.gv) format!
+# And make a Figure and open in browser
+\dontrun{
+
 plot(m1, std = TRUE)
 
 # If you just want the .dot code returned set file = NA
 plot(m1, std = TRUE, file = NA)
+}
 }
 \references{
 \itemize{
@@ -130,7 +133,6 @@ Other Super-easy helpers:
 Other Twin Modeling Functions: 
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},

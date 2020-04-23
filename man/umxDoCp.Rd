@@ -75,7 +75,6 @@ m1 = umxDoCp(var1, var2, mzData= mzData, dzData= dzData, sep = "_T", causal= TRU
 Other Twin Modeling Functions: 
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
