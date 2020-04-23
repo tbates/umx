@@ -207,7 +207,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		message("Polite note: It's better to use 'sep'. This might become compulsory as it helps umx manage variable names in twin models.")
 		# stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
 	}else{
-		fullVars = tvars(selDVs , sep = sep, suffixes= 1:nSib)
+		fullVars = tvars(selDVs  , sep = sep, suffixes= 1:nSib)
 		fullCovs  = tvars(selCovs, sep = sep, suffixes= 1:nSib)
 	}
 
@@ -233,10 +233,12 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		# = Make mxData, dropping any unused columns =
 		# ============================================
 		usedVars = c(fullVars, fullCovs)
-		umx_msg(usedVars)
-		umx_msg(fullVars)
-		umx_msg(fullCovs)
-		umx_msg(type)
+		if(verbose){
+			umx_msg(usedVars)
+			umx_msg(fullVars)
+			umx_msg(fullCovs)
+			umx_msg(type)
+		}
 
 		mzData = xmu_make_mxData(mzData, type = type, manifests = usedVars, fullCovs = fullCovs, numObs = numObsMZ, dropMissingDef = dropMissingDef)
 		dzData = xmu_make_mxData(dzData, type = type, manifests = usedVars, fullCovs = fullCovs, numObs = numObsDZ, dropMissingDef = dropMissingDef)

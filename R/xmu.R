@@ -465,14 +465,15 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 			# no means
 		}
 	}
+
 	if(!is.null(int)){
 		message(msg) 
-		umx_print(int, digits = digits)
-		if(report == "html"){
-			# depends on R2HTML::HTML
-			R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE); 
-			umx_open("tmp.html")
-		}
+		umx_print(int, digits = digits, file=report, append = TRUE, sortableDF = TRUE)
+		# if(report == "html"){
+		# 	# depends on R2HTML::HTML
+		# 	R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE);
+		# 	umx_open("tmp.html")
+		# }
 	}		
 }
 

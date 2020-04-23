@@ -3363,6 +3363,9 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, append = FALSE, sortableDF= TRUE, both = TRUE, ...){
 	# depends on R2HTML::HTML and knitr::kable
 	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
+	if(!is.na(file) && file == "markdown"){
+		file = NA
+	}
 	if(class(x)[[1]] == "character"){
 		print(x)
 	}else if(class(x)[[1]] != "data.frame"){
@@ -3382,7 +3385,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 			x[abs(x) < suppress] = 0
 			zero.print = "."
 		}
-		x    = umx_round(x, digits = digits, coerce = FALSE)
+		x = umx_round(x, digits = digits, coerce = FALSE)
 		isNA = is.na(x)
 		if (any(isNA)){
 			x[isNA] = na.print
@@ -3392,17 +3395,17 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 	    }
 	    if (zero.print != "0" && any(isZero)){
 			x[isZero] = zero.print
-	    } 
+	    }
 	    if (is.numeric(x) || is.complex(x)){
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(!is.na(file)){
-			# from report = html
+			# From report = html
 			if(file == "html"){
 				file = "tmp.html"
 			}
 			R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF)
 			system(paste0("open ", file))
-			print("Table opened in browser")
+			# print("Table opened in browser")
 			if(both){
 				print(knitr::kable(x))
 			}

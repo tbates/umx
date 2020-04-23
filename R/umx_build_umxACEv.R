@@ -443,12 +443,7 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		colNames = c("A", "D", "E")
 	}
 	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-	Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-	if(report == "html"){
-		# depends on R2HTML::HTML
-		R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE); 
-		umx_open("tmp.html")
-	}
+	umx_print(Estimates, digits = digits, zero.print = zero.print, append=FALSE, sortableDF=TRUE, both=TRUE, na.print="NA", file=report)
 	xmu_twin_print_means(model, digits = digits, report = report)
 	
 	if(extended == TRUE) {
