@@ -4,7 +4,7 @@
 \alias{FishersMethod}
 \title{Fishers Method of combining p-values.}
 \usage{
-FishersMethod(pvalues)
+FishersMethod(pvalues, ...)
 }
 \arguments{
 \item{pvalues}{A vector of p-values, e.g. c(.041, .183)}

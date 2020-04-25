@@ -3728,12 +3728,14 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' @family Miscellaneous Stats Helpers
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
 #' Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi:10.2307/2681650. JSTOR 2681650.
-#' See also Stouffer's method for combining Z scores, which allow weighting.
+#' See also Stouffer's method for combining Z scores, which allows weighting.
 #' Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton #' University Press.
 #' @md
 #' @examples
 #' FishersMethod(c(.041, .378))
-FishersMethod <- function(pvalues){
+FishersMethod <- function(pvalues, ...){
+	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+	pvalues = c(pvalues, unlist(dot.items))
 	pchisq( -2 * sum(log(pvalues)), df= (2 * length(pvalues)), lower.tail = FALSE)
 }
 
