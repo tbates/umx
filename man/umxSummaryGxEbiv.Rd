@@ -12,13 +12,12 @@ umxSummaryGxEbiv(
   location = "topleft",
   separateGraphs = FALSE,
   file = getOption("umx_auto_plot"),
-  comparison = FALSE,
+  comparison = NULL,
   std = NULL,
   reduce = FALSE,
   CIs = NULL,
   report = c("markdown", "html"),
   returnStd = NULL,
-  show = c("std", "raw"),
   ...
 )
 }
@@ -35,7 +34,7 @@ umxSummaryGxEbiv(
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
-\item{comparison}{mxCompare model with comparison (default = FALSE).}
+\item{comparison}{mxCompare model with this model if offered up (default = NULL).}
 
 \item{std}{Whether to show the standardized model (not implemented! TRUE)}
 
@@ -46,8 +45,6 @@ umxSummaryGxEbiv(
 \item{report}{markdown or html (html opens in browser)}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
-
-\item{show}{Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")}
 
 \item{...}{Optional additional parameters}
 }
@@ -62,8 +59,8 @@ umxSummaryGxEbiv(
 \examples{
 data(twinData)
 df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "")
-mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
-dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
+mzData  = subset(df, zygosity \%in\% c("MZFF", "MZMM"))
+dzData  = subset(df, zygosity \%in\% c("DZFF", "DZMM", "DZOS"))
 
 \dontrun{
 m1 = umxGxEbiv(selDVs = "wt", selDefs = "ht", 

@@ -70,16 +70,11 @@
 #' }
 umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
-	if(tryHard == "yes"){
-		tryHard = "yes"
-	}
 	nSib = 2;
 	# =================
 	# = Set optimizer =
 	# =================
-	if(!is.null(optimizer)){
-		umx_set_optimizer(optimizer)
-	}
+	if(!is.null(optimizer)) umx_set_optimizer(optimizer)
 	if(!is.null(sep)){
 		if(length(sep) > 1){
 			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
@@ -104,7 +99,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 	umx_check_names(selDVs, dzData)
 	message("selDVs: ", omxQuotes(selDVs))
 
-	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for gxe")
+	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for GxEbiv")
 	# TODO umxGxEbiv Check Defs are not correlated 1 or 0
 	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins
 	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
@@ -302,11 +297,10 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @param CIs Confidence intervals (FALSE)
 #' @param xlab label for the x-axis of plot
 #' @param location default = "topleft"
-#' @param comparison mxCompare model with comparison (default = FALSE).
+#' @param comparison mxCompare model with this model if offered up (default = NULL).
 #' @param reduce  Whether to run and tabulate a complete model reduction...(Defaults to FALSE)
 #' @param separateGraphs Std and raw plots in separate graphs? (default = FALSE)
 #' @param report markdown or html (html opens in browser)
-#' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
@@ -320,8 +314,8 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @examples
 #' data(twinData)
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "")
-#' mzData  = subset(df, zygosity %in%  c("MZFF", "MZMM"))
-#' dzData  = subset(df, zygosity %in%  c("DZFF", "DZMM", "DZOS"))
+#' mzData  = subset(df, zygosity %in% c("MZFF", "MZMM"))
+#' dzData  = subset(df, zygosity %in% c("DZFF", "DZMM", "DZOS"))
 #'
 #' \dontrun{
 #' m1 = umxGxEbiv(selDVs = "wt", selDefs = "ht", 
@@ -331,12 +325,8 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), comparison = FALSE, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), returnStd = NULL, show = c("std", "raw"),...) {
-	show = match.arg(show, c("std", "raw"))
-	if(show != "std"){
-		std = FALSE
-		# message("Polite message: in next version, show= will be replaced with std=TRUE/FALSE/NULL")
-	}
+umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), comparison = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), returnStd = NULL,...) {
+	message("umxSummaryGxEbiv is beta code: You likely might also want to run summary(model) ")
 	report = match.arg(report)
 	umx_has_been_run(model, stop = TRUE)
 	
@@ -344,15 +334,12 @@ umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "to
 		message("For GxE, returnStd, extended, std, comparison or CIs are not yet implemented...")
 	}
 
-	if(is.null(model)){
-		message("umxSummaryGxEbiv calls plot.MxModelGxEbiv for a twin moderation plot. A use example is:\n umxSummaryGxEbiv(model, location = \"topright\")")
-		stop();
-	}
 	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
-	selDVs = model$MZm$expectation$dims
-	nVar <- length(selDVs)/2;
-	# TODO umxSummaryACE these already exist if a_std exists..
-	# TODO replace all this with umx_standardizeACE
+	selDVs = xmu_twin_get_var_names(model, source = "observed")
+	nVar = length(selDVs)
+
+	# TODO umxSummaryGxEbiv these already exist if a_std exists..
+	# TODO replace all this with umx_standardizeGxEbiv
 	# Calculate standardized variance components
 	# chA  <- model$MZ.chA$values # Path coefficients
 	# message("chA")
@@ -360,15 +347,15 @@ umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "to
 
 	tmp = cbind(model$top.aBeta1$values, model$top.cBeta1$values, model$top.eBeta1$values)
 	tmp = data.frame(tmp)
-	names(tmp) <-c("aBeta1", "cBeta1", "eBeta1")
+	names(tmp) = c("aBeta1", "cBeta1", "eBeta1")
 	message("Betas on defVar effects")
-	umx_print(tmp, digits=3)
+	umx_print(tmp, digits = digits)
 	
 	tmp = cbind(model$top.aBeta2$values, model$top.cBeta2$values, model$top.eBeta2$values)
 	tmp = data.frame(tmp)
 	message("Betas on DV effects")
 	names(tmp) <-c("aBeta2", "cBeta2", "eBeta2")
-	umx_print(tmp, digits = 3)
+	umx_print(tmp, digits = digits)
 
 	# message("Amz")
 	# print(model$MZ$Amz$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
@@ -390,6 +377,7 @@ umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "to
 	# umxPlotGxEbiv(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
 
 	if(reduce){
+		stop("Sorry, umxReduce not yet implemented for umxGxEbiv")
 		# TODO umxReduce not yet implemented for umxGxEbiv!
 		umxReduce(model = model, report = report)
 	}

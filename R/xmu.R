@@ -186,6 +186,9 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 			round(-2 * logLik(model), digits = digits))
 		)
 	} else {
+		if(!umx_is_MxModel(comparison)){
+			stop("xmu_show_fit_or_comparison: 'comparison' must be a model (or left NULL). You gave me a ", class(comparison)[[1]])
+		}
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = digits)
 	}		
