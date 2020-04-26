@@ -348,20 +348,20 @@ umxSummaryGxEbiv <- function(model = NULL, digits = 2, xlab = NA, location = "to
 	tmp = cbind(model$top.aBeta1$values, model$top.cBeta1$values, model$top.eBeta1$values)
 	tmp = data.frame(tmp)
 	names(tmp) = c("aBeta1", "cBeta1", "eBeta1")
-	message("Betas on defVar effects")
+	message("a, c, and e Betas on defVar")
 	umx_print(tmp, digits = digits)
 	
 	tmp = cbind(model$top.aBeta2$values, model$top.cBeta2$values, model$top.eBeta2$values)
 	tmp = data.frame(tmp)
-	message("Betas on DV effects")
-	names(tmp) <-c("aBeta2", "cBeta2", "eBeta2")
+	message("a. c, and e Betas on DV")
+	names(tmp) = c("aBeta2", "cBeta2", "eBeta2")
 	umx_print(tmp, digits = digits)
 
 	# message("Amz")
 	# print(model$MZ$Amz$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
+
 	# message("Adz")
 	# umx_print(model$DZ$Adz$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
-
 	# message("C from DZ model")
 	# umx_print(model$DZ$C$result) # chA %*% top.PsAdz %*% t(chA)),  # variance component A
 	# message("E from DZ model")
@@ -423,14 +423,14 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 #' umxPlotGxEbiv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
 #' }
 umxPlotGxEbiv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
-	message("umxGxEbiv plot is in early beta: expect problems, and let me know what they are!")
-	if(class(x) != "MxModelGxEbiv"){
+	message("umxGxEbiv plot is in early alpha: it isn't feature complete and has bugs as it's just the umxGxE code. Let me know how you'd like this model displayed")
+	if(class(x)[[1]] != "MxModelGxEbiv"){
 		stop("The first parameter of umxPlotGxE must be a GxEbiv model, you gave me a ", class(x))
 	}
 	model = x # to remind us that x has to be a umxGxEbiv model
 	# get unique values of moderator
-	mzData = model$MZ$data$observed
-	dzData = model$DZ$data$observed
+	mzData  = model$MZ$data$observed
+	dzData  = model$DZ$data$observed
 	selDefs = names(mzData)[3:4]
 	if(is.na(xlab)){
 		xlab = selDefs[1]
