@@ -4,7 +4,13 @@
 \alias{xmu_data_missing}
 \title{Drop rows with missing definition variables}
 \usage{
-xmu_data_missing(data, selVars, sep = NULL, dropMissingDef = TRUE)
+xmu_data_missing(
+  data,
+  selVars,
+  sep = NULL,
+  dropMissingDef = TRUE,
+  hint = "data"
+)
 }
 \arguments{
 \item{data}{The dataframe to check for missing variables}
@@ -14,6 +20,8 @@ xmu_data_missing(data, selVars, sep = NULL, dropMissingDef = TRUE)
 \item{sep}{A sep if this is twin data and selVars are baseNames (default NULL)}
 
 \item{dropMissingDef}{Whether to drop the rows, or just stop (TRUE)}
+
+\item{hint}{info for message to user ("data")}
 }
 \value{
 \itemize{
@@ -26,8 +34,13 @@ Definition variables can't be missing. This function helps with that.
 \examples{
 tmp = mtcars; 
 tmp[1,]; tmp[1, "wt"] = NA
-tmp = xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissingDef = TRUE)
-tmp[1,]
+tmp = xmu_data_missing(tmp, selVars = "wt", sep= NULL, dropMissingDef= TRUE, hint= "mtcars")
+dim(mtcars)
+dim(tmp)
+
+\dontrun{
+tmp = xmu_data_missing(tmp, selVars = "wt", sep= NULL, dropMissingDef= FALSE, hint= "mtcars")
+}
 }
 \seealso{
 \itemize{

@@ -489,6 +489,7 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 #' @param selVars The variables to check for missingness
 #' @param sep A sep if this is twin data and selVars are baseNames (default NULL)
 #' @param dropMissingDef Whether to drop the rows, or just stop (TRUE)
+#' @param hint info for message to user ("data")
 #' @return - data with missing rows dropped
 #' @export
 #' @family xmu internal not for end user
@@ -497,9 +498,14 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 #' @examples
 #' tmp = mtcars; 
 #' tmp[1,]; tmp[1, "wt"] = NA
-#' tmp = xmu_data_missing(tmp, selVars = "wt", sep = NULL, dropMissingDef = TRUE)
-#' tmp[1,]
-xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE) {
+#' tmp = xmu_data_missing(tmp, selVars = "wt", sep= NULL, dropMissingDef= TRUE, hint= "mtcars")
+#' dim(mtcars)
+#' dim(tmp)
+#' 
+#' \dontrun{
+#' tmp = xmu_data_missing(tmp, selVars = "wt", sep= NULL, dropMissingDef= FALSE, hint= "mtcars")
+#' }
+xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hint= "data") {
 	if(!is.null(sep)){
 		selVars = tvars(selVars, sep)
 	}
@@ -509,11 +515,11 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE) {
 		return(data)
 	}else{
 		if(dropMissingDef){
-			message(sum(!OK), " row(s) dropped due to missing definition variable(s)")
+			message(sum(!OK), " row(s) dropped from ", omxQuotes(hint), " due to missing definition variable(s)")
 			return(data[OK, ])
 		} else {
-			stop(sum(!OK), " rows of data have NA definition variables. Set dropMissingDef = TRUE, or remove these yourself with
-data[complete.cases(data[,selVars]),]")
+			stop(sum(!OK), " rows of ", omxQuotes(hint), " have NA definition variables. Set dropMissingDef = TRUE, or remove these yourself with
+", hint, "[complete.cases(", hint, "[,selVars]),]")
 		}
 	}
 }

@@ -1577,15 +1577,15 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	}
 	
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
-	selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:2)
-	selDefs = umx_paste_names(selDefs, sep = sep, suffixes = 1:2)
+	selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:nSib)
+	selDefs = umx_paste_names(selDefs, sep = sep, suffixes = 1:nSib)
 	if(any(selDefs %in% selDVs)) {
 		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");
 	}
-	if(length(selDefs) != 2){
+	if(length(selDefs) != nSib){
 		warning("selDefs must be length = 2");
 	}
-	if(length(selDVs) != 2){
+	if(length(selDVs) != nSib){
 		stop("DV list must be length = 2: 1 variable for each of 2 twins... You tried ", length(selDVs)/nSib)
 	}
 
@@ -1607,8 +1607,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	dzData = dzData[,selVars]
 	mzData = mzData[,selVars]
 	
-	mzData = xmu_data_missing(mzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef)
-	dzData = xmu_data_missing(dzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef)
+	mzData = xmu_data_missing(mzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef, hint= "mzData")
+	dzData = xmu_data_missing(dzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef, hint= "dzData")
 
 	model = mxModel(name,
 		mxModel("top",		
@@ -1663,7 +1663,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# } else {
 				# mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeans")
 			# },
-			mxAlgebra(name = "expMeanMZ", cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad)),
+			mxAlgebra(name = "expMean", cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad)),
 
 			# Compute ACE variance components
 			mxAlgebra(name = "A11", (top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def1)),
@@ -1687,7 +1687,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			),
 			# Data & Objective
 			mxData(mzData, type = "raw"),
-			mxExpectationNormal("expCovMZ", means = "expMeanMZ", dimnames = selDVs),
+			mxExpectationNormal("expCovMZ", means = "expMean", dimnames = selDVs),
 			mxFitFunctionML()
 		),
 	    mxModel("DZ",
@@ -1719,13 +1719,13 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			mxAlgebra(name = "Def1Rquad", top.betaQuad%*% Def1^2),
 			mxAlgebra(name = "Def2Rlin" , top.betaLin %*% Def2  ),
 			mxAlgebra(name = "Def2Rquad", top.betaQuad%*% Def2^2),
-			mxAlgebra(cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeanDZ"),
+			mxAlgebra(name = "expMean", cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad)),
 			# mxAlgebra(name="Def1R", top.betas%*%rbind(Def1, Def1^2)),
 			# mxAlgebra(name="Def2R", top.betas%*%rbind(Def2, Def2^2)),
 			# mxAlgebra(name="expMeans", cbind(top.Means+Def1R, top.Means+Def2R)),
 			# Data & Objective
 	    	mxData(dzData, type = "raw"),
-			mxExpectationNormal("expCovDZ", means = "expMeanDZ", dimnames = selDVs),
+			mxExpectationNormal("expCovDZ", means = "expMean", dimnames = selDVs),
 			mxFitFunctionML()
 	    ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))

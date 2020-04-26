@@ -99,38 +99,20 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 	umx_check_names(selDVs, dzData)
 	message("selDVs: ", omxQuotes(selDVs))
 
-	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for GxEbiv")
+	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for umxGxEbiv")
 	# TODO umxGxEbiv Check Defs are not correlated 1 or 0
 	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins
 	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	rawVar    = diag(var(mzData[,selDVs], na.rm = TRUE))[1]
 	startMain = sqrt(c(.8, .0 ,.6) * rawVar)
-	
+
 	selVars   = c(selDVs, selDefs)
 	# drop any unused variables
 	dzData = dzData[ , selVars]
 	mzData = mzData[ , selVars]
-	
-	if(any(is.na(mzData[,selDefs]))){
-		if(dropMissingDef){
-			missingT1 = is.na(mzData[,selDefs[1]])
-			missingT2 = is.na(mzData[,selDefs[2]])
-			missDef = (missingT1 | missingT2)
-			message(sum(missDef), " mz rows dropped due to missing def var for Twin 1 or Twin 2 or both")
-			mzData = mzData[!missDef, ]
-		} else {
-			stop("Some rows of mzData have NA definition variables. Remove these yourself, or set dropMissing = TRUE")
-		}
-	}
-	if(any(is.na(dzData[,selDefs]))){
-		if(dropMissingDef){
-			missDef = is.na(dzData[,selDefs[1]]) | is.na(dzData[,selDefs[2]])
-			message(sum(missDef), " dz rows dropped due to missing def var for Twin 1 or Twin 2 or both")
-			dzData = dzData[!missDef, ]
-		} else {
-			stop("Some rows of dzData have NA definition variables. Remove these yourself, or set dropMissing = TRUE")
-		}
-	}
+
+	mzData = xmu_data_missing(mzData, selVars = selDefs, dropMissingDef=dropMissingDef, hint="mzData")
+	dzData = xmu_data_missing(dzData, selVars = selDefs, dropMissingDef=dropMissingDef, hint="dzData")
 	model = mxModel(name,
 		mxModel("top",
 			# TODO:	Add covariates to G x E biv model
@@ -174,6 +156,11 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 
 			# Assemble Cholesky decomposition for twin 1 and twin 2 
 			umxMatrix("PsAmz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
+			# 1  .  1  .
+			# .  1  .  1
+			# 1  .  1  .
+			# .  1  .  1
+			
 			umxMatrix("PsAdz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0,.5, 0, 1, 0,.5, 1, 0, 1)),
 			umxMatrix("PsC"  , "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
 	
@@ -425,7 +412,7 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 umxPlotGxEbiv <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...) {
 	message("umxGxEbiv plot is in early alpha: it isn't feature complete and has bugs as it's just the umxGxE code. Let me know how you'd like this model displayed")
 	if(class(x)[[1]] != "MxModelGxEbiv"){
-		stop("The first parameter of umxPlotGxE must be a GxEbiv model, you gave me a ", class(x))
+		stop("The first parameter of umxPlotGxE must be a umxGxEbiv model, you gave me a ", class(x))
 	}
 	model = x # to remind us that x has to be a umxGxEbiv model
 	# get unique values of moderator
