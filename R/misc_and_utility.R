@@ -5213,7 +5213,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	if(!all(is.na(twinIDs2keep))){
 		if(any(!twinIDs2keep %in% levelsOfTwinID)){
-			stop("One or more twinIDs you reuqested to keep do not occur in the data:", 
+			stop("One or more twinIDs you requested to keep do not occur in the data:", 
 				omxQuotes(twinIDs2keep[which(!(twinIDs2keep %in% levelsOfTwinID))])
 			)
 		} else {
@@ -5241,10 +5241,10 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 		newNames = paste0(vars2keep, "_T", levelsOfTwinID[i])
 		if(i == 1){
 			previous = data[data[,twinID] %in% levelsOfTwinID[i], allVars]
-			previous = umx_rename(previous, replace = newNames, old = vars2keep)
+			previous = umx_rename(previous, from = vars2keep, to = newNames)
 		} else {
 			current  = data[data[,twinID] %in% levelsOfTwinID[i], famIDPlus_vars2keep]
-			current  = umx_rename(current, replace = newNames, old = vars2keep)			
+			current  = umx_rename(current, from = vars2keep, to = newNames)			
 			previous = merge(previous, current, by = famID, all.x = TRUE, all.y = TRUE)
 		}
 		# cat(paste0(levelsOfTwinID[i], " "))
