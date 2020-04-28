@@ -1,9 +1,63 @@
+# umx 4.0.0
+* May 2020 R 4.0.0
+* NEW: Covariates in twin models for ordinal and continuous manifests!
+	* `m1 = umxACE(selVars = "wt", selCovs= "age", sep="_T")`
+* NEW: `umxTwinMaker`: Make twin models by specifying *just the within-twin paths for one twin*
+	* umxTwinMaker handles making twin2, variance components covariances, MZ and DZ groups, makes a `umxSuperModel` and runs it!
+	* `plot()` and "std= TRUE" work for any model now! 
+* NEW: `umxDoCp` Path-based Direction of causation model.
+* NEW: `umxSummaryACE` prints a means table! including for intercepts only, no means model, and intercepts + covariate betas. Other models gain this also.
+* NEW: `umxRenameMatrix` wrap up the multiple lines of code needed to modify a matrix in OpenMx.
+* IMPROVED: twin Models print out means now.
+* IMPROVED: `umxCompare` includes Delta-AIC.
+* IMPROVED: `xmu_make_mxData` now handles cov matrix input (added `numObs` parameter).
+* IMPROVED: `umx_print` gains append, sortable, and "both" (md and html) options.
+* IMPROVED: `umxThresholdMatrix` supports leaving all thresholds free with `method= "allFree"`	h/t @NathanGillespie for catching this.
+* IMPROVED: `xmu_data_missing` can `hint=` to user which dataset had missingness.
+* IMPROVED:  standardize on expMean as name of means matrix even when it's a local algebra.
+* IMPROVED:  increase use of `xmu_data_missing` helper.
+* IMPROVED:  `umxSummaryGxEbiv` working, with a note that the whole function is beta.	h/t @MikeNeale for catching this.
+* IMPROVED: `FishersMethod`: accepts p-values for meta-analysis in "..." argument.
+* IMPROVED: `umx_rot` can NA the last value.
+* IMPROVED:  `parameters` supports standartdizing parameters (closes #92)	.
+* IMPROVED: `power.ACE.test` now prints the parameter and value when testing power (closes #111).
+* IMPROVED: `umx_print` to react correctly to report as an input to file more mergers of print to console and to html.
+* IMPROVED: `umx_make_twin_data_nice` can turn numeric zyg column into human readable "MZMM" etc.
+* IMPROVED: `umx_make_TwinData` has dzAr.
+* IMPROVED: `umxIP` gains report option.
+* IMPROVED: `umx_check` can concatenate extra messages, and is by default polite with messages.
+* IMPROVED: `namez` handles class(list) objects, returning $ components.
+* IMPROVED: `umx_var` upgrades input to df (e.g. if you feed it a column, it now works).
+* IMPROVED: `xmuTwinUpgradeMeansToCovariateModel` uses the incoming model's thresholds name.
+* IMPROVED:  better labels for output tables.
+* IMPROVED: `umxCP` plot prints model name.
+* IMPROVED: `umxIP` plot prints model name.
+* IMPROVED: `umx_is_ordered` can process mxData as well as df.
+* IMPROVED: `umxThresholdMatrix` reimplemented `l_u_bound` - wasn't working since move to threshold algebra some years back #ht @nathangillespie for catching this!
+* REPLACE: `parallel::detectCores` --> ` imxGetNumThreads` (as OpenMx does).
+* NEW: `umxTwinUpgradeMeansToCovariateModel` function to add def-based covariates to means in umx twin models.
+* NEW: `xmu_data_missing` helper to drop rows with missing def vars or stop and alert the user to do this.
+* NEW: `xmu_extract_column` to allow mxData
+* NEW: `xmu_twin_add_WeightMatrices` helper.
+* NEW: `umxTwinAddMeansModel` will add a means model to a twin model (not finished!)
+* NEW: `xmuDefMean` helper
+* NEW: `xmuDefBetas` helper
+* HELP `umxACE` improved tutorial, more tips * IMPROVED `plot` for `umxACE` now prints model name on the diagram.
+* IMPROVED `plot` for `umxACEv` now prints model name on the diagram.
+* IMPROVED `plot` for `umxACE` now prints tips for print.
+* IMPROVED `plot` for `umxACEv` now prints tips for print.
+* NEW `xmu_twin_upgrade_selDvs2SelVars` helper.
+* NEW: `xmu_make_TwinSuperModel` handles selCovs
+* HELP: `umxACE` covariate examples
+* HELP: `umx_explode_twin_names` links for findability
+* IMPROVED: `umx_check` handles ... items better
+* IMPROVED: `xmu_make_mxData` handles dropping rows, alerting about variance ratios.
+* IMPROVED: `umx_rename` now uses "from=, to=" format for renaming columns.
+* IMPROVED: `update a call to `umx_rename` which was using old/replace  instead of from/to (and so generating a polite note).
+
 # umx 3.1.0
-* April 2020 R 4.0.0 compatibility
-* NEW: Arbitrary covariates in twin models working for continuous data!
-* BETA: `umxTwinMaker`: Make twin models by specifying *just the within-twin paths for one twin*: This makes twin2, adds covariances for variance components, creates the MZ and DZ groups, and makes and runs a `umxSuperModel` plot() and std= TRUE work for any model now! 
+* 13 March 2020 R 4.0.0 compatibility
 * BETA: `plot` for `umxTwinMaker` models!!
-* NEW: `umxDoCp` Path-based Direction of causation model
 * NEW: data for example with direction of causation work on umxSummary for DoC
 * NEW: `xmu_path2twin`  twin model helper for `umxPath` users 
 * NEW: `xmu_path_regex` helper for making twin models for `umxPath` users
@@ -13,7 +67,7 @@
 * IMPROVED: `umxFitIndices` Many new indices! @bwiernik
 * IMPROVED: `umxPath(v.m0 = )` now uses values (if provided) to set starts for variance
 * IMPROVED: `umx_check_parallel` use all cores (instead of half) by default
-* IMPROVED: `umxPlotACE` variable labels (trimmed off _T1 like umxPlotCP does
+* IMPROVED: `umxPlotACE` variable labels (trimmed off _T1 like `umxPlotCP` does
 * IMPROVED: `umxDoCp` bound e/es above zero
 * IMPROVED: `umxDoCp` start with all variance as specific
 * IMPROVED: `power.ACE.test`
