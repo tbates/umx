@@ -39,7 +39,10 @@ matrix or vector, it will be upgraded to a dataframe)}
 Return the names of any ordinal variables in a dataframe
 }
 \examples{
+x = data.frame(ordered(rbinom(100,1,.5))); names(x) = c("x")
+umx_is_ordered(x, summaryObject= TRUE) # all ordered factors including binary
 tmp = mtcars
+
 tmp$cyl = ordered(mtcars$cyl) # ordered factor
 tmp$vs = ordered(mtcars$vs) # binary factor
 umx_is_ordered(tmp) # true/false
