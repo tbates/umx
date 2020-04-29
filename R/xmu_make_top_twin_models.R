@@ -538,21 +538,15 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 	umx_check(all(c("MZ", "DZ", "top") %in% names(model)), "stop", message= "need a model with top, MZ and DZ sub-models")	
 	umx_check(!is.null(model$top$expMean), "stop", "Model must have $top$expMean for xmuTwinUpgradeMeansToCovariateModel to work.")
 
-	# fullVars = c("IQ1", "Grit1", "Openness1", "IQ2", "Grit2", "Openness2");
-	# fullCovs = c("age1", "sex1", "age2", "sex2");
 	baseVars = umx_explode_twin_names(fullVars, sep = sep)$baseNames
 	baseCovs = umx_explode_twin_names(fullCovs, sep = sep)$baseNames
-	nVar = length(baseVars)
-	nCov = length(baseCovs)
+	nVar     = length(baseVars)
+	nCov     = length(baseCovs)
 
 	# 1. Make a betaDef matrix
 	betaLabels = paste0(rep(baseCovs, times= nVar), "_b_Var", rep(1:nVar, each= nCov) )
-	# umx_msg(fullVars)
-	# umx_msg(baseCovs)
-	# umx_msg(betaLabels)
 	meansBetas = umxMatrix("meansBetas", "Full", nrow = nCov, ncol = nVar, free = TRUE, labels= betaLabels, values = 0, lbound = -2, ubound = 2)
 	dimnames(meansBetas) = list(baseCovs, baseVars)
-	# umx_msg(meansBetas$labels)
 	# age  "age_b_Var1" "age_b_Var2" "age_b_Var3"
 	# sex  "sex_b_Var1" "sex_b_Var2" "sex_b_Var3"
 

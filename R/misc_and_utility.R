@@ -5157,33 +5157,54 @@ umx_rot <- function(vec, na.last=FALSE){
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' # ================================================================
-#' # = First we have to make a long format file to base the demo on =
-#' # ================================================================
-# # 1. Drop the 'age' column (we have age1 and age2, and age won't make sense in a long format
+#' # ==============================================
+#' # = First make a long format file for the demo =
+#' # ==============================================
+# # 1. Drop the 'age' column (we have in addition "age1" and "age2", and "age" 
+# # will clash in long format
+#' data(twinData)
 #' tmp = twinData[, -2]
 # # 2. Add fake twinID identifiers for each twin, else this data set won't have a twinID!
 #' tmp$twinID1 = 1
 #' tmp$twinID2 = 2
 #' long = umx_wide2long(data = tmp, sep = "")
-#' #
+#' str(long)
+#' # 'data.frame':	7616 obs. of  11 variables:
+#' #  $ fam     : int  1 2 3 4 5 6 7 8 9 10 ...
+#' #  $ zyg     : int  1 1 1 1 1 1 1 1 1 1 ...
+#' #  $ part    : int  2 2 2 2 2 2 2 2 2 2 ...
+#' #  $ cohort  : chr  "younger" "younger" "younger" "younger" ...
+#' #  $ zygosity: Factor w/ 5 levels "MZFF","MZMM",..: 1 1 1 1 1 1 1 1 1 1 ...
+#' #  $ wt      : int  58 54 55 66 50 60 65 40 60 76 ...
+#' #  $ ht      : num  1.7 1.63 1.65 1.57 1.61 ...
+#' #  $ htwt    : num  20.1 20.3 20.2 26.8 19.3 ...
+#' #  $ bmi     : num  21 21.1 21 23 20.7 ...
+#' #  $ age     : int  21 24 21 21 19 26 23 29 24 28 ...
+#' #  $ twinID  : num  1 1 1 1 1 1 1 1 1 1 ...
 #' 
 #' # OK. Now to demo long2wide...
 #' 
 #' # Keeping all columns
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity")
-#' names(wide) # some vars, like part, should have been passed along instead of made into "part_T1"
+#' namez(wide) # some vars, like part, should have been passed along instead of made into "part_T1"
 #' 
+#' # ======================================
+#' # = Demo requesting specific vars2keep =
+#' # ======================================
+#'
 #' # Just keep bmi and wt
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", 
 #'     zygosity= "zygosity", vars2keep = c("bmi", "wt"))
-#' names(wide)
-#' 
+#' namez(wide)
 #' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
 #' 
+#' # ==================
+#' # = Demo passalong =
+#' # ==================
 #' # Keep bmi and wt, and pass through 'cohort'
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
 #'   vars2keep = c("bmi", "wt"), passalong = "cohort")
+#' namez(wide)
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA, twinIDs2keep=NA) {
 	IDVars = c(famID, twinID, zygosity)
 	umx_check_names(IDVars, data = data, die = TRUE)

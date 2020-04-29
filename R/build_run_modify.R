@@ -1634,7 +1634,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			mxAlgebra(name = "iSD", solve(sqrt(I * V)) ),
 
 			# Matrix & Algebra for expected means vector (non-moderated)
-			mxMatrix(name = "Means", "Full", nrow = 1, ncol = nVar, free = TRUE, values = obsMean, labels = "mean"), # needs mods for multivariate!
+			mxMatrix(name = "intercept", "Full", nrow = 1, ncol = nVar, free = TRUE, values = obsMean, labels = "mean"), # needs mods for multivariate!
 			# Matrices for betas
 			mxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "lin11"), 
 			mxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "quad11")
@@ -1652,21 +1652,22 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			umxMatrix("Def2", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[2])), # c("data.age2")
 			# Algebra for expected mean vector
 			# TODO simplify this algebra... one for each twin... not 4* cov...
-			mxAlgebra(top.betaLin %*% Def1  , name = "Def1Rlin"),
-			mxAlgebra(top.betaQuad%*% Def1^2, name = "Def1Rquad"),
-			mxAlgebra(top.betaLin %*% Def2  , name = "Def2Rlin"),
-			mxAlgebra(top.betaQuad%*% Def2^2, name = "Def2Rquad"),
+			mxAlgebra(name = "Def1Rlin" , top.betaLin  %*% Def1  ),
+			mxAlgebra(name = "Def1Rquad", top.betaQuad %*% Def1^2),
+			mxAlgebra(name = "Def2Rlin" , top.betaLin  %*% Def2  ),
+			mxAlgebra(name = "Def2Rquad", top.betaQuad %*% Def2^2),
+
 			# if(0){ # TODO if there are covs
 			# 	mxMatrix(name = "covsT1", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT1)),
 			# 	mxMatrix(name = "covsT2", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT2)),
 			# 	mxAlgebra(top.betas %*% covsT1, name = "predMeanT1"),
 			# 	mxAlgebra(top.betas %*% covsT2, name = "predMeanT2"),
-			# 	mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad + predMeanT1,
-			# 	                 top.Means + Def2Rlin + Def2Rquad + predMeanT2), name = "expMeans")
+			# 	mxAlgebra( cbind(top.intercept + Def1Rlin + Def1Rquad + predMeanT1,
+			# 	                 top.intercept + Def2Rlin + Def2Rquad + predMeanT2), name = "expMeans")
 			# } else {
-				# mxAlgebra( cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad), name = "expMeans")
+				# mxAlgebra( cbind(top.intercept + Def1Rlin + Def1Rquad, top.intercept + Def2Rlin + Def2Rquad), name = "expMeans")
 			# },
-			mxAlgebra(name = "expMean", cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad)),
+			mxAlgebra(name = "expMean", cbind(top.intercept + Def1Rlin + Def1Rquad, top.intercept + Def2Rlin + Def2Rquad)),
 
 			# Compute ACE variance components
 			mxAlgebra(name = "A11", (top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def1)),
@@ -1715,17 +1716,22 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 			umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
 
-			mxAlgebra(rbind(cbind(A11+C11+E11   , dzAr%x%A12+dzCr%x%C12),
-			                cbind(dzAr%x%A21+dzCr%x%C21, A22+C22+E22) ), name= "expCovDZ"),
-			# Algebra for expected mean vector
+			mxAlgebra(name= "expCovDZ",
+				rbind(cbind(A11+C11+E11, dzAr%x%A12+dzCr%x%C12),
+			          cbind(dzAr%x%A21+dzCr%x%C21, A22+C22+E22) )),
+
+			# =================
+			# = Means Algebra =
+			# =================
 			mxAlgebra(name = "Def1Rlin" , top.betaLin %*% Def1  ),
 			mxAlgebra(name = "Def1Rquad", top.betaQuad%*% Def1^2),
 			mxAlgebra(name = "Def2Rlin" , top.betaLin %*% Def2  ),
 			mxAlgebra(name = "Def2Rquad", top.betaQuad%*% Def2^2),
-			mxAlgebra(name = "expMean", cbind(top.Means + Def1Rlin + Def1Rquad, top.Means + Def2Rlin + Def2Rquad)),
-			# mxAlgebra(name="Def1R", top.betas%*%rbind(Def1, Def1^2)),
-			# mxAlgebra(name="Def2R", top.betas%*%rbind(Def2, Def2^2)),
-			# mxAlgebra(name="expMeans", cbind(top.Means+Def1R, top.Means+Def2R)),
+			mxAlgebra(name = "expMean"  , cbind(top.intercept + Def1Rlin + Def1Rquad, top.intercept + Def2Rlin + Def2Rquad)),
+			mxAlgebra(name = "Def1R"    , top.betas%*%rbind(Def1, Def1^2)),
+			mxAlgebra(name = "Def2R"    , top.betas%*%rbind(Def2, Def2^2)),
+			mxAlgebra(name = "expMeans" , cbind(top.intercept+Def1R, top.intercept+Def2R)),
+
 			# Data & Objective
 	    	mxData(dzData, type = "raw"),
 			mxExpectationNormal("expCovDZ", means = "expMean", dimnames = selDVs),
