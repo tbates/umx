@@ -12,9 +12,12 @@
 
 [Road map](https://github.com/tbates/umx/labels/enhancement), and [Tutorials](https://tbates.github.io) (let me know what you'd like, or perhaps a book?)
 
-`umx` is a [structural equation modeling](https://en.wikipedia.org/wiki/Structural_equation_modeling) package designed to make SEM easier, from building, to modifying and reporting. Please cite as: `citation("umx")`:
+`umx` is a package designed to make [structural equation modeling](https://en.wikipedia.org/wiki/Structural_equation_modeling) easier, from building, to modifying and reporting.
 
-Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. [DOI:10.1017/thg.2019.2](https://doi.org/10.1017/thg.2019.2)
+`citation("umx")`
+
+If you use it, you should cite: Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. [DOI:10.1017/thg.2019.2](https://doi.org/10.1017/thg.2019.2)
+
 
 `umx` includes high-level functions for complex models such as multi-group twin models, as well as graphical model output.
 
@@ -30,22 +33,27 @@ Most functions have extensive and practical examples (even figures for the twin 
 
 See what is on offer with '?umx'. There are online tutorials at  [tbates.github.io](http://tbates.github.io).
 
-`umx` stands for "user" OpenMx functions. It provides over 100 functions, but most importantly the high-level `umxRAM` functions that makes path-based SEM in R straightforward from model specification to `plot`, along with a suite of high-level twin modelling functions. These are supported by dozens of low-level functions automating activities such as labeling, setting start values etc., and helping with data-wrangling, plotting etc.
+`umx` stands for "user" OpenMx functions. It provides over 100 functions, but most importantly
+1. `umxRAM` that makes path-based SEM in R straightforward and `plot` that allows you to visualise your model
+2. A suite of twin modelling functions.
+
+These are supported by dozens of low-level functions automating activities such as labeling, setting start values etc., and helping with data-wrangling, plotting etc.
 
 Some highlights include:
 
 1. Building Path Models
-	* `umxRAM()` *# mxModel with smart `data =` parameter, automatic labels, start, run, plot, and auto-discovery of manifests and latents from the paths you write*
-	* `umxPath()` *# write paths but with one-word settings to set `var` , `mean` `cov`, `fixedAt` 'v.m.' = and more.*
+	* `umxRAM()` *# Take included umxPaths, the data provided in `data =` returning the model, along with a `plot` and `umxSummary`*
+	  * Automatic labels on paths, start values
+	* `umxPath()` *# write paths with human-readable language like `var = ` , `mean = ` `cov = `, `fixedAt=`. Quickly define a variance and mean ('v.m. = ') and more.*
 2. Reporting output
-	* `umxSummary(model)` # *A fit summary designed for journal reporting (Χ², p, CFI, TLI, & RMSEA). Optionally show the path loadings*
-	* `plot(model, std=T, digits = 3, file = "name")` # *Graphical, model in your browser! or edit in programs like OmniGraffle*
-3. Modify models
-	* `umxModify()` *# Modify and run a model. You can add objects, drop or add paths, including by wildcard label matching), re-name the model, re-run, and even return the comparison. All in 1 line *
+	* `umxSummary(model)` # *Nice summary table, in markdown or browser. Designed for journal reporting (Χ², p, CFI, TLI, & RMSEA). Optionally show path loadings*
+	* `plot(model, std=TRUE, digits = 3, ...)` # *Graphical model in your browser! or edit in programs like OmniGraffle*
 	* `parameters(m1, "below", .1, pattern="_to_"))` *# A powerful assistant to get labels and values from a model (e.g. all 'to' params, below .1 in value)*
+3. Modify models
+	* `umxModify(model, update = )` *# Modify and re-run a model. You can add objects, drop or add paths, including by wildcard label matching), re-name the model, and even return the comparison. All in 1 line *
 4. Twin modeling!
 	* `umxACE` *# Twin ACE modeling with aplomb* paths are labeled! Works with `plot()` and `umxSummary`!
-	* `umxCP`, `umxIP`, `umxGxE`, `umxCP`, `umxGxEbiv`, `umxSexLim`  …
+	* `umxCP`, `umxIP`, `umxGxE`, `umxCP`, `umxGxEbiv`, `umxSexLim`
 	* ![umxACE](https://github.com/tbates/umx/blob/master/man/figures/ACEunivariate.png)
 5. Easy-to-remember options
 	* `umx_set_cores()`

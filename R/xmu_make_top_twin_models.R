@@ -506,17 +506,23 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #' Not for end-users: Add a means model with covariates to a twin model
 #'
 #' @description
-#' Add intercept and covariate (definition-based) means model to a twin model 
-#' (i.e., a umx top/MZ/DZ supermodel).
-
-#' @details Non-covariate means lived in `model$top$expMean`
+#' Does the following to `model` (i.e., a umx top/MZ/DZ supermodel):
+#'
+#' 1. Change `top.expMeans` to `top.intercept`.
+#' 2. Create `top.meansBetas` for beta weights in rows (of covariates) and columns for each variable.
+#' 3. Add matrices for each twin's data.cov vars (matrixes are called `T1DefVars`).  
+#' 4. Switch `mxExpectationNormal` in each data group to point to the local `expMean`.
+#' 5. Add "expMean" algebra to each data group.
+#'   * `grp.expMean` sums `top.intercept`  and grp.DefVars %*% top.meansBetas for each twin.
+#'
+#' @details In umx models with no covariates, means live in `top$expMean`
 #' 
 #'
-#' @param model The model we are modifying (must have MZ DZ and top submodels)
+#' @param model The [umxSuperModel()] we are modifying (must have `MZ` `DZ` and `top` submodels)
 #' @param fullVars the FULL names of manifest variables
 #' @param fullCovs the FULL names of definition variables
-#' @param sep How twin variable names have been expanded (default "_T")
-#' @return - model with means model extended to covariates.
+#' @param sep How twin variable names have been expanded, e.g. "_T".
+#' @return - model, now with means model extended to covariates.
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - called by [xmuTwinSuper_Continuous()]
@@ -528,10 +534,11 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' # m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
-#  # TODO non-working output as umxACE drops the covs from the data...
+#  # This example won't work, as umxACE drops the covs from the data...
 #' # m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
 #' # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
-#' # }
+#' #
+#' }
 #'
 xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) {
 	# TODO Check the def vars are still in the dataset at this point...
@@ -543,7 +550,7 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 	nVar     = length(baseVars)
 	nCov     = length(baseCovs)
 
-	# 1. Make a betaDef matrix
+	# 1. Make `meansBetas` matrix
 	betaLabels = paste0(rep(baseCovs, times= nVar), "_b_Var", rep(1:nVar, each= nCov) )
 	meansBetas = umxMatrix("meansBetas", "Full", nrow = nCov, ncol = nVar, free = TRUE, labels= betaLabels, values = 0, lbound = -2, ubound = 2)
 	dimnames(meansBetas) = list(baseCovs, baseVars)
