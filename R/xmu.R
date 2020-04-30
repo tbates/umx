@@ -16,7 +16,6 @@
 # = Fns not used directly by users subject to arbitrary change and deprecation !!  =
 # ==================================================================================
 
-
 #' Get on or more columns from mzData or regular data.frame
 #'
 #' @description

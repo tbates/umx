@@ -1569,15 +1569,13 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	nSib = 2;
 	if(!is.null(data)){
 		if(is.null(dzData)){
-			dzData = "DZ"
-			mzData = "MZ"
+			dzData = "DZ"; mzData = "MZ"
 		}
 		mzData = data[data[,zyg] %in% mzData, ]
 		dzData = data[data[,zyg] %in% dzData, ]
 	}
-	if(dzCr == .25 & (name == "G_by_E")){
-		name = "G_by_E_ADE"
-	}
+
+	if(dzCr == .25 & name == "G_by_E") name = "G_by_E_ADE"
 	
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
 	selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:nSib)
@@ -1606,13 +1604,21 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	startMain = sqrt(c(.8, .0 ,.6) * rawVar)	
 	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for gxe")
 	
-	# drop any unused variables
-	dzData = dzData[,selVars]
-	mzData = mzData[,selVars]
+	# drop unused variables
+	dzData = dzData[ , selVars]
+	mzData = mzData[ , selVars]
 	
 	mzData = xmu_data_missing(mzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef, hint= "mzData")
 	dzData = xmu_data_missing(dzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef, hint= "dzData")
-
+	
+	# =====================================
+	# = DO T1 and T2 share the moderator? =
+	# =====================================
+	shared = all(mzData[, selDefs[1]] == mzData[, selDefs[2]])
+	if(!shared){
+		message("Twins do not share the moderator... I will regress both twin's moderator from each twin, but you need to check this doesn't violate assumptions")
+	}
+	
 	model = mxModel(name,
 		mxModel("top",		
 			# Matrices a, c, and e to store a, c, and e path coefficients
@@ -1641,8 +1647,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 			# TODO:	umxGxE: Add covariates
 			# if(0){
-				# TODO: umxGxE If there are covs
-				# mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = TRUE, values = 0.05, labels = paste0("beta_", covariates))
+			# 	TODO: umxGxE If there are covs
+			# 	mxMatrix(name = "betas" , "Full", nrow = nCov, ncol = nVar, free = TRUE, values = 0.05, labels = paste0("beta_", covariates))
 			# }
 		),
 		mxModel("MZ",
