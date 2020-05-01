@@ -7,22 +7,31 @@
 xmuTwinUpgradeMeansToCovariateModel(model, fullVars, fullCovs, sep)
 }
 \arguments{
-\item{model}{The model we are modifying (must have MZ DZ and top submodels)}
+\item{model}{The \code{\link[=umxSuperModel]{umxSuperModel()}} we are modifying (must have \code{MZ} \code{DZ} and \code{top} submodels)}
 
 \item{fullVars}{the FULL names of manifest variables}
 
 \item{fullCovs}{the FULL names of definition variables}
 
-\item{sep}{How twin variable names have been expanded (default "_T")}
+\item{sep}{How twin variable names have been expanded, e.g. "_T".}
 }
 \value{
 \itemize{
-\item model with means model extended to covariates.
+\item model, now with means model extended to covariates.
 }
 }
 \description{
-Add intercept and covariate (definition-based) means model to a twin model
-(i.e., a umx top/MZ/DZ supermodel).
+Does the following to \code{model} (i.e., a umx top/MZ/DZ supermodel):
+\enumerate{
+\item Change \code{top.expMeans} to \code{top.intercept}
+\item Create \code{top.meansBetas} for beta weights in rows (of covariates) and columns for each variable.
+\item Add matrices for each twin's data.cov vars (matrixes are called \code{T1DefVars}).
+\item Switch \code{mxExpectationNormal} in each data group to point to the local \code{expMean}
+\item Add "expMean" algebra to each data group
+}
+\itemize{
+\item This sums \code{top.intercept}  and DefVars \%*\% top.meansBetas for each twin
+}
 }
 \details{
 Non-covariate means lived in \code{model$top$expMean}
