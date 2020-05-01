@@ -3723,6 +3723,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' set of p-values from tests of the same hypothesis in independent samples, 
 #' 
 #' @param pvalues A vector of p-values, e.g. c(.041, .183)
+#' @param ... More p-values if you want to offer them up one by one instead of wrapping in a vector for `pvalues`
 #' @return - A meta-analytic p-value
 #' @export
 #' @family Miscellaneous Stats Helpers

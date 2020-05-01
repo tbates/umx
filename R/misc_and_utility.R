@@ -2712,86 +2712,6 @@ umx_msg <- function(x) {
 	}
 }
 
-# ====================
-# = String Functions =
-# ====================
-#' Concatenate base variable names with suffixes to create wide-format variable names (i.e twin-format)
-#'
-#' @description
-#' It's easier to work with base names, rather than the twice-as-long hard-to-typo list of column names.
-#' `umx_paste_names` adds suffixes to names so you can work with that nice short list.
-#' So, you provide `bmi`, and you get back fully specified family-wise names: `c("bmi_T1", "bmi_T2")`
-#' 
-#' *note*: `tvars` is a shortcut for `umx_paste_names`
-#' 
-#' @details
-#' **Method 1**: *Use complete suffixes*
-#' 
-#' You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
-#' and very general:
-#'
-#'     umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
-#'
-#' *Note*: for quick typing, `tvars` is an alias for `umx_paste_names`
-#'
-#' **Method 2**: *Use sep and a suffix vector.*
-#' 
-#' Alternatively, you can use `sep` to add a constant like "_T" after each basename, along
-#' with a vector of suffixes. This has the benefit of showing what is varying:
-#' This is then suffixed with e.g. "1", "2".
-#'
-#'     umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
-#'
-#' *Working with covariates*
-#' 
-#' If you are using [umxACEcov()], you **need** to keep all the covariates at the end of the list.
-#' Here's how:
-#' 
-#'     umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
-#' 
-#' *note*: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
-#' T1vars, T2 vars, T1 covs, T2 covs. This is what `covNames` accomplishes.
-#' @aliases tvars
-#' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
-#' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
-#' @param suffixes a list of terminal suffixes differentiating the twins default = 1:2)
-#' @param covNames a list of _base_ names for covariates (to be sorted last in list), e.g c("age", "sex")
-#' @param prefix a string to prepend to each label, e.g "mean" -> "mean_age" "mean_sex"
-#' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
-#' @export
-#' @family String Functions
-#' @seealso [namez()] [umx_explode_twin_names()]
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
-#' @examples
-#' # two styles doing the same thing: first is more general
-#' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
-#' umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
-#' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
-#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
-#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
-#' # For quick-typing, tvars is an alias for umx_paste_names
-#' tvars(c("IQ", "C"), cov = "age", sep = "_T", prefix= "mean_")
-#' tvars("IQ")
-#' @md
-umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
-	nameList = c()
-	if(is.null(varNames)){
-		nameList = NULL
-	}else{
-		for (ID in suffixes) {
-			nameList = c(nameList, paste0(prefix, varNames, sep, ID))
-		}
-	}
-	if(!is.null(covNames)){
-		for (ID in suffixes) {
-			nameList = c(nameList, paste0(prefix, covNames, sep, ID))
-		}
-	}
-	return(nameList)
-}
-#' @export
-tvars <- umx_paste_names
 
 #' xmu_CI_merge
 #'
@@ -4398,23 +4318,6 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 	eval(substitute(mxAlgebra(tExp, name=name, dimnames=dimnames), list(tExp = parse(text=algString)[[1]])))
 }
 
-#' umx_object_as_str
-#'
-#' Utility to return an object's name as a string
-#'
-#' @param x an object
-#' @return - name as string
-#' @export
-#' @family String Functions
-#' @references - <https://www.github.com/tbates/umx>
-#' @md
-#' @examples
-#' umx_object_as_str(mtcars)
-#' # "mtcars"
-umx_object_as_str<- function(x) {
-  deparse(substitute(x))
-}
-
 
 #' Scale data columns, skipping non-scalable columns
 #'
@@ -4889,6 +4792,123 @@ qm <- function(..., rowMarker = "|") {
 # ================================
 # = string and php-style helpers =
 # ================================
+
+#' Return variable name as a string
+#'
+#' Utility to return an object's name as a string
+#'
+#' @param x an object
+#' @return - name as string
+#' @export
+#' @family String Functions
+#' @references - <https://www.github.com/tbates/umx>
+#' @md
+#' @examples
+#' umx_str_from_object(mtcars)
+#' # "mtcars"
+umx_str_from_object <- function(x) {
+  deparse(substitute(x))
+}
+
+#' Select desired characters from a string
+#'
+#' @description
+#' `umx_str_chars` returns desired characters of a string
+#'
+#' @details
+#'
+#' @param what A string
+#' @param which which chars to select out.
+#' @return - Array of selected characters
+#' @export
+#' @family String Functions
+#' @seealso - [umx_explode()]
+#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @md
+#' @examples
+#' umx_str_chars("myFpassUword", c(3,8))
+umx_str_chars <- function(what, which) {
+	strsplit(what, "")[[1]][which]
+}
+
+#' Concatenate base variable names with suffixes to create wide-format variable names (i.e twin-format)
+#'
+#' @description
+#' It's easier to work with base names, rather than the twice-as-long hard-to-typo list of column names.
+#' `umx_paste_names` adds suffixes to names so you can work with that nice short list.
+#' So, you provide `bmi`, and you get back fully specified family-wise names: `c("bmi_T1", "bmi_T2")`
+#' 
+#' *note*: `tvars` is a shortcut for `umx_paste_names`
+#' 
+#' @details
+#' **Method 1**: *Use complete suffixes*
+#' 
+#' You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
+#' and very general:
+#'
+#'     umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
+#'
+#' *Note*: for quick typing, `tvars` is an alias for `umx_paste_names`
+#'
+#' **Method 2**: *Use sep and a suffix vector.*
+#' 
+#' Alternatively, you can use `sep` to add a constant like "_T" after each basename, along
+#' with a vector of suffixes. This has the benefit of showing what is varying:
+#' This is then suffixed with e.g. "1", "2".
+#'
+#'     umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
+#'
+#' *Working with covariates*
+#' 
+#' If you are using [umxACEcov()], you **need** to keep all the covariates at the end of the list.
+#' Here's how:
+#' 
+#'     umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
+#' 
+#' *note*: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
+#' T1vars, T2 vars, T1 covs, T2 covs. This is what `covNames` accomplishes.
+#' @aliases tvars
+#' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
+#' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
+#' @param suffixes a list of terminal suffixes differentiating the twins default = 1:2)
+#' @param covNames a list of _base_ names for covariates (to be sorted last in list), e.g c("age", "sex")
+#' @param prefix a string to prepend to each label, e.g "mean" -> "mean_age" "mean_sex"
+#' @return - vector of suffixed var names, i.e., c("v1_T1", "v2_T1", "v1_T2", "v2_T2", "cov_T1", "cov_T2")
+#' @export
+#' @family String Functions
+#' @seealso [namez()] [umx_explode_twin_names()]
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
+#' @examples
+#' # two styles doing the same thing: first is more general
+#' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
+#' umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
+#' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
+#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
+#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+#' # For quick-typing, tvars is an alias for umx_paste_names
+#' tvars(c("IQ", "C"), cov = "age", sep = "_T", prefix= "mean_")
+#' tvars("IQ")
+#' @md
+umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
+	nameList = c()
+	if(is.null(varNames)){
+		nameList = NULL
+	}else{
+		for (ID in suffixes) {
+			nameList = c(nameList, paste0(prefix, varNames, sep, ID))
+		}
+	}
+	if(!is.null(covNames)){
+		for (ID in suffixes) {
+			nameList = c(nameList, paste0(prefix, covNames, sep, ID))
+		}
+	}
+	return(nameList)
+}
+#' @export
+tvars <- umx_paste_names
+
 #' Explode a string (Like the php function `explode`)
 #'
 #' Takes a string and returns an array of delimited strings (by default, each single character)

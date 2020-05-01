@@ -8,6 +8,8 @@ FishersMethod(pvalues, ...)
 }
 \arguments{
 \item{pvalues}{A vector of p-values, e.g. c(.041, .183)}
+
+\item{...}{More p-values if you want to offer them up one by one instead of wrapping in a vector for \code{pvalues}}
 }
 \value{
 \itemize{
