@@ -461,7 +461,7 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 		int = model$top$expMean$values
 		if(!is.null(int)){
 			# expMeans
-			msg = "Means: Intercepts from model$top$expMeans"
+			msg = "Means: Intercepts from model$top$expMean"
 			row.names(int) = "intercept"
 		}else{
 			# no means

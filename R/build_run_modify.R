@@ -1,4 +1,3 @@
-
 #   Copyright 2007-2020 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -1566,11 +1565,9 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' }
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
-	nSib = 2;
+	nSib    = 2;
 	if(!is.null(data)){
-		if(is.null(dzData)){
-			dzData = "DZ"; mzData = "MZ"
-		}
+		if(is.null(dzData)){ dzData = "DZ"; mzData = "MZ" }
 		mzData = data[data[,zyg] %in% mzData, ]
 		dzData = data[data[,zyg] %in% dzData, ]
 	}
@@ -1652,43 +1649,44 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# }
 		),
 		mxModel("MZ",
-			# matrices for covariates (just on the means)
 			# Matrices for moderating/interacting variable
-			umxMatrix("Def1", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[1])), # c("data.age1")
-			umxMatrix("Def2", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[2])), # c("data.age2")
-			# Algebra for expected mean vector
-			# TODO simplify this algebra... one for each twin... not 4* cov...
-			mxAlgebra(name = "Def1Rlin" , top.betaLin  %*% Def1  ),
-			mxAlgebra(name = "Def1Rquad", top.betaQuad %*% Def1^2),
-			mxAlgebra(name = "Def2Rlin" , top.betaLin  %*% Def2  ),
-			mxAlgebra(name = "Def2Rquad", top.betaQuad %*% Def2^2),
-
+			umxMatrix("DefT1", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[1])), # c("data.age1")
+			umxMatrix("DefT2", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[2])), # c("data.age2")
+			# ====================================
+			# = Algebra for expected mean vector =
+			# ====================================
 			# if(0){ # TODO if there are covs
+			#   # matrices for covariates (just on the means)
 			# 	mxMatrix(name = "covsT1", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT1)),
 			# 	mxMatrix(name = "covsT2", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", covsT2)),
 			# 	mxAlgebra(top.betas %*% covsT1, name = "predMeanT1"),
 			# 	mxAlgebra(top.betas %*% covsT2, name = "predMeanT2"),
-			# 	mxAlgebra( cbind(top.intercept + Def1Rlin + Def1Rquad + predMeanT1,
-			# 	                 top.intercept + Def2Rlin + Def2Rquad + predMeanT2), name = "expMeans")
+			# 	mxAlgebra( cbind(top.intercept + DefT1Rlin + DefT1Rquad + predMeanT1,
+			# 	                 top.intercept + DefT2Rlin + DefT2Rquad + predMeanT2), name = "expMeans")
 			# } else {
-				# mxAlgebra( cbind(top.intercept + Def1Rlin + Def1Rquad, top.intercept + Def2Rlin + Def2Rquad), name = "expMeans")
+				# mxAlgebra( cbind(top.intercept + DefT1Rlin + DefT1Rquad, top.intercept + DefT2Rlin + DefT2Rquad), name = "expMeans")
 			# },
-			mxAlgebra(name = "expMean", cbind(top.intercept + Def1Rlin + Def1Rquad, top.intercept + Def2Rlin + Def2Rquad)),
+			# TODO simplify this algebra... one for each twin... not 4* cov...
+			mxAlgebra(name = "DefT1_lin" , top.betaLin  %*% DefT1  ),
+			mxAlgebra(name = "DefT1_quad", top.betaQuad %*% DefT1^2),
+			mxAlgebra(name = "DefT2_lin" , top.betaLin  %*% DefT2  ),
+			mxAlgebra(name = "DefT2_quad", top.betaQuad %*% DefT2^2),
+			mxAlgebra(name = "expMean", cbind(top.intercept + DefT1_lin + DefT1_quad, top.intercept + DefT2_lin + DefT2_quad)),
 
 			# Compute ACE variance components
-			mxAlgebra(name = "A11", (top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def1)),
-			mxAlgebra(name = "C11", (top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def1)),
-			mxAlgebra(name = "E11", (top.e + top.em %*% Def1) %*% t(top.e+ top.em %*% Def1)),
+			mxAlgebra(name = "A11", (top.a + top.am %*% DefT1) %*% t(top.a+ top.am %*% DefT1)),
+			mxAlgebra(name = "C11", (top.c + top.cm %*% DefT1) %*% t(top.c+ top.cm %*% DefT1)),
+			mxAlgebra(name = "E11", (top.e + top.em %*% DefT1) %*% t(top.e+ top.em %*% DefT1)),
                                        
-			mxAlgebra(name = "A12", (top.a + top.am %*% Def1) %*% t(top.a+ top.am %*% Def2)),
-			mxAlgebra(name = "C12", (top.c + top.cm %*% Def1) %*% t(top.c+ top.cm %*% Def2)),
+			mxAlgebra(name = "A12", (top.a + top.am %*% DefT1) %*% t(top.a+ top.am %*% DefT2)),
+			mxAlgebra(name = "C12", (top.c + top.cm %*% DefT1) %*% t(top.c+ top.cm %*% DefT2)),
 
-			mxAlgebra(name = "A21", (top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def1)),
-			mxAlgebra(name = "C21", (top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def1)),
+			mxAlgebra(name = "A21", (top.a + top.am %*% DefT2) %*% t(top.a+ top.am %*% DefT1)),
+			mxAlgebra(name = "C21", (top.c + top.cm %*% DefT2) %*% t(top.c+ top.cm %*% DefT1)),
 
-			mxAlgebra(name = "A22", (top.a + top.am %*% Def2) %*% t(top.a+ top.am %*% Def2)),
-			mxAlgebra(name = "C22", (top.c + top.cm %*% Def2) %*% t(top.c+ top.cm %*% Def2)),
-			mxAlgebra(name = "E22", (top.e + top.em %*% Def2) %*% t(top.e+ top.em %*% Def2)),
+			mxAlgebra(name = "A22", (top.a + top.am %*% DefT2) %*% t(top.a+ top.am %*% DefT2)),
+			mxAlgebra(name = "C22", (top.c + top.cm %*% DefT2) %*% t(top.c+ top.cm %*% DefT2)),
+			mxAlgebra(name = "E22", (top.e + top.em %*% DefT2) %*% t(top.e+ top.em %*% DefT2)),
 
 			# Algebra for expected variance/covariance matrix and expected mean vector in MZ
 			mxAlgebra(name = "expCovMZ", rbind(
@@ -1701,22 +1699,36 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			mxFitFunctionML()
 		),
 	    mxModel("DZ",
-			umxMatrix("Def1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # twin1  c("data.divorce1")
-			umxMatrix("Def2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # twin2  c("data.divorce2")
+			umxMatrix("DefT1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # twin1  c("data.divorce1")
+			umxMatrix("DefT2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # twin2  c("data.divorce2")
+
+			# =================
+			# = Means Algebra =
+			# =================
+			mxAlgebra(name = "DefT1_lin" , top.betaLin %*% DefT1  ),
+			mxAlgebra(name = "DefT1_quad", top.betaQuad%*% DefT1^2),
+			mxAlgebra(name = "DefT2_lin" , top.betaLin %*% DefT2  ),
+			mxAlgebra(name = "DefT2_quad", top.betaQuad%*% DefT2^2),
+			mxAlgebra(name = "expMean"  , cbind(top.intercept + DefT1_lin + DefT1_quad, top.intercept + DefT2_lin + DefT2_quad)),
+
+			# mxAlgebra(name = "DefT1R"    , top.betas%*%rbind(DefT1, DefT1^2)),
+			# mxAlgebra(name = "DefT2R"    , top.betas%*%rbind(DefT2, DefT2^2)),
+			# mxAlgebra(name = "expMeans" , cbind(top.intercept+DefT1R, top.intercept+DefT2R)),
+
 			# Compute ACE variance components
-			mxAlgebra(name= "A11", (top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def1)),
-			mxAlgebra(name= "C11", (top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def1)),
-			mxAlgebra(name= "E11", (top.e+ top.em%*% Def1) %*% t(top.e+ top.em%*% Def1)),
+			mxAlgebra(name= "A11", (top.a+ top.am%*% DefT1) %*% t(top.a+ top.am%*% DefT1)),
+			mxAlgebra(name= "C11", (top.c+ top.cm%*% DefT1) %*% t(top.c+ top.cm%*% DefT1)),
+			mxAlgebra(name= "E11", (top.e+ top.em%*% DefT1) %*% t(top.e+ top.em%*% DefT1)),
 
-			mxAlgebra(name= "A12", (top.a+ top.am%*% Def1) %*% t(top.a+ top.am%*% Def2)),
-			mxAlgebra(name= "C12", (top.c+ top.cm%*% Def1) %*% t(top.c+ top.cm%*% Def2)),
+			mxAlgebra(name= "A12", (top.a+ top.am%*% DefT1) %*% t(top.a+ top.am%*% DefT2)),
+			mxAlgebra(name= "C12", (top.c+ top.cm%*% DefT1) %*% t(top.c+ top.cm%*% DefT2)),
 
-			mxAlgebra(name= "A21", (top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def1)),
-			mxAlgebra(name= "C21", (top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def1)),
+			mxAlgebra(name= "A21", (top.a+ top.am%*% DefT2) %*% t(top.a+ top.am%*% DefT1)),
+			mxAlgebra(name= "C21", (top.c+ top.cm%*% DefT2) %*% t(top.c+ top.cm%*% DefT1)),
 
-			mxAlgebra(name= "A22", (top.a+ top.am%*% Def2) %*% t(top.a+ top.am%*% Def2)),
-			mxAlgebra(name= "C22", (top.c+ top.cm%*% Def2) %*% t(top.c+ top.cm%*% Def2)),
-			mxAlgebra(name= "E22", (top.e+ top.em%*% Def2) %*% t(top.e+ top.em%*% Def2)),
+			mxAlgebra(name= "A22", (top.a+ top.am%*% DefT2) %*% t(top.a+ top.am%*% DefT2)),
+			mxAlgebra(name= "C22", (top.c+ top.cm%*% DefT2) %*% t(top.c+ top.cm%*% DefT2)),
+			mxAlgebra(name= "E22", (top.e+ top.em%*% DefT2) %*% t(top.e+ top.em%*% DefT2)),
 
 			# Expected DZ variance/covariance matrix
 			umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
@@ -1726,17 +1738,6 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 				rbind(cbind(A11+C11+E11, dzAr%x%A12+dzCr%x%C12),
 			          cbind(dzAr%x%A21+dzCr%x%C21, A22+C22+E22) )),
 
-			# =================
-			# = Means Algebra =
-			# =================
-			mxAlgebra(name = "Def1Rlin" , top.betaLin %*% Def1  ),
-			mxAlgebra(name = "Def1Rquad", top.betaQuad%*% Def1^2),
-			mxAlgebra(name = "Def2Rlin" , top.betaLin %*% Def2  ),
-			mxAlgebra(name = "Def2Rquad", top.betaQuad%*% Def2^2),
-			mxAlgebra(name = "expMean"  , cbind(top.intercept + Def1Rlin + Def1Rquad, top.intercept + Def2Rlin + Def2Rquad)),
-			mxAlgebra(name = "Def1R"    , top.betas%*%rbind(Def1, Def1^2)),
-			mxAlgebra(name = "Def2R"    , top.betas%*%rbind(Def2, Def2^2)),
-			mxAlgebra(name = "expMeans" , cbind(top.intercept+Def1R, top.intercept+Def2R)),
 
 			# Data & Objective
 	    	mxData(dzData, type = "raw"),

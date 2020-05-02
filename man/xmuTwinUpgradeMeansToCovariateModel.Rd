@@ -23,18 +23,18 @@ xmuTwinUpgradeMeansToCovariateModel(model, fullVars, fullCovs, sep)
 \description{
 Does the following to \code{model} (i.e., a umx top/MZ/DZ supermodel):
 \enumerate{
-\item Change \code{top.expMeans} to \code{top.intercept}
+\item Change \code{top.expMeans} to \code{top.intercept}.
 \item Create \code{top.meansBetas} for beta weights in rows (of covariates) and columns for each variable.
 \item Add matrices for each twin's data.cov vars (matrixes are called \code{T1DefVars}).
-\item Switch \code{mxExpectationNormal} in each data group to point to the local \code{expMean}
-\item Add "expMean" algebra to each data group
+\item Switch \code{mxExpectationNormal} in each data group to point to the local \code{expMean}.
+\item Add "expMean" algebra to each data group.
 }
 \itemize{
-\item This sums \code{top.intercept}  and DefVars \%*\% top.meansBetas for each twin
+\item \code{grp.expMean} sums \code{top.intercept}  and grp.DefVars \%*\% top.meansBetas for each twin.
 }
 }
 \details{
-Non-covariate means lived in \code{model$top$expMean}
+In umx models with no covariates, means live in \code{top$expMean}
 }
 \examples{
 \dontrun{
@@ -45,7 +45,8 @@ dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 # m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 # m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
 # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
-# }
+#
+}
 
 }
 \seealso{

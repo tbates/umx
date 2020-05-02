@@ -4587,7 +4587,9 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 			form = paste0(var, " ~ ", paste(covs, collapse = " + "))
 			form = as.formula(form)
 		}
-		tmp <- residuals(lm(form, data = tmp, na.action = na.exclude))
+		residModel = lm(form, data = tmp, na.action = na.exclude)
+		umxAPA(residModel)
+		tmp = residuals(residModel)
 		newNAs = sum(is.na(tmp))
 		if(newNAs > oldNAs){
 			message(newNAs - oldNAs, " cases of var ", omxQuotes(var), "lost due to missing covariates")
