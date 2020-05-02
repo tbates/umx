@@ -204,22 +204,21 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		no_c_no_cem = umxModify(no_c_no_cm , update = "em_r1c1", name = "No_c_no_ce_mod"    , tryHard= tryHard)
 		no_c_no_mod = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation", tryHard= tryHard)
 
-		no_lin_mean = umxModify(noACEmod, update = "lin11"  , name = "No_mod_no_lin_mean" , tryHard= tryHard)
-		no_sq_mean  = umxModify(noACEmod, update = "quad11" , name = "No_mod_no_quad_mean", tryHard= tryHard)
-		nomeans     = umxModify(noACEmod, regex = "lin|quad", name = "No_mod_no_means_mod", tryHard= tryHard)
-
-		# comparisons = c(
-		# 	noAmod, noCmod, noEmod, noACEmod,
-		# 	no_a_no_am, no_c_no_cm, no_c_no_cem,
-		# 	no_c_no_mod,
-		# 	no_lin_mean, no_sq_mean, nomeans
-		# )
+		# if("testFor quad11 in parameters"){
+		# 	no_sq_mean  = umxModify(noACEmod, update = "quad11" , name = "No_mod_no_quad_mean", tryHard= tryHard)
+		# 	no_lin_mean = umxModify(noACEmod, update = "lin11"  , name = "No_mod_no_lin_mean" , tryHard= tryHard)
+		# 	nomeans     = umxModify(noACEmod, regex = "lin|quad", name = "No_mod_no_means_mod", tryHard= tryHard)
+		# } else {
+		# 	# likely has non-equal moderators don't bother trying to drop
+		# 	# betaSelf and betaCoTwin they are almost certainly necessary
+		# }
 
 		comparisons = c(
 			noAmod, noCmod, noEmod, noACEmod,
 			no_a_no_am, no_c_no_cm, no_c_no_cem,
 			no_c_no_mod
 		)
+
 		# ====================
 		# = everything table =
 		# ====================

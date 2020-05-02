@@ -4588,7 +4588,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 			form = as.formula(form)
 		}
 		residModel = lm(form, data = tmp, na.action = na.exclude)
-		umxAPA(residModel)
+		umxAPA(residModel, digits=3)
 		tmp = residuals(residModel)
 		newNAs = sum(is.na(tmp))
 		if(newNAs > oldNAs){

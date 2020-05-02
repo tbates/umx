@@ -1234,10 +1234,11 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # 1. def var approach
 #' m2 = umxACE(selDVs = "ht", selCovs = c("age", "cohort"), sep = "", dzData = dzData, mzData = mzData)
 #'
-#' # 2. residualized approach: remove ht variance accounted for by age
-#' tmp = umx_residualize("ht", "age", suffixes = 1:2, data = twinData)
-#' mzData = tmp[tmp$zygosity %in% "MZFF", ]
-#' dzData = tmp[tmp$zygosity %in% "DZFF", ]
+#' # 2. Residualized approach: remove height variance accounted-for by age.
+#' FFdata = twinData[twinData$zygosity %in% c("MZFF", "DZFF"), ]
+#' FFdata = umx_residualize("ht", "age", suffixes = 1:2, data = FFdata)
+#' mzData = FFdata[FFdata$zygosity %in% "MZFF", ]
+#' dzData = FFdata[FFdata$zygosity %in% "DZFF", ]
 #' m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 #'
 #' # =============================================================
@@ -1611,8 +1612,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	# =====================================
 	# = DO T1 and T2 share the moderator? =
 	# =====================================
-	shared = all(mzData[, selDefs[1]] == mzData[, selDefs[2]])
-	if(!shared){
+	bModeratorsIdentical = all(mzData[, selDefs[1]] == mzData[, selDefs[2]])
+	if(!bModeratorsIdentical){
 		message("Twins do not share the moderator... I will regress both twin's moderator from each twin, but you need to check this doesn't violate assumptions")
 	}
 	
@@ -1638,9 +1639,19 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 			# Matrix & Algebra for expected means vector (non-moderated)
 			mxMatrix(name = "intercept", "Full", nrow = 1, ncol = nVar, free = TRUE, values = obsMean, labels = "mean"), # needs mods for multivariate!
-			# Matrices for betas
-			mxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "lin11"), 
-			mxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "quad11")
+
+			if(bModeratorsIdentical){
+				# Matrices for betas
+				list(
+					mxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "lin11"),
+					mxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "quad11")
+				)
+			}else{
+				list(
+					mxMatrix(name = "betaSelf"  , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0), 
+					mxMatrix(name = "betaCoTwin", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0)
+				)
+			}
 
 			# TODO:	umxGxE: Add covariates
 			# if(0){
@@ -1666,12 +1677,21 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# } else {
 				# mxAlgebra( cbind(top.intercept + DefT1Rlin + DefT1Rquad, top.intercept + DefT2Rlin + DefT2Rquad), name = "expMeans")
 			# },
-			# TODO simplify this algebra... one for each twin... not 4* cov...
-			mxAlgebra(name = "DefT1_lin" , top.betaLin  %*% DefT1  ),
-			mxAlgebra(name = "DefT1_quad", top.betaQuad %*% DefT1^2),
-			mxAlgebra(name = "DefT2_lin" , top.betaLin  %*% DefT2  ),
-			mxAlgebra(name = "DefT2_quad", top.betaQuad %*% DefT2^2),
-			mxAlgebra(name = "expMean", cbind(top.intercept + DefT1_lin + DefT1_quad, top.intercept + DefT2_lin + DefT2_quad)),
+
+			if(bModeratorsIdentical){
+				# do lm(DV ~ moderator + moderator^2)
+				mxAlgebra(name = "expMean", cbind(
+					top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2),
+					top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2))
+				)
+			}else{
+				# do lm(DV ~ self moderator + co-twin moderator)
+				mxAlgebra(name = "expMean", cbind(
+					top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2),
+					top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1))
+				)
+			}
+			,
 
 			# Compute ACE variance components
 			mxAlgebra(name = "A11", (top.a + top.am %*% DefT1) %*% t(top.a+ top.am %*% DefT1)),
@@ -1693,10 +1713,10 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 				  cbind(A11+C11+E11, A12+C12),
 			      cbind(A21+C21    , A22+C22+E22))
 			),
+
 			# Data & Objective
 			mxData(mzData, type = "raw"),
-			mxExpectationNormal("expCovMZ", means = "expMean", dimnames = selDVs),
-			mxFitFunctionML()
+			mxExpectationNormal("expCovMZ", means = "expMean", dimnames = selDVs), mxFitFunctionML()
 		),
 	    mxModel("DZ",
 			umxMatrix("DefT1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # twin1  c("data.divorce1")
@@ -1705,16 +1725,21 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# =================
 			# = Means Algebra =
 			# =================
-			mxAlgebra(name = "DefT1_lin" , top.betaLin %*% DefT1  ),
-			mxAlgebra(name = "DefT1_quad", top.betaQuad%*% DefT1^2),
-			mxAlgebra(name = "DefT2_lin" , top.betaLin %*% DefT2  ),
-			mxAlgebra(name = "DefT2_quad", top.betaQuad%*% DefT2^2),
-			mxAlgebra(name = "expMean"  , cbind(top.intercept + DefT1_lin + DefT1_quad, top.intercept + DefT2_lin + DefT2_quad)),
-
-			# mxAlgebra(name = "DefT1R"    , top.betas%*%rbind(DefT1, DefT1^2)),
-			# mxAlgebra(name = "DefT2R"    , top.betas%*%rbind(DefT2, DefT2^2)),
-			# mxAlgebra(name = "expMeans" , cbind(top.intercept+DefT1R, top.intercept+DefT2R)),
-
+			if(bModeratorsIdentical){
+				# do lm(DV ~ moderator + moderator^2)
+				mxAlgebra(name = "expMean", cbind(
+					top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2),
+					top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2))
+				)
+			}else{
+				# do lm(DV ~ self moderator + co-twin moderator)
+				mxAlgebra(name = "expMean", cbind(
+					top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2),
+					top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1))
+				)
+			}
+			,
+			
 			# Compute ACE variance components
 			mxAlgebra(name= "A11", (top.a+ top.am%*% DefT1) %*% t(top.a+ top.am%*% DefT1)),
 			mxAlgebra(name= "C11", (top.c+ top.cm%*% DefT1) %*% t(top.c+ top.cm%*% DefT1)),
