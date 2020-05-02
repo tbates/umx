@@ -8,6 +8,7 @@
 * NEW: `umxDoCp` Path-based Direction of causation model.
 * NEW: `umxSummaryACE` prints a means table! including for intercepts only, no means model, and intercepts + covariate betas. Other models gain this also.
 * NEW: `umxRenameMatrix` wrap up the multiple lines of code needed to modify a matrix in OpenMx.
+* NEW: `umxstr_chars` return selected characters of a string.
 * IMPROVED: twin Models print out means now.
 * IMPROVED: `umxCompare` includes Delta-AIC.
 * IMPROVED: `xmu_make_mxData` now handles cov matrix input (added `numObs` parameter).
