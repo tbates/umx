@@ -260,7 +260,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	tryHard             = match.arg(tryHard)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	lavaanMode          = match.arg(lavaanMode)
-	
+	umx_check(is.character(model), "stop", "model should be a lavaan model string. You gave me a ", omxQuotes(class(model)))
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B

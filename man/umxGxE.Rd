@@ -90,7 +90,23 @@ m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzDa
 \dontrun{
 # Select the data on the fly with data= and zygosity levels
 m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
-# Controlling umxSummary
+
+# ===============================================================
+# = example with Twins having different values of the moderator =
+# ===============================================================
+
+twinData$age1 = twinData$age2 = twinData$age
+tmp = twinData
+tmp$age2 = tmp$age2 +rnorm(n=length(tmp$age2))
+selDVs  = "bmi"
+selDefs = "age"
+mzData = subset(tmp, zygosity == "MZFF")
+dzData = subset(tmp, zygosity == "DZFF")
+m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
+
+# ====================================
+# = Controlling output of umxSummary =
+# ====================================
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = TRUE)

@@ -225,10 +225,11 @@ dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 # 1. def var approach
 m2 = umxACE(selDVs = "ht", selCovs = c("age", "cohort"), sep = "", dzData = dzData, mzData = mzData)
 
-# 2. residualized approach: remove ht variance accounted for by age
-tmp = umx_residualize("ht", "age", suffixes = 1:2, data = twinData)
-mzData = tmp[tmp$zygosity \%in\% "MZFF", ]
-dzData = tmp[tmp$zygosity \%in\% "DZFF", ]
+# 2. Residualized approach: remove height variance accounted-for by age.
+FFdata = twinData[twinData$zygosity \%in\% c("MZFF", "DZFF"), ]
+FFdata = umx_residualize("ht", "age", suffixes = 1:2, data = FFdata)
+mzData = FFdata[FFdata$zygosity \%in\% "MZFF", ]
+dzData = FFdata[FFdata$zygosity \%in\% "DZFF", ]
 m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
 
 # =============================================================
