@@ -58,15 +58,16 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \description{
 \code{umxAPA} creates summaries from a range of inputs. Use it for reporting \code{lm} models, effects, and summarizing data.
 \enumerate{
-\item Given an \code{lm}, \code{umxAPA} will return a formatted effect, including 95\% CI
-in square brackets, for one of the effects (specified by name in se). e.g.:
-\code{umxAPA(lm(mpg~wt, data=mtcars), "wt")} yields: \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001
+\item Given an \code{\link[stats:lm]{stats::lm()}} model, \code{umxAPA} will return a formatted effect, including 95\% CI
+in square brackets e.g.:
+\code{umxAPA(lm(mpg~wt, data=mtcars), "wt")} yields: \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001. Optionally, you can request
+and effect by name (specified by se = "name").
 \item This also works for \code{\link[=t.test]{t.test()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[=cor.test]{cor.test()}}, and others as I come across them.
-\item get a CI from obj=beta and se=se : \code{umxAPA(-0.30, .03) # \eqn{\beta} = -0.3 [-0.36, -0.24]}
-\item Back out an SE from b and CI: \code{umxAPA(-0.030, c(-0.073, 0.013)) # \eqn{\beta} = -0.03, se =0.02}
-\item Given only a number as obj, will be treated as a p-value as returned in APA format.
-\item Given a dataframe, \code{umxAPA} will return a table of correlations, with
-the mean and SD of each variable as the last row. So,
+\item Get a CI from obj=beta and se=se : \code{umxAPA(-0.30, .03)} returns \eqn{\beta} = -0.3 \link{-0.36, -0.24}
+\item Back out an SE from b and CI: \code{umxAPA(-0.030, c(-0.073, 0.013))} returns \eqn{\beta} = -0.03, se = 0.02
+\item Given only a number as obj, will be treated as a p-value, and returned in APA format.
+\item Given a dataframe, \code{umxAPA} will return a table of correlations with
+the mean and SD of each variable as the last row. e.g.:
 \verb{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
 correlations, means and SDs thus:
 \tabular{lccc}{
@@ -143,6 +144,8 @@ umxAPA(m1)
 }
 }
 \seealso{
+\code{\link[=SE_from_p]{SE_from_p()}}
+
 Other Reporting Functions: 
 \code{\link{loadings.MxModel}()},
 \code{\link{umxFactorScores}()},

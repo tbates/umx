@@ -7,7 +7,7 @@
 umx_write_to_clipboard(x)
 }
 \arguments{
-\item{x}{something to put on the clipboard}
+\item{x}{something to paste to the clipboard}
 }
 \value{
 None
