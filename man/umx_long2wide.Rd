@@ -59,8 +59,7 @@ are present elsewhere to try and self-heal missing data.
 # ==============================================
 data(twinData)
 tmp = twinData[, -2]
-tmp$twinID1 = 1
-tmp$twinID2 = 2
+tmp$twinID1 = 1; tmp$twinID2 = 2
 long = umx_wide2long(data = tmp, sep = "")
 str(long)
 # 'data.frame':	7616 obs. of  11 variables:
@@ -88,7 +87,9 @@ namez(wide) # some vars, like part, should have been passed along instead of mad
 
 # Just keep bmi and wt
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", 
-    zygosity= "zygosity", vars2keep = c("bmi", "wt"))
+    zygosity = "zygosity", vars2keep = c("bmi", "wt")
+)
+
 namez(wide)
 # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
 
@@ -97,8 +98,10 @@ namez(wide)
 # ==================
 # Keep bmi and wt, and pass through 'cohort'
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
-vars2keep = c("bmi", "wt"), passalong = "cohort")
+	vars2keep = c("bmi", "wt"), passalong = "cohort"
+)
 namez(wide)
+
 }
 \references{
 \itemize{

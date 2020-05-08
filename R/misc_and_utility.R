@@ -5064,8 +5064,7 @@ umxCov2cor <- function(x) {
 #' data(twinData)
 #' tmp = twinData[, -2]
 # # 2. Add fake twinID identifiers for each twin, else this data set won't have a twinID!
-#' tmp$twinID1 = 1
-#' tmp$twinID2 = 2
+#' tmp$twinID1 = 1; tmp$twinID2 = 2
 #' long = umx_wide2long(data = tmp, sep = "")
 #' str(long)
 #' # 'data.frame':	7616 obs. of  11 variables:
@@ -5093,7 +5092,9 @@ umxCov2cor <- function(x) {
 #'
 #' # Just keep bmi and wt
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", 
-#'     zygosity= "zygosity", vars2keep = c("bmi", "wt"))
+#'     zygosity = "zygosity", vars2keep = c("bmi", "wt")
+#' )
+#'
 #' namez(wide)
 #' # "fam" "twinID" "zygosity" "bmi_T1" "wt_T1" "bmi_T2" "wt_T2"
 #' 
@@ -5102,8 +5103,10 @@ umxCov2cor <- function(x) {
 #' # ==================
 #' # Keep bmi and wt, and pass through 'cohort'
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
-#' vars2keep = c("bmi", "wt"), passalong = "cohort")
+#'		vars2keep = c("bmi", "wt"), passalong = "cohort"
+#' )
 #' namez(wide)
+#'
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA, twinIDs2keep=NA) {
 	umx_check_names(c(famID, twinID, zygosity), data = data, die = TRUE)
 	umx_check_names(passalong, data = data, die = TRUE)
