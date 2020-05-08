@@ -185,14 +185,14 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
-	umx_check(!is.null(rev) && is.null(max), "stop", "If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 
 	# ==================================
 	# = Reverse any items needing this =
 	# ==================================
 	if(!is.null(rev)){
+		umx_check(is.null(max), "stop", "If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 		revItems = data[,paste0(base, rev), drop= FALSE]
-		revItems = (max+min) - revItems
+		revItems = (max + min) - revItems
 		data[,paste0(base, rev)] = revItems
 	}
 	allColNames = paste0(base, c(pos, rev))
