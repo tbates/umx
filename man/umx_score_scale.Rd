@@ -43,10 +43,13 @@ umx_score_scale(
 \description{
 Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 
-Items must be named on the pattern \<base\>\<n\>, where \code{base} is the string common to all item (column) names.
+Items must be named on the pattern \code{baseN}, where \code{base} is the string common to all item (column) names and N is the item number in the scale.
+
 \code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers.
-To reverse items, the function uses \code{itemMax} is the high score (to compute how to reverse items).
-\code{min} defaults to 1.
+
+To reverse items, the function uses \code{max} and \code{min} as the loweest and highest possible response scores to compute how to reverse items.
+
+\emph{note}: \code{min} defaults to 1.
 }
 \examples{
 library(psych)

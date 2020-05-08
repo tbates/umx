@@ -116,10 +116,13 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @description
 #' Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 #' 
-#' Items must be named on the pattern \<base\>\<n\>, where `base` is the string common to all item (column) names.
+#' Items must be named on the pattern `baseN`, where `base` is the string common to all item (column) names and N is the item number in the scale.
+#' 
 #' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers.
-#' To reverse items, the function uses `itemMax` is the high score (to compute how to reverse items).
-#' `min` defaults to 1.
+#' 
+#' To reverse items, the function uses `max` and `min` as the loweest and highest possible response scores to compute how to reverse items.
+#' 
+#' *note*: `min` defaults to 1.
 #' 
 #' @param base String common to all item names.
 #' @param pos The positive-scored item numbers.
@@ -3478,9 +3481,11 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 		namesNeeded = dimnames(namesNeeded)[[2]]
 	} else if (typeof(namesNeeded)=="character"){
 		namesNeeded = namesNeeded
+	} else if (is.null(namesNeeded) ||is.na(namesNeeded)){
+		return(TRUE)
 	} else{
 		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded), "\n",
-		"PS: names in data were: ", namesInData)
+		"PS: names in data were: ", omxQuotes(namesInData))
 	}
 
 	if(intersection){
@@ -5254,6 +5259,10 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	if(NA %in% levelsOfTwinID){
 	  message("Some subjects have NA as twinID!")
 	}
+
+	# ======================================
+	# = Drop unwanted twinIDs if requested =
+	# ======================================
 	if(!all(is.na(twinIDs2keep))){
 		if(any(!twinIDs2keep %in% levelsOfTwinID)){
 			stop("One or more twinIDs you requested to keep do not occur in the data:", 
@@ -5267,33 +5276,38 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 		}
 	}
 
-	# levelsOfTwinID = c(1,2,50,51)
-
-	if(anyNA(passalong)){
-		allVars = c(IDVars, vars2keep)		
-	}else{
-		allVars = c(IDVars, passalong, vars2keep)
-	}
-	famIDPlus_vars2keep = c(famID, vars2keep)
-
-	# ==================================
-	# = Merge each twinID to the right =
-	# ==================================
+	# ===================================
+	# = Merge each twinID starting at 1 =
+	# ===================================
 	# Extract all the twins of twinID i, merge by famid with existing blocks 
-	for(i in seq_along(levelsOfTwinID)) {
-		newNames = paste0(vars2keep, "_T", levelsOfTwinID[i])
+	for(i in 1:length(levelsOfTwinID)) {
+		# 1. get all rows of this twinID
+		namesForThisTwin = paste0(c(zygosity, vars2keep), "_T", levelsOfTwinID[i])
+		current = data[data[,twinID] %in% levelsOfTwinID[i], c(famID, zygosity, vars2keep)]
+		current = umx_rename(current, from = c(zygosity, vars2keep), to = namesForThisTwin)
+
 		if(i == 1){
-			previous = data[data[,twinID] %in% levelsOfTwinID[i], allVars]
-			previous = umx_rename(previous, from = vars2keep, to = newNames)
+			# First time through: create dataframe based on twinID[1]
+			previous = current
 		} else {
-			current  = data[data[,twinID] %in% levelsOfTwinID[i], famIDPlus_vars2keep]
-			current  = umx_rename(current, from = vars2keep, to = newNames)			
-			previous = merge(previous, current, by = famID, all.x = TRUE, all.y = TRUE)
+			# Twin 2 and onward: create dataframe based on twinID[2], and merge with twin frame
+			# IDVars = c(famID, twinID, zygosity))
+			previous = merge(previous, current, by = c(famID, zygosity), all.x = TRUE, all.y = TRUE) # xsuffixes = c("", levelsOfTwinID[i])
 		}
-		# cat(paste0(levelsOfTwinID[i], " "))
 	}
-	# TODO umx_long2wide: Bother to check if zygosity is not NA in some member of family?
-	# 	to avoid problem of NA if NA in first family member found?
+	# Find the first non-NA cell in "zygosity_Tn" and store this in zygosity
+	previous[,zygosity] = ifelse(is.na(previous[,paste0(zygosity, "_T1")]), previous[,paste0(zygosity, "_T2")], previous[,paste0(zygosity, "_T1")])
+
+	# Delete the copies of zygosity
+	previous[,namez(previous, c(zygosity, "_T"))] = NULL  
+
+	if(!anyNA(passalong)){
+		# passalong variables found: merge them into the dataset
+		justIDandPassAlong = data[, c(IDVars, passalong)]
+		passAlongData = data[!duplicated(data[, famID]), c(famID, passalong)]
+		previous = merge(previous, passAlongData, by = famID, all.x = TRUE, all.y = FALSE)
+	}
+
   return(previous)
 }
 
