@@ -3939,15 +3939,15 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @description
 #' `umxAPA` creates summaries from a range of inputs. Use it for reporting `lm` models, effects, and summarizing data.
 #' 
-#' 1. Given an `lm`, `umxAPA` will return a formatted effect, including 95% CI 
-#' in square brackets, for one of the effects (specified by name in se). e.g.:
-#' `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001
+#' 1. Given an [stats::lm()] model, `umxAPA` will return a formatted effect, including 95% CI 
+#' in square brackets e.g.: `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001. here "wt" 
+#' restricts the output to just the named effect.
 #' 2. This also works for [t.test()], [stats::glm()], [cor.test()], and others as I come across them.
-#' 3. get a CI from obj=beta and se=se : `umxAPA(-0.30, .03) # \eqn{\beta} = -0.3 [-0.36, -0.24]`
-#' 4. Back out an SE from b and CI: `umxAPA(-0.030, c(-0.073, 0.013)) # \eqn{\beta} = -0.03, se =0.02`
-#' 5. Given only a number as obj, will be treated as a p-value as returned in APA format.
-#' 6. Given a dataframe, `umxAPA` will return a table of correlations, with
-#' the mean and SD of each variable as the last row. So, 
+#' 3. Get a CI from obj=beta and se=se : `umxAPA(-0.30, .03)` returns \eqn{\beta} = -0.3 [-0.36, -0.24]
+#' 4. Back out an SE from b and CI: `umxAPA(-0.030, c(-0.073, 0.013))` returns \eqn{\beta} = -0.03, se = 0.02
+#' 5. Given only a number as obj, will be treated as a p-value, and returned in APA format.
+#' 6. Given a dataframe, `umxAPA` will return a table of correlations with
+#' the mean and SD of each variable as the last row. e.g.:
 #' `umxAPA(mtcars[,c("cyl", "wt", "mpg", )]` yields a table of 
 #' correlations, means and SDs thus:
 #'   \tabular{lccc}{
@@ -3976,6 +3976,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @return - string
 #' @export
+#' @seealso [SE_from_p()]
 #' @family Reporting Functions
 #' @references - <https://github.com/tbates/umx>, <https://my.ilstu.edu/~jhkahn/apastats.html>
 #' @md

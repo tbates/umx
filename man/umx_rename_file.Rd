@@ -18,7 +18,8 @@ umx_rename_file(
 
 \item{replaceStr}{The (regex) replacement string "\1 are not dogs"}
 
-\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
+\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window.
+If it is blank, a choose folder dialog will be thrown.}
 
 \item{listPattern}{A pre-filter for files}
 

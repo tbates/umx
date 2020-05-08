@@ -1827,7 +1827,8 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #'
 #' @param findStr The (regex) string to find, i.e., "cat"
 #' @param replaceStr The (regex) replacement string "\1 are not dogs"
-#' @param baseFolder The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param baseFolder The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window.
+#' If it is blank, a choose folder dialog will be thrown.
 #' @param listPattern A pre-filter for files
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
@@ -1924,13 +1925,15 @@ dl_from_dropbox <- function(x, key=NULL){
 #' On OS X, `umx_move_file` can access the current front-most Finder window.
 #' The file moves are fast and, because you can use regular expressions, powerful.
 #'
-#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.
-#' @param regex = regex string select files to move (NOT IMPLEMENTED YET)
+#' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current
+#' front-most Finder window. If it is blank, a choose folder dialog will be thrown.
+#' @param regex [Regular expression](regex) to select files in baseFolder
 #' @param fileNameList List of files to move
 #' @param destFolder Folder to move files into
 #' @param test Boolean determining whether to change the names, or just report on what would have happened
 #' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe))
 #' @return None
+#' @seealso [file.rename()], [regex()]
 #' @family File Functions
 #' @md
 #' @export
@@ -1939,7 +1942,11 @@ dl_from_dropbox <- function(x, key=NULL){
 #' base = "~/Desktop/"
 #' dest = "~/Music/iTunes/iTunes Music/Music/"
 #' umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= TRUE)
-#' umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", 
+#'
+#' # ============================================================
+#' # = Move all files in downloads ending in ".jpeg" to Desktop =
+#' # ============================================================
+#' umx_move_file(baseFolder = "~/Downloads/", regex=".jpeg", 
 #'		destFolder = "~/Desktop/", test= TRUE)
 #' }
 #'
@@ -2166,7 +2173,7 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #'
 #' @details
 #' Works on Mac. Let me know if it fails on windows or Unix.
-#' @param x something to put on the clipboard
+#' @param x something to paste to the clipboard
 #' @return None 
 #' @export
 #' @family File Functions
@@ -2176,13 +2183,14 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 #' }
 umx_write_to_clipboard <- function(x) {
 	if(umx_check_OS("OSX")){
-		clipboard <- pipe("pbcopy", "w")
+		clipboard = pipe("pbcopy", "w")
 		write.table(x, file = clipboard, sep = "\t", row.names = FALSE, col.names = FALSE, quote = FALSE)
 		close(clipboard)
 	} else if (umx_check_OS("Windows")){
 		write.table(x, file = "clipboard", sep = "\t", col.names = NA)
 	}else{
-		message("clipboard not implemented for *nix - awaiting a reliable solution. See:
+		message("clipboard not implemented for *nix - awaiting a reliable solution.
+		file(description='clipboard') might help.  See:
 		https://stackoverflow.com/questions/13438556/how-do-i-copy-and-paste-data-into-r-from-the-clipboard#13438558")
 	}
 }
@@ -2541,10 +2549,48 @@ print.reliability <- function (x, digits = 4, ...){
      invisible(x)
 }
 
+#' Convert Radians to Degrees
+#'
+#' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
+#' 
+#' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are 2\eqn{x} \eqn{\pi} 
+#' radians in a circle.
+#'
+#' @param rad The value in Radians you wish to convert
+#' @return - value in degrees
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [deg2rad()], [sin()]
+#' @md
+#' @examples
+#' rad2deg(pi) #180 degrees
+rad2deg <- function(rad) {
+	rad * 180/pi
+}
 
-# ==================
-# = Code functions =
-# ==================
+#' Convert Degrees to Degrees 
+#'
+#' @description Just a helper to multiply degrees by \eqn{\pi} and divide by 180 to get radians.
+#' 
+#' *note*: R's trig functions, e.g. [sin()] use Radians for input! 180 Degrees is equal to 
+#' 2\eqn{x \pi} radians.
+#'
+#' @param deg The value in degrees you wish to convert to radians
+#' @return - value in radians
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [rad2deg()], [sin()]
+#' @md
+#' @examples
+#' deg2rad(180) # pi!
+deg2rad <- function(deg) {
+	deg * pi/ 180
+}
+
+
+# =======================
+# = Developer functions =
+# =======================
 
 #' Install OpenMx, with choice of builds
 #'
@@ -2679,9 +2725,10 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 	}
 }
 
-# ==============================
-# = User interaction functions =
-# ==============================
+
+# ================================
+# = Reporting & Graphing helpers =
+# ================================
 
 #' Print the name and compact contents of variable.
 #'
@@ -2714,148 +2761,6 @@ umx_msg <- function(x) {
 		}
 	}
 }
-
-
-#' xmu_CI_merge
-#'
-#' if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),
-#' this is a simple helper to kludge them together.
-#'
-#' @param m1 first copy of the model
-#' @param m2 second copy of the model
-#' @return - [mxModel()]
-#' @family xmu internal not for end user
-#' @export
-#' @references - <https://www.github.com/tbates/umx>
-#' @examples
-#' \dontrun{
-#' xmu_CI_merge(m1, m2)
-#' }
-xmu_CI_merge <- function(m1, m2) {
-	# TODO xmu_CI_merge has 5 things todo :-(
-	# 1. remove duplicates...
-	# 2. (check they are the same as well!)
-	# 3. Support arbitrarily long list of input models with ...
-	# 4. check the models are the same, with same fit
-	# 5. check the models have CIs
-	# kluge together
-	a  = m1$output$confidenceIntervals
-	b  = m2$output$confidenceIntervals
-	a_names = attr(a, "dimnames")[[1]]
-	b_names = attr(b, "dimnames")[[1]]
-	all_names = c(a_names, b_names)
-	all_CIs = rbind(a,b)
-	if(any(duplicated(all_names))){
-		message("Some CIs appear to be duplicates...")
-		message("I dropped these from the list:")
-		cat(duplicated(all_names))
-		cat(all_names[duplicated(all_names)])
-		cat(all_CIs[duplicated(all_names), ])
-	}
-
-	m1$output$confidenceIntervals = all_CIs
-	return(m1)
-	# return(all_CIs)
-}
-
-# =====================
-# = Statistical tools =
-# =====================
-#' 
-#' Convert Radians to Degrees
-#'
-#' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
-#' 
-#' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are 2\eqn{x} \eqn{\pi} 
-#' radians in a circle.
-#'
-#' @param rad The value in Radians you wish to convert
-#' @return - value in degrees
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [deg2rad()], [sin()]
-#' @md
-#' @examples
-#' rad2deg(pi) #180 degrees
-rad2deg <- function(rad) {
-	rad * 180/pi
-}
-
-#' Convert Degrees to Degrees 
-#'
-#' @description Just a helper to multiply degrees by \eqn{\pi} and divide by 180 to get radians.
-#' 
-#' *note*: R's trig functions, e.g. [sin()] use Radians for input! 180 Degrees is equal to 
-#' 2\eqn{x \pi} radians.
-#'
-#' @param deg The value in degrees you wish to convert to radians
-#' @return - value in radians
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [rad2deg()], [sin()]
-#' @md
-#' @examples
-#' deg2rad(180) # pi!
-deg2rad <- function(deg) {
-	deg * pi/ 180
-}
-
-#' Convert a dataframe into a cov mxData object
-#'
-#' `xmu_DF_to_mxData_TypeCov` converts a dataframe into [mxData()] with `type="cov"` and `nrow = numObs`
-#' and optionally adding means.
-#'
-#' @param df the dataframe to covert to an mxData type cov object.
-#' @param columns = Which columns to keep (default is all).
-#' @param use = Default is "complete.obs".
-#' @return - [mxData()] of type = cov
-#' @export
-#' @family xmu internal not for end user
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
-#' @examples
-#' xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
-xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
-	use = match.arg(use)
-	if(anyNA(columns)){
-		columns = names(df)
-	}
-	df = df[,columns]
-	if(use == "complete.obs"){
-		df = df[complete.cases(df), ]
-	} else {
-		if(anyNA(df)){
-			message("numObs was set to nrow, but if as the data contain NAs, this is too liberal!")
-		}
-	}
-	numObs = nrow(df)
-	umx_check_names(columns, df)
-	return(mxData(cov(df[, columns], use = use), type = "cov", numObs = numObs))
-}
-
-#' Convert a covariance matrix into a correlation matrix
-#'
-#' A version of [cov2cor()] that forces upper and lower triangles to be *identical* (rather than nearly identical)
-#'
-#' @param x something that cov2cor can work on (matrix, df, etc.)
-#' @return - A correlation matrix
-#' @export
-#' @family Miscellaneous Stats Helpers
-#' @seealso [cov2cor()]
-#' @references - <https://www.github.com/tbates/umx>
-#' @examples
-#' umxCov2cor(cov(mtcars[,1:5]))
-#' @md
-umxCov2cor <- function(x) {
-	x = cov2cor(x)
-	x[lower.tri(x)] <- t(x)[lower.tri(t(x))]
-	return(x)
-}
-
-
-# ================================
-# = Reporting & Graphing helpers =
-# ================================
 
 #' Helper to make the list of vars and their shapes for a graphviz string
 #'
@@ -4710,92 +4615,6 @@ xmu_match.arg <- function(x, option_list, check = TRUE){
 	}
 }
 
-#' qm
-#'
-#' Quickmatrix function
-#'
-#' @param ... the components of your matrix
-#' @param rowMarker mark the end of each row
-#' @return - matrix
-#' @family Miscellaneous Utility Functions
-#' @references \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
-#' @export
-#' @examples
-#' # simple example
-#' qm(0, 1 |
-#'    2, NA)
-#' \dontrun{
-#' # clever example
-#' M1 = M2 = diag(2)
-#' qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
-#' }
-qm <- function(..., rowMarker = "|") {
-	# Short hard to read version that allows some of the more advanced Matlab capabilities like Matrices as arguments:
-	# turn ... into string
-	args<-deparse(substitute(rbind(cbind(...))))
-	# create "rbind(cbind(.),cbind(.),.)" construct
-	sep = paste0("\\", rowMarker)
-	args<-gsub(sep, "), cbind(", args)
-	# eval
-	eval(parse(text = args))
-}
-
-# easier to read variant that does not accept matrices as arguments...
-# qm <- function(..., colsep = "|") {
-# 	# Get the arguments as a list
-# 	arg <- eval(substitute(alist(...)))
-# 	out <- strsplit(as.character(arg), split = colsep, fixed = TRUE)
-# 	ns <- sapply(out, length)
-# 	ncol <- if(any(ns > 1)){min(which(ns>1))}else{length(ns)}
-# 	matrix(as.numeric(unlist(out)), ncol = ncol, byrow = TRUE)
-# }
-
-#  tic()
-# 
-#  toc()
-# 
-# tic <- function(gcFirst = TRUE, type=c("elapsed", "user.self", "sys.self")){
-#    type <- match.arg(type)
-#    assign(".type", type, envir=baseenv())
-#    if(gcFirst) gc(FALSE)
-#    tic <- proc.time()[type]         
-#    assign(".tic", tic, envir=baseenv())
-#    invisible(tic)
-# }
-# 
-# toc <- function(){
-#    type <- get(".type", envir=baseenv())
-#    toc <- proc.time()[type]
-#    tic <- get(".tic", envir=baseenv())
-#    print(toc - tic)
-#    invisible(toc)
-# }
-# 
-# library(rbenchmark)
-# # Example 1
-# # Benchmarking the allocation of one 10^6-element numeric vector,
-# # by default replicated 100 times
-# benchmark(1:10^6)
-# # simple test functions used in subsequent examples
-# random.array <- function(rows, cols, dist=rnorm)
-# array(dist(rows*cols), c(rows, cols))
-# random.replicate <- function(rows, cols, dist=rnorm)
-# replicate(cols, dist(rows))
-# 
-# library("microbenchmark")
-# library("ggplot2")
-# tm <- microbenchmark(
-# 	rchisq(100, 0),
-# 	rchisq(100, 1),
-# 	rchisq(100, 2),
-# 	rchisq(100, 3),
-# 	rchisq(100, 5), times=1000
-# )
-# boxplot(tm)
-# autoplot(tm)
-# summary(tm)
-# tm <- microbenchmark(1:10^6); autoplot(tm)
-
 # ================================
 # = string and php-style helpers =
 # ================================
@@ -5149,6 +4968,29 @@ umx_rot <- function(vec, na.last=FALSE){
 # =================================
 # = Data: Read, Prep, Clean, Fake =
 # =================================
+
+
+#' Convert a covariance matrix into a correlation matrix
+#'
+#' A version of [cov2cor()] that forces upper and lower triangles to be *identical* (rather than nearly identical)
+#'
+#' @param x something that cov2cor can work on (matrix, df, etc.)
+#' @return - A correlation matrix
+#' @export
+#' @family Miscellaneous Stats Helpers
+#' @seealso [cov2cor()]
+#' @references - <https://www.github.com/tbates/umx>
+#' @examples
+#' umxCov2cor(cov(mtcars[,1:5]))
+#' @md
+umxCov2cor <- function(x) {
+	x = cov2cor(x)
+	x[lower.tri(x)] <- t(x)[lower.tri(t(x))]
+	return(x)
+}
+
+
+
 #' Take a long twin-data file and make it wide (one family per row)
 #'
 #' @description
@@ -6308,6 +6150,85 @@ umx_make_raw_from_cov <- function(covMat, n, means = 0, varNames = NULL, empiric
 	return(out)
 }
 
+
+#' xmu_CI_merge
+#'
+#' if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),
+#' this is a simple helper to kludge them together.
+#'
+#' @param m1 first copy of the model
+#' @param m2 second copy of the model
+#' @return - [mxModel()]
+#' @family xmu internal not for end user
+#' @export
+#' @references - <https://www.github.com/tbates/umx>
+#' @examples
+#' \dontrun{
+#' xmu_CI_merge(m1, m2)
+#' }
+xmu_CI_merge <- function(m1, m2) {
+	# TODO xmu_CI_merge has 5 things todo :-(
+	# 1. remove duplicates...
+	# 2. (check they are the same as well!)
+	# 3. Support arbitrarily long list of input models with ...
+	# 4. check the models are the same, with same fit
+	# 5. check the models have CIs
+	# kluge together
+	a  = m1$output$confidenceIntervals
+	b  = m2$output$confidenceIntervals
+	a_names = attr(a, "dimnames")[[1]]
+	b_names = attr(b, "dimnames")[[1]]
+	all_names = c(a_names, b_names)
+	all_CIs = rbind(a,b)
+	if(any(duplicated(all_names))){
+		message("Some CIs appear to be duplicates...")
+		message("I dropped these from the list:")
+		cat(duplicated(all_names))
+		cat(all_names[duplicated(all_names)])
+		cat(all_CIs[duplicated(all_names), ])
+	}
+
+	m1$output$confidenceIntervals = all_CIs
+	return(m1)
+	# return(all_CIs)
+}
+
+
+
+#' Convert a dataframe into a cov mxData object
+#'
+#' `xmu_DF_to_mxData_TypeCov` converts a dataframe into [mxData()] with `type="cov"` and `nrow = numObs`
+#' and optionally adding means.
+#'
+#' @param df the dataframe to covert to an mxData type cov object.
+#' @param columns = Which columns to keep (default is all).
+#' @param use = Default is "complete.obs".
+#' @return - [mxData()] of type = cov
+#' @export
+#' @family xmu internal not for end user
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
+xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
+	use = match.arg(use)
+	if(anyNA(columns)){
+		columns = names(df)
+	}
+	df = df[,columns]
+	if(use == "complete.obs"){
+		df = df[complete.cases(df), ]
+	} else {
+		if(anyNA(df)){
+			message("numObs was set to nrow, but if as the data contain NAs, this is too liberal!")
+		}
+	}
+	numObs = nrow(df)
+	umx_check_names(columns, df)
+	return(mxData(cov(df[, columns], use = use), type = "cov", numObs = numObs))
+}
+
+
 # =============
 # = Read data =
 # =============
@@ -6841,6 +6762,94 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 	# This is useful because it lets you use paste() and rep() to quickly and easily insert values from R variables into the string, then parse the string as an mxAlgebra argument.
 	# Use case: include a matrix exponent (that is A %*% A %*% A %*% A...) with a variable exponent. With this function, the code goes:
 }
+
+
+#' qm
+#'
+#' Quickmatrix function
+#'
+#' @param ... the components of your matrix
+#' @param rowMarker mark the end of each row
+#' @return - matrix
+#' @family Miscellaneous Utility Functions
+#' @references \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style}
+#' @export
+#' @examples
+#' # simple example
+#' qm(0, 1 |
+#'    2, NA)
+#' \dontrun{
+#' # clever example
+#' M1 = M2 = diag(2)
+#' qm(M1,c(4,5) | c(1,2),M2 | t(1:3))
+#' }
+qm <- function(..., rowMarker = "|") {
+	# Short hard to read version that allows some of the more advanced Matlab capabilities like Matrices as arguments:
+	# turn ... into string
+	args<-deparse(substitute(rbind(cbind(...))))
+	# create "rbind(cbind(.),cbind(.),.)" construct
+	sep = paste0("\\", rowMarker)
+	args<-gsub(sep, "), cbind(", args)
+	# eval
+	eval(parse(text = args))
+}
+
+# easier to read variant that does not accept matrices as arguments...
+# qm <- function(..., colsep = "|") {
+# 	# Get the arguments as a list
+# 	arg <- eval(substitute(alist(...)))
+# 	out <- strsplit(as.character(arg), split = colsep, fixed = TRUE)
+# 	ns <- sapply(out, length)
+# 	ncol <- if(any(ns > 1)){min(which(ns>1))}else{length(ns)}
+# 	matrix(as.numeric(unlist(out)), ncol = ncol, byrow = TRUE)
+# }
+
+#  tic()
+# 
+#  toc()
+# 
+# tic <- function(gcFirst = TRUE, type=c("elapsed", "user.self", "sys.self")){
+#    type <- match.arg(type)
+#    assign(".type", type, envir=baseenv())
+#    if(gcFirst) gc(FALSE)
+#    tic <- proc.time()[type]         
+#    assign(".tic", tic, envir=baseenv())
+#    invisible(tic)
+# }
+# 
+# toc <- function(){
+#    type <- get(".type", envir=baseenv())
+#    toc <- proc.time()[type]
+#    tic <- get(".tic", envir=baseenv())
+#    print(toc - tic)
+#    invisible(toc)
+# }
+# 
+# library(rbenchmark)
+# # Example 1
+# # Benchmarking the allocation of one 10^6-element numeric vector,
+# # by default replicated 100 times
+# benchmark(1:10^6)
+# # simple test functions used in subsequent examples
+# random.array <- function(rows, cols, dist=rnorm)
+# array(dist(rows*cols), c(rows, cols))
+# random.replicate <- function(rows, cols, dist=rnorm)
+# replicate(cols, dist(rows))
+# 
+# library("microbenchmark")
+# library("ggplot2")
+# tm <- microbenchmark(
+# 	rchisq(100, 0),
+# 	rchisq(100, 1),
+# 	rchisq(100, 2),
+# 	rchisq(100, 3),
+# 	rchisq(100, 5), times=1000
+# )
+# boxplot(tm)
+# autoplot(tm)
+# summary(tm)
+# tm <- microbenchmark(1:10^6); autoplot(tm)
+
 
 # =============================
 # = Standardization Functions =
