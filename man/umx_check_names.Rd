@@ -40,7 +40,11 @@ umx_check_names(c("x1", "x2"), mxData(demoOneFactor, type="raw"))
 umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
+# no request
+umx_check_names(c(), data = demoOneFactor, die = FALSE, no_others = TRUE)
+
 \dontrun{
+# An example error from vars that don't exist in the data
 umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 }
 }

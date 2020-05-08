@@ -178,14 +178,14 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
+	
+	# TODO umx_score_scale
+	# 1. Check there are no NAs is score is totals.
+	# 2. Check the range of each item is within min:max
 	score = match.arg(score)
 	
-	if(is.null(name)){
-		name = paste0(base, "_score")
-	}
-	if(!is.null(rev) && is.null(max)){
-		stop("If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
-	}
+	if(is.null(name)){ name = paste0(base, "_score") }
+	umx_check(!is.null(rev) && is.null(max), "stop", "If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 
 	# ==================================
 	# = Reverse any items needing this =
@@ -3364,7 +3364,11 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' umx_check_names(c("z1", "x2"), data = demoOneFactor, die = FALSE)
 #' umx_check_names(c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE)
 #' umx_check_names(c("x1","x2","x3","x4","x5"), data = demoOneFactor, die = FALSE, no_others = TRUE)
+#' # no request
+#' umx_check_names(c(), data = demoOneFactor, die = FALSE, no_others = TRUE)
+#' 
 #' \dontrun{
+#' # An example error from vars that don't exist in the data
 #' umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 #' }
 umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALSE, intersection = FALSE, message = ""){
@@ -5072,34 +5076,21 @@ umxCov2cor <- function(x) {
 #' # ==================
 #' # Keep bmi and wt, and pass through 'cohort'
 #' wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
-#'   vars2keep = c("bmi", "wt"), passalong = "cohort")
+#' vars2keep = c("bmi", "wt"), passalong = "cohort")
 #' namez(wide)
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA, twinIDs2keep=NA) {
-	IDVars = c(famID, twinID, zygosity)
-	umx_check_names(IDVars, data = data, die = TRUE)
+	umx_check_names(c(famID, twinID, zygosity), data = data, die = TRUE)
+	umx_check_names(passalong, data = data, die = TRUE)
+	levelsOfTwinID = unique(data[,twinID])
+	umx_check(length(levelsOfTwinID) > 10, "stop", "Found ", length(levelsOfTwinID), " levels of twinID. That seems too many??? should be c(1,2,50,51) or similar?")
+	message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
 
-	if(!anyNA(passalong)){
-		umx_check_names(passalong, data = data, die = TRUE)
-	}
-
+	IDVars = c(famID, twinID)
 	if(typeof(vars2keep) == "character"){
-		# Check user provided list
 		umx_check_names(vars2keep, data = data, die = TRUE)
 	} else {
-		# vars that are not ID columns
 		# message("Keeping all variables")
-		vars2keep = setdiff(names(data), IDVars)
-	}
-	
-	levelsOfTwinID = unique(data[,twinID])
-	if(length(levelsOfTwinID) > 10){
-		stop("Found ", length(levelsOfTwinID), " levels of twinID. That seems too many??? should be c(1,2,50,51) or similar?")
-	} else {
-		message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
-	}
-
-	if(NA %in% levelsOfTwinID){
-	  message("Some subjects have NA as twinID!")
+		vars2keep = setdiff(names(data), c(IDVars, zygosity))
 	}
 
 	# ======================================
@@ -5133,14 +5124,14 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 			previous = current
 		} else {
 			# Twin 2 and onward: create dataframe based on twinID[2], and merge with twin frame
-			# IDVars = c(famID, twinID, zygosity))
-			previous = merge(previous, current, by = c(famID, zygosity), all.x = TRUE, all.y = TRUE) # xsuffixes = c("", levelsOfTwinID[i])
+			previous = merge(previous, current, by = c(famID, zygosity), all.x = TRUE, all.y = TRUE) # suffixes = c("", levelsOfTwinID[i])
 		}
 	}
-	# Find the first non-NA cell in "zygosity_Tn" and store this in zygosity
-	previous[,zygosity] = ifelse(is.na(previous[,paste0(zygosity, "_T1")]), previous[,paste0(zygosity, "_T2")], previous[,paste0(zygosity, "_T1")])
+	# TODO Find the first non-NA cell in "zygosity_Tn" and store this in zygosity
+	# TODO Delete the copies of zygosity
+	umx_msg(namez(previous, zygosity))
+	# previous[,zygosity] = ifelse(is.na(previous[,paste0(zygosity, "_T1")]), previous[,paste0(zygosity, "_T2")], previous[,paste0(zygosity, "_T1")])
 
-	# Delete the copies of zygosity
 	previous[,namez(previous, c(zygosity, "_T"))] = NULL  
 
 	if(!anyNA(passalong)){

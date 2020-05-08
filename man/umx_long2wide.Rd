@@ -97,7 +97,7 @@ namez(wide)
 # ==================
 # Keep bmi and wt, and pass through 'cohort'
 wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygosity", 
-  vars2keep = c("bmi", "wt"), passalong = "cohort")
+vars2keep = c("bmi", "wt"), passalong = "cohort")
 namez(wide)
 }
 \references{
