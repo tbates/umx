@@ -5081,15 +5081,14 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	umx_check_names(c(famID, twinID, zygosity), data = data, die = TRUE)
 	umx_check_names(passalong, data = data, die = TRUE)
 	levelsOfTwinID = unique(data[,twinID])
-	umx_check(length(levelsOfTwinID) > 10, "stop", "Found ", length(levelsOfTwinID), " levels of twinID. That seems too many??? should be c(1,2,50,51) or similar?")
+	umx_check(length(levelsOfTwinID) < 11, "stop", "Found ", length(levelsOfTwinID), " levels of twinID. That seems too many??? should be c(1,2,50,51) or similar?")
 	message("Found ", length(levelsOfTwinID), " levels of twinID: ", omxQuotes(levelsOfTwinID))
 
-	IDVars = c(famID, twinID)
 	if(typeof(vars2keep) == "character"){
 		umx_check_names(vars2keep, data = data, die = TRUE)
 	} else {
 		# message("Keeping all variables")
-		vars2keep = setdiff(names(data), c(IDVars, zygosity))
+		vars2keep = setdiff(names(data), c(famID, twinID, zygosity))
 	}
 
 	# ======================================
@@ -5123,12 +5122,14 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 			previous = current
 		} else {
 			# Twin 2 and onward: create dataframe based on twinID[2], and merge with twin frame
-			previous = merge(previous, current, by = c(famID, zygosity), all.x = TRUE, all.y = TRUE) # suffixes = c("", levelsOfTwinID[i])
+			previous = merge(previous, current, by = c(famID), all.x = TRUE, all.y = TRUE) # suffixes = c("", levelsOfTwinID[i])
 		}
 	}
 	# TODO Find the first non-NA cell in "zygosity_Tn" and store this in zygosity
 	# TODO Delete the copies of zygosity
-	umx_msg(namez(previous, zygosity))
+	umx_msg(zygosity)
+	umx_msg(namez(previous))
+	
 	# previous[,zygosity] = ifelse(is.na(previous[,paste0(zygosity, "_T1")]), previous[,paste0(zygosity, "_T2")], previous[,paste0(zygosity, "_T1")])
 
 	previous[,namez(previous, c(zygosity, "_T"))] = NULL  
