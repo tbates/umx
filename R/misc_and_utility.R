@@ -178,19 +178,18 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
-	
 	# TODO umx_score_scale
-	# 1. Check there are no NAs is score is totals.
+	# 1. Check there are no NAs if score is totals.
 	# 2. Check the range of each item is within min:max
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
-
+	oldData = data
 	# ==================================
 	# = Reverse any items needing this =
 	# ==================================
 	if(!is.null(rev)){
-		umx_check(is.null(max), "stop", "If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
+		umx_check(!is.null(max), "stop", "If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 		revItems = data[,paste0(base, rev), drop= FALSE]
 		revItems = (max + min) - revItems
 		data[,paste0(base, rev)] = revItems
@@ -208,8 +207,8 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		# score = means
 		score = rowMeans(data[ , allColNames, drop = FALSE], na.rm = na.rm)
 	}
-	data[, name] = score
-	return(data)
+	oldData[, name] = score
+	return(oldData)
 }
 
 
