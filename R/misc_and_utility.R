@@ -5127,7 +5127,6 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 	}
 	# TODO Find the first non-NA cell in "zygosity_Tn" and store this in zygosity
 	# TODO Delete the copies of zygosity
-	umx_msg(zygosity)
 	umx_msg(namez(previous))
 	
 	# previous[,zygosity] = ifelse(is.na(previous[,paste0(zygosity, "_T1")]), previous[,paste0(zygosity, "_T2")], previous[,paste0(zygosity, "_T1")])
