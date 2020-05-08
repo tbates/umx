@@ -111,7 +111,10 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 	}
 }
 
-#' Score a psychometric scale by summing normal and reversed items
+#' Score a psychometric scale by summing normal and reversed items. 
+#' 
+#' In the presence of NAs, `score= "mean"` and `score = "totals"` both return NA unless na.rm = TRUE.
+#' `score = "max"`, ignores NAs no mattrer what.
 #'
 #' @description
 #' Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
@@ -139,23 +142,47 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @md
 #' @examples
 #' library(psych)
+#' data(bfi)
 #' 
 #' # ==============================
 #' # = Score Agreeableness totals =
 #' # ==============================
+#' 
+#' # Handscore subject 1
+#' # A1(Reversed) + A2 + A3 + A4 + A5 
+#' #      (6+1)-2 + 4  + 3  + 4  + 4  = 20
 #' 
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
 #' tmp[1, namez(tmp, "A",ignore.case=FALSE)]
 #' #  A1 A2 A3 A4 A5  A
 #' #  2  4  3  4  4  20
 #' 
-#' # Handscore subject 1
-#' # A2 + A3 + A4 + A5 + A1(Reversed)
-#' # 4  + 3  + 4  + 4 + (6+1)-2 = 20
+#' # =================================================================================
+#' # = Note: (as of a fix in 2020-05-08) items not reversed in the returned data set =
+#' # =================================================================================
+#' tmp = umx_score_scale("A", pos = 1, rev = 2:5, max = 6, data= bfi, name = "A")
+#' tmp[1, namez(tmp, "A",ignore.case=FALSE)]
+#' #   A1 A2 A3 A4 A5   A
+#' #   2   4  3  4  4 = 15
 #' 
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
 #' tmp$A[1] # subject 1 mean = 4
 #' 
+#' # ===========================================
+#' # = How does mean react to a missing value? =
+#' # ===========================================
+#' tmpDF = bfi
+#' tmpDF[1, "A1"] = NA
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, name = "A", score="mean")
+#' tmp$A[1] # NA: (na.rm defaults to FALSE)
+#' 
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, 
+#'      name = "A", score="mean", na.rm=TRUE)
+#' tmp$A[1] # 3.75
+#' 
+#' # ===============
+#' # = Score = max =
+#' # ===============
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
 #' tmp$A[1] # subject 1 max = 5 (the reversed item 1)
 #' 
@@ -199,9 +226,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		df = data[ , allColNames, drop = FALSE]
 		score = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
-			score[i] = max(df[i,])
+			score[i] = max(df[i,], na.rm=TRUE)
 		}
-	}else if(score=="totals"){
+	}else if(score == "totals"){
 		score = rowSums(data[ , allColNames, drop = FALSE], na.rm = na.rm)
 	}else{
 		# score = means
@@ -5125,22 +5152,45 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 			previous = merge(previous, current, by = c(famID), all.x = TRUE, all.y = TRUE) # suffixes = c("", levelsOfTwinID[i])
 		}
 	}
-	# TODO Find the first non-NA cell in "zygosity_Tn" and store this in zygosity
-	# TODO Delete the copies of zygosity
-	umx_msg(namez(previous))
+	# TODO 
+	# 1. Pull the columns matching "zygosity_T[0-9]+$"
+	# 3. Delete the copies of zygosity
+	# 2. Add a column "zygosity" consisting for each row of the the first non-NA cell in the "zygosity_Tx" block
+	zygCols = previous[, namez(previous, paste0(zygosity, "_T[0-9]+$")), drop= FALSE]
+	zygosityCol = rep(NA, nrow(previous))
 	
-	# previous[,zygosity] = ifelse(is.na(previous[,paste0(zygosity, "_T1")]), previous[,paste0(zygosity, "_T2")], previous[,paste0(zygosity, "_T1")])
+	for (i in 1:nrow(zygCols)) {
+		theseZygs = zygCols[i, ]
+		if(any(!is.na(theseZygs))){
+			zygosityCol[i] = zygCols[i, which(!is.na(theseZygs))[1] ]
+		} else {
+			zygosityCol[i] = NA
+		}
+	}
+	previous[, zygosity] = zygosityCol
 
-	previous[,namez(previous, c(zygosity, "_T"))] = NULL  
+	# Delete the "zygosity_Tx" Zyg cols
+	previous[, namez(previous, paste0(zygosity, "_T"))] = NULL
 
 	if(!anyNA(passalong)){
 		# passalong variables found: merge them into the dataset
-		justIDandPassAlong = data[, c(IDVars, passalong)]
 		passAlongData = data[!duplicated(data[, famID]), c(famID, passalong)]
-		previous = merge(previous, passAlongData, by = famID, all.x = TRUE, all.y = FALSE)
+		previous      = merge(previous, passAlongData, by = famID, all.x = TRUE, all.y = FALSE)
 	}
 
-  return(previous)
+	# Rearrange cols to zygosity, passalong then everything else
+	if(!anyNA(passalong)){
+		firstNames = c(famID, zygosity, passalong)
+	}else{
+		firstNames = c(famID, zygosity)		
+	}
+	allNames   = namez(previous)
+	otherNames = allNames[!(allNames %in% firstNames)]
+	names2keep = c(firstNames, otherNames)
+
+	umx_check_names(names2keep, data=previous)
+	previous = previous[, c(firstNames, otherNames)]
+	return(previous)
 }
 
 
