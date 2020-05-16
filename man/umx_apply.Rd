@@ -27,8 +27,10 @@ Other functions to think of include:
 }
 \examples{
 umx_apply(mean, mtcars, by = "columns")
-umx_apply(mean, of = mtcars, by = "columns")
-umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
+umx_apply("mean", of = mtcars, by = "columns")
+tmp = mtcars[1:3,]; tmp[1,1]=NA
+umx_apply("mean", by = "rows", of = tmp)
+umx_apply("mean", by = "rows", of = tmp, na.rm = TRUE)
 }
 \references{
 \itemize{

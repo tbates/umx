@@ -114,7 +114,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' Score a psychometric scale by summing normal and reversed items. 
 #' 
 #' In the presence of NAs, `score= "mean"` and `score = "totals"` both return NA unless na.rm = TRUE.
-#' `score = "max"`, ignores NAs no mattrer what.
+#' `score = "max"`, ignores NAs no matter what.
 #'
 #' @description
 #' Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
@@ -123,7 +123,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' 
 #' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers.
 #' 
-#' To reverse items, the function uses `max` and `min` as the loweest and highest possible response scores to compute how to reverse items.
+#' To reverse items, the function uses `max` and `min` as the lowest and highest possible response scores to compute how to reverse items.
 #' 
 #' *note*: `min` defaults to 1.
 #' 
@@ -205,12 +205,22 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
-	# TODO umx_score_scale
-	# 1. Check there are no NAs if score is totals.
-	# 2. Check the range of each item is within min:max
+	# TODO umx_score_scale Check there are no NAs if score is totals.
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
+
+	mins = umx_apply("min", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
+	maxs = umx_apply("max", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
+	if(any(mins < min)){
+		msg = paste0("Polite warning: the following columns had responses less than the min response you set (", omxQuotes(min), "):", omxQuotes(names(mins)[(mins<min)]))
+		umx_msg(msg)
+	}
+	if(any(maxs > max)){
+		msg = paste0("Polite warning: the following columns had responses greater than the max response you set (", omxQuotes(max), "):", omxQuotes(names(max)[(maxs>max)]))
+		umx_msg(msg)
+	}
+
 	oldData = data
 	# ==================================
 	# = Reverse any items needing this =
@@ -221,18 +231,19 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		revItems = (max + min) - revItems
 		data[,paste0(base, rev)] = revItems
 	}
+
 	allColNames = paste0(base, c(pos, rev))
+	df = data[ , allColNames, drop = FALSE]
+
 	if(score=="max"){
-		df = data[ , allColNames, drop = FALSE]
 		score = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
 			score[i] = max(df[i,], na.rm=TRUE)
 		}
 	}else if(score == "totals"){
-		score = rowSums(data[ , allColNames, drop = FALSE], na.rm = na.rm)
-	}else{
-		# score = means
-		score = rowMeans(data[ , allColNames, drop = FALSE], na.rm = na.rm)
+		score = rowSums(df, na.rm = na.rm)
+	}else if(score == "means"){
+		score = rowMeans(df, na.rm = na.rm)
 	}
 	oldData[, name] = score
 	return(oldData)
@@ -1552,15 +1563,13 @@ umx_pad <- function(x, n) {
 #' @md
 #' @examples
 #' umx_apply(mean, mtcars, by = "columns")
-#' umx_apply(mean, of = mtcars, by = "columns")
-#' umx_apply(mean, by = "rows", of = mtcars[1:3,], na.rm = TRUE)
+#' umx_apply("mean", of = mtcars, by = "columns")
+#' tmp = mtcars[1:3,]; tmp[1,1]=NA
+#' umx_apply("mean", by = "rows", of = tmp)
+#' umx_apply("mean", by = "rows", of = tmp, na.rm = TRUE)
 umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 	by = match.arg(by)
-	if (by == "rows") {
-		by = 1
-	} else {
-		by = 2		
-	}
+	by = ifelse(by == "rows", 1, 2)
 	apply(of, by, FUN, ...)
 }
 
@@ -4569,18 +4578,20 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 #' plot(wt1 ~ wt2, data = df)
 umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
+	# Issue #82 is to allow twins > 2
 	if(length(sep) != 1){
 		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
 	}
 	if(!identical(twins, 1:2)){
 		stop("I only support two twins at present, but you asked for:", omxQuotes(twins)," \n",
-		"e-mail Tim to work on arbitrary family members.")
+		"comment on gitgub.com/tbates/umx/#82 to include arbitrary family members.")
 	}
 	# TODO umx_scale_wide_twin_data: Discover suffixes as unique digits following suffix (could be 1:6)
 	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = twins)
 	umx_check_names(namesNeeded, data)
 	t1Traits = paste0(varsToScale, sep, 1)
 	t2Traits = paste0(varsToScale, sep, 2)
+	
 	for (i in 1:length(varsToScale)) {
 		T1 = data[,t1Traits[i]]
 		T2 = data[,t2Traits[i]]
@@ -5220,7 +5231,37 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' str(long)
 #' str(twinData)
 umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
-	# TODO umx_wide2long Assumes 2 twins: Generalize to unlimited family size.
+	# TODO issue #82 umx_wide2long Assumes 2 twins: Generalize to unlimited family size.
+
+	twinNames = umx_names(data, paste0(".", sep, "[1-9]$"))
+	nonTwinColNames = setdiff(umx_names(data), twinNames)
+	long = reshape(data, v.names = "conc", idvar = "Subject", timevar = "time", direction = "long")
+	# wide = reshape(Indometh, v.names = "conc", idvar = "Subject", timevar = "time", direction = "wide")
+
+	# reshape(long,
+	# 	v.names       = selVars,
+	# 	idvar         = "id",
+	# 	ids           = 1:NROW(data),
+	# 	times         = seq_along(varying[[1]]),
+	# 	drop          = NULL,
+	# 	direction     = "wide",
+	# 	new.row.names = NULL,
+	# 	sep           = ".",
+	# 	split         =
+	# )
+	#
+	# reshape(wide,
+	# 	varying       = NULL,
+	# 	timevar       = "zygosity",
+	# 	idvar         = c("famid", "twid"),
+	# 	ids           = "_T". 1:NROW(data),
+	# 	times         = seq_along(varying[[1]]),
+	# 	drop          = NULL,
+	# 	direction     = "long",
+	# 	new.row.names = NULL,
+	# 	sep           = ".",
+	# 	split         =
+	# )
 
 	# 1. get the suffixed names
 	T1 = umx_names(data, paste0(".", sep, "1"))
@@ -5231,9 +5272,9 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 	# 2. Remove the suffixes
 	T1base = T1
 	T2base = T2
-	m <- regexpr(paste0(sep, "1$"), T1base)
+	m = regexpr(paste0(sep, "1$"), T1base)
 	regmatches(T1base, m) <- ""
-	m <- regexpr(paste0(sep, "2$"), T2base)
+	m = regexpr(paste0(sep, "2$"), T2base)
 	regmatches(T2base, m) <- ""
 	
 	# Check they're the same

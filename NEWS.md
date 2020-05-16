@@ -9,7 +9,7 @@
 * NEW: `umxSummaryACE` prints a means table! including for intercepts only, no means model, and intercepts + covariate betas. Other models gain this also.
 * NEW: `umxRenameMatrix` wrap up the multiple lines of code needed to modify a matrix in OpenMx.
 * NEW: `umx_str_chars` return selected characters of a string.
-* HELP `umxACE` residualise examples match
+* HELP `umxACE` residualize examples match
 * IMPROVED: `umxGxE` code to detect mismatched moderators
 * IMPROVED: `umxGxE` code to include co-twin moderator in means model
 * IMPROVED: `umxGxE` simplified algebra
@@ -24,7 +24,7 @@
 * IMPROVED:  `umxSummaryGxEbiv` working, with a note that the whole function is beta.	h/t @MikeNeale for catching this.
 * IMPROVED: `FishersMethod`: accepts p-values for meta-analysis in "..." argument.
 * IMPROVED: `umx_rot` can NA the last value.
-* IMPROVED:  `parameters` supports standartdizing parameters (closes #92)	.
+* IMPROVED:  `parameters` supports standardizing parameters (closes #92)	.
 * IMPROVED: `power.ACE.test` now prints the parameter and value when testing power (closes #111).
 * IMPROVED: `umx_print` to react correctly to report as an input to file more mergers of print to console and to html.
 * IMPROVED: `umx_make_twin_data_nice` can turn numeric zyg column into human readable "MZMM" etc.
@@ -38,7 +38,7 @@
 * IMPROVED: `umxCP` plot prints model name.
 * IMPROVED: `umxIP` plot prints model name.
 * IMPROVED: `umx_is_ordered` can process mxData as well as df.
-* IMPROVED: `umxThresholdMatrix` reimplemented `l_u_bound` - wasn't working since move to threshold algebra some years back #ht @nathangillespie for catching this!
+* IMPROVED: `umxThresholdMatrix` re-implemented `l_u_bound` - wasn't working since move to threshold algebra some years back #ht @nathangillespie for catching this!
 * REPLACE: `parallel::detectCores` --> ` imxGetNumThreads` (as OpenMx does).
 * NEW: `umxTwinUpgradeMeansToCovariateModel` function to add def-based covariates to means in umx twin models.
 * NEW: `xmu_data_missing` helper to drop rows with missing def vars or stop and alert the user to do this.

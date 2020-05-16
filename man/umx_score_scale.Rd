@@ -47,13 +47,13 @@ Items must be named on the pattern \code{baseN}, where \code{base} is the string
 
 \code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers.
 
-To reverse items, the function uses \code{max} and \code{min} as the loweest and highest possible response scores to compute how to reverse items.
+To reverse items, the function uses \code{max} and \code{min} as the lowest and highest possible response scores to compute how to reverse items.
 
 \emph{note}: \code{min} defaults to 1.
 }
 \details{
 In the presence of NAs, \code{score= "mean"} and \code{score = "totals"} both return NA unless na.rm = TRUE.
-\code{score = "max"}, ignores NAs no mattrer what.
+\code{score = "max"}, ignores NAs no matter what.
 }
 \examples{
 library(psych)
