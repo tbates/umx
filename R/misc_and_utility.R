@@ -235,7 +235,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	allColNames = paste0(base, c(pos, rev))
 	df = data[ , allColNames, drop = FALSE]
 
-	if(score=="max"){
+	if(score == "max"){
 		score = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
 			score[i] = max(df[i,], na.rm=TRUE)
