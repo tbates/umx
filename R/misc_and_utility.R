@@ -1715,7 +1715,7 @@ umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE,
 	    nameVector = umx_names(data)
 	    if (is.null(nameVector)) {
 	        stop(paste0("umx_rename requires a dataframe or something else with names(), ", 
-	            umx_object_as_str(data), " is a ", typeof(data)))
+	            umx_str_from_object(data), " is a ", typeof(data)))
 	    }
 		new_names = gsub(regex, to, nameVector)
 		if(test){
@@ -4921,7 +4921,7 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		})
 	}
 	if(is.null(nameVector)){
-		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_object_as_str(df), " is a ", typeof(df)))
+		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_str_from_object(df), " is a ", typeof(df)))
 	}
 	if(is.null(replacement)){
 		tmp =  grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
