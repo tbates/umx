@@ -4,7 +4,6 @@ library(testthat)
 umx_set_silent(TRUE)
 
 test_that("umxLav2RAM and umxRAM2Lav work", {
-	testthat::skip_on_cran() 
 	roundtrip <- function(modelStr, verbose=FALSE) {
 		m1 = umxLav2RAM(modelStr, autoRun=FALSE, printTab=FALSE, lavaanMode="lavaan")
 		lav = umxRAM2Lav(m1)

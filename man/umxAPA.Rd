@@ -62,7 +62,7 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 in square brackets e.g.: \code{umxAPA(lm(mpg~wt, data=mtcars), "wt")} yields: \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001. here "wt"
 restricts the output to just the named effect.
 \item This also works for \code{\link[=t.test]{t.test()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[=cor.test]{cor.test()}}, and others as I come across them.
-\item Get a CI from obj=beta and se=se : \code{umxAPA(-0.30, .03)} returns \eqn{\beta} = -0.3 \link{-0.36, -0.24}
+\item Get a CI from obj=beta and se=se : \code{umxAPA(-0.30, .03)} returns \eqn{\beta} = -0.3 [-0.36, -0.24]
 \item Back out an SE from b and CI: \code{umxAPA(-0.030, c(-0.073, 0.013))} returns \eqn{\beta} = -0.03, se = 0.02
 \item Given only a number as obj, will be treated as a p-value, and returned in APA format.
 \item Given a dataframe, \code{umxAPA} will return a table of correlations with

@@ -19,9 +19,6 @@ umx_str_chars(what, which)
 \description{
 \code{umx_str_chars} returns desired characters of a string
 }
-\details{
-
-}
 \examples{
 umx_str_chars("myFpassUword", c(3,8))
 }

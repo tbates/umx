@@ -5,8 +5,6 @@
 # test_package("umx")
 
 test_that("testing umx twin models", {
-	testthat::skip_on_cran() 
-
 	# 1. Test sep enforcement
 	require(umx)
 	data(GFF)

@@ -10,8 +10,7 @@
 # [] Latents non-RAM !
 
 test_that("residuals.MxModel works", {
-	testthat::skip_on_cran() 
-	require(OpenMx)
+	require(umx)
 	data(demoOneFactor)
 	manifests = names(demoOneFactor)
 	m1 = umxRAM("test", data = mxData(cov(demoOneFactor), type = "cov", numObs = 500),

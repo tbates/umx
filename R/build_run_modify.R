@@ -199,6 +199,9 @@ utils::globalVariables(c(
 	# Used in tmx_genotypic_effect
 	"x1", "y1", "y2", "dose", "value", "freq", "Frequency", 
 	
+	# Used in umxGxE
+    "DefT1", "DefT2", "top.betaCoTwin", "top.betaSelf",
+
 	# Used in umxGxEbiv
 	"mod1", "mod2", 
 	"Adz", "Amz",
@@ -215,6 +218,7 @@ utils::globalVariables(c(
     "Iai", "Ici", "Iei", 
 	"SigmaA"   , "SigmaC"     , "SigmaE", 
 	"SigmaPh11", "SigmaPh21dz", "SigmaPh21mz",
+	
 	# Used in poly funs
 	"minus2SatLogLik", "nCells", "diffchi",
 	 
@@ -4823,24 +4827,25 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # Ran you model (if autoRun is on), and displayed a brief summary
 #' # including a comparison if you modified a model...!
 #' 
-#' # Let's get some journal-ready fit information
+#' # Let's get some journal-ready fit information for standardized parameters
 #' 
-#' umxSummary(m1) 
-#' umxSummary(m1, std = TRUE) #also display parameter estimates 
+#' umxSummary(m1, std = TRUE)
 #' # You can get the coefficients of an MxModel with coef(), just like for lm etc.
 #' coef(m1)
 #' 
-#' # But with more control using parameters
+#' # But with more control using "parameters", for example just the G loadings
+#' # above .3, rounded to 2-digits.
 #' parameters(m1, thresh="above", b=.3, pattern = "G_to.*", digits = 2)
 #'
 #' # ==================
 #' # = Model updating =
 #' # ==================
-#' # Can we set the loading of X5 on G to zero?
-#' m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = TRUE)
+#' # Can we set the loading of x1 on G to zero? (nope...)
+#' m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X1", comparison = TRUE)
 #'
-#' 
+#' # The use of "comparison = TRUE" generates this table:
 #' umxCompare(m1, m2)
+#' 
 #' # Note: umxSetParameters can do this with some additional flexibility
 #' 
 #' # ========================
@@ -4853,12 +4858,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' # And make a Figure and open in browser
 #' \dontrun{
-#' 
 #' plot(m1, std = TRUE)
 #' 
 #' # If you just want the .dot code returned set file = NA
 #' plot(m1, std = TRUE, file = NA)
 #' }
+#' 
 #' @docType package
 #' @name umx
 NULL

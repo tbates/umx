@@ -2,7 +2,6 @@ library(umx)
 library(testthat)
 
 test_that("umxCP works", {
-	testthat::skip_on_cran() 
 	# ========================================================
 	# = Run a 3-factor Common pathway twin model of 6 traits =
 	# ========================================================

@@ -17,7 +17,7 @@ umx_move_file(
 \item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current
 front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
 
-\item{regex}{\href{regex}{Regular expression} to select files in baseFolder}
+\item{regex}{match string choosing which files are selected in baseFolder}
 
 \item{fileNameList}{List of files to move}
 

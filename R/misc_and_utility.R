@@ -1962,7 +1962,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #'
 #' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current
 #' front-most Finder window. If it is blank, a choose folder dialog will be thrown.
-#' @param regex [Regular expression](regex) to select files in baseFolder
+#' @param regex match string choosing which files are selected in baseFolder
 #' @param fileNameList List of files to move
 #' @param destFolder Folder to move files into
 #' @param test Boolean determining whether to change the names, or just report on what would have happened
@@ -4682,8 +4682,6 @@ umx_str_from_object <- function(x) {
 #' @description
 #' `umx_str_chars` returns desired characters of a string
 #'
-#' @details
-#'
 #' @param what A string
 #' @param which which chars to select out.
 #' @return - Array of selected characters
@@ -5235,7 +5233,7 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 
 	twinNames = umx_names(data, paste0(".", sep, "[1-9]$"))
 	nonTwinColNames = setdiff(umx_names(data), twinNames)
-	long = reshape(data, v.names = "conc", idvar = "Subject", timevar = "time", direction = "long")
+	# long = reshape(data, v.names = "conc", idvar = "Subject", timevar = "time", direction = "long")
 	# wide = reshape(Indometh, v.names = "conc", idvar = "Subject", timevar = "time", direction = "wide")
 
 	# reshape(long,
