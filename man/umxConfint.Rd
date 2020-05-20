@@ -79,9 +79,9 @@ tmp = umxConfint(m1, parm = "A", run = TRUE)
 tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 
 \dontrun{
-# For some twin models, "all" uses a "smart" mode
+# For some twin models, a "smart" mode is implemented
 # note: only implemented for umxCP so far
-m2 =  umxConfint(m1, "all")
+m2 =  umxConfint(m1, "smart")
 }
 
 }

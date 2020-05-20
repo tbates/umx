@@ -55,6 +55,7 @@
 #' power.ACE.test(AA = .5, CC = 0, update = "a") 
 #' # Suggests n = 84 MZ and 94 DZ pairs.
 #'
+#' \dontrun{
 #' # ================================
 #' # = Show power across range of N =
 #' # ================================
@@ -108,7 +109,6 @@
 #' power.ACE.test(MZ_DZ_ratio= 2/1, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 #' power.ACE.test(MZ_DZ_ratio= 1/2, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 #'
-#' \dontrun{
 #' 
 #' # =====================================
 #' # = Compare ncp and empirical methods =
@@ -148,7 +148,6 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	#         return(0)
 	#     }
 	# }
-	# message("This is beta code: I likely will alter the interface!")
 	method  = match.arg(method)
 	tryHard = match.arg(tryHard)
 	update  = match.arg(update)

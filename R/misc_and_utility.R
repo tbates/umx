@@ -3236,7 +3236,7 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 			x = data.frame(x)
 		} else {
 			message("Sorry, umx_print currently only prints data.frames, matrices, and vectors.\n
-			File a request to print '", class(x)[[1]], "' objects\n or perhaps you want umx_msg?")
+			File a request to print ", omxQuotes(class(x)[[1]]), " objects\n or perhaps you want umx_msg?")
 			return()
 		}
 	}
@@ -3272,7 +3272,6 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 			if(both){
 				print(knitr::kable(x))
 			}
-
 	    }else{
 			print(knitr::kable(x))
 	    }

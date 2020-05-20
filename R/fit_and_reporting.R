@@ -503,9 +503,9 @@ loadings.MxModel <- function(x, ...) {
 #' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 #' 
 #' \dontrun{
-#' # For some twin models, "all" uses a "smart" mode
+#' # For some twin models, a "smart" mode is implemented
 #' # note: only implemented for umxCP so far
-#' m2 =  umxConfint(m1, "all")
+#' m2 =  umxConfint(m1, "smart")
 #' }
 #'
 umxConfint <- function(object, parm = c("existing", "all", "or one or more labels", "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("SLSQP", "NPSOL", "CSOLNP", "current")) {
@@ -580,7 +580,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 	if(run) {
 		# Check there are some in existence
 		if(!umx_has_CIs(object, "intervals")) {
-			message("This model has no CIs yet. Perhaps you wanted to use parm = 'all' for CIs on all free parameters? Or to a list of labels?")
+			message("Polite note: This model has no CIs yet. Perhaps you wanted to use parm = 'all' to request CIs on all free parameters? Or list some path labels?")
 		}else{
 			# object = mxRun(object, intervals = TRUE)
 			object = omxRunCI(object, optimizer = optimizer)
@@ -589,13 +589,13 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 	# 4. Report CIs
 	if(!umx_has_CIs(object, "both")) {
 		if(run == FALSE){
-			message("Some CIs have been requested, but have not yet been run. Add ", omxQuotes("run = TRUE"), " to your umxConfint() call to run them.\n",
-			"To store the model run capture it from umxConfint like this:\n",
+			message("Polite note: Some CIs have been requested but not run. Add ", omxQuotes("run = TRUE"), " to your umxConfint() call to run them.\n",
+			"To store the model capture it from umxConfint like this:\n",
 			"m1 = umxConfint(m1, run = TRUE)")
 		} else if(length(object$intervals)==0){
 			message("No CIs requested...")
 		} else{
-			message("hmmm... you wanted it run, but I don't see any computed CIs despite there being ", length(object$intervals), " requested...",
+			message("Polite note: hmmm... You wanted it run, but I don't see any computed CIs despite there being ", length(object$intervals), " requested...",
 			"\nThat's a bug. Please report it to timothy.c.bates@gmail.com")
 		}
 	} else {
@@ -822,7 +822,7 @@ umxSummary.default <- function(model, ...){
 #'
 #' @aliases umxSummary.MxModel umxSummary.MxRAMModel
 #' @param model The [mxModel()] whose fit will be reported
-#' @param std If TRUE, model is standardized (Default FALSE) NULL means don't show.
+#' @param std If TRUE, model is standardized (Default FALSE, NULL means "don't show").
 #' @param digits How many decimal places to report (Default 2)
 #' @param report If "html", then show results in browser (alternative = "markdown")
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
@@ -832,7 +832,6 @@ umxSummary.default <- function(model, ...){
 #' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
 #' @param ... Other parameters to control model summary
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
-#' @param show Deprecated: use std = TRUE.
 #' @family Reporting functions
 #' @seealso - [umxRun()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
@@ -872,20 +871,9 @@ umxSummary.default <- function(model, ...){
 #' 	umxPath(v1m0 = "G")
 #' )
 #' umxSummary(m1, std = TRUE, filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, ..., matrixAddresses = FALSE, show = c("deprecated", "raw", "std", "none")){
+umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, ..., matrixAddresses = FALSE){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
-	show   = match.arg(show)
-	if(show != "deprecated"){
-		message("Polite note: In umx 3, all functions will use std=T|F|NULL) in place of  show = 'raw|std|none")
-		if(show == "std"){
-			std = TRUE
-		} else if (show == "raw"){
-			std = FALSE
-		}else{
-			std = NULL
-		}
-	}
 
 	report = match.arg(report)
 	filter = match.arg(filter)
@@ -1023,6 +1011,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 				}
 				x = paste0(
 					"\u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
+					# "Chi2(", ChiDoF, ") = ", round(Chi, 2), # was A7
 					", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
 					"; CFI = "  , round(CFI, 3),
 					"; TLI = "  , round(TLI, 3),

@@ -86,6 +86,7 @@ Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 power.ACE.test(AA = .5, CC = 0, update = "a") 
 # Suggests n = 84 MZ and 94 DZ pairs.
 
+\dontrun{
 # ================================
 # = Show power across range of N =
 # ================================
@@ -139,7 +140,6 @@ power.ACE.test(update = "c", AA= .3, CC= .5)
 power.ACE.test(MZ_DZ_ratio= 2/1, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 power.ACE.test(MZ_DZ_ratio= 1/2, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 
-\dontrun{
 
 # =====================================
 # = Compare ncp and empirical methods =

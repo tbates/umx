@@ -182,6 +182,7 @@ umxSummary(m1, std=TRUE)
 # |b1             |         0.89|   0.04|0.89 [0.81, 0.96]    |
 # |disp_with_disp |         1.00|   0.00|1 [1, 1]             |
 
+\dontrun{
 # 3. Of course you can plot the model
 plot(m1)
 plot(m1, std=TRUE, means=FALSE)
@@ -258,7 +259,6 @@ m1 = umxRAM("tim", data = myCov,
      umxPath(var = c("wt", "disp", "mpg"))
  )
 
-\dontrun{
 
 # ===============================
 # = Using umxRAM in Sketch mode =

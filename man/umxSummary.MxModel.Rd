@@ -15,8 +15,7 @@
   SE = TRUE,
   RMSEA_CI = FALSE,
   ...,
-  matrixAddresses = FALSE,
-  show = c("deprecated", "raw", "std", "none")
+  matrixAddresses = FALSE
 )
 }
 \arguments{
@@ -25,7 +24,7 @@
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
 
-\item{std}{If TRUE, model is standardized (Default FALSE) NULL means don't show.}
+\item{std}{If TRUE, model is standardized (Default FALSE, NULL means "don't show").}
 
 \item{digits}{How many decimal places to report (Default 2)}
 
@@ -40,8 +39,6 @@ If NULL will be competed on demand. If FALSE will not be computed. Only needed f
 \item{...}{Other parameters to control model summary}
 
 \item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
-
-\item{show}{Deprecated: use std = TRUE.}
 }
 \value{
 \itemize{

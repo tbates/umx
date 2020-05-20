@@ -66,12 +66,12 @@ umxCompare(m1, m2)
 confint(m1) # OpenMx's SE-based confidence intervals
 umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 
-# And make a Figure and open in browser
 \dontrun{
-plot(m1, std = TRUE)
+# And make a Figure and open in browser
+# plot(m1, std = TRUE)
 
 # If you just want the .dot code returned set file = NA
-plot(m1, std = TRUE, file = NA)
+# plot(m1, std = TRUE, file = NA)
 }
 
 }

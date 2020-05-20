@@ -420,6 +420,7 @@ umxModel <- function(...) {
 #' # |b1             |         0.89|   0.04|0.89 [0.81, 0.96]    |
 #' # |disp_with_disp |         1.00|   0.00|1 [1, 1]             |
 #' 
+#' \dontrun{
 #' # 3. Of course you can plot the model
 #' plot(m1)
 #' plot(m1, std=TRUE, means=FALSE)
@@ -496,7 +497,6 @@ umxModel <- function(...) {
 #'      umxPath(var = c("wt", "disp", "mpg"))
 #'  )
 #'
-#' \dontrun{
 #' 
 #' # ===============================
 #' # = Using umxRAM in Sketch mode =
@@ -4767,9 +4767,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	mxPath(from = from, to = to, connect = connect, arrows = arrows, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound)
 }
 
-# =====================================
-# = Parallel helpers to be added here =
-# =====================================
 
 #' Functions for Structural Equation Modeling in OpenMx
 #'
@@ -4856,12 +4853,12 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' confint(m1) # OpenMx's SE-based confidence intervals
 #' umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 #' 
-#' # And make a Figure and open in browser
 #' \dontrun{
-#' plot(m1, std = TRUE)
+#' # And make a Figure and open in browser
+#' # plot(m1, std = TRUE)
 #' 
 #' # If you just want the .dot code returned set file = NA
-#' plot(m1, std = TRUE, file = NA)
+#' # plot(m1, std = TRUE, file = NA)
 #' }
 #' 
 #' @docType package
