@@ -41,6 +41,7 @@
 #' In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496–499. Eds. Brian S. Everitt & David C. Howell.
 #' @md
 #' @examples
+#' \dontrun{
 #' # ========================
 #' # = Does Rain cause Mud? =
 #' # ========================
@@ -72,7 +73,6 @@
 #' b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 #'
-#' \dontrun{
 #' var1 = paste0("SOS", 1:8)
 #' var2 = paste0("Vocab", 1:10)
 #' Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
@@ -221,6 +221,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @md
 #' @examples
 #'
+#' \dontrun{
 #' # ================
 #' # = 1. Load Data =
 #' # ================
@@ -245,6 +246,8 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' # ================================================
 #' a2b = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 #' plot(a2b)
+#' 
+#' }
 umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
 	message("beta code")
 	# 1. ✓ draw latents
@@ -350,6 +353,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @md
 #' @examples
+#' \dontrun{
 #' # ================
 #' # = 1. Load Data =
 #' # ================
@@ -377,6 +381,8 @@ plot.MxModelDoC <- umxPlotDoC
 #' A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B", comp=TRUE)
 #' B2A = umxModify(DoC, "b2a", free = TRUE, name = "B2A", comp=TRUE)
 #' umxCompare(B2A, A2B)
+#' 
+#' }
 umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, zero.print = ".", ...) {
 	message("Summary support for DoC models not complete yet")
 

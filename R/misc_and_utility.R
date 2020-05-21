@@ -5064,6 +5064,7 @@ umxCov2cor <- function(x) {
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' # ==============================================
 #' # = First make a long format file for the demo =
 #' # ==============================================
@@ -5114,6 +5115,8 @@ umxCov2cor <- function(x) {
 #'		vars2keep = c("bmi", "wt"), passalong = "cohort"
 #' )
 #' namez(wide)
+#' 
+#' }
 #'
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA, twinIDs2keep=NA) {
 	umx_check_names(c(famID, twinID, zygosity), data = data, die = TRUE)

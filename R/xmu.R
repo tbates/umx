@@ -217,6 +217,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @seealso - [mxTryHard()]
 #' @md
 #' @examples
+#' \dontrun{
 #' m1 = umxRAM("tim", data = mtcars,
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath("wt", with = "disp"),
@@ -236,6 +237,8 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
+#' 
+#' }
 #'
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3) {
 	# TODO xmu_safe_run_summary: Activate test examples

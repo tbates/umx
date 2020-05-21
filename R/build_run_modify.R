@@ -813,6 +813,24 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' myfunc TITLE
+#'
+#' @description
+#' myfunc is a function which
+#'
+#' @details
+#'
+#' @param param an [umxLabel()] to DO WHAT?
+#' @return - [myfunc()]
+#' @export
+#' @family
+#' @seealso - [umxLabel()]
+#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @md
+#' @examples
+#' myfunc(param)
+#' \dontrun{
+#' 
 #' library(umx)
 #' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
 #' manifests = c("x","y")
@@ -820,11 +838,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' 		AA = 0, CC = .4, EE = .6, varNames = manifests)
 #' 
 #' # Group 1
-#' grp1 = tmp[tmp$zygosity == "MZ", manifests]
+#' grp1   = tmp[tmp$zygosity == "MZ", manifests]
 #' g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
 #' 
 #' # Group 2
-#' grp2 = tmp[tmp$zygosity == "DZ", manifests]
+#' grp2   = tmp[tmp$zygosity == "DZ", manifests]
 #' g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 #' 
 #' 
@@ -834,15 +852,18 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
 #' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 #' )
+#' 
 #' # Model 2
 #' m2 = umxRAM("m2", data = g2Data,
 #' 	umxPath("x", to = "y", labels = "beta"),
 #' 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
 #' 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
 #' )
+#' 
 #' # Place m1 and m2 into a supermodel, and autoRun it
 #' # NOTE: umxSummary is only semi-smart/certain enough to compute saturated models etc
 #' # and report multiple groups correctly.
+#' 
 #' m3 = umxSuperModel('top', m1, m2)
 #' 
 #' umxSummary(m3, std= TRUE)
@@ -858,6 +879,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' 
 #' summary(m3)
 #' 
+#' }
 umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE) {
 	tryHard = match.arg(tryHard)
 	umx_check(boolean.test= is.character(name), action="stop", message="You need to set the name for the supermodel, i.e. add name = 'modelName' ")
@@ -956,6 +978,8 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' # 1. Drop the path to x1 (also updating the name so it's
 #' #    self-explanatory, and get a fit comparison
 #' m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
+#' 
+#' \dontrun{
 #' # 2. Add the path back (setting free = TRUE)
 #' m2 = umxModify(m1, update = "G_to_x1", free= TRUE, name = "addback_X1", comparison = TRUE)
 #' # 3. Fix a value at a non-zero value
@@ -984,6 +1008,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 #' searchString = "G_to_x([0-9])"
 #' newLabel = "loading_for_path\\1" # use value in regex group 1
 #' m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
+#' }
 #' 
 umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
@@ -4333,19 +4358,11 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
-#' # A worked example
-#' data(demoOneFactor)
-#' manifests = names(demoOneFactor)
-#
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
-#' 	umxPath("G", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1.0)
-#' )
-#' umxSummary(m1, std = TRUE)
-#' require(umx)
-#' #
-#' # Examples of each path type, and option
+#'
+#' # ==========================================
+#' # = Examples of each path type, and option =
+#' # ==========================================
+#' 
 #' umxPath("A", to = "B") # One-headed path from A to B
 #' umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @@1
 #' umxPath("A", to = c("B", "C"), fixedAt = 1:2) # same, with more than 1 value
@@ -4366,17 +4383,20 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umxPath(unique.pairs = letters[1:3]) # all distinct pairs: a<->a, a<->b, a<->c, b<->b, etc.
 #' umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 #' 
-#' # =========================================================
-#' # = Definition variable example.Not much use at present,  =
-#' # = as def vars are not readily used in RAM models...     =
-#' # = Working on something rational and intuitive.          =
-#' # =========================================================
-#' data(mtcars)
-#' m1 = umxRAM("manifest", data = mtcars,
-#'	umxPath(v.m. = "mpg"),
-#'	umxPath(defn = "mpg")
-#')
-#'
+#' \dontrun{
+#' # A worked example
+#' data(demoOneFactor)
+#' manifests = names(demoOneFactor)
+#
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
+#' 	umxPath("G", to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = "G", fixedAt = 1.0)
+#' )
+#' umxSummary(m1, std = TRUE)
+#' require(umx)
+#' #
+#' 
 #' # ====================
 #' # = Cholesky example =
 #' # ====================
@@ -4390,8 +4410,19 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = latents, fixedAt = 1)
 #' )
-#' \dontrun{
 #' plot(m1, splines= FALSE)
+#'
+#' # =========================================================
+#' # = Definition variable example.Not much use at present,  =
+#' # = as def vars are not readily used in RAM models...     =
+#' # = Working on something rational and intuitive.          =
+#' # =========================================================
+#' data(mtcars)
+#' m1 = umxRAM("manifest", data = mtcars,
+#'	 umxPath(v.m. = "mpg"),
+#'	 umxPath(defn = "mpg")
+#' )
+#'
 #' }
 #'
 umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
