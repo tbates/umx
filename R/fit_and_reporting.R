@@ -3728,7 +3728,7 @@ FishersMethod <- function(pvalues, ...){
 	pchisq( -2 * sum(log(pvalues)), df= (2 * length(pvalues)), lower.tail = FALSE)
 }
 
-#' umx_fun
+#' Summarizing functions used in umx_aggregate and for umxAPA
 #'
 #' Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
 #' to craft a custom nameless functions. e.g.
