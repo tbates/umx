@@ -283,8 +283,6 @@ m1 = umxRAM("CFA_sketch", data = paste0("x", 1:4),
 	umxPath(var = paste0("x", 1:4)),
 	umxPath(v1m0 = "g")
 )
-}
-
 
 # =================================================
 # = This is an example of using your own labels:  =
@@ -302,6 +300,8 @@ m1$S$labels
 # wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 # disp "disp_with_mpg" "b1"          "disp_with_disp"
 parameters(m1)
+
+}
 
 }
 \references{
