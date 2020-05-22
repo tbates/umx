@@ -47,6 +47,7 @@
 #' @author Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer
 #' @md
 #' @examples
+#' \dontrun{
 #' library(umx)
 #' data(demoOneFactor)
 #' latents = c("G")
@@ -66,6 +67,8 @@
 #' 	umxPath(v1m0 = latents)
 #' )
 #' umxFitIndices(m1, refModels = mxRefModels(m2, run = TRUE))
+#' }
+#' 
 umxFitIndices = function(model, ...) {
   if (is.list(model)) {
     stop("Lists of models not supported in `umxFitIndices()`.\nSpecify one model at a time.", call. = FALSE)

@@ -65,6 +65,7 @@
 #' @examples
 #' library(umx);
 #' 
+#' \donttest{
 #' # =========================
 #' # = Pure additivity: d= 0 =
 #' # =========================
@@ -83,6 +84,8 @@
 #' p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE); 
 #' # p + ggplot2::geom_point() + ggplot2::geom_text(hjust = 0, nudge_x = 0.05)
 #' # ggsave(paste0(base, "c03_genotypic_effect_by_gene_dose.pdf"), width = 4.6, height = 4.6)
+#' }
+#' 
 tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show = TRUE){
 	# TODO Print this, with marginal sum? put tables and plot on one page in browser?
 	# high blood pressure will be defined as >=130/80 millimeters of mercury (previous guideline = 140/90)
@@ -293,7 +296,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	show   = match.arg(show)
 	report = match.arg(report)
 	
-	if(matrices == "thresholds"){
+	if("thresholds" %in% matrices){
 		# TODO tmx_show: Threshold printing not yet finalised
 		if(!is.null(model$deviations_for_thresh)){
 			dev = TRUE

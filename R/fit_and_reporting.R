@@ -271,6 +271,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @md
 #' @examples
+#' \dontrun{
 #' data(twinData)
 #' mzData <- subset(twinData, zygosity == "MZFF")
 #' dzData <- subset(twinData, zygosity == "DZFF")
@@ -279,6 +280,8 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' umxSummary(m2)
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
 #' m2 = umxReduce(m1)
+#' 
+#' }
 umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", intervals = TRUE, ...) {
 	report = match.arg(report)
 	oldAutoPlot = umx_set_auto_plot(FALSE, silent = TRUE)
@@ -2617,6 +2620,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
@@ -2624,7 +2628,10 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", tryHard="yes")
 #' plot(m1)
+#' # Directly call the umx function
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+#' 
+#' }
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), ...) {
 	if(!class(x)[[1]] == "MxModelGxE"){
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
@@ -3655,8 +3662,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' )
 #' RMSEA(m1)
 RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
-	sm <- summary(x)
-	RMSEA.summary.mxmodel(x= sm, ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
+	RMSEA.summary.mxmodel(x= summary(x), ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
 }
 
 #' RMSEA function for MxModels

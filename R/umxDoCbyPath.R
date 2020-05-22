@@ -123,6 +123,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
+#' \dontrun{
 #' # We'll make some ACE models, but first, let's clean up the twinData 
 #' # set for analysis
 #' # 1. Add a separator to the twin variable names (with sep = "_T")
@@ -169,6 +170,8 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, 
 #' 	t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0))
 #' )
+#' 
+#' }
 #'
 umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
 	# TODO
