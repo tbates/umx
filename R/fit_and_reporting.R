@@ -3724,7 +3724,8 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
 #' Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi:10.2307/2681650. JSTOR 2681650.
 #' See also Stouffer's method for combining Z scores, which allows weighting.
-#' Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton #' University Press.
+#' Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
+#' University Press.
 #' @md
 #' @examples
 #' FishersMethod(c(.041, .378))
@@ -3734,7 +3735,7 @@ FishersMethod <- function(pvalues, ...){
 	pchisq( -2 * sum(log(pvalues)), df= (2 * length(pvalues)), lower.tail = FALSE)
 }
 
-#' umx_fun
+#' Summarizing functions used in umx_aggregate and for umxAPA
 #'
 #' Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
 #' to craft a custom nameless functions. e.g.

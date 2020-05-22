@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umx_fun_mean_sd}
 \alias{umx_fun_mean_sd}
-\title{umx_fun}
+\title{Summarizing functions used in umx_aggregate and for umxAPA}
 \usage{
 umx_fun_mean_sd(x, na.rm = TRUE, digits = 2)
 }
