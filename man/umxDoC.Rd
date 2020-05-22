@@ -64,6 +64,7 @@ each with three indicators). Note: For pedagogical reasons, only the model for 1
 To be added.
 }
 \examples{
+\dontrun{
 # ========================
 # = Does Rain cause Mud? =
 # ========================
@@ -95,7 +96,6 @@ a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
 b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 
-\dontrun{
 var1 = paste0("SOS", 1:8)
 var2 = paste0("Vocab", 1:10)
 Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)

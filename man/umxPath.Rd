@@ -164,18 +164,11 @@ There are also new terms to describe fixing values: \dQuote{fixedAt} and \dQuote
 Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
 }
 \examples{
-# A worked example
-data(demoOneFactor)
-manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
-	umxPath("G", to = manifests),
-	umxPath(var = manifests),
-	umxPath(var = "G", fixedAt = 1.0)
-)
-umxSummary(m1, std = TRUE)
-require(umx)
-#
-# Examples of each path type, and option
+
+# ==========================================
+# = Examples of each path type, and option =
+# ==========================================
+
 umxPath("A", to = "B") # One-headed path from A to B
 umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @1
 umxPath("A", to = c("B", "C"), fixedAt = 1:2) # same, with more than 1 value
@@ -196,16 +189,18 @@ umxPath(unique.bivariate = c('a','b','c')) # bivariate paths a<->b, a<->c, b<->c
 umxPath(unique.pairs = letters[1:3]) # all distinct pairs: a<->a, a<->b, a<->c, b<->b, etc.
 umxPath(Cholesky = c("A1","A2"), to = c("m1", "m2")) # Cholesky
 
-# =========================================================
-# = Definition variable example.Not much use at present,  =
-# = as def vars are not readily used in RAM models...     =
-# = Working on something rational and intuitive.          =
-# =========================================================
-data(mtcars)
-m1 = umxRAM("manifest", data = mtcars,
-umxPath(v.m. = "mpg"),
-umxPath(defn = "mpg")
+\dontrun{
+# A worked example
+data(demoOneFactor)
+manifests = names(demoOneFactor)
+m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
+	umxPath("G", to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = "G", fixedAt = 1.0)
 )
+umxSummary(m1, std = TRUE)
+require(umx)
+#
 
 # ====================
 # = Cholesky example =
@@ -220,8 +215,19 @@ m1 = umxRAM("Chol", data = demoOneFactor, type = "cov",
 	umxPath(var = manifests),
 	umxPath(var = latents, fixedAt = 1)
 )
-\dontrun{
 plot(m1, splines= FALSE)
+
+# =========================================================
+# = Definition variable example.Not much use at present,  =
+# = as def vars are not readily used in RAM models...     =
+# = Working on something rational and intuitive.          =
+# =========================================================
+data(mtcars)
+m1 = umxRAM("manifest", data = mtcars,
+ umxPath(v.m. = "mpg"),
+ umxPath(defn = "mpg")
+)
+
 }
 
 }

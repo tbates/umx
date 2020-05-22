@@ -1,5 +1,5 @@
 ## Changes
-Reduced run time for examples following CRAN feedback
+Further reduce run time for examples following CRAN feedback
 Features and improvements. 
 
 ## Test environments

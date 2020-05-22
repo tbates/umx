@@ -52,6 +52,7 @@ Rule 2: The latent a, c, and e latent variables must be labelled to match the ba
 To avoid clashes, variables must not match the numbered variables in \code{t1_t2links}  - by default names like "a1" are reserved for ace.
 }
 \examples{
+\dontrun{
 # We'll make some ACE models, but first, let's clean up the twinData 
 # set for analysis
 # 1. Add a separator to the twin variable names (with sep = "_T")
@@ -98,6 +99,8 @@ umxPath(c("as1", 'c1', "e1"), to = "wt", values=.2)
 m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, 
 	t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0))
 )
+
+}
 
 }
 \references{

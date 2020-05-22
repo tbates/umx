@@ -46,6 +46,7 @@ If summary = TRUE then \code{\link[=umxSummary]{umxSummary()}} is requested (aga
 \emph{note}: If \code{autoRun} is logical, then it over-rides \code{summary} to match \code{autoRun}. This is useful for easy use \code{\link[=umxRAM]{umxRAM()}} and twin models.
 }
 \examples{
+\dontrun{
 m1 = umxRAM("tim", data = mtcars,
 	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath("wt", with = "disp"),
@@ -65,6 +66,8 @@ xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, std = TRUE)
 xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
 # Run + Summary + no comparison
 xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
+
+}
 
 }
 \seealso{

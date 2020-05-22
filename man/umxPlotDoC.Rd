@@ -54,6 +54,7 @@ See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary
 }
 \examples{
 
+\dontrun{
 # ================
 # = 1. Load Data =
 # ================
@@ -78,6 +79,8 @@ DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRU
 # ================================================
 a2b = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 plot(a2b)
+
+}
 }
 \references{
 \itemize{
