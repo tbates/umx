@@ -467,6 +467,7 @@ umxModel <- function(...) {
 #' # For convenience, list up the manifests you will be using
 #' 
 #' selVars = c("mpg", "wt", "disp")
+#' tmp = mtcars; tmp$disp= tmp$disp *.016
 #' myCov = mxData(cov(tmp[, selVars]), type = "cov", numObs = nrow(mtcars) )
 #'
 #' m1 = umxRAM("tim", data = myCov,
@@ -527,7 +528,7 @@ umxModel <- function(...) {
 #' # = This is an example of using your own labels:  =
 #' #   umxRAM will not over-ride them                =
 #' # =================================================
-#' m1 = umxRAM("tim", data = myCov,
+#' m1 = umxRAM("tim", data = mtcars, type="cov",
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath(cov = c("wt", "disp"), labels = "b1"),
 #' 	umxPath(var = c("wt", "disp", "mpg"))
@@ -813,24 +814,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' myfunc TITLE
-#'
-#' @description
-#' myfunc is a function which
-#'
-#' @details
-#'
-#' @param param an [umxLabel()] to DO WHAT?
-#' @return - [myfunc()]
-#' @export
-#' @family
-#' @seealso - [umxLabel()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
-#' @md
-#' @examples
-#' myfunc(param)
-#' \dontrun{
 #' 
+#' \dontrun{
 #' library(umx)
 #' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
 #' manifests = c("x","y")

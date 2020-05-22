@@ -876,7 +876,7 @@ umxSummary.default <- function(model, ...){
 #' umxSummary(m1, std = TRUE, filter = "NS")
 umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, ..., matrixAddresses = FALSE){
 	# TODO make table take lists of models...
-	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
+	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 
 	report = match.arg(report)
 	filter = match.arg(filter)
@@ -893,6 +893,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		 }
 	}
 	umx_has_been_run(model, stop = TRUE)
+
 	if(is.null(refModels)) {
 		# SaturatedModels not passed in from outside, so get them from the model
 		# TODO umxSummary Improve efficiency: Compute summary only once by detecting when SaturatedLikelihood is missing
@@ -989,45 +990,45 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		} else {
 			if(TLI > .95) {
 				TLI_OK = "OK"
-				} else {
-					TLI_OK = "bad"
-				}
-			}
-			if(!is.finite(RMSEA)) {
-				RMSEA_OK = "OK"
 			} else {
-				if(RMSEA < .06){
-				RMSEA_OK = "OK"
-				} else {
-					RMSEA_OK = "bad"
-				}
+				TLI_OK = "bad"
 			}
-			if(report == "table"){
-				x = data.frame(cbind(model$name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
-				names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
-				print(x)
+		}
+		if(!is.finite(RMSEA)) {
+			RMSEA_OK = "OK"
+		} else {
+			if(RMSEA < .06){
+			RMSEA_OK = "OK"
 			} else {
-				if(RMSEA_CI){
-					RMSEA_CI = RMSEA(modelSummary)$txt
-				} else {
-					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
-				}
-				x = paste0(
-					"\u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
-					# "Chi2(", ChiDoF, ") = ", round(Chi, 2), # was A7
-					", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
-					"; CFI = "  , round(CFI, 3),
-					"; TLI = "  , round(TLI, 3),
-					"; ", RMSEA_CI
-					)
-				print(x)
-				if(TLI_OK != "OK"){
-					message("TLI is worse than desired")
-				}
-				if(RMSEA_OK != "OK"){
-					message("RMSEA is worse than desired")
-				}
+				RMSEA_OK = "bad"
 			}
+		}
+		if(report == "table"){
+			x = data.frame(cbind(model$name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
+			names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
+			print(x)
+		} else {
+			if(RMSEA_CI){
+				RMSEA_CI = RMSEA(modelSummary)$txt
+			} else {
+				RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
+			}
+			x = paste0(
+				"\u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
+				# "Chi2(", ChiDoF, ") = ", round(Chi, 2), # was A7
+				", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
+				"; CFI = "  , round(CFI, 3),
+				"; TLI = "  , round(TLI, 3),
+				"; ", RMSEA_CI
+				)
+			print(x)
+			if(TLI_OK != "OK"){
+				message("TLI is worse than desired")
+			}
+			if(RMSEA_OK != "OK"){
+				message("RMSEA is worse than desired")
+			}
+		}
 	})
 	# TODO: umxSummary.MxRAMModel integrate interval printing into summary table
 	if(!is.null(model$output$confidenceIntervals)){

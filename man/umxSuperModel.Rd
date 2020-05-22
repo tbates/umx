@@ -22,31 +22,18 @@ umxSuperModel(
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{std}{Show standardized parameters, raw (default), or just the fit indices (null)}
-
-\item{param}{an \code{\link[=umxLabel]{umxLabel()}} to DO WHAT?}
 }
 \value{
 \itemize{
 \item \code{\link[=mxModel]{mxModel()}}
-}
-
-\itemize{
-\item \code{\link[=myfunc]{myfunc()}}
 }
 }
 \description{
 umxSuperModel takes 1 or more models and wraps them in a supermodel with a
 \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}} fit function that minimizes the sum of the
 fits of the sub-models.
-
-myfunc is a function which
-}
-\details{
-
 }
 \examples{
-myfunc TITLE
-
 myfunc(param)
 \dontrun{
 
@@ -104,18 +91,10 @@ summary(m3)
 \itemize{
 \item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
-
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
-}
 }
 \seealso{
 \itemize{
 \item \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
-}
-
-\itemize{
-\item \code{\link[=umxLabel]{umxLabel()}}
 }
 
 Other Core Modeling Functions: 
@@ -128,5 +107,4 @@ Other Core Modeling Functions:
 \code{\link{umxSummary}()},
 \code{\link{umx}}
 }
-\concept{}
 \concept{Core Modeling Functions}

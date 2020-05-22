@@ -434,19 +434,16 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 	varList = umx_var(data, format = "diag")
 	if(any(varList < minVar)){
 		# At least 1 small
-		message("The variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
-			"You might want to multiply to express the variable in smaller units, e.g. cm instead of metres.\n",
-			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
-		
+		message("Polite note: Variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
+			"You might want to express the variable in smaller units, e.g. multiply to use cm instead of metres.\n",
+			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")		
 	}
 	if(max(varList)/min(varList) > maxVarRatio){
 		# At least 1 big difference in variance
-		message("The variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
-			"You might want multiply to get variables into units on more similar scales.\n",
+		message("Polite note: Variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
+			"You might want scale the less variable manifests to get all variables on similar scales.\n",
 			"Alternatively, umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
-		
 	}
-
 }
 
 # xmu_twin_print_means(model, digits = digits, report = report)
