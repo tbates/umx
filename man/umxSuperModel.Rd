@@ -22,18 +22,34 @@ umxSuperModel(
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{std}{Show standardized parameters, raw (default), or just the fit indices (null)}
+
+\item{param}{an \code{\link[=umxLabel]{umxLabel()}} to DO WHAT?}
 }
 \value{
 \itemize{
 \item \code{\link[=mxModel]{mxModel()}}
+}
+
+\itemize{
+\item \code{\link[=myfunc]{myfunc()}}
 }
 }
 \description{
 umxSuperModel takes 1 or more models and wraps them in a supermodel with a
 \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}} fit function that minimizes the sum of the
 fits of the sub-models.
+
+myfunc is a function which
+}
+\details{
+
 }
 \examples{
+myfunc TITLE
+
+myfunc(param)
+\dontrun{
+
 library(umx)
 # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
 manifests = c("x","y")
@@ -41,11 +57,11 @@ tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150,
 		AA = 0, CC = .4, EE = .6, varNames = manifests)
 
 # Group 1
-grp1 = tmp[tmp$zygosity == "MZ", manifests]
+grp1   = tmp[tmp$zygosity == "MZ", manifests]
 g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
 
 # Group 2
-grp2 = tmp[tmp$zygosity == "DZ", manifests]
+grp2   = tmp[tmp$zygosity == "DZ", manifests]
 g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 
 
@@ -55,15 +71,18 @@ m1 = umxRAM("m1", data = g1Data,
 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 )
+
 # Model 2
 m2 = umxRAM("m2", data = g2Data,
 	umxPath("x", to = "y", labels = "beta"),
 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
 )
+
 # Place m1 and m2 into a supermodel, and autoRun it
 # NOTE: umxSummary is only semi-smart/certain enough to compute saturated models etc
 # and report multiple groups correctly.
+
 m3 = umxSuperModel('top', m1, m2)
 
 umxSummary(m3, std= TRUE)
@@ -80,14 +99,23 @@ umxSummary(m3, std= TRUE)
 summary(m3)
 
 }
+}
 \references{
 \itemize{
 \item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+}
+
+\itemize{
+\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
 }
 }
 \seealso{
 \itemize{
 \item \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
+}
+
+\itemize{
+\item \code{\link[=umxLabel]{umxLabel()}}
 }
 
 Other Core Modeling Functions: 
@@ -100,4 +128,5 @@ Other Core Modeling Functions:
 \code{\link{umxSummary}()},
 \code{\link{umx}}
 }
+\concept{}
 \concept{Core Modeling Functions}

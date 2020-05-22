@@ -54,6 +54,7 @@ family member, they are NA everywhere. i.e., it does not hunt for values that
 are present elsewhere to try and self-heal missing data.
 }
 \examples{
+\dontrun{
 # ==============================================
 # = First make a long format file for the demo =
 # ==============================================
@@ -101,6 +102,8 @@ wide = umx_long2wide(data= long, famID= "fam", twinID= "twinID", zygosity= "zygo
 	vars2keep = c("bmi", "wt"), passalong = "cohort"
 )
 namez(wide)
+
+}
 
 }
 \references{

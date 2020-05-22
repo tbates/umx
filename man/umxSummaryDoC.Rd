@@ -57,6 +57,7 @@ drawing the tables to a web browser where they may readily be copied into non-ma
 See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary()}}.
 }
 \examples{
+\dontrun{
 # ================
 # = 1. Load Data =
 # ================
@@ -84,6 +85,8 @@ A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B", comp=TRUE)
 B2A = umxModify(DoC, "b2a", free = TRUE, name = "B2A", comp=TRUE)
 umxCompare(B2A, A2B)
+
+}
 }
 \seealso{
 \itemize{

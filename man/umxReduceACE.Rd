@@ -37,6 +37,7 @@ It is designed for testing univariate models. You can offer up either the ACE or
 Suggestions for more sophisticated automation welcomed!
 }
 \examples{
+\dontrun{
 data(twinData)
 mzData <- subset(twinData, zygosity == "MZFF")
 dzData <- subset(twinData, zygosity == "DZFF")
@@ -45,6 +46,8 @@ m2 = umxReduce(m1)
 umxSummary(m2)
 m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
 m2 = umxReduce(m1)
+
+}
 }
 \references{
 \itemize{

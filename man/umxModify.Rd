@@ -95,6 +95,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 # 1. Drop the path to x1 (also updating the name so it's
 #    self-explanatory, and get a fit comparison
 m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
+
+\dontrun{
 # 2. Add the path back (setting free = TRUE)
 m2 = umxModify(m1, update = "G_to_x1", free= TRUE, name = "addback_X1", comparison = TRUE)
 # 3. Fix a value at a non-zero value
@@ -123,6 +125,7 @@ m2 = umxModify(m1, update = labsToUpdate, newlabels= newLabel, name = "equated",
 searchString = "G_to_x([0-9])"
 newLabel = "loading_for_path\\\\1" # use value in regex group 1
 m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
+}
 
 }
 \references{
