@@ -229,6 +229,7 @@ m1 = umxRAM("tim", data = tmp, type="cov",
 # For convenience, list up the manifests you will be using
 
 selVars = c("mpg", "wt", "disp")
+tmp = mtcars; tmp$disp= tmp$disp *.016
 myCov = mxData(cov(tmp[, selVars]), type = "cov", numObs = nrow(mtcars) )
 
 m1 = umxRAM("tim", data = myCov,
@@ -289,7 +290,7 @@ m1 = umxRAM("CFA_sketch", data = paste0("x", 1:4),
 # = This is an example of using your own labels:  =
 #   umxRAM will not over-ride them                =
 # =================================================
-m1 = umxRAM("tim", data = myCov,
+m1 = umxRAM("tim", data = mtcars, type="cov",
 	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath(cov = c("wt", "disp"), labels = "b1"),
 	umxPath(var = c("wt", "disp", "mpg"))

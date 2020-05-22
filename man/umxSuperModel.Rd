@@ -34,9 +34,8 @@ umxSuperModel takes 1 or more models and wraps them in a supermodel with a
 fits of the sub-models.
 }
 \examples{
-myfunc(param)
-\dontrun{
 
+\dontrun{
 library(umx)
 # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
 manifests = c("x","y")
