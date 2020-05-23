@@ -8,6 +8,7 @@ umx_rename_file(
   findStr = NA,
   replaceStr = NA,
   baseFolder = "Finder",
+  ignoreSuffix = TRUE,
   listPattern = NA,
   test = TRUE,
   overwrite = FALSE
@@ -20,6 +21,8 @@ umx_rename_file(
 
 \item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window.
 If it is blank, a choose folder dialog will be thrown.}
+
+\item{ignoreSuffix}{Whether to ignore (don't search in) the suffix (filetype like .mpg) TRUE.}
 
 \item{listPattern}{A pre-filter for files}
 
@@ -38,11 +41,6 @@ The file renaming is fast and, because you can use regular expressions, powerful
 \dontrun{
 # "Season 01" --> "S01" in current folder in MacOS Finder
 umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
-}
-}
-\references{
-\itemize{
-\item \url{https://www.github.com/tbates/umx}
 }
 }
 \seealso{

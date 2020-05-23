@@ -1,6 +1,6 @@
 # umx 4.0.0
 * May 2020 R 4.0.0
-* FIXED: `umx_score_scale` Fixe a bad design decision where I was storing the reversed items in the data returned to the user. Worked for 1 run, but not repeats...
+* FIXED: `umx_score_scale` Fix a bad design decision where I was storing the reversed items in the data returned to the user. Worked for 1 run, but not repeats...
 * FIXED: `umx_long2wide` now looks for zygosity in more than just twin 1 h/t @nathangillespie for catching this case.
 * NEW: Covariates in twin models for ordinal and continuous manifests!
 	* `m1 = umxACE(selVars = "wt", selCovs= "age", sep="_T")`
@@ -34,16 +34,18 @@
 * IMPROVED: `umxGxE` simplified algebra
 * IMPROVED: `umxIP` gains report option.
 * IMPROVED: `umxIP` plot prints model name.
-* IMPROVED: `umxSummaryGxEbiv` working, with a note that the whole function is beta.	h/t @MikeNeale for catching this.
-* IMPROVED: `umxThresholdMatrix` re-implemented `l_u_bound` - wasn't working since move to threshold algebra some years back #ht @nathangillespie for catching this!
-* IMPROVED: `umxThresholdMatrix` supports leaving all thresholds free with `method= "allFree"`	h/t @NathanGillespie for catching this.
+* IMPROVED: `umxSummaryGxEbiv` working, with a note that the whole function is beta. h/t @MikeNeale.
+* IMPROVED: `umxThresholdMatrix` re-implemented `l_u_bound` - wasn't working for some time h/t @NathanGillespie.
+* IMPROVED: `umxThresholdMatrix` supports leaving all thresholds free with `method= "allFree"`	h/t @NathanGillespie.
 * IMPROVED: `umx_check_names` returns TRUE when no names are entered.
 * IMPROVED: `umx_check` can concatenate extra messages, and is by default polite with messages.
 * IMPROVED: `umx_check` handles ... items better
 * IMPROVED: `umx_is_ordered` can process mxData as well as df.
 * IMPROVED: `umx_make_TwinData` has dzAr.
 * IMPROVED: `umx_make_twin_data_nice` can turn numeric zyg column into human readable "MZMM" etc.
-* IMPROVED: `umx_print` gains append, sortable, and "both" (md and html) options.
+* IMPROVED: `umx_print` gains options to append to existing file.
+* IMPROVED: `umx_print` gains options to make tables sort-able.
+* IMPROVED: `umx_print` gains options to output content in "both" md and html.
 * IMPROVED: `umx_print` to react correctly to report as an input to file more mergers of print to console and to html.
 * IMPROVED: `umx_rename` now uses "from=, to=" format for renaming columns.
 * IMPROVED: `umx_rename` was using old/replace  instead of from/to (and so generating a polite note).

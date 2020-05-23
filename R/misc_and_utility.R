@@ -1864,6 +1864,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @param replaceStr The (regex) replacement string "\1 are not dogs"
 #' @param baseFolder The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window.
 #' If it is blank, a choose folder dialog will be thrown.
+#' @param ignoreSuffix Whether to ignore (don't search in) the suffix (filetype like .mpg) TRUE.
 #' @param listPattern A pre-filter for files
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
@@ -1871,18 +1872,17 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @return None
 #' @export
 #' @md
-#' @references - <https://www.github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
 #' }
-umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", listPattern = NA, test = TRUE, overwrite = FALSE) {
-	if(is.na(replaceStr)){
-		stop("Please set a replacement string")
-	}
-	# vain hope to work around R consuming \ characters
-	# replaceStr = Hmisc::escapeRegex(replaceStr)
+umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", ignoreSuffix = TRUE, listPattern = NA, test = TRUE, overwrite = FALSE) {
+	umx_check(!is.na(replaceStr), "stop", "Please set a replaceStr to the replacement string you desire.")
+
+	# ==============================
+	# = 1. Set folder to search in =
+	# ==============================
 	if(baseFolder == "Finder"){
 		baseFolder = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)
@@ -1890,18 +1890,29 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep = "") ## choose a directory
 		message("Using selected folder:", baseFolder)
 	}
-	if(is.na(listPattern)){
-		listPattern = findStr
-	}
+
+	# =================================================
+	# = 2. Find files matching listPattern or findStr =
+	# =================================================
+	if(is.na(listPattern)){ listPattern = findStr }
 	a = list.files(baseFolder, pattern = listPattern)
 	message("found ", length(a), " possible files")
+
 	changed = 0
 	for (fn in a) {
-		findB = grepl(pattern = findStr, fn) # returns 1 if found
-		if(findB){
-			fnew = gsub(findStr, replacement = replaceStr, x = fn) # replace all instances
+		strFound = grepl(pattern = findStr, fn) # returns 1 if found
+		if(strFound){
+			if(ignoreSuffix){
+				# pull suffix and baseName (without suffix)
+				baseName = sub(pattern = "(.*)(\\..*)$", x = fn, replacement = "\\1")
+				suffix   = sub(pattern = "(.*)(\\..*)$"  , x = fn, replacement = "\\2")
+				fnew = gsub(findStr, replacement = replaceStr, x = baseName) # replace all instances
+				fnew = paste0(fnew, suffix)
+			} else {
+				fnew = gsub(findStr, replacement = replaceStr, x = fn) # replace all instances
+			}
 			if(test){
-				message("would change ", fn, " to ", fnew)
+				message(fn, " would be changed to:	", omxQuotes(fnew))
 			} else {
 				if((!overwrite) & file.exists(paste(baseFolder, fnew, sep = ""))){
 					message("renaming ", fn, "to", fnew, "failed as already exists. To overwrite set T")

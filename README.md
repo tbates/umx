@@ -33,8 +33,9 @@ Most functions have extensive and practical examples (even figures for the twin 
 
 See what is on offer with '?umx'. There are online tutorials at  [tbates.github.io](http://tbates.github.io).
 
-`umx` stands for "user" OpenMx functions. It provides over 100 functions, but most importantly
-1. `umxRAM` that makes path-based SEM in R straightforward and `plot` that allows you to visualise your model
+`umx` stands for "user" OpenMx functions. It provides over 100 functions, but most importantly:
+
+1. `umxRAM` that makes path-based SEM in R straightforward and `plot` for graphically display of your model.
 2. A suite of twin modelling functions.
 
 These are supported by dozens of low-level functions automating activities such as labeling, setting start values etc., and helping with data-wrangling, plotting etc.
