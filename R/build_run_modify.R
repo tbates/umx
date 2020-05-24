@@ -4787,23 +4787,29 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' Functions for Structural Equation Modeling in OpenMx
 #'
 #' @description
-#' `umx` allows you to more easily build, run, modify, and report structural models, building on the OpenMx package.
-#' All core functions are organized into families, so they are easier to find (see "families" below under \strong{See Also})
+#' `umx` allows you to more easily build, run, modify, and report structural models, 
+#' building on the OpenMx package.
+#' All core functions are organized into families, so they are easier to find 
+#' (see "families" below under \strong{See Also})
 #'
-#' All the functions have full-featured and well commented examples, some even have *figures*, so use the help, even if you think it won't help :-)
+#' All the functions have full-featured and well commented examples, some even have *figures*, 
+#' so use the help, even if you think it won't help :-)
 #' Have a look, for example at [umxRAM()]
 #' 
 #' Check out NEWS about new features at `news(package = "umx")`
+#' 
 #' @details
 #' Introductory working examples are below. You can run all demos with demo(umx)
 #' When I have a vignette, it will be: vignette("umx", package = "umx")
 #' 
 #' There is a helpful blog at <https://tbates.github.io>
 #' 
-#' If you want the bleeding-edge version:
+#' (Only) if you want the bleeding-edge version:
 #' 
 #' devtools::install_github("tbates/umx")
 #' 
+#' @docType package
+#' @name umx
 #' @family Teaching and testing Functions
 #' @family Core Modeling Functions
 #' @family Reporting Functions
@@ -4853,13 +4859,15 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # ==================
 #' # = Model updating =
 #' # ==================
+#' # We'll use umxModify to modify the model...
 #' # Can we set the loading of x1 on G to zero? (nope...)
 #' m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X1", comparison = TRUE)
 #'
-#' # The use of "comparison = TRUE" generates this table:
+#' # note1: umxSetParameters can do this with some additional flexibility
+#' # note2 "comparison = TRUE" above is the same as calling 
+#' # umxCompare, like this
 #' umxCompare(m1, m2)
 #' 
-#' # Note: umxSetParameters can do this with some additional flexibility
 #' 
 #' # ========================
 #' # = Confidence intervals =
@@ -4867,16 +4875,17 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' # umxSummary() will show these, but you can also use the confint() function
 #' confint(m1) # OpenMx's SE-based confidence intervals
-#' umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
+#' 
 #' 
 #' \dontrun{
+#' # umxConfint formats everything you need nicely, and allows adding CIs (with parm=)
+#' umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
+#' 
 #' # And make a Figure and open in browser
-#' # plot(m1, std = TRUE)
+#' plot(m1, std = TRUE)
 #' 
 #' # If you just want the .dot code returned set file = NA
-#' # plot(m1, std = TRUE, file = NA)
+#' plot(m1, std = TRUE, file = NA)
 #' }
-#' 
-#' @docType package
-#' @name umx
+#'
 NULL
