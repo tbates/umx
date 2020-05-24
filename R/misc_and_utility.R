@@ -205,7 +205,6 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
-	# TODO umx_score_scale Check there are no NAs if score is totals.
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
@@ -241,6 +240,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			score[i] = max(df[i,], na.rm=TRUE)
 		}
 	}else if(score == "totals"){
+		if(any(is.na(df))){
+			message("Polite note: you asked for scale totals, but some subjects have missing data: I just ignored that. You might want means...")
+		}
 		score = rowSums(df, na.rm = na.rm)
 	}else if(score == "means"){
 		score = rowMeans(df, na.rm = na.rm)

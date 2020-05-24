@@ -495,6 +495,7 @@ loadings.MxModel <- function(x, ...) {
 #' # CI requests added for free matrix parameters. User prompted to set run = TRUE
 #' m3 = umxConfint(m1, "all")
 #' 
+#' \dontrun{
 #' # Run the requested CIs
 #' m3 = umxConfint(m3, run = TRUE) 
 #' 
@@ -505,7 +506,6 @@ loadings.MxModel <- function(x, ...) {
 #' # Wipe existing CIs, add G_to_x1
 #' tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 #' 
-#' \dontrun{
 #' # For some twin models, a "smart" mode is implemented
 #' # note: only implemented for umxCP so far
 #' m2 =  umxConfint(m1, "smart")
