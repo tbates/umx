@@ -68,6 +68,7 @@ umxConfint(m2)
 # CI requests added for free matrix parameters. User prompted to set run = TRUE
 m3 = umxConfint(m1, "all")
 
+\dontrun{
 # Run the requested CIs
 m3 = umxConfint(m3, run = TRUE) 
 
@@ -78,7 +79,6 @@ tmp = umxConfint(m1, parm = "A", run = TRUE)
 # Wipe existing CIs, add G_to_x1
 tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 
-\dontrun{
 # For some twin models, a "smart" mode is implemented
 # note: only implemented for umxCP so far
 m2 =  umxConfint(m1, "smart")
