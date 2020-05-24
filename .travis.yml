@@ -1,4 +1,4 @@
-os: osx
+os: windows
 language: r
 cache: packages
 sudo: false
