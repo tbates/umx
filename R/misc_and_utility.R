@@ -1877,7 +1877,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
 #' }
-umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", ignoreSuffix = TRUE, listPattern = NA, test = TRUE, overwrite = FALSE) {
+umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", ignoreSuffix = TRUE, listPattern = NULL, test = TRUE, overwrite = FALSE) {
 	umx_check(!is.na(replaceStr), "stop", "Please set a replaceStr to the replacement string you desire.")
 
 	# ==============================
@@ -1894,22 +1894,20 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 	# =================================================
 	# = 2. Find files matching listPattern or findStr =
 	# =================================================
-	if(is.na(listPattern)){ listPattern = findStr }
 	a = list.files(baseFolder, pattern = listPattern)
 	message("found ", length(a), " possible files")
 
 	changed = 0
 	for (fn in a) {
-		strFound = grepl(pattern = findStr, fn) # returns 1 if found
-		if(strFound){
+		if(grepl(pattern = findStr, fn, perl= TRUE)){
 			if(ignoreSuffix){
 				# pull suffix and baseName (without suffix)
 				baseName = sub(pattern = "(.*)(\\..*)$", x = fn, replacement = "\\1")
-				suffix   = sub(pattern = "(.*)(\\..*)$"  , x = fn, replacement = "\\2")
-				fnew = gsub(findStr, replacement = replaceStr, x = baseName) # replace all instances
+				suffix   = sub(pattern = "(.*)(\\..*)$", x = fn, replacement = "\\2")
+				fnew = gsub(findStr, replacement = replaceStr, x = baseName, perl= TRUE) # replace all instances
 				fnew = paste0(fnew, suffix)
 			} else {
-				fnew = gsub(findStr, replacement = replaceStr, x = fn) # replace all instances
+				fnew = gsub(findStr, replacement = replaceStr, x = fn, perl= TRUE) # replace all instances
 			}
 			if(test){
 				message(fn, " would be changed to:	", omxQuotes(fnew))
@@ -1928,7 +1926,7 @@ umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder"
 		}
 	}
 	if(test & changed==0){
-		message("add test = FALSE to actually change files.")
+		message("set test = FALSE to actually change files.")
 	} else {
 		umx_msg(changed)
 	}

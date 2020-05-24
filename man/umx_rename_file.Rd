@@ -9,7 +9,7 @@ umx_rename_file(
   replaceStr = NA,
   baseFolder = "Finder",
   ignoreSuffix = TRUE,
-  listPattern = NA,
+  listPattern = NULL,
   test = TRUE,
   overwrite = FALSE
 )
