@@ -59,16 +59,16 @@ m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
 
 m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 
+\dontrun{
 # Add a CI request for "G_to_x1", run, and report. Save with this CI computed
 m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
 
 # Just print out any existing CIs
-umxConfint(m2) 
+umxConfint(m2)
 
 # CI requests added for free matrix parameters. User prompted to set run = TRUE
 m3 = umxConfint(m1, "all")
 
-\dontrun{
 # Run the requested CIs
 m3 = umxConfint(m3, run = TRUE) 
 
