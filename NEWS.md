@@ -52,6 +52,10 @@
 * IMPROVED: `umx_residualize` now prints the betas (and CIs) of the residualization it performs.
 * IMPROVED: `umx_rot` can NA the last value.
 * IMPROVED: `umx_score_scale` checks input ranges
+* IMPROVED: `umx_score_scale` tell user what the max response is for reversed items if they leave this blank.
+* IMPROVED: `umx_score_scale` Warns user if there are NAs when "score"  is totals.
+* IMPROVED: `umx_rename_file`: Perl mode is TRUE (allows lookahead/behind features; default list pattern is NULL.
+* IMPROVED: `umx_rename_file` now ignores file suffix by default.
 * IMPROVED: `umx_var` upgrades input to df (e.g. if you feed it a column, it now works).
 * IMPROVED: `xmuTwinUpgradeMeansToCovariateModel` uses the incoming model's thresholds name.
 * IMPROVED: `xmu_data_missing` can `hint=` to user which dataset had missingness.
