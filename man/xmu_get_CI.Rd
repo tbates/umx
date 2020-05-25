@@ -46,7 +46,7 @@ manifests = names(demoOneFactor)
 m1 = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = "G", fixedAt = 1.0)
+	umxPath(var = "G", fixedAt = 1)
 )
 m1 = umxCI(m1, run= "yes")
 
@@ -55,11 +55,12 @@ xmu_get_CI(model= m1, "x1_with_x1")
 xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
 
 # prefix (submodel) and suffix (e.g. std) are ignored if not needed
-xmu_get_CI(model =m1, "x1_with_x1", prefix = "top.", suffix = "_std")
+xmu_get_CI(model= m1, "x1_with_x1", prefix = "top.", suffix = "_std")
 
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
 }
+
 }
 \references{
 \itemize{
