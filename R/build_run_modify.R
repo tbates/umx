@@ -3456,6 +3456,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' )
 #'
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
+#' \dontrun{
 #' m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE) # set start values and label all parameters
 #' umxSummary(m1, std = TRUE)
 #' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
@@ -3464,6 +3465,8 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' confint(m1) # OpenMx's SE-based CIs
 #' umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
 #' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
+#' }
+#' 
 umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use

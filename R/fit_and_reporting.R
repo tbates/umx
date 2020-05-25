@@ -486,16 +486,16 @@ loadings.MxModel <- function(x, ...) {
 #' 
 #' m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 #' 
+#' \dontrun{
 #' # Add a CI request for "G_to_x1", run, and report. Save with this CI computed
 #' m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
 #' 
 #' # Just print out any existing CIs
-#' umxConfint(m2) 
+#' umxConfint(m2)
 #' 
 #' # CI requests added for free matrix parameters. User prompted to set run = TRUE
 #' m3 = umxConfint(m1, "all")
 #' 
-#' \dontrun{
 #' # Run the requested CIs
 #' m3 = umxConfint(m3, run = TRUE) 
 #' 
@@ -512,15 +512,15 @@ loadings.MxModel <- function(x, ...) {
 #' }
 #'
 umxConfint <- function(object, parm = c("existing", "all", "or one or more labels", "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, showErrorCodes = FALSE, optimizer= c("SLSQP", "NPSOL", "CSOLNP", "current")) {
-	# optimizer is sent to omxRunCI
 	optimizer = match.arg(optimizer)
 	if(optimizer == "current"){
+		# optimizer is sent to omxRunCI so set "current" to the actual name
 		optimizer = umx_set_optimizer(silent = TRUE)
 	}
 	parm = xmu_match.arg(parm, c("existing", "all", "or one or more labels", "smart"), check = FALSE)
 
 	# Upgrade "all" to "smart" for CP
-	if(class(object) == "MxModelCP" && parm == "all"){
+	if(class(object)[[1]] == "MxModelCP" && parm == "all"){
 		parm = "smart"
 	}
 
@@ -541,7 +541,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 		CIs_to_set = names(omxGetParameters(object, free = TRUE))
 		object = mxModel(object, mxCI(CIs_to_set, interval = level))
 	} else if (parm == "smart"){
-		if(class(object) == "MxModelCP"){
+		if(class(object)[[1]] == "MxModelCP"){
 			# Add individual smart (only free cell) mxCI requests
 			# For CP model, these are the free cells in
 			# 	top.as_std, top.cs_std, top.es_std
@@ -616,7 +616,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 
 		CIs = model_summary$CI
 		CIs$parameter = row.names(CIs)
-		row.names(CIs) <- NULL
+		row.names(CIs) = NULL
 		CIs = CIs[, c("parameter", "estimate", "lbound", "ubound", "note")]
 		intersect(names(CIdetail), names(CIs))
 		tmp = merge(CIs, CIdetail[CIdetail$side == "lower", ], by = "parameter", all.x = TRUE)
