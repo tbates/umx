@@ -36,7 +36,7 @@
 #' @param digits Rounding for reporting parameters (default 2)
 #' @param optimizer If set, will switch the optimizer.
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
-#' @return [OpenMx::mxPower()] or [OpenMx::mxPowerSearch()] object
+#' @return [OpenMx::mxPower()] object
 #' @family Twin Modeling Functions
 #' @seealso - [OpenMx::mxPower()]
 #' @references * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
