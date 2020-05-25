@@ -39,6 +39,7 @@ Look up CIs for free parameters in a model, and return as APA-formatted text str
 If std are available, then these are reported.
 }
 \examples{
+\dontrun{
 require(umx); data(demoOneFactor)
 manifests = names(demoOneFactor)
 
@@ -56,7 +57,6 @@ xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
 # prefix (submodel) and suffix (e.g. std) are ignored if not needed
 xmu_get_CI(model =m1, "x1_with_x1", prefix = "top.", suffix = "_std")
 
-\dontrun{
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
 }

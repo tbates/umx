@@ -225,7 +225,12 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	# = Reverse any items needing this =
 	# ==================================
 	if(!is.null(rev)){
-		umx_check(!is.null(max), "stop", "If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
+		if(is.null(max)){
+			maxs = umx_apply("max", data[ , paste0(base, rev), drop = FALSE], by = "columns", na.rm= TRUE)
+			message("If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
+			print(table(data[ , paste0(base, rev[1])] ))
+			stop("FYI, the max appears to be ", max(maxs))
+        }
 		revItems = data[,paste0(base, rev), drop= FALSE]
 		revItems = (max + min) - revItems
 		data[,paste0(base, rev)] = revItems
@@ -2939,6 +2944,18 @@ xmu_dot_rank <- function(vars, pattern, rank) {
 #' 		toLabel= c('a','b','c'), fromType= "latent");
 #' umx_msg(out$latents)
 #' 
+#' 
+#' # ========================
+#' # = Label a means matrix =
+#' # ========================
+#' 
+#' tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
+#' out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
+#' 	fromLabel= "one", toLabel= c("v1", "v2")
+#' )
+#' cat(out$str)
+#'
+#' \dontrun{
 #' # ==============================================
 #' # = Get a string which includes CI information =
 #' # ==============================================
@@ -2954,15 +2971,7 @@ xmu_dot_rank <- function(vars, pattern, rank) {
 #'       toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
 #' umx_msg(out$str); umx_msg(out$latents)
 #' 
-#' # ========================
-#' # = Label a means matrix =
-#' # ========================
-#' 
-#' tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
-#' out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
-#' 	fromLabel= "one", toLabel= c("v1", "v2")
-#' )
-#' cat(out$str)
+#' }
 #'
 xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
 	from   = match.arg(from)

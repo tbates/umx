@@ -2051,13 +2051,14 @@ xmu_string2path <- function(from) {
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx); data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
 #' m1 = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m1 = umxCI(m1, run= "yes")
 #' 
@@ -2066,12 +2067,12 @@ xmu_string2path <- function(from) {
 #' xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
 #' 
 #' # prefix (submodel) and suffix (e.g. std) are ignored if not needed
-#' xmu_get_CI(model =m1, "x1_with_x1", prefix = "top.", suffix = "_std")
+#' xmu_get_CI(model= m1, "x1_with_x1", prefix = "top.", suffix = "_std")
 #' 
-#' \dontrun{
 #' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
 #' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
 #' }
+#'
 xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
 	# xmu_get_CI ?
 	# TODO xmu_get_CI: Look for CIs, if not found look for SEs, if not found compute with mxSE (high priority!)

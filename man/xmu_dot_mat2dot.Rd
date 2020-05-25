@@ -111,6 +111,18 @@ out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag",
 		toLabel= c('a','b','c'), fromType= "latent");
 umx_msg(out$latents)
 
+
+# ========================
+# = Label a means matrix =
+# ========================
+
+tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
+out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
+	fromLabel= "one", toLabel= c("v1", "v2")
+)
+cat(out$str)
+
+\dontrun{
 # ==============================================
 # = Get a string which includes CI information =
 # ==============================================
@@ -126,15 +138,7 @@ out = xmu_dot_mat2dot(m1$A, from = "cols", cells = "any",
       toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
 umx_msg(out$str); umx_msg(out$latents)
 
-# ========================
-# = Label a means matrix =
-# ========================
-
-tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
-out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
-	fromLabel= "one", toLabel= c("v1", "v2")
-)
-cat(out$str)
+}
 
 }
 \seealso{
