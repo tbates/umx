@@ -7,17 +7,17 @@
 xmu_dot_define_shapes(latents, manifests, preOut = "")
 }
 \arguments{
-\item{latents}{list of latent variables}
+\item{latents}{list of latent variables (including "one")}
 
 \item{manifests}{list of manifest variables}
 
-\item{preOut}{"" by default.}
+\item{preOut}{existing output string (pasteed in front of this: "" by default).}
 }
 \value{
 string
 }
 \description{
-Helper to make a graphviz rank string is a function which.
+Helper to make a graphviz rank string defining the latent, manifest, and means and their shapes
 }
 \examples{
 xmu_dot_define_shapes(c("as1"), c("E", "N"))

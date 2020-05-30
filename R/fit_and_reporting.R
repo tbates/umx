@@ -2405,77 +2405,47 @@ plot.MxRAMModel <- plot.MxModel
 #' m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
-	# TODO: umxPlotACE Replace label-parsing with code that walks across the known matrices...
-	# Obviates problems with arbitrary names.
-
 	model = x # just to be clear that x is a model
 	if(std){model = xmu_standardize_ACE(model)}
 
-	# selDVs = xmu_twin_get_var_names(model)
-	selDVs = xmu_twin_get_var_names(model)
-	nVar   = length(selDVs);
-	# selDVs = selDVs[1:(nVar)]
+	nVar   = dim(model$top$a$values)[[1]]
+	selDVs = dimnames(model$MZ$data$observed)[[2]]
+	selDVs = sub("(_T)?[0-9]$", "", selDVs[1:(nVar)]) # trim "_Tn" from end
+	out = list(str = "", latents = c(), manifests = c())
 
-	out     = "" ;
-	latents = c();
-	parameterKeyList = omxGetParameters(model);
-	
-	for(thisParam in names(parameterKeyList) ) {
-		value = parameterKeyList[thisParam]
-		if(class(value) == "numeric") {
-			value = round(value, digits)
-		}
+	# 2. Factor correlations on the lower
+	out = xmu_dot_mat2dot(model$top$a, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", arrows = "forward", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$c, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", arrows = "forward", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$e, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", arrows = "forward", showFixed = showFixed, p = out)
 
-		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
-			from    = sub('([ace])_r([0-9]+)c([0-9]+)'           , '\\1\\3', thisParam, perl = TRUE);  # a c or e
-			target  = as.numeric(sub('([ace])_r([0-9]+)c([0-9]+)', '\\2'   , thisParam, perl = TRUE));
-			target  = selDVs[as.numeric(target)]
-			latents = append(latents, from)
-			show = TRUE
-		} else { # means probably
-			if(means){
-				show = TRUE
-			} else {
-				show = FALSE
-			}
-			from   = thisParam;
-			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl = TRUE) 
-		}
-		if(show){
-			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
-		}
+	# Process "expMean" 1 * nVar matrix
+	if(means){
+		# from = "one"; target = selDVs[c]
+		out = xmu_dot_mat2dot(model$top$intercept, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
+		out = xmu_dot_mat2dot(model$top$meansBetas, cells = "any", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
 	}
-	preOut = "\t# Latents\n"
-	latents = unique(latents)
-	for(var in latents) {
-	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
-	}
+	cat(out$str)
 
-	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(var in selDVs) {
-	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
-	}
+	# TODO: could add self-referential @1 loops to a, c, and e
 
-	rankVariables = paste("\t{rank = same; ", paste(selDVs, collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
-	# grep('a', latents, value=T)
-	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value=T), collapse="; "), "};\n") # {rank=min; a1; a2}
-	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value=T), collapse="; "), "};\n") # {rank=min; c1; e1}
+	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
+	# cat(preOut)
+	same    = xmu_dot_rank(out$manifests, rank= "same")
+	top     = xmu_dot_rank(out$latents  , "^a", rank= "min")
+	bottom  = xmu_dot_rank(out$latents  , "^[ce]", rank= "max")
+
 	label = model$name
 	splines = "FALSE"
 	digraph = paste0(
 		"digraph G {\n\t",
 		'label="', label, '";\n\t',
 		"splines = \"", splines, "\";\n",
-		preOut,
-		out,
-		rankVariables,
-		rankA, 
-		rankCE, "\n}"
+		preOut, out, same, top, bottom, "\n}"
 	)
-
 	print("?umxPlotACE options: std, means, digits, strip_zero, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
-} # end umxPlotACE
+}
+ # end umxPlotACE
 
 #' @export
 plot.MxModelACE <- umxPlotACE

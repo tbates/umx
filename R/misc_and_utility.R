@@ -2816,11 +2816,11 @@ umx_msg <- function(x) {
 #' Helper to make the list of vars and their shapes for a graphviz string
 #'
 #' @description
-#' Helper to make a graphviz rank string is a function which.
+#' Helper to make a graphviz rank string defining the latent, manifest, and means and their shapes
 #'
-#' @param latents list of latent variables
+#' @param latents list of latent variables (including "one")
 #' @param manifests list of manifest variables
-#' @param preOut "" by default.
+#' @param preOut existing output string (pasteed in front of this: "" by default).
 #' @return string
 #' @export
 #' @family Graphviz
