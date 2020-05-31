@@ -3016,18 +3016,22 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 					sourceIndex = c; sinkIndex = r; fromWidth = nCols; toWidth = nRows
 				}
 
-				if(fromLabel == "one"){
-					thisFrom = fromLabel
-				} else if(length(fromLabel) == 1 && fromWidth > 1 ){
-					thisFrom = paste0(fromLabel, sourceIndex)
+				if(length(fromLabel) == 1){
+					if(fromLabel == "one"){
+						thisFrom = "one"
+					} else if(fromWidth > 1){
+						thisFrom = paste0(fromLabel, sourceIndex)
+					}
 				} else {
 					thisFrom = fromLabel[sourceIndex]
 				}
 
-				if(toLabel == "one"){
-					thisTo = toLabel
-				} else if(length(toLabel) == 1 && toWidth > 1 ){
-					thisTo = paste0(toLabel, sinkIndex)
+				if(length(toLabel) == 1){
+					if(toLabel == "one"){
+						thisFrom = "one"
+					} else if(toWidth > 1){
+						thisTo = paste0(toLabel, sinkIndex)
+					}
 				} else {
 					thisTo = toLabel[sinkIndex]
 				}
