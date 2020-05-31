@@ -3028,7 +3028,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 
 				if(length(toLabel) == 1){
 					if(toLabel == "one"){
-						thisFrom = "one"
+						thisTo = "one"
 					} else if(toWidth > 1){
 						thisTo = paste0(toLabel, sinkIndex)
 					}
