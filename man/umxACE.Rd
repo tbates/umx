@@ -195,11 +195,6 @@ twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 
-\dontshow{
-mzData[1:80, ]
-dzData[1:80, ]
-}
-	
 # 3. Built & run the model, controlling for age in the means model
 m1 = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
 

@@ -2977,19 +2977,18 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 	from   = match.arg(from)
 	cells  = match.arg(cells)
 	arrows = match.arg(arrows)
-	# Get custom from and to labels if set
+	# Get default from and to labels if custom not set
 	if(is.null(fromLabel)){ fromLabel = x$name }
 	if(is.null(toLabel))  { toLabel   = x$name }
 
 	if(class(x) == "MxAlgebra"){
 		# convert to a matrix
 		tmp = x$result
-		x = umxMatrix(x$name, "Full", dim(tmp)[1], dim(tmp)[2], free = TRUE, values = tmp)
-		
+		x   = umxMatrix(x$name, "Full", dim(tmp)[1], dim(tmp)[2], free = TRUE, values = tmp)
 	}
 
-	nRows  = nrow(x)
-	nCols  = ncol(x)
+	nRows = nrow(x)
+	nCols = ncol(x)
  
 	# Get parameter value and make the plot string
 	# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
@@ -3012,27 +3011,23 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 				}
 
 				if(from == "rows"){
-					sourceIndex = r; sinkIndex = c
+					sourceIndex = r; sinkIndex = c; fromWidth = nRows; toWidth = nCols
 				} else { # from cols
-					sourceIndex = c; sinkIndex = r
+					sourceIndex = c; sinkIndex = r; fromWidth = nCols; toWidth = nRows
 				}
 
-				if(length(fromLabel) == 1){
-					if(fromLabel == "one"){
-						thisFrom = fromLabel
-					} else {
-						thisFrom = paste0(fromLabel, sourceIndex)
-					}
+				if(fromLabel == "one"){
+					thisFrom = fromLabel
+				} else if(length(fromLabel) == 1 && fromWidth > 1 ){
+					thisFrom = paste0(fromLabel, sourceIndex)
 				} else {
 					thisFrom = fromLabel[sourceIndex]
 				}
 
-				if(length(toLabel) == 1){
-					if(toLabel == "one"){
-						thisTo = toLabel
-					} else {
-						thisTo = paste0(toLabel, sinkIndex)
-					}
+				if(toLabel == "one"){
+					thisTo = toLabel
+				} else if(length(toLabel) == 1 && toWidth > 1 ){
+					thisTo = paste0(toLabel, sinkIndex)
 				} else {
 					thisTo = toLabel[sinkIndex]
 				}
@@ -3066,7 +3061,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 	}
 	p$latents   = unique(p$latents)
 	p$manifests = unique(p$manifests)	
-	p
+	return(p)
 }
 
 
