@@ -2429,9 +2429,6 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	# TODO: could add self-referential @1 loops to a, c, and e
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = out$manifests)
 
-	umx_msg(selDVs)
-	umx_msg(out$manifests)
-
 	same    = xmu_dot_rank(out$manifests, "."    , rank = "same")
 	top     = xmu_dot_rank(out$latents  , "^a"   , rank = "min")
 	bottom  = xmu_dot_rank(out$latents  , "^[ce]", rank = "max")

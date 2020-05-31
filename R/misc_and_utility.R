@@ -2908,6 +2908,11 @@ xmu_dot_rank <- function(vars, pattern, rank) {
 #' @md
 #' @examples
 #'
+#' # test with a 1 * 1 value= 1 (1, 4, 6 on the diag)
+#' a_cp = umxMatrix("a_cp", "Lower", 1, 1, free = TRUE, values = 1)
+#' out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "both")
+#' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
+
 #' # Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
 #' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
 #'
@@ -3021,6 +3026,8 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 						thisFrom = "one"
 					} else if(fromWidth > 1){
 						thisFrom = paste0(fromLabel, sourceIndex)
+					}else{
+						thisFrom = fromLabel[sourceIndex]						
 					}
 				} else {
 					thisFrom = fromLabel[sourceIndex]
@@ -3031,6 +3038,8 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 						thisTo = "one"
 					} else if(toWidth > 1){
 						thisTo = paste0(toLabel, sinkIndex)
+					}else{
+						thisTo = toLabel[sinkIndex]						
 					}
 				} else {
 					thisTo = toLabel[sinkIndex]
