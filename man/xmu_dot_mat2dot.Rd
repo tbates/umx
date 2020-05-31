@@ -75,6 +75,17 @@ Finally, you can pass in previous output and new paths will be concatenated to t
 }
 \examples{
 
+# test with a 1 * 1
+a_cp = umxMatrix("a_cp", "Lower", 1, 1, free = TRUE, values = pi)
+out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "both")
+cat(out$str) # a_cp -> a_cp [dir = both label="2"];
+out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "forward",
+	fromLabel = "fromMe", toLabel = "toYou", fromType = "latent", toType = "manifest", digits = 3, SEstyle = TRUE
+	)
+cat(out$str) # fromMe -> toYou [dir = forward label="3.142"];
+cat(out$latent) # fromMe
+cat(out$manifest) # toYou
+
 # Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
 a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
 
