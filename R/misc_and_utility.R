@@ -3278,21 +3278,16 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 	if(is.null(dim(x)[1]) || dim(x)[1] == 0){
 		return()
 	} else {
+		x = umx_round(x, digits = digits, coerce = FALSE)
 		if(!is.null(suppress)){
+			# zero-out suppressed values
 			x[abs(x) < suppress] = 0
 			zero.print = "."
 		}
-		x = umx_round(x, digits = digits, coerce = FALSE)
-		isNA = is.na(x)
-		if (any(isNA)){
-			x[isNA] = na.print
-			isZero  = !isNA & x == 0	 	
-	    }else{
-	    	isZero = FALSE
-	    }
-	    if (zero.print != "0" && any(isZero)){
-			x[isZero] = zero.print
-	    }
+
+		x[is.na(x)] = na.print		
+		x[(x == 0)] = zero.print
+
 	    if (is.numeric(x) || is.complex(x)){
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(!is.na(file)){

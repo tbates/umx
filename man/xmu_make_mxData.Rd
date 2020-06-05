@@ -11,7 +11,8 @@ xmu_make_mxData(
   numObs = NULL,
   fullCovs = NULL,
   dropMissingDef = TRUE,
-  verbose = FALSE
+  verbose = FALSE,
+  use = "pairwise.complete.obs"
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ xmu_make_mxData(
 \item{dropMissingDef}{Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.}
 
 \item{verbose}{If verbose, report on columns kept and dropped (default FALSE)}
+
+\item{use}{When type = cov or cor, should this drop NAs? (use = "pairwise.complete.obs" by default, with a polite note)}
 }
 \value{
 \itemize{

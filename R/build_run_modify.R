@@ -581,7 +581,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		# comparison
 		# allContinuousMethod
 		# remove_unused_manifests
-		model = umxLav2RAM(model = model, data = data, group = group, group.equal = group.equal, std.lv = std.lv, name = name, 
+		model = umxLav2RAM(model = model, data = data, type = type, group = group, group.equal = group.equal, std.lv = std.lv, name = name, 
 					lavaanMode = lavaanMode, autoRun = autoRun, tryHard = tryHard, printTab = printTab)
 		return(model)
 	}

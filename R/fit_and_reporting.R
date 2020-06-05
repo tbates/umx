@@ -397,7 +397,7 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, reorder=NULL,
 	}
 	umx_print(data.frame(resid), digits = digits, zero.print = ".", suppress = suppress)
 	if(is.null(suppress)){
-		print("nb: You can zoom in on bad values with, e.g. suppress = .01, which will hide values smaller than this. Use digits = to round")
+		print("nb: Zoom in on bad values with, e.g. suppress = .1, which will hide smaller values. Use digits = to round")
 	}
 	invisible(resid)
 }

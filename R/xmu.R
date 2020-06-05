@@ -537,6 +537,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' @param fullCovs Covariate names if any (NULL = none) These are checked by `dropMissingDef`
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
+#' @param use When type = cov or cor, should this drop NAs? (use = "pairwise.complete.obs" by default, with a polite note)
 #' @return - [mxData()]
 #' @export
 #' @family xmu internal not for end user
@@ -592,7 +593,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' # =======================
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE) {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE, use = "pairwise.complete.obs") {
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
@@ -642,10 +643,16 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			data = mxData(observed = data, type = "raw")
 		}else if(type == "cov"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
-			data = mxData(observed = cov(data), type = type, numObs = nrow(data))
+			if(use %in% c("everything", "all.obs") && anyNA(data)){
+				message("Polite note: there were some NAs in your data: these rows dropped in making cov matrix")
+			}
+			data = mxData(observed = cov(data, use = use), type = type, numObs = nrow(data))
 		}else if(type == "cor"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
-			data = mxData(observed = cor(data), type = type, numObs = nrow(data))
+			if(use %in% c("everything", "all.obs") && anyNA(data)){
+				message("Polite note: there were some NAs in your data: these rows dropped in making cor matrix")
+			}
+			data = mxData(observed = umxHetCor(data, use = use), type = type, numObs = nrow(data))
 		} else if(type %in% c('WLS', 'DWLS', 'ULS')){
 			if(any(umx_is_ordered(data))){
 				# At least one non-continuous variable
