@@ -802,26 +802,28 @@ umxSummary.default <- function(model, ...){
 
 #' Shows a compact, publication-style, summary of a RAM model
 #'
-#' Report the fit of a model in a compact form suitable for a journal. Alerts you
-#' when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
+#' Report the fit of a model in a compact form suitable for a journal. 
+#' It reports parameters in a markdown or html table (optionally standardized), and fit indices
+#' RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI and TLI (incremental fit indices comparing model a model with the worst fit).
+#' 
+#' `umxSummary` alerts you when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
 #' 
-#' CIs and Identification
+#' **CIs and Identification**
 #' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 #' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 #' 
-#' Sometimes they appear NA. This often indicates a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
+#' Sometimes SEs appear NA. This may reflect a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
 #' This can include empirical under-identification - for instance two factors
 #' that are essentially identical in structure. use [mxCheckIdentification()] to check identification.
 #' 
-#' One or more paths estimated at or close to zero suggests that fixing one or two of 
-#' these to zero may fix the standard error calculation, 
-#' and alleviate the need to estimate likelihood-based or bootstrap CIs
+#' Solutions: If there are paths estimated at or close to zero suggests that fixing one or two of 
+#' these to zero may fix the standard error calculation.
 #' 
 #' If factor loadings can flip sign and provide identical fit, this creates another form of 
 #' under-identification and can break confidence interval estimation.
-#' Fixing a factor loading to 1 and estimating factor variances can help here.
+#' *Solution*: Fixing a factor loading to 1 and estimating factor variances can help here.
 #'
 #' @aliases umxSummary.MxModel umxSummary.MxRAMModel
 #' @param model The [mxModel()] whose fit will be reported
@@ -3285,14 +3287,10 @@ or specify all arguments:\n
 	}
 
 	if(class(x) != "summary.mxmodel"){
-		if(umx_has_been_run(x)){
-			x = summary(x)
-		} else {
+		if(!umx_has_been_run(x)){
 			# message("Just a note: Model has not been run. That might not matter for you")
 		}
-	}
-	if(class(x) != "summary.mxmodel"){
-		# must be a model that hasn't been run, make up a similar dataframe
+		# model that may or may not have been run: make up a similar dataframe to what we get from summary$parameters
 		x = omxGetParameters(x)
 		x = data.frame(name = names(x), Estimate = as.numeric(x), stringsAsFactors = FALSE)
 	} else {

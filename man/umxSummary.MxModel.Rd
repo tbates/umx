@@ -46,27 +46,29 @@ If NULL will be competed on demand. If FALSE will not be computed. Only needed f
 }
 }
 \description{
-Report the fit of a model in a compact form suitable for a journal. Alerts you
-when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
+Report the fit of a model in a compact form suitable for a journal.
+It reports parameters in a markdown or html table (optionally standardized), and fit indices
+RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI and TLI (incremental fit indices comparing model a model with the worst fit).
 }
 \details{
+\code{umxSummary} alerts you when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
+
 Note: For some (multi-group) models, you will need to fall back on \code{\link[=summary]{summary()}}
 
-CIs and Identification
+\strong{CIs and Identification}
 This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 These are used to derive confidence intervals based on the formula 95\%CI = estimate +/- 1.96*SE)
 
-Sometimes they appear NA. This often indicates a model which is not identified (see \url{http://davidakenny.net/cm/identify.htm}).
+Sometimes SEs appear NA. This may reflect a model which is not identified (see \url{http://davidakenny.net/cm/identify.htm}).
 This can include empirical under-identification - for instance two factors
 that are essentially identical in structure. use \code{\link[=mxCheckIdentification]{mxCheckIdentification()}} to check identification.
 
-One or more paths estimated at or close to zero suggests that fixing one or two of
-these to zero may fix the standard error calculation,
-and alleviate the need to estimate likelihood-based or bootstrap CIs
+Solutions: If there are paths estimated at or close to zero suggests that fixing one or two of
+these to zero may fix the standard error calculation.
 
 If factor loadings can flip sign and provide identical fit, this creates another form of
 under-identification and can break confidence interval estimation.
-Fixing a factor loading to 1 and estimating factor variances can help here.
+\emph{Solution}: Fixing a factor loading to 1 and estimating factor variances can help here.
 }
 \examples{
 require(umx)
