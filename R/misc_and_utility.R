@@ -269,7 +269,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [umxLabel()]
+#' @seealso - [xmuLabel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples

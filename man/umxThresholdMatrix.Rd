@@ -179,8 +179,8 @@ all(tmp[[2]]$free)
 \seealso{
 Other Advanced Model Building Functions: 
 \code{\link{umxJiggle}()},
-\code{\link{umxLabel}()},
-\code{\link{umxValues}()},
-\code{\link{umx}}
+\code{\link{umx}},
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 }
 \concept{Advanced Model Building Functions}

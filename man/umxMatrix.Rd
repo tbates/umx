@@ -57,7 +57,7 @@ umxMatrix(
 
 \item{joinModel}{See mxMatrix documentation: Defaults to as.character(NA)}
 
-\item{jiggle}{= NA passed to umxLabel to jiggle start values (default does nothing)}
+\item{jiggle}{= NA passed to xmuLabel to jiggle start values (default does nothing)}
 }
 \value{
 \itemize{
@@ -98,7 +98,7 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 }
 \seealso{
 \itemize{
-\item \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}}, \code{\link[=mxMatrix]{mxMatrix()}}, \code{\link[=umxLabel]{umxLabel()}}, \code{\link[=umxRAM]{umxRAM()}}
+\item \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}}, \code{\link[=mxMatrix]{mxMatrix()}}, \code{\link[=xmuLabel]{xmuLabel()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Core Modeling Functions: 

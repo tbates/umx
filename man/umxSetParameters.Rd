@@ -93,7 +93,7 @@ parameters(m2)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxLabel]{umxLabel()}}
+\item \code{\link[=umxModify]{umxModify()}}, \code{\link[=xmuLabel]{xmuLabel()}}
 }
 
 Other Modify or Compare Models: 

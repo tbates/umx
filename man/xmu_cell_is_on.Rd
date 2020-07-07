@@ -51,7 +51,7 @@ xmu_cell_is_on(r=4,c = 3, "any", mat = a_cp)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxLabel]{umxLabel()}}
+\item \code{\link[=xmuLabel]{xmuLabel()}}
 }
 
 Other xmu internal not for end user: 

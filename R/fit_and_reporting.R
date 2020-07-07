@@ -4273,12 +4273,20 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 #' `umx_r_test` is a wrapper around the cocor test of difference between correlations.
 #'
 #' @details
-#' Currently `umx_r_test` handles the test of whether `r.jk` and `r.hm` differ in magnitude.
-#' i.e, two non-overlapping (no variable in common) correlations in the same dataset.
-#' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
+#' **Non-overlapping (no variable in common) correlations in the same dataset.**
+#' If 4 variables are provided in `vars`, `umx_r_test` conducts a test of
+#' the correlation of var 1 & 2 differs in magnitude from the correlation of var 3 with var 4.
+#' (`r.jk` and `r.hm` in cocor speak).
+#' 
+#' **Overlapping (1 variable in common) correlations in the same dataset.**
+#' If 3 variables are provided in `vars`, `umx_r_test` conducts a test of whether
+#' the correlation of var 1 & 2 differs in magnitude from the correlation of var 1 with var 3.
+#' (`r.jk` and `r.jh` in cocor speak).
+#' 
+#' In the future it will be expanded to handle other correlations, and to take correlations as input.
 #'
 #' @param data The dataset.
-#' @param vars Four variables forming the two pairs of columns: "j & k" and "h & m".
+#' @param vars Three or 4 variables forming the two pairs of columns.
 #' @param alternative A two (default) or one-sided (greater less) test.
 #' @return cocor result.
 #' @export
@@ -4289,24 +4297,37 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 #' # obtaining between disp and hp?
 #' vars = c("mpg", "cyl", "disp", "hp")
 #' umx_r_test(mtcars, vars)
+#' umx_r_test(mtcars, c("mpg", "disp", "hp"))
 umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "greater", "less")) {
 	alternative = match.arg(alternative)
-	test         = "silver2004"
 	alpha        = 0.05
 	conf.level   = 0.95
 	null.value   = 0
 	data.name    = NULL
 	var.labels   = NULL
 	return.htest = FALSE
+	n    = nrow(data)	
 	jkhm = data[, vars]
 	cors = cor(jkhm)
 	# jkhm = 1234
-	r.jk = as.numeric(cors[vars[1], vars[2]])
-	r.hm = as.numeric(cors[vars[3], vars[4]])
-	r.jh = as.numeric(cors[vars[1], vars[3]])
-	r.jm = as.numeric(cors[vars[1], vars[4]])
-	r.kh = as.numeric(cors[vars[2], vars[3]])
-	r.km = as.numeric(cors[vars[2], vars[4]])
-	n = nrow(jkhm)	
-	cocor::cocor.dep.groups.nonoverlap(r.jk, r.hm, r.jh, r.jm, r.kh, r.km, n, alternative = alternative, test = test, alpha = alpha, conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
+	if(length(vars)==3){
+		r.jk = as.numeric(cors[vars[1], vars[2]])
+		r.jh = as.numeric(cors[vars[1], vars[3]])
+		r.kh = as.numeric(cors[vars[2], vars[3]])
+		# tests = (pearson1898, hotelling1940, hendrickson1970, williams1959, olkin1967, dunn1969, steiger1980, meng1992, hittner2003, or zou2007).
+		cocor::cocor.dep.groups.overlap(r.jk, r.jh, r.kh, n, alternative = alternative, test = "hittner2003", alpha = alpha, 
+			conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
+	} else {
+		r.jk = as.numeric(cors[vars[1], vars[2]])
+		r.hm = as.numeric(cors[vars[3], vars[4]])
+		r.jh = as.numeric(cors[vars[1], vars[3]])
+		r.jm = as.numeric(cors[vars[1], vars[4]])
+		r.kh = as.numeric(cors[vars[2], vars[3]])
+		r.km = as.numeric(cors[vars[2], vars[4]])
+		# test         = "silver2004"
+	 	# tests = (pearson1898, dunn1969, steiger1980, raghunathan1996, silver2004, or zou2007).
+ 		cocor::cocor.dep.groups.nonoverlap(r.jk, r.hm, r.jh, r.jm, r.kh, r.km, n, alternative = alternative, test = "silver2004", alpha = alpha, 
+			conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
+	}
+
 }

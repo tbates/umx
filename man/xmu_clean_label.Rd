@@ -25,7 +25,7 @@ xmu_clean_label("my.var.lab", replace = "_")
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxLabel]{umxLabel()}}
+\item \code{\link[=xmuLabel]{xmuLabel()}}
 }
 
 Other xmu internal not for end user: 

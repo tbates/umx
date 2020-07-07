@@ -286,9 +286,9 @@ Other datasets:
 
 Other Advanced Model Building Functions: 
 \code{\link{umxJiggle}()},
-\code{\link{umxLabel}()},
 \code{\link{umxThresholdMatrix}()},
-\code{\link{umxValues}()}
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},

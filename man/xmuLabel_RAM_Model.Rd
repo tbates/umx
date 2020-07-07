@@ -35,7 +35,7 @@ xmuLabel_RAM_Model(
 This function will label all the free parameters in a RAM \code{\link[=mxModel]{mxModel()}}
 }
 \details{
-End users should just call \code{\link[=umxLabel]{umxLabel()}}
+End users should just call \code{\link[=xmuLabel]{xmuLabel()}}
 }
 \examples{
 require(umx); data(demoOneFactor)

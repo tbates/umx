@@ -24,7 +24,7 @@ nb: We don't assume what each matrix is for. Instead, the function just sticks l
 i.e., matrix-name + _ + r + rowNumber + c + colNumber
 }
 \details{
-End users should just call \code{\link[=umxLabel]{umxLabel()}}
+End users should just call \code{\link[=xmuLabel]{xmuLabel()}}
 }
 \examples{
 require(umx)

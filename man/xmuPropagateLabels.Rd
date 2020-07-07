@@ -19,7 +19,7 @@ xmuPropagateLabels(model, suffix = "", verbose = TRUE)
 }
 }
 \description{
-You should be calling \code{\link[=umxLabel]{umxLabel()}}.
+You should be calling \code{\link[=xmuLabel]{xmuLabel()}}.
 This function is called by xmuLabel_MATRIX_Model
 }
 \examples{
