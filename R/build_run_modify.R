@@ -787,7 +787,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 			thisModel = mxModel(newModel, myData, name= paste0(name, "_", thisLevelOfGroup))
 			modelList = c(modelList, thisModel)
 		}
-		newModel = umxSuperModel(name = name, modelList)
+		return(umxSuperModel(name = name, modelList, autoRun = autoRun, tryHard = tryHard, std = std))
 	}
 
 	newModel = omxAssignFirstParameters(newModel)
@@ -892,7 +892,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	newModel = omxAssignFirstParameters(newModel)
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std)
-	return(newModel)
+	invisible(newModel)
 }
 
 #' umxModify: Add, set, or drop model paths by label.
