@@ -116,6 +116,7 @@ names(x)
 m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
+# scores requested, so these will be returned
 x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 }
 }

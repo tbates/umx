@@ -214,7 +214,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equ
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxSimplex()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md

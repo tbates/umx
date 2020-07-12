@@ -111,6 +111,8 @@
 #' m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 #' m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 #' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
+#' 
+#' # scores requested, so these will be returned
 #' x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
@@ -180,7 +182,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	}
 	# TODO umxEFA: Adapt to input datatype, i.e., add cov handler
 	# umx_print(factors)
-	manifests <- names(data)
+	manifests = names(data)
 	m1 = umxRAM(model = name, data = data, autoRun = FALSE,
 		umxPath(factors, to = manifests, connect = "unique.bivariate"),
 		umxPath(v.m. = manifests),
@@ -225,6 +227,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	
 	if(scores != "none"){
 		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
+		return(x)
 	}
 	if(return == "loadings"){
 		invisible(x)

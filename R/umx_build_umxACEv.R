@@ -367,7 +367,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxACEv()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md

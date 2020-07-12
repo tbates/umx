@@ -293,7 +293,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxGxEbiv}()}, [plot()], [umxSummary()] work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>

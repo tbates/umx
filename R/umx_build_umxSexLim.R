@@ -447,7 +447,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxSexLim()], [umxPlotSexLim()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md

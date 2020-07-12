@@ -93,12 +93,27 @@ umxCompare(B2A, A2B)
 \item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Twin Reporting Functions: 
+Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{power.ACE.test}()},
+\code{\link{umxACEcov}()},
+\code{\link{umxACEv}()},
+\code{\link{umxACE}()},
+\code{\link{umxCP}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxDoC}()},
+\code{\link{umxGxE_window}()},
+\code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
+\code{\link{umxIP}()},
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
@@ -111,4 +126,4 @@ Other Twin Reporting Functions:
 \code{\link{umxSummarySimplex}()},
 \code{\link{umx}}
 }
-\concept{Twin Reporting Functions}
+\concept{Twin Modeling Functions}

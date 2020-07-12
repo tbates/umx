@@ -4826,7 +4826,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Plotting functions
 #' @family Super-easy helpers
 #' @family Twin Modeling Functions
-#' @family Twin Reporting Functions
 #' @family Twin Data functions
 #' @family Get and set
 #' @family Check or test

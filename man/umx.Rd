@@ -152,16 +152,14 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()}
-
-Other Twin Reporting Functions: 
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
@@ -376,7 +374,6 @@ Other xmu internal not for end user:
 \concept{Teaching and testing Functions}
 \concept{Twin Data functions}
 \concept{Twin Modeling Functions}
-\concept{Twin Reporting Functions}
 \concept{datasets}
 \concept{xmu internal not for end user}
 \concept{zAdvanced Helpers}

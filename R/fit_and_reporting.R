@@ -144,7 +144,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduceACE()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @export
@@ -178,7 +178,7 @@ umxReduce.default <- function(model, ...){
 #' @param ... Other parameters to control model summary.
 #' @return best model
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso [umxReduceACE()], [umxReduce()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 #' *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482).
@@ -266,7 +266,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @param ... Other parameters to control model summary
 #' @return Best fitting model
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduce()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @md
@@ -1076,7 +1076,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' @param show std, raw etc. Not implemented for umxACE yet.
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxACE()], [plot.MxModelACE()], [umxModify()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1309,7 +1309,7 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxACEcov()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1511,7 +1511,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxCP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://www.github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -1673,7 +1673,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxIP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -1798,7 +1798,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @param show not doing anything yet (required for all summary functions)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - [umxGxE()], [umxReduce()], [plot()], [umxSummary)] all work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -2686,7 +2686,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxCP()]
 #' @family Plotting functions
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
@@ -4189,7 +4189,7 @@ summaryAPA <- umxAPA
 #' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
 #' @return - formatted table, e.g. in markdown.
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxAPA()]
 #' @references - <https://github.com/tbates/umx>
 #' @md
@@ -4202,6 +4202,9 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 	report = match.arg(report)
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
+	print(paste0("mean age ", round(mean(data$age, na.rm = TRUE), 2), " (SD= ", round(sd(data$age, na.rm = TRUE), 2), ")"))
+	
+	
 	selDVs = tvars(selVars, sep)
 	umx_check_names(selDVs, data = data, die = TRUE)
 	long = umx_wide2long(data= data[,selDVs], sep =sep)

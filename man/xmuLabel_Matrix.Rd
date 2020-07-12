@@ -47,7 +47,7 @@ xmuLabel_Matrix(
 This function will label all the free parameters in an \code{\link[=mxMatrix]{mxMatrix()}}
 }
 \details{
-End users should just call \code{\link[=xmuLabel]{xmuLabel()}}
+Model developers should just call \code{\link[=xmuLabel]{xmuLabel()}}
 
 Purpose: label the cells of an mxMatrix
 Detail: Defaults to the handy "name_r1c1" where name is the matrix name, and r1c1 = row 1 col 1.

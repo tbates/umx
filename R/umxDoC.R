@@ -216,7 +216,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @references - <https://tbates.github.io>
 #' @return - Optionally return the dot code
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @md
 #' @examples
@@ -349,7 +349,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' @param ... Other parameters to control model summary.
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @md
 #' @examples
