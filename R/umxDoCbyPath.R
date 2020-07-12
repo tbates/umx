@@ -118,8 +118,8 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' @param sep The separator used to create twin 1 and 2 names (Default "_T")
 #' @return - [umxSuperModel()]
 #' @export
-#' @family xmu internal not for end user
-#' @seealso - [umxRAM()], [umxSuperModel()]
+#' @family Twin Modeling Functions
+#' @seealso - [umxRAM()], [umxSuperModel()], [umxPath()]
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
@@ -134,19 +134,21 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' mzData = subset(tmp, zygosity %in%  c("MZFF", "MZMM"))
 #' dzData = subset(tmp, zygosity %in%  c("DZFF", "DZMM"))
 #' 
-#' # ================
-#' # = An ACE model =
-#' # ================
-#' # Define paths: You only need the paths for one person:
+#' # ==========================
+#' # = Make an ACE twin model =
+#' # ==========================
+#' # 1. Define paths for *one* person:
 #' paths = c(
-#'	umxPath(v1m0 = c("a1", 'c1', "e1")),
-#'	umxPath(means = c("wt")),
-#'	umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
+#'    umxPath(v1m0 = c("a1", 'c1', "e1")),
+#'    umxPath(means = c("wt")),
+#'    umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
 #')
+#' # 2. Make a twin model from the paths for one person
 #' m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData)
 #' plot(m1, std= TRUE, means= FALSE)
-#' m2 = umxACE(selDVs="wt", mzData = mzData, dzData=dzData, sep="_T")
 #'
+#' # 3. comparison with umxACE...
+#' m2 = umxACE(selDVs="wt", mzData = mzData, dzData=dzData, sep="_T")
 #'
 #' # =====================
 #' # = Bivariate example =

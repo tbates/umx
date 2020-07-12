@@ -34,7 +34,6 @@ umx_check(is.null(tmp$a))                   # old is gone
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},

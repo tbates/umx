@@ -39,7 +39,6 @@ I might change this to a lookup-function that gets a CI string if one exists.
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},

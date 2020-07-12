@@ -27,7 +27,6 @@ xmu_dot_rank_str(min = "L1", same = c("x1", "x2"), max = paste0("e", 1:3))
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},

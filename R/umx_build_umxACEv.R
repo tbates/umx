@@ -260,24 +260,17 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 	
 	# If given covariates, call umxACEvcov
-	if(!is.null(selCovs)){
-		if(covMethod == "fixed"){
-			stop("Implementing fixed means effects for version 2.0")
-			# TODO add allContinuousMethod = allContinuousMethod and type
-			# umxACEvdefcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
-		} else if(covMethod == "random") {
-			message("umxACEvcov not yet implemented")
-			# TODO implement umxACEvcov or refactor
-			# TODO add allContinuousMethod = allContinuousMethod and type
-			# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
-		}
-		return(model)
+	if(covMethod == "random") {
+		stop("random covariates for umxACEv not yet implemented")
+		# TODO implement umxACEvcov or refactor
+		# TODO add allContinuousMethod = allContinuousMethod and type
+		# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
 	}
 	# nSib = 2, equateMeans = TRUE, verbose = verbose
 	selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
 	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
-
-	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= NULL, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar)
+	
+	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= selCovs, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar)
 	tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 
 	# Finish building top

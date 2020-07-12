@@ -112,6 +112,7 @@ Other Twin Modeling Functions:
 \code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

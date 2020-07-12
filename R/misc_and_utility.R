@@ -204,7 +204,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max", "factor"), name = NULL, na.rm=FALSE) {
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
@@ -251,6 +251,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		score = rowSums(df, na.rm = na.rm)
 	}else if(score == "means"){
 		score = rowMeans(df, na.rm = na.rm)
+	}else if(score == "factor"){
+		x = umxEFA(name = "score", factors = "g", data = df, scores= "Regression")
+		score = x$g
 	}
 	oldData[, name] = score
 	return(oldData)

@@ -157,6 +157,7 @@ Other Twin Modeling Functions:
 \code{\link{umxSummaryGxE}()},
 \code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

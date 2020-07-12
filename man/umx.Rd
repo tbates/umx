@@ -170,7 +170,8 @@ Other Twin Modeling Functions:
 \code{\link{umxSummaryGxE}()},
 \code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()}
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()}
 
 Other Twin Data functions: 
 \code{\link{umx_long2wide}()},
@@ -291,7 +292,6 @@ Other Advanced Model Building Functions:
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
