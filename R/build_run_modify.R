@@ -369,7 +369,7 @@ umxModel <- function(...) {
 #' @param data data for the model. Can be an [mxData()] or a data.frame
 #' @param ... umxPaths, mxThreshold objects, etc.
 #' @param group (optional) Column name to use for a multi-group model (default = NULL)
-#' @param group.equal In multi-group models, what to equate across groups (default = NULL)
+#' @param group.equal In multi-group models, what to equate across groups (default = NULL: all free)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model
@@ -437,12 +437,13 @@ umxModel <- function(...) {
 #' # = A multi-group model =
 #' # =======================
 #'
+#' mtcars$litres = mtcars$disp/61.02
 #' m1 = umxRAM("tim", data = mtcars, group = "am",
 #' 	umxPath(c("wt", "litres"), to = "mpg"),
 #' 	umxPath("wt", with = "litres"),
 #' 	umxPath(v.m. = c("wt", "litres", "mpg"))
 #' )
-#' # In this model, all parameters are equated across the two groups.
+#' # In this model, all parameters are free across the two groups.
 #'
 #' # ====================================
 #' # = A cov model, with steps laid out =
@@ -704,7 +705,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ==================
 	# = Assemble model =
 	# ==================
-	newModel = do.call("mxModel", list(name = name, type = "RAM", 
+
+	newModel = do.call("mxModel", list(name = name, type = "RAM",
 		manifestVars = usedManifests,
 		latentVars  = latentVars,
 		independent = independent, dot.items)
@@ -725,8 +727,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		}
 	}else{
 		newModel = mxModel(newModel, myData)
-		# will be re-processed with the required data below...
-		# except should not do this if lavaan... i.e., subset here with level of group...
+		# note: if necessary (group), will be re-processed to add the required data below...
 	}
 	
 	# ==========================
@@ -740,6 +741,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		"mxPath('one', to = manifestVars)")
 		newModel = mxModel(newModel, mxPath("one", usedManifests))
 	}
+
+	# =========================
+	# = Labels and set values =
+	# =========================
+	suffix = ifelse(is.null(group), yes = suffix, no = paste0(suffix, "_GROUP"))
 	newModel = xmuLabel(newModel, suffix = suffix)
 	if(setValues){
 		newModel = xmuValues(newModel, onlyTouchZeros = TRUE)
@@ -763,16 +769,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# = Handle group here =
 	# =====================
 	if(!is.null(group)){
-		# 1. go back to raw data and subset by "group" column
-		# 2. create new mxData,
-		# 3. add data to copy of the model and accumulate in list of models
+		# 1. Go back to raw data and subset by "group" column
+		# 2. Create new mxData,
+		# 3. Add data to copy of the model and accumulate in list of models
 		# 4. Add list of models to umxSuperModel
 		modelList = list()
-		groupCol = data[,group]
+		groupCol  = data[, group]
 		levelsOfGroup = unique(groupCol)
-		if(!is.null(group.equal)){
-			message("sorry, haven't implemented group.equal yet")
-		}
 		# already computed above
 		# unusedManifests = setdiff(manifestVars, foundNames)
 		# usedManifests   = setdiff(intersect(manifestVars, foundNames), "one")
@@ -785,6 +788,14 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 				myData = xmu_make_mxData(data= thisSubset, type = type, verbose = FALSE)
 			}
 			thisModel = mxModel(newModel, myData, name= paste0(name, "_", thisLevelOfGroup))
+
+			if(!is.null(group.equal)){
+				message("sorry, haven't implemented group.equal yet")
+			}else{
+				# replace "_GROUP$" with _thisLevelOfGroup
+				thisModel = umxSetParameters(thisModel, regex= "_GROUP$", newlabels= paste0("_", thisLevelOfGroup))
+			}
+
 			modelList = c(modelList, thisModel)
 		}
 		return(umxSuperModel(name = name, modelList, autoRun = autoRun, tryHard = tryHard, std = std))

@@ -199,6 +199,7 @@ m1 = umxRAM(data = mtcars, "#modelName
 # = A multi-group model =
 # =======================
 
+mtcars$litres = mtcars$disp/61.02
 m1 = umxRAM("tim", data = mtcars, group = "am",
 	umxPath(c("wt", "litres"), to = "mpg"),
 	umxPath("wt", with = "litres"),
