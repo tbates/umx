@@ -96,7 +96,7 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 \tab  A =~ B \tab A by B  \tab       \tab A (Latent) is measured by B	                          \cr
 \tab  A ~  B \tab A on B  \tab A<- A \tab A "is regressed on" (<- ) B   	                      \cr
 \tab  A ~~ B \tab A with B\tab A<->B \tab A covaries with B	                                      \cr
-\tab  A ~  1 \tab [A\    \tab       \tab A has mean	                                          \cr
+\tab  A ~  1 \tab [A]    \tab       \tab A has mean	                                          \cr
 \tab  A := B \tab         \tab       \tab A is defined by B (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})	          \cr
 \tab  A == B \tab         \tab       \tab A is constrained == to B (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
 }
