@@ -678,6 +678,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' 'show' means print the intervals if computed, or list their names if not.
 #' @param interval The interval for newly added CIs (defaults to 0.95)
 #' @param type The type of CI (defaults to "both", options are "lower" and  "upper")
+#' @param regex Add CIs for labels matching this regular expression (over-rides which)
 #' @param showErrorCodes Whether to show errors (default == TRUE)
 #' @return - [mxModel()]
 #' @family Reporting functions
@@ -697,8 +698,16 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' )
 #' m1$intervals # none yet - empty list()
 #' m1 = umxCI(m1)
-#' m1$intervals # $G_to_x1
+#' m1$intervals # $G_to_x1...
 #' m1 = umxCI(m1, remove = TRUE) # remove CIs from the model and return it
+#' m1$intervals # none again
+#'
+#' # Add CIs by name
+#' parameters(m1, patt="_with_")
+#' m1 = umxCI(m1, which = "x1_with_x1")
+#' m1 = umxCI(m1, regex = "x1_with_", run= "yes")
+#' #          lbound estimate ubound lbound Code ubound Code
+#' # x1_with_x1  0.036    0.041  0.047           0           0
 #' 
 #' # ========================
 #' # = A twin model example =
@@ -719,12 +728,14 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' # Request a CI by label:
 #' m1 = umxCI(m1, "a_r1c1", run = "yes")
 #' }
-umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary", "show"), interval = 0.95, type = c("both", "lower", "upper"), showErrorCodes = TRUE) {
+umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary", "show"), interval = 0.95, type = c("both", "lower", "upper"), regex = NULL, showErrorCodes = TRUE) {
 	# Note: OpenMx now overloads confint, returning SE-based intervals.
 	run = match.arg(run)
 	which = xmu_match.arg(which, c("ALL", NA, "list of your making"), check = FALSE)
 	if(remove){
-		if(which == "ALL"){
+		if(!is.null(regex)){
+			CIs = namez(model$intervals, pattern = regex)
+		} else if(which == "ALL"){
 			CIs = names(model$intervals)
 		} else {
 			CIs = which 
@@ -740,10 +751,12 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 		# TODO Avoid duplicating existing CIs
 		# TODO Add each CI individually
 		# TODO Break them out into separate models and reassemble if on cluster?
-		if(is.na(which)){
+		if(is.na(which) && is.null(regex)){
 			# nothing to add
 		} else {
-			if(which == "ALL"){
+			if(!is.null(regex)){
+				CIs = umxGetParameters(model, regex = regex, free=TRUE)
+			} else if(which == "ALL"){
 				CIs = names(omxGetParameters(model, free = TRUE))
 			} else {
 				CIs = which 
@@ -3343,7 +3356,7 @@ parameters <- umxParameters
 #' @param inputTarget An object to get parameters from: could be a RAM [mxModel()]
 #' @param regex A regular expression to filter the labels. Default (NA) returns all labels. If vector, treated as raw labels to find.
 #' @param free  A Boolean determining whether to return only free parameters.
-#' @param fetch What to return: "values" (default) or "free", "lbound", "ubound", or "all"
+#' @param fetch What to return: "labels" (default) or "values", "free", "lbound", "ubound", or "all"
 #' @param verbose How much feedback to give
 #' @export
 #' @seealso [omxGetParameters()], [parameters()]
@@ -3367,7 +3380,7 @@ parameters <- umxParameters
 #' # Complex regex pattern
 #' umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 #' 
-umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
+umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("labels", "values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
 	# TODO
 	# 1. Be nice to offer a method to handle sub-models
 	# 	model$aSubmodel$matrices$aMatrix$labels
@@ -3376,6 +3389,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 		# allow umxGetParameters to function like omxGetParameters()[name filter]
 	# 3. Allow user to request values, free, etc. (already done with umx_parameters)
 	fetch = match.arg(fetch)
+	umx_check(fetch=="labels", action="stop",message="polite stop: You asked for ", omxQuotes(fetch), ". umxGetParameters only supports fetching labels at present: Make an issue on github to support fetching these, or try parameters() ")
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(methods::is(inputTarget, "MxMatrix")) {
@@ -3398,15 +3412,6 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 			}
 		} else {
 			# It's a grep string
-			# if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
-			# 	regex = paste0("^", regex, "[_0-9]"); # anchor to the start of the string
-			# 	anchored = TRUE
-			# 	if(verbose == TRUE) {
-			# 		message("note: anchored regex to beginning of string and allowed only numeric follow\n");
-			# 	}
-			# }else{
-			# 	anchored = FALSE
-			# }
 			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # Return more detail
 		}
 		if(length(theLabels) == 0){
