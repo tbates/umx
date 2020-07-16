@@ -93,20 +93,20 @@ Lavaan is well documented. For quick reference, some common symbols in lavaan st
 
 \tabular{rllll}{
 \tab lav     \tab Mplus   \tab sem   \tab Action                          	                      \cr
-\tab  A =~ B \tab A by B  \tab       \tab A (Latent) is measured by B	                              \cr
-\tab  A ~  B \tab A on B  \tab A<- A \tab A "is regressed on" (<- ) B   	                          \cr
+\tab  A =~ B \tab A by B  \tab       \tab A (Latent) is measured by B	                          \cr
+\tab  A ~  B \tab A on B  \tab A<- A \tab A "is regressed on" (<- ) B   	                      \cr
 \tab  A ~~ B \tab A with B\tab A<->B \tab A covaries with B	                                      \cr
-\tab  A ~  1 \tab \link{A}     \tab       \tab A has mean	                                              \cr
+\tab  A ~  1 \tab [A\    \tab       \tab A has mean	                                          \cr
 \tab  A := B \tab         \tab       \tab A is defined by B (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})	          \cr
 \tab  A == B \tab         \tab       \tab A is constrained == to B (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
 }
 
 \tabular{rlll}{
-\tab \verb{=~}   \tab lhs (Latent) is manifested by rhs\cr
-\tab \code{~}    \tab lhs "is regressed on" (<- ) rhs\cr
-\tab \verb{~~}   \tab lhs covaries with rhs\cr
-\tab \code{~ 1}  \tab lhs has mean\cr
-\tab \verb{:=}   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})\cr
+\tab \verb{=~}   \tab lhs (Latent) is manifested by rhs                   \cr
+\tab \code{~}    \tab lhs "is regressed on" (<- ) rhs                     \cr
+\tab \verb{~~}   \tab lhs covaries with rhs                               \cr
+\tab \code{~ 1}  \tab lhs has mean                                        \cr
+\tab \verb{:=}   \tab lhs is defined by rhs (see \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}})   \cr
 \tab \code{==}   \tab lhs is constrained == to rhs (see \code{\link[OpenMx:mxConstraint]{OpenMx::mxConstraint()}} )
 }
 
