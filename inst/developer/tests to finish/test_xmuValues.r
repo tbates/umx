@@ -22,5 +22,5 @@ umxSummary(m1, show = "std"); # plot(m1, showFixed = T)
 # ================
 
 testthat::expect_error(
-	umxValues(m1), "You do this with mxPath(from = 'one', to = 'var')"
+	xmuValues(m1), "You do this with mxPath(from = 'one', to = 'var')"
 )

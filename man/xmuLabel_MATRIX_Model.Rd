@@ -24,7 +24,7 @@ nb: We don't assume what each matrix is for. Instead, the function just sticks l
 i.e., matrix-name + _ + r + rowNumber + c + colNumber
 }
 \details{
-End users should just call \code{\link[=umxLabel]{umxLabel()}}
+Model developers should just call \code{\link[=xmuLabel]{xmuLabel()}}
 }
 \examples{
 require(umx)
@@ -46,7 +46,6 @@ m4 = umx:::xmuLabel_MATRIX_Model(m2, suffix = "male")
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},

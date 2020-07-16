@@ -1,3 +1,26 @@
+# umx 4.1.0
+* July 2020 R 4.0.0
+* CHANGE: `umxRAM` group now independent by default (label style  "path_group" )
+* FIXED: 'umxRAM` group option failing to pass autorun tryHard Merge pull request #134 @khusmann
+* IMPROVED: `umxACE` return group models invisibly #134 @khusmann
+* IMPROVED: `umxACEv` support for covariates enabled.
+* IMPROVED: `umx_score_scale` gains the ability to return a factor score.
+* IMPROVED: `umxEFA` returns scores by default when requested (used to require user to also set `return = "loadings"`  (thanks to user!)
+* IMPROVED: `umx_r_test` handles case of overlapping variables, i.e., compare r(ab) to r(ac) 
+* IMPROVED: `umxPlotACE` uses matrix cells, not labels to draw the plot (so now labels are arbitrary)
+* IMPROVED: `umxIP` checks names of nFac for each of a, c, and e 
+* IMPROVED: `umxSimplex` default sep is now "_T" instead of NULL (should do this throughout?) 
+* IMPROVED: `residuals` can now suppress 0s - helpful for large tables
+* IMPROVED: `xmu_dot_mat2dot` can cope with 1-variable name lists
+* DEVELOPER `umxValues` -> `xmuValues` clean up namespace 
+* DEVELOPER `umxLabels`  -> `xmuLabels` clean up namespace
+* FIXED: `parameters`: std wasn't being used.
+* INFO:  TLI /CFI vs. RMSEA
+* HELP:  `umxEFA` examples.
+* HELP:  `umxTwinMaker`.
+
+
+
 # umx 4.0.0
 * May 2020 R 4.0.0
 * FIXED: `umx_score_scale` Fix a bad design decision where I was storing the reversed items in the data returned to the user. Worked for 1 run, but not repeats...

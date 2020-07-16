@@ -19,7 +19,7 @@ xmuPropagateLabels(model, suffix = "", verbose = TRUE)
 }
 }
 \description{
-You should be calling \code{\link[=umxLabel]{umxLabel()}}.
+You should be calling \code{\link[=xmuLabel]{xmuLabel()}}.
 This function is called by xmuLabel_MATRIX_Model
 }
 \examples{
@@ -41,7 +41,6 @@ m1 = umx:::xmuPropagateLabels(m1, suffix = "MZ")
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},

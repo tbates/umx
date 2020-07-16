@@ -144,7 +144,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param ... Other parameters to control model summary
 #' @family Reporting Functions
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduceACE()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @export
@@ -178,7 +178,7 @@ umxReduce.default <- function(model, ...){
 #' @param ... Other parameters to control model summary.
 #' @return best model
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso [umxReduceACE()], [umxReduce()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 #' *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482).
@@ -266,7 +266,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @param ... Other parameters to control model summary
 #' @return Best fitting model
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduce()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
 #' @md
@@ -397,7 +397,7 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, reorder=NULL,
 	}
 	umx_print(data.frame(resid), digits = digits, zero.print = ".", suppress = suppress)
 	if(is.null(suppress)){
-		print("nb: You can zoom in on bad values with, e.g. suppress = .01, which will hide values smaller than this. Use digits = to round")
+		print("nb: Zoom in on bad values with, e.g. suppress = .1, which will hide smaller values. Use digits = to round")
 	}
 	invisible(resid)
 }
@@ -678,6 +678,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' 'show' means print the intervals if computed, or list their names if not.
 #' @param interval The interval for newly added CIs (defaults to 0.95)
 #' @param type The type of CI (defaults to "both", options are "lower" and  "upper")
+#' @param regex Add CIs for labels matching this regular expression (over-rides which)
 #' @param showErrorCodes Whether to show errors (default == TRUE)
 #' @return - [mxModel()]
 #' @family Reporting functions
@@ -697,8 +698,16 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' )
 #' m1$intervals # none yet - empty list()
 #' m1 = umxCI(m1)
-#' m1$intervals # $G_to_x1
+#' m1$intervals # $G_to_x1...
 #' m1 = umxCI(m1, remove = TRUE) # remove CIs from the model and return it
+#' m1$intervals # none again
+#'
+#' # Add CIs by name
+#' parameters(m1, patt="_with_")
+#' m1 = umxCI(m1, which = "x1_with_x1")
+#' m1 = umxCI(m1, regex = "x1_with_", run= "yes")
+#' #          lbound estimate ubound lbound Code ubound Code
+#' # x1_with_x1  0.036    0.041  0.047           0           0
 #' 
 #' # ========================
 #' # = A twin model example =
@@ -719,12 +728,14 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' # Request a CI by label:
 #' m1 = umxCI(m1, "a_r1c1", run = "yes")
 #' }
-umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary", "show"), interval = 0.95, type = c("both", "lower", "upper"), showErrorCodes = TRUE) {
+umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary", "show"), interval = 0.95, type = c("both", "lower", "upper"), regex = NULL, showErrorCodes = TRUE) {
 	# Note: OpenMx now overloads confint, returning SE-based intervals.
 	run = match.arg(run)
 	which = xmu_match.arg(which, c("ALL", NA, "list of your making"), check = FALSE)
 	if(remove){
-		if(which == "ALL"){
+		if(!is.null(regex)){
+			CIs = namez(model$intervals, pattern = regex)
+		} else if(which == "ALL"){
 			CIs = names(model$intervals)
 		} else {
 			CIs = which 
@@ -740,10 +751,12 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 		# TODO Avoid duplicating existing CIs
 		# TODO Add each CI individually
 		# TODO Break them out into separate models and reassemble if on cluster?
-		if(is.na(which)){
+		if(is.na(which) && is.null(regex)){
 			# nothing to add
 		} else {
-			if(which == "ALL"){
+			if(!is.null(regex)){
+				CIs = umxGetParameters(model, regex = regex, free=TRUE)
+			} else if(which == "ALL"){
 				CIs = names(omxGetParameters(model, free = TRUE))
 			} else {
 				CIs = which 
@@ -802,26 +815,28 @@ umxSummary.default <- function(model, ...){
 
 #' Shows a compact, publication-style, summary of a RAM model
 #'
-#' Report the fit of a model in a compact form suitable for a journal. Alerts you
-#' when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
+#' Report the fit of a model in a compact form suitable for a journal. 
+#' It reports parameters in a markdown or html table (optionally standardized), and fit indices
+#' RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI and TLI (incremental fit indices comparing model a model with the worst fit).
+#' 
+#' `umxSummary` alerts you when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
 #' 
-#' CIs and Identification
+#' **CIs and Identification**
 #' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 #' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
 #' 
-#' Sometimes they appear NA. This often indicates a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
+#' Sometimes SEs appear NA. This may reflect a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
 #' This can include empirical under-identification - for instance two factors
 #' that are essentially identical in structure. use [mxCheckIdentification()] to check identification.
 #' 
-#' One or more paths estimated at or close to zero suggests that fixing one or two of 
-#' these to zero may fix the standard error calculation, 
-#' and alleviate the need to estimate likelihood-based or bootstrap CIs
+#' Solutions: If there are paths estimated at or close to zero suggests that fixing one or two of 
+#' these to zero may fix the standard error calculation.
 #' 
 #' If factor loadings can flip sign and provide identical fit, this creates another form of 
 #' under-identification and can break confidence interval estimation.
-#' Fixing a factor loading to 1 and estimating factor variances can help here.
+#' *Solution*: Fixing a factor loading to 1 and estimating factor variances can help here.
 #'
 #' @aliases umxSummary.MxModel umxSummary.MxRAMModel
 #' @param model The [mxModel()] whose fit will be reported
@@ -1074,7 +1089,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' @param show std, raw etc. Not implemented for umxACE yet.
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxACE()], [plot.MxModelACE()], [umxModify()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1307,7 +1322,7 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxACEcov()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1509,7 +1524,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxCP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://www.github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -1671,7 +1686,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxIP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -1796,7 +1811,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @param show not doing anything yet (required for all summary functions)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @export
 #' @seealso - [umxGxE()], [umxReduce()], [plot()], [umxSummary)] all work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -2684,7 +2699,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxCP()]
 #' @family Plotting functions
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
@@ -3285,14 +3300,10 @@ or specify all arguments:\n
 	}
 
 	if(class(x) != "summary.mxmodel"){
-		if(umx_has_been_run(x)){
-			x = summary(x)
-		} else {
+		if(!umx_has_been_run(x)){
 			# message("Just a note: Model has not been run. That might not matter for you")
 		}
-	}
-	if(class(x) != "summary.mxmodel"){
-		# must be a model that hasn't been run, make up a similar dataframe
+		# model that may or may not have been run: make up a similar dataframe to what we get from summary$parameters
 		x = omxGetParameters(x)
 		x = data.frame(name = names(x), Estimate = as.numeric(x), stringsAsFactors = FALSE)
 	} else {
@@ -3345,7 +3356,7 @@ parameters <- umxParameters
 #' @param inputTarget An object to get parameters from: could be a RAM [mxModel()]
 #' @param regex A regular expression to filter the labels. Default (NA) returns all labels. If vector, treated as raw labels to find.
 #' @param free  A Boolean determining whether to return only free parameters.
-#' @param fetch What to return: "values" (default) or "free", "lbound", "ubound", or "all"
+#' @param fetch What to return: "labels" (default) or "values", "free", "lbound", "ubound", or "all"
 #' @param verbose How much feedback to give
 #' @export
 #' @seealso [omxGetParameters()], [parameters()]
@@ -3369,7 +3380,7 @@ parameters <- umxParameters
 #' # Complex regex pattern
 #' umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 #' 
-umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
+umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("labels", "values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
 	# TODO
 	# 1. Be nice to offer a method to handle sub-models
 	# 	model$aSubmodel$matrices$aMatrix$labels
@@ -3378,6 +3389,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 		# allow umxGetParameters to function like omxGetParameters()[name filter]
 	# 3. Allow user to request values, free, etc. (already done with umx_parameters)
 	fetch = match.arg(fetch)
+	umx_check(fetch=="labels", action="stop",message="polite stop: You asked for ", omxQuotes(fetch), ". umxGetParameters only supports fetching labels at present: Make an issue on github to support fetching these, or try parameters() ")
 	if(umx_is_MxModel(inputTarget)) {
 		topLabels = names(omxGetParameters(inputTarget, indep = FALSE, free = free))
 	} else if(methods::is(inputTarget, "MxMatrix")) {
@@ -3400,15 +3412,6 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("valu
 			}
 		} else {
 			# It's a grep string
-			# if(length(grep("[\\.\\*\\[\\(\\+\\|^]+", regex) ) < 1){ # no grep found: add some anchors for safety
-			# 	regex = paste0("^", regex, "[_0-9]"); # anchor to the start of the string
-			# 	anchored = TRUE
-			# 	if(verbose == TRUE) {
-			# 		message("note: anchored regex to beginning of string and allowed only numeric follow\n");
-			# 	}
-			# }else{
-			# 	anchored = FALSE
-			# }
 			theLabels = grep(regex, theLabels, perl = FALSE, value = TRUE) # Return more detail
 		}
 		if(length(theLabels) == 0){
@@ -4191,7 +4194,7 @@ summaryAPA <- umxAPA
 #' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
 #' @return - formatted table, e.g. in markdown.
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxAPA()]
 #' @references - <https://github.com/tbates/umx>
 #' @md
@@ -4204,6 +4207,9 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 	report = match.arg(report)
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
+	print(paste0("mean age ", round(mean(data$age, na.rm = TRUE), 2), " (SD= ", round(sd(data$age, na.rm = TRUE), 2), ")"))
+	
+	
 	selDVs = tvars(selVars, sep)
 	umx_check_names(selDVs, data = data, die = TRUE)
 	long = umx_wide2long(data= data[,selDVs], sep =sep)
@@ -4275,12 +4281,20 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 #' `umx_r_test` is a wrapper around the cocor test of difference between correlations.
 #'
 #' @details
-#' Currently `umx_r_test` handles the test of whether `r.jk` and `r.hm` differ in magnitude.
-#' i.e, two non-overlapping (no variable in common) correlations in the same dataset.
-#' In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
+#' **Non-overlapping (no variable in common) correlations in the same dataset.**
+#' If 4 variables are provided in `vars`, `umx_r_test` conducts a test of
+#' the correlation of var 1 & 2 differs in magnitude from the correlation of var 3 with var 4.
+#' (`r.jk` and `r.hm` in cocor speak).
+#' 
+#' **Overlapping (1 variable in common) correlations in the same dataset.**
+#' If 3 variables are provided in `vars`, `umx_r_test` conducts a test of whether
+#' the correlation of var 1 & 2 differs in magnitude from the correlation of var 1 with var 3.
+#' (`r.jk` and `r.jh` in cocor speak).
+#' 
+#' In the future it will be expanded to handle other correlations, and to take correlations as input.
 #'
 #' @param data The dataset.
-#' @param vars Four variables forming the two pairs of columns: "j & k" and "h & m".
+#' @param vars Three or 4 variables forming the two pairs of columns.
 #' @param alternative A two (default) or one-sided (greater less) test.
 #' @return cocor result.
 #' @export
@@ -4291,24 +4305,37 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 #' # obtaining between disp and hp?
 #' vars = c("mpg", "cyl", "disp", "hp")
 #' umx_r_test(mtcars, vars)
+#' umx_r_test(mtcars, c("mpg", "disp", "hp"))
 umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "greater", "less")) {
 	alternative = match.arg(alternative)
-	test         = "silver2004"
 	alpha        = 0.05
 	conf.level   = 0.95
 	null.value   = 0
 	data.name    = NULL
 	var.labels   = NULL
 	return.htest = FALSE
+	n    = nrow(data)	
 	jkhm = data[, vars]
 	cors = cor(jkhm)
 	# jkhm = 1234
-	r.jk = as.numeric(cors[vars[1], vars[2]])
-	r.hm = as.numeric(cors[vars[3], vars[4]])
-	r.jh = as.numeric(cors[vars[1], vars[3]])
-	r.jm = as.numeric(cors[vars[1], vars[4]])
-	r.kh = as.numeric(cors[vars[2], vars[3]])
-	r.km = as.numeric(cors[vars[2], vars[4]])
-	n = nrow(jkhm)	
-	cocor::cocor.dep.groups.nonoverlap(r.jk, r.hm, r.jh, r.jm, r.kh, r.km, n, alternative = alternative, test = test, alpha = alpha, conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
+	if(length(vars)==3){
+		r.jk = as.numeric(cors[vars[1], vars[2]])
+		r.jh = as.numeric(cors[vars[1], vars[3]])
+		r.kh = as.numeric(cors[vars[2], vars[3]])
+		# tests = (pearson1898, hotelling1940, hendrickson1970, williams1959, olkin1967, dunn1969, steiger1980, meng1992, hittner2003, or zou2007).
+		cocor::cocor.dep.groups.overlap(r.jk, r.jh, r.kh, n, alternative = alternative, test = "hittner2003", alpha = alpha, 
+			conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
+	} else {
+		r.jk = as.numeric(cors[vars[1], vars[2]])
+		r.hm = as.numeric(cors[vars[3], vars[4]])
+		r.jh = as.numeric(cors[vars[1], vars[3]])
+		r.jm = as.numeric(cors[vars[1], vars[4]])
+		r.kh = as.numeric(cors[vars[2], vars[3]])
+		r.km = as.numeric(cors[vars[2], vars[4]])
+		# test         = "silver2004"
+	 	# tests = (pearson1898, dunn1969, steiger1980, raghunathan1996, silver2004, or zou2007).
+ 		cocor::cocor.dep.groups.nonoverlap(r.jk, r.hm, r.jh, r.jm, r.kh, r.km, n, alternative = alternative, test = "silver2004", alpha = alpha, 
+			conf.level = conf.level, null.value = null.value, data.name = data.name, var.labels = var.labels, return.htest = return.htest)
+	}
+
 }

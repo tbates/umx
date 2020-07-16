@@ -537,6 +537,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' @param fullCovs Covariate names if any (NULL = none) These are checked by `dropMissingDef`
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
+#' @param use When type = cov or cor, should this drop NAs? (use = "pairwise.complete.obs" by default, with a polite note)
 #' @return - [mxData()]
 #' @export
 #' @family xmu internal not for end user
@@ -592,7 +593,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' # =======================
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE) {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE, use = "pairwise.complete.obs") {
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
@@ -642,10 +643,16 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			data = mxData(observed = data, type = "raw")
 		}else if(type == "cov"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
-			data = mxData(observed = cov(data), type = type, numObs = nrow(data))
+			if(use %in% c("everything", "all.obs") && anyNA(data)){
+				message("Polite note: there were some NAs in your data: these rows dropped in making cov matrix")
+			}
+			data = mxData(observed = cov(data, use = use), type = type, numObs = nrow(data))
 		}else if(type == "cor"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
-			data = mxData(observed = cor(data), type = type, numObs = nrow(data))
+			if(use %in% c("everything", "all.obs") && anyNA(data)){
+				message("Polite note: there were some NAs in your data: these rows dropped in making cor matrix")
+			}
+			data = mxData(observed = umxHetCor(data, use = use), type = type, numObs = nrow(data))
 		} else if(type %in% c('WLS', 'DWLS', 'ULS')){
 			if(any(umx_is_ordered(data))){
 				# At least one non-continuous variable
@@ -973,7 +980,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #' nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 #' i.e., matrix-name + _ + r + rowNumber + c + colNumber
 #' 
-#' End users should just call [umxLabel()]
+#' Model developers should just call [xmuLabel()]
 #' 
 #'
 #' @param model a matrix-style mxModel to label
@@ -1013,7 +1020,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #'
 #' This function will label all the free parameters in a RAM [mxModel()]
 #' 
-#' End users should just call [umxLabel()]
+#' Model developers should just call [xmuLabel()]
 #'
 #' @param model a RAM mxModel to label
 #' @param suffix a string to append to each label
@@ -1178,11 +1185,11 @@ xmu_simplex_corner <- function(x, start = .9) {
 #'
 #' This function will label all the free parameters in an [mxMatrix()]
 #' 
-#' End users should just call [umxLabel()]
+#' Model developers should just call [xmuLabel()]
 #'
 #' Purpose: label the cells of an mxMatrix
 #' Detail: Defaults to the handy "name_r1c1" where name is the matrix name, and r1c1 = row 1 col 1.
-#' Use case: You should not use this: call umxLabel
+#' Use case: You should not use this: call xmuLabel
 #' umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
 #' umx:::xmuLabel_Matrix(mxMatrix("Full" , 3, 3, values = 1, name = "a", byrow = TRUE));
 #' umx:::xmuLabel_Matrix(mxMatrix("Symm" , 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
@@ -1207,7 +1214,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 #' @export
 xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE, labelFixedCells = FALSE, overRideExisting = FALSE) {
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
-		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
+		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want xmuLabel()")
 	}
 	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
 	nrows = nrow(mx_matrix);
@@ -1260,7 +1267,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 		newLabels[upper.tri(newLabels, diag = FALSE)] <- mirrorLabels[upper.tri(mirrorLabels, diag = FALSE)]
 		diag(newLabels) <- NA
 	} else if(type == "IdenMatrix" | type == "UnitMatrix" | type == "ZeroMatrix") {
-		# message("umxLabel Ignored ", type, " matrix ", mx_matrix$name, " - it has no free values!")
+		# message("xmuLabel Ignored ", type, " matrix ", mx_matrix$name, " - it has no free values!")
 		return(mx_matrix)
 	} else {
 		return(paste0("You tried to set type ", "to ", omxQuotes(type)));
@@ -1362,9 +1369,9 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' Purpose: Create startvalues for OpenMx paths
 #' use cases
 #' umx:::xmuStart_value_list(1)
-#' umxValues(1) # 1 value, varying around 1, with sd of .1
-#' umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-#' umxValues(100, 15)  # 1 start, with mean 100 and sd 15
+#' xmuValues(1) # 1 value, varying around 1, with sd of .1
+#' xmuValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+#' xmuValues(100, 15)  # 1 start, with mean 100 and sd 15
 #'
 #' @param mean the mean start value
 #' @param sd the sd of values
@@ -1386,7 +1393,7 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 
 #' xmuPropagateLabels (not a user function)
 #'
-#' You should be calling [umxLabel()].
+#' You should be calling [xmuLabel()].
 #' This function is called by xmuLabel_MATRIX_Model
 #'
 #' @param model a model to label
@@ -1643,7 +1650,7 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' @return - legal label string
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [umxLabel()]
+#' @seealso - [xmuLabel()]
 #' @md
 #' @examples
 #' xmu_clean_label("data.var", replace = "_")

@@ -63,19 +63,21 @@ tmp = umx_scale_wide_twin_data(varsToScale= c("wt", "ht"), sep= "_T", data= tmp)
 mzData = subset(tmp, zygosity \%in\%  c("MZFF", "MZMM"))
 dzData = subset(tmp, zygosity \%in\%  c("DZFF", "DZMM"))
 
-# ================
-# = An ACE model =
-# ================
-# Define paths: You only need the paths for one person:
+# ==========================
+# = Make an ACE twin model =
+# ==========================
+# 1. Define paths for *one* person:
 paths = c(
-umxPath(v1m0 = c("a1", 'c1', "e1")),
-umxPath(means = c("wt")),
-umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
+   umxPath(v1m0 = c("a1", 'c1', "e1")),
+   umxPath(means = c("wt")),
+   umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
 )
+# 2. Make a twin model from the paths for one person
 m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData)
 plot(m1, std= TRUE, means= FALSE)
-m2 = umxACE(selDVs="wt", mzData = mzData, dzData=dzData, sep="_T")
 
+# 3. comparison with umxACE...
+m2 = umxACE(selDVs="wt", mzData = mzData, dzData=dzData, sep="_T")
 
 # =====================
 # = Bivariate example =
@@ -110,77 +112,41 @@ m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData,
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
+\item \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}, \code{\link[=umxPath]{umxPath()}}
 }
 
-Other xmu internal not for end user: 
-\code{\link{umxModel}()},
-\code{\link{umxRenameMatrix}()},
-\code{\link{umx_APA_pval}()},
-\code{\link{umx_fun_mean_sd}()},
-\code{\link{umx_get_bracket_addresses}()},
-\code{\link{umx_make}()},
-\code{\link{umx_standardize}()},
-\code{\link{umx_string_to_algebra}()},
-\code{\link{umx}},
-\code{\link{xmuHasSquareBrackets}()},
-\code{\link{xmuLabel_MATRIX_Model}()},
-\code{\link{xmuLabel_Matrix}()},
-\code{\link{xmuLabel_RAM_Model}()},
-\code{\link{xmuMI}()},
-\code{\link{xmuMakeDeviationThresholdsMatrices}()},
-\code{\link{xmuMakeOneHeadedPathsFromPathList}()},
-\code{\link{xmuMakeTwoHeadedPathsFromPathList}()},
-\code{\link{xmuMaxLevels}()},
-\code{\link{xmuMinLevels}()},
-\code{\link{xmuPropagateLabels}()},
-\code{\link{xmuRAM2Ordinal}()},
-\code{\link{xmuTwinSuper_Continuous}()},
-\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
-\code{\link{xmu_CI_merge}()},
-\code{\link{xmu_CI_stash}()},
-\code{\link{xmu_DF_to_mxData_TypeCov}()},
-\code{\link{xmu_PadAndPruneForDefVars}()},
-\code{\link{xmu_cell_is_on}()},
-\code{\link{xmu_check_levels_identical}()},
-\code{\link{xmu_check_needs_means}()},
-\code{\link{xmu_check_variance}()},
-\code{\link{xmu_clean_label}()},
-\code{\link{xmu_data_missing}()},
-\code{\link{xmu_data_swap_a_block}()},
-\code{\link{xmu_describe_data_WLS}()},
-\code{\link{xmu_dot_make_paths}()},
-\code{\link{xmu_dot_make_residuals}()},
-\code{\link{xmu_dot_maker}()},
-\code{\link{xmu_dot_move_ranks}()},
-\code{\link{xmu_dot_rank_str}()},
-\code{\link{xmu_extract_column}()},
-\code{\link{xmu_get_CI}()},
-\code{\link{xmu_lavaan_process_group}()},
-\code{\link{xmu_make_TwinSuperModel}()},
-\code{\link{xmu_make_bin_cont_pair_data}()},
-\code{\link{xmu_make_mxData}()},
-\code{\link{xmu_match.arg}()},
-\code{\link{xmu_name_from_lavaan_str}()},
-\code{\link{xmu_path2twin}()},
-\code{\link{xmu_path_regex}()},
-\code{\link{xmu_safe_run_summary}()},
-\code{\link{xmu_set_sep_from_suffix}()},
-\code{\link{xmu_show_fit_or_comparison}()},
-\code{\link{xmu_simplex_corner}()},
-\code{\link{xmu_standardize_ACEcov}()},
-\code{\link{xmu_standardize_ACEv}()},
-\code{\link{xmu_standardize_ACE}()},
-\code{\link{xmu_standardize_CP}()},
-\code{\link{xmu_standardize_IP}()},
-\code{\link{xmu_standardize_RAM}()},
-\code{\link{xmu_standardize_SexLim}()},
-\code{\link{xmu_standardize_Simplex}()},
-\code{\link{xmu_start_value_list}()},
-\code{\link{xmu_starts}()},
-\code{\link{xmu_twin_add_WeightMatrices}()},
-\code{\link{xmu_twin_check}()},
-\code{\link{xmu_twin_get_var_names}()},
-\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
+Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{power.ACE.test}()},
+\code{\link{umxACEcov}()},
+\code{\link{umxACEv}()},
+\code{\link{umxACE}()},
+\code{\link{umxCP}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxDoC}()},
+\code{\link{umxGxE_window}()},
+\code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
+\code{\link{umxIP}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umx}}
 }
-\concept{xmu internal not for end user}
+\concept{Twin Modeling Functions}

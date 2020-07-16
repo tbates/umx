@@ -41,7 +41,7 @@ umxRAM(
 
 \item{group}{(optional) Column name to use for a multi-group model (default = NULL)}
 
-\item{group.equal}{In multi-group models, what to equate across groups (default = NULL)}
+\item{group.equal}{In multi-group models, what to equate across groups (default = NULL: all free)}
 
 \item{suffix}{String to append to each label (useful if model will be used in a multi-group model)}
 
@@ -199,12 +199,13 @@ m1 = umxRAM(data = mtcars, "#modelName
 # = A multi-group model =
 # =======================
 
+mtcars$litres = mtcars$disp/61.02
 m1 = umxRAM("tim", data = mtcars, group = "am",
 	umxPath(c("wt", "litres"), to = "mpg"),
 	umxPath("wt", with = "litres"),
 	umxPath(v.m. = c("wt", "litres", "mpg"))
 )
-# In this model, all parameters are equated across the two groups.
+# In this model, all parameters are free across the two groups.
 
 # ====================================
 # = A cov model, with steps laid out =

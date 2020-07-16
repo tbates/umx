@@ -659,7 +659,6 @@ umxIP
 umxJiggle
 umxLabel
 umxLabeler
-umxLabels
 umxMakeThresholdMatrix
 umxMatrix
 umxModel
@@ -684,7 +683,8 @@ umxSuperModel
 umxTryHard
 umxTwoStage
 umxUnexplainedCausalNexus
-umxValues
+xmuLabels
+xmuValues
 umxVersion
 uni
 UVa

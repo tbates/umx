@@ -204,7 +204,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max"), name = NULL, na.rm=FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max", "factor"), name = NULL, na.rm=FALSE) {
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
@@ -251,6 +251,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		score = rowSums(df, na.rm = na.rm)
 	}else if(score == "means"){
 		score = rowMeans(df, na.rm = na.rm)
+	}else if(score == "factor"){
+		x = umxEFA(name = "score", factors = "g", data = df, scores= "Regression")
+		score = x$g
 	}
 	oldData[, name] = score
 	return(oldData)
@@ -269,7 +272,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [umxLabel()]
+#' @seealso - [xmuLabel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -3278,21 +3281,16 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 	if(is.null(dim(x)[1]) || dim(x)[1] == 0){
 		return()
 	} else {
+		x = umx_round(x, digits = digits, coerce = FALSE)
 		if(!is.null(suppress)){
+			# zero-out suppressed values
 			x[abs(x) < suppress] = 0
 			zero.print = "."
 		}
-		x = umx_round(x, digits = digits, coerce = FALSE)
-		isNA = is.na(x)
-		if (any(isNA)){
-			x[isNA] = na.print
-			isZero  = !isNA & x == 0	 	
-	    }else{
-	    	isZero = FALSE
-	    }
-	    if (zero.print != "0" && any(isZero)){
-			x[isZero] = zero.print
-	    }
+
+		x[is.na(x)] = na.print		
+		x[(x == 0)] = zero.print
+
 	    if (is.numeric(x) || is.complex(x)){
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(!is.na(file)){

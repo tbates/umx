@@ -47,11 +47,11 @@ xmuLabel_Matrix(
 This function will label all the free parameters in an \code{\link[=mxMatrix]{mxMatrix()}}
 }
 \details{
-End users should just call \code{\link[=umxLabel]{umxLabel()}}
+Model developers should just call \code{\link[=xmuLabel]{xmuLabel()}}
 
 Purpose: label the cells of an mxMatrix
 Detail: Defaults to the handy "name_r1c1" where name is the matrix name, and r1c1 = row 1 col 1.
-Use case: You should not use this: call umxLabel
+Use case: You should not use this: call xmuLabel
 umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
 umx:::xmuLabel_Matrix(mxMatrix("Full" , 3, 3, values = 1, name = "a", byrow = TRUE));
 umx:::xmuLabel_Matrix(mxMatrix("Symm" , 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
@@ -64,7 +64,6 @@ See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value =
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},

@@ -92,7 +92,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+#' myVars = c("mpg", "disp", "hp", "wt", "qsec")
 #' m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
 #' loadings(m1)
 #' 
@@ -101,17 +101,25 @@
 #' loadings(m2)
 #' 
 #' # Formula interface in umxEFA
-#' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
+#' m2 = umxEFA(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m2)
 #'
 #' # Return a loadings object
 #' x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
 #' names(x)
 #' 
+#' # scores requested, so these will be returned
+#' x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
+#' x
+#' #       g
+#' # 1  -0.48059346
+#' # 2  -0.42354000
+#' # 3  -0.87078110
+#'
 #' m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 #' m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 #' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
-#' x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
+#' 
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
 	rotation = c("varimax", "promax", "none"), return = c("model", "loadings"), report = c("markdown", "html"), summary = FALSE, name = "efa", digits = 2, n.obs = NULL, covmat = NULL){
@@ -180,7 +188,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	}
 	# TODO umxEFA: Adapt to input datatype, i.e., add cov handler
 	# umx_print(factors)
-	manifests <- names(data)
+	manifests = names(data)
 	m1 = umxRAM(model = name, data = data, autoRun = FALSE,
 		umxPath(factors, to = manifests, connect = "unique.bivariate"),
 		umxPath(v.m. = manifests),
@@ -225,6 +233,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	
 	if(scores != "none"){
 		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
+		return(x)
 	}
 	if(return == "loadings"){
 		invisible(x)

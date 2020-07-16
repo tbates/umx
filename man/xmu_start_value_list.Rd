@@ -22,15 +22,14 @@ xmu_start_value_list(mean = 1, sd = NA, n = 1)
 Purpose: Create startvalues for OpenMx paths
 use cases
 umx:::xmuStart_value_list(1)
-umxValues(1) # 1 value, varying around 1, with sd of .1
-umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-umxValues(100, 15)  # 1 start, with mean 100 and sd 15
+xmuValues(1) # 1 value, varying around 1, with sd of .1
+xmuValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+xmuValues(100, 15)  # 1 start, with mean 100 and sd 15
 }
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},

@@ -11,7 +11,7 @@ umx_score_scale(
   min = 1,
   max = NULL,
   data = NULL,
-  score = c("totals", "mean", "max"),
+  score = c("totals", "mean", "max", "factor"),
   name = NULL,
   na.rm = FALSE
 )

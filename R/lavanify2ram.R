@@ -261,7 +261,8 @@ umxRAM2Lav <- function(model) {
 #'
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, 
 	lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, 
-	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), 
+	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), 
+	allContinuousMethod = c("cumulants", "marginals"), 
 	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), 
 	verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE){
 	# TODO: make groups independent

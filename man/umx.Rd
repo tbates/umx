@@ -152,16 +152,14 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()}
-
-Other Twin Reporting Functions: 
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
@@ -172,7 +170,8 @@ Other Twin Reporting Functions:
 \code{\link{umxSummaryGxE}()},
 \code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()}
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()}
 
 Other Twin Data functions: 
 \code{\link{umx_long2wide}()},
@@ -286,14 +285,13 @@ Other datasets:
 
 Other Advanced Model Building Functions: 
 \code{\link{umxJiggle}()},
-\code{\link{umxLabel}()},
 \code{\link{umxThresholdMatrix}()},
-\code{\link{umxValues}()}
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
 \code{\link{umxRenameMatrix}()},
-\code{\link{umxTwinMaker}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
@@ -376,7 +374,6 @@ Other xmu internal not for end user:
 \concept{Teaching and testing Functions}
 \concept{Twin Data functions}
 \concept{Twin Modeling Functions}
-\concept{Twin Reporting Functions}
 \concept{datasets}
 \concept{xmu internal not for end user}
 \concept{zAdvanced Helpers}
