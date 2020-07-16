@@ -80,7 +80,8 @@ a_cp = umxMatrix("a_cp", "Lower", 1, 1, free = TRUE, values = pi)
 out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "both")
 cat(out$str) # a_cp -> a_cp [dir = both label="2"];
 out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "forward",
-	fromLabel = "fromMe", toLabel = "toYou", fromType = "latent", toType = "manifest", digits = 3, SEstyle = TRUE
+	fromLabel = "fromMe", toLabel = "toYou", 
+	fromType  = "latent", toType  = "manifest", digits = 3, SEstyle = TRUE
 	)
 cat(out$str) # fromMe -> toYou [dir = forward label="3.142"];
 cat(out$latent) # fromMe

@@ -99,23 +99,26 @@ Thanks to @ConorDolan for code implementing the rotation matrix and other sugges
 \dontrun{
 myVars = c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
+# By default, returns the model
+umx_is_MxModel(m1) # TRUE
+# The loadings are stashed in the model:
 loadings(m1)
-
-# Formula interface in base-R factanal
-m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
-loadings(m2)
 
 # Formula interface in umxEFA
 m2 = umxEFA(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
 
-# Return a loadings object
+# base-R factanal Formula interface for comparison
+m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
+loadings(m2)
+
+# Return the loadings object
 x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
-names(x)
+names(x) # "loadings" "rotmat"
 
 # scores requested, so these will be returned
 x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
-x
+head(x)
 #       g
 # 1  -0.48059346
 # 2  -0.42354000
