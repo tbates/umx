@@ -125,13 +125,25 @@ umxRAM2Lav <- function(model) {
 #'
 #' Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
 #'
+#'
+#' \tabular{rllll}{
+#'	\tab lav     \tab Mplus   \tab sem   \tab Action                          	                      \cr
+#'	\tab  A =~ B \tab A by B  \tab       \tab A (Latent) is measured by B	                              \cr
+#'	\tab  A ~  B \tab A on B  \tab A<- A \tab A "is regressed on" (<- ) B   	                          \cr
+#'	\tab  A ~~ B \tab A with B\tab A<->B \tab A covaries with B	                                      \cr
+#'	\tab  A ~  1 \tab [A]     \tab       \tab A has mean	                                              \cr
+#'	\tab  A := B \tab         \tab       \tab A is defined by B (see [OpenMx::mxAlgebra()])	          \cr
+#'	\tab  A == B \tab         \tab       \tab A is constrained == to B (see [OpenMx::mxConstraint()] )
+#' }
+#'
+#'
 #' \tabular{rlll}{
-#'   \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
-#'   \tab "~"    \tab lhs "is regressed on" (<- ) rhs\cr
-#'   \tab "~~"   \tab lhs covaries with rhs\cr
-#'   \tab "~ 1"  \tab lhs has mean\cr
-#'   \tab ":="   \tab lhs is defined by rhs (see [OpenMx::mxAlgebra()])\cr
-#'   \tab "=="   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
+#'   \tab `=~`   \tab lhs (Latent) is manifested by rhs\cr
+#'   \tab `~`    \tab lhs "is regressed on" (<- ) rhs\cr
+#'   \tab `~~`   \tab lhs covaries with rhs\cr
+#'   \tab `~ 1`  \tab lhs has mean\cr
+#'   \tab `:=`   \tab lhs is defined by rhs (see [OpenMx::mxAlgebra()])\cr
+#'   \tab `==`   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
 #' }
 #'
 #' **Naming of multiple groups**
@@ -239,9 +251,9 @@ umxRAM2Lav <- function(model) {
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-#' namedStr = " 	# my name
+#' namedModel = " 	# my name
 #' 	y ~x"
-#' m1 = umxRAM(namedStr) 
+#' m1 = umxRAM(namedModel) 
 #'
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
