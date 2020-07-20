@@ -94,23 +94,26 @@
 #' \dontrun{
 #' myVars = c("mpg", "disp", "hp", "wt", "qsec")
 #' m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
+#' # By default, returns the model
+#' umx_is_MxModel(m1) # TRUE
+#' # The loadings are stashed in the model:
 #' loadings(m1)
-#' 
-#' # Formula interface in base-R factanal
-#' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
-#' loadings(m2)
 #' 
 #' # Formula interface in umxEFA
 #' m2 = umxEFA(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 #' loadings(m2)
+#' 
+#' # base-R factanal Formula interface for comparison
+#' m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
+#' loadings(m2)
 #'
-#' # Return a loadings object
+#' # Return the loadings object
 #' x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
-#' names(x)
+#' names(x) # "loadings" "rotmat"
 #' 
 #' # scores requested, so these will be returned
 #' x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
-#' x
+#' head(x)
 #' #       g
 #' # 1  -0.48059346
 #' # 2  -0.42354000
@@ -209,22 +212,28 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	   thisManifest = manifests[i]
 	   m1$S$lbound[thisManifest, thisManifest] = 0
 	}
+	# TODO could add tryHard support
 	m1 = mxRun(m1)
+
+	# ============================
+	# = Do rotation if requested =
+	# ============================
 	if(rotation != "none" && nFac > 1){
-		x = loadings.MxModel(m1)
-		x = eval(parse(text = paste0(rotation, "(x)")))
+		oldLoadings = loadings.MxModel(m1)
+		newLoadings = eval(parse(text = paste0(rotation, "(oldLoadings)")))
 		if(!umx_set_silent(silent=TRUE)){
 			print("Rotation results")
-			print(x) # print out the nice rotation result
-			rm = x$rotmat
+			print(newLoadings) # print out the nice rotation result
+			rm = newLoadings$rotmat
 			print("Factor Correlation Matrix")
 			print(solve(t(rm) %*% rm))
 		}
 		# stash the rotated result in the model A matrix
-		m1$A$values[manifests, factors] = x$loadings[1:nManifests, 1:nFac] 
+		m1$A$values[manifests, factors] = newLoadings$loadings[1:nManifests, 1:nFac] 
 	} else if(!umx_set_silent(silent=TRUE)){
 		print("Results")
 		print(loadings(m1))
+		newLoadings = loadings.MxModel(m1)
 	}
 
 	if(summary){
@@ -232,13 +241,15 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	}
 	
 	if(scores != "none"){
-		x = umxFactorScores(m1, type = scores, minManifests = minManifests)
-		return(x)
+		factorScores = umxFactorScores(m1, type = scores, minManifests = minManifests)
+		return(factorScores)
 	}
 	if(return == "loadings"){
-		invisible(x)
+		invisible(newLoadings)
 	}else if(return == "model"){
 		invisible(m1)
+	}else{
+		stop("polite error: Not sure what ", omxQuotes(return), " is to return it" )
 	}
 }
 
