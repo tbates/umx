@@ -1047,6 +1047,8 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 		# handle labels as input
 		if (!regex) {
 			theLabels = update
+			# TODO: check the labels are present
+			# if not suggest reversal for with items
 			if(is.null(newlabels)){
 				newModel = omxSetParameters(newModel, labels = theLabels, free = free, values = value, name = name)
 			}else{
