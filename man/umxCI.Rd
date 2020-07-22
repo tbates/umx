@@ -76,15 +76,15 @@ parameters(m1, patt="_with_")
 m1 = umxCI(m1, which = "x1_with_x1")
 m1 = umxCI(m1, which = c("x1_with_x1", "x2_with_x2"))
 m1 = umxCI(m1, regex = "x1_with_", run= "yes")
-#          lbound estimate ubound lbound Code ubound Code
+#           lbound estimate ubound lbound Code ubound Code
 # x1_with_x1  0.036    0.041  0.047           0           0
 
 # ========================
 # = A twin model example =
 # ========================
 data(twinData) 
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = c("bmi1","bmi2"), dzData = dzData, mzData = mzData)
 \dontrun{
 umxCI(m1, run = "show") # show what will be requested
