@@ -74,6 +74,7 @@ m1$intervals # none again
 # Add CIs by name
 parameters(m1, patt="_with_")
 m1 = umxCI(m1, which = "x1_with_x1")
+m1 = umxCI(m1, which = c("x1_with_x1", "x2_with_x2"))
 m1 = umxCI(m1, regex = "x1_with_", run= "yes")
 #          lbound estimate ubound lbound Code ubound Code
 # x1_with_x1  0.036    0.041  0.047           0           0
@@ -95,7 +96,7 @@ m1$intervals # none!
 # Show what parameters are available to get CIs on
 umxParameters(m1) 
 # Request a CI by label:
-m1 = umxCI(m1, "a_r1c1", run = "yes")
+m1 = umxCI(m1, which = "a_r1c1", run = "yes")
 }
 }
 \references{

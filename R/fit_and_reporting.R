@@ -705,6 +705,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' # Add CIs by name
 #' parameters(m1, patt="_with_")
 #' m1 = umxCI(m1, which = "x1_with_x1")
+#' m1 = umxCI(m1, which = c("x1_with_x1", "x2_with_x2"))
 #' m1 = umxCI(m1, regex = "x1_with_", run= "yes")
 #' #          lbound estimate ubound lbound Code ubound Code
 #' # x1_with_x1  0.036    0.041  0.047           0           0
@@ -726,7 +727,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' # Show what parameters are available to get CIs on
 #' umxParameters(m1) 
 #' # Request a CI by label:
-#' m1 = umxCI(m1, "a_r1c1", run = "yes")
+#' m1 = umxCI(m1, which = "a_r1c1", run = "yes")
 #' }
 umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), remove = FALSE, run = c("no", "yes", "if necessary", "show"), interval = 0.95, type = c("both", "lower", "upper"), regex = NULL, showErrorCodes = TRUE) {
 	# Note: OpenMx now overloads confint, returning SE-based intervals.
@@ -735,7 +736,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 	if(remove){
 		if(!is.null(regex)){
 			CIs = namez(model$intervals, pattern = regex)
-		} else if(which == "ALL"){
+		} else if(any(which == "ALL")){
 			CIs = names(model$intervals)
 		} else {
 			CIs = which 
@@ -751,12 +752,12 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 		# TODO Avoid duplicating existing CIs
 		# TODO Add each CI individually
 		# TODO Break them out into separate models and reassemble if on cluster?
-		if(is.na(which) && is.null(regex)){
+		if(any(is.na(which)) && is.null(regex)){
 			# nothing to add
 		} else {
 			if(!is.null(regex)){
-				CIs = umxGetParameters(model, regex = regex, free=TRUE)
-			} else if(which == "ALL"){
+				CIs = umxGetParameters(model, regex = regex, free = TRUE)
+			} else if(any(which == "ALL")){
 				CIs = names(omxGetParameters(model, free = TRUE))
 			} else {
 				CIs = which 

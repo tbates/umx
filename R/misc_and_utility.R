@@ -1494,6 +1494,7 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 #' }
 umx_open_CRAN_page <- function(package = "umx") {
 	for (p in package) {
+		# deparse(substitute(package))
 		result = tryCatch({
 		    print(packageVersion(p))
 		}, warning = function(x) {
