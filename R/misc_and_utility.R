@@ -133,7 +133,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @param min Min possible score (default = 1). Not implemented for values other than 1 so far...
 #' @param max Max possible score for an item (to compute how to reverse items).
 #' @param data The data frame
-#' @param score Whether to compute the score totals, mean, or max (default = "totals")
+#' @param score Whether to compute the score total, mean, max, or factor (default = "total")
 #' @param name = name of the scale to be returned. Defaults to "base_score"
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @return - scores
@@ -204,7 +204,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("totals", "mean", "max", "factor"), name = NULL, na.rm=FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE) {
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
@@ -240,22 +240,24 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	df = data[ , allColNames, drop = FALSE]
 
 	if(score == "max"){
-		score = rep(NA, nrow(df))
+		scaleScore = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
-			score[i] = max(df[i,], na.rm=TRUE)
+			scaleScore[i] = max(df[i,], na.rm=TRUE)
 		}
-	}else if(score == "totals"){
+	}else if(score == "total"){
 		if(any(is.na(df))){
 			message("Polite note: you asked for scale totals, but some subjects have missing data: I just ignored that. You might want means...")
 		}
-		score = rowSums(df, na.rm = na.rm)
-	}else if(score == "means"){
-		score = rowMeans(df, na.rm = na.rm)
+		scaleScore = rowSums(df, na.rm = na.rm)
+	}else if(score == "mean"){
+		scaleScore = rowMeans(df, na.rm = na.rm)
 	}else if(score == "factor"){
 		x = umxEFA(name = "score", factors = "g", data = df, scores= "Regression")
-		score = x$g
+		scaleScore = x$g
+	}else{
+		stop("not sure how to handle score = ", omxQuotes(score), ". Legal options are: ", omxQuotes(c("total", "mean", "max", "factor")))
 	}
-	oldData[, name] = score
+	oldData[, name] = scaleScore
 	return(oldData)
 }
 
