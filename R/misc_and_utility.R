@@ -136,6 +136,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @param score Whether to compute the score total, mean, max, or factor (default = "total")
 #' @param name = name of the scale to be returned. Defaults to "base_score"
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
+#' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @return - scores
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -204,7 +205,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA) {
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
@@ -252,7 +253,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	}else if(score == "mean"){
 		scaleScore = rowMeans(df, na.rm = na.rm)
 	}else if(score == "factor"){
-		x = umxEFA(name = "score", factors = "g", data = df, scores= "Regression")
+		x = umxEFA(name = "score", factors = "g", data = df, scores= "Regression", minManifests= minManifests)
 		scaleScore = x$g
 	}else{
 		stop("not sure how to handle score = ", omxQuotes(score), ". Legal options are: ", omxQuotes(c("total", "mean", "max", "factor")))
@@ -6405,6 +6406,50 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 	#
 	# "EA3S5"
 	return(tmp)
+}
+
+#' Read and optionally merge demographics file from prolific academic
+#'
+#' prolific academic provides a demographics file. This reads it and merges with your data
+#' using PID and participant_id
+#'
+#' @param file Path to a file to read.
+#' @param base Optional path to folder
+#' @param df Optional existing datafile
+#' @param verbose Whether to print names in the file.
+#' @param by.df The ID name in your datafile (default = "PID")
+#' @param by.demog The ID name in the prolific demographics file (default = "participant_id") 
+#' @param vars Vars to keep from demographics file (default =  age & Sex)
+#' @param all.df Whether to keeo all lines of df (default = TRUE)
+#' @param all.demog Whether to keeo all lines of demog (default = FALSE)
+#' @return - [[data.frame]]
+#' @export
+#' @family Data Functions
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' \dontrun{
+#' fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
+#' df = umx_read_prolific_demog(fp, df = df)
+#' tmp = umx_read_prolific_demog(demog= fp, base = "", df = NULL, verbose = FALSE)
+#' }
+umx_read_prolific_demog <-function(file, base = "", df = NULL, verbose = FALSE, by.df = "PID", by.demog = "participant_id", vars= c("age", "Sex"), all.df = TRUE, all.demog = FALSE) {
+	if(base != "") file = paste0(base, file)
+	newdf = read.csv(file, header= TRUE, sep=',', quote="\"", dec=".", fill= TRUE, comment.char="", stringsAsFactors= FALSE)
+	if(verbose) print(namez(newdf)) 
+	umx_check_names(namesNeeded=vars, data=newdf)
+	if(!is.null(df)){
+		umx_check_names(namesNeeded=by.df, data=df)
+		umx_check_names(namesNeeded=by.demog, data=newdf)
+		newdf = merge(df, newdf[, c(by.demog, vars)], by.x = by.df, by.y = by.demog, all.x = all.df, all.y = all.demog)
+	}else{
+		newdf = newdf[, vars]
+	}
+	# may as well print out a nice subjects section...
+	print(umx_aggregate(age ~ Sex, newdf))
+	tmp= newdf; tmp$one = 1; print(umx_aggregate(age ~ one, tmp))
+	umx_print("Subjects with data were n prolific volunteers ( m  male f female, mean age  yrs years)")
+	invisible(newdf)
 }
 
 #' Read lower-triangle of data matrix from console or file

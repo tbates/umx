@@ -57,6 +57,7 @@ Other Data Functions:
 \code{\link{umx_polychoric}()},
 \code{\link{umx_polytriowise}()},
 \code{\link{umx_read_lower}()},
+\code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
 \code{\link{umx_reorder}()},
 \code{\link{umx_select_valid}()},

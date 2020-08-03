@@ -13,7 +13,8 @@ umx_score_scale(
   data = NULL,
   score = c("total", "mean", "max", "factor"),
   name = NULL,
-  na.rm = FALSE
+  na.rm = FALSE,
+  minManifests = NA
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ umx_score_scale(
 \item{name}{= name of the scale to be returned. Defaults to "base_score"}
 
 \item{na.rm}{Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!}
+
+\item{minManifests}{If score = factor, how many missing items to tolerate for an individual?}
 }
 \value{
 \itemize{
