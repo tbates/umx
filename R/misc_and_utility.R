@@ -838,7 +838,7 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' )
 #' umx_set_cores() # print current value
 #' oldCores <- umx_set_cores(silent = TRUE)  # store existing value
-#' umx_set_cores(imxGetNumThreads()) # set to max
+#' umx_set_cores(omxDetectCores()) # set to max
 #' umx_set_cores(-1); umx_set_cores() # set to max
 #' m1 = umx_set_cores(1, m1)  # set m1 usage to 1 core
 #' umx_set_cores(model = m1)  # show new value for m1
@@ -847,7 +847,7 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 	if(is.na(cores)){
 		n = mxOption(model, "Number of Threads") # get the old value
 		if(!silent){
-			message(n, "/", imxGetNumThreads() )
+			message(n, "/", omxDetectCores() )
 		}
 		return(n)
 	} else if(umx_is_MxModel(cores)) {
@@ -857,11 +857,12 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 			stop("cores must be a number. You gave me ", cores)
 		}
 		umx_check(isTRUE(all.equal(cores, as.integer(cores))), message = paste0("cores must be an integer. You gave me: ", cores))
-		if(cores > imxGetNumThreads() ){
-			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", imxGetNumThreads() )
-			cores = imxGetNumThreads()
+		if(cores > omxDetectCores() ){
+			
+			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", omxDetectCores() )
+			cores = omxDetectCores()
 		} else if (cores < 1){
-			cores = imxGetNumThreads()
+			cores = omxDetectCores()
 		}
 		mxOption(model, "Number of Threads", cores)		
 	}
