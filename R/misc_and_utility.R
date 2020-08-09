@@ -819,7 +819,7 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #'
 #' set the number of cores (threads) used by OpenMx
 #'
-#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to imxGetNumThreads().
+#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to omxDetectCores().
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
 #' @param silent If TRUE, no message will be printed.
 #' @return - number of cores
@@ -1013,15 +1013,15 @@ umx_get_checkpoint <- function(model = NULL) {
 #' # On a fast machine, takes a minute with 1 core
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = c(1, imxGetNumThreads()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
+umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
 	if(!is.null(testScript)){
 		stop("test script not implemented yet - beat on tim to do it!")
 	}
 	oldCores = umx_set_cores()
 	if( (length(nCores) == 1) && (nCores == -1)){
-		nCores = imxGetNumThreads()
+		nCores = omxDetectCores()
 	}
-	message("You have been using ", oldCores, " of ", imxGetNumThreads(), " available cores (0 means max - 1)")
+	message("You have been using ", oldCores, " of ", omxDetectCores(), " available cores (0 means max - 1)")
 	message("I will now set cores to ", omxQuotes(nCores), " (they will be reset after) and run a script that hits that many cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
 	set.seed(10)

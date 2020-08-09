@@ -7,7 +7,7 @@
 umx_set_cores(cores = NA, model = NULL, silent = FALSE)
 }
 \arguments{
-\item{cores}{number of cores to use. NA (the default) returns current value. "-1" will set to imxGetNumThreads().}
+\item{cores}{number of cores to use. NA (the default) returns current value. "-1" will set to omxDetectCores().}
 
 \item{model}{an (optional) model to set. If left NULL, the global option is updated.}
 
