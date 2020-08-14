@@ -1106,7 +1106,7 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 	# thisCores = 4
 	for (thisCores in nCores) {
 		umx_set_cores(thisCores)
-		thisModel = mxRename(models[[n]], paste0("nCcores_equals_", thisCores))
+		thisModel = mxRename(models[[n]], paste0("nCores_equals_", thisCores))
 		thisModel = mxRun(thisModel)
 		# umx_time(thisModel, autoRun= F)
 		models[[n]] = thisModel
@@ -3141,6 +3141,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #'
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
+	formatStr = xmu_match.arg(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	if(is.list(x)){
 		# check each item is a model
 		if(!umx_is_MxModel(x, listOK = TRUE)){
@@ -3159,7 +3160,6 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	}else{
 		stop("You must set the first parameter to 'start', 'stop', 'now', a model, or a list of models.\nYou offered up a", class(x))
 	}
-	formatStr = xmu_match.arg(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	for(i in 1:length(x)) {			
 		if(length(x) > 1) {
 			thisX = x[[i]]
@@ -3186,7 +3186,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 							options("umx_last_time" = proc.time())
 						}
 					}
-			}else if(thisX =="now"){
+			}else if(thisX == "now"){
 				return(format(Sys.time(), "%X, %a %d %b %Y"))				
 			}
 		} else {
@@ -3197,37 +3197,33 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 			}
 			thisTime = thisX$output$wallTime
 			if(i == 1){
-				lastTime = thisTime
-				timeDelta = ""
+				lastTime     = thisTime
+				timeDelta    = ""
 				percentDelta = ""
 			} else {
-				timeDelta = paste0("(\u0394: ", round(thisTime - lastTime, 3), ")")
+				timeDelta    = paste0("(\u0394: ", round(thisTime - lastTime, 3), ")")
 				percentDelta = paste0(round(as.numeric(thisTime) / as.numeric(lastTime)*100, 3), "%")
 			}
 		}
 		if(formatStr == "std"){
-			formatStr = "Wall clock time (HH:MM:SS.hh): %H:%M:%OS2"
+			realFormatStr = "Wall clock time (HH:MM:SS.hh): %H:%M:%OS2"
 		} else if(formatStr == "simple"){
-			if(thisTime > (3600 * 2) - 1){ # hours
-				formatStr = "%H hours, %M minute(s), %OS2 seconds"
-			} else if(thisTime > 3600){ # hours
-				formatStr = "%H hour, %M minute(s), %OS2 seconds"
-			} else if(thisTime > 60){ # minutes
-				if(thisTime > 119){ # minutes
-					formatStr = "%M minutes,  %OS2 seconds"
-				}else{
-					formatStr = "%M minute,  %OS2 seconds"	
-				}					
-			} else { # seconds
-				formatStr = "%OS2 seconds"
+			if(thisTime > (3600-1)){ # > 1 hour
+				realFormatStr = "%H hr, %M min, %OS2 sec"
+			} else if(thisTime > (60-1)){ # minutes
+				realFormatStr = "%M min,  %OS2 sec"
+			} else { # < 1 minute
+				realFormatStr = "%OS2 sec"
 			}
+		}else{
+			realFormatStr = formatStr
 		}
 		
 		if(class(thisX) == "character"){
 			# Handle start-stop
-			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", formatStr))
+			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", realFormatStr))
 		} else {
-			timeString = format(.POSIXct(thisTime, tz), paste0(thisX$name, ": ", formatStr, timeDelta, commaSep, percentDelta))
+			timeString = format(.POSIXct(thisTime, tz), paste0(thisX$name, ": ", realFormatStr, " ", timeDelta, commaSep, percentDelta))
 		}
 		message(timeString)
 	}
