@@ -26,7 +26,7 @@ umxEquate(
 
 \item{b}{one or more labels to equate (if newNames is not set, these will set to the a labels, thus equating the parameters}
 
-\item{newlabels}{\link{optional} list of new labels for the equated parameters.}
+\item{newlabels}{(optional) list of new labels for the equated parameters.}
 
 \item{free}{Should parameter(s) initially be free? (default = TRUE)}
 
