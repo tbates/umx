@@ -1508,12 +1508,12 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 			mxAlgebra(name = "e_std", SD %*% e)  # standardized e
 		)
 		model = mxModel(model, newTop)
-		if(addCI){
-			if(addStd){
-				model = mxModel(model, mxCI(c('top.a_std', 'top.c_std', 'top.e_std')))
-			}else{
-				model = mxModel(model, mxCI(c('top.a', 'top.c', 'top.e')))
-			}
+	}
+	if(addCI){
+		if(addStd){
+			model = mxModel(model, mxCI(c('top.a_std', 'top.c_std', 'top.e_std')))
+		}else{
+			model = mxModel(model, mxCI(c('top.a', 'top.c', 'top.e')))
 		}
 	}
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
@@ -3644,15 +3644,18 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 
 #' \emph{Tip}: To find labels by name, use the regex parameter of [umxGetParameters()]
 #' 
-#' @param model   An [mxModel()] within which to equate parameters
-#' @param master  A list of "master" labels to which slave labels will be equated
-#' @param slave   A list of slave labels which will be updated to match master labels, thus equating the parameters
+#' @param model   An [mxModel()] within which to equate parameters listed in "a" with those in "b"
+#' @param a  one or more parameter labels to equate with b labels
+#' @param b  one or more labels to equate (if newNames is not set, these will set to the a labels, thus equating the parameters
+#' @param newlabels [optional] list of new labels for the equated parameters.
 #' @param free    Should parameter(s) initially be free? (default = TRUE)
 #' @param verbose Whether to give verbose feedback (default = TRUE)
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param master  A list of "master" labels to which slave labels will be equated
+#' @param slave   A list of slave labels which will be updated to match master labels, thus equating the parameters
 #' @return - [mxModel()]
 #' @export
 #' @seealso [umxModify()], [umxCompare()]
@@ -3668,45 +3671,69 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
-#' # By default, umxEquate just equates master and slave labels
-#' m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Eq x1 x2 loadings")
+#' # By default, umxEquate just equates master and slave labels: doesn't run model
+#' m2 = umxEquate(m1, a = "G_to_x1", b = "G_to_x2", name = "Eq x1 x2 loadings")
+#' 
 #' # Set autoRun = TRUE and comparison = TRUE to run and output a comparison
-#' m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq x1 x2",
-#' 	     master = "G_to_x1", slave = "G_to_x2"
+#' m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq_x1_x2",
+#' 	     a = "G_to_x1", b = "G_to_x2"
 #' )
-umxEquate <- function(model, master, slave, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no", "yes", "ordinal", "search"), comparison = TRUE) {
-	tryHard = match.arg(tryHard)
+#'
+#' # rename the equated paths
+#' m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq_x1_x2",
+#' 	     a = "G_to_x1", b = "G_to_x2", newlabels = c("equated")
+#' )
+#' parameters(m2)
+umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no", "yes", "ordinal", "search"), comparison = TRUE, master= NULL, slave= NULL) {
 	free = xmu_match.arg(free, c(TRUE, FALSE, NA)) # match.arg can't handle Boolean as options?
+	tryHard = match.arg(tryHard)
+
+	if(!is.null(master)){
+		listA = master
+		listB = slave
+	}else{
+		listA = a
+		listB = b		
+	}
+
 	if(!umx_is_MxModel(model)){
 		message("ERROR in umxEquate: model must be a model, you gave me a ", class(model)[1])
-		message("A usage example is umxEquate(model, master=\"a_to_b\", slave=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
+		message("A usage example is umxEquate(model, listA=\"a_to_b\", listB=\"a_to_c\", name=\"model2\") # equate paths a->b and a->c, in a new model called \"model2\"")
 		stop()
 	}
 
-	if(length(master) == 1){
-		if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", master) ) < 1){ # no grep found: add some anchors
-			master = paste0("^", master, "$"); # anchor to the start of the string
-			slave  = paste0("^", slave,  "$");
+	if(length(listA) == 1){
+		if(length(grep("[\\^\\.\\*\\[\\(\\+\\|]+", listA) ) < 1){ # no grep found: add some anchors
+			listA = paste0("^", listA, "$"); # anchor to the start of the string
+			listB  = paste0("^", listB,  "$");
 			if(verbose == TRUE){
 				cat("note: matching whole label\n");
 			}
 		}
 	}
-	masterLabels = umxGetParameters(model, regex = master, free = free, verbose = verbose)
-	slaveLabels  = umxGetParameters(model, regex = slave , free = free, verbose = verbose)
-	if( length(slaveLabels) != length(masterLabels) && (length(masterLabels)!=1)) {
-		print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-		stop("ERROR in umxEquate: master and slave labels not the same length!\n",
-		length(slaveLabels), " slavelabels found, and ", length(masterLabels), " masters")
+	listALabels = umxGetParameters(model, regex = listA, free = free, verbose = verbose)
+	listBLabels = umxGetParameters(model, regex = listB, free = free, verbose = verbose)
+	if( length(listBLabels) != length(listALabels) && (length(listALabels)!=1)) {
+		print(list(listALabels = listALabels, listBLabels = listBLabels))
+		stop("ERROR in umxEquate: listA and listB labels not the same length!\n",
+		length(listBLabels), " list B labels found, and ", length(listALabels), " list As")
 	}
-	if(length(slaveLabels) == 0) {
+	if(length(listBLabels) == 0) {
 		legal = names(omxGetParameters(model, indep=FALSE, free=free))
 		legal = legal[which(!is.na(legal))]
 		message("Labels available in model are: ", paste(legal, ", "))
-		stop("ERROR in umxEquate: no slave labels found or none requested!")
+		stop("ERROR in umxEquate: no listB labels found or none requested!")
 	}
-	# print(list(masterLabels = masterLabels, slaveLabels = slaveLabels))
-	newModel = omxSetParameters(model = model, labels = slaveLabels, newlabels = masterLabels, name = name)
+	# print(list(listALabels = listALabels, listBLabels = listBLabels))
+	if(is.null(newlabels)){
+		newModel = omxSetParameters(model = model, labels = listBLabels, newlabels = listALabels, name = name)
+	} else {
+		umx_check(length(newlabels)==length(listALabels), "stop", "newlabels must be the same length as list a. ", 
+			"Found ", length(listALabels), " list a labels, and ", length(newlabels), " newlabels"
+		)
+		newModel = omxSetParameters(model = model   , labels = listALabels, newlabels = newlabels, name = name)
+		newModel = omxSetParameters(model = newModel, labels = listBLabels, newlabels = newlabels, name = name)
+	}
 	newModel = omxAssignFirstParameters(newModel, indep = FALSE)
 	newModel = xmu_safe_run_summary(newModel, model, autoRun = autoRun, tryHard = tryHard, comparison = comparison)
 	return(newModel)

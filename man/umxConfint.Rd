@@ -41,9 +41,10 @@ Implements confidence interval function for umx models.
 Note: By default, requesting new CIs wipes the existing ones.
 To keep these, set wipeExistingRequests = FALSE.
 
+Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
+
 \emph{Note}: \code{\link[=confint]{confint()}} is an OpenMx function which will return SE-based CIs.
 
-Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
 If \code{parm} is empty, and \code{run = FALSE}, a message will alert you to set \code{run = TRUE}.
 }
 \examples{

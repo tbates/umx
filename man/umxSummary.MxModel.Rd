@@ -22,7 +22,7 @@
 \item{model}{The \code{\link[=mxModel]{mxModel()}} whose fit will be reported}
 
 \item{refModels}{Saturated models if needed for fit indices (see example below:
-If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.}
+If NULL will be computed on demand. If FALSE will not be computed.}
 
 \item{std}{If TRUE, model is standardized (Default FALSE, NULL means "don't show").}
 
@@ -108,7 +108,7 @@ Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxRun]{umxRun()}}
+\item \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Reporting functions: 

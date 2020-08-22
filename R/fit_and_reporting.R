@@ -454,10 +454,11 @@ loadings.MxModel <- function(x, ...) {
 #' 
 #' Note: By default, requesting new CIs wipes the existing ones.
 #' To keep these, set wipeExistingRequests = FALSE.
+#' 
+#' Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
 #'
 #' @details *Note*: [confint()] is an OpenMx function which will return SE-based CIs.
 #' 
-#' Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
 #' If `parm` is empty, and `run = FALSE`, a message will alert you to set `run = TRUE`. 
 #'
 #' @param object An [mxModel()], possibly already containing [mxCI()]s that have been [mxRun()] with intervals = TRUE))
@@ -848,11 +849,11 @@ umxSummary.default <- function(model, ...){
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
 #' @param refModels Saturated models if needed for fit indices (see example below:
-#' 	If NULL will be competed on demand. If FALSE will not be computed. Only needed for raw data.
+#' 	If NULL will be computed on demand. If FALSE will not be computed.
 #' @param ... Other parameters to control model summary
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @family Reporting functions
-#' @seealso - [umxRun()]
+#' @seealso - [umxRAM()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Conventional criteria versus new alternatives. *Structural Equation Modeling*, **6**, 1-55. 
 #'
@@ -916,8 +917,21 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		modelSummary = summary(model)
 		if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
-			refModels = mxRefModels(model, run = TRUE)
-			modelSummary = summary(model, refModels = refModels)
+			refModels = tryCatch({
+			    refModels = mxRefModels(model, run = TRUE)
+			}, warning = function(x) {
+			    print("warning calling mxRefModels: Note WLS not supported for ref models, fit indices not available https://github.com/OpenMx/OpenMx/issues/184")
+			}, error = function(x) {
+			    print("error calling mxRefModels: Note fit indices not available as WLS not supported for ref models https://github.com/OpenMx/OpenMx/issues/184")
+			}, finally={
+			    # print("cleanup-code")
+			})
+
+			if(!class(refModels)=="list"){
+				modelSummary = summary(model)
+			} else {
+				modelSummary = summary(model, refModels = refModels)
+			}
 		}
 		if(is.null(model$data)){
 			# TODO model with no data - no saturated solution?

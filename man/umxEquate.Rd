@@ -6,22 +6,27 @@
 \usage{
 umxEquate(
   model,
-  master,
-  slave,
+  a,
+  b,
+  newlabels = NULL,
   free = c(TRUE, FALSE, NA),
   verbose = FALSE,
   name = NULL,
   autoRun = FALSE,
   tryHard = c("no", "yes", "ordinal", "search"),
-  comparison = TRUE
+  comparison = TRUE,
+  master = NULL,
+  slave = NULL
 )
 }
 \arguments{
-\item{model}{An \code{\link[=mxModel]{mxModel()}} within which to equate parameters}
+\item{model}{An \code{\link[=mxModel]{mxModel()}} within which to equate parameters listed in "a" with those in "b"}
 
-\item{master}{A list of "master" labels to which slave labels will be equated}
+\item{a}{one or more parameter labels to equate with b labels}
 
-\item{slave}{A list of slave labels which will be updated to match master labels, thus equating the parameters}
+\item{b}{one or more labels to equate (if newNames is not set, these will set to the a labels, thus equating the parameters}
+
+\item{newlabels}{\link{optional} list of new labels for the equated parameters.}
 
 \item{free}{Should parameter(s) initially be free? (default = TRUE)}
 
@@ -34,6 +39,10 @@ umxEquate(
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
+
+\item{master}{A list of "master" labels to which slave labels will be equated}
+
+\item{slave}{A list of slave labels which will be updated to match master labels, thus equating the parameters}
 }
 \value{
 \itemize{
@@ -68,12 +77,19 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
 )
-# By default, umxEquate just equates master and slave labels
-m2 = umxEquate(m1, master = "G_to_x1", slave = "G_to_x2", name = "Eq x1 x2 loadings")
+# By default, umxEquate just equates master and slave labels: doesn't run model
+m2 = umxEquate(m1, a = "G_to_x1", b = "G_to_x2", name = "Eq x1 x2 loadings")
+
 # Set autoRun = TRUE and comparison = TRUE to run and output a comparison
-m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq x1 x2",
-	     master = "G_to_x1", slave = "G_to_x2"
+m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq_x1_x2",
+	     a = "G_to_x1", b = "G_to_x2"
 )
+
+# rename the equated paths
+m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq_x1_x2",
+	     a = "G_to_x1", b = "G_to_x2", newlabels = c("equated")
+)
+parameters(m2)
 }
 \references{
 \itemize{
