@@ -64,7 +64,7 @@
 #' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
-#' @importFrom utils browseURL install.packages str
+#' @importFrom utils browseURL install.packages str read.csv
 
 #' @importFrom cowplot draw_label
 #' @importFrom ggplot2 qplot scale_x_continuous theme element_text scale_x_continuous
@@ -1010,7 +1010,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 	tryHard = match.arg(tryHard)
 
 	if(!is.null(master)){
-		x = umxEquate(lastFit, master = master, slave = update, free = freeToStart, verbose = verbose, name = name, autoRun = autoRun, comparison = comparison)
+		x = umxEquate(lastFit, a = master, b = update, free = freeToStart, verbose = verbose, name = name, autoRun = autoRun, comparison = comparison)
 		return(x)
 	}
 
@@ -3647,7 +3647,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param model   An [mxModel()] within which to equate parameters listed in "a" with those in "b"
 #' @param a  one or more parameter labels to equate with b labels
 #' @param b  one or more labels to equate (if newNames is not set, these will set to the a labels, thus equating the parameters
-#' @param newlabels [optional] list of new labels for the equated parameters.
+#' @param newlabels (optional) list of new labels for the equated parameters.
 #' @param free    Should parameter(s) initially be free? (default = TRUE)
 #' @param verbose Whether to give verbose feedback (default = TRUE)
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
