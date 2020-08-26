@@ -7073,14 +7073,15 @@ umx_standardize.default <- function(model, ...){
 #' m1 = umx_standardize(m1)
 #' umxSummary(m1)
 xmu_standardize_RAM <- function(model, ...) {
-	if (!umx_is_RAM(model)){
-		stop("I need a RAM model")
-	}
+	umx_check(umx_is_RAM(model), action="stop", message="xmu_standardize_RAM needs a RAM model")
 	umx_has_been_run(model)
+
+	# mxStandardizeRAMpaths(model=, SE=, cov=)
 	# Get the names of the A, S and M matrices
 	nameA = model$expectation$A
 	nameS = model$expectation$S
 	nameM = model$expectation$M
+
 	# Get the A and S matrices, and make an identity matrix
 	A = model[[nameA]]
 	S = model[[nameS]]

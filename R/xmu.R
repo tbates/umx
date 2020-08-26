@@ -741,7 +741,7 @@ for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= '
 xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "m1") {
 	# Assume `name` should be used if !is.null(name)
 	if(is.na(name)){
-		# If first line contains a #, assume user wants it to be a name for the model
+		# If first line begins with '#', assume user wants it to be a name for the model
 		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
 		if(grepl(x = line1, pattern = "#")){
 			# line1 = "## my model ##"
