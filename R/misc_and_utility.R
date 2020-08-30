@@ -1876,13 +1876,13 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' Rename files. On OS X, the function can access the current front-most Finder window.
 #' The file renaming is fast and, because you can use regular expressions, powerful.
 #'
-#' @param findStr The (regex) string to find, i.e., "cat"
-#' @param replaceStr The (regex) replacement string "\1 are not dogs"
-#' @param baseFolder The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window.
-#' If it is blank, a choose folder dialog will be thrown.
+#' @param findStr The pattern to find, i.e., "cats"
+#' @param replaceStr The replacement pattern "\1 are not dogs"
+#' @param baseFolder Folder to search in. Default ("Finder") will use the current front-most Finder window (on MacOS).
+#' Set to NA for a "choose folder" dialog.
+#' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param ignoreSuffix Whether to ignore (don't search in) the suffix (filetype like .mpg) TRUE.
 #' @param listPattern A pre-filter for files
-#' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
 #' @family File Functions
 #' @return None
@@ -1891,12 +1891,12 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @examples
 #' \dontrun{
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
-#' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder", test = TRUE)
+#' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", test = TRUE)
 #' # move date to end of file name
-#' umx_rename_file("^(.*) *([0-9]{2}\\.[0-9]{2}\\.[0-9]+) *(.*)", replaceStr="\\1 \\3 \\2", baseFolder = "Finder")
+#' umx_rename_file("^(.*) *([0-9]{2}\\.[0-9]{2}\\.[0-9]+) *(.*)", replaceStr="\\1 \\3 \\2")
 #' 
 #' }
-umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", ignoreSuffix = TRUE, listPattern = NULL, test = TRUE, overwrite = FALSE) {
+umx_rename_file <- function(findStr = "Finder", replaceStr = NA, baseFolder = "Finder", test = TRUE, ignoreSuffix = TRUE, listPattern = NULL, overwrite = FALSE) {
 	umx_check(!is.na(replaceStr), "stop", "Please set a replaceStr to the replacement string you desire.")
 
 	# ==============================

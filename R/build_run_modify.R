@@ -67,8 +67,10 @@
 #' @importFrom utils browseURL install.packages str read.csv
 
 #' @importFrom cowplot draw_label
-#' @importFrom ggplot2 qplot scale_x_continuous theme element_text scale_x_continuous
-#' @importFrom ggplot2 expand_limits aes geom_point geom_segment
+#' @importFrom ggplot2 ggplot qplot
+#' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme theme_ipsum 
+#' @importFrom ggplot2 geom_point geom_segment geom_lineexpand_limits aes 
+#' @importFrom ggplot2 ggtitle element_text 
 
 # Used in plot
 #' @importFrom DiagrammeR DiagrammeR

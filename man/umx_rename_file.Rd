@@ -5,28 +5,28 @@
 \title{Rename files}
 \usage{
 umx_rename_file(
-  findStr = NA,
+  findStr = "Finder",
   replaceStr = NA,
   baseFolder = "Finder",
+  test = TRUE,
   ignoreSuffix = TRUE,
   listPattern = NULL,
-  test = TRUE,
   overwrite = FALSE
 )
 }
 \arguments{
-\item{findStr}{The (regex) string to find, i.e., "cat"}
+\item{findStr}{The pattern to find, i.e., "cats"}
 
-\item{replaceStr}{The (regex) replacement string "\1 are not dogs"}
+\item{replaceStr}{The replacement pattern "\1 are not dogs"}
 
-\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window.
-If it is blank, a choose folder dialog will be thrown.}
+\item{baseFolder}{Folder to search in. Default ("Finder") will use the current front-most Finder window (on MacOS).
+Set to NA for a "choose folder" dialog.}
+
+\item{test}{Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)}
 
 \item{ignoreSuffix}{Whether to ignore (don't search in) the suffix (filetype like .mpg) TRUE.}
 
 \item{listPattern}{A pre-filter for files}
-
-\item{test}{Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)}
 
 \item{overwrite}{Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)}
 }
@@ -40,9 +40,9 @@ The file renaming is fast and, because you can use regular expressions, powerful
 \examples{
 \dontrun{
 # "Season 01" --> "S01" in current folder in MacOS Finder
-umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\\\1", baseFolder = "Finder", test = TRUE)
+umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\\\1", test = TRUE)
 # move date to end of file name
-umx_rename_file("^(.*) *([0-9]{2}\\\\.[0-9]{2}\\\\.[0-9]+) *(.*)", replaceStr="\\\\1 \\\\3 \\\\2", baseFolder = "Finder")
+umx_rename_file("^(.*) *([0-9]{2}\\\\.[0-9]{2}\\\\.[0-9]+) *(.*)", replaceStr="\\\\1 \\\\3 \\\\2")
 
 }
 }
