@@ -40,7 +40,10 @@ The file renaming is fast and, because you can use regular expressions, powerful
 \examples{
 \dontrun{
 # "Season 01" --> "S01" in current folder in MacOS Finder
-umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
+umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\\\1", baseFolder = "Finder", test = TRUE)
+# move date to end of file name
+umx_rename_file("^(.*) *([0-9]{2}\\\\.[0-9]{2}\\\\.[0-9]+) *(.*)", replaceStr="\\\\1 \\\\3 \\\\2", baseFolder = "Finder")
+
 }
 }
 \seealso{

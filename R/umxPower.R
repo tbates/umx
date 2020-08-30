@@ -247,6 +247,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' @param sig.level Default = .05
 #' @param value Value of dropped parameter (default = 0)
 #' @param method "ncp" (default) or "empirical"
+#' @param plot whether to plot the power.
 #' @param explore Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.
 #' @param digits Rounding precision for reporting result.
 #' @param silent Suppress model runs printouts to console (TRUE)
@@ -333,7 +334,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' }
 #'
-umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, silent = TRUE){
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=TRUE, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
 	oldSilent = umx_set_silent(silent, silent = TRUE) # set silent and store existing value
@@ -372,10 +373,19 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		}
 		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
 		message("\n#####################\n# Estimating ", beingEstimated, " #\n#####################\n")
-		tmp = mxPower(trueModel, nullModel, n= n, power=power, sig.level = sig.level, method= method)	
+		tmp = mxPower(trueModel, nullModel, n = n, power = power, sig.level = sig.level, method = method)
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, digits)
 	}
 	umx_set_silent(oldSilent) # reinstate
+	if(plot){
+		stop("plot not implemented for power - email tim")
+		p = ggplot(aes(x= ps$X_with_Y, y = ps$power), data = ps)
+		p = p + geom_line(color = "red", size = .5, alpha = 0.9)
+		p = p + theme_ipsum()
+		p = p + ggtitle(paste0("Statistical power to detect", X_with_Y, "at alpha = ", .05))
+		p
+	}
+	
 	return(tmp)
 }
 

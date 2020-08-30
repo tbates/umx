@@ -1891,7 +1891,10 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @examples
 #' \dontrun{
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
-#' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\1", baseFolder = "Finder", test = TRUE)
+#' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", baseFolder = "Finder", test = TRUE)
+#' # move date to end of file name
+#' umx_rename_file("^(.*) *([0-9]{2}\\.[0-9]{2}\\.[0-9]+) *(.*)", replaceStr="\\1 \\3 \\2", baseFolder = "Finder")
+#' 
 #' }
 umx_rename_file <- function(findStr = NA, replaceStr = NA, baseFolder = "Finder", ignoreSuffix = TRUE, listPattern = NULL, test = TRUE, overwrite = FALSE) {
 	umx_check(!is.na(replaceStr), "stop", "Please set a replaceStr to the replacement string you desire.")

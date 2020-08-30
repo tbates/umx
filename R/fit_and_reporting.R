@@ -3731,6 +3731,40 @@ FishersMethod <- function(pvalues, ...){
 	pchisq( -2 * sum(log(pvalues)), df= (2 * length(pvalues)), lower.tail = FALSE)
 }
 
+#' Geometric Mean
+#'
+#' @description
+#' `Geometric means` are the nth-root of the product of the input values. Commonly used in utility functions.
+#' 
+#' @param x A vector of values.
+#' @param na.rm remove NAs by default.
+#' @return - Geometic mean of x
+#' @export
+#' @family Miscellaneous Stats Helpers
+#' @references - <https://en.wikipedia.org/wiki/Geometric_mean>
+#' @md
+#' @examples
+#' geometic_mean(c(50, 100))
+#'
+#' # For a given sum, geometric mean is maximised with equality
+#' geometic_mean(c(75,75))
+#'
+#' v = c(1, 149); c(sum(v), geometic_mean(v), mean(v), median(v))
+#' # 150.00000  12.20656  75.00000  75.00000
+#' 
+#' # Underlying logic
+#' sqrt(50 * 100)
+#' 
+#' # Alternate form using logs
+#' exp(mean(log(c(50 *100))))
+#' 
+#' # Reciprocal duality
+#' 1/geometic_mean(c(100, 50))
+#' geometic_mean(c(1/100, 1/50))
+geometic_mean = function(x, na.rm = TRUE){
+	exp(sum(log(x[x > 0]), na.rm = na.rm) / length(x))
+}
+
 #' Summarizing functions used in umx_aggregate and for umxAPA
 #'
 #' Miscellaneous functions that are handy in summary and other tasks where you might otherwise have
