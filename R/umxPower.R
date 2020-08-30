@@ -381,7 +381,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		stop("plot not implemented for power - email tim")
 		p = ggplot(aes(x= ps$X_with_Y, y = ps$power), data = ps)
 		p = p + geom_line(color = "red", size = .5, alpha = 0.9)
-		p = p + theme_ipsum()
+		# p = p + theme_ipsum()
 		p = p + ggtitle(paste0("Statistical power to detect", X_with_Y, "at alpha = ", .05))
 		p
 	}
