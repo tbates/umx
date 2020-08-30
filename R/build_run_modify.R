@@ -68,8 +68,8 @@
 
 #' @importFrom cowplot draw_label
 #' @importFrom ggplot2 ggplot qplot
-#' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme theme_ipsum 
-#' @importFrom ggplot2 geom_point geom_segment geom_lineexpand_limits aes 
+#' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
+#' @importFrom ggplot2 geom_point geom_segment geom_line expand_limits aes 
 #' @importFrom ggplot2 ggtitle element_text 
 
 # Used in plot
