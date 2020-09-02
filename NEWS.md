@@ -1,7 +1,7 @@
 # umx 4.1.0
 * July 2020 R 4.0.0
 * CHANGE: `umxRAM` group now independent by default (label style  "path_group" )
-* FIXED: 'umxRAM` group option failing to pass autorun tryHard Merge pull request #134 @khusmann
+* FIXED: 'umxRAM` group option failing to pass autoRun tryHard Merge pull request #134 @khusmann
 * IMPROVED: `umxACE` return group models invisibly #134 @khusmann
 * IMPROVED: `umxACEv` support for covariates enabled.
 * IMPROVED: `umx_score_scale` gains the ability to return a factor score.

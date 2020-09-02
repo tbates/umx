@@ -1881,7 +1881,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' @param baseFolder Folder to search in. Default ("Finder") will use the current front-most Finder window (on MacOS).
 #' Set to NA for a "choose folder" dialog.
 #' @param test Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)
-#' @param ignoreSuffix Whether to ignore (don't search in) the suffix (filetype like .mpg) TRUE.
+#' @param ignoreSuffix Whether to ignore (don't search in) the suffix (file-type like .mpg) TRUE.
 #' @param listPattern A pre-filter for files
 #' @param overwrite Boolean determining if an existing file will be overwritten (Defaults to the safe FALSE)
 #' @family File Functions
@@ -2832,7 +2832,7 @@ umx_msg <- function(x) {
 #'
 #' @param latents list of latent variables (including "one")
 #' @param manifests list of manifest variables
-#' @param preOut existing output string (pasteed in front of this: "" by default).
+#' @param preOut existing output string (pasted in front of this: "" by default).
 #' @return string
 #' @export
 #' @family Graphviz
@@ -6421,8 +6421,8 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @param by.df The ID name in your datafile (default = "PID")
 #' @param by.demog The ID name in the prolific demographics file (default = "participant_id") 
 #' @param vars Vars to keep from demographics file (default =  age & Sex)
-#' @param all.df Whether to keeo all lines of df (default = TRUE)
-#' @param all.demog Whether to keeo all lines of demog (default = FALSE)
+#' @param all.df Whether to keep all lines of df (default = TRUE)
+#' @param all.demog Whether to keep all lines (people) in the demographics file (default = FALSE)
 #' @return - [[data.frame]]
 #' @export
 #' @family Data Functions

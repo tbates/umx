@@ -31,9 +31,9 @@ umx_read_prolific_demog(
 
 \item{vars}{Vars to keep from demographics file (default =  age & Sex)}
 
-\item{all.df}{Whether to keeo all lines of df (default = TRUE)}
+\item{all.df}{Whether to keep all lines of df (default = TRUE)}
 
-\item{all.demog}{Whether to keeo all lines of demog (default = FALSE)}
+\item{all.demog}{Whether to keep all lines (people) in the demographics file (default = FALSE)}
 }
 \value{
 \itemize{

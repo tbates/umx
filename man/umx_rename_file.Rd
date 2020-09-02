@@ -24,7 +24,7 @@ Set to NA for a "choose folder" dialog.}
 
 \item{test}{Boolean determining whether to change files on disk, or just report on what would have happened (Defaults to test = TRUE)}
 
-\item{ignoreSuffix}{Whether to ignore (don't search in) the suffix (filetype like .mpg) TRUE.}
+\item{ignoreSuffix}{Whether to ignore (don't search in) the suffix (file-type like .mpg) TRUE.}
 
 \item{listPattern}{A pre-filter for files}
 

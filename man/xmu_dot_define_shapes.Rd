@@ -11,7 +11,7 @@ xmu_dot_define_shapes(latents, manifests, preOut = "")
 
 \item{manifests}{list of manifest variables}
 
-\item{preOut}{existing output string (pasteed in front of this: "" by default).}
+\item{preOut}{existing output string (pasted in front of this: "" by default).}
 }
 \value{
 string
