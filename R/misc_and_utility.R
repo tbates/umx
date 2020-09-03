@@ -2358,7 +2358,7 @@ print.oddsratio <- function(x, digits = 3, ...) {
 		ORstring = paste0(OR, " CI", 100-(alpha*100), " [", LowerCI, ", ", UpperCI, "]")
 	}
 	cat(sprintf(paste0("%", charLen, "s = ", ORstring), "OR"), fill= TRUE)
-	cat("note: When base rates differ, a given odds ratio can represent very different degrees of association/correlation")
+	cat("polite note: Remember OR is sensitive to base rate: A given odds ratio can represent very different degrees of association/correlation")
     invisible(x)
 }
 
