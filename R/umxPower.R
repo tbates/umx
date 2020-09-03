@@ -334,7 +334,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' }
 #'
-umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=TRUE, silent = TRUE){
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=FALSE, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
 	oldSilent = umx_set_silent(silent, silent = TRUE) # set silent and store existing value
@@ -379,10 +379,10 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 	umx_set_silent(oldSilent) # reinstate
 	if(plot){
 		stop("plot not implemented for power - email tim")
-		p = ggplot(aes(x= ps$X_with_Y, y = ps$power), data = ps)
+		p = ggplot(aes(x= tmp$X_with_Y, y = tmp$power), data = ps)
 		p = p + geom_line(color = "red", size = .5, alpha = 0.9)
 		# p = p + theme_ipsum()
-		p = p + ggtitle(paste0("Statistical power to detect", X_with_Y, "at alpha = ", .05))
+		p = p + ggtitle(paste0("Statistical power to detect", update, "at alpha = ", .05))
 		p
 	}
 	
