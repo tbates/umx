@@ -42,7 +42,7 @@ Other Get and set:
 \code{\link{umx_set_condensed_slots}()},
 \code{\link{umx_set_cores}()},
 \code{\link{umx_set_data_variance_check}()},
-\code{\link{umx_set_mvn_optimization_options}()},
+\code{\link{umx_set_optimization_options}()},
 \code{\link{umx_set_optimizer}()},
 \code{\link{umx_set_plot_format}()},
 \code{\link{umx_set_separator}()},

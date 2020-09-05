@@ -722,11 +722,10 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 #'
 #' `umx_set_mvn_optimization_options` provides access to get and set options affecting optimization.
 #' 
-#' *note*: For `mvnRelEps`,  values between .0001 to .01 are conventional.
-#' Smaller values slow optimization.
+#' *note*: For `mvnRelEps`, values between .0001 to .01 are conventional. Smaller values slow optimization.
 #'
 #' @param opt default returns current values of the options listed. Currently
-#' "mvnRelEps" and "mvnMaxPointsA".
+#' "mvnRelEps", "mvnMaxPointsA", and "Parallel diagnostics".
 #' @param value If not NULL, the value to set the opt to (can be a list of length(opt))
 #' @param silent If TRUE, no message will be printed.
 #' @param model A model for which to set the optimizer. Default (NULL) sets the optimizer globally.
@@ -736,12 +735,14 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
-#' umx_set_mvn_optimization_options() # print the existing state(s)
-#' umx_set_mvn_optimization_options("mvnRelEps") # show this one
+#' # show current value for selected or all options
+#' umx_set_optimization_options() # print the existing state(s)
+#' umx_set_optimization_options("mvnRelEps") 
 #' \dontrun{
-#' umx_set_mvn_optimization_options("mvnRelEps", .01) # update globally
+#' umx_set_optimization_options("mvnRelEps", .01) # update globally
+#' umx_set_optimization_options("Parallel diagnostics", value = "Yes") 
 #' }
-umx_set_mvn_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA"), value = NULL, model = NULL, silent = FALSE) {
+umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA", "Parallel diagnostics"), value = NULL, model = NULL, silent = FALSE) {
 	if(is.null(value)){
 		# print current values for each item in opt
 		for (this in opt) {			
@@ -765,6 +766,7 @@ umx_set_mvn_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA
 				} else {
 					o = mxOption(model, this, value[i])
 				}
+				i = i + 1
 			}
 		}
 	}
