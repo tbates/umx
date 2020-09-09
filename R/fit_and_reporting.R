@@ -2225,7 +2225,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param labels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)
-#' @param splines Whether to allow lines to curve: defaults to TRUE (nb: some models look better with FALSE)
+#' @param splines Whether to allow lines to curve: defaults to "TRUE" (nb: some models look better with "FALSE")
 #' @param min optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.
 #' @param same optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.
 #' @param max optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.
@@ -2267,8 +2267,10 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #' } # end dontrun
 #'
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ...) {
 	# loop over submodels
+	splines = match.arg(splines)
+
 	if(length(x@submodels)){
 		n = 1
 		for (sub in x@submodels) {
@@ -2320,11 +2322,8 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		# =================
 		# = Define shapes =
 		# =================
-		if(splines){
-			preOut = '\tsplines="TRUE";\n\t# Latents\n'
-		} else {
-			preOut = '\tsplines="FALSE";\n\t# Latents\n'
-		}
+		preOut = paste0('\tsplines="', splines , '";\n\t# Latents\n')
+
 		for(var in latents) {
 		   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 		}
