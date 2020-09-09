@@ -2268,9 +2268,10 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' } # end dontrun
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ...) {
-	# loop over submodels
+	if(is.logical(splines)){ splines = ifelse(splines, "TRUE", "FALSE")}
 	splines = match.arg(splines)
 
+	# loop over submodels
 	if(length(x@submodels)){
 		n = 1
 		for (sub in x@submodels) {

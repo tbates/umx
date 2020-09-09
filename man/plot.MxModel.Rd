@@ -16,7 +16,7 @@
   labels = c("none", "labels", "both"),
   resid = c("circle", "line", "none"),
   strip_zero = FALSE,
-  splines = c("TRUE", "FALSE", "compound", "ortho", "polyline", "curved"),
+  splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"),
   min = NULL,
   same = NULL,
   max = NULL,
