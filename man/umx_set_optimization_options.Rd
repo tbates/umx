@@ -27,7 +27,7 @@ umx_set_optimization_options(
 }
 }
 \description{
-\code{umx_set_mvn_optimization_options} provides access to get and set options affecting optimization.
+\code{umx_set_optimization_options} provides access to get and set options affecting optimization.
 }
 \details{
 \emph{note}: For \code{mvnRelEps}, values between .0001 to .01 are conventional. Smaller values slow optimization.

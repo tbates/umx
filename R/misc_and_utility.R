@@ -720,7 +720,7 @@ umx_set_condensed_slots <- function(state = NA, silent = FALSE) {
 
 #' Set options that affect optimization in OpenMx
 #'
-#' `umx_set_mvn_optimization_options` provides access to get and set options affecting optimization.
+#' `umx_set_optimization_options` provides access to get and set options affecting optimization.
 #' 
 #' *note*: For `mvnRelEps`, values between .0001 to .01 are conventional. Smaller values slow optimization.
 #'
