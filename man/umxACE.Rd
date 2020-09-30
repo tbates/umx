@@ -186,7 +186,7 @@ require(umx)
 # = How heritable is height? =
 # ============================
 
-# 1. Height in metres has a tiny variance, and this makes optimising hard.
+# 1. Height in meters has a tiny variance, and this makes optimising hard.
 #    We'll scale it by 10x to make the Optimizer's task easier.
 data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10

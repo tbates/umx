@@ -1224,7 +1224,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # = How heritable is height? =
 #' # ============================
 #' 
-#' # 1. Height in metres has a tiny variance, and this makes optimising hard.
+#' # 1. Height in meters has a tiny variance, and this makes optimising hard.
 #' #    We'll scale it by 10x to make the Optimizer's task easier.
 #' data(twinData) # ?twinData from Australian twins.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
@@ -3801,7 +3801,8 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 
 #' Create the threshold matrix needed for modeling ordinal data.
 #'
-#' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this complex matrix. Big time saver!
+#' High-level helper for ordinal modeling. Creates, labels, and sets smart-starts for this 
+#' complex set set of an algebra and matrices. Big time saver!
 #'
 #' @details We often need to model ordinal data: sex, low-med-hi, depressed/normal, etc., 
 #' A useful conceptual strategy to handle these data is to build a standard model for normally-varying data 
@@ -3841,6 +3842,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @param verbose How much to say about what was done. (defaults to FALSE)
 #' @return - list of thresholds matrix, deviations, lowerOnes
 #' @export
+#' @seealso [mxThresholds()]
 #' @family Advanced Model Building Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -3946,9 +3948,8 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' tmp = umxThresholdMatrix(twinData, selDVs = tvars(selDVs, sep= ""), sep = "", method = "allFree")
 #' all(tmp[[2]]$free)
 #' 
-umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE){
+umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE){
 	# TODO: umxThresholdMatrix: priority A: Move to a more robust way to detect twin than just the sep isn't NULL??
-	# could change parameter name from selDVs to completeVarNames
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	# df = x; sep = NULL; threshMatName = "threshMat"; method = "auto"; l_u_bound = c(NA,NA); verbose = T
 	method = match.arg(method)
@@ -3956,20 +3957,18 @@ umxThresholdMatrix <- function(df, selDVs = NULL, sep = NULL, method = c("Mehta"
 		verbose=FALSE
 	}
 
-	if(is.null(selDVs)){
-		warning("Polite message: For coding safety, when calling umxThresholdMatrix, set selDVs to the list of FULL names of all the variables in the model (AND you MUST include sep if this is a twin model!!)")
+	if(is.null(fullVarNames)){
+		warning("Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames to the list of FULL names of all the variables in the model (AND you MUST include sep if this is a twin model!!)")
 		fullVarNames = names(df)
 		nSib = 1
 	} else if(is.null(sep)){
 		# no sep: Assume this is not family data
-		fullVarNames = selDVs 
 		nSib = 1
 	} else {
 		# sep provided: Assume this is twin data (already expanded... no way currently to tell if sep was intended to build or decompose vars - see TODO above!!)
 		# Set nSib, and break down names into base and suffix if necessary
-		fullVarNames = selDVs
 		msg = paste0("umxThresholdMatrix needs the _FULL_ name of each variable (in addition to the `sep` used to break them down to base names)... 
-			you provided: ", omxQuotes(selDVs))
+			you provided: ", omxQuotes(fullVarNames))
 		umx_check_names(namesNeeded = fullVarNames, data = df, die = TRUE, message = msg)
 		tmp         = umx_explode_twin_names(fullVarNames, sep = sep)
 		baseNames   = tmp$baseNames

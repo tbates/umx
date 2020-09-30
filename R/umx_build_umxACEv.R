@@ -595,9 +595,11 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @examples
 #' require(umx)
 #' data(twinData)
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACEv(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
+#' umxSummary(m1)
+#' umxPlotACEv(m1, std = FALSE) # Don't standardize
 #' plot(m1, std = FALSE) # don't standardize
 umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	# TODO umxPlotACEv: update to matrix version instead of label hunting
@@ -610,7 +612,8 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	if(std){ model = umx_standardize(model) }
 
 	selDVs = xmu_twin_get_var_names(model)
-	nVar   = length(selDVs)/2 # assumes 2 siblings
+	# umx_msg(selDVs)
+	nVar   = length(selDVs) # assumes 2 siblings
 	selDVs = selDVs[1:(nVar)]
 
 	parameterKeyList = omxGetParameters(model) # e.g. expMean_r1c1  A_r1c1  C_r1c1  E_r1c1
@@ -678,7 +681,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 		rankCE, "\n}"
 	)
 	
-	print("?umxPlotACE options: std=, means=, digits=, strip_zero=, file=, min=, max =")
+	print("?umxPlotACEv options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACE
 
