@@ -100,7 +100,7 @@ As can be seen, each phenotype also by default has A, C, and E influences specif
 Features of the model include the ability to include add more one set of independent pathways, different numbers
 of pathways for a, c, and e, as well the ability to use ordinal data, and different fit functions, e.g. WLS.
 
-\strong{note}: The function \code{\link[=umx_set_mvn_optimization_options]{umx_set_mvn_optimization_options()}} allows users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
+\strong{note}: The function \code{\link[=umx_set_optimization_options]{umx_set_optimization_options()}} allows users to see and set \code{mvnRelEps} and \code{mvnMaxPointsA}
 mvnRelEps defaults to .005. For ordinal models, you might find that '0.01' works better.
 }
 \details{

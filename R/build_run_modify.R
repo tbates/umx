@@ -2359,7 +2359,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' Features include the ability to include more than one common pathway, to use ordinal data.
 #' 
-#' **note**: The function [umx_set_mvn_optimization_options()] allows users to see and set `mvnRelEps` and `mvnMaxPointsA`
+#' **note**: The function [umx_set_optimization_options()] allows users to see and set `mvnRelEps` and `mvnMaxPointsA`
 #' mvnRelEps defaults to .005. For ordinal models, you might find that '0.01' works better.
 #' 
 #' @details
@@ -2508,7 +2508,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' 
 #' # umx_set_optimizer("NPSOL")
-#' # umx_set_mvn_optimization_options("mvnRelEps", .01)
+#' # umx_set_optimization_options("mvnRelEps", .01)
 #' m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' m2 = umxModify(m1, regex = "(cs_r[3-5]|c_cp_r[12])", name = "dropC", comp= TRUE)
 #' 
@@ -2684,7 +2684,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' Features of the model include the ability to include add more one set of independent pathways, different numbers
 #' of pathways for a, c, and e, as well the ability to use ordinal data, and different fit functions, e.g. WLS.
 #' 
-#' **note**: The function [umx_set_mvn_optimization_options()] allows users to see and set `mvnRelEps` and `mvnMaxPointsA`
+#' **note**: The function [umx_set_optimization_options()] allows users to see and set `mvnRelEps` and `mvnMaxPointsA`
 #' mvnRelEps defaults to .005. For ordinal models, you might find that '0.01' works better.
 #' 
 #' @details
