@@ -7,9 +7,11 @@
 harmonic_mean(x, weights = NULL, na.rm = c(TRUE, FALSE))
 }
 \arguments{
-\item{x}{A vector of values.}
+\item{x}{A vector of values to take the harmonic mean for}
 
-\item{na.rm}{remove NAs by default.}
+\item{weights}{Optional vector of weights.}
+
+\item{na.rm}{remove NAs (default = TRUE).}
 }
 \value{
 \itemize{
@@ -21,26 +23,16 @@ The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of
 Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio.
 }
 \examples{
-harmonic_mean(c(30, 1000))
-geometric_mean(c(30, 1000))
-mean(c(30, 1000))
+# Harmonic means are suitable for ratios
+tmp = c(33/1, 23/1)
+harmonic_mean(tmp)
 
-# For a given sum, geometric mean is maximised with equality
-harmonic_mean(c(75,75))
+geometric_mean(tmp)
+mean(tmp)
 
-# For a given sum, geometric mean is maximised with equality
-v = c(1, 149); c(sum(v), harmonic_mean(v), mean(v), median(v))
-# 150.00000  12.20656  75.00000  75.00000
+# Example with weights
+harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
 
-# Underlying logic
-sqrt(50 * 100)
-
-# Alternate form using logs
-exp(mean(log(c(50 *100))))
-
-# Reciprocal duality
-1/harmonic_mean(c(100, 50))
-harmonic_mean(c(1/100, 1/50))
 }
 \references{
 \itemize{

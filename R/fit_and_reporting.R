@@ -3773,8 +3773,9 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of the input values.
 #' Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio.
 #' 
-#' @param x A vector of values.
-#' @param na.rm remove NAs by default.
+#' @param x A vector of values to take the harmonic mean for
+#' @param weights Optional vector of weights.
+#' @param na.rm remove NAs (default = TRUE).
 #' @return - Harmonic mean of x
 #' @export
 #' @family Miscellaneous Stats Helpers
