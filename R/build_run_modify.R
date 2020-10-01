@@ -556,9 +556,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	if(show != "deprecated"){
 		message("polite note: In future, replace show with std = T/F/NULL ")
 		if(show =="raw" ){
-			std=FALSE
+			std = FALSE
 		} else {
-			std= TRUE
+			std = TRUE
 		}
 	}
 
@@ -589,7 +589,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		return(model)
 	}
 
-	umx_check(!is.null(data), "stop", "In umxRAM, you must set 'data = '. If you're building a model with no data, use mxModel")
 
 	# umxPath-based model
 	if(typeof(model) == "character"){
@@ -604,7 +603,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 			if(is.na(name)){
 				name = model$name
 			}
-			newModel = mxModel(model, dot.items, name = name)
+			if(is.null(data)){
+				newModel = mxModel(model, dot.items, name = name)
+			} else {
+				if(umx_is_MxData(data)){
+					newModel = mxModel(model, dot.items, data, name = name)
+				} else {
+					stop("Polite note: I don't know how to convert raw data into mxData to update your model - can you please do that for me and try again?")
+					# newModel = mxModel(model, dot.items, data, name = name)
+				}
+			}
 			# if(setValues){
 			# 	newModel = xmuValues(newModel)
 			# }
@@ -614,6 +622,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 			stop("First item must be either an existing model or a name string. You gave me a ", typeof(model))
 		}
 	}
+
+	umx_check(!is.null(data), "stop", "In umxRAM, you must set 'data = '. If you're building a model with no data, use mxModel")
+
 	if(!length(dot.items) > 0){
 		# do we care?
 	}
@@ -3833,13 +3844,14 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' dev_1 "obese_dev1"   "obese_dev1"
 #'
 #' @param df The data being modeled (to allow access to the factor levels and quantiles within these for each variable)
-#' @param selDVs The variable names. Note for twin data, just the base names, which sep will be used to fill out.
+#' @param fullVarNames The variable names. Note for twin data, just the base names, which sep will be used to fill out.
 #' @param sep (e.g. "_T") Required for wide (twin) data. It is used to break the base names our from their numeric suffixes.
 #' @param method How to implement the thresholds: Mehta, (1 free thresh for binary, first two fixed for ordinal) or "allFree"
 #' @param l_u_bound c(NA, NA) by default, you can use this to bound the first (base) threshold.
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
 #' @param threshMatName name of the matrix which is returned. Defaults to "threshMat" - best not to change it.
 #' @param verbose How much to say about what was done. (defaults to FALSE)
+#' @param selDVs deprecated. Use fullVarNames
 #' @return - list of thresholds matrix, deviations, lowerOnes
 #' @export
 #' @seealso [mxThresholds()]
@@ -3948,13 +3960,18 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' tmp = umxThresholdMatrix(twinData, selDVs = tvars(selDVs, sep= ""), sep = "", method = "allFree")
 #' all(tmp[[2]]$free)
 #' 
-umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE){
+umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE, selDVs= "deprecated"){
 	# TODO: umxThresholdMatrix: priority A: Move to a more robust way to detect twin than just the sep isn't NULL??
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	# df = x; sep = NULL; threshMatName = "threshMat"; method = "auto"; l_u_bound = c(NA,NA); verbose = T
 	method = match.arg(method)
 	if(method=="allFree"){
 		verbose=FALSE
+	}
+
+	if(any(selDVs!="deprecated")){
+		message("Polite note: please use fullVarNames instead of selDVs when calling umxThresholdMatrix")
+		fullVarNames= selDVs
 	}
 
 	if(is.null(fullVarNames)){

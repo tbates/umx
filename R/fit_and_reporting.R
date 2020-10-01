@@ -3734,7 +3734,8 @@ FishersMethod <- function(pvalues, ...){
 #' Geometric Mean
 #'
 #' @description
-#' `Geometric means` are the nth-root of the product of the input values. Commonly used in utility functions.
+#' `Geometric means` are the nth-root of the product of the input values.
+#' Common uses include computing economic utility.
 #' 
 #' @param x A vector of values.
 #' @param na.rm remove NAs by default.
@@ -3761,8 +3762,60 @@ FishersMethod <- function(pvalues, ...){
 #' # Reciprocal duality
 #' 1/geometric_mean(c(100, 50))
 #' geometric_mean(c(1/100, 1/50))
-geometric_mean = function(x, na.rm = TRUE){
+geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
+	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)
 	exp(sum(log(x[x > 0]), na.rm = na.rm) / length(x))
+}
+
+
+
+#' Harmonic Mean
+#'
+#' @description
+#' The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of the input values.
+#' Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio.
+#' 
+#' @param x A vector of values.
+#' @param na.rm remove NAs by default.
+#' @return - Harmonic mean of x
+#' @export
+#' @family Miscellaneous Stats Helpers
+#' @references - <https://en.wikipedia.org/wiki/Harmonic_mean>
+#' @md
+#' @examples
+#' harmonic_mean(c(30, 1000))
+#' geometric_mean(c(30, 1000))
+#' mean(c(30, 1000))
+#'
+#' # For a given sum, geometric mean is maximised with equality
+#' harmonic_mean(c(75,75))
+#'
+#' # For a given sum, geometric mean is maximised with equality
+#' v = c(1, 149); c(sum(v), harmonic_mean(v), mean(v), median(v))
+#' # 150.00000  12.20656  75.00000  75.00000
+#' 
+#' # Underlying logic
+#' sqrt(50 * 100)
+#' 
+#' # Alternate form using logs
+#' exp(mean(log(c(50 *100))))
+#' 
+#' # Reciprocal duality
+#' 1/harmonic_mean(c(100, 50))
+#' harmonic_mean(c(1/100, 1/50))
+harmonic_mean = function(x, weights = NULL, na.rm = c(TRUE, FALSE)){
+	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)
+	if(na.rm){
+		x = x[!is.na(x)]
+		weights = weights[!is.na(weights)]
+	}
+	if(is.null(weights)){
+		# reciprocal of the arithmetic mean of the reciprocals of the input values
+		h = 1/mean(1/x)
+	} else {
+		h = sum(weights)/sum(weights/x)
+	}
+	return(h)
 }
 
 #' Summarizing functions used in umx_aggregate and for umxAPA

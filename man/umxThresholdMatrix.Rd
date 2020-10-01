@@ -12,11 +12,14 @@ umxThresholdMatrix(
   threshMatName = "threshMat",
   l_u_bound = c(NA, NA),
   droplevels = FALSE,
-  verbose = FALSE
+  verbose = FALSE,
+  selDVs = "deprecated"
 )
 }
 \arguments{
 \item{df}{The data being modeled (to allow access to the factor levels and quantiles within these for each variable)}
+
+\item{fullVarNames}{The variable names. Note for twin data, just the base names, which sep will be used to fill out.}
 
 \item{sep}{(e.g. "_T") Required for wide (twin) data. It is used to break the base names our from their numeric suffixes.}
 
@@ -30,7 +33,7 @@ umxThresholdMatrix(
 
 \item{verbose}{How much to say about what was done. (defaults to FALSE)}
 
-\item{selDVs}{The variable names. Note for twin data, just the base names, which sep will be used to fill out.}
+\item{selDVs}{deprecated. Use fullVarNames}
 }
 \value{
 \itemize{
