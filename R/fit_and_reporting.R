@@ -3767,8 +3767,6 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 	exp(sum(log(x[x > 0]), na.rm = na.rm) / length(x))
 }
 
-
-
 #' Harmonic Mean
 #'
 #' @description
@@ -3783,26 +3781,16 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' @references - <https://en.wikipedia.org/wiki/Harmonic_mean>
 #' @md
 #' @examples
-#' harmonic_mean(c(30, 1000))
-#' geometric_mean(c(30, 1000))
-#' mean(c(30, 1000))
+#' # Harmonic means are suitable for ratios
+#' tmp = c(33/1, 23/1)
+#' harmonic_mean(tmp)
+#' 
+#' geometric_mean(tmp)
+#' mean(tmp)
 #'
-#' # For a given sum, geometric mean is maximised with equality
-#' harmonic_mean(c(75,75))
-#'
-#' # For a given sum, geometric mean is maximised with equality
-#' v = c(1, 149); c(sum(v), harmonic_mean(v), mean(v), median(v))
-#' # 150.00000  12.20656  75.00000  75.00000
+#' # Example with weights
+#' harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
 #' 
-#' # Underlying logic
-#' sqrt(50 * 100)
-#' 
-#' # Alternate form using logs
-#' exp(mean(log(c(50 *100))))
-#' 
-#' # Reciprocal duality
-#' 1/harmonic_mean(c(100, 50))
-#' harmonic_mean(c(1/100, 1/50))
 harmonic_mean = function(x, weights = NULL, na.rm = c(TRUE, FALSE)){
 	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)
 	if(na.rm){
