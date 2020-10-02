@@ -3854,7 +3854,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @param selDVs deprecated. Use fullVarNames
 #' @return - list of thresholds matrix, deviations, lowerOnes
 #' @export
-#' @seealso [OpenMx::mxThresholds()]
+#' @seealso [OpenMx::mxThreshold()]
 #' @family Advanced Model Building Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
