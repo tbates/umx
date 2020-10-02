@@ -4,7 +4,9 @@
 \name{iqdat}
 \alias{iqdat}
 \title{Twin data: IQ measured longitudinally across 4 ages.}
-\format{A data frame with 562 rows (twin families). Nine measures on each twin.}
+\format{
+A data frame with 562 rows (twin families). Nine measures on each twin.
+}
 \usage{
 data(iqdat)
 }

@@ -4,7 +4,9 @@
 \name{us_skinfold_data}
 \alias{us_skinfold_data}
 \title{Anthropometric data on twins}
-\format{A data frame with 53940 twin families (1 per row) each twin measured on 10 variables.}
+\format{
+A data frame with 53940 twin families (1 per row) each twin measured on 10 variables.
+}
 \usage{
 data(us_skinfold_data)
 }
