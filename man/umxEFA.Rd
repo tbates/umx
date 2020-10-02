@@ -97,26 +97,37 @@ Thanks to @ConorDolan for code implementing the rotation matrix and other sugges
 }
 \examples{
 \dontrun{
-myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+myVars = c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(mtcars[, myVars], factors =   2, rotation = "promax")
+# By default, returns the model
+umx_is_MxModel(m1) # TRUE
+# The loadings are stashed in the model:
 loadings(m1)
 
-# Formula interface in base-R factanal
-m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
-loadings(m2)
-
 # Formula interface in umxEFA
+m2 = umxEFA(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
+loadings(m2)
+
+# base-R factanal Formula interface for comparison
 m2 = factanal(~ mpg + disp + hp + wt + qsec, factors = 2, rotation = "promax", data = mtcars)
 loadings(m2)
 
-# Return a loadings object
+# Return the loadings object
 x = umxEFA(mtcars[, myVars], factors = 2, return = "loadings")
-names(x)
+names(x) # "loadings" "rotmat"
+
+# scores requested, so these will be returned
+x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
+head(x)
+#       g
+# 1  -0.48059346
+# 2  -0.42354000
+# 3  -0.87078110
 
 m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
-x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
+
 }
 }
 \references{

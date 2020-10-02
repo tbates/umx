@@ -47,6 +47,8 @@ oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 Other Miscellaneous Stats Helpers: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
+\code{\link{geometric_mean}()},
+\code{\link{harmonic_mean}()},
 \code{\link{reliability}()},
 \code{\link{umxCov2cor}()},
 \code{\link{umxHetCor}()},

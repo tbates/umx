@@ -50,7 +50,7 @@ m1 = umxRAM("OneFactor", data = demoOneFactor, type= "cov",
 	umxPath(var = "G", fixedAt = 1)
 )
 m1 = mxRun(m1)
-umxSummary(m1, show = "std")
+umxSummary(m1, std = TRUE)
 umxDiagnose(m1)
 }
 \references{

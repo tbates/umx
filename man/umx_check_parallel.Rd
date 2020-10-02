@@ -5,7 +5,7 @@
 \title{Check if OpenMx is using OpenMP, test cores, and get timings}
 \usage{
 umx_check_parallel(
-  nCores = c(1, parallel::detectCores()),
+  nCores = c(1, omxDetectCores()),
   testScript = NULL,
   rowwiseParallel = TRUE,
   nSubjects = 1000
@@ -30,7 +30,8 @@ Shows how many cores you are using, and runs a test script so user can check CPU
 Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz Quad-core i7 desktop.
 
 \tabular{rllll}{
-date       \tab type            \tab Cores   \tab Time              \tab                                 \cr
+2020-08-09 \tab 2.17.3 (OpenMP git)  \tab 1 core  \tab 01 52    \tab     (CSOLNP on laptop)                   \cr
+2020-08-09 \tab 2.17.3 (OpenMP git)  \tab 4 core  \tab 40.184    \tab     (CSOLNP on laptop)                   \cr
 2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 1 core  \tab 01 min, 11 sec    \tab     (NPSOL)                   \cr
 2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 4 core  \tab 00 min, 22 sec    \tab     (NPSOL)                   \cr
 2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 6 core  \tab 00 min, 21 sec    \tab     (NPSOL)                   \cr
@@ -73,7 +74,6 @@ Other Test:
 \code{\link{umx_is_MxMatrix}()},
 \code{\link{umx_is_MxModel}()},
 \code{\link{umx_is_RAM}()},
-\code{\link{umx_is_cov}()},
-\code{\link{umx_is_ordered}()}
+\code{\link{umx_is_cov}()}
 }
 \concept{Test}

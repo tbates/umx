@@ -37,6 +37,7 @@ Options include plotting the raw and standardized graphs separately, or in a com
 You can also set the label for the x axis (xlab), and choose the location of the legend.
 }
 \examples{
+\dontrun{
 require(umx)
 data(twinData)
 twinData$age1 = twinData$age2 = twinData$age
@@ -44,7 +45,10 @@ mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", tryHard="yes")
 plot(m1)
+# Directly call the umx function
 umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+
+}
 }
 \references{
 \itemize{
@@ -62,7 +66,6 @@ umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},

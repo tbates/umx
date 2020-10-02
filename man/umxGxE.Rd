@@ -90,7 +90,23 @@ m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzDa
 \dontrun{
 # Select the data on the fly with data= and zygosity levels
 m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
-# Controlling umxSummary
+
+# ===============================================================
+# = example with Twins having different values of the moderator =
+# ===============================================================
+
+twinData$age1 = twinData$age2 = twinData$age
+tmp = twinData
+tmp$age2 = tmp$age2 +rnorm(n=length(tmp$age2))
+selDVs  = "bmi"
+selDefs = "age"
+mzData = subset(tmp, zygosity == "MZFF")
+dzData = subset(tmp, zygosity == "DZFF")
+m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
+
+# ====================================
+# = Controlling output of umxSummary =
+# ====================================
 umxSummaryGxE(m1)
 umxSummary(m1, location = "topright")
 umxSummary(m1, separateGraphs = TRUE)
@@ -109,13 +125,11 @@ umxReduce(m1)
 }
 }
 \seealso{
-\itemize{
-\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
-}
+\code{\link[=umxGxE_window]{umxGxE_window()}}, \code{\link[=umxReduce]{umxReduce()}}, \code{\link[=umxSummary]{umxSummary()}}
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
@@ -125,9 +139,26 @@ Other Twin Modeling Functions:
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxEbiv}()},
 \code{\link{umxIP}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

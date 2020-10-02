@@ -64,6 +64,7 @@ each with three indicators). Note: For pedagogical reasons, only the model for 1
 To be added.
 }
 \examples{
+\dontrun{
 # ========================
 # = Does Rain cause Mud? =
 # ========================
@@ -95,7 +96,6 @@ a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
 b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 
-\dontrun{
 var1 = paste0("SOS", 1:8)
 var2 = paste0("Vocab", 1:10)
 Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
@@ -120,8 +120,8 @@ In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496–49
 }
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
@@ -131,9 +131,26 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

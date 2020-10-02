@@ -90,34 +90,59 @@ plot(m1, std= TRUE, means= FALSE)
 plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 } # end dontrun
 
-}
-\references{
-\itemize{
-\item \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
-}
+# =================
+# = An ACEv model =
+# =================
+# Not complete
+
+paths = c(
+umxPath(v1m0 = c("A1", 'C1', "E1")),
+umxPath(v1m0 = c("A2", 'C2', "E2")),
+umxPath(v.m0 = c("l1", 'l2')),
+umxPath(v.m. = c("wt", "ht")),
+umxPath(c("A1", 'C1', "E1"), to = "l1", values= .2),
+umxPath(c("A2", 'C2', "E2"), to = "l2", values= .2),
+umxPath(c("l1", 'l2'), to = c("wt", "ht"), values= .2)
+)
+
 }
 \seealso{
 \itemize{
 \item \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=plot.MxModel]{plot.MxModel()}}, \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, \code{\link[=umxPlotIP]{umxPlotIP()}}, \code{\link[=umxPlotGxE]{umxPlotGxE()}}
 }
 
-Other umx S3 functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModel}()}
-
-Other Plotting functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModel}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotACE}()},
+Other Twin Modeling Functions: 
+\code{\link{power.ACE.test}()},
+\code{\link{umxACEcov}()},
+\code{\link{umxACEv}()},
+\code{\link{umxACE}()},
+\code{\link{umxCP}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxDoC}()},
+\code{\link{umxGxE_window}()},
+\code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
+\code{\link{umxIP}()},
 \code{\link{umxPlotCP}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
-\concept{Plotting functions}
-\concept{umx S3 functions}
+\concept{Twin Modeling Functions}

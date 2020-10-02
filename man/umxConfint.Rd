@@ -41,9 +41,10 @@ Implements confidence interval function for umx models.
 Note: By default, requesting new CIs wipes the existing ones.
 To keep these, set wipeExistingRequests = FALSE.
 
+Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
+
 \emph{Note}: \code{\link[=confint]{confint()}} is an OpenMx function which will return SE-based CIs.
 
-Because these can take time to run, by default only CIs already computed will be reported. Set run = TRUE to run new CIs.
 If \code{parm} is empty, and \code{run = FALSE}, a message will alert you to set \code{run = TRUE}.
 }
 \examples{
@@ -59,11 +60,12 @@ m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
 
 m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 
+\dontrun{
 # Add a CI request for "G_to_x1", run, and report. Save with this CI computed
 m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
 
 # Just print out any existing CIs
-umxConfint(m2) 
+umxConfint(m2)
 
 # CI requests added for free matrix parameters. User prompted to set run = TRUE
 m3 = umxConfint(m1, "all")
@@ -78,10 +80,9 @@ tmp = umxConfint(m1, parm = "A", run = TRUE)
 # Wipe existing CIs, add G_to_x1
 tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 
-\dontrun{
-# For some twin models, "all" uses a "smart" mode
+# For some twin models, a "smart" mode is implemented
 # note: only implemented for umxCP so far
-m2 =  umxConfint(m1, "all")
+m2 =  umxConfint(m1, "smart")
 }
 
 }

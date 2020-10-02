@@ -4,10 +4,12 @@
 \alias{umx_rot}
 \title{Rotate a vector}
 \usage{
-umx_rot(vec)
+umx_rot(vec, na.last = FALSE)
 }
 \arguments{
 \item{vec}{vector to rotate}
+
+\item{na.last}{Whether to set the last value to NA (default = FALSE)}
 }
 \value{
 \itemize{
@@ -33,8 +35,9 @@ Other String Functions:
 \code{\link{umx_explode}()},
 \code{\link{umx_grep}()},
 \code{\link{umx_names}()},
-\code{\link{umx_object_as_str}()},
 \code{\link{umx_paste_names}()},
+\code{\link{umx_str_chars}()},
+\code{\link{umx_str_from_object}()},
 \code{\link{umx_trim}()},
 \code{\link{umx}}
 }

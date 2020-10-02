@@ -8,7 +8,7 @@ umxGetParameters(
   inputTarget,
   regex = NA,
   free = NA,
-  fetch = c("values", "free", "lbound", "ubound", "all"),
+  fetch = c("labels", "values", "free", "lbound", "ubound", "all"),
   verbose = FALSE
 )
 }
@@ -19,7 +19,7 @@ umxGetParameters(
 
 \item{free}{A Boolean determining whether to return only free parameters.}
 
-\item{fetch}{What to return: "values" (default) or "free", "lbound", "ubound", or "all"}
+\item{fetch}{What to return: "labels" (default) or "values", "free", "lbound", "ubound", or "all"}
 
 \item{verbose}{How much feedback to give}
 }

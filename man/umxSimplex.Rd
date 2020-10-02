@@ -9,7 +9,7 @@ umxSimplex(
   selDVs,
   dzData,
   mzData,
-  sep = NULL,
+  sep = "_T",
   equateMeans = TRUE,
   dzAr = 0.5,
   dzCr = 1,
@@ -58,7 +58,7 @@ The simplex model provides a powerful tool for theory-based decomposition of gen
 and environmental differences. \code{umxSimplex} makes a 2-group simplex twin model.
 }
 \details{
-\strong{This code is beta} quality: \strong{not} for publication use. It will be completed by Boulder 2020.
+\strong{This code is beta} quality: \strong{not} for publication use.
 
 The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
@@ -132,7 +132,7 @@ umxCompare(m1, m2)
 # = Test a 3 time-point model =
 # =============================
 m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), 
-			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "yes")
+dzData = dzData, mzData = mzData, tryHard = "yes")
 }
 }
 \references{
@@ -142,12 +142,12 @@ m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3),
 }
 \seealso{
 \itemize{
-\item \code{\link{umxACE}()} for more examples of twin modeling, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
+\item \code{\link[=umxACE]{umxACE()}} for more examples of twin modeling, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
@@ -158,8 +158,25 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

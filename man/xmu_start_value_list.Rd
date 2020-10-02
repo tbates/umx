@@ -22,14 +22,14 @@ xmu_start_value_list(mean = 1, sd = NA, n = 1)
 Purpose: Create startvalues for OpenMx paths
 use cases
 umx:::xmuStart_value_list(1)
-umxValues(1) # 1 value, varying around 1, with sd of .1
-umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-umxValues(100, 15)  # 1 start, with mean 100 and sd 15
+xmuValues(1) # 1 value, varying around 1, with sd of .1
+xmuValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+xmuValues(100, 15)  # 1 start, with mean 100 and sd 15
 }
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
-\code{\link{umxTwinMaker}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
@@ -49,16 +49,18 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
 \code{\link{xmu_PadAndPruneForDefVars}()},
-\code{\link{xmu_assemble_twin_supermodel}()},
 \code{\link{xmu_cell_is_on}()},
 \code{\link{xmu_check_levels_identical}()},
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},
@@ -66,11 +68,12 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
+\code{\link{xmu_make_TwinSuperModel}()},
 \code{\link{xmu_make_bin_cont_pair_data}()},
 \code{\link{xmu_make_mxData}()},
-\code{\link{xmu_make_top_twin}()},
 \code{\link{xmu_match.arg}()},
 \code{\link{xmu_name_from_lavaan_str}()},
 \code{\link{xmu_path2twin}()},
@@ -88,6 +91,9 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_SexLim}()},
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_starts}()},
-\code{\link{xmu_twin_check}()}
+\code{\link{xmu_twin_add_WeightMatrices}()},
+\code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}

@@ -59,7 +59,7 @@
 #' # = Parameter labels =
 #' # ====================
 #' 
-#' x = umxLabel(mxMatrix(name="means", "Full", ncol = 2, nrow = 2))
+#' x = xmuLabel(mxMatrix(name="means", "Full", ncol = 2, nrow = 2))
 #' x$labels
 #' 
 #' # ========

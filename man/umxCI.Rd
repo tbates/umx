@@ -11,6 +11,7 @@ umxCI(
   run = c("no", "yes", "if necessary", "show"),
   interval = 0.95,
   type = c("both", "lower", "upper"),
+  regex = NULL,
   showErrorCodes = TRUE
 )
 }
@@ -27,6 +28,8 @@ umxCI(
 \item{interval}{The interval for newly added CIs (defaults to 0.95)}
 
 \item{type}{The type of CI (defaults to "both", options are "lower" and  "upper")}
+
+\item{regex}{Add CIs for labels matching this regular expression (over-rides which)}
 
 \item{showErrorCodes}{Whether to show errors (default == TRUE)}
 }
@@ -64,15 +67,24 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 )
 m1$intervals # none yet - empty list()
 m1 = umxCI(m1)
-m1$intervals # $G_to_x1
+m1$intervals # $G_to_x1...
 m1 = umxCI(m1, remove = TRUE) # remove CIs from the model and return it
+m1$intervals # none again
+
+# Add CIs by name
+parameters(m1, patt="_with_")
+m1 = umxCI(m1, which = "x1_with_x1")
+m1 = umxCI(m1, which = c("x1_with_x1", "x2_with_x2"))
+m1 = umxCI(m1, regex = "x1_with_", run= "yes")
+#           lbound estimate ubound lbound Code ubound Code
+# x1_with_x1  0.036    0.041  0.047           0           0
 
 # ========================
 # = A twin model example =
 # ========================
 data(twinData) 
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = c("bmi1","bmi2"), dzData = dzData, mzData = mzData)
 \dontrun{
 umxCI(m1, run = "show") # show what will be requested
@@ -84,7 +96,7 @@ m1$intervals # none!
 # Show what parameters are available to get CIs on
 umxParameters(m1) 
 # Request a CI by label:
-m1 = umxCI(m1, "a_r1c1", run = "yes")
+m1 = umxCI(m1, which = "a_r1c1", run = "yes")
 }
 }
 \references{

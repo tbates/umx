@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.R
 \name{umxACEcov}
 \alias{umxACEcov}
-\title{Run a Cholesky with covariates, either fixed (def var in the means) or random (in the expected covariance matrix)}
+\title{Run a Cholesky with covariates that are random (in the expected covariance matrix)}
 \usage{
 umxACEcov(
   name = "ACEcov",
@@ -70,19 +70,12 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 }
 \description{
 Often, researchers include covariates in 2-group Cholesky \code{\link[=umxACE]{umxACE()}} twin models.
-A simple method is to regressing covariates from the data (see \code{\link[=umx_residualize]{umx_residualize()}}).
-A second method (supported in umxACEcov) is to include the covariates in the means model. This is the
-'fixed' option for covariates models them in the mean as definition variables.
-On the plus side, there is no distributional assumption for this method. A downside of this approach is that all
-covariates must be non-NA, thus dropping any rows where one or more covariates are missing.
-This is wasteful of data.
-}
-\details{
 The umxACEcov 'random' option models the covariates in the expected covariance matrix, thus allowing
 all data to be preserved. The downside is that this method has a strong assumption
 of multivariate normality. Covariates like age, which are perfectly correlated in twins cannot be used.
 Covariates like sex, which are ordinal, violate the normality assumption.
-
+}
+\details{
 The following figure shows how the ACE model with random covariates appears as a path diagram:
 
 \if{html}{\figure{ACEcovVarianceModel.png}{options: width="50\%" alt="Figure: ACEcovVarianceModel.png"}}
@@ -144,8 +137,8 @@ Educational Achievement Data. \emph{Behavior Genetics}, \strong{46}, 583-95. doi
 }
 \seealso{
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
 \code{\link{umxCP}()},
@@ -155,9 +148,26 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

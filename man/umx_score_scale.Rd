@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_score_scale}
 \alias{umx_score_scale}
-\title{Score a psychometric scale by summing normal and reversed items}
+\title{Score a psychometric scale by summing normal and reversed items.}
 \usage{
 umx_score_scale(
   base = NULL,
@@ -11,9 +11,10 @@ umx_score_scale(
   min = 1,
   max = NULL,
   data = NULL,
-  score = c("totals", "mean", "max"),
+  score = c("total", "mean", "max", "factor"),
   name = NULL,
-  na.rm = FALSE
+  na.rm = FALSE,
+  minManifests = NA
 )
 }
 \arguments{
@@ -29,11 +30,13 @@ umx_score_scale(
 
 \item{data}{The data frame}
 
-\item{score}{Whether to compute the score totals, mean, or max (default = "totals")}
+\item{score}{Whether to compute the score total, mean, max, or factor (default = "total")}
 
 \item{name}{= name of the scale to be returned. Defaults to "base_score"}
 
 \item{na.rm}{Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!}
+
+\item{minManifests}{If score = factor, how many missing items to tolerate for an individual?}
 }
 \value{
 \itemize{
@@ -43,30 +46,61 @@ umx_score_scale(
 \description{
 Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 
-Items must be named on the pattern \<base\>\<n\>, where \code{base} is the string common to all item (column) names.
+Items must be named on the pattern \code{baseN}, where \code{base} is the string common to all item (column) names and N is the item number in the scale.
+
 \code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers.
-To reverse items, the function uses \code{itemMax} is the high score (to compute how to reverse items).
-\code{min} defaults to 1.
+
+To reverse items, the function uses \code{max} and \code{min} as the lowest and highest possible response scores to compute how to reverse items.
+
+\emph{note}: \code{min} defaults to 1.
+}
+\details{
+In the presence of NAs, \code{score= "mean"} and \code{score = "totals"} both return NA unless na.rm = TRUE.
+\code{score = "max"}, ignores NAs no matter what.
 }
 \examples{
 library(psych)
+data(bfi)
 
 # ==============================
 # = Score Agreeableness totals =
 # ==============================
+
+# Handscore subject 1
+# A1(Reversed) + A2 + A3 + A4 + A5 
+#      (6+1)-2 + 4  + 3  + 4  + 4  = 20
 
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
 tmp[1, namez(tmp, "A",ignore.case=FALSE)]
 #  A1 A2 A3 A4 A5  A
 #  2  4  3  4  4  20
 
-# Handscore subject 1
-# A2 + A3 + A4 + A5 + A1(Reversed)
-# 4  + 3  + 4  + 4 + (6+1)-2 = 20
+# =================================================================================
+# = Note: (as of a fix in 2020-05-08) items not reversed in the returned data set =
+# =================================================================================
+tmp = umx_score_scale("A", pos = 1, rev = 2:5, max = 6, data= bfi, name = "A")
+tmp[1, namez(tmp, "A",ignore.case=FALSE)]
+#   A1 A2 A3 A4 A5   A
+#   2   4  3  4  4 = 15
 
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
 tmp$A[1] # subject 1 mean = 4
 
+# ===========================================
+# = How does mean react to a missing value? =
+# ===========================================
+tmpDF = bfi
+tmpDF[1, "A1"] = NA
+tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, name = "A", score="mean")
+tmp$A[1] # NA: (na.rm defaults to FALSE)
+
+tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, 
+     name = "A", score="mean", na.rm=TRUE)
+tmp$A[1] # 3.75
+
+# ===============
+# = Score = max =
+# ===============
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
 tmp$A[1] # subject 1 max = 5 (the reversed item 1)
 

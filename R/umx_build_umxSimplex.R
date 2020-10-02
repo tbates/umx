@@ -3,7 +3,7 @@
 #' The simplex model provides a powerful tool for theory-based decomposition of genetic
 #' and environmental differences. `umxSimplex` makes a 2-group simplex twin model. 
 #' 
-#' **This code is beta** quality: **not** for publication use. It will be completed by Boulder 2020.
+#' **This code is beta** quality: **not** for publication use.
 #' 
 #' @details
 #' 
@@ -77,7 +77,7 @@
 #' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [umxACE()] for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://www.github.com/tbates/umx>
 #' @md
 #' @examples
@@ -97,10 +97,10 @@
 #' # = Test a 3 time-point model =
 #' # =============================
 #' m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), 
-#' 			dzData = dzData, mzData = mzData, sep = "_T", tryHard = "yes")
+#'	dzData = dzData, mzData = mzData, tryHard = "yes")
 #' }
 #' @md
-umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	message("This is beta code - will be ready for Boulder 2020")
 	# TODO: modernize
 	tryHard = match.arg(tryHard)
@@ -214,7 +214,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = NULL, equ
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxSimplex()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md

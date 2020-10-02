@@ -1,4 +1,4 @@
-#   Copyright 2007-2019 Timothy C. Bates
+#   Copyright 2007-2020 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -23,65 +23,23 @@
 #' @param ... the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)
 #' @description 
 #' 
-#' xmuMakeThresholdsMatrices should be replaced with [umxThresholdMatrix()]
+#' `xmuMakeThresholdsMatrices` should be replaced with [umxThresholdMatrix()]
 #' 
-#' umxSaturated should be replaced with [mxRefModels()]
-#' 
-#' umx_grep_labels should be replaced with [umx_grep()]
-#' 
-#' grepSPSS_labels should be replaced with [umx_grep()]
-#' 
-#' umxStart should be replaced with [umxValues()]
-#' 
-#' umxTryHard is deprecated: use [umxRun()] instead
+#' `umxTryHard` is deprecated: use [umxRun()] instead
 #'
-#' genEpi_Jiggle is deprecated: use [umxJiggle()] instead
+#' `stringToMxAlgebra` is deprecated: please use [umx_string_to_algebra()] instead
+#'
+#' `genEpi_EvalQuote` is deprecated: please use [mxEvalByName()] instead
+#'
+#' `umxReportCIs` is deprecated: please use [umxCI()] instead
+#'
+#' replace `umxReportFit` with [umxSummary()]
 #' 
-#' umxLabels Is deprecated: use [umxLabel()] instead
-#' 
-#' umxLabels Is deprecated: use [umxLabel()] instead
-#' 
-#' umxPath is deprecated: Use [mxPath()] and [umxLabel()] instead
-#' 
-#' umxReportFit is deprecated: use [umxSummary()] instead
-#' 
-#' umxGetLabels is deprecated: use [umxGetParameters()] instead
+#' Replace `umxGraph_RAM` with [plot()]
 #'
-#' stringToMxAlgebra is deprecated: please use [umx_string_to_algebra()] instead
+#' Replace `tryHard` with [mxTryHard()]
 #'
-#' genEpi_EvalQuote is deprecated: please use [mxEvalByName()] instead
-#'
-#' umxReportCIs is deprecated: please use [umxCI()] instead
-#'
-#' hasSquareBrackets is deprecated: please use [umx_has_square_brackets()] instead
-#' 
-#' xmuHasSquareBrackets is deprecated: please use [umx_has_square_brackets()] instead
-#' 
-#' replace umxReportFit with [umxSummary()]
-#' 
-#' Replace umxGraph_RAM with [plot()]
-#'
-#' Replace tryHard with [mxTryHard()]
-#'
-#' Replace genEpi_ReRun with [umxModify()]
-#'
-#' Replace mxStart with [umxValues()]
-#'
-#' Replace umxLabeler with [umxLabel()]
-#'
-#' Replace standardizeRAM with [xmu_standardize_RAM()]
-#'
-#' Replace genEpi_equate with [umxEquate()]
-#'
-#' Replace genEpi_Path with [umxPath()]
-#'
-#' Replace genEpiCompare with [umxCompare()]
-#' 
-#' Change col.as.numeric to [umx_as_numeric()]
-#' 
-#' Change cor.prob to [umx_cor()]
-#' 
-#' Change umx_u_APA_pval to [umx_APA_pval()]
+#' Replace `standardizeRAM` with [umx_standardize()]
 #' 
 #'
 #' @name umx-deprecated

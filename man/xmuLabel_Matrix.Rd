@@ -47,11 +47,11 @@ xmuLabel_Matrix(
 This function will label all the free parameters in an \code{\link[=mxMatrix]{mxMatrix()}}
 }
 \details{
-End users should just call \code{\link[=umxLabel]{umxLabel()}}
+Model developers should just call \code{\link[=xmuLabel]{xmuLabel()}}
 
 Purpose: label the cells of an mxMatrix
 Detail: Defaults to the handy "name_r1c1" where name is the matrix name, and r1c1 = row 1 col 1.
-Use case: You should not use this: call umxLabel
+Use case: You should not use this: call xmuLabel
 umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
 umx:::xmuLabel_Matrix(mxMatrix("Full" , 3, 3, values = 1, name = "a", byrow = TRUE));
 umx:::xmuLabel_Matrix(mxMatrix("Symm" , 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
@@ -63,7 +63,7 @@ See also: fit2 = omxSetParameters(fit1, labels = "a_r1c1", free = FALSE, value =
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
-\code{\link{umxTwinMaker}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
@@ -82,16 +82,18 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
 \code{\link{xmu_PadAndPruneForDefVars}()},
-\code{\link{xmu_assemble_twin_supermodel}()},
 \code{\link{xmu_cell_is_on}()},
 \code{\link{xmu_check_levels_identical}()},
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},
@@ -99,11 +101,12 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
+\code{\link{xmu_make_TwinSuperModel}()},
 \code{\link{xmu_make_bin_cont_pair_data}()},
 \code{\link{xmu_make_mxData}()},
-\code{\link{xmu_make_top_twin}()},
 \code{\link{xmu_match.arg}()},
 \code{\link{xmu_name_from_lavaan_str}()},
 \code{\link{xmu_path2twin}()},
@@ -122,6 +125,9 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
-\code{\link{xmu_twin_check}()}
+\code{\link{xmu_twin_add_WeightMatrices}()},
+\code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}

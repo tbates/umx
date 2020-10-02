@@ -47,14 +47,14 @@ power.ACE.test(
 
 \item{tryHard}{Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)}
 
-\item{digits}{Rouding for reporting parameters (default 2)}
+\item{digits}{Rounding for reporting parameters (default 2)}
 
 \item{optimizer}{If set, will switch the optimizer.}
 
 \item{nSim}{Total number of pairs to simulate in the models (default = 4000)}
 }
 \value{
-\code{\link[OpenMx:mxPower]{OpenMx::mxPower()}} or \code{\link[OpenMx:mxPower]{OpenMx::mxPowerSearch()}} object
+\code{\link[OpenMx:mxPower]{OpenMx::mxPower()}} object
 }
 \description{
 \code{power.ACE.test} simulates a univariate ACE model (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins. It
@@ -86,6 +86,7 @@ Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 power.ACE.test(AA = .5, CC = 0, update = "a") 
 # Suggests n = 84 MZ and 94 DZ pairs.
 
+\dontrun{
 # ================================
 # = Show power across range of N =
 # ================================
@@ -104,12 +105,11 @@ power.ACE.test(AA= .5, CC= 0, update = "a")
 # 102 of each of MZ and DZ pairs for 80\% power.
 power.ACE.test(AA= .5, CC= .3, update = "c")
 
-# ========================================
+# ==========================================
 # = Set 'a' to a fixed, but non-zero value =
-# ========================================
+# ==========================================
 
 power.ACE.test(update= "a", value= sqrt(.2), AA= .5, CC= 0)
-# TODO get power.ACE.test to print the value of A in the null model.
 
 # ========================================
 # = Drop More than one parameter (A & C) =
@@ -140,7 +140,6 @@ power.ACE.test(update = "c", AA= .3, CC= .5)
 power.ACE.test(MZ_DZ_ratio= 2/1, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 power.ACE.test(MZ_DZ_ratio= 1/2, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 
-\dontrun{
 
 # =====================================
 # = Compare ncp and empirical methods =
@@ -185,7 +184,7 @@ Power failure: why small sample size undermines the reliability of neuroscience.
 }
 
 Other Twin Modeling Functions: 
-\code{\link{umxACE_cov_fixed}()},
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
@@ -196,9 +195,26 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxReduceACE}()},
+\code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
+\code{\link{umxSummarizeTwinData}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryDoC}()},
+\code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummarySexLim}()},
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

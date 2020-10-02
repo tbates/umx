@@ -54,6 +54,7 @@ GFI, AGFI, PGFI, GH, NFI, PNFI, RFI
 Want more? \emph{Open an Issue} at \href{https://github.com/tbates/umx/issues}{GitHub}.
 }
 \examples{
+\dontrun{
 library(umx)
 data(demoOneFactor)
 latents = c("G")
@@ -73,6 +74,8 @@ m2 = umxRAM("m1", data = demoOneFactor,
 	umxPath(v1m0 = latents)
 )
 umxFitIndices(m1, refModels = mxRefModels(m2, run = TRUE))
+}
+
 }
 \seealso{
 Other Reporting functions: 

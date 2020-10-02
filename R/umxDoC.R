@@ -41,6 +41,7 @@
 #' In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496–499. Eds. Brian S. Everitt & David C. Howell.
 #' @md
 #' @examples
+#' \dontrun{
 #' # ========================
 #' # = Does Rain cause Mud? =
 #' # ========================
@@ -72,7 +73,6 @@
 #' b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 #'
-#' \dontrun{
 #' var1 = paste0("SOS", 1:8)
 #' var2 = paste0("Vocab", 1:10)
 #' Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
@@ -216,11 +216,12 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @references - <https://tbates.github.io>
 #' @return - Optionally return the dot code
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @md
 #' @examples
 #'
+#' \dontrun{
 #' # ================
 #' # = 1. Load Data =
 #' # ================
@@ -245,6 +246,8 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' # ================================================
 #' a2b = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 #' plot(a2b)
+#' 
+#' }
 umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
 	message("beta code")
 	# 1. ✓ draw latents
@@ -299,10 +302,23 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	top     = xmu_dot_rank(out$latents, "^[ace][1-2]$"  , "min")
 	same    = xmu_dot_rank(out$latents, "^[ab]$"        , "same")
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max") # specifics
-	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, same, bottom, out$str, "\n}");
 
+	label = model$name
+	splines = "FALSE"
+
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut,
+		top, 
+		same,
+		bottom,
+		out, "\n}"
+	)
+	
+	print("?umxPlotACE options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	if(format != "current"){ umx_set_plot_format(format) }
-
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
 
@@ -333,10 +349,11 @@ plot.MxModelDoC <- umxPlotDoC
 #' @param ... Other parameters to control model summary.
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Reporting Functions
+#' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @md
 #' @examples
+#' \dontrun{
 #' # ================
 #' # = 1. Load Data =
 #' # ================
@@ -364,6 +381,8 @@ plot.MxModelDoC <- umxPlotDoC
 #' A2B = umxModify(DoC, "a2b", free = TRUE, name = "A2B", comp=TRUE)
 #' B2A = umxModify(DoC, "b2a", free = TRUE, name = "B2A", comp=TRUE)
 #' umxCompare(B2A, A2B)
+#' 
+#' }
 umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, zero.print = ".", ...) {
 	message("Summary support for DoC models not complete yet")
 

@@ -1,4 +1,4 @@
-#   Copyright 2007-2019 Timothy C. Bates
+#   Copyright 2007-2020 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -16,10 +16,149 @@
 # = Fns not used directly by users subject to arbitrary change and deprecation !!  =
 # ==================================================================================
 
+#' Get on or more columns from mzData or regular data.frame
+#'
+#' @description
+#' same effect as `df[, col]` but works for [mxData()] and check the names are present
+#'
+#' @param data mxData or data.frame
+#' @param col the name(s) of the column(s) to extract
+#' @param drop whether to drop the structure of the data.frame when extracting one column
+#' @return - column of data
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' xmu_extract_column(mtcars, "wt")
+#' xmu_extract_column(mxData(mtcars, type = "raw"), "wt")
+#' xmu_extract_column(mxData(mtcars, type = "raw"), "wt", drop=TRUE)
+#' xmu_extract_column(mxData(mtcars, type = "raw"), c("wt", "mpg"))
+xmu_extract_column <- function(data, col, drop= FALSE) {
+	umx_check_names(col, data)
+	if(umx_is_MxData(data)){
+		return(data$observed[ , col, drop = drop])
+	}else{
+		return(data[ , col, drop = drop])
+	}
+}
+
+
+#' Rename a umxMatrix (in a model)
+#'
+#' @description
+#' Rename a umxMatrix, including updating its labels
+#'
+#' @param x A model or matrix
+#' @param matrixName Name of the matrix
+#' @param name The new name
+#' @return - updated matrix or model with updated matrix in it.
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' data(twinData) # ?twinData from Australian twins.
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' m1  = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+#' tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
+#' umx_check(tmp$hello$labels == "hello_r1c1") # new is there
+#' umx_check(is.null(tmp$a))                   # old is gone
+umxRenameMatrix <- function(x, matrixName, name) {
+	if(umx_is_MxModel(x)){
+		# 1. Grab a copy of the matrix
+		tmp = x[[matrixName]]
+		umx_check(!is.null(tmp), "stop", paste0("matrix ", matrixName, " not found (calling umxRenameMatrix in model ", omxQuotes(x$name), ")"))
+		# 2. Update the new copy
+		tmp$name   = name
+		tmp$labels = namez(tmp$labels, pattern = paste0(matrixName), replacement = paste0(name))
+
+		# 2. Delete the old one from the model
+		x = mxModel(x, matrixName, remove= TRUE)
+		# 4. Add back to top
+		x = mxModel(x, tmp)
+		return(x)
+	} else {
+		stop("Haven't implemented umxRenameMatrix for matrices")
+	}
+}
+
+
+#' Not for user: pull variable names from a twin model
+#'
+#' @description
+#' Barely useful, but justified perhaps by centralizing trimming the "_T1" off, and returning just twin 1.
+#'
+#' @param model A model to get the variables from
+#' @param source Whether to access the dimnames of the "expCovMZ" or the names of the "observed" data (will include covariates) 
+#' @param trim Whether to trim the suffix (TRUE)
+#' @param twinOneOnly Whether to return on the names for twin 1 (i.e., unique names)
+#' @return - variable names from twin model
+#' @export
+#' @family xmu internal not for end user
+#' @md
+#' @examples
+#' data(twinData) # ?twinData from Australian twins.
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
+#' selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
+#' umx_check(selVars == "ht")
+#' xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) #"ht1" "ht2"
+#' selVars = xmu_twin_get_var_names(m1, source= "observed", trim= TRUE, twinOneOnly= TRUE)# "ht"
+#' nVar = length(selVars)
+#' umx_check(nVar==1)
+#' 
+xmu_twin_get_var_names <- function(model, source = c("expCovMZ", "observed"), trim = TRUE, twinOneOnly = TRUE) {
+	# TODO if a model has covariates, we should exclude these from the list: they will be included in observed
+	source = match.arg(source)
+	if(source == "observed"){
+		selDVs = dimnames(model$MZ$data$observed)[[2]]
+	} else {
+		# expCovMZ used in umxSummaryACE and also umxSummaryACEcov
+		# It will exclude covariates (data.vars appearing only in the means model)
+		# Note however, matrix often lacks dimnames...
+		selDVs = dimnames(model$top$expCovMZ)[[1]]
+	}
+	if(trim){
+		selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
+	}
+	if(twinOneOnly){
+		selDVs = unique(selDVs)
+	}
+	return(selDVs)
+}
 
 # ==========================
 # = Run and Report helpers =
 # ==========================
+
+#' Upgrade selDvs to SelVars
+#'
+#' @description
+#' Just a helper to go from "wt" to "wt_T1" contingent on sep not being null
+#'
+#' @param selDVs with wt or wt_T1
+#' @param sep either "" etc., or NULL
+#' @param nSib  wideness of data
+#' @return list of wt_T1 wt_T2 etc.
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [umx]
+#' @md
+#' @examples
+#' xmu_twin_upgrade_selDvs2SelVars("wt", NULL, 2)
+#'
+xmu_twin_upgrade_selDvs2SelVars <- function(selDVs, sep, nSib) {
+	if(is.null(sep)){
+		selVars = selDVs
+	}else{
+		selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
+	}
+	return(selVars)
+}
+
 
 #' Show model logLik of model or print comparison table
 #'
@@ -46,6 +185,9 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 			round(-2 * logLik(model), digits = digits))
 		)
 	} else {
+		if(!umx_is_MxModel(comparison)){
+			stop("xmu_show_fit_or_comparison: 'comparison' must be a model (or left NULL). You gave me a ", class(comparison)[[1]])
+		}
 		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = digits)
 	}		
@@ -69,13 +211,13 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param std What to print in summary. "default" = the object's summary default. FALSE = raw, TRUE = standardize, NULL = omit parameter table.
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
-#' @param show = "deprecated"
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [mxTryHard()]
 #' @md
 #' @examples
+#' \dontrun{
 #' m1 = umxRAM("tim", data = mtcars,
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath("wt", with = "disp"),
@@ -95,13 +237,12 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
+#' 
+#' }
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, show = "deprecated") {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
-	if(show != "deprecated"){
-		stop("somehow 'show' got passed to xmu_safe_run_summary: use std=T/F instead")
-	}
 
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -293,32 +434,110 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 	varList = umx_var(data, format = "diag")
 	if(any(varList < minVar)){
 		# At least 1 small
-		message("The variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
-			"You might want to multiply to express the variable in smaller units, e.g. cm instead of metres.\n",
-			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
-		
+		message("Polite note: Variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
+			"You might want to express the variable in smaller units, e.g. multiply to use cm instead of metres.\n",
+			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")		
 	}
 	if(max(varList)/min(varList) > maxVarRatio){
 		# At least 1 big difference in variance
-		message("The variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
-			"You might want multiply to get variables into units on more similar scales.\n",
+		message("Polite note: Variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
+			"You might want scale the less variable manifests to get all variables on similar scales.\n",
 			"Alternatively, umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
-		
+	}
+}
+
+# xmu_twin_print_means(model, digits = digits, report = report)
+xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html")){
+	report = match.arg(report)
+	int = model$top$intercept$values
+	if(!is.null(int)){
+		# means and betas
+		msg = message("Means: Intercept and (raw) betas from model$top$intercept and model$top$meansBetas")
+		row.names(int) = "intercept"
+		b = model$top$meansBetas$values
+		bvals = b[,1:dim(b)[[2]], drop = FALSE]
+		int = rbind(int, cbind(bvals, bvals))
+	} else {
+		int = model$top$expMean$values
+		if(!is.null(int)){
+			# expMeans
+			msg = "Means: Intercepts from model$top$expMean"
+			row.names(int) = "intercept"
+		}else{
+			# no means
+		}
 	}
 
+	if(!is.null(int)){
+		message(msg) 
+		umx_print(int, digits = digits, file=report, append = TRUE, sortableDF = TRUE)
+		# if(report == "html"){
+		# 	# depends on R2HTML::HTML
+		# 	R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE);
+		# 	umx_open("tmp.html")
+		# }
+	}		
+}
+
+#' Drop rows with missing definition variables
+#'
+#' @description
+#' Definition variables can't be missing. This function helps with that.
+#'
+#' @param data The dataframe to check for missing variables
+#' @param selVars The variables to check for missingness
+#' @param sep A sep if this is twin data and selVars are baseNames (default NULL)
+#' @param dropMissingDef Whether to drop the rows, or just stop (TRUE)
+#' @param hint info for message to user ("data")
+#' @return - data with missing rows dropped
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [complete.cases()]
+#' @md
+#' @examples
+#' tmp = mtcars; 
+#' tmp[1,]; tmp[1, "wt"] = NA
+#' tmp = xmu_data_missing(tmp, selVars = "wt", sep= NULL, dropMissingDef= TRUE, hint= "mtcars")
+#' dim(mtcars)
+#' dim(tmp)
+#' 
+#' \dontrun{
+#' tmp = xmu_data_missing(tmp, selVars = "wt", sep= NULL, dropMissingDef= FALSE, hint= "mtcars")
+#' }
+xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hint= "data") {
+	if(!is.null(sep)){
+		selVars = tvars(selVars, sep)
+	}
+	umx_check_names(selVars, data)
+	OK = complete.cases(data[, selVars])
+	if(sum(!OK) == 0){
+		return(data)
+	}else{
+		if(dropMissingDef){
+			message(sum(!OK), " row(s) dropped from ", omxQuotes(hint), " due to missing definition variable(s)")
+			return(data[OK, ])
+		} else {
+			stop(sum(!OK), " rows of ", omxQuotes(hint), " have NA definition variables. Set dropMissingDef = TRUE, or remove these yourself with
+", hint, "[complete.cases(", hint, "[,selVars]),]")
+		}
+	}
 }
 
 #' Upgrade a dataframe to an mxData type.
 #'
 #' @description
-#' `xmu_make_mxData` is an internal function to upgrade a dataframe to `mxData`. It can also drop variables from the dataframe.
-#'
+#' `xmu_make_mxData` is an internal function to upgrade a dataframe to `mxData`. It can also drop variables and rows
+#' from the dataframe.
 #' The most common use will be to give it a dataframe, and get back an `mxData` object of type raw, cov, cor (WLS is just raw).
 #'
 #' @param data A [data.frame()] or [mxData()]
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
+#' @param numObs Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData
+#' @param fullCovs Covariate names if any (NULL = none) These are checked by `dropMissingDef`
+#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
+#' @param use When type = cov or cor, should this drop NAs? (use = "pairwise.complete.obs" by default, with a polite note)
 #' @return - [mxData()]
 #' @export
 #' @family xmu internal not for end user
@@ -327,9 +546,10 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' # =========================
 #' # = Continuous ML example =
 #' # =========================
-#' manVars = c("mpg", "cyl", "disp")
+#' data(mtcars)
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto"); # class(tmp); # "MxDataStatic"
 #' # names(tmp$observed) # "mpg"  "cyl"  "disp"
+#' manVars = c("mpg", "cyl", "disp")
 #' tmp = xmu_make_mxData(data= mtcars, type = "Auto", manifests = manVars); 
 #' tmp$type == "raw" # TRUE
 #'
@@ -348,28 +568,37 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' # ==========================
 #' # = already mxData example =
 #' # ==========================
-#'m1 = umxRAM("auto", data = mxData(mtcars, type = "raw"),
+#' m1 = umxRAM("auto", data = mxData(mtcars, type = "raw"),
 #'	umxPath(var= "wt"),
 #'	umxPath(mean=  "wt")
-#')
+#' )
 #'
 #' # ========================
 #' # = Cov and cor examples =
 #' # ========================
-#' tmp = xmu_make_mxData(data= mtcars, type = "cov")
-#' tmp = xmu_make_mxData(data= mtcars, type = "cor")
+#' tmp = xmu_make_mxData(data= mtcars, type = "cov", manifests = c("mpg", "cyl"))
+#' tmp = xmu_make_mxData(data= mtcars, type = "cor", manifests = c("mpg", "cyl"))
+#' tmp = xmu_make_mxData(data= cov(mtcars[, c("mpg", "cyl")]), 
+#'         type = "cov", manifests = c("mpg", "cyl"), numObs=200)
+#' 
+#' # mxData input examples
+#' tmp = mxData(cov(mtcars[, c("mpg", "cyl")]), type = "cov", numObs= 100)
+#' xmu_make_mxData(data= tmp, type = "cor", manifests = c("mpg", "cyl")) # consume mxData
+#' xmu_make_mxData(data= tmp, type = "cor", manifests = c("mpg"))        # trim existing mxData
+#' xmu_make_mxData(data= tmp, type = "cor") # no manifests specified (use all)
+#' xmu_make_mxData(data= tmp, manifests = c("mpg", "cyl")) # auto
 #'
 #' # =======================
 #' # = Pass string through =
 #' # =======================
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, verbose = FALSE) {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE, use = "pairwise.complete.obs") {
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
 		stop("Did you perhaps just include the data among other functions instead of via data = ?")
-	}else if(class(data) == "character"){
+	}else if(class(data)[[1]] == "character"){
 		# Pass strings through
 		return(data)
 	}
@@ -386,29 +615,44 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			unusedManifests = c()
 			dropColumns = FALSE
 		}
+		namesNeeded = manifests
 	}else{
 		# Manifests specified: mark all others as un-used
 		# remove duplicates (e.g. caused by var in manifests and definition vars lists
-		manifests = unique(manifests)
-		unusedManifests = setdiff(umx_names(data), manifests)
+		namesNeeded = unique(c(manifests, fullCovs))
+		umx_check_names(namesNeeded= namesNeeded, data= data)
+		unusedManifests = setdiff(umx_names(data), namesNeeded)
 		dropColumns = TRUE
 	}
 
-	if (class(data)[1] == "data.frame") {
+	if (class(data)[[1]] == "data.frame") {
+		# check variance, excluding covariates
+		xmu_check_variance(data[, setdiff(namesNeeded, fullCovs), drop = FALSE])
+
 		if(dropColumns){
-			# Trim down the data to include only the requested columns
-			data = data[, manifests, drop = FALSE]
-			xmu_check_variance(data)
+			# Trim down the data to include only the requested columns 
+			data = data[, namesNeeded, drop = FALSE]
 		}
+		if(!is.null(fullCovs)){
+			# drop rows with missing def vars or stop
+			data = xmu_data_missing(data, selVars = fullCovs, dropMissingDef = dropMissingDef)
+		}
+		
 		# Upgrade data.frame to mxData of desired type
 		if(type %in% c("Auto", "FIML")){
 			data = mxData(observed = data, type = "raw")
-		}else	if(type == "cov"){
+		}else if(type == "cov"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
-			data = mxData(observed = cov(data), type = type, numObs = nrow(data))
-		}else	if(type == "cor"){
+			if(use %in% c("everything", "all.obs") && anyNA(data)){
+				message("Polite note: there were some NAs in your data: these rows dropped in making cov matrix")
+			}
+			data = mxData(observed = cov(data, use = use), type = type, numObs = nrow(data))
+		}else if(type == "cor"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
-			data = mxData(observed = cor(data), type = type, numObs = nrow(data))
+			if(use %in% c("everything", "all.obs") && anyNA(data)){
+				message("Polite note: there were some NAs in your data: these rows dropped in making cor matrix")
+			}
+			data = mxData(observed = umxHetCor(data, use = use), type = type, numObs = nrow(data))
 		} else if(type %in% c('WLS', 'DWLS', 'ULS')){
 			if(any(umx_is_ordered(data))){
 				# At least one non-continuous variable
@@ -428,20 +672,28 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		if(dropColumns){
 			if(data$type %in% c("cov", "cor")){
 				# Trim down the data to include only the requested columns				
-				data$observed = umx_reorder(data$observed, manifests)
+				data$observed = umx_reorder(data$observed, namesNeeded)
 			} else if (data$type == "raw"){
-				# Might be worth doing data = mxData(data = data$observed[, manifests], type=‘raw’)
-				data$observed = data$observed[, manifests, drop = FALSE]
-			} else {
-				stop("You offered up an existing mxData and requested dropping unused variables: I can only do this for cov, cor, and raw data")
+				xmu_check_variance(data$observed[, setdiff(namesNeeded, fullCovs), drop = FALSE])
+				# Trim down the data to include only the requested columns 
+				data$observed = data$observed[, namesNeeded, drop = FALSE]
+			}
+			if(!is.null(fullCovs)){
+				# drop rows with missing def vars or stop
+				data$observed = xmu_data_missing(data$observed, selVars = fullCovs, dropMissingDef = dropMissingDef)
 			}
 		}
-	}else if (class(data) == "matrix"){
-		message("You gave me a matrix. umx needs to know the N for cov data. Rather than me assemble it,
-			the easiest and least error-prone method is for you to pass in raw data, or else\n
-			data = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
+	}else if(class(data)[[1]] == "matrix"){
+		if(is.null(numObs)){
+			stop("You gave me a cov matrix. umx needs the numObs for this.\nNote easiest and least error-prone method is
+for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= 'cov', numObs= 100) # (or whatever your N is)")
+		} else {
+			umx_check(is.null(fullCovs), "stop", "covariates make no sense for summary data")
+			# Drop unused variables from matrix
+			data = mxData(umx_reorder(data, manifests), type= type, numObs= numObs)
+		}
 	}else{
-		stop("I was expecting a data frame or mxData  you gave me a ", omxQuotes(class(data)))	
+		stop("I was expecting a data.frame, mxData or cov matrix.\nYou gave me a ", omxQuotes(class(data)))	
 	}
 	if(verbose){
 		msg_str = ""
@@ -458,17 +710,6 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 			}
 		}
 		
-		# TODO clean up notes from old-style WLS
-		# if("preferredFit" %in% names(data)){
-		# 	message("Preferred fit for data = ", data$preferredFit)
-		# } else {
-		# 	message("Data type = ", data$type)
-		# }
-		# if(is.na(data$means)){
-			# message("No means")
-		# } else {
-			# message("Has means")
-		# }
 		message("ManifestVars set to: ", paste(manifests, collapse = ", "), ". ", msg_str)
 	}
 	return(data)
@@ -500,7 +741,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 xmu_name_from_lavaan_str <- function(lavaanString = NULL, name = NA, default = "m1") {
 	# Assume `name` should be used if !is.null(name)
 	if(is.na(name)){
-		# If first line contains a #, assume user wants it to be a name for the model
+		# If first line begins with '#', assume user wants it to be a name for the model
 		line1 = strsplit(lavaanString, split="\\n", perl = TRUE)[[1]][1]
 		if(grepl(x = line1, pattern = "#")){
 			# line1 = "## my model ##"
@@ -739,7 +980,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #' nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 #' i.e., matrix-name + _ + r + rowNumber + c + colNumber
 #' 
-#' End users should just call [umxLabel()]
+#' Model developers should just call [xmuLabel()]
 #' 
 #'
 #' @param model a matrix-style mxModel to label
@@ -779,7 +1020,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #'
 #' This function will label all the free parameters in a RAM [mxModel()]
 #' 
-#' End users should just call [umxLabel()]
+#' Model developers should just call [xmuLabel()]
 #'
 #' @param model a RAM mxModel to label
 #' @param suffix a string to append to each label
@@ -944,11 +1185,11 @@ xmu_simplex_corner <- function(x, start = .9) {
 #'
 #' This function will label all the free parameters in an [mxMatrix()]
 #' 
-#' End users should just call [umxLabel()]
+#' Model developers should just call [xmuLabel()]
 #'
 #' Purpose: label the cells of an mxMatrix
 #' Detail: Defaults to the handy "name_r1c1" where name is the matrix name, and r1c1 = row 1 col 1.
-#' Use case: You should not use this: call umxLabel
+#' Use case: You should not use this: call xmuLabel
 #' umx:::xmuLabel_Matrix(mxMatrix("Lower", 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
 #' umx:::xmuLabel_Matrix(mxMatrix("Full" , 3, 3, values = 1, name = "a", byrow = TRUE));
 #' umx:::xmuLabel_Matrix(mxMatrix("Symm" , 3, 3, values = 1, name = "a", byrow = TRUE), jiggle = .05, boundDiag = NA);
@@ -973,7 +1214,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 #' @export
 xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop = 0, jiggle = NA, boundDiag = NA, suffix = "", verbose = TRUE, labelFixedCells = FALSE, overRideExisting = FALSE) {
 	if (!is(mx_matrix, "MxMatrix")){ # label a mxMatrix
-		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want umxLabel()")
+		stop("I'm sorry Dave... xmuLabel_Matrix works on mxMatrix. You passed an ", class(mx_matrix), ". And why are you calling xmuLabel_Matrix() anyhow? You want xmuLabel()")
 	}
 	type = class(mx_matrix)[1]; # Diag Full  Lower Stand Sdiag Symm Iden Unit Zero
 	nrows = nrow(mx_matrix);
@@ -1026,7 +1267,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 		newLabels[upper.tri(newLabels, diag = FALSE)] <- mirrorLabels[upper.tri(mirrorLabels, diag = FALSE)]
 		diag(newLabels) <- NA
 	} else if(type == "IdenMatrix" | type == "UnitMatrix" | type == "ZeroMatrix") {
-		# message("umxLabel Ignored ", type, " matrix ", mx_matrix$name, " - it has no free values!")
+		# message("xmuLabel Ignored ", type, " matrix ", mx_matrix$name, " - it has no free values!")
 		return(mx_matrix)
 	} else {
 		return(paste0("You tried to set type ", "to ", omxQuotes(type)));
@@ -1128,9 +1369,9 @@ xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
 #' Purpose: Create startvalues for OpenMx paths
 #' use cases
 #' umx:::xmuStart_value_list(1)
-#' umxValues(1) # 1 value, varying around 1, with sd of .1
-#' umxValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
-#' umxValues(100, 15)  # 1 start, with mean 100 and sd 15
+#' xmuValues(1) # 1 value, varying around 1, with sd of .1
+#' xmuValues(1, n=letters) # length(letters) start values, with mean 1 and sd .1
+#' xmuValues(100, 15)  # 1 start, with mean 100 and sd 15
 #'
 #' @param mean the mean start value
 #' @param sd the sd of values
@@ -1152,7 +1393,7 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 
 #' xmuPropagateLabels (not a user function)
 #'
-#' You should be calling [umxLabel()].
+#' You should be calling [xmuLabel()].
 #' This function is called by xmuLabel_MATRIX_Model
 #'
 #' @param model a model to label
@@ -1182,7 +1423,7 @@ xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
 	return(model)
 }
 
-#' xmuMI
+#' xmuMI (not for end users)
 #'
 #' A function to compute and report modifications which would improve fit.
 #' You will probably use [umxMI()] instead
@@ -1409,7 +1650,7 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' @return - legal label string
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [umxLabel()]
+#' @seealso - [xmuLabel()]
 #' @md
 #' @examples
 #' xmu_clean_label("data.var", replace = "_")
@@ -1817,13 +2058,14 @@ xmu_string2path <- function(from) {
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx); data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
 #' m1 = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1.0)
+#' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' m1 = umxCI(m1, run= "yes")
 #' 
@@ -1832,12 +2074,12 @@ xmu_string2path <- function(from) {
 #' xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
 #' 
 #' # prefix (submodel) and suffix (e.g. std) are ignored if not needed
-#' xmu_get_CI(model =m1, "x1_with_x1", prefix = "top.", suffix = "_std")
+#' xmu_get_CI(model= m1, "x1_with_x1", prefix = "top.", suffix = "_std")
 #' 
-#' \dontrun{
 #' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
 #' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
 #' }
+#'
 xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
 	# xmu_get_CI ?
 	# TODO xmu_get_CI: Look for CIs, if not found look for SEs, if not found compute with mxSE (high priority!)

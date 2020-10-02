@@ -39,13 +39,14 @@ Look up CIs for free parameters in a model, and return as APA-formatted text str
 If std are available, then these are reported.
 }
 \examples{
+\dontrun{
 require(umx); data(demoOneFactor)
 manifests = names(demoOneFactor)
 
 m1 = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
-	umxPath(var = "G", fixedAt = 1.0)
+	umxPath(var = "G", fixedAt = 1)
 )
 m1 = umxCI(m1, run= "yes")
 
@@ -54,12 +55,12 @@ xmu_get_CI(model= m1, "x1_with_x1")
 xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
 
 # prefix (submodel) and suffix (e.g. std) are ignored if not needed
-xmu_get_CI(model =m1, "x1_with_x1", prefix = "top.", suffix = "_std")
+xmu_get_CI(model= m1, "x1_with_x1", prefix = "top.", suffix = "_std")
 
-\dontrun{
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
 }
+
 }
 \references{
 \itemize{
@@ -69,7 +70,7 @@ xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = 
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
-\code{\link{umxTwinMaker}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
@@ -89,16 +90,18 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
 \code{\link{xmu_PadAndPruneForDefVars}()},
-\code{\link{xmu_assemble_twin_supermodel}()},
 \code{\link{xmu_cell_is_on}()},
 \code{\link{xmu_check_levels_identical}()},
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},
@@ -106,10 +109,11 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_lavaan_process_group}()},
+\code{\link{xmu_make_TwinSuperModel}()},
 \code{\link{xmu_make_bin_cont_pair_data}()},
 \code{\link{xmu_make_mxData}()},
-\code{\link{xmu_make_top_twin}()},
 \code{\link{xmu_match.arg}()},
 \code{\link{xmu_name_from_lavaan_str}()},
 \code{\link{xmu_path2twin}()},
@@ -128,6 +132,9 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
-\code{\link{xmu_twin_check}()}
+\code{\link{xmu_twin_add_WeightMatrices}()},
+\code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}

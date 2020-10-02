@@ -14,6 +14,7 @@ umxPower(
   method = c("ncp", "empirical"),
   explore = FALSE,
   digits = 2,
+  plot = FALSE,
   silent = TRUE
 )
 }
@@ -35,6 +36,8 @@ umxPower(
 \item{explore}{Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.}
 
 \item{digits}{Rounding precision for reporting result.}
+
+\item{plot}{whether to plot the power.}
 
 \item{silent}{Suppress model runs printouts to console (TRUE)}
 }

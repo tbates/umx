@@ -16,7 +16,7 @@
   labels = c("none", "labels", "both"),
   resid = c("circle", "line", "none"),
   strip_zero = FALSE,
-  splines = TRUE,
+  splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"),
   min = NULL,
   same = NULL,
   max = NULL,
@@ -42,7 +42,7 @@
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = FALSE)}
 
-\item{splines}{Whether to allow lines to curve: defaults to TRUE (nb: some models look better with FALSE)}
+\item{splines}{Whether to allow lines to curve: defaults to "TRUE" (nb: some models look better with "FALSE")}
 
 \item{min}{optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.}
 
@@ -112,12 +112,10 @@ plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 }
 
 Other umx S3 functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()}
+\code{\link{plot.MxLISRELModel}()}
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
 \code{\link{umxPlotACE}()},

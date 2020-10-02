@@ -7,7 +7,7 @@
 \usage{
 umxParameters(
   x,
-  thresh = c("all", "above", "below", "NS", "sig"),
+  thresh = c("all", "above", "below", ">", "<", "NS", "sig"),
   b = NULL,
   pattern = ".*",
   std = FALSE,
@@ -16,7 +16,7 @@ umxParameters(
 
 parameters(
   x,
-  thresh = c("all", "above", "below", "NS", "sig"),
+  thresh = c("all", "above", "below", ">", "<", "NS", "sig"),
   b = NULL,
   pattern = ".*",
   std = FALSE,
@@ -55,10 +55,10 @@ It is on my TODO list to implement filtering by significance, and to add standar
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = mxData(demoOneFactor, type = "raw"),
-	umxPath(from = "G", to = manifests),
-	umxPath(v.m. = manifests),
-	umxPath(v1m0 = "G")
+m1 = umxRAM("OneFactor", data = demoOneFactor,
+	umxPath(from = "G", to = manifests), # factor loadings
+	umxPath(v.m. = manifests),           # residual variance
+	umxPath(v1m0 = "G")                  # standardized latent
 )
 # Parameters with values below .1
 umxParameters(m1, "below", .1)

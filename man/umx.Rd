@@ -5,10 +5,13 @@
 \alias{umx}
 \title{Functions for Structural Equation Modeling in OpenMx}
 \description{
-\code{umx} allows you to more easily build, run, modify, and report structural models, building on the OpenMx package.
-All core functions are organized into families, so they are easier to find (see "families" below under \strong{See Also})
+\code{umx} allows you to more easily build, run, modify, and report structural models,
+building on the OpenMx package.
+All core functions are organized into families, so they are easier to find
+(see "families" below under \strong{See Also})
 
-All the functions have full-featured and well commented examples, some even have \emph{figures}, so use the help, even if you think it won't help :-)
+All the functions have full-featured and well commented examples, some even have \emph{figures},
+so use the help, even if you think it won't help :-)
 Have a look, for example at \code{\link[=umxRAM]{umxRAM()}}
 
 Check out NEWS about new features at \code{news(package = "umx")}
@@ -19,7 +22,7 @@ When I have a vignette, it will be: vignette("umx", package = "umx")
 
 There is a helpful blog at \url{https://tbates.github.io}
 
-If you want the bleeding-edge version:
+(Only) if you want the bleeding-edge version:
 
 devtools::install_github("tbates/umx")
 }
@@ -37,25 +40,28 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 # Ran you model (if autoRun is on), and displayed a brief summary
 # including a comparison if you modified a model...!
 
-# Let's get some journal-ready fit information
+# Let's get some journal-ready fit information for standardized parameters
 
-umxSummary(m1) 
-umxSummary(m1, show = "std") #also display parameter estimates 
+umxSummary(m1, std = TRUE)
 # You can get the coefficients of an MxModel with coef(), just like for lm etc.
 coef(m1)
 
-# But with more control using parameters
-parameters(m1, thresh="above", b=.3, pat = "G_to.*", digits = 3)
+# But with more control using "parameters", for example just the G loadings
+# above .3, rounded to 2-digits.
+parameters(m1, thresh="above", b=.3, pattern = "G_to.*", digits = 2)
 
 # ==================
 # = Model updating =
 # ==================
-# Can we set the loading of X5 on G to zero?
-m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X5", comparison = TRUE)
+# We'll use umxModify to modify the model...
+# Can we set the loading of x1 on G to zero? (nope...)
+m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X1", comparison = TRUE)
 
-
+# note1: umxSetParameters can do this with some additional flexibility
+# note2 "comparison = TRUE" above is the same as calling 
+# umxCompare, like this
 umxCompare(m1, m2)
-# Note: umxSetParameters can do this with some additional flexibility
+
 
 # ========================
 # = Confidence intervals =
@@ -63,13 +69,19 @@ umxCompare(m1, m2)
 
 # umxSummary() will show these, but you can also use the confint() function
 confint(m1) # OpenMx's SE-based confidence intervals
+
+
+\dontrun{
+# umxConfint formats everything you need nicely, and allows adding CIs (with parm=)
 umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 
-# And make a Figure in dot (.gv) format!
+# And make a Figure and open in browser
 plot(m1, std = TRUE)
 
 # If you just want the .dot code returned set file = NA
 plot(m1, std = TRUE, file = NA)
+}
+
 }
 \references{
 \itemize{
@@ -112,7 +124,6 @@ Other Modify or Compare Models:
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
@@ -129,8 +140,8 @@ Other Super-easy helpers:
 \code{\link{umxMendelianRandomization}()}
 
 Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
-\code{\link{umxACE_cov_fixed}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
@@ -141,16 +152,14 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()}
-
-Other Twin Reporting Functions: 
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
@@ -161,7 +170,8 @@ Other Twin Reporting Functions:
 \code{\link{umxSummaryGxE}()},
 \code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()}
+\code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()}
 
 Other Twin Data functions: 
 \code{\link{umx_long2wide}()},
@@ -180,7 +190,7 @@ Other Get and set:
 \code{\link{umx_set_condensed_slots}()},
 \code{\link{umx_set_cores}()},
 \code{\link{umx_set_data_variance_check}()},
-\code{\link{umx_set_mvn_optimization_options}()},
+\code{\link{umx_set_optimization_options}()},
 \code{\link{umx_set_optimizer}()},
 \code{\link{umx_set_plot_file_suffix}()},
 \code{\link{umx_set_plot_format}()},
@@ -193,7 +203,8 @@ Other Check or test:
 \code{\link{umx_is_class}()},
 \code{\link{umx_is_endogenous}()},
 \code{\link{umx_is_exogenous}()},
-\code{\link{umx_is_numeric}()}
+\code{\link{umx_is_numeric}()},
+\code{\link{umx_is_ordered}()}
 
 Other Data Functions: 
 \code{\link{umxFactor}()},
@@ -209,6 +220,7 @@ Other Data Functions:
 \code{\link{umx_polypairwise}()},
 \code{\link{umx_polytriowise}()},
 \code{\link{umx_read_lower}()},
+\code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
 \code{\link{umx_reorder}()},
 \code{\link{umx_select_valid}()},
@@ -228,14 +240,17 @@ Other String Functions:
 \code{\link{umx_explode}()},
 \code{\link{umx_grep}()},
 \code{\link{umx_names}()},
-\code{\link{umx_object_as_str}()},
 \code{\link{umx_paste_names}()},
 \code{\link{umx_rot}()},
+\code{\link{umx_str_chars}()},
+\code{\link{umx_str_from_object}()},
 \code{\link{umx_trim}()}
 
 Other Miscellaneous Stats Helpers: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
+\code{\link{geometric_mean}()},
+\code{\link{harmonic_mean}()},
 \code{\link{oddsratio}()},
 \code{\link{reliability}()},
 \code{\link{umxCov2cor}()},
@@ -273,13 +288,13 @@ Other datasets:
 
 Other Advanced Model Building Functions: 
 \code{\link{umxJiggle}()},
-\code{\link{umxLabel}()},
 \code{\link{umxThresholdMatrix}()},
-\code{\link{umxValues}()}
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
-\code{\link{umxTwinMaker}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
@@ -298,16 +313,18 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
 \code{\link{xmu_PadAndPruneForDefVars}()},
-\code{\link{xmu_assemble_twin_supermodel}()},
 \code{\link{xmu_cell_is_on}()},
 \code{\link{xmu_check_levels_identical}()},
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},
@@ -315,11 +332,12 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
+\code{\link{xmu_make_TwinSuperModel}()},
 \code{\link{xmu_make_bin_cont_pair_data}()},
 \code{\link{xmu_make_mxData}()},
-\code{\link{xmu_make_top_twin}()},
 \code{\link{xmu_match.arg}()},
 \code{\link{xmu_name_from_lavaan_str}()},
 \code{\link{xmu_path2twin}()},
@@ -338,7 +356,10 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
 \code{\link{xmu_starts}()},
-\code{\link{xmu_twin_check}()}
+\code{\link{xmu_twin_add_WeightMatrices}()},
+\code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{Advanced Model Building Functions}
 \concept{Check or test}
@@ -356,7 +377,6 @@ Other xmu internal not for end user:
 \concept{Teaching and testing Functions}
 \concept{Twin Data functions}
 \concept{Twin Modeling Functions}
-\concept{Twin Reporting Functions}
 \concept{datasets}
 \concept{xmu internal not for end user}
 \concept{zAdvanced Helpers}

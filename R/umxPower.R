@@ -33,10 +33,10 @@
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
 #' @param tryHard Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)
-#' @param digits Rouding for reporting parameters (default 2)
+#' @param digits Rounding for reporting parameters (default 2)
 #' @param optimizer If set, will switch the optimizer.
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
-#' @return [OpenMx::mxPower()] or [OpenMx::mxPowerSearch()] object
+#' @return [OpenMx::mxPower()] object
 #' @family Twin Modeling Functions
 #' @seealso - [OpenMx::mxPower()]
 #' @references * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
@@ -55,6 +55,7 @@
 #' power.ACE.test(AA = .5, CC = 0, update = "a") 
 #' # Suggests n = 84 MZ and 94 DZ pairs.
 #'
+#' \dontrun{
 #' # ================================
 #' # = Show power across range of N =
 #' # ================================
@@ -73,12 +74,11 @@
 #' # 102 of each of MZ and DZ pairs for 80% power.
 #' power.ACE.test(AA= .5, CC= .3, update = "c")
 #'
-#' # ========================================
+#' # ==========================================
 #' # = Set 'a' to a fixed, but non-zero value =
-#' # ========================================
+#' # ==========================================
 #' 
 #' power.ACE.test(update= "a", value= sqrt(.2), AA= .5, CC= 0)
-#' # TODO get power.ACE.test to print the value of A in the null model.
 #'
 #' # ========================================
 #' # = Drop More than one parameter (A & C) =
@@ -109,7 +109,6 @@
 #' power.ACE.test(MZ_DZ_ratio= 2/1, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 #' power.ACE.test(MZ_DZ_ratio= 1/2, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 #'
-#' \dontrun{
 #' 
 #' # =====================================
 #' # = Compare ncp and empirical methods =
@@ -149,7 +148,6 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	#         return(0)
 	#     }
 	# }
-	# message("This is beta code: I likely will alter the interface!")
 	method  = match.arg(method)
 	tryHard = match.arg(tryHard)
 	update  = match.arg(update)
@@ -212,9 +210,12 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		pairsUsed = paste0(round(nFound * pMZ), " MZ and ",round(nFound * (1 - pMZ)), " DZ pairs")
 		if(!is.null(n)){
 			empiricalPower = attributes(tmp)$detail$power
-			message(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect a parameter of ", round(paramSize, 3)))
+			update = "a_r1c1"
+			paramSize = AA
+			
+			message(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect an ", update, " (variance) parameter of ", round(paramSize, 3)))
 		} else {
-			message(paste0("For ", round(power * 100, digits), "% power, you need ", pairsUsed))
+			message(paste0("For ", round(power * 100, digits), "% power to detect ", omxQuotes(update), " of size ", paramSize, ", you need ", pairsUsed))
 		}
 	}
 	return(tmp)
@@ -246,6 +247,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #' @param sig.level Default = .05
 #' @param value Value of dropped parameter (default = 0)
 #' @param method "ncp" (default) or "empirical"
+#' @param plot whether to plot the power.
 #' @param explore Whether to tabulate the range of n or effect size (if n specified). Default = FALSE.
 #' @param digits Rounding precision for reporting result.
 #' @param silent Suppress model runs printouts to console (TRUE)
@@ -332,7 +334,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' }
 #'
-umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, silent = TRUE){
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=FALSE, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
 	oldSilent = umx_set_silent(silent, silent = TRUE) # set silent and store existing value
@@ -371,10 +373,19 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		}
 		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
 		message("\n#####################\n# Estimating ", beingEstimated, " #\n#####################\n")
-		tmp = mxPower(trueModel, nullModel, n= n, power=power, sig.level = sig.level, method= method)	
+		tmp = mxPower(trueModel, nullModel, n = n, power = power, sig.level = sig.level, method = method)
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, digits)
 	}
 	umx_set_silent(oldSilent) # reinstate
+	if(plot){
+		stop("plot not implemented for power - email tim")
+		# p = ggplot(aes(x= tmp$X_with_Y, y = tmp$power), data = ps)
+		# p = p + geom_line(color = "red", size = .5, alpha = 0.9)
+		# p = p + theme_ipsum()
+		# p = p + ggtitle(paste0("Statistical power to detect", update, "at alpha = ", .05))
+		# p
+	}
+	
 	return(tmp)
 }
 

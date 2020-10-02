@@ -125,13 +125,25 @@ umxRAM2Lav <- function(model) {
 #'
 #' Lavaan is well documented. For quick reference, some common symbols in lavaan strings are:
 #'
+#'
+#' \tabular{rllll}{
+#'	\tab lav     \tab Mplus   \tab sem   \tab Action                          	                      \cr
+#'	\tab  A =~ B \tab A by B  \tab       \tab A (Latent) is measured by B	                          \cr
+#'	\tab  A ~  B \tab A on B  \tab A<- A \tab A "is regressed on" (<- ) B   	                      \cr
+#'	\tab  A ~~ B \tab A with B\tab A<->B \tab A covaries with B	                                      \cr
+#'	\tab  A ~  1 \tab \[A\]    \tab       \tab A has mean	                                          \cr
+#'	\tab  A := B \tab         \tab       \tab A is defined by B (see [OpenMx::mxAlgebra()])	          \cr
+#'	\tab  A == B \tab         \tab       \tab A is constrained == to B (see [OpenMx::mxConstraint()] )
+#' }
+#'
+#'
 #' \tabular{rlll}{
-#'   \tab "=~"   \tab lhs (Latent) is manifested by rhs\cr
-#'   \tab "~"    \tab lhs "is regressed on" (<- ) rhs\cr
-#'   \tab "~~"   \tab lhs covaries with rhs\cr
-#'   \tab "~ 1"  \tab lhs has mean\cr
-#'   \tab ":="   \tab lhs is defined by rhs (see [OpenMx::mxAlgebra()])\cr
-#'   \tab "=="   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
+#'   \tab `=~`   \tab lhs (Latent) is manifested by rhs                   \cr
+#'   \tab `~`    \tab lhs "is regressed on" (<- ) rhs                     \cr
+#'   \tab `~~`   \tab lhs covaries with rhs                               \cr
+#'   \tab `~ 1`  \tab lhs has mean                                        \cr
+#'   \tab `:=`   \tab lhs is defined by rhs (see [OpenMx::mxAlgebra()])   \cr
+#'   \tab `==`   \tab lhs is constrained == to rhs (see [OpenMx::mxConstraint()] )
 #' }
 #'
 #' **Naming of multiple groups**
@@ -239,9 +251,9 @@ umxRAM2Lav <- function(model) {
 #'
 #' tmp = umxLav2RAM(lav)
 #'
-#' namedStr = " 	# my name
+#' namedModel = " 	# my name
 #' 	y ~x"
-#' m1 = umxRAM(namedStr) 
+#' m1 = umxRAM(namedModel) 
 #'
 #' # Formative factor
 #' # lavaanify("f5 <~ z1 + z2 + z3 + z4")
@@ -249,7 +261,8 @@ umxRAM2Lav <- function(model) {
 #'
 umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NULL, name = NA, 
 	lavaanMode = c("sem", "lavaan"), std.lv = FALSE, suffix = "", comparison = TRUE, 
-	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), 
+	type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), 
+	allContinuousMethod = c("cumulants", "marginals"), 
 	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), 
 	verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE){
 	# TODO: make groups independent
@@ -260,7 +273,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	tryHard             = match.arg(tryHard)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	lavaanMode          = match.arg(lavaanMode)
-	
+	umx_check(is.character(model), "stop", "model should be a lavaan model string. You gave me a ", omxQuotes(class(model)))
 	# =~  =  L  -> A
 	# ~   =  y <-  x
 	# ~~  =  A <-> B
@@ -405,7 +418,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	tmp   = xmu_lavaan_process_group(algebraRows, groupNum = 0)
 	model = mxModel(model, tmp$plist)
 
-	if (class(data) == "character"){
+	if (class(data)[[1]] == "character"){
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		autoPlot = umx_set_auto_plot(silent = TRUE)
 		if(autoRun && autoPlot){

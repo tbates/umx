@@ -75,6 +75,18 @@ Finally, you can pass in previous output and new paths will be concatenated to t
 }
 \examples{
 
+# test with a 1 * 1
+a_cp = umxMatrix("a_cp", "Lower", 1, 1, free = TRUE, values = pi)
+out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "both")
+cat(out$str) # a_cp -> a_cp [dir = both label="2"];
+out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "forward",
+	fromLabel = "fromMe", toLabel = "toYou", 
+	fromType  = "latent", toType  = "manifest", digits = 3, SEstyle = TRUE
+	)
+cat(out$str) # fromMe -> toYou [dir = forward label="3.142"];
+cat(out$latent) # fromMe
+cat(out$manifest) # toYou
+
 # Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
 a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
 
@@ -111,6 +123,18 @@ out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag",
 		toLabel= c('a','b','c'), fromType= "latent");
 umx_msg(out$latents)
 
+
+# ========================
+# = Label a means matrix =
+# ========================
+
+tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
+out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
+	fromLabel= "one", toLabel= c("v1", "v2")
+)
+cat(out$str)
+
+\dontrun{
 # ==============================================
 # = Get a string which includes CI information =
 # ==============================================
@@ -126,15 +150,7 @@ out = xmu_dot_mat2dot(m1$A, from = "cols", cells = "any",
       toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
 umx_msg(out$str); umx_msg(out$latents)
 
-# ========================
-# = Label a means matrix =
-# ========================
-
-tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
-out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
-	fromLabel= "one", toLabel= c("v1", "v2")
-)
-cat(out$str)
+}
 
 }
 \seealso{

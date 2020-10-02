@@ -54,6 +54,7 @@ See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary
 }
 \examples{
 
+\dontrun{
 # ================
 # = 1. Load Data =
 # ================
@@ -78,6 +79,8 @@ DoC = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRU
 # ================================================
 a2b = umxModify(DoC, "a2b", free = TRUE, name = "A2B")
 plot(a2b)
+
+}
 }
 \references{
 \itemize{
@@ -89,11 +92,26 @@ plot(a2b)
 \item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxSummary.MxModelDoC]{umxSummary.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Twin Reporting Functions: 
+Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{power.ACE.test}()},
+\code{\link{umxACEcov}()},
+\code{\link{umxACEv}()},
+\code{\link{umxACE}()},
+\code{\link{umxCP}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxDoC}()},
+\code{\link{umxGxE_window}()},
+\code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
+\code{\link{umxIP}()},
 \code{\link{umxPlotCP}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
@@ -105,6 +123,7 @@ Other Twin Reporting Functions:
 \code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
-\concept{Twin Reporting Functions}
+\concept{Twin Modeling Functions}

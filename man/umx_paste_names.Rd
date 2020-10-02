@@ -69,7 +69,8 @@ varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
 umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 # For quick-typing, tvars is an alias for umx_paste_names
-tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+tvars(c("IQ", "C"), cov = "age", sep = "_T", prefix= "mean_")
+tvars("IQ")
 }
 \references{
 \itemize{
@@ -77,15 +78,16 @@ tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 }
 }
 \seealso{
-\code{\link[=namez]{namez()}}
+\code{\link[=namez]{namez()}} \code{\link[=umx_explode_twin_names]{umx_explode_twin_names()}}
 
 Other String Functions: 
 \code{\link{umx_explode_twin_names}()},
 \code{\link{umx_explode}()},
 \code{\link{umx_grep}()},
 \code{\link{umx_names}()},
-\code{\link{umx_object_as_str}()},
 \code{\link{umx_rot}()},
+\code{\link{umx_str_chars}()},
+\code{\link{umx_str_from_object}()},
 \code{\link{umx_trim}()},
 \code{\link{umx}}
 }

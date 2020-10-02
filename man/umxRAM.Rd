@@ -27,7 +27,7 @@ umxRAM(
   std.lv = FALSE,
   lavaanMode = c("sem", "lavaan"),
   printTab = FALSE,
-  show = c("deprecated", "raw", "std")
+  show = "deprecated"
 )
 }
 \arguments{
@@ -41,7 +41,7 @@ umxRAM(
 
 \item{group}{(optional) Column name to use for a multi-group model (default = NULL)}
 
-\item{group.equal}{In multi-group models, what to equate across groups (default = NULL)}
+\item{group.equal}{In multi-group models, what to equate across groups (default = NULL: all free)}
 
 \item{suffix}{String to append to each label (useful if model will be used in a multi-group model)}
 
@@ -85,7 +85,7 @@ umxRAM(
 \description{
 \code{umxRAM} expedites creation of structural equation models, still without doing invisible things to the model. It
 supports \code{\link[=umxPath]{umxPath()}} but also lavaan-style string specification of models: lavaan's scripting language has become a
-lingua franca for SEM books, so supporting across apps makes a lot of sense.
+lingua franca for SEM books, so supporting this improves science learning.
 
 Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
 using the widely used \code{mtcars} data set.\if{html}{\out{<div class="Rsplus">}}\preformatted{m1 = umxRAM("tim", data = mtcars,
@@ -95,22 +95,24 @@ using the widely used \code{mtcars} data set.\if{html}{\out{<div class="Rsplus">
 )
 }\if{html}{\out{</div>}}
 
-As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} just wraps these paths up, takes the \verb{data =} input, and
-then internally sets up all the labels and start values for the model, runs it, displays a summary, and a plot!
+As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} wraps these paths up, takes the \verb{data =} input, and
+then internally sets up all the labels and start values for the model, runs it, and calls \code{\link[=umxSummary]{umxSummary()}}, and \code{\link[=plot.MxModel]{plot.MxModel()}}.
 
 Try it, or one of the several models in the examples at the bottom of this page.
 
 A common error is to include data in the main list, a bit like
-saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = dd)}.
+saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
 
-\strong{nb}: Because it uses the presence of a variable in the data to detect if a variable is latent or not, umxRAM needs data at build time.
+\strong{nb}: Because it uses the presence of a variable in the data to detect if a variable is latent or not, \code{umxRAM} needs data at build time.
 
 \strong{String Syntax}
 
-Here's the same example using lavaan syntax (for more examples, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\if{html}{\out{<div class="Rsplus">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
+Here is an example using lavaan syntax (for more, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\if{html}{\out{<div class="Rsplus">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
 }\if{html}{\out{</div>}}
 
-\emph{note}: If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
+\strong{Sketch mode}
+
+If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
 a simple vector of manifest names to work with.\if{html}{\out{<div class="Rsplus">}}\preformatted{m1 = umxRAM("sketch", data = c("A", "B", "C"),
 	umxPath("A", to = "B"),
 	umxPath("B", with = "C"),
@@ -142,18 +144,17 @@ umxRAM differs from mxModel in the following ways:
 \item Supports a subset of lavaan string input.
 }
 
-\strong{Comparison with other software}
-
 \strong{Start values}. Currently, manifest variable means are set to the observed means, residual variances are set to 80\%
 of the observed variance of each variable,
 and single-headed paths are set to a positive starting value (currently .9).
 \emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for \code{\link[=umxRAM]{umxRAM()}}.
 
+\strong{Comparison with other software}
+
 \strong{Black-box software, defaults, and automatic addition of paths}.
-Some SEM software does a lot of behind-the-scenes defaulting and path addition. I've explored
-similar features (like auto-creating error and exogenous variances using \code{endog.variances = TRUE}
-and \code{exog.variances = TRUE}). Also identification helpers like \code{fix = "latents"}
-and \code{fix = "firstLoadings"}. If you want this, I'd say use \code{umxRAM} with lavaan string input.
+
+Some SEM software does a lot of behind-the-scenes defaulting and path addition.
+If you want this, I'd say use \code{umxRAM} with lavaan string input.
 }
 \examples{
 
@@ -181,6 +182,7 @@ umxSummary(m1, std=TRUE)
 # |b1             |         0.89|   0.04|0.89 [0.81, 0.96]    |
 # |disp_with_disp |         1.00|   0.00|1 [1, 1]             |
 
+\dontrun{
 # 3. Of course you can plot the model
 plot(m1)
 plot(m1, std=TRUE, means=FALSE)
@@ -197,12 +199,13 @@ m1 = umxRAM(data = mtcars, "#modelName
 # = A multi-group model =
 # =======================
 
+mtcars$litres = mtcars$disp/61.02
 m1 = umxRAM("tim", data = mtcars, group = "am",
 	umxPath(c("wt", "litres"), to = "mpg"),
 	umxPath("wt", with = "litres"),
 	umxPath(v.m. = c("wt", "litres", "mpg"))
 )
-# In this model, all parameters are equated across the two groups.
+# In this model, all parameters are free across the two groups.
 
 # ====================================
 # = A cov model, with steps laid out =
@@ -227,6 +230,7 @@ m1 = umxRAM("tim", data = tmp, type="cov",
 # For convenience, list up the manifests you will be using
 
 selVars = c("mpg", "wt", "disp")
+tmp = mtcars; tmp$disp= tmp$disp *.016
 myCov = mxData(cov(tmp[, selVars]), type = "cov", numObs = nrow(mtcars) )
 
 m1 = umxRAM("tim", data = myCov,
@@ -257,7 +261,6 @@ m1 = umxRAM("tim", data = myCov,
      umxPath(var = c("wt", "disp", "mpg"))
  )
 
-\dontrun{
 
 # ===============================
 # = Using umxRAM in Sketch mode =
@@ -281,14 +284,12 @@ m1 = umxRAM("CFA_sketch", data = paste0("x", 1:4),
 	umxPath(var = paste0("x", 1:4)),
 	umxPath(v1m0 = "g")
 )
-}
-
 
 # =================================================
 # = This is an example of using your own labels:  =
 #   umxRAM will not over-ride them                =
 # =================================================
-m1 = umxRAM("tim", data = myCov,
+m1 = umxRAM("tim", data = mtcars, type="cov",
 	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath(cov = c("wt", "disp"), labels = "b1"),
 	umxPath(var = c("wt", "disp", "mpg"))
@@ -300,6 +301,8 @@ m1$S$labels
 # wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 # disp "disp_with_mpg" "b1"          "disp_with_disp"
 parameters(m1)
+
+}
 
 }
 \references{

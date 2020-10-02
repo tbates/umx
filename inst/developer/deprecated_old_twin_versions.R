@@ -998,7 +998,7 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 #' mold = umxCPold("old", selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzData)
 #' umxCompare(mold, mold)
 #' umxSummary(mold)
-#' umxParameters(mold, patt = "^c")
+#' parameters(mold, patt = "^c")
 #' m2 = umxModify(mold, regex = "(cs_.*$)|(c_cp_)", name = "dropC")
 #' umxSummaryCP(m2, comparison = mold, file = NA)
 #' umxCompare(m1, m2)

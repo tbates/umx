@@ -14,6 +14,7 @@ umx_make_TwinData(
   varNames = "var",
   MZr = NULL,
   DZr = MZr,
+  dzAr = 0.5,
   scale = FALSE,
   mean = 0,
   sd = 1,
@@ -43,7 +44,9 @@ umx_make_TwinData(
 
 \item{MZr}{If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.}
 
-\item{DZr}{NULL}
+\item{DZr}{Set to return dataframe using MZr and Dzr (Default NULL)}
+
+\item{dzAr}{DZ Ar (default .5)}
 
 \item{scale}{Whether to scale output to var=1 mean=0 (Default FALSE)}
 
@@ -252,6 +255,7 @@ Other Data Functions:
 \code{\link{umx_polypairwise}()},
 \code{\link{umx_polytriowise}()},
 \code{\link{umx_read_lower}()},
+\code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
 \code{\link{umx_reorder}()},
 \code{\link{umx_select_valid}()},

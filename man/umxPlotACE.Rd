@@ -12,6 +12,7 @@ umxPlotACE(
   means = FALSE,
   std = TRUE,
   strip_zero = TRUE,
+  showFixed = FALSE,
   ...
 )
 }
@@ -28,6 +29,8 @@ umxPlotACE(
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
+\item{showFixed}{Whether too draw fixed parameters.}
+
 \item{...}{Additional (optional) parameters}
 }
 \value{
@@ -41,10 +44,9 @@ plot method for \code{\link[=umxACE]{umxACE()}} models. Make a graphical display
 \examples{
 require(umx)
 data(twinData)
-selDVs = "bmi"
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
-m1 = umxACE("plotACEexample", selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
+m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
 }
 \references{
@@ -63,7 +65,6 @@ plot(m1, std = FALSE) # don't standardize
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},

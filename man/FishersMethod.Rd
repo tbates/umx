@@ -4,10 +4,12 @@
 \alias{FishersMethod}
 \title{Fishers Method of combining p-values.}
 \usage{
-FishersMethod(pvalues)
+FishersMethod(pvalues, ...)
 }
 \arguments{
 \item{pvalues}{A vector of p-values, e.g. c(.041, .183)}
+
+\item{...}{More p-values if you want to offer them up one by one instead of wrapping in a vector for \code{pvalues}}
 }
 \value{
 \itemize{
@@ -25,13 +27,16 @@ FishersMethod(c(.041, .378))
 \itemize{
 \item Fisher, R.A. (1925). \emph{Statistical Methods for Research Workers}. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
 Fisher, R. A (1948). "Questions and answers #14". \emph{The American Statistician}. \strong{2}: 30–31. doi:10.2307/2681650. JSTOR 2681650.
-See also Stouffer's method for combining Z scores, which allow weighting.
-Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton #' University Press.
+See also Stouffer's method for combining Z scores, which allows weighting.
+Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
+University Press.
 }
 }
 \seealso{
 Other Miscellaneous Stats Helpers: 
 \code{\link{SE_from_p}()},
+\code{\link{geometric_mean}()},
+\code{\link{harmonic_mean}()},
 \code{\link{oddsratio}()},
 \code{\link{reliability}()},
 \code{\link{umxCov2cor}()},

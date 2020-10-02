@@ -1,15 +1,15 @@
 ## Changes
-Reduced run time for examples following CRAN feedback
+Further reduce run time for examples following CRAN feedback
 Features and improvements. 
 
 ## Test environments
-* OS X 10.14.0, R version 3.6.3
-* 64-bit Linux, R version 3.6.3
-* Win R Under development (unstable) (2020-03-11 r77925)
+* OS X 10.14.0, R version 4.0.0
+* 64-bit Linux, R version 4.0.0
+* Win R Under development (unstable) (2020-05-15 r78473)
 
 
 ## R CMD check results
-* No WARNINGs, ERRORs or NOTEs
+* Win claims an EROR but doesn't show any. No WARNINGs, ERRORs or NOTEs on travis
 
 ## Downstream dependencies
 * No downstream dependencies.

@@ -15,7 +15,6 @@ umxSummaryCP(
   report = c("markdown", "html"),
   file = getOption("umx_auto_plot"),
   returnStd = FALSE,
-  show = NULL,
   ...
 )
 }
@@ -38,8 +37,6 @@ umxSummaryCP(
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
-\item{show}{parameter used in all summary functions. Not sure which of show and std will be supported long term: sing out if you have an opinion.}
-
 \item{...}{Optional additional parameters}
 }
 \value{
@@ -58,8 +55,8 @@ data(twinData)
 twinData$wt1 = twinData$wt1/10
 twinData$wt2 = twinData$wt2/10
 selDVs = c("ht", "wt")
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "", optimizer = "SLSQP")
 umxSummaryCP(m1, file = NA) # Suppress plot creation with file
@@ -67,10 +64,12 @@ umxSummary(m1, file = NA)   # Generic summary is the same
 stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
 umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
 umxSummary(m1, std = FALSE, file = NA)
+
 # =================
 # = Print example =
 # =================
 umxSummary(m1, file = "Figure 3", std = TRUE)
+
 # =================
 # = Confint example =
 # =================
@@ -90,12 +89,27 @@ umxSummary(m1, CIs = TRUE, file = NA);
 \item \code{\link{umxCP}()}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Twin Reporting Functions: 
+Other Twin Modeling Functions: 
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{power.ACE.test}()},
+\code{\link{umxACEcov}()},
+\code{\link{umxACEv}()},
+\code{\link{umxACE}()},
+\code{\link{umxCP}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxDoC}()},
+\code{\link{umxGxE_window}()},
+\code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
+\code{\link{umxIP}()},
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
+\code{\link{umxRotate.MxModelCP}()},
+\code{\link{umxSexLim}()},
+\code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
@@ -106,6 +120,7 @@ Other Twin Reporting Functions:
 \code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
+\code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
-\concept{Twin Reporting Functions}
+\concept{Twin Modeling Functions}

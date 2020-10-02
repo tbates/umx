@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu_make_top_twin_models.R
 \name{xmu_starts}
 \alias{xmu_starts}
-\title{Helper providing twin models with boilerplate means and variance start values}
+\title{Helper providing boilerplate start values for means and variance in twin models}
 \usage{
 xmu_starts(
   mzData,
@@ -70,23 +70,27 @@ tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "",
 data(twinData)
 twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
 # Cut BMI column to form ordinal obesity variables
-obLevels   = c('normal', 'overweight', 'obese')
-cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
-twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
-twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+obLevels = c('normal', 'overweight', 'obese')
+cuts     = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
+twinData$obese1= cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+twinData$obese2= cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
 # Make the ordinal variables into mxFactors
 ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\% "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 tmp = xmu_starts(mzData, dzData, selVars = c("wt","obese"), sep= "", 
-	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+ nSib= 2, equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+
+tmp = xmu_starts(mxData(mzData, type="raw"), mxData(mzData, type="raw"), 
+   selVars = c("wt","obese"), sep= "", nSib= 2, equateMeans = TRUE, 
+  varForm = "Cholesky", SD= FALSE)
 
 }
 \seealso{
 Other xmu internal not for end user: 
 \code{\link{umxModel}()},
-\code{\link{umxTwinMaker}()},
+\code{\link{umxRenameMatrix}()},
 \code{\link{umx_APA_pval}()},
 \code{\link{umx_fun_mean_sd}()},
 \code{\link{umx_get_bracket_addresses}()},
@@ -106,16 +110,18 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
 \code{\link{xmu_PadAndPruneForDefVars}()},
-\code{\link{xmu_assemble_twin_supermodel}()},
 \code{\link{xmu_cell_is_on}()},
 \code{\link{xmu_check_levels_identical}()},
 \code{\link{xmu_check_needs_means}()},
 \code{\link{xmu_check_variance}()},
 \code{\link{xmu_clean_label}()},
+\code{\link{xmu_data_missing}()},
 \code{\link{xmu_data_swap_a_block}()},
 \code{\link{xmu_describe_data_WLS}()},
 \code{\link{xmu_dot_make_paths}()},
@@ -123,11 +129,12 @@ Other xmu internal not for end user:
 \code{\link{xmu_dot_maker}()},
 \code{\link{xmu_dot_move_ranks}()},
 \code{\link{xmu_dot_rank_str}()},
+\code{\link{xmu_extract_column}()},
 \code{\link{xmu_get_CI}()},
 \code{\link{xmu_lavaan_process_group}()},
+\code{\link{xmu_make_TwinSuperModel}()},
 \code{\link{xmu_make_bin_cont_pair_data}()},
 \code{\link{xmu_make_mxData}()},
-\code{\link{xmu_make_top_twin}()},
 \code{\link{xmu_match.arg}()},
 \code{\link{xmu_name_from_lavaan_str}()},
 \code{\link{xmu_path2twin}()},
@@ -145,6 +152,9 @@ Other xmu internal not for end user:
 \code{\link{xmu_standardize_SexLim}()},
 \code{\link{xmu_standardize_Simplex}()},
 \code{\link{xmu_start_value_list}()},
-\code{\link{xmu_twin_check}()}
+\code{\link{xmu_twin_add_WeightMatrices}()},
+\code{\link{xmu_twin_check}()},
+\code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}

@@ -48,7 +48,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
-)#' umxMI(m1, full=FALSE)
+)
+# umxMI(m1, full=FALSE)
 }
 \references{
 \itemize{

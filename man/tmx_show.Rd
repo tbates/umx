@@ -8,7 +8,7 @@ tmx_show(
   model,
   what = c("values", "free", "labels", "nonzero_or_free"),
   show = c("free", "fixed", "all"),
-  matrices = c("S", "A", "M", "thresholds"),
+  matrices = c("S", "A", "M"),
   digits = 2,
   report = c("markdown", "inline", "html", "report"),
   na.print = "",
@@ -51,13 +51,16 @@ m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
-)#'
+)
+
 tmx_show(m1)
 tmx_show(m1, digits = 3)
 tmx_show(m1, matrices = "S")
 tmx_show(m1, what = "free")
 tmx_show(m1, what = "labels")
 tmx_show(m1, what = "free", matrices = "A")
+# tmx_show(m1, what = "free", matrices = "thresholds")
+
 }
 \references{
 \itemize{

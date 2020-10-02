@@ -13,7 +13,7 @@ umx_r_test(
 \arguments{
 \item{data}{The dataset.}
 
-\item{vars}{Four variables forming the two pairs of columns: "j & k" and "h & m".}
+\item{vars}{Three or 4 variables forming the two pairs of columns.}
 
 \item{alternative}{A two (default) or one-sided (greater less) test.}
 }
@@ -24,20 +24,31 @@ cocor result.
 \code{umx_r_test} is a wrapper around the cocor test of difference between correlations.
 }
 \details{
-Currently \code{umx_r_test} handles the test of whether \code{r.jk} and \code{r.hm} differ in magnitude.
-i.e, two non-overlapping (no variable in common) correlations in the same dataset.
-In the future it will be expanded to handle overlapping correlations, and to take correlation matrices as input.
+\strong{Non-overlapping (no variable in common) correlations in the same dataset.}
+If 4 variables are provided in \code{vars}, \code{umx_r_test} conducts a test of
+the correlation of var 1 & 2 differs in magnitude from the correlation of var 3 with var 4.
+(\code{r.jk} and \code{r.hm} in cocor speak).
+
+\strong{Overlapping (1 variable in common) correlations in the same dataset.}
+If 3 variables are provided in \code{vars}, \code{umx_r_test} conducts a test of whether
+the correlation of var 1 & 2 differs in magnitude from the correlation of var 1 with var 3.
+(\code{r.jk} and \code{r.jh} in cocor speak).
+
+In the future it will be expanded to handle other correlations, and to take correlations as input.
 }
 \examples{
 # Is the correlation of mpg with cylinder count different from that 
 # obtaining between disp and hp?
 vars = c("mpg", "cyl", "disp", "hp")
 umx_r_test(mtcars, vars)
+umx_r_test(mtcars, c("mpg", "disp", "hp"))
 }
 \seealso{
 Other Miscellaneous Stats Helpers: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
+\code{\link{geometric_mean}()},
+\code{\link{harmonic_mean}()},
 \code{\link{oddsratio}()},
 \code{\link{reliability}()},
 \code{\link{umxCov2cor}()},

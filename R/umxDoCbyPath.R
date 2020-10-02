@@ -36,8 +36,6 @@
 #' 
 #' }
 umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, name = "DoC", autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
-	# TODO: set class MxModelDoCp
-	# TODO: make plot.MxModelDoC which ignores T2, and DZ group and covariance stuff?
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
@@ -120,11 +118,12 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' @param sep The separator used to create twin 1 and 2 names (Default "_T")
 #' @return - [umxSuperModel()]
 #' @export
-#' @family xmu internal not for end user
-#' @seealso - [umxRAM()], [umxSuperModel()]
+#' @family Twin Modeling Functions
+#' @seealso - [umxRAM()], [umxSuperModel()], [umxPath()]
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
+#' \dontrun{
 #' # We'll make some ACE models, but first, let's clean up the twinData 
 #' # set for analysis
 #' # 1. Add a separator to the twin variable names (with sep = "_T")
@@ -135,19 +134,21 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' mzData = subset(tmp, zygosity %in%  c("MZFF", "MZMM"))
 #' dzData = subset(tmp, zygosity %in%  c("DZFF", "DZMM"))
 #' 
-#' # ================
-#' # = An ACE model =
-#' # ================
-#' # Define paths: You only need the paths for one person:
+#' # ==========================
+#' # = Make an ACE twin model =
+#' # ==========================
+#' # 1. Define paths for *one* person:
 #' paths = c(
-#'	umxPath(v1m0 = c("a1", 'c1', "e1")),
-#'	umxPath(means = c("wt")),
-#'	umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
+#'    umxPath(v1m0 = c("a1", 'c1', "e1")),
+#'    umxPath(means = c("wt")),
+#'    umxPath(c("a1", 'c1', "e1"), to = "wt", values=.2)
 #')
+#' # 2. Make a twin model from the paths for one person
 #' m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData)
 #' plot(m1, std= TRUE, means= FALSE)
-#' m2 = umxACE(selDVs="wt", mzData = mzData, dzData=dzData, sep="_T")
 #'
+#' # 3. comparison with umxACE...
+#' m2 = umxACE(selDVs="wt", mzData = mzData, dzData=dzData, sep="_T")
 #'
 #' # =====================
 #' # = Bivariate example =
@@ -171,6 +172,8 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData, 
 #' 	t1_t2links = list('as'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0))
 #' )
+#' 
+#' }
 #'
 umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
 	# TODO
@@ -269,9 +272,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
-#' @family umx S3 functions
-#' @family Plotting functions
-#' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
+#' @family Twin Modeling Functions
 #' @md
 #' @examples
 #' \dontrun{
@@ -297,6 +298,21 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' plot(m1, std= TRUE, means= FALSE)
 #' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
 #' } # end dontrun
+#'
+#'# =================
+#'# = An ACEv model =
+#'# =================
+#' # Not complete
+#'
+#' paths = c(
+#'	umxPath(v1m0 = c("A1", 'C1', "E1")),
+#'	umxPath(v1m0 = c("A2", 'C2', "E2")),
+#'	umxPath(v.m0 = c("l1", 'l2')),
+#'	umxPath(v.m. = c("wt", "ht")),
+#'	umxPath(c("A1", 'C1', "E1"), to = "l1", values= .2),
+#'	umxPath(c("A2", 'C2', "E2"), to = "l2", values= .2),
+#'	umxPath(c("l1", 'l2'), to = c("wt", "ht"), values= .2)
+#' )
 #'
 plot.MxModelTwinMaker <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, oneTwin = TRUE, sep= "_T", digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = TRUE, min= NULL, same= NULL, max= NULL, ...) {
 	# loop over submodels	

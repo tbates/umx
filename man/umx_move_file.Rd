@@ -14,9 +14,10 @@ umx_move_file(
 )
 }
 \arguments{
-\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
+\item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current
+front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
 
-\item{regex}{= regex string select files to move (NOT IMPLEMENTED YET)}
+\item{regex}{match string choosing which files are selected in baseFolder}
 
 \item{fileNameList}{List of files to move}
 
@@ -38,12 +39,18 @@ The file moves are fast and, because you can use regular expressions, powerful.
 base = "~/Desktop/"
 dest = "~/Music/iTunes/iTunes Music/Music/"
 umx_move_file(baseFolder = base, fileNameList = toMove, destFolder = dest, test= TRUE)
-umx_move_file(baseFolder = "~/Desktop/Desktops/", regex=".jpeg", 
+
+# ============================================================
+# = Move all files in downloads ending in ".jpeg" to Desktop =
+# ============================================================
+umx_move_file(baseFolder = "~/Downloads/", regex=".jpeg", 
 	destFolder = "~/Desktop/", test= TRUE)
 }
 
 }
 \seealso{
+\code{\link[=file.rename]{file.rename()}}, \code{\link[=regex]{regex()}}
+
 Other File Functions: 
 \code{\link{dl_from_dropbox}()},
 \code{\link{umx_file_load_pseudo}()},
