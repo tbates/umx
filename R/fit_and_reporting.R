@@ -3771,7 +3771,8 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #'
 #' @description
 #' The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of the input values.
-#' Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio.
+#' Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio. 
+#' Also it is the correct mean for averaging speeds weighted for distance.
 #' 
 #' @param x A vector of values to take the harmonic mean for
 #' @param weights Optional vector of weights.
@@ -3791,6 +3792,8 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #'
 #' # Example with weights
 #' harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
+#' # If Jack travels outbound at 1 mph, and returns at 10 miles an hour, what is his average speed?
+#' harmonic_mean(c(1,10)) # 1.81 mph
 #' 
 harmonic_mean = function(x, weights = NULL, na.rm = c(TRUE, FALSE)){
 	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)

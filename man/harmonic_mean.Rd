@@ -21,6 +21,7 @@ harmonic_mean(x, weights = NULL, na.rm = c(TRUE, FALSE))
 \description{
 The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of the input values.
 Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio.
+Also it is the correct mean for averaging speeds weighted for distance.
 }
 \examples{
 # Harmonic means are suitable for ratios
@@ -32,6 +33,8 @@ mean(tmp)
 
 # Example with weights
 harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
+# If Jack travels outbound at 1 mph, and returns at 10 miles an hour, what is his average speed?
+harmonic_mean(c(1,10)) # 1.81 mph
 
 }
 \references{
