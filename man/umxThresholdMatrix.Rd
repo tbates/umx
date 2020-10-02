@@ -181,7 +181,7 @@ all(tmp[[2]]$free)
 }
 }
 \seealso{
-\code{\link[OpenMx:mxThresholds]{OpenMx::mxThresholds()}}
+\code{\link[OpenMx:mxThreshold]{OpenMx::mxThreshold()}}
 
 Other Advanced Model Building Functions: 
 \code{\link{umxJiggle}()},
