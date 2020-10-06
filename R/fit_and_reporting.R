@@ -2604,6 +2604,8 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' Plot GxE results (univariate environmental moderation of ACE components).
 #' Options include plotting the raw and standardized graphs separately, or in a combined panel.
 #' You can also set the label for the x axis (xlab), and choose the location of the legend.
+#' 
+#' *note*: If `gg=TRUE`, the plots are drawn in ggplot, and also returned as a `list(raw, std)` so you can edit them.
 #'
 #' @aliases plot.MxModelGxE
 #' @param x A fitted [umxGxE()] model to plot
@@ -2612,6 +2614,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' see ?legend for alternatives like bottomright
 #' @param separateGraphs (default = FALSE)
 #' @param acergb Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")
+#' @param gg Use ggplot2 (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return None 
 #' @family Plotting functions
@@ -2633,7 +2636,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 #' 
 #' }
-umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), ...) {
+umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg=FALSE, ...) {
 	if(!class(x)[[1]] == "MxModelGxE"){
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
 	}
@@ -2668,25 +2671,53 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	if(is.na(xlab)){
 		xlab = sub("(_T)?[0-9]$", "", selDefs[1])
 	}
-	
-	if(separateGraphs){
-		print("Outputting two graphs")
-		# graphics::par(cex = cex) # Font mag
-	}else{
-		graphics::par(mfrow = c(1, 2)) # one row, two columns for raw and std variance
-		# graphics::par(cex = cex) # Font mag
-		# par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
-	}
-	# acergb = c("red", "green", "blue", "black")
-	graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
-	graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb, bty = "n")
-	# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = acergb)
-	
-	graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
-	graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
-	# legend(location, legend= c("Va", "Vc", "Ve"), lty = 1:4, col = acergb)
+	if(gg){
+		tmp = data.frame(cbind(defVarValues, out))
+		names(tmp)= c("SES", "Va", "Vc", "Ve", "Vt")
+		tmp = tidyr::pivot_longer(tmp, !SES, names_to = "component", values_to = "variance")
+		tmp = as.data.frame(tmp) # un-fuck the tibble from tidyr
+		raw = qplot(x = SES, y = variance, color = component, geom="line", xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects", data = tmp)
+		raw = raw + theme(legend.title = element_blank())+ theme(legend.background=element_blank())+theme(legend.position=c(.1,.8))
 
-	graphics::par(mfrow = c(1, 1)) # back to black
+		# graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
+		# graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
+		tmp = data.frame(cbind(defVarValues, outStd[,1:3]))
+		names(tmp)= c("SES", "Va", "Vc", "Ve")
+		tmp = tidyr::pivot_longer(tmp, !SES, names_to = "component", values_to = "variance")
+		tmp = as.data.frame(tmp) # un-fuck the tibble from tidyr
+		std = qplot(x = SES, y = variance, color = component, geom="line", ylim = c(0,1), xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation effects", data = tmp)
+		std = std + theme(legend.title = element_blank(), legend.position=c(.3,8))
+		std = std + theme(legend.title = element_blank())+ theme(legend.background=element_blank())+theme(legend.position=c(.1,.8))
+		tmp = list(std, raw)
+		if(separateGraphs){
+			print(plot_grid(plotlist=tmp))
+		}else{
+			print(ggdraw(tmp[[1]]) )
+			print(ggdraw(tmp[[2]]) )
+		}
+		invisible(tmp)
+	} else {
+		if(separateGraphs){
+			print("Outputting two graphs")
+			# graphics::par(cex = cex) # Font mag
+		}else{
+			graphics::par(mfrow = c(1, 2)) # one row, two columns for raw and std variance
+			# graphics::par(cex = cex) # Font mag
+			# par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
+		}
+		# acergb = c("red", "green", "blue", "black")
+		graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
+		graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb, bty = "n")
+		# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = acergb)
+	
+		graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
+		graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
+		# legend(location, legend= c("Va", "Vc", "Ve"), lty = 1:4, col = acergb)
+
+		graphics::par(mfrow = c(1, 1)) # back to black
+	
+	}
+	
 }
 
 #' @export

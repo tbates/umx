@@ -11,6 +11,7 @@ umxPlotGxE(
   location = "topleft",
   separateGraphs = FALSE,
   acergb = c("red", "green", "blue", "black"),
+  gg = FALSE,
   ...
 )
 }
@@ -25,6 +26,8 @@ see ?legend for alternatives like bottomright}
 \item{separateGraphs}{(default = FALSE)}
 
 \item{acergb}{Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")}
+
+\item{gg}{Use ggplot2 (default = FALSE)}
 
 \item{...}{Optional additional parameters}
 }
