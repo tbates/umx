@@ -39,6 +39,9 @@ Plot GxE results (univariate environmental moderation of ACE components).
 Options include plotting the raw and standardized graphs separately, or in a combined panel.
 You can also set the label for the x axis (xlab), and choose the location of the legend.
 }
+\details{
+\emph{note}: If \code{gg=TRUE}, the plots are drawn in ggplot, and also returned as a \code{list(raw, std)} so you can edit them.
+}
 \examples{
 \dontrun{
 require(umx)
