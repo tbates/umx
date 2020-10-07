@@ -36,7 +36,7 @@
 #'
 #' 	more tricky - we should really report the variances and the standardized thresholds.
 #' The guidance would be to try starting with unit variances and thresholds that are within
-#'  +/- 2SD of the mean. [bivariate outliers %p option](https://openmx.ssri.psu.edu/thread/3899)
+#'  +/- 2 SD of the mean. [bivariate outliers %p option](https://openmx.ssri.psu.edu/thread/3899)
 #' @param model an [mxModel()] to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
@@ -1813,14 +1813,15 @@ umxSummary.MxModelIP <- umxSummaryIP
 #'
 #' @aliases umxSummary.MxModelGxE
 #' @param model A fitted [umxGxE()] model to summarize
+#' @param reduce  Whether run and tabulate a complete model reduction...(Defaults to FALSE)
+#' @param separateGraphs If TRUE, both std and raw plots in one figure (default FALSE)
+#' @param report "markdown" or "html" = open a browser for copyable tables
+#' @param gg Whether to use ggplot to create the graphs (default TRUE)
 #' @param std Whether to show the standardized model (not implemented! TRUE)
 #' @param CIs Confidence intervals (FALSE)
 #' @param xlab label for the x-axis of plot
 #' @param digits round to how many digits (default = 2)
 #' @param location default = "topleft"
-#' @param reduce  Whether run and tabulate a complete model reduction...(Defaults to FALSE)
-#' @param separateGraphs If TRUE, both std and raw plots in one figure (default FALSE)
-#' @param report "markdown" or "html" = open a browser for copyable tables
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param show not doing anything yet (required for all summary functions)
@@ -1855,7 +1856,8 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL,...) {
+summary(m1)$parameters[, c("name", "Estimate", "Std.Error")]
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, gg=TRUE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL, ...) {
 	report = match.arg(report)
 	# if(!is.null(show){
 	# 	if(show == "std"){
@@ -1868,7 +1870,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	umx_has_been_run(model, stop = TRUE)
 	
 	if(any(!is.null(c(returnStd, std, CIs) ))){
-		message("For GxE, returnStd, std, comparison or CIs are not yet implemented...")
+		message("For GxE, returnStd, std, comparison or CIs are not implemented... The plot will include standardized outcomes, but raw output should be emphasised. SEs are shown rather the CIs, at present")
 	}
 
 	if(is.null(model)){
@@ -1883,8 +1885,8 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 		# markdown
 		umx_print(tablePub, digits=digits)
 	}
-	
-	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs)
+
+	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs, gg = gg)
 
 	if(reduce){
 		umxReduce(model = model, report = report)
@@ -2632,8 +2634,8 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", tryHard="yes")
 #' plot(m1)
-#' # Directly call the umx function
-#' umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+#' # Directly call umxPlotGxE
+#' umxPlotGxE(m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 #' 
 #' }
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg=FALSE, ...) {
@@ -2661,11 +2663,29 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	am  = model$top$matrices$am$values
 	cm  = model$top$matrices$cm$values
 	em  = model$top$matrices$em$values
+
+	tmp = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]
+	aSE = tmp[tmp$name=="a_r1c1", "Std.Error"]
+	cSE = tmp[tmp$name=="c_r1c1", "Std.Error"]
+	eSE = tmp[tmp$name=="e_r1c1", "Std.Error"]
+
+	amSE = tmp[tmp$name=="am_r1c1", "Std.Error"]
+	cmSE = tmp[tmp$name=="cm_r1c1", "Std.Error"]
+	emSE = tmp[tmp$name=="em_r1c1", "Std.Error"]
+
 	Va  = (c(a) + c(am) * defVarValues)^2
 	Vc  = (c(c) + c(cm) * defVarValues)^2
 	Ve  = (c(e) + c(em) * defVarValues)^2
+
+	VaUpper  = (c(a) + 1.96*aSE + c(am + 1.96*amSE) * defVarValues)^2
+	VaLower  = (c(a) - 1.96*aSE + c(am - 1.96*amSE) * defVarValues)^2
+	VcUpper  = (c(c) + 1.96*aSE + c(cm + 1.96*amSE) * defVarValues)^2
+	VcLower  = (c(c) - 1.96*aSE + c(cm - 1.96*amSE) * defVarValues)^2
+	VeUpper  = (c(e) + 1.96*aSE + c(em + 1.96*amSE) * defVarValues)^2
+	VeLower  = (c(e) - 1.96*aSE + c(em - 1.96*amSE) * defVarValues)^2
+
 	Vt  = Va + Vc + Ve
-	out    = as.matrix(cbind(Va, Vc, Ve, Vt))
+	out    = as.matrix(cbind(Va, Vc, Ve, Vt, VaUpper, VaLower, VcUpper, VcLower, VeUpper, VeLower))
 	outStd = as.matrix(cbind(Va/Vt, Vc/Vt, Ve/Vt))
 	
 	if(is.na(xlab)){
@@ -2676,9 +2696,18 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 		names(tmp)= c("SES", "Va", "Vc", "Ve", "Vt")
 		tmp = tidyr::pivot_longer(tmp, !SES, names_to = "component", values_to = "variance")
 		tmp = as.data.frame(tmp) # un-fuck the tibble from tidyr
-		raw = qplot(x = SES, y = variance, color = component, geom="line", xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects", data = tmp)
-		raw = raw + theme(legend.title = element_blank())+ theme(legend.background=element_blank())+theme(legend.position=c(.1,.8))
 
+		# qplot
+		# theme
+		# element_blank
+		# geom_ribbon
+		# aes
+		raw = qplot(x = SES, y = variance, color = component, geom="line", xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects", data = tmp)
+		raw = raw + theme(legend.title = element_blank() )+ theme(legend.background = element_blank() ) + theme(legend.position = c(.1,.8))
+
+		raw = raw + geom_ribbon(aes(ymin = VaLower, ymax = VaUpper))
+		 # + geom_line(aes(y = level)) + geom_line(aes(y=level2)) + scale_fill_manual(values=c("red", "green"), name="fill")
+		  
 		# graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
 		# graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
 		tmp = data.frame(cbind(defVarValues, outStd[,1:3]))
@@ -2696,6 +2725,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 			print(ggdraw(tmp[[2]]) )
 		}
 		invisible(tmp)
+		
 	} else {
 		if(separateGraphs){
 			print("Outputting two graphs")
