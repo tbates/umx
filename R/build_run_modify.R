@@ -66,11 +66,11 @@
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv
 
-#' @importFrom cowplot draw_label
-#' @importFrom ggplot2 ggplot qplot
+#' @importFrom cowplot draw_label plot_grid ggdraw
+#' @importFrom ggplot2 ggplot qplot ggtitle
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
-#' @importFrom ggplot2 geom_point geom_segment geom_line expand_limits aes 
-#' @importFrom ggplot2 ggtitle element_text 
+#' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon
+#' @importFrom ggplot2 element_text element_blank expand_limits aes
 
 # Used in plot
 #' @importFrom DiagrammeR DiagrammeR

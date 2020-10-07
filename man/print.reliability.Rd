@@ -7,7 +7,7 @@
 \method{print}{reliability}(x, digits = 4, ...)
 }
 \arguments{
-\item{x}{A \code{\link[umx:reliability]{umx::reliability()}} result.}
+\item{x}{A \code{\link[=reliability]{reliability()}} result.}
 
 \item{digits}{The rounding precision.}
 
@@ -19,7 +19,7 @@
 }
 }
 \description{
-Print method for the \code{\link[umx:reliability]{umx::reliability()}} function.
+Print method for the \code{\link[=reliability]{reliability()}} function.
 }
 \examples{
 # treat vehicle aspects as items of a test
@@ -28,6 +28,6 @@ reliability(cov(mtcars))
 }
 \seealso{
 \itemize{
-\item \code{\link[=print]{print()}}, \code{\link[umx:reliability]{umx::reliability()}},
+\item \code{\link[=print]{print()}}, \code{\link[=reliability]{reliability()}},
 }
 }

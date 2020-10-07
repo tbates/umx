@@ -1,5 +1,3 @@
-# system("mdimport ~/bin/umx/R")
-#
 #   Copyright 2007-2020 Timothy C. Bates
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +18,7 @@
 
 #' Diagnose problems in a model - this is a work in progress.
 #'
-#' The goal of this function **WILL BE** (not currently functional) is to diagnose problems in
+#' The goal of this function **WILL BE** (not currently functional) to diagnose problems in
 #' a model and return suggestions to the user.
 #' It is a work in progress, and of no use as yet.
 #'
@@ -31,7 +29,7 @@
 #' 3. Difference of these?
 #' 	
 #' Try
-#' 	* diagonalizeExpCov diagonal.
+#' 	* diagonalizeExpCov diagonal
 #' 	* [umx_is_ordered()]
 #'
 #' 	more tricky - we should really report the variances and the standardized thresholds.
@@ -1850,13 +1848,12 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' mzData = mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
 #' dzData = dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
 #' \dontrun{
-#' m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+#' m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep="", dzData = dzData, mzData = mzData)
 #' # Plot Moderation
 #' umxSummaryGxE(m1)
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 #' }
-summary(m1)$parameters[, c("name", "Estimate", "Std.Error")]
 umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, gg=TRUE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL, ...) {
 	report = match.arg(report)
 	# if(!is.null(show){
@@ -1870,7 +1867,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	umx_has_been_run(model, stop = TRUE)
 	
 	if(any(!is.null(c(returnStd, std, CIs) ))){
-		message("For GxE, returnStd, std, comparison or CIs are not implemented... The plot will include standardized outcomes, but raw output should be emphasised. SEs are shown rather the CIs, at present")
+		message("For GxE, returnStd, std, comparison or CIs are not implemented... The plot will include standardized outcomes, but raw output should be emphasized. SEs are shown rather the CIs, at present")
 	}
 
 	if(is.null(model)){
@@ -2616,7 +2613,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' see ?legend for alternatives like bottomright
 #' @param separateGraphs (default = FALSE)
 #' @param acergb Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")
-#' @param gg Use ggplot2 (default = FALSE)
+#' @param gg Use ggplot2 (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return None 
 #' @family Plotting functions
@@ -2638,9 +2635,9 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' umxPlotGxE(m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 #' 
 #' }
-umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg=FALSE, ...) {
+umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg = TRUE, ...) {
 	if(!class(x)[[1]] == "MxModelGxE"){
-		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x))
+		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x)[[1]])
 	}
 	model = x # to remind us that x has to be a umxGxE model
 	mzData = model$MZ$data$observed
@@ -2655,7 +2652,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	mz2 = as.vector(mzData[,selDefs[2]])
 	dz1 = as.vector(dzData[,selDefs[1]])
 	dz2 = as.vector(dzData[,selDefs[2]])
-	allValuesOfDefVar= c(mz1,mz2,dz1,dz2)
+	allValuesOfDefVar = c(mz1,mz2,dz1,dz2)
 	defVarValues = sort(unique(allValuesOfDefVar))
 	a   = model$top$matrices$a$values
 	c   = model$top$matrices$c$values
@@ -2693,36 +2690,29 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	}
 	if(gg){
 		tmp = data.frame(cbind(defVarValues, out))
-		names(tmp)= c("SES", "Va", "Vc", "Ve", "Vt")
-		tmp = tidyr::pivot_longer(tmp, !SES, names_to = "component", values_to = "variance")
+		tmp = tidyr::pivot_longer(tmp, !defVarValues, names_to = "component", values_to = "variance")
 		tmp = as.data.frame(tmp) # un-fuck the tibble from tidyr
 
-		# qplot
-		# theme
-		# element_blank
-		# geom_ribbon
-		# aes
-		raw = qplot(x = SES, y = variance, color = component, geom="line", xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects", data = tmp)
-		raw = raw + theme(legend.title = element_blank() )+ theme(legend.background = element_blank() ) + theme(legend.position = c(.1,.8))
-
-		raw = raw + geom_ribbon(aes(ymin = VaLower, ymax = VaUpper))
+		raw = qplot(x = defVarValues, y = variance, color = component, geom="line", xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects", data = tmp)
+		raw = raw + theme(legend.title = element_blank() )+ theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .8))
+		# raw = raw + geom_ribbon(aes(ymin = VaLower, ymax = VaUpper))
 		 # + geom_line(aes(y = level)) + geom_line(aes(y=level2)) + scale_fill_manual(values=c("red", "green"), name="fill")
 		  
 		# graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
 		# graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
 		tmp = data.frame(cbind(defVarValues, outStd[,1:3]))
-		names(tmp)= c("SES", "Va", "Vc", "Ve")
-		tmp = tidyr::pivot_longer(tmp, !SES, names_to = "component", values_to = "variance")
+		tmp = tidyr::pivot_longer(tmp, !defVarValues, names_to = "component", values_to = "variance")
 		tmp = as.data.frame(tmp) # un-fuck the tibble from tidyr
-		std = qplot(x = SES, y = variance, color = component, geom="line", ylim = c(0,1), xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation effects", data = tmp)
+		std = qplot(x = defVarValues, y = variance, color = component, geom="line", ylim = c(0,1), xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation effects", data = tmp)
 		std = std + theme(legend.title = element_blank(), legend.position=c(.3,8))
 		std = std + theme(legend.title = element_blank())+ theme(legend.background=element_blank())+theme(legend.position=c(.1,.8))
 		tmp = list(std, raw)
 		if(separateGraphs){
-			print(plot_grid(plotlist=tmp))
+			print(ggdraw(std))
+			print(ggdraw(raw))
 		}else{
-			print(ggdraw(tmp[[1]]) )
-			print(ggdraw(tmp[[2]]) )
+			plot_grid(plotlist = tmp)
+			# print(plot_grid(plotlist=tmp))
 		}
 		invisible(tmp)
 		

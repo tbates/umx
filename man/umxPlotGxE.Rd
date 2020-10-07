@@ -11,7 +11,7 @@ umxPlotGxE(
   location = "topleft",
   separateGraphs = FALSE,
   acergb = c("red", "green", "blue", "black"),
-  gg = FALSE,
+  gg = TRUE,
   ...
 )
 }
@@ -27,7 +27,7 @@ see ?legend for alternatives like bottomright}
 
 \item{acergb}{Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")}
 
-\item{gg}{Use ggplot2 (default = FALSE)}
+\item{gg}{Use ggplot2 (default = TRUE)}
 
 \item{...}{Optional additional parameters}
 }
@@ -51,8 +51,8 @@ mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", tryHard="yes")
 plot(m1)
-# Directly call the umx function
-umxPlotGxE(x = m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+# Directly call umxPlotGxE
+umxPlotGxE(m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
 
 }
 }

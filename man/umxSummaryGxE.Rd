@@ -11,6 +11,7 @@ umxSummaryGxE(
   xlab = NA,
   location = "topleft",
   separateGraphs = FALSE,
+  gg = TRUE,
   file = getOption("umx_auto_plot"),
   returnStd = NULL,
   std = NULL,
@@ -31,6 +32,8 @@ umxSummaryGxE(
 \item{location}{default = "topleft"}
 
 \item{separateGraphs}{If TRUE, both std and raw plots in one figure (default FALSE)}
+
+\item{gg}{Whether to use ggplot to create the graphs (default TRUE)}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
@@ -76,7 +79,7 @@ dzData  = subset(twinData, zygosity == "DZMM", selVars)
 mzData = mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
 dzData = dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
 \dontrun{
-m1 = umxGxE(selDVs = selDVs, selDefs = selDefs, dzData = dzData, mzData = mzData)
+m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep="", dzData = dzData, mzData = mzData)
 # Plot Moderation
 umxSummaryGxE(m1)
 umxSummaryGxE(m1, location = "topright")

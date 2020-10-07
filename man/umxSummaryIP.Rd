@@ -98,6 +98,7 @@ Other Twin Modeling Functions:
 \code{\link{umxSummaryCP}()},
 \code{\link{umxSummaryDoC}()},
 \code{\link{umxSummaryGxEbiv}()},
+\code{\link{umxSummaryGxE}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
 \code{\link{umxTwinMaker}()},
