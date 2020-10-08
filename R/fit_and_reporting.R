@@ -2674,16 +2674,16 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	Vc  = (c(c) + c(cm) * defVarValues)^2
 	Ve  = (c(e) + c(em) * defVarValues)^2
 
-	VaUpper  = (c(a) + 1.96*aSE + c(am + 1.96*amSE) * defVarValues)^2
-	VaLower  = (c(a) - 1.96*aSE + c(am - 1.96*amSE) * defVarValues)^2
-	VcUpper  = (c(c) + 1.96*aSE + c(cm + 1.96*amSE) * defVarValues)^2
-	VcLower  = (c(c) - 1.96*aSE + c(cm - 1.96*amSE) * defVarValues)^2
-	VeUpper  = (c(e) + 1.96*aSE + c(em + 1.96*amSE) * defVarValues)^2
-	VeLower  = (c(e) - 1.96*aSE + c(em - 1.96*amSE) * defVarValues)^2
+	VaUpper  = (c(a + 1.96*aSE) + c(am + 1.96*amSE) * defVarValues)^2
+	VcUpper  = (c(c + 1.96*cSE) + c(cm + 1.96*cmSE) * defVarValues)^2
+	VeUpper  = (c(e + 1.96*eSE) + c(em + 1.96*emSE) * defVarValues)^2
+	VaLower  = (c(a - 1.96*aSE) + c(am - 1.96*amSE) * defVarValues)^2
+	VcLower  = (c(c - 1.96*cSE) + c(cm - 1.96*cmSE) * defVarValues)^2
+	VeLower  = (c(e - 1.96*eSE) + c(em - 1.96*emSE) * defVarValues)^2
 
 	Vt  = Va + Vc + Ve
-	# out    = as.matrix(cbind(Va, Vc, Ve, Vt, VaUpper, VaLower, VcUpper, VcLower, VeUpper, VeLower))
-	out    = as.matrix(cbind(Va   , Vc   , Ve, Vt))
+	out    = as.matrix(cbind(Va, Vc, Ve, Vt, VaUpper, VaLower, VcUpper, VcLower, VeUpper, VeLower))
+	# out    = as.matrix(cbind(Va   , Vc   , Ve, Vt))
 	outStd = as.matrix(cbind(Va = Va/Vt, Vc = Vc/Vt, Ve = Ve/Vt))
 	
 	if(is.na(xlab)){
@@ -2691,29 +2691,36 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	}
 	if(gg){
 		tmp = data.frame(cbind(defVarValues, out))
-		tmp = tidyr::pivot_longer(tmp, !defVarValues, names_to = "component", values_to = "variance")
-		tmp = as.data.frame(tmp) # un-fuck the tibble from tidyr
+		p = ggplot(data = tmp, xlab = xlab, ylab = "Variance", main= "Raw Moderation effects") 
+		p = p + geom_line(aes(x=defVarValues, y = Vt, group = 4, colour = 'Vtot'))
+		p = p + geom_ribbon(aes(x = defVarValues, ymin = VeLower, ymax = VeUpper), alpha = .2, fill = "blue" , show.legend= FALSE, linetype= 0)
+		p = p + geom_ribbon(aes(x = defVarValues, ymin = VcLower, ymax = VcUpper), alpha = .2, fill = "green", show.legend= FALSE, linetype= 0)
+		p = p + geom_ribbon(aes(x = defVarValues, ymin = VaLower, ymax = VaUpper), alpha = .2, fill = "red"  , show.legend= FALSE, linetype= 0)
+		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
+		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
+		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))
+		p = p + ylab('Variance')
+		p = p + xlab(xlab)
+		raw = p + theme(legend.title = element_blank() ) + theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .9))
 
-		raw = qplot(x = defVarValues, y = variance, color = component, geom="line", xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects", data = tmp)
-		raw = raw + theme(legend.title = element_blank() )+ theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .8))
-		# raw = raw + geom_ribbon(aes(ymin = VaLower, ymax = VaUpper))
-		 # + geom_line(aes(y = level)) + geom_line(aes(y=level2)) + scale_fill_manual(values=c("red", "green"), name="fill")
-		  
-		# graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
-		# graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
-		tmp = data.frame(cbind(defVarValues, outStd[,1:3]))
-		tmp = tidyr::pivot_longer(tmp, !defVarValues, names_to = "component", values_to = "variance")
-		tmp = as.data.frame(tmp) # un-fuck the tibble from tidyr
-		std = qplot(x = defVarValues, y = variance, color = component, geom="line", ylim = c(0,1), xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation effects", data = tmp)
-		std = std + theme(legend.title = element_blank(), legend.position=c(.3,8))
-		std = std + theme(legend.title = element_blank())+ theme(legend.background=element_blank())+theme(legend.position=c(.1,.8))
+
+		tmp = data.frame(cbind(defVarValues, outStd))
+		p = ggplot(data = tmp, ylim = c(0,1), xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation effects") 
+		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
+		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
+		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))
+		p = p + ylab('Std. Variance')
+		p = p + xlab(xlab)
+		std = p + theme(legend.title = element_blank() ) + theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .9))
+
+
 		tmp = list(std, raw)
 		if(separateGraphs){
 			print(ggdraw(std))
 			print(ggdraw(raw))
 		}else{
-			plot_grid(plotlist = tmp)
-			# print(plot_grid(plotlist=tmp))
+			# plot_grid(plotlist = tmp)
+			print(plot_grid(plotlist=tmp))
 		}
 		invisible(tmp)
 		
