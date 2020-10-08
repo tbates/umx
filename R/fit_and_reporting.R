@@ -2683,7 +2683,6 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 
 	Vt  = Va + Vc + Ve
 	out    = as.matrix(cbind(Va, Vc, Ve, Vt, VaUpper, VaLower, VcUpper, VcLower, VeUpper, VeLower))
-	# out    = as.matrix(cbind(Va   , Vc   , Ve, Vt))
 	outStd = as.matrix(cbind(Va = Va/Vt, Vc = Vc/Vt, Ve = Ve/Vt))
 	
 	if(is.na(xlab)){
@@ -2699,8 +2698,6 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
 		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))
-		p = p + ylab('Variance')
-		p = p + xlab(xlab)
 		raw = p + theme(legend.title = element_blank() ) + theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .9))
 
 
@@ -2709,8 +2706,6 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
 		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))
-		p = p + ylab('Std. Variance')
-		p = p + xlab(xlab)
 		std = p + theme(legend.title = element_blank() ) + theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .9))
 
 
