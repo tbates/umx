@@ -2633,8 +2633,8 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep="", tryHard="yes")
 #' plot(m1)
 #' # Directly call umxPlotGxE
-#' umxPlotGxE(m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
-#' umxPlotGxE(m1, moderatorValues=1:100)
+#' umxPlotGxE(m1, xlab = "Age", separateGraphs = TRUE, gg = FALSE)
+#' umxPlotGxE(m1, moderatorValues=18:67)
 #' 
 #' }
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg = TRUE, moderatorValues= NULL, ...) {
