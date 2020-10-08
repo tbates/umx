@@ -12,6 +12,7 @@ umxPlotGxE(
   separateGraphs = FALSE,
   acergb = c("red", "green", "blue", "black"),
   gg = TRUE,
+  moderatorValues = NULL,
   ...
 )
 }
@@ -28,6 +29,8 @@ see ?legend for alternatives like bottomright}
 \item{acergb}{Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")}
 
 \item{gg}{Use ggplot2 (default = TRUE)}
+
+\item{moderatorValues}{If you want to pass in your own list of moderator values instead of the real ones in the data (Default = NULL)}
 
 \item{...}{Optional additional parameters}
 }
@@ -53,6 +56,7 @@ m1= umxGxE(selDVs= "bmi", selDefs= "age", dzData= dzData, mzData= mzData, sep=""
 plot(m1)
 # Directly call umxPlotGxE
 umxPlotGxE(m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+umxPlotGxE(m1, moderatorValues=1:100)
 
 }
 }

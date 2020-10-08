@@ -2614,6 +2614,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' @param separateGraphs (default = FALSE)
 #' @param acergb Colors to use for plot c(a = "red", c = "green", e = "blue", tot = "black")
 #' @param gg Use ggplot2 (default = TRUE)
+#' @param moderatorValues If you want to pass in your own list of moderator values instead of the real ones in the data (Default = NULL)
 #' @param ... Optional additional parameters
 #' @return None 
 #' @family Plotting functions
@@ -2633,9 +2634,10 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' plot(m1)
 #' # Directly call umxPlotGxE
 #' umxPlotGxE(m1, xlab = "SES", separateGraphs = TRUE, location = "topleft")
+#' umxPlotGxE(m1, moderatorValues=1:100)
 #' 
 #' }
-umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg = TRUE, ...) {
+umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg = TRUE, moderatorValues= NULL, ...) {
 	if(!class(x)[[1]] == "MxModelGxE"){
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x)[[1]])
 	}
@@ -2644,16 +2646,20 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	dzData = model$DZ$data$observed
 	selDefs = names(mzData)[3:4]
 	if(is.na(xlab)){
-		xlab = selDefs[1]
+		xlab = sub("(_T)?[0-9]$", "", selDefs[1])
 	}
-
 	# Get unique values of moderator
 	mz1 = as.vector(mzData[,selDefs[1]])
 	mz2 = as.vector(mzData[,selDefs[2]])
 	dz1 = as.vector(dzData[,selDefs[1]])
 	dz2 = as.vector(dzData[,selDefs[2]])
-	allValuesOfDefVar = c(mz1,mz2,dz1,dz2)
-	defVarValues = sort(unique(allValuesOfDefVar))
+
+	if(is.null(moderatorValues)){
+		defVarValues = sort(unique(c(mz1,mz2,dz1,dz2)))
+	} else {
+		defVarValues = moderatorValues
+	}
+
 	a   = model$top$matrices$a$values
 	c   = model$top$matrices$c$values
 	e   = model$top$matrices$e$values
@@ -2683,15 +2689,11 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 
 	Vt  = Va + Vc + Ve
 	out    = as.matrix(cbind(Va, Vc, Ve, Vt, VaUpper, VaLower, VcUpper, VcLower, VeUpper, VeLower))
-	# out    = as.matrix(cbind(Va   , Vc   , Ve, Vt))
 	outStd = as.matrix(cbind(Va = Va/Vt, Vc = Vc/Vt, Ve = Ve/Vt))
 
-	if(is.na(xlab)){
-		xlab = sub("(_T)?[0-9]$", "", selDefs[1])
-	}
 	if(gg){
 		tmp = data.frame(cbind(defVarValues, out))
-		p = ggplot(data = tmp, xlab = xlab, ylab = "Variance", main= "Raw Moderation effects") 
+		p = ggplot(data = tmp) 
 		p = p + geom_ribbon(aes(x = defVarValues, ymin = VeLower, ymax = VeUpper), alpha = .2, fill = "blue" , show.legend= FALSE, linetype= 0)
 		p = p + geom_ribbon(aes(x = defVarValues, ymin = VcLower, ymax = VcUpper), alpha = .2, fill = "green", show.legend= FALSE, linetype= 0)
 		p = p + geom_ribbon(aes(x = defVarValues, ymin = VaLower, ymax = VaUpper), alpha = .2, fill = "red"  , show.legend= FALSE, linetype= 0)
@@ -2699,49 +2701,36 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
 		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))
-		p = p + ylab('Variance')
-		p = p + xlab(xlab)
+		p = p + labs(x = xlab, y = 'Raw Variance', title = "Raw Moderation effects")
 		raw = p + theme(legend.title = element_blank() ) + theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .9))
 
 
 		tmp = data.frame(cbind(defVarValues, outStd))
-		p = ggplot(data = tmp, ylim = c(0,1), xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation effects") 
+		p = ggplot(data = tmp, ylim = c(0,1)) 
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
 		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))
-		p = p + ylab('Std. Variance')
-		p = p + xlab(xlab)
+		p = p + labs(x = xlab, y = 'Standardized Variance', title = "Standardized Moderation effects")
 		std = p + theme(legend.title = element_blank() ) + theme(legend.background = element_blank() ) + theme(legend.position = c(.1, .9))
-
 
 		tmp = list(std, raw)
 		if(separateGraphs){
 			print(ggdraw(std))
 			print(ggdraw(raw))
 		}else{
-			# plot_grid(plotlist = tmp)
 			print(plot_grid(plotlist=tmp))
 		}
 		invisible(tmp)
 		
 	} else {
-		if(separateGraphs){
-			print("Outputting two graphs")
-			# graphics::par(cex = cex) # Font mag
-		}else{
-			graphics::par(mfrow = c(1, 2)) # one row, two columns for raw and std variance
-			# graphics::par(cex = cex) # Font mag
-			# par(mfrow = c(2, 1)) # two rows, one column for raw and std variance
+		if(!separateGraphs){
+			graphics::par(mfrow = c(1, 2)) # one row * two columns to hold raw and std plots
 		}
-		# acergb = c("red", "green", "blue", "black")
 		graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
 		graphics::legend(location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb, bty = "n")
-		# legend(location, legend= c("Va", "Vc", "Ve", "Vt"), lty = 1:4, col = acergb)
 	
 		graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
 		graphics::legend(location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
-		# legend(location, legend= c("Va", "Vc", "Ve"), lty = 1:4, col = acergb)
-
 		graphics::par(mfrow = c(1, 1)) # back to black
 	
 	}
