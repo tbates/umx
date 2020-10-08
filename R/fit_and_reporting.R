@@ -2692,10 +2692,10 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	if(gg){
 		tmp = data.frame(cbind(defVarValues, out))
 		p = ggplot(data = tmp, xlab = xlab, ylab = "Variance", main= "Raw Moderation effects") 
-		p = p + geom_line(aes(x=defVarValues, y = Vt, group = 4, colour = 'Vtot'))
 		p = p + geom_ribbon(aes(x = defVarValues, ymin = VeLower, ymax = VeUpper), alpha = .2, fill = "blue" , show.legend= FALSE, linetype= 0)
 		p = p + geom_ribbon(aes(x = defVarValues, ymin = VcLower, ymax = VcUpper), alpha = .2, fill = "green", show.legend= FALSE, linetype= 0)
 		p = p + geom_ribbon(aes(x = defVarValues, ymin = VaLower, ymax = VaUpper), alpha = .2, fill = "red"  , show.legend= FALSE, linetype= 0)
+		# p = p + geom_line(aes(x=defVarValues, y = Vt, group = 4, colour = 'Vtot'))
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
 		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))
