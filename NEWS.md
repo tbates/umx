@@ -7,6 +7,7 @@
 * FIXED: `umxRAM` with a model as first parameter now doesn't demand new data, and can (optionally) replace existing data with a new mxData (not error checked).
 * IMPROVED `umxPlotGxE` gains CI ribbons fixes #96
 * IMPROVED `umxPlotGxE` defaults to use ggplot and now returns the graphs for decoration closes #139
+* IMPROVED: `umxPlotGxE` can now plot user-specified moderator ranges closes #96
 * IMPROVED: `umxACE` return group models invisibly #134 @khusmann.
 * IMPROVED: `plot` now allows ortho compound and polyline spline control.
 * IMPROVED: `umx_set_optimization_options` can get and set "Parallel diagnostics"
