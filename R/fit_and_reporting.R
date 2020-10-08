@@ -2685,7 +2685,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	# out    = as.matrix(cbind(Va, Vc, Ve, Vt, VaUpper, VaLower, VcUpper, VcLower, VeUpper, VeLower))
 	out    = as.matrix(cbind(Va   , Vc   , Ve, Vt))
 	outStd = as.matrix(cbind(Va = Va/Vt, Vc = Vc/Vt, Ve = Ve/Vt))
-	
+
 	if(is.na(xlab)){
 		xlab = sub("(_T)?[0-9]$", "", selDefs[1])
 	}
