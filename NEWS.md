@@ -1,3 +1,29 @@
+# umx 4.2.0
+* October 2020 R 4.0.2
+* NEW: `harmonic_mean` with support for weights.
+* NEW: `geometric_mean`
+* NEW: `umx_read_prolific_demog` to read prolific academic demographics files (better to store these in your own data...
+* FIXED: 'umxRAM` group option failing to pass autoRun tryHard Merge pull request #134 @khusmann
+* FIXED: `umxRAM` with a model as first parameter now doesn't demand new data, and can (optionally) replace existing data with a new mxData (not error checked).
+* IMPROVED `umxPlotGxE` gains CI ribbons fixes #96
+* IMPROVED `umxPlotGxE` defaults to use ggplot and now returns the graphs for decoration closes #139
+* IMPROVED: `umxACE` return group models invisibly #134 @khusmann.
+* IMPROVED: `plot` now allows ortho compound and polyline spline control.
+* IMPROVED: `umx_set_optimization_options` can get and set "Parallel diagnostics"
+* IMPROVED: `umx_set_optimization_options` can get and set "Parallel diagnostics".
+* IMPROVED: `tmx_show` smart about not printing NULL matrices.
+* IMPROVED: 'umxEquate` gained a `newlabels` parameter, so you can provide a name for the equated paths (rather than the second path adopting the label of the first path)
+* IMPROVED: `umx_score_scale` supports minManifests for factor scores
+* IMPROVED: `umxCI`: gains `regex` parameter to support adding and removing CIs on labels matching a string pattern.
+* FIX: `umxPlotIP` wasn't working with threshold models (didn't ignore thresh names for plot)
+* FIX: `umx_time` was using time units for model 1 for all models... h/t @khusmann
+* FIX: `umxPlotACEv` was not displaying half the variables in an MV model as NA.
+* FIX: `umx_set_cores` no longer use `imxGetNumThreads` which is actually hard-coded to not report number of threads.
+* FIX: Check for more than one named CI requested closes #136
+* WORKAROUND: 'umxSummary` wraps `mxRefModels` error for WLS models in tryCatch to tell user OpenMx doesn't support fit stats for WLS as yet.
+* BACKWARD: `umxThresholdMatrix` changed parameter from selDVs to fullVarNames to prevent user error.
+* HELP: `harmonic_mean` example averaging speeds across distance.
+
 # umx 4.1.0
 * July 2020 R 4.0.0
 * CHANGE: `umxRAM` group now independent by default (label style  "path_group" )
