@@ -2782,7 +2782,6 @@ plot.MxModelGxE <- umxPlotGxE
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	# Upgraded from label-based to cell-based plot building
 	format = match.arg(format)
 	model  = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
@@ -2862,9 +2861,9 @@ plot.MxModelCP <- umxPlotCP
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
-#' @param std whether to standardize the model (defaults to TRUE)
+#' @param std Whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR")
-#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" (Default)
+#' @param SEstyle Report "b (se)" instead of "b \[lower, upper\]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
@@ -2880,16 +2879,8 @@ plot.MxModelCP <- umxPlotCP
 #' umxPlotIP(model, file = NA)
 #' }
 umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	# TODO umxPlotIP: convert to matrix-search (rather than label-dependent) path finding
-	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
-	# 1. a_cp_matrix = A latent (and correlations among latents)
-	# 	* These go from a_cp n=row TO common n= row
-	# 	* Or for off diag, from a_cp n=col TO a_cp n= row
-	# 2. Same again for c_cp_matrix, e_cp_matrix
-	# 3. cp_loadings common factor loadings
-
 	format = match.arg(format)
-	model = x # just to emphasise that x has to be a model 
+	model = x # Just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelIP", callingFn = "umxPlotIP")
 	
 	if(std){

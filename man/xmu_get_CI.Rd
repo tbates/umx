@@ -23,7 +23,7 @@ xmu_get_CI(
 
 \item{suffix}{The suffix for algebras when standardized (default = "_std")}
 
-\item{digits}{= 2}
+\item{digits}{Rounding digits.}
 
 \item{SEstyle}{If TRUE, report "b(se)" instead of b CI95[l,u] (default = FALSE)}
 
@@ -43,19 +43,19 @@ If std are available, then these are reported.
 require(umx); data(demoOneFactor)
 manifests = names(demoOneFactor)
 
-m1 = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
+tmp = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
 )
-m1 = umxCI(m1, run= "yes")
+tmp = umxCI(tmp, run= "yes")
 
 # Get CI by parameter label
-xmu_get_CI(model= m1, "x1_with_x1")
-xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
+xmu_get_CI(model= tmp, "x1_with_x1")
+xmu_get_CI(model= tmp, "x1_with_x1", SEstyle = TRUE, digits = 3)
 
 # prefix (submodel) and suffix (e.g. std) are ignored if not needed
-xmu_get_CI(model= m1, "x1_with_x1", prefix = "top.", suffix = "_std")
+xmu_get_CI(model= tmp, "x1_with_x1", prefix = "top.", suffix = "_std")
 
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
 xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
@@ -64,7 +64,7 @@ xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = 
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 }
 \seealso{
@@ -96,6 +96,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
 \code{\link{xmu_PadAndPruneForDefVars}()},
+\code{\link{xmu_bracket_address2umxlabel}()},
 \code{\link{xmu_cell_is_on}()},
 \code{\link{xmu_check_levels_identical}()},
 \code{\link{xmu_check_needs_means}()},
@@ -135,6 +136,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()},
 \code{\link{xmu_twin_get_var_names}()},
-\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()},
+\code{\link{xmu_umxlabel_2_bracket_address}()}
 }
 \concept{xmu internal not for end user}

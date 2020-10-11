@@ -2040,6 +2040,69 @@ xmu_string2path <- function(from) {
 	}
 }
 
+
+#' Generate bracket address from r_c style label
+#'
+#' Takes a label like A_r1c1 and returns A[1,1]
+#'
+#' @param label A umx style row col label
+#' @param dotprefix Dot address prefix for label (e.g., "ai"
+#' @param suffix e.g. "_std" default = "")
+#' @return - label e.g. "ai[1,1]"
+#' @export
+#' @family xmu internal not for end user
+#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
+#' @md
+#' @examples
+#' xmu_umxlabel_2_bracket_address(label = "A_r1c1")
+#' xmu_umxlabel_2_bracket_address(label = "A_r10c1")
+#' xmu_umxlabel_2_bracket_address(label = "A_r1c1", dotprefix = "model.top")
+#' xmu_umxlabel_2_bracket_address(label = "A_r1c1", suffix    = "_std")
+#' xmu_umxlabel_2_bracket_address(label = "A_r1c1", dotprefix = "myModel", suffix = "_std")
+#'
+xmu_umxlabel_2_bracket_address <- function(label, dotprefix="", suffix="") {
+	grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
+	if(!dotprefix == ""){
+		dotprefix = paste0(dotprefix, ".")
+	}
+	mat = sub(x = label, pattern = grepStr, replacement = '\\1', perl = TRUE);
+	row = sub(x = label, pattern = grepStr, replacement = '\\2', perl = TRUE);
+	col = sub(x = label, pattern = grepStr, replacement = '\\3', perl = TRUE);
+	# prefix = "top."
+	label = paste0(dotprefix, mat, suffix, "[", row, ",", col, "]")
+	return(label)
+}
+
+#' Take a bracket addresses and return a matrix_rXcX style label.
+#'
+#' Takes a label like A[1,1] and returns A_r1c1.
+#' If std are available, then these are reported.
+#'
+#' @param label A bracket label
+#' @param prefix prefix for label (e.g., "ai"
+#' @param suffix e.g. "_std" default = "")
+#' @return - label e.g. "ai_r1c1"
+#' @export
+#' @family xmu internal not for end user
+#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
+#' @md
+#' @examples
+#' xmu_bracket_address2umxlabel(label = "A[1,1]")
+#' xmu_bracket_address2umxlabel(label = "top.A[1,1]")
+#' xmu_bracket_address2umxlabel(label = "A_std[1,1]")
+#'
+xmu_bracket_address2umxlabel <- function(label, keepPrefix = TRUE) {
+	grepStr = "^(.*)\\.(.*)(\\[)(.*)(,)(.*)(\\])" # 1 = matrix names, 2 = row, 3 = column
+	prefix = sub(x = label, pattern = grepStr, replacement = '\\1', perl = TRUE);
+	mat = sub(x = label, pattern = grepStr, replacement = '\\2', perl = TRUE);
+	row = sub(x = label, pattern = grepStr, replacement = '\\3', perl = TRUE);
+	col = sub(x = label, pattern = grepStr, replacement = '\\5', perl = TRUE);
+	# prefix = "top."
+	label = paste0(prefix, ".", mat, "[", row, ",", col, "]")
+	return(label)
+}
+
+
 #' Look up and report CIs for free parameters
 #'
 #' Look up CIs for free parameters in a model, and return as APA-formatted text string.
@@ -2050,31 +2113,31 @@ xmu_string2path <- function(from) {
 #' @param prefix The submodel to look in (default = "top.")
 #' @param suffix The suffix for algebras when standardized (default = "_std")
 #' @param SEstyle If TRUE, report "b(se)" instead of b CI95\[l,u\] (default = FALSE)
-#' @param digits = 2
+#' @param digits Rounding digits.
 #' @param verbose = FALSE
 #' @return - the CI string, e.g. ".73\[-.20, .98\]" or .73(.10)
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
 #' require(umx); data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
+#' tmp = umxRAM("get_CI_example", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
-#' m1 = umxCI(m1, run= "yes")
+#' tmp = umxCI(tmp, run= "yes")
 #' 
 #' # Get CI by parameter label
-#' xmu_get_CI(model= m1, "x1_with_x1")
-#' xmu_get_CI(model= m1, "x1_with_x1", SEstyle=TRUE, digits=3)
+#' xmu_get_CI(model= tmp, "x1_with_x1")
+#' xmu_get_CI(model= tmp, "x1_with_x1", SEstyle = TRUE, digits = 3)
 #' 
 #' # prefix (submodel) and suffix (e.g. std) are ignored if not needed
-#' xmu_get_CI(model= m1, "x1_with_x1", prefix = "top.", suffix = "_std")
+#' xmu_get_CI(model= tmp, "x1_with_x1", prefix = "top.", suffix = "_std")
 #' 
 #' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", suffix = "_std")
 #' xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = "_std")
@@ -2085,9 +2148,7 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 	# TODO xmu_get_CI: Look for CIs, if not found look for SEs, if not found compute with mxSE (high priority!)
 	# TODO xmu_get_CI: Add choice of separator for CI (stash as preference) (easy)
 	if(!umx_has_CIs(model)){
-		if(verbose){
-			message("no CIs")
-		}
+		if(verbose){ message("no CIs") }
 		return(NA)
 	} else {
 		# We want "top.ai_std[1,1]" from "ai_r1c1"
@@ -2099,13 +2160,8 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 				check = label
 			}else{
 				# Probably an auto-bracket-labelled CI e.g. "top.A_std[1,3]", in which case label would be "A_r1c3"
-				grepStr = '^(.*)_r([0-9]+)c([0-9]+)$' # 1 = matrix names, 2 = row, 3 = column
-				mat = sub(x = label, pattern = grepStr, replacement = '\\1', perl = TRUE);
-				row = sub(x = label, pattern = grepStr, replacement = '\\2', perl = TRUE);
-				col = sub(x = label, pattern = grepStr, replacement = '\\3', perl = TRUE);
-				# prefix = "top."
-				dimIndex    = paste0(prefix, mat, suffix, "[", row, ",", col, "]")
-				dimNoSuffix = paste0(prefix, mat, "[", row, ",", col, "]")
+				dimIndex = xmu_bracket_address_2_umxlabel(label, prefix = prefix, suffix = suffix)
+				dimNoSuffix = xmu_bracket_address_2_umxlabel(label, prefix = prefix, suffix = "")
 
 				if(dimIndex %in% intervalNames){
 					check = dimIndex

@@ -26,11 +26,11 @@ umxPlotIP(
 
 \item{means}{Whether to show means paths (defaults to FALSE)}
 
-\item{std}{whether to standardize the model (defaults to TRUE)}
+\item{std}{Whether to standardize the model (defaults to TRUE)}
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
+\item{SEstyle}{Report "b (se)" instead of "b [lower, upper]" (Default)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
