@@ -2087,9 +2087,9 @@ xmu_umxlabel_2_bracket_address <- function(label, dotprefix="", suffix="") {
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
-#' xmu_bracket_address2umxlabel(label = "A[1,1]")
-#' xmu_bracket_address2umxlabel(label = "top.A[1,1]")
-#' xmu_bracket_address2umxlabel(label = "A_std[1,1]")
+#' xmu_bracket_address2umxlabel(label = "A\[1,1\]")
+#' xmu_bracket_address2umxlabel(label = "top.A\[1,1\]")
+#' xmu_bracket_address2umxlabel(label = "A_std\[1,1\]")
 #'
 xmu_bracket_address2umxlabel <- function(label, keepPrefix = TRUE) {
 	grepStr = "^(.*)\\.(.*)(\\[)(.*)(,)(.*)(\\])" # 1 = matrix names, 2 = row, 3 = column

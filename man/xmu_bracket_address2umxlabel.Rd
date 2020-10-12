@@ -23,9 +23,9 @@ Takes a label like A\link{1,1} and returns A_r1c1.
 If std are available, then these are reported.
 }
 \examples{
-xmu_bracket_address2umxlabel(label = "A[1,1]")
-xmu_bracket_address2umxlabel(label = "top.A[1,1]")
-xmu_bracket_address2umxlabel(label = "A_std[1,1]")
+xmu_bracket_address2umxlabel(label = "A\[1,1\]")
+xmu_bracket_address2umxlabel(label = "top.A\[1,1\]")
+xmu_bracket_address2umxlabel(label = "A_std\[1,1\]")
 
 }
 \references{
