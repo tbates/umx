@@ -2079,8 +2079,7 @@ xmu_umxlabel_2_bracket_address <- function(label, dotprefix="", suffix="") {
 #' If std are available, then these are reported.
 #'
 #' @param label A bracket label
-#' @param prefix prefix for label (e.g., "ai"
-#' @param suffix e.g. "_std" default = "")
+#' @param keepPrefix Keep any prefix found e.g. "model.top"
 #' @return - label e.g. "ai_r1c1"
 #' @export
 #' @family xmu internal not for end user

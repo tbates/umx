@@ -9,9 +9,7 @@ xmu_bracket_address2umxlabel(label, keepPrefix = TRUE)
 \arguments{
 \item{label}{A bracket label}
 
-\item{prefix}{prefix for label (e.g., "ai"}
-
-\item{suffix}{e.g. "_std" default = "")}
+\item{keepPrefix}{Keep any prefix found e.g. "model.top"}
 }
 \value{
 \itemize{
