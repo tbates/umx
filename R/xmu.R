@@ -2159,8 +2159,8 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 				check = label
 			}else{
 				# Probably an auto-bracket-labelled CI e.g. "top.A_std[1,3]", in which case label would be "A_r1c3"
-				dimIndex = xmu_bracket_address_2_umxlabel(label, prefix = prefix, suffix = suffix)
-				dimNoSuffix = xmu_bracket_address_2_umxlabel(label, prefix = prefix, suffix = "")
+				dimIndex = xmu_bracket_address2umxlabel(label, prefix = prefix, suffix = suffix)
+				dimNoSuffix = xmu_bracket_address2umxlabel(label, prefix = prefix, suffix = "")
 
 				if(dimIndex %in% intervalNames){
 					check = dimIndex
