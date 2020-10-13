@@ -2930,9 +2930,13 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			message("While making the plot, I found a path labeled ", thisParam, "I don't know where that goes.\n",
 			"If you are using umxModify to make newLabels, instead of making up a new label, use, say, the first label in update as the newLabel to help plot()")
 		}
+
+		# look for CIs if they exist...
 		if(!means & from == "one"){
 			# not adding means...
 		} else {
+			# look for standardized values to replace the raw ones...
+			# TODO std ==?
 			CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", digits = digits, SEstyle = SEstyle, verbose = FALSE)
 			if(is.na(CIstr)){
 				val = round(parameterKeyList[thisParam], digits)
@@ -2941,7 +2945,6 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 			}
 			out = paste0(out, ";\n", from, " -> ", target, " [label=\"", val, "\"]")
 		}
-		# devtools::document("~/bin/umx.twin"); devtools::install("~/bin/umx.twin");
 	}
 
 	preOut = "\t# Latents\n"
