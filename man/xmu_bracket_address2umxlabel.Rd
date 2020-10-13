@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmu_bracket_address2umxlabel}
 \alias{xmu_bracket_address2umxlabel}
-\title{Take a bracket addresses and return a matrix_rXcX style label.}
+\title{Take a bracket address and return a matrix_rXcX style label.}
 \usage{
 xmu_bracket_address2umxlabel(label, keepPrefix = TRUE)
 }
@@ -17,13 +17,12 @@ xmu_bracket_address2umxlabel(label, keepPrefix = TRUE)
 }
 }
 \description{
-Takes a label like A\link{1,1} and returns A_r1c1.
-If std are available, then these are reported.
+Takes a label like A[1,1] and returns "A_r1c1".
 }
 \examples{
-xmu_bracket_address2umxlabel(label = "A\[1,1\]")
-xmu_bracket_address2umxlabel(label = "top.A\[1,1\]")
-xmu_bracket_address2umxlabel(label = "A_std\[1,1\]")
+xmu_bracket_address2umxlabel(label = "A[1,1]")
+xmu_bracket_address2umxlabel(label = "top.A[1,1]")
+xmu_bracket_address2umxlabel(label = "A_std[1,1]")
 
 }
 \references{
