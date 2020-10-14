@@ -2101,10 +2101,8 @@ xmu_bracket_address2rclabel <- function(label, keepPrefix = TRUE) {
 	} else {
 		label = paste0(mat, "[", row, ",", col, "]")
 	}
-
 	return(label)
 }
-
 
 #' Look up and report CIs for free parameters
 #'
