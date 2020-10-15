@@ -2936,14 +2936,6 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 	# ==============
 
 	preOut = "\t# Latents\n"
-	latents = unique(latents)
-	for(var in latents) {
-		if(var == "one"){
-			preOut = paste0(preOut, "\t", var, " [shape = triangle];\n")
-		} else {
-			preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
-		}
-	}
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
 	top     = xmu_dot_rank(out$latents, "^[ace]i", "min")
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s", "max")
