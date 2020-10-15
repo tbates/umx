@@ -103,7 +103,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_CI_stash}()},
 \code{\link{xmu_DF_to_mxData_TypeCov}()},
 \code{\link{xmu_PadAndPruneForDefVars}()},
-\code{\link{xmu_bracket_address2umxlabel}()},
+\code{\link{xmu_bracket_address2rclabel}()},
 \code{\link{xmu_cell_is_on}()},
 \code{\link{xmu_check_levels_identical}()},
 \code{\link{xmu_check_needs_means}()},
@@ -127,6 +127,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_name_from_lavaan_str}()},
 \code{\link{xmu_path2twin}()},
 \code{\link{xmu_path_regex}()},
+\code{\link{xmu_rclabel_2_bracket_address}()},
 \code{\link{xmu_set_sep_from_suffix}()},
 \code{\link{xmu_show_fit_or_comparison}()},
 \code{\link{xmu_simplex_corner}()},
@@ -143,7 +144,6 @@ Other xmu internal not for end user:
 \code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()},
 \code{\link{xmu_twin_get_var_names}()},
-\code{\link{xmu_twin_upgrade_selDvs2SelVars}()},
-\code{\link{xmu_umxlabel_2_bracket_address}()}
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}
