@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmu_bracket_address2rclabel}
 \alias{xmu_bracket_address2rclabel}
-\title{Take a bracket address and return a matrix_rXcX style label.}
+\title{Convert a bracket address into an A_rXcX-style label.}
 \usage{
 xmu_bracket_address2rclabel(label, keepPrefix = TRUE)
 }

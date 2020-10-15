@@ -11,6 +11,7 @@ umxPlotIP(
   digits = 2,
   means = FALSE,
   std = TRUE,
+  showFixed = TRUE,
   format = c("current", "graphviz", "DiagrammeR"),
   SEstyle = FALSE,
   strip_zero = TRUE,
@@ -27,6 +28,8 @@ umxPlotIP(
 \item{means}{Whether to show means paths (defaults to FALSE)}
 
 \item{std}{Whether to standardize the model (defaults to TRUE)}
+
+\item{showFixed}{Whether to graph paths that are fixed but != 0 (default = TRUE)}
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 

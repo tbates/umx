@@ -2862,6 +2862,7 @@ plot.MxModelCP <- umxPlotCP
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
+#' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR")
 #' @param SEstyle Report "b (se)" instead of "b \[lower, upper\]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
@@ -2884,9 +2885,9 @@ plot.MxModelCP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showFixed = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	format = match.arg(format)
-	model = x # Just to emphasise that x has to be a model 
+	model = x # Just to emphasize that x has to be a model 
 	umx_check_model(model, "MxModelIP", callingFn = "umxPlotIP")
 	
 	if(std){

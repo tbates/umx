@@ -2041,9 +2041,9 @@ xmu_string2path <- function(from) {
 }
 
 
-#' Generate bracket address from r_c style label
+#' Convert an "A_r1c1"-style label in a bracket address.
 #'
-#' Takes a label like A_r1c1 and returns A[1,1]
+#' Takes a label like "A_r1c1" and returns "A\[1,1\]"
 #'
 #' @param label A umx style row col label
 #' @param dotprefix Dot address prefix for label (e.g., "ai"
@@ -2073,7 +2073,7 @@ xmu_rclabel_2_bracket_address <- function(label, dotprefix = "", suffix = "") {
 	return(label)
 }
 
-#' Take a bracket address and return a matrix_rXcX style label.
+#' Convert a bracket address into an A_rXcX-style label.
 #'
 #' Takes a label like A\[1,1\] and returns "A_r1c1".
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmu_rclabel_2_bracket_address}
 \alias{xmu_rclabel_2_bracket_address}
-\title{Generate bracket address from r_c style label}
+\title{Convert an "A_r1c1"-style label in a bracket address.}
 \usage{
 xmu_rclabel_2_bracket_address(label, dotprefix = "", suffix = "")
 }
@@ -19,7 +19,7 @@ xmu_rclabel_2_bracket_address(label, dotprefix = "", suffix = "")
 }
 }
 \description{
-Takes a label like A_r1c1 and returns A\link{1,1}
+Takes a label like "A_r1c1" and returns "A[1,1]"
 }
 \examples{
 xmu_rclabel_2_bracket_address(label = "A_r1c1") #A[1,1]
