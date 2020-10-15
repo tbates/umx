@@ -2101,10 +2101,8 @@ xmu_bracket_address2rclabel <- function(label, keepPrefix = TRUE) {
 	} else {
 		label = paste0(mat, "[", row, ",", col, "]")
 	}
-
 	return(label)
 }
-
 
 #' Look up and report CIs for free parameters
 #'
@@ -2155,6 +2153,7 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 		return(NA)
 	} else {
 		# We want "top.ai_std[1,1]" from "ai_r1c1"
+		# or...
 		result = tryCatch({
 			CIlist = model$output$confidenceIntervals
 			intervalNames = dimnames(CIlist)[[1]]
