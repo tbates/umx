@@ -2153,6 +2153,7 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 		return(NA)
 	} else {
 		# We want "top.ai_std[1,1]" from "ai_r1c1"
+		# or...
 		result = tryCatch({
 			CIlist = model$output$confidenceIntervals
 			intervalNames = dimnames(CIlist)[[1]]
