@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmu_rclabel_2_bracket_address}
 \alias{xmu_rclabel_2_bracket_address}
-\title{Convert an "A_r1c1"-style label in a bracket address.}
+\title{Convert an "A_r1c1"-style label to a bracket address.}
 \usage{
 xmu_rclabel_2_bracket_address(label, dotprefix = "", suffix = "")
 }
@@ -15,7 +15,7 @@ xmu_rclabel_2_bracket_address(label, dotprefix = "", suffix = "")
 }
 \value{
 \itemize{
-\item label e.g. "ai\link{1,1}"
+\item label e.g. "ai[1,1]"
 }
 }
 \description{

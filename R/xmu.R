@@ -2041,14 +2041,14 @@ xmu_string2path <- function(from) {
 }
 
 
-#' Convert an "A_r1c1"-style label in a bracket address.
+#' Convert an "A_r1c1"-style label to a bracket address.
 #'
 #' Takes a label like "A_r1c1" and returns "A\[1,1\]"
 #'
 #' @param label A umx style row col label
 #' @param dotprefix Dot address prefix for label (e.g., "ai"
 #' @param suffix e.g. "_std" default = "")
-#' @return - label e.g. "ai[1,1]"
+#' @return - label e.g. "ai\[1,1\]"
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
