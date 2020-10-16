@@ -2048,7 +2048,7 @@ xmu_string2path <- function(from) {
 #' @param label A umx style row col label
 #' @param dotprefix Dot address prefix for label (e.g., "ai"
 #' @param suffix e.g. "_std" default = "")
-#' @return - label e.g. "ai[1,1]"
+#' @return - label e.g. "ai\[1,1\]"
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>

@@ -331,7 +331,12 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	} else {
 		for (w in matrices) {
 			if(!is.null(model$matrices[[w]])){
-				if(report == "html"){ file = paste0(what, w, ".html") } else { file = NA}
+				if(report == "html"){
+					file = paste0(what, w, ".html")
+					# generate the free+value+popover-lable kableExtra plot here!
+				} else {
+					file = NA
+				}
 				if(what == "values"){
 					tmp = data.frame(model$matrices[[w]]$values)
 					message("\n", "Values of ", omxQuotes(w), " matrix (0 shown as .):", appendLF = FALSE)

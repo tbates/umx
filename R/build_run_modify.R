@@ -72,6 +72,10 @@
 #' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon
 #' @importFrom ggplot2 element_text element_blank expand_limits aes
 
+#' @importFrom kableExtra
+# # ' @importFrom knitr
+
+
 # Used in plot
 #' @importFrom DiagrammeR DiagrammeR
 
