@@ -2041,7 +2041,7 @@ xmu_string2path <- function(from) {
 }
 
 
-#' Convert an "A_r1c1"-style label in a bracket address.
+#' Convert an "A_r1c1"-style label to a bracket address.
 #'
 #' Takes a label like "A_r1c1" and returns "A\[1,1\]"
 #'
