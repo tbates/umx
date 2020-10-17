@@ -110,7 +110,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 		return(thePlot)
 	}
 	# Genotypes BB Bb bb Frequency p2 2pq q2
-	df <- data.frame(stringsAsFactors = FALSE,
+	df = data.frame(stringsAsFactors = FALSE,
 		Genotypes = c("Frequency", "fraction"),
 		BB = c("p\u00B2", round(p^2, 2)),
 		Bb = c("2pq"    , round(2 * p * q, 2)),
@@ -145,7 +145,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 	# meanDose = 2 * p^2 + 2 * p * q  # eq 3.14
 	# df$effect * df$freq; sum(df$effect * df$freq) # sums to zero
 	# TODO add examples on page 57
-	df <- data.frame(stringsAsFactors = FALSE,
+	df = data.frame(stringsAsFactors = FALSE,
 		dose     = c(0            , 1     , 2      ),
 		genotype = c("bb"         , "Bb"  , "BB"   ),
 		value    = c(G_bb         , G_Bb  , G_BB   ),
@@ -167,7 +167,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 	# = Genotypic EFFECT model (the regression line) =
 	# ================================================
 	# p55, pink book, fig 3.2
-	df <- data.frame(stringsAsFactors = FALSE,
+	df = data.frame(stringsAsFactors = FALSE,
 		dose     = c(0     , 1     , 2     ),
 		genotype = c("bb"  , "Bb"  , "BB"  ),
 		effect   = c(-a    , d     , a     ),
