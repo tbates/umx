@@ -23,10 +23,10 @@ Depends:
 Imports:
     cowplot,
     DiagrammeR,
-    lavaan,
 	ggplot2,
     kableExtra,
 	knitr,
+    lavaan,
     MASS,
     Matrix,
     methods,
