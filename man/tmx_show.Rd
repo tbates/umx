@@ -10,7 +10,7 @@ tmx_show(
   show = c("free", "fixed", "all"),
   matrices = c("S", "A", "M"),
   digits = 2,
-  report = c("markdown", "html"),
+  report = c("html", "markdown"),
   na.print = "",
   zero.print = ".",
   html_font = NULL,
@@ -61,14 +61,19 @@ m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
 	umxPath(var = "G", fixedAt = 1)
 )
 
-tmx_show(m1)
+tmx_show(m1, report="markdown")
+tmx_show(m1, digits = 3, report = "markdown")
+tmx_show(m1, matrices = "S", report="markdown")
+tmx_show(m1, what = "free", report="markdown")
+tmx_show(m1, what = "labels", report="markdown")
+tmx_show(m1, what = "free", matrices = "A", report="markdown")
+\dontrun{
+# =============================================
+# = Show smart table on the web (the default) =
+# =============================================
 tmx_show(m1, report="html")
-tmx_show(m1, digits = 3)
-tmx_show(m1, matrices = "S")
-tmx_show(m1, what = "free")
-tmx_show(m1, what = "labels")
-tmx_show(m1, what = "free", matrices = "A")
-# tmx_show(m1, what = "free", matrices = "thresholds")
+tmx_show(m1, what = "free", matrices = "thresholds")
+}
 
 }
 \references{
