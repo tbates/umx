@@ -392,33 +392,32 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 						)
 					}
 					print(tb)
-					return()
 				} else {
 					file = NA
-				}
-				if(what == "values"){
-					tmp = data.frame(model$matrices[[w]]$values)
-					message("\n", "Values of ", omxQuotes(w), " matrix (0 shown as .):", appendLF = FALSE)
-				}else if(what == "free"){
-					tmp = data.frame(model$matrices[[w]]$free)
-					message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
-				}else if(what == "labels"){
-					tmp = model$matrices[[w]]$labels
-					if(show == "free"){
-						tmp[model$matrices[[w]]$free != TRUE] = ""
-					} else if (show == "fixed") {
-						tmp[model$matrices[[w]]$free == TRUE] = ""
+					if(what == "values"){
+						tmp = data.frame(model$matrices[[w]]$values)
+						message("\n", "Values of ", omxQuotes(w), " matrix (0 shown as .):", appendLF = FALSE)
+					}else if(what == "free"){
+						tmp = data.frame(model$matrices[[w]]$free)
+						message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
+					}else if(what == "labels"){
+						tmp = model$matrices[[w]]$labels
+						if(show == "free"){
+							tmp[model$matrices[[w]]$free != TRUE] = ""
+						} else if (show == "fixed") {
+							tmp[model$matrices[[w]]$free == TRUE] = ""
+						}
+						message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
+					}else if(what == "nonzero_or_free"){
+						message("99 means parameter is fixed at a non-zero value")
+						values = model$matrices[[w]]$values
+						Free   = model$matrices[[w]]$free
+						values[!Free & values !=0] = 99
+						tmp = data.frame(values)
+						message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
 					}
-					message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
-				}else if(what == "nonzero_or_free"){
-					message("99 means parameter is fixed at a non-zero value")
-					values = model$matrices[[w]]$values
-					Free   = model$matrices[[w]]$free
-					values[!Free & values !=0] = 99
-					tmp = data.frame(values)
-					message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
+					umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
 				}
-				umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
 			}
 		}
 	}
