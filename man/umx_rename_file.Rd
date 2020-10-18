@@ -35,7 +35,7 @@ None
 }
 \description{
 Rename files. On OS X, the function can access the current front-most Finder window.
-The file renaming is fast and, because you can use regular expressions, powerful.
+The file renaming is fast and, because you can use regular expressions too change names.
 }
 \examples{
 \dontrun{

@@ -10,9 +10,13 @@ tmx_show(
   show = c("free", "fixed", "all"),
   matrices = c("S", "A", "M"),
   digits = 2,
-  report = c("markdown", "inline", "html", "report"),
+  report = c("markdown", "html"),
   na.print = "",
-  zero.print = "."
+  zero.print = ".",
+  html_font = NULL,
+  style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
+  bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
+  lightable_options = "striped"
 )
 }
 \arguments{
@@ -31,6 +35,10 @@ tmx_show(
 \item{na.print}{How to display NAs (default = "")}
 
 \item{zero.print}{How to display 0 values (default = ".")}
+
+\item{html_font}{Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'}
+
+\item{style}{The style for the table c("Times", '"Arial Narrow", arial, helvetica, sans-s')}
 }
 \value{
 None
@@ -54,6 +62,7 @@ m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
 )
 
 tmx_show(m1)
+tmx_show(m1, report="html")
 tmx_show(m1, digits = 3)
 tmx_show(m1, matrices = "S")
 tmx_show(m1, what = "free")

@@ -264,6 +264,8 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
 #' @param report How to report the results. "html" = open in browser.
+#' @param style The style for the table c("Times", '"Arial Narrow", arial, helvetica, sans-s')
+#' @param html_font Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'
 #' @return None
 #' @export
 #' @family Teaching and Testing functions
@@ -281,6 +283,7 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' )
 #'
 #' tmx_show(m1)
+#' tmx_show(m1, report="html")
 #' tmx_show(m1, digits = 3)
 #' tmx_show(m1, matrices = "S")
 #' tmx_show(m1, what = "free")
@@ -288,14 +291,16 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' tmx_show(m1, what = "free", matrices = "A")
 #' # tmx_show(m1, what = "free", matrices = "thresholds")
 #'
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("markdown", "inline", "html", "report"), na.print = "", zero.print = ".") {
+tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("markdown", "html"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
 	if(!umx_is_RAM(model)){
 		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
 	}
-	what   = match.arg(what)
-	show   = match.arg(show)
-	report = match.arg(report)
+	what      = match.arg(what)
+	show      = match.arg(show)
+	report    = match.arg(report)
+	style    = match.arg(style)
 	
+	umx_set_table_format(report) # side effect
 	if("thresholds" %in% matrices){
 		# TODO tmx_show: Threshold printing not yet finalised
 		if(!is.null(model$deviations_for_thresh)){
@@ -333,7 +338,61 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 			if(!is.null(model$matrices[[w]])){
 				if(report == "html"){
 					file = paste0(what, w, ".html")
-					# generate the free+value+popover-lable kableExtra plot here!
+					# generate the free + value + popover label kableExtra plot here with library(kableExtra)
+					
+					values = umx_round(model$matrices[[w]]$values, digits)
+					free   = model$matrices[[w]]$free
+					values[!free & values ==0] = zero.print
+					
+					cols = dim(values)[[2]]
+					tb = kbl(values, caption = paste0(w, " matrix"))
+					tb = add_footnote(tb, label = paste0("fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print))) # , paths fixed@0 left blank
+
+					# header = (cols+1); names(header)= paste0(w, " matrix")
+					# tb = add_header_above(tb, header = header)
+					
+					if(is.null(html_font)){
+						if(style == "classic"){
+							tb = kable_classic(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "classic_2"){
+							tb = kable_classic_2(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "minimal"){
+							tb = kable_minimal(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "material"){
+							tb = kable_material(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "material_dark"){
+							tb = kable_material_dark(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "paper"){
+							tb = kable_paper(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "paper"){
+							tb = kable_paper(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						}
+					}else{
+						if(style == "classic"){
+							tb = kable_classic(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "classic_2"){
+							tb = kable_classic_2(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "minimal"){
+							tb = kable_minimal(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "material"){
+							tb = kable_material(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "material_dark"){
+							tb = kable_material_dark(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "paper"){
+							tb = kable_paper(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						} else if(style == "paper"){
+							tb = kable_paper(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+						}
+					}
+
+					for (i in 2:(cols+1)) {
+						tb = column_spec(tb, i, 
+							color = ifelse(model$matrices[[w]]$free[, i-1], "black", "#AAAAAA"), # #666666 red= #D7261E green= #26D71E
+							tooltip = m1$A$labels[, (i-1)]
+						)
+					}
+					print(tb)
+					return()
 				} else {
 					file = NA
 				}
@@ -344,13 +403,12 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					tmp = data.frame(model$matrices[[w]]$free)
 					message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
 				}else if(what == "labels"){
-					x = model$matrices[[w]]$labels
+					tmp = model$matrices[[w]]$labels
 					if(show == "free"){
-						x[model$matrices[[w]]$free != TRUE] = ""
+						tmp[model$matrices[[w]]$free != TRUE] = ""
 					} else if (show == "fixed") {
-						x[model$matrices[[w]]$free == TRUE] = ""
+						tmp[model$matrices[[w]]$free == TRUE] = ""
 					}
-					tmp = x
 					message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
 				}else if(what == "nonzero_or_free"){
 					message("99 means parameter is fixed at a non-zero value")

@@ -1876,7 +1876,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' Rename files
 #'
 #' Rename files. On OS X, the function can access the current front-most Finder window.
-#' The file renaming is fast and, because you can use regular expressions, powerful.
+#' The file renaming is fast and, because you can use regular expressions too change names.
 #'
 #' @param findStr The pattern to find, i.e., "cats"
 #' @param replaceStr The replacement pattern "\1 are not dogs"
