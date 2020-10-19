@@ -71,7 +71,9 @@
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
 #' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon
 #' @importFrom ggplot2 element_text element_blank expand_limits aes
-# #' @importFrom kableExtra
+#' @importFrom kableExtra kbl add_footnote column_spec
+#' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
+
 # # ' @importFrom knitr
 
 # Used in plot

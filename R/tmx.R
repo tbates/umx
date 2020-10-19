@@ -1,3 +1,5 @@
+# "I like ambitious goals. I
+
 # TODO Create a tmx path tracing rules
 # TODO Fix up umxUnexplainedCausalNexus()
 
@@ -300,7 +302,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	report    = match.arg(report)
 	style    = match.arg(style)
 	
-	umx_set_table_format(report) # side effect
+	oldTableFormat = umx_set_table_format(report) # side effect
 	if("thresholds" %in% matrices){
 		# TODO tmx_show: Threshold printing not yet finalised
 		if(!is.null(model$deviations_for_thresh)){
@@ -338,7 +340,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 			if(!is.null(model$matrices[[w]])){
 				if(report == "html"){
 					file = paste0(what, w, ".html")
-					# generate the free + value + popover label kableExtra plot here with library(kableExtra)
+					# generate the free + value + popover label using kableExtra
 					
 					values = umx_round(model$matrices[[w]]$values, digits)
 					free   = model$matrices[[w]]$free
@@ -347,7 +349,6 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					cols = dim(values)[[2]]
 					tb = kbl(values, caption = paste0(w, " matrix"))
 					tb = add_footnote(tb, label = paste0("fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print))) # , paths fixed@0 left blank
-
 					# header = (cols+1); names(header)= paste0(w, " matrix")
 					# tb = add_header_above(tb, header = header)
 					
@@ -364,8 +365,6 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 							tb = kable_material_dark(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
 						} else if(style == "paper"){
 							tb = kable_paper(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "paper"){
-							tb = kable_paper(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
 						}
 					}else{
 						if(style == "classic"){
@@ -380,8 +379,6 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 							tb = kable_material_dark(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
 						} else if(style == "paper"){
 							tb = kable_paper(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "paper"){
-							tb = kable_paper(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
 						}
 					}
 
@@ -392,7 +389,8 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 						)
 					}
 					print(tb)
-					return()
+					umx_set_table_format(oldTableFormat) # side effect
+					invisible()
 				} else {
 					file = NA
 				}
@@ -422,4 +420,6 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 			}
 		}
 	}
+	umx_set_table_format(oldTableFormat) # side effect
+	
 }
