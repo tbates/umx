@@ -284,16 +284,21 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #'
-#' tmx_show(m1)
+#' tmx_show(m1, report="markdown")
+#' tmx_show(m1, digits = 3, report = "markdown")
+#' tmx_show(m1, matrices = "S", report="markdown")
+#' tmx_show(m1, what = "free", report="markdown")
+#' tmx_show(m1, what = "labels", report="markdown")
+#' tmx_show(m1, what = "free", matrices = "A", report="markdown")
+#' \dontrun{
+#' # =============================================
+#' # = Show smart table on the web (the default) =
+#' # =============================================
 #' tmx_show(m1, report="html")
-#' tmx_show(m1, digits = 3)
-#' tmx_show(m1, matrices = "S")
-#' tmx_show(m1, what = "free")
-#' tmx_show(m1, what = "labels")
-#' tmx_show(m1, what = "free", matrices = "A")
-#' # tmx_show(m1, what = "free", matrices = "thresholds")
+#' tmx_show(m1, what = "free", matrices = "thresholds")
+#' }
 #'
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("markdown", "html"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
+tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
 	if(!umx_is_RAM(model)){
 		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
 	}
@@ -393,30 +398,30 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					invisible()
 				} else {
 					file = NA
-				}
-				if(what == "values"){
-					tmp = data.frame(model$matrices[[w]]$values)
-					message("\n", "Values of ", omxQuotes(w), " matrix (0 shown as .):", appendLF = FALSE)
-				}else if(what == "free"){
-					tmp = data.frame(model$matrices[[w]]$free)
-					message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
-				}else if(what == "labels"){
-					tmp = model$matrices[[w]]$labels
-					if(show == "free"){
-						tmp[model$matrices[[w]]$free != TRUE] = ""
-					} else if (show == "fixed") {
-						tmp[model$matrices[[w]]$free == TRUE] = ""
+					if(what == "values"){
+						tmp = data.frame(model$matrices[[w]]$values)
+						message("\n", "Values of ", omxQuotes(w), " matrix (0 shown as .):", appendLF = FALSE)
+					}else if(what == "free"){
+						tmp = data.frame(model$matrices[[w]]$free)
+						message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
+					}else if(what == "labels"){
+						tmp = model$matrices[[w]]$labels
+						if(show == "free"){
+							tmp[model$matrices[[w]]$free != TRUE] = ""
+						} else if (show == "fixed") {
+							tmp[model$matrices[[w]]$free == TRUE] = ""
+						}
+						message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
+					}else if(what == "nonzero_or_free"){
+						message("99 means parameter is fixed at a non-zero value")
+						values = model$matrices[[w]]$values
+						Free   = model$matrices[[w]]$free
+						values[!Free & values !=0] = 99
+						tmp = data.frame(values)
+						message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
 					}
-					message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
-				}else if(what == "nonzero_or_free"){
-					message("99 means parameter is fixed at a non-zero value")
-					values = model$matrices[[w]]$values
-					Free   = model$matrices[[w]]$free
-					values[!Free & values !=0] = 99
-					tmp = data.frame(values)
-					message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
+					umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
 				}
-				umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
 			}
 		}
 	}
