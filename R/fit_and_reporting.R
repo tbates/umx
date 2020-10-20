@@ -2257,13 +2257,13 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' m1 = umxRAM("grow", data = myGrowthMixtureData,
 #'		umxPath(var = manifests, free = TRUE), 
 #'		umxPath(means = manifests, fixedAt = 0), 
-#'		umxPath(v.m. = c("intercept","slope")),
-#'		umxPath("intercept", with = "slope"),
-#'		umxPath("intercept", to = manifests, fixedAt = 1), 
-#'		umxPath("slope", to = manifests, arrows = 1, fixedAt = c(0, 1, 2, 3, 4))
+#'		umxPath(v.m. = c("int","slope")),
+#'		umxPath("int", with = "slope"),
+#'		umxPath("int", to = manifests, fixedAt = 1), 
+#'		umxPath("slope", to = manifests, arrows = 1, fixedAt = c(0,1,2,3,4))
 #' )
 #'
-#' plot(m1, means=FALSE, std=TRUE, strip=TRUE, splines="FALSE", max="intercept")
+#' plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
 #' } # end dontrun
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ...) {
