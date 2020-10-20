@@ -61,11 +61,11 @@ m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
 	umxPath(var = "G", fixedAt = 1)
 )
 
-tmx_show(m1, report="markdown")
+tmx_show(m1, report = "markdown")
 tmx_show(m1, digits = 3, report = "markdown")
-tmx_show(m1, matrices = "S", report="markdown")
-tmx_show(m1, what = "free", report="markdown")
-tmx_show(m1, what = "labels", report="markdown")
+tmx_show(m1, matrices = "S", report = "markdown")
+tmx_show(m1, what = "free"  , report = "markdown")
+tmx_show(m1, what = "labels", report = "markdown")
 tmx_show(m1, what = "free", matrices = "A", report="markdown")
 \dontrun{
 # =============================================

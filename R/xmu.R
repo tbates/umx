@@ -1734,12 +1734,16 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #' @md
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	if(strip_zero){
-		# strip leading "0." (pad "0.5" to "50")
-		# optionally negative number, with only 1 digit after the decimal
-		digraph = umx_names(digraph, '(label ?= ?\\"-?)(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
-		# optionally negative number, with only 1 or more digits after the decimal
-		digraph = umx_names(digraph, '(label ?= ?\\"-?)(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
-		# a1 -> ht1 [label = "0.92"];
+		# strip leading "0." (pad "@0.5" to "@50")
+		# a1 -> ht1 [label = "@-0.92"];
+
+		# \\1 = "label = @-"
+		# umx_names('a1 -> ht1 [label = "0.92"];', '(label ?= ?\\"@?-?)(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
+
+		# look for (optionally @ or negative) number with only 1 digit after the decimal
+		digraph = umx_names(digraph, '(label ?= ?\\"@?-?)(0\\.)([0-9])\\"', replacement = "\\1\\30\"", global = TRUE)
+		# look for (optionally @ or negative) number, with 1 or more digits after the decimal
+		digraph = umx_names(digraph, '(label ?= ?\\"@?-?)(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
 	}
 
 	if(!is.na(file)){

@@ -2286,15 +2286,14 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		# ==========
 		# = Setup  =
 		# ==========
-		resid = match.arg(resid)
 		model = x # just to be clear that x is a model
-
+		resid = match.arg(resid)
 		labels = match.arg(labels)
 		latents = model@latentVars   # 'vis', 'math', and 'text' 
 		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
 		# update values using compute = T to capture labels with [] references.
-		# TODO: !!! Needs more work to sync with confidence intervals and SES
+		# TODO: !!! Needs more work to sync with confidence intervals and SEs
 		model$S$values = mxEval(S, model, compute = TRUE)
 		model$A$values = mxEval(A, model, compute = TRUE)
 		if(!is.null(model$M)){
@@ -2399,7 +2398,8 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			out, "\n",
 			rankVariables, "\n}"
 		)
-		print("?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F, min=, max =, same = , fixed, resid= 'circle|line|none'")
+		print("?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
+		# cat(out)
 		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}
 } # end plot.MxModel
