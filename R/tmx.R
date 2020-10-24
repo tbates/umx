@@ -390,7 +390,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					for (i in 2:(cols+1)) {
 						tb = column_spec(tb, i, 
 							color = ifelse(model$matrices[[w]]$free[, i-1], "black", "#AAAAAA"), # #666666 red= #D7261E green= #26D71E
-							tooltip = m1$A$labels[, (i-1)]
+							tooltip = model$A$labels[, (i-1)]
 						)
 					}
 					print(tb)
