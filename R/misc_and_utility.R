@@ -3247,8 +3247,8 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @param x A data.frame to print (matrices will be coerced to data.frame)
 #' @param digits  The number of decimal places to print (getOption("digits"))
 #' @param quote  Parameter passed to print (FALSE)
-#' @param na.print String to replace NA with ("")
-#' @param zero.print String to replace 0.000 with  ("0")
+#' @param na.print How to display NAs (default = "")
+#' @param zero.print How to display 0 values (default = "0")
 #' @param justify Parameter passed to print (defaults to "none")
 #' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open table in browser.
 #' @param suppress minimum numeric value to print (NULL = print all values, no matter how small)
@@ -3256,6 +3256,14 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @param sortableDF If html, is table sortable? (TRUE)
 #' @param both If html, is table also printed as markdown? (TRUE)
 #' @param ... Optional parameters for print
+
+
+#' @param report How to report the results. "html" = open in browser.
+#' @param style The style for the table "paper","material_dark" etc.
+#' @param bootstrap_options border etc.
+#' @param lightable_options striped
+#' @param html_font Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'
+
 #' @return - A dataframe of text
 #' @export
 #' @seealso [umx_msg()], [umx_set_table_format()] 
@@ -3268,7 +3276,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' umx_print(mtcars[1:10,], file = "html")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 #' }
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, append = FALSE, sortableDF= TRUE, both = TRUE, ...){
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, append = FALSE, sortableDF= TRUE, both = TRUE, report = c("html", "markdown"), html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", ...){
 	# depends on R2HTML::HTML and knitr::kable
 	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
 	if(!is.na(file) && file == "markdown"){
