@@ -266,7 +266,9 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
 #' @param report How to report the results. "html" = open in browser.
-#' @param style The style for the table c("Times", '"Arial Narrow", arial, helvetica, sans-s')
+#' @param style The style for the table "paper","material_dark" etc.
+#' @param bootstrap_options border etc.
+#' @param lightable_options striped
 #' @param html_font Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'
 #' @return None
 #' @export

@@ -38,7 +38,11 @@ tmx_show(
 
 \item{html_font}{Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'}
 
-\item{style}{The style for the table c("Times", '"Arial Narrow", arial, helvetica, sans-s')}
+\item{style}{The style for the table "paper","material_dark" etc.}
+
+\item{bootstrap_options}{border etc.}
+
+\item{lightable_options}{striped}
 }
 \value{
 None
