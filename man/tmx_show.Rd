@@ -13,7 +13,7 @@ tmx_show(
   report = c("html", "markdown"),
   na.print = "",
   zero.print = ".",
-  html_font = NULL,
+  font = NULL,
   style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
   bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
   lightable_options = "striped"
@@ -36,9 +36,13 @@ tmx_show(
 
 \item{zero.print}{How to display 0 values (default = ".")}
 
-\item{html_font}{Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'}
+\item{font}{Deafult is null. Set (e.g. "Optima") to override the style's default font.}
 
-\item{style}{The style for the table c("Times", '"Arial Narrow", arial, helvetica, sans-s')}
+\item{style}{Defaults to paper (other options are "material_dark", "classic", "classic_2", "minimal", "material")}
+
+\item{bootstrap_options}{Defaults to c("hover", "bordered", "condensed", "responsive")}
+
+\item{lightable_options}{Default is "striped"}
 }
 \value{
 None
@@ -71,7 +75,7 @@ tmx_show(m1, what = "free", matrices = "A", report="markdown")
 # =============================================
 # = Show smart table on the web (the default) =
 # =============================================
-tmx_show(m1, report="html")
+tmx_show(m1, report = "html")
 tmx_show(m1, what = "free", matrices = "thresholds")
 }
 

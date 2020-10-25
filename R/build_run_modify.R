@@ -3855,7 +3855,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @param droplevels Whether to drop levels with no observed data (defaults to FALSE)
 #' @param threshMatName name of the matrix which is returned. Defaults to "threshMat" - best not to change it.
 #' @param verbose How much to say about what was done. (defaults to FALSE)
-#' @param selDVs deprecated. Use fullVarNames
+#' @param selDVs deprecated. Use "fullVarNames"
 #' @return - list of thresholds matrix, deviations, lowerOnes
 #' @export
 #' @seealso [OpenMx::mxThreshold()]

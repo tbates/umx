@@ -1992,11 +1992,11 @@ dl_from_dropbox <- function(x, key=NULL){
 #'
 #' @param baseFolder  The folder to search in. If set to "Finder" (and you are on OS X) it will use the current
 #' front-most Finder window. If it is blank, a choose folder dialog will be thrown.
-#' @param regex match string choosing which files are selected in baseFolder
-#' @param fileNameList List of files to move
-#' @param destFolder Folder to move files into
-#' @param test Boolean determining whether to change the names, or just report on what would have happened
-#' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe))
+#' @param regex string to select files to process within the selected folder.
+#' @param fileNameList List of files to move.
+#' @param destFolder Folder to move files to.
+#' @param test Boolean determining whether to change the names, or just report a dry run.
+#' @param overwrite Boolean determining whether to overwrite files or not (default = FALSE (safe)).
 #' @return None
 #' @seealso [file.rename()], [regex()]
 #' @family File Functions

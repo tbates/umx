@@ -33,7 +33,7 @@ umxThresholdMatrix(
 
 \item{verbose}{How much to say about what was done. (defaults to FALSE)}
 
-\item{selDVs}{deprecated. Use fullVarNames}
+\item{selDVs}{deprecated. Use "fullVarNames"}
 }
 \value{
 \itemize{

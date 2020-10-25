@@ -17,15 +17,15 @@ umx_move_file(
 \item{baseFolder}{The folder to search in. If set to "Finder" (and you are on OS X) it will use the current
 front-most Finder window. If it is blank, a choose folder dialog will be thrown.}
 
-\item{regex}{match string choosing which files are selected in baseFolder}
+\item{regex}{string to select files to process within the selected folder.}
 
-\item{fileNameList}{List of files to move}
+\item{fileNameList}{List of files to move.}
 
-\item{destFolder}{Folder to move files into}
+\item{destFolder}{Folder to move files to.}
 
-\item{test}{Boolean determining whether to change the names, or just report on what would have happened}
+\item{test}{Boolean determining whether to change the names, or just report a dry run.}
 
-\item{overwrite}{Boolean determining whether to overwrite files or not (default = FALSE (safe))}
+\item{overwrite}{Boolean determining whether to overwrite files or not (default = FALSE (safe)).}
 }
 \value{
 None

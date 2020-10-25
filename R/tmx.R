@@ -266,8 +266,10 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
 #' @param report How to report the results. "html" = open in browser.
-#' @param style The style for the table c("Times", '"Arial Narrow", arial, helvetica, sans-s')
-#' @param html_font Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'
+#' @param style Defaults to paper (other options are "material_dark", "classic", "classic_2", "minimal", "material")
+#' @param bootstrap_options Defaults to c("hover", "bordered", "condensed", "responsive")
+#' @param lightable_options Default is "striped"
+#' @param font Deafult is null. Set (e.g. "Optima") to override the style's default font.
 #' @return None
 #' @export
 #' @family Teaching and Testing functions
@@ -294,11 +296,11 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' # =============================================
 #' # = Show smart table on the web (the default) =
 #' # =============================================
-#' tmx_show(m1, report="html")
+#' tmx_show(m1, report = "html")
 #' tmx_show(m1, what = "free", matrices = "thresholds")
 #' }
 #'
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
+tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
 	if(!umx_is_RAM(model)){
 		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
 	}
@@ -357,7 +359,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					# header = (cols+1); names(header)= paste0(w, " matrix")
 					# tb = add_header_above(tb, header = header)
 					
-					if(is.null(html_font)){
+					if(is.null(font)){
 						if(style == "classic"){
 							tb = kable_classic(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
 						} else if(style == "classic_2"){
@@ -390,12 +392,10 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					for (i in 2:(cols+1)) {
 						tb = column_spec(tb, i, 
 							color = ifelse(model$matrices[[w]]$free[, i-1], "black", "#AAAAAA"), # #666666 red= #D7261E green= #26D71E
-							tooltip = m1$A$labels[, (i-1)]
+							tooltip = model$A$labels[, (i-1)]
 						)
 					}
 					print(tb)
-					umx_set_table_format(oldTableFormat) # side effect
-					invisible()
 				} else {
 					file = NA
 					if(what == "values"){
@@ -425,6 +425,5 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 			}
 		}
 	}
-	umx_set_table_format(oldTableFormat) # side effect
-	
+	umx_set_table_format(oldTableFormat) # side effect	
 }
