@@ -12,16 +12,17 @@ umx_print(
   na.print = "",
   zero.print = "0",
   justify = "none",
-  file = c(NA, "tmp.html"),
   suppress = NULL,
+  file = c(NA, "tmp.html"),
+  kableExtra = TRUE,
   append = FALSE,
   sortableDF = TRUE,
-  both = TRUE,
   report = c("html", "markdown"),
   html_font = NULL,
   style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
   bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
   lightable_options = "striped",
+  both = TRUE,
   ...
 )
 }
@@ -38,15 +39,15 @@ umx_print(
 
 \item{justify}{Parameter passed to print (defaults to "none")}
 
-\item{file}{whether to write to a file (defaults to NA (no file). Use "tmp.html" to open table in browser.}
-
 \item{suppress}{minimum numeric value to print (NULL = print all values, no matter how small)}
+
+\item{file}{whether to write to a file (defaults to NA (no file). Use "html" to open table in browser.}
+
+\item{kableExtra}{Whether to print the table using kableExtra (if html)}
 
 \item{append}{If html, is this appended to file? (FALSE)}
 
 \item{sortableDF}{If html, is table sortable? (TRUE)}
-
-\item{both}{If html, is table also printed as markdown? (TRUE)}
 
 \item{report}{How to report the results. "html" = open in browser.}
 
@@ -57,6 +58,8 @@ umx_print(
 \item{bootstrap_options}{border etc.}
 
 \item{lightable_options}{striped}
+
+\item{both}{If html, is table also printed as markdown? (TRUE)}
 
 \item{...}{Optional parameters for print}
 }

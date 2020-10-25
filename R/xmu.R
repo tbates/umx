@@ -2221,7 +2221,7 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 # =================
 # = TABLE HELPERS =
 # =================
-xmu_style_kable <- function(tb, html_font = NULL, bootstrap_options=bootstrap_options, lightable_options = lightable_options, full_width = FALSE) {
+xmu_style_kable <- function(tb, style, html_font = NULL, bootstrap_options=bootstrap_options, lightable_options = lightable_options, full_width = FALSE) {
 	if(is.null(html_font)){
 		if(style == "classic"){
 			tb = kable_classic(tb, full_width = full_width, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
