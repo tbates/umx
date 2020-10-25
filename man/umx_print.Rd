@@ -17,6 +17,11 @@ umx_print(
   append = FALSE,
   sortableDF = TRUE,
   both = TRUE,
+  report = c("html", "markdown"),
+  html_font = NULL,
+  style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
+  bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
+  lightable_options = "striped",
   ...
 )
 }
@@ -27,9 +32,9 @@ umx_print(
 
 \item{quote}{Parameter passed to print (FALSE)}
 
-\item{na.print}{String to replace NA with ("")}
+\item{na.print}{How to display NAs (default = "")}
 
-\item{zero.print}{String to replace 0.000 with  ("0")}
+\item{zero.print}{How to display 0 values (default = "0")}
 
 \item{justify}{Parameter passed to print (defaults to "none")}
 
@@ -42,6 +47,16 @@ umx_print(
 \item{sortableDF}{If html, is table sortable? (TRUE)}
 
 \item{both}{If html, is table also printed as markdown? (TRUE)}
+
+\item{report}{How to report the results. "html" = open in browser.}
+
+\item{html_font}{Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'}
+
+\item{style}{The style for the table "paper","material_dark" etc.}
+
+\item{bootstrap_options}{border etc.}
+
+\item{lightable_options}{striped}
 
 \item{...}{Optional parameters for print}
 }
