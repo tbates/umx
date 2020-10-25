@@ -266,10 +266,10 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
 #' @param report How to report the results. "html" = open in browser.
-#' @param style Defaults to paper (other options are "material_dark", "classic", "classic_2", "minimal", "material")
-#' @param bootstrap_options Defaults to c("hover", "bordered", "condensed", "responsive")
+#' @param style The style for the table (Defaults to "paper". Other options are "material_dark", "classic", "classic_2", "minimal", "material")
+#' @param bootstrap_options border etc. Defaults to c("hover", "bordered", "condensed", "responsive")
 #' @param lightable_options Default is "striped"
-#' @param font Deafult is null. Set (e.g. "Optima") to override the style's default font.
+#' @param font Default is null. Set (e.g. "Optima") to override the style's default font.
 #' @return None
 #' @export
 #' @family Teaching and Testing functions
@@ -309,6 +309,14 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 	report    = match.arg(report)
 	style    = match.arg(style)
 	
+	# filter out non-empty matrices
+	requestedMatrices = matrices
+	matrices = c()
+	for (w in requestedMatrices) {
+		if(!is.null(model$matrices[[w]])){
+			matrices = c(matrices, w)
+		}
+	}
 	oldTableFormat = umx_set_table_format(report) # side effect
 	if("thresholds" %in% matrices){
 		# TODO tmx_show: Threshold printing not yet finalised
@@ -344,86 +352,51 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 		}
 	} else {
 		for (w in matrices) {
-			if(!is.null(model$matrices[[w]])){
-				if(report == "html"){
-					file = paste0(what, w, ".html")
-					# generate the free + value + popover label using kableExtra
-					
-					values = umx_round(model$matrices[[w]]$values, digits)
-					free   = model$matrices[[w]]$free
-					values[!free & values ==0] = zero.print
-					
-					cols = dim(values)[[2]]
-					tb = kbl(values, caption = paste0(w, " matrix"))
-					tb = add_footnote(tb, label = paste0("fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print))) # , paths fixed@0 left blank
-					# header = (cols+1); names(header)= paste0(w, " matrix")
-					# tb = add_header_above(tb, header = header)
-					
-					if(is.null(font)){
-						if(style == "classic"){
-							tb = kable_classic(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "classic_2"){
-							tb = kable_classic_2(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "minimal"){
-							tb = kable_minimal(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "material"){
-							tb = kable_material(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "material_dark"){
-							tb = kable_material_dark(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "paper"){
-							tb = kable_paper(tb, full_width = FALSE, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						}
-					}else{
-						if(style == "classic"){
-							tb = kable_classic(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "classic_2"){
-							tb = kable_classic_2(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "minimal"){
-							tb = kable_minimal(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "material"){
-							tb = kable_material(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "material_dark"){
-							tb = kable_material_dark(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						} else if(style == "paper"){
-							tb = kable_paper(tb, full_width = FALSE, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
-						}
-					}
-
-					for (i in 2:(cols+1)) {
-						tb = column_spec(tb, i, 
-							color = ifelse(model$matrices[[w]]$free[, i-1], "black", "#AAAAAA"), # #666666 red= #D7261E green= #26D71E
-							tooltip = model$A$labels[, (i-1)]
-						)
-					}
-					print(tb)
-				} else {
-					file = NA
-					if(what == "values"){
-						tmp = data.frame(model$matrices[[w]]$values)
-						message("\n", "Values of ", omxQuotes(w), " matrix (0 shown as .):", appendLF = FALSE)
-					}else if(what == "free"){
-						tmp = data.frame(model$matrices[[w]]$free)
-						message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
-					}else if(what == "labels"){
-						tmp = model$matrices[[w]]$labels
-						if(show == "free"){
-							tmp[model$matrices[[w]]$free != TRUE] = ""
-						} else if (show == "fixed") {
-							tmp[model$matrices[[w]]$free == TRUE] = ""
-						}
-						message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
-					}else if(what == "nonzero_or_free"){
-						message("99 means parameter is fixed at a non-zero value")
-						values = model$matrices[[w]]$values
-						Free   = model$matrices[[w]]$free
-						values[!Free & values !=0] = 99
-						tmp = data.frame(values)
-						message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
-					}
-					umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= file)
+			if(report == "html"){
+				file = paste0(what, w, ".html")
+				# generate the free + value + popover label using kableExtra
+				values = umx_round(model$matrices[[w]]$values, digits)
+				free   = model$matrices[[w]]$free
+				values[!free & values ==0] = zero.print
+				
+				cols = dim(values)[[2]]
+				tb = kbl(values, caption = paste0(w, " matrix"))
+				tb = add_footnote(tb, label = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print))) # , paths fixed@0 left blank
+				tb = xmu_style_kable(tb, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
+				
+				for (thisCol in 2:(cols+1)) {
+					tb = column_spec(tb, thisCol, 
+						color = ifelse(model$matrices[[w]]$free[, thisCol-1], "black", "#AAAAAA"), # #666666 red= #D7261E green= #26D71E
+						tooltip = model$A$labels[, (thisCol-1)]
+					)
 				}
+				print(tb)
+			} else {
+				if(what == "values"){
+					tmp = data.frame(model$matrices[[w]]$values)
+					message("\n", "Values of ", omxQuotes(w), " matrix (0 shown as .):", appendLF = FALSE)
+				}else if(what == "free"){
+					tmp = data.frame(model$matrices[[w]]$free)
+					message("\n", "Free cells in ", w, " matrix (FALSE shown as .):", appendLF = FALSE)
+				}else if(what == "labels"){
+					tmp = model$matrices[[w]]$labels
+					if(show == "free"){
+						tmp[model$matrices[[w]]$free != TRUE] = ""
+					} else if (show == "fixed") {
+						tmp[model$matrices[[w]]$free == TRUE] = ""
+					}
+					message("\n", show, " labels for ", w, " matrix:", appendLF = FALSE)
+				}else if(what == "nonzero_or_free"){
+					message("99 means parameter is fixed at a non-zero value")
+					values = model$matrices[[w]]$values
+					Free   = model$matrices[[w]]$free
+					values[!Free & values !=0] = 99
+					tmp = data.frame(values)
+					message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
+				}
+				umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= NA)
 			}
-		}
+		} # for each matrix
 	}
 	umx_set_table_format(oldTableFormat) # side effect	
 }

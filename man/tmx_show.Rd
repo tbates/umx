@@ -36,11 +36,11 @@ tmx_show(
 
 \item{zero.print}{How to display 0 values (default = ".")}
 
-\item{font}{Deafult is null. Set (e.g. "Optima") to override the style's default font.}
+\item{font}{Default is null. Set (e.g. "Optima") to override the style's default font.}
 
-\item{style}{Defaults to paper (other options are "material_dark", "classic", "classic_2", "minimal", "material")}
+\item{style}{The style for the table (Defaults to "paper". Other options are "material_dark", "classic", "classic_2", "minimal", "material")}
 
-\item{bootstrap_options}{Defaults to c("hover", "bordered", "condensed", "responsive")}
+\item{bootstrap_options}{border etc. Defaults to c("hover", "bordered", "condensed", "responsive")}
 
 \item{lightable_options}{Default is "striped"}
 }

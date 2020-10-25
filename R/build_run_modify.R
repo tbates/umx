@@ -1363,22 +1363,24 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' # ===================
 #' # = Ordinal example =
 #' # ===================
+#' 
+#' # Prep data
 #' require(umx)
 #' data(twinData)
-#' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale=c("wt"),sep="")
 #' # Cut BMI column to form ordinal obesity variables
 #' obLevels = c('normal', 'overweight', 'obese')
 #' cuts = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
 #' twinData$obese1=cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels)
 #' twinData$obese2=cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels)
+#' 
 #' # Make the ordinal variables into umxFactors
 #' ordDVs = c("obese1", "obese2")
 #' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#' 
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
-#' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 #' 
-#' # Data-prep done - here's the model and summary!
+#' # Model and summary!
 #' m1 = umxACE(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
 #'
 #' # And controlling age (otherwise manifests appearance as latent C)

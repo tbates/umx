@@ -3247,15 +3247,23 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @param x A data.frame to print (matrices will be coerced to data.frame)
 #' @param digits  The number of decimal places to print (getOption("digits"))
 #' @param quote  Parameter passed to print (FALSE)
-#' @param na.print String to replace NA with ("")
-#' @param zero.print String to replace 0.000 with  ("0")
+#' @param na.print How to display NAs (default = "")
+#' @param zero.print How to display 0 values (default = "0")
 #' @param justify Parameter passed to print (defaults to "none")
-#' @param file whether to write to a file (defaults to NA (no file). Use "tmp.html" to open table in browser.
+#' @param file whether to write to a file (defaults to NA (no file). Use "html" to open table in browser.
 #' @param suppress minimum numeric value to print (NULL = print all values, no matter how small)
 #' @param append If html, is this appended to file? (FALSE)
 #' @param sortableDF If html, is table sortable? (TRUE)
 #' @param both If html, is table also printed as markdown? (TRUE)
+#' @param kableExtra Whether to print the table using kableExtra (if html)
+
+#' @param report How to report the results. "html" = open in browser.
+#' @param style The style for the table "paper","material_dark" etc.
+#' @param bootstrap_options border etc.
+#' @param lightable_options striped
+#' @param html_font Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'
 #' @param ... Optional parameters for print
+
 #' @return - A dataframe of text
 #' @export
 #' @seealso [umx_msg()], [umx_set_table_format()] 
@@ -3268,9 +3276,10 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' umx_print(mtcars[1:10,], file = "html")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 #' }
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", file = c(NA, "tmp.html"), suppress = NULL, append = FALSE, sortableDF= TRUE, both = TRUE, ...){
-	# depends on R2HTML::HTML and knitr::kable
+umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", suppress = NULL, file = c(NA, "tmp.html"), kableExtra = TRUE, append = FALSE, sortableDF= TRUE, report = c("html", "markdown"), html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", both = TRUE, ...){
+	# Depends on R2HTML::HTML and knitr::kable
 	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
+	style = match.arg(style)
 	if(!is.na(file) && file == "markdown"){
 		file = NA
 	}
@@ -3303,14 +3312,20 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(!is.na(file)){
 			# From report = html
-			if(file == "html"){
-				file = "tmp.html"
-			}
-			R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF)
-			system(paste0("open ", file))
-			# print("Table opened in browser")
-			if(both){
-				print(knitr::kable(x))
+			if(file == "html"){ file = "tmp.html" }
+			if(both){ print(knitr::kable(x)) }
+			if(kableExtra){
+				x = umx_round(x, digits)
+				x[x == 0] = zero.print
+				x = kbl(x) #caption = 
+				if(zero.print != "0"){
+					x = add_footnote(x, label = paste0("zero printed as ", omxQuotes(zero.print)))
+				}
+				x = xmu_style_kable(x, html_font = html_font, style = style, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
+				print(x)
+			} else {
+				R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF)
+				system(paste0("open ", file))
 			}
 	    }else{
 			print(knitr::kable(x))

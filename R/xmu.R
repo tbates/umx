@@ -13,7 +13,7 @@
 #   limitations under the License.
 
 # ==================================================================================
-# = Fns not used directly by users subject to arbitrary change and deprecation !!  =
+# = FNS NOT USED DIRECTLY BY USERS SUBJECT TO ARBITRARY CHANGE AND DEPRECATION !!  =
 # ==================================================================================
 
 #' Get on or more columns from mzData or regular data.frame
@@ -131,7 +131,7 @@ xmu_twin_get_var_names <- function(model, source = c("expCovMZ", "observed"), tr
 }
 
 # ==========================
-# = Run and Report helpers =
+# = RUN AND REPORT HELPERS =
 # ==========================
 
 #' Upgrade selDvs to SelVars
@@ -328,7 +328,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 }
 
 # ===================================
-# = Data and model checking helpers =
+# = DATA AND MODEL CHECKING HELPERS =
 # ===================================
 
 #' Check data to see if model needs means.
@@ -1563,7 +1563,7 @@ xmuHasSquareBrackets <- function (input) {
 }
 
 # ===================================
-# = Ordinal/Threshold Model Helpers =
+# = ORDINAL/THRESHOLD MODEL HELPERS =
 # ===================================
 
 #' xmuMaxLevels
@@ -1637,7 +1637,7 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 }
 
 # ===============
-# = RAM helpers =
+# = RAM HELPERS =
 # ===============
 
 #' Remove illegal characters from labels
@@ -1717,7 +1717,7 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 
 
 # ====================
-# = Graphviz helpers =
+# = GRAPHVIZ HELPERS =
 # ====================
 
 #' Internal umx function to help plotting graphviz
@@ -2216,4 +2216,39 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 		return(result)
 	}
 	# if estimate differs...
+}
+
+# =================
+# = TABLE HELPERS =
+# =================
+xmu_style_kable <- function(tb, style, html_font = NULL, bootstrap_options=bootstrap_options, lightable_options = lightable_options, full_width = FALSE) {
+	if(is.null(html_font)){
+		if(style == "classic"){
+			tb = kable_classic(tb, full_width = full_width, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "classic_2"){
+			tb = kable_classic_2(tb, full_width = full_width, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "minimal"){
+			tb = kable_minimal(tb, full_width = full_width, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "material"){
+			tb = kable_material(tb, full_width = full_width, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "material_dark"){
+			tb = kable_material_dark(tb, full_width = full_width, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "paper"){
+			tb = kable_paper(tb, full_width = full_width, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		}
+	}else{
+		if(style == "classic"){
+			tb = kable_classic(tb, full_width = full_width, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "classic_2"){
+			tb = kable_classic_2(tb, full_width = full_width, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "minimal"){
+			tb = kable_minimal(tb, full_width = full_width, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "material"){
+			tb = kable_material(tb, full_width = full_width, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "material_dark"){
+			tb = kable_material_dark(tb, full_width = full_width, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		} else if(style == "paper"){
+			tb = kable_paper(tb, full_width = full_width, html_font = html_font, bootstrap_options=bootstrap_options, lightable_options = lightable_options)
+		}
+	}
 }
