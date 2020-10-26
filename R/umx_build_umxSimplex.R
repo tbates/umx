@@ -1,5 +1,6 @@
 #' Build and run a simplex twin model (not ready for use!)
 #' 
+#' @description
 #' The simplex model provides a powerful tool for theory-based decomposition of genetic
 #' and environmental differences. `umxSimplex` makes a 2-group simplex twin model. 
 #' 

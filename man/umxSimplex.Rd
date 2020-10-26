@@ -56,10 +56,10 @@ Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1"
 \description{
 The simplex model provides a powerful tool for theory-based decomposition of genetic
 and environmental differences. \code{umxSimplex} makes a 2-group simplex twin model.
+
+\strong{This code is beta} quality: \strong{not} for publication use.
 }
 \details{
-\strong{This code is beta} quality: \strong{not} for publication use.
-
 The simplex model decomposes phenotypic variance
 into Additive genetic, unique environmental (E) and, optionally, either
 common or shared-environment (C) or non-additive genetic effects (D).
