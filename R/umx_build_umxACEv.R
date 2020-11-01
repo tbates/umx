@@ -14,10 +14,14 @@
 
 #' Build and run 2-group uni- or multi-variate ACE models based on VARIANCE (not paths).
 #'
+#' @description
 #' A common task in twin modeling involves using the genetic and environmental differences 
 #' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
-#' to model the genetic and environmental structure of one, or, typically, several phenotypes
-#' (measured behaviors).
+#' to model the genetic and environmental structure of one, or, typically, several phenotypes.
+#' `umxACEv` directly estimates variance components (ratheer than paths, which 
+#' are then squared to produce variance and therefore cannot be negative). It offers better power, 
+#' correct Type I error and un-biased estimates (with no zero-bound for the variances) as a saturated model.
+#' (Verhulst et al, 2019).
 #' 
 #' The ACE variance-based model decomposes phenotypic variance into additive genetic (A),
 #' unique environmental (E) and, optionally, either common environment (shared-environment, C) or 
@@ -88,7 +92,10 @@
 #' @return - [mxModel()] subclass `mxModel.ACE`
 #' @export
 #' @family Twin Modeling Functions
-#' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
+#' @references - Verhulst, B., Prom-Wormley, E., Keller, M., Medland, S., & Neale, M. C. (2019).
+#' Type I Error Rates and Parameter Bias in Multivariate Behavioral Genetic Models. *Behav Genet*, 
+#' **49**, 99-111. doi:<https://doi.org/10.1007/s10519-018-9942-y>
+#' Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
 #' @md
 #' @examples

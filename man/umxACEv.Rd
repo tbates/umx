@@ -88,10 +88,12 @@ umxACEv(
 \description{
 A common task in twin modeling involves using the genetic and environmental differences
 between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
-to model the genetic and environmental structure of one, or, typically, several phenotypes
-(measured behaviors).
-}
-\details{
+to model the genetic and environmental structure of one, or, typically, several phenotypes.
+\code{umxACEv} directly estimates variance components (ratheer than paths, which
+are then squared to produce variance and therefore cannot be negative). It offers better power,
+correct Type I error and un-biased estimates (with no zero-bound for the variances) as a saturated model.
+(Verhulst et al, 2019).
+
 The ACE variance-based model decomposes phenotypic variance into additive genetic (A),
 unique environmental (E) and, optionally, either common environment (shared-environment, C) or
 non-additive genetic effects (D). Scroll down to details for how to use the function, a figure
@@ -107,7 +109,8 @@ This ensures unbiased type-I error rates. It means that occasionally
 estimates of variance may be negative. This should be used as an occasion to inspect you model
 choices and data. \code{umxACEv} can be used as a base model to validate the ACE Cholesky model,
 a core model in behavior genetics (Neale and Cardon, 1992).
-
+}
+\details{
 \strong{Data Input}
 The function flexibly accepts raw data, and also summary covariance data
 (in which case the user must also supple numbers of observations for the two input data sets).
@@ -287,7 +290,10 @@ umxSummary(m1, std = FALSE)
 }
 \references{
 \itemize{
-\item Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
+\item Verhulst, B., Prom-Wormley, E., Keller, M., Medland, S., & Neale, M. C. (2019).
+Type I Error Rates and Parameter Bias in Multivariate Behavioral Genetic Models. \emph{Behav Genet},
+\strong{49}, 99-111. doi:\url{https://doi.org/10.1007/s10519-018-9942-y}
+Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
 to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
 }
 }
