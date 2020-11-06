@@ -4328,7 +4328,13 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 	report = match.arg(report)
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
-	print(paste0("mean age ", round(mean(data$age, na.rm = TRUE), 2), " (SD= ", round(sd(data$age, na.rm = TRUE), 2), ")"))
+
+	if(!is.null(data$age)){
+		ageCol = data[, "age"]
+	} else {
+		ageCol = data[, paste0("age", sep, 1)]
+	}
+	print(paste0("mean age ", round(mean(ageCol, na.rm = TRUE), 2), " (SD= ", round(sd(ageCol, na.rm = TRUE), 2), ")"))
 	
 	
 	selDVs = tvars(selVars, sep)

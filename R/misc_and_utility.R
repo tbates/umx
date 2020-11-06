@@ -5214,6 +5214,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 		# 1. get all rows of this twinID
 		namesForThisTwin = paste0(c(zygosity, vars2keep), "_T", levelsOfTwinID[i])
 		current = data[data[,twinID] %in% levelsOfTwinID[i], c(famID, zygosity, vars2keep)]
+		# name columns "col_Ti"
 		current = umx_rename(current, from = c(zygosity, vars2keep), to = namesForThisTwin)
 
 		if(i == 1){
@@ -5224,19 +5225,21 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 			previous = merge(previous, current, by = c(famID), all.x = TRUE, all.y = TRUE) # suffixes = c("", levelsOfTwinID[i])
 		}
 	}
-	# TODO 
+
 	# 1. Pull the columns matching "zygosity_T[0-9]+$"
-	# 3. Delete the copies of zygosity
 	# 2. Add a column "zygosity" consisting for each row of the the first non-NA cell in the "zygosity_Tx" block
+	# 3. Delete the copies of zygosity
 	zygCols = previous[, namez(previous, paste0(zygosity, "_T[0-9]+$")), drop= FALSE]
-	zygosityCol = rep(NA, nrow(previous))
-	
+
+	zygosityCol = zygCols[,1, drop=FALSE]
 	for (i in 1:nrow(zygCols)) {
+		# for each row, get the zygs found for that pair
 		theseZygs = zygCols[i, ]
+		# label the zyg of the pair, the first non-NA value for the family
 		if(any(!is.na(theseZygs))){
-			zygosityCol[i] = zygCols[i, which(!is.na(theseZygs))[1] ]
+			zygosityCol[i,] = zygCols[i, which(!is.na(theseZygs))[1] ]
 		} else {
-			zygosityCol[i] = NA
+			zygosityCol[i,] = NA
 		}
 	}
 	previous[, zygosity] = zygosityCol
