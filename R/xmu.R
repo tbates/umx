@@ -881,7 +881,11 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 	# 5. Check data are legal
 		if(!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric", "factor", "ordered"), all = TRUE)) {
 			bad = selVars[!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric","factor", "ordered"), all = FALSE)]
-			stop("variables must be integer, numeric or (usually ordered) factor. The following are not: ", omxQuotes(bad))
+
+			messsage("Variables must be integer, numeric or (usually ordered) factor. The following are not: ", omxQuotes(bad))
+			messsage("First bad class found was: ", omxQuotes(class(mzData[, bad[1] ])) )
+			stop()
+			
 		}
 		# Drop unused columns from mzData and dzData
 		mzData = mzData[, selVars]
