@@ -5,7 +5,7 @@
 \title{Rename files}
 \usage{
 umx_rename_file(
-  findStr = "Finder",
+  findStr = "old",
   replaceStr = NA,
   baseFolder = "Finder",
   test = TRUE,
@@ -41,6 +41,7 @@ The file renaming is fast and, because you can use regular expressions too chang
 \dontrun{
 # "Season 01" --> "S01" in current folder in MacOS Finder
 umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\\\1", test = TRUE)
+
 # move date to end of file name
 umx_rename_file("^(.*) *([0-9]{2}\\\\.[0-9]{2}\\\\.[0-9]+) *(.*)", replaceStr="\\\\1 \\\\3 \\\\2")
 

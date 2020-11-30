@@ -1894,11 +1894,12 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' \dontrun{
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", test = TRUE)
+#' 
 #' # move date to end of file name
 #' umx_rename_file("^(.*) *([0-9]{2}\\.[0-9]{2}\\.[0-9]+) *(.*)", replaceStr="\\1 \\3 \\2")
 #' 
 #' }
-umx_rename_file <- function(findStr = "Finder", replaceStr = NA, baseFolder = "Finder", test = TRUE, ignoreSuffix = TRUE, listPattern = NULL, overwrite = FALSE) {
+umx_rename_file <- function(findStr = "old", replaceStr = NA, baseFolder = "Finder", test = TRUE, ignoreSuffix = TRUE, listPattern = NULL, overwrite = FALSE) {
 	umx_check(!is.na(replaceStr), "stop", "Please set a replaceStr to the replacement string you desire.")
 
 	# ==============================
@@ -1915,12 +1916,22 @@ umx_rename_file <- function(findStr = "Finder", replaceStr = NA, baseFolder = "F
 	# =================================================
 	# = 2. Find files matching listPattern or findStr =
 	# =================================================
-	a = list.files(baseFolder, pattern = listPattern)
-	message("found ", length(a), " possible files")
+	fileList = list.files(baseFolder, pattern = listPattern)
+	message("found ", length(fileList), " possible files")
+	# if(test){
+	# 	omxQuotes(fileList)
+	# }
+	# return(fileList)
 
 	changed = 0
-	for (fn in a) {
-		if(grepl(pattern = findStr, fn, perl= TRUE)){
+	for (fn in fileList) {
+		if(ignoreSuffix){
+			baseName = sub(pattern = "(.*)(\\..*)$", x = fn, replacement = "\\1")
+		}else{
+			baseName = fn
+		}
+		if(grepl(pattern = findStr, baseName, perl= TRUE)){
+			# found pattern
 			if(ignoreSuffix){
 				# pull suffix and baseName (without suffix)
 				baseName = sub(pattern = "(.*)(\\..*)$", x = fn, replacement = "\\1")
@@ -1940,14 +1951,10 @@ umx_rename_file <- function(findStr = "Finder", replaceStr = NA, baseFolder = "F
 					changed = changed + 1;
 				}
 			}
-		}else{
-			if(test){
-				# message(paste("bad file",fn))
-			}
 		}
 	}
-	if(test & changed==0){
-		message("set test = FALSE to actually change files.")
+	if(test & changed == 0){
+		message("no matches for change (PS: once you get some hits, set test = FALSE to actually change files.")
 	} else {
 		umx_msg(changed)
 	}
