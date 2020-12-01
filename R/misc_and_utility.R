@@ -2297,21 +2297,21 @@ umx_write_to_clipboard <- function(x) {
 #' @return - Value after yrs
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_off_on()]
+#' @seealso - [fin_percent_off()]
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
 #' #
 #' # Value of a principle after yrs years at rate %% return.
-#' fin_contributions_plus_interest(principal = 5000, rate = 0.05, yrs = 10)
+#' fin_compound_interest(principal = 5000, rate = 0.05, yrs = 10)
 #' #
 #' # Value of periodic deposits after yrs years at rate %% return.
-#' fin_contributions_plus_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+#' fin_compound_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
 #' #
 #' # Value of principal + periodic deposits after yrs years at rate %% return.
-#' fin_contributions_plus_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+#' fin_compound_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
 #' #
-fin_contributions_plus_interest <- function(principal = 0, deposits = 0, rate = 0.05, yrs = 10, n = 12){	
+fin_compound_interest <- function(principal = 0, deposits = 0, rate = 0.05, yrs = 10, n = 12){	
 	Compound_interest_for_principal = principal* (1+rate/n)^(n*yrs)
 	Future_value_of_a_series = deposits * (((1 + rate/n)^(n*yrs) - 1) / (rate/n))
 	Total =  Compound_interest_for_principal+ Future_value_of_a_series
@@ -2334,23 +2334,23 @@ fin_contributions_plus_interest <- function(principal = 0, deposits = 0, rate = 
 #' @return - new value and hcange required to return to baseline.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_contributions_plus_interest()]
+#' @seealso - [fin_compound_interest()]
 #' @md
 #' @examples
 #' #
 #' # Percent needed to return to original value after 10% off
-#' fin_off_on(-.1)
-#' fin_off_on(-.1, digits=3)
+#' fin_percent_off(-.1)
+#' fin_percent_off(-.1, digits=3)
 #' #
 #' # Percent needed to return to original value after 10% on
-#' fin_off_on(.1)
+#' fin_percent_off(.1)
 #' # Percent needed to return to original value after 50% off 34.50
-#' fin_off_on(-.5, value = 34.5)
-fin_off_on <- function(percent, value= 100, digits = 2) {
+#' fin_percent_off(-.5, value = 34.5)
+fin_percent_off <- function(percent, value= 100, digits = 2) {
 	if(abs(percent) > 1){
 		percent= percent/100
 	}
-	off = value*(1-percent)
+	off = value*(1+percent)
 	on = (value/off)-1
 	list(off = off, on = round(on, digits))
 }

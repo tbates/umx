@@ -29,8 +29,8 @@ deg2rad(180) # pi!
 }
 
 Other Miscellaneous Functions: 
-\code{\link{fin_contributions_plus_interest}()},
-\code{\link{fin_off_on}()},
+\code{\link{fin_compound_interest}()},
+\code{\link{fin_percent_off}()},
 \code{\link{rad2deg}()}
 }
 \concept{Miscellaneous Functions}
