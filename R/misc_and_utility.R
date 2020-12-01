@@ -1899,11 +1899,12 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' \dontrun{
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
 #' umx_rename_file("[Ss]eason +([0-9]+)", replaceStr="S\\1", test = TRUE)
+#' 
 #' # move date to end of file name
 #' umx_rename_file("^(.*) *([0-9]{2}\\.[0-9]{2}\\.[0-9]+) *(.*)", replaceStr="\\1 \\3 \\2")
 #' 
 #' }
-umx_rename_file <- function(findStr = "Finder", replaceStr = NA, baseFolder = "Finder", test = TRUE, ignoreSuffix = TRUE, listPattern = NULL, overwrite = FALSE) {
+umx_rename_file <- function(findStr = "old", replaceStr = NA, baseFolder = "Finder", test = TRUE, ignoreSuffix = TRUE, listPattern = NULL, overwrite = FALSE) {
 	umx_check(!is.na(replaceStr), "stop", "Please set a replaceStr to the replacement string you desire.")
 
 	# ==============================
@@ -1920,12 +1921,22 @@ umx_rename_file <- function(findStr = "Finder", replaceStr = NA, baseFolder = "F
 	# =================================================
 	# = 2. Find files matching listPattern or findStr =
 	# =================================================
-	a = list.files(baseFolder, pattern = listPattern)
-	message("found ", length(a), " possible files")
+	fileList = list.files(baseFolder, pattern = listPattern)
+	message("found ", length(fileList), " possible files")
+	# if(test){
+	# 	omxQuotes(fileList)
+	# }
+	# return(fileList)
 
 	changed = 0
-	for (fn in a) {
-		if(grepl(pattern = findStr, fn, perl= TRUE)){
+	for (fn in fileList) {
+		if(ignoreSuffix){
+			baseName = sub(pattern = "(.*)(\\..*)$", x = fn, replacement = "\\1")
+		}else{
+			baseName = fn
+		}
+		if(grepl(pattern = findStr, baseName, perl= TRUE)){
+			# found pattern
 			if(ignoreSuffix){
 				# pull suffix and baseName (without suffix)
 				baseName = sub(pattern = "(.*)(\\..*)$", x = fn, replacement = "\\1")
@@ -1945,14 +1956,10 @@ umx_rename_file <- function(findStr = "Finder", replaceStr = NA, baseFolder = "F
 					changed = changed + 1;
 				}
 			}
-		}else{
-			if(test){
-				# message(paste("bad file",fn))
-			}
 		}
 	}
-	if(test & changed==0){
-		message("set test = FALSE to actually change files.")
+	if(test & changed == 0){
+		message("no matches for change (PS: once you get some hits, set test = FALSE to actually change files.")
 	} else {
 		umx_msg(changed)
 	}
@@ -2268,6 +2275,86 @@ umx_write_to_clipboard <- function(x) {
 # =========================
 # = Various Stats helpers =
 # =========================
+
+
+#' Compute the value of a principle plus annual savings, at a compound interest over a number of years
+#'
+#' @description
+#' This function allows you to determine the final value of a principle, with optional additional 
+#' periodic savings, over a number of years at a given rate of interest.
+#'
+#' @details None.
+#' If an amount of $5,000 is deposited into a savings account at an annual interest rate of 5%, compounded monthly, 
+#' with additional deposits of $100 per month (made at the end of each month). The value of the investment after 10 
+#' years can be calculated as follows...
+#'
+#'
+#' @param principal The initial investment at time 0.
+#' @param deposits Optional periodic additional investment each year.
+#' @param rate Annual interest rate (decimal)
+#' @param yrs Duration of the investment.
+#' @param n Compounding per unit time (e.g. 12 for monthly, 365 for daily)
+#' @return - Value after yrs
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_off_on()]
+#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @md
+#' @examples
+#' #
+#' # Value of a principle after yrs years at rate %% return.
+#' fin_contributions_plus_interest(principal = 5000, rate = 0.05, yrs = 10)
+#' #
+#' # Value of periodic deposits after yrs years at rate %% return.
+#' fin_contributions_plus_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+#' #
+#' # Value of principal + periodic deposits after yrs years at rate %% return.
+#' fin_contributions_plus_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+#' #
+fin_contributions_plus_interest <- function(principal = 0, deposits = 0, rate = 0.05, yrs = 10, n = 12){	
+	Compound_interest_for_principal = principal* (1+rate/n)^(n*yrs)
+	Future_value_of_a_series = deposits * (((1 + rate/n)^(n*yrs) - 1) / (rate/n))
+	Total =  Compound_interest_for_principal+ Future_value_of_a_series
+	# Total = [ 5000 (1 + 0.05 / 12) ^ (12 × 10) ] + [ 100 × (((1 + 0.00416)^(12 × 10) - 1) / (0.00416)) ]
+	return(Total)
+}
+
+
+#' Compute the percent change needed to return to the original value after percent off (or on).
+#'
+#' @description
+#' Determine the pecent change needed to "undo" an initial percent change.
+#'
+#' @details None.
+#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
+#' 
+#' @param percent
+#' @param value 
+#' @param digits (rounding)
+#' @return - value of the
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_off_on()]
+#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @md
+#' @examples
+#' #
+#' # Percent needed to return to original value after 10% off
+#' fin_off_on(-.1)
+#' fin_off_on(-.1, digits=3)
+#' #
+#' # Percent needed to return to original value after 10% on
+#' fin_off_on(.1)
+#' # Percent needed to return to original value after 50% off 34.50
+#' fin_off_on(-.5, value = 34.5)
+fin_off_on <- function(percent, value= 100, digits = 2) {
+	if(abs(percent) > 1){
+		percent= percent/100
+	}
+	off = value*(1-percent)
+	on = (value/off)-1
+	list(off = off, on = round(on, digits))
+}
 
 #' Compute odds ratio (OR)
 #'
@@ -4421,12 +4508,13 @@ umx_scale <- function(df, varsToScale = NULL, coerce = FALSE, attr = FALSE, verb
 #' # Is zygosity a factor (note we don't drop = F to keep as dataframe)
 #' umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
 #' umx_is_class(mtcars$mpg) # report class of this column (same as class(mpg))
-umx_is_class <- function(df, classes=NULL, all = TRUE){
-	if(!is.data.frame(df)){
+umx_is_class <- function(df, classes = NULL, all = TRUE){
+
+	if(!("data.frame" %in%  class(df)) ){
 		if(is.null(classes)){
 			return(class(df))		
 		}else{
-			return(class(df %in% classes))
+			return(class(df)[[1]] %in% classes)
 		}
 	}
 	colNames = names(df)
@@ -4441,7 +4529,7 @@ umx_is_class <- function(df, classes=NULL, all = TRUE){
 	}else{
 		bIsOK = rep(FALSE, length(colNames))
 		for (n in colNames) {
-			bIsOK[i] = (class(df[, n]) %in% classes)[1]
+			bIsOK[i] = (class(df[, n, drop = TRUE]) %in% classes)[1]
 			i = i + 1
 		}
 		if(all){

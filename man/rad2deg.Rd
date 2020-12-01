@@ -29,6 +29,8 @@ rad2deg(pi) #180 degrees
 }
 
 Other Miscellaneous Functions: 
-\code{\link{deg2rad}()}
+\code{\link{deg2rad}()},
+\code{\link{fin_contributions_plus_interest}()},
+\code{\link{fin_off_on}()}
 }
 \concept{Miscellaneous Functions}
