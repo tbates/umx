@@ -882,8 +882,8 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 		if(!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric", "factor", "ordered"), all = TRUE)) {
 			bad = selVars[!umx_is_class(mzData[, selVars], classes = c("integer", "double", "numeric","factor", "ordered"), all = FALSE)]
 
-			messsage("Variables must be integer, numeric or (usually ordered) factor. The following are not: ", omxQuotes(bad))
-			messsage("First bad class found was: ", omxQuotes(class(mzData[, bad[1] ])) )
+			message("Variables must be integer, numeric or (usually ordered) factor. The following are not: ", omxQuotes(bad))
+			message("First bad class found was: ", omxQuotes(class(mzData[, bad[1] ])) )
 			stop()
 			
 		}

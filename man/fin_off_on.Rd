@@ -7,13 +7,15 @@
 fin_off_on(percent, value = 100, digits = 2)
 }
 \arguments{
-\item{value}{}
+\item{percent}{Change in percent (e.g. 0.1 = 10\%\%)}
+
+\item{value}{Principal}
 
 \item{digits}{(rounding)}
 }
 \value{
 \itemize{
-\item value of the
+\item new value and hcange required to return to baseline.
 }
 }
 \description{
@@ -34,14 +36,9 @@ fin_off_on(.1)
 # Percent needed to return to original value after 50\% off 34.50
 fin_off_on(-.5, value = 34.5)
 }
-\references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
-}
-}
 \seealso{
 \itemize{
-\item \code{\link[=fin_off_on]{fin_off_on()}}
+\item \code{\link[=fin_contributions_plus_interest]{fin_contributions_plus_interest()}}
 }
 
 Other Miscellaneous Functions: 

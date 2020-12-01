@@ -13,7 +13,7 @@ tmx_show(
   report = c("html", "markdown"),
   na.print = "",
   zero.print = ".",
-  font = NULL,
+  html_font = NULL,
   style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
   bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
   lightable_options = "striped"
@@ -36,7 +36,7 @@ tmx_show(
 
 \item{zero.print}{How to display 0 values (default = ".")}
 
-\item{font}{Default is null. Set (e.g. "Optima") to override the style's default font.}
+\item{html_font}{Default is null. Set (e.g. "Optima") to override the style's default font.}
 
 \item{style}{The style for the table (Defaults to "paper". Other options are "material_dark", "classic", "classic_2", "minimal", "material")}
 

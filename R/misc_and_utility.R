@@ -2328,14 +2328,13 @@ fin_contributions_plus_interest <- function(principal = 0, deposits = 0, rate = 
 #' @details None.
 #' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
 #' 
-#' @param percent
-#' @param value 
+#' @param percent Change in percent (e.g. 0.1 = 10%%)
+#' @param value Principal
 #' @param digits (rounding)
-#' @return - value of the
+#' @return - new value and hcange required to return to baseline.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_off_on()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @seealso - [fin_contributions_plus_interest()]
 #' @md
 #' @examples
 #' #
