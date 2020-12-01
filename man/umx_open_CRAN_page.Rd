@@ -4,10 +4,12 @@
 \alias{umx_open_CRAN_page}
 \title{Open the CRAN page for a package}
 \usage{
-umx_open_CRAN_page(package = "umx")
+umx_open_CRAN_page(package = "umx", inst = FALSE)
 }
 \arguments{
 \item{package}{An \R package name.}
+
+\item{inst}{Install and load if not already installed?}
 }
 \value{
 None

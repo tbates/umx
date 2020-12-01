@@ -1491,6 +1491,7 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 #' Useful for looking up documentation, checking you have an
 #' up-to-date version, showing the package to people etc.
 #' @param package An \R package name.
+#' @param inst Install and load if not already installed?
 #' @return None 
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -1499,7 +1500,7 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 #' \dontrun{
 #' umx_open_CRAN_page("umx")
 #' }
-umx_open_CRAN_page <- function(package = "umx") {
+umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 	for (p in package) {
 		# deparse(substitute(package))
 		result = tryCatch({
@@ -1509,7 +1510,11 @@ umx_open_CRAN_page <- function(package = "umx") {
 		}, error = function(x) {
 		    print("not installed locally")
 		}, finally={
-		    # print("cleanup-code")
+			if(inst){
+				install.packages(package)
+			} else {
+				# print("cleanup-code")
+			}
 		})		
 		system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
 	}
