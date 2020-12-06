@@ -40,15 +40,16 @@
 	umx_set_plot_file_suffix("gv")
 	umx_set_silent(FALSE)
 
-	if(is.null(getOption('knitr.table.format'))){
-		umx_set_table_format('markdown')
+	# if(is.null(getOption('knitr.table.format'))){
+		# umx_set_table_format('markdown')
 		# options('knitr.table.format' = "markdown")
-	}
+	# }
 	umx_set_silent(FALSE)
 	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
 	umx_set_data_variance_check(minVar = .1, maxVarRatio = 1000)
 	umx_set_separator(umx_default_separator = ",")
+	umx_set_table_format("markdown")
 	# umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
 }
@@ -1582,7 +1583,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @examples
 #' require(umx)
 #' data(twinData) 
-#' umx_set_optimizer("SLSQP")
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"

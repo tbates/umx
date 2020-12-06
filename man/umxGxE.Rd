@@ -79,7 +79,6 @@ The following figure the GxE model as a path diagram:
 \examples{
 require(umx)
 data(twinData) 
-umx_set_optimizer("SLSQP")
 twinData$age1 = twinData$age2 = twinData$age
 selDVs  = "bmi"
 selDefs = "age"
