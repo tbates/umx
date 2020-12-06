@@ -41,8 +41,8 @@
 	umx_set_silent(FALSE)
 
 	# if(is.null(getOption('knitr.table.format'))){
-		# umx_set_table_format('markdown')
-		# options('knitr.table.format' = "markdown")
+	# 	umx_set_table_format('markdown')
+	# 	options('knitr.table.format' = "markdown")
 	# }
 	umx_set_silent(FALSE)
 	umx_set_auto_run(TRUE)
@@ -559,11 +559,19 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	allContinuousMethod = match.arg(allContinuousMethod)
 
 	if(show != "deprecated"){
-		message("polite note: In future, replace show with std = T/F/NULL ")
+		message("polite note: In future, replace 'show =' with 'std = TRUE' or FALSE ")
 		if(show =="raw" ){
 			std = FALSE
 		} else {
 			std = TRUE
+		}
+	}
+
+	# if data provided check it isn't a tibble
+	if(!is.null(data)){
+		# avoid ingesting tibbles
+		if("tbl" %in% class(data)){
+			data = as.data.frame(data)
 		}
 	}
 
@@ -1457,11 +1465,23 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 
 	if(dzCr == .25 & (name == "ACE")){ name = "ADE" }
 
+	# if data provided create twin files 
 	if(!is.null(data)){
 		if(is.null(sep)){ sep = "_T" }
+		# avoid ingesting tibbles
+		if("tbl" %in% class(data)){
+			data = as.data.frame(data)
+		}
 		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
 		dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
+	}else{
+		# avoid ingesting tibbles
+		if("tbl" %in% class(mzData)){
+			mzData = as.data.frame(mzData)
+			dzData = as.data.frame(dzData)
+		}
 	}
+
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
 		
 	# nSib = 2, equateMeans = TRUE, verbose = verbose
@@ -1583,6 +1603,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @examples
 #' require(umx)
 #' data(twinData) 
+# twinData = tibble::as_tibble(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"
@@ -1646,17 +1667,28 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		# mxAlgebra( cbind(top.intercept + DefT1Rlin + DefT1Rquad, top.intercept + DefT2Rlin + DefT2Rquad), name = "expMeans")
 	# },
 
+	if(dzCr == .25 & name == "G_by_E") name = "G_by_E_ADE"
 	tryHard = match.arg(tryHard)
 	nSib    = 2;
+
+	# if data provided create twin files 
 	if(!is.null(data)){
+		# avoid ingesting tibbles
+		if("tbl" %in% class(data)){
+			data = as.data.frame(data)
+		}
 		if(is.null(dzData)){ dzData = "DZ"; mzData = "MZ" }
 		mzData = data[data[,zyg] %in% mzData, ]
 		dzData = data[data[,zyg] %in% dzData, ]
+	}else{
+		# avoid ingesting tibbles
+		if("tbl" %in% class(mzData)){
+			mzData = as.data.frame(mzData)
+			dzData = as.data.frame(dzData)
+		}
 	}
-
-	if(dzCr == .25 & name == "G_by_E") name = "G_by_E_ADE"
-	
 	xmu_twin_check(selDVs=selDVs, dzData = dzData, mzData = mzData, optimizer = optimizer, sep = sep, nSib = nSib)
+
 	selDVs  = umx_paste_names(selDVs , sep = sep, suffixes = 1:nSib)
 	selDefs = umx_paste_names(selDefs, sep = sep, suffixes = 1:nSib)
 	if(any(selDefs %in% selDVs)) {
@@ -2553,10 +2585,21 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 	# Add nFac to base name if no user-set name provided.
 	if(name == "CP"){ name = paste0(name, nFac, "fac") }
 
+	# if data provided create twin files 
 	if(!is.null(data)){
 		if(is.null(sep)){ sep = "_T" }
+		# avoid ingesting tibbles
+		if("tbl" %in% class(data)){
+			data = as.data.frame(data)
+		}
 		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
 		dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
+	}else{
+		# avoid ingesting tibbles
+		if("tbl" %in% class(mzData)){
+			mzData = as.data.frame(mzData)
+			dzData = as.data.frame(dzData)
+		}
 	}
 	xmu_twin_check(selDVs= selDVs, dzData = dzData, mzData = mzData, enforceSep = TRUE, sep = sep, nSib = nSib, optimizer = optimizer)
 	
@@ -2825,14 +2868,24 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	tryHard             = match.arg(tryHard)
 	nSib                = 2 # Number of siblings in a twin pair.
 
-	if(correlatedA){ message("Sorry, I haven't implemented correlated A yet...") }
+	if(correlatedA){ message("Sorry, I haven't implemented correlated A yet in umxIP...") }
 
+	# if data provided create twin files 
 	if(!is.null(data)){
 		if(is.null(sep)){ sep = "_T" }
+		# avoid ingesting tibbles
+		if("tbl" %in% class(data)){
+			data = as.data.frame(data)
+		}
 		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
 		dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
+	}else{
+		# avoid ingesting tibbles
+		if("tbl" %in% class(mzData)){
+			mzData = as.data.frame(mzData)
+			dzData = as.data.frame(dzData)
+		}
 	}
-	
 	# TODO umxIP: check covariates
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 

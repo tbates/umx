@@ -259,11 +259,27 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 	covMethod           = match.arg(covMethod)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	if(dzCr == .25 & name == "ACEv"){ name = "ADEv" }
+
+	# if data provided create twin files 
 	if(!is.null(data)){
 		if(is.null(sep)){ sep = "_T" }
-		mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
-		dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
+		# avoid ingesting tibbles
+		if("tbl" %in% class(data)){
+			data = as.data.frame(data)
+		}
+		if(is.null(dzData)){ dzData = "DZ"; mzData = "MZ" }
+		mzData = data[data[,zyg] %in% mzData, ]
+		dzData = data[data[,zyg] %in% dzData, ]
+		# mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
+		# dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
+	}else{
+		# avoid ingesting tibbles
+		if("tbl" %in% class(mzData)){
+			mzData = as.data.frame(mzData)
+			dzData = as.data.frame(dzData)
+		}
 	}
+
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 	
 	# If given covariates, call umxACEvcov
