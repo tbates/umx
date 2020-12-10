@@ -1,10 +1,12 @@
-# umx 4.2.0
-* October 2020 R 4.0.2 (2020-06-22)
-* NEW: `tmx_show` display model matrices on the web, with color-coded free/false, values, and roll-over labels.
+# umx 4.2.5
+* December 2020 R 4.0.3 (2020-06-22)
+* NEW: `tmx_show` display model matrices on the web, with color-coded free/false, values + roll-over labels.
 * NEW: `harmonic_mean` with support for weights.
 * NEW: `geometric_mean`
-* IMPROVED `umxPlotGxE` gains CI ribbons (closes #96)
-* IMPROVED `umxPlotGxE` defaults to use ggplot and now returns the graphs for decoration (closes #139)
+* NEW: `fin_compound_interest`
+* NEW: `fin_percent_off`
+* IMPROVED: `umxPlotGxE` gains CI ribbons (closes #96)
+* IMPROVED: `umxPlotGxE` defaults to use ggplot and now returns the graphs for decoration (closes #139)
 * IMPROVED: `umxPlotGxE` can now plot user-specified moderator ranges (closes #96)
 * IMPROVED: `umxPlotIP` now relies on matrix cells, not the labels they contain (closes #61)
 * IMPROVED: `umxACE` returns group models invisibly #134 @khusmann.
@@ -14,7 +16,16 @@
 * IMPROVED: `tmx_show` smart about not printing NULL matrices.
 * IMPROVED: 'umxEquate` gained a `newlabels` parameter for the equated paths (rather than one path adopting the label of the other)
 * IMPROVED: `umx_score_scale` supports minManifests for factor scores
+* IMPROVED: `umx_open_CRAN_page` now can install a package if not installed, as well as open the CRAN page for the package.
+* IMPROVED: `umx_rename_file` nicer user feedback about matches and files checked
+* IMPROVED: `umx_long2wide` more resilient to zygosity column type
+* IMPROVED: `umxSummarizeTwinData` more resilient to name of age column
+* IMPROVED: `plot` strip_zero option works for fixed (@) parameters
+* IMPROVED: `umx_is_class` handle non-df input
 * IMPROVED: `umxCI`: gains `regex` parameter to support adding and removing CIs on labels matching a string pattern.
+* IMPROVED: `umx_is_class` handle non-df input
+* IMPROVED: `umx_rename_file` nicer user feedback about matches and files checked
+* IMPROVED: `umx_set_table_format` to markdown on load
 * FIXED: 'umxRAM` group option failing to pass autoRun tryHard Merge pull request #134 @khusmann
 * FIXED: `umxRAM` with a model as first parameter now doesn't demand new data. Updates data if data is provided.
 * FIXED: `umxPlotIP` wasn't working with threshold models (didn't ignore thresh names for plot).
@@ -22,6 +33,8 @@
 * FIXED: `umxPlotACEv` was not displaying half the variables in an MV model as NA.
 * FIXED: `umx_set_cores` no longer use `imxGetNumThreads` which is actually hard-coded to not report number of threads.
 * FIXED: Check for more than one named CI requested (closes #136).
+* FIXED: `tmx_show` has `html_font` parameter in help.
+* FIXED: typo messsage -> message
 * WORKAROUND: 'umxSummary` wraps `mxRefModels` error for WLS models in tryCatch to tell user OpenMx doesn't support fit stats for WLS as yet.
 * BACKWARD: `umxThresholdMatrix` changed parameter from selDVs to fullVarNames to prevent user error.
 * HELP: `harmonic_mean` example averaging speeds across distance.

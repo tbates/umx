@@ -1,6 +1,6 @@
 Package: umx
-Version: 4.2.0
-Date: 2020-10-25
+Version: 4.2.5
+Date: 2020-12-12
 Title: Structural Equation and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
@@ -36,6 +36,7 @@ Imports:
     polycor,
     R2HTML,
     RCurl,
+    scales,
     utils,
     xtable
 Suggests: 
@@ -43,7 +44,6 @@ Suggests:
     devtools,
     gdata,
     Hmisc,
-    scales,
 	spelling,
     testthat,
     rmarkdown,
