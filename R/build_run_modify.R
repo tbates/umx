@@ -75,6 +75,9 @@
 #' @importFrom kableExtra kbl add_footnote column_spec
 #' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
 
+# Used in print.money
+#' @importFrom scales dollar_format dollar
+
 # # ' @importFrom knitr
 
 # Used in plot

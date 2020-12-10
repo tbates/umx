@@ -2290,10 +2290,12 @@ umx_write_to_clipboard <- function(x) {
 #'
 #'
 #' @param principal The initial investment at time 0.
-#' @param deposits Optional periodic additional investment each year.
-#' @param rate Annual interest rate (decimal)
+#' @param deposits Optional periodic additional investment each *year*.
+#' @param interest Annual interest rate (decimal)
 #' @param yrs Duration of the investment.
 #' @param n Compounding per unit time (e.g. 12 for monthly, 365 for daily)
+#' @param when Deposits made at the "beginning" (of each year) or "end"
+#' @param symbol Currency symbol to embed in the result.
 #' @return - Value after yrs
 #' @export
 #' @family Miscellaneous Functions
@@ -2302,23 +2304,79 @@ umx_write_to_clipboard <- function(x) {
 #' @md
 #' @examples
 #' #
-#' # Value of a principle after yrs years at rate %% return.
-#' fin_compound_interest(principal = 5000, rate = 0.05, yrs = 10)
+#' # Value of a principle after yrs years at 5% return, compounding monthly.
+#' fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10)
+#' # annual compounding
+#' fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10, n=1)
 #' #
-#' # Value of periodic deposits after yrs years at rate %% return.
-#' fin_compound_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+#' # Value of periodic deposit of $100/yr after 10 years at rate 7% return.
+#' fin_compound_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 #' #
-#' # Value of principal + periodic deposits after yrs years at rate %% return.
-#' fin_compound_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+#' # Value of principal + deposit of $100/yr after 10 years at rate 7% return.
+#' fin_compound_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
 #' #
-fin_compound_interest <- function(principal = 0, deposits = 0, rate = 0.05, yrs = 10, n = 12){	
-	Compound_interest_for_principal = principal* (1+rate/n)^(n*yrs)
-	Future_value_of_a_series = deposits * (((1 + rate/n)^(n*yrs) - 1) / (rate/n))
+#' fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 10, n=1)
+#' # manually
+#' sum(20e3*(1.07^(10:1))) # 295672
+#'
+#' # $10,000 invested at the end of each year for 5 years at 6%
+#' fin_compound_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
+#'
+fin_compound_interest <- function(principal = 0, deposits = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$"){
+	# deposits = 100
+	# interest = .05
+	# n        = 12
+	# yrs      = 10
+	# 1. compute compounding rate per unit time n (allowing for zero interest so 1.0)
+	rate = ifelse(interest==0, 1, 1+(interest/n))
+
+	# 2. compute compounded value of the principal (initial deposit)
+	Compound_interest_for_principal = principal* rate^(n*yrs)
+
+	# 3. compute compounded value of the deposits
+	if(interest==0){
+		Future_value_of_a_series = deposits * yrs
+	} else {
+		# beginning: A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n))
+		# end      : A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n)) × (1+r/n)
+		if(when == "beginning"){
+			# deposits at the beginning of each year
+			periods = (yrs:1)*n
+			Future_value_of_a_series = sum(deposits*(rate^periods))
+		} else {
+			# deposits at the end of the year
+			periods = ((yrs-1):1)*n
+			Future_value_of_a_series = sum(deposits*(rate^periods)) + (1*deposits)
+		}
+	}
 	Total =  Compound_interest_for_principal+ Future_value_of_a_series
-	# Total = [ 5000 (1 + 0.05 / 12) ^ (12 × 10) ] + [ 100 × (((1 + 0.00416)^(12 × 10) - 1) / (0.00416)) ]
+	class(Total) = 'money'
+	attr(Total, 'symbol') <- symbol
 	return(Total)
 }
 
+#' Print a money object
+#'
+#' Print method for, class()= "money" objects: e.g. [umx::fin_compound_interest()]. 
+#'
+#' @param x money object.
+#' @param symbol Default prefix if not set.
+#' @param ... further arguments passed to or from other methods.
+#' @return - invisible
+#' @seealso - [print()], [umx::fin_compound_interest()], 
+#' @md
+#' @method print money
+#' @export
+#' @examples
+#' fin_compound_interest(d= 20000, r= .07, y= 20)
+#'
+print.money <- function(x, symbol = "$", ...) {
+	if(!is.null(attr(x, 'symbol')) ){
+		symbol = attr(x, 'symbol')
+	}
+	# bucks <- scales::dollar_format(prefix = symbol, suffix = "", largest_with_cents = 1e+05, big.mark = ",", negative_parens = FALSE)
+	cat(scales::dollar(as.numeric(x), prefix = symbol, big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE))
+}
 
 #' Compute the percent change needed to return to the original value after percent off (or on).
 #'

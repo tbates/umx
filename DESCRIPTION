@@ -43,6 +43,7 @@ Suggests:
     devtools,
     gdata,
     Hmisc,
+    scales,
 	spelling,
     testthat,
     rmarkdown,

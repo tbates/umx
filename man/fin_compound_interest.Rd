@@ -7,21 +7,27 @@
 fin_compound_interest(
   principal = 0,
   deposits = 0,
-  rate = 0.05,
+  interest = 0.05,
   yrs = 10,
-  n = 12
+  n = 12,
+  when = "beginning",
+  symbol = "$"
 )
 }
 \arguments{
 \item{principal}{The initial investment at time 0.}
 
-\item{deposits}{Optional periodic additional investment each year.}
+\item{deposits}{Optional periodic additional investment each \emph{year}.}
 
-\item{rate}{Annual interest rate (decimal)}
+\item{interest}{Annual interest rate (decimal)}
 
 \item{yrs}{Duration of the investment.}
 
 \item{n}{Compounding per unit time (e.g. 12 for monthly, 365 for daily)}
+
+\item{when}{Deposits made at the "beginning" (of each year) or "end"}
+
+\item{symbol}{Currency symbol to embed in the result.}
 }
 \value{
 \itemize{
@@ -40,15 +46,24 @@ years can be calculated as follows...
 }
 \examples{
 #
-# Value of a principle after yrs years at rate \%\% return.
-fin_compound_interest(principal = 5000, rate = 0.05, yrs = 10)
+# Value of a principle after yrs years at 5\% return, compounding monthly.
+fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10)
+# annual compounding
+fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10, n=1)
 #
-# Value of periodic deposits after yrs years at rate \%\% return.
-fin_compound_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+# Value of periodic deposit of $100/yr after 10 years at rate 7\% return.
+fin_compound_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 #
-# Value of principal + periodic deposits after yrs years at rate \%\% return.
-fin_compound_interest(principal = 5000, deposits = 100, rate = 0.05, yrs = 10, n = 12)
+# Value of principal + deposit of $100/yr after 10 years at rate 7\% return.
+fin_compound_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
 #
+fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 10, n=1)
+# manually
+sum(20e3*(1.07^(10:1))) # 295672
+
+# $10,000 invested at the end of each year for 5 years at 6\%
+fin_compound_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
+
 }
 \references{
 \itemize{
