@@ -2375,7 +2375,8 @@ print.money <- function(x, symbol = "$", ...) {
 		symbol = attr(x, 'symbol')
 	}
 	# bucks <- scales::dollar_format(prefix = symbol, suffix = "", largest_with_cents = 1e+05, big.mark = ",", negative_parens = FALSE)
-	cat(scales::dollar(as.numeric(x), prefix = symbol, big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE))
+	# dollar is from scales::
+	cat(dollar(as.numeric(x), prefix = symbol, big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE))
 }
 
 #' Compute the percent change needed to return to the original value after percent off (or on).
