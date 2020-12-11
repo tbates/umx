@@ -81,7 +81,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso - [AIC()]
-#' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+#' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://pubmed.ncbi.nlm.nih.gov/15117008/}
 #' @md
 #' @examples
 #' l1 = lm(mpg~ wt + disp, data=mtcars)
@@ -100,7 +100,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 	aic.weights = round(MuMIn::Weights(AIClist), 2)
 	if(isS4(models[[1]]) & is(models[[1]], "MxModel")){
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		# Probabilities according to AIC Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		# Probabilities according to AIC Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(models)), " respectively are: ",
 			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
@@ -233,7 +233,7 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 		aic.weights = round(Weights(AIClist), 2)
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ",
@@ -322,7 +322,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
 	message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-	# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+	# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 	aic.weights = round(Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
 	message("AIC weight-based {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
 		omxQuotes(namez(c(ACE, ADE, CE, AE))), " respectively are: ", 
@@ -470,7 +470,7 @@ loadings.MxModel <- function(x, ...) {
 #' @return - [mxModel()]
 #' @family Reporting functions
 #' @seealso - [stats::confint()], [OpenMx::mxSE()], [umxCI()], [OpenMx::mxCI()]
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -682,7 +682,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' @return - [mxModel()]
 #' @family Reporting functions
 #' @seealso - [stats::confint()], [umxConfint()], [umxCI()], [umxModify()]
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -1539,7 +1539,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxCP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @references - <https://www.github.com/tbates/umx>, <https://tbates.github.io>
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' \dontrun{
@@ -1918,7 +1918,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @family Reporting functions
 #' @seealso - [mxCompare()], [umxSummary()], [umxRAM()],
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -2036,7 +2036,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://www.ncbi.nlm.nih.gov/pubmed/15117008 )
+		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 		aic.weights = round(Weights(AIClist), 2)
 		message("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ", 
@@ -2185,7 +2185,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @seealso - [umx_set_plot_format()], [umx_set_auto_plot()], [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
 #' @family umx S3 functions
 #' @family Plotting functions
-#' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
+#' @references - <https://github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md
 #' @examples
 #' # plot()
@@ -2233,7 +2233,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
 #' @family umx S3 functions
 #' @family Plotting functions
-#' @references - <https://www.github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
+#' @references - <https://github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md
 #' @examples
 #' \dontrun{
@@ -2425,7 +2425,7 @@ plot.MxRAMModel <- plot.MxModel
 #' @family Plotting functions
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxACE()]
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -2979,7 +2979,7 @@ plot.MxModelIP <- umxPlotIP
 #' @param decreasing How to sort (default = TRUE, decreasing)
 #' @seealso - [mxMI()]
 #' @family Modify or Compare Models
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -3042,7 +3042,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' @param model The model containing variables from and to.
 #' @seealso - [mxCheckIdentification()], [mxCompare()]
 #' @family Modify or Compare Models
-#' @references - https://www.github.com/tbates/umx/
+#' @references - https://github.com/tbates/umx/
 #' @export
 #' @md
 #' @examples
@@ -3064,8 +3064,8 @@ umxUnexplainedCausalNexus <- function(from, delta, to, model= NULL) {
 
 umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, meanOffsets = FALSE) {
 	# Usage: umxConditionalsFromModel(model, newData)
-	# Original author: [Timothy Brick](https://www.github.com/tbates/umx/users/tbrick)
-	# [history](https://www.github.com/tbates/umx/thread/2076)
+	# Original author: [Timothy Brick](https://github.com/tbates/umx/users/tbrick)
+	# [history](https://github.com/tbates/umx/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
 	# TODO: Special case for latent variables
 	expectation = model$objective
@@ -3129,8 +3129,8 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	# Usage: umxComputeConditionals(model, newData)
 	# Result is a replica of the newData data frame with missing values and (if a RAM model) latent variables populated.
-	# original author: [Timothy Brick](https://www.github.com/tbates/umx/users/tbrick)
-	# [history](https://www.github.com/tbates/umx/thread/2076)
+	# original author: [Timothy Brick](https://github.com/tbates/umx/users/tbrick)
+	# [history](https://github.com/tbates/umx/thread/2076)
 	# called by umxConditionalsFromModel()
 	if(dim(mu)[1] > dim(mu)[2] ) {
 		mu = t(mu)
@@ -3403,7 +3403,7 @@ parameters <- umxParameters
 #' @export
 #' @seealso [omxGetParameters()], [parameters()]
 #' @family Reporting Functions
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)

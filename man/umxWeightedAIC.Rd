@@ -27,7 +27,7 @@ umxWeightedAIC(models = list(l1, l2))
 }
 \references{
 \itemize{
-\item Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}. \strong{11}, 192-196. \url{https://www.ncbi.nlm.nih.gov/pubmed/15117008}
+\item Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}. \strong{11}, 192-196. \url{https://pubmed.ncbi.nlm.nih.gov/15117008/}
 }
 }
 \seealso{

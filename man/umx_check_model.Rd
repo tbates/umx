@@ -60,7 +60,7 @@ umx_check_model(m1, hasData = TRUE)
 }
 }
 \references{
-- <https://www.github.com/tbates/umx>
+- <https://github.com/tbates/umx>
 }
 \seealso{
 Other Test: 

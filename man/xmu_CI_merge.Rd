@@ -24,7 +24,7 @@ xmu_CI_merge(m1, m2)
 }
 }
 \references{
-- <https://www.github.com/tbates/umx>
+- <https://github.com/tbates/umx>
 }
 \seealso{
 Other xmu internal not for end user: 

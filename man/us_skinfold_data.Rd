@@ -54,7 +54,7 @@ Moskowitz, W. B., Schwartz, P. F., & Schieken, R. M. (1999).
 Childhood passive smoking, race, and coronary artery disease risk:
 the MCV Twin Study. Medical College of Virginia.
 \emph{Archives of Pediatrics and Adolescent Medicine}, \strong{153}, 446-453.
-\url{https://www.ncbi.nlm.nih.gov/pubmed/10323623}
+\url{https://pubmed.ncbi.nlm.nih.gov/10323623/}
 }
 \seealso{
 Other datasets: 

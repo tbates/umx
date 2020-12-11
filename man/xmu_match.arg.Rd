@@ -42,7 +42,7 @@ xmu_match.arg("bad", option_list)
 }
 \references{
 \itemize{
-\item \url{https://www.github.com/tbates/umx}
+\item \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

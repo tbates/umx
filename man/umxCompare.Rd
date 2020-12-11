@@ -67,7 +67,7 @@ umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 }
 \references{
 \itemize{
-\item \url{https://www.github.com/tbates/umx}
+\item \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

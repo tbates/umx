@@ -49,7 +49,7 @@ umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 }
 }
 \references{
-- <https://www.github.com/tbates/umx>
+- <https://github.com/tbates/umx>
 }
 \seealso{
 Other Test: 

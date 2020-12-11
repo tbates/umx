@@ -195,7 +195,7 @@ NULL
 #' Childhood passive smoking, race, and coronary artery disease risk:
 #' the MCV Twin Study. Medical College of Virginia.
 #' *Archives of Pediatrics and Adolescent Medicine*, **153**, 446-453.
-#' <https://www.ncbi.nlm.nih.gov/pubmed/10323623>
+#' <https://pubmed.ncbi.nlm.nih.gov/10323623/>
 #' @usage data(us_skinfold_data)
 #' @format A data frame with 53940 twin families (1 per row) each twin measured on 10 variables.
 #' @md

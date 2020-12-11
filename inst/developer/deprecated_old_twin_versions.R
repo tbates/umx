@@ -31,7 +31,7 @@
 #' @return - path list
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @examples
 #' library(umx)
 #' data(demoOneFactor)
@@ -984,7 +984,7 @@ umxPlotCPold <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - \code{\link{umxACE}()} for more examples of twin modeling, \code{\link{plot}()}, \code{\link{umxSummary}()} work for IP, CP, GxE, SAT, and ACE models.
-#' @references - \url{https://www.github.com/tbates/umx}
+#' @references - \url{https://github.com/tbates/umx}
 #' @examples
 #' \dontrun{
 #' require(umx)

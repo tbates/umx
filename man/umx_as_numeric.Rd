@@ -34,7 +34,7 @@ df = umx_as_numeric(df, force=TRUE); str(df)
 }
 }
 \references{
-- <https://www.github.com/tbates/umx>
+- <https://github.com/tbates/umx>
 }
 \seealso{
 Other Data Functions: 

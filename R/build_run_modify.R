@@ -2500,7 +2500,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @family Twin Modeling Functions
 #' @seealso - [umxSummaryCP()], [umxPlotCP()]. See [umxRotate.MxModelCP()] to rotate the factor loadings of a [umxCP()] model. See [umxACE()] for more examples of twin modeling. 
 #' [plot()] and [umxSummary()] work for all twin models, e.g., [umxIP()], [umxCP()], [umxGxE()], and [umxACE()].
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -2833,7 +2833,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -3169,7 +3169,7 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' @export
 #' @seealso - Core functions:
 #' @family Advanced Model Building Functions
-#' @references - <https://www.github.com/tbates/umx>, <https://tbates.github.io>
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' require(umx)
@@ -3332,7 +3332,7 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @return - [mxModel()]
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' # ==============================================================
@@ -3530,7 +3530,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @return - [mxModel()]
 #' @family Core Modeling Functions
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
 #' @examples
@@ -3732,7 +3732,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @export
 #' @seealso [umxModify()], [umxCompare()]
 #' @family Modify or Compare Models
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -4955,7 +4955,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Advanced Model Building Functions
 #' @family zAdvanced Helpers
 #' @family xmu internal not for end user
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require("umx")

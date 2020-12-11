@@ -25,7 +25,7 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io}, \url{http://php.net/manual/en/function.explode.php}
+\item \url{https://tbates.github.io}, \url{https://www.php.net/manual/en/function.explode.php}
 }
 }
 \seealso{

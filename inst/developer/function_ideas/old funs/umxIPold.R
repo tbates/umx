@@ -31,7 +31,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxIP()], [plot()] and [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{

@@ -96,7 +96,7 @@ umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
 
 }
 \references{
-- <https://www.github.com/tbates/umx>
+- <https://github.com/tbates/umx>
 }
 \seealso{
 Other Data Functions: 

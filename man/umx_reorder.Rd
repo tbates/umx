@@ -26,7 +26,7 @@ umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 }
 \references{
-- <https://www.github.com/tbates/umx>
+- <https://github.com/tbates/umx>
 }
 \seealso{
 Other Data Functions: 

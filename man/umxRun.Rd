@@ -71,7 +71,7 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 \references{
 \itemize{
-\item \url{https://www.github.com/tbates/umx}
+\item \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

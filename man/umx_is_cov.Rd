@@ -29,7 +29,7 @@ umx_is_cov(df, boolean = TRUE)
 umx_is_cov(mtcars, boolean = TRUE)
 }
 \references{
-- <https://www.github.com/tbates/umx>
+- <https://github.com/tbates/umx>
 }
 \seealso{
 Other Test: 

@@ -79,7 +79,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE()] for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{

@@ -4,9 +4,9 @@
 [![Codecov test coverage](https://codecov.io/gh/tbates/umx/branch/master/graph/badge.svg)](https://codecov.io/gh/tbates/umx?branch=master)
 ![Github commits](https://img.shields.io/github/commits-since/tbates/umx/latest.svg?colorB=green)
 [![cran version](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)
-[![Monthly Downloads](http://cranlogs.r-pkg.org/badges/umx)](http://cranlogs.r-pkg.org/badges/umx)
-[![Total Downloads](http://cranlogs.r-pkg.org/badges/grand-total/umx)](http://cranlogs.r-pkg.org/badges/grand-total/umx)
-[![Rdoc](http://www.rdocumentation.org/badges/version/umx)](http://www.rdocumentation.org/packages/umx)
+[![Monthly Downloads](https://cranlogs.r-pkg.org/badges/umx)](https://cranlogs.r-pkg.org/badges/umx)
+[![Total Downloads](https://cranlogs.r-pkg.org/badges/grand-total/umx)](https://cranlogs.r-pkg.org/badges/grand-total/umx)
+[![Rdoc](https://www.rdocumentation.org/badges/version/umx)](https://www.rdocumentation.org/packages/umx)
 [![DOI](https://img.shields.io/badge/doi-10.1017/thg.2019.2-yellow.svg?style=flat)](https://doi.org/10.1017/thg.2019.2)
 [![License](https://img.shields.io/cran/l/umx.svg)](https://cran.r-project.org/package=umx)
 

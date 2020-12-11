@@ -30,7 +30,7 @@ if(umx_is_MxModel(list(m1,m1), listOK = TRUE)){
 }
 \references{
 \itemize{
-\item \url{https://www.github.com/tbates/umx}
+\item \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

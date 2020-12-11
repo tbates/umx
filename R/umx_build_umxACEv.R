@@ -613,7 +613,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @export
 #' @family Plotting functions
 #' @family Reporting functions
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)

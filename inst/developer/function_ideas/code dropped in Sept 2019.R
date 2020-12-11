@@ -11,7 +11,7 @@
 #' @return a table of model comparisons
 #' @export
 #' @family Modify or Compare Models
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
@@ -69,7 +69,7 @@ umxDrop1 <- function(model, regex = NULL, maxP = 1) {
 #' @return a table of fit changes
 #' @export
 #' @family Modify or Compare Models
-#' @references - <https://www.github.com/tbates/umx>
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{

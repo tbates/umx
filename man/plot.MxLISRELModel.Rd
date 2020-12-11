@@ -64,7 +64,7 @@ The commercial application \dQuote{OmniGraffle} is great for editing these image
 }
 \references{
 \itemize{
-\item \url{https://www.github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
+\item \url{https://github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 }
 }
 \seealso{

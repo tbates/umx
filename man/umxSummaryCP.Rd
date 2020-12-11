@@ -81,7 +81,7 @@ umxSummary(m1, CIs = TRUE, file = NA);
 }
 \references{
 \itemize{
-\item \url{https://www.github.com/tbates/umx}, \url{https://tbates.github.io}
+\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 }
 \seealso{
