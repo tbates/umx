@@ -2368,7 +2368,7 @@ fin_compound_interest <- function(principal = 0, deposits = 0, interest = 0.05, 
 #' @method print money
 #' @export
 #' @examples
-#' fin_compound_interest(d= 20000, r= .07, y= 20)
+#' fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
 print.money <- function(x, symbol = "$", ...) {
 	if(!is.null(attr(x, 'symbol')) ){

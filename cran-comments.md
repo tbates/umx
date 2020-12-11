@@ -9,8 +9,7 @@
 ## R CMD check results
 * Win claims an ERROR but doesn't show any. No WARNINGs, ERRORs or NOTEs on travis
 
-## Downstream dependencies
-* No downstream dependencies.
+## No Downstream dependencies
 
 Many thanks!
 Tim
