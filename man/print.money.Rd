@@ -22,7 +22,7 @@
 Print method for, class()= "money" objects: e.g. \code{\link[=fin_compound_interest]{fin_compound_interest()}}.
 }
 \examples{
-fin_compound_interest(d= 20000, r= .07, y= 20)
+fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 
 }
 \seealso{
