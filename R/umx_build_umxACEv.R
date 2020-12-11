@@ -18,7 +18,7 @@
 #' A common task in twin modeling involves using the genetic and environmental differences 
 #' between large numbers of pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 #' to model the genetic and environmental structure of one, or, typically, several phenotypes.
-#' `umxACEv` directly estimates variance components (ratheer than paths, which 
+#' `umxACEv` directly estimates variance components (rather than paths, which 
 #' are then squared to produce variance and therefore cannot be negative). It offers better power, 
 #' correct Type I error and un-biased estimates (with no zero-bound for the variances) as a saturated model.
 #' (Verhulst et al, 2019).

@@ -513,7 +513,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #' 3. Add matrices for each twin's data.cov vars (matrixes are called `T1DefVars`).  
 #' 4. Switch `mxExpectationNormal` in each data group to point to the local `expMean`.
 #' 5. Add "expMean" algebra to each data group.
-#'   * `grp.expMean` sums `top.intercept`  and grp.DefVars %*% top.meansBetas for each twin.
+#'   * `grp.expMean` sums `top.intercept`  and `grp.DefVars %*% top.meansBetas` for each twin.
 #'
 #' @details In umx models with no covariates, means live in `top$expMean`
 #' 

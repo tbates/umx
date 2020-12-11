@@ -34,7 +34,6 @@
 * FIXED: `umx_set_cores` no longer use `imxGetNumThreads` which is actually hard-coded to not report number of threads.
 * FIXED: Check for more than one named CI requested (closes #136).
 * FIXED: `tmx_show` has `html_font` parameter in help.
-* FIXED: typo messsage -> message
 * WORKAROUND: 'umxSummary` wraps `mxRefModels` error for WLS models in tryCatch to tell user OpenMx doesn't support fit stats for WLS as yet.
 * BACKWARD: `umxThresholdMatrix` changed parameter from selDVs to fullVarNames to prevent user error.
 * HELP: `harmonic_mean` example averaging speeds across distance.

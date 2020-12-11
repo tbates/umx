@@ -105,7 +105,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' *Details*
 #'
 #' Some rules. All labels are expanded with a twin suffix: so "var1" -> "var1_T1" etc. so you
-#' provide the person-model using just the base name (and tell umxTwinMaker how to expand it by providing a separator string).
+#' provide the person-model using just the base name (and tell [umxTwinMaker()] how to expand it by providing a separator string).
 #' 
 #' Rule 2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
 #' To avoid clashes, variables must not match the numbered variables in `t1_t2links`  - by default names like "a1" are reserved for ace.

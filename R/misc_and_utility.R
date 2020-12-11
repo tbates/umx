@@ -821,7 +821,7 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #'
 #' set the number of cores (threads) used by OpenMx
 #'
-#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to omxDetectCores().
+#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to `omxDetectCores()`.
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
 #' @param silent If TRUE, no message will be printed.
 #' @return - number of cores
@@ -2382,7 +2382,7 @@ print.money <- function(x, symbol = "$", ...) {
 #' Compute the percent change needed to return to the original value after percent off (or on).
 #'
 #' @description
-#' Determine the pecent change needed to "undo" an initial percent change.
+#' Determine the percent change needed to "undo" an initial percent change.
 #'
 #' @details None.
 #' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
@@ -2390,7 +2390,7 @@ print.money <- function(x, symbol = "$", ...) {
 #' @param percent Change in percent (e.g. 0.1 = 10%%)
 #' @param value Principal
 #' @param digits (rounding)
-#' @return - new value and hcange required to return to baseline.
+#' @return - new value and change required to return to baseline.
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_compound_interest()]

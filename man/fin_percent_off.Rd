@@ -15,11 +15,11 @@ fin_percent_off(percent, value = 100, digits = 2)
 }
 \value{
 \itemize{
-\item new value and hcange required to return to baseline.
+\item new value and change required to return to baseline.
 }
 }
 \description{
-Determine the pecent change needed to "undo" an initial percent change.
+Determine the percent change needed to "undo" an initial percent change.
 }
 \details{
 None.

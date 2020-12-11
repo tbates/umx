@@ -30,7 +30,7 @@ Does the following to \code{model} (i.e., a umx top/MZ/DZ supermodel):
 \item Add "expMean" algebra to each data group.
 }
 \itemize{
-\item \code{grp.expMean} sums \code{top.intercept}  and grp.DefVars \%*\% top.meansBetas for each twin.
+\item \code{grp.expMean} sums \code{top.intercept}  and \code{grp.DefVars \%*\% top.meansBetas} for each twin.
 }
 }
 \details{
