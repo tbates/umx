@@ -72,12 +72,12 @@ fin_compound_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent_off]{fin_percent_off()}}
+\item \code{\link[=fin_percent]{fin_percent()}}
 }
 
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
-\code{\link{fin_percent_off}()},
+\code{\link{fin_percent}()},
 \code{\link{rad2deg}()}
 }
 \concept{Miscellaneous Functions}

@@ -2299,7 +2299,7 @@ umx_write_to_clipboard <- function(x) {
 #' @return - Value after yrs
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_percent_off()]
+#' @seealso - [fin_percent()]
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
@@ -2363,7 +2363,7 @@ fin_compound_interest <- function(principal = 0, deposits = 0, interest = 0.05, 
 #' @param symbol Default prefix if not set.
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
-#' @seealso - [print()], [umx::fin_compound_interest()], 
+#' @seealso - [umx::fin_percent()], [print()]
 #' @md
 #' @method print money
 #' @export
@@ -2387,7 +2387,7 @@ print.money <- function(x, symbol = "$", ...) {
 #' @details None.
 #' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
 #' 
-#' @param percent Change in percent (e.g. 0.1 = 10%%)
+#' @param percent Change in percent (e.g. for 10%, enter 10, not 0.1)
 #' @param value Principal
 #' @param digits (rounding)
 #' @return - new value and change required to return to baseline.
@@ -2398,20 +2398,18 @@ print.money <- function(x, symbol = "$", ...) {
 #' @examples
 #' #
 #' # Percent needed to return to original value after 10% off
-#' fin_percent_off(-.1)
-#' fin_percent_off(-.1, digits=3)
+#' fin_percent(-10)
+#' fin_percent(-10, digits = 3)
 #' #
 #' # Percent needed to return to original value after 10% on
-#' fin_percent_off(.1)
+#' fin_percent(10)
 #' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent_off(-.5, value = 34.5)
-fin_percent_off <- function(percent, value= 100, digits = 2) {
-	if(abs(percent) > 1){
-		percent= percent/100
-	}
-	off = value*(1+percent)
-	on = (value/off)-1
-	list(off = off, on = round(on, digits))
+#' fin_percent(-50, value = 34.5)
+fin_percent <- function(percent, value= 100, digits = 2) {
+	percent = percent/100
+	newValue = value * (1+percent)
+	percent_to_reverse = (value/newValue) - 1
+	list(newValue = newValue, percent_to_reverse = round(percent_to_reverse, digits))
 }
 
 #' Compute odds ratio (OR)

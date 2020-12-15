@@ -27,6 +27,6 @@ fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 }
 \seealso{
 \itemize{
-\item \code{\link[=print]{print()}}, \code{\link[=fin_compound_interest]{fin_compound_interest()}},
+\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=print]{print()}}
 }
 }
