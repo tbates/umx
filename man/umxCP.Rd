@@ -59,7 +59,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
-\item{correlatedA}{?? (default = FALSE).}
+\item{correlatedA}{BETA (default = FALSE).}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
