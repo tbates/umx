@@ -1,4 +1,9 @@
-# umx 4.2.5
+**Development version** umx 4.3.0
+* December 2020 R 4.0.3 (2020-06-22)
+
+
+# Releases
+## umx 4.2.5
 * December 2020 R 4.0.3 (2020-06-22)
 * NEW: `tmx_show` display model matrices on the web, with color-coded free/false, values + roll-over labels.
 * NEW: `harmonic_mean` with support for weights.
@@ -39,7 +44,7 @@
 * HELP: `harmonic_mean` example averaging speeds across distance.
 * NEW: `umx_read_prolific_demog` to read prolific academic demographics files.
 
-# umx 4.1.0
+## umx 4.1.0
 * July 2020 R 4.0.0
 * CHANGE: `umxRAM` group now independent by default (label style  "path_group" )
 * FIXED: 'umxRAM` group option failing to pass autoRun tryHard Merge pull request #134 @khusmann
@@ -62,7 +67,7 @@
 
 
 
-# umx 4.0.0
+## umx 4.0.0
 * May 2020 R 4.0.0
 * FIXED: `umx_score_scale` Fix a bad design decision where I was storing the reversed items in the data returned to the user. Worked for 1 run, but not repeats...
 * FIXED: `umx_long2wide` now looks for zygosity in more than just twin 1 h/t @nathangillespie for catching this case.
@@ -133,7 +138,7 @@
 * NEW: `xmu_make_TwinSuperModel` handles selCovs
 * REPLACE: `parallel::detectCores` --> ` imxGetNumThreads` (as OpenMx does).
 
-# umx 3.1.0
+## umx 3.1.0
 * 13 March 2020 R 4.0.0 compatibility
 * BETA: `plot` for `umxTwinMaker` models!!
 * NEW: data for example with direction of causation work on umxSummary for DoC
@@ -161,7 +166,7 @@
 * HELP: `umx_explode_twin_names` links for find-ability
 
 
-# umx 3.0.6
+## umx 3.0.6
 * Feb 2020 R 4.0.0 compatibility
 * BETA: `umxDoc` example but summary and plot TODO
 * NEW: `umxRAM2Lav` export umx to lavaan
@@ -176,7 +181,7 @@
 * REPAIR: `umxSummary` handles std=NULL as documented (don't show parameter table)
 * RENAME:  `umx_nice_data` --> `umx_make_twin_data_nice` with future improvements planned to cope with non numeric twin schemes.
 
-# umx 3.0.5
+## umx 3.0.5
 * December 2019 R 4.0.0 compatibility
 * BUG FIXED: `umx_is_ordered` was broken by previous fix to support the un-tidyverse mucking with dataframes... Now fixed
 * BETA: `umxRAM` supports multi-group via `group = "column"
@@ -197,7 +202,7 @@
 * CLEANUP: Reorganized function groupings to be easier to navigate.
 
 
-# umx 3.0.0
+## umx 3.0.0
 * August 2019 R 3.6.1 "Action of the Toes"
 * This release has major new features in beta including support for lavaan syntax, AND a over 80 additional improvements clean-out/cleanup of old functions and parameters that impede getting learning and using `umx`: Think of it like `ggplot2` version 2.
 
@@ -285,7 +290,7 @@
 * HELP: `umxPower` gains text and a nice figure
 
 
-# umx 2.15.0
+## umx 2.15.0
 * May 2019, R 3.6.0 "Planting of a Tree"
 * **tip**: Try new `plot` `splines` = T|F and `min`= , `max` = `same`=  controls to layout your graphs!
 * NEW: `umxLav2RAM`: detect `ngroup`, and a `umxSuperModel` of groups.
@@ -304,7 +309,7 @@
   * NEW: `xmu_clean_label`
   * NEW: `xmu_name_from_lavaan_str` helper
 
-# umx 2.10.0
+## umx 2.10.0
 * April 2019, R 3.5.3 "Great Truth"
 * CITATION: `citation("umx")` Our paper on umx is out! 
   * Bates, Neale and Maes (2019). umx: twin and path-based structural equation modeling in R. *Twin Research and Human Genetics*. **22**, 27-41. doi: [10.1017/thg.2019.2](https://doi.org/10.1017/thg.2019.2)
@@ -369,7 +374,7 @@
 * CLEANUP: Removed `thresholds` option from several functions (always doing deviation-based, WLS isn't thresholds, and left-censored will be implemented differently)
 
 
-# umx 2.9.9
+## umx 2.9.9
 * December 2018, R 3.5.2
 * Compatibility with OpenMx changes.
 * NEW: `umxSummarizeTwinData` to create summary tables for papers using twin Data.
@@ -381,7 +386,7 @@
 * INCOMPATIBLE: `plot` dropped deprecated showMeans and showFixed from plot after 3 years (use `means=` and `fixed =` ).
 * INCOMPATIBLE: `umx_scale_wide_twin_data` dropped support for deprecated suffix parameter.
 
-# umx 2.9.0
+## umx 2.9.0
 * December 2018, R 3.5.1: "More love"
 * INCOMPATIBLE: Support for `suffix` as a synonym for `sep` removed after 3-years of deprecation warnings.
 * FIXED: `umxSummary`for `ACEv` models: CI now works - (was 'a' not 'A').
@@ -412,7 +417,7 @@
 * HELP: Examples cleaned up
 
 
-# umx 2.8.5
+## umx 2.8.5
 * October 2018, R 3.5.1: "More love"
 * NEW: `xmu_make_mxData` function to make mxData functions out of dataframes (and also drop variables from cov/cor dataframes.
 * NEW: SE style confidence information for CP and IP `plot`s.
@@ -434,7 +439,7 @@
 * BUG: `umxAPA` test parameter had no effect.
 * HELP: Better links, text, layout, etc., umxCP/IP HELP figures.
 
-# umx 2.8.2
+## umx 2.8.2
 * June 2018, R 3.5.0: Simplex or s**t sticks
 * FIXED: `umxSexLim` now works for univariate tests (thanks to Michael Zakharin for reporting!)
 * FIXED: `umxSummary` Corrected Chi^2 df for RAM models.
@@ -453,7 +458,7 @@
 * DELETED: `umxAlgebra` This appears broken in some circumstances?
 * HELP:  verbose option for twin helper; better feedback;
 
-# umx 2.6.5
+## umx 2.6.5
 * May 2018, R 3.5.0: "Poly gets a cracker"
 * NEW: Beta versions of `umx_polychoric`, `umx_polypairwise`, and `umx_polytriowise`
 * NEW: `umxSimplex`twin model!
@@ -480,7 +485,7 @@
 * INTERNAL: `xmu_simplex_corner` helper function for simplex modeling.
 * INTERNAL: `umx_make_sql` improved 
 
-# umx 2.4.0 Post-Boulder Workshop CRAN edition
+## umx 2.4.0 Post-Boulder Workshop CRAN edition
 * March 21 2018, R 3.4.4
 * NEW: `umxIP` nFac now allows specifying different numbers of a, c, and e factors!
 * NEW: `umxACEv` plot works (shows correlated factors).
@@ -501,7 +506,7 @@
 * DROPPED: deleted deprecated showStd and showMeans parameters from plot ACE.
 * BUG-FIX: `umxSummaryIP` was assuming nFac = 1
 
-# umx 2.0.2
+## umx 2.0.2
 * Feb 12 2018, R 3.4.3 Higher goals edition
 * NEW: `umxSummary` works with multi-group models!
 	* (make these with `umxSuperModel`)
@@ -513,7 +518,7 @@
 * DOCS: `umxAPA` now has t-test and `glm` examples
 * DROPPED: `umx_install_OpenMx` (use `install.OpenMx`)
 
-# umx 2.0.0
+## umx 2.0.0
 * January 29 2018, R 3.4.3 Birthday edition
 * BETA: `umxSexLim` multivariate twin sex-limitation.
 * BETA: `umxGxE_biv` bivariate Gene-environment interaction model.
@@ -528,12 +533,12 @@
 * DROPPED: `umxReRun` (use `umxModify`)
 * DROPPED: support for `suffix` parameter (use `sep` instead)
 
-# umx 1.9.2
+## umx 1.9.2
 * December 2017, R 3.4.2
 * *TIP*: Filter paths by estimated size with `umx_parameters(model, "below", .1)`
 * NEW:  `tmx_genotypic_effect` Part of a suite of teaching functions for biometric genetics!
 
-# umx 1.9.1
+## umx 1.9.1
 * November 2017, R 3.4.2
 * *TIP*: `?umxRAM` has a sketch mode. just set `data` to a list of manifest variable names.
 * NEW: `umxSuperModel` function to automate multiple-group model creation.
@@ -574,7 +579,7 @@
 * INTERNAL: Switch from `R2HTML` to `xtable`
 * MINOR: `umxParameters` now supports non-run models
 
-# umx 1.8.0
+## umx 1.8.0
 * September 2017, R 3.4.1 "Single Candle"
 * *TIP*: `?umxAPA` can format lots of things for you: from dataframes to p-values - try it out! Let me know what you'd like.
 * NEW `?umx_parameters` function, report parameter estimates, filtering by name and value!
@@ -603,7 +608,7 @@
 * CHANGE: `anova`. OpenMx now supports, this so I dropped it from `umx`.
 * CHANGE: `umx_fix_first_loadings` now skips latents with fixed variance.
 
-# umx 1.7.5
+## umx 1.7.5
 * April 04 2017, R 3.3.3 "Another Canoe"
 * *TIP*: In twin models, mzData and dzData can contain unused variables (umx removes them for you!)
 * NEW: `umxVersion` (returns `mxVersion` + information on umx).
@@ -639,7 +644,7 @@
 * DOCUMENT: Fix typo in `umxPath` docs
 * INCOMPATIBLE: renamed `umx_cov_diag` to umx_var
 
-# umx 1.5.5
+## umx 1.5.5
 * March 20 2017, R 3.3.3 "Another Canoe"
 * NEW: `umx_write_to_clipboard`
 * NEW: `umx_r_test`
@@ -647,7 +652,7 @@
 * FIXED: Switch away from CSOLNP in umxCP example.
 * ROLLBACK: No longer generically alter CSOLNP tolerance.
 
-# umx 1.5.1
+## umx 1.5.1
 * March 05 2017 R 3.3.2
 * IMPROVED: `umxCP` example for improved compatibility with OpenMx 2.7
 * IMPROVED: umx twin models now set a better (less likely to fail) precision for CSOLNP
@@ -658,7 +663,7 @@
 * ADD: "check" option to `umx_make`
 * FIXED: `umxPath(a, forms= , arrows = 2)` bug
 
-# umx 1.5.0
+## umx 1.5.0
 * December 2016
 * Features + OpenMx 1.7.3 compatibility release
 * IMPROVED: `umxRAM` returns invisibly
@@ -668,20 +673,20 @@
 * REMOVED: `umxSE` now included in OpenMx 2.7.0!
 * FIXED: `umx_set_plot_format` uses silent = TRUE internally where needed
 
-# umx 1.4.9
+## umx 1.4.9
 * December 2016
 * Bug fix
 * FIXED: `umx_make_TwinData` fix bug in DZ moderator code and A+C computation
 * IMPROVED: more functionality hints in man page titles
 
-# umx 1.4.5
+## umx 1.4.5
 * November 2016 "Usability is queen/Sincere Pumpkin Patch"
 * IMPROVED: Reorganize function families to increase clarity
 * IMPROVED: `umx_set` functions now show legal options by default
 * NEW: `umx_set` functions have silent option
 * FIX secure http URLs
 
-# umx 1.4.0
+## umx 1.4.0
 * Mid October 2016 "New features and improvements"
 * BUG FIX: `umxFitIndices` RMR and SRMR (h/t Brenton Wiernik!)
 * NEW: `umxMatrix` with default labels and name as 1st parameter 
@@ -695,7 +700,7 @@
 * IMPROVED: `umxRAM` remove_unused_manifests no longer updates manifestVars + leaves variable in data by default.
 * RENAME: `plot` "showFixed" deprecated in favor of easier to type "fixed"
 
-# umx 1.3.0
+## umx 1.3.0
 * R 3.3.1 companion: "Bug in your Hair" August 2016
 * NEW: `umxPath` allows `unique.pairs` connection
  * Useful for growth curve models
@@ -712,7 +717,7 @@
 * FIX: `plot` calls from summary
 * REMOVE: dependency on non-condensed slots
 
-# umx 1.2.8
+## umx 1.2.8
 * R 3.3.0 companion: "Very compatible" May 2016
 * NEW: `umxRAM` can now build and run Joint Continuous Ordinal models!!
 * NEW: `umx_show_options` function to help users learn the options available
@@ -727,7 +732,7 @@
 * UPDATE: `umx_time` and `umx_check_parallel` to work with new S4 list deprecation
 * MINOR: `umxTwoStage` shorter run-time on 2-stage least squares 
 
-# umx 1.2.7
+## umx 1.2.7
 * May 2016 stable release
 * ADDED: `umxTwoStage` FIML-based Instrumental variable and Mendelian Randomization (beta)
 * ADDED: `umx_make_MR_data` to simulate SNP-based Mendelian randomization data (beta)
@@ -749,13 +754,13 @@
 * CHANGE: `umx_residualize` ditto.
 * UPDATE: "Read me" file.
 
-# umx 1.2.5
+## umx 1.2.5
 * April 2016 R 3.2.5 "Very, Very Secure Dishes"
 * Bug fix release
 * FIX: $models bug in `umxStandardizeACE`
 * EXPAND: test suite
 
-# umx 1.2.0
+## umx 1.2.0
 * April 2016 R 3.2.4 "Very Secure Dishes"
 * NEW: `plot` using DiagrammeR!
 * NEW: Choose plot format!
@@ -774,13 +779,13 @@
 * REQUIRE knitr, DiagrammeR
 * INCREASE minimum R / OpenMx to  >= 3.2.0 / >= 2.5.0
 
-# umx 1.1.5
+## umx 1.1.5
 * March 2016 Boulder Workshop feedback updates
 * NEW: `plot` now works on Windows and Unix as well as OS X! (h/t @mhunter)
 * CHANGE: `umxReRun` to `umxModify` (h/t @hmaes)
 * BETTER: compatibility with OpenMx 2.5.2
 
-# umx 1.1.1
+## umx 1.1.1
 * Feb 2016 R 3.2.3 Wooden Christmas Tree edition
 * NEW: auto-run now the default for all models!
 	* Added option to switch this: options("umx_auto_run" = TRUE)
@@ -795,7 +800,7 @@
 * BETTER: Help improvements (wording, see-also etc)
 * DEEP: Removed dependency on formula.tools
 
-# umx 1.1.0
+## umx 1.1.0
 * December 2015, R 3.2.3 "Wooden Christmas-Tree"
 * NEW: `vcov`() added
 * NEW: Begin support for sex-lim twin models
@@ -814,7 +819,7 @@
 * IMPROVED: consistency in parameter names (minor backward incompatibility)
 * DEEP: Replacing @ with $ accessor begun
 
-# umx 1.0.0
+## umx 1.0.0
 * NEW `umxCP` twin models!  + plot(), umxSummary()
 * NEW `umxIP` twin models!  + plot(), umxSummary() 
 * NEW `umxGxE` twin models! + plot(), umxSummary() 
@@ -826,31 +831,31 @@
 * DROPPED umxRAM functionality to set endogenous, exogenous, and latent traits
 * DROPPED Deprecated a dozen functions.
 
-# umx 0.50.0
+## umx 0.50.0
 * March 2015 R 3.1.3, "Smooth Sidewalk" 
 * First CRAN release!
 
-# umx 0.49.0
+## umx 0.49.0
 * IMPROVE Edge cases work
 * IMPROVE Improving help files and feedback
 * IMPROVE Rationalizing function names into @families
 
-# umx 0.45-beta
+## umx 0.45-beta
 * Feature complete
 * Bug squashing
 * Optimizing function names for memorability and typing
 
-# umx 0.40-beta
+## umx 0.40-beta
 * Beta level!
 * Standard `confint`(); `plot`() etc functions implemented
 * Adding umxRAM() and umxPath shortcuts
 
-# umx 0.30-alpha
+## umx 0.30-alpha
 * Alpha release
 * 90% feature complete
 * Lots of name rationalization
 
-# umx 0.25-alpha
+## umx 0.25-alpha
 * Alpha release
 * 80% feature complete
 * Function prefix reflects usage:: camel-case for major functions, underscore for utility functions, "xmu" prefix, "not for end-user"
