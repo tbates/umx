@@ -1503,20 +1503,31 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 	for (p in package) {
 		# deparse(substitute(package))
+
+		# 1. Open the web pages
+		system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
+
+		# 2. install if requested
+		if(inst){
+			install.packages(p)
+		} else {
+			# print("cleanup-code")
+		}
+
+		# 3. print data on current version and load
 		result = tryCatch({
 		    print(packageVersion(p))
+			print(str(paste0(p)))
+		    library(p, character.only = TRUE)
 		}, warning = function(x) {
-		    print("not installed locally")
+		    print(paste(p, "Might not be installed locally"))
+			print(x)
 		}, error = function(x) {
-		    print("not installed locally")
-		}, finally={
-			if(inst){
-				install.packages(package)
-			} else {
-				# print("cleanup-code")
-			}
+		    print(paste(p, "Might not be installed locally"))
+			print(x)
+		}, finally = {
+			#
 		})		
-		system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
 	}
 }
 
