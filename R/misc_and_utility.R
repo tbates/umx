@@ -3780,6 +3780,31 @@ umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.o
 	}
 }
 
+
+#' Get values from lower triangle of a matrix 
+#'
+#' @description
+#' `umx_lower.tri` is a wrapper for [lower.tri()] and a selection to return
+#' values from a lower matrix in one step.
+#'
+#' @param x a [matrix()] from which to extract values.
+#' @param diag whether to include the diagonal (default = FALSE).
+#' @return - values of cellss of the lower triangle.
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - [lower.tri()]
+#' @md
+#' @examples
+#' x = qm(1,2,3|4,5,6|7,8,9)
+#' umx_lower.tri(x)
+#' # 4,7,8
+#' umx_lower.tri(x, diag=TRUE) # 1 4 7 5 8 9
+#'
+umx_lower.tri <- function(x, diag=FALSE){
+	lowercells = lower.tri(x, diag = diag)
+	x[lowercells]
+}
+
 #' umx_means
 #'
 #' Helper to get means from a df that might contain ordered or string data.

@@ -34,6 +34,7 @@ Other Miscellaneous Utility Functions:
 \code{\link{umxVersion}()},
 \code{\link{umx_array_shift}()},
 \code{\link{umx_find_object}()},
+\code{\link{umx_lower.tri}()},
 \code{\link{umx_msg}()},
 \code{\link{umx_pad}()},
 \code{\link{umx_print}()},

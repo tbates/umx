@@ -180,17 +180,16 @@ For a deep-dive, see \code{\link[=xmu_make_TwinSuperModel]{xmu_make_TwinSuperMod
 # = Run a 3-factor Common pathway twin model of 6 traits =
 # ========================================================
 require(umx)
-umx_set_optimizer("SLSQP")
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 3,
-		dzData = dzData, mzData = mzData, tryHard = "yes")
+m1 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, tryHard = "yes",
+		dzData = dzData, mzData = mzData)
 
 # Shortcut using "data ="
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
-m1 = umxCP(selDVs = selDVs, nFac = 3, data=GFF, zyg="zyg_2grp")
+m1 = umxCP(selDVs= selDVs, nFac= 3, data=GFF, zyg="zyg_2grp")
 
 # ===================
 # = Do it using WLS =
@@ -242,10 +241,29 @@ data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
-m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	nFac = 3, correlatedA = TRUE, tryHard = "yes")
-}
+m5 = umxCP("correlated_causes", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+	 nFac = 3, correlatedA = TRUE, tryHard = "yes")
 
+umxCompare(m4, m1)
+
+# What are the ace covariance labels? (two ways to get)
+umx_lower.tri(m5$top$a_cp$labels)
+parameters(m5, patt = "[ce]_cp")
+
+# =================================
+# = Stop c and e from correlating =
+# =================================
+tmp = umx_lower.tri(m5$top$a_cp$labels)
+tmp = namez(tmp, "a_cp", "[ce]_cp")
+m6  = umxModify(m5, regex= tmp, name= "onlyAcorr", comp = TRUE)
+
+# 1. Drop all (a|c|e) correlations, then add one a<->a covariance
+tmp= namez(umx_lower.tri(m5$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
+m6 = umxModify(m5, regex= tmp, auto = FALSE)
+# 2. now free back up "a2_a1_cov"
+m6 = umxModify(m6, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
+umxCompare(m6, m1)
+} # end dontrun
 }
 \references{
 \itemize{

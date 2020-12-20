@@ -125,7 +125,7 @@ m2 = umxModify(m1, update = labsToUpdate, newlabels= newLabel, name = "equated",
 searchString = "G_to_x([0-9])"
 newLabel = "loading_for_path\\\\1" # use value in regex group 1
 m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
-}
+} # end dontrun
 
 }
 \references{
