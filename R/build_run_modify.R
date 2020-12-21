@@ -2594,6 +2594,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m6 = umxModify(m6, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
 #' umxCompare(m6, m1)
 #' } # end dontrun
+#'
 umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO umxCP: Add covariates to means model: Will involve xmu_make_top_twin? also means model?
 	tryHard             = match.arg(tryHard)
@@ -2642,9 +2643,9 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 		# c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
 		# e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
 
-		a_cp_matrix$lbound[lower.tri(a_cp_matrix$ubound)] = 0
-		c_cp_matrix$lbound[lower.tri(a_cp_matrix$ubound)] = 0
-		e_cp_matrix$lbound[lower.tri(a_cp_matrix$ubound)] = 0
+		a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
 
 	} else {
 		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7)
