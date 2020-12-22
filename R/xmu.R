@@ -452,7 +452,7 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 	int = model$top$intercept$values
 	if(!is.null(int)){
 		# means and betas
-		msg = message("Means: Intercept and (raw) betas from model$top$intercept and model$top$meansBetas")
+		msg = message("Table: Means and (raw) betas from model$top$intercept and model$top$meansBetas")
 		row.names(int) = "intercept"
 		b = model$top$meansBetas$values
 		bvals = b[,1:dim(b)[[2]], drop = FALSE]
@@ -461,7 +461,7 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 		int = model$top$expMean$values
 		if(!is.null(int)){
 			# expMeans
-			msg = "Means: Intercepts from model$top$expMean"
+			msg = "Table: Means (from model$top$expMean)"
 			row.names(int) = "intercept"
 		}else{
 			# no means
@@ -469,8 +469,8 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 	}
 
 	if(!is.null(int)){
-		message(msg) 
 		umx_print(int, digits = digits, file=report, append = TRUE, sortableDF = TRUE)
+		message(msg) 
 		# if(report == "html"){
 		# 	# depends on R2HTML::HTML
 		# 	R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE);

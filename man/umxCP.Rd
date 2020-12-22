@@ -264,6 +264,7 @@ m6 = umxModify(m5, regex= tmp, auto = FALSE)
 m6 = umxModify(m6, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
 umxCompare(m6, m1)
 } # end dontrun
+
 }
 \references{
 \itemize{
