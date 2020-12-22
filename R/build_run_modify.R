@@ -2672,6 +2672,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 		umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1), # Common env path 
 		umxMatrix("es", "Lower", nVar, nVar, free = TRUE, values = .5), # Unique env path
 		umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .5), # loadings on latent phenotype
+
 		# Quadratic multiplication to add cp_loading effects
 		mxAlgebra(name = "A"  , cp_loadings %&% A_cp + as %*% t(as)), # Additive genetic variance
 		mxAlgebra(name = "C"  , cp_loadings %&% C_cp + cs %*% t(cs)), # Common environmental variance

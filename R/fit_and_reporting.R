@@ -2104,7 +2104,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	N = round(model$data$numObs)
 	pard = t(data.frame("mod" = summary(model)$parameters[, 5 + 2 * std], row.names = summary(model)$parameters[, 1]))
 	pb   = txtProgressBar(min = 0, max = rep, label = "Computing confidence intervals", style = 3)
-	#####
+
 	if(type == "empirical") {
 		if(length(rawData) == 0) {
 			if(model$data$type == "raw"){

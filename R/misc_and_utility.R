@@ -1924,7 +1924,7 @@ umx_rename_file <- function(findStr = "old", replaceStr = NA, baseFolder = "Find
 		baseFolder = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)
 	} else if(baseFolder == "") {
-		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep = "") ## choose a directory
+		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep = "") # choose a directory
 		message("Using selected folder:", baseFolder)
 	}
 
@@ -2053,7 +2053,7 @@ umx_move_file <- function(baseFolder = NA, regex = NULL, fileNameList = NA, dest
 		baseFolder = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (target of front window as alias)'")
 		message("Using front-most Finder window:", baseFolder)
 	} else if(baseFolder == "") {
-		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep="") ## choose a directory
+		baseFolder = paste(dirname(file.choose(new = FALSE)), "/", sep="") # choose a directory
 		message("Using selected folder:", baseFolder)
 	}
 	moved = 0
@@ -2198,7 +2198,7 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 		theFile = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")
 		message("Using file selected in front-most Finder window:", theFile)
 	} else if(theFile == "") {
-		theFile = file.choose(new = FALSE) ## choose a file
+		theFile = file.choose(new = FALSE) # choose a file
 		message("Using selected file:", theFile)
 	} else if(theFile == "make") {
 		theFile = system.file("extdata", "GQ6.sql.xlsx", package = "umx")
@@ -2857,7 +2857,7 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 			url = system(intern = TRUE, "osascript -e 'tell application \"Finder\" to get the POSIX path of (selection as alias)'")
 			message("Using file selected in front-most Finder window:", url)
 		} else if(url == "") {
-			url = file.choose(new = FALSE) ## choose a file
+			url = file.choose(new = FALSE) # choose a file
 			message("Using selected file:", url)
 		}
 		install.packages(url)
@@ -4436,7 +4436,7 @@ umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordere
 	} else {
 		cutPoints = quantile(x, probs = c((1:(nlevels-1)) / (nlevels)), type = 8, na.rm = TRUE)
 		levelLabels = paste0("quantile", 1:(nlevels))
-		## needed to collapse overlapping quantiles
+		# needed to collapse overlapping quantiles
 		uniqueItems = !duplicated(cutPoints)
 		cutPoints   = cutPoints[uniqueItems]
 		levelLabels = levelLabels[uniqueItems]

@@ -70,7 +70,7 @@ data(iqdat)
 mzData <- subset(iqdat, zygosity == "MZ")
 dzData <- subset(iqdat, zygosity == "DZ")
 vars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "mxTryHard")
+m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "yes")
 umxSummary(m1, file = NA);
 }
 }

@@ -102,7 +102,7 @@
 #' }
 #' @md
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
-	message("This is beta code - will be ready for Boulder 2020")
+	message("Polite note: umxSimplex is in beta. Suggestions  always welcome")
 	# TODO: modernize
 	tryHard = match.arg(tryHard)
 	nSib = 2
@@ -227,7 +227,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equ
 #' mzData <- subset(iqdat, zygosity == "MZ")
 #' dzData <- subset(iqdat, zygosity == "DZ")
 #' vars = c("IQ_age1", "IQ_age2", "IQ_age3", "IQ_age4")
-#' m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "mxTryHard")
+#' m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "yes")
 #' umxSummary(m1, file = NA);
 #' }
 umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
@@ -273,19 +273,19 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 	All_s = data.frame(rbind(as, cs, es), row.names = c("as", "cs", "es")); names(All_s) <- selDVs[1:nVar]
 	All_i = data.frame(rbind(ai, ci, ei), row.names = c("ai", "ci", "ei")); names(All_i) <- selDVs[2:nVar]
 	if(report == "html"){
-		message("## Transmitted Influences")
 		umx_print(All_t, digits = digits, zero.print = ".", file = "trans.html")
-		message("## Innovations")
+		message("Table: Transmitted Influences")
 		umx_print(All_i, digits = digits, zero.print = ".", file = "innov.html")
-		message("## Specific Effects")
+		message("Table: Innovations")
 		umx_print(All_s, digits = digits, zero.print = ".", file = "spec.html")
+		message("Table: Specific Effects")
 	} else {
-		message("\n##-------------------##\n## Transmitted Influences")
 		umx_print(All_t, digits = digits, zero.print = ".")
-		message("\n##-------------------##\n## Innovations")
+		message("Table: Transmitted Influences")
 		umx_print(All_i, digits = digits, zero.print = ".")
-		message("\n##-------------------##\n## Specific Effects")
+		message("Table: Innovations")
 		umx_print(All_s, digits = digits, zero.print = ".")
+		message("Table: Specific Effects")
 	}
 	return()
 
@@ -312,7 +312,6 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 	}
 	
 	if(extended == TRUE) {
-		message("Unstandardized path coefficients")
 		AClean = A
 		CClean = C
 		EClean = E
@@ -322,11 +321,11 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 		unStandardizedEstimates = data.frame(cbind(AClean, CClean, EClean), row.names = rowNames);
 		names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
 		umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
+		message("Table: Unstandardized path coefficients")
 	}
 
 	# Pre & post multiply covariance matrix by inverse of standard deviations
 	if(showRg) {
-		message("Genetic correlations")
 		NAmatrix <- matrix(NA, nVar, nVar);
 		# genetic correlations, C and E correlations
 		rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); 
@@ -343,6 +342,7 @@ umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot
 	 	# Make a nice table.
 		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
 		umx_print(genetic_correlations, digits = digits, zero.print = zero.print)
+		message("Table: Genetic correlations")
 	}
 	hasCIs = umx_has_CIs(model)
 		if(hasCIs & CIs) {

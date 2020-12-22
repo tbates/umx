@@ -130,16 +130,16 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		mxAlgebra(name="Vmz", A   + C + E),
 		mxAlgebra(name="Vdz", Adz + C + E),
 
-		### Generate the Asymmetric Matrix
+		# Generate the Asymmetric Matrix
 		# Non-shared env effects on Latent Variables 
 		umxMatrix("beta", "Full", nrow=nLat, ncol=nLat, free=FALSE, labels = c("a2a", "a2b", "b2a", "b2b"), values= 0),
 		mxAlgebra(name= "cause", Diag1 %x% solve(Diag1 - beta)), 	
 
-		### Generate the Factor Loading Matrix
+		# Generate the Factor Loading Matrix
 		FacLoad,
 		mxAlgebra(name="FacLoadtw", Diag1 %x% FacLoad),
 
-		## Covariance between the items due to the latent factors
+		# Covariance between the items due to the latent factors
 		mxAlgebra(name= "FacCovMZ", FacLoadtw %&% (cause %&% Vmz)),
 		mxAlgebra(name= "FacCovDZ", FacLoadtw %&% (cause %&% Vdz)),
 
@@ -417,25 +417,25 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 
 		# Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE, auto=F); Chol = mxRun(Chol)
 
-		message("## Means")
 		means = model$top$Means$values
 		colnames(means) = selDVs[1:nVar]
 		umx_print(means)
+		message("Table: Means")
 		
-		message("## Causal paths")
 		betaNames  = as.vector(model$top$beta$labels)
 		betaValues = as.vector(model$top$beta$values)
 		umx_print(data.frame(beta = betaNames, value = betaValues))
+		message("Table: Causal paths")
 
-		message("## Parameter list")
 		ptable = summary(model)$parameters
 		umx_print(ptable[, c("name", "Estimate", "Std.Error")])
+		message("Table: Parameter list")
 
 		return()
 		# model$top$beta$labels[model$top$beta$free]
 		# umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 
-		message("## Common Factor paths")
+		# Print Common Factor paths
 		a_cp = model$top$a_cp$values # nFac * nFac matrix of path coefficients flowing into cp_loadings
 		c_cp = model$top$c_cp$values
 		e_cp = model$top$e_cp$values
@@ -450,13 +450,13 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		} else {
 			umx_print(commonACE, digits = digits, zero.print = ".")
 		}
+		message("Table: Common Factor paths")
 		
 		if(class(model$top$matrices$a_cp)[1] == "LowerMatrix"){
 			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
 			print(a_cp)
 		}
 		
-		message("## Loading of each trait on the Common Factors")
 		# Get standardized loadings on Common factors
 		rowNames = sub("(_T)?1$", "", selDVs[1:nVar]) # Clean up names
 		cp_loadings = model$top$cp_loadings$values # nVar * nFac matrix
@@ -467,8 +467,8 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		} else {
 			umx_print(cp_loadings, digits = digits, zero.print = ".")
 		}
+		message("Table: Loading of each trait on the Common Factors")
 
-		message("## Specific-factor loadings")
 		# Specific path coefficients ready to be stacked together
 		as = model$top$as$values # Specific factor path coefficients
 		cs = model$top$cs$values
@@ -486,9 +486,9 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		} else {
 			umx_print(specifics, digits = digits, zero.print = ".")
 		}
+		message("Table: Specific-factor loadings")
 		
 		if(showRg) {
-			message("Genetic Correlations")
 			# Pre & post multiply covariance matrix by inverse of standard deviations
 			A  = model$top$A$values # Variances
 			C  = model$top$C$values
@@ -508,6 +508,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 			} else {
 				umx_print(genetic_correlations, digits = digits, zero.print = ".")
 			}
+			message("Table: Genetic Correlations")
 			
 		}
 		if(!is.na(file)){
