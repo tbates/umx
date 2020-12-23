@@ -1236,13 +1236,13 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			cols = dim(model$top$matrices$a$labels)[2]
 			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
 
-			# iterate over each CI
+			# Iterate over each CI
 			labelList = imxGenerateLabels(model)	
-			rowCount = dim(CIlist)[1]
+			rowCount  = dim(CIlist)[1]
 			# return(CIlist)
 			for(n in 1:rowCount) { # n = 1
 				thisName = row.names(CIlist)[n] # thisName = "a11"
-					# convert labels to [bracket] style
+					# Convert labels to [bracket] style
 					if(!umx_has_square_brackets(thisName)) {
 					nameParts = labelList[which(row.names(labelList) == thisName),]
 					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
@@ -2461,7 +2461,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 		preOut, out$str, same, top, bottom, "\n}"
 	)
 
-	print("?umxPlotACE options: std, means, digits, strip_zero, file=, min=, max =")
+	message("\n?umxPlotACE options: std=T/F, means=T/F, digits=n, strip_zero=T/F, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
  # end umxPlotACE
