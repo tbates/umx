@@ -1118,7 +1118,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show, ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
-	# depends on R2HTML::HTML
+
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
@@ -1139,9 +1139,9 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		A = mxEval(top.A, model) # Variances
 		C = mxEval(top.C, model)
 		E = mxEval(top.E, model)
-
+		
 		if(std){
-			msg = "Table: Standardized solution"
+			caption = paste0("Standardized parameter estimates from a ", dim(a)[2], "-factor Cholesky ACE model. ")
 			Vtot = A + C + E; # Total variance
 			I  <- diag(nVar); # nVar Identity matrix
 			SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
@@ -1155,7 +1155,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			cClean = c_std
 			eClean = e_std
 		} else {
-			msg = "Table: Raw solution"
+			caption = paste0("Raw parameter estimates from a ", dim(a)[2], "-factor Cholesky ACE model. ")
 			aClean = a
 			cClean = c
 			eClean = e
@@ -1168,18 +1168,14 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 
 		if(model$top$dzCr$values == .25){
 			colNames = c("a", "d", "e")
+			caption = paste0(caption, "A: additive genetic; D: dominance effects; E: unique environment.")
 		} else {
 			colNames = c("a", "c", "e")
+			caption = paste0(caption, "A: additive genetic; C: common environment; E: unique environment.")
 		}
 		names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-		if(report == "html"){
-			# depends on R2HTML::HTML
-			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE); 
-			umx_open("tmp.html")
-		}
-		print(msg)
-		xmu_twin_print_means(model = model, report= report)
+		umx_print(Estimates, digits = digits, caption = caption, report = report, zero.print = zero.print)
+		xmu_twin_print_means(model = model, report = report)
 
 		if(extended == TRUE) {
 			aClean = a
@@ -1190,8 +1186,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			eClean[upper.tri(eClean)] = NA
 			unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs);
 			names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-			umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
-			message("Table: Unstandardized path coefficients")
+			umx_print(unStandardizedEstimates, captions = "Unstandardized path coefficients", digits = digits, zero.print = zero.print)
 		}
 
 		if(showRg) {
@@ -1210,8 +1205,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			names(genetic_correlations) <- selDVs
 		 	# Make a nice table.
 			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-			umx_print(genetic_correlations, digits = digits, zero.print = zero.print)
-			message("Table: Genetic correlations")
+			umx_print(genetic_correlations, caption = "Genetic correlations", digits = digits, zero.print = zero.print)
 		}
 		hasCIs = umx_has_CIs(model)
 		if(hasCIs & CIs) {
@@ -1273,17 +1267,9 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			}
 			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
 			# TODO umxSummaryACE: Add option to use mxSE
-			# print(a_CI)
-			# print(c_CI)
-			# print(e_CI)
 			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = selDVs, stringsAsFactors = FALSE)
 			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-			Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-			if(report == "html"){
-				# depends on R2HTML::HTML
-				R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T); 
-				umx_open("tmpCI.html")
-			}
+			umx_print(Estimates, digits = digits, zero.print = zero.print,  report=report, file = "tmpCI.html")
 			xmu_twin_print_means(model, digits = digits, report = report)
 			CI_Fit = model
 			CI_Fit$top$a$values = a_CI

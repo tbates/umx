@@ -3404,43 +3404,52 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #'
 #' @param x A data.frame to print (matrices will be coerced to data.frame)
 #' @param digits  The number of decimal places to print (getOption("digits"))
-#' @param quote  Parameter passed to print (FALSE)
-#' @param na.print How to display NAs (default = "")
-#' @param zero.print How to display 0 values (default = "0")
+#' @param caption Optional caption.
+#' @param file Whether to write to a file (defaults to NA (no file). Use "html" to open table in browser.
+#' @param report How to report the results. "html" = open in browser.
+#' @param kableExtra Whether to print the table using kableExtra (if report="html")
+#' @param zero.print How to display 0 values (default = "0") for sparse tables, using "." can produce more readable results.
 #' @param justify Parameter passed to print (defaults to "none")
-#' @param file whether to write to a file (defaults to NA (no file). Use "html" to open table in browser.
-#' @param suppress minimum numeric value to print (NULL = print all values, no matter how small)
+#' @param na.print How to display NAs (default = "")
+#' @param quote Whether or not to quote strings (FALSE)
+#' @param suppress Minimum numeric value to print (NULL = print all values, no matter how small)
 #' @param append If html, is this appended to file? (FALSE)
 #' @param sortableDF If html, is table sortable? (TRUE)
 #' @param both If html, is table also printed as markdown? (TRUE)
-#' @param kableExtra Whether to print the table using kableExtra (if html)
-
-#' @param report How to report the results. "html" = open in browser.
 #' @param style The style for the table "paper","material_dark" etc.
-#' @param bootstrap_options border etc.
-#' @param lightable_options striped
-#' @param html_font Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'
+#' @param bootstrap_options e.g.  border etc.
+#' @param lightable_options e.g. striped
+#' @param html_font Override default font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'
 #' @param ... Optional parameters for print
-
 #' @return - A dataframe of text
-#' @export
 #' @seealso [umx_msg()], [umx_set_table_format()] 
 #' @family Miscellaneous Utility Functions
+#' @export
 #' @md
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
+#' umx_print(mtcars[1,1:2], digits = 2, caption="Hi: I'm the caption!")
 #' \dontrun{
 #' umx_print(mtcars[1:10,], file = "html")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 #' }
-umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print = "", zero.print = "0", justify = "none", suppress = NULL, file = c(NA, "tmp.html"), kableExtra = TRUE, append = FALSE, sortableDF= TRUE, report = c("html", "markdown"), html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", both = TRUE, ...){
-	# Depends on R2HTML::HTML and knitr::kable
-	file = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
-	style = match.arg(style)
+umx_print <- function (x, digits = getOption("digits"), caption = NULL, report = c("markdown", "html"), file = c(NA, "tmp.html"), na.print = "", zero.print = "0", justify = "none", quote = FALSE, suppress = NULL, kableExtra = TRUE, append = FALSE, sortableDF= TRUE,  html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", both = TRUE, ...){
+	style  = match.arg(style)
+	file   = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
+	report = match.arg(report)		
+
+	# Catch legacy users passing in file instead of report...
 	if(!is.na(file) && file == "markdown"){
-		file = NA
+		report = "markdown"
+		file   = NA
+	}else if(!is.na(file) && file == "html"){
+		report = "html"
+		file   = "tmp.html"
+	}else{
+		#
 	}
+
 	if(class(x)[[1]] == "character"){
 		print(x)
 	}else if(class(x)[[1]] != "data.frame"){
@@ -3468,25 +3477,25 @@ umx_print <- function (x, digits = getOption("digits"), quote = FALSE, na.print 
 
 	    if (is.numeric(x) || is.complex(x)){
 	        print(x, quote = quote, right = TRUE, ...)
-		} else if(!is.na(file)){
-			# From report = html
-			if(file == "html"){ file = "tmp.html" }
-			if(both){ print(knitr::kable(x)) }
+		} else if(report == "html"){
+			# From report = "html"
+			if(both){ print(knitr::kable(x, caption= caption)) }
 			if(kableExtra){
-				x = umx_round(x, digits)
-				x[x == 0] = zero.print
-				x = kbl(x) #caption = 
+				# default html output
+				x = kbl(x,  caption = caption)
 				if(zero.print != "0"){
 					x = add_footnote(x, label = paste0("zero printed as ", omxQuotes(zero.print)))
 				}
 				x = xmu_style_kable(x, html_font = html_font, style = style, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 				print(x)
 			} else {
+				# !kableExtra
 				R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF)
 				system(paste0("open ", file))
 			}
 	    }else{
-			print(knitr::kable(x))
+			print(knitr::kable(x, caption = caption))
+			# print(kbl(x, caption = caption, format = umx_set_table_format(silent=TRUE)))
 	    }
 	    invisible(x)
 	}

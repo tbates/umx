@@ -8,16 +8,17 @@ or as a web browser table.}
 umx_print(
   x,
   digits = getOption("digits"),
-  quote = FALSE,
+  caption = NULL,
+  report = c("markdown", "html"),
+  file = c(NA, "tmp.html"),
   na.print = "",
   zero.print = "0",
   justify = "none",
+  quote = FALSE,
   suppress = NULL,
-  file = c(NA, "tmp.html"),
   kableExtra = TRUE,
   append = FALSE,
   sortableDF = TRUE,
-  report = c("html", "markdown"),
   html_font = NULL,
   style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
   bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
@@ -31,33 +32,35 @@ umx_print(
 
 \item{digits}{The number of decimal places to print (getOption("digits"))}
 
-\item{quote}{Parameter passed to print (FALSE)}
+\item{caption}{Optional caption.}
+
+\item{report}{How to report the results. "html" = open in browser.}
+
+\item{file}{Whether to write to a file (defaults to NA (no file). Use "html" to open table in browser.}
 
 \item{na.print}{How to display NAs (default = "")}
 
-\item{zero.print}{How to display 0 values (default = "0")}
+\item{zero.print}{How to display 0 values (default = "0") for sparse tables, using "." can produce more readable results.}
 
 \item{justify}{Parameter passed to print (defaults to "none")}
 
-\item{suppress}{minimum numeric value to print (NULL = print all values, no matter how small)}
+\item{quote}{Whether or not to quote strings (FALSE)}
 
-\item{file}{whether to write to a file (defaults to NA (no file). Use "html" to open table in browser.}
+\item{suppress}{Minimum numeric value to print (NULL = print all values, no matter how small)}
 
-\item{kableExtra}{Whether to print the table using kableExtra (if html)}
+\item{kableExtra}{Whether to print the table using kableExtra (if report="html")}
 
 \item{append}{If html, is this appended to file? (FALSE)}
 
 \item{sortableDF}{If html, is table sortable? (TRUE)}
 
-\item{report}{How to report the results. "html" = open in browser.}
-
-\item{html_font}{Override style font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'}
+\item{html_font}{Override default font. e.g. "Times" or '"Arial Narrow", arial, helvetica, sans-s'}
 
 \item{style}{The style for the table "paper","material_dark" etc.}
 
-\item{bootstrap_options}{border etc.}
+\item{bootstrap_options}{e.g.  border etc.}
 
-\item{lightable_options}{striped}
+\item{lightable_options}{e.g. striped}
 
 \item{both}{If html, is table also printed as markdown? (TRUE)}
 
@@ -76,6 +79,7 @@ By default, Zeros have the decimals suppressed, and NAs are suppressed altogethe
 \examples{
 umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
+umx_print(mtcars[1,1:2], digits = 2, caption="Hi: I'm the caption!")
 \dontrun{
 umx_print(mtcars[1:10,], file = "html")
 umx_print(mtcars[1:10,], file = "tmp.html")
