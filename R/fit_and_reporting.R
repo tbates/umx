@@ -2388,7 +2388,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			out, "\n",
 			rankVariables, "\n}"
 		)
-		print("?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
+		message("\n?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
 		# cat(out)
 		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}
@@ -2581,7 +2581,7 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		rankA,
 		rankCE, "\n}", sep=""
 	)
-	print("?umxPlotACEcov options: std=, means=, digits=, strip_zero=, file=, min=, max =")
+	message("\n?umxPlotACEcov options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACEcov
 

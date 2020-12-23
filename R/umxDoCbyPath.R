@@ -458,7 +458,7 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, fixed = TRUE, means = TRU
 			out, "\n",
 			rankVariables, "\n}"
 		)
-		print("?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F, min=, max =, same = , fixed, resid= 'circle|line|none'")
+		message("\n?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F, min=, max =, same = , fixed, resid= 'circle|line|none'")
 		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}
 } # end plot.MxModelTwinMaker

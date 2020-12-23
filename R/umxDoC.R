@@ -317,7 +317,7 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 		out, "\n}"
 	)
 	
-	print("?umxPlotACE options: std=, means=, digits=, strip_zero=, file=, min=, max =")
+	message("\n?umxPlotDoC options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	if(format != "current"){ umx_set_plot_format(format) }
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
