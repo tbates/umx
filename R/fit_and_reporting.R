@@ -1006,12 +1006,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		} else {
 			toShow = parameterTable[,namesToShow]
 		}
-		if(report == "html"){
-			umx_print(toShow, digits = digits, file = "tmp.html");
-		} else {
-			umx_print(toShow, digits = digits, na.print = "", zero.print = "0", justify = "none")
-		}
-		message("Table: Model Parameter loadings")
+		umx_print(toShow, digits = digits, report = report, caption = "Model Parameter loadings", na.print = "", zero.print = "0", justify = "none")
 	}
 	with(modelSummary, {
 		if(!is.finite(TLI)){
@@ -1186,7 +1181,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			eClean[upper.tri(eClean)] = NA
 			unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = selDVs);
 			names(unStandardizedEstimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-			umx_print(unStandardizedEstimates, captions = "Unstandardized path coefficients", digits = digits, zero.print = zero.print)
+			umx_print(unStandardizedEstimates, caption = "Unstandardized Cholesky ACE model path coefficients", digits = digits, zero.print = zero.print)
 		}
 
 		if(showRg) {
@@ -1367,12 +1362,12 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 		e_std = SD %*% e;
 
 		if(std){
-			msg = "Table: Standardized solution"
+			caption = "Standardized solution"
 			aClean = a_std
 			cClean = c_std
 			eClean = e_std
 		} else {
-			msg = "Table: Raw solution"
+			caption = "Raw solution"
 			aClean = a
 			cClean = c
 			eClean = e
@@ -1386,13 +1381,7 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 
 		names(Estimates) = paste0(rep(c("a", "c", "e"), each = nDV), rep(1:nDV));
 
-		Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-		if(report == "html"){
-			# depends on R2HTML::HTML
-			R2HTML::HTML(Estimates, file = "tmp.html", Border = 0, append = FALSE, sortableDF = TRUE);
-			umx_open("tmp.html")
-		}
-		print(msg)
+		umx_print(Estimates, digits = digits, zero.print = zero.print, report=report, caption= caption)
 		xmu_twin_print_means(model, digits = digits, report = report)
 		
 		if(extended == TRUE) {
@@ -1404,8 +1393,7 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 			eClean[upper.tri(eClean)] = NA
 			unStandardizedEstimates = data.frame(cbind(aClean, cClean, eClean), row.names = rowNames);
 			names(unStandardizedEstimates) = paste0(rep(c("a", "c", "e"), each = nDV), rep(1:nDV));
-			umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print)
-			message("Table: Unstandardized path coefficients")
+			umx_print(unStandardizedEstimates, digits = digits, zero.print = zero.print, caption = "Unstandardized path coefficients")
 		}
 
 		# Pre & post multiply covariance matrix by inverse of standard deviations
@@ -1424,8 +1412,7 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 			names(genetic_correlations) <- rowNames
 		 	# Make a nice-ish table
 			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each= nDV), rep(1:nDV))
-			umx_print(genetic_correlations, digits=digits, zero.print = zero.print)
-			message("Table: Genetic correlations")
+			umx_print(genetic_correlations, digits=digits, zero.print = zero.print, caption = "Genetic correlations")
 		}
 		stdFit = model
 		hasCIs = umx_has_CIs(model)
@@ -1527,7 +1514,6 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @examples
 #' \dontrun{
 #' require(umx)
-#' umx_set_optimizer("SLSQP")
 #' data(twinData)
 # # Help optimizer by putting wt on a similar scale to ht
 #' twinData$wt1 = twinData$wt1/10
@@ -1589,12 +1575,7 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) 
 		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."), stringsAsFactors = FALSE);
 		names(commonACE) = c ("A", "C", "E")
-		if(report == "html"){
-			umx_print(commonACE, digits = digits, zero.print = ".", file = "std_spec.html")
-		} else {
-			umx_print(commonACE, digits = digits, zero.print = ".")
-		}
-		message("Table: Common Factor Paths\n")
+		umx_print(commonACE, digits = digits, zero.print = ".", report = report, caption = "Common Factor Paths")
 		
 		if(class(model$top$matrices$a_cp)[1] == "LowerMatrix"){
 			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
@@ -1605,12 +1586,7 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 		cp_loadings = model$top$cp_loadings$values # nVar * nFac matrix
 		cp_loadings = data.frame(cp_loadings, row.names = selDVs, stringsAsFactors = FALSE);
 		names(cp_loadings) = paste0("CP", 1:length(names(cp_loadings)))
-		if(report == "html"){
-			umx_print(cp_loadings, digits = digits, zero.print = ".", file = "std_common.html");
-		} else {
-			umx_print(cp_loadings, digits = digits, zero.print = ".")
-		}
-		message("Table: Loading of each trait on the Common Factors")
+		umx_print(cp_loadings, digits = digits, zero.print = ".", report =report, caption = "Loadings of each trait on the Common Factors")
 
 		# 3. Create Tables of Specific-factor loadings
 		# Stack specific path coefficients together
@@ -1623,15 +1599,8 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 				  diag(cs),
 				  diag(es))
 		)
-		names(specifics) = selDVs;
-
-		if(report == "html"){
-			umx_print(specifics, digits = digits, zero.print = ".", file = "std_spec.html")
-		} else {
-			umx_print(specifics, digits = digits, zero.print = ".")
-		}
-		message("Table: Specific-factor loadings.")
-
+		names(specifics) = selDVs
+		umx_print(specifics, digits = digits, report = report, caption = "Specific-factor loadings", zero.print = ".")
 		xmu_twin_print_means(model, digits = digits, report = report)
 
 		if(showRg) {
@@ -1650,13 +1619,7 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 			genetic_correlations = data.frame(cbind(rA, rC, rE), row.names = selDVs);
 			# Make a table
 			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-			if(report == "html"){
-				umx_print(genetic_correlations, digits = digits, zero.print = ".", file = "geneticCorrs.html")
-			} else {
-				umx_print(genetic_correlations, digits = digits, zero.print = ".")
-			}
-			message("Table: Genetic Correlations")
-			
+			umx_print(genetic_correlations, digits = digits, zero.print = ".", report = report, caption = "Genetic Correlations")
 		}
 		if(!is.na(file)){
 			umxPlotCP(model, file = file, digits = digits, std = FALSE, means = FALSE)
@@ -1743,8 +1706,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 	# 1. Make Table of General IP path loadings
 	x = sapply(FUN = seq_len, nFac)
 	names(std_Estimates) = c(paste0("ai", 1:nFac["a"]), paste0("ci", 1:nFac["c"]), paste0("ei", 1:nFac["e"]))
-	umx_print(std_Estimates, digits = digits, zero.print = ".", report = report)
-	message("Table: General IP path loadings")
+	umx_print(std_Estimates, digits = digits, zero.print = ".", report = report, caption = "General Independent Pathway path loadings")
 
 	# 2. Make Table of Standard specific path coefficients ready to be stacked together
 	as_std = SD %*% as; # Standardized path coefficients (nVar specific factors matrices)
@@ -1762,9 +1724,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 		)
 	)
 	names(std_Specifics) = rowNames;
-	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".", report = report)
-	message("Table: Specific factor loadings")
-
+	umx_print(round(std_Specifics, digits), digits = digits, zero.print = ".", report = report, caption = "Specific factor loadings")
 	xmu_twin_print_means(model, digits = digits, report = report)
 	
 	if(showRg) {
@@ -1776,8 +1736,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 		genetic_correlations = data.frame(cbind(rA, rC, rE), row.names = rowNames);
 		# Make a table
 		names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-		umx_print(genetic_correlations, digits = digits, zero.print = ".", report = report)
-		message("Table: Genetic Correlations")
+		umx_print(genetic_correlations, digits = digits, zero.print = ".", report = report, caption = "Genetic Correlations")
 	}
 	if(CIs){
 		message("Showing CIs in output not implemented yet. In the mean time, use summary(model) to view them.")
@@ -1932,7 +1891,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "inline", "html"), compareWeightedAIC = FALSE, file = "tmp.html") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, file = "tmp.html") {
 	report = match.arg(report)
 	if(umx_is_MxModel(all)){
 		stop("Provide all comparison models as a c() (You provided a model as input to 'all', and I'm guessing that's a mistake)")
@@ -2003,19 +1962,15 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 
 	# rename for printing to console
 	names(tablePub) = c("Model", "EP", "\u0394 -2LL" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model")
-	htmlNames       = c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "&Delta AIC", "Compare with Model")
-	
-	if(report == "html"){
-		tableHTML = tablePub
-		names(tableHTML) = htmlNames
-		print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function = function(x){x})
-		# digitList         =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
-		# nsmallList        =  c(0       , 0   , 3             ,  3          , 3  ,  3    , 0)
-		# R2HTML::HTML(tableHTML, file = file, Border = 0, append = FALSE, sortableDF = TRUE, digits = digitList)# , nsmall = nsmallList);
-		umx_open(file)
-	} else {
-		umx_print(tablePub)
-	}
+	umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
+
+	# htmlNames       = c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "&Delta AIC", "Compare with Model")
+	# if(report == "html"){
+	# 	tableHTML = tablePub
+	# 	names(tableHTML) = htmlNames
+	# 	print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function = function(x){x})
+	# 	umx_open(file)
+	# }
 	if(compareWeightedAIC){
 		modelList = c(base, comparison)
 		# get list of AICs
@@ -2124,9 +2079,9 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 	UL4 = round(UL, 4)
 	ci  = cbind(LL4, UL4)
 	colnames(ci) = c(paste((low*100), "%", sep = ""), paste((upp*100), "%", sep = ""))
-	p = summary(model)$parameters[, c(1, 2, 3, 4, c(5:6 + 2*std))]
-	cols <- sapply(p, is.numeric)
-	p[, cols] <- round(p[,cols], digits) 
+	p         = summary(model)$parameters[, c(1, 2, 3, 4, c(5:6 + 2*std))]
+	cols      = sapply(p, is.numeric)
+	p[, cols] = round(p[,cols], digits) 
 	
 	if(dat) {
 		return(list("Type" = type, "bootdat" = data.frame(pard), "CI" = cbind(p, ci)))
@@ -2282,7 +2237,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		latents = model@latentVars   # 'vis', 'math', and 'text' 
 		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
-		# update values using compute = T to capture labels with [] references.
+		# Update values using compute = T to capture labels with [] references.
 		# TODO: !!! Needs more work to sync with confidence intervals and SEs
 		model$S$values = mxEval(S, model, compute = TRUE)
 		model$A$values = mxEval(A, model, compute = TRUE)

@@ -9,7 +9,7 @@ umxCompare(
   comparison = NULL,
   all = TRUE,
   digits = 3,
-  report = c("markdown", "inline", "html"),
+  report = c("markdown", "html", "inline"),
   compareWeightedAIC = FALSE,
   file = "tmp.html"
 )

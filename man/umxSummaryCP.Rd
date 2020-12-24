@@ -50,7 +50,6 @@ Summarizes a Common-Pathway model, as returned by \code{\link[=umxCP]{umxCP()}}
 \examples{
 \dontrun{
 require(umx)
-umx_set_optimizer("SLSQP")
 data(twinData)
 twinData$wt1 = twinData$wt1/10
 twinData$wt2 = twinData$wt2/10
