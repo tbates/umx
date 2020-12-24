@@ -1949,19 +1949,21 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				} else {
 					this = ". This did not lower fit significantly "
 				}
-				message(
-				"The hypothesis that ", omxQuotes(tablePub[i,"comparison"]), 
+				inlineMsg  = paste0("The hypothesis that ", omxQuotes(tablePub[i,"comparison"]), 
 				" was tested by dropping ", tablePub[i,"comparison"],
 				" from ", omxQuotes(tablePub[i, "base"]), 
 				this, "(\u03C7\u00B2(", tablePub[i, "diffdf"], ") = ", round(tablePub[i, "diffLL"], 2), # \u03A7 = Chi \u00B2 = superscript 2
 				", p = ", tablePub[i,"p"], ": AIC = ", round(tablePub[i,"AIC"], digits), " change in AIC = ", round(tablePub[i,"deltaAIC"], digits), ")."
 				)
+				cat(inlineMsg)
 			}
 		}
 	}
-
+	
 	# rename for printing to console
 	names(tablePub) = c("Model", "EP", "\u0394 -2LL" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model")
+
+	if(report == "inline"){ report= "markdown"}
 	umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
 
 	# htmlNames       = c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "&Delta AIC", "Compare with Model")
@@ -1980,10 +1982,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
-		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
+		cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 		aic.weights = round(Weights(AIClist), 2)
-		message("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
+		cat("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ", 
 			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")	
 	}
