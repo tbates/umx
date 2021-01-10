@@ -16,7 +16,66 @@
 # = FNS NOT USED DIRECTLY BY USERS SUBJECT TO ARBITRARY CHANGE AND DEPRECATION !!  =
 # ==================================================================================
 
-#' Get on or more columns from mzData or regular data.frame
+#' Print algebras from a umx model
+#'
+#' @description
+#' `xmu_print_algebras` adds the results of algebras to a summary
+#'
+#' @details
+#'
+#' @param model A umx model from which to print algebras.
+#' @param digits rounding (default = 3)
+#' @param verbose tell user if no algebras found
+#' @return - nothing
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [umxSummary()]
+#' @md
+#' @examples
+#' 
+#' \dontrun{
+#' library(mlbench)
+#' data(BostonHousing2)
+#' BostonHousing2$log_crim = log2(BostonHousing2$crim)
+#' BostonHousing2$nox      = BostonHousing2$nox*100
+#' m2 = umxRAM(data = BostonHousing2, "#crime_model
+#' 	cmedv ~ log_crim + b1*nox; 
+#' 	nox   ~ a1*rad + a2*log_crim
+#'	i_1 := a1*b1
+#'	i_2 := a2*b1"
+#' )
+#' m3 = mxRun(mxModel(m1, mxAlgebra(name= "rtwo", rbind(i_1, i_2))))
+#' m3 = mxRun(mxModel(m3, mxAlgebra(name= "ctwo", cbind(i_1, i_2))))
+#' xmu_print_algebras(m3)
+#' }
+xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
+	# OpenMx algebras are just matrices of values, so just print what we find as a table if more than 1 cell?
+	# umx_check_model(model)
+	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
+	if (length(model@algebras) > 0){
+		algNames = names(model@algebras)
+		for(thisAlg in algNames){
+			b  = mxEvalByName(thisAlg, model)
+			if(dim(b)[1] == 1 && dim(b)[2] == 1){
+				# 1*1 algebra
+				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
+				p  = 2 * pnorm(abs(b/SE), lower.tail = FALSE)
+				SEstring = paste0(round(b, digits), "CI95[", round(b - (1.96 * SE), digits), commaSep, round(b + (1.96 * SE), digits), "]")
+				cat("Algebra", omxQuotes(thisAlg), " = ", SEstring, ". p-value ", umx_APA_pval(p, addComparison = TRUE), "\n", sep = "")
+			}else{
+				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
+				cat("Algebra", omxQuotes(thisAlg), ":\n", sep = "")
+				umx_print(umx_round(b, 3))
+			}
+		}
+	} else {
+		if(verbose){
+			message("No algebras")
+		}
+	}
+}
+
+#' Get one or more columns from mzData or regular data.frame
 #'
 #' @description
 #' same effect as `df[, col]` but works for [mxData()] and check the names are present

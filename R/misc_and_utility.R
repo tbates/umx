@@ -2461,25 +2461,25 @@ print.percent <- function(x, ...) {
 	cat(symbol, oldValue, " ", dir , " by ", percent*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 }
 
-#' Print a percent object
+#' Plot a percent change graph
 #'
-#' Print method for, class()= "percent" objects: e.g. [umx::fin_percent()]. 
+#' Plot method for, class()= "percent" objects: e.g. [umx::fin_percent()]. 
 #'
 #' @param x percent object.
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
 #' @seealso - [umx::fin_percent()], [print()]
 #' @md
-#' @method print percent
+#' @method plot percent
 #' @export
 #' @examples
 #' # Percent needed to return to original value after 10% off
-#' fin_percent(-10)
+#' plot(fin_percent(-10))
 #' # Percent needed to return to original value after 10% on
-#' fin_percent(10)
+#' plot(fin_percent(10))
 #'
 #' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5)
+#' plot(fin_percent(-50, value = 34.5))
 #'
 plot.percent <- function(x, ...) {
 	digits   = attr(x, 'digits')
@@ -2489,16 +2489,23 @@ plot.percent <- function(x, ...) {
 	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
 	dir = ifelse(percent < 0, "decreased", "increased")
 
-	p = ggplot(data.frame(x = c(min, max)), aes(x))
-	p = ggplot(data = mtcars, aes(x=mpg, y=wt)) + geom_point()
-	p = p + labs(x= "Fuel efficiency (mpg)", y= "Weight (tons)",
-	  title    = "Title: Fuel economy declines as weight increases",
+	percent  = percent/100
+	newValue = value * (1 + percent)
+	percent_to_reverse = (value/newValue) - 1
+
+# x range	= -100 (%) to +500 (%)?
+# y = -100 to +200?
+# y range	= -100 to +200?
+
+	p = ggplot(data.frame(x = c(0, 100)), aes(x))
+	p = p + stat_function(fun = fun)
+	p = p + labs(x= "Original Value", y= "New value",
+	  title    = "Percent change on, and off",
 	  subtitle = "Subtitle: (1973-74)",
 	  caption  = "Caption: Data from the 1974 Motor Trend US magazine",
 	  tag = "Tag: A"
 	)
 	p + theme_ipsum()
-	p = p + stat_function(fun = fun)
 	
 	cat(symbol, oldValue, " ", dir , " by ", percent*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 }

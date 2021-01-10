@@ -1053,6 +1053,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	if(!is.null(model$output$confidenceIntervals)){
 		print(model$output$confidenceIntervals)
 	}
+	
+	xmu_print_algebras(model)
+	
 	if(!is.null(std)){ # return these as  invisible for the user to filer, sort etc.
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
@@ -4139,7 +4142,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			umx_print(output, digits = digits)
 		}
 	} else if("lm" == class(obj)[[1]]) {
-		# report lm summary table
+		# Report lm summary table
 		if(std){
 			obj = update(obj, data = umx_scale(obj$model))
 		}

@@ -271,6 +271,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_name_from_lavaan_str}()},
 \code{\link{xmu_path2twin}()},
 \code{\link{xmu_path_regex}()},
+\code{\link{xmu_print_algebras}()},
 \code{\link{xmu_rclabel_2_bracket_address}()},
 \code{\link{xmu_safe_run_summary}()},
 \code{\link{xmu_set_sep_from_suffix}()},
