@@ -4,12 +4,14 @@
 \alias{fin_percent}
 \title{Compute the percent change needed to return to the original value after percent off (or on).}
 \usage{
-fin_percent(percent, value = 100, digits = 2)
+fin_percent(percent, value = 100, symbol = "$", digits = 2)
 }
 \arguments{
 \item{percent}{Change in percent (e.g. for 10\%, enter 10, not 0.1)}
 
 \item{value}{Principal}
+
+\item{symbol}{units (default = $)}
 
 \item{digits}{(rounding)}
 }
@@ -29,10 +31,9 @@ If an amount of $100 has 20\% added, what percent do we need to drop it by to re
 #
 # Percent needed to return to original value after 10\% off
 fin_percent(-10)
-fin_percent(-10, digits = 3)
-#
 # Percent needed to return to original value after 10\% on
 fin_percent(10)
+
 # Percent needed to return to original value after 50\% off 34.50
 fin_percent(-50, value = 34.5)
 }

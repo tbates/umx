@@ -2399,6 +2399,7 @@ print.money <- function(x, symbol = "$", ...) {
 #' 
 #' @param percent Change in percent (e.g. for 10%, enter 10, not 0.1)
 #' @param value Principal
+#' @param symbol units (default = $)
 #' @param digits (rounding)
 #' @return - new value and change required to return to baseline.
 #' @export
@@ -2409,18 +2410,142 @@ print.money <- function(x, symbol = "$", ...) {
 #' #
 #' # Percent needed to return to original value after 10% off
 #' fin_percent(-10)
-#' fin_percent(-10, digits = 3)
-#' #
 #' # Percent needed to return to original value after 10% on
 #' fin_percent(10)
+#'
 #' # Percent needed to return to original value after 50% off 34.50
 #' fin_percent(-50, value = 34.5)
-fin_percent <- function(percent, value= 100, digits = 2) {
-	percent = percent/100
-	newValue = value * (1+percent)
+fin_percent <- function(percent, value= 100, symbol = "$", digits = 2) {
+	percent  = percent/100
+	newValue = value * (1 + percent)
 	percent_to_reverse = (value/newValue) - 1
-	list(newValue = newValue, percent_to_reverse = round(percent_to_reverse, digits))
+	class(newValue) = 'percent'
+	attr(newValue, 'oldValue') = value
+	attr(newValue, 'percent')  = percent
+	attr(newValue, 'digits')   = digits
+	attr(newValue, 'symbol')   = symbol
+	attr(newValue, 'percent_to_reverse') = percent_to_reverse
+	return(newValue)
 }
+
+#' Print a percent object
+#'
+#' Print method for, class()= "percent" objects: e.g. [umx::fin_percent()]. 
+#'
+#' @param x percent object.
+#' @param ... further arguments passed to or from other methods.
+#' @return - invisible
+#' @seealso - [umx::fin_percent()], [print()]
+#' @md
+#' @method print percent
+#' @export
+#' @examples
+#' # Percent needed to return to original value after 10% off
+#' fin_percent(-10)
+#' # Percent needed to return to original value after 10% on
+#' fin_percent(10)
+#'
+#' # Percent needed to return to original value after 50% off 34.50
+#' fin_percent(-50, value = 34.5)
+#'
+print.percent <- function(x, ...) {
+	if(!is.null(attr(x, 'digits')) ){
+		digits = attr(x, 'digits')
+	}
+	oldValue = round(attr(x, 'oldValue'), digits)
+	percent  = attr(x, 'percent')
+	symbol   = attr(x, 'symbol')
+	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
+	dir = ifelse(percent < 0, "decreased", "increased")
+
+	cat(symbol, oldValue, " ", dir , " by ", percent*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
+}
+
+#' Print a percent object
+#'
+#' Print method for, class()= "percent" objects: e.g. [umx::fin_percent()]. 
+#'
+#' @param x percent object.
+#' @param ... further arguments passed to or from other methods.
+#' @return - invisible
+#' @seealso - [umx::fin_percent()], [print()]
+#' @md
+#' @method print percent
+#' @export
+#' @examples
+#' # Percent needed to return to original value after 10% off
+#' fin_percent(-10)
+#' # Percent needed to return to original value after 10% on
+#' fin_percent(10)
+#'
+#' # Percent needed to return to original value after 50% off 34.50
+#' fin_percent(-50, value = 34.5)
+#'
+plot.percent <- function(x, ...) {
+	digits   = attr(x, 'digits')
+	oldValue = round(attr(x, 'oldValue'), digits)
+	percent  = attr(x, 'percent')
+	symbol   = attr(x, 'symbol')
+	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
+	dir = ifelse(percent < 0, "decreased", "increased")
+
+	p = ggplot(data.frame(x = c(min, max)), aes(x))
+	p = ggplot(data = mtcars, aes(x=mpg, y=wt)) + geom_point()
+	p = p + labs(x= "Fuel efficiency (mpg)", y= "Weight (tons)",
+	  title    = "Title: Fuel economy declines as weight increases",
+	  subtitle = "Subtitle: (1973-74)",
+	  caption  = "Caption: Data from the 1974 Motor Trend US magazine",
+	  tag = "Tag: A"
+	)
+	p + theme_ipsum()
+	p = p + stat_function(fun = fun)
+	
+	cat(symbol, oldValue, " ", dir , " by ", percent*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
+}
+
+#' Easily plot functions in R
+#'
+#' @description
+#' A wrapper for [stat_function()]
+#'
+#' @details
+#'
+#' @param fun the function to plot
+#' @param min x min
+#' @param max x max
+#' @param p A plot to append the function too
+#' @return - A ggplot graph
+#' @export
+#' @family
+#' @seealso - [stat_function()]
+#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @md
+#' @examples
+#' # maybe call this funplot?
+#' umxPlotFun(sin, max= 2*pi)
+#'
+#' # Doing it manually
+#' p = ggplot(data.frame(x = c(-5, 5)), aes(x))
+#' p = p + stat_function(fun = dnorm)
+#' p
+#' 
+#' \dontrun{
+#' p = ggplot(data.frame(x = c(0, 10000)), aes(x))
+#' p = p + stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
+#' p = p + stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
+#' }
+#'
+umxPlotFun <- function(fun= dnorm, min= 0, max= 5, p = NULL) {
+	if(!is.null(p)){
+		p = p + stat_function(fun = fun, xlim= c(min, max))
+	}else{
+		p = ggplot(data.frame(x = c(min, max)), aes(x))
+		p = p + stat_function(fun = fun)
+	}
+	print(p)
+	invisible(p)	
+}
+
 
 #' Compute odds ratio (OR)
 #'
