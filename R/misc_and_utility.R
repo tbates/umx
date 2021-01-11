@@ -2510,19 +2510,21 @@ plot.percent <- function(x, ...) {
 	# Capital gains tax-free allowance = £12,300 (tax rate = 20%)
 	
 	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
-	p = p + scale_y_continuous(n.breaks = 8) + scale_x_continuous(n.breaks = 10) #trans="log")
-	p = p + stat_function(fun = fnReversePercent)
+	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
+	p = p + ggplot2::stat_function(fun = fnReversePercent)
 	p = p + labs(x = "Percent Off", y = "Percent back on to recover", title = "Percent change on, and off")
-	p
+
 	# subtitle = "Subtitle: (1973-74)",
 	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
 	# tag      = "Tag: A"
 
+	# p = p + hrbrthemes::theme_ipsum()
+	p = p + hrbrthemes::theme_ft_rc()
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
 	p = p + cowplot::draw_label(lab, hjust=0, x = percentChange*100, y = percent_to_reverse*100)
-	p = p + theme_ipsum()
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
+	return(p)
 }
 
 #' Easily plot functions in R
