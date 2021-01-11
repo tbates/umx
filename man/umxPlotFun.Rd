@@ -7,13 +7,13 @@
 umxPlotFun(fun = dnorm, min = 0, max = 5, p = NULL)
 }
 \arguments{
-\item{fun}{the function to plot}
+\item{fun}{Function to plot}
 
 \item{min}{x min}
 
 \item{max}{x max}
 
-\item{p}{A plot to append the function too}
+\item{p}{Optional plot to draw the function into}
 }
 \value{
 \itemize{
@@ -21,7 +21,7 @@ umxPlotFun(fun = dnorm, min = 0, max = 5, p = NULL)
 }
 }
 \description{
-A wrapper for \code{\link[=stat_function]{stat_function()}}
+A wrapper for \code{\link[=ggplot2:stat_function]{ggplot2:stat_function()}}
 }
 \details{
 
@@ -32,24 +32,33 @@ umxPlotFun(sin, max= 2*pi)
 
 # Doing it manually
 p = ggplot(data.frame(x = c(-5, 5)), aes(x))
-p = p + stat_function(fun = dnorm)
+p = p + ggplot2::stat_function(fun = dnorm)
 p
 
 \dontrun{
 p = ggplot(data.frame(x = c(0, 10000)), aes(x))
-p = p + stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
-p = p + stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
+p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
+p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
 }
 
 }
-\references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
-}
-}
 \seealso{
 \itemize{
-\item \code{\link[=stat_function]{stat_function()}}
+\item \code{\link[ggplot2:geom_function]{ggplot2::stat_function()}}
 }
+
+Other Plotting functions: 
+\code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModel}()},
+\code{\link{umxPlotACEcov}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxPlotACE}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotGxEbiv}()},
+\code{\link{umxPlotGxE}()},
+\code{\link{umxPlotIP}()},
+\code{\link{umxPlotSexLim}()},
+\code{\link{umxPlotSimplex}()},
+\code{\link{umx}}
 }
-\concept{}
+\concept{Plotting functions}

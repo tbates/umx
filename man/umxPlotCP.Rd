@@ -83,6 +83,7 @@ Other Plotting functions:
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
 \code{\link{umxPlotACE}()},
+\code{\link{umxPlotFun}()},
 \code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},
 \code{\link{umxPlotIP}()},

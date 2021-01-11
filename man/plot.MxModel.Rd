@@ -120,6 +120,7 @@ Other Plotting functions:
 \code{\link{umxPlotACEv}()},
 \code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
+\code{\link{umxPlotFun}()},
 \code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},
 \code{\link{umxPlotIP}()},

@@ -60,6 +60,7 @@ Other Plotting functions:
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
+\code{\link{umxPlotFun}()},
 \code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},
 \code{\link{umxPlotIP}()},

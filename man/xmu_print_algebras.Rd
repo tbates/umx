@@ -22,7 +22,7 @@ xmu_print_algebras(model, digits = 3, verbose = FALSE)
 \code{xmu_print_algebras} adds the results of algebras to a summary
 }
 \details{
-
+Non-user function called by \code{\link[=umxSummary]{umxSummary()}}
 }
 \examples{
 
