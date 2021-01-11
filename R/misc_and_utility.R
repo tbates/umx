@@ -2453,12 +2453,12 @@ print.percent <- function(x, ...) {
 		digits = attr(x, 'digits')
 	}
 	oldValue = round(attr(x, 'oldValue'), digits)
-	percent  = attr(x, 'percent')
+	percentChange  = attr(x, 'percent')
 	symbol   = attr(x, 'symbol')
 	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
-	dir = ifelse(percent < 0, "decreased", "increased")
+	dir = ifelse(percentChange < 0, "decreased", "increased")
 
-	cat(symbol, oldValue, " ", dir , " by ", percent*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
+	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 }
 
 #' Plot a percent change graph
@@ -2482,32 +2482,47 @@ print.percent <- function(x, ...) {
 #' plot(fin_percent(-50, value = 34.5))
 #'
 plot.percent <- function(x, ...) {
+	symbol   = attr(x, 'symbol')
 	digits   = attr(x, 'digits')
 	oldValue = round(attr(x, 'oldValue'), digits)
-	percent  = attr(x, 'percent')
-	symbol   = attr(x, 'symbol')
+	percentChange  = attr(x, 'percent')	
 	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
-	dir = ifelse(percent < 0, "decreased", "increased")
 
-	percent  = percent/100
-	newValue = value * (1 + percent)
-	percent_to_reverse = (value/newValue) - 1
-
-# x range	= -100 (%) to +500 (%)?
-# y = -100 to +200?
-# y range	= -100 to +200?
-
-	p = ggplot(data.frame(x = c(0, 100)), aes(x))
-	p = p + stat_function(fun = fun)
-	p = p + labs(x= "Original Value", y= "New value",
-	  title    = "Percent change on, and off",
-	  subtitle = "Subtitle: (1973-74)",
-	  caption  = "Caption: Data from the 1974 Motor Trend US magazine",
-	  tag = "Tag: A"
-	)
-	p + theme_ipsum()
 	
-	cat(symbol, oldValue, " ", dir , " by ", percent*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
+	dir = ifelse(percentChange < 0, "decreased", "increased")
+
+	# fnReversePercent(-.1)
+	fnReversePercent <- function(x) {
+		# 1/(1+.1)
+		percentOn = x/100
+		newValue = (1 + percentOn)
+		percent_to_reverse = 1-(1/newValue)
+		return(-percent_to_reverse*100)
+	}
+	# x range	= -100 (%) to +500 (%)?
+	# y = -100 to +200?
+	# y range	= -100 to +200?
+
+	# ISA fixes all of this... 20k/yr to add
+	# Income   tax-free allowance = £12,500/yr
+	# Interest tax-free allowance = £12,500/yr
+	# Dividend tax-free allowance =  £2,000/yr (I'm under.. phew)
+	# Capital gains tax-free allowance = £12,300 (tax rate = 20%)
+	
+	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
+	p = p + scale_y_continuous(n.breaks = 8) + scale_x_continuous(n.breaks = 10) #trans="log")
+	p = p + stat_function(fun = fnReversePercent)
+	p = p + labs(x = "Percent Off", y = "Percent back on to recover", title = "Percent change on, and off")
+	p
+	# subtitle = "Subtitle: (1973-74)",
+	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
+	# tag      = "Tag: A"
+
+	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
+	p = p + cowplot::draw_label(lab, hjust=0, x = percentChange*100, y = percent_to_reverse*100)
+	p = p + theme_ipsum()
+	print(p)
+	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 }
 
 #' Easily plot functions in R
