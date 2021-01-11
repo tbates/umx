@@ -21,7 +21,7 @@
 #' @description
 #' `xmu_print_algebras` adds the results of algebras to a summary
 #'
-#' @details
+#' @details Non-user function called by [umxSummary()]
 #'
 #' @param model A umx model from which to print algebras.
 #' @param digits rounding (default = 3)

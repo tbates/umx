@@ -59,7 +59,7 @@
 # methods::setClass is called during build not package source code.
 # suppress NOTE with a spurious importFrom in the namespace
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
-#' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test
+#' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
 #' @importFrom stats qnorm quantile residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms

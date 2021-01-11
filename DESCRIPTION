@@ -41,10 +41,11 @@ Imports:
     scales,
     utils,
     xtable
-Suggests: 
+Suggests:
     cocor,
     devtools,
     gdata,
+	hrbrthemes,
     Hmisc,
 	spelling,
     testthat,

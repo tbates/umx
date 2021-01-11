@@ -2530,19 +2530,18 @@ plot.percent <- function(x, ...) {
 #' Easily plot functions in R
 #'
 #' @description
-#' A wrapper for [stat_function()]
+#' A wrapper for [ggplot2:stat_function()]
 #'
 #' @details
 #'
-#' @param fun the function to plot
+#' @param fun Function to plot
 #' @param min x min
 #' @param max x max
-#' @param p A plot to append the function too
+#' @param p  Optional plot to draw the function into
 #' @return - A ggplot graph
 #' @export
-#' @family
-#' @seealso - [stat_function()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @family Plotting functions
+#' @seealso - [ggplot2::stat_function()]
 #' @md
 #' @examples
 #' # maybe call this funplot?
@@ -2550,13 +2549,13 @@ plot.percent <- function(x, ...) {
 #'
 #' # Doing it manually
 #' p = ggplot(data.frame(x = c(-5, 5)), aes(x))
-#' p = p + stat_function(fun = dnorm)
+#' p = p + ggplot2::stat_function(fun = dnorm)
 #' p
 #' 
 #' \dontrun{
 #' p = ggplot(data.frame(x = c(0, 10000)), aes(x))
-#' p = p + stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
-#' p = p + stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
+#' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
+#' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
 #' }
 #'
 umxPlotFun <- function(fun= dnorm, min= 0, max= 5, p = NULL) {
