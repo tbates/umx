@@ -100,6 +100,7 @@
 NULL
 
 utils::globalVariables(c(
+	'x',
 	'xtable',
 	'M', 'S',
 	'A', 'E',

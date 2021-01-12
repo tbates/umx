@@ -4,7 +4,15 @@
 \alias{umxPlotFun}
 \title{Easily plot functions in R}
 \usage{
-umxPlotFun(fun = dnorm, min = 0, max = 5, p = NULL)
+umxPlotFun(
+  fun = dnorm,
+  min = 0,
+  max = 5,
+  xlab = NULL,
+  ylab = NULL,
+  title = NULL,
+  p = NULL
+)
 }
 \arguments{
 \item{fun}{Function to plot}
@@ -13,7 +21,13 @@ umxPlotFun(fun = dnorm, min = 0, max = 5, p = NULL)
 
 \item{max}{x max}
 
-\item{p}{Optional plot to draw the function into}
+\item{xlab}{= Optional x axis label}
+
+\item{ylab}{= Optional y axis label}
+
+\item{title}{Optional title for the plot}
+
+\item{p}{Optional plot onto which to draw the function.}
 }
 \value{
 \itemize{
@@ -24,18 +38,15 @@ umxPlotFun(fun = dnorm, min = 0, max = 5, p = NULL)
 A wrapper for \code{\link[=ggplot2:stat_function]{ggplot2:stat_function()}}
 }
 \details{
-
+Easily plot a function - like sin, using ggplot.
 }
 \examples{
-# maybe call this funplot?
+# Maybe call this funplot?
 umxPlotFun(sin, max= 2*pi)
 
-# Doing it manually
-p = ggplot(data.frame(x = c(-5, 5)), aes(x))
-p = p + ggplot2::stat_function(fun = dnorm)
-p
 
 \dontrun{
+# Manually	
 p = ggplot(data.frame(x = c(0, 10000)), aes(x))
 p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
 p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")

@@ -2518,8 +2518,8 @@ plot.percent <- function(x, ...) {
 	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
 	# tag      = "Tag: A"
 
-	# p = p + hrbrthemes::theme_ipsum()
-	p = p + hrbrthemes::theme_ft_rc()
+	p = p + hrbrthemes::theme_ipsum()
+	# p = p + hrbrthemes::theme_ft_rc()
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
 	p = p + cowplot::draw_label(lab, hjust=0, x = percentChange*100, y = percent_to_reverse*100)
 	print(p)
@@ -2532,41 +2532,64 @@ plot.percent <- function(x, ...) {
 #' @description
 #' A wrapper for [ggplot2:stat_function()]
 #'
-#' @details
+#' @details Easily plot a function - like sin, using ggplot.
 #'
 #' @param fun Function to plot
 #' @param min x min
 #' @param max x max
-#' @param p  Optional plot to draw the function into
+#' @param xlab = Optional x axis label
+#' @param ylab = Optional y axis label
+#' @param title Optional title for the plot
+#' @param p  Optional plot onto which to draw the function.
 #' @return - A ggplot graph
 #' @export
 #' @family Plotting functions
 #' @seealso - [ggplot2::stat_function()]
 #' @md
 #' @examples
-#' # maybe call this funplot?
+#' # Maybe call this funplot?
 #' umxPlotFun(sin, max= 2*pi)
 #'
-#' # Doing it manually
-#' p = ggplot(data.frame(x = c(-5, 5)), aes(x))
-#' p = p + ggplot2::stat_function(fun = dnorm)
-#' p
 #' 
 #' \dontrun{
+#' # Manually	
 #' p = ggplot(data.frame(x = c(0, 10000)), aes(x))
 #' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
 #' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
 #' }
 #'
-umxPlotFun <- function(fun= dnorm, min= 0, max= 5, p = NULL) {
+umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
 	if(!is.null(p)){
-		p = p + stat_function(fun = fun, xlim= c(min, max))
+		p = p + ggplot2::stat_function(fun = fun, xlim= c(min, max))
 	}else{
-		p = ggplot(data.frame(x = c(min, max)), aes(x))
-		p = p + stat_function(fun = fun)
+		p     = ggplot(data.frame(x = c(min, max)), aes(x))
+		p     = p + ggplot2::stat_function(fun = fun)
+		xlab  = ifelse(!is.null(xlab),  xlab , "X value")
+		if(is.null(ylab)){
+			if(length(as.character(quote(sin))) == 1){
+				ylab = paste0(as.character(quote(sin), " of x"))
+			} else {
+				ylab = paste0("Function of X")
+			}
+		}
+
+		if(is.null(title)){
+			if(length(as.character(quote(sin))) == 1){
+				title = paste0("Plot of ", as.character(quote(sin), " function"))
+			} else {
+				title = paste0("Function plot")
+			}
+		}
+		p = p + labs(x = xlab, y = ylab, caption = title)
 	}
+	p = p + hrbrthemes::theme_ipsum()
+
 	print(p)
 	invisible(p)	
+	# Doing it manually
+	# p = ggplot(data.frame(x = c(-5, 5)), aes(x))
+	# p = p + ggplot2::stat_function(fun = dnorm)
+	# p
 }
 
 
