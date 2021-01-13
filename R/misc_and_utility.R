@@ -367,21 +367,56 @@ umx_get_options <- function() {
 	umx_set_auto_plot()
 	umx_set_plot_format()
 	umx_set_plot_file_suffix()
+	umx_set_plot_use_hrbrthemes()
 	umx_set_table_format()
 	umx_set_optimizer()
 	message(umx_set_cores(silent = TRUE), " cores will be used")
 	umx_set_auto_run() 
 	umx_set_condensed_slots()
+	
 }
 
-#' Set output suffix used in umx plot (structural diagrams) files to disk 
+#' Set theme system to use for plots.
 #'
 #' Set output file suffix (default = "gv", alternative is "dot"). If you call this with no
 #' value, it will return the current setting. If you call it with TRUE, it toggles the setting.
 #'
-#' @param umx.plot.suffix the suffix for plots files (if empty, returns the current value of umx.plot.format). If "TRUE", then toggles
+#' @param umx.plot.use_hrbrthemes whether to them plots iwth hrbrthemes (if empty returns the current value)
 #' @param silent If TRUE, no message will be printed.
-#' @return - Current umx.plot.suffix setting
+#' @return - Current setting
+#' @export
+#' @family Get and set
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
+#' @examples
+#' umx_set_plot_use_hrbrthemes() # print current state
+#' old = umx_set_plot_use_hrbrthemes(silent = TRUE) # store current value
+#' umx_set_plot_use_hrbrthemes(TRUE)
+#' umx_set_plot_file_suffix(old) # reinstate
+umx_set_plot_use_hrbrthemes <- function(umx.plot.use_hrbrthemes = NULL, silent = FALSE) {
+	if(is.null(umx.plot.use_hrbrthemes)) {
+		if(!silent){
+			message("Currently option to use hrbrthemes for plots is", 
+				omxQuotes(getOption("umx.plot.use_hrbrthemes")),
+				". Valid options are TRUE or FALSE"
+			)
+		}
+		invisible(getOption("umx.plot.use_hrbrthemes"))
+	} else {
+		umx_check(umx.plot.use_hrbrthemes %in% c(TRUE, FALSE), "stop", "valid options are TRUE or FALSE)")
+		options("umx.plot.use_hrbrthemes" = umx.plot.use_hrbrthemes)
+	}
+}
+
+#' Set output suffix used in umx SEM diagram files saved to disk.
+#'
+#' `umx` SEM diagram files can have a suffix of "gv" (default) or  "dot".
+#' Interogate the setting by calling with no value: it will return the current setting. 
+#' To change the setting call with "gv" or "dot". Or use TRUE to toggle the setting.
+#'
+#' @param umx.plot.suffix The suffix for plot files (if empty current value is returned). "TRUE", toggles setting.
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current setting
 #' @export
 #' @family Get and set
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
@@ -2511,17 +2546,23 @@ plot.percent <- function(x, ...) {
 	
 	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
 	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
-	p = p + ggplot2::stat_function(fun = fnReversePercent)
+	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "blue")
 	p = p + labs(x = "Percent Off", y = "Percent back on to recover", title = "Percent change on, and off")
 
 	# subtitle = "Subtitle: (1973-74)",
 	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
 	# tag      = "Tag: A"
 
-	p = p + hrbrthemes::theme_ipsum()
-	# p = p + hrbrthemes::theme_ft_rc()
+	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
+		# p = p + hrbrthemes::theme_ipsum()
+		p = p + hrbrthemes::theme_ft_rc()
+	} else {
+		# p = p + ggplot2::theme_bw()
+		p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
+	}
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
-	p = p + cowplot::draw_label(lab, hjust=0, x = percentChange*100, y = percent_to_reverse*100)
+	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "lightgrey")
+	p = p + cowplot::draw_label("•", hjust=0, x = percentChange*100, y = percent_to_reverse*100, color = "red")
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 	return(p)
@@ -2530,7 +2571,7 @@ plot.percent <- function(x, ...) {
 #' Easily plot functions in R
 #'
 #' @description
-#' A wrapper for [ggplot2:stat_function()]
+#' A wrapper for [ggplot2::stat_function()]
 #'
 #' @details Easily plot a function - like sin, using ggplot.
 #'
@@ -2547,11 +2588,12 @@ plot.percent <- function(x, ...) {
 #' @seealso - [ggplot2::stat_function()]
 #' @md
 #' @examples
+#' \dontrun{
+#' # Uses fonts not available on CRAN
 #' # Maybe call this funplot?
 #' umxPlotFun(sin, max= 2*pi)
 #'
 #' 
-#' \dontrun{
 #' # Manually	
 #' p = ggplot(data.frame(x = c(0, 10000)), aes(x))
 #' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
@@ -2582,7 +2624,11 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 		}
 		p = p + labs(x = xlab, y = ylab, caption = title)
 	}
-	p = p + hrbrthemes::theme_ipsum()
+	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
+		p = p + hrbrthemes::theme_ipsum()
+	} else {
+		p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
+	}
 
 	print(p)
 	invisible(p)	

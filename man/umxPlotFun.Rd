@@ -35,17 +35,18 @@ umxPlotFun(
 }
 }
 \description{
-A wrapper for \code{\link[=ggplot2:stat_function]{ggplot2:stat_function()}}
+A wrapper for \code{\link[ggplot2:geom_function]{ggplot2::stat_function()}}
 }
 \details{
 Easily plot a function - like sin, using ggplot.
 }
 \examples{
+\dontrun{
+# Uses fonts not available on CRAN
 # Maybe call this funplot?
 umxPlotFun(sin, max= 2*pi)
 
 
-\dontrun{
 # Manually	
 p = ggplot(data.frame(x = c(0, 10000)), aes(x))
 p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")

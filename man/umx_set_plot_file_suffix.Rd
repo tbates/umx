@@ -2,23 +2,24 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_set_plot_file_suffix}
 \alias{umx_set_plot_file_suffix}
-\title{Set output suffix used in umx plot (structural diagrams) files to disk}
+\title{Set output suffix used in umx SEM diagram files saved to disk.}
 \usage{
 umx_set_plot_file_suffix(umx.plot.suffix = NULL, silent = FALSE)
 }
 \arguments{
-\item{umx.plot.suffix}{the suffix for plots files (if empty, returns the current value of umx.plot.format). If "TRUE", then toggles}
+\item{umx.plot.suffix}{The suffix for plot files (if empty current value is returned). "TRUE", toggles setting.}
 
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
 \itemize{
-\item Current umx.plot.suffix setting
+\item Current setting
 }
 }
 \description{
-Set output file suffix (default = "gv", alternative is "dot"). If you call this with no
-value, it will return the current setting. If you call it with TRUE, it toggles the setting.
+\code{umx} SEM diagram files can have a suffix of "gv" (default) or  "dot".
+Interogate the setting by calling with no value: it will return the current setting.
+To change the setting call with "gv" or "dot". Or use TRUE to toggle the setting.
 }
 \examples{
 umx_set_plot_file_suffix() # print current state
@@ -45,6 +46,7 @@ Other Get and set:
 \code{\link{umx_set_optimization_options}()},
 \code{\link{umx_set_optimizer}()},
 \code{\link{umx_set_plot_format}()},
+\code{\link{umx_set_plot_use_hrbrthemes}()},
 \code{\link{umx_set_separator}()},
 \code{\link{umx_set_silent}()},
 \code{\link{umx_set_table_format}()},
