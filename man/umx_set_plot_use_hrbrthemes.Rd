@@ -24,12 +24,7 @@ value, it will return the current setting. If you call it with TRUE, it toggles 
 umx_set_plot_use_hrbrthemes() # print current state
 old = umx_set_plot_use_hrbrthemes(silent = TRUE) # store current value
 umx_set_plot_use_hrbrthemes(TRUE)
-umx_set_plot_file_suffix(old) # reinstate
-}
-\references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+umx_set_plot_use_hrbrthemes(old) # reinstate
 }
 \seealso{
 Other Get and set: 

@@ -386,13 +386,12 @@ umx_get_options <- function() {
 #' @return - Current setting
 #' @export
 #' @family Get and set
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' umx_set_plot_use_hrbrthemes() # print current state
 #' old = umx_set_plot_use_hrbrthemes(silent = TRUE) # store current value
 #' umx_set_plot_use_hrbrthemes(TRUE)
-#' umx_set_plot_file_suffix(old) # reinstate
+#' umx_set_plot_use_hrbrthemes(old) # reinstate
 umx_set_plot_use_hrbrthemes <- function(umx.plot.use_hrbrthemes = NULL, silent = FALSE) {
 	if(is.null(umx.plot.use_hrbrthemes)) {
 		if(!silent){
@@ -2546,7 +2545,7 @@ plot.percent <- function(x, ...) {
 	
 	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
 	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
-	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "blue")
+	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
 	p = p + labs(x = "Percent Off", y = "Percent back on to recover", title = "Percent change on, and off")
 
 	# subtitle = "Subtitle: (1973-74)",
@@ -2558,11 +2557,11 @@ plot.percent <- function(x, ...) {
 		p = p + hrbrthemes::theme_ft_rc()
 	} else {
 		# p = p + ggplot2::theme_bw()
-		p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
+		p = p + cowplot::theme_cowplot(font_family = "Arial", font_size = 12)
 	}
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
 	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "lightgrey")
-	p = p + cowplot::draw_label("•", hjust=0, x = percentChange*100, y = percent_to_reverse*100, color = "red")
+	p = p + cowplot::draw_label("\u25CF", hjust=0, x = percentChange*100, y = percent_to_reverse*100, color = "lightred")
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 	return(p)
