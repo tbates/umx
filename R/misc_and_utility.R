@@ -15,7 +15,9 @@
 # devtools::document("~/bin/umx"); devtools::install("~/bin/umx");
 # utility naming convention: "umx_" prefix, lowercase, and "_" (not camel case) e.g. xmu_data_swap_a_block()
 
-# Poems one should know by heart:
+# ===================================
+# = Poems one should know by heart: =
+# ===================================
 
 # William Shakespeare
 # [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
@@ -26,9 +28,10 @@
 #  * "One half of me is yours, the other half is yours,
 #    Mine own, I would say; but if mine, then yours,
 #    And so all yours."
-#  * If to do were as easy as to know what were good to do, chapels 
-#    had been churches, and poor men's cottages princes’ palaces.
-# * “This above all: to thine own self be true,
+#  * If to do were as easy as to know what were good to do,
+#    chapels had been churches, 
+#    and poor men's cottages princes’ palaces.
+#  * This above all: to thine own self be true,
 
 # # PERCY BYSSHE SHELLEY
 # [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
@@ -2324,8 +2327,8 @@ umx_write_to_clipboard <- function(x) {
 #' Compute the value of a principle plus annual savings, at a compound interest over a number of years
 #'
 #' @description
-#' This function allows you to determine the final value of a principle, with optional additional 
-#' periodic savings, over a number of years at a given rate of interest.
+#' Allows you to determine the final value of an initial `principle` (with optional 
+#' periodic `deposits`), over a number of years (`yrs`) at a given rate of `interest`.
 #'
 #' @details None.
 #' If an amount of $5,000 is deposited into a savings account at an annual interest rate of 5%, compounded monthly, 
@@ -2335,9 +2338,9 @@ umx_write_to_clipboard <- function(x) {
 #'
 #' @param principal The initial investment at time 0.
 #' @param deposits Optional periodic additional investment each *year*.
-#' @param interest Annual interest rate (decimal)
-#' @param yrs Duration of the investment.
-#' @param n Compounding per unit time (e.g. 12 for monthly, 365 for daily)
+#' @param interest Annual interest rate (default = .05)
+#' @param yrs Duration of the investment (default = 10).
+#' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
 #' @return - Value after yrs
@@ -2557,11 +2560,11 @@ plot.percent <- function(x, ...) {
 		p = p + hrbrthemes::theme_ft_rc()
 	} else {
 		# p = p + ggplot2::theme_bw()
-		p = p + cowplot::theme_cowplot(font_family = "Arial", font_size = 12)
+		p = p + cowplot::theme_cowplot(font_size = 11)
 	}
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
 	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "lightgrey")
-	p = p + cowplot::draw_label("\u25CF", hjust=0, x = percentChange*100, y = percent_to_reverse*100, color = "lightred")
+	p = p + cowplot::draw_label("\u25CF", hjust=0, x = percentChange*100, y = percent_to_reverse*100, color = "red")
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 	return(p)

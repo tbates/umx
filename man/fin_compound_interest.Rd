@@ -19,11 +19,11 @@ fin_compound_interest(
 
 \item{deposits}{Optional periodic additional investment each \emph{year}.}
 
-\item{interest}{Annual interest rate (decimal)}
+\item{interest}{Annual interest rate (default = .05)}
 
-\item{yrs}{Duration of the investment.}
+\item{yrs}{Duration of the investment (default = 10).}
 
-\item{n}{Compounding per unit time (e.g. 12 for monthly, 365 for daily)}
+\item{n}{Compounding intervals per year (default = 12 (monthly), 365 for daily)}
 
 \item{when}{Deposits made at the "beginning" (of each year) or "end"}
 
@@ -35,8 +35,8 @@ fin_compound_interest(
 }
 }
 \description{
-This function allows you to determine the final value of a principle, with optional additional
-periodic savings, over a number of years at a given rate of interest.
+Allows you to determine the final value of an initial \code{principle} (with optional
+periodic \code{deposits}), over a number of years (\code{yrs}) at a given rate of \code{interest}.
 }
 \details{
 None.
