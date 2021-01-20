@@ -649,13 +649,20 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 	invisible(list(minVar = minVar, maxVarRatio = maxVarRatio))
 }
 
-#' Print anything when running a model?
+#' Turn off most console and summary output from umx
 #'
-#' Sets a umx property "silent" to `TRUE` or `FALSE`. This is fed to [OpenMx::mxRun()] inside functions like [umxRAM()].
+#' Running multiple analyses or simulations, it can be handy to turn off the automatic summary, 
+#' graphing, and printing that umx does to help interactive sessions. `umx_set_silent` does this.
+#' Summary and graph output, as well as progress and durable console output will be suppressed.
+#' 
+#' Not every function knows about silent, but most, like [umx::umxRAM()] etc do.
+#' 
+#' @details
+#' Under the hood, `umx_set_silent` sets options("umx_silent"). This can be set to either `TRUE` or `FALSE`.
 #' If TRUE, then the progress messages from model runs are suppressed. Useful for power simulations etc.
 #'
-#' @param value If TRUE mxRun is silent in most umx Models. Empty returns the current value.
-#' @param silent If TRUE, no message will be printed.
+#' @param value Boolean stating if umx Models should run silently (TRUE).
+#' @param silent If TRUE, this function itseld will just return the state of the option, with no user message.
 #' @return - Current silent value
 #' @export
 #' @family Get and set

@@ -1,3 +1,8 @@
+# ========================================
+# = GxE bivariate with moderation script =
+# ========================================
+https://openmx.ssri.psu.edu/node/4478
+
 mxOption(NULL, "Default optimizer", "NPSOL")
 
 # -----------------------------------------------------------------------
@@ -43,9 +48,8 @@ mzDataF[,ordVars] <- mxFactor( x=mzDataF[,ordVars], levels=c(0,1) )
 dzDataF[,ordVars] <- mxFactor( x=dzDataF[,ordVars], levels=c(0,1) )
 
 # Raw data in OpenMx format
-dataMZ 	  <- mxData(observed = mzDataF, type = "raw" )
-dataDZ 	  <- mxData(observed = dzDataF, type = "raw" )
-
+dataMZ <- mxData(observed = mzDataF, type = "raw" )
+dataDZ <- mxData(observed = dzDataF, type = "raw" )
 
 
 # ---------------------Cholesky part!------------------------------------
@@ -73,16 +77,16 @@ frCvD     <- diag(frMV,ntv,ntv)        # lower bounds for diagonal of covariance
 frCvD[lower.tri(frCvD)] <- TRUE        # lower bounds for below diagonal elements
 frCvD[upper.tri(frCvD)] <- TRUE        # lower bounds for above diagonal elements
 frCv      <- matrix(as.logical(frCvD),4)
-svMe      <- c(0,0)                   # start value for means
+svMe      <- c(0,0)                    # start value for means
 svPa      <- .4                        # start value for path coefficient
 svPaD     <- vech(diag(svPa,nv,nv))    # start values for diagonal of covariance matrix
 svPe      <- .8                        # start value for path coefficient for e
 svPeD     <- vech(diag(svPe,nv,nv))    # start values for diagonal of covariance matrix
-lbPa      <- 0                    # start value for lower bounds
+lbPa      <- 0                         # start value for lower bounds
 lbPaD     <- diag(lbPa,nv,nv)          # lower bounds for diagonal of covariance matrix
 lbPaD[lower.tri(lbPaD)] <- -10         # lower bounds for below diagonal elements
 lbPaD[upper.tri(lbPaD)] <- NA          # lower bounds for above diagonal elements
-svTh      <- 1.5     # start value for thresholds
+svTh      <- 1.5                       # start value for thresholds
 
 
 pathModVal = c(0,0.1,0.1)
@@ -126,10 +130,9 @@ myVarD <- mxAlgebra(name = "D0", expression = d %*% t(d))
 myVarE <- mxAlgebra(name = "E0", expression = e %*% t(e))
 
 # Algebra to compute total variances and standard deviations (diagonal only) per twin
-var1     <- mxAlgebra( A1+D1+E1, name="V1" )
-var2     <- mxAlgebra( A2+D2+E2, name="V2" )
-
-myVar     <- mxAlgebra( A0+D0+E0, name="V0" )
+var1   <- mxAlgebra( A1+D1+E1, name="V1" )
+var2   <- mxAlgebra( A2+D2+E2, name="V2" )
+myVar  <- mxAlgebra( A0+D0+E0, name="V0" )
 
 # Constraint on variance of Binary variables
 matUnv <- mxMatrix( type="Unit", nrow=nvo, ncol=1, name="Unv1" )
@@ -146,21 +149,17 @@ expCovDZ <- mxAlgebra(name = "expCovDZ", expression = rbind (cbind(A1+D1+E1,    
 
 # Matrices for expected Means for females and males
 #setting up the regression
-intercept      <- mxMatrix( type="Full", nrow=1, ncol=ntv, free=frMV, values=svMe, labels=meanLabs, name="intercept" )
-threshold      <-mxMatrix( type="Full", nrow=1, ncol=ntvo, free=T, values=svTh, labels=threshLabs, name="Threshold" )
+intercept  <- mxMatrix( type="Full", nrow=1, ncol=ntv, free=frMV, values=svMe, labels=meanLabs, name="intercept" )
+threshold  <-mxMatrix( type="Full", nrow=1, ncol=ntvo, free=T, values=svTh, labels=threshLabs, name="Threshold" )
 
 # Regression effects
-B_Age        <- mxMatrix( type="Full", nrow=1, ncol=nv, free=TRUE, values=.1, labels=betaLabs_age, name="bAge" )
-defAge       <- mxMatrix( type="Full", nrow=1, ncol=2, free=FALSE, labels=c("data.Zage_s_1","data.Zage_s_2"), name="Age")
+B_Age   <- mxMatrix( type="Full", nrow=1, ncol=nv, free=TRUE, values=.1, labels=betaLabs_age, name="bAge" )
+defAge  <- mxMatrix( type="Full", nrow=1, ncol=2, free=FALSE, labels=c("data.Zage_s_1","data.Zage_s_2"), name="Age")
+B_Sex   <- mxMatrix( type="Full", nrow=1, ncol=nv, free=TRUE, values=.1, labels=betaLabs_sex, name="bSex" )
+defSex  <- mxMatrix( type="Full", nrow=1, ncol=2, free=FALSE, labels=c("data.sex_s_1","data.sex_s_2"), name="Sex")
+expMean <- mxAlgebra( intercept + (Age %x% bAge) + (Sex %x% bSex) , name="expMean")
 
-B_Sex        <- mxMatrix( type="Full", nrow=1, ncol=nv, free=TRUE, values=.1, labels=betaLabs_sex, name="bSex" )
-defSex       <- mxMatrix( type="Full", nrow=1, ncol=2, free=FALSE, labels=c("data.sex_s_1","data.sex_s_2"), name="Sex")
-
-expMean  	<- mxAlgebra( intercept + (Age %x% bAge) + (Sex %x% bSex) , name="expMean")
-
-
-inclusions   <- list (B_Age, B_Sex,  defAge, defSex, intercept, expMean, threshold)
-
+inclusions = list (B_Age, B_Sex,  defAge, defSex, intercept, expMean, threshold)
 
 # Objective objects for Multiple Groups
 expMZ     <- mxExpectationNormal( covariance="expCovMZ", means="expMean", dimnames=selVars, thresholds="Threshold", threshnames=ordVars )
@@ -180,7 +179,7 @@ modelDZ <- mxModel(pathA, pathD, pathE, modPathA, modPathD, modPathE, mod_tw1, m
                    B_Age, B_Sex,  defAge, defSex, intercept, expMean, threshold,
                    dataDZ, expCovDZ, expDZ, funML, name = "DZ")
 
-multi     	<- mxFitFunctionMultigroup( c("MZ","DZ") )
+multi   <- mxFitFunctionMultigroup( c("MZ","DZ") )
 ADEmodModel  <- mxModel( "ADEmod", modelMZ, modelDZ, funML, multi )
 
 ADEmodFit  <-  mxRun(ADEmodModel)

@@ -2,14 +2,14 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_set_silent}
 \alias{umx_set_silent}
-\title{Print anything when running a model?}
+\title{Turn off most console and summary output from umx}
 \usage{
 umx_set_silent(value = NA, silent = FALSE)
 }
 \arguments{
-\item{value}{If TRUE mxRun is silent in most umx Models. Empty returns the current value.}
+\item{value}{Boolean stating if umx Models should run silently (TRUE).}
 
-\item{silent}{If TRUE, no message will be printed.}
+\item{silent}{If TRUE, this function itseld will just return the state of the option, with no user message.}
 }
 \value{
 \itemize{
@@ -17,7 +17,14 @@ umx_set_silent(value = NA, silent = FALSE)
 }
 }
 \description{
-Sets a umx property "silent" to \code{TRUE} or \code{FALSE}. This is fed to \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} inside functions like \code{\link[=umxRAM]{umxRAM()}}.
+Running multiple analyses or simulations, it can be handy to turn off the automatic summary,
+graphing, and printing that umx does to help interactive sessions. \code{umx_set_silent} does this.
+Summary and graph output, as well as progress and durable console output will be suppressed.
+}
+\details{
+Not every function knows about silent, but most, like \code{\link[=umxRAM]{umxRAM()}} etc do.
+
+Under the hood, \code{umx_set_silent} sets options("umx_silent"). This can be set to either \code{TRUE} or \code{FALSE}.
 If TRUE, then the progress messages from model runs are suppressed. Useful for power simulations etc.
 }
 \examples{

@@ -106,7 +106,13 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 	rawVar    = diag(var(mzData[,selDVs], na.rm = TRUE))[1]
 	startMain = sqrt(c(.8, .0 ,.6) * rawVar)
 
-	selVars   = c(selDVs, selDefs)
+	# selVars is used to set the dimnames for the expectation and means ordering, so in this hand-assembled function order matters...
+	# 2021-01-19: was selVars = c(selDVs, selDefs)
+    selVars = c(selDefs[1], selDVs[1], selDefs[2], selDVs[2]) #MN
+	# expMean variable order = m_mod, m_trait, m_mod, m_trait
+	# expectations have dimnames = selVars
+	
+	
 	# drop any unused variables
 	dzData = dzData[ , selVars]
 	mzData = mzData[ , selVars]
