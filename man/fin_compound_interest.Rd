@@ -21,6 +21,8 @@ fin_compound_interest(
 
 \item{deposits}{Optional periodic additional investment each \emph{year}.}
 
+\item{deposit_inflator}{Whether to increase the deposits over time (default 0 = no)}
+
 \item{interest}{Annual interest rate (default = .05)}
 
 \item{yrs}{Duration of the investment (default = 10).}
@@ -35,7 +37,7 @@ fin_compound_interest(
 }
 \value{
 \itemize{
-\item Value after yrs
+\item Value of balance after yrs of investment.
 }
 }
 \description{

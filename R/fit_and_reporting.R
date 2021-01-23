@@ -3980,17 +3980,15 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @description
 #' `umxAPA` creates summaries from a range of inputs. Use it for reporting `lm` models, effects, and summarizing data.
 #' 
-#' 1. Given an [stats::lm()] model, `umxAPA` will return a formatted effect, including 95% CI 
-#' in square brackets e.g.: `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.344 \[-6.486, -4.203\], p< 0.001. here "wt" 
+#' 1. Given an [stats::lm()] model, `umxAPA` will return a formatted effect, including 95% CI. 
+#' e.g.: `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.34 \[-6.48, -4.20\], p < 0.001. here "wt" 
 #' restricts the output to just the named effect.
-#' 2. This also works for [t.test()], [stats::glm()], [cor.test()], and others as I come across them.
-#' 3. Get a CI from obj=beta and se=se : `umxAPA(-0.30, .03)` returns \eqn{\beta} = -0.3 \[-0.36, -0.24\]
-#' 4. Back out an SE from b and CI: `umxAPA(-0.030, c(-0.073, 0.013))` returns \eqn{\beta} = -0.03, se = 0.02
+#' 2. `umxAPA` also supports [t.test()], [stats::glm()], [cor.test()], and others as I need them.
+#' 3. Get a CI from `obj=beta` and se=se : `umxAPA(-0.30, .03)` returns \eqn{\beta} = -0.3 \[-0.36, -0.24\]
+#' 4. Back out an SE from \eqn{\beta} and CI: `umxAPA(-0.030, c(-0.073, 0.013))` returns \eqn{\beta} = -0.03, se = 0.02
 #' 5. Given only a number as obj, will be treated as a p-value, and returned in APA format.
-#' 6. Given a dataframe, `umxAPA` will return a table of correlations with
-#' the mean and SD of each variable as the last row. e.g.:
-#' `umxAPA(mtcars[,c("cyl", "wt", "mpg", )]` yields a table of 
-#' correlations, means and SDs thus:
+#' 6. Given a dataframe, `umxAPA` will return a table of correlations with means and SDs in the last row. e.g.:
+#' `umxAPA(mtcars[,c("cyl", "wt", "mpg", )]` yields:
 #'   \tabular{lccc}{
 #'            \tab cyl         \tab  wt          \tab mpg          \cr
 #'    cyl     \tab 1           \tab  0.78        \tab -0.85        \cr
@@ -4026,24 +4024,30 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' # ========================================
 #' # = Report lm (regression/anova) results =
 #' # ========================================
-#' umxAPA(lm(mpg ~ wt + disp, mtcars)) # All parameters
-#' umxAPA(lm(mpg ~ wt + disp, mtcars), "disp") # Just disp effect
-#' umxAPA(lm(mpg ~ wt + disp, mtcars), std = TRUE) # Standardize effects
+#' umxAPA(lm(mpg ~ wt + disp, mtcars)) # Report all parameters
+#' umxAPA(lm(mpg ~ wt + disp, mtcars), "wt") # Just effect of weight
+#' umxAPA(lm(mpg ~ wt + disp, mtcars), std = TRUE) # Standardize model!
 #' 
-#' # glm example
+#' ###############
+#' # GLM example #
+#' ###############
+#'
 #' df = mtcars
 #' df$mpg_thresh = 0
-#' df$mpg_thresh[df$mpg>16] = 1
+#' df$mpg_thresh[df$mpg > 16] = 1
 #' m1 = glm(mpg_thresh ~ wt + gear,data = df, family = binomial)
 #' umxAPA(m1)
 #' 
-#' # A t-Test
-#' m1 = t.test(1:10, y = c(7:20))
-#' umxAPA(m1)
+#' ###############
+#' # A t-Test    #
+#' ###############
+#'
+#' umxAPA(t.test(x = 1:10, y = c(7:20)))
+#' umxAPA(t.test(extra ~ group, data = sleep))
 #' 
-#' # ========================================================
-#' # = Summarize a DATA FRAME: Correlations + Means and SDs =
-#' # ========================================================
+#' # ======================================================
+#' # = Summarize DATA FRAME: Correlations + Means and SDs =
+#' # ======================================================
 #' umxAPA(mtcars[,1:3])
 #' umxAPA(mtcars[,1:3], digits = 3)
 #' umxAPA(mtcars[,1:3], lower = FALSE)
@@ -4051,9 +4055,9 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' umxAPA(mtcars[,1:3], report = "html")
 #' }
 #' 
-#' # ===============================================
-#' # = CONFIDENCE INTERVAL text from effect and se =
-#' # ===============================================
+#' # ==========================================
+#' # = CONFIDENCE INTERVAL from effect and se =
+#' # ==========================================
 #' umxAPA(.4, .3) # parameter 2 interpreted as SE
 #' 
 #' # Input beta and CI, and back out the SE
@@ -4062,9 +4066,9 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' # ====================
 #' # = Format a p-value =
 #' # ====================
-#' umxAPA(.0182613)
-#' umxAPA(.000182613)
-#' umxAPA(.000182613,  addComparison=FALSE)
+#' umxAPA(.0182613)   #   0.02
+#' umxAPA(.00018261) # < 0.001
+#' umxAPA(.00018261, addComparison = FALSE) # 0.001
 #' 
 #' # ========================
 #' # = Report a correlation =
@@ -4074,11 +4078,6 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(m1)
 #'
-#' # ===================
-#' # = Report a t-test =
-#' # ===================
-#' m1 = t.test(extra ~ group, data = sleep)
-#' umxAPA(m1)
 umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
 	test = match.arg(test)

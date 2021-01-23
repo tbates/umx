@@ -2346,12 +2346,13 @@ umx_write_to_clipboard <- function(x) {
 #' @param principal The initial investment at time 0.
 #' @param deposits Optional periodic additional investment each *year*.
 #' @param interest Annual interest rate (default = .05)
+#' @param deposit_inflator Whether to increase the deposits over time (default 0 = no)
 #' @param yrs Duration of the investment (default = 10).
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
 #' @param report "markdown" or "html"
-#' @return - Value after yrs
+#' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_percent()]

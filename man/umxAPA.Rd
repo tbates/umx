@@ -58,17 +58,15 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \description{
 \code{umxAPA} creates summaries from a range of inputs. Use it for reporting \code{lm} models, effects, and summarizing data.
 \enumerate{
-\item Given an \code{\link[stats:lm]{stats::lm()}} model, \code{umxAPA} will return a formatted effect, including 95\% CI
-in square brackets e.g.: \code{umxAPA(lm(mpg~wt, data=mtcars), "wt")} yields: \eqn{\beta} = -5.344 [-6.486, -4.203], p< 0.001. here "wt"
+\item Given an \code{\link[stats:lm]{stats::lm()}} model, \code{umxAPA} will return a formatted effect, including 95\% CI.
+e.g.: \code{umxAPA(lm(mpg~wt, data=mtcars), "wt")} yields: \eqn{\beta} = -5.34 [-6.48, -4.20], p < 0.001. here "wt"
 restricts the output to just the named effect.
-\item This also works for \code{\link[=t.test]{t.test()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[=cor.test]{cor.test()}}, and others as I come across them.
-\item Get a CI from obj=beta and se=se : \code{umxAPA(-0.30, .03)} returns \eqn{\beta} = -0.3 [-0.36, -0.24]
-\item Back out an SE from b and CI: \code{umxAPA(-0.030, c(-0.073, 0.013))} returns \eqn{\beta} = -0.03, se = 0.02
+\item \code{umxAPA} also supports \code{\link[=t.test]{t.test()}}, \code{\link[stats:glm]{stats::glm()}}, \code{\link[=cor.test]{cor.test()}}, and others as I need them.
+\item Get a CI from \code{obj=beta} and se=se : \code{umxAPA(-0.30, .03)} returns \eqn{\beta} = -0.3 [-0.36, -0.24]
+\item Back out an SE from \eqn{\beta} and CI: \code{umxAPA(-0.030, c(-0.073, 0.013))} returns \eqn{\beta} = -0.03, se = 0.02
 \item Given only a number as obj, will be treated as a p-value, and returned in APA format.
-\item Given a dataframe, \code{umxAPA} will return a table of correlations with
-the mean and SD of each variable as the last row. e.g.:
-\verb{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields a table of
-correlations, means and SDs thus:
+\item Given a dataframe, \code{umxAPA} will return a table of correlations with means and SDs in the last row. e.g.:
+\verb{umxAPA(mtcars[,c("cyl", "wt", "mpg", )]} yields:
 \tabular{lccc}{
 \tab cyl         \tab  wt          \tab mpg          \cr
 cyl     \tab 1           \tab  0.78        \tab -0.85        \cr
@@ -83,24 +81,30 @@ mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
 # ========================================
 # = Report lm (regression/anova) results =
 # ========================================
-umxAPA(lm(mpg ~ wt + disp, mtcars)) # All parameters
-umxAPA(lm(mpg ~ wt + disp, mtcars), "disp") # Just disp effect
-umxAPA(lm(mpg ~ wt + disp, mtcars), std = TRUE) # Standardize effects
+umxAPA(lm(mpg ~ wt + disp, mtcars)) # Report all parameters
+umxAPA(lm(mpg ~ wt + disp, mtcars), "wt") # Just effect of weight
+umxAPA(lm(mpg ~ wt + disp, mtcars), std = TRUE) # Standardize model!
 
-# glm example
+###############
+# GLM example #
+###############
+
 df = mtcars
 df$mpg_thresh = 0
-df$mpg_thresh[df$mpg>16] = 1
+df$mpg_thresh[df$mpg > 16] = 1
 m1 = glm(mpg_thresh ~ wt + gear,data = df, family = binomial)
 umxAPA(m1)
 
-# A t-Test
-m1 = t.test(1:10, y = c(7:20))
-umxAPA(m1)
+###############
+# A t-Test    #
+###############
 
-# ========================================================
-# = Summarize a DATA FRAME: Correlations + Means and SDs =
-# ========================================================
+umxAPA(t.test(x = 1:10, y = c(7:20)))
+umxAPA(t.test(extra ~ group, data = sleep))
+
+# ======================================================
+# = Summarize DATA FRAME: Correlations + Means and SDs =
+# ======================================================
 umxAPA(mtcars[,1:3])
 umxAPA(mtcars[,1:3], digits = 3)
 umxAPA(mtcars[,1:3], lower = FALSE)
@@ -108,9 +112,9 @@ umxAPA(mtcars[,1:3], lower = FALSE)
 umxAPA(mtcars[,1:3], report = "html")
 }
 
-# ===============================================
-# = CONFIDENCE INTERVAL text from effect and se =
-# ===============================================
+# ==========================================
+# = CONFIDENCE INTERVAL from effect and se =
+# ==========================================
 umxAPA(.4, .3) # parameter 2 interpreted as SE
 
 # Input beta and CI, and back out the SE
@@ -119,9 +123,9 @@ umxAPA(-0.030, c(-0.073, 0.013), digits = 3)
 # ====================
 # = Format a p-value =
 # ====================
-umxAPA(.0182613)
-umxAPA(.000182613)
-umxAPA(.000182613,  addComparison=FALSE)
+umxAPA(.0182613)   #   0.02
+umxAPA(.00018261) # < 0.001
+umxAPA(.00018261, addComparison = FALSE) # 0.001
 
 # ========================
 # = Report a correlation =
@@ -131,11 +135,6 @@ tmp = subset(twinData, zygosity \%in\% c("MZFF", "MZMM"))
 m1 = cor.test(~ wt1 + wt2, data = tmp)
 umxAPA(m1)
 
-# ===================
-# = Report a t-test =
-# ===================
-m1 = t.test(extra ~ group, data = sleep)
-umxAPA(m1)
 }
 \references{
 \itemize{
