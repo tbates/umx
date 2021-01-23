@@ -68,23 +68,20 @@
 #' # TODO: teach umxReduce to test all relevant hypotheses for umxGxEbiv
 #' umxReduce(m1)
 #' }
-umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = NA, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = 0, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
-	nSib = 2;
-	# =================
-	# = Set optimizer =
-	# =================
-	if(!is.null(optimizer)) umx_set_optimizer(optimizer)
+	nSib = 2
+	if(!is.null(optimizer)){umx_set_optimizer(optimizer)}
 	if(!is.null(sep)){
 		if(length(sep) > 1){
-			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n",
-			"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
+			stop("sep should be just one word, like '_T'. I will add 1 and 2 afterwards... \n", 
+				"i.e., you have to name your variables 'obese_T1' and 'obese_T2' etc.")
 		}
-		selDVs  = umx_paste_names(selDVs , sep, 1:nSib)
+		selDVs = umx_paste_names(selDVs, sep, 1:nSib)
 		selDefs = umx_paste_names(selDefs, sep, 1:nSib)
 	}
-	if(any(selDefs %in% selDVs)) {
-		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable");
+	if(any(selDefs %in% selDVs)){
+		warning("selDefs was found in selDVs: You probably gave me all the variables in selDVs instead of just the DEPENDENT variable")
 	}
 	if(length(selDVs)/nSib != 1){
 		umx_msg(selDVs)
@@ -92,14 +89,12 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 	}
 	if(length(selDefs) != 2){
 		umx_msg(selDefs)
-		warning("selDefs must be length = 2. Or perhaps you didn't set sep = ?");
+		warning("selDefs must be length = 2. Or perhaps you didn't set sep = ?")
 	}
-
 	umx_check_names(selDVs, mzData)
 	umx_check_names(selDVs, dzData)
 	message("selDVs: ", omxQuotes(selDVs))
-
-	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for umxGxEbiv")
+	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "Data must be raw for umxGxEbiv")
 	# TODO umxGxEbiv Check Defs are not correlated 1 or 0
 	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins
 	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
@@ -108,173 +103,111 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 
 	# selVars is used to set the dimnames for the expectation and means ordering, so in this hand-assembled function order matters...
 	# 2021-01-19: was selVars = c(selDVs, selDefs)
-    selVars = c(selDefs[1], selDVs[1], selDefs[2], selDVs[2]) #MN
 	# expMean variable order = m_mod, m_trait, m_mod, m_trait
 	# expectations have dimnames = selVars
-	
-	
+    selVars = c(selDefs[1], selDVs[1], selDefs[2], selDVs[2]) #MN
 	# drop any unused variables
 	dzData = dzData[ , selVars]
 	mzData = mzData[ , selVars]
-
 	mzData = xmu_data_missing(mzData, selVars = selDefs, dropMissingDef=dropMissingDef, hint="mzData")
 	dzData = xmu_data_missing(dzData, selVars = selDefs, dropMissingDef=dropMissingDef, hint="dzData")
-	model = mxModel(name,
+	model = mxModel(name, 
 		mxModel("top",
-			# TODO:	Add covariates to G x E biv model
-			# ACE model moderator – Cholesky elements
-			# path coefficients a, c, e
-			# Defined as scalars (1x1)
-			# TODO Can all of these 1x1s be wrapped up into something bigger?
-			# A chol
-			# a0m  = a11
-			# a0mt = a21
-			# a0t  = a22
-			# a1mt = aBeta1
-			# a1t  = aBeta2
-
-			# ACE model moderator main effects parameters
-			# a0m = a11
-			umxMatrix("a11", "Lower", nrow=1, ncol=1, free=TRUE, values=.6), 
-			umxMatrix("c11", "Lower", nrow=1, ncol=1, free=TRUE, values=.6), 
-			umxMatrix("e11", "Lower", nrow=1, ncol=1, free=TRUE, values=.6),
-
-			# ACE model moderator-trait covariances: main effects
-			umxMatrix("a21", "Lower", nrow=1, ncol=1, free=TRUE, values=.6), 
-			umxMatrix("c21", "Lower", nrow=1, ncol=1, free=TRUE, values=.6),
-			umxMatrix("e21", "Lower", nrow=1, ncol=1, free=TRUE, values=.6),
-
-			# ACE model trait-specific main effects parameters
-			umxMatrix("a22", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
-			umxMatrix("c22", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
-			umxMatrix("e22", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
-
-
-			# ACE model  moderator-trait covariances: moderation
-			umxMatrix("aBeta1", "Lower", nrow=1, ncol=1, free=TRUE, values = .0), 
-			umxMatrix("cBeta1", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
-			umxMatrix("eBeta1", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),	
-
-			# ACE model trait 1 moderator effects
-			umxMatrix("aBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
-			umxMatrix("cBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
-			umxMatrix("eBeta2", "Lower", nrow=1, ncol=1, free=TRUE, values = .0),
-
+			umxMatrix("a11"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6), 
+			umxMatrix("c11"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6), 
+			umxMatrix("e11"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("a21"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6), 
+			umxMatrix("c21"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("e21"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("a22"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("c22"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("e22"   , "Lower", nrow = 1, ncol = 1, free = TRUE, values = .6),
+			umxMatrix("aBeta1", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .0), 
+			umxMatrix("cBeta1", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .0),
+			umxMatrix("eBeta1", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .0),	
+			umxMatrix("aBeta2", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .0),
+			umxMatrix("cBeta2", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .0),
+			umxMatrix("eBeta2", "Lower", nrow = 1, ncol = 1, free = TRUE, values = .0),
 			# Assemble Cholesky decomposition for twin 1 and twin 2 
-			umxMatrix("PsAmz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
-			# 1  .  1  .
-			# .  1  .  1
-			# 1  .  1  .
-			# .  1  .  1
-			
-			umxMatrix("PsAdz", "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0,.5, 0, 1, 0,.5, 1, 0, 1)),
-			umxMatrix("PsC"  , "Symm", nrow=4, ncol=4, free=FALSE, values= c(1, 0, 1, 0, 1, 0, 1, 1, 0, 1)),
-	
-			# Matrix & Algebra for expected means vector (non-moderated)
-			# TODO start means at obsMean
-			# TODO allow other covs on means?
-			umxMatrix("expMean", "Full", nrow = 1, ncol = 4, free = TRUE, values = 0, labels = c("m_mod", "m_trait", "m_mod", "m_trait"))
+			umxMatrix("PsAmz",   "Symm", nrow = 4, ncol = 4, free = FALSE, values = c(1,  0, 1.0, 0, 1, 0,  1.0, 1, 0, 1)), 
+			umxMatrix("PsAdz",   "Symm", nrow = 4, ncol = 4, free = FALSE, values = c(1,  0, 0.5, 0, 1, 0,  0.5, 1, 0, 1)), 
+			umxMatrix("PsC",     "Symm", nrow = 4, ncol = 4, free = FALSE, values = c(1,  0, 1.0, 0, 1, 0,  1.0, 1, 0, 1)), 
+			umxMatrix("expMean", "Full", nrow = 1, ncol = 4, free = TRUE,  values = 0, labels = c("m_mod", "m_trait", "m_mod", "m_trait"))
 		),
-		mxModel("MZ",
-			# Definition variables to create moderated paths (M -> T)
-			umxMatrix("mod1", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[1])),
-			umxMatrix("mod2", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[2])),
-
+        mxModel("MZ", 
 			# Matrices generated to hold A and E computed Variance Components
 			# This is a Cholesky decomposition of A for twin 1 and twin 2 (mz and dz) 
 			# note that mod1 appears in the top left part (twin 1) and mod2 in the bottom right part (twin 2)
-
-			# A chol
-			# a0m  = a11
-			# a0mt = a21
-			# a0t  = a22
-			# a1mt = aBeta1
-			# a1t  = aBeta2
-
-			mxAlgebra(name = "chA", rbind(
-				cbind(top.a11, 0, 0, 0),
-				cbind(top.a21 + mod1 %x% top.aBeta1, top.a22 + mod1 %x% top.aBeta2, 0, 0),
-				cbind(0                 , 0               , top.a11, 0),
-				cbind(0                 , 0               , top.a21 + mod2 %x% top.aBeta1, top.a22 + mod2 %x% top.aBeta2))
-			),
-
-			# C chol
-			mxAlgebra(name = "chC", rbind(
-				cbind(top.c11, 0, 0, 0),
-				cbind(top.c21 + mod1 %x% top.cBeta1, top.c22 + mod1 %x% top.cBeta2, 0  , 0),
-				cbind(0                 ,0                , top.c11, 0),
-				cbind(0                 ,0                , top.c21 + mod2 %x% top.cBeta1, top.c22 + mod2 %x% top.cBeta2))
-			),
-
-			# E chol
-			mxAlgebra(name = "chE", rbind(
-				cbind(top.e11, 0, 0 , 0),
-				cbind(top.e21 + mod1 %x% top.eBeta1, top.e22 + mod1 %x% top.eBeta2, 0 , 0),
-				cbind(0                 ,0                ,top.e11, 0),
-				cbind(0                 ,0                ,top.e21 + mod2 %x% top.eBeta1, top.e22 + mod2 %x% top.eBeta2))
-			),
-
-			# Get the expected covariance matrices 
-			mxAlgebra(name = "Amz", chA %&% top.PsAmz),  # variance component A
-			mxAlgebra(name = "C"  , chC %&% top.PsC  ),  # variance component C
-			mxAlgebra(name = "E"  , chE %*% t(chE)   ),  # variance component E
-
-			# Assemble phenotypic 4 x 4 MZ cov matrix 
-			mxAlgebra(name = "expCovMZ", Amz + C + E), 
-			mxData(mzData, type = "raw"),
-			mxExpectationNormal("expCovMZ", means = "top.expMean", dimnames = selVars),
-			mxFitFunctionML()
+			# Definition variables to create moderated paths (M -> T)
+			umxMatrix("mod1", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[1])), 
+            umxMatrix("mod2", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[2])), 
+			mxAlgebra(name = "chA", 
+				rbind(
+					cbind(top.a11,                         0,                               0,       0),
+					cbind(top.a21 + (mod1 %x% top.aBeta1), top.a22 + (mod1 %x% top.aBeta2), 0,       0), 
+					cbind(0,                               0,                               top.a11, 0), 
+					cbind(0,                               0,                               top.a21 + (mod2 %x% top.aBeta1), top.a22 + (mod2 %x% top.aBeta2)))
+			), 
+			mxAlgebra(name = "chC", 
+				rbind(
+					cbind(top.c11,                                                       0,                               0,                              0), 
+					cbind(top.c21 + (mod1 %x% top.cBeta1), top.c22 + (mod1 %x% top.cBeta2),                               0,                              0), 
+					cbind(0,                                                             0,                         top.c11,                              0), 
+					cbind(0,                                                             0, top.c21 + (mod2 %x% top.cBeta1), top.c22 + (mod2 %x% top.cBeta2)))
+			), 
+            mxAlgebra(name = "chE", 
+				rbind(
+					cbind(                        top.e11,                               0, 0, 0), 
+					cbind(top.e21 + (mod1 %x% top.eBeta1), top.e22 + (mod1 %x% top.eBeta2), 0, 0), 
+					cbind(                              0,                               0, top.e11, 0), 
+					cbind(                              0,                               0, top.e21 + (mod2 %x% top.eBeta1), top.e22 + (mod2 %x% top.eBeta2)))
+			), 
+			mxAlgebra(name = "Amz", chA %&% top.PsAmz), 
+			mxAlgebra(name = "C",   chC %&% top.PsC), 
+			mxAlgebra(name = "E",   chE %*% t(chE)), 
+            mxAlgebra(name = "expCovMZ", Amz + C + E), 
+			mxData(mzData, type = "raw"), 
+			mxExpectationNormal("expCovMZ", means = "top.expMean", dimnames = selVars), mxFitFunctionML()
 		),
-	  mxModel("DZ",
-			# defs, e.g twin1  c("data.divorce1")
-			umxMatrix("mod1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # "data.defmod1"
-			umxMatrix("mod2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # "data.defmod2"
-
-			# ========================================
-			# = Compute a, c, e, Cholesky components =
-			# ========================================
-
-			mxAlgebra(name ="chA", rbind(
-				cbind(top.a11                      , 0                            , 0, 0),
-				cbind(top.a21 + mod1 %x% top.aBeta1, top.a22 + mod1 %x% top.aBeta2, 0, 0),
-				cbind(0, 0, top.a11                      , 0                            ),
-				cbind(0, 0, top.a21 + mod2 %x% top.aBeta1, top.a22 + mod2 %x% top.aBeta2))
-			),
-			# C chol
-			mxAlgebra(name ="chC", rbind(
-				cbind(top.c11, 0, 0, 0),
-				cbind(top.c21 + mod1 %x% top.cBeta1, top.c22 + mod1 %x% top.cBeta2, 0, 0),
-				cbind(0, 0, top.c11, 0),
-				cbind(0, 0, top.c21 + mod2 %x% top.cBeta1, top.c22 + mod2 %x% top.cBeta2))
-			),
-			# E chol
-			mxAlgebra(name ="chE", rbind(
-				cbind(top.e11, 0, 0, 0),
-				cbind(top.e21 + mod1 %x% top.eBeta1, top.e22 + mod1 %x% top.eBeta2, 0, 0),
-				cbind(0, 0, top.e11, 0),
-				cbind(0, 0, top.e21 + mod2 %x% top.eBeta1, top.e22 + mod2 %x% top.eBeta2))
-			),
-
-			mxAlgebra(name = "Adz", chA %*% top.PsAdz %*% t(chA)),  # variance component A
-			mxAlgebra(name = "C"  , chC %*% top.PsC   %*% t(chC)),  # variance component C
-			mxAlgebra(name = "E"  , chE %*% t(chE)              ),  # variance component E
-
-			# Algebra for expected Variance/Covariance Matrices in MZ & DZ twins
-			mxAlgebra(name = "expCovDZ", Adz + C + E),
-			# Data & Objective
-			mxData(dzData, type = "raw"),
-			mxExpectationNormal("expCovDZ", means = "top.expMean", dimnames = selVars),
-			mxFitFunctionML()
-	  ),
+        mxModel("DZ", 
+			umxMatrix("mod1", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[1])), # "data.defmod1"
+			umxMatrix("mod2", "Full", nrow = 1, ncol = 1, free = FALSE, labels = paste0("data.", selDefs[2])), # "data.defmod2"
+			mxAlgebra(name = "chA", 
+				rbind(
+					cbind(top.a11,                         0,                               0,       0),
+					cbind(top.a21 + (mod1 %x% top.aBeta1), top.a22 + (mod1 %x% top.aBeta2), 0,       0), 
+					cbind(0,                               0,                               top.a11, 0), 
+					cbind(0,                               0,                               top.a21 + (mod2 %x% top.aBeta1), top.a22 + (mod2 %x% top.aBeta2)))
+				), 
+			mxAlgebra(name = "chC", 
+				rbind(
+					cbind(top.c11,                                                       0,                               0,                              0), 
+					cbind(top.c21 + (mod1 %x% top.cBeta1), top.c22 + (mod1 %x% top.cBeta2),                               0,                              0), 
+					cbind(0,                                                             0,                         top.c11,                              0), 
+					cbind(0,                                                             0, top.c21 + (mod2 %x% top.cBeta1), top.c22 + (mod2 %x% top.cBeta2)))
+				), 
+            mxAlgebra(name = "chE", 
+				rbind(
+					cbind(                        top.e11,                               0, 0, 0), 
+					cbind(top.e21 + (mod1 %x% top.eBeta1), top.e22 + (mod1 %x% top.eBeta2), 0, 0), 
+					cbind(                              0,                               0, top.e11, 0), 
+					cbind(                              0,                               0, top.e21 + (mod2 %x% top.eBeta1), top.e22 + (mod2 %x% top.eBeta2)))
+				), 
+			mxAlgebra(name = "Adz", chA %&% top.PsAdz ), 
+			mxAlgebra(name = "C",   chC %&% top.PsC   ), 
+			mxAlgebra(name = "E",   chE %*% t(chE)    ), 
+			mxAlgebra(name = "expCovDZ", Adz + C + E  ), 
+			mxData(dzData, type = "raw"), 
+			mxExpectationNormal("expCovDZ", means = "top.expMean", dimnames = selVars), mxFitFunctionML()
+		),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
-
-	if(!is.na(lboundACE)){
-		model = omxSetParameters(model, labels = c('a_r1c1', 'c_r1c1', 'e_r1c1'), lbound = lboundACE)
-	}
-	if(!is.na(lboundM)){
-		model = omxSetParameters(model, labels = c('am_r1c1', 'cm_r1c1', 'em_r1c1'), lbound = lboundM)
-	}
+    if (!is.na(lboundACE)) {
+        model = omxSetParameters(model, labels = c("a11_r1c1", "c11_r1c1", "e11_r1c1","a22_r1c1", "c22_r1c1", "e22_r1c1"), lbound = lboundACE)
+    }
+    if (!is.na(lboundM)) {
+        model = omxSetParameters(model, labels = c("a22_r1c1", "c22_r1c1", "e22_r1c1"), lbound = lboundM)
+    }
 	model = as(model, "MxModelGxEbiv")
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	invisible(model)

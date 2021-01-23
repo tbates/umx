@@ -11,7 +11,7 @@ umxGxEbiv(
   dzData,
   mzData,
   sep = NULL,
-  lboundACE = NA,
+  lboundACE = 0,
   lboundM = NA,
   dropMissingDef = FALSE,
   autoRun = getOption("umx_auto_run"),
