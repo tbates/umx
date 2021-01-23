@@ -2350,6 +2350,7 @@ umx_write_to_clipboard <- function(x) {
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
+#' @param report "markdown" or "html"
 #' @return - Value after yrs
 #' @export
 #' @family Miscellaneous Functions
@@ -2376,38 +2377,97 @@ umx_write_to_clipboard <- function(x) {
 #' # $10,000 invested at the end of each year for 5 years at 6%
 #' fin_compound_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 #'
-fin_compound_interest <- function(principal = 0, deposits = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$"){
+fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", report= c("markdown", "html")){
+	report = match.arg(report)
+	if(deposit_inflator != 0){
+		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+deposit_inflator)^c(1:(yrs-1)))
+	}else{
+		deposits = rep(deposits, times = yrs)
+	}
 	# deposits = 100
 	# interest = .05
 	# n        = 12
 	# yrs      = 10
+
+	# TODO add an annual table like this
+	# Final Investment Value		Initial  Balance
+	# £267,672,51					$principle
+	# Total Interest Earned		Total <period> deposits
+	# £267,672,51					£267,672,51
+	# 							Effective annual rate: 4.06%
+	#
+
 	# 1. compute compounding rate per unit time n (allowing for zero interest so 1.0)
 	rate = ifelse(interest==0, 1, 1+(interest/n))
 
-	# 2. compute compounded value of the principal (initial deposit)
-	Compound_interest_for_principal = principal* rate^(n*yrs)
-
-	# 3. compute compounded value of the deposits
-	if(interest==0){
-		Future_value_of_a_series = deposits * yrs
-	} else {
-		# beginning: A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n))
-		# end      : A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n)) × (1+r/n)
+	# make a pretty table
+	# n    = n    # units per year
+	# rate = rate # rate per unit time (n)
+	
+	tableOut = data.frame(Year = NA, Deposits = NA, Interest = NA, Total_Deposits = NA, Total_Interest = NA, Total = scales::dollar(principal, prefix = symbol, largest_with_cents = 0))
+	balance  = principal
+	totalDeposits = 0
+	totalInterest = 0
+	for (yr in 1:yrs) {
+		# 1. Compute compounding rate per unit time n (allowing for zero interest so 1.0)
 		if(when == "beginning"){
-			# deposits at the beginning of each year
-			periods = (yrs:1)*n
-			Future_value_of_a_series = sum(deposits*(rate^periods))
+			# Deposits at the beginning of each year
+			thisInterest = ((balance + deposits[yr]) * rate^n) - (balance + deposits[yr])
 		} else {
-			# deposits at the end of the year
-			periods = ((yrs-1):1)*n
-			Future_value_of_a_series = sum(deposits*(rate^periods)) + (1*deposits)
+			# Deposits at the end of the year
+			thisInterest = (balance * rate^n) - balance
 		}
+		totalDeposits = (totalDeposits + deposits[yr])
+		totalInterest = (totalInterest + thisInterest)
+		balance       = (balance + deposits[yr] + thisInterest)
+		thisRow = c(Year=yr, Deposit= deposits[yr], Interest = thisInterest, Total_Deposit = totalDeposits, Total_Interest = totalInterest, Total = balance)
+		thisRow = c(thisRow[1], scales::dollar(thisRow[-1], prefix = symbol, largest_with_cents = 0))
+		tableOut = rbind(tableOut, thisRow)
 	}
-	Total =  Compound_interest_for_principal+ Future_value_of_a_series
+	umx_print(tableOut, justify = "right", report=report)
+
+	# invisible(report)
+	# gray?		green		orange		Blue
+	# | Year| Deposits | Interest | Total Deposits | Tot Interest| Total |
+	# |:----|:---------|:---------|:---------------|:---------|:---------|
+	# | 1   | £19,000  | £1,000   | £40,000        | £1,200   | £100,200 |
+	# | 2   | £10,000  | £1,000   | £65,000        | £1,200   | £100,200 |
+	# | 3   | £19,000  | £1,000   | £65,000        | £1,200   | £100,200 |
+	# | 4   | £19,000  | £1,000   | £65,000        | £1,200   | £200,200 |
+	# | 5   | £19,000  | £1,000   | £65,000        | £1,200   | £300,200 |
+	# | 6   | £19,000  | £1,000   | £65,000        | £1,200   | £400,200 |
+
+	if(length(deposits)==1){
+		# 2. compute compounded value of the principal (initial deposit)
+		Compound_interest_for_principal = principal* rate^(n*yrs)
+
+		# 3. compute compounded value of the deposits
+
+		if(interest==0){
+			Future_value_of_a_series = deposits * yrs
+		} else {
+			# beginning: A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n))
+			# end      : A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n)) × (1+r/n)
+			if(when == "beginning"){
+				# deposits at the beginning of each year
+				periods = (yrs:1)*n
+				Future_value_of_a_series = sum(deposits*(rate^periods))
+			} else {
+				# deposits at the end of the year
+				periods = ((yrs-1):1)*n
+				Future_value_of_a_series = sum(deposits*(rate^periods)) + (1*deposits)
+			}
+		}
+
+		Total =  Compound_interest_for_principal+ Future_value_of_a_series
+	} else {
+		Total = balance
+	}
 	class(Total) = 'money'
 	attr(Total, 'symbol') <- symbol
 	return(Total)
 }
+
 
 #' Print a money object
 #'

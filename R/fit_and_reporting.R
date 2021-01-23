@@ -4158,9 +4158,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			b       = b_and_p["Estimate"]
 			tval    = b_and_p["t value"]
 			pval    = b_and_p["Pr(>|t|)"]
-			print(paste0(i, betaSymbol, round(b, digits), 
+			cat(paste0(i, betaSymbol, round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
-			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
+			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
 			))		
 		}
 	} else if("glm" == class(obj)[[1]]) {
@@ -4188,9 +4188,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			b       = b_and_p["Estimate"]
 			testStat    = b_and_p["z value"]
 			pval    = b_and_p["Pr(>|z|)"]
-			print(paste0(i, betaSymbol, round(b, digits), 
+			cat(paste0(i, betaSymbol, round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
-			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
+			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
 			))
 		}
 		print(paste0("AIC = ", round(AIC(obj), 3) ))
@@ -4212,9 +4212,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			tval    = model_coefficients[i, "t-value"]
 			numDF   = model_coefficients[i, "DF"]
 			pval    = model_coefficients[i, "p-value"]
-			print(paste0(i, betaSymbol, round(b, digits), 
+			cat(paste0(i, betaSymbol, round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
-			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE)
+			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE),"\n"
 			))
 		}
 	} else {

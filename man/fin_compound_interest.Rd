@@ -7,11 +7,13 @@
 fin_compound_interest(
   principal = 0,
   deposits = 0,
+  deposit_inflator = 0,
   interest = 0.05,
   yrs = 10,
   n = 12,
   when = "beginning",
-  symbol = "$"
+  symbol = "$",
+  report = c("markdown", "html")
 )
 }
 \arguments{
@@ -28,6 +30,8 @@ fin_compound_interest(
 \item{when}{Deposits made at the "beginning" (of each year) or "end"}
 
 \item{symbol}{Currency symbol to embed in the result.}
+
+\item{report}{"markdown" or "html"}
 }
 \value{
 \itemize{
