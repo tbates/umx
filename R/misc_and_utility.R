@@ -384,7 +384,7 @@ umx_get_options <- function() {
 #' Set output file suffix (default = "gv", alternative is "dot"). If you call this with no
 #' value, it will return the current setting. If you call it with TRUE, it toggles the setting.
 #'
-#' @param umx.plot.use_hrbrthemes whether to them plots iwth hrbrthemes (if empty returns the current value)
+#' @param umx.plot.use_hrbrthemes whether to them plots with hrbrthemes (if empty returns the current value)
 #' @param silent If TRUE, no message will be printed.
 #' @return - Current setting
 #' @export
@@ -413,7 +413,7 @@ umx_set_plot_use_hrbrthemes <- function(umx.plot.use_hrbrthemes = NULL, silent =
 #' Set output suffix used in umx SEM diagram files saved to disk.
 #'
 #' `umx` SEM diagram files can have a suffix of "gv" (default) or  "dot".
-#' Interogate the setting by calling with no value: it will return the current setting. 
+#' Interrogate the setting by calling with no value: it will return the current setting. 
 #' To change the setting call with "gv" or "dot". Or use TRUE to toggle the setting.
 #'
 #' @param umx.plot.suffix The suffix for plot files (if empty current value is returned). "TRUE", toggles setting.
@@ -664,7 +664,7 @@ umx_set_data_variance_check <- function(minVar = NULL, maxVarRatio = NULL, silen
 #' If TRUE, then the progress messages from model runs are suppressed. Useful for power simulations etc.
 #'
 #' @param value Boolean stating if umx Models should run silently (TRUE).
-#' @param silent If TRUE, this function itseld will just return the state of the option, with no user message.
+#' @param silent If TRUE, this function itself will just return the state of the option, with no user message.
 #' @return - Current silent value
 #' @export
 #' @family Get and set
@@ -4087,7 +4087,7 @@ umx_var <- function(df, format = c("full", "diag", "lower"), use = c("complete.o
 #'
 #' @param x a [matrix()] from which to extract values.
 #' @param diag whether to include the diagonal (default = FALSE).
-#' @return - values of cellss of the lower triangle.
+#' @return - values of cells of the lower triangle.
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - [lower.tri()]

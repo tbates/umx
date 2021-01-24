@@ -1,5 +1,5 @@
 ## Changes
-Added a full stop to the new sentence in the DESCRIPTION.
+new features
 ## Test environments
 * OS X 11.0.0, R version 4.0.3 (2020-06-22)
 * Win R Under development (unstable) (2020-12-09 r79601)

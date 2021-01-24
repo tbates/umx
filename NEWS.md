@@ -1,10 +1,32 @@
 **Development version** umx 4.3.0
-* December 2020 R 4.0.3 (2020-06-22)
 
 
 # Releases
+## umx 4.3.0
+* January 2021 R 4.0.3 (2020-10-10)
+* NEW `plot` can output to pdf, png, svg!
+* NEW `umx_set_plot_format` can pdf, png, svg output (in addition to DiagrammeR and graphviz)
+* IMPROVED: `umxSummary` now reports algebra values when present in RAM models closes #70
+* IMPROVED: `umxCompare` table output and plain-english summary printing (cat)
+* IMPROVED: table captions and Rmarkdown compatibility
+* IMPROVED: `umxSummary` tables have pandoc captions (see #145)
+* IMPROVED: messages in console
+* IMPROVED: `umxSimplex` summary tables have captions
+* IMPROVED: `umxDoC` summary tables have captions
+* FIXED: `umxSimplex` example
+* IMPROVED: `umxCP` practical workflows for correlated ACE
+* NEW: `umx_lower.tri` helper to get lower.tri values in 1 call
+* HELP: `umxCP` Document that correlatedA works on a, c and e, allowing factors built by these matrices to correlate.
+* BETA: `umxGxEbiv` lboundACE @ 0 by default
+* FIXED: `umxGxEbiv` fix nonfunctional lboundACE and lboundM (thanks @mcneale)
+* FIXED: `umxGxEbiv` selVars order was imposed on expectation dimnames but didn't match the cov matrix due to bespoke nature of expCov algebras...
+* IMPROVED: `fin_compound_interest` now outputs a table of annual returns
+* IMPROVED: `umxAPA` uses cat to improve usability of summary data
+* NEW: `umx_set_plot_use_hrbrthemes` control
+* NEW: `plot.percent` for percent change
+
 ## umx 4.2.5
-* December 2020 R 4.0.3 (2020-06-22)
+* December 2020 R 4.0.3 (2020-10-10)
 * NEW: `tmx_show` display model matrices on the web, with color-coded free/false, values + roll-over labels.
 * NEW: `harmonic_mean` with support for weights.
 * NEW: `geometric_mean`
