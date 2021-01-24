@@ -25,6 +25,8 @@ Depends:
 Imports:
     cowplot,
     DiagrammeR,
+	DiagrammeRsvg,
+	rsvg,
 	ggplot2,
     kableExtra,
 	knitr,

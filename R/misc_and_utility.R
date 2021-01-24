@@ -471,13 +471,15 @@ umx_set_plot_file_suffix <- function(umx.plot.suffix = NULL, silent = FALSE) {
 #' old = umx_set_plot_format(silent = TRUE) # store current value
 #' umx_set_plot_format("graphviz")
 #' umx_set_plot_format("DiagrammeR")
+#' umx_set_plot_format("png")
+#' umx_set_plot_format("pdf")
 #' umx_set_plot_format(old) # reinstate
 umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 	if(is.null(umx.plot.format)) {
 		if(!silent){
-			message("Current format is", 
+			message("Current format is ", 
 				omxQuotes(getOption("umx.plot.format")),
-				". Valid options are 'graphviz' or 'DiagrammeR'. Use TRUE to toggle"
+				". Valid options are 'DiagrammeR', 'pdf', 'png', 'svg', or 'graphviz'. TRUE toggles between DiagrammeR and graphviz"
 			)
 		}
 		invisible(getOption("umx.plot.format"))
@@ -490,7 +492,7 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 				umx.plot.format = "graphviz"
 			}
 		} else {
-			umx_check(umx.plot.format %in% c("graphviz", "DiagrammeR"), "stop", "valid options are 'graphviz' or 'DiagrammeR'. Use TRUE to toggle)")
+			umx_check(umx.plot.format %in% c("DiagrammeR", "pdf", "png", 'svg', "graphviz"), "stop", "valid options are 'DiagrammeR', 'pdf', 'png', 'svg', 'graphviz'. TRUE toggles between DiagrammeR and graphviz)")
 		}
 		options("umx.plot.format" = umx.plot.format)
 	}

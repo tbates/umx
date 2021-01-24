@@ -1810,17 +1810,33 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 
 	if(!is.na(file)){
 		if(file == "name"){
-			# maybe:
-			if (umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
+			if (umx_set_plot_format(silent = TRUE) %in% c("DiagrammeR", "pdf", "png")){
+				# tempfile
 				file = tempfile(fileext = paste0(".", umx_set_plot_file_suffix(silent = TRUE)) )
-			} else { # leave in the users current directory?
+			} else {
+				# leave in the users current directory for graphviz
 				file = paste0(model$name, ".", umx_set_plot_file_suffix(silent = TRUE))
 			}
 		}
-		cat(digraph, file = file) # write to file
-		if(umx_set_plot_format(silent = TRUE) == "DiagrammeR"){
-				print(DiagrammeR::DiagrammeR(diagram = file, type = "grViz"))
+		cat(digraph, file = file) # write dot file
+		if(umx_set_plot_format(silent=TRUE) == "DiagrammeR"){
+			print(DiagrammeR(diagram = file, type = "grViz"))
+		}else if(umx_set_plot_format(silent=TRUE) %in%  c("pdf", "svg", "png")){
+			tmp = export_svg(grViz(file)) #export as SVG
+			raw = charToRaw(tmp) # flatten
+			if(umx_set_plot_format(silent=TRUE) == "pdf"){
+				fileName = paste0(model$name, ".pdf")
+				rsvg_pdf(raw, fileName) # save as pdf
+			} else if(umx_set_plot_format(silent=TRUE) == "png"){
+				fileName = paste0(model$name, ".png")
+				rsvg_png(raw, fileName) # save as png in current working directory
+			} else if(umx_set_plot_format(silent=TRUE) == "svg"){
+				fileName = paste0(model$name, ".svg")
+				cat(tmp, file = fileName)
+			}
+			umx_open(fileName)
 		} else {
+			# graphviz
 			if(umx_check_OS("OSX")){
 				umx_open(file);
 			} else if(umx_check_OS("Windows")){
