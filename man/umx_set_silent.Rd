@@ -9,7 +9,7 @@ umx_set_silent(value = NA, silent = FALSE)
 \arguments{
 \item{value}{Boolean stating if umx Models should run silently (TRUE).}
 
-\item{silent}{If TRUE, this function itseld will just return the state of the option, with no user message.}
+\item{silent}{If TRUE, this function itself will just return the state of the option, with no user message.}
 }
 \value{
 \itemize{

@@ -18,7 +18,7 @@ umx_set_plot_file_suffix(umx.plot.suffix = NULL, silent = FALSE)
 }
 \description{
 \code{umx} SEM diagram files can have a suffix of "gv" (default) or  "dot".
-Interogate the setting by calling with no value: it will return the current setting.
+Interrogate the setting by calling with no value: it will return the current setting.
 To change the setting call with "gv" or "dot". Or use TRUE to toggle the setting.
 }
 \examples{

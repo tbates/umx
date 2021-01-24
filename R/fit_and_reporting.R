@@ -144,7 +144,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @family Reporting Functions
 #' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduceACE()]
-#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
+#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
 #' @export
 #' @md
 umxReduce <- function(model, report = c("markdown", "inline", "html"), baseFileName = "tmp", ...){
@@ -179,7 +179,7 @@ umxReduce.default <- function(model, ...){
 #' @family Twin Modeling Functions
 #' @seealso [umxReduceACE()], [umxReduce()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
-#' *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482).
+#' *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}.
 #' @md
 #' @examples
 #' \dontrun{
@@ -266,7 +266,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduce()]
-#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. [doi:](https://doi.org/10.3758/BF03206482)
+#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
 #' @md
 #' @examples
 #' \dontrun{

@@ -1604,7 +1604,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @seealso [umxGxE_window()], [umxReduce()], [umxSummary()]
 #' @family Twin Modeling Functions
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
-#'  **6**, 554-571. DOI: [10.1375/twin.5.6.554](https://doi.org/10.1375/twin.5.6.554)
+#'  **6**, 554-571. DOI: \doi{10.1375/twin.5.6.554}
 #' @md
 #' @examples
 #' require(umx)
@@ -2117,11 +2117,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @references 
 #' Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
-#' *Behavior Genetics*, **19**, 63-78. doi:<https://doi.org/10.1007/BF01065884>.
+#' *Behavior Genetics*, **19**, 63-78. doi:\doi{10.1007/BF01065884}.
 #' 
 #' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 #' to Handle Missing Covariate Data in Twin Research : With an Application to
-#' Educational Achievement Data. *Behavior Genetics*, **46**, 583-95. doi:<https://doi.org/10.1007/s10519-015-9771-1>.
+#' Educational Achievement Data. *Behavior Genetics*, **46**, 583-95. doi:\doi{10.1007/s10519-015-9771-1}.
 #'
 #' @examples
 #' \dontrun{

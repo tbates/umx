@@ -7,7 +7,7 @@
 umx_set_plot_use_hrbrthemes(umx.plot.use_hrbrthemes = NULL, silent = FALSE)
 }
 \arguments{
-\item{umx.plot.use_hrbrthemes}{whether to them plots iwth hrbrthemes (if empty returns the current value)}
+\item{umx.plot.use_hrbrthemes}{whether to them plots with hrbrthemes (if empty returns the current value)}
 
 \item{silent}{If TRUE, no message will be printed.}
 }

@@ -8,7 +8,7 @@
 #' @return - list of output and diagnostics. matrix of correlations = $polychorics
 #' @export
 #' @family Data Functions
-#' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
+#' @references - \doi{10.3389/fpsyg.2016.00528}
 #' @examples
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)
@@ -213,7 +213,7 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 #' @return - matrix of correlations
 #' @export
 #' @family Data Functions
-#' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
+#' @references - \doi{10.3389/fpsyg.2016.00528}
 #' @examples
 #' umx_set_optimizer("SLSQP")
 #' tmp = mtcars
@@ -286,7 +286,7 @@ umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "
 #' @return - matrix of correlations
 #' @export
 #' @family Data Functions
-#' @references - \url{https://doi.org/10.3389/fpsyg.2016.00528}
+#' @references - \doi{10.3389/fpsyg.2016.00528}
 #' @examples
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)

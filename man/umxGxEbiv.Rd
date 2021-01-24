@@ -97,10 +97,10 @@ umxReduce(m1)
 \references{
 \itemize{
 \item Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
-\strong{6}, 554-571. doi:\href{https://doi.org/10.1375/twin.5.6.554}{10.1375/twin.5.6.554}.
+\strong{6}, 554-571. \doi{10.1375/twin.5.6.554}.
 \item van der Sluis, S., Posthuma, D., & Dolan, C. V. (2012). A note on false positives and
 power in G x E modelling of twin data. \emph{Behavior Genetics},
-\strong{42}, 170-186. doi:\href{https://doi.org/10.1007/s10519-011-9480-3}{10.1007/s10519-011-9480-3}.
+\strong{42}, 170-186. \doi{10.1007/s10519-011-9480-3}.
 }
 }
 \seealso{

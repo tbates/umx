@@ -39,7 +39,7 @@ as.matrix(Fischbein_wt) # convert to matrix
 }
 \references{
 Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty.
-\emph{Annals of Human Biology}, \strong{4}. 417-430. \url{https://doi.org/10.1080/03014467700002401}
+\emph{Annals of Human Biology}, \strong{4}. 417-430. \doi{10.1080/03014467700002401}
 }
 \seealso{
 Other datasets: 

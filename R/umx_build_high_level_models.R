@@ -85,9 +85,9 @@
 #' @seealso - [factanal()], [mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>,
 #' 
-#' Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. *British Journal of Statistical Psychology*, **17**, 65–70. doi: [10.1111/j.2044-8317.1964.tb00244.x](https://doi.org/10.1111/j.2044-8317.1964.tb00244.x).
+#' Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. *British Journal of Statistical Psychology*, **17**, 65–70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
 #' 
-#' Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. *Psychometrika*, **23**, 187–200. doi: [10.1007/BF02289233](https://doi.org/10.1007/BF02289233).
+#' Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. *Psychometrika*, **23**, 187–200. \doi{10.1007/BF02289233}.
 #' 
 #'
 #' @examples

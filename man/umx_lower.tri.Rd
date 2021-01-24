@@ -13,7 +13,7 @@ umx_lower.tri(x, diag = FALSE)
 }
 \value{
 \itemize{
-\item values of cellss of the lower triangle.
+\item values of cells of the lower triangle.
 }
 }
 \description{

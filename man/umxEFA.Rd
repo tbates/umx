@@ -135,9 +135,9 @@ m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[
 \item \url{https://github.com/tbates/umx},
 }
 
-Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. \emph{British Journal of Statistical Psychology}, \strong{17}, 65–70. doi: \href{https://doi.org/10.1111/j.2044-8317.1964.tb00244.x}{10.1111/j.2044-8317.1964.tb00244.x}.
+Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. \emph{British Journal of Statistical Psychology}, \strong{17}, 65–70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
 
-Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. \emph{Psychometrika}, \strong{23}, 187–200. doi: \href{https://doi.org/10.1007/BF02289233}{10.1007/BF02289233}.
+Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. \emph{Psychometrika}, \strong{23}, 187–200. \doi{10.1007/BF02289233}.
 }
 \seealso{
 \itemize{

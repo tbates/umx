@@ -41,7 +41,7 @@ cov2cor(x$R)
 cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \references{
-- \url{https://doi.org/10.3389/fpsyg.2016.00528}
+- \doi{10.3389/fpsyg.2016.00528}
 }
 \seealso{
 Other Data Functions: 

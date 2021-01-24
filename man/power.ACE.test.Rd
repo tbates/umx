@@ -172,10 +172,10 @@ power.ACE.test(update = "a", AA= .5, CC= 0, nSim= 20)
 \itemize{
 \item Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 revisited: II detection of common environmental variance. \emph{Twin Res Hum Genet}, \strong{11}: 48-54.
-doi: \href{https://doi.org/10.1375/twin.11.1.48}{10.1375/twin.11.1.48}
+\doi{10.1375/twin.11.1.48}.
 \item Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., and Munafo, M. R. (2013).
 Power failure: why small sample size undermines the reliability of neuroscience.
-\emph{Nature Reviews Neuroscience}, \strong{14}, 365-376. doi: \href{https://doi.org/10.1038/nrn3475}{10.1038/nrn3475}
+\emph{Nature Reviews Neuroscience}, \strong{14}, 365-376. \doi{10.1038/nrn3475}
 }
 }
 \seealso{

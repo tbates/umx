@@ -294,7 +294,7 @@ NULL
 #' @family datasets
 #' @name Fischbein_wt
 #' @references Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty. 
-#' *Annals of Human Biology*, **4**. 417-430. <https://doi.org/10.1080/03014467700002401>
+#' *Annals of Human Biology*, **4**. 417-430. \doi{10.1080/03014467700002401}
 #' @usage data(Fischbein_wt)
 #' @format A 6*6 correlation matrix based on n = 66 female subjects.
 #' @md

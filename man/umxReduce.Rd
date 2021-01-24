@@ -40,7 +40,7 @@ I am thinking for RAM models to drop NS paths, and report that test.
 }
 \references{
 \itemize{
-\item Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}, \strong{11}, 192-196. \href{https://doi.org/10.3758/BF03206482}{doi:}
+\item Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}, \strong{11}, 192-196. \doi{10.3758/BF03206482}
 }
 }
 \seealso{
