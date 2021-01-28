@@ -7019,7 +7019,7 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
     n = floor((sqrt(1 + 8*m) - d)/2)
 	if(is.null(names)){
 		names = paste0("X", 1:n)
-	}else if(length(names!= n)){
+	}else if(length(names) != n){
 		message("names ignored as you provided ", length(names), " but the data are n = ", n, " wide.")
 		names = paste0("X", 1:n)
 	}
