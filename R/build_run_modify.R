@@ -2484,7 +2484,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
-#' @param correlatedA (a, and c and e). Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
+#' @param correlatedACE Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -2501,6 +2501,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param freeLowerA (ignore): Whether to leave the lower triangle of A free (default = FALSE).
 #' @param freeLowerC (ignore): Whether to leave the lower triangle of C free (default = FALSE).
 #' @param freeLowerE (ignore): Whether to leave the lower triangle of E free (default = FALSE).
+#' @param correlatedA deprecated.
 #' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
