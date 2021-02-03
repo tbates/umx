@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{fin_compound_interest}
 \alias{fin_compound_interest}
-\title{Compute the value of a principle plus annual savings, at a compound interest over a number of years}
+\title{Compute the value of a principle & annual deposits at a compound interest over a number of years}
 \usage{
 fin_compound_interest(
   principal = 0,
@@ -13,7 +13,9 @@ fin_compound_interest(
   n = 12,
   when = "beginning",
   symbol = "$",
-  report = c("markdown", "html")
+  report = c("markdown", "html"),
+  largest_with_cents = 0,
+  baseYear = 0
 )
 }
 \arguments{
@@ -34,6 +36,10 @@ fin_compound_interest(
 \item{symbol}{Currency symbol to embed in the result.}
 
 \item{report}{"markdown" or "html"}
+
+\item{largest_with_cents}{Default = 0}
+
+\item{baseYear}{Default = 0, can set, e.g. to 2020 for printing}
 }
 \value{
 \itemize{
@@ -43,28 +49,33 @@ fin_compound_interest(
 \description{
 Allows you to determine the final value of an initial \code{principle} (with optional
 periodic \code{deposits}), over a number of years (\code{yrs}) at a given rate of \code{interest}.
-}
-\details{
-None.
-If an amount of $5,000 is deposited into a savings account at an annual interest rate of 5\%, compounded monthly,
-with additional deposits of $100 per month (made at the end of each month). The value of the investment after 10
-years can be calculated as follows...
+Principl and deposits are optional. You control compounding periods eaach year (n) and whether deposits occur at the beginning or end of the year.
+The function outputs a nice table of annual returns, formats the total using a user-settable currency \code{symbol}. Can also \code{report} using a web table.
 }
 \examples{
-#
 # Value of a principle after yrs years at 5\% return, compounding monthly.
+# Report as a nice table of annual returns and a formatted total:
 fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10)
-# annual compounding
-fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10, n=1)
-#
+
+\dontrun{
+# Make a nice table and open in web browser...
+fin_compound_interest(principal = 5000, interest = 0.05, rep= "html")
+}
+
 # Value of periodic deposit of $100/yr after 10 years at rate 7\% return.
 fin_compound_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
-#
-# Value of principal + deposit of $100/yr after 10 years at rate 7\% return.
+
+# Annual rather than monthly compounding (n=1)
+fin_compound_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
+
+# Value of principal + deposits of $100/yr over 10 years at 7\% return.
 fin_compound_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
-#
-fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 10, n=1)
-# manually
+
+# £20k at 7\% once a year for 10 years
+fin_compound_interest(deposits=20e3, interest = 0.07, yrs = 10, n=1)
+# $295,672
+
+# manual sum
 sum(20e3*(1.07^(10:1))) # 295672
 
 # $10,000 invested at the end of each year for 5 years at 6\%
@@ -73,7 +84,7 @@ fin_compound_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end
 }
 \references{
 \itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
+\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{github}
 }
 }
 \seealso{

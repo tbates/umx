@@ -28,10 +28,10 @@ None.
 If an amount of $100 has 20\% added, what percent do we need to drop it by to return to the original value?
 }
 \examples{
-#
-# Percent needed to return to original value after 10\% off
+# Percent needed to return to original value after 10\% taken off
 fin_percent(-10)
-# Percent needed to return to original value after 10\% on
+
+# Percent needed to return to original value after 10\% added on
 fin_percent(10)
 
 # Percent needed to return to original value after 50\% off 34.50

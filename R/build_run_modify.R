@@ -2601,7 +2601,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' umxCompare(m6, m1)
 #' } # end dontrun
 #'
-umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
+umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedACE = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = "deprecated") {
 	# TODO umxCP: Add covariates to means model: Will involve xmu_make_top_twin? also means model?
 	tryHard             = match.arg(tryHard)
 	type                = match.arg(type)
@@ -2634,24 +2634,32 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 	model     = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= selCovs, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, bVector = FALSE, verbose= FALSE)
 	tmp       = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 	varStarts = tmp$varStarts
-
-	if(correlatedA){
-		# nFac = 3
-		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # Latent common factor
-		c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Common environmental path coefficients
-		e_cp_matrix = umxMatrix("e_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Unique environmental path coefficients
-
+	if(correlatedA != "deprecated"){
+		message("Polite message: As of February 2021, please use 'correlatedACE' in place of 'correlatedA'.
+		The new behavior with 'correlatedACE' still makes a_cp_matrix etc. type Lower, but leaves the off-diagonal elements fixed at zero.
+		(you can then free each one as you choose)")
+		correlatedACE = TRUE
+	}
+	if(correlatedACE){
+		if(correlatedA != "deprecated"){
+			a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # Latent common factor
+			c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Common environmental path coefficients
+			e_cp_matrix = umxMatrix("e_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Unique environmental path coefficients
+		}else{
+			a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # Latent common factor
+			c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # latent common factor Common environmental path coefficients
+			e_cp_matrix = umxMatrix("e_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # latent common factor Unique environmental path coefficients			
+		}
+		diag(a_cp_matrix$free) = TRUE
+		diag(c_cp_matrix$free) = TRUE
+		diag(e_cp_matrix$free) = TRUE
 		diag(a_cp_matrix$values) = .7
 		diag(c_cp_matrix$values) = .0
 		diag(e_cp_matrix$values) = .7
 
-		# a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
-		# c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
-		# e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
-
-		a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
-		c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
-		e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		# a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		# c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		# e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
 
 	} else {
 		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7)
@@ -4532,7 +4540,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' )
 #' umxSummary(m1, std = TRUE)
 #' require(umx)
-#' #
+#'
 #' 
 #' # ====================
 #' # = Cholesky example =
