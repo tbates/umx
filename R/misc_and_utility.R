@@ -3071,7 +3071,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are \eqn{2\pi} 
-#' radians in a circle. 1 Rad = \eqn{180/π} degrees (~ 57.296\eqn{^{\circ}})
+#' radians in a circle. 1 Rad = \eqn{180/\pi} degrees (~ 57.296\eqn{^{\circ}})
 #'
 #' @param rad The value in Radians you wish to convert
 #' @return - value in degrees
@@ -3090,7 +3090,7 @@ rad2deg <- function(rad) { rad * 180/pi }
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! 
 #' 
-#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/π} degrees	 (\eqn{\approx 57.296^{\circ}})
+#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees	 (\eqn{\approx 57.296^{\circ}})
 #'
 #' @param deg The value in degrees you wish to convert to radians
 #' @return - value in radians
