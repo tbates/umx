@@ -4,16 +4,18 @@
 \alias{fin_percent}
 \title{Compute the percent change needed to return to the original value after percent off (or on).}
 \usage{
-fin_percent(percent, value = 100, symbol = "$", digits = 2)
+fin_percent(percent, value = 100, symbol = "$", digits = 2, plot = TRUE)
 }
 \arguments{
-\item{percent}{Change in percent (e.g. for 10\%, enter 10, not 0.1)}
+\item{percent}{Change in percent (enter 10 for 10\%, not 0.1)}
 
 \item{value}{Principal}
 
-\item{symbol}{units (default = $)}
+\item{symbol}{value units (default = "$")}
 
-\item{digits}{(rounding)}
+\item{digits}{Rounding of results (default 2 places)}
+
+\item{plot}{Whether to plot the result (default TRUE)}
 }
 \value{
 \itemize{
@@ -21,11 +23,9 @@ fin_percent(percent, value = 100, symbol = "$", digits = 2)
 }
 }
 \description{
-Determine the percent change needed to "undo" an initial percent change.
-}
-\details{
-None.
-If an amount of $100 has 20\% added, what percent do we need to drop it by to return to the original value?
+Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
+If an amount of \$100 has 20\\% added, what percent do we need to drop it by to return to the original value?
+\code{fin_percent(20)} yields \$100 increased by 20\\% = \$120 (Percent to reverse = -17\\%)
 }
 \examples{
 # Percent needed to return to original value after 10\% taken off

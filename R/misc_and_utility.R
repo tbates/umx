@@ -2504,15 +2504,15 @@ print.money <- function(x, symbol = "$", ...) {
 #' Compute the percent change needed to return to the original value after percent off (or on).
 #'
 #' @description
-#' Determine the percent change needed to "undo" an initial percent change.
-#'
-#' @details None.
-#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
+#' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
+#' If an amount of \$100 has 20\% added, what percent do we need to drop it by to return to the original value?
+#' `fin_percent(20)` yields \$100 increased by 20\% = \$120 (Percent to reverse = -17\%)
 #' 
-#' @param percent Change in percent (e.g. for 10%, enter 10, not 0.1)
+#' @param percent Change in percent (enter 10 for 10%, not 0.1)
 #' @param value Principal
-#' @param symbol units (default = $)
-#' @param digits (rounding)
+#' @param symbol value units (default = "$")
+#' @param digits Rounding of results (default 2 places)
+#' @param plot Whether to plot the result (default TRUE)
 #' @return - new value and change required to return to baseline.
 #' @export
 #' @family Miscellaneous Functions
@@ -2527,7 +2527,7 @@ print.money <- function(x, symbol = "$", ...) {
 #'
 #' # Percent needed to return to original value after 50% off 34.50
 #' fin_percent(-50, value = 34.5)
-fin_percent <- function(percent, value= 100, symbol = "$", digits = 2) {
+fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE) {
 	percent  = percent/100
 	newValue = value * (1 + percent)
 	percent_to_reverse = (value/newValue) - 1
@@ -2537,6 +2537,10 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2) {
 	attr(newValue, 'digits')   = digits
 	attr(newValue, 'symbol')   = symbol
 	attr(newValue, 'percent_to_reverse') = percent_to_reverse
+
+	if(plot){
+		plot(newValue)
+	}
 	return(newValue)
 }
 
@@ -2600,7 +2604,6 @@ plot.percent <- function(x, ...) {
 	percentChange  = attr(x, 'percent')	
 	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
 
-	
 	dir = ifelse(percentChange < 0, "decreased", "increased")
 
 	# fnReversePercent(-.1)
@@ -2614,17 +2617,11 @@ plot.percent <- function(x, ...) {
 	# x range	= -100 (%) to +500 (%)?
 	# y = -100 to +200?
 	# y range	= -100 to +200?
-
-	# ISA fixes all of this... 20k/yr to add
-	# Income   tax-free allowance = £12,500/yr
-	# Interest tax-free allowance = £12,500/yr
-	# Dividend tax-free allowance =  £2,000/yr (I'm under.. phew)
-	# Capital gains tax-free allowance = £12,300 (tax rate = 20%)
 	
 	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
 	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
 	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
-	p = p + labs(x = "Percent Off", y = "Percent back on to recover", title = "Percent change on, and off")
+	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(oldValue, " percent change"))
 
 	# subtitle = "Subtitle: (1973-74)",
 	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
@@ -2638,11 +2635,14 @@ plot.percent <- function(x, ...) {
 		p = p + cowplot::theme_cowplot(font_size = 11)
 	}
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
+
+	# Add label to plot, centred on x, top at y} (in data coordinates)
 	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "lightgrey")
-	p = p + cowplot::draw_label("\u25CF", hjust=0, x = percentChange*100, y = percent_to_reverse*100, color = "red")
+	# Add label to plot in data coordinates, flush-left at x, baseline centred on y.
+	p = p + cowplot::draw_label("\u25CF", hjust=0, vjust=.5, x = percentChange*100, y = percent_to_reverse*100, color = "red")
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
-	return(p)
+	invisible(p)
 }
 
 #' Easily plot functions in R

@@ -1890,10 +1890,27 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' \dontrun{
 #' umxCompare(m1, m2, report = "html") # Open table in browser
 #' }
+#'
+#' # Two comparison models
 #' m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
+#' 
 #' umxCompare(m1, c(m2, m3))
 #' umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
+#'
+#' \dontrun{
+#' manifests = names(demoOneFactor)
+#' m1 = umxRAM("WLS", data = demoOneFactor, type = "DWLS",
+#' 	umxPath("G", to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )
+#'
+#' m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
+#' umxCompare(m1, m2)
+#' umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
+#' umxCompare(m1, m2, report = "html") # Open table in browser
+#' }
 umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, file = "tmp.html") {
 	report = match.arg(report)
 	if(umx_is_MxModel(all)){
@@ -1921,15 +1938,49 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 	}
 	tableOut = mxCompare(base = base, comparison = comparison, all = all)
+	tableOut = as.data.frame(tableOut)
 
-	# | 1       |    2          | 3  | 4        | 5   | 6        | 7        | 8      | 9    |
+	# |base |comparison | ep|minus2LL |df |      AIC|diffLL |diffdf |p  |fit       |fitUnits |diffFit |chisq     |SBchisq |
+	# |:----|:----------|--:|:--------|:--|--------:|:------|:------|:--|:---------|:--------|:-------|:---------|:-------|
+	# |DWLS |           |  6|         |0  | 12.00000|       |       |   |0         |r'Wr     |        |0         |        |
+	# |DWLS |drop_l2mpg |  5|         |1  | 14.49542|       |1      |   |4.4954186 |r'Wr     |        |4.4954186 |        |
+	
 	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf | p    |
+	#    1            2           3     4          5     6          7          8        9     
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
-	tablePub = tableOut[, c("comparison", "ep", "diffLL"      , "diffdf"    , "p", "AIC", "base")]
+
+	old = FALSE # pre Feb 2021 version 2.18.1.233
+	# OpenMx:::pkg_globals$myVersion
+
+	if(old){
+		# old format mxCompare
+		tablePub = tableOut[, c("comparison", "ep", "diffLL" , "diffdf", "p", "AIC", "base", "fitUnits")]
+		names(tablePub)     = c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base", "fitUnits")
+	} else {
+		# new format mxCompare
+		tablePub = tableOut[, c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base", "fitUnits")]
+		# str(tmp@results)
+		# 'data.frame':	2 obs. of  13 variables:
+		#  $ base      : chr  "tim" "tim"
+		#  $ comparison: chr  NA "tim"
+		#  $ ep        : num  9 9
+		#  $ df        : num  87 87
+		#  $ diffdf    : num  NA 0
+		#  $ fit       : num  330 330
+		#  $ fitUnits  : chr  "-2lnL" "-2lnL"
+		#  $ diffFit   : num  NA 0
+		#  $ AIC       : num  348 348
+		#  $ p         : num  NA NA
+		#  $ minus2LL  : num  330 330
+		#  $ diffLL    : num  NA 0
+		#  $ SBchisq   : num  NA NA
+
+	}
+
+	# Subtract row-1 AIC from all values and place the resulting deltaAIC column after AIC 
 	tablePub$deltaAIC = tablePub[, "AIC"] - tablePub[1, "AIC"]
-	# rearrange
-	tablePub = tablePub[,c("comparison", "ep", "diffLL", "diffdf", "p", "AIC", "deltaAIC", "base")]
+	tablePub = tablePub[,c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "deltaAIC", "base", "fitUnits")]
 
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	# U+2206 = math delta
@@ -1937,34 +1988,34 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	nRows = dim(tablePub)[1]
 	for (i in 1:nRows) {
 		if(is.na(tablePub[i, "comparison"])){
-			tablePub[i, "comparison"] = tablePub[i, "base"] 
+			tablePub[i, "comparison"] = tablePub[i, "base"]
 			tablePub[i, "base"] = NA
 		}
 	}
-	tablePub[,"p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^3), digits = digits, addComparison = NA)
+	tablePub[, "p"] = umx_APA_pval(tablePub[, "p"], min = (1/ 10^3), digits = digits, addComparison = NA)
 	if(report == "inline"){
 		n_rows = dim(tablePub)[1]
 		for (i in 1:n_rows) {
-			thisPValue = tableOut[i,"p"]
+			thisPValue = tableOut[i, "p"]
 			if(!is.na(thisPValue) && !is.nan(thisPValue)){
 				if(tableOut[i, "p"] < .05){
 					this = ". This caused a significant loss of fit "
 				} else {
 					this = ". This did not lower fit significantly "
 				}
-				inlineMsg  = paste0("The hypothesis that ", omxQuotes(tablePub[i,"comparison"]), 
-				" was tested by dropping ", tablePub[i,"comparison"],
+				inlineMsg = paste0("The hypothesis that ", omxQuotes(tablePub[i, "comparison"]), 
+				" was tested by dropping ", tablePub[i, "comparison"],
 				" from ", omxQuotes(tablePub[i, "base"]), 
-				this, "(\u03C7\u00B2(", tablePub[i, "diffdf"], ") = ", round(tablePub[i, "diffLL"], 2), # \u03A7 = Chi \u00B2 = superscript 2
-				", p = ", tablePub[i,"p"], ": AIC = ", round(tablePub[i,"AIC"], digits), " change in AIC = ", round(tablePub[i,"deltaAIC"], digits), ")."
+				this, "(\u03C7\u00B2(", tablePub[i, "diffdf"], ") = ", round(tablePub[i, "diffFit"], 2), # \u03A7 = Chi \u00B2 = superscript 2
+				", p = ", tablePub[i, "p"], ": AIC = ", round(tablePub[i, "AIC"], digits), " change in AIC = ", round(tablePub[i, "deltaAIC"], digits), ")."
 				)
 				cat(inlineMsg)
 			}
 		}
 	}
 	
-	# rename for printing to console
-	names(tablePub) = c("Model", "EP", "\u0394 -2LL" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model")
+	# Rename for printing to console
+	names(tablePub) = c("Model", "EP", "\u0394 Fit" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model", "Fit units")
 
 	if(report == "inline"){ report= "markdown"}
 	umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)

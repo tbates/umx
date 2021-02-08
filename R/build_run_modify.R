@@ -4057,7 +4057,6 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE, selDVs= "deprecated"){
 	# TODO: umxThresholdMatrix: priority A: Move to a more robust way to detect twin than just the sep isn't NULL??
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
-	# df = x; sep = NULL; threshMatName = "threshMat"; method = "auto"; l_u_bound = c(NA,NA); verbose = T
 	method = match.arg(method)
 	if(method=="allFree"){
 		verbose=FALSE
@@ -4086,7 +4085,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		twinIndexes = tmp$twinIndexes
 		nSib        = length(twinIndexes)
 	}
-	# Create df with just the requested variables
+	# Create dataframe with just the requested variables
 	df = df[, fullVarNames, drop = FALSE]
 	# Check input
 	if(dim(df)[1] < 1){ stop("Data input to umxThresholdMatrix had no rows. I use the data to set thresholds, so the data must have rows.") }
