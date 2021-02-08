@@ -2652,9 +2652,9 @@ plot.percent <- function(x, ...) {
 #'
 #' @details Easily plot a function - like sin, using ggplot.
 #'
-#' @param fun Function to plot
-#' @param min x min
-#' @param max x max
+#' @param fun Function to plot. Also takes strings like "sin(x) + sqrt(1/x)"
+#' @param min x-range min
+#' @param max x-range max
 #' @param xlab = Optional x axis label
 #' @param ylab = Optional y axis label
 #' @param title Optional title for the plot
@@ -2669,6 +2669,7 @@ plot.percent <- function(x, ...) {
 #' # Uses fonts not available on CRAN
 #' # Maybe call this funplot?
 #' umxPlotFun(sin, max= 2*pi)
+#' umxPlotFun("sqrt(1/x)", max= 2*pi)
 #'
 #' 
 #' # Manually	
@@ -2678,6 +2679,18 @@ plot.percent <- function(x, ...) {
 #' }
 #'
 umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
+
+	if(class(fun)=="character"){
+		make_function <- function(args, body, env = parent.frame()) {
+			args <- as.pairlist(args)
+			eval(call("function", args, body), env)
+		}
+		if(is.null(title)){
+			title = paste0("Plot of ", omxQuotes(fun))
+		}
+		fun = make_function(alist(x=NA), parse(text = fun)[[1]] )
+	}
+	
 	if(!is.null(p)){
 		p = p + ggplot2::stat_function(fun = fun, xlim= c(min, max))
 	}else{
@@ -2693,8 +2706,8 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 		}
 
 		if(is.null(title)){
-			if(length(as.character(quote(sin))) == 1){
-				title = paste0("Plot of ", as.character(quote(sin), " function"))
+			if(length(as.character(quote(fun))) == 1){
+				title = paste0("Plot of ", as.character(quote(fun), " function"))
 			} else {
 				title = paste0("Function plot")
 			}
