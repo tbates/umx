@@ -1951,7 +1951,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
 	# Pre Feb 2021 version 2.18.1.233
-	if(packageVersion("OpenMx") < "2.18"){
+	if(packageVersion("OpenMx") < "2.18.1.233"){
 		# old format mxCompare
 		tablePub = tableOut[, c("comparison", "ep", "diffLL" , "diffdf", "p", "AIC", "base")]
 		names(tablePub)     = c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base")
