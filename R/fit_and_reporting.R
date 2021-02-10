@@ -1940,23 +1940,22 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	tableOut = mxCompare(base = base, comparison = comparison, all = all)
 	tableOut = as.data.frame(tableOut)
 
-	# |base |comparison | ep|minus2LL |df |      AIC|diffLL |diffdf |p  |fit       |fitUnits |diffFit |chisq     |SBchisq |
-	# |:----|:----------|--:|:--------|:--|--------:|:------|:------|:--|:---------|:--------|:-------|:---------|:-------|
-	# |DWLS |           |  6|         |0  | 12.00000|       |       |   |0         |r'Wr     |        |0         |        |
-	# |DWLS |drop_l2mpg |  5|         |1  | 14.49542|       |1      |   |4.4954186 |r'Wr     |        |4.4954186 |        |
+	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf |p     |fit       |fitUnits |diffFit |chisq     |SBchisq |
+	# |:--------|:--------------|---:|:---------|:----|---------:|:---------|:-------|:-----|:---------|:--------|:-------|:---------|:-------|
+	# |DWLS     |               |  6 |          |0    | 12.00000 |          |        |      |0         |r'Wr     |        |0         |        |
+	# |DWLS     |drop_l2mpg     |  5 |          |1    | 14.49542 |          |1       |      |4.4954186 |r'Wr     |        |4.4954186 |        |
 	
 	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf | p    |
 	#    1            2           3     4          5     6          7          8        9     
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
-	old = FALSE # pre Feb 2021 version 2.18.1.233
-	# OpenMx:::pkg_globals$myVersion
-
-	if(old){
+	# Pre Feb 2021 version 2.18.1.233
+	if(packageVersion("OpenMx") < "2.18"){
 		# old format mxCompare
-		tablePub = tableOut[, c("comparison", "ep", "diffLL" , "diffdf", "p", "AIC", "base", "fitUnits")]
-		names(tablePub)     = c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base", "fitUnits")
+		tablePub = tableOut[, c("comparison", "ep", "diffLL" , "diffdf", "p", "AIC", "base")]
+		names(tablePub)     = c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base")
+		tablePub$fitUnits = ""
 	} else {
 		# new format mxCompare
 		tablePub = tableOut[, c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base", "fitUnits")]
@@ -1975,7 +1974,6 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		#  $ minus2LL  : num  330 330
 		#  $ diffLL    : num  NA 0
 		#  $ SBchisq   : num  NA NA
-
 	}
 
 	# Subtract row-1 AIC from all values and place the resulting deltaAIC column after AIC 
