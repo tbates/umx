@@ -5002,7 +5002,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' )
 #' 
 #' # umx added informative labels, created starting values, 
-#' # Ran you model (if autoRun is on), and displayed a brief summary
+#' # Ran your model (if autoRun is on), and displayed a brief summary
 #' # including a comparison if you modified a model...!
 #' 
 #' # Let's get some journal-ready fit information for standardized parameters

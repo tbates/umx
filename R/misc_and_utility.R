@@ -2540,8 +2540,9 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TR
 
 	if(plot){
 		plot(newValue)
+	}else{
+		return(newValue)		
 	}
-	return(newValue)
 }
 
 #' Print a percent object
