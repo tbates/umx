@@ -39,12 +39,12 @@ fin_percent(-50, value = 34.5)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_compound_interest]{fin_compound_interest()}}
+\item \code{\link[=fin_interest]{fin_interest()}}
 }
 
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
-\code{\link{fin_compound_interest}()},
+\code{\link{fin_interest}()},
 \code{\link{rad2deg}()}
 }
 \concept{Miscellaneous Functions}

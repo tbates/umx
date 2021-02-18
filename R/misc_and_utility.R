@@ -2347,7 +2347,8 @@ umx_write_to_clipboard <- function(x) {
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
-#' @param report "markdown" or "html"
+#' @param report "markdown" or "html", 
+#' @param table Whether to print a table of annual returns (default TRUE)
 #' @param largest_with_cents Default = 0
 #' @param baseYear Default = 0, can set, e.g. to 2020 for printing
 #' @return - Value of balance after yrs of investment.
@@ -2359,33 +2360,33 @@ umx_write_to_clipboard <- function(x) {
 #' @examples
 #' # Value of a principle after yrs years at 5% return, compounding monthly.
 #' # Report as a nice table of annual returns and a formatted total:
-#' fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10)
+#' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 #'
 #' \dontrun{
 #' # Make a nice table and open in web browser...
-#' fin_compound_interest(principal = 5000, interest = 0.05, rep= "html")
+#' fin_interest(principal = 5000, interest = 0.05, rep= "html")
 #' }
 #'
 #' # Value of periodic deposit of $100/yr after 10 years at rate 7% return.
-#' fin_compound_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
+#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 #'
 #' # Annual rather than monthly compounding (n=1)
-#' fin_compound_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
+#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
 #'
 #' # Value of principal + deposits of $100/yr over 10 years at 7% return.
-#' fin_compound_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
+#' fin_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
 #'
 #' # £20k at 7% once a year for 10 years
-#' fin_compound_interest(deposits=20e3, interest = 0.07, yrs = 10, n=1)
+#' fin_interest(deposits=20e3, interest = 0.07, yrs = 10, n=1)
 #' # $295,672
 #'
 #' # manual sum
 #' sum(20e3*(1.07^(10:1))) # 295672
 #'
 #' # $10,000 invested at the end of each year for 5 years at 6%
-#' fin_compound_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
+#' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 #'
-fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", report= c("markdown", "html"), largest_with_cents = 0, baseYear=0){
+fin_interest <- function(principal = 0, deposits = 0, deposit_inflator = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", report= c("markdown", "html"), largest_with_cents = 0, baseYear=0, table = TRUE){
 	report = match.arg(report)
 	if(deposit_inflator != 0){
 		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+deposit_inflator)^c(1:(yrs-1)))
@@ -2432,7 +2433,9 @@ fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator 
 		thisRow = c(thisRow[1], scales::dollar(thisRow[-1], prefix = symbol, largest_with_cents = largest_with_cents))
 		tableOut = rbind(tableOut, thisRow)
 	}
-	umx_print(tableOut, justify = "right", report=report)
+	if(table){
+		umx_print(tableOut, justify = "right", report=report)
+	}
 
 	# invisible(report)
 	# gray?		green		orange		Blue
@@ -2479,7 +2482,7 @@ fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator 
 
 #' Print a money object
 #'
-#' Print method for, class()= "money" objects: e.g. [umx::fin_compound_interest()]. 
+#' Print method for, class()= "money" objects: e.g. [umx::fin_interest()]. 
 #'
 #' @param x money object.
 #' @param symbol Default prefix if not set.
@@ -2490,7 +2493,7 @@ fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator 
 #' @method print money
 #' @export
 #' @examples
-#' fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 20)
+#' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
 print.money <- function(x, symbol = "$", ...) {
 	if(!is.null(attr(x, 'symbol')) ){
@@ -2516,7 +2519,7 @@ print.money <- function(x, symbol = "$", ...) {
 #' @return - new value and change required to return to baseline.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_compound_interest()]
+#' @seealso - [fin_interest()]
 #' @md
 #' @examples
 #' # Percent needed to return to original value after 10% taken off
