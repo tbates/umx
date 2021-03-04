@@ -7,7 +7,7 @@
 umxPlotFun(
   fun = dnorm,
   min = 0,
-  max = 5,
+  max = NA,
   xlab = NULL,
   ylab = NULL,
   title = NULL,
@@ -15,11 +15,11 @@ umxPlotFun(
 )
 }
 \arguments{
-\item{fun}{Function to plot. Also takes strings like "sin(x) + sqrt(1/x)"}
+\item{fun}{Function to plot}
 
-\item{min}{x-range min}
+\item{min}{x min}
 
-\item{max}{x-range max}
+\item{max}{x max}
 
 \item{xlab}{= Optional x axis label}
 
@@ -45,7 +45,9 @@ Easily plot a function - like sin, using ggplot.
 # Uses fonts not available on CRAN
 # Maybe call this funplot?
 umxPlotFun(sin, max= 2*pi)
-umxPlotFun("sqrt(1/x)", max= 2*pi)
+umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
+p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
+umxPlotFun(function(x){100^2-x^2}, max= 100)
 
 
 # Manually	

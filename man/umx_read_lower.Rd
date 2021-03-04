@@ -33,7 +33,7 @@ require(umx) # for umxRAM
 IQtests = c("brainstorm", "matrix", "moral", "shopping", "typing")
 allCols = c("C", IQtests, "avgIQ", "maxIQ", "video")
 
-df = umx_read_lower(file = "", diag = FALSE)
+df = umx_read_lower(diag = FALSE, names = allCols)
 0.38
 0.86	0.30
 0.42	0.12	0.27
