@@ -537,7 +537,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #  # This example won't work, as umxACE drops the covs from the data...
 #' # m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
 #' # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
-#' #
+#'
 #' }
 #'
 xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) {

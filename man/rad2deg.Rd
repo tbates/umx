@@ -17,11 +17,14 @@ rad2deg(rad)
 \description{
 Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
 
-\emph{note}: R's trig functions, e.g. \code{\link[=sin]{sin()}} use Radians for input! There are 2\eqn{x} \eqn{\pi}
-radians in a circle.
+\emph{note}: R's trig functions, e.g. \code{\link[=sin]{sin()}} use Radians for input! There are \eqn{2\pi}
+radians in a circle. 1 Rad = \eqn{180/\pi} degrees (~ 57.296\eqn{^{\circ}})
 }
 \examples{
 rad2deg(pi) #180 degrees
+}
+\references{
+\url{https://en.wikipedia.org/wiki/Radian}
 }
 \seealso{
 \itemize{
@@ -30,7 +33,7 @@ rad2deg(pi) #180 degrees
 
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
-\code{\link{fin_compound_interest}()},
+\code{\link{fin_interest}()},
 \code{\link{fin_percent}()}
 }
 \concept{Miscellaneous Functions}

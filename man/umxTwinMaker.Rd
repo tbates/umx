@@ -107,7 +107,7 @@ m1 = umxTwinMaker("test", paths, mzData = mzData, dzData= dzData,
 }
 \references{
 \itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
+\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{github}
 }
 }
 \seealso{

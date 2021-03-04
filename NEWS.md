@@ -1,76 +1,72 @@
 **Development version** umx 4.3.0
 
+## dev umx 4.5.0
+* IMPROVED `umxCP` `correlatedACE` leaves the covariances fixed@0
+
 
 # Releases
 ## umx 4.3.0
 * January 2021 R 4.0.3 (2020-10-10)
 * NEW `plot` can output to pdf, png, svg!
-* NEW `umx_set_plot_format` can pdf, png, svg output (in addition to DiagrammeR and graphviz)
+* NEW `umx_set_plot_format` can choose between pdf, png, svg plot output (in addition to DiagrammeR and graphviz)
 * IMPROVED: `umxSummary` now reports algebra values when present in RAM models closes #70
-* IMPROVED: `umxCompare` table output and plain-english summary printing (cat)
-* IMPROVED: table captions and Rmarkdown compatibility
 * IMPROVED: `umxSummary` tables have pandoc captions (see #145)
-* IMPROVED: messages in console
-* IMPROVED: `umxSimplex` summary tables have captions
-* IMPROVED: `umxDoC` summary tables have captions
-* FIXED: `umxSimplex` example
+* IMPROVED: `umxCompare` table output and plain-english summary printing (cat)
 * IMPROVED: `umxCP` practical workflows for correlated ACE
 * NEW: `umx_lower.tri` helper to get lower.tri values in 1 call
 * HELP: `umxCP` Document that correlatedA works on a, c and e, allowing factors built by these matrices to correlate.
 * BETA: `umxGxEbiv` lboundACE @ 0 by default
+* FIXED: `umxSimplex` example
 * FIXED: `umxGxEbiv` fix nonfunctional lboundACE and lboundM (thanks @mcneale)
 * FIXED: `umxGxEbiv` selVars order was imposed on expectation dimnames but didn't match the cov matrix due to bespoke nature of expCov algebras...
 * IMPROVED: `fin_compound_interest` now outputs a table of annual returns
 * IMPROVED: `umxAPA` uses cat to improve usability of summary data
 * NEW: `umx_set_plot_use_hrbrthemes` control
-* NEW: `plot.percent` for percent change
+* NEW: `plot.percent` plot support for percent change questions
 
 ## umx 4.2.5
 * December 2020 R 4.0.3 (2020-10-10)
 * NEW: `tmx_show` display model matrices on the web, with color-coded free/false, values + roll-over labels.
 * NEW: `harmonic_mean` with support for weights.
+* HELP: `harmonic_mean` Example averaging speeds across distance.
 * NEW: `geometric_mean`
 * NEW: `fin_compound_interest`
-* NEW: `fin_percent_off`
-* IMPROVED: `umxPlotGxE` gains CI ribbons (closes #96)
-* IMPROVED: `umxPlotGxE` defaults to use ggplot and now returns the graphs for decoration (closes #139)
-* IMPROVED: `umxPlotGxE` can now plot user-specified moderator ranges (closes #96)
-* IMPROVED: `umxPlotIP` now relies on matrix cells, not the labels they contain (closes #61)
-* IMPROVED: `umxACE` returns group models invisibly #134 @khusmann.
-* IMPROVED: `plot` now allows "ortho" "compound" and "polyline" spline control.
-* IMPROVED: `umx_set_optimization_options` can get and set "Parallel diagnostics"
-* IMPROVED: `umx_set_optimization_options` can get and set "Parallel diagnostics".
-* IMPROVED: `tmx_show` smart about not printing NULL matrices.
-* IMPROVED: 'umxEquate` gained a `newlabels` parameter for the equated paths (rather than one path adopting the label of the other)
-* IMPROVED: `umx_score_scale` supports minManifests for factor scores
-* IMPROVED: `umx_open_CRAN_page` now can install a package if not installed, as well as open the CRAN page for the package.
-* IMPROVED: `umx_rename_file` nicer user feedback about matches and files checked
-* IMPROVED: `umx_long2wide` more resilient to zygosity column type
-* IMPROVED: `umxSummarizeTwinData` more resilient to name of age column
-* IMPROVED: `plot` strip_zero option works for fixed (@) parameters
-* IMPROVED: `umx_is_class` handle non-df input
-* IMPROVED: `umxCI`: gains `regex` parameter to support adding and removing CIs on labels matching a string pattern.
-* IMPROVED: `umx_is_class` handle non-df input
-* IMPROVED: `umx_rename_file` nicer user feedback about matches and files checked
-* IMPROVED: `umx_set_table_format` to markdown on load
-* FIXED: 'umxRAM` group option failing to pass autoRun tryHard Merge pull request #134 @khusmann
-* FIXED: `umxRAM` with a model as first parameter now doesn't demand new data. Updates data if data is provided.
-* FIXED: `umxPlotIP` wasn't working with threshold models (didn't ignore thresh names for plot).
-* FIXED: `umx_time` was using time units for model 1 for all models... h/t @khusmann
-* FIXED: `umxPlotACEv` was not displaying half the variables in an MV model as NA.
-* FIXED: `umx_set_cores` no longer use `imxGetNumThreads` which is actually hard-coded to not report number of threads.
+* NEW: `fin_percent`
+* IMPROVED: `umxPlotGxE` Gains CI ribbons (closes #96)
+* IMPROVED: `umxPlotGxE` Defaults to use ggplot and now returns the graphs for further decoration (closes #139)
+* IMPROVED: `umxPlotGxE` Can now plot user-specified moderator ranges (closes #96)
+* IMPROVED: `umxPlotIP` Now relies on matrix cells, not their labels (closes #61)
+* IMPROVED: `umxACE` Returns group models invisibly #134 @khusmann.
+* IMPROVED: `plot` Now allows "ortho" "compound" and "polyline" spline control.
+* IMPROVED: `umx_set_optimization_options` Can get and set "Parallel diagnostics"
+* IMPROVED: `tmx_show` Smart about not printing NULL matrices.
+* IMPROVED: 'umxEquate` Gained a `newlabels` parameter for the equated paths (rather than one path adopting the label of the other)
+* IMPROVED: `umx_score_scale` Supports `minManifests` for factor scores
+* IMPROVED: `umx_open_CRAN_page` Can now install a package, as well as open the CRAN page for the package.
+* IMPROVED: `umx_rename_file` Better feedback about matches and files checked.
+* IMPROVED: `umx_long2wide` More resilient to zygosity column type.
+* IMPROVED: `umxSummarizeTwinData` More resilient to name of age column
+* IMPROVED: `plot` `strip_zero` option works for fixed (@) parameters
+* IMPROVED: `umx_is_class` Handle non-df input.
+* IMPROVED: `umxCI`: Gains `regex` parameter to support adding and removing CIs on labels matching a string pattern.
+* IMPROVED: `umx_is_class` Handles non-df input.
+* IMPROVED: `umx_set_table_format` Defaults to "markdown" on load.
+* FIXED: `umxPlotIP` Wasn't working with threshold models (didn't ignore thresh names for plot).
+* FIXED: `umx_time` Was using time units for model 1 for all models... h/t @khusmann
+* FIXED: `umxPlotACEv` Was not displaying half the variables in an MV model as NA.
+* FIXED: `umx_set_cores` No longer use `imxGetNumThreads` which is hard-coded to not report number of threads.
 * FIXED: Check for more than one named CI requested (closes #136).
-* FIXED: `tmx_show` has `html_font` parameter in help.
-* WORKAROUND: 'umxSummary` wraps `mxRefModels` error for WLS models in tryCatch to tell user OpenMx doesn't support fit stats for WLS as yet.
-* BACKWARD: `umxThresholdMatrix` changed parameter from selDVs to fullVarNames to prevent user error.
-* HELP: `harmonic_mean` example averaging speeds across distance.
+* FIXED: `tmx_show` Has `html_font` parameter in help.
+* WORKAROUND: 'umxSummary` Catches `mxRefModels` error for WLS models and politely informs user OpenMx doesn't support fit stats for WLS yet.
+* BACKWARD: `umxThresholdMatrix` Changed parameter from selDVs to fullVarNames to prevent user error.
 * NEW: `umx_read_prolific_demog` to read prolific academic demographics files.
 
 ## umx 4.1.0
 * July 2020 R 4.0.0
-* CHANGE: `umxRAM` group now independent by default (label style  "path_group" )
-* FIXED: 'umxRAM` group option failing to pass autoRun tryHard Merge pull request #134 @khusmann
-* IMPROVED: `umxACE` return group models invisibly #134 @khusmann
+* CHANGE: `umxRAM` Groups in multi-group models now independent by default (label style  "path_group" )
+* FIXED: 'umxRAM` Group option failing to pass autoRun tryHard Merge pull request #134 @khusmann
+* FIXED: `umxRAM` No longer demand new data if a model is given as the first parameter. Updates data if provided.
+* IMPROVED: `umxACE` Return group models invisibly #134 @khusmann
 * IMPROVED: `umxACEv` support for covariates enabled.
 * IMPROVED: `umx_score_scale` gains the ability to return a factor score.
 * IMPROVED: `umxEFA` returns scores by default when requested (used to require user to also set `return = "loadings"`  (thanks to user!)
@@ -88,8 +84,8 @@
 * HELP:  `umxTwinMaker`.
 
 
-
 ## umx 4.0.0
+
 * May 2020 R 4.0.0
 * FIXED: `umx_score_scale` Fix a bad design decision where I was storing the reversed items in the data returned to the user. Worked for 1 run, but not repeats...
 * FIXED: `umx_long2wide` now looks for zygosity in more than just twin 1 h/t @nathangillespie for catching this case.

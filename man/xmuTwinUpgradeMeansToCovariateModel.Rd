@@ -45,7 +45,7 @@ dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 # m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 # m2 = xmuTwinUpgradeMeansToCovariateModel(m1, fullVars = c("ht1", "ht2"),
 # 	fullCovs = c("age1", "sex1", "age2", "sex2"), sep = "")
-#
+
 }
 
 }

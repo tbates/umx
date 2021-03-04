@@ -16,7 +16,7 @@ umxCP(
   data = NULL,
   zyg = "zygosity",
   allContinuousMethod = c("cumulants", "marginals"),
-  correlatedA = FALSE,
+  correlatedACE = FALSE,
   dzAr = 0.5,
   dzCr = 1,
   autoRun = getOption("umx_auto_run"),
@@ -32,7 +32,8 @@ umxCP(
   numObsMZ = NULL,
   freeLowerA = FALSE,
   freeLowerC = FALSE,
-  freeLowerE = FALSE
+  freeLowerE = FALSE,
+  correlatedA = "deprecated"
 )
 }
 \arguments{
@@ -59,7 +60,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
-\item{correlatedA}{(a, and c and e). Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.}
+\item{correlatedACE}{Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -92,6 +93,8 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 \item{freeLowerC}{(ignore): Whether to leave the lower triangle of C free (default = FALSE).}
 
 \item{freeLowerE}{(ignore): Whether to leave the lower triangle of E free (default = FALSE).}
+
+\item{correlatedA}{deprecated.}
 }
 \value{
 \itemize{

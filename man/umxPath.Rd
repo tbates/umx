@@ -200,7 +200,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 )
 umxSummary(m1, std = TRUE)
 require(umx)
-#
+
 
 # ====================
 # = Cholesky example =

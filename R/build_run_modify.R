@@ -2484,7 +2484,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
-#' @param correlatedA (a, and c and e). Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
+#' @param correlatedACE Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -2501,6 +2501,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param freeLowerA (ignore): Whether to leave the lower triangle of A free (default = FALSE).
 #' @param freeLowerC (ignore): Whether to leave the lower triangle of C free (default = FALSE).
 #' @param freeLowerE (ignore): Whether to leave the lower triangle of E free (default = FALSE).
+#' @param correlatedA deprecated.
 #' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
@@ -2601,7 +2602,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' umxCompare(m6, m1)
 #' } # end dontrun
 #'
-umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedA = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
+umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedACE = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = "deprecated") {
 	# TODO umxCP: Add covariates to means model: Will involve xmu_make_top_twin? also means model?
 	tryHard             = match.arg(tryHard)
 	type                = match.arg(type)
@@ -2634,24 +2635,32 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 	model     = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= selCovs, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, bVector = FALSE, verbose= FALSE)
 	tmp       = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 	varStarts = tmp$varStarts
-
-	if(correlatedA){
-		# nFac = 3
-		a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # Latent common factor
-		c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Common environmental path coefficients
-		e_cp_matrix = umxMatrix("e_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Unique environmental path coefficients
-
+	if(correlatedA != "deprecated"){
+		message("Polite message: As of February 2021, please use 'correlatedACE' in place of 'correlatedA'.
+		The new behavior with 'correlatedACE' still makes a_cp_matrix etc. type Lower, but leaves the off-diagonal elements fixed at zero.
+		(you can then free each one as you choose)")
+		correlatedACE = TRUE
+	}
+	if(correlatedACE){
+		if(correlatedA != "deprecated"){
+			a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # Latent common factor
+			c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Common environmental path coefficients
+			e_cp_matrix = umxMatrix("e_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Unique environmental path coefficients
+		}else{
+			a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # Latent common factor
+			c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # latent common factor Common environmental path coefficients
+			e_cp_matrix = umxMatrix("e_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # latent common factor Unique environmental path coefficients			
+		}
+		diag(a_cp_matrix$free) = TRUE
+		diag(c_cp_matrix$free) = TRUE
+		diag(e_cp_matrix$free) = TRUE
 		diag(a_cp_matrix$values) = .7
 		diag(c_cp_matrix$values) = .0
 		diag(e_cp_matrix$values) = .7
 
-		# a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
-		# c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
-		# e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
-
-		a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
-		c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
-		e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		# a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		# c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
+		# e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
 
 	} else {
 		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7)
@@ -4048,7 +4057,6 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE, selDVs= "deprecated"){
 	# TODO: umxThresholdMatrix: priority A: Move to a more robust way to detect twin than just the sep isn't NULL??
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
-	# df = x; sep = NULL; threshMatName = "threshMat"; method = "auto"; l_u_bound = c(NA,NA); verbose = T
 	method = match.arg(method)
 	if(method=="allFree"){
 		verbose=FALSE
@@ -4077,7 +4085,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		twinIndexes = tmp$twinIndexes
 		nSib        = length(twinIndexes)
 	}
-	# Create df with just the requested variables
+	# Create dataframe with just the requested variables
 	df = df[, fullVarNames, drop = FALSE]
 	# Check input
 	if(dim(df)[1] < 1){ stop("Data input to umxThresholdMatrix had no rows. I use the data to set thresholds, so the data must have rows.") }
@@ -4532,7 +4540,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' )
 #' umxSummary(m1, std = TRUE)
 #' require(umx)
-#' #
+#'
 #' 
 #' # ====================
 #' # = Cholesky example =
@@ -4994,7 +5002,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' )
 #' 
 #' # umx added informative labels, created starting values, 
-#' # Ran you model (if autoRun is on), and displayed a brief summary
+#' # Ran your model (if autoRun is on), and displayed a brief summary
 #' # including a comparison if you modified a model...!
 #' 
 #' # Let's get some journal-ready fit information for standardized parameters

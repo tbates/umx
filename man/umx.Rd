@@ -37,7 +37,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 )
 
 # umx added informative labels, created starting values, 
-# Ran you model (if autoRun is on), and displayed a brief summary
+# Ran your model (if autoRun is on), and displayed a brief summary
 # including a comparison if you modified a model...!
 
 # Let's get some journal-ready fit information for standardized parameters

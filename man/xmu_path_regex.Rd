@@ -33,7 +33,7 @@ xmu_path_regex(c("a", "one", "b"), pattern = "$", replacement = "_T1")
 }
 \references{
 \itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
+\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{github}
 }
 }
 \seealso{

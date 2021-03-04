@@ -2333,18 +2333,12 @@ umx_write_to_clipboard <- function(x) {
 # =========================
 
 
-#' Compute the value of a principle plus annual savings, at a compound interest over a number of years
-#'
+#' Compute the value of a principle & annual deposits at a compound interest over a number of years
 #' @description
 #' Allows you to determine the final value of an initial `principle` (with optional 
 #' periodic `deposits`), over a number of years (`yrs`) at a given rate of `interest`.
-#'
-#' @details None.
-#' If an amount of $5,000 is deposited into a savings account at an annual interest rate of 5%, compounded monthly, 
-#' with additional deposits of $100 per month (made at the end of each month). The value of the investment after 10 
-#' years can be calculated as follows...
-#'
-#'
+#' Principl and deposits are optional. You control compounding periods eaach year (n) and whether deposits occur at the beginning or end of the year.
+#' The function outputs a nice table of annual returns, formats the total using a user-settable currency `symbol`. Can also `report` using a web table.
 #' @param principal The initial investment at time 0.
 #' @param deposits Optional periodic additional investment each *year*.
 #' @param interest Annual interest rate (default = .05)
@@ -2353,34 +2347,46 @@ umx_write_to_clipboard <- function(x) {
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
-#' @param report "markdown" or "html"
+#' @param report "markdown" or "html", 
+#' @param table Whether to print a table of annual returns (default TRUE)
+#' @param largest_with_cents Default = 0
+#' @param baseYear Default = 0, can set, e.g. to 2020 for printing
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_percent()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @references - [tutorials](https://tbates.github.io), [github](https://github.com/tbates/umx)
 #' @md
 #' @examples
-#' #
 #' # Value of a principle after yrs years at 5% return, compounding monthly.
-#' fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10)
-#' # annual compounding
-#' fin_compound_interest(principal = 5000, interest = 0.05, yrs = 10, n=1)
-#' #
+#' # Report as a nice table of annual returns and a formatted total:
+#' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
+#'
+#' \dontrun{
+#' # Make a nice table and open in web browser...
+#' fin_interest(principal = 5000, interest = 0.05, rep= "html")
+#' }
+#'
 #' # Value of periodic deposit of $100/yr after 10 years at rate 7% return.
-#' fin_compound_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
-#' #
-#' # Value of principal + deposit of $100/yr after 10 years at rate 7% return.
-#' fin_compound_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
-#' #
-#' fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 10, n=1)
-#' # manually
+#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
+#'
+#' # Annual rather than monthly compounding (n=1)
+#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
+#'
+#' # Value of principal + deposits of $100/yr over 10 years at 7% return.
+#' fin_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
+#'
+#' # £20k at 7% once a year for 10 years
+#' fin_interest(deposits=20e3, interest = 0.07, yrs = 10, n=1)
+#' # $295,672
+#'
+#' # manual sum
 #' sum(20e3*(1.07^(10:1))) # 295672
 #'
 #' # $10,000 invested at the end of each year for 5 years at 6%
-#' fin_compound_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
+#' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 #'
-fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", report= c("markdown", "html")){
+fin_interest <- function(principal = 0, deposits = 0, deposit_inflator = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", report= c("markdown", "html"), largest_with_cents = 0, baseYear=0, table = TRUE){
 	report = match.arg(report)
 	if(deposit_inflator != 0){
 		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+deposit_inflator)^c(1:(yrs-1)))
@@ -2423,11 +2429,13 @@ fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator 
 		totalDeposits = (totalDeposits + deposits[yr])
 		totalInterest = (totalInterest + thisInterest)
 		balance       = (balance + deposits[yr] + thisInterest)
-		thisRow = c(Year=yr, Deposit= deposits[yr], Interest = thisInterest, Total_Deposit = totalDeposits, Total_Interest = totalInterest, Total = balance)
-		thisRow = c(thisRow[1], scales::dollar(thisRow[-1], prefix = symbol, largest_with_cents = 0))
+		thisRow = c(Year=yr+baseYear, Deposit= deposits[yr], Interest = thisInterest, Total_Deposit = totalDeposits, Total_Interest = totalInterest, Total = balance)
+		thisRow = c(thisRow[1], scales::dollar(thisRow[-1], prefix = symbol, largest_with_cents = largest_with_cents))
 		tableOut = rbind(tableOut, thisRow)
 	}
-	umx_print(tableOut, justify = "right", report=report)
+	if(table){
+		umx_print(tableOut, justify = "right", report=report)
+	}
 
 	# invisible(report)
 	# gray?		green		orange		Blue
@@ -2474,7 +2482,7 @@ fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator 
 
 #' Print a money object
 #'
-#' Print method for, class()= "money" objects: e.g. [umx::fin_compound_interest()]. 
+#' Print method for, class()= "money" objects: e.g. [umx::fin_interest()]. 
 #'
 #' @param x money object.
 #' @param symbol Default prefix if not set.
@@ -2485,7 +2493,7 @@ fin_compound_interest <- function(principal = 0, deposits = 0, deposit_inflator 
 #' @method print money
 #' @export
 #' @examples
-#' fin_compound_interest(deposits = 20e3, interest = 0.07, yrs = 20)
+#' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
 print.money <- function(x, symbol = "$", ...) {
 	if(!is.null(attr(x, 'symbol')) ){
@@ -2499,30 +2507,30 @@ print.money <- function(x, symbol = "$", ...) {
 #' Compute the percent change needed to return to the original value after percent off (or on).
 #'
 #' @description
-#' Determine the percent change needed to "undo" an initial percent change.
-#'
-#' @details None.
-#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
+#' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
+#' If an amount of \$100 has 20\% added, what percent do we need to drop it by to return to the original value?
+#' `fin_percent(20)` yields \$100 increased by 20\% = \$120 (Percent to reverse = -17\%)
 #' 
-#' @param percent Change in percent (e.g. for 10%, enter 10, not 0.1)
+#' @param percent Change in percent (enter 10 for 10%, not 0.1)
 #' @param value Principal
-#' @param symbol units (default = $)
-#' @param digits (rounding)
+#' @param symbol value units (default = "$")
+#' @param digits Rounding of results (default 2 places)
+#' @param plot Whether to plot the result (default TRUE)
 #' @return - new value and change required to return to baseline.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_compound_interest()]
+#' @seealso - [fin_interest()]
 #' @md
 #' @examples
-#' #
-#' # Percent needed to return to original value after 10% off
+#' # Percent needed to return to original value after 10% taken off
 #' fin_percent(-10)
-#' # Percent needed to return to original value after 10% on
+#'
+#' # Percent needed to return to original value after 10% added on
 #' fin_percent(10)
 #'
 #' # Percent needed to return to original value after 50% off 34.50
 #' fin_percent(-50, value = 34.5)
-fin_percent <- function(percent, value= 100, symbol = "$", digits = 2) {
+fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE) {
 	percent  = percent/100
 	newValue = value * (1 + percent)
 	percent_to_reverse = (value/newValue) - 1
@@ -2532,7 +2540,12 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2) {
 	attr(newValue, 'digits')   = digits
 	attr(newValue, 'symbol')   = symbol
 	attr(newValue, 'percent_to_reverse') = percent_to_reverse
-	return(newValue)
+
+	if(plot){
+		plot(newValue)
+	}else{
+		return(newValue)		
+	}
 }
 
 #' Print a percent object
@@ -2595,7 +2608,6 @@ plot.percent <- function(x, ...) {
 	percentChange  = attr(x, 'percent')	
 	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
 
-	
 	dir = ifelse(percentChange < 0, "decreased", "increased")
 
 	# fnReversePercent(-.1)
@@ -2609,17 +2621,11 @@ plot.percent <- function(x, ...) {
 	# x range	= -100 (%) to +500 (%)?
 	# y = -100 to +200?
 	# y range	= -100 to +200?
-
-	# ISA fixes all of this... 20k/yr to add
-	# Income   tax-free allowance = £12,500/yr
-	# Interest tax-free allowance = £12,500/yr
-	# Dividend tax-free allowance =  £2,000/yr (I'm under.. phew)
-	# Capital gains tax-free allowance = £12,300 (tax rate = 20%)
 	
 	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
 	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
 	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
-	p = p + labs(x = "Percent Off", y = "Percent back on to recover", title = "Percent change on, and off")
+	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(oldValue, " percent change"))
 
 	# subtitle = "Subtitle: (1973-74)",
 	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
@@ -2633,11 +2639,14 @@ plot.percent <- function(x, ...) {
 		p = p + cowplot::theme_cowplot(font_size = 11)
 	}
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
+
+	# Add label to plot, centred on x, top at y} (in data coordinates)
 	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "lightgrey")
-	p = p + cowplot::draw_label("\u25CF", hjust=0, x = percentChange*100, y = percent_to_reverse*100, color = "red")
+	# Add label to plot in data coordinates, flush-left at x, baseline centred on y.
+	p = p + cowplot::draw_label("\u25CF", hjust=0, vjust=.5, x = percentChange*100, y = percent_to_reverse*100, color = "red")
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
-	return(p)
+	invisible(p)
 }
 
 #' Easily plot functions in R
@@ -2647,9 +2656,9 @@ plot.percent <- function(x, ...) {
 #'
 #' @details Easily plot a function - like sin, using ggplot.
 #'
-#' @param fun Function to plot
-#' @param min x min
-#' @param max x max
+#' @param fun Function to plot. Also takes strings like "sin(x) + sqrt(1/x)"
+#' @param min x-range min
+#' @param max x-range max
 #' @param xlab = Optional x axis label
 #' @param ylab = Optional y axis label
 #' @param title Optional title for the plot
@@ -2667,6 +2676,7 @@ plot.percent <- function(x, ...) {
 #' umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
 #' p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
 #' umxPlotFun(function(x){100^2-x^2}, max= 100)
+#' umxPlotFun("sqrt(1/x)", max= 2*pi)
 #'
 #' 
 #' # Manually	
@@ -2675,7 +2685,18 @@ plot.percent <- function(x, ...) {
 #' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
 #' }
 #'
-umxPlotFun <- function(fun= dnorm, min= 0, max= NA, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
+umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
+	if(class(fun)=="character"){
+		make_function <- function(args, body, env = parent.frame()) {
+			args <- as.pairlist(args)
+			eval(call("function", args, body), env)
+		}
+		if(is.null(title)){
+			title = paste0("Plot of ", omxQuotes(fun))
+		}
+		fun = make_function(alist(x=NA), parse(text = fun)[[1]] )
+	}
+	
 	if(!is.null(p)){
 		if(is.na(max)){
 			p = p + ggplot2::stat_function(fun = fun)
@@ -2695,8 +2716,8 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= NA, xlab = NULL, ylab = NULL, ti
 		}
 
 		if(is.null(title)){
-			if(length(as.character(quote(sin))) == 1){
-				title = paste0("Plot of ", as.character(quote(sin), " function"))
+			if(length(as.character(quote(fun))) == 1){
+				title = paste0("Plot of ", as.character(quote(fun), " function"))
 			} else {
 				title = paste0("Function plot")
 			}
@@ -3072,40 +3093,38 @@ print.reliability <- function (x, digits = 4, ...){
 #'
 #' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
 #' 
-#' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are 2\eqn{x} \eqn{\pi} 
-#' radians in a circle.
+#' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are \eqn{2\pi} 
+#' radians in a circle. 1 Rad = \eqn{180/\pi} degrees (~ 57.296\eqn{^{\circ}})
 #'
 #' @param rad The value in Radians you wish to convert
 #' @return - value in degrees
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [deg2rad()], [sin()]
+#' @references [https://en.wikipedia.org/wiki/Radian](https://en.wikipedia.org/wiki/Radian)
 #' @md
 #' @examples
 #' rad2deg(pi) #180 degrees
-rad2deg <- function(rad) {
-	rad * 180/pi
-}
+rad2deg <- function(rad) { rad * 180/pi }
 
 #' Convert Degrees to Degrees 
 #'
-#' @description Just a helper to multiply degrees by \eqn{\pi} and divide by 180 to get radians.
+#' @description A helper to convert degres (360 in  a circle) to Rad (\eqn{2\pi} in a circle, so \eqn{deg x 180/\pi} to get radians.
 #' 
-#' *note*: R's trig functions, e.g. [sin()] use Radians for input! 180 Degrees is equal to 
-#' 2\eqn{x \pi} radians.
+#' *note*: R's trig functions, e.g. [sin()] use Radians for input! 
+#' 
+#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees	 (\eqn{\approx 57.296^{\circ}})
 #'
 #' @param deg The value in degrees you wish to convert to radians
 #' @return - value in radians
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [rad2deg()], [sin()]
+#' @references [https://en.wikipedia.org/wiki/Radian](https://en.wikipedia.org/wiki/Radian)
 #' @md
 #' @examples
-#' deg2rad(180) # pi!
-deg2rad <- function(deg) {
-	deg * pi/ 180
-}
-
+#' deg2rad(180) == pi # TRUE!
+deg2rad <- function(deg) { deg * pi/ 180 }
 
 # =======================
 # = Developer functions =
@@ -5234,7 +5253,7 @@ umx_str_from_object <- function(x) {
 #' @export
 #' @family String Functions
 #' @seealso - [umx_explode()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @references - [tutorials](https://tbates.github.io), [github](https://github.com/tbates/umx)
 #' @md
 #' @examples
 #' umx_str_chars("myFpassUword", c(3,8))

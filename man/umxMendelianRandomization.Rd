@@ -74,8 +74,8 @@ plot(m3, means = FALSE)
 # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
 m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
 m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
-#
-#
+
+
 df = umx_make_MR_data(1e5) 
 m1 = umxMendelianRandomization(Y ~ X, instruments = ~ qtl, data = df)
 coef(m1)
@@ -86,6 +86,8 @@ coef(m1)
 # library(sem) # may require you to install X11
 m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 coef(m2)
+
+# Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 }
