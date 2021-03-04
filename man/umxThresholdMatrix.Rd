@@ -153,7 +153,7 @@ cutPoints = quantile(twinData[, "bmi1"], probs = c(.25, .4, .7), na.rm = TRUE)
 twinData$obeseQuad1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 twinData$obeseQuad2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 selVars = c("obeseQuad1", "obeseQuad2")
-twinData[, selVars] = mxFactor(twinData[, selVars], levels = obesityLevels)
+twinData[, selVars] = umxFactor(twinData[, selVars])
 
 selDVs =c("bmi", "obese", "obeseTri", "obeseQuad")
 tmp = umxThresholdMatrix(twinData, selDVs = tvars(selDVs, sep= ""), sep = "", verbose = TRUE)

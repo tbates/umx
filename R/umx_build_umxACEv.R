@@ -180,20 +180,21 @@
 #' # ===================
 #' require(umx)
 #' data(twinData)
+#'
 #' # Cut bmi column to form ordinal obesity variables
-#' ordDVs = c("obese1", "obese2")
-#' selDVs = c("obese")
-#' obesityLevels = c('normal', 'overweight', 'obese')
 #' cutPoints = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' obesityLevels = c('normal', 'overweight', 'obese')
 #' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#'
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
-#' mzData = twinData[twinData$zygosity %in% "MZFF", ][1:80,] # 80 pairs for speed
+#' twinData[, c("obese1", "obese2")] = umxFactor(twinData[, c("obese1", "obese2")])
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ][1:80,] # 80 pairs for speed on CRAN
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ][1:80,]
-#' str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
-#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
-#' umxSummary(m1)
+#' m2 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#'
+#' # FYI: Show mz, dz, and t1 and t2 have the same levels!
+#' str(mzData)
 #' 
 #' # ============================================
 #' # = Bivariate continuous and ordinal example =
@@ -207,8 +208,8 @@
 #' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #'
-#' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
-#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
+#' # Make the ordinal variables into ordered mxFactors
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #'
 #' # umxACEv can trim out unused variables on its own
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
@@ -228,7 +229,7 @@
 #' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' ordDVs = c("obese1", "obese2")
-#' twinData[, ordDVs] = mxFactor(twinData[, ordDVs], levels = obesityLevels)
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 #' 
 #' selDVs = c("wt", "obese")
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]

@@ -2,12 +2,12 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{fin_interest}
 \alias{fin_interest}
-\title{Compute the value of a principle & annual deposits at a compound interest over a number of years}
+\title{Compute the value of a principal & annual deposits at a compound interest over a number of years}
 \usage{
 fin_interest(
   principal = 0,
   deposits = 0,
-  deposit_inflator = 0,
+  dinflate = 0,
   interest = 0.05,
   yrs = 10,
   n = 12,
@@ -24,7 +24,7 @@ fin_interest(
 
 \item{deposits}{Optional periodic additional investment each \emph{year}.}
 
-\item{deposit_inflator}{Whether to increase the deposits over time (default 0 = no)}
+\item{dinflate}{How much to inflate deposits over time (default = 0)}
 
 \item{interest}{Annual interest rate (default = .05)}
 
@@ -50,13 +50,13 @@ fin_interest(
 }
 }
 \description{
-Allows you to determine the final value of an initial \code{principle} (with optional
+Allows you to determine the final value of an initial \code{principal} (with optional
 periodic \code{deposits}), over a number of years (\code{yrs}) at a given rate of \code{interest}.
-Principl and deposits are optional. You control compounding periods eaach year (n) and whether deposits occur at the beginning or end of the year.
+Principal and deposits are optional. You control compounding periods each year (n) and whether deposits occur at the beginning or end of the year.
 The function outputs a nice table of annual returns, formats the total using a user-settable currency \code{symbol}. Can also \code{report} using a web table.
 }
 \examples{
-# Value of a principle after yrs years at 5\% return, compounding monthly.
+# Value of a principal after yrs years at 5\% return, compounding monthly.
 # Report as a nice table of annual returns and a formatted total:
 fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 

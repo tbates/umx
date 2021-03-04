@@ -2333,16 +2333,16 @@ umx_write_to_clipboard <- function(x) {
 # =========================
 
 
-#' Compute the value of a principle & annual deposits at a compound interest over a number of years
+#' Compute the value of a principal & annual deposits at a compound interest over a number of years
 #' @description
-#' Allows you to determine the final value of an initial `principle` (with optional 
+#' Allows you to determine the final value of an initial `principal` (with optional 
 #' periodic `deposits`), over a number of years (`yrs`) at a given rate of `interest`.
-#' Principl and deposits are optional. You control compounding periods eaach year (n) and whether deposits occur at the beginning or end of the year.
+#' Principal and deposits are optional. You control compounding periods each year (n) and whether deposits occur at the beginning or end of the year.
 #' The function outputs a nice table of annual returns, formats the total using a user-settable currency `symbol`. Can also `report` using a web table.
 #' @param principal The initial investment at time 0.
 #' @param deposits Optional periodic additional investment each *year*.
 #' @param interest Annual interest rate (default = .05)
-#' @param deposit_inflator Whether to increase the deposits over time (default 0 = no)
+#' @param dinflate How much to inflate deposits over time (default = 0)
 #' @param yrs Duration of the investment (default = 10).
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
 #' @param when Deposits made at the "beginning" (of each year) or "end"
@@ -2358,7 +2358,7 @@ umx_write_to_clipboard <- function(x) {
 #' @references - [tutorials](https://tbates.github.io), [github](https://github.com/tbates/umx)
 #' @md
 #' @examples
-#' # Value of a principle after yrs years at 5% return, compounding monthly.
+#' # Value of a principal after yrs years at 5% return, compounding monthly.
 #' # Report as a nice table of annual returns and a formatted total:
 #' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 #'
@@ -2386,10 +2386,10 @@ umx_write_to_clipboard <- function(x) {
 #' # $10,000 invested at the end of each year for 5 years at 6%
 #' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 #'
-fin_interest <- function(principal = 0, deposits = 0, deposit_inflator = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", report= c("markdown", "html"), largest_with_cents = 0, baseYear=0, table = TRUE){
+fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", report= c("markdown", "html"), largest_with_cents = 0, baseYear=0, table = TRUE){
 	report = match.arg(report)
-	if(deposit_inflator != 0){
-		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+deposit_inflator)^c(1:(yrs-1)))
+	if(dinflate != 0){
+		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+dinflate)^c(1:(yrs-1)))
 	}else{
 		deposits = rep(deposits, times = yrs)
 	}
@@ -2400,7 +2400,7 @@ fin_interest <- function(principal = 0, deposits = 0, deposit_inflator = 0, inte
 
 	# TODO add an annual table like this
 	# Final Investment Value		Initial  Balance
-	# £267,672,51					$principle
+	# £267,672,51					$principal
 	# Total Interest Earned		Total <period> deposits
 	# £267,672,51					£267,672,51
 	# 							Effective annual rate: 4.06%
@@ -2683,27 +2683,33 @@ plot.percent <- function(x, ...) {
 #' }
 #'
 umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
-
-	if(class(fun)=="character"){
-		make_function <- function(args, body, env = parent.frame()) {
-			args <- as.pairlist(args)
-			eval(call("function", args, body), env)
+	if(class(fun) == "numeric"){
+		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
+	} else if(class(fun) == "character"){
+		for (i in fun) {
+			make_function <- function(args, body, env = parent.frame()) {
+				args <- as.pairlist(args)
+				eval(call("function", args, body), env)
+			}
+			if(is.null(title)){
+				title = paste0("Plot of ", omxQuotes(fun))
+			}
+			if(is.null(ylab)){
+				ylab = fun
+			}
+			fun = make_function(alist(x=NA), parse(text = fun)[[1]] )		
 		}
-		if(is.null(title)){
-			title = paste0("Plot of ", omxQuotes(fun))
-		}
-		fun = make_function(alist(x=NA), parse(text = fun)[[1]] )
 	}
-	
+
 	if(!is.null(p)){
 		p = p + ggplot2::stat_function(fun = fun, xlim= c(min, max))
 	}else{
-		p     = ggplot(data.frame(x = c(min, max)), aes(x))
-		p     = p + ggplot2::stat_function(fun = fun)
-		xlab  = ifelse(!is.null(xlab),  xlab , "X value")
+		p    = ggplot(data.frame(x = c(min, max)), aes(x))
+		p    = p + ggplot2::stat_function(fun = fun)
+		xlab = ifelse(!is.null(xlab),  xlab , "X value")
 		if(is.null(ylab)){
-			if(length(as.character(quote(sin))) == 1){
-				ylab = paste0(as.character(quote(sin), " of x"))
+			if(length(as.character(quote(fun))) == 1){
+				ylab = paste0(as.character(quote(fun), " of x"))
 			} else {
 				ylab = paste0("Function of X")
 			}
@@ -2718,6 +2724,7 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 		}
 		p = p + labs(x = xlab, y = ylab, caption = title)
 	}
+	
 	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
 		p = p + hrbrthemes::theme_ipsum()
 	} else {
@@ -3013,7 +3020,7 @@ specify_decimal <- function(x, k){
 #' @export
 #' @family Miscellaneous Stats Helpers
 #' @seealso - [umx::print.reliability()], 
-#' @references - \url{https://cran.r-project.org/package=Rcmdr}
+#' @references - <https://cran.r-project.org/package=Rcmdr>
 #' @examples
 #' # treat car data as items of a test
 #' data(mtcars)

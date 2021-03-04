@@ -21,7 +21,7 @@ data(mtcars)
 reliability(cov(mtcars))
 }
 \references{
-- \url{https://cran.r-project.org/package=Rcmdr}
+- <https://cran.r-project.org/package=Rcmdr>
 }
 \seealso{
 - [umx::print.reliability()],
