@@ -2664,6 +2664,9 @@ plot.percent <- function(x, ...) {
 #' # Uses fonts not available on CRAN
 #' # Maybe call this funplot?
 #' umxPlotFun(sin, max= 2*pi)
+#' umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
+#' p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
+#' umxPlotFun(function(x){100^2-x^2}, max= 100)
 #'
 #' 
 #' # Manually	
@@ -2672,9 +2675,13 @@ plot.percent <- function(x, ...) {
 #' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
 #' }
 #'
-umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
+umxPlotFun <- function(fun= dnorm, min= 0, max= NA, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
 	if(!is.null(p)){
-		p = p + ggplot2::stat_function(fun = fun, xlim= c(min, max))
+		if(is.na(max)){
+			p = p + ggplot2::stat_function(fun = fun)
+		} else {
+			p = p + ggplot2::stat_function(fun = fun, xlim= c(min, max))
+		}
 	}else{
 		p     = ggplot(data.frame(x = c(min, max)), aes(x))
 		p     = p + ggplot2::stat_function(fun = fun)
@@ -6978,7 +6985,7 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, verbose = FALSE, 
 #' IQtests = c("brainstorm", "matrix", "moral", "shopping", "typing")
 #' allCols = c("C", IQtests, "avgIQ", "maxIQ", "video")
 #' 
-#' df = umx_read_lower(file = "", diag = FALSE)
+#' df = umx_read_lower(diag = FALSE, names = allCols)
 #' 0.38
 #' 0.86	0.30
 #' 0.42	0.12	0.27
