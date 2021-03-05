@@ -2689,47 +2689,56 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(class(fun) == "character"){
-		for (i in fun) {
-			make_function <- function(args, body, env = parent.frame()) {
-				args <- as.pairlist(args)
-				eval(call("function", args, body), env)
-			}
-			if(is.null(title)){
-				title = paste0("Plot of ", omxQuotes(fun))
-			}
-			if(is.null(ylab)){
-				ylab = fun
-			}
-			fun = make_function(alist(x=NA), parse(text = fun)[[1]] )
+		funOut= c()
+		make_function <- function(args, body, env = parent.frame()) {
+			args <- as.pairlist(args)
+			eval(call("function", args, body), env)
 		}
+		for (i in fun) {
+			if(is.null(title)){ title = paste0("Plot of ", omxQuotes(i)) }
+			if(is.null(ylab)){ ylab = i}
+			thisFun = make_function(alist(x=NA), parse(text = i)[[1]] )
+			
+			funOut = c(funOut, thisFun)
+		}
+		fun = funOut # 1 or more functions
 	}
-
+	# plot function 1
 	if(!is.null(p)){
 		if(is.na(max)){
-			p = p + ggplot2::stat_function(fun = fun)
+			p = p + ggplot2::stat_function(fun = fun[[1]])
 		} else {
-			p = p + ggplot2::stat_function(fun = fun, xlim= c(min, max))
+			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max))
 		}
 	}else{
 		p    = ggplot(data.frame(x = c(min, max)), aes(x))
-		p    = p + ggplot2::stat_function(fun = fun)
+		p    = p + ggplot2::stat_function(fun = fun[[1]])
 		xlab = ifelse(!is.null(xlab),  xlab , "X value")
 		if(is.null(ylab)){
-			if(length(as.character(quote(fun))) == 1){
-				ylab = paste0(as.character(quote(fun), " of x"))
+			if(length(as.character(quote(fun[[1]]))) == 1){
+				ylab = paste0(as.character(quote(fun[[1]]), " of x"))
 			} else {
 				ylab = paste0("Function of X")
 			}
 		}
 
 		if(is.null(title)){
-			if(length(as.character(quote(fun))) == 1){
-				title = paste0("Plot of ", as.character(quote(fun), " function"))
+			if(length(as.character(quote(fun[[1]]))) == 1){
+				title = paste0("Plot of ", as.character(quote(fun[[1]]), " function"))
 			} else {
 				title = paste0("Function plot")
 			}
 		}
 		p = p + labs(x = xlab, y = ylab, caption = title)
+	}
+
+	if(length(fun)>1){
+		n= 1
+		colorList = c("red", "green", "blue")
+		for (i in fun[2:length(fun)]) {
+			p = p + ggplot2::stat_function(fun = i, color=colorList[n])
+			n=n+1
+		}
 	}
 	
 	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
