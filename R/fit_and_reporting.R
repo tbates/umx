@@ -1275,8 +1275,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			CI_Fit$top$e$values = e_CI
 		} # end Use CIs
 	} # end list catcher?
-	
-	
+
 	if(!is.na(file)) {
 		# message("making dot file")
 		if(hasCIs & CIs){
