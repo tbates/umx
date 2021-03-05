@@ -7,7 +7,7 @@
 umxPlotFun(
   fun = dnorm,
   min = 0,
-  max = NA,
+  max = 5,
   xlab = NULL,
   ylab = NULL,
   title = NULL,
@@ -15,11 +15,11 @@ umxPlotFun(
 )
 }
 \arguments{
-\item{fun}{Function to plot}
+\item{fun}{Function to plot. Also takes strings like "sin(x) + sqrt(1/x)"}
 
-\item{min}{x min}
+\item{min}{x-range min}
 
-\item{max}{x max}
+\item{max}{x-range max}
 
 \item{xlab}{= Optional x axis label}
 
@@ -48,6 +48,7 @@ umxPlotFun(sin, max= 2*pi)
 umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
 p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
 umxPlotFun(function(x){100^2-x^2}, max= 100)
+umxPlotFun("sqrt(1/x)", max= 2*pi)
 
 
 # Manually	
