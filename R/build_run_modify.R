@@ -1551,7 +1551,11 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 			mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # total variance --> 1/SD
 			mxAlgebra(name = "a_std", SD %*% a), # standardized a
 			mxAlgebra(name = "c_std", SD %*% c), # standardized c
-			mxAlgebra(name = "e_std", SD %*% e)  # standardized e
+			mxAlgebra(name = "e_std", SD %*% e), # standardized e
+
+			mxAlgebra(name = "A_std", SD %&% A), # standardized A
+			mxAlgebra(name = "C_std", SD %&% C), # standardized C
+			mxAlgebra(name = "E_std", SD %&% E)  # standardized E
 		)
 		model = mxModel(model, newTop)
 	}
