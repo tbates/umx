@@ -2280,14 +2280,14 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
 			n = n + 1
 		}
-	}else{	
+	} else {
 		# ==========
 		# = Setup  =
 		# ==========
-		model = x # just to be clear that x is a model
-		resid = match.arg(resid)
-		labels = match.arg(labels)
-		latents = model@latentVars   # 'vis', 'math', and 'text' 
+		model   = x # just to be clear that x is a model
+		resid   = match.arg(resid)
+		labels  = match.arg(labels)
+		latents = model@latentVars # 'vis', 'math', and 'text' 
 		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
 		# Update values using compute = T to capture labels with [] references.
@@ -2385,6 +2385,27 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		x = xmu_dot_move_ranks(max = max, min = min, same=same, old_min = latents, old_same = selDVs, old_max = varianceNames)
 		rankVariables = xmu_dot_rank_str(min = x$min, same = x$same, max = x$max)
 
+		# ===================
+		# = Selection paths =
+		# ===================
+		if(!is.null(model$expectation$selectionPlan)){
+			# Draw each found "from-to" pair as a headless arrow on the diagram.
+			
+			selPaths = cbind(model$expectation$selectionPlan, value = model[["selectionVector"]]$values)
+		  #   step from to     values
+		  # 1    1   V1 V2 -0.2373752
+
+			for(thisPath in 1:nrow(selPaths)) {
+		 	    step = selPaths[thisPath, "step"] # color
+				color = c("red", "green", "blue")[step]
+				from = selPaths[thisPath, "from"]
+				to   = selPaths[thisPath, "to"]
+				val  = round(selPaths[thisPath, "value"], digits)
+				newPath = paste0("\t", from, " ->", to, "[label='", val, "' color='", color, "' dir='none' style='dotted'];\n")
+				out = paste0(out, newPath)
+			}			
+		}
+		
 		# ===================================
 		# = Assemble full text to write out =
 		# ===================================
