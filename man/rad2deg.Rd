@@ -34,6 +34,7 @@ rad2deg(pi) #180 degrees
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
 \code{\link{fin_interest}()},
-\code{\link{fin_percent}()}
+\code{\link{fin_percent}()},
+\code{\link{fin_valuation}()}
 }
 \concept{Miscellaneous Functions}

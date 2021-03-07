@@ -98,6 +98,7 @@ fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
 \code{\link{fin_percent}()},
+\code{\link{fin_valuation}()},
 \code{\link{rad2deg}()}
 }
 \concept{Miscellaneous Functions}

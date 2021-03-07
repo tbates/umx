@@ -2332,6 +2332,52 @@ umx_write_to_clipboard <- function(x) {
 # = Various Stats helpers =
 # =========================
 
+# =====================
+# = Financial Helpers =
+# =====================
+
+#' Work the valuation of a company
+#'
+#' @description
+#' myfunc is a function which
+#'
+#' @details
+#'
+#' @param revenue Revenue of the company
+#' @param opmargin Margin on operating revenue
+#' @param expenses Additional fixed costs
+#' @param PE of the company
+#' @param symbol Currency
+#' @param use reporting values in "B" (billion) or "M" (millions)
+#' @return - value
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()]
+#' @md
+#' @examples
+#' fin_valuation(rev=7e9, opmargin=.1, PE=33)
+#' # Market cap =  $18,480,000,000
+#' # (Based on PE= 33, operating Income of $0.70 B, and net income =$0.56B
+#'
+fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, symbol = "$", use = c("B", "M")) {
+	use = match.arg(use)
+	if(use=="B"){
+		divisor=1e9
+	} else {
+		divisor=1e6
+	}
+	operatingIncome = revenue * opmargin
+	netIncome = operatingIncome *(1-expenses)
+	marketCap = netIncome*PE
+	class(marketCap) = 'money'; attr(marketCap, 'symbol') <- symbol
+	class(netIncome) = 'money'; attr(netIncome, 'symbol') <- symbol
+	class(operatingIncome) = 'money'; attr(operatingIncome, 'symbol') <- symbol
+	
+	cat("Market cap = ", print(marketCap, cat=F))
+	cat("\n(Based on PE= ", PE, ", operating Income of ", print(operatingIncome/divisor, cat=F), " ", use, ", and net income =", print(netIncome/divisor, cat=F), use, "\n", sep = "")
+
+	invisible(marketCap)
+}
 
 #' Compute the value of a principal & annual deposits at a compound interest over a number of years
 #' @description
@@ -2496,12 +2542,19 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 #' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
 print.money <- function(x, symbol = "$", ...) {
+	dot.items = list(...) # grab all the dot items cat
+	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
+	
 	if(!is.null(attr(x, 'symbol')) ){
 		symbol = attr(x, 'symbol')
 	}
 	# bucks <- scales::dollar_format(prefix = symbol, suffix = "", largest_with_cents = 1e+05, big.mark = ",", negative_parens = FALSE)
-	# dollar is from scales::
-	cat(scales::dollar(as.numeric(x), prefix = symbol, big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE))
+	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE)
+	if(cat){
+		cat(formatted)
+	} else {
+		formatted
+	}
 }
 
 #' Compute the percent change needed to return to the original value after percent off (or on).
