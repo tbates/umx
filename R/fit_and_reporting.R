@@ -2401,7 +2401,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 				from = selPaths[thisPath, "from"]
 				to   = selPaths[thisPath, "to"]
 				val  = round(selPaths[thisPath, "value"], digits)
-				newPath = paste0("\t", from, " ->", to, "[label='", val, "' color='", color, "' dir='none' style='dotted'];\n")
+				newPath = paste0("\t", from, " ->", to, "[label='", val, "' color='", color, "' dir='none'];\n")
 				out = paste0(out, newPath)
 			}			
 		}
