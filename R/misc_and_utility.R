@@ -2339,10 +2339,12 @@ umx_write_to_clipboard <- function(x) {
 #' Work the valuation of a company
 #'
 #' @description
-#' myfunc is a function which
+#' `fin_valuation` uses the revenue, eoperating margin, expenses and PE to compute a market capitalisation
 #'
 #' @details
-#'
+#' revenue is multiplid by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
+#' and the resulting earnings turned into a price via the `PE`
+#' 
 #' @param revenue Revenue of the company
 #' @param opmargin Margin on operating revenue
 #' @param expenses Additional fixed costs
