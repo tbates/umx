@@ -644,9 +644,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 
 	umx_check(!is.null(data), "stop", "In umxRAM, you must set 'data = '. If you're building a model with no data, use mxModel")
 
-	if(!length(dot.items) > 0){
-		# do we care?
-	}
 	foundNames = c()
 	defnNames = c()
 	for (thisItem in dot.items) {

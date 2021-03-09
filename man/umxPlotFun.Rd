@@ -11,7 +11,8 @@ umxPlotFun(
   xlab = NULL,
   ylab = NULL,
   title = NULL,
-  p = NULL
+  p = NULL,
+  ...
 )
 }
 \arguments{

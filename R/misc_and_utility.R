@@ -2738,7 +2738,18 @@ plot.percent <- function(x, ...) {
 #' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
 #' }
 #'
-umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
+umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL, ...) {
+	# umx_msg(ylim)
+	args <- list(...)
+	if (length(args)>0){
+		for(i in 1:length(args)) {
+			assign(x = names(args)[i], value = args[[i]])
+		}
+		if(is.null(ylim)){
+			ylim=NA
+		}	
+	}
+
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(class(fun) == "character"){
@@ -2761,10 +2772,10 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 		if(is.na(max)){
 			p = p + ggplot2::stat_function(fun = fun[[1]])
 		} else {
-			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max))
+			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max), ylim=ylim)
 		}
 	}else{
-		p    = ggplot(data.frame(x = c(min, max)), aes(x))
+		p    = ggplot(data.frame(x = c(min, max)), aes(x), ylim=ylim)
 		p    = p + ggplot2::stat_function(fun = fun[[1]])
 		xlab = ifelse(!is.null(xlab),  xlab , "X value")
 		if(is.null(ylab)){
@@ -2802,10 +2813,6 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 
 	print(p)
 	invisible(p)	
-	# Doing it manually
-	# p = ggplot(data.frame(x = c(-5, 5)), aes(x))
-	# p = p + ggplot2::stat_function(fun = dnorm)
-	# p
 }
 
 
