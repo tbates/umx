@@ -2788,7 +2788,11 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 
 		if(is.null(title)){
 			if(length(as.character(quote(fun[[1]]))) == 1){
-				title = paste0("Plot of ", as.character(quote(fun[[1]]), " function"))
+				result = tryCatch({
+					title = expression(paste0("Plot of ",fun[[1]]))
+				}, error = function() {
+					title = paste0("Plot of ", as.character(quote(fun[[1]]), " function"))
+				})
 			} else {
 				title = paste0("Function plot")
 			}
