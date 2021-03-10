@@ -32,10 +32,11 @@ fin_valuation(
 }
 }
 \description{
-myfunc is a function which
+\code{fin_valuation} uses the revenue, eoperating margin, expenses and PE to compute a market capitalisation
 }
 \details{
-
+revenue is multiplid by opmargin to get a gross profit. From this the proportion specified in \code{expenses} is subtracted
+and the resulting earnings turned into a price via the \code{PE}
 }
 \examples{
 fin_valuation(rev=7e9, opmargin=.1, PE=33)

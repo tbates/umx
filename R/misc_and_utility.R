@@ -2339,10 +2339,12 @@ umx_write_to_clipboard <- function(x) {
 #' Work the valuation of a company
 #'
 #' @description
-#' myfunc is a function which
+#' `fin_valuation` uses the revenue, eoperating margin, expenses and PE to compute a market capitalisation
 #'
 #' @details
-#'
+#' revenue is multiplid by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
+#' and the resulting earnings turned into a price via the `PE`
+#' 
 #' @param revenue Revenue of the company
 #' @param opmargin Margin on operating revenue
 #' @param expenses Additional fixed costs
@@ -2724,31 +2726,27 @@ plot.percent <- function(x, ...) {
 #' @examples
 #' \dontrun{
 #' # Uses fonts not available on CRAN
-#' # Maybe call this funplot?
 #' umxPlotFun(sin, max= 2*pi)
+#' umxPlotFun("sqrt(1/x)", max= 2*pi)
 #' umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
 #' p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
-#' umxPlotFun(function(x){100^2-x^2}, max= 100)
-#' umxPlotFun("sqrt(1/x)", max= 2*pi)
+#' umxPlotFun(function(x){100^2-x^2}, p = p)
 #'
-#' 
-#' # Manually	
-#' p = ggplot(data.frame(x = c(0, 10000)), aes(x))
-#' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
-#' p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
+#' # Controlling other plot features
+#' umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
 #' }
 #'
-umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL, ...) {
+umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
 	# umx_msg(ylim)
-	args <- list(...)
-	if (length(args)>0){
-		for(i in 1:length(args)) {
-			assign(x = names(args)[i], value = args[[i]])
-		}
-		if(is.null(ylim)){
-			ylim=NA
-		}	
-	}
+	# args <- list(...)
+	# if (length(args)>0){
+	# 	for(i in 1:length(args)) {
+	# 		assign(x = names(args)[i], value = args[[i]])
+	# 	}
+	# 	if(is.null(ylim)){
+	# 		ylim=NA
+	# 	}
+	# }
 
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
@@ -2766,16 +2764,19 @@ umxPlotFun <- function(fun= dnorm, min= 0, max= 5, xlab = NULL, ylab = NULL, tit
 			funOut = c(funOut, thisFun)
 		}
 		fun = funOut # 1 or more functions
+	}else{
+		# got a bare function like sin
+		fun = list(fun)
 	}
 	# plot function 1
 	if(!is.null(p)){
 		if(is.na(max)){
 			p = p + ggplot2::stat_function(fun = fun[[1]])
 		} else {
-			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max), ylim=ylim)
+			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max))
 		}
 	}else{
-		p    = ggplot(data.frame(x = c(min, max)), aes(x), ylim=ylim)
+		p    = ggplot(data.frame(x = c(min, max)), aes(x))
 		p    = p + ggplot2::stat_function(fun = fun[[1]])
 		xlab = ifelse(!is.null(xlab),  xlab , "X value")
 		if(is.null(ylab)){

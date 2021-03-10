@@ -6,13 +6,12 @@
 \usage{
 umxPlotFun(
   fun = dnorm,
-  min = 0,
+  min = -1,
   max = 5,
   xlab = NULL,
   ylab = NULL,
   title = NULL,
-  p = NULL,
-  ...
+  p = NULL
 )
 }
 \arguments{
@@ -44,18 +43,14 @@ Easily plot a function - like sin, using ggplot.
 \examples{
 \dontrun{
 # Uses fonts not available on CRAN
-# Maybe call this funplot?
 umxPlotFun(sin, max= 2*pi)
+umxPlotFun("sqrt(1/x)", max= 2*pi)
 umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
 p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
-umxPlotFun(function(x){100^2-x^2}, max= 100)
-umxPlotFun("sqrt(1/x)", max= 2*pi)
+umxPlotFun(function(x){100^2-x^2}, p = p)
 
-
-# Manually	
-p = ggplot(data.frame(x = c(0, 10000)), aes(x))
-p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$water), colour = "blue")
-p = p + ggplot2::stat_function(fun = function(x) decay(x, signal_loss$white_matter), colour = "red")
+# Controlling other plot features
+umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
 }
 
 }
