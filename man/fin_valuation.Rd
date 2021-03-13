@@ -32,10 +32,10 @@ fin_valuation(
 }
 }
 \description{
-\code{fin_valuation} uses the revenue, eoperating margin, expenses and PE to compute a market capitalisation
+\code{fin_valuation} uses the revenue, operating margin, expenses and PE to compute a market capitalisation
 }
 \details{
-revenue is multiplid by opmargin to get a gross profit. From this the proportion specified in \code{expenses} is subtracted
+Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in \code{expenses} is subtracted
 and the resulting earnings turned into a price via the \code{PE}
 }
 \examples{

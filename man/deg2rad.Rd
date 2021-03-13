@@ -15,7 +15,7 @@ deg2rad(deg)
 }
 }
 \description{
-A helper to convert degres (360 in  a circle) to Rad (\eqn{2\pi} in a circle, so \eqn{deg x 180/\pi} to get radians.
+A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi} in a circle, so \eqn{deg x 180/\pi} to get radians.
 
 \emph{note}: R's trig functions, e.g. \code{\link[=sin]{sin()}} use Radians for input!
 
