@@ -235,9 +235,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			print(table(data[ , paste0(base, rev[1])] ))
 			stop("FYI, the max appears to be ", max(maxs))
         }
-		revItems = data[,paste0(base, rev), drop= FALSE]
+		revItems = data[,paste0(base, rev), drop = FALSE]
 		revItems = (max + min) - revItems
-		data[,paste0(base, rev)] = revItems
+		data[ , paste0(base, rev)] = revItems
 	}
 
 	allColNames = paste0(base, c(pos, rev))
