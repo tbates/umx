@@ -20,8 +20,8 @@
 # ===================================
 
 # William Shakespeare
-# [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
-# [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
+# [Macbeth Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
+# [Othello To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
 # [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
 #  * "How far that little candle throws his beams! So shines a good deed in a weary world."
 #  * The quality of mercy is not strained.

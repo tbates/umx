@@ -4301,7 +4301,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			# beta and CI
 			# lower = b - (1.96 * se)
 			# upper = b + (1.96 * se)
-			str= paste0("\u03B2 = ", round(obj, digits), ", se = ", round((se[2] - se[1])/(1.96 * 2), digits))
+			str= paste0("\u03B2 = ", round(obj, digits), "SE = ", round((se[2] - se[1])/(1.96 * 2), digits))
 			cat(str)
 			invisible(str)
 		} else {
