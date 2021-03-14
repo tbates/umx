@@ -2339,10 +2339,10 @@ umx_write_to_clipboard <- function(x) {
 #' Work the valuation of a company
 #'
 #' @description
-#' `fin_valuation` uses the revenue, eoperating margin, expenses and PE to compute a market capitalisation
+#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalisation
 #'
 #' @details
-#' revenue is multiplid by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
+#' Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
 #' and the resulting earnings turned into a price via the `PE`
 #' 
 #' @param revenue Revenue of the company
@@ -2757,7 +2757,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 			eval(call("function", args, body), env)
 		}
 		for (i in fun) {
-			if(is.null(title)){ title = paste0("Plot of ", omxQuotes(i)) }
+			if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
 			if(is.null(ylab)){ ylab = i}
 			thisFun = make_function(alist(x=NA), parse(text = i)[[1]] )
 			
@@ -2789,10 +2789,15 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 
 		if(is.null(title)){
 			if(length(as.character(quote(fun[[1]]))) == 1){
-				title = paste0("Plot of ", as.character(quote(fun[[1]]), " function"))
-			} else {
-				title = paste0("Function plot")
+				pref= "Plot of function: "
+			}else{
+				pref= "Plot of Functions: "
 			}
+			result = tryCatch({
+				title = expression(paste0(pref,fun[[1]]))
+			}, error = function() {
+				title = paste0(pref, as.character(quote(fun[[1]]), " function"))
+			})
 		}
 		p = p + labs(x = xlab, y = ylab, caption = title)
 	}
@@ -3187,7 +3192,7 @@ rad2deg <- function(rad) { rad * 180/pi }
 
 #' Convert Degrees to Degrees 
 #'
-#' @description A helper to convert degres (360 in  a circle) to Rad (\eqn{2\pi} in a circle, so \eqn{deg x 180/\pi} to get radians.
+#' @description A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi} in a circle, so \eqn{deg x 180/\pi} to get radians.
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! 
 #' 
