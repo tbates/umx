@@ -20,8 +20,8 @@
 # ===================================
 
 # William Shakespeare
-# [Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
-# [To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
+# [Macbeth Tomorrow and tomorrow soliloquy](https://www.poetryfoundation.org/poems/56964/speech-tomorrow-and-tomorrow-and-tomorrow)
+# [Othello To be or not to be](https://www.poetryfoundation.org/poems/56965/speech-to-be-or-not-to-be-that-is-the-question)
 # [The Merchant of Venice](https://www.goodreads.com/work/quotes/2682703-the-merchant-of-venice)
 #  * "How far that little candle throws his beams! So shines a good deed in a weary world."
 #  * The quality of mercy is not strained.
@@ -235,9 +235,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			print(table(data[ , paste0(base, rev[1])] ))
 			stop("FYI, the max appears to be ", max(maxs))
         }
-		revItems = data[,paste0(base, rev), drop= FALSE]
+		revItems = data[,paste0(base, rev), drop = FALSE]
 		revItems = (max + min) - revItems
-		data[,paste0(base, rev)] = revItems
+		data[ , paste0(base, rev)] = revItems
 	}
 
 	allColNames = paste0(base, c(pos, rev))
