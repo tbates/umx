@@ -2747,7 +2747,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 	# 		ylim=NA
 	# 	}
 	# }
-
+	
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(class(fun) == "character"){
