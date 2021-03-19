@@ -13,10 +13,10 @@ fin_interest(
   n = 12,
   when = "beginning",
   symbol = "$",
-  report = c("markdown", "html"),
   largest_with_cents = 0,
-  baseYear = 0,
-  table = TRUE
+  baseYear = as.numeric(format(Sys.time(), "\%Y")),
+  table = TRUE,
+  report = c("markdown", "html")
 )
 }
 \arguments{
@@ -36,13 +36,13 @@ fin_interest(
 
 \item{symbol}{Currency symbol to embed in the result.}
 
-\item{report}{"markdown" or "html",}
-
 \item{largest_with_cents}{Default = 0}
 
 \item{baseYear}{Default = 0, can set, e.g. to 2020 for printing}
 
 \item{table}{Whether to print a table of annual returns (default TRUE)}
+
+\item{report}{"markdown" or "html",}
 }
 \value{
 \itemize{
