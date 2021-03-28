@@ -905,7 +905,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' summary(m3)
 #' 
 #' }
-umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE) {
+umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE) {
 	tryHard = match.arg(tryHard)
 	umx_check(boolean.test= is.character(name), action="stop", message="You need to set the name for the supermodel, i.e. add name = 'modelName' ")
 	dot.items = list(...) # grab all the dot items: models...	
@@ -924,7 +924,7 @@ umxSuperModel <- function(name = 'top', ..., autoRun = getOption("umx_auto_run")
 				modelNames = c(modelNames, thisModel$name)
 			}
 		} else {
-		 	stop("Only mxModels can be included in a group, item ", thisModel, " was a ", class(dot.items[[thisModel]]))
+		 	stop("Only models can be included in ... ", thisModel, " was a ", class(dot.items[[thisModel]]))
 		}
 	}
 	# multiple group fit function sums the likelihoods of its component models

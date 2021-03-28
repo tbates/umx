@@ -2529,6 +2529,7 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 
 
 #' Print a money object
+#' @aliases bucks print
 #'
 #' Print method for, class()= "money" objects: e.g. [umx::fin_interest()]. 
 #'
@@ -2538,12 +2539,12 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 #' @return - invisible
 #' @seealso - [umx::fin_percent()], [print()]
 #' @md
-#' @method print money
 #' @export
 #' @examples
+#' bucks(100 * 1.05^32)
 #' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
-print.money <- function(x, symbol = "$", ...) {
+bucks <- function(x, symbol = "$", ...) {
 	dot.items = list(...) # grab all the dot items cat
 	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
 	
@@ -2558,6 +2559,10 @@ print.money <- function(x, symbol = "$", ...) {
 		formatted
 	}
 }
+
+#' @export
+#' @method print money
+print.money <- bucks
 
 #' Compute the percent change needed to return to the original value after percent off (or on).
 #'
