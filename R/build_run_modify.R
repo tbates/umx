@@ -3842,6 +3842,7 @@ umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), v
 		newModel = omxSetParameters(model = model   , labels = listALabels, newlabels = newlabels, name = name)
 		newModel = omxSetParameters(model = newModel, labels = listBLabels, newlabels = newlabels, name = name)
 	}
+	
 	newModel = omxAssignFirstParameters(newModel, indep = FALSE)
 	newModel = xmu_safe_run_summary(newModel, model, autoRun = autoRun, tryHard = tryHard, comparison = comparison)
 	return(newModel)
