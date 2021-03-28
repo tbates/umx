@@ -912,6 +912,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	if(is.null(refModels)) {
 		# SaturatedModels not passed in from outside, so get them from the model
 		# TODO umxSummary Improve efficiency: Compute summary only once by detecting when SaturatedLikelihood is missing
+		# m1$output$SaturatedLikelihood
 		modelSummary = summary(model)
 		if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
@@ -3673,17 +3674,17 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' RMSEA function for MxModels
 #'
 #' Return RMSEA and its confidence interval on a model.
+#' RMSEA(tmp, silent=TRUE)$RMSEA
 #'
 #' @rdname RMSEA.MxModel
 #' @param x an [mxModel()] from which to get RMSEA
-#' @param ci.lower the lower CI to compute
-#' @param ci.upper the upper CI to compute
-#' @param digits digits to show (defaults to 3)
-#' @return - object containing the RMSEA and lower and upper bounds
+#' @param ci.lower the lower CI to compute (only .05 supported)
+#' @param ci.upper the upper CI to compute (only .95 supported)
+#' @param digits digits to show (default = 3)
+#' @return - object containing the RMSEA, lower and upper bounds, and p-close
 #' @export
 #' @family Reporting functions
-#' @references - <https://github.com/tbates/umx>,
-#' \url{https://github.com/simsem/semTools/wiki/Functions}
+#' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' require(umx)
@@ -3696,13 +3697,44 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' RMSEA(m1)
+#' x = RMSEA(m1)
+#' x$RMSEA # -> 0.0309761
+#' # Raw: needs to be run by umx to get RMSEA
+#' m2 = umxRAM("One Factor", data = demoOneFactor,
+#' 	umxPath("G", to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = "G", fixedAt = 1)
+#' )
+#' RMSEA(m2)
 RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
-	RMSEA.summary.mxmodel(x= summary(x), ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
+	model = x
+	if(is.null(model$output$SaturatedLikelihood)){
+		# no ref models in summary... compute them
+		# no SaturatedLikelihood, compute refModels
+		refModels = tryCatch({
+		    refModels = mxRefModels(model, run = TRUE)
+		}, warning = function(x) {
+		    print("warning calling mxRefModels: Note WLS not supported for ref models, fit indices not available https://github.com/OpenMx/OpenMx/issues/184")
+		}, error = function(x) {
+		    print("error calling mxRefModels: Note fit indices not available as WLS not supported for ref models https://github.com/OpenMx/OpenMx/issues/184")
+		}, finally={
+		    # print("cleanup-code")
+		})
+		if(!class(refModels)=="list"){
+			modelSummary = summary(model)
+		} else {
+			modelSummary = summary(model, refModels = refModels)
+		}
+	}else{
+		modelSummary = summary(model)		
+	}
+	RMSEA.summary.mxmodel(x= modelSummary, ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
 }
 
 #' RMSEA function for MxModels
 #'
-#' Compute the confidence interval on RMSEA
+#' Compute the confidence interval on RMSEA and print it out. 
+#' *note*: If your goal is to extract the RMSEA from a model, use `RMSEA(m1)$RMSEA`
 #'
 #' @param x an [mxModel()] summary from which to get RMSEA
 #' @param ci.lower the lower CI to compute
@@ -3724,21 +3756,59 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
 #' )
-#'
-#' RMSEA(m1)
+#' tmp = summary(m1)
+#' RMSEA(tmp)
 RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3){
+	summary = x # x is a model summary
 	if(ci.lower != .05 | ci.upper != .95){
 		stop("only 95% CI on RMSEA supported as yet...")
 	}
+	if(is.na(summary$RMSEA) || is.null(summary$RMSEA)){
+		message("model summary has no RMSEA, sorry - you might need to run ref models?")
+		return(NA)
+	} else {
+		output = list(RMSEA = summary$RMSEA, CI.lower = summary$RMSEACI["lower"], CI.upper = summary$RMSEACI["upper"], RMSEA.pvalue = summary$RMSEAClose)
+		class(output) = "RMSEA"
+		attr(output, 'digits')   = digits
+		return(output)
+	}
+}
+
+#' Print a RMSEA object
+#'
+#' Print method for, class()= "RMSEA" objects: e.g. [umx::RMSEA()]. 
+#'
+#' @param x RMSEA object.
+#' @param ... further arguments passed to or from other methods.
+#' @return - invisible
+#' @seealso - [umx::RMSEA()], [print()]
+#' @md
+#' @method print RMSEA
+#' @export
+#' @examples
+#' data(demoOneFactor)
+#' manifests = names(demoOneFactor)
+#'
+#' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
+#' 	umxPath("G", to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = "G", fixedAt = 1.0)
+#' )
+#' tmp = summary(m1)
+#' RMSEA(tmp)
+#'
+print.RMSEA <- function(x, ...) {
+	# x is an RMSEA object
+	if(!is.null(attr(x, 'digits')) ){
+		digits = attr(x, 'digits')
+	}
+
 	txt = paste0("RMSEA = ", round(x$RMSEA, digits))
-	txt = paste0(txt, " CI", sub("^0?\\.", replacement = "", ci.upper))
-	txt = paste0(txt, "[", round(x$RMSEACI["lower"], digits), ", ")
-	txt = paste0(txt, round(x$RMSEACI["upper"], digits), "], ")
-	txt = paste0(txt, "Prob(RMSEA <= 0.05) = ", umx_APA_pval(x$RMSEAClose))
-	print(txt)
-	invisible(list(RMSEA = x$RMSEA, CI.lower = x$RMSEACI["lower"], 
-		CI.upper = x$RMSEACI["upper"], RMSEA.pvalue = x$RMSEAClose, txt = txt)
-	)
+	txt = paste0(txt, " CI[")
+	txt = paste0(txt, round(x$CI.lower, digits), ", ")
+	txt = paste0(txt, round(x$CI.upper, digits), "], ")
+	txt = paste0(txt, "Prob(RMSEA <= 0.05) = ", umx_APA_pval(x$RMSEA.pvalue))
+	cat(txt)
 }
 
 # ===================================

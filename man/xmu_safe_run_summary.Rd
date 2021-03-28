@@ -12,7 +12,8 @@ xmu_safe_run_summary(
   summary = !umx_set_silent(silent = TRUE),
   std = "default",
   comparison = TRUE,
-  digits = 3
+  digits = 3,
+  returning = c("model", "summary")
 )
 }
 \arguments{

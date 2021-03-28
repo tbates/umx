@@ -21,7 +21,8 @@
 }
 }
 \description{
-Compute the confidence interval on RMSEA
+Compute the confidence interval on RMSEA and print it out.
+\emph{note}: If your goal is to extract the RMSEA from a model, use \code{RMSEA(m1)$RMSEA}
 }
 \examples{
 require(umx)
@@ -33,8 +34,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1.0)
 )
-
-RMSEA(m1)
+tmp = summary(m1)
+RMSEA(tmp)
 }
 \references{
 \itemize{

@@ -299,9 +299,10 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' 
 #' }
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, returning = c("model", "summary")) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard = match.arg(tryHard)
+	returning = match.arg(returning)
 
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -349,19 +350,21 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 	}
 	if(!umx_has_been_run(model1)){
 		# Didn't get run... don't try and summarize it (will error)
+		theSummary = NA
 	} else if(summary){
 		tryCatch({
 			if(is.null(std)) {
-				umxSummary(model1, std = NULL, digits = digits)	
+				theSummary = umxSummary(model1, std = NULL, digits = digits)	
 			} else if(std == "default"){
-				umxSummary(model1, digits = digits)
+				theSummary = umxSummary(model1, digits = digits)
 			} else {
-				umxSummary(model1, std = std, digits = digits)
+				theSummary = umxSummary(model1, std = std, digits = digits)
 			}
 		# }, warning = function(w) {
 		# 	message("Warning incurred trying to run umxSummary")
 		# 	message(w)
 		}, error = function(e) {
+			theSummary = NA
 			message("Error incurred trying to run umxSummary")
 			message(e)
 		})
@@ -383,9 +386,12 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		})
 
 	}
-	invisible(model1)
+	if(returning=="model"){
+		invisible(model1)
+	} else {
+		invisible(theSummary)
+	}
 }
-
 # ===================================
 # = DATA AND MODEL CHECKING HELPERS =
 # ===================================
