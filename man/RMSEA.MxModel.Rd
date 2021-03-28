@@ -9,19 +9,20 @@
 \arguments{
 \item{x}{an \code{\link[=mxModel]{mxModel()}} from which to get RMSEA}
 
-\item{ci.lower}{the lower CI to compute}
+\item{ci.lower}{the lower CI to compute (only .05 supported)}
 
-\item{ci.upper}{the upper CI to compute}
+\item{ci.upper}{the upper CI to compute (only .95 supported)}
 
-\item{digits}{digits to show (defaults to 3)}
+\item{digits}{digits to show (default = 3)}
 }
 \value{
 \itemize{
-\item object containing the RMSEA and lower and upper bounds
+\item object containing the RMSEA, lower and upper bounds, and p-close
 }
 }
 \description{
 Return RMSEA and its confidence interval on a model.
+RMSEA(tmp, silent=TRUE)$RMSEA
 }
 \examples{
 require(umx)
@@ -34,11 +35,17 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(var = "G", fixedAt = 1)
 )
 RMSEA(m1)
+# Raw: needs to be run by umx to get RMSEA
+m2 = umxRAM("One Factor", data = demoOneFactor,
+	umxPath("G", to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = "G", fixedAt = 1)
+)
+RMSEA(m2)
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/umx},
-\url{https://github.com/simsem/semTools/wiki/Functions}
+\item \url{https://github.com/tbates/umx}
 }
 }
 \seealso{
