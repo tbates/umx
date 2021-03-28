@@ -32,6 +32,8 @@ xmu_safe_run_summary(
 \item{comparison}{Toggle to allow not making comparison, even if second model is provided (more flexible in programming).}
 
 \item{digits}{Rounding precision in tables and plots}
+
+\item{returning}{What to return (default, the run model)}
 }
 \value{
 \itemize{

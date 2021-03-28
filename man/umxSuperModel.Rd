@@ -5,7 +5,7 @@
 \title{Make a multi-group model}
 \usage{
 umxSuperModel(
-  name = "top",
+  name = "super",
   ...,
   autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "ordinal", "search"),

@@ -270,6 +270,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param std What to print in summary. "default" = the object's summary default. FALSE = raw, TRUE = standardize, NULL = omit parameter table.
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
+#' @param returning What to return (default, the run model)
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user

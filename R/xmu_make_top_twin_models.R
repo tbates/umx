@@ -343,10 +343,10 @@ xmuTwinSuper_Continuous <- function(name= NULL, fullVars, fullCovs = NULL, sep, 
 		)
 	} else {
 		# Raw data or (WLS && allContinuousMethod != cumulants): Needs means and MZ and DZ a means model.
-		# =============================
-		# = Figure out start values  =
+		# ====================================================================
+		# =                     Figure out start values                      =
 		# = NOTE: fullVars is expanded by the time we get to here... no sep. =
-		# ===================================================================
+		# ====================================================================
 		starts = xmu_starts(mzData= mzData, dzData= dzData, selVars= fullVars, equateMeans= equateMeans, nSib= nSib, varForm= "Cholesky")
 		# Contains starts$varStarts; starts$meanStarts; starts$meanLabels # (Equated across twins if requested)
 		model = mxModel(name,

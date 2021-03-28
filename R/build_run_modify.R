@@ -838,11 +838,11 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' Make a multi-group model
 #'
 #' @description
-#' umxSuperModel takes 1 or more models and wraps them in a supermodel with a
+#' `umxSuperModel` takes 1 or more models and wraps them in a supermodel with a
 #' [mxFitFunctionMultigroup()] fit function that minimizes the sum of the
 #' fits of the sub-models.
 #'
-#' @param name The name for the container model (default = 'top')
+#' @param name The name for the container model (default = 'super')
 #' @param ...  Models forming the multiple groups contained in the supermodel.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"

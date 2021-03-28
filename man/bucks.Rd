@@ -31,6 +31,7 @@ bucks(x, symbol = "$", ...)
 Print a money object
 }
 \examples{
+bucks(100 * 1.05^32)
 fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 
 }
