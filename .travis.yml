@@ -3,6 +3,7 @@ language: r
 cache: packages
 sudo: false
 warnings_are_errors: true
+disable_homebrew: true
 
 r_packages:
   - covr
