@@ -2756,21 +2756,23 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(class(fun) == "character"){
-		funOut= c()
 		make_function <- function(args, body, env = parent.frame()) {
 			args <- as.pairlist(args)
 			eval(call("function", args, body), env)
 		}
-		for (i in fun) {
-			if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
+		funOut = c()
+		for (i in fun) {			
+			if(is.null(title)){ title = paste0("Plot of ", i) }
+			# filed ideas to format as latex...
+			# if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
+			# if(is.null(title)){ title = parse(text = paste0("Plot of ", i)) }
 			if(is.null(ylab)){ ylab = i}
 			thisFun = make_function(alist(x=NA), parse(text = i)[[1]] )
-			
 			funOut = c(funOut, thisFun)
 		}
 		fun = funOut # 1 or more functions
 	}else{
-		# got a bare function like sin
+		# Got a bare function like sin
 		fun = list(fun)
 	}
 	# plot function 1

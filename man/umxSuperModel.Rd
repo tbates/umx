@@ -13,7 +13,7 @@ umxSuperModel(
 )
 }
 \arguments{
-\item{name}{The name for the container model (default = 'top')}
+\item{name}{The name for the container model (default = 'super')}
 
 \item{...}{Models forming the multiple groups contained in the supermodel.}
 
@@ -29,7 +29,7 @@ umxSuperModel(
 }
 }
 \description{
-umxSuperModel takes 1 or more models and wraps them in a supermodel with a
+\code{umxSuperModel} takes 1 or more models and wraps them in a supermodel with a
 \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}} fit function that minimizes the sum of the
 fits of the sub-models.
 }
