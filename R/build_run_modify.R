@@ -907,25 +907,26 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' }
 umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE) {
 	tryHard = match.arg(tryHard)
-	umx_check(boolean.test= is.character(name), action="stop", message="You need to set the name for the supermodel, i.e. add name = 'modelName' ")
+	umx_check(boolean.test= is.character(name), action= "stop", message= "You need to set the name for the supermodel, i.e. add name = 'modelName' ")
 	dot.items = list(...) # grab all the dot items: models...	
 	dot.items = unlist(dot.items)
 	nModels   = length(dot.items)
-	
 	# Get list of model names
 	modelNames = c()
 	for(modelIndex in 1:nModels) {
 		thisModel = dot.items[[modelIndex]]
 		if(umx_is_MxModel(thisModel)){
-			if(is.null(thisModel$expectation)){
-				# umx_msg("hello")
-				# ignore model... no objective to optimize
+			if(is.null(thisModel$fitfunction)){
+				# ignore model... no fitfunction to optimize
 			} else {
 				modelNames = c(modelNames, thisModel$name)
 			}
 		} else {
 		 	stop("Only models can be included in ... ", thisModel, " was a ", class(dot.items[[thisModel]]))
 		}
+	}
+	if(length(modelNames)<1){
+	 	stop("No models in '...' had an fitfunction: At least two models must have an fitfunction and objective for umxSuperModel to jointly optimize")
 	}
 	# multiple group fit function sums the likelihoods of its component models
 	newModel = mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
