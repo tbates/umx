@@ -85,6 +85,20 @@ umxSummary(m3, std= TRUE)
 summary(m3)
 
 }
+nameList = umxModelNames(super)
+dupes    = nameList[duplicated(nameList)] # "top" "MZ" "DZ"
+
+subNames = names(super$submodels)
+suffix = 1
+for(thisSub in subNames) {
+	thisModel = super$submodels[[thisSub]]
+	for(thisDupName in dupes) {
+		thisModel = mxRename(thisModel, paste0(thisDupName, "_", suffix), oldname=thisDupName)
+	}
+	super = mxModel(super, thisModel)
+	suffix = suffix + 1
+}
+umxModelNames(super)
 }
 \references{
 \itemize{

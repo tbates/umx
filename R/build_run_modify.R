@@ -930,11 +930,30 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 	}else if(anyDuplicated(modelNames)){
 	 	stop("Models must have unique names: Duplicates detected in ", omxQuotes(modelNames))
 	}
-	umx_msg(modelNames)
+	
 	# multiple group fit function sums the likelihoods of its component models
 	newModel = mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	newModel = omxAssignFirstParameters(newModel)
+
+	# 2. Find and change any duplicate model names inside the models
+	# 	1. find all duplicated names
+	# 	2. loop over the sub models, finding and changing each duplicate name
+	#' nameList = umxModelNames(super)
+	#' dupes    = nameList[duplicated(nameList)] # "top" "MZ" "DZ"
+	#' 
+	#' subNames = names(super$submodels)
+	#' suffix = 1
+	#' for(thisSub in subNames) {
+	#' 	thisModel = super$submodels[[thisSub]]
+	#' 	for(thisDupName in dupes) {
+	#' 		thisModel = mxRename(thisModel, paste0(thisDupName, "_", suffix), oldname=thisDupName)
+	#' 	}
+	#' 	super = mxModel(super, thisModel)
+	#' 	suffix = suffix + 1
+	#' }
+	#' umxModelNames(super)
+
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std)
 	invisible(newModel)
 }
