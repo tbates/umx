@@ -48,9 +48,9 @@
 #' load libraries
 #'
 #' @description
-#' libs is a function to allow loading multiple librarys in one call
+#' libs is a function to allow loading multiple libraries in one call
 #'
-#' @param ... an [umxLabel()] to DO WHAT?
+#' @param ... library names as  string
 #' @return - [libs()]
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -59,7 +59,7 @@
 #' @examples
 #' \dontrun{
 #' libs("umx", "OpenMx", "car")
-#' libs(c("umx", "OpenMx", "car"))
+#' libs("umx", c("OpenMx", "car"))
 #' }
 libs <- function(...) {
 	dot.items = list(...) # grab all the dot items

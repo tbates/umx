@@ -24,7 +24,7 @@ title = expression(paste0("Plot of ",fun[[1]]))
 * NEW `umx_set_plot_format` can choose between pdf, png, svg plot output (in addition to DiagrammeR and graphviz)
 * IMPROVED: `umxSummary` now reports algebra values when present in RAM models closes #70
 * IMPROVED: `umxSummary` tables have pandoc captions (see #145)
-* IMPROVED: `umxCompare` table output and plain-english summary printing (cat)
+* IMPROVED: `umxCompare` table output and plain-English summary printing (cat)
 * IMPROVED: `umxCP` practical workflows for correlated ACE
 * NEW: `umx_lower.tri` helper to get lower.tri values in 1 call
 * HELP: `umxCP` Document that correlatedA works on a, c and e, allowing factors built by these matrices to correlate.
