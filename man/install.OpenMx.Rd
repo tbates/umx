@@ -50,6 +50,7 @@ install.OpenMx("open travis build page") # Open web page of travis builds
 \code{\link[=umxVersion]{umxVersion()}}
 
 Other Miscellaneous Utility Functions: 
+\code{\link{libs}()},
 \code{\link{qm}()},
 \code{\link{umxBrownie}()},
 \code{\link{umxLav2RAM}()},

@@ -27,6 +27,7 @@ umx_open_CRAN_page("umx")
 \seealso{
 Other Miscellaneous Utility Functions: 
 \code{\link{install.OpenMx}()},
+\code{\link{libs}()},
 \code{\link{qm}()},
 \code{\link{umxBrownie}()},
 \code{\link{umxLav2RAM}()},

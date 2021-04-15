@@ -32,6 +32,7 @@ umxBrownie()
 
 Other Miscellaneous Utility Functions: 
 \code{\link{install.OpenMx}()},
+\code{\link{libs}()},
 \code{\link{qm}()},
 \code{\link{umxLav2RAM}()},
 \code{\link{umxRAM2Lav}()},

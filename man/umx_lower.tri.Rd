@@ -34,6 +34,7 @@ umx_lower.tri(x, diag=TRUE) # 1 4 7 5 8 9
 
 Other Miscellaneous Utility Functions: 
 \code{\link{install.OpenMx}()},
+\code{\link{libs}()},
 \code{\link{qm}()},
 \code{\link{umxBrownie}()},
 \code{\link{umxLav2RAM}()},

@@ -925,9 +925,12 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 		 	stop("Only models can be included in ... ", thisModel, " was a ", class(dot.items[[thisModel]]))
 		}
 	}
-	if(length(modelNames)<1){
+	if(length(modelNames) < 1){
 	 	stop("No models in '...' had an fitfunction: At least two models must have an fitfunction and objective for umxSuperModel to jointly optimize")
+	}else if(anyDuplicated(modelNames)){
+	 	stop("Models must have unique names: Duplicates detected in ", omxQuotes(modelNames))
 	}
+	umx_msg(modelNames)
 	# multiple group fit function sums the likelihoods of its component models
 	newModel = mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
 	# Trundle through and make sure values with the same label have the same start value... means for instance.

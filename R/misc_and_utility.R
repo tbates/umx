@@ -45,6 +45,30 @@
 #  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
 
 
+#' load libraries
+#'
+#' @description
+#' libs is a function to allow loading multiple librarys in one call
+#'
+#' @param ... an [umxLabel()] to DO WHAT?
+#' @return - [libs()]
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - [library()]
+#' @md
+#' @examples
+#' \dontrun{
+#' libs("umx", "OpenMx", "car")
+#' libs(c("umx", "OpenMx", "car"))
+#' }
+libs <- function(...) {
+	dot.items = list(...) # grab all the dot items
+	dot.items = unlist(dot.items) # In case any dot items are lists
+	for (pack in dot.items) {
+		library(pack, character.only = TRUE)		
+	}
+}
+
 #' Determine whether a dataset will need weights and summary statistics for the means if used with mxFitFunctionWLS
 #'
 #' Given either a data.frame or an mxData of type raw, this function determines whether [mxFitFunctionWLS()]
