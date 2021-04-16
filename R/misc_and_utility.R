@@ -91,7 +91,7 @@ libs <- function(...) {
 #' m2 = mxRename(m1, "model2")
 #' umxModelNames(m1) # "CP1fac" "top" "MZ" "DZ"
 #' 
-#' super = umxSuperModel("myModel", m1, m2, autoRun= TRUE)
+#' super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
 #' umxModelNames(super)
 #' 
 #' plot(super$CP1fac)
