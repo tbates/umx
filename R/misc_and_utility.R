@@ -81,33 +81,21 @@ libs <- function(...) {
 #' @return - names found
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - [mxRename()]
+#' @seealso - [mxRename()], [umxSuperModel()]
 #' @md
 #' @examples
+#' \dontrun{
 #' data(GFF)
 #' selDVs = c("gff", "fc", "qol")
-#' m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", autoRun= FALSE)
+#' m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", autoRun= TRUE)
 #' m2 = mxRename(m1, "model2")
 #' umxModelNames(m1) # "CP1fac" "top" "MZ" "DZ"
 #' 
-#' super = umxSuperModel("myModel", m1, m2, autoRun= FALSE)
+#' super = umxSuperModel("myModel", m1, m2, autoRun= TRUE)
 #' umxModelNames(super)
 #' 
-#' nameList = umxModelNames(super)
-#' dupes    = nameList[duplicated(nameList)] # "top" "MZ" "DZ"
-#' 
-#' subNames = names(super$submodels)
-#' suffix = 1
-#' for(thisSub in subNames) {
-#' 	thisModel = super$submodels[[thisSub]]
-#' 	for(thisDupName in dupes) {
-#' 		thisModel = mxRename(thisModel, paste0(thisDupName, "_", suffix), oldname=thisDupName)
-#' 	}
-#' 	super = mxModel(super, thisModel)
-#' 	suffix = suffix + 1
+#' plot(super$CP1fac)
 #' }
-#' umxModelNames(super)
-#'
 umxModelNames <- function(model, includeOuterModelName = FALSE) {
 	nameList = c()
 	if(includeOuterModelName){

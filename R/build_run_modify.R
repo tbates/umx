@@ -842,6 +842,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' [mxFitFunctionMultigroup()] fit function that minimizes the sum of the
 #' fits of the sub-models.
 #'
+#' *note*: Any duplicate model-names are renamed to be unique by suffixing `_1` etc.
+#'
 #' @param name The name for the container model (default = 'super')
 #' @param ...  Models forming the multiple groups contained in the supermodel.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -858,7 +860,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' \dontrun{
 #' library(umx)
 #' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
-#' manifests = c("x","y")
+#' manifests = c("x", "y")
 #' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
 #' 		AA = 0, CC = .4, EE = .6, varNames = manifests)
 #' 
@@ -939,20 +941,20 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 	# 2. Find and change any duplicate model names inside the models
 	# 	1. find all duplicated names
 	# 	2. loop over the sub models, finding and changing each duplicate name
-	#' nameList = umxModelNames(super)
-	#' dupes    = nameList[duplicated(nameList)] # "top" "MZ" "DZ"
-	#' 
-	#' subNames = names(super$submodels)
-	#' suffix = 1
-	#' for(thisSub in subNames) {
-	#' 	thisModel = super$submodels[[thisSub]]
-	#' 	for(thisDupName in dupes) {
-	#' 		thisModel = mxRename(thisModel, paste0(thisDupName, "_", suffix), oldname=thisDupName)
-	#' 	}
-	#' 	super = mxModel(super, thisModel)
-	#' 	suffix = suffix + 1
-	#' }
-	#' umxModelNames(super)
+	dupes = nameList[duplicated(umxModelNames(newModel))] # "top" "MZ" "DZ"
+	if(length(dupes) > 1000){
+		print("polite note: Renamed sub-models with duplicate names, e.g. 'top' -> 'top_2'")
+		suffix = 2
+		subNames = names(newModel$submodels)[-1]
+		for(thisSub in subNames){
+			thisModel = newModel$submodels[[thisSub]]
+			for(thisDupName in dupes){
+				thisModel = mxRename(thisModel, paste0(thisDupName, "_", suffix), oldname=thisDupName)
+			}
+			newModel = mxModel(newModel, thisModel)
+			suffix = suffix + 1
+		}
+	}
 
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std)
 	invisible(newModel)

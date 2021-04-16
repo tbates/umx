@@ -1,21 +1,21 @@
-**Development version** umx 4.5.0
-
-title = expression(paste0("Plot of ",fun[[1]]))
-
 ## dev umx 4.4.0
 * NEW: `umxPlot` now detects and plots Pearson-Aitken selection (as solid red headless paths)
 * NEW: `umxPlotFun` plot functions, e.g "sin(x)", "cos(x)" without hassles
 * NEW: `fin_valuation` uses revenue, margin, expenses and PE to compute a market cap
-* IMPROVED `umxCompare` Maintain compatibility with new OpenMx changes to `mxCompare` (esp. for WLS)
-* IMPROVE: `umx_read_lower` accept names for lower diag
-* IMPROVED `umxCP` `correlatedACE` leaves the covariances fixed@0
-* IMPROVED `umxAPA` pretty printing
+* NEW: `umxModelNames`
+* NEW: `libs` as a short cut for `multiple library()` calls
+  * e.g. `libs("x", "y", c("a", "b"))`
+* IMPROVED: `umxSuperModel` checks for duplicate names in incoming model names.
+* IMPROVED `umxCompare` Maintain compatibility with new OpenMx changes to `mxCompare` (esp. for WLS).
+* IMPROVE: `umx_read_lower` accept names for lower diag.
+* IMPROVED `umxCP` `correlatedACE` leaves the covariances fixed@0.
+* IMPROVED `umxAPA` pretty printing.
 * IMPROVED: `umxACE` added `A_std` closes #151
 * IMPROVED: `umxACEv` Tables now include markdown-compatible table captions
-* IMPROVED: `fin_interest`
-* IMPROVED: `umxPlotFun` check for character input`
-* IMPROVED: `fin_interest` shorter parameter name `dinflate`
-* MINOR: use `umxFactor` in examples
+* IMPROVED: `fin_interest`.
+* IMPROVED: `umxPlotFun` check for character input`.
+* IMPROVED: `fin_interest` shorter parameter name `dinflate`.
+* MINOR: Use `umxFactor` in examples.
 
 # Releases
 ## umx 4.3.0

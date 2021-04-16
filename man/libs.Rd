@@ -7,7 +7,7 @@
 libs(...)
 }
 \arguments{
-\item{...}{an \code{\link[=umxLabel]{umxLabel()}} to DO WHAT?}
+\item{...}{library names as  string}
 }
 \value{
 \itemize{
@@ -15,12 +15,12 @@ libs(...)
 }
 }
 \description{
-libs is a function to allow loading multiple librarys in one call
+libs is a function to allow loading multiple libraries in one call
 }
 \examples{
 \dontrun{
 libs("umx", "OpenMx", "car")
-libs(c("umx", "OpenMx", "car"))
+libs("umx", c("OpenMx", "car"))
 }
 }
 \seealso{

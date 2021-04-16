@@ -43,10 +43,6 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 	}
 }
 
-
-
-
-
 #' Not for user: pull variable names from a twin model
 #'
 #' @description
