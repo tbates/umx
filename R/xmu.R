@@ -16,64 +16,6 @@
 # = FNS NOT USED DIRECTLY BY USERS SUBJECT TO ARBITRARY CHANGE AND DEPRECATION !!  =
 # ==================================================================================
 
-#' Print algebras from a umx model
-#'
-#' @description
-#' `xmu_print_algebras` adds the results of algebras to a summary
-#'
-#' @details Non-user function called by [umxSummary()]
-#'
-#' @param model A umx model from which to print algebras.
-#' @param digits rounding (default = 3)
-#' @param verbose tell user if no algebras found
-#' @return - nothing
-#' @export
-#' @family xmu internal not for end user
-#' @seealso - [umxSummary()]
-#' @md
-#' @examples
-#' 
-#' \dontrun{
-#' library(mlbench)
-#' data(BostonHousing2)
-#' BostonHousing2$log_crim = log2(BostonHousing2$crim)
-#' BostonHousing2$nox      = BostonHousing2$nox*100
-#' m2 = umxRAM(data = BostonHousing2, "#crime_model
-#' 	cmedv ~ log_crim + b1*nox; 
-#' 	nox   ~ a1*rad + a2*log_crim
-#'	i_1 := a1*b1
-#'	i_2 := a2*b1"
-#' )
-#' m3 = mxRun(mxModel(m1, mxAlgebra(name= "rtwo", rbind(i_1, i_2))))
-#' m3 = mxRun(mxModel(m3, mxAlgebra(name= "ctwo", cbind(i_1, i_2))))
-#' xmu_print_algebras(m3)
-#' }
-xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
-	# OpenMx algebras are just matrices of values, so just print what we find as a table if more than 1 cell?
-	# umx_check_model(model)
-	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
-	if (length(model@algebras) > 0){
-		algNames = names(model@algebras)
-		for(thisAlg in algNames){
-			b  = mxEvalByName(thisAlg, model)
-			if(dim(b)[1] == 1 && dim(b)[2] == 1){
-				# 1*1 algebra
-				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
-				p  = 2 * pnorm(abs(b/SE), lower.tail = FALSE)
-				SEstring = paste0(round(b, digits), "CI95[", round(b - (1.96 * SE), digits), commaSep, round(b + (1.96 * SE), digits), "]")
-				cat("Algebra", omxQuotes(thisAlg), " = ", SEstring, ". p-value ", umx_APA_pval(p, addComparison = TRUE), "\n", sep = "")
-			}else{
-				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
-				cat("Algebra", omxQuotes(thisAlg), ":\n", sep = "")
-				umx_print(umx_round(b, 3))
-			}
-		}
-	} else {
-		if(verbose){
-			message("No algebras")
-		}
-	}
-}
 
 #' Get one or more columns from mzData or regular data.frame
 #'
@@ -100,48 +42,6 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 		return(data[ , col, drop = drop])
 	}
 }
-
-
-#' Rename a umxMatrix (in a model)
-#'
-#' @description
-#' Rename a umxMatrix, including updating its labels
-#'
-#' @param x A model or matrix
-#' @param matrixName Name of the matrix
-#' @param name The new name
-#' @return - updated matrix or model with updated matrix in it.
-#' @export
-#' @family xmu internal not for end user
-#' @md
-#' @examples
-#' data(twinData) # ?twinData from Australian twins.
-#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
-#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
-#' m1  = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
-#' tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
-#' umx_check(tmp$hello$labels == "hello_r1c1") # new is there
-#' umx_check(is.null(tmp$a))                   # old is gone
-umxRenameMatrix <- function(x, matrixName, name) {
-	if(umx_is_MxModel(x)){
-		# 1. Grab a copy of the matrix
-		tmp = x[[matrixName]]
-		umx_check(!is.null(tmp), "stop", paste0("matrix ", matrixName, " not found (calling umxRenameMatrix in model ", omxQuotes(x$name), ")"))
-		# 2. Update the new copy
-		tmp$name   = name
-		tmp$labels = namez(tmp$labels, pattern = paste0(matrixName), replacement = paste0(name))
-
-		# 2. Delete the old one from the model
-		x = mxModel(x, matrixName, remove= TRUE)
-		# 4. Add back to top
-		x = mxModel(x, tmp)
-		return(x)
-	} else {
-		stop("Haven't implemented umxRenameMatrix for matrices")
-	}
-}
-
 
 #' Not for user: pull variable names from a twin model
 #'
@@ -393,6 +293,100 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		invisible(theSummary)
 	}
 }
+
+# xmu_twin_print_means(model, digits = digits, report = report)
+xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html")){
+	report = match.arg(report)
+	int = model$top$intercept$values
+	if(!is.null(int)){
+		# means and betas
+		caption = "Means and (raw) betas from model$top$intercept and model$top$meansBetas"
+		row.names(int) = "intercept"
+		b = model$top$meansBetas$values
+		bvals = b[,1:dim(b)[[2]], drop = FALSE]
+		int = rbind(int, cbind(bvals, bvals))
+	} else {
+		int = model$top$expMean$values
+		if(!is.null(int)){
+			# expMeans
+			caption = "Means (from model$top$expMean)"
+			row.names(int) = "intercept"
+		}else{
+			# no means
+		}
+	}
+
+	if(!is.null(int)){
+		umx_print(int, digits = digits, caption = caption, file=report, append = TRUE, sortableDF = TRUE)
+		# if(report == "html"){
+		# 	# depends on R2HTML::HTML
+		# 	R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE);
+		# 	umx_open("tmp.html")
+		# }
+	}		
+}
+
+
+#' Print algebras from a umx model
+#'
+#' @description
+#' `xmu_print_algebras` adds the results of algebras to a summary
+#'
+#' @details Non-user function called by [umxSummary()]
+#'
+#' @param model A umx model from which to print algebras.
+#' @param digits rounding (default = 3)
+#' @param verbose tell user if no algebras found
+#' @return - nothing
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [umxSummary()]
+#' @md
+#' @examples
+#' 
+#' \dontrun{
+#' library(mlbench)
+#' data(BostonHousing2)
+#' BostonHousing2$log_crim = log2(BostonHousing2$crim)
+#' BostonHousing2$nox      = BostonHousing2$nox*100
+#' m2 = umxRAM(data = BostonHousing2, "#crime_model
+#' 	cmedv ~ log_crim + b1*nox; 
+#' 	nox   ~ a1*rad + a2*log_crim
+#'	i_1 := a1*b1
+#'	i_2 := a2*b1"
+#' )
+#' m3 = mxRun(mxModel(m1, mxAlgebra(name= "rtwo", rbind(i_1, i_2))))
+#' m3 = mxRun(mxModel(m3, mxAlgebra(name= "ctwo", cbind(i_1, i_2))))
+#' xmu_print_algebras(m3)
+#' }
+xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
+	# OpenMx algebras are just matrices of values, so just print what we find as a table if more than 1 cell?
+	# umx_check_model(model)
+	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
+	if (length(model@algebras) > 0){
+		algNames = names(model@algebras)
+		for(thisAlg in algNames){
+			b  = mxEvalByName(thisAlg, model)
+			if(dim(b)[1] == 1 && dim(b)[2] == 1){
+				# 1*1 algebra
+				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
+				p  = 2 * pnorm(abs(b/SE), lower.tail = FALSE)
+				SEstring = paste0(round(b, digits), "CI95[", round(b - (1.96 * SE), digits), commaSep, round(b + (1.96 * SE), digits), "]")
+				cat("Algebra", omxQuotes(thisAlg), " = ", SEstring, ". p-value ", umx_APA_pval(p, addComparison = TRUE), "\n", sep = "")
+			}else{
+				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
+				cat("Algebra", omxQuotes(thisAlg), ":\n", sep = "")
+				umx_print(umx_round(b, 3))
+			}
+		}
+	} else {
+		if(verbose){
+			message("No algebras")
+		}
+	}
+}
+
+
 # ===================================
 # = DATA AND MODEL CHECKING HELPERS =
 # ===================================
@@ -512,37 +506,6 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 	}
 }
 
-# xmu_twin_print_means(model, digits = digits, report = report)
-xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html")){
-	report = match.arg(report)
-	int = model$top$intercept$values
-	if(!is.null(int)){
-		# means and betas
-		caption = "Means and (raw) betas from model$top$intercept and model$top$meansBetas"
-		row.names(int) = "intercept"
-		b = model$top$meansBetas$values
-		bvals = b[,1:dim(b)[[2]], drop = FALSE]
-		int = rbind(int, cbind(bvals, bvals))
-	} else {
-		int = model$top$expMean$values
-		if(!is.null(int)){
-			# expMeans
-			caption = "Means (from model$top$expMean)"
-			row.names(int) = "intercept"
-		}else{
-			# no means
-		}
-	}
-
-	if(!is.null(int)){
-		umx_print(int, digits = digits, caption = caption, file=report, append = TRUE, sortableDF = TRUE)
-		# if(report == "html"){
-		# 	# depends on R2HTML::HTML
-		# 	R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE);
-		# 	umx_open("tmp.html")
-		# }
-	}		
-}
 
 #' Drop rows with missing definition variables
 #'
@@ -585,6 +548,75 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 			stop(sum(!OK), " rows of ", omxQuotes(hint), " have NA definition variables. Set dropMissingDef = TRUE, or remove these yourself with
 ", hint, "[complete.cases(", hint, "[,selVars]),]")
 		}
+	}
+}
+
+#' Determine if a dataset will need statistics for the means if used in a WLS model.
+#'
+#' Given either a data.frame or raw `mxData`, this function determines whether [mxFitFunctionWLS()]
+#' will generate expectations for means.
+#' 
+#' All-continuous models processed using the "cumulants" method LACK means, while
+#' all continuous processed with allContinuousMethod = "marginals" will HAVE means.
+#' 
+#' When data are not all continuous, means are modeled and `allContinuousMethod` is ignored.
+#'
+#' @param data The raw data being used in a [mxFitFunctionWLS()] model.
+#' @param allContinuousMethod the method used to process data when all columns are continuous (default = "cumulants")
+#' @param verbose Whether or not to report diagnostics.
+#' @return - list describing the data.
+#' @family xmu internal not for end user
+#' @seealso - [mxFitFunctionWLS()], [omxAugmentDataWithWLSSummary()]
+#' @export
+#' @md
+#' @examples
+#'
+#' # ====================================
+#' # = All continuous, data.frame input =
+#' # ====================================
+#'
+#' tmp =xmu_describe_data_WLS(mtcars, allContinuousMethod= "cumulants", verbose = TRUE)
+#' tmp$hasMeans # FALSE - no means with cumulants
+#' tmp =xmu_describe_data_WLS(mtcars, allContinuousMethod= "marginals") 
+#' tmp$hasMeans # TRUE we get means with marginals
+#'
+#' # ==========================
+#' # = mxData object as input =
+#' # ==========================
+#' tmp = mxData(mtcars, type="raw")
+#' xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants", verbose = TRUE)$hasMeans # FALSE
+#' xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
+#'
+#' # =======================================
+#' # = One var is a factor: Means modeled =
+#' # =======================================
+#' tmp = mtcars
+#' tmp$cyl = factor(tmp$cyl)
+#'xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants")$hasMeans # TRUE - always has means
+#'xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
+#' 
+xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "marginals"), verbose=FALSE){
+	allContinuousMethod = match.arg(allContinuousMethod)
+	if(class(data) == "data.frame"){
+		# all good
+	} else if(class(data) == "MxDataStatic" && data$type == "raw"){
+		data = data$observed
+	}else{
+		message("xmu_describe_data_WLS currently only knows how to process dataframes and mxData of type = 'raw'.\n",
+		"You offered up an object of class: ", omxQuotes(class(data)))
+	}
+
+	if(all(sapply(data, FUN= is.numeric))){
+		if(verbose){ print("all continuous") }
+
+		if(allContinuousMethod == "cumulants"){
+			return(list(hasMeans = FALSE))
+		} else {
+			return(list(hasMeans = TRUE))
+		}
+	}else{
+		# Data with any non-continuous vars have means under WLS
+		return(list(hasMeans = TRUE))
 	}
 }
 

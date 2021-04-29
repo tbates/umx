@@ -919,9 +919,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			refModels = tryCatch({
 			    refModels = mxRefModels(model, run = TRUE)
 			}, warning = function(x) {
-			    print("warning calling mxRefModels: Note WLS not supported for ref models, fit indices not available https://github.com/OpenMx/OpenMx/issues/184")
+			    print("Warning calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 			}, error = function(x) {
-			    print("error calling mxRefModels: Note fit indices not available as WLS not supported for ref models https://github.com/OpenMx/OpenMx/issues/184")
+			    print("Error calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 			}, finally={
 			    # print("cleanup-code")
 			})
@@ -3713,9 +3713,9 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 		refModels = tryCatch({
 		    refModels = mxRefModels(model, run = TRUE)
 		}, warning = function(x) {
-		    print("warning calling mxRefModels: Note WLS not supported for ref models, fit indices not available https://github.com/OpenMx/OpenMx/issues/184")
+		    print("warning calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 		}, error = function(x) {
-		    print("error calling mxRefModels: Note fit indices not available as WLS not supported for ref models https://github.com/OpenMx/OpenMx/issues/184")
+		    print("error calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 		}, finally={
 		    # print("cleanup-code")
 		})

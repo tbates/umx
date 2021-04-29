@@ -13,7 +13,7 @@ umxSuperModel(
 )
 }
 \arguments{
-\item{name}{The name for the container model (default = 'top')}
+\item{name}{The name for the container model (default = 'super')}
 
 \item{...}{Models forming the multiple groups contained in the supermodel.}
 
@@ -29,16 +29,18 @@ umxSuperModel(
 }
 }
 \description{
-umxSuperModel takes 1 or more models and wraps them in a supermodel with a
+\code{umxSuperModel} takes 1 or more models and wraps them in a supermodel with a
 \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}} fit function that minimizes the sum of the
 fits of the sub-models.
+
+\emph{note}: Any duplicate model-names are renamed to be unique by suffixing \verb{_1} etc.
 }
 \examples{
 
 \dontrun{
 library(umx)
 # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
-manifests = c("x","y")
+manifests = c("x", "y")
 tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
 		AA = 0, CC = .4, EE = .6, varNames = manifests)
 

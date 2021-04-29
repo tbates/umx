@@ -34,9 +34,11 @@ umx_msg(mtcars)
 \seealso{
 Other Miscellaneous Utility Functions: 
 \code{\link{install.OpenMx}()},
+\code{\link{libs}()},
 \code{\link{qm}()},
 \code{\link{umxBrownie}()},
 \code{\link{umxLav2RAM}()},
+\code{\link{umxModelNames}()},
 \code{\link{umxRAM2Lav}()},
 \code{\link{umxVersion}()},
 \code{\link{umx_array_shift}()},

@@ -25,9 +25,11 @@ x # now only 2 items (altered in containing environment)
 \seealso{
 Other Miscellaneous Utility Functions: 
 \code{\link{install.OpenMx}()},
+\code{\link{libs}()},
 \code{\link{qm}()},
 \code{\link{umxBrownie}()},
 \code{\link{umxLav2RAM}()},
+\code{\link{umxModelNames}()},
 \code{\link{umxRAM2Lav}()},
 \code{\link{umxVersion}()},
 \code{\link{umx_find_object}()},
