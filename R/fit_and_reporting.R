@@ -850,7 +850,7 @@ umxSummary.default <- function(model, ...){
 #' 	If NULL will be computed on demand. If FALSE will not be computed.
 #' @param ... Other parameters to control model summary
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
-#' @family Reporting functions
+#' @family Summary functions
 #' @seealso - [umxRAM()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Conventional criteria versus new alternatives. *Structural Equation Modeling*, **6**, 1-55. 
@@ -1315,7 +1315,7 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @param ... Other parameters to control model summary
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Modeling Functions
+#' @family Summary functions
 #' @seealso - [umxACEcov()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
@@ -1510,7 +1510,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
 #' @export
-#' @family Twin Modeling Functions
+#' @family Summary functions
 #' @seealso - \code{\link{umxCP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -1652,7 +1652,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Modeling Functions
+#' @family Summary functions
 #' @export
 #' @seealso - \code{\link{umxIP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -1777,7 +1777,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @param show not doing anything yet (required for all summary functions)
 #' @param ... Optional additional parameters
 #' @return - optional [mxModel()]
-#' @family Twin Modeling Functions
+#' @family Summary functions
 #' @export
 #' @seealso - [umxGxE()], [umxReduce()], [plot()], [umxSummary)] all work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -1868,7 +1868,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
-#' @family Reporting functions
+#' @family Summary functions
 #' @seealso - [mxCompare()], [umxSummary()], [umxRAM()],
 #' @references - <https://github.com/tbates/umx>
 #' @export
@@ -2782,7 +2782,6 @@ plot.MxModelGxE <- umxPlotGxE
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxCP()]
 #' @family Plotting functions
-#' @family Twin Modeling Functions
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples

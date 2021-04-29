@@ -216,7 +216,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @references - <https://tbates.github.io>
 #' @return - Optionally return the dot code
 #' @export
-#' @family Twin Modeling Functions
+#' @family Plotting functions
 #' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @md
 #' @examples

@@ -272,7 +272,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
-#' @family Twin Modeling Functions
+#' @family Plotting functions
 #' @md
 #' @examples
 #' \dontrun{
