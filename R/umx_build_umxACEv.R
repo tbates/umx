@@ -617,7 +617,6 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @return - optionally return the dot code
 #' @export
 #' @family Plotting functions
-#' @family Reporting functions
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples

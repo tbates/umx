@@ -92,38 +92,20 @@ plot(a2b)
 \item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxSummary.MxModelDoC]{umxSummary.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other Twin Modeling Functions: 
+Other Plotting functions: 
+\code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
-\code{\link{power.ACE.test}()},
-\code{\link{umxACEcov}()},
-\code{\link{umxACEv}()},
-\code{\link{umxACE}()},
-\code{\link{umxCP}()},
-\code{\link{umxDoCp}()},
-\code{\link{umxDoC}()},
-\code{\link{umxGxE_window}()},
-\code{\link{umxGxEbiv}()},
-\code{\link{umxGxE}()},
-\code{\link{umxIP}()},
+\code{\link{plot.MxModel}()},
+\code{\link{umxPlotACEcov}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
-\code{\link{umxReduceACE}()},
-\code{\link{umxReduceGxE}()},
-\code{\link{umxReduce}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACEcov}()},
-\code{\link{umxSummaryACEv}()},
-\code{\link{umxSummaryACE}()},
-\code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryDoC}()},
-\code{\link{umxSummaryGxEbiv}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
-\code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()},
-\code{\link{umxTwinMaker}()},
+\code{\link{umxPlotFun}()},
+\code{\link{umxPlotGxEbiv}()},
+\code{\link{umxPlotGxE}()},
+\code{\link{umxPlotIP}()},
+\code{\link{umxPlotSexLim}()},
+\code{\link{umxPlotSimplex}()},
 \code{\link{umx}}
 }
-\concept{Twin Modeling Functions}
+\concept{Plotting functions}

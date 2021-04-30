@@ -124,22 +124,25 @@ all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 
 }
 \seealso{
-Other Miscellaneous Utility Functions: 
-\code{\link{install.OpenMx}()},
-\code{\link{libs}()},
-\code{\link{qm}()},
-\code{\link{umxBrownie}()},
-\code{\link{umxLav2RAM}()},
-\code{\link{umxModelNames}()},
-\code{\link{umxRAM2Lav}()},
-\code{\link{umxVersion}()},
-\code{\link{umx_array_shift}()},
-\code{\link{umx_find_object}()},
-\code{\link{umx_lower.tri}()},
-\code{\link{umx_msg}()},
-\code{\link{umx_open_CRAN_page}()},
-\code{\link{umx_pad}()},
-\code{\link{umx_print}()},
+Other Data Functions: 
+\code{\link{umxFactor}()},
+\code{\link{umxHetCor}()},
+\code{\link{umx_as_numeric}()},
+\code{\link{umx_cont_2_quantiles}()},
+\code{\link{umx_lower2full}()},
+\code{\link{umx_make_MR_data}()},
+\code{\link{umx_make_TwinData}()},
+\code{\link{umx_make_fake_data}()},
+\code{\link{umx_make_raw_from_cov}()},
+\code{\link{umx_polychoric}()},
+\code{\link{umx_polypairwise}()},
+\code{\link{umx_polytriowise}()},
+\code{\link{umx_read_lower}()},
+\code{\link{umx_read_prolific_demog}()},
+\code{\link{umx_rename}()},
+\code{\link{umx_reorder}()},
+\code{\link{umx_select_valid}()},
+\code{\link{umx_stack}()},
 \code{\link{umx}}
 }
-\concept{Miscellaneous Utility Functions}
+\concept{Data Functions}

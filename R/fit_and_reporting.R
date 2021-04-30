@@ -1868,6 +1868,8 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
+#' @family Core Modelling Functions
+#' @family Modify or Compare Models
 #' @family Summary functions
 #' @seealso - [mxCompare()], [umxSummary()], [umxRAM()],
 #' @references - <https://github.com/tbates/umx>

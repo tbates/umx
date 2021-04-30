@@ -40,7 +40,6 @@ Other Miscellaneous Utility Functions:
 \code{\link{umx_open_CRAN_page}()},
 \code{\link{umx_pad}()},
 \code{\link{umx_print}()},
-\code{\link{umx_score_scale}()},
 \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}

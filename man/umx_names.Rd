@@ -115,17 +115,6 @@ namez(umxMatrix("bob", "Full", 3,3)$labels)
 And \code{\link[=umx_check_names]{umx_check_names()}} to check for existence of names in a dataframe.
 }
 
-Other Reporting Functions: 
-\code{\link{loadings.MxModel}()},
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umxReduce}()},
-\code{\link{umx_aggregate}()},
-\code{\link{umx_time}()},
-\code{\link{umx}}
-
 Other String Functions: 
 \code{\link{umx_explode_twin_names}()},
 \code{\link{umx_explode}()},
@@ -137,5 +126,4 @@ Other String Functions:
 \code{\link{umx_trim}()},
 \code{\link{umx}}
 }
-\concept{Reporting Functions}
 \concept{String Functions}

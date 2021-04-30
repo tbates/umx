@@ -62,6 +62,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 }
 
 Other Modify or Compare Models: 
+\code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
 \code{\link{umxFixAll}()},
 \code{\link{umxModify}()},

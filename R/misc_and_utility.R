@@ -1376,7 +1376,7 @@ umx_factor <- umxFactor
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @return - scores
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Data Functions
 #' @md
 #' @examples
 #' library(psych)
@@ -5526,7 +5526,6 @@ umx_explode <- function(delimiter = character(), string) {
 #' @export
 #' @seealso - Base-R pattern matching functions: [grep()].
 #' And [umx_check_names()] to check for existence of names in a dataframe. 
-#' @family Reporting Functions
 #' @family String Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md

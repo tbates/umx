@@ -103,6 +103,15 @@ Other Core Modeling Functions:
 \code{\link{umxSummary}()},
 \code{\link{umxSuperModel}()}
 
+Other Modify or Compare Models: 
+\code{\link{umxCompare}()},
+\code{\link{umxEquate}()},
+\code{\link{umxFixAll}()},
+\code{\link{umxMI}()},
+\code{\link{umxModify}()},
+\code{\link{umxSetParameters}()},
+\code{\link{umxUnexplainedCausalNexus}()}
+
 Other Reporting Functions: 
 \code{\link{loadings.MxModel}()},
 \code{\link{umxAPA}()},
@@ -111,24 +120,17 @@ Other Reporting Functions:
 \code{\link{umxParameters}()},
 \code{\link{umxReduce}()},
 \code{\link{umx_aggregate}()},
-\code{\link{umx_names}()},
 \code{\link{umx_time}()}
-
-Other Modify or Compare Models: 
-\code{\link{umxEquate}()},
-\code{\link{umxFixAll}()},
-\code{\link{umxMI}()},
-\code{\link{umxModify}()},
-\code{\link{umxSetParameters}()},
-\code{\link{umxUnexplainedCausalNexus}()}
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
 \code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
 \code{\link{umxPlotFun}()},
 \code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},
@@ -141,7 +143,6 @@ Other Super-easy helpers:
 \code{\link{umxMendelianRandomization}()}
 
 Other Twin Modeling Functions: 
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
@@ -153,8 +154,6 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
@@ -162,14 +161,10 @@ Other Twin Modeling Functions:
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
 \code{\link{umxSummaryACE}()},
-\code{\link{umxSummaryCP}()},
 \code{\link{umxSummaryDoC}()},
 \code{\link{umxSummaryGxEbiv}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
 \code{\link{umxTwinMaker}()}
@@ -225,6 +220,7 @@ Other Data Functions:
 \code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
 \code{\link{umx_reorder}()},
+\code{\link{umx_score_scale}()},
 \code{\link{umx_select_valid}()},
 \code{\link{umx_stack}()}
 
@@ -281,8 +277,7 @@ Other Miscellaneous Utility Functions:
 \code{\link{umx_msg}()},
 \code{\link{umx_open_CRAN_page}()},
 \code{\link{umx_pad}()},
-\code{\link{umx_print}()},
-\code{\link{umx_score_scale}()}
+\code{\link{umx_print}()}
 
 Other datasets: 
 \code{\link{Fischbein_wt}},
@@ -381,6 +376,7 @@ Other xmu internal not for end user:
 \concept{Plotting functions}
 \concept{Reporting Functions}
 \concept{String Functions}
+\concept{Summary Functions}
 \concept{Super-easy helpers}
 \concept{Teaching and testing Functions}
 \concept{Twin Data functions}

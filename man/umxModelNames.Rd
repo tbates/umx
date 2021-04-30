@@ -30,7 +30,7 @@ m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", a
 m2 = mxRename(m1, "model2")
 umxModelNames(m1) # "CP1fac" "top" "MZ" "DZ"
 
-super = umxSuperModel("myModel", m1, m2, autoRun= TRUE)
+super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
 umxModelNames(super)
 
 plot(super$CP1fac)
@@ -56,7 +56,6 @@ Other Miscellaneous Utility Functions:
 \code{\link{umx_open_CRAN_page}()},
 \code{\link{umx_pad}()},
 \code{\link{umx_print}()},
-\code{\link{umx_score_scale}()},
 \code{\link{umx}}
 }
 \concept{Miscellaneous Utility Functions}

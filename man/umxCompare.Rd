@@ -92,21 +92,22 @@ umxCompare(m1, m2, report = "html") # Open table in browser
 \item \code{\link[=mxCompare]{mxCompare()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},
 }
 
-Other Reporting functions: 
-\code{\link{RMSEA.MxModel}()},
-\code{\link{RMSEA.summary.mxmodel}()},
-\code{\link{RMSEA}()},
-\code{\link{extractAIC.MxModel}()},
-\code{\link{loadings}()},
-\code{\link{residuals.MxModel}()},
-\code{\link{umxCI_boot}()},
-\code{\link{umxCI}()},
-\code{\link{umxConfint}()},
-\code{\link{umxExpCov}()},
-\code{\link{umxExpMeans}()},
-\code{\link{umxFitIndices}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxRotate}()},
-\code{\link{umxSummary.MxModel}()}
+Other Modify or Compare Models: 
+\code{\link{umxEquate}()},
+\code{\link{umxFixAll}()},
+\code{\link{umxMI}()},
+\code{\link{umxModify}()},
+\code{\link{umxSetParameters}()},
+\code{\link{umxUnexplainedCausalNexus}()},
+\code{\link{umx}}
+
+Other Summary functions: 
+\code{\link{umxSummary.MxModel}()},
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()}
 }
-\concept{Reporting functions}
+\concept{Core Modelling Functions}
+\concept{Modify or Compare Models}
+\concept{Summary functions}

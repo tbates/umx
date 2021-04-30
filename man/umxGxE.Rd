@@ -127,7 +127,6 @@ umxReduce(m1)
 \code{\link[=umxGxE_window]{umxGxE_window()}}, \code{\link[=umxReduce]{umxReduce()}}, \code{\link[=umxSummary]{umxSummary()}}
 
 Other Twin Modeling Functions: 
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{power.ACE.test}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
@@ -138,8 +137,6 @@ Other Twin Modeling Functions:
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxEbiv}()},
 \code{\link{umxIP}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
@@ -147,14 +144,10 @@ Other Twin Modeling Functions:
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryACEv}()},
 \code{\link{umxSummaryACE}()},
-\code{\link{umxSummaryCP}()},
 \code{\link{umxSummaryDoC}()},
 \code{\link{umxSummaryGxEbiv}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
 \code{\link{umxTwinMaker}()},
