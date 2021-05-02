@@ -62,11 +62,13 @@ m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
 \code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
 \code{\link{umxPlotFun}()},
 \code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},

@@ -97,6 +97,7 @@ parameters(m2)
 }
 
 Other Modify or Compare Models: 
+\code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
 \code{\link{umxFixAll}()},
 \code{\link{umxMI}()},

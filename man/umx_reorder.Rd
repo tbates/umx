@@ -45,6 +45,7 @@ Other Data Functions:
 \code{\link{umx_read_lower}()},
 \code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
+\code{\link{umx_score_scale}()},
 \code{\link{umx_select_valid}()},
 \code{\link{umx_stack}()},
 \code{\link{umx}}

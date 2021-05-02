@@ -43,6 +43,7 @@ mxCompare(m1, m2)
 }
 \seealso{
 Other Modify or Compare Models: 
+\code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
 \code{\link{umxMI}()},
 \code{\link{umxModify}()},

@@ -117,13 +117,10 @@ Other Reporting functions:
 \code{\link{loadings}()},
 \code{\link{residuals.MxModel}()},
 \code{\link{umxCI_boot}()},
-\code{\link{umxCompare}()},
 \code{\link{umxConfint}()},
 \code{\link{umxExpCov}()},
 \code{\link{umxExpMeans}()},
 \code{\link{umxFitIndices}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxRotate}()},
-\code{\link{umxSummary.MxModel}()}
+\code{\link{umxRotate}()}
 }
 \concept{Reporting functions}

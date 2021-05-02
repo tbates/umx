@@ -76,38 +76,11 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE)
 \item \code{\link[=umxACEcov]{umxACEcov()}}
 }
 
-Other Twin Modeling Functions: 
-\code{\link{plot.MxModelTwinMaker}()},
-\code{\link{power.ACE.test}()},
-\code{\link{umxACEcov}()},
-\code{\link{umxACEv}()},
-\code{\link{umxACE}()},
-\code{\link{umxCP}()},
-\code{\link{umxDoCp}()},
-\code{\link{umxDoC}()},
-\code{\link{umxGxE_window}()},
-\code{\link{umxGxEbiv}()},
-\code{\link{umxGxE}()},
-\code{\link{umxIP}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
-\code{\link{umxReduceACE}()},
-\code{\link{umxReduceGxE}()},
-\code{\link{umxReduce}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACEv}()},
-\code{\link{umxSummaryACE}()},
+Other Summary functions: 
+\code{\link{umxCompare}()},
+\code{\link{umxSummary.MxModel}()},
 \code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryDoC}()},
-\code{\link{umxSummaryGxEbiv}()},
 \code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
-\code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()},
-\code{\link{umxTwinMaker}()},
-\code{\link{umx}}
+\code{\link{umxSummaryIP}()}
 }
-\concept{Twin Modeling Functions}
+\concept{Summary functions}

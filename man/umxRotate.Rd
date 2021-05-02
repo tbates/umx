@@ -41,12 +41,9 @@ Other Reporting functions:
 \code{\link{residuals.MxModel}()},
 \code{\link{umxCI_boot}()},
 \code{\link{umxCI}()},
-\code{\link{umxCompare}()},
 \code{\link{umxConfint}()},
 \code{\link{umxExpCov}()},
 \code{\link{umxExpMeans}()},
-\code{\link{umxFitIndices}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxSummary.MxModel}()}
+\code{\link{umxFitIndices}()}
 }
 \concept{Reporting functions}

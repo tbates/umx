@@ -117,21 +117,11 @@ Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
 \item \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Reporting functions: 
-\code{\link{RMSEA.MxModel}()},
-\code{\link{RMSEA.summary.mxmodel}()},
-\code{\link{RMSEA}()},
-\code{\link{extractAIC.MxModel}()},
-\code{\link{loadings}()},
-\code{\link{residuals.MxModel}()},
-\code{\link{umxCI_boot}()},
-\code{\link{umxCI}()},
+Other Summary functions: 
 \code{\link{umxCompare}()},
-\code{\link{umxConfint}()},
-\code{\link{umxExpCov}()},
-\code{\link{umxExpMeans}()},
-\code{\link{umxFitIndices}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxRotate}()}
+\code{\link{umxSummaryACEcov}()},
+\code{\link{umxSummaryCP}()},
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryIP}()}
 }
-\concept{Reporting functions}
+\concept{Summary functions}

@@ -89,7 +89,6 @@ Other Reporting Functions:
 \code{\link{umxGetParameters}()},
 \code{\link{umxParameters}()},
 \code{\link{umxReduce}()},
-\code{\link{umx_names}()},
 \code{\link{umx_time}()},
 \code{\link{umx}}
 }

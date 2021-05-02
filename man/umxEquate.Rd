@@ -100,6 +100,7 @@ parameters(m2)
 \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
 
 Other Modify or Compare Models: 
+\code{\link{umxCompare}()},
 \code{\link{umxFixAll}()},
 \code{\link{umxMI}()},
 \code{\link{umxModify}()},
