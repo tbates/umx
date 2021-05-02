@@ -842,9 +842,11 @@ umxSummary.default <- function(model, ...){
 #' @param model The [mxModel()] whose fit will be reported
 #' @param std If TRUE, model is standardized (Default FALSE, NULL means "don't show").
 #' @param digits How many decimal places to report (Default 2)
-#' @param report If "html", then show results in browser (alternative = "markdown")
-#' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
+#' @param report If "html", then show results in browser (default = "markdown")
 #' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
+#' @param means Whether to include means in the summary (TRUE)
+#' @param residuals Whether to include residuals in the summary (TRUE)
+#' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
 #' @param refModels Saturated models if needed for fit indices (see example below:
 #' 	If NULL will be computed on demand. If FALSE will not be computed.
@@ -889,12 +891,11 @@ umxSummary.default <- function(model, ...){
 #' 	umxPath(v1m0 = "G")
 #' )
 #' umxSummary(m1, std = TRUE, filter = "NS")
-umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), filter = c("ALL", "NS", "SIG"), SE = TRUE, RMSEA_CI = FALSE, ..., matrixAddresses = FALSE){
+umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means= TRUE, residuals= TRUE, SE = TRUE, filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, ..., matrixAddresses = FALSE){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
-
-	report = match.arg(report)
-	filter = match.arg(filter)
+	report   = match.arg(report)
+	filter   = match.arg(filter)
 	
 	message("?umxSummary std=T|F', digits, report= 'html', filter= 'NS' & more")
 	
@@ -1007,6 +1008,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		} else {
 			toShow = parameterTable[,namesToShow]
 		}
+		toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+
 		umx_print(toShow, digits = digits, report = report, caption = "Model Parameter loadings", na.print = "", zero.print = "0", justify = "none")
 	}
 	with(modelSummary, {
@@ -1057,7 +1060,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	
 	xmu_print_algebras(model)
 	
-	if(!is.null(std)){ # return these as  invisible for the user to filer, sort etc.
+	if(!is.null(std)){ # return these as  invisible for the user to filter, sort etc.
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
 		}else if(filter == "SIG"){

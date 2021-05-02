@@ -13,14 +13,12 @@ umxModelNames(model, includeOuterModelName = FALSE)
 }
 \value{
 \itemize{
-\item names found
+\item All models names
 }
 }
 \description{
-\code{umxModelNames}
-}
-\details{
-
+\code{umxModelNames} rerturns the names of each model contained in the model provided to it
+(optionally excluding the out model itself).
 }
 \examples{
 \dontrun{
@@ -30,7 +28,7 @@ m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", a
 m2 = mxRename(m1, "model2")
 umxModelNames(m1) # "CP1fac" "top" "MZ" "DZ"
 
-super = umxSuperModel("myModel", m1, m2, autoRun= TRUE)
+super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
 umxModelNames(super)
 
 plot(super$CP1fac)

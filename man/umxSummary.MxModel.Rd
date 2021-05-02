@@ -11,8 +11,10 @@
   std = FALSE,
   digits = 2,
   report = c("markdown", "html"),
-  filter = c("ALL", "NS", "SIG"),
+  means = TRUE,
+  residuals = TRUE,
   SE = TRUE,
+  filter = c("ALL", "NS", "SIG"),
   RMSEA_CI = FALSE,
   ...,
   matrixAddresses = FALSE
@@ -28,11 +30,15 @@ If NULL will be computed on demand. If FALSE will not be computed.}
 
 \item{digits}{How many decimal places to report (Default 2)}
 
-\item{report}{If "html", then show results in browser (alternative = "markdown")}
+\item{report}{If "html", then show results in browser (default = "markdown")}
 
-\item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
+\item{means}{Whether to include means in the summary (TRUE)}
+
+\item{residuals}{Whether to include residuals in the summary (TRUE)}
 
 \item{SE}{Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.}
+
+\item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
 \item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to FALSE)}
 

@@ -72,13 +72,12 @@ libs <- function(...) {
 #' Return names of models found within a model
 #'
 #' @description
-#' `umxModelNames` 
-#'
-#' @details
+#' `umxModelNames` rerturns the names of each model contained in the model provided to it 
+#' (optionally excluding the out model itself).
 #'
 #' @param model an [mxModel()] to search for model names.
 #' @param includeOuterModelName FALSE
-#' @return - names found
+#' @return - All models names
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - [mxRename()], [umxSuperModel()]

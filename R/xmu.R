@@ -1741,6 +1741,94 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 # = RAM HELPERS =
 # ===============
 
+#' Order and group the parameters in a RAM summary
+#'
+#' @description
+#' A complex model is easily summarized when the parameters are grouped by residuals, latent variance, factor loading etc.
+#'
+#' @details
+#'
+#' @param model the model containing the parameters.
+#' @param paramTable The parameter table.
+#' @param means Whether to show the means (FALSE)
+#' @param residuals Whether to show the residuals (FALSE)
+#' @return - Sorted parameter table
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [umxSummary()]
+#' @md
+#' @examples
+#' \dontrun{
+#' xmu_summary_RAM_group_parameters(model, paramTable,  means= FALSE, residuals= FALSE)
+#' }
+xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, residuals= FALSE) {
+	# https://github.com/tbates/umx/issues/66
+	# 1. check is ram
+	# 2. check column 1-= "name"
+	# TODO: robustify this by doing it in the model space: look up where each label is in the S A M matrices
+	# Use F to identify labels that involve latents
+
+	latents = model$latentVars
+	manifests = model$manifestVars
+	paramTable$type = "custom"
+
+	for (i in 1:dim(paramTable)[1]) {
+		thisName = paramTable[i, "name"]
+		# umx_msg(thisName)
+		if(length(namez(thisName, "^one_to_"))){
+			# thisName = "one_to_CS1"
+			paramTable[i, "type"] = "Means"
+		} else if(length(namez(thisName, "_to_"))){
+			parts = umx_explode("_to_", thisName)
+			if(parts[1]  %in% latents){
+				if(parts[2]  %in% latents){
+					# Factor loadings lat_to_manifest[]  e.g. thisName = "Unity_to_CS1"
+					paramTable[i, "type"] = "Factor to factor"
+				}else{
+					paramTable[i, "type"] = "Factor loadings"					
+				}
+			} else {
+				paramTable[i, "type"] = "Manifest paths"
+			}
+		} else if(length(namez(thisName, "_with_"))){
+			parts = umx_explode("_with_", thisName)
+			if(parts[1]  %in% latents){
+				if(parts[2]  %in% latents){
+					if(parts[1] == parts[2]){
+						paramTable[i, "type"] = "Factor Variances"
+					}else{
+						paramTable[i, "type"] = "Factor Covariances"
+					}
+				}
+			} else {
+				# manifest with
+				if(parts[2] %in% manifests){
+					if(parts[1] == parts[2]){
+						paramTable[i, "type"] = "Residuals"
+					}else{
+						paramTable[i, "type"] = "Manifest Covariances"						
+					}
+				}else{
+					paramTable[i, "type"] = "Manifest-latent Covariances"
+				}
+			}
+		}else{
+			# this was a label that didn't match an expected pattern.
+			# Likely something with a suffix, or a user name like "beta1"
+			# stop("not sure what this path is")
+			# not hit
+		}
+	}
+	paramTable = paramTable[order(paramTable$type), ]	
+	if(!means){
+		paramTable = paramTable[!(paramTable$type == "Means"), ]	
+	}
+	if(!residuals){
+		paramTable = paramTable[!(paramTable$type == "Residuals"), ]	
+	}
+	return(paramTable)
+}
+
 #' Remove illegal characters from labels
 #'
 #' @description
