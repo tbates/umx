@@ -1006,7 +1006,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		} else if(filter == "SIG") {
 			toShow = parameterTable[parameterTable$sig == TRUE, namesToShow]
 		} else {
-			toShow = parameterTable[,namesToShow]
+			toShow = parameterTable[, namesToShow]
 		}
 		toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
 
@@ -1049,8 +1049,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 				"; ", RMSEA_CI
 			)
 			message(fitMsg)
-			if(TLI_OK   != "OK"){ message("TLI is worse than desired") }
-			if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired")}
+			if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
+			if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
 		}
 	})
 	# TODO: umxSummary.MxRAMModel integrate interval printing into summary table

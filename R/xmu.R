@@ -1741,6 +1741,18 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 # = RAM HELPERS =
 # ===============
 
+umxLocateParameters <- function(model, thisName) {
+	mats = model$matrices
+	for (i in 1:length(mats)) {
+		look = which(mats[[i]]$labels == thisName, arr.ind = TRUE)
+		if(dim(look)[1]>0){
+			# found
+			return(data.frame(label = thisName, model = model$name, matrix = mats[[i]]$name, row = look[1,1], col = look[1,2]))
+		}
+	}
+	return(NA)
+}
+
 #' Order and group the parameters in a RAM summary
 #'
 #' @description
@@ -1759,30 +1771,65 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' @md
 #' @examples
 #' \dontrun{
-#' xmu_summary_RAM_group_parameters(model, paramTable,  means= FALSE, residuals= FALSE)
+#' data(demoOneFactor)
+#' manifests = names(demoOneFactor)
+#' m1 = umxRAM("One Factor", data = demoOneFactor,
+#' 	umxPath("G", to = manifests),
+#' 	umxPath(v.m. = manifests),
+#' 	umxPath(v1m0 = "G")
+#' )
+#' tmp = umxSummary(m1, means=FALSE, residuals = FALSE)
+#' xmu_summary_RAM_group_parameters(m1, paramTable = tmp,  means= FALSE, residuals= FALSE)
 #' }
+#'
 xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, residuals= FALSE) {
 	# https://github.com/tbates/umx/issues/66
-	# 1. check is ram
-	# 2. check column 1-= "name"
-	# TODO: robustify this by doing it in the model space: look up where each label is in the S A M matrices
+	umx_is_RAM(model)
+	umx_check("name" %in% namez(paramTable), message="couldn't find name column in parameterTable")
+	# TODO: robust in the model space: look up where each label is in the S A M matrices
 	# Use F to identify labels that involve latents
 
-	latents = model$latentVars
+	latents   = model$latentVars
 	manifests = model$manifestVars
-	paramTable$type = "custom"
+	Anames    = dimnames(model$A)[[1]]
+	Snames    = dimnames(model$S)[[1]]
 
+	paramTable$type = "custom"
 	for (i in 1:dim(paramTable)[1]) {
 		thisName = paramTable[i, "name"]
-		# umx_msg(thisName)
-		if(length(namez(thisName, "^one_to_"))){
-			# thisName = "one_to_CS1"
+		location = umxLocateParameters(model, thisName)
+		
+		if(location$matrix == "M"){
 			paramTable[i, "type"] = "Means"
-		} else if(length(namez(thisName, "_to_"))){
-			parts = umx_explode("_to_", thisName)
-			if(parts[1]  %in% latents){
-				if(parts[2]  %in% latents){
-					# Factor loadings lat_to_manifest[]  e.g. thisName = "Unity_to_CS1"
+		} else if(location$matrix == "S"){ # 2 headed symmetric
+			from = Anames[location$col]
+			to   = Anames[location$row]
+			if(from  %in% latents){
+				if(to  %in% latents){
+					if(from == to){
+						paramTable[i, "type"] = "Factor Variances"
+					}else{
+						paramTable[i, "type"] = "Factor Covariances"
+					}
+				}else{
+					paramTable[i, "type"] = "Latent-Manifest Covariances"
+				}
+			} else { # from %in% manifests
+				if(to %in% manifests){
+					if(from == to){
+						paramTable[i, "type"] = "Residuals"
+					}else{
+						paramTable[i, "type"] = "Manifest Covariances"						
+					}
+				}else{
+					paramTable[i, "type"] = "Latent-Manifest Covariances"
+				}
+			}
+		} else if(location$matrix == "A"){
+			from = Anames[location$col]
+			to   = Anames[location$row]
+			if(from %in% latents){
+				if(to %in% latents){
 					paramTable[i, "type"] = "Factor to factor"
 				}else{
 					paramTable[i, "type"] = "Factor loadings"					
@@ -1790,36 +1837,13 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 			} else {
 				paramTable[i, "type"] = "Manifest paths"
 			}
-		} else if(length(namez(thisName, "_with_"))){
-			parts = umx_explode("_with_", thisName)
-			if(parts[1]  %in% latents){
-				if(parts[2]  %in% latents){
-					if(parts[1] == parts[2]){
-						paramTable[i, "type"] = "Factor Variances"
-					}else{
-						paramTable[i, "type"] = "Factor Covariances"
-					}
-				}
-			} else {
-				# manifest with
-				if(parts[2] %in% manifests){
-					if(parts[1] == parts[2]){
-						paramTable[i, "type"] = "Residuals"
-					}else{
-						paramTable[i, "type"] = "Manifest Covariances"						
-					}
-				}else{
-					paramTable[i, "type"] = "Manifest-latent Covariances"
-				}
-			}
 		}else{
-			# this was a label that didn't match an expected pattern.
-			# Likely something with a suffix, or a user name like "beta1"
-			# stop("not sure what this path is")
-			# not hit
+			# this was a label that didn't match an expected pattern... shouldn't happen
 		}
 	}
+	# sort by our newly filled-in type column
 	paramTable = paramTable[order(paramTable$type), ]	
+	# filter
 	if(!means){
 		paramTable = paramTable[!(paramTable$type == "Means"), ]	
 	}

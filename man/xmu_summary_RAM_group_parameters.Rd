@@ -33,8 +33,17 @@ A complex model is easily summarized when the parameters are grouped by residual
 }
 \examples{
 \dontrun{
-xmu_summary_RAM_group_parameters(model, paramTable,  means= FALSE, residuals= FALSE)
+data(demoOneFactor)
+manifests = names(demoOneFactor)
+m1 = umxRAM("One Factor", data = demoOneFactor,
+	umxPath("G", to = manifests),
+	umxPath(v.m. = manifests),
+	umxPath(v1m0 = "G")
+)
+tmp = umxSummary(m1, means=FALSE, residuals = FALSE)
+xmu_summary_RAM_group_parameters(m1, paramTable = tmp,  means= FALSE, residuals= FALSE)
 }
+
 }
 \seealso{
 \itemize{
