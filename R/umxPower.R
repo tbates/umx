@@ -190,7 +190,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		update = "a_r1c1"
 		paramSize = AA
 	}
-	# run the true Model
+	# Run the true Model
 	trueModel = xmu_safe_run_summary(trueModel, summary = FALSE, std = TRUE, tryHard = tryHard, comparison= FALSE)
 	# make and run the falseModel
 	nullModel = umxModify(trueModel, update = update, value = value, name = falseModelName, tryHard = tryHard)
@@ -205,17 +205,16 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		plot(power ~ N, data = tmp)
 		abline(h = power)
 	} else {
-		tmp = mxPower(trueModel=trueModel, falseModel= nullModel, n= n, sig.level = sig.level, power = power, method = method)
+		tmp = mxPower(trueModel= trueModel, falseModel= nullModel, n= n, sig.level = sig.level, power = power, method = method)
 		nFound = attributes(tmp)$detail$n
 		pairsUsed = paste0(round(nFound * pMZ), " MZ and ",round(nFound * (1 - pMZ)), " DZ pairs")
 		if(!is.null(n)){
 			empiricalPower = attributes(tmp)$detail$power
-			update = "a_r1c1"
-			paramSize = AA
-			
-			message(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect an ", update, " (variance) parameter of ", round(paramSize, 3)))
+			# update         = "a_r1c1"
+			# paramSize      = AA
+			cat(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect an ", update, " (variance) parameter of ", round(paramSize, 3), ".\n"))
 		} else {
-			message(paste0("For ", round(power * 100, digits), "% power to detect ", omxQuotes(update), " of size ", paramSize, ", you need ", pairsUsed))
+			cat(paste0("For ", round(power * 100, digits), "% power to detect ", omxQuotes(update), " of size ", paramSize, ", you need ", pairsUsed, ".\n"))
 		}
 	}
 	return(tmp)
