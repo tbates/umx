@@ -3979,7 +3979,7 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 #' )#'
 #' umx_has_been_run(m1)
 umx_has_been_run <- function(model, stop = FALSE) {
-	output <- model$output
+	output = model$output
 	if (is.null(output)){
 		if(stop){
 			stop("Provided model has no objective function, and thus no output to process further")

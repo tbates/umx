@@ -202,7 +202,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #'
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, returning = c("model", "summary")) {
 	# TODO xmu_safe_run_summary: Activate test examples
-	tryHard = match.arg(tryHard)
+	tryHard   = match.arg(tryHard)
 	returning = match.arg(returning)
 
 	if(tryHard == "yes"){
@@ -249,6 +249,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 			message(e)
 		})
 	}
+
 	if(!umx_has_been_run(model1)){
 		# Didn't get run... don't try and summarize it (will error)
 		theSummary = NA

@@ -1,4 +1,4 @@
-## dev umx 4.4.0
+## dev umx 4.8.0
 * NEW: `umxPlot` now detects and plots Pearson-Aitken selection (as solid red headless paths).
 * NEW: `xmu_summary_RAM_group_parameters` sort and filter RAM model parameters for ease of understanding.
 * NEW: `umxPlotFun` plot functions, e.g "sin(x)", "cos(x)" without hassles.

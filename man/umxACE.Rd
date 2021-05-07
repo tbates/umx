@@ -401,7 +401,7 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxSummaryACE]{umxSummaryACE()}}, \code{\link[=umxModify]{umxModify()}}
+\item \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxSummaryACE]{umxSummaryACE()}}, \code{\link[=power.ACE.test]{power.ACE.test()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
 Other Twin Modeling Functions: 

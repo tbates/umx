@@ -80,10 +80,10 @@ Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 }
 \examples{
 
-# ===============================================
-# = Power to detect a^2=.5 with equal MZ and DZ =
-# ===============================================
-power.ACE.test(AA = .5, CC = 0, update = "a") 
+# =====================================================
+# = N for .8 power to detect a^2 = .5 equal MZ and DZ =
+# =====================================================
+power.ACE.test(AA = .5, CC = 0, update = "a")
 # Suggests n = 84 MZ and 94 DZ pairs.
 
 \dontrun{
@@ -180,7 +180,7 @@ Power failure: why small sample size undermines the reliability of neuroscience.
 }
 \seealso{
 \itemize{
-\item \code{\link[OpenMx:mxPower]{OpenMx::mxPower()}}
+\item \code{\link[OpenMx:mxPower]{OpenMx::mxPower()}}, \code{\link[=umxACE]{umxACE()}}
 }
 
 Other Twin Modeling Functions: 

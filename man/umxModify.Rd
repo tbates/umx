@@ -7,18 +7,18 @@
 umxModify(
   lastFit,
   update = NULL,
-  master = NULL,
   regex = FALSE,
   free = FALSE,
   value = 0,
   newlabels = NULL,
   freeToStart = NA,
   name = NULL,
-  verbose = FALSE,
-  intervals = FALSE,
   comparison = FALSE,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search")
+  tryHard = c("no", "yes", "ordinal", "search"),
+  master = NULL,
+  intervals = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -26,10 +26,7 @@ umxModify(
 
 \item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.}
 
-\item{master}{If you set master, then the labels in update will be equated (slaved) to those provided in master.}
-
-\item{regex}{Whether or not update is a regular expression (default FALSE). If you provide a string, it
-overrides the contents of update, and sets regex to TRUE.}
+\item{regex}{Whether or not update is a regular expression (default FALSE). If you provide a string, it overrides the contents of update, and sets regex to TRUE.}
 
 \item{free}{The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)}
 
@@ -41,15 +38,17 @@ overrides the contents of update, and sets regex to TRUE.}
 
 \item{name}{The name for the new model}
 
-\item{verbose}{How much feedback to give}
-
-\item{intervals}{Whether to run confidence intervals (see \code{\link[=mxRun]{mxRun()}})}
-
 \item{comparison}{Whether to run umxCompare() on the new and old models.}
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+
+\item{master}{If you set master, then the update labels will be equated to these (i.e. replaced by them).}
+
+\item{intervals}{Whether to run confidence intervals (see \code{\link[=mxRun]{mxRun()}})}
+
+\item{verbose}{How much feedback to give}
 }
 \value{
 \itemize{

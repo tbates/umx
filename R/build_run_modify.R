@@ -992,18 +992,17 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @aliases umxModify
 #' @param lastFit The [mxModel()] you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
-#' @param master If you set master, then the labels in update will be equated (slaved) to those provided in master.
-#' @param regex  Whether or not update is a regular expression (default FALSE). If you provide a string, it
-#' overrides the contents of update, and sets regex to TRUE.
+#' @param regex  Whether or not update is a regular expression (default FALSE). If you provide a string, it overrides the contents of update, and sets regex to TRUE.
 #' @param free The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
 #' @param value The value to set the parameters whose labels you specify too (defaults to 0)
 #' @param newlabels If not NULL, used as a replacement set of labels (can be regular expression). value and free are ignored!
 #' @param freeToStart Whether to update parameters based on their current free-state. free = c(TRUE, FALSE, NA), (defaults to NA - i.e, not checked)
 #' @param name The name for the new model
-#' @param intervals Whether to run confidence intervals (see [mxRun()])
 #' @param comparison Whether to run umxCompare() on the new and old models.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param master If you set master, then the update labels will be equated to these (i.e. replaced by them).
+#' @param intervals Whether to run confidence intervals (see [mxRun()])
 #' @param verbose How much feedback to give
 #' @return - [mxModel()]
 #' @family Core Modeling Functions
@@ -1060,7 +1059,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
 #' } # end dontrun
 #' 
-umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, verbose = FALSE, intervals = FALSE, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search")) {
+umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), master = NULL, intervals = FALSE, verbose = FALSE) {
 	tryHard = match.arg(tryHard)
 
 	if(!is.null(master)){
@@ -1069,12 +1068,12 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 	}
 
 	if (typeof(regex) != "logical"){
-		# Use the regex as input, and switch to regex mode
+		# Use the regex as update, and switch to regex mode
 		if(!is.null(update)){
 			stop("If you input a regular expression in ", omxQuotes("regex"), " you must leave ", omxQuotes("update"), " set to NULL.")
 		}
 		update = regex
-		regex = TRUE
+		regex  = TRUE
 	}
 	
 	if(is.null(update)){
@@ -1090,12 +1089,12 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 				stop(paste0("Length of newlabels must be 1, or same as update. You gave me ", 
 				length(update), " labels to update, and ", length(newlabels), " newlabels"))
 			}else{
-				# copy out newlabels to match length of update
+				# Copy out newlabels to match length of update
 				newlabels = rep(newlabels, length(update))
 			}
 		}
 	}
-	# Finally, something to do...
+	
 	if(regex | typeof(update) == "character") {
 		newModel = lastFit
 		# handle labels as input
@@ -1266,7 +1265,7 @@ umxModify <- function(lastFit, update = NULL, master = NULL, regex = FALSE, free
 #' @return - [mxModel()] of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxPlotACE()], [umxSummaryACE()], [umxModify()]
+#' @seealso - [umxPlotACE()], [umxSummaryACE()], [power.ACE.test()], [umxModify()]
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
 #' @md

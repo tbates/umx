@@ -38,7 +38,7 @@
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
 #' @return [OpenMx::mxPower()] object
 #' @family Twin Modeling Functions
-#' @seealso - [OpenMx::mxPower()]
+#' @seealso - [OpenMx::mxPower()], [umxACE()]
 #' @references * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 #' revisited: II detection of common environmental variance. *Twin Res Hum Genet*, **11**: 48-54.
 #' \doi{10.1375/twin.11.1.48}.
@@ -49,10 +49,10 @@
 #' @md
 #' @examples
 #'
-#' # ===============================================
-#' # = Power to detect a^2=.5 with equal MZ and DZ =
-#' # ===============================================
-#' power.ACE.test(AA = .5, CC = 0, update = "a") 
+#' # =====================================================
+#' # = N for .8 power to detect a^2 = .5 equal MZ and DZ =
+#' # =====================================================
+#' power.ACE.test(AA = .5, CC = 0, update = "a")
 #' # Suggests n = 84 MZ and 94 DZ pairs.
 #'
 #' \dontrun{
@@ -159,7 +159,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 
 	# nSim = 4000
 	# MZ_DZ_ratio is an odds & pMZ = odds/(1+odds)
-	pMZ = MZ_DZ_ratio/(1 + MZ_DZ_ratio)
+	pMZ      = MZ_DZ_ratio/(1 + MZ_DZ_ratio)
 	nMZpairs = round(nSim * pMZ)
 	nDZpairs = round(nSim * (1 - pMZ))
 	# Turn off plotting
@@ -167,7 +167,6 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	oldPlot = umx_set_auto_plot(FALSE, silent=TRUE);
 
 	# 1. Generate data and run model 1
-	# tmp = umx_make_TwinData(nMZpairs= 500, nDZpairs = 500, AA= .5, CC= 0, EE= NULL, varNames= "var", mean= 0, empirical= TRUE)
 	tmp = umx_make_TwinData(nMZpairs= nMZpairs, nDZpairs = nDZpairs, AA= AA, CC= CC, EE= EE, varNames= "var", mean= 0, empirical= TRUE)
 	mzData = subset(tmp, zygosity == "MZ")
 	dzData = subset(tmp, zygosity == "DZ")
@@ -186,18 +185,17 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 		update = "c_r1c1"
 		paramSize = CC
 	} else if(update == "a_after_dropping_c"){
-		trueModel = umxModify(trueModel, update="c_r1c1", value = value, autoRun = FALSE)
+		trueModel = umxModify(trueModel, update="c_r1c1", value = 0, autoRun = FALSE)
 		update = "a_r1c1"
 		paramSize = AA
 	}
-	# run the true Model
+	# Run the true Model, then modify to create the falseModel
 	trueModel = xmu_safe_run_summary(trueModel, summary = FALSE, std = TRUE, tryHard = tryHard, comparison= FALSE)
-	# make and run the falseModel
 	nullModel = umxModify(trueModel, update = update, value = value, name = falseModelName, tryHard = tryHard)
 
-	# return plot to old value
+	# return plot and silent to old values
 	umx_set_auto_plot(oldPlot)
-	umx_set_silent(oldSilent)    # reinstate
+	umx_set_silent(oldSilent)
 	
 	if(search){
 		# power is not an input to mxPowerSearch
