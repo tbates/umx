@@ -1,5 +1,5 @@
 ## dev umx 4.8.0
-* NEW: `umxPlot` now detects and plots Pearson-Aitken selection (as solid red headless paths).
+* NEW: `umxPlot` now detects and plots Pearson-Aitken selection paths (solid red headless).
 * NEW: `xmu_summary_RAM_group_parameters` sort and filter RAM model parameters for ease of understanding.
 * NEW: `umxPlotFun` plot functions, e.g "sin(x)", "cos(x)" without hassles.
 * NEW: `fin_valuation` uses revenue, margin, expenses and PE to compute a market cap.
@@ -8,6 +8,7 @@
 * NEW: `libs` as a short cut for `multiple library()` calls
   * e.g. `libs("x", "y", c("a", "b"))`
 * IMPROVED: `umxACEv` Tables now include markdown-compatible table captions.
+* IMPROVED: `umxAPA` lm reports overall-R^2 (in addition too beta & CI[] for each parameter)
 * IMPROVED: `umxSummary` sorts RAM parameters by type (factor loading etc.) and can filter means and residuals for ease of use.
 * IMPROVED: `umxSuperModel` checks for duplicate names in incoming model names and makes them unique.
 * IMPROVED: `umxCompare` Maintain compatibility with new OpenMx changes to `mxCompare` (esp. for WLS).

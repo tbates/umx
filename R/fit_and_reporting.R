@@ -4288,23 +4288,25 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		if(std){
 			obj = update(obj, data = umx_scale(obj$model))
 		}
-		model_coefficients = summary(obj)$coefficients
-		conf = confint(obj)
+		sumry = summary(obj)
+		conf  = confint(obj)
 		if(is.null(se)){
-			se = dimnames(model_coefficients)[[1]]
+			se = dimnames(sumry$coefficients)[[1]]
 		}
 		for (i in se) {
 			lower   = conf[i, 1]
 			upper   = conf[i, 2]
-			b_and_p = model_coefficients[i, ]
+			b_and_p = sumry$coefficients[i, ]
 			b       = b_and_p["Estimate"]
 			tval    = b_and_p["t value"]
 			pval    = b_and_p["Pr(>|t|)"]
 			cat(paste0(i, betaSymbol, round(b, digits), 
-			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
-			   "t = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
-			))		
+				" ["  , round(lower, digits), commaSep, round(upper, digits), "], ",
+				"t = ", round(tval , digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
+			))
 		}
+		cat(paste0("Adjusted R\u00B2 = ", round(sumry$r.squared, 3)))
+		
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table
 		if(std){
