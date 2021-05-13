@@ -53,7 +53,7 @@ grp2   = tmp[tmp$zygosity == "DZ", manifests]
 g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 
 
-# Model 1 (could add auto=FALSE if you don't want to run this as it is being built)
+# Model 1 (could add autoRun = FALSE if you don't want to run this as it is being built)
 m1 = umxRAM("m1", data = g1Data,
 	umxPath("x", to = "y", labels = "beta"),
 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
@@ -86,6 +86,20 @@ umxSummary(m3, std= TRUE)
 
 summary(m3)
 
+# ====================================
+# = Test models with duplicate names =
+# ====================================
+data(GFF)
+mzData = subset(GFF, zyg_2grp == "MZ")
+dzData = subset(GFF, zyg_2grp == "DZ")
+selDVs = c("gff", "fc", "qol")
+m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", autoRun= TRUE)
+m2 = mxRename(m1, "model2")
+umxModelNames(m1) # "top" "MZ" "DZ"
+umxModelNames(m2) # "top" "MZ" "DZ"
+
+super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
+umxModelNames(super)
 }
 }
 \references{

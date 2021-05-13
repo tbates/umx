@@ -948,6 +948,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		# nb: mxStandardizeRAMpaths returns the raw paths as well, so two birds, one stone.
 		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
 		nSubModels = length(model$submodels)
+		return(parameterTable)
 		if(nSubModels > 0){
 			tmp = parameterTable
 			parameterTable = tmp[[1]]
@@ -4305,7 +4306,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 				"t = ", round(tval , digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
 			))
 		}
-		cat(paste0("Adjusted R\u00B2 = ", round(sumry$r.squared, 3)))
+		cat(paste0("R\u00B2 = ", round(sumry$r.squared, 3), " (adj = ", round(sumry$adj.r.squared, 3), ")"))
 		
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table

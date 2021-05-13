@@ -873,7 +873,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
 #' 
 #' 
-#' # Model 1 (could add auto=FALSE if you don't want to run this as it is being built)
+#' # Model 1 (could add autoRun = FALSE if you don't want to run this as it is being built)
 #' m1 = umxRAM("m1", data = g1Data,
 #' 	umxPath("x", to = "y", labels = "beta"),
 #' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
@@ -905,7 +905,21 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' # |Resid_y_grp2 |         0.75|   0.05|0.75 [0.65, 0.84] |
 #' 
 #' summary(m3)
+#'
+#' # ====================================
+#' # = Test models with duplicate names =
+#' # ====================================
+#' data(GFF)
+#' mzData = subset(GFF, zyg_2grp == "MZ")
+#' dzData = subset(GFF, zyg_2grp == "DZ")
+#' selDVs = c("gff", "fc", "qol")
+#' m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", autoRun= TRUE)
+#' m2 = mxRename(m1, "model2")
+#' umxModelNames(m1) # "top" "MZ" "DZ"
+#' umxModelNames(m2) # "top" "MZ" "DZ"
 #' 
+#' super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
+#' umxModelNames(super)
 #' }
 umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE) {
 	tryHard = match.arg(tryHard)
@@ -928,7 +942,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 		}
 	}
 	if(length(modelNames) < 1){
-	 	stop("No models in '...' had an fitfunction: At least two models must have an fitfunction and objective for umxSuperModel to jointly optimize")
+	 	stop("No models in '...' had a fitfunction: At least two models must have a fitfunction and objective for umxSuperModel to jointly optimize")
 	}else if(anyDuplicated(modelNames)){
 	 	stop("Models must have unique names: Duplicates detected in ", omxQuotes(modelNames))
 	}
@@ -937,25 +951,24 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 	newModel = mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	newModel = omxAssignFirstParameters(newModel)
-
 	# 2. Find and change any duplicate model names inside the models
 	# 	1. find all duplicated names
 	# 	2. loop over the sub models, finding and changing each duplicate name
-	dupes = nameList[duplicated(umxModelNames(newModel))] # "top" "MZ" "DZ"
-	if(length(dupes) > 1000){
-		print("polite note: Renamed sub-models with duplicate names, e.g. 'top' -> 'top_2'")
+	tmpnames = umxModelNames(newModel)
+	dupes = tmpnames[duplicated(tmpnames)] # "top" "MZ" "DZ"
+	if(length(dupes) > 0){
 		suffix = 2
 		subNames = names(newModel$submodels)[-1]
 		for(thisSub in subNames){
 			thisModel = newModel$submodels[[thisSub]]
 			for(thisDupName in dupes){
-				thisModel = mxRename(thisModel, paste0(thisDupName, "_", suffix), oldname=thisDupName)
+				thisModel = mxRename(thisModel, paste0(thisDupName, "_", suffix), oldname = thisDupName)
 			}
 			newModel = mxModel(newModel, thisModel)
 			suffix = suffix + 1
 		}
+		print(paste0("Polite note: Renamed sub-models with duplicate names, e.g. ", omxQuotes(dupes[1]), " -> ", omxQuotes(paste0(dupes[1], "_2"))))
 	}
-
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std)
 	invisible(newModel)
 }

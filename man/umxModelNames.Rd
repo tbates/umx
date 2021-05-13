@@ -23,10 +23,13 @@ umxModelNames(model, includeOuterModelName = FALSE)
 \examples{
 \dontrun{
 data(GFF)
+mzData = subset(GFF, zyg_2grp == "MZ")
+dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol")
 m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", autoRun= TRUE)
 m2 = mxRename(m1, "model2")
-umxModelNames(m1) # "CP1fac" "top" "MZ" "DZ"
+umxModelNames(m1) # "top" "MZ" "DZ"
+umxModelNames(m2) # "top" "MZ" "DZ"
 
 super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
 umxModelNames(super)

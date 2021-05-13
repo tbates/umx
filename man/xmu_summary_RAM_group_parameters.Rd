@@ -26,10 +26,7 @@ xmu_summary_RAM_group_parameters(
 }
 }
 \description{
-A complex model is easily summarized when the parameters are grouped by residuals, latent variance, factor loading etc.
-}
-\details{
-
+Makes understtanding complex model output easier by grouping parameters are type: residuals, latent variance, factor loading etc.
 }
 \examples{
 \dontrun{
