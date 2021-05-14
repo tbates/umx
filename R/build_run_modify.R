@@ -914,10 +914,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff", "fc", "qol")
 #' m1 = umxCP(selDVs= selDVs, nFac= 1, dzData= dzData, mzData= mzData, sep= "_T", autoRun= TRUE)
-#' m2 = mxRename(m1, "model2")
+#' m2 = mxRename(m1, "CP2")
 #' umxModelNames(m1) # "top" "MZ" "DZ"
 #' umxModelNames(m2) # "top" "MZ" "DZ"
-#' 
 #' super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
 #' umxModelNames(super)
 #' }
