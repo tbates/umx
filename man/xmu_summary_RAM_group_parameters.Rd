@@ -26,7 +26,7 @@ xmu_summary_RAM_group_parameters(
 }
 }
 \description{
-Makes understtanding complex model output easier by grouping parameters are type: residuals, latent variance, factor loading etc.
+Makes understanding complex model output easier by grouping parameters are type: residuals, latent variance, factor loading etc.
 }
 \examples{
 \dontrun{

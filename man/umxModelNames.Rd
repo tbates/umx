@@ -17,7 +17,7 @@ umxModelNames(model, includeOuterModelName = FALSE)
 }
 }
 \description{
-\code{umxModelNames} rerturns the names of each model contained in the model provided to it
+\code{umxModelNames} returns the names of each model contained in the model provided to it
 (optionally excluding the out model itself).
 }
 \examples{

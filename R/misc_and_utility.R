@@ -48,7 +48,7 @@
 #' load libraries
 #'
 #' @description
-#' libs is a function to allow loading multiple libraries in one call
+#' `libs` allows loading multiple libraries in one call
 #'
 #' @param ... library names as  string
 #' @return - [libs()]
@@ -72,7 +72,7 @@ libs <- function(...) {
 #' Return names of models found within a model
 #'
 #' @description
-#' `umxModelNames` rerturns the names of each model contained in the model provided to it 
+#' `umxModelNames` returns the names of each model contained in the model provided to it 
 #' (optionally excluding the out model itself).
 #'
 #' @param model an [mxModel()] to search for model names.
@@ -1568,8 +1568,6 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx"
 #' }
 umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 	for (p in package) {
-		# deparse(substitute(package))
-
 		# 1. Open the web pages
 		system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
 
@@ -2386,7 +2384,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #' Work the valuation of a company
 #'
 #' @description
-#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalisation
+#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization
 #'
 #' @details
 #' Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
