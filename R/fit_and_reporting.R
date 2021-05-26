@@ -948,7 +948,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		# nb: mxStandardizeRAMpaths returns the raw paths as well, so two birds, one stone.
 		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
 		nSubModels = length(model$submodels)
-		return(parameterTable)
 		if(nSubModels > 0){
 			tmp = parameterTable
 			parameterTable = tmp[[1]]

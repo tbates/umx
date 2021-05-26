@@ -15,7 +15,7 @@ libs(...)
 }
 }
 \description{
-libs is a function to allow loading multiple libraries in one call
+\code{libs} allows loading multiple libraries in one call
 }
 \examples{
 \dontrun{

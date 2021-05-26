@@ -1757,7 +1757,7 @@ umxLocateParameters <- function(model, thisName) {
 #' Order and group the parameters in a RAM summary
 #'
 #' @description
-#' Makes understtanding complex model output easier by grouping parameters are type: residuals, latent variance, factor loading etc.
+#' Makes understanding complex model output easier by grouping parameters are type: residuals, latent variance, factor loading etc.
 #'
 #' @param model the model containing the parameters.
 #' @param paramTable The parameter table.
