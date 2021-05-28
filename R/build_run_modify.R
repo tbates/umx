@@ -3217,7 +3217,8 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 		model = mxRename(model, name)
 	}
 	model$expectation$thresholds = "threshMat"
-	model = mxModel(model, umxThresholdMatrix(model$data$observed, selDVs = model$manifestVars, verbose = verbose))
+	
+	model = mxModel(model, umxThresholdMatrix(model$data$observed, fullVarNames = model$manifestVars, verbose = verbose))
 	return(model)
 }
 
@@ -3999,7 +4000,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' # data: 1 2-level ordered factor
 #' x = data.frame(ordered(rbinom(100,1,.5))); names(x) = c("x")
 #'
-#' tmp = umxThresholdMatrix(x, selDVs = "x")
+#' tmp = umxThresholdMatrix(x, fullVarNames = "x")
 #' # The lower ones matrix (all fixed)
 #' tmp[[1]]$values
 #' tmp[[1]]$free
@@ -4013,18 +4014,17 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' 
 #' # Example of a warning to not omit the variable names
 #' # tmp = umxThresholdMatrix(x)
-#' # Just a polite message, but for coding safety, I recommend calling
-#' # umxThresholdMatrix with the names of the variables in the model.
-#' #   Next time, please include selDVs (AND you MUST include sep if this is a twin model!!)
+#' # Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames to the list of FULL names of all
+#' #  the variables in the model (AND you MUST include sep if this is a twin model!!)
 #' 
 #' # One ordered factor with 5-levels
 #' x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
 #' x = data.frame(ordered(x)); names(x) <- c("x")
-#' tmp = umxThresholdMatrix(x, selDVs = "x")
+#' tmp = umxThresholdMatrix(x, fullVarNames = "x")
 #' tmp[[2]]$name
 #' tmp[[2]]$free # last one is free.. (method = Mehta)
 #' 
-#' tmp = umxThresholdMatrix(x, selDVs = "x", l_u_bound= c(-1,1))
+#' tmp = umxThresholdMatrix(x, fullVarNames = "x", l_u_bound= c(-1,1))
 #' tmp[[2]]$lbound # bounds applied to base threshold
 #'
 #' # =================================
@@ -4046,7 +4046,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' 
 #' # Example 1
 #' # use verbose = TRUE to see informative messages
-#' tmp = umxThresholdMatrix(twinData, selDVs = selVars, sep = "", verbose = TRUE) 
+#' tmp = umxThresholdMatrix(twinData, fullVarNames = selVars, sep = "", verbose = TRUE) 
 #' 
 #' 
 #' # ======================================
@@ -4059,7 +4059,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' twinData$obeseTri2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
 #' selDVs = "obeseTri"; selVars = tvars(selDVs, sep = "", suffixes = 1:2)
 #' twinData[, selVars] = umxFactor(twinData[, selVars])
-#' tmp = umxThresholdMatrix(twinData, selDVs = selVars, sep = "", verbose = TRUE)
+#' tmp = umxThresholdMatrix(twinData, fullVarNames = selVars, sep = "", verbose = TRUE)
 #'
 #' 
 #' # ========================================================
@@ -4073,7 +4073,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' twinData[, selVars] = umxFactor(twinData[, selVars])
 #'
 #' selDVs =c("bmi", "obese", "obeseTri", "obeseQuad")
-#' tmp = umxThresholdMatrix(twinData, selDVs = tvars(selDVs, sep= ""), sep = "", verbose = TRUE)
+#' tmp = umxThresholdMatrix(twinData, fullVarNames = tvars(selDVs, sep= ""), sep = "", verbose = TRUE)
 #' # The lower ones matrix (all fixed)
 #' tmp[[1]]$values
 #' # The deviations matrix
@@ -4089,7 +4089,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' # = Example with method = allFree =
 #' # =================================
 #'
-#' tmp = umxThresholdMatrix(twinData, selDVs = tvars(selDVs, sep= ""), sep = "", method = "allFree")
+#' tmp = umxThresholdMatrix(twinData, fullVarNames = tvars(selDVs, sep= ""), sep = "", method = "allFree")
 #' all(tmp[[2]]$free)
 #' 
 umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE, selDVs= "deprecated"){
@@ -4100,7 +4100,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		verbose=FALSE
 	}
 
-	if(any(selDVs!="deprecated")){
+	if(any(selDVs != "deprecated")){
 		message("Polite note: please use fullVarNames instead of selDVs when calling umxThresholdMatrix")
 		fullVarNames= selDVs
 	}

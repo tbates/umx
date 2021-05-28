@@ -182,7 +182,6 @@ Other Get and set:
 \code{\link{umx_get_options}()},
 \code{\link{umx_set_auto_plot}()},
 \code{\link{umx_set_auto_run}()},
-\code{\link{umx_set_auto_summary}()},
 \code{\link{umx_set_checkpoint}()},
 \code{\link{umx_set_condensed_slots}()},
 \code{\link{umx_set_cores}()},

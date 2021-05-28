@@ -82,7 +82,7 @@ If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provi
 
 You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
 
-\emph{Note}, if you want a power calculator, see \code{\link[=mxPower]{mxPower()}}.
+\emph{Note}, if you want a power calculator, see \code{\link[=power.ACE.test]{power.ACE.test()}} and \code{\link[=mxPower]{mxPower()}}.
 
 \strong{Shortcuts}
 
@@ -115,18 +115,19 @@ tmp = umx_make_TwinData(nMZpairs = 10000, AA = .30, CC = .00, EE = .70)
 # Show dataframe with 20,000 rows and 3 variables: var_T1, var_T2, and zygosity
 str(tmp)
 
-# =====================================
-# = How to consume the built datasets =
-# =====================================
+# ===============================
+# = How to consume the datasets =
+# ===============================
+
 mzData = tmp[tmp$zygosity == "MZ", ]
 dzData = tmp[tmp$zygosity == "DZ", ]
 str(mzData); str(dzData); 
-cov(mzData[, c("var_T1","var_T2")])
-cov(dzData[, c("var_T1","var_T2")])
-umxAPA(mzData[,c("var_T1","var_T2")])
+cov(mzData[, c("var_T1", "var_T2")])
+cov(dzData[, c("var_T1", "var_T2")])
+umxAPA(mzData[, c("var_T1", "var_T2")])
 
 # Prefer to work in path coefficient values? (little a?)
-tmp = umx_make_TwinData(2000, AA = .7^2, CC = .0)
+tmp    = umx_make_TwinData(2000, AA = .7^2, CC = .0)
 mzData = tmp[tmp$zygosity == "MZ", ]
 dzData = tmp[tmp$zygosity == "DZ", ]
 m1 = umxACE(selDVs="var", sep="_T", mzData= mzData, dzData= dzData)
