@@ -251,7 +251,8 @@ xmu_cell_is_on <- function(r, c, where=c("diag", "lower", "lower_inc", "upper", 
 # ==============================
 # = Get and set OpenMx options =
 # ==============================
-#' umx_get_options
+
+#' Display umx options
 #'
 #' Show the umx options. Useful for beginners to discover, or people like me to remember :-)
 #'
@@ -267,10 +268,9 @@ umx_get_options <- function() {
 	umx_set_plot_use_hrbrthemes()
 	umx_set_table_format()
 	umx_set_optimizer()
-	message(umx_set_cores(silent = TRUE), " cores will be used")
 	umx_set_auto_run() 
 	umx_set_condensed_slots()
-	
+	message(umx_set_cores(silent = TRUE), " cores will be used")	
 }
 
 #' Set theme system to use for plots.
@@ -589,16 +589,15 @@ umx_set_silent <- function(value = NA, silent = FALSE) {
 	invisible(oldValue)
 }
 
-#' umx_set_auto_run
+#' Automatically run models?
 #'
-#' Set autoRun default for models like umxACE umxGxE etc.
+#' Set `autoRun` default for models like [umxRAM()], [umxACE()] etc.
 #'
 #' @param autoRun If TRUE or FALSE, sets the umx_auto_run option. Else returns the current value of umx_auto_run
 #' @param silent If TRUE, no message will be printed.
 #' @return - Current umx_auto_run setting
 #' @export
 #' @family Get and set
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' library(umx)

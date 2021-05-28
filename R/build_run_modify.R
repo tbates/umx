@@ -45,11 +45,11 @@
 	# 	umx_set_table_format('markdown')
 	# 	options('knitr.table.format' = "markdown")
 	# }
-	umx_set_silent(FALSE)
-	umx_set_auto_run(TRUE)
 	umx_set_auto_plot(TRUE)
+	umx_set_auto_run(TRUE)
 	umx_set_data_variance_check(minVar = .1, maxVarRatio = 1000)
 	umx_set_separator(umx_default_separator = ",")
+	umx_set_silent(FALSE)
 	umx_set_table_format("markdown")
 	# umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
