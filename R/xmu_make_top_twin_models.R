@@ -448,8 +448,8 @@ xmuTwinSuper_SomeBinary <- function(name=NULL, fullVars, fullCovs = NULL, mzData
 	# Algebra to pick out the ordinal variables.
 	# TODO check using twin 1 to pick where the bin variables are is robust...
 	# Fill with zeros: default for ordinals and binary...
-	meansFree        = !colTypes$isBin # fix the binary variables at zero (umx_means did this)
-	the_bin_cols     = which(colTypes$isBin)[1:colTypes$nBinVars/nSib] # columns in which the bin vars appear for T1, i.e., c(1,3,5)
+	meansFree        = !colTypes$isBin # Fix the binary variables at zero (umx_means did this)
+	the_bin_cols     = which(colTypes$isBin)[1:colTypes$nBinVars/nSib] # Columns in which the bin vars appear for T1, i.e., c(1,3,5)
 	binBracketLabels = paste0("Vtot[", the_bin_cols, ",", the_bin_cols, "]") # "Vtot[1,1]" "Vtot[3,3]"
 
 	# =============================
