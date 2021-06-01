@@ -35,21 +35,21 @@ See what is on offer with '?umx'. There are online tutorials at  [tbates.github.
 
 `umx` stands for "user" OpenMx functions. It provides over 100 functions, but most importantly:
 
-1. `umxRAM` that makes path-based SEM in R straightforward and `plot` for graphically display of your model.
-2. A suite of twin modelling functions.
+1. `umxRAM` that makes path-based SEM in R straightforward, with `umxSummary` and `plot` for table and graphical display of your models. It can also interpret basic lavaan if you get a script in that language.
+2. A suite of twin modelling functions, such as `umxACE`.
 
-These are supported by dozens of low-level functions automating activities such as labeling, setting start values etc., and helping with data-wrangling, plotting etc.
+These are supported by many low-level functions automating activities such as parameter labels, start values etc., as well as helping with data-wrangling, journal-ready presentation (try `umxAPA()` among other tasks.
 
 Some highlights include:
 
 1. Building Path Models
-	* `umxRAM()` *# Take included umxPaths, the data provided in `data =` returning the model, along with a `plot` and `umxSummary`*
-	  * Automatic labels on paths, start values
+	* `umxRAM()` *# Take umxPaths + data  `data =` run and return a model, along with a `plot` and `umxSummary`*
 	* `umxPath()` *# write paths with human-readable language like `var = ` , `mean = ` `cov = `, `fixedAt=`. Quickly define a variance and mean ('v.m. = ') and more.*
 2. Reporting output
 	* `umxSummary(model)` # *Nice summary table, in markdown or browser. Designed for journal reporting (Χ², p, CFI, TLI, & RMSEA). Optionally show path loadings*
 	* `plot(model, std=TRUE, digits = 3, ...)` # *Graphical model in your browser! or edit in programs like OmniGraffle*
 	* `parameters(m1, "below", .1, pattern="_to_"))` *# A powerful assistant to get labels and values from a model (e.g. all 'to' params, below .1 in value)*
+	* `residuals(m1, supp=.1)` *# Show residual covariances filtered for magnitude*
 3. Modify models
 	* `umxModify(model, update = )` *# Modify and re-run a model. You can add objects, drop or add paths, including by wildcard label matching), re-name the model, and even return the comparison. All in 1 line *
 4. Twin modeling!
@@ -64,8 +64,7 @@ Some highlights include:
 	* `umxHetcor(data, use = "pairwise.complete.obs")` *# Compute appropriate pair-wise correlations for mixed data types.*
 	* Dozens more: Check out the "family links" in `?umx` and in any help file!
 
-Feel free to use, and submit code and requests via Github. Tell your friends! Publish more good science :-)
-
+Code and requests welcome via Github. Tell your friends! Publish good science :-)
 
 For thrill-seekers and collaborators only: the bleeding-edge development version is here:
 
