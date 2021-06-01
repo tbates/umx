@@ -1808,20 +1808,20 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 					if(from == to){
 						paramTable[i, "type"] = "Factor Variances"
 					}else{
-						paramTable[i, "type"] = "Factor Covariances"
+						paramTable[i, "type"] = "Factor Covs"
 					}
 				}else{
-					paramTable[i, "type"] = "Latent-Manifest Covariances"
+					paramTable[i, "type"] = "Latent-Manifest Covs"
 				}
 			} else { # from %in% manifests
 				if(to %in% manifests){
 					if(from == to){
 						paramTable[i, "type"] = "Residuals"
 					}else{
-						paramTable[i, "type"] = "Manifest Covariances"						
+						paramTable[i, "type"] = "Manifest Covs"						
 					}
 				}else{
-					paramTable[i, "type"] = "Latent-Manifest Covariances"
+					paramTable[i, "type"] = "Latent-Manifest Covs"
 				}
 			}
 		} else if(location$matrix == "A"){

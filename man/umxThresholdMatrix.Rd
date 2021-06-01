@@ -96,8 +96,7 @@ tmp[[3]]$formula
 
 # Example of a warning to not omit the variable names
 # tmp = umxThresholdMatrix(x)
-# Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames to the list of FULL names of all
-#  the variables in the model (AND you MUST include sep if this is a twin model!!)
+# Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames...
 
 # One ordered factor with 5-levels
 x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
@@ -170,7 +169,8 @@ tmp[[3]]$formula
 # = Example with method = allFree =
 # =================================
 
-tmp = umxThresholdMatrix(twinData, fullVarNames = tvars(selDVs, sep= ""), sep = "", method = "allFree")
+tmp = umxThresholdMatrix(twinData, fullVarNames = tvars(selDVs, sep= ""), sep = "", 
+	method = "allFree")
 all(tmp[[2]]$free)
 
 }

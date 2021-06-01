@@ -22,6 +22,9 @@
 
 # ![](example-plot.jpg "Example Plot Title") = Image in man/figures
 
+# cran_prep <- check_for_cran("~/bin/umx/", show_status=FALSE)
+# cran_prep$cran_summary()
+
 # Makevars for clang
 # 	mate ~/.R/Makevars
 # 	https://gist.github.com/tbates/9cec0a93e04c06c41b550454eaa892a3
@@ -4014,8 +4017,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' 
 #' # Example of a warning to not omit the variable names
 #' # tmp = umxThresholdMatrix(x)
-#' # Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames to the list of FULL names of all
-#' #  the variables in the model (AND you MUST include sep if this is a twin model!!)
+#' # Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames...
 #' 
 #' # One ordered factor with 5-levels
 #' x = cut(rnorm(100), breaks = c(-Inf,.2,.5, .7, Inf)); levels(x) = 1:5
@@ -4089,7 +4091,8 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' # = Example with method = allFree =
 #' # =================================
 #'
-#' tmp = umxThresholdMatrix(twinData, fullVarNames = tvars(selDVs, sep= ""), sep = "", method = "allFree")
+#' tmp = umxThresholdMatrix(twinData, fullVarNames = tvars(selDVs, sep= ""), sep = "", 
+#' 	method = "allFree")
 #' all(tmp[[2]]$free)
 #' 
 umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE, selDVs= "deprecated"){
