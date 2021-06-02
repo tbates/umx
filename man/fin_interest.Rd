@@ -16,7 +16,8 @@ fin_interest(
   largest_with_cents = 0,
   baseYear = as.numeric(format(Sys.time(), "\%Y")),
   table = TRUE,
-  report = c("markdown", "html")
+  report = c("markdown", "html"),
+  final = NULL
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ fin_interest(
 \item{table}{Whether to print a table of annual returns (default TRUE)}
 
 \item{report}{"markdown" or "html",}
+
+\item{final}{if set (default = NULL), returns the rate that turns principal into final after yrs}
 }
 \value{
 \itemize{
@@ -84,6 +87,7 @@ sum(20e3*(1.07^(10:1))) # 295672
 # $10,000 invested at the end of each year for 5 years at 6\%
 fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 
+fin_interest(deposits = 100, final=200, yrs = 5)
 }
 \references{
 \itemize{
