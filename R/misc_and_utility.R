@@ -3362,6 +3362,7 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "examples")) # Run the examples
 #' umx_make(what = "spell"))    # Spell check the documents
 #' umx_make(what = "check"))    # Run R CMD check
+#' umx_make(what = "rhub"))     # Check on rhub
 #' umx_make(what = "win"))      # Check on win-builder
 #' umx_make(what = "release"))  # Release to CRAN
 #' }
@@ -3384,7 +3385,7 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		devtools::check_rhub(pkg = pkg)
+		devtools::check_rhub(pkg = pkg, interactive = FALSE)
 	} else if (what == "release"){
 		oldDir = getwd()
 		setwd(dir= pkg)

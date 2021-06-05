@@ -406,9 +406,9 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 		std = FALSE
 		# message("Polite message: in next version, show= will be replaced with std=TRUE/FALSE/NULL")
 	}
-	report = match.arg(report)
-	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
-	# depends on R2HTML::HTML
+	report   = match.arg(report)
+	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
+	# Depends on R2HTML::HTML
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
@@ -423,7 +423,6 @@ umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"),
 	A = mxEval(top.A, model) # Variances
 	C = mxEval(top.C, model)
 	E = mxEval(top.E, model)
-
 	if(std){
 		caption = paste0("Standardized parameter estimates from a ", dim(A)[2], "-factor Direct variance ACE model. ")
 		
