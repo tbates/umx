@@ -141,7 +141,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param ... Other parameters to control model summary
-#' @family Reporting Functions
+#' @family Model Summary and Comparison
 #' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduceACE()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
@@ -177,7 +177,7 @@ umxReduce.default <- function(model, ...){
 #' @return best model
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso [umxReduceACE()], [umxReduce()]
+#' @seealso [umxReduce()], [umxReduceACE()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 #' *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}.
 #' @md
@@ -432,7 +432,7 @@ loadings.default <- function(x, ...) stats::loadings(x, ...)
 #' @param ... Other parameters (currently unused)
 #' @return - loadings matrix
 #' @export
-#' @family Reporting Functions
+#' @family Miscellaneous Functions
 #' @seealso - [factanal()], [loadings()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -801,7 +801,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #'
 #' @param model The [mxModel()] whose fit will be reported
 #' @param ... Other parameters to control model summary
-#' @family Core Modeling Functions
+#' @family Model Summary and Comparison
 #' @md
 #' @export
 umxSummary <- function(model, ...){
@@ -1872,7 +1872,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @family Core Modelling Functions
-#' @family Modify or Compare Models
+#' @family Model Summary and Comparison
 #' @family Summary functions
 #' @seealso - [mxCompare()], [umxSummary()], [umxRAM()],
 #' @references - <https://github.com/tbates/umx>
@@ -3002,7 +3002,7 @@ plot.MxModelIP <- umxPlotIP
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
 #' @param decreasing How to sort (default = TRUE, decreasing)
 #' @seealso - [mxMI()]
-#' @family Modify or Compare Models
+#' @family Model Summary and Comparison
 #' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
@@ -3065,7 +3065,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' @param to The dependent variable that you want to watch changing.
 #' @param model The model containing variables from and to.
 #' @seealso - [mxCheckIdentification()], [mxCompare()]
-#' @family Modify or Compare Models
+#' @family Advanced Model Building Functions
 #' @references - https://github.com/tbates/umx/
 #' @export
 #' @md

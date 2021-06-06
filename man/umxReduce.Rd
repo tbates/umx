@@ -46,14 +46,12 @@ I am thinking for RAM models to drop NS paths, and report that test.
 \seealso{
 \code{\link[=umxReduceGxE]{umxReduceGxE()}}, \code{\link[=umxReduceACE]{umxReduceACE()}}
 
-Other Reporting Functions: 
-\code{\link{loadings.MxModel}()},
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umx_aggregate}()},
-\code{\link{umx_time}()},
+Other Model Summary and Comparison: 
+\code{\link{umxCompare}()},
+\code{\link{umxEquate}()},
+\code{\link{umxMI}()},
+\code{\link{umxSetParameters}()},
+\code{\link{umxSummary}()},
 \code{\link{umx}}
 
 Other Twin Modeling Functions: 
@@ -83,5 +81,5 @@ Other Twin Modeling Functions:
 \code{\link{umxTwinMaker}()},
 \code{\link{umx}}
 }
-\concept{Reporting Functions}
+\concept{Model Summary and Comparison}
 \concept{Twin Modeling Functions}

@@ -93,32 +93,26 @@ Other Teaching and testing Functions:
 \code{\link{tmx_genotypic_effect}()},
 \code{\link{tmx_is.identified}()}
 
-Other Core Modeling Functions: 
-\code{\link{umxAlgebra}()},
+Other Core Model Building Functions: 
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
 \code{\link{umxPath}()},
 \code{\link{umxRAM}()},
-\code{\link{umxRun}()},
-\code{\link{umxSummary}()},
 \code{\link{umxSuperModel}()}
 
-Other Modify or Compare Models: 
+Other Model Summary and Comparison: 
 \code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
-\code{\link{umxFixAll}()},
 \code{\link{umxMI}()},
-\code{\link{umxModify}()},
+\code{\link{umxReduce}()},
 \code{\link{umxSetParameters}()},
-\code{\link{umxUnexplainedCausalNexus}()}
+\code{\link{umxSummary}()}
 
 Other Reporting Functions: 
-\code{\link{loadings.MxModel}()},
 \code{\link{umxAPA}()},
 \code{\link{umxFactorScores}()},
 \code{\link{umxGetParameters}()},
 \code{\link{umxParameters}()},
-\code{\link{umxReduce}()},
 \code{\link{umx_aggregate}()},
 \code{\link{umx_time}()}
 
@@ -287,8 +281,12 @@ Other datasets:
 \code{\link{us_skinfold_data}}
 
 Other Advanced Model Building Functions: 
+\code{\link{umxAlgebra}()},
+\code{\link{umxFixAll}()},
 \code{\link{umxJiggle}()},
+\code{\link{umxRun}()},
 \code{\link{umxThresholdMatrix}()},
+\code{\link{umxUnexplainedCausalNexus}()},
 \code{\link{xmuLabel}()},
 \code{\link{xmuValues}()}
 
@@ -367,13 +365,13 @@ Other xmu internal not for end user:
 }
 \concept{Advanced Model Building Functions}
 \concept{Check or test}
-\concept{Core Modeling Functions}
+\concept{Core Model Building Functions}
 \concept{Data Functions}
 \concept{File Functions}
 \concept{Get and set}
 \concept{Miscellaneous Stats Helpers}
 \concept{Miscellaneous Utility Functions}
-\concept{Modify or Compare Models}
+\concept{Model Summary and Comparison}
 \concept{Plotting functions}
 \concept{Reporting Functions}
 \concept{String Functions}

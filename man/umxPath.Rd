@@ -241,14 +241,11 @@ m1 = umxRAM("manifest", data = mtcars,
 \item \code{\link[=mxPath]{mxPath()}}
 }
 
-Other Core Modeling Functions: 
-\code{\link{umxAlgebra}()},
+Other Core Model Building Functions: 
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
 \code{\link{umxRAM}()},
-\code{\link{umxRun}()},
-\code{\link{umxSummary}()},
 \code{\link{umxSuperModel}()},
 \code{\link{umx}}
 }
-\concept{Core Modeling Functions}
+\concept{Core Model Building Functions}

@@ -58,14 +58,14 @@ class(x$formula) # "call"
 \item \code{\link[=umxMatrix]{umxMatrix()}}
 }
 
-Other Core Modeling Functions: 
-\code{\link{umxMatrix}()},
-\code{\link{umxModify}()},
-\code{\link{umxPath}()},
-\code{\link{umxRAM}()},
+Other Advanced Model Building Functions: 
+\code{\link{umxFixAll}()},
+\code{\link{umxJiggle}()},
 \code{\link{umxRun}()},
-\code{\link{umxSummary}()},
-\code{\link{umxSuperModel}()},
-\code{\link{umx}}
+\code{\link{umxThresholdMatrix}()},
+\code{\link{umxUnexplainedCausalNexus}()},
+\code{\link{umx}},
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 }
-\concept{Core Modeling Functions}
+\concept{Advanced Model Building Functions}

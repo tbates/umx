@@ -104,6 +104,7 @@ Other Miscellaneous Functions:
 \code{\link{deg2rad}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_valuation}()},
+\code{\link{loadings.MxModel}()},
 \code{\link{rad2deg}()}
 }
 \concept{Miscellaneous Functions}

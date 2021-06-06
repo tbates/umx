@@ -99,13 +99,12 @@ parameters(m2)
 \seealso{
 \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
 
-Other Modify or Compare Models: 
+Other Model Summary and Comparison: 
 \code{\link{umxCompare}()},
-\code{\link{umxFixAll}()},
 \code{\link{umxMI}()},
-\code{\link{umxModify}()},
+\code{\link{umxReduce}()},
 \code{\link{umxSetParameters}()},
-\code{\link{umxUnexplainedCausalNexus}()},
+\code{\link{umxSummary}()},
 \code{\link{umx}}
 }
-\concept{Modify or Compare Models}
+\concept{Model Summary and Comparison}

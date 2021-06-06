@@ -183,7 +183,11 @@ all(tmp[[2]]$free)
 \code{\link[OpenMx:mxThreshold]{OpenMx::mxThreshold()}}
 
 Other Advanced Model Building Functions: 
+\code{\link{umxAlgebra}()},
+\code{\link{umxFixAll}()},
 \code{\link{umxJiggle}()},
+\code{\link{umxRun}()},
+\code{\link{umxUnexplainedCausalNexus}()},
 \code{\link{umx}},
 \code{\link{xmuLabel}()},
 \code{\link{xmuValues}()}

@@ -101,14 +101,11 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 \item \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}}, \code{\link[=mxMatrix]{mxMatrix()}}, \code{\link[=xmuLabel]{xmuLabel()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Core Modeling Functions: 
-\code{\link{umxAlgebra}()},
+Other Core Model Building Functions: 
 \code{\link{umxModify}()},
 \code{\link{umxPath}()},
 \code{\link{umxRAM}()},
-\code{\link{umxRun}()},
-\code{\link{umxSummary}()},
 \code{\link{umxSuperModel}()},
 \code{\link{umx}}
 }
-\concept{Core Modeling Functions}
+\concept{Core Model Building Functions}

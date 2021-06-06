@@ -75,14 +75,14 @@ m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 }
 }
 \seealso{
-Other Core Modeling Functions: 
+Other Advanced Model Building Functions: 
 \code{\link{umxAlgebra}()},
-\code{\link{umxMatrix}()},
-\code{\link{umxModify}()},
-\code{\link{umxPath}()},
-\code{\link{umxRAM}()},
-\code{\link{umxSummary}()},
-\code{\link{umxSuperModel}()},
-\code{\link{umx}}
+\code{\link{umxFixAll}()},
+\code{\link{umxJiggle}()},
+\code{\link{umxThresholdMatrix}()},
+\code{\link{umxUnexplainedCausalNexus}()},
+\code{\link{umx}},
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 }
-\concept{Core Modeling Functions}
+\concept{Advanced Model Building Functions}

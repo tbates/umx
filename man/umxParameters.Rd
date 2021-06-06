@@ -78,11 +78,9 @@ umxParameters(m1, "below", .1, "_to_")
 }
 
 Other Reporting Functions: 
-\code{\link{loadings.MxModel}()},
 \code{\link{umxAPA}()},
 \code{\link{umxFactorScores}()},
 \code{\link{umxGetParameters}()},
-\code{\link{umxReduce}()},
 \code{\link{umx_aggregate}()},
 \code{\link{umx_time}()},
 \code{\link{umx}}

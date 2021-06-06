@@ -403,11 +403,10 @@ umxModel <- function(...) {
 #' @param std.lv Whether to auto standardize latent variables when using string syntax (default = FALSE)
 #' @param lavaanMode Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)
 #' @param printTab (for string input, whether to output a table of paths (FALSE)
-#' @param show Deprecated
 #' @return - [mxModel()]
 #' @export 
 #' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]
-#' @family Core Modeling Functions
+#' @family Core Model Building Functions
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -558,7 +557,7 @@ umxModel <- function(...) {
 #'
 #' }
 #'
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE, show = "deprecated") {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	type       = match.arg(type)
@@ -854,7 +853,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @param std Show standardized parameters, raw (default), or just the fit indices (null)
 #' @return - [mxModel()]
 #' @export
-#' @family Core Modeling Functions
+#' @family Core Model Building Functions
 #' @seealso - [mxFitFunctionMultigroup()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -1020,8 +1019,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @param intervals Whether to run confidence intervals (see [mxRun()])
 #' @param verbose How much feedback to give
 #' @return - [mxModel()]
-#' @family Core Modeling Functions
-#' @family Modify or Compare Models
+#' @family Core Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
@@ -3501,7 +3499,7 @@ xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param jiggle = NA passed to xmuLabel to jiggle start values (default does nothing)
 #' @return - [mxMatrix()]
 #' @export
-#' @family Core Modeling Functions
+#' @family Core Model Building Functions
 #' @seealso - [xmu_simplex_corner()], [mxMatrix()], [xmuLabel()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -3568,7 +3566,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @param recompute See mxAlgebra documentation
 #' @return - [mxAlgebra()]
 #' @export
-#' @family Core Modeling Functions
+#' @family Advanced Model Building Functions	
 #' @seealso - [umxMatrix()]
 #' @md
 #' @examples
@@ -3605,7 +3603,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE
 #' @param comparison Whether to run umxCompare() after umxRun
 #' @return - [mxModel()]
-#' @family Core Modeling Functions
+#' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
@@ -3711,7 +3709,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' and, because this can create duplicate labels, we also call [omxAssignFirstParameters()]
 #' to equate the start values for parameters which now have identical labels.
 #' 
-#' @param model an [mxModel()] to WITH
+#' @param model an [mxModel()] to set parameters in.
 #' @param labels = labels to find
 #' @param free = new value for free
 #' @param values = new values
@@ -3725,7 +3723,7 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 #' @param test Just show what you would do? (defaults to FALSE)
 #' @return - [mxModel()]
 #' @export
-#' @family Modify or Compare Models
+#' @family Model Summary and Comparison
 #' @seealso - [umxModify()], [xmuLabel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -3807,7 +3805,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @return - [mxModel()]
 #' @export
 #' @seealso [umxModify()], [umxCompare()]
-#' @family Modify or Compare Models
+#' @family Model Summary and Comparison
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -3898,7 +3896,7 @@ umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), v
 #' @param run  whether to fix and re-run the model, or just return it (defaults to FALSE)
 #' @return - the fixed [mxModel()]
 #' @export
-#' @family Modify or Compare Models
+#' @family Advanced Model Building Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -4539,7 +4537,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param hasMeans Used in 'forms' case to know whether the data have means or not.
 #' @return - 1 or more [mxPath()]s
 #' @export
-#' @family Core Modeling Functions
+#' @family Core Model Building Functions
 #' @seealso - [mxPath()]
 #' @references - <https://tbates.github.io>
 #' @md
@@ -5012,8 +5010,8 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @docType package
 #' @name umx
 #' @family Teaching and testing Functions
-#' @family Core Modeling Functions
-#' @family Modify or Compare Models
+#' @family Core Model Building Functions
+#' @family Model Summary and Comparison
 #' @family Summary Functions
 #' @family Reporting Functions
 #' @family Plotting functions

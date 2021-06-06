@@ -20,7 +20,7 @@ umxSetParameters(
 )
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to WITH}
+\item{model}{an \code{\link[=mxModel]{mxModel()}} to set parameters in.}
 
 \item{labels}{= labels to find}
 
@@ -96,13 +96,12 @@ parameters(m2)
 \item \code{\link[=umxModify]{umxModify()}}, \code{\link[=xmuLabel]{xmuLabel()}}
 }
 
-Other Modify or Compare Models: 
+Other Model Summary and Comparison: 
 \code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
-\code{\link{umxFixAll}()},
 \code{\link{umxMI}()},
-\code{\link{umxModify}()},
-\code{\link{umxUnexplainedCausalNexus}()},
+\code{\link{umxReduce}()},
+\code{\link{umxSummary}()},
 \code{\link{umx}}
 }
-\concept{Modify or Compare Models}
+\concept{Model Summary and Comparison}
