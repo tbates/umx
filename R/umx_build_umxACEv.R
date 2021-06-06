@@ -89,7 +89,8 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @return - [mxModel()] subclass `mxModel.ACE`
+#' @param nSib Number of sibs, default is 2. Working on 3 :-)
+#' @return - [mxModel()] subclass `mxModelACEv`
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Verhulst, B., Prom-Wormley, E., Keller, M., Medland, S., & Neale, M. C. (2019).
@@ -143,20 +144,24 @@
 #' #    but scaling is advisable.
 #' # 
 #' require(umx)
+#' # Load data and rescale height to cm (var in m too small)
 #' data(twinData) # ?twinData from Australian twins.
-#' # height var is very small: move from m to cm to increase.
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", ]
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", ]
+#'
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' m1 = umxACEv(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
+#' 
 #' umxSummary(m1, std = FALSE) # unstandardized
-#' # tip: with report = "html", umxSummary can print the table to your browser!
 #' plot(m1)
+#'
+#' # tip: with report = "html", umxSummary can print the table to your browser!
+#' # tip: You can turn off auto-plot with umx_set_auto_plot(FALSE)
 #' 
 #' # ========================================================
 #' # = Evidence for dominance ? (DZ correlation set to .25) =
 #' # ========================================================
-#' m2 = umxACEv("ADE", selDVs = "ht", sep="", dzData = dzData, mzData = mzData, dzCr = .25)
+#' m2 = umxACEv("ADE", selDVs = "ht", dzCr = .25, sep="", dzData = dzData, mzData = mzData)
 #' umxCompare(m2, m1) # Is ADE better?
 #' umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 #'
@@ -251,11 +256,14 @@
 #' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
 #' umxSummary(m1, std = FALSE)
 #' 
-umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"),
+umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), 
+	allContinuousMethod = c("cumulants", "marginals"),
 	data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, 
 	boundDiag = NULL, equateMeans = TRUE, bVector = FALSE,  covMethod = c("fixed", "random"), 
-	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
-	nSib                = 2 # number of siblings in a twin pair
+	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2) {
+	if(nSib != 2){
+		umx_msg("I can only handle 2 sibs, you gave me ", nSib)
+	}
 	type                = match.arg(type)
 	covMethod           = match.arg(covMethod)
 	allContinuousMethod = match.arg(allContinuousMethod)
