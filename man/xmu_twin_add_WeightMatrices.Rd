@@ -37,7 +37,7 @@ m1$MZ$fitfunction$vector= TRUE
 tmp = xmu_twin_add_WeightMatrices(m1,
 	mzWeights= rnorm(nrow(m1$MZ$data$observed)), 
 	dzWeights= rnorm(nrow(m1$DZ$data$observed))
- )
+)
 
 }
 \seealso{
@@ -112,6 +112,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_summary_RAM_group_parameters}()},
 \code{\link{xmu_twin_check}()},
 \code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_make_def_means_mats_and_alg}()},
 \code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}

@@ -4,7 +4,7 @@
 \alias{xmuTwinUpgradeMeansToCovariateModel}
 \title{Not for end-users: Add a means model with covariates to a twin model}
 \usage{
-xmuTwinUpgradeMeansToCovariateModel(model, fullVars, fullCovs, sep)
+xmuTwinUpgradeMeansToCovariateModel(model, fullVars, fullCovs, nSib, sep)
 }
 \arguments{
 \item{model}{The \code{\link[=umxSuperModel]{umxSuperModel()}} we are modifying (must have \code{MZ} \code{DZ} and \code{top} submodels)}
@@ -12,6 +12,8 @@ xmuTwinUpgradeMeansToCovariateModel(model, fullVars, fullCovs, sep)
 \item{fullVars}{the FULL names of manifest variables}
 
 \item{fullCovs}{the FULL names of definition variables}
+
+\item{nSib}{How many siblings}
 
 \item{sep}{How twin variable names have been expanded, e.g. "_T".}
 }
@@ -125,6 +127,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()},
 \code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_make_def_means_mats_and_alg}()},
 \code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}

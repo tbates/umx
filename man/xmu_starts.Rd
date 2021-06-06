@@ -74,12 +74,11 @@ ordDVs = c("obese1", "obese2")
 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 mzData = twinData[twinData$zygosity \%in\% "MZFF",] 
 dzData = twinData[twinData$zygosity \%in\% "DZFF",]
-tmp = xmu_starts(mzData, dzData, selVars = c("wt","obese"), sep= "", 
- nSib= 2, equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+xmu_starts(mzData, dzData, selVars = c("wt","obese"), sep= "", 
+ nSib= 2, equateMeans = TRUE, SD= FALSE)
 
-tmp = xmu_starts(mxData(mzData, type="raw"), mxData(mzData, type="raw"), 
-   selVars = c("wt","obese"), sep= "", nSib= 2, equateMeans = TRUE, 
-  varForm = "Cholesky", SD= FALSE)
+xmu_starts(mxData(mzData, type="raw"), mxData(mzData, type="raw"), 
+   selVars = c("wt","obese"), sep= "", nSib= 2, equateMeans = TRUE, SD= FALSE)
 
 # ==============
 # = Three sibs =
@@ -91,9 +90,8 @@ selDVs = c("wt", "ht")
 mzData = twinData[twinData$zygosity \%in\%  "MZFF", ] 
 dzData = twinData[twinData$zygosity \%in\%  "DZFF", ]
 
-tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "",
-	nSib = 3, equateMeans = TRUE, varForm = "Cholesky")
-tmp
+xmu_starts(mzData, dzData, selVars=selDVs, sep="", nSib=3, equateMeans=TRUE)
+xmu_starts(mzData, dzData, selVars=selDVs, sep="", nSib=3, equateMeans=FALSE)
 }
 \seealso{
 Other xmu internal not for end user: 
@@ -167,6 +165,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()},
 \code{\link{xmu_twin_get_var_names}()},
+\code{\link{xmu_twin_make_def_means_mats_and_alg}()},
 \code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
 }
 \concept{xmu internal not for end user}
