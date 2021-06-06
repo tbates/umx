@@ -189,8 +189,8 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 	# TODO: 2. xmu_make_TwinSuperModel Add beta matrix for fixed covariates in means.
 	# TODO: 4. xmu_make_TwinSuperModel more tests in a test page
 
-	# *Note*: If dropping this into an existing model, it replaces all code setting: nVar, selVars, used, 
-	# Also any code figuring out data-type
+	# *Note*: If dropping this into an existing model, all your code setting: nVar, selVars, used
+	# any code figuring out data-type, is  not needed!
 
 	# ===================
 	# = match arguments =
@@ -207,7 +207,7 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 		message("Polite note: It's better to use 'sep'. This might become compulsory as it helps umx manage variable names in twin models.")
 		# stop("You MUST set 'sep'. Otherwise xmu_make_top can't reliably expand selDVs into full variable names")
 	}else{
-		fullVars = tvars(selDVs  , sep = sep, suffixes= 1:nSib)
+		fullVars = tvars(selDVs , sep = sep, suffixes= 1:nSib)
 		fullCovs = tvars(selCovs, sep = sep, suffixes= 1:nSib)
 	}
 
@@ -319,10 +319,11 @@ xmu_make_TwinSuperModel <- function(name="twin_super", mzData, dzData, selDVs, s
 #' @seealso - [xmu_make_TwinSuperModel()]
 #' @md
 #' @examples
-#' # xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
-#' #    mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
-#' #    allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T"
-#' # )
+#' \dontrun{
+#'  xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
+#'     mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
+#'     allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T" )
+#' }
 xmuTwinSuper_Continuous <- function(name= NULL, fullVars, fullCovs = NULL, sep, mzData, dzData, equateMeans, type, allContinuousMethod, nSib){
 	# ==============================
 	# = Handle all continuous case =
@@ -625,27 +626,22 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF", ]
 #' 
 #' round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
+#' xmu_starts(mzData, dzData, selVars=selDVs, sep="", equateMeans=TRUE, varForm="Cholesky")
 #' 
-#' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
-#'		equateMeans = TRUE, varForm = "Cholesky")
-#' tmp
-#' 
+#' # Variance instead of SD
 #' round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
 #' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
 #'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
 #' 
-#' tmp
-#' 
 #' # one variable
-#' tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
-#'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+#' xmu_starts(mzData, dzData, selVars= "wt", sep="", equateMeans= TRUE, varForm= "Cholesky")
 #' 
 #' # Ordinal/continuous mix
 #' data(twinData)
 #' twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
 #' # Cut BMI column to form ordinal obesity variables
-#' obLevels = c('normal', 'overweight', 'obese')
 #' cuts     = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
+#' obLevels = c('normal', 'overweight', 'obese')
 #' twinData$obese1= cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
 #' twinData$obese2= cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
 #' # Make the ordinal variables into mxFactors
@@ -660,10 +656,20 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, sep) 
 #'    selVars = c("wt","obese"), sep= "", nSib= 2, equateMeans = TRUE, 
 #'	  varForm = "Cholesky", SD= FALSE)
 #'
+#' # ==============
+#' # = Three sibs =
+#' # ==============
+#' data(twinData)
+#' twinData$wt3 = twinData$wt2
+#' twinData$ht3 = twinData$ht2
+#' selDVs = c("wt", "ht")
+#' mzData = twinData[twinData$zygosity %in%  "MZFF", ] 
+#' dzData = twinData[twinData$zygosity %in%  "DZFF", ]
+#' 
+#' xmu_starts(mzData, dzData, selVars=selDVs, sep="", nSib=3, equateMeans=TRUE)
+#' xmu_starts(mzData, dzData, selVars=selDVs, sep="", nSib=3, equateMeans=FALSE)
 xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
-	# Make mxData, dropping any unused columns
 	if(!is.null(sep)){
-		# sep = ""; nSib = 2; selVars = c("wt", "ht")
 		selVars = umx_paste_names(selVars, sep = sep, suffixes = 1:nSib)
 	}
 	nVar = length(selVars)/nSib
@@ -677,19 +683,19 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 		}else{
 			allData = rbind(mzData, dzData)[,selVars]
 		}
-
+		# uses sib 1 and 2 irrespective of nSib (doesn't matter here)
 		T1 = allData[, 1:nVar, drop = FALSE]
 		T2 = allData[, (nVar+1):(nVar*2), drop = FALSE];
 		names(T2) = names(T1)
 		longData = rbind(T1, T2)[, selVars[1:nVar], drop = FALSE]
-		# Mean starts (used across all raw solutions
+		# Mean starts (1 per variable)
 		meanStarts = umx_means(longData, ordVar = 0, na.rm = TRUE)
 
-		# Make wide again
-		meanStarts = c(meanStarts, meanStarts)
+		# Make nSib wide
+		meanStarts = rep(meanStarts, times = nSib)
 		if(equateMeans){
-			meanLabels = paste0("expMean_", selVars[1:nVar]) # Names recycled for twin 2
-			meanLabels = c(meanLabels, meanLabels)
+			# e.g. "expMean_ht1" "expMean_wt1" "expMean_ht1"
+			meanLabels = rep(paste0("expMean_", selVars[1:nVar]), times = nSib)
 		} else {
 			meanLabels = paste0("expMean_", selVars)
 		}

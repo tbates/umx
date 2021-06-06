@@ -51,27 +51,22 @@ mzData = twinData[twinData$zygosity \%in\%  "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\%  "DZFF", ]
 
 round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
+xmu_starts(mzData, dzData, selVars=selDVs, sep="", equateMeans=TRUE, varForm="Cholesky")
 
-tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
-	equateMeans = TRUE, varForm = "Cholesky")
-tmp
-
+# Variance instead of SD
 round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
 tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
 	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
 
-tmp
-
 # one variable
-tmp = xmu_starts(mzData, dzData, selVars = "wt", sep= "", 
-	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+xmu_starts(mzData, dzData, selVars= "wt", sep="", equateMeans= TRUE, varForm= "Cholesky")
 
 # Ordinal/continuous mix
 data(twinData)
 twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
 # Cut BMI column to form ordinal obesity variables
-obLevels = c('normal', 'overweight', 'obese')
 cuts     = quantile(twinData[, "bmi1"], probs = c(.5, .8), na.rm = TRUE)
+obLevels = c('normal', 'overweight', 'obese')
 twinData$obese1= cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
 twinData$obese2= cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
 # Make the ordinal variables into mxFactors
@@ -86,6 +81,19 @@ tmp = xmu_starts(mxData(mzData, type="raw"), mxData(mzData, type="raw"),
    selVars = c("wt","obese"), sep= "", nSib= 2, equateMeans = TRUE, 
   varForm = "Cholesky", SD= FALSE)
 
+# ==============
+# = Three sibs =
+# ==============
+data(twinData)
+twinData$wt3 = twinData$wt2
+twinData$ht3 = twinData$ht2
+selDVs = c("wt", "ht")
+mzData = twinData[twinData$zygosity \%in\%  "MZFF", ] 
+dzData = twinData[twinData$zygosity \%in\%  "DZFF", ]
+
+tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "",
+	nSib = 3, equateMeans = TRUE, varForm = "Cholesky")
+tmp
 }
 \seealso{
 Other xmu internal not for end user: 

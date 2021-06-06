@@ -85,7 +85,6 @@
 #' @param weightVar = If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
-#' @param covMethod How to treat covariates: "fixed" (default) or "random".
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
@@ -256,18 +255,12 @@
 #' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
 #' umxSummary(m1, std = FALSE)
 #' 
-umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), 
-	allContinuousMethod = c("cumulants", "marginals"),
-	data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, 
-	boundDiag = NULL, equateMeans = TRUE, bVector = FALSE,  covMethod = c("fixed", "random"), 
-	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2) {
-	if(nSib != 2){
-		umx_msg("I can only handle 2 sibs, you gave me ", nSib)
-	}
+umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2) {
 	type                = match.arg(type)
 	covMethod           = match.arg(covMethod)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	if(dzCr == .25 & name == "ACEv"){ name = "ADEv" }
+	if(nSib != 2){umx_msg("I can only handle 2 sibs, you gave me ", nSib) }
 
 	# if data provided create twin files 
 	if(!is.null(data)){
@@ -279,8 +272,6 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 		if(is.null(dzData)){ dzData = "DZ"; mzData = "MZ" }
 		mzData = data[data[,zyg] %in% mzData, ]
 		dzData = data[data[,zyg] %in% dzData, ]
-		# mzData = data[data[,zyg] %in% ifelse(is.null(mzData), "DZ", mzData), ]
-		# dzData = data[data[,zyg] %in% ifelse(is.null(dzData), "DZ", dzData), ]
 	}else{
 		# avoid ingesting tibbles
 		if("tbl" %in% class(mzData)){
@@ -291,19 +282,11 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 	
-	# If given covariates, call umxACEvcov
-	if(covMethod == "random") {
-		stop("random covariates for umxACEv not yet implemented")
-		# TODO implement umxACEvcov or refactor
-		# TODO add allContinuousMethod = allContinuousMethod and type
-		# umxACEvcov(name = name, selDVs=selDVs, selCovs=selCovs, dzData=dzData, mzData=mzData, sep = sep, dzAr = dzAr, dzCr = dzCr, addStd = addStd, addCI = addCI, boundDiag = boundDiag, equateMeans = equateMeans, bVector = bVector, autoRun = autoRun, tryHard = tryHard)
-	}
-	# nSib = 2, equateMeans = TRUE, verbose = verbose
 	selVars = tvars(selDVs, sep = sep, suffixes= 1:nSib)
-	nVar = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
+	nVar    = length(selVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family) **
 	
 	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= selCovs, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar)
-	tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
+	tmp   = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 
 	# Finish building top
 	top = mxModel(model$top,

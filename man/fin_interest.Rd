@@ -74,20 +74,21 @@ fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 # Annual rather than monthly compounding (n=1)
 fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
 
-# Value of principal + deposits of $100/yr over 10 years at 7\% return.
-fin_interest(principal = 20000, deposits = 100, interest = 0.07, yrs = 10)
+# Value of 20k principal + £100/yr over 10 years at 7\% return.
+fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="£")
 
-# £20k at 7\% once a year for 10 years
-fin_interest(deposits=20e3, interest = 0.07, yrs = 10, n=1)
-# $295,672
+# £20k at 15\% annually (n=1) for 10 years
+fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
+# $466,986
 
 # manual sum
-sum(20e3*(1.07^(10:1))) # 295672
+sum(20e3*(1.15^(10:1))) # 295672
 
 # $10,000 invested at the end of each year for 5 years at 6\%
 fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 
-fin_interest(deposits = 100, final=200, yrs = 5)
+# Interest needed to move principal to final value in yrs time.
+fin_interest(principal = 100, final=200, yrs = 5)
 }
 \references{
 \itemize{

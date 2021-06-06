@@ -48,10 +48,11 @@ Sets up top, MZ and DZ submodels with a means model, data, and expectation for a
 called by \code{\link[=xmu_make_TwinSuperModel]{xmu_make_TwinSuperModel()}}.
 }
 \examples{
-# xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
-#    mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
-#    allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T"
-# )
+\dontrun{
+ xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
+    mzData = mzData, dzData = dzData, equateMeans = TRUE, type = type, 
+    allContinuousMethod = allContinuousMethod, nSib= nSib, sep = "_T" )
+}
 }
 \seealso{
 \itemize{

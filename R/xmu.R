@@ -302,10 +302,18 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 	if(!is.null(int)){
 		# means and betas
 		caption = "Means and (raw) betas from model$top$intercept and model$top$meansBetas"
-		row.names(int) = "intercept"
 		b = model$top$meansBetas$values
-		bvals = b[,1:dim(b)[[2]], drop = FALSE]
-		int = rbind(int, cbind(bvals, bvals))
+		bcols = dim(b)[[2]]
+		bvals = b[,1:bcols, drop = FALSE]
+		interceptsPerSib = dim(int)[[2]]/bcols
+		if(interceptsPerSib==2){
+			int = rbind(int, cbind(bvals, bvals))
+		} else if(interceptsPerSib==3){
+			int = rbind(int, cbind(bvals, bvals, bvals))
+		}else{
+			umx_msg("Polite note: email Tim as this number of means not expected")
+		}
+		row.names(int) = c("intercept", "beta")
 	} else {
 		int = model$top$expMean$values
 		if(!is.null(int)){

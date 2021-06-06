@@ -25,10 +25,10 @@ umxACEv(
   boundDiag = NULL,
   equateMeans = TRUE,
   bVector = FALSE,
-  covMethod = c("fixed", "random"),
   autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "ordinal", "search"),
-  optimizer = NULL
+  optimizer = NULL,
+  nSib = 2
 )
 }
 \arguments{
@@ -72,17 +72,17 @@ umxACEv(
 
 \item{bVector}{Whether to compute row-wise likelihoods (defaults to FALSE).}
 
-\item{covMethod}{How to treat covariates: "fixed" (default) or "random".}
-
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
+
+\item{nSib}{Number of sibs, default is 2. Working on 3 :-)}
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}} subclass \code{mxModel.ACE}
+\item \code{\link[=mxModel]{mxModel()}} subclass \code{mxModelACEv}
 }
 }
 \description{
@@ -180,20 +180,24 @@ m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE, name="AE")
 #    but scaling is advisable.
 # 
 require(umx)
+# Load data and rescale height to cm (var in m too small)
 data(twinData) # ?twinData from Australian twins.
-# height var is very small: move from m to cm to increase.
 twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", ]
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", ]
+
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACEv(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
+
 umxSummary(m1, std = FALSE) # unstandardized
-# tip: with report = "html", umxSummary can print the table to your browser!
 plot(m1)
+
+# tip: with report = "html", umxSummary can print the table to your browser!
+# tip: You can turn off auto-plot with umx_set_auto_plot(FALSE)
 
 # ========================================================
 # = Evidence for dominance ? (DZ correlation set to .25) =
 # ========================================================
-m2 = umxACEv("ADE", selDVs = "ht", sep="", dzData = dzData, mzData = mzData, dzCr = .25)
+m2 = umxACEv("ADE", selDVs = "ht", dzCr = .25, sep="", dzData = dzData, mzData = mzData)
 umxCompare(m2, m1) # Is ADE better?
 umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
 
