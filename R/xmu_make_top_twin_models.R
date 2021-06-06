@@ -358,30 +358,44 @@ xmuTwinSuper_Continuous <- function(name= NULL, fullVars, fullCovs = NULL, sep, 
 			mxModel("DZ", dzData, mxExpectationNormal("top.expCovDZ", "top.expMean") ),			
 			mxFitFunctionMultigroup(c("MZ", "DZ"))
 		)
-		if(!is.null(fullCovs)){			
-			model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, sep = sep)
+		if(!is.null(fullCovs)){
+			model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, nSib = nSib, sep = sep)
 		}
 	}
 	return(model)
 }
 
-# xmuTwinSuper_NoBinary(name=name, fullVars = fullVars, fullCovs = fullCovs, mzData = mzData, dzData = dzData, equateMeans= equateMeans, nSib=2)
+#' xmuTwinSuper_NoBinary
+#'
+#' @description
+#'  # Handle 1 or more ordinal variables (no binary)
+#'  Means ordinal, but no binary
+#'  Means: all free, start cont at the measured value, ordinals @0
+#' 
+#'  Notes: Ordinal requires:
+#'  1. Variable set to mxFactor
+#'  2. For Binary variables:
+#'    1. Latent means of binary variables fixedAt 0 (or by data.def?)
+#'    2. Latent variance (A + C + E) constrained == 1 
+#'  3. For Ordinal variables, first 2 thresholds fixed
+#'
+#' @param name = NULL
+#' @param fullVars full names of variables
+#' @param fullCovs full names of covariates
+#' @param mzData mzData
+#' @param dzData dzData
+#' @param sep sep
+#' @param nSib nSib
+#' @param equateMeans T/F
+#' @param verbose (Default FALSE)
+#' @return - twin model
+#' @export
+#' @family
+#' @md
+#' @examples
+#' #
 xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
 	umx_check(!is.null(name), "stop", "I need a name for the super model")
-	# ==================================================
-	# = Handle 1 or more ordinal variables (no binary) =
-	# ==================================================
-	# Means ordinal, but no binary
-	# Means: all free, start cont at the measured value, ordinals @0
-
-	# ============================
-	# = Notes: Ordinal requires: =
-	# ============================
-	# 1. Variable set to mxFactor
-	# 2. For Binary variables:
-	#   1. Latent means of binary variables fixedAt 0 (or by data.def?)
-	#   2. Latent variance (A + C + E) constrained == 1 
-	# 3. For Ordinal variables, first 2 thresholds fixed
 
 	nVar = length(fullVars)/nSib; # Number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	colTypes = umx_is_ordered(xmu_extract_column(mzData, fullVars), summaryObject= TRUE)
@@ -410,7 +424,8 @@ xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData
 		mxFitFunctionMultigroup(c("MZ", "DZ"))
 	)
 	if(!is.null(fullCovs)){
-		model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, sep = sep)
+		model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, nSib = nSib, sep = sep)
+
 	}
 	
 	return(model)
@@ -481,7 +496,7 @@ xmuTwinSuper_SomeBinary <- function(name=NULL, fullVars, fullCovs = NULL, mzData
 	)
 
 	if(!is.null(fullCovs)){
-		model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, sep = sep)
+		model = xmuTwinUpgradeMeansToCovariateModel(model, fullVars = fullVars, fullCovs = fullCovs, nSib = nSib, sep = sep)
 	}
 	return(model)
 }
@@ -654,15 +669,15 @@ xmu_twin_make_def_means_mats_and_alg <- function(baseCovs, fullVars, nSib, sep) 
 #' dzData = twinData[twinData$zygosity %in%  "DZFF", ]
 #' 
 #' round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
-#' xmu_starts(mzData, dzData, selVars=selDVs, sep="", equateMeans=TRUE, varForm="Cholesky")
+#' xmu_starts(mzData, dzData, selVars=selDVs, nSib= 2, sep="", equateMeans=TRUE, varForm="Cholesky")
 #' 
 #' # Variance instead of SD
 #' round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
-#' tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
-#'		equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+#' xmu_starts(mzData, dzData, selVars = selDVs, nSib = 2, sep= "", 
+#'		equateMeans= TRUE, varForm= "Cholesky", SD= FALSE)
 #' 
 #' # one variable
-#' xmu_starts(mzData, dzData, selVars= "wt", sep="", equateMeans= TRUE, varForm= "Cholesky")
+#' xmu_starts(mzData, dzData, selVars= "wt", nSib = 2, sep="", equateMeans = TRUE)
 #' 
 #' # Ordinal/continuous mix
 #' data(twinData)
@@ -695,7 +710,7 @@ xmu_twin_make_def_means_mats_and_alg <- function(baseCovs, fullVars, nSib, sep) 
 #' 
 #' xmu_starts(mzData, dzData, selVars=selDVs, sep="", nSib=3, equateMeans=TRUE)
 #' xmu_starts(mzData, dzData, selVars=selDVs, sep="", nSib=3, equateMeans=FALSE)
-xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib = 2, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
+xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMeans= NULL, nSib, varForm = c("Cholesky"), SD= TRUE, divideBy = 3) {
 	if(!is.null(sep)){
 		selVars = umx_paste_names(selVars, sep = sep, suffixes = 1:nSib)
 	}

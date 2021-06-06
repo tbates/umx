@@ -10,7 +10,7 @@ xmu_starts(
   selVars = selVars,
   sep = NULL,
   equateMeans = NULL,
-  nSib = 2,
+  nSib,
   varForm = c("Cholesky"),
   SD = TRUE,
   divideBy = 3
@@ -51,15 +51,15 @@ mzData = twinData[twinData$zygosity \%in\%  "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\%  "DZFF", ]
 
 round(sqrt(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3),3)
-xmu_starts(mzData, dzData, selVars=selDVs, sep="", equateMeans=TRUE, varForm="Cholesky")
+xmu_starts(mzData, dzData, selVars=selDVs, nSib= 2, sep="", equateMeans=TRUE, varForm="Cholesky")
 
 # Variance instead of SD
 round(var(dzData[,tvars(selDVs, "")], na.rm=TRUE)/3,3)
-tmp = xmu_starts(mzData, dzData, selVars = selDVs, sep= "", 
-	equateMeans = TRUE, varForm = "Cholesky", SD= FALSE)
+xmu_starts(mzData, dzData, selVars = selDVs, nSib = 2, sep= "", 
+	equateMeans= TRUE, varForm= "Cholesky", SD= FALSE)
 
 # one variable
-xmu_starts(mzData, dzData, selVars= "wt", sep="", equateMeans= TRUE, varForm= "Cholesky")
+xmu_starts(mzData, dzData, selVars= "wt", nSib = 2, sep="", equateMeans = TRUE)
 
 # Ordinal/continuous mix
 data(twinData)
