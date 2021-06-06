@@ -42,13 +42,14 @@ mxCompare(m1, m2)
 }
 }
 \seealso{
-Other Modify or Compare Models: 
-\code{\link{umxCompare}()},
-\code{\link{umxEquate}()},
-\code{\link{umxMI}()},
-\code{\link{umxModify}()},
-\code{\link{umxSetParameters}()},
+Other Advanced Model Building Functions: 
+\code{\link{umxAlgebra}()},
+\code{\link{umxJiggle}()},
+\code{\link{umxRun}()},
+\code{\link{umxThresholdMatrix}()},
 \code{\link{umxUnexplainedCausalNexus}()},
-\code{\link{umx}}
+\code{\link{umx}},
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 }
-\concept{Modify or Compare Models}
+\concept{Advanced Model Building Functions}

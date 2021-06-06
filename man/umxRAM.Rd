@@ -26,8 +26,7 @@ umxRAM(
   verbose = FALSE,
   std.lv = FALSE,
   lavaanMode = c("sem", "lavaan"),
-  printTab = FALSE,
-  show = "deprecated"
+  printTab = FALSE
 )
 }
 \arguments{
@@ -74,8 +73,6 @@ umxRAM(
 \item{lavaanMode}{Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)}
 
 \item{printTab}{(for string input, whether to output a table of paths (FALSE)}
-
-\item{show}{Deprecated}
 }
 \value{
 \itemize{
@@ -313,14 +310,11 @@ parameters(m1)
 \seealso{
 \code{\link[=umxPath]{umxPath()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=plot]{plot()}}, \code{\link[=parameters]{parameters()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}, \code{\link[=umxLav2RAM]{umxLav2RAM()}}
 
-Other Core Modeling Functions: 
-\code{\link{umxAlgebra}()},
+Other Core Model Building Functions: 
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
 \code{\link{umxPath}()},
-\code{\link{umxRun}()},
-\code{\link{umxSummary}()},
 \code{\link{umxSuperModel}()},
 \code{\link{umx}}
 }
-\concept{Core Modeling Functions}
+\concept{Core Model Building Functions}

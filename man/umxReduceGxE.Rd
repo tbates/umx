@@ -48,7 +48,7 @@ model = umxReduce(model)
 }
 }
 \seealso{
-\code{\link[=umxReduceACE]{umxReduceACE()}}, \code{\link[=umxReduce]{umxReduce()}}
+\code{\link[=umxReduce]{umxReduce()}}, \code{\link[=umxReduceACE]{umxReduceACE()}}
 
 Other Twin Modeling Functions: 
 \code{\link{power.ACE.test}()},

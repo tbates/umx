@@ -33,13 +33,14 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 \item \code{\link[=mxCheckIdentification]{mxCheckIdentification()}}, \code{\link[=mxCompare]{mxCompare()}}
 }
 
-Other Modify or Compare Models: 
-\code{\link{umxCompare}()},
-\code{\link{umxEquate}()},
+Other Advanced Model Building Functions: 
+\code{\link{umxAlgebra}()},
 \code{\link{umxFixAll}()},
-\code{\link{umxMI}()},
-\code{\link{umxModify}()},
-\code{\link{umxSetParameters}()},
-\code{\link{umx}}
+\code{\link{umxJiggle}()},
+\code{\link{umxRun}()},
+\code{\link{umxThresholdMatrix}()},
+\code{\link{umx}},
+\code{\link{xmuLabel}()},
+\code{\link{xmuValues}()}
 }
-\concept{Modify or Compare Models}
+\concept{Advanced Model Building Functions}

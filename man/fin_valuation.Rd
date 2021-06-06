@@ -53,6 +53,7 @@ Other Miscellaneous Functions:
 \code{\link{deg2rad}()},
 \code{\link{fin_interest}()},
 \code{\link{fin_percent}()},
+\code{\link{loadings.MxModel}()},
 \code{\link{rad2deg}()}
 }
 \concept{Miscellaneous Functions}

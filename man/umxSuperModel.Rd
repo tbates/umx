@@ -111,14 +111,11 @@ umxModelNames(super)
 \item \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Core Modeling Functions: 
-\code{\link{umxAlgebra}()},
+Other Core Model Building Functions: 
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
 \code{\link{umxPath}()},
 \code{\link{umxRAM}()},
-\code{\link{umxRun}()},
-\code{\link{umxSummary}()},
 \code{\link{umx}}
 }
-\concept{Core Modeling Functions}
+\concept{Core Model Building Functions}

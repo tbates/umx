@@ -37,14 +37,11 @@ loadings(m1)
 \item \code{\link[=factanal]{factanal()}}, \code{\link[=loadings]{loadings()}}
 }
 
-Other Reporting Functions: 
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umxReduce}()},
-\code{\link{umx_aggregate}()},
-\code{\link{umx_time}()},
-\code{\link{umx}}
+Other Miscellaneous Functions: 
+\code{\link{deg2rad}()},
+\code{\link{fin_interest}()},
+\code{\link{fin_percent}()},
+\code{\link{fin_valuation}()},
+\code{\link{rad2deg}()}
 }
-\concept{Reporting Functions}
+\concept{Miscellaneous Functions}
