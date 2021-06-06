@@ -248,10 +248,10 @@ utils::globalVariables(c(
 	"dzWeightMatrix",
 	# xmuTwinUpgradeMeansToCovariateModel
     "top.intercept",
-	"T1DefVars",
 	"top.meansBetas",
-	"T2DefVars"
-	
+	"T1DefVars",
+	"T2DefVars",
+	"T3DefVars"
 ))
 
 # ===================================================================
@@ -561,19 +561,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	type       = match.arg(type)
-	show       = match.arg(show)
 	tryHard    = match.arg(tryHard)
 	lavaanMode = match.arg(lavaanMode)
 	allContinuousMethod = match.arg(allContinuousMethod)
-
-	if(show != "deprecated"){
-		message("polite note: In future, replace 'show =' with 'std = TRUE' or FALSE ")
-		if(show =="raw" ){
-			std = FALSE
-		} else {
-			std = TRUE
-		}
-	}
 
 	# if data provided check it isn't a tibble
 	if(!is.null(data)){

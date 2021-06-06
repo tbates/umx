@@ -260,9 +260,9 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 	covMethod           = match.arg(covMethod)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	if(dzCr == .25 & name == "ACEv"){ name = "ADEv" }
-	if(nSib != 2){umx_msg("I can only handle 2 sibs, you gave me ", nSib) }
+	if(nSib != 2){umx_msg(paste0("I can only handle 2 sibs, you gave me ", nSib)) }
 
-	# if data provided create twin files 
+	# If data provided create twin files 
 	if(!is.null(data)){
 		if(is.null(sep)){ sep = "_T" }
 		# avoid ingesting tibbles

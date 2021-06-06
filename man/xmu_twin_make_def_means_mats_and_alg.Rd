@@ -23,7 +23,8 @@ Obscure helper for means in twin models. Returns matrices for
 each definition variable, and an algebra to ocompute means
 }
 \examples{
-# xmu_twin_make_def_means_mats_and_alg(baseCovs= baseCovs, fullVars = fullVars, nSib = nSib, sep= sep)
+# xmu_twin_make_def_means_mats_and_alg(baseCovs= baseCovs, 
+#   fullVars = fullVars, nSib = nSib, sep= sep)
 }
 \seealso{
 \itemize{

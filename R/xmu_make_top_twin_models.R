@@ -617,7 +617,8 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, nSib,
 #' @seealso - [xmuTwinUpgradeMeansToCovariateModel()]
 #' @md
 #' @examples
-#' # xmu_twin_make_def_means_mats_and_alg(baseCovs= baseCovs, fullVars = fullVars, nSib = nSib, sep= sep)
+#' # xmu_twin_make_def_means_mats_and_alg(baseCovs= baseCovs, 
+#' #   fullVars = fullVars, nSib = nSib, sep= sep)
 xmu_twin_make_def_means_mats_and_alg <- function(baseCovs, fullVars, nSib, sep) {
 	nCov    = length(baseCovs)
 	defMats = list()
