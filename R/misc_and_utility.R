@@ -3378,9 +3378,9 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 	what = match.arg(what)
 
 	if(what == "lastrHub"){
-		prev = rhub::list_package_checks(pkg = pkg, howmany = 1)
+		prev = rhub::list_package_checks(package = pkg, howmany = 1)
 		check_id = prev$id[1]
-		rhub::get_check(check_id)
+		return(rhub::get_check(check_id))
 	}else if(what == "install_full"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
 		# system("sleep 5; open /Applications/R.app &")

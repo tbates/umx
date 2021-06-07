@@ -81,6 +81,7 @@ Other xmu internal not for end user:
 \code{\link{xmuMinLevels}()},
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
+\code{\link{xmuTwinSuper_NoBinary}()},
 \code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},

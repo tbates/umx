@@ -257,7 +257,6 @@
 #' 
 umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2) {
 	type                = match.arg(type)
-	covMethod           = match.arg(covMethod)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	if(dzCr == .25 & name == "ACEv"){ name = "ADEv" }
 	if(nSib != 2){umx_msg(paste0("I can only handle 2 sibs, you gave me ", nSib)) }
