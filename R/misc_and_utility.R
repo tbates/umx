@@ -3352,7 +3352,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", "examples" etc.
 #'
-#' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))
+#' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell", or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
 #' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
@@ -3373,12 +3373,13 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "rhub"))     # Check on rhub
 #' umx_make(what = "win"))      # Check on win-builder
 #' umx_make(what = "release"))  # Release to CRAN
+#' tmp = umx_make(what = "lastRhub")) # View rhub result
 #' }
-umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastrHub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
+umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
 	what = match.arg(what)
 
-	if(what == "lastrHub"){
-		prev = rhub::list_package_checks(package = pkg, howmany = 1)
+	if(what == "lastRhub"){
+		prev = rhub::list_package_checks(package = pkg, howmany = 4)
 		check_id = prev$id[1]
 		return(rhub::get_check(check_id))
 	}else if(what == "install_full"){
