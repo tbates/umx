@@ -6,7 +6,7 @@
 \usage{
 umx_make(
   what = c("quick_install", "install_full", "spell", "run_examples", "check", "win",
-    "rhub", "release", "travisCI", "sitrep"),
+    "rhub", "lastRhub", "release", "travisCI", "sitrep"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,
@@ -15,7 +15,7 @@ umx_make(
 )
 }
 \arguments{
-\item{what}{whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell" check, or check "examples"))}
+\item{what}{whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell", or check "examples"))}
 
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 
@@ -43,6 +43,7 @@ umx_make(what = "check"))    # Run R CMD check
 umx_make(what = "rhub"))     # Check on rhub
 umx_make(what = "win"))      # Check on win-builder
 umx_make(what = "release"))  # Release to CRAN
+tmp = umx_make(what = "lastRhub")) # View rhub result
 }
 }
 \references{
@@ -73,6 +74,7 @@ Other xmu internal not for end user:
 \code{\link{xmuPropagateLabels}()},
 \code{\link{xmuRAM2Ordinal}()},
 \code{\link{xmuTwinSuper_Continuous}()},
+\code{\link{xmuTwinSuper_NoBinary}()},
 \code{\link{xmuTwinUpgradeMeansToCovariateModel}()},
 \code{\link{xmu_CI_merge}()},
 \code{\link{xmu_CI_stash}()},

@@ -390,7 +390,7 @@ xmuTwinSuper_Continuous <- function(name= NULL, fullVars, fullCovs = NULL, sep, 
 #' @param verbose (Default FALSE)
 #' @return - twin model
 #' @export
-#' @family
+#' @family xmu internal not for end user
 #' @md
 #' @examples
 #' #
