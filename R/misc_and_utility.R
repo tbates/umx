@@ -1579,7 +1579,8 @@ umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 
 		# 3. print data on current version and load
 		result = tryCatch({
-		    print(packageVersion(p))
+			ver  = packageVersion(p)
+		    cat(ver)
 		    library(p, character.only = TRUE)
 		}, warning = function(x) {
 		    print(paste(p, "Might not be installed locally:\n"))
