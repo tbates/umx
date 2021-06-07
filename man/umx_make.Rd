@@ -6,7 +6,7 @@
 \usage{
 umx_make(
   what = c("quick_install", "install_full", "spell", "run_examples", "check", "win",
-    "rhub", "release", "travisCI", "sitrep"),
+    "rhub", "lastrHub", "release", "travisCI", "sitrep"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,

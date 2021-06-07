@@ -3374,9 +3374,14 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "win"))      # Check on win-builder
 #' umx_make(what = "release"))  # Release to CRAN
 #' }
-umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
+umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastrHub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
 	what = match.arg(what)
-	if(what == "install_full"){
+
+	if(what == "lastrHub"){
+		prev = rhub::list_package_checks(pkg = pkg, howmany = 1)
+		check_id = prev$id[1]
+		rhub::get_check(check_id)
+	}else if(what == "install_full"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
 		# system("sleep 5; open /Applications/R.app &")
 		
