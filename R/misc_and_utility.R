@@ -3366,15 +3366,15 @@ umx_update_OpenMx <- install.OpenMx
 #' @md
 #' @examples
 #' \dontrun{
-#' umx_make(what = "q"))        # Quick install
-#' umx_make(what = "install"))  # Just installs the package
-#' umx_make(what = "examples")) # Run the examples
-#' umx_make(what = "spell"))    # Spell check the documents
-#' umx_make(what = "check"))    # Run R CMD check
-#' umx_make(what = "rhub"))     # Check on rhub
-#' umx_make(what = "win"))      # Check on win-builder
-#' umx_make(what = "release"))  # Release to CRAN
-#' tmp = umx_make(what = "lastRhub")) # View rhub result
+#' umx_make(what = "q")        # Quick install
+#' umx_make(what = "install")  # Just installs the package
+#' umx_make(what = "examples") # Run the examples
+#' umx_make(what = "spell")    # Spell check the documents
+#' umx_make(what = "check")    # Run R CMD check
+#' umx_make(what = "rhub")     # Check on rhub
+#' umx_make(what = "win")      # Check on win-builder
+#' umx_make(what = "release")  # Release to CRAN
+#' tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
 umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
 	what = match.arg(what)
