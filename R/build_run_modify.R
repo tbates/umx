@@ -1256,6 +1256,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
+#' @param nSib Number of siblings in a family (default - 2). "3" = extra sib
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param numObsDZ Number of DZ twins: Set this if you input covariance data.
@@ -1484,10 +1485,9 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' plot(m1)
 #' }
 #'
-umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
+umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
-	nSib    = 2 # Number of siblings in a twin pair.
 	allContinuousMethod = match.arg(allContinuousMethod)
 	if(residualizeContinuousVars){
 		stop("residualizing (as opposed to modelling) continuous variables not implemented yet: just set to FALSE for now")
@@ -1525,6 +1525,25 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 	nVar  = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
 	
 	# Finish building top
+	# Finish building top
+	if(nSib==2){
+		expCovMZ = mxAlgebra(rbind (cbind(ACE,  AC), cbind( AC, ACE)), dimnames = list(selVars, selVars), name = "expCovMZ")
+		expCovDZ = mxAlgebra(rbind (cbind(ACE, hAC), cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+	} else if (nSib==3) {
+		expCovMZ = mxAlgebra(name="expCovMZ", dimnames = list(selVars, selVars), rbind(
+			cbind(ACE,  AC, hAC),
+		    cbind(AC , ACE, hAC),
+		    cbind(hAC, hAC, ACE))
+		)
+		expCovDZ = mxAlgebra(name= "expCovDZ", dimnames = list(selVars, selVars), rbind(
+			cbind(ACE, hAC, hAC),
+			cbind(hAC, ACE, hAC),
+			cbind(hAC, hAC, ACE))
+		)
+	}else{
+		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2022, best tim :-)")
+	}
+	
 	top = mxModel(model$top,
 		# NB: "top" defines the algebra of the twin model, which MZ and DZ slave off of
 		# it already has the means model and thresholds matrix added if necessary  - see "xmu_make_TwinSuperModel" above
@@ -1544,10 +1563,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 		mxAlgebra(name = "ACE", A+C+E),
 		mxAlgebra(name = "AC" , A+C  ),
 		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
-		mxAlgebra(rbind(cbind(ACE, AC),
-		                cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
-		mxAlgebra(rbind(cbind(ACE, hAC),
-		                cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+		expCovMZ, expCovDZ
 	)
 
 	model = mxModel(model, top) 

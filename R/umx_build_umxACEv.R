@@ -288,6 +288,23 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 	tmp   = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 
 	# Finish building top
+	if(nSib==2){
+		expCovMZ = mxAlgebra(rbind (cbind(ACE,  AC), cbind( AC, ACE)), dimnames = list(selVars, selVars), name = "expCovMZ")
+		expCovDZ = mxAlgebra(rbind (cbind(ACE, hAC), cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+	} else if (nSib==3) {
+		expCovMZ = mxAlgebra(name="expCovMZ", dimnames = list(selVars, selVars), rbind(
+			cbind(ACE,  AC, hAC),
+		    cbind(AC , ACE, hAC),
+		    cbind(hAC, hAC, ACE))
+		)
+		expCovDZ = mxAlgebra(name= "expCovDZ", dimnames = list(selVars, selVars), rbind(
+			cbind(ACE, hAC, hAC),
+			cbind(hAC, ACE, hAC),
+			cbind(hAC, hAC, ACE))
+		)
+	}else{
+		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2022, best tim :-)")
+	}
 	top = mxModel(model$top,
 		# "top" defines the algebra of the twin model, which MZ and DZ slave off of
 		# NB: top already has the means model and thresholds matrix added if necessary  - see above
@@ -302,10 +319,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 		mxAlgebra(name = "ACE", A+C+E),
 		mxAlgebra(name = "AC" , A+C  ),
 		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),
-		mxAlgebra(rbind (cbind(ACE, AC),
-		                 cbind(AC , ACE)), dimnames = list(selVars, selVars), name = "expCovMZ"),
-		mxAlgebra(rbind (cbind(ACE, hAC),
-		                 cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+		expCovMZ, expCovDZ
 	)
 	model = mxModel(model, top) 
 	
