@@ -14,6 +14,7 @@ umx_make_TwinData(
   varNames = "var",
   MZr = NULL,
   DZr = MZr,
+  nSib = 2,
   dzAr = 0.5,
   scale = FALSE,
   mean = 0,
@@ -45,6 +46,8 @@ umx_make_TwinData(
 \item{MZr}{If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.}
 
 \item{DZr}{Set to return dataframe using MZr and Dzr (Default NULL)}
+
+\item{nSib}{Number of siblings in a family (default - 2). "3" = extra sib.}
 
 \item{dzAr}{DZ Ar (default .5)}
 
@@ -86,7 +89,7 @@ You supply the number of pairs of each zygosity that wish to simulate (nMZpairs,
 
 \strong{Shortcuts}
 
-You can omit nDZpairs. You can also give any two of A, C, or E and the function produce the missing parameter that makes \code{A+C+E == 1}.
+You can omit nDZpairs. You can also give any two of A, C, or E and the function deduces the missing parameter so \code{A+C+E == 1}.
 
 \strong{Moderation}
 

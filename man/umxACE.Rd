@@ -23,6 +23,7 @@ umxACE(
   tryHard = c("no", "yes", "ordinal", "search"),
   optimizer = NULL,
   residualizeContinuousVars = FALSE,
+  nSib = 2,
   dzAr = 0.5,
   dzCr = 1,
   weightVar = NULL,
@@ -67,6 +68,8 @@ umxACE(
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
 \item{residualizeContinuousVars}{Not yet implemented.}
+
+\item{nSib}{Number of siblings in a family (default - 2). "3" = extra sib.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 

@@ -1256,7 +1256,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @param nSib Number of siblings in a family (default - 2). "3" = extra sib
+#' @param nSib Number of siblings in a family (default - 2). "3" = extra sib.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param numObsDZ Number of DZ twins: Set this if you input covariance data.
