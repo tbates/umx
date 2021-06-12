@@ -286,12 +286,6 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #'
-#' tmx_show(m1, report = "markdown")
-#' tmx_show(m1, digits = 3, report = "markdown")
-#' tmx_show(m1, matrices = "S", report = "markdown")
-#' tmx_show(m1, what = "free"  , report = "markdown")
-#' tmx_show(m1, what = "labels", report = "markdown")
-#' tmx_show(m1, what = "free", matrices = "A", report="markdown")
 #' \dontrun{
 #' # =============================================
 #' # = Show smart table on the web (the default) =
@@ -300,9 +294,17 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' tmx_show(m1, what = "free", matrices = "thresholds")
 #' }
 #'
+#' tmx_show(m1, report = "markdown")
+#' tmx_show(m1, digits = 3, report = "markdown")
+#' tmx_show(m1, matrices = "S", report = "markdown")
+#' tmx_show(m1, what = "free"  , report = "markdown")
+#' tmx_show(m1, what = "labels", report = "markdown")
+#' tmx_show(m1, what = "free", matrices = "A", report= "markdown")
+#' tmx_show(m1, zero.print="-")
+#'
 tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
 	if(!umx_is_RAM(model)){
-		stop("I can only show the components of RAM models: You gave me an ", class(model)[[1]])
+		stop("Sorry, currently, tmx_show only knows how to display umxRAM models: You gave me a ", class(model)[[1]])
 	}
 	what   = match.arg(what)
 	show   = match.arg(show)
@@ -357,17 +359,20 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 				# generate the free + value + popover label using kableExtra
 				values = umx_round(model$matrices[[w]]$values, digits)
 				free   = model$matrices[[w]]$free
+				labels = model$matrices[[w]]$labels
+				class  = class(model$matrices[[w]])[[1]]
 				values[!free & values ==0] = zero.print
 				
 				cols = dim(values)[[2]]
-				tb = kbl(values, caption = paste0(w, " matrix"))
+				tb = kbl(values, caption = paste0(w, " matrix (", class, ")"))
 				tb = add_footnote(tb, label = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print))) # , paths fixed@0 left blank
 				tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 				
 				for (thisCol in 2:(cols+1)) {
 					tb = column_spec(tb, thisCol, 
-						color = ifelse(model$matrices[[w]]$free[, thisCol-1], "black", "#AAAAAA"), # #666666 red= #D7261E green= #26D71E
-						tooltip = model$A$labels[, (thisCol-1)]
+						# #666666 red= #D7261E green= #26D71E
+						color = ifelse(model$matrices[[w]]$free[, thisCol-1], "black", "#AAAAAA"),
+						tooltip = labels[, (thisCol-1)]
 					)
 				}
 				print(tb)

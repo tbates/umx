@@ -164,7 +164,7 @@ cov(tmp[tmp$zygosity == "DZ", c("var_T1","var_T2")])
 tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE) 
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
-# Output can be scaled
+# Output can be scaled (mean=0, std=1)
 tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
@@ -192,13 +192,14 @@ umx_polychoric(subset(tmp, zygosity=="MZ", c("var_T1", "var_T2")))$polychorics
 # var_T2 0.7435457 1.0000000
 
 
-# ========================
-# = Just use MZr and DZr =
-# ========================
-tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, varNames = "IQ")
-umxAPA(subset(tmp, zygosity == "MZ", c("IQ_T1", "IQ_T2")))
-umxAPA(subset(tmp, zygosity == "DZ", c("IQ_T1", "IQ_T2")))
+# =================================================
+# = Just use MZr and DZr (also works with nSib>2) =
+# =================================================
+tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, nSib= 3, varNames = "IQ")
+umxAPA(subset(tmp, zygosity == "MZ", paste0("IQ_T", 1:2)))
+umxAPA(subset(tmp, zygosity == "DZ", paste0("IQ_T", 1:2)))
 m1 = umxACE(selDVs= "IQ", data = tmp)
+m1 = umxACE(selDVs= "IQ", data = tmp, nSib=3)
 # TODO tmx_ examples of unmodeled D etc.
 
 # Bivariate GxSES example (see umxGxEbiv)
