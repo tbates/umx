@@ -3408,8 +3408,9 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		plat = "windows-x86_64-devel"
-		# plat = "debian-clang-devel"
+		# plat = "windows-x86_64-devel" # broken 2021-06-12
+		plat = "debian-clang-devel"
+		# plat = "macos-highsierra-release"
 		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
 		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 

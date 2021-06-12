@@ -43,12 +43,12 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 # Let's get some journal-ready fit information for standardized parameters
 
 umxSummary(m1, std = TRUE)
-# You can get the coefficients of an MxModel with coef(), just like for lm etc.
-coef(m1)
-
-# But with more control using "parameters", for example just the G loadings
-# above .3, rounded to 2-digits.
+# "parameters" flexibly retrieves the model coefficients. 
+# For example just G-loadings greater than |.3| and rounded to 2-digits.
 parameters(m1, thresh="above", b=.3, pattern = "G_to.*", digits = 2)
+
+# (The built-in coef works as for lm etc.)
+coef(m1)
 
 # ==================
 # = Model updating =
