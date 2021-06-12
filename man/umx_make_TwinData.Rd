@@ -14,6 +14,7 @@ umx_make_TwinData(
   varNames = "var",
   MZr = NULL,
   DZr = MZr,
+  nSib = 2,
   dzAr = 0.5,
   scale = FALSE,
   mean = 0,
@@ -45,6 +46,8 @@ umx_make_TwinData(
 \item{MZr}{If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.}
 
 \item{DZr}{Set to return dataframe using MZr and Dzr (Default NULL)}
+
+\item{nSib}{Number of siblings in a family (default - 2). "3" = extra sib.}
 
 \item{dzAr}{DZ Ar (default .5)}
 
@@ -86,7 +89,7 @@ You supply the number of pairs of each zygosity that wish to simulate (nMZpairs,
 
 \strong{Shortcuts}
 
-You can omit nDZpairs. You can also give any two of A, C, or E and the function produce the missing parameter that makes \code{A+C+E == 1}.
+You can omit nDZpairs. You can also give any two of A, C, or E and the function deduces the missing parameter so \code{A+C+E == 1}.
 
 \strong{Moderation}
 
@@ -161,7 +164,7 @@ cov(tmp[tmp$zygosity == "DZ", c("var_T1","var_T2")])
 tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE) 
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
-# Output can be scaled
+# Output can be scaled (mean=0, std=1)
 tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
@@ -189,13 +192,14 @@ umx_polychoric(subset(tmp, zygosity=="MZ", c("var_T1", "var_T2")))$polychorics
 # var_T2 0.7435457 1.0000000
 
 
-# ========================
-# = Just use MZr and DZr =
-# ========================
-tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, varNames = "IQ")
-umxAPA(subset(tmp, zygosity == "MZ", c("IQ_T1", "IQ_T2")))
-umxAPA(subset(tmp, zygosity == "DZ", c("IQ_T1", "IQ_T2")))
+# =================================================
+# = Just use MZr and DZr (also works with nSib>2) =
+# =================================================
+tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, nSib= 3, varNames = "IQ")
+umxAPA(subset(tmp, zygosity == "MZ", paste0("IQ_T", 1:2)))
+umxAPA(subset(tmp, zygosity == "DZ", paste0("IQ_T", 1:2)))
 m1 = umxACE(selDVs= "IQ", data = tmp)
+m1 = umxACE(selDVs= "IQ", data = tmp, nSib=3)
 # TODO tmx_ examples of unmodeled D etc.
 
 # Bivariate GxSES example (see umxGxEbiv)

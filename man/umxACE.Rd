@@ -69,7 +69,7 @@ umxACE(
 
 \item{residualizeContinuousVars}{Not yet implemented.}
 
-\item{nSib}{Number of siblings in a family (default - 2). "3" = extra sib}
+\item{nSib}{Number of siblings in a family (default - 2). "3" = extra sib.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 

@@ -3408,7 +3408,11 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		devtools::check_rhub(pkg = pkg, platforms = "debian-clang-devel", interactive = FALSE)
+		plat = "windows-x86_64-devel"
+		# plat = "debian-clang-devel"
+		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
+		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
+
 	} else if (what == "release"){
 		oldDir = getwd()
 		setwd(dir= pkg)
@@ -6233,7 +6237,7 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumeric
 #' 
 #' **Shortcuts**
 #' 
-#' You can omit nDZpairs. You can also give any two of A, C, or E and the function produce the missing parameter that makes `A+C+E == 1`.
+#' You can omit nDZpairs. You can also give any two of A, C, or E and the function deduces the missing parameter so `A+C+E == 1`.
 #' 
 #' **Moderation**
 #' 
@@ -6262,6 +6266,7 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumeric
 #' @param DD value for E variance.
 #' @param MZr If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.
 #' @param DZr Set to return dataframe using MZr and Dzr (Default NULL)
+#' @param nSib Number of siblings in a family (default - 2). "3" = extra sib.
 #' @param dzAr DZ Ar (default .5)
 #' @param scale Whether to scale output to var=1 mean=0 (Default FALSE)
 #' @param bivAmod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
@@ -6335,7 +6340,7 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumeric
 #' tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE) 
 #' cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 #'
-#' # Output can be scaled
+#' # Output can be scaled (mean=0, std=1)
 #' tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
 #' cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 #'
@@ -6363,13 +6368,14 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumeric
 #' # var_T2 0.7435457 1.0000000
 #'
 #'
-#' # ========================
-#' # = Just use MZr and DZr =
-#' # ========================
-#' tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, varNames = "IQ")
-#' umxAPA(subset(tmp, zygosity == "MZ", c("IQ_T1", "IQ_T2")))
-#' umxAPA(subset(tmp, zygosity == "DZ", c("IQ_T1", "IQ_T2")))
+#' # =================================================
+#' # = Just use MZr and DZr (also works with nSib>2) =
+#' # =================================================
+#' tmp = umx_make_TwinData(100, MZr = .86, DZr = .60, nSib= 3, varNames = "IQ")
+#' umxAPA(subset(tmp, zygosity == "MZ", paste0("IQ_T", 1:2)))
+#' umxAPA(subset(tmp, zygosity == "DZ", paste0("IQ_T", 1:2)))
 #' m1 = umxACE(selDVs= "IQ", data = tmp)
+#' m1 = umxACE(selDVs= "IQ", data = tmp, nSib=3)
 #' # TODO tmx_ examples of unmodeled D etc.
 #' 
 #' # Bivariate GxSES example (see umxGxEbiv)
@@ -6398,7 +6404,7 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumeric
 #' # x = rbind(tmp[[1]], tmp[[2]])
 #' # plot(residuals(m1)~ x$M_T1, data=x)
 #' }
-umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  DD = NULL,  varNames = "var", MZr= NULL, DZr= MZr, dzAr= .5, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL, seed = NULL, empirical = FALSE) {
+umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  DD = NULL,  varNames = "var", MZr= NULL, DZr= MZr, nSib= 2, dzAr= .5, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL, seed = NULL, empirical = FALSE) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
@@ -6407,28 +6413,39 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		if(is.null(DZr)){
 			stop("Both MZr and DZr must be set if you want to generate data matching MZ and DZ correlations.")
 		}
-		mzCov = matrix(nrow = 2, byrow = TRUE, c(
-			1, MZr,
-			MZr, 1)
-		);
-		dzCov = matrix(nrow = 2, byrow = TRUE, c(
-			1, DZr,
-			DZr, 1)
-		);
-		sdMat = diag(rep(sd, 2))
+		if(nSib==2){
+			mzCov = matrix(nrow = nSib, byrow = TRUE, c(1, MZr, MZr, 1))
+			dzCov = matrix(nrow = nSib, byrow = TRUE, c(1, DZr, DZr, 1))
+			means = c(mean, mean)
+		} else if(nSib==3){
+			mzCov = matrix(nrow = nSib, byrow = TRUE, c(
+				1  , MZr, DZr,
+				MZr, 1  , DZr,
+				DZr, DZr , 1)
+			)
+			dzCov = matrix(nrow = nSib, byrow = TRUE, c(
+				1  , DZr, DZr,
+				DZr, 1  , DZr,
+				DZr, DZr , 1)
+			)
+			means = c(mean, mean, mean)
+		}
+		sdMat = diag(rep(sd, nSib))
 		mzCov = sdMat %*% mzCov %*% sdMat
 		dzCov = sdMat %*% dzCov %*% sdMat
 		# MASS::mvrnorm
-		mzData = mvrnorm(n = nMZpairs, mu = c(mean, mean), Sigma = mzCov, empirical = empirical);
-		dzData = mvrnorm(n = nDZpairs, mu = c(mean, mean), Sigma = dzCov, empirical = empirical);
+		mzData = mvrnorm(n = nMZpairs, mu = means, Sigma = mzCov, empirical = empirical);
+		dzData = mvrnorm(n = nDZpairs, mu = means, Sigma = dzCov, empirical = empirical);
 		mzData = data.frame(mzData)
 		dzData = data.frame(dzData)
 		if(length(varNames) > 1){
 			names(mzData) = names(dzData) = varNames
 		} else {
-			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T")
+			names(mzData) = names(dzData) = umx_paste_names(varNames, "_T", suffixes = 1:nSib)
 		}
 	}else if(length(AA) == 1){
+		umx_check(nSib==2, "stop", "nSib >2 only supported for MZr currently, you gave me ", nSib)
+			
 		# Standard ACE, no moderation
 		if(sum2one){
 			if(sum(c(is.null(AA), is.null(CC), is.null(EE))) > 1){

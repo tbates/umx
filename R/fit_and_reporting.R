@@ -4241,7 +4241,8 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			". CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "]. ",
 			"t(", round(obj$parameter, 2), ") = ", round(obj$statistic, 2), ", p = ", umxAPA(obj$p.value))
 		}
-		return(o)
+		cat(o)
+		invisible(o)
 	}else if("data.frame" == class(obj)[[1]]){
 		# Generate a summary of correlation and means
 		# TODO umxAPA could upgrade strings to factors here (instead of stopping)...
@@ -4434,7 +4435,7 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 	} else {
 		ageCol = data[, paste0("age", sep, 1)]
 	}
-	print(paste0("mean age ", round(mean(ageCol, na.rm = TRUE), 2), " (SD= ", round(sd(ageCol, na.rm = TRUE), 2), ")"))
+	cat(paste0("mean age ", round(mean(ageCol, na.rm = TRUE), 2), " (SD= ", round(sd(ageCol, na.rm = TRUE), 2), ")"))
 	
 	
 	selDVs = tvars(selVars, sep)

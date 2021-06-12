@@ -601,11 +601,11 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, nSib,
 	return(mxModel(model, top, MZ, DZ))
 }
 
-#' xmu_twin_make_def_means_mats_and_alg
+#' Make the matrices and algebras for definition-based means models
 #'
 #' @description
-#' Obscure helper for means in twin models. Returns matrices for 
-#' each definition variable, and an algebra to ocompute means
+#' not-for-end-user helper for means in twin models. Returns matrices for 
+#' each definition variable, and an algebra to compute means.
 #'
 #' @param baseCovs base names of the DVs, e.g. "age"
 #' @param fullVars full names of the DVs, e.g. "E_T1"
