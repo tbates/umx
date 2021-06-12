@@ -59,38 +59,37 @@ Principal and deposits are optional. You control compounding periods each year (
 The function outputs a nice table of annual returns, formats the total using a user-settable currency \code{symbol}. Can also \code{report} using a web table.
 }
 \examples{
-# Value of a principal after yrs years at 5\% return, compounding monthly.
-# Report as a nice table of annual returns and a formatted total:
-fin_interest(principal = 5000, interest = 0.05, yrs = 10)
-
 \dontrun{
-# Make a nice table and open in web browser...
+# 1. Value of a principal after yrs years at 5\% return, compounding monthly.
+# Report in browser as a nice table of annual returns and formatted totals.
 fin_interest(principal = 5000, interest = 0.05, rep= "html")
 }
 
-fin_interest(now = 1.4, yrs=5)
-# Value of periodic deposit of $100/yr after 10 years at rate 7\% return.
+# Report as a nice markdown table
+fin_interest(principal = 5000, interest = 0.05, yrs = 10)
+
+
+# 2 What rate is needed to increase principal to final value in yrs time?
+fin_interest(final = 1.4, yrs=5)
+fin_interest(principal = 50, final=200, yrs = 5)
+
+# 3. What's the value of deposits of $100/yr after 10 years at 7\% return?
 fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 
-# Annual rather than monthly compounding (n=1)
-fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
-
-# Value of 20k principal + £100/yr over 10 years at 7\% return.
+# 4. What's the value of £20k + £100/yr over 10 years at 7\% return?
 fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="£")
 
-# £20k at 15\% annually (n=1) for 10 years
+# 5. What is $10,000 invested at the end of each year for 5 years at 6\%?
+fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
+
+# 6. What will £20k be worth after 10 years at 15\% annually (n=1)?
 fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
 # $466,986
 
 # manual sum
 sum(20e3*(1.15^(10:1))) # 295672
-
-# $10,000 invested at the end of each year for 5 years at 6\%
-fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
-
-# Interest needed to move principal to final value in yrs time.
-fin_interest(principal = 100, final=200, yrs = 5)
-fin_interest(final=1.4, yrs = 5)
+# 4. Annual (rather than monthly) compounding (n=1)
+fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
 
 }
 \references{
