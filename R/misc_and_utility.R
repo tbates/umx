@@ -2438,13 +2438,13 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @param dinflate How much to inflate deposits over time (default = 0)
 #' @param yrs Duration of the investment (default = 10).
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
+#' @param final If set, returns the interest required to achieve this return over yrs years.
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
 #' @param report "markdown" or "html", 
 #' @param table Whether to print a table of annual returns (default TRUE)
 #' @param largest_with_cents Default = 0
 #' @param baseYear Default = 0, can set, e.g. to 2020 for printing
-#' @param final if set (default = NULL), returns the rate that turns principal into final after yrs
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
@@ -2461,6 +2461,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' fin_interest(principal = 5000, interest = 0.05, rep= "html")
 #' }
 #'
+#' fin_interest(now = 1.4, yrs=5)
 #' # Value of periodic deposit of $100/yr after 10 years at rate 7% return.
 #' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 #'
@@ -2482,8 +2483,11 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #'
 #' # Interest needed to move principal to final value in yrs time.
 #' fin_interest(principal = 100, final=200, yrs = 5)
-fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html"), final=NULL){
+#' fin_interest(final=1.4, yrs = 5)
+#' 
+fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, final=NULL, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
 	report = match.arg(report)
+
 	if(dinflate != 0){
 		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+dinflate)^c(1:(yrs-1)))
 	}else{
@@ -2503,8 +2507,12 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 	#
 	if(!is.null(final)){
 		# final = prin*(1+rate)^y
-		return((final/principal)^(1/yrs)-1)
-		# rate is the years root of (final *prin?)
+		# rate is (final/prin)^1/yrs
+		if(principal == 0){
+			return(round(final^(1/yrs)-1, 3))
+		} else {
+			return(round((final/principal)^(1/yrs)-1, 3))
+		}
 	}
 
 	# 1. compute compounding rate per unit time n (allowing for zero interest so 1.0)

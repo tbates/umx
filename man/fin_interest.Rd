@@ -10,14 +10,14 @@ fin_interest(
   dinflate = 0,
   interest = 0.05,
   yrs = 10,
+  final = NULL,
   n = 12,
   when = "beginning",
   symbol = "$",
   largest_with_cents = 0,
   baseYear = as.numeric(format(Sys.time(), "\%Y")),
   table = TRUE,
-  report = c("markdown", "html"),
-  final = NULL
+  report = c("markdown", "html")
 )
 }
 \arguments{
@@ -30,6 +30,8 @@ fin_interest(
 \item{interest}{Annual interest rate (default = .05)}
 
 \item{yrs}{Duration of the investment (default = 10).}
+
+\item{final}{If set, returns the interest required to achieve this return over yrs years.}
 
 \item{n}{Compounding intervals per year (default = 12 (monthly), 365 for daily)}
 
@@ -44,8 +46,6 @@ fin_interest(
 \item{table}{Whether to print a table of annual returns (default TRUE)}
 
 \item{report}{"markdown" or "html",}
-
-\item{final}{if set (default = NULL), returns the rate that turns principal into final after yrs}
 }
 \value{
 \itemize{
@@ -68,6 +68,7 @@ fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 fin_interest(principal = 5000, interest = 0.05, rep= "html")
 }
 
+fin_interest(now = 1.4, yrs=5)
 # Value of periodic deposit of $100/yr after 10 years at rate 7\% return.
 fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 
@@ -89,6 +90,8 @@ fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 
 # Interest needed to move principal to final value in yrs time.
 fin_interest(principal = 100, final=200, yrs = 5)
+fin_interest(final=1.4, yrs = 5)
+
 }
 \references{
 \itemize{
