@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu_make_top_twin_models.R
 \name{xmu_twin_make_def_means_mats_and_alg}
 \alias{xmu_twin_make_def_means_mats_and_alg}
-\title{xmu_twin_make_def_means_mats_and_alg}
+\title{Make the matrices and algebras for definition-based means models}
 \usage{
 xmu_twin_make_def_means_mats_and_alg(baseCovs, fullVars, nSib, sep)
 }
@@ -19,8 +19,8 @@ xmu_twin_make_def_means_mats_and_alg(baseCovs, fullVars, nSib, sep)
 matrices and an algebra
 }
 \description{
-Obscure helper for means in twin models. Returns matrices for
-each definition variable, and an algebra to ocompute means
+not-for-end-user helper for means in twin models. Returns matrices for
+each definition variable, and an algebra to compute means.
 }
 \examples{
 # xmu_twin_make_def_means_mats_and_alg(baseCovs= baseCovs, 

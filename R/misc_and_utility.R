@@ -3400,7 +3400,11 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		devtools::check_rhub(pkg = pkg, platforms = "debian-clang-devel", interactive = FALSE)
+		plat = "windows-x86_64-devel"
+		# plat = "debian-clang-devel"
+		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
+		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
+
 	} else if (what == "release"){
 		oldDir = getwd()
 		setwd(dir= pkg)
