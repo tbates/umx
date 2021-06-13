@@ -5051,10 +5051,13 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # Ran your model (if autoRun is on), and displayed a brief summary
 #' # including a comparison if you modified a model...!
 #' 
-#' # Let's get some journal-ready fit information for standardized parameters
+#' # umxSummary generates journal-ready fit information.
+#' # We can choose std=T for standardized parameters and can also
+#' # filter out some types of parameter (e.g. means or residuals)
 #' 
-#' umxSummary(m1, std = TRUE)
-#' # "parameters" flexibly retrieves the model coefficients. 
+#' umxSummary(m1, std = TRUE, residuals=FALSE)
+#' 
+#' # parameters() flexibly retrieves model coefficients. 
 #' # For example just G-loadings greater than |.3| and rounded to 2-digits.
 #' parameters(m1, thresh="above", b=.3, pattern = "G_to.*", digits = 2)
 #'
@@ -5064,7 +5067,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # ==================
 #' # = Model updating =
 #' # ==================
-#' # We'll use umxModify to modify the model...
+#' # umxModify modifies, renames, re-runs, and compares a model
 #' # Can we set the loading of x1 on G to zero? (nope...)
 #' m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X1", comparison = TRUE)
 #'

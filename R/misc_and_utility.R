@@ -1583,10 +1583,10 @@ umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 		    cat(ver)
 		    library(p, character.only = TRUE)
 		}, warning = function(x) {
-		    print(paste(p, "Might not be installed locally:\n"))
+		    cat(p, "might not be installed locally:\n")
 			print(x)
 		}, error = function(x) {
-		    print(paste(p, "Might not be installed locally:\n"))
+		    cat(p, "might not be installed locally:\n")
 			print(x)
 		}, finally = {
 			#
@@ -2438,13 +2438,13 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @param dinflate How much to inflate deposits over time (default = 0)
 #' @param yrs Duration of the investment (default = 10).
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
-#' @param final If set, returns the interest required to achieve this return over yrs years.
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
 #' @param report "markdown" or "html", 
 #' @param table Whether to print a table of annual returns (default TRUE)
 #' @param largest_with_cents Default = 0
 #' @param baseYear Default = 0, can set, e.g. to 2020 for printing
+#' @param final if set (default = NULL), returns the rate that turns principal into final after yrs
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
@@ -2452,41 +2452,38 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @references - [tutorials](https://tbates.github.io), [github](https://github.com/tbates/umx)
 #' @md
 #' @examples
+#' # Value of a principal after yrs years at 5% return, compounding monthly.
+#' # Report as a nice table of annual returns and a formatted total:
+#' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
+#'
 #' \dontrun{
-#' # 1. Value of a principal after yrs years at 5% return, compounding monthly.
-#' # Report in browser as a nice table of annual returns and formatted totals.
+#' # Make a nice table and open in web browser...
 #' fin_interest(principal = 5000, interest = 0.05, rep= "html")
 #' }
 #'
-#' # Report as a nice markdown table
-#' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
-#'
-#'
-#' # 2 What rate is needed to increase principal to final value in yrs time?
-#' fin_interest(final = 1.4, yrs=5)
-#' fin_interest(principal = 50, final=200, yrs = 5)
-#'
-#' # 3. What's the value of deposits of $100/yr after 10 years at 7% return?
+#' # Value of periodic deposit of $100/yr after 10 years at rate 7% return.
 #' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 #'
-#' # 4. What's the value of £20k + £100/yr over 10 years at 7% return?
+#' # Annual rather than monthly compounding (n=1)
+#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
+#'
+#' # Value of 20k principal + £100/yr over 10 years at 7% return.
 #' fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="£")
 #'
-#' # 5. What is $10,000 invested at the end of each year for 5 years at 6%?
-#' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
-#'
-#' # 6. What will £20k be worth after 10 years at 15% annually (n=1)?
+#' # £20k at 15% annually (n=1) for 10 years
 #' fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
 #' # $466,986
 #'
 #' # manual sum
 #' sum(20e3*(1.15^(10:1))) # 295672
-#' # 4. Annual (rather than monthly) compounding (n=1)
-#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
-#' 
-fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, final=NULL, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
+#'
+#' # $10,000 invested at the end of each year for 5 years at 6%
+#' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
+#'
+#' # Interest needed to move principal to final value in yrs time.
+#' fin_interest(principal = 100, final=200, yrs = 5)
+fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html"), final=NULL){
 	report = match.arg(report)
-
 	if(dinflate != 0){
 		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+dinflate)^c(1:(yrs-1)))
 	}else{
@@ -2506,12 +2503,8 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 	#
 	if(!is.null(final)){
 		# final = prin*(1+rate)^y
-		# rate is (final/prin)^1/yrs
-		if(principal == 0){
-			return(round(final^(1/yrs)-1, 3))
-		} else {
-			return(round((final/principal)^(1/yrs)-1, 3))
-		}
+		return((final/principal)^(1/yrs)-1)
+		# rate is the years root of (final *prin?)
 	}
 
 	# 1. compute compounding rate per unit time n (allowing for zero interest so 1.0)
@@ -3407,9 +3400,8 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		# plat = "windows-x86_64-devel" # broken 2021-06-12
-		plat = "debian-clang-devel"
-		# plat = "macos-highsierra-release"
+		plat = "windows-x86_64-devel"
+		# plat = "debian-clang-devel"
 		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
 		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 
@@ -3963,7 +3955,8 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 				# default html output
 				x = kbl(x,  caption = caption)
 				if(zero.print != "0"){
-					x = add_footnote(x, label = paste0("zero printed as ", omxQuotes(zero.print)))
+					# x = add_footnote(x, label = paste0("zero printed as ", omxQuotes(zero.print)))
+					x = footnote(kable_input= x, general = paste0("zero printed as ", omxQuotes(zero.print)))
 				}
 				x = xmu_style_kable(x, html_font = html_font, style = style, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 				print(x)
