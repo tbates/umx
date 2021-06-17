@@ -365,7 +365,9 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 				
 				cols = dim(values)[[2]]
 				tb = kbl(values, caption = paste0(w, " matrix (", class, ")"))
-				tb = add_footnote(tb, label = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print))) # , paths fixed@0 left blank
+				# , paths fixed@0 left blank
+				tb = footnote(kable_input= tb, general = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
+
 				tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 				
 				for (thisCol in 2:(cols+1)) {

@@ -1583,10 +1583,10 @@ umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 		    cat(ver)
 		    library(p, character.only = TRUE)
 		}, warning = function(x) {
-		    print(paste(p, "Might not be installed locally:\n"))
+		    cat(p, "might not be installed locally:\n")
 			print(x)
 		}, error = function(x) {
-		    print(paste(p, "Might not be installed locally:\n"))
+		    cat(p, "might not be installed locally:\n")
 			print(x)
 		}, finally = {
 			#
@@ -2438,13 +2438,13 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @param dinflate How much to inflate deposits over time (default = 0)
 #' @param yrs Duration of the investment (default = 10).
 #' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
-#' @param final If set, returns the interest required to achieve this return over yrs years.
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
 #' @param report "markdown" or "html", 
 #' @param table Whether to print a table of annual returns (default TRUE)
 #' @param largest_with_cents Default = 0
 #' @param baseYear Default = 0, can set, e.g. to 2020 for printing
+#' @param final if set (default = NULL), returns the rate that turns principal into final after yrs
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
@@ -2479,14 +2479,17 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
 #' # $466,986
 #'
-#' # manual sum
-#' sum(20e3*(1.15^(10:1))) # 295672
-#' # 4. Annual (rather than monthly) compounding (n=1)
+#' # manual equivalent
+#' sum(20e3*(1.15^(10:1))) # 466985.5
+#'
+#' # 7. Annual (rather than monthly) compounding (n=1)
 #' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
 #' 
+#' # 8 Interest needed to increase principal to final value in yrs time.
+#' fin_interest(principal = 100, final=200, yrs = 5)
+#'
 fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, final=NULL, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
 	report = match.arg(report)
-
 	if(dinflate != 0){
 		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+dinflate)^c(1:(yrs-1)))
 	}else{
@@ -2506,12 +2509,8 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 	#
 	if(!is.null(final)){
 		# final = prin*(1+rate)^y
-		# rate is (final/prin)^1/yrs
-		if(principal == 0){
-			return(round(final^(1/yrs)-1, 3))
-		} else {
-			return(round((final/principal)^(1/yrs)-1, 3))
-		}
+		return((final/principal)^(1/yrs)-1)
+		# rate is the years root of (final *prin?)
 	}
 
 	# 1. compute compounding rate per unit time n (allowing for zero interest so 1.0)
@@ -3363,9 +3362,10 @@ umx_update_OpenMx <- install.OpenMx
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell", or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
-#' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
+#' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE)
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
+#' @param which What rhub platform to use? c("mac", "linux", "win")
 #' @return None
 #' @export
 #' @family xmu internal not for end user
@@ -3383,9 +3383,9 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "release")  # Release to CRAN
 #' tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
+umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux")) {
 	what = match.arg(what)
-
+	which = match.arg(which)
 	if(what == "lastRhub"){
 		prev = rhub::list_package_checks(package = pkg, howmany = 4)
 		check_id = prev$id[1]
@@ -3407,9 +3407,16 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		# plat = "windows-x86_64-devel" # broken 2021-06-12
-		plat = "debian-clang-devel"
-		# plat = "macos-highsierra-release"
+		if(which == "mac"){
+			plat = "macos-highsierra-release-cran"
+		} else if(which=="linux") {
+			plat = "debian-gcc-patched"
+			# plat = "debian-clang-devel"
+		} else if(which=="win") {
+			plat = "windows-x86_64-patched" 
+			# plat = "windows-x86_64-devel" # broken 2021-06-12
+		}
+
 		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
 		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 
@@ -3963,7 +3970,8 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 				# default html output
 				x = kbl(x,  caption = caption)
 				if(zero.print != "0"){
-					x = add_footnote(x, label = paste0("zero printed as ", omxQuotes(zero.print)))
+					# x = add_footnote(x, label = paste0("zero printed as ", omxQuotes(zero.print)))
+					x = footnote(kable_input= x, general = paste0("zero printed as ", omxQuotes(zero.print)))
 				}
 				x = xmu_style_kable(x, html_font = html_font, style = style, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 				print(x)
