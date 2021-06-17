@@ -3356,9 +3356,10 @@ umx_update_OpenMx <- install.OpenMx
 #' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell", or check "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
-#' @param run = If what is "examples", whether to also run examples marked don't run. (default FALSE)
+#' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE)
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
+#' @param which What rhub platform to use? c("mac", "linux", "win")
 #' @return None
 #' @export
 #' @family xmu internal not for end user
@@ -3376,9 +3377,9 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "release")  # Release to CRAN
 #' tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US") {
+umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux")) {
 	what = match.arg(what)
-
+	which = match.arg(which)
 	if(what == "lastRhub"){
 		prev = rhub::list_package_checks(package = pkg, howmany = 4)
 		check_id = prev$id[1]
@@ -3400,8 +3401,15 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
-		plat = "windows-x86_64-devel"
-		# plat = "debian-clang-devel"
+		if(which == "mac"){
+			plat = "macos-highsierra-release-cran"
+		} else if(which=="linux") {
+			plat = "debian-gcc-patched"
+			# plat = "debian-clang-devel"
+		} else if(which=="win") {
+			plat = "windows-x86_64-patched" 
+			# plat = "windows-x86_64-devel"
+		}
 		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
 		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 

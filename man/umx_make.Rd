@@ -11,7 +11,8 @@ umx_make(
   check = TRUE,
   run = FALSE,
   start = NULL,
-  spelling = "en_US"
+  spelling = "en_US",
+  which = c("win", "mac", "linux")
 )
 }
 \arguments{
@@ -21,11 +22,13 @@ umx_make(
 
 \item{check}{Whether to run check on the package before release (default = TRUE).}
 
-\item{run}{= If what is "examples", whether to also run examples marked don't run. (default FALSE)}
+\item{run}{If what is "examples", whether to also run examples marked don't run. (default FALSE)}
 
 \item{start}{If what is "examples", which function to start from (default (NULL) = beginning).}
 
 \item{spelling}{Whether to check spelling before release (default = "en_US": set NULL to not check).}
+
+\item{which}{What rhub platform to use? c("mac", "linux", "win")}
 }
 \value{
 None
