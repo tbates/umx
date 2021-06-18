@@ -300,7 +300,7 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' tmx_show(m1, what = "free"  , report = "markdown")
 #' tmx_show(m1, what = "labels", report = "markdown")
 #' tmx_show(m1, what = "free", matrices = "A", report= "markdown")
-#' tmx_show(m1, zero.print="-")
+#' tmx_show(m1, zero.print = "-")
 #'
 tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
 	if(!umx_is_RAM(model)){
@@ -319,6 +319,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 			matrices = c(matrices, w)
 		}
 	}
+	
 	oldTableFormat = umx_set_table_format(report) # side effect
 	if("thresholds" %in% matrices){
 		# TODO tmx_show: Threshold printing not yet finalised
@@ -363,18 +364,19 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 				class  = class(model$matrices[[w]])[[1]]
 				values[!free & values ==0] = zero.print
 				
-				cols = dim(values)[[2]]
 				tb = kbl(values, caption = paste0(w, " matrix (", class, ")"))
 				# , paths fixed@0 left blank
 				tb = footnote(kable_input= tb, general = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
-
 				tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
-				
-				for (thisCol in 2:(cols+1)) {
+
+				matCols = dim(values)[[2]]
+				tabCols = kableExtra::magic_mirror(tb)$ncol
+				offset  = (tabCols-matCols)
+				for (thisCol in (1+offset):tabCols) {
 					tb = column_spec(tb, thisCol, 
 						# #666666 red= #D7261E green= #26D71E
-						color = ifelse(model$matrices[[w]]$free[, thisCol-1], "black", "#AAAAAA"),
-						tooltip = labels[, (thisCol-1)]
+						color = ifelse(model$matrices[[w]]$free[, (thisCol-offset)], "black", "#AAAAAA"),
+						tooltip = labels[, (thisCol-offset)]
 					)
 				}
 				print(tb)

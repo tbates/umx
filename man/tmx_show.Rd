@@ -79,7 +79,7 @@ tmx_show(m1, matrices = "S", report = "markdown")
 tmx_show(m1, what = "free"  , report = "markdown")
 tmx_show(m1, what = "labels", report = "markdown")
 tmx_show(m1, what = "free", matrices = "A", report= "markdown")
-tmx_show(m1, zero.print="-")
+tmx_show(m1, zero.print = "-")
 
 }
 \references{
