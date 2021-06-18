@@ -31,7 +31,7 @@ fin_interest(
 
 \item{yrs}{Duration of the investment (default = 10).}
 
-\item{final}{If set, returns the interest required to achieve this return over yrs years.}
+\item{final}{if set (default = NULL), returns the rate that turns principal into final after yrs}
 
 \item{n}{Compounding intervals per year (default = 12 (monthly), 365 for daily)}
 
@@ -86,10 +86,14 @@ fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
 # $466,986
 
-# manual sum
-sum(20e3*(1.15^(10:1))) # 295672
-# 4. Annual (rather than monthly) compounding (n=1)
+# manual equivalent
+sum(20e3*(1.15^(10:1))) # 466985.5
+
+# 7. Annual (rather than monthly) compounding (n=1)
 fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
+
+# 8 Interest needed to increase principal to final value in yrs time.
+fin_interest(principal = 100, final=200, yrs = 5)
 
 }
 \references{
