@@ -3418,7 +3418,8 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		}
 
 		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
-		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
+		devtools::check_rhub(platforms = plat, interactive = FALSE, env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "true", `_R_CHECK_CRAN_INCOMING_USE_ASPELL_` = "false"))
+		# devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 
 	} else if (what == "release"){
 		oldDir = getwd()
