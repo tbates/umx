@@ -74,38 +74,29 @@
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv
-
 #' @importFrom cowplot draw_label plot_grid ggdraw 
 #' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
 #' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon
 #' @importFrom ggplot2 element_text element_blank expand_limits aes
-#' @importFrom kableExtra kbl add_footnote column_spec footnote
+
+# knitr and kableExtra used in printing tables
+# #' @importFrom knitr kable knit_print
+#' @importFrom kableExtra kable kbl add_footnote column_spec footnote
 #' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
-
-# # ' @importFrom knitr
-
 # Used in plot
 #' @importFrom DiagrammeR DiagrammeR
-
 # Used in umx_make_TwinData
 #' @importFrom MASS mvrnorm
-
 # Used in umxAPA
 #' @importFrom nlme intervals
-
 # Used in umxHetCor
 #' @importFrom polycor hetcor
-
 # Used in umxCompare
 #' @importFrom xtable xtable
-
 # Used in umxWeightedAIC
 #' @importFrom MuMIn Weights
 
-
-# Not used?
-NULL
 
 utils::globalVariables(c(
 	'x',
@@ -5054,7 +5045,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # umxSummary generates journal-ready fit information.
 #' # We can choose std=T for standardized parameters and can also
 #' # filter out some types of parameter (e.g. means or residuals)
-#' 
+#'
+#' knitr::kable(mtcars[1,1:2])
+#'
 #' umxSummary(m1, std = TRUE, residuals=FALSE)
 #' 
 #' # parameters() flexibly retrieves model coefficients. 

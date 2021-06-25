@@ -3966,7 +3966,7 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(report == "html"){
 			# From report = "html"
-			if(both){ print(knitr::kable(x, caption= caption)) }
+			if(both){ print(kable(x, caption= caption)) }
 			if(kableExtra){
 				# default html output
 				x = kbl(x,  caption = caption)
@@ -3982,8 +3982,11 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 				system(paste0("open ", file))
 			}
 	    }else{
-			print(knitr::kable(x, caption = caption))
-			# print(kbl(x, caption = caption, format = umx_set_table_format(silent=TRUE)))
+			# markdown/latex
+			# knit_print(kbl(x, caption = caption, format = umx_set_table_format(silent=TRUE)))
+			# print(kbl(x, caption = caption))
+			# return(kbl(x, caption = caption, format = umx_set_table_format(silent=TRUE) ))
+			print(kable(x, caption = caption))
 	    }
 	    invisible(x)
 	}

@@ -44,6 +44,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 # We can choose std=T for standardized parameters and can also
 # filter out some types of parameter (e.g. means or residuals)
 
+knitr::kable(mtcars[1,1:2])
+
 umxSummary(m1, std = TRUE, residuals=FALSE)
 
 # parameters() flexibly retrieves model coefficients. 

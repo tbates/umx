@@ -1,5 +1,10 @@
 ## dev umx 4.9.0
-* NEW: 
+* NEW: `umxACEv` works with nSib = 3
+* NEW: `umxACE` works with nSib = 3
+* IMPROVED: `umxAPA` more use of cat to print (easier to read and copy)
+* IMPROVED: `fin_interest` compute effective interest
+* FIXED: `tmx_show` works for M matrix
+* IMPROVED: `xmuTwinSuper_NoBinary` update for nSib>2
 
 # Releases
 ## umx 4.8.0

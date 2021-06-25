@@ -2,8 +2,3 @@ See the umx and OpenMx home pages for more.
 
  - (\url{https://github.com/tbates/umx})
   - (\url{https://openmx.ssri.psu.edu})
-
-Note: In addition to the version of OpenMx on CRAN, a version with
-NPSOL-enabled is available. To install it, once you have umx installed run
-
-install.OpenMx("NPSOL")
