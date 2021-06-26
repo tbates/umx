@@ -58,14 +58,20 @@
 	packageStartupMessage("For an overview type '?umx'")
 }
 
+# Forgettable functions
+# MASS mvrnorm   # Used in umx_make_TwinData
+# nlme intervals # Used in umxAPA
+# polycor hetcor # Used in umxHetCor
+# xtable xtable  # Used in umxCompare
+# MuMIn Weights  # Used in umxWeightedAIC
+#  methods::setClass is called during build not package source code.
+
 # #' @importFrom Base::charToRaw
 #' @importFrom DiagrammeR DiagrammeR grViz
 #' @importFrom DiagrammeRsvg export_svg
 #' @importFrom rsvg rsvg_png rsvg_pdf
 #' @importFrom graphics plot abline
 #' @importFrom methods as getSlots is slotNames setClass
-# methods::setClass is called during build not package source code.
-# suppress NOTE with a spurious importFrom in the namespace
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
@@ -74,28 +80,20 @@
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv
-#' @importFrom cowplot draw_label plot_grid ggdraw 
+#' @importFrom MASS mvrnorm
+#' @importFrom nlme intervals
+#' @importFrom polycor hetcor
+#' @importFrom xtable xtable
+#' @importFrom MuMIn Weights
+#' @importFrom DiagrammeR DiagrammeR
 #' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
 #' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon
 #' @importFrom ggplot2 element_text element_blank expand_limits aes
-
-# knitr and kableExtra used in printing tables
-# #' @importFrom knitr kable knit_print
-#' @importFrom kableExtra kable kbl add_footnote column_spec footnote
+#' @importFrom cowplot draw_label plot_grid ggdraw 
+#' @importFrom knitr kable
+#' @importFrom kableExtra kbl add_footnote column_spec footnote
 #' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
-# Used in plot
-#' @importFrom DiagrammeR DiagrammeR
-# Used in umx_make_TwinData
-#' @importFrom MASS mvrnorm
-# Used in umxAPA
-#' @importFrom nlme intervals
-# Used in umxHetCor
-#' @importFrom polycor hetcor
-# Used in umxCompare
-#' @importFrom xtable xtable
-# Used in umxWeightedAIC
-#' @importFrom MuMIn Weights
 
 
 utils::globalVariables(c(

@@ -41,8 +41,8 @@ Imports:
     scales,
     utils,
     xtable,
-	knitr,
-    kableExtra
+    kableExtra,
+	knitr
 Suggests:
     cocor,
     devtools,
