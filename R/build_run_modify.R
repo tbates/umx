@@ -2611,28 +2611,22 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
-#' m5 = umxCP("correlated_causes", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-#' 	 nFac = 3, correlatedA = TRUE, tryHard = "yes")
+#' m5 = umxCP("base_model", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+#' 	 nFac = 3, correlatedACE = TRUE, tryHard = "yes")
 #' 
-#' umxCompare(m4, m1)
+#' umxCompare(m5, m1)
 #'
 #' # What are the ace covariance labels? (two ways to get)
 #' umx_lower.tri(m5$top$a_cp$labels)
-#' parameters(m5, patt = "[ce]_cp")
+#' parameters(m5, patt = "[ace]_cp")
 #'
-#' # =================================
-#' # = Stop c and e from correlating =
-#' # =================================
-#' tmp = umx_lower.tri(m5$top$a_cp$labels)
-#' tmp = namez(tmp, "a_cp", "[ce]_cp")
-#' m6  = umxModify(m5, regex= tmp, name= "onlyAcorr", comp = TRUE)
-#' 
-#' # 1. Drop all (a|c|e) correlations, then add one a<->a covariance
-#' tmp= namez(umx_lower.tri(m5$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
-#' m6 = umxModify(m5, regex= tmp, auto = FALSE)
-#' # 2. now free back up "a2_a1_cov"
-#' m6 = umxModify(m6, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
-#' umxCompare(m6, m1)
+#' # 1. Now allow a1 and a2 to correlate
+#' m6 = umxModify(m5, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
+#' umxCompare(m6, m5)
+#'
+#' # 2. Drop all (a|c|e) correlations from a model
+#' tmp= namez(umx_lower.tri(m6$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
+#' m7 = umxModify(m6, regex= tmp, comparison = TRUE)
 #' } # end dontrun
 #'
 umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedACE = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = "deprecated") {
@@ -2706,7 +2700,8 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 	top = mxModel(model$top,
 		umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
 		umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
-		umxMatrix("nFac_Unit", "Unit", nrow = nFac, ncol = 1),
+		umxMatrix("nFac_UnitCol", "Unit", nrow = nFac, ncol = 1),
+		umxMatrix("nFac_Iden", "Iden", nrow = nFac, ncol = nFac),
 		# Latent common factor genetic paths
 		a_cp_matrix, c_cp_matrix, e_cp_matrix,
 		# Constrain variance of latent phenotype factor to 1.0
@@ -2716,7 +2711,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 		mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)  ), # E_cp variance
 		mxAlgebra(name = "L"   , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
 		mxAlgebra(name = "diagL", diag2vec(L)),
-		mxConstraint(name = "fix_CP_variances_to_1", diagL == nFac_Unit),
+		mxConstraint(name = "fix_CP_variances_to_1", diagL == nFac_UnitCol),
 
 		umxMatrix("as", "Lower", nVar, nVar, free = TRUE, values = .5), # Additive gen path 
 		umxMatrix("cs", "Lower", nVar, nVar, free = TRUE, values = .1), # Common env path 
@@ -2724,9 +2719,9 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 		umxMatrix("cp_loadings", "Full", nVar, nFac, free = TRUE, values = .5), # loadings on latent phenotype
 
 		# Quadratic multiplication to add cp_loading effects
-		mxAlgebra(name = "A"  , cp_loadings %&% A_cp + as %*% t(as)), # Additive genetic variance
-		mxAlgebra(name = "C"  , cp_loadings %&% C_cp + cs %*% t(cs)), # Common environmental variance
-		mxAlgebra(name = "E"  , cp_loadings %&% E_cp + es %*% t(es)), # Unique environmental variance
+		mxAlgebra(name = "A"  , cp_loadings %&% (A_cp * nFac_Iden) + as %*% t(as)), # Additive genetic variance
+		mxAlgebra(name = "C"  , cp_loadings %&% (C_cp * nFac_Iden) + cs %*% t(cs)), # Common environmental variance
+		mxAlgebra(name = "E"  , cp_loadings %&% (E_cp * nFac_Iden) + es %*% t(es)), # Unique environmental variance
 		mxAlgebra(name = "ACE", A + C + E),
 		mxAlgebra(name = "AC" , A + C),
 		mxAlgebra(name = "hAC", (dzAr %x% A) + (dzCr %x% C)),

@@ -244,28 +244,22 @@ data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
-m5 = umxCP("correlated_causes", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	 nFac = 3, correlatedA = TRUE, tryHard = "yes")
+m5 = umxCP("base_model", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
+	 nFac = 3, correlatedACE = TRUE, tryHard = "yes")
 
-umxCompare(m4, m1)
+umxCompare(m5, m1)
 
 # What are the ace covariance labels? (two ways to get)
 umx_lower.tri(m5$top$a_cp$labels)
-parameters(m5, patt = "[ce]_cp")
+parameters(m5, patt = "[ace]_cp")
 
-# =================================
-# = Stop c and e from correlating =
-# =================================
-tmp = umx_lower.tri(m5$top$a_cp$labels)
-tmp = namez(tmp, "a_cp", "[ce]_cp")
-m6  = umxModify(m5, regex= tmp, name= "onlyAcorr", comp = TRUE)
+# 1. Now allow a1 and a2 to correlate
+m6 = umxModify(m5, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
+umxCompare(m6, m5)
 
-# 1. Drop all (a|c|e) correlations, then add one a<->a covariance
-tmp= namez(umx_lower.tri(m5$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
-m6 = umxModify(m5, regex= tmp, auto = FALSE)
-# 2. now free back up "a2_a1_cov"
-m6 = umxModify(m6, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
-umxCompare(m6, m1)
+# 2. Drop all (a|c|e) correlations from a model
+tmp= namez(umx_lower.tri(m6$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
+m7 = umxModify(m6, regex= tmp, comparison = TRUE)
 } # end dontrun
 
 }
