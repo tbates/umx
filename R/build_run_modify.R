@@ -2683,18 +2683,20 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 			a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # Latent common factor
 			c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # latent common factor Common environmental path coefficients
 			e_cp_matrix = umxMatrix("e_cp", "Lower", nFac, nFac, free = FALSE, values = 0) # latent common factor Unique environmental path coefficients			
+			diag(a_cp_matrix$free) = TRUE
+			diag(c_cp_matrix$free) = TRUE
+			diag(e_cp_matrix$free) = TRUE
 		}
-		diag(a_cp_matrix$free) = TRUE
-		diag(c_cp_matrix$free) = TRUE
-		diag(e_cp_matrix$free) = TRUE
 		diag(a_cp_matrix$values) = .7
 		diag(c_cp_matrix$values) = .0
 		diag(e_cp_matrix$values) = .7
 
-		# a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
-		# c_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
-		# e_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = 0
-
+		a_cp_matrix$lbound[lower.tri(a_cp_matrix$lbound)] = -1
+		c_cp_matrix$lbound[lower.tri(c_cp_matrix$lbound)] = -1
+		e_cp_matrix$lbound[lower.tri(e_cp_matrix$lbound)] = -1
+		a_cp_matrix$ubound[lower.tri(a_cp_matrix$ubound)] =  1
+		c_cp_matrix$ubound[lower.tri(c_cp_matrix$ubound)] =  1
+		e_cp_matrix$ubound[lower.tri(e_cp_matrix$ubound)] =  1
 	} else {
 		a_cp_matrix = umxMatrix("a_cp", "Diag" , nFac, nFac, free = TRUE, values = .7)
 		c_cp_matrix = umxMatrix("c_cp", "Diag" , nFac, nFac, free = TRUE, values = .0)
