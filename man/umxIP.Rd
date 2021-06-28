@@ -104,8 +104,8 @@ of pathways for a, c, and e, as well the ability to use ordinal data, and differ
 mvnRelEps defaults to .005. For ordinal models, you might find that '0.01' works better.
 }
 \details{
-Like the \code{\link[=umxACE]{umxACE()}} model, the CP model decomposes phenotypic variance
-into Additive genetic, unique environmental (E) and, optionally, either
+Like the \code{\link[=umxACE]{umxACE()}} model, the IP model decomposes phenotypic variance
+into additive genetic (A), unique environmental (E) and, optionally, either
 common or shared-environment (C) or
 non-additive genetic effects (D).
 

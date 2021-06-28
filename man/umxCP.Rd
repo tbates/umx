@@ -125,9 +125,8 @@ mvnRelEps defaults to .005. For ordinal models, you might find that '0.01' works
 }
 \details{
 Like the \code{\link[=umxACE]{umxACE()}} model, the CP model decomposes phenotypic variance
-into Additive genetic, unique environmental (E) and, optionally, either
-common or shared-environment (C) or
-non-additive genetic effects (D).
+into additive genetic (A), unique environmental (E) and, optionally, either
+common or shared-environment (C) or non-additive genetic effects (D).
 
 Unlike the Cholesky, these factors do not act directly on the phenotype. Instead latent A,
 C, and E influences impact on one or more latent factors which in turn account for variance in the phenotypes (see Figure).
@@ -239,27 +238,27 @@ m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzDa
 # TODO umxCPL fix WLS here
 # label at row 1 and column 1 of matrix 'top.binLabels'' in model 'CP3fac' : object 'Vtot'
 
-# Correlated factors example
+# ==============================
+# = Correlated factors example =
+# ==============================
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
-m5 = umxCP("base_model", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
-	 nFac = 3, correlatedACE = TRUE, tryHard = "yes")
-
-umxCompare(m5, m1)
+m1 = umxCP("base_model", selDVs = selDVs, sep = "_T", correlatedACE = TRUE, 
+	 dzData = dzData, mzData = mzData, nFac = 3, tryHard = "yes")
 
 # What are the ace covariance labels? (two ways to get)
-umx_lower.tri(m5$top$a_cp$labels)
-parameters(m5, patt = "[ace]_cp")
+umx_lower.tri(m1$top$a_cp$labels)
+parameters(m1, patt = "[ace]_cp")
 
 # 1. Now allow a1 and a2 to correlate
-m6 = umxModify(m5, regex= "a_cp_r2c1", name= "a2_a1_cov", free=TRUE)
-umxCompare(m6, m5)
+m2=umxModify(m1,regex="a_cp_r2c1",name="a2_a1_cov",free=TRUE,tryHard="yes")
+umxCompare(m2, m1)
 
 # 2. Drop all (a|c|e) correlations from a model
-tmp= namez(umx_lower.tri(m6$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
-m7 = umxModify(m6, regex= tmp, comparison = TRUE)
+tmp= namez(umx_lower.tri(m2$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
+m3 = umxModify(m2, regex= tmp, comparison = TRUE)
 } # end dontrun
 
 }
