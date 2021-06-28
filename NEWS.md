@@ -1,4 +1,5 @@
 ## dev umx 4.9.0
+* FIXED: `umxCP` `correlatedACE` was not being filtered out of the expectation #hat-tip @micanzach
 * NEW: `umxACEv` works with nSib = 3
 * NEW: `umxACE` works with nSib = 3
 * IMPROVED: `umxAPA` more use of cat to print (easier to read and copy)

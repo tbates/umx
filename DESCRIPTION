@@ -4,7 +4,8 @@ Date: 2021-10-01
 Title: Structural Equation and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
-	person("Gillespie"       , "Nathan"  , role = c("ctb"), email = "nathan.gillespie@vcuhealth.org"),
+	person("Gillespie"       , "Nathan"  , role = c("wit"), email = "nathan.gillespie@vcuhealth.org"),
+	person("Michael"         , "Zakharin", role = c("wit"), email = "s1775682@sms.ed.ac.uk"),
 	person("Brenton"         , "Wiernik" , role = c("ctb"), email = "wiernik@umn.edu"),
 	person(c("Joshua", "N.") , "Pritikin", role = c("ctb"), email = "jpritikin@pobox.com"),
 	person(c("Michael", "C."), "Neale"   , role = c("ctb"), email = "neale@vcu.edu"),
