@@ -2614,8 +2614,6 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m5 = umxCP("base_model", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, 
 #' 	 nFac = 3, correlatedACE = TRUE, tryHard = "yes")
 #' 
-#' umxCompare(m5, m1)
-#'
 #' # What are the ace covariance labels? (two ways to get)
 #' umx_lower.tri(m5$top$a_cp$labels)
 #' parameters(m5, patt = "[ace]_cp")
