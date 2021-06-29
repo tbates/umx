@@ -1695,8 +1695,8 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 	nFac     = c(a = dim(ai)[2], c = dim(ci)[2], e = dim(ei)[2]);
 
 	Vtot     = A+C+E; # total variance
-	nVarIden = diag(nVar); # Make up a little nVar Identity matrix using the clever behavior of diag to make an nVar*nVar Identity matrix
-	SD       = solve(sqrt(nVarIden*Vtot))   # inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
+	nVarIden = diag(nVar); # Make up a little nVar Identity matrix using the behavior of diag to make an nVar*nVar Identity matrix
+	SD       = solve(sqrt(nVarIden*Vtot)) # inverse of diagonal matrix of standard deviations  (same as "(\sqrt(I.Vtot))~"
 	ai_std   = SD %*% ai ; # Standardized path coefficients (independent general factors )
 	ci_std   = SD %*% ci ; # Standardized path coefficients (independent general factors )
 	ei_std   = SD %*% ei ; # Standardized path coefficients (independent general factors )
