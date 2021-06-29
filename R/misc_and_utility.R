@@ -8048,7 +8048,6 @@ umx_standardize.MxModelIP <- xmu_standardize_IP
 #' }
 xmu_standardize_CP <- function(model, ...){
 	if(!is.null(model$top$as_std)){
-		print("hello")
 		# Standardized general path components
 		# Standardized cp loadings
 		model@submodels$top$cp_loadings@values = model$top$algebras$cp_loadings_std$result 
