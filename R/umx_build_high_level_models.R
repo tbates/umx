@@ -190,7 +190,6 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 		# factors is a list of factor names (we hope)
 	}
 	# TODO umxEFA: Adapt to input datatype, i.e., add cov handler
-	# umx_print(factors)
 	manifests = names(data)
 	m1 = umxRAM(model = name, data = data, autoRun = FALSE,
 		umxPath(factors, to = manifests, connect = "unique.bivariate"),
