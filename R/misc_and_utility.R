@@ -36,10 +36,14 @@
 # # PERCY BYSSHE SHELLEY
 # [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
 
-# Brevia
 #  * [Invictus](https://en.wikipedia.org/wiki/Invictus)
+# Brevia
 #  * [Abou ben Adhem](https://www.poetryfoundation.org/poems/44433/abou-ben-adhem)
 #  * [Odi et amo](https://en.wikipedia.org/wiki/Catullus_85)
+#      I hate and I love.
+#      Why?, perhaps you ask.
+#      I know not, but I feel it so,
+#      and it tortures me.
 
 # # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
 #  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
