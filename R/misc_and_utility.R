@@ -445,7 +445,7 @@ umx_set_separator <- function( umx_default_separator = NULL, silent = FALSE) {
 #' umx_set_table_format("") # get available options
 #' umx_set_table_format(old)    # reinstate
 umx_set_table_format <- function(knitr.table.format = NULL, silent = FALSE) {
-	legal = c('latex', 'html', 'markdown', 'pandoc', 'rst')
+	legal = c('latex', 'html', 'pipe', 'simple', 'markdown', 'rst')
 	if(is.null(knitr.table.format)) {
 		if(!silent){
 			message("Current format is", omxQuotes(getOption("knitr.table.format")), 
@@ -3971,10 +3971,10 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 	        print(x, quote = quote, right = TRUE, ...)
 		} else if(report == "html"){
 			# From report = "html"
-			if(both){ print(kable(x, caption= caption)) }
+			if(both){ print(kable(x, caption= caption, format="pipe")) }
 			if(kableExtra){
 				# default html output
-				x = kbl(x,  caption = caption)
+				x = kbl(x,  caption = caption, format=report)
 				if(zero.print != "0"){
 					# x = add_footnote(x, label = paste0("zero printed as ", omxQuotes(zero.print)))
 					x = footnote(kable_input= x, general = paste0("zero printed as ", omxQuotes(zero.print)))
@@ -3988,10 +3988,8 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 			}
 	    }else{
 			# markdown/latex
-			# knit_print(kbl(x, caption = caption, format = umx_set_table_format(silent=TRUE)))
-			# print(kbl(x, caption = caption))
-			# return(kbl(x, caption = caption, format = umx_set_table_format(silent=TRUE) ))
-			print(kable(x, caption = caption))
+			x = kbl(x, caption = caption, format=report)
+			print(x)
 	    }
 	    invisible(x)
 	}

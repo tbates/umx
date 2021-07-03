@@ -364,7 +364,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 				class  = class(model$matrices[[w]])[[1]]
 				values[!free & values ==0] = zero.print
 				
-				tb = kbl(values, caption = paste0(w, " matrix (", class, ")"))
+				tb = kbl(values, caption = paste0(w, " matrix (", class, ")"), format = report)
 				# , paths fixed@0 left blank
 				tb = footnote(kable_input= tb, general = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
 				tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
@@ -403,7 +403,7 @@ tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_fre
 					tmp = data.frame(values)
 					message("\n", what, " for ", w, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
 				}
-				umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= NA)
+				umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= NA, report = report)
 			}
 		} # for each matrix
 	}

@@ -4048,9 +4048,8 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 	if(report == "html"){
 		umx_print(tmp, digits = digits, file = "tmp.html")
 	} else if(report == "markdown"){
-		return(kable(tmp))
+		return(kable(tmp, format="pipe"))
 	}else{
-		# umx_print(tmp, digits = digits)
 		return(tmp)
 	}
 }
