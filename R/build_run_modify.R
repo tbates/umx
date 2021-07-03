@@ -2694,10 +2694,11 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 	}
 	# Finish building top
 	top = mxModel(model$top,
-		umxMatrix("dzAr", "Full", 1, 1, free = FALSE, values = dzAr),
-		umxMatrix("dzCr", "Full", 1, 1, free = FALSE, values = dzCr),
-		umxMatrix("nFac_UnitCol", "Unit", nrow = nFac, ncol = 1),
-		umxMatrix("nFac_Iden", "Iden", nrow = nFac, ncol = nFac),
+		umxMatrix("dzAr"        , "Full", 1, 1, free = FALSE, values = dzAr),
+		umxMatrix("dzCr"        , "Full", 1, 1, free = FALSE, values = dzCr),
+		umxMatrix("nFac_UnitCol", "Unit" , nrow = nFac, ncol = 1),
+		umxMatrix("nFac_Iden"   , "Iden" , nrow = nFac, ncol = nFac),
+		umxMatrix("nFac_Lower1s", "Lower", nrow = nFac, ncol = nFac, values= 1),
 		# Latent common factor genetic paths
 		a_cp_matrix, c_cp_matrix, e_cp_matrix,
 		# Constrain variance of latent phenotype factor to 1.0
@@ -2706,6 +2707,11 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 		mxAlgebra(name = "C_cp", c_cp %*% t(c_cp)  ), # C_cp variance
 		mxAlgebra(name = "E_cp", e_cp %*% t(e_cp)  ), # E_cp variance
 		mxAlgebra(name = "L"   , A_cp + C_cp + E_cp), # total common factor covariance (a+c+e)
+		
+		# multiply by lower 1s?
+		# mxAlgebra(name = "sumL", nFac_Lower1s %*% L),
+		# mxConstraint(name = "fix_CP_variances_to_1", sumL[nFac,1:nFac] == nFac_UnitCol),
+		
 		mxAlgebra(name = "diagL", diag2vec(L)),
 		mxConstraint(name = "fix_CP_variances_to_1", diagL == nFac_UnitCol),
 
