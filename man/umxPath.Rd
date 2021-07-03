@@ -98,70 +98,64 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 }
 }
 \description{
-The goal of this function is to enable quick-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
+This function is used to easily and compactly specify paths in models. In addition to
+\code{from} and \code{to}, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
+There are also new terms to describe fixing values: \code{fixedAt} and \code{fixFirst}.
+To give a couple of the most common, time-saving examples:
+\itemize{
+\item \code{umxPath("A", with = "B",  fixedAt = 1)}
+\item \code{umxPath(var = c("A", "B"),  fixedAt = 1)}
+\item \code{umxPath(v.m. = manifests)}
+\item \code{umxPath(v1m0 = latents)}
+\item \code{umxPath(v1m0 = latents)}
+\item \code{umxPath(means = manifests)}
+\item \code{umxPath(fromEach = c('A',"B","C"), to = c("y1","y2"))}
+\item \code{umxPath(unique.bivariate = c('A',"B","C"))}
+\item \code{umxPath("A", to = c("B","C","D"),  firstAt = 1)}
+}
+}
+\details{
+\code{umxPath} introduces the following new words to your path-definingvocabulary: \code{with}, \code{var}, \code{cov}, \code{means}, \code{v1m0},
+\code{v0m0}, \code{v.m0}, \code{v.m}, \code{fixedAt}, \code{freeAt}, \code{firstAt}, \code{unique.bivariate}, \code{unique.pairs}, \code{fromEach}, \code{Cholesky}, \code{defn}, \code{forms}.
 
-It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{means}, \strong{v1m0}, \strong{v0m0,} \strong{v.m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{fromEach}, \strong{Cholesky}, \strong{defn}, \strong{forms}.
-
-The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
-
-\code{umxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
+\code{with} creates covariances (2-headed paths):
+\code{umxPath(A, with = B)}
 
 Specify a variance for A with
-
 \code{umxPath(var = "A")}.
 
-This is equivalent to \code{mxPath(from = "A", to = "A", arrows = 2)}.
-
 Of course you can use vectors anywhere:
-
 \code{umxPath(var = c('N','E', 'O'))}
 
-To specify a mean, you just say
-
+To specify a mean, you just say:
 \code{umxPath(mean = "A")}, which is equivalent to \code{mxPath(from = "one", to = "A")}.
 
 To fix a path at a value, you can say:
-
-\code{umxPath(var = "A", fixedAt = 1)} .
-
-instead of \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)}
+\code{umxPath(var = "A", fixedAt = 1)}
 
 The common task of creating a variable with variance fixed at 1 and mean at 0 is done thus:
-
 \code{umxPath(v1m0 = "A")}
 
 For free variance and means use:
-
 \code{umxPath(v.m. = "A")}
 
-umxPath exposes \dQuote{unique.bivariate} and \dQuote{unique.pairs} so you don't have to remember
-how to fill in connect = in mxPath (you can still use connect if you wish).
-
-So, to create paths creates A<->A, B<->B, and A->B, you would say:
-
+\code{umxPath} exposes \code{unique.bivariate} and \code{unique.pairs}, So to create paths A<->A, B<->B,
+and A->B, you would say:
 \code{umxPath(unique.pairs = c('A',"B"))}
 
 To create paths A<->B, B<->C, and A<->C, you would say:
 \code{umxPath(unique.bivariate = c('A',"B","C"))}
 
-\code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the all.bivariate pattern
+Creates one-headed arrows on the all.bivariate pattern
+\code{umxPath(fromEach = c('A',"B","C"))}
 
 Setting up a latent trait, you can scale with a fixed first path thus:
 
 \code{umxPath("A", to = c("B","C","D"),  firstAt = 1)}
 
-This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
-
 To create Cholesky-pattern connections:
 
-\code{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
-}
-\details{
-This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
-\dQuote{from} and \dQuote{to}, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
-There are also new terms to describe fixing values: \dQuote{fixedAt} and \dQuote{fixFirst}.
-
-Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
+\verb{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
 }
 \examples{
 

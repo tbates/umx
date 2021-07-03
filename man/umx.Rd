@@ -44,9 +44,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 # We can choose std=T for standardized parameters and can also
 # filter out some types of parameter (e.g. means or residuals)
 
-isNamespaceLoaded("knitr")
-library("kableExtra")
-library("knitr")
+umx_set_table_format()
 knitr::kable(mtcars[1,1:2])
 
 umxSummary(m1, std = TRUE, residuals=FALSE)
@@ -268,7 +266,6 @@ Other Miscellaneous Utility Functions:
 \code{\link{install.OpenMx}()},
 \code{\link{libs}()},
 \code{\link{qm}()},
-\code{\link{umxBrownie}()},
 \code{\link{umxLav2RAM}()},
 \code{\link{umxModelNames}()},
 \code{\link{umxRAM2Lav}()},

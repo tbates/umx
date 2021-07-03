@@ -17,7 +17,7 @@
 }
 }
 \description{
-Plot method for, class()= "percent" objects: e.g. \code{\link[=fin_percent]{fin_percent()}}.
+Plot method for "percent" objects: e.g. \code{\link[=fin_percent]{fin_percent()}}.
 }
 \examples{
 # Percent needed to return to original value after 10\% off
@@ -31,6 +31,6 @@ plot(fin_percent(-50, value = 34.5))
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=print]{print()}}
+\item \code{\link[=fin_percent]{fin_percent()}}
 }
 }

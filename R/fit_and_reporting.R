@@ -3779,7 +3779,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 
 #' Print a RMSEA object
 #'
-#' Print method for, class()= "RMSEA" objects: e.g. [umx::RMSEA()]. 
+#' Print method for "RMSEA" objects: e.g. [umx::RMSEA()]. 
 #'
 #' @param x RMSEA object.
 #' @param ... further arguments passed to or from other methods.

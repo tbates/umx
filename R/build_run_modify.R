@@ -286,17 +286,16 @@ umxModel <- function(...) {
 	stop("You probably meant umxRAM?, not umxModel?")
 }
 
-#' Easier path-based SEM modeling.
+#' Build and run path-based SEM models
 #'
 #' @description
 #' `umxRAM` expedites creation of structural equation models, still without doing invisible things to the model. It 
-#' supports [umxPath()] but also lavaan-style string specification of models: lavaan's scripting language has become a 
-#' lingua franca for SEM books, so supporting this improves science learning.
+#' supports [umxPath()]. To support cross-language sharing and science learning, `umxRAM` also supports lavaan model strings.
 #' 
 #' Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
 #' using the widely used `mtcars` data set.
 #' 
-#' ```Rsplus
+#' ```
 #' m1 = umxRAM("tim", data = mtcars,
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath("wt", with = "disp"),
@@ -318,7 +317,7 @@ umxModel <- function(...) {
 #' 
 #' Here is an example using lavaan syntax (for more, see [umxLav2RAM()])
 #' 
-#' ```Rsplus
+#' ```R
 #' m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
 #' ```
 #'
@@ -327,7 +326,7 @@ umxModel <- function(...) {
 #' If you are at the "sketching" stage of theory consideration, `umxRAM` supports
 #' a simple vector of manifest names to work with.
 #' 
-#' ```Rsplus
+#' ```R
 #' m1 = umxRAM("sketch", data = c("A", "B", "C"),
 #' 	umxPath("A", to = "B"),
 #' 	umxPath("B", with = "C"),
@@ -341,9 +340,9 @@ umxModel <- function(...) {
 #' 
 #' @details
 #' 
-#' **Comparison with OpenMx and mxModel**
+#' **Comparison for OpenMx users**
 #' 
-#' umxRAM differs from mxModel in the following ways:
+#' `umxRAM` differs from [OpenMx::mxModel()] in the following ways:
 #' 
 #' 1. You don't need to set type = "RAM".
 #' 2. You don't need to list manifestVars (they are detected from path usage).
@@ -358,14 +357,12 @@ umxModel <- function(...) {
 #' 11. Less typing: [umxPath()] offers powerful verbs to describe paths.
 #' 12. Supports a subset of lavaan string input.
 #'
-#' **Start values**. Currently, manifest variable means are set to the observed means, residual variances are set to 80% 
-#' of the observed variance of each variable, 
+#' **Start values**. Currently, manifest variable means are set to the observed means, 
+#' residual variances are set to 80%  of the observed variance of each variable, 
 #' and single-headed paths are set to a positive starting value (currently .9).
 #' *note*: The start-value strategy is subject to improvement, and will be documented in the help for [umxRAM()].
 #' 
 #' **Comparison with other software**
-#' 
-#' **Black-box software, defaults, and automatic addition of paths**.
 #' 
 #' Some SEM software does a lot of behind-the-scenes defaulting and path addition. 
 #' If you want this, I'd say use `umxRAM` with lavaan string input.
@@ -2520,7 +2517,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ("yes") uses mxTryHard, "no" uses normal mxRun. Other options: "ordinal", "search"
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
@@ -2628,7 +2625,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' m3 = umxModify(m2, regex= tmp, comparison = TRUE)
 #' } # end dontrun
 #'
-umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedACE = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = "deprecated") {
+umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedACE = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = "deprecated") {
 	# TODO umxCP: Add covariates to means model: Will involve xmu_make_top_twin? also means model?
 	tryHard             = match.arg(tryHard)
 	type                = match.arg(type)
@@ -4431,70 +4428,63 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 
 #' Easier (and powerful) specification of paths in SEM.
 #'
-#' @details This function returns a standard mxPath, but gives new options for specifying the path. In addition to the normal
-#' \dQuote{from} and \dQuote{to}, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
-#' There are also new terms to describe fixing values: \dQuote{fixedAt} and \dQuote{fixFirst}.
-#' 
-#' Finally, (in future) it will allow sem-style \dQuote{A->B} string specification.
+#' @description This function is used to easily and compactly specify paths in models. In addition to
+#' `from` and `to`, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
+#' There are also new terms to describe fixing values: `fixedAt` and `fixFirst`.
+#' To give a couple of the most common, time-saving examples:
 #'
-#' @description The goal of this function is to enable quick-to-write, quick-to-read, flexible path descriptions for RAM models in OpenMx.
-#' 
-#' It introduces the following new words to our vocabulary for describing paths: \strong{with}, \strong{var}, \strong{cov}, \strong{means}, \strong{v1m0}, \strong{v0m0,} \strong{v.m0}, \strong{v.m.}, \strong{fixedAt}, \strong{freeAt}, \strong{firstAt}, \strong{unique.bivariate}, \strong{unique.pairs}, \strong{fromEach}, \strong{Cholesky}, \strong{defn}, \strong{forms}.
+#' * `umxPath("A", with = "B",  fixedAt = 1)`
+#' * `umxPath(var = c("A", "B"),  fixedAt = 1)`
+#' * `umxPath(v.m. = manifests)`
+#' * `umxPath(v1m0 = latents)`
+#' * `umxPath(v1m0 = latents)`
+#' * `umxPath(means = manifests)`
+#' * `umxPath(fromEach = c('A',"B","C"), to = c("y1","y2"))`
+#' * `umxPath(unique.bivariate = c('A',"B","C"))`
+#' * `umxPath("A", to = c("B","C","D"),  firstAt = 1)`
 #'
-#' The new preposition \dQuote{with} means you no-longer need set arrows = 2 on covariances. Instead, you can say:
+#' @details
+#' `umxPath` introduces the following new words to your path-definingvocabulary: `with`, `var`, `cov`, `means`, `v1m0`, 
+#' `v0m0`, `v.m0`, `v.m`, `fixedAt`, `freeAt`, `firstAt`, `unique.bivariate`, `unique.pairs`, `fromEach`, `Cholesky`, `defn`, `forms`.
 #'
-#'    \code{umxPath(A, with = B)} instead of \code{mxPath(from = A, to = B, arrows = 2)}.
+#' `with` creates covariances (2-headed paths):
+#' `umxPath(A, with = B)`
 #' 
 #' Specify a variance for A with
-#' 
-#' \code{umxPath(var = "A")}.
-#' 
-#' This is equivalent to \code{mxPath(from = "A", to = "A", arrows = 2)}.
+#' `umxPath(var = "A")`.
 #' 
 #' Of course you can use vectors anywhere:
+#' `umxPath(var = c('N','E', 'O'))`
 #' 
-#' \code{umxPath(var = c('N','E', 'O'))}
-#' 
-#' To specify a mean, you just say
-#' 
-#' \code{umxPath(mean = "A")}, which is equivalent to \code{mxPath(from = "one", to = "A")}.
+#' To specify a mean, you just say:
+#' `umxPath(mean = "A")`, which is equivalent to `mxPath(from = "one", to = "A")`.
 #' 
 #' To fix a path at a value, you can say:
-#' 
-#' \code{umxPath(var = "A", fixedAt = 1)} .
-#' 
-#' instead of \code{mxPath(from = A, to = A, arrows = 2, free = FALSE, values = 1)} 
+#' `umxPath(var = "A", fixedAt = 1)`
 #' 
 #' The common task of creating a variable with variance fixed at 1 and mean at 0 is done thus:
-#' 
-#' \code{umxPath(v1m0 = "A")}
+#' `umxPath(v1m0 = "A")`
 #' 
 #' For free variance and means use:
+#' `umxPath(v.m. = "A")`
 #' 
-#' \code{umxPath(v.m. = "A")}
-#' 
-#' umxPath exposes \dQuote{unique.bivariate} and \dQuote{unique.pairs} so you don't have to remember
-#' how to fill in connect = in mxPath (you can still use connect if you wish).
-#' 
-#' So, to create paths creates A<->A, B<->B, and A->B, you would say:
-#' 
-#' \code{umxPath(unique.pairs = c('A',"B"))} 
+#' `umxPath` exposes `unique.bivariate` and `unique.pairs`, So to create paths A<->A, B<->B, 
+#' and A->B, you would say:
+#' `umxPath(unique.pairs = c('A',"B"))` 
 #' 
 #' To create paths A<->B, B<->C, and A<->C, you would say:
-#' \code{umxPath(unique.bivariate = c('A',"B","C"))}
-#' 
-#' \code{umxPath(fromEach = c('A',"B","C"))} Creates one-headed arrows on the all.bivariate pattern
+#' `umxPath(unique.bivariate = c('A',"B","C"))`
 #'
+#' Creates one-headed arrows on the all.bivariate pattern
+#' `umxPath(fromEach = c('A',"B","C"))`
 #'
 #' Setting up a latent trait, you can scale with a fixed first path thus:
-#' 
-#' \code{umxPath("A", to = c("B","C","D"),  firstAt = 1)}  
-#' 
-#' This is equivalent to \code{mxPath(from = A, to = c(B,C,D), free = c(F, T, T), values = c(1, .5, .4))}.
-#' 
+#'
+#' `umxPath("A", to = c("B","C","D"),  firstAt = 1)`  
+#'
 #' To create Cholesky-pattern connections:
 #' 
-#' \code{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
+#' `umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))`
 #' 
 #' 
 #' @param from One or more source variables e.g "A" or c("A","B")
@@ -5040,9 +5030,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' # We can choose std=T for standardized parameters and can also
 #' # filter out some types of parameter (e.g. means or residuals)
 #'
-#' isNamespaceLoaded("knitr")
-#' library("kableExtra")
-#' library("knitr")
+#' umx_set_table_format()
 #' knitr::kable(mtcars[1,1:2])
 #'
 #' umxSummary(m1, std = TRUE, residuals=FALSE)

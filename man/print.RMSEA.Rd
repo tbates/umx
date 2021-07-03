@@ -17,7 +17,7 @@
 }
 }
 \description{
-Print method for, class()= "RMSEA" objects: e.g. \code{\link[=RMSEA]{RMSEA()}}.
+Print method for "RMSEA" objects: e.g. \code{\link[=RMSEA]{RMSEA()}}.
 }
 \examples{
 data(demoOneFactor)

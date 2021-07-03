@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.R
 \name{umxRAM}
 \alias{umxRAM}
-\title{Easier path-based SEM modeling.}
+\title{Build and run path-based SEM models}
 \usage{
 umxRAM(
   model = NA,
@@ -81,16 +81,15 @@ umxRAM(
 }
 \description{
 \code{umxRAM} expedites creation of structural equation models, still without doing invisible things to the model. It
-supports \code{\link[=umxPath]{umxPath()}} but also lavaan-style string specification of models: lavaan's scripting language has become a
-lingua franca for SEM books, so supporting this improves science learning.
+supports \code{\link[=umxPath]{umxPath()}}. To support cross-language sharing and science learning, \code{umxRAM} also supports lavaan model strings.
 
 Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
-using the widely used \code{mtcars} data set.\if{html}{\out{<div class="Rsplus">}}\preformatted{m1 = umxRAM("tim", data = mtcars,
+using the widely used \code{mtcars} data set.\preformatted{m1 = umxRAM("tim", data = mtcars,
 	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath("wt", with = "disp"),
 	umxPath(v.m. = c("wt", "disp", "mpg"))
 )
-}\if{html}{\out{</div>}}
+}
 
 As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} wraps these paths up, takes the \verb{data =} input, and
 then internally sets up all the labels and start values for the model, runs it, and calls \code{\link[=umxSummary]{umxSummary()}}, and \code{\link[=plot.MxModel]{plot.MxModel()}}.
@@ -104,13 +103,13 @@ saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
 
 \strong{String Syntax}
 
-Here is an example using lavaan syntax (for more, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\if{html}{\out{<div class="Rsplus">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
+Here is an example using lavaan syntax (for more, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\if{html}{\out{<div class="R">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
 }\if{html}{\out{</div>}}
 
 \strong{Sketch mode}
 
 If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
-a simple vector of manifest names to work with.\if{html}{\out{<div class="Rsplus">}}\preformatted{m1 = umxRAM("sketch", data = c("A", "B", "C"),
+a simple vector of manifest names to work with.\if{html}{\out{<div class="R">}}\preformatted{m1 = umxRAM("sketch", data = c("A", "B", "C"),
 	umxPath("A", to = "B"),
 	umxPath("B", with = "C"),
 	umxPath(v.m. = c("A", "B", "C"))
@@ -123,9 +122,9 @@ Will create this figure:
 \if{latex}{\figure{sketch.pdf}{options: width=7cm}}
 }
 \details{
-\strong{Comparison with OpenMx and mxModel}
+\strong{Comparison for OpenMx users}
 
-umxRAM differs from mxModel in the following ways:
+\code{umxRAM} differs from \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} in the following ways:
 \enumerate{
 \item You don't need to set type = "RAM".
 \item You don't need to list manifestVars (they are detected from path usage).
@@ -141,14 +140,12 @@ umxRAM differs from mxModel in the following ways:
 \item Supports a subset of lavaan string input.
 }
 
-\strong{Start values}. Currently, manifest variable means are set to the observed means, residual variances are set to 80\%
-of the observed variance of each variable,
+\strong{Start values}. Currently, manifest variable means are set to the observed means,
+residual variances are set to 80\%  of the observed variance of each variable,
 and single-headed paths are set to a positive starting value (currently .9).
 \emph{note}: The start-value strategy is subject to improvement, and will be documented in the help for \code{\link[=umxRAM]{umxRAM()}}.
 
 \strong{Comparison with other software}
-
-\strong{Black-box software, defaults, and automatic addition of paths}.
 
 Some SEM software does a lot of behind-the-scenes defaulting and path addition.
 If you want this, I'd say use \code{umxRAM} with lavaan string input.

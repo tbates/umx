@@ -1584,7 +1584,7 @@ umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 		# 3. print data on current version and load
 		result = tryCatch({
 			ver  = packageVersion(p)
-		    cat(ver)
+		    print(ver)
 		    library(p, character.only = TRUE)
 		}, warning = function(x) {
 		    cat(p, "might not be installed locally:\n")
@@ -1964,7 +1964,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' A great reference is The Food Lab by Kenji Alt Lopez. https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087.
 #'
 #' @export
-#' @family Miscellaneous Utility Functions
+#' @family Miscellaneous Functions
 #' @seealso - [omxBrownie()]
 #' @references - [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087)
 #' @examples
@@ -2638,16 +2638,17 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TR
 
 
 #' Print a money object
+#'
+#' @description Print function for "money" objects, e.g. [fin_interest()].
+#'
 #' @aliases bucks print
-#'
-#' Print method for, class()= "money" objects: e.g. [umx::fin_interest()]. 
-#'
 #' @param x money object.
 #' @param symbol Default prefix if not set.
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
-#' @seealso - [umx::fin_percent()], [print()]
+#' @seealso - [umx::fin_percent()], [umx::fin_interest()]
 #' @md
+# #' @family print
 #' @export
 #' @examples
 #' bucks(100 * 1.05^32)
@@ -2675,12 +2676,12 @@ print.money <- bucks
 
 #' Print a percent object
 #'
-#' Print method for, class()= "percent" objects: e.g. [umx::fin_percent()]. 
+#' Print method for "percent" objects: e.g. [umx::fin_percent()]. 
 #'
 #' @param x percent object.
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
-#' @seealso - [umx::fin_percent()], [print()]
+#' @seealso - [umx::fin_percent()]
 #' @md
 #' @method print percent
 #' @export
@@ -2708,12 +2709,12 @@ print.percent <- function(x, ...) {
 
 #' Plot a percent change graph
 #'
-#' Plot method for, class()= "percent" objects: e.g. [umx::fin_percent()]. 
+#' Plot method for "percent" objects: e.g. [umx::fin_percent()]. 
 #'
 #' @param x percent object.
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
-#' @seealso - [umx::fin_percent()], [print()]
+#' @seealso - [umx::fin_percent()]
 #' @md
 #' @method plot percent
 #' @export

@@ -30,21 +30,12 @@ umxBrownie()
 \item \code{\link[=omxBrownie]{omxBrownie()}}
 }
 
-Other Miscellaneous Utility Functions: 
-\code{\link{install.OpenMx}()},
-\code{\link{libs}()},
-\code{\link{qm}()},
-\code{\link{umxLav2RAM}()},
-\code{\link{umxModelNames}()},
-\code{\link{umxRAM2Lav}()},
-\code{\link{umxVersion}()},
-\code{\link{umx_array_shift}()},
-\code{\link{umx_find_object}()},
-\code{\link{umx_lower.tri}()},
-\code{\link{umx_msg}()},
-\code{\link{umx_open_CRAN_page}()},
-\code{\link{umx_pad}()},
-\code{\link{umx_print}()},
-\code{\link{umx}}
+Other Miscellaneous Functions: 
+\code{\link{deg2rad}()},
+\code{\link{fin_interest}()},
+\code{\link{fin_percent}()},
+\code{\link{fin_valuation}()},
+\code{\link{loadings.MxModel}()},
+\code{\link{rad2deg}()}
 }
-\concept{Miscellaneous Utility Functions}
+\concept{Miscellaneous Functions}

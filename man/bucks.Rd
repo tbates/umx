@@ -3,14 +3,6 @@
 \name{bucks}
 \alias{bucks}
 \alias{print}
-\alias{Print}
-\alias{method}
-\alias{for,}
-\alias{class()=}
-\alias{"money"}
-\alias{objects:}
-\alias{e.g.}
-\alias{[umx::fin_interest()].}
 \title{Print a money object}
 \usage{
 bucks(x, symbol = "$", ...)
@@ -28,7 +20,7 @@ bucks(x, symbol = "$", ...)
 }
 }
 \description{
-Print a money object
+Print function for "money" objects, e.g. \code{\link[=fin_interest]{fin_interest()}}.
 }
 \examples{
 bucks(100 * 1.05^32)
@@ -37,6 +29,6 @@ fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=print]{print()}}
+\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}
 }
 }
