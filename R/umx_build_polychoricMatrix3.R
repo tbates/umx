@@ -1,6 +1,6 @@
 #' FIML-based polychoric, polyserial, and Pearson correlations
 #'
-#' Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
+#' Compute polychoric/polyserial/Pearson correlations with FIML.
 #'
 #' @param data Dataframe
 #' @param useDeviations Whether to code the mode using deviation thresholds (default = TRUE)
@@ -8,7 +8,7 @@
 #' @return - list of output and diagnostics. matrix of correlations = $polychorics
 #' @export
 #' @family Data Functions
-#' @references - \doi{10.3389/fpsyg.2016.00528}
+#' @references - Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 #' @examples
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)
@@ -213,7 +213,7 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 #' @return - matrix of correlations
 #' @export
 #' @family Data Functions
-#' @references - \doi{10.3389/fpsyg.2016.00528}
+#' @references - Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 #' @examples
 #' umx_set_optimizer("SLSQP")
 #' tmp = mtcars
