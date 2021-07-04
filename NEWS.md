@@ -1,11 +1,21 @@
 ## dev umx 4.9.0
-* FIXED: `umxCP` `correlatedACE` was not being filtered out of the expectation #hat-tip @micanzach
-* NEW: `umxACEv` works with nSib = 3
-* NEW: `umxACE` works with nSib = 3
+* NEW: `umxACEv` and `umxACE` work with `nSib = 3`!
+* BETA: `umxCP` `correlatedACE` was not being filtered out of the expectation #hat-tip @micanzach But still working on what the right choices are here...
+* CHANGED:  `umxCP` defaults to tryHard = "yes"
+* REMOVED: `umxRAM` deprecated parameter `show` after 4 years deprecation
+* FIXED: `tmx_show` works for M matrix, closed  #163
+* FIXED: `kable` and `kbl` get format passed in at all calls
+* IMPROVED: `umx_make_TwinData` supports `nSib` > 2 for MZ/DZr mode
+* IMPROVED: `umxAPA` more use of cat to print (easier to read and copy)
+* IMPROVED:  `umx_open_CRAN_page` printing if installed version if found
 * IMPROVED: `umxAPA` more use of cat to print (easier to read and copy)
 * IMPROVED: `fin_interest` compute effective interest
-* FIXED: `tmx_show` works for M matrix
-* IMPROVED: `xmuTwinSuper_NoBinary` update for nSib>2
+* IMPROVED: `xmuTwinSuper_NoBinary` update for nSib > 2
+* MINOR: `kable` formats (pandoc's "pipe" and "simple" added, "pandoc" removed)
+* MINOR: `add_footnote` in place of `footnote`...
+* HELP:  `umxPath` and `umxRAM` help
+* xmu: `xmuTwinUpgradeMeansToCovariateModel` can handle nSib=3
+* xmu: `xmu_twin_make_def_means_mats_and_alg` helper
 
 # Releases
 ## umx 4.8.0
