@@ -14,8 +14,10 @@
 * MINOR: `kable` formats (pandoc's "pipe" and "simple" added, "pandoc" removed)
 * MINOR: `add_footnote` in place of `footnote`...
 * HELP:  `umxPath` and `umxRAM` help
+* HELP:  better organization of functions/families
 * xmu: `xmuTwinUpgradeMeansToCovariateModel` can handle nSib=3
 * xmu: `xmu_twin_make_def_means_mats_and_alg` helper
+* xmu: `xmu_start` improved closes #158
 
 # Releases
 ## umx 4.8.0
