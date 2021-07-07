@@ -4450,7 +4450,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' * `umxPath("A", to = c("B","C","D"),  firstAt = 1)`
 #'
 #' @details
-#' `umxPath` introduces the following new words to your path-definingvocabulary: `with`, `var`, `cov`, `means`, `v1m0`, 
+#' `umxPath` introduces the following new words to your path-defining vocabulary: `with`, `var`, `cov`, `means`, `v1m0`, 
 #' `v0m0`, `v.m0`, `v.m`, `fixedAt`, `freeAt`, `firstAt`, `unique.bivariate`, `unique.pairs`, `fromEach`, `Cholesky`, `defn`, `forms`.
 #'
 #' `with` creates covariances (2-headed paths):

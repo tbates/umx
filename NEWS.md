@@ -11,7 +11,7 @@
 * IMPROVED: `umxAPA` more use of cat to print (easier to read and copy)
 * IMPROVED: `fin_interest` compute effective interest
 * IMPROVED: `xmuTwinSuper_NoBinary` update for nSib > 2
-* MINOR: `kable` formats (pandoc's "pipe" and "simple" added, "pandoc" removed)
+* MINOR: `kable` formats (pandoc "pipe" and "simple" added, "pandoc" removed)
 * MINOR: `add_footnote` in place of `footnote`...
 * HELP:  `umxPath` and `umxRAM` help
 * HELP:  better organization of functions/families

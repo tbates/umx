@@ -115,7 +115,7 @@ To give a couple of the most common, time-saving examples:
 }
 }
 \details{
-\code{umxPath} introduces the following new words to your path-definingvocabulary: \code{with}, \code{var}, \code{cov}, \code{means}, \code{v1m0},
+\code{umxPath} introduces the following new words to your path-defining vocabulary: \code{with}, \code{var}, \code{cov}, \code{means}, \code{v1m0},
 \code{v0m0}, \code{v.m0}, \code{v.m}, \code{fixedAt}, \code{freeAt}, \code{firstAt}, \code{unique.bivariate}, \code{unique.pairs}, \code{fromEach}, \code{Cholesky}, \code{defn}, \code{forms}.
 
 \code{with} creates covariances (2-headed paths):
