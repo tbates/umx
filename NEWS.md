@@ -1,4 +1,9 @@
-## dev umx 4.9.0
+## dev umx 4.9.1
+* 
+# Releases
+
+## umx 4.9.0
+* July 2021 R 4.1.0 (2021-06-27)
 * NEW: `umxACEv` and `umxACE` work with `nSib = 3`!
 * BETA: `umxCP` `correlatedACE` was not being filtered out of the expectation #hat-tip @micanzach But still working on what the right choices are here...
 * CHANGED:  `umxCP` defaults to tryHard = "yes"
@@ -19,7 +24,6 @@
 * xmu: `xmu_twin_make_def_means_mats_and_alg` helper
 * xmu: `xmu_start` improved closes #158
 
-# Releases
 ## umx 4.8.0
 * June 2021 R 4.1.0 (2021-06-01)
 * NEW: `umxPlot` now detects and plots Pearson-Aitken selection paths (solid red headless).
