@@ -89,7 +89,6 @@ umxSummary(m1, CIs = TRUE, file = NA);
 }
 
 Other Summary functions: 
-\code{\link{umxCompare}()},
 \code{\link{umxSummary.MxModel}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryGxE}()},

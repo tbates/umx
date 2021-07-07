@@ -92,10 +92,6 @@ plot(m1, std = TRUE, file = NA)
 }
 }
 \seealso{
-Other Teaching and testing Functions: 
-\code{\link{tmx_genotypic_effect}()},
-\code{\link{tmx_is.identified}()}
-
 Other Core Model Building Functions: 
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
@@ -118,22 +114,6 @@ Other Reporting Functions:
 \code{\link{umxParameters}()},
 \code{\link{umx_aggregate}()},
 \code{\link{umx_time}()}
-
-Other Plotting functions: 
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
-\code{\link{plot.MxModel}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotACE}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
-\code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()}
 
 Other Super-easy helpers: 
 \code{\link{umxEFA}()},
@@ -174,6 +154,28 @@ Other Twin Data functions:
 \code{\link{umx_scale_wide_twin_data}()},
 \code{\link{umx_wide2long}()}
 
+Other Miscellaneous Stats Functions: 
+\code{\link{FishersMethod}()},
+\code{\link{SE_from_p}()},
+\code{\link{geometric_mean}()},
+\code{\link{harmonic_mean}()},
+\code{\link{oddsratio}()},
+\code{\link{reliability}()},
+\code{\link{umxCov2cor}()},
+\code{\link{umxHetCor}()},
+\code{\link{umxWeightedAIC}()},
+\code{\link{umx_apply}()},
+\code{\link{umx_cor}()},
+\code{\link{umx_means}()},
+\code{\link{umx_r_test}()},
+\code{\link{umx_round}()},
+\code{\link{umx_scale}()},
+\code{\link{umx_var}()}
+
+Other Teaching and testing Functions: 
+\code{\link{tmx_genotypic_effect}()},
+\code{\link{tmx_is.identified}()}
+
 Other Get and set: 
 \code{\link{umx_get_checkpoint}()},
 \code{\link{umx_get_options}()},
@@ -199,6 +201,22 @@ Other Check or test:
 \code{\link{umx_is_exogenous}()},
 \code{\link{umx_is_numeric}()},
 \code{\link{umx_is_ordered}()}
+
+Other Plotting functions: 
+\code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{plot.MxModel}()},
+\code{\link{umxPlotACEcov}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxPlotACE}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxPlotFun}()},
+\code{\link{umxPlotGxEbiv}()},
+\code{\link{umxPlotGxE}()},
+\code{\link{umxPlotIP}()},
+\code{\link{umxPlotSexLim}()},
+\code{\link{umxPlotSimplex}()}
 
 Other Data Functions: 
 \code{\link{umxFactor}()},
@@ -240,24 +258,6 @@ Other String Functions:
 \code{\link{umx_str_chars}()},
 \code{\link{umx_str_from_object}()},
 \code{\link{umx_trim}()}
-
-Other Miscellaneous Stats Helpers: 
-\code{\link{FishersMethod}()},
-\code{\link{SE_from_p}()},
-\code{\link{geometric_mean}()},
-\code{\link{harmonic_mean}()},
-\code{\link{oddsratio}()},
-\code{\link{reliability}()},
-\code{\link{umxCov2cor}()},
-\code{\link{umxHetCor}()},
-\code{\link{umxWeightedAIC}()},
-\code{\link{umx_apply}()},
-\code{\link{umx_cor}()},
-\code{\link{umx_means}()},
-\code{\link{umx_r_test}()},
-\code{\link{umx_round}()},
-\code{\link{umx_scale}()},
-\code{\link{umx_var}()}
 
 Other Miscellaneous Utility Functions: 
 \code{\link{install.OpenMx}()},
@@ -373,13 +373,12 @@ Other xmu internal not for end user:
 \concept{Data Functions}
 \concept{File Functions}
 \concept{Get and set}
-\concept{Miscellaneous Stats Helpers}
+\concept{Miscellaneous Stats Functions}
 \concept{Miscellaneous Utility Functions}
 \concept{Model Summary and Comparison}
 \concept{Plotting functions}
 \concept{Reporting Functions}
 \concept{String Functions}
-\concept{Summary Functions}
 \concept{Super-easy helpers}
 \concept{Teaching and testing Functions}
 \concept{Twin Data functions}

@@ -99,7 +99,6 @@ umxSummaryGxE(m1, separateGraphs = FALSE)
 [umxSummary)]: R:umxSummary)
 
 Other Summary functions: 
-\code{\link{umxCompare}()},
 \code{\link{umxSummary.MxModel}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryCP}()},

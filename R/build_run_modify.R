@@ -3785,17 +3785,17 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' \emph{Tip}: To find labels by name, use the regex parameter of [umxGetParameters()]
 #' 
 #' @param model   An [mxModel()] within which to equate parameters listed in "a" with those in "b"
-#' @param a  one or more parameter labels to equate with b labels
-#' @param b  one or more labels to equate (if newNames is not set, these will set to the a labels, thus equating the parameters
+#' @param a  one or more labels to equate with those in the "b" set.
+#' @param b  one or more labels to equate with those in the 'a' set. (if 'newlabels' is NULL, labels will be set to 'a' list).
 #' @param newlabels (optional) list of new labels for the equated parameters.
-#' @param free    Should parameter(s) initially be free? (default = TRUE)
+#' @param free    Must the parameter(s) initially be free? (default = TRUE)
 #' @param verbose Whether to give verbose feedback (default = TRUE)
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
-#' @param master  A list of "master" labels to which slave labels will be equated
-#' @param slave   A list of slave labels which will be updated to match master labels, thus equating the parameters
+#' @param master  synonym for 'a'
+#' @param slave   synonym for 'b'
 #' @return - [mxModel()]
 #' @export
 #' @seealso [umxModify()], [umxCompare()]
@@ -4996,21 +4996,20 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' @docType package
 #' @name umx
-#' @family Teaching and testing Functions
 #' @family Core Model Building Functions
 #' @family Model Summary and Comparison
-#' @family Summary Functions
 #' @family Reporting Functions
-#' @family Plotting functions
 #' @family Super-easy helpers
 #' @family Twin Modeling Functions
 #' @family Twin Data functions
+#' @family Miscellaneous Stats Functions
+#' @family Teaching and testing Functions
 #' @family Get and set
 #' @family Check or test
+#' @family Plotting functions
 #' @family Data Functions
 #' @family File Functions
 #' @family String Functions
-#' @family Miscellaneous Stats Helpers
 #' @family Miscellaneous Utility Functions
 #' @family datasets
 #' @family Advanced Model Building Functions

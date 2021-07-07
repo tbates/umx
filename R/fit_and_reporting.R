@@ -79,7 +79,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @param digits (default 2)
 #' @return - Best model
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @seealso - [AIC()]
 #' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://pubmed.ncbi.nlm.nih.gov/15117008/}
 #' @md
@@ -1870,10 +1870,8 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
-#' @family Core Modelling Functions
 #' @family Model Summary and Comparison
-#' @family Summary functions
-#' @seealso - [mxCompare()], [umxSummary()], [umxRAM()],
+#' @seealso - [umxSummary()], [umxRAM()],[mxCompare()]
 #' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
@@ -3828,7 +3826,7 @@ print.RMSEA <- function(x, ...) {
 #' @param ... More p-values if you want to offer them up one by one instead of wrapping in a vector for `pvalues`
 #' @return - A meta-analytic p-value
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
 #' Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi:10.2307/2681650. JSTOR 2681650.
 #' See also Stouffer's method for combining Z scores, which allows weighting.
@@ -3853,7 +3851,7 @@ FishersMethod <- function(pvalues, ...){
 #' @param na.rm remove NAs by default.
 #' @return - Geometric mean of x
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Geometric_mean>
 #' @md
 #' @examples
@@ -3891,7 +3889,7 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' @param na.rm remove NAs (default = TRUE).
 #' @return - Harmonic mean of x
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Harmonic_mean>
 #' @md
 #' @examples
@@ -4524,7 +4522,7 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 #' @param alternative A two (default) or one-sided (greater less) test.
 #' @return cocor result.
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @md
 #' @examples
 #' # Is the correlation of mpg with cylinder count different from that 

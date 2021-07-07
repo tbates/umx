@@ -118,7 +118,6 @@ Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
 }
 
 Other Summary functions: 
-\code{\link{umxCompare}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryCP}()},
 \code{\link{umxSummaryGxE}()},

@@ -44,7 +44,7 @@ oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 \item \code{\link[=umx_r_test]{umx_r_test()}}
 }
 
-Other Miscellaneous Stats Helpers: 
+Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
 \code{\link{geometric_mean}()},
@@ -62,4 +62,4 @@ Other Miscellaneous Stats Helpers:
 \code{\link{umx_var}()},
 \code{\link{umx}}
 }
-\concept{Miscellaneous Stats Helpers}
+\concept{Miscellaneous Stats Functions}
