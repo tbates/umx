@@ -4996,21 +4996,20 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' 
 #' @docType package
 #' @name umx
-#' @family Teaching and testing Functions
 #' @family Core Model Building Functions
 #' @family Model Summary and Comparison
-#' @family Summary Functions
 #' @family Reporting Functions
-#' @family Plotting functions
 #' @family Super-easy helpers
 #' @family Twin Modeling Functions
 #' @family Twin Data functions
+#' @family Miscellaneous Stats Functions
+#' @family Teaching and testing Functions
 #' @family Get and set
 #' @family Check or test
+#' @family Plotting functions
 #' @family Data Functions
 #' @family File Functions
 #' @family String Functions
-#' @family Miscellaneous Stats Helpers
 #' @family Miscellaneous Utility Functions
 #' @family datasets
 #' @family Advanced Model Building Functions

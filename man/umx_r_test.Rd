@@ -44,7 +44,7 @@ umx_r_test(mtcars, vars)
 umx_r_test(mtcars, c("mpg", "disp", "hp"))
 }
 \seealso{
-Other Miscellaneous Stats Helpers: 
+Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
 \code{\link{geometric_mean}()},
@@ -62,4 +62,4 @@ Other Miscellaneous Stats Helpers:
 \code{\link{umx_var}()},
 \code{\link{umx}}
 }
-\concept{Miscellaneous Stats Helpers}
+\concept{Miscellaneous Stats Functions}

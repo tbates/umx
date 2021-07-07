@@ -77,7 +77,6 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE)
 }
 
 Other Summary functions: 
-\code{\link{umxCompare}()},
 \code{\link{umxSummary.MxModel}()},
 \code{\link{umxSummaryCP}()},
 \code{\link{umxSummaryGxE}()},

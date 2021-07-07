@@ -67,7 +67,7 @@ Other Data Functions:
 \code{\link{umx_stack}()},
 \code{\link{umx}}
 
-Other Miscellaneous Stats Helpers: 
+Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
 \code{\link{geometric_mean}()},
@@ -86,4 +86,4 @@ Other Miscellaneous Stats Helpers:
 \code{\link{umx}}
 }
 \concept{Data Functions}
-\concept{Miscellaneous Stats Helpers}
+\concept{Miscellaneous Stats Functions}

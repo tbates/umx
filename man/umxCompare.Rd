@@ -89,7 +89,7 @@ umxCompare(m1, m2, report = "html") # Open table in browser
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxCompare]{mxCompare()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},
+\item \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},\code{\link[=mxCompare]{mxCompare()}}
 }
 
 Other Model Summary and Comparison: 
@@ -99,14 +99,5 @@ Other Model Summary and Comparison:
 \code{\link{umxSetParameters}()},
 \code{\link{umxSummary}()},
 \code{\link{umx}}
-
-Other Summary functions: 
-\code{\link{umxSummary.MxModel}()},
-\code{\link{umxSummaryACEcov}()},
-\code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()}
 }
-\concept{Core Modelling Functions}
 \concept{Model Summary and Comparison}
-\concept{Summary functions}

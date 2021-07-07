@@ -71,7 +71,6 @@ umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 }
 
 Other Summary functions: 
-\code{\link{umxCompare}()},
 \code{\link{umxSummary.MxModel}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryCP}()},

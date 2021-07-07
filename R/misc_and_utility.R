@@ -1659,7 +1659,7 @@ umx_pad <- function(x, n) {
 #' @return - object
 #' @export
 #' @seealso - [umx_aggregate()] 
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -2591,6 +2591,43 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 }
 
 
+#' Compute NI given annual Earnings.
+#'
+#' @description
+#' Employees pay contributions at 12%% on annual earnings between £9,568 and £50,270. Above that you pay at 2%%. 
+#' Employers pay at 13.8%% on all annual earnings of more than £8,840, although there are different thresholds 
+#' for those under the age of 21 and for apprentices under the age of 25.
+#'
+#' @details
+#'
+#' @param annualEarnings Employee annual earnings.
+#' @return - NI
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()]
+#' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul>
+#' @md
+#' @examples
+#' fin_NI(42e3)
+#' fin_NI(142000)
+#'
+fin_NI <- function(annualEarnings, symbol="£") {
+	if(annualEarnings < 50270){
+		employee = .12 * max(0, (annualEarnings- 9568))
+	} else {
+		employee = (.12 * (annualEarnings- 9568)) + (.02 * (annualEarnings-50270))
+	}
+	employer = .138 * max((annualEarnings - 8840), 0)
+
+	Total = employer + employee
+	class(Total) = 'money'
+	attr(Total, 'symbol') <- symbol
+	cat(paste0("Employer pays: ", bucks(employer, sym=symbol, cat=FALSE), ", and employee pays ", bucks(employee, sym=symbol, cat=FALSE),
+	 ". so ", round((employer+employee)/annualEarnings*100, 2),	"%\n")
+	 )
+	return(Total)
+}
+
 #' Compute the percent change needed to return to the original value after percent off (or on).
 #'
 #' @description
@@ -2915,7 +2952,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 #' @param alpha for CI (default = 0.05)
 #' @return - List of odds in group 1 and group2, and the resulting OR and CI
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @seealso - [umx_r_test()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
@@ -3011,7 +3048,7 @@ print.oddsratio <- function(x, digits = 3, ...) {
 #' @param type Unused argument for future directions
 #' @return - Matrix of correlations and p-values
 #' @seealso umxHetCor
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @export
 #' @references - <https://github.com/tbates/umx>
 #' @md
@@ -3074,7 +3111,7 @@ rowMin <- function(df, na.rm= TRUE) {
 #' @param digits how many digits to round to (defaults to getOption("digits"))
 #' @param coerce whether to make the column numeric if it is not (default = FALSE)
 #' @return - [mxModel()]
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @export
 #' @references - <https://github.com/tbates/umx>
 #' @md
@@ -3126,7 +3163,7 @@ umx_round <- function(df, digits = getOption("digits"), coerce = FALSE) {
 #' @param upper Upper CI
 #' @return - Standard error
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @seealso - [umxAPA()]
 #' @md
 #' @examples
@@ -3173,7 +3210,7 @@ specify_decimal <- function(x, k){
 #' @param S A square, symmetric, numeric covariance matrix
 #' @return None 
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @seealso - [umx::print.reliability()], 
 #' @references - <https://cran.r-project.org/package=Rcmdr>
 #' @examples
@@ -4188,7 +4225,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 #' @param allowCorForFactorCovs When ordinal data are present, use heterochoric correlations in affected cells, in place of covariances. 
 #' @return - [mxModel()]
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
@@ -4318,7 +4355,7 @@ umx_lower.tri <- function(x, diag=FALSE){
 #' @param na.rm passed to mean - defaults to "na.rm"
 #' @return - frame of means
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @examples
 #' tmp = mtcars[,1:4]
 #' tmp$cyl = ordered(mtcars$cyl) # ordered factor
@@ -5031,7 +5068,7 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @return - new dataframe with scaled variables
 #' @export
 #' @seealso umx_scale_wide_twin_data scale
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -5759,7 +5796,7 @@ umx_rot <- function(vec, na.last=FALSE){
 #' @param x something that cov2cor can work on (matrix, df, etc.)
 #' @return - A correlation matrix
 #' @export
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @seealso [cov2cor()]
 #' @references - <https://github.com/tbates/umx>
 #' @examples
@@ -7344,7 +7381,7 @@ xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 #' @param std.err Compute the SEs? (default = FALSE)
 #' @return - A matrix of correlations
 #' @family Data Functions
-#' @family Miscellaneous Stats Helpers
+#' @family Miscellaneous Stats Functions
 #' @export
 #' @md
 #' @examples

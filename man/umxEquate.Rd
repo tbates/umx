@@ -22,13 +22,13 @@ umxEquate(
 \arguments{
 \item{model}{An \code{\link[=mxModel]{mxModel()}} within which to equate parameters listed in "a" with those in "b"}
 
-\item{a}{one or more parameter labels to equate with b labels}
+\item{a}{one or more labels to equate with those in the "b" set.}
 
-\item{b}{one or more labels to equate (if newNames is not set, these will set to the a labels, thus equating the parameters}
+\item{b}{one or more labels to equate with those in the 'a' set. (if 'newlabels' is NULL, labels will be set to 'a' list).}
 
 \item{newlabels}{(optional) list of new labels for the equated parameters.}
 
-\item{free}{Should parameter(s) initially be free? (default = TRUE)}
+\item{free}{Must the parameter(s) initially be free? (default = TRUE)}
 
 \item{verbose}{Whether to give verbose feedback (default = TRUE)}
 
@@ -40,9 +40,9 @@ umxEquate(
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
-\item{master}{A list of "master" labels to which slave labels will be equated}
+\item{master}{synonym for 'a'}
 
-\item{slave}{A list of slave labels which will be updated to match master labels, thus equating the parameters}
+\item{slave}{synonym for 'b'}
 }
 \value{
 \itemize{

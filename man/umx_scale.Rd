@@ -52,7 +52,7 @@ plot(wt1 ~ wt2, data = df)
 \seealso{
 umx_scale_wide_twin_data scale
 
-Other Miscellaneous Stats Helpers: 
+Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
 \code{\link{geometric_mean}()},
@@ -70,4 +70,4 @@ Other Miscellaneous Stats Helpers:
 \code{\link{umx_var}()},
 \code{\link{umx}}
 }
-\concept{Miscellaneous Stats Helpers}
+\concept{Miscellaneous Stats Functions}

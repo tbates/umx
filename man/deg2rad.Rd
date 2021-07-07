@@ -33,6 +33,7 @@ deg2rad(180) == pi # TRUE!
 }
 
 Other Miscellaneous Functions: 
+\code{\link{fin_NI}()},
 \code{\link{fin_interest}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_valuation}()},
