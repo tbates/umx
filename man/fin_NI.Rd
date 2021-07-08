@@ -24,6 +24,7 @@ for those under the age of 21 and for apprentices under the age of 25.
 }
 \examples{
 fin_NI(42e3)
+fin_NI(142000)
 
 }
 \references{
