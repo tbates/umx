@@ -2513,7 +2513,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
-#' @param correlatedACE Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
+#' @param correlatedACE DONT USE THIS! Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -2605,6 +2605,9 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' # ==============================
 #' # = Correlated factors example =
 #' # ==============================
+#' # ====================
+#' # = DONT USE THIS!!! =
+#' # ====================
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
@@ -2665,6 +2668,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 		correlatedACE = TRUE
 	}
 	if(correlatedACE){
+		umx_msg("Polite message: correlatedACE is in alpha: Results are not valid currently!!! Do not use!!!")
 		if(correlatedA != "deprecated"){
 			a_cp_matrix = umxMatrix("a_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # Latent common factor
 			c_cp_matrix = umxMatrix("c_cp", "Lower", nFac, nFac, free = TRUE, values = 0) # latent common factor Common environmental path coefficients
@@ -4450,7 +4454,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' * `umxPath("A", to = c("B","C","D"),  firstAt = 1)`
 #'
 #' @details
-#' `umxPath` introduces the following new words to your path-definingvocabulary: `with`, `var`, `cov`, `means`, `v1m0`, 
+#' `umxPath` introduces the following new words to your path-defining vocabulary: `with`, `var`, `cov`, `means`, `v1m0`, 
 #' `v0m0`, `v.m0`, `v.m`, `fixedAt`, `freeAt`, `firstAt`, `unique.bivariate`, `unique.pairs`, `fromEach`, `Cholesky`, `defn`, `forms`.
 #'
 #' `with` creates covariances (2-headed paths):
