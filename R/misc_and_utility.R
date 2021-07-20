@@ -74,7 +74,7 @@ libs <- function(...) {
 		}, warning = function(warn) {
 			umx_msg("Who's, Z?")
 		}, error = function(err) {
-			umx_msg("I'll try and install.packages(", omxQuotes(pack)") for you")
+			umx_msg("I'll try and install.packages(", omxQuotes(pack), ") for you")
 		    install.packages(pack)
 			library(pack, character.only = TRUE)
 		}, finally={

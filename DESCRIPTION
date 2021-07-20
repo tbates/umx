@@ -1,7 +1,7 @@
 Package: umx
 Version: 4.9.0
 Date: 2021-07-04
-Title: Structural Equation and Twin Modeling in R
+Title: SEM and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
 	person("Gillespie"       , "Nathan"  , role = c("wit"), email = "nathan.gillespie@vcuhealth.org"),
@@ -15,8 +15,8 @@ Maintainer: Timothy C. Bates <timothy.c.bates@gmail.com>
 License: GPL-3
 Language: en-US
 Encoding: UTF-8
-URL: https://github.com/tbates/umx
-Description: Quickly create, run, and report structural equation and twin models.
+URL: https://github.com/tbates/umx#readme
+Description: Quickly create, run, and report structural equation models, and twin models.
     See '?umx' for help, and umx_open_CRAN_page("umx") for NEWS.
     Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R.
     Twin Research and Human Genetics, 22, 27-41. <doi:10.1017/thg.2019.2>.
