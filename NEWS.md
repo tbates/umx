@@ -1,5 +1,8 @@
-## dev umx 4.9.1
-* 
+## dev umx 4.9.5
+* IMPROVED: `umxCP` warning to not use `correlatedACE`
+* IMPROVED: `umxSummarizeTwinData` takes an age column and notes when it can't be found
+* IMPROVED: `libs` install.package if not found
+
 # Releases
 
 ## umx 4.9.0
