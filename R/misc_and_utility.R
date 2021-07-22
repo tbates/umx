@@ -30,7 +30,7 @@
 #    And so all yours."
 #  * If to do were as easy as to know what were good to do,
 #    chapels had been churches, 
-#    and poor men's cottages princes’ palaces.
+#    and poor men's cottages princes' palaces.
 #  * This above all: to thine own self be true,
 
 # # PERCY BYSSHE SHELLEY
@@ -74,7 +74,7 @@ libs <- function(...) {
 		}, warning = function(warn) {
 			umx_msg("Who's, Z?")
 		}, error = function(err) {
-			umx_msg("I'll try and install.packages(", omxQuotes(pack), ") for you")
+			umx_msg(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you"))
 		    install.packages(pack)
 			library(pack, character.only = TRUE)
 		}, finally={
@@ -2483,13 +2483,13 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' # 3. What's the value of deposits of $100/yr after 10 years at 7% return?
 #' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 #'
-#' # 4. What's the value of £20k + £100/yr over 10 years at 7% return?
-#' fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="£")
+#' # 4. What's the value of $20k + $100/yr over 10 years at 7% return?
+#' fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="$")
 #'
 #' # 5. What is $10,000 invested at the end of each year for 5 years at 6%?
 #' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 #'
-#' # 6. What will £20k be worth after 10 years at 15% annually (n=1)?
+#' # 6. What will $20k be worth after 10 years at 15% annually (n=1)?
 #' fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
 #' # $466,986
 #'
@@ -2509,18 +2509,6 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 	}else{
 		deposits = rep(deposits, times = yrs)
 	}
-	# deposits = 100
-	# interest = .05
-	# n        = 12
-	# yrs      = 10
-
-	# TODO add an annual table like this
-	# Final Investment Value		Initial  Balance
-	# £267,672,51					$principal
-	# Total Interest Earned		Total <period> deposits
-	# £267,672,51					£267,672,51
-	# 							Effective annual rate: 4.06%
-	#
 	if(!is.null(final)){
 		# final = prin*(1+rate)^y
 		return((final/principal)^(1/yrs)-1)
@@ -2558,17 +2546,6 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 		umx_print(tableOut, justify = "right", report=report)
 	}
 
-	# invisible(report)
-	# gray?		green		orange		Blue
-	# | Year| Deposits | Interest | Total Deposits | Tot Interest| Total |
-	# |:----|:---------|:---------|:---------------|:---------|:---------|
-	# | 1   | £19,000  | £1,000   | £40,000        | £1,200   | £100,200 |
-	# | 2   | £10,000  | £1,000   | £65,000        | £1,200   | £100,200 |
-	# | 3   | £19,000  | £1,000   | £65,000        | £1,200   | £100,200 |
-	# | 4   | £19,000  | £1,000   | £65,000        | £1,200   | £200,200 |
-	# | 5   | £19,000  | £1,000   | £65,000        | £1,200   | £300,200 |
-	# | 6   | £19,000  | £1,000   | £65,000        | £1,200   | £400,200 |
-
 	if(length(deposits)==1){
 		# 2. compute compounded value of the principal (initial deposit)
 		Compound_interest_for_principal = principal* rate^(n*yrs)
@@ -2578,8 +2555,8 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 		if(interest==0){
 			Future_value_of_a_series = deposits * yrs
 		} else {
-			# beginning: A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n))
-			# end      : A = PMT × (((1 + r/n)^(nt) - 1) ÷ (r/n)) × (1+r/n)
+			# beginning: A = PMT * (((1 + r/n)^(nt) - 1) / (r/n))
+			# end      : A = PMT * (((1 + r/n)^(nt) - 1) / (r/n)) * (1+r/n)
 			if(when == "beginning"){
 				# deposits at the beginning of each year
 				periods = (yrs:1)*n
@@ -2608,9 +2585,8 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 #' Employers pay at 13.8%% on all annual earnings of more than £8,840, although there are different thresholds 
 #' for those under the age of 21 and for apprentices under the age of 25.
 #'
-#' @details
-#'
 #' @param annualEarnings Employee annual earnings.
+#' @param symbol Currency symbol to embed in the result.
 #' @return - NI
 #' @export
 #' @family Miscellaneous Functions
@@ -2621,7 +2597,7 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 #' fin_NI(42e3)
 #' fin_NI(142000)
 #'
-fin_NI <- function(annualEarnings, symbol="£") {
+fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 	if(annualEarnings < 50270){
 		employee = .12 * max(0, (annualEarnings- 9568))
 	} else {
@@ -2632,7 +2608,7 @@ fin_NI <- function(annualEarnings, symbol="£") {
 	Total = employer + employee
 	class(Total) = 'money'
 	attr(Total, 'symbol') <- symbol
-	cat(paste0("Employer pays: ", bucks(employer, sym=symbol, cat=FALSE), ", and employee pays ", bucks(employee, sym=symbol, cat=FALSE),
+	cat(paste0("Employer pays: ", bucks(employer, sym=symbol, cat=FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
 	 ". so ", round((employer+employee)/annualEarnings*100, 2),	"%\n")
 	 )
 	return(Total)
@@ -3189,7 +3165,7 @@ SE_from_p <- function(beta = NULL, p = NULL, SE = NULL, lower = NULL, upper = NU
 		beta_over_SE = -log(p) * (416 * log(p) + 717)/1000
 		SE = abs(beta/beta_over_SE) # 3 = 5/(5/3) a/(a/b) = b
 		return(c(SE = SE))
-		# p = exp(−0.717×(beta/SE) − 0.416×(beta/SE)^2)
+		# p = exp(-0.717*(beta/SE) - 0.416*(beta/SE)^2)
 		# p = .780
 		# x = log(p)
 

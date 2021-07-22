@@ -76,13 +76,13 @@ fin_interest(principal = 50, final=200, yrs = 5)
 # 3. What's the value of deposits of $100/yr after 10 years at 7\% return?
 fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
 
-# 4. What's the value of £20k + £100/yr over 10 years at 7\% return?
-fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="£")
+# 4. What's the value of $20k + $100/yr over 10 years at 7\% return?
+fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="$")
 
 # 5. What is $10,000 invested at the end of each year for 5 years at 6\%?
 fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 
-# 6. What will £20k be worth after 10 years at 15\% annually (n=1)?
+# 6. What will $20k be worth after 10 years at 15\% annually (n=1)?
 fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
 # $466,986
 

@@ -9,6 +9,7 @@ umxSummarizeTwinData(
   selVars = NULL,
   sep = "_T",
   zyg = "zygosity",
+  age = "age",
   MZ = NULL,
   DZ = NULL,
   MZFF = "MZFF",

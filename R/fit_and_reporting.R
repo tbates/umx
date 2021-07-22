@@ -4421,15 +4421,16 @@ summaryAPA <- umxAPA
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
 #' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
-umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2, report = c("markdown", "html")) {
+umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2, report = c("markdown", "html")) {
 	report = match.arg(report)
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
-
-	if(!is.null(data$age)){
-		ageCol = data[, "age"]
-	} else {
-		ageCol = data[, paste0("age", sep, 1)]
+	if(umx_check_names(age, data= data, die=FALSE)){
+		ageCol = data[, age]
+	} else if(umx_check_names(paste0(age, sep, 1), data= data, die=FALSE)){
+		ageCol = data[, paste0(age, sep, 1)]
+	}else{
+		stop("Sorry: I can't find an age column called ", omxQuotes(age), " or ", omxQuotes(paste0(age, sep, 1)), " Set age= <name of your age column>")
 	}
 	cat(paste0("mean age ", round(mean(ageCol, na.rm = TRUE), 2), " (SD= ", round(sd(ageCol, na.rm = TRUE), 2), ")"))
 	

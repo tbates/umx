@@ -8,6 +8,8 @@ fin_NI(annualEarnings, symbol = "£")
 }
 \arguments{
 \item{annualEarnings}{Employee annual earnings.}
+
+\item{symbol}{Currency symbol to embed in the result.}
 }
 \value{
 \itemize{
@@ -18,9 +20,6 @@ fin_NI(annualEarnings, symbol = "£")
 Employees pay contributions at 12\%\% on annual earnings between £9,568 and £50,270. Above that you pay at 2\%\%.
 Employers pay at 13.8\%\% on all annual earnings of more than £8,840, although there are different thresholds
 for those under the age of 21 and for apprentices under the age of 25.
-}
-\details{
-
 }
 \examples{
 fin_NI(42e3)
