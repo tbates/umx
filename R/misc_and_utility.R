@@ -2591,7 +2591,7 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_interest()]
-#' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul>
+#' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
 #' @md
 #' @examples
 #' fin_NI(42e3)
