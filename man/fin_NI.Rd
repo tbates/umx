@@ -28,7 +28,7 @@ fin_NI(142000)
 }
 \references{
 \itemize{
-\item \url{https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul}
+\item \url{https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/}
 }
 }
 \seealso{
