@@ -28,7 +28,9 @@ umxSummarizeTwinData(
 
 \item{sep}{The separator string that will turn a variable name into a twin variable name, default= "_T" for wt_T1 and wt_T2.}
 
-\item{zyg}{The zygosity variable in the dataset, default = "zygosity".}
+\item{zyg}{The zygosity column in the dataset (default "zygosity").}
+
+\item{age}{The age column in the dataset (default "age")}
 
 \item{MZ}{Set level in zyg corresponding to MZ for two group case (defaults to using 5-group case).}
 

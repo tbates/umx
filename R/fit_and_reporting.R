@@ -4400,7 +4400,8 @@ summaryAPA <- umxAPA
 #' @param data The twin data.
 #' @param selVars Collection of variables to report on, e.g. c("wt", "ht").
 #' @param sep  The separator string that will turn a variable name into a twin variable name, default= "_T" for wt_T1 and wt_T2.
-#' @param zyg  The zygosity variable in the dataset, default = "zygosity".
+#' @param age The age column in the dataset (default "age")
+#' @param zyg  The zygosity column in the dataset (default "zygosity").
 #' @param MZ Set level in zyg corresponding to MZ for two group case (defaults to using 5-group case).
 #' @param DZ Set level in zyg corresponding to DZ for two group case (defaults to using 5-group case).
 #' @param MZFF The level of zyg corresponding to MZ FF pairs: default= "MZFF".
