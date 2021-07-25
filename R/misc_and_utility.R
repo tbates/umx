@@ -2591,7 +2591,7 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_interest()]
-#' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul>
+#' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
 #' @md
 #' @examples
 #' fin_NI(42e3)
@@ -2607,8 +2607,8 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 
 	Total = employer + employee
 	class(Total) = 'money'
-	attr(Total, 'symbol') <- symbol
-	cat(paste0("Employer pays: ", bucks(employer, sym=symbol, cat=FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
+	attr(Total, 'symbol') = symbol
+	cat(paste0("Employer pays: ", bucks(employer, symbol = symbol, cat = FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
 	 ". so ", round((employer+employee)/annualEarnings*100, 2),	"%\n")
 	 )
 	return(Total)
@@ -2684,7 +2684,6 @@ bucks <- function(x, symbol = "$", ...) {
 	if(!is.null(attr(x, 'symbol')) ){
 		symbol = attr(x, 'symbol')
 	}
-	# bucks <- scales::dollar_format(prefix = symbol, suffix = "", largest_with_cents = 1e+05, big.mark = ",", negative_parens = FALSE)
 	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE)
 	if(cat){
 		cat(formatted)
