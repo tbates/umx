@@ -179,7 +179,7 @@ umxRAM2Lav <- function(model) {
 #' @return - list of [umxPath()]s
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - [umxRAM()]
+#' @seealso [umxRAM2Lav()], [umxRAM()]
 #' @md
 #' @examples
 #' 
@@ -265,6 +265,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	allContinuousMethod = c("cumulants", "marginals"), 
 	autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), 
 	verbose = FALSE, optimizer = NULL, std = FALSE, printTab = TRUE){
+
 	# TODO: make groups independent
 	# TODO: support group.equal Equality constraints across multiple
 	# groups: "loadings", "intercepts", "means", "regressions", "residuals", "covariances"
