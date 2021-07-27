@@ -3393,6 +3393,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @param which What rhub platform to use? c("mac", "linux", "win")
+#' @param spell for rhub, check spelling? TRUE
 #' @return None
 #' @export
 #' @family xmu internal not for end user
@@ -3410,7 +3411,7 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "release")  # Release to CRAN
 #' tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux")) {
+umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux"), spell=TRUE) {
 	what = match.arg(what)
 	which = match.arg(which)
 	if(what == "lastRhub"){
@@ -3445,7 +3446,11 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		}
 
 		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
-		devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE, env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "true", `_R_CHECK_CRAN_INCOMING_USE_ASPELL_` = "false"))
+		if(spell){
+			devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE, env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "true", `_R_CHECK_CRAN_INCOMING_USE_ASPELL_` = "false"))
+		}else{
+			devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
+		}
 		# devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 
 	} else if (what == "release"){
