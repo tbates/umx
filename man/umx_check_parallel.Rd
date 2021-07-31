@@ -27,26 +27,30 @@ None
 Shows how many cores you are using, and runs a test script so user can check CPU usage.
 }
 \details{
-Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz Quad-core i7 desktop.
+Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz
+Quad-core i7 desktop and then quad i7 2018 macBook Pro
 
 \tabular{rllll}{
-2020-08-09 \tab 2.17.3 (OpenMP git)  \tab 1 core  \tab 01 52    \tab     (CSOLNP on laptop)                   \cr
-2020-08-09 \tab 2.17.3 (OpenMP git)  \tab 4 core  \tab 40.184    \tab     (CSOLNP on laptop)                   \cr
-2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 1 core  \tab 01 min, 11 sec    \tab     (NPSOL)                   \cr
-2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 4 core  \tab 00 min, 22 sec    \tab     (NPSOL)                   \cr
-2019-06-13 \tab v2.13.2 (OpenMP git)  \tab 6 core  \tab 00 min, 21 sec    \tab     (NPSOL)                   \cr
-2018-10-14 \tab v2.11.5 (OpenMP on CRAN)  \tab 4 cores  \tab 00 min, 36 sec    \tab \eqn{\Delta}:-39.598) \cr
-2018-09-17 \tab v2.11.3         \tab 1    \tab 01 min, 31 sec    \tab                                 \cr
-2018-09-17 \tab v2.11.3         \tab 4    \tab 00 min, 30.6 sec  \tab \eqn{\Delta}: -61.49) \cr
-2017-10-16 \tab v2.7.18-9       \tab 1    \tab 01 min, 07.30 sec \tab                                 \cr
-2017-10-16 \tab v2.7.18-9       \tab 4    \tab 00 min, 22.63 sec \tab \eqn{\Delta}: -44.68) \cr
-2017-10-16 \tab Clang OpenMP    \tab 1    \tab 01 min, 08.38 sec \tab                                 \cr
-2017-10-16 \tab Clang OpenMP    \tab 4    \tab 00 min, 24.89 sec \tab \eqn{\Delta}: -43.49) \cr
-2017-09-07 \tab Clang OpenMP    \tab 1    \tab 01 min, 12.90 sec \tab                                 \cr
-2017-09-07 \tab Clang OpenMP    \tab 4    \tab 00 min, 32.20 sec \tab \eqn{\Delta}: -40.70   \cr
-2017-09-07 \tab Clang notOpenMP \tab 1    \tab 01 min, 09.90 sec \tab                                 \cr
-2017-09-07 \tab TRAVIS          \tab 1    \tab 01 min, 06.20 sec \tab                                 \cr
-2017-09-07 \tab TRAVIS          \tab 4    \tab 00 min, 21.10 sec \tab \eqn{\Delta}: -45.00   \cr
+Date       \tab Version         \tab Cores \tab Time              \tab     Notes               \cr
+2021-07-28 \tab 2.19.6.19 (git) \tab 8     \tab 00 min 42.98 sec  \tab \eqn{\Delta}:-80 (SLSQP laptop (55 sec under NPSOL))  \cr
+2021-07-28 \tab 2.19.6.19 (git) \tab 1     \tab 02 min 03 sec     \tab (SLSQP on laptop)       \cr
+2020-08-09 \tab 2.17.3  (git)   \tab 1     \tab 01 min 52 sec     \tab (CSOLNP on laptop)      \cr
+2020-08-09 \tab 2.17.3  (git)   \tab 4     \tab 00 min 40.18 sec  \tab (CSOLNP on laptop)      \cr
+2019-06-13 \tab v2.13.2 (git)   \tab 1     \tab 01 min, 11 sec    \tab (NPSOL)                 \cr
+2019-06-13 \tab v2.13.2 (git)   \tab 4     \tab 00 min, 22 sec    \tab (NPSOL)                 \cr
+2019-06-13 \tab v2.13.2 (git)   \tab 6     \tab 00 min, 21 sec    \tab (NPSOL)                 \cr
+2018-10-14 \tab v2.11.5 (CRAN)  \tab 4     \tab 00 min, 36 sec    \tab \eqn{\Delta}:-39.598)   \cr
+2018-09-17 \tab v2.11.3         \tab 1     \tab 01 min, 31 sec    \tab                         \cr
+2018-09-17 \tab v2.11.3         \tab 4     \tab 00 min, 30.6 sec  \tab \eqn{\Delta}: -61.49)   \cr
+2017-10-16 \tab v2.7.18-9       \tab 1     \tab 01 min, 07.30 sec \tab                         \cr
+2017-10-16 \tab v2.7.18-9       \tab 4     \tab 00 min, 22.63 sec \tab \eqn{\Delta}: -44.68)   \cr
+2017-10-16 \tab Clang OpenMP    \tab 1     \tab 01 min, 08.38 sec \tab                         \cr
+2017-10-16 \tab Clang OpenMP    \tab 4     \tab 00 min, 24.89 sec \tab \eqn{\Delta}: -43.49)   \cr
+2017-09-07 \tab Clang OpenMP    \tab 1     \tab 01 min, 12.90 sec \tab                         \cr
+2017-09-07 \tab Clang OpenMP    \tab 4     \tab 00 min, 32.20 sec \tab \eqn{\Delta}: -40.70    \cr
+2017-09-07 \tab Clang notOpenMP \tab 1     \tab 01 min, 09.90 sec \tab                         \cr
+2017-09-07 \tab TRAVIS          \tab 1     \tab 01 min, 06.20 sec \tab                         \cr
+2017-09-07 \tab TRAVIS          \tab 4     \tab 00 min, 21.10 sec \tab \eqn{\Delta}: -45.00    \cr
 }
 }
 \examples{

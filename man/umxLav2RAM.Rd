@@ -205,9 +205,7 @@ m1 = umxRAM(namedModel)
 
 }
 \seealso{
-\itemize{
-\item \code{\link[=umxRAM]{umxRAM()}}
-}
+\code{\link[=umxRAM2Lav]{umxRAM2Lav()}}, \code{\link[=umxRAM]{umxRAM()}}
 
 Other Miscellaneous Utility Functions: 
 \code{\link{install.OpenMx}()},

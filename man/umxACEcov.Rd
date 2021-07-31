@@ -74,6 +74,7 @@ The umxACEcov 'random' option models the covariates in the expected covariance m
 all data to be preserved. The downside is that this method has a strong assumption
 of multivariate normality. Covariates like age, which are perfectly correlated in twins cannot be used.
 Covariates like sex, which are ordinal, violate the normality assumption.
+Binary and ordinal covariates like sex also violate the normality assumption. Which is most of the use cases :-(.
 }
 \details{
 The following figure shows how the ACE model with random covariates appears as a path diagram:
