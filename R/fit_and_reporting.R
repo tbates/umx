@@ -2399,13 +2399,13 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		  # 1    1   V1 V2 -0.2373752
 
 			for(thisPath in 1:nrow(selPaths)) {
-		 	    step = selPaths[thisPath, "step"] # color
+		 	    step  = selPaths[thisPath, "step"] # color
 				color = c("red", "green", "blue")[step]
-				from = selPaths[thisPath, "from"]
-				to   = selPaths[thisPath, "to"]
-				val  = round(selPaths[thisPath, "value"], digits)
+				from  = selPaths[thisPath, "from"]
+				to    = selPaths[thisPath, "to"]
+				val   = round(selPaths[thisPath, "value"], digits)
 				newPath = paste0("\t", from, " ->", to, "[label='", val, "' color='", color, "' dir='none'];\n")
-				out = paste0(out, newPath)
+				out   = paste0(out, newPath)
 			}			
 		}
 		
@@ -2417,7 +2417,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			"digraph G {\n    ", 
 			'label="', label, '";\n',
 			preOut, "\n",
-			out, "\n",
+			out   , "\n",
 			rankVariables, "\n}"
 		)
 		message("\n?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")

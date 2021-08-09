@@ -1978,7 +1978,12 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 		}
 		cat(digraph, file = file) # write dot file
 		if(umx_set_plot_format(silent=TRUE) == "DiagrammeR"){
-			print(DiagrammeR(diagram = file, type = "grViz"))
+			# opts_chunk$get()$fig.path # "../graphs/"
+			# opts_chunk$get()$fig.width
+			# opts_chunk$get()$fig.height
+			# opts_chunk$get()$dpi
+			grViz(diagram = file, engine = "dot", allow_subst = TRUE, options = NULL, width = NULL, height = NULL)
+			# print(DiagrammeR(diagram = file, type = "grViz")) # 2021-08-09 issue https://github.com/tbates/umx/issues/149
 		}else if(umx_set_plot_format(silent=TRUE) %in%  c("pdf", "svg", "png")){
 			tmp = export_svg(grViz(file)) #export as SVG
 			raw = charToRaw(tmp) # flatten
