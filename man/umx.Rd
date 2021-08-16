@@ -9,6 +9,9 @@
 building on the OpenMx package.
 All core functions are organized into families, so they are easier to find
 (see "families" below under \strong{See Also})
+Please cite as: Bates, T. C., Neale, M. C., & Maes, H. H. (2019).
+umx: A library for Structural Equation and Twin Modelling in R.
+\emph{Twin Research and Human Genetics}, \strong{22}, 27-41. \doi{10.1017/thg.2019.2}.
 
 All the functions have full-featured and well commented examples, some even have \emph{figures},
 so use the help, even if you think it won't help :-)
@@ -88,7 +91,9 @@ plot(m1, std = TRUE, file = NA)
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/umx}
+\item Bates, T. C., Neale, M. C., & Maes, H. H. (2019). umx: A library for Structural
+Equation and Twin Modelling in R. \emph{Twin Research and Human Genetics}, \strong{22}, 27-41. \doi{10.1017/thg.2019.2},
+\url{https://github.com/tbates/umx}, tutorial: \url{https://tbates.github.io}
 }
 }
 \seealso{

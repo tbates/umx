@@ -1144,31 +1144,30 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' unique environmental (E) and, optionally, either common or shared-environment (C) or 
 #' non-additive genetic effects (D).
 #' 
-#' The following figure shows how the ACE model appears as a path diagram (for one variable):
+#' The following figure shows the ACE model for one variable "x" as a path diagram:
 #' 
 #' \if{html}{\figure{ACEunivariate.png}{options: width="50\%" alt="Figure: ACE univariate.png"}}
 #' \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
 #'
 #' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
 #' 
-#' This model creates as many latent A C and E variables as there are phenotypes, and, moving 
-#' from left to right, decomposes the variance in each manifest into successively restricted 
-#' factors. The following figure shows how the ACE model appears as a path diagram:
+#' The Cholesky decomposition creates as many latent A (and C and E) latent variables as there are phenotypes, and, moving 
+#' from left to right, decomposes the variance in each phenotype into successively restricted 
+#' factors. The following figure shows the multivariate ACE model for three variables:
 #' 
 #' \if{html}{\figure{ACEmatrix.png}{options: width="50\%" alt="Figure: ACE matrix.png"}}
 #' \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
 #'
-#' In this model, the variance-covariance matrix of the raw data
-#' is recovered as the product of the lower Cholesky and its transform.
+#' In this ACE model of three phenotypes, the expected variance-covariance matrix of the original data
+#' is the product of each lower Cholesky and its transform (i.e., `A = a %*% t(a)` summed for `A+C+E`.
 #' 
-#' This Cholesky or lower-triangle decomposition allows a model which is both sure to be 
-#' solvable, and also to account for all the variance (with some restrictions) in the data.
+#' This lower-triangle decomposition feature of the Cholesky yields a model which is certain to both
+#' account for all the variance (with some restrictions) in the data and be solvable.
 #' 
-#' This figure also contains the key to understanding how to modify models that `umxACE` produces.
-#' read the "Matrices and Labels in ACE model" section in details below...
+#' This figure also contains the key to understanding how to modify models that `umxACE` produces
+#' using `umxModify()` to drop paths  by label like `"a_r1c1"`. **nb**: Read the "Matrices and Labels in ACE model" section in details below...
 #' 
-#' **NOTE**: Scroll down to details for how to use the function, a figure
-#' and multiple examples.
+#' **NOTE**: Scroll down to details for how to use the function, a figure and multiple examples.
 #' 
 #' @details
 #' \strong{Covariates}
@@ -4982,6 +4981,9 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' building on the OpenMx package.
 #' All core functions are organized into families, so they are easier to find 
 #' (see "families" below under \strong{See Also})
+#' Please cite as: Bates, T. C., Neale, M. C., & Maes, H. H. (2019). 
+#' umx: A library for Structural Equation and Twin Modelling in R. 
+#' *Twin Research and Human Genetics*, **22**, 27-41. \doi{10.1017/thg.2019.2}.
 #'
 #' All the functions have full-featured and well commented examples, some even have *figures*, 
 #' so use the help, even if you think it won't help :-)
@@ -5020,7 +5022,10 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' @family Advanced Model Building Functions
 #' @family zAdvanced Helpers
 #' @family xmu internal not for end user
-#' @references - <https://github.com/tbates/umx>
+#' @references - Bates, T. C., Neale, M. C., & Maes, H. H. (2019). umx: A library for Structural 
+#' Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. \doi{10.1017/thg.2019.2}, 
+#' <https://github.com/tbates/umx>, tutorial: <https://tbates.github.io>
+#'
 #' @md
 #' @examples
 #' require("umx")
