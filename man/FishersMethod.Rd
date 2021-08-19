@@ -17,8 +17,9 @@ FishersMethod(pvalues, ...)
 }
 }
 \description{
-\code{FishersMethod} implements R.A. Fisher's method for creating a meta-analytic p-value by combining a
-set of p-values from tests of the same hypothesis in independent samples,
+\code{FishersMethod} implements R.A. Fisher's (1925) method for creating a meta-analytic p-value by combining a
+set of p-values from tests of the same hypothesis in independent samples. See also Stouffer's method
+for combining Z scores, which allows weighting.
 }
 \examples{
 FishersMethod(c(.041, .378))
@@ -26,9 +27,10 @@ FishersMethod(c(.041, .378))
 \references{
 \itemize{
 \item Fisher, R.A. (1925). \emph{Statistical Methods for Research Workers}. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
-Fisher, R. A (1948). "Questions and answers #14". \emph{The American Statistician}. \strong{2}: 30–31. doi:10.2307/2681650. JSTOR 2681650.
-See also Stouffer's method for combining Z scores, which allows weighting.
-Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
+}
+\itemize{
+\item Fisher, R. A (1948). "Questions and answers #14". \emph{The American Statistician}. \strong{2}: 30–31. \doi{10.2307/2681650. JSTOR 2681650}.
+\item Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
 University Press.
 }
 }
