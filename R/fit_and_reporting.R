@@ -3819,18 +3819,17 @@ print.RMSEA <- function(x, ...) {
 #' Fishers Method of combining p-values.
 #'
 #' @description
-#' `FishersMethod` implements R.A. Fisher's method for creating a meta-analytic p-value by combining a 
-#' set of p-values from tests of the same hypothesis in independent samples, 
-#' 
+#' `FishersMethod` implements R.A. Fisher's (1925) method for creating a meta-analytic p-value by combining a 
+#' set of p-values from tests of the same hypothesis in independent samples. See also Stouffer's method 
+#' for combining Z scores, which allows weighting.
 #' @param pvalues A vector of p-values, e.g. c(.041, .183)
 #' @param ... More p-values if you want to offer them up one by one instead of wrapping in a vector for `pvalues`
 #' @return - A meta-analytic p-value
 #' @export
 #' @family Miscellaneous Stats Functions
-#' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
-#' Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi:10.2307/2681650. JSTOR 2681650.
-#' See also Stouffer's method for combining Z scores, which allows weighting.
-#' Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
+#' @references - * Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
+#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi:10.2307/2681650. JSTOR 2681650.
+#' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
 #' University Press.
 #' @md
 #' @examples
