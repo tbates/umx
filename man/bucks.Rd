@@ -5,14 +5,23 @@
 \alias{print}
 \title{Print a money object}
 \usage{
-bucks(x, symbol = "$", ...)
+bucks(
+  x,
+  symbol = "$",
+  big.mark = ",",
+  decimal.mark = ".",
+  trim = TRUE,
+  largest_with_cents = 1e+05,
+  negative_parens = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{money object.}
 
 \item{symbol}{Default prefix if not set.}
 
-\item{...}{further arguments passed to or from other methods.}
+\item{...}{further arguments passed to or from other methods. also cat =F to return string}
 }
 \value{
 \itemize{
@@ -29,6 +38,6 @@ fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}
+\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[scales:label_dollar]{scales::dollar()}}
 }
 }

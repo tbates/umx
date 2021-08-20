@@ -2506,7 +2506,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' # 8 Interest needed to increase principal to final value in yrs time.
 #' fin_interest(principal = 100, final=200, yrs = 5)
 #'
-fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, final=NULL, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
+fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
 	report = match.arg(report)
 	if(dinflate != 0){
 		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+dinflate)^c(1:(yrs-1)))
@@ -2515,6 +2515,7 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 	}
 	if(!is.null(final)){
 		# final = prin*(1+rate)^y
+		if(principal==0){ principal=1 }
 		return((final/principal)^(1/yrs)-1)
 		# rate is the years root of (final *prin?)
 	}
@@ -2671,9 +2672,9 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TR
 #' @aliases bucks print
 #' @param x money object.
 #' @param symbol Default prefix if not set.
-#' @param ... further arguments passed to or from other methods.
+#' @param ... further arguments passed to or from other methods. also cat =F to return string
 #' @return - invisible
-#' @seealso - [umx::fin_percent()], [umx::fin_interest()]
+#' @seealso - [umx::fin_percent()], [umx::fin_interest()], [scales::dollar()]
 #' @md
 # #' @family print
 #' @export
@@ -2681,14 +2682,20 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TR
 #' bucks(100 * 1.05^32)
 #' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
-bucks <- function(x, symbol = "$", ...) {
+bucks <- function(x, symbol = "$", big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE, ...) {
 	dot.items = list(...) # grab all the dot items cat
 	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
-	
+	if(is.null(dot.items[["cat"]])){
+		cat = TRUE
+	} else {
+		cat = FALSE
+		dot.items[["cat"]] = NULL
+	}
+
 	if(!is.null(attr(x, 'symbol')) ){
 		symbol = attr(x, 'symbol')
 	}
-	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE)
+	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = big.mark, decimal.mark = decimal.mark, trim =trim, largest_with_cents = largest_with_cents, negative_parens = negative_parens, ...)
 	if(cat){
 		cat(formatted)
 	} else {
