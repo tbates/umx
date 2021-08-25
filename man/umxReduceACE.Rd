@@ -9,7 +9,8 @@ umxReduceACE(
   report = c("markdown", "inline", "html", "report"),
   baseFileName = "tmp",
   intervals = TRUE,
-  ...
+  tryHard = "yes",
+  silent = FALSE...
 )
 }
 \arguments{
@@ -20,6 +21,10 @@ umxReduceACE(
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 
 \item{intervals}{Recompute CIs (if any included) on the best model (default = TRUE)}
+
+\item{tryHard}{Default = "yes"}
+
+\item{silent}{Default = FALSE}
 
 \item{...}{Other parameters to control model summary}
 }

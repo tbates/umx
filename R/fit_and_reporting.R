@@ -261,6 +261,8 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
+#' @param tryHard Default = "yes"
+#' @param silent Default = FALSE
 #' @param ... Other parameters to control model summary
 #' @return Best fitting model
 #' @export
@@ -280,20 +282,25 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' m2 = umxReduce(m1)
 #' 
 #' }
-umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", intervals = TRUE, ...) {
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", intervals = TRUE, tryHard="yes", silent=FALSE...) {
 	report = match.arg(report)
+	if(silent){
+		oldSilent = umx_set_silent(TRUE)
+	}else{
+		oldSilent = FALSE
+	}
 	oldAutoPlot = umx_set_auto_plot(FALSE, silent = TRUE)
 	if(model$top$dzCr$values == 1){
 		message("You gave me an ACE model")		
 		ACE = model
-		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE")
+		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE", tryHard=tryHard)
 		if(-2*logLik(ACE) > -2*logLik(ADE)){
-			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE")
-			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
+			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE", tryHard=tryHard)
+			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard=tryHard)
 			message("A dominance model is preferred, set dzCr = 0.25")
 		}else{
-			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
-			AE = umxModify(ACE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
+			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE", tryHard = tryHard)
+			AE = umxModify(ACE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard = tryHard)
 		}
 	}else if(model$top$dzCr$values == .25){
 		if(model$name=="ACE"){
@@ -303,13 +310,13 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 			message("You gave me an ADE model.")
 		}
 		ADE = model
-		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE")
-		AE  = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE")
+		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE", tryHard=tryHard)
+		AE  = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard=tryHard)
 		if(-2*logLik(ADE) > -2*logLik(ACE)){
-			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE")
+			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE", tryHard=tryHard)
 			message("An ACE model is preferred, set dzCr = 1.0")
 		}else{
-			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE")
+			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE", tryHard=tryHard)
 		}
 	}else{
 		stop(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)",
@@ -332,6 +339,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 		bestModel = mxRun(bestModel, intervals = intervals)
 	}
 	umx_set_auto_plot(oldAutoPlot, silent = TRUE)
+	umx_set_silent(oldSilent)
 	invisible(bestModel)
 }
 #' @export
