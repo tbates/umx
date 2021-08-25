@@ -9,8 +9,9 @@ umxReduceACE(
   report = c("markdown", "inline", "html", "report"),
   baseFileName = "tmp",
   intervals = TRUE,
-  tryHard = "yes",
-  silent = FALSE...
+  tryHard = c("yes", "no", "ordinal", "search"),
+  silent = FALSE,
+  ...
 )
 }
 \arguments{

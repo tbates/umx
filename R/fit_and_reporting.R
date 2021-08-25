@@ -140,6 +140,8 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @param model The [mxModel()] which will be reduced.
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
+#' @param tryHard Default = "yes"
+#' @param silent Default = FALSE
 #' @param ... Other parameters to control model summary
 #' @family Model Summary and Comparison
 #' @family Twin Modeling Functions
@@ -147,7 +149,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
 #' @export
 #' @md
-umxReduce <- function(model, report = c("markdown", "inline", "html"), baseFileName = "tmp", ...){
+umxReduce <- function(model, report = c("markdown", "inline", "html"), baseFileName = "tmp", tryHard, silent, ...){
 	UseMethod("umxReduce", model)
 }
 
@@ -282,7 +284,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' m2 = umxReduce(m1)
 #' 
 #' }
-umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", intervals = TRUE, tryHard="yes", silent=FALSE...) {
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", intervals = TRUE, tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, ...) {
 	report = match.arg(report)
 	if(silent){
 		oldSilent = umx_set_silent(TRUE)
@@ -3836,7 +3838,7 @@ print.RMSEA <- function(x, ...) {
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
-#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. \doi{10.2307/2681650. JSTOR 2681650}.
+#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. \doi{10.2307/2681650}.
 #' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
 #' University Press.
 #' @md

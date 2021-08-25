@@ -8,6 +8,8 @@ umxReduce(
   model,
   report = c("markdown", "inline", "html"),
   baseFileName = "tmp",
+  tryHard,
+  silent,
   ...
 )
 }
@@ -17,6 +19,10 @@ umxReduce(
 \item{report}{How to report the results. "html" = open in browser}
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
+
+\item{tryHard}{Default = "yes"}
+
+\item{silent}{Default = FALSE}
 
 \item{...}{Other parameters to control model summary}
 }

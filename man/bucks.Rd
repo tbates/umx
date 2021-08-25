@@ -21,6 +21,16 @@ bucks(
 
 \item{symbol}{Default prefix if not set.}
 
+\item{big.mark}{option defaulting to ","}
+
+\item{decimal.mark}{option defaulting to "."}
+
+\item{trim}{option defaulting to TRUE}
+
+\item{largest_with_cents}{option defaulting to 1e+05}
+
+\item{negative_parens}{option defaulting to FALSE}
+
 \item{...}{further arguments passed to or from other methods. also cat =F to return string}
 }
 \value{

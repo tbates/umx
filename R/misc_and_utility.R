@@ -2672,6 +2672,11 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TR
 #' @aliases bucks print
 #' @param x money object.
 #' @param symbol Default prefix if not set.
+#' @param big.mark option defaulting to ","
+#' @param decimal.mark option defaulting to "."
+#' @param trim option defaulting to TRUE
+#' @param largest_with_cents option defaulting to 1e+05
+#' @param negative_parens option defaulting to FALSE
 #' @param ... further arguments passed to or from other methods. also cat =F to return string
 #' @return - invisible
 #' @seealso - [umx::fin_percent()], [umx::fin_interest()], [scales::dollar()]
