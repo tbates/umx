@@ -30,8 +30,8 @@ FishersMethod(c(.041, .378))
 }
 \itemize{
 \item Fisher, R. A (1948). "Questions and answers #14". \emph{The American Statistician}. \strong{2}: 30–31. \doi{10.2307/2681650}.
-\item Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
-University Press.
+\item Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier,
+Vol. 1 - Adjustment during Army Life. Princeton, Princeton University Press.
 }
 }
 \seealso{

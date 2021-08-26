@@ -140,21 +140,23 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @param model The [mxModel()] which will be reduced.
 #' @param report How to report the results. "html" = open in browser
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
+#' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
 #' @param tryHard Default = "yes"
 #' @param silent Default = FALSE
 #' @param ... Other parameters to control model summary
 #' @family Model Summary and Comparison
 #' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduceACE()]
-#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
+#' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
+#'  *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
 #' @export
 #' @md
-umxReduce <- function(model, report = c("markdown", "inline", "html"), baseFileName = "tmp", tryHard, silent, ...){
+umxReduce <- function(model, report = c("markdown", "inline", "html"), intervals = TRUE, baseFileName = "tmp", tryHard = "yes", silent=FALSE, ...){
 	UseMethod("umxReduce", model)
 }
 
 #' @export
-umxReduce.default <- function(model, ...){
+umxReduce.default <- function(model, report = c("markdown", "inline", "html"), intervals = FALSE, baseFileName = "tmp", tryHard = "yes", silent=FALSE, ...){
 	stop("umxReduce is not defined for objects of class:", class(model))
 }
 
@@ -170,11 +172,12 @@ umxReduce.default <- function(model, ...){
 #' 
 #' In addition to printing a table, the function returns the preferred model.
 #' 
-#' @param model An [mxModel()] to reduce.
-#' @param report How to report the results. "html" = open in browser.
-#' @param baseFileName (optional) custom filename for html output (defaults to "tmp").
+#' @param model A [umxGxE()] to reduce.
+#' @param report How to report the results. default = "markdown". "html" = open in browser.
+#' @param baseFileName (optional) custom filename for html output (default = "tmp").
+#' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
-
+#' @param silent Default (FALSE)
 #' @param ... Other parameters to control model summary.
 #' @return best model
 #' @export
@@ -187,7 +190,7 @@ umxReduce.default <- function(model, ...){
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp_gxe", tryHard = c("no", "yes", "ordinal", "search"), ...) {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
 	report = match.arg(report)
 	umx_is_MxModel(model)
 	if(class(model) == "MxModelGxE"){		
@@ -241,6 +244,9 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 			omxQuotes(namez(modelList)), " respectively are: ",
 			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC())."
 		)
+		if(intervals){
+			bestModel = mxRun(bestModel, intervals = intervals)
+		}
 		invisible(bestModel)
 	} else {
 		stop("This function is for GxE. Feel free to let me know what you want...")
@@ -3839,8 +3845,8 @@ print.RMSEA <- function(x, ...) {
 #' @family Miscellaneous Stats Functions
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
 #' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. \doi{10.2307/2681650}.
-#' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, Vol. 1 - Adjustment during Army Life. Princeton, Princeton
-#' University Press.
+#' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, 
+#' Vol. 1 - Adjustment during Army Life. Princeton, Princeton University Press.
 #' @md
 #' @examples
 #' FishersMethod(c(.041, .378))
