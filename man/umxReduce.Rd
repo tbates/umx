@@ -7,6 +7,7 @@
 umxReduce(
   model,
   report = c("markdown", "inline", "html"),
+  intervals = TRUE,
   baseFileName = "tmp",
   tryHard = "yes",
   silent = FALSE,
@@ -17,6 +18,8 @@ umxReduce(
 \item{model}{The \code{\link[=mxModel]{mxModel()}} which will be reduced.}
 
 \item{report}{How to report the results. "html" = open in browser}
+
+\item{intervals}{Recompute CIs (if any included) on the best model (default = TRUE)}
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 

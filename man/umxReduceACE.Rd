@@ -7,8 +7,8 @@
 umxReduceACE(
   model,
   report = c("markdown", "inline", "html", "report"),
-  baseFileName = "tmp",
   intervals = TRUE,
+  baseFileName = "tmp",
   tryHard = c("yes", "no", "ordinal", "search"),
   silent = FALSE,
   ...
@@ -19,9 +19,9 @@ umxReduceACE(
 
 \item{report}{How to report the results. "html" = open in browser}
 
-\item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
-
 \item{intervals}{Recompute CIs (if any included) on the best model (default = TRUE)}
+
+\item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 
 \item{tryHard}{Default = "yes"}
 

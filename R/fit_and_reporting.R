@@ -139,8 +139,8 @@ umxWeightedAIC <- function(models, digits= 2) {
 #'
 #' @param model The [mxModel()] which will be reduced.
 #' @param report How to report the results. "html" = open in browser
-#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
+#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param tryHard Default = "yes"
 #' @param silent Default = FALSE
 #' @param ... Other parameters to control model summary
@@ -174,8 +174,8 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' 
 #' @param model A [umxGxE()] to reduce.
 #' @param report How to report the results. default = "markdown". "html" = open in browser.
-#' @param baseFileName (optional) custom filename for html output (default = "tmp").
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
+#' @param baseFileName (optional) custom filename for html output (default = "tmp").
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param silent Default (FALSE)
 #' @param ... Other parameters to control model summary.
@@ -190,7 +190,7 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
 	report = match.arg(report)
 	umx_is_MxModel(model)
 	if(class(model) == "MxModelGxE"){		
@@ -267,8 +267,8 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #'
 #' @param model an ACE or ADE [mxModel()] to reduce
 #' @param report How to report the results. "html" = open in browser
-#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
+#' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param tryHard Default = "yes"
 #' @param silent Default = FALSE
 #' @param ... Other parameters to control model summary
@@ -290,7 +290,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' m2 = umxReduce(m1)
 #' 
 #' }
-umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), baseFileName = "tmp", intervals = TRUE, tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, ...) {
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, ...) {
 	report = match.arg(report)
 	if(silent){
 		oldSilent = umx_set_silent(TRUE)
