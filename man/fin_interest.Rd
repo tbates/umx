@@ -31,7 +31,7 @@ fin_interest(
 
 \item{yrs}{Duration of the investment (default = 10).}
 
-\item{final}{if set (default = NULL), returns the rate that turns principal into final after yrs}
+\item{final}{if set (default = NULL), returns the rate that turns principal (default=1) into final after yrs}
 
 \item{n}{Compounding intervals per year (default = 12 (monthly), 365 for daily)}
 

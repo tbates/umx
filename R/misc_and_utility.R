@@ -2462,7 +2462,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @param table Whether to print a table of annual returns (default TRUE)
 #' @param largest_with_cents Default = 0
 #' @param baseYear Default = 0, can set, e.g. to 2020 for printing
-#' @param final if set (default = NULL), returns the rate that turns principal into final after yrs
+#' @param final if set (default = NULL), returns the rate that turns principal (default=1) into final after yrs
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
@@ -2516,7 +2516,7 @@ fin_interest <- function(principal = 0, deposits = 0, dinflate = 0, interest = 0
 	if(!is.null(final)){
 		# final = prin*(1+rate)^y
 		if(principal==0){ principal=1 }
-		return((final/principal)^(1/yrs)-1)
+		return((final/principal)^(1/(yrs+1))-1)
 		# rate is the years root of (final *prin?)
 	}
 
