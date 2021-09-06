@@ -7,7 +7,7 @@
 fin_interest(
   principal = 0,
   deposits = 0,
-  dinflate = 0,
+  inflate = 0,
   interest = 0.05,
   yrs = 10,
   final = NULL,
@@ -25,7 +25,7 @@ fin_interest(
 
 \item{deposits}{Optional periodic additional investment each \emph{year}.}
 
-\item{dinflate}{How much to inflate deposits over time (default = 0)}
+\item{inflate}{How much to inflate deposits over time (default = 0)}
 
 \item{interest}{Annual interest rate (default = .05)}
 
