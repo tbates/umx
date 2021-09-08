@@ -14,7 +14,8 @@ umx_score_scale(
   score = c("total", "mean", "max", "factor"),
   name = NULL,
   na.rm = FALSE,
-  minManifests = NA
+  minManifests = NA,
+  alpha = FALSE
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ umx_score_scale(
 \item{na.rm}{Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!}
 
 \item{minManifests}{If score = factor, how many missing items to tolerate for an individual?}
+
+\item{alpha}{print Cronbach's alpha? (TRUE)}
 }
 \value{
 \itemize{

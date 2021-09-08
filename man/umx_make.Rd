@@ -12,7 +12,7 @@ umx_make(
   run = FALSE,
   start = NULL,
   spelling = "en_US",
-  which = c("win", "mac", "linux"),
+  which = c("win", "mac", "linux", "solaris"),
   spell = TRUE
 )
 }

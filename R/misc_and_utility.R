@@ -1393,6 +1393,7 @@ umx_factor <- umxFactor
 #' @param name = name of the scale to be returned. Defaults to "base_score"
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
+#' @param alpha print Cronbach's alpha? (TRUE)
 #' @return - scores
 #' @export
 #' @family Data Functions
@@ -1461,7 +1462,7 @@ umx_factor <- umxFactor
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA, alpha = FALSE) {
 	score = match.arg(score)
 	
 	if(is.null(name)){ name = paste0(base, "_score") }
@@ -1495,6 +1496,11 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 	allColNames = paste0(base, c(pos, rev))
 	df = data[ , allColNames, drop = FALSE]
+
+	if(alpha){
+		print(str(df))
+		print(reliability(cov(df, use= "complete.obs")))
+	}
 
 	if(score == "max"){
 		scaleScore = rep(NA, nrow(df))
@@ -3427,7 +3433,7 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "release")  # Release to CRAN
 #' tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux"), spell=TRUE) {
+umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), spell=TRUE) {
 	what = match.arg(what)
 	which = match.arg(which)
 	if(what == "lastRhub"){
@@ -3457,8 +3463,10 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 			plat = "debian-gcc-patched"
 			# plat = "debian-clang-devel"
 		} else if(which=="win") {
-			plat = "windows-x86_64-patched" 
+			plat = "windows-x86_64-devel" #"windows-x86_64-patched" 
 			# plat = "windows-x86_64-devel" # broken 2021-06-12
+		} else if (which=="solaris"){
+			plat = "solaris-x86-patched-ods"
 		}
 
 		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
