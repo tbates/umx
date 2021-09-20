@@ -2619,8 +2619,8 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 	Total = employer + employee
 	class(Total) = 'money'
 	attr(Total, 'symbol') = symbol
-	cat(paste0("Employer pays: ", bucks(employer, symbol = symbol, cat = FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
-	 ". so ", round((employer+employee)/annualEarnings*100, 2),	"%\n")
+	cat(paste0("Employer pays ", bucks(employer, symbol = symbol, cat = FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
+	 ". So ", round((employer+employee)/annualEarnings*100, 2),	" % total!\n")
 	 )
 	return(Total)
 }

@@ -347,7 +347,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 	setList        = omxQuotes(c("n", "power", "sig.level")[which(!c(n_null, pwr_null, sig_null))])
 	beingEstimated = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
 
-	nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
+	nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update, collapse="_"))
 	if(explore){
 		if(!is.null(power)){
 			stop("Can't set power when exploring: I can only explore FOR power or effect size across a range of ns or effect sizes")
@@ -368,7 +368,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		} else if (nulls == 3){
 			stop("You didn't set any of ", setList, ": You need to fix two of these for me to be able to estimate the remaining one...")
 		}
-		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update))
+		nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update, collapse = "_"))
 		message("\n#####################\n# Estimating ", beingEstimated, " #\n#####################\n")
 		tmp = mxPower(trueModel, nullModel, n = n, power = power, sig.level = sig.level, method = method)
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, digits)
