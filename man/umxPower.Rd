@@ -14,7 +14,7 @@ umxPower(
   method = c("ncp", "empirical"),
   explore = FALSE,
   digits = 2,
-  plot = FALSE,
+  plot = TRUE,
   silent = TRUE
 )
 }

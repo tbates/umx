@@ -140,14 +140,6 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	# # TODO why not equivalent to this?
 	# # https://genepi.qimr.edu.au//general/TwinPowerCalculator/twinpower.cgi
 	#
-	# type = c("univariate", "bivariate", "GxE")
-	# decimalplaces <- function(x) {
-	#     if (abs(x - round(x)) > .Machine$double.eps^0.5) {
-	#         nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed = TRUE)[[1]][[2]])
-	#     } else {
-	#         return(0)
-	#     }
-	# }
 	method  = match.arg(method)
 	tryHard = match.arg(tryHard)
 	update  = match.arg(update)
@@ -331,13 +323,13 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 #'
 #' }
 #'
-umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=FALSE, silent = TRUE){
+umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=TRUE, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
 	oldSilent = umx_set_silent(silent, silent = TRUE) # set silent and store existing value
 	
 	if(explore & method=="ncp" & !is.null(n) ){
-		stop("method = 'ncp' does not work for searching with fixed n. Use method = 'empirical' instead, or specify power to estimate in place of n")
+		stop("method = 'ncp' does not work for both explore AND fixed n. Try method = 'empirical'")
 	}
 
 	n_null         = is.null(n)
@@ -358,9 +350,24 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 			# delete the unused lower-upper columns
 			tmp = tmp[,	1:2]
 		}
+		if(plot){
+			# TODO:
+			# 1. add dotted vertical line at N yielding power= power
+			# color the power line, and plot dots at estimated points.
+			p = ggplot(data = tmp, aes(x= N, y= power)) + geom_line(color = "red", size = .5, alpha = 0.9)
+			p = p + geom_point()
+			p = p + labs(x= "Sample Size (N)", y= "Power = 1 - \U03B2",
+			   title = paste0("Statistical power to detect true model"),
+		       subtitle = paste0("Alpha = ", sig.level),
+		       caption = paste0("Lists of changed paths: ", omxQuotes(update))
+			) 
+			p + ggplot2::theme_bw() + cowplot::draw_label("label", x = 20, y = .8)		
+			# p = p + hrbrthemes::theme_ipsum()
+			print(p)
+		}
 	} else {
 		if(nulls == 0){
-			stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these three to null. Probably n")
+			stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these to null. Probably n")
 		} else if (nulls == 1){
 			# great!
 		} else if (nulls == 2){
@@ -372,17 +379,12 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 		message("\n#####################\n# Estimating ", beingEstimated, " #\n#####################\n")
 		tmp = mxPower(trueModel, nullModel, n = n, power = power, sig.level = sig.level, method = method)
 		attributes(tmp)$detail$power = round(attributes(tmp)$detail$power, digits)
+		if(plot){
+			# message("Nothing to plot: try `explore = TRUE` next time?")
+		}
+		
 	}
-	umx_set_silent(oldSilent) # reinstate
-	if(plot){
-		stop("plot not implemented for power - email tim")
-		# p = ggplot(aes(x= tmp$X_with_Y, y = tmp$power), data = ps)
-		# p = p + geom_line(color = "red", size = .5, alpha = 0.9)
-		# p = p + theme_ipsum()
-		# p = p + ggtitle(paste0("Statistical power to detect", update, "at alpha = ", .05))
-		# p
-	}
-	
+	umx_set_silent(oldSilent) # reinstate silent status
 	return(tmp)
 }
 
