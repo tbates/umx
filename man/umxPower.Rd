@@ -109,31 +109,24 @@ pwr::pwr.r.test(r = .3, n = 90)
 # alternative = two.sided
 
 # Power search for detectable effect size, given n = 90
+umxPower(m1, "X_with_Y", explore = TRUE)
+umxPower(m1, "X_with_Y", n= 90, explore = TRUE)
 umxPower(m1, "X_with_Y", n= 90, method = "empirical", explore = TRUE)
 
-# Search X_with_Y:power relationship for n=90
-# |    | X_with_Y | power | lower | upper |
-# |:---|:---------|:------|:------|:------|
-# | 1  | 0.03     | 0.27  | 0.15  | 0.44  |
-# | 2  | 0.03     | 0.32  | 0.20  | 0.48  |
-# | 3  | 0.04     | 0.38  | 0.26  | 0.53  |
-# | 4  | 0.04     | 0.45  | 0.33  | 0.57  |
-# | 5  | 0.04     | 0.51  | 0.41  | 0.61  |
-# | 6  | 0.05     | 0.58  | 0.49  | 0.66  |
-# | 7  | 0.05     | 0.64  | 0.57  | 0.71  |
-# | 8  | 0.06     | 0.70  | 0.64  | 0.75  |
-# | 9  | 0.06     | 0.75  | 0.69  | 0.80  |
-# | 10 | 0.06     | 0.80  | 0.74  | 0.85  |
-# | 11 | 0.07     | 0.84  | 0.77  | 0.88  |
-# | 12 | 0.07     | 0.87  | 0.80  | 0.92  |
-# | 13 | 0.08     | 0.90  | 0.83  | 0.94  |
-# | 14 | 0.08     | 0.92  | 0.85  | 0.96  |
-# | 15 | 0.08     | 0.94  | 0.87  | 0.97  |
-# | 16 | 0.09     | 0.95  | 0.89  | 0.98  |
-# | 17 | 0.09     | 0.96  | 0.91  | 0.98  |
-# | 18 | 0.10     | 0.97  | 0.92  | 0.99  |
-# | 19 | 0.10     | 0.98  | 0.93  | 0.99  |
-# | 20 | 0.10     | 0.98  | 0.94  | 0.99  |
+
+data(twinData) # ?twinData from Australian twins.
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
+m1 = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
+
+# drop more than 1 path
+# can't use ncp with 
+umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'ncp', n=90, explore = TRUE)
+# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
+umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE)
+umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
+
 
 }
 
