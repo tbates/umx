@@ -97,6 +97,7 @@
 
 
 utils::globalVariables(c(
+	'N',
 	'x',
 	'xtable',
 	'M', 'S',
