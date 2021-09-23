@@ -325,14 +325,17 @@ umxModel <- function(...) {
 #' **Sketch mode**
 #'
 #' If you are at the "sketching" stage of theory consideration, `umxRAM` supports
-#' a simple vector of manifest names to work with.
+#' setting data to a simple vector of manifest names.
+#' As usual in `umxRAM`, any variables you refer to that are not in data are treated as latents.
 #' 
 #' ```R
-#' m1 = umxRAM("sketch", data = c("A", "B", "C"),
-#' 	umxPath("A", to = "B"),
-#' 	umxPath("B", with = "C"),
-#' 	umxPath(v.m. = c("A", "B", "C"))
+#' m1 = umxRAM("sketch", data = c("A", "B"),
+#' 	umxPath("C", to = c("A", "B"), values=.3),
+#' 	umxPath("A", with = "B", values=.45),
+#' 	umxPath(v.m. = c("A", "B")),
+#' 	umxPath(v1m0 = "C")
 #' )
+#' plot(m1, means=F)
 #' ```
 #' Will create this figure:
 #' 
