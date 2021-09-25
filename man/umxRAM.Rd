@@ -116,7 +116,7 @@ As usual in \code{umxRAM}, any variables you refer to that are not in data are t
 	umxPath(v.m. = c("A", "B")),
 	umxPath(v1m0 = "C")
 )
-plot(m1, means=F)
+plot(m1, means = FALSE)
 }\if{html}{\out{</div>}}
 
 Will create this figure:

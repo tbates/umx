@@ -22,7 +22,7 @@
 
 # ![](example-plot.jpg "Example Plot Title") = Image in man/figures
 
-# cran_prep <- check_for_cran("~/bin/umx/", show_status=FALSE)
+# cran_prep = check_for_cran("~/bin/umx/", show_status=FALSE)
 # cran_prep$cran_summary()
 
 # Makevars for clang
@@ -335,7 +335,7 @@ umxModel <- function(...) {
 #' 	umxPath(v.m. = c("A", "B")),
 #' 	umxPath(v1m0 = "C")
 #' )
-#' plot(m1, means=F)
+#' plot(m1, means = FALSE)
 #' ```
 #' Will create this figure:
 #' 
@@ -3655,8 +3655,8 @@ umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FA
 		# carry on if we failed
 		while(model$output$status[[1]] == 6 && n > 2 ) {
 			print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
-			model <- mxRun(model)
-			n <- (n - 1)
+			model = mxRun(model)
+			n = (n - 1)
 			tries = (tries + 1)
 		}
 		if(tries == 0){ 

@@ -27,7 +27,7 @@ m1 = umxRAM("has_means_ex", data = demoOneFactor, type = "cov",
 	umxPath(var = "G", fixedAt = 1)
 )#'
 umx_has_means(m1)
-m1 <- mxModel(m1,
+m1 = mxModel(m1,
 	mxPath(from = "one", to = manifests),
 	mxData(demoOneFactor[1:100,], type = "raw")
 )

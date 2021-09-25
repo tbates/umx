@@ -24,14 +24,14 @@ set the number of cores (threads) used by OpenMx
 \examples{
 library(umx)
 manifests = c("mpg", "disp", "gear")
-m1 <- mxModel("ind", type = "RAM",
+m1 = mxModel("ind", type = "RAM",
 	manifestVars = manifests,
 	mxPath(from = manifests, arrows = 2),
 	mxPath(from = "one", to = manifests),
 	mxData(mtcars[, manifests], type = "raw")
 )
 umx_set_cores() # print current value
-oldCores <- umx_set_cores(silent = TRUE)  # store existing value
+oldCores = umx_set_cores(silent = TRUE)  # store existing value
 umx_set_cores(omxDetectCores()) # set to max
 umx_set_cores(-1); umx_set_cores() # set to max
 m1 = umx_set_cores(1, m1)  # set m1 usage to 1 core

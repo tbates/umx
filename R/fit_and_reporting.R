@@ -281,8 +281,8 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @examples
 #' \dontrun{
 #' data(twinData)
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' m2 = umxReduce(m1)
 #' umxSummary(m2)
@@ -291,7 +291,8 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' 
 #' }
 umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, ...) {
-	report = match.arg(report)
+	report  = match.arg(report)
+	tryHard = match.arg(tryHard)
 	if(silent){
 		oldSilent = umx_set_silent(TRUE)
 	}else{
@@ -301,10 +302,10 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	if(model$top$dzCr$values == 1){
 		message("You gave me an ACE model")		
 		ACE = model
-		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE", tryHard=tryHard)
+		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE", tryHard = tryHard)
 		if(-2*logLik(ACE) > -2*logLik(ADE)){
-			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE", tryHard=tryHard)
-			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard=tryHard)
+			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE", tryHard = tryHard)
+			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard = tryHard)
 			message("A dominance model is preferred, set dzCr = 0.25")
 		}else{
 			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE", tryHard = tryHard)
@@ -453,7 +454,7 @@ loadings.default <- function(x, ...) stats::loadings(x, ...)
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' myVars <- c("mpg", "disp", "hp", "wt", "qsec")
+#' myVars = c("mpg", "disp", "hp", "wt", "qsec")
 #' m1 = umxEFA(name = "test", factors = 2, data = mtcars[, myVars])
 #' loadings(m1)
 #'
@@ -642,10 +643,10 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 		# 3. Format CIs
 		model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
 		model_CI_OK = object$output$confidenceIntervalCodes
-		colnames(model_CI_OK) <- c("lbound Code", "ubound Code")
+		colnames(model_CI_OK) = c("lbound Code", "ubound Code")
 		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
 		print(model_CIs)
-		npsolMessages <- list(
+		npsolMessages = list(
 		'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
 		'2' = 'The linear constraints and bounds could not be satisfied. The problem has no feasible solution.',
 		'3' = 'The nonlinear constraints and bounds could not be satisfied. The problem may have no feasible solution.',
@@ -1123,8 +1124,8 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' require(umx)
 #' data(twinData)
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- subset(twinData, zygosity == "MZFF")
-#' dzData <- subset(twinData, zygosity == "DZFF")
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 #' umxSummary(m1)
 #' \dontrun{
@@ -1159,9 +1160,9 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 		
 		if(std){
 			caption = paste0("Standardized parameter estimates from a ", dim(a)[2], "-factor Cholesky ACE model. ")
-			Vtot = A + C + E; # Total variance
-			I  <- diag(nVar); # nVar Identity matrix
-			SD <- solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
+			Vtot = A + C + E;            # Total variance
+			I    = diag(nVar);           # nVar Identity matrix
+			SD   = solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
 			# (same as "(\sqrt(I.Vtot))~"
 
 			# Standardized _path_ coefficients ready to be stacked together
@@ -1208,7 +1209,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 
 		if(showRg) {
 			# Pre & post multiply covariance matrix by inverse of standard deviations
-			NAmatrix <- matrix(NA, nVar, nVar);
+			NAmatrix = matrix(NA, nVar, nVar);
 			rA = tryCatch(solve(sqrt(I*A)) %*% A %*% solve(sqrt(I*A)), error = function(err) return(NAmatrix)); # genetic correlations
 			rC = tryCatch(solve(sqrt(I*C)) %*% C %*% solve(sqrt(I*C)), error = function(err) return(NAmatrix)); # C correlations
 			rE = tryCatch(solve(sqrt(I*E)) %*% E %*% solve(sqrt(I*E)), error = function(err) return(NAmatrix)); # E correlations
@@ -1219,7 +1220,7 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			rCClean[upper.tri(rCClean)] = NA
 			rEClean[upper.tri(rEClean)] = NA
 			genetic_correlations = data.frame(cbind(rAClean, rCClean, rEClean), row.names = selDVs);
-			names(genetic_correlations) <- selDVs
+			names(genetic_correlations) = selDVs
 		 	# Make a nice table.
 			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
 			umx_print(genetic_correlations, caption = "Genetic correlations", digits = digits, zero.print = zero.print)
@@ -1241,12 +1242,12 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			# imxEvalByName finds them both
 			# outList = c();
 			# for(aName in row.names(CIlist)) {
-			# 	outList <- append(outList, imxEvalByName(aName, model))
+			# 	outList = append(outList, imxEvalByName(aName, model))
 			# }
 			# # Add estimates into the CIlist
 			# CIlist$estimate = outList
 			# reorder to match summary
-			# CIlist <- CIlist[, c("lbound", "estimate", "ubound")]
+			# CIlist = CIlist[, c("lbound", "estimate", "ubound")]
 			CIlist$fullName = row.names(CIlist)
 			# Initialise empty matrices for the CI results
 			rows = dim(model$top$matrices$a$labels)[1]
@@ -1419,7 +1420,7 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 
 		# Pre & post multiply covariance matrix by inverse of standard deviations
 		if(showRg) {
-			NAmatrix <- matrix(NA, nDV, nDV);
+			NAmatrix = matrix(NA, nDV, nDV);
 			rA = tryCatch(solve(sqrt(Iden * A)) %*% A %*% solve(sqrt(Iden * A)), error = function(err) return(NAmatrix)); # genetic correlations
 			rC = tryCatch(solve(sqrt(Iden * C)) %*% C %*% solve(sqrt(Iden * C)), error = function(err) return(NAmatrix)); # C correlations
 			rE = tryCatch(solve(sqrt(Iden * E)) %*% E %*% solve(sqrt(Iden * E)), error = function(err) return(NAmatrix)); # E correlations
@@ -1451,7 +1452,7 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 			# # Add estimates into the CIlist
 			# CIlist$estimate = outList
 			# reorder to match summary
-			CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
+			CIlist = CIlist[, c("lbound", "estimate", "ubound")] 
 			CIlist$fullName = row.names(CIlist)
 			# Initialise empty matrices for the standardized results
 			rows = dim(model$top$matrices$a$labels)[1]
@@ -1632,7 +1633,7 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = FALSE, showRg = FA
 			E = model$top$E$values
 			Vtot = A + C + E; # Total variance
 			nVarIden = diag(nVar)
-			NAmatrix <- matrix(NA, nVar, nVar);
+			NAmatrix = matrix(NA, nVar, nVar);
 
 			rA = tryCatch(solve(sqrt(nVarIden * A)) %*% A %*% solve(sqrt(nVarIden * A)), error = function(err) return(NAmatrix)); # genetic correlations
 			rC = tryCatch(solve(sqrt(nVarIden * C)) %*% C %*% solve(sqrt(nVarIden * C)), error = function(err) return(NAmatrix)); # C correlations
@@ -1678,8 +1679,8 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @examples
 #' require(umx)
 #' data(GFF) # family function and well-being data
-#' mzData <- subset(GFF, zyg_2grp == "MZ")
-#' dzData <- subset(GFF, zyg_2grp == "DZ")
+#' mzData = subset(GFF, zyg_2grp == "MZ")
+#' dzData = subset(GFF, zyg_2grp == "DZ")
 #' selDVs = c("hap", "sat", "AD") # These will be expanded into "hap_T1" "hap_T2" etc.
 #' m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 #' umxSummaryIP(m1)
@@ -1750,7 +1751,7 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 	
 	if(showRg) {
 		# Pre & post multiply covariance matrix by inverse of standard deviations
-		NAmatrix <- matrix(NA, nVar, nVar);  
+		NAmatrix = matrix(NA, nVar, nVar);  
 		rA = tryCatch(solve(sqrt(nVarIden*A)) %*% A %*% solve(sqrt(nVarIden*A)), error=function(err) return(NAmatrix)); # genetic correlations
 		rC = tryCatch(solve(sqrt(nVarIden*C)) %*% C %*% solve(sqrt(nVarIden*C)), error=function(err) return(NAmatrix)); # shared environmental correlations
 		rE = tryCatch(solve(sqrt(nVarIden*E)) %*% E %*% solve(sqrt(nVarIden*E)), error=function(err) return(NAmatrix)); # Unique environmental correlations
@@ -3090,11 +3091,11 @@ umxUnexplainedCausalNexus <- function(from, delta, to, model= NULL) {
 	umx_check_model(model, type = "RAM")
 	
 	manifests = model@manifestVars
-	partialDataRow <- matrix(0, 1, length(manifests))  # add dimnames to allow access by name
+	partialDataRow = matrix(0, 1, length(manifests))  # add dimnames to allow access by name
 	dimnames(partialDataRow) = list("val", manifests)
-	partialDataRow[1, from] <- delta # delta is in raw "from" units
-	partialDataRow[1, to]   <- NA
-	completedRow <- umxConditionalsFromModel(model, partialDataRow, meanOffsets = TRUE)
+	partialDataRow[1, from]  = delta # delta is in raw "from" units
+	partialDataRow[1, to]    = NA
+	completedRow = umxConditionalsFromModel(model, partialDataRow, meanOffsets = TRUE)
 	# by default, meanOffsets = FALSE, and the results take expected means into account
 	return(completedRow[1, to])
 }
@@ -3582,22 +3583,21 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 	}
 	if(umx_is_RAM(object)){
 		if(manifests & !latents){
-			# expCov = attr(object$objective[[2]]$result, "expCov")
 			thisFit = paste0(object$name, ".fitfunction")
-			expCov <- attr(object$output$algebras[[thisFit]], "expCov")
+			expCov  = attr(object$output$algebras[[thisFit]], "expCov")
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		} else {
-			A <- mxEval(A, object)
-			S <- mxEval(S, object)
-			I <- diag(1, nrow(A))
-			E <- solve(I - A)
-			expCov <- E %&% S # The model-implied covariance matrix
-			mV <- NULL
+			A = mxEval(A, object)
+			S = mxEval(S, object)
+			I = diag(1, nrow(A))
+			E = solve(I - A)
+			expCov = E %&% S # The model-implied covariance matrix
+			mV = NULL
 			if(latents) {
-				mV <- object@latentVars 
+				mV = object@latentVars 
 			}
 			if(manifests) {
-				mV <- c(mV, object@manifestVars)
+				mV = c(mV, object@manifestVars)
 			}
 			expCov = expCov[mV, mV]
 		}
@@ -3605,7 +3605,7 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 		if(latents){
 			stop("I don't know how to reliably get the latents for non-RAM objects... Sorry :-(")
 		} else {
-			expCov <- attr(object$output$algebras[[paste0(object$name, ".fitfunction")]], "expCov")
+			expCov = attr(object$output$algebras[[paste0(object$name, ".fitfunction")]], "expCov")
 			dimnames(expCov) = list(manifestNames, manifestNames)
 		}
 	}
@@ -3658,7 +3658,7 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 		# TODO should a function called expMeans get expected means for latents... why not.
 		stop("Haven't thought about getting means for latents yet... Bug me about it :-)")
 	}
-	expMean <- attr(model$output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
+	expMean = attr(model$output$algebras[[paste0(model$name, ".fitfunction")]], "expMean")
 	
 	if(model$data$type == "raw"){
 		manifestNames = names(model$data$observed)

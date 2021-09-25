@@ -66,8 +66,8 @@ See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary
 require(umx)
 data(twinData)
 selDVs = c("bmi1", "bmi2")
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
 umxSummary(m1)
 \dontrun{
