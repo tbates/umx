@@ -57,4 +57,4 @@ Suggests:
 	rhub
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

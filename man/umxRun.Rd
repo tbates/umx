@@ -6,24 +6,21 @@
 \usage{
 umxRun(
   model,
-  n = 1,
-  calc_SE = TRUE,
+  tryHard = c("no", "yes", "ordinal", "search"),
   calc_sat = TRUE,
   setValues = FALSE,
   setLabels = FALSE,
   intervals = FALSE,
+  optimizer = NULL,
   comparison = NULL
 )
 }
 \arguments{
 \item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to run.}
 
-\item{n}{The maximum number of times you want to run the model trying to get a code green run (defaults to 1)}
+\item{tryHard}{How to tryHard. Default = "no". Alternatives "yes", "ordinal", "search"}
 
-\item{calc_SE}{Whether to calculate standard errors (ignored when n = 1)
-for the summary (if you use \code{\link[=mxCI]{mxCI()}} or \code{\link[=umxCI]{umxCI()}}, you can turn this off)}
-
-\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[=mxData]{mxData()}} \code{\link[=mxModel]{mxModel()}}s) (defaults to TRUE - why would you want anything else?)}
+\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[=mxData]{mxData()}} \code{\link[=mxModel]{mxModel()}}s)}
 
 \item{setValues}{Whether to set the starting values of free parameters (default = FALSE)}
 
@@ -31,7 +28,9 @@ for the summary (if you use \code{\link[=mxCI]{mxCI()}} or \code{\link[=umxCI]{u
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE}
 
-\item{comparison}{Whether to run umxCompare() after umxRun}
+\item{optimizer}{optional to set the optimizer.}
+
+\item{comparison}{Comparison model (will be used to drive umxCompare() after umxRun}
 }
 \value{
 \itemize{
@@ -48,11 +47,10 @@ require(umx)
 data(demoOneFactor)
 latents  = c("G")
 manifests = names(demoOneFactor)
-m1 = mxModel("One Factor", type = "RAM", 
-	manifestVars = manifests, latentVars = latents, 
-	mxPath(from = latents  , to = manifests),
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1.0),
+m1 = mxModel("fact", type="RAM", manifestVars=manifests, latentVars=latents,
+	mxPath(latents  , to = manifests),
+	mxPath(manifests, arrows = 2),
+	mxPath(latents  , arrows = 2, free = FALSE, values = 1),
 	mxData(cov(demoOneFactor), type = "cov", numObs=500)
 )
 
