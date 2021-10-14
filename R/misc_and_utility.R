@@ -1394,6 +1394,7 @@ umx_factor <- umxFactor
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
+#' @param mapStrings For input like True/False can map to 0,1 NULL
 #' @return - scores
 #' @export
 #' @family Data Functions
@@ -1462,11 +1463,30 @@ umx_factor <- umxFactor
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA, alpha = FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA, alpha = FALSE, mapStrings= NULL) {
 	score = match.arg(score)
-	
 	if(is.null(name)){ name = paste0(base, "_score") }
+	oldData = data
 
+	if(!is.null(mapStrings)){
+		relevantColumns = paste0(base, c(pos, rev))
+		for (thisCol in relevantColumns){
+			unique_values = unique(data[, thisCol, drop = TRUE])
+			unique_values = unique_values[!is.na(unique_values)]
+			if(any(!(unique_values %in% mapStrings))){
+				notFound = unique_values[which(!(unique_values %in% mapStrings))]
+				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+			}
+			data[, thisCol] = factor(data[, thisCol, drop=TRUE], levels= mapStrings)
+			data[, thisCol] = as.numeric(data[, thisCol, drop=TRUE])
+		}
+		if(!is.null(max)){
+			max = length(mapStrings)
+			message(paste0("polite note: You set the max but with mapStrings I set the max: Ignoring yours and setting it to ", max))
+		}else{
+			max = length(mapStrings)
+		}
+	}
 	mins = umx_apply("min", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
 	maxs = umx_apply("max", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
 	if(any(mins < min)){
@@ -1478,7 +1498,6 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		umx_msg(msg)
 	}
 
-	oldData = data
 	# ==================================
 	# = Reverse any items needing this =
 	# ==================================
@@ -1499,7 +1518,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 	if(alpha){
 		print(str(df))
-		print(reliability(cov(df, use= "complete.obs")))
+		print(reliability(cov(df, use= "pairwise.complete.obs")))
 	}
 
 	if(score == "max"){
@@ -1509,16 +1528,14 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		}
 	}else if(score == "total"){
 		if(any(is.na(df))){
-			message("Polite note: you asked for scale totals, but some subjects have missing data: I just ignored that. You might want means...")
+			message("Polite note: You asked for scale totals, but some subjects have missing data: Pay attention to na.rm, or perhaps use means?...")
 		}
 		scaleScore = rowSums(df, na.rm = na.rm)
 	}else if(score == "mean"){
 		scaleScore = rowMeans(df, na.rm = na.rm)
 	}else if(score == "factor"){
-		x = umxEFA(name = "score", factors = "g", data = df, scores= "Regression", minManifests= minManifests)
-		scaleScore = x$g
-	}else{
-		stop("not sure how to handle score = ", omxQuotes(score), ". Legal options are: ", omxQuotes(c("total", "mean", "max", "factor")))
+		tmp = umxEFA(name = "score", factors = "g", data = df, scores= "Regression", minManifests= minManifests)
+		scaleScore = tmp$g
 	}
 	oldData[, name] = scaleScore
 	return(oldData)
@@ -1706,10 +1723,11 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' @export
 #' @references - <https://github.com/tbates/umx>
 #' @examples
-#' df = mtcars
 #' # make mpg into string, and cyl into a factor
+#' df = mtcars
 #' df$mpg = as.character(df$mpg)
 #' df$cyl = factor(df$cyl)
+#' df$am = df$am==1
 #' 
 #' df = umx_as_numeric(df); str(df) # mpg not touched
 #' df = umx_as_numeric(df, force=TRUE); str(df) # mpg coerced back to numeric

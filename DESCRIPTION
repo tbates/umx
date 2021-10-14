@@ -1,6 +1,6 @@
 Package: umx
-Version: 4.9.5
-Date: 2021-09-10
+Version: 4.10.1
+Date: 2021-10-31
 Title: SEM and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
