@@ -18,7 +18,7 @@ rad2deg(rad)
 Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
 
 \emph{note}: R's trig functions, e.g. \code{\link[=sin]{sin()}} use Radians for input! There are \eqn{2\pi}
-radians in a circle. 1 Rad = \eqn{180/\pi} degrees (~ 57.296\eqn{^{\circ}})
+radians in a circle. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
 }
 \examples{
 rad2deg(pi) #180 degrees

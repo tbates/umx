@@ -1833,12 +1833,12 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' tmp = umx_rename(tmp, regex = "lacement", to = "") # revert to disp
 #' umx_names(tmp, "^d") # all names beginning with a d
 #'
-#' # advanced: checking deprecated format handled...
+#' # dev: check deprecated format handled...
 #' tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
-umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE, old = "deprecated", replace= "deprecated") {
+umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE, old = "deprecated_from", replace= "deprecated_to") {
 	# See also gdata::rename.vars(data, from, to)	
-	if(any(old     != "deprecated")){from = old; message("Polite message: Please use 'from' instead of 'old' in umx_rename()") }
-	if(any(replace != "deprecated")){to = replace; message("Polite message: Please use 'to' instead of 'replace' in umx_rename()") }
+	if(any(old     != "deprecated_from")){from = old; message("Polite message: Please use 'from' instead of 'old' in umx_rename()") }
+	if(any(replace != "deprecated_to")){to = replace; message("Polite message: Please use 'to' instead of 'replace' in umx_rename()") }
 
 	if(!is.null(attributes(from)$names)){
 		stop("You gave a list to from in umx_rename(). Lists (old='new') only allowed in to")
@@ -2485,8 +2485,8 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @param report "markdown" or "html", 
 #' @param table Whether to print a table of annual returns (default TRUE)
 #' @param largest_with_cents Default = 0
-#' @param baseYear Default = 0, can set, e.g. to 2020 for printing
-#' @param final if set (default = NULL), returns the rate that turns principal (default=1) into final after yrs
+#' @param baseYear Default = current year (for table row labels)
+#' @param final if set (default = NULL), returns the rate required to turn principal into final after yrs (principal defaults to 1)
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
@@ -3301,7 +3301,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are \eqn{2\pi} 
-#' radians in a circle. 1 Rad = \eqn{180/\pi} degrees (~ 57.296\eqn{^{\circ}})
+#' radians in a circle. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
 #'
 #' @param rad The value in Radians you wish to convert
 #' @return - value in degrees
@@ -3316,11 +3316,12 @@ rad2deg <- function(rad) { rad * 180/pi }
 
 #' Convert Degrees to Degrees 
 #'
-#' @description A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi} in a circle, so \eqn{deg x 180/\pi} to get radians.
+#' @description A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi}
+#' in a circle), so \eqn{deg x 180/\pi} to get radians.
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! 
 #' 
-#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees	 (\eqn{\approx 57.296^{\circ}})
+#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
 #'
 #' @param deg The value in degrees you wish to convert to radians
 #' @return - value in radians
@@ -7718,7 +7719,6 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @param rowMarker mark the end of each row
 #' @return - matrix
 #' @family Miscellaneous Utility Functions
-#' @references \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style/}
 #' @export
 #' @examples
 #' # simple example
