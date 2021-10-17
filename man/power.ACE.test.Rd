@@ -8,7 +8,8 @@ power.ACE.test(
   AA = 0.5,
   CC = 0,
   EE = NULL,
-  update = c("a", "c", "a_after_dropping_c"),
+  DD = NULL,
+  update = c("a", "c", "a_after_dropping_c", "d"),
   value = 0,
   n = NULL,
   MZ_DZ_ratio = 1,
@@ -27,13 +28,15 @@ power.ACE.test(
 
 \item{CC}{Shared environment variance (Default 0)}
 
-\item{EE}{Unique environment variance. Leave NULL (default) to compute an amount summing to 1}
+\item{EE}{Unique environment variance. Leave NULL (default) to compute an amount summing to 1.}
+
+\item{DD}{Dominance Is set (default= NULL) compute an ADE rather than ACE model (DZr=.25)}
 
 \item{update}{Component to drop (Default "a", i.e., drop a)}
 
 \item{value}{Value to set dropped path to (Default 0)}
 
-\item{n}{If provided, solve at the given n (Default NULL)}
+\item{n}{If provided, solve at the given number of MZ+DZ pairs (Default NULL)}
 
 \item{MZ_DZ_ratio}{MZ pairs per DZ pair (Default 1 = equal numbers.)}
 
@@ -57,14 +60,17 @@ power.ACE.test(
 \code{\link[OpenMx:mxPower]{OpenMx::mxPower()}} object
 }
 \description{
-\code{power.ACE.test} simulates a univariate ACE model (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins. It
-computes power to detect dropping one or more paths specified in \verb{drop=}.
+\code{power.ACE.test} simulates a univariate ACE model. It
+computes power to detect dropping one or more paths (a, c, or a after dropping c), specified in \verb{drop=}.
+
 The interface and functionality of this service are experimental and subject to change.
 }
 \details{
 Statistical power is the proportion of studies that, over the long run, one should expect to yield a statistically
 significant result given certain study characteristics such as sample size (N), the expected effect size (\eqn{\beta}),
 and the criterion for statistical significance (\eqn{\alpha}).
+
+(with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins.
 
 A typical target for power is 80\%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
 of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
@@ -96,13 +102,12 @@ power.ACE.test(AA= .5, CC= 0, update = "a", search = TRUE)
 # for power to be valid.
 # tryHard helps ensure this, as does the default nSim= 4000 pair data.
 # Power is important to get right, so I recommend using tryHard = "yes" (the default)
-power.ACE.test(AA= .5, CC= 0, update = "a")
 
 # =====================
 # = Power to detect C =
 # =====================
 
-# 102 of each of MZ and DZ pairs for 80\% power.
+# 102 of each of MZ and DZ pairs for 80\% power (default).
 power.ACE.test(AA= .5, CC= .3, update = "c")
 
 # ==========================================
@@ -132,24 +137,24 @@ power.ACE.test(update = "c", AA= .0, CC= .5)
 power.ACE.test(update = "c", AA= .3, CC= .5)
 
 
-# ===============================================
-# = Power with more DZs than MZs and vice versa =
-# ===============================================
+# ===================================
+# = Power with more DZs or more MZs =
+# ===================================
 
-# Power about the same: total pairs with 2 MZs per DZ = 692, vs. 707
+# Power about the same: total pairs with 2 MZs per DZ
 power.ACE.test(MZ_DZ_ratio= 2/1, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 power.ACE.test(MZ_DZ_ratio= 1/2, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
+power.ACE.test(update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 
 
 # =====================================
 # = Compare ncp and empirical methods =
 # =====================================
-# Compare to empirical mode: suggests 83.6 MZ and 83.6 DZ pairs
 
-power.ACE.test(update= "a", AA= .5, CC= 0, method= "empirical")
-# method= "empirical": For 80\% power, you need 76 MZ and 76 DZ pairs
 power.ACE.test(update= "a", AA= .5, CC= 0, method = "ncp")
-# method = "ncp": For 80\% power, you need 83.5 MZ and 83.5 DZ pairs
+# method = "ncp": For 80\% power, you need 166 MZ and 166 DZ pairs
+power.ACE.test(update= "a", AA= .5, CC= 0, method= "empirical")
+# method= "empirical": For 80\% power, you need 154 MZ and 154 DZ pairs
 
 # ====================
 # = Show off options =
@@ -159,10 +164,12 @@ power.ACE.test(update= "a", AA= .5, CC= 0, method = "ncp")
 power.ACE.test(update = "a", AA= .5, CC= 0, tryHard= "no")
 
 # 2. toggle optimizer
+
 power.ACE.test(update= "a", AA= .5, CC= 0, optimizer= "SLSQP")
 
-# 3. How many twin pairs in the base simulated data?
-power.ACE.test(update = "a", AA= .5, CC= 0)
+# 3. You can raise or lower the number of pairs used in the true model
+#    by varying nSim (twin pairs in the simulated data).
+
 power.ACE.test(update = "a", AA= .5, CC= 0, nSim= 20)
 
 }

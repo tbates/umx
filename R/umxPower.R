@@ -1,13 +1,17 @@
 #' Test the power of an ACE model to detect paths of interest.
 #'
-#' @description `power.ACE.test` simulates a univariate ACE model (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins. It 
-#' computes power to detect dropping one or more paths specified in `drop=`. 
+#' @description `power.ACE.test` simulates a univariate ACE model. It 
+#' computes power to detect dropping one or more paths (a, c, or a after dropping c), specified in `drop=`. 
+#' 
 #' The interface and functionality of this service are experimental and subject to change.
+#' 
 #' @details
 #' Statistical power is the proportion of studies that, over the long run, one should expect to yield a statistically
 #' significant result given certain study characteristics such as sample size (N), the expected effect size (\eqn{\beta}),
 #' and the criterion for statistical significance (\eqn{\alpha}).
-#' 
+#'
+#' (with nMZpairs= 2000 and MZ_DZ_ratio*nMZpairs DZ twins.
+#'
 #' A typical target for power is 80%. Much as the accepted critical p-value is .05, this has emerged as a trade off, in this case
 #' of resources required for more powerful studies against the cost of missing a true effect.  People interested in truth
 #' discourage running studies with low power: A study with 20 percent power will fail to detect real effects 80% of the time.
@@ -23,9 +27,10 @@
 #'
 #' @param AA Additive genetic variance (Default .5)
 #' @param CC Shared environment variance (Default 0)
-#' @param EE Unique environment variance. Leave NULL (default) to compute an amount summing to 1
+#' @param EE Unique environment variance. Leave NULL (default) to compute an amount summing to 1.
+#' @param DD Dominance Is set (default= NULL) compute an ADE rather than ACE model (DZr=.25)
 #' @param update Component to drop (Default "a", i.e., drop a)
-#' @param n If provided, solve at the given n (Default NULL)
+#' @param n If provided, solve at the given number of MZ+DZ pairs (Default NULL)
 #' @param MZ_DZ_ratio MZ pairs per DZ pair (Default 1 = equal numbers.)
 #' @param sig.level alpha (p-value) Default = 0.05
 #' @param power Default = .8 (80 percent power, equal to 1 - Type II rate)
@@ -65,13 +70,12 @@
 #' # for power to be valid.
 #' # tryHard helps ensure this, as does the default nSim= 4000 pair data.
 #' # Power is important to get right, so I recommend using tryHard = "yes" (the default)
-#' power.ACE.test(AA= .5, CC= 0, update = "a")
 #' 
 #' # =====================
 #' # = Power to detect C =
 #' # =====================
 #' 
-#' # 102 of each of MZ and DZ pairs for 80% power.
+#' # 102 of each of MZ and DZ pairs for 80% power (default).
 #' power.ACE.test(AA= .5, CC= .3, update = "c")
 #'
 #' # ==========================================
@@ -101,24 +105,24 @@
 #' power.ACE.test(update = "c", AA= .3, CC= .5)
 #'
 #'
-#' # ===============================================
-#' # = Power with more DZs than MZs and vice versa =
-#' # ===============================================
+#' # ===================================
+#' # = Power with more DZs or more MZs =
+#' # ===================================
 #'
-#' # Power about the same: total pairs with 2 MZs per DZ = 692, vs. 707
+#' # Power about the same: total pairs with 2 MZs per DZ
 #' power.ACE.test(MZ_DZ_ratio= 2/1, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 #' power.ACE.test(MZ_DZ_ratio= 1/2, update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
+#' power.ACE.test(update= "a", AA= .3, CC= 0, method="ncp", tryHard="yes")
 #'
 #' 
 #' # =====================================
 #' # = Compare ncp and empirical methods =
 #' # =====================================
-#' # Compare to empirical mode: suggests 83.6 MZ and 83.6 DZ pairs
 #'
-#' power.ACE.test(update= "a", AA= .5, CC= 0, method= "empirical")
-#' # method= "empirical": For 80% power, you need 76 MZ and 76 DZ pairs
 #' power.ACE.test(update= "a", AA= .5, CC= 0, method = "ncp")
-#' # method = "ncp": For 80% power, you need 83.5 MZ and 83.5 DZ pairs
+#' # method = "ncp": For 80% power, you need 166 MZ and 166 DZ pairs
+#' power.ACE.test(update= "a", AA= .5, CC= 0, method= "empirical")
+#' # method= "empirical": For 80% power, you need 154 MZ and 154 DZ pairs
 #'
 #' # ====================
 #' # = Show off options =
@@ -128,15 +132,17 @@
 #' power.ACE.test(update = "a", AA= .5, CC= 0, tryHard= "no")
 #'
 #' # 2. toggle optimizer
+#'
 #' power.ACE.test(update= "a", AA= .5, CC= 0, optimizer= "SLSQP")
 #'
-#' # 3. How many twin pairs in the base simulated data?
-#' power.ACE.test(update = "a", AA= .5, CC= 0)
+#' # 3. You can raise or lower the number of pairs used in the true model
+#' #    by varying nSim (twin pairs in the simulated data).
+#'
 #' power.ACE.test(update = "a", AA= .5, CC= 0, nSim= 20)
 #'
 #' }
 #'
-power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_after_dropping_c"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("yes", "no", "ordinal", "search"), digits = 2, optimizer = NULL, nSim=4000){
+power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "c", "a_after_dropping_c", "d"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("yes", "no", "ordinal", "search"), digits = 2, optimizer = NULL, nSim=4000){
 	# # TODO why not equivalent to this?
 	# # https://genepi.qimr.edu.au//general/TwinPowerCalculator/twinpower.cgi
 	#
@@ -151,23 +157,28 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 
 	# nSim = 4000
 	# MZ_DZ_ratio is an odds & pMZ = odds/(1+odds)
-	pMZ      = MZ_DZ_ratio/(1 + MZ_DZ_ratio)
+	pMZ = MZ_DZ_ratio/(1 + MZ_DZ_ratio)
 	nMZpairs = round(nSim * pMZ)
 	nDZpairs = round(nSim * (1 - pMZ))
 	# Turn off plotting
 	oldSilent = umx_set_silent(TRUE)
 	oldPlot = umx_set_auto_plot(FALSE, silent=TRUE);
 
+	# =================================================
+	# = Build the "true" model & "false" (null) model =
+	# =================================================
 	# 1. Generate data and run model 1
-	tmp = umx_make_TwinData(nMZpairs= nMZpairs, nDZpairs = nDZpairs, AA= AA, CC= CC, EE= EE, varNames= "var", mean= 0, empirical= TRUE)
-	mzData = subset(tmp, zygosity == "MZ")
-	dzData = subset(tmp, zygosity == "DZ")
-	
-	# ==============================================
-	# = Build the "true" and "false" (null) models =
-	# ==============================================
-	# Make, don't run yet
-	trueModel = umxACE(selDVs = "var", sep = "_T", mzData = mzData, dzData= dzData, autoRun = FALSE, optimizer = optimizer)
+	if(!is.null(DD)){
+		tmp = umx_make_TwinData(nMZpairs= nMZpairs, nDZpairs = nDZpairs, AA= AA, CC=0, DD= DD, EE= EE, varNames= "var", mean= 0, empirical= TRUE)
+		mzData = subset(tmp, zygosity == "MZ")
+		dzData = subset(tmp, zygosity == "DZ")
+		trueModel = umxACE(selDVs = "var", sep = "_T", mzData = mzData, dzData= dzData, dzCr = .25, autoRun = FALSE, optimizer = optimizer)
+	} else {
+		tmp = umx_make_TwinData(nMZpairs= nMZpairs, nDZpairs = nDZpairs, AA= AA, CC= CC, EE= EE, varNames= "var", mean= 0, empirical= TRUE)
+		mzData = subset(tmp, zygosity == "MZ")
+		dzData = subset(tmp, zygosity == "DZ")
+		trueModel = umxACE(selDVs = "var", sep = "_T", mzData = mzData, dzData= dzData, autoRun = FALSE, optimizer = optimizer)
+	}
 
 	# update = c("a", "c", "a_after_dropping_c")
 	if(update == "a"){
@@ -176,6 +187,9 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	} else if(update == "c"){
 		update = "c_r1c1"
 		paramSize = CC
+	} else if(update == "d"){
+		update = "c_r1c1"
+		paramSize = DD
 	} else if(update == "a_after_dropping_c"){
 		trueModel = umxModify(trueModel, update="c_r1c1", value = 0, autoRun = FALSE)
 		update = "a_r1c1"
@@ -192,19 +206,24 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, update = c("a", "c", "a_afte
 	if(search){
 		# power is not an input to mxPowerSearch
 		tmp = mxPowerSearch(trueModel= trueModel, falseModel= nullModel, n = n, sig.level = sig.level, method = method)
-		plot(power ~ N, data = tmp)
+		plot(power ~ N, data = tmp,  xlab= "N (total MZ+DZ pairs)")
 		abline(h = power)
 	} else {
 		tmp = mxPower(trueModel= trueModel, falseModel= nullModel, n= n, sig.level = sig.level, power = power, method = method)
 		nFound = attributes(tmp)$detail$n
 		pairsUsed = paste0(round(nFound * pMZ), " MZ and ",round(nFound * (1 - pMZ)), " DZ pairs")
 		if(!is.null(n)){
-			empiricalPower = attributes(tmp)$detail$power
-			# update         = "a_r1c1"
-			# paramSize      = AA
-			cat(paste0("With ", pairsUsed, ", you have ", round(empiricalPower * 100, digits), "% power to detect an ", update, " (variance) parameter of ", round(paramSize, 3), ".\n"))
+			if(!is.null(power)){
+				cat(paste0("Given", pairsUsed, ", and your chosen ", round(power * 100, digits),
+					" power, you can detect a ", update, " parameter of ", round(paramSize, 3), ".\n"))
+			}else{
+				empiricalPower = attributes(tmp)$detail$power
+				cat(paste0("Given ", pairsUsed, " and ", round(paramSize, 3), " ", update, 
+					" you have ", round(empiricalPower * 100, digits), "% power.\n"))	
+			}
 		} else {
-			cat(paste0("For ", round(power * 100, digits), "% power to detect ", omxQuotes(update), " of size ", paramSize, ", you need ", pairsUsed, ".\n"))
+			cat(paste0("For ", round(power * 100, digits), "% power to detect ", omxQuotes(update), 
+				" of size ", paramSize, ", you need ", pairsUsed, ".\n"))
 		}
 	}
 	return(tmp)
