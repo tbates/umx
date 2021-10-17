@@ -4318,6 +4318,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			))
 		}
 		cat(paste0("R\u00B2 = ", round(sumry$r.squared, 3), " (adj = ", round(sumry$adj.r.squared, 3), ")"))
+		invisible(obj)
 		
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table
