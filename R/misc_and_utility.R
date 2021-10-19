@@ -1482,7 +1482,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		}
 		if(!is.null(max)){
 			message(paste0("polite note: You set the max but with mapStrings I set the max:
-			Ignoring yours (which was ", omQuotes(max), ")and setting it to ", length(mapStrings)))
+			Ignoring yours (which was ", max, ") and setting it to ", length(mapStrings)))
 			max = length(mapStrings)
 		}else{
 			max = length(mapStrings)
