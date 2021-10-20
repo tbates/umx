@@ -269,8 +269,9 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @param report How to report the results. "html" = open in browser
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
-#' @param tryHard Default = "yes"
-#' @param silent Default = FALSE
+#' @param tryHard (default = "yes")
+#' @param silent Don't prrint the ACE models (default = FALSE)
+#' @param digits rounding in printout (default = 2)
 #' @param ... Other parameters to control model summary
 #' @return Best fitting model
 #' @export
@@ -284,13 +285,23 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
+#'
+#' # ===========================================================================
+#' # = Table of parameters + fit comparisons, ready too copy to word processor =
+#' # ===========================================================================
+#' umxReduce(m1, silent=TRUE, digits=2, repo="h")
+#'
+#' # ==========================================
+#' # = Function captures the preferred model =
+#' # ==========================================
 #' m2 = umxReduce(m1)
 #' umxSummary(m2)
+#' 
+#' # works for ADE input also
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
-#' m2 = umxReduce(m1)
 #' 
 #' }
-umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, ...) {
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, digits = 2, ...) {
 	report  = match.arg(report)
 	tryHard = match.arg(tryHard)
 	if(silent){
@@ -329,12 +340,22 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 		}
 	}else{
 		stop(model$top$dzCr$values, " is an odd number for dzCr, isn't it? I was expecting 1 (C) or .25 (D)",
-		"\nPerhaps you're John Loehlin, and are doing an assortative mating test? e-mail me to get this added here.")
+		"\nPerhaps you're a John Loehlin (requiescat in pace :-( ) fan, and are doing an assortative mating test? e-mail me to get this added here.")
 		# TODO umxReduceACE handle odd values of dzCr as assortative mating etc.?
 		bestModel = model
 	}
 	# = Show fit table =
-	umxCompare(ACE, c(ADE, CE, AE), all = TRUE, report = report)
+	tmp = data.frame(matrix(1:12,3,4))
+	names(tmp) = c("A", "C", "E", "D")
+	tmp[1,] = c(ACE$top$a_std$result, ACE$top$c_std$result, ACE$top$e_std$result, NA)
+	tmp[2,] = c(ADE$top$a_std$result, NA                  , ADE$top$e_std$result, ADE$top$c_std$result)
+	tmp[3,] = c(AC$top$a_std$result , AC$top$c_std$result , NA                  , NA)
+	tmp[4,] = c(AE$top$a_std$result , NA                  , AE$top$e_std$result , NA)
+
+	biggles = umxCompare(ACE, c(ADE, CE, AE), all = TRUE, report = report, silent=TRUE)
+	tmp2 = cbind(biggles[, 1, drop=FALSE], tmp, biggles[, 2:dim(biggles)[2] ] )
+	umx_print(tmp2, digits = digits, report = report)
+	
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
 	message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
@@ -1309,6 +1330,8 @@ umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), 
 			message("If you asked for CIs, returned model is not runnable (contains CIs not parameter values)")
 		}
 		xmu_standardize_ACE(model)
+	}else{
+		invisible(Estimates)
 	}
 }
 
@@ -1887,6 +1910,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
+#' @param silent (don't print, just return the table as a dataframe (default = FALSE)
 #' @family Model Summary and Comparison
 #' @seealso - [umxSummary()], [umxRAM()],[mxCompare()]
 #' @references - <https://github.com/tbates/umx>
@@ -1930,7 +1954,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
 #' umxCompare(m1, m2, report = "html") # Open table in browser
 #' }
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, file = "tmp.html") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, silent = FALSE, file = "tmp.html") {
 	report = match.arg(report)
 	if(umx_is_MxModel(all)){
 		stop("Provide all comparison models as a c() (You provided a model as input to 'all', and I'm guessing that's a mistake)")
@@ -2026,7 +2050,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				this, "(\u03C7\u00B2(", tablePub[i, "diffdf"], ") = ", round(tablePub[i, "diffFit"], 2), # \u03A7 = Chi \u00B2 = superscript 2
 				", p = ", tablePub[i, "p"], ": AIC = ", round(tablePub[i, "AIC"], digits), " change in AIC = ", round(tablePub[i, "deltaAIC"], digits), ")."
 				)
-				cat(inlineMsg)
+				if(!silent){
+					cat(inlineMsg)
+				}
 			}
 		}
 	}
@@ -2035,8 +2061,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	names(tablePub) = c("Model", "EP", "\u0394 Fit" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model", "Fit units")
 
 	if(report == "inline"){ report= "markdown"}
-	umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
-
+	if(!silent){
+		umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
+	}
 	# htmlNames       = c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "&Delta AIC", "Compare with Model")
 	# if(report == "html"){
 	# 	tableHTML = tablePub
@@ -2053,12 +2080,15 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
-		cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 		aic.weights = round(Weights(AIClist), 2)
-		cat("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
-			omxQuotes(namez(modelList)), " respectively are: ", 
-			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")	
+		if(!silent){
+			cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
+			cat("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
+				omxQuotes(namez(modelList)), " respectively are: ", 
+				omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")	
+		}
+		
 	}
 	invisible(tablePub)
 }
