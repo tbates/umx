@@ -317,10 +317,12 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 		if(-2*logLik(ACE) > -2*logLik(ADE)){
 			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE", tryHard = tryHard)
 			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard = tryHard)
+			 E = umxModify( AE, regex = "a_r[0-9]+c[0-9]+" , name =  "E", tryHard = tryHard)
 			message("A dominance model is preferred, set dzCr = 0.25")
 		}else{
 			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE", tryHard = tryHard)
 			AE = umxModify(ACE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard = tryHard)
+			 E = umxModify( AE, regex = "a_r[0-9]+c[0-9]+" , name =  "E", tryHard = tryHard)
 		}
 	}else if(model$top$dzCr$values == .25){
 		if(model$name=="ACE"){
@@ -330,8 +332,9 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 			message("You gave me an ADE model.")
 		}
 		ADE = model
-		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE", tryHard=tryHard)
-		AE  = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard=tryHard)
+		ACE = umxModify(ADE, 'dzCr_r1c1', value = 1, name = "ACE", tryHard = tryHard)
+		AE  = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard = tryHard)
+		 E  = umxModify( AE, regex = "a_r[0-9]+c[0-9]+" , name =  "E", tryHard = tryHard)
 		if(-2*logLik(ADE) > -2*logLik(ACE)){
 			CE = umxModify(ACE, regex = "a_r[0-9]+c[0-9]+" , name = "CE", tryHard=tryHard)
 			message("An ACE model is preferred, set dzCr = 1.0")
@@ -345,26 +348,28 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 		bestModel = model
 	}
 	# = Show fit table =
-	tmp = data.frame(matrix(1:12,3,4))
-	names(tmp) = c("A", "C", "E", "D")
+	tmp = data.frame(matrix(nrow=5,ncol=4))
+	names(tmp) = c("a"              , "c"                 , "e"                 , "d")
 	tmp[1,] = c(ACE$top$a_std$result, ACE$top$c_std$result, ACE$top$e_std$result, NA)
 	tmp[2,] = c(ADE$top$a_std$result, NA                  , ADE$top$e_std$result, ADE$top$c_std$result)
-	tmp[3,] = c(AC$top$a_std$result , AC$top$c_std$result , NA                  , NA)
-	tmp[4,] = c(AE$top$a_std$result , NA                  , AE$top$e_std$result , NA)
+	tmp[3,] = c( NA                 ,  CE$top$c_std$result,  CE$top$e_std$result, NA)
+	tmp[4,] = c( AE$top$a_std$result, NA                  ,  AE$top$e_std$result, NA)
+	tmp[5,] = c( NA                 , NA                  ,   E$top$e_std$result, NA)
 
-	biggles = umxCompare(ACE, c(ADE, CE, AE), all = TRUE, report = report, silent=TRUE)
-	tmp2 = cbind(biggles[, 1, drop=FALSE], tmp, biggles[, 2:dim(biggles)[2] ] )
+	biggles = umxCompare(ACE, c(ADE, CE, AE, E), all = TRUE, report = report, silent=TRUE)
+	tmp2 = cbind(biggles[, 1, drop = FALSE], tmp, biggles[, 2:dim(biggles)[2] ] )
 	umx_print(tmp2, digits = digits, report = report)
 	
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
-	message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
+	message("Among ACE, ADE, CE, and AE models ", omxQuotes(bestModel$name), " fit best according to AIC.")
 	# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 	aic.weights = round(Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
-	message("AIC weight-based {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
-		omxQuotes(namez(c(ACE, ADE, CE, AE))), " respectively are: ", 
+	aic.names   = namez(c(ACE, ADE, CE, AE))
+	message("Conditional AIC probability {Wagenmakers, 2004, 192-196}  indicates relative model support as", 
+		omxQuotes(aic.names), " respectively are: ", 
 		omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")
-
+		message(paste0(aic.names," (", aic.weights, "%)"))
 	if(intervals){
 		bestModel = mxRun(bestModel, intervals = intervals)
 	}

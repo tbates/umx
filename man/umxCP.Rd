@@ -267,6 +267,7 @@ m3 = umxModify(m2, regex= tmp, comparison = TRUE)
 }
 \references{
 \itemize{
+\item Martin, N. G., & Eaves, L. J. (1977). The Genetical Analysis of Covariance Structure. \emph{Heredity}, \strong{38}, 79-95.
 \item Kendler, K. S., Heath, A. C., Martin, N. G., & Eaves, L. J. (1987). Symptoms of anxiety and symptoms of depression.
 Same genes, different environments? \emph{Archives of General Psychiatry}, \strong{44}, 451-457. \doi{10.1001/archpsyc.1987.01800170073010}.
 \item McArdle, J. J., & Goldsmith, H. H. (1990). Alternative common factor models for multivariate biometric analyses.
