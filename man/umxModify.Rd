@@ -69,7 +69,7 @@ Regular expressions are a powerful feature: they let you drop collections of pat
 for instance, this would match labels containing either "Cs" or "Cr":\preformatted{fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
 }
 
-You may find it easier to be more explicit. Like this:\if{html}{\out{<div class="sourceCode R">}}\preformatted{fit2 = umxSetParameters(fit1, labels = c("Cs", "Cr"), values = 0, free = FALSE, name = "newName")
+You may find it easier to be more explicit. Like this:\if{html}{\out{<div class="R">}}\preformatted{fit2 = umxSetParameters(fit1, labels = c("Cs", "Cr"), values = 0, free = FALSE, name = "newName")
 fit2 = mxRun(fit2)
 summary(fit2)
 }\if{html}{\out{</div>}}

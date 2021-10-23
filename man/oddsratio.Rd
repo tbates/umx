@@ -23,7 +23,7 @@ Returns the odds in each group, and the odds ratio. Takes the cases (n) and tota
 of two numbers for each of two groups.
 }
 \details{
-Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:\if{html}{\out{<div class="sourceCode R">}}\preformatted{Group 1 odds = 0.43
+Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:\if{html}{\out{<div class="R">}}\preformatted{Group 1 odds = 0.43
 Group 2 odds = 0.11
           OR = 3.86 CI95[0.160, 3.64]
 }\if{html}{\out{</div>}}

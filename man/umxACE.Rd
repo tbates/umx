@@ -210,6 +210,12 @@ umxSummary(m1, std = FALSE) # un-standardized
 # plot(m1) # Also, look at the options for ?plot.MxModel.
 
 \donttest{
+# ===========================================
+# = Test ADE, AE, CE, E, and generate table =
+# ===========================================
+
+umxReduce(m1, report="html", silent= TRUE)
+
 # ============================
 # = Model, with 2 covariates =
 # ============================

@@ -1,6 +1,7 @@
-## dev umx 4.10.1
-* October 2021 R 4.1.0 (2021-10-20)
+## dev umx 4.11.0
 
+## dev umx 4.10.1
+* October 2021 R 4.1.1 (2021/08/10)
 * NEW: `umxPower` can plot power search space! (beta!)
 * FIX: `umxPower` supports multiple path drop
 * IMPROVED: `umxPower` parameters ==1 for power search with fixed n
