@@ -6399,7 +6399,7 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumeric
 #' # =============
 #'
 #' # Omit nDZpairs (equal numbers of both by default)
-#' tmp = umx_make_TwinData(nMZpairs = 100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (sums to 1)
+#' tmp = umx_make_TwinData(100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (sums to 1)
 #' cov(tmp[tmp$zygosity == "DZ", c("var_T1","var_T2")])
 #'
 #' # Not limited to unit variance
@@ -6766,8 +6766,13 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	dzData$zygosity = "DZ"
 	twinData = rbind(mzData, dzData)
 	twinData$zygosity = factor(twinData$zygosity, levels = c("MZ", "DZ"), labels = c("MZ", "DZ"))
+	
 	if(scale){
 		twinData = umx_scale_wide_twin_data(varNames, sep = "_T", data = twinData)
+	}else{
+		shift = min(min(twinData$var_T1), min(twinData$var_T2))
+		twinData$var_T1 = twinData$var_T1 - shift
+		twinData$var_T2 = twinData$var_T2 - shift
 	}
 	return(twinData)
 	# return(list(mzData = mzData, dzData = dzData))

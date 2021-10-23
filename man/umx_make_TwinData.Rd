@@ -157,7 +157,7 @@ m1 = umxACE(selDVs="var", data = tmp, mzData= "MZ", dzData= "DZ", dzCr=.25)
 # =============
 
 # Omit nDZpairs (equal numbers of both by default)
-tmp = umx_make_TwinData(nMZpairs = 100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (sums to 1)
+tmp = umx_make_TwinData(100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (sums to 1)
 cov(tmp[tmp$zygosity == "DZ", c("var_T1","var_T2")])
 
 # Not limited to unit variance
