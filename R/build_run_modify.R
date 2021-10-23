@@ -22,7 +22,7 @@
 
 # ![](example-plot.jpg "Example Plot Title") = Image in man/figures
 
-# cran_prep <- check_for_cran("~/bin/umx/", show_status=FALSE)
+# cran_prep = check_for_cran("~/bin/umx/", show_status=FALSE)
 # cran_prep$cran_summary()
 
 # Makevars for clang
@@ -97,6 +97,7 @@
 
 
 utils::globalVariables(c(
+	'N',
 	'x',
 	'xtable',
 	'M', 'S',
@@ -324,14 +325,17 @@ umxModel <- function(...) {
 #' **Sketch mode**
 #'
 #' If you are at the "sketching" stage of theory consideration, `umxRAM` supports
-#' a simple vector of manifest names to work with.
+#' setting data to a simple vector of manifest names.
+#' As usual in `umxRAM`, any variables you refer to that are not in data are treated as latents.
 #' 
 #' ```R
-#' m1 = umxRAM("sketch", data = c("A", "B", "C"),
-#' 	umxPath("A", to = "B"),
-#' 	umxPath("B", with = "C"),
-#' 	umxPath(v.m. = c("A", "B", "C"))
+#' m1 = umxRAM("sketch", data = c("A", "B"),
+#' 	umxPath("C", to = c("A", "B"), values=.3),
+#' 	umxPath("A", with = "B", values=.45),
+#' 	umxPath(v.m. = c("A", "B")),
+#' 	umxPath(v1m0 = "C")
 #' )
+#' plot(m1, means = FALSE)
 #' ```
 #' Will create this figure:
 #' 
@@ -1047,7 +1051,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' newLabel = "loading_for_path\\1" # use value in regex group 1
 #' m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
 #' } # end dontrun
-#' 
+#'
 umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), master = NULL, intervals = FALSE, verbose = FALSE) {
 	tryHard = match.arg(tryHard)
 
@@ -1286,6 +1290,12 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' # plot(m1) # Also, look at the options for ?plot.MxModel.
 #' 
 #' \donttest{
+#' # ===========================================
+#' # = Test ADE, AE, CE, E, and generate table =
+#' # ===========================================
+#'
+#' umxReduce(m1, report="html", silent= TRUE)
+#'
 #' # ============================
 #' # = Model, with 2 covariates =
 #' # ============================
@@ -2536,7 +2546,13 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @family Twin Modeling Functions
 #' @seealso - [umxSummaryCP()], [umxPlotCP()]. See [umxRotate.MxModelCP()] to rotate the factor loadings of a [umxCP()] model. See [umxACE()] for more examples of twin modeling. 
 #' [plot()] and [umxSummary()] work for all twin models, e.g., [umxIP()], [umxCP()], [umxGxE()], and [umxACE()].
-#' @references - <https://github.com/tbates/umx>
+#' @references * Martin, N. G., & Eaves, L. J. (1977). The Genetical Analysis of Covariance Structure. *Heredity*, **38**, 79-95.
+#' * Kendler, K. S., Heath, A. C., Martin, N. G., & Eaves, L. J. (1987). Symptoms of anxiety and symptoms of depression. 
+#' Same genes, different environments? *Archives of General Psychiatry*, **44**, 451-457. \doi{10.1001/archpsyc.1987.01800170073010}.
+#' * McArdle, J. J., & Goldsmith, H. H. (1990). Alternative common factor models for multivariate biometric analyses.
+#' *Behavior Genetics*, **20**, 569-608. \doi{10.1007/BF01065873}.
+#' * <https://github.com/tbates/umx>
+#'
 #' @md
 #' @examples
 #' \dontrun{
@@ -2904,7 +2920,12 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @references - <https://github.com/tbates/umx>
+#' @references * Kendler, K. S., Heath, A. C., Martin, N. G., & Eaves, L. J. (1987). Symptoms of anxiety and symptoms of depression. 
+#' Same genes, different environments? *Archives of General Psychiatry*, **44**, 451-457. \doi{10.1001/archpsyc.1987.01800170073010}.
+#' * McArdle, J. J., & Goldsmith, H. H. (1990). Alternative common factor models for multivariate biometric analyses.
+#' *Behavior Genetics*, **20**, 569-608. \doi{10.1007/BF01065873}.
+#' * <https://github.com/tbates/umx>
+#'
 #' @md
 #' @examples
 #' \dontrun{
@@ -3592,14 +3613,13 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 #' @param model The [mxModel()] you wish to run.
-#' @param n The maximum number of times you want to run the model trying to get a code green run (defaults to 1)
-#' @param calc_SE Whether to calculate standard errors (ignored when n = 1)
-#' for the summary (if you use [mxCI()] or [umxCI()], you can turn this off)
-#' @param calc_sat Whether to calculate the saturated and independence models (for raw [mxData()] [mxModel()]s) (defaults to TRUE - why would you want anything else?)
+#' @param tryHard  How to tryHard. Default = "no". Alternatives "yes", "ordinal", "search"
+#' @param calc_sat Whether to calculate the saturated and independence models (for raw [mxData()] [mxModel()]s)
 #' @param setValues Whether to set the starting values of free parameters (default = FALSE)
 #' @param setLabels Whether to set the labels (default =  FALSE)
+#' @param optimizer optional to set the optimizer.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE
-#' @param comparison Whether to run umxCompare() after umxRun
+#' @param comparison Comparison model (will be used to drive umxCompare() after umxRun
 #' @return - [mxModel()]
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
@@ -3610,11 +3630,10 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' data(demoOneFactor)
 #' latents  = c("G")
 #' manifests = names(demoOneFactor)
-#' m1 = mxModel("One Factor", type = "RAM", 
-#' 	manifestVars = manifests, latentVars = latents, 
-#' 	mxPath(from = latents  , to = manifests),
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = latents  , arrows = 2, free = FALSE, values = 1.0),
+#' m1 = mxModel("fact", type="RAM", manifestVars=manifests, latentVars=latents,
+#' 	mxPath(latents  , to = manifests),
+#' 	mxPath(manifests, arrows = 2),
+#' 	mxPath(latents  , arrows = 2, free = FALSE, values = 1),
 #' 	mxData(cov(demoOneFactor), type = "cov", numObs=500)
 #' )
 #'
@@ -3630,51 +3649,39 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
 #' }
 #' 
-umxRun <- function(model, n = 1, calc_SE = TRUE, calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, comparison = NULL){
+
+# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+
+umxRun <- function(model, tryHard = c("no", "yes", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, optimizer = NULL, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
 	# TODO: umxRun: Optimise for speed
+	tryHard    = match.arg(tryHard)
+
+	# =================
+	# = Set optimizer =
+	# =================
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
+
 	if(setLabels){
 		model = xmuLabel(model)
 	}
 	if(setValues){
 		model = xmuValues(model)
 	}
-	if(n == 1){
-		model = mxRun(model, intervals = intervals);
-	} else {
-		model = mxOption(model, "Calculate Hessian", "No")
-		model = mxOption(model, "Standard Errors", "No")
-		# make an initial run
-		model = mxRun(model);
-		n = (n - 1); tries = 0
-		# carry on if we failed
-		while(model$output$status[[1]] == 6 && n > 2 ) {
-			print(paste("Run", tries+1, "status Red(6): Trying hard...", n, "more times."))
-			model <- mxRun(model)
-			n <- (n - 1)
-			tries = (tries + 1)
-		}
-		if(tries == 0){ 
-			# print("Ran fine first time!")	
-		}
-		# get the SEs for summary (if requested)
-		if(calc_SE){
-			# print("Calculating Hessian & SEs")
-			model = mxOption(model, "Calculate Hessian", "Yes")
-			model = mxOption(model, "Standard Errors", "Yes")
-		}
-		if(calc_SE | intervals){
-			model = mxRun(model, intervals = intervals)
-		}
-	}
-	if(umx_is_RAM(model)){
-		if(model$data$type == "raw"){
-			# If we have a RAM model with raw data, compute the saturated and independence models
-			# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
-			ref_models = mxRefModels(model, run = TRUE)
-			model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
-			model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(ref_models$Saturated))
+	model = xmu_safe_run_summary(model, autoRun = TRUE,  tryHard =  tryHard)
+
+	if(calc_sat){
+		if(umx_is_RAM(model)){
+			if(model$data$type == "raw"){
+				# If we have a RAM model with raw data, compute the saturated and independence models
+				# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
+				ref_models = mxRefModels(model, run = TRUE)
+				model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
+				model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(ref_models$Saturated))
+			}
 		}
 	}
 	if(!is.null(comparison)){ 

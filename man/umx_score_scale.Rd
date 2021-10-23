@@ -15,7 +15,8 @@ umx_score_scale(
   name = NULL,
   na.rm = FALSE,
   minManifests = NA,
-  alpha = FALSE
+  alpha = FALSE,
+  mapStrings = NULL
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ umx_score_scale(
 \item{minManifests}{If score = factor, how many missing items to tolerate for an individual?}
 
 \item{alpha}{print Cronbach's alpha? (TRUE)}
+
+\item{mapStrings}{For input like True/False can map to 0,1 NULL}
 }
 \value{
 \itemize{

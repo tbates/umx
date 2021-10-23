@@ -20,10 +20,11 @@ umx_as_numeric(df, which = NULL, force = FALSE)
 Convert each column of a dataframe to numeric
 }
 \examples{
-df = mtcars
 # make mpg into string, and cyl into a factor
+df = mtcars
 df$mpg = as.character(df$mpg)
 df$cyl = factor(df$cyl)
+df$am = df$am==1
 
 df = umx_as_numeric(df); str(df) # mpg not touched
 df = umx_as_numeric(df, force=TRUE); str(df) # mpg coerced back to numeric

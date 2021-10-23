@@ -10,8 +10,8 @@ umx_rename(
   to = NULL,
   regex = NULL,
   test = FALSE,
-  old = "deprecated",
-  replace = "deprecated"
+  old = "deprecated_from",
+  replace = "deprecated_to"
 )
 }
 \arguments{
@@ -73,7 +73,7 @@ tmp = umx_rename(tmp, regex = "lacement", to = "", test= TRUE)
 tmp = umx_rename(tmp, regex = "lacement", to = "") # revert to disp
 umx_names(tmp, "^d") # all names beginning with a d
 
-# advanced: checking deprecated format handled...
+# dev: check deprecated format handled...
 tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
 }
 \seealso{

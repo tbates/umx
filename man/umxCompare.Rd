@@ -11,6 +11,7 @@ umxCompare(
   digits = 3,
   report = c("markdown", "html", "inline"),
   compareWeightedAIC = FALSE,
+  silent = FALSE,
   file = "tmp.html"
 )
 }
@@ -28,6 +29,8 @@ create a web table and open your default browser.
 (handy for getting tables into Word, and other text systems!)}
 
 \item{compareWeightedAIC}{Show the Wagenmakers AIC weighted comparison (default = FALSE)}
+
+\item{silent}{(don't print, just return the table as a dataframe (default = FALSE)}
 
 \item{file}{file to write html too if report = "html" (defaults to "tmp.html")}
 }

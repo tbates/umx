@@ -11,6 +11,7 @@ umxReduceACE(
   baseFileName = "tmp",
   tryHard = c("yes", "no", "ordinal", "search"),
   silent = FALSE,
+  digits = 2,
   ...
 )
 }
@@ -23,9 +24,11 @@ umxReduceACE(
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 
-\item{tryHard}{Default = "yes"}
+\item{tryHard}{(default = "yes")}
 
-\item{silent}{Default = FALSE}
+\item{silent}{Don't prrint the ACE models (default = FALSE)}
+
+\item{digits}{rounding in printout (default = 2)}
 
 \item{...}{Other parameters to control model summary}
 }
@@ -45,13 +48,23 @@ Suggestions for more sophisticated automation welcomed!
 \examples{
 \dontrun{
 data(twinData)
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
+
+# ===========================================================================
+# = Table of parameters + fit comparisons, ready too copy to word processor =
+# ===========================================================================
+umxReduce(m1, silent=TRUE, digits=2, repo="h")
+
+# ==========================================
+# = Function captures the preferred model =
+# ==========================================
 m2 = umxReduce(m1)
 umxSummary(m2)
+
+# works for ADE input also
 m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
-m2 = umxReduce(m1)
 
 }
 }

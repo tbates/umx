@@ -1,7 +1,28 @@
-## dev umx 4.9.5
+## dev umx 4.10.1
+* October 2021 R 4.1.0 (2021-10-20)
+
+* NEW: `umxPower` can plot power search space! (beta!)
+* FIX: `umxPower` supports multiple path drop
+* IMPROVED: `umxPower` parameters ==1 for power search with fixed n
+* IMPROVED: `power.ACE.test` can run ADE model
+* IMPROVED: `power.ACE.test` Clarify which of power, effect, and n are fixed or being estimated.
 * IMPROVED: `umxCP` warning to not use `correlatedACE`
 * IMPROVED: `umxSummarizeTwinData` takes an age column and notes when it can't be found
+* IMPROVED: `umx_score_scale` can score items with character labels
+* IMPROVED: `umx_score_scale` gains the ability to report Cronbach's alpha
+* IMPROVED: `umx_rename` clearer names for deprecated parameters
+* IMPROVED: `umxReduce.ACE` gains tryHard  (compute ACE/ADE/CE/AE, outputs a table an also AIC-based probability weights for which is the preferable model)
+* IMPROVED: `umxAPA` (invisibly) returns the standardized model for lm
+* IMPROVED: `umxRun` has tryHard (not a very useful function)
+* IMPROVED: `bucks` more control for formatting money
 * IMPROVED: `libs` now install.packages() if not found
+* CHANGE: `fin_interest` more memo/typeable parameter name for inflation
+* IMPROVED: `grViz()` in place of print(DiagrammR())` (should work better with knitr)
+* HELP: `FishersMethod` Rd ref
+* HELP: `deg2rad` Rd better in html
+* HELP: `umxRAM` sketch mode help
+* HELP: `umxCP` more refs for Rd
+* HELP: improvements
 
 # Releases
 

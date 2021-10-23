@@ -31,7 +31,7 @@ fin_interest(
 
 \item{yrs}{Duration of the investment (default = 10).}
 
-\item{final}{if set (default = NULL), returns the rate that turns principal (default=1) into final after yrs}
+\item{final}{if set (default = NULL), returns the rate required to turn principal into final after yrs (principal defaults to 1)}
 
 \item{n}{Compounding intervals per year (default = 12 (monthly), 365 for daily)}
 
@@ -41,7 +41,7 @@ fin_interest(
 
 \item{largest_with_cents}{Default = 0}
 
-\item{baseYear}{Default = 0, can set, e.g. to 2020 for printing}
+\item{baseYear}{Default = current year (for table row labels)}
 
 \item{table}{Whether to print a table of annual returns (default TRUE)}
 

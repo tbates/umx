@@ -31,7 +31,7 @@ the paired-wide columns (see examples).
 \details{
 In R, residuals for a variable can be found with the following statement:
 
-\code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
+\code{tmp = residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 
 This tmp variable could then be written over the old data:
 

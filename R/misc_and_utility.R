@@ -785,14 +785,14 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' @examples
 #' library(umx)
 #' manifests = c("mpg", "disp", "gear")
-#' m1 <- mxModel("ind", type = "RAM",
+#' m1 = mxModel("ind", type = "RAM",
 #' 	manifestVars = manifests,
 #' 	mxPath(from = manifests, arrows = 2),
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(mtcars[, manifests], type = "raw")
 #' )
 #' umx_set_cores() # print current value
-#' oldCores <- umx_set_cores(silent = TRUE)  # store existing value
+#' oldCores = umx_set_cores(silent = TRUE)  # store existing value
 #' umx_set_cores(omxDetectCores()) # set to max
 #' umx_set_cores(-1); umx_set_cores() # set to max
 #' m1 = umx_set_cores(1, m1)  # set m1 usage to 1 core
@@ -1023,7 +1023,7 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 	indicators3    = indicators[9:12]
 
 	# Create model with both direct and moderated paths
-	test1 <- mxModel("threeLatentWithModerator", type = "RAM",
+	test1 = mxModel("threeLatentWithModerator", type = "RAM",
 	  manifestVars = c(indicators),
 	  latentVars   = c(latents, "dummy1"),
 	  umxPath(latents1 , to = indicators1, connect = "all.pairs", values = .2),
@@ -1394,6 +1394,7 @@ umx_factor <- umxFactor
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
+#' @param mapStrings For input like True/False can map to 0,1 NULL
 #' @return - scores
 #' @export
 #' @family Data Functions
@@ -1462,11 +1463,31 @@ umx_factor <- umxFactor
 #' RevelleE = as.numeric(scores$scores[,"E"]) * 5
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA, alpha = FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA, alpha = FALSE, mapStrings= NULL) {
 	score = match.arg(score)
-	
 	if(is.null(name)){ name = paste0(base, "_score") }
+	oldData = data
 
+	if(!is.null(mapStrings)){
+		relevantColumns = paste0(base, c(pos, rev))
+		for (thisCol in relevantColumns){
+			unique_values = unique(data[, thisCol, drop = TRUE])
+			unique_values = unique_values[!is.na(unique_values)]
+			if(any(!(unique_values %in% mapStrings))){
+				notFound = unique_values[which(!(unique_values %in% mapStrings))]
+				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+			}
+			data[, thisCol] = factor(data[, thisCol, drop=TRUE], levels= mapStrings)
+			data[, thisCol] = as.numeric(data[, thisCol, drop=TRUE])
+		}
+		if(!is.null(max)){
+			message(paste0("polite note: You set the max but with mapStrings I set the max:
+			Ignoring yours (which was ", max, ") and setting it to ", length(mapStrings)))
+			max = length(mapStrings)
+		}else{
+			max = length(mapStrings)
+		}
+	}
 	mins = umx_apply("min", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
 	maxs = umx_apply("max", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
 	if(any(mins < min)){
@@ -1478,7 +1499,6 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		umx_msg(msg)
 	}
 
-	oldData = data
 	# ==================================
 	# = Reverse any items needing this =
 	# ==================================
@@ -1499,7 +1519,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 	if(alpha){
 		print(str(df))
-		print(reliability(cov(df, use= "complete.obs")))
+		print(reliability(cov(df, use= "pairwise.complete.obs")))
 	}
 
 	if(score == "max"){
@@ -1509,16 +1529,14 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		}
 	}else if(score == "total"){
 		if(any(is.na(df))){
-			message("Polite note: you asked for scale totals, but some subjects have missing data: I just ignored that. You might want means...")
+			message("Polite note: You asked for scale totals, but some subjects have missing data: Pay attention to na.rm, or perhaps use means?...")
 		}
 		scaleScore = rowSums(df, na.rm = na.rm)
 	}else if(score == "mean"){
 		scaleScore = rowMeans(df, na.rm = na.rm)
 	}else if(score == "factor"){
-		x = umxEFA(name = "score", factors = "g", data = df, scores= "Regression", minManifests= minManifests)
-		scaleScore = x$g
-	}else{
-		stop("not sure how to handle score = ", omxQuotes(score), ". Legal options are: ", omxQuotes(c("total", "mean", "max", "factor")))
+		tmp = umxEFA(name = "score", factors = "g", data = df, scores= "Regression", minManifests= minManifests)
+		scaleScore = tmp$g
 	}
 	oldData[, name] = scaleScore
 	return(oldData)
@@ -1544,7 +1562,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' @examples
 #' x = umxVersion(); x
 umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = "umx") {
-	umx_vers <- try(packageVersion("umx"))
+	umx_vers = try(packageVersion("umx"))
     if (verbose) {
         msg = paste0("umx version: ", umx_vers)
         message(msg)
@@ -1634,15 +1652,15 @@ umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 #' umx_pad(1:3, 3)
 umx_pad <- function(x, n) {
   if (is.data.frame(x)) {
-    nrow <- nrow(x)
-    attr(x, "row.names") <- 1:n
+    nrow = nrow(x)
+    attr(x, "row.names") = 1:n
     for( i in 1:ncol(x) ) {
-      x[[i]] <- c( x[[i]], rep(NA, times = n - nrow) )
+      x[[i]] = c( x[[i]], rep(NA, times = n - nrow) )
     }
     return(x)
   } else if (is.list(x)) {
     if (missing(n)) {
-      max_len <- max( sapply( x, length ) )
+      max_len = max( sapply( x, length ) )
       return( lapply(x, function(xx) {
         return( c(xx, rep(NA, times=max_len-length(xx))) )
       }))
@@ -1706,10 +1724,11 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' @export
 #' @references - <https://github.com/tbates/umx>
 #' @examples
-#' df = mtcars
 #' # make mpg into string, and cyl into a factor
+#' df = mtcars
 #' df$mpg = as.character(df$mpg)
 #' df$cyl = factor(df$cyl)
+#' df$am = df$am==1
 #' 
 #' df = umx_as_numeric(df); str(df) # mpg not touched
 #' df = umx_as_numeric(df, force=TRUE); str(df) # mpg coerced back to numeric
@@ -1815,12 +1834,12 @@ umx_find_object <- function(pattern = ".*", requiredClass = "MxModel") {
 #' tmp = umx_rename(tmp, regex = "lacement", to = "") # revert to disp
 #' umx_names(tmp, "^d") # all names beginning with a d
 #'
-#' # advanced: checking deprecated format handled...
+#' # dev: check deprecated format handled...
 #' tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
-umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE, old = "deprecated", replace= "deprecated") {
+umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE, old = "deprecated_from", replace= "deprecated_to") {
 	# See also gdata::rename.vars(data, from, to)	
-	if(any(old     != "deprecated")){from = old; message("Polite message: Please use 'from' instead of 'old' in umx_rename()") }
-	if(any(replace != "deprecated")){to = replace; message("Polite message: Please use 'to' instead of 'replace' in umx_rename()") }
+	if(any(old     != "deprecated_from")){from = old; message("Polite message: Please use 'from' instead of 'old' in umx_rename()") }
+	if(any(replace != "deprecated_to")){to = replace; message("Polite message: Please use 'to' instead of 'replace' in umx_rename()") }
 
 	if(!is.null(attributes(from)$names)){
 		stop("You gave a list to from in umx_rename(). Lists (old='new') only allowed in to")
@@ -1950,12 +1969,12 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 			# need to cope with finding nothing
 			findIndex = grep(grepString,vLabels, value=FALSE, ignore.case=ignore.case)
 			if(output=="both") {
-				theResult <- as.matrix(vLabels[findIndex])
+				theResult = as.matrix(vLabels[findIndex])
 			} else if(output=="label"){
 				vLabels= as.vector(vLabels[findIndex])
-				theResult <- (vLabels)
+				theResult = (vLabels)
 			} else if(output=="name"){
-				theResult <- names(vLabels)[findIndex]
+				theResult = names(vLabels)[findIndex]
 			}else{
 				stop(paste("bad choice of output:", output))
 			}
@@ -2208,16 +2227,16 @@ umx_check_OS <- function(target=c("OSX", "SunOS", "Linux", "Windows"), action = 
 	target = match.arg(target)
 	# OSX == Darwin
 	# Solaris == SunOS
-	sysinfo <- Sys.info()
+	sysinfo = Sys.info()
 	if (!is.null(sysinfo)){
-		os <- sysinfo['sysname']
+		os = sysinfo['sysname']
 		if (os == 'Darwin'){
-			os <- "OSX"    	
+			os = "OSX"    	
 		}
 	} else {
-		os <- .Platform$OS.type
+		os = .Platform$OS.type
 		if (grepl("linux-gnu", R.version$os)){
-		  os <- "Linux"	    	
+		  os = "Linux"	    	
 		}
 	}
 	isTarget = (target == os)
@@ -2384,13 +2403,13 @@ umx_write_to_clipboard <- function(x) {
 dl_from_dropbox <- function(x, key=NULL){
 	# depends on RCurl::getBinaryURL
 	if(is.null(key)){
-		bin <- RCurl::getBinaryURL(x, ssl.verifypeer = FALSE)
+		bin = RCurl::getBinaryURL(x, ssl.verifypeer = FALSE)
 		x = sub("^.+/(.*)$", "\\1", x, ignore.case = FALSE, perl = FALSE, fixed = FALSE, useBytes = FALSE)
 	} else {
 		# user has provided key and file name, so concatenate with https...
-		bin <- RCurl::getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
+		bin = RCurl::getBinaryURL(paste0("https://dl.dropboxusercontent.com/s/", key, "/", x), ssl.verifypeer = FALSE)
 	}
-	con <- file(x, open = "wb")
+	con = file(x, open = "wb")
 	writeBin(bin, con)
 	close(con)
 	message(noquote(paste(x, "read into", getwd())))
@@ -2440,9 +2459,9 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 	operatingIncome = revenue * opmargin
 	netIncome = operatingIncome *(1-expenses)
 	marketCap = netIncome*PE
-	class(marketCap) = 'money'; attr(marketCap, 'symbol') <- symbol
-	class(netIncome) = 'money'; attr(netIncome, 'symbol') <- symbol
-	class(operatingIncome) = 'money'; attr(operatingIncome, 'symbol') <- symbol
+	class(marketCap) = 'money'; attr(marketCap, 'symbol') = symbol
+	class(netIncome) = 'money'; attr(netIncome, 'symbol') = symbol
+	class(operatingIncome) = 'money'; attr(operatingIncome, 'symbol') = symbol
 	
 	cat("Market cap = ", print(marketCap, cat=F))
 	cat("\n(Based on PE= ", PE, ", operating Income of ", print(operatingIncome/divisor, cat=F), " ", use, ", and net income =", print(netIncome/divisor, cat=F), use, "\n", sep = "")
@@ -2467,8 +2486,8 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @param report "markdown" or "html", 
 #' @param table Whether to print a table of annual returns (default TRUE)
 #' @param largest_with_cents Default = 0
-#' @param baseYear Default = 0, can set, e.g. to 2020 for printing
-#' @param final if set (default = NULL), returns the rate that turns principal (default=1) into final after yrs
+#' @param baseYear Default = current year (for table row labels)
+#' @param final if set (default = NULL), returns the rate required to turn principal into final after yrs (principal defaults to 1)
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
@@ -2584,7 +2603,7 @@ fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.
 		Total = balance
 	}
 	class(Total) = 'money'
-	attr(Total, 'symbol') <- symbol
+	attr(Total, 'symbol') = symbol
 	return(Total)
 }
 
@@ -2619,8 +2638,8 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 	Total = employer + employee
 	class(Total) = 'money'
 	attr(Total, 'symbol') = symbol
-	cat(paste0("Employer pays: ", bucks(employer, symbol = symbol, cat = FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
-	 ". so ", round((employer+employee)/annualEarnings*100, 2),	"%\n")
+	cat(paste0("Employer pays ", bucks(employer, symbol = symbol, cat = FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
+	 ". So ", round((employer+employee)/annualEarnings*100, 2),	" % total!\n")
 	 )
 	return(Total)
 }
@@ -2852,22 +2871,11 @@ plot.percent <- function(x, ...) {
 #' }
 #'
 umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
-	# umx_msg(ylim)
-	# args <- list(...)
-	# if (length(args)>0){
-	# 	for(i in 1:length(args)) {
-	# 		assign(x = names(args)[i], value = args[[i]])
-	# 	}
-	# 	if(is.null(ylim)){
-	# 		ylim=NA
-	# 	}
-	# }
-	
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(class(fun) == "character"){
 		make_function <- function(args, body, env = parent.frame()) {
-			args <- as.pairlist(args)
+			args = as.pairlist(args)
 			eval(call("function", args, body), env)
 		}
 		funOut = c()
@@ -3082,13 +3090,13 @@ umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "comp
 		message("dropped ", ncol(X) - sum(numericCols), " non-numeric column(s).")
 	}
 	
-	R <- cor(X[,numericCols], use = use)
-	above <- upper.tri(R)
-	below <- lower.tri(R)
-	r2 <- R[above]^2
-	Fstat <- r2 * df/(1 - r2)
+	R     = cor(X[,numericCols], use = use)
+	above = upper.tri(R)
+	below = lower.tri(R)
+	r2    = R[above]^2
+	Fstat = r2 * df/(1 - r2)
 	R[row(R) == col(R)] <- NA # NA on the diagonal
-	R[above] <- pf(Fstat, 1, df, lower.tail = FALSE)
+	R[above] = pf(Fstat, 1, df, lower.tail = FALSE)
 	R[below] = round(R[below], digits)
 	R[above] = round(R[above], digits)
 	# R[above] = paste("p=",round(R[above], digits))
@@ -3226,42 +3234,42 @@ specify_decimal <- function(x, k){
 #' reliability(cov(mtcars))
 reliability <-function (S){
      reliab <- function(S, R) {
-         k <- dim(S)[1]
-         ones <- rep(1, k)
-         v <- as.vector(ones %*% S %*% ones)
-         alpha <- (k/(k - 1)) * (1 - (1/v) * sum(diag(S)))
-         rbar <- mean(R[lower.tri(R)])
-         std.alpha <- k * rbar/(1 + (k - 1) * rbar)
+         k         = dim(S)[1]
+         ones      = rep(1, k)
+         v         = as.vector(ones %*% S %*% ones)
+         alpha     = (k/(k - 1)) * (1 - (1/v) * sum(diag(S)))
+         rbar      = mean(R[lower.tri(R)])
+         std.alpha = k * rbar/(1 + (k - 1) * rbar)
          c(alpha = alpha, std.alpha = std.alpha)
      }
-     result <- list()
+     result = list()
      if ((!is.numeric(S)) || !is.matrix(S) || (nrow(S) != ncol(S)) || any(abs(S - t(S)) > max(abs(S)) * 1e-10) || nrow(S) < 2)
          stop("argument must be a square, symmetric, numeric covariance matrix")
-     k <- dim(S)[1]
-     s <- sqrt(diag(S))
-     R <- S/(s %o% s)
-     rel <- reliab(S, R)
-     result$alpha <- rel[1]
-     result$st.alpha <- rel[2]
+     k = dim(S)[1]
+     s = sqrt(diag(S))
+     R = S/(s %o% s)
+     rel = reliab(S, R)
+     result$alpha = rel[1]
+     result$st.alpha = rel[2]
      if (k < 3) {
          warning("there are fewer than 3 items in the scale")
          return(invisible(NULL))
      }
-     rel <- matrix(0, k, 3)
+     rel = matrix(0, k, 3)
      for (i in 1:k) {
-         rel[i, c(1, 2)] <- reliab(S[-i, -i], R[-i, -i])
-         a <- rep(0, k)
-         b <- rep(1, k)
-         a[i] <- 1
-         b[i] <- 0
-         cov <- a %*% S %*% b
-         var <- b %*% S %*% b
-         rel[i, 3] <- cov/(sqrt(var * S[i, i]))
+         rel[i, c(1, 2)] = reliab(S[-i, -i], R[-i, -i])
+         a = rep(0, k)
+         b = rep(1, k)
+         a[i] = 1
+         b[i] = 0
+         cov = a %*% S %*% b
+         var = b %*% S %*% b
+         rel[i, 3] = cov/(sqrt(var * S[i, i]))
      }
-     rownames(rel) <- rownames(S)
-     colnames(rel) <- c("Alpha", "Std.Alpha", "r(item, total)")
-     result$rel.matrix <- rel
-     class(result) <- "reliability"
+     rownames(rel) = rownames(S)
+     colnames(rel) = c("Alpha", "Std.Alpha", "r(item, total)")
+     result$rel.matrix = rel
+     class(result) = "reliability"
      result
 }
 
@@ -3294,7 +3302,7 @@ print.reliability <- function (x, digits = 4, ...){
 #' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are \eqn{2\pi} 
-#' radians in a circle. 1 Rad = \eqn{180/\pi} degrees (~ 57.296\eqn{^{\circ}})
+#' radians in a circle. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
 #'
 #' @param rad The value in Radians you wish to convert
 #' @return - value in degrees
@@ -3309,11 +3317,12 @@ rad2deg <- function(rad) { rad * 180/pi }
 
 #' Convert Degrees to Degrees 
 #'
-#' @description A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi} in a circle, so \eqn{deg x 180/\pi} to get radians.
+#' @description A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi}
+#' in a circle), so \eqn{deg x 180/\pi} to get radians.
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! 
 #' 
-#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees	 (\eqn{\approx 57.296^{\circ}})
+#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
 #'
 #' @param deg The value in degrees you wish to convert to radians
 #' @return - value in radians
@@ -4738,7 +4747,7 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )#'
 #' umx_has_means(m1)
-#' m1 <- mxModel(m1,
+#' m1 = mxModel(m1,
 #' 	mxPath(from = "one", to = manifests),
 #' 	mxData(demoOneFactor[1:100,], type = "raw")
 #' )
@@ -4916,7 +4925,7 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 	dimnames(new) = list(newOrder, newOrder)
 	for(r in newOrder) {
 		for(c in newOrder) {
-			new[r, c] <- old[r, c]
+			new[r, c] = old[r, c]
 		}
 	}
 	return(new)
@@ -5032,8 +5041,8 @@ umx2ord <- umx_cont_2_quantiles
 #' umx_has_square_brackets("[hello]")
 #' umx_has_square_brackets("goodbye")
 umx_has_square_brackets <- function (input) {
-    match1 <- grep("[", input, fixed = TRUE)
-    match2 <- grep("]", input, fixed = TRUE)
+    match1 = grep("[", input, fixed = TRUE)
+    match2 = grep("]", input, fixed = TRUE)
     return(length(match1) > 0 && length(match2) > 0)
 }
 
@@ -5229,7 +5238,7 @@ umx_is_numeric <- function(df, all = TRUE){
 #' 
 #' @details In R, residuals for a variable can be found with the following statement:
 #' 
-#' \code{tmp <- residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
+#' \code{tmp = residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
 #'
 #' This tmp variable could then be written over the old data:
 #' 
@@ -5293,7 +5302,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	} else {
 		if(class(var) == "formula"){
 			umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
-			form <- var
+			form = var
 			var  = all.vars(terms(form))[1]
 			covs = all.vars(delete.response(terms(form)))
 		} else {
@@ -5818,7 +5827,7 @@ umx_rot <- function(vec, na.last=FALSE){
 #' @md
 umxCov2cor <- function(x) {
 	x = cov2cor(x)
-	x[lower.tri(x)] <- t(x)[lower.tri(t(x))]
+	x[lower.tri(x)] = t(x)[lower.tri(t(x))]
 	return(x)
 }
 
@@ -6071,9 +6080,9 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 	T1base = T1
 	T2base = T2
 	m = regexpr(paste0(sep, "1$"), T1base)
-	regmatches(T1base, m) <- ""
+	regmatches(T1base, m) = ""
 	m = regexpr(paste0(sep, "2$"), T2base)
-	regmatches(T2base, m) <- ""
+	regmatches(T2base, m) = ""
 	
 	# Check they're the same
 	if(!setequal(T1base, T2base)){
@@ -6189,8 +6198,8 @@ xmu_data_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 	theRows = theData[rowSelector,]
 	old_BlockTwo = theRows[,T2Names]
 	theRows[,T1Names] -> theRows[, T2Names]
-	theRows[,T1Names] <- old_BlockTwo
-	theData[rowSelector,] <- theRows
+	theRows[,T1Names] = old_BlockTwo
+	theData[rowSelector,] = theRows
 	return(theData)
 }
 
@@ -6814,22 +6823,22 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 	q = 1 - pQTL # Increaser allele frequency
 	a = sqrt(1/(2 * pQTL * q)) # Genotypic value for genetic variable of variance 1.0
 	# Residual variance in variable X (so variance adds up to one)
-	Vex  <- (1- Vqtl - bUX^2)
-	sdex <- sqrt(Vex) # Residual standard error in variable X
+	Vex  = (1- Vqtl - bUX^2)
+	sdex = sqrt(Vex) # Residual standard error in variable X
 	
 	# Residual variance for Y variable (so var sums to 1)
 	Vey = 1 - (bXY^2 + 2*bXY*bUX*bUY + bUY^2) 
-	sdey <- sqrt(Vey) # Residual standard error in variable Y
+	sdey = sqrt(Vey) # Residual standard error in variable Y
  
 	# Simulate individual genotypic and phenotypic values
-	qtl <- sample(c(-a, 0, a), nSubjects, replace = TRUE, prob = c(pQTL^2, 2 * pQTL * q, q^2)) 
-	U <- rnorm(nSubjects, 0, 1) #Confounding variables
-	X <- b_qtl_x * qtl + bUX * U + rnorm(nSubjects, 0, sdex) # X variable
-	Y <- bXY * X + bUY * U + rnorm(nSubjects, 0, sdey) # Y variable
+	qtl = sample(c(-a, 0, a), nSubjects, replace = TRUE, prob = c(pQTL^2, 2 * pQTL * q, q^2)) 
+	U   = rnorm(nSubjects, 0, 1) #Confounding variables
+	X   = b_qtl_x * qtl + bUX * U + rnorm(nSubjects, 0, sdex) # X variable
+	Y   = bXY * X + bUY * U + rnorm(nSubjects, 0, sdey) # Y variable
 	# Recode SNP qtl using traditional 0, 1, 2 coding
-	qtl <- replace(qtl, qtl ==  a, 2)
-	qtl <- replace(qtl, qtl ==  0, 1)
-	qtl <- replace(qtl, qtl == -a, 0)
+	qtl = replace(qtl, qtl ==  a, 2)
+	qtl = replace(qtl, qtl ==  0, 1)
+	qtl = replace(qtl, qtl == -a, 0)
 	MR_data = data.frame(X = X, Y = Y, U = U, qtl = qtl)
 	# save(MR_data, file = "~/bin/umx/data/MR_data.rda")
 }
@@ -6869,26 +6878,26 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
     warning("Data must be a data frame or matrix")
   }
   # organization
-  row <- dim(dataset)[1] # number of rows
-  if(is.na(n))(n <- row) # sets unspecified sample size to num rows
-  col <- dim(dataset)[2] # number of columns
-  del <- is.na(dataset)  # records position of NAs in dataset
+  row = dim(dataset)[1] # number of rows
+  if(is.na(n))(n = row) # sets unspecified sample size to num rows
+  col = dim(dataset)[2] # number of columns
+  del = is.na(dataset)  # records position of NAs in dataset
   if(n != row){
-    select <- round(runif(n, 0.5, row+.49),0)
-    del    <- del[select,]
+    select = round(runif(n, 0.5, row+.49),0)
+    del    = del[select,]
   }
-  num <- rep(NA, col)    # see what's not a factor
-  ord <- rep(NA, col)    # see what's an ordered factor
+  num = rep(NA, col)    # see what's not a factor
+  ord = rep(NA, col)    # see what's an ordered factor
 
   # which columns are numeric (the others are factors)?
   for (i in 1:col){
-    num[i] <- is.numeric(dataset[,i])
-    ord[i] <- is.ordered(dataset[,i])
+    num[i] = is.numeric(dataset[,i])
+    ord[i] = is.ordered(dataset[,i])
   }
 
   # check for unordered factors
-  location <- !(num|ord)
-  unorder  <- sum(location)
+  location = !(num|ord)
+  unorder  = sum(location)
 
   if(unorder>0)warning(
     paste("Unordered factor detected in variable(s):", 
@@ -6900,8 +6909,7 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
   if(sum(!num) == 0){
     # generate data with rmvnorm
 	# depends on mvtnorm::rmvnorm
-    fake <- mvtnorm::rmvnorm(n, apply(dataset, 2, mean, na.rm = TRUE),
-		cov(dataset, use = "pairwise.complete.obs"), mvt.method)
+    fake = mvtnorm::rmvnorm(n, apply(dataset, 2, mean, na.rm = TRUE), cov(dataset, use = "pairwise.complete.obs"), mvt.method)
 
     # round the data to the requested digits
     fake <- round(fake, digits)
@@ -7717,7 +7725,6 @@ umx_str2Algebra <- function(algString, name = NA, dimnames = NA) {
 #' @param rowMarker mark the end of each row
 #' @return - matrix
 #' @family Miscellaneous Utility Functions
-#' @references \url{http://www.sumsar.net/blog/2014/03/a-hack-to-create-matrices-in-R-matlab-style/}
 #' @export
 #' @examples
 #' # simple example
