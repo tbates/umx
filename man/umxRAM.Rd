@@ -103,14 +103,14 @@ saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
 
 \strong{String Syntax}
 
-Here is an example using lavaan syntax (for more, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\if{html}{\out{<div class="R">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
+Here is an example using lavaan syntax (for more, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\if{html}{\out{<div class="sourceCode R">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
 }\if{html}{\out{</div>}}
 
 \strong{Sketch mode}
 
 If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
 setting data to a simple vector of manifest names.
-As usual in \code{umxRAM}, any variables you refer to that are not in data are treated as latents.\if{html}{\out{<div class="R">}}\preformatted{m1 = umxRAM("sketch", data = c("A", "B"),
+As usual in \code{umxRAM}, any variables you refer to that are not in data are treated as latents.\if{html}{\out{<div class="sourceCode R">}}\preformatted{m1 = umxRAM("sketch", data = c("A", "B"),
 	umxPath("C", to = c("A", "B"), values=.3),
 	umxPath("A", with = "B", values=.45),
 	umxPath(v.m. = c("A", "B")),
