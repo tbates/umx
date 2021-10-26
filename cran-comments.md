@@ -1,5 +1,7 @@
 ## Changes
 Update for a package dependency
+Note: one doi doesn't resolve every time for CRAN check, but works fine for the end user: 
+I think it's an issue about jstor (journal archive) thinking CRAN page request is non-normal.
 
 ## Test environments
 * OS X 11.0.0, R version 4.1.1
