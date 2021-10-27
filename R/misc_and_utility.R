@@ -45,8 +45,8 @@
 #      I know not, but I feel it so,
 #      and it tortures me.
 
-# # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
-#  * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
+# [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
+# * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
 
 
 #' load libraries
@@ -58,7 +58,7 @@
 #' @return - [libs()]
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - [library()]
+#' @seealso - [library()]. [remove.packages()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -74,7 +74,7 @@ libs <- function(...) {
 		}, warning = function(warn) {
 			umx_msg("Who's, Z?")
 		}, error = function(err) {
-			umx_msg(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you"))
+			cat(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you"))
 		    install.packages(pack)
 			library(pack, character.only = TRUE)
 		}, finally={
