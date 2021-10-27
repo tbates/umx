@@ -1,5 +1,6 @@
 ## Changes
-Update for a package dependency
+A dozen new features and a many minor improvements.
+
 Note: one doi doesn't resolve every time for CRAN check, but works fine for the end user: 
 I think it's an issue about jstor (journal archive) thinking CRAN page request is non-normal.
 
