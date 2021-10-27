@@ -7,19 +7,24 @@
 * IMPROVED: `umxPower` parameters ==1 for power search with fixed n
 * IMPROVED: `power.ACE.test` can run ADE model
 * IMPROVED: `power.ACE.test` Clarify which of power, effect, and n are fixed or being estimated.
-* IMPROVED: `umxCP` warning to not use `correlatedACE`
+* IMPROVED: `umxReduce.ACE` gains tryHard  (compute ACE/ADE/CE/AE, outputs a table an also AIC-based probability weights for which is the preferable model)
+* IMPROVED: `umxReduce` tests familiality (E model)
+* IMPROVED: `umxReduce(ACE)` includes the parameters of the reduced models. #ht @nick martin
 * IMPROVED: `umxSummarizeTwinData` takes an age column and notes when it can't be found
 * IMPROVED: `umx_score_scale` can score items with character labels
 * IMPROVED: `umx_score_scale` gains the ability to report Cronbach's alpha
-* IMPROVED: `umx_rename` clearer names for deprecated parameters
-* IMPROVED: `umxReduce.ACE` gains tryHard  (compute ACE/ADE/CE/AE, outputs a table an also AIC-based probability weights for which is the preferable model)
-* IMPROVED: `umxAPA` (invisibly) returns the standardized model for lm
+* IMPROVED: `umx_rename` better names for deprecated parameters
 * IMPROVED: `umxRun` has tryHard (not a very useful function)
+* IMPROVED: `umxCompare` can silently return a data.frame for further modification
+* IMPROVED: `umxCP` warning to not use `correlatedACE`
+* IMPROVED: `umxAPA` (invisibly) returns the standardized model for lm
 * IMPROVED: `bucks` more control for formatting money
 * IMPROVED: `libs` now install.packages() if not found
+* IMPROVED: `umx_make_TwinData` shifts data to be positive if it not being scaled
 * CHANGE: `fin_interest` more memo/typeable parameter name for inflation
 * IMPROVED: `grViz()` in place of print(DiagrammR())` (should work better with knitr)
 * HELP: `FishersMethod` Rd ref
+* HELP: `umxCP` ref Martin, N. G., & Eaves, L. J. (1977). The Genetical Analysis of Covariance Structure. *Heredity*, **38**, 79-95.
 * HELP: `deg2rad` Rd better in html
 * HELP: `umxRAM` sketch mode help
 * HELP: `umxCP` more refs for Rd
