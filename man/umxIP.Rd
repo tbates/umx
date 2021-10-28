@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.R
 \name{umxIP}
 \alias{umxIP}
-\title{umxIP: Build and run an Independent pathway twin model}
+\title{umxIP: Build and run an Independent Pathway twin model}
 \usage{
 umxIP(
   name = "IP",
@@ -89,7 +89,13 @@ umxIP(
 }
 }
 \description{
-Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model).
+Make a 2-group Independent Pathway twin model.
+
+The independent-pathway model  (aka "biometric model" (McArdle and Goldsmith, 1990) proposes that \code{A},
+\code{C}, and \code{E} components act directly on the manifest or measured phenotypes. This contrasts with
+the \code{\link[=umxCP]{umxCP()}} model, in which these inifluences are collected on a hypothesised or latent causal
+variable, which is maniifested in the measured phenotypes.
+
 The following figure shows the IP model diagrammatically:
 
 \if{html}{\figure{IP.png}{options: width="50\%" alt="Figure: IP.png"}}
@@ -196,7 +202,7 @@ Same genes, different environments? \emph{Archives of General Psychiatry}, \stro
 }
 \seealso{
 \itemize{
-\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
+\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxCP]{umxCP()}}
 }
 
 Other Twin Modeling Functions: 

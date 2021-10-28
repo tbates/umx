@@ -2433,15 +2433,16 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	invisible(model)
 }
 
-#' umxCP: Build and run a Common pathway twin model
+#' umxCP: Build and run a Common Pathway twin model
 #'
 #' @description
-#' Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
+#' Make a 2-group Common Pathway twin model.
 #' 
-#' The common-pathway model provides a powerful tool for theory-based decomposition of genetic
-#' and environmental differences.
-#' 
-#' umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
+#' The common-pathway model  (aka "psychometric model" (McArdle and Goldsmith, 1990) provides a powerful tool
+#' for theory-based testing of genetic and environmental differences. It proposes that `A`, `C`, and `E` components
+#' act on a latent substrate (organ, mental mechanism etc.) and this is manifestted in the measured phenotypes.
+#'
+#' `umxCP` supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 #' to model the genetic and environmental structure of multiple phenotypes
 #' (measured behaviors).
 #' 
@@ -2817,10 +2818,16 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 	return(model)
 } # end umxCP
 
-#' umxIP: Build and run an Independent pathway twin model
+#' umxIP: Build and run an Independent Pathway twin model
 #'
 #' @description
-#' Make a 2-group Independent Pathway twin model (Common-factor independent-pathway multivariate model).
+#' Make a 2-group Independent Pathway twin model.
+#' 
+#' The independent-pathway model  (aka "biometric model" (McArdle and Goldsmith, 1990) proposes that `A`, 
+#' `C`, and `E` components act directly on the manifest or measured phenotypes. This contrasts with 
+#' the [umxCP()] model, in which these inifluences are collected on a hypothesised or latent causal
+#' variable, which is maniifested in the measured phenotypes.
+#' 
 #' The following figure shows the IP model diagrammatically:
 #'
 #' \if{html}{\figure{IP.png}{options: width="50\%" alt="Figure: IP.png"}}
@@ -2919,7 +2926,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' @return - [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [plot()], [umxSummary()], [umxCP()]
 #' @references * Kendler, K. S., Heath, A. C., Martin, N. G., & Eaves, L. J. (1987). Symptoms of anxiety and symptoms of depression. 
 #' Same genes, different environments? *Archives of General Psychiatry*, **44**, 451-457. \doi{10.1001/archpsyc.1987.01800170073010}.
 #' * McArdle, J. J., & Goldsmith, H. H. (1990). Alternative common factor models for multivariate biometric analyses.

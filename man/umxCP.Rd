@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.R
 \name{umxCP}
 \alias{umxCP}
-\title{umxCP: Build and run a Common pathway twin model}
+\title{umxCP: Build and run a Common Pathway twin model}
 \usage{
 umxCP(
   name = "CP",
@@ -102,12 +102,13 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 }
 }
 \description{
-Make a 2-group Common Pathway twin model (Common-factor common-pathway multivariate model).
+Make a 2-group Common Pathway twin model.
 
-The common-pathway model provides a powerful tool for theory-based decomposition of genetic
-and environmental differences.
+The common-pathway model  (aka "psychometric model" (McArdle and Goldsmith, 1990) provides a powerful tool
+for theory-based testing of genetic and environmental differences. It proposes that \code{A}, \code{C}, and \code{E} components
+act on a latent substrate (organ, mental mechanism etc.) and this is manifestted in the measured phenotypes.
 
-umxCP supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
+\code{umxCP} supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of multiple phenotypes
 (measured behaviors).
 
