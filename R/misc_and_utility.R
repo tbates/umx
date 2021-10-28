@@ -64,6 +64,7 @@
 #' \dontrun{
 #' libs("umx", "OpenMx", "car")
 #' libs("umx", c("OpenMx", "car"))
+#' remove.packages()
 #' }
 libs <- function(...) {
 	dot.items = list(...) # grab all the dot items
