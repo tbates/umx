@@ -21,6 +21,7 @@ libs(...)
 \dontrun{
 libs("umx", "OpenMx", "car")
 libs("umx", c("OpenMx", "car"))
+remove.packages()
 }
 }
 \seealso{

@@ -2649,8 +2649,9 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 #'
 #' @description
 #' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
-#' If an amount of \$100 has 20\% added, what percent do we need to drop it by to return to the original value?
-#' `fin_percent(20)` yields \$100 increased by 20\% = \$120 (Percent to reverse = -17\%)
+#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
+#' 
+#' `fin_percent(20)` yields $100 increased by 20% = $120 (Percent to reverse = -17%)
 #' 
 #' @param percent Change in percent (enter 10 for 10%, not 0.1)
 #' @param value Principal
