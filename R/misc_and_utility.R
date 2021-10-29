@@ -2493,7 +2493,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_percent()]
-#' @references - [tutorials](https://tbates.github.io), [github](https://github.com/tbates/umx)
+#' @references - <https://en.wikipedia.org/wiki/Compound_interest>
 #' @md
 #' @examples
 #' \dontrun{

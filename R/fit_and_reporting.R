@@ -3894,8 +3894,9 @@ FishersMethod <- function(pvalues, ...){
 #' Geometric Mean
 #'
 #' @description
-#' `Geometric means` are the nth-root of the product of the input values.
-#' Common uses include computing economic utility.
+#' The Geometric mean is the nth-root of the product of `n` input values.
+#' Common uses include computing economic utility.  That is to say, the utility of 
+#' `c(1, 2, 10)` is \deqn{(1 * 2 * 10)/3} = 6.6 not 6.3 (the arithmetic mean).
 #' 
 #' @param x A vector of values.
 #' @param na.rm remove NAs by default.

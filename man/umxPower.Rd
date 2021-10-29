@@ -57,7 +57,7 @@ This sounds silly, but empirical rates are often as low as 20\% (Button, et al.,
 
 Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 
-\if{html}{\figure{power.png}{options: width="50\%" alt="Figure: power.png"}}
+\if{html}{\figure{power.png}{options: width=50\% alt="Figure: power.png"}}
 \if{latex}{\figure{power.pdf}{options: width=7cm}}
 }
 \examples{

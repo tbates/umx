@@ -50,7 +50,7 @@ analysis showing the utility of SEM over two-stage regression.
 
 The following figure shows how the ACE model appears as a path diagram:
 
-\if{html}{\figure{TSLS.png}{options: width="50\%" alt="Figure: Mendelian Randomisation analysis.png"}}
+\if{html}{\figure{TSLS.png}{options: width=50\% alt="Figure: Mendelian Randomisation analysis.png"}}
 \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
 }
 \examples{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.R
 \name{umxACE}
 \alias{umxACE}
-\title{Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)}
+\title{Build and run a 2-group Cholesky ACE twin model (univariate or multivariate)}
 \usage{
 umxACE(
   name = "ACE",
@@ -102,7 +102,7 @@ non-additive genetic effects (D).
 
 The following figure shows the ACE model for one variable "x" as a path diagram:
 
-\if{html}{\figure{ACEunivariate.png}{options: width="50\%" alt="Figure: ACE univariate.png"}}
+\if{html}{\figure{ACEunivariate.png}{options: width=50\% alt="Figure: ACE univariate.png"}}
 \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
 
 \code{umxACE} allows multivariate analyses, and this brings us to the Cholesky part of the model.
@@ -111,7 +111,7 @@ The Cholesky decomposition creates as many latent A (and C and E) latent variabl
 from left to right, decomposes the variance in each phenotype into successively restricted
 factors. The following figure shows the multivariate ACE model for three variables:
 
-\if{html}{\figure{ACEmatrix.png}{options: width="50\%" alt="Figure: ACE matrix.png"}}
+\if{html}{\figure{ACEmatrix.png}{options: width=50\% alt="Figure: ACE matrix.png"}}
 \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
 
 In this ACE model of three phenotypes, the expected variance-covariance matrix of the original data

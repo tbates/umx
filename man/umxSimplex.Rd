@@ -75,7 +75,7 @@ These combine to explain the causes of variance in the phenotype (see Figure).
 
 \strong{Simplex path diagram}:
 
-\if{html}{\figure{simplex.png}{options: width="50\%" alt="Figure: simplex.png"}}
+\if{html}{\figure{simplex.png}{options: width=50\% alt="Figure: simplex.png"}}
 \if{latex}{\figure{simplex.pdf}{options: width=7cm}}
 
 \strong{Data Input}

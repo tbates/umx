@@ -339,7 +339,7 @@ umxModel <- function(...) {
 #' ```
 #' Will create this figure:
 #' 
-#' \if{html}{\figure{sketch.png}{options: width="50\%" alt="Figure: sketch.png"}}
+#' \if{html}{\figure{sketch.png}{options: alt="Figure: sketch.png"}}
 #' \if{latex}{\figure{sketch.pdf}{options: width=7cm}}
 #' 
 #' @details
@@ -1134,7 +1134,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 # = Twin Functions =
 # ==================
 
-#' Build and run a 2-group Cholesky twin model (uni-variate or multi-variate)
+#' Build and run a 2-group Cholesky ACE twin model (univariate or multivariate)
 #'
 #' @description
 #' Implementing a core task in twin modeling, umxACE models the genetic and environmental
@@ -1150,7 +1150,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' 
 #' The following figure shows the ACE model for one variable "x" as a path diagram:
 #' 
-#' \if{html}{\figure{ACEunivariate.png}{options: width="50\%" alt="Figure: ACE univariate.png"}}
+#' \if{html}{\figure{ACEunivariate.png}{options: width=50% alt="Figure: ACE univariate.png"}}
 #' \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
 #'
 #' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
@@ -1159,7 +1159,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' from left to right, decomposes the variance in each phenotype into successively restricted 
 #' factors. The following figure shows the multivariate ACE model for three variables:
 #' 
-#' \if{html}{\figure{ACEmatrix.png}{options: width="50\%" alt="Figure: ACE matrix.png"}}
+#' \if{html}{\figure{ACEmatrix.png}{options: width=50% alt="Figure: ACE matrix.png"}}
 #' \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
 #'
 #' In this ACE model of three phenotypes, the expected variance-covariance matrix of the original data
@@ -1618,7 +1618,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' 
 #' The following figure the GxE model as a path diagram:
 #' 
-#' \if{html}{\figure{GxE.png}{options: width="50\%" alt="Figure: GxE.png"}}
+#' \if{html}{\figure{GxE.png}{options: width=50% alt="Figure: GxE.png"}}
 #' \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
 #'
 #' @param name The name of the model (default= "G_by_E")
@@ -2127,7 +2127,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #'
 #' The following figure shows how the ACE model with random covariates appears as a path diagram:
 #' 
-#' \if{html}{\figure{ACEcovVarianceModel.png}{options: width="50\%" alt="Figure: ACEcovVarianceModel.png"}}
+#' \if{html}{\figure{ACEcovVarianceModel.png}{options: width=50% alt="Figure: ACEcovVarianceModel.png"}}
 #' \if{latex}{\figure{ACEcovVarianceModel.pdf}{options: width=7cm}}
 #'
 #' 
@@ -2448,7 +2448,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' Common-pathway path diagram:
 #' 
-#' \if{html}{\figure{CP.png}{options: width="50\%" alt="Figure: CP.png"}}
+#' \if{html}{\figure{CP.png}{options: width=50% alt="Figure: CP.png"}}
 #' \if{latex}{\figure{CP.pdf}{options: width=7cm}}
 #' 
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
@@ -2830,7 +2830,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' 
 #' The following figure shows the IP model diagrammatically:
 #'
-#' \if{html}{\figure{IP.png}{options: width="50\%" alt="Figure: IP.png"}}
+#' \if{html}{\figure{IP.png}{options: width=50% alt="Figure: IP.png"}}
 #' \if{latex}{\figure{IP.pdf}{options: width=7cm}}
 #'
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.

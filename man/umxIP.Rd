@@ -98,7 +98,7 @@ variable, which is maniifested in the measured phenotypes.
 
 The following figure shows the IP model diagrammatically:
 
-\if{html}{\figure{IP.png}{options: width="50\%" alt="Figure: IP.png"}}
+\if{html}{\figure{IP.png}{options: width=50\% alt="Figure: IP.png"}}
 \if{latex}{\figure{IP.pdf}{options: width=7cm}}
 
 As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.

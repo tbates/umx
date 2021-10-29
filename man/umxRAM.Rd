@@ -121,7 +121,7 @@ plot(m1, means = FALSE)
 
 Will create this figure:
 
-\if{html}{\figure{sketch.png}{options: width="50\%" alt="Figure: sketch.png"}}
+\if{html}{\figure{sketch.png}{options: alt="Figure: sketch.png"}}
 \if{latex}{\figure{sketch.pdf}{options: width=7cm}}
 }
 \details{

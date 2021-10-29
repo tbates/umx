@@ -31,7 +31,7 @@
 #' The following figure shows the A components of a trivariate ACEv model:
 #' 
 #'
-#' \if{html}{\figure{ACEv.png}{options: width="50\%" alt="Figure: ACEv.png"}}
+#' \if{html}{\figure{ACEv.png}{options: width=50% alt="Figure: ACEv.png"}}
 #' \if{latex}{\figure{ACEv.pdf}{options: width=7cm}}
 #' 
 #' \emph{NOTE}: This function does not use the Cholesky decomposition. Instead it directly models variance.

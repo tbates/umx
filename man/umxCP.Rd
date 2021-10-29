@@ -114,7 +114,7 @@ to model the genetic and environmental structure of multiple phenotypes
 
 Common-pathway path diagram:
 
-\if{html}{\figure{CP.png}{options: width="50\%" alt="Figure: CP.png"}}
+\if{html}{\figure{CP.png}{options: width=50\% alt="Figure: CP.png"}}
 \if{latex}{\figure{CP.pdf}{options: width=7cm}}
 
 As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.

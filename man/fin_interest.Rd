@@ -98,7 +98,7 @@ fin_interest(principal = 100, final=200, yrs = 5)
 }
 \references{
 \itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{github}
+\item \url{https://en.wikipedia.org/wiki/Compound_interest}
 }
 }
 \seealso{

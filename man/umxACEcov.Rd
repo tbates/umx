@@ -79,7 +79,7 @@ Binary and ordinal covariates like sex also violate the normality assumption. Wh
 \details{
 The following figure shows how the ACE model with random covariates appears as a path diagram:
 
-\if{html}{\figure{ACEcovVarianceModel.png}{options: width="50\%" alt="Figure: ACEcovVarianceModel.png"}}
+\if{html}{\figure{ACEcovVarianceModel.png}{options: width=50\% alt="Figure: ACEcovVarianceModel.png"}}
 \if{latex}{\figure{ACEcovVarianceModel.pdf}{options: width=7cm}}
 }
 \examples{

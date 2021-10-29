@@ -21,7 +21,7 @@
 #'
 #' Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 #' 
-#' \if{html}{\figure{power.png}{options: width="50\%" alt="Figure: power.png"}}
+#' \if{html}{\figure{power.png}{options: width=50% alt="Figure: power.png"}}
 #' \if{latex}{\figure{power.pdf}{options: width=7cm}}
 #'
 #'
@@ -245,7 +245,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #'
 #' Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 #' 
-#' \if{html}{\figure{power.png}{options: width="50\%" alt="Figure: power.png"}}
+#' \if{html}{\figure{power.png}{options: width=50% alt="Figure: power.png"}}
 #' \if{latex}{\figure{power.pdf}{options: width=7cm}}
 #'
 #' @param trueModel The model with the parameters at values you expect in the population.

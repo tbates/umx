@@ -73,7 +73,7 @@ testing, and visualizing  G xE (or C or E x E) interaction forms.
 \details{
 The following figure the GxE model as a path diagram:
 
-\if{html}{\figure{GxE.png}{options: width="50\%" alt="Figure: GxE.png"}}
+\if{html}{\figure{GxE.png}{options: width=50\% alt="Figure: GxE.png"}}
 \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
 }
 \examples{
