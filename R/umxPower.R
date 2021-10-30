@@ -263,7 +263,8 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' @export
 #' @family Teaching and Testing functions
 #' @seealso - [umxRAM()]
-#' @references - [tutorials](https://tbates.github.io)
+#' @references - Miles, J. (2003). A framework for power analysis using a structural equation modelling procedure. *BMC Mediical Research Methodology*, **3**, 27. \doi{10.1186/1471-2288-3-27}
+
 #' @md
 #' @examples
 #' # ===================================================
@@ -326,14 +327,12 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' m1 = umxACE(selDVs = "ht", selCovs = "age", sep = "", dzData = dzData, mzData = mzData)
 #'
 #' # drop more than 1 path
-#' # can't use ncp with 
 #' umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'ncp', n=90, explore = TRUE)
+#'
 #' # Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
+#' # note: Can't use method = "ncp" with search)
 #' umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE)
 #' umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
-#'
-#'
-
 #' }
 #'
 umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=TRUE, silent = TRUE){
