@@ -37,6 +37,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 RMSEA(m1)
 x = RMSEA(m1)
 x$RMSEA # -> 0.0309761
+
+\dontrun{
 # Raw: needs to be run by umx to get RMSEA
 m2 = umxRAM("One Factor", data = demoOneFactor,
 	umxPath("G", to = manifests),
@@ -44,6 +46,7 @@ m2 = umxRAM("One Factor", data = demoOneFactor,
 	umxPath(var = "G", fixedAt = 1)
 )
 RMSEA(m2)
+}
 }
 \references{
 \itemize{

@@ -270,7 +270,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param tryHard (default = "yes")
-#' @param silent Don't prrint the ACE models (default = FALSE)
+#' @param silent Don't print the ACE models (default = FALSE)
 #' @param digits rounding in printout (default = 2)
 #' @param ... Other parameters to control model summary
 #' @return Best fitting model
@@ -3751,6 +3751,8 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' RMSEA(m1)
 #' x = RMSEA(m1)
 #' x$RMSEA # -> 0.0309761
+#' 
+#' \dontrun{
 #' # Raw: needs to be run by umx to get RMSEA
 #' m2 = umxRAM("One Factor", data = demoOneFactor,
 #' 	umxPath("G", to = manifests),
@@ -3758,6 +3760,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' RMSEA(m2)
+#' }
 RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
 	model = x
 	if(is.null(model$output$SaturatedLikelihood)){
@@ -3879,7 +3882,7 @@ print.RMSEA <- function(x, ...) {
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
-#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. \doi{10.2307/2681650}.
+#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi: https://doi.org/10.2307/2681650.
 #' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, 
 #' Vol. 1 - Adjustment during Army Life. Princeton, Princeton University Press.
 #' @md

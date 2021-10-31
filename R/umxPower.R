@@ -263,7 +263,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' @export
 #' @family Teaching and Testing functions
 #' @seealso - [umxRAM()]
-#' @references - Miles, J. (2003). A framework for power analysis using a structural equation modelling procedure. *BMC Mediical Research Methodology*, **3**, 27. \doi{10.1186/1471-2288-3-27}
+#' @references - Miles, J. (2003). A framework for power analysis using a structural equation modelling procedure. *BMC Medical Research Methodology*, **3**, 27. \doi{10.1186/1471-2288-3-27}
 
 #' @md
 #' @examples

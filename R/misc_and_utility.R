@@ -84,15 +84,16 @@ libs <- function(...) {
 	}
 }
 
-#' Succintly select complete rows from a dataframe
+#' Succinctly select complete rows from a dataframe
 #'
 #' @description
-#' Succintly select complete rows from a dataframe.
+#' Succinctly select complete rows from a dataframe.
 #'
 #' @param df an [data.frame()] to select on
-#' @param rows rows to keep (incomplete still discarded)
-#' @param cols cols to keep (incomplete still discarded)
-#' @return - complete rows and [optionally] selected columns
+#' @param rows Rows to keep (optional, incomplete rows still discarded)
+#' @param cols Cols to keep
+#' @param drop Whether to return a vecotr when only 1 column is selected (default TRUE)
+#' @return - Complete rows and [optionally] selected columns
 #' @export
 #' @family Data Functions
 #' @md
@@ -102,7 +103,7 @@ libs <- function(...) {
 #' complete(tmp, cols="mpg")
 #' complete(tmp, cols="mpg", drop = FALSE)
 #' complete(tmp) # no Mazda RX4 Wag
-#' }
+#'
 complete <- function(df, rows = NULL, cols = NULL, drop = TRUE) {
 	if(is.null(rows)){
 		if(is.null(cols)){
@@ -976,7 +977,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #'
 #' @details
 #' Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz
-#' Quad-core i7 desktop and then quad i7 2018 macBook Pro
+#' Quad-core i7 desktop and then a quad i7 2018 MacBook Pro
 #' 
 #' \tabular{rllll}{
 #'	Date       \tab Version         \tab Cores \tab Time              \tab     Notes               \cr

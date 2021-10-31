@@ -2440,7 +2440,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' The common-pathway model  (aka "psychometric model" (McArdle and Goldsmith, 1990) provides a powerful tool
 #' for theory-based testing of genetic and environmental differences. It proposes that `A`, `C`, and `E` components
-#' act on a latent substrate (organ, mental mechanism etc.) and this is manifestted in the measured phenotypes.
+#' act on a latent substrate (organ, mental mechanism etc.) and this is manifested in the measured phenotypes.
 #'
 #' `umxCP` supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 #' to model the genetic and environmental structure of multiple phenotypes
@@ -2524,7 +2524,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
-#' @param correlatedACE DONT USE THIS! Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
+#' @param correlatedACE DON'T USE THIS! Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -2623,7 +2623,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' # = Correlated factors example =
 #' # ==============================
 #' # ====================
-#' # = DONT USE THIS!!! =
+#' # = DON'T USE THIS!!! =
 #' # ====================
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
@@ -2825,8 +2825,8 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' 
 #' The independent-pathway model  (aka "biometric model" (McArdle and Goldsmith, 1990) proposes that `A`, 
 #' `C`, and `E` components act directly on the manifest or measured phenotypes. This contrasts with 
-#' the [umxCP()] model, in which these inifluences are collected on a hypothesised or latent causal
-#' variable, which is maniifested in the measured phenotypes.
+#' the [umxCP()] model, in which these influences are collected on a hypothesised or latent causal
+#' variable, which is manifested in the measured phenotypes.
 #' 
 #' The following figure shows the IP model diagrammatically:
 #'

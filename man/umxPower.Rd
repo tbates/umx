@@ -132,7 +132,7 @@ umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
 }
 \references{
 \itemize{
-\item Miles, J. (2003). A framework for power analysis using a structural equation modelling procedure. \emph{BMC Mediical Research Methodology}, \strong{3}, 27. \doi{10.1186/1471-2288-3-27}
+\item Miles, J. (2003). A framework for power analysis using a structural equation modelling procedure. \emph{BMC Medical Research Methodology}, \strong{3}, 27. \doi{10.1186/1471-2288-3-27}
 }
 }
 \seealso{

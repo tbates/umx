@@ -21,7 +21,7 @@
 * IMPROVED: `bucks` more control for formatting money
 * IMPROVED: `libs` now install.packages() if not found
 * IMPROVED: `umx_make_TwinData` shifts data to be positive if it not being scaled
-* CHANGE: `fin_interest` more memo/typeable parameter name for inflation
+* CHANGE: `fin_interest` more memo/type-able parameter name for inflation
 * IMPROVED: `grViz()` in place of print(DiagrammR())` (should work better with knitr)
 * HELP: `FishersMethod` Rd ref
 * HELP: `umxCP` ref Martin, N. G., & Eaves, L. J. (1977). The Genetical Analysis of Covariance Structure. *Heredity*, **38**, 79-95.

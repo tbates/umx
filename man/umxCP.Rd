@@ -60,7 +60,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
-\item{correlatedACE}{DONT USE THIS! Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.}
+\item{correlatedACE}{DON'T USE THIS! Allows correlations between the factors built by each of the a, c, and e matrices. Default = FALSE.}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
 
@@ -106,7 +106,7 @@ Make a 2-group Common Pathway twin model.
 
 The common-pathway model  (aka "psychometric model" (McArdle and Goldsmith, 1990) provides a powerful tool
 for theory-based testing of genetic and environmental differences. It proposes that \code{A}, \code{C}, and \code{E} components
-act on a latent substrate (organ, mental mechanism etc.) and this is manifestted in the measured phenotypes.
+act on a latent substrate (organ, mental mechanism etc.) and this is manifested in the measured phenotypes.
 
 \code{umxCP} supports this with pairs of mono-zygotic (MZ) and di-zygotic (DZ) twins reared together
 to model the genetic and environmental structure of multiple phenotypes
@@ -243,7 +243,7 @@ m3 = umxCP(selDVs = selDVs, sep = "_T", nFac = 3, dzData = dzData, mzData = mzDa
 # = Correlated factors example =
 # ==============================
 # ====================
-# = DONT USE THIS!!! =
+# = DON'T USE THIS!!! =
 # ====================
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")

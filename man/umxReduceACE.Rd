@@ -26,7 +26,7 @@ umxReduceACE(
 
 \item{tryHard}{(default = "yes")}
 
-\item{silent}{Don't prrint the ACE models (default = FALSE)}
+\item{silent}{Don't print the ACE models (default = FALSE)}
 
 \item{digits}{rounding in printout (default = 2)}
 

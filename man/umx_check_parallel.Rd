@@ -28,7 +28,7 @@ Shows how many cores you are using, and runs a test script so user can check CPU
 }
 \details{
 Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz
-Quad-core i7 desktop and then quad i7 2018 macBook Pro
+Quad-core i7 desktop and then a quad i7 2018 MacBook Pro
 
 \tabular{rllll}{
 Date       \tab Version         \tab Cores \tab Time              \tab     Notes               \cr

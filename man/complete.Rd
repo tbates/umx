@@ -2,24 +2,34 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{complete}
 \alias{complete}
-\title{Succintly select complete rows from a dataframe}
+\title{Succinctly select complete rows from a dataframe}
 \usage{
 complete(df, rows = NULL, cols = NULL, drop = TRUE)
 }
 \arguments{
 \item{df}{an \code{\link[=data.frame]{data.frame()}} to select on}
 
-\item{rows}{rows to keep (incomplete still discarded)}
+\item{rows}{Rows to keep (optional, incomplete rows still discarded)}
 
-\item{cols}{cols to keep (incomplete still discarded)}
+\item{cols}{Cols to keep}
+
+\item{drop}{Whether to return a vecotr when only 1 column is selected (default TRUE)}
 }
 \value{
 \itemize{
-\item complete rows and \link{optionally} selected columns
+\item Complete rows and \link{optionally} selected columns
 }
 }
 \description{
-Succintly select complete rows from a dataframe.
+Succinctly select complete rows from a dataframe.
+}
+\examples{
+tmp = mtcars
+tmp[2,1] = NA
+complete(tmp, cols="mpg")
+complete(tmp, cols="mpg", drop = FALSE)
+complete(tmp) # no Mazda RX4 Wag
+
 }
 \seealso{
 Other Data Functions: 
