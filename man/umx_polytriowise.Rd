@@ -44,6 +44,7 @@ cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \seealso{
 Other Data Functions: 
+\code{\link{complete}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

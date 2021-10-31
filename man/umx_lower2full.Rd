@@ -100,6 +100,7 @@ umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
 }
 \seealso{
 Other Data Functions: 
+\code{\link{complete}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

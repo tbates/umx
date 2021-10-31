@@ -84,6 +84,47 @@ libs <- function(...) {
 	}
 }
 
+#' Succintly select complete rows from a dataframe
+#'
+#' @description
+#' Succintly select complete rows from a dataframe.
+#'
+#' @param df an [data.frame()] to select on
+#' @param rows rows to keep (incomplete still discarded)
+#' @param cols cols to keep (incomplete still discarded)
+#' @return - complete rows and [optionally] selected columns
+#' @export
+#' @family Data Functions
+#' @md
+#' @examples
+#' tmp = mtcars
+#' tmp[2,1] = NA
+#' complete(tmp, cols="mpg")
+#' complete(tmp, cols="mpg", drop = FALSE)
+#' complete(tmp) # no Mazda RX4 Wag
+#' }
+complete <- function(df, rows = NULL, cols = NULL, drop = TRUE) {
+	if(is.null(rows)){
+		if(is.null(cols)){
+			# every complete row, all cols
+			df[complete.cases(df), , drop = drop]
+		}else{
+			# every complete row, selected cols
+			df[complete.cases(df[, cols]), cols, drop = drop]
+		}
+	} else {
+		# remove discluded rows
+		df = df[rows, ]
+		if(is.null(cols)){
+			# every remaining complete row, all cols
+			df[complete.cases(df), , drop = drop]
+		}else{
+			# every remaining complete row, selected cols
+			df[complete.cases(df[, cols]), cols, drop = drop]
+		}
+	}
+}
+
 #' Return names of models found within a model
 #'
 #' @description

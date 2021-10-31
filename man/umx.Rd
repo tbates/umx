@@ -224,6 +224,7 @@ Other Plotting functions:
 \code{\link{umxPlotSimplex}()}
 
 Other Data Functions: 
+\code{\link{complete}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

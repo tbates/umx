@@ -47,6 +47,7 @@ umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
 }
 \seealso{
 Other Data Functions: 
+\code{\link{complete}()},
 \code{\link{umxFactor}()},
 \code{\link{umx_as_numeric}()},
 \code{\link{umx_cont_2_quantiles}()},
