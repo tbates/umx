@@ -17,7 +17,7 @@ complete(df, rows = NULL, cols = NULL, drop = TRUE)
 }
 \value{
 \itemize{
-\item Complete rows and \link{optionally} selected columns
+\item Complete rows and (optionally) selected columns
 }
 }
 \description{
