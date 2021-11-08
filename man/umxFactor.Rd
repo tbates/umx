@@ -80,7 +80,7 @@ jnk = umxFactor(df); str(jnk)
 }
 
 Other Data Functions: 
-\code{\link{complete}()},
+\code{\link{noNAs}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
 \code{\link{umx_cont_2_quantiles}()},

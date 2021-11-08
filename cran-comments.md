@@ -1,6 +1,6 @@
 ## Changes
-Response to previous CRAN Check: Removed 2 doi's that work fine, but fail CRAN check
-I think it's an issue about jstor (journal archive) thinking CRAN page request is non-normal.
+Response to previous CRAN Check: Removed 2 doi's that work outside cran, but fail CRAN check
+looks like an issue with  jstor (journal archive) thinking CRAN page request is non-normal.
 
 A dozen new features and many minor improvements.
 

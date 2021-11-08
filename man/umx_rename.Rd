@@ -80,7 +80,7 @@ tmp = umx_rename(tmp, old = c("am", "disp", "drat"), replace = new)
 \link{namez} to filter (and replace) names, Also \link{umx_check_names} to check for existence of names in a dataframe.
 
 Other Data Functions: 
-\code{\link{complete}()},
+\code{\link{noNAs}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

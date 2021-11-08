@@ -30,7 +30,7 @@ umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 }
 \seealso{
 Other Data Functions: 
-\code{\link{complete}()},
+\code{\link{noNAs}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
