@@ -6,7 +6,7 @@
 \usage{
 umxRun(
   model,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search"),
   calc_sat = TRUE,
   setValues = FALSE,
   setLabels = FALSE,
@@ -18,7 +18,7 @@ umxRun(
 \arguments{
 \item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to run.}
 
-\item{tryHard}{How to tryHard. Default = "no". Alternatives "yes", "ordinal", "search"}
+\item{tryHard}{How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"}
 
 \item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[=mxData]{mxData()}} \code{\link[=mxModel]{mxModel()}}s)}
 
