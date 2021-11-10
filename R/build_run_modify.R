@@ -246,7 +246,7 @@ utils::globalVariables(c(
 
 # ===================================================================
 # = Define some class containers to allow specialised model objects =
-# = plot, etc. can then operate on these                             =
+# = plot, etc. can then operate on these                            =
 # ===================================================================
 methods::setClass("MxModelDoC"    , contains = "MxModel")
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
@@ -2825,7 +2825,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' 
 #' The independent-pathway model  (aka "biometric model" (McArdle and Goldsmith, 1990) proposes that `A`, 
 #' `C`, and `E` components act directly on the manifest or measured phenotypes. This contrasts with 
-#' the [umxCP()] model, in which these influences are collected on a hypothesised or latent causal
+#' the [umxCP()] model, in which these influences are collected on a hypothesized or latent causal
 #' variable, which is manifested in the measured phenotypes.
 #' 
 #' The following figure shows the IP model diagrammatically:
@@ -3620,7 +3620,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 #' @param model The [mxModel()] you wish to run.
-#' @param tryHard  How to tryHard. Default = "no". Alternatives "yes", "ordinal", "search"
+#' @param tryHard  How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw [mxData()] [mxModel()]s)
 #' @param setValues Whether to set the starting values of free parameters (default = FALSE)
 #' @param setLabels Whether to set the labels (default =  FALSE)
@@ -3659,7 +3659,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 
 # type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
 
-umxRun <- function(model, tryHard = c("no", "yes", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, optimizer = NULL, comparison = NULL){
+umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, optimizer = NULL, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
 	# TODO: umxRun: Optimise for speed

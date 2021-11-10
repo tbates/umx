@@ -92,7 +92,7 @@ libs <- function(...) {
 #' @param df an [data.frame()] to select on
 #' @param rows Rows to keep (optional, incomplete rows still discarded)
 #' @param cols Cols to keep
-#' @param drop Whether to return a vecotr when only 1 column is selected (default TRUE)
+#' @param drop Whether to return a vector when only 1 column is selected (default TRUE)
 #' @return - Complete rows and (optionally) selected columns
 #' @export
 #' @family Data Functions
@@ -6075,6 +6075,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @return - long-format dataframe
 #' @export
 #' @family Twin Data functions
+#' @seealso [reshape()]
 #' @examples
 #' long = umx_wide2long(data = twinData, sep = "")
 #' long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)

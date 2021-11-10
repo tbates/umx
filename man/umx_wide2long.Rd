@@ -32,6 +32,8 @@ str(long)
 str(twinData)
 }
 \seealso{
+[reshape()]
+
 Other Twin Data functions: 
 \code{\link{umx_long2wide}()},
 \code{\link{umx_make_TwinData}()},
