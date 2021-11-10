@@ -4784,7 +4784,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		return(list(a, b))
 	}
 	if(!is.null(v0m.)){
-		if(!is.na(values)){
+		if(length(values)!=1 || !is.na(values)){
 			if(length(values)==2){
 				varValue = values[1]
 				meanValue = values[2]
