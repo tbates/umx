@@ -56,7 +56,7 @@ cov(tmp)
 }
 
 Other Data Functions: 
-\code{\link{complete}()},
+\code{\link{noNAs}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

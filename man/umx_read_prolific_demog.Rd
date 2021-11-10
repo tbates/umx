@@ -58,7 +58,7 @@ tmp = umx_read_prolific_demog(demog= fp, base = "", df = NULL, verbose = FALSE)
 }
 \seealso{
 Other Data Functions: 
-\code{\link{complete}()},
+\code{\link{noNAs}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

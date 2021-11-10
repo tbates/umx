@@ -100,11 +100,11 @@ libs <- function(...) {
 #' @examples
 #' tmp = mtcars
 #' tmp[2,1] = NA
-#' complete(tmp, cols="mpg")
-#' complete(tmp, cols="mpg", drop = FALSE)
-#' complete(tmp) # no Mazda RX4 Wag
+#' noNAs(tmp, cols="mpg")
+#' noNAs(tmp, cols="mpg", drop = FALSE)
+#' noNAs(tmp) # no Mazda RX4 Wag
 #'
-complete <- function(df, rows = NULL, cols = NULL, drop = TRUE) {
+noNAs <- function(df, rows = NULL, cols = NULL, drop = TRUE) {
 	if(is.null(rows)){
 		if(is.null(cols)){
 			# every complete row, all cols
@@ -3495,10 +3495,10 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		return(rhub::get_check(check_id))
 	}else if(what == "install_full"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
-		# system("sleep 5; open /Applications/R.app &")
-		
+		devtools::load_all(path = pkg)
 	} else if(what == "quick_install"){
-		devtools::document(pkg = pkg); devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);				
+		devtools::document(pkg = pkg); devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);
+		devtools::load_all(path = pkg)
 	} else if(what == "run_examples"){
 		devtools::run_examples(pkg = pkg, run = run, start = start)
 	} else if(what == "check"){
@@ -3512,6 +3512,7 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 	} else if (what =="rhub"){
 		if(which == "mac"){
 			plat = "macos-highsierra-release-cran"
+			plat = "macos-m1-bigsur-release"
 		} else if(which=="linux") {
 			plat = "debian-gcc-patched"
 			# plat = "debian-clang-devel"
@@ -3528,8 +3529,6 @@ umx_make <- function(what = c("quick_install", "install_full", "spell", "run_exa
 		}else{
 			devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 		}
-		# devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
-
 	} else if (what == "release"){
 		oldDir = getwd()
 		setwd(dir= pkg)

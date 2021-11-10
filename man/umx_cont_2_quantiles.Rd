@@ -74,7 +74,7 @@ x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
 }
 \seealso{
 Other Data Functions: 
-\code{\link{complete}()},
+\code{\link{noNAs}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
