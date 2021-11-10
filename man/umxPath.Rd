@@ -15,6 +15,7 @@ umxPath(
   v.m. = NULL,
   v0m0 = NULL,
   v.m0 = NULL,
+  v0m. = NULL,
   fixedAt = NULL,
   freeAt = NULL,
   firstAt = NULL,
