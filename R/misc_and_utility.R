@@ -6076,6 +6076,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @return - long-format dataframe
 #' @export
 #' @family Twin Data functions
+#' @seealso [reshape()]
 #' @examples
 #' long = umx_wide2long(data = twinData, sep = "")
 #' long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
