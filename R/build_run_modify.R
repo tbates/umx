@@ -4110,14 +4110,12 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	method = match.arg(method)
 	if(method=="allFree"){
-		verbose=FALSE
+		verbose = FALSE
 	}
-
 	if(any(selDVs != "deprecated")){
 		message("Polite note: please use fullVarNames instead of selDVs when calling umxThresholdMatrix")
-		fullVarNames= selDVs
+		fullVarNames = selDVs
 	}
-
 	if(is.null(fullVarNames)){
 		warning("Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames to the list of FULL names of all the variables in the model (AND you MUST include sep if this is a twin model!!)")
 		fullVarNames = names(df)
@@ -4140,7 +4138,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 	df = df[, fullVarNames, drop = FALSE]
 	# Check input
 	if(dim(df)[1] < 1){ stop("Data input to umxThresholdMatrix had no rows. I use the data to set thresholds, so the data must have rows.") }
-	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
+	if(droplevels){ stop("Not sure it's wise to drop levels... let me know if you have a case where this is legit") }
 	
 	summaryObj     = umx_is_ordered(df, summaryObject= TRUE)
     isFactor       = summaryObj$isFactor
@@ -4244,14 +4242,14 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		if(verbose){
 			message(sum(isBin), " trait(s) are binary: ", omxQuotes(binVarNames),
 			"\nFor these, you you MUST fix the mean and variance of the latent traits driving each variable (usually 0 & 1 respectively) .\n",
-			"See ?mxThresholdMatrix")
+			"See ?umxThresholdMatrix")
 		}
 	}
 	if(nOrdVars > 0){
 		if(verbose){
 			message(nOrdVars, " variables are ordinal (>2 levels). For these I will use Paras Mehta's 'fix first 2 thresholds' method.\n",
 			"It's ESSENTIAL that you leave the means and variances of the latent ordinal traits FREE!\n",
-			"See ?mxThresholdMatrix")
+			"See ?umxThresholdMatrix")
 		}
 	}
 	if(minLevels == 1){
@@ -4272,7 +4270,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		# ===============================================================
 		# Pros: Doesn't assume equal intervals.
 		# Problems = empty bins and noise (equal thresholds (illegal) and higher than realistic z-values)
-		tab = table(thisCol)/sum(table(thisCol)) # Simple histogram of proportion at each threshold
+		tab = table(thisCol)/sum(table(thisCol)) # Simple table of % values occuring at each threshold
 		cumTab = cumsum(tab)                     # Convert to a cumulative sum (sigmoid from 0 to 1)
 		# Use quantiles to get z-equivalent for each level: ditch one to get thresholds...
 		zValues = qnorm(p = cumTab, lower.tail = TRUE)
@@ -4286,14 +4284,22 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 			nPlusInf  = sum(zValues == (Inf))
 			nMinusInf = sum(zValues == (-Inf))
 			if(nPlusInf){
-				maxOK = max(zValues[!is.infinite(zValues)])
-				padding = seq(from = (maxOK + .1), by = .1, length.out = nPlusInf)
-				zValues[zValues == (Inf)] = padding
+				if(length(zValues[!is.infinite(zValues)])==0){
+					zValues[zValues == (Inf)] = seq(from = .1, by = .1, length.out = nPlusInf)
+				} else {
+					maxOK = max(zValues[!is.infinite(zValues)])
+					padding = seq(from = (maxOK + .1), by = .1, length.out = nPlusInf)
+					zValues[zValues == (Inf)] = padding
+				}
 			}
 			if(nMinusInf){
-				minOK = min(zValues[!is.infinite(zValues)])
-				padding = seq(from = (minOK - .1), by = (- .1), length.out = nMinusInf)
-				zValues[zValues == (-Inf)] = padding
+				if(length(zValues[!is.infinite(zValues)])==0){
+					zValues[zValues == (-Inf)] = seq(from = -.1, by = .1, length.out = nPlusInf)
+				} else {
+					minOK = min(zValues[!is.infinite(zValues)])
+					padding = seq(from = (minOK - .1), by = (- .1), length.out = nMinusInf)
+					zValues[zValues == (-Inf)] = padding
+				}
 			}
 		}
 		# =================================
@@ -4521,9 +4527,10 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param v.m. variance and mean, both free.
 #' @param v0m0 variance and mean, both fixed at zero.
 #' @param v.m0 variance free, mean fixed at zero.
-#' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
-#' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
-#' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
+#' @param v0m. variance fixed at 0, mean free.
+#' @param fixedAt Equivalent to setting "free = FALSE, values = fixedAt"
+#' @param freeAt Equivalent to setting "free = TRUE, values = freeAt"
+#' @param firstAt First path is fixed at this value (free is ignored: warning if other than a single TRUE)
 #' @param unique.bivariate equivalent to setting from, and "connect = "unique.bivariate", arrows = 2".
 #' nb: from, to, and with must be left empty (their default)
 #' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)

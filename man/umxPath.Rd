@@ -57,11 +57,13 @@ umxPath(
 
 \item{v.m0}{variance free, mean fixed at zero.}
 
-\item{fixedAt}{Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)}
+\item{v0m.}{variance fixed at 0, mean free.}
 
-\item{freeAt}{Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)}
+\item{fixedAt}{Equivalent to setting "free = FALSE, values = fixedAt"}
 
-\item{firstAt}{first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)}
+\item{freeAt}{Equivalent to setting "free = TRUE, values = freeAt"}
+
+\item{firstAt}{First path is fixed at this value (free is ignored: warning if other than a single TRUE)}
 
 \item{unique.bivariate}{equivalent to setting from, and "connect = "unique.bivariate", arrows = 2".
 nb: from, to, and with must be left empty (their default)}

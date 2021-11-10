@@ -7468,14 +7468,22 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 			data[,i] = factor(data[,i])
 		}
 	}
-	hetc = hetcor(data, ML = ML, use = use, std.err = std.err)
-	if(verbose){
-		print(hetc)
-	}
-	if(return == "correlations"){
-		return(hetc$correlations)
+	if(is.null(dim(data)) || dim(data)[2]==1){
+		if(is.null(dim(data))){
+			return(var(as.numeric(data), na.rm = TRUE))
+		} else {
+			return(var(as.numeric(data[,1]), na.rm = TRUE))
+		}
 	} else {
-		return(hetc)
+		hetc = hetcor(data, ML = ML, use = use, std.err = std.err)
+		if(verbose){
+			print(hetc)
+		}
+		if(return == "correlations"){
+			return(hetc$correlations)
+		} else {
+			return(hetc)
+		}
 	}
 }
 
