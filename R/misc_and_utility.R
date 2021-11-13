@@ -6317,12 +6317,14 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @examples
 #' data(twinData)
 #' tmp = twinData
+#' tmp2 = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zygosity="zygosity")
 #' tmp$zygosity=NULL
-#' tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zyg="zygosity")
+#' tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zygosity="zygosity")
 #' namez(tmp, "zyg")
 #' levels(tmp$zygosity)
 #'
-umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumericZygosity = FALSE, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")){
+umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbering, labelNumericZygosity = FALSE, levels = 1:5, labels = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS")){
+	# 1. rename existing zygosity column to "zygosity" if not already
 	if(zygosity != "zygosity"){
 		if(!is.null(data$zygosity)){
 			stop("A column called 'zygosity' already exists. please rename that column first, e.g. with\n",
@@ -6332,7 +6334,7 @@ umx_make_twin_data_nice <- function(data, sep, zygosity, numbering, labelNumeric
 			# data$zygosity = data[, zygosity]
 		}
 	}
-	# Update twin names with new separator.
+	# Update twin names (ending in "sep1" etc.) with new separator ("_T1" etc).
 	oldNames = namez(data, paste0(sep, "[0-9]$"))
 	newNames = namez(oldNames, pattern = paste0(sep, "([0-9])$"), replacement = "_T\\1")
 	data = umx_rename(data=data, from = oldNames, to = newNames)

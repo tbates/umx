@@ -6,8 +6,8 @@
 \usage{
 umx_make_twin_data_nice(
   data,
-  sep,
-  zygosity,
+  sep = "",
+  zygosity = "zygosity",
   numbering,
   labelNumericZygosity = FALSE,
   levels = 1:5,
@@ -45,8 +45,9 @@ umx_make_twin_data_nice(
 \examples{
 data(twinData)
 tmp = twinData
+tmp2 = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zygosity="zygosity")
 tmp$zygosity=NULL
-tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zyg="zygosity")
+tmp = umx_make_twin_data_nice(twinData, sep="", numbering = 1:5, zygosity="zygosity")
 namez(tmp, "zyg")
 levels(tmp$zygosity)
 
