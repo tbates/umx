@@ -93,7 +93,7 @@ Make a 2-group Independent Pathway twin model.
 
 The independent-pathway model  (aka "biometric model" (McArdle and Goldsmith, 1990) proposes that \code{A},
 \code{C}, and \code{E} components act directly on the manifest or measured phenotypes. This contrasts with
-the \code{\link[=umxCP]{umxCP()}} model, in which these influences are collected on a hypothesised or latent causal
+the \code{\link[=umxCP]{umxCP()}} model, in which these influences are collected on a hypothesized or latent causal
 variable, which is manifested in the measured phenotypes.
 
 The following figure shows the IP model diagrammatically:

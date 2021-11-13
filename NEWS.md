@@ -1,10 +1,12 @@
 ## dev umx 4.11.0
 
 ## dev umx 4.10.1
-* October 2021 R 4.1.1 (2021/08/10)
+* November 2021 R 4.1.1 (2021/08/10)
 * NEW: `umxPower` can plot power search space! (beta!)
-* FIX: `umxPower` supports multiple path drop
+* NEW: `noNAs()` helper to return complete rows.
+* FIX: `umxPower` supports multiple path drop.
 * IMPROVED: `umxPower` parameters ==1 for power search with fixed n
+* IMPROVED: `umxPower` ref
 * IMPROVED: `power.ACE.test` can run ADE model
 * IMPROVED: `power.ACE.test` Clarify which of power, effect, and n are fixed or being estimated.
 * IMPROVED: `umxReduce.ACE` gains tryHard  (compute ACE/ADE/CE/AE, outputs a table an also AIC-based probability weights for which is the preferable model)
@@ -18,10 +20,12 @@
 * IMPROVED: `umxCompare` can silently return a data.frame for further modification
 * IMPROVED: `umxCP` warning to not use `correlatedACE`
 * IMPROVED: `umxAPA` (invisibly) returns the standardized model for lm
+* IMPROVED: `umxPath` gains `v0m.`
 * IMPROVED: `bucks` more control for formatting money
 * IMPROVED: `libs` now install.packages() if not found
 * IMPROVED: `umx_make_TwinData` shifts data to be positive if it not being scaled
 * CHANGE: `fin_interest` more memo/type-able parameter name for inflation
+* CHANGE: `umxRun` defaults to tryHard= "yes"
 * IMPROVED: `grViz()` in place of print(DiagrammR())` (should work better with knitr)
 * HELP: `FishersMethod` Rd ref
 * HELP: `umxCP` ref Martin, N. G., & Eaves, L. J. (1977). The Genetical Analysis of Covariance Structure. *Heredity*, **38**, 79-95.

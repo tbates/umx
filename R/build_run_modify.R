@@ -246,7 +246,7 @@ utils::globalVariables(c(
 
 # ===================================================================
 # = Define some class containers to allow specialised model objects =
-# = plot, etc. can then operate on these                             =
+# = plot, etc. can then operate on these                            =
 # ===================================================================
 methods::setClass("MxModelDoC"    , contains = "MxModel")
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
@@ -2825,7 +2825,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' 
 #' The independent-pathway model  (aka "biometric model" (McArdle and Goldsmith, 1990) proposes that `A`, 
 #' `C`, and `E` components act directly on the manifest or measured phenotypes. This contrasts with 
-#' the [umxCP()] model, in which these influences are collected on a hypothesised or latent causal
+#' the [umxCP()] model, in which these influences are collected on a hypothesized or latent causal
 #' variable, which is manifested in the measured phenotypes.
 #' 
 #' The following figure shows the IP model diagrammatically:
@@ -3620,7 +3620,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 #' @param model The [mxModel()] you wish to run.
-#' @param tryHard  How to tryHard. Default = "no". Alternatives "yes", "ordinal", "search"
+#' @param tryHard  How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw [mxData()] [mxModel()]s)
 #' @param setValues Whether to set the starting values of free parameters (default = FALSE)
 #' @param setLabels Whether to set the labels (default =  FALSE)
@@ -3659,7 +3659,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 
 # type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
 
-umxRun <- function(model, tryHard = c("no", "yes", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, optimizer = NULL, comparison = NULL){
+umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, optimizer = NULL, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
 	# TODO: umxRun: Optimise for speed
@@ -4110,14 +4110,12 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	method = match.arg(method)
 	if(method=="allFree"){
-		verbose=FALSE
+		verbose = FALSE
 	}
-
 	if(any(selDVs != "deprecated")){
 		message("Polite note: please use fullVarNames instead of selDVs when calling umxThresholdMatrix")
-		fullVarNames= selDVs
+		fullVarNames = selDVs
 	}
-
 	if(is.null(fullVarNames)){
 		warning("Polite message: For coding safety, when calling umxThresholdMatrix, set fullVarNames to the list of FULL names of all the variables in the model (AND you MUST include sep if this is a twin model!!)")
 		fullVarNames = names(df)
@@ -4140,7 +4138,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 	df = df[, fullVarNames, drop = FALSE]
 	# Check input
 	if(dim(df)[1] < 1){ stop("Data input to umxThresholdMatrix had no rows. I use the data to set thresholds, so the data must have rows.") }
-	if(droplevels){ stop("Not sure it's wise to drop levels... let me know what you think") }
+	if(droplevels){ stop("Not sure it's wise to drop levels... let me know if you have a case where this is legit") }
 	
 	summaryObj     = umx_is_ordered(df, summaryObject= TRUE)
     isFactor       = summaryObj$isFactor
@@ -4244,14 +4242,14 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		if(verbose){
 			message(sum(isBin), " trait(s) are binary: ", omxQuotes(binVarNames),
 			"\nFor these, you you MUST fix the mean and variance of the latent traits driving each variable (usually 0 & 1 respectively) .\n",
-			"See ?mxThresholdMatrix")
+			"See ?umxThresholdMatrix")
 		}
 	}
 	if(nOrdVars > 0){
 		if(verbose){
 			message(nOrdVars, " variables are ordinal (>2 levels). For these I will use Paras Mehta's 'fix first 2 thresholds' method.\n",
 			"It's ESSENTIAL that you leave the means and variances of the latent ordinal traits FREE!\n",
-			"See ?mxThresholdMatrix")
+			"See ?umxThresholdMatrix")
 		}
 	}
 	if(minLevels == 1){
@@ -4272,7 +4270,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		# ===============================================================
 		# Pros: Doesn't assume equal intervals.
 		# Problems = empty bins and noise (equal thresholds (illegal) and higher than realistic z-values)
-		tab = table(thisCol)/sum(table(thisCol)) # Simple histogram of proportion at each threshold
+		tab = table(thisCol)/sum(table(thisCol)) # Simple table of % values occuring at each threshold
 		cumTab = cumsum(tab)                     # Convert to a cumulative sum (sigmoid from 0 to 1)
 		# Use quantiles to get z-equivalent for each level: ditch one to get thresholds...
 		zValues = qnorm(p = cumTab, lower.tail = TRUE)
@@ -4286,14 +4284,22 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 			nPlusInf  = sum(zValues == (Inf))
 			nMinusInf = sum(zValues == (-Inf))
 			if(nPlusInf){
-				maxOK = max(zValues[!is.infinite(zValues)])
-				padding = seq(from = (maxOK + .1), by = .1, length.out = nPlusInf)
-				zValues[zValues == (Inf)] = padding
+				if(length(zValues[!is.infinite(zValues)])==0){
+					zValues[zValues == (Inf)] = seq(from = .1, by = .1, length.out = nPlusInf)
+				} else {
+					maxOK = max(zValues[!is.infinite(zValues)])
+					padding = seq(from = (maxOK + .1), by = .1, length.out = nPlusInf)
+					zValues[zValues == (Inf)] = padding
+				}
 			}
 			if(nMinusInf){
-				minOK = min(zValues[!is.infinite(zValues)])
-				padding = seq(from = (minOK - .1), by = (- .1), length.out = nMinusInf)
-				zValues[zValues == (-Inf)] = padding
+				if(length(zValues[!is.infinite(zValues)])==0){
+					zValues[zValues == (-Inf)] = seq(from = -.1, by = .1, length.out = nPlusInf)
+				} else {
+					minOK = min(zValues[!is.infinite(zValues)])
+					padding = seq(from = (minOK - .1), by = (- .1), length.out = nMinusInf)
+					zValues[zValues == (-Inf)] = padding
+				}
 			}
 		}
 		# =================================
@@ -4521,9 +4527,10 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param v.m. variance and mean, both free.
 #' @param v0m0 variance and mean, both fixed at zero.
 #' @param v.m0 variance free, mean fixed at zero.
-#' @param fixedAt Equivalent to setting "free = FALSE, values = x" nb: free and values must be left empty (their default)
-#' @param freeAt Equivalent to setting "free = TRUE, values = x" nb: free and values must be left empty (their default)
-#' @param firstAt first value is fixed at this (values passed to free are ignored: warning if not a single TRUE)
+#' @param v0m. variance fixed at 0, mean free.
+#' @param fixedAt Equivalent to setting "free = FALSE, values = fixedAt"
+#' @param freeAt Equivalent to setting "free = TRUE, values = freeAt"
+#' @param firstAt First path is fixed at this value (free is ignored: warning if other than a single TRUE)
 #' @param unique.bivariate equivalent to setting from, and "connect = "unique.bivariate", arrows = 2".
 #' nb: from, to, and with must be left empty (their default)
 #' @param unique.pairs equivalent to setting "connect = "unique.pairs", arrows = 2" (don't use from, to, or with)
@@ -4614,15 +4621,15 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' }
 #'
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
-	connect = match.arg(connect) # set to single if not overridden by user.
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, v0m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+	connect = match.arg(connect) # Set to single if not overridden by user.
 	# xmu_string2path(from)
 	n = 0
-	for (i in list(with, cov, var, forms, means, fromEach, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, v.m0, defn, Cholesky)) {
+	for (i in list(with, cov, var, forms, means, fromEach, unique.bivariate, unique.pairs, v.m. , v1m0, v0m0, v.m0, v0m., defn, Cholesky)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n > 1){
-		stop("At most one of with, cov, var, forms, means, fromEach, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, v.m0, defn, or Cholesky can be set: Use at one time")
+		stop("At most one of with, cov, var, forms, means, fromEach, unique.bivariate, unique.pairs, v1m0, v.m., v0m0, v.m0, v0m., defn, or Cholesky can be set: Use at one time")
 	} else if(n == 0){
 		# check that from is set?
 		if(is.null(from)){
@@ -4635,7 +4642,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n && !is.null(fixedAt)){
-		warning("When you use v.m. , v1m0, v0m0, v.m0, don't also set fixedAt - I will ignore it this time")
+		warning("When you use v.m. , v1m0, v0m0, v.m0, v0m., don't also set fixedAt - I will ignore it this time")
 		fixedAt = NULL
 	}
 
@@ -4773,6 +4780,36 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		} else {
 			a = mxPath(from = v.m0, arrows = 2, free = TRUE, values = values)
 			b = mxPath(from = "one", to = v.m0, free = FALSE, values = 0)
+		}
+		return(list(a, b))
+	}
+	if(!is.null(v0m.)){
+		if(length(values)!=1 || !is.na(values)){
+			if(length(values)==2){
+				varValue = values[1]
+				meanValue = values[2]
+			} else if(length(values)==1){
+				varValue = 0
+				meanValue = values
+			} else {
+				stop("Managing which values apply to variances and which to means is error prone for more than one variable: Please do them 1 at a time\n")
+			}
+		}else{
+			varValue  = 0
+			meanValue = 0			
+		}
+		if(any(!is.na(labels))){
+			if(length(labels)==2){
+				a = mxPath(from = v0m., arrows = 2, free = FALSE, values = varValue, labels = labels[1])
+				b = mxPath(from = "one", to = v0m., free = TRUE , values = meanValue, labels = labels[2])
+			} else {
+				stop("Managing which labels apply to the variances and which to the means is error prone:\n",
+				"I suggest you call: umxPath(var) and umxPath(means=) separately"
+				)
+			}
+		} else {
+			a = mxPath(from = v0m., arrows = 2, free = FALSE, values = varValue)
+			b = mxPath(from = "one", to = v0m., free = TRUE , values = meanValue)
 		}
 		return(list(a, b))
 	}

@@ -13,7 +13,7 @@ noNAs(df, rows = NULL, cols = NULL, drop = TRUE)
 
 \item{cols}{Cols to keep}
 
-\item{drop}{Whether to return a vecotr when only 1 column is selected (default TRUE)}
+\item{drop}{Whether to return a vector when only 1 column is selected (default TRUE)}
 }
 \value{
 \itemize{
