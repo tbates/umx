@@ -2858,6 +2858,7 @@ plot.percent <- function(x, ...) {
 	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
 	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
 	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
+	# p = p + ggplot2::geom_area()
 	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(oldValue, " percent change"))
 
 	# subtitle = "Subtitle: (1973-74)",
@@ -2874,9 +2875,15 @@ plot.percent <- function(x, ...) {
 	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
 
 	# Add label to plot, centred on x, top at y} (in data coordinates)
-	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "lightgrey")
+	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "grey")
 	# Add label to plot in data coordinates, flush-left at x, baseline centred on y.
-	p = p + cowplot::draw_label("\u25CF", hjust=0, vjust=.5, x = percentChange*100, y = percent_to_reverse*100, color = "red")
+	p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")
+	# p = p + ggplot2::geom_hline(yintercept = percent_to_reverse*100) + ggplot2::geom_vline(xintercept = percentChange*100)
+	# hor
+	p = p + ggplot2::geom_segment(x = percentChange*100, y=percent_to_reverse*100, xend=-100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+	# vert
+	p = p + ggplot2::geom_segment(x = percentChange*100, y=-10, xend=percentChange*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+	
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 	invisible(p)
