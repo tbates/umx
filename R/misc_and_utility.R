@@ -2687,53 +2687,6 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 	return(Total)
 }
 
-#' Compute the percent change needed to return to the original value after percent off (or on).
-#'
-#' @description
-#' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
-#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
-#' 
-#' `fin_percent(20)` yields $100 increased by 20% = $120 (Percent to reverse = -17%)
-#' 
-#' @param percent Change in percent (enter 10 for 10%, not 0.1)
-#' @param value Principal
-#' @param symbol value units (default = "$")
-#' @param digits Rounding of results (default 2 places)
-#' @param plot Whether to plot the result (default TRUE)
-#' @return - new value and change required to return to baseline.
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [fin_interest()]
-#' @md
-#' @examples
-#' # Percent needed to return to original value after 10% taken off
-#' fin_percent(-10)
-#'
-#' # Percent needed to return to original value after 10% added on
-#' fin_percent(10)
-#'
-#' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5)
-fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE) {
-	percent  = percent/100
-	newValue = value * (1 + percent)
-	percent_to_reverse = (value/newValue) - 1
-	class(newValue) = 'percent'
-	attr(newValue, 'oldValue') = value
-	attr(newValue, 'percent')  = percent
-	attr(newValue, 'digits')   = digits
-	attr(newValue, 'symbol')   = symbol
-	attr(newValue, 'percent_to_reverse') = percent_to_reverse
-
-	if(plot){
-		plot(newValue)
-	}else{
-		return(newValue)
-	}
-}
-
-
-
 #' Print a money object
 #'
 #' @description Print function for "money" objects, e.g. [fin_interest()].
@@ -2780,6 +2733,52 @@ bucks <- function(x, symbol = "$", big.mark = ",", decimal.mark = ".", trim = TR
 #' @export
 #' @method print money
 print.money <- bucks
+
+#' Compute the percent change needed to return to the original value after percent off (or on).
+#'
+#' @description
+#' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
+#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
+#' 
+#' `fin_percent(20)` yields $100 increased by 20% = $120 (Percent to reverse = -17%)
+#' 
+#' @param percent Change in percent (enter 10 for 10%, not 0.1)
+#' @param value Principal
+#' @param symbol value units (default = "$")
+#' @param digits Rounding of results (default 2 places)
+#' @param plot Whether to plot the result (default TRUE)
+#' @return - new value and change required to return to baseline.
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()]
+#' @md
+#' @examples
+#' # Percent needed to return to original value after 10% taken off
+#' fin_percent(-10)
+#'
+#' # Percent needed to return to original value after 10% added on
+#' fin_percent(10)
+#'
+#' # Percent needed to return to original value after 50% off 34.50
+#' fin_percent(-50, value = 34.5)
+fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE) {
+	percent  = percent/100
+	newValue = value * (1 + percent)
+	percent_to_reverse = (value/newValue) - 1
+	class(newValue) = 'percent'
+	attr(newValue, 'oldValue') = value
+	attr(newValue, 'percent')  = percent
+	attr(newValue, 'digits')   = digits
+	attr(newValue, 'symbol')   = symbol
+	attr(newValue, 'percent_to_reverse') = percent_to_reverse
+
+	if(plot){
+		plot(newValue)
+	}else{
+		return(newValue)
+	}
+}
+
 
 #' Print a percent object
 #'
@@ -2859,6 +2858,7 @@ plot.percent <- function(x, ...) {
 	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
 	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
 	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(oldValue, " percent change"))
+	# p = p + ggplot2::geom_area() can't do with stat fun..
 
 	# subtitle = "Subtitle: (1973-74)",
 	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
@@ -2871,12 +2871,17 @@ plot.percent <- function(x, ...) {
 		# p = p + ggplot2::theme_bw()
 		p = p + cowplot::theme_cowplot(font_size = 11)
 	}
-	lab = paste0(percentChange*100, "% off=", percent_to_reverse * 100, "% on", sep = "")
+	lab = paste0(round(percentChange*100, 2), "% off=", round(percent_to_reverse * 100, 2), "% on", sep = "")
 
 	# Add label to plot, centred on x, top at y} (in data coordinates)
-	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = percentChange*100, y = percent_to_reverse*100, color= "lightgrey")
+	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = -50, y = 700, color= "grey")
 	# Add label to plot in data coordinates, flush-left at x, baseline centred on y.
-	p = p + cowplot::draw_label("\u25CF", hjust=0, vjust=.5, x = percentChange*100, y = percent_to_reverse*100, color = "red")
+	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")
+	# hor
+	p = p + ggplot2::geom_segment(x = percentChange*100, y=percent_to_reverse*100, xend=-100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+	# vert
+	p = p + ggplot2::geom_segment(x = percentChange*100, y=-10, xend=percentChange*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+	
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
 	invisible(p)
