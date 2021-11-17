@@ -3,8 +3,9 @@
 ## dev umx 4.10.1
 * November 2021 R 4.1.1 (2021/08/10)
 * NEW: `umxPower` can plot power search space! (beta!)
-* NEW: `noNAs()` helper to return complete rows.
-* FIX: `umxPower` supports multiple path drop.
+* NEW: `noNAs()` helper returning complete rows of a data.frame.
+* NEW: `umxThresholdMatrix` can handle one value columns
+* IMPROVED: `umxPath` gains `v0m.`
 * IMPROVED: `umxPower` parameters ==1 for power search with fixed n
 * IMPROVED: `umxPower` ref
 * IMPROVED: `power.ACE.test` can run ADE model
@@ -12,7 +13,7 @@
 * IMPROVED: `umxReduce.ACE` gains tryHard  (compute ACE/ADE/CE/AE, outputs a table an also AIC-based probability weights for which is the preferable model)
 * IMPROVED: `umxReduce` tests familiality (E model)
 * IMPROVED: `umxReduce(ACE)` includes the parameters of the reduced models. #ht @nick martin
-* IMPROVED: `umxSummarizeTwinData` takes an age column and notes when it can't be found
+* IMPROVED: `umxSummarizeTwinData` takes an age column and notes when it can’t be found
 * IMPROVED: `umx_score_scale` can score items with character labels
 * IMPROVED: `umx_score_scale` gains the ability to report Cronbach's alpha
 * IMPROVED: `umx_rename` better names for deprecated parameters
@@ -20,13 +21,13 @@
 * IMPROVED: `umxCompare` can silently return a data.frame for further modification
 * IMPROVED: `umxCP` warning to not use `correlatedACE`
 * IMPROVED: `umxAPA` (invisibly) returns the standardized model for lm
-* IMPROVED: `umxPath` gains `v0m.`
 * IMPROVED: `bucks` more control for formatting money
 * IMPROVED: `libs` now install.packages() if not found
 * IMPROVED: `umx_make_TwinData` shifts data to be positive if it not being scaled
+* IMPROVED: `grViz()` in place of print(DiagrammR())` (should work better with knitr)
 * CHANGE: `fin_interest` more memo/type-able parameter name for inflation
 * CHANGE: `umxRun` defaults to tryHard= "yes"
-* IMPROVED: `grViz()` in place of print(DiagrammR())` (should work better with knitr)
+* FIX: `umxPower` supports multiple path drop.
 * HELP: `FishersMethod` Rd ref
 * HELP: `umxCP` ref Martin, N. G., & Eaves, L. J. (1977). The Genetical Analysis of Covariance Structure. *Heredity*, **38**, 79-95.
 * HELP: `deg2rad` Rd better in html
