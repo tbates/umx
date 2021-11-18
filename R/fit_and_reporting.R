@@ -4377,7 +4377,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		# F = gaussian, quasibinomial, quasipoisson
 		# Cp similar to AIC
 		# see ?anova.glm 
-
+		cat("Change in the log odds of the outcome for a one unit increase in the predictor variable:\n")
 		model_coefficients = summary(obj)$coefficients
 		conf = confint(obj)
 		if(is.null(se)){
@@ -4390,24 +4390,24 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			b       = b_and_p["Estimate"]
 			testStat    = b_and_p["z value"]
 			pval    = b_and_p["Pr(>|z|)"]
-			cat(paste0(i, betaSymbol, round(b, digits), 
+			cat(paste0(i, " log(odds) = ", round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
 			))
 		}
-		if(obj$family$family=="binomial"){
+		if(obj$family$family == "binomial"){
 			# https://stats.idre.ucla.edu/r/dae/logit-regression/
-			cat("Converted to odds ratio (rather than log(odds)), the results are:\n")
-			model_coefficients   = exp(coef(obj)) # Odds Ratios OR
-			conf = exp(confint(obj))
-			tmp = cbind(OR = model_coefficients, conf)
+			cat("\nAs ORs (odds ratios, rather than log(odds)):\n")
+			model_coefficients = exp(coef(obj)) # Odds Ratios OR
+			conf = exp(conf)
+			tmp  = cbind(OR = model_coefficients, conf)
 			for (i in 1:dim(tmp)[[1]]) {
 				lower   = conf[i, 1]
 				upper   = conf[i, 2]
 				OR = model_coefficients[i]
 				cat(paste0(se[i], " OR = ", round(OR, digits), " [", round(lower, digits), commaSep, round(upper, digits), "]\n"))
 			}
-			cat("Or even more useful back into probabilities...\n")
+			cat("\nAnd as probabilities...\n")
 			for (i in 1:dim(tmp)[[1]]) {
 				OR = model_coefficients[i]
 				cat(paste0(se[i], " probability = ", round(OR/(1+OR), digits), "\n"))
