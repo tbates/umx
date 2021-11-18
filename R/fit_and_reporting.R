@@ -4407,6 +4407,11 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 				OR = model_coefficients[i]
 				cat(paste0(se[i], " OR = ", round(OR, digits), " [", round(lower, digits), commaSep, round(upper, digits), "]\n"))
 			}
+			cat("Or even more useful back into probabilities...\n")
+			for (i in 1:dim(tmp)[[1]]) {
+				OR = model_coefficients[i]
+				cat(paste0(se[i], " probability = ", round(OR/(1+OR), digits), "\n"))
+			}
 		}
 		cat(paste0("\nAIC = ", round(AIC(obj), 3) ))
 	} else if( "lme" == class(obj)[[1]]) {
