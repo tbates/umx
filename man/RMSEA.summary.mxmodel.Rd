@@ -25,6 +25,8 @@ Compute the confidence interval on RMSEA and print it out.
 \emph{note}: If your goal is to extract the RMSEA from a model, use \code{RMSEA(m1)$RMSEA}
 }
 \examples{
+
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -36,6 +38,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor[1:100,], type = "cov",
 )
 tmp = summary(m1)
 RMSEA(tmp)
+}
 }
 \references{
 \itemize{

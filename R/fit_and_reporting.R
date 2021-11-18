@@ -3561,6 +3561,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("labe
 #' @references - \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3573,6 +3574,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("labe
 #' extractAIC(m1)
 #' # -2.615998
 #' AIC(m1)
+#' }
 extractAIC.MxModel <- function(fit, scale, k, ...) {
 	a = mxCompare(fit)
 	return(a[1, "AIC"])
@@ -3739,7 +3741,6 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
-#' 
 #' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
@@ -3751,8 +3752,10 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' RMSEA(m1)
+#' 
 #' x = RMSEA(m1)
 #' x$RMSEA # -> 0.0309761
+#'
 #' # Raw: needs to be run by umx to get RMSEA
 #' m2 = umxRAM("One Factor", data = demoOneFactor,
 #' 	umxPath("G", to = manifests),
@@ -3802,6 +3805,8 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' @references - <https://github.com/simsem/semTools/wiki/Functions>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3813,6 +3818,7 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' )
 #' tmp = summary(m1)
 #' RMSEA(tmp)
+#' }
 RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3){
 	summary = x # x is a model summary
 	if(ci.lower != .05 | ci.upper != .95){
