@@ -3739,6 +3739,8 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3749,8 +3751,6 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #' RMSEA(m1)
-#' 
-#' \dontrun{
 #' x = RMSEA(m1)
 #' x$RMSEA # -> 0.0309761
 #' # Raw: needs to be run by umx to get RMSEA
@@ -3769,9 +3769,9 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 		refModels = tryCatch({
 		    refModels = mxRefModels(model, run = TRUE)
 		}, warning = function(x) {
-		    print("warning calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+		    print("warning in RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 		}, error = function(x) {
-		    print("error calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+		    print("error RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 		}, finally={
 		    # print("cleanup-code")
 		})
@@ -3806,7 +3806,7 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor[1:100,], type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
@@ -4361,7 +4361,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table
 		if(std){
-			message("TODO: not sure how to not scale the DV in this gml")
+			message("TODO: not sure how to not scale the DV in this glm model: Don't trust this")
 			obj = update(obj, data = umx_scale(obj$model))
 		}
 		# TODO pick test based on family
@@ -4372,7 +4372,6 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 
 		model_coefficients = summary(obj)$coefficients
 		conf = confint(obj)
-
 		if(is.null(se)){
 			se = dimnames(model_coefficients)[[1]]
 		}
@@ -4388,7 +4387,20 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
 			))
 		}
-		print(paste0("AIC = ", round(AIC(obj), 3) ))
+		if(obj$family$family=="binomial"){
+			# https://stats.idre.ucla.edu/r/dae/logit-regression/
+			cat("Converted to odds ratio (rather than log(odds)), the results are:\n")
+			model_coefficients   = exp(coef(obj)) # Odds Ratios OR
+			conf = exp(confint(obj))
+			tmp = cbind(OR = model_coefficients, conf)
+			for (i in 1:dim(tmp)[[1]]) {
+				lower   = conf[i, 1]
+				upper   = conf[i, 2]
+				OR = model_coefficients[i]
+				cat(paste0(se[i], " OR = ", round(OR, digits), " [", round(lower, digits), commaSep, round(upper, digits), "]\n"))
+			}
+		}
+		cat(paste0("\nAIC = ", round(AIC(obj), 3) ))
 	} else if( "lme" == class(obj)[[1]]) {
 		# report lm summary table
 		if(std){
