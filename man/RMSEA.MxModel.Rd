@@ -25,6 +25,7 @@ Return RMSEA and its confidence interval on a model.
 RMSEA(tmp, silent=TRUE)$RMSEA
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -36,7 +37,6 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 )
 RMSEA(m1)
 
-\dontrun{
 x = RMSEA(m1)
 x$RMSEA # -> 0.0309761
 # Raw: needs to be run by umx to get RMSEA

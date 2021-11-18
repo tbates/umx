@@ -25,6 +25,7 @@ Returns the AIC for an OpenMx model.
 Original Author: Brandmaier
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -36,6 +37,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 extractAIC(m1)
 # -2.615998
 AIC(m1)
+}
 }
 \references{
 \itemize{
