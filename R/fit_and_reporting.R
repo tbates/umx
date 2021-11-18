@@ -3850,6 +3850,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
+#' \dontrun{
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
@@ -3857,6 +3858,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' )
 #' tmp = summary(m1)
 #' RMSEA(tmp)
+#' }
 #'
 print.RMSEA <- function(x, ...) {
 	# x is an RMSEA object
@@ -4216,7 +4218,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @export
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
-#' @references - <https://github.com/tbates/umx>, <https://www.shengdongzhao.com/?p=1501>
+#' @references - <https://stats.idre.ucla.edu/r/dae/logit-regression>, <https://github.com/tbates/umx>, <https://www.shengdongzhao.com/?p=1501>
 #' @md
 #' @examples
 #' 
