@@ -3846,6 +3846,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' @method print RMSEA
 #' @export
 #' @examples
+#' \dontrun{
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
@@ -3856,6 +3857,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' )
 #' tmp = summary(m1)
 #' RMSEA(tmp)
+#' }
 #'
 print.RMSEA <- function(x, ...) {
 	# x is an RMSEA object
