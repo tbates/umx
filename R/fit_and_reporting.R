@@ -3755,6 +3755,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' 
 #' x = RMSEA(m1)
 #' x$RMSEA # -> 0.0309761
+#'
 #' # Raw: needs to be run by umx to get RMSEA
 #' m2 = umxRAM("One Factor", data = demoOneFactor,
 #' 	umxPath("G", to = manifests),
@@ -3771,9 +3772,9 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 		refModels = tryCatch({
 		    refModels = mxRefModels(model, run = TRUE)
 		}, warning = function(x) {
-		    print("warning calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+		    print("warning in RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 		}, error = function(x) {
-		    print("error calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+		    print("error RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
 		}, finally={
 		    # print("cleanup-code")
 		})
@@ -3810,7 +3811,7 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+#' m1 = umxRAM("One Factor", data = demoOneFactor[1:100,], type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1.0)
@@ -3850,6 +3851,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
+#' \dontrun{
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
@@ -4217,7 +4219,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @export
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
-#' @references - <https://github.com/tbates/umx>, <https://www.shengdongzhao.com/?p=1501>
+#' @references - <https://stats.idre.ucla.edu/r/dae/logit-regression>, <https://github.com/tbates/umx>, <https://www.shengdongzhao.com/?p=1501>
 #' @md
 #' @examples
 #' 
@@ -4368,7 +4370,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table
 		if(std){
-			message("TODO: not sure how to not scale the DV in this gml")
+			message("TODO: not sure how to not scale the DV in this glm model: Don't trust this")
 			obj = update(obj, data = umx_scale(obj$model))
 		}
 		# TODO pick test based on family
@@ -4376,10 +4378,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		# F = gaussian, quasibinomial, quasipoisson
 		# Cp similar to AIC
 		# see ?anova.glm 
-
+		cat("Change in the log odds of the outcome for a one unit increase in the predictor variable:\n")
 		model_coefficients = summary(obj)$coefficients
 		conf = confint(obj)
-
 		if(is.null(se)){
 			se = dimnames(model_coefficients)[[1]]
 		}
@@ -4390,12 +4391,30 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			b       = b_and_p["Estimate"]
 			testStat    = b_and_p["z value"]
 			pval    = b_and_p["Pr(>|z|)"]
-			cat(paste0(i, betaSymbol, round(b, digits), 
+			cat(paste0(i, " log(odds) = ", round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
 			))
 		}
-		print(paste0("AIC = ", round(AIC(obj), 3) ))
+		if(obj$family$family == "binomial"){
+			# https://stats.idre.ucla.edu/r/dae/logit-regression/
+			cat("\nAs ORs (odds ratios, rather than log(odds)):\n")
+			model_coefficients = exp(coef(obj)) # Odds Ratios OR
+			conf = exp(conf)
+			tmp  = cbind(OR = model_coefficients, conf)
+			for (i in 1:dim(tmp)[[1]]) {
+				lower   = conf[i, 1]
+				upper   = conf[i, 2]
+				OR = model_coefficients[i]
+				cat(paste0(se[i], " OR = ", round(OR, digits), " [", round(lower, digits), commaSep, round(upper, digits), "]\n"))
+			}
+			cat("\nAnd as probabilities...\n")
+			for (i in 1:dim(tmp)[[1]]) {
+				OR = model_coefficients[i]
+				cat(paste0(se[i], " probability = ", round(OR/(1+OR), digits), "\n"))
+			}
+		}
+		cat(paste0("\nAIC = ", round(AIC(obj), 3) ))
 	} else if( "lme" == class(obj)[[1]]) {
 		# report lm summary table
 		if(std){
