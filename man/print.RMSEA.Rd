@@ -19,21 +19,6 @@
 \description{
 Print method for "RMSEA" objects: e.g. \code{\link[=RMSEA]{RMSEA()}}.
 }
-\examples{
-data(demoOneFactor)
-manifests = names(demoOneFactor)
-
-\dontrun{
-m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
-	umxPath("G", to = manifests),
-	umxPath(var = manifests),
-	umxPath(var = "G", fixedAt = 1.0)
-)
-tmp = summary(m1)
-RMSEA(tmp)
-}
-
-}
 \seealso{
 \itemize{
 \item \code{\link[=RMSEA]{RMSEA()}}, \code{\link[=print]{print()}}
