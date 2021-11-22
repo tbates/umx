@@ -3851,7 +3851,6 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' \dontrun{
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
