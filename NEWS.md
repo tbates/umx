@@ -15,7 +15,9 @@
 * IMPROVED: `umxReduce(ACE)` includes the parameters of the reduced models. #ht @nick martin
 * IMPROVED: `umxSummarizeTwinData` takes an age column and notes when it can’t be found
 * IMPROVED: `umx_score_scale` can score items with character labels
-* IMPROVED: `umx_score_scale` gains the ability to report Cronbach's alpha
+* IMPROVED: `umx_score_scale` gains the ability to report Cronbach alpha
+* IMPROVED: `umxAPA` gains OR output for logit models
+* IMPROVED: `tmx_show` handles matrices
 * IMPROVED: `umx_rename` better names for deprecated parameters
 * IMPROVED: `umxRun` has tryHard (not a very useful function)
 * IMPROVED: `umxCompare` can silently return a data.frame for further modification
