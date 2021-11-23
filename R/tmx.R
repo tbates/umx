@@ -254,7 +254,7 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' Show matrices of models in a easy-to-learn-from format. 
 #'
 #'
-#' @param model an object e.g. [mxModel()] from which to show parameters.
+#' @param x an object e.g. [umxRAM()] [umxMatrix()] from which to show parameters.
 #' @param what legal options are "values" (default), "free", or "labels").
 #' @param show filter on what to show c("all", "free", "fixed").
 #' @param matrices to show  (default is c("S", "A")). "thresholds" in beta.
@@ -270,13 +270,13 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @md
 #' @export
 #' @family Reporting functions
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped")  UseMethod("tmx_show", model)
+tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped")  UseMethod("tmx_show", model)
 
 # Define generic RMSEA...
 #' Show matrices of models in a easy-to-learn-from format. 
 #'
 #'
-#' @param x an object e.g. [mxModel()] from which to show parameters.
+#' @param x an object e.g. [umxRAM()] [umxMatrix()] from which to show parameters.
 #' @param what legal options are "values" (default), "free", or "labels").
 #' @param show filter on what to show c("all", "free", "fixed").
 #' @param matrices to show  (default is c("S", "A")). "thresholds" in beta.
@@ -360,7 +360,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' 
 #' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
 #'
-#' @param x an [mxModel()] from which to show parameters.
+#' @param x an object e.g. [umxRAM()] [umxMatrix()] from which to show parameters.
 #' @param what legal options are "values" (default), "free", or "labels").
 #' @param show filter on what to show c("all", "free", "fixed").
 #' @param matrices to show  (default is c("S", "A")). "thresholds" in beta.

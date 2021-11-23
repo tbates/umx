@@ -3018,7 +3018,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @seealso - [umx_r_test()]
-#' @references - <https://stats.idre.ucla.edu/r/dae/logit-regression>, <https://tbates.github.io>
+#' @references - <https://stats.idre.ucla.edu/r/dae/logit-regression/>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
@@ -3937,12 +3937,13 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		if(class(thisX) == "character"){
 			if(thisX == "start"){
 				options("umx_last_time" = proc.time())
-				return(invisible())
+				invisible()
 			} else if (thisX == "stop" || thisX == "lap" ) {
 					tmp = getOption("umx_last_time")
 					if(is.null(tmp)){
 						message("Timer was not yet started: I started it now...")
 						options("umx_last_time" = proc.time())
+						thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
 						invisible()
 					} else {
 						thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])

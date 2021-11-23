@@ -20,7 +20,7 @@
 )
 }
 \arguments{
-\item{x}{an \code{\link[=mxModel]{mxModel()}} from which to show parameters.}
+\item{x}{an object e.g. \code{\link[=umxRAM]{umxRAM()}} \code{\link[=umxMatrix]{umxMatrix()}} from which to show parameters.}
 
 \item{what}{legal options are "values" (default), "free", or "labels").}
 
