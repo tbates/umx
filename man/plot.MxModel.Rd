@@ -111,9 +111,6 @@ plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
 \item \code{\link[=umx_set_plot_format]{umx_set_plot_format()}}, \code{\link[=plot.MxModel]{plot.MxModel()}}, \code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, \code{\link[=umxPlotIP]{umxPlotIP()}}, \code{\link[=umxPlotGxE]{umxPlotGxE()}}
 }
 
-Other umx S3 functions: 
-\code{\link{plot.MxLISRELModel}()}
-
 Other Plotting functions: 
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
@@ -131,4 +128,3 @@ Other Plotting functions:
 \code{\link{umx}}
 }
 \concept{Plotting functions}
-\concept{umx S3 functions}

@@ -144,7 +144,7 @@ umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
 }
 
 Other Teaching and Testing functions: 
-\code{\link{tmx_show}()},
+\code{\link{tmx_show.MxModel}()},
 \code{\link{umxDiagnose}()}
 }
 \concept{Teaching and Testing functions}

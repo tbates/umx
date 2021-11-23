@@ -2284,7 +2284,6 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
-#' @family umx S3 functions
 #' @family Plotting functions
 #' @references - <https://github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md
@@ -3710,7 +3709,7 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 }
 
 
-# define generic RMSEA...
+# Define generic RMSEA...
 #' Generic RMSEA function
 #'
 #' See [RMSEA.MxModel()] to access the RMSEA of MxModels
@@ -3754,7 +3753,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' RMSEA(m1)
 #' 
 #' x = RMSEA(m1)
-#' x$RMSEA # -> 0.0309761
+#' x$RMSEA # 0.0309761
 #'
 #' # Raw: needs to be run by umx to get RMSEA
 #' m2 = umxRAM("One Factor", data = demoOneFactor,
@@ -3851,7 +3850,6 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #'
-#' \dontrun{
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
@@ -4399,18 +4397,23 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		if(obj$family$family == "binomial"){
 			# https://stats.idre.ucla.edu/r/dae/logit-regression/
 			cat("\nAs ORs (odds ratios, rather than log(odds)):\n")
-			model_coefficients = exp(coef(obj)) # Odds Ratios OR
-			conf = exp(conf)
-			tmp  = cbind(OR = model_coefficients, conf)
-			for (i in 1:dim(tmp)[[1]]) {
-				lower   = conf[i, 1]
-				upper   = conf[i, 2]
-				OR = model_coefficients[i]
-				cat(paste0(se[i], " OR = ", round(OR, digits), " [", round(lower, digits), commaSep, round(upper, digits), "]\n"))
+
+
+			model_ORs = exp(coef(obj)) # Odds Ratios OR
+			confOR    = exp(conf)
+			for (i in 1:length(model_ORs)) {
+				lower    = confOR[i, 1]
+				upper    = confOR[i, 2]
+				OR       = model_ORs[i]
+				testStat = model_coefficients[i, "z value"]
+				pval     = model_coefficients[i, "Pr(>|z|)"]
+				cat(paste0(se[i], " OR = ", round(OR, digits), " [", round(lower, digits), commaSep, round(upper, digits), "], ",
+ 			    "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"))
 			}
+
 			cat("\nAnd as probabilities...\n")
-			for (i in 1:dim(tmp)[[1]]) {
-				OR = model_coefficients[i]
+			for (i in 1:length(model_ORs)) {
+				OR = model_ORs[i]
 				cat(paste0(se[i], " probability = ", round(OR/(1+OR), digits), "\n"))
 			}
 		}

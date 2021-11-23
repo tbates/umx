@@ -103,6 +103,8 @@ Other Reporting functions:
 \code{\link{extractAIC.MxModel}()},
 \code{\link{loadings}()},
 \code{\link{residuals.MxModel}()},
+\code{\link{tmx_show.MxMatrix}()},
+\code{\link{tmx_show}()},
 \code{\link{umxCI_boot}()},
 \code{\link{umxCI}()},
 \code{\link{umxExpCov}()},

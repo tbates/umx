@@ -3920,7 +3920,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		umx_check(x %in% c('start', 'stop', "lap", "now"), "stop", "Valid time strings are 'start', 'stop', 'lap', (or a model or list of models). Leave blank for 'now'")
 	}else if(is.na(x)){
 		cat("Current time is ", format(Sys.time(), "%X, %a %d %b %Y"), "\nTry me with a list of models, or 'start', 'stop'")
-		return()
+		invisible()
 	}else{
 		stop("You must set the first parameter to 'start', 'stop', 'now', a model, or a list of models.\nYou offered up a", class(x))
 	}
@@ -3943,7 +3943,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 					if(is.null(tmp)){
 						message("Timer was not yet started: I started it now...")
 						options("umx_last_time" = proc.time())
-						return(invisible())
+						invisible()
 					} else {
 						thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
 						if(thisX =="stop"){
@@ -3951,7 +3951,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 						}
 					}
 			}else if(thisX == "now"){
-				return(format(Sys.time(), "%X, %a %d %b %Y"))				
+				return(format(Sys.time(), "%X, %a %d %b %Y"))
 			}
 		} else {
 			# handle model

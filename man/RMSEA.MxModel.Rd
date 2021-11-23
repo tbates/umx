@@ -38,7 +38,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 RMSEA(m1)
 
 x = RMSEA(m1)
-x$RMSEA # -> 0.0309761
+x$RMSEA # 0.0309761
 
 # Raw: needs to be run by umx to get RMSEA
 m2 = umxRAM("One Factor", data = demoOneFactor,
@@ -61,6 +61,8 @@ Other Reporting functions:
 \code{\link{extractAIC.MxModel}()},
 \code{\link{loadings}()},
 \code{\link{residuals.MxModel}()},
+\code{\link{tmx_show.MxMatrix}()},
+\code{\link{tmx_show}()},
 \code{\link{umxCI_boot}()},
 \code{\link{umxCI}()},
 \code{\link{umxConfint}()},

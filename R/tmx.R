@@ -250,6 +250,108 @@ tmx_is.identified <- function(nVariables, nFactors){
 }
 
 
+# Define generic tmx_show ...
+#' Show matrices of models in a easy-to-learn-from format. 
+#'
+#'
+#' @param model an object e.g. [mxModel()] from which to show parameters.
+#' @param what legal options are "values" (default), "free", or "labels").
+#' @param show filter on what to show c("all", "free", "fixed").
+#' @param matrices to show  (default is c("S", "A")). "thresholds" in beta.
+#' @param digits precision to report. Default = round to 2 decimal places.
+#' @param na.print How to display NAs (default = "")
+#' @param zero.print How to display 0 values (default = ".")
+#' @param report How to report the results. "html" = open in browser.
+#' @param style The style for the table (Defaults to "paper". Other options are "material_dark", "classic", "classic_2", "minimal", "material")
+#' @param bootstrap_options border etc. Defaults to c("hover", "bordered", "condensed", "responsive")
+#' @param lightable_options Default is "striped"
+#' @param html_font Default is null. Set (e.g. "Optima") to override the style's default font.
+#' @return None
+#' @md
+#' @export
+#' @family Reporting functions
+tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped")  UseMethod("tmx_show", model)
+
+# Define generic RMSEA...
+#' Show matrices of models in a easy-to-learn-from format. 
+#'
+#'
+#' @param x an object e.g. [mxModel()] from which to show parameters.
+#' @param what legal options are "values" (default), "free", or "labels").
+#' @param show filter on what to show c("all", "free", "fixed").
+#' @param matrices to show  (default is c("S", "A")). "thresholds" in beta.
+#' @param digits precision to report. Default = round to 2 decimal places.
+#' @param na.print How to display NAs (default = "")
+#' @param zero.print How to display 0 values (default = ".")
+#' @param report How to report the results. "html" = open in browser.
+#' @param style The style for the table (Defaults to "paper". Other options are "material_dark", "classic", "classic_2", "minimal", "material")
+#' @param bootstrap_options border etc. Defaults to c("hover", "bordered", "condensed", "responsive")
+#' @param lightable_options Default is "striped"
+#' @param html_font Default is null. Set (e.g. "Optima") to override the style's default font.
+#' @return None
+#' @md
+#' @export
+#' @family Reporting functions
+tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped"){
+	what   = match.arg(what)
+	show   = match.arg(show)
+	report = match.arg(report)
+	style  = match.arg(style)
+	oldTableFormat = umx_set_table_format(report) # side effect
+	
+	if(report == "html"){
+		file = paste0(what, x$name, ".html")
+		# generate the free + value + popover label using kableExtra
+		values = umx_round(x$values, digits)
+		free   = x$free
+		labels = x$labels
+		class  = class(x)[[1]]
+		values[!free & values ==0] = zero.print
+		
+		tb = kbl(values, caption = paste0(x$name, " matrix (", class, ")"), format = report)
+		# , paths fixed@0 left blank
+		tb = footnote(kable_input= tb, general = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
+		tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
+
+		matCols = dim(values)[[2]]
+		tabCols = kableExtra::magic_mirror(tb)$ncol
+		offset  = (tabCols - matCols)
+		for (thisCol in (1 + offset):tabCols){
+			tb = column_spec(tb, thisCol,
+				# #666666 red= #D7261E green= #26D71E
+				color = ifelse(x$free[, (thisCol-offset)], "black", "#AAAAAA"),
+				tooltip = labels[, (thisCol-offset)]
+			)
+		}
+		print(tb)
+	} else {
+		if(what == "values"){
+			tmp = data.frame(x$values)
+			message("\n", "Values of ", omxQuotes(x), " matrix (0 shown as .):", appendLF = FALSE)
+		}else if(what == "free"){
+			tmp = data.frame(x$free)
+			message("\n", "Free cells in ", x$name, " matrix (FALSE shown as .):", appendLF = FALSE)
+		}else if(what == "labels"){
+			tmp = x$labels
+			if(show == "free"){
+				tmp[x$free != TRUE] = ""
+			} else if (show == "fixed") {
+				tmp[x$free == TRUE] = ""
+			}
+			message("\n", show, " labels for ", x$name, " matrix:", appendLF = FALSE)
+		}else if(what == "nonzero_or_free"){
+			message("99 means parameter is fixed at a non-zero value")
+			values = x$values
+			Free   = x$free
+			values[!Free & values !=0] = 99
+			tmp = data.frame(values)
+			message("\n", what, " for ", x$name, " matrix (0 shown as '.', 99=fixed non-zero value):", appendLF = FALSE)
+		}
+		umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= NA, report = report)
+	} # for each matrix
+	umx_set_table_format(oldTableFormat) # side effect
+}
+
 #' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
 #' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
@@ -258,7 +360,7 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' 
 #' The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
 #'
-#' @param model an [mxModel()] from which to show parameters.
+#' @param x an [mxModel()] from which to show parameters.
 #' @param what legal options are "values" (default), "free", or "labels").
 #' @param show filter on what to show c("all", "free", "fixed").
 #' @param matrices to show  (default is c("S", "A")). "thresholds" in beta.
@@ -302,10 +404,11 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' tmx_show(m1, what = "free", matrices = "A", report= "markdown")
 #' tmx_show(m1, zero.print = "-")
 #'
-tmx_show <- function(model, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
-	if(!umx_is_RAM(model)){
+tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
+	if(!umx_is_RAM(x)){
 		stop("Sorry, currently, tmx_show only knows how to display umxRAM models: You gave me a ", class(model)[[1]])
 	}
+	model = x
 	what   = match.arg(what)
 	show   = match.arg(show)
 	report = match.arg(report)
