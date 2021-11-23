@@ -4217,7 +4217,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @export
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
-#' @references - <https://stats.idre.ucla.edu/r/dae/logit-regression>, <https://github.com/tbates/umx>, <https://www.shengdongzhao.com/?p=1501>
+#' @references - <https://stats.idre.ucla.edu/r/dae/logit-regression/>, <https://github.com/tbates/umx>, <https://www.shengdongzhao.com/?p=1501>
 #' @md
 #' @examples
 #' 
