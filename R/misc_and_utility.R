@@ -3997,7 +3997,6 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	invisible(thisTime)
 }
 
-
 #' Print tables in a range of formats (markdown default, see [umx_set_table_format()] for other formats)
 #' or as a web browser table.
 #'
