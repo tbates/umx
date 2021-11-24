@@ -5,7 +5,7 @@
 \title{Show matrices of models in a easy-to-learn-from format.}
 \usage{
 tmx_show(
-  model,
+  x,
   what = c("values", "free", "labels", "nonzero_or_free"),
   show = c("free", "fixed", "all"),
   matrices = c("S", "A", "M"),
@@ -20,7 +20,7 @@ tmx_show(
 )
 }
 \arguments{
-\item{model}{an object e.g. \code{\link[=mxModel]{mxModel()}} from which to show parameters.}
+\item{x}{an object e.g. \code{\link[=umxRAM]{umxRAM()}} \code{\link[=umxMatrix]{umxMatrix()}} from which to show parameters.}
 
 \item{what}{legal options are "values" (default), "free", or "labels").}
 
