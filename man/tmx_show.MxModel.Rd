@@ -71,6 +71,7 @@ m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
 # =============================================
 tmx_show(m1, report = "html")
 tmx_show(m1, what = "free", matrices = "thresholds")
+tmx_show(m1, zero.print = "-")
 }
 
 tmx_show(m1, report = "markdown")
@@ -79,7 +80,6 @@ tmx_show(m1, matrices = "S", report = "markdown")
 tmx_show(m1, what = "free"  , report = "markdown")
 tmx_show(m1, what = "labels", report = "markdown")
 tmx_show(m1, what = "free", matrices = "A", report= "markdown")
-tmx_show(m1, zero.print = "-")
 
 }
 \references{
