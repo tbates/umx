@@ -3904,7 +3904,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' umx_time('stop') # report the time since timer was restarted.
 #'
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
-	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
+	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 	formatStr = xmu_match.arg(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
 	if(is.list(x)){
 		# check each item is a model
@@ -3924,6 +3924,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	}else{
 		stop("You must set the first parameter to 'start', 'stop', 'now', a model, or a list of models.\nYou offered up a", class(x))
 	}
+
 	for(i in 1:length(x)) {			
 		if(length(x) > 1) {
 			thisX = x[[i]]
@@ -3937,14 +3938,15 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		if(class(thisX) == "character"){
 			if(thisX == "start"){
 				options("umx_last_time" = proc.time())
-				invisible()
+				thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
+				# invisible()
 			} else if (thisX == "stop" || thisX == "lap" ) {
 					tmp = getOption("umx_last_time")
 					if(is.null(tmp)){
 						message("Timer was not yet started: I started it now...")
 						options("umx_last_time" = proc.time())
 						thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
-						invisible()
+						# invisible()
 					} else {
 						thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
 						if(thisX =="stop"){
@@ -3955,7 +3957,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 				return(format(Sys.time(), "%X, %a %d %b %Y"))
 			}
 		} else {
-			# handle model
+			# Handle model
 			if(!umx_has_been_run(thisX) && autoRun){
 				thisX = mxRun(thisX)
 				# message("You must run the model before asking for the elapsed run time")
@@ -3994,7 +3996,6 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 	}
 	invisible(thisTime)
 }
-
 
 
 #' Print tables in a range of formats (markdown default, see [umx_set_table_format()] for other formats)
