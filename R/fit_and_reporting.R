@@ -396,6 +396,7 @@ umxReduce.MxModelACE <- umxReduceACE
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -420,7 +421,6 @@ umxReduce.MxModelACE <- umxReduceACE
 #' # [1] "nb: You can zoom in on bad values with, e.g. suppress = .01, which
 #' #      will hide values smaller than this. Use digits = to round"
 #'
-#' \dontrun{
 #' residuals(m1, digits = 3)
 #' residuals(m1, digits = 3, suppress = .005)
 #' # residuals are returned as an invisible object you can capture in a variable
