@@ -2,7 +2,7 @@
 % Please edit documentation in R/umx_build_high_level_models.R
 \name{umxMendelianRandomization}
 \alias{umxMendelianRandomization}
-\alias{umxTwoStage}
+\alias{umxMR}
 \title{Build a SEM implementing the equivalent of 2-stage least squares regression}
 \usage{
 umxMendelianRandomization(
@@ -42,7 +42,7 @@ to be used to compute weighted 2SLS estimates.}
 }
 \description{
 \code{umxTwoStage} implementing the Structural Equation Model equivalent of a 2SLS regression.
-For ease of learning, the function is modeled closely on the \code{\link[sem:tsls]{sem::tsls()}}.
+For ease of learning, the parameters follow the \code{tsls()} function in the sem package.
 }
 \details{
 The example is a \href{https://en.wikipedia.org/wiki/Mendelian_randomization}{Mendelian Randomization}
@@ -64,7 +64,7 @@ library(umx)
 \dontrun{
 # Note: in practice: many more subjects are desirable - this just to let example run fast
 df = umx_make_MR_data(1000) 
-m1 = umxTwoStage(Y ~ X, instruments = ~ qtl, data = df)
+m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 parameters(m1)
 plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
 m2 = umxModify(m1, "qtl_to_X", comparison=TRUE, tryHard="yes", name="QTL_affects_X") # yip
@@ -104,7 +104,7 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 \seealso{
 \itemize{
-\item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[sem:tsls]{sem::tsls()}}, \code{\link[=umxRAM]{umxRAM()}}
+\item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Super-easy helpers: 
