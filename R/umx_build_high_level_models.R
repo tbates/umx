@@ -313,13 +313,13 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 
 #' Build a SEM implementing the equivalent of 2-stage least squares regression
 #'
-#' `umxTwoStage` implementing the Structural Equation Model equivalent of a 2SLS regression.
+#' `umxMR` (`umxTwoStage`) implements the Structural Equation Model equivalent of a 2SLS regression.
 #' For ease of learning, the parameters follow the `tsls()` function in the sem package.
 #' 
 #' The example is a [Mendelian Randomization](https://en.wikipedia.org/wiki/Mendelian_randomization)
 #' analysis showing the utility of SEM over two-stage regression.
 #' 
-#' The following figure shows how the ACE model appears as a path diagram:
+#' The following figure shows how the MR model appears as a path diagram:
 #' 
 #' \if{html}{\figure{TSLS.png}{options: width=50% alt="Figure: Mendelian Randomisation analysis.png"}}
 #' \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
@@ -366,7 +366,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #'
 #'
 #' df = umx_make_MR_data(1e5) 
-#' m1 = umxMendelianRandomization(Y ~ X, instruments = ~ qtl, data = df)
+#' m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' 
 #' # ======================
@@ -379,7 +379,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
-umxMendelianRandomization <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
+umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer('umx') to prioritize")	
 	# formula = Y ~ X; instruments ~ qtl; data = umx_make_MR_data(10000)
 	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
@@ -418,4 +418,4 @@ umxMendelianRandomization <- function(formula= Y ~ X, instruments = ~qtl, data, 
 }
 
 #' @export
-umxTwoStage <- umxMendelianRandomization
+umxMR <- umxTwoStage

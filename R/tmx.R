@@ -378,6 +378,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -388,14 +389,12 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
 #'
-#' \dontrun{
 #' # =============================================
 #' # = Show smart table on the web (the default) =
 #' # =============================================
 #' tmx_show(m1, report = "html")
 #' tmx_show(m1, what = "free", matrices = "thresholds")
 #' tmx_show(m1, zero.print = "-")
-#' }
 #'
 #' tmx_show(m1, report = "markdown")
 #' tmx_show(m1, digits = 3, report = "markdown")
@@ -403,6 +402,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' tmx_show(m1, what = "free"  , report = "markdown")
 #' tmx_show(m1, what = "labels", report = "markdown")
 #' tmx_show(m1, what = "free", matrices = "A", report= "markdown")
+#' }
 #'
 tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
 	if(!umx_is_RAM(x)){

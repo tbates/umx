@@ -122,7 +122,7 @@ Other Reporting Functions:
 
 Other Super-easy helpers: 
 \code{\link{umxEFA}()},
-\code{\link{umxMendelianRandomization}()}
+\code{\link{umxTwoStage}()}
 
 Other Twin Modeling Functions: 
 \code{\link{power.ACE.test}()},

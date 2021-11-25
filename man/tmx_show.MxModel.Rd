@@ -56,6 +56,7 @@ tables, and can even be displayed as tables in a web browser.
 The user can select which matrices to view, whether to show values, free, and/or labels, and the precision of rounding.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -65,14 +66,12 @@ m1 = umxRAM("tmx_sh", data = demoOneFactor, type = "cov",
 	umxPath(var = "G", fixedAt = 1)
 )
 
-\dontrun{
 # =============================================
 # = Show smart table on the web (the default) =
 # =============================================
 tmx_show(m1, report = "html")
 tmx_show(m1, what = "free", matrices = "thresholds")
 tmx_show(m1, zero.print = "-")
-}
 
 tmx_show(m1, report = "markdown")
 tmx_show(m1, digits = 3, report = "markdown")
@@ -80,6 +79,7 @@ tmx_show(m1, matrices = "S", report = "markdown")
 tmx_show(m1, what = "free"  , report = "markdown")
 tmx_show(m1, what = "labels", report = "markdown")
 tmx_show(m1, what = "free", matrices = "A", report= "markdown")
+}
 
 }
 \references{
