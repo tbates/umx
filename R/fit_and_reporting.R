@@ -732,6 +732,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' @export
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -762,7 +763,6 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE(selDVs = c("bmi1","bmi2"), dzData = dzData, mzData = mzData)
-#' \dontrun{
 #' umxCI(m1, run = "show") # show what will be requested
 #' umxCI(m1, run = "yes") # actually compute the CIs
 #' # Don't force update of CIs, but if they were just added, then calculate them
