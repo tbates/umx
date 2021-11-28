@@ -1,7 +1,7 @@
 ## dev umx 4.11.0
 
 ## dev umx 4.10.10
-* November 2021 R 4.1.1 (2021/11/25)
+* November 2021 R 4.1.1 (2021/11/30)
 * NEW: `umxPower` can plot power search space! (beta!)
 * NEW: `noNAs()` helper returning complete rows of a data.frame.
 * NEW: `umxThresholdMatrix` can handle one value columns

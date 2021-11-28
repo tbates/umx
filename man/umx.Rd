@@ -30,6 +30,7 @@ There is a helpful blog at \url{https://tbates.github.io}
 devtools::install_github("tbates/umx")
 }
 \examples{
+\dontrun{
 require("umx")
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -77,7 +78,6 @@ umxCompare(m1, m2)
 confint(m1) # OpenMx's SE-based confidence intervals
 
 
-\dontrun{
 # umxConfint formats everything you need nicely, and allows adding CIs (with parm=)
 umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 

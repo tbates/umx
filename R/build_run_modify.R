@@ -5079,6 +5079,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #'
 #' @md
 #' @examples
+#' \dontrun{
 #' require("umx")
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -5126,7 +5127,6 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 #' confint(m1) # OpenMx's SE-based confidence intervals
 #' 
 #' 
-#' \dontrun{
 #' # umxConfint formats everything you need nicely, and allows adding CIs (with parm=)
 #' umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
 #' 
