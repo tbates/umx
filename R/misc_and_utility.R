@@ -1512,6 +1512,15 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	oldData = data
 
 	if(!is.null(mapStrings)){
+		if(!is.null(max)){
+			# check min max matches mapstrings
+			if(!(length(mapStrings) == length(min:max))){
+				stop(paste0("polite note: You set the max and min, but ", min, " to ", max, " must equal the number of map strings: ", length(mapStrings)))
+			}
+		}else{
+			min = 1
+			max = length(mapStrings)
+		}
 		relevantColumns = paste0(base, c(pos, rev))
 		for (thisCol in relevantColumns){
 			unique_values = unique(data[, thisCol, drop = TRUE])
@@ -1520,15 +1529,8 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 				notFound = unique_values[which(!(unique_values %in% mapStrings))]
 				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
 			}
-			data[, thisCol] = factor(data[, thisCol, drop=TRUE], levels= mapStrings)
+			data[, thisCol] = factor(data[, thisCol, drop=TRUE], labels = mapStrings, levels= mapStrings)
 			data[, thisCol] = as.numeric(data[, thisCol, drop=TRUE])
-		}
-		if(!is.null(max)){
-			message(paste0("polite note: You set the max but with mapStrings I set the max:
-			Ignoring yours (which was ", max, ") and setting it to ", length(mapStrings)))
-			max = length(mapStrings)
-		}else{
-			max = length(mapStrings)
 		}
 	}
 	mins = umx_apply("min", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
