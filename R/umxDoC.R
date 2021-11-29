@@ -84,8 +84,24 @@
 #'
 #' }
 #' 
-umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, data = NULL, zyg = "zygosity") {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
+	if (name == "DoC") {name <- ifelse(causal, "DoC", "Chol")}
+	if (!is.null(data)) {
+	  if (is.null(sep)) {
+	    sep <- "_T"
+	  }
+	  if ("tbl" %in% class(data)) {
+	    data <- as.data.frame(data)
+	  }
+	  mzData <- data[data[, zyg] %in% ifelse(is.null(mzData),"DZ", mzData), ]
+	  dzData <- data[data[, zyg] %in% ifelse(is.null(dzData),"DZ", dzData), ]
+	} else {
+	  if ("tbl" %in% class(mzData)) {
+	    mzData <- as.data.frame(mzData)
+	    dzData <- as.data.frame(dzData)
+	  }
+	}
 	if(name == "DoC"){name = ifelse(causal, "DoC", "Chol")}
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
