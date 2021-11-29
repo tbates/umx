@@ -7,6 +7,7 @@ Authors@R: c(
 	person("Gillespie"       , "Nathan"  , role = c("wit"), email = "nathan.gillespie@vcuhealth.org"),
 	person("Michael"         , "Zakharin", role = c("wit"), email = "s1775682@sms.ed.ac.uk"),
 	person("Brenton"         , "Wiernik" , role = c("ctb"), email = "wiernik@umn.edu"),
+	person("Luis"            , "De Araujo", role = c("ctb"), email = "ldearaujo@unimelb.edu.au"),
 	person(c("Joshua", "N.") , "Pritikin", role = c("ctb"), email = "jpritikin@pobox.com"),
 	person(c("Michael", "C."), "Neale"   , role = c("ctb"), email = "neale@vcu.edu"),
 	person("Hermine"         , "Maes"    , role = c("ctb"), email = "hmeaes@vcu.edu")

@@ -15,7 +15,9 @@ umxDoC(
   autoRun = getOption("umx_auto_run"),
   intervals = FALSE,
   tryHard = c("no", "yes", "ordinal", "search"),
-  optimizer = NULL
+  optimizer = NULL,
+  data = NULL,
+  zyg = "zygosity"
 )
 }
 \arguments{
@@ -40,6 +42,10 @@ umxDoC(
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
+
+\item{data}{= NULL If building the MZ and DZ datasets internally from a complete data set.}
+
+\item{zyg}{= "zygosity" (for the data= method of using this function)}
 }
 \value{
 \itemize{
@@ -96,6 +102,16 @@ a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
 b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
 
+# ==========================================
+# = Alternative call with data in one file =
+# ==========================================
+data(docData)
+docData = umx_scale_wide_twin_data(c(var1, var2), docData, sep= "_T")
+DoC  = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
+	  mzData= c("MZFF", "MZMM"), dzData= c("DZFF", "DZMM"), data = docData
+)
+
+# Useage example (won\t run)
 var1 = paste0("SOS", 1:8)
 var2 = paste0("Vocab", 1:10)
 Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
@@ -104,6 +120,7 @@ a2b  = umxModify(DoC, "a2b", free = TRUE, name = "a2b")
 b2a  = umxModify(DoC, "b2a", free = TRUE, name = "b2a")
 Recip= umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip")
 umxCompare(Chol, c(a2b, b2a, Recip))
+
 
 }
 
