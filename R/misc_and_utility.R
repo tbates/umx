@@ -1437,59 +1437,57 @@ umx_factor <- umxFactor
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
-#' @param mapStrings For input like True/False can map to 0,1 NULL
+#' @param mapStrings For input like "No"/"Maybe"/"Yes" -> 0,1,2
 #' @return - scores
 #' @export
 #' @family Data Functions
 #' @md
 #' @examples
 #' library(psych)
+#' library(psychTools)
 #' data(bfi)
-#' 
+#'
 #' # ==============================
 #' # = Score Agreeableness totals =
 #' # ==============================
-#' 
+#'
 #' # Handscore subject 1
-#' # A1(Reversed) + A2 + A3 + A4 + A5 
-#' #      (6+1)-2 + 4  + 3  + 4  + 4  = 20
-#' 
+#' # A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4 = 20
+#'
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
-#' tmp[1, namez(tmp, "A",ignore.case=FALSE)]
+#' tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 #' #  A1 A2 A3 A4 A5  A
 #' #  2  4  3  4  4  20
-#' 
-#' # =================================================================================
-#' # = Note: (as of a fix in 2020-05-08) items not reversed in the returned data set =
-#' # =================================================================================
-#' tmp = umx_score_scale("A", pos = 1, rev = 2:5, max = 6, data= bfi, name = "A")
-#' tmp[1, namez(tmp, "A",ignore.case=FALSE)]
-#' #   A1 A2 A3 A4 A5   A
-#' #   2   4  3  4  4 = 15
-#' 
+#'
+#' # ====================
+#' # = Request the mean =
+#' # ====================
 #' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
-#' tmp$A[1] # subject 1 mean = 4
-#' 
-#' # ===========================================
-#' # = How does mean react to a missing value? =
-#' # ===========================================
+#' tmp$A[1] # = 4
+#'
+#' # ==================
+#' # = na.rm = TRUE ! =
+#' # ==================
 #' tmpDF = bfi
 #' tmpDF[1, "A1"] = NA
-#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, name = "A", score="mean")
-#' tmp$A[1] # NA: (na.rm defaults to FALSE)
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, score="mean")
+#' tmp$A_score[1] # 3.75
 #' 
-#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, 
-#'      name = "A", score="mean", na.rm=TRUE)
-#' tmp$A[1] # 3.75
+#' tmp= umx_score_scale("A", pos= 2:5, rev= 1, max = 6, data = tmpDF,
+#'    score="mean", na.rm=FALSE)
+#' tmp$A_score[1] # NA (reject cases with missing items)
 #' 
 #' # ===============
 #' # = Score = max =
 #' # ===============
-#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
-#' tmp$A[1] # subject 1 max = 5 (the reversed item 1)
+#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6,
+#'	  data = bfi, name = "A", score = "max")
+#' tmp$A[1] # Subject 1 max = 5 (reversed) item 1
 #' 
-#' tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp)
-#' tmp$E_score[1] # default scale name
+#' # Default scale name
+#' tmp = umx_score_scale("E", pos = 3:5, rev = 1:2, max = 6, 
+#'    data= tmp, score = "mean", na.rm=FALSE)
+#' tmp$E_score[1]
 #' 
 #' # Using @BillRevelle's psych package: More diagnostics, including alpha
 #' scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
@@ -1497,25 +1495,43 @@ umx_factor <- umxFactor
 #'		A = c("-A1", "A2", "A3", "A4", "A5")
 #' ))
 #' summary(scores)
-#' scores$scores[1,]
+#' scores$scores[1, ]
 #' #  E   A 
 #' # 3.8 4.0 
 #' 
 #' # Compare output
 #' # (note, by default psych::scoreItems replaces NAs with the sample median...)
-#' RevelleE = as.numeric(scores$scores[,"E"]) * 5
+#' RevelleE = as.numeric(scores$scores[,"E"])
 #' all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 #'
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=FALSE, minManifests = NA, alpha = FALSE, mapStrings= NULL) {
+#' # =======================
+#' # = MapStrings examples =
+#' # =======================
+#' mapStrings = c(
+#'    "Very Inaccurate", "Moderately Inaccurate", 
+#'    "Slightly Inaccurate", "Slightly Accurate",
+#'    "Moderately Accurate", "Very Accurate")
+#' bfi$As1 = factor(bfi$A1, levels = 1:6, labels = mapStrings)
+#' bfi$As2 = factor(bfi$A2, levels = 1:6, labels = mapStrings)
+#' bfi$As3 = factor(bfi$A3, levels = 1:6, labels = mapStrings)
+#' bfi$As4 = factor(bfi$A4, levels = 1:6, labels = mapStrings)
+#' bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
+#' bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
+#' bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
+#' all(bfi$A == bfi$As)
+#'
+#' # copes with bad name requests
+#' umx_score_scale(base = "NotPresent", pos=2:5, rev=1, max=6, data=bfi)
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL) {
 	score = match.arg(score)
 	if(is.null(name)){ name = paste0(base, "_score") }
 	oldData = data
-
+	umx_check_names(namesNeeded= paste0(base, c(pos, rev)), data=data)
 	if(!is.null(mapStrings)){
 		if(!is.null(max)){
-			# check min max matches mapstrings
+			# check min max matches mapStrings
 			if(!(length(mapStrings) == length(min:max))){
-				stop(paste0("polite note: You set the max and min, but ", min, " to ", max, " must equal the number of map strings: ", length(mapStrings)))
+				stop(paste0("You set the max and min, but ", min, " to ", max, " must equal the number of map strings: ", length(mapStrings)))
 			}
 		}else{
 			min = 1
@@ -1529,8 +1545,8 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 				notFound = unique_values[which(!(unique_values %in% mapStrings))]
 				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
 			}
-			data[, thisCol] = factor(data[, thisCol, drop=TRUE], labels = mapStrings, levels= mapStrings)
-			data[, thisCol] = as.numeric(data[, thisCol, drop=TRUE])
+			tmp = factor(data[, thisCol, drop = TRUE], levels = mapStrings, labels = min:max)
+			data[, thisCol] = as.numeric(as.character(tmp))
 		}
 	}
 	mins = umx_apply("min", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
@@ -3469,7 +3485,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", "examples" etc.
 #'
-#' @param what whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell", or check "examples"))
+#' @param what whether to "install", "release" to CRAN, "test", "check" test on "win" or "rhub", "spell", or "examples"))
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
 #' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE)
@@ -3494,13 +3510,17 @@ umx_update_OpenMx <- install.OpenMx
 #' umx_make(what = "release")  # Release to CRAN
 #' tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("quick_install", "install_full", "spell", "run_examples", "check", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), spell=TRUE) {
-	what = match.arg(what)
+umx_make <- function(what = c("load", "quick_install", "install_full", "spell", "run_examples", "check", "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), spell=TRUE) {
+	what  = match.arg(what)
 	which = match.arg(which)
 	if(what == "lastRhub"){
 		prev = rhub::list_package_checks(package = pkg, howmany = 4)
 		check_id = prev$id[1]
 		return(rhub::get_check(check_id))
+	}else if(what == "test"){
+		devtools::test(pkg = pkg)
+	}else if(what == "load"){
+		devtools::load_all(path = pkg)
 	}else if(what == "install_full"){
 		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
 		devtools::load_all(path = pkg)

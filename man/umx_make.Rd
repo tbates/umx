@@ -5,8 +5,8 @@
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
 umx_make(
-  what = c("quick_install", "install_full", "spell", "run_examples", "check", "win",
-    "rhub", "lastRhub", "release", "travisCI", "sitrep"),
+  what = c("load", "quick_install", "install_full", "spell", "run_examples", "check",
+    "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,
@@ -17,7 +17,7 @@ umx_make(
 )
 }
 \arguments{
-\item{what}{whether to "install", "release" to CRAN, check on "win", "check", "rhub", "spell", or check "examples"))}
+\item{what}{whether to "install", "release" to CRAN, "test", "check" test on "win" or "rhub", "spell", or "examples"))}
 
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 

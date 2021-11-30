@@ -16,6 +16,7 @@
 * IMPROVED: `umxSummarizeTwinData` takes an age column and notes when it can’t be found
 * IMPROVED: `umx_score_scale` can score items with character labels
 * IMPROVED: `umx_score_scale` gains the ability to report Cronbach alpha
+* CHANGED: `umx_score_scale` changed default `na.rm = TRUE`.
 * IMPROVED: `umxAPA` gains OR output for logit models
 * IMPROVED: `tmx_show` handles matrices
 * IMPROVED: `umx_rename` better names for deprecated parameters

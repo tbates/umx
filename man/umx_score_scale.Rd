@@ -13,7 +13,7 @@ umx_score_scale(
   data = NULL,
   score = c("total", "mean", "max", "factor"),
   name = NULL,
-  na.rm = FALSE,
+  na.rm = TRUE,
   minManifests = NA,
   alpha = FALSE,
   mapStrings = NULL
@@ -42,7 +42,7 @@ umx_score_scale(
 
 \item{alpha}{print Cronbach's alpha? (TRUE)}
 
-\item{mapStrings}{For input like True/False can map to 0,1 NULL}
+\item{mapStrings}{For input like "No"/"Maybe"/"Yes" -> 0,1,2}
 }
 \value{
 \itemize{
@@ -66,52 +66,50 @@ In the presence of NAs, \code{score= "mean"} and \code{score = "totals"} both re
 }
 \examples{
 library(psych)
+library(psychTools)
 data(bfi)
 
 # ==============================
 # = Score Agreeableness totals =
 # ==============================
 
-# Handscore subject 1
-# A1(Reversed) + A2 + A3 + A4 + A5 
-#      (6+1)-2 + 4  + 3  + 4  + 4  = 20
+# Handscore subject 1 (=20)
+# A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4 
 
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
-tmp[1, namez(tmp, "A",ignore.case=FALSE)]
+tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 #  A1 A2 A3 A4 A5  A
 #  2  4  3  4  4  20
 
-# =================================================================================
-# = Note: (as of a fix in 2020-05-08) items not reversed in the returned data set =
-# =================================================================================
-tmp = umx_score_scale("A", pos = 1, rev = 2:5, max = 6, data= bfi, name = "A")
-tmp[1, namez(tmp, "A",ignore.case=FALSE)]
-#   A1 A2 A3 A4 A5   A
-#   2   4  3  4  4 = 15
-
+# ====================
+# = Request the mean =
+# ====================
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
 tmp$A[1] # subject 1 mean = 4
 
-# ===========================================
-# = How does mean react to a missing value? =
-# ===========================================
+# ================
+# = na.rm=TRUE ! =
+# ================
 tmpDF = bfi
 tmpDF[1, "A1"] = NA
-tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, name = "A", score="mean")
-tmp$A[1] # NA: (na.rm defaults to FALSE)
+tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, score="mean")
+tmp$A_score[1] # 3.75
 
-tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, 
-     name = "A", score="mean", na.rm=TRUE)
-tmp$A[1] # 3.75
+tmp= umx_score_scale("A", pos= 2:5, rev= 1, max = 6, data = tmpDF,
+   score="mean", na.rm=FALSE)
+tmp$A_score[1] # NA: (na.rm defaults to TRUE)
 
 # ===============
 # = Score = max =
 # ===============
-tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="max")
-tmp$A[1] # subject 1 max = 5 (the reversed item 1)
+tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6,
+  data = bfi, name = "A", score = "max")
+tmp$A[1] # Subject 1 max = 5 (the reversed item 1)
 
-tmp = umx_score_scale("E", pos = c(3,4,5), rev = c(1,2), max = 6, data= tmp)
-tmp$E_score[1] # default scale name
+# Default scale name
+tmp = umx_score_scale("E", pos = 3:5, rev = 1:2, max = 6, 
+   data= tmp, score = "mean", na.rm=FALSE)
+tmp$E_score[1]
 
 # Using @BillRevelle's psych package: More diagnostics, including alpha
 scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
@@ -119,15 +117,33 @@ scores= psych::scoreItems(items = bfi, min = 1, max = 6, keys = list(
 	A = c("-A1", "A2", "A3", "A4", "A5")
 ))
 summary(scores)
-scores$scores[1,]
+scores$scores[1, ]
 #  E   A 
 # 3.8 4.0 
 
 # Compare output
 # (note, by default psych::scoreItems replaces NAs with the sample median...)
-RevelleE = as.numeric(scores$scores[,"E"]) * 5
+RevelleE = as.numeric(scores$scores[,"E"])
 all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
 
+# =======================
+# = MapStrings examples =
+# =======================
+mapStrings = c(
+   "Very Inaccurate", "Moderately Inaccurate", 
+   "Slightly Inaccurate", "Slightly Accurate",
+   "Moderately Accurate", "Very Accurate")
+bfi$As1 = factor(bfi$A1, levels = 1:6, labels = mapStrings)
+bfi$As2 = factor(bfi$A2, levels = 1:6, labels = mapStrings)
+bfi$As3 = factor(bfi$A3, levels = 1:6, labels = mapStrings)
+bfi$As4 = factor(bfi$A4, levels = 1:6, labels = mapStrings)
+bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
+bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
+bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
+all(bfi$A == bfi$As)
+
+# copes with bad name requests
+umx_score_scale(base = "NotPresent", pos=2:5, rev=1, max=6, data=bfi)
 }
 \seealso{
 Other Data Functions: 

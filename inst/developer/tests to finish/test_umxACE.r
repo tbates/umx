@@ -1,4 +1,4 @@
-# test_file("~/bin/umx/tests/testthat/test_umxACE.r") 
+# test_active_file("~/bin/umx/tests/testthat/test_umxACE.r") 
 # test_package("umx")
 library(testthat)
 library(umx)
