@@ -73,8 +73,8 @@ data(bfi)
 # = Score Agreeableness totals =
 # ==============================
 
-# Handscore subject 1 (=20)
-# A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4 
+# Handscore subject 1
+# A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4 = 20
 
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
 tmp[1, namez(tmp, "A",ignore.case = FALSE)]
@@ -85,11 +85,11 @@ tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 # = Request the mean =
 # ====================
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
-tmp$A[1] # subject 1 mean = 4
+tmp$A[1] # = 4
 
-# ================
-# = na.rm=TRUE ! =
-# ================
+# ==================
+# = na.rm = TRUE ! =
+# ==================
 tmpDF = bfi
 tmpDF[1, "A1"] = NA
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, score="mean")
@@ -97,14 +97,14 @@ tmp$A_score[1] # 3.75
 
 tmp= umx_score_scale("A", pos= 2:5, rev= 1, max = 6, data = tmpDF,
    score="mean", na.rm=FALSE)
-tmp$A_score[1] # NA: (na.rm defaults to TRUE)
+tmp$A_score[1] # NA (reject cases with missing items)
 
 # ===============
 # = Score = max =
 # ===============
 tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6,
   data = bfi, name = "A", score = "max")
-tmp$A[1] # Subject 1 max = 5 (the reversed item 1)
+tmp$A[1] # Subject 1 max = 5 (reversed) item 1
 
 # Default scale name
 tmp = umx_score_scale("E", pos = 3:5, rev = 1:2, max = 6, 

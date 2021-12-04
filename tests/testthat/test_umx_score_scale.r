@@ -49,6 +49,9 @@ test_that("umx_score_scale works", {
 	# =======================
 	# = MapStrings examples =
 	# =======================
+	data(bfi)
+	
+	bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 	mapStrings = c(
 	   "Very Inaccurate", "Moderately Inaccurate", 
 	   "Slightly Inaccurate", "Slightly Accurate",
@@ -58,8 +61,16 @@ test_that("umx_score_scale works", {
 	bfi$As3 = factor(bfi$A3, levels = 1:6, labels = mapStrings)
 	bfi$As4 = factor(bfi$A4, levels = 1:6, labels = mapStrings)
 	bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
-	bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 	bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
 	expect_equal(bfi$A, bfi$As)
+
+	bfi$Astr1 = as.character(bfi$As1)
+	bfi$Astr2 = as.character(bfi$As2)
+	bfi$Astr3 = as.character(bfi$As3)
+	bfi$Astr4 = as.character(bfi$As4)
+	bfi$Astr5 = as.character(bfi$As5)
+	bfi= umx_score_scale(name="Astr", base="Astr", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
+
+	expect_equal(bfi$A, bfi$Astr)
 
 })
