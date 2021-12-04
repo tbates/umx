@@ -140,7 +140,7 @@ umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxRAM]{umxRAM()}}
+\item \code{\link[=power.ACE.test]{power.ACE.test()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Teaching and Testing functions: 

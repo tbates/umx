@@ -187,7 +187,7 @@ Power failure: why small sample size undermines the reliability of neuroscience.
 }
 \seealso{
 \itemize{
-\item \code{\link[OpenMx:mxPower]{OpenMx::mxPower()}}, \code{\link[=umxACE]{umxACE()}}
+\item \code{\link[=umxPower]{umxPower()}}, \code{\link[OpenMx:mxPower]{OpenMx::mxPower()}}, \code{\link[=umxACE]{umxACE()}}
 }
 
 Other Twin Modeling Functions: 
