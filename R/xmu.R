@@ -1750,17 +1750,23 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 # = RAM HELPERS =
 # ===============
 
-umxLocateParameters <- function(model, thisName) {
-	mats = model$matrices
-	for (i in 1:length(mats)) {
-		look = which(mats[[i]]$labels == thisName, arr.ind = TRUE)
-		if(dim(look)[1]>0){
-			# found
-			return(data.frame(label = thisName, model = model$name, matrix = mats[[i]]$name, row = look[1,1], col = look[1,2]))
-		}
-	}
-	return(NA)
-}
+# umxLocateParameters(m1)
+#               label model matrix row col
+# 1 bmi1_with_bmi2_MZ    MZ      S   2   1
+
+# umxLocateParameters <- function(model, thisName) {
+# 	mats = model$matrices
+# 	for (i in 1:length(mats)) {
+# 		look = which(mats[[i]]$labels == thisName, arr.ind = TRUE)
+# 		if(dim(look)[1]>0){ # label found at least once in this matrix. use row 1 to generate a mats
+# 			return(data.frame(label = thisName, model = model$name, matrix = mats[[i]]$name, row = look[1,1], col = look[1,2]))
+# 		}
+# 	}
+# 	return(NA)
+# }
+
+# tmp = omxLocateParameters(m1, "bmi1_with_bmi2_MZ")
+# returns tmp$model $matrix $row $column $value $lbound $ubound
 
 #' Order and group the parameters in a RAM summary
 #'
@@ -1792,44 +1798,43 @@ umxLocateParameters <- function(model, thisName) {
 xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, residuals= FALSE) {
 	# https://github.com/tbates/umx/issues/66
 	umx_is_RAM(model)
-	umx_check("name" %in% namez(paramTable), message="couldn't find name column in parameterTable")
-	# TODO: robust in the model space: look up where each label is in the S A M matrices
-	# Use F to identify labels that involve latents
-
-	latents   = model$latentVars
-	manifests = model$manifestVars
-	Anames    = dimnames(model$A)[[1]]
-	Snames    = dimnames(model$S)[[1]]
+	umx_check("name" %in% namez(paramTable), message="Couldn't find name column in parameterTable")
+	# TODO: Use F to identify labels that involve latents
 
 	paramTable$type = "custom"
 	for (i in 1:dim(paramTable)[1]) {
-		thisName = paramTable[i, "name"]
-		location = umxLocateParameters(model, thisName)
-		
+		thisName  = paramTable[i, "name"]
+		location  = omxLocateParameters(model, thisName)[1,]
+		thisModel = umxGetModel(model, targetModel = location$model)
+		Anames    = dimnames(thisModel$A)[[1]]
+		Snames    = dimnames(thisModel$S)[[1]]
+		latents   = umxGetLatents(model, location$model)
+		manifests = umxGetManifests(model, location$model)
+		# Set the type for this path
 		if(location$matrix == "M"){
-			paramTable[i, "type"] = "Means"
+			paramTable[i, "type"] = "Mean"
 		} else if(location$matrix == "S"){ # 2 headed symmetric
 			from = Anames[location$col]
 			to   = Anames[location$row]
 			if(from  %in% latents){
 				if(to  %in% latents){
 					if(from == to){
-						paramTable[i, "type"] = "Factor Variances"
+						paramTable[i, "type"] = "Factor Variance"
 					}else{
-						paramTable[i, "type"] = "Factor Covs"
+						paramTable[i, "type"] = "Factor Cov"
 					}
 				}else{
-					paramTable[i, "type"] = "Latent-Manifest Covs"
+					paramTable[i, "type"] = "Latent-Manifest Cov"
 				}
 			} else { # from %in% manifests
 				if(to %in% manifests){
 					if(from == to){
-						paramTable[i, "type"] = "Residuals"
+						paramTable[i, "type"] = "Residual"
 					}else{
-						paramTable[i, "type"] = "Manifest Covs"						
+						paramTable[i, "type"] = "Manifest Cov"						
 					}
 				}else{
-					paramTable[i, "type"] = "Latent-Manifest Covs"
+					paramTable[i, "type"] = "Latent-Manifest Cov"
 				}
 			}
 		} else if(location$matrix == "A"){
@@ -1839,23 +1844,24 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 				if(to %in% latents){
 					paramTable[i, "type"] = "Factor to factor"
 				}else{
-					paramTable[i, "type"] = "Factor loadings"					
+					paramTable[i, "type"] = "Factor loading"					
 				}
 			} else {
-				paramTable[i, "type"] = "Manifest paths"
+				paramTable[i, "type"] = "Manifest path"
 			}
 		}else{
 			# this was a label that didn't match an expected pattern... shouldn't happen
 		}
 	}
+	
 	# sort by our newly filled-in type column
 	paramTable = paramTable[order(paramTable$type), ]	
 	# filter
 	if(!means){
-		paramTable = paramTable[!(paramTable$type == "Means"), ]	
+		paramTable = paramTable[!(paramTable$type == "Mean"), ]	
 	}
 	if(!residuals){
-		paramTable = paramTable[!(paramTable$type == "Residuals"), ]	
+		paramTable = paramTable[!(paramTable$type == "Residual"), ]	
 	}
 	return(paramTable)
 }

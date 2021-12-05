@@ -47,7 +47,7 @@ umx_make_TwinData(
 
 \item{DZr}{Set to return dataframe using MZr and Dzr (Default NULL)}
 
-\item{nSib}{Number of siblings in a family (default - 2). "3" = extra sib.}
+\item{nSib}{Number of siblings in a family (default = 2). "3" = extra sib.}
 
 \item{dzAr}{DZ Ar (default .5)}
 
@@ -81,22 +81,23 @@ Makes MZ and DZ twin data, optionally with moderated A. By default, the three va
 
 See examples for how to use this: it is pretty flexible.
 
-If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2
+If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2.
+\strong{note}: the function was designed around nSib = 2 and var names = var_T1. It isn't yet smart enough to do, for instance
+scaling or shifting to make the min value 0 (normal for most traits we analyse) for nonstandard \code{varNames} and `nSib``.
 
-You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
+\emph{Note}, if you want a power calculator, see \code{\link[=power.ACE.test]{power.ACE.test()}} and \code{\link[=umxPower]{umxPower()}}.
 
-\emph{Note}, if you want a power calculator, see \code{\link[=power.ACE.test]{power.ACE.test()}} and \code{\link[=mxPower]{mxPower()}}.
+\strong{Usage}
 
-\strong{Shortcuts}
-
-You can omit nDZpairs. You can also give any two of A, C, or E and the function deduces the missing parameter so \code{A+C+E == 1}.
+You must supply \code{nMZpairs} (you can omit \code{nDZpairs}).
+You can give any two of A, C, or E and the function deduces the missing parameter so \code{A+C+E == 1}.
 
 \strong{Moderation}
 
 \strong{Univariate GxE Data}
 To simulate data for \code{umxGxE}, offer up a list of the average, min and max values for \code{AA}, i.e., c(avg = .5, min = 0, max = 1).
 
-\code{umx_make_TwinData} will then return moderated heritability, with average value = avg, and swinging
+\code{umx_make_TwinData} will return moderated data, with average value = avg, swinging
 down to min and up to max across 3-SDs of the moderator.
 
 \strong{Bivariate GxE Data}

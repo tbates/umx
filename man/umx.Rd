@@ -115,6 +115,9 @@ Other Model Summary and Comparison:
 Other Reporting Functions: 
 \code{\link{umxAPA}()},
 \code{\link{umxFactorScores}()},
+\code{\link{umxGetLatents}()},
+\code{\link{umxGetManifests}()},
+\code{\link{umxGetModel}()},
 \code{\link{umxGetParameters}()},
 \code{\link{umxParameters}()},
 \code{\link{umx_aggregate}()},

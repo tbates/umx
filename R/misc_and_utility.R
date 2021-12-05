@@ -6379,22 +6379,24 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #' 
 #' See examples for how to use this: it is pretty flexible.
 #' 
-#' If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2
+#' If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2.
+#' **note**: the function was designed around nSib = 2 and var names = var_T1. It isn't yet smart enough to do, for instance
+#' scaling or shifting to make the min value 0 (normal for most traits we analyse) for nonstandard `varNames` and `nSib``. 
+#'
+#' *Note*, if you want a power calculator, see [power.ACE.test()] and [umxPower()].
+#'
 #' 
-#' You supply the number of pairs of each zygosity that wish to simulate (nMZpairs, nDZpairs), along with the values of AA, CC,and EE.
+#' **Usage**
 #' 
-#' *Note*, if you want a power calculator, see [power.ACE.test()] and [mxPower()].
-#' 
-#' **Shortcuts**
-#' 
-#' You can omit nDZpairs. You can also give any two of A, C, or E and the function deduces the missing parameter so `A+C+E == 1`.
+#' You must supply `nMZpairs` (you can omit `nDZpairs`).
+#' You can give any two of A, C, or E and the function deduces the missing parameter so `A+C+E == 1`.
 #' 
 #' **Moderation**
 #' 
 #' **Univariate GxE Data**
 #' To simulate data for `umxGxE`, offer up a list of the average, min and max values for `AA`, i.e., c(avg = .5, min = 0, max = 1).
 #' 
-#' `umx_make_TwinData` will then return moderated heritability, with average value = avg, and swinging
+#' `umx_make_TwinData` will return moderated data, with average value = avg, swinging
 #' down to min and up to max across 3-SDs of the moderator.
 #'
 #' **Bivariate GxE Data**
@@ -6416,7 +6418,7 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #' @param DD value for E variance.
 #' @param MZr If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.
 #' @param DZr Set to return dataframe using MZr and Dzr (Default NULL)
-#' @param nSib Number of siblings in a family (default - 2). "3" = extra sib.
+#' @param nSib Number of siblings in a family (default = 2). "3" = extra sib.
 #' @param dzAr DZ Ar (default .5)
 #' @param scale Whether to scale output to var=1 mean=0 (Default FALSE)
 #' @param bivAmod Used for Bivariate GxE data: list(Beta_a1 = .025, Beta_a2 = .025)
@@ -6853,10 +6855,6 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	
 	if(scale){
 		twinData = umx_scale_wide_twin_data(varNames, sep = "_T", data = twinData)
-	}else{
-		shift = min(min(twinData$var_T1), min(twinData$var_T2))
-		twinData$var_T1 = twinData$var_T1 - shift
-		twinData$var_T2 = twinData$var_T2 - shift
 	}
 	return(twinData)
 	# return(list(mzData = mzData, dzData = dzData))
