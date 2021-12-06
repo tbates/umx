@@ -18,7 +18,7 @@ test_that("umx_score_scale works", {
 	# ==============================
 	# = Score Agreeableness totals =
 	# ==============================
-		#'
+
 	# Handscore subject 1
 	# A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4  = 20
 	tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
@@ -35,7 +35,7 @@ test_that("umx_score_scale works", {
 	tmpDF = bfi
 	tmpDF[1, "A1"] = NA
 	tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= tmpDF, score="mean")
-	tmp$A_score[1] # 3.75
+	expect_equal(tmp$A_score[1], 3.75)
 
 	tmp= umx_score_scale("A", pos= 2:5, rev= 1, max = 6, data = tmpDF, score="mean", na.rm=FALSE)
 	expect_true( is.na(tmp$A_score[1]) )
@@ -43,8 +43,9 @@ test_that("umx_score_scale works", {
 	# ===============
 	# = Score = max =
 	# ===============
-	tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6,
-	tmp$A[1] # Subject 1 max = 5 (the reversed item 1)
+	# Subject 1 max = 5 (the reversed item 1)
+	tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, score = "max", data=bfi)
+	expect_equal(tmp$A_score[1], 5)
 
 	# =======================
 	# = MapStrings examples =
@@ -72,5 +73,7 @@ test_that("umx_score_scale works", {
 	bfi= umx_score_scale(name="Astr", base="Astr", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
 
 	expect_equal(bfi$A, bfi$Astr)
+	# copes with bad name requests
+	expect_error( umx_score_scale(base = "NotPresent", pos=2:5, rev=1, max=6, data=bfi) )
 
 })

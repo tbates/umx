@@ -1519,9 +1519,6 @@ umx_factor <- umxFactor
 #' bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 #' bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
 #' all(bfi$A == bfi$As)
-#'
-#' # copes with bad name requests
-#' umx_score_scale(base = "NotPresent", pos=2:5, rev=1, max=6, data=bfi)
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL) {
 	score = match.arg(score)
 	if(is.null(name)){ name = paste0(base, "_score") }
