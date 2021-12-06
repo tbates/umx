@@ -1750,24 +1750,6 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 # = RAM HELPERS =
 # ===============
 
-# umxLocateParameters(m1)
-#               label model matrix row col
-# 1 bmi1_with_bmi2_MZ    MZ      S   2   1
-
-# umxLocateParameters <- function(model, thisName) {
-# 	mats = model$matrices
-# 	for (i in 1:length(mats)) {
-# 		look = which(mats[[i]]$labels == thisName, arr.ind = TRUE)
-# 		if(dim(look)[1]>0){ # label found at least once in this matrix. use row 1 to generate a mats
-# 			return(data.frame(label = thisName, model = model$name, matrix = mats[[i]]$name, row = look[1,1], col = look[1,2]))
-# 		}
-# 	}
-# 	return(NA)
-# }
-
-# tmp = omxLocateParameters(m1, "bmi1_with_bmi2_MZ")
-# returns tmp$model $matrix $row $column $value $lbound $ubound
-
 #' Order and group the parameters in a RAM summary
 #'
 #' @description
@@ -1804,12 +1786,13 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 	paramTable$type = "custom"
 	for (i in 1:dim(paramTable)[1]) {
 		thisName  = paramTable[i, "name"]
-		location  = omxLocateParameters(model, thisName)[1,]
+		location  = omxLocateParameters(model, labels = thisName, free = NA)[1,]
 		thisModel = umxGetModel(model, targetModel = location$model)
+		latents   = umxGetLatents(thisModel)
+		manifests = umxGetManifests(thisModel)
 		Anames    = dimnames(thisModel$A)[[1]]
 		Snames    = dimnames(thisModel$S)[[1]]
-		latents   = umxGetLatents(model, location$model)
-		manifests = umxGetManifests(model, location$model)
+
 		# Set the type for this path
 		if(location$matrix == "M"){
 			paramTable[i, "type"] = "Mean"

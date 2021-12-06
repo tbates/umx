@@ -2207,7 +2207,7 @@ umxGetManifests <- function(model, targetModel = NULL) {
 	if(is.null(targetModel)){
 		return(model$manifestVars)
 	} else if(model$name == targetModel){
-		return(model$latentVars)
+		return(model$manifestVars)
 	} else {
 		return(model$submodels[[targetModel]]$manifestVars)
 	}

@@ -42,8 +42,8 @@ m1 = umxRAM("m1", data = g1Data,
 # Model 2
 m2 = umxRAM("m2", data = g2Data,
 	umxPath("x", to = "y", labels = "beta"),
-	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
-	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
+	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp2")),
+	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
 )
 
 m3 = umxSuperModel('top', m1, m2)
