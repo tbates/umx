@@ -70,7 +70,7 @@ test_that("umx_score_scale works", {
 	bfi$Astr3 = as.character(bfi$As3)
 	bfi$Astr4 = as.character(bfi$As4)
 	bfi$Astr5 = as.character(bfi$As5)
-	bfi= umx_score_scale(name="Astr", base="Astr", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
+	bfi = umx_score_scale(name="Astr", base="Astr", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
 
 	expect_equal(bfi$A, bfi$Astr)
 	# copes with bad name requests

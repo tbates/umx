@@ -47,6 +47,7 @@ umxCompare compares two or more \code{\link[=mxModel]{mxModel()}}s. It has sever
 \emph{Note}: If you leave comparison blank, it will just give fit info for the base model
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -71,7 +72,6 @@ umxCompare(m1, c(m2, m3))
 umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 
-\dontrun{
 manifests = names(demoOneFactor)
 m1 = umxRAM("WLS", data = demoOneFactor, type = "DWLS",
 	umxPath("G", to = manifests),
