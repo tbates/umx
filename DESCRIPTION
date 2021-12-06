@@ -55,7 +55,7 @@ Suggests:
     testthat,
     rmarkdown,
 	psych,
-	psychTols,
+	psychTools,
 	rhub
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
