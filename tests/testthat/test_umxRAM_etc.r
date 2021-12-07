@@ -33,4 +33,4 @@ test_that("umxRAM works", {
 	test_that("testing umxModel", {
 		expect_error(umxModel(), regexp = "You probably meant umxRAM")
 	})
-}
+})

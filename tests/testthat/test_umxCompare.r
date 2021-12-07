@@ -28,17 +28,17 @@ test_that("umxCompare works", {
 	umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 	umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 
-	expect_error({
-		manifests = names(demoOneFactor)
-		m1 = umxRAM("WLS", data = demoOneFactor, type = "DWLS",
-			umxPath("G", to = manifests),
-			umxPath(var = manifests),
-			umxPath(var = "G", fixedAt = 1)
-		)
-
-		m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
-		umxCompare(m1, m2)
-		umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
-		umxCompare(m1, m2, report = "html") # Open table in browser
+	# WLS not working for umxSummary or umxCompare
+		# manifests = names(demoOneFactor)
+	# 	m1 = umxRAM("WLS", data = demoOneFactor, type = "DWLS",
+	# 		umxPath("G", to = manifests),
+	# 		umxPath(var = manifests),
+	# 		umxPath(var = "G", fixedAt = 1)
+	# 	)
+	#
+	# 	m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
+	# 	umxCompare(m1, m2)
+	# 	umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
+	# 	umxCompare(m1, m2, report = "html") # Open table in browser
 	})
 })

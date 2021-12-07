@@ -519,6 +519,7 @@ loadings.MxModel <- function(x, ...) {
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' 
@@ -531,7 +532,6 @@ loadings.MxModel <- function(x, ...) {
 #' 
 #' m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 #' 
-#' \dontrun{
 #' # Add a CI request for "G_to_x1", run, and report. Save with this CI computed
 #' m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
 #' 
