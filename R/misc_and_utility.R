@@ -1437,7 +1437,10 @@ umx_factor <- umxFactor
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
-#' @param mapStrings For input like "No"/"Maybe"/"Yes" -> 0,1,2
+#' @param mapStrings For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2
+#' @param omegaNfactors nfactors for the omega function (if requesting reliability) (default = 1)
+#' @param verbose Whether to print the whole omega output (FALSE)
+#' @param digits Rounding for omega etc. (default 2) 
 #' @return - scores
 #' @export
 #' @family Data Functions
@@ -1522,7 +1525,7 @@ umx_factor <- umxFactor
 #'
 #' # copes with bad name requests
 #' umx_score_scale(base = "NotPresent", pos=2:5, rev=1, max=6, data=bfi)
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors= 1, digits = 2, verbose = FALSE) {
 	score = match.arg(score)
 	if(is.null(name)){ name = paste0(base, "_score") }
 	oldData = data
@@ -1579,8 +1582,14 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	df = data[ , allColNames, drop = FALSE]
 
 	if(alpha){
-		print(str(df))
 		print(reliability(cov(df, use= "pairwise.complete.obs")))
+		tmp = psych::omega(df, nfactors=omegaNfactors)
+		if(verbose){
+			print(str(df))
+			print(tmp)
+		}else{
+			cat(paste0("\u03C9 h = ", round(tmp$omega_h, digits), "; \u03C9 t = ", round(tmp$omega.tot, digits)))
+		}
 	}
 
 	if(score == "max"){
