@@ -48,6 +48,7 @@ Because CIs can take time to run, by default only already-computed CIs will be r
 If \code{parm} is empty, and \code{run = FALSE}, a message will alert you to set \code{run = TRUE}.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 
@@ -60,7 +61,6 @@ m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
 
 m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 
-\dontrun{
 # Add a CI request for "G_to_x1", run, and report. Save with this CI computed
 m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
 
