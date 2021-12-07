@@ -43,7 +43,7 @@
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
 #' @return [OpenMx::mxPower()] object
 #' @family Twin Modeling Functions
-#' @seealso - [OpenMx::mxPower()], [umxACE()]
+#' @seealso - [umxPower()], [OpenMx::mxPower()], [umxACE()] 
 #' @references * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
 #' revisited: II detection of common environmental variance. *Twin Res Hum Genet*, **11**: 48-54.
 #' \doi{10.1375/twin.11.1.48}.
@@ -262,7 +262,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' @return power table
 #' @export
 #' @family Teaching and Testing functions
-#' @seealso - [umxRAM()]
+#' @seealso - [power.ACE.test()], [umxRAM()]
 #' @references - Miles, J. (2003). A framework for power analysis using a structural equation modelling procedure. *BMC Medical Research Methodology*, **3**, 27. \doi{10.1186/1471-2288-3-27}
 #' * [Superpower package](https://CRAN.R-project.org/package=Superpower)
 #' @md

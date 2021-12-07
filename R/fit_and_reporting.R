@@ -1925,6 +1925,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @export
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -1938,9 +1939,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 #' umxCompare(m1, m2)
 #' umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
-#' \dontrun{
 #' umxCompare(m1, m2, report = "html") # Open table in browser
-#' }
 #'
 #' # Two comparison models
 #' m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
@@ -1949,7 +1948,6 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
 #' umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 #'
-#' \dontrun{
 #' manifests = names(demoOneFactor)
 #' m1 = umxRAM("WLS", data = demoOneFactor, type = "DWLS",
 #' 	umxPath("G", to = manifests),
@@ -2100,6 +2098,175 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	invisible(tablePub)
 }
+
+#' umxGetLatents
+#'
+#' @description
+#' Get the latentVars from a RAM model, optionally targetting a submodel.
+#'
+#' @param model a [umxRAM()]
+#' @param targetModel name of the model to extract from
+#' @return - variables
+#' @export
+#' @family Reporting Functions
+#' @seealso - [umxGetManifests()], [umxRAM()], [umxSuperModel()]
+#' @md
+#' @examples
+#' \dontrun{
+#' library(umx)
+#' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
+#' manifests = c("x", "y")
+#' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
+#' 		AA = 0, CC = .4, EE = .6, varNames = manifests)
+#' 
+# Group 1
+#' grp1   = tmp[tmp$zygosity == "MZ", manifests]
+#' g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
+#' 
+# Group 2
+#' grp2   = tmp[tmp$zygosity == "DZ", manifests]
+#' g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
+
+#' # Model 1 (could add autoRun = FALSE if you don't want to run this as it is being built)
+#' m1 = umxRAM("m1", data = g1Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
+#' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
+#' )
+#' 
+#' # Model 2
+#' m2 = umxRAM("m2", data = g2Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
+#' 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
+#' )
+#' 
+#' m3 = umxSuperModel('top', m1, m2)
+#' umxGetLatents(m3)
+#' umxGetLatents(m3, targetModel = "m1")
+#' }
+umxGetLatents <- function(model, targetModel = NULL) {
+	if(is.null(targetModel)){
+		return(model$latentVars)
+	} else if(model$name == targetModel){
+		return(model$latentVars)
+	} else{
+		return(model$submodels[[targetModel]]$latentVars)
+	}
+}
+
+#' umxGetManifests
+#'
+#' @description
+#' Get the latentVars from a RAM model, optionally targetting a submodel.
+#'
+#' @param model a [umxRAM()]
+#' @param targetModel name of the model to extract from
+#' @return - variables
+#' @export
+#' @family Reporting Functions
+#' @seealso - [umxGetManifests()], [umxRAM()], [umxSuperModel()]
+#' @md
+#' @examples
+#' \dontrun{
+#' library(umx)
+#' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
+#' manifests = c("x", "y")
+#' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
+#' 		AA = 0, CC = .4, EE = .6, varNames = manifests)
+#' 
+# Group 1
+#' grp1   = tmp[tmp$zygosity == "MZ", manifests]
+#' g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
+#' 
+# Group 2
+#' grp2   = tmp[tmp$zygosity == "DZ", manifests]
+#' g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
+
+#' # Model 1 (could add autoRun = FALSE if you don't want to run this as it is being built)
+#' m1 = umxRAM("m1", data = g1Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
+#' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
+#' )
+#' 
+#' # Model 2
+#' m2 = umxRAM("m2", data = g2Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels=c("Var_x", "Resid_y_grp2")),
+#' 	umxPath(means = manifests, labels=c("Mean_x", "Mean_y"))
+#' )
+#' 
+#' m3 = umxSuperModel('top', m1, m2)
+#' umxGetManifests(m3)
+#' umxGetManifests(m3, targetModel = "m1")
+#' }
+umxGetManifests <- function(model, targetModel = NULL) {
+	if(is.null(targetModel)){
+		return(model$manifestVars)
+	} else if(model$name == targetModel){
+		return(model$manifestVars)
+	} else {
+		return(model$submodels[[targetModel]]$manifestVars)
+	}
+}
+
+#' umxGetModel
+#'
+#' @description
+#' Get the latentVars from a RAM model, optionally targetting a submodel.
+#'
+#' @param model a [umxRAM()]
+#' @param targetModel name of the model to extract from
+#' @return - variables
+#' @export
+#' @family Reporting Functions
+#' @seealso - [umxGetModel()], [umxRAM()], [umxSuperModel()]
+#' @md
+#' @examples
+#' \dontrun{
+#' library(umx)
+#' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
+#' manifests = c("x", "y")
+#' tmp = umx_make_TwinData(nMZpairs = 100, nDZpairs = 150, 
+#' 		AA = 0, CC = .4, EE = .6, varNames = manifests)
+#' 
+# Group 1
+#' grp1   = tmp[tmp$zygosity == "MZ", manifests]
+#' g1Data = mxData(cov(grp1), type = "cov", numObs = nrow(grp1), means=umx_means(grp1))
+#' 
+# Group 2
+#' grp2   = tmp[tmp$zygosity == "DZ", manifests]
+#' g2Data = mxData(cov(grp2), type = "cov", numObs = nrow(grp2), means=umx_means(grp2))
+
+#' # Model 1 (could add autoRun = FALSE if you don't want to run this as it is being built)
+#' m1 = umxRAM("m1", data = g1Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp1")),
+#' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
+#' )
+#' 
+#' # Model 2
+#' m2 = umxRAM("m2", data = g2Data,
+#' 	umxPath("x", to = "y", labels = "beta"),
+#' 	umxPath(var = manifests, labels = c("Var_x", "Resid_y_grp2")),
+#' 	umxPath(means = manifests, labels = c("Mean_x", "Mean_y"))
+#' )
+#' 
+#' m3 = umxSuperModel('top', m1, m2)
+#' umxGetModel(m3)
+#' umxGetModel(m3, targetModel = "m1")
+#' }
+umxGetModel <- function(model, targetModel = NULL) {
+	if(is.null(targetModel)){
+		return(model)
+	} else if(model$name == targetModel){
+		return(model)
+	} else {
+		return(model$submodels[[targetModel]])
+	}
+}
+
 
 #' umxCI_boot
 #'

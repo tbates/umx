@@ -146,6 +146,9 @@ umxAPA(m1)
 
 Other Reporting Functions: 
 \code{\link{umxFactorScores}()},
+\code{\link{umxGetLatents}()},
+\code{\link{umxGetManifests}()},
+\code{\link{umxGetModel}()},
 \code{\link{umxGetParameters}()},
 \code{\link{umxParameters}()},
 \code{\link{umx_aggregate}()},

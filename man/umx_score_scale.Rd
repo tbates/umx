@@ -147,9 +147,6 @@ bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
 bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
 all(bfi$A == bfi$As)
-
-# copes with bad name requests
-umx_score_scale(base = "NotPresent", pos=2:5, rev=1, max=6, data=bfi)
 }
 \seealso{
 Other Data Functions: 
