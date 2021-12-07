@@ -4,7 +4,12 @@
 \alias{umxVersion}
 \title{Get or print the version of umx, along with detail from OpenMx and general system info.}
 \usage{
-umxVersion(model = NULL, min = NULL, verbose = TRUE, return = "umx")
+umxVersion(
+  model = NULL,
+  min = NULL,
+  verbose = TRUE,
+  return = c("umx_vers", "OpenMx_vers")
+)
 }
 \arguments{
 \item{model}{Optional to show optimizer in this model}

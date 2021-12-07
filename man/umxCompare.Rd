@@ -61,9 +61,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
 umxCompare(m1, m2)
 umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
-\dontrun{
 umxCompare(m1, m2, report = "html") # Open table in browser
-}
 
 # Two comparison models
 m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")

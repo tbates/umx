@@ -18,6 +18,7 @@ umx_score_scale(
   alpha = FALSE,
   mapStrings = NULL,
   omegaNfactors = 1,
+  digits = 2,
   verbose = FALSE
 )
 }
@@ -47,6 +48,8 @@ umx_score_scale(
 \item{mapStrings}{For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2}
 
 \item{omegaNfactors}{nfactors for the omega function (if requesting reliability) (default = 1)}
+
+\item{digits}{Rounding for omega etc. (default 2)}
 
 \item{verbose}{Whether to print the whole omega output (FALSE)}
 }
@@ -130,7 +133,7 @@ scores$scores[1, ]
 # Compare output
 # (note, by default psych::scoreItems replaces NAs with the sample median...)
 RevelleE = as.numeric(scores$scores[,"E"])
-all(RevelleE == tmp[,"E_score"], na.rm = TRUE)
+RevelleE == tmp[,"E_score"]
 
 # =======================
 # = MapStrings examples =
@@ -146,7 +149,6 @@ bfi$As4 = factor(bfi$A4, levels = 1:6, labels = mapStrings)
 bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
 bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
-all(bfi$A == bfi$As)
 }
 \seealso{
 Other Data Functions: 
