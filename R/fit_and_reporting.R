@@ -44,6 +44,7 @@
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -56,6 +57,7 @@
 #' m1 = mxRun(m1)
 #' umxSummary(m1, std = TRUE)
 #' umxDiagnose(m1)
+#' }
 umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 	# 1. First thing to check is whether the covariance matrix is positive definite.
 	minEigen = min(eigen(umxExpCov(model))$values)
