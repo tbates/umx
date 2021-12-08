@@ -40,6 +40,7 @@ The guidance would be to try starting with unit variances and thresholds that ar
 +/- 2 SD of the mean. \href{https://openmx.ssri.psu.edu/thread/3899}{bivariate outliers \%p option}
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -52,6 +53,7 @@ m1 = umxRAM("OneFactor", data = demoOneFactor, type= "cov",
 m1 = mxRun(m1)
 umxSummary(m1, std = TRUE)
 umxDiagnose(m1)
+}
 }
 \references{
 \itemize{
