@@ -29,7 +29,7 @@ test_that("umxCompare works", {
 	umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
 
 	# WLS not working for umxSummary or umxCompare
-		# manifests = names(demoOneFactor)
+	# manifests = names(demoOneFactor)
 	# 	m1 = umxRAM("WLS", data = demoOneFactor, type = "DWLS",
 	# 		umxPath("G", to = manifests),
 	# 		umxPath(var = manifests),
@@ -40,5 +40,5 @@ test_that("umxCompare works", {
 	# 	umxCompare(m1, m2)
 	# 	umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
 	# 	umxCompare(m1, m2, report = "html") # Open table in browser
-	})
+	# })
 })
