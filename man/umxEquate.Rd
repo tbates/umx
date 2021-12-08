@@ -69,6 +69,7 @@ with free = TRUE
 \emph{Tip}: To find labels by name, use the regex parameter of \code{\link[=umxGetParameters]{umxGetParameters()}}
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -90,6 +91,7 @@ m2 = umxEquate(m1, autoRun = TRUE, comparison = TRUE, name = "Eq_x1_x2",
 	     a = "G_to_x1", b = "G_to_x2", newlabels = c("equated")
 )
 parameters(m2)
+}
 }
 \references{
 \itemize{
