@@ -171,6 +171,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
 #' @param returning What to return (default, the run model)
+#' @param intervals whether to run intervlas or not (default = FALSE)
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
@@ -200,7 +201,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' 
 #' }
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, returning = c("model", "summary")) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary")) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard   = match.arg(tryHard)
 	returning = match.arg(returning)
@@ -225,13 +226,13 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 	if(autoRun){
 		tryCatch({
 			if(tryHard == "no"){
-				model1 = mxRun(model1, beginMessage = !umx_set_silent(silent = TRUE), silent = umx_set_silent(silent = TRUE))
+				model1 = mxRun(model1, beginMessage = !umx_set_silent(silent = TRUE), silent = umx_set_silent(silent = TRUE), intervals = intervals)
 			} else if (tryHard == "mxTryHard"){
-				model1 = mxTryHard(model1)
+				model1 = mxTryHard(model1, intervals = intervals)
 			} else if (tryHard == "mxTryHardOrdinal"){
-				model1 = mxTryHardOrdinal(model1)
+				model1 = mxTryHardOrdinal(model1, intervals = intervals)
 			} else if (tryHard == "mxTryHardWideSearch"){
-				model1 = mxTryHardWideSearch(model1)
+				model1 = mxTryHardWideSearch(model1, intervals = intervals)
 			}
 		# }, warning = function(w){
 		# 	if(tryHard == "no"){
