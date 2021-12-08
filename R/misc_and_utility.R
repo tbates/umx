@@ -3809,6 +3809,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 	for (r in 1:nRows) {
 		for (c in 1:nCols) {
 			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){
+				
 				# cell is in the target zone
 				if(!is.null(model)){
 					# Model available - look for CIs by label...
@@ -3816,10 +3817,22 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 					if(is.na(CIstr)){
 						value = umx_round(x$values[r,c], digits)
 					}else{
-						value = CIstr
+						value = umx_round(CIstr, digits)
 					}
 				} else {
-					value = umx_round(x$values[r,c], digits)
+					if(is.numeric(x$values[r,c])){
+						value = umx_round(x$values[r,c], digits)
+					} else {
+						value = x$values[r,c]
+					}
+					# tryCatch({
+					#    value = umx_round(x$values[r,c], digits)
+					# }, warning = function() {
+					# }, error = function() {
+					# }, finally={
+					# 	value = x$values[r,c]
+					# })
+					# #
 				}
 
 				if(from == "rows"){

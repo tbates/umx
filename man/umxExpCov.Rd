@@ -27,7 +27,7 @@ umxExpCov(object, latents = FALSE, manifests = TRUE, digits = NULL, ...)
 Extract the expected covariance matrix from an \code{\link[=mxModel]{mxModel()}}
 }
 \examples{
-require(umx)
+# require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",

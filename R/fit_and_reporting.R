@@ -3769,7 +3769,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @seealso - [umxRun()], [umxCI_boot()]
 #' @md
 #' @examples
-#' require(umx)
+#' # require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
