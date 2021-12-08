@@ -3820,6 +3820,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3841,6 +3842,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 	     a = "G_to_x1", b = "G_to_x2", newlabels = c("equated")
 #' )
 #' parameters(m2)
+#' }
 umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no", "yes", "ordinal", "search"), comparison = TRUE, master= NULL, slave= NULL) {
 	free = xmu_match.arg(free, c(TRUE, FALSE, NA)) # match.arg can't handle Boolean as options?
 	tryHard = match.arg(tryHard)
