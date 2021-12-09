@@ -3226,6 +3226,7 @@ plot.MxModelIP <- umxPlotIP
 #' @export
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3235,7 +3236,8 @@ plot.MxModelIP <- umxPlotIP
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
-#' # umxMI(m1, full=FALSE)
+#' umxMI(m1, full = FALSE)
+#' }
 umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToShow = "both", decreasing = TRUE) {
 	if(typeToShow != "both"){
 		message("Only showing both add and remove is supported so far")
@@ -3649,6 +3651,7 @@ parameters <- umxParameters
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3664,6 +3667,7 @@ parameters <- umxParameters
 #' umxGetParameters(m1, free = FALSE) # Only fixed parameters
 #' # Complex regex pattern
 #' umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
+#' }
 #' 
 umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("labels", "values", "free", "lbound", "ubound", "all"), verbose = FALSE) {
 	# TODO

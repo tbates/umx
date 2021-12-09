@@ -33,6 +33,7 @@ and return if all are found.
 \emph{note}: To return all labels, just leave regex as is.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -48,6 +49,7 @@ umxGetParameters(m1, free = TRUE)  # Only free parameters
 umxGetParameters(m1, free = FALSE) # Only fixed parameters
 # Complex regex pattern
 umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
+}
 
 }
 \references{

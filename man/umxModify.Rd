@@ -80,6 +80,7 @@ AND relabel cells (because the default value is 0, so it is ignored when using n
 \examples{
 require(umx)
 
+\dontrun{
 # First we'll just build a 1-factor model
 umx_set_optimizer("SLSQP")
 data(demoOneFactor)
@@ -95,7 +96,6 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #    self-explanatory, and get a fit comparison
 m2 = umxModify(m1, update = "G_to_x1", name = "drop_X1", comparison = TRUE)
 
-\dontrun{
 # 2. Add the path back (setting free = TRUE)
 m2 = umxModify(m1, update = "G_to_x1", free= TRUE, name = "addback_X1", comparison = TRUE)
 # 3. Fix a value at a non-zero value

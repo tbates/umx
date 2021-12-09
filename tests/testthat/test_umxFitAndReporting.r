@@ -48,6 +48,20 @@ test_that("umxExpMeans works", {
 	umxExpMeans(m1, digits = 3)
 })
 
+test_that("umxMI works", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	
+	m1 = umxRAM("One Factor", data = demoOneFactor,
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	
+	umxMI(m1, full=FALSE)
+})
+
 test_that("RMSEA works", {
 	data(demoOneFactor)
 	manifests = names(demoOneFactor)

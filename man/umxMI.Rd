@@ -41,6 +41,7 @@ You are almost certainly doing better science when testing competing models rath
 }
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -49,7 +50,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
 )
-# umxMI(m1, full=FALSE)
+umxMI(m1, full = FALSE)
+}
 }
 \references{
 \itemize{
