@@ -267,6 +267,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' * [Superpower package](https://CRAN.R-project.org/package=Superpower)
 #' @md
 #' @examples
+#' \dontrun{
 #' # ===================================================
 #' # = Power to detect correlation of .3 in 200 people =
 #' # ===================================================
@@ -297,8 +298,6 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' # =================================================
 #' umxPower(m1, "X_with_Y", explore = TRUE)
 #'
-#' \dontrun{
-#' 
 #' # =====================================
 #' # = Examples with method = empirical  =
 #' # =====================================
@@ -333,8 +332,8 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' # note: Can't use method = "ncp" with search)
 #' umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE)
 #' umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
+#' 
 #' }
-#'
 umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= .05, value = 0, method= c("ncp", "empirical"), explore = FALSE, digits = 2, plot=TRUE, silent = TRUE){
 	# rockchalk::lazyCor(.3,2)
 	method   = match.arg(method)
@@ -345,7 +344,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 	}
 	
 	if(explore & !is.null(n) & length(update)>1 ){
-		stop("exploration with fixed n only works for updates of 1 parameter. Either remove n=, or try one parameter at a time")
+		stop("Exploration with fixed n only works for updates of 1 parameter. Either remove n=, or try one parameter at a time")
 	}
 
 	n_null         = is.null(n)
@@ -355,34 +354,55 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 	setList        = omxQuotes(c("n", "power", "sig.level")[which(!c(n_null, pwr_null, sig_null))])
 	beingEstimated = omxQuotes(c("n", "power", "sig.level")[which(c(n_null, pwr_null, sig_null))])
 
-	nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update, collapse="_"))
+	nullModel = umxModify(trueModel, update, value = value, name= paste0("drop_", update, collapse = "_"))
 	if(explore){
 		# if n is set, the models must differ by only 1 parameter. search then searches the power 
 		# for detecting detecting different parameter value changes at the given n.
 		tmp = mxPowerSearch(trueModel, falseModel = nullModel, n = n, sig.level = sig.level, method = method)
-		tmp = (umx_round(tmp, digits = digits))
-		if(method=="ncp"){
+		tmp = umx_round(tmp, digits = digits)
+		if(method == "ncp"){
 			# delete the unused lower-upper columns
 			tmp = tmp[,	1:2]
 		}
 		if(plot){
-			if(is.null(power)){ power=.80 }
-			est = mxPower(trueModel, falseModel = nullModel, power = power, sig.level = sig.level, method = method)
-			estimatedN = round(attributes(est)$detail$n, digits)
+			if(is.null(n)){
+				# establish values at fixed power (or .8)
+				if(is.null(power)){ power = .80}
+				est = mxPower(trueModel, falseModel = nullModel, power = power, sig.level = sig.level, method = method)
+				estimatedN = round(attributes(est)$detail$n, digits)
+				# color the power line, and plot dots at estimated points.
+				p = ggplot(data = tmp, aes(x= n, y= power)) + geom_line(color = "red", size = .5, alpha = 0.9)
+				p = p + geom_point()
+				p = p + labs(x= "Sample Size (N)", y= "Power = 1 - \U03B2",
+				   title = paste0("Statistical power to detect true model"),
+			       subtitle = paste0("Alpha = ", sig.level),
+			       caption = paste0("Lists of changed paths: ", omxQuotes(update))
+				) 
+				p = p + ggplot2::theme_bw() + cowplot::draw_label(paste0("N for ", power*100, "% power = ", estimatedN), x = estimatedN, y = .8, hjust = 0)
+				p = p + ggplot2::geom_vline(xintercept = estimatedN, linetype=2, colour="grey") # dashed
+				print(p)
+			} else {
+				if(is.null(power)){ power = .80}
+				# est = mxPower(trueModel, falseModel = nullModel, n = n, power = power, sig.level = sig.level, method = method)
+				# estimatedEffect = round(attributes(est)$detail$n, digits)
 
-			# color the power line, and plot dots at estimated points.
-			p = ggplot(data = tmp, aes(x= N, y= power)) + geom_line(color = "red", size = .5, alpha = 0.9)
-			p = p + geom_point()
-			p = p + labs(x= "Sample Size (N)", y= "Power = 1 - \U03B2",
-			   title = paste0("Statistical power to detect true model"),
-		       subtitle = paste0("Alpha = ", sig.level),
-		       caption = paste0("Lists of changed paths: ", omxQuotes(update))
-			) 
-			p = p + ggplot2::theme_bw() + cowplot::draw_label(paste0("N for ", power*100, "% power = ", estimatedN), x = estimatedN, y = .8, hjust = 0)
-			p = p + ggplot2::geom_vline(xintercept = estimatedN, linetype=2, colour="grey") # dashed
-			print(p)
+				# color the power line, and plot dots at estimated points.
+				tmp$effect = tmp[,1]
+				p = ggplot(data = tmp, aes(x= effect, y = power)) + geom_line(color = "red", size = .5, alpha = 0.9)
+				p = p + geom_point()
+				p = p + labs(
+				   x        = paste0("Effect Size (", omxQuotes(update), ")"), 
+				   y        = "Power = 1 - \U03B2",
+				   title    = paste0("Statistical power with N = ", n),
+			       subtitle = paste0("Alpha = ", sig.level)
+				) 
+				# p = p + ggplot2::theme_bw() + cowplot::draw_label(paste0("Effect for ", power*100, "% power = ", estimatedEffect), x = estimatedEffect, y = .8, hjust = 0)
+				# p = p + ggplot2::geom_vline(xintercept = estimatedEffect, linetype=2, colour="grey") # dashed
+				print(p)
+			}
 		}
 	} else {
+		# explore = FALSE
 		if(nulls == 0){
 			stop("You filled in all three of ", setList, ": I've got nothing to estimate...\nSet one of these to null. Probably n")
 		} else if (nulls == 1){

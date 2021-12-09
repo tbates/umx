@@ -61,6 +61,7 @@ Illustration of  \eqn{\alpha}, \eqn{\beta}, and power (1-\eqn{\beta}):
 \if{latex}{\figure{power.pdf}{options: width=7cm}}
 }
 \examples{
+\dontrun{
 # ===================================================
 # = Power to detect correlation of .3 in 200 people =
 # ===================================================
@@ -90,8 +91,6 @@ umxPower(m1, "X_with_Y", n= 90)
 # = Tabulate Power across a range of values of  n =
 # =================================================
 umxPower(m1, "X_with_Y", explore = TRUE)
-
-\dontrun{
 
 # =====================================
 # = Examples with method = empirical  =
@@ -127,8 +126,8 @@ umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'ncp', n=90, explore =
 # note: Can't use method = "ncp" with search)
 umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE)
 umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
-}
 
+}
 }
 \references{
 \itemize{
