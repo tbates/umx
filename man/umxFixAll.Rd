@@ -24,6 +24,7 @@ umxFixAll(model, name = "_fixed", run = FALSE, verbose = FALSE)
 Fix all free parameters in a model using omxGetParameters()
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -35,6 +36,8 @@ m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
 )
 m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 mxCompare(m1, m2)
+
+}
 }
 \references{
 \itemize{

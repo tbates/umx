@@ -1144,7 +1144,6 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' @param extended how much to report (FALSE).
 #' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary.
-#' @param show std, raw etc. Not implemented for umxACE yet.
 #' @return - optional [mxModel()]
 #' @export
 #' @family Twin Modeling Functions
@@ -1164,7 +1163,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' umxSummaryACE(m1, file = "name", std = TRUE)
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
-umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show, ...) {
+umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 
@@ -3844,6 +3843,8 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 #' @references - <https://openmx.ssri.psu.edu/thread/2598>
 #' @md
 #' @examples
+#' \dontrun{
+#' 
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3856,6 +3857,7 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 #'
 #' umxExpMeans(m1)
 #' umxExpMeans(m1, digits = 3)
+#' }
 umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 	umx_check_model(model, beenRun = TRUE)
 	if(!umx_has_means(model)){

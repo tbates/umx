@@ -70,6 +70,7 @@ and, because this can create duplicate labels, we also call \code{\link[=omxAssi
 to equate the start values for parameters which now have identical labels.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 latents  = c("G")
@@ -85,6 +86,8 @@ umxSetParameters(m1, regex = "^", newlabels= "m1_", test = TRUE)
 # Change path to x1 to x2, equating these two paths
 m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
 parameters(m2) 
+
+}
 }
 \references{
 \itemize{

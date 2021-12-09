@@ -17,7 +17,6 @@ umxSummaryACE(
   returnStd = FALSE,
   extended = FALSE,
   zero.print = ".",
-  show,
   ...
 )
 }
@@ -44,8 +43,6 @@ Defaults to NA = do not create plot output.}
 \item{extended}{how much to report (FALSE).}
 
 \item{zero.print}{How to show zeros (".")}
-
-\item{show}{std, raw etc. Not implemented for umxACE yet.}
 
 \item{...}{Other parameters to control model summary.}
 }

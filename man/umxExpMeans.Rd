@@ -24,6 +24,8 @@ umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 Extract the expected means matrix from an \code{\link[=mxModel]{mxModel()}}
 }
 \examples{
+\dontrun{
+
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -35,6 +37,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor,
 
 umxExpMeans(m1)
 umxExpMeans(m1, digits = 3)
+}
 }
 \references{
 \itemize{

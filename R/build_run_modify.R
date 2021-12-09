@@ -3739,6 +3739,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -3755,6 +3756,8 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' # Change path to x1 to x2, equating these two paths
 #' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
 #' parameters(m2) 
+#' 
+#' }
 umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE, strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
 	if(is.character(regex)){
 		labels = regex
@@ -3913,6 +3916,7 @@ umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), v
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3924,6 +3928,8 @@ umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), v
 #' )
 #' m2 = umxFixAll(m1, run = TRUE, verbose = TRUE)
 #' mxCompare(m1, m2)
+#' 
+#' }
 umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 	if(!umx_is_MxModel(model)){
 		message("ERROR in umxFixAll: model must be a model, you gave me a ", class(model)[1])

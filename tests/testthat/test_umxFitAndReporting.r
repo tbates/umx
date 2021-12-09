@@ -32,3 +32,31 @@ test_that("umxExpCov works", {
 	vcov(m1) # supplied by OpenMx
 	umxExpCov(m1, digits = 3)
 })
+
+test_that("umxExpMeans works", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	
+	m1 = umxRAM("One Factor", data = demoOneFactor,
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	
+	umxExpMeans(m1)
+	umxExpMeans(m1, digits = 3)
+})
+
+test_that("RMSEA works", {
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	
+	m1 = umxRAM("One Factor", data = demoOneFactor, type= "cov",
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1.0)
+	)
+	tmp = summary(m1)
+	RMSEA(tmp)
+})
