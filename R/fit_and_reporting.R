@@ -3547,6 +3547,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -3561,6 +3562,8 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' umxParameters(m1, "above", .5)
 #' # Parameters with values below .1 and containing "_to_" in their label
 #' umxParameters(m1, "below", .1, "_to_")
+#' }
+#' 
 umxParameters <- function(x, thresh = c("all", "above", "below", ">", "<", "NS", "sig"), b = NULL, pattern = ".*", std = FALSE, digits = 2) {
 	# TODO clarify when to use parameters vs. umxGetParameters
 	# TODO Add filtering by significance (based on SEs)

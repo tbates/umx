@@ -33,6 +33,23 @@ test_that("umxExpCov works", {
 	umxExpCov(m1, digits = 3)
 })
 
+test_that("umxParameters works", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+
+	m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	umxParameters(m1, "below", .1)
+	# Parameters with values above .5
+	umxParameters(m1, "above", .5)
+	# Parameters with values below .1 and containing "_to_" in their label
+	umxParameters(m1, "below", .1, "_to_")
+})
+
 test_that("umxExpMeans works", {
 	require(umx)
 	data(demoOneFactor)
