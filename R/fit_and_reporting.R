@@ -3769,7 +3769,8 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @seealso - [umxRun()], [umxCI_boot()]
 #' @md
 #' @examples
-#' # require(umx)
+#' \dontrun{
+#' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #
@@ -3780,6 +3781,8 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' )#'
 #' vcov(m1) # supplied by OpenMx
 #' umxExpCov(m1, digits = 3)
+#' 
+#' }
 umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, ...){
 	# umx_has_been_run(m1)
 	# TODO integrate with mxGetExpected(model, "covariance")
