@@ -387,8 +387,8 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 				# estimatedEffect = round(attributes(est)$detail$n, digits)
 
 				# color the power line, and plot dots at estimated points.
-				tmp$effect = tmp[,1]
-				p = ggplot(data = tmp, aes(x= effect, y = power)) + geom_line(color = "red", size = .5, alpha = 0.9)
+				tmp$x = tmp[,1] # create a uniform name for the x axis variable (effect size of whatever labelled parameter was dropped)
+				p = ggplot(data = tmp, aes(x= x, y = power)) + geom_line(color = "red", size = .5, alpha = 0.9)
 				p = p + geom_point()
 				p = p + labs(
 				   x        = paste0("Effect Size (", omxQuotes(update), ")"), 

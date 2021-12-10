@@ -42,12 +42,14 @@ umxPlotACE(
 plot method for \code{\link[=umxACE]{umxACE()}} models. Make a graphical display of an ACE model
 }
 \examples{
+\dontrun{
 require(umx)
 data(twinData)
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 plot(m1, std = FALSE) # don't standardize
+}
 }
 \references{
 \itemize{

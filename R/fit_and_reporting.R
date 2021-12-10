@@ -2678,12 +2678,14 @@ plot.MxRAMModel <- plot.MxModel
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(twinData)
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
+#' }
 umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, showFixed = FALSE, ...) {
 	model = x # just to be clear that x is a model
 	if(std){model = xmu_standardize_ACE(model)}
@@ -2749,6 +2751,7 @@ plot.MxModelACE <- umxPlotACE
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' # BMI ?twinData from Australian twins. 
 #' # Cohort 1 Zygosity 1 == MZ females 3 == DZ females
@@ -2764,6 +2767,7 @@ plot.MxModelACE <- umxPlotACE
 #' m1 = umxACEcov(selDVs= selDVs, selCovs= selCovs, dzData= dzData, mzData= mzData, sep= "")
 #' plot(m1)
 #' plot(m1, std = FALSE) # don't standardize
+#' }
 umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	model = x # just to be clear that x is a model
 
@@ -2885,8 +2889,8 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' # Directly call umxPlotGxE
 #' umxPlotGxE(m1, xlab = "Age", separateGraphs = TRUE, gg = FALSE)
 #' umxPlotGxE(m1, moderatorValues=18:67)
-#' 
 #' }
+#' 
 umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALSE, acergb = c("red", "green", "blue", "black"), gg = TRUE, moderatorValues= NULL, ...) {
 	if(!class(x)[[1]] == "MxModelGxE"){
 		stop("The first parameter of umxPlotGxE must be a GxE model, you gave me a ", class(x)[[1]])
@@ -2983,7 +2987,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 			graphics::par(mfrow = c(1, 2)) # one row * two columns to hold raw and std plots
 		}
 		graphics::matplot(x = defVarValues, y = out, type = "l", lty = 1:4, col = acergb, xlab = xlab, ylab = "Variance", main= "Raw Moderation Effects")
-		graphics::legend(x = ocation, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb, bty = "n")
+		graphics::legend(x = location, legend = c("genetic", "shared", "unique", "total"), lty = 1:4, col = acergb, bty = "n")
 	
 		graphics::matplot(defVarValues, outStd, type = "l", lty = 1:4, col = acergb, ylim = 0:1, xlab = xlab, ylab = "Standardized Variance", main= "Standardized Moderation Effects")
 		graphics::legend(x = location, legend = c("genetic", "shared", "unique"), lty = 1:4, col = acergb, bty = "n")
@@ -4000,7 +4004,6 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' @references - <https://github.com/simsem/semTools/wiki/Functions>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
-#' 
 #' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)

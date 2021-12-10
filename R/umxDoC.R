@@ -21,7 +21,7 @@
 #' \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
 #'
 #' @details
-#' To be added. 
+#' To be added.
 #' @param name The name of the model (defaults to "DOC").
 #' @param var1Indicators variables defining latent trait 1
 #' @param var2Indicators variables defining latent trait 2
@@ -84,7 +84,7 @@
 #' 	  mzData= c("MZFF", "MZMM"), dzData= c("DZFF", "DZMM"), data = docData
 #' )
 #'
-#' # Useage example (won\t run)
+#' # Usage example (won\t run)
 #' var1 = paste0("SOS", 1:8)
 #' var2 = paste0("Vocab", 1:10)
 #' Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
@@ -93,8 +93,6 @@
 #' b2a  = umxModify(DoC, "b2a", free = TRUE, name = "b2a")
 #' Recip= umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip")
 #' umxCompare(Chol, c(a2b, b2a, Recip))
-#' 
-#' 
 #' }
 #' 
 umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, data = NULL, zyg = "zygosity") {
@@ -223,9 +221,8 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' Plot a Direction of Causation Model.
 #'
 #' Summarize a fitted model returned by [umxDoC()]. Can control digits, report comparison model fits,
-#' optionally show the *Rg* (genetic and environmental correlations), and show confidence intervals. the report parameter allows
-#' drawing the tables to a web browser where they may readily be pasted into, e.g. Word.
-#'
+#' optionally show the *Rg* (genetic and environmental correlations), and show confidence intervals.
+#' *note*: `std` is not implemented as yet.
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases plot.MxModelDoC
@@ -274,7 +271,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' plot(a2b)
 #' 
 #' }
-umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
+umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
 	message("beta code")
 	# 1. ✓ draw latents
 	# 2. ✓ draw manifests,
@@ -286,7 +283,7 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	format = match.arg(format)
 	model = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelDoC", callingFn = "umxPlotDoC")
-	
+
 	if(std){
 		message("I'm sorry Dave, no std for DoC yet ;-(")
 		# model = xmu_standardize_DoC(model)
@@ -319,31 +316,30 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed 
 	# [1,] "a2a" "b2a"
 	# [2,] "a2b" "b2b"
 	out = xmu_dot_mat2dot(model$top$beta, cells = "any", toLabel = selLat, from = "cols", fromType = "latent", showFixed = showFixed, p = out, fromLabel=selLat)
-	# Process "expMean" 1 * nVar matrix
+
+	# Process "expMean" 1 * nVar matrix # from = "one"; target = selDVs[c]
 	if(means){
-		# from = "one"; target = selDVs[c]
 		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
 	}
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
 	top     = xmu_dot_rank(out$latents, "^[ace][1-2]$"  , "min")
 	same    = xmu_dot_rank(out$latents, "^[ab]$"        , "same")
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max") # specifics
+	umx_msg(out$latents)
 
 	label = model$name
 	splines = "FALSE"
-
+	
 	digraph = paste0(
 		"digraph G {\n\t",
 		'label="', label, '";\n\t',
 		"splines = \"", splines, "\";\n",
 		preOut,
-		top, 
-		same,
-		bottom,
-		out, "\n}"
+		out,
+		"\n", top, same, bottom, "\n}"
 	)
 	
-	message("\n?umxPlotDoC options: std=, means=, digits=, strip_zero=, file=, min=, max =")
+	cat("\n?umxPlotDoC options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	if(format != "current"){ umx_set_plot_format(format) }
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }

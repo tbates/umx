@@ -63,6 +63,7 @@ Summarize a genetic moderation model, as returned by \code{\link[=umxGxE]{umxGxE
 Note: see also \code{\link[=umxReduce]{umxReduce()}} which knows how to reduce a GxE model.
 }
 \examples{
+\dontrun{
 # The total sample has been subdivided into a young cohort, 
 # aged 18-30 years, and an older cohort aged 31 and above.
 # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
@@ -78,7 +79,6 @@ dzData  = subset(twinData, zygosity == "DZMM", selVars)
 # Exclude cases with missing Def
 mzData = mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
 dzData = dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
-\dontrun{
 m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep="", dzData = dzData, mzData = mzData)
 # Plot Moderation
 umxSummaryGxE(m1)

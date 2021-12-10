@@ -102,6 +102,16 @@ test_that("umxSummaryACE works", {
 	stdFit = umxSummaryACE(m1, returnStd = TRUE);
 })
 
+test_that("umxPlotACE works", {
+	require(umx)
+	data(twinData)
+	selDVs = c("bmi1", "bmi2")
+	mzData = subset(twinData, zygosity == "MZFF")
+	dzData = subset(twinData, zygosity == "DZFF")
+	m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
+	plot(m1, std = FALSE) # don't standardize
+})
+
 test_that("umxSummaryGxE works", {
 	require(umx)
 	data(twinData) 

@@ -54,13 +54,12 @@ umxSummaryACEcov(
 Summarize a Cholesky model with covariates, as returned by \code{\link[=umxACEcov]{umxACEcov()}}
 }
 \examples{
+\dontrun{
 require(umx)
 data(twinData)
-selDVs = c("bmi1", "bmi2")
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
-m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-\dontrun{
+m1 = umxACEcov(selDVs = "bmi", selCovs = "wt", dzData = dzData, mzData = mzData, sep="")
 umxSummaryACE(m1, file = NA)
 umxSummaryACE(m1, file = "name", std = TRUE)
 stdFit = umxSummaryACE(m1, returnStd = TRUE)

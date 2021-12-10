@@ -57,8 +57,8 @@ plot(m1)
 # Directly call umxPlotGxE
 umxPlotGxE(m1, xlab = "Age", separateGraphs = TRUE, gg = FALSE)
 umxPlotGxE(m1, moderatorValues=18:67)
-
 }
+
 }
 \references{
 \itemize{
