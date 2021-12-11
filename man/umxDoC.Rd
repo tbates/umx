@@ -111,7 +111,7 @@ DoC  = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
 	  mzData= c("MZFF", "MZMM"), dzData= c("DZFF", "DZMM"), data = docData
 )
 
-# Useage example (won\t run)
+# Usage example (won\t run)
 var1 = paste0("SOS", 1:8)
 var2 = paste0("Vocab", 1:10)
 Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
@@ -120,8 +120,6 @@ a2b  = umxModify(DoC, "a2b", free = TRUE, name = "a2b")
 b2a  = umxModify(DoC, "b2a", free = TRUE, name = "b2a")
 Recip= umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip")
 umxCompare(Chol, c(a2b, b2a, Recip))
-
-
 }
 
 }

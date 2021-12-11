@@ -48,6 +48,7 @@ umxSummaryIP(
 Summarize a Independent Pathway model, as returned by \code{\link[=umxIP]{umxIP()}}
 }
 \examples{
+\dontrun{
 require(umx)
 data(GFF) # family function and well-being data
 mzData = subset(GFF, zyg_2grp == "MZ")
@@ -56,7 +57,6 @@ selDVs = c("hap", "sat", "AD") # These will be expanded into "hap_T1" "hap_T2" e
 m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 umxSummaryIP(m1)
 plot(m1)
-\dontrun{
 umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 }
 }

@@ -22,9 +22,11 @@ It behaves equivalently to stats::loadings, returning the loadings from an
 EFA (factor analysis). However it does not store the rotation matrix.
 }
 \examples{
+\dontrun{
 myVars = c("mpg", "disp", "hp", "wt", "qsec")
 m1 = umxEFA(name = "test", factors = 2, data = mtcars[, myVars])
 loadings(m1)
+}
 
 }
 \references{

@@ -77,6 +77,7 @@ under-identification and can break confidence interval estimation.
 \emph{Solution}: Fixing a factor loading to 1 and estimating factor variances can help here.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -100,6 +101,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor[1:100, ],
 	umxPath(v1m0 = "G")
 )
 umxSummary(m1, std = TRUE, filter = "NS")
+}
+
 }
 \references{
 \itemize{

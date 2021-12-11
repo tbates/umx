@@ -2770,6 +2770,7 @@ print.money <- bucks
 #' @param symbol value units (default = "$")
 #' @param digits Rounding of results (default 2 places)
 #' @param plot Whether to plot the result (default TRUE)
+#' @param logY Whether to plot y axis as log (TRUE)
 #' @return - new value and change required to return to baseline.
 #' @export
 #' @family Miscellaneous Functions
@@ -2784,7 +2785,7 @@ print.money <- bucks
 #'
 #' # Percent needed to return to original value after 50% off 34.50
 #' fin_percent(-50, value = 34.5)
-fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE) {
+fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE, logY = TRUE) {
 	percent  = percent/100
 	newValue = value * (1 + percent)
 	percent_to_reverse = (value/newValue) - 1
@@ -2796,7 +2797,7 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TR
 	attr(newValue, 'percent_to_reverse') = percent_to_reverse
 
 	if(plot){
-		plot(newValue)
+		plot(newValue, logY = logY)
 	}else{
 		return(newValue)
 	}
@@ -2854,17 +2855,17 @@ print.percent <- function(x, ...) {
 #' plot(fin_percent(10))
 #'
 #' # Percent needed to return to original value after 50% off 34.50
-#' plot(fin_percent(-50, value = 34.5))
+#' plot(fin_percent(-50, value = 34.5, logY = FALSE))
 #'
 plot.percent <- function(x, ...) {
+	tmp = list(...) # pull logY if passed in
+	logY = tmp$logY
 	symbol   = attr(x, 'symbol')
 	digits   = attr(x, 'digits')
 	oldValue = round(attr(x, 'oldValue'), digits)
 	percentChange  = attr(x, 'percent')	
 	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
-
 	dir = ifelse(percentChange < 0, "decreased", "increased")
-
 	# fnReversePercent(-.1)
 	fnReversePercent <- function(x) {
 		# 1/(1+.1)
@@ -2876,16 +2877,26 @@ plot.percent <- function(x, ...) {
 	# x range	= -100 (%) to +500 (%)?
 	# y = -100 to +200?
 	# y range	= -100 to +200?
-	
 	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
-	p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10) #trans="log")
+	lab = paste0(round(percentChange*100, 2), "% off=", round(percent_to_reverse * 100, 2), "% on", sep = "")
+	if(is.null(logY)||!(logY)){
+		p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10)
+		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = -50, y = 700, color= "grey")
+		# hor & vert
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100             , y=percent_to_reverse*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y=-10, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+	} else {
+		p = p + ggplot2::scale_y_continuous(n.breaks = 8, trans="log10") + ggplot2::scale_x_continuous(n.breaks = 10) 
+		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = -50, y = log10(700), color= "grey")
+		# hor & vert
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100             , y= log10(percent_to_reverse*100), yend=log10(percent_to_reverse*100), alpha=.5, color = "lightgrey")
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y=-10, yend=log10(percent_to_reverse*100), alpha=.5, color = "lightgrey")
+	}
 	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
 	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(oldValue, " percent change"))
-	# p = p + ggplot2::geom_area() can't do with stat fun..
+	# p = p + ggplot2::geom_area() can't do with stat fun ...
 
-	# subtitle = "Subtitle: (1973-74)",
-	# caption  = "Caption: Data from the 1974 Motor Trend US magazine",
-	# tag      = "Tag: A"
+	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")
 
 	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
 		# p = p + hrbrthemes::theme_ipsum()
@@ -2894,16 +2905,7 @@ plot.percent <- function(x, ...) {
 		# p = p + ggplot2::theme_bw()
 		p = p + cowplot::theme_cowplot(font_size = 11)
 	}
-	lab = paste0(round(percentChange*100, 2), "% off=", round(percent_to_reverse * 100, 2), "% on", sep = "")
 
-	# Add label to plot, centred on x, top at y} (in data coordinates)
-	p = p + cowplot::draw_label(lab, vjust=1, hjust = .5, x = -50, y = 700, color= "grey")
-	# Add label to plot in data coordinates, flush-left at x, baseline centred on y.
-	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")
-	# hor
-	p = p + ggplot2::geom_segment(x = percentChange*100, y=percent_to_reverse*100, xend=-100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
-	# vert
-	p = p + ggplot2::geom_segment(x = percentChange*100, y=-10, xend=percentChange*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
 	
 	print(p)
 	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
@@ -4925,6 +4927,7 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' @family Test
 #' @references - <https://github.com/tbates/umx>
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -4933,13 +4936,12 @@ umx_has_CIs <- function(model, check = c("both", "intervals", "output")) {
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
+#' )
 #' umx_check_model(m1) # TRUE, this is a model
 #' umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 #' umx_check_model(m1, hasData = TRUE)
 #' 
 #' 
-#' \dontrun{
 #' umx_check_model(m1, hasMeans = TRUE)
 #' umx_check_model(m1, beenRun = FALSE)
 #' # Model with no data
@@ -4980,7 +4982,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 	}
 	if(!is.null(hasMeans)){
 		if (!(hasMeans == umx_has_means(obj))) {
-			stop("'model' does or does not have means")
+			stop(paste0(omxQuotes(obj$name), " does not have means"))
 		}
 	}
 	return(TRUE)
@@ -7755,6 +7757,8 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -7766,6 +7770,7 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' )#'
 #' umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 # "stdA[1,6]" "stdA[2,6]" "stdA[3,6]" "stdA[4,6]" "stdA[5,6]"
+#' }
 umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 	# c("stdS[6,7]", "stdS[7,7]")
 	if(is.na(newName)){

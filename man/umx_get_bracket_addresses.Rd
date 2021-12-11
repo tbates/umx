@@ -22,6 +22,8 @@ umx_get_bracket_addresses(mat, free = NA, newName = NA)
 Sometimes you want these :-) This also allows you to change the matrix name: useful for using mxMatrix addresses in an mxAlgebra.
 }
 \examples{
+
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -31,6 +33,7 @@ m1 = umxRAM("get_add_ex", data = demoOneFactor, type = "cov",
 	umxPath(var = "G", fixedAt = 1)
 )#'
 umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
+}
 }
 \references{
 \itemize{

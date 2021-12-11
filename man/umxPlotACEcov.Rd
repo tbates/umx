@@ -39,6 +39,7 @@ umxPlotACEcov(
 Make a graphical display of an ACE model with covariates.
 }
 \examples{
+\dontrun{
 require(umx)
 # BMI ?twinData from Australian twins. 
 # Cohort 1 Zygosity 1 == MZ females 3 == DZ females
@@ -54,6 +55,7 @@ dzData = subset(twinData, zygosity == "DZFF", selVars)[1:100, ]
 m1 = umxACEcov(selDVs= selDVs, selCovs= selCovs, dzData= dzData, mzData= mzData, sep= "")
 plot(m1)
 plot(m1, std = FALSE) # don't standardize
+}
 }
 \references{
 \itemize{

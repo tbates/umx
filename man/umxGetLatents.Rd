@@ -17,7 +17,7 @@ umxGetLatents(model, targetModel = NULL)
 }
 }
 \description{
-Get the latentVars from a RAM model, optionally targetting a submodel.
+Get the latentVars from a RAM model, optionally targeting a submodel.
 }
 \examples{
 \dontrun{

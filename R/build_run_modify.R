@@ -94,6 +94,7 @@
 #' @importFrom knitr kable
 #' @importFrom kableExtra kbl add_footnote column_spec footnote
 #' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
+# pwr.r.test
 
 utils::globalVariables(c(
 	'N',
@@ -399,6 +400,7 @@ umxModel <- function(...) {
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' 
 #' # ============================================
 #' # = 1. Here's a simple example with raw data =
@@ -424,7 +426,6 @@ umxModel <- function(...) {
 #' # |b1             |         0.89|   0.04|0.89 [0.81, 0.96]    |
 #' # |disp_with_disp |         1.00|   0.00|1 [1, 1]             |
 #' 
-#' \dontrun{
 #' # 3. Of course you can plot the model
 #' plot(m1)
 #' plot(m1, std=TRUE, means=FALSE)
@@ -3632,6 +3633,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' @export
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' latents  = c("G")
@@ -3644,7 +3646,6 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' )
 #'
 #' m1 = umxRun(m1) # just run: will create saturated model if needed
-#' \dontrun{
 #' m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE) # set start values and label all parameters
 #' umxSummary(m1, std = TRUE)
 #' m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
@@ -3652,12 +3653,10 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' residuals(m1, run = TRUE) # get CIs on all free parameters
 #' confint(m1) # OpenMx's SE-based CIs
 #' umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
-#' m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
+#' m1 = umxRun(m1, tryHard = "yes")
 #' }
 #' 
-
 # type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-
 umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, optimizer = NULL, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
