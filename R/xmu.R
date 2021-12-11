@@ -171,7 +171,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
 #' @param returning What to return (default, the run model)
-#' @param intervals whether to run intervlas or not (default = FALSE)
+#' @param intervals whether to run intervals or not (default = FALSE)
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
@@ -179,7 +179,9 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @md
 #' @examples
 #' \dontrun{
-#' m1 = umxRAM("tim", data = mtcars,
+#' tmp = mtcars
+#' tmp$disp = tmp$disp/100
+#' m1 = umxRAM("tim", data = tmp,
 #' 	umxPath(c("wt", "disp"), to = "mpg"),
 #' 	umxPath("wt", with = "disp"),
 #' 	umxPath(v.m. = c("wt", "disp", "mpg"))
@@ -195,7 +197,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' # Show std parameters
 #' xmu_safe_run_summary(m1, autoRun = TRUE, summary = TRUE, std = TRUE)
 #' # Run + Summary + comparison
-#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE)
+#' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, intervals = TRUE)
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
 #' 

@@ -28,7 +28,7 @@ test_that("umxEquate works", {
 
 })
 
-test_that("umx_check_model works", {
+test_that("umx_check_model() works", {
 	require(umx)
 	data(demoOneFactor)
 	manifests = names(demoOneFactor)
@@ -42,8 +42,7 @@ test_that("umx_check_model works", {
 	expect_true(umx_check_model(m1, type = "RAM")) # equivalent to umx_is_RAM()
 	expect_true(umx_check_model(m1, hasData = TRUE))
 	
-	
-	expect_true(umx_check_model(m1, hasMeans = TRUE))
+	expect_error(umx_check_model(m1, hasMeans = TRUE), regexp = "does not have means")
 	# Model with no data
 	m1 = umxRAM("x ~~ .3*y", autoRun = FALSE)
 	expect_true(umx_check_model(m1, beenRun = FALSE))

@@ -4982,7 +4982,7 @@ umx_check_model <- function(obj, type = NULL, hasData = NULL, beenRun = NULL, ha
 	}
 	if(!is.null(hasMeans)){
 		if (!(hasMeans == umx_has_means(obj))) {
-			stop("'model' does or does not have means")
+			stop(paste0(omxQuotes(obj$name), " does not have means"))
 		}
 	}
 	return(TRUE)
@@ -7757,6 +7757,8 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -7768,6 +7770,7 @@ xmu_PadAndPruneForDefVars <- function(df, varNames, defNames, suffixes, highDefV
 #' )#'
 #' umx_get_bracket_addresses(m1$matrices$A, free= TRUE)
 # "stdA[1,6]" "stdA[2,6]" "stdA[3,6]" "stdA[4,6]" "stdA[5,6]"
+#' }
 umx_get_bracket_addresses <- function(mat, free = NA, newName = NA) {
 	# c("stdS[6,7]", "stdS[7,7]")
 	if(is.na(newName)){

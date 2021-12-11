@@ -2109,7 +2109,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 #' umxGetLatents
 #'
 #' @description
-#' Get the latentVars from a RAM model, optionally targetting a submodel.
+#' Get the latentVars from a RAM model, optionally targeting a submodel.
 #'
 #' @param model a [umxRAM()]
 #' @param targetModel name of the model to extract from
@@ -2165,7 +2165,7 @@ umxGetLatents <- function(model, targetModel = NULL) {
 #' umxGetManifests
 #'
 #' @description
-#' Get the latentVars from a RAM model, optionally targetting a submodel.
+#' Get the latentVars from a RAM model, optionally targeting a submodel.
 #'
 #' @param model a [umxRAM()]
 #' @param targetModel name of the model to extract from
@@ -2221,7 +2221,7 @@ umxGetManifests <- function(model, targetModel = NULL) {
 #' umxGetModel
 #'
 #' @description
-#' Get the latentVars from a RAM model, optionally targetting a submodel.
+#' Get the latentVars from a RAM model, optionally targeting a submodel.
 #'
 #' @param model a [umxRAM()]
 #' @param targetModel name of the model to extract from
