@@ -3096,8 +3096,7 @@ umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed =
 		'label="', label, '";\n\t',
 		"splines = \"", splines, "\";\n",
 		preOut, 
-		top, 
-		bottom, 
+		top, bottom, 
 		out$str, "\n}"
 	)
 	

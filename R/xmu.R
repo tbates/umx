@@ -1955,7 +1955,6 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 		# look for (optionally @ or negative) number, with 1 or more digits after the decimal
 		digraph = umx_names(digraph, '(label ?= ?\\"@?-?)(0\\.)([0-9]+)\\"', replacement = "\\1\\3\"", global = TRUE)
 	}
-
 	if(!is.na(file)){
 		if(file == "name"){
 			if (umx_set_plot_format(silent = TRUE) %in% c("DiagrammeR", "pdf", "png")){

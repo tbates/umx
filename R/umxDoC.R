@@ -325,17 +325,15 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed
 	top     = xmu_dot_rank(out$latents, "^[ace][1-2]$"  , "min")
 	same    = xmu_dot_rank(out$latents, "^[ab]$"        , "same")
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max") # specifics
-	umx_msg(out$latents)
 
 	label = model$name
 	splines = "FALSE"
-	
 	digraph = paste0(
 		"digraph G {\n\t",
 		'label="', label, '";\n\t',
 		"splines = \"", splines, "\";\n",
 		preOut,
-		out,
+		out$str,
 		"\n", top, same, bottom, "\n}"
 	)
 	
