@@ -4864,6 +4864,7 @@ umx_has_means <- function(model) {
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -4879,7 +4880,6 @@ umx_has_means <- function(model) {
 #' umx_has_CIs(m1, check = "output")  # FALSE not yet run
 #' m1 = mxRun(m1)
 #' umx_has_CIs(m1, check = "output")  # Still FALSE: Set and Run
-#' \dontrun{
 #' m1 = mxRun(m1, intervals = TRUE)
 #' umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 #' umxSummary(m1)
