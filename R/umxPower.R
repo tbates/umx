@@ -364,19 +364,22 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 			# delete the unused lower-upper columns
 			tmp = tmp[,	1:2]
 		}
+		# tmp contains "N" (note capital here (but lower in the function...) and power
+		# OR label of modified path and power
 		if(plot){
 			if(is.null(n)){
-				# establish values at fixed power (or .8)
+				# 1. estimate N needed for power (default = .8)
 				if(is.null(power)){ power = .80}
 				est = mxPower(trueModel, falseModel = nullModel, power = power, sig.level = sig.level, method = method)
 				estimatedN = round(attributes(est)$detail$n, digits)
-				# color the power line, and plot dots at estimated points.
-				p = ggplot(data = tmp, aes(x= n, y= power)) + geom_line(color = "red", size = .5, alpha = 0.9)
+
+				# use powersearch from tmp to plot power across the range of N
+				p = ggplot(data = tmp, aes(x= N, y= power)) + geom_line(color = "red", size = .5, alpha = 0.9)
 				p = p + geom_point()
 				p = p + labs(x= "Sample Size (N)", y= "Power = 1 - \U03B2",
 				   title = paste0("Statistical power to detect true model"),
 			       subtitle = paste0("Alpha = ", sig.level),
-			       caption = paste0("Lists of changed paths: ", omxQuotes(update))
+			       caption = paste0("List of changed paths: ", omxQuotes(update))
 				) 
 				p = p + ggplot2::theme_bw() + cowplot::draw_label(paste0("N for ", power*100, "% power = ", estimatedN), x = estimatedN, y = .8, hjust = 0)
 				p = p + ggplot2::geom_vline(xintercept = estimatedN, linetype=2, colour="grey") # dashed
