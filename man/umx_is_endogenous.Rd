@@ -20,6 +20,7 @@ umx_is_endogenous(model, manifests_only = TRUE)
 Return a list of all the endogenous variables (variables with at least one incoming single-arrow path) in a model.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 m1 = umxRAM("umx_is_endogenous", data = demoOneFactor, type = "cov",
@@ -29,6 +30,8 @@ m1 = umxRAM("umx_is_endogenous", data = demoOneFactor, type = "cov",
 )
 umx_is_endogenous(m1, manifests_only = TRUE)
 umx_is_endogenous(m1, manifests_only = FALSE)
+
+}
 }
 \references{
 \itemize{

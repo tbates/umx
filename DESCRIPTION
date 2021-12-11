@@ -56,7 +56,8 @@ Suggests:
     rmarkdown,
 	psych,
 	psychTools,
-	rhub
+	rhub,
+	pwr
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
 RoxygenNote: 7.1.2

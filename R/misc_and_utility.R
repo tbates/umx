@@ -952,6 +952,7 @@ umx_checkpoint <- umx_set_checkpoint
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' umx_get_checkpoint() # current global default
 #' require(umx)
 #' data(demoOneFactor)
@@ -963,6 +964,8 @@ umx_checkpoint <- umx_set_checkpoint
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )#' m1 = umx_set_checkpoint(interval = 2, model = m1)
 #' umx_get_checkpoint(model = m1)
+#' }
+#' 
 umx_get_checkpoint <- function(model = NULL) {
 	message("Always Checkpoint: "    , mxOption(model, "Always Checkpoint") )
 	message("Checkpoint  Count: "    , mxOption(model, "Checkpoint Count" ) )
@@ -1163,6 +1166,7 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
@@ -1172,6 +1176,8 @@ umxJiggle <- function(matrixIn, mean = 0, sd = .1, dontTouch = 0) {
 #' )
 #' umx_is_exogenous(m1, manifests_only = TRUE)
 #' umx_is_exogenous(m1, manifests_only = FALSE)
+#' 
+#' }
 umx_is_exogenous <- function(model, manifests_only = TRUE) {
 	umx_check_model(model, type = "RAM")
 	checkThese = model@manifestVars
@@ -1204,6 +1210,7 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' m1 = umxRAM("umx_is_endogenous", data = demoOneFactor, type = "cov",
@@ -1213,6 +1220,8 @@ umx_is_exogenous <- function(model, manifests_only = TRUE) {
 #' )
 #' umx_is_endogenous(m1, manifests_only = TRUE)
 #' umx_is_endogenous(m1, manifests_only = FALSE)
+#' 
+#' }
 umx_is_endogenous <- function(model, manifests_only = TRUE) {
 	# has_no_incoming_single_arrow
 	umx_check_model(model, type = "RAM")
@@ -1265,6 +1274,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @seealso [umx_paste_names()]
 #' @family String Functions
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data("twinData")
 #' umx_explode_twin_names(twinData, sep = "")
@@ -1277,6 +1287,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
 #' umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
 #' umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
+#' }
 umx_explode_twin_names <- function(df, sep = "_T") {
 	if(is.data.frame(df)){
 		names_in_df = names(df)

@@ -1,4 +1,4 @@
-library(testthat)
-library(umx)
+library("testthat")
+library("umx")
 
 test_check("umx")
