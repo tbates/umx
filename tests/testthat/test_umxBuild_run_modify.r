@@ -47,6 +47,14 @@ test_that("umx_check_model() works", {
 	m1 = umxRAM("x ~~ .3*y", autoRun = FALSE)
 	expect_true(umx_check_model(m1, beenRun = FALSE))
 	expect_true(umx_check_model(m1, hasData = FALSE))
+	
+	if(umx_is_RAM(m1)){
+		message("nice RAM model!")
+	}
+	if(!umx_is_RAM(m1)){
+		message("model needs to be a RAM model")
+	}
+	
 })
 
 test_that("umxFixAll works", {
