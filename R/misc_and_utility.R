@@ -1440,7 +1440,8 @@ umx_factor <- umxFactor
 #' @param mapStrings For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2
 #' @param omegaNfactors nfactors for the omega function (if requesting reliability) (default = 1)
 #' @param verbose Whether to print the whole omega output (FALSE)
-#' @param digits Rounding for omega etc. (default 2) 
+#' @param digits Rounding for omega etc. (default 2)
+#' @param suffix (if dealing with, e.g. "baseN_T1")
 #' @return - scores
 #' @export
 #' @family Data Functions
@@ -1521,11 +1522,11 @@ umx_factor <- umxFactor
 #' bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
 #' bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 #' bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors= 1, digits = 2, verbose = FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors= 1, digits = 2, verbose = FALSE, suffix = "") {
 	score = match.arg(score)
-	if(is.null(name)){ name = paste0(base, "_score") }
+	if(is.null(name)){ name = paste0(base, "_score", suffix) }
 	oldData = data
-	umx_check_names(namesNeeded= paste0(base, c(pos, rev)), data=data)
+	umx_check_names(namesNeeded= paste0(base, c(pos, rev), suffix), data=data)
 	if(!is.null(mapStrings)){
 		if(!is.null(max)){
 			# check min max matches mapStrings
@@ -1536,7 +1537,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			min = 1
 			max = length(mapStrings)
 		}
-		relevantColumns = paste0(base, c(pos, rev))
+		relevantColumns = paste0(base, c(pos, rev), suffix)
 		for (thisCol in relevantColumns){
 			unique_values = unique(data[, thisCol, drop = TRUE])
 			unique_values = unique_values[!is.na(unique_values)]
@@ -1548,8 +1549,8 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			data[, thisCol] = as.numeric(as.character(tmp))
 		}
 	}
-	mins = umx_apply("min", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
-	maxs = umx_apply("max", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
+	mins = umx_apply("min", data[ , paste0(base, c(pos, rev), suffix), drop = FALSE], by = "columns", na.rm=TRUE)
+	maxs = umx_apply("max", data[ , paste0(base, c(pos, rev), suffix), drop = FALSE], by = "columns", na.rm=TRUE)
 	if(any(mins < min)){
 		msg = paste0("Polite warning: the following columns had responses less than the min response you set (", omxQuotes(min), "):", omxQuotes(names(mins)[(mins<min)]))
 		umx_msg(msg)
@@ -1564,17 +1565,17 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	# ==================================
 	if(!is.null(rev)){
 		if(is.null(max)){
-			maxs = umx_apply("max", data[ , paste0(base, rev), drop = FALSE], by = "columns", na.rm= TRUE)
+			maxs = umx_apply("max", data[ , paste0(base, rev, suffix), drop = FALSE], by = "columns", na.rm= TRUE)
 			message("If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
-			print(table(data[ , paste0(base, rev[1])] ))
+			print(table(data[ , paste0(base, rev[1], suffix)] ))
 			stop("FYI, the max appears to be ", max(maxs))
         }
-		revItems = data[,paste0(base, rev), drop = FALSE]
+		revItems = data[,paste0(base, rev, suffix), drop = FALSE]
 		revItems = (max + min) - revItems
 		data[ , paste0(base, rev)] = revItems
 	}
 
-	allColNames = paste0(base, c(pos, rev))
+	allColNames = paste0(base, c(pos, rev), suffix)
 	df = data[ , allColNames, drop = FALSE]
 
 	if(alpha){
