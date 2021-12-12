@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umxRenameMatrix}
 \alias{umxRenameMatrix}
-\title{Rename a umxMatrix (in a model)}
+\title{Rename a umxMatrix (even in a model)}
 \usage{
 umxRenameMatrix(x, matrixName, name)
 }
@@ -19,9 +19,10 @@ umxRenameMatrix(x, matrixName, name)
 }
 }
 \description{
-Rename a umxMatrix, including updating its labels
+Rename a \code{\link[=umxMatrix]{umxMatrix()}}, including updating its labels ot match the new name.
 }
 \examples{
+\dontrun{
 data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
@@ -30,6 +31,8 @@ m1  = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FAL
 tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
 umx_check(tmp$hello$labels == "hello_r1c1") # new is there
 umx_check(is.null(tmp$a))                   # old is gone
+}
+
 }
 \seealso{
 Other xmu internal not for end user: 

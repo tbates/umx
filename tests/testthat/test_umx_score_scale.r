@@ -1,6 +1,6 @@
 # library(testthat)
 # library(umx)
-# test_file("~/bin/umx/tests/testthat/test_residuals.MxModel.r") 
+# test_file("~/bin/umx/tests/testthat/test_umx_score_scale.r") 
 # test_package("umx")
 # TODO make tests for residuals!
 # [] need to get the text output test working

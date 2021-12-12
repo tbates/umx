@@ -38,6 +38,7 @@ Allows the user to straight-forwardly require a specific model type (i.e.,
 You can also test whether is has a means model or not and (in future) test if it has submodels.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -45,13 +46,12 @@ m1 = umxRAM("check_model_ex", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
-)#'
+)
 umx_check_model(m1) # TRUE, this is a model
 umx_check_model(m1, type = "RAM") # equivalent to umx_is_RAM()
 umx_check_model(m1, hasData = TRUE)
 
 
-\dontrun{
 umx_check_model(m1, hasMeans = TRUE)
 umx_check_model(m1, beenRun = FALSE)
 # Model with no data

@@ -4,7 +4,14 @@
 \alias{fin_percent}
 \title{Compute the percent change needed to return to the original value after percent off (or on).}
 \usage{
-fin_percent(percent, value = 100, symbol = "$", digits = 2, plot = TRUE)
+fin_percent(
+  percent,
+  value = 100,
+  symbol = "$",
+  digits = 2,
+  plot = TRUE,
+  logY = TRUE
+)
 }
 \arguments{
 \item{percent}{Change in percent (enter 10 for 10\%, not 0.1)}
@@ -16,6 +23,8 @@ fin_percent(percent, value = 100, symbol = "$", digits = 2, plot = TRUE)
 \item{digits}{Rounding of results (default 2 places)}
 
 \item{plot}{Whether to plot the result (default TRUE)}
+
+\item{logY}{Whether to plot y axis as log (TRUE)}
 }
 \value{
 \itemize{

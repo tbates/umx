@@ -20,6 +20,7 @@ umx_is_exogenous(model, manifests_only = TRUE)
 Return a list of all the exogenous variables (variables with no incoming single-arrow path) in a model.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
@@ -29,6 +30,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 )
 umx_is_exogenous(m1, manifests_only = TRUE)
 umx_is_exogenous(m1, manifests_only = FALSE)
+
+}
 }
 \references{
 \itemize{

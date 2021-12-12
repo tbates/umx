@@ -52,6 +52,7 @@ If pattern is a vector, each regular expression is matched, and all unique match
 It is on my TODO list to implement filtering by significance, and to add standardizing.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -66,6 +67,8 @@ umxParameters(m1, "below", .1)
 umxParameters(m1, "above", .5)
 # Parameters with values below .1 and containing "_to_" in their label
 umxParameters(m1, "below", .1, "_to_")
+}
+
 }
 \references{
 \itemize{

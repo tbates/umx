@@ -28,6 +28,35 @@ test_that("umxEquate works", {
 
 })
 
+test_that("umx_check_model() works", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+   	
+	m1 = umxRAM("check_model_ex", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	expect_true(umx_check_model(m1)) # TRUE, this is a model
+	expect_true(umx_check_model(m1, type = "RAM")) # equivalent to umx_is_RAM()
+	expect_true(umx_check_model(m1, hasData = TRUE))
+	
+	expect_error(umx_check_model(m1, hasMeans = TRUE), regexp = "does not have means")
+	# Model with no data
+	m1 = umxRAM("x ~~ .3*y", autoRun = FALSE)
+	expect_true(umx_check_model(m1, beenRun = FALSE))
+	expect_true(umx_check_model(m1, hasData = FALSE))
+	
+	if(umx_is_RAM(m1)){
+		message("nice RAM model!")
+	}
+	if(!umx_is_RAM(m1)){
+		message("model needs to be a RAM model")
+	}
+	
+})
+
 test_that("umxFixAll works", {
 	require(umx)
 	data(demoOneFactor)

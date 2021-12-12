@@ -20,6 +20,7 @@ umx_has_CIs(model, check = c("both", "intervals", "output"))
 A utility function to return a binary answer to the question "does this \code{\link[=mxModel]{mxModel()}} have confidence intervals?"
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -35,7 +36,6 @@ umx_has_CIs(m1, check = "intervals") # TRUE intervals set
 umx_has_CIs(m1, check = "output")  # FALSE not yet run
 m1 = mxRun(m1)
 umx_has_CIs(m1, check = "output")  # Still FALSE: Set and Run
-\dontrun{
 m1 = mxRun(m1, intervals = TRUE)
 umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
 umxSummary(m1)

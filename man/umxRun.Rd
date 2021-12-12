@@ -43,6 +43,7 @@ It can also calculate the saturated and independence likelihoods necessary for m
 \strong{Note} this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 latents  = c("G")
@@ -55,7 +56,6 @@ m1 = mxModel("fact", type="RAM", manifestVars=manifests, latentVars=latents,
 )
 
 m1 = umxRun(m1) # just run: will create saturated model if needed
-\dontrun{
 m1 = umxRun(m1, setValues = TRUE, setLabels = TRUE) # set start values and label all parameters
 umxSummary(m1, std = TRUE)
 m1 = mxModel(m1, mxCI("G_to_x1")) # add one CI
@@ -63,7 +63,7 @@ m1 = mxRun(m1, intervals = TRUE)
 residuals(m1, run = TRUE) # get CIs on all free parameters
 confint(m1) # OpenMx's SE-based CIs
 umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
-m1 = umxRun(m1, n = 10) # re-run up to 10 times if not green on first run
+m1 = umxRun(m1, tryHard = "yes")
 }
 
 }

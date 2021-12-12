@@ -21,6 +21,7 @@ vector of twin indexes. e.g.: c("Dep_T1", "Dep_T2", "Anx_T1", "Anx_T2") will bec
 list(baseNames = c("Dep", "Anx"), sep = "_T", twinIndexes = c(1,2))
 }
 \examples{
+\dontrun{
 require(umx)
 data("twinData")
 umx_explode_twin_names(twinData, sep = "")
@@ -33,6 +34,7 @@ x[x < 0] = 0; y[y < 0] = 0
 umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
 umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
 umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
+}
 }
 \seealso{
 [umx_paste_names()]
