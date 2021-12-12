@@ -1,6 +1,6 @@
 # library(testthat)
 # library(umx)
-# test_file("~/bin/umx/tests/testthat/test_umx_scale.r") 
+# test_file("~/bin/umx/tests/testthat/test_umx_misc.r") 
 # 
 # testthat::test_package("umx")
 

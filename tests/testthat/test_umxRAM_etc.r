@@ -17,9 +17,9 @@ test_that("umxRAM works", {
 	)
 
 	m2 = mxRun(mxModel("NOT_RAM",
-		mxMatrix("Full", 5, 1, values = 0.2, free = T, name = "A"), 
-		mxMatrix("Symm", 1, 1, values = 1, free = F, name = "L"), 
-		mxMatrix("Diag", 5, 5, values = 1, free = T, name = "U"), 
+		mxMatrix("Full", 5, 1, values = 0.2, free = TRUE , name = "A"), 
+		mxMatrix("Symm", 1, 1, values = 1  , free = FALSE, name = "L"), 
+		mxMatrix("Diag", 5, 5, values = 1  , free = TRUE , name = "U"), 
 		mxAlgebra(A %*% L %*% t(A) + U, name = "R"), 
 		mxExpectationNormal("R", dimnames = names(demoOneFactor)),
 		mxFitFunctionML(),
@@ -61,27 +61,8 @@ test_that("umxRAM works", {
 	 
 	 # 3. Of course you can plot the model
 	 plot(m1)
-	 plot(m1, std=TRUE, means=FALSE)
+	 plot(m1, std = TRUE, means=FALSE)
 	 plot(m1, std = TRUE, means=FALSE, strip= TRUE, resid = "line")
-	
-	 # ===============================================
-	 # = lavaan string example (more at ?umxLav2RAM) =
-	 # ===============================================
-	 m1 = umxRAM(data = mtcars, "#modelName
-	  mpg ~ wt + disp")
-	 
-	
-	 # =======================
-	 # = A multi-group model =
-	 # =======================
-	
-	 mtcars$litres = mtcars$disp/61.02
-	 m1 = umxRAM("tim", data = mtcars, group = "am",
-	 	umxPath(c("wt", "litres"), to = "mpg"),
-	 	umxPath("wt", with = "litres"),
-	 	umxPath(v.m. = c("wt", "litres", "mpg"))
-	 )
-	 # In this model, all parameters are free across the two groups.
 	
 	 # ====================================
 	 # = A cov model, with steps laid out =
@@ -97,6 +78,26 @@ test_that("umxRAM works", {
 	 	umxPath("wt", with = "disp"),
 	 	umxPath(var = c("mpg", "wt", "disp"))
 	 )
+
+	 # ===============================================
+	 # = lavaan string example (more at ?umxLav2RAM) =
+	 # ===============================================
+	 m1 = umxRAM(data = tmp, "#modelName
+	  mpg ~ wt + disp")
+	 
+	
+	 # =======================
+	 # = A multi-group model =
+	 # =======================
+	
+	 mtcars$litres = mtcars$disp/61.02
+	 m1 = umxRAM("tim", data = mtcars, group = "am",
+	 	umxPath(c("wt", "litres"), to = "mpg"),
+	 	umxPath("wt", with = "litres"),
+	 	umxPath(v.m. = c("wt", "litres", "mpg"))
+	 )
+	 # In this model, all parameters are free across the two groups.
+	
 	
 	 # (see ?umxPath for more nifty options making paths...)
 	
@@ -106,8 +107,8 @@ test_that("umxRAM works", {
 	 # For convenience, list up the manifests you will be using
 	 
 	 selVars = c("mpg", "wt", "disp")
-	 tmp = mtcars; tmp$disp= tmp$disp *.016
-	 myCov = mxData(cov(tmp[, selVars]), type = "cov", numObs = nrow(mtcars) )
+	 tmp     = mtcars; tmp$disp= tmp$disp *.016
+	 myCov   = mxData(cov(tmp[, selVars]), type = "cov", numObs = nrow(mtcars) )
 	
 	 m1 = umxRAM("tim", data = myCov,
 	 	umxPath(c("wt", "disp"), to = "mpg"),
@@ -121,20 +122,18 @@ test_that("umxRAM works", {
 	 # =======================
 	
 	 # 1. Run an all-continuous WLS model
-	  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], 
-			type = "WLS", allContinuousMethod = "cumulants",
-	  	umxPath(var = c("wt", "disp", "mpg")),
-	  	umxPath(c("wt", "disp"), to = "mpg"),
-	  	umxPath("wt", with = "disp"),
-	      umxPath(var = c("wt", "disp", "mpg"))
+	  mw = umxRAM("raw", data = tmp[, c("mpg", "wt", "disp")], type = "WLS", allContinuousMethod = "cumulants",
+	  		umxPath(var = c("wt", "disp", "mpg")),
+			umxPath(c("wt", "disp"), to = "mpg"),
+	  		umxPath("wt", with = "disp"),
+	      	umxPath(var = c("wt", "disp", "mpg"))
 	  )
 	 # 2. Switch to marginals to support means
-	  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], 
-			type = "WLS", allContinuousMethod= "marginals",
-	  	umxPath(var = c("wt", "disp", "mpg")),
-	  	umxPath(c("wt", "disp"), to = "mpg"),
-	  	umxPath("wt", with = "disp"),
-	      umxPath(var = c("wt", "disp", "mpg"))
+	  mw = umxRAM("raw", data = tmp[, c("mpg", "wt", "disp")], type = "WLS", allContinuousMethod= "marginals",
+	  		umxPath(var = c("wt", "disp", "mpg")),
+			umxPath(c("wt", "disp"), to = "mpg"),
+			umxPath("wt", with = "disp"),
+			umxPath(v.m. = c("wt", "disp", "mpg"))
 	  )
 	
 	 

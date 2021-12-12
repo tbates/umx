@@ -9,7 +9,7 @@ umx_str_chars(what, which)
 \arguments{
 \item{what}{A string}
 
-\item{which}{which chars to select out.}
+\item{which}{Chars to select out.}
 }
 \value{
 \itemize{

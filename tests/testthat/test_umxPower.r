@@ -35,14 +35,6 @@ test_that("umxPower works", {
 	# =================================================
 	umxPower(m1, "X_with_Y", explore = TRUE)
 	
-	# =====================================
-	# = Examples with method = empirical  =
-	# =====================================
-	
-	# Power to detect r = .3 given n = 90
-	umxPower(m1, "X_with_Y", n = 90, method = "empirical")
-	# power is .823
-
 	# Explore power across N with r @ .3
 	umxPower(m1, "X_with_Y", explore = TRUE)
 
@@ -53,13 +45,24 @@ test_that("umxPower works", {
 	#   sig.level = 0.05
 	#       power = 0.827
 	# alternative = two.sided
+
+	# =====================================
+	# = Examples with method = empirical  =
+	# =====================================
+	
+	# Power to detect r = .3 given n = 90
+	# takes a minute
+	umxPower(m1, "X_with_Y", n = 90, method = "empirical", explore = FALSE)
+	# power is .823
+
 	
 	# Power search for detectable effect size, given n = 90
 	expect_error(
 		umxPower(m1, "X_with_Y", n= 90, explore = TRUE),
 		regex = "'ncp' does not work for both explore AND fixed n"
 	)
-	umxPower(m1, "X_with_Y", n= 90, method = "empirical", explore = TRUE)
+	# takes a minute or two!
+	# umxPower(m1, "X_with_Y", n= 90, method = "empirical", explore = TRUE)
 	
 	data(twinData) # ?twinData from Australian twins.
 	twinData[, c("ht1", "ht2")] = 10 * twinData[, c("ht1", "ht2")]
@@ -70,13 +73,11 @@ test_that("umxPower works", {
 	# Drop more than 1 path
 	umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'ncp', n=90, explore = FALSE)
 	expect_error(
+		# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
 		umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE),
 		regex = "fixed n only works for updates of 1 parameter"
 	)
 
-	
-	# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
 	# note: Can't use method = "ncp" with search)
-	umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE)
-	umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
+	expect_error(umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE), "Cannot generate data with trueModel 'ACE'")
 })

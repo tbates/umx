@@ -140,7 +140,7 @@ test_that("umxSummaryIP works", {
 	m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 	umxSummaryIP(m1)
 	plot(m1)
-	umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
+	# umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 })
 
 test_that("umxExpCov works", {
@@ -167,11 +167,11 @@ test_that("umxParameters works", {
 		umxPath(var = manifests),
 		umxPath(var = "G", fixedAt = 1)
 	)
-	umxParameters(m1, "below", .1)
+	umxParameters(m1, "below", b= .1)
 	# Parameters with values above .5
-	umxParameters(m1, "above", .5)
+	umxParameters(m1, "above", b= .5)
 	# Parameters with values below .1 and containing "_to_" in their label
-	umxParameters(m1, "below", .1, "_to_")
+	expect_message(umxParameters(m1, "below", b= .1, patt="_to_"), "Nothing found matching pattern")
 })
 
 test_that("umxExpMeans works", {
