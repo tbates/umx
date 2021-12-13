@@ -355,7 +355,6 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 #' @seealso - [umxSummary()]
 #' @md
 #' @examples
-#' 
 #' \dontrun{
 #' library(mlbench)
 #' data(BostonHousing2)
@@ -674,6 +673,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' tmp = mtcars; tmp[1, "mpg"] = NA # add NA
 #' tmp = xmu_make_mxData(data= tmp, type = "WLS", manifests = manVars, verbose= TRUE)
 #'
+#' \dontrun{
 #' # ==========================
 #' # = already mxData example =
 #' # ==========================
@@ -681,6 +681,8 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #'	umxPath(var= "wt"),
 #'	umxPath(mean=  "wt")
 #' )
+#' 
+#' }
 #'
 #' # ========================
 #' # = Cov and cor examples =

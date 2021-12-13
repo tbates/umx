@@ -3809,6 +3809,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' umx_time('stop') # alert user stop called when not yet started... 
 #' umx_time('stop')
@@ -3827,7 +3828,8 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' umx_time(c(m1, m2)) # print comparison table
 #' umx_time('stop') # report the time since timer last started, and restart
 #' umx_time('stop') # report the time since timer was restarted.
-#'
+#' }
+#' 
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 	formatStr = xmu_match.arg(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)

@@ -838,7 +838,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
-#' 
 #' \dontrun{
 #' library(umx)
 #' # Create two sets of data in which X & Y correlate ~ .4 in both datasets.
@@ -1004,9 +1003,8 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @export
 #' @md
 #' @examples
-#' require(umx)
-#' 
 #' \dontrun{
+#' require(umx)
 #' # First we'll just build a 1-factor model
 #' umx_set_optimizer("SLSQP")
 #' data(demoOneFactor)
@@ -1263,6 +1261,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
 #' @md
 #' @examples
+#' \donttest{
 #' require(umx)
 #' # ============================
 #' # = How heritable is height? =
@@ -1289,7 +1288,6 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' # tip 2: plot works for umx: Get a figure of the model and parameters
 #' # plot(m1) # Also, look at the options for ?plot.MxModel.
 #' 
-#' \donttest{
 #' # ===========================================
 #' # = Test ADE, AE, CE, E, and generate table =
 #' # ===========================================
@@ -1646,6 +1644,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #'  **6**, 554-571. \doi{10.1375/twin.5.6.554}
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(twinData) 
 # twinData = tibble::as_tibble(twinData)
@@ -1656,7 +1655,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' dzData  = subset(twinData, zygosity == "DZFF")[1:100,]
 #' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
 #' 
-#' \dontrun{
 #' # Select the data on the fly with data= and zygosity levels
 #' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
 #' 
@@ -1965,6 +1963,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' *Behavior Genetics*, **45**, 581-96. doi{10.1007/s10519-015-9732-8} <https://link.springer.com/article/10.1007/s10519-015-9732-8>
 #' @md
 #' @examples
+#' \dontrun{
 #' library(umx);
 #' # ==============================
 #' # = 1. Open and clean the data =
@@ -1988,7 +1987,6 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		target = 40, plotWindow = TRUE)
 #' 
-#' \dontrun{
 #' # Run with FIML (default) uses all information
 #' umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
 #' 
@@ -3158,9 +3156,9 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' @seealso - [umxCP()]
 #' @md
 #' @examples
+#' \dontrun{
 #' # Rotate a CP solution(param)
 #' # Common pathway model rotation
-#' \dontrun{
 #' library(umx)
 #' # Fit 3 factor CPM
 #' data(GFF)
@@ -3272,6 +3270,7 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' latents = c("G")
@@ -3293,6 +3292,8 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' mxEval(S, m1) # plausible variances
 #' umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 #' xmuValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
+#' 
+#' }
 xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	if(is.numeric(obj) ) {
 		# Use obj as the mean, return a list of length n, with sd = sd
@@ -3435,6 +3436,7 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' # ==============================================================
 #' # = Show how OpenMx models are not labeled, and then add labels =
 #' # ==============================================================
@@ -3473,6 +3475,7 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' xmuLabel(a, verbose = TRUE)
 #' xmuLabel(a, verbose = TRUE, overRideExisting = FALSE)
 #' xmuLabel(a, verbose = TRUE, overRideExisting = TRUE)
+#' }
 xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0, labelFixedCells = TRUE, jiggle = NA, boundDiag = NA, verbose = FALSE, overRideExisting = FALSE, name = NULL) {	
 	# TODO xmuLabel: Change these to an S3 method with three classes...
 	# 	Check that arguments not used by a particular class are not set away from their defaults
