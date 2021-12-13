@@ -1339,7 +1339,7 @@ umx_factor <- umxFactor
 #' # Handscore subject 1
 #' # A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4 = 20
 #'
-#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
+#' tmp = umx_score_scale(base = "A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
 #' tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 #' #  A1 A2 A3 A4 A5  A
 #' #  2  4  3  4  4  20
@@ -1347,7 +1347,8 @@ umx_factor <- umxFactor
 #' # ====================
 #' # = Request the mean =
 #' # ====================
-#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
+#' tmp = umx_score_scale(name = "A", base = "A", 
+#'    pos = 2:5, rev = 1, max = 6, data= bfi, score="mean")
 #' tmp$A[1] # = 4
 #'
 #' # ==================
