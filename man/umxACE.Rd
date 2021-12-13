@@ -183,6 +183,7 @@ could make them independent again with this script:
 of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978, p267).
 }
 \examples{
+\donttest{
 require(umx)
 # ============================
 # = How heritable is height? =
@@ -209,7 +210,6 @@ umxSummary(m1, std = FALSE) # un-standardized
 # tip 2: plot works for umx: Get a figure of the model and parameters
 # plot(m1) # Also, look at the options for ?plot.MxModel.
 
-\donttest{
 # ===========================================
 # = Test ADE, AE, CE, E, and generate table =
 # ===========================================

@@ -25,6 +25,27 @@ test_that("umx_scale works for different inputs", {
 	expect_error(umx_scale(mxData(mtcars[, c("mpg" , "cyl" , "disp")], type = "raw")), regex = err)
 })
 
+test_that("umx_time", {
+	require(umx)
+	umx_time('stop') # alert user stop called when not yet started... 
+	umx_time('stop')
+	umx_time('start')
+	data(demoOneFactor)
+	latents  = c("G")
+	manifests = names(demoOneFactor)
+	myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
+	m1 = umxRAM("umx_time_example", data = myData,
+		umxPath(from = latents, to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = latents, fixedAt = 1)
+	)
+	umx_time(m1) # report time from mxModel
+	m2 = umxRun(m1)
+	umx_time(c(m1, m2)) # print comparison table
+	umx_time('stop') # report the time since timer last started, and restart
+	umx_time('stop') # report the time since timer was restarted.
+})
+
 test_that("umx_get_checkpoint", {
 	require(umx)
 	umx_get_checkpoint()

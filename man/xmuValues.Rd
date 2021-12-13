@@ -33,6 +33,7 @@ It tries to be smart in guessing starts from the values in your data and the mod
 list of length n, with sd = sd.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 latents = c("G")
@@ -54,6 +55,8 @@ m1 = xmuValues(m1)
 mxEval(S, m1) # plausible variances
 umx_print(mxEval(S,m1), 3, zero.print = ".") # plausible variances
 xmuValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 1
+
+}
 }
 \references{
 \itemize{

@@ -77,6 +77,7 @@ The following figure the GxE model as a path diagram:
 \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
 }
 \examples{
+\dontrun{
 require(umx)
 data(twinData) 
 twinData$age1 = twinData$age2 = twinData$age
@@ -86,7 +87,6 @@ mzData  = subset(twinData, zygosity == "MZFF")[1:100,]
 dzData  = subset(twinData, zygosity == "DZFF")[1:100,]
 m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
 
-\dontrun{
 # Select the data on the fly with data= and zygosity levels
 m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
 

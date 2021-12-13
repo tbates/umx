@@ -57,6 +57,7 @@ near the center of the window highly relative to subjects far above or below the
 This allows detecting and visualizing arbitrary GxE (or CxE or ExE) interaction forms.
 }
 \examples{
+\dontrun{
 library(umx);
 # ==============================
 # = 1. Open and clean the data =
@@ -80,7 +81,6 @@ dzData = subset(twinData, zygosity == "DZFF", c(selDVs, mod))
 umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 		target = 40, plotWindow = TRUE)
 
-\dontrun{
 # Run with FIML (default) uses all information
 umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
 
