@@ -68,6 +68,7 @@ umxMatrix(
 umxMatrix is a wrapper for mxMatrix which labels cells buy default, and has the name parameter first in order.
 }
 \examples{
+\dontrun{
 # ==================================================================================
 # = 1. Showing how name is first parameter, and how cells are labelled by default. =
 # ==================================================================================
@@ -89,6 +90,8 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 #      [,1]    [,2]
 # [1,] NA      NA  
 # [2,] "beta1" NA  
+
+}
 
 }
 \references{

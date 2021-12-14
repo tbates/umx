@@ -2838,7 +2838,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 		funOut = c()
 		for (i in fun) {			
 			if(is.null(title)){ title = paste0("Plot of ", i) }
-			# filed ideas to format as latex...
+			# failed ideas to format as latex...
 			# if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
 			# if(is.null(title)){ title = parse(text = paste0("Plot of ", i)) }
 			if(is.null(ylab)){ ylab = i}

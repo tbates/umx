@@ -28,6 +28,40 @@ test_that("umxEquate works", {
 
 })
 
+test_that("umxMatrix works", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+
+	# ==================================================================================
+	# = 1. Showing how name is first parameter, and how cells are labelled by default. =
+	# ==================================================================================
+	expect_equal(umxMatrix("test", "Full", 2, 2)$labels[1,1], "test_r1c1")
+	#      [,1]        [,2]
+	# [1,] "test_r1c1" "test_r1c2"
+	# [2,] "test_r2c1" "test_r2c2"
+	
+	# ===========================================================
+	# = 2. Over-ride default (matrix name) as prefix for labels =
+	# ===========================================================
+	expect_equal(umxMatrix("test", "Full", 2, 2, baseName = "bob")$labels[1,1], "bob_r1c1")
+	
+	
+	# ==========================================
+	# = 3. User-provided labels are left as-is =
+	# ==========================================
+	expect_equal(umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))$labels[2,1], "beta1")
+	#      [,1]    [,2]
+	# [1,] NA      NA  
+	# [2,] "beta1" NA 
+	
+	x = umxAlgebra("circ", 2 * pi)
+	class(x$formula)
+	x = mxAlgebra(name = "circ", 2 * pi)
+	class(x$formula) # "call"
+	
+})
+
 test_that("umx_check_model() works", {
 	require(umx)
 	data(demoOneFactor)

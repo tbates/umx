@@ -3533,6 +3533,7 @@ xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' # ==================================================================================
 #' # = 1. Showing how name is first parameter, and how cells are labelled by default. =
 #' # ==================================================================================
@@ -3554,6 +3555,8 @@ xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' #      [,1]    [,2]
 #' # [1,] NA      NA  
 #' # [2,] "beta1" NA  
+#' 
+#' }
 #'
 umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FALSE, values = NA, labels = TRUE, lbound = NA, ubound = NA, byrow = getOption('mxByrow'), baseName = NA, dimnames = NA, condenseSlots = getOption('mxCondenseMatrixSlots'), ..., joinKey = as.character(NA), joinModel = as.character(NA), jiggle = NA) {
 	legalMatrixTypes = c("Diag", "Full", "Iden", "Lower", "Sdiag", "Stand", "Symm", "Unit",  "Zero")
@@ -3599,11 +3602,12 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @seealso - [umxMatrix()]
 #' @md
 #' @examples
+#' \dontrun{
 #' x = umxAlgebra("circ", 2 * pi)
 #' class(x$formula)
 #' x = mxAlgebra(name = "circ", 2 * pi)
 #' class(x$formula) # "call"
-#'
+#' }
 umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.character(NA), joinModel=as.character(NA), verbose=0L, initial=matrix(as.numeric(NA),1,1), recompute=c('always','onDemand'), fixed = "deprecated_use_recompute") {
 	if(class(name) != "character"){
 		stop("In umxAlgebra, name comes first, not expression.")

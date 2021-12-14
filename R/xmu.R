@@ -57,6 +57,7 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' @family xmu internal not for end user
 #' @md
 #' @examples
+#' \dontrun{
 #' data(twinData) # ?twinData from Australian twins.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
@@ -64,10 +65,11 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 #' selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
 #' umx_check(selVars == "ht")
-#' xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) #"ht1" "ht2"
+#' xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) # "ht1" "ht2"
 #' selVars = xmu_twin_get_var_names(m1, source= "observed", trim= TRUE, twinOneOnly= TRUE)# "ht"
 #' nVar = length(selVars)
-#' umx_check(nVar==1)
+#' umx_check(nVar == 1)
+#' }
 #' 
 xmu_twin_get_var_names <- function(model, source = c("expCovMZ", "observed"), trim = TRUE, twinOneOnly = TRUE) {
 	# TODO if a model has covariates, we should exclude these from the list: they will be included in observed
