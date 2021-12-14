@@ -21,9 +21,12 @@ Process a set of lavaan tables rows forming a group (Model).
 Returns empty arrays if no rows matching the requested group are found.
 }
 \examples{
+\dontrun{
 tab = lavaan::lavaanify("y~x")
 xmu_lavaan_process_group(tab, groupNum = 1)
 xmu_lavaan_process_group(tab, groupNum = 0)
+
+}
 }
 \seealso{
 \itemize{

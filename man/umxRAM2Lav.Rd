@@ -20,7 +20,9 @@ Also likely to change functionality and even parameters as new features are supp
 and lavaan-style strings exported. Several features are not yet supported. Let me know if you would like them.
 }
 \examples{
+\dontrun{
 umxRAM2Lav(umxLav2RAM("x ~ y", autoRun = FALSE, printTab = FALSE, lavaanMode = "lavaan"))
+}
 }
 \seealso{
 - [umxLav2RAM()], [umxRAM()]

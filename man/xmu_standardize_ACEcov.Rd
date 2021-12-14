@@ -20,6 +20,7 @@ xmu_standardize_ACEcov(model, ...)
 Standardize an ACE model with covariates
 }
 \examples{
+\dontrun{
 require(umx)
 data(twinData)
 twinData$age1 = twinData$age2 = twinData$age
@@ -31,6 +32,7 @@ dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 	 sep = "", autoRun = TRUE)
 fit = xmu_standardize_ACEcov(m1)
+}
 }
 \references{
 \itemize{

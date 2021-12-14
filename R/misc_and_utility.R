@@ -7886,6 +7886,7 @@ umx_standardize.default <- function(model, ...){
 #' @export
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -7899,6 +7900,8 @@ umx_standardize.default <- function(model, ...){
 #' m1 = xmu_standardize_RAM(m1)
 #' m1 = umx_standardize(m1)
 #' umxSummary(m1)
+#' 
+#' }
 xmu_standardize_RAM <- function(model, ...) {
 	umx_check(umx_is_RAM(model), action="stop", message="xmu_standardize_RAM needs a RAM model")
 	umx_has_been_run(model)
@@ -8016,6 +8019,7 @@ umx_standardize.MxModelACE <- xmu_standardize_ACE
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
@@ -8027,6 +8031,7 @@ umx_standardize.MxModelACE <- xmu_standardize_ACE
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 #' 	 sep = "", autoRun = TRUE)
 #' fit = xmu_standardize_ACEcov(m1)
+#' }
 xmu_standardize_ACEcov <- function(model, ...) {
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {

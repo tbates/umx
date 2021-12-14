@@ -4,6 +4,11 @@ library(testthat)
 umx_set_silent(TRUE)
 
 test_that("umxLav2RAM and umxRAM2Lav work", {
+	umxRAM2Lav(umxLav2RAM("x ~ y", autoRun = FALSE, printTab = FALSE, lavaanMode = "lavaan"))
+	tab = lavaan::lavaanify("y~x")
+	xmu_lavaan_process_group(tab, groupNum = 1)
+	xmu_lavaan_process_group(tab, groupNum = 0)
+	
 	roundtrip <- function(modelStr, verbose=FALSE) {
 		m1 = umxLav2RAM(modelStr, autoRun=FALSE, printTab=FALSE, lavaanMode="lavaan")
 		lav = umxRAM2Lav(m1)

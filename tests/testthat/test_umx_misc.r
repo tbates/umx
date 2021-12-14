@@ -46,9 +46,36 @@ test_that("umx_time", {
 	umx_time('stop') # report the time since timer was restarted.
 })
 
+test_that("xmu_standardize_ACEcov", {
+	require(umx)
+	data(twinData)
+	selDVs  = c("bmi")
+	selCovs = c("ht") # silly example
+	selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes= 1:2)
+	mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
+	dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
+	m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE)
+	fit = xmu_standardize_ACEcov(m1)
+
+})
+
 test_that("umx_get_checkpoint", {
 	require(umx)
 	umx_get_checkpoint()
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	twinData$age1 = twinData$age2 = twinData$age
+   	
+	m1 = umxRAM("check_model_ex", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var     = manifests),
+		umxPath(var     = "G", fixedAt = 1)
+	)
+	umx_get_checkpoint(model = m1)
+})
+
+test_that("standardize", {
+	require(umx)
 	data(demoOneFactor)
 	manifests = names(demoOneFactor)
    	
@@ -57,7 +84,9 @@ test_that("umx_get_checkpoint", {
 		umxPath(var     = manifests),
 		umxPath(var     = "G", fixedAt = 1)
 	)
-	umx_get_checkpoint(model = m1)
+	m1 = xmu_standardize_RAM(m1)
+	m1 = umx_standardize(m1)
+	umxSummary(m1)
 })
 
 test_that("umx_is_exogenous", {
