@@ -48,7 +48,7 @@ umx_score_scale(
 
 \item{mapStrings}{For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2}
 
-\item{omegaNfactors}{nfactors for the omega function (if requesting reliability) (default = 1)}
+\item{omegaNfactors}{Number of factors for the omega reliability (default = 1)}
 
 \item{digits}{Rounding for omega etc. (default 2)}
 
@@ -64,7 +64,7 @@ umx_score_scale(
 \description{
 Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 
-Items must be named on the pattern \code{baseN}, where \code{base} is the string common to all item (column) names and N is the item number in the scale.
+Items must be named on the pattern \code{basename + N + suffix}, where \code{base} is the prefix common to all item (column) names, N is item number in the scale, and suffix an optional trail (like "_T1").
 
 \code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers.
 

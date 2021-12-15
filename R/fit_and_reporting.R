@@ -2106,7 +2106,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	invisible(tablePub)
 }
 
-#' umxGetLatents
+#' Get the latentVars from a RAM model
 #'
 #' @description
 #' Get the latentVars from a RAM model, optionally targeting a submodel.
@@ -2162,7 +2162,7 @@ umxGetLatents <- function(model, targetModel = NULL) {
 	}
 }
 
-#' umxGetManifests
+#' Get the manifestVars from a RAM model
 #'
 #' @description
 #' Get the latentVars from a RAM model, optionally targeting a submodel.

@@ -5,7 +5,7 @@
 * IMPROVED: `umxDoC` plot Rd figure includes specifics.
 * IMPROVED: `umxPower` search plot with fixed N has effect size on the x axis.
 * IMPROVED: `umxGxE` plot legend location works for `ggplot`.
-* IMPROVED: `umx_score_scale` gains add omega reliabilty.
+* IMPROVED: `umx_score_scale` gains add omega reliability.
 * IMPROVED: CI printing more robust (e.g. when they fail).
 * FIXED: `omxLocateParameters` call was breaking `umxSummary`.
 * FIXED: `xmu_safe_run_summary` supports `intervals` parameter.
