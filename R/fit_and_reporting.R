@@ -2218,17 +2218,17 @@ umxGetManifests <- function(model, targetModel = NULL) {
 	}
 }
 
-#' umxGetModel
+#' Used to get a RAM submodel by name
 #'
 #' @description
-#' Get the latentVars from a RAM model, optionally targeting a submodel.
+#' Get any model from a RAM model, including submodels.
 #'
-#' @param model a [umxRAM()]
+#' @param model a [umxRAM()] model.
 #' @param targetModel name of the model to extract from
-#' @return - variables
+#' @return - model
 #' @export
 #' @family Reporting Functions
-#' @seealso - [umxGetModel()], [umxRAM()], [umxSuperModel()]
+#' @seealso - [umxGetManifests()], [umxRAM()], [umxSuperModel()]
 #' @md
 #' @examples
 #' \dontrun{
