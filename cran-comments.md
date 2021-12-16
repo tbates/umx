@@ -1,6 +1,6 @@
 ## Changes
-Dramatically reduced the run time of examples.
-
+Dramatically reduced the run time of examples. None over-time on win check now.
+Bug fixes, new features.
 ## Test environments
 * OS X 11.0.0, R version 4.1.1
 * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
@@ -11,5 +11,4 @@ Dramatically reduced the run time of examples.
 
 ## No Downstream dependencies
 
-Many thanks for all your work on the R project: It is deeply appreciated here!
-Tim
+Many thanks, Tim
