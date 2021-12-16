@@ -179,7 +179,7 @@ umxModelNames <- function(model, includeOuterModelName = FALSE) {
 #' Rename a umxMatrix (even in a model)
 #'
 #' @description
-#' Rename a [umxMatrix()], including updating its labels ot match the new name.
+#' Rename a [umxMatrix()], including updating its labels to match the new name.
 #'
 #' @param x A model or matrix
 #' @param matrixName Name of the matrix
@@ -1299,7 +1299,7 @@ umx_factor <- umxFactor
 #' @description
 #' Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 #' 
-#' Items must be named on the pattern `baseN`, where `base` is the string common to all item (column) names and N is the item number in the scale.
+#' Items must be named on the pattern `basename + N + suffix`, where `base` is the prefix common to all item (column) names, N is item number in the scale, and suffix an optional trail (like "_T1").
 #' 
 #' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers.
 #' 
@@ -1319,7 +1319,7 @@ umx_factor <- umxFactor
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
 #' @param mapStrings For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2
-#' @param omegaNfactors nfactors for the omega function (if requesting reliability) (default = 1)
+#' @param omegaNfactors Number of factors for the omega reliability (default = 1)
 #' @param verbose Whether to print the whole omega output (FALSE)
 #' @param digits Rounding for omega etc. (default 2)
 #' @param suffix (if dealing with, e.g. "baseN_T1")

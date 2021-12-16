@@ -19,7 +19,7 @@ umxRenameMatrix(x, matrixName, name)
 }
 }
 \description{
-Rename a \code{\link[=umxMatrix]{umxMatrix()}}, including updating its labels ot match the new name.
+Rename a \code{\link[=umxMatrix]{umxMatrix()}}, including updating its labels to match the new name.
 }
 \examples{
 \dontrun{
