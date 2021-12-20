@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxGetLatents}
 \alias{umxGetLatents}
-\title{umxGetLatents}
+\title{Get the latentVars from a RAM model}
 \usage{
 umxGetLatents(model, targetModel = NULL)
 }

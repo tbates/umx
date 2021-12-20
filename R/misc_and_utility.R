@@ -48,6 +48,57 @@
 # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
 # * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
 
+# #' Easily use the Box-Cox transform
+# #'
+# #' @description
+# #' Applies Box-Cox to the input columns. Box-Cox finds (x ^ (lambda - 1)) / lambda
+# #'
+# #' | \eqn{\lambda} | Transformation  |
+# #' |:--------------|:----------------|
+# #' | -2            | \eqn{1/x^2}     |
+# #' | -1            | 1/x             |
+# #' | -.5           | 1/sqrt(x)       |
+# #' | 0             | log(x)          |
+# #' | 0.5           | sqrt(x)         |
+# #'
+# #' This is a crucial processing step. You should graph (`plotit =TRUE`) and examine.
+# #'
+# #' TODO: take more than one column.
+# #' TODO: (optionally) snap to common values.
+# #' @details
+# #'
+# #' @param x A variable to transform.
+# #' @param verbose Plot the likelihood of lambda and show nearest "common" transform.
+# #' @return - The Box-Cox transformed variable.
+# #' @export
+# #' @family Data Functions
+# #' @seealso - [MASS::boxcox()]
+# #' @references - Box, G. E. P. and Cox, D. R. (1964) An analysis of transformations (with discussion). 
+# #' *Journal of the Royal Statistical Society B*, **26**, 211–252. <https://www.jstor.org/stable/2984418>
+# #' @md
+# #' @examples
+# #' tmp = log(1:100)
+# #' hist(tmp)
+# #' hist(umx_boxcox(tmp))
+# umx_boxcox <- function(x, verbose = TRUE, shiftMin=FALSE) {
+# 	if(min(x)<0){
+# 		con.expr
+# 	} else {
+# 		alt.expr
+# 	}
+# 	xbox = MASS::boxcox(lm(x ~ 1), plotit = verbose)
+# 	lambda = xbox$x[which.max(xbox$y)]
+# 	if(lambda == 0){
+# 		newX = log(x)
+# 	} else {
+# 		newX = ((x^lambda) - 1) / lambda
+# 	}
+# 	if(verbose){
+# 		nearest = c("1/x^2", "1/x", "1/sqrt(x)", "log(x)", "sqrt(x)")[which.min(abs(lambda - c(-2, -1, -.5, 0, 0.5)))]
+# 		cat("lambda = ", lambda, "\nTransform was: (x ^ ", lambda, " - 1) / ", lambda, "\nThe nearest common transform is:", 		omxQuotes(nearest))
+# 	}
+# 	return(newX)
+# }
 
 #' load libraries
 #'
@@ -2424,6 +2475,11 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' periodic `deposits`), over a number of years (`yrs`) at a given rate of `interest`.
 #' Principal and deposits are optional. You control compounding periods each year (n) and whether deposits occur at the beginning or end of the year.
 #' The function outputs a nice table of annual returns, formats the total using a user-settable currency `symbol`. Can also `report` using a web table.
+#' 
+#' *notes*: Graham valuation: fair P/E = 9 + (1.5 * growth%). e.g.  $INTEL fair P/E = 9+.5*3 = 10.5 up to  9+2*10 = 29
+#' Can move the weighting beteeen a conservative .5 and an optimistic 2 (in terms of how long the growth will last and how low the hurdle rate is)
+#' 
+#' 
 #' @param principal The initial investment at time 0.
 #' @param deposits Optional periodic additional investment each *year*.
 #' @param interest Annual interest rate (default = .05)

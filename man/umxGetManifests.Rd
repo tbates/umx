@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxGetManifests}
 \alias{umxGetManifests}
-\title{umxGetManifests}
+\title{Get the manifestVars from a RAM model}
 \usage{
 umxGetManifests(model, targetModel = NULL)
 }
