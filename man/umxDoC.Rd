@@ -66,9 +66,6 @@ each with three indicators). Note: For pedagogical reasons, only the model for 1
 \if{html}{\figure{DoC.png}{options: width=50\% alt="Figure: Direction of Causation"}}
 \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
 }
-\details{
-To be added.
-}
 \references{
 \itemize{
 \item N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496–499. Eds. Brian S. Everitt & David C. Howell.

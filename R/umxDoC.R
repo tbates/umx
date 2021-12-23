@@ -1,6 +1,3 @@
-# Direction of Causation Modeling 
-# http://ibg.colorado.edu/cdrom2016/verhulst/Causation/DOC%20student.R
-
 #' Build and run a 2-group Direction of Causation twin models. (BETA!)
 #'
 #' @description
@@ -14,11 +11,13 @@
 #' If the association in the population is due to confounding (either genetic or shared environmental confounding),
 #' then in discordant MZ twins the association will reduce to zero/non-significance.
 #' 
+#' \if{html}{\figure{discordant_causal_patterns.png}{options: width=50% alt="Figure: Types of confounding"}}
+#' \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
+#' 
+#' Example output from `umxDiscTwin`:
 #' \if{html}{\figure{DiscordantTwins.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
 #' \if{latex}{\figure{DiscordantTwins.pdf}{options: width=7cm}}
-#'
-#' @details
-#' To be added.
+#' 
 #' @param selVar trait selected for discrepant twin scores.
 #' @param var2 trait 2 (outcome trait)
 #' @param popData, Single people dataframe
@@ -46,19 +45,18 @@ umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, use = "complete.o
 	umx_check_names(tvars(c(selVar, var2), "_T"), data = mzData)
 	umx_check_names(tvars(c(selVar, var2), "_T"), data = dzData)
 
-	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row=NULL, input = NULL) {
+	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
 		if(is.null(input)){
 			nrow = 3
-			return(data.frame(
-				group = rep(NA,3), xLevel = rep(NA,3), N = rep(NA,3), r = rep(NA,3), 
-				sd = rep(NA,3), se = rep(NA,3), ci.lower = rep(NA,3), ci.upper = rep(NA,3))
+			return(data.frame(group = rep(NA,3), xLevel = rep(NA,3), N = rep(NA,3), 
+				r = rep(NA,3), ci.lower = rep(NA,3), ci.upper = rep(NA,3))
+				# sd = rep(NA,3), se = rep(NA,3), 
 			)
 		}
 		if(is.null(row)){
 			# row = first empty row
 			row = which.max(is.na(input$r))
 		}
-		# ✓ group ✓ xLevel  ✓ N ✓ param sd se ✓ ci
 		input[row, "group"]    = group
 		input[row, "xLevel"]   = xLevel
 		input[row, "N"]        = corObj$parameter  # df
@@ -93,6 +91,7 @@ umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, use = "complete.o
 	ifelse(out == "plot", return(bar), return(r_df) ) 
 }
 
+# http://ibg.colorado.edu/cdrom2016/verhulst/Causation
 #' Build and run a 2-group Direction of Causation twin models.
 #'
 #' @description
@@ -109,8 +108,6 @@ umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, use = "complete.o
 #' \if{html}{\figure{DoC.png}{options: width=50% alt="Figure: Direction of Causation"}}
 #' \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
 #'
-#' @details
-#' To be added.
 #' @param name The name of the model (defaults to "DOC").
 #' @param var1Indicators variables defining latent trait 1
 #' @param var2Indicators variables defining latent trait 2

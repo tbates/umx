@@ -46,11 +46,12 @@ If a trait x is causal, then the assoociation of x with y is expected to be equa
 If the association in the population is due to confounding (either genetic or shared environmental confounding),
 then in discordant MZ twins the association will reduce to zero/non-significance.
 
+\if{html}{\figure{discordant_causal_patterns.png}{options: width=50\% alt="Figure: Types of confounding"}}
+\if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
+
+Example output from \code{umxDiscTwin}:
 \if{html}{\figure{DiscordantTwins.png}{options: width=50\% alt="Figure: Causation in Discordant twins"}}
 \if{latex}{\figure{DiscordantTwins.pdf}{options: width=7cm}}
-}
-\details{
-To be added.
 }
 \examples{
 \dontrun{
