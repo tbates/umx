@@ -88,9 +88,9 @@ umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, use = "complete.o
 	bar = bar + ggtitle(paste0("The Effect of ", selVar, " on ", var2)) + theme_bw()
 	# bar = bar + scale_y_continuous(breaks = 0:20*4)
 	# Legend label, use darker colors
-	bar = bar + scale_fill_hue(name= "Group", breaks= c("MZ", "DZ"), labels= c("MZ cross trait within pair", "DZ cross trait within pair"))
+	bar = bar + scale_fill_hue(name= "Group", breaks= c("Pop", "MZ", "DZ"), labels= c("Unselected", "DZ discordant", "MZ discordant"))
 	print(bar)
-	ifelse(out=="plot", return(bar), return(r_df) ) 
+	ifelse(out == "plot", return(bar), return(r_df) ) 
 }
 
 #' Build and run a 2-group Direction of Causation twin models.
