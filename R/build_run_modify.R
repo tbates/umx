@@ -88,8 +88,10 @@
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
-#' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon
+#' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon geom_bar geom_errorbar
 #' @importFrom ggplot2 element_text element_blank expand_limits aes
+#' @importFrom ggplot2 position_dodge xlab ylab ggtitle theme_bw scale_fill_hue 
+# scale_y_continuous
 #' @importFrom cowplot draw_label plot_grid ggdraw 
 #' @importFrom knitr kable
 #' @importFrom kableExtra kbl add_footnote column_spec footnote

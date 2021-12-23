@@ -1,8 +1,97 @@
 # Direction of Causation Modeling 
 # http://ibg.colorado.edu/cdrom2016/verhulst/Causation/DOC%20student.R
 
-# TODO: plot.MxModelDoC, and umxSummary.MxModel_DoC methods
-# TODO: support D for one or both traits
+#' Build and run a 2-group Direction of Causation twin models. (BETA!)
+#'
+#' @description
+#' Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
+#' A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
+#' 
+#' `umxDiscTwin` compares the correlation of x and y in the general sample and in the MZ and DZ samples selected for being  
+#' discordant on trait 1.
+#' 
+#' If a trait x is causal, then the assoociation of x with y is expected to be equally large in all threee samples.
+#' If the association in the population is due to confounding (either genetic or shared environmental confounding),
+#' then in discordant MZ twins the association will reduce to zero/non-significance.
+#' 
+#' \if{html}{\figure{DiscordantTwins.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
+#' \if{latex}{\figure{DiscordantTwins.pdf}{options: width=7cm}}
+#'
+#' @details
+#' To be added.
+#' @param selVar trait selected for discrepant twin scores.
+#' @param var2 trait 2 (outcome trait)
+#' @param popData, Single people dataframe
+#' @param dzData The DZ dataframe
+#' @param mzData The MZ dataframe
+#' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
+#' @param use NA handling in corr.test (default= "complete.obs")
+#' @return - table of results
+#' @export
+#' @family Twin Modeling Functions
+#' @seealso - [umxDoC()]
+#' @references - McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
+#' @md
+#' @examples
+#' \dontrun{
+#' umxDiscTwin(selVar = "x", var2 = "y", popData = mzXDisc, dzData = dzXDisc, mzData = mzXDisc)
+#' tmp = umxDiscTwin(selVar = "y", var2 = "x", popData = mzYDisc, dzData = dzYDisc, mzData = mzYDisc)
+#' print(tmp, digits = 3)
+#' }
+umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, use = "complete.obs", out = c("table", "plot"), sep= "_T") {
+	message("umxDiscTwin is beta quality and parameter names may change!")
+	out = match.arg(out)
+	# TODO: expand to two pairs of traits (6 rows)
+	umx_check_names(tvars(c(selVar, var2), "_T"), data = popData)
+	umx_check_names(tvars(c(selVar, var2), "_T"), data = mzData)
+	umx_check_names(tvars(c(selVar, var2), "_T"), data = dzData)
+
+	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row=NULL, input = NULL) {
+		if(is.null(input)){
+			nrow = 3
+			return(data.frame(
+				group = rep(NA,3), xLevel = rep(NA,3), N = rep(NA,3), r = rep(NA,3), 
+				sd = rep(NA,3), se = rep(NA,3), ci.lower = rep(NA,3), ci.upper = rep(NA,3))
+			)
+		}
+		if(is.null(row)){
+			# row = first empty row
+			row = which.max(is.na(input$r))
+		}
+		# ✓ group ✓ xLevel  ✓ N ✓ param sd se ✓ ci
+		input[row, "group"]    = group
+		input[row, "xLevel"]   = xLevel
+		input[row, "N"]        = corObj$parameter  # df
+		input[row, "r"]        = corObj$estimate   # cor
+		input[row, "ci.lower"] = corObj$conf.int[1]
+		input[row, "ci.upper"] = corObj$conf.int[2]
+		input[row, "p"]        = corObj$p.value    # p
+		return(input)
+	}
+	.formula = reformulate(paste0("~ ", selVar, " + ", var2))
+
+	r_df = pingle() # Create and initialise the database
+
+	corObj   = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
+	r_df      = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
+
+	corObj   = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
+	r_df      = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
+
+	corObj   = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
+	r_df      = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
+	r_df$xLevel = factor(r_df$xLevel, levels=c("Pop", "DZ", "MZ"))
+	bar = ggplot(r_df, aes(x = xLevel, y = r, fill = xLevel))
+	bar = bar + geom_bar(position = position_dodge(), stat = "identity", size = .3, colour = "black") # 3 = thin
+	bar = bar + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9)) # Thinner lines
+	bar = bar + xlab("Zygosity") + ylab("Correlation")
+	bar = bar + ggtitle(paste0("The Effect of ", selVar, " on ", var2)) + theme_bw()
+	# bar = bar + scale_y_continuous(breaks = 0:20*4)
+	# Legend label, use darker colors
+	bar = bar + scale_fill_hue(name= "Group", breaks= c("MZ", "DZ"), labels= c("MZ cross trait within pair", "DZ cross trait within pair"))
+	print(bar)
+	ifelse(out=="plot", return(bar), return(r_df) ) 
+}
 
 #' Build and run a 2-group Direction of Causation twin models.
 #'
@@ -38,21 +127,17 @@
 #' @return - [mxModel()] of subclass MxModelDoC
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [plot.MxModelDoC()], [umxSummary.MxModelDoC()], [umxModify()]
-#' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. 
-#' In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496–499. Eds. Brian S. Everitt & David C. Howell.
+#' @seealso - [umxDiscTwin()]
+#' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496–499. Eds. Brian S. Everitt & David C. Howell.
+#' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
+#' * Rasmussen, S. H. R., Ludeke, S., & Hjelmborg, J. V. B. (2019). A major limitation of the direction of causation model: non-shared environmental confounding. *Twin Res Hum Genet*, **22**, 1-13. \doi{10.1017/thg.2018.67}
 #' @md
 #' @examples
 #' \dontrun{
+#' 
 #' # ========================
 #' # = Does Rain cause Mud? =
 #' # ========================
-#'
-#' # =======================================
-#' # = 2. Define manifests for var 1 and 2 =
-#' # =======================================
-#' var1 = paste0("varA", 1:3)
-#' var2 = paste0("varB", 1:3)
 #'
 #' # ================
 #' # = 1. Load Data =
@@ -62,38 +147,33 @@
 #' mzData  = subset(docData, zygosity %in% c("MZFF", "MZMM"))
 #' dzData  = subset(docData, zygosity %in% c("DZFF", "DZMM"))
 #'
+#' # =======================================
+#' # = 2. Define manifests for var 1 and 2 =
+#' # =======================================
+#' var1 = paste0("varA", 1:3)
+#' var2 = paste0("varB", 1:3)
+#'
 #' # =======================================================
-#' # = 2. Make the non-causal (Cholesky) and causal models =
+#' # = 3. Make the non-causal (Cholesky) and causal models =
 #' # =======================================================
 #' Chol = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+#' # nb: DoC initially has causal paths fixed @0
 #' DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
-#'
-#' # ================================================
-#' # = Make the directional models by modifying DoC =
-#' # ================================================
 #' a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
 #' b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
 #' Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
+#'
+#' # Compare fits
+#' umxCompare(Chol, c(a2b, b2a, Recip))
 #'
 #' # ==========================================
 #' # = Alternative call with data in one file =
 #' # ==========================================
 #' data(docData)
 #' docData = umx_scale_wide_twin_data(c(var1, var2), docData, sep= "_T")
-#' DoC  = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
+#' DoC = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
 #' 	  mzData= c("MZFF", "MZMM"), dzData= c("DZFF", "DZMM"), data = docData
 #' )
-#'
-#' # Usage example (won\t run)
-#' var1 = paste0("SOS", 1:8)
-#' var2 = paste0("Vocab", 1:10)
-#' Chol = umxDoC(var1= var1, var2= var2,mzData= mzData, dzData= dzData, causal= FALSE)
-#' DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
-#' a2b  = umxModify(DoC, "a2b", free = TRUE, name = "a2b")
-#' b2a  = umxModify(DoC, "b2a", free = TRUE, name = "b2a")
-#' Recip= umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip")
-#' umxCompare(Chol, c(a2b, b2a, Recip))
-#' }
 #' 
 umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, data = NULL, zyg = "zygosity") {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
