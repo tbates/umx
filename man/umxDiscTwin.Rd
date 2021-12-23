@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxDoC.R
 \name{umxDiscTwin}
 \alias{umxDiscTwin}
-\title{Build and run a 2-group Direction of Causation twin models.}
+\title{Build and run a 2-group Direction of Causation twin models. (BETA!)}
 \usage{
 umxDiscTwin(
   selVar,
