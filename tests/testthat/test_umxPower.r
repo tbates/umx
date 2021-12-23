@@ -51,19 +51,17 @@ test_that("umxPower works", {
 	# =====================================
 	
 	# Power to detect r = .3 given n = 90
-	# takes a minute
+	umx_time("start")
 	umxPower(m1, "X_with_Y", n = 90, method = "empirical", explore = FALSE)
+	umx_time("stop") # 45 seconds!
 	# power is .823
 
-	
 	# Power search for detectable effect size, given n = 90
 	expect_error(
 		umxPower(m1, "X_with_Y", n= 90, explore = TRUE),
 		regex = "'ncp' does not work for both explore AND fixed n"
 	)
-	# takes a minute or two!
-	# umxPower(m1, "X_with_Y", n= 90, method = "empirical", explore = TRUE)
-	
+
 	data(twinData) # ?twinData from Australian twins.
 	twinData[, c("ht1", "ht2")] = 10 * twinData[, c("ht1", "ht2")]
 	mzData = twinData[twinData$zygosity %in% "MZFF", ]
@@ -78,6 +76,12 @@ test_that("umxPower works", {
 		regex = "fixed n only works for updates of 1 parameter"
 	)
 
+	# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
+	# note: Can't use method = "ncp" with search)
+	expect_error(umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE),
+		regex = "Cannot generate data with trueModel" # rows in the data do not match the number of rows requested 
+	)
+	
 	# note: Can't use method = "ncp" with search)
 	expect_error(umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE), "Cannot generate data with trueModel 'ACE'")
 })

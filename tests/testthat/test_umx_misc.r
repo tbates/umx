@@ -74,6 +74,26 @@ test_that("umx_get_checkpoint", {
 	umx_get_checkpoint(model = m1)
 })
 
+test_that("umx_has_CIs", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+   	
+	m1 = umxRAM("check_model_ex", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var     = manifests),
+		umxPath(var     = "G", fixedAt = 1)
+	)
+	umx_has_CIs(m1) # FALSE: no CIs and no output
+	m1 = mxModel(m1, mxCI("g_to_x1"))
+	umx_has_CIs(m1, check = "intervals") # TRUE intervals set
+	umx_has_CIs(m1, check = "output")  # FALSE not yet run
+	m1 = mxRun(m1)
+	umx_has_CIs(m1, check = "output")  # Still FALSE: Set and Run
+	m1 = mxRun(m1, intervals = TRUE)
+	umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
+})
+
 test_that("standardize", {
 	require(umx)
 	data(demoOneFactor)
@@ -89,7 +109,7 @@ test_that("standardize", {
 	umxSummary(m1)
 })
 
-test_that("umx_is_exogenous", {
+test_that("umx_is_exogenous umx_is_endogenous", {
 	require(umx)
 	data(demoOneFactor)
 	manifests = names(demoOneFactor)   	
@@ -141,7 +161,7 @@ test_that("umx_explode_twin_names", {
 	umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
 })
 
-test_that("umx_explode_twin_names", {
+test_that("umx_check", {
 	require(umx)
 	data(twinData) # ?twinData from Australian twins.
 	twinData[, c("ht1", "ht2")] = 10 * twinData[, c("ht1", "ht2")]
@@ -154,7 +174,7 @@ test_that("umx_explode_twin_names", {
 
 })
 
-test_that("umx_explode_twin_names", {
+test_that("xmu_cell_is_on", {
 	a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
 	expect_false(xmu_cell_is_on(r = 3, c = 3, "left", mat = a_cp))
 	expect_error(xmu_cell_is_on(r=4,c = 3, "any", mat = a_cp))
