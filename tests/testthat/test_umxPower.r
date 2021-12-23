@@ -35,6 +35,9 @@ test_that("umxPower works", {
 	# =================================================
 	umxPower(m1, "X_with_Y", explore = TRUE)
 	
+	# Explore power across N with r @ .3
+	umxPower(m1, "X_with_Y", explore = TRUE)
+
 	# Test using cor.test doing the same thing.
 	pwr::pwr.r.test(r = .3, n = 90)
 	#           n = 90
@@ -47,18 +50,17 @@ test_that("umxPower works", {
 	# = Examples with method = empirical  =
 	# =====================================
 	
+	# Power to detect r = .3 given n = 90
+	umx_time("start")
+	umxPower(m1, "X_with_Y", n = 90, method = "empirical", explore = FALSE)
+	umx_time("stop") # 45 seconds!
+	# power is .823
+
 	# Power search for detectable effect size, given n = 90
 	expect_error(
 		umxPower(m1, "X_with_Y", n= 90, explore = TRUE),
 		regex = "'ncp' does not work for both explore AND fixed n"
 	)
-
-	# Power to detect r = .3 given n = 90
-	umx_time("start")
-	umxPower(m1, "X_with_Y", n = 90, method = "empirical")
-	# umxPower(m1, "X_with_Y", n = 90, method = "empirical", explore = TRUE)
-	umx_time("stop") # 45 seconds!
-	# power is .823
 
 	data(twinData) # ?twinData from Australian twins.
 	twinData[, c("ht1", "ht2")] = 10 * twinData[, c("ht1", "ht2")]
@@ -69,6 +71,7 @@ test_that("umxPower works", {
 	# Drop more than 1 path
 	umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'ncp', n=90, explore = FALSE)
 	expect_error(
+		# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
 		umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE),
 		regex = "fixed n only works for updates of 1 parameter"
 	)
@@ -79,4 +82,6 @@ test_that("umxPower works", {
 		regex = "Cannot generate data with trueModel" # rows in the data do not match the number of rows requested 
 	)
 	
+	# note: Can't use method = "ncp" with search)
+	expect_error(umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE), "Cannot generate data with trueModel 'ACE'")
 })

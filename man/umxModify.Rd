@@ -78,9 +78,8 @@ summary(fit2)
 AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 }
 \examples{
-require(umx)
-
 \dontrun{
+require(umx)
 # First we'll just build a 1-factor model
 umx_set_optimizer("SLSQP")
 data(demoOneFactor)

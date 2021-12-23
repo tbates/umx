@@ -287,6 +287,7 @@ Other Twin Modeling Functions:
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
+\code{\link{umxDiscTwin}()},
 \code{\link{umxDoCp}()},
 \code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},

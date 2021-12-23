@@ -126,8 +126,8 @@ White space is replaced with "_" and illegal characters are replaced with "x"
 }
 }
 \examples{
-
 \dontrun{
+
 # auto-data, print table, return umxRAM model
 m1 = umxLav2RAM("y ~ x", printTab= TRUE)
 

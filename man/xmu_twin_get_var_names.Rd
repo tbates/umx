@@ -29,6 +29,7 @@ xmu_twin_get_var_names(
 Barely useful, but justified perhaps by centralizing trimming the "_T1" off, and returning just twin 1.
 }
 \examples{
+\dontrun{
 data(twinData) # ?twinData from Australian twins.
 twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
@@ -36,10 +37,11 @@ dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
 umx_check(selVars == "ht")
-xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) #"ht1" "ht2"
+xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) # "ht1" "ht2"
 selVars = xmu_twin_get_var_names(m1, source= "observed", trim= TRUE, twinOneOnly= TRUE)# "ht"
 nVar = length(selVars)
-umx_check(nVar==1)
+umx_check(nVar == 1)
+}
 
 }
 \seealso{

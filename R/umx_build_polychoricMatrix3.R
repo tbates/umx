@@ -10,6 +10,7 @@
 #' @family Data Functions
 #' @references - Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 #' @examples
+#' \dontrun{
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)
 #' tmp$vs = umxFactor(mtcars$vs)
@@ -17,6 +18,8 @@
 #' x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
 #' x$polychorics
 #' cor(mtcars[, c("am", "vs")])
+#' 
+#' }
 #' 
 umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard      = match.arg(tryHard)

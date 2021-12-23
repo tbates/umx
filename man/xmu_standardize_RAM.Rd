@@ -18,6 +18,7 @@ You probably want \code{\link[=umx_standardize]{umx_standardize()}}, not this.
 \code{xmu_standardize_RAM} takes a RAM-style model, and returns standardized version.
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -31,6 +32,8 @@ m1 = umxRAM("std_ex", data = demoOneFactor, type = "cov",
 m1 = xmu_standardize_RAM(m1)
 m1 = umx_standardize(m1)
 umxSummary(m1)
+
+}
 }
 \references{
 \itemize{

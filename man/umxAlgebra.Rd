@@ -47,11 +47,12 @@ umxAlgebra(
 umxAlgebra is a wrapper for mxAlgebra which has the name parameter first in order.
 }
 \examples{
+\dontrun{
 x = umxAlgebra("circ", 2 * pi)
 class(x$formula)
 x = mxAlgebra(name = "circ", 2 * pi)
 class(x$formula) # "call"
-
+}
 }
 \seealso{
 \itemize{

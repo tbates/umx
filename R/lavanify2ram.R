@@ -34,7 +34,9 @@ xmu_lav_add_regression <- function(spec, Amat, op, m1, m2) {
 #' @family Miscellaneous Utility Functions
 #' @seealso - [umxLav2RAM()], [umxRAM()]
 #' @examples
+#' \dontrun{
 #' umxRAM2Lav(umxLav2RAM("x ~ y", autoRun = FALSE, printTab = FALSE, lavaanMode = "lavaan"))
+#' }
 umxRAM2Lav <- function(model) {
 	# umx_is_RAM()
 	ex = model$expectation
@@ -182,8 +184,8 @@ umxRAM2Lav <- function(model) {
 #' @seealso [umxRAM2Lav()], [umxRAM()]
 #' @md
 #' @examples
-#' 
 #' \dontrun{
+#' 
 #' # auto-data, print table, return umxRAM model
 #' m1 = umxLav2RAM("y ~ x", printTab= TRUE)
 #' 
@@ -447,9 +449,12 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 #' @seealso - [umxLav2RAM()]
 #' @md
 #' @examples
+#' \dontrun{
 #' tab = lavaan::lavaanify("y~x")
 #' xmu_lavaan_process_group(tab, groupNum = 1)
 #' xmu_lavaan_process_group(tab, groupNum = 0)
+#' 
+#' }
 xmu_lavaan_process_group <- function(tab, groupNum){
 	constraintOps = c("==", "<", ">")
 	handledOps = c("=~", "~", "~1", "~~", ":=", constraintOps)

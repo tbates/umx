@@ -25,7 +25,6 @@ xmu_print_algebras(model, digits = 3, verbose = FALSE)
 Non-user function called by \code{\link[=umxSummary]{umxSummary()}}
 }
 \examples{
-
 \dontrun{
 library(mlbench)
 data(BostonHousing2)

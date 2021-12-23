@@ -65,6 +65,7 @@ tmp$type == "raw" # TRUE (WLS is triggered by the fit function, not the data typ
 tmp = mtcars; tmp[1, "mpg"] = NA # add NA
 tmp = xmu_make_mxData(data= tmp, type = "WLS", manifests = manVars, verbose= TRUE)
 
+\dontrun{
 # ==========================
 # = already mxData example =
 # ==========================
@@ -72,6 +73,8 @@ m1 = umxRAM("auto", data = mxData(mtcars, type = "raw"),
 umxPath(var= "wt"),
 umxPath(mean=  "wt")
 )
+
+}
 
 # ========================
 # = Cov and cor examples =

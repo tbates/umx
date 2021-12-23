@@ -57,6 +57,7 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' @family xmu internal not for end user
 #' @md
 #' @examples
+#' \dontrun{
 #' data(twinData) # ?twinData from Australian twins.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
@@ -64,10 +65,11 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' m1 = umxACE(selDVs= "ht", sep= "", dzData= dzData, mzData= mzData, autoRun= FALSE)
 #' selVars = xmu_twin_get_var_names(m1, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE) # "ht"
 #' umx_check(selVars == "ht")
-#' xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) #"ht1" "ht2"
+#' xmu_twin_get_var_names(m1, source= "expCovMZ", trim= FALSE, twinOneOnly= FALSE) # "ht1" "ht2"
 #' selVars = xmu_twin_get_var_names(m1, source= "observed", trim= TRUE, twinOneOnly= TRUE)# "ht"
 #' nVar = length(selVars)
-#' umx_check(nVar==1)
+#' umx_check(nVar == 1)
+#' }
 #' 
 xmu_twin_get_var_names <- function(model, source = c("expCovMZ", "observed"), trim = TRUE, twinOneOnly = TRUE) {
 	# TODO if a model has covariates, we should exclude these from the list: they will be included in observed
@@ -355,7 +357,6 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 #' @seealso - [umxSummary()]
 #' @md
 #' @examples
-#' 
 #' \dontrun{
 #' library(mlbench)
 #' data(BostonHousing2)
@@ -674,6 +675,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' tmp = mtcars; tmp[1, "mpg"] = NA # add NA
 #' tmp = xmu_make_mxData(data= tmp, type = "WLS", manifests = manVars, verbose= TRUE)
 #'
+#' \dontrun{
 #' # ==========================
 #' # = already mxData example =
 #' # ==========================
@@ -681,6 +683,8 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #'	umxPath(var= "wt"),
 #'	umxPath(mean=  "wt")
 #' )
+#' 
+#' }
 #'
 #' # ========================
 #' # = Cov and cor examples =
@@ -1411,6 +1415,90 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 	}
 	return(mx_matrix)
 }
+
+#' Return whether a cell is in a set location of a matrix
+#'
+#' @description
+#' Helper to determine is a cell is in a set location of a matrix or not.
+#' Left is useful for, e.g. twin means matrices.
+#' @param r which row the cell is on.
+#' @param c which column the cell is in.
+#' @param where the location (any, diag, lower or upper (or _inc) or left).
+#' @param mat (optionally) provide matrix to check dimensions against r and c.
+#' @return - [mxModel()]
+#' @export
+#' @family xmu internal not for end user
+#' @seealso - [xmuLabel()]
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' xmu_cell_is_on(r = 3, c = 3, "lower")
+#' xmu_cell_is_on(r = 3, c = 3, "lower_inc")
+#' xmu_cell_is_on(r = 3, c = 3, "upper")
+#' xmu_cell_is_on(r = 3, c = 3, "upper_inc")
+#' xmu_cell_is_on(r = 3, c = 3, "diag")
+#' xmu_cell_is_on(r = 2, c = 3, "diag")
+#' xmu_cell_is_on(r = 3, c = 3, "any")
+#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+#' xmu_cell_is_on(r = 3, c = 3, "left", mat = a_cp)
+xmu_cell_is_on <- function(r, c, where=c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), mat= NULL) {
+	where = match.arg(where)
+	if(!is.null(mat)){
+		# check r and c in bounds.
+		if(r > dim(mat)[1]){
+			stop("r is greater than size of matrix: ", dim(mat)[1])
+		}
+		if(c > dim(mat)[2]){
+			stop("c is greater than size of matrix: ", dim(mat)[2])
+		}
+	}
+	if(where =="any"){
+		valid = TRUE
+	} else if(where =="left"){
+		if(is.null(mat)){
+			stop("matrix must be offered up to check for begin on the left")
+		}
+		if(c <= dim(mat)[2]/2){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="diag"){
+		if(r == c){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="lower"){
+		if(r > c){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="lower_inc"){
+		if(r >= c){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="upper"){
+		if(c > r){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	} else if(where =="upper_inc"){
+		if(c >= r){
+			valid = TRUE
+		} else {
+			valid = FALSE
+		}
+	}else{
+		stop("Where must be one of all, diag, lower, or upper. You gave me:", omxQuotes(where))
+	}
+	return(valid)
+}
+
 
 #' Make a deviation-based mxRAMObjective for ordinal models.
 #'

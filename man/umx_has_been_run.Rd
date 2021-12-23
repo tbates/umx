@@ -20,6 +20,7 @@ umx_has_been_run(model, stop = FALSE)
 check if an mxModel has been run or not
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -27,8 +28,10 @@ m1 = umxRAM("has_been_run_example", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
-)#'
+)
 umx_has_been_run(m1)
+}
+
 }
 \references{
 \itemize{

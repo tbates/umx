@@ -41,9 +41,9 @@ This works by taking the common-pathways loadings matrix from a solved \code{\li
 them back into the loadings matrix, re-estimating the model with the parameters fixed at this rotation, then return the new model.
 }
 \examples{
+\dontrun{
 # Rotate a CP solution(param)
 # Common pathway model rotation
-\dontrun{
 library(umx)
 # Fit 3 factor CPM
 data(GFF)
@@ -64,6 +64,7 @@ Other Twin Modeling Functions:
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
 \code{\link{umxCP}()},
+\code{\link{umxDiscTwin}()},
 \code{\link{umxDoCp}()},
 \code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},

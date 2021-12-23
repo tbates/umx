@@ -3,6 +3,7 @@
 # testthat::test_file("~/bin/umx/tests/testthat/test_umx_residualize.r") 
 # test_package("umx")
 test_that("umx_residualize works for different inputs", {
+	data(mtcars)
 	tmp = mtcars
 	tmp$mpg_T1  = tmp$mpg_T2  = tmp$mpg
 	tmp$cyl_T1  = tmp$cyl_T2  = tmp$cyl

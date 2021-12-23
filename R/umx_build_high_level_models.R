@@ -343,6 +343,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' @md
 #' @examples
+#' \dontrun{
 #' library(umx)
 #' 
 #' 
@@ -350,7 +351,6 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # = Mendelian Randomization analysis =
 #' # ====================================
 #' 
-#' \dontrun{
 #' # Note: in practice: many more subjects are desirable - this just to let example run fast
 #' df = umx_make_MR_data(1000) 
 #' m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)

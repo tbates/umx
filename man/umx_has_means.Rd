@@ -18,6 +18,7 @@ umx_has_means(model)
 A utility function to return a binary answer to the question "does this \code{\link[=mxModel]{mxModel()}} have a means model?"
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -34,6 +35,8 @@ m1 = mxModel(m1,
 umx_has_means(m1)
 m1 = mxRun(m1)
 umx_has_means(m1)
+
+}
 }
 \references{
 \itemize{

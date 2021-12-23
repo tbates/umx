@@ -48,6 +48,57 @@
 # [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
 # * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
 
+# #' Easily use the Box-Cox transform
+# #'
+# #' @description
+# #' Applies Box-Cox to the input columns. Box-Cox finds (x ^ (lambda - 1)) / lambda
+# #'
+# #' | \eqn{\lambda} | Transformation  |
+# #' |:--------------|:----------------|
+# #' | -2            | \eqn{1/x^2}     |
+# #' | -1            | 1/x             |
+# #' | -.5           | 1/sqrt(x)       |
+# #' | 0             | log(x)          |
+# #' | 0.5           | sqrt(x)         |
+# #'
+# #' This is a crucial processing step. You should graph (`plotit =TRUE`) and examine.
+# #'
+# #' TODO: take more than one column.
+# #' TODO: (optionally) snap to common values.
+# #' @details
+# #'
+# #' @param x A variable to transform.
+# #' @param verbose Plot the likelihood of lambda and show nearest "common" transform.
+# #' @return - The Box-Cox transformed variable.
+# #' @export
+# #' @family Data Functions
+# #' @seealso - [MASS::boxcox()]
+# #' @references - Box, G. E. P. and Cox, D. R. (1964) An analysis of transformations (with discussion). 
+# #' *Journal of the Royal Statistical Society B*, **26**, 211–252. <https://www.jstor.org/stable/2984418>
+# #' @md
+# #' @examples
+# #' tmp = log(1:100)
+# #' hist(tmp)
+# #' hist(umx_boxcox(tmp))
+# umx_boxcox <- function(x, verbose = TRUE, shiftMin=FALSE) {
+# 	if(min(x)<0){
+# 		con.expr
+# 	} else {
+# 		alt.expr
+# 	}
+# 	xbox = MASS::boxcox(lm(x ~ 1), plotit = verbose)
+# 	lambda = xbox$x[which.max(xbox$y)]
+# 	if(lambda == 0){
+# 		newX = log(x)
+# 	} else {
+# 		newX = ((x^lambda) - 1) / lambda
+# 	}
+# 	if(verbose){
+# 		nearest = c("1/x^2", "1/x", "1/sqrt(x)", "log(x)", "sqrt(x)")[which.min(abs(lambda - c(-2, -1, -.5, 0, 0.5)))]
+# 		cat("lambda = ", lambda, "\nTransform was: (x ^ ", lambda, " - 1) / ", lambda, "\nThe nearest common transform is:", 		omxQuotes(nearest))
+# 	}
+# 	return(newX)
+# }
 
 #' load libraries
 #'
@@ -176,10 +227,10 @@ umxModelNames <- function(model, includeOuterModelName = FALSE) {
 # =========================================================
 # = Obscure enough to be in xmu internal not for end user =
 # =========================================================
-#' Rename a umxMatrix (in a model)
+#' Rename a umxMatrix (even in a model)
 #'
 #' @description
-#' Rename a umxMatrix, including updating its labels
+#' Rename a [umxMatrix()], including updating its labels to match the new name.
 #'
 #' @param x A model or matrix
 #' @param matrixName Name of the matrix
@@ -189,6 +240,7 @@ umxModelNames <- function(model, includeOuterModelName = FALSE) {
 #' @family xmu internal not for end user
 #' @md
 #' @examples
+#' \dontrun{
 #' data(twinData) # ?twinData from Australian twins.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
@@ -197,6 +249,8 @@ umxModelNames <- function(model, includeOuterModelName = FALSE) {
 #' tmp = umxRenameMatrix(m1$top, matrixName = "a", name="hello")
 #' umx_check(tmp$hello$labels == "hello_r1c1") # new is there
 #' umx_check(is.null(tmp$a))                   # old is gone
+#' }
+#' 
 umxRenameMatrix <- function(x, matrixName, name) {
 	if(umx_is_MxModel(x)){
 		# 1. Grab a copy of the matrix
@@ -215,95 +269,6 @@ umxRenameMatrix <- function(x, matrixName, name) {
 		stop("Haven't implemented umxRenameMatrix for matrices")
 	}
 }
-
-
-#' Return whether a cell is in a set location of a matrix
-#'
-#' @description
-#' Helper to determine is a cell is in a set location of a matrix or not.
-#' Left is useful for, e.g. twin means matrices.
-#' @param r which row the cell is on.
-#' @param c which column the cell is in.
-#' @param where the location (any, diag, lower or upper (or _inc) or left).
-#' @param mat (optionally) provide matrix to check dimensions against r and c.
-#' @return - [mxModel()]
-#' @export
-#' @family xmu internal not for end user
-#' @seealso - [xmuLabel()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
-#' @examples
-#' xmu_cell_is_on(r = 3, c = 3, "lower")
-#' xmu_cell_is_on(r = 3, c = 3, "lower_inc")
-#' xmu_cell_is_on(r = 3, c = 3, "upper")
-#' xmu_cell_is_on(r = 3, c = 3, "upper_inc")
-#' xmu_cell_is_on(r = 3, c = 3, "diag")
-#' xmu_cell_is_on(r = 2, c = 3, "diag")
-#' xmu_cell_is_on(r = 3, c = 3, "any")
-#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-#' xmu_cell_is_on(r = 3, c = 3, "left", mat = a_cp)
-#' \dontrun{
-#' # test stopping
-#' xmu_cell_is_on(r=4,c = 3, "any", mat = a_cp)
-#' }
-xmu_cell_is_on <- function(r, c, where=c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), mat= NULL) {
-	where = match.arg(where)
-	if(!is.null(mat)){
-		# check r and c in bounds.
-		if(r > dim(mat)[1]){
-			stop("r is greater than size of matrix: ", dim(mat)[1])
-		}
-		if(c > dim(mat)[2]){
-			stop("c is greater than size of matrix: ", dim(mat)[2])
-		}
-	}
-	if(where =="any"){
-		valid = TRUE
-	} else if(where =="left"){
-		if(is.null(mat)){
-			stop("matrix must be offered up to check for begin on the left")
-		}
-		if(c <= dim(mat)[2]/2){
-			valid = TRUE
-		} else {
-			valid = FALSE
-		}
-	} else if(where =="diag"){
-		if(r == c){
-			valid = TRUE
-		} else {
-			valid = FALSE
-		}
-	} else if(where =="lower"){
-		if(r > c){
-			valid = TRUE
-		} else {
-			valid = FALSE
-		}
-	} else if(where =="lower_inc"){
-		if(r >= c){
-			valid = TRUE
-		} else {
-			valid = FALSE
-		}
-	} else if(where =="upper"){
-		if(c > r){
-			valid = TRUE
-		} else {
-			valid = FALSE
-		}
-	} else if(where =="upper_inc"){
-		if(c >= r){
-			valid = TRUE
-		} else {
-			valid = FALSE
-		}
-	}else{
-		stop("Where must be one of all, diag, lower, or upper. You gave me:", omxQuotes(where))
-	}
-	return(valid)
-}
-
 
 # ==============================
 # = Get and set OpenMx options =
@@ -1259,50 +1224,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 	return (model)
 }
 
-#' Break twin variable names (BMI_T1, BMI_T2) into base variable names (BMI, "_T", 1:2)
-#'
-#' @description
-#' Break names like Dep_T1 into a list of base names, a separator, and a 
-#' vector of twin indexes. e.g.: c("Dep_T1", "Dep_T2", "Anx_T1", "Anx_T2") will become:
-#' 
-#' list(baseNames = c("Dep", "Anx"), sep = "_T", twinIndexes = c(1,2))
-#'
-#' @param df vector of names or data.frame containing the data
-#' @param sep text constant separating name from numeric 1:2 twin index.
-#' @return - list(baseNames, sep, twinIndexes)
-#' @export
-#' @seealso [umx_paste_names()]
-#' @family String Functions
-#' @examples
-#' \dontrun{
-#' require(umx)
-#' data("twinData")
-#' umx_explode_twin_names(twinData, sep = "")
-#' umx_explode_twin_names(twinData, sep = NULL)
-#' 
-#' # Ignore this: just a single-character/single variable test case
-#' x = round(10 * rnorm(1000, mean = -.2))
-#' y = round(5 * rnorm(1000))
-#' x[x < 0] = 0; y[y < 0] = 0
-#' umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
-#' umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
-#' umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
-#' }
-umx_explode_twin_names <- function(df, sep = "_T") {
-	if(is.data.frame(df)){
-		names_in_df = names(df)
-	} else {
-		names_in_df = df
-	}
-	regex3Parts = paste0("^(.+)", sep, "([0-9]+)$")
-	legalVars   = grep(regex3Parts, names_in_df, value = TRUE)
-	baseNames   = sub(regex3Parts, replacement = "\\1", x = legalVars)
-	baseNames   = unique(baseNames)
-	twinIndexes = sub(regex3Parts, replacement = "\\2", x = legalVars)
-	twinIndexes = sort(unique(as.numeric(twinIndexes)))
-	return(list(baseNames = baseNames, sep = sep, twinIndexes = twinIndexes))
-}
-
 
 # ===================================
 # = Ordinal/Threshold Model Helpers =
@@ -1429,7 +1350,7 @@ umx_factor <- umxFactor
 #' @description
 #' Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 #' 
-#' Items must be named on the pattern `baseN`, where `base` is the string common to all item (column) names and N is the item number in the scale.
+#' Items must be named on the pattern `basename + N + suffix`, where `base` is the prefix common to all item (column) names, N is item number in the scale, and suffix an optional trail (like "_T1").
 #' 
 #' `pos` and `rev` are vectors of the item numbers for the normal and reverse-scored item numbers.
 #' 
@@ -1449,9 +1370,10 @@ umx_factor <- umxFactor
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
 #' @param mapStrings For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2
-#' @param omegaNfactors nfactors for the omega function (if requesting reliability) (default = 1)
+#' @param omegaNfactors Number of factors for the omega reliability (default = 1)
 #' @param verbose Whether to print the whole omega output (FALSE)
-#' @param digits Rounding for omega etc. (default 2) 
+#' @param digits Rounding for omega etc. (default 2)
+#' @param suffix (if dealing with, e.g. "baseN_T1")
 #' @return - scores
 #' @export
 #' @family Data Functions
@@ -1468,7 +1390,7 @@ umx_factor <- umxFactor
 #' # Handscore subject 1
 #' # A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4 = 20
 #'
-#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
+#' tmp = umx_score_scale(base = "A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
 #' tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 #' #  A1 A2 A3 A4 A5  A
 #' #  2  4  3  4  4  20
@@ -1476,7 +1398,8 @@ umx_factor <- umxFactor
 #' # ====================
 #' # = Request the mean =
 #' # ====================
-#' tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
+#' tmp = umx_score_scale(name = "A", base = "A", 
+#'    pos = 2:5, rev = 1, max = 6, data= bfi, score="mean")
 #' tmp$A[1] # = 4
 #'
 #' # ==================
@@ -1532,11 +1455,11 @@ umx_factor <- umxFactor
 #' bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
 #' bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 #' bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors= 1, digits = 2, verbose = FALSE) {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors= 1, digits = 2, verbose = FALSE, suffix = "") {
 	score = match.arg(score)
-	if(is.null(name)){ name = paste0(base, "_score") }
+	if(is.null(name)){ name = paste0(base, "_score", suffix) }
 	oldData = data
-	umx_check_names(namesNeeded= paste0(base, c(pos, rev)), data=data)
+	umx_check_names(namesNeeded= paste0(base, c(pos, rev), suffix), data=data)
 	if(!is.null(mapStrings)){
 		if(!is.null(max)){
 			# check min max matches mapStrings
@@ -1547,7 +1470,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			min = 1
 			max = length(mapStrings)
 		}
-		relevantColumns = paste0(base, c(pos, rev))
+		relevantColumns = paste0(base, c(pos, rev), suffix)
 		for (thisCol in relevantColumns){
 			unique_values = unique(data[, thisCol, drop = TRUE])
 			unique_values = unique_values[!is.na(unique_values)]
@@ -1559,8 +1482,8 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			data[, thisCol] = as.numeric(as.character(tmp))
 		}
 	}
-	mins = umx_apply("min", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
-	maxs = umx_apply("max", data[ , paste0(base, c(pos, rev)), drop = FALSE], by = "columns", na.rm=TRUE)
+	mins = umx_apply("min", data[ , paste0(base, c(pos, rev), suffix), drop = FALSE], by = "columns", na.rm=TRUE)
+	maxs = umx_apply("max", data[ , paste0(base, c(pos, rev), suffix), drop = FALSE], by = "columns", na.rm=TRUE)
 	if(any(mins < min)){
 		msg = paste0("Polite warning: the following columns had responses less than the min response you set (", omxQuotes(min), "):", omxQuotes(names(mins)[(mins<min)]))
 		umx_msg(msg)
@@ -1575,17 +1498,17 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	# ==================================
 	if(!is.null(rev)){
 		if(is.null(max)){
-			maxs = umx_apply("max", data[ , paste0(base, rev), drop = FALSE], by = "columns", na.rm= TRUE)
+			maxs = umx_apply("max", data[ , paste0(base, rev, suffix), drop = FALSE], by = "columns", na.rm= TRUE)
 			message("If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
-			print(table(data[ , paste0(base, rev[1])] ))
+			print(table(data[ , paste0(base, rev[1], suffix)] ))
 			stop("FYI, the max appears to be ", max(maxs))
         }
-		revItems = data[,paste0(base, rev), drop = FALSE]
+		revItems = data[,paste0(base, rev, suffix), drop = FALSE]
 		revItems = (max + min) - revItems
 		data[ , paste0(base, rev)] = revItems
 	}
 
-	allColNames = paste0(base, c(pos, rev))
+	allColNames = paste0(base, c(pos, rev), suffix)
 	df = data[ , allColNames, drop = FALSE]
 
 	if(alpha){
@@ -2552,6 +2475,11 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' periodic `deposits`), over a number of years (`yrs`) at a given rate of `interest`.
 #' Principal and deposits are optional. You control compounding periods each year (n) and whether deposits occur at the beginning or end of the year.
 #' The function outputs a nice table of annual returns, formats the total using a user-settable currency `symbol`. Can also `report` using a web table.
+#' 
+#' *notes*: Graham valuation: fair P/E = 9 + (1.5 * growth%). e.g.  $INTEL fair P/E = 9+.5*3 = 10.5 up to  9+2*10 = 29
+#' Can move the weighting beteeen a conservative .5 and an optimistic 2 (in terms of how long the growth will last and how low the hurdle rate is)
+#' 
+#' 
 #' @param principal The initial investment at time 0.
 #' @param deposits Optional periodic additional investment each *year*.
 #' @param interest Annual interest rate (default = .05)
@@ -2966,7 +2894,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 		funOut = c()
 		for (i in fun) {			
 			if(is.null(title)){ title = paste0("Plot of ", i) }
-			# filed ideas to format as latex...
+			# failed ideas to format as latex...
 			# if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
 			# if(is.null(title)){ title = parse(text = paste0("Plot of ", i)) }
 			if(is.null(ylab)){ ylab = i}
@@ -3937,6 +3865,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' umx_time('stop') # alert user stop called when not yet started... 
 #' umx_time('stop')
@@ -3955,7 +3884,8 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' umx_time(c(m1, m2)) # print comparison table
 #' umx_time('stop') # report the time since timer last started, and restart
 #' umx_time('stop') # report the time since timer was restarted.
-#'
+#' }
+#' 
 umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3"), tz = "GMT", autoRun = TRUE){
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 	formatStr = xmu_match.arg(formatStr, c("simple", "std", "custom %H %M %OS3"), check = FALSE)
@@ -4174,6 +4104,7 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -4182,8 +4113,10 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
+#' )
 #' umx_has_been_run(m1)
+#' }
+#' 
 umx_has_been_run <- function(model, stop = FALSE) {
 	output = model$output
 	if (is.null(output)){
@@ -4683,6 +4616,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -4698,6 +4632,7 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' }
 #' if(!umx_is_RAM(m1)){
 #' 	message("model needs to be a RAM model")
+#' }
 #' }
 umx_is_RAM <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
@@ -4840,6 +4775,7 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -4857,6 +4793,8 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' umx_has_means(m1)
 #' m1 = mxRun(m1)
 #' umx_has_means(m1)
+#' 
+#' }
 umx_has_means <- function(model) {
 	if(!umx_is_RAM(model)){
 		# TODO umx_has_means could check for the means matrix used in our twin models
@@ -5567,6 +5505,50 @@ xmu_match.arg <- function(x, option_list, check = TRUE){
 # = string and php-style helpers =
 # ================================
 
+#' Break twin variable names (BMI_T1, BMI_T2) into base variable names (BMI, "_T", 1:2)
+#'
+#' @description
+#' Break names like Dep_T1 into a list of base names, a separator, and a 
+#' vector of twin indexes. e.g.: c("Dep_T1", "Dep_T2", "Anx_T1", "Anx_T2") will become:
+#' 
+#' list(baseNames = c("Dep", "Anx"), sep = "_T", twinIndexes = c(1,2))
+#'
+#' @param df vector of names or data.frame containing the data
+#' @param sep text constant separating name from numeric 1:2 twin index.
+#' @return - list(baseNames, sep, twinIndexes)
+#' @export
+#' @seealso [umx_paste_names()]
+#' @family String Functions
+#' @examples
+#' \dontrun{
+#' require(umx)
+#' data("twinData")
+#' umx_explode_twin_names(twinData, sep = "")
+#' umx_explode_twin_names(twinData, sep = NULL)
+#' 
+#' # Ignore this: just a single-character/single variable test case
+#' x = round(10 * rnorm(1000, mean = -.2))
+#' y = round(5 * rnorm(1000))
+#' x[x < 0] = 0; y[y < 0] = 0
+#' umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
+#' umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
+#' umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
+#' }
+umx_explode_twin_names <- function(df, sep = "_T") {
+	if(is.data.frame(df)){
+		names_in_df = names(df)
+	} else {
+		names_in_df = df
+	}
+	regex3Parts = paste0("^(.+)", sep, "([0-9]+)$")
+	legalVars   = grep(regex3Parts, names_in_df, value = TRUE)
+	baseNames   = sub(regex3Parts, replacement = "\\1", x = legalVars)
+	baseNames   = unique(baseNames)
+	twinIndexes = sub(regex3Parts, replacement = "\\2", x = legalVars)
+	twinIndexes = sort(unique(as.numeric(twinIndexes)))
+	return(list(baseNames = baseNames, sep = sep, twinIndexes = twinIndexes))
+}
+
 #' Return variable name as a string
 #'
 #' Utility to return an object's name as a string
@@ -5590,7 +5572,7 @@ umx_str_from_object <- function(x) {
 #' `umx_str_chars` returns desired characters of a string
 #'
 #' @param what A string
-#' @param which which chars to select out.
+#' @param which Chars to select out.
 #' @return - Array of selected characters
 #' @export
 #' @family String Functions
@@ -5909,6 +5891,24 @@ umx_rot <- function(vec, na.last=FALSE){
 	return(vec)
 } 
 
+#' Like the php array_shift function: shifts an item off the beginning of a list
+#' 
+#' Returns x\[1\]. Has the SIDE EFFECT of assigning x to x\[2:end\] in the container environment.
+#'
+#' @param x the vector to shift
+#' @return - first item of x
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @md
+#' @examples
+#' x = c("Alice", "Bob", "Carol")
+#' umx_array_shift(x) # returns "Alice"
+#' x # now only 2 items (altered in containing environment)
+umx_array_shift <- function(x){
+	item1 = x[1]
+	x <<- x[2:length(x)]
+	return(item1)
+}
 
 # =================================
 # = Data: Read, Prep, Clean, Fake =
@@ -6228,6 +6228,7 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 #' @return - long-format dataframe
 #' @export
 #' @family Data Functions
+#' @seealso [umx_wide2long()]
 #' @md
 #' @examples
 #' 
@@ -6238,8 +6239,6 @@ umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
 #' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 #' str(df) # ind is a factor, with levels select
 #' ggplot2::qplot(x = mpg, y= values, color=ind, data = df)
-#' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
-#' ggplot2::qplot(x = mpg, y= values, group="ind", data = df)
 umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "ind") {
 	# TODO: rewrite to create the full size in one go, and slot in blocks
 	# initialize new dataframe
@@ -6257,24 +6256,6 @@ umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "
 	return(df)
 }
 
-#' Like the php array_shift function: shifts an item off the beginning of a list
-#' 
-#' Returns x\[1\]. Has the SIDE EFFECT of assigning x to x\[2:end\] in the container environment.
-#'
-#' @param x the vector to shift
-#' @return - first item of x
-#' @export
-#' @family Miscellaneous Utility Functions
-#' @md
-#' @examples
-#' x = c("Alice", "Bob", "Carol")
-#' umx_array_shift(x) # returns "Alice"
-#' x # now only 2 items (altered in containing environment)
-umx_array_shift <- function(x){
-	item1 = x[1]
-	x <<- x[2:length(x)]
-	return(item1)
-}
 
 #' Data helper function to swap blocks of data from one set of columns to another.
 #'
@@ -6346,6 +6327,7 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 		return(data)
 	}
 }
+
 
 # =================
 # = Simulate Data =
@@ -7960,6 +7942,7 @@ umx_standardize.default <- function(model, ...){
 #' @export
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
@@ -7973,6 +7956,8 @@ umx_standardize.default <- function(model, ...){
 #' m1 = xmu_standardize_RAM(m1)
 #' m1 = umx_standardize(m1)
 #' umxSummary(m1)
+#' 
+#' }
 xmu_standardize_RAM <- function(model, ...) {
 	umx_check(umx_is_RAM(model), action="stop", message="xmu_standardize_RAM needs a RAM model")
 	umx_has_been_run(model)
@@ -8090,6 +8075,7 @@ umx_standardize.MxModelACE <- xmu_standardize_ACE
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' \dontrun{
 #' require(umx)
 #' data(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
@@ -8101,6 +8087,7 @@ umx_standardize.MxModelACE <- xmu_standardize_ACE
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, 
 #' 	 sep = "", autoRun = TRUE)
 #' fit = xmu_standardize_ACEcov(m1)
+#' }
 xmu_standardize_ACEcov <- function(model, ...) {
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {

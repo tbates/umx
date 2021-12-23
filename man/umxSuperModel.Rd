@@ -36,7 +36,6 @@ fits of the sub-models.
 \emph{note}: Any duplicate model-names are renamed to be unique by suffixing \verb{_1} etc.
 }
 \examples{
-
 \dontrun{
 library(umx)
 # Create two sets of data in which X & Y correlate ~ .4 in both datasets.

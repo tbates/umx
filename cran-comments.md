@@ -1,9 +1,6 @@
 ## Changes
-Response to previous CRAN Check: dont run several examples. Removed 2 doi's that work outside cran, but fail CRAN check
-looks like an issue with  jstor (journal archive) thinking CRAN page request is non-normal.
-
-A couple of bug fixed, a dozen new features and multiple minor improvements.
-
+Dramatically reduced the run time of examples. None over-time on win check now.
+Bug fixes, new features.
 ## Test environments
 * OS X 11.0.0, R version 4.1.1
 * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
@@ -14,5 +11,4 @@ A couple of bug fixed, a dozen new features and multiple minor improvements.
 
 ## No Downstream dependencies
 
-Many thanks for all your work on the R project: It is deeply appreciated here!
-Tim
+Many thanks, Tim

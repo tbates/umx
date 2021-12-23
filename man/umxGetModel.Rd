@@ -2,22 +2,22 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxGetModel}
 \alias{umxGetModel}
-\title{umxGetModel}
+\title{Used to get a RAM submodel by name}
 \usage{
 umxGetModel(model, targetModel = NULL)
 }
 \arguments{
-\item{model}{a \code{\link[=umxRAM]{umxRAM()}}}
+\item{model}{a \code{\link[=umxRAM]{umxRAM()}} model.}
 
 \item{targetModel}{name of the model to extract from}
 }
 \value{
 \itemize{
-\item variables
+\item model
 }
 }
 \description{
-Get the latentVars from a RAM model, optionally targeting a submodel.
+Get any model from a RAM model, including submodels.
 }
 \examples{
 \dontrun{
@@ -53,7 +53,7 @@ umxGetModel(m3, targetModel = "m1")
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxGetModel]{umxGetModel()}}, \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
+\item \code{\link[=umxGetManifests]{umxGetManifests()}}, \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 
 Other Reporting Functions: 

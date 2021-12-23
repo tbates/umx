@@ -51,6 +51,7 @@ xmuLabel adds labels to things, be it an: \code{\link[=mxModel]{mxModel()}} (RAM
 This is a core function in umx: Adding labels to paths opens the door to \code{\link[=umxEquate]{umxEquate()}}, as well as \code{\link[=omxSetParameters]{omxSetParameters()}}
 }
 \examples{
+\dontrun{
 # ==============================================================
 # = Show how OpenMx models are not labeled, and then add labels =
 # ==============================================================
@@ -89,6 +90,7 @@ a$labels
 xmuLabel(a, verbose = TRUE)
 xmuLabel(a, verbose = TRUE, overRideExisting = FALSE)
 xmuLabel(a, verbose = TRUE, overRideExisting = TRUE)
+}
 }
 \references{
 \itemize{

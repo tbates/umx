@@ -35,10 +35,10 @@ df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
 df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 str(df) # ind is a factor, with levels select
 ggplot2::qplot(x = mpg, y= values, color=ind, data = df)
-df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
-ggplot2::qplot(x = mpg, y= values, group="ind", data = df)
 }
 \seealso{
+\code{\link[=umx_wide2long]{umx_wide2long()}}
+
 Other Data Functions: 
 \code{\link{noNAs}()},
 \code{\link{umxFactor}()},

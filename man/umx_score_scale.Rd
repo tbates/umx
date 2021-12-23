@@ -19,7 +19,8 @@ umx_score_scale(
   mapStrings = NULL,
   omegaNfactors = 1,
   digits = 2,
-  verbose = FALSE
+  verbose = FALSE,
+  suffix = ""
 )
 }
 \arguments{
@@ -47,11 +48,13 @@ umx_score_scale(
 
 \item{mapStrings}{For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2}
 
-\item{omegaNfactors}{nfactors for the omega function (if requesting reliability) (default = 1)}
+\item{omegaNfactors}{Number of factors for the omega reliability (default = 1)}
 
 \item{digits}{Rounding for omega etc. (default 2)}
 
 \item{verbose}{Whether to print the whole omega output (FALSE)}
+
+\item{suffix}{(if dealing with, e.g. "baseN_T1")}
 }
 \value{
 \itemize{
@@ -61,7 +64,7 @@ umx_score_scale(
 \description{
 Use this function to generate scores as the appropriate sum of responses to the normal and reversed items in a scale.
 
-Items must be named on the pattern \code{baseN}, where \code{base} is the string common to all item (column) names and N is the item number in the scale.
+Items must be named on the pattern \code{basename + N + suffix}, where \code{base} is the prefix common to all item (column) names, N is item number in the scale, and suffix an optional trail (like "_T1").
 
 \code{pos} and \code{rev} are vectors of the item numbers for the normal and reverse-scored item numbers.
 
@@ -85,7 +88,7 @@ data(bfi)
 # Handscore subject 1
 # A1(R)+A2+A3+A4+A5 = (6+1)-2 +4+3+4+4 = 20
 
-tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
+tmp = umx_score_scale(base = "A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A")
 tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 #  A1 A2 A3 A4 A5  A
 #  2  4  3  4  4  20
@@ -93,7 +96,8 @@ tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 # ====================
 # = Request the mean =
 # ====================
-tmp = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data= bfi, name = "A", score="mean")
+tmp = umx_score_scale(name = "A", base = "A", 
+   pos = 2:5, rev = 1, max = 6, data= bfi, score="mean")
 tmp$A[1] # = 4
 
 # ==================

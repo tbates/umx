@@ -57,6 +57,9 @@ Allows you to determine the final value of an initial \code{principal} (with opt
 periodic \code{deposits}), over a number of years (\code{yrs}) at a given rate of \code{interest}.
 Principal and deposits are optional. You control compounding periods each year (n) and whether deposits occur at the beginning or end of the year.
 The function outputs a nice table of annual returns, formats the total using a user-settable currency \code{symbol}. Can also \code{report} using a web table.
+
+\emph{notes}: Graham valuation: fair P/E = 9 + (1.5 * growth\%). e.g.  $INTEL fair P/E = 9+.5\emph{3 = 10.5 up to  9+2}10 = 29
+Can move the weighting beteeen a conservative .5 and an optimistic 2 (in terms of how long the growth will last and how low the hurdle rate is)
 }
 \examples{
 \dontrun{

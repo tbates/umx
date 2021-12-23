@@ -143,15 +143,18 @@ NULL
 #' and Human Genetics, **13**, 143-162. doi{10.1375/twin.13.2.143}
 #' @md
 #' @examples
+#' \dontrun{
 #' # Twin 1 variables (end in '_T1')
 #' data(GFF)
 #' umx_names(GFF, "1$") # Just variables ending in 1 (twin 1)
 #' str(GFF) # first few rows
 #' 
+#' 
 #' m1 = umxACE(selDVs= "gff", sep = "_T",
 #' 	mzData = subset(GFF, zyg_2grp == "MZ"), 
 #' 	dzData = subset(GFF, zyg_2grp == "DZ")
 #' )
+#' }
 #'
 NULL
 
@@ -200,12 +203,14 @@ NULL
 #' @format A data frame with 53940 twin families (1 per row) each twin measured on 10 variables.
 #' @md
 #' @examples
+#' \dontrun{
 #' data(us_skinfold_data)
 #' str(us_skinfold_data)
 #' par(mfrow = c(1, 2))  # 1 rows and 3 columns
 #' plot(ht_T1 ~ht_T2, ylim = c(130, 165), data = subset(us_skinfold_data, zyg == 1))
 #' plot(ht_T1 ~ht_T2, ylim = c(130, 165), data = subset(us_skinfold_data, zyg == 3))
 #' par(mfrow = c(1, 1))  # back to as it was
+#' }
 NULL
 
 # Load Data
@@ -251,6 +256,7 @@ NULL
 #' @format A data frame with 562 rows (twin families). Nine measures on each twin.
 #' @seealso [umxSimplex()] 
 #' @examples
+#' \dontrun{
 #' data(iqdat)
 #' str(iqdat)
 #' par(mfrow = c(1, 3))  # 1 rows and 3 columns
@@ -258,6 +264,7 @@ NULL
 #' plot(IQ_age4_T1 ~ IQ_age4_T2, ylim = c(50, 150), data = subset(iqdat, zygosity == "DZ"))
 #' plot(IQ_age1_T1 ~ IQ_age4_T2, data = subset(iqdat, zygosity == "MZ"))
 #' par(mfrow = c(1, 1))  # back to as it was
+#' }
 NULL
 
 # ==========================
@@ -299,9 +306,11 @@ NULL
 #' @format A 6*6 correlation matrix based on n = 66 female subjects.
 #' @md
 #' @examples
+#' \dontrun{
 #' data(Fischbein_wt) # load the data
 #' str(Fischbein_wt) # data.frame
 #' as.matrix(Fischbein_wt) # convert to matrix
+#' }
 NULL
 
 

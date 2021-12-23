@@ -24,6 +24,7 @@ umx_polychoric(
 Compute polychoric/polyserial/Pearson correlations with FIML.
 }
 \examples{
+\dontrun{
 tmp = mtcars
 tmp$am = umxFactor(mtcars$am)
 tmp$vs = umxFactor(mtcars$vs)
@@ -31,6 +32,8 @@ tmp = umx_scale(tmp)
 x = umx_polychoric(tmp[, c("am", "vs")], tryHard = "yes")
 x$polychorics
 cor(mtcars[, c("am", "vs")])
+
+}
 
 }
 \references{

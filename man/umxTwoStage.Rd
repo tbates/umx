@@ -54,6 +54,7 @@ The following figure shows how the MR model appears as a path diagram:
 \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
 }
 \examples{
+\dontrun{
 library(umx)
 
 
@@ -61,7 +62,6 @@ library(umx)
 # = Mendelian Randomization analysis =
 # ====================================
 
-\dontrun{
 # Note: in practice: many more subjects are desirable - this just to let example run fast
 df = umx_make_MR_data(1000) 
 m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)

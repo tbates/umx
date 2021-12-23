@@ -18,6 +18,7 @@ umx_is_RAM(obj)
 Utility function returning a binary answer to the question "Is this a RAM model?"
 }
 \examples{
+\dontrun{
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -32,6 +33,7 @@ if(umx_is_RAM(m1)){
 }
 if(!umx_is_RAM(m1)){
 	message("model needs to be a RAM model")
+}
 }
 }
 \references{

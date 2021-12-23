@@ -33,9 +33,11 @@ Created as follows:\if{html}{\out{<div class="sourceCode R">}}\preformatted{Fisc
 }\if{html}{\out{</div>}}
 }
 \examples{
+\dontrun{
 data(Fischbein_wt) # load the data
 str(Fischbein_wt) # data.frame
 as.matrix(Fischbein_wt) # convert to matrix
+}
 }
 \references{
 Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic and of dizygotic twins during puberty.

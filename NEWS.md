@@ -1,6 +1,21 @@
-## dev umx 4.11.0
+## dev umx 4.10.50
+* December 2021 R 4.1.1 (2021/11/30)
+* IMPROVED: `umxDoC` can take data (#ht @lf-araujo )
+* IMPROVED: `umxDoC` plot Rd figure includes specifics.
+* IMPROVED: `umxPower` search plot with fixed N has effect size on the x axis.
+* IMPROVED: `umxGxE` plot legend location works for `ggplot`.
+* IMPROVED: `umx_score_scale` gains omega reliability.
+* IMPROVED: CI printing more robust (e.g. when they fail).
+* BUG: `umx_score_scale` bug in handling new `mapstrings`.
+* FIXED: `umxDoC` plot.
+* FIXED: `omxLocateParameters` call was breaking `umxSummary`.
+* FIXED: `xmu_safe_run_summary` supports `intervals` parameter.
+* FIXED: `umxSummary` works with `umxSuperModel` now that paths have types.
+* FIXED: `umx_make_twinData` works with custom names
+* FIXED: `umx_make_twinData` no longer shifts means now that mean and sd parameters are available.
+* NEW: helpers to `umxGetModel`, `umxGetLatents`, and `umxGetManifests
 
-## dev umx 4.10.10
+## umx 4.10.10
 * November 2021 R 4.1.1 (2021/11/30)
 * NEW: `umxPower` can plot power search space! (beta!)
 * NEW: `noNAs()` helper returning complete rows of a data.frame.
