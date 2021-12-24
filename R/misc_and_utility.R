@@ -2982,7 +2982,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @seealso - [umx_r_test()]
-#' @references - <https://stats.idre.ucla.edu/r/dae/logit-regression/>, <https://tbates.github.io>
+#' @references - <https://stats.oarc.ucla.edu/r/dae/logit-regression/>, <https://tbates.github.io>
 #' @md
 #' @examples
 #' oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))

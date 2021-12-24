@@ -75,7 +75,7 @@
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
-#' @importFrom stats qnorm quantile residuals rnorm runif sd
+#' @importFrom stats qnorm quantile reformulate residuals rnorm runif sd
 #' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
@@ -99,6 +99,10 @@
 # pwr.r.test
 
 utils::globalVariables(c(
+    'ci.lower',
+	'ci.upper',
+	'r',
+	'xLevel',
 	'N',
 	'x',
 	'xtable',
@@ -1649,7 +1653,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' \dontrun{
 #' require(umx)
 #' data(twinData) 
-# twinData = tibble::as_tibble(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"

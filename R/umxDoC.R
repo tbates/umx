@@ -23,8 +23,9 @@
 #' @param popData, Single people dataframe
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
-#' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
+#' @param out Whether to return the table or the ggplot (if you want to adumbrate it)
 #' @param use NA handling in corr.test (default= "complete.obs")
+#' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @return - table of results
 #' @export
 #' @family Twin Modeling Functions
@@ -37,7 +38,7 @@
 #' tmp = umxDiscTwin(selVar = "y", var2 = "x", popData = mzYDisc, dzData = dzYDisc, mzData = mzYDisc)
 #' print(tmp, digits = 3)
 #' }
-umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, use = "complete.obs", out = c("table", "plot"), sep= "_T") {
+umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, out = c("table", "plot"), use = "complete.obs", sep= "_T") {
 	message("umxDiscTwin is beta quality and parameter names may change!")
 	out = match.arg(out)
 	# TODO: expand to two pairs of traits (6 rows)

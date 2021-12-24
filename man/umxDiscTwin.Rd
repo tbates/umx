@@ -10,8 +10,8 @@ umxDiscTwin(
   popData,
   mzData,
   dzData,
-  use = "complete.obs",
   out = c("table", "plot"),
+  use = "complete.obs",
   sep = "_T"
 )
 }
@@ -25,6 +25,8 @@ umxDiscTwin(
 \item{mzData}{The MZ dataframe}
 
 \item{dzData}{The DZ dataframe}
+
+\item{out}{Whether to return the table or the ggplot (if you want to adumbrate it)}
 
 \item{use}{NA handling in corr.test (default= "complete.obs")}
 

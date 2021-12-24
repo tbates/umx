@@ -1,5 +1,5 @@
 Package: umx
-Version: 4.10.50
+Version: 4.11.0
 Date: 2021-12-25
 Title: Structural Equation Modeling and Twin Modeling in R
 Authors@R: c(
@@ -44,8 +44,7 @@ Imports:
     utils,
     xtable,
     kableExtra,
-	knitr,
-	tibble
+	knitr
 Suggests:
     cocor,
     devtools,

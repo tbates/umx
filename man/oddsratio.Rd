@@ -37,7 +37,7 @@ oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 }
 \references{
 \itemize{
-\item \url{https://stats.idre.ucla.edu/r/dae/logit-regression/}, \url{https://tbates.github.io}
+\item \url{https://stats.oarc.ucla.edu/r/dae/logit-regression/}, \url{https://tbates.github.io}
 }
 }
 \seealso{
