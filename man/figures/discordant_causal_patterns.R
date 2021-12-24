@@ -10,5 +10,7 @@ bar = ggplot(tmp, aes(x = type, y = r, fill = group))
 bar = bar + geom_bar(position = position_dodge(), stat = "identity", size = .1, colour = "black") # thin black outline
 bar = bar + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9))
 bar = bar + xlab("Causal Status") + ylab("Correlation")
-bar = bar + ggtitle(paste0("Discordant twin association reveal confounding")) + theme_bw()
+bar = bar + ggtitle(paste0("Association in discordant twins reveals confounding")) + theme_bw()
 print(bar)
+p = ggplot(data = mtcars, aes(x=mpg, y=wt)) + geom_point()
+# bar + hrbrthemes::theme_ipsum()
