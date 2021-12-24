@@ -66,6 +66,50 @@ each with three indicators). Note: For pedagogical reasons, only the model for 1
 \if{html}{\figure{DoC.png}{options: width=50\% alt="Figure: Direction of Causation"}}
 \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
 }
+\examples{
+\dontrun{
+
+# ========================
+# = Does Rain cause Mud? =
+# ========================
+
+# ================
+# = 1. Load Data =
+# ================
+data(docData)
+docData = umx_scale_wide_twin_data(c(var1, var2), docData, sep= "_T")
+mzData  = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
+dzData  = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
+
+# =======================================
+# = 2. Define manifests for var 1 and 2 =
+# =======================================
+var1 = paste0("varA", 1:3)
+var2 = paste0("varB", 1:3)
+
+# =======================================================
+# = 3. Make the non-causal (Cholesky) and causal models =
+# =======================================================
+Chol = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
+# nb: DoC initially has causal paths fixed @0
+DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
+a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
+b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
+Recip = umxModify(DoC, c("a2b", "b2a"), free = TRUE, name = "Recip"); summary(Recip)
+
+# Compare fits
+umxCompare(Chol, c(a2b, b2a, Recip))
+
+# ==========================================
+# = Alternative call with data in one file =
+# ==========================================
+data(docData)
+docData = umx_scale_wide_twin_data(c(var1, var2), docData, sep= "_T")
+DoC = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
+	  mzData= c("MZFF", "MZMM"), dzData= c("DZFF", "DZMM"), data = docData
+)
+}
+}
 \references{
 \itemize{
 \item N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496–499. Eds. Brian S. Everitt & David C. Howell.

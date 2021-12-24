@@ -9,7 +9,7 @@
 #' 
 #' If a trait x is causal, then the assoociation of x with y is expected to be equally large in all threee samples.
 #' If the association in the population is due to confounding (either genetic or shared environmental confounding),
-#' then in discordant MZ twins the association will reduce to zero/non-significance.
+#' then in discordant MZ twins the association will reduce to zero or non-significance.
 #' 
 #' \if{html}{\figure{discordant_causal_patterns.png}{options: width=50% alt="Figure: Types of confounding"}}
 #' \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
@@ -172,7 +172,7 @@ umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, out = c("table", 
 #' DoC = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
 #' 	  mzData= c("MZFF", "MZMM"), dzData= c("DZFF", "DZMM"), data = docData
 #' )
-#' 
+#' }
 umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, data = NULL, zyg = "zygosity") {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
 	if(name == "DoC"){name = ifelse(causal, "DoC", "Chol")}
