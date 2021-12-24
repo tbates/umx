@@ -26,7 +26,6 @@ test_that("umxConfint works", {
 	
 	# CI requests added for free matrix parameters. User prompted to set run = TRUE
 	expect_message(umxConfint(m1, "all"), regexp = "Polite note: Some CIs have been requested but not run. Add 'run = TRUE'")
-	m3 = umxConfint(m1, "all")
 	
 	# Run the requested CIs
 	m3 = umxConfint(m3, run = TRUE) 

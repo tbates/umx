@@ -7,6 +7,23 @@ context("umx umx_has_CIs Functions")
 
 test_that("umx_has_CIs works", {
 	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+   	
+	m1 = umxRAM("check_model_ex", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var     = manifests),
+		umxPath(var     = "G", fixedAt = 1)
+	)
+	umx_has_CIs(m1) # FALSE: no CIs and no output
+	m1 = mxModel(m1, mxCI("G_to_x1"))
+	expect_true(umx_has_CIs(m1, check = "intervals")) # intervals set
+	expect_false(umx_has_CIs(m1, check = "output"))  # FALSE not yet run
+	m1 = mxRun(m1)
+	expect_false(umx_has_CIs(m1, check = "output"))  # Still FALSE: Set and Run
+	m1 = mxRun(m1, intervals = TRUE)
+	expect_true(umx_has_CIs(m1, check = "output"))  # TRUE: Set, and Run with intervals = T
+
 	data(myFADataRaw, package="OpenMx")
 	manifests = names(myFADataRaw)
 	latents   = c("G")

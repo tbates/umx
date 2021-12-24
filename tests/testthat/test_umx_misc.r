@@ -74,26 +74,6 @@ test_that("umx_get_checkpoint", {
 	umx_get_checkpoint(model = m1)
 })
 
-test_that("umx_has_CIs", {
-	require(umx)
-	data(demoOneFactor)
-	manifests = names(demoOneFactor)
-   	
-	m1 = umxRAM("check_model_ex", data = demoOneFactor, type = "cov",
-		umxPath("G", to = manifests),
-		umxPath(var     = manifests),
-		umxPath(var     = "G", fixedAt = 1)
-	)
-	umx_has_CIs(m1) # FALSE: no CIs and no output
-	m1 = mxModel(m1, mxCI("g_to_x1"))
-	umx_has_CIs(m1, check = "intervals") # TRUE intervals set
-	umx_has_CIs(m1, check = "output")  # FALSE not yet run
-	m1 = mxRun(m1)
-	umx_has_CIs(m1, check = "output")  # Still FALSE: Set and Run
-	m1 = mxRun(m1, intervals = TRUE)
-	umx_has_CIs(m1, check = "output")  # TRUE: Set, and Run with intervals = T
-})
-
 test_that("standardize", {
 	require(umx)
 	data(demoOneFactor)
