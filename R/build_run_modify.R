@@ -2007,7 +2007,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 
 	umx_check(!is.null(moderator), "stop", "Moderator must be set to the name of the moderator column, e.g, moderator = 'birth_year'")
 	
-	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
 	if(!is.null(sep)){
 		selVars   = umx_paste_names(selDVs, sep = sep, 1:2)
 		# moderator = umx_paste_names(moderator, sep = sep, 1:2)

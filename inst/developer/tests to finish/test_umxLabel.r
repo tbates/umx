@@ -1,12 +1,12 @@
 # library(testthat); library(devtools)
-# test_file("~/bin/umx/tests/testthat/test_umxLabel.r")
+# test_file("~/bin/umx/inst/developer/tests to finish/test_umxLabel.r")
 # 
 # test_package("umx")
 test_that("umxLabel works for different inputs", {	
 	require(umx)
-	require(OpenMx)
+	library(testthat)
 	change.mat <- function(X,ch.fun) {
-	  do.call(structure,c(list(.Data=do.call(ch.fun,list(X))),attributes(X)))
+		do.call(structure, c(list(.Data = do.call(ch.fun,list(X))), attributes(X)))
 	}
 	# ===============================
 	# = Test on each type of matrix =
@@ -14,7 +14,7 @@ test_that("umxLabel works for different inputs", {
 	allTypes = c("Diag", "Full", "Iden", "Lower", "Stand", "Sdiag", "Symm", "Unit", "Zero")
 
 	# 1. Test Diag
-		obj = mxMatrix(name = "a", type = "Diag", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		obj = mxMatrix(name = "a", type = "Diag", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		res =  matrix(nrow = 3, byrow = T, data = c(
 		 "a_r1c1", NA    , NA,
 		  NA   , "a_r2c2", NA,
@@ -22,7 +22,7 @@ test_that("umxLabel works for different inputs", {
 		testthat::expect_identical(obj, res, "Diag test failed")
 
 	# 2. Test Full
-		obj = mxMatrix(name = "a", type = "Full", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		obj = mxMatrix(name = "a", type = "Full", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		res =  matrix(nrow = 3, byrow = T, data = c(
 	    "a_r1c1", "a_r1c2", "a_r1c3",
 	    "a_r2c1", "a_r2c2", "a_r2c3",
@@ -31,7 +31,7 @@ test_that("umxLabel works for different inputs", {
 		testthat::expect_identical(obj, res, "Full test failed")
 
 	# 3. Test Iden
-		# obj = mxMatrix(name = "a", type = "Iden", nrow = 3, ncol = 3); obj = umxLabel(obj);
+		# obj = mxMatrix(name = "a", type = "Iden", nrow = 3, ncol = 3); obj = xmuLabel(obj);
 		# obj = obj$labels
 		# res =  matrix(nrow = 3, byrow = T, data = c(
 		# 	    NA, NA, NA,
@@ -40,7 +40,7 @@ test_that("umxLabel works for different inputs", {
 		# testthat::expect_identical(obj, change.mat(res, mode), "Identity Matrix test failed")
 
 	# 4. Test Lower Stand Sdiag Symm Unit Zero
-		obj = mxMatrix(name = "a", type = "Lower", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		obj = mxMatrix(name = "a", type = "Lower", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		obj
 		res =  matrix(nrow = 3, byrow = T, data = c(
 	    "a_r1c1",       NA,       NA,
@@ -50,7 +50,7 @@ test_that("umxLabel works for different inputs", {
 		testthat::expect_identical(obj, res, "Test Lower failed")
 
 	# 5. Test Stand Sdiag Symm Unit Zero
-		obj = mxMatrix(name = "a", type = "Stand", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		obj = mxMatrix(name = "a", type = "Stand", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		res =  matrix(nrow = 3, byrow = T, data = c(
 	    NA      , "a_r2c1", "a_r3c1",
 	    "a_r2c1", NA      , "a_r3c2",
@@ -59,7 +59,7 @@ test_that("umxLabel works for different inputs", {
 		testthat::expect_identical(obj, res, "Test Stand failed")
 
 	# 6. Test Sdiag
-		obj = mxMatrix(name = "a", type = "Sdiag", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		obj = mxMatrix(name = "a", type = "Sdiag", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		res =  matrix(nrow = 3, byrow = T, data = c(
 	    NA      , NA      , NA,
 	    "a_r2c1", NA      , NA,
@@ -68,7 +68,7 @@ test_that("umxLabel works for different inputs", {
 		testthat::expect_identical(obj, res, "Test Sdiag failed")
 
 	# 7. Test Symm
-		obj = mxMatrix(name = "a", type = "Symm", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		obj = mxMatrix(name = "a", type = "Symm", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		res =  matrix(nrow = 3, byrow = T, data = c(
 	    "a_r1c1", "a_r2c1", "a_r3c1",
 	    "a_r2c1", "a_r2c2", "a_r3c2",
@@ -76,7 +76,7 @@ test_that("umxLabel works for different inputs", {
 		testthat::expect_identical(obj, res, "test Symm failed")
 
 	# 7. Test Unit
-		# obj = mxMatrix(name = "a", type = "Unit", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		# obj = mxMatrix(name = "a", type = "Unit", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		# res =  matrix(nrow = 3, byrow = T, data = c(
 		# 	    NA, NA, NA,
 		# 	    NA, NA, NA,
@@ -84,7 +84,7 @@ test_that("umxLabel works for different inputs", {
 		# testthat::expect_identical(obj, res, "Test Unit failed")
 
 	# 7. Test Zero
-		# obj = mxMatrix(name = "a", type = "Zero", nrow = 3, ncol = 3); obj = umxLabel(obj); obj = obj$labels
+		# obj = mxMatrix(name = "a", type = "Zero", nrow = 3, ncol = 3); obj = xmuLabel(obj); obj = obj$labels
 		# res =  matrix(nrow = 3, byrow = T, data = c(
 		# 	    NA, NA, NA,
 		# 	    NA, NA, NA,
@@ -101,7 +101,7 @@ test_that("umxLabel works for different inputs", {
 		mxPath(from = latents, arrows = 2, free = F, values = 1.0),
 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 	)
-	m1 = umxLabel(m1)
+	m1 = xmuLabel(m1)
 	names_c <- c("x1", "x2", "x3", "x4", "x5", "G")
 	expected_A_labels <- matrix(nrow=6, byrow = TRUE, data = c(
 		"x1_to_x1", "x2_to_x1", "x3_to_x1", "x4_to_x1", "x5_to_x1", "G_to_x1", 
@@ -132,6 +132,6 @@ test_that("umxLabel works for different inputs", {
 	# ======================================================
 	# = Check we are rejecting things we don't understand	 =
 	# ======================================================
-	testthat::expect_error(umxLabel(1), regexp = "I can only label OpenMx models and mxMatrix types. You gave me a double")	
+	testthat::expect_error(xmuLabel(1), regexp = "I can only label OpenMx models and mxMatrix types. You gave me a double")	
 
 })

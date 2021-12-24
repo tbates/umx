@@ -6,7 +6,6 @@ test_that("umxCP works", {
 	# = Run a 3-factor Common pathway twin model of 6 traits =
 	# ========================================================
 	require(umx)
-	umx_set_optimizer("SLSQP")
 	data(GFF)
 	mzData = subset(GFF, zyg_2grp == "MZ")
 	dzData = subset(GFF, zyg_2grp == "DZ")

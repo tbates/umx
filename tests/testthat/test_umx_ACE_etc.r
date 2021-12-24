@@ -22,10 +22,10 @@ test_that("testing umx twin models", {
 	dzD = na.omit(dzData[, tvars(selDVs, "_T")])
 	mzD = na.omit(dzData[, tvars(selDVs, "_T")])
 	m4 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzD, mzData = mzD, type = "DWLS")
+
 	 # ============================
 	 # = How heritable is height? =
 	 # ============================
-	 require(umx)
 	 data(twinData) # ?twinData from Australian twins.
 	 # Pick the variables
 	 # 1. Height has a tiny variance, and this makes solution finding very hard.
@@ -58,9 +58,7 @@ test_that("testing umx twin models", {
 	 # ===================================================
 	 # = WLS example using diagonal weight least squares =
 	 # ===================================================
-	 m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, 
-	 	type = "DWLS", allContinuousMethod='marginals'
-	 )
+	 m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod = 'marginals')
 	
 	 # ==============================
 	 # = Univariate model of weight =
@@ -88,8 +86,7 @@ test_that("testing umx twin models", {
 	 m2 = umxACE(selDVs = "wt", dzData = dzData, mzData = mzData, sep = "", boundDiag = NULL)
 	
 	 # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
-	 m1 = umxACE(selDVs = "wt", sep = "", data = twinData,
-	 	dzData = c("DZMM", "DZFF", "DZOS"), mzData = c("MZMM", "MZFF"))
+	 m1 = umxACE(selDVs = "wt", sep = "", data = twinData, dzData = c("DZMM", "DZFF", "DZOS"), mzData = c("MZMM", "MZFF"))
 	 # |   |   a1|c1 |   e1|
 	 # |:--|----:|:--|----:|
 	 # |wt | 0.93|.  | 0.38|
@@ -121,7 +118,6 @@ test_that("testing umx twin models", {
 	 # ===================
 	 # = Ordinal example =
 	 # ===================
-	 require(umx)
 	 data(twinData)
 	 twinData= umx_scale_wide_twin_data(data=twinData,varsToScale=c("wt"),sep="")
 	 # Cut BMI column to form ordinal obesity variables
@@ -164,7 +160,6 @@ test_that("testing umx twin models", {
 	 # =======================================
 	 # = Mixed continuous and binary example =
 	 # =======================================
-	 require(umx)
 	 data(twinData)
 	 twinData= umx_scale_wide_twin_data(data= twinData,varsToScale= "wt", sep="")
 	 # Cut to form category of 20% obese subjects
@@ -186,7 +181,6 @@ test_that("testing umx twin models", {
 	 # Example with covariance data only =
 	 # ===================================
 	
-	 require(umx)
 	 data(twinData)
 	 twinData= umx_scale_wide_twin_data(data=twinData, varsToScale= "wt", sep="")
 	 selDVs = c("wt1", "wt2")
@@ -201,7 +195,7 @@ test_that("testing umx twin models", {
 test_that("umxGxE", {
 	require(umx)
 	data(twinData) 
-	winData = tibble::as_tibble(twinData)
+	# winData = tibble::as_tibble(twinData)
 	twinData$age1 = twinData$age2 = twinData$age
 	selDVs  = "bmi"
 	selDefs = "age"
@@ -219,10 +213,10 @@ test_that("umxGxE_window", {
 	selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 	data(twinData) # Dataset of Australian twins, built into OpenMx
 	twinData = twinData[!is.na(twinData[mod]), ]
-	mzData = subset(twinData, zygosity == "MZFF", c(selDVs, mod))
-	dzData = subset(twinData, zygosity == "DZFF", c(selDVs, mod))
+	mzData = subset(twinData, zygosity == "MZFF")
+	dzData = subset(twinData, zygosity == "DZFF")
 
-	umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, target = 40, plotWindow = TRUE)
+	m1 = umxGxE_window(selDVs = "bmi", moderator = mod, sep= "", mzData = mzData, dzData = dzData, target = 40, plotWindow = TRUE)
 })
 
 
