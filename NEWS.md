@@ -1,4 +1,11 @@
-## dev umx 4.10.50
+## dev umx 4.11.00
+* NEW: `umxDiscTwin` implements the discrepant twin method of testing for causal effects.
+* NEW: `umxDiscTwin` graph for publication.
+* IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control
+* IMPROVED: `umxGxEwindow`: removes un-needed columns
+* IMPROVED: `umxRun`: gained `summary` control
+
+## umx 4.10.50
 * December 2021 R 4.1.1 (2021/11/30)
 * IMPROVED: `umxDoC` can take data (#ht @lf-araujo )
 * IMPROVED: `umxDoC` plot Rd figure includes specifics.
