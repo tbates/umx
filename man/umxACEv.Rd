@@ -136,6 +136,7 @@ to .25 to model dominance effects.
 of degrees of freedom to simultaneously model C and D with only MZ and DZ twin pairs (Eaves et al. 1978 p267).
 }
 \examples{
+\dontrun{
 
 # ==============================
 # = Univariate model of weight =
@@ -275,10 +276,8 @@ twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
 selDVs = c("wt", "obese")
 mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
-\dontrun{
 m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
-}
 
 # ===================================
 # Example with covariance data only =
@@ -291,6 +290,7 @@ mz = cov(twinData[twinData$zygosity \%in\% "MZFF", tvars(selDVs, "")], use = "co
 dz = cov(twinData[twinData$zygosity \%in\% "DZFF", tvars(selDVs, "")], use = "complete")
 m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
 umxSummary(m1, std = FALSE)
+}
 
 }
 \references{

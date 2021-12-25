@@ -10,6 +10,7 @@ umxRun(
   calc_sat = TRUE,
   setValues = FALSE,
   setLabels = FALSE,
+  summary = !umx_set_silent(silent = TRUE),
   intervals = FALSE,
   optimizer = NULL,
   comparison = NULL

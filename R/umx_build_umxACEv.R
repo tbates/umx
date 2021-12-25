@@ -99,6 +99,7 @@
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
 #' @md
 #' @examples
+#' \dontrun{
 #' 
 #' # ==============================
 #' # = Univariate model of weight =
@@ -238,10 +239,9 @@
 #' selDVs = c("wt", "obese")
 #' mzData = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzData = twinData[twinData$zygosity %in% "DZFF", ]
-#' \dontrun{
+
 #' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
-#' }
 #' 
 #' # ===================================
 #' # Example with covariance data only =
@@ -254,6 +254,7 @@
 #' dz = cov(twinData[twinData$zygosity %in% "DZFF", tvars(selDVs, "")], use = "complete")
 #' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
 #' umxSummary(m1, std = FALSE)
+#' }
 #' 
 umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2) {
 	type                = match.arg(type)

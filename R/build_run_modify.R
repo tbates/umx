@@ -1953,7 +1953,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' @param weightCov Whether to use cov.wt matrices or FIML default = FALSE, i.e., FIML
 #' @param width An option to widen or narrow the window from its default (of 1)
 #' @param target A user-selected list of moderator values to test (default = NULL = explore the full range)
-#' @param plotWindow whether to plot what the window looks like
+#' @param plotWindow whether to plot the data window.
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param return  whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")
 #' @return - Table of estimates of ACE along the moderator
 #' @export
@@ -1970,6 +1971,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' @examples
 #' \dontrun{
 #' library(umx);
+#'
 #' # ==============================
 #' # = 1. Open and clean the data =
 #' # ==============================
@@ -1980,10 +1982,11 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' data(twinData) # Dataset of Australian twins, built into OpenMx
 #' # The twinData consist of two cohorts: "younger" and "older".
 #' # zygosity is a factor. levels =  MZFF, MZMM, DZFF, DZMM, DZOS.
+#' 
 #' # Delete missing moderator rows
 #' twinData = twinData[!is.na(twinData[mod]), ]
-#' mzData = subset(twinData, zygosity == "MZFF", c(selDVs, mod))
-#' dzData = subset(twinData, zygosity == "DZFF", c(selDVs, mod))
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
 #' 
 #' # ========================
 #' # = 2. Run the analyses! =
@@ -1992,17 +1995,24 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		target = 40, plotWindow = TRUE)
 #' 
+#' umxGxE_window(selDVs = "bmi", sep="", moderator = mod, mzData = mzData, dzData = dzData, 
+#' 		target = 40, plotWindow = TRUE, tryHard = "yes")
+#'
 #' # Run with FIML (default) uses all information
 #' umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
+#' umxGxE_window(selDVs="bmi", sep="", moderator="age", mzData=mzData, dzData=dzData, tryHard="yes")
 #' 
 #' # Run creating weighted covariance matrices (excludes missing data)
 #' umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
 #' 		weightCov = TRUE)
 #' }
 #' 
-umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, return = c("estimates","last_model")) {
-	return = match.arg(return)
+umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, tryHard = c("no", "yes", "ordinal", "search"), return = c("estimates","last_model")) {
+	return  = match.arg(return)
+	tryHard = match.arg(tryHard)
+	
 	nSib   = 2 # Number of siblings in a twin pair.
+	
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib)
 
 	umx_check(!is.null(moderator), "stop", "Moderator must be set to the name of the moderator column, e.g, moderator = 'birth_year'")
@@ -2016,8 +2026,12 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 
 	# TODO umxGxE_window: allow missing moderator?
 	# Check DVs exists in mzData and dzData (and nothing else apart from the moderator)
-	umx_check_names(c(selVars, moderator), data = mzData, die = TRUE, no_others = TRUE)
-	umx_check_names(c(selVars, moderator), data = dzData, die = TRUE, no_others = TRUE)
+	umx_check_names(c(selVars, moderator), data = mzData, die = TRUE)
+	umx_check_names(c(selVars, moderator), data = dzData, die = TRUE)
+
+	# drop any extraneous columns
+	mzData = mzData[, c(selVars, moderator)]
+	dzData = mzData[, c(selVars, moderator)]
 
 	# Add a zygosity column (that way we know what it's called)
 	mzData$ZYG = "MZ";
@@ -2084,7 +2098,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		} else {
 			m1 = umxACE(selDVs = selDVs, sep=sep, dzData = dzData, mzData = mzData, weightVar = "weight", autoRun = FALSE)
 		}
-		m1 = mxRun(m1); 
+		m1 = umxRun(m1, tryHard = tryHard, summary = FALSE)
 		if(plotWindow){
 			plot(allData[,moderator], allData$weight) # normal-curve yumminess
 			umxSummaryACE(m1)
@@ -2092,28 +2106,31 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 		out[n, ] = mxEval(c(i, top.a_std[1,1], top.c_std[1,1], top.e_std[1,1], top.a[1,1], top.c[1,1], top.e[1,1]), m1)
 		n = n + 1
 	}
+	if(length(targetLevels)==1){
+		# no need to plot: perhaps draw the ACE diagram?
+		plot(m1)
+	} else {
+		# plot ACE across levels of the moderator
+		ACE = c("A", "C", "E")
+		# Squaring paths to produce variances
+		out[,ACE] = out[,ACE]^2
+		# plotting variance components
+		with(out, {
+			plot(A ~ modLevel, main = paste0(selDVs[1], " variance"), ylab = "Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
+			lines(modLevel, C, col = 'green')
+			lines(modLevel, E, col = 'blue')
+			legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)
 
-	ACE = c("A", "C", "E")
-	# Squaring paths to produce variances
-	out[,ACE] = out[,ACE]^2
-	# plotting variance components
-	with(out,{
-		plot(A ~ modLevel, main = paste0(selDVs[1], " variance"), ylab = "Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
-		lines(modLevel, C, col = 'green')
-		lines(modLevel, E, col = 'blue')
-		legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)
-
-		plot(Astd ~ modLevel, main = paste0(selDVs[1], " std variance"), ylab = "Std Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
-		lines(modLevel, Cstd, col = 'green')
-		lines(modLevel, Estd, col = 'blue')
-		legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)
-	})
+			plot(Astd ~ modLevel, main = paste0(selDVs[1], " std variance"), ylab = "Std Variance", xlab=moderator, las = 1, bty = 'l', type = 'l', col = 'red', ylim = c(0, 1), data = out)
+			lines(modLevel, Cstd, col = 'green')
+			lines(modLevel, Estd, col = 'blue')
+			legend('topright', fill = c('red', 'green', 'blue'), legend = ACE, bty = 'n', cex = .8)
+		})
+	}
 	if(return == "last_model"){
 		invisible(m1)
 	} else if(return == "estimates") {
 		invisible(out)
-	}else{
-		warning("You specified a return type that is invalid. Valid options are last_model and estimates. You requested:", return)
 	}
 }
 
@@ -3668,7 +3685,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' }
 #' 
 # type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, intervals = FALSE, optimizer = NULL, comparison = NULL){
+umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, summary = !umx_set_silent(silent = TRUE), intervals = FALSE, optimizer = NULL, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
 	# TODO: umxRun: Optimise for speed
@@ -3687,7 +3704,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 	if(setValues){
 		model = xmuValues(model)
 	}
-	model = xmu_safe_run_summary(model, autoRun = TRUE,  tryHard =  tryHard)
+	model = xmu_safe_run_summary(model, autoRun = TRUE,  summary = summary, tryHard =  tryHard)
 
 	if(calc_sat){
 		if(umx_is_RAM(model)){

@@ -28,7 +28,7 @@ test_that("umxConfint works", {
 	expect_message(umxConfint(m1, "all"), regexp = "Polite note: Some CIs have been requested but not run. Add 'run = TRUE'")
 	
 	# Run the requested CIs
-	m3 = umxConfint(m3, run = TRUE) 
+	m2 = umxConfint(m1, "all", run = TRUE) 
 	
 	# Run CIs for free one-headed (asymmetric) paths in RAM model. 
 	#   note: Deletes other existing requests,

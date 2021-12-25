@@ -1,7 +1,7 @@
 # library(testthat)
 # library(umx)
 # test_file("~/bin/umx/tests/testthat/test_umx_ACE_etc.r") 
-# 
+# TODO: Switch on ACE and ACEv examples for testing
 # test_package("umx")
 
 test_that("testing umx twin models", {
@@ -209,14 +209,14 @@ test_that("umxGxE", {
 
 test_that("umxGxE_window", {
 	require(umx)
-	mod = "age" # The full name of the moderator column in the dataset
-	selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 	data(twinData) # Dataset of Australian twins, built into OpenMx
 	twinData = twinData[!is.na(twinData[mod]), ]
 	mzData = subset(twinData, zygosity == "MZFF")
 	dzData = subset(twinData, zygosity == "DZFF")
 
-	m1 = umxGxE_window(selDVs = "bmi", moderator = mod, sep= "", mzData = mzData, dzData = dzData, target = 40, plotWindow = TRUE)
+	m1 = umxGxE_window(selDVs = "bmi", moderator = "age", sep= "", mzData = mzData, dzData = dzData, target = 40, plotWindow = TRUE)
+	m1 = umxGxE_window(selDVs = "bmi", moderator = "age", sep= "", mzData = mzData, dzData = dzData, plotWindow = TRUE, tryHard = "yes")
+
 })
 
 
@@ -434,3 +434,158 @@ test_that("umxGxE_window", {
 #' m1 = umxACE(selDVs=selDVs, dzData=dz, mzData=mz, numObsDZ=569, numObsMZ=351)
 #' umxSummary(m1)
 #' plot(m1)
+
+#' 
+#' # ==============================
+#' # = Univariate model of weight =
+#' # ==============================
+#' require(umx)
+#' data(twinData) # ?twinData from Australian twins.
+#'
+#' # Things to note: ACE model of weight will return a NEGATIVE variance in C.
+#' #  This is exactly why we have ACEv! It suggests we need a different model
+#' #  In this case: ADE.
+#' # Other things to note:
+#' # 1. umxACEv can figure out variable names: provide "sep", and selVars. 
+#' #    Function generates: "wt" -> "wt1" "wt2"
+#' # 2. umxACEv picks the variables it needs from the data.
+#' 
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACEv(selDVs = "wt", sep = "", dzData = dzData, mzData = mzData)
+#' 
+#' # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
+#' m1 = umxACEv(selDVs = "wt", sep = "", dzData = "MZFF", mzData = "DZFF", data = twinData)
+#' # ========================================================
+#' # = Evidence for dominance ? (DZ correlation set to .25) =
+#' # ========================================================
+#' m2 = umxACEv("ADE", selDVs = "wt", sep = "", dzData = dzData, mzData = mzData, dzCr = .25)
+#' # note: the underlying matrices are still called A, C, and E.
+#' # I catch this in the summary table, so columns are labeled A, D, and E.
+#' # However, currently, the plot will say A, C, E.
+#' 
+#' # We can modify this model, dropping dominance component (still called C), 
+#' # and see a comparison:
+#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE, name="AE")
+#' # =========================================================
+#' # = Well done! Now you can make modify twin models in umx =
+#' # =========================================================
+#' 
+#' # ============================
+#' # = How heritable is height? =
+#' # ============================
+#' # 
+#' # Note: Height has a small variance. umx can typically picks good starts,
+#' #    but scaling is advisable.
+#' # 
+#' require(umx)
+#' # Load data and rescale height to cm (var in m too small)
+#' data(twinData) # ?twinData from Australian twins.
+#' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
+#'
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' m1 = umxACEv(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
+#' 
+#' umxSummary(m1, std = FALSE) # unstandardized
+#' plot(m1)
+#'
+#' # tip: with report = "html", umxSummary can print the table to your browser!
+#' # tip: You can turn off auto-plot with umx_set_auto_plot(FALSE)
+#' 
+#' # ========================================================
+#' # = Evidence for dominance ? (DZ correlation set to .25) =
+#' # ========================================================
+#' m2 = umxACEv("ADE", selDVs = "ht", dzCr = .25, sep="", dzData = dzData, mzData = mzData)
+#' umxCompare(m2, m1) # Is ADE better?
+#' umxSummary(m2, comparison = m1) # nb: though this is ADE, matrices are still called A,C,E
+#'
+#' # We can modify this model, dropping shared environment, and see a comparison:
+#' m3 = umxModify(m2, update = "C_r1c1", comparison = TRUE, name = "AE")
+#'
+#' # =====================================
+#' # = Bivariate height and weight model =
+#' # =====================================
+#' 
+#' data(twinData)
+#' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
+#' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"), ]
+#' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
+#' mzData = mzData[1:80, ] # Quicker run to keep CRAN happy
+#' dzData = dzData[1:80, ]
+#' m1 = umxACEv(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
+#' 
+#' # ===================
+#' # = Ordinal example =
+#' # ===================
+#' require(umx)
+#' data(twinData)
+#'
+#' # Cut bmi column to form ordinal obesity variables
+#' cutPoints = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' obesityLevels = c('normal', 'overweight', 'obese')
+#' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#'
+#' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
+#' twinData[, c("obese1", "obese2")] = umxFactor(twinData[, c("obese1", "obese2")])
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ][1:80,] # 80 pairs for speed on CRAN
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ][1:80,]
+#' m2 = umxACEv(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
+#'
+#' # FYI: Show mz, dz, and t1 and t2 have the same levels!
+#' str(mzData)
+#' 
+#' # ============================================
+#' # = Bivariate continuous and ordinal example =
+#' # ============================================
+#' data(twinData)
+#' # Cut bmi column to form ordinal obesity variables
+#' ordDVs = c("obese1", "obese2")
+#' obesityLevels = c('normal', 'overweight', 'obese')
+#' cutPoints = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+#' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#'
+#' # Make the ordinal variables into ordered mxFactors
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#'
+#' # umxACEv can trim out unused variables on its own
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+#' 
+#' m1 = umxACEv(selDVs = c("wt", "obese"), dzData = dzData, mzData = mzData, sep = '')
+#' plot(m1)
+#' 
+#' # =======================================
+#' # = Mixed continuous and binary example =
+#' # =======================================
+#' require(umx)
+#' data(twinData)
+#' # Cut to form category of 20% obese subjects
+#' # and make into mxFactors (ensure ordered is TRUE, and require levels)
+#' cutPoints = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+#' obesityLevels = c('normal', 'obese')
+#' twinData$obese1 = cut(twinData$bmi1, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = obesityLevels) 
+#' ordDVs = c("obese1", "obese2")
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#' 
+#' selDVs = c("wt", "obese")
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
+
+#' m1 = umxACEv(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
+#' umxSummary(m1)
+#' 
+#' # ===================================
+#' # Example with covariance data only =
+#' # ===================================
+#' 
+#' require(umx)
+#' data(twinData)
+#' selDVs = c("wt")
+#' mz = cov(twinData[twinData$zygosity %in% "MZFF", tvars(selDVs, "")], use = "complete")
+#' dz = cov(twinData[twinData$zygosity %in% "DZFF", tvars(selDVs, "")], use = "complete")
+#' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
+#' umxSummary(m1, std = FALSE)

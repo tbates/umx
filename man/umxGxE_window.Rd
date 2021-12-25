@@ -14,6 +14,7 @@ umxGxE_window(
   target = NULL,
   width = 1,
   plotWindow = FALSE,
+  tryHard = c("no", "yes", "ordinal", "search"),
   return = c("estimates", "last_model")
 )
 }
@@ -35,7 +36,9 @@ e.g.: 'bmi' --> c("bmi_T1", "bmi_T2")}
 
 \item{width}{An option to widen or narrow the window from its default (of 1)}
 
-\item{plotWindow}{whether to plot what the window looks like}
+\item{plotWindow}{whether to plot the data window.}
+
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{return}{whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")}
 }
@@ -59,6 +62,7 @@ This allows detecting and visualizing arbitrary GxE (or CxE or ExE) interaction 
 \examples{
 \dontrun{
 library(umx);
+
 # ==============================
 # = 1. Open and clean the data =
 # ==============================
@@ -69,10 +73,11 @@ selDVs = c("bmi1", "bmi2") # The DV for twin 1 and twin 2
 data(twinData) # Dataset of Australian twins, built into OpenMx
 # The twinData consist of two cohorts: "younger" and "older".
 # zygosity is a factor. levels =  MZFF, MZMM, DZFF, DZMM, DZOS.
+
 # Delete missing moderator rows
 twinData = twinData[!is.na(twinData[mod]), ]
-mzData = subset(twinData, zygosity == "MZFF", c(selDVs, mod))
-dzData = subset(twinData, zygosity == "DZFF", c(selDVs, mod))
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 
 # ========================
 # = 2. Run the analyses! =
@@ -81,8 +86,12 @@ dzData = subset(twinData, zygosity == "DZFF", c(selDVs, mod))
 umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
 		target = 40, plotWindow = TRUE)
 
+umxGxE_window(selDVs = "bmi", sep="", moderator = mod, mzData = mzData, dzData = dzData, 
+		target = 40, plotWindow = TRUE, tryHard = "yes")
+
 # Run with FIML (default) uses all information
 umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
+umxGxE_window(selDVs="bmi", sep="", moderator="age", mzData=mzData, dzData=dzData, tryHard="yes")
 
 # Run creating weighted covariance matrices (excludes missing data)
 umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
