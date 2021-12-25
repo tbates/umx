@@ -124,10 +124,12 @@ test_that("umxSummaryGxE works", {
 	# Exclude cases with missing Def
 	mzData = mzData[!is.na(mzData[selDefs[1]]) & !is.na(mzData[selDefs[2]]),]
 	dzData = dzData[!is.na(dzData[selDefs[1]]) & !is.na(dzData[selDefs[2]]),]
-	m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep="", dzData = dzData, mzData = mzData)
+	m1 = umxGxE(selDVs = "bmi", selDefs = "age", sep="", dzData = dzData, mzData = mzData, tryHard="yes")
 	# Plot Moderation
 	umxSummary(m1)
-	umxSummaryGxE(m1, location = "topright")
+	umxSummaryGxE(m1, location = "topright", gg=FALSE)
+	umxSummaryGxE(m1, location = "left")
+	umxSummaryGxE(m1, location = c(.1, .9))
 	umxSummaryGxE(m1, separateGraphs = FALSE)
 })
 
@@ -200,7 +202,7 @@ test_that("umxMI works", {
 		umxPath(var = "G", fixedAt = 1)
 	)
 	
-	umxMI(m1, full=FALSE)
+	# umxMI(m1, full=FALSE)
 })
 
 test_that("RMSEA works", {

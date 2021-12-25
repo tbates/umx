@@ -19,17 +19,17 @@ test_that("umxPower works", {
 	   umxPath(var = c("X", "Y"))
 	)
 	# 3. Test power to detect .3 versus 0, with n= 90 subjects
-	umxPower(m1, "X_with_Y", n= 90)
+	tmp = umxPower(m1, "X_with_Y", n= 90)
+	expect_equal(as.numeric(tmp), 0.83, tolerance=.01)
 	
-	# ####################
-	# # Estimating power #
-	# ####################
-	#    method = ncp
-	#         n = 90
-	#     power = 0.83
-	# sig.level = 0.05
-	# statistic = LRT
-	
+	# Test using cor.test doing the same thing.
+	pwr::pwr.r.test(r = .3, n = 90)
+	#           n = 90
+	#           r = 0.3
+	#   sig.level = 0.05
+	#       power = 0.827
+	# alternative = two.sided
+
 	# =================================================
 	# = Tabulate Power across a range of values of  n =
 	# =================================================
@@ -38,13 +38,6 @@ test_that("umxPower works", {
 	# Explore power across N with r @ .3
 	umxPower(m1, "X_with_Y", explore = TRUE)
 
-	# Test using cor.test doing the same thing.
-	pwr::pwr.r.test(r = .3, n = 90)
-	#           n = 90
-	#           r = 0.3
-	#   sig.level = 0.05
-	#       power = 0.827
-	# alternative = two.sided
 
 	# =====================================
 	# = Examples with method = empirical  =
@@ -78,10 +71,9 @@ test_that("umxPower works", {
 
 	# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
 	# note: Can't use method = "ncp" with search)
-	expect_error(umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE),
-		regex = "Cannot generate data with trueModel" # rows in the data do not match the number of rows requested 
+	expect_error(
+		umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
 	)
-	
+# Definition variable(s) found, but the number of rows in the data do not match the number of rows requested for data generation" # rows in the data do not match the number of rows requested
 	# note: Can't use method = "ncp" with search)
-	expect_error(umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE), "Cannot generate data with trueModel 'ACE'")
 })
