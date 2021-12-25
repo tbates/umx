@@ -210,7 +210,7 @@ test_that("umxGxE", {
 test_that("umxGxE_window", {
 	require(umx)
 	data(twinData) # Dataset of Australian twins, built into OpenMx
-	twinData = twinData[!is.na(twinData[mod]), ]
+	twinData = twinData[!is.na(twinData["age"]), ]
 	mzData = subset(twinData, zygosity == "MZFF")
 	dzData = subset(twinData, zygosity == "DZFF")
 

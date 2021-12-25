@@ -3654,6 +3654,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' @param setLabels Whether to set the labels (default =  FALSE)
 #' @param optimizer optional to set the optimizer.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE
+#' @param summary Whether to print summary or not (default = !umx_set_silent() )
 #' @param comparison Comparison model (will be used to drive umxCompare() after umxRun
 #' @return - [mxModel()]
 #' @family Advanced Model Building Functions
