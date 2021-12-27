@@ -16,11 +16,11 @@ umxDiscTwin(
 )
 }
 \arguments{
-\item{selVar}{trait selected for discrepant twin scores.}
+\item{selVar}{Trait selected for discrepant twin scores.}
 
 \item{var2}{trait 2 (outcome trait)}
 
-\item{popData, }{Single people dataframe}
+\item{popData}{General population dataframe}
 
 \item{mzData}{The MZ dataframe}
 
@@ -69,7 +69,7 @@ print(tmp, digits = 3)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxDoC]{umxDoC()}}
+\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxDoCdiff]{umxDoCdiff()}}
 }
 
 Other Twin Modeling Functions: 
@@ -78,6 +78,7 @@ Other Twin Modeling Functions:
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
 \code{\link{umxCP}()},
+\code{\link{umxDoCdiff}()},
 \code{\link{umxDoCp}()},
 \code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},

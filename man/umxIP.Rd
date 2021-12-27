@@ -98,7 +98,7 @@ variable, which is manifested in the measured phenotypes.
 
 The following figure shows the IP model diagrammatically:
 
-\if{html}{\figure{IP.png}{options: width=50\% alt="Figure: IP.png"}}
+\if{html}{\figure{IP.svg}{options: width=50\% alt="Figure: IP model"}}
 \if{latex}{\figure{IP.pdf}{options: width=7cm}}
 
 As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.
@@ -212,6 +212,7 @@ Other Twin Modeling Functions:
 \code{\link{umxACE}()},
 \code{\link{umxCP}()},
 \code{\link{umxDiscTwin}()},
+\code{\link{umxDoCdiff}()},
 \code{\link{umxDoCp}()},
 \code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},

@@ -1,3 +1,63 @@
+#' MZ differences method for testing evidence for causality
+#'
+#' @description
+#' `umxDocDiff` implements the methods, e.g. De Moor (2008), in which MZ differences on a variable
+#' `x` asserted to be causal of an outcome variable `y` are tested for association with differences on y.
+#'
+#' **Example output from `umxDocDiff`**:
+#' \if{html}{\figure{DiffMZ.png}{options: width=50% alt="Figure: MZ differences model"}}
+#' \if{latex}{\figure{DiffMZ.pdf}{options: width=7cm}}
+#'
+#' @param x Presumed causal variable, e.g. "effort"
+#' @param y Presumed caused outcome, e.g. "testScore"
+#' @param data Dataframe containing the twin data.
+#' @param sep The separator "_T" used to make twin var names frrmo x and y.
+#' @param zygosity The column containnig "zygosity" data
+#' @param zygList The MZ zygosity codes c("MZFF", "MZMM")
+#' @param r2pos Where to locate the R2 label (defaul = c(x=-2,y=3))
+#' @return - Graph for decorating
+#' @export
+#' @family Twin Modeling Functions
+#' @seealso - [umxDoC()], [umxDiscTwin()]
+#' @references - De Moor, M. H., Boomsma, D. I., Stubbe, J. H., Willemsen, G., & de Geus, E. J. (2008). Testing causality in the association between regular exercise and symptoms of anxiety and depression. Archives of General Psychiatry, 65(8), 897-905. \doi{10.1001/archpsyc.65.8.897}.
+#' @md
+#' @examples
+#' data(twinData)
+#' umxDoCdiff(x = "ht", "wt", r2pos=c(x=-2,y=3), data = twinData, sep = "")
+umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), r2pos = list(x=-2,y=3)) {
+	# 1. Expand names for ease of use
+	# x = "SOSeffort"
+	# y = "IQ"
+	# data = jtf_twin
+
+	x_T1 = paste0(x, sep, 1); x_T2 = paste0(x, sep, 2)
+	y_T1 = paste0(y, sep, 1); y_T2 = paste0(y, sep, 2)
+
+	# 2. Scale x and y
+	df = umx_scale_wide_twin_data(varsToScale= c(x, y), sep = sep, data= data, twins = 1:2)	
+
+	# 3. Make diff scores
+	df$xDiff = df[, x_T1] - df[, x_T2]
+	df$yDiff = df[, y_T1] - df[, y_T2]
+	validRows = df[, zygosity] %in% zygList
+	mzData = df[validRows, ]
+	
+	# 4. Plot	
+	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData) + geom_jitter() # + geom_count() 
+	# p = p + labs(title= "MZ twin intra-pair differences model", x = paste0(x, " \u0394 (Twin 1 - Twin 2)"), y = paste0(y, " \u0394 (Twin 1 - Twin 2)"))
+	p = p + labs(title= "MZ twin intra-pair differences model")
+	p = p + labs(x = paste(x, " difference (Twin1 - Twin2)")) 
+	p = p + labs(y = paste(y, " difference (Twin1 - Twin2)"))
+	p = p + geom_smooth(method = "lm")
+	p = p+ geom_abline(slope = 1, intercept = 0, linetype="dotdash", color = "grey")
+	
+	# model = lm(yDiff ~ xDiff, data = mzData)
+	R2 = round(summary(lm(yDiff ~ xDiff, data = mzData))$r.squared, 3)
+	p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = paste("italic(R) ^ 2 == ", R2), parse = TRUE, family = "Times")
+	# p = p + hrbrthemes::theme_ipsum()
+	print(p)
+}
+
 #' Build and run a 2-group Direction of Causation twin models. (BETA!)
 #'
 #' @description
@@ -18,9 +78,9 @@
 #' \if{html}{\figure{DiscordantTwins.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
 #' \if{latex}{\figure{DiscordantTwins.pdf}{options: width=7cm}}
 #' 
-#' @param selVar trait selected for discrepant twin scores.
+#' @param selVar Trait selected for discrepant twin scores.
 #' @param var2 trait 2 (outcome trait)
-#' @param popData, Single people dataframe
+#' @param popData General population dataframe 
 #' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
 #' @param out Whether to return the table or the ggplot (if you want to adumbrate it)
@@ -29,7 +89,7 @@
 #' @return - table of results
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxDoC()]
+#' @seealso - [umxDoC()], [umxDoCdiff()]
 #' @references - McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' @md
 #' @examples

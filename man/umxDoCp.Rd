@@ -79,6 +79,7 @@ Other Twin Modeling Functions:
 \code{\link{umxACE}()},
 \code{\link{umxCP}()},
 \code{\link{umxDiscTwin}()},
+\code{\link{umxDoCdiff}()},
 \code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxEbiv}()},

@@ -2433,9 +2433,11 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #'
 #' [plot()] produces SEM diagrams in graphviz format, and relies on [DiagrammeR()] (or a 
 #' graphviz application) to create the image. 
-#' \emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser. 
+#'
+#' \emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser. Other options include pdf SVG etc. 
 #' 
-#' If you use umx_set_plot_format("graphviz"), they will open in a graphviz helper app (if installed).
+#' If you use `umx_set_plot_format("graphviz")`, graphs will open in a graphviz helper app (if installed).
+#' 
 #' The commercial application \dQuote{OmniGraffle} is great for editing these images.
 #' On unix and windows, [plot()] will create a pdf and open it in your default pdf reader.
 #' 

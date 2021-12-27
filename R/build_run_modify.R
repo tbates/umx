@@ -88,8 +88,8 @@
 #' @importFrom DiagrammeR DiagrammeR
 #' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
-#' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon geom_bar geom_errorbar
-#' @importFrom ggplot2 element_text element_blank expand_limits aes
+#' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon geom_bar geom_errorbar geom_jitter geom_smooth geom_abline
+#' @importFrom ggplot2 element_text element_blank expand_limits aes annotate
 #' @importFrom ggplot2 position_dodge xlab ylab ggtitle theme_bw scale_fill_hue 
 # scale_y_continuous
 #' @importFrom cowplot draw_label plot_grid ggdraw 
@@ -2847,7 +2847,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' 
 #' The following figure shows the IP model diagrammatically:
 #'
-#' \if{html}{\figure{IP.png}{options: width=50% alt="Figure: IP.png"}}
+#' \if{html}{\figure{IP.svg}{options: width=50% alt="Figure: IP model"}}
 #' \if{latex}{\figure{IP.pdf}{options: width=7cm}}
 #'
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.

@@ -120,6 +120,7 @@ Other Twin Modeling Functions:
 \code{\link{umxACE}()},
 \code{\link{umxCP}()},
 \code{\link{umxDiscTwin}()},
+\code{\link{umxDoCdiff}()},
 \code{\link{umxDoCp}()},
 \code{\link{umxDoC}()},
 \code{\link{umxGxEbiv}()},

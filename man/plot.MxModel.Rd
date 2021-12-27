@@ -55,10 +55,12 @@
 \description{
 \code{\link[=plot]{plot()}} produces SEM diagrams in graphviz format, and relies on \code{\link[=DiagrammeR]{DiagrammeR()}} (or a
 graphviz application) to create the image.
-\emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser.
 }
 \details{
-If you use umx_set_plot_format("graphviz"), they will open in a graphviz helper app (if installed).
+\emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser. Other options include pdf SVG etc.
+
+If you use \code{umx_set_plot_format("graphviz")}, graphs will open in a graphviz helper app (if installed).
+
 The commercial application \dQuote{OmniGraffle} is great for editing these images.
 On unix and windows, \code{\link[=plot]{plot()}} will create a pdf and open it in your default pdf reader.
 
