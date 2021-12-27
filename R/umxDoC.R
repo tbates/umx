@@ -7,7 +7,7 @@
 #' `umxDiscTwin` compares the correlation of x and y in the general sample and in the MZ and DZ samples selected for being  
 #' discordant on trait 1.
 #' 
-#' If a trait x is causal, then the assoociation of x with y is expected to be equally large in all threee samples.
+#' If a trait x is causal, then the association of x with y is expected to be equally large in all three samples.
 #' If the association in the population is due to confounding (either genetic or shared environmental confounding),
 #' then in discordant MZ twins the association will reduce to zero or non-significance.
 #' 

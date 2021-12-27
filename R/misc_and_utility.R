@@ -2477,7 +2477,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' The function outputs a nice table of annual returns, formats the total using a user-settable currency `symbol`. Can also `report` using a web table.
 #' 
 #' *notes*: Graham valuation: fair P/E = 9 + (1.5 * growth%). e.g.  $INTEL fair P/E = 9+.5*3 = 10.5 up to  9+2*10 = 29
-#' Can move the weighting beteeen a conservative .5 and an optimistic 2 (in terms of how long the growth will last and how low the hurdle rate is)
+#' Can move the weighting between a conservative .5 and an optimistic 2 (in terms of how long the growth will last and how low the hurdle rate is)
 #' 
 #' 
 #' @param principal The initial investment at time 0.
