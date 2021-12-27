@@ -2173,12 +2173,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @export
 #' @family Twin Modeling Functions
 #' @md
-#' @references 
-#' Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
+#' @references - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
 #' *Behavior Genetics*, **19**, 63-78. doi{10.1007/BF01065884}.
-#' 
-#' Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
+#' * Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 #' to Handle Missing Covariate Data in Twin Research : With an Application to
 #' Educational Achievement Data. *Behavior Genetics*, **46**, 583-95. doi{10.1007/s10519-015-9771-1}.
 #'
@@ -2216,12 +2214,11 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ===========================================================================
 #' # = A bivariate example (need a dataset with a VIABLE COVARIATE to do this) =
 #' # ===========================================================================
-#' selDVs  = c("ht", "wt") # Set the DV
-#' selCovs = c("income") # Set the COV
+#' selDVs  = "wt" # Set the DVs
+#' selCovs = "ht" # Set the COV
 #' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", sep = 1:2)
-#' # 80 rows so example runs fast on CRAN
-#' mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
-#' dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+#' mzData = subset(twinData, zygosity == "MZFF")
+#' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
 #'    dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE
 #' )
@@ -2309,10 +2306,10 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 		CovMeanStarts = umx_means(mzData[, selCovs[1:nCov], drop = FALSE], ordVar = 0, na.rm = TRUE)
 		meanStarts    = c(DVmeanStarts, DVmeanStarts, CovMeanStarts, CovMeanStarts)
 	} else {
-		stop("Currently, means must be equated... why?")
+		stop("Sorry, currently, means must be equated...")
 	}
 	
-	# make beta labels
+	# Make beta labels
 	betaLabels = paste0(rep(paste0("var", 1:nDV), each = nCov), rep(paste0("beta", 1:nCov), times = nDV))
 	betaLabels = matrix(betaLabels, nrow = nCov, ncol  = nDV, byrow = FALSE)
 
@@ -2379,14 +2376,15 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 		mxAlgebra(name = "bCovB"  ,  t(beta) %*% CovB),
 		mxAlgebra(name = "CovWBb" ,              CovWB %*% beta),
 		mxAlgebra(name = "CovBb"  ,               CovB %*% beta),
+
 		# Algebra for expected variance/covariance matrix #in MZ twins
-		
 		mxAlgebra(name = "expCovMZ", dimnames = list(names(mzData), names(mzData)), expression = rbind(
 			cbind(ACE + bCovWBb, AC  + bCovBb , bCovWB, bCovB),
 			cbind(AC  + bCovBb , ACE + bCovWBb, bCovB , bCovWB),
 			cbind(       CovWBb,        CovBb , CovWB , CovB),
 			cbind(       CovBb ,        CovWBb, CovB  , CovWB))
 		),
+
 		# Algebra for expected variance/covariance matrix #in DZ twins
 		mxAlgebra(name = "expCovDZ", dimnames = list(names(dzData), names(dzData)), expression = rbind(
 			cbind(ACE + bCovWBb, hAC + bCovBb , bCovWB, bCovB),
@@ -2434,7 +2432,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	if(addStd){
 		newTop = mxModel(model$top,
 			mxMatrix(name  = "Iden", "Iden", nDV, nDV), # nDV Identity matrix
-			mxAlgebra(name = "Vtot", A + C+ E),       # Total variance
+			mxAlgebra(name = "Vtot", A + C+ E),         # Total variance
 			mxAlgebra(name = "SD", solve(sqrt(Iden * Vtot))), # Total variance
 			mxAlgebra(name = "a_std", SD %*% a), # standardized a
 			mxAlgebra(name = "c_std", SD %*% c), # standardized c
@@ -2467,7 +2465,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' 
 #' Common-pathway path diagram:
 #' 
-#' \if{html}{\figure{CP.png}{options: width=50% alt="Figure: CP.png"}}
+#' \if{html}{\figure{CP.svg}{options: width=50% alt="Figure: CP model"}}
 #' \if{latex}{\figure{CP.pdf}{options: width=7cm}}
 #' 
 #' As can be seen, each phenotype also by default has A, C, and E influences specific to that phenotype.

@@ -27,7 +27,7 @@ umxRun(
 
 \item{setLabels}{Whether to set the labels (default =  FALSE)}
 
-\item{summary}{Whether to print summary oor not (default = !umx_set_silent() )}
+\item{summary}{Whether to print summary or not (default = !umx_set_silent() )}
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE}
 

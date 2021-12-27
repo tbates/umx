@@ -3315,8 +3315,10 @@ print.reliability <- function (x, digits = 4, ...){
 #'
 #' @description Just a helper to multiply radians by 180 and divide by \eqn{\pi} to get degrees.
 #' 
-#' *note*: R's trig functions, e.g. [sin()] use Radians for input! There are \eqn{2\pi} 
-#' radians in a circle. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
+#' *note*: R's trig functions, e.g. [sin()] use Radians for input! 
+#' 
+#' There are \eqn{2\pi} radians in a circle.
+#' 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
 #'
 #' @param rad The value in Radians you wish to convert
 #' @return - value in degrees
@@ -3326,18 +3328,22 @@ print.reliability <- function (x, digits = 4, ...){
 #' @references [https://en.wikipedia.org/wiki/Radian](https://en.wikipedia.org/wiki/Radian)
 #' @md
 #' @examples
+# Has test
 #' rad2deg(pi) #180 degrees
 rad2deg <- function(rad) { rad * 180/pi }
 
 #' Convert Degrees to Degrees 
 #'
 #' @description A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi}
-#' in a circle), so \eqn{deg x 180/\pi} to get radians.
+#' in a circle).
 #' 
 #' *note*: R's trig functions, e.g. [sin()] use Radians for input! 
 #' 
-#' 180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
-#'
+#' The formula is radians = \eqn{deg x 180/\pi}. 
+#' 
+#' * 180 Degrees is equal to \eqn{\pi} radians.
+#' * 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
+#' 
 #' @param deg The value in degrees you wish to convert to radians
 #' @return - value in radians
 #' @export
@@ -3346,6 +3352,7 @@ rad2deg <- function(rad) { rad * 180/pi }
 #' @references [https://en.wikipedia.org/wiki/Radian](https://en.wikipedia.org/wiki/Radian)
 #' @md
 #' @examples
+# Has test
 #' deg2rad(180) == pi # TRUE!
 deg2rad <- function(deg) { deg * pi/ 180 }
 
@@ -4105,6 +4112,7 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 #' @md
 #' @examples
 #' \dontrun{
+# has test
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)

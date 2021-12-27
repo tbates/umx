@@ -7,6 +7,11 @@
 context("umx_ data helper functions")
 
 test_that("umx_scale works for different inputs", {
+	expect_equal(rad2deg(pi), 180)
+	expect_equal(deg2rad(180),pi)
+})
+
+test_that("umx_scale works for different inputs", {
 	# ==============================
 	# = no error on expected input =
 	# ==============================
@@ -28,16 +33,16 @@ test_that("umx_scale works for different inputs", {
 test_that("umx_time", {
 	require(umx)
 	umx_time('stop') # alert user stop called when not yet started... 
-	umx_time('stop')
-	umx_time('start')
+	expect_named(umx_time('stop')) # elapsed time: 13.24 sec
+	expect_named(umx_time('start'))
 	data(demoOneFactor)
-	latents  = c("G")
+	latents   = c("G")
 	manifests = names(demoOneFactor)
-	myData = mxData(cov(demoOneFactor), type = "cov", numObs=500)
+	myData    = mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 	m1 = umxRAM("umx_time_example", data = myData,
 		umxPath(from = latents, to = manifests),
-		umxPath(var = manifests),
-		umxPath(var = latents, fixedAt = 1)
+		umxPath(var  = manifests),
+		umxPath(var  = latents, fixedAt = 1)
 	)
 	umx_time(m1) # report time from mxModel
 	m2 = umxRun(m1)

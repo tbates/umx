@@ -1355,17 +1355,17 @@ umxSummary.MxModelACE <- umxSummaryACE
 
 #' Present results of a twin ACE-model with covariates in table and graphical forms.
 #'
-#' Summarize a Cholesky model with covariates, as returned by [umxACEcov()]
+#' Summarize a Cholesky model with random-effects covariates, as returned by [umxACEcov()]
 #'
 #' @aliases umxSummary.MxModelACEcov
-#' @param model a [umxACEcov()] model to summarize
-#' @param digits round to how many digits (default = 2)
+#' @param model A [umxACEcov()] model to summarize
+#' @param digits Round to how many digits (default = 2)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
-#' @param extended how much to report (FALSE)
-#' @param showRg = whether to show the genetic correlations (FALSE)
-#' @param std = whether to show the standardized model (TRUE)
-#' @param comparison you can run mxCompare on a comparison model (NULL)
+#' @param extended How much to report (FALSE)
+#' @param showRg = Whether to show the genetic correlations (FALSE)
+#' @param std = Whether to show the standardized model (TRUE)
+#' @param comparison You can run mxCompare on a comparison model (NULL)
 #' @param CIs Whether to show Confidence intervals if they exist (TRUE)
 #' @param zero.print How to show zeros (".")
 #' @param report If "html", then open an html table of the results.
@@ -1382,13 +1382,13 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' data(twinData)
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
-#' m1 = umxACEcov(selDVs = "bmi", selCovs = "wt", dzData = dzData, mzData = mzData, sep="")
-#' umxSummaryACE(m1, file = NA)
-#' umxSummaryACE(m1, file = "name", std = TRUE)
-#' stdFit = umxSummaryACE(m1, returnStd = TRUE)
+#' m1 = umxACEcov(selDVs = c("bmi", "wt"), selCovs = "ht", dzData = dzData, mzData = mzData, sep="")
+#' umxSummaryACEcov(m1, file = NA)
+#' umxSummaryACEcov(m1, file = "name", std = TRUE)
+#' stdFit = umxSummary(m1, returnStd = TRUE)
 #' }
 umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, ...) {
-	umx_msg("beta function!! Better to use umxACE with covariates in the meaans, IMHO.")
+	umx_msg("Beta function!! Better to use umxACE() with covariates in the means, IMHO.")
 	report   = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	
@@ -1401,7 +1401,11 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 	} else {
 		umx_has_been_run(model, stop = TRUE)
 		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
-		selDVs = xmu_twin_get_var_names(model, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE)
+		# includes covs
+		# selDVs = xmu_twin_get_var_names(model, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE)
+		
+		# just the DVs, not the covs
+		selDVs = dimnames(m1$top$a)[[1]]
 		nDV    = length(selDVs)
 
 		# Calculate standardized variance components
@@ -1412,7 +1416,7 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 		C    = mxEval(top.C, model);
 		E    = mxEval(top.E, model);
 		Vtot = A + C + E; # Total variance
-		Iden = diag(nDV); # nDV Identity matrix
+		Iden = diag(nDV) # nDV Identity matrix
 		SD   = solve(sqrt(Iden * Vtot)) # Inverse of diagonal matrix of standard deviations
 		# (same as "(\sqrt(Iden.Vtot))~"
 
@@ -2776,7 +2780,6 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	}
 
 	if(std){model = umx_standardize(model)}
-
 	# Relies on 'a' not having its dimnames stripped off...
 	if(model$MZ$data$type == "raw"){
 		selDVs = dimnames(model$top$a)[[1]]
@@ -2786,12 +2789,11 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		stop("ACEcov has to have raw data...")
 	}
 
-	nVar    = length(selDVs)/2;
-	selDVs  = selDVs[1:(nVar)]
-	out     = "" ;
-	latents = c();
-
-	varCount = length(selDVs)
+	varCount = length(selDVs)*2
+	nVar     = length(selDVs)
+	selDVs   = selDVs[1:(nVar)]
+	out      = "" ;
+	latents  = c();
 	parameterKeyList = omxGetParameters(model);
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
@@ -2801,8 +2803,8 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
 			show    = TRUE
 			search  = '([ace])_r([0-9]+)c([0-9]+)'
-			from    = sub(search, '\\1\\3', thisParam, perl = T); # a c or e
-			target  = as.numeric(sub(search, '\\2', thisParam, perl = T)); # pull the row
+			from    = sub(search, '\\1\\3', thisParam, perl = TRUE); # a c or e
+			target  = as.numeric(sub(search, '\\2', thisParam, perl = TRUE)); # pull the row
 			target  = selDVs[target]
 			latents = append(latents, from)
 		} else { # means probably
@@ -2811,25 +2813,24 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 			} else {
 				show = FALSE
 			}
-			selDVs
 			from   = thisParam; # "one"
-			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=T)
+			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=TRUE)
 		}
 		if(show){
 			out = paste0(out, from, " -> ", target, " [label = \"", value, "\"]", ";\n")
 		}
 	}
-	preOut = "\t# Latents\n"
+	preOut  = "\t# Latents\n"
 	latents = unique(latents)
 	for(var in latents) {
 	   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
 	}
 
 	preOut = paste0(preOut, "\n\t# Manifests\n")
-	for(var in selDVs[1:varCount]) {
+	for(var in selDVs) {
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
-	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:varCount], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
+	rankVariables = paste("\t{rank = same; ", paste(selDVs, collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
 	# grep('a', latents, value=T)
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = T), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = T), collapse = "; "), "};\n") # {rank=min; c1; e1}
