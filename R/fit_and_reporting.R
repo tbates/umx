@@ -1405,7 +1405,7 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 		# selDVs = xmu_twin_get_var_names(model, source = "expCovMZ", trim = TRUE, twinOneOnly = TRUE)
 		
 		# just the DVs, not the covs
-		selDVs = dimnames(m1$top$a)[[1]]
+		selDVs = dimnames(model$top$a)[[1]]
 		nDV    = length(selDVs)
 
 		# Calculate standardized variance components
