@@ -116,25 +116,27 @@ m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "
 # ===========================================================================
 # = A bivariate example (need a dataset with a VIABLE COVARIATE to do this) =
 # ===========================================================================
-selDVs  = c("ht", "wt") # Set the DV
-selCovs = c("income") # Set the COV
+selDVs  = "wt" # Set the DVs
+selCovs = "ht" # Set the COV
 selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", sep = 1:2)
-# 80 rows so example runs fast on CRAN
-mzData = subset(twinData, zygosity == "MZFF", selVars)[1:80, ]
-dzData = subset(twinData, zygosity == "DZFF", selVars)[1:80, ]
+mzData = subset(twinData, zygosity == "MZFF")
+dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
    dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE
 )
 }
 }
 \references{
-Neale, M. C., & Martin, N. G. (1989). The effects of age, sex,
+\itemize{
+\item Neale, M. C., & Martin, N. G. (1989). The effects of age, sex,
 and genotype on self-report drunkenness following a challenge dose of alcohol.
 \emph{Behavior Genetics}, \strong{19}, 63-78. doi{10.1007/BF01065884}.
-
-Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
+}
+\itemize{
+\item Schwabe, I., Boomsma, D. I., Zeeuw, E. L., & Berg, S. M. (2015). A New Approach
 to Handle Missing Covariate Data in Twin Research : With an Application to
 Educational Achievement Data. \emph{Behavior Genetics}, \strong{46}, 583-95. doi{10.1007/s10519-015-9771-1}.
+}
 }
 \seealso{
 Other Twin Modeling Functions: 

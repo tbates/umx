@@ -21,15 +21,15 @@ umxSummaryACEcov(
 )
 }
 \arguments{
-\item{model}{a \code{\link[=umxACEcov]{umxACEcov()}} model to summarize}
+\item{model}{A \code{\link[=umxACEcov]{umxACEcov()}} model to summarize}
 
-\item{digits}{round to how many digits (default = 2)}
+\item{digits}{Round to how many digits (default = 2)}
 
-\item{showRg}{= whether to show the genetic correlations (FALSE)}
+\item{showRg}{= Whether to show the genetic correlations (FALSE)}
 
-\item{std}{= whether to show the standardized model (TRUE)}
+\item{std}{= Whether to show the standardized model (TRUE)}
 
-\item{comparison}{you can run mxCompare on a comparison model (NULL)}
+\item{comparison}{You can run mxCompare on a comparison model (NULL)}
 
 \item{CIs}{Whether to show Confidence intervals if they exist (TRUE)}
 
@@ -41,7 +41,7 @@ umxSummaryACEcov(
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
-\item{extended}{how much to report (FALSE)}
+\item{extended}{How much to report (FALSE)}
 
 \item{...}{Other parameters to control model summary}
 }
@@ -51,7 +51,7 @@ umxSummaryACEcov(
 }
 }
 \description{
-Summarize a Cholesky model with covariates, as returned by \code{\link[=umxACEcov]{umxACEcov()}}
+Summarize a Cholesky model with random-effects covariates, as returned by \code{\link[=umxACEcov]{umxACEcov()}}
 }
 \examples{
 \dontrun{
@@ -59,10 +59,10 @@ require(umx)
 data(twinData)
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
-m1 = umxACEcov(selDVs = "bmi", selCovs = "wt", dzData = dzData, mzData = mzData, sep="")
-umxSummaryACE(m1, file = NA)
-umxSummaryACE(m1, file = "name", std = TRUE)
-stdFit = umxSummaryACE(m1, returnStd = TRUE)
+m1 = umxACEcov(selDVs = c("bmi", "wt"), selCovs = "ht", dzData = dzData, mzData = mzData, sep="")
+umxSummaryACEcov(m1, file = NA)
+umxSummaryACEcov(m1, file = "name", std = TRUE)
+stdFit = umxSummary(m1, returnStd = TRUE)
 }
 }
 \references{

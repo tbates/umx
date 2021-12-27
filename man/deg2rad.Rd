@@ -16,11 +16,15 @@ deg2rad(deg)
 }
 \description{
 A helper to convert degrees (360 in  a circle) to Rad (\eqn{2\pi}
-in a circle), so \eqn{deg x 180/\pi} to get radians.
+in a circle).
 
 \emph{note}: R's trig functions, e.g. \code{\link[=sin]{sin()}} use Radians for input!
 
-180 Degrees is equal to \eqn{\pi} radians. 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
+The formula is radians = \eqn{deg x 180/\pi}.
+\itemize{
+\item 180 Degrees is equal to \eqn{\pi} radians.
+\item 1 Rad = \eqn{180/\pi} degrees = ~ 57.296 degrees.
+}
 }
 \examples{
 deg2rad(180) == pi # TRUE!
