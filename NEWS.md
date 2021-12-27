@@ -1,6 +1,8 @@
 ## dev umx 4.11.00
 * NEW: `umxDiscTwin` implements the discrepant twin method of testing for causal effects.
 * NEW: `umxDiscTwin` graph for publication.
+* FIXED: `umxACEcov` plot and summary working (needed to filter covs from DVs)
+* TRY: `umxCP` help `.svg` figure instead of `.png`` (smaller)
 * IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control
 * IMPROVED: `umxGxEwindow`: removes un-needed columns
 * IMPROVED: `umxRun`: gained `summary` control
