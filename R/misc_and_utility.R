@@ -2816,17 +2816,27 @@ plot.percent <- function(x, ...) {
 	# x range	= -100 (%) to +500 (%)?
 	# y = -100 to +200?
 	# y range	= -100 to +200?
-	p = ggplot(data.frame(x = c(-90, 0)), aes(x))
-	lab = paste0(round(percentChange*100, 2), "% off = ", round(percent_to_reverse * 100, 2), "% on", sep = "")
+	if(percentChange>0){
+		p = ggplot(data.frame(x = c(0, 90)), aes(x))
+		lab = paste0(round(percentChange*100, 2), "% on = ", round(percent_to_reverse * 100, 2), "% off", sep = "")
+		labXpos = 50
+		labYpos = -20
+		logY = FALSE
+	} else {
+		p = ggplot(data.frame(x = c(-90, 0)), aes(x))
+		lab = paste0(round(percentChange*100, 2), "% off = ", round(percent_to_reverse * 100, 2), "% on", sep = "")
+		labXpos = -50
+		labYpos = 700
+	}
 	if(is.null(logY)||!(logY)){
 		p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10)
-		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = -50, y = 700, color= "grey")
+		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = labYpos, color= "grey")
 		# hor & vert
 		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100, y=percent_to_reverse*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
 		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y=-10, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
 	} else {
 		p = p + ggplot2::scale_y_continuous(n.breaks = 8, trans="log10") + ggplot2::scale_x_continuous(n.breaks = 10) 
-		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = -50, y = log10(700), color= "grey")
+		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = log10(labYpos), color= "grey")
 		# hor & vert
 		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100             , y= log10(percent_to_reverse*100), yend= log10(percent_to_reverse*100), alpha=.5, color = "lightgrey")
 		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y= -10, yend= log10(percent_to_reverse*100), alpha= .5, color = "lightgrey")
@@ -4021,7 +4031,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @examples
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
-#' umx_print(mtcars[1,1:2], digits = 2, caption="Hi: I'm the caption!")
+#' umx_print(mtcars[1,1:2], digits = 2, caption = "Hi: I'm the caption!")
 #' \dontrun{
 #' umx_print(mtcars[1:10,], file = "html")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
