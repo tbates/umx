@@ -99,6 +99,8 @@
 # pwr.r.test
 
 utils::globalVariables(c(
+	"xDiff",
+	"yDiff",
     'ci.lower',
 	'ci.upper',
 	'r',

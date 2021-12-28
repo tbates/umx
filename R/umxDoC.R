@@ -15,6 +15,8 @@
 #' @param zygosity The column containnig "zygosity" data
 #' @param zygList The MZ zygosity codes c("MZFF", "MZMM")
 #' @param r2pos Where to locate the R2 label (defaul = c(x=-2,y=3))
+#' @param axislim = clip x any axes to range, e.g c(-3,-3)
+#' @param digits Rounding for beta (def2)
 #' @return - Graph for decorating
 #' @export
 #' @family Twin Modeling Functions
@@ -24,7 +26,7 @@
 #' @examples
 #' data(twinData)
 #' umxDoCdiff(x = "ht", "wt", r2pos=c(x=-2,y=3), data = twinData, sep = "")
-umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), r2pos = list(x=-2,y=3)) {
+umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), r2pos = list(x=-2,y=3),  axislim = NA, digits=2) {
 	# 1. Expand names for ease of use
 	# x = "SOSeffort"
 	# y = "IQ"
@@ -43,17 +45,30 @@ umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = 
 	mzData = df[validRows, ]
 	
 	# 4. Plot	
-	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData) + geom_jitter() # + geom_count() 
+	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData)  + geom_jitter(shape="circle open") # + geom_count(shape="circle open") 
 	# p = p + labs(title= "MZ twin intra-pair differences model", x = paste0(x, " \u0394 (Twin 1 - Twin 2)"), y = paste0(y, " \u0394 (Twin 1 - Twin 2)"))
 	p = p + labs(title= "MZ twin intra-pair differences model")
-	p = p + labs(x = paste(x, " difference (Twin1 - Twin2)")) 
-	p = p + labs(y = paste(y, " difference (Twin1 - Twin2)"))
+	p = p + labs(x = paste("Difference in ", x, " (T1 - T2)")) 
+	p = p + labs(y = paste("Difference in ", y, " (T1 - T2)"))
 	p = p + geom_smooth(method = "lm")
 	p = p+ geom_abline(slope = 1, intercept = 0, linetype="dotdash", color = "grey")
+	p = p+ geom_hline(yintercept = 0, linetype="dotted", color = "grey")
+	p = p+ geom_vline(xintercept = 0, linetype="dotted", color = "grey")
+	if(length(axislim)>1 && !is.na(axislim)){
+		p = p + coord_cartesian(xlim = axislim, ylim = axislim, expand =FALSE)
+	}
 	
 	# model = lm(yDiff ~ xDiff, data = mzData)
-	R2 = round(summary(lm(yDiff ~ xDiff, data = mzData))$r.squared, 3)
-	p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = paste("italic(R) ^ 2 == ", R2), parse = TRUE, family = "Times")
+	tmp    = summary(lm(yDiff ~ xDiff, data = mzData))
+	beta   = tmp$coefficients["xDiff", "Estimate"]
+	SE     = tmp$coefficients["xDiff", "Std. Error"]
+	
+	pvalue = tmp$coefficients["xDiff", "Pr(>|t|)"]
+	R2     = round(tmp$r.squared, 3)
+	blurb = paste0(umxAPA(beta, se=SE), ", p", umxAPA(pvalue))
+	p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = blurb, family = "Times")
+	# p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = paste("italic(R) ^2 == ", R2), parse = TRUE, family = "Times")
+	p = p + theme_bw()
 	# p = p + hrbrthemes::theme_ipsum()
 	print(p)
 }
