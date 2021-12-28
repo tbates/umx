@@ -11,7 +11,9 @@ umxDoCdiff(
   sep = "_T",
   zygosity = "zygosity",
   zygList = c("MZFF", "MZMM"),
-  r2pos = list(x = -2, y = 3)
+  r2pos = list(x = -2, y = 3),
+  axislim = NA,
+  digits = 2
 )
 }
 \arguments{
@@ -28,6 +30,10 @@ umxDoCdiff(
 \item{zygList}{The MZ zygosity codes c("MZFF", "MZMM")}
 
 \item{r2pos}{Where to locate the R2 label (defaul = c(x=-2,y=3))}
+
+\item{axislim}{= clip x any axes to range, e.g c(-3,-3)}
+
+\item{digits}{Rounding for beta (def2)}
 }
 \value{
 \itemize{

@@ -7,11 +7,11 @@
 libs(...)
 }
 \arguments{
-\item{...}{library names as  string}
+\item{...}{library names as strings, e.g. "pwr"}
 }
 \value{
 \itemize{
-\item \code{\link[=libs]{libs()}}
+\item nothing.
 }
 }
 \description{
@@ -26,7 +26,7 @@ remove.packages()
 }
 \seealso{
 \itemize{
-\item \code{\link[=library]{library()}}. \code{\link[=remove.packages]{remove.packages()}}
+\item \code{\link[=library]{library()}}, \code{\link[=install.packages]{install.packages()}}, \code{\link[=remove.packages]{remove.packages()}}
 }
 
 Other Miscellaneous Utility Functions: 
