@@ -105,11 +105,11 @@
 #' @description
 #' `libs` allows loading multiple libraries in one call
 #'
-#' @param ... library names as  string
-#' @return - [libs()]
+#' @param ... library names as strings, e.g. "pwr"
+#' @return - nothing.
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - [library()]. [remove.packages()]
+#' @seealso - [library()], [install.packages()], [remove.packages()]
 #' @md
 #' @examples
 #' \dontrun{
