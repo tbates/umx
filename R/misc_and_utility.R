@@ -2538,6 +2538,12 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #'
 fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
 	report = match.arg(report)
+	if(principal==0){
+		caption= paste0("Compounding ", bucks(deposits, symbol, cat=TRUE), " deposits over ", yrs, " years at ", interest, "% interest with ", inflate*100, "% inflation.")
+	} else {
+		caption= paste0("Compounding ", bucks(principal, symbol, cat=TRUE), " and ", bucks(deposits, symbol, cat=TRUE), " annual deposits over ", yrs, " years at ", interest, "% interest with ", inflate*100, "% inflation.")
+	}
+
 	if(inflate != 0){
 		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+inflate)^c(1:(yrs-1)))
 	}else{
@@ -2553,10 +2559,6 @@ fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.
 	# 1. compute compounding rate per unit time n (allowing for zero interest so 1.0)
 	rate = ifelse(interest==0, 1, 1+(interest/n))
 
-	# make a pretty table
-	# n    = n    # units per year
-	# rate = rate # rate per unit time (n)
-	
 	tableOut = data.frame(Year = NA, Deposits = NA, Interest = NA, Total_Deposits = NA, Total_Interest = NA, Total = scales::dollar(principal, prefix = symbol, largest_with_cents = 0))
 	balance  = principal
 	totalDeposits = 0
@@ -2578,7 +2580,9 @@ fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.
 		tableOut = rbind(tableOut, thisRow)
 	}
 	if(table){
-		umx_print(tableOut, justify = "right", report=report)
+		# principal = 0, deposits = 0, inflate = 0, interest = 0.05, yrs
+		umx_msg(caption)
+		umx_print(tableOut, justify = "right", caption = caption, report=report)
 	}
 
 	if(length(deposits)==1){
@@ -2789,12 +2793,13 @@ print.percent <- function(x, ...) {
 #' @export
 #' @examples
 #' # Percent needed to return to original value after 10% off
-#' plot(fin_percent(-10))
+#' fin_percent(-10)
 #' # Percent needed to return to original value after 10% on
-#' plot(fin_percent(10))
+#' tmp = fin_percent(10)
+#' plot(tmp)
 #'
 #' # Percent needed to return to original value after 50% off 34.50
-#' plot(fin_percent(-50, value = 34.5, logY = FALSE))
+#' fin_percent(-50, value = 34.5, logY = FALSE)
 #'
 plot.percent <- function(x, ...) {
 	tmp = list(...) # pull logY if passed in
