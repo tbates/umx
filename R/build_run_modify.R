@@ -90,7 +90,7 @@
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
 #' @importFrom ggplot2 geom_point geom_segment geom_line geom_ribbon geom_bar 
 #' @importFrom ggplot2 geom_errorbar geom_jitter geom_smooth geom_abline geom_hline geom_vline
-#' @importFrom ggplot2 element_text element_blank expand_limits aes annotate coord_cartesian g
+#' @importFrom ggplot2 element_text element_blank expand_limits aes annotate coord_cartesian
 #' @importFrom ggplot2 position_dodge xlab ylab ggtitle theme_bw scale_fill_hue 
 # scale_y_continuous
 #' @importFrom cowplot draw_label plot_grid ggdraw 

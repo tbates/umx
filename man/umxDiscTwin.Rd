@@ -52,8 +52,9 @@ then in discordant MZ twins the association will reduce to zero or non-significa
 \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
 
 Example output from \code{umxDiscTwin}:
-\if{html}{\figure{DiscordantTwins.png}{options: width=50\% alt="Figure: Causation in Discordant twins"}}
-\if{latex}{\figure{DiscordantTwins.pdf}{options: width=7cm}}
+
+\if{html}{\figure{DiscTwins_example.png}{options: width=50\% alt="Figure: Causation in Discordant twins"}}
+\if{latex}{\figure{DiscTwins_example.pdf}{options: width=7cm}}
 }
 \examples{
 \dontrun{
@@ -69,7 +70,7 @@ print(tmp, digits = 3)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxDoCdiff]{umxDoCdiff()}}
+\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxDiffMZ]{umxDiffMZ()}}
 }
 
 Other Twin Modeling Functions: 
@@ -78,7 +79,7 @@ Other Twin Modeling Functions:
 \code{\link{umxACEv}()},
 \code{\link{umxACE}()},
 \code{\link{umxCP}()},
-\code{\link{umxDoCdiff}()},
+\code{\link{umxDiffMZ}()},
 \code{\link{umxDoCp}()},
 \code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},

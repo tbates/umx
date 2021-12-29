@@ -14,7 +14,7 @@ umxAPA(
   use = "complete",
   min = 0.001,
   addComparison = NA,
-  report = c("markdown", "html"),
+  report = c("markdown", "html", "none"),
   lower = TRUE,
   test = c("Chisq", "LRT", "Rao", "F", "Cp"),
   SEs = TRUE,

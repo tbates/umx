@@ -1,17 +1,24 @@
-#' MZ differences method for testing evidence for causality
+#' MZ differences method for testing evidence for causality.
 #'
 #' @description
-#' `umxDocDiff` implements the methods, e.g. De Moor (2008), in which MZ differences on a variable
+#' `umxDiffMZ` implements the methods, e.g. De Moor (2008), in which MZ differences on a variable
 #' `x` asserted to be causal of an outcome variable `y` are tested for association with differences on y.
+#' The logic of the design is shown below:
+#' 
+#' **Figure showing from MZ differences logic for the p(mud| do(rain)) Pearl **:
+#' \if{html}{\figure{DiffMZ_rain_mud.png}{options: width=50% alt="Figure: MZ differences model"}}
+#' \if{latex}{\figure{DiffMZ_rain_mud.pdf}{options: width=7cm}}
 #'
-#' **Example output from `umxDocDiff`**:
-#' \if{html}{\figure{DiffMZ.png}{options: width=50% alt="Figure: MZ differences model"}}
-#' \if{latex}{\figure{DiffMZ.pdf}{options: width=7cm}}
+#' Example output is shown below, with the fitted line and fit shown.
+#'
+#' **Example output from `umxDiffMZ`**:
+#' \if{html}{\figure{DiffMZ_example.png}{options: width=50% alt="Figure: MZ differences model"}}
+#' \if{latex}{\figure{DiffMZ_example.pdf}{options: width=7cm}}
 #'
 #' @param x Presumed causal variable, e.g. "effort"
 #' @param y Presumed caused outcome, e.g. "testScore"
 #' @param data Dataframe containing the twin data.
-#' @param sep The separator "_T" used to make twin var names frrmo x and y.
+#' @param sep The separator "_T" used to make twin var names from x and y.
 #' @param zygosity The column containnig "zygosity" data
 #' @param zygList The MZ zygosity codes c("MZFF", "MZMM")
 #' @param r2pos Where to locate the R2 label (defaul = c(x=-2,y=3))
@@ -25,14 +32,10 @@
 #' @md
 #' @examples
 #' data(twinData)
-#' umxDoCdiff(x = "ht", "wt", r2pos=c(x=-2,y=3), data = twinData, sep = "")
-#' umxDoCdiff(x = "ht", "wt", axislim = c(-2,2), data = twinData, sep = "")
-umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), r2pos = list(x=-2,y=3),  axislim = NA, digits=2) {
+#' umxDiffMZ(x="ht", y="wt", r2pos=c(x=-2,y=3), data = twinData, sep = "")
+#' umxDiffMZ(x="ht", y="wt", axislim = c(-2,2), data = twinData, sep = "")
+umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), r2pos = list(x=-2,y=3),  axislim = NA, digits=2) {
 	# 1. Expand names for ease of use
-	# x = "SOSeffort"
-	# y = "IQ"
-	# data = jtf_twin
-
 	x_T1 = paste0(x, sep, 1); x_T2 = paste0(x, sep, 2)
 	y_T1 = paste0(y, sep, 1); y_T2 = paste0(y, sep, 2)
 
@@ -66,7 +69,7 @@ umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = 
 	
 	pvalue = tmp$coefficients["xDiff", "Pr(>|t|)"]
 	R2     = round(tmp$r.squared, 3)
-	blurb = paste0(umxAPA(beta, se=SE), ", p ", umxAPA(pvalue, addComp = TRUE, digits = digits))
+	blurb = paste0(umxAPA(beta, se=SE, report="none"), ", p ", umxAPA(pvalue, addComp = TRUE, digits = digits, report="none"))
 	p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = blurb, family = "Times")
 	# p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = paste("italic(R) ^2 == ", R2), parse = TRUE, family = "Times")
 	p = p + theme_bw()
@@ -91,8 +94,9 @@ umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = 
 #' \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
 #' 
 #' Example output from `umxDiscTwin`:
-#' \if{html}{\figure{DiscordantTwins.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
-#' \if{latex}{\figure{DiscordantTwins.pdf}{options: width=7cm}}
+#' 
+#' \if{html}{\figure{DiscTwins_example.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
+#' \if{latex}{\figure{DiscTwins_example.pdf}{options: width=7cm}}
 #' 
 #' @param selVar Trait selected for discrepant twin scores.
 #' @param var2 trait 2 (outcome trait)
@@ -105,7 +109,7 @@ umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = 
 #' @return - table of results
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxDoC()], [umxDoCdiff()]
+#' @seealso - [umxDoC()], [umxDiffMZ()]
 #' @references - McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' @md
 #' @examples

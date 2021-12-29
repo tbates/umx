@@ -4479,7 +4479,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(m1)
 #'
-umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
+umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
 	report = match.arg(report)
 	test = match.arg(test)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
@@ -4651,7 +4651,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 				# p-value provided but not SE
 				se  = SE_from_p(beta = obj, p = p)
 				str = paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]")
-				cat(str)
+				if(report != "none"){ cat(str) }
 				invisible(str)
 			}
 		} else if(length(se) == 2){
@@ -4659,12 +4659,12 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			# lower = b - (1.96 * se)
 			# upper = b + (1.96 * se)
 			str= paste0("\u03B2 = ", round(obj, digits), "SE = ", round((se[2] - se[1])/(1.96 * 2), digits))
-			cat(str)
+			if(report != "none"){ cat(str) }
 			invisible(str)
 		} else {
 			# obj = beta and SE
 			str = paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]")
-			cat(str)
+			if(report != "none"){ cat(str) }
 			invisible(str)
 		}
 
