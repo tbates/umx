@@ -26,6 +26,7 @@
 #' @examples
 #' data(twinData)
 #' umxDoCdiff(x = "ht", "wt", r2pos=c(x=-2,y=3), data = twinData, sep = "")
+#' umxDoCdiff(x = "ht", "wt", axislim = c(-2,2), data = twinData, sep = "")
 umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), r2pos = list(x=-2,y=3),  axislim = NA, digits=2) {
 	# 1. Expand names for ease of use
 	# x = "SOSeffort"
@@ -51,10 +52,10 @@ umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = 
 	p = p + labs(x = paste("Difference in ", x, " (T1 - T2)")) 
 	p = p + labs(y = paste("Difference in ", y, " (T1 - T2)"))
 	p = p + geom_smooth(method = "lm")
-	p = p+ geom_abline(slope = 1, intercept = 0, linetype="dotdash", color = "grey")
-	p = p+ geom_hline(yintercept = 0, linetype="dotted", color = "grey")
-	p = p+ geom_vline(xintercept = 0, linetype="dotted", color = "grey")
-	if(length(axislim)>1 && !is.na(axislim)){
+	p = p + geom_abline(slope = 1, intercept = 0, linetype = "dotdash", color = "grey")
+	p = p + geom_hline(yintercept = 0, linetype= "dotted", color = "grey")
+	p = p + geom_vline(xintercept = 0, linetype = "dotted", color = "grey")
+	if(length(axislim) > 1 && !is.na(axislim)){
 		p = p + coord_cartesian(xlim = axislim, ylim = axislim, expand =FALSE)
 	}
 	
@@ -65,7 +66,7 @@ umxDoCdiff <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = 
 	
 	pvalue = tmp$coefficients["xDiff", "Pr(>|t|)"]
 	R2     = round(tmp$r.squared, 3)
-	blurb = paste0(umxAPA(beta, se=SE), ", p", umxAPA(pvalue))
+	blurb = paste0(umxAPA(beta, se=SE), ", p ", umxAPA(pvalue, addComp = TRUE, digits = digits))
 	p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = blurb, family = "Times")
 	# p = p + annotate("text", x = r2pos[1], y = r2pos[2], label = paste("italic(R) ^2 == ", R2), parse = TRUE, family = "Times")
 	p = p + theme_bw()
