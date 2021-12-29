@@ -51,6 +51,7 @@ umxDoCdiff(
 \examples{
 data(twinData)
 umxDoCdiff(x = "ht", "wt", r2pos=c(x=-2,y=3), data = twinData, sep = "")
+umxDoCdiff(x = "ht", "wt", axislim = c(-2,2), data = twinData, sep = "")
 }
 \references{
 \itemize{

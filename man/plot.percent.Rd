@@ -21,12 +21,13 @@ Plot method for "percent" objects: e.g. \code{\link[=fin_percent]{fin_percent()}
 }
 \examples{
 # Percent needed to return to original value after 10\% off
-plot(fin_percent(-10))
+fin_percent(-10)
 # Percent needed to return to original value after 10\% on
-plot(fin_percent(10))
+tmp = fin_percent(10)
+plot(tmp)
 
 # Percent needed to return to original value after 50\% off 34.50
-plot(fin_percent(-50, value = 34.5, logY = FALSE))
+fin_percent(-50, value = 34.5, logY = FALSE)
 
 }
 \seealso{

@@ -79,7 +79,7 @@ By default, Zeros have the decimals suppressed, and NAs are suppressed altogethe
 \examples{
 umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
-umx_print(mtcars[1,1:2], digits = 2, caption="Hi: I'm the caption!")
+umx_print(mtcars[1,1:2], digits = 2, caption = "Hi: I'm the caption!")
 \dontrun{
 umx_print(mtcars[1:10,], file = "html")
 umx_print(mtcars[1:10,], file = "tmp.html")
