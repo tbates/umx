@@ -414,6 +414,30 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 	}
 }
 
+#' Set the symbol for money
+#'
+#' Set umx_set_dollar_symbol (used in e.g. [fin_interest()]
+#'
+#' @param umx_set_dollar_symbol symbol for money calculations.
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current umx_set_dollar_symbol
+#' @export
+#' @family Get and set
+#' @examples
+#' library(umx)
+#' umx_set_dollar_symbol() # show current state
+#' old = umx_set_dollar_symbol(silent=TRUE) # store existing value
+#' fin_interest(100)
+#' umx_set_dollar_symbol(old)    # reinstate
+umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
+	if(is.null(umx.dollar.symbol)) {
+		if(!silent){ message("Current format is ", omxQuotes(getOption("umx.dollar.symbol"))	) }
+		invisible(getOption("umx.dollar.symbol"))
+	} else {
+		options("umx.dollar.symbol" = umx.dollar.symbol)
+	}
+}
+
 #' Set the separator
 #'
 #' Set umx_default_separator (used in CI\[low sep high\] ). Default = ","
@@ -2496,7 +2520,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_percent()]
+#' @seealso - [fin_percent()], [fin_interest()], [umx_set_dollar_symbol()], [fin_NI()], [fin_valuation()]
 #' @references - <https://en.wikipedia.org/wiki/Compound_interest>
 #' @md
 #' @examples
@@ -2509,7 +2533,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' # Report as a nice markdown table
 #' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 #'
-#'
+#' umx_set_dollar_symbol("£")
 #' # 2 What rate is needed to increase principal to final value in yrs time?
 #' fin_interest(final = 1.4, yrs=5)
 #' fin_interest(principal = 50, final=200, yrs = 5)
@@ -2536,12 +2560,13 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' # 8 Interest needed to increase principal to final value in yrs time.
 #' fin_interest(principal = 100, final=200, yrs = 5)
 #'
-fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = "$", largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
+fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
 	report = match.arg(report)
+	if(is.null(symbol)){symbol = umx_set_dollar_symbol(silent=TRUE)}
 	if(principal==0){
-		caption= paste0("Compounding ", bucks(deposits, symbol, cat=TRUE), " deposits over ", yrs, " years at ", interest, "% interest with ", inflate*100, "% inflation.")
+		caption= paste0("Compounding ", bucks(deposits, symbol, cat=TRUE), " deposits over ", yrs, " years at ", interest*100, "% interest with ", inflate*100, "% inflation.")
 	} else {
-		caption= paste0("Compounding ", bucks(principal, symbol, cat=TRUE), " and ", bucks(deposits, symbol, cat=TRUE), " annual deposits over ", yrs, " years at ", interest, "% interest with ", inflate*100, "% inflation.")
+		caption= paste0("Compounding ", bucks(principal, symbol, cat=TRUE), " and ", bucks(deposits, symbol, cat=TRUE), " annual deposits over ", yrs, " years at ", interest * 100, "% interest with ", inflate*100, "% inflation.")
 	}
 
 	if(inflate != 0){
