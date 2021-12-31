@@ -13,7 +13,7 @@ fin_interest(
   final = NULL,
   n = 12,
   when = "beginning",
-  symbol = "$",
+  symbol = NULL,
   largest_with_cents = 0,
   baseYear = as.numeric(format(Sys.time(), "\%Y")),
   table = TRUE,
@@ -71,7 +71,7 @@ fin_interest(principal = 5000, interest = 0.05, rep= "html")
 # Report as a nice markdown table
 fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 
-
+umx_set_dollar_symbol("£")
 # 2 What rate is needed to increase principal to final value in yrs time?
 fin_interest(final = 1.4, yrs=5)
 fin_interest(principal = 50, final=200, yrs = 5)
@@ -106,7 +106,7 @@ fin_interest(principal = 100, final=200, yrs = 5)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}
+\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=umx_set_dollar_symbol]{umx_set_dollar_symbol()}}, \code{\link[=fin_NI]{fin_NI()}}, \code{\link[=fin_valuation]{fin_valuation()}}
 }
 
 Other Miscellaneous Functions: 
