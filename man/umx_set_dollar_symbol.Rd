@@ -7,12 +7,12 @@
 umx_set_dollar_symbol(umx.dollar.symbol = NULL, silent = FALSE)
 }
 \arguments{
-\item{silent}{If TRUE, no message will be printed.}
+\item{umx.dollar.symbol}{symbol for money calculations.}
 
-\item{umx_set_dollar_symbol}{symbol for money calculations.}
+\item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx_set_dollar_symbol
+- Current umx.dollar.symbol
 }
 \description{
 Set umx_set_dollar_symbol (used in e.g. [fin_interest()]

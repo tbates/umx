@@ -11,8 +11,8 @@ umxDiffMZ(
   sep = "_T",
   zygosity = "zygosity",
   zygList = c("MZFF", "MZMM"),
-  r2pos = list(x = -2, y = 3),
-  axislim = NA,
+  labxy = c(-1.2, 1.8),
+  xylim = c(NA, NA),
   digits = 2
 )
 }
@@ -29,9 +29,9 @@ umxDiffMZ(
 
 \item{zygList}{The MZ zygosity codes c("MZFF", "MZMM")}
 
-\item{r2pos}{Where to locate the R2 label (defaul = c(x=-2,y=3))}
+\item{labxy}{Where to locate the R2 label (defaul = c(x=-2,y=3))}
 
-\item{axislim}{= clip x any axes to range, e.g c(-3,-3)}
+\item{xylim}{= clip x any axes to range, e.g c(-3,-3)}
 
 \item{digits}{Rounding for beta (def2)}
 }
@@ -57,8 +57,8 @@ Example output is shown below, with the fitted line and fit shown.
 }
 \examples{
 data(twinData)
-umxDiffMZ(x="ht", y="wt", r2pos=c(x=-2,y=3), data = twinData, sep = "")
-umxDiffMZ(x="ht", y="wt", axislim = c(-2,2), data = twinData, sep = "")
+umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
+umxDiffMZ(x="ht", y="wt", xylim = c(-2, 2), data = twinData, sep = "")
 }
 \references{
 \itemize{

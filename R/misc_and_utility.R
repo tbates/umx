@@ -418,9 +418,9 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 #'
 #' Set umx_set_dollar_symbol (used in e.g. [fin_interest()]
 #'
-#' @param umx_set_dollar_symbol symbol for money calculations.
+#' @param umx.dollar.symbol symbol for money calculations.
 #' @param silent If TRUE, no message will be printed.
-#' @return - Current umx_set_dollar_symbol
+#' @return - Current umx.dollar.symbol
 #' @export
 #' @family Get and set
 #' @examples
@@ -3478,32 +3478,33 @@ umx_update_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", "examples" etc.
 #'
-#' @param what whether to "install", "release" to CRAN, "test", "check" test on "win" or "rhub", "spell", or "examples"))
+#' @param what whether to "install", "release" to CRAN, "test", "check" test on "win" or "rhub", "spell", or "examples")).
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
-#' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE)
+#' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE).
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
-#' @param which What rhub platform to use? c("mac", "linux", "win")
+#' @param which What rhub platform to use? c("mac", "linux", "win").
+#' @param run_dont_test When checking.
 #' @param spell for rhub, check spelling? TRUE
 #' @return None
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @references - <https://devtools.r-lib.org>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' \dontrun{
-#' umx_make(what = "q")        # Quick install
-#' umx_make(what = "install")  # Just installs the package
-#' umx_make(what = "examples") # Run the examples
-#' umx_make(what = "spell")    # Spell check the documents
-#' umx_make(what = "check")    # Run R CMD check
-#' umx_make(what = "rhub")     # Check on rhub
-#' umx_make(what = "win")      # Check on win-builder
-#' umx_make(what = "release")  # Release to CRAN
-#' tmp = umx_make(what = "lastRhub") # View rhub result
+#' # umx_make(what = "q")        # Quick install
+#' # umx_make(what = "install")  # Just installs the package
+#' # umx_make(what = "examples") # Run the examples
+#' # umx_make(what = "spell")    # Spell check the documents
+#' # umx_make(what = "check")    # Run R CMD check
+#' # umx_make(what = "rhub")     # Check on rhub
+#' # umx_make(what = "win")      # Check on win-builder
+#' # umx_make(what = "release")  # Release to CRAN
+#' # tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("load", "quick_install", "install_full", "spell", "run_examples", "check", "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), spell=TRUE) {
+umx_make <- function(what = c("load", "quick_install", "install_full", "spell", "run_examples", "check", "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris", run_dont_test = FALSE), spell=TRUE) {
 	what  = match.arg(what)
 	which = match.arg(which)
 	if(what == "lastRhub"){
@@ -3524,7 +3525,7 @@ umx_make <- function(what = c("load", "quick_install", "install_full", "spell", 
 		devtools::run_examples(pkg = pkg, run = run, start = start)
 	} else if(what == "check"){
 		# http://r-pkgs.had.co.nz/check.html
-		devtools::check(pkg = pkg)		
+		devtools::check(pkg = pkg, run_dont_test = run_dont_test)		
 	} else if (what =="win"){
 		# old =
 		# devtools::build_win(pkg = pkg)

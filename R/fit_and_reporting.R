@@ -4409,11 +4409,12 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param use If obj is a data.frame, how to handle NAs (default = "complete")
 #' @param min For a p-value, the smallest value to report numerically (default .001)
 #' @param addComparison For a p-value, whether to add "</=" default (NA) adds "<" if necessary
-#' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
+#' @param report What to return (default = 'markdown'). Use 'html' to open a web table. none doesn't print. expression can contain plotmath 
 #' @param lower Whether to not show the lower triangle of correlations for a data.frame (Default TRUE)
 #' @param SEs Whether or not to show correlations with their SE (Default TRUE)
 #' @param means Whether or not to show means in a correlation table (Default TRUE)
 #' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
+#' @param suffix A string to append to the result. Mostly used with report = "expression"
 #' @return - string
 #' @export
 #' @seealso [SE_from_p()]
@@ -4479,7 +4480,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(m1)
 #'
-umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE) {
+umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="") {
 	report = match.arg(report)
 	test = match.arg(test)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
@@ -4650,24 +4651,33 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			} else {
 				# p-value provided but not SE
 				se  = SE_from_p(beta = obj, p = p)
-				str = paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]")
-				if(report != "none"){ cat(str) }
+				str = paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]", suffix)
+				if(!report %in% c("expression", "none")){ cat(str) }
 				invisible(str)
 			}
 		} else if(length(se) == 2){
 			# beta and CI
 			# lower = b - (1.96 * se)
 			# upper = b + (1.96 * se)
-			str= paste0("\u03B2 = ", round(obj, digits), "SE = ", round((se[2] - se[1])/(1.96 * 2), digits))
-			if(report != "none"){ cat(str) }
+			if(report == "expression"){
+				RCI = paste0(round(obj, digits), "SE = ", round((se[2] - se[1])/(1.96 * 2), digits), suffix)
+				str = bquote(beta == .(RCI))
+			}else{
+				str = paste0("\u03B2 = ", round(obj, digits), " SE = ", round((se[2] - se[1])/(1.96 * 2), digits), suffix)
+			}
+			if(!report %in% c("expression", "none")){ cat(str) }
 			invisible(str)
 		} else {
 			# obj = beta and SE
-			str = paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]")
-			if(report != "none"){ cat(str) }
+			if(report == "expression"){
+				RCI = paste0(round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]", suffix)
+				str = bquote(beta == .(RCI))
+			}else{
+				str = paste0("\u03B2 = ", round(obj, digits), " [", round(obj - (1.96 * se), digits), commaSep, round(obj + (1.96 * se), digits), "]")
+			}
+			if(!report %in% c("expression", "none")){ cat(str) }
 			invisible(str)
 		}
-
 	}
 }
 

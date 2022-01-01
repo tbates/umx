@@ -14,11 +14,12 @@ umxAPA(
   use = "complete",
   min = 0.001,
   addComparison = NA,
-  report = c("markdown", "html", "none"),
+  report = c("markdown", "html", "none", "expression"),
   lower = TRUE,
   test = c("Chisq", "LRT", "Rao", "F", "Cp"),
   SEs = TRUE,
-  means = TRUE
+  means = TRUE,
+  suffix = ""
 )
 }
 \arguments{
@@ -40,7 +41,7 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 
 \item{addComparison}{For a p-value, whether to add "</=" default (NA) adds "<" if necessary}
 
-\item{report}{What to return (default = 'markdown'). Use 'html' to open a web table.}
+\item{report}{What to return (default = 'markdown'). Use 'html' to open a web table. none doesn't print. expression can contain plotmath}
 
 \item{lower}{Whether to not show the lower triangle of correlations for a data.frame (Default TRUE)}
 
@@ -49,6 +50,8 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \item{SEs}{Whether or not to show correlations with their SE (Default TRUE)}
 
 \item{means}{Whether or not to show means in a correlation table (Default TRUE)}
+
+\item{suffix}{A string to append to the result. Mostly used with report = "expression"}
 }
 \value{
 \itemize{

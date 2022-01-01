@@ -12,26 +12,28 @@ umx_make(
   run = FALSE,
   start = NULL,
   spelling = "en_US",
-  which = c("win", "mac", "linux", "solaris"),
+  which = c("win", "mac", "linux", "solaris", run_dont_test = FALSE),
   spell = TRUE
 )
 }
 \arguments{
-\item{what}{whether to "install", "release" to CRAN, "test", "check" test on "win" or "rhub", "spell", or "examples"))}
+\item{what}{whether to "install", "release" to CRAN, "test", "check" test on "win" or "rhub", "spell", or "examples")).}
 
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 
 \item{check}{Whether to run check on the package before release (default = TRUE).}
 
-\item{run}{If what is "examples", whether to also run examples marked don't run. (default FALSE)}
+\item{run}{If what is "examples", whether to also run examples marked don't run. (default FALSE).}
 
 \item{start}{If what is "examples", which function to start from (default (NULL) = beginning).}
 
 \item{spelling}{Whether to check spelling before release (default = "en_US": set NULL to not check).}
 
-\item{which}{What rhub platform to use? c("mac", "linux", "win")}
+\item{which}{What rhub platform to use? c("mac", "linux", "win").}
 
 \item{spell}{for rhub, check spelling? TRUE}
+
+\item{run_dont_test}{When checking.}
 }
 \value{
 None
@@ -54,7 +56,7 @@ tmp = umx_make(what = "lastRhub") # View rhub result
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\item \url{https://devtools.r-lib.org}, \url{https://github.com/tbates/umx}
 }
 }
 \seealso{
