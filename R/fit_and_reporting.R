@@ -12,6 +12,48 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+#' Quickly plot y ~ x with a fit and R^2 printed.
+#'
+#' @description Give it "x" and "y" as strings with a fit and R^2 printed. (Might make x take a formula in future).
+#' @param x variable as string.
+#' @param y variable as string.
+#' @param data The data for the graph.
+#' @param xlab X-axis label (default y).
+#' @param ylab Y-axis label (default y).
+#' @param title Graph title. Default =  paste0(y, " as a function of ", x)
+#' @param fitx x location for the fit summary (default 1).
+#' @param fity y location for the fit summary (default 2).
+#' @return - plot you can edit.
+#' @export
+#' @family
+#' @seealso - [ggplot2::qplot()]
+#' @md
+#' @examples
+#'
+#' umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
+#' umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
+umxPlot <- function(x, y, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2) {
+	if(class(x)=="formula"){
+		.formula = x
+		tmp = attr(terms(x), "factors")
+		tmp = dimnames(tmp)[[1]]
+		y = tmp[1]
+		x = tmp[2]
+	} else {
+		.formula = reformulate(paste0(y, "~ ", x))	
+	}
+	m1 = lm(.formula, data = data)
+	r2 = round(summary(m1)$r.squared, 3)
+	lab = bquote(R^2 == .(r2))
+	# bquote(R^2 == .(r2))
+	# p + annotate("text", 3, 30, label = expression(R^2 == beta + 1 ~ hello), family="Optima")
+	p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = 'lm') + geom_point()
+	p  = p + labs(x= xlab, y= ylab, title= title)
+	p  = p + cowplot::draw_label(lab, x = fitx, y = fity, fontfamily = "Times", size = 12)
+	p  = p + theme_gray() # gray,bw,linedraw,light,dark,minimal,classic
+	p
+}
+
 # =====================
 # = Model Diagnostics =
 # =====================

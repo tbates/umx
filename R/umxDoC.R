@@ -35,6 +35,7 @@
 #' umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
 #' umxDiffMZ(x="ht", y="wt", xylim = c(-2, 2), data = twinData, sep = "")
 umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits=2) {
+	message("umxDiffMZ is pre-alpha quality: Internals are stubs and parameter names may change!")
 	# 1. Expand names for ease of use
 	x_T1 = paste0(x, sep, 1); x_T2 = paste0(x, sep, 2)
 	y_T1 = paste0(y, sep, 1); y_T2 = paste0(y, sep, 2)
@@ -111,7 +112,9 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [umxDiffMZ()]
-#' @references - McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
+#' @references - Begg, M. D., & Parides, M. K. (2003). Separation of individual-level and cluster-level covariate effects in regression analysis of correlated data. Stat Med, 22(16), 2591-2602. \doi{10.1002/sim.1524} 
+#' * Bergen, S. E., Gardner, C. O., Aggen, S. H., & Kendler, K. S. (2008). Socioeconomic status and social support following illicit drug use: causal pathways or common liability? *Twin Res Hum Genet*, **11**, 266-274. \doi{10.1375/twin.11.3.266}
+#' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' @md
 #' @examples
 #' \dontrun{
@@ -119,13 +122,11 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' tmp = umxDiscTwin(selVar = "y", var2 = "x", popData = mzYDisc, dzData = dzYDisc, mzData = mzYDisc)
 #' print(tmp, digits = 3)
 #' }
-umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, out = c("table", "plot"), use = "complete.obs", sep= "_T") {
-	message("umxDiscTwin is beta quality and parameter names may change!")
+umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF", "DZMM", "DZOS"), out = c("table", "plot"), use = "complete.obs", sep= "_T") {
+	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!")
 	out = match.arg(out)
 	# TODO: expand to two pairs of traits (6 rows)
-	umx_check_names(tvars(c(selVar, var2), "_T"), data = popData)
-	umx_check_names(tvars(c(selVar, var2), "_T"), data = mzData)
-	umx_check_names(tvars(c(selVar, var2), "_T"), data = dzData)
+	umx_check_names(tvars(c(x, y), "_T"), data = data)
 
 	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
 		if(is.null(input)){
@@ -148,24 +149,30 @@ umxDiscTwin <- function(selVar, var2, popData, mzData, dzData, out = c("table", 
 		input[row, "p"]        = corObj$p.value    # p
 		return(input)
 	}
-	.formula = reformulate(paste0("~ ", selVar, " + ", var2))
 
-	r_df = pingle() # Create and initialise the database
+	r_df = pingle() # Create and initialise the database.
 
-	corObj   = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
-	r_df      = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
+	mzData       = subset(jtf_twin, zygosity %in% c("MZFF", "MZMM"))
+	dzData       = subset(jtf_twin, zygosity %in% c("DZFF", "DZMM", "DZOS"))
 
-	corObj   = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
-	r_df      = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
+	.formula = reformulate(paste0("~ ", x, " + ", y))
 
-	corObj   = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
-	r_df      = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
+	corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
+	r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
+
+	corObj  = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
+	r_df    = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
+
+	corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
+	r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
+
 	r_df$xLevel = factor(r_df$xLevel, levels=c("Pop", "DZ", "MZ"))
+
 	bar = ggplot(r_df, aes(x = xLevel, y = r, fill = xLevel))
 	bar = bar + geom_bar(position = position_dodge(), stat = "identity", size = .3, colour = "black") # 3 = thin
 	bar = bar + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9)) # Thinner lines
 	bar = bar + xlab("Zygosity") + ylab("Correlation")
-	bar = bar + ggtitle(paste0("The Effect of ", selVar, " on ", var2)) + theme_bw()
+	bar = bar + ggtitle(paste0("The Effect of ", x, " on ", y)) + theme_bw()
 	# bar = bar + scale_y_continuous(breaks = 0:20*4)
 	# Legend label, use darker colors
 	bar = bar + scale_fill_hue(name= "Group", breaks= c("Pop", "MZ", "DZ"), labels= c("Unselected", "DZ discordant", "MZ discordant"))
