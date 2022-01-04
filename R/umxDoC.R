@@ -1,3 +1,5 @@
+# BTC/SQ, Energy Equities (+TSLA?), FB/AAPL/AMZN/NFLX/MSFT/GOOG
+
 #' MZ differences method for testing evidence for causality.
 #'
 #' @description
@@ -100,11 +102,10 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' \if{html}{\figure{DiscTwins_example.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
 #' \if{latex}{\figure{DiscTwins_example.pdf}{options: width=7cm}}
 #' 
-#' @param selVar Trait selected for discrepant twin scores.
-#' @param var2 trait 2 (outcome trait)
+#' @param x Cause
+#' @param y Effect
 #' @param popData General population dataframe 
-#' @param dzData The DZ dataframe
-#' @param mzData The MZ dataframe
+#' @param data dataframe containing MZ and DZ data
 #' @param out Whether to return the table or the ggplot (if you want to adumbrate it)
 #' @param use NA handling in corr.test (default= "complete.obs")
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
@@ -118,16 +119,13 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' @md
 #' @examples
 #' \dontrun{
-#' umxDiscTwin(selVar = "x", var2 = "y", popData = mzXDisc, dzData = dzXDisc, mzData = mzXDisc)
-#' tmp = umxDiscTwin(selVar = "y", var2 = "x", popData = mzYDisc, dzData = dzYDisc, mzData = mzYDisc)
+#' data(twinData)
+#' twinData$FAMID = twinData$fam
+#' umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+#' tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
 #' print(tmp, digits = 3)
 #' }
 umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF", "DZMM", "DZOS"), out = c("table", "plot"), use = "complete.obs", sep= "_T") {
-	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!")
-	out = match.arg(out)
-	# TODO: expand to two pairs of traits (6 rows)
-	umx_check_names(tvars(c(x, y), "_T"), data = data)
-
 	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
 		if(is.null(input)){
 			nrow = 3
@@ -143,25 +141,38 @@ umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF
 		input[row, "group"]    = group
 		input[row, "xLevel"]   = xLevel
 		input[row, "N"]        = corObj$parameter  # df
-		input[row, "r"]        = corObj$estimate   # cor
+		input[row, "Bwithin"]  = corObj$estimate   # cor
+		input[row, "Bbetween"] = corObj$estimate   # cor
 		input[row, "ci.lower"] = corObj$conf.int[1]
 		input[row, "ci.upper"] = corObj$conf.int[2]
 		input[row, "p"]        = corObj$p.value    # p
 		return(input)
 	}
 
+	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!\nNOT currently working!")
+	out = match.arg(out)
+	# TODO: expand to two pairs of traits (6 rows)
+	umx_check_names(tvars(c(x, y), sep), data = data)
+	umx_check_names("FAMID", data = data, message = "You must add a column for family ID called 'FAMID'")
+
+	data$xFamMean = rowMeans(data[, tvars(x, sep = sep)], na.rm = TRUE)
+	data$yFamMean = rowMeans(data[, tvars(y, sep = sep)], na.rm = TRUE)
+
 	r_df = pingle() # Create and initialise the database.
 
-	mzData       = subset(jtf_twin, zygosity %in% c("MZFF", "MZMM"))
-	dzData       = subset(jtf_twin, zygosity %in% c("DZFF", "DZMM", "DZOS"))
+	dzData = umx_wide2long(data = subset(data, zygosity %in% dzData), sep = sep)
+	mzData = umx_wide2long(data = subset(data, zygosity %in% mzData), sep = sep)
 
-	.formula = reformulate(paste0("~ ", x, " + ", y))
+	# IQ ~ EffortMean + SOSeffort
+	.formula = reformulate(paste0(y, " ~ ", xFamMean, " + ", x))
+	m1 = lme(.formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
+	umxAPA(m1, std = TRUE, digits = 3);
 
 	corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
 	r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
 
-	corObj  = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
-	r_df    = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
+	corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
+	r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
 
 	corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
 	r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
@@ -180,7 +191,7 @@ umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF
 	ifelse(out == "plot", return(bar), return(r_df) ) 
 }
 
-# http://ibg.colorado.edu/cdrom2016/verhulst/Causation
+
 #' Build and run a 2-group Direction of Causation twin models.
 #'
 #' @description

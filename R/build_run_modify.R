@@ -91,9 +91,9 @@
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
 #' @importFrom ggplot2 geom_abline geom_bar geom_curve geom_errorbar geom_hline geom_jitter geom_line 
 #' @importFrom ggplot2 geom_point geom_ribbon geom_segment geom_smooth  geom_vline
-#' @importFrom ggplot2 element_blank element_text expand_limits ggtitle 
-#' @importFrom ggplot2 aes aes_string annotate coord_cartesian
-#' @importFrom ggplot2 position_dodge xlab ylab theme_bw scale_fill_hue 
+#' @importFrom ggplot2 aes aes_string annotate coord_cartesian element_blank element_text expand_limits position_dodge 
+#' @importFrom ggplot2 ggtitle xlab ylab scale_fill_hue
+#' @importFrom ggplot2 theme_bw theme_gray  
 # scale_y_continuous
 #' @importFrom cowplot draw_label plot_grid ggdraw 
 #' @importFrom knitr kable

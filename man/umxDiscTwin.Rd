@@ -16,19 +16,17 @@ umxDiscTwin(
 )
 }
 \arguments{
-\item{mzData}{The MZ dataframe}
+\item{x}{Cause}
 
-\item{dzData}{The DZ dataframe}
+\item{y}{Effect}
+
+\item{data}{dataframe containing MZ and DZ data}
 
 \item{out}{Whether to return the table or the ggplot (if you want to adumbrate it)}
 
 \item{use}{NA handling in corr.test (default= "complete.obs")}
 
 \item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
-
-\item{selVar}{Trait selected for discrepant twin scores.}
-
-\item{var2}{trait 2 (outcome trait)}
 
 \item{popData}{General population dataframe}
 }
@@ -58,8 +56,10 @@ Example output from \code{umxDiscTwin}:
 }
 \examples{
 \dontrun{
-umxDiscTwin(selVar = "x", var2 = "y", popData = mzXDisc, dzData = dzXDisc, mzData = mzXDisc)
-tmp = umxDiscTwin(selVar = "y", var2 = "x", popData = mzYDisc, dzData = dzYDisc, mzData = mzYDisc)
+data(twinData)
+twinData$FAMID = twinData$fam
+umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
 print(tmp, digits = 3)
 }
 }
