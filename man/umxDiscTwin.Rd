@@ -27,8 +27,6 @@ umxDiscTwin(
 \item{use}{NA handling in corr.test (default= "complete.obs")}
 
 \item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
-
-\item{popData}{General population dataframe}
 }
 \value{
 \itemize{

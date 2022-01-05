@@ -12,7 +12,8 @@ umx_make(
   run = FALSE,
   start = NULL,
   spelling = "en_US",
-  which = c("win", "mac", "linux", "solaris", run_dont_test = FALSE),
+  which = c("win", "mac", "linux", "solaris"),
+  run_dont_test = FALSE,
   spell = TRUE
 )
 }
@@ -31,9 +32,9 @@ umx_make(
 
 \item{which}{What rhub platform to use? c("mac", "linux", "win").}
 
-\item{spell}{for rhub, check spelling? TRUE}
-
 \item{run_dont_test}{When checking.}
+
+\item{spell}{for rhub, check spelling? TRUE}
 }
 \value{
 None

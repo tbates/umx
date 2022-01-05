@@ -3504,7 +3504,7 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "release")  # Release to CRAN
 #' # tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("load", "quick_install", "install_full", "spell", "run_examples", "check", "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run=FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris", run_dont_test = FALSE), spell=TRUE) {
+umx_make <- function(what = c("load", "quick_install", "install_full", "spell", "run_examples", "check", "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
 	what  = match.arg(what)
 	which = match.arg(which)
 	if(what == "lastRhub"){

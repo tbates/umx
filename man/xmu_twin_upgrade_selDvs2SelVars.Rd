@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmu_twin_upgrade_selDvs2SelVars}
 \alias{xmu_twin_upgrade_selDvs2SelVars}
-\title{Upgrade selDvs to SelVars}
+\title{Upgrade selDVs to selVars}
 \usage{
 xmu_twin_upgrade_selDvs2SelVars(selDVs, sep, nSib)
 }
