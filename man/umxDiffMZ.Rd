@@ -19,17 +19,17 @@ umxDiffMZ(
 \arguments{
 \item{x}{Presumed causal variable, e.g. "effort"}
 
-\item{y}{Presumed caused outcome, e.g. "testScore"}
+\item{y}{Presumed caused outcome, e.g. "score"}
 
 \item{data}{Dataframe containing the twin data.}
 
 \item{sep}{The separator "_T" used to make twin var names from x and y.}
 
-\item{zygosity}{The column containnig "zygosity" data}
+\item{zygosity}{The column containing "zygosity" data}
 
 \item{zygList}{The MZ zygosity codes c("MZFF", "MZMM")}
 
-\item{labxy}{Where to locate the R2 label (defaul = c(x=-2,y=3))}
+\item{labxy}{Where to locate the R2 label (default = c(x=-2,y=3))}
 
 \item{xylim}{= clip x any axes to range, e.g c(-3,-3)}
 

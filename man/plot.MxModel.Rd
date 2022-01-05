@@ -3,7 +3,6 @@
 \name{plot.MxModel}
 \alias{plot.MxModel}
 \alias{plot}
-\alias{umxPlot}
 \title{Create and display a graphical path diagram for a model.}
 \usage{
 \method{plot}{MxModel}(

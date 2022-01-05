@@ -18,12 +18,12 @@
 #' \if{latex}{\figure{DiffMZ_example.pdf}{options: width=7cm}}
 #'
 #' @param x Presumed causal variable, e.g. "effort"
-#' @param y Presumed caused outcome, e.g. "testScore"
+#' @param y Presumed caused outcome, e.g. "score"
 #' @param data Dataframe containing the twin data.
 #' @param sep The separator "_T" used to make twin var names from x and y.
-#' @param zygosity The column containnig "zygosity" data
+#' @param zygosity The column containing "zygosity" data
 #' @param zygList The MZ zygosity codes c("MZFF", "MZMM")
-#' @param labxy Where to locate the R2 label (defaul = c(x=-2,y=3))
+#' @param labxy Where to locate the R2 label (default = c(x=-2,y=3))
 #' @param xylim = clip x any axes to range, e.g c(-3,-3)
 #' @param digits Rounding for beta (def2)
 #' @return - Graph for decorating
@@ -104,7 +104,6 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' 
 #' @param x Cause
 #' @param y Effect
-#' @param popData General population dataframe 
 #' @param data dataframe containing MZ and DZ data
 #' @param out Whether to return the table or the ggplot (if you want to adumbrate it)
 #' @param use NA handling in corr.test (default= "complete.obs")

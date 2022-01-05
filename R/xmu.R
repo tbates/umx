@@ -95,7 +95,7 @@ xmu_twin_get_var_names <- function(model, source = c("expCovMZ", "observed"), tr
 # = RUN AND REPORT HELPERS =
 # ==========================
 
-#' Upgrade selDvs to SelVars
+#' Upgrade selDVs to selVars
 #'
 #' @description
 #' Just a helper to go from "wt" to "wt_T1" contingent on sep not being null

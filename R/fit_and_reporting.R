@@ -2491,7 +2491,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' select graphviz.app (or OmniGraffle professional),
 #' then set \dQuote{change all}.
 #'
-#' @aliases plot umxPlot
+#' @aliases plot
 #' @rdname plot.MxModel
 #' @param x An [mxModel()] from which to make a path diagram
 #' @param std Whether to standardize the model (default = FALSE).
