@@ -2451,7 +2451,8 @@ dl_from_dropbox <- function(x, key=NULL){
 #' Work the valuation of a company
 #'
 #' @description
-#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization
+#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
+#' Betterr to use a more powerful online site, like  <https://dcftool.com/analysis/AAPL> or <https://www.minuteup.co/?stock=RKLB>.
 #'
 #' @details
 #' Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
@@ -2466,7 +2467,8 @@ dl_from_dropbox <- function(x, key=NULL){
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()]
+#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @references <https://www.minuteup.co/?stock=RKLB>, <https://dcftool.com/analysis/AAPL>
 #' @md
 #' @examples
 #' fin_valuation(rev=7e9, opmargin=.1, PE=33)
@@ -2520,7 +2522,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_percent()], [fin_interest()], [umx_set_dollar_symbol()], [fin_NI()], [fin_valuation()]
+#' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_NI()], [fin_valuation()]
 #' @references - <https://en.wikipedia.org/wiki/Compound_interest>
 #' @md
 #' @examples
@@ -2654,7 +2656,7 @@ fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.
 #' @return - NI
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()]
+#' @seealso - [fin_interest()], [fin_percent()], [fin_valuation()]
 #' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
 #' @md
 #' @examples

@@ -106,7 +106,7 @@ fin_interest(principal = 100, final=200, yrs = 5)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=umx_set_dollar_symbol]{umx_set_dollar_symbol()}}, \code{\link[=fin_NI]{fin_NI()}}, \code{\link[=fin_valuation]{fin_valuation()}}
+\item \code{\link[=umx_set_dollar_symbol]{umx_set_dollar_symbol()}}, \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_NI]{fin_NI()}}, \code{\link[=fin_valuation]{fin_valuation()}}
 }
 
 Other Miscellaneous Functions: 

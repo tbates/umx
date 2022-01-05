@@ -33,7 +33,7 @@ fin_NI(142000)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_interest]{fin_interest()}}
+\item \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_valuation]{fin_valuation()}}
 }
 
 Other Miscellaneous Functions: 
