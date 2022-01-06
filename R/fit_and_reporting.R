@@ -4663,7 +4663,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		}
 		cat(paste0("\nAIC = ", round(AIC(obj), 3) ))
 	} else if( "lme" == class(obj)[[1]]) {
-		# report lm summary table
+		# report nlme::lme() summary table
 		if(std){
 			obj = update(obj, data = umx_scale(obj$data))
 		}
@@ -4674,17 +4674,19 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		}
 		for (i in se) {
 			# umx_msg(i)
-			lower   = conf[i, "lower"]
-			upper   = conf[i, "upper"]
-			b       = conf[i, "est."]
-			tval    = model_coefficients[i, "t-value"]
-			numDF   = model_coefficients[i, "DF"]
-			pval    = model_coefficients[i, "p-value"]
+			lower = conf[i, "lower"]
+			upper = conf[i, "upper"]
+			b     = conf[i, "est."]
+			tval  = model_coefficients[i, "t-value"]
+			numDF = model_coefficients[i, "DF"]
+			pval  = model_coefficients[i, "p-value"]
 			cat(paste0(i, betaSymbol, round(b, digits), 
 			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
 			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE),"\n"
 			))
 		}
+		# return (possibly standardized) model
+		invisible(obj)
 	} else {
 		if(is.null(se)){
 			if(is.null(p)){

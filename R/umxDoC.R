@@ -126,7 +126,8 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot"), use = "complete.obs", sep = "_T") {
 	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!\nNOT currently working!")
 	out = match.arg(out)
-	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
+	
+	pingle <- function(xLevel = "e.g. MZ", model, group = NA, row = NULL, input = NULL) {
 		if(is.null(input)){
 			nrow = 3
 			return(data.frame(group = rep(NA,3), xLevel = rep(NA,3), N = rep(NA,3), 
@@ -134,18 +135,15 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 				# sd = rep(NA,3), se = rep(NA,3), 
 			)
 		}
-		if(is.null(row)){
-			# row = first empty row
-			row = which.max(is.na(input$r))
-		}
+		if(is.null(row)){ row = which.max(is.na(input$r)) }
+		input[row, "N"]        = model$fixDF$terms[x]  # df
+		input[row, "Bwithin"]  = model$coefficients$fixed[x]
+		input[row, "Bbetween"] = model$coefficients$fixed["FamMeanX"]
+		input[row, "ci.lower"] = model$conf.int[1]
+		input[row, "ci.upper"] = model$conf.int[2]
+		input[row, "p"]        = model$p.value    # p
 		input[row, "group"]    = group
 		input[row, "xLevel"]   = xLevel
-		input[row, "N"]        = corObj$parameter  # df
-		input[row, "Bwithin"]  = corObj$estimate   # cor
-		input[row, "Bbetween"] = corObj$estimate   # cor
-		input[row, "ci.lower"] = corObj$conf.int[1]
-		input[row, "ci.upper"] = corObj$conf.int[2]
-		input[row, "p"]        = corObj$p.value    # p
 		return(input)
 	}
 	r_df = pingle() # Create and initialise the database.
@@ -169,9 +167,21 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	mzData = umx_wide2long(data = data[data$zygosity %in% mzZygs, neededVars], sep = sep)
 	# 2. Run lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
 	formula = reformulate(termlabels = c("FamMeanX", x), response = y)
-	m1 = nlme::lme(fixed = formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
-
-	umxAPA(m1, std = TRUE, digits = 3);
+	obj = nlme::lme(fixed = formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
+	obj = update(obj, data = umx_scale(obj$data))
+	model_coefficients = summary(obj)$tTable
+	conf = intervals(obj, which = "fixed")[["fixed"]]
+	lower = conf[i, "lower"]
+	upper = conf[i, "upper"]
+	b     = conf[i, "est."]
+	tval  = model_coefficients[i, "t-value"]
+	numDF = model_coefficients[i, "DF"]
+	pval  = model_coefficients[i, "p-value"]
+	
+	cat(paste0(i, betaSymbol, round(b, digits), 
+	   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
+	   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE),"\n"
+	))
 
 	# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
 	# r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
@@ -195,6 +205,28 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	print(bar)
 	ifelse(out == "plot", return(bar), return(r_df) ) 
 }
+# pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
+# 	if(is.null(input)){
+# 		nrow = 3
+# 		return(data.frame(group = rep(NA,3), xLevel = rep(NA,3), N = rep(NA,3),
+# 			r = rep(NA,3), ci.lower = rep(NA,3), ci.upper = rep(NA,3))
+# 			# sd = rep(NA,3), se = rep(NA,3),
+# 		)
+# 	}
+# 	if(is.null(row)){
+# 		# row = first empty row
+# 		row = which.max(is.na(input$r))
+# 	}
+# 	input[row, "group"]    = group
+# 	input[row, "xLevel"]   = xLevel
+# 	input[row, "N"]        = corObj$parameter  # df
+# 	input[row, "Bwithin"]  = corObj$estimate   # cor
+# 	input[row, "Bbetween"] = corObj$estimate   # cor
+# 	input[row, "ci.lower"] = corObj$conf.int[1]
+# 	input[row, "ci.upper"] = corObj$conf.int[2]
+# 	input[row, "p"]        = corObj$p.value    # p
+# 	return(input)
+# }
 
 
 #' Build and run a 2-group Direction of Causation twin models.
@@ -723,3 +755,4 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 
 #' @export
 umxSummary.MxModelDoC <- umxSummaryDoC
+
