@@ -85,7 +85,6 @@ xmuOldPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std =
 			# not adding means...
 		} else {
 			# look for standardized values to replace the raw ones...
-			# TODO std ==?
 			CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", digits = digits, SEstyle = SEstyle, verbose = FALSE)
 			if(is.na(CIstr)){
 				val = round(parameterKeyList[thisParam], digits)

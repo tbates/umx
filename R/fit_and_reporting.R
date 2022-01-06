@@ -25,11 +25,11 @@
 #' @param fity y location for the fit summary (default 2).
 #' @return - plot you can edit.
 #' @export
-#' @family
+#' @family Plotting functions
 #' @seealso - [ggplot2::qplot()]
 #' @md
 #' @examples
-#'
+#' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
 #' umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
 umxPlot <- function(x, y, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2) {
@@ -1523,8 +1523,6 @@ umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comp
 		stdFit = model
 		hasCIs = umx_has_CIs(model)
 		if(hasCIs & CIs) {
-			# TODO Need to refactor this into some function calls...
-			# TODO and then add to umxSummaryIP and CP
 			message("Creating CI-based report!")
 			# CIs exist, get the lower and upper CIs as a dataframe
 			CIlist = data.frame(model$output$confidenceIntervals)
@@ -1621,17 +1619,19 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' \dontrun{
 #' require(umx)
 #' data(twinData)
+#' 
 # # Help optimizer by putting wt on a similar scale to ht
 #' twinData$wt1 = twinData$wt1/10
 #' twinData$wt2 = twinData$wt2/10
 #' selDVs = c("ht", "wt")
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
-#' umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
+#' 
 #' m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "", optimizer = "SLSQP")
 #' umxSummaryCP(m1, file = NA) # Suppress plot creation with file
 #' umxSummary(m1, file = NA)   # Generic summary is the same
 #' stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
+#' 
 #' umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
 #' umxSummary(m1, std = FALSE, file = NA)
 #'

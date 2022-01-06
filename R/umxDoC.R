@@ -73,22 +73,18 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 	R2     = round(tmp$r.squared, 3)
 	pvalStr = paste0(", p ", umxAPA(pvalue, addComparison = TRUE, digits = digits, report = "none"))
 	blurb = umxAPA(beta, se=SE, report = "expression", suffix = pvalStr)
-	# blurb = substr(blurb, start= 2, stop= nchar(blurb))
 	p = p + annotate("text", x = labxy[1], y = labxy[2], label = blurb, family = "Times")
-	# p = p + annotate("text", x = labxy[1], y = labxy[2], label = paste0("paste(beta, \"", blurb, "\")"), parse = TRUE, family = "Times")
-	p = p + theme_bw()
-	# p = p + hrbrthemes::theme_ipsum()
+	p = p + theme_bw() # + hrbrthemes::theme_ipsum()
 	print(p)
 }
 
-#' Build and run a 2-group Direction of Causation twin models. (BETA!)
+#' Intra-pair asssociation in MZ, DZ  twin models. (ALPHA!)
 #'
 #' @description
 #' Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 #' A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 #' 
-#' `umxDiscTwin` compares the correlation of x and y in the general sample and in the MZ and DZ samples selected for being  
-#' discordant on trait 1.
+#' `umxDiscTwin` compares the correlation of x and y in the general sample to the within-pair asssociation in MZ and DZ samples.
 #' 
 #' If a trait x is causal, then the association of x with y is expected to be equally large in all three samples.
 #' If the association in the population is due to confounding (either genetic or shared environmental confounding),
@@ -105,7 +101,8 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' @param x Cause
 #' @param y Effect
 #' @param data dataframe containing MZ and DZ data
-#' @param out Whether to return the table or the ggplot (if you want to adumbrate it)
+#' @param FAMID Name of the column containing family IDs.
+#' @param out Whether to return the table or the ggplot (if you want to decorate it)
 #' @param use NA handling in corr.test (default= "complete.obs")
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @return - table of results
@@ -119,12 +116,13 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' @examples
 #' \dontrun{
 #' data(twinData)
-#' twinData$FAMID = twinData$fam
 #' umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
-#' tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+#' tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="", FAMID = "fam")
 #' print(tmp, digits = 3)
 #' }
-umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF", "DZMM", "DZOS"), out = c("table", "plot"), use = "complete.obs", sep= "_T") {
+umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot"), use = "complete.obs", sep = "_T") {
+	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!\nNOT currently working!")
+	out = match.arg(out)
 	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
 		if(is.null(input)){
 			nrow = 3
@@ -147,34 +145,39 @@ umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF
 		input[row, "p"]        = corObj$p.value    # p
 		return(input)
 	}
-
-	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!\nNOT currently working!")
-	out = match.arg(out)
-	# TODO: expand to two pairs of traits (6 rows)
-	umx_check_names(tvars(c(x, y), sep), data = data)
-	umx_check_names("FAMID", data = data, message = "You must add a column for family ID called 'FAMID'")
-
-	data$xFamMean = rowMeans(data[, tvars(x, sep = sep)], na.rm = TRUE)
-	data$yFamMean = rowMeans(data[, tvars(y, sep = sep)], na.rm = TRUE)
-
 	r_df = pingle() # Create and initialise the database.
 
-	dzData = umx_wide2long(data = subset(data, zygosity %in% dzData), sep = sep)
-	mzData = umx_wide2long(data = subset(data, zygosity %in% mzData), sep = sep)
+	# 0. Check inputs
+	# TODO: expand to two pairs of traits (6 rows)
+	# TODO: check zyg levels present?
+	umx_check_names(tvars(c(x, y), sep), data = data)
+	# TODO: illegal names = "famMean"
+	if(FAMID=="FAMID"){
+		umx_check_names("FAMID", data = data, message = "You must add a column for family ID called 'FAMID'")
+	} else {
+		umx_check_names(FAMID, data = data, message = c("Could not find your FAMID column ", omxQuotes('FAMID')) )
+		data$FAMID = data[, FAMID]
+	}
 
-	# IQ ~ EffortMean + SOSeffort
-	.formula = reformulate(paste0(y, " ~ ", xFamMean, " + ", x))
+	# 1. Compute the mean for each family, and make data long for analysis
+	data$xFamMean = rowMeans(data[, tvars(x, sep = sep)], na.rm = TRUE)
+	data$yFamMean = rowMeans(data[, tvars(y, sep = sep)], na.rm = TRUE)
+	dzData        = umx_wide2long(data = subset(data, zygosity %in% dzData), sep = sep)
+	mzData        = umx_wide2long(data = subset(data, zygosity %in% mzData), sep = sep)
+
+	# 2. Run lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
+	.formula = reformulate(paste0(y, " ~ famMean + ", x))
 	m1 = lme(.formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
 	umxAPA(m1, std = TRUE, digits = 3);
 
-	corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
-	r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
-
-	corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
-	r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
-
-	corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
-	r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
+	# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
+	# r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
+	#
+	# corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
+	# r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
+	#
+	# corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
+	# r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
 
 	r_df$xLevel = factor(r_df$xLevel, levels=c("Pop", "DZ", "MZ"))
 
@@ -553,7 +556,6 @@ plot.MxModelDoC <- umxPlotDoC
 #' # ================
 #' # = 1. Load Data =
 #' # ================
-#' umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
 #' data(docData)
 #' mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
 #' dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
@@ -580,7 +582,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' 
 #' }
 umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, zero.print = ".", ...) {
-	message("Summary support for DoC models not complete yet")
+	message("Summary support for DoC models not complete yet. Feedback welcome at http://github.com/tbates/umx/issues if you are using this.")
 
 	# TODO: Allow "a2b" in place of causal to avoid the make/modify 2-step
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables

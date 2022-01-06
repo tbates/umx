@@ -20,13 +20,16 @@ xmu_standardize_ACE(model, ...)
 Standardize an ACE model \emph{BUT} you probably want \code{\link[=umx_standardize]{umx_standardize()}}.
 }
 \examples{
+
+\dontrun{
 require(umx)
 data(twinData)
 selDVs = c("bmi1", "bmi2")
-mzData <- twinData[twinData$zygosity \%in\% "MZFF", selDVs][1:80,] # 80 pairs for speed
-dzData <- twinData[twinData$zygosity \%in\% "DZFF", selDVs][1:80,]
-m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-std = xmu_standardize_ACE(m1)
+mzData = twinData[twinData$zygosity \%in\% "MZFF", selDVs]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", selDVs]
+m1     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+std    = xmu_standardize_ACE(m1)
+}
 }
 \references{
 \itemize{

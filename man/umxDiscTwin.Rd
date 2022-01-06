@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxDoC.R
 \name{umxDiscTwin}
 \alias{umxDiscTwin}
-\title{Build and run a 2-group Direction of Causation twin models. (BETA!)}
+\title{Intra-pair asssociation in MZ, DZ  twin models. (ALPHA!)}
 \usage{
 umxDiscTwin(
   x,
@@ -37,8 +37,7 @@ umxDiscTwin(
 Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 
-\code{umxDiscTwin} compares the correlation of x and y in the general sample and in the MZ and DZ samples selected for being
-discordant on trait 1.
+\code{umxDiscTwin} compares the correlation of x and y in the general sample to the within-pair asssociation in MZ and DZ samples.
 
 If a trait x is causal, then the association of x with y is expected to be equally large in all three samples.
 If the association in the population is due to confounding (either genetic or shared environmental confounding),

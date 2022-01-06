@@ -227,7 +227,8 @@ Other Plotting functions:
 \code{\link{umxPlotGxE}()},
 \code{\link{umxPlotIP}()},
 \code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()}
+\code{\link{umxPlotSimplex}()},
+\code{\link{umxPlot}()}
 
 Other Data Functions: 
 \code{\link{noNAs}()},

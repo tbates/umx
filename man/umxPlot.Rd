@@ -41,7 +41,7 @@ umxPlot(
 Give it "x" and "y" as strings with a fit and R^2 printed. (Might make x take a formula in future).
 }
 \examples{
-
+data(mtcars)
 umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
 umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
 }
@@ -49,5 +49,22 @@ umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
 \itemize{
 \item \code{\link[ggplot2:qplot]{ggplot2::qplot()}}
 }
+
+Other Plotting functions: 
+\code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{plot.MxModel}()},
+\code{\link{umxPlotACEcov}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxPlotACE}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxPlotFun}()},
+\code{\link{umxPlotGxEbiv}()},
+\code{\link{umxPlotGxE}()},
+\code{\link{umxPlotIP}()},
+\code{\link{umxPlotSexLim}()},
+\code{\link{umxPlotSimplex}()},
+\code{\link{umx}}
 }
-\concept{}
+\concept{Plotting functions}

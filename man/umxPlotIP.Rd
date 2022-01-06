@@ -87,6 +87,7 @@ Other Plotting functions:
 \code{\link{umxPlotGxE}()},
 \code{\link{umxPlotSexLim}()},
 \code{\link{umxPlotSimplex}()},
+\code{\link{umxPlot}()},
 \code{\link{umx}}
 }
 \concept{Plotting functions}

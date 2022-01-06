@@ -75,6 +75,7 @@
 #' @param report Report as markdown to the console, or open a table in browser ("html")
 #' @param summary  run [umxSummary()] on the underlying umxRAM model? (Default = FALSE)
 #' @param name A name for your model (default = efa)
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param digits rounding (default = 2)
 #' @param n.obs Number of observations in if covmat provided (default = NA)
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
@@ -125,9 +126,10 @@
 #' 
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
-	rotation = c("varimax", "promax", "none"), return = c("model", "loadings"), report = c("markdown", "html"), summary = FALSE, name = "efa", digits = 2, n.obs = NULL, covmat = NULL){
+	rotation = c("varimax", "promax", "none"), return = c("model", "loadings"), report = c("markdown", "html"), summary = FALSE, name = "efa", digits = 2, tryHard = c("no", "yes", "ordinal", "search"), n.obs = NULL, covmat = NULL){
 	# TODO: umxEFA: Detect ordinal items and switch to DWLS?
 	rotation = xmu_match.arg(rotation, c("varimax", "promax", "none"), check = FALSE)
+	tryHard    = match.arg(tryHard)
 	scores   = match.arg(scores)
 	return   = match.arg(return)
 
@@ -211,8 +213,8 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	   thisManifest = manifests[i]
 	   m1$S$lbound[thisManifest, thisManifest] = 0
 	}
-	# TODO could add tryHard support
-	m1 = mxRun(m1)
+
+	m1 = umxRun(m1, tryHard= tryHard)
 
 	# ============================
 	# = Do rotation if requested =

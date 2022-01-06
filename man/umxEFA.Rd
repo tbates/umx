@@ -17,6 +17,7 @@ umxEFA(
   summary = FALSE,
   name = "efa",
   digits = 2,
+  tryHard = c("no", "yes", "ordinal", "search"),
   n.obs = NULL,
   covmat = NULL
 )
@@ -43,6 +44,8 @@ umxEFA(
 \item{name}{A name for your model (default = efa)}
 
 \item{digits}{rounding (default = 2)}
+
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{n.obs}{Number of observations in if covmat provided (default = NA)}
 

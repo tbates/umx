@@ -39,6 +39,8 @@ umxPlotACEv(
 Plots an ACE model graphically, opening the result in the browser (or a graphviz application).
 }
 \examples{
+
+\dontrun{
 require(umx)
 data(twinData)
 mzData = subset(twinData, zygosity == "MZFF")
@@ -47,6 +49,7 @@ m1 = umxACEv(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 umxSummary(m1)
 umxPlotACEv(m1, std = FALSE) # Don't standardize
 plot(m1, std = FALSE) # don't standardize
+}
 }
 \references{
 \itemize{
@@ -68,6 +71,7 @@ Other Plotting functions:
 \code{\link{umxPlotIP}()},
 \code{\link{umxPlotSexLim}()},
 \code{\link{umxPlotSimplex}()},
+\code{\link{umxPlot}()},
 \code{\link{umx}}
 }
 \concept{Plotting functions}
