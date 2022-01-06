@@ -101,6 +101,9 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' @param x Cause
 #' @param y Effect
 #' @param data dataframe containing MZ and DZ data
+#' @param mzZygs MZ zygosities c("MZFF", "MZMM")
+#' @param dzZygs DZ zygosities c("DZFF", "DZMM", "DZOS")
+#' @param FAMID The column containing family IDs (default = "FAMID")
 #' @param FAMID Name of the column containing family IDs.
 #' @param out Whether to return the table or the ggplot (if you want to decorate it)
 #' @param use NA handling in corr.test (default= "complete.obs")
@@ -116,11 +119,11 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' @examples
 #' \dontrun{
 #' data(twinData)
-#' umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+#' # add to test must set FAMID umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
 #' tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="", FAMID = "fam")
 #' print(tmp, digits = 3)
 #' }
-umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot"), use = "complete.obs", sep = "_T") {
+umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot"), use = "complete.obs", sep = "_T") {
 	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!\nNOT currently working!")
 	out = match.arg(out)
 	pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
@@ -147,27 +150,27 @@ umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF
 	}
 	r_df = pingle() # Create and initialise the database.
 
-	# 0. Check inputs
-	# TODO: expand to two pairs of traits (6 rows)
+	# 1. Compute the mean for each family, and add variable
+	data$FamMeanX = rowMeans(data[, tvars(x, sep = sep)], na.rm = TRUE)
+
+	# 2. Check inputs
+	# data = twinData; x = "ht"; y = "wt"; FAMID = "fam"; sep = ""
 	# TODO: check zyg levels present?
-	umx_check_names(tvars(c(x, y), sep), data = data)
-	# TODO: illegal names = "famMean"
-	if(FAMID=="FAMID"){
-		umx_check_names("FAMID", data = data, message = "You must add a column for family ID called 'FAMID'")
+	if(FAMID == "FAMID"){
+		umx_check_names("FAMID", data = data, message = "Please set 'FAMID=' to your column containing family IDs")
 	} else {
 		umx_check_names(FAMID, data = data, message = c("Could not find your FAMID column ", omxQuotes('FAMID')) )
 		data$FAMID = data[, FAMID]
 	}
-
-	# 1. Compute the mean for each family, and make data long for analysis
-	data$xFamMean = rowMeans(data[, tvars(x, sep = sep)], na.rm = TRUE)
-	data$yFamMean = rowMeans(data[, tvars(y, sep = sep)], na.rm = TRUE)
-	dzData        = umx_wide2long(data = subset(data, zygosity %in% dzData), sep = sep)
-	mzData        = umx_wide2long(data = subset(data, zygosity %in% mzData), sep = sep)
-
+	neededVars = c(tvars(c(x, y), sep = sep), "FAMID", "FamMeanX")
+	umx_check_names(neededVars, data = data)
+	# TODO: remove non-used columns...
+	dzData = umx_wide2long(data = data[data$zygosity %in% dzZygs, neededVars], sep = sep)
+	mzData = umx_wide2long(data = data[data$zygosity %in% mzZygs, neededVars], sep = sep)
 	# 2. Run lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
-	.formula = reformulate(paste0(y, " ~ famMean + ", x))
-	m1 = lme(.formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
+	formula = reformulate(termlabels = c("FamMeanX", x), response = y)
+	m1 = nlme::lme(fixed = formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
+
 	umxAPA(m1, std = TRUE, digits = 3);
 
 	# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)

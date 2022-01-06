@@ -8,8 +8,9 @@ umxDiscTwin(
   x,
   y,
   data,
-  mzData = c("MZFF", "MZMM"),
-  dzData = c("DZFF", "DZMM", "DZOS"),
+  mzZygs = c("MZFF", "MZMM"),
+  dzZygs = c("DZFF", "DZMM", "DZOS"),
+  FAMID = "FAMID",
   out = c("table", "plot"),
   use = "complete.obs",
   sep = "_T"
@@ -22,7 +23,13 @@ umxDiscTwin(
 
 \item{data}{dataframe containing MZ and DZ data}
 
-\item{out}{Whether to return the table or the ggplot (if you want to adumbrate it)}
+\item{mzZygs}{MZ zygosities c("MZFF", "MZMM")}
+
+\item{dzZygs}{DZ zygosities c("DZFF", "DZMM", "DZOS")}
+
+\item{FAMID}{Name of the column containing family IDs.}
+
+\item{out}{Whether to return the table or the ggplot (if you want to decorate it)}
 
 \item{use}{NA handling in corr.test (default= "complete.obs")}
 
@@ -54,9 +61,8 @@ Example output from \code{umxDiscTwin}:
 \examples{
 \dontrun{
 data(twinData)
-twinData$FAMID = twinData$fam
-umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
-tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+# add to test must set FAMID umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="", FAMID = "fam")
 print(tmp, digits = 3)
 }
 }

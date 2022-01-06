@@ -8,17 +8,20 @@ umx_check_names(
   namesNeeded,
   data = NA,
   die = TRUE,
+  illegal = NULL,
   no_others = FALSE,
   intersection = FALSE,
   message = ""
 )
 }
 \arguments{
-\item{namesNeeded}{list of variable names to find (a dataframe is also allowed)}
+\item{namesNeeded}{Variable names to find (a dataframe is also allowed)}
 
 \item{data}{data.frame, matrix, or mxData to search in for names (default NA)}
 
-\item{die}{whether to die if the check fails (default TRUE)}
+\item{die}{Whether to die if the check fails (default TRUE).}
+
+\item{illegal}{Optional list of names which must NOT be present.}
 
 \item{no_others}{Whether to test that the data contain no columns in addition to those in namesNeeded (default FALSE)}
 
