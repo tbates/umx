@@ -124,27 +124,57 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' print(tmp, digits = 3)
 #' }
 umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot"), use = "complete.obs", sep = "_T") {
-	message("umxDiscTwin is pre-alpha quality: Internals are stubs and parameter names may change!\nNOT currently working!")
+	message("umxDiscTwin is pre-alpha quality: Internals are just stubs and parameter names may change!")
 	out = match.arg(out)
 	
-	pingle <- function(xLevel = "e.g. MZ", model, group = NA, row = NULL, input = NULL) {
+	pingle <- function(xLevel = "e.g. MZ", model, x, FamMeanX = "FamMeanX", group = NA, row = NULL, input = NULL) {
 		if(is.null(input)){
 			nrow = 3
-			return(data.frame(group = rep(NA,3), xLevel = rep(NA,3), N = rep(NA,3), 
-				r = rep(NA,3), ci.lower = rep(NA,3), ci.upper = rep(NA,3))
-				# sd = rep(NA,3), se = rep(NA,3), 
+			return(data.frame(
+				xLevel   = rep(NA,3), N         = rep(NA,3), 
+				Bwithin  = rep(NA,3), ci.lower  = rep(NA,3), ci.upper = rep(NA,3),
+				tval     = rep(NA,3), pval      = rep(NA,3),
+				Bbetween = rep(NA,3), SEbetween = rep(NA,3)) 
 			)
 		}
-		if(is.null(row)){ row = which.max(is.na(input$r)) }
-		input[row, "N"]        = model$fixDF$terms[x]  # df
-		input[row, "Bwithin"]  = model$coefficients$fixed[x]
-		input[row, "Bbetween"] = model$coefficients$fixed["FamMeanX"]
-		input[row, "ci.lower"] = model$conf.int[1]
-		input[row, "ci.upper"] = model$conf.int[2]
-		input[row, "p"]        = model$p.value    # p
-		input[row, "group"]    = group
-		input[row, "xLevel"]   = xLevel
-		return(input)
+		if(is.null(row)){ row = which.max(is.na(input$xLevel)) }
+
+
+		if(class(model) == "lm"){
+			input[row, "xLevel"]    = xLevel                # e.g. "Pop"
+			input[row, "N"]         = model$df.residual     # df
+			
+			input[row, "Bwithin"]   = model$coefficients[x] # intra-pair effect, not modeling family.
+			input[row, "ci.lower"]  = confint(model)[x, 1]  # CI[lower]
+			input[row, "ci.upper"]  = confint(model)[x, 2]  # CI[,upper]
+			input[row, "tval"]      = summary(model)$coefficients["ht", "t value"]
+			input[row, "pval"]      = summary(model)$coefficients["ht", "Pr(>|t|)"]
+			return(input)
+		}else{
+			conf = intervals(model, which = "fixed")[["fixed"]]
+			model_coefficients = summary(model)$tTable
+			input[row, "xLevel"]    = xLevel               # e.g. "MZ"
+			input[row, "N"]         = model$fixDF$terms[x] # df
+			input[row, "Bwithin"]   = conf[x, "est." ]     # intra-pair effect
+			input[row, "ci.lower"]  = conf[x, "lower"]     # CI[lower]
+			input[row, "ci.upper"]  = conf[x, "upper"]     # CI[,upper]
+			input[row, "tval"]      = model_coefficients[x, "t-value"]
+			input[row, "pval"]      = model_coefficients[x, "p-value"]
+			tryCatch({
+				input[row, "Bbetween"]  = model$coefficients$fixed["FamMeanX"]        # between family beta
+				input[row, "SEbetween"] = model_coefficients["FamMeanX", "Std.Error"] # between family SE
+			}, warning = function() {
+			    # warning-handler-code
+			}, error = function() {
+			    # error-handler-code
+			}, finally={
+			    # cleanup-code
+			})
+			return(input)
+			# Within.lower  = conf[x, "lower"]
+			# Within.upper  = conf[x, "upper"]
+			# Within.est    = conf[x, "est."]
+		}
 	}
 	r_df = pingle() # Create and initialise the database.
 
@@ -162,48 +192,46 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	}
 	neededVars = c(tvars(c(x, y), sep = sep), "FAMID", "FamMeanX")
 	umx_check_names(neededVars, data = data)
-	# TODO: remove non-used columns...
-	dzData = umx_wide2long(data = data[data$zygosity %in% dzZygs, neededVars], sep = sep)
-	mzData = umx_wide2long(data = data[data$zygosity %in% mzZygs, neededVars], sep = sep)
-	# 2. Run lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
+
+	popData = umx_wide2long(data = data[, neededVars], sep = sep)
+	dzData  = umx_wide2long(data = data[data$zygosity %in% dzZygs, neededVars], sep = sep)
+	mzData  = umx_wide2long(data = data[data$zygosity %in% mzZygs, neededVars], sep = sep)
+
+	# TODO create T1 for non-pair comparison
+
+	# 2. Run nlme::lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
+	# obj = update(obj, data = umx_scale(obj$data))
 	formula = reformulate(termlabels = c("FamMeanX", x), response = y)
-	obj = nlme::lme(fixed = formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
-	obj = update(obj, data = umx_scale(obj$data))
-	model_coefficients = summary(obj)$tTable
-	conf = intervals(obj, which = "fixed")[["fixed"]]
-	lower = conf[i, "lower"]
-	upper = conf[i, "upper"]
-	b     = conf[i, "est."]
-	tval  = model_coefficients[i, "t-value"]
-	numDF = model_coefficients[i, "DF"]
-	pval  = model_coefficients[i, "p-value"]
-	
-	cat(paste0(i, betaSymbol, round(b, digits), 
-	   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
-	   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE),"\n"
-	))
 
-	# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
-	# r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
-	#
-	# corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
-	# r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
-	#
-	# corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
-	# r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
+	if(F){
+		obj  = lm(reformulate(termlabels = x, response = y), data = umx_scale(popData))
+	} else {
+		obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim"))
+	}
+	r_df = pingle(xLevel = "Pop", model= obj, x= x, input = r_df)
 
-	r_df$xLevel = factor(r_df$xLevel, levels=c("Pop", "DZ", "MZ"))
+	obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim"))
+	r_df = pingle(xLevel = "DZ", model= obj, x= x, input = r_df)
 
-	bar = ggplot(r_df, aes(x = xLevel, y = r, fill = xLevel))
-	bar = bar + geom_bar(position = position_dodge(), stat = "identity", size = .3, colour = "black") # 3 = thin
-	bar = bar + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9)) # Thinner lines
-	bar = bar + xlab("Zygosity") + ylab("Correlation")
-	bar = bar + ggtitle(paste0("The Effect of ", x, " on ", y)) + theme_bw()
-	# bar = bar + scale_y_continuous(breaks = 0:20*4)
+	obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim"))
+	r_df = pingle(xLevel = "MZ", model= obj, x= x, input = r_df)
+
+
+	r_df$xLevel = factor(r_df$xLevel, levels = c("Pop", "DZ", "MZ"))
+	p = ggplot(r_df, aes(x = xLevel, y = Bwithin, fill = xLevel))
+	p = p + geom_bar(position = position_dodge(), stat = "identity", size = .3, colour = "black") # 3 = thin
+	p = p + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9)) # Thinner lines
+	p = p + xlab("Zygosity") + ylab(expression(beta ~ within ))
+	p = p + ggtitle(paste0("Estimated effect of ", x, " on ", y)) + theme_bw()
+	# p = p + scale_y_continuous(breaks = 0:20*4)
 	# Legend label, use darker colors
-	bar = bar + scale_fill_hue(name= "Group", breaks= c("Pop", "MZ", "DZ"), labels= c("Unselected", "DZ discordant", "MZ discordant"))
-	print(bar)
-	ifelse(out == "plot", return(bar), return(r_df) ) 
+	p = p + scale_fill_hue(name= "Group", breaks= c("Pop", "MZ", "DZ"), labels= c("Unselected", "DZ discordant", "MZ discordant"))
+	print(p)
+	if(out=="plot"){
+		return(p)
+	} else {
+		return(r_df)
+	}
 }
 # pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
 # 	if(is.null(input)){
@@ -227,6 +255,15 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 # 	input[row, "p"]        = corObj$p.value    # p
 # 	return(input)
 # }
+
+# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
+# r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
+#
+# corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
+# r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
+#
+# corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
+# r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
 
 
 #' Build and run a 2-group Direction of Causation twin models.
