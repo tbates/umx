@@ -51,16 +51,18 @@ Summarizes a Common-Pathway model, as returned by \code{\link[=umxCP]{umxCP()}}
 \dontrun{
 require(umx)
 data(twinData)
+
 twinData$wt1 = twinData$wt1/10
 twinData$wt2 = twinData$wt2/10
 selDVs = c("ht", "wt")
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
-umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
+
 m1 = umxCP(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "", optimizer = "SLSQP")
 umxSummaryCP(m1, file = NA) # Suppress plot creation with file
 umxSummary(m1, file = NA)   # Generic summary is the same
 stdFit = umxSummaryCP(m1, digits = 2, std = TRUE, file = NA, returnStd = TRUE);
+
 umxSummary(m1, std = FALSE, showRg = TRUE, file = NA);
 umxSummary(m1, std = FALSE, file = NA)
 

@@ -4,7 +4,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umx_DOC_etc.r") 
 
 test_that("testing umxDiffMZ", {
-	# 1. Test sep enforcement
 	require(umx)
 	data(twinData)
 	df = umx_scale_wide_twin_data(varsToScale= c("ht", "wt"), sep = "", data= twinData, twins = 1:2)

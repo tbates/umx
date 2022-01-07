@@ -30,8 +30,4 @@ Replace \code{standardizeRAM} with \code{\link[=umx_standardize]{umx_standardize
 \item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
-\seealso{
-Other umx deprecated: 
-\code{\link{xmuOldPlotIP}()}
-}
 \concept{umx deprecated}

@@ -63,8 +63,8 @@
 # #'
 # #' This is a crucial processing step. You should graph (`plotit =TRUE`) and examine.
 # #'
-# #' TODO: take more than one column.
-# #' TODO: (optionally) snap to common values.
+# #' Improvements would allow taking more than one column and (optionally)# 
+# #' snapping to common values.
 # #' @details
 # #'
 # #' @param x A variable to transform.
@@ -2451,7 +2451,8 @@ dl_from_dropbox <- function(x, key=NULL){
 #' Work the valuation of a company
 #'
 #' @description
-#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization
+#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
+#' Betterr to use a more powerful online site, like  <https://dcftool.com/analysis/AAPL> or <https://www.minuteup.co/?stock=RKLB>.
 #'
 #' @details
 #' Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
@@ -2466,7 +2467,8 @@ dl_from_dropbox <- function(x, key=NULL){
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()]
+#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @references <https://www.minuteup.co/?stock=RKLB>, <https://dcftool.com/analysis/AAPL>
 #' @md
 #' @examples
 #' fin_valuation(rev=7e9, opmargin=.1, PE=33)
@@ -2520,7 +2522,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_percent()], [fin_interest()], [umx_set_dollar_symbol()], [fin_NI()], [fin_valuation()]
+#' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_NI()], [fin_valuation()]
 #' @references - <https://en.wikipedia.org/wiki/Compound_interest>
 #' @md
 #' @examples
@@ -2566,7 +2568,7 @@ fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.
 	if(principal==0){
 		caption= paste0("Compounding ", bucks(deposits, symbol, cat=TRUE), " deposits over ", yrs, " years at ", interest*100, "% interest with ", inflate*100, "% inflation.")
 	} else {
-		caption= paste0("Compounding ", bucks(principal, symbol, cat=TRUE), " and ", bucks(deposits, symbol, cat=TRUE), " annual deposits over ", yrs, " years at ", interest * 100, "% interest with ", inflate*100, "% inflation.")
+		caption= paste0("Compounding ", bucks(principal, symbol, cat=TRUE), " principle plus ", bucks(deposits, symbol, cat=TRUE), " annual deposits, ", interest * 100, "% interest and ", inflate*100, "% inflation.")
 	}
 
 	if(inflate != 0){
@@ -2606,7 +2608,6 @@ fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.
 	}
 	if(table){
 		# principal = 0, deposits = 0, inflate = 0, interest = 0.05, yrs
-		umx_msg(caption)
 		umx_print(tableOut, justify = "right", caption = caption, report=report)
 	}
 
@@ -2654,7 +2655,7 @@ fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.
 #' @return - NI
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()]
+#' @seealso - [fin_interest()], [fin_percent()], [fin_valuation()]
 #' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
 #' @md
 #' @examples
@@ -4239,9 +4240,10 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' Check if a list of names are in the [namez()] of a dataframe (or the [dimnames()] of a matrix), or the names of 
 #' the observed data of an [mzData()]
 #'
-#' @param namesNeeded list of variable names to find (a dataframe is also allowed)
+#' @param namesNeeded Variable names to find (a dataframe is also allowed)
 #' @param data data.frame, matrix, or mxData to search in for names (default NA)
-#' @param die whether to die if the check fails (default TRUE)
+#' @param die Whether to die if the check fails (default TRUE).
+#' @param illegal Optional list of names which must NOT be present.
 #' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (default FALSE)
 #' @param intersection Show the intersection of names
 #' @param message Some helpful text to append when dieing.
@@ -4266,7 +4268,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' # An example error from vars that don't exist in the data
 #' umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 #' }
-umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALSE, intersection = FALSE, message = ""){
+umx_check_names <- function(namesNeeded, data = NA, die = TRUE, illegal = NULL, no_others = FALSE, intersection = FALSE, message = ""){
 	if(is.data.frame(data)){
 		namesInData = names(data)
 	}else if(is.matrix(data)){
@@ -4276,7 +4278,7 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 	} else if (!typeof(data) == "character"){
 		namesInData = data
 	} else {
-		stop("data has to be a dataframe or matrix. You gave me a ", typeof(data))
+		stop("Oops: Data has to be a dataframe or matrix. You gave me a ", typeof(data))
 	}
 
 	if(is.data.frame(namesNeeded)){
@@ -4285,28 +4287,37 @@ umx_check_names <- function(namesNeeded, data = NA, die = TRUE, no_others = FALS
 		namesNeeded = dimnames(namesNeeded)[[2]]
 	} else if (typeof(namesNeeded)=="character"){
 		namesNeeded = namesNeeded
-	} else if (is.null(namesNeeded) ||is.na(namesNeeded)){
+	} else if (is.null(namesNeeded) || is.na(namesNeeded)){
 		return(TRUE)
 	} else{
-		stop("namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded), "\n",
+		stop("Oops: namesNeeded has to be a list of names, a dataframe or matrix. You gave me a ", typeof(namesNeeded), "\n",
 		"PS: names in data were: ", omxQuotes(namesInData))
 	}
 
 	if(intersection){
 		namesFound = intersect(namesNeeded, namesInData)
-		message(paste(namesFound, ", "))
+		message(omxQuotes(namesFound))
 	} else {
-		namesFound = (namesNeeded %in% namesInData)
+		namesFound   = namesNeeded %in% namesInData
 		if(any(!namesFound)){
 			if(die){
-				# print(namesInData[namesFound])
-				stop("Not all required names were found in the data. Missing were:\n",
-					paste(namesNeeded[!namesFound], collapse = "; "), "\n", message
-				)
+				stop("Not all required names were found in the data. Missing were:\n", paste(namesNeeded[!namesFound], collapse = "; "), "\n", message)
 			} else {
 				return(FALSE)
 			}
-		} else if(no_others & !setequal(namesInData, namesNeeded)){
+		}
+		if(!is.null(illegal)){
+			illegalFound = illegal %in% namesInData
+			if(any(illegalFound)){
+				if(die){
+					stop("An illegal name was found in the data:\n", omxQuotes(illegal[illegalFound]), "\n", message)
+				} else {
+					return(FALSE)
+				}
+			}
+		}
+
+		if(no_others & !setequal(namesInData, namesNeeded)){
 			if(die){
 				stop("Data contains columns other than those needed. Superfluous columns were:\n", 
 					paste(namesInData[!namesInData %in% namesNeeded], collapse = "; "))
@@ -8070,13 +8081,16 @@ umx_standardize.MxModel <- xmu_standardize_RAM
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' require(umx)
 #' data(twinData)
 #' selDVs = c("bmi1", "bmi2")
-#' mzData <- twinData[twinData$zygosity %in% "MZFF", selDVs][1:80,] # 80 pairs for speed
-#' dzData <- twinData[twinData$zygosity %in% "DZFF", selDVs][1:80,]
-#' m1  = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
-#' std = xmu_standardize_ACE(m1)
+#' mzData = twinData[twinData$zygosity %in% "MZFF", selDVs]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", selDVs]
+#' m1     = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+#' std    = xmu_standardize_ACE(m1)
+#' }
 xmu_standardize_ACE <- function(model, ...) {
 	if(typeof(model) == "list"){ # Call self recursively
 		for(thisFit in model) {

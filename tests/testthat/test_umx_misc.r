@@ -64,6 +64,35 @@ test_that("xmu_standardize_ACEcov", {
 
 })
 
+test_that("test umx_check_names", {
+	require(umx)
+	data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
+	# Find variables that do exist
+	expect_true(umx_check_names(namesNeeded = c("x1", "x2"), demoOneFactor))
+	# Needed name missing
+	expect_true(umx_check_names(namesNeeded = c("z1", "x2"), data = demoOneFactor, die = FALSE))
+	# Test when no_others
+	expect_true(umx_check_names(namesNeeded = c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE))
+	# No others doesn't break
+	expect_true(umx_check_names(namesNeeded = paste0("x", 1:5), data = demoOneFactor, die = FALSE, no_others = TRUE))
+	# Works with no names
+	umx_check_names(c(), data = demoOneFactor, die = FALSE, no_others = TRUE)
+	# Error when var doesn't exist in the data and die = TRUE
+	expect_error(umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE))
+
+	# Error when illegal found and die = TRUE
+	expect_error(umx_check_names("x2", illegal = "x3", data = demoOneFactor, die = TRUE))
+	expect_false(umx_check_names("x2", illegal = "x3", data = demoOneFactor, die = FALSE))
+
+	# Take a matrix
+	expect_true(umx_check_names(namesNeeded = c("x1", "x2"), as.matrix(demoOneFactor)))
+	# Take a cov
+	expect_true(umx_check_names(namesNeeded = c("x1", "x2"), cov(demoOneFactor[, c("x1","x2")])))
+	# Take an mxData
+	expect_true(umx_check_names(namesNeeded = c("x1", "x2"), mxData(demoOneFactor, type="raw")))
+
+})
+
 test_that("umx_get_checkpoint", {
 	require(umx)
 	umx_get_checkpoint()

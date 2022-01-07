@@ -176,8 +176,6 @@
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 #' mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"), ]
 #' dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
-#' mzData = mzData[1:80, ] # Quicker run to keep CRAN happy
-#' dzData = dzData[1:80, ]
 #' m1 = umxACEv(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
 #' 
 #' # ===================
@@ -194,8 +192,8 @@
 #'
 #' # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 #' twinData[, c("obese1", "obese2")] = umxFactor(twinData[, c("obese1", "obese2")])
-#' mzData = twinData[twinData$zygosity %in% "MZFF", ][1:80,] # 80 pairs for speed on CRAN
-#' dzData = twinData[twinData$zygosity %in% "DZFF", ][1:80,]
+#' mzData = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzData = twinData[twinData$zygosity %in% "DZFF", ]
 #' m2 = umxACEv(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
 #'
 #' # FYI: Show mz, dz, and t1 and t2 have the same levels!
@@ -624,6 +622,8 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' require(umx)
 #' data(twinData)
 #' mzData = subset(twinData, zygosity == "MZFF")
@@ -632,18 +632,12 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' umxSummary(m1)
 #' umxPlotACEv(m1, std = FALSE) # Don't standardize
 #' plot(m1, std = FALSE) # don't standardize
+#' }
 umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
-	# TODO umxPlotACEv: update to matrix version instead of label hunting
-	# TODO umxPlotACEv: use xmu_dot_define_shapes etc.?
-	# preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:varCount])
-	# top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
-	# bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
-	# digraph = paste0("digraph G {\n	splines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	model = x # Just to be clear that x is a model
 	if(std){ model = umx_standardize(model) }
 
 	selDVs = xmu_twin_get_var_names(model)
-	# umx_msg(selDVs)
 	nVar   = length(selDVs) # assumes 2 siblings
 	selDVs = selDVs[1:(nVar)]
 
@@ -732,13 +726,15 @@ plot.MxModelACEv <- umxPlotACEv
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
+#' 
+#' \dontrun{
 #' require(umx)
 #' data(twinData)
-#' selDVs = c("bmi")
-#' mzData <- twinData[twinData$zygosity %in% "MZFF",][1:80,] # 80 pairs for speed
-#' dzData <- twinData[twinData$zygosity %in% "DZFF",][1:80,]
-#' m1  = umxACEv(selDVs = selDVs, sep="", dzData = dzData, mzData = mzData)
+#' mzData = twinData[twinData$zygosity %in% "MZFF",]
+#' dzData = twinData[twinData$zygosity %in% "DZFF",]
+#' m1  = umxACEv(selDVs = "bmi", sep="", dzData = dzData, mzData = mzData)
 #' std = umx_standardize(m1)
+#' }
 xmu_standardize_ACEv <- function(model, ...) {
 	# TODO umxSummaryACEv these already exist if a_std exists..
 	message("Standardized variance-based models may yield negative variances...")

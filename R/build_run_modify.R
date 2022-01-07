@@ -82,7 +82,7 @@
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv
 #' @importFrom MASS mvrnorm
-#' @importFrom nlme intervals
+#' @importFrom nlme intervals lme
 #' @importFrom polycor hetcor
 #' @importFrom xtable xtable
 #' @importFrom MuMIn Weights

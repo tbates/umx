@@ -219,6 +219,20 @@ test_that("umxGxE_window", {
 
 })
 
+test_that("test umxACEv xmu_standardize_ACE xmu_standardize_ACEv", {
+	require(umx)
+	data(twinData)
+	mzData = twinData[twinData$zygosity %in% "MZFF", ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ]
+	m1     = umxACE(selDVs = "bmi", sep="", dzData = dzData, mzData = mzData)
+	std    = xmu_standardize_ACE(m1)
+	m1     = umxACEv(selDVs = "bmi", sep="", dzData = dzData, mzData = mzData)
+	std    = umx_standardize(m1)
+	umxPlotACEv(m1, std = FALSE) # Don't standardize
+	plot(m1, std = FALSE) # don't standardize
+	
+})
+
 
 #' require(umx)
 #' # ============================

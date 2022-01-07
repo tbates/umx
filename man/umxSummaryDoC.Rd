@@ -61,7 +61,6 @@ See documentation for other umx models here: \code{\link[=umxSummary]{umxSummary
 # ================
 # = 1. Load Data =
 # ================
-umx_set_auto_plot(FALSE) # turn off autoplotting for CRAN
 data(docData)
 mzData = subset(docData, zygosity \%in\% c("MZFF", "MZMM"))
 dzData = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))

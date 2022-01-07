@@ -213,8 +213,6 @@ data(twinData)
 twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")]*100
 mzData = twinData[twinData$zygosity \%in\% c("MZFF", "MZMM"), ]
 dzData = twinData[twinData$zygosity \%in\% c("DZFF", "DZMM", "DZOS"), ]
-mzData = mzData[1:80, ] # Quicker run to keep CRAN happy
-dzData = dzData[1:80, ]
 m1 = umxACEv(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
 
 # ===================
@@ -231,8 +229,8 @@ twinData$obese2 = cut(twinData$bmi2, breaks = c(-Inf, cutPoints, Inf), labels = 
 
 # Make the ordinal variables into mxFactors (ensure ordered is TRUE, and require levels)
 twinData[, c("obese1", "obese2")] = umxFactor(twinData[, c("obese1", "obese2")])
-mzData = twinData[twinData$zygosity \%in\% "MZFF", ][1:80,] # 80 pairs for speed on CRAN
-dzData = twinData[twinData$zygosity \%in\% "DZFF", ][1:80,]
+mzData = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzData = twinData[twinData$zygosity \%in\% "DZFF", ]
 m2 = umxACEv(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
 
 # FYI: Show mz, dz, and t1 and t2 have the same levels!

@@ -1,14 +1,11 @@
 # "I like ambitious goals. I
 
-# TODO Create a tmx path tracing rules
 # TODO Fix up umxUnexplainedCausalNexus()
-
 
 # Thresholded normal Figure released under CCBy at
 #    https://figshare.com/s/b6552245d88dd8892726
 # This file living at
 #    https://github.com/tbates/BGBook/blob/master/figs/c03_genotypic_effect_by_gene_dose.R
-# TODO: What does this show
 # Used Derivation of expected twin covariances. In chapter 03, BG Methods, 2ed.
 # See also dataf1.ps p44 in previous edition.
 
@@ -425,7 +422,6 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 	
 	oldTableFormat = umx_set_table_format(report) # side effect
 	if("thresholds" %in% matrices){
-		# TODO tmx_show: Threshold printing not yet finalised
 		if(!is.null(model$deviations_for_thresh)){
 			dev = TRUE
 			x = model$deviations_for_thresh
