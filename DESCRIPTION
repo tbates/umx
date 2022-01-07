@@ -49,6 +49,7 @@ Suggests:
     cocor,
     devtools,
     gdata,
+	gert,
 	hrbrthemes,
     Hmisc,
 	spelling,

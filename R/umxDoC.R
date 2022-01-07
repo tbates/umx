@@ -140,6 +140,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 
 
 		if(class(model) == "lm"){
+			# not used
 			input[row, "xLevel"]    = xLevel                # e.g. "Pop"
 			input[row, "N"]         = model$df.residual     # df
 			
@@ -170,9 +171,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 			    # cleanup-code
 			})
 			return(input)
-			# Within.lower  = conf[x, "lower"]
-			# Within.upper  = conf[x, "upper"]
-			# Within.est    = conf[x, "est."]
+
 		}
 	}
 	r_df = pingle() # Create and initialise the database.
@@ -218,17 +217,16 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	p = p + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9)) # Thinner lines
 	p = p + xlab("Zygosity") + ylab(expression(beta ~ within ))
 	p = p + ggtitle(paste0("Estimated effect of ", x, " on ", y)) + theme_bw()
-	# p = p + scale_y_continuous(breaks = 0:20*4)
+	# p = p + scale_y_continuous(breaks = 0:20 * 4)
 	# Legend label, use darker colors
-	p = p + scale_fill_hue(name= "Group", breaks= c("Pop", "MZ", "DZ"), labels= c("Unselected", "DZ discordant", "MZ discordant"))
+	p = p + scale_fill_hue(name= "Group", breaks= c("Pop", "MZ", "DZ"), labels= c("Unselected", "DZ within family", "MZ within family"))
 	print(p)
-	if(out=="plot"){
+	if(out == "plot"){
 		return(p)
 	} else {
 		return(r_df)
 	}
 }
-
 
 #' Build and run a 2-group Direction of Causation twin models.
 #'

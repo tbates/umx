@@ -3516,21 +3516,21 @@ umx_make <- function(what = c("load", "quick_install", "install_full", "spell", 
 		devtools::test(pkg = pkg)
 	}else if(what == "load"){
 		devtools::load_all(path = pkg)
-	}else if(what == "install_full"){
-		devtools::document(pkg = pkg); devtools::install(pkg = pkg);
-		devtools::load_all(path = pkg)
+		umx_print(gert::git_status(repo = pkg))
 	} else if(what == "quick_install"){
-		devtools::document(pkg = pkg); devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);
+		devtools::document(pkg = pkg);
+		devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);
+		devtools::load_all(path = pkg)
+		umx_print(gert::git_status(repo = pkg))
+	}else if(what == "install_full"){
+		devtools::document(pkg = pkg);
+		devtools::install(pkg = pkg);
 		devtools::load_all(path = pkg)
 	} else if(what == "run_examples"){
 		devtools::run_examples(pkg = pkg, run = run, start = start)
 	} else if(what == "check"){
-		# http://r-pkgs.had.co.nz/check.html
-		devtools::check(pkg = pkg, run_dont_test = run_dont_test)		
+		devtools::check(pkg = pkg, run_dont_test = run_dont_test) # http://r-pkgs.had.co.nz/check.html
 	} else if (what =="win"){
-		# old =
-		# devtools::build_win(pkg = pkg)
-		# new =
 		devtools::check_win_devel(pkg = pkg)
 	} else if (what =="rhub"){
 		if(which == "mac"){
