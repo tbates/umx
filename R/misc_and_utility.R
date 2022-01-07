@@ -4068,7 +4068,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' umx_print(mtcars[1:10,], file = "html")
 #' umx_print(mtcars[1:10,], file = "tmp.html")
 #' }
-umx_print <- function (x, digits = getOption("digits"), caption = NULL, report = c("markdown", "html"), file = c(NA, "tmp.html"), na.print = "", zero.print = "0", justify = "none", quote = FALSE, suppress = NULL, kableExtra = TRUE, append = FALSE, sortableDF= TRUE,  html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", both = TRUE, ...){
+umx_print <- function (x, digits = getOption("digits"), caption = NULL, report = c("markdown", "html"), file = c(NA, "deprecated"), na.print = "", zero.print = "0", justify = "none", quote = FALSE, suppress = NULL, kableExtra = TRUE, append = FALSE, sortableDF= TRUE,  html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", both = TRUE, ...){
 	style  = match.arg(style)
 	file   = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
 	report = match.arg(report)		
@@ -4081,7 +4081,7 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 		report = "html"
 		file   = "tmp.html"
 	}else{
-		#
+
 	}
 
 	if(class(x)[[1]] == "character"){
@@ -4089,8 +4089,10 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 	}else if(class(x)[[1]] != "data.frame"){
 		if(class(x)[[1]] == "matrix" | class(x)[[1]] == "numeric"){
 			x = data.frame(x)
+		} else if(class(x)[[1]]=="tbl_df"){
+			x = data.frame(x)
 		} else {
-			message("Sorry, umx_print currently only prints data.frames, matrices, and vectors.\n
+			message("Sorry, umx_print currently only prints data.frames, dreaded tibbles, matrices, and vectors.\n
 			File a request to print ", omxQuotes(class(x)[[1]]), " objects\n or perhaps you want umx_msg?")
 			return()
 		}

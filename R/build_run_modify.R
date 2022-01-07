@@ -102,7 +102,7 @@
 # pwr.r.test
 
 utils::globalVariables(c(
-	"xFamMean",
+	"xFamMean", "Bwithin",
 	"xDiff",
 	"yDiff",
     'ci.lower',

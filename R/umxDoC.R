@@ -84,11 +84,11 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 #' A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 #' 
-#' `umxDiscTwin` compares the correlation of x and y in the general sample to the within-pair asssociation in MZ and DZ samples.
+#' `umxDiscTwin` uses lme to compute within-person beta of y on x and MZ and DZ models controlling the between-family variance.
 #' 
-#' If a trait x is causal, then the association of x with y is expected to be equally large in all three samples.
-#' If the association in the population is due to confounding (either genetic or shared environmental confounding),
-#' then in discordant MZ twins the association will reduce to zero or non-significance.
+#' If `x` is causal, then the effect size of x on y is expected to be equally large in all three samples.
+#' If the population association reflects confounded genes or shared environments,
+#' then the association in MZ twins will reduce to zero or non-significance.
 #' 
 #' \if{html}{\figure{discordant_causal_patterns.png}{options: width=50% alt="Figure: Types of confounding"}}
 #' \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
@@ -202,20 +202,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	# obj = update(obj, data = umx_scale(obj$data))
 	formula = reformulate(termlabels = c("FamMeanX", x), response = y)
 
-	# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
-	# r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
-	#
-	# corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
-	# r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
-	#
-	# corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
-	# r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
-
-	if(F){
-		obj  = lm(reformulate(termlabels = x, response = y), data = umx_scale(popData))
-	} else {
-		obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim"))
-	}
+	obj  = lme(fixed = reformulate(termlabels = x, response = y), random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim"))
 	r_df = pingle(xLevel = "Pop", model= obj, x= x, input = r_df)
 
 	obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim"))
@@ -241,37 +228,6 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 		return(r_df)
 	}
 }
-# pingle <- function(xLevel = "e.g. MZ", corObj, group = NA, row = NULL, input = NULL) {
-# 	if(is.null(input)){
-# 		nrow = 3
-# 		return(data.frame(group = rep(NA,3), xLevel = rep(NA,3), N = rep(NA,3),
-# 			r = rep(NA,3), ci.lower = rep(NA,3), ci.upper = rep(NA,3))
-# 			# sd = rep(NA,3), se = rep(NA,3),
-# 		)
-# 	}
-# 	if(is.null(row)){
-# 		# row = first empty row
-# 		row = which.max(is.na(input$r))
-# 	}
-# 	input[row, "group"]    = group
-# 	input[row, "xLevel"]   = xLevel
-# 	input[row, "N"]        = corObj$parameter  # df
-# 	input[row, "Bwithin"]  = corObj$estimate   # cor
-# 	input[row, "Bbetween"] = corObj$estimate   # cor
-# 	input[row, "ci.lower"] = corObj$conf.int[1]
-# 	input[row, "ci.upper"] = corObj$conf.int[2]
-# 	input[row, "p"]        = corObj$p.value    # p
-# 	return(input)
-# }
-
-# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
-# r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
-#
-# corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
-# r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
-#
-# corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
-# r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
 
 
 #' Build and run a 2-group Direction of Causation twin models.

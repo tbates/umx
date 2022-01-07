@@ -2,14 +2,15 @@
 % Please edit documentation in R/umxDoC.R
 \name{umxDiscTwin}
 \alias{umxDiscTwin}
-\title{Build and run a 2-group Direction of Causation twin models. (BETA!)}
+\title{Intra-pair asssociation in MZ, DZ  twin models. (ALPHA!)}
 \usage{
 umxDiscTwin(
   x,
   y,
   data,
-  mzData = c("MZFF", "MZMM"),
-  dzData = c("DZFF", "DZMM", "DZOS"),
+  mzZygs = c("MZFF", "MZMM"),
+  dzZygs = c("DZFF", "DZMM", "DZOS"),
+  FAMID = "FAMID",
   out = c("table", "plot"),
   use = "complete.obs",
   sep = "_T"
@@ -22,11 +23,13 @@ umxDiscTwin(
 
 \item{data}{dataframe containing MZ and DZ data}
 
-\item{mzData}{zygosity codes denoting MZ (default c("MZFF", "MZMM")}
+\item{mzZygs}{MZ zygosities c("MZFF", "MZMM")}
 
-\item{dzData}{zygosity codes denoting DZ (default c("DZFF", "DZMM", "DZOS")}
+\item{dzZygs}{DZ zygosities c("DZFF", "DZMM", "DZOS")}
 
-\item{out}{Whether to return the table or the ggplot (if you want to adumbrate it)}
+\item{FAMID}{The column containing family IDs (default = "FAMID")}
+
+\item{out}{Whether to return the table or the ggplot (if you want to decorate it)}
 
 \item{use}{NA handling in corr.test (default= "complete.obs")}
 
@@ -41,12 +44,11 @@ umxDiscTwin(
 Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 
-\code{umxDiscTwin} compares the correlation of x and y in the general sample and in the MZ and DZ samples selected for being
-discordant on trait 1.
+\code{umxDiscTwin} uses lme to compute within-person beta of y on x and MZ and DZ models controlling the between-family variance.
 
-If a trait x is causal, then the association of x with y is expected to be equally large in all three samples.
-If the association in the population is due to confounding (either genetic or shared environmental confounding),
-then in discordant MZ twins the association will reduce to zero or non-significance.
+If \code{x} is causal, then the effect size of x on y is expected to be equally large in all three samples.
+If the population association reflects confounded genes or shared environments,
+then the association in MZ twins will reduce to zero or non-significance.
 
 \if{html}{\figure{discordant_causal_patterns.png}{options: width=50\% alt="Figure: Types of confounding"}}
 \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
@@ -59,9 +61,8 @@ Example output from \code{umxDiscTwin}:
 \examples{
 \dontrun{
 data(twinData)
-twinData$FAMID = twinData$fam
-umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
-tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+# add to test must set FAMID umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="")
+tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="", FAMID = "fam")
 print(tmp, digits = 3)
 }
 }
