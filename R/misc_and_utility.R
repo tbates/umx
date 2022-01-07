@@ -3516,7 +3516,12 @@ umx_make <- function(what = c("load", "quick_install", "install_full", "spell", 
 		devtools::test(pkg = pkg)
 	}else if(what == "load"){
 		devtools::load_all(path = pkg)
-		umx_print(gert::git_status(repo = pkg))
+		changed = gert::git_status(repo = "~/bin/umx")
+		if(dim(changed)[1]<1){
+			umx_print(gert::git_status(repo = pkg))
+		} else {
+			cat("git up to date")
+		}
 	} else if(what == "quick_install"){
 		devtools::document(pkg = pkg);
 		devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);
