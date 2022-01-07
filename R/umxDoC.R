@@ -106,6 +106,8 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 #' @param y Effect
 #' @param data dataframe containing MZ and DZ data
 #' @param out Whether to return the table or the ggplot (if you want to adumbrate it)
+#' @param mzData zygosity codes denoting MZ (default c("MZFF", "MZMM")
+#' @param dzData zygosity codes denoting DZ (default c("DZFF", "DZMM", "DZOS")
 #' @param use NA handling in corr.test (default= "complete.obs")
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @return - table of results
@@ -167,14 +169,14 @@ umxDiscTwin <- function(x, y, data, mzData = c("MZFF", "MZMM"), dzData = c("DZFF
 	m1 = lme(.formula, random = ~ 1|FAMID, data = mzData, na.action = "na.omit", control = list(opt= "optim"))
 	umxAPA(m1, std = TRUE, digits = 3);
 
-	corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
-	r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
-
-	corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
-	r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
-
-	corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
-	r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
+	# corObj = cor.test(.formula, data = umx_wide2long(data = popData, sep = sep), use = use)
+	# r_df   = pingle(xLevel = "Pop", corObj = corObj, input = r_df)
+	#
+	# corObj = cor.test(.formula, data = umx_wide2long(data = dzData, sep = sep), use = use)
+	# r_df   = pingle(xLevel = "DZ", corObj = corObj, input = r_df)
+	#
+	# corObj = cor.test(.formula, data = umx_wide2long(data = mzData, sep = sep), use = use)
+	# r_df   = pingle(xLevel = "MZ", corObj = corObj, input = r_df)
 
 	r_df$xLevel = factor(r_df$xLevel, levels=c("Pop", "DZ", "MZ"))
 

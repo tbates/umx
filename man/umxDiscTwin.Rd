@@ -22,6 +22,10 @@ umxDiscTwin(
 
 \item{data}{dataframe containing MZ and DZ data}
 
+\item{mzData}{zygosity codes denoting MZ (default c("MZFF", "MZMM")}
+
+\item{dzData}{zygosity codes denoting DZ (default c("DZFF", "DZMM", "DZOS")}
+
 \item{out}{Whether to return the table or the ggplot (if you want to adumbrate it)}
 
 \item{use}{NA handling in corr.test (default= "complete.obs")}
