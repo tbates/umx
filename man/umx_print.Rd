@@ -77,12 +77,13 @@ you can change how NA and zero appear, and suppressing values below a certain cu
 By default, Zeros have the decimals suppressed, and NAs are suppressed altogether.
 }
 \examples{
+data(mtcars)
 umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
 umx_print(mtcars[1,1:2], digits = 2, caption = "Hi: I'm the caption!")
 \dontrun{
-umx_print(mtcars[1:10,], file = "html")
-umx_print(mtcars[1:10,], file = "tmp.html")
+umx_print(mtcars[1:10,], report = "html")
+umx_print(mtcars[1:10,], file = "html") # set report="html"
 }
 }
 \seealso{
