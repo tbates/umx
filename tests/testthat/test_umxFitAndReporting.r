@@ -191,6 +191,13 @@ test_that("umxExpMeans works", {
 	umxExpMeans(m1, digits = 3)
 })
 
+test_that("umx_print works", {
+	require(umx)
+	data(mtcars)
+	# warn to set report="html"                                   
+	expect_output(umx_print(mtcars[1:10,], file = "html"), regexp="polite")
+})
+
 test_that("umxMI works", {
 	require(umx)
 	data(demoOneFactor)

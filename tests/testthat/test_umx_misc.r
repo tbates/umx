@@ -71,12 +71,12 @@ test_that("test umx_check_names", {
 	expect_true(umx_check_names(namesNeeded = c("x1", "x2"), demoOneFactor))
 	# Needed name missing
 	expect_true(umx_check_names(namesNeeded = c("z1", "x2"), data = demoOneFactor, die = FALSE))
-	# Test when no_others
-	expect_true(umx_check_names(namesNeeded = c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE))
+	# Test when no others are permitted
+	expect_false(umx_check_names(namesNeeded = c("x1", "x2"), data = demoOneFactor, die = FALSE, no_others = TRUE))
 	# No others doesn't break
 	expect_true(umx_check_names(namesNeeded = paste0("x", 1:5), data = demoOneFactor, die = FALSE, no_others = TRUE))
 	# Works with no names
-	umx_check_names(c(), data = demoOneFactor, die = FALSE, no_others = TRUE)
+	expect_true(umx_check_names(c(), data = demoOneFactor, die = FALSE, no_others = TRUE))
 	# Error when var doesn't exist in the data and die = TRUE
 	expect_error(umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE))
 
