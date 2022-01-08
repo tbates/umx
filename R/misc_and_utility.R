@@ -3129,7 +3129,7 @@ print.oddsratio <- function(x, digits = 3, ...) {
 #' umx_cor(tmp)
 umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2, type= c("r and p-value", "smart")) {
 	# see also
-	# hmisc::rcorr()
+	# Hmisc::rcorr()
 	use = match.arg(use)
 	message("TODO: umx_cor assumes no missing data, n is just nrow() !!")
 	# nVar    = dim(x)[2]

@@ -94,7 +94,6 @@
 #' @importFrom ggplot2 aes aes_string annotate coord_cartesian element_blank element_text expand_limits position_dodge 
 #' @importFrom ggplot2 ggtitle xlab ylab scale_fill_hue
 #' @importFrom ggplot2 theme_bw theme_gray  
-# scale_y_continuous
 #' @importFrom cowplot draw_label plot_grid ggdraw 
 #' @importFrom knitr kable
 #' @importFrom kableExtra kbl add_footnote column_spec footnote

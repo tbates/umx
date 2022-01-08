@@ -51,7 +51,6 @@ Suggests:
     gdata,
 	gert,
 	hrbrthemes,
-    Hmisc,
 	spelling,
     testthat,
     rmarkdown,
