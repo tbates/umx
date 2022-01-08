@@ -10,7 +10,7 @@ umx_print(
   digits = getOption("digits"),
   caption = NULL,
   report = c("markdown", "html"),
-  file = c(NA, "deprecated"),
+  file = c(NA, "tmp.html"),
   na.print = "",
   zero.print = "0",
   justify = "none",

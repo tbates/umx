@@ -4067,26 +4067,31 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @export
 #' @md
 #' @examples
+#' data(mtcars)
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
 #' umx_print(mtcars[1,1:2], digits = 2, zero.print = "")
 #' umx_print(mtcars[1,1:2], digits = 2, caption = "Hi: I'm the caption!")
 #' \dontrun{
-#' umx_print(mtcars[1:10,], file = "html")
-#' umx_print(mtcars[1:10,], file = "tmp.html")
+#' umx_print(mtcars[1:10,], report = "html")
+#' umx_print(mtcars[1:10,], file = "html") # set report="html"
 #' }
-umx_print <- function (x, digits = getOption("digits"), caption = NULL, report = c("markdown", "html"), file = c(NA, "deprecated"), na.print = "", zero.print = "0", justify = "none", quote = FALSE, suppress = NULL, kableExtra = TRUE, append = FALSE, sortableDF= TRUE,  html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", both = TRUE, ...){
+umx_print <- function (x, digits = getOption("digits"), caption = NULL, report = c("markdown", "html"), file = c(NA, "tmp.html"), na.print = "", zero.print = "0", justify = "none", quote = FALSE, suppress = NULL, kableExtra = TRUE, append = FALSE, sortableDF= TRUE,  html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", both = TRUE, ...){
 	style  = match.arg(style)
 	file   = xmu_match.arg(file, c(NA, "tmp.html"), check = FALSE)
 	report = match.arg(report)		
 
 	# Catch legacy users passing in file instead of report...
 	if(!is.na(file) && file == "markdown"){
+		cat("polite note: in future, please use report = 'markdown', not file='markdown'. file is for choosing a custom html file when writing to the browser with report= 'html'")
 		report = "markdown"
 		file   = NA
 	}else if(!is.na(file) && file == "html"){
+		cat("polite note: in future, please use report = 'html', not file='html'. file is for choosing a custom html file when writing to the browser with report= 'html'")
 		report = "html"
 		file   = "tmp.html"
 	}
+
+!is.na(file) && file == "markdown"
 
 	if(class(x)[[1]] != "data.frame"){
 		if(class(x)[[1]] == "matrix" | class(x)[[1]] == "numeric"){
