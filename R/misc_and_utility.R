@@ -4086,16 +4086,12 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 	}else if(!is.na(file) && file == "html"){
 		report = "html"
 		file   = "tmp.html"
-	}else{
-
 	}
 
-	if(class(x)[[1]] == "character"){
-		print(x)
-	}else if(class(x)[[1]] != "data.frame"){
+	if(class(x)[[1]] != "data.frame"){
 		if(class(x)[[1]] == "matrix" | class(x)[[1]] == "numeric"){
 			x = data.frame(x)
-		} else if(class(x)[[1]]=="tbl_df"){
+		} else if(class(x)[[1]] == "tbl_df"){
 			x = data.frame(x)
 		} else {
 			message("Sorry, umx_print currently only prints data.frames, dreaded tibbles, matrices, and vectors.\n
@@ -4104,8 +4100,11 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 		}
 	}
 
-	if(is.null(dim(x)[1]) || dim(x)[1] == 0){
-		return()
+	if(class(x)[[1]] == "character"){
+		print(x)
+		invisible(x)
+	}else if(is.null(dim(x)[1]) || dim(x)[1] == 0){
+		invisible(x)
 	} else {
 		x = umx_round(x, digits = digits, coerce = FALSE)
 		if(!is.null(suppress)){
