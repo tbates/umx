@@ -45,14 +45,11 @@ umxDiffMZ(
 on a variable \code{x} asserted to be causal of an outcome variable \code{y} are tested for association with differences on y.
 The logic of the design is shown below:
 
-**Figure showing from MZ differences logic for the p(mud| do(rain)) Pearl **:
-
 \if{html}{\figure{DiffMZ_rain_mud.png}{options: width=50\% alt="Figure: MZ differences model"}}
 \if{latex}{\figure{DiffMZ_rain_mud.pdf}{options: width=7cm}}
-
-Example output is shown below, with the fitted line and fit shown.
-
-\strong{Example output from \code{umxDiffMZ}}:
+}
+\details{
+Example output is shown below, with the fitted line and fit inscribed. The plot is just a ggplot graph that is returned and can be edited and formatted.
 
 \if{html}{\figure{DiffMZ_example.png}{options: width=50\% alt="Figure: MZ differences model"}}
 \if{latex}{\figure{DiffMZ_example.pdf}{options: width=7cm}}
