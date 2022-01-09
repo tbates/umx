@@ -37,7 +37,7 @@
 #' @examples
 #' data(twinData)
 #' umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
-#' umxDiffMZ(x="ht", y="wt", xylim = c(-2, 2), data = twinData, sep = "")
+#' umxDiffMZ(x="ht", y="wt", xylim = c( -2, 2), data = twinData, sep = "")
 umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits=2) {
 	message("umxDiffMZ is pre-alpha quality: Internals are stubs and parameter names may change!")
 	# 1. Expand names for ease of use

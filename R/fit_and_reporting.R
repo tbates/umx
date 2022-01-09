@@ -1180,7 +1180,6 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' @aliases umxSummary.MxModelACE
 #' @param model an [mxModel()] to summarize.
 #' @param digits round to how many digits (default = 2).
-#' @param file The name of the dot file to write: "name" = use the name of the model.
 #' Defaults to NA = do not create plot output.
 #' @param comparison you can run mxCompare on a comparison model (NULL).
 #' @param std Whether to standardize the output (default = TRUE).
@@ -1188,6 +1187,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' @param CIs Whether to show Confidence intervals if they exist (TRUE).
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE).
 #' @param report If "html", then open an html table of the results.
+#' @param file The name of the dot file for figure: "name" = use the name of the model.
 #' @param extended how much to report (FALSE).
 #' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary.
@@ -1211,7 +1211,7 @@ umxSummary.MxRAMModel <- umxSummary.MxModel
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
 #' 
-umxSummaryACE <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 
@@ -1911,14 +1911,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' }
 umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, gg=TRUE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL, ...) {
 	report = match.arg(report)
-	# if(!is.null(show){
-	# 	if(show == "std"){
-	# 		std = TRUE
-	# 	} else {
-	# 		std = FALSE
-	# 	}
-	# }
-	
+	umx_check(is.null(show), "stop", "For several years now, show has been deprecated in favor of std.\nTo continue, just use 'std = TRUE' instead of show='std'")
 	umx_has_been_run(model, stop = TRUE)
 	
 	if(any(!is.null(c(returnStd, std, CIs) ))){
@@ -1926,7 +1919,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	}
 
 	if(is.null(model)){
-		message("umxSummaryGxE calls plot.MxModelGxE for a twin moderation plot. A use example is:\n umxSummaryGxE(model, location = \"topright\")")
+		message("umxSummaryGxE calls plot.MxModelGxE for a twin moderation plot. A use example is:\n umxSummaryGxE(m1, location = \"topleft\")")
 		stop();
 	}
 	tablePub = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]

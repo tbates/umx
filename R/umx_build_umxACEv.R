@@ -373,14 +373,14 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @aliases umxSummary.MxModelACEv
 #' @param model an [mxModel()] to summarize
 #' @param digits round to how many digits (default = 2)
-#' @param file The name of the dot file to write: "name" = use the name of the model.
-#' Defaults to NA = no plot.
 #' @param comparison you can run mxCompare on a comparison model (NULL)
 #' @param std Whether to standardize the output (default = TRUE)
 #' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param CIs Whether to show Confidence intervals if they exist (TRUE)
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param report If "html", then open an html table of the results
+#' @param file The name of the dot file to write: "name" = use the name of the model.
+#' Defaults to getOption("umx_auto_plot"), which is likely "name".
 #' @param extended how much to report (FALSE)
 #' @param zero.print How to show zeros (".")
 #' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
@@ -403,7 +403,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' umxSummary(m1, file = "name", std = TRUE)
 #' stdFit = umxSummary(m1, returnStd = TRUE)
 #' }
-umxSummaryACEv <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
+umxSummaryACEv <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
 	show = match.arg(show, c("std", "raw"))
 	if(show != "std"){
 		std = FALSE

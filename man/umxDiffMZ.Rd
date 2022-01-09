@@ -62,7 +62,7 @@ For a more sophisticated linear mixed model approach, see \code{\link[=umxDiscTw
 \examples{
 data(twinData)
 umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
-umxDiffMZ(x="ht", y="wt", xylim = c(-2, 2), data = twinData, sep = "")
+umxDiffMZ(x="ht", y="wt", xylim = c( -2, 2), data = twinData, sep = "")
 }
 \references{
 \itemize{

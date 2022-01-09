@@ -8,12 +8,12 @@
 umxSummaryACEv(
   model,
   digits = 2,
-  file = getOption("umx_auto_plot"),
   comparison = NULL,
   std = TRUE,
   showRg = FALSE,
   CIs = TRUE,
   report = c("markdown", "html"),
+  file = getOption("umx_auto_plot"),
   returnStd = FALSE,
   extended = FALSE,
   zero.print = ".",
@@ -26,9 +26,6 @@ umxSummaryACEv(
 
 \item{digits}{round to how many digits (default = 2)}
 
-\item{file}{The name of the dot file to write: "name" = use the name of the model.
-Defaults to NA = no plot.}
-
 \item{comparison}{you can run mxCompare on a comparison model (NULL)}
 
 \item{std}{Whether to standardize the output (default = TRUE)}
@@ -38,6 +35,9 @@ Defaults to NA = no plot.}
 \item{CIs}{Whether to show Confidence intervals if they exist (TRUE)}
 
 \item{report}{If "html", then open an html table of the results}
+
+\item{file}{The name of the dot file to write: "name" = use the name of the model.
+Defaults to getOption("umx_auto_plot"), which is likely "name".}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
