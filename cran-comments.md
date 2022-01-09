@@ -1,10 +1,10 @@
 ## Changes
-Dramatically reduced the run time of examples. None over-time on win check now.
-Bug fixes, new features.
+New lme based genetic models of causation. Bug fixes, 
+
 ## Test environments
-* OS X 11.0.0, R version 4.1.1
+* OS X 11.0.0, R version 4.1.2
 * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
-* 64-bit Linux, R version 4.1.1
+* 64-bit Linux, R version 4.1.2
 
 ## R CMD check results
 * Status: OK
