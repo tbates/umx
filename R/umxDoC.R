@@ -38,7 +38,7 @@
 #' data(twinData)
 #' umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
 #' umxDiffMZ(x="ht", y="wt", xylim = c( -2, 2), data = twinData, sep = "")
-umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c("MZFF", "MZMM"), labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits=2) {
+umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF", "MZMM"), labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits = 2) {
 	message("umxDiffMZ is pre-alpha quality: Internals are stubs and parameter names may change!")
 	# 1. Expand names for ease of use
 	x_T1 = paste0(x, sep, 1); x_T2 = paste0(x, sep, 2)
@@ -50,32 +50,33 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zygosity = "zygosity", zygList = c
 	# 3. Make diff scores
 	df$xDiff = df[, x_T1] - df[, x_T2]
 	df$yDiff = df[, y_T1] - df[, y_T2]
-	validRows = df[, zygosity] %in% zygList
+	df$xMean = df[, x_T1] + df[, x_T2]
+	validRows = df[, zyg] %in% mzZygs
 	mzData = df[validRows, ]
 	
-	# 4. Plot	
-	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData)  + geom_jitter(shape="circle open") # + geom_count(shape="circle open") 
+	# 4. Plot
+	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData)  + geom_jitter() # + geom_jitter(shape="circle open") # + geom_count(shape="circle open") 
 	# p = p + labs(title= "MZ twin intra-pair differences model", x = paste0(x, " \u0394 (Twin 1 - Twin 2)"), y = paste0(y, " \u0394 (Twin 1 - Twin 2)"))
 	p = p + labs(title= "MZ twin intra-pair differences model")
 	p = p + labs(x = paste("Difference in ", x, " (T1 - T2)")) 
 	p = p + labs(y = paste("Difference in ", y, " (T1 - T2)"))
-	p = p + geom_smooth(method = "lm")
-	p = p + geom_abline(slope = 1, intercept = 0, linetype = "dotdash", color = "grey")
+	p = p + geom_smooth()
+	# p = p + geom_abline(slope = 1, intercept = 0, linetype = "dotdash", color = "grey")
+	# p = p + geom_vline(xintercept = 0, linetype = "dotted", color = "grey")
 	p = p + geom_hline(yintercept = 0, linetype = "dotted", color = "grey")
-	p = p + geom_vline(xintercept = 0, linetype = "dotted", color = "grey")
 	if(any(!is.na(xylim))){
 		p = p + coord_cartesian(xlim = xylim, ylim = xylim, expand = FALSE)
 	}
 	
 	# model = lm(yDiff ~ xDiff, data = mzData)
-	tmp    = summary(lm(yDiff ~ xDiff, data = mzData))
-	beta   = tmp$coefficients["xDiff", "Estimate"]
-	SE     = tmp$coefficients["xDiff", "Std. Error"]
-	pvalue = tmp$coefficients["xDiff", "Pr(>|t|)"]
-	R2     = round(tmp$r.squared, 3)
+	sumry  = summary(lm(yDiff ~ xDiff, data = mzData))
+	beta   = sumry$coefficients["xDiff", "Estimate"]
+	SE     = sumry$coefficients["xDiff", "Std. Error"]
+	pvalue = sumry$coefficients["xDiff", "Pr(>|t|)"]
+	R2     = round(sumry$r.squared, 3)
 	pvalStr = paste0(", p ", umxAPA(pvalue, addComparison = TRUE, digits = digits, report = "none"))
-	blurb = umxAPA(beta, se=SE, report = "expression", suffix = pvalStr)
-	p = p + annotate("text", x = labxy[1], y = labxy[2], label = blurb, family = "Times")
+	blurb  = umxAPA(beta, se=SE, report = "expression", suffix = pvalStr)
+	p = p + annotate("text", x = labxy[1], y = labxy[2], label = blurb)
 	p = p + theme_bw() # + hrbrthemes::theme_ipsum()
 	print(p)
 }
@@ -196,8 +197,8 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	umx_check_names(neededVars, data = data)
 
 	popData = umx_wide2long(data = data[, neededVars], sep = sep)
-	dzData  = umx_wide2long(data = data[data$zygosity %in% dzZygs, neededVars], sep = sep)
-	mzData  = umx_wide2long(data = data[data$zygosity %in% mzZygs, neededVars], sep = sep)
+	dzData  = umx_wide2long(data = data[data$zyg %in% dzZygs, neededVars], sep = sep)
+	mzData  = umx_wide2long(data = data[data$zyg %in% mzZygs, neededVars], sep = sep)
 
 	# TODO create T1 for non-pair comparison
 
