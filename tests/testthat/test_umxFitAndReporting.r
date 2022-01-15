@@ -183,8 +183,8 @@ test_that("umxExpMeans works", {
 	
 	m1 = umxRAM("One Factor", data = demoOneFactor,
 		umxPath("G", to = manifests),
-		umxPath(var = manifests),
-		umxPath(var = "G", fixedAt = 1)
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
 	)
 	
 	umxExpMeans(m1)
@@ -205,8 +205,8 @@ test_that("umxMI works", {
 	
 	m1 = umxRAM("One Factor", data = demoOneFactor,
 		umxPath("G", to = manifests),
-		umxPath(var = manifests),
-		umxPath(var = "G", fixedAt = 1)
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
 	)
 	
 	# umxMI(m1, full=FALSE)

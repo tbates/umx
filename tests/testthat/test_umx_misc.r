@@ -150,14 +150,12 @@ test_that("umx_has_means", {
 	)
 	expect_false(umx_has_means(m1))
 
-	m1 = mxModel(m1,
-		mxPath(from = "one", to = manifests),
-		mxData(demoOneFactor[1:100,], type = "raw")
+	m1 = mxModel(m1, mxData(demoOneFactor[1:100,], type = "raw"),
+		mxPath(from = "one", to = manifests)
 	)
 	expect_true(umx_has_means(m1))
 	m1 = mxRun(m1)
 	expect_true(umx_has_means(m1))
-
 })
 
 test_that("umx_explode_twin_names", {
@@ -170,7 +168,7 @@ test_that("umx_explode_twin_names", {
 	x = round(10 * rnorm(1000, mean = -.2))
 	y = round(5 * rnorm(1000))
 	x[x < 0] = 0; y[y < 0] = 0
-	umx_explode_twin_names(data.frame(x_T1 = x, x_T2 = y), sep = "_T")
+	umx_explode_twin_names(data.frame(x_T1  = x, x_T2  = y), sep = "_T")
 	umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
 	umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
 })

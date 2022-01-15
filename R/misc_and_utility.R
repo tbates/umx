@@ -951,7 +951,7 @@ umx_checkpoint <- umx_set_checkpoint
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
-#' )#' m1 = umx_set_checkpoint(interval = 2, model = m1)
+#' )
 #' umx_get_checkpoint(model = m1)
 #' }
 #' 
@@ -3505,14 +3505,14 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "release")  # Release to CRAN
 #' # tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("load", "quick_install", "install_full", "spell", "run_examples", "check", "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
+umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
 	what  = match.arg(what)
 	which = match.arg(which)
 	if(what == "lastRhub"){
 		prev = rhub::list_package_checks(package = pkg, howmany = 4)
 		check_id = prev$id[1]
 		return(rhub::get_check(check_id))
-	}else if(what == "test"){
+	}else if(what == "testthat"){
 		devtools::test(pkg = pkg)
 	}else if(what == "load"){
 		devtools::load_all(path = pkg)
@@ -3520,7 +3520,7 @@ umx_make <- function(what = c("load", "quick_install", "install_full", "spell", 
 		if(dim(changed)[1]>=1){
 			umx_print(gert::git_status(repo = pkg))
 		}
-	} else if(what == "quick_install"){
+	} else if(what == "quickInst"){
 		devtools::document(pkg = pkg);
 		devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);
 		devtools::load_all(path = pkg)
@@ -3528,13 +3528,13 @@ umx_make <- function(what = c("load", "quick_install", "install_full", "spell", 
 		if(dim(changed)[1]>=1){
 			umx_print(gert::git_status(repo = pkg))
 		}
-	}else if(what == "install_full"){
+	}else if(what == "install"){
 		devtools::document(pkg = pkg);
 		devtools::install(pkg = pkg);
 		devtools::load_all(path = pkg)
 	} else if(what == "run_examples"){
 		devtools::run_examples(pkg = pkg, run = run, start = start)
-	} else if(what == "check"){
+	} else if(what == "checkCRAN"){
 		devtools::check(pkg = pkg, run_dont_test = run_dont_test) # http://r-pkgs.had.co.nz/check.html
 	} else if (what =="win"){
 		devtools::check_win_devel(pkg = pkg)
@@ -3565,10 +3565,12 @@ umx_make <- function(what = c("load", "quick_install", "install_full", "spell", 
 		setwd(dir= oldDir)
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
-	}else if (what=="travisCI"){
-		browseURL("https://travis-ci.org/tbates/umx")
+	# }else if (what=="travisCI"){
+	# 	browseURL("https://travis-ci.org/tbates/umx")
 	}else if (what == "sitrep"){
 		devtools::dev_sitrep(pkg = pkg)
+	}else{
+		stop("I don't know how to ", what)
 	}
 }
 
@@ -4855,7 +4857,8 @@ umx_is_cov <- function(data = NULL, boolean = FALSE, verbose = FALSE) {
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
-#' )#'
+#' )
+#'
 #' umx_has_means(m1)
 #' m1 = mxModel(m1,
 #' 	mxPath(from = "one", to = manifests),

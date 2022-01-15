@@ -3923,8 +3923,8 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 #
 #' m1 = umxRAM("One Factor", data = demoOneFactor,
 #' 	umxPath("G", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1)
+#' 	umxPath(v.m. = manifests),
+#' 	umxPath(v1m0 = "G")
 #' )
 #'
 #' umxExpMeans(m1)
@@ -4007,8 +4007,8 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' # Raw: needs to be run by umx to get RMSEA
 #' m2 = umxRAM("One Factor", data = demoOneFactor,
 #' 	umxPath("G", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1)
+#' 	umxPath(v.m. = manifests),
+#' 	umxPath(v1m0 = "G")
 #' )
 #' RMSEA(m2)
 #' }

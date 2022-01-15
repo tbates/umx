@@ -5,8 +5,8 @@
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
 umx_make(
-  what = c("load", "quick_install", "install_full", "spell", "run_examples", "check",
-    "test", "win", "rhub", "lastRhub", "release", "travisCI", "sitrep"),
+  what = c("load", "quickInst", "install", "spell", "sitrep", "checkCRAN", "testthat",
+    "examples", "win", "rhub", "lastRhub", "release"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,
