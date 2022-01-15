@@ -12,10 +12,19 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#' Quickly plot y ~ x with a fit and R^2 printed.
+#' Quickly plot y ~ x with a regression line and R^2, and nice labels.
 #'
-#' @description Give it "x" and "y" as strings with a fit and R^2 printed. (Might make x take a formula in future).
-#' @param x variable as string.
+#' @description
+#' Want a figure for your paper or presentation but not the work of combining [ggplot2::ggplot()], 
+#' [ggplot2::geom_smooth()] and `method` options, plus [ggplot2::geom_point()]. Organizing [ggplot2::labs()] and its
+#' `x`, `y`, and `title` components. Adding your preferred theme like [ggplot2::theme_gray()], plus recalling
+#' for [cowplot::draw_label()], and/or [ggplot2::annotate()] to draw math-enabled labels on the plot, as well
+#' as the required [bquote()], and extracting the relevant fit statistics from [lm()] and the subsidiary tasks
+#' of [reformulate()] programmatic variables?
+#' 
+#' `umxPlot` just takes `y ~ x` (or "x" and "y" as strings), and gives you a nicely labelled plot, with a fitted line, the
+#' \ifelse{html}{\out{<em>R</em><sup>2</sup>}}{\eqn{R^2}} so readers can see how well this fitted. It knows how to put Greek symbols like \eqn{beta} into axes.
+#' @param x formula or (alternatively) x as string
 #' @param y variable as string.
 #' @param data The data for the graph.
 #' @param xlab X-axis label (default y).

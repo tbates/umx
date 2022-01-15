@@ -2,11 +2,11 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxPlot}
 \alias{umxPlot}
-\title{Quickly plot y ~ x with a fit and R^2 printed.}
+\title{Quickly plot y ~ x with a regression line and R^2, and nice labels.}
 \usage{
 umxPlot(
   x,
-  y,
+  y = NULL,
   data,
   xlab = x,
   ylab = y,
@@ -16,7 +16,7 @@ umxPlot(
 )
 }
 \arguments{
-\item{x}{variable as string.}
+\item{x}{formula or (alternatively) x as string}
 
 \item{y}{variable as string.}
 
@@ -38,7 +38,15 @@ umxPlot(
 }
 }
 \description{
-Give it "x" and "y" as strings with a fit and R^2 printed. (Might make x take a formula in future).
+Want a figure for your paper or presentation but not the work of combining \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}},
+\code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}} and \code{method} options, plus \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}. Organizing \code{\link[ggplot2:labs]{ggplot2::labs()}} and its
+\code{x}, \code{y}, and \code{title} components. Adding your preferred theme like \code{\link[ggplot2:ggtheme]{ggplot2::theme_gray()}}, plus recalling
+for \code{\link[cowplot:draw_label]{cowplot::draw_label()}}, and/or \code{\link[ggplot2:annotate]{ggplot2::annotate()}} to draw math-enabled labels on the plot, as well
+as the required \code{\link[=bquote]{bquote()}}, and extracting the relevant fit statistics from \code{\link[=lm]{lm()}} and the subsidiary tasks
+of \code{\link[=reformulate]{reformulate()}} programmatic variables?
+
+\code{umxPlot} just takes \code{y ~ x} (or "x" and "y" as strings), and gives you a nicely labelled plot, with a fitted line, the
+\ifelse{html}{\out{<em>R</em><sup>2</sup>}}{\eqn{R^2}} so readers can see how well this fitted. It knows how to put Greek symbols like \eqn{beta} into axes.
 }
 \examples{
 data(mtcars)
