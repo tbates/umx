@@ -32,13 +32,16 @@
 #' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
 #' umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
-umxPlot <- function(x, y, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2) {
+umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2) {
 	if(class(x)=="formula"){
 		.formula = x
 		tmp = attr(terms(x), "factors")
 		tmp = dimnames(tmp)[[1]]
 		y = tmp[1]
 		x = tmp[2]
+	} else if(is.null(y)){
+		# let qplot make a histogram
+		return(qplot(x, data = data, xlab =x, main = title))
 	} else {
 		.formula = reformulate(paste0(y, "~ ", x))	
 	}
