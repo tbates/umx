@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxDoC.R
 \name{umxDiscTwin}
 \alias{umxDiscTwin}
-\title{Intra-pair asssociation in MZ, DZ  twin models. (ALPHA!)}
+\title{Intra-pair association in MZ, DZ  twin models. (ALPHA quality!)}
 \usage{
 umxDiscTwin(
   x,

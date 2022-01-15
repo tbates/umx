@@ -78,7 +78,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF
 	print(p)
 }
 
-#' Intra-pair asssociation in MZ, DZ  twin models. (ALPHA!)
+#' Intra-pair association in MZ, DZ  twin models. (ALPHA quality!)
 #'
 #' @description
 #' Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
