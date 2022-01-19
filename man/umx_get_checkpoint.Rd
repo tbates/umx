@@ -25,7 +25,7 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
-)#' m1 = umx_set_checkpoint(interval = 2, model = m1)
+)
 umx_get_checkpoint(model = m1)
 }
 

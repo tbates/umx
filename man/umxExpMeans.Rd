@@ -31,8 +31,8 @@ data(demoOneFactor)
 manifests = names(demoOneFactor)
 m1 = umxRAM("One Factor", data = demoOneFactor,
 	umxPath("G", to = manifests),
-	umxPath(var = manifests),
-	umxPath(var = "G", fixedAt = 1)
+	umxPath(v.m. = manifests),
+	umxPath(v1m0 = "G")
 )
 
 umxExpMeans(m1)
