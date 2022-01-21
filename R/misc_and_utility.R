@@ -2873,7 +2873,7 @@ plot.percent <- function(x, ...) {
 		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y= -10, yend= log10(percent_to_reverse*100), alpha= .5, color = "lightgrey")
 	}
 	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
-	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(percentChange*100, " percent ", ifelse(percentChange>0, "on ", "off "), oldValue, " (= ", (1+percentChange)*oldValue, ")"))
+	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(percentChange*100, " percent ", ifelse(percentChange>0, "on ", "off "), oldValue, " = ", (1+percentChange)*oldValue))
 	# p = p + ggplot2::geom_area() can't do with stat fun ...
 
 	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")

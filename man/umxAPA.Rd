@@ -41,7 +41,7 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 
 \item{addComparison}{For a p-value, whether to add "</=" default (NA) adds "<" if necessary}
 
-\item{report}{What to return (default = 'markdown'). Use 'html' to open a web table. none doesn't print. expression can contain plotmath}
+\item{report}{What to return (default = 'markdown'). Use 'html' to open a web table. none doesn't print. expression can contain \code{\link[=plotmath]{plotmath()}}}
 
 \item{lower}{Whether to not show the lower triangle of correlations for a data.frame (Default TRUE)}
 

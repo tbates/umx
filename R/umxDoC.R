@@ -93,6 +93,11 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF
 #' \if{html}{\figure{discordant_causal_patterns.png}{options: width=50% alt="Figure: Types of confounding"}}
 #' \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
 #' 
+#' The function uses the [nlme::lme()] function to compute the effect of the presumed causal variable on the outcome, 
+#' controlling, for mid-family score and with random means model using familyID. e.g.:
+#' 
+#' `mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1|FAMID, data = umx_scale(MZ), na.action = "na.omit")`
+#' 
 #' Example output from `umxDiscTwin`:
 #' 
 #' \if{html}{\figure{DiscTwins_example.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}

@@ -4456,7 +4456,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param use If obj is a data.frame, how to handle NAs (default = "complete")
 #' @param min For a p-value, the smallest value to report numerically (default .001)
 #' @param addComparison For a p-value, whether to add "</=" default (NA) adds "<" if necessary
-#' @param report What to return (default = 'markdown'). Use 'html' to open a web table. none doesn't print. expression can contain plotmath 
+#' @param report What to return (default = 'markdown'). Use 'html' to open a web table. none doesn't print. expression can contain [plotmath()] 
 #' @param lower Whether to not show the lower triangle of correlations for a data.frame (Default TRUE)
 #' @param SEs Whether or not to show correlations with their SE (Default TRUE)
 #' @param means Whether or not to show means in a correlation table (Default TRUE)
