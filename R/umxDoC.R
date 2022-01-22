@@ -20,8 +20,8 @@
 #' @param y Presumed caused outcome, e.g. "score"
 #' @param data Dataframe containing the twin data.
 #' @param sep The separator "_T" used to make twin var names from x and y.
-#' @param zygosity The column containing "zygosity" data
-#' @param zygList The MZ zygosity codes c("MZFF", "MZMM")
+#' @param mzZygs The MZ zygosity codes c("MZFF", "MZMM")
+#' @param zyg The column containing "zygosity" data
 #' @param labxy Where to locate the R2 label (default = c(x=-2,y=3))
 #' @param xylim = clip x any axes to range, e.g c(-3,-3)
 #' @param digits Rounding for beta (def2)
@@ -35,7 +35,7 @@
 #' data(twinData)
 #' umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
 #' umxDiffMZ(x="ht", y="wt", xylim = c( -2, 2), data = twinData, sep = "")
-umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF", "MZMM"), labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits = 2) {
+umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = "zygosity", labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits = 2) {
 	message("umxDiffMZ is pre-alpha quality: Internals are stubs and parameter names may change!")
 	# 1. Expand names for ease of use
 	x_T1 = paste0(x, sep, 1); x_T2 = paste0(x, sep, 2)

@@ -11,7 +11,7 @@ test_that("test umxPath", {
 	manifests = names(demoOneFactor)
 
 	umxPath("A", to = "B") # One-headed path from A to B
-	umxPath("A", to = "B"), fixedAt = 1) # same, with value fixed @@1
+	umxPath("A", to = "B", fixedAt = 1) # same, with value fixed @@1
 	umxPath("A", to = c("B", "C"), fixedAt = 1:2) # same, with more than 1 value
 	umxPath("A", to = c("B", "C"), firstAt = 1) # Fix only the first path, others free
 	umxPath(var = letters[1:5]) # Give a variance to five variables	
