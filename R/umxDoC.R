@@ -238,12 +238,15 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' Build and run a 2-group Direction of Causation twin models.
 #'
 #' @description
-#' Testing causal claims is often difficult due to an inability to conduct experimental randomization of traits and situations to people.  
-#' When twins are available, even when measured on a single occasion, the pattern of cross-twin cross-trait correlations 
-#' can (given distinguishable modes of inheritance for the two traits) falsify causal hypotheses.
+#' Testing causal claims is often difficult due to an inability to conduct experimental randomization of traits and 
+#' situations to people. When twins are available, even when measured on a single occasion, the pattern of cross-twin
+#' cross-trait correlations can (given distinguishable modes of inheritance for the two traits) falsify causal hypotheses.
 #' 
 #' `umxDoC` implements a 2-group model to form latent variables for each of two traits, and allows testing whether 
 #' trait 1 causes trait 2, vice-versa, or even reciprocal causation.
+#' 
+#' Using latent variables instead of a manifest measure for testing causation, avoids the bias created by differences in 
+#' measurement error in which the more reliable measure appears to "cause" the less reliable one (Gillespie and Martin, 2005).
 #' 
 #' The following figure shows how the DoC model appears as a path diagram (for two latent variables X and Y,
 #' each with three indicators). Note: For pedagogical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.

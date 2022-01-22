@@ -21,11 +21,11 @@ test_that("test umxPath", {
 	umxPath(v1m0 = "A") # Give "A" variance and a mean, fixed at 1 and 0 respectively
 	umxPath(v.m. = "A") # Give "A" variance and a mean, leaving both free.
 	umxPath(v0m0 = "W") # Give "A" variance and a mean, fixing both @0.
-	umxPath(v.m0 = "W"), # Give "A" variance and a mean, fixing mean, and leaving var free
+	umxPath(v.m0 = "W") # Give "A" variance and a mean, fixing mean, and leaving var free
 	umxPath(v0m0 = "W", label = c(NA, "data.W")) # use data as values
 	umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
 	umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
-	umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
+	umxPath("A", with = c("B", "C") firstAt = 1) # first covariance fixed at 1
 	umxPath(cov = c("A", "B"))  # Covariance A <-> B
 	umxPath(defn = "mpg") # create latent called def_mpg, with 0 mean * var, and label = "data.mpg"
 	umxPath(fromEach = c('a','b'), to = c('c','d')) # a->c, a<->d, b<->c, b<->d
