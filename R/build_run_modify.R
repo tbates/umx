@@ -4676,12 +4676,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 
 	n = 0
-	for (i in list(v.m. , v1m0, v0m0, v.m0)) {
+	for (i in list(v.m. , v1m0, v0m0, v0m., v.m0)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n && !is.null(fixedAt)){
-		warning("When you use v.m. , v1m0, v0m0, v.m0, v0m., don't also set fixedAt - I will ignore it this time")
-		fixedAt = NULL
+		stop("I stopped processing the model: When you use v.m. , v1m0, v0m0, v.m0, or v0m. you can't also set fixedAt")
+	}
+	if(n && !is.null(firstAt)){
+		stop("I stopped processing the model: When you use v.m. , v1m0, v0m0, v.m0, or v0m. you can't also set firstAt")
 	}
 
 	if(!is.null(defn)){
