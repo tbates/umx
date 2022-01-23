@@ -25,7 +25,7 @@ test_that("test umxPath", {
 	umxPath(v0m0 = "W", label = c(NA, "data.W")) # use data as values
 	umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
 	umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
-	umxPath("A", with = c("B", "C") firstAt = 1) # first covariance fixed at 1
+	umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 	umxPath(cov = c("A", "B"))  # Covariance A <-> B
 	umxPath(defn = "mpg") # create latent called def_mpg, with 0 mean * var, and label = "data.mpg"
 	umxPath(fromEach = c('a','b'), to = c('c','d')) # a->c, a<->d, b<->c, b<->d
