@@ -77,7 +77,7 @@ print(tmp, digits = 3)
 }
 \itemize{
 \item Bergen, S. E., Gardner, C. O., Aggen, S. H., & Kendler, K. S. (2008). Socioeconomic status and social support following illicit drug use: causal pathways or common liability? \emph{Twin Res Hum Genet}, \strong{11}, 266-274. \doi{10.1375/twin.11.3.266}
-\item McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. \emph{Perspectives on Psychological Science}, \strong{5}, 546-556. \doi{10.1177/1745691610383511}
+\item McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. \emph{Perspectives on Psychological Science}, \strong{5}, 546-556. \url{https://journals.sagepub.com/doi/10.1177/1745691610383511}
 }
 }
 \seealso{
