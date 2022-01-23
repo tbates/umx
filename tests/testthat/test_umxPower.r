@@ -3,7 +3,7 @@
 # test_file("~/bin/umx/tests/testthat/test_umxPower.r") 
 # test_package("umx")
 
-context("umxCompare()")
+context("umxPower()")
 
 test_that("umxPower works", {
 	# ===================================================
