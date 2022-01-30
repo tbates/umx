@@ -1,11 +1,15 @@
 ## dev umx 4.11.00
-* NEW: `umxDiscTwin` implements the discrepant twin method of testing for causal effects.
-* NEW: `umxDiscTwin` graph for publication.
-* FIXED: `umxACEcov` plot and summary working (needed to filter covs from DVs)
-* TRY: `umxCP` help `.svg` figure instead of `.png`` (smaller)
-* IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control
-* IMPROVED: `umxGxEwindow`: removes un-needed columns
-* IMPROVED: `umxRun`: gained `summary` control
+* NEW: `umxDiscTwin` Discordant twin test for causal effects.
+* NEW: `umxDiscTwin` Graphical output for publication.
+* NEW: `umxPlot` ease customized/journal-close, e.g. y~x, -> x y plot, with r^2.
+* FIXED: `umxACEcov` plot and summary working (needed to filter covs from DVs).
+* TRY: `umxCP` help `.svg` figure instead of `.png`` (smaller).
+* IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control.
+* IMPROVED: `umxGxEwindow`: removes un-needed columns.
+* IMPROVED: `umxRun`: gained `summary` control.
+* SAFECODING: `umxPath` stops when `v*m*` is used with `firstAt` or `fixedAt`.
+* MINOR: `umx_print` call fixed where was being called with file.
+* ADMIN: copyright, tests, Rd improvements.
 
 ## umx 4.10.50
 * December 2021 R 4.1.1 (2021/11/30)
