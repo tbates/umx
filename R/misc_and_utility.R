@@ -2899,12 +2899,13 @@ plot.percent <- function(x, ...) {
 #'
 #' @details Easily plot a function - like sin, using ggplot.
 #'
-#' @param fun Function to plot. Also takes strings like "sin(x) + sqrt(1/x)"
-#' @param min x-range min
-#' @param max x-range max
-#' @param xlab = Optional x axis label
-#' @param ylab = Optional y axis label
-#' @param title Optional title for the plot
+#' @param fun Function to plot. Also takes strings like "sin(x) + sqrt(1/x)".
+#' @param min x-range min.
+#' @param max x-range max.
+#' @param xlab = Optional x axis label.
+#' @param ylab = Optional y axis label.
+#' @param title Optional title for the plot.
+#' @param logY  Set to, e.g. "log" to set COORDINATE of y to log.
 #' @param p  Optional plot onto which to draw the function.
 #' @return - A ggplot graph
 #' @export
@@ -2924,7 +2925,8 @@ plot.percent <- function(x, ...) {
 #' umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
 #' }
 #'
-umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, p = NULL) {
+umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), p = NULL) {
+	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(class(fun) == "character"){
@@ -2956,6 +2958,9 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 		}
 	}else{
 		p    = ggplot(data.frame(x = c(min, max)), aes(x))
+		if(logY != "no"){
+			p = p + ggplot2::coord_trans(y = logY)
+		}
 		p    = p + ggplot2::stat_function(fun = fun[[1]])
 		xlab = ifelse(!is.null(xlab),  xlab , "X value")
 		if(is.null(ylab)){
@@ -2980,8 +2985,9 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 		}
 		p = p + labs(x = xlab, y = ylab, caption = title)
 	}
-
-	if(length(fun)>1){
+	
+	
+	if(length(fun) > 1){
 		n= 1
 		colorList = c("red", "green", "blue")
 		for (i in fun[2:length(fun)]) {
