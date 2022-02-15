@@ -37,7 +37,16 @@ option_list = c(TRUE, FALSE, NA)
 xmu_match.arg(option_list, option_list) # works with non character
 # An example of checking a bad item and stopping
 \dontrun{
-xmu_match.arg("bad", option_list)
+	tmp <- function(x= c("one", "two", "three")) {
+		xmu_match.arg(x, option_list = c("one", "two", "three"))
+	}
+testthat::expect_true(tmp() == "one")
+testthat::expect_error(tmp("bad"))
+	tmp <- function(x= c("one", "two", "three")) {
+		xmu_match.arg(x, option_list = c("one", "two", "three"), check = FALSE)
+	}
+testthat::expect_true(tmp("OK") == "OK")
+testthat::expect_error(tmp(), NA)
 }
 }
 \references{

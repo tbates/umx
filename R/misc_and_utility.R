@@ -2927,6 +2927,7 @@ plot.percent <- function(x, ...) {
 #'
 umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), p = NULL) {
 	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
+
 	if(class(fun) == "numeric"){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(class(fun) == "character"){
@@ -5560,7 +5561,16 @@ umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
 #' xmu_match.arg(option_list, option_list) # works with non character
 #' # An example of checking a bad item and stopping
 #' \dontrun{
-#' xmu_match.arg("bad", option_list)
+#' 	tmp <- function(x= c("one", "two", "three")) {
+#' 		xmu_match.arg(x, option_list = c("one", "two", "three"))
+#' 	}
+#' testthat::expect_true(tmp() == "one")
+#' testthat::expect_error(tmp("bad"))
+#' 	tmp <- function(x= c("one", "two", "three")) {
+#' 		xmu_match.arg(x, option_list = c("one", "two", "three"), check = FALSE)
+#' 	}
+#' testthat::expect_true(tmp("OK") == "OK")
+#' testthat::expect_error(tmp(), NA)
 #' }
 xmu_match.arg <- function(x, option_list, check = TRUE){
 	# Often Rs match.arg  will work...
