@@ -1080,6 +1080,7 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 	
 	# set rowwiseParallel
 	if(packageVersion("OpenMx") >= "2.6.1"){
+		message("ignored rowwiseParallel: bug tim if you need this")
 		# test1$fitfunction$rowwiseParallel = rowwiseParallel
 	} else {
 		message("ignored rowwiseParallel: upgrade to OpenMx 2.6.1 or better to use this")
