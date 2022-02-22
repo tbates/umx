@@ -127,64 +127,52 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="", FAMID = "fam")
 #' print(tmp, digits = 3)
 #' }
-umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot"), use = "complete.obs", sep = "_T") {
+umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot", "model"), use = "complete.obs", sep = "_T") {
 	message("umxDiscTwin is pre-alpha quality: Internals are just stubs and parameter names may change!")
 	out = match.arg(out)
 	
-	pingle <- function(xLevel = "e.g. MZ", model, x, FamMeanX = "FamMeanX", group = NA, row = NULL, input = NULL) {
-		if(is.null(input)){
-			nrow = 3
+	updateDB <- function(xLevel = "e.g. MZ", model, x, FamMeanX = "FamMeanX", group = NA, row = NULL, input = NULL) {
+		if(is.numeric(input)){
+			nrow = input
 			return(data.frame(
-				xLevel   = rep(NA,3), N         = rep(NA,3), 
-				Bwithin  = rep(NA,3), ci.lower  = rep(NA,3), ci.upper = rep(NA,3),
-				tval     = rep(NA,3), pval      = rep(NA,3),
-				Bbetween = rep(NA,3), SEbetween = rep(NA,3)) 
+				xLevel   = rep(NA,nrow), N         = rep(NA,nrow), 
+				Bwithin  = rep(NA,nrow), ci.lower  = rep(NA,nrow), ci.upper = rep(NA,nrow),
+				tval     = rep(NA,nrow), pval      = rep(NA,nrow),
+				Bbetween = rep(NA,nrow), SEbetween = rep(NA,nrow)) 
 			)
 		}
 		if(is.null(row)){ row = which.max(is.na(input$xLevel)) }
 
+		conf = intervals(model, which = "fixed")[["fixed"]]
+		model_coefficients      = summary(model)$tTable
+		input[row, "xLevel"]    = xLevel               # e.g. "MZ"
+		input[row, "N"]         = model$fixDF$terms[x] # df
+		input[row, "Bwithin"]   = conf[x, "est." ]     # intra-pair effect
+		input[row, "ci.lower"]  = conf[x, "lower"]     # CI[lower]
+		input[row, "ci.upper"]  = conf[x, "upper"]     # CI[,upper]
+		input[row, "tval"]      = model_coefficients[x, "t-value"]
+		input[row, "pval"]      = model_coefficients[x, "p-value"]
 
-		if(class(model) == "lm"){
-			# not used
-			input[row, "xLevel"]    = xLevel                # e.g. "Pop"
-			input[row, "N"]         = model$df.residual     # df
-			
-			input[row, "Bwithin"]   = model$coefficients[x] # intra-pair effect, not modeling family.
-			input[row, "ci.lower"]  = confint(model)[x, 1]  # CI[lower]
-			input[row, "ci.upper"]  = confint(model)[x, 2]  # CI[,upper]
-			input[row, "tval"]      = summary(model)$coefficients["ht", "t value"]
-			input[row, "pval"]      = summary(model)$coefficients["ht", "Pr(>|t|)"]
-			return(input)
-		}else{
-			conf = intervals(model, which = "fixed")[["fixed"]]
-			model_coefficients = summary(model)$tTable
-			input[row, "xLevel"]    = xLevel               # e.g. "MZ"
-			input[row, "N"]         = model$fixDF$terms[x] # df
-			input[row, "Bwithin"]   = conf[x, "est." ]     # intra-pair effect
-			input[row, "ci.lower"]  = conf[x, "lower"]     # CI[lower]
-			input[row, "ci.upper"]  = conf[x, "upper"]     # CI[,upper]
-			input[row, "tval"]      = model_coefficients[x, "t-value"]
-			input[row, "pval"]      = model_coefficients[x, "p-value"]
-
-			junk = tryCatch({
-				input[row, "Bbetween"]  = model$coefficients$fixed["FamMeanX"]        # between family beta
-				input[row, "SEbetween"] = model_coefficients["FamMeanX", "Std.Error"] # between family SE
-			}, warning = function(x) {
-			    # ignored
-			}, error = function(x) {
-			    # ignored
-			}, finally={
-			    # ignored
-			})
-
-			return(input)
-
-		}
+		junk = tryCatch({
+			input[row, "Bbetween"]  = model$coefficients$fixed["FamMeanX"]        # between family beta
+			input[row, "SEbetween"] = model_coefficients["FamMeanX", "Std.Error"] # between family SE
+		}, warning = function(x) {
+		    # ignored
+		}, error = function(x) {
+		    # ignored
+		}, finally={
+		    # ignored
+		})
+		return(input)
 	}
-	r_df = pingle() # Create and initialise the database.
+	r_df = updateDB(input= 3) # Create and initialise the database.
 
 	# 1. Compute the mean for each family, and add variable
 	data$FamMeanX = rowMeans(data[, tvars(x, sep = sep)], na.rm = TRUE)
+
+	# recode x to Diff
+	data[, paste0("deltaX", sep, 1)] = data[, paste0(x, sep, 1)] - data$FamMeanX
+	data[, paste0("deltaX", sep, 2)] = data[, paste0(x, sep, 2)] - data$FamMeanX
 
 	# 2. Check inputs
 	# data = twinData; x = "ht"; y = "wt"; FAMID = "fam"; sep = ""
@@ -195,7 +183,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 		umx_check_names(FAMID, data = data, message = c("Could not find your FAMID column ", omxQuotes('FAMID')) )
 		data$FAMID = data[, FAMID]
 	}
-	neededVars = c(tvars(c(x, y), sep = sep), "FAMID", "FamMeanX")
+	neededVars = c(tvars(c(x, y, "deltaX"), sep = sep), "FAMID", "FamMeanX")
 	umx_check_names(neededVars, data = data)
 
 	popData = umx_wide2long(data = data[, neededVars], sep = sep)
@@ -205,18 +193,37 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	# TODO create T1 for non-pair comparison
 
 	# 2. Run nlme::lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
-	# obj = update(obj, data = umx_scale(obj$data))
 	formula = reformulate(termlabels = c("FamMeanX", x), response = y)
 
-	obj  = lme(fixed = reformulate(termlabels = x, response = y), random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim"))
-	r_df = pingle(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(reformulate(termlabels = x, response = y), random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(formula, random = ~ 1|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(formula, random = ~ 1|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
 
-	obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim"))
-	r_df = pingle(xLevel = "DZ", model= obj, x= x, input = r_df)
+	obj = lme(IQ ~ SOSeffort        , random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	obj = lme(IQ ~ deltaX + FamMeanX, random = ~ 1|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
+	obj = lme(IQ ~ deltaX + FamMeanX, random = ~ 1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
 
-	obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim"))
-	r_df = pingle(xLevel = "MZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
 
+
+	# obj = lme(IQ ~ SOSeffort        , random = ~ 1           |FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ deltaX           , random = ~ 1 + FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
+	# obj = lme(IQ ~ deltaX           , random = ~ 1 + FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
+
+
+	# obj = lme(IQ ~ FamMeanX + SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ FamMeanX + SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ FamMeanX + SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
+	#
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1+ FamMeanX|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1+ FamMeanX|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
+	#
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
 
 	r_df$xLevel = factor(r_df$xLevel, levels = c("Pop", "DZ", "MZ"))
 	p = ggplot(r_df, aes(x = xLevel, y = Bwithin, fill = xLevel))
@@ -230,8 +237,10 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	print(p)
 	if(out == "plot"){
 		return(p)
-	} else {
+	} else if(out == "table"){
 		return(r_df)
+	} else if(out == "model"){
+		return(obj)
 	}
 }
 

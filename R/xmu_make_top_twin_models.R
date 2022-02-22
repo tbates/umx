@@ -480,7 +480,7 @@ xmuTwinSuper_SomeBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzDa
 	model = mxModel(name,
 		mxModel("top",
 			# means
-			umxMatrix("expMean", "Full" , nrow = 1, ncol = nVar*nSib, free = meansFree, values = starts$meanStarts, labels = starts$meanLabels, dimnames = list("means", fullVars)),
+			umxMatrix("expMean", "Full" , nrow = 1, ncol = (nVar*nSib), free = meansFree, values = starts$meanStarts, labels = starts$meanLabels, dimnames = list("means", fullVars)),
 			# thresholds
 			umxThresholdMatrix(rbind(mzData$observed, dzData$observed), fullVarNames = fullVars, sep = sep, verbose = verbose),
 
