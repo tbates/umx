@@ -204,23 +204,26 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	obj = lme(IQ ~ deltaX + FamMeanX, random = ~ 1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
 
 	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ deltaX   , random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
+	# obj = lme(IQ ~ deltaX   , random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
 
+	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= x, input = r_df)
 
-	# obj = lme(IQ ~ SOSeffort        , random = ~ 1           |FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ deltaX           , random = ~ 1 + FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
-	# obj = lme(IQ ~ deltaX           , random = ~ 1 + FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
+	# good
+	# obj = lme(IQ ~ SOSeffort           , random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ 1|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ 1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= x, input = r_df)
 
+	# obj = lme(IQ ~ SOSeffort           , random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
 
-	# obj = lme(IQ ~ FamMeanX + SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ FamMeanX + SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ FamMeanX + SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
-	#
-	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ 1+ FamMeanX|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ 1+ FamMeanX|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
-	#
+	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
+
 	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
 	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
 	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)

@@ -3589,14 +3589,12 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 	if(is.numeric(type)){
 		stop("You used ", omxQuotes(type), " as the type of your matrix. You probably need to add something like type='Full' or specify nrow and ncol")
 	}
-
 	if(isTRUE(labels)){
 		setLabels = TRUE
 		labels    = NA
 	} else {
 		setLabels = FALSE
 	}
-
 	x = mxMatrix(type = type, nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = byrow, dimnames = dimnames, name = name, condenseSlots = condenseSlots, joinKey = joinKey, joinModel = joinModel, ...)
 	if(setLabels){
 		x = xmuLabel(x, baseName = baseName, jiggle = jiggle)

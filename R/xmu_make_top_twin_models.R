@@ -259,8 +259,7 @@ xmu_make_TwinSuperModel <- function(name = "twin_super", mzData, dzData, selDVs,
 		} else {
 			stop("You appear to have something other than I expected in terms of WLS, or binary, ordinal and continuous variable mix")
 		}
-		
-		# nb: means not yet equated across twins	
+		# nb: means not yet equated across twins
 	} else if(dataType %in% c("cov", "cor")){
 		if(!is.null(weightVar)){
 			stop("You can't set weightVar when you give cov data - use cov.wt to create weighted cov matrices, or pass in raw data")
