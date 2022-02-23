@@ -894,7 +894,7 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 umx_set_checkpoint <- function(interval = 1, units = c("evaluations", "iterations", "minutes"), prefix = "", directory = getwd(), model = NULL) {
 	if(umx_is_MxModel(interval)){
 		stop("You passed in a model as the first parameter. You probably want:\n",
-		"umx_is_MxModel(model=yourModel)")
+		"umx_set_checkpoint(model=yourModel)")
 	}
 	units = match.arg(units)
 	if(interval == 0){
@@ -3444,7 +3444,8 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 		loc = "NPSOL"
 		message("next time, use 'NPSOL' instead of 'UVa'")
 	}
-	
+	oldTimeOut = getOption('timeout')
+	options(timeout=60*3)
 	if(!is.null(url)){
 		if(url == "Finder"){
 			umx_check_OS("OSX")
@@ -3477,6 +3478,7 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 	} else if(loc == "open travis build page"){
 		browseURL("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/?C=M;O=D")
 	}
+	options(timeout=oldTimeOut)
 }
 
 #' @export
