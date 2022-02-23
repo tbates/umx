@@ -11,7 +11,7 @@ umxDiscTwin(
   mzZygs = c("MZFF", "MZMM"),
   dzZygs = c("DZFF", "DZMM", "DZOS"),
   FAMID = "FAMID",
-  out = c("table", "plot"),
+  out = c("table", "plot", "model"),
   use = "complete.obs",
   sep = "_T"
 )
