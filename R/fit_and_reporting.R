@@ -32,6 +32,8 @@
 #' @param title Graph title. Default =  paste0(y, " as a function of ", x)
 #' @param fitx x location for the fit summary (default 1).
 #' @param fity y location for the fit summary (default 2).
+#' @param method Method for fitting curve (default = lm)
+#' @param family for glm default = "gaussian"
 #' @return - plot you can edit.
 #' @export
 #' @family Plotting functions
@@ -41,7 +43,9 @@
 #' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
 #' umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
-umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2) {
+umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
+	method = match.arg(method)
+	family = match.arg(family)
 	if(class(x)=="formula"){
 		.formula = x
 		tmp = attr(terms(x), "factors")
@@ -54,16 +58,20 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 	} else {
 		.formula = reformulate(paste0(y, "~ ", x))	
 	}
-	m1 = lm(.formula, data = data)
-	r2 = round(summary(m1)$r.squared, 3)
-	lab = bquote(R^2 == .(r2))
-	# bquote(R^2 == .(r2))
-	# p + annotate("text", 3, 30, label = expression(R^2 == beta + 1 ~ hello), family="Optima")
-	p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = 'lm') + geom_point()
-	p  = p + labs(x= xlab, y= ylab, title= title)
-	p  = p + cowplot::draw_label(lab, x = fitx, y = fity, fontfamily = "Times", size = 12)
-	p  = p + theme_gray() # gray,bw,linedraw,light,dark,minimal,classic
+
+	p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method) + geom_point()
+	if(method =="lm"){
+		m1  = lm(.formula, data = data)
+		r2  = round(summary(m1)$r.squared, 3)
+		lab = bquote(R^2 == .(r2))
+		p = p + labs(x= xlab, y= ylab, title= title)
+		p = p + cowplot::draw_label(lab, x = fitx, y = fity, fontfamily = "Times", size = 12)
+	}else if (method == "glm"){
+		# m1  = glm(.formula, data = data, family=family)
+	}
+	p = p + theme_gray() # gray, bw, linedraw, light, dark, minimal, classic
 	p
+	# p + annotate("text", 3, 30, label = expression(R^2 == beta + 1 ~ hello), family="Optima")
 }
 
 # =====================

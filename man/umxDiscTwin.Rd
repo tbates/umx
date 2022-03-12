@@ -44,7 +44,8 @@ umxDiscTwin(
 Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 
-\code{umxDiscTwin} uses lme to compute within-person beta of y on x and MZ and DZ models controlling the between-family variance.
+\code{umxDiscTwin} uses `lme`` to compute the beta of y on x in models eithere a) only controlling for non-independence,
+and models in MZ and DZ subsamples also conttrolling the controlling the between-family level of in the predictor.
 
 If \code{x} is causal, then the effect size of x on y is expected to be equally large in all three samples.
 If the population association reflects confounded genes or shared environments,
@@ -56,9 +57,9 @@ then the association in MZ twins will reduce to zero or non-significance.
 The function uses the \code{\link[nlme:lme]{nlme::lme()}} function to compute the effect of the presumed causal variable on the outcome,
 controlling, for mid-family score and with random means model using familyID. e.g.:
 
-\code{mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1|FAMID, data = umx_scale(MZ), na.action = "na.omit")}
+\code{mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1+FamMeanX|FAMID, data = umx_scale(MZ), na.action = "na.omit")}
 
-Example output from \code{umxDiscTwin}:
+\strong{Example output from \code{umxDiscTwin}}
 
 \if{html}{\figure{DiscTwins_example.png}{options: width=50\% alt="Figure: Causation in Discordant twins"}}
 \if{latex}{\figure{DiscTwins_example.pdf}{options: width=7cm}}
