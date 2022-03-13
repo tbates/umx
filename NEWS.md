@@ -7,7 +7,7 @@
 * IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control.
 * IMPROVED: `umxGxEwindow`: removes un-needed columns.
 * IMPROVED: `umxRun`: gained `summary` control.
-* SAFECODING: `umxPath` stops when `v*m*` is used with `firstAt` or `fixedAt`.
+* SAFE CODING: `umxPath` stops when `v*m*` is used with `firstAt` or `fixedAt`.
 * MINOR: `umx_print` call fixed where was being called with file.
 * ADMIN: copyright, tests, Rd improvements.
 

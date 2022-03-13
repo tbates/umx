@@ -44,12 +44,12 @@ umxDiscTwin(
 Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 
-\code{umxDiscTwin} uses `lme`` to compute the beta of y on x in models eithere a) only controlling for non-independence,
-and models in MZ and DZ subsamples also conttrolling the controlling the between-family level of in the predictor.
+\code{umxDiscTwin} uses \code{\link[nlme:nlme]{nlme::nlme()}} to compute the beta for x in \code{y ~ x} in models either a) Just ontrolling for non-independence,
+and b) MZ and DZ subsample models in which the family level of the predictor y is also controlled.
 
 If \code{x} is causal, then the effect size of x on y is expected to be equally large in all three samples.
 If the population association reflects confounded genes or shared environments,
-then the association in MZ twins will reduce to zero or non-significance.
+then the association in MZ twins will reduce to zero/non-significance.
 
 \if{html}{\figure{discordant_causal_patterns.png}{options: width=50\% alt="Figure: Types of confounding"}}
 \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
