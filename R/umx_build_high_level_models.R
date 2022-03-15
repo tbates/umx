@@ -274,6 +274,7 @@ umxFactanal <- umxEFA
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 2)
 #' x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 #' 
@@ -283,7 +284,6 @@ umxFactanal <- umxEFA
 #' hist(x$F1)
 #' plot(F1 ~ F2, data = x)
 #' 
-#' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 1)
 #' x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 #' x
