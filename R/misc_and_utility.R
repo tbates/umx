@@ -1371,6 +1371,7 @@ umx_factor <- umxFactor
 #' Just automates applying [complete.cases()]
 #' 
 #' @param df The df (just the relevant columns)
+#' @param cols (optional) list of columns (default = use all)
 #' @param graph Whether to graph.
 #' @return -
 #' @export
