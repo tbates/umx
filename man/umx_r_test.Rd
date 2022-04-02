@@ -59,6 +59,7 @@ Other Miscellaneous Stats Functions:
 \code{\link{umx_means}()},
 \code{\link{umx_round}()},
 \code{\link{umx_scale}()},
+\code{\link{umx_score_scale}()},
 \code{\link{umx_var}()},
 \code{\link{umx}}
 }

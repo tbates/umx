@@ -32,6 +32,7 @@ It is a simple wrapper around mxFactorScores. For missing data, you must specify
 variables allowed for a score (subjects with fewer than minManifests will return a score of NA.
 }
 \examples{
+\dontrun{
 m1 = umxEFA(mtcars, factors = 2)
 x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 
@@ -41,7 +42,6 @@ x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 hist(x$F1)
 plot(F1 ~ F2, data = x)
 
-\dontrun{
 m1 = umxEFA(mtcars, factors = 1)
 x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 x

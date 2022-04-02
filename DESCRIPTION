@@ -54,6 +54,7 @@ Suggests:
 	spelling,
     testthat,
     rmarkdown,
+	paran,
 	psych,
 	psychTools,
 	rhub,
