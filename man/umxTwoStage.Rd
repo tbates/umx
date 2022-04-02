@@ -101,7 +101,7 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 \itemize{
 \item Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
 \item Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to
-Assess Causality Using Observational Data. \emph{J Am Soc Nephrol}, \strong{27}), 3253-3265. \url{doi:10.1681/ASN.2016010098}
+Assess Causality Using Observational Data. \emph{Journal of the American Society of Nephrology}, \strong{27}), 3253-3265. \url{doi:10.1681/ASN.2016010098}
 }
 }
 \seealso{

@@ -344,7 +344,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @references - * Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to 
-#' Assess Causality Using Observational Data. *J Am Soc Nephrol*, **27**), 3253-3265. <doi:10.1681/ASN.2016010098>
+#' Assess Causality Using Observational Data. *Journal of the American Society of Nephrology*, **27**), 3253-3265. <doi:10.1681/ASN.2016010098>
 #' @md
 #' @examples
 #' \dontrun{

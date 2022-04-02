@@ -84,7 +84,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 #' A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 #' 
-#' `umxDiscTwin` uses [nlme::nlme()] to compute the beta for x in `y ~ x` in models either a) Just ontrolling for non-independence, 
+#' `umxDiscTwin` uses [nlme::nlme()] to compute the beta for x in `y ~ x` in models either a) Only controlling non-independence, 
 #' and b) MZ and DZ subsample models in which the family level of the predictor y is also controlled.
 #' 
 #' If `x` is causal, then the effect size of x on y is expected to be equally large in all three samples.

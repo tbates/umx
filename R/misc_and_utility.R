@@ -1372,13 +1372,6 @@ umx_factor <- umxFactor
 #' 
 #' @param df The df (just the relevant columns)
 #' @param graph Whether to graph.
-umxParan <- function(df, cols= NA, graph = TRUE) {
-	if(!is.na(cols)){
-		umx_check_names(cols, data = df)
-		df = df[cols, ]
-	}
-	paran::paran(df[complete.cases(df), ], graph = graph)
-}
 #' @return -
 #' @export
 #' @family Miscellaneous Stats Functions
@@ -1390,6 +1383,13 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' umxParan(bfi[, paste0("A", 1:5)])
 #' umxParan(bfi, paste0("A", 1:5))
 #' # umxParan(bfi, paste0("AB", 1))
+umxParan <- function(df, cols= NA, graph = TRUE) {
+	if(!is.na(cols)){
+		umx_check_names(cols, data = df)
+		df = df[cols, ]
+	}
+	paran::paran(df[complete.cases(df), ], graph = graph)
+}
 
 #' Score a psychometric scale by summing normal and reversed items. 
 #' 

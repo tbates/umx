@@ -3,7 +3,7 @@
 \name{umxParan}
 \alias{umxParan}
 \title{A wrapper to make paran easier to use.
-Just automates applying [complete.cases()]}
+Just automates applying \code{\link[=complete.cases]{complete.cases()}}}
 \usage{
 umxParan(df, cols = NA, graph = TRUE)
 }
@@ -12,7 +12,41 @@ umxParan(df, cols = NA, graph = TRUE)
 
 \item{graph}{Whether to graph.}
 }
+\value{
+\itemize{
+\item 
+}
+}
 \description{
 A wrapper to make paran easier to use.
-Just automates applying [complete.cases()]
+Just automates applying \code{\link[=complete.cases]{complete.cases()}}
 }
+\examples{
+library(psych)
+library(psychTools)
+data(bfi)
+umxParan(bfi[, paste0("A", 1:5)])
+umxParan(bfi, paste0("A", 1:5))
+# umxParan(bfi, paste0("AB", 1))
+}
+\seealso{
+Other Miscellaneous Stats Functions: 
+\code{\link{FishersMethod}()},
+\code{\link{SE_from_p}()},
+\code{\link{geometric_mean}()},
+\code{\link{harmonic_mean}()},
+\code{\link{oddsratio}()},
+\code{\link{reliability}()},
+\code{\link{umxCov2cor}()},
+\code{\link{umxHetCor}()},
+\code{\link{umxWeightedAIC}()},
+\code{\link{umx_apply}()},
+\code{\link{umx_cor}()},
+\code{\link{umx_means}()},
+\code{\link{umx_r_test}()},
+\code{\link{umx_round}()},
+\code{\link{umx_scale}()},
+\code{\link{umx_var}()},
+\code{\link{umx}}
+}
+\concept{Miscellaneous Stats Functions}
