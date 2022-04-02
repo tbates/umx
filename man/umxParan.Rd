@@ -10,11 +10,13 @@ umxParan(df, cols = NA, graph = TRUE)
 \arguments{
 \item{df}{The df (just the relevant columns)}
 
+\item{cols}{(optional) list of columns (default = use all)}
+
 \item{graph}{Whether to graph.}
 }
 \value{
 \itemize{
-\item 
+\item nothing
 }
 }
 \description{

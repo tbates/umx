@@ -453,7 +453,7 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 	allContinuousMethod = match.arg(allContinuousMethod)
 	# data must be mxData
 	
-	if(class(data) == "data.frame"){
+	if(inherits(data, "data.frame")){
 		if(type %in% c("WLS", "DWLS", "ULS")){
 			tmp =xmu_describe_data_WLS(data, allContinuousMethod = allContinuousMethod)
 			return(tmp$hasMeans)
@@ -608,9 +608,9 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' 
 xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "marginals"), verbose=FALSE){
 	allContinuousMethod = match.arg(allContinuousMethod)
-	if(class(data) == "data.frame"){
+	if(inherits(data, "data.frame")){
 		# all good
-	} else if(class(data) == "MxDataStatic" && data$type == "raw"){
+	} else if(inherits(data, "MxDataStatic") && data$type == "raw"){
 		data = data$observed
 	}else{
 		message("xmu_describe_data_WLS currently only knows how to process dataframes and mxData of type = 'raw'.\n",

@@ -46,7 +46,7 @@
 umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
 	method = match.arg(method)
 	family = match.arg(family)
-	if(class(x)=="formula"){
+	if(inherits(x, "formula")){
 		.formula = x
 		tmp = attr(terms(x), "factors")
 		tmp = dimnames(tmp)[[1]]
@@ -257,7 +257,7 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
 	report = match.arg(report)
 	umx_is_MxModel(model)
-	if(class(model) == "MxModelGxE"){		
+	if(inherits(model, "MxModelGxE")){
 		# Reduce GxE Model
 
 		noAmod = umxModify(model, update = "am_r1c1", name = "No_mod_on_A", tryHard= tryHard)
@@ -2832,7 +2832,7 @@ plot.MxModelACE <- umxPlotACE
 umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, ...) {
 	model = x # just to be clear that x is a model
 
-	if(!class(x) == "MxModelACEcov"){
+	if(!inherits(x, "MxModelACEcov")){
 		stop("The first parameter of umxPlotACEcov must be an ACEcov model, you gave me a ", class(x))
 	}
 
@@ -2854,7 +2854,7 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	parameterKeyList = omxGetParameters(model);
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
-		if(class(value) == "numeric") {
+		if(inherits(value, "numeric")) {
 			value = round(value, digits)
 		}
 		if (grepl("^[ace]_r[0-9]+c[0-9]+", thisParam)) { # a c e
@@ -3645,7 +3645,7 @@ umxParameters <- function(x, thresh = c("all", "above", "below", ">", "<", "NS",
 	# 	model$MZ$matrices
 	
 	# x = cp4
-	if(class(thresh) == "numeric"){
+	if(inherits(thresh, "numeric")){
 		stop("You might not have specified the parameter value (b) by name. e.g.:\n
 	parameters(cp4, pattern = '_cp_', thresh = 'below', b = .1)\n
 or specify all arguments:\n

@@ -1373,7 +1373,7 @@ umx_factor <- umxFactor
 #' @param df The df (just the relevant columns)
 #' @param cols (optional) list of columns (default = use all)
 #' @param graph Whether to graph.
-#' @return -
+#' @return - nothing
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @md
@@ -1385,7 +1385,7 @@ umx_factor <- umxFactor
 #' umxParan(bfi, paste0("A", 1:5))
 #' # umxParan(bfi, paste0("AB", 1))
 umxParan <- function(df, cols= NA, graph = TRUE) {
-	if(!is.na(cols)){
+	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
 		df = df[cols, ]
 	}
@@ -2953,10 +2953,9 @@ plot.percent <- function(x, ...) {
 #'
 umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), p = NULL) {
 	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
-
-	if(class(fun) == "numeric"){
+	if(inherits(fun, "numeric")){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
-	} else if(class(fun) == "character"){
+	} else if(inherits(fun, "character")){
 		make_function <- function(args, body, env = parent.frame()) {
 			args = as.pairlist(args)
 			eval(call("function", args, body), env)
@@ -3826,7 +3825,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 	if(is.null(fromLabel)){ fromLabel = x$name }
 	if(is.null(toLabel))  { toLabel   = x$name }
 
-	if(class(x) == "MxAlgebra"){
+	if(inherits(x, "MxAlgebra")){
 		# convert to a matrix
 		tmp = x$result
 		x   = umxMatrix(x$name, "Full", dim(tmp)[1], dim(tmp)[2], free = TRUE, values = tmp)
@@ -4004,13 +4003,13 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 		if(length(x) > 1) {
 			thisX = x[[i]]
 		} else {
-			if(class(x) == "list"){
+			if(inherits(x, "list")){
 				thisX = x[[i]]
 			} else {
 				thisX = x
 			}
 		}
-		if(class(thisX) == "character"){
+		if(inherits(thisX, "character")){
 			if(thisX == "start"){
 				options("umx_last_time" = proc.time())
 				thisTime = (proc.time()["elapsed"] - getOption("umx_last_time")["elapsed"])
@@ -4061,7 +4060,7 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 			realFormatStr = formatStr
 		}
 		
-		if(class(thisX) == "character"){
+		if(inherits(thisX, "character")){
 			# Handle start-stop
 			timeString = format(.POSIXct(thisTime, tz), paste0("elapsed time: ", realFormatStr))
 		} else {
@@ -5450,7 +5449,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 		}
 		return(data)
 	} else {
-		if(class(var) == "formula"){
+		if(inherits(var, "formula")){
 			umx_check(is.null(covs), "stop", "when using formula, leave covs empty")
 			form = var
 			var  = all.vars(terms(form))[1]

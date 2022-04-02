@@ -569,7 +569,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# if data provided check it isn't a tibble
 	if(!is.null(data)){
 		# avoid ingesting tibbles
-		if("tbl" %in% class(data)){
+		if(inherits(data, "tbl")){
 			data = as.data.frame(data)
 		}
 	}
@@ -581,7 +581,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		umx_set_optimizer(optimizer)
 	}
 	if(!is.null(group)){
-		if(class(data) != "data.frame"){
+		if(!inherits(data, "data.frame")){
 			stop("Currently, for multiple groups, data must be a raw data.frame so I can subset it into multiple groups. You gave me a ", omxQuotes(class(data)))
 		}
 	}
@@ -736,7 +736,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ============
 	# = Add data =
 	# ============
-	if (class(myData) == "character"){
+	if (inherits(myData, "character")){
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = xmuLabel(newModel, suffix = suffix)
 		if(is.null(group)){

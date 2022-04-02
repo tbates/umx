@@ -186,7 +186,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	data = umx_scale(data)
 	if(is.null(factors)){
 		stop("You need to request at least 1 latent factor, e.g.: factors = 4")
-	} else if( length(factors) == 1 && class(factors) == "numeric"){
+	} else if( length(factors) == 1 && inherits(factors, "numeric")){
 		factors = paste0("F", c(1:factors))
 	}else{
 		# factors is a list of factor names (we hope)
@@ -388,7 +388,7 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weight
 	# formula = Y ~ X; instruments ~ qtl; data = umx_make_MR_data(10000)
 	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 	# summary(sem::tsls(Q ~ P + D, ~ D + F + A, data=Kmenta))
-	if(!class(formula) == "formula"){
+	if(!inherits(formula, "formula")){
 		stop("formula must be a formula")
 	}
 	allForm = all.vars(terms(formula))
