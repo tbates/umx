@@ -28,7 +28,7 @@ library(psych)
 library(psychTools)
 data(bfi)
 umxParan(bfi[, paste0("A", 1:5)])
-umxParan(bfi, paste0("A", 1:5))
+umxParan(bfi, cols= paste0("A", 1:5))
 # umxParan(bfi, paste0("AB", 1))
 }
 \seealso{

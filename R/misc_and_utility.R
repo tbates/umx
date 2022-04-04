@@ -1382,12 +1382,12 @@ umx_factor <- umxFactor
 #' library(psychTools)
 #' data(bfi)
 #' umxParan(bfi[, paste0("A", 1:5)])
-#' umxParan(bfi, paste0("A", 1:5))
+#' umxParan(bfi, cols= paste0("A", 1:5))
 #' # umxParan(bfi, paste0("AB", 1))
 umxParan <- function(df, cols= NA, graph = TRUE) {
 	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
-		df = df[cols, ]
+		df = df[, cols]
 	}
 	paran::paran(df[complete.cases(df), ], graph = graph)
 }
