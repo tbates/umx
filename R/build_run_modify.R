@@ -1750,6 +1750,9 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	if(length(selDefs) != nSib){
 		warning("selDefs must be length = 2");
 	}
+	
+	umx_check(is.numeric(mzData[, selDefs[1] ]), "stop", "Definition vars (selDefs) must be numeric (not, e.g. factor)")
+	
 	if(length(selDVs) != nSib){
 		stop("DV list must be length = 2: 1 variable for each of 2 twins... You tried ", length(selDVs)/nSib)
 	}

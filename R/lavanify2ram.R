@@ -131,7 +131,7 @@ umxRAM2Lav <- function(model) {
 #' \tabular{rllll}{
 #'	\tab lav     \tab Mplus   \tab sem   \tab Action                          	                      \cr
 #'	\tab  A =~ B \tab A by B  \tab       \tab A (Latent) is measured by B	                          \cr
-#'	\tab  A ~  B \tab A on B  \tab A<- A \tab A "is regressed on" (<- ) B   	                      \cr
+#'	\tab  A ~  B \tab A on B  \tab A<- B \tab A "is regressed on" (<- ) B   	                      \cr
 #'	\tab  A ~~ B \tab A with B\tab A<->B \tab A covaries with B	                                      \cr
 #'	\tab  A ~  1 \tab \[A\]    \tab       \tab A has mean	                                          \cr
 #'	\tab  A := B \tab         \tab       \tab A is defined by B (see [OpenMx::mxAlgebra()])	          \cr
