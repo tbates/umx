@@ -647,7 +647,7 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 
 	for(thisParam in names(parameterKeyList) ) {
 		value = parameterKeyList[thisParam]
-		if(class(value) == "numeric") {
+		if(inherits(value, "numeric")) {
 			value = round(value, digits)
 		}
 		if (grepl("^[ACE]_r[0-9]+c[0-9]+", thisParam)) { # fires on things like "A_r1c1"

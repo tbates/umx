@@ -186,7 +186,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	data = umx_scale(data)
 	if(is.null(factors)){
 		stop("You need to request at least 1 latent factor, e.g.: factors = 4")
-	} else if( length(factors) == 1 && class(factors) == "numeric"){
+	} else if( length(factors) == 1 && inherits(factors, "numeric")){
 		factors = paste0("F", c(1:factors))
 	}else{
 		# factors is a list of factor names (we hope)
@@ -274,6 +274,7 @@ umxFactanal <- umxEFA
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
+#' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 2)
 #' x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 #' 
@@ -283,7 +284,6 @@ umxFactanal <- umxEFA
 #' hist(x$F1)
 #' plot(F1 ~ F2, data = x)
 #' 
-#' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 1)
 #' x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 #' x
@@ -313,9 +313,9 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 }
 
 
-#' Build a SEM implementing the equivalent of 2-stage least squares regression
+#' Build a SEM implementing the instrumental variable design
 #'
-#' `umxMR` (`umxTwoStage`) implements the Structural Equation Model equivalent of a 2SLS regression.
+#' `umxMR` (`umxTwoStage`) implements a Mendelian randomization or instrumental variable Structural Equation Model.
 #' For ease of learning, the parameters follow the `tsls()` function in the sem package.
 #' 
 #' The example is a [Mendelian Randomization](https://en.wikipedia.org/wiki/Mendelian_randomization)
@@ -343,6 +343,8 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @seealso - [umx_make_MR_data()], [umxRAM()]
 #' @references - * Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
+#' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to 
+#' Assess Causality Using Observational Data. *Journal of the American Society of Nephrology*, **27**), 3253-3265. <doi:10.1681/ASN.2016010098>
 #' @md
 #' @examples
 #' \dontrun{
@@ -386,7 +388,7 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weight
 	# formula = Y ~ X; instruments ~ qtl; data = umx_make_MR_data(10000)
 	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 	# summary(sem::tsls(Q ~ P + D, ~ D + F + A, data=Kmenta))
-	if(!class(formula) == "formula"){
+	if(!inherits(formula, "formula")){
 		stop("formula must be a formula")
 	}
 	allForm = all.vars(terms(formula))

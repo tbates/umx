@@ -142,9 +142,7 @@ xmu_twin_upgrade_selDvs2SelVars <- function(selDVs, sep, nSib) {
 xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 	if(is.null(comparison)){
 		# \u00d7 = times sign
-		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", 
-			round(-2 * logLik(model), digits = digits))
-		)
+		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", round(-2 * logLik(model), digits = digits)) )
 	} else {
 		if(!umx_is_MxModel(comparison)){
 			stop("xmu_show_fit_or_comparison: 'comparison' must be a model (or left NULL). You gave me a ", class(comparison)[[1]])
@@ -256,7 +254,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 	}
 
 	if(!umx_has_been_run(model1)){
-		# Didn't get run... don't try and summarize it (will error)
+		# Didn't get run... don't try and summarise it (will error)
 		theSummary = NA
 	} else if(summary){
 		tryCatch({
@@ -316,7 +314,7 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 		} else if(interceptsPerSib==3){
 			int = rbind(int, cbind(bvals, bvals, bvals))
 		}else{
-			umx_msg("Polite note: email Tim as this number of means not expected")
+			umx_msg("Polite note: email package maintainer as this number of means not expected")
 		}
 		row.names(int) = c("intercept", "beta")
 	} else {
@@ -331,7 +329,7 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 	}
 
 	if(!is.null(int)){
-		umx_print(int, digits = digits, caption = caption, file=report, append = TRUE, sortableDF = TRUE)
+		umx_print(int, digits = digits, caption = caption, report=report, append = TRUE, sortableDF = TRUE)
 		# if(report == "html"){
 		# 	# depends on R2HTML::HTML
 		# 	R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE);
@@ -455,7 +453,7 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 	allContinuousMethod = match.arg(allContinuousMethod)
 	# data must be mxData
 	
-	if(class(data) == "data.frame"){
+	if(inherits(data, "data.frame")){
 		if(type %in% c("WLS", "DWLS", "ULS")){
 			tmp =xmu_describe_data_WLS(data, allContinuousMethod = allContinuousMethod)
 			return(tmp$hasMeans)
@@ -610,9 +608,9 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' 
 xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "marginals"), verbose=FALSE){
 	allContinuousMethod = match.arg(allContinuousMethod)
-	if(class(data) == "data.frame"){
+	if(inherits(data, "data.frame")){
 		# all good
-	} else if(class(data) == "MxDataStatic" && data$type == "raw"){
+	} else if(inherits(data, "MxDataStatic") && data$type == "raw"){
 		data = data$observed
 	}else{
 		message("xmu_describe_data_WLS currently only knows how to process dataframes and mxData of type = 'raw'.\n",

@@ -51,6 +51,7 @@ Other Miscellaneous Stats Functions:
 \code{\link{reliability}()},
 \code{\link{umxCov2cor}()},
 \code{\link{umxHetCor}()},
+\code{\link{umxParan}()},
 \code{\link{umxWeightedAIC}()},
 \code{\link{umx_cor}()},
 \code{\link{umx_means}()},

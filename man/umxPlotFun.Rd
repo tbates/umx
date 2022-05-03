@@ -11,21 +11,24 @@ umxPlotFun(
   xlab = NULL,
   ylab = NULL,
   title = NULL,
+  logY = c("no", "log", "log10"),
   p = NULL
 )
 }
 \arguments{
-\item{fun}{Function to plot. Also takes strings like "sin(x) + sqrt(1/x)"}
+\item{fun}{Function to plot. Also takes strings like "sin(x) + sqrt(1/x)".}
 
-\item{min}{x-range min}
+\item{min}{x-range min.}
 
-\item{max}{x-range max}
+\item{max}{x-range max.}
 
-\item{xlab}{= Optional x axis label}
+\item{xlab}{= Optional x axis label.}
 
-\item{ylab}{= Optional y axis label}
+\item{ylab}{= Optional y axis label.}
 
-\item{title}{Optional title for the plot}
+\item{title}{Optional title for the plot.}
+
+\item{logY}{Set to, e.g. "log" to set COORDINATE of y to log.}
 
 \item{p}{Optional plot onto which to draw the function.}
 }

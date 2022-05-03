@@ -20,8 +20,8 @@
 #' @param y Presumed caused outcome, e.g. "score"
 #' @param data Dataframe containing the twin data.
 #' @param sep The separator "_T" used to make twin var names from x and y.
-#' @param zygosity The column containing "zygosity" data
-#' @param zygList The MZ zygosity codes c("MZFF", "MZMM")
+#' @param mzZygs The MZ zygosity codes c("MZFF", "MZMM")
+#' @param zyg The column containing "zygosity" data
 #' @param labxy Where to locate the R2 label (default = c(x=-2,y=3))
 #' @param xylim = clip x any axes to range, e.g c(-3,-3)
 #' @param digits Rounding for beta (def2)
@@ -35,7 +35,7 @@
 #' data(twinData)
 #' umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
 #' umxDiffMZ(x="ht", y="wt", xylim = c( -2, 2), data = twinData, sep = "")
-umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF", "MZMM"), labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits = 2) {
+umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = "zygosity", labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits = 2) {
 	message("umxDiffMZ is pre-alpha quality: Internals are stubs and parameter names may change!")
 	# 1. Expand names for ease of use
 	x_T1 = paste0(x, sep, 1); x_T2 = paste0(x, sep, 2)
@@ -84,11 +84,12 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF
 #' Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 #' A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 #' 
-#' `umxDiscTwin` uses lme to compute within-person beta of y on x and MZ and DZ models controlling the between-family variance.
+#' `umxDiscTwin` uses [nlme::nlme()] to compute the beta for x in `y ~ x` in models either a) Only controlling non-independence, 
+#' and b) MZ and DZ subsample models in which the family level of the predictor y is also controlled.
 #' 
 #' If `x` is causal, then the effect size of x on y is expected to be equally large in all three samples.
 #' If the population association reflects confounded genes or shared environments,
-#' then the association in MZ twins will reduce to zero or non-significance.
+#' then the association in MZ twins will reduce to zero/non-significance.
 #' 
 #' \if{html}{\figure{discordant_causal_patterns.png}{options: width=50% alt="Figure: Types of confounding"}}
 #' \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
@@ -96,9 +97,9 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF
 #' The function uses the [nlme::lme()] function to compute the effect of the presumed causal variable on the outcome, 
 #' controlling, for mid-family score and with random means model using familyID. e.g.:
 #' 
-#' `mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1|FAMID, data = umx_scale(MZ), na.action = "na.omit")`
+#' `mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1+FamMeanX|FAMID, data = umx_scale(MZ), na.action = "na.omit")`
 #' 
-#' Example output from `umxDiscTwin`:
+#' **Example output from `umxDiscTwin`**
 #' 
 #' \if{html}{\figure{DiscTwins_example.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
 #' \if{latex}{\figure{DiscTwins_example.pdf}{options: width=7cm}}
@@ -118,7 +119,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF
 #' @seealso - [umxDoC()], [umxDiffMZ()]
 #' @references - Begg, M. D., & Parides, M. K. (2003). Separation of individual-level and cluster-level covariate effects in regression analysis of correlated data. Stat Med, 22(16), 2591-2602. \doi{10.1002/sim.1524} 
 #' * Bergen, S. E., Gardner, C. O., Aggen, S. H., & Kendler, K. S. (2008). Socioeconomic status and social support following illicit drug use: causal pathways or common liability? *Twin Res Hum Genet*, **11**, 266-274. \doi{10.1375/twin.11.3.266}
-#' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
+#' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \url{https://journals.sagepub.com/doi/10.1177/1745691610383511}
 #' @md
 #' @examples
 #' \dontrun{
@@ -127,64 +128,52 @@ umxDiffMZ <- function(x, y, data, sep = "_T", zyg = "zygosity", mzZygs = c("MZFF
 #' tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="", FAMID = "fam")
 #' print(tmp, digits = 3)
 #' }
-umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot"), use = "complete.obs", sep = "_T") {
+umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot", "model"), use = "complete.obs", sep = "_T") {
 	message("umxDiscTwin is pre-alpha quality: Internals are just stubs and parameter names may change!")
 	out = match.arg(out)
 	
-	pingle <- function(xLevel = "e.g. MZ", model, x, FamMeanX = "FamMeanX", group = NA, row = NULL, input = NULL) {
-		if(is.null(input)){
-			nrow = 3
+	updateDB <- function(xLevel = "e.g. MZ", model, x, FamMeanX = "FamMeanX", group = NA, row = NULL, input = NULL) {
+		if(is.numeric(input)){
+			nrow = input
 			return(data.frame(
-				xLevel   = rep(NA,3), N         = rep(NA,3), 
-				Bwithin  = rep(NA,3), ci.lower  = rep(NA,3), ci.upper = rep(NA,3),
-				tval     = rep(NA,3), pval      = rep(NA,3),
-				Bbetween = rep(NA,3), SEbetween = rep(NA,3)) 
+				xLevel   = rep(NA,nrow), N         = rep(NA,nrow), 
+				Bwithin  = rep(NA,nrow), ci.lower  = rep(NA,nrow), ci.upper = rep(NA,nrow),
+				tval     = rep(NA,nrow), pval      = rep(NA,nrow),
+				Bbetween = rep(NA,nrow), SEbetween = rep(NA,nrow)) 
 			)
 		}
 		if(is.null(row)){ row = which.max(is.na(input$xLevel)) }
 
+		conf = intervals(model, which = "fixed")[["fixed"]]
+		model_coefficients      = summary(model)$tTable
+		input[row, "xLevel"]    = xLevel               # e.g. "MZ"
+		input[row, "N"]         = model$fixDF$terms[x] # df
+		input[row, "Bwithin"]   = conf[x, "est." ]     # intra-pair effect
+		input[row, "ci.lower"]  = conf[x, "lower"]     # CI[lower]
+		input[row, "ci.upper"]  = conf[x, "upper"]     # CI[,upper]
+		input[row, "tval"]      = model_coefficients[x, "t-value"]
+		input[row, "pval"]      = model_coefficients[x, "p-value"]
 
-		if(class(model) == "lm"){
-			# not used
-			input[row, "xLevel"]    = xLevel                # e.g. "Pop"
-			input[row, "N"]         = model$df.residual     # df
-			
-			input[row, "Bwithin"]   = model$coefficients[x] # intra-pair effect, not modeling family.
-			input[row, "ci.lower"]  = confint(model)[x, 1]  # CI[lower]
-			input[row, "ci.upper"]  = confint(model)[x, 2]  # CI[,upper]
-			input[row, "tval"]      = summary(model)$coefficients["ht", "t value"]
-			input[row, "pval"]      = summary(model)$coefficients["ht", "Pr(>|t|)"]
-			return(input)
-		}else{
-			conf = intervals(model, which = "fixed")[["fixed"]]
-			model_coefficients = summary(model)$tTable
-			input[row, "xLevel"]    = xLevel               # e.g. "MZ"
-			input[row, "N"]         = model$fixDF$terms[x] # df
-			input[row, "Bwithin"]   = conf[x, "est." ]     # intra-pair effect
-			input[row, "ci.lower"]  = conf[x, "lower"]     # CI[lower]
-			input[row, "ci.upper"]  = conf[x, "upper"]     # CI[,upper]
-			input[row, "tval"]      = model_coefficients[x, "t-value"]
-			input[row, "pval"]      = model_coefficients[x, "p-value"]
-
-			junk = tryCatch({
-				input[row, "Bbetween"]  = model$coefficients$fixed["FamMeanX"]        # between family beta
-				input[row, "SEbetween"] = model_coefficients["FamMeanX", "Std.Error"] # between family SE
-			}, warning = function(x) {
-			    # ignored
-			}, error = function(x) {
-			    # ignored
-			}, finally={
-			    # ignored
-			})
-
-			return(input)
-
-		}
+		junk = tryCatch({
+			input[row, "Bbetween"]  = model$coefficients$fixed["FamMeanX"]        # between family beta
+			input[row, "SEbetween"] = model_coefficients["FamMeanX", "Std.Error"] # between family SE
+		}, warning = function(x) {
+		    # ignored
+		}, error = function(x) {
+		    # ignored
+		}, finally={
+		    # ignored
+		})
+		return(input)
 	}
-	r_df = pingle() # Create and initialise the database.
+	r_df = updateDB(input= 3) # Create and initialise the database.
 
 	# 1. Compute the mean for each family, and add variable
 	data$FamMeanX = rowMeans(data[, tvars(x, sep = sep)], na.rm = TRUE)
+
+	# recode x to Diff
+	data[, paste0("deltaX", sep, 1)] = data[, paste0(x, sep, 1)] - data$FamMeanX
+	data[, paste0("deltaX", sep, 2)] = data[, paste0(x, sep, 2)] - data$FamMeanX
 
 	# 2. Check inputs
 	# data = twinData; x = "ht"; y = "wt"; FAMID = "fam"; sep = ""
@@ -195,7 +184,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 		umx_check_names(FAMID, data = data, message = c("Could not find your FAMID column ", omxQuotes('FAMID')) )
 		data$FAMID = data[, FAMID]
 	}
-	neededVars = c(tvars(c(x, y), sep = sep), "FAMID", "FamMeanX")
+	neededVars = c(tvars(c(x, y, "deltaX"), sep = sep), "FAMID", "FamMeanX")
 	umx_check_names(neededVars, data = data)
 
 	popData = umx_wide2long(data = data[, neededVars], sep = sep)
@@ -205,24 +194,50 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	# TODO create T1 for non-pair comparison
 
 	# 2. Run nlme::lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
-	# obj = update(obj, data = umx_scale(obj$data))
 	formula = reformulate(termlabels = c("FamMeanX", x), response = y)
 
-	obj  = lme(fixed = reformulate(termlabels = x, response = y), random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim"))
-	r_df = pingle(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(reformulate(termlabels = x, response = y), random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(formula, random = ~ 1|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(formula, random = ~ 1|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
 
-	obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim"))
-	r_df = pingle(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort        , random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ deltaX + FamMeanX, random = ~ 1|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
+	# obj = lme(IQ ~ deltaX + FamMeanX, random = ~ 1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
 
-	obj  = lme(fixed = formula, random = ~ 1|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim"))
-	r_df = pingle(xLevel = "MZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ deltaX   , random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
+	# obj = lme(IQ ~ deltaX   , random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
 
+	# Begg & Parides (2008) Model #3 
+	# h(E[Yij|Xij;X􏰄i)=􏰀2 +􏰁2Xij +􏰂2X􏰄i
+	# X&‌#772;
+	
+	obj = lme(IQ ~ SOSeffort           , random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
+	obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= x, input = r_df)
+
+	# also good
+	# obj = lme(IQ ~ SOSeffort           , random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ 1|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ 1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= x, input = r_df)
+
+	# obj = lme(IQ ~ SOSeffort           , random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
+
+	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
+
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
+	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
 
 	r_df$xLevel = factor(r_df$xLevel, levels = c("Pop", "DZ", "MZ"))
 	p = ggplot(r_df, aes(x = xLevel, y = Bwithin, fill = xLevel))
 	p = p + geom_bar(position = position_dodge(), stat = "identity", size = .3, colour = "black") # 3 = thin
 	p = p + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9)) # Thinner lines
-	p = p + xlab("Zygosity") + ylab(expression(beta ~ within ))
+	p = p + xlab("Zygosity") + ylab(expression(beta ~ or ~ beta ~ within ))
 	p = p + ggtitle(paste0("Estimated effect of ", x, " on ", y)) + theme_bw()
 	# p = p + scale_y_continuous(breaks = 0:20 * 4)
 	# Legend label, use darker colors
@@ -230,20 +245,25 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	print(p)
 	if(out == "plot"){
 		return(p)
-	} else {
+	} else if(out == "table"){
 		return(r_df)
+	} else if(out == "model"){
+		return(obj)
 	}
 }
 
 #' Build and run a 2-group Direction of Causation twin models.
 #'
 #' @description
-#' Testing causal claims is often difficult due to an inability to conduct experimental randomization of traits and situations to people.  
-#' When twins are available, even when measured on a single occasion, the pattern of cross-twin cross-trait correlations 
-#' can (given distinguishable modes of inheritance for the two traits) falsify causal hypotheses.
+#' Testing causal claims is often difficult due to an inability to conduct experimental randomization of traits and 
+#' situations to people. When twins are available, even when measured on a single occasion, the pattern of cross-twin
+#' cross-trait correlations can (given distinguishable modes of inheritance for the two traits) falsify causal hypotheses.
 #' 
 #' `umxDoC` implements a 2-group model to form latent variables for each of two traits, and allows testing whether 
 #' trait 1 causes trait 2, vice-versa, or even reciprocal causation.
+#' 
+#' Using latent variables instead of a manifest measure for testing causation, avoids the bias created by differences in 
+#' measurement error in which the more reliable measure appears to "cause" the less reliable one (Gillespie and Martin, 2005).
 #' 
 #' The following figure shows how the DoC model appears as a path diagram (for two latent variables X and Y,
 #' each with three indicators). Note: For pedagogical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.

@@ -11,7 +11,7 @@ umxDiscTwin(
   mzZygs = c("MZFF", "MZMM"),
   dzZygs = c("DZFF", "DZMM", "DZOS"),
   FAMID = "FAMID",
-  out = c("table", "plot"),
+  out = c("table", "plot", "model"),
   use = "complete.obs",
   sep = "_T"
 )
@@ -44,11 +44,12 @@ umxDiscTwin(
 Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
 A combination of control data and data from twins discordant for the putative causal trait can falsify causal hypotheses.
 
-\code{umxDiscTwin} uses lme to compute within-person beta of y on x and MZ and DZ models controlling the between-family variance.
+\code{umxDiscTwin} uses \code{\link[nlme:nlme]{nlme::nlme()}} to compute the beta for x in \code{y ~ x} in models either a) Only controlling non-independence,
+and b) MZ and DZ subsample models in which the family level of the predictor y is also controlled.
 
 If \code{x} is causal, then the effect size of x on y is expected to be equally large in all three samples.
 If the population association reflects confounded genes or shared environments,
-then the association in MZ twins will reduce to zero or non-significance.
+then the association in MZ twins will reduce to zero/non-significance.
 
 \if{html}{\figure{discordant_causal_patterns.png}{options: width=50\% alt="Figure: Types of confounding"}}
 \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
@@ -56,9 +57,9 @@ then the association in MZ twins will reduce to zero or non-significance.
 The function uses the \code{\link[nlme:lme]{nlme::lme()}} function to compute the effect of the presumed causal variable on the outcome,
 controlling, for mid-family score and with random means model using familyID. e.g.:
 
-\code{mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1|FAMID, data = umx_scale(MZ), na.action = "na.omit")}
+\code{mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1+FamMeanX|FAMID, data = umx_scale(MZ), na.action = "na.omit")}
 
-Example output from \code{umxDiscTwin}:
+\strong{Example output from \code{umxDiscTwin}}
 
 \if{html}{\figure{DiscTwins_example.png}{options: width=50\% alt="Figure: Causation in Discordant twins"}}
 \if{latex}{\figure{DiscTwins_example.pdf}{options: width=7cm}}
@@ -77,7 +78,7 @@ print(tmp, digits = 3)
 }
 \itemize{
 \item Bergen, S. E., Gardner, C. O., Aggen, S. H., & Kendler, K. S. (2008). Socioeconomic status and social support following illicit drug use: causal pathways or common liability? \emph{Twin Res Hum Genet}, \strong{11}, 266-274. \doi{10.1375/twin.11.3.266}
-\item McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. \emph{Perspectives on Psychological Science}, \strong{5}, 546-556. \doi{10.1177/1745691610383511}
+\item McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. \emph{Perspectives on Psychological Science}, \strong{5}, 546-556. \url{https://journals.sagepub.com/doi/10.1177/1745691610383511}
 }
 }
 \seealso{

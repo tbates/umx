@@ -457,7 +457,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), strip_zero = TRUE, ...) {
 	# umxPlotSimplex walks across the known matrices to obviate problems with arbitrary names in label based approaches.
 	# 1. Could add dimnames() to A, C, E?
-	if(!class(x) == "MxModelSimplex"){
+	if(!inherits(x, "MxModelSimplex")){
 		stop("The first parameter of umxPlotSimplex must be a umxSimplex model, you gave me a ", class(x))
 	}
 	format = match.arg(format)

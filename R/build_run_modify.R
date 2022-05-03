@@ -569,7 +569,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# if data provided check it isn't a tibble
 	if(!is.null(data)){
 		# avoid ingesting tibbles
-		if("tbl" %in% class(data)){
+		if(inherits(data, "tbl")){
 			data = as.data.frame(data)
 		}
 	}
@@ -581,7 +581,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		umx_set_optimizer(optimizer)
 	}
 	if(!is.null(group)){
-		if(class(data) != "data.frame"){
+		if(!inherits(data, "data.frame")){
 			stop("Currently, for multiple groups, data must be a raw data.frame so I can subset it into multiple groups. You gave me a ", omxQuotes(class(data)))
 		}
 	}
@@ -736,7 +736,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ============
 	# = Add data =
 	# ============
-	if (class(myData) == "character"){
+	if (inherits(myData, "character")){
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = xmuLabel(newModel, suffix = suffix)
 		if(is.null(group)){
@@ -1474,6 +1474,28 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 #' umxSummary(m1)
 #'
+#' # ==============
+#' # = Two binary =
+#' # ==============
+#' require(umx)
+#' data(twinData)
+#' htLevels   = c('short', 'tall')
+#' obLevels   = c('normal', 'obese')
+#' cuts       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+#' twinData$obese1= cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
+#' twinData$obese2= cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
+#' ordDVs = c("obese1", "obese2")
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#' 
+#' twinData$short1 = cut(twinData$ht1, breaks=c(-Inf,1.6,Inf), labels=htLevels) 
+#' twinData$short2 = cut(twinData$ht2, breaks=c(-Inf,1.6,Inf), labels=htLevels) 
+#' ordDVs = c("short1", "short2")
+#' twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+#'
+#' mzData = twinData[twinData$zygosity %in% "MZFF",]
+#' dzData = twinData[twinData$zygosity %in% "DZFF",]
+#' m1 = umxACE(selDVs = c("short", "obese"), dzData = dzData, mzData = mzData, sep = '')
+#'
 #' # ===================================
 #' # Example with covariance data only =
 #' # ===================================
@@ -1527,7 +1549,6 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 	model = xmu_make_TwinSuperModel(name=name, mzData = mzData, dzData = dzData, selDVs = selDVs, selCovs= selCovs, sep = sep, type = type, allContinuousMethod = allContinuousMethod, numObsMZ = numObsMZ, numObsDZ = numObsDZ, nSib= nSib, equateMeans = equateMeans, weightVar = weightVar, bVector = FALSE, verbose= FALSE)
 	tmp   = xmu_starts(mzData, dzData, selVars = selDVs, sep = sep, nSib = nSib, varForm = "Cholesky", equateMeans= equateMeans, SD= TRUE, divideBy = 3)
 	nVar  = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL** (so x2 per family)
-	
 	# Finish building top
 	# Finish building top
 	if(nSib==2){
@@ -1545,7 +1566,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 			cbind(hAC, hAC, ACE))
 		)
 	}else{
-		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2022, best tim :-)")
+		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2024, best tim :-)")
 	}
 	
 	top = mxModel(model$top,
@@ -3593,14 +3614,12 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 	if(is.numeric(type)){
 		stop("You used ", omxQuotes(type), " as the type of your matrix. You probably need to add something like type='Full' or specify nrow and ncol")
 	}
-
 	if(isTRUE(labels)){
 		setLabels = TRUE
 		labels    = NA
 	} else {
 		setLabels = FALSE
 	}
-
 	x = mxMatrix(type = type, nrow = nrow, ncol = ncol, free = free, values = values, labels = labels, lbound = lbound, ubound = ubound, byrow = byrow, dimnames = dimnames, name = name, condenseSlots = condenseSlots, joinKey = joinKey, joinModel = joinModel, ...)
 	if(setLabels){
 		x = xmuLabel(x, baseName = baseName, jiggle = jiggle)
@@ -4679,12 +4698,14 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 	}
 
 	n = 0
-	for (i in list(v.m. , v1m0, v0m0, v.m0)) {
+	for (i in list(v.m. , v1m0, v0m0, v0m., v.m0)) {
 		if(!is.null(i)){ n = n + 1}
 	}
 	if(n && !is.null(fixedAt)){
-		warning("When you use v.m. , v1m0, v0m0, v.m0, v0m., don't also set fixedAt - I will ignore it this time")
-		fixedAt = NULL
+		stop("I stopped processing the model: When you use v.m. , v1m0, v0m0, v.m0, or v0m. you can't also set fixedAt")
+	}
+	if(n && !is.null(firstAt)){
+		stop("I stopped processing the model: When you use v.m. , v1m0, v0m0, v.m0, or v0m. you can't also set firstAt")
 	}
 
 	if(!is.null(defn)){

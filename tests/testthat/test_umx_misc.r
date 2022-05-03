@@ -4,7 +4,7 @@
 # 
 # testthat::test_package("umx")
 
-context("umx_ data helper functions")
+context("umx_ misc helper and data functions")
 
 test_that("umx_scale works for different inputs", {
 	expect_equal(rad2deg(pi), 180)

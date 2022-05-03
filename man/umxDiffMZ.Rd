@@ -9,8 +9,8 @@ umxDiffMZ(
   y,
   data,
   sep = "_T",
-  zyg = "zygosity",
   mzZygs = c("MZFF", "MZMM"),
+  zyg = "zygosity",
   labxy = c(-1.2, 1.8),
   xylim = c(NA, NA),
   digits = 2
@@ -25,15 +25,15 @@ umxDiffMZ(
 
 \item{sep}{The separator "_T" used to make twin var names from x and y.}
 
+\item{mzZygs}{The MZ zygosity codes c("MZFF", "MZMM")}
+
+\item{zyg}{The column containing "zygosity" data}
+
 \item{labxy}{Where to locate the R2 label (default = c(x=-2,y=3))}
 
 \item{xylim}{= clip x any axes to range, e.g c(-3,-3)}
 
 \item{digits}{Rounding for beta (def2)}
-
-\item{zygosity}{The column containing "zygosity" data}
-
-\item{zygList}{The MZ zygosity codes c("MZFF", "MZMM")}
 }
 \value{
 \itemize{

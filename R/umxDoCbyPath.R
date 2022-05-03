@@ -185,7 +185,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 
 	# Check all paths are paths
 	for (i in length(paths)) {
-		if(!class(paths[[i]]) == "MxPath"){
+		if(!inherits(paths[[i]], "MxPath")){
 			stop("all elements of paths must be a umxPath. Item ", i, "seems to be class ", omxQuotes(class(paths[[i]]) ) )
 		}
 	}

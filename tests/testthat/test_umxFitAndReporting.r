@@ -5,43 +5,6 @@
 
 context("umxFitAndReporting_Functions")
 
-test_that("umxCompare works", {
-	require(umx)
-	data(demoOneFactor)
-	manifests = names(demoOneFactor)
-
-	m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-		umxPath("G", to = manifests),
-		umxPath(var = manifests),
-		umxPath(var = "G", fixedAt = 1)
-	)
-
-	m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
-	umxCompare(m1, m2)
-	umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
-	umxCompare(m1, m2, report = "html") # Open table in browser
-
-	# Two comparison models
-	m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
-
-	umxCompare(m1, c(m2, m3))
-	umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
-	umxCompare(c(m1, m2), c(m2, m3), all = TRUE)
-
-	# WLS not working for umxSummary or umxCompare
-	# manifests = names(demoOneFactor)
-	# 	m1 = umxRAM("WLS", data = demoOneFactor, type = "DWLS",
-	# 		umxPath("G", to = manifests),
-	# 		umxPath(var = manifests),
-	# 		umxPath(var = "G", fixedAt = 1)
-	# 	)
-	#
-	# 	m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
-	# 	umxCompare(m1, m2)
-	# 	umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
-	# 	umxCompare(m1, m2, report = "html") # Open table in browser
-	# })
-})
 
 test_that("umxDiagnose works", {
 	require(umx)
@@ -54,7 +17,31 @@ test_that("umxDiagnose works", {
 		umxPath(var = "G", fixedAt = 1)
 	)
 
-	umxDiagnose(m1)
+	expect_error(umxDiagnose(m1), NA)
+})
+
+test_that("umxCompare works", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+
+	m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+
+	m2 = umxModify(m1, update = "G_to_x2", name = "drop_path_2_x2")
+	expect_output(umxCompare(m1, m2))
+	expect_error(umxCompare(m1, m2, report = "inline"), NA) # Add English-sentence descriptions
+	expect_error(umxCompare(m1, m2, report = "html"), NA) # Open table in browser
+
+	# Two comparison models
+	m3 = umxModify(m2, update = "G_to_x3", name = "drop_path_2_x2_and_3")
+
+	umxCompare(m1, c(m2, m3))
+	umxCompare(m1, c(m2, m3), compareWeightedAIC = TRUE)
+	expect_error(umxCompare(c(m1, m2), c(m2, m3), all = TRUE), NA)
 })
 
 test_that("umxEFA works", {
@@ -62,6 +49,7 @@ test_that("umxEFA works", {
 	myVars = c("mpg", "disp", "hp", "wt", "qsec")
 	m1 = umxEFA(name = "test", factors = 2, data = mtcars[, myVars])
 	loadings(m1)
+	expect_true(dim(loadings(m1))[1]==5)
 })
 
 test_that("umxSummary works", {
@@ -86,7 +74,7 @@ test_that("umxSummary works", {
 		umxPath(v.m. = manifests),
 		umxPath(v1m0 = "G")
 	)
-	umxSummary(m1, std = TRUE, filter = "NS")
+	expect_error(umxSummary(m1, std = TRUE, filter = "NS"), NA)
 })
 
 test_that("umxSummaryACE works", {
@@ -95,11 +83,11 @@ test_that("umxSummaryACE works", {
 	selDVs = c("bmi1", "bmi2")
 	mzData = subset(twinData, zygosity == "MZFF")
 	dzData = subset(twinData, zygosity == "DZFF")
-	m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData)
+	m1 = umxACE(selDVs = "bmi", sep="", dzData = dzData, mzData = mzData)
 	umxSummary(m1)
 	umxSummaryACE(m1, file = NA);
 	umxSummaryACE(m1, file = "name", std = TRUE)
-	stdFit = umxSummaryACE(m1, returnStd = TRUE);
+	expect_error(umxSummaryACE(m1, returnStd = TRUE), NA)
 })
 
 test_that("umxPlotACE works", {
@@ -109,7 +97,8 @@ test_that("umxPlotACE works", {
 	mzData = subset(twinData, zygosity == "MZFF")
 	dzData = subset(twinData, zygosity == "DZFF")
 	m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
-	plot(m1, std = FALSE) # don't standardize
+	 # don't standardize
+	 expect_error(plot(m1, std = FALSE), NA)
 })
 
 test_that("umxSummaryGxE works", {
@@ -130,7 +119,7 @@ test_that("umxSummaryGxE works", {
 	umxSummaryGxE(m1, location = "topright", gg=FALSE)
 	umxSummaryGxE(m1, location = "left")
 	umxSummaryGxE(m1, location = c(.1, .9))
-	umxSummaryGxE(m1, separateGraphs = FALSE)
+	expect_error(umxSummaryGxE(m1, separateGraphs = FALSE), NA)
 })
 
 test_that("umxSummaryIP works", {
@@ -140,9 +129,8 @@ test_that("umxSummaryIP works", {
 	dzData = subset(GFF, zyg_2grp == "DZ")
 	selDVs = c("hap", "sat", "AD") # These will be expanded into "hap_T1" "hap_T2" etc.
 	m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-	umxSummaryIP(m1)
-	plot(m1)
-	# umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
+	expect_error(umxSummaryIP(m1), NA)
+	expect_error(plot(m1), NA)
 })
 
 test_that("umxExpCov works", {
@@ -156,7 +144,9 @@ test_that("umxExpCov works", {
 		umxPath(var = "G", fixedAt = 1)
 	)
 	vcov(m1) # supplied by OpenMx
-	umxExpCov(m1, digits = 3)
+	
+	expect_error(umxExpCov(m1, digits = 3), NA)
+
 })
 
 test_that("umxParameters works", {
@@ -188,7 +178,7 @@ test_that("umxExpMeans works", {
 	)
 	
 	umxExpMeans(m1)
-	umxExpMeans(m1, digits = 3)
+	expect_error(umxExpMeans(m1, digits = 3), NA)
 })
 
 test_that("umx_print works", {

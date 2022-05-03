@@ -1,7 +1,7 @@
 # library(testthat)
 # library(umx)
 # test_package("umx")
-# test_file("~/bin/umx/tests/testthat/test_umx_DOC_etc.r") 
+# test_active_file("~/bin/umx/tests/testthat/test_umx_DOC_etc.r") 
 
 test_that("testing umxDiffMZ", {
 	require(umx)
@@ -15,9 +15,9 @@ test_that("testing umxDiffMZ", {
 		x     = "Difference in exposure to rain (T1 - T2)",
 		y     = "Difference in mud (T1 - T2)"
 	)
-	p = p + annotate("text", x=  .4, y = -.35, label = "Twin 1 goes out in the rain more,\nand has more mud on his shoes", family="Optima", size=4)
+	p = p + annotate("text", x=  .4, y = -.35, label = "Twin 1 goes out in the rain more,\nand has more mud on his shoes", family="Times", size=4)
 	p = p + geom_curve(data = data.frame(x1 = .5, y1 = -.22, x2 = .85, y2 = .85), aes(x = x1, y = y1, xend = x2, yend = y2), arrow = arrow(length = unit(0.4, "cm")) )
-	p = p + annotate("text", x= -.5, y =  .50, label = "Twin 1 seldom walks in rain,\nand has less mud on his shoes", family="Optima", size=4)
+	p = p + annotate("text", x= -.5, y =  .50, label = "Twin 1 seldom walks in rain,\nand has less mud on his shoes", family="Times", size=4)
 	p = p + geom_curve(data = data.frame(x1 = -.75, y1 = .35, x2 = -.55, y2 = -.65), aes(x = x1, y = y1, xend = x2, yend = y2), arrow = arrow(length = unit(0.4, "cm")) )
 	print(p)
 })

@@ -385,6 +385,28 @@ dzData = twinData[twinData$zygosity \%in\% "DZFF",]
 m1 = umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = '')
 umxSummary(m1)
 
+# ==============
+# = Two binary =
+# ==============
+require(umx)
+data(twinData)
+htLevels   = c('short', 'tall')
+obLevels   = c('normal', 'obese')
+cuts       = quantile(twinData[, "bmi1"], probs = .2, na.rm = TRUE)
+twinData$obese1= cut(twinData$bmi1, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
+twinData$obese2= cut(twinData$bmi2, breaks=c(-Inf,cuts,Inf), labels=obLevels) 
+ordDVs = c("obese1", "obese2")
+twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+
+twinData$short1 = cut(twinData$ht1, breaks=c(-Inf,1.6,Inf), labels=htLevels) 
+twinData$short2 = cut(twinData$ht2, breaks=c(-Inf,1.6,Inf), labels=htLevels) 
+ordDVs = c("short1", "short2")
+twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+
+mzData = twinData[twinData$zygosity \%in\% "MZFF",]
+dzData = twinData[twinData$zygosity \%in\% "DZFF",]
+m1 = umxACE(selDVs = c("short", "obese"), dzData = dzData, mzData = mzData, sep = '')
+
 # ===================================
 # Example with covariance data only =
 # ===================================

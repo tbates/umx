@@ -12,7 +12,10 @@ umxPlot(
   ylab = y,
   title = paste0(y, " as a function of ", x),
   fitx = 1,
-  fity = 2
+  fity = 2,
+  method = c("lm", "auto", "loess", "glm", "gam"),
+  family = c("gaussian", "binomial", "Gamma", "inverse", "poisson", "quasi",
+    "quasibinomial", "quasipoisson")
 )
 }
 \arguments{
@@ -31,6 +34,10 @@ umxPlot(
 \item{fitx}{x location for the fit summary (default 1).}
 
 \item{fity}{y location for the fit summary (default 2).}
+
+\item{method}{Method for fitting curve (default = lm)}
+
+\item{family}{for glm default = "gaussian"}
 }
 \value{
 \itemize{

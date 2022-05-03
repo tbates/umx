@@ -3,7 +3,7 @@
 \name{umxTwoStage}
 \alias{umxTwoStage}
 \alias{umxMR}
-\title{Build a SEM implementing the equivalent of 2-stage least squares regression}
+\title{Build a SEM implementing the instrumental variable design}
 \usage{
 umxTwoStage(
   formula = Y ~ X,
@@ -41,7 +41,7 @@ to be used to compute weighted 2SLS estimates.}
 }
 }
 \description{
-\code{umxMR} (\code{umxTwoStage}) implements the Structural Equation Model equivalent of a 2SLS regression.
+\code{umxMR} (\code{umxTwoStage}) implements a Mendelian randomization or instrumental variable Structural Equation Model.
 For ease of learning, the parameters follow the \code{tsls()} function in the sem package.
 }
 \details{
@@ -100,6 +100,8 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 \itemize{
 \item Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
+\item Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to
+Assess Causality Using Observational Data. \emph{Journal of the American Society of Nephrology}, \strong{27}), 3253-3265. \url{doi:10.1681/ASN.2016010098}
 }
 }
 \seealso{
