@@ -3646,16 +3646,26 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @md
 #' @examples
 #' \dontrun{
-#' x = umxAlgebra("circ", 2 * pi)
+#' A = umxMatrix("A", "Full", nrow = 3, ncol = 3, values=2)
+#' B = umxAlgebra("B", A)
+#' C = umxAlgebra(A + B, name = "C")
+#' D = umxAlgebra(sin(C), name = "D")
+#' m1 = mxRun(mxModel("AlgebraExample", A, B, C, D ))
+#' mxEval(D, m1)
+#' 	
+#' x = umxAlgebra("circ", expression = 2 * pi)
 #' class(x$formula)
 #' x = mxAlgebra(name = "circ", 2 * pi)
 #' class(x$formula) # "call"
 #' }
 umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.character(NA), joinModel=as.character(NA), verbose=0L, initial=matrix(as.numeric(NA),1,1), recompute=c('always','onDemand'), fixed = "deprecated_use_recompute") {
+	message("umxAlgebra is not working yet: contribute here https://github.com/tbates/umx/issues/199 if you'd like this finished... ")
 	if(class(name) != "character"){
 		stop("In umxAlgebra, name comes first, not expression.")
 	}
-	x = mxAlgebra(expression, name = name, dimnames = dimnames, ..., joinKey=joinKey, joinModel=joinModel, verbose=verbose, initial=initial, recompute = recompute)
+
+	formula = match.call()$expression
+	x = mxAlgebra(formula, name = name, dimnames = dimnames, ..., joinKey=joinKey, joinModel=joinModel, verbose=verbose, initial=initial, recompute = recompute)
 	return(x)
 }
 

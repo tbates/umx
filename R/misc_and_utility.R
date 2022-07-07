@@ -2718,7 +2718,7 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 #' @param decimal.mark option defaulting to "."
 #' @param trim option defaulting to TRUE
 #' @param largest_with_cents option defaulting to 1e+05
-#' @param negative_parens option defaulting to FALSE
+#' @param negative_parens option defaulting to "hyphen"
 #' @param ... further arguments passed to or from other methods. also cat =F to return string
 #' @return - invisible
 #' @seealso - [umx::fin_percent()], [umx::fin_interest()], [scales::dollar()]
@@ -2729,7 +2729,7 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 #' bucks(100 * 1.05^32)
 #' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
-bucks <- function(x, symbol = "$", big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = FALSE, ...) {
+bucks <- function(x, symbol = "$", big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = c("hyphen", "minus", "parens"), ...) {
 	dot.items = list(...) # grab all the dot items cat
 	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
 	if(is.null(dot.items[["cat"]])){
@@ -2742,7 +2742,7 @@ bucks <- function(x, symbol = "$", big.mark = ",", decimal.mark = ".", trim = TR
 	if(!is.null(attr(x, 'symbol')) ){
 		symbol = attr(x, 'symbol')
 	}
-	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = big.mark, decimal.mark = decimal.mark, trim =trim, largest_with_cents = largest_with_cents, negative_parens = negative_parens, ...)
+	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = big.mark, decimal.mark = decimal.mark, trim =trim, largest_with_cents = largest_with_cents, style_negative = negative_parens, ...)
 	if(cat){
 		cat(formatted)
 	} else {

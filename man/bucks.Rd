@@ -12,7 +12,7 @@ bucks(
   decimal.mark = ".",
   trim = TRUE,
   largest_with_cents = 1e+05,
-  negative_parens = FALSE,
+  negative_parens = c("hyphen", "minus", "parens"),
   ...
 )
 }
@@ -29,7 +29,7 @@ bucks(
 
 \item{largest_with_cents}{option defaulting to 1e+05}
 
-\item{negative_parens}{option defaulting to FALSE}
+\item{negative_parens}{option defaulting to "hyphen"}
 
 \item{...}{further arguments passed to or from other methods. also cat =F to return string}
 }
@@ -48,6 +48,6 @@ fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[scales:label_dollar]{scales::dollar()}}
+\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[scales:dollar_format]{scales::dollar()}}
 }
 }

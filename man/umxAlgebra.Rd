@@ -48,7 +48,14 @@ umxAlgebra is a wrapper for mxAlgebra which has the name parameter first in orde
 }
 \examples{
 \dontrun{
-x = umxAlgebra("circ", 2 * pi)
+A = umxMatrix("A", "Full", nrow = 3, ncol = 3, values=2)
+B = umxAlgebra("B", A)
+C = umxAlgebra(A + B, name = "C")
+D = umxAlgebra(sin(C), name = "D")
+m1 = mxRun(mxModel("AlgebraExample", A, B, C, D ))
+mxEval(D, m1)
+	
+x = umxAlgebra("circ", expression = 2 * pi)
 class(x$formula)
 x = mxAlgebra(name = "circ", 2 * pi)
 class(x$formula) # "call"
