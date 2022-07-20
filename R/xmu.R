@@ -301,40 +301,46 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 # xmu_twin_print_means(model, digits = digits, report = report)
 xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html")){
 	report = match.arg(report)
-	int = model$top$intercept$values
-	if(!is.null(int)){
+	# get intercept, e.g. mean T1, T2
+	interceptVals = model$top$intercept$values
+	meanVals = interceptVals
+	if(!is.null(interceptVals)){
 		# means and betas
 		caption = "Means and (raw) betas from model$top$intercept and model$top$meansBetas"
 		b = model$top$meansBetas$values
-		bcols = dim(b)[[2]]
-		bvals = b[,1:bcols, drop = FALSE]
-		interceptsPerSib = dim(int)[[2]]/bcols
-		if(interceptsPerSib==2){
-			int = rbind(int, cbind(bvals, bvals))
-		} else if(interceptsPerSib==3){
-			int = rbind(int, cbind(bvals, bvals, bvals))
+		# e.g.
+		# m1$top$meansBetas$values
+		#                   ht
+		# age    -0.0005409507
+		# cohort -0.0045778153
+
+		bNtraits = dim(b)[[2]]
+		# force this to become a dataframe
+		bVals = b[ ,1:bNtraits, drop = FALSE]
+		nSib = dim(interceptVals)[[2]]/bNtraits
+		if(nSib==2){
+			widebVals = cbind(bVals, bVals)
+		} else if(nSib==3){
+			widebVals = cbind(bVals, bVals, bVals)
 		}else{
 			umx_msg("Polite note: email package maintainer as this number of means not expected")
 		}
-		row.names(int) = c("intercept", "beta")
+		meanVals = rbind(interceptVals, widebVals)
+		# row.names(meanVals) = c("intercept", paste0("beta", 1:bNtraits))
+		row.names(meanVals)[1] = "intercept"
 	} else {
-		int = model$top$expMean$values
-		if(!is.null(int)){
+		meanVals = model$top$expMean$values
+		if(!is.null(meanVals)){
 			# expMeans
 			caption = "Means (from model$top$expMean)"
-			row.names(int) = "intercept"
+			row.names(meanVals) = "intercept"
 		}else{
 			# no means
 		}
 	}
 
-	if(!is.null(int)){
-		umx_print(int, digits = digits, caption = caption, report=report, append = TRUE, sortableDF = TRUE)
-		# if(report == "html"){
-		# 	# depends on R2HTML::HTML
-		# 	R2HTML::HTML(int, file = "tmp.html", Border = 0, append = TRUE, sortableDF = TRUE);
-		# 	umx_open("tmp.html")
-		# }
+	if(!is.null(meanVals)){
+		umx_print(meanVals, digits = digits, caption = caption, report=report, append = TRUE, sortableDF = TRUE)
 	}		
 }
 

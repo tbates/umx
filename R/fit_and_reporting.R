@@ -1245,7 +1245,6 @@ umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = xmu_twin_get_var_names(model, trim= TRUE, twinOneOnly= TRUE)
 		nVar   = length(selDVs)
-
 		# TODO umxSummaryACE these already exist if a_std exists..
 		# TODO replace all this with xmu_standardizeACE
 		# Calculate standardized variance components
