@@ -14,7 +14,8 @@ xmu_safe_run_summary(
   comparison = TRUE,
   digits = 3,
   intervals = FALSE,
-  returning = c("model", "summary")
+  returning = c("model", "summary"),
+  refModels = NULL
 )
 }
 \arguments{
@@ -34,9 +35,11 @@ xmu_safe_run_summary(
 
 \item{digits}{Rounding precision in tables and plots}
 
-\item{intervals}{whether to run intervals or not (default = FALSE)}
+\item{intervals}{whether to run intervals or not (default FALSE)}
 
 \item{returning}{What to return (default, the run model)}
+
+\item{refModels}{whether to run refModels or not (default NULL)}
 }
 \value{
 \itemize{

@@ -622,13 +622,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 					newModel = mxModel(model, dot.items, data, name = name)
 				} else {
 					stop("Polite note: I don't know how to convert raw data into mxData to update your model - can you please do that for me and try again?")
-					# newModel = mxModel(model, dot.items, data, name = name)
 				}
 			}
 			# if(setValues){
 			# 	newModel = xmuValues(newModel)
 			# }
-			newModel = xmu_safe_run_summary(newModel, autoRun = autoRun,  tryHard =  tryHard)
+			newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, refModels = refModels, std = std)
 			return(newModel)
 		} else {
 			stop("First item must be either an existing model or a name string. You gave me a ", typeof(model))
@@ -824,7 +823,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	}
 
 	newModel = omxAssignFirstParameters(newModel)
-	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std)
+	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, refModels = refModels, std = std)
 	invisible(newModel)
 }
 

@@ -48,6 +48,6 @@ fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[scales:dollar_format]{scales::dollar()}}
+\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[scales:label_dollar]{scales::dollar()}}
 }
 }

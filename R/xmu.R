@@ -171,7 +171,8 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param comparison Toggle to allow not making comparison, even if second model is provided (more flexible in programming).
 #' @param digits Rounding precision in tables and plots
 #' @param returning What to return (default, the run model)
-#' @param intervals whether to run intervals or not (default = FALSE)
+#' @param intervals whether to run intervals or not (default FALSE)
+#' @param refModels whether to run refModels or not (default NULL)
 #' @return - [mxModel()]
 #' @export
 #' @family xmu internal not for end user
@@ -203,7 +204,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' 
 #' }
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary")) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary"), refModels = NULL) {
 	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard   = match.arg(tryHard)
 	returning = match.arg(returning)
@@ -236,13 +237,6 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 			} else if (tryHard == "mxTryHardWideSearch"){
 				model1 = mxTryHardWideSearch(model1, intervals = intervals)
 			}
-		# }, warning = function(w){
-		# 	if(tryHard == "no"){
-		# 		message("Warning incurred trying to run model: mxTryHard might help?")
-		# 	} else {
-		# 		message("Warning incurred trying to run model")
-		# 	}
-		# 	message(w)
 		}, error = function(e){
 			if(tryHard == "no"){
 				message("Error incurred trying to run model: model = mxTryHard(model) might help?")
@@ -254,20 +248,17 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 	}
 
 	if(!umx_has_been_run(model1)){
-		# Didn't get run... don't try and summarise it (will error)
+		# Not run, so don't summarise (will error)
 		theSummary = NA
 	} else if(summary){
 		tryCatch({
 			if(is.null(std)) {
-				theSummary = umxSummary(model1, std = NULL, digits = digits)	
+				theSummary = umxSummary(model1, std = NULL, digits = digits, refModels = refModels)	
 			} else if(std == "default"){
-				theSummary = umxSummary(model1, digits = digits)
+				theSummary = umxSummary(model1, digits = digits, refModels = refModels)
 			} else {
-				theSummary = umxSummary(model1, std = std, digits = digits)
+				theSummary = umxSummary(model1, std = std, digits = digits, refModels = refModels)
 			}
-		# }, warning = function(w) {
-		# 	message("Warning incurred trying to run umxSummary")
-		# 	message(w)
 		}, error = function(e) {
 			theSummary = NA
 			message("Error incurred trying to run umxSummary")
@@ -282,16 +273,13 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 					umxCompare(model1, model2, digits = digits)
 				}
 			}
-		# }, warning = function(w) {
-		# 	message("Warning incurred trying to run umxCompare")
-		# 	message(w)
 		}, error = function(e) {
 			message("Error incurred trying to run umxCompare")
 			message(e)
 		})
 
 	}
-	if(returning=="model"){
+	if(returning == "model"){
 		invisible(model1)
 	} else {
 		invisible(theSummary)
