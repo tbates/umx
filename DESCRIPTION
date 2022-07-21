@@ -1,6 +1,6 @@
 Package: umx
-Version: 4.11.0
-Date: 2022-03-30
+Version: 4.15.0
+Date: 2022-07-11
 Title: Structural Equation Modeling and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
@@ -22,8 +22,8 @@ Description: Quickly create, run, and report structural equation models, and twi
     Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R.
     Twin Research and Human Genetics, 22, 27-41. <doi:10.1017/thg.2019.2>.
 Depends:
-    R (>= 3.5.0),
-    OpenMx (>= 2.11.5)
+    R (>= 4.1.0),
+    OpenMx (>= 2.19.0)
 Imports:
 	ggplot2,
     cowplot,

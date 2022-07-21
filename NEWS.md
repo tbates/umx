@@ -1,14 +1,21 @@
 ## dev umx 4.11.00
+
+## umx 4.14.0
 * NEW: `umxDiscTwin` Discordant twin test for causal effects.
 * NEW: `umxDiscTwin` Graphical output for publication.
 * NEW: `umxPlot` ease customized/journal-close, e.g. y~x, -> x y plot, with r^2.
+* FIXED: `xmu_twin_print_means` now takes >1 covariate h/t @Eren Kafadar #201
+* FIXED: `xmu_safe_run_summary` now takes refModels = FALSE h/t @lf-araujo #200
 * FIXED: `umxACEcov` plot and summary working (needed to filter covs from DVs).
-* TRY: `umxCP` help `.svg` figure instead of `.png`` (smaller).
+* FIXED: `xmu_twin_print_means` handles more than 1 covariate and improves labelling.
 * IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control.
 * IMPROVED: `umxGxEwindow`: removes un-needed columns.
+* IMPROVED: `umxGxE` checks that `selDefs` are numeric
 * IMPROVED: `umxRun`: gained `summary` control.
 * SAFE CODING: `umxPath` stops when `v*m*` is used with `firstAt` or `fixedAt`.
+* SAFE CODING: `umxAlgebra` warns that it isn't functional.
 * MINOR: `umx_print` call fixed where was being called with file.
+* HELP: `umxCP` help `.svg` figure instead of `.png`` (smaller).
 * ADMIN: copyright, tests, Rd improvements.
 
 ## umx 4.10.50

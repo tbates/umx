@@ -1,5 +1,5 @@
 ## Changes
-New lme based genetic models of causation. Bug fixes, 
+Bug/feature fixes
 
 ## Test environments
 * OS X 11.0.0, R version 4.1.2
