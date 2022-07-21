@@ -84,14 +84,12 @@ umxRAM(
 supports \code{\link[=umxPath]{umxPath()}}. To support cross-language sharing and science learning, \code{umxRAM} also supports lavaan model strings.
 
 Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
-using the widely used \code{mtcars} data set.
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{m1 = umxRAM("tim", data = mtcars,
+using the widely used \code{mtcars} data set.\preformatted{m1 = umxRAM("tim", data = mtcars,
 	umxPath(c("wt", "disp"), to = "mpg"),
 	umxPath("wt", with = "disp"),
 	umxPath(v.m. = c("wt", "disp", "mpg"))
 )
-}\if{html}{\out{</div>}}
+}
 
 As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} wraps these paths up, takes the \verb{data =} input, and
 then internally sets up all the labels and start values for the model, runs it, and calls \code{\link[=umxSummary]{umxSummary()}}, and \code{\link[=plot.MxModel]{plot.MxModel()}}.
@@ -105,18 +103,14 @@ saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
 
 \strong{String Syntax}
 
-Here is an example using lavaan syntax (for more, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})
-
-\if{html}{\out{<div class="sourceCode R">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
+Here is an example using lavaan syntax (for more, see \code{\link[=umxLav2RAM]{umxLav2RAM()}})\if{html}{\out{<div class="sourceCode R">}}\preformatted{m1 = umxRAM("mpg ~ wt + disp", data = mtcars)
 }\if{html}{\out{</div>}}
 
 \strong{Sketch mode}
 
 If you are at the "sketching" stage of theory consideration, \code{umxRAM} supports
 setting data to a simple vector of manifest names.
-As usual in \code{umxRAM}, any variables you refer to that are not in data are treated as latents.
-
-\if{html}{\out{<div class="sourceCode R">}}\preformatted{m1 = umxRAM("sketch", data = c("A", "B"),
+As usual in \code{umxRAM}, any variables you refer to that are not in data are treated as latents.\if{html}{\out{<div class="sourceCode R">}}\preformatted{m1 = umxRAM("sketch", data = c("A", "B"),
 	umxPath("C", to = c("A", "B"), values=.3),
 	umxPath("A", with = "B", values=.45),
 	umxPath(v.m. = c("A", "B")),

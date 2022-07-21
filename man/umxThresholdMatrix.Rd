@@ -68,10 +68,8 @@ With twin data, make sure to provide the \strong{full names} for twin data... th
 
 For twins (the function currently handles only pairs), the thresholds are equated for both twins using labels:
 
-$labels
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{  obese_T1         obese_T2
-}\if{html}{\out{</div>}}
+$labels\preformatted{  obese_T1         obese_T2
+}
 
 dev_1 "obese_dev1"   "obese_dev1"
 }
