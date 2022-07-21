@@ -1,11 +1,23 @@
 # library(testthat)
 # library(umx)
-# test_file("~/bin/umx/tests/testthat/test_umxRAM_etc.r") 
+# test_active_file("~/bin/umx/tests/testthat/test_umxRAM_etc.r") 
 # test_package("umx")
 context("umxRAM()")
 
-test_that("umxRAM works", {
-	
+test_that("umxRAM handles two covariates", {
+	# Test working with more than 1 covariate
+	require(umx)
+	data(twinData)
+	twinData = umx_scale_wide_twin_data(data=twinData, varsToScale= "wt", sep="")
+	twinData$cohort1 = twinData$cohort2 =twinData$part
+	mzData = twinData[twinData$zygosity %in% "MZFF",]
+	dzData = twinData[twinData$zygosity %in% "DZFF",]
+	 expect_error(regexp = NA, {
+	 	m1 = umxACE(selDVs = 'ht', selCovs = c("age","cohort"), sep = "", dzData = dzData, mzData = mzData)
+	})
+})
+
+test_that("umxRAM works", {	
 	require(umx)
 	data(demoOneFactor) # from OpenMx
 	latents  = c("G")
@@ -25,16 +37,18 @@ test_that("umxRAM works", {
 		mxFitFunctionML(),
 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 	))
+})
 
-	test_that("testing umx_is_RAM", {
-		expect_equal(umx_is_RAM(m1), TRUE)
-		expect_equal(umx_is_RAM(m2), FALSE)
-	})
+test_that("testing umx_is_RAM", {
+	expect_equal(umx_is_RAM(m1), TRUE)
+	expect_equal(umx_is_RAM(m2), FALSE)
+})
 
-	test_that("testing umxModel", {
-		expect_error(umxModel(), regexp = "You probably meant umxRAM")
-	})
+test_that("testing umxModel", {
+	expect_error(umxModel(), regexp = "You probably meant umxRAM")
+})
 
+test_that("testing Rsw data", {
 	 # ============================================
 	 # = 1. Here's a simple example with raw data =
 	 # ============================================
@@ -176,5 +190,5 @@ test_that("umxRAM works", {
 	# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 	# disp "disp_with_mpg" "b1"          "disp_with_disp"
 	 parameters(m1)
-	
-})
+ })
+

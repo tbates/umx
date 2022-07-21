@@ -5445,7 +5445,7 @@ umx_is_numeric <- function(df, all = TRUE){
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 	# Check names	
 	nVar = length(var)
-	if(nVar > 1 && class(var) != "formula"){
+	if(nVar > 1 && !inherits(var, "formula")){
 		for (i in 1:nVar) {
 			data = umx_residualize(var[i], covs = covs, suffixes = suffixes, data = data)
 		}

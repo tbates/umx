@@ -8,9 +8,10 @@
 * FIXED: `xmu_safe_run_summary` now takes refModels = FALSE h/t @lf-araujo #200
 * FIXED: `umxACEcov` plot and summary working (needed to filter covs from DVs).
 * FIXED: `xmu_twin_print_means` handles more than 1 covariate and improves labelling.
+* FIXED: `umx_score_scale` handles NA correctly.
 * IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control.
 * IMPROVED: `umxGxEwindow`: removes un-needed columns.
-* IMPROVED: `umxGxE` checks that `selDefs` are numeric
+* IMPROVED: `umxGxE` checks that `selDefs` are numeric (closes #196, h/t @salvatoj)
 * IMPROVED: `umxRun`: gained `summary` control.
 * SAFE CODING: `umxPath` stops when `v*m*` is used with `firstAt` or `fixedAt`.
 * SAFE CODING: `umxAlgebra` warns that it isn't functional.

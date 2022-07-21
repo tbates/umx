@@ -152,7 +152,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' l2 = lm(mpg~ wt, data=mtcars)
 #' umxWeightedAIC(models = list(l1, l2))
 umxWeightedAIC <- function(models, digits= 2) {
-	if(class(models[[1]])== "numeric"){
+	if(inherits(models[[1]], "numeric")){
 		stop("Please input the list of models to compare as a list, i.e. models = list(model1, model2)")
 	}
 	AIClist = c()
@@ -1042,7 +1042,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			    # print("cleanup-code")
 			})
 
-			if(!class(refModels)=="list"){
+			if(!inherits(refModels == "list")){
 				modelSummary = summary(model)
 			} else {
 				modelSummary = summary(model, refModels = refModels)
@@ -3661,7 +3661,7 @@ or specify all arguments:\n
 		x = umx_standardize(x)
 	}
 
-	if(class(x) != "summary.mxmodel"){
+	if(!inherits(x, "summary.mxmodel")){
 		if(!umx_has_been_run(x)){
 			# message("Just a note: Model has not been run. That might not matter for you")
 		}
@@ -4033,7 +4033,7 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 		}, finally={
 		    # print("cleanup-code")
 		})
-		if(!class(refModels)=="list"){
+		if(!inherits(refModels, "list")){
 			modelSummary = summary(model)
 		} else {
 			modelSummary = summary(model, refModels = refModels)
@@ -4346,9 +4346,9 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 	}
 	x_n = function(x){sum(!is.na(x))}
 
-	if(class(what)=="function"){
+	if(inherits(what, "function")){
 		FUN = what
-	} else if(class(what) != "character"){
+	} else if(!inherits(what, "character")){
 		stop("umx_aggregate what should be a built-in name like 'mean_sd', or a function, you gave me a", class(what))
 	} else if(what == "mean_sd"){
 		FUN = mean_sd
