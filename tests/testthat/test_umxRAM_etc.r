@@ -37,12 +37,10 @@ test_that("umxRAM works", {
 		mxFitFunctionML(),
 		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 	))
-})
-
-test_that("testing umx_is_RAM", {
 	expect_equal(umx_is_RAM(m1), TRUE)
 	expect_equal(umx_is_RAM(m2), FALSE)
 })
+
 
 test_that("testing umxModel", {
 	expect_error(umxModel(), regexp = "You probably meant umxRAM")
