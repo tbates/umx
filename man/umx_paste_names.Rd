@@ -40,8 +40,10 @@ So, you provide \code{bmi}, and you get back fully specified family-wise names: 
 \strong{Method 1}: \emph{Use complete suffixes}
 
 You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
-and very general:\preformatted{umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
-}
+and very general:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
+}\if{html}{\out{</div>}}
 
 \emph{Note}: for quick typing, \code{tvars} is an alias for \code{umx_paste_names}
 
@@ -49,14 +51,18 @@ and very general:\preformatted{umx_paste_names(c("var1", "var2"), suffixes = c("
 
 Alternatively, you can use \code{sep} to add a constant like "_T" after each basename, along
 with a vector of suffixes. This has the benefit of showing what is varying:
-This is then suffixed with e.g. "1", "2".\preformatted{umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
-}
+This is then suffixed with e.g. "1", "2".
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
+}\if{html}{\out{</div>}}
 
 \emph{Working with covariates}
 
 If you are using \code{\link[=umxACEcov]{umxACEcov()}}, you \strong{need} to keep all the covariates at the end of the list.
-Here's how:\preformatted{umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
-}
+Here's how:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
+}\if{html}{\out{</div>}}
 
 \emph{note}: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
 T1vars, T2 vars, T1 covs, T2 covs. This is what \code{covNames} accomplishes.
