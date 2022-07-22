@@ -7,7 +7,7 @@
 * FIXED: `xmu_twin_print_means` now takes >1 covariate h/t @Eren Kafadar #201
 * FIXED: `xmu_safe_run_summary` now takes refModels = FALSE h/t @lf-araujo #200
 * FIXED: `umxACEcov` plot and summary working (needed to filter covs from DVs).
-* FIXED: `xmu_twin_print_means` handles more than 1 covariate and improves labelling.
+* FIXED: `xmu_twin_print_means` handles more than 1 covariate and improves labeling.
 * FIXED: `umx_score_scale` handles NA correctly.
 * IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control.
 * IMPROVED: `umxGxEwindow`: removes un-needed columns.
@@ -135,7 +135,7 @@
 * IMPROVED: `fin_compound_interest` now outputs a table of annual returns
 * IMPROVED: `umxAPA` uses cat to improve usability of summary data
 * HELP: `umxCP` Document that correlatedA works on a, c and e, allowing factors to correlate.
-* BETA: `umxGxEbiv` lboundACE @ 0 by default
+* BETA: `umxGxEbiv` "lboundACE" @ 0 by default
 * FIXED: `umxSimplex` example
 * FIXED: `umxGxEbiv` fix nonfunctional lboundACE and lboundM (thanks @mcneale)
 * FIXED: `umxGxEbiv` selVars order was imposed on expectation dimnames but didn't match the cov matrix due to bespoke nature of `expCov` algebras...

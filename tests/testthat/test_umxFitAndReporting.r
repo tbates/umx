@@ -74,7 +74,7 @@ test_that("umxSummary works", {
 		umxPath(v.m. = manifests),
 		umxPath(v1m0 = "G")
 	)
-	expect_error(umxSummary(m1, std = TRUE, filter = "NS"), NA)
+	expect_error(regex= NA, {umxSummary(m1, std = TRUE, filter = "NS")})
 })
 
 test_that("umxSummaryACE works", {
@@ -87,7 +87,7 @@ test_that("umxSummaryACE works", {
 	umxSummary(m1)
 	umxSummaryACE(m1, file = NA);
 	umxSummaryACE(m1, file = "name", std = TRUE)
-	expect_error(umxSummaryACE(m1, returnStd = TRUE), NA)
+	expect_error(regex = NA, {umxSummaryACE(m1, returnStd = TRUE)})
 })
 
 test_that("umxPlotACE works", {
@@ -98,7 +98,7 @@ test_that("umxPlotACE works", {
 	dzData = subset(twinData, zygosity == "DZFF")
 	m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 	 # don't standardize
-	 expect_error(plot(m1, std = FALSE), NA)
+	 expect_error(plot(m1, std = FALSE), regex = NA)
 })
 
 test_that("umxSummaryGxE works", {
