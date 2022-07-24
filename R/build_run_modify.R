@@ -392,6 +392,7 @@ umxModel <- function(...) {
 #' @param name A friendly name for the model
 #' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param weight Passes weight values to mxData
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param std Whether to show standardized estimates, raw (NULL print fit only)
 #' @param optimizer optionally set the optimizer (default NULL does nothing)
@@ -558,7 +559,7 @@ umxModel <- function(...) {
 #'
 #' }
 #'
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	type       = match.arg(type)
@@ -715,9 +716,18 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# Used = all data columns present in found and not reserved, e.g. "one"
 	unusedManifests = setdiff(manifestVars, c(foundNames, defnNames))
 
+  # Include weight if it is passed
+  if (!is.null(weight)) unusedManifests = setdiff(c(manifestVars, weight), c(foundNames, defnNames))
+
 	if(remove_unused_manifests & length(unusedManifests) > 0){
 		usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
-		myData = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests, defnNames), verbose = verbose)
+    if (!is.null(weight)) {
+        myData = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests,
+          defnNames), verbose = verbose, weight = weight)
+    } else {
+        myData = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests,
+          defnNames), verbose = verbose)
+    }
 	} else {
 		# keep everything
 		usedManifests = manifestVars
