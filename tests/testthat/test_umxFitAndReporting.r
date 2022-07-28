@@ -119,7 +119,7 @@ test_that("umxSummaryGxE works", {
 	umxSummaryGxE(m1, location = "topright", gg=FALSE)
 	umxSummaryGxE(m1, location = "left")
 	umxSummaryGxE(m1, location = c(.1, .9))
-	expect_error(umxSummaryGxE(m1, separateGraphs = FALSE), NA)
+	expect_error(umxSummaryGxE(m1, separateGraphs = FALSE), regex = NA)
 })
 
 test_that("umxSummaryIP works", {
@@ -129,8 +129,8 @@ test_that("umxSummaryIP works", {
 	dzData = subset(GFF, zyg_2grp == "DZ")
 	selDVs = c("hap", "sat", "AD") # These will be expanded into "hap_T1" "hap_T2" etc.
 	m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
-	expect_error(umxSummaryIP(m1), NA)
-	expect_error(plot(m1), NA)
+	expect_error(umxSummaryIP(m1), regex = NA)
+	expect_error(plot(m1), regex = NA)
 })
 
 test_that("umxExpCov works", {
@@ -145,7 +145,7 @@ test_that("umxExpCov works", {
 	)
 	vcov(m1) # supplied by OpenMx
 	
-	expect_error(umxExpCov(m1, digits = 3), NA)
+	expect_error(umxExpCov(m1, digits = 3), regex = NA)
 
 })
 
@@ -178,7 +178,7 @@ test_that("umxExpMeans works", {
 	)
 	
 	umxExpMeans(m1)
-	expect_error(umxExpMeans(m1, digits = 3), NA)
+	expect_error(umxExpMeans(m1, digits = 3), regex = NA)
 })
 
 test_that("umx_print works", {
