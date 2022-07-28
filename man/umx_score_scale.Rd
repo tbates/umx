@@ -54,7 +54,7 @@ umx_score_scale(
 
 \item{verbose}{Whether to print the whole omega output (FALSE)}
 
-\item{suffix}{(if dealing with, e.g. "baseN_T1")}
+\item{suffix}{(if dealing with, e.g. "_T1")}
 }
 \value{
 \itemize{

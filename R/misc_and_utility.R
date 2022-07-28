@@ -1423,7 +1423,7 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' @param omegaNfactors Number of factors for the omega reliability (default = 1)
 #' @param verbose Whether to print the whole omega output (FALSE)
 #' @param digits Rounding for omega etc. (default 2)
-#' @param suffix (if dealing with, e.g. "baseN_T1")
+#' @param suffix (if dealing with, e.g. "_T1")
 #' @return - scores
 #' @export
 #' @family Data Functions
