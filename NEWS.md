@@ -1,4 +1,4 @@
-## dev umx 4.11.00
+## dev umx 4.2.00
 
 ## umx 4.14.0
 * NEW: `umxDiscTwin` Discordant twin test for causal effects.
