@@ -93,10 +93,7 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 }
 \references{
 \itemize{
-\item 
-\itemize{
 \item Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass.
-}
 }
 \itemize{
 \item Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.

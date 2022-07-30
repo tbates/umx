@@ -341,7 +341,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @export
 #' @family Super-easy helpers
 #' @seealso - [umx_make_MR_data()], [umxRAM()]
-#' @references - * Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
+#' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to 
 #' Assess Causality Using Observational Data. *Journal of the American Society of Nephrology*, **27**), 3253-3265. <doi:10.1681/ASN.2016010098>
@@ -356,7 +356,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # ====================================
 #' 
 #' # Note: in practice: many more subjects are desirable - this just to let example run fast
-#' df = umx_make_MR_data(1000) 
+#' df = umx_make_MR_data(1000)
 #' m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 #' parameters(m1)
 #' plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
