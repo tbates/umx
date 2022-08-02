@@ -635,6 +635,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @param data A [data.frame()] or [mxData()]
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
+#' @param weight Passes weight values to mxData
 #' @param numObs Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData
 #' @param fullCovs Covariate names if any (NULL = none) These are checked by `dropMissingDef`
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
@@ -698,7 +699,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' # =======================
 #' xmu_make_mxData(data= c("a", "b", "c"), type = "Auto")
 #' 
-xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE, use = "pairwise.complete.obs") {
+xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS'), manifests = NULL, numObs = NULL, weight = NULL, fullCovs = NULL, dropMissingDef = TRUE, verbose = FALSE, use = "pairwise.complete.obs") {
 	type = match.arg(type)
 	if(is.null(data)){
 		message("You must set data: either data = data.frame or data = mxData(yourData, type = 'raw|cov)', ...) or at least a list of variable names if using umxRAM in sketch mode)")
@@ -736,7 +737,9 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 
 		if(dropColumns){
 			# Trim down the data to include only the requested columns 
-			data = data[, namesNeeded, drop = FALSE]
+     if (!is.null(weight)) namesNeeded = append(namesNeeded, weight)
+      data = data[, namesNeeded, drop = FALSE]
+ 
 		}
 		if(!is.null(fullCovs)){
 			# drop rows with missing def vars or stop
@@ -745,7 +748,11 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		
 		# Upgrade data.frame to mxData of desired type
 		if(type %in% c("Auto", "FIML")){
-			data = mxData(observed = data, type = "raw")
+      if (!is.null(weight)) {
+        data = mxData(observed = data, type = "raw", weight = weight)
+      } else {
+        data = mxData(observed = data, type = "raw")
+      }
 		}else if(type == "cov"){
 			# TODO xmu_make_mxData: could refuse to do this, as we don't know how to handle missingness...
 			if(use %in% c("everything", "all.obs") && anyNA(data)){
