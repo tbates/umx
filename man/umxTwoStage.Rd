@@ -63,7 +63,7 @@ library(umx)
 # ====================================
 
 # Note: in practice: many more subjects are desirable - this just to let example run fast
-df = umx_make_MR_data(1000) 
+df = umx_make_MR_data(1000)
 m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 parameters(m1)
 plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
