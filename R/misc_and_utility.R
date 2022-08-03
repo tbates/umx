@@ -35,7 +35,11 @@
 
 # # PERCY BYSSHE SHELLEY
 # [Ozymandias](https://www.poetryfoundation.org/poems/46565/ozymandias)
-
+#
+# [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
+# * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
+# * [The Wild Swans at Coole](https://en.wikipedia.org/wiki/The_Wild_Swans_at_Coole_(poem))
+#
 #  * [Invictus](https://en.wikipedia.org/wiki/Invictus)
 # Brevia
 #  * [Abou ben Adhem](https://www.poetryfoundation.org/poems/44433/abou-ben-adhem)
@@ -45,8 +49,7 @@
 #      I know not, but I feel it so,
 #      and it tortures me.
 
-# [Yeats](https://en.wikipedia.org/wiki/W._B._Yeats)
-# * [The Second Coming](https://en.wikipedia.org/wiki/The_Second_Coming_(poem))
+
 
 # #' Easily use the Box-Cox transform
 # #'
