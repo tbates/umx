@@ -14,6 +14,7 @@ umxRAM(
   suffix = "",
   comparison = TRUE,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  weight = NULL,
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "ordinal", "search"),
@@ -47,6 +48,8 @@ umxRAM(
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
 \item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
+
+\item{weight}{Passes weight values to mxData}
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
@@ -304,6 +307,17 @@ m1$S$labels
 # wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 # disp "disp_with_mpg" "b1"          "disp_with_disp"
 parameters(m1)
+
+# ===========
+# = Weights =
+# ===========
+# !!! Not tested !!!
+mtcars$litres = mtcars$disp/61.02
+m1 = umxRAM("tim", data = mtcars, weight= "cyl",
+	umxPath(c("wt", "litres"), to = "mpg"),
+	umxPath("wt", with = "litres"),
+	umxPath(v.m. = c("wt", "litres", "mpg"))
+)
 
 }
 

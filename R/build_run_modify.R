@@ -557,6 +557,17 @@ umxModel <- function(...) {
 #'# disp "disp_with_mpg" "b1"          "disp_with_disp"
 #' parameters(m1)
 #'
+#' # ===========
+#' # = Weights =
+#' # ===========
+#' # !!! Not tested !!!
+#' mtcars$litres = mtcars$disp/61.02
+#' m1 = umxRAM("tim", data = mtcars, weight= "cyl",
+#' 	umxPath(c("wt", "litres"), to = "mpg"),
+#' 	umxPath("wt", with = "litres"),
+#' 	umxPath(v.m. = c("wt", "litres", "mpg"))
+#' )
+#'
 #' }
 #'
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
@@ -567,6 +578,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	lavaanMode = match.arg(lavaanMode)
 	allContinuousMethod = match.arg(allContinuousMethod)
 
+	if(!is.null(weight)){
+		message("Polite note: Weight feature has not been tested: Models may have spurious fit, consider this feature alpha quality")
+	}
 	# if data provided check it isn't a tibble
 	if(!is.null(data)){
 		# avoid ingesting tibbles
