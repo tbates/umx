@@ -9,6 +9,7 @@ xmu_make_mxData(
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   manifests = NULL,
   numObs = NULL,
+  weight = NULL,
   fullCovs = NULL,
   dropMissingDef = TRUE,
   verbose = FALSE,
@@ -23,6 +24,8 @@ xmu_make_mxData(
 \item{manifests}{If set, only these variables will be retained.}
 
 \item{numObs}{Only needed if you pass in a cov/cor matrix wanting this to be upgraded to mxData}
+
+\item{weight}{Passes weight values to mxData}
 
 \item{fullCovs}{Covariate names if any (NULL = none) These are checked by \code{dropMissingDef}}
 

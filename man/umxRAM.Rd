@@ -14,6 +14,7 @@ umxRAM(
   suffix = "",
   comparison = TRUE,
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  weight = NULL,
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "ordinal", "search"),
@@ -47,6 +48,8 @@ umxRAM(
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
 \item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
+
+\item{weight}{Passes weight values to mxData}
 
 \item{allContinuousMethod}{"cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.}
 
