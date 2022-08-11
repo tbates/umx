@@ -8,32 +8,38 @@ umx_read_prolific_demog(
   file,
   base = "",
   df = NULL,
-  verbose = FALSE,
-  by.df = "PID",
-  by.demog = "participant_id",
-  vars = c("age", "Sex"),
+  by.df = "PROLIFIC_PID",
+  by.demog = by.df,
+  age = "age",
+  sex = "Sex",
+  vars = NULL,
   all.df = TRUE,
-  all.demog = FALSE
+  all.demog = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
 \item{file}{Path to a file to read.}
 
-\item{base}{Optional path to folder}
+\item{base}{Optional path to folder, in which case 'file' is just filename.}
 
-\item{df}{Optional existing datafile}
+\item{df}{Existing datafile to merge demographics into (optional)}
 
-\item{verbose}{Whether to print names in the file.}
+\item{by.df}{The ID name in your datafile (default = "PROLIFIC_PID" (WAS "PID")}
 
-\item{by.df}{The ID name in your datafile (default = "PID")}
+\item{by.demog}{The ID name in the prolific demographics file (default = by.demog (WAS "participant_id")}
 
-\item{by.demog}{The ID name in the prolific demographics file (default = "participant_id")}
+\item{age}{Name of sex var in demographics file ("age")}
 
-\item{vars}{Vars to keep from demographics file (default =  age & Sex)}
+\item{sex}{Name of sex var in demographics file ("Sex")}
+
+\item{vars}{Additional vars to keep from demographics file (WAS age & Sex)}
 
 \item{all.df}{Whether to keep all lines of df (default = TRUE)}
 
 \item{all.demog}{Whether to keep all lines (people) in the demographics file (default = FALSE)}
+
+\item{verbose}{Print variable names found in the file.}
 }
 \value{
 \itemize{
@@ -48,7 +54,7 @@ using PID and participant_id
 \dontrun{
 fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
 df = umx_read_prolific_demog(fp, df = df)
-tmp = umx_read_prolific_demog(demog= fp, base = "", df = NULL, verbose = FALSE)
+tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", by.demog = "participant_id", sex = "gender", vars=c("EthnicitySimplified"))
 }
 }
 \references{
