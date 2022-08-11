@@ -7430,10 +7430,10 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, verbose = FALSE, 
 	if(base != "") file = paste0(base, file)
 	newdf = read.csv(file, header= TRUE, sep=',', quote="\"", dec=".", fill= TRUE, comment.char="", stringsAsFactors= FALSE)
 	if(verbose) print(namez(newdf)) 
-	umx_check_names(namesNeeded=vars, data=newdf)
+	umx_check_names(namesNeeded = vars, data = newdf)
 	if(!is.null(df)){
-		umx_check_names(namesNeeded=by.df, data=df)
-		umx_check_names(namesNeeded=by.demog, data=newdf)
+		umx_check_names(namesNeeded = by.df, data = df)
+		umx_check_names(namesNeeded = by.demog, data = newdf)
 		newdf = merge(df, newdf[, c(by.demog, vars)], by.x = by.df, by.y = by.demog, all.x = all.df, all.y = all.demog)
 	}else{
 		newdf = newdf[, vars]
