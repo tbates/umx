@@ -7437,7 +7437,7 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 	if(base != "") file = paste0(base, file)
 	newdf = read.csv(file, header= TRUE, sep=',', quote="\"", dec=".", fill= TRUE, comment.char="", stringsAsFactors= FALSE)
 	if(verbose) print(namez(newdf)) 
-	umx_check_names(namesNeeded=vars, data=newdf)
+	umx_check_names(namesNeeded = vars, data = newdf)
 	if(!is.null(df)){
 		umx_check_names(namesNeeded = by.df, data = df)
 		umx_check_names(namesNeeded = by.demog, data = newdf)

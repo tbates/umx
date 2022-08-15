@@ -355,8 +355,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # = Mendelian Randomization analysis =
 #' # ====================================
 #' 
-#' # Note: in practice: many more subjects are desirable - this just to let example run fast
-#' df = umx_make_MR_data(1000)
+#' df = umx_make_MR_data(10e4)
 #' m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 #' parameters(m1)
 #' plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
@@ -369,7 +368,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
 #'
 #'
-#' df = umx_make_MR_data(1e5) 
+#' df = umx_make_MR_data(10e4) 
 #' m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 #' coef(m1)
 #' 
@@ -383,11 +382,8 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
-umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weights, contrasts= NULL, name = "tsls", ...) {
-	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxTwoStage: email maintainer('umx') to prioritize")	
-	# formula = Y ~ X; instruments ~ qtl; data = umx_make_MR_data(10000)
-	# m1 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
-	# summary(sem::tsls(Q ~ P + D, ~ D + F + A, data=Kmenta))
+umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, contrasts= NULL, name = "IV_model", ...) {
+	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxMR: e-mail maintainer('umx') to prioritize")	
 	if(!inherits(formula, "formula")){
 		stop("formula must be a formula")
 	}
@@ -402,22 +398,20 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, weight
 		stop("I'm currently limited to 1 DV, 1 IV, and 1 instrument: 'instruments' had ", length(allForm), " items")
 	}
 	manifests <- c(allForm, inst)     # manifests <- c("qtl", "X", "Y")
-	latentErr <- paste0("e", allForm) # latentErr   <- c("eX", "eY")
+	latentErr <- paste0("e", allForm) # latentErr <- c("eX", "eY")
 	umx_check_names(manifests, data = data, die = TRUE)
 
-	IVModel = umxRAM("IV Model", data = data,
+	IVModel = umxRAM(name, data = data,
 		# Causal and confounding paths
 		umxPath(inst , to = Xvars), # beta of SNP effect          :  X ~ b1 x inst
 		umxPath(Xvars, to = DV),    # Causal effect of Xvars on DV: DV ~ b2 x X
-
 		# Latent error stuff + setting up variance and means for variables
 		umxPath(v.m. = inst),     # Model variance and mean of instrument
 		umxPath(var = latentErr), # Variance of residual errors
-		umxPath(latentErr, to = allForm, fixedAt = 1), # X and Y residuals@1.
+		umxPath(latentErr, to = allForm, fixedAt = 1), # X and Y residuals@1
 		umxPath(unique.bivariate = latentErr, values = 0.2, labels = paste0("phi", length(latentErr)) ), # Correlation among residuals
 		umxPath(means = c(Xvars, DV))
 	)
-	# umx_time(IVModel) # IV Model: 3.1 s ( was 14.34 seconds with poor start values) for 100,000 subjects
 	return(IVModel)
 }
 
