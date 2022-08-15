@@ -335,7 +335,8 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' If specified should be a non-negative numeric vector with one entry for each observation,
 #' to be used to compute weighted two-stage least-squares estimates.
 #' @param contrasts	an optional list (not supported)
-#' @param name for the model (default = "tsls")
+#' @param name for the model (default = "IVmodel")
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param ...	arguments to be passed along. (not supported)
 #' @return - [mxModel()]
 #' @export
@@ -382,7 +383,8 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
-umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, contrasts= NULL, name = "IV_model", ...) {
+umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, contrasts= NULL, name = "IV_model", tryHard = c("no", "yes", "ordinal", "search"), ...) {
+	# tryHard = match.arg(tryHard)
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxMR: e-mail maintainer('umx') to prioritize")	
 	if(!inherits(formula, "formula")){
 		stop("formula must be a formula")
@@ -401,7 +403,7 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, contra
 	latentErr <- paste0("e", allForm) # latentErr <- c("eX", "eY")
 	umx_check_names(manifests, data = data, die = TRUE)
 
-	IVModel = umxRAM(name, data = data,
+	IVModel = umxRAM(name, data = data, tryHard = tryHard,
 		# Causal and confounding paths
 		umxPath(inst , to = Xvars), # beta of SNP effect          :  X ~ b1 x inst
 		umxPath(Xvars, to = DV),    # Causal effect of Xvars on DV: DV ~ b2 x X
