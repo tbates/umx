@@ -1508,7 +1508,7 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
 #' bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 #' bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors= 1, digits = 2, verbose = FALSE, suffix = "") {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors = 1, digits = 2, verbose = FALSE, suffix = "") {
 	score = match.arg(score)
 	if(is.null(name)){ name = paste0(base, "_score", suffix) }
 	oldData = data
@@ -1560,18 +1560,23 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		revItems = (max + min) - revItems
 		data[ , paste0(base, rev)] = revItems
 	}
-
 	allColNames = paste0(base, c(pos, rev), suffix)
 	df = data[ , allColNames, drop = FALSE]
 
 	if(alpha){
-		print(reliability(cov(df, use= "pairwise.complete.obs")))
-		tmp = psych::omega(df, nfactors=omegaNfactors)
+		print(reliability(cov(df, use = "pairwise.complete.obs")))
+		suppressWarnings({tmp = psych::omega(df, nfactors = omegaNfactors)})
+
 		if(verbose){
 			print(str(df))
 			print(tmp)
 		}else{
-			cat(paste0("\u03C9 h = ", round(tmp$omega_h, digits), "; \u03C9 t = ", round(tmp$omega.tot, digits)))
+			if(omegaNfactors == 1){
+				# Omega_h for 1 factor is not meaningful, just omega_t
+				cat(paste0("\u03C9 t = ", round(tmp$omega.tot, digits)))
+			} else {
+				cat(paste0("\u03C9 h = ", round(tmp$omega_h, digits), "; \u03C9 t = ", round(tmp$omega.tot, digits)))
+			}
 		}
 	}
 
