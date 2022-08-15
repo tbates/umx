@@ -7425,8 +7425,8 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @examples
 #' \dontrun{
 #' fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
-#' df = umx_read_prolific_demog(fp, df = df)
-#' tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", by.demog = "participant_id", sex = "gender", vars=c("EthnicitySimplified"))
+#' df = umx_read_prolific_demog(fp, sex = "gender", df = df)
+#' tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
 #' }
 umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = by.df, age = "age", sex = "Sex", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
 	if(base != "") file = paste0(base, file)
