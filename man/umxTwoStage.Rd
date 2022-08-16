@@ -32,10 +32,6 @@ umxTwoStage(
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{...}{arguments to be passed along. (not supported)}
-
-\item{weights}{(optional) vector of weights to be used in the fitting process (not supported)
-If specified should be a non-negative numeric vector with one entry for each observation,
-to be used to compute weighted two-stage least-squares estimates.}
 }
 \value{
 \itemize{

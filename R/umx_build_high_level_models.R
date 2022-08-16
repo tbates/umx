@@ -331,9 +331,6 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @param instruments A one-sided formula specifying instrumental variables (default = qtl).
 #' @param data Frame containing the variables in the model.
 #' @param subset (optional) vector specifying a subset of observations to be used in fitting the model.
-#' @param weights (optional) vector of weights to be used in the fitting process (not supported)
-#' If specified should be a non-negative numeric vector with one entry for each observation,
-#' to be used to compute weighted two-stage least-squares estimates.
 #' @param contrasts	an optional list (not supported)
 #' @param name for the model (default = "IVmodel")
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
