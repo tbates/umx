@@ -53,8 +53,8 @@ using PID and participant_id
 \examples{
 \dontrun{
 fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
-df = umx_read_prolific_demog(fp, df = df)
-tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", by.demog = "participant_id", sex = "gender", vars=c("EthnicitySimplified"))
+df = umx_read_prolific_demog(fp, sex = "gender", df = df)
+tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
 }
 }
 \references{
