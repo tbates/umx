@@ -9,14 +9,18 @@
 * FIXED: `umxACEcov` plot and summary working (needed to filter covs from DVs).
 * FIXED: `xmu_twin_print_means` handles more than 1 covariate and improves labeling.
 * FIXED: `umx_score_scale` handles NA correctly.
+* IMPROVED: `umxMR`: gained `tryHard'
 * IMPROVED: `umxGxEwindow`: gained `tryHard`, smarter print control.
 * IMPROVED: `umxGxEwindow`: removes un-needed columns.
 * IMPROVED: `umxGxE` checks that `selDefs` are numeric (closes #196, h/t @salvatoj)
 * IMPROVED: `umxRun`: gained `summary` control.
+* IMPROVED: `umx_read_prolific_demog` more control, better defaults, and more reliable summary table.
+* IMPROVED: `umx_score_scale` cleaner output for 1 factor case with omega.
 * SAFE CODING: `umxPath` stops when `v*m*` is used with `firstAt` or `fixedAt`.
 * SAFE CODING: `umxAlgebra` warns that it isn't functional.
 * MINOR: `umx_print` call fixed where was being called with file.
 * HELP: `umxCP` help `.svg` figure instead of `.png`` (smaller).
+* HELP: `umxMR` Remove unsupported 'weights' parameter.
 * ADMIN: copyright, tests, Rd improvements.
 
 ## umx 4.10.50
