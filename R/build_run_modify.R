@@ -1547,7 +1547,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 	# if data provided create twin files 
 	if(!is.null(data)){
 		if(is.null(sep)){ sep = "_T" }
-		# avoid ingesting tibbles
+		# Avoid ingesting tibbles
 		if("tbl" %in% class(data)){
 			data = as.data.frame(data)
 		}

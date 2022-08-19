@@ -195,7 +195,6 @@ test_that("testing umx twin models", {
 test_that("umxGxE", {
 	require(umx)
 	data(twinData) 
-	# winData = tibble::as_tibble(twinData)
 	twinData$age1 = twinData$age2 = twinData$age
 	selDVs  = "bmi"
 	selDefs = "age"

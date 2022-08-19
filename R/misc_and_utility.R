@@ -1565,17 +1565,17 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 	if(alpha){
 		print(reliability(cov(df, use = "pairwise.complete.obs")))
-		suppressWarnings({tmp = psych::omega(df, nfactors = omegaNfactors)})
+		suppressWarnings({omegaOut = psych::omega(df, nfactors = omegaNfactors)})
 
 		if(verbose){
 			print(str(df))
-			print(tmp)
+			print(omegaOut)
 		}else{
 			if(omegaNfactors == 1){
 				# Omega_h for 1 factor is not meaningful, just omega_t
-				cat(paste0("\u03C9 t = ", round(tmp$omega.tot, digits)))
+				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits)))
 			} else {
-				cat(paste0("\u03C9 h = ", round(tmp$omega_h, digits), "; \u03C9 t = ", round(tmp$omega.tot, digits)))
+				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits)))
 			}
 		}
 	}
@@ -3605,7 +3605,7 @@ umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep",
 	} else if (what == "release"){
 		oldDir = getwd()
 		setwd(dir= pkg)
-		devtools::release(pkg = pkg, check = check) # spelling = NULL		 
+		devtools::release(pkg = pkg, check = check, "--no-manual") # spelling = NULL		 
 		setwd(dir= oldDir)
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
