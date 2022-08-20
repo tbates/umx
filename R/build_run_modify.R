@@ -989,19 +989,18 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 
 #' umxModify: Add, set, or drop model paths by label.
 #' 
-#' umxModify allows you to modify, re-run and summarize an [mxModel()],
-#' all in one line of script.
+#' umxModify allows you to modify, re-run and summarize an [mxModel()], all in one line of script.
 #' 
 #' @details
 #' You can add paths, or other model elements, set path values (default is 0), or replace labels.
 #' As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
 #' 
-#' \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}
+#' `fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)`
 #' 
 #' Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
 #' for instance, this would match labels containing either "Cs" or "Cr":
 #' 
-#' ```
+#' ```R
 #' fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
 #' ```
 #' 

@@ -56,8 +56,7 @@ umxModify(
 }
 }
 \description{
-umxModify allows you to modify, re-run and summarize an \code{\link[=mxModel]{mxModel()}},
-all in one line of script.
+umxModify allows you to modify, re-run and summarize an \code{\link[=mxModel]{mxModel()}}, all in one line of script.
 }
 \details{
 You can add paths, or other model elements, set path values (default is 0), or replace labels.
@@ -68,7 +67,7 @@ As an example, this one-liner drops a path labelled "Cs", and returns the update
 Regular expressions are a powerful feature: they let you drop collections of paths by matching patterns
 for instance, this would match labels containing either "Cs" or "Cr":
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
+\if{html}{\out{<div class="sourceCode R">}}\preformatted{fit2 = umxModify(fit1, regex = "C\[sr\]", name = "drop_Cs_and_Cr", comparison = TRUE)
 }\if{html}{\out{</div>}}
 
 You may find it easier to be more explicit. Like this:

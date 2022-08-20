@@ -226,7 +226,7 @@ As documented on the help page of `cache_rds()`, there are two common cases in w
 
 1. The code in the expression has changed, e.g., if you changed the code from `cache_rds({x + 1})` to `cache_rds({x + 2})`, the cache will be automatically invalidated and the expression will be re-evaluated. However, please note that changes in white spaces or comments do not matter. Or generally speaking, as long as the change does not affect the parsed expression, the cache will not be invalidated, e.g., the two expressions below are essentially identical (hence if you have executed `cache_rds()` on the first expression, the second expression will be able to take advantage of the cache):
 
-    ```r
+    ```{r}
     res = xfun::cache_rds({
       Sys.sleep(3  );
       x=1:10;  # semi-colons won't matter
@@ -243,7 +243,7 @@ As documented on the help page of `cache_rds()`, there are two common cases in w
 
 1. The value of a global variable in the expression has changed, e.g., if `y` has changed, you are most likely to want to invalidate the cache and rerun the expression below:
 
-    ```r
+    ```{r}
     res = xfun::cache_rds({
       x = 1:10
       x + y
@@ -252,7 +252,7 @@ As documented on the help page of `cache_rds()`, there are two common cases in w
 
     This is because `x` is a local variable in the expression, and `y` is an external global variable (not created locally like `x`). To invalidate the cache when `y` has changed, you may let `cache_rds()` know through the `hash` argument that `y` needs to be considered when deciding if the cache should be invalidated:
 
-    ```r
+    ```{r}
     res = xfun::cache_rds({
       x = 1:10
       x + y
@@ -261,7 +261,7 @@ As documented on the help page of `cache_rds()`, there are two common cases in w
 
     If you do not want to provide this list of value(s) to the `hash` argument, you may try `hash = "auto"` instead, which asks `cache_rds()` to try to figure out all global variables automatically and use a list of their values as the value for the `hash` argument.
 
-    ```r
+    ```{r}
     res = xfun::cache_rds({
       x = 1:10
       x + y

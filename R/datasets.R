@@ -286,7 +286,7 @@ NULL
 #' @details
 #' Created as follows:
 #' 
-#' ```R
+#' ```
 #' Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
 #' 1.000
 #' 0.985	1.000
