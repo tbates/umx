@@ -11,7 +11,7 @@ umx_score_scale(
   min = 1,
   max = NULL,
   data = NULL,
-  score = c("total", "mean", "max", "factor"),
+  score = c("total", "proportionCorrect", "errors", "mean", "max", "factor"),
   name = NULL,
   na.rm = TRUE,
   minManifests = NA,
@@ -36,7 +36,7 @@ umx_score_scale(
 
 \item{data}{The data frame}
 
-\item{score}{Whether to compute the score total, mean, max, or factor (default = "total")}
+\item{score}{Whether to compute total, proportionCorrect, errors, mean, max, or factor (default = "total")}
 
 \item{name}{= name of the scale to be returned. Defaults to "base_score"}
 
