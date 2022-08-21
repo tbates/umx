@@ -1589,19 +1589,19 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		}
 	}else if(score == "total"){
 		if(any(is.na(df))){
-			message("Polite note: You asked for scale totals, but some subjects have missing data: Perhaps use means?...")
+			message("\nPolite note: You asked for scale totals, but some subjects have missing data: Perhaps use means?...")
 		}
 		scaleScore = rowSums(df, na.rm = na.rm)
 	}else if(score == "errors"){
 		if(any(is.na(df))){
-			message("Polite note: You asked for errors. Just to let you know, some subjects have NA data: I ignored those.")
+			message("\nPolite note: You asked for errors. Just to let you know, some subjects have NA data: I ignored those.")
 		}
 		scaleScore = rowSums(df, na.rm = na.rm)
 		attempted = rowSums(!is.na(df))
 		scaleScore = attempted - scaleScore
 	}else if(score == "proportionCorrect"){
 		if(any(is.na(df))){
-			message("Polite note: You asked for proportions  (scaleScore/attempted). Just to let you know, some subjects have missing data.")
+			message("\nPolite note: You asked for proportions  (scaleScore/attempted). Just to let you know, some subjects have missing data.")
 		}
 		attempted = rowSums(!is.na(df))
 		scaleScore = rowSums(df, na.rm = na.rm)
