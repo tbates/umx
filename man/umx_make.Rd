@@ -44,14 +44,16 @@ Easily  run devtools "install", "release", "win", "examples" etc.
 }
 \examples{
 \dontrun{
-# umx_make(what = "q")        # Quick install
-# umx_make(what = "install")  # Just installs the package
-# umx_make(what = "examples") # Run the examples
-# umx_make(what = "spell")    # Spell check the documents
-# umx_make(what = "check")    # Run R CMD check
-# umx_make(what = "rhub")     # Check on rhub
-# umx_make(what = "win")      # Check on win-builder
-# umx_make(what = "release")  # Release to CRAN
+# umx_make()  # Just load new code (don't rebuild help etc)
+# umx_make(what = "quickInst") # Quick install
+# umx_make(what = "install")   # Install the package
+# umx_make(what = "spell")     # Spell check the documents
+# umx_make(what = "sitrep")    # Are needed packages up to date?
+# umx_make(what = "examples")  # Run the examples
+# umx_make(what = "checkCRAN") # Run R CMD check
+# umx_make(what = "rhub")      # Check on rhub
+# umx_make(what = "win")       # Check on win-builder
+# umx_make(what = "release")   # Release to CRAN
 # tmp = umx_make(what = "lastRhub") # View rhub result
 }
 }
