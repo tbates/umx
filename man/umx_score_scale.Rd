@@ -157,6 +157,7 @@ bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrin
 \seealso{
 Other Data Functions: 
 \code{\link{noNAs}()},
+\code{\link{prolific_check_ID}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

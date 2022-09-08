@@ -33,6 +33,7 @@ noNAs(tmp) # no Mazda RX4 Wag
 }
 \seealso{
 Other Data Functions: 
+\code{\link{prolific_check_ID}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

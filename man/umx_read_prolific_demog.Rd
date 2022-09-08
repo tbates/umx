@@ -65,6 +65,7 @@ tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimpl
 \seealso{
 Other Data Functions: 
 \code{\link{noNAs}()},
+\code{\link{prolific_check_ID}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},

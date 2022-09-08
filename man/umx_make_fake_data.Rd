@@ -58,6 +58,7 @@ fakeCars = umx_make_fake_data(mtcars)
 
 Other Data Functions: 
 \code{\link{noNAs}()},
+\code{\link{prolific_check_ID}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
