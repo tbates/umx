@@ -32,7 +32,7 @@ str(long)
 str(twinData)
 }
 \seealso{
-[reshape()]
+[reshape()], [umx_merge_randomized_columns()]
 
 Other Twin Data functions: 
 \code{\link{umx_long2wide}()},

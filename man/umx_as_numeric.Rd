@@ -25,7 +25,6 @@ df = mtcars
 df$mpg = as.character(df$mpg)
 df$cyl = factor(df$cyl)
 df$am = df$am==1
-
 df = umx_as_numeric(df); str(df) # mpg not touched
 df = umx_as_numeric(df, force=TRUE); str(df) # mpg coerced back to numeric
 \dontrun{
@@ -49,6 +48,7 @@ Other Data Functions:
 \code{\link{umx_make_TwinData}()},
 \code{\link{umx_make_fake_data}()},
 \code{\link{umx_make_raw_from_cov}()},
+\code{\link{umx_merge_randomized_columns}()},
 \code{\link{umx_polychoric}()},
 \code{\link{umx_polypairwise}()},
 \code{\link{umx_polytriowise}()},

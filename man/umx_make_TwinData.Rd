@@ -259,6 +259,7 @@ Other Data Functions:
 \code{\link{umx_make_MR_data}()},
 \code{\link{umx_make_fake_data}()},
 \code{\link{umx_make_raw_from_cov}()},
+\code{\link{umx_merge_randomized_columns}()},
 \code{\link{umx_polychoric}()},
 \code{\link{umx_polypairwise}()},
 \code{\link{umx_polytriowise}()},
