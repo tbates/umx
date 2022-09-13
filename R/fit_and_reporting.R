@@ -3381,8 +3381,7 @@ umxUnexplainedCausalNexus <- function(from, delta, to, model= NULL) {
 
 umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, meanOffsets = FALSE) {
 	# Usage: umxConditionalsFromModel(model, newData)
-	# Original author: [Timothy Brick](https://github.com/tbates/umx/users/tbrick)
-	# [history](https://github.com/tbates/umx/thread/2076)
+	# Original author: [Timothy Brick](https://openmx.ssri.psu.edu/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
 	# TODO: Special case for latent variables
 	expectation = model$objective
@@ -3446,8 +3445,7 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	# Usage: umxComputeConditionals(model, newData)
 	# Result is a replica of the newData data frame with missing values and (if a RAM model) latent variables populated.
-	# original author: [Timothy Brick](https://github.com/tbates/umx/users/tbrick)
-	# [history](https://github.com/tbates/umx/thread/2076)
+	# original author: [Timothy Brick](https://openmx.ssri.psu.edu/thread/2076)
 	# called by umxConditionalsFromModel()
 	if(dim(mu)[1] > dim(mu)[2] ) {
 		mu = t(mu)
