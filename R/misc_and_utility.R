@@ -1805,7 +1805,6 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 #' df$mpg = as.character(df$mpg)
 #' df$cyl = factor(df$cyl)
 #' df$am = df$am==1
-#' 
 #' df = umx_as_numeric(df); str(df) # mpg not touched
 #' df = umx_as_numeric(df, force=TRUE); str(df) # mpg coerced back to numeric
 #' \dontrun{
@@ -6263,6 +6262,53 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 }
 
 
+#' umx_merge_randomized_columns
+#'
+#' @description
+#' umx_merge_randomized_columns is designed to merge data where subjects are randomized to conditions, 
+#' so they have a value in one column, and NA in the otherr condition columns.
+#'
+#' @details
+#'
+#' @param colNames Names of the columns containing the condition data.
+#' @param df The data frame
+#' @param newVarName Name for the new column holding the newVarName (default "score").
+#' @param conditionCol Name for the new column holding the condition (default "condition").
+#' @return - df with new cols
+#' @export
+#' @family Data Functions
+#' @seealso - [umx_long2wide()]
+#' @md
+#' @examples
+#' \dontrun{
+#' fp = "~/Desktop/Political Ideology_September 13, 2022_10.47.xlsx"
+#' df = readxl::read_excel(fp)
+#' df = df[c(-1,-2), ] # delete temp data and question text
+#' df = data.frame(df)
+#' namez(df, "ris", coll = "vec") # c('RiskAversionNoLotter', 'RiskAversionLottery')
+#' colNames= c('RiskAversionNoLotter', 'RiskAversionLottery')
+#' df = umx_as_numeric(df, colNames, force=TRUE)
+#' tmp = umx_merge_randomized_columns(colNames, df)
+#' 
+#' }
+umx_merge_randomized_columns <- function(colNames, df, newVarName = "score", conditionCol = "condition") {
+	umx_check(! (newVarName %in% names(df)), "stop", "newVarName already exists: it must be unique")
+	umx_check(! (conditionCol %in% names(df)), "stop", "conditionCol already exists: it must be unique")
+	# cols are numeric
+	# isn't a tibble!!
+	# 1. copy values from `colName[1]` into a new column called newVarName (`score`)
+	df[,newVarName]   = df[,colNames[1]]
+	df[,conditionCol] = colNames[1]
+	
+	# 2. loop over additional importing non NA values into the var and condition columns
+	for (i in 2:(length(colNames))) {
+		targetCol = df[,colNames[i]]
+		df[!is.na(targetCol),newVarName]   = targetCol[!is.na(targetCol)]
+		df[!is.na(targetCol),conditionCol] = colNames[i]
+	}
+	return(df)
+}
+
 #' Change data family data from wide (2 twins per row) to long format.
 #'
 #' @description
@@ -6280,7 +6326,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @return - long-format dataframe
 #' @export
 #' @family Twin Data functions
-#' @seealso [reshape()]
+#' @seealso [reshape()], [umx_merge_randomized_columns()]
 #' @examples
 #' long = umx_wide2long(data = twinData, sep = "")
 #' long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
