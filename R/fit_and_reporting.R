@@ -4548,8 +4548,12 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), commaSep, round(obj$conf.int[2], digits), "]")
 			o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
 		} else {
-			o = paste0("Means were ", omxQuotes(obj$estimate),
-			". CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "]. ",
+			grpNames = names(m1$estimate)
+			descriptionTxt = paste0("Means in the ", 
+				namez(grpNames[1], pattern= "mean in group ", replacement="")," and ", 
+				namez(grpNames[2], pattern= "mean in group ", replacement=""), " groups were ")
+			o = paste0(descriptionTxt, omxQuotes(round(obj$estimate, digits)), "respectively. ",
+			"CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "]. ",
 			"t(", round(obj$parameter, 2), ") = ", round(obj$statistic, 2), ", p = ", umxAPA(obj$p.value))
 		}
 		cat(o)
