@@ -20,8 +20,8 @@ prolific_check_ID(IDs, df, IDcol = "PROLIFIC_PID")
 prolific participants can time out but still be in the datafram. this identifies them.
 }
 \examples{
-IDs = c("59d0ec2446447f00011f0254","5a08c9a7f2e3460001edb063","5f29d9582a2fc9166092ebe5","5f7a28b8bedcf2112ebd1289","610036375afd3ab1afe073e7","614d465852620924f85603c8","6237ca974050879378c8fea8","62da96ec6d17660ed2b57be6","62f91b7367c06a4a0a84e589","631642cc32dcd0f19447027c")
-prolific_check_ID(IDs, df)
+# IDs = c("59d0ec2446447f00011edb063","5a08c9a7f2e3460001edb063f0254")
+# prolific_check_ID(IDs, df)
 }
 \seealso{
 Other Data Functions: 

@@ -6270,8 +6270,6 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' 
 #' It returns a new column of merged scores, and a new column of associated conditions.
 #'
-#' @details
-#'
 #' @param colNames Names of the columns containing the condition data.
 #' @param df The data frame
 #' @param newVarName Name for the new column holding the newVarName (default "score").
@@ -7382,41 +7380,6 @@ xmu_CI_merge <- function(m1, m2) {
 }
 
 
-
-#' Convert a dataframe into a cov mxData object
-#'
-#' `xmu_DF_to_mxData_TypeCov` converts a dataframe into [mxData()] with `type="cov"` and `nrow = numObs`
-#' and optionally adding means.
-#'
-#' @param df the dataframe to covert to an mxData type cov object.
-#' @param columns = Which columns to keep (default is all).
-#' @param use = Default is "complete.obs".
-#' @return - [mxData()] of type = cov
-#' @export
-#' @family xmu internal not for end user
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
-#' @examples
-#' xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
-xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
-	use = match.arg(use)
-	if(anyNA(columns)){
-		columns = names(df)
-	}
-	df = df[,columns]
-	if(use == "complete.obs"){
-		df = df[complete.cases(df), ]
-	} else {
-		if(anyNA(df)){
-			message("numObs was set to nrow, but if as the data contain NAs, this is too liberal!")
-		}
-	}
-	numObs = nrow(df)
-	umx_check_names(columns, df)
-	return(mxData(cov(df[, columns], use = use), type = "cov", numObs = numObs))
-}
-
-
 # =============
 # = Read data =
 # =============
@@ -7530,8 +7493,8 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 #' @export
 #' @family Data Functions
 #' @examples
-#' IDs = c("59d0ec2446447f00011f0254","5a08c9a7f2e3460001edb063","5f29d9582a2fc9166092ebe5","5f7a28b8bedcf2112ebd1289","610036375afd3ab1afe073e7","614d465852620924f85603c8","6237ca974050879378c8fea8","62da96ec6d17660ed2b57be6","62f91b7367c06a4a0a84e589","631642cc32dcd0f19447027c")
-#' prolific_check_ID(IDs, df)
+#' # IDs = c("59d0ec2446447f00011edb063","5a08c9a7f2e3460001edb063f0254")
+#' # prolific_check_ID(IDs, df)
 prolific_check_ID <- function(IDs, df, IDcol = "PROLIFIC_PID") {
 	IDs[which(IDs %in% df[, IDcol, drop = TRUE])]
 }

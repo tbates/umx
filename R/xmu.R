@@ -17,6 +17,39 @@
 # ==================================================================================
 
 
+#' Convert a dataframe into a cov mxData object
+#'
+#' `xmu_DF_to_mxData_TypeCov` converts a dataframe into [mxData()] with `type="cov"` and `nrow = numObs`
+#' and optionally adding means.
+#'
+#' @param df the dataframe to covert to an mxData type cov object.
+#' @param columns = Which columns to keep (default is all).
+#' @param use = Default is "complete.obs".
+#' @return - [mxData()] of type = cov
+#' @export
+#' @family xmu internal not for end user
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
+xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
+	use = match.arg(use)
+	if(anyNA(columns)){
+		columns = names(df)
+	}
+	df = df[,columns]
+	if(use == "complete.obs"){
+		df = df[complete.cases(df), ]
+	} else {
+		if(anyNA(df)){
+			message("numObs was set to nrow, but if as the data contain NAs, this is too liberal!")
+		}
+	}
+	numObs = nrow(df)
+	umx_check_names(columns, df)
+	return(mxData(cov(df[, columns], use = use), type = "cov", numObs = numObs))
+}
+
 #' Get one or more columns from mzData or regular data.frame
 #'
 #' @description
