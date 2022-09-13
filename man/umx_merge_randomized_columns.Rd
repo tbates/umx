@@ -26,8 +26,10 @@ umx_merge_randomized_columns(
 }
 }
 \description{
-umx_merge_randomized_columns is designed to merge data where subjects are randomized to conditions,
-so they have a value in one column, and NA in the otherr condition columns.
+\code{umx_merge_randomized_columns} is designed to merge data where subjects have been randomized
+to conditions, so they have a value in one column, and NA in the other condition columns.
+
+It returns a new column of merged scores, and a new column of associated conditions.
 }
 \examples{
 \dontrun{
