@@ -6272,9 +6272,10 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #'
 #' @param colNames Names of the columns containing the condition data.
 #' @param df The data frame
+#' @param levels optional names for the levels of condition (default = colNames).
 #' @param newVarName Name for the new column holding the newVarName (default "score").
 #' @param newCondName Name for the new column holding the condition (default "condition").
-#' @param as.factor Turn condition into a factor? FALSE 
+#' @param as.factor Turn condition into a factor? (FALSE)
 #' @return - df with new cols
 #' @export
 #' @family Data Functions

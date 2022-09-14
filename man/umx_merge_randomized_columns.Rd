@@ -18,11 +18,13 @@ umx_merge_randomized_columns(
 
 \item{df}{The data frame}
 
+\item{levels}{optional names for the levels of condition (default = colNames).}
+
 \item{newVarName}{Name for the new column holding the newVarName (default "score").}
 
 \item{newCondName}{Name for the new column holding the condition (default "condition").}
 
-\item{as.factor}{Turn condition into a factor? FALSE}
+\item{as.factor}{Turn condition into a factor? (FALSE)}
 }
 \value{
 \itemize{
