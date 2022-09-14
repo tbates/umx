@@ -6273,7 +6273,8 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @param colNames Names of the columns containing the condition data.
 #' @param df The data frame
 #' @param newVarName Name for the new column holding the newVarName (default "score").
-#' @param conditionCol Name for the new column holding the condition (default "condition").
+#' @param newCondName Name for the new column holding the condition (default "condition").
+#' @param as.factor Turn condition into a factor? FALSE 
 #' @return - df with new cols
 #' @export
 #' @family Data Functions
@@ -6288,23 +6289,27 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' namez(df, "ris", coll = "vec") # c('RiskAversionNoLotter', 'RiskAversionLottery')
 #' colNames= c('RiskAversionNoLotter', 'RiskAversionLottery')
 #' df = umx_as_numeric(df, colNames, force=TRUE)
-#' tmp = umx_merge_randomized_columns(colNames, df)
-#' 
+#' tmp = umx_merge_randomized_columns(colNames, df); table(tmp$condition)
+#' tmp = umx_merge_randomized_columns(colNames, df, 
+#' 	levels = c("treatment", "control")); table(tmp$condition)
 #' }
-umx_merge_randomized_columns <- function(colNames, df, newVarName = "score", conditionCol = "condition") {
+umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVarName = "score", newCondName = "condition", as.factor = FALSE) {
 	umx_check(! (newVarName %in% names(df)), "stop", "newVarName already exists: it must be unique")
-	umx_check(! (conditionCol %in% names(df)), "stop", "conditionCol already exists: it must be unique")
+	umx_check(! (newCondName %in% names(df)), "stop", "newCondName already exists: it must be unique")
 	# cols are numeric
 	# isn't a tibble!!
 	# 1. copy values from `colName[1]` into a new column called newVarName (`score`)
 	df[,newVarName]   = df[,colNames[1]]
-	df[,conditionCol] = colNames[1]
+	df[,newCondName] = levels[1]
 	
 	# 2. loop over additional importing non NA values into the var and condition columns
 	for (i in 2:(length(colNames))) {
 		targetCol = df[,colNames[i]]
 		df[!is.na(targetCol),newVarName]   = targetCol[!is.na(targetCol)]
-		df[!is.na(targetCol),conditionCol] = colNames[i]
+		df[!is.na(targetCol),newCondName] = levels[i]
+	}
+	if(as.factor){
+		df[, newCondName] = factor(df[, newCondName], levels = levels)
 	}
 	return(df)
 }

@@ -7,8 +7,10 @@
 umx_merge_randomized_columns(
   colNames,
   df,
+  levels = colNames,
   newVarName = "score",
-  conditionCol = "condition"
+  newCondName = "condition",
+  as.factor = FALSE
 )
 }
 \arguments{
@@ -18,7 +20,9 @@ umx_merge_randomized_columns(
 
 \item{newVarName}{Name for the new column holding the newVarName (default "score").}
 
-\item{conditionCol}{Name for the new column holding the condition (default "condition").}
+\item{newCondName}{Name for the new column holding the condition (default "condition").}
+
+\item{as.factor}{Turn condition into a factor? FALSE}
 }
 \value{
 \itemize{
@@ -40,8 +44,9 @@ df = data.frame(df)
 namez(df, "ris", coll = "vec") # c('RiskAversionNoLotter', 'RiskAversionLottery')
 colNames= c('RiskAversionNoLotter', 'RiskAversionLottery')
 df = umx_as_numeric(df, colNames, force=TRUE)
-tmp = umx_merge_randomized_columns(colNames, df)
-
+tmp = umx_merge_randomized_columns(colNames, df); table(tmp$condition)
+tmp = umx_merge_randomized_columns(colNames, df, 
+	levels = c("treatment", "control")); table(tmp$condition)
 }
 }
 \seealso{
