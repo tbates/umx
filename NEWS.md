@@ -1,5 +1,15 @@
 ## dev umx 4.2.00
 
+## umx 4.15.0
+* NEW: `umx_merge_randomized_columns` wide-2-mingled (rather than wide2long) to unify data from people assigned to different conditions.
+* NEW: `umxDiscTwin` Discordant twin test for causal effects.
+* NEW: `umxDiscTwin` Graphical output for publication.
+* NEW: `umxPlot` ease customized/journal-close, e.g. y~x, -> x y plot, with r^2.
+* IMPROVED: `umxAPA` t-test reporting.
+* IMPROVED: `umx_score_scale` gains error and proportion
+* IMPROVED: `umx_score_scale` report only omega total when 1 factor extr…
+* IMPROVED: `umx_read_prolific_demog` gains functionality.
+
 ## umx 4.14.0
 * NEW: `umx_merge_randomized_columns` mingle (rather than wide to long) people assigned to different conditions.
 * NEW: `umxDiscTwin` Discordant twin test for causal effects.

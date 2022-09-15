@@ -4431,7 +4431,11 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' Creates nicely formatted journal-style summaries of models, p-values, data-frames and much more.
 #'
 #' @description
-#' `umxAPA` creates APA-style reports from a range of statistical models, or to summarize data.
+#' `umxAPA` creates APA-style reports from a range of statistical models, or to summarize data. I wrote it to suit me.
+#' 
+#' Nice alternatives include jtools's `summ` function.
+#' 
+#' Example functionality includes:
 #' 
 #' 1. Given an [stats::lm()] model, `umxAPA` will return a formatted effect, including 95% CI. 
 #' e.g.: `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.34 \[-6.48, -4.20\], p < 0.001. here "wt" 
