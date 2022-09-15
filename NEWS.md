@@ -6,8 +6,8 @@
 * NEW: `umxDiscTwin` Graphical output for publication.
 * NEW: `umxPlot` ease customized/journal-close, e.g. y~x, -> x y plot, with r^2.
 * IMPROVED: `umxAPA` t-test reporting.
-* IMPROVED: `umx_score_scale` gains error and proportion
-* IMPROVED: `umx_score_scale` report only omega total when 1 factor extr…
+* IMPROVED: `umx_score_scale` gains error and proportion.
+* IMPROVED: `umx_score_scale` report only omega total when 1 factor extracted.
 * IMPROVED: `umx_read_prolific_demog` gains functionality.
 
 ## umx 4.14.0
