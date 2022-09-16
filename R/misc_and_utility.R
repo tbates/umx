@@ -3067,7 +3067,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 #' @details
 #' Returns a list of odds1, odds2, and OR + CI. Has a pretty-printing method so displays as:
 #'
-#' ```R
+#' ```
 #' Group 1 odds = 0.43
 #' Group 2 odds = 0.11
 #'           OR = 3.86 CI95[0.160, 3.64]
@@ -7490,7 +7490,7 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 
 #' Return PIDs in df
 #'
-#' prolific participants can time out but still be in the datafram. this identifies them.
+#' prolific participants can time out but still be in the dataframe. This identifies them.
 #'
 #' @param IDs Timed-out (or other) IDs to look for.
 #' @param df to search.

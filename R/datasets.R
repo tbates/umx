@@ -274,18 +274,17 @@ NULL
 #'
 #' A dataframe containing correlations of weight for 66 females measured 6 times at 6-month intervals.
 #' 
-#' \itemize{
-#'   \item Weight1: Weight at time 1 (t0)
-#'   \item Weight2: Weight at time 2 (t0 + 6 months)
-#'   \item Weight3: Weight at time 3 (t0 + 12 months)
-#'   \item Weight4: Weight at time 4 (t0 + 18 months)
-#'   \item Weight5: Weight at time 5 (t0 + 24 months)
-#'   \item Weight6: Weight at time 6 (t0 + 32 months)
-#' }
+#' * Weight1: Weight at time 1 (t0)
+#' * Weight2: Weight at time 2 (t0 + 6 months)
+#' * Weight3: Weight at time 3 (t0 + 12 months)
+#' * Weight4: Weight at time 4 (t0 + 18 months)
+#' * Weight5: Weight at time 5 (t0 + 24 months)
+#' * Weight6: Weight at time 6 (t0 + 32 months)
 #' 
+#'
 #' @details
 #' Created as follows:
-#' 
+#'
 #' ```
 #' Fischbein_wt = umx_read_lower(file = "", diag = TRUE, names = paste0("Weight", 1:6), ensurePD= TRUE)
 #' 1.000
@@ -295,7 +294,7 @@ NULL
 #' 0.932	0.940	0.964	0.975	1.000
 #' 0.890	0.897	0.927	0.949	0.973	1.000
 #' ```
-#' 
+#'
 #' @docType data
 #' @keywords datasets
 #' @family datasets
