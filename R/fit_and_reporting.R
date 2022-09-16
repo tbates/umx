@@ -4142,7 +4142,7 @@ print.RMSEA <- function(x, ...) {
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
-#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. doi: https://doi.org/10.2307/2681650.
+#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. \doi{10.2307/2681650}.
 #' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, 
 #' Vol. 1 - Adjustment during Army Life. Princeton, Princeton University Press.
 #' @md
@@ -4431,7 +4431,11 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' Creates nicely formatted journal-style summaries of models, p-values, data-frames and much more.
 #'
 #' @description
-#' `umxAPA` creates APA-style reports from a range of statistical models, or to summarize data.
+#' `umxAPA` creates APA-style reports from a range of statistical models, or to summarize data. I wrote it to suit me.
+#' 
+#' Nice alternatives include jtools's `summ` function.
+#' 
+#' Example functionality includes:
 #' 
 #' 1. Given an [stats::lm()] model, `umxAPA` will return a formatted effect, including 95% CI. 
 #' e.g.: `umxAPA(lm(mpg~wt, data=mtcars), "wt")` yields: \eqn{\beta} = -5.34 \[-6.48, -4.20\], p < 0.001. here "wt" 

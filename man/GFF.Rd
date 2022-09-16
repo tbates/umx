@@ -96,7 +96,7 @@ m1 = umxACE(selDVs= "gff", sep = "_T",
 van der Aa, N., Boomsma, D. I., Rebollo-Mesa, I., Hudziak, J. J., & Bartels,
 M. (2010). Moderation of genetic factors by parental divorce in adolescents'
 evaluations of family functioning and subjective wellbeing. Twin Research
-and Human Genetics, \strong{13}, 143-162. doi{10.1375/twin.13.2.143}
+and Human Genetics, \strong{13}, 143-162. \doi{10.1375/twin.13.2.143}
 }
 \seealso{
 Other datasets: 

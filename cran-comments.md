@@ -7,7 +7,7 @@ Bug/feature fixes
 * 64-bit Linux, R version 4.2.1
 
 ## R CMD check results
-* Status: 1 NOTE (valid doi URLS flagged as possibly invalid, but all are OK)
+* All OK
 
 ## No Downstream dependencies
 
