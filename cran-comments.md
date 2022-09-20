@@ -1,5 +1,5 @@
 ## Changes
-Bug/feature fixes
+Complying with CRAN Latex not supporting underscores
 
 ## Test environments
 * MacOS 12.5, R version 4.2.1

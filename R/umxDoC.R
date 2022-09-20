@@ -5,14 +5,14 @@
 #' on a variable `x` asserted to be causal of an outcome variable `y` are tested for association with differences on y.
 #' The logic of the design is shown below:
 #'
-#' \if{html}{\figure{DiffMZ_rain_mud.png}{options: width=50% alt="Figure: MZ differences model"}}
-#' \if{latex}{\figure{DiffMZ_rain_mud.pdf}{options: width=7cm}}
+#' \if{html}{\figure{DiffMZRainMud.png}{options: width=50% alt="Figure: MZ differences model"}}
+#' \if{latex}{\figure{DiffMZRainMud.pdf}{options: width=7cm}}
 #'
 #' @details
 #' Example output is shown below, with the fitted line and fit inscribed. The plot is just a ggplot graph that is returned and can be edited and formatted.
 #'
-#' \if{html}{\figure{DiffMZ_example.png}{options: width=50% alt="Figure: MZ differences model"}}
-#' \if{latex}{\figure{DiffMZ_example.pdf}{options: width=7cm}}
+#' \if{html}{\figure{DiffMZexample.png}{options: width=50% alt="Figure: MZ differences model"}}
+#' \if{latex}{\figure{DiffMZexample.pdf}{options: width=7cm}}
 #' 
 #' For a more sophisticated linear mixed model approach, see [umxDiscTwin()].
 #' 
@@ -91,8 +91,8 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' If the population association reflects confounded genes or shared environments,
 #' then the association in MZ twins will reduce to zero/non-significance.
 #' 
-#' \if{html}{\figure{discordant_causal_patterns.png}{options: width=50% alt="Figure: Types of confounding"}}
-#' \if{latex}{\figure{discordant_causal_patterns.pdf}{options: width=7cm}}
+#' \if{html}{\figure{discordantCausalPatterns.png}{options: width=50% alt="Figure: Types of confounding"}}
+#' \if{latex}{\figure{discordantCausalPatterns.pdf}{options: width=7cm}}
 #' 
 #' The function uses the [nlme::lme()] function to compute the effect of the presumed causal variable on the outcome, 
 #' controlling, for mid-family score and with random means model using familyID. e.g.:
@@ -101,8 +101,8 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' 
 #' **Example output from `umxDiscTwin`**
 #' 
-#' \if{html}{\figure{DiscTwins_example.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
-#' \if{latex}{\figure{DiscTwins_example.pdf}{options: width=7cm}}
+#' \if{html}{\figure{DiscTwinsExample.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
+#' \if{latex}{\figure{DiscTwinsExample.pdf}{options: width=7cm}}
 #' 
 #' @param x Cause
 #' @param y Effect
