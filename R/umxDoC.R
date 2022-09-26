@@ -28,7 +28,7 @@
 #' @return - Graph for decorating
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxDoC()], [umxDiscTwin()]
+#' @seealso - [umxDoC()], [umxDiscTwin()], [umxMR()]
 #' @references - De Moor, M. H., Boomsma, D. I., Stubbe, J. H., Willemsen, G., & de Geus, E. J. (2008). Testing causality in the association between regular exercise and symptoms of anxiety and depression. Archives of General Psychiatry, 65(8), 897-905. \doi{10.1001/archpsyc.65.8.897}.
 #' @md
 #' @examples
@@ -116,7 +116,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' @return - table of results
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxDoC()], [umxDiffMZ()]
+#' @seealso - [umxDoC()], [umxDiffMZ()], [umxMR()]
 #' @references - Begg, M. D., & Parides, M. K. (2003). Separation of individual-level and cluster-level covariate effects in regression analysis of correlated data. Stat Med, 22(16), 2591-2602. \doi{10.1002/sim.1524} 
 #' * Bergen, S. E., Gardner, C. O., Aggen, S. H., & Kendler, K. S. (2008). Socioeconomic status and social support following illicit drug use: causal pathways or common liability? *Twin Res Hum Genet*, **11**, 266-274. \doi{10.1375/twin.11.3.266}
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}

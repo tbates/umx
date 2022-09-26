@@ -83,7 +83,7 @@ print(tmp, digits = 3)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxDiffMZ]{umxDiffMZ()}}
+\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxDiffMZ]{umxDiffMZ()}}, \code{\link[=umxMR]{umxMR()}}
 }
 
 Other Twin Modeling Functions: 

@@ -338,7 +338,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @return - [mxModel()]
 #' @export
 #' @family Super-easy helpers
-#' @seealso - [umx_make_MR_data()], [umxRAM()]
+#' @seealso - [umx_make_MR_data()], [umxDiffMZ()], [umxDoC()], [umxDiscTwin()]
 #' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to 
