@@ -1423,6 +1423,7 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
 #' @param mapStrings For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2
+#' @param correctAnswer For scoreing items with one correct response 1/0.
 #' @param omegaNfactors Number of factors for the omega reliability (default = 1)
 #' @param verbose Whether to print the whole omega output (FALSE)
 #' @param digits Rounding for omega etc. (default 2)
@@ -1508,14 +1509,14 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
 #' bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
 #' bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
-umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "proportionCorrect", "errors", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL, omegaNfactors = 1, digits = 2, verbose = FALSE, suffix = "") {
+umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "proportionCorrect", "errors", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL,  correctAnswer = NULL, omegaNfactors = 1, digits = 2, verbose = FALSE, suffix = "") {
 	score = match.arg(score)
 	if(is.null(name)){ name = paste0(base, "_score", suffix) }
 	oldData = data
 	umx_check_names(namesNeeded= paste0(base, c(pos, rev), suffix), data=data)
 	if(!is.null(mapStrings)){
 		if(!is.null(max)){
-			# check min max matches mapStrings
+			# Check min max matches mapStrings
 			if(!(length(mapStrings) == length(min:max))){
 				stop(paste0("You set the max and min, but ", min, " to ", max, " must equal the number of map strings: ", length(mapStrings)))
 			}
@@ -1582,7 +1583,12 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		}
 	}
 
-	if(score == "max"){
+	if(!is.null(correctAnswer)){
+		scaleScore = rep(NA, nrow(df))
+		for (i in 1:nrow(df)) {
+			scaleScore[i] = sum(df[i,] == correctAnswer, na.rm=TRUE)
+		}
+	} else if(score == "max"){
 		scaleScore = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
 			scaleScore[i] = max(df[i,], na.rm=TRUE)

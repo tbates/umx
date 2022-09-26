@@ -17,6 +17,7 @@ umx_score_scale(
   minManifests = NA,
   alpha = FALSE,
   mapStrings = NULL,
+  correctAnswer = NULL,
   omegaNfactors = 1,
   digits = 2,
   verbose = FALSE,
@@ -47,6 +48,8 @@ umx_score_scale(
 \item{alpha}{print Cronbach's alpha? (TRUE)}
 
 \item{mapStrings}{For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2}
+
+\item{correctAnswer}{For scoreing items with one correct response 1/0.}
 
 \item{omegaNfactors}{Number of factors for the omega reliability (default = 1)}
 
