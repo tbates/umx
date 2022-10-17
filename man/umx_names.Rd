@@ -84,6 +84,7 @@ namez(mtcars, "m", collapse = "vector") # Paste-able R-code for a vector
 # Other options passed to R's grep command
 umx_names(mtcars, "mpg" , invert = TRUE)  # Non-matches (instead of matches)
 umx_names(mtcars, "disp", value  = FALSE) # Return indices of matches 
+umx_names(mtcars, "disp", value  = "grepl")  # which var matches disp
 umx_names(mtcars, "^d"  , fixed  = TRUE)  # Vars containing literal '^d' (none...)
 
 # =======================================

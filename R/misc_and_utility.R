@@ -1423,7 +1423,7 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' @param minManifests If score = factor, how many missing items to tolerate for an individual?
 #' @param alpha print Cronbach's alpha? (TRUE)
 #' @param mapStrings For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2
-#' @param correctAnswer For scoreing items with one correct response 1/0.
+#' @param correctAnswer For scoring items with one correct response 1/0.
 #' @param omegaNfactors Number of factors for the omega reliability (default = 1)
 #' @param verbose Whether to print the whole omega output (FALSE)
 #' @param digits Rounding for omega etc. (default 2)
@@ -1584,14 +1584,15 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	}
 
 	if(!is.null(correctAnswer)){
+		message("\nPolite note: You provided correct Answers. I scored items 1 or 0 and returned the sum.")
 		scaleScore = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
-			scaleScore[i] = sum(df[i,] == correctAnswer, na.rm=TRUE)
+			scaleScore[i] = sum(df[i, ] == correctAnswer, na.rm = TRUE)
 		}
 	} else if(score == "max"){
 		scaleScore = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
-			scaleScore[i] = max(df[i,], na.rm=TRUE)
+			scaleScore[i] = max(df[i,], na.rm = TRUE)
 		}
 	}else if(score == "total"){
 		if(any(is.na(df))){
@@ -5889,6 +5890,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' # Other options passed to R's grep command
 #' umx_names(mtcars, "mpg" , invert = TRUE)  # Non-matches (instead of matches)
 #' umx_names(mtcars, "disp", value  = FALSE) # Return indices of matches 
+#' umx_names(mtcars, "disp", value  = "grepl")  # which var matches disp
 #' umx_names(mtcars, "^d"  , fixed  = TRUE)  # Vars containing literal '^d' (none...)
 #' 
 #' # =======================================
@@ -5910,7 +5912,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' 
 umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE, perl = FALSE, value = TRUE, fixed = FALSE, useBytes = FALSE, invert = FALSE, global = FALSE, collapse = c("as.is", "vector", "formula")) {
 	collapse = match.arg(collapse)
-
+	umx_check(value %in% c(TRUE, FALSE, "grepl"), "stop", "'value' must be one of TRUE, FALSE, or grepl")
 	if(fixed){
 		ignore.case = FALSE
 	}
@@ -5960,8 +5962,11 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 		stop(paste0("umx_names requires a dataframe or something else with names() or parameters(), ", umx_str_from_object(df), " is a ", typeof(df)))
 	}
 	if(is.null(replacement)){
-		tmp =  grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value,
-	     fixed = fixed, useBytes = useBytes, invert = invert)
+		if(value == "grepl"){
+			tmp = grepl(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, fixed = fixed, useBytes = useBytes)
+		} else {
+			tmp = grep(pattern = pattern, x = nameVector, ignore.case = ignore.case, perl = perl, value = value, fixed = fixed, useBytes = useBytes, invert = invert)
+		}
 	} else {
 		if(global){
 			tmp = gsub(pattern = pattern, replacement = replacement, x = nameVector, ignore.case = ignore.case, perl = perl, fixed = fixed, useBytes = useBytes)

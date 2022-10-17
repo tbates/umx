@@ -4433,7 +4433,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @description
 #' `umxAPA` creates APA-style reports from a range of statistical models, or to summarize data. I wrote it to suit me.
 #' 
-#' Nice alternatives include jtools's `summ` function.
+#' Nice alternatives include `jtools::summ`.
 #' 
 #' Example functionality includes:
 #' 
@@ -4606,6 +4606,13 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	} else if("lm" == class(obj)[[1]]) {
 		# Report lm summary table
 		if(std){
+			# Should not touch the left-hand side variable, make sure factors are not touched, inc. binary variables
+			# see also summ(transform.response = TRUE)
+			# labels gets the RHS, but includes, e.g. interactions, all.vars get the var list, inc. the LHS
+			# RHSvars = intersect(labels(obj$terms), all.vars(obj$terms))
+			# modelDF = obj$model
+			# modelDF[, RHSvars] = umx_scale(modelDF[, RHSvars])
+			# obj = update(obj, data = modelDF)
 			obj = update(obj, data = umx_scale(obj$model))
 		}
 		sumry = summary(obj)
