@@ -2984,6 +2984,7 @@ plot.percent <- function(x, ...) {
 #'
 umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), p = NULL) {
 	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
+	
 	if(inherits(fun, "numeric")){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
 	} else if(inherits(fun, "character")){
@@ -3014,7 +3015,7 @@ umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, ti
 			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max))
 		}
 	}else{
-		p    = ggplot(data.frame(x = c(min, max)), aes(x))
+		p  = ggplot(data.frame(x = c(min, max)), aes(x) )
 		if(logY != "no"){
 			p = p + ggplot2::coord_trans(y = logY)
 		}
@@ -6285,7 +6286,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @return - df with new cols
 #' @export
 #' @family Data Functions
-#' @seealso - [umx_long2wide()]
+#' @seealso - [umx_long2wide()], [prolific_check_ID()], [umx_read_prolific_demog()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -6338,7 +6339,7 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #' @return - long-format dataframe
 #' @export
 #' @family Twin Data functions
-#' @seealso [reshape()], [umx_merge_randomized_columns()]
+#' @seealso [reshape()], [umx_merge_randomized_columns()], [umx_select_valid()]
 #' @examples
 #' long = umx_wide2long(data = twinData, sep = "")
 #' long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
@@ -7464,6 +7465,7 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @param all.demog Whether to keep all lines (people) in the demographics file (default = FALSE)
 #' @param verbose Print variable names found in the file.
 #' @return - [[data.frame]]
+#' @seealso - [prolific_check_ID()], [umx_merge_randomized_columns()]
 #' @export
 #' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -7503,6 +7505,7 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 #' @param IDcol Name of prolific ID column (default PROLIFIC_PID)
 #' @return - list of IDs in the dataframe
 #' @export
+#' @seealso - [umx_read_prolific_demog()], [umx_merge_randomized_columns()]
 #' @family Data Functions
 #' @examples
 #' # IDs = c("59d0ec2446447f00011edb063","5a08c9a7f2e3460001edb063f0254")
