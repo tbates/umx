@@ -7460,8 +7460,8 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @param file Path to a file to read.
 #' @param base Optional path to folder, in which case 'file' is just filename.
 #' @param df Existing datafile to merge demographics into (optional)
-#' @param by.df The ID name in your datafile (default = "PROLIFIC_PID" (WAS "PID")
-#' @param by.demog The ID name in the prolific demographics file (default = by.demog (WAS "participant_id") 
+#' @param by.df The ID name in existing datafile (default = "PROLIFIC_PID"
+#' @param by.demog The ID name in the prolific demographics file (default = "Participant id" was by.demog)
 #' @param age Name of sex var in demographics file ("age")
 #' @param sex Name of sex var in demographics file ("Sex")
 #' @param vars Additional vars to keep from demographics file (WAS age & Sex)
@@ -7476,14 +7476,15 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @examples
 #' \dontrun{
 #' fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
-#' df = umx_read_prolific_demog(fp, sex = "gender", df = df)
+#' df = umx_read_prolific_demog(fp, sex = "Gender", age = "Age", df = df)
 #' tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
 #' }
-umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = by.df, age = "age", sex = "Sex", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
+umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = "Participant.id", age = "age", sex = "Gender", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
 	if(base != "") file = paste0(base, file)
-	newdf = read.csv(file, header= TRUE, sep=',', quote="\"", dec=".", fill= TRUE, comment.char="", stringsAsFactors= FALSE)
-	if(verbose) print(namez(newdf)) 
-	umx_check_names(namesNeeded = vars, data = newdf)
+	newdf = read.csv(file, header= TRUE, sep = ',', quote = "\"", dec = ".", fill = TRUE, comment.char = "", stringsAsFactors = FALSE)
+	if(verbose) print(namez(newdf))
+	umx_check_names(namesNeeded = c(vars,age, sex), data = newdf, message="Checking demographics col names")
+
 	if(!is.null(df)){
 		umx_check_names(namesNeeded = by.df, data = df)
 		umx_check_names(namesNeeded = by.demog, data = newdf)
@@ -7494,8 +7495,9 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 	# May as well print out a nice subjects section...
 	print(umx_aggregate(eval(parse(text= paste0(age, "~", sex))), data = newdf))
 	tmp = newdf; tmp$one = 1
+	# "Man (including Trans Male/Trans Man)"
 	print(umx_aggregate(eval(parse(text= paste0(age, " ~ one"))), data = tmp))
-	umx_msg("Subjects with data were n prolific volunteers ( m  male f female, mean age  yrs years)")
+	umx_msg("Subjects were n prolific volunteers ( m  male f female, mean age  yrs years)")
 	invisible(newdf)
 }
 
