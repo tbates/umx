@@ -44,7 +44,7 @@
 #' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
 #' umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
-umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
+umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=NA, fity=NA, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
 	method = match.arg(method)
 	family = match.arg(family)
 	if(inherits(x, "formula")){
@@ -67,7 +67,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 	data[,x]
 	
 	if(is.na(fitx)){
-		fitx = min(data[,z])
+		fitx = min(data[,x])
 		fity= max(data[,y])
 	}
 
