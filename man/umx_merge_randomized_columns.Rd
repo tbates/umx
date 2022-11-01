@@ -53,7 +53,7 @@ tmp = umx_merge_randomized_columns(colNames, df,
 }
 \seealso{
 \itemize{
-\item \code{\link[=umx_long2wide]{umx_long2wide()}}
+\item \code{\link[=umx_long2wide]{umx_long2wide()}}, \code{\link[=prolific_check_ID]{prolific_check_ID()}}, \code{\link[=umx_read_prolific_demog]{umx_read_prolific_demog()}}
 }
 
 Other Data Functions: 

@@ -61,7 +61,7 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \description{
 \code{umxAPA} creates APA-style reports from a range of statistical models, or to summarize data. I wrote it to suit me.
 
-Nice alternatives include jtools's \code{summ} function.
+Nice alternatives include \code{jtools::summ}.
 
 Example functionality includes:
 \enumerate{

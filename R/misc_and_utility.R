@@ -1414,16 +1414,16 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' @param base String common to all item names.
 #' @param pos The positive-scored item numbers.
 #' @param rev The reverse-scored item numbers.
-#' @param min Min possible score (default = 1). Not implemented for values other than 1 so far...
-#' @param max Max possible score for an item (to compute how to reverse items).
+#' @param min Minimum legal response value (default = 1). Not implemented for values other than 1 so far...
+#' @param max Maximum legal response value (also used to compute reversed item values).
 #' @param data The data frame
-#' @param score Whether to compute total, proportionCorrect, errors, mean, max, or factor (default = "total")
-#' @param name = name of the scale to be returned. Defaults to "base_score"
+#' @param score Score total (default), proportionCorrect, errors, mean, max, or factor scores
+#' @param name The name of the scale to be returned. Defaults to "<base>_score"
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
-#' @param minManifests If score = factor, how many missing items to tolerate for an individual?
-#' @param alpha print Cronbach's alpha? (TRUE)
-#' @param mapStrings For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2
-#' @param correctAnswer For scoring items with one correct response 1/0.
+#' @param minManifests How many missing items to tolerate for an individual (when score = factor)
+#' @param alpha print Reliability (omega and Cronbach's alpha) (TRUE)
+#' @param mapStrings Recoding input like "No"/"Maybe"/"Yes" into numeric values (0,1,2)
+#' @param correctAnswer Use when scoring items with one correct response (1/0).
 #' @param omegaNfactors Number of factors for the omega reliability (default = 1)
 #' @param verbose Whether to print the whole omega output (FALSE)
 #' @param digits Rounding for omega etc. (default 2)
@@ -1455,6 +1455,24 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' tmp = umx_score_scale(name = "A", base = "A", 
 #'    pos = 2:5, rev = 1, max = 6, data= bfi, score="mean")
 #' tmp$A[1] # = 4
+#'
+#' # ========================
+#' # = Request factor score =
+#' # ========================
+#'tmp = umx_score_scale(name = "A", base = "A", 
+#'   pos = 2:5, rev = 1, max = 6, data= bfi, score="factor")
+#' #            g
+#' # A2 0.6574826
+#' # A3 0.7581274
+#' # A4 0.4814788
+#' # A5 0.6272332
+#' # A1 0.3736021
+#'
+#' # ==================
+#' # = Request alpha  =
+#' # ==================
+#' tmp=umx_score_scale(base="A", pos=2:5, rev=1, max=6, data=bfi, alpha=TRUE)
+#' # omega t = 0.72
 #'
 #' # ==================
 #' # = na.rm = TRUE ! =

@@ -13,6 +13,7 @@ umxPlot(
   title = paste0(y, " as a function of ", x),
   fitx = 1,
   fity = 2,
+  geom_point = TRUE,
   method = c("lm", "auto", "loess", "glm", "gam"),
   family = c("gaussian", "binomial", "Gamma", "inverse", "poisson", "quasi",
     "quasibinomial", "quasipoisson")
@@ -34,6 +35,8 @@ umxPlot(
 \item{fitx}{x location for the fit summary (default 1).}
 
 \item{fity}{y location for the fit summary (default 2).}
+
+\item{geom_point}{show points? (TRUE)}
 
 \item{method}{Method for fitting curve (default = lm)}
 

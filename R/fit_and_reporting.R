@@ -32,6 +32,7 @@
 #' @param title Graph title. Default =  paste0(y, " as a function of ", x)
 #' @param fitx x location for the fit summary (default 1).
 #' @param fity y location for the fit summary (default 2).
+#' @param geom_point  show points? (TRUE) 
 #' @param method Method for fitting curve (default = lm)
 #' @param family for glm default = "gaussian"
 #' @return - plot you can edit.
@@ -43,7 +44,7 @@
 #' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
 #' umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
-umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
+umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=1, fity=2, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
 	method = match.arg(method)
 	family = match.arg(family)
 	if(inherits(x, "formula")){
@@ -58,8 +59,18 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 	} else {
 		.formula = reformulate(paste0(y, "~ ", x))	
 	}
+	if(geom_point){
+		p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method) + geom_point()
+	} else {
+		p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method)
+	}
+	data[,x]
+	
+	if(is.na(fitx)){
+		fitx = min(data[,z])
+		fity= max(data[,y])
+	}
 
-	p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method) + geom_point()
 	if(method =="lm"){
 		m1  = lm(.formula, data = data)
 		r2  = round(summary(m1)$r.squared, 3)

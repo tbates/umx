@@ -24,6 +24,8 @@ prolific participants can time out but still be in the dataframe. This identifie
 # prolific_check_ID(IDs, df)
 }
 \seealso{
+- [umx_read_prolific_demog()], [umx_merge_randomized_columns()]
+
 Other Data Functions: 
 \code{\link{noNAs}()},
 \code{\link{umxFactor}()},

@@ -12,8 +12,7 @@ umxPlotFun(
   ylab = NULL,
   title = NULL,
   logY = c("no", "log", "log10"),
-  p = NULL,
-  ...
+  p = NULL
 )
 }
 \arguments{
@@ -31,7 +30,7 @@ umxPlotFun(
 
 \item{logY}{Set to, e.g. "log" to set COORDINATE of y to log.}
 
-\item{p}{Optional parameters passed to ggplot}
+\item{p}{Optional plot onto which to draw the function.}
 }
 \value{
 \itemize{

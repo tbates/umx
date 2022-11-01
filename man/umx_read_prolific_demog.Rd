@@ -9,9 +9,9 @@ umx_read_prolific_demog(
   base = "",
   df = NULL,
   by.df = "PROLIFIC_PID",
-  by.demog = by.df,
+  by.demog = "Participant.id",
   age = "age",
-  sex = "Sex",
+  sex = "Gender",
   vars = NULL,
   all.df = TRUE,
   all.demog = FALSE,
@@ -25,9 +25,9 @@ umx_read_prolific_demog(
 
 \item{df}{Existing datafile to merge demographics into (optional)}
 
-\item{by.df}{The ID name in your datafile (default = "PROLIFIC_PID" (WAS "PID")}
+\item{by.df}{The ID name in existing datafile (default = "PROLIFIC_PID"}
 
-\item{by.demog}{The ID name in the prolific demographics file (default = by.demog (WAS "participant_id")}
+\item{by.demog}{The ID name in the prolific demographics file (default = "Participant id" was by.demog)}
 
 \item{age}{Name of sex var in demographics file ("age")}
 
@@ -53,7 +53,7 @@ using PID and participant_id
 \examples{
 \dontrun{
 fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
-df = umx_read_prolific_demog(fp, sex = "gender", df = df)
+df = umx_read_prolific_demog(fp, sex = "Gender", age = "Age", df = df)
 tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
 }
 }
@@ -63,6 +63,10 @@ tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimpl
 }
 }
 \seealso{
+\itemize{
+\item \code{\link[=prolific_check_ID]{prolific_check_ID()}}, \code{\link[=umx_merge_randomized_columns]{umx_merge_randomized_columns()}}
+}
+
 Other Data Functions: 
 \code{\link{noNAs}()},
 \code{\link{prolific_check_ID}()},

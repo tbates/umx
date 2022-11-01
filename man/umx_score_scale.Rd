@@ -31,25 +31,25 @@ umx_score_scale(
 
 \item{rev}{The reverse-scored item numbers.}
 
-\item{min}{Min possible score (default = 1). Not implemented for values other than 1 so far...}
+\item{min}{Minimum legal response value (default = 1). Not implemented for values other than 1 so far...}
 
-\item{max}{Max possible score for an item (to compute how to reverse items).}
+\item{max}{Maximum legal response value (also used to compute reversed item values).}
 
 \item{data}{The data frame}
 
-\item{score}{Whether to compute total, proportionCorrect, errors, mean, max, or factor (default = "total")}
+\item{score}{Score total (default), proportionCorrect, errors, mean, max, or factor scores}
 
-\item{name}{= name of the scale to be returned. Defaults to "base_score"}
+\item{name}{The name of the scale to be returned. Defaults to "<base>_score"}
 
 \item{na.rm}{Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!}
 
-\item{minManifests}{If score = factor, how many missing items to tolerate for an individual?}
+\item{minManifests}{How many missing items to tolerate for an individual (when score = factor)}
 
-\item{alpha}{print Cronbach's alpha? (TRUE)}
+\item{alpha}{print Reliability (omega and Cronbach's alpha) (TRUE)}
 
-\item{mapStrings}{For recoding input like "No"/"Maybe"/"Yes" to numeric 0,1,2}
+\item{mapStrings}{Recoding input like "No"/"Maybe"/"Yes" into numeric values (0,1,2)}
 
-\item{correctAnswer}{For scoreing items with one correct response 1/0.}
+\item{correctAnswer}{Use when scoring items with one correct response (1/0).}
 
 \item{omegaNfactors}{Number of factors for the omega reliability (default = 1)}
 
@@ -102,6 +102,24 @@ tmp[1, namez(tmp, "A",ignore.case = FALSE)]
 tmp = umx_score_scale(name = "A", base = "A", 
    pos = 2:5, rev = 1, max = 6, data= bfi, score="mean")
 tmp$A[1] # = 4
+
+# ========================
+# = Request factor score =
+# ========================
+tmp = umx_score_scale(name = "A", base = "A", 
+  pos = 2:5, rev = 1, max = 6, data= bfi, score="factor")
+#            g
+# A2 0.6574826
+# A3 0.7581274
+# A4 0.4814788
+# A5 0.6272332
+# A1 0.3736021
+
+# ==================
+# = Request alpha  =
+# ==================
+tmp=umx_score_scale(base="A", pos=2:5, rev=1, max=6, data=bfi, alpha=TRUE)
+# omega t = 0.72
 
 # ==================
 # = na.rm = TRUE ! =
