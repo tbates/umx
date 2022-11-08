@@ -1418,7 +1418,7 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' @param max Maximum legal response value (also used to compute reversed item values).
 #' @param data The data frame
 #' @param score Score total (default), proportionCorrect, errors, mean, max, or factor scores
-#' @param name The name of the scale to be returned. Defaults to "<base>_score"
+#' @param name The name of the scale to be returned. Defaults to "`base`_score"
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @param minManifests How many missing items to tolerate for an individual (when score = factor)
 #' @param alpha print Reliability (omega and Cronbach's alpha) (TRUE)
@@ -6302,7 +6302,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #'
 #' @param colNames Names of the columns containing the condition data.
 #' @param df The data frame
-#' @param levels optional names for the levels of condition (default = colNames).
+#' @param levels optional names for the levels of condition (default = `colNames`).
 #' @param newVarName Name for the new column holding the newVarName (default "score").
 #' @param newCondName Name for the new column holding the condition (default "condition").
 #' @param as.factor Turn condition into a factor? (FALSE)
@@ -7480,7 +7480,7 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @param base Optional path to folder, in which case 'file' is just filename.
 #' @param df Existing datafile to merge demographics into (optional)
 #' @param by.df The ID name in existing datafile (default = "PROLIFIC_PID"
-#' @param by.demog The ID name in the prolific demographics file (default = "Participant id" was by.demog)
+#' @param by.demog The ID name in the prolific demographics file (default = "Participant id" was `by.demog`)
 #' @param age Name of sex var in demographics file ("age")
 #' @param sex Name of sex var in demographics file ("Sex")
 #' @param vars Additional vars to keep from demographics file (WAS age & Sex)

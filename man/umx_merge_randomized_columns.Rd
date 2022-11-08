@@ -18,7 +18,7 @@ umx_merge_randomized_columns(
 
 \item{df}{The data frame}
 
-\item{levels}{optional names for the levels of condition (default = colNames).}
+\item{levels}{optional names for the levels of condition (default = \code{colNames}).}
 
 \item{newVarName}{Name for the new column holding the newVarName (default "score").}
 

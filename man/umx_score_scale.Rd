@@ -39,7 +39,7 @@ umx_score_scale(
 
 \item{score}{Score total (default), proportionCorrect, errors, mean, max, or factor scores}
 
-\item{name}{The name of the scale to be returned. Defaults to "<base>_score"}
+\item{name}{The name of the scale to be returned. Defaults to "\code{base}_score"}
 
 \item{na.rm}{Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!}
 

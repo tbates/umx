@@ -27,7 +27,7 @@ umx_read_prolific_demog(
 
 \item{by.df}{The ID name in existing datafile (default = "PROLIFIC_PID"}
 
-\item{by.demog}{The ID name in the prolific demographics file (default = "Participant id" was by.demog)}
+\item{by.demog}{The ID name in the prolific demographics file (default = "Participant id" was \code{by.demog})}
 
 \item{age}{Name of sex var in demographics file ("age")}
 
