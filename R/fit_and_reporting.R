@@ -4548,14 +4548,11 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' umxAPA(m1)
 #'
 umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="") {
-	report = match.arg(report)
-	test = match.arg(test)
-	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
-	if(std){
-		betaSymbol = " \u03B2 = "
-	} else {
-		betaSymbol = " B = "
-	}
+	report     = match.arg(report)
+	test       = match.arg(test)
+	commaSep   = paste0(umx_set_separator(silent = TRUE), " ")
+	betaSymbol = ifelse(std, " \u03B2 = ", " B = ")
+
 	if("htest" == class(obj)[[1]]){
 		# t.test
 		if(obj$method ==  "Pearson's product-moment correlation"){
@@ -4564,12 +4561,18 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
 		} else {
 			grpNames = names(obj$estimate)
-			descriptionTxt = paste0("Means in the ", 
-				namez(grpNames[1], pattern= "mean (in group|of) ", replacement="")," and ", 
-				namez(grpNames[2], pattern= "mean (in group|of) ", replacement=""), " groups were ")
-			o = paste0(descriptionTxt, omxQuotes(round(obj$estimate, digits)), "respectively. ",
-			"CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "]. ",
-			"t(", round(obj$parameter, 2), ") = ", round(obj$statistic, 2), ", p = ", umxAPA(obj$p.value))
+			if(grpNames=="mean difference"){
+				o = paste0("Means differed by ", round(obj$estimate, digits), " ")
+			} else {
+				descriptionTxt = paste0("Means in the ", 
+					namez(grpNames[1], pattern= "mean (in group|of) ", replacement="")," and ", 
+					namez(grpNames[2], pattern= "mean (in group|of) ", replacement=""), " groups were "
+				)
+				o = paste0(descriptionTxt, omxQuotes(round(obj$estimate, digits)), "respectively. ")
+			}
+			o = paste0(o, "(CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "], ",
+				"t(", round(obj$parameter, 2), ") = ", round(obj$statistic, 2), ", p = ", umxAPA(obj$p.value), ")"
+			)
 		}
 		cat(o)
 		invisible(o)
