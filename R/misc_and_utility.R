@@ -1583,13 +1583,21 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	}
 	allColNames = paste0(base, c(pos, rev), suffix)
 	df = data[ , allColNames, drop = FALSE]
-
+	if(!is.null(correctAnswer)){
+		dfDummy = matrix(nrow = nrow(df), ncol= ncol(df))
+		for (i in 1:nrow(df)) {
+			dfDummy[i,] = (df[i, ] == correctAnswer)
+		}
+		df = dfDummy
+		if(verbose){
+			print(str(df))
+		}
+	}
 	if(alpha){
 		print(reliability(cov(df, use = "pairwise.complete.obs")))
 		suppressWarnings({omegaOut = psych::omega(df, nfactors = omegaNfactors)})
 
 		if(verbose){
-			print(str(df))
 			print(omegaOut)
 		}else{
 			if(omegaNfactors == 1){
@@ -1602,10 +1610,10 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	}
 
 	if(!is.null(correctAnswer)){
-		message("\nPolite note: You provided correct Answers. I scored items 1 or 0 and returned the sum.")
+		message("\nPolite note: I returned  the sum of correct Answers scored 1/0.")
 		scaleScore = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
-			scaleScore[i] = sum(df[i, ] == correctAnswer, na.rm = TRUE)
+			scaleScore[i] = sum(df[i, ], na.rm = TRUE)
 		}
 	} else if(score == "max"){
 		scaleScore = rep(NA, nrow(df))
@@ -1628,7 +1636,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		if(any(is.na(df))){
 			message("\nPolite note: You asked for proportions  (scaleScore/attempted). Just to let you know, some subjects have missing data.")
 		}
-		attempted = rowSums(!is.na(df))
+		attempted  = rowSums(!is.na(df))
 		scaleScore = rowSums(df, na.rm = na.rm)
 		scaleScore = scaleScore/attempted
 	}else if(score == "mean"){
