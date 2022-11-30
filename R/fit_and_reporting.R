@@ -4555,6 +4555,10 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 
 	if("htest" == class(obj)[[1]]){
 		# t.test
+		if(std){
+			message("Polite note: Sorry, I can't standardize a t-test for you")
+		}
+		
 		if(obj$method ==  "Pearson's product-moment correlation"){
 			# cor.test
 			o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), commaSep, round(obj$conf.int[2], digits), "]")
