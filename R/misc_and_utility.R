@@ -2536,7 +2536,7 @@ dl_from_dropbox <- function(x, key=NULL){
 #'
 #' @description
 #' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
-#' Better to use a more powerful online site, like  <https://dcftool.com/analysis/AAPL> or <https://www.minuteup.co/?stock=RKLB>.
+#' Better to use a more powerful online site.
 #'
 #' @details
 #' Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
@@ -2552,7 +2552,6 @@ dl_from_dropbox <- function(x, key=NULL){
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
-#' @references <https://www.minuteup.co/?stock=RKLB>, <https://dcftool.com/analysis/AAPL>
 #' @md
 #' @examples
 #' fin_valuation(rev=7e9, opmargin=.1, PE=33)

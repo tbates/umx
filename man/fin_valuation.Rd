@@ -33,7 +33,7 @@ fin_valuation(
 }
 \description{
 \code{fin_valuation} uses the revenue, operating margin, expenses and PE to compute a market capitalization.
-Better to use a more powerful online site, like  \url{https://dcftool.com/analysis/AAPL} or \url{https://www.minuteup.co/?stock=RKLB}.
+Better to use a more powerful online site.
 }
 \details{
 Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in \code{expenses} is subtracted
@@ -44,9 +44,6 @@ fin_valuation(rev=7e9, opmargin=.1, PE=33)
 # Market cap =  $18,480,000,000
 # (Based on PE= 33, operating Income of $0.70 B, and net income =$0.56B
 
-}
-\references{
-\url{https://www.minuteup.co/?stock=RKLB}, \url{https://dcftool.com/analysis/AAPL}
 }
 \seealso{
 \itemize{
