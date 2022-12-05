@@ -1,6 +1,9 @@
-## dev umx 4.2.00
+## dev umx 4.20.00
+* Dec 2022 R 4.2.1
+* IMPROVED: `umx_score_scale` reliability works with `correctAnswers`
 
-## umx 4.15.0
+## umx 4.15.1
+* Nov 2022 R 4.2.1
 * NEW: `umx_merge_randomized_columns` wide-2-mingled (rather than wide2long) to unify data from people assigned to different conditions.
 * NEW: `umxDiscTwin` Discordant twin test for causal effects.
 * NEW: `umxDiscTwin` Graphical output for publication.
