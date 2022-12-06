@@ -1459,8 +1459,8 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' # ========================
 #' # = Request factor score =
 #' # ========================
-#'tmp = umx_score_scale(name = "A", base = "A", 
-#'   pos = 2:5, rev = 1, max = 6, data= bfi, score="factor")
+#'tmp = umx_score_scale(name = "A", base = "A", pos = 2:5, rev = 1,
+#'    max = 6, score = "factor", minManifests = 4, data= bfi)
 #' #            g
 #' # A2 0.6574826
 #' # A3 0.7581274
