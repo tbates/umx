@@ -115,11 +115,14 @@ tmp = umx_score_scale(name = "A", base = "A", pos = 2:5, rev = 1,
 # A5 0.6272332
 # A1 0.3736021
 
+\dontrun{
 # ==================
 # = Request alpha  =
 # ==================
+
 tmp=umx_score_scale(base="A", pos=2:5, rev=1, max=6, data=bfi, alpha=TRUE)
 # omega t = 0.72
+}
 
 # ==================
 # = na.rm = TRUE ! =
