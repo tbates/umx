@@ -4,10 +4,12 @@
 \alias{libs}
 \title{load libraries}
 \usage{
-libs(...)
+libs(..., force.update = FALSE)
 }
 \arguments{
 \item{...}{library names as strings, e.g. "pwr"}
+
+\item{force.update}{install.package even if present (to get new version) FALSE}
 }
 \value{
 \itemize{
