@@ -109,6 +109,7 @@
 #' `libs` allows loading multiple libraries in one call
 #'
 #' @param ... library names as strings, e.g. "pwr"
+#' @param force.update install.package even if present (to get new version) FALSE
 #' @return - nothing.
 #' @export
 #' @family Miscellaneous Utility Functions
@@ -120,11 +121,14 @@
 #' libs("umx", c("OpenMx", "car"))
 #' remove.packages()
 #' }
-libs <- function(...) {
+libs <- function(... , force.update = FALSE) {
 	dot.items = list(...) # grab all the dot items
 	dot.items = unlist(dot.items) # In case any dot items are lists
 	for (pack in dot.items) {
 		result = tryCatch({
+			if(force.update){
+				install.packages(pack)
+			}
 			library(pack, character.only = TRUE)
 		}, warning = function(warn) {
 			umx_msg("Who's, Z?")
