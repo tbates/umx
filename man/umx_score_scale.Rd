@@ -106,6 +106,7 @@ tmp$A[1] # = 4
 # ========================
 # = Request factor score =
 # ========================
+\dontrun{
 tmp = umx_score_scale(name = "A", base = "A", pos = 2:5, rev = 1,
    max = 6, score = "factor", minManifests = 4, data= bfi)
 #            g
@@ -115,7 +116,6 @@ tmp = umx_score_scale(name = "A", base = "A", pos = 2:5, rev = 1,
 # A5 0.6272332
 # A1 0.3736021
 
-\dontrun{
 # ==================
 # = Request alpha  =
 # ==================
@@ -145,7 +145,7 @@ tmp$A[1] # Subject 1 max = 5 (reversed) item 1
 
 # Default scale name
 tmp = umx_score_scale("E", pos = 3:5, rev = 1:2, max = 6, 
-   data= tmp, score = "mean", na.rm=FALSE)
+   data= tmp, score = "mean", na.rm = FALSE)
 tmp$E_score[1]
 
 # Using @BillRevelle's psych package: More diagnostics, including alpha

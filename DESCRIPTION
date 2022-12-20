@@ -61,4 +61,4 @@ Suggests:
 	pwr
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
-RoxygenNote: 7.2.2
+RoxygenNote: 7.2.3

@@ -4369,7 +4369,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 	tmp = data.frame(tmp)
 	tmp[, 1] = paste0(as.character(tmp[, 1]), " (n = ", n_s[, 2], ")")
 	if(report == "html"){
-		umx_print(tmp, digits = digits, file = "tmp.html")
+		umx_print(tmp, digits = digits, report = report)
 	} else if(report == "markdown"){
 		return(kable(tmp, format="pipe"))
 	}else{
@@ -4604,11 +4604,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		} else {
 			output  = data.frame(cor_table, stringsAsFactors = FALSE)
 		}
-		if(report == "html"){
-			umx_print(output, digits = digits, file = "tmp.html")
-		} else {
-			umx_print(output, digits = digits)
-		}
+		umx_print(output, digits = digits, report = report)
 		if(anyNA(obj)){
 			message("Some rows in dataframe had missing values.")
 		}
@@ -4616,11 +4612,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		# Assume these are correlations or similar numbers
 		cor_table = umx_apply(round, obj, digits = digits) # round correlations
 		output = data.frame(cor_table)
-		if(report == "html"){
-			umx_print(output, digits = digits, file = "tmp.html")
-		} else {
-			umx_print(output, digits = digits)
-		}
+		umx_print(output, digits = digits, report = report)
 	} else if("lm" == class(obj)[[1]]) {
 		# Report lm summary table
 		if(std){
@@ -4866,11 +4858,8 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 		names(df) = namez(df, "(rMZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% MZ,"Freq"]),")"))
 		names(df) = namez(df, "(rDZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% DZ,"Freq"]),")"))
 	}
-	if(report == "html"){
-		umx_print(df, digits=digits, file = "tmp.html")
-	} else {
-		umx_print(df, digits=digits)
-	}
+
+	umx_print(df, digits=digits, report = report)
 	
 	# return(df)
 	# Calculate Mean Age and SD for men and women
