@@ -1,6 +1,8 @@
 ## dev umx 4.20.00
 * Dec 2022 R 4.2.1
 * IMPROVED: `umx_score_scale` reliability works with `correctAnswers`
+* IMPROVED: `libs` can mimic install (force.update=T)
+* FIXED: `umxAPA` and others work with report  html properly
 
 ## umx 4.15.1
 * Nov 2022 R 4.2.1
