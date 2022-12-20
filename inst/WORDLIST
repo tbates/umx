@@ -444,6 +444,7 @@ mxModel
 MxModelACE
 MxModelCP
 MxModelDoC
+MxModelMRDoC
 MxModels
 mxPath
 mxPaths
