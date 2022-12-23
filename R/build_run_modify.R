@@ -260,6 +260,7 @@ utils::globalVariables(c(
 # = plot, etc. can then operate on these                            =
 # ===================================================================
 methods::setClass("MxModelDoC"    , contains = "MxModel")
+methods::setClass("MxModelMRDoC"    , contains = "MxModel")
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
 
 methods::setClass("MxModelACE"    , contains = "MxModel")
