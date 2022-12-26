@@ -252,7 +252,16 @@ utils::globalVariables(c(
 	"top.meansBetas",
 	"T1DefVars",
 	"T2DefVars",
-	"T3DefVars"
+	"T3DefVars",
+	#MRDoC2
+	'dzmu',
+	'BE',
+	'A_',
+	'C_',
+	'E_',
+	'SPh',
+	'Smz_'
+	
 ))
 
 # ===================================================================

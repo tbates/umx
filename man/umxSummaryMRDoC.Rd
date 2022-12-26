@@ -28,6 +28,8 @@ umxSummaryMRDoC(
 
 \item{comparison}{Run mxCompare on a comparison model (default NULL)}
 
+\item{RMSEA_CI}{Optionally compute CI on RMSEA.}
+
 \item{report}{Print tables to the console (as 'markdown'), or open in browser ('html')}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
@@ -40,7 +42,7 @@ umxSummaryMRDoC(
 }
 }
 \description{
-Summarizes a MR Direction of Causation model, as returned by \code{\link[=umxDoC]{umxDoC()}}
+Summarizes a MR Direction of Causation model, as returned by \code{\link[=umxMRDoC]{umxMRDoC()}}
 }
 \seealso{
 \itemize{

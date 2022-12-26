@@ -18,9 +18,9 @@
 #' @param mzData The MZ dataframe
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
+#' @param summary Optionally show a summary.
 #' @param data = NULL If building the MZ and DZ datasets internally from a complete data set.
 #' @param zyg = "zygosity" (for the data= method of using this function)
 #' @return - [mxModel()] of subclass MxModelMRDoC
@@ -44,9 +44,10 @@
 #' # ============================
 #' # = 2. Make a MRDoC2 model   =
 #' # ============================
-#' out = umxMRDoC(mzData = mzData, dzData = dzData,  pheno = c("varA1", "varA2"), prss = c("varB1", "varA3")
+#' out = umxMRDoC(mzData = mzData, dzData = dzData,  
+#'	pheno = c("varA1", "varA2"), prss = c("varB1", "varA3") )
 #'}
-umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg = NULL, sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, refModels = NULL) {
+umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg = NULL, sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 
   tryHard = match.arg(tryHard)
 
@@ -241,7 +242,7 @@ umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg
 
 #' Present the results of a Mendelian Randomization Direction of Causation Model in a table
 #'
-#' Summarizes a MR Direction of Causation model, as returned by [umxDoC()]
+#' Summarizes a MR Direction of Causation model, as returned by [umxMRDoC()]
 #'
 #' @aliases umxSummary.MxModelMRDoC
 #' @param model A fitted [umxDoC()] model to summarize
@@ -249,6 +250,7 @@ umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg
 #' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
 #' @param CIs Confidence intervals (default FALSE)
 #' @param comparison Run mxCompare on a comparison model (default NULL)
+#' @param RMSEA_CI Optionally compute CI on RMSEA.
 #' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param ... Optional additional parameters

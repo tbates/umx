@@ -16,8 +16,7 @@ umxMRDoC(
   name = NULL,
   autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "ordinal", "search"),
-  optimizer = NULL,
-  refModels = NULL
+  optimizer = NULL
 )
 }
 \arguments{
@@ -35,6 +34,8 @@ umxMRDoC(
 
 \item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
 
+\item{summary}{Optionally show a summary.}
+
 \item{name}{The name of the model (defaults to either "MRDoC" or "MRDoC2).}
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
@@ -42,8 +43,6 @@ umxMRDoC(
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
-
-\item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 }
 \value{
 \itemize{
@@ -74,7 +73,8 @@ dzData  = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 # ============================
 # = 2. Make a MRDoC2 model   =
 # ============================
-out = umxMRDoC(mzData = mzData, dzData = dzData,  pheno = c("varA1", "varA2"), prss = c("varB1", "varA3")
+out = umxMRDoC(mzData = mzData, dzData = dzData,  
+pheno = c("varA1", "varA2"), prss = c("varB1", "varA3") )
 }
 }
 \references{
