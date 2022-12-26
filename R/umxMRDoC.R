@@ -243,11 +243,10 @@ umxMRDoC <- function(pheno, prss,
     stop("Only 1 or 2 PRSs are supported")
   }
 
-  model = mxAutoStart(model)
+	model = mxAutoStart(model)
 	model = as(model, "MxModelMRDoC") # set class so that S3s dispatch e.g. plot()
-  model  = xmu_safe_run_summary(model, autoRun = TRUE,  summary = summary, tryHard =  tryHard)
-
-  return(model)
+	model = xmu_safe_run_summary(model, autoRun = TRUE,  summary = summary, tryHard =  tryHard)
+	return(model)
 }
 
 

@@ -121,6 +121,7 @@ Other Twin Modeling Functions:
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
+\code{\link{umxMRDoC}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
