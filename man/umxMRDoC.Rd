@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxMRDoC.R
 \name{umxMRDoC}
 \alias{umxMRDoC}
-\title{Extends mendelian randomization with the twin design to test evidence of causality}
+\title{Extends Mendelian randomization with the twin design to test evidence of causality}
 \usage{
 umxMRDoC(
   pheno,
@@ -35,7 +35,7 @@ umxMRDoC(
 
 \item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
 
-\item{name}{The name of the model (defaults to either "MRDOC" or "MRDoC2).}
+\item{name}{The name of the model (defaults to either "MRDoC" or "MRDoC2).}
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 

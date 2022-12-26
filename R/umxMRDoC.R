@@ -1,4 +1,4 @@
-#' Extends mendelian randomization with the twin design to test evidence of causality 
+#' Extends Mendelian randomization with the twin design to test evidence of causality 
 #'
 #' @description
 #' Testing causal claims is often difficult due to an inability to conduct experimental randomization of traits and 
@@ -11,7 +11,7 @@
 #'
 #' This function applies both the MRDoC model and the MRDoC2 model depending on how many PRSs are passed as arguments.
 #' 
-#' @param name The name of the model (defaults to either "MRDOC" or "MRDoC2).
+#' @param name The name of the model (defaults to either "MRDoC" or "MRDoC2).
 #' @param pheno Phenotypes of interest, order matters ("exposure", "outcome")
 #' @param prss Polygenic score(s). If a single one is passed MRDoC is run, MRDoC2 otherwise. 
 #' @param dzData The DZ dataframe
@@ -46,19 +46,12 @@
 #' # ============================
 #' out = umxMRDoC(mzData = mzData, dzData = dzData,  pheno = c("varA1", "varA2"), prss = c("varB1", "varA3")
 #'}
-umxMRDoC <- function(pheno, prss,
-                      mzData = NULL, dzData = NULL,
-                      data = NULL, zyg = NULL,
-                    sep = "_T", summary = !umx_set_silent(silent = TRUE),
-                    name = NULL, autoRun = getOption("umx_auto_run"),
-                     tryHard = c("no", "yes", "ordinal", "search"),
-                    optimizer = NULL, refModels = NULL) {
+umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg = NULL, sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, refModels = NULL) {
 
-  tryHard <- match.arg(tryHard)
+  tryHard = match.arg(tryHard)
 
   options(mxByrow = TRUE)
   umx_set_silent(TRUE)
-
 
   # Managing data
   if (!is.null(data)) {
@@ -85,9 +78,9 @@ umxMRDoC <- function(pheno, prss,
   mzData = xmu_make_mxData(mzData, manifests = vnames)
   dzData = xmu_make_mxData(dzData, manifests = vnames)
 
-  x=y=1
+  x = y = 1
 
-  if (length(prss)==1) {
+  if (length(prss) == 1) {
 
     message("WARNING: still under testing, do not use in your research yet")
     if (is.null(name)) { name = "MRDoC"}
@@ -97,40 +90,40 @@ umxMRDoC <- function(pheno, prss,
                 labels = c(NA, "g2", "b1", 
                            "g1", NA, "b2", 
                            NA, NA, NA),
-                free = c(F, F, T,
-                         T, F, T,
-                         F, F, F)),
+                free = c(FALSE, FALSE, TRUE,
+                         TRUE, FALSE, TRUE,
+                         FALSE, FALSE, FALSE)),
       umxMatrix('I', type='Iden', nrow= 3,ncol= 3 ),
-      umxMatrix('F', type='Full', nrow=5, ncol=6, free=F,
+      umxMatrix('F', type='Full', nrow=5, ncol=6, free=FALSE,
                 values=c(1,0,0,0,0,0,
                         0,1,0,0,0,0,
                         0,0,1,0,0,0,
                         0,0,0,1,0,0,
                         0,0,0,0,1,0)),
-      umxMatrix('LY', type='Full',nrow=3, ncol = 3, free = F, values = diag(3),
+      umxMatrix('LY', type='Full',nrow=3, ncol = 3, free = FALSE, values = diag(3),
                 labels = NA),
       umxMatrix('A', type='Symm', nrow=3,ncol = 3,
                 labels=c("ab2","abraas",NA,
                          "abraas","as2",NA,
                          NA,NA,"x2"),
-                free=c(T,T,F,
-                       T,T,F,
-                       F,F,T)),
+                free=c(TRUE,TRUE,FALSE,
+                       TRUE,TRUE,FALSE,
+                       FALSE,FALSE,TRUE)),
       umxMatrix('C', type='Symm',nrow=3, ncol = 3,
                 labels =c("cb2","cbrccs",NA,
                          "cbrccs","cs2",NA,
                          NA,NA,NA),
-                free=c(T,T,F,
-                       T,T,F,
-                       F,F,F)),
+                free=c(TRUE,TRUE,FALSE,
+                       TRUE,TRUE,FALSE,
+                       FALSE,FALSE,FALSE)),
       umxMatrix('E', type='Symm', nrow=3, ncol = 3,
                 labels =c("eb2",NA,NA,
                          NA,"es2",NA,
                          NA,NA,NA),
-                free= c(T,F,F,
-                        F,T,F,
-                        F,F,F)),
-      umxMatrix('dzmu', type='Full', nrow=1, ncol=6, free=T, value=0,
+                free= c(TRUE,FALSE,FALSE,
+                        FALSE,TRUE,FALSE,
+                        FALSE,FALSE,FALSE)),
+      umxMatrix('dzmu', type='Full', nrow=1, ncol=6, free=TRUE, value=0,
          labels=c('muPh1','muPh2','muPS1','muPh1','muPh2','muPS1')),
       mxAlgebra('mzmu', expression = dzmu%*%t(F)),
       mxAlgebra('A_', expression = solve(I - BE)%&%A),
@@ -156,10 +149,9 @@ umxMRDoC <- function(pheno, prss,
          mxFitFunctionML()
     )
 
-    model = mxModel(name, top, MZ, DZ, 
-                    mxFitFunctionMultigroup(c("MZ","DZ") ))
+    model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ","DZ") ))
 
-  } else if (length(prss)==2) {
+  } else if (length(prss) == 2) {
 
     if (is.null(name)) { name = "MRDoC2"}
 
@@ -170,54 +162,53 @@ umxMRDoC <- function(pheno, prss,
                            "g1", NA, "b2", "b3",
                            NA, NA, NA, NA,
                            NA, NA, NA, NA),
-                free = c(F, T, T, F,
-                         T, F, F, T,
-                         F, F, F, F,
-                         F, F, F, F)),
+                free = c(FALSE, TRUE, TRUE, FALSE,
+                         TRUE, FALSE, FALSE, TRUE,
+                         FALSE, FALSE, FALSE, FALSE,
+                         FALSE, FALSE, FALSE, FALSE)),
       umxMatrix('I', type='Iden', nrow= 4,ncol= 4 ),
-      umxMatrix('F', type='Full', nrow=6, ncol=8, free=F,
+      umxMatrix('F', type='Full', nrow=6, ncol=8, free=FALSE,
                 values=c(1,0,0,0,0,0,0,0,
                          0,1,0,0,0,0,0,0,
                          0,0,1,0,0,0,0,0,
                          0,0,0,1,0,0,0,0,
                          0,0,0,0,1,0,0,0,
                          0,0,0,0,0,1,0,0)),
-      umxMatrix('LY', type='Full',nrow=4, ncol = 4, free = F, values = diag(4),
+      umxMatrix('LY', type='Full',nrow=4, ncol = 4, free = FALSE, values = diag(4),
                 labels = NA),
       umxMatrix('A', type='Symm', nrow=4,ncol = 4,
                 labels=c("ab2","abraas",NA,NA,
                          "abraas","as2",NA,NA,
                          NA,NA,"x2","xrfy", 
                          NA,NA,"xrfy","y2"),
-                free=c(T,T,F,F,
-                       T,T,F,F,
-                       F,F,T,T,
-                       F,F,T,T)),
+                free=c(TRUE,TRUE,FALSE,FALSE,
+                       TRUE,TRUE,FALSE,FALSE,
+                       FALSE,FALSE,TRUE,TRUE,
+                       FALSE,FALSE,TRUE,TRUE)),
       umxMatrix('C', type='Symm',nrow=4, ncol = 4,
                 labels =c("cb2","cbrccs",NA,NA,
                          "cbrccs","cs2",NA,NA,
                          NA,NA,NA,NA,
                          NA,NA,NA,NA),
-                free=c(T,T,F,F,
-                       T,T,F,F,
-                       F,F,F,F,
-                       F,F,F,F)),
+                free=c(TRUE,TRUE,FALSE,FALSE,
+                       TRUE,TRUE,FALSE,FALSE,
+                       FALSE,FALSE,FALSE,FALSE,
+                       FALSE,FALSE,FALSE,FALSE)),
       umxMatrix('E', type='Symm', nrow=4, ncol = 4,
                 labels =c("eb2","ebrees",NA,NA,
                          "ebrees","es2",NA,NA,
                          NA,NA,NA,NA,
                          NA,NA,NA,NA),
-                free= c(T,T,F,F,
-                        T,T,F,F,
-                        F,F,F,F,
-                        F,F,F,F)),
-      umxMatrix('dzmu', type='Full', nrow=1, ncol=8, free=T, value=0,
-         labels=c('muPh1','muPh2','muPS1','muPS2','muPh1','muPh2','muPS1','muPS2')),
+                free= c(TRUE,TRUE,FALSE,FALSE,
+                        TRUE,TRUE,FALSE,FALSE,
+                        FALSE,FALSE,FALSE,FALSE,
+                        FALSE,FALSE,FALSE,FALSE)),
+      umxMatrix('dzmu', type='Full', nrow=1, ncol=8, free=T, value=0, labels=c('muPh1','muPh2','muPS1','muPS2','muPh1','muPh2','muPS1','muPS2')),
       mxAlgebra('mzmu', expression = dzmu %*% t(F)),
-      mxAlgebra('A_', expression = solve(I - BE) %&% A),
-      mxAlgebra('C_', expression = solve(I - BE) %&% C),
-      mxAlgebra('E_', expression = solve(I - BE) %&% E),
-      mxAlgebra('SPh', expression= A_ + C_ + E_),
+      mxAlgebra('A_'  , expression = solve(I - BE) %&% A),
+      mxAlgebra('C_'  , expression = solve(I - BE) %&% C),
+      mxAlgebra('E_'  , expression = solve(I - BE) %&% E),
+      mxAlgebra('SPh' , expression= A_ + C_ + E_),
       mxAlgebra('Smz_', expression=rbind(
                            cbind(SPh,A_+C_),
                            cbind(A_+C_,SPh))),
@@ -225,23 +216,22 @@ umxMRDoC <- function(pheno, prss,
                            cbind(SPh,.5%x%A_+C_),
                            cbind(.5%x%A_+C_,SPh))),
       mxAlgebra('Smz', expression= F%&%Smz_)
-    )
+	  )
 
-    MZ = mxModel("MZ", mzData,
-      mxExpectationNormal(covariance = "top.Smz",means = "top.mzmu", vnames[1:6]),
-      mxFitFunctionML()
-    )
+	MZ = mxModel("MZ", mzData,
+		mxExpectationNormal(covariance = "top.Smz",means = "top.mzmu", vnames[1:6]),
+		mxFitFunctionML()
+	)
 
-    DZ = mxModel("DZ", dzData,
-         mxExpectationNormal(covariance = "top.Sdz",means = "top.dzmu", vnames),
-         mxFitFunctionML()
-    )
+	DZ = mxModel("DZ", dzData,
+		mxExpectationNormal(covariance = "top.Sdz",means = "top.dzmu", vnames),
+		mxFitFunctionML()
+	)
 
-    model = mxModel(name, top, MZ, DZ, 
-                    mxFitFunctionMultigroup(c("MZ","DZ") ))
-  } else {
-    stop("Only 1 or 2 PRSs are supported")
-  }
+		model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ","DZ") ))
+	} else {
+		stop("Only 1 or 2 PRSs are supported")
+	}
 
 	model = mxAutoStart(model)
 	model = as(model, "MxModelMRDoC") # set class so that S3s dispatch e.g. plot()
@@ -268,9 +258,7 @@ umxMRDoC <- function(pheno, prss,
 #' @family Summary functions
 #' @seealso - \code{\link{umxDoC}()}, [plot()], [umxSummary()] work for DoC models.
 #' @md
-umxSummaryMRDoC <- function(model, digits = 2, std = TRUE, CIs = FALSE, comparison = NULL,
-                                RMSEA_CI = FALSE, report = c("markdown", "html"), 
-                                file = getOption("umx_auto_plot"), ...) {
+umxSummaryMRDoC <- function(model, digits = 2, std = TRUE, CIs = FALSE, comparison = NULL, RMSEA_CI = FALSE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), ...) {
 
 	if (CIs){ model = umxCI(model, run = "if necessary")}
 
@@ -307,11 +295,11 @@ umxSummaryMRDoC <- function(model, digits = 2, std = TRUE, CIs = FALSE, comparis
 			}
 		}
 
-			if(RMSEA_CI){
-				RMSEA_CI = RMSEA(model_summary)$txt
-			} else {
-				RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
-			}
+		if(RMSEA_CI){
+			RMSEA_CI = RMSEA(model_summary)$txt
+		} else {
+			RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
+		}
       Chi = model_summary$fit
       ChiDoF = model_summary$degreesOfFreedom
 			fitMsg = paste0("\nModel Fit: \u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
@@ -325,13 +313,6 @@ umxSummaryMRDoC <- function(model, digits = 2, std = TRUE, CIs = FALSE, comparis
 			if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
 			if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
   })
-
-	# tmp = model_summary[c("fit", "numObs","degreesOfFreedom", "AIC.Mx", "BIC.Mx", "CFI", "TLI", "optimizerEngine", "RMSEA", "RMSEACI")]
-	# tmp = as.data.frame(tmp)
-	# tmp = mutate(tmp, lower = RMSEACI[1], upper = RMSEACI[2])
-	# tmp = select(tmp, -RMSEACI)
-	# tmp = tmp[-2, ]
-	# umx_print(tmp, digits = digits, zero.print = ".", report =report, caption = "Model fit")
 
 }
 
