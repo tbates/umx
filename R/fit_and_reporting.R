@@ -4599,8 +4599,11 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 
 		if(means){
 			mean_sd = umx_apply(umx_fun_mean_sd, of = obj)
-			output  = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
-			rownames(output)[length(rownames(output))] = "Mean (SD)"
+			# output  = data.frame(rbind(cor_table, mean_sd), stringsAsFactors = FALSE)
+			# rownames(output)[length(rownames(output))] = "Mean (SD)"
+
+			output  = data.frame(cbind(mean_sd, cor_table), stringsAsFactors = FALSE)
+			# colnames(output)[length(colnames(output))] = "Mean (SD)"
 		} else {
 			output  = data.frame(cor_table, stringsAsFactors = FALSE)
 		}
