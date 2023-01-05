@@ -7515,16 +7515,22 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' }
 umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = "Participant.id", age = "age", sex = "Gender", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
 	if(base != "") file = paste0(base, file)
-	newdf = read.csv(file, header= TRUE, sep = ',', quote = "\"", dec = ".", fill = TRUE, comment.char = "", stringsAsFactors = FALSE)
+	newdf = read.csv(file, header= TRUE, sep = ',', quote = "\"", dec = ".", fill = TRUE, comment.char = "", stringsAsFactors = FALSE, na.strings = c("NA", "DATA_EXPIRED"))
 	if(verbose) print(namez(newdf))
-	umx_check_names(namesNeeded = c(vars,age, sex), data = newdf, message="Checking demographics col names")
-
+	allNames = umx_check_names(namesNeeded = c(vars,age, sex), data = newdf, message="Checking demographics col names", die=FALSE)
+	if(allNames){
+		# allNames found
+	} else {
+		print(paste0("Asked for: ", omxQuotes(c(vars,age, sex))))
+		print(namez(newdf))
+		stop("Names missing")
+	}
 	if(!is.null(df)){
 		umx_check_names(namesNeeded = by.df, data = df)
 		umx_check_names(namesNeeded = by.demog, data = newdf)
 		newdf = merge(df, newdf[, c(by.demog, age, sex, vars)], by.x = by.df, by.y = by.demog, all.x = all.df, all.y = all.demog)
 	}else{
-		newdf = newdf[, vars]
+		newdf = newdf[, c(by.demog, age, sex, vars)]
 	}
 	# May as well print out a nice subjects section...
 	print(umx_aggregate(eval(parse(text= paste0(age, "~", sex))), data = newdf))
