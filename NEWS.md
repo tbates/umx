@@ -1,8 +1,14 @@
+## dev umx 4.25.00
+* Feb 2023 R 4.2.1
+
 ## dev umx 4.20.00
-* Dec 2022 R 4.2.1
+* Jan 2023 R 4.2.1
+* NEW: `umxMRDoC` Direction of causation with twins! (by @lf-araujo)
 * IMPROVED: `umx_score_scale` reliability works with `correctAnswers`
-* IMPROVED: `libs` can mimic install (force.update=T)
-* FIXED: `umxAPA` and others work with report  html properly
+* IMPROVED: `umx_is_numeric` works with tibble input h/t @psychelzh
+* IMPROVED: `libs` can for package update using `force.update = TRUE`
+* IMPROVED: `umxAPA` cor/means output data.frame input
+* FIXED: `umxAPA` (and others) report = "html" works properly.
 
 ## umx 4.15.1
 * Nov 2022 R 4.2.1

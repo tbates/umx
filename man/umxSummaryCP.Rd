@@ -94,6 +94,7 @@ Other Summary functions:
 \code{\link{umxSummary.MxModel}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()}
+\code{\link{umxSummaryIP}()},
+\code{\link{umxSummaryMRDoC}()}
 }
 \concept{Summary functions}

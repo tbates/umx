@@ -74,6 +74,7 @@ Other Summary functions:
 \code{\link{umxSummary.MxModel}()},
 \code{\link{umxSummaryACEcov}()},
 \code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryGxE}()}
+\code{\link{umxSummaryGxE}()},
+\code{\link{umxSummaryMRDoC}()}
 }
 \concept{Summary functions}

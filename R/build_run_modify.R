@@ -252,14 +252,24 @@ utils::globalVariables(c(
 	"top.meansBetas",
 	"T1DefVars",
 	"T2DefVars",
-	"T3DefVars"
+	"T3DefVars",
+	#MRDoC2
+	'dzmu',
+	'BE',
+	'A_',
+	'C_',
+	'E_',
+	'SPh',
+	'Smz_'
+	
 ))
 
 # ===================================================================
 # = Define some class containers to allow specialised model objects =
 # = plot, etc. can then operate on these                            =
 # ===================================================================
-methods::setClass("MxModelDoC"    , contains = "MxModel")
+methods::setClass("MxModelDoC"      , contains = "MxModel")
+methods::setClass("MxModelMRDoC"    , contains = "MxModel")
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
 
 methods::setClass("MxModelACE"    , contains = "MxModel")

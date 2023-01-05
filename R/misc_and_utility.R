@@ -5435,7 +5435,7 @@ umx_is_numeric <- function(df, all = TRUE){
 	bIsNumeric = rep(FALSE, length(colNames))
 	i = 1
 	for (n in colNames) {
-		bIsNumeric[i] = is.numeric(df[,n])
+		bIsNumeric[i] = is.numeric(df[, n, drop = TRUE])
 		i = i + 1
 	}
 	if(all){

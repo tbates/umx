@@ -90,6 +90,7 @@ Other Twin Modeling Functions:
 \code{\link{umxGxEbiv}()},
 \code{\link{umxGxE}()},
 \code{\link{umxIP}()},
+\code{\link{umxMRDoC}()},
 \code{\link{umxReduceGxE}()},
 \code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
