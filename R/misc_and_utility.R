@@ -3015,7 +3015,7 @@ plot.percent <- function(x, ...) {
 #' umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
 #' }
 #'
-umxPlotFun <- function(fun= dnorm, min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), p = NULL) {
+umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), p = NULL) {
 	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
 	
 	if(inherits(fun, "numeric")){
