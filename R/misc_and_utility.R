@@ -1435,7 +1435,9 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' @return - scores
 #' @export
 #' @family Data Functions
-#' @md
+#' @references -  Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, <https://CRAN.R-project.org/package=psych> Version = 2.2.9.
+#' * McNeish, D. (2018). Thanks coefficient alpha, we'll take it from here. Psychol Methods, 23(3), 412-433. \doi{10.1037/met0000144}.
+#' @md 
 #' @examples
 #' library(psych)
 #' library(psychTools)
