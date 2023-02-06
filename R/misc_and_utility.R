@@ -1374,12 +1374,44 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
+#' A wrapper to map colums of strings to numeric
+#' 
+#' @param df The df
+#' @param cols (optional) list of columns (default = use all)
+#' @param mapStrings legal strings which will be mapped in order to numbers.
+#' @return - df
+#' @export
+#' @family Data Functions
+#' @md
+#' @examples
+#' 
+umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
+	if(!all(is.na(cols))){
+		umx_check_names(cols, data = df)
+		df = df[, cols]
+	}
+	for (thisCol in names(df)){
+		# check values
+		unique_values = unique(df[, thisCol, drop = TRUE])
+		unique_values = unique_values[!is.na(unique_values)]
+		if(any(!(unique_values %in% mapStrings))){
+			notFound = unique_values[which(!(unique_values %in% mapStrings))]
+			stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+		}
+		# string 2 numeric
+		tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
+		df[, thisCol] = as.numeric(as.character(tmp))
+	}
+	return(df)
+}
+
 #' A wrapper to make paran easier to use.
 #' Just automates applying [complete.cases()]
 #' 
 #' @param df The df (just the relevant columns)
 #' @param cols (optional) list of columns (default = use all)
 #' @param graph Whether to graph.
+#' @param mapStrings optional mapping if cols are strings
 #' @return - nothing
 #' @export
 #' @family Miscellaneous Stats Functions
@@ -1391,11 +1423,24 @@ umx_factor <- umxFactor
 #' umxParan(bfi[, paste0("A", 1:5)])
 #' umxParan(bfi, cols= paste0("A", 1:5))
 #' # umxParan(bfi, paste0("AB", 1))
-umxParan <- function(df, cols= NA, graph = TRUE) {
+umxParan <- function(df, cols= NA, graph = TRUE, mapStrings = NULL) {
 	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
 		df = df[, cols]
 	}
+	if(!is.null(mapStrings)){
+		for (thisCol in names(df)){
+			unique_values = unique(df[, thisCol, drop = TRUE])
+			unique_values = unique_values[!is.na(unique_values)]
+			if(any(!(unique_values %in% mapStrings))){
+				notFound = unique_values[which(!(unique_values %in% mapStrings))]
+				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+			}
+			tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
+			df[, thisCol] = as.numeric(as.character(tmp))
+		}
+	}
+
 	paran::paran(df[complete.cases(df), ], graph = graph)
 }
 
@@ -1727,6 +1772,11 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("um
 #' }
 umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 	for (p in package) {
+		# asString = deparse(substitute(parameter))
+		# if(!exists(asString)){
+		# 	p = asString
+		# }
+		# umx_msg(p)
 		# 1. Open the web pages
 		system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
 

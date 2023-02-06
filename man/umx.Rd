@@ -182,6 +182,7 @@ Other Miscellaneous Stats Functions:
 \code{\link{umx_r_test}()},
 \code{\link{umx_round}()},
 \code{\link{umx_scale}()},
+\code{\link{umx_strings2numeric}()},
 \code{\link{umx_var}()}
 
 Other Teaching and testing Functions: 
