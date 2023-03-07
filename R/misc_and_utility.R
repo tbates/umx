@@ -1390,7 +1390,7 @@ umx_factor <- umxFactor
 umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
 	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
-		df = df[, cols, drop=FALSE]
+		df = df[, cols, drop = FALSE]
 	}
 	for (thisCol in names(df)){
 		# check values
@@ -1404,7 +1404,11 @@ umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
 		tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
 		df[, thisCol] = as.numeric(as.character(tmp))
 	}
-	return(df)
+	if(length(cols) == 1){
+		return(df[, cols, drop = TRUE])
+	} else {
+		return(df)
+	}
 }
 
 #' A wrapper to make paran easier to use.
