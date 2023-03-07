@@ -1655,12 +1655,13 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 		if(verbose){
 			print(omegaOut)
+			print("\n")
 		}else{
 			if(omegaNfactors == 1){
 				# Omega_h for 1 factor is not meaningful, just omega_t
-				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits)))
+				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
 			} else {
-				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits)))
+				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
 			}
 		}
 	}
