@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_strings2numeric}
 \alias{umx_strings2numeric}
-\title{A wrapper to map colums of strings to numeric}
+\title{A wrapper to map columns of strings to numeric}
 \usage{
 umx_strings2numeric(df, cols = NA, mapStrings = NULL)
 }
@@ -11,7 +11,7 @@ umx_strings2numeric(df, cols = NA, mapStrings = NULL)
 
 \item{cols}{(optional) list of columns (default = use all)}
 
-\item{mapStrings}{legal strings to map to numbers.}
+\item{mapStrings}{legal strings which will be mapped in order to numbers.}
 }
 \value{
 \itemize{
@@ -19,27 +19,32 @@ umx_strings2numeric(df, cols = NA, mapStrings = NULL)
 }
 }
 \description{
-A wrapper to map colums of strings to numeric
+A wrapper to map columns of strings to numeric
 }
 \seealso{
-Other Miscellaneous Stats Functions: 
-\code{\link{FishersMethod}()},
-\code{\link{SE_from_p}()},
-\code{\link{geometric_mean}()},
-\code{\link{harmonic_mean}()},
-\code{\link{oddsratio}()},
-\code{\link{reliability}()},
-\code{\link{umxCov2cor}()},
+Other Data Functions: 
+\code{\link{noNAs}()},
+\code{\link{prolific_check_ID}()},
+\code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
-\code{\link{umxParan}()},
-\code{\link{umxWeightedAIC}()},
-\code{\link{umx_apply}()},
-\code{\link{umx_cor}()},
-\code{\link{umx_means}()},
-\code{\link{umx_r_test}()},
-\code{\link{umx_round}()},
-\code{\link{umx_scale}()},
-\code{\link{umx_var}()},
+\code{\link{umx_as_numeric}()},
+\code{\link{umx_cont_2_quantiles}()},
+\code{\link{umx_lower2full}()},
+\code{\link{umx_make_MR_data}()},
+\code{\link{umx_make_TwinData}()},
+\code{\link{umx_make_fake_data}()},
+\code{\link{umx_make_raw_from_cov}()},
+\code{\link{umx_merge_randomized_columns}()},
+\code{\link{umx_polychoric}()},
+\code{\link{umx_polypairwise}()},
+\code{\link{umx_polytriowise}()},
+\code{\link{umx_read_lower}()},
+\code{\link{umx_read_prolific_demog}()},
+\code{\link{umx_rename}()},
+\code{\link{umx_reorder}()},
+\code{\link{umx_score_scale}()},
+\code{\link{umx_select_valid}()},
+\code{\link{umx_stack}()},
 \code{\link{umx}}
 }
-\concept{Miscellaneous Stats Functions}
+\concept{Data Functions}

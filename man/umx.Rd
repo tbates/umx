@@ -182,7 +182,6 @@ Other Miscellaneous Stats Functions:
 \code{\link{umx_r_test}()},
 \code{\link{umx_round}()},
 \code{\link{umx_scale}()},
-\code{\link{umx_strings2numeric}()},
 \code{\link{umx_var}()}
 
 Other Teaching and testing Functions: 
@@ -255,7 +254,8 @@ Other Data Functions:
 \code{\link{umx_reorder}()},
 \code{\link{umx_score_scale}()},
 \code{\link{umx_select_valid}()},
-\code{\link{umx_stack}()}
+\code{\link{umx_stack}()},
+\code{\link{umx_strings2numeric}()}
 
 Other File Functions: 
 \code{\link{dl_from_dropbox}()},

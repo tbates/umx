@@ -1374,7 +1374,7 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
-#' A wrapper to map colums of strings to numeric
+#' A wrapper to map columns of strings to numeric.
 #' 
 #' @param df The df
 #' @param cols (optional) list of columns (default = use all)
@@ -1384,11 +1384,13 @@ umx_factor <- umxFactor
 #' @family Data Functions
 #' @md
 #' @examples
-#' 
+#' tmp = data.frame(x=letters)
+#' umx_strings2numeric(tmp, mapStrings = letters)
+#' umx_strings2numeric(tmp, cols= x, mapStrings = letters)
 umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
 	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
-		df = df[, cols]
+		df = df[, cols, drop=FALSE]
 	}
 	for (thisCol in names(df)){
 		# check values
@@ -1481,7 +1483,7 @@ umxParan <- function(df, cols= NA, graph = TRUE, mapStrings = NULL) {
 #' @export
 #' @family Data Functions
 #' @references -  Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, <https://CRAN.R-project.org/package=psych> Version = 2.2.9.
-#' * McNeish, D. (2018). Thanks coefficient alpha, we'll take it from here. Psychol Methods, 23(3), 412-433. \doi{10.1037/met0000144}.
+#' * McNeish, D. (2018). Thanks coefficient alpha, we’ll take it from here. *Psychological Methods*, **23**, 412-433. \doi{10.1037/met0000144}.
 #' @md 
 #' @examples
 #' library(psych)

@@ -61,6 +61,7 @@ Other Data Functions:
 \code{\link{umx_reorder}()},
 \code{\link{umx_score_scale}()},
 \code{\link{umx_select_valid}()},
+\code{\link{umx_strings2numeric}()},
 \code{\link{umx}}
 }
 \concept{Data Functions}
