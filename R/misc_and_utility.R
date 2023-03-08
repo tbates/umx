@@ -1395,6 +1395,7 @@ umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
 		df = df[, cols, drop=FALSE]
 	}else{
 		cols = names(df)
+		df = df[, cols, drop = FALSE]
 	}
 	for (thisCol in cols){
 		# check values
@@ -1414,8 +1415,8 @@ umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
 		tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
 		df[, thisCol] = as.numeric(as.character(tmp))
 	}
-	if(length(cols)==1){
-		return(df[, "cols"])
+	if(length(cols) == 1){
+		return(df[, cols, drop = TRUE])
 	} else {
 		return(df)
 	}
@@ -1669,12 +1670,13 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 		if(verbose){
 			print(omegaOut)
+			print("\n")
 		}else{
 			if(omegaNfactors == 1){
 				# Omega_h for 1 factor is not meaningful, just omega_t
-				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits)))
+				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
 			} else {
-				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits)))
+				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
 			}
 		}
 	}
