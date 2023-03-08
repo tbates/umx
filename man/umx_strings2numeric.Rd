@@ -19,12 +19,13 @@ umx_strings2numeric(df, cols = NA, mapStrings = NULL)
 }
 }
 \description{
-A wrapper to map columns of strings to numeric.
+If you give one column name, this is changed to numeric, and returned as a \strong{vector}.
+If you give multiple column names, or don't set cols, each is changed to numeric, and the updated \strong{data.frame} is returned.
 }
 \examples{
 tmp = data.frame(x=letters)
 umx_strings2numeric(tmp, mapStrings = letters)
-umx_strings2numeric(tmp, cols= x, mapStrings = letters)
+umx_strings2numeric(tmp, cols= "x", mapStrings = letters)
 }
 \seealso{
 Other Data Functions: 

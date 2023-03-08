@@ -1376,6 +1376,9 @@ umx_factor <- umxFactor
 
 #' A wrapper to map columns of strings to numeric.
 #' 
+#' If you give one column name, this is changed to numeric, and returned as a **vector**.
+#' If you give multiple column names, or don't set cols, each is changed to numeric, and the updated **data.frame** is returned.
+#' 
 #' @param df The df
 #' @param cols (optional) list of columns (default = use all)
 #' @param mapStrings legal strings which will be mapped in order to numbers.
@@ -1388,8 +1391,6 @@ umx_factor <- umxFactor
 #' umx_strings2numeric(tmp, mapStrings = letters)
 #' umx_strings2numeric(tmp, cols= "x", mapStrings = letters)
 umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
-	# df = data.frame(df)
-
 	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
 		df = df[, cols, drop=FALSE]
