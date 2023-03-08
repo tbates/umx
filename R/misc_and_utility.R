@@ -1386,25 +1386,39 @@ umx_factor <- umxFactor
 #' @examples
 #' tmp = data.frame(x=letters)
 #' umx_strings2numeric(tmp, mapStrings = letters)
-#' umx_strings2numeric(tmp, cols= x, mapStrings = letters)
+#' umx_strings2numeric(tmp, cols= "x", mapStrings = letters)
 umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
+	# df = data.frame(df)
+
 	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
 		df = df[, cols, drop=FALSE]
+	}else{
+		cols = names(df)
 	}
-	for (thisCol in names(df)){
+	for (thisCol in cols){
 		# check values
 		unique_values = unique(df[, thisCol, drop = TRUE])
 		unique_values = unique_values[!is.na(unique_values)]
-		if(any(!(unique_values %in% mapStrings))){
-			notFound = unique_values[which(!(unique_values %in% mapStrings))]
-			stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+		if(is.null(mapStrings)){
+			# use table to find valid strings in some order... (not good, tell the user!)
+			mapStrings = unique_values
+			message("You didn't set mapStrings. This is unwise! I found the following responses, and used them in this order:", omxQuotes(mapStrings))
+		}else{
+			if(any(!(unique_values %in% mapStrings))){
+				notFound = unique_values[which(!(unique_values %in% mapStrings))]
+				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+			}
 		}
 		# string 2 numeric
 		tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
 		df[, thisCol] = as.numeric(as.character(tmp))
 	}
-	return(df)
+	if(length(cols)==1){
+		return(df[, "cols"])
+	} else {
+		return(df)
+	}
 }
 
 #' A wrapper to make paran easier to use.

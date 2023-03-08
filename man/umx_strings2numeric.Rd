@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_strings2numeric}
 \alias{umx_strings2numeric}
-\title{A wrapper to map columns of strings to numeric}
+\title{A wrapper to map columns of strings to numeric.}
 \usage{
 umx_strings2numeric(df, cols = NA, mapStrings = NULL)
 }
@@ -19,7 +19,12 @@ umx_strings2numeric(df, cols = NA, mapStrings = NULL)
 }
 }
 \description{
-A wrapper to map columns of strings to numeric
+A wrapper to map columns of strings to numeric.
+}
+\examples{
+tmp = data.frame(x=letters)
+umx_strings2numeric(tmp, mapStrings = letters)
+umx_strings2numeric(tmp, cols= x, mapStrings = letters)
 }
 \seealso{
 Other Data Functions: 
