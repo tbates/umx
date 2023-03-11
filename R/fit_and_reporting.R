@@ -4566,7 +4566,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		} else {
 			grpNames = names(obj$estimate)
 			if("mean difference" %in% grpNames){
-				o = paste0("Means differed by ", round(obj$estimate, digits), " ")
+				o = paste0(obj$data.name, " means differed by ", round(obj$estimate, digits), " ")
 			} else {
 				descriptionTxt = paste0("Means in the ", 
 					namez(grpNames[1], pattern= "mean (in group|of) ", replacement="")," and ", 
