@@ -4568,10 +4568,14 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			if("mean difference" %in% grpNames){
 				o = paste0(obj$data.name, " means differed by ", round(obj$estimate, digits), " ")
 			} else {
-				descriptionTxt = paste0("Means in the ", 
-					namez(grpNames[1], pattern= "mean (in group|of) ", replacement="")," and ", 
-					namez(grpNames[2], pattern= "mean (in group|of) ", replacement=""), " groups were "
-				)
+				if(length(grpNames)>1){
+					descriptionTxt = paste0("Means in the ", 
+						namez(grpNames[1], pattern= "mean (in group|of) ", replacement="")," and ", 
+						namez(grpNames[2], pattern= "mean (in group|of) ", replacement=""), " groups were "
+					)
+				} else {
+					descriptionTxt = paste0("Means in the ", obj$data.name, " groups were ")
+				}
 				o = paste0(descriptionTxt, omxQuotes(round(obj$estimate, digits)), "respectively. ")
 			}
 			o = paste0(o, "(CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "], ",
