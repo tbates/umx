@@ -19,7 +19,8 @@ umxAPA(
   test = c("Chisq", "LRT", "Rao", "F", "Cp"),
   SEs = TRUE,
   means = TRUE,
-  suffix = ""
+  suffix = "",
+  cols = NA
 )
 }
 \arguments{
@@ -52,6 +53,8 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \item{means}{Whether or not to show means in a correlation table (Default TRUE)}
 
 \item{suffix}{A string to append to the result. Mostly used with report = "expression"}
+
+\item{cols}{Optional, pass in a list of column names when using umxAPA with a dataframe input.}
 }
 \value{
 \itemize{
