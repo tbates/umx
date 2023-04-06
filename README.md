@@ -1,6 +1,6 @@
 # umx
 
-[![Build Status](https://travis-ci.org/tbates/umx.svg?branch=master)](https://travis-ci.org/tbates/umx)
+[![Build Status](https://www.travis-ci.com/tbates/umx.svg?branch=master)](https://www.travis-ci.com/tbates/umx)
 [![Codecov test coverage](https://codecov.io/gh/tbates/umx/branch/master/graph/badge.svg)](https://app.codecov.io/gh/tbates/umx?branch=master)
 ![Github commits](https://img.shields.io/github/commits-since/tbates/umx/latest.svg?colorB=green)
 [![cran version](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)

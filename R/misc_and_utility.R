@@ -3771,7 +3771,7 @@ umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep",
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
 	# }else if (what=="travisCI"){
-	# 	browseURL("https://travis-ci.org/tbates/umx")
+	# 	browseURL("https://www.travis-ci.com/tbates/umx")
 	}else if (what == "sitrep"){
 		devtools::dev_sitrep(pkg = pkg)
 	}else{

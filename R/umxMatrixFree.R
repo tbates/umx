@@ -15,7 +15,8 @@
 #' @param ncol Number of columns in the matrix: Must be set
 #' @param free Whether cells are free (Default FALSE)  
 #' @param values The values of the matrix (Default NA)
-#' @param ...  Accepts all other arguments from [umMatrix()]
+#' @param labels The labels of the matrix (Default NA)
+#' @param ...  Accepts all other arguments from [umxMatrix()]
 #' @return - [mxMatrix()]
 #' @export
 #' @seealso - [umxMatrix()]
@@ -33,7 +34,7 @@
 #'            
 #'  # Will return a umxMatrix free at the eb2 and es2 positions.
 #'}
-umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA,free = F, values = NA, labels = labels,   ...){
+umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, values = NA, labels = labels, ...){
   
   options(mxByrow = TRUE)
   
