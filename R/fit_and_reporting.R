@@ -4590,7 +4590,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		# TODO umxAPA could upgrade strings to factors here (instead of stopping)...
 		if(!any(is.na(cols))){
 			umx_check_names(cols, data = obj, die = TRUE)
-			obj = obj[cols, ]
+			obj = obj[, cols]
 		}
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE, std.err = SEs, return = "hetcor object")
 		# cor_table = x; digits = 2
