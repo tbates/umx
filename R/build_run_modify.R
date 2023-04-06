@@ -1095,7 +1095,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #'
 umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), master = NULL, intervals = FALSE, verbose = FALSE) {
 	tryHard = match.arg(tryHard)
-	if(name=="guess"){
+	if(!is.null(name) && name == "guess"){
 		name = update[1]
 	}
 	if(!is.null(master)){
