@@ -8,7 +8,7 @@ umxMatrixFree(
   name = name,
   nrow = NULL,
   ncol = NA,
-  free = F,
+  free = FALSE,
   values = NA,
   labels = labels,
   ...
@@ -25,7 +25,9 @@ umxMatrixFree(
 
 \item{values}{The values of the matrix (Default NA)}
 
-\item{...}{Accepts all other arguments from \code{\link[=umMatrix]{umMatrix()}}}
+\item{labels}{The labels of the matrix (Default NA)}
+
+\item{...}{Accepts all other arguments from \code{\link[=umxMatrix]{umxMatrix()}}}
 }
 \value{
 \itemize{
