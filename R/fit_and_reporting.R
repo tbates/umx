@@ -4482,6 +4482,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param means Whether or not to show means in a correlation table (Default TRUE)
 #' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @param suffix A string to append to the result. Mostly used with report = "expression"
+#' @param cols Optional, pass in a list of column names when using umxAPA with a dataframe input.
 #' @return - string
 #' @export
 #' @seealso [SE_from_p()]
@@ -4547,7 +4548,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(m1)
 #'
-umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="") {
+umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="", cols=NA) {
 	report     = match.arg(report)
 	test       = match.arg(test)
 	commaSep   = paste0(umx_set_separator(silent = TRUE), " ")
@@ -4587,6 +4588,10 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	}else if("data.frame" == class(obj)[[1]]){
 		# Generate a summary of correlation and means
 		# TODO umxAPA could upgrade strings to factors here (instead of stopping)...
+		if(!any(is.na(cols))){
+			umx_check_names(cols, data = obj, die = TRUE)
+			obj = obj[cols, ]
+		}
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE, std.err = SEs, return = "hetcor object")
 		# cor_table = x; digits = 2
 		# cor_table = umx_apply(FUN= round, of = cor_table, digits = digits) # round correlations
