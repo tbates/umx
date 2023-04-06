@@ -1,5 +1,4 @@
-# library(testthat)
-# library(umx)
+# library(testthat); library(umx)
 # test_file("~/bin/umx/tests/testthat/test_umx_ACE_etc.r") 
 # TODO: Switch on ACE and ACEv examples for testing
 # test_package("umx")
@@ -416,7 +415,6 @@ test_that("test umxACEv xmu_standardize_ACE xmu_standardize_ACEv", {
 #' # =======================================
 #' # = Mixed continuous and binary example =
 #' # =======================================
-#' require(umx)
 #' data(twinData)
 #' twinData= umx_scale_wide_twin_data(data= twinData,varsToScale= "wt", sep="")
 #' # Cut to form category of 20% obese subjects

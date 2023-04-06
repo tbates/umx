@@ -61,6 +61,7 @@ m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},

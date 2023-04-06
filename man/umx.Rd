@@ -216,6 +216,7 @@ Other Check or test:
 \code{\link{umx_is_ordered}()}
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},

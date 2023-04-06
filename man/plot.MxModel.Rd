@@ -113,6 +113,7 @@ plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{umxPlotACEcov}()},

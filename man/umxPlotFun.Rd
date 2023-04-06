@@ -63,6 +63,7 @@ umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5))
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},

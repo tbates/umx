@@ -57,21 +57,19 @@
 #'
 #' @details
 #'
-#' @param model a statistical model which contains a fit measure
-#' @param effect optional hard coded fit/effect
-#' @param xloc x location of pkot
-#' @param yloc y location of pkot
+#' @param model a statistical model which contains a fit measure.
+#' @param effect optional hard coded fit/effect.
+#' @param xloc x location of R.
+#' @param yloc y location of R.
 #' @return - plot
 #' @export
-#' @family
-#' @seealso - [umxLabel()]
+#' @family Plotting functions
+#' @seealso - [umxPlot()], [umxPlotFun()]
 #' @md
 #' @examples
-#' \dontrun{
 #'	m1 = lm(mpg ~ wt, data = mtcars)
 #'	p = qplot(wt, mpg, data = mtcars, geom = c("point" , "smooth")) + 
 #'	ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
-#' }
 ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 	if(is.na(effect)){
 		r2 = round(summary(model)$r.squared, 3)

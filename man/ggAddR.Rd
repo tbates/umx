@@ -7,13 +7,13 @@
 ggAddR(model, effect = NA, xloc = 8, yloc = 10)
 }
 \arguments{
-\item{model}{a statistical model which contains a fit measure}
+\item{model}{a statistical model which contains a fit measure.}
 
-\item{effect}{optional hard coded fit/effect}
+\item{effect}{optional hard coded fit/effect.}
 
-\item{xloc}{x location of pkot}
+\item{xloc}{x location of R.}
 
-\item{yloc}{y location of pkot}
+\item{yloc}{y location of R.}
 }
 \value{
 \itemize{
@@ -24,14 +24,31 @@ ggAddR(model, effect = NA, xloc = 8, yloc = 10)
 Add a fit statistic to a ggplot
 }
 \examples{
-\dontrun{
 m1 = lm(mpg ~ wt, data = mtcars)
 p = qplot(wt, mpg, data = mtcars, geom = c("point" , "smooth")) + 
 ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
 }
-}
 \seealso{
 \itemize{
-\item \code{\link[=umxLabel]{umxLabel()}}
+\item \code{\link[=umxPlot]{umxPlot()}}, \code{\link[=umxPlotFun]{umxPlotFun()}}
 }
+
+Other Plotting functions: 
+\code{\link{plot.MxLISRELModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{plot.MxModel}()},
+\code{\link{umxPlotACEcov}()},
+\code{\link{umxPlotACEv}()},
+\code{\link{umxPlotACE}()},
+\code{\link{umxPlotCP}()},
+\code{\link{umxPlotDoC}()},
+\code{\link{umxPlotFun}()},
+\code{\link{umxPlotGxEbiv}()},
+\code{\link{umxPlotGxE}()},
+\code{\link{umxPlotIP}()},
+\code{\link{umxPlotSexLim}()},
+\code{\link{umxPlotSimplex}()},
+\code{\link{umxPlot}()},
+\code{\link{umx}}
 }
+\concept{Plotting functions}
