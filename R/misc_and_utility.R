@@ -50,6 +50,39 @@
 #      and it tortures me.
 
 
+#' Add a fit statistic to a ggplot
+#'
+#' @description
+#' Add a fit statistic to a ggplot
+#'
+#' @details
+#'
+#' @param model a statistical model which contains a fit measure
+#' @param effect optional hard coded fit/effect
+#' @param xloc x location of pkot
+#' @param yloc y location of pkot
+#' @return - plot
+#' @export
+#' @family
+#' @seealso - [umxLabel()]
+#' @md
+#' @examples
+#' \dontrun{
+#'	m1 = lm(mpg ~ wt, data = mtcars)
+#'	p = qplot(wt, mpg, data = mtcars, geom = c("point" , "smooth")) + 
+#'	ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+#' }
+ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
+	if(is.na(effect)){
+		r2 = round(summary(model)$r.squared, 3)
+		lab = bquote(R^2 == .(r2))
+		return(cowplot::draw_label(lab, x = xloc, y = yloc, fontfamily = "Times", size = 12))
+	} else {
+		return(cowplot::draw_label(effect, x = xloc, y = yloc, fontfamily = "Times", size = 12))
+	}
+}
+
+
 
 # #' Easily use the Box-Cox transform
 # #'
