@@ -48,17 +48,17 @@ Imports:
 Suggests:
     cocor,
     devtools,
-    gdata,
 	gert,
 	hrbrthemes,
-	spelling,
-    testthat,
-    rmarkdown,
+    openxlsx,
 	paran,
 	psych,
 	psychTools,
+	pwr,
+    rmarkdown,
 	rhub,
-	pwr
+	spelling,
+    testthat
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
 RoxygenNote: 7.2.3

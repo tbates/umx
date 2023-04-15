@@ -2526,7 +2526,7 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 	# remove suffix (i.e., .xlsx )
 	testName = umx_trim(basename(theFile), "\\..+$")
 	
-	df = gdata::read.xls(theFile, sheet = 1, stringsAsFactors= FALSE)
+	df = openxlsx::read.xlsx(theFile, sheet = 1, stringsAsFactors= FALSE)
 
 	expect8 = c("itemText", "direction", "scale", "type")
 	if(!all(expect8 %in% names(df))){
