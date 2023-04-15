@@ -55,8 +55,6 @@
 #' @description
 #' Add a fit statistic to a ggplot
 #'
-#' @details
-#'
 #' @param model a statistical model which contains a fit measure.
 #' @param effect optional hard coded fit/effect.
 #' @param xloc x location of R.
