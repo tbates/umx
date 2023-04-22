@@ -31,7 +31,9 @@ umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 \seealso{
 Other Data Functions: 
 \code{\link{noNAs}()},
+\code{\link{prolific_anonymize}()},
 \code{\link{prolific_check_ID}()},
+\code{\link{prolific_read_demog}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
@@ -46,7 +48,6 @@ Other Data Functions:
 \code{\link{umx_polypairwise}()},
 \code{\link{umx_polytriowise}()},
 \code{\link{umx_read_lower}()},
-\code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
 \code{\link{umx_score_scale}()},
 \code{\link{umx_select_valid}()},

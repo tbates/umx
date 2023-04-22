@@ -24,10 +24,12 @@ prolific participants can time out but still be in the dataframe. This identifie
 # prolific_check_ID(IDs, df)
 }
 \seealso{
-- [umx_read_prolific_demog()], [umx_merge_randomized_columns()]
+- [prolific_read_demog()], [prolific_anonymize()], [umx_merge_randomized_columns()] # [prolific_check_ID()]
 
 Other Data Functions: 
 \code{\link{noNAs}()},
+\code{\link{prolific_anonymize}()},
+\code{\link{prolific_read_demog}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
@@ -42,7 +44,6 @@ Other Data Functions:
 \code{\link{umx_polypairwise}()},
 \code{\link{umx_polytriowise}()},
 \code{\link{umx_read_lower}()},
-\code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
 \code{\link{umx_reorder}()},
 \code{\link{umx_score_scale}()},

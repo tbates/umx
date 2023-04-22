@@ -53,12 +53,14 @@ tmp = umx_merge_randomized_columns(colNames, df,
 }
 \seealso{
 \itemize{
-\item \code{\link[=umx_long2wide]{umx_long2wide()}}, \code{\link[=prolific_check_ID]{prolific_check_ID()}}, \code{\link[=umx_read_prolific_demog]{umx_read_prolific_demog()}}
+\item \code{\link[=umx_long2wide]{umx_long2wide()}}, \code{\link[=prolific_check_ID]{prolific_check_ID()}}, \code{\link[=prolific_read_demog]{prolific_read_demog()}}, \code{\link[=prolific_anonymize]{prolific_anonymize()}}
 }
 
 Other Data Functions: 
 \code{\link{noNAs}()},
+\code{\link{prolific_anonymize}()},
 \code{\link{prolific_check_ID}()},
+\code{\link{prolific_read_demog}()},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
@@ -72,7 +74,6 @@ Other Data Functions:
 \code{\link{umx_polypairwise}()},
 \code{\link{umx_polytriowise}()},
 \code{\link{umx_read_lower}()},
-\code{\link{umx_read_prolific_demog}()},
 \code{\link{umx_rename}()},
 \code{\link{umx_reorder}()},
 \code{\link{umx_score_scale}()},

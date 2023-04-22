@@ -6423,7 +6423,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @return - df with new cols
 #' @export
 #' @family Data Functions
-#' @seealso - [umx_long2wide()], [prolific_check_ID()], [umx_read_prolific_demog()]
+#' @seealso - [umx_long2wide()], [prolific_check_ID()], [prolific_read_demog()], [prolific_anonymize()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -7602,7 +7602,7 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @param all.demog Whether to keep all lines (people) in the demographics file (default = FALSE)
 #' @param verbose Print variable names found in the file.
 #' @return - [[data.frame]]
-#' @seealso - [prolific_check_ID()], [umx_merge_randomized_columns()]
+#' @seealso - [prolific_check_ID()], [prolific_anonymize()], [umx_merge_randomized_columns()]
 #' @export
 #' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -7610,10 +7610,10 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @examples
 #' \dontrun{
 #' fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
-#' df = umx_read_prolific_demog(fp, sex = "Gender", age = "Age", df = df)
-#' tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
+#' df = prolific_read_demog(fp, sex = "Gender", age = "Age", df = df)
+#' tmp = prolific_read_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
 #' }
-umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = "Participant.id", age = "age", sex = "Gender", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
+prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = "Participant.id", age = "age", sex = "Gender", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
 	if(base != "") file = paste0(base, file)
 	newdf = read.csv(file, header= TRUE, sep = ',', quote = "\"", dec = ".", fill = TRUE, comment.char = "", stringsAsFactors = FALSE, na.strings = c("NA", "DATA_EXPIRED"))
 	if(verbose) print(namez(newdf))
@@ -7641,6 +7641,52 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 	invisible(newdf)
 }
 
+#' Read and optionally merge demographics file from prolific academic
+#'
+#' prolific.ac IDs might compromise subject anonymity when share. This replaces PIDs with 
+#' using PID and participant_id
+#'
+#' @param df Existing datafile to anonymize.
+#' @param PID The prolific ID col name to anonymize
+#' @param extraColumns Any  extra columns to delete (default NA)
+#' @param baseOffset The numeric to start renumbering PIDs from (default = 1e4)
+#' @return - [[data.frame]]
+#' @seealso - [prolific_check_ID()], [prolific_read_demog()], [prolific_anonymize()], [umx_merge_randomized_columns()] 
+#' @export
+#' @family Data Functions
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' \dontrun{
+#' tmp = prolific_anonymize(df, PID = "PID")
+#' }
+prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOffset = 1e4){
+	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID")
+	if(!is.na(PID)){
+		if(PID %in% names(df)){
+			# Anonymise the PIDs
+			oldValues = df[,PID]
+			if(anyDuplicated(df[, PID])){
+				message("Some IDs were duplicates. That pattern will be preserved")
+				uniqueIDs = unique(oldValues)
+				newIDs    = c((baseOffset+1):(baseOffset + length(uniqueIDs)) )
+				lookuptbl = setNames(newIDs, uniqueIDs)
+				df[,PID]  = lookuptbl[as.character(oldValues)]
+			} else {
+				message("No duplicates")
+				df[,PID] = c((baseOffset+1): (baseOffset + length(oldValues) ) )
+			}
+		} else {
+			df[,PID] = c((baseOffset+1): (baseOffset + dim(df)[1]) )
+			message("Created ", PID, " and stored anonymous sequential number IDs there")
+		}
+	}
+	df = df[, names(df)[!names(df) %in% revealingColumns]]
+	message("OK, what's left now is:")
+	message(omxQuotes(names(df)))
+	invisible(df)
+}
+
 #' Return PIDs in df
 #'
 #' prolific participants can time out but still be in the dataframe. This identifies them.
@@ -7650,7 +7696,7 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 #' @param IDcol Name of prolific ID column (default PROLIFIC_PID)
 #' @return - list of IDs in the dataframe
 #' @export
-#' @seealso - [umx_read_prolific_demog()], [umx_merge_randomized_columns()]
+#' @seealso - [prolific_read_demog()], [prolific_anonymize()], [umx_merge_randomized_columns()] # [prolific_check_ID()]
 #' @family Data Functions
 #' @examples
 #' # IDs = c("59d0ec2446447f00011edb063","5a08c9a7f2e3460001edb063f0254")
