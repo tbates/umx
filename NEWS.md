@@ -1,5 +1,16 @@
 ## dev umx 4.25.00
-* Feb 2023 R 4.2.1
+* May 2023 R 4.2.1
+* NEW: `prolific_anonymize()`
+* NEW: `ggAddR` helper to add R/beta to a graph
+* NEW: `umxMatrixFree` to help in simulations
+* NEW `umx_strings2numeric` helper function to recode strings to numbers
+* IMPROVED: `RMSEA()`
+* IMPROVED: `umxAPA` gains `cols` to allow input checking in place of Rs…
+* IMPROVED: `umx_strings2numeric` example, handle 1 col df
+* IMPROVED: `prolific_read_demog` handle "DATA_EXPIRED"
+* FIX: `umxModify` works with new R null behavior
+* REFS: `umx_score_scale` omega refs
+* RENAME: `umx_read_prolific_demog` -> `prolific_read_demog`
 
 ## dev umx 4.20.00
 * Jan 2023 R 4.2.1
