@@ -7641,10 +7641,12 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 	invisible(newdf)
 }
 
-#' Read and optionally merge demographics file from prolific academic
+#' Clean up a prolific file for sharing by removing anonymity-compromising columns.
 #'
-#' prolific.ac IDs might compromise subject anonymity when share. This replaces PIDs with 
-#' using PID and participant_id
+#' prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
+#' This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
+#' You can extend the columns deleted by adding them to `extraColumns`. It is ideal for use when sharing data to \url{http://researchbox.org} which enforces
+#' anonymisation.
 #'
 #' @param df Existing datafile to anonymize.
 #' @param PID The prolific ID col name to anonymize

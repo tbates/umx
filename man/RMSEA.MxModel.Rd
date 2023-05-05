@@ -4,14 +4,14 @@
 \alias{RMSEA.MxModel}
 \title{RMSEA function for MxModels}
 \usage{
-\method{RMSEA}{MxModel}(x, ci.lower = 0.05, ci.upper = 0.95, digits = 3)
+\method{RMSEA}{MxModel}(x, ci.lower = 0.025, ci.upper = 0.975, digits = 3)
 }
 \arguments{
 \item{x}{an \code{\link[=mxModel]{mxModel()}} from which to get RMSEA}
 
-\item{ci.lower}{the lower CI to compute (only .05 supported)}
+\item{ci.lower}{the lower CI to compute (only 95\%, i.e., .025 supported)}
 
-\item{ci.upper}{the upper CI to compute (only .95 supported)}
+\item{ci.upper}{the upper CI to compute (only 95\%, i.e., .975 supported)}
 
 \item{digits}{digits to show (default = 3)}
 }

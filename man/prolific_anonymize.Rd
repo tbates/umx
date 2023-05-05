@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{prolific_anonymize}
 \alias{prolific_anonymize}
-\title{Read and optionally merge demographics file from prolific academic}
+\title{Clean up a prolific file for sharing by removing anonymity-compromising columns.}
 \usage{
 prolific_anonymize(
   df = NULL,
@@ -26,8 +26,10 @@ prolific_anonymize(
 }
 }
 \description{
-prolific.ac IDs might compromise subject anonymity when share. This replaces PIDs with
-using PID and participant_id
+prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
+This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
+You can extend the columns deleted by adding them to \code{extraColumns}. It is ideal for use when sharing data to \url{http://researchbox.org} which enforces
+anonymisation.
 }
 \examples{
 \dontrun{

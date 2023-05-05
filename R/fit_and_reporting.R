@@ -3996,8 +3996,8 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #'
 #' @rdname RMSEA.MxModel
 #' @param x an [mxModel()] from which to get RMSEA
-#' @param ci.lower the lower CI to compute (only .05 supported)
-#' @param ci.upper the upper CI to compute (only .95 supported)
+#' @param ci.lower the lower CI to compute (only 95%, i.e., .025 supported)
+#' @param ci.upper the upper CI to compute (only 95%, i.e., .975 supported)
 #' @param digits digits to show (default = 3)
 #' @return - object containing the RMSEA, lower and upper bounds, and p-close
 #' @export
@@ -4028,7 +4028,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' )
 #' RMSEA(m2)
 #' }
-RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
+RMSEA.MxModel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3) { 
 	model = x
 	if(is.null(model$output$SaturatedLikelihood)){
 		# no ref models in summary... compute them
@@ -4053,15 +4053,15 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 	RMSEA.summary.mxmodel(x= modelSummary, ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
 }
 
-#' RMSEA function for MxModels
+#' RMSEA function for MxModel summary
 #'
-#' Compute the confidence interval on RMSEA and print it out. 
-#' *note*: If your goal is to extract the RMSEA from a model, use `RMSEA(m1)$RMSEA`
-#'
+#' Extract the RMSEA and confidence interval from a model summary and returns it as an RMSEA object.
+#' To report just the RMSEA, you can use `RMSEA(model)$RMSEA`
+#' 
 #' @param x an [mxModel()] summary from which to get RMSEA
-#' @param ci.lower the lower CI to compute
-#' @param ci.upper the upper CI to compute
-#' @param digits digits to show (defaults to 3)
+#' @param ci.lower the lower CI to compute (only 95% CI (.025) is implemented)
+#' @param ci.upper the upper CI to compute (only 95% CI (.975) is implemented)
+#' @param digits The number of digits to round data (defaults to 3)
 #' @return - object containing the RMSEA and lower and upper bounds
 #' @rdname RMSEA.summary.mxmodel
 #' @export
@@ -4082,13 +4082,13 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' tmp = summary(m1)
 #' RMSEA(tmp)
 #' }
-RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3){
+RMSEA.summary.mxmodel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3){
 	summary = x # x is a model summary
-	if(ci.lower != .05 | ci.upper != .95){
-		stop("only 95% CI on RMSEA supported as yet...")
+	if(ci.lower != .025 | ci.upper != .975){
+		stop("Polite note: Only 95% CI on RMSEA supported as yet, submit a request to http://github.com/OpenMx/OpenMx/issues for this feature.")
 	}
 	if(is.na(summary$RMSEA) || is.null(summary$RMSEA)){
-		message("model summary has no RMSEA, sorry - you might need to run ref models?")
+		message("Polite note: Model summary has no RMSEA - you might need to run RMSEA on the model, or run umxSummary or mxRefModels models first?")
 		return(NA)
 	} else {
 		output = list(RMSEA = summary$RMSEA, CI.lower = summary$RMSEACI["lower"], CI.upper = summary$RMSEACI["upper"], RMSEA.pvalue = summary$RMSEAClose)
