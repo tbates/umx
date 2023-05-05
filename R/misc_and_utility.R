@@ -7661,26 +7661,33 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 #' tmp = prolific_anonymize(df, PID = "PID")
 #' }
 prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOffset = 1e4){
-	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID")
-	if(!is.na(PID)){
-		if(PID %in% names(df)){
-			# Anonymise the PIDs
-			oldValues = df[,PID]
-			if(anyDuplicated(df[, PID])){
-				message("Some IDs were duplicates. That pattern will be preserved")
-				uniqueIDs = unique(oldValues)
-				newIDs    = c((baseOffset+1):(baseOffset + length(uniqueIDs)) )
-				lookuptbl = setNames(newIDs, uniqueIDs)
-				df[,PID]  = lookuptbl[as.character(oldValues)]
-			} else {
-				message("No duplicates")
-				df[,PID] = c((baseOffset+1): (baseOffset + length(oldValues) ) )
-			}
-		} else {
-			df[,PID] = c((baseOffset+1): (baseOffset + dim(df)[1]) )
-			message("Created ", PID, " and stored anonymous sequential number IDs there")
-		}
+	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID", "PID")
+	# cleanup revealingColumns
+	if(PID %in% revealingColumns){
+		revealingColumns = revealingColumns[!revealingColumns==PID]
 	}
+
+	isPIDInNamesB = umx_check_names(PID, df, die = FALSE)
+	if(isPIDInNamesB){
+		# Anonymise the PID column
+		oldValues = df[,PID]
+		if(anyDuplicated(df[, PID])){
+			message("Some IDs were duplicates. That pattern will be preserved")
+			uniqueIDs = unique(oldValues)
+			newIDs    = c((baseOffset+1):(baseOffset + length(uniqueIDs)) )
+			lookuptbl = setNames(newIDs, uniqueIDs)
+			df[,PID]  = lookuptbl[as.character(oldValues)]
+		} else {
+			message("No duplicates")
+			df[,PID] = c((baseOffset+1): (baseOffset + length(oldValues) ) )
+		}
+	} else {
+		# PID was not found, assume this df has no ID column so invent one. But this is super unusal do tell the user!
+		df[,PID] = c((baseOffset+1): (baseOffset + dim(df)[1]) )
+		message("Created ", PID, " and stored anonymous sequential number IDs there")
+	}
+	
+	# clean up	
 	df = df[, names(df)[!names(df) %in% revealingColumns]]
 	message("OK, what's left now is:")
 	message(omxQuotes(names(df)))
