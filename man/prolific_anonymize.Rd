@@ -28,7 +28,7 @@ prolific_anonymize(
 \description{
 prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
 This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
-You can extend the columns deleted by adding them to \code{extraColumns}. It is ideal for use when sharing data to \url{http://researchbox.org} which enforces
+You can extend the columns deleted by adding them to \code{extraColumns}. It is ideal for use when sharing data to \url{https://researchbox.org} which enforces
 anonymisation.
 }
 \examples{

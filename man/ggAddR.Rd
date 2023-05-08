@@ -25,7 +25,7 @@ Add a fit statistic to a ggplot
 }
 \examples{
 m1 = lm(mpg ~ wt, data = mtcars)
-p = qplot(wt, mpg, data = mtcars, geom = c("point" , "smooth")) + 
+p = ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
 ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
 }
 \seealso{
