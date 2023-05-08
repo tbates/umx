@@ -66,7 +66,7 @@
 #' @md
 #' @examples
 #'	m1 = lm(mpg ~ wt, data = mtcars)
-#'	p = qplot(wt, mpg, data = mtcars, geom = c("point" , "smooth")) + 
+#'	p = ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
 #'	ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
 ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 	if(is.na(effect)){
@@ -7645,7 +7645,7 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 #'
 #' prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
 #' This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
-#' You can extend the columns deleted by adding them to `extraColumns`. It is ideal for use when sharing data to \url{http://researchbox.org} which enforces
+#' You can extend the columns deleted by adding them to `extraColumns`. It is ideal for use when sharing data to \url{https://researchbox.org} which enforces
 #' anonymisation.
 #'
 #' @param df Existing datafile to anonymize.

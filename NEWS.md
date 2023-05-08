@@ -490,7 +490,7 @@
 * NEW: `xmu_dot_define_shapes` builds the latents and manifest shape definitions (should be xmu_)
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` get/set variance tolerance.
-* NEW: `umx` is checked on [travis](https://www.travis-ci.com/tbates/umx/builds).
+* NEW: `umx` is checked on travis
 * NEW: [github](https://github.com/tbates/umx) has build, doi, etc info boxes! 
 * NEW: `plot` allows user control over splines, as well as max, min, same positioning.
 * NEW: `xmu_dot_move_ranks`.
