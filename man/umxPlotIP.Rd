@@ -74,6 +74,7 @@ umxPlotIP(model, file = NA)
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},

@@ -3996,8 +3996,8 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #'
 #' @rdname RMSEA.MxModel
 #' @param x an [mxModel()] from which to get RMSEA
-#' @param ci.lower the lower CI to compute (only .05 supported)
-#' @param ci.upper the upper CI to compute (only .95 supported)
+#' @param ci.lower the lower CI to compute (only 95%, i.e., .025 supported)
+#' @param ci.upper the upper CI to compute (only 95%, i.e., .975 supported)
 #' @param digits digits to show (default = 3)
 #' @return - object containing the RMSEA, lower and upper bounds, and p-close
 #' @export
@@ -4028,7 +4028,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' )
 #' RMSEA(m2)
 #' }
-RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) { 
+RMSEA.MxModel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3) { 
 	model = x
 	if(is.null(model$output$SaturatedLikelihood)){
 		# no ref models in summary... compute them
@@ -4053,15 +4053,15 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 	RMSEA.summary.mxmodel(x= modelSummary, ci.lower = ci.lower, ci.upper = ci.upper, digits = digits)
 }
 
-#' RMSEA function for MxModels
+#' RMSEA function for MxModel summary
 #'
-#' Compute the confidence interval on RMSEA and print it out. 
-#' *note*: If your goal is to extract the RMSEA from a model, use `RMSEA(m1)$RMSEA`
-#'
+#' Extract the RMSEA and confidence interval from a model summary and returns it as an RMSEA object.
+#' To report just the RMSEA, you can use `RMSEA(model)$RMSEA`
+#' 
 #' @param x an [mxModel()] summary from which to get RMSEA
-#' @param ci.lower the lower CI to compute
-#' @param ci.upper the upper CI to compute
-#' @param digits digits to show (defaults to 3)
+#' @param ci.lower the lower CI to compute (only 95% CI (.025) is implemented)
+#' @param ci.upper the upper CI to compute (only 95% CI (.975) is implemented)
+#' @param digits The number of digits to round data (defaults to 3)
 #' @return - object containing the RMSEA and lower and upper bounds
 #' @rdname RMSEA.summary.mxmodel
 #' @export
@@ -4082,13 +4082,13 @@ RMSEA.MxModel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3) {
 #' tmp = summary(m1)
 #' RMSEA(tmp)
 #' }
-RMSEA.summary.mxmodel <- function(x, ci.lower = .05, ci.upper = .95, digits = 3){
+RMSEA.summary.mxmodel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3){
 	summary = x # x is a model summary
-	if(ci.lower != .05 | ci.upper != .95){
-		stop("only 95% CI on RMSEA supported as yet...")
+	if(ci.lower != .025 | ci.upper != .975){
+		stop("Polite note: Only 95% CI on RMSEA supported as yet, submit a request to http://github.com/OpenMx/OpenMx/issues for this feature.")
 	}
 	if(is.na(summary$RMSEA) || is.null(summary$RMSEA)){
-		message("model summary has no RMSEA, sorry - you might need to run ref models?")
+		message("Polite note: Model summary has no RMSEA - you might need to run RMSEA on the model, or run umxSummary or mxRefModels models first?")
 		return(NA)
 	} else {
 		output = list(RMSEA = summary$RMSEA, CI.lower = summary$RMSEACI["lower"], CI.upper = summary$RMSEACI["upper"], RMSEA.pvalue = summary$RMSEAClose)
@@ -4482,11 +4482,12 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param means Whether or not to show means in a correlation table (Default TRUE)
 #' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @param suffix A string to append to the result. Mostly used with report = "expression"
+#' @param cols Optional, pass in a list of column names when using umxAPA with a dataframe input.
 #' @return - string
 #' @export
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
-#' @references - <https://stats.oarc.ucla.edu/r/dae/logit-regression/>, <https://github.com/tbates/umx>, <https://www.shengdongzhao.com/?p=1501>
+#' @references - <https://stats.oarc.ucla.edu/r/dae/logit-regression/>
 #' @md
 #' @examples
 #' 
@@ -4547,7 +4548,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(m1)
 #'
-umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="") {
+umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="", cols=NA) {
 	report     = match.arg(report)
 	test       = match.arg(test)
 	commaSep   = paste0(umx_set_separator(silent = TRUE), " ")
@@ -4566,12 +4567,16 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		} else {
 			grpNames = names(obj$estimate)
 			if("mean difference" %in% grpNames){
-				o = paste0("Means differed by ", round(obj$estimate, digits), " ")
+				o = paste0(obj$data.name, " means differed by ", round(obj$estimate, digits), " ")
 			} else {
-				descriptionTxt = paste0("Means in the ", 
-					namez(grpNames[1], pattern= "mean (in group|of) ", replacement="")," and ", 
-					namez(grpNames[2], pattern= "mean (in group|of) ", replacement=""), " groups were "
-				)
+				if(length(grpNames)>1){
+					descriptionTxt = paste0("Means in the ", 
+						namez(grpNames[1], pattern= "mean (in group|of) ", replacement="")," and ", 
+						namez(grpNames[2], pattern= "mean (in group|of) ", replacement=""), " groups were "
+					)
+				} else {
+					descriptionTxt = paste0("Means in the ", obj$data.name, " groups were ")
+				}
 				o = paste0(descriptionTxt, omxQuotes(round(obj$estimate, digits)), "respectively. ")
 			}
 			o = paste0(o, "(CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "], ",
@@ -4583,6 +4588,10 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	}else if("data.frame" == class(obj)[[1]]){
 		# Generate a summary of correlation and means
 		# TODO umxAPA could upgrade strings to factors here (instead of stopping)...
+		if(!any(is.na(cols))){
+			umx_check_names(cols, data = obj, die = TRUE)
+			obj = obj[, cols]
+		}
 		cor_table = umxHetCor(obj, ML = FALSE, use = use, treatAllAsFactor = FALSE, verbose = FALSE, std.err = SEs, return = "hetcor object")
 		# cor_table = x; digits = 2
 		# cor_table = umx_apply(FUN= round, of = cor_table, digits = digits) # round correlations

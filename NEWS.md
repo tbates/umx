@@ -1,5 +1,16 @@
 ## dev umx 4.25.00
-* Feb 2023 R 4.2.1
+* May 2023 R 4.2.1
+* NEW: `prolific_anonymize()`
+* NEW: `ggAddR` helper to add R/beta to a graph
+* NEW: `umxMatrixFree` to help in simulations
+* NEW `umx_strings2numeric` helper function to recode strings to numbers
+* IMPROVED: `RMSEA()`
+* IMPROVED: `umxAPA` gains `cols` to allow input checking in place of Rs…
+* IMPROVED: `umx_strings2numeric` example, handle 1 col df
+* IMPROVED: `prolific_read_demog` handle "DATA_EXPIRED"
+* FIX: `umxModify` works with new R null behavior
+* REFS: `umx_score_scale` omega refs
+* RENAME: `umx_read_prolific_demog` -> `prolific_read_demog`
 
 ## dev umx 4.20.00
 * Jan 2023 R 4.2.1
@@ -479,7 +490,7 @@
 * NEW: `xmu_dot_define_shapes` builds the latents and manifest shape definitions (should be xmu_)
 * NEW: `xmu_check_variance` checks data for minVar (default > 0.1) and comparable scale for variables (maxVarRatio default = 500)
 	* `umx_set_data_variance_check` get/set variance tolerance.
-* NEW: `umx` is checked on [travis](https://travis-ci.org/tbates/umx/builds).
+* NEW: `umx` is checked on travis
 * NEW: [github](https://github.com/tbates/umx) has build, doi, etc info boxes! 
 * NEW: `plot` allows user control over splines, as well as max, min, same positioning.
 * NEW: `xmu_dot_move_ranks`.

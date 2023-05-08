@@ -5,7 +5,7 @@
 \title{A wrapper to make paran easier to use.
 Just automates applying \code{\link[=complete.cases]{complete.cases()}}}
 \usage{
-umxParan(df, cols = NA, graph = TRUE)
+umxParan(df, cols = NA, graph = TRUE, mapStrings = NULL)
 }
 \arguments{
 \item{df}{The df (just the relevant columns)}
@@ -13,6 +13,8 @@ umxParan(df, cols = NA, graph = TRUE)
 \item{cols}{(optional) list of columns (default = use all)}
 
 \item{graph}{Whether to graph.}
+
+\item{mapStrings}{optional mapping if cols are strings}
 }
 \value{
 \itemize{

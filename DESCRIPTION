@@ -1,6 +1,6 @@
 Package: umx
-Version: 4.20.0
-Date: 2023-01-07
+Version: 4.21.0
+Date: 2023-05-10
 Title: Structural Equation Modeling and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
@@ -48,17 +48,17 @@ Imports:
 Suggests:
     cocor,
     devtools,
-    gdata,
 	gert,
 	hrbrthemes,
-	spelling,
-    testthat,
-    rmarkdown,
+    openxlsx,
 	paran,
 	psych,
 	psychTools,
+	pwr,
+    rmarkdown,
 	rhub,
-	pwr
+	spelling,
+    testthat
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
 RoxygenNote: 7.2.3

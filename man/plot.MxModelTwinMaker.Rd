@@ -112,6 +112,7 @@ umxPath(c("l1", 'l2'), to = c("wt", "ht"), values= .2)
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},

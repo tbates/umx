@@ -50,6 +50,35 @@
 #      and it tortures me.
 
 
+#' Add a fit statistic to a ggplot
+#'
+#' @description
+#' Add a fit statistic to a ggplot
+#'
+#' @param model a statistical model which contains a fit measure.
+#' @param effect optional hard coded fit/effect.
+#' @param xloc x location of R.
+#' @param yloc y location of R.
+#' @return - plot
+#' @export
+#' @family Plotting functions
+#' @seealso - [umxPlot()], [umxPlotFun()]
+#' @md
+#' @examples
+#'	m1 = lm(mpg ~ wt, data = mtcars)
+#'	p = ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
+#'	ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
+	if(is.na(effect)){
+		r2 = round(summary(model)$r.squared, 3)
+		lab = bquote(R^2 == .(r2))
+		return(cowplot::draw_label(lab, x = xloc, y = yloc, fontfamily = "Times", size = 12))
+	} else {
+		return(cowplot::draw_label(effect, x = xloc, y = yloc, fontfamily = "Times", size = 12))
+	}
+}
+
+
 
 # #' Easily use the Box-Cox transform
 # #'
@@ -1374,12 +1403,62 @@ umx_factor <- umxFactor
 # = Utility =
 # ===========
 
+#' A wrapper to map columns of strings to numeric.
+#' 
+#' If you give one column name, this is changed to numeric, and returned as a **vector**.
+#' If you give multiple column names, or don't set cols, each is changed to numeric, and the updated **data.frame** is returned.
+#' 
+#' @param df The df
+#' @param cols (optional) list of columns (default = use all)
+#' @param mapStrings legal strings which will be mapped in order to numbers.
+#' @return - df
+#' @export
+#' @family Data Functions
+#' @md
+#' @examples
+#' tmp = data.frame(x=letters)
+#' umx_strings2numeric(tmp, mapStrings = letters)
+#' umx_strings2numeric(tmp, cols= "x", mapStrings = letters)
+umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
+	if(!all(is.na(cols))){
+		umx_check_names(cols, data = df)
+		df = df[, cols, drop=FALSE]
+	}else{
+		cols = names(df)
+		df = df[, cols, drop = FALSE]
+	}
+	for (thisCol in cols){
+		# check values
+		unique_values = unique(df[, thisCol, drop = TRUE])
+		unique_values = unique_values[!is.na(unique_values)]
+		if(is.null(mapStrings)){
+			# use table to find valid strings in some order... (not good, tell the user!)
+			mapStrings = unique_values
+			message("You didn't set mapStrings. This is unwise! I found the following responses, and used them in this order:", omxQuotes(mapStrings))
+		}else{
+			if(any(!(unique_values %in% mapStrings))){
+				notFound = unique_values[which(!(unique_values %in% mapStrings))]
+				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+			}
+		}
+		# string 2 numeric
+		tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
+		df[, thisCol] = as.numeric(as.character(tmp))
+	}
+	if(length(cols) == 1){
+		return(df[, cols, drop = TRUE])
+	} else {
+		return(df)
+	}
+}
+
 #' A wrapper to make paran easier to use.
 #' Just automates applying [complete.cases()]
 #' 
 #' @param df The df (just the relevant columns)
 #' @param cols (optional) list of columns (default = use all)
 #' @param graph Whether to graph.
+#' @param mapStrings optional mapping if cols are strings
 #' @return - nothing
 #' @export
 #' @family Miscellaneous Stats Functions
@@ -1391,11 +1470,24 @@ umx_factor <- umxFactor
 #' umxParan(bfi[, paste0("A", 1:5)])
 #' umxParan(bfi, cols= paste0("A", 1:5))
 #' # umxParan(bfi, paste0("AB", 1))
-umxParan <- function(df, cols= NA, graph = TRUE) {
+umxParan <- function(df, cols= NA, graph = TRUE, mapStrings = NULL) {
 	if(!all(is.na(cols))){
 		umx_check_names(cols, data = df)
 		df = df[, cols]
 	}
+	if(!is.null(mapStrings)){
+		for (thisCol in names(df)){
+			unique_values = unique(df[, thisCol, drop = TRUE])
+			unique_values = unique_values[!is.na(unique_values)]
+			if(any(!(unique_values %in% mapStrings))){
+				notFound = unique_values[which(!(unique_values %in% mapStrings))]
+				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+			}
+			tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
+			df[, thisCol] = as.numeric(as.character(tmp))
+		}
+	}
+
 	paran::paran(df[complete.cases(df), ], graph = graph)
 }
 
@@ -1435,7 +1527,9 @@ umxParan <- function(df, cols= NA, graph = TRUE) {
 #' @return - scores
 #' @export
 #' @family Data Functions
-#' @md
+#' @references -  Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, <https://CRAN.R-project.org/package=psych> Version = 2.2.9.
+#' * McNeish, D. (2018). Thanks coefficient alpha, we’ll take it from here. *Psychological Methods*, **23**, 412-433. \doi{10.1037/met0000144}.
+#' @md 
 #' @examples
 #' library(psych)
 #' library(psychTools)
@@ -1606,12 +1700,13 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 		if(verbose){
 			print(omegaOut)
+			print("\n")
 		}else{
 			if(omegaNfactors == 1){
 				# Omega_h for 1 factor is not meaningful, just omega_t
-				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits)))
+				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
 			} else {
-				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits)))
+				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
 			}
 		}
 	}
@@ -1725,6 +1820,11 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("um
 #' }
 umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 	for (p in package) {
+		# asString = deparse(substitute(parameter))
+		# if(!exists(asString)){
+		# 	p = asString
+		# }
+		# umx_msg(p)
 		# 1. Open the web pages
 		system(paste0("open 'https://cran.r-project.org/package=", p, "'"))		
 
@@ -2424,7 +2524,7 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 	# remove suffix (i.e., .xlsx )
 	testName = umx_trim(basename(theFile), "\\..+$")
 	
-	df = gdata::read.xls(theFile, sheet = 1, stringsAsFactors= FALSE)
+	df = openxlsx::read.xlsx(theFile, sheet = 1, stringsAsFactors= FALSE)
 
 	expect8 = c("itemText", "direction", "scale", "type")
 	if(!all(expect8 %in% names(df))){
@@ -3667,7 +3767,7 @@ umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep",
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
 	# }else if (what=="travisCI"){
-	# 	browseURL("https://travis-ci.org/tbates/umx")
+	# 	browseURL("https://www.travis-ci.com/tbates/umx")
 	}else if (what == "sitrep"){
 		devtools::dev_sitrep(pkg = pkg)
 	}else{
@@ -6323,7 +6423,7 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @return - df with new cols
 #' @export
 #' @family Data Functions
-#' @seealso - [umx_long2wide()], [prolific_check_ID()], [umx_read_prolific_demog()]
+#' @seealso - [umx_long2wide()], [prolific_check_ID()], [prolific_read_demog()], [prolific_anonymize()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -7502,7 +7602,7 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @param all.demog Whether to keep all lines (people) in the demographics file (default = FALSE)
 #' @param verbose Print variable names found in the file.
 #' @return - [[data.frame]]
-#' @seealso - [prolific_check_ID()], [umx_merge_randomized_columns()]
+#' @seealso - [prolific_check_ID()], [prolific_anonymize()], [umx_merge_randomized_columns()]
 #' @export
 #' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -7510,10 +7610,10 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' @examples
 #' \dontrun{
 #' fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
-#' df = umx_read_prolific_demog(fp, sex = "Gender", age = "Age", df = df)
-#' tmp = umx_read_prolific_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
+#' df = prolific_read_demog(fp, sex = "Gender", age = "Age", df = df)
+#' tmp = prolific_read_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
 #' }
-umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = "Participant.id", age = "age", sex = "Gender", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
+prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = "Participant.id", age = "age", sex = "Gender", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
 	if(base != "") file = paste0(base, file)
 	newdf = read.csv(file, header= TRUE, sep = ',', quote = "\"", dec = ".", fill = TRUE, comment.char = "", stringsAsFactors = FALSE, na.strings = c("NA", "DATA_EXPIRED"))
 	if(verbose) print(namez(newdf))
@@ -7541,6 +7641,61 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 	invisible(newdf)
 }
 
+#' Clean up a prolific file for sharing by removing anonymity-compromising columns.
+#'
+#' prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
+#' This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
+#' You can extend the columns deleted by adding them to `extraColumns`. It is ideal for use when sharing data to \url{https://researchbox.org} which enforces
+#' anonymisation.
+#'
+#' @param df Existing datafile to anonymize.
+#' @param PID The prolific ID col name to anonymize
+#' @param extraColumns Any  extra columns to delete (default NA)
+#' @param baseOffset The numeric to start renumbering PIDs from (default = 1e4)
+#' @return - [[data.frame]]
+#' @seealso - [prolific_check_ID()], [prolific_read_demog()], [prolific_anonymize()], [umx_merge_randomized_columns()] 
+#' @export
+#' @family Data Functions
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' \dontrun{
+#' tmp = prolific_anonymize(df, PID = "PID")
+#' }
+prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOffset = 1e4){
+	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID", "PID")
+	# cleanup revealingColumns
+	if(PID %in% revealingColumns){
+		revealingColumns = revealingColumns[!revealingColumns==PID]
+	}
+
+	isPIDInNamesB = umx_check_names(PID, df, die = FALSE)
+	if(isPIDInNamesB){
+		# Anonymise the PID column
+		oldValues = df[,PID]
+		if(anyDuplicated(df[, PID])){
+			message("Some IDs were duplicates. That pattern will be preserved")
+			uniqueIDs = unique(oldValues)
+			newIDs    = c((baseOffset+1):(baseOffset + length(uniqueIDs)) )
+			lookuptbl = setNames(newIDs, uniqueIDs)
+			df[,PID]  = lookuptbl[as.character(oldValues)]
+		} else {
+			message("No duplicates")
+			df[,PID] = c((baseOffset+1): (baseOffset + length(oldValues) ) )
+		}
+	} else {
+		# PID was not found, assume this df has no ID column so invent one. But this is super unusal do tell the user!
+		df[,PID] = c((baseOffset+1): (baseOffset + dim(df)[1]) )
+		message("Created ", PID, " and stored anonymous sequential number IDs there")
+	}
+	
+	# clean up	
+	df = df[, names(df)[!names(df) %in% revealingColumns]]
+	message("OK, what's left now is:")
+	message(omxQuotes(names(df)))
+	invisible(df)
+}
+
 #' Return PIDs in df
 #'
 #' prolific participants can time out but still be in the dataframe. This identifies them.
@@ -7550,7 +7705,7 @@ umx_read_prolific_demog <-function(file, base = "", df = NULL, by.df = "PROLIFIC
 #' @param IDcol Name of prolific ID column (default PROLIFIC_PID)
 #' @return - list of IDs in the dataframe
 #' @export
-#' @seealso - [umx_read_prolific_demog()], [umx_merge_randomized_columns()]
+#' @seealso - [prolific_read_demog()], [prolific_anonymize()], [umx_merge_randomized_columns()] # [prolific_check_ID()]
 #' @family Data Functions
 #' @examples
 #' # IDs = c("59d0ec2446447f00011edb063","5a08c9a7f2e3460001edb063f0254")

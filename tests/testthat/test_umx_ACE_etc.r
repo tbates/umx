@@ -1,10 +1,9 @@
-# library(testthat)
-# library(umx)
+# library(testthat); library(umx)
 # test_file("~/bin/umx/tests/testthat/test_umx_ACE_etc.r") 
 # TODO: Switch on ACE and ACEv examples for testing
 # test_package("umx")
 
-test_that("testing umx twin models", {
+test_that("test sep enforcement", {
 	# 1. Test sep enforcement
 	require(umx)
 	data(GFF)
@@ -22,6 +21,10 @@ test_that("testing umx twin models", {
 	dzD = na.omit(dzData[, tvars(selDVs, "_T")])
 	mzD = na.omit(dzData[, tvars(selDVs, "_T")])
 	m4 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzD, mzData = mzD, type = "DWLS")
+})
+
+test_that("umxACE univariate", {
+	require(umx)
 
 	 # ============================
 	 # = How heritable is height? =
@@ -60,6 +63,10 @@ test_that("testing umx twin models", {
 	 # ===================================================
 	 m3 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData, type = "DWLS", allContinuousMethod = 'marginals')
 	
+ })
+	
+
+ test_that("umxACE wt ht", {
 	 # ==============================
 	 # = Univariate model of weight =
 	 # ==============================
@@ -68,7 +75,7 @@ test_that("testing umx twin models", {
 	 
 	 # 1. Weight has a large variance, and this makes solution finding very hard.
 	 # Here, we scale wt to make the Optimizer's task easier.
-	
+	 require(umx)
 	 data(twinData)
 	 tmp = umx_residualize(c("wt", "ht"), cov = "age", suffixes= c(1, 2), data = twinData)
 	 mzData = tmp[tmp$zygosity %in% "MZFF", ]
@@ -91,6 +98,10 @@ test_that("testing umx twin models", {
 	 # |:--|----:|:--|----:|
 	 # |wt | 0.93|.  | 0.38|
 	
+ })
+
+ test_that("umxModify", {
+	 require(umx)
 	 # MODEL MODIFICATION
 	 # We can modify this model, e.g. test shared environment. 
 	 # Set comparison to modify, and show effect in one step.
@@ -98,6 +109,10 @@ test_that("testing umx twin models", {
 	 m2 = umxModify(m1, update = "c_r1c1", name = "no_C", comparison = TRUE)
 	 # nb: You can see names of free parameters with parameters(m2)
 	
+ })
+
+ test_that("umxACE bivariate", {
+ 	require(umx)
 	 # =========================================================
 	 # = Well done! Now you can make modify twin models in umx =
 	 # =========================================================
@@ -115,6 +130,10 @@ test_that("testing umx twin models", {
 	 m1 = umxACE(selDVs = c("ht", "wt"), sep = '', dzData = dzData, mzData = mzData)
 	 umxSummary(m1)
 	
+ })
+
+ test_that("umxACE ordinal", {
+ 	require(umx)
 	 # ===================
 	 # = Ordinal example =
 	 # ===================
@@ -138,6 +157,11 @@ test_that("testing umx twin models", {
 	 m1 = umxACE(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
 	 # umxSummary(m1)
 	
+ })
+
+ test_that("umxACE bivariate and ordinal", {
+ 	require(umx)
+	
 	 # ============================================
 	 # = Bivariate continuous and ordinal example =
 	 # ============================================
@@ -157,6 +181,10 @@ test_that("testing umx twin models", {
 	 dzData = dzData[1:80,]
 	 m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
 	 
+ })
+
+ test_that("umxACE bivariate continuous", {
+ 	require(umx)
 	 # =======================================
 	 # = Mixed continuous and binary example =
 	 # =======================================
@@ -416,7 +444,6 @@ test_that("test umxACEv xmu_standardize_ACE xmu_standardize_ACEv", {
 #' # =======================================
 #' # = Mixed continuous and binary example =
 #' # =======================================
-#' require(umx)
 #' data(twinData)
 #' twinData= umx_scale_wide_twin_data(data= twinData,varsToScale= "wt", sep="")
 #' # Cut to form category of 20% obese subjects

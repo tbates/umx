@@ -73,6 +73,7 @@ The commercial application \dQuote{OmniGraffle} is great for editing these image
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},

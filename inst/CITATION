@@ -1,9 +1,4 @@
-citHeader("To cite package 'umx' in publications use:")
-citFooter(paste("BibTeX entries for LaTeX users are obtained by:\n\n",
-	"toBibtex(citation('umx'))\n\n")
-)
-     
-citEntry(entry="article",
+bibentry(bibtype = "Article",
 	title = paste("umx: A library for Structural Equation and Twin Modelling in R"),
 	author = c(
 		person(c("Timothy", "C."), "Bates"),
@@ -12,10 +7,13 @@ citEntry(entry="article",
 	),
 	journal   = "Twin Research and Human Genetics",
 	publisher = "Cambridge Press",
-	year  = "2019",
+	year  = 2019,
 	volume = "22",
 	pages = "27-41",
 	doi   = "10.1017/thg.2019.2",
+
+	mheader = "To cite package 'umx' in publications use:", 
+
 	textVersion = paste(
 		"Timothy C. Bates,",
 		"Michael C. Neale,", 

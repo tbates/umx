@@ -5,7 +5,7 @@
 \title{Easily plot functions in R}
 \usage{
 umxPlotFun(
-  fun = dnorm,
+  fun = c(dnorm, "sin(x) + sqrt(1/x)"),
   min = -1,
   max = 5,
   xlab = NULL,
@@ -63,6 +63,7 @@ umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5))
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},

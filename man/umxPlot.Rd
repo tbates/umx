@@ -69,6 +69,7 @@ umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
 }
 
 Other Plotting functions: 
+\code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
