@@ -86,7 +86,6 @@ umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg
 
   if (length(prss) == 1) {
 
-    message("WARNING: still under testing, do not use in your research yet")
     if (is.null(name)) { name = "MRDoC"}
 
     top = mxModel("top",
