@@ -8551,7 +8551,7 @@ xmu_standardize_SexLim <- function(model, ...){
 	}
 	return(model)
 }
-# @export
+#' @export
 umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
