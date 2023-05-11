@@ -24,9 +24,11 @@ ggAddR(model, effect = NA, xloc = 8, yloc = 10)
 Add a fit statistic to a ggplot
 }
 \examples{
+\dontrun{
 m1 = lm(mpg ~ wt, data = mtcars)
 p = ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
 ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+}
 }
 \seealso{
 \itemize{
