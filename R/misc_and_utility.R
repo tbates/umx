@@ -65,9 +65,11 @@
 #' @seealso - [umxPlot()], [umxPlotFun()]
 #' @md
 #' @examples
+#' \dontrun{
 #'	m1 = lm(mpg ~ wt, data = mtcars)
 #'	p = ggplot2::ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
-#'	ggplot2::ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+#'	ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+#' }
 ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 	if(is.na(effect)){
 		r2 = round(summary(model)$r.squared, 3)
