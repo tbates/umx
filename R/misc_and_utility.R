@@ -66,8 +66,8 @@
 #' @md
 #' @examples
 #'	m1 = lm(mpg ~ wt, data = mtcars)
-#'	p = ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
-#'	ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+#'	p = ggplot2::ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
+#'	ggplot2::ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
 ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 	if(is.na(effect)){
 		r2 = round(summary(model)$r.squared, 3)
@@ -8549,7 +8549,7 @@ xmu_standardize_SexLim <- function(model, ...){
 	}
 	return(model)
 }
-# @export
+#' @export
 umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 
