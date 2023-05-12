@@ -27,7 +27,7 @@ Add a fit statistic to a ggplot
 \dontrun{
 m1 = lm(mpg ~ wt, data = mtcars)
 p = ggplot2::ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
-ggplot2::ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
 }
 }
 \seealso{
