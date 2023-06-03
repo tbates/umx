@@ -51,6 +51,7 @@ umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg
 
   tryHard = match.arg(tryHard)
 
+  sketch = FALSE
   if (missing(data) && missing(mzData) && missing(dzData)) sketch = TRUE
   options(mxByrow = TRUE)
   umx_set_silent(TRUE)
