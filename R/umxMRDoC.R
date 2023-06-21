@@ -48,6 +48,8 @@
 #'	pheno = c("varA1", "varA2"), prss = c("varB1", "varA3") )
 #'}
 umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg = NULL, sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+  if (missing(data) && missing(mzData) && missing(dzData)) sketch = TRUE
+  sketch = FALSE
 
   tryHard = match.arg(tryHard)
 
@@ -70,20 +72,21 @@ umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg
 
   vnames = tvars(c(pheno, prss), sep = sep)
 
-  xmu_twin_check(
-    selDVs = c(pheno, prss),
-    sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE,
-    nSib = 2, optimizer = optimizer
-  )
+  if (sketch==F){
+    xmu_twin_check(
+      selDVs = c(pheno, prss),
+      sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE,
+      nSib = 2, optimizer = optimizer
+    )
+  }
 
-  mzData = xmu_make_mxData(mzData, manifests = vnames)
-  dzData = xmu_make_mxData(dzData, manifests = vnames)
+  if (!missing(mzData)) {mzData = xmu_make_mxData(mzData, manifests = vnames)}
+  if (!missing(dzData)) {dzData = xmu_make_mxData(dzData, manifests = vnames)}
 
   x = y = 1
 
   if (length(prss) == 1) {
 
-    message("WARNING: still under testing, do not use in your research yet")
     if (is.null(name)) { name = "MRDoC"}
 
     top = mxModel("top",
@@ -140,15 +143,20 @@ umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg
 		mxAlgebra('Smz', expression= F%&%Smz_)
 	  )
 
-    MZ = mxModel("MZ", mzData,
+    MZ = mxModel("MZ",
       mxExpectationNormal(covariance = "top.Smz",means = "top.mzmu", vnames[1:5]),
       mxFitFunctionML()
     )
 
-    DZ = mxModel("DZ", dzData,
+    DZ = mxModel("DZ",
          mxExpectationNormal(covariance = "top.Sdz",means = "top.dzmu", vnames),
          mxFitFunctionML()
     )
+
+    if (sketch == F){
+      MZ = mxModel(MZ, mzData)
+      DZ = mxModel(DZ, dzData)
+    }
 
     model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ","DZ") ))
 
@@ -219,25 +227,33 @@ umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg
       mxAlgebra('Smz', expression= F%&%Smz_)
 	  )
 
-	MZ = mxModel("MZ", mzData,
-		mxExpectationNormal(covariance = "top.Smz",means = "top.mzmu", vnames[1:6]),
-		mxFitFunctionML()
-	)
+    MZ = mxModel("MZ", mzData,
+      mxExpectationNormal(covariance = "top.Smz",means = "top.mzmu", vnames[1:6]),
+      mxFitFunctionML()
+    )
 
-	DZ = mxModel("DZ", dzData,
-		mxExpectationNormal(covariance = "top.Sdz",means = "top.dzmu", vnames),
-		mxFitFunctionML()
-	)
+    DZ = mxModel("DZ", dzData,
+      mxExpectationNormal(covariance = "top.Sdz",means = "top.dzmu", vnames),
+      mxFitFunctionML()
+    )
 
-		model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ","DZ") ))
-	} else {
-		stop("Only 1 or 2 PRSs are supported")
-	}
+    if (sketch == F){
+      MZ = mxModel(MZ, mzData)
+      DZ = mxModel(DZ, dzData)
+    }
 
-	model = mxAutoStart(model)
-	model = as(model, "MxModelMRDoC") # set class so that S3s dispatch e.g. plot()
-	model = xmu_safe_run_summary(model, autoRun = TRUE,  summary = summary, tryHard =  tryHard)
-	return(model)
+    model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ","DZ") ))
+  } else {
+    stop("Only 1 or 2 PRSs are supported")
+  }
+
+  model = as(model, "MxModelMRDoC") # set class so that S3s dispatch e.g. plot()
+  if (sketch == F){
+    model = mxAutoStart(model)
+    model  = xmu_safe_run_summary(model, autoRun = TRUE,  summary = summary, tryHard =  tryHard)
+  }
+
+  return(model)
 }
 
 

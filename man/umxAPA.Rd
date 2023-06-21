@@ -148,7 +148,7 @@ umxAPA(m1)
 }
 \references{
 \itemize{
-\item \url{https://stats.oarc.ucla.edu/r/dae/logit-regression/}, \url{https://github.com/tbates/umx}, \url{https://www.shengdongzhao.com/?p=1501}
+\item \url{https://stats.oarc.ucla.edu/r/dae/logit-regression/}
 }
 }
 \seealso{

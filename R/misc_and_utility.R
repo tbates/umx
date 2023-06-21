@@ -65,9 +65,11 @@
 #' @seealso - [umxPlot()], [umxPlotFun()]
 #' @md
 #' @examples
+#' \dontrun{
 #'	m1 = lm(mpg ~ wt, data = mtcars)
-#'	p = qplot(wt, mpg, data = mtcars, geom = c("point" , "smooth")) + 
+#'	p = ggplot2::ggplot(data = mtcars, aes(x = wt, y = mpg))+ geom_point() +geom_smooth()+
 #'	ggAddR(m1, effect = NA, xloc=2, yloc= 10); p
+#' }
 ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 	if(is.na(effect)){
 		r2 = round(summary(model)$r.squared, 3)
@@ -7641,10 +7643,12 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 	invisible(newdf)
 }
 
-#' Read and optionally merge demographics file from prolific academic
+#' Clean up a prolific file for sharing by removing anonymity-compromising columns.
 #'
-#' prolific.ac IDs might compromise subject anonymity when share. This replaces PIDs with 
-#' using PID and participant_id
+#' prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
+#' This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
+#' You can extend the columns deleted by adding them to `extraColumns`. It is ideal for use when sharing data to \url{https://researchbox.org} which enforces
+#' anonymisation.
 #'
 #' @param df Existing datafile to anonymize.
 #' @param PID The prolific ID col name to anonymize
@@ -7661,26 +7665,33 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 #' tmp = prolific_anonymize(df, PID = "PID")
 #' }
 prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOffset = 1e4){
-	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID")
-	if(!is.na(PID)){
-		if(PID %in% names(df)){
-			# Anonymise the PIDs
-			oldValues = df[,PID]
-			if(anyDuplicated(df[, PID])){
-				message("Some IDs were duplicates. That pattern will be preserved")
-				uniqueIDs = unique(oldValues)
-				newIDs    = c((baseOffset+1):(baseOffset + length(uniqueIDs)) )
-				lookuptbl = setNames(newIDs, uniqueIDs)
-				df[,PID]  = lookuptbl[as.character(oldValues)]
-			} else {
-				message("No duplicates")
-				df[,PID] = c((baseOffset+1): (baseOffset + length(oldValues) ) )
-			}
-		} else {
-			df[,PID] = c((baseOffset+1): (baseOffset + dim(df)[1]) )
-			message("Created ", PID, " and stored anonymous sequential number IDs there")
-		}
+	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID", "PID")
+	# cleanup revealingColumns
+	if(PID %in% revealingColumns){
+		revealingColumns = revealingColumns[!revealingColumns==PID]
 	}
+
+	isPIDInNamesB = umx_check_names(PID, df, die = FALSE)
+	if(isPIDInNamesB){
+		# Anonymise the PID column
+		oldValues = df[,PID]
+		if(anyDuplicated(df[, PID])){
+			message("Some IDs were duplicates. That pattern will be preserved")
+			uniqueIDs = unique(oldValues)
+			newIDs    = c((baseOffset+1):(baseOffset + length(uniqueIDs)) )
+			lookuptbl = setNames(newIDs, uniqueIDs)
+			df[,PID]  = lookuptbl[as.character(oldValues)]
+		} else {
+			message("No duplicates")
+			df[,PID] = c((baseOffset+1): (baseOffset + length(oldValues) ) )
+		}
+	} else {
+		# PID was not found, assume this df has no ID column so invent one. But this is super unusal do tell the user!
+		df[,PID] = c((baseOffset+1): (baseOffset + dim(df)[1]) )
+		message("Created ", PID, " and stored anonymous sequential number IDs there")
+	}
+	
+	# clean up	
 	df = df[, names(df)[!names(df) %in% revealingColumns]]
 	message("OK, what's left now is:")
 	message(omxQuotes(names(df)))
@@ -8540,7 +8551,7 @@ xmu_standardize_SexLim <- function(model, ...){
 	}
 	return(model)
 }
-# @export
+#' @export
 umx_standardize.MxModelSexLim <- xmu_standardize_SexLim
 
 

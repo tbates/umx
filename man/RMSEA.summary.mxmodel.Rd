@@ -2,18 +2,18 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{RMSEA.summary.mxmodel}
 \alias{RMSEA.summary.mxmodel}
-\title{RMSEA function for MxModels}
+\title{RMSEA function for MxModel summary}
 \usage{
-\method{RMSEA}{summary.mxmodel}(x, ci.lower = 0.05, ci.upper = 0.95, digits = 3)
+\method{RMSEA}{summary.mxmodel}(x, ci.lower = 0.025, ci.upper = 0.975, digits = 3)
 }
 \arguments{
 \item{x}{an \code{\link[=mxModel]{mxModel()}} summary from which to get RMSEA}
 
-\item{ci.lower}{the lower CI to compute}
+\item{ci.lower}{the lower CI to compute (only 95\% CI (.025) is implemented)}
 
-\item{ci.upper}{the upper CI to compute}
+\item{ci.upper}{the upper CI to compute (only 95\% CI (.975) is implemented)}
 
-\item{digits}{digits to show (defaults to 3)}
+\item{digits}{The number of digits to round data (defaults to 3)}
 }
 \value{
 \itemize{
@@ -21,8 +21,8 @@
 }
 }
 \description{
-Compute the confidence interval on RMSEA and print it out.
-\emph{note}: If your goal is to extract the RMSEA from a model, use \code{RMSEA(m1)$RMSEA}
+Extract the RMSEA and confidence interval from a model summary and returns it as an RMSEA object.
+To report just the RMSEA, you can use \code{RMSEA(model)$RMSEA}
 }
 \examples{
 \dontrun{
