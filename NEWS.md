@@ -1,5 +1,5 @@
 ## dev umx 4.25.00
-* May 2023 R 4.2.1
+* August 2023 R 4.3.1 (2023-06-16)
 * NEW: `prolific_anonymize()`
 * NEW: `ggAddR` helper to add R/beta to a graph
 * NEW: `umxMatrixFree` to help in simulations
@@ -12,7 +12,7 @@
 * REFS: `umx_score_scale` omega refs
 * RENAME: `umx_read_prolific_demog` -> `prolific_read_demog`
 
-## dev umx 4.20.00
+## umx 4.20.00
 * Jan 2023 R 4.2.1
 * NEW: `umxMRDoC` Direction of causation with twins! (by @lf-araujo)
 * IMPROVED: `umx_score_scale` reliability works with `correctAnswers`
