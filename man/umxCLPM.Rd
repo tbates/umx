@@ -15,9 +15,13 @@ umxCLPM(
 )
 }
 \arguments{
+\item{waves}{Number of waves of data.}
+
 \item{name}{The name of the model (defaults to either "Heise1969", "Hamaker2015", or "STARTS1995").}
 
-\item{data}{= NULL Data frame for the analysis}
+\item{model}{Model type ("Hamaker2015", "Heise1969", or "STARTS1995")}
+
+\item{data}{Data frame for the analysis}
 
 \item{summary}{Optionally show a summary.}
 

@@ -9,11 +9,13 @@
 #' 
 #' Sketchmode is available, just do no pass data and you will be returned a model object to be manipulated later. 
 #' 
+#' @param waves Number of waves of data.
 #' @param name The name of the model (defaults to either "Heise1969", "Hamaker2015", or "STARTS1995").
+#' @param model Model type ("Hamaker2015", "Heise1969", or "STARTS1995")
+#' @param data Data frame for the analysis
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param summary Optionally show a summary.
-#' @param data = NULL Data frame for the analysis 
 #' @return - [mxModel()]
 #' @export
 #' @family CLPM Functions
@@ -62,22 +64,22 @@ umxCLPM <- function(waves, name = NULL, model = c("Hamaker2015", "Heise1969", "S
       autoRun = FALSE,
       # WITHIN MODEL
       umxPath(ps, xs, fixedAt = 1),
-      umxPath(var = c(ps[2:waves]), label = "us" ),
-      umxPath(var = c(qs[2:waves]), label = "vs" ), 
+      umxPath(var = c(ps[2:waves]), labels = "us" ),
+      umxPath(var = c(qs[2:waves]), labels = "vs" ), 
       umxPath(qs, ys, fixedAt = 1),
       # CAUSAL
-      umxPath(ps[1:waves - 1], qs[2:waves], value = 0.05),
-      umxPath(qs[1:waves-1], ps[2:waves], value = 0.05),
+      umxPath(ps[1:waves - 1], qs[2:waves], values = 0.05),
+      umxPath(qs[1:waves-1], ps[2:waves], values = 0.05),
       # AR
-      umxPath(ps[1:waves - 1], ps[2:waves], value = 1),
-      umxPath(qs[1:waves - 1], qs[2:waves], value = 1),
+      umxPath(ps[1:waves - 1], ps[2:waves], values = 1),
+      umxPath(qs[1:waves - 1], qs[2:waves], values = 1),
       # CORRELATIONS
-      umxPath(ps[2:waves], with = qs[2:waves], value = 0.02),
-      umxPath(ps[1], with = qs[1], value = 0.02),
+      umxPath(ps[2:waves], with = qs[2:waves], values = 0.02),
+      umxPath(ps[1], with = qs[1], values = 0.02),
       # MEANS
       umxPath(means = mean_names), 
       # UNCORRELATED VARIANCES
-      umxPath(var = c(ps[1], qs[1]), value = 1)
+      umxPath(var = c(ps[1], qs[1]), values = 1)
     )
   }  else if (model == "Hamaker2015") {
 
@@ -99,22 +101,22 @@ umxCLPM <- function(waves, name = NULL, model = c("Hamaker2015", "Heise1969", "S
       umxPath("yir", ys, fixedAt = 1),
       # WITHIN MODEL
       umxPath(ps, xs, fixedAt = 1),
-      umxPath(var = ps[2:waves], label = "us"),
-      umxPath(var = qs[2:waves], label = "vs"), 
+      umxPath(var = ps[2:waves], labels = "us"),
+      umxPath(var = qs[2:waves], labels = "vs"), 
       umxPath(qs, ys, fixedAt = 1),
       # CAUSAL
-      umxPath(ps[1:waves - 1], qs[2:waves], value = 0.2),
-      umxPath(qs[1:waves-1], ps[2:waves], value = 0.05),
+      umxPath(ps[1:waves - 1], qs[2:waves], values = 0.2),
+      umxPath(qs[1:waves-1], ps[2:waves], values = 0.05),
       # AR
-      umxPath(ps[1:waves - 1], ps[2:waves], value = 1),
-      umxPath(qs[1:waves - 1], qs[2:waves], value = 1),
+      umxPath(ps[1:waves - 1], ps[2:waves], values = 1),
+      umxPath(qs[1:waves - 1], qs[2:waves], values = 1),
       # CORRELATIONS
-      umxPath(ps[2:waves], with = qs[2:waves], value = 0.02, label = "uv"),
-      umxPath(ps[1], with = qs[1], value = 0.08),
-      umxPath("xir", with = "yir", value = 0.08),
+      umxPath(ps[2:waves], with = qs[2:waves], values = 0.02, labels = "uv"),
+      umxPath(ps[1], with = qs[1], values = 0.08),
+      umxPath("xir", with = "yir", values = 0.08),
       # UNCORRELATED VARIANCES
-      umxPath(var = c("xir", "yir"), value = 1),
-      umxPath(var = c(ps[1], qs[1]), value = 1),
+      umxPath(var = c("xir", "yir"), values = 1),
+      umxPath(var = c(ps[1], qs[1]), values = 1),
       # MEANS
       umxPath(means = mean_names)
     )
@@ -141,26 +143,26 @@ umxCLPM <- function(waves, name = NULL, model = c("Hamaker2015", "Heise1969", "S
       umxPath("yir", ys, fixedAt = 1),
       # WITHIN MODEL
       umxPath(ps, xs, fixedAt = 1),
-      umxPath(var = ps[2:waves], label = "us"),
-      umxPath(var = qs[2:waves], label = "vs"), 
+      umxPath(var = ps[2:waves], labels = "us"),
+      umxPath(var = qs[2:waves], labels = "vs"), 
       umxPath(qs, ys, fixedAt = 1),
       # CAUSAL
-      umxPath(ps[1:waves - 1], qs[2:waves], value = 0.05),
-      umxPath(qs[1:waves-1], ps[2:waves], value = 0.05),
+      umxPath(ps[1:waves - 1], qs[2:waves], values = 0.05),
+      umxPath(qs[1:waves-1], ps[2:waves], values = 0.05),
       # AR
-      umxPath(ps[1:waves - 1], ps[2:waves], value = .1),
-      umxPath(qs[1:waves - 1], qs[2:waves], value = .1),
+      umxPath(ps[1:waves - 1], ps[2:waves], values = .1),
+      umxPath(qs[1:waves - 1], qs[2:waves], values = .1),
       # CORRELATIONS
-      umxPath(ps[2:waves], with = qs[2:waves], value = 0.02, label = "uv"),
-      umxPath(ps[1], with = qs[1], value = 0.02),
-      umxPath("xir", with = "yir", value = 0.02),
+      umxPath(ps[2:waves], with = qs[2:waves], values = 0.02, labels = "uv"),
+      umxPath(ps[1], with = qs[1], values = 0.02),
+      umxPath("xir", with = "yir", values = 0.02),
       # MEANS
       umxPath(means = mean_names),
       # UNCORRELATED VARIANCES
-      umxPath(var = xs, value = 0.5),
-      umxPath(var = ys, value = 0.5),
-      umxPath(var = c("xir", "yir"), value = 1),
-      umxPath(var = c(ps[1], qs[1]), value = 1)
+      umxPath(var = xs, values = 0.5),
+      umxPath(var = ys, values = 0.5),
+      umxPath(var = c("xir", "yir"), values = 1),
+      umxPath(var = c(ps[1], qs[1]), values = 1)
     )
 
   } 

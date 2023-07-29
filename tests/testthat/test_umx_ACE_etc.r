@@ -98,9 +98,6 @@ test_that("umxACE univariate", {
 	 # |:--|----:|:--|----:|
 	 # |wt | 0.93|.  | 0.38|
 	
- })
-
- test_that("umxModify", {
 	 require(umx)
 	 # MODEL MODIFICATION
 	 # We can modify this model, e.g. test shared environment. 
