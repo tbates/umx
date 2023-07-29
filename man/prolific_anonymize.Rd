@@ -26,10 +26,12 @@ prolific_anonymize(
 }
 }
 \description{
-prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
-This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
-You can extend the columns deleted by adding them to \code{extraColumns}. It is ideal for use when sharing data to \url{https://researchbox.org} which enforces
-anonymisation.
+prolific.ac IDs and other columns like IP and lat/long might compromise
+subject anonymity when shared.
+\code{prolific_anonymize} replaces PIDs with a simple numeric sequence, preserving
+repeated measures in long data, and removing other columns.
+You can delete additional  columns by adding them to \code{extraColumns}. It is ideal for use
+when sharing data to \url{https://researchbox.org} which enforces anonymization.
 }
 \examples{
 \dontrun{
@@ -43,7 +45,7 @@ tmp = prolific_anonymize(df, PID = "PID")
 }
 \seealso{
 \itemize{
-\item \code{\link[=prolific_check_ID]{prolific_check_ID()}}, \code{\link[=prolific_read_demog]{prolific_read_demog()}}, \code{\link[=prolific_anonymize]{prolific_anonymize()}}, \code{\link[=umx_merge_randomized_columns]{umx_merge_randomized_columns()}}
+\item \code{\link[=prolific_check_ID]{prolific_check_ID()}}, \code{\link[=prolific_read_demog]{prolific_read_demog()}}, \code{\link[=umx_merge_randomized_columns]{umx_merge_randomized_columns()}}
 }
 
 Other Data Functions: 

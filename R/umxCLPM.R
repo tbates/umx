@@ -7,7 +7,7 @@
 #' and the third is the CLPM from STARTS (1995).
 #' You simply pass the number of waves and the data set and the model you want to run.
 #' 
-#' Sketchmode is available, just do no pass data and you will be returned a model object to be manipulated later. 
+#' Sketch mode is available, just do no pass data and you will be returned a model object to be manipulated later. 
 #' 
 #' @param waves Number of waves of data.
 #' @param name The name of the model (defaults to either "Heise1969", "Hamaker2015", or "STARTS1995").
@@ -19,9 +19,9 @@
 #' @return - [mxModel()]
 #' @export
 #' @family CLPM Functions
-#' @references - MKenny, D. A., & Zautra, A. (1995). The trait-state-error model for multiwave data. Journal of Consulting and Clinical Psychology, 63(1), 52–59. \doi{10.1037/0022-006X.63.1.52}
-#' * Hamaker E. L., Kuiper R. M., Grasman R. (2015). A critique of the cross-lagged panel model. Psychological Methods, 20(1), 102–116. \doi{10.1037/a0038889}
-#' * Heise D. R. (1970). Causal inference from panel data. Sociological Methodology, 2, 3–27. \doi{10.2307/270780}
+#' @references - Kenny, D.A., & Zautra, A. (1995). The trait-state-error model for multiwave data. *Journal of Consulting and Clinical Psychology*, **63**, 52–59. \doi{10.1037/0022-006X.63.1.52}
+#' * Hamaker E.L., Kuiper R.M., & Grasman R. (2015). A critique of the cross-lagged panel model. *Psychological Methods*, **20**, 102–116. \doi{10.1037/a0038889}
+#' * Heise D. R. (1970). Causal inference from panel data. *Sociological Methodology*, 2, 3–27. \doi{10.2307/270780}
 #' @md
 #' @examples
 #' \dontrun{

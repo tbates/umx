@@ -7645,17 +7645,19 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 
 #' Clean up a prolific file for sharing by removing anonymity-compromising columns.
 #'
-#' prolific.ac IDs and other columns like IP and lat/long might potentially compromise subject anonymity when shared.
-#' This replaces PIDs with a simple numeric sequence, preserving repeated measures in long data, and removing other columns.
-#' You can extend the columns deleted by adding them to `extraColumns`. It is ideal for use when sharing data to \url{https://researchbox.org} which enforces
-#' anonymisation.
+#' prolific.ac IDs and other columns like IP and lat/long might compromise 
+#' subject anonymity when shared.
+#' `prolific_anonymize` replaces PIDs with a simple numeric sequence, preserving
+#' repeated measures in long data, and removing other columns.
+#' You can delete additional  columns by adding them to `extraColumns`. It is ideal for use 
+#' when sharing data to \url{https://researchbox.org} which enforces anonymization.
 #'
 #' @param df Existing datafile to anonymize.
 #' @param PID The prolific ID col name to anonymize
 #' @param extraColumns Any  extra columns to delete (default NA)
 #' @param baseOffset The numeric to start renumbering PIDs from (default = 1e4)
 #' @return - [[data.frame]]
-#' @seealso - [prolific_check_ID()], [prolific_read_demog()], [prolific_anonymize()], [umx_merge_randomized_columns()] 
+#' @seealso - [prolific_check_ID()], [prolific_read_demog()], [umx_merge_randomized_columns()] 
 #' @export
 #' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>

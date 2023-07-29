@@ -41,7 +41,7 @@ The first is the classic CLPM from Heise (1969), the second is the CLPM from Ham
 and the third is the CLPM from STARTS (1995).
 You simply pass the number of waves and the data set and the model you want to run.
 
-Sketchmode is available, just do no pass data and you will be returned a model object to be manipulated later.
+Sketch mode is available, just do no pass data and you will be returned a model object to be manipulated later.
 }
 \examples{
 \dontrun{
@@ -60,11 +60,11 @@ hamaker <- umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt
 }
 \references{
 \itemize{
-\item MKenny, D. A., & Zautra, A. (1995). The trait-state-error model for multiwave data. Journal of Consulting and Clinical Psychology, 63(1), 52–59. \doi{10.1037/0022-006X.63.1.52}
+\item Kenny, D.A., & Zautra, A. (1995). The trait-state-error model for multiwave data. \emph{Journal of Consulting and Clinical Psychology}, \strong{63}, 52–59. \doi{10.1037/0022-006X.63.1.52}
 }
 \itemize{
-\item Hamaker E. L., Kuiper R. M., Grasman R. (2015). A critique of the cross-lagged panel model. Psychological Methods, 20(1), 102–116. \doi{10.1037/a0038889}
-\item Heise D. R. (1970). Causal inference from panel data. Sociological Methodology, 2, 3–27. \doi{10.2307/270780}
+\item Hamaker E.L., Kuiper R.M., & Grasman R. (2015). A critique of the cross-lagged panel model. \emph{Psychological Methods}, \strong{20}, 102–116. \doi{10.1037/a0038889}
+\item Heise D. R. (1970). Causal inference from panel data. \emph{Sociological Methodology}, 2, 3–27. \doi{10.2307/270780}
 }
 }
 \concept{CLPM Functions}
