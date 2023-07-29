@@ -94,11 +94,18 @@ test_that("umxACE univariate", {
 	
 	 # A short cut (which is even shorter for "_T" twin data with "MZ"/"DZ" data in zygosity column is:
 	 m1 = umxACE(selDVs = "wt", sep = "", data = twinData, dzData = c("DZMM", "DZFF", "DZOS"), mzData = c("MZMM", "MZFF"))
-	 # |   |   a1|c1 |   e1|
-	 # |:--|----:|:--|----:|
-	 # |wt | 0.93|.  | 0.38|
+	 Table: Standardized parameter estimates from a 1-factor Cholesky ACE model. A: additive genetic; C: common environment; E: unique environment.
+
+	#  |   |    a1|    c1|    e1|
+	#  |:--|-----:|-----:|-----:|
+	#  |wt | 0.892| 0.126| 0.433|
+
+ 	#  Table: Means (from model$top$expMean)
+
+ 	#  |          |    wt1|    wt2|
+	#  |:---------|------:|------:|
+	#  |intercept | 72.495| 72.495|
 	
-	 require(umx)
 	 # MODEL MODIFICATION
 	 # We can modify this model, e.g. test shared environment. 
 	 # Set comparison to modify, and show effect in one step.
@@ -110,14 +117,10 @@ test_that("umxACE univariate", {
 
  test_that("umxACE bivariate", {
  	require(umx)
-	 # =========================================================
-	 # = Well done! Now you can make modify twin models in umx =
-	 # =========================================================
-	
+	 data(twinData)
 	 # =====================================
 	 # = Bivariate height and weight model =
 	 # =====================================
-	 data(twinData)
 	 # We'll scale height (ht1 and ht2) and weight
 	 twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 	 mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"),]
@@ -157,34 +160,31 @@ test_that("umxACE univariate", {
  })
 
  test_that("umxACE bivariate and ordinal", {
- 	require(umx)
-	
-	 # ============================================
-	 # = Bivariate continuous and ordinal example =
-	 # ============================================
-	 data(twinData)
-	 twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
-	 # Cut BMI column to form ordinal obesity variables
-	 obLevels   = c('normal', 'overweight', 'obese')
-	 cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
-	 twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
-	 twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
-	 # Make the ordinal variables into mxFactors
-	 ordDVs = c("obese1", "obese2")
-	 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
-	 mzData = twinData[twinData$zygosity %in% "MZFF",] 
-	 dzData = twinData[twinData$zygosity %in% "DZFF",]
-	 mzData = mzData[1:80,] # just top 80 so example runs in a couple of secs
-	 dzData = dzData[1:80,]
-	 m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
-	 
+ 	 # ============================================
+ 	 # = Bivariate continuous and ordinal example =
+ 	 # ============================================
+ 	 require(umx)
+ 	 data(twinData)
+ 	 twinData= umx_scale_wide_twin_data(data=twinData,varsToScale="wt",sep= "")
+ 	 # Cut BMI column to form ordinal obesity variables
+ 	 obLevels   = c('normal', 'overweight', 'obese')
+ 	 cuts       = quantile(twinData[, "bmi1"], probs = c(.5, .2), na.rm = TRUE)
+ 	 twinData$obese1=cut(twinData$bmi1,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+ 	 twinData$obese2=cut(twinData$bmi2,breaks=c(-Inf,cuts,Inf),labels=obLevels)
+ 	 # Make the ordinal variables into mxFactors
+ 	 ordDVs = c("obese1", "obese2")
+ 	 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
+ 	 mzData = twinData[twinData$zygosity %in% "MZFF",]
+ 	 dzData = twinData[twinData$zygosity %in% "DZFF",]
+ 	 m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
+
  })
 
  test_that("umxACE bivariate continuous", {
- 	require(umx)
 	 # =======================================
 	 # = Mixed continuous and binary example =
 	 # =======================================
+ 	require(umx)
 	 data(twinData)
 	 twinData= umx_scale_wide_twin_data(data= twinData,varsToScale= "wt", sep="")
 	 # Cut to form category of 20% obese subjects

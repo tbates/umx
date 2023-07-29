@@ -260,6 +260,8 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		summary = FALSE
 	}
 	if(autoRun){
+		model1 = omxAssignFirstParameters(model1)
+		
 		tryCatch({
 			if(tryHard == "no"){
 				model1 = mxRun(model1, beginMessage = !umx_set_silent(silent = TRUE), silent = umx_set_silent(silent = TRUE), intervals = intervals)
