@@ -3698,9 +3698,10 @@ umx_update_OpenMx <- install.OpenMx
 #' \dontrun{
 #' # umx_make()  # Just load new code (don't rebuild help etc)
 #' # umx_make(what = "quickInst") # Quick install
-#' # umx_make(what = "install")   # Install the package
-#' # umx_make(what = "spell")     # Spell check the documents
+#' # umx_make(what = "install")   # Full package rebuild and install
+#' # umx_make(what = "spell")     # Spellcheck Rd documents
 #' # umx_make(what = "sitrep")    # Are needed packages up to date?
+#' # umx_make(what = "deps_install") # Update needed packages
 #' # umx_make(what = "examples")  # Run the examples
 #' # umx_make(what = "checkCRAN") # Run R CMD check
 #' # umx_make(what = "rhub")      # Check on rhub
@@ -3708,16 +3709,10 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "release")   # Release to CRAN
 #' # tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
+umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
 	what  = match.arg(what)
 	which = match.arg(which)
-	if(what == "lastRhub"){
-		prev = rhub::list_package_checks(package = pkg, howmany = 4)
-		check_id = prev$id[1]
-		return(rhub::get_check(check_id))
-	}else if(what == "testthat"){
-		devtools::test(pkg = pkg)
-	}else if(what == "load"){
+	if(what == "load"){
 		devtools::load_all(path = pkg)
 		changed = gert::git_status(repo = "~/bin/umx")
 		if(dim(changed)[1]>=1){
@@ -3735,6 +3730,14 @@ umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep",
 		devtools::document(pkg = pkg);
 		devtools::install(pkg = pkg);
 		devtools::load_all(path = pkg)
+	} else if (what == "spell"){
+		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
+	# }else if (what=="travisCI"){
+	# 	browseURL("https://www.travis-ci.com/tbates/umx")
+	}else if (what == "sitrep"){
+		devtools::dev_sitrep(pkg = pkg)
+	}else if (what == "deps_install"){
+		devtools::install_dev_deps(pkg=pkg)
 	} else if(what == "run_examples"){
 		devtools::run_examples(pkg = pkg, run = run, start = start)
 	} else if(what == "checkCRAN"){
@@ -3761,17 +3764,17 @@ umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep",
 		}else{
 			devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
 		}
+	} else if(what == "lastRhub"){
+			prev = rhub::list_package_checks(package = pkg, howmany = 4)
+			check_id = prev$id[1]
+			return(rhub::get_check(check_id))
+		}else if(what == "testthat"){
+			devtools::test(pkg = pkg)
 	} else if (what == "release"){
 		oldDir = getwd()
 		setwd(dir= pkg)
 		devtools::release(pkg = pkg, check = check, "--no-manual") # spelling = NULL		 
 		setwd(dir= oldDir)
-	} else if (what == "spell"){
-		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
-	# }else if (what=="travisCI"){
-	# 	browseURL("https://www.travis-ci.com/tbates/umx")
-	}else if (what == "sitrep"){
-		devtools::dev_sitrep(pkg = pkg)
 	}else{
 		stop("I don't know how to ", what)
 	}
