@@ -5,8 +5,8 @@
 \title{"make" the umx package using devtools: release to CRAN etc.}
 \usage{
 umx_make(
-  what = c("load", "quickInst", "install", "spell", "sitrep", "dev_deps", "checkCRAN",
-    "testthat", "examples", "win", "rhub", "lastRhub", "release"),
+  what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install",
+    "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,
@@ -46,9 +46,10 @@ Easily  run devtools "install", "release", "win", "examples" etc.
 \dontrun{
 # umx_make()  # Just load new code (don't rebuild help etc)
 # umx_make(what = "quickInst") # Quick install
-# umx_make(what = "install")   # Install the package
-# umx_make(what = "spell")     # Spell check the documents
+# umx_make(what = "install")   # Full package rebuild and install
+# umx_make(what = "spell")     # Spellcheck Rd documents
 # umx_make(what = "sitrep")    # Are needed packages up to date?
+# umx_make(what = "deps_install") # Update needed packages
 # umx_make(what = "examples")  # Run the examples
 # umx_make(what = "checkCRAN") # Run R CMD check
 # umx_make(what = "rhub")      # Check on rhub
