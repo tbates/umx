@@ -4,7 +4,8 @@
 #' `umx` allows you to more easily build, run, modify, and report structural models, 
 #' building on the OpenMx package.
 #' All core functions are organized into families, so they are easier to find 
-#' (see "families" below under \strong{See Also})
+#' (so if you know a function similar to what you are looking for, look at other members of its "family" at the bottom of its help file.
+#' 
 #' Please cite as: Bates, T. C., Neale, M. C., & Maes, H. H. (2019). 
 #' umx: A library for Structural Equation and Twin Modelling in R. 
 #' *Twin Research and Human Genetics*, **22**, 27-41. \doi{10.1017/thg.2019.2}.
@@ -24,8 +25,7 @@
 #' (Only) if you want the bleeding-edge version:
 #' 
 #' devtools::install_github("tbates/umx")
-#' 
-'_PACKAGE'
+#'
 #' @name umx
 #' @family Core Model Building Functions
 #' @family Model Summary and Comparison
@@ -45,7 +45,7 @@
 #' @family datasets
 #' @family Advanced Model Building Functions
 #' @family zAdvanced Helpers
-#' @family xmu internal not for end user
+#'
 #' @references - Bates, T. C., Neale, M. C., & Maes, H. H. (2019). umx: A library for Structural 
 #' Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. \doi{10.1017/thg.2019.2}, 
 #' <https://github.com/tbates/umx>, tutorial: <https://tbates.github.io>
@@ -110,4 +110,5 @@
 #' plot(m1, std = TRUE, file = NA)
 #' }
 #'
+'_PACKAGE'
 NULL
