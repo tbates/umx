@@ -44,7 +44,6 @@ Other xmu internal not for end user:
 \code{\link{umx_get_bracket_addresses}()},
 \code{\link{umx_make}()},
 \code{\link{umx_standardize}()},
-\code{\link{umx}},
 \code{\link{xmuHasSquareBrackets}()},
 \code{\link{xmuLabel_MATRIX_Model}()},
 \code{\link{xmuLabel_Matrix}()},
