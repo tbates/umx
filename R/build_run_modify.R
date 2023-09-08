@@ -2126,10 +2126,10 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	}
 
 	if(!is.null(target)){
-		if(target < min(modVar)) {
-			stop("specifiedTarget is below the range in moderator. min(modVar) was ", min(modVar))
-		} else if(target > max(modVar)){
-			stop("specifiedTarget is above the range in moderator. max(modVar) was ", max(modVar))
+		if(any(target < min(modVar))) {
+			stop("A target found below the minimum value of moderator. min(modVar) was ", min(modVar))
+		} else if(any(target > max(modVar))){
+			stop("target above the max value of the moderator. max(modVar) was ", max(modVar))
 		} else {
 			targetLevels = target
 		}
