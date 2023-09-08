@@ -1,4 +1,5 @@
 ## dev umx 4.25.00
+* FIXED: `umxGxE_window` handles target range without error once more h/t Marla Kürten
 
 ## umx 4.16.00
 * August 2023 R 4.3.1 (2023-06-16)
