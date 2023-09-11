@@ -1,10 +1,11 @@
-## dev umx 4.25.00
+## dev umx 4.17.00
+* NEW: `fin_ticker` open a stock in the browser.
 
 ## umx 4.16.00
 * August 2023 R 4.3.1 (2023-06-16)
 * NEW: `umxMRDoC` Direction of causation with twins! (by @lf-araujo)
 * NEW: `umxMatrixFree` to help in simulations (by @lf-araujo)
-* NEW: `prolific_anonymize()`
+* NEW: `prolific_anonymize()` remove IDs and other identifying columns: Ideal when sharing data.
 * NEW: `ggAddR` helper to add R/beta to a graph
 * NEW `umx_strings2numeric` helper function to recode strings to numbers
 * IMPROVED: `RMSEA()`

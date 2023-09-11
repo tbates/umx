@@ -49,6 +49,28 @@
 #      I know not, but I feel it so,
 #      and it tortures me.
 
+#' Open a ticker in yahoo finance.
+#'
+#' @description
+#' Open a stock ticker, currently in yahoo finance
+#'
+#' @param param a ticker to look up, e.g., "OXY"
+#' @return - [Open a ticker in yahoo finance()]
+#' @export
+#' @family
+#' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
+#' @md
+#' @examples
+#' # Open $INTC in yahoo finance.
+#' \dontrun{
+#' fin_ticker("INTC")
+#' }
+
+fin_ticker <- function(ticker= "INTC") {
+	url =paste0("https://finance.yahoo.com/quote/", ticker)
+	# https://www.google.com/finance/quote/SWBI:NASDAQ
+	browseURL(url, browser = getOption("browser"))
+}
 
 #' Add a fit statistic to a ggplot
 #'
