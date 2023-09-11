@@ -89,7 +89,7 @@ umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData
 umxGxE_window(selDVs = "bmi", sep="", moderator = mod, mzData = mzData, dzData = dzData, 
 		target = 40, plotWindow = TRUE, tryHard = "yes")
 
-# Run with FIML (default) uses all information
+# Run with tryHard
 umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
 umxGxE_window(selDVs="bmi", sep="", moderator="age", mzData=mzData, dzData=dzData, tryHard="yes")
 
@@ -97,7 +97,8 @@ umxGxE_window(selDVs="bmi", sep="", moderator="age", mzData=mzData, dzData=dzDat
 umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
 		weightCov = TRUE)
 }
-
+# This example runs multiple target moderator values
+m1 = umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, target = c(39,40,50), plotWindow = TRUE)
 }
 \references{
 \itemize{

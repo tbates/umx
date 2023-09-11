@@ -1,6 +1,9 @@
 ## dev umx 4.17.00
 * NEW: `fin_ticker` open a stock in the browser.
 
+## dev umx 4.20.00
+* FIXED: `umxGxE_window` handles target range without error once more (h/t Marla Kürten)
+
 ## umx 4.16.00
 * August 2023 R 4.3.1 (2023-06-16)
 * NEW: `umxMRDoC` Direction of causation with twins! (by @lf-araujo)

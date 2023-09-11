@@ -34,6 +34,7 @@
 #'            
 #'  # Will return a umxMatrix free at the eb2 and es2 positions.
 #'}
+
 umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, values = NA, labels = labels, ...){
   
   options(mxByrow = TRUE)
