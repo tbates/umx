@@ -2063,7 +2063,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' umxGxE_window(selDVs = "bmi", sep="", moderator = mod, mzData = mzData, dzData = dzData, 
 #' 		target = 40, plotWindow = TRUE, tryHard = "yes")
 #'
-#' # Run with FIML (default) uses all information
+#' # Run with tryHard
 #' umxGxE_window(selDVs = "bmi", sep="", moderator = "age", mzData = mzData, dzData = dzData)
 #' umxGxE_window(selDVs="bmi", sep="", moderator="age", mzData=mzData, dzData=dzData, tryHard="yes")
 #' 
@@ -2071,7 +2071,9 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
 #' 		weightCov = TRUE)
 #' }
-#' 
+#' # This example runs multiple target moderator values
+#' m1 = umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, target = c(39,40,50), plotWindow = TRUE)
+
 umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, tryHard = c("no", "yes", "ordinal", "search"), return = c("estimates","last_model")) {
 	return  = match.arg(return)
 	tryHard = match.arg(tryHard)
@@ -2084,7 +2086,6 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	
 	if(!is.null(sep)){
 		selVars   = umx_paste_names(selDVs, sep = sep, 1:2)
-		# moderator = umx_paste_names(moderator, sep = sep, 1:2)
 	}else{
 		selVars = selDVs
 	}
@@ -2094,7 +2095,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 	umx_check_names(c(selVars, moderator), data = mzData, die = TRUE)
 	umx_check_names(c(selVars, moderator), data = dzData, die = TRUE)
 
-	# drop any extraneous columns
+	# Drop any extraneous columns
 	mzData = mzData[, c(selVars, moderator)]
 	dzData = mzData[, c(selVars, moderator)]
 

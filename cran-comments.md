@@ -1,5 +1,5 @@
 ## Changes
-New package features + some fixes
+Fix a non-working feature for a user.
 
 ## Test environments
 * MacOS 12.5, R version 4.3.1
@@ -11,5 +11,5 @@ New package features + some fixes
 
 ## No Downstream dependencies
 
-Many thanks!,
+Many thanks once more!
 Tim
