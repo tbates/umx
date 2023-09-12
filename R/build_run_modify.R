@@ -2070,10 +2070,11 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' # Run creating weighted covariance matrices (excludes missing data)
 #' umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
 #' 		weightCov = TRUE)
-#' }
 #' # This example runs multiple target moderator values
-#' m1 = umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, target = c(39,40,50), plotWindow = TRUE)
-
+#' mxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
+#' 	target = c(39,40,50), plotWindow = TRUE)
+#'
+#' }
 umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, tryHard = c("no", "yes", "ordinal", "search"), return = c("estimates","last_model")) {
 	return  = match.arg(return)
 	tryHard = match.arg(tryHard)

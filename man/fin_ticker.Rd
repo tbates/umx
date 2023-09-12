@@ -7,11 +7,11 @@
 fin_ticker(ticker = "INTC")
 }
 \arguments{
-\item{param}{a ticker to look up, e.g., "OXY"}
+\item{ticker}{A stock symbol to look up, e.g., "OXY"}
 }
 \value{
 \itemize{
-\item \code{\link[=Open a ticker in yahoo finance]{Open a ticker in yahoo finance()}}
+\item Open a ticker in a finance site online
 }
 }
 \description{

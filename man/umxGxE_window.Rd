@@ -96,9 +96,11 @@ umxGxE_window(selDVs="bmi", sep="", moderator="age", mzData=mzData, dzData=dzDat
 # Run creating weighted covariance matrices (excludes missing data)
 umxGxE_window(selDVs = "bmi", sep="", moderator= "age", mzData = mzData, dzData = dzData, 
 		weightCov = TRUE)
-}
 # This example runs multiple target moderator values
-m1 = umxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, target = c(39,40,50), plotWindow = TRUE)
+mxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData, 
+	target = c(39,40,50), plotWindow = TRUE)
+
+}
 }
 \references{
 \itemize{

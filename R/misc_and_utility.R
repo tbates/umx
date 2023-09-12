@@ -54,8 +54,8 @@
 #' @description
 #' Open a stock ticker, currently in yahoo finance
 #'
-#' @param param a ticker to look up, e.g., "OXY"
-#' @return - [Open a ticker in yahoo finance()]
+#' @param ticker A stock symbol to look up, e.g., "OXY"
+#' @return - Open a ticker in a finance site online
 #' @export
 #' @family
 #' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
