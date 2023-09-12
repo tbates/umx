@@ -39,14 +39,21 @@ loadings(m1)
 \item \code{\link[=factanal]{factanal()}}, \code{\link[=loadings]{loadings()}}
 }
 
-Other Miscellaneous Functions: 
-\code{\link{deg2rad}()},
-\code{\link{fin_NI}()},
-\code{\link{fin_interest}()},
-\code{\link{fin_percent}()},
-\code{\link{fin_ticker}()},
-\code{\link{fin_valuation}()},
-\code{\link{rad2deg}()},
-\code{\link{umxBrownie}()}
+Other Reporting functions: 
+\code{\link{RMSEA.MxModel}()},
+\code{\link{RMSEA.summary.mxmodel}()},
+\code{\link{RMSEA}()},
+\code{\link{extractAIC.MxModel}()},
+\code{\link{loadings}()},
+\code{\link{residuals.MxModel}()},
+\code{\link{tmx_show.MxMatrix}()},
+\code{\link{tmx_show}()},
+\code{\link{umxCI_boot}()},
+\code{\link{umxCI}()},
+\code{\link{umxConfint}()},
+\code{\link{umxExpCov}()},
+\code{\link{umxExpMeans}()},
+\code{\link{umxFitIndices}()},
+\code{\link{umxRotate}()}
 }
-\concept{Miscellaneous Functions}
+\concept{Reporting functions}

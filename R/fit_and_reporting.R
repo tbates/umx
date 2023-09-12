@@ -553,7 +553,7 @@ loadings.default <- function(x, ...) stats::loadings(x, ...)
 #' @param ... Other parameters (currently unused)
 #' @return - loadings matrix
 #' @export
-#' @family Miscellaneous Functions
+#' @family Reporting functions
 #' @seealso - [factanal()], [loadings()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md

@@ -53,6 +53,7 @@ Other Reporting functions:
 \code{\link{RMSEA.MxModel}()},
 \code{\link{RMSEA.summary.mxmodel}()},
 \code{\link{RMSEA}()},
+\code{\link{loadings.MxModel}()},
 \code{\link{loadings}()},
 \code{\link{residuals.MxModel}()},
 \code{\link{tmx_show.MxMatrix}()},

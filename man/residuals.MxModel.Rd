@@ -69,6 +69,7 @@ Other Reporting functions:
 \code{\link{RMSEA.summary.mxmodel}()},
 \code{\link{RMSEA}()},
 \code{\link{extractAIC.MxModel}()},
+\code{\link{loadings.MxModel}()},
 \code{\link{loadings}()},
 \code{\link{tmx_show.MxMatrix}()},
 \code{\link{tmx_show}()},
