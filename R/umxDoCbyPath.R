@@ -495,6 +495,9 @@ xmu_path2twin <- function(paths, thisTwin = 1, sep = "_T"){
 		thisPath = paths[[i]]
 		thisPath@from = xmu_path_regex(thisPath$from, "$", suffix)
 		thisPath@to   = xmu_path_regex(thisPath$to  , "$", suffix)
+	        if (grepl("^data.", thisPath@labels)) {
+      			thisPath@labels = xmu_path_regex(thisPath@labels, "$", paste0(thisPath$label, suffix))
+    		}
 		paths[[i]] = thisPath
 	}
 	paths
