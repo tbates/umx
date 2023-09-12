@@ -57,7 +57,7 @@
 #' @param ticker A stock symbol to look up, e.g., "OXY"
 #' @return - Open a ticker in a finance site online
 #' @export
-#' @family
+#' @family Miscellaneous Functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
 #' @md
 #' @examples
