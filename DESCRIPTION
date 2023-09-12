@@ -1,4 +1,5 @@
 Package: umx
+Version: 4.17.0
 Date: 2023-09-12
 Title: Structural Equation Modeling and Twin Modeling in R
 Authors@R: c(
