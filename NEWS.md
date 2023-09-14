@@ -1,8 +1,9 @@
 ## dev umx 4.25.00
-## dev umx 4.20.00
-* Sept 2023 R 4.3.1 (2023-09-12)
+
+## umx 4.17.00
+* Sept 2023 R 4.3.1 (2023-09-15)
 * NEW: `fin_ticker` open a stock in the browser.
-* IMPROVED: umxTwinMaker can manage definition variables (by @lf-araujo)
+* IMPROVED: `umxTwinMaker` can manage definition variables (by @lf-araujo)
 * FIXED: `umxGxE_window` handles target range without error once more (h/t Marla Kürten)
 
 ## umx 4.16.00
