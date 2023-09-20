@@ -1023,7 +1023,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	report   = match.arg(report)
 	filter   = match.arg(filter)
 	
-	message("?umxSummary std=T|F', digits, report= 'html', filter= 'NS' & more")
+	message("?umxSummary options: std=T|F', digits=, report= 'html', filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
 	if( filter != "ALL" & is.null(std) ) {
@@ -1184,7 +1184,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	}
 	
 	xmu_print_algebras(model)
-	
+	parameterTable = unique.data.frame(parameterTable)
 	if(!is.null(std)){ # return these as  invisible for the user to filter, sort etc.
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
