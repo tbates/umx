@@ -49,6 +49,31 @@
 #      I know not, but I feel it so,
 #      and it tortures me.
 
+#' Justified P/E Ratio
+#'
+#' @description
+#' Compute the Justified P/E of a stock.
+#' Justified P/E = [ (DPS / EPS) * (1 + g)] / (k – g)
+#' DPS is the dividend per share, EPS is the earnings per share,
+#' g is the sustainable growth rate, and k is the required rate of return.
+#' @param ticker A stock symbol to look up, e.g., "OXY"
+#' @return - Open a ticker in a finance site online
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
+#' @md
+#' @examples
+#' fin_JustifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
+#' 
+fin_JustifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, discountRate = .12, basePE= 20, yrs=10) {
+	paste0("Based on growth (", growthRate*100, "% expected growth for ", yrs, " years and a base P/E of ",
+	basePE, "), the justified P/E would be: ", (growthRate * yrs) + basePE )
+	
+   # ((0.4 * 2) * (1 + 0.06)) / (0.1 - 0.06)
+   # ((Dividend/EPS) * (1 + growthRate)) / (k-growthRate)
+   # Justified P/E Ratio = 16.8
+}
+
 #' Open a ticker in yahoo finance.
 #'
 #' @description

@@ -3,7 +3,7 @@ Fix a non-working feature for a user.
 
 ## Test environments
 * MacOS 12.5, R version 4.3.1
-* Win64 R Under development (unstable) (2023-08-17 r84984 ucrt)
+* Win64 R Under development (unstable) (2023-09-13)
 * 64-bit Linux, R version 4.3.1
 
 ## R CMD check results
