@@ -1135,6 +1135,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			toShow = parameterTable[, namesToShow]
 		}
 		toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+		toShow = unique.data.frame(toShow[,c(namesToShow, "type")])
 		umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
 	}
 	with(modelSummary, {
@@ -1184,7 +1185,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	}
 	
 	xmu_print_algebras(model)
-	parameterTable = unique.data.frame(parameterTable)
 	if(!is.null(std)){ # return these as  invisible for the user to filter, sort etc.
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
