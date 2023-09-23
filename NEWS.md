@@ -4,7 +4,9 @@
 * Sept 2023 R 4.3.1 (2023-09-15)
 * NEW: `fin_ticker` open a stock in the browser.
 * IMPROVED: `umxTwinMaker` can manage definition variables (by @lf-araujo)
+* IMPROVED: `umxSummary` suppress duplicate paths
 * FIXED: `umxGxE_window` handles target range without error once more (h/t Marla Kürten)
+* FIXED: `umxMRDoC`  byrow misspelling
 
 ## umx 4.16.00
 * August 2023 R 4.3.1 (2023-06-16)
