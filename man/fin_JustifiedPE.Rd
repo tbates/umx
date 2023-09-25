@@ -14,11 +14,21 @@ fin_JustifiedPE(
 )
 }
 \arguments{
-\item{ticker}{A stock symbol to look up, e.g., "OXY"}
+\item{Dividend}{The dividend.}
+
+\item{EPS}{The Earnings per Share}
+
+\item{growthRate}{The growth rrate}
+
+\item{discountRate}{Your chosne discount rate}
+
+\item{basePE}{The base PE}
+
+\item{yrs}{Years}
 }
 \value{
 \itemize{
-\item Open a ticker in a finance site online
+\item A PE that is justified for this stock.
 }
 }
 \description{
@@ -28,7 +38,7 @@ DPS is the dividend per share, EPS is the earnings per share,
 g is the sustainable growth rate, and k is the required rate of return.
 }
 \examples{
-fin_JustifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
+# fin_JustifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
 
 }
 \seealso{

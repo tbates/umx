@@ -116,6 +116,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' @param mzData Data for MZ twins
 #' @param dzData Data for DZ twins
 #' @param sep The separator used to create twin 1 and 2 names (Default "_T")
+#' @param autoRun Wether to run the supermodel before returning it.
 #' @return - [umxSuperModel()]
 #' @export
 #' @family Twin Modeling Functions
@@ -175,7 +176,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' 
 #' }
 #'
-umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T"){
+umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'=c(1, 1), 'e'=c(0, 0)), mzData = NULL, dzData= NULL, sep = "_T", autoRun = getOption("umx_auto_run")){
 	# TODO
 	# Ensure labels that might need equating of freeing across MZ/DZ or T1 T2
 	# Check no manifests match the t1_t2links?
@@ -235,7 +236,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 			DZ = mxModel(DZ, umxPath(T1, with = T2, free=FALSE, values = DZvalue, labels=paste0(T1, "_DZr_", T2)))
 		}
 	}
-	model = umxSuperModel(name, MZ, DZ)
+	model = umxSuperModel(name, MZ, DZ, autoRun = autoRun)
 	
 	# TODO: equate means: "wt_T1_with_wt_T1" "wt_T2_with_wt_T2"
 	# 4. Equate means in auto-added means model

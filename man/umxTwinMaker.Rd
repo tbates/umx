@@ -10,7 +10,8 @@ umxTwinMaker(
   t1_t2links = list(a = c(1, 0.5), c = c(1, 1), e = c(0, 0)),
   mzData = NULL,
   dzData = NULL,
-  sep = "_T"
+  sep = "_T",
+  autoRun = getOption("umx_auto_run")
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ umxTwinMaker(
 \item{dzData}{Data for DZ twins}
 
 \item{sep}{The separator used to create twin 1 and 2 names (Default "_T")}
+
+\item{autoRun}{Wether to run the supermodel before returning it.}
 }
 \value{
 \itemize{

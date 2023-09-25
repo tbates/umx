@@ -56,14 +56,19 @@
 #' Justified P/E = [ (DPS / EPS) * (1 + g)] / (k – g)
 #' DPS is the dividend per share, EPS is the earnings per share,
 #' g is the sustainable growth rate, and k is the required rate of return.
-#' @param ticker A stock symbol to look up, e.g., "OXY"
-#' @return - Open a ticker in a finance site online
+#' @param Dividend The dividend.
+#' @param EPS The Earnings per Share
+#' @param growthRate The growth rrate
+#' @param discountRate Your chosne discount rate
+#' @param basePE The base PE
+#' @param yrs Years
+#' @return - A PE that is justified for this stock.
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
 #' @md
 #' @examples
-#' fin_JustifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
+#' # fin_JustifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
 #' 
 fin_JustifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, discountRate = .12, basePE= 20, yrs=10) {
 	paste0("Based on growth (", growthRate*100, "% expected growth for ", yrs, " years and a base P/E of ",
