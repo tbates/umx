@@ -23,6 +23,8 @@ F77   = /opt/gfortran/bin/gfortran
 If not, A copy might be available at the bottom of https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository)
 Which you would have to rename and move.
 
+9. Install OpenMP
+https://mac.r-project.org/openmp/
 
 Now you can make and install OpenMx. From `~/binOpenMx`, run `make install`
 
@@ -35,4 +37,5 @@ git fetch origin
 make install
 
 In R
+devtools::build("~/bin/OpenMx", binary = TRUE)
 system(paste0("open ", .libPaths()[1]))
