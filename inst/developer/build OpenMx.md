@@ -1,41 +1,39 @@
-## OS X installation
+# OS X installation
 
-1. Download and Install latest R and OpenMx's required packages
-2. Install Xcode from the App Store
+## Install needed software
+1. Install R and OpenMx's required packages.
+2. Install `Xcode` (on the App Store)
 3. Run `xcode-select --install` in a terminal window to get standard C libraries etc
   * *note*: app store will update it thereafter.
-4. If the RMPI package fails to build with configure: error: "Cannot find mpi.h header file", then `brew install mpi` should get you on the path to have rmpi working.
-5. Download and install the `gfortran-nn.n-universal.pkg`  available at: https://cran.r-project.org
-6. Clone OpenMx into `~/bin/OpenMx` (or whatever you prefer, but this is standard)
-  * `git clone git://github.com/OpenMx/OpenMx.git`
-  * cd OpenMx
-7. Add (or create) the following to `~/.R/Makevars`
-
+4. Download and install `gfortran-nn.n-universal.pkg` from [https://cran.r-project.org](https://cran.r-project.org)
+5. Clone OpenMx into `~/bin/OpenMx` (anywhere's fine, but this is standard)
+	* `git clone git://github.com/OpenMx/OpenMx.git`
+	* `cd OpenMx`
+6. Add (or create) the following to `~/.R/Makevars`
+>
 CC    = /usr/bin/gcc
 CXX   = /usr/bin/g++
 CXX1X = /usr/bin/g++
 FC    = /opt/gfortran/bin/gfortran
 F77   = /opt/gfortran/bin/gfortran
 
-
 8. You need the correct version of NPSOL for your build. It likely came inside the git repo at "~/bin/OpenMx/inst/npsol/osx/x86_64/libnpsol.a"
-
-If not, A copy might be available at the bottom of https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository)
-Which you would have to rename and move.
-
+	* If not, A copy might be available at the bottom of [https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository](https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository) which you would have to download, rename, and move into position.
 9. Install OpenMP
-https://mac.r-project.org/openmp/
+	* https://mac.r-project.org/openmp/
 
-Now you can make and install OpenMx. From `~/binOpenMx`, run `make install`
+## Make and install OpenMx.
+Now you can make and install OpenMx.
 
-Validate the installation by running make test - it takes some time to complete.
+1. cd to `~/binOpenMx`
+2. run `make install`
+3. optionally `make test` to validate (takes time)
 
-For subsequent rebuilds from source the procedure is much easier:
-
-cd ~/bin/OpenMx
-git fetch origin
-make install
-
-In R
+You can also odo this from inside R
+> 
 devtools::build("~/bin/OpenMx", binary = TRUE)
 system(paste0("open ", .libPaths()[1]))
+
+*Notes*
+1. If the RMPI package fails to build with configure: error: "Cannot find mpi.h header file", then it will need to be installed. This used to be via a brew instruction: `brew install mpi`
+
