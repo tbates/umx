@@ -35,9 +35,8 @@
 #'  # Will return a umxMatrix free at the eb2 and es2 positions.
 #'}
 
-umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, values = NA, labels = labels, ...){
+umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, values = NA, labels = labels, byrow = TRUE,...){
   
-  options(mxByrow = TRUE)
   
   if (missing(nrow)) {
     if (!missing(free)) {nrow = dim(matrix(free, ncol = ncol))[1]}
@@ -46,7 +45,6 @@ umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, v
   }
   
   if (!missing(labels)) {
-    labels. = labels
     free = labels
     free = (!is.na(labels))
   }
@@ -54,7 +52,7 @@ umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, v
   dots <- list(...)
   do.call(eval(parse(
     text="umx::umxMatrix")),
-    c(list(name = name, nrow = nrow, ncol = ncol, free = free ,values = values, labels = labels),
+    c(list(name = name, nrow = nrow, ncol = ncol, free = free ,values = values, labels = labels, byrow = byrow),
       dots[names(dots)])
   )
 }
