@@ -1,6 +1,4 @@
-growth_rate <- function(final_value, initial_value = 1, years) {
-	(final_value / initial_value) ** (1 / years) - 1
-}
+## to get a particular tag
 git fetch origin --tags
 git checkout v2.21.8   
 # OS X installation
@@ -48,4 +46,3 @@ system(paste0("open ", .libPaths()[1]))
 2. Run `xcode-select --install` in a terminal window to get standard C libraries etc
   * *note*: app store will update it thereafter.
 
-2023-09-29 07:34:10.218 R[38815:717019] WARNING: Secure coding is not enabled for restorable state! Enable secure coding by implementing NSApplicationDelegate.applicationSupportsSecureRestorableState: and returning YES.
