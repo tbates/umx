@@ -12,8 +12,12 @@ git checkout v2.21.8
 2. Install `Xcode` (on the App Store)
 4. Download and install `gfortran-nn.n-universal.pkg` from [https://cran.r-project.org](https://cran.r-project.org/bin/macosx/tools/)
 5. Clone OpenMx into `~/bin/OpenMx` (anywhere's fine, but this is standard)
-	* `git clone git://github.com/OpenMx/OpenMx.git`
-	* `cd OpenMx`
+
+	```
+git clone git://github.com/OpenMx/OpenMx.git
+cd OpenMx
+```
+
 6. Add (or create) the following to `mate ~/.R/Makevars`
 >
 CC    = /usr/bin/gcc
