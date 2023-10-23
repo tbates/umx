@@ -20,8 +20,6 @@ CXX1X = /usr/bin/g++
 FC    = /opt/gfortran/bin/gfortran
 F77   = /opt/gfortran/bin/gfortran
 
-8. You need the correct version of NPSOL for your build. It likely came inside the git repo at "~/bin/OpenMx/inst/npsol/osx/x86_64/libnpsol.a"
-	* If not, A copy might be available at the bottom of [https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository](https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository) which you would have to download, rename, and move into position.
 9. Install OpenMP
 	* https://mac.r-project.org/openmp/
 
@@ -33,8 +31,8 @@ LDFLAGS += -lomp
 ## Make and install OpenMx.
 Now you can make and install OpenMx.
 
-1. cd to `~/binOpenMx`
-2. run `make install`
+1. `cd ~/bin/OpenMx`
+2. `make install`
 3. optionally `make test` to validate (takes time)
 
 You can also odo this from inside R
@@ -42,10 +40,12 @@ You can also odo this from inside R
 devtools::build("~/bin/OpenMx", binary = TRUE)
 system(paste0("open ", .libPaths()[1]))
 
-*Notes*
-1. If the RMPI package fails to build with configure: error: "Cannot find mpi.h header file", then it will need to be installed. This used to be via a brew instruction: `brew install mpi`
+*Notes: Usually not necessary now*
 
+1. If the RMPI package fails to build with configure: error: "Cannot find mpi.h header file", then it will need to be installed. This used to be via a brew instruction: `brew install mpi`
 2. Run `xcode-select --install` in a terminal window to get standard C libraries etc
   * *note*: app store will update it thereafter.
+8. You need the correct version of NPSOL for your build. It likely came inside the git repo at "~/bin/OpenMx/inst/npsol/osx/x86_64/libnpsol.a"
+	* If not, A copy might be available at the bottom of [https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository](https://openmx.ssri.psu.edu/wiki/howto-build-openmx-source-repository) which you would have to download, rename, and move into position.  
 
 2023-09-29 07:34:10.218 R[38815:717019] WARNING: Secure coding is not enabled for restorable state! Enable secure coding by implementing NSApplicationDelegate.applicationSupportsSecureRestorableState: and returning YES.
