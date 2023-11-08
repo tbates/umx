@@ -54,7 +54,7 @@ Enhances:
 	psych,
 	psychTools,
 	pwr,
-	rmarkdown,
+	rmarkdown
 Suggests:
 	devtools,
 	rhub,
