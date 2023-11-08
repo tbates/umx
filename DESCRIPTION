@@ -1,6 +1,6 @@
 Package: umx
-Version: 4.17.0
-Date: 2023-10-01
+Version: 4.18.0
+Date: 2023-11-11
 Title: Structural Equation Modeling and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
@@ -26,39 +26,40 @@ Depends:
     OpenMx (>= 2.19.0)
 Imports:
 	ggplot2,
-    cowplot,
-    DiagrammeR,
+	cowplot,
+	DiagrammeR,
+	lavaan,
+	MASS,
+	Matrix,
+	methods,
+	MuMIn,
+	mvtnorm,
+	nlme,
+	polycor,
+	R2HTML,
+	RCurl,
+	scales,
+	utils,
+	xtable,
+	kableExtra,
+	knitr
+Enhances:
 	DiagrammeRsvg,
 	rsvg,
-    lavaan,
-    MASS,
-    Matrix,
-    methods,
-	MuMIn,
-    mvtnorm,
-    nlme,
-    polycor,
-    R2HTML,
-    RCurl,
-    scales,
-    utils,
-    xtable,
-    kableExtra,
-	knitr
-Suggests:
-    cocor,
-    devtools,
+	cocor,
 	gert,
 	hrbrthemes,
-    openxlsx,
+	openxlsx,
 	paran,
 	psych,
 	psychTools,
 	pwr,
-    rmarkdown,
+	rmarkdown,
+Suggests:
+	devtools,
 	rhub,
 	spelling,
-    testthat
+	testthat
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
 RoxygenNote: 7.2.3
