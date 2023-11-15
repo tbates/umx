@@ -49,12 +49,15 @@ Imports:
 	paran,
 	psych,
 	psychTools,
+	foreign,
 	pwr,
 	rmarkdown
 Enhances:
 	cocor,
 	DiagrammeRsvg,
-	rsvg
+	rsvg,
+	parallel,
+	GPArotation
 Suggests:
 	devtools,
 	rhub,
