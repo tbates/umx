@@ -25,9 +25,11 @@ Depends:
     R (>= 4.1.0),
     OpenMx (>= 2.19.0),
 Imports:
-	ggplot2,
 	cowplot,
 	DiagrammeR,
+	ggplot2,
+	kableExtra,
+	knitr,
 	lavaan,
 	MASS,
 	Matrix,
@@ -41,12 +43,6 @@ Imports:
 	scales,
 	utils,
 	xtable,
-	kableExtra,
-	knitr
-Enhances:
-	DiagrammeRsvg,
-	rsvg,
-	cocor,
 	gert,
 	hrbrthemes,
 	openxlsx,
@@ -55,6 +51,10 @@ Enhances:
 	psychTools,
 	pwr,
 	rmarkdown
+Enhances:
+	cocor,
+	DiagrammeRsvg,
+	rsvg
 Suggests:
 	devtools,
 	rhub,
