@@ -11,6 +11,7 @@ umxMatrixFree(
   free = FALSE,
   values = NA,
   labels = labels,
+  byrow = TRUE,
   ...
 )
 }
