@@ -16,15 +16,15 @@ fin_JustifiedPE(
 \arguments{
 \item{Dividend}{The dividend.}
 
-\item{EPS}{The Earnings per Share}
+\item{EPS}{The Earnings per Share.}
 
-\item{growthRate}{The growth rrate}
+\item{growthRate}{The growth rate.}
 
-\item{discountRate}{Your chosne discount rate}
+\item{discountRate}{Your chosen discount rate.}
 
-\item{basePE}{The base PE}
+\item{basePE}{The base PE.}
 
-\item{yrs}{Years}
+\item{yrs}{Years.}
 }
 \value{
 \itemize{

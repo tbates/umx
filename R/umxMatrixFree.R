@@ -11,11 +11,12 @@
 #' a matrix of labels, as well as a label name. 
 #' 
 #' @param name The name of the matrix: Must be set
-#' @param nrow Number of rows in the matrix: Optional
-#' @param ncol Number of columns in the matrix: Must be set
+#' @param nrow Number of rows in the matrix (Optional)
+#' @param ncol Number of columns in the matrix (Required)
 #' @param free Whether cells are free (Default FALSE)  
 #' @param values The values of the matrix (Default NA)
 #' @param labels The labels of the matrix (Default NA)
+#' @param byrow Default for byrow (TRUE)
 #' @param ...  Accepts all other arguments from [umxMatrix()]
 #' @return - [mxMatrix()]
 #' @export
@@ -35,9 +36,7 @@
 #'  # Will return a umxMatrix free at the eb2 and es2 positions.
 #'}
 
-umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, values = NA, labels = labels, byrow = TRUE,...){
-  
-  
+umxMatrixFree  <- function (name = name, nrow = NULL, ncol = NA, free = FALSE, values = NA, labels = labels, byrow = TRUE, ...){
   if (missing(nrow)) {
     if (!missing(free)) {nrow = dim(matrix(free, ncol = ncol))[1]}
     if (!missing(labels)) {nrow = dim(matrix(labels, ncol = ncol))[1]}

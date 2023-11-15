@@ -53,15 +53,15 @@
 #'
 #' @description
 #' Compute the Justified P/E of a stock.
-#' Justified P/E = [ (DPS / EPS) * (1 + g)] / (k – g)
+#' Justified P/E = ( (DPS / EPS) * (1 + g)) / (k – g)
 #' DPS is the dividend per share, EPS is the earnings per share,
 #' g is the sustainable growth rate, and k is the required rate of return.
 #' @param Dividend The dividend.
-#' @param EPS The Earnings per Share
-#' @param growthRate The growth rrate
-#' @param discountRate Your chosne discount rate
-#' @param basePE The base PE
-#' @param yrs Years
+#' @param EPS The Earnings per Share.
+#' @param growthRate The growth rate.
+#' @param discountRate Your chosen discount rate.
+#' @param basePE The base PE.
+#' @param yrs Years.
 #' @return - A PE that is justified for this stock.
 #' @export
 #' @family Miscellaneous Functions
@@ -3904,7 +3904,7 @@ xmu_dot_define_shapes <- function(latents, manifests, preOut= "") {
 #' Helper to make a graphviz rank string
 #'
 #' Given a list of names, this filters the list, and returns a graphviz string to force them into the given rank.
-#' e.g. "{rank=same; as1};"
+#' e.g. `"{rank=same; as1};"`
 #'
 #' @param vars a list of strings
 #' @param pattern regular expression to filter vars

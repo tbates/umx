@@ -71,8 +71,8 @@
 
 # #' @importFrom Base::charToRaw
 #' @importFrom DiagrammeR DiagrammeR grViz
-#' @importFrom DiagrammeRsvg export_svg
-#' @importFrom rsvg rsvg_png rsvg_pdf
+# #' @importFrom DiagrammeRsvg export_svg
+# #' @importFrom rsvg rsvg_png rsvg_pdf
 #' @importFrom graphics plot abline
 #' @importFrom methods as getSlots is slotNames setClass
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases

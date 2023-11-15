@@ -2098,14 +2098,14 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 			grViz(diagram = file, engine = "dot", allow_subst = TRUE, options = NULL, width = NULL, height = NULL)
 			# print(DiagrammeR(diagram = file, type = "grViz")) # 2021-08-09 issue https://github.com/tbates/umx/issues/149
 		}else if(umx_set_plot_format(silent=TRUE) %in%  c("pdf", "svg", "png")){
-			tmp = export_svg(grViz(file)) #export as SVG
+			tmp = DiagrammeRsvg::export_svg(grViz(file)) #export as SVG
 			raw = charToRaw(tmp) # flatten
 			if(umx_set_plot_format(silent=TRUE) == "pdf"){
 				fileName = paste0(model$name, ".pdf")
-				rsvg_pdf(raw, fileName) # save as pdf
+				rsvg::rsvg_pdf(raw, fileName) # save as pdf
 			} else if(umx_set_plot_format(silent=TRUE) == "png"){
 				fileName = paste0(model$name, ".png")
-				rsvg_png(raw, fileName) # save as png in current working directory
+				rsvg::rsvg_png(raw, fileName) # save as png in current working directory
 			} else if(umx_set_plot_format(silent=TRUE) == "svg"){
 				fileName = paste0(model$name, ".svg")
 				cat(tmp, file = fileName)

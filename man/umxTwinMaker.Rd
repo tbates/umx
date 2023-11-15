@@ -15,19 +15,19 @@ umxTwinMaker(
 )
 }
 \arguments{
-\item{name}{The name for the resulting \code{\link[=umxSuperModel]{umxSuperModel()}} (Default "m1")}
+\item{name}{The name for the resulting \code{\link[=umxSuperModel]{umxSuperModel()}} (Default "m1").}
 
-\item{paths}{A vector of \code{\link[=umxPath]{umxPath()}}s describing one person}
+\item{paths}{A vector of \code{\link[=umxPath]{umxPath()}}s describing one person.}
 
 \item{t1_t2links}{base name (and values) of paths that covary between T1 and T2. Default: c('a'=c(1,.5), 'c'=c(1,1), 'e'=c(0,0))}
 
-\item{mzData}{Data for MZ twins}
+\item{mzData}{Data for MZ twins.}
 
-\item{dzData}{Data for DZ twins}
+\item{dzData}{Data for DZ twins.}
 
 \item{sep}{The separator used to create twin 1 and 2 names (Default "_T")}
 
-\item{autoRun}{Wether to run the supermodel before returning it.}
+\item{autoRun}{Whether to run the supermodel before returning it.}
 }
 \value{
 \itemize{
