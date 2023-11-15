@@ -52,17 +52,17 @@ Imports:
 	foreign,
 	pwr,
 	rmarkdown
-Enhances:
-	cocor,
-	DiagrammeRsvg,
-	rsvg,
-	parallel,
-	GPArotation
 Suggests:
+	cocor,
 	devtools,
 	rhub,
 	spelling,
-	testthat
+	testthat,
+	parallel,
+	GPArotation
+Enhances:
+	DiagrammeRsvg,
+	rsvg
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
 RoxygenNote: 7.2.3
