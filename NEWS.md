@@ -1,5 +1,10 @@
 ## dev umx 4.25.00
 
+## umx 4.19.00
+* November 2023 R 4.3.1 (2023-06-16)
+* FIXED: encode unicode beta in an `expression` instead of using uXXXX
+* IMPROVED: Move DiagrammeRsvg rsvg to Enhances
+
 ## umx 4.17.00
 * Sept 2023 R 4.3.1 (2023-09-15)
 * NEW: `fin_ticker` open a stock in the browser.
