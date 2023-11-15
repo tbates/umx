@@ -24,7 +24,6 @@ Description: Quickly create, run, and report structural equation models, and twi
 Depends:
     R (>= 4.1.0),
     OpenMx (>= 2.19.0),
-	Matrix (>= 1.6-2)
 Imports:
 	ggplot2,
 	cowplot,
