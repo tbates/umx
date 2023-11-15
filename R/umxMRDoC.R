@@ -48,8 +48,10 @@
 #'	pheno = c("varA1", "varA2"), prss = c("varB1", "varA3") )
 #'}
 umxMRDoC <- function(pheno, prss, mzData = NULL, dzData = NULL, data = NULL, zyg = NULL, sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
-  if (missing(data) && missing(mzData) && missing(dzData)) sketch = TRUE
+
   sketch = FALSE
+  if (missing(data) && missing(mzData) && missing(dzData)) sketch = TRUE
+
 
   tryHard = match.arg(tryHard)
 
