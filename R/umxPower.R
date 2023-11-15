@@ -374,9 +374,11 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 				estimatedN = round(attributes(est)$detail$n, digits)
 
 				# use powersearch from tmp to plot power across the range of N
-				p = ggplot(data = tmp, aes(x= N, y= power)) + geom_line(color = "red", size = .5, alpha = 0.9)
+				p = ggplot(data = tmp, aes(x= N, y= power)) + geom_line(color = "red", linewidth = .5, alpha = 0.9)
 				p = p + geom_point()
-				p = p + labs(x= "Sample Size (N)", y= "Power = 1 - \U03B2",
+				# encode beta in an expression instead of using u-code
+				p = p + labs(x= "Sample Size (N)", y= expression(paste("Power = 1 - ",beta)),
+				# p = p + labs(x= "Sample Size (N)", y= "Power = 1 - \U03B2",
 				   title = paste0("Statistical power to detect true model"),
 			       subtitle = paste0("Alpha = ", sig.level),
 			       caption = paste0("List of changed paths: ", omxQuotes(update))
@@ -395,7 +397,7 @@ umxPower <- function(trueModel, update= NULL, n= NULL, power = NULL, sig.level= 
 				p = p + geom_point()
 				p = p + labs(
 				   x        = paste0("Effect Size (", omxQuotes(update), ")"), 
-				   y        = "Power = 1 - \U03B2",
+				   y        = expression(paste("Power = 1 - ", beta)),
 				   title    = paste0("Statistical power with N = ", n),
 			       subtitle = paste0("Alpha = ", sig.level)
 				) 

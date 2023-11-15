@@ -18,7 +18,7 @@ string
 }
 \description{
 Given a list of names, this filters the list, and returns a graphviz string to force them into the given rank.
-e.g. "{rank=same; as1};"
+e.g. \code{"{rank=same; as1};"}
 }
 \examples{
 xmu_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")

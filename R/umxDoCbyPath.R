@@ -110,13 +110,13 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' Rule 2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
 #' To avoid clashes, variables must not match the numbered variables in `t1_t2links`  - by default names like "a1" are reserved for ace.
 #' 
-#' @param name The name for the resulting [umxSuperModel()] (Default "m1")
-#' @param paths A vector of [umxPath()]s describing one person
+#' @param name The name for the resulting [umxSuperModel()] (Default "m1").
+#' @param paths A vector of [umxPath()]s describing one person.
 #' @param t1_t2links base name (and values) of paths that covary between T1 and T2. Default: c('a'=c(1,.5), 'c'=c(1,1), 'e'=c(0,0))
-#' @param mzData Data for MZ twins
-#' @param dzData Data for DZ twins
+#' @param mzData Data for MZ twins.
+#' @param dzData Data for DZ twins.
 #' @param sep The separator used to create twin 1 and 2 names (Default "_T")
-#' @param autoRun Wether to run the supermodel before returning it.
+#' @param autoRun Whether to run the supermodel before returning it.
 #' @return - [umxSuperModel()]
 #' @export
 #' @family Twin Modeling Functions

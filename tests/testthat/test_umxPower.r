@@ -63,16 +63,18 @@ test_that("umxPower works", {
 	
 	# Drop more than 1 path
 	umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'ncp', n=90, explore = FALSE)
+
 	expect_error(
 		# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
 		umxPower(m1, update = c("c_r1c1", "age_b_Var1"), method = 'empirical', n=90, explore = TRUE),
 		regex = "fixed n only works for updates of 1 parameter"
 	)
 
-	# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
-	# note: Can't use method = "ncp" with search)
 	expect_error(
-		umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
+		# Specify only 1 parameter (not 'age_b_Var1' and 'c_r1c1' ) to search a parameter:power relationship
+		# note: Can't use method = "ncp" with search)
+		umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE),
+		regex = "Cannot generate data with trueModel"
 	)
 # Definition variable(s) found, but the number of rows in the data do not match the number of rows requested for data generation" # rows in the data do not match the number of rows requested
 	# note: Can't use method = "ncp" with search)

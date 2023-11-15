@@ -61,7 +61,9 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 	# p = p + geom_abline(slope = 1, intercept = 0, linetype = "dotdash", color = "grey")
 	# p = p + geom_vline(xintercept = 0, linetype = "dotted", color = "grey")
 	p = p + geom_hline(yintercept = 0, linetype = "dotted", color = "grey")
-	if(any(!is.na(xylim))){
+	if(any(is.na(xylim))){
+		#xylim not set or not valid
+	}else{
 		p = p + coord_cartesian(xlim = xylim, ylim = xylim, expand = FALSE)
 	}
 	

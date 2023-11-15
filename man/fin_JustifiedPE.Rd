@@ -16,15 +16,15 @@ fin_JustifiedPE(
 \arguments{
 \item{Dividend}{The dividend.}
 
-\item{EPS}{The Earnings per Share}
+\item{EPS}{The Earnings per Share.}
 
-\item{growthRate}{The growth rrate}
+\item{growthRate}{The growth rate.}
 
-\item{discountRate}{Your chosne discount rate}
+\item{discountRate}{Your chosen discount rate.}
 
-\item{basePE}{The base PE}
+\item{basePE}{The base PE.}
 
-\item{yrs}{Years}
+\item{yrs}{Years.}
 }
 \value{
 \itemize{
@@ -33,7 +33,7 @@ fin_JustifiedPE(
 }
 \description{
 Compute the Justified P/E of a stock.
-Justified P/E = \link{ (DPS / EPS) * (1 + g)} / (k – g)
+Justified P/E = ( (DPS / EPS) * (1 + g)) / (k – g)
 DPS is the dividend per share, EPS is the earnings per share,
 g is the sustainable growth rate, and k is the required rate of return.
 }

@@ -7,7 +7,7 @@
 context("umxFactorScores")
 
 test_that("umx_scale works for different inputs", {
-	data(mttcars)
+	data(mtcars)
 	m1 = umxEFA(mtcars, factors = 2)
 	x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 	# =========================================================================

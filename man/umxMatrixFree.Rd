@@ -11,21 +11,24 @@ umxMatrixFree(
   free = FALSE,
   values = NA,
   labels = labels,
+  byrow = TRUE,
   ...
 )
 }
 \arguments{
 \item{name}{The name of the matrix: Must be set}
 
-\item{nrow}{Number of rows in the matrix: Optional}
+\item{nrow}{Number of rows in the matrix (Optional)}
 
-\item{ncol}{Number of columns in the matrix: Must be set}
+\item{ncol}{Number of columns in the matrix (Required)}
 
 \item{free}{Whether cells are free (Default FALSE)}
 
 \item{values}{The values of the matrix (Default NA)}
 
 \item{labels}{The labels of the matrix (Default NA)}
+
+\item{byrow}{Default for byrow (TRUE)}
 
 \item{...}{Accepts all other arguments from \code{\link[=umxMatrix]{umxMatrix()}}}
 }
