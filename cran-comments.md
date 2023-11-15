@@ -1,5 +1,7 @@
 ## Changes
-Fix a non-working feature for a user.
+umx was archived from CRAN without notice to me (due to an update of OpenMx).
+
+This version fixes a handful of warnings and should get it reinstated.
 
 ## Test environments
 * MacOS 14.0, R version 4.3.1 (2023-06-16)
@@ -11,5 +13,5 @@ Fix a non-working feature for a user.
 
 ## No Downstream dependencies
 
-Many thanks once more!
-Tim
+Thank you,
+Prof. Timothy Bates

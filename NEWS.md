@@ -4,6 +4,8 @@
 * November 2023 R 4.3.1 (2023-06-16)
 * FIXED: encode unicode beta in an `expression` instead of using uXXXX
 * IMPROVED: Move DiagrammeRsvg rsvg to Enhances
+* FIXED: `umxMatrixFree` undocumented argument 'byrow'
+* FIXED: `umxMRDoC` sketch mode fixed
 
 ## umx 4.17.00
 * Sept 2023 R 4.3.1 (2023-09-15)
