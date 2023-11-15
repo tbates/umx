@@ -1,9 +1,25 @@
+```R
 growth_rate <- function(final_value, initial_value = 1, years) {
 	(final_value / initial_value) ** (1 / years) - 1
 }
+```
+
 git fetch origin --tags
 git checkout v2.21.8   
+
 # OS X installation
+
+## Make and install OpenMx.
+Now you can make and install OpenMx.
+
+1. cd to `~/binOpenMx`
+2. run `make install`
+3. optionally `make test` to validate (takes time)
+
+You can also do this from inside R
+> 
+devtools::build("~/bin/OpenMx", binary = TRUE)
+system(paste0("open ", .libPaths()[1]))
 
 ## Install needed software
 1. Install R and OpenMx's required packages.
@@ -30,17 +46,7 @@ CPPFLAGS += -Xclang -fopenmp
 LDFLAGS += -lomp
 ```
 
-## Make and install OpenMx.
-Now you can make and install OpenMx.
 
-1. cd to `~/binOpenMx`
-2. run `make install`
-3. optionally `make test` to validate (takes time)
-
-You can also odo this from inside R
-> 
-devtools::build("~/bin/OpenMx", binary = TRUE)
-system(paste0("open ", .libPaths()[1]))
 
 *Notes*
 1. If the RMPI package fails to build with configure: error: "Cannot find mpi.h header file", then it will need to be installed. This used to be via a brew instruction: `brew install mpi`
