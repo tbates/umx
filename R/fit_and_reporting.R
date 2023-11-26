@@ -3333,14 +3333,24 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 		}
 	}
 	suppressMessages({MI = mxMI(model = model, matrices = matrices, full = full)})
-	if(full){
-		MIlist = MI$MI.Full
+	if(typeof(MI)[1]=="list"){
+		# old style
+		if(full){
+			MIlist = MI$MI.Full
+		} else {
+			MIlist = MI$MI
+		}
 	} else {
-		MIlist = MI$MI
+		# dataframe for Nov 2023 OpenMx 6b2cc13d1d17843b505bf4fb295c73bb8a1212b5
+		if(full){
+			MIlist = MI[, "MI.Full"]
+		} else {
+			MIlist = MI[, "MI"]
+		}
 	}
 	if(is.na(numInd)){
 		thresh = qchisq(p = (1 - 0.01), df = 1) # 6.63
-		# check how many
+		# check how many sig
 		nSig = length(MIlist[MIlist > thresh])
 		if(nSig < 1){
 			# nothing significant, display top 3 or so
