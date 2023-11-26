@@ -1847,7 +1847,7 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("um
 	}
 	OpenMx_vers = mxVersion(model = model, verbose = verbose)	
     if (verbose) {
-		message('You can update OpenMx with:\ninstall.OpenMx(c("NPSOL", "travis", "CRAN", "open travis build page")')
+		message('Open the CRAN page for any package with umx_open_CRAN_page()\nYou can update OpenMx with:\ninstall.OpenMx(c("NPSOL", "travis", "CRAN", "open travis build page")')
     }
 
 	if(return == "umx"){
