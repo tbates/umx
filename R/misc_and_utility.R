@@ -7692,9 +7692,16 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 	if(!is.null(df)){
 		umx_check_names(namesNeeded = by.df, data = df)
 		umx_check_names(namesNeeded = by.demog, data = newdf)
-		newdf = merge(df, newdf[, c(by.demog, age, sex, vars)], by.x = by.df, by.y = by.demog, all.x = all.df, all.y = all.demog)
+		newdf = merge(df, newdf[, c(by.demog, age, sex, vars)], by.x = by.df, by.y = by.demog, all.x = all.df, all.y = all.demog, suffixes = c("", ".y"))
 	}else{
 		newdf = newdf[, c(by.demog, age, sex, vars)]
+	}
+
+	if(age %in% namez(df)){
+		age = paste0(age, ".y")
+	}
+	if(sex %in% namez(df)){
+		sex = paste0(sex, ".y")
 	}
 	# May as well print out a nice subjects section...
 	print(umx_aggregate(eval(parse(text= paste0(age, "~", sex))), data = newdf))
