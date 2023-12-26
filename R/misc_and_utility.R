@@ -7668,7 +7668,7 @@ umx_file_load_pseudo <- function(fn, bp, suffix = "_NT", chosenp = "S5") {
 #' \dontrun{
 #' fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
 #' df = prolific_read_demog(fp, sex = "Gender", age = "Age", df = df)
-#' tmp = prolific_read_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
+#' tmp = prolific_read_demog(fp, by.df = "PROLIFIC_PID", vars=c("Ethnicity.simplified"))
 #' }
 prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PID", by.demog = "Participant.id", age = "age", sex = "Gender", vars= NULL, all.df = TRUE, all.demog = FALSE, verbose = FALSE) {
 	if(base != "") file = paste0(base, file)
@@ -7678,10 +7678,17 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 	if(!allNames){
 		print(paste0("Asked for: ", omxQuotes(c(vars,age, sex))))
 		print(namez(newdf))
-		stop("Names missing")
+		stop("At least one name missing")
 	}
 
 	# Replace "CONSENT_REVOKED" with NA
+	# TODO check each var name?
+	tmp = newdf[, allNames]
+	bad = tmp == "CONSENT_REVOKED"
+	tmp[bad] = NA
+	newdf[, allNames] = tmp
+	# repair age if needed
+	newdf[, age] = as.numeric(newdf[, age])
 	if(!is.null(df)){
 		umx_check_names(namesNeeded = by.df, data = df)
 		umx_check_names(namesNeeded = by.demog, data = newdf)
@@ -7694,7 +7701,7 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 	tmp = newdf; tmp$one = 1
 	# "Man (including Trans Male/Trans Man)"
 	print(umx_aggregate(eval(parse(text= paste0(age, " ~ one"))), data = tmp))
-	umx_msg("Subjects were n prolific volunteers ( m  male f female, mean age  yrs years)")
+	message("Subjects were n prolific volunteers ( m  male f female, mean age  yrs years)")
 	invisible(newdf)
 }
 
