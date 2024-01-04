@@ -7743,7 +7743,7 @@ prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOf
 	}
 
 	isPIDInNames    = umx_check_names(PID, df, die = FALSE)
-	areExtrasFound = umx_check_names(extraColumns, df, die = FALSE)
+	areExtrasFound = umx_check_names(extraColumns, df, die = TRUE)
 	
 	if(isPIDInNames){
 		# Anonymise the PID column
