@@ -7936,8 +7936,10 @@ xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
 
 			# Set NA if FALSE
 			lowScores = data[,thisBinName] == "low"
-			data[lowScores , thisVarName] = NA
-			data[!lowScores, thisBinName] = NA
+			lowScoreRows = which(lowScores)
+			data[lowScoreRows, thisVarName] = NA
+			nonLowScoreRows = which(!lowScores)
+			data[nonLowScoreRows, thisBinName] = NA
 		}
 		var_i = var_i + 1
 	}
