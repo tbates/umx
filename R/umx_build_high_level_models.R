@@ -227,7 +227,15 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 			print(newLoadings) # print out the nice rotation result
 			rm = newLoadings$rotmat
 			print("Factor Correlation Matrix")
-			print(solve(t(rm) %*% rm))
+			junk = tryCatch({
+				print(solve(t(rm) %*% rm))
+			}, warning = function(x) {
+				umx_msg("Warning while printing factor correlation matrix: It may not be valid", x)
+			}, error = function(x) {
+				umx_msg("Error: Can't print factor correlation matrix: It may not be valid", x)
+			}, finally={
+			    # ignored
+			})
 		}
 		# stash the rotated result in the model A matrix
 		m1$A$values[manifests, factors] = newLoadings$loadings[1:nManifests, 1:nFac] 
