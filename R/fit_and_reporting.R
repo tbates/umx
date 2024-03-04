@@ -377,6 +377,10 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' 
 #' }
 umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, digits = 2, ...) {
+	
+	# override umx_set_auto_run
+	oldAutoRun = umx_set_auto_run(autoRun = FALSE)
+	
 	report  = match.arg(report)
 	tryHard = match.arg(tryHard)
 	if(silent){
@@ -450,6 +454,8 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	}
 	umx_set_auto_plot(oldAutoPlot, silent = TRUE)
 	umx_set_silent(oldSilent)
+	umx_set_auto_run(autoRun = oldAutoRun)
+	
 	invisible(bestModel)
 }
 #' @export
