@@ -19,17 +19,17 @@ prolific_read_demog(
 )
 }
 \arguments{
-\item{file}{Path to a file to read.}
+\item{file}{Path to demographics file.}
 
 \item{base}{Optional path to folder, in which case 'file' is just filename.}
 
 \item{df}{Existing datafile to merge demographics into (optional)}
 
-\item{by.df}{The ID name in existing datafile (default = "PROLIFIC_PID"}
+\item{by.df}{The ID name in existing df (default = "PROLIFIC_PID")}
 
 \item{by.demog}{The ID name in the prolific demographics file (default = "Participant id" was \code{by.demog})}
 
-\item{age}{Name of sex var in demographics file ("age")}
+\item{age}{Name of age var in demographics file ("age")}
 
 \item{sex}{Name of sex var in demographics file ("Sex")}
 
@@ -54,7 +54,7 @@ using PID and participant_id
 \dontrun{
 fp = "~/Desktop/prolific_export_5f20c3e662e3b6407dcd37a5.csv"
 df = prolific_read_demog(fp, sex = "Gender", age = "Age", df = df)
-tmp = prolific_read_demog(fp, by.df = "PROLIFIC_PID", vars=c("EthnicitySimplified"))
+tmp = prolific_read_demog(fp, by.df = "PROLIFIC_PID", vars=c("Ethnicity.simplified"))
 }
 }
 \references{

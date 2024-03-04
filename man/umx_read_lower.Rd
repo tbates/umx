@@ -7,14 +7,13 @@
 umx_read_lower(file = "", diag = TRUE, names = NULL, ensurePD = FALSE)
 }
 \arguments{
-\item{file}{Path to a file to read (Default "" will read from user input)}
+\item{file}{Path to file (Default "" will read from user input)}
 
-\item{diag}{Whether the data include the diagonal. Defaults to TRUE}
+\item{diag}{Whether data include diagonal (Default TRUE)}
 
-\item{names}{The default names for the variables.
-Defaults to as.character(paste("X", 1:n, sep=""))}
+\item{names}{Variable names. (Default as.character(paste0("X", 1:n)) )}
 
-\item{ensurePD}{Whether to coerce the resultant matrix to positive definite (Defaults to FALSE)}
+\item{ensurePD}{Whether to coerce the resultant matrix to positive definite (Default FALSE)}
 }
 \value{
 \itemize{

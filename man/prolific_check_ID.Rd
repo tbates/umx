@@ -17,7 +17,7 @@ prolific_check_ID(IDs, df, IDcol = "PROLIFIC_PID")
 - list of IDs in the dataframe
 }
 \description{
-prolific participants can time out but still be in the dataframe. This identifies them.
+Participants may time-out on Prolific, but still complete on Qualtrics. This identifies them.
 }
 \examples{
 # IDs = c("59d0ec2446447f00011edb063","5a08c9a7f2e3460001edb063f0254")

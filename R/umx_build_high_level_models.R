@@ -230,9 +230,11 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 			junk = tryCatch({
 				print(solve(t(rm) %*% rm))
 			}, warning = function(x) {
-				umx_msg("Warning while printing factor correlation matrix: It may not be valid", x)
+				umx_msg("Warning while printing factor correlation matrix: It may not be valid")
+				umx_msg(x)
 			}, error = function(x) {
-				umx_msg("Error: Can't print factor correlation matrix: It may not be valid", x)
+				umx_msg("Error: Can't print factor correlation matrix: It may not be valid")
+				umx_msg(x)
 			}, finally={
 			    # ignored
 			})
