@@ -207,6 +207,7 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 libs <- function(... , force.update = FALSE) {
 	dot.items = list(...) # grab all the dot items
 	dot.items = unlist(dot.items) # In case any dot items are lists
+	
 	for (pack in dot.items) {
 		result = tryCatch({
 			if(force.update){
