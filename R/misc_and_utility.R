@@ -207,6 +207,7 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 libs <- function(... , force.update = FALSE) {
 	dot.items = list(...) # grab all the dot items
 	dot.items = unlist(dot.items) # In case any dot items are lists
+	
 	for (pack in dot.items) {
 		result = tryCatch({
 			if(force.update){
@@ -7705,13 +7706,40 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 	if(sex %in% namez(df)){
 		sex = paste0(sex, ".y")
 	}
+
 	# May as well print out a nice subjects section...
-	print(umx_aggregate(eval(parse(text= paste0(age, "~", sex))), data = newdf))
-	tmp = newdf; tmp$one = 1
 	# "Man (including Trans Male/Trans Man)"
-	print(umx_aggregate(eval(parse(text= paste0(age, " ~ one"))), data = tmp))
-	message("Subjects were n prolific volunteers ( m  male f female, mean age  yrs years)")
+
+	jnk = umx_aggregate(eval(parse(text= paste0(age, "~", sex))), data = newdf)
+	print(jnk)
+
+	
+	fStr = namez(xmu_read.markdown(jnk)[1,1], pattern = ".*Female \\(n = ([0-9]+)\\)", replacement = "\\1") # "Female (n = 351)"
+	mStr = namez(xmu_read.markdown(jnk)[2,1], pattern =   ".*Male \\(n = ([0-9]+)\\)", replacement = "\\1") # "Male (n = 351)"
+
+	tmp = newdf; tmp$one = 1
+	jnk = umx_aggregate(eval(parse(text= paste0(age, " ~ one"))), data = tmp)
+	print(jnk)
+	Nstr = namez(xmu_read.markdown(jnk)[1,1], pattern = "1 \\(n = ([0-9]+)\\)", replacement = "\\1") # "1 (n = 703)"
+	ageStr = xmu_read.markdown(jnk)[1,2] # "48.32 (12.92)"
+	message(paste0("Subjects were ", Nstr, " prolific volunteers (", mStr," male, ", fStr, " female; mean age ", ageStr , " years)"))
+	# "Subjects were n prolific volunteers ( m  male f female, mean age  yrs years)"
 	invisible(newdf)
+}
+
+xmu_read.markdown <- function(file, stringsAsFactors = FALSE, strip.white = TRUE, ...){
+    if (length(file) > 1) {
+        lines <- file
+    } else if (grepl('\n', file)) {
+        con <- textConnection(file)
+        lines <- readLines(con)
+        close(con)
+    } else {
+        lines <- readLines(file)
+    }
+    lines <- lines[!grepl('^[[:blank:]+-=:_|]*$', lines)]
+    lines <- gsub('(^\\s*?\\|)|(\\|\\s*?$)', '', lines)
+    read.delim(text = paste(lines, collapse = '\n'), sep = '|', stringsAsFactors = stringsAsFactors, strip.white = strip.white, ...)
 }
 
 #' Clean up a prolific file for sharing by removing anonymity-compromising columns.

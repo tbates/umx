@@ -1,4 +1,12 @@
-## dev umx 4.25.00
+## dev
+
+## umx 4.20.00
+* March 2024 R 4.3.3 (2024-02-29)
+* IMPROVED: `umxMR` can standardize the manifests.
+* IMPROVED: `prolific_read_demog`
+* IMPROVED: `prolific_anonymize` can delete more columns.
+* IMPROVED: various messages, and help improvements.
+* FIXED: `umxReduce.ACE` now aware of `umx_set_auto_run` #241 @lf-araujo
 
 ## umx 4.19.00
 * November 2023 R 4.3.1 (2023-06-16)
