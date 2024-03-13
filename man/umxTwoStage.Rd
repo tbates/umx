@@ -9,6 +9,7 @@ umxTwoStage(
   formula = Y ~ X,
   instruments = ~qtl,
   data,
+  std = FALSE,
   subset,
   contrasts = NULL,
   name = "IV_model",
@@ -23,11 +24,13 @@ umxTwoStage(
 
 \item{data}{Frame containing the variables in the model.}
 
+\item{std}{Standardize the manifests before running model (default is FALSE)}
+
 \item{subset}{(optional) vector specifying a subset of observations to be used in fitting the model.}
 
-\item{contrasts}{an optional list (not supported)}
+\item{contrasts}{An optional list (not supported)}
 
-\item{name}{for the model (default = "IVmodel")}
+\item{name}{The model name (default is "IVmodel")}
 
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
@@ -48,22 +51,20 @@ analysis showing the utility of SEM over two-stage regression.
 
 The following figure shows how the MR model appears as a path diagram:
 
-\if{html}{\figure{TSLS.png}{options: width=50\% alt="Figure: Mendelian Randomisation analysis.png"}}
+\if{html}{\figure{TSLS.png}{options: width=50\% alt="Figure: Mendelian Randomization analysis.png"}}
 \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
 }
 \examples{
 \dontrun{
-library(umx)
-
-
 # ====================================
 # = Mendelian Randomization analysis =
 # ====================================
 
+library(umx)
 df = umx_make_MR_data(10e4)
 m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 parameters(m1)
-plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
+plot(m1, means = FALSE, min="") # help DiagrammR layout the plot.
 m2 = umxModify(m1, "qtl_to_X", comparison=TRUE, tryHard="yes", name="QTL_affects_X") # yip
 m3 = umxModify(m1, "X_to_Y"  , comparison=TRUE, tryHard="yes", name="X_affects_Y") # nope
 plot(m3, means = FALSE)
@@ -71,7 +72,6 @@ plot(m3, means = FALSE)
 # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
 m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
 m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
-
 
 df = umx_make_MR_data(10e4) 
 m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)

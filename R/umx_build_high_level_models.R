@@ -333,17 +333,18 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' 
 #' The following figure shows how the MR model appears as a path diagram:
 #' 
-#' \if{html}{\figure{TSLS.png}{options: width=50% alt="Figure: Mendelian Randomisation analysis.png"}}
+#' \if{html}{\figure{TSLS.png}{options: width=50% alt="Figure: Mendelian Randomization analysis.png"}}
 #' \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
 
 #' @aliases umxMR
 #' @param formula The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.
 #' @param instruments A one-sided formula specifying instrumental variables (default = qtl).
 #' @param data Frame containing the variables in the model.
+#' @param std Standardize the manifests before running model (default is FALSE)
+#' @param name The model name (default is "IVmodel")
 #' @param subset (optional) vector specifying a subset of observations to be used in fitting the model.
-#' @param contrasts	an optional list (not supported)
-#' @param name for the model (default = "IVmodel")
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param contrasts An optional list (not supported)
 #' @param ...	arguments to be passed along. (not supported)
 #' @return - [mxModel()]
 #' @export
@@ -356,17 +357,15 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @md
 #' @examples
 #' \dontrun{
-#' library(umx)
-#' 
-#' 
 #' # ====================================
 #' # = Mendelian Randomization analysis =
 #' # ====================================
 #' 
+#' library(umx)
 #' df = umx_make_MR_data(10e4)
 #' m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 #' parameters(m1)
-#' plot(m1, means = FALSE, min="") # help DiagrammaR layout the plot.
+#' plot(m1, means = FALSE, min="") # help DiagrammR layout the plot.
 #' m2 = umxModify(m1, "qtl_to_X", comparison=TRUE, tryHard="yes", name="QTL_affects_X") # yip
 #' m3 = umxModify(m1, "X_to_Y"  , comparison=TRUE, tryHard="yes", name="X_affects_Y") # nope
 #' plot(m3, means = FALSE)
@@ -374,7 +373,6 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
 #' m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
 #' m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
-#'
 #'
 #' df = umx_make_MR_data(10e4) 
 #' m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
@@ -390,7 +388,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
-umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, contrasts= NULL, name = "IV_model", tryHard = c("no", "yes", "ordinal", "search"), ...) {
+umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, std = FALSE, subset, contrasts= NULL, name = "IV_model", tryHard = c("no", "yes", "ordinal", "search"), ...) {
 	# tryHard = match.arg(tryHard)
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxMR: e-mail maintainer('umx') to prioritize")	
 	if(!inherits(formula, "formula")){
@@ -409,6 +407,10 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, subset, contra
 	manifests <- c(allForm, inst)     # manifests <- c("qtl", "X", "Y")
 	latentErr <- paste0("e", allForm) # latentErr <- c("eX", "eY")
 	umx_check_names(manifests, data = data, die = TRUE)
+
+	if(std){
+		data = umx_scale(data, varsToScale = manifests)
+	}
 
 	IVModel = umxRAM(name, data = data, tryHard = tryHard,
 		# Causal and confounding paths

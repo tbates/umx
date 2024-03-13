@@ -5468,7 +5468,9 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
-#' data(twinData) 
+#' data(twinData)
+#' # note: this example is here to remind us why scaling independently for each 
+#' # twin would be very bad! Use  umx_scale_wide_twin_data() instead!
 #' df = umx_scale(twinData, varsToScale = c("wt1", "wt2"))
 #' df = umx_scale(twinData,  attr= TRUE)
 #' plot(wt1 ~ wt2, data = df)
