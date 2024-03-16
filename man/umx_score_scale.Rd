@@ -74,6 +74,7 @@ Items must be named on the pattern \code{basename + N + suffix}, where \code{bas
 To reverse items, the function uses \code{max} and \code{min} as the lowest and highest possible response scores to compute how to reverse items.
 
 \emph{note}: \code{min} defaults to 1.
+\strong{TIP}: If you have strings, \code{umx_score_scale} will work (use \verb{mapStrings = }). \emph{BUT} if you want to make a numeric copy, use \code{umx_strings2numeric}
 }
 \details{
 In the presence of NAs, \code{score= "mean"} and \code{score = "totals"} both return NA unless na.rm = TRUE.

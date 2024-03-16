@@ -1561,6 +1561,7 @@ umxParan <- function(df, cols= NA, graph = TRUE, mapStrings = NULL) {
 #' To reverse items, the function uses `max` and `min` as the lowest and highest possible response scores to compute how to reverse items.
 #' 
 #' *note*: `min` defaults to 1.
+#' **TIP**: If you have strings, `umx_score_scale` will work (use `mapStrings = `). *BUT* if you want to make a numeric copy, use `umx_strings2numeric`
 #' 
 #' @param base String common to all item names.
 #' @param pos The positive-scored item numbers.
