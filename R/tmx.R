@@ -81,7 +81,8 @@
 #' tmx_genotypic_effect(p = .5, q =.5, a =.5, d = 1, m = 0)
 #'
 #' p = tmx_genotypic_effect(p = .5, q = .5, a = 1, d = .5, m = 0, show = TRUE); 
-#' # p + ggplot2::geom_point() + ggplot2::geom_text(hjust = 0, nudge_x = 0.05)
+#' # p = p + ggplot2::geom_point() 
+#' # p + ggplot2::geom_text(hjust = 0, nudge_x = 0.05, label= "x")
 #' # ggsave(paste0(base, "c03_genotypic_effect_by_gene_dose.pdf"), width = 4.6, height = 4.6)
 #' }
 #' 
