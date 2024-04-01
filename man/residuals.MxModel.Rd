@@ -65,16 +65,16 @@ a = residuals(m1); a
 }
 \seealso{
 Other Reporting functions: 
+\code{\link{RMSEA}()},
 \code{\link{RMSEA.MxModel}()},
 \code{\link{RMSEA.summary.mxmodel}()},
-\code{\link{RMSEA}()},
 \code{\link{extractAIC.MxModel}()},
-\code{\link{loadings.MxModel}()},
 \code{\link{loadings}()},
-\code{\link{tmx_show.MxMatrix}()},
+\code{\link{loadings.MxModel}()},
 \code{\link{tmx_show}()},
-\code{\link{umxCI_boot}()},
+\code{\link{tmx_show.MxMatrix}()},
 \code{\link{umxCI}()},
+\code{\link{umxCI_boot}()},
 \code{\link{umxConfint}()},
 \code{\link{umxExpCov}()},
 \code{\link{umxExpMeans}()},

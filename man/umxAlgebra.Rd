@@ -67,12 +67,12 @@ class(x$formula) # "call"
 }
 
 Other Advanced Model Building Functions: 
+\code{\link{umx}},
 \code{\link{umxFixAll}()},
 \code{\link{umxJiggle}()},
 \code{\link{umxRun}()},
 \code{\link{umxThresholdMatrix}()},
 \code{\link{umxUnexplainedCausalNexus}()},
-\code{\link{umx}},
 \code{\link{xmuLabel}()},
 \code{\link{xmuValues}()}
 }

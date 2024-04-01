@@ -105,10 +105,10 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 }
 
 Other Core Model Building Functions: 
+\code{\link{umx}},
 \code{\link{umxModify}()},
 \code{\link{umxPath}()},
 \code{\link{umxRAM}()},
-\code{\link{umxSuperModel}()},
-\code{\link{umx}}
+\code{\link{umxSuperModel}()}
 }
 \concept{Core Model Building Functions}
