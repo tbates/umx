@@ -110,15 +110,15 @@ m1 = umxCI(m1, which = "a_r1c1", run = "yes")
 }
 
 Other Reporting functions: 
+\code{\link{RMSEA}()},
 \code{\link{RMSEA.MxModel}()},
 \code{\link{RMSEA.summary.mxmodel}()},
-\code{\link{RMSEA}()},
 \code{\link{extractAIC.MxModel}()},
-\code{\link{loadings.MxModel}()},
 \code{\link{loadings}()},
+\code{\link{loadings.MxModel}()},
 \code{\link{residuals.MxModel}()},
-\code{\link{tmx_show.MxMatrix}()},
 \code{\link{tmx_show}()},
+\code{\link{tmx_show.MxMatrix}()},
 \code{\link{umxCI_boot}()},
 \code{\link{umxConfint}()},
 \code{\link{umxExpCov}()},

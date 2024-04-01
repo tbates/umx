@@ -53,10 +53,13 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 		tmp = dimnames(tmp)[[1]]
 		y = tmp[1]
 		x = tmp[2]
+		umx_check_names(c(x, y), data = data, die = TRUE)
 	} else if(is.null(y)){
 		# let qplot make a histogram
 		return(qplot(x, data = data, xlab =x, main = title))
 	} else {
+		# make formula from x and y strings
+		umx_check_names(c(x, y), data = data, die = TRUE)
 		.formula = reformulate(paste0(y, "~ ", x))	
 	}
 	if(geom_point){
@@ -64,14 +67,13 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 	} else {
 		p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method)
 	}
-	data[,x]
-	
+	# data[,x]
 	if(is.na(fitx)){
 		fitx = min(data[,x])
-		fity= max(data[,y])
+		fity = max(data[,y])
 	}
 
-	if(method =="lm"){
+	if(method == "lm"){
 		m1  = lm(.formula, data = data)
 		r2  = round(summary(m1)$r.squared, 3)
 		lab = bquote(R^2 == .(r2))
@@ -79,6 +81,8 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 		p = p + cowplot::draw_label(lab, x = fitx, y = fity, fontfamily = "Times", size = 12)
 	}else if (method == "glm"){
 		# m1  = glm(.formula, data = data, family=family)
+	}else{
+		message("polite note: Currently, I only know how to do method = lm or glm")
 	}
 	p = p + theme_gray() # gray, bw, linedraw, light, dark, minimal, classic
 	p

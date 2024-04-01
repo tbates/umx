@@ -26,11 +26,11 @@ umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
 }
 \seealso{
 Other Test: 
+\code{\link{umx_check}()},
 \code{\link{umx_check_OS}()},
 \code{\link{umx_check_model}()},
 \code{\link{umx_check_names}()},
 \code{\link{umx_check_parallel}()},
-\code{\link{umx_check}()},
 \code{\link{umx_has_CIs}()},
 \code{\link{umx_has_been_run}()},
 \code{\link{umx_has_means}()},

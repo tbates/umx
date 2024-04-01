@@ -74,32 +74,32 @@ m1 = umxDoCp(var1, var2, mzData= mzData, dzData= dzData, sep = "_T", causal= TRU
 
 Other Twin Modeling Functions: 
 \code{\link{power.ACE.test}()},
+\code{\link{umx}},
+\code{\link{umxACE}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
-\code{\link{umxACE}()},
 \code{\link{umxCP}()},
 \code{\link{umxDiffMZ}()},
 \code{\link{umxDiscTwin}()},
 \code{\link{umxDoC}()},
+\code{\link{umxGxE}()},
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxEbiv}()},
-\code{\link{umxGxE}()},
 \code{\link{umxIP}()},
 \code{\link{umxMRDoC}()},
+\code{\link{umxReduce}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
-\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACEv}()},
 \code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryACEv}()},
 \code{\link{umxSummaryDoC}()},
 \code{\link{umxSummaryGxEbiv}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
-\code{\link{umxTwinMaker}()},
-\code{\link{umx}}
+\code{\link{umxTwinMaker}()}
 }
 \concept{Twin Modeling Functions}

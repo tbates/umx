@@ -238,10 +238,10 @@ m1 = umxRAM("manifest", data = mtcars,
 }
 
 Other Core Model Building Functions: 
+\code{\link{umx}},
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
 \code{\link{umxRAM}()},
-\code{\link{umxSuperModel}()},
-\code{\link{umx}}
+\code{\link{umxSuperModel}()}
 }
 \concept{Core Model Building Functions}

@@ -43,11 +43,11 @@ if(!umx_is_RAM(m1)){
 }
 \seealso{
 Other Test: 
+\code{\link{umx_check}()},
 \code{\link{umx_check_OS}()},
 \code{\link{umx_check_model}()},
 \code{\link{umx_check_names}()},
 \code{\link{umx_check_parallel}()},
-\code{\link{umx_check}()},
 \code{\link{umx_has_CIs}()},
 \code{\link{umx_has_been_run}()},
 \code{\link{umx_has_means}()},

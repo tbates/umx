@@ -63,11 +63,11 @@ levels(tmp$zygosity)
 }
 
 Other Twin Data functions: 
+\code{\link{umx}},
 \code{\link{umx_long2wide}()},
 \code{\link{umx_make_TwinData}()},
 \code{\link{umx_residualize}()},
 \code{\link{umx_scale_wide_twin_data}()},
-\code{\link{umx_wide2long}()},
-\code{\link{umx}}
+\code{\link{umx_wide2long}()}
 }
 \concept{Twin Data functions}

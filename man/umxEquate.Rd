@@ -102,11 +102,11 @@ parameters(m2)
 \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
 
 Other Model Summary and Comparison: 
+\code{\link{umx}},
 \code{\link{umxCompare}()},
 \code{\link{umxMI}()},
 \code{\link{umxReduce}()},
 \code{\link{umxSetParameters}()},
-\code{\link{umxSummary}()},
-\code{\link{umx}}
+\code{\link{umxSummary}()}
 }
 \concept{Model Summary and Comparison}

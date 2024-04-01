@@ -40,6 +40,7 @@ umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
 [umx_paste_names()]
 
 Other String Functions: 
+\code{\link{umx}},
 \code{\link{umx_explode}()},
 \code{\link{umx_grep}()},
 \code{\link{umx_names}()},
@@ -47,7 +48,6 @@ Other String Functions:
 \code{\link{umx_rot}()},
 \code{\link{umx_str_chars}()},
 \code{\link{umx_str_from_object}()},
-\code{\link{umx_trim}()},
-\code{\link{umx}}
+\code{\link{umx_trim}()}
 }
 \concept{String Functions}
