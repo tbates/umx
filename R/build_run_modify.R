@@ -82,7 +82,7 @@
 #' @importFrom stats setNames update var delete.response terms
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
-#' @importFrom utils browseURL install.packages str read.csv
+#' @importFrom utils browseURL install.packages str read.csv read.delim
 #' @importFrom MASS mvrnorm
 #' @importFrom nlme intervals lme
 #' @importFrom polycor hetcor
