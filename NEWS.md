@@ -1,9 +1,9 @@
 ## dev
 
 ## umx 4.20.00
-* March 2024 R 4.3.3 (2024-02-29)
+* April 2024 R 4.4.1
 * IMPROVED: `umxMR` can standardize the manifests.
-* IMPROVED: `prolific_read_demog`
+* IMPROVED: `prolific_read_demog` outputs a ready to paste demographics string.
 * IMPROVED: `prolific_anonymize` can delete more columns.
 * IMPROVED: various messages, and help improvements.
 * FIXED: `umxReduce.ACE` now aware of `umx_set_auto_run` #241 @lf-araujo
