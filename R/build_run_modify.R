@@ -715,9 +715,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		# check'm if you've got'm
 		umx_check_names(defnNames, data = data, message = "note: used as definition variable, but not present in data")
 	}
-
 	# Anything else used as a path, but not found in the data (and not a key word like "one") must be a latent
 	latentVars = setdiff(foundNames, c(manifestVars, "one"))
+
+
 	nLatent = length(latentVars)
 	# Report which latents were created
 	if (!umx_set_silent(silent=TRUE)) {
@@ -756,8 +757,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
     }
 	} else {
 		# keep everything
-		usedManifests = manifestVars
-		myData = xmu_make_mxData(data= data, type = type, verbose = verbose)
+		usedManifests = setdiff(manifestVars, defnNames)
+		myData = xmu_make_mxData(data= data, type = type, verbose = verbose, manifests = c(usedManifests, defnNames))
 	}
 	# ==================
 	# = Assemble model =
