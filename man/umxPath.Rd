@@ -179,7 +179,7 @@ umxPath("A", with = "B") # using with: same as "to = B, arrows = 2"
 umxPath("A", with = "B", fixedAt = .5) # 2-head path fixed at .5
 umxPath("A", with = c("B", "C"), firstAt = 1) # first covariance fixed at 1
 umxPath(cov = c("A", "B"))  # Covariance A <-> B
-umxPath(defn = "mpg") # create latent called def_mpg, with 0 mean * var, and label = "data.mpg"
+umxPath(defn = "mpg") # create latent called def_mpg, with var = 1 and label = "data.mpg"
 umxPath(fromEach = c('a','b'), to = c('c','d')) # a->c, a<->d, b<->c, b<->d
 umxPath(unique.bivariate = c('a','b','c')) # bivariate paths a<->b, a<->c, b<->c etc.
 umxPath(unique.pairs = letters[1:3]) # all distinct pairs: a<->a, a<->b, a<->c, b<->b, etc.
@@ -213,19 +213,36 @@ m1 = umxRAM("Chol", data = demoOneFactor, type = "cov",
 )
 plot(m1, splines= FALSE)
 
-# =========================================================
-# = Definition variable example.Not much use at present,  =
-# = as def vars are not readily used in RAM models...     =
-# = Working on something rational and intuitive.          =
-# =========================================================
-data(mtcars)
-m1 = umxRAM("manifest", data = mtcars,
- umxPath(v.m. = "mpg"),
- umxPath(defn = "mpg")
+# ======================================================================
+# = Definition variable example. for a RAM model                       =
+# = def vars are instantiated as dummy latents with data on the "mean" = 
+# ======================================================================
+library(umx); libs("MASS") # for mvrnorm()
+# 1. Create Data
+N = 500 # size of each group
+Sigma  = matrix(c(1,.5,.5,1),2,2) # cov (.5)
+group1 = MASS::mvrnorm(N, c(1,2), Sigma)
+group2 = MASS::mvrnorm(N, c(0,0), Sigma)
+# rbind groups and name cols "x" and "y"
+xy = rbind(group1, group2)
+dimnames(xy)[2]= list(c("x", "y"))
+
+# Create a definition variable for group status
+groupID = rep(c(1,0), each = N) 
+df = data.frame(xy, groupID = groupID)
+
+# Make the model with a definition variable on means
+m1 = umxRAM("Def Means", data = df,
+	umxPath(v.m. = c("x","y")),
+	umxPath("x", with = "y"),
+ # create a unit latent called "def_groupID" with data "data.groupID"
+	umxPath(defn = "groupID"),
+ # Add it to the x and y means
+	umxPath("def_groupID", to = c("x", "y"))
 )
+plot(m1)
 
 }
-
 }
 \references{
 \itemize{
