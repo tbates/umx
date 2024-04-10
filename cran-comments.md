@@ -1,7 +1,5 @@
 ## Changes
-umx was archived from CRAN without notice to me (due to an update of OpenMx).
-
-This version fixes a handful of warnings and should get it reinstated.
+New modeling feature and miscellaneous Rd enhancements.
 
 ## Test environments
 * MacOS 14.0, R version 4.3.3
