@@ -100,7 +100,6 @@
 #' @importFrom knitr kable
 #' @importFrom kableExtra kbl add_footnote column_spec footnote
 #' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
-# pwr.r.test
 
 utils::globalVariables(c(
 	"xFamMean", "Bwithin",

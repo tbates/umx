@@ -29,11 +29,11 @@ View documentation on the GxE model subclass here: \code{\link[=umxSummaryGxE]{u
 }
 \seealso{
 Other Model Summary and Comparison: 
-\code{\link{umx}},
 \code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
 \code{\link{umxMI}()},
 \code{\link{umxReduce}()},
-\code{\link{umxSetParameters}()}
+\code{\link{umxSetParameters}()},
+\code{\link{umx}}
 }
 \concept{Model Summary and Comparison}

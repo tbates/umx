@@ -36,7 +36,6 @@ umx_set_optimizer(old) # set back
 }
 \seealso{
 Other Get and set: 
-\code{\link{umx}},
 \code{\link{umx_get_checkpoint}()},
 \code{\link{umx_get_options}()},
 \code{\link{umx_set_auto_plot}()},
@@ -52,6 +51,7 @@ Other Get and set:
 \code{\link{umx_set_plot_use_hrbrthemes}()},
 \code{\link{umx_set_separator}()},
 \code{\link{umx_set_silent}()},
-\code{\link{umx_set_table_format}()}
+\code{\link{umx_set_table_format}()},
+\code{\link{umx}}
 }
 \concept{Get and set}

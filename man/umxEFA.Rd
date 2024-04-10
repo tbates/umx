@@ -148,7 +148,7 @@ Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor anal
 }
 
 Other Super-easy helpers: 
-\code{\link{umx}},
-\code{\link{umxTwoStage}()}
+\code{\link{umxTwoStage}()},
+\code{\link{umx}}
 }
 \concept{Super-easy helpers}

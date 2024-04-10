@@ -64,11 +64,11 @@ umxMI(m1, full = FALSE)
 }
 
 Other Model Summary and Comparison: 
-\code{\link{umx}},
 \code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
 \code{\link{umxReduce}()},
 \code{\link{umxSetParameters}()},
-\code{\link{umxSummary}()}
+\code{\link{umxSummary}()},
+\code{\link{umx}}
 }
 \concept{Model Summary and Comparison}

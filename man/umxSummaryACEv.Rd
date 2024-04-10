@@ -87,23 +87,22 @@ stdFit = umxSummary(m1, returnStd = TRUE)
 
 Other Twin Modeling Functions: 
 \code{\link{power.ACE.test}()},
-\code{\link{umx}},
-\code{\link{umxACE}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
+\code{\link{umxACE}()},
 \code{\link{umxCP}()},
 \code{\link{umxDiffMZ}()},
 \code{\link{umxDiscTwin}()},
-\code{\link{umxDoC}()},
 \code{\link{umxDoCp}()},
-\code{\link{umxGxE}()},
+\code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
 \code{\link{umxIP}()},
 \code{\link{umxMRDoC}()},
-\code{\link{umxReduce}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
+\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
@@ -113,6 +112,7 @@ Other Twin Modeling Functions:
 \code{\link{umxSummaryGxEbiv}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
-\code{\link{umxTwinMaker}()}
+\code{\link{umxTwinMaker}()},
+\code{\link{umx}}
 }
 \concept{Twin Modeling Functions}

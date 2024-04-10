@@ -57,27 +57,26 @@ I am thinking for RAM models to drop NS paths, and report that test.
 \code{\link[=umxReduceGxE]{umxReduceGxE()}}, \code{\link[=umxReduceACE]{umxReduceACE()}}
 
 Other Model Summary and Comparison: 
-\code{\link{umx}},
 \code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
 \code{\link{umxMI}()},
 \code{\link{umxSetParameters}()},
-\code{\link{umxSummary}()}
+\code{\link{umxSummary}()},
+\code{\link{umx}}
 
 Other Twin Modeling Functions: 
 \code{\link{power.ACE.test}()},
-\code{\link{umx}},
-\code{\link{umxACE}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
+\code{\link{umxACE}()},
 \code{\link{umxCP}()},
 \code{\link{umxDiffMZ}()},
 \code{\link{umxDiscTwin}()},
-\code{\link{umxDoC}()},
 \code{\link{umxDoCp}()},
-\code{\link{umxGxE}()},
+\code{\link{umxDoC}()},
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxEbiv}()},
+\code{\link{umxGxE}()},
 \code{\link{umxIP}()},
 \code{\link{umxMRDoC}()},
 \code{\link{umxReduceACE}()},
@@ -86,13 +85,14 @@ Other Twin Modeling Functions:
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACE}()},
 \code{\link{umxSummaryACEv}()},
+\code{\link{umxSummaryACE}()},
 \code{\link{umxSummaryDoC}()},
 \code{\link{umxSummaryGxEbiv}()},
 \code{\link{umxSummarySexLim}()},
 \code{\link{umxSummarySimplex}()},
-\code{\link{umxTwinMaker}()}
+\code{\link{umxTwinMaker}()},
+\code{\link{umx}}
 }
 \concept{Model Summary and Comparison}
 \concept{Twin Modeling Functions}

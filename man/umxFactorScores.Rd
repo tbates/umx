@@ -58,7 +58,6 @@ x
 }
 
 Other Reporting Functions: 
-\code{\link{umx}},
 \code{\link{umxAPA}()},
 \code{\link{umxGetLatents}()},
 \code{\link{umxGetManifests}()},
@@ -66,6 +65,7 @@ Other Reporting Functions:
 \code{\link{umxGetParameters}()},
 \code{\link{umxParameters}()},
 \code{\link{umx_aggregate}()},
-\code{\link{umx_time}()}
+\code{\link{umx_time}()},
+\code{\link{umx}}
 }
 \concept{Reporting Functions}

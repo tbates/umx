@@ -33,14 +33,14 @@ umx_str_chars("myFpassUword", c(3,8))
 }
 
 Other String Functions: 
-\code{\link{umx}},
-\code{\link{umx_explode}()},
 \code{\link{umx_explode_twin_names}()},
+\code{\link{umx_explode}()},
 \code{\link{umx_grep}()},
 \code{\link{umx_names}()},
 \code{\link{umx_paste_names}()},
 \code{\link{umx_rot}()},
 \code{\link{umx_str_from_object}()},
-\code{\link{umx_trim}()}
+\code{\link{umx_trim}()},
+\code{\link{umx}}
 }
 \concept{String Functions}

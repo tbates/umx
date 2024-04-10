@@ -46,12 +46,12 @@ mxCompare(m1, m2)
 }
 \seealso{
 Other Advanced Model Building Functions: 
-\code{\link{umx}},
 \code{\link{umxAlgebra}()},
 \code{\link{umxJiggle}()},
 \code{\link{umxRun}()},
 \code{\link{umxThresholdMatrix}()},
 \code{\link{umxUnexplainedCausalNexus}()},
+\code{\link{umx}},
 \code{\link{xmuLabel}()},
 \code{\link{xmuValues}()}
 }

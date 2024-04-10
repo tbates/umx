@@ -49,7 +49,6 @@ Other Data Functions:
 \code{\link{prolific_anonymize}()},
 \code{\link{prolific_check_ID}()},
 \code{\link{prolific_read_demog}()},
-\code{\link{umx}},
 \code{\link{umxFactor}()},
 \code{\link{umxHetCor}()},
 \code{\link{umx_as_numeric}()},
@@ -68,6 +67,7 @@ Other Data Functions:
 \code{\link{umx_score_scale}()},
 \code{\link{umx_select_valid}()},
 \code{\link{umx_stack}()},
-\code{\link{umx_strings2numeric}()}
+\code{\link{umx_strings2numeric}()},
+\code{\link{umx}}
 }
 \concept{Data Functions}

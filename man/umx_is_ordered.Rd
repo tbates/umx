@@ -75,11 +75,11 @@ umx_is_ordered(tmp[, "cyl", drop= FALSE])
 }
 \seealso{
 Other Check or test: 
-\code{\link{umx}},
 \code{\link{umx_check_names}()},
 \code{\link{umx_is_class}()},
 \code{\link{umx_is_endogenous}()},
 \code{\link{umx_is_exogenous}()},
-\code{\link{umx_is_numeric}()}
+\code{\link{umx_is_numeric}()},
+\code{\link{umx}}
 }
 \concept{Check or test}

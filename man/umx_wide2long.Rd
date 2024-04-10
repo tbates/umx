@@ -35,11 +35,11 @@ str(twinData)
 [reshape()], [umx_merge_randomized_columns()], [umx_select_valid()]
 
 Other Twin Data functions: 
-\code{\link{umx}},
 \code{\link{umx_long2wide}()},
 \code{\link{umx_make_TwinData}()},
 \code{\link{umx_make_twin_data_nice}()},
 \code{\link{umx_residualize}()},
-\code{\link{umx_scale_wide_twin_data}()}
+\code{\link{umx_scale_wide_twin_data}()},
+\code{\link{umx}}
 }
 \concept{Twin Data functions}

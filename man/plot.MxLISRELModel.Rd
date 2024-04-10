@@ -74,21 +74,21 @@ The commercial application \dQuote{OmniGraffle} is great for editing these image
 
 Other Plotting functions: 
 \code{\link{ggAddR}()},
-\code{\link{plot.MxModel}()},
 \code{\link{plot.MxModelTwinMaker}()},
-\code{\link{umx}},
-\code{\link{umxPlot}()},
-\code{\link{umxPlotACE}()},
+\code{\link{plot.MxModel}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
+\code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxE}()},
 \code{\link{umxPlotGxEbiv}()},
+\code{\link{umxPlotGxE}()},
 \code{\link{umxPlotIP}()},
 \code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()}
+\code{\link{umxPlotSimplex}()},
+\code{\link{umxPlot}()},
+\code{\link{umx}}
 }
 \concept{Plotting functions}
 \concept{umx S3 functions}

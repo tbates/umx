@@ -94,11 +94,11 @@ umxCompare(m1, m2, report = "html") # Open table in browser
 }
 
 Other Model Summary and Comparison: 
-\code{\link{umx}},
 \code{\link{umxEquate}()},
 \code{\link{umxMI}()},
 \code{\link{umxReduce}()},
 \code{\link{umxSetParameters}()},
-\code{\link{umxSummary}()}
+\code{\link{umxSummary}()},
+\code{\link{umx}}
 }
 \concept{Model Summary and Comparison}

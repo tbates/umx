@@ -77,12 +77,12 @@ m1 = umxRun(m1, tryHard = "yes")
 }
 \seealso{
 Other Advanced Model Building Functions: 
-\code{\link{umx}},
 \code{\link{umxAlgebra}()},
 \code{\link{umxFixAll}()},
 \code{\link{umxJiggle}()},
 \code{\link{umxThresholdMatrix}()},
 \code{\link{umxUnexplainedCausalNexus}()},
+\code{\link{umx}},
 \code{\link{xmuLabel}()},
 \code{\link{xmuValues}()}
 }

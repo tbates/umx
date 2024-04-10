@@ -46,12 +46,12 @@ Imports:
 	gert,
 	hrbrthemes,
 	openxlsx,
-	paran,
-	psych,
-	psychTools,
 	foreign,
 	pwr,
-	rmarkdown
+	rmarkdown,
+	psych,
+	psychTools,
+	paran
 Suggests:
 	cocor,
 	devtools,

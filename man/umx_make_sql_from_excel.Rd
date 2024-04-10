@@ -59,11 +59,11 @@ umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 \seealso{
 Other File Functions: 
 \code{\link{dl_from_dropbox}()},
-\code{\link{umx}},
 \code{\link{umx_file_load_pseudo}()},
 \code{\link{umx_move_file}()},
 \code{\link{umx_open}()},
 \code{\link{umx_rename_file}()},
-\code{\link{umx_write_to_clipboard}()}
+\code{\link{umx_write_to_clipboard}()},
+\code{\link{umx}}
 }
 \concept{File Functions}
