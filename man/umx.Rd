@@ -2,8 +2,8 @@
 % Please edit documentation in R/package.R
 \docType{package}
 \name{umx}
-\alias{umx}
 \alias{umx-package}
+\alias{umx}
 \title{Functions for Structural Equation Modeling in OpenMx}
 \description{
 \code{umx} allows you to more easily build, run, modify, and report structural models,
@@ -138,28 +138,28 @@ Other Super-easy helpers:
 
 Other Twin Modeling Functions: 
 \code{\link{power.ACE.test}()},
+\code{\link{umxACE}()},
 \code{\link{umxACEcov}()},
 \code{\link{umxACEv}()},
-\code{\link{umxACE}()},
 \code{\link{umxCP}()},
 \code{\link{umxDiffMZ}()},
 \code{\link{umxDiscTwin}()},
-\code{\link{umxDoCp}()},
 \code{\link{umxDoC}()},
+\code{\link{umxDoCp}()},
+\code{\link{umxGxE}()},
 \code{\link{umxGxE_window}()},
 \code{\link{umxGxEbiv}()},
-\code{\link{umxGxE}()},
 \code{\link{umxIP}()},
 \code{\link{umxMRDoC}()},
+\code{\link{umxReduce}()},
 \code{\link{umxReduceACE}()},
 \code{\link{umxReduceGxE}()},
-\code{\link{umxReduce}()},
 \code{\link{umxRotate.MxModelCP}()},
 \code{\link{umxSexLim}()},
 \code{\link{umxSimplex}()},
 \code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACEv}()},
 \code{\link{umxSummaryACE}()},
+\code{\link{umxSummaryACEv}()},
 \code{\link{umxSummaryDoC}()},
 \code{\link{umxSummaryGxEbiv}()},
 \code{\link{umxSummarySexLim}()},
@@ -227,20 +227,20 @@ Other Check or test:
 Other Plotting functions: 
 \code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{umxPlot}()},
+\code{\link{umxPlotACE}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
-\code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},
+\code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotIP}()},
 \code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()},
-\code{\link{umxPlot}()}
+\code{\link{umxPlotSimplex}()}
 
 Other Data Functions: 
 \code{\link{noNAs}()},
@@ -278,8 +278,8 @@ Other File Functions:
 \code{\link{umx_write_to_clipboard}()}
 
 Other String Functions: 
-\code{\link{umx_explode_twin_names}()},
 \code{\link{umx_explode}()},
+\code{\link{umx_explode_twin_names}()},
 \code{\link{umx_grep}()},
 \code{\link{umx_names}()},
 \code{\link{umx_paste_names}()},

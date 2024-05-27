@@ -63,19 +63,19 @@ m1 = umxSimplex(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 Other Plotting functions: 
 \code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{umx}},
+\code{\link{umxPlot}()},
+\code{\link{umxPlotACE}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
-\code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},
+\code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotIP}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlot}()},
-\code{\link{umx}}
+\code{\link{umxPlotSexLim}()}
 }
 \concept{Plotting functions}

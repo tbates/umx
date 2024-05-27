@@ -81,6 +81,7 @@ umxParameters(m1, "below", .1, "_to_")
 }
 
 Other Reporting Functions: 
+\code{\link{umx}},
 \code{\link{umxAPA}()},
 \code{\link{umxFactorScores}()},
 \code{\link{umxGetLatents}()},
@@ -88,7 +89,6 @@ Other Reporting Functions:
 \code{\link{umxGetModel}()},
 \code{\link{umxGetParameters}()},
 \code{\link{umx_aggregate}()},
-\code{\link{umx_time}()},
-\code{\link{umx}}
+\code{\link{umx_time}()}
 }
 \concept{Reporting Functions}

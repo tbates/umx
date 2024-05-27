@@ -51,6 +51,7 @@ Other Data Functions:
 \code{\link{prolific_anonymize}()},
 \code{\link{prolific_check_ID}()},
 \code{\link{prolific_read_demog}()},
+\code{\link{umx}},
 \code{\link{umxFactor}()},
 \code{\link{umx_as_numeric}()},
 \code{\link{umx_cont_2_quantiles}()},
@@ -69,8 +70,7 @@ Other Data Functions:
 \code{\link{umx_score_scale}()},
 \code{\link{umx_select_valid}()},
 \code{\link{umx_stack}()},
-\code{\link{umx_strings2numeric}()},
-\code{\link{umx}}
+\code{\link{umx_strings2numeric}()}
 
 Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
@@ -79,6 +79,7 @@ Other Miscellaneous Stats Functions:
 \code{\link{harmonic_mean}()},
 \code{\link{oddsratio}()},
 \code{\link{reliability}()},
+\code{\link{umx}},
 \code{\link{umxCov2cor}()},
 \code{\link{umxParan}()},
 \code{\link{umxWeightedAIC}()},
@@ -88,8 +89,7 @@ Other Miscellaneous Stats Functions:
 \code{\link{umx_r_test}()},
 \code{\link{umx_round}()},
 \code{\link{umx_scale}()},
-\code{\link{umx_var}()},
-\code{\link{umx}}
+\code{\link{umx_var}()}
 }
 \concept{Data Functions}
 \concept{Miscellaneous Stats Functions}

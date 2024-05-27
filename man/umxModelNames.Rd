@@ -46,6 +46,7 @@ Other Miscellaneous Utility Functions:
 \code{\link{install.OpenMx}()},
 \code{\link{libs}()},
 \code{\link{qm}()},
+\code{\link{umx}},
 \code{\link{umxLav2RAM}()},
 \code{\link{umxRAM2Lav}()},
 \code{\link{umxVersion}()},
@@ -55,7 +56,6 @@ Other Miscellaneous Utility Functions:
 \code{\link{umx_msg}()},
 \code{\link{umx_open_CRAN_page}()},
 \code{\link{umx_pad}()},
-\code{\link{umx_print}()},
-\code{\link{umx}}
+\code{\link{umx_print}()}
 }
 \concept{Miscellaneous Utility Functions}

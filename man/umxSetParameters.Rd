@@ -100,11 +100,11 @@ parameters(m2)
 }
 
 Other Model Summary and Comparison: 
+\code{\link{umx}},
 \code{\link{umxCompare}()},
 \code{\link{umxEquate}()},
 \code{\link{umxMI}()},
 \code{\link{umxReduce}()},
-\code{\link{umxSummary}()},
-\code{\link{umx}}
+\code{\link{umxSummary}()}
 }
 \concept{Model Summary and Comparison}
