@@ -18,13 +18,13 @@ geometric_mean(x, na.rm = c(TRUE, FALSE))
 }
 \description{
 The Geometric mean is the nth-root of the product of \code{n} input values.
-Common uses include computing economic utility.  That is to say, the utility of
-\code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)/3} = 6.6 not 6.3 (the arithmetic mean).
+Common uses include computing economic utility. For example, the geometric mean utility of
+\code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not 4.3 (the arithmetic mean of utility).
 }
 \examples{
 geometric_mean(c(50, 100))
 
-# For a given sum, geometric mean is maximised with equality
+# For a given sum, geometric mean is maximised when all values are equal:
 geometric_mean(c(75,75))
 
 v = c(1, 149); c(sum(v), geometric_mean(v), mean(v), median(v))
