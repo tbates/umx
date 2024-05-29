@@ -2752,12 +2752,12 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' Can move the weighting between a conservative .5 and an optimistic 2 (in terms of how long the growth will last and how low the hurdle rate is)
 #' 
 #' 
-#' @param principal The initial investment at time 0.
+#' @param principal The initial investment at time 0 (default 100)
 #' @param deposits Optional periodic additional investment each *year*.
-#' @param interest Annual interest rate (default = .05)
-#' @param inflate How much to inflate deposits over time (default = 0)
-#' @param yrs Duration of the investment (default = 10).
-#' @param n Compounding intervals per year (default = 12 (monthly), 365 for daily)
+#' @param interest Annual interest rate (default .05)
+#' @param inflate How much to inflate deposits over time (default 0)
+#' @param yrs Duration of the investment (default 10).
+#' @param n Compounding intervals per year (default 12 (monthly), use 365 for daily)
 #' @param when Deposits made at the "beginning" (of each year) or "end"
 #' @param symbol Currency symbol to embed in the result.
 #' @param report "markdown" or "html", 
@@ -2808,7 +2808,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' # 8 Interest needed to increase principal to final value in yrs time.
 #' fin_interest(principal = 100, final=200, yrs = 5)
 #'
-fin_interest <- function(principal = 0, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
+fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
 	report = match.arg(report)
 	if(is.null(symbol)){symbol = umx_set_dollar_symbol(silent=TRUE)}
 	if(principal==0){
