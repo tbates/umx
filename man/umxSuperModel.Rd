@@ -111,10 +111,10 @@ umxModelNames(super)
 }
 
 Other Core Model Building Functions: 
+\code{\link{umx}},
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
 \code{\link{umxPath}()},
-\code{\link{umxRAM}()},
-\code{\link{umx}}
+\code{\link{umxRAM}()}
 }
 \concept{Core Model Building Functions}

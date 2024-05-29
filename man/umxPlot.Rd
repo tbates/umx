@@ -71,19 +71,19 @@ umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
 Other Plotting functions: 
 \code{\link{ggAddR}()},
 \code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
 \code{\link{plot.MxModel}()},
+\code{\link{plot.MxModelTwinMaker}()},
+\code{\link{umx}},
+\code{\link{umxPlotACE}()},
 \code{\link{umxPlotACEcov}()},
 \code{\link{umxPlotACEv}()},
-\code{\link{umxPlotACE}()},
 \code{\link{umxPlotCP}()},
 \code{\link{umxPlotDoC}()},
 \code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotGxE}()},
+\code{\link{umxPlotGxEbiv}()},
 \code{\link{umxPlotIP}()},
 \code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()},
-\code{\link{umx}}
+\code{\link{umxPlotSimplex}()}
 }
 \concept{Plotting functions}

@@ -331,10 +331,10 @@ m1 = umxRAM("tim", data = mtcars, weight= "cyl",
 \code{\link[=umxPath]{umxPath()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=plot]{plot()}}, \code{\link[=parameters]{parameters()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}, \code{\link[=umxLav2RAM]{umxLav2RAM()}}
 
 Other Core Model Building Functions: 
+\code{\link{umx}},
 \code{\link{umxMatrix}()},
 \code{\link{umxModify}()},
 \code{\link{umxPath}()},
-\code{\link{umxSuperModel}()},
-\code{\link{umx}}
+\code{\link{umxSuperModel}()}
 }
 \concept{Core Model Building Functions}
