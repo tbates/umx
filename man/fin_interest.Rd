@@ -5,7 +5,7 @@
 \title{Compute the value of a principal & annual deposits at a compound interest over a number of years}
 \usage{
 fin_interest(
-  principal = 0,
+  principal = 100,
   deposits = 0,
   inflate = 0,
   interest = 0.05,
@@ -21,19 +21,19 @@ fin_interest(
 )
 }
 \arguments{
-\item{principal}{The initial investment at time 0.}
+\item{principal}{The initial investment at time 0 (default 100)}
 
 \item{deposits}{Optional periodic additional investment each \emph{year}.}
 
-\item{inflate}{How much to inflate deposits over time (default = 0)}
+\item{inflate}{How much to inflate deposits over time (default 0)}
 
-\item{interest}{Annual interest rate (default = .05)}
+\item{interest}{Annual interest rate (default .05)}
 
-\item{yrs}{Duration of the investment (default = 10).}
+\item{yrs}{Duration of the investment (default 10).}
 
 \item{final}{if set (default = NULL), returns the rate required to turn principal into final after yrs (principal defaults to 1)}
 
-\item{n}{Compounding intervals per year (default = 12 (monthly), 365 for daily)}
+\item{n}{Compounding intervals per year (default 12 (monthly), use 365 for daily)}
 
 \item{when}{Deposits made at the "beginning" (of each year) or "end"}
 
