@@ -3852,11 +3852,13 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' )
 #' parameters(m1)
 #' # Match all labels
-#  # Test run, showing all updated with an "m1_" in front
+#  # example showing all updated with an "m1_" in front
 #' umxSetParameters(m1, regex = "^", newlabels= "m1_", test = TRUE)
+#'
 #' # Change path to x1 to x2, equating these two paths
 #' m2 = umxSetParameters(m1, "G_to_x1", newlabels= "G_to_x2", test = FALSE)
-#' parameters(m2) 
+#' m2 = umxRun(m2) # umxSetParameters does not re-run he model, so make sure you do!
+#' parameters(m2)
 #' 
 #' }
 umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabels = NULL, lbound = NULL, ubound = NULL, indep = FALSE, strict = TRUE, name = NULL, regex = FALSE, test = FALSE) {
