@@ -61,26 +61,27 @@ The following figure shows how the MR model appears as a path diagram:
 # ====================================
 
 library(umx)
-df = umx_make_MR_data(10e4)
+df = umx_make_MR_data(10e4, Vqtl = 0.02, bXY = 0.1, bUX = 0.5, bUY = 0.5, pQTL = 0.5)
 m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
 parameters(m1)
 plot(m1, means = FALSE, min="") # help DiagrammR layout the plot.
 m2 = umxModify(m1, "qtl_to_X", comparison=TRUE, tryHard="yes", name="QTL_affects_X") # yip
-m3 = umxModify(m1, "X_to_Y"  , comparison=TRUE, tryHard="yes", name="X_affects_Y") # nope
+m3 = umxModify(m1, "X_to_Y"  , comparison=TRUE, tryHard="yes", name="X_affects_Y") # yip
 plot(m3, means = FALSE)
 
 # Errant analysis using ordinary least squares regression (WARNING this result is CONFOUNDED!!)
-m1 = lm(Y ~ X    , data = df); coef(m1) # incorrect .35 effect of X on Y
-m1 = lm(Y ~ X + U, data = df); coef(m1) # Controlling U reveals the true 0.1 beta weight
+ols1 = lm(Y ~ X    , data = df); coef(ols1) # Inflated .35 effect of X on Y
+ols2 = lm(Y ~ X + U, data = df); coef(ols2) # Controlling U reveals the true 0.1 beta weight
 
-df = umx_make_MR_data(10e4) 
+# Simulate date with no causal X -> Y effect.
+df = umx_make_MR_data(10e4, Vqtl = 0.02, bXY = 0, bUX = 0.5, bUY = 0.5, pQTL = 0.5)
 m1 = umxMR(Y ~ X, instruments = ~ qtl, data = df)
-coef(m1)
+parameters(m1)
 
 # ======================
 # = Now with sem::tsls =
 # ======================
-# library(sem) # may require you to install X11
+# libs("sem")
 m2 = sem::tsls(formula = Y ~ X, instruments = ~ qtl, data = df)
 coef(m2)
 
