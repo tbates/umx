@@ -8,7 +8,8 @@ umx_check_parallel(
   nCores = c(1, omxDetectCores()),
   testScript = NULL,
   rowwiseParallel = TRUE,
-  nSubjects = 1000
+  nSubjects = 1000,
+  optimizer = NULL
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ umx_check_parallel(
 \item{rowwiseParallel}{Whether to parallel-ize rows (default) or gradient computation}
 
 \item{nSubjects}{Number of rows to model (Default = 1000) Reduce for quicker runs.}
+
+\item{optimizer}{Set optimizer, e.g., "NPSOL")}
 }
 \value{
 None
@@ -55,7 +58,7 @@ Date       \tab Version         \tab Cores \tab Time              \tab     Notes
 }
 \examples{
 \dontrun{
-# On a fast machine, takes a minute with 1 core
+# In 2016 1core took 1 minute
 umx_check_parallel()
 }
 }

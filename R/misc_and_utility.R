@@ -1089,6 +1089,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @param testScript A user-provided script to run (NULL)
 #' @param rowwiseParallel Whether to parallel-ize rows (default) or gradient computation 
 #' @param nSubjects Number of rows to model (Default = 1000) Reduce for quicker runs.
+#' @param optimizer Set optimizer, e.g., "NPSOL")
 #' @return None
 #' @export
 #' @family Test
@@ -1096,10 +1097,14 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @md
 #' @examples
 #' \dontrun{
-#' # On a fast machine, takes a minute with 1 core
+#' # In 2016 1core took 1 minute
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000) {
+umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000, optimizer=NULL) {
+	if(!is.null(optimizer)){
+		oldOpt = umx_set_optimizer()
+		umx_set_optimizer(optimizer)
+	}
 	if(!is.null(testScript)){
 		stop("test script not implemented yet - beat on tim to do it!")
 	}
@@ -1171,8 +1176,7 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 	
 	# set rowwiseParallel
 	if(packageVersion("OpenMx") >= "2.6.1"){
-		message("ignored rowwiseParallel: bug tim if you need this")
-		# test1$fitfunction$rowwiseParallel = rowwiseParallel
+		test1$fitfunction$rowwiseParallel = rowwiseParallel
 	} else {
 		message("ignored rowwiseParallel: upgrade to OpenMx 2.6.1 or better to use this")
 		# ignore: this is not supported by versions before 2.6.1
@@ -1189,7 +1193,6 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 	}
 	n = 1
 	# run each model
-	# thisCores = 4
 	for (thisCores in nCores) {
 		umx_set_cores(thisCores)
 		thisModel = mxRename(models[[n]], paste0("nCores_equals_", thisCores))
@@ -1199,7 +1202,9 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 		n = n + 1
 	}
 	umx_set_cores(oldCores)
-	# umx_time(models, autoRun= F)
+	if(!is.null(optimizer)){
+		umx_set_optimizer(oldOpt)
+	}
 	invisible(umx_time(models, formatStr = "%M %OS3", autoRun = FALSE))
 }
 
