@@ -3,7 +3,8 @@
 ## Make and install OpenMx.
 If you've installed R, Xcode and Fortran (see 2 below), you are ready to make and install OpenMx.
 
-1. In `terminal.app`, cd to `~/binOpenMx`
+1. In `terminal.app`, cd to `~/bin/OpenMx/`
+
 2. `make install`
 3. optionally `make test` to validate (takes time)
 
@@ -43,7 +44,7 @@ F77   = /opt/gfortran/bin/gfortran
 
 ```
 CPPFLAGS += -Xclang -fopenmp
-LDFLAGS += -lomp
+LDFLAGS  += -lomp
 ```
 
 *Notes: Usually not necessary now*
