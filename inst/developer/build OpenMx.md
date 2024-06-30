@@ -40,7 +40,7 @@ F77   = /opt/gfortran/bin/gfortran
 
 7. Install OpenMP
  * https://mac.r-project.org/openmp/
- * Add the following to Makevars
+ * Add the following to ~/.R/Makevars
 
 ```
 CPPFLAGS += -Xclang -fopenmp
