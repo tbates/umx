@@ -4,8 +4,7 @@
 If you've installed R, Xcode and Fortran (see 2 below), you are ready to make and install OpenMx.
 
 1. In `terminal.app`, cd to `~/bin/OpenMx/`
-
-2. `make install`
+2. `make build` # to build he binary bundle in staging or `make install` to install
 3. optionally `make test` to validate (takes time)
 
 You can also do this from inside R
