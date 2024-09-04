@@ -46,6 +46,10 @@ geometric_mean(c(1/100, 1/50))
 }
 }
 \seealso{
+\itemize{
+\item \code{\link[=harmonic_mean]{harmonic_mean()}}, \code{\link[=mean]{mean()}}
+}
+
 Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},

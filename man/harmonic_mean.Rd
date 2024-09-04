@@ -43,6 +43,10 @@ harmonic_mean(c(1,10)) # 1.81 mph
 }
 }
 \seealso{
+\itemize{
+\item \code{\link[=geometric_mean]{geometric_mean()}}, \code{\link[=aggregate]{aggregate()}}
+}
+
 Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
 \code{\link{SE_from_p}()},
