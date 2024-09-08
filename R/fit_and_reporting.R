@@ -4202,6 +4202,7 @@ FishersMethod <- function(pvalues, ...){
 #' @param na.rm remove NAs by default.
 #' @return - Geometric mean of x
 #' @export
+#' @seealso - [harmonic_mean()], [mean()]
 #' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Geometric_mean>
 #' @md
@@ -4240,6 +4241,7 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' @param na.rm remove NAs (default = TRUE).
 #' @return - Harmonic mean of x
 #' @export
+#' @seealso - [geometric_mean()], [aggregate()]
 #' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Harmonic_mean>
 #' @md
