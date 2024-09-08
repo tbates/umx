@@ -29,14 +29,14 @@ Optionally, this also works on wide (i.e., twin) data. Just supply suffixes to i
 the paired-wide columns (see examples).
 }
 \details{
-In R, residuals for a variable can be found with the following statement:
+In R, residuals for a variable can be found with the \code{residuals} function:
 
-\code{tmp = residuals(lm(var ~ cov1 + cov2, data = data, na.action = na.exclude))}
+\code{residuals(lm(mpg ~ wt + am, data = mtcars, na.action = na.exclude))}
 
-This tmp variable could then be written over the old data:
+This result could then be written over the old DV column.
 
-umx_residualize obviates the user having to build the lm, set na.action, or replace the data.
-In addition, it has the powerful feature of operating on a list of variables, and of operating on
+\code{umx_residualize} obviates the user having to build the lm, set na.action, or replace the data.
+In addition, it has the powerful features of operating on a list of variables, and of operating on
 wide data, expanding the var name using a set of variable-name suffixes.
 }
 \examples{

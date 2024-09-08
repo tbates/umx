@@ -219,6 +219,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @param model The [mxModel()] which will be reduced.
 #' @param report How to report the results. "html" = open in browser
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
+#' @param testD Whether to test ADE and DE models (TRUE) 
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param tryHard Default = "yes"
 #' @param silent Default = FALSE
@@ -230,12 +231,12 @@ umxWeightedAIC <- function(models, digits= 2) {
 #'  *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
 #' @export
 #' @md
-umxReduce <- function(model, report = c("markdown", "inline", "html"), intervals = TRUE, baseFileName = "tmp", tryHard = "yes", silent=FALSE, ...){
+umxReduce <- function(model, report = c("markdown", "inline", "html"), intervals = TRUE, testD = TRUE, baseFileName = "tmp", tryHard = "yes", silent=FALSE, ...){
 	UseMethod("umxReduce", model)
 }
 
 #' @export
-umxReduce.default <- function(model, report = c("markdown", "inline", "html"), intervals = FALSE, baseFileName = "tmp", tryHard = "yes", silent=FALSE, ...){
+umxReduce.default <- function(model, report = c("markdown", "inline", "html"), intervals = FALSE, testD = TRUE, baseFileName = "tmp", tryHard = "yes", silent=FALSE, ...){
 	stop("umxReduce is not defined for objects of class:", class(model))
 }
 
@@ -254,6 +255,7 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' @param model A [umxGxE()] to reduce.
 #' @param report How to report the results. default = "markdown". "html" = open in browser.
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
+#' @param testD Whether to test ADE and DE models (TRUE)
 #' @param baseFileName (optional) custom filename for html output (default = "tmp").
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param silent Default (FALSE)
@@ -269,7 +271,7 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
 	report = match.arg(report)
 	umx_is_MxModel(model)
 	if(inherits(model, "MxModelGxE")){
@@ -347,6 +349,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @param model an ACE or ADE [mxModel()] to reduce
 #' @param report How to report the results. "html" = open in browser
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
+#' @param testD Whether to test ADE and DE models (TRUE)
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
 #' @param tryHard (default = "yes")
 #' @param silent Don't print the ACE models (default = FALSE)
@@ -380,10 +383,9 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
 #' 
 #' }
-umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, digits = 2, ...) {
-	
-	# override umx_set_auto_run
-	oldAutoRun = umx_set_auto_run(autoRun = FALSE)
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), testD = TRUE, intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, digits = 2, ...) {
+	# override umx_set_auto_run?
+	oldAutoRun = umx_set_auto_run(autoRun = TRUE)
 	
 	report  = match.arg(report)
 	tryHard = match.arg(tryHard)
@@ -393,11 +395,12 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 		oldSilent = FALSE
 	}
 	oldAutoPlot = umx_set_auto_plot(FALSE, silent = TRUE)
+
+
 	if(model$top$dzCr$values == 1){
-		message("You gave me an ACE model")		
 		ACE = model
 		ADE = umxModify(model, 'dzCr_r1c1', value = .25, name = "ADE", tryHard = tryHard)
-		if(-2*logLik(ACE) > -2*logLik(ADE)){
+		if(-2*logLik(ACE) > -2*logLik(ADE) && testD){
 			CE = umxModify(ADE, regex = "a_r[0-9]+c[0-9]+" , name = "DE", tryHard = tryHard)
 			AE = umxModify(ADE, regex = "c_r[0-9]+c[0-9]+" , name = "AE", tryHard = tryHard)
 			 E = umxModify( AE, regex = "a_r[0-9]+c[0-9]+" , name =  "E", tryHard = tryHard)
@@ -442,16 +445,19 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	biggles = umxCompare(ACE, c(ADE, CE, AE, E), all = TRUE, report = report, silent=TRUE)
 	tmp2 = cbind(biggles[, 1, drop = FALSE], tmp, biggles[, 2:dim(biggles)[2] ] )
 	umx_print(tmp2, digits = digits, report = report)
-	
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
-	message("Among ACE, ADE, CE, and AE models ", omxQuotes(bestModel$name), " fit best according to AIC.")
+	message("Among ACE, ADE, CE, and AE models ", omxQuotes(bestModel$name), " fit best according to AIC.\n")
 	# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
-	aic.weights = round(Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
-	aic.names   = namez(c(ACE, ADE, CE, AE))
-	message("Conditional AIC probability {Wagenmakers, 2004, 192-196}  indicates relative model support as", 
-		omxQuotes(aic.names), " respectively are: ", 
-		omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")
+	if(testD){
+		aic.weights = round(Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
+		aic.names   = namez(c(ACE, ADE, CE, AE))
+	} else {
+		aic.weights = round(Weights(AIC(ACE, CE, AE)[,"AIC"]), 2)
+		aic.names   = namez(c(ACE, CE, AE))
+	}
+	message("Conditional AIC probability {Wagenmakers, 2004, 192-196} using MuMIn::Weights(AIC()) indicated relative model support for ", 
+		omxQuotes(aic.names), " respectively as: ", omxQuotes(aic.weights))
 		message(paste0(aic.names," (", aic.weights, "%)"))
 	if(intervals){
 		bestModel = mxRun(bestModel, intervals = intervals)
