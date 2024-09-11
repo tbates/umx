@@ -8,6 +8,7 @@ umxReduceGxE(
   model,
   report = c("markdown", "inline", "html", "report"),
   intervals = TRUE,
+  testD = TRUE,
   baseFileName = "tmp_gxe",
   tryHard = c("yes", "no", "ordinal", "search"),
   silent = FALSE,
@@ -20,6 +21,8 @@ umxReduceGxE(
 \item{report}{How to report the results. default = "markdown". "html" = open in browser.}
 
 \item{intervals}{Recompute CIs (if any included) on the best model (default = TRUE)}
+
+\item{testD}{Whether to test ADE and DE models (TRUE)}
 
 \item{baseFileName}{(optional) custom filename for html output (default = "tmp").}
 
