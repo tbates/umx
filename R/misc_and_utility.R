@@ -2026,7 +2026,7 @@ umx_as_numeric <- function(df, which = NULL, force = FALSE) {
 		colsToConvert = colsToConvert[umx_is_numeric(df)]
 	}
 	for (i in colsToConvert) {
-		df[ ,i] = as.numeric(df[ ,i])
+		df[ ,i] = as.numeric(df[ ,i, drop = TRUE])
 	}
 	return(df)
 }
