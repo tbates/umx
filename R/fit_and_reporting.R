@@ -4893,14 +4893,17 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 			rDZ = cor.test(data = data[data[,zyg] %in% DZ,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
 			df[n, "rMZ"] = paste0(round(rMZ$estimate, digits), " (", round((rMZ$conf.int[2] - rMZ$conf.int[1])/(1.96 * 2), digits), ")")
 			df[n, "rDZ"] = paste0(round(rDZ$estimate, digits), " (", round((rDZ$conf.int[2] - rDZ$conf.int[1])/(1.96 * 2), digits), ")")
+			df[n, "Var"] = paste0(df[n, "Var"], " (", rMZ$parameter, "/", rDZ$parameter, ")")
 			n = n+1
 		}
 		nPerZyg = data.frame(table(data[, zyg]))
+		print(names(df))
 		names(df) = namez(df, "(rMZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% MZ,"Freq"]),")"))
 		names(df) = namez(df, "(rDZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% DZ,"Freq"]),")"))
 	}
 
 	umx_print(df, digits=digits, report = report)
+	print("note (n/n) = MZ/DZ complete pairs")
 	
 	# return(df)
 	# Calculate Mean Age and SD for men and women
