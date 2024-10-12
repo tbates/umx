@@ -8,6 +8,7 @@ umxReduce(
   model,
   report = c("markdown", "inline", "html"),
   intervals = TRUE,
+  testD = TRUE,
   baseFileName = "tmp",
   tryHard = "yes",
   silent = FALSE,
@@ -20,6 +21,8 @@ umxReduce(
 \item{report}{How to report the results. "html" = open in browser}
 
 \item{intervals}{Recompute CIs (if any included) on the best model (default = TRUE)}
+
+\item{testD}{Whether to test ADE and DE models (TRUE)}
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 

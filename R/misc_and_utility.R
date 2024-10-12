@@ -1588,6 +1588,7 @@ umxParan <- function(df, cols= NA, graph = TRUE, mapStrings = NULL) {
 #' @return - scores
 #' @export
 #' @family Data Functions
+#' @seealso	umx_strings2numeric
 #' @references -  Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, <https://CRAN.R-project.org/package=psych> Version = 2.2.9.
 #' * McNeish, D. (2018). Thanks coefficient alpha, we’ll take it from here. *Psychological Methods*, **23**, 412-433. \doi{10.1037/met0000144}.
 #' @md 
@@ -2026,7 +2027,7 @@ umx_as_numeric <- function(df, which = NULL, force = FALSE) {
 		colsToConvert = colsToConvert[umx_is_numeric(df)]
 	}
 	for (i in colsToConvert) {
-		df[ ,i] = as.numeric(df[ ,i])
+		df[ ,i] = as.numeric(df[ ,i, drop = TRUE])
 	}
 	return(df)
 }
