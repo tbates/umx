@@ -2277,20 +2277,17 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' 
 #' *note*: Cheaper cuts like blade steak can come out fine.
 #' 
-#' A great reference is The Food Lab by Kenji Alt Lopez. https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087.
-#'
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [omxBrownie()]
-#' @references - [The Food Lab](https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087)
 #' @examples
 #' umxBrownie()
 #' @md
 umxBrownie <- function() {
 	message("Rub steak in a table spoon of salt, put it back in the fridge for an hour (longer is fine).\n",
-	"Place steak on a hot cast-iron skillet, with a little peanut oil.\n",
-	"Turn steaks as often as you wish. Control heat to below smoke point.\n",
-	"Remove and eat when internal temp reaches 130 \u0080 F.\n"
+	"Place steak on a hot cast-iron skillet, with a little olive oil.\n",
+	"Turn steak as often as you wish. Control heat to below smoke point.\n",
+	"Remove and eat when internal temp reaches 110 \u0080 F.\n"
 	)
 }
 

@@ -14,16 +14,9 @@ Equipment matters. You should buy a heavy cast-iron skillet, and a digital inter
 Preferably cook over a gas flame.
 
 \emph{note}: Cheaper cuts like blade steak can come out fine.
-
-A great reference is The Food Lab by Kenji Alt Lopez. https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087.
 }
 \examples{
 umxBrownie()
-}
-\references{
-\itemize{
-\item \href{https://www.amazon.co.uk/Food-Lab-Cooking-Through-Science/dp/0393081087}{The Food Lab}
-}
 }
 \seealso{
 \itemize{
