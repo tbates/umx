@@ -5454,14 +5454,14 @@ umx_string_to_algebra <- function(algString, name = NA, dimnames = NA) {
 #' Scale data columns, skipping non-scalable columns
 #'
 #' @description 
-#' `umx_scale` applies scale to the columns of a data.frame. By default it scales all numeric columns,
+#' `umx_scale` applies [scale()] to the columns of a data.frame. By default it scales all numeric columns,
 #' and is smart enough to skip non-scalable columns (strings, factors, etc.).
 #' 
 #' You can also select which columns to convert.
 #' This is useful when you want to avoid numeric columns which are actually factors.
 #' 
-#' *note*: By default, the attributes which scale adds ("scaled:center" and 
-#' "scaled:scale" removed to leave nice numeric columns. Set `attr= TRUE` to preserve these.
+#' *note*: By default, the [scale()] function adds [attributes()] ("scaled:center" and 
+#' "scaled:scale", `umx_scale` removes these leaving nice numeric columns. Set `attr= TRUE` to preserve them.
 #'
 #' @param df A dataframe to scale (or a numeric vector)
 #' @param varsToScale (leave blank to scale all)

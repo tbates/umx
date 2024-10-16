@@ -29,14 +29,14 @@ umx_scale(
 }
 }
 \description{
-\code{umx_scale} applies scale to the columns of a data.frame. By default it scales all numeric columns,
+\code{umx_scale} applies \code{\link[=scale]{scale()}} to the columns of a data.frame. By default it scales all numeric columns,
 and is smart enough to skip non-scalable columns (strings, factors, etc.).
 
 You can also select which columns to convert.
 This is useful when you want to avoid numeric columns which are actually factors.
 
-\emph{note}: By default, the attributes which scale adds ("scaled:center" and
-"scaled:scale" removed to leave nice numeric columns. Set \code{attr= TRUE} to preserve these.
+\emph{note}: By default, the \code{\link[=scale]{scale()}} function adds \code{\link[=attributes]{attributes()}} ("scaled:center" and
+"scaled:scale", \code{umx_scale} removes these leaving nice numeric columns. Set \code{attr= TRUE} to preserve them.
 }
 \examples{
 data(twinData)
