@@ -27,7 +27,7 @@ umx_polypairwise(
 - matrix of correlations
 }
 \description{
-Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx
+Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx, but pair by pair, not across the whole dataset at once.
 }
 \examples{
 umx_set_optimizer("SLSQP")
@@ -41,7 +41,7 @@ cov2cor(x$R)
 cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \references{
-- Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
+- Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 }
 \seealso{
 Other Data Functions: 
