@@ -231,11 +231,11 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 				tmp = solve(t(rm) %*% rm)
 				print(tmp)
 			}, warning = function(x) {
-				umx_msg("Warning while printing factor correlation matrix: It may not be valid")
+				umx_msg("A polite warning occurred while printing factor correlation matrix for this rotation: It may not be valid, or rotation may not provide a rotmat?")
 				print(paste0("Class of rotation matrix (should be matrix), was in fact: ", class(rm)))
 				print(x)
 			}, error = function(x) {
-				umx_msg("Error: Can't print factor correlation matrix: It may not be valid")
+				umx_msg("A polite error occurred: Can't print factor correlation matrix for this rotation: It may not be valid, or rotation may not provide a rotmat?")
 				print(paste0("Class of rotation matrix (should be matrix), was in fact: ", class(rm)))
 				print(x)
 			}, finally={
