@@ -3861,7 +3861,7 @@ umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep",
 #' umx_msg(mtcars)
 umx_msg <- function(x) {
 	nm = deparse(substitute(x) )
-	if(is.data.frame(x)){
+	if(any(is.data.frame(x))){
 		message(nm, " = ")
 		str(x)
 	} else {

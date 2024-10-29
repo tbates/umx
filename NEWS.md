@@ -8,7 +8,7 @@
 * IMPROVED: `prolific_read_demog` outputs a ready to paste demographics string.
 * IMPROVED: `prolific_anonymize` can delete more columns.
 * IMPROVED: various messages, and help improvements.
-* FIXED: `umxReduce.ACE` now aware of `umx_set_auto_run` #241 @lf-araujo
+* FIXED: `umxReduce.MxModelACE` now aware of `umx_set_auto_run` #241 @lf-araujo
 
 ## umx 4.19.00
 * November 2023 R 4.3.1 (2023-06-16)
@@ -23,7 +23,7 @@
 * IMPROVED: `umxTwinMaker` can manage definition variables (by @lf-araujo)
 * IMPROVED: `umxSummary` suppress duplicate paths
 * FIXED: `umxGxE_window` handles target range without error once more (h/t Marla Kürten)
-* FIXED: `umxMRDoC`  byrow misspelling
+* FIXED: `umxMRDoC` byrow misspelling
 
 ## umx 4.16.00
 * August 2023 R 4.3.1 (2023-06-16)

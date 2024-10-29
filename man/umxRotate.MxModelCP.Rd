@@ -30,7 +30,7 @@
 }
 \description{
 Rotate a CP solution.
-Should work with rotations provided in \code{library("GPArotation")} and \code{library("psych")}, e.g
+Should work with rotations provided in \code{libs("GPArotation")} and \code{libs("psych")}, e.g.,
 
 \strong{Orthogonal}: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
 

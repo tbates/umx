@@ -3221,7 +3221,7 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #'
 #' @description
 #' Rotate a CP solution.
-#' Should work with rotations provided in `library("GPArotation")` and `library("psych")`, e.g
+#' Should work with rotations provided in `libs("GPArotation")` and `libs("psych")`, e.g.,
 #' 
 #' **Orthogonal**: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
 #' 
