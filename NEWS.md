@@ -1,8 +1,21 @@
 ## dev
 
+## umx 4.21.00
+* November 2024 R 4.4.1
+* IMPROVED: `umx_scale_wide_twin` accepts sibs #253 from lf-araujo/patch-6
+* IMPROVED `umxBrownie` makes a rare steak
+* IMPROVED `umxSummarizeTwinData` reports complete pairs for rMZ and rDZ
+* IMPROVED: `umx_as.numeric` explicit drop = TRUE
+* IMPROVED: `umxReduce` ACE can skip ADE model
+* IMPROVED: `umxReduce` output better formatted
+* IMPROVED: `umx_check_parallel` gains set optimizer, and row parallel
+* IMPROVED: `umxEFA` error reporting is more robust
+* HELP: `umx_scale` better
+* HELP: `umx_scale` clarify polychoric and pairwise functionality
+
 ## umx 4.20.00
-* April 2024 R 4.4.3
-* NEW: `umxRAM` Can include definition variables h/t @lf-araujo
+* April 2024 R 4.3.3
+* NEW: `umxRAM` Can include definition variables! h/t @lf-araujo
 * HELP: `umxRAM` example a model with a def var on means
 * IMPROVED: `umxMR` can standardize manifests.
 * IMPROVED: `prolific_read_demog` outputs a ready to paste demographics string.
