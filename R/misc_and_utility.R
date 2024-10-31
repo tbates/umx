@@ -5760,33 +5760,38 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' data(twinData) 
 #' df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 #' plot(wt1 ~ wt2, data = df)
-umx_scale_wide_twin_data <- function(varsToScale, sep, data, twins = 1:2) {
-	# Issue #82 is to allow twins > 2
-	if(length(sep) != 1){
-		stop("I need one sep, you gave me ", length(sep), "\nYou, might, for instance, need to change c('_T1', '_T2') to just '_T'")
-	}
-	if(!identical(twins, 1:2)){
-		stop("I only support two twins at present, but you asked for:", omxQuotes(twins)," \n",
-		"comment on gitgub.com/tbates/umx/#82 to include arbitrary family members.")
-	}
-	# TODO umx_scale_wide_twin_data: Discover suffixes as unique digits following suffix (could be 1:6)
-	namesNeeded = umx_paste_names(varsToScale, sep = sep, suffixes = twins)
-	umx_check_names(namesNeeded, data)
-	t1Traits = paste0(varsToScale, sep, 1)
-	t2Traits = paste0(varsToScale, sep, 2)
+umx_scale_wide_twin_data <-  function(varsToScale, sep, data, twins = 1:2) {
+	  if (length(sep) != 1) {
+		  stop("I need one sep, you gave me ", length(sep), "\nYou might, for instance, need to change c('_T1', '_T2') to just '_T'")
+	  }
 	
-	for (i in 1:length(varsToScale)) {
-		T1 = data[,t1Traits[i]]
-		T2 = data[,t2Traits[i]]
-		totalMean = mean(c(T1, T2), na.rm = TRUE)
-		totalSD   =   sd(c(T1, T2), na.rm = TRUE)
-		T1 = (T1 - totalMean)/totalSD
-		T2 = (T2 - totalMean)/totalSD
-		data[,t1Traits[i] ] = T1
-		data[,t2Traits[i] ] = T2
-	}
-	return(data)
-}
+	  namesNeeded <- umx_paste_names(varsToScale, sep = sep, suffixes = twins)
+	  umx_check_names(namesNeeded, data)
+	
+	  for (i in 1:length(varsToScale)) {
+		  combinedData <- NULL
+		  for (twin in twins) {
+			  trait <- paste0(varsToScale[i], sep, twin)
+			  if (is.numeric(data[, trait])) {
+				  combinedData <- c(combinedData, data[, trait])
+			  }
+		  }
+		
+		  if (!is.null(combinedData)) {
+			  totalMean <- mean(combinedData, na.rm = TRUE)
+			  totalSD <- sd(combinedData, na.rm = TRUE)
+			
+			  for (twin in twins) {
+				  trait <- paste0(varsToScale[i], sep, twin)
+				  if (is.numeric(data[, trait])) {
+					  data[, trait] <- (data[, trait] - totalMean) / totalSD
+				  }
+			  }
+		  }
+	  }
+	
+	  return(data)
+  }
 
 #' Select first item in list of options, while being flexible about choices.
 #'
