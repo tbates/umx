@@ -111,7 +111,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 #'
 #' 	more tricky - we should really report the variances and the standardized thresholds.
 #' The guidance would be to try starting with unit variances and thresholds that are within
-#'  +/- 2 SD of the mean. [bivariate outliers %p option](https://openmx.ssri.psu.edu/thread/3899)
+#'  +/- 2 SD of the mean. Similar to the old %p option in classic Mx.
 #' @param model an [mxModel()] to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
@@ -383,7 +383,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
 #' 
 #' }
-umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), testD = TRUE, intervals = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, digits = 2, ...) {
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, digits = 2, ...) {
 	# override umx_set_auto_run?
 	oldAutoRun = umx_set_auto_run(autoRun = TRUE)
 	
@@ -594,7 +594,7 @@ loadings.MxModel <- function(x, ...) {
 #' 
 #' Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
 #'
-#' @details *Note*: [confint()] is an OpenMx function which will return SE-based CIs.
+#' @details *Note*: OpenMx defines a `confint` function which will return SE-based CIs.
 #' 
 #' If `parm` is empty, and `run = FALSE`, a message will alert you to set `run = TRUE`. 
 #'
@@ -3842,7 +3842,6 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("labe
 #' @return - AIC value
 #' @seealso - [AIC()], [umxCompare()], [logLik()]
 #' @family Reporting functions
-#' @references - \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
 #' @md
 #' @examples
 #' \dontrun{

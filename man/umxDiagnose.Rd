@@ -38,8 +38,7 @@ Try
 \if{html}{\out{<div class="sourceCode">}}\preformatted{more tricky - we should really report the variances and the standardized thresholds.
 }\if{html}{\out{</div>}}
 
-The guidance would be to try starting with unit variances and thresholds that are within
-+/- 2 SD of the mean. \href{https://openmx.ssri.psu.edu/thread/3899}{bivariate outliers \%p option}
+The guidance would be to try starting with unit variances and thresholds that are within +/- 2 SD of the mean.
 }
 \examples{
 \dontrun{
