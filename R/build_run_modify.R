@@ -748,16 +748,17 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	if(remove_unused_manifests & length(unusedManifests) > 0){
 		usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
     if (!is.null(weight)) {
-        myData = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests,
-          defnNames), verbose = verbose, weight = weight)
+        myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = 
+            defnNames, verbose = verbose, weight = weight)
     } else {
-        myData = xmu_make_mxData(data = data, type = type, manifests = c(usedManifests,
-          defnNames), verbose = verbose)
+        myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = 
+            defnNames, verbose = verbose)
     }
 	} else {
 		# keep everything
 		usedManifests = setdiff(manifestVars, defnNames)
-		myData = xmu_make_mxData(data= data, type = type, verbose = verbose, manifests = c(usedManifests, defnNames))
+		myData = xmu_make_mxData(data= data, type = type, verbose = verbose, manifests = usedManifests, fullCovs = 
+            defnNames)
 	}
 	# ==================
 	# = Assemble model =
@@ -3221,7 +3222,7 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #'
 #' @description
 #' Rotate a CP solution.
-#' Should work with rotations provided in `library("GPArotation")` and `library("psych")`, e.g
+#' Should work with rotations provided in `libs("GPArotation")` and `libs("psych")`, e.g.,
 #' 
 #' **Orthogonal**: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
 #' 

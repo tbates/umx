@@ -43,7 +43,7 @@
 #' @details
 #' In an EFA, all items may load on all factors.
 #' 
-#' Should work with rotations provided in `library("GPArotation")` and `library("psych")`, e.g
+#' Should work with rotations provided in `libs("GPArotation")` and `libs("psych")`, e.g.,
 #' 
 #' **Orthogonal**: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
 #' **Oblique**: "Promax", "promax", "oblimin", "simplimax", "bentlerQ", "geominQ", "biquartimin" and "cluster"
@@ -228,13 +228,16 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 			rm = newLoadings$rotmat
 			print("Factor Correlation Matrix")
 			junk = tryCatch({
-				print(solve(t(rm) %*% rm))
+				tmp = solve(t(rm) %*% rm)
+				print(tmp)
 			}, warning = function(x) {
-				umx_msg("Warning while printing factor correlation matrix: It may not be valid")
-				umx_msg(x)
+				umx_msg("A polite warning occurred while printing factor correlation matrix for this rotation: It may not be valid, or rotation may not provide a rotmat?")
+				print(paste0("Class of rotation matrix (should be matrix), was in fact: ", class(rm)))
+				print(x)
 			}, error = function(x) {
-				umx_msg("Error: Can't print factor correlation matrix: It may not be valid")
-				umx_msg(x)
+				umx_msg("A polite error occurred: Can't print factor correlation matrix for this rotation: It may not be valid, or rotation may not provide a rotmat?")
+				print(paste0("Class of rotation matrix (should be matrix), was in fact: ", class(rm)))
+				print(x)
 			}, finally={
 			    # ignored
 			})

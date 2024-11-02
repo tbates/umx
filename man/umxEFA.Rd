@@ -80,7 +80,7 @@ You can also rotate the factors using any rotation function.
 
 In an EFA, all items may load on all factors.
 
-Should work with rotations provided in \code{library("GPArotation")} and \code{library("psych")}, e.g
+Should work with rotations provided in \code{libs("GPArotation")} and \code{libs("psych")}, e.g.,
 
 \strong{Orthogonal}: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
 \strong{Oblique}: "Promax", "promax", "oblimin", "simplimax", "bentlerQ", "geominQ", "biquartimin" and "cluster"
