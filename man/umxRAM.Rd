@@ -35,7 +35,7 @@ umxRAM(
 
 \item{...}{umxPaths, mxThreshold objects, etc.}
 
-\item{data}{data for the model. Can be an \code{\link[=mxData]{mxData()}} or a data.frame}
+\item{data}{data for the model. Can be an \code{\link[OpenMx:mxData]{OpenMx::mxData()}} or a data.frame}
 
 \item{name}{A friendly name for the model}
 
@@ -79,7 +79,7 @@ umxRAM(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

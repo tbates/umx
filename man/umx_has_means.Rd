@@ -7,7 +7,7 @@
 umx_has_means(model)
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} to check for presence of means}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to check for presence of means}
 }
 \value{
 \itemize{
@@ -15,7 +15,7 @@ umx_has_means(model)
 }
 }
 \description{
-A utility function to return a binary answer to the question "does this \code{\link[=mxModel]{mxModel()}} have a means model?"
+A utility function to return a binary answer to the question "does this \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} have a means model?"
 }
 \examples{
 \dontrun{

@@ -7,7 +7,7 @@
 umxSummary(model, ...)
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} whose fit will be reported}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} whose fit will be reported}
 
 \item{...}{Other parameters to control model summary}
 }

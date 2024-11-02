@@ -65,7 +65,7 @@ Used to expand selDVs into full column names, i.e., "dep" --> c("dep_T1", "dep_T
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.ACEcov
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} of subclass mxModel.ACEcov
 }
 }
 \description{

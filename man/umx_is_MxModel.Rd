@@ -7,7 +7,7 @@
 umx_is_MxModel(obj, listOK = FALSE)
 }
 \arguments{
-\item{obj}{An object to be tested to see if it is an OpenMx \code{\link[=mxModel]{mxModel()}}}
+\item{obj}{An object to be tested to see if it is an OpenMx \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}}
 
 \item{listOK}{Is it acceptable to pass in a list of models? (Default = FALSE)}
 }

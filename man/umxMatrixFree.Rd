@@ -34,7 +34,7 @@ umxMatrixFree(
 }
 \value{
 \itemize{
-\item \code{\link[=mxMatrix]{mxMatrix()}}
+\item \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}}
 }
 }
 \description{

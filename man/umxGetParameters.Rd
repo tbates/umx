@@ -13,7 +13,7 @@ umxGetParameters(
 )
 }
 \arguments{
-\item{inputTarget}{An object to get parameters from: could be a RAM \code{\link[=mxModel]{mxModel()}}}
+\item{inputTarget}{An object to get parameters from: could be a RAM \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}}
 
 \item{regex}{A regular expression to filter the labels. Default (NA) returns all labels. If vector, treated as raw labels to find.}
 

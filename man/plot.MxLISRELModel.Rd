@@ -18,7 +18,7 @@
 )
 }
 \arguments{
-\item{x}{A LISREL \code{\link[=mxModel]{mxModel()}} from which to make a path diagram}
+\item{x}{A LISREL \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to make a path diagram}
 
 \item{std}{Whether to standardize the model (default = FALSE).}
 
@@ -39,7 +39,7 @@
 \item{...}{Optional parameters}
 }
 \description{
-\code{plot.MxLISRELModel} produces SEM diagrams using \code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} (or a graphviz application) to create the image.
+\code{plot.MxLISRELModel} produces SEM diagrams using [\code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} to create the image.
 }
 \details{
 \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).

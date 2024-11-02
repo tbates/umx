@@ -17,7 +17,7 @@ umxPlotACE(
 )
 }
 \arguments{
-\item{x}{\code{\link[=mxModel]{mxModel()}} to plot (created by umxACE in order to inherit the MxModelACE class)}
+\item{x}{\code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to plot (created by umxACE in order to inherit the MxModelACE class)}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 

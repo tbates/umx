@@ -17,7 +17,7 @@ umx_set_plot_format(umx.plot.format = NULL, silent = FALSE)
 }
 }
 \description{
-Set output format of plots (default = "DiagrammeR", alternative is "graphviz"). If you call this with no
+Set output format of plots (default = "\code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}}", alternatives are graphviz, svg, png, pdf). If you call this with no
 value, it will return the current setting. If you call it with TRUE, it toggles the setting.
 }
 \examples{

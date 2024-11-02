@@ -23,7 +23,7 @@
 #' @param summary Optionally show a summary.
 #' @param data = NULL If building the MZ and DZ datasets internally from a complete data set.
 #' @param zyg = "zygosity" (for the data= method of using this function)
-#' @return - [mxModel()] of subclass MxModelMRDoC
+#' @return - [OpenMx::mxModel()] of subclass MxModelMRDoC
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()]

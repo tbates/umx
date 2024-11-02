@@ -7,7 +7,7 @@
 umx_is_MxMatrix(obj)
 }
 \arguments{
-\item{obj}{an object to be tested to see if it is an OpenMx \code{\link[=mxMatrix]{mxMatrix()}}}
+\item{obj}{an object to be tested to see if it is an OpenMx \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}}}
 }
 \value{
 \itemize{

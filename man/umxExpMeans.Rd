@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxExpMeans}
 \alias{umxExpMeans}
-\title{Extract the expected means matrix from an \code{\link[=mxModel]{mxModel()}}}
+\title{Extract the expected means matrix from an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}}
 \usage{
 umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to get the means from}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to get the means from}
 
 \item{manifests}{Whether to select the manifest variables (defaults to TRUE)}
 
@@ -21,7 +21,7 @@ umxExpMeans(model, manifests = TRUE, latents = NULL, digits = NULL)
 }
 }
 \description{
-Extract the expected means matrix from an \code{\link[=mxModel]{mxModel()}}
+Extract the expected means matrix from an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 \examples{
 \dontrun{

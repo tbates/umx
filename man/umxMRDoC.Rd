@@ -46,7 +46,7 @@ umxMRDoC(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}} of subclass MxModelMRDoC
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} of subclass MxModelMRDoC
 }
 }
 \description{

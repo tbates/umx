@@ -7,7 +7,7 @@
 \method{residuals}{MxModel}(object, digits = 2, suppress = NULL, reorder = NULL, ...)
 }
 \arguments{
-\item{object}{An fitted \code{\link[=mxModel]{mxModel()}} from which to get residuals}
+\item{object}{An fitted \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to get residuals}
 
 \item{digits}{round to how many digits (default = 2)}
 

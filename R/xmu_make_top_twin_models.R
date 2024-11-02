@@ -87,7 +87,7 @@
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note. 
 #' @param verbose (default = FALSE)
-#' @return - [mxModel()]s for top, MZ and DZ.
+#' @return - [OpenMx::mxModel()]s for top, MZ and DZ.
 #' @export
 #' @family xmu internal not for end user
 #' @md

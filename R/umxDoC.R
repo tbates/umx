@@ -286,7 +286,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param data = NULL If building the MZ and DZ datasets internally from a complete data set.
 #' @param zyg = "zygosity" (for the data= method of using this function)
-#' @return - [mxModel()] of subclass MxModelDoC
+#' @return - [OpenMx::mxModel()] of subclass MxModelDoC
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDiscTwin()]
@@ -609,7 +609,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE).
 #' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary.
-#' @return - optional [mxModel()]
+#' @return - optional [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.

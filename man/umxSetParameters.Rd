@@ -20,7 +20,7 @@ umxSetParameters(
 )
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to set parameters in.}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to set parameters in.}
 
 \item{labels}{= labels to find}
 
@@ -46,11 +46,11 @@ umxSetParameters(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
-\code{umxSetParameters} is used to alter values, and other parameter properties in an \code{\link[=mxModel]{mxModel()}}.
+\code{umxSetParameters} is used to alter values, and other parameter properties in an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}.
 A common use is setting new values and changing parameters from free to false.
 \emph{Note}: If you just want to modify and re-run a model, you probably want \code{\link[=umxModify]{umxModify()}}.
 }

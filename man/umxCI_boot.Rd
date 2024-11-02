@@ -40,7 +40,7 @@ use parametric Monte Carlo bootstrapping based on your expected and observed cov
 }
 }
 \description{
-Compute boot-strapped Confidence Intervals for parameters in an \code{\link[=mxModel]{mxModel()}}
+Compute boot-strapped Confidence Intervals for parameters in an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 The function creates a sampling distribution for parameters by repeatedly drawing samples
 with replacement from your data and then computing the statistic for each redrawn sample.
 }

@@ -1,16 +1,16 @@
 Package: umx
 Version: 4.21.0
-Date: 2024-11-30
+Date: 2024-11-10
 Title: Structural Equation Modeling and Twin Modeling in R
 Authors@R: c(
-	person(c("Timothy", "C."), "Bates"   , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
+	person(c("Timothy", "C."), "Bates"    , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
 	person("Nathan"          , "Gillespie", role = c("wit"), email = "nathan.gillespie@vcuhealth.org"),
-	person("Hermine"         , "Maes"    , role = c("ctb"), email = "hmeaes@vcu.edu"),
-	person(c("Michael", "C."), "Neale"   , role = c("ctb"), email = "neale@vcu.edu"),
-	person(c("Joshua", "N.") , "Pritikin", role = c("ctb"), email = "jpritikin@pobox.com"),
+	person("Hermine"         , "Maes"     , role = c("ctb"), email = "hmeaes@vcu.edu"),
+	person(c("Michael", "C."), "Neale"    , role = c("ctb"), email = "neale@vcu.edu"),
+	person(c("Joshua", "N.") , "Pritikin" , role = c("ctb"), email = "jpritikin@pobox.com"),
 	person("Luis"            , "De Araujo", role = c("ctb"), email = "ldearaujo@unimelb.edu.au"),
-	person("Brenton"         , "Wiernik" , role = c("ctb"), email = "wiernik@umn.edu"),
-	person("Michael"         , "Zakharin", role = c("wit"), email = "s1775682@sms.ed.ac.uk")
+	person("Brenton"         , "Wiernik"  , role = c("ctb"), email = "wiernik@umn.edu"),
+	person("Michael"         , "Zakharin" , role = c("wit"), email = "s1775682@sms.ed.ac.uk")
 	)
 Maintainer: Timothy C. Bates <timothy.c.bates@gmail.com>
 License: GPL-3

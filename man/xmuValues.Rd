@@ -7,7 +7,7 @@
 xmuValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 }
 \arguments{
-\item{obj}{The RAM or matrix \code{\link[=mxModel]{mxModel()}}, or \code{\link[=mxMatrix]{mxMatrix()}} that you want to set start values for.}
+\item{obj}{The RAM or matrix \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, or \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}} that you want to set start values for.}
 
 \item{sd}{Optional Standard Deviation for start values}
 
@@ -17,7 +17,7 @@ xmuValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}} with updated start values
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} with updated start values
 }
 }
 \description{
@@ -25,7 +25,7 @@ For models to be estimated, it is essential that path values start at credible v
 \code{xmuValues} takes on that task for you.
 }
 \details{
-xmuValues can set start values for the free parameters in both RAM and Matrix \code{\link[=mxModel]{mxModel()}}s.
+xmuValues can set start values for the free parameters in both RAM and Matrix \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s.
 It can also take an mxMatrix as input.
 It tries to be smart in guessing starts from the values in your data and the model type.
 

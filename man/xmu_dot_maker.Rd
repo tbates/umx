@@ -7,7 +7,7 @@
 xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link[=mxModel]{mxModel()}} to get the name from}
+\item{model}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to get the name from}
 
 \item{file}{Either "name" (use model name) or a file name}
 

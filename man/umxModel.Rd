@@ -27,7 +27,7 @@ umxModel()
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[=umxRAM]{umxRAM()}}, \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 
 Other xmu internal not for end user: 

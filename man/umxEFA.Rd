@@ -53,7 +53,7 @@ umxEFA(
 }
 \value{
 \itemize{
-\item EFA \code{\link[=mxModel]{mxModel()}}
+\item EFA \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

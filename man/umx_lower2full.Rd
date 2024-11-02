@@ -7,7 +7,7 @@
 umx_lower2full(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL)
 }
 \arguments{
-\item{lower.data}{An [mxMatrix()]}
+\item{lower.data}{An [OpenMx::mxMatrix()]}
 
 \item{diag}{A boolean specifying whether the lower.data includes the diagonal}
 
@@ -16,11 +16,11 @@ umx_lower2full(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL)
 \item{dimnames}{Optional dimnames for the matrix (defaults to NULL)}
 }
 \value{
-- [mxMatrix()]
+- [OpenMx::mxMatrix()]
 }
 \description{
 Takes a vector of the lower-triangle of cells in a matrix as you might read-in
-from a journal article), OR a matrix (for instance from a "lower" [mxMatrix()], 
+from a journal article), OR a matrix (for instance from a "lower" [OpenMx::mxMatrix()], 
 and returns a full matrix, copying the lower triangle into the upper.
 }
 \details{

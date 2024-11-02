@@ -75,7 +75,7 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE()] for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
@@ -199,7 +199,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equ
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases umxSummary.MxModelSimplex
-#' @param model an [mxModel()] to summarize
+#' @param model an [OpenMx::mxModel()] to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param file The name of the dot file to write: "name" = use the name of the model.
 #' Defaults to NA = no plot.
@@ -213,7 +213,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equ
 #' @param zero.print How to show zeros (default = ".")
 #' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param ... Other parameters to control model summary
-#' @return - optional [mxModel()]
+#' @return - optional [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxSimplex()]

@@ -7,7 +7,7 @@
 umxModelNames(model, includeOuterModelName = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to search for model names.}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to search for model names.}
 
 \item{includeOuterModelName}{FALSE}
 }

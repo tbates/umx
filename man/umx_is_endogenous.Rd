@@ -7,7 +7,7 @@
 umx_is_endogenous(model, manifests_only = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} from which to get endogenous variables}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to get endogenous variables}
 
 \item{manifests_only}{Whether to check only manifests (default = TRUE)}
 }
