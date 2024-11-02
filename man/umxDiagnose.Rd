@@ -39,7 +39,7 @@ Try
 }\if{html}{\out{</div>}}
 
 The guidance would be to try starting with unit variances and thresholds that are within
-+/- 2 SD of the mean. Similar to the old \%p option in classic Mx.
++/- 2 SD of the mean. Like \%p option in Classic Mx.
 }
 \examples{
 \dontrun{

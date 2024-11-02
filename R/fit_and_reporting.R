@@ -3393,7 +3393,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' @param delta A the amount to simulate changing \sQuote{from} by. 
 #' @param to The dependent variable that you want to watch changing.
 #' @param model The model containing variables from and to.
-#' @seealso - [OpenMx::mxCheckIdentification()], [OpenMx::umxCompare()]
+#' @seealso - [OpenMx::mxCheckIdentification()], [umxCompare()]
 #' @family Advanced Model Building Functions
 #' @references - https://github.com/tbates/umx/
 #' @export

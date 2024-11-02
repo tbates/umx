@@ -11,7 +11,7 @@ umxPlotSexLim(
   digits = 2,
   means = FALSE,
   std = TRUE,
-  format = c("current", "graphviz", "[DiagrammeR::DiagrammeR()]"),
+  format = c("current", "graphviz", "DiagrammeR"),
   SEstyle = FALSE,
   strip_zero = TRUE,
   ...
@@ -28,7 +28,7 @@ umxPlotSexLim(
 
 \item{std}{Whether to standardize the model (defaults to TRUE)}
 
-\item{format}{= c("current", "graphviz", "\code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}}")}
+\item{format}{= c("current", "graphviz", "DiagrammeR")}
 
 \item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
 
