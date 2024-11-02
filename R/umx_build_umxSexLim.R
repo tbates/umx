@@ -743,7 +743,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
-#' @param format = c("current", "graphviz", "[DiagrammeR::DiagrammeR()]") 
+#' @param format = c("current", "graphviz", "DiagrammeR") 
 #' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Optional additional parameters
@@ -784,7 +784,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' umxPlotSexLim(m1)
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
-umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "[DiagrammeR::DiagrammeR()]"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	message("no plots for umxPlotSexLim as yet.")
 	return()
 	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
