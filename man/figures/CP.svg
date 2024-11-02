@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="41.24056 18.937495 519.581 560.39844" width="519.581" height="560.39844">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" viewBox="41.24056 18.937495 519.581 560.39844" width="519.581" height="560.39844">
   <defs>
-    <font-face font-family="Optima" font-size="16" panose-1="2 0 5 3 6 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="478" cap-height="691" ascent="919.0063" descent="-268.00537" font-weight="400">
-      <font-face-src>
-        <font-face-name name="Optima-Regular"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Optima" font-size="18" panose-1="2 0 8 3 8 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="485" cap-height="691" ascent="921.0052" descent="-268.00537" font-weight="700">
-      <font-face-src>
-        <font-face-name name="Optima-Bold"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Optima" font-size="13" panose-1="2 0 5 3 6 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="478" cap-height="691" ascent="919.0063" descent="-268.00537" font-weight="400">
-      <font-face-src>
-        <font-face-name name="Optima-Regular"/>
-      </font-face-src>
-    </font-face>
     <marker orient="auto" overflow="visible" markerUnits="strokeWidth" id="SharpArrow_Marker" stroke-linejoin="miter" stroke-miterlimit="10" viewBox="-4 -4 10 8" markerWidth="10" markerHeight="8" color="black">
       <g>
         <path d="M 5 0 L -3 -3 L 0 0 L 0 0 L -3 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
@@ -27,44 +12,8 @@
         <path d="M 8 0 L 0 -3 L 0 3 Z" fill="currentColor" stroke="currentColor" stroke-width="1"/>
       </g>
     </marker>
-    <font-face font-family="Helvetica Neue" font-size="16" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Helvetica Neue" font-size="14" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Helvetica Neue" font-size="12" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Helvetica Neue" font-size="13" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Helvetica Neue" font-size="26" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Helvetica Neue" font-size="11" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
-    <font-face font-family="Helvetica Neue" font-size="28" panose-1="2 0 5 3 0 0 0 2 0 4" units-per-em="1000" underline-position="-100" underline-thickness="50" slope="0" x-height="517" cap-height="714" ascent="951.9958" descent="-212.99744" font-weight="400">
-      <font-face-src>
-        <font-face-name name="HelveticaNeue"/>
-      </font-face-src>
-    </font-face>
   </defs>
-  <metadata> Produced by OmniGraffle 7.19.2\n2021-11-30 21:50:44 +0000</metadata>
-  <g id="CP" stroke="none" stroke-dasharray="none" fill="none" stroke-opacity="1" fill-opacity="1">
+  <g id="CP" fill="none" stroke-dasharray="none" fill-opacity="1" stroke="none" stroke-opacity="1">
     <title>CP</title>
     <rect fill="white" x="41.24056" y="18.937495" width="516.75944" height="558.0625"/>
     <g id="CP_Layer_1">
@@ -73,83 +22,83 @@
         <rect x="99" y="374" width="63" height="63" fill="white"/>
         <rect x="99" y="374" width="63" height="63" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(104 395.80005)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="8.268" y="15">Var 1</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="8.268" y="15" xml:space="preserve">Var 1</tspan>
         </text>
       </g>
       <g id="Graphic_143">
         <rect x="173.7" y="374" width="63" height="63" fill="white"/>
         <rect x="173.7" y="374" width="63" height="63" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(178.7 395.80005)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="8.268" y="15">Var 2</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="8.268" y="15" xml:space="preserve">Var 2</tspan>
         </text>
       </g>
       <g id="Graphic_142">
         <rect x="248.4" y="374" width="63" height="63" fill="white"/>
         <rect x="248.4" y="374" width="63" height="63" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(253.4 395.80005)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="8.268" y="15">Var 3</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="8.268" y="15" xml:space="preserve">Var 3</tspan>
         </text>
       </g>
       <g id="Graphic_141">
         <rect x="323.1" y="374" width="63" height="63" fill="white"/>
         <rect x="323.1" y="374" width="63" height="63" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(328.1 395.80005)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="8.268" y="15">Var 4</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="8.268" y="15" xml:space="preserve">Var 4</tspan>
         </text>
       </g>
       <g id="Graphic_140">
         <rect x="442.8" y="374" width="63" height="63" fill="white"/>
         <rect x="442.8" y="374" width="63" height="63" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(447.8 395.80005)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="8.268" y="15">Var n</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="8.268" y="15" xml:space="preserve">Var n</tspan>
         </text>
       </g>
       <g id="Graphic_139">
         <circle cx="130.5" cy="198.5" r="31.5000503339097" fill="white"/>
         <circle cx="130.5" cy="198.5" r="31.5000503339097" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(110.3 184.30005)" fill="black">
-          <tspan font-family="Optima" font-size="18" font-weight="700" fill="black" x="5.249001" y="17">CF</tspan>
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" y="24">1</tspan>
+          <tspan font-family="Optima" font-weight="bold" font-size="18" fill="black" x="5.249001" y="17" xml:space="preserve">CF</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" y="24" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_138">
         <circle cx="279.5" cy="198.5" r="31.5000503339097" fill="white"/>
         <circle cx="279.5" cy="198.5" r="31.5000503339097" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(259.3 184.30005)" fill="black">
-          <tspan font-family="Optima" font-size="18" font-weight="700" fill="black" x="5.249001" y="17">CF</tspan>
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" y="24">2</tspan>
+          <tspan font-family="Optima" font-weight="bold" font-size="18" fill="black" x="5.249001" y="17" xml:space="preserve">CF</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" y="24" xml:space="preserve">2</tspan>
         </text>
       </g>
       <g id="Graphic_137">
         <circle cx="474.5" cy="198.5" r="31.5000503339097" fill="white"/>
         <circle cx="474.5" cy="198.5" r="31.5000503339097" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(454.3 184.30005)" fill="black">
-          <tspan font-family="Optima" font-size="18" font-weight="700" fill="black" x="5.249001" y="17">CF</tspan>
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" y="24">n</tspan>
+          <tspan font-family="Optima" font-weight="bold" font-size="18" fill="black" x="5.249001" y="17" xml:space="preserve">CF</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" y="24" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Graphic_136">
         <ellipse cx="82.25625" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" fill="white"/>
         <ellipse cx="82.25625" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(69.93125 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="3.375" y="15">A</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">1</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="3.375" y="15" xml:space="preserve">A</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_135">
         <ellipse cx="130.71289" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" fill="white"/>
         <ellipse cx="130.71289" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(118.38789 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="3.375" y="15">C</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">1</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="3.375" y="15" xml:space="preserve">C</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_134">
         <ellipse cx="179.16952" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" fill="white"/>
         <ellipse cx="179.16952" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(166.84452 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="4.711" y="15">E</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">1</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="4.711" y="15" xml:space="preserve">E</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Line_133">
@@ -203,70 +152,70 @@
       <g id="Graphic_117">
         <rect x="89.73477" y="107.79151" width="27" height="35" fill="white"/>
         <text transform="translate(95.04677 112.79151)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">a</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">1</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">a</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_116">
         <rect x="117.1194" y="108.1087" width="27" height="35" fill="white"/>
         <text transform="translate(122.4314 113.1087)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">c</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">1</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">c</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_115">
         <rect x="144.13085" y="108.36016" width="27" height="35" fill="white"/>
         <text transform="translate(149.44285 113.36016)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">e</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">1</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">e</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_114">
-        <ellipse cx="230.43048" cy="71.6" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
-        <ellipse cx="230.43048" cy="71.6" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+        <ellipse cx="230.43048" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" fill="white"/>
+        <ellipse cx="230.43048" cy="71.6" rx="21.6562846045629" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(218.10548 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="3.375" y="15">A</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">2</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="3.375" y="15" xml:space="preserve">A</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">2</tspan>
         </text>
       </g>
       <g id="Graphic_113">
         <ellipse cx="278.8871" cy="71.6" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
         <ellipse cx="278.8871" cy="71.6" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(266.5621 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="3.375" y="15">C</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">2</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="3.375" y="15" xml:space="preserve">C</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">2</tspan>
         </text>
       </g>
       <g id="Graphic_112">
         <ellipse cx="327.34375" cy="71.6" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
         <ellipse cx="327.34375" cy="71.6" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(315.01875 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="4.711" y="15">E</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">2</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="4.711" y="15" xml:space="preserve">E</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">2</tspan>
         </text>
       </g>
       <g id="Graphic_111">
         <ellipse cx="425.6047" cy="71.6" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
         <ellipse cx="425.6047" cy="71.6" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(413.2797 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="3.375" y="15">A</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">n</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="3.375" y="15" xml:space="preserve">A</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Graphic_110">
         <ellipse cx="474.06134" cy="71.6" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
         <ellipse cx="474.06134" cy="71.6" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(461.73634 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="3.375" y="15">C</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">n</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="3.375" y="15" xml:space="preserve">C</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Graphic_109">
         <ellipse cx="522.518" cy="71.6" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
         <ellipse cx="522.518" cy="71.6" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(510.193 59.43754)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="4.711" y="15">E</tspan>
-          <tspan font-family="Optima" font-size="13" font-weight="400" fill="black" y="21">n</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="4.711" y="15" xml:space="preserve">E</tspan>
+          <tspan font-family="Optima" font-size="13" fill="black" y="21" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Line_108">
@@ -290,67 +239,67 @@
       <g id="Graphic_102">
         <rect x="237.42473" y="106.52313" width="27" height="35" fill="white"/>
         <text transform="translate(242.73673 111.52313)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">a</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">2</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">a</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">2</tspan>
         </text>
       </g>
       <g id="Graphic_101">
         <rect x="265.64805" y="107.11996" width="27" height="35" fill="white"/>
         <text transform="translate(270.96005 112.11996)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">c</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">2</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">c</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">2</tspan>
         </text>
       </g>
       <g id="Graphic_100">
         <rect x="293.34487" y="107.31996" width="27" height="35" fill="white"/>
         <text transform="translate(298.65687 112.31996)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">e</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">2</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">e</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">2</tspan>
         </text>
       </g>
       <g id="Graphic_99">
         <rect x="429.5625" y="107" width="27" height="35" fill="white"/>
         <text transform="translate(434.8745 112)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">a</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">n</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">a</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Graphic_98">
         <rect x="460.73886" y="105.56651" width="27" height="35" fill="white"/>
         <text transform="translate(466.05086 110.56651)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="10125234e-20" y="15">c</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">n</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="10125234e-20" y="15" xml:space="preserve">c</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Graphic_97">
         <rect x="487.469" y="105.74528" width="31" height="35" fill="white"/>
         <text transform="translate(492.702 110.74528)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">e</tspan>
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" y="21">m</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">e</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" y="21" xml:space="preserve">m</tspan>
         </text>
       </g>
       <g id="Graphic_96">
         <ellipse cx="100.25625" cy="512.6" rx="21.6562846045629" ry="21.6000353729893" fill="white"/>
         <ellipse cx="100.25625" cy="512.6" rx="21.6562846045629" ry="21.6000353729893" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(87.93125 500.932)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x=".5409998" y="15">As</tspan>
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" y="20">1</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x=".5409998" y="15" xml:space="preserve">As</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" y="20" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_95">
         <ellipse cx="129.65625" cy="539.6" rx="21.6562846045629" ry="21.6000353729892" fill="white"/>
         <ellipse cx="129.65625" cy="539.6" rx="21.6562846045629" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(117.33125 527.932)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x=".5409998" y="15">Cs</tspan>
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" y="20">1</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x=".5409998" y="15" xml:space="preserve">Cs</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" y="20" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_94">
         <ellipse cx="161.16952" cy="512.6" rx="21.6562846045629" ry="21.6000353729893" fill="white"/>
         <ellipse cx="161.16952" cy="512.6" rx="21.6562846045629" ry="21.6000353729893" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(148.84452 500.932)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x="1.8769998" y="15">Es</tspan>
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" y="20">1</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="1.8769998" y="15" xml:space="preserve">Es</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" y="20" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Line_93">
@@ -367,7 +316,7 @@
           <circle cx="543.0547" cy="43.269575" r="9.70271550396273" fill="white"/>
           <circle cx="543.0547" cy="43.269575" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(540.29255 34.045575)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_89">
@@ -384,10 +333,10 @@
       </g>
       <g id="Group_81">
         <g id="Graphic_85">
-          <circle cx="490.0547" cy="42.269575" r="9.70271550396275" fill="white"/>
-          <circle cx="490.0547" cy="42.269575" r="9.70271550396275" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="490.0547" cy="42.269575" r="9.70271550396272" fill="white"/>
+          <circle cx="490.0547" cy="42.269575" r="9.70271550396272" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(487.29255 33.045575)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_84">
@@ -404,10 +353,10 @@
       </g>
       <g id="Group_76">
         <g id="Graphic_80">
-          <circle cx="445.0547" cy="42.269575" r="9.70271550396271" fill="white"/>
-          <circle cx="445.0547" cy="42.269575" r="9.70271550396271" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="445.0547" cy="42.269575" r="9.70271550396272" fill="white"/>
+          <circle cx="445.0547" cy="42.269575" r="9.70271550396272" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(442.29255 33.045575)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_79">
@@ -427,7 +376,7 @@
           <circle cx="230.3707" cy="36.7027" r="9.70271550396273" fill="white"/>
           <circle cx="230.3707" cy="36.7027" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(227.60853 27.4787)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_74">
@@ -447,7 +396,7 @@
           <circle cx="59.00599" cy="45.379975" r="9.70271550396273" fill="white"/>
           <circle cx="59.00599" cy="45.379975" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(56.24383 36.155976)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_69">
@@ -464,10 +413,10 @@
       </g>
       <g id="Group_61">
         <g id="Graphic_65">
-          <circle cx="75.085995" cy="534.5707" r="9.70271550396273" fill="white"/>
-          <circle cx="75.085995" cy="534.5707" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="75.085995" cy="534.5707" r="9.70271550396272" fill="white"/>
+          <circle cx="75.085995" cy="534.5707" r="9.70271550396272" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(72.323835 525.3467)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_64">
@@ -487,7 +436,7 @@
           <circle cx="104.086" cy="561.5707" r="9.70271550396273" fill="white"/>
           <circle cx="104.086" cy="561.5707" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(101.32384 552.3467)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_59">
@@ -504,10 +453,10 @@
       </g>
       <g id="Group_51">
         <g id="Graphic_55">
-          <circle cx="187.4207" cy="534.6412" r="9.70271550396273" fill="white"/>
-          <circle cx="187.4207" cy="534.6412" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="187.4207" cy="534.6412" r="9.70271550396274" fill="white"/>
+          <circle cx="187.4207" cy="534.6412" r="9.70271550396274" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(184.65853 525.4172)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_54">
@@ -526,32 +475,32 @@
         <ellipse cx="444.65625" cy="513.4" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
         <ellipse cx="444.65625" cy="513.4" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(432.33125 501.732)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x=".5409998" y="15">As</tspan>
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" y="20">n</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x=".5409998" y="15" xml:space="preserve">As</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" y="20" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Graphic_49">
         <ellipse cx="474.23947" cy="539.6" rx="21.656284604563" ry="21.6000353729892" fill="white"/>
         <ellipse cx="474.23947" cy="539.6" rx="21.656284604563" ry="21.6000353729892" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(461.91447 527.932)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x=".5409998" y="15">Cs</tspan>
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" y="20">n</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x=".5409998" y="15" xml:space="preserve">Cs</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" y="20" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Graphic_48">
         <ellipse cx="505.75274" cy="512.6" rx="21.6562846045629" ry="21.6000353729893" fill="white"/>
         <ellipse cx="505.75274" cy="512.6" rx="21.6562846045629" ry="21.6000353729893" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
         <text transform="translate(493.42774 500.932)" fill="black">
-          <tspan font-family="Optima" font-size="16" font-weight="400" fill="black" x=".5409998" y="15">As</tspan>
-          <tspan font-family="Helvetica Neue" font-size="12" font-weight="400" fill="black" y="20">n</tspan>
+          <tspan font-family="Optima" font-size="16" fill="black" x="1.8769998" y="15" xml:space="preserve">Es</tspan>
+          <tspan font-family="Helvetica Neue" font-size="12" fill="black" y="20" xml:space="preserve">n</tspan>
         </text>
       </g>
       <g id="Group_43">
         <g id="Graphic_47">
-          <circle cx="420.6692" cy="539.5707" r="9.70271550396271" fill="white"/>
-          <circle cx="420.6692" cy="539.5707" r="9.70271550396271" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="420.6692" cy="539.5707" r="9.70271550396273" fill="white"/>
+          <circle cx="420.6692" cy="539.5707" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(417.90706 530.3467)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_46">
@@ -568,10 +517,10 @@
       </g>
       <g id="Group_38">
         <g id="Graphic_42">
-          <circle cx="448.6692" cy="561.5707" r="9.70271550396275" fill="white"/>
-          <circle cx="448.6692" cy="561.5707" r="9.70271550396275" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="448.6692" cy="561.5707" r="9.70271550396273" fill="white"/>
+          <circle cx="448.6692" cy="561.5707" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(445.90706 552.3467)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_41">
@@ -588,10 +537,10 @@
       </g>
       <g id="Group_33">
         <g id="Graphic_37">
-          <circle cx="532.0039" cy="534.6412" r="9.70271550396276" fill="white"/>
-          <circle cx="532.0039" cy="534.6412" r="9.70271550396276" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="532.0039" cy="534.6412" r="9.70271550396274" fill="white"/>
+          <circle cx="532.0039" cy="534.6412" r="9.70271550396274" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(529.24175 525.4172)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_36">
@@ -618,15 +567,15 @@
       <g id="Graphic_29">
         <rect x="102.5" y="270.00782" width="38" height="35" fill="white"/>
         <text transform="translate(107.608 275.00782)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">cf</tspan>
-          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" y="21">11</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">cf</tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" y="21" xml:space="preserve">11</tspan>
         </text>
       </g>
       <g id="Graphic_28">
         <rect x="136.56385" y="269.50247" width="38" height="35" fill="white"/>
         <text transform="translate(141.67185 274.50247)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">cf</tspan>
-          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" y="21">21</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">cf</tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" y="21" xml:space="preserve">21</tspan>
         </text>
       </g>
       <g id="Group_23">
@@ -634,7 +583,7 @@
           <circle cx="111.00599" cy="44.379975" r="9.70271550396273" fill="white"/>
           <circle cx="111.00599" cy="44.379975" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(108.24383 35.155976)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_26">
@@ -651,10 +600,10 @@
       </g>
       <g id="Group_18">
         <g id="Graphic_22">
-          <circle cx="158.006" cy="45.379975" r="9.70271550396273" fill="white"/>
-          <circle cx="158.006" cy="45.379975" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="158.006" cy="45.379975" r="9.70271550396272" fill="white"/>
+          <circle cx="158.006" cy="45.379975" r="9.70271550396272" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(155.24383 36.155976)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_21">
@@ -674,7 +623,7 @@
           <circle cx="278.8402" cy="36.739148" r="9.70271550396272" fill="white"/>
           <circle cx="278.8402" cy="36.739148" r="9.70271550396272" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(276.07805 27.51515)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_16">
@@ -691,10 +640,10 @@
       </g>
       <g id="Group_8">
         <g id="Graphic_12">
-          <circle cx="327.28396" cy="36.739148" r="9.70271550396273" fill="white"/>
-          <circle cx="327.28396" cy="36.739148" r="9.70271550396273" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+          <circle cx="327.28396" cy="36.739148" r="9.70271550396271" fill="white"/>
+          <circle cx="327.28396" cy="36.739148" r="9.70271550396271" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
           <text transform="translate(324.5218 27.51515)" fill="black">
-            <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">1</tspan>
+            <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">1</tspan>
           </text>
         </g>
         <g id="Graphic_11">
@@ -711,14 +660,14 @@
       </g>
       <g id="Graphic_7">
         <text transform="translate(401 383)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="26" font-weight="400" fill="black" x="0" y="25">…</tspan>
+          <tspan font-family="Helvetica Neue" font-size="26" fill="black" x="0" y="25" xml:space="preserve">…</tspan>
         </text>
       </g>
       <g id="Graphic_6">
         <rect x="173.79206" y="269.76277" width="38" height="35" fill="white"/>
         <text transform="translate(178.90006 274.76277)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="16" font-weight="400" fill="black" x="0" y="15">cf</tspan>
-          <tspan font-family="Helvetica Neue" font-size="13" font-weight="400" fill="black" y="21">31</tspan>
+          <tspan font-family="Helvetica Neue" font-size="16" fill="black" x="0" y="15" xml:space="preserve">cf</tspan>
+          <tspan font-family="Helvetica Neue" font-size="13" fill="black" y="21" xml:space="preserve">31</tspan>
         </text>
       </g>
       <g id="Line_5">
@@ -730,18 +679,18 @@
       <g id="Graphic_3">
         <rect x="87.82169" y="454.155" width="31" height="30" fill="white"/>
         <text transform="translate(93.00469 459.155)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="14" font-weight="400" fill="black" x="0" y="13">as</tspan>
-          <tspan font-family="Helvetica Neue" font-size="11" font-weight="400" fill="black" y="17">1</tspan>
+          <tspan font-family="Helvetica Neue" font-size="14" fill="black" x="0" y="13" xml:space="preserve">as</tspan>
+          <tspan font-family="Helvetica Neue" font-size="11" fill="black" y="17" xml:space="preserve">1</tspan>
         </text>
       </g>
       <g id="Graphic_145">
         <text transform="translate(401 176)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="28" font-weight="400" fill="black" x="0" y="27">…</tspan>
+          <tspan font-family="Helvetica Neue" font-size="28" fill="black" x="0" y="27" xml:space="preserve">…</tspan>
         </text>
       </g>
       <g id="Graphic_146">
-        <text transform="translate(401 455)" fill="black">
-          <tspan font-family="Helvetica Neue" font-size="26" font-weight="400" fill="black" x="0" y="25">…</tspan>
+        <text transform="translate(284 464)" fill="black">
+          <tspan font-family="Helvetica Neue" font-size="26" fill="black" x="0" y="25" xml:space="preserve">…</tspan>
         </text>
       </g>
     </g>
