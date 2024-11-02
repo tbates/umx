@@ -43,7 +43,7 @@ To keep these, set wipeExistingRequests = FALSE.
 
 Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
 
-\emph{Note}: \code{\link[=confint]{confint()}} is an OpenMx function which will return SE-based CIs.
+\emph{Note}: OpenMx defines a \code{confint} function which will return SE-based CIs.
 
 If \code{parm} is empty, and \code{run = FALSE}, a message will alert you to set \code{run = TRUE}.
 }

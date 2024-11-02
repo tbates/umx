@@ -15,7 +15,7 @@ umxFitIndices(model, ...)
 List of fit statistics
 }
 \description{
-Computes a variety of fit indices. Originated in this thread: \url{http://openmx.ssri.psu.edu/thread/765}
+Computes a variety of fit indices.
 }
 \details{
 Note: This function is currently not robust across multi-group designs or

@@ -7,8 +7,8 @@
 umxReduceACE(
   model,
   report = c("markdown", "inline", "html", "report"),
-  testD = TRUE,
   intervals = TRUE,
+  testD = TRUE,
   baseFileName = "tmp",
   tryHard = c("yes", "no", "ordinal", "search"),
   silent = FALSE,
@@ -21,9 +21,9 @@ umxReduceACE(
 
 \item{report}{How to report the results. "html" = open in browser}
 
-\item{testD}{Whether to test ADE and DE models (TRUE)}
-
 \item{intervals}{Recompute CIs (if any included) on the best model (default = TRUE)}
+
+\item{testD}{Whether to test ADE and DE models (TRUE)}
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 

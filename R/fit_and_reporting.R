@@ -968,7 +968,7 @@ umxSummary.default <- function(model, ...){
 #' 
 #' Sometimes SEs appear NA. This may reflect a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
 #' This can include empirical under-identification - for instance two factors
-#' that are essentially identical in structure. use [mxCheckIdentification()] to check identification.
+#' that are essentially identical in structure. use [OpenMx::mxCheckIdentification()] to check identification.
 #' 
 #' Solutions: If there are paths estimated at or close to zero suggests that fixing one or two of 
 #' these to zero may fix the standard error calculation.
@@ -2012,7 +2012,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @param silent (don't print, just return the table as a dataframe (default = FALSE)
 #' @family Model Summary and Comparison
-#' @seealso - [umxSummary()], [umxRAM()],[mxCompare()]
+#' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
 #' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
@@ -3394,7 +3394,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' @param delta A the amount to simulate changing \sQuote{from} by. 
 #' @param to The dependent variable that you want to watch changing.
 #' @param model The model containing variables from and to.
-#' @seealso - [mxCheckIdentification()], [mxCompare()]
+#' @seealso - [OpenMx::mxCheckIdentification()], [OpenMx::umxCompare()]
 #' @family Advanced Model Building Functions
 #' @references - https://github.com/tbates/umx/
 #' @export

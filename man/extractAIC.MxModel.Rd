@@ -39,11 +39,6 @@ extractAIC(m1)
 AIC(m1)
 }
 }
-\references{
-\itemize{
-\item \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
-}
-}
 \seealso{
 \itemize{
 \item \code{\link[=AIC]{AIC()}}, \code{\link[=umxCompare]{umxCompare()}}, \code{\link[=logLik]{logLik()}}

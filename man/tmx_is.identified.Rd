@@ -18,7 +18,7 @@ tmx_is.identified(nVariables, nFactors)
 }
 \description{
 Test if a factor model is identified by establishing if the number of variables is equal too or grater than
-the number of model parameters. See also \code{\link[=mxCheckIdentification]{mxCheckIdentification()}} for checking actual models.
+the number of model parameters. See also \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}} for checking actual models.
 }
 \examples{
 tmx_is.identified(nVariables = 2, nFactors = 1) # FALSE
@@ -33,7 +33,7 @@ tmx_is.identified(nVariables = 5, nFactors = 2) # TRUE
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxCheckIdentification]{mxCheckIdentification()}}
+\item \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}}
 }
 
 Other Teaching and testing Functions: 

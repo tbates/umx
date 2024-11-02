@@ -38,7 +38,8 @@ Try
 \if{html}{\out{<div class="sourceCode">}}\preformatted{more tricky - we should really report the variances and the standardized thresholds.
 }\if{html}{\out{</div>}}
 
-The guidance would be to try starting with unit variances and thresholds that are within +/- 2 SD of the mean.
+The guidance would be to try starting with unit variances and thresholds that are within
++/- 2 SD of the mean. Similar to the old \%p option in classic Mx.
 }
 \examples{
 \dontrun{

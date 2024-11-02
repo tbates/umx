@@ -2279,7 +2279,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' 
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [omxBrownie()]
+#' @seealso - [OpenMx::omxBrownie()]
 #' @examples
 #' umxBrownie()
 #' @md
