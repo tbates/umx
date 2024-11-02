@@ -21,7 +21,7 @@ umxSummaryACE(
 )
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to summarize.}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to summarize.}
 
 \item{digits}{round to how many digits (default = 2).
 Defaults to NA = do not create plot output.}
@@ -48,7 +48,7 @@ Defaults to NA = do not create plot output.}
 }
 \value{
 \itemize{
-\item optional \code{\link[=mxModel]{mxModel()}}
+\item optional \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

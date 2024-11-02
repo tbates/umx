@@ -79,7 +79,7 @@
 #' @param digits rounding (default = 2)
 #' @param n.obs Number of observations in if covmat provided (default = NA)
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
-#' @return - EFA [mxModel()]
+#' @return - EFA [OpenMx::mxModel()]
 #' @family Super-easy helpers
 #' @export
 #' @md
@@ -349,7 +349,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param contrasts An optional list (not supported)
 #' @param ...	arguments to be passed along. (not supported)
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Super-easy helpers
 #' @seealso - [umx_make_MR_data()], [umxDiffMZ()], [umxDoC()], [umxDiscTwin()]

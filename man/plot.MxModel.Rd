@@ -23,7 +23,7 @@
 )
 }
 \arguments{
-\item{x}{An \code{\link[=mxModel]{mxModel()}} from which to make a path diagram}
+\item{x}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to make a path diagram}
 
 \item{std}{Whether to standardize the model (default = FALSE).}
 
@@ -52,11 +52,10 @@
 \item{...}{Optional parameters}
 }
 \description{
-\code{\link[=plot]{plot()}} produces SEM diagrams in graphviz format, and relies on \code{\link[=DiagrammeR]{DiagrammeR()}} (or a
-graphviz application) to create the image.
+\code{\link[=plot]{plot()}} produces SEM diagrams in graphviz format, and relies on \code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} to create the image.
 }
 \details{
-\emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser. Other options include pdf SVG etc.
+\emph{Note:} \code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} is supported out of the box.  By default, plots open in your browser. Other options include pdf SVG etc.
 
 If you use \code{umx_set_plot_format("graphviz")}, graphs will open in a graphviz helper app (if installed).
 

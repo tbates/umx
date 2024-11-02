@@ -15,7 +15,7 @@ umx_is_ordered(
 )
 }
 \arguments{
-\item{df}{A \code{\link[=data.frame]{data.frame()}} or \code{\link[=mxData]{mxData()}} to look in for ordinal variables (if you offer a
+\item{df}{A \code{\link[=data.frame]{data.frame()}} or \code{\link[OpenMx:mxData]{OpenMx::mxData()}} to look in for ordinal variables (if you offer a
 matrix or vector, it will be upgraded to a dataframe)}
 
 \item{names}{whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)}

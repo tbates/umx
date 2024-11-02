@@ -17,7 +17,7 @@ xmu_make_mxData(
 )
 }
 \arguments{
-\item{data}{A \code{\link[=data.frame]{data.frame()}} or \code{\link[=mxData]{mxData()}}}
+\item{data}{A \code{\link[=data.frame]{data.frame()}} or \code{\link[OpenMx:mxData]{OpenMx::mxData()}}}
 
 \item{type}{What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')}
 
@@ -37,7 +37,7 @@ xmu_make_mxData(
 }
 \value{
 \itemize{
-\item \code{\link[=mxData]{mxData()}}
+\item \code{\link[OpenMx:mxData]{OpenMx::mxData()}}
 }
 }
 \description{

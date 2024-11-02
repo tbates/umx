@@ -11,14 +11,14 @@ umxPlotSexLim(
   digits = 2,
   means = FALSE,
   std = TRUE,
-  format = c("current", "graphviz", "DiagrammeR"),
+  format = c("current", "graphviz", "[DiagrammeR::DiagrammeR()]"),
   SEstyle = FALSE,
   strip_zero = TRUE,
   ...
 )
 }
 \arguments{
-\item{x}{\code{\link[=mxModel]{mxModel()}} to display graphically}
+\item{x}{\code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to display graphically}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
@@ -28,7 +28,7 @@ umxPlotSexLim(
 
 \item{std}{Whether to standardize the model (defaults to TRUE)}
 
-\item{format}{= c("current", "graphviz", "DiagrammeR")}
+\item{format}{= c("current", "graphviz", "\code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}}")}
 
 \item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
 

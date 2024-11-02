@@ -85,7 +85,7 @@ umxACE(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}} of subclass mxModel.ACE
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} of subclass mxModel.ACE
 }
 }
 \description{

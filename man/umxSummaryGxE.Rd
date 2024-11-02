@@ -53,7 +53,7 @@ umxSummaryGxE(
 }
 \value{
 \itemize{
-\item optional \code{\link[=mxModel]{mxModel()}}
+\item optional \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

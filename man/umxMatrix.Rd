@@ -61,7 +61,7 @@ umxMatrix(
 }
 \value{
 \itemize{
-\item \code{\link[=mxMatrix]{mxMatrix()}}
+\item \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}}
 }
 }
 \description{
@@ -101,7 +101,7 @@ umxMatrix("foo", "Lower", nrow=2, ncol=2, labels= c(NA, "beta1", NA))
 }
 \seealso{
 \itemize{
-\item \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}}, \code{\link[=mxMatrix]{mxMatrix()}}, \code{\link[=xmuLabel]{xmuLabel()}}, \code{\link[=umxRAM]{umxRAM()}}
+\item \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}}, \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}}, \code{\link[=xmuLabel]{xmuLabel()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Core Model Building Functions: 

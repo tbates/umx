@@ -15,7 +15,7 @@ xmu_get_CI(
 )
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to get CIs from}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to get CIs from}
 
 \item{label}{the label of the cell to interrogate for a CI, e.g. "ai_r1c1"}
 

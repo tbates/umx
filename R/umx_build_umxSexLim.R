@@ -59,7 +59,7 @@
 #' @param autoRun Whether to mxRun the model (default TRUE: the estimated model will be returned).
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
-#' @return - [mxModel()] of subclass mxModel.CFSexLim
+#' @return - [OpenMx::mxModel()] of subclass mxModel.CFSexLim
 #' @export 
 #' @seealso [umxSummarySexLim()], [umxPlotSexLim()]
 #' @family Twin Modeling Functions
@@ -445,7 +445,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @param extended how much to report (FALSE)
 #' @param zero.print How to show zeros (".")
 #' @param ... Other parameters to control model summary
-#' @return - optional [mxModel()]
+#' @return - optional [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxSexLim()], [umxPlotSexLim()]
@@ -738,7 +738,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' Options include `digits` (rounding), showing `means` or not, and which output `format` is desired.
 #'
 #' @aliases plot.MxModelSexLim
-#' @param x [mxModel()] to display graphically
+#' @param x [OpenMx::mxModel()] to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)

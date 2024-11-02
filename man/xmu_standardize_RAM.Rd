@@ -7,7 +7,7 @@
 xmu_standardize_RAM(model, ...)
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to standardize}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} you wish to standardize}
 
 \item{...}{Other options}
 }

@@ -16,7 +16,7 @@ umxReduce(
 )
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} which will be reduced.}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} which will be reduced.}
 
 \item{report}{How to report the results. "html" = open in browser}
 

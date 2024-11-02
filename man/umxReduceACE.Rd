@@ -17,7 +17,7 @@ umxReduceACE(
 )
 }
 \arguments{
-\item{model}{an ACE or ADE \code{\link[=mxModel]{mxModel()}} to reduce}
+\item{model}{an ACE or ADE \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to reduce}
 
 \item{report}{How to report the results. "html" = open in browser}
 

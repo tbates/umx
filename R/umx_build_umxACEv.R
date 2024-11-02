@@ -89,7 +89,7 @@
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param nSib Number of sibs, default is 2. Working on 3 :-)
-#' @return - [mxModel()] subclass `mxModelACEv`
+#' @return - [OpenMx::mxModel()] subclass `mxModelACEv`
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Verhulst, B., Prom-Wormley, E., Keller, M., Medland, S., & Neale, M. C. (2019).
@@ -371,7 +371,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases umxSummary.MxModelACEv
-#' @param model an [mxModel()] to summarize
+#' @param model an [OpenMx::mxModel()] to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param comparison you can run mxCompare on a comparison model (NULL)
 #' @param std Whether to standardize the output (default = TRUE)
@@ -385,7 +385,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @param zero.print How to show zeros (".")
 #' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param ... Other parameters to control model summary
-#' @return - optional [mxModel()]
+#' @return - optional [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACEv()] 

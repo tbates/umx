@@ -7,7 +7,7 @@
 \method{RMSEA}{MxModel}(x, ci.lower = 0.025, ci.upper = 0.975, digits = 3)
 }
 \arguments{
-\item{x}{an \code{\link[=mxModel]{mxModel()}} from which to get RMSEA}
+\item{x}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to get RMSEA}
 
 \item{ci.lower}{the lower CI to compute (only 95\%, i.e., .025 supported)}
 

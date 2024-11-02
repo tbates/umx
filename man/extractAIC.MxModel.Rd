@@ -7,7 +7,7 @@
 \method{extractAIC}{MxModel}(fit, scale, k, ...)
 }
 \arguments{
-\item{fit}{an fitted \code{\link[=mxModel]{mxModel()}} from which to get the AIC}
+\item{fit}{an fitted \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to get the AIC}
 
 \item{scale}{not used}
 

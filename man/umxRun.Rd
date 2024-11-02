@@ -17,11 +17,11 @@ umxRun(
 )
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to run.}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} you wish to run.}
 
 \item{tryHard}{How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"}
 
-\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[=mxData]{mxData()}} \code{\link[=mxModel]{mxModel()}}s)}
+\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[OpenMx:mxData]{OpenMx::mxData()}} \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s)}
 
 \item{setValues}{Whether to set the starting values of free parameters (default = FALSE)}
 
@@ -37,11 +37,11 @@ umxRun(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
-\code{umxRun} is a version of \code{\link[=mxRun]{mxRun()}} which can run also set start values, labels, and run multiple times
+\code{umxRun} is a version of \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} which can run also set start values, labels, and run multiple times
 It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 \strong{Note} this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 }

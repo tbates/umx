@@ -19,7 +19,7 @@ umxPlotCP(
 )
 }
 \arguments{
-\item{x}{The Common Pathway \code{\link[=mxModel]{mxModel()}} to display graphically}
+\item{x}{The Common Pathway \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to display graphically}
 
 \item{means}{Whether to show means paths (defaults to FALSE)}
 

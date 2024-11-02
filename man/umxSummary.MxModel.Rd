@@ -21,7 +21,7 @@
 )
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} whose fit will be reported}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} whose fit will be reported}
 
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be computed on demand. If FALSE will not be computed.}

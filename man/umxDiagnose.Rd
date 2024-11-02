@@ -7,7 +7,7 @@
 umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to diagnose}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to diagnose}
 
 \item{tryHard}{whether I should try and fix it? (defaults to FALSE)}
 
