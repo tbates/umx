@@ -3755,7 +3755,7 @@ parameters <- umxParameters
 #' @param fetch What to return: "labels" (default) or "values", "free", "lbound", "ubound", or "all"
 #' @param verbose How much feedback to give
 #' @export
-#' @seealso [omxGetParameters()], [parameters()]
+#' @seealso [OpenMx::omxGetParameters()], [parameters()]
 #' @family Reporting Functions
 #' @references - <https://github.com/tbates/umx>
 #' @md
