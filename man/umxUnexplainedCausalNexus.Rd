@@ -30,7 +30,7 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 }
 \seealso{
 \itemize{
-\item \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}}, \code{\link[umxCompare]{umxCompare()}}
+\item \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}}, \code{\link[=umxCompare]{umxCompare()}}
 }
 
 Other Advanced Model Building Functions: 

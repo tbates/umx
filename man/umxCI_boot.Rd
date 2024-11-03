@@ -59,12 +59,6 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 umxCI_boot(m1, type = "par.expected")
 }
 }
-\references{
-\itemize{
-\item \url{https://openmx.ssri.psu.edu/thread/2598}
-Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
-}
-}
 \seealso{
 \itemize{
 \item \code{\link[=umxExpMeans]{umxExpMeans()}}, \code{\link[=umxExpCov]{umxExpCov()}}
