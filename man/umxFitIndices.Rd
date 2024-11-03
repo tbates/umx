@@ -7,9 +7,9 @@
 umxFitIndices(model, ...)
 }
 \arguments{
-\item{model}{The \code{\link{mxModel}} for which you want fit indices.}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} for which you want fit indices.}
 
-\item{...}{Additional parameters passed to \code{\link{summary.MxModel}}.}
+\item{...}{Additional parameters passed to \code{\link[OpenMx:summary.MxModel]{OpenMx::summary.MxModel()}}.}
 }
 \value{
 List of fit statistics

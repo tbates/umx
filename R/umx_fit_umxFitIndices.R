@@ -39,8 +39,8 @@
 #'
 #' Want more? *Open an Issue* at [GitHub](https://github.com/tbates/umx/issues).
 #'
-#' @param model The \code{\link{mxModel}} for which you want fit indices.
-#' @param ... Additional parameters passed to \code{\link{summary.MxModel}}.
+#' @param model The [OpenMx::mxModel()] for which you want fit indices.
+#' @param ... Additional parameters passed to [OpenMx::summary.MxModel()].
 #' @return List of fit statistics
 #' @export
 #' @family Reporting functions

@@ -24,7 +24,7 @@ umxGetParameters(
 \item{verbose}{How much feedback to give}
 }
 \description{
-umxGetParameters retrieves parameter labels from a model, like \code{\link[=omxGetParameters]{omxGetParameters()}}.
+umxGetParameters retrieves parameter labels from a model, like \code{\link[OpenMx:omxGetParameters]{OpenMx::omxGetParameters()}}.
 However, it is supercharged with regular expressions, so you can get labels that match a pattern.
 }
 \details{

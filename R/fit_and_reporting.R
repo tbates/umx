@@ -809,7 +809,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' }
 #' If `run = "no"`, the function simply adds the CI requests, but returns the model without running them.
 #' 
-#' @param model The [OpenMx::mxModel()] you wish to report [mxCI()]s on
+#' @param model The [OpenMx::mxModel()] you wish to report [OpenMx::mxCI()]s on
 #' @param which What CIs to add: c("ALL", NA, "list of your making")
 #' @param remove = FALSE (if set, removes existing specified CIs from the model)
 #' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".
@@ -3740,7 +3740,7 @@ parameters <- umxParameters
 
 #' Get parameters from a model, with support for pattern matching!
 #'
-#' umxGetParameters retrieves parameter labels from a model, like [omxGetParameters()].
+#' umxGetParameters retrieves parameter labels from a model, like [OpenMx::omxGetParameters()].
 #' However, it is supercharged with regular expressions, so you can get labels that match a pattern.
 #' 
 #' In addition, if regex contains a vector, this is treated as a list of raw labels to search for, 

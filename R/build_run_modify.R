@@ -3819,7 +3819,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' **Details**
 #' Internally, `umxSetParameters` is equivalent to a call to `omxSetParameters` where you 
 #' have the ability to generate a pattern-based label list, 
-#' and, because this can create duplicate labels, we also call [omxAssignFirstParameters()]
+#' and, because this can create duplicate labels, we also call [OpenMx::omxAssignFirstParameters()]
 #' to equate the start values for parameters which now have identical labels.
 #' 
 #' @param model an [OpenMx::mxModel()] to set parameters in.

@@ -279,7 +279,7 @@ noNAs <- function(df, rows = NULL, cols = NULL, drop = TRUE) {
 #' @return - All models names
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - [mxRename()], [umxSuperModel()]
+#' @seealso - [OpenMx::mxRename()], [umxSuperModel()]
 #' @md
 #' @examples
 #' \dontrun{

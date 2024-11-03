@@ -209,7 +209,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [mxTryHard()]
+#' @seealso - [OpenMx::mxTryHard()]
 #' @md
 #' @examples
 #' \dontrun{
