@@ -13,7 +13,7 @@
 
 \code{stringToMxAlgebra} is deprecated: please use \code{\link[=umx_string_to_algebra]{umx_string_to_algebra()}} instead
 
-\code{genEpi_EvalQuote} is deprecated: please use \code{\link[=mxEvalByName]{mxEvalByName()}} instead
+\code{genEpi_EvalQuote} is deprecated: please use \code{\link[OpenMx:mxEval]{OpenMx::mxEvalByName()}} instead
 
 \code{umxReportCIs} is deprecated: please use \code{\link[=umxCI]{umxCI()}} instead
 
@@ -21,7 +21,7 @@ replace \code{umxReportFit} with \code{\link[=umxSummary]{umxSummary()}}
 
 Replace \code{umxGraph_RAM} with \code{\link[=plot]{plot()}}
 
-Replace \code{tryHard} with \code{\link[=mxTryHard]{mxTryHard()}}
+Replace \code{tryHard} with \code{\link[OpenMx:mxTryHard]{OpenMx::mxTryHard()}}
 
 Replace \code{standardizeRAM} with \code{\link[=umx_standardize]{umx_standardize()}}
 }

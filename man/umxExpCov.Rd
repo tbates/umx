@@ -41,12 +41,6 @@ umxExpCov(m1, digits = 3)
 
 }
 }
-\references{
-\itemize{
-\item \url{https://openmx.ssri.psu.edu/thread/2598}
-Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
-}
-}
 \seealso{
 \itemize{
 \item \code{\link[=umxRun]{umxRun()}}, \code{\link[=umxCI_boot]{umxCI_boot()}}

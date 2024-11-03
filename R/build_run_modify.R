@@ -3681,7 +3681,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @param verbose Quiet or informative
 #' @param initial See mxAlgebra documentation
 #' @param recompute See mxAlgebra documentation
-#' @return - [mxAlgebra()]
+#' @return - [OpenMx::mxAlgebra()]
 #' @export
 #' @family Advanced Model Building Functions	
 #' @seealso - [umxMatrix()]

@@ -25,7 +25,6 @@ Extract the expected means matrix from an \code{\link[OpenMx:mxModel]{OpenMx::mx
 }
 \examples{
 \dontrun{
-
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
@@ -37,11 +36,6 @@ m1 = umxRAM("One Factor", data = demoOneFactor,
 
 umxExpMeans(m1)
 umxExpMeans(m1, digits = 3)
-}
-}
-\references{
-\itemize{
-\item \url{https://openmx.ssri.psu.edu/thread/2598}
 }
 }
 \seealso{

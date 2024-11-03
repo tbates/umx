@@ -2377,8 +2377,6 @@ umxGetModel <- function(model, targetModel = NULL) {
 #' @param digits rounding precision
 #' @return - expected covariance matrix
 #' @export
-#' @references - \url{https://openmx.ssri.psu.edu/thread/2598}
-#' Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 #' @seealso - [umxExpMeans()], [umxExpCov()]
 #' @family Reporting functions
 #' @md
@@ -3875,8 +3873,6 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @return - expected covariance matrix
 #' @export
 #' @family Reporting functions
-#' @references - \url{https://openmx.ssri.psu.edu/thread/2598}
-#' Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 #' @seealso - [umxRun()], [umxCI_boot()]
 #' @md
 #' @examples
@@ -3952,11 +3948,9 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 #' @return - expected means
 #' @export
 #' @family Reporting functions
-#' @references - <https://openmx.ssri.psu.edu/thread/2598>
 #' @md
 #' @examples
 #' \dontrun{
-#' 
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)

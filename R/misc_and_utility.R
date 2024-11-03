@@ -5423,7 +5423,6 @@ umx_has_square_brackets <- function (input) {
     return(length(match1) > 0 && length(match2) > 0)
 }
 
-
 #' Convert a string to an OpenMx algebra
 #'
 #' This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), 
@@ -5434,7 +5433,7 @@ umx_has_square_brackets <- function (input) {
 #' @param algString a string to turn into an algebra
 #' @param name of the returned algebra
 #' @param dimnames of the returned algebra
-#' @return - [mxAlgebra()]
+#' @return - [OpenMx::mxAlgebra()]
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>
