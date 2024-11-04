@@ -1,11 +1,10 @@
 ## Changes
-New modeling feature and miscellaneous Rd enhancements.
+New features and miscellaneous help and improvements.
 
 ## Test environments
-* MacOS 14.0, R version 4.3.3
-* Win64 R R version 4.4.0 alpha (2024-03-26 r86209 ucrt)
-* 64-bit Linux, R version 4.4.1
-
+* MacOS 14.0, R version 4.4.2
+* Win64 R Under development (unstable) (2024-11-01 r87285 ucrt)
+* 64-bit Linux, R version 4.4.2
 
 ## R CMD check results
 * All OK
