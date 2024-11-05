@@ -50,7 +50,7 @@ Combined with selDVs to form the full var names, i.e., just "dep" --> c("dep_T1"
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

@@ -15,7 +15,7 @@ umx_string_to_algebra(algString, name = NA, dimnames = NA)
 }
 \value{
 \itemize{
-\item \code{\link[=mxAlgebra]{mxAlgebra()}}
+\item \code{\link[OpenMx:mxAlgebra]{OpenMx:: mxAlgebra()}}
 }
 }
 \description{

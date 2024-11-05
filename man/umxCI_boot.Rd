@@ -40,7 +40,7 @@ use parametric Monte Carlo bootstrapping based on your expected and observed cov
 }
 }
 \description{
-Compute boot-strapped Confidence Intervals for parameters in an \code{\link[=mxModel]{mxModel()}}
+Compute boot-strapped Confidence Intervals for parameters in an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 The function creates a sampling distribution for parameters by repeatedly drawing samples
 with replacement from your data and then computing the statistic for each redrawn sample.
 }
@@ -57,12 +57,6 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 )
 
 umxCI_boot(m1, type = "par.expected")
-}
-}
-\references{
-\itemize{
-\item \url{https://openmx.ssri.psu.edu/thread/2598}
-Original written by \url{https://openmx.ssri.psu.edu/users/bwiernik}
 }
 }
 \seealso{

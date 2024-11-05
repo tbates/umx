@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxCompare}
 \alias{umxCompare}
-\title{Print a comparison table of one or more \code{\link[=mxModel]{mxModel()}}s, formatted nicely.}
+\title{Print a comparison table of one or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s, formatted nicely.}
 \usage{
 umxCompare(
   base = NULL,
@@ -16,7 +16,7 @@ umxCompare(
 )
 }
 \arguments{
-\item{base}{The base \code{\link[=mxModel]{mxModel()}} for comparison}
+\item{base}{The base \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} for comparison}
 
 \item{comparison}{The model (or list of models) which will be compared for fit with the base model (can be empty)}
 
@@ -35,7 +35,7 @@ create a web table and open your default browser.
 \item{file}{file to write html too if report = "html" (defaults to "tmp.html")}
 }
 \description{
-umxCompare compares two or more \code{\link[=mxModel]{mxModel()}}s. It has several nice features:
+umxCompare compares two or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s. It has several nice features:
 \enumerate{
 \item It supports direct control of rounding, and reports p-values rounded to APA style.
 \item It reports the table in your preferred format (default is markdown, options include latex).
@@ -90,7 +90,7 @@ umxCompare(m1, m2, report = "html") # Open table in browser
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},\code{\link[=mxCompare]{mxCompare()}}
+\item \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},\code{\link[OpenMx:mxCompare]{OpenMx:: mxCompare()}}
 }
 
 Other Model Summary and Comparison: 

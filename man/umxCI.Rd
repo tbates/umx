@@ -16,7 +16,7 @@ umxCI(
 )
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to report \code{\link[=mxCI]{mxCI()}}s on}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} you wish to report \code{\link[OpenMx:mxCI]{OpenMx:: mxCI()}}s on}
 
 \item{which}{What CIs to add: c("ALL", NA, "list of your making")}
 
@@ -35,7 +35,7 @@ umxCI(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

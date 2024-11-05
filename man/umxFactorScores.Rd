@@ -54,7 +54,7 @@ x
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxFactorScores]{mxFactorScores()}}
+\item \code{\link[OpenMx:mxFactorScores]{OpenMx:: mxFactorScores()}}
 }
 
 Other Reporting Functions: 

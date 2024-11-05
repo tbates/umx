@@ -79,11 +79,11 @@
 #' @param digits rounding (default = 2)
 #' @param n.obs Number of observations in if covmat provided (default = NA)
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
-#' @return - EFA [mxModel()]
+#' @return - EFA [OpenMx::mxModel()]
 #' @family Super-easy helpers
 #' @export
 #' @md
-#' @seealso - [factanal()], [mxFactorScores()]
+#' @seealso - [factanal()], [OpenMx:: mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>,
 #' 
 #' Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. *British Journal of Statistical Psychology*, **17**, 65–70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
@@ -283,7 +283,7 @@ umxFactanal <- umxEFA
 #' @return - dataframe of scores.
 #' @export
 #' @family Reporting Functions
-#' @seealso - [mxFactorScores()]
+#' @seealso - [OpenMx:: mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -349,7 +349,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param contrasts An optional list (not supported)
 #' @param ...	arguments to be passed along. (not supported)
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Super-easy helpers
 #' @seealso - [umx_make_MR_data()], [umxDiffMZ()], [umxDoC()], [umxDiscTwin()]

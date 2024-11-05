@@ -7,7 +7,7 @@
 umxModelNames(model, includeOuterModelName = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to search for model names.}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to search for model names.}
 
 \item{includeOuterModelName}{FALSE}
 }
@@ -39,7 +39,7 @@ plot(super$CP1fac)
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxRename]{mxRename()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
+\item \code{\link[OpenMx:mxRename]{OpenMx:: mxRename()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 
 Other Miscellaneous Utility Functions: 

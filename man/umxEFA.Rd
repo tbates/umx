@@ -53,7 +53,7 @@ umxEFA(
 }
 \value{
 \itemize{
-\item EFA \code{\link[=mxModel]{mxModel()}}
+\item EFA \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
@@ -144,7 +144,7 @@ Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor anal
 }
 \seealso{
 \itemize{
-\item \code{\link[=factanal]{factanal()}}, \code{\link[=mxFactorScores]{mxFactorScores()}}
+\item \code{\link[=factanal]{factanal()}}, \code{\link[OpenMx:mxFactorScores]{OpenMx:: mxFactorScores()}}
 }
 
 Other Super-easy helpers: 

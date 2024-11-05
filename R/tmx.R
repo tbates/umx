@@ -228,14 +228,14 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 #'
 #' @description
 #' Test if a factor model is identified by establishing if the number of variables is equal too or grater than
-#' the number of model parameters. See also [mxCheckIdentification()] for checking actual models.
+#' the number of model parameters. See also [OpenMx:: mxCheckIdentification()] for checking actual models.
 #'
 #' @param nVariables the number of variables measured.
 #' @param nFactors the number of factors posited.
 #' @return - Binary
 #' @export
 #' @family Teaching and testing Functions
-#' @seealso - [mxCheckIdentification()]
+#' @seealso - [OpenMx:: mxCheckIdentification()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples

@@ -15,7 +15,7 @@ xmuRAM2Ordinal(model, verbose = TRUE, name = NULL)
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

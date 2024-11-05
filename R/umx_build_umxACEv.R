@@ -89,14 +89,14 @@
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param nSib Number of sibs, default is 2. Working on 3 :-)
-#' @return - [mxModel()] subclass `mxModelACEv`
+#' @return - [OpenMx::mxModel()] subclass `mxModelACEv`
 #' @export
 #' @family Twin Modeling Functions
 #' @references - Verhulst, B., Prom-Wormley, E., Keller, M., Medland, S., & Neale, M. C. (2019).
 #' Type I Error Rates and Parameter Bias in Multivariate Behavioral Genetic Models. *Behav Genet*, 
 #' **49**, 99-111. \doi{10.1007/s10519-018-9942-y}
 #' Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
-#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
+#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
 #' @md
 #' @examples
 #' \dontrun{
@@ -371,7 +371,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' See documentation for other umx models here: [umxSummary()].
 #' 
 #' @aliases umxSummary.MxModelACEv
-#' @param model an [mxModel()] to summarize
+#' @param model an [OpenMx::mxModel()] to summarize
 #' @param digits round to how many digits (default = 2)
 #' @param comparison you can run mxCompare on a comparison model (NULL)
 #' @param std Whether to standardize the output (default = TRUE)
@@ -385,7 +385,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @param zero.print How to show zeros (".")
 #' @param show Here to support being called from generic xmu_safe_run_summary. User should ignore: can be c("std", "raw")
 #' @param ... Other parameters to control model summary
-#' @return - optional [mxModel()]
+#' @return - optional [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACEv()] 

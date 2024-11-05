@@ -11,7 +11,7 @@ xmu_describe_data_WLS(
 )
 }
 \arguments{
-\item{data}{The raw data being used in a \code{\link[=mxFitFunctionWLS]{mxFitFunctionWLS()}} model.}
+\item{data}{The raw data being used in a \code{\link[OpenMx:mxFitFunctionWLS]{OpenMx:: mxFitFunctionWLS()}} model.}
 
 \item{allContinuousMethod}{the method used to process data when all columns are continuous (default = "cumulants")}
 
@@ -23,7 +23,7 @@ xmu_describe_data_WLS(
 }
 }
 \description{
-Given either a data.frame or raw \code{mxData}, this function determines whether \code{\link[=mxFitFunctionWLS]{mxFitFunctionWLS()}}
+Given either a data.frame or raw \code{mxData}, this function determines whether \code{\link[OpenMx:mxFitFunctionWLS]{OpenMx:: mxFitFunctionWLS()}}
 will generate expectations for means.
 }
 \details{
@@ -61,7 +61,7 @@ xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxFitFunctionWLS]{mxFitFunctionWLS()}}, \code{\link[=omxAugmentDataWithWLSSummary]{omxAugmentDataWithWLSSummary()}}
+\item \code{\link[OpenMx:mxFitFunctionWLS]{OpenMx:: mxFitFunctionWLS()}}, \code{\link[=omxAugmentDataWithWLSSummary]{omxAugmentDataWithWLSSummary()}}
 }
 
 Other xmu internal not for end user: 

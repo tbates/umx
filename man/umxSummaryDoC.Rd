@@ -45,7 +45,7 @@ Defaults to NA = do not create plot output.}
 }
 \value{
 \itemize{
-\item optional \code{\link[=mxModel]{mxModel()}}
+\item optional \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

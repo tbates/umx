@@ -58,7 +58,7 @@ xmu_make_TwinSuperModel(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}s for top, MZ and DZ.
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s for top, MZ and DZ.
 }
 }
 \description{

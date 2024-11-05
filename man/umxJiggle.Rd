@@ -7,7 +7,7 @@
 umxJiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
 }
 \arguments{
-\item{matrixIn}{an \code{\link[=mxMatrix]{mxMatrix()}} to jiggle the values of}
+\item{matrixIn}{an \code{\link[OpenMx:mxMatrix]{OpenMx:: mxMatrix()}} to jiggle the values of}
 
 \item{mean}{the mean value to add to each value}
 
@@ -17,7 +17,7 @@ umxJiggle(matrixIn, mean = 0, sd = 0.1, dontTouch = 0)
 }
 \value{
 \itemize{
-\item \code{\link[=mxMatrix]{mxMatrix()}}
+\item \code{\link[OpenMx:mxMatrix]{OpenMx:: mxMatrix()}}
 }
 }
 \description{

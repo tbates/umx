@@ -159,7 +159,7 @@ xmu_twin_upgrade_selDvs2SelVars <- function(selDVs, sep, nSib) {
 #' @description
 #' Just a helper to show the logLik of a model or print a comparison table. 
 #'
-#' @param model an [mxModel()] to report on
+#' @param model an [OpenMx::mxModel()] to report on
 #' @param comparison If not NULL, used as comparison model
 #' @param digits (default = 2)
 #' @return None
@@ -206,10 +206,10 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @param returning What to return (default, the run model)
 #' @param intervals whether to run intervals or not (default FALSE)
 #' @param refModels whether to run refModels or not (default NULL)
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [mxTryHard()]
+#' @seealso - [OpenMx:: mxTryHard()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -593,7 +593,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 
 #' Determine if a dataset will need statistics for the means if used in a WLS model.
 #'
-#' Given either a data.frame or raw `mxData`, this function determines whether [mxFitFunctionWLS()]
+#' Given either a data.frame or raw `mxData`, this function determines whether [OpenMx:: mxFitFunctionWLS()]
 #' will generate expectations for means.
 #' 
 #' All-continuous models processed using the "cumulants" method LACK means, while
@@ -601,12 +601,12 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' 
 #' When data are not all continuous, means are modeled and `allContinuousMethod` is ignored.
 #'
-#' @param data The raw data being used in a [mxFitFunctionWLS()] model.
+#' @param data The raw data being used in a [OpenMx:: mxFitFunctionWLS()] model.
 #' @param allContinuousMethod the method used to process data when all columns are continuous (default = "cumulants")
 #' @param verbose Whether or not to report diagnostics.
 #' @return - list describing the data.
 #' @family xmu internal not for end user
-#' @seealso - [mxFitFunctionWLS()], [omxAugmentDataWithWLSSummary()]
+#' @seealso - [OpenMx:: mxFitFunctionWLS()], [omxAugmentDataWithWLSSummary()]
 #' @export
 #' @md
 #' @examples
@@ -1127,7 +1127,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 
 #' xmuLabel_MATRIX_Model (not a user function)
 #'
-#' This function will label all the free parameters in a (non-RAM) OpenMx [mxModel()]
+#' This function will label all the free parameters in a (non-RAM) OpenMx [OpenMx::mxModel()]
 #' nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 #' i.e., matrix-name + _ + r + rowNumber + c + colNumber
 #' 
@@ -1137,7 +1137,7 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #' @param model a matrix-style mxModel to label
 #' @param suffix a string to append to each label
 #' @param verbose how much feedback to give
-#' @return - The labeled [mxModel()]
+#' @return - The labeled [OpenMx::mxModel()]
 #' @family xmu internal not for end user
 #' @export
 #' @md
@@ -1169,7 +1169,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 
 #' xmuLabel_RAM_Model (not a user function)
 #'
-#' This function will label all the free parameters in a RAM [mxModel()]
+#' This function will label all the free parameters in a RAM [OpenMx::mxModel()]
 #' 
 #' Model developers should just call [xmuLabel()]
 #'
@@ -1179,7 +1179,7 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @param overRideExisting Whether to overRideExisting (Default FALSE)
 #' @param verbose how much feedback to give
 #' @param name Add optional name parameter to rename returned model (default = leave it along)
-#' @return - The labeled [mxModel()]
+#' @return - The labeled [OpenMx::mxModel()]
 #' @family xmu internal not for end user
 #' @export
 #' @md
@@ -1334,7 +1334,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 
 #' xmuLabel_Matrix (not a user function)
 #'
-#' This function will label all the free parameters in an [mxMatrix()]
+#' This function will label all the free parameters in an [OpenMx:: mxMatrix()]
 #' 
 #' Model developers should just call [xmuLabel()]
 #'
@@ -1359,7 +1359,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 #' @param verbose how much feedback to give
 #' @param labelFixedCells = FALSE
 #' @param overRideExisting Whether to overRideExisting (Default FALSE)
-#' @return - The labeled [mxMatrix()]
+#' @return - The labeled [OpenMx:: mxMatrix()]
 #' @family xmu internal not for end user
 #' @md
 #' @export
@@ -1459,7 +1459,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 #' @param c which column the cell is in.
 #' @param where the location (any, diag, lower or upper (or _inc) or left).
 #' @param mat (optionally) provide matrix to check dimensions against r and c.
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [xmuLabel()]
@@ -1634,7 +1634,7 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' @param model a model to label
 #' @param suffix a string to append to each label
 #' @param verbose whether to say what is being done
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
 #' @md
@@ -1663,7 +1663,7 @@ xmuPropagateLabels <- function(model, suffix = "", verbose = TRUE) {
 #' A function to compute and report modifications which would improve fit.
 #' You will probably use [umxMI()] instead
 #'
-#' @param model an [mxModel()] to derive modification indices for
+#' @param model an [OpenMx::mxModel()] to derive modification indices for
 #' @param vector = Whether to report the results as a vector default = TRUE
 #' @family xmu internal not for end user
 #' @export
@@ -2058,7 +2058,7 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 #'
 #' @description
 #' Helper to print a digraph to file and open it
-#' @param model An [mxModel()] to get the name from 
+#' @param model An [OpenMx::mxModel()] to get the name from 
 #' @param file Either "name" (use model name) or a file name
 #' @param digraph Graphviz code for a model
 #' @param strip_zero Whether to remove the leading "0." in digits in the diagram
@@ -2467,7 +2467,7 @@ xmu_bracket_address2rclabel <- function(label, keepPrefix = TRUE) {
 #' Look up CIs for free parameters in a model, and return as APA-formatted text string.
 #' If std are available, then these are reported.
 #'
-#' @param model an [mxModel()] to get CIs from
+#' @param model an [OpenMx::mxModel()] to get CIs from
 #' @param label the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
 #' @param prefix The submodel to look in (default = "top.")
 #' @param suffix The suffix for algebras when standardized (default = "_std")

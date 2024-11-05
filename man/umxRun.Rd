@@ -17,11 +17,11 @@ umxRun(
 )
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} you wish to run.}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} you wish to run.}
 
 \item{tryHard}{How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"}
 
-\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[=mxData]{mxData()}} \code{\link[=mxModel]{mxModel()}}s)}
+\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[=mxData]{mxData()}} \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s)}
 
 \item{setValues}{Whether to set the starting values of free parameters (default = FALSE)}
 
@@ -37,7 +37,7 @@ umxRun(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

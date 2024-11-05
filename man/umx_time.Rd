@@ -12,7 +12,7 @@ umx_time(
 )
 }
 \arguments{
-\item{x}{A \code{\link[=mxModel]{mxModel()}} or list of models for which to display elapsed time, or 'start' or 'stop'}
+\item{x}{A \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} or list of models for which to display elapsed time, or 'start' or 'stop'}
 
 \item{formatStr}{A format string, defining how to show the time (defaults to human readable)}
 

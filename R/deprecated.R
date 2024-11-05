@@ -29,7 +29,7 @@
 #'
 #' `stringToMxAlgebra` is deprecated: please use [umx_string_to_algebra()] instead
 #'
-#' `genEpi_EvalQuote` is deprecated: please use [mxEvalByName()] instead
+#' `genEpi_EvalQuote` is deprecated: please use [OpenMx:: mxEvalByName()] instead
 #'
 #' `umxReportCIs` is deprecated: please use [umxCI()] instead
 #'
@@ -37,7 +37,7 @@
 #' 
 #' Replace `umxGraph_RAM` with [plot()]
 #'
-#' Replace `tryHard` with [mxTryHard()]
+#' Replace `tryHard` with [OpenMx:: mxTryHard()]
 #'
 #' Replace `standardizeRAM` with [umx_standardize()]
 #' 

@@ -61,7 +61,7 @@ umxGxE(
 }
 \value{
 \itemize{
-\item GxE \code{\link[=mxModel]{mxModel()}}
+\item GxE \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

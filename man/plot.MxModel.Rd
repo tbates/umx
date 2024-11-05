@@ -23,7 +23,7 @@
 )
 }
 \arguments{
-\item{x}{An \code{\link[=mxModel]{mxModel()}} from which to make a path diagram}
+\item{x}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to make a path diagram}
 
 \item{std}{Whether to standardize the model (default = FALSE).}
 

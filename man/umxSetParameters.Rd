@@ -20,7 +20,7 @@ umxSetParameters(
 )
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to set parameters in.}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to set parameters in.}
 
 \item{labels}{= labels to find}
 
@@ -46,11 +46,11 @@ umxSetParameters(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
-\code{umxSetParameters} is used to alter values, and other parameter properties in an \code{\link[=mxModel]{mxModel()}}.
+\code{umxSetParameters} is used to alter values, and other parameter properties in an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}.
 A common use is setting new values and changing parameters from free to false.
 \emph{Note}: If you just want to modify and re-run a model, you probably want \code{\link[=umxModify]{umxModify()}}.
 }
@@ -66,7 +66,7 @@ to a regular expression matching the labels you want to select. e.g. "G_to_.*" w
 \strong{Details}
 Internally, \code{umxSetParameters} is equivalent to a call to \code{omxSetParameters} where you
 have the ability to generate a pattern-based label list,
-and, because this can create duplicate labels, we also call \code{\link[=omxAssignFirstParameters]{omxAssignFirstParameters()}}
+and, because this can create duplicate labels, we also call \code{\link[OpenMx:omxAssignFirstParameters]{OpenMx:: omxAssignFirstParameters()}}
 to equate the start values for parameters which now have identical labels.
 }
 \examples{

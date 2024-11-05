@@ -15,11 +15,11 @@ xmuLabel_MATRIX_Model(model, suffix = "", verbose = TRUE)
 }
 \value{
 \itemize{
-\item The labeled \code{\link[=mxModel]{mxModel()}}
+\item The labeled \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
-This function will label all the free parameters in a (non-RAM) OpenMx \code{\link[=mxModel]{mxModel()}}
+This function will label all the free parameters in a (non-RAM) OpenMx \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 nb: We don't assume what each matrix is for. Instead, the function just sticks labels like "a_r1c1" into each cell
 i.e., matrix-name + _ + r + rowNumber + c + colNumber
 }

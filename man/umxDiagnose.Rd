@@ -2,12 +2,12 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxDiagnose}
 \alias{umxDiagnose}
-\title{Diagnose problems in a model - this is a work in progress.}
+\title{Diagnose problems in a model - not working!}
 \usage{
 umxDiagnose(model, tryHard = FALSE, diagonalizeExpCov = FALSE)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to diagnose}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to diagnose}
 
 \item{tryHard}{whether I should try and fix it? (defaults to FALSE)}
 
@@ -35,11 +35,9 @@ Try
 * diagonalizeExpCov diagonal
 * \code{\link[=umx_is_ordered]{umx_is_ordered()}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{more tricky - we should really report the variances and the standardized thresholds.
-}\if{html}{\out{</div>}}
-
-The guidance would be to try starting with unit variances and thresholds that are within
-+/- 2 SD of the mean. \href{https://openmx.ssri.psu.edu/thread/3899}{bivariate outliers \%p option}
+Tricky, but reporting variances and standardized thresholds is ideal.
+Guidance is to start with unit variances and thresholds within
++/- 2 SD of the mean.
 }
 \examples{
 \dontrun{

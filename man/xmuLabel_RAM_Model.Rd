@@ -28,11 +28,11 @@ xmuLabel_RAM_Model(
 }
 \value{
 \itemize{
-\item The labeled \code{\link[=mxModel]{mxModel()}}
+\item The labeled \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
-This function will label all the free parameters in a RAM \code{\link[=mxModel]{mxModel()}}
+This function will label all the free parameters in a RAM \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 \details{
 Model developers should just call \code{\link[=xmuLabel]{xmuLabel()}}

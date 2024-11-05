@@ -1,6 +1,6 @@
 #' Get additional fit-indices for a model with umxFitIndices
 #'
-#' Computes a variety of fit indices. Originated in this thread: <http://openmx.ssri.psu.edu/thread/765>
+#' Computes a variety of fit indices.
 #'
 #' Note: This function is currently not robust across multi-group designs or
 #' definition variables. It is designed to provide residual-based fit indices

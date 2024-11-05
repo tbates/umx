@@ -46,7 +46,7 @@ umxGxEbiv(
 }
 \value{
 \itemize{
-\item GxEbiv \code{\link[=mxModel]{mxModel()}}
+\item GxEbiv \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

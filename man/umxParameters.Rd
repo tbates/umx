@@ -24,7 +24,7 @@ parameters(
 )
 }
 \arguments{
-\item{x}{an \code{\link[=mxModel]{mxModel()}} or model summary from which to report parameter estimates.}
+\item{x}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} or model summary from which to report parameter estimates.}
 
 \item{thresh}{optional: Filter out estimates 'below' or 'above' a certain value (default = "all").}
 

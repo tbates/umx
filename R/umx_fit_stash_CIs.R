@@ -5,11 +5,11 @@
 #'
 #' @details I might change this to a lookup-function that gets a CI string if one exists.
 #'
-#' @param model An [mxModel()] to get CIs from.
+#' @param model An [OpenMx::mxModel()] to get CIs from.
 #' @param digits rounding.
 #' @param dropZeros makes strings for failed CIs?
 #' @param stdAlg2mat treat std as algebra: stash in non std matrix.
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxConfint()], [xmu_get_CI()]

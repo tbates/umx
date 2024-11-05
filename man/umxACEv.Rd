@@ -82,7 +82,7 @@ umxACEv(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}} subclass \code{mxModelACEv}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} subclass \code{mxModelACEv}
 }
 }
 \description{
@@ -297,7 +297,7 @@ umxSummary(m1, std = FALSE)
 Type I Error Rates and Parameter Bias in Multivariate Behavioral Genetic Models. \emph{Behav Genet},
 \strong{49}, 99-111. \doi{10.1007/s10519-018-9942-y}
 Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
-to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \url{https://www.nature.com/articles/hdy1978101.pdf}
+to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
 }
 }
 \seealso{

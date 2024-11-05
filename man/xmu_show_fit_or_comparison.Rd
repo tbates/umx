@@ -7,7 +7,7 @@
 xmu_show_fit_or_comparison(model, comparison = NULL, digits = 2)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to report on}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to report on}
 
 \item{comparison}{If not NULL, used as comparison model}
 

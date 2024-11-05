@@ -22,7 +22,7 @@ umxModify(
 )
 }
 \arguments{
-\item{lastFit}{The \code{\link[=mxModel]{mxModel()}} you wish to update and run.}
+\item{lastFit}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} you wish to update and run.}
 
 \item{update}{What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.}
 
@@ -52,11 +52,11 @@ umxModify(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
-umxModify allows you to modify, re-run and summarize an \code{\link[=mxModel]{mxModel()}}, all in one line of script.
+umxModify allows you to modify, re-run and summarize an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, all in one line of script.
 }
 \details{
 You can add paths, or other model elements, set path values (default is 0), or replace labels.

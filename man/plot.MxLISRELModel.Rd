@@ -18,7 +18,7 @@
 )
 }
 \arguments{
-\item{x}{A LISREL \code{\link[=mxModel]{mxModel()}} from which to make a path diagram}
+\item{x}{A LISREL \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to make a path diagram}
 
 \item{std}{Whether to standardize the model (default = FALSE).}
 

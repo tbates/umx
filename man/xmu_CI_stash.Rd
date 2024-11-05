@@ -7,7 +7,7 @@
 xmu_CI_stash(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link[=mxModel]{mxModel()}} to get CIs from.}
+\item{model}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to get CIs from.}
 
 \item{digits}{rounding.}
 
@@ -17,7 +17,7 @@ xmu_CI_stash(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE)
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

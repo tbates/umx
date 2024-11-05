@@ -40,11 +40,11 @@ xmuLabel_Matrix(
 }
 \value{
 \itemize{
-\item The labeled \code{\link[=mxMatrix]{mxMatrix()}}
+\item The labeled \code{\link[OpenMx:mxMatrix]{OpenMx:: mxMatrix()}}
 }
 }
 \description{
-This function will label all the free parameters in an \code{\link[=mxMatrix]{mxMatrix()}}
+This function will label all the free parameters in an \code{\link[OpenMx:mxMatrix]{OpenMx:: mxMatrix()}}
 }
 \details{
 Model developers should just call \code{\link[=xmuLabel]{xmuLabel()}}

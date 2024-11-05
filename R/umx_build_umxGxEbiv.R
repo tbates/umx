@@ -33,7 +33,7 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
-#' @return - GxEbiv [mxModel()]
+#' @return - GxEbiv [OpenMx::mxModel()]
 #' @export
 #' @md
 #' @family Twin Modeling Functions
@@ -231,7 +231,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param ... Optional additional parameters
-#' @return - optional [mxModel()]
+#' @return - optional [OpenMx::mxModel()]
 #' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxGxEbiv}()}, [plot()], [umxSummary()] work for IP, CP, GxE, and ACE models.

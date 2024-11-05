@@ -15,7 +15,7 @@ umxConfint(
 )
 }
 \arguments{
-\item{object}{An \code{\link[=mxModel]{mxModel()}}, possibly already containing \code{\link[=mxCI]{mxCI()}}s that have been \code{\link[=mxRun]{mxRun()}} with intervals = TRUE))}
+\item{object}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, possibly already containing \code{\link[OpenMx:mxCI]{OpenMx:: mxCI()}}s that have been \code{\link[=mxRun]{mxRun()}} with intervals = TRUE))}
 
 \item{parm}{Which parameters to get confidence intervals for. Can be "existing", "all", or one or more parameter names.}
 
@@ -31,7 +31,7 @@ umxConfint(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{

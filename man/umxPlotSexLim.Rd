@@ -18,7 +18,7 @@ umxPlotSexLim(
 )
 }
 \arguments{
-\item{x}{\code{\link[=mxModel]{mxModel()}} to display graphically}
+\item{x}{\code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to display graphically}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 

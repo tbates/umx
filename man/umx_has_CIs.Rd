@@ -7,7 +7,7 @@
 umx_has_CIs(model, check = c("both", "intervals", "output"))
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} to check for presence of CIs}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to check for presence of CIs}
 
 \item{check}{What to check for: "intervals" requested, "output" present, or "both". Defaults to "both"}
 }
@@ -17,7 +17,7 @@ umx_has_CIs(model, check = c("both", "intervals", "output"))
 }
 }
 \description{
-A utility function to return a binary answer to the question "does this \code{\link[=mxModel]{mxModel()}} have confidence intervals?"
+A utility function to return a binary answer to the question "does this \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} have confidence intervals?"
 }
 \examples{
 \dontrun{

@@ -7,7 +7,7 @@
 \method{extractAIC}{MxModel}(fit, scale, k, ...)
 }
 \arguments{
-\item{fit}{an fitted \code{\link[=mxModel]{mxModel()}} from which to get the AIC}
+\item{fit}{an fitted \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to get the AIC}
 
 \item{scale}{not used}
 
@@ -37,11 +37,6 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 extractAIC(m1)
 # -2.615998
 AIC(m1)
-}
-}
-\references{
-\itemize{
-\item \url{https://openmx.ssri.psu.edu/thread/931#comment-4858}
 }
 }
 \seealso{

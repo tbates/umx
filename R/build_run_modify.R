@@ -298,7 +298,7 @@ methods::setClass("MxModelSimplex", contains = "MxModel")
 #' @return None
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [umxRAM()], [mxModel()]
+#' @seealso - [umxRAM()], [OpenMx::mxModel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -416,7 +416,7 @@ umxModel <- function(...) {
 #' @param std.lv Whether to auto standardize latent variables when using string syntax (default = FALSE)
 #' @param lavaanMode Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)
 #' @param printTab (for string input, whether to output a table of paths (FALSE)
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export 
 #' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]
 #' @family Core Model Building Functions
@@ -878,7 +878,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param std Show standardized parameters, raw (default), or just the fit indices (null)
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Core Model Building Functions
 #' @seealso - [mxFitFunctionMultigroup()], [umxRAM()]
@@ -1002,7 +1002,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 
 #' umxModify: Add, set, or drop model paths by label.
 #' 
-#' umxModify allows you to modify, re-run and summarize an [mxModel()], all in one line of script.
+#' umxModify allows you to modify, re-run and summarize an [OpenMx::mxModel()], all in one line of script.
 #' 
 #' @details
 #' You can add paths, or other model elements, set path values (default is 0), or replace labels.
@@ -1029,7 +1029,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' AND relabel cells (because the default value is 0, so it is ignored when using newlabels).
 #' 
 #' @aliases umxModify
-#' @param lastFit The [mxModel()] you wish to update and run.
+#' @param lastFit The [OpenMx::mxModel()] you wish to update and run.
 #' @param update What to update before re-running. Can be a list of labels, a regular expression (set regex = TRUE) or an object such as mxCI etc.
 #' @param regex  Whether or not update is a regular expression (default FALSE). If you provide a string, it overrides the contents of update, and sets regex to TRUE.
 #' @param free The state to set "free" to for the parameters whose labels you specify (defaults to free = FALSE, i.e., fixed)
@@ -1043,7 +1043,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @param master If you set master, then the update labels will be equated to these (i.e. replaced by them).
 #' @param intervals Whether to run confidence intervals (see [mxRun()])
 #' @param verbose How much feedback to give
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @family Core Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
@@ -1301,12 +1301,12 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' @param boundDiag Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0 since umx version 1.8
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
-#' @return - [mxModel()] of subclass mxModel.ACE
+#' @return - [OpenMx::mxModel()] of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxPlotACE()], [umxSummaryACE()], [power.ACE.test()], [umxModify()]
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
-#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
+#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
 #' @md
 #' @examples
 #' \donttest{
@@ -1705,7 +1705,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @param autoRun Optionally run the model (default), or just to create it and return without running.
 #' @param tryHard Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "ordinal", "search".
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
-#' @return - GxE [mxModel()]
+#' @return - GxE [OpenMx::mxModel()]
 #' @export
 #' @seealso [umxGxE_window()], [umxReduce()], [umxSummary()]
 #' @family Twin Modeling Functions
@@ -2032,7 +2032,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' 
 #' Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
 #' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
-#' *Behavior Genetics*, **45**, 581-96. \doi{10.1007/s10519-015-9732-8} <https://link.springer.com/article/10.1007/s10519-015-9732-8>
+#' *Behavior Genetics*, **45**, 581-96. \doi{10.1007/s10519-015-9732-8}.
 #' @md
 #' @examples
 #' \dontrun{
@@ -2237,7 +2237,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
-#' @return - [mxModel()] of subclass mxModel.ACEcov
+#' @return - [OpenMx::mxModel()] of subclass mxModel.ACEcov
 #' @export
 #' @family Twin Modeling Functions
 #' @md
@@ -2627,7 +2627,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' @param freeLowerC (ignore): Whether to leave the lower triangle of C free (default = FALSE).
 #' @param freeLowerE (ignore): Whether to leave the lower triangle of E free (default = FALSE).
 #' @param correlatedA deprecated.
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxSummaryCP()], [umxPlotCP()]. See [umxRotate.MxModelCP()] to rotate the factor loadings of a [umxCP()] model. See [umxACE()] for more examples of twin modeling. 
@@ -3008,7 +3008,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' @param freeLowerA ignore: Whether to leave the lower triangle of A free (default = FALSE).
 #' @param freeLowerC ignore: Whether to leave the lower triangle of C free (default = FALSE).
 #' @param freeLowerE ignore: Whether to leave the lower triangle of E free (default = FALSE).
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [plot()], [umxSummary()], [umxCP()]
@@ -3295,7 +3295,7 @@ umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHa
 #' @param model An RAM model to add thresholds too.
 #' @param name = A new name for the modified model. Default (NULL) = leave it as is).
 #' @param verbose Tell the user what was added and why (Default = TRUE).
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxRAM()]
@@ -3339,18 +3339,18 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' For models to be estimated, it is essential that path values start at credible values. 
 #' `xmuValues` takes on that task for you.
 #' 
-#' xmuValues can set start values for the free parameters in both RAM and Matrix [mxModel()]s. 
+#' xmuValues can set start values for the free parameters in both RAM and Matrix [OpenMx::mxModel()]s. 
 #' It can also take an mxMatrix as input.
 #' It tries to be smart in guessing starts from the values in your data and the model type.
 #' 
 #' *note*: If you give xmuValues a numeric input, it will use obj as the mean, and return a 
 #' list of length n, with sd = sd.
 #'
-#' @param obj The RAM or matrix [mxModel()], or [mxMatrix()] that you want to set start values for.
+#' @param obj The RAM or matrix [OpenMx::mxModel()], or [OpenMx:: mxMatrix()] that you want to set start values for.
 #' @param sd Optional Standard Deviation for start values
 #' @param n Optional Mean for start values
 #' @param onlyTouchZeros Don't alter parameters that have starts (useful to speed [umxModify()])
-#' @return - [mxModel()] with updated start values
+#' @return - [OpenMx::mxModel()] with updated start values
 #' @export
 #' @seealso - Core functions:
 #' @family Advanced Model Building Functions
@@ -3503,10 +3503,10 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 
 #' xmuLabel: Add labels to a RAM model, matrix, or path
 #'
-#' xmuLabel adds labels to things, be it an: [mxModel()] (RAM or matrix based), an [mxPath()], or an [mxMatrix()]
+#' xmuLabel adds labels to things, be it an: [OpenMx::mxModel()] (RAM or matrix based), an [mxPath()], or an [OpenMx:: mxMatrix()]
 #' This is a core function in umx: Adding labels to paths opens the door to [umxEquate()], as well as [omxSetParameters()]
 #'
-#' @param obj An [mxModel()] (RAM or matrix based), [mxPath()], or [mxMatrix()]
+#' @param obj An [OpenMx::mxModel()] (RAM or matrix based), [mxPath()], or [OpenMx:: mxMatrix()]
 #' @param suffix String to append to each label (might be used to distinguish, say male and female submodels in a model)
 #' @param baseName String to prepend to labels. Defaults to NA ("")
 #' @param setfree Whether to label only the free paths (defaults to FALSE)
@@ -3517,7 +3517,7 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @param verbose How much feedback to give the user (default = FALSE)
 #' @param overRideExisting = FALSE
 #' @param name Optional new name if given a model. Default (NULL) does not rename model.
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
@@ -3613,10 +3613,10 @@ xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param joinKey See mxMatrix documentation: Defaults to as.character(NA)
 #' @param joinModel See mxMatrix documentation: Defaults to as.character(NA)
 #' @param jiggle = NA passed to xmuLabel to jiggle start values (default does nothing)
-#' @return - [mxMatrix()]
+#' @return - [OpenMx:: mxMatrix()]
 #' @export
 #' @family Core Model Building Functions
-#' @seealso - [xmu_simplex_corner()], [mxMatrix()], [xmuLabel()], [umxRAM()]
+#' @seealso - [xmu_simplex_corner()], [OpenMx:: mxMatrix()], [xmuLabel()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -3681,7 +3681,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @param verbose Quiet or informative
 #' @param initial See mxAlgebra documentation
 #' @param recompute See mxAlgebra documentation
-#' @return - [mxAlgebra()]
+#' @return - [OpenMx:: mxAlgebra()]
 #' @export
 #' @family Advanced Model Building Functions	
 #' @seealso - [umxMatrix()]
@@ -3721,16 +3721,16 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' `umxRun` is a version of [mxRun()] which can run also set start values, labels, and run multiple times
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
-#' @param model The [mxModel()] you wish to run.
+#' @param model The [OpenMx::mxModel()] you wish to run.
 #' @param tryHard  How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"
-#' @param calc_sat Whether to calculate the saturated and independence models (for raw [mxData()] [mxModel()]s)
+#' @param calc_sat Whether to calculate the saturated and independence models (for raw [mxData()] [OpenMx::mxModel()]s)
 #' @param setValues Whether to set the starting values of free parameters (default = FALSE)
 #' @param setLabels Whether to set the labels (default =  FALSE)
 #' @param optimizer optional to set the optimizer.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE
 #' @param summary Whether to print summary or not (default = !umx_set_silent() )
 #' @param comparison Comparison model (will be used to drive umxCompare() after umxRun
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
@@ -3804,7 +3804,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 
 #' Change or fix parameters (e.g. their values, labels, bounds, ..) in a model. 
 #'
-#' `umxSetParameters` is used to alter values, and other parameter properties in an [mxModel()].
+#' `umxSetParameters` is used to alter values, and other parameter properties in an [OpenMx::mxModel()].
 #' A common use is setting new values and changing parameters from free to false. 
 #' *Note*: If you just want to modify and re-run a model, you probably want [umxModify()].
 #' 
@@ -3819,10 +3819,10 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' **Details**
 #' Internally, `umxSetParameters` is equivalent to a call to `omxSetParameters` where you 
 #' have the ability to generate a pattern-based label list, 
-#' and, because this can create duplicate labels, we also call [omxAssignFirstParameters()]
+#' and, because this can create duplicate labels, we also call [OpenMx:: omxAssignFirstParameters()]
 #' to equate the start values for parameters which now have identical labels.
 #' 
-#' @param model an [mxModel()] to set parameters in.
+#' @param model an [OpenMx::mxModel()] to set parameters in.
 #' @param labels = labels to find
 #' @param free = new value for free
 #' @param values = new values
@@ -3834,7 +3834,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' @param name = new name for the returned model
 #' @param regex patterns to match for labels (or if TRUE, use labels as regular expressions)
 #' @param test Just show what you would do? (defaults to FALSE)
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Model Summary and Comparison
 #' @seealso - [umxModify()], [xmuLabel()]
@@ -3908,7 +3908,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' 
 #' \emph{Tip}: To find labels by name, use the regex parameter of [umxGetParameters()]
 #' 
-#' @param model   An [mxModel()] within which to equate parameters listed in "a" with those in "b"
+#' @param model   An [OpenMx::mxModel()] within which to equate parameters listed in "a" with those in "b"
 #' @param a  one or more labels to equate with those in the "b" set.
 #' @param b  one or more labels to equate with those in the 'a' set. (if 'newlabels' is NULL, labels will be set to 'a' list).
 #' @param newlabels (optional) list of new labels for the equated parameters.
@@ -3920,7 +3920,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param master  synonym for 'a'
 #' @param slave   synonym for 'b'
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @seealso [umxModify()], [umxCompare()]
 #' @family Model Summary and Comparison
@@ -4010,11 +4010,11 @@ umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), v
 #'
 #' Fix all free parameters in a model using omxGetParameters()
 #'
-#' @param model an [mxModel()] within which to fix free parameters
+#' @param model an [OpenMx::mxModel()] within which to fix free parameters
 #' @param verbose whether to mention how many paths were fixed (default is FALSE)
 #' @param name optional new name for the model. if you begin with a _ it will be made a suffix
 #' @param run  whether to fix and re-run the model, or just return it (defaults to FALSE)
-#' @return - the fixed [mxModel()]
+#' @return - the fixed [OpenMx::mxModel()]
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>

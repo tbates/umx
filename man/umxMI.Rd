@@ -14,7 +14,7 @@ umxMI(
 )
 }
 \arguments{
-\item{model}{An \code{\link[=mxModel]{mxModel()}} for which to report modification indices}
+\item{model}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} for which to report modification indices}
 
 \item{matrices}{which matrices to test. The default (NA) will test A & S for RAM models}
 

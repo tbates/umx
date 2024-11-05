@@ -19,7 +19,7 @@ xmuLabel(
 )
 }
 \arguments{
-\item{obj}{An \code{\link[=mxModel]{mxModel()}} (RAM or matrix based), \code{\link[=mxPath]{mxPath()}}, or \code{\link[=mxMatrix]{mxMatrix()}}}
+\item{obj}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} (RAM or matrix based), \code{\link[=mxPath]{mxPath()}}, or \code{\link[OpenMx:mxMatrix]{OpenMx:: mxMatrix()}}}
 
 \item{suffix}{String to append to each label (might be used to distinguish, say male and female submodels in a model)}
 
@@ -43,11 +43,11 @@ xmuLabel(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
-xmuLabel adds labels to things, be it an: \code{\link[=mxModel]{mxModel()}} (RAM or matrix based), an \code{\link[=mxPath]{mxPath()}}, or an \code{\link[=mxMatrix]{mxMatrix()}}
+xmuLabel adds labels to things, be it an: \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} (RAM or matrix based), an \code{\link[=mxPath]{mxPath()}}, or an \code{\link[OpenMx:mxMatrix]{OpenMx:: mxMatrix()}}
 This is a core function in umx: Adding labels to paths opens the door to \code{\link[=umxEquate]{umxEquate()}}, as well as \code{\link[=omxSetParameters]{omxSetParameters()}}
 }
 \examples{

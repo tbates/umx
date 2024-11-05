@@ -7,7 +7,7 @@
 umx_is_exogenous(model, manifests_only = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} from which to get exogenous variables}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} from which to get exogenous variables}
 
 \item{manifests_only}{Whether to check only manifests (default = TRUE)}
 }

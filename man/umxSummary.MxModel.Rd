@@ -21,7 +21,7 @@
 )
 }
 \arguments{
-\item{model}{The \code{\link[=mxModel]{mxModel()}} whose fit will be reported}
+\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} whose fit will be reported}
 
 \item{refModels}{Saturated models if needed for fit indices (see example below:
 If NULL will be computed on demand. If FALSE will not be computed.}
@@ -67,7 +67,7 @@ These are used to derive confidence intervals based on the formula 95\%CI = esti
 
 Sometimes SEs appear NA. This may reflect a model which is not identified (see \url{http://davidakenny.net/cm/identify.htm}).
 This can include empirical under-identification - for instance two factors
-that are essentially identical in structure. use \code{\link[=mxCheckIdentification]{mxCheckIdentification()}} to check identification.
+that are essentially identical in structure. use \code{\link[OpenMx:mxCheckIdentification]{OpenMx:: mxCheckIdentification()}} to check identification.
 
 Solutions: If there are paths estimated at or close to zero suggests that fixing one or two of
 these to zero may fix the standard error calculation.

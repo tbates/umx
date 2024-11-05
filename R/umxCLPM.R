@@ -16,7 +16,7 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param summary Optionally show a summary.
-#' @return - [mxModel()]
+#' @return - [OpenMx::mxModel()]
 #' @export
 #' @family CLPM Functions
 #' @references - Kenny, D.A., & Zautra, A. (1995). The trait-state-error model for multiwave data. *Journal of Consulting and Clinical Psychology*, **63**, 52–59. \doi{10.1037/0022-006X.63.1.52}

@@ -43,7 +43,7 @@ xmu_safe_run_summary(
 }
 \value{
 \itemize{
-\item \code{\link[=mxModel]{mxModel()}}
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 }
 \description{
@@ -83,7 +83,7 @@ xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, compari
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxTryHard]{mxTryHard()}}
+\item \code{\link[OpenMx:mxTryHard]{OpenMx:: mxTryHard()}}
 }
 
 Other xmu internal not for end user: 

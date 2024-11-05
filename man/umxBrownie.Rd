@@ -20,7 +20,7 @@ umxBrownie()
 }
 \seealso{
 \itemize{
-\item \code{\link[=omxBrownie]{omxBrownie()}}
+\item \code{\link[OpenMx:omxBrownie]{OpenMx:: omxBrownie()}}
 }
 
 Other Miscellaneous Functions: 

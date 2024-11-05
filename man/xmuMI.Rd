@@ -7,7 +7,7 @@
 xmuMI(model, vector = TRUE)
 }
 \arguments{
-\item{model}{an \code{\link[=mxModel]{mxModel()}} to derive modification indices for}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to derive modification indices for}
 
 \item{vector}{= Whether to report the results as a vector default = TRUE}
 }
