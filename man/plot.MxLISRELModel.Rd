@@ -39,7 +39,7 @@
 \item{...}{Optional parameters}
 }
 \description{
-\code{plot.MxLISRELModel} produces SEM diagrams using \code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} (or a graphviz application) to create the image.
+\code{plot.MxLISRELModel} produces SEM diagrams using [\code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} to create the image.
 }
 \details{
 \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).

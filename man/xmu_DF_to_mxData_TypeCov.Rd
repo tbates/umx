@@ -20,11 +20,11 @@ xmu_DF_to_mxData_TypeCov(
 }
 \value{
 \itemize{
-\item \code{\link[=mxData]{mxData()}} of type = cov
+\item \code{\link[OpenMx:mxData]{OpenMx::mxData()}} of type = cov
 }
 }
 \description{
-\code{xmu_DF_to_mxData_TypeCov} converts a dataframe into \code{\link[=mxData]{mxData()}} with \code{type="cov"} and \code{nrow = numObs}
+\code{xmu_DF_to_mxData_TypeCov} converts a dataframe into \code{\link[OpenMx:mxData]{OpenMx::mxData()}} with \code{type="cov"} and \code{nrow = numObs}
 and optionally adding means.
 }
 \examples{

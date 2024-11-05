@@ -36,7 +36,7 @@ Notes:
 \item Runs much faster with full = FALSE (but this does not allow the model to re-fit around the newly-
 freed parameter).
 \item Compared to mxMI, this function returns top changes, and also suppresses the run message.
-\item Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link[=mxMI]{mxMI()}}
+\item Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link[OpenMx:mxMI]{OpenMx::mxMI()}}
 You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
 }
 }
@@ -60,7 +60,7 @@ umxMI(m1, full = FALSE)
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxMI]{mxMI()}}
+\item \code{\link[OpenMx:mxMI]{OpenMx::mxMI()}}
 }
 
 Other Model Summary and Comparison: 

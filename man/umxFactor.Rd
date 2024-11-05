@@ -17,18 +17,18 @@ umxFactor(
 )
 }
 \arguments{
-\item{x}{A variable to recode as an mxFactor (see \code{\link[=mxFactor]{mxFactor()}})}
+\item{x}{A variable to recode as an mxFactor (see \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}})}
 
-\item{levels}{(default NULL). Like \code{\link[=factor]{factor()}} but UNLIKE \code{\link[=mxFactor]{mxFactor()}},
+\item{levels}{(default NULL). Like \code{\link[=factor]{factor()}} but UNLIKE \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}},
 unique values will be used if levels not specified.}
 
-\item{labels}{= levels (see \code{\link[=mxFactor]{mxFactor()}})}
+\item{labels}{= levels (see \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}})}
 
-\item{exclude}{= NA (see \code{\link[=mxFactor]{mxFactor()}})}
+\item{exclude}{= NA (see \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}})}
 
 \item{ordered}{= TRUE By default return an ordered mxFactor}
 
-\item{collapse}{= FALSE (see \code{\link[=mxFactor]{mxFactor()}})}
+\item{collapse}{= FALSE (see \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}})}
 
 \item{verbose}{Whether to tell user about such things as coercing to factor}
 
@@ -37,11 +37,11 @@ will try and ensure factor levels same across all twins.}
 }
 \value{
 \itemize{
-\item \code{\link[=mxFactor]{mxFactor()}}
+\item \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}}
 }
 }
 \description{
-A convenient version of \code{\link[=mxFactor]{mxFactor()}} supporting the common
+A convenient version of \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}} supporting the common
 case in which the factor levels are those in the variable.
 }
 \examples{
@@ -76,7 +76,7 @@ jnk = umxFactor(df); str(jnk)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxFactanal]{umxFactanal()}}, \code{\link[=mxFactor]{mxFactor()}}
+\item \code{\link[=umxFactanal]{umxFactanal()}}, \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}}
 }
 
 Other Data Functions: 

@@ -111,7 +111,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 #'
 #' Tricky, but reporting variances and standardized thresholds is ideal.
 #' Guidance is to start with unit variances and thresholds within
-#'  +/- 2 SD of the mean.
+#'  +/- 2 SD of the mean. Like %p option in Classic Mx.
 #' @param model an [OpenMx::mxModel()] to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
 #' @param diagonalizeExpCov Whether to diagonalize the ExpCov
@@ -593,11 +593,11 @@ loadings.MxModel <- function(x, ...) {
 #' 
 #' Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
 #'
-#' @details *Note*: [confint()] is an OpenMx function which will return SE-based CIs.
+#' @details *Note*: OpenMx defines a `confint` function which will return SE-based CIs.
 #' 
 #' If `parm` is empty, and `run = FALSE`, a message will alert you to set `run = TRUE`. 
 #'
-#' @param object An [OpenMx::mxModel()], possibly already containing [OpenMx:: mxCI()]s that have been [mxRun()] with intervals = TRUE))
+#' @param object An [OpenMx::mxModel()], possibly already containing [OpenMx::mxCI()]s that have been [OpenMx::mxRun()] with intervals = TRUE))
 #' @param parm	Which parameters to get confidence intervals for. Can be "existing", "all", or one or more parameter names.
 #' @param level The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
@@ -808,7 +808,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' }
 #' If `run = "no"`, the function simply adds the CI requests, but returns the model without running them.
 #' 
-#' @param model The [OpenMx::mxModel()] you wish to report [OpenMx:: mxCI()]s on
+#' @param model The [OpenMx::mxModel()] you wish to report [OpenMx::mxCI()]s on
 #' @param which What CIs to add: c("ALL", NA, "list of your making")
 #' @param remove = FALSE (if set, removes existing specified CIs from the model)
 #' @param run Whether or not to compute the CIs. Valid values = "no" (default), "yes", "if necessary".
@@ -967,7 +967,7 @@ umxSummary.default <- function(model, ...){
 #' 
 #' Sometimes SEs appear NA. This may reflect a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
 #' This can include empirical under-identification - for instance two factors
-#' that are essentially identical in structure. use [OpenMx:: mxCheckIdentification()] to check identification.
+#' that are essentially identical in structure. use [OpenMx::mxCheckIdentification()] to check identification.
 #' 
 #' Solutions: If there are paths estimated at or close to zero suggests that fixing one or two of 
 #' these to zero may fix the standard error calculation.
@@ -2011,7 +2011,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @param silent (don't print, just return the table as a dataframe (default = FALSE)
 #' @family Model Summary and Comparison
-#' @seealso - [umxSummary()], [umxRAM()],[OpenMx:: mxCompare()]
+#' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
 #' @references - <https://github.com/tbates/umx>
 #' @export
 #' @md
@@ -2464,7 +2464,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 
 #' Create and display a graphical path diagram for a LISREL model.
 #'
-#' `plot.MxLISRELModel` produces SEM diagrams using [DiagrammeR::DiagrammeR()] (or a graphviz application) to create the image. 
+#' `plot.MxLISRELModel` produces SEM diagrams using [[DiagrammeR::DiagrammeR()] to create the image. 
 #' 
 #' \emph{Note:} By default, plots open in your browser (or plot pane if using RStudio).
 #' 
@@ -2509,10 +2509,9 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 
 #' Create and display a graphical path diagram for a model.
 #'
-#' [plot()] produces SEM diagrams in graphviz format, and relies on [DiagrammeR()] (or a 
-#' graphviz application) to create the image. 
+#' [plot()] produces SEM diagrams in graphviz format, and relies on [DiagrammeR::DiagrammeR()] to create the image. 
 #'
-#' \emph{Note:} DiagrammeR is supported out of the box.  By default, plots open in your browser. Other options include pdf SVG etc. 
+#' \emph{Note:} [DiagrammeR::DiagrammeR()] is supported out of the box.  By default, plots open in your browser. Other options include pdf SVG etc. 
 #' 
 #' If you use `umx_set_plot_format("graphviz")`, graphs will open in a graphviz helper app (if installed).
 #' 
@@ -3308,7 +3307,7 @@ plot.MxModelIP <- umxPlotIP
 #' 1. Runs much faster with full = FALSE (but this does not allow the model to re-fit around the newly-
 #' freed parameter).
 #' 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
-#' 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in [mxMI()]
+#' 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in [OpenMx::mxMI()]
 #' You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
 #' @param model An [OpenMx::mxModel()] for which to report modification indices
 #' @param matrices which matrices to test. The default (NA) will test A & S for RAM models
@@ -3316,7 +3315,7 @@ plot.MxModelIP <- umxPlotIP
 #' @param numInd How many modifications to report. Use -1 for all. Default (NA) will report all over 6.63 (p = .01)
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
 #' @param decreasing How to sort (default = TRUE, decreasing)
-#' @seealso - [mxMI()]
+#' @seealso - [OpenMx::mxMI()]
 #' @family Model Summary and Comparison
 #' @references - <https://github.com/tbates/umx>
 #' @export
@@ -3391,7 +3390,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' @param delta A the amount to simulate changing \sQuote{from} by. 
 #' @param to The dependent variable that you want to watch changing.
 #' @param model The model containing variables from and to.
-#' @seealso - [OpenMx:: mxCheckIdentification()], [OpenMx:: mxCompare()]
+#' @seealso - [OpenMx::mxCheckIdentification()], [umxCompare()]
 #' @family Advanced Model Building Functions
 #' @references - https://github.com/tbates/umx/
 #' @export
@@ -3740,7 +3739,7 @@ parameters <- umxParameters
 
 #' Get parameters from a model, with support for pattern matching!
 #'
-#' umxGetParameters retrieves parameter labels from a model, like [OpenMx:: omxGetParameters()].
+#' umxGetParameters retrieves parameter labels from a model, like [OpenMx::omxGetParameters()].
 #' However, it is supercharged with regular expressions, so you can get labels that match a pattern.
 #' 
 #' In addition, if regex contains a vector, this is treated as a list of raw labels to search for, 
@@ -4486,7 +4485,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #'   }
 #'
 #' @aliases summaryAPA
-#' @param obj A model (e.g. [lm()], [lme()], [glm()], [t.test()]), beta-value, or [data.frame]
+#' @param obj A model (e.g. [lm()], [nlme::lme()], [glm()], [t.test()]), beta-value, or [data.frame]
 #' @param se If obj is a beta, se treated as standard-error (returning a CI). 
 #' If obj is a model, used to select effect of interest (blank for all effects). 
 #' Finally, set se to the CI c(lower, upper), to back out the SE.

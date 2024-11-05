@@ -83,7 +83,7 @@
 #' @family Super-easy helpers
 #' @export
 #' @md
-#' @seealso - [factanal()], [OpenMx:: mxFactorScores()]
+#' @seealso - [factanal()], [OpenMx::mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>,
 #' 
 #' Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. *British Journal of Statistical Psychology*, **17**, 65–70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
@@ -283,7 +283,7 @@ umxFactanal <- umxEFA
 #' @return - dataframe of scores.
 #' @export
 #' @family Reporting Functions
-#' @seealso - [OpenMx:: mxFactorScores()]
+#' @seealso - [OpenMx::mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples

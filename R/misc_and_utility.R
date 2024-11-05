@@ -279,7 +279,7 @@ noNAs <- function(df, rows = NULL, cols = NULL, drop = TRUE) {
 #' @return - All models names
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @seealso - [OpenMx:: mxRename()], [umxSuperModel()]
+#' @seealso - [OpenMx::mxRename()], [umxSuperModel()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -462,7 +462,7 @@ umx_set_plot_file_suffix <- function(umx.plot.suffix = NULL, silent = FALSE) {
 
 #' Set output format of plots (structural diagrams) in umx
 #'
-#' Set output format of plots (default = "DiagrammeR", alternative is "graphviz"). If you call this with no
+#' Set output format of plots (default = "[DiagrammeR::DiagrammeR()]", alternatives are graphviz, svg, png, pdf). If you call this with no
 #' value, it will return the current setting. If you call it with TRUE, it toggles the setting.
 #'
 #' @param umx.plot.format format for plots (if empty, returns the current value of umx.plot.format). If "TRUE", then toggles
@@ -1216,11 +1216,11 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 #'
 #' umxJiggle takes values in a matrix and jiggles them
 #'
-#' @param matrixIn an [OpenMx:: mxMatrix()] to jiggle the values of
+#' @param matrixIn an [OpenMx::mxMatrix()] to jiggle the values of
 #' @param mean the mean value to add to each value
 #' @param sd the sd of the jiggle noise
 #' @param dontTouch A value, which, if found, will be left as-is (defaults to 0)
-#' @return - [OpenMx:: mxMatrix()]
+#' @return - [OpenMx::mxMatrix()]
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
@@ -1352,24 +1352,24 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 
 #' umxFactor
 #'
-#' A convenient version of [mxFactor()] supporting the common 
+#' A convenient version of [OpenMx::mxFactor()] supporting the common 
 #' case in which the factor levels are those in the variable.
 #'
 #' @aliases umx_factor
-#' @param x A variable to recode as an mxFactor (see [mxFactor()])
-#' @param levels (default NULL). Like [factor()] but UNLIKE [mxFactor()], 
+#' @param x A variable to recode as an mxFactor (see [OpenMx::mxFactor()])
+#' @param levels (default NULL). Like [factor()] but UNLIKE [OpenMx::mxFactor()], 
 #' unique values will be used if levels not specified.
-#' @param labels = levels (see [mxFactor()])
-#' @param exclude = NA (see [mxFactor()])
+#' @param labels = levels (see [OpenMx::mxFactor()])
+#' @param exclude = NA (see [OpenMx::mxFactor()])
 #' @param ordered = TRUE By default return an ordered mxFactor
-#' @param collapse = FALSE (see [mxFactor()])
+#' @param collapse = FALSE (see [OpenMx::mxFactor()])
 #' @param verbose Whether to tell user about such things as coercing to factor
 #' @param sep If twin data are being used, the string that separates the base from twin index
 #' will try and ensure factor levels same across all twins.
-#' @return - [mxFactor()]
+#' @return - [OpenMx::mxFactor()]
 #' @export
 #' @family Data Functions
-#' @seealso - [umxFactanal()], [mxFactor()]
+#' @seealso - [umxFactanal()], [OpenMx::mxFactor()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -2279,7 +2279,7 @@ umx_grep <- function(df, grepString, output = c("both", "label", "name"), ignore
 #' 
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [OpenMx:: omxBrownie()]
+#' @seealso - [OpenMx::omxBrownie()]
 #' @examples
 #' umxBrownie()
 #' @md
@@ -4805,7 +4805,7 @@ umx_is_MxData <- function(x) {
 #'
 #' Return the names of any ordinal variables in a dataframe
 #'
-#' @param df A [data.frame()] or [mxData()] to look in for ordinal variables (if you offer a
+#' @param df A [data.frame()] or [OpenMx::mxData()] to look in for ordinal variables (if you offer a
 #' matrix or vector, it will be upgraded to a dataframe)
 #' @param names whether to return the names of ordinal variables, or a binary (T,F) list (default = FALSE)
 #' @param strict whether to stop when unordered factors are found (default = TRUE)
@@ -5024,7 +5024,7 @@ umx_is_MxModel <- function(obj, listOK = FALSE) {
 #'
 #' Utility function returning a binary answer to the question "Is this an OpenMx mxMatrix?"
 #'
-#' @param obj an object to be tested to see if it is an OpenMx [OpenMx:: mxMatrix()]
+#' @param obj an object to be tested to see if it is an OpenMx [OpenMx::mxMatrix()]
 #' @return - Boolean
 #' @export
 #' @family Test
@@ -5311,7 +5311,7 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 #' umx_cont_2_quantiles
 #'
 #' Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
-#' It returns an [mxFactor()], with the levels labeled with the max value
+#' It returns an [OpenMx::mxFactor()], with the levels labeled with the max value
 #' in each quantile (i.e., open on the left-side). quantiles are labeled "quantile1"
 #' "quantile2" etc.
 #' 
@@ -5324,7 +5324,7 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 #' @param type what to return (Default is "mxFactor") options: "ordered" and "unordered")
 #' @param verbose report the min, max, and decile cuts used (default = FALSE)
 #' @param returnCutpoints just return the cutpoints, for use directly
-#' @return - recoded variable as an [mxFactor()]
+#' @return - recoded variable as an [OpenMx::mxFactor()]
 #' @export
 #' @family Data Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -5423,7 +5423,6 @@ umx_has_square_brackets <- function (input) {
     return(length(match1) > 0 && length(match2) > 0)
 }
 
-
 #' Convert a string to an OpenMx algebra
 #'
 #' This is useful use to quickly and easily insert values from R variables into the string (using paste() and rep() etc.), 
@@ -5434,7 +5433,7 @@ umx_has_square_brackets <- function (input) {
 #' @param algString a string to turn into an algebra
 #' @param name of the returned algebra
 #' @param dimnames of the returned algebra
-#' @return - [OpenMx:: mxAlgebra()]
+#' @return - [OpenMx::mxAlgebra()]
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>
@@ -7213,18 +7212,13 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		SESlist = rnorm(n = nMZpairs, mean = 0, sd = 1)
 		j = 1
 		for (thisSES in SESlist) {
-			# thisSES = 0
 			AA = max(0, (avgA + (thisSES * SES_2_A_beta)))
-			# CC = 0.0
-			# EE = 0.1
 			AC  = AA + CC
 			ACE = AA + CC + EE
 			mzCov = matrix(nrow = 2, byrow = TRUE, c(
 				ACE, AC,
 				AC , ACE)
 			);
-			# print(mzCov)
-			# MASS:: package
 			mzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
 			mzData[j, ] = c(mzPair, thisSES, thisSES)
 			j = j + 1
@@ -7236,7 +7230,6 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		SESlist = rnorm(n = nDZpairs, mean = 0, sd = 1)
 		j = 1
 		for (thisSES in SESlist) {
-			# thisSES = -5
 			AA = max(0, (avgA + (thisSES * SES_2_A_beta)))
 			hAC = (dzAr * AA) + CC
 			ACE = AA + CC + EE
@@ -8037,18 +8030,18 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 #' Convert lower-only matrix data to full (or enforce symmetry on a full matrix)
 #'
 #' Takes a vector of the lower-triangle of cells in a matrix as you might read-in
-#' from a journal article), OR a matrix (for instance from a "lower" [OpenMx:: mxMatrix()], 
+#' from a journal article), OR a matrix (for instance from a "lower" [OpenMx::mxMatrix()], 
 #' and returns a full matrix, copying the lower triangle into the upper.
 #' 
 #' *note*: Can also take lower data presented in the form of a data.frame. Note also, if 
 #' presented with a full matrix, the function will return a matrix with  symmetry enforced. Can be
 #' handy when you have a "nearly-symmetrical" matrix (with differences in the tenth decimal place).
 #' 
-#' @param lower.data An [OpenMx:: mxMatrix()]
+#' @param lower.data An [OpenMx::mxMatrix()]
 #' @param diag A boolean specifying whether the lower.data includes the diagonal
 #' @param byrow Whether the matrix is to be filled by row or by column (default = TRUE)
 #' @param dimnames Optional dimnames for the matrix (defaults to NULL)
-#' @return - [OpenMx:: mxMatrix()]
+#' @return - [OpenMx::mxMatrix()]
 #' @family Data Functions
 #' @export
 #' @references - <https://github.com/tbates/umx>

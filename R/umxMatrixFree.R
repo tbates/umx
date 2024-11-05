@@ -18,7 +18,7 @@
 #' @param labels The labels of the matrix (Default NA)
 #' @param byrow Default for byrow (TRUE)
 #' @param ...  Accepts all other arguments from [umxMatrix()]
-#' @return - [OpenMx:: mxMatrix()]
+#' @return - [OpenMx::mxMatrix()]
 #' @export
 #' @seealso - [umxMatrix()]
 #' @md

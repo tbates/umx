@@ -26,12 +26,12 @@ umx_cont_2_quantiles(
 }
 \value{
 \itemize{
-\item recoded variable as an \code{\link[=mxFactor]{mxFactor()}}
+\item recoded variable as an \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}}
 }
 }
 \description{
 Recode a continuous variable into n-quantiles (default = deciles (10 levels)).
-It returns an \code{\link[=mxFactor]{mxFactor()}}, with the levels labeled with the max value
+It returns an \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}}, with the levels labeled with the max value
 in each quantile (i.e., open on the left-side). quantiles are labeled "quantile1"
 "quantile2" etc.
 }

@@ -19,7 +19,7 @@ xmu_extract_column(data, col, drop = FALSE)
 }
 }
 \description{
-same effect as \code{df[, col]} but works for \code{\link[=mxData]{mxData()}} and check the names are present
+same effect as \code{df[, col]} but works for \code{\link[OpenMx:mxData]{OpenMx::mxData()}} and check the names are present
 }
 \examples{
 xmu_extract_column(mtcars, "wt")

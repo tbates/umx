@@ -70,7 +70,8 @@
 #  methods::setClass is called during build not package source code.
 
 # #' @importFrom Base::charToRaw
-#' @importFrom DiagrammeR DiagrammeR grViz
+#' @importFrom DiagrammeR grViz
+#' @importFrom DiagrammeR DiagrammeR
 # #' @importFrom DiagrammeRsvg export_svg
 # #' @importFrom rsvg rsvg_png rsvg_pdf
 #' @importFrom graphics plot abline
@@ -88,7 +89,6 @@
 #' @importFrom polycor hetcor
 #' @importFrom xtable xtable
 #' @importFrom MuMIn Weights
-#' @importFrom DiagrammeR DiagrammeR
 #' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous theme 
 #' @importFrom ggplot2 geom_abline geom_bar geom_curve geom_errorbar geom_hline geom_jitter geom_line 
@@ -394,7 +394,7 @@ umxModel <- function(...) {
 #' If you want this, I'd say use `umxRAM` with lavaan string input.
 #' 
 #' @param model A model to update (or set to string to use as name for new model)
-#' @param data data for the model. Can be an [mxData()] or a data.frame
+#' @param data data for the model. Can be an [OpenMx::mxData()] or a data.frame
 #' @param ... umxPaths, mxThreshold objects, etc.
 #' @param group (optional) Column name to use for a multi-group model (default = NULL)
 #' @param group.equal In multi-group models, what to equate across groups (default = NULL: all free)
@@ -868,7 +868,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #'
 #' @description
 #' `umxSuperModel` takes 1 or more models and wraps them in a supermodel with a
-#' [mxFitFunctionMultigroup()] fit function that minimizes the sum of the
+#' [OpenMx::mxFitFunctionMultigroup()] fit function that minimizes the sum of the
 #' fits of the sub-models.
 #'
 #' *note*: Any duplicate model-names are renamed to be unique by suffixing `_1` etc.
@@ -881,7 +881,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Core Model Building Functions
-#' @seealso - [mxFitFunctionMultigroup()], [umxRAM()]
+#' @seealso - [OpenMx::mxFitFunctionMultigroup()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -1041,7 +1041,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param master If you set master, then the update labels will be equated to these (i.e. replaced by them).
-#' @param intervals Whether to run confidence intervals (see [mxRun()])
+#' @param intervals Whether to run confidence intervals (see [OpenMx::mxRun()])
 #' @param verbose How much feedback to give
 #' @return - [OpenMx::mxModel()]
 #' @family Core Model Building Functions
@@ -3346,7 +3346,7 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' *note*: If you give xmuValues a numeric input, it will use obj as the mean, and return a 
 #' list of length n, with sd = sd.
 #'
-#' @param obj The RAM or matrix [OpenMx::mxModel()], or [OpenMx:: mxMatrix()] that you want to set start values for.
+#' @param obj The RAM or matrix [OpenMx::mxModel()], or [OpenMx::mxMatrix()] that you want to set start values for.
 #' @param sd Optional Standard Deviation for start values
 #' @param n Optional Mean for start values
 #' @param onlyTouchZeros Don't alter parameters that have starts (useful to speed [umxModify()])
@@ -3503,10 +3503,10 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 
 #' xmuLabel: Add labels to a RAM model, matrix, or path
 #'
-#' xmuLabel adds labels to things, be it an: [OpenMx::mxModel()] (RAM or matrix based), an [mxPath()], or an [OpenMx:: mxMatrix()]
-#' This is a core function in umx: Adding labels to paths opens the door to [umxEquate()], as well as [omxSetParameters()]
+#' xmuLabel adds labels to things, be it an: [OpenMx::mxModel()] (RAM or matrix based), an [OpenMx::mxPath()], or an [OpenMx::mxMatrix()]
+#' This is a core function in umx: Adding labels to paths opens the door to [umxEquate()], as well as [OpenMx::omxSetParameters()]
 #'
-#' @param obj An [OpenMx::mxModel()] (RAM or matrix based), [mxPath()], or [OpenMx:: mxMatrix()]
+#' @param obj An [OpenMx::mxModel()] (RAM or matrix based), [OpenMx::mxPath()], or [OpenMx::mxMatrix()]
 #' @param suffix String to append to each label (might be used to distinguish, say male and female submodels in a model)
 #' @param baseName String to prepend to labels. Defaults to NA ("")
 #' @param setfree Whether to label only the free paths (defaults to FALSE)
@@ -3613,10 +3613,10 @@ xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @param joinKey See mxMatrix documentation: Defaults to as.character(NA)
 #' @param joinModel See mxMatrix documentation: Defaults to as.character(NA)
 #' @param jiggle = NA passed to xmuLabel to jiggle start values (default does nothing)
-#' @return - [OpenMx:: mxMatrix()]
+#' @return - [OpenMx::mxMatrix()]
 #' @export
 #' @family Core Model Building Functions
-#' @seealso - [xmu_simplex_corner()], [OpenMx:: mxMatrix()], [xmuLabel()], [umxRAM()]
+#' @seealso - [xmu_simplex_corner()], [OpenMx::mxMatrix()], [xmuLabel()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @md
 #' @examples
@@ -3681,7 +3681,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @param verbose Quiet or informative
 #' @param initial See mxAlgebra documentation
 #' @param recompute See mxAlgebra documentation
-#' @return - [OpenMx:: mxAlgebra()]
+#' @return - [OpenMx::mxAlgebra()]
 #' @export
 #' @family Advanced Model Building Functions	
 #' @seealso - [umxMatrix()]
@@ -3718,12 +3718,12 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 
 #' umxRun: Run an mxModel
 #'
-#' `umxRun` is a version of [mxRun()] which can run also set start values, labels, and run multiple times
+#' `umxRun` is a version of [OpenMx::mxRun()] which can run also set start values, labels, and run multiple times
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 #' @param model The [OpenMx::mxModel()] you wish to run.
 #' @param tryHard  How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"
-#' @param calc_sat Whether to calculate the saturated and independence models (for raw [mxData()] [OpenMx::mxModel()]s)
+#' @param calc_sat Whether to calculate the saturated and independence models (for raw [OpenMx::mxData()] [OpenMx::mxModel()]s)
 #' @param setValues Whether to set the starting values of free parameters (default = FALSE)
 #' @param setLabels Whether to set the labels (default =  FALSE)
 #' @param optimizer optional to set the optimizer.
@@ -3819,7 +3819,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' **Details**
 #' Internally, `umxSetParameters` is equivalent to a call to `omxSetParameters` where you 
 #' have the ability to generate a pattern-based label list, 
-#' and, because this can create duplicate labels, we also call [OpenMx:: omxAssignFirstParameters()]
+#' and, because this can create duplicate labels, we also call [OpenMx::omxAssignFirstParameters()]
 #' to equate the start values for parameters which now have identical labels.
 #' 
 #' @param model an [OpenMx::mxModel()] to set parameters in.
@@ -4658,10 +4658,10 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @param lbound lower bounds for each path value
 #' @param ubound upper bounds for each path value
 #' @param hasMeans Used in 'forms' case to know whether the data have means or not.
-#' @return - 1 or more [mxPath()]s
+#' @return - 1 or more [OpenMx::mxPath()]s
 #' @export
 #' @family Core Model Building Functions
-#' @seealso - [mxPath()]
+#' @seealso - [OpenMx::mxPath()]
 #' @references - <https://tbates.github.io>
 #' @md
 #' @examples

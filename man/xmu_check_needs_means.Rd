@@ -11,7 +11,7 @@ xmu_check_needs_means(
 )
 }
 \arguments{
-\item{data}{\code{\link[=mxData]{mxData()}} to check.}
+\item{data}{\code{\link[OpenMx:mxData]{OpenMx::mxData()}} to check.}
 
 \item{type}{of the data requested by the model.}
 

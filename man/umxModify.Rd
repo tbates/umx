@@ -46,7 +46,7 @@ umxModify(
 
 \item{master}{If you set master, then the update labels will be equated to these (i.e. replaced by them).}
 
-\item{intervals}{Whether to run confidence intervals (see \code{\link[=mxRun]{mxRun()}})}
+\item{intervals}{Whether to run confidence intervals (see \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}})}
 
 \item{verbose}{How much feedback to give}
 }

@@ -30,7 +30,7 @@ umxSuperModel(
 }
 \description{
 \code{umxSuperModel} takes 1 or more models and wraps them in a supermodel with a
-\code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}} fit function that minimizes the sum of the
+\code{\link[OpenMx:mxFitFunctionMultigroup]{OpenMx::mxFitFunctionMultigroup()}} fit function that minimizes the sum of the
 fits of the sub-models.
 
 \emph{note}: Any duplicate model-names are renamed to be unique by suffixing \verb{_1} etc.
@@ -107,7 +107,7 @@ umxModelNames(super)
 }
 \seealso{
 \itemize{
-\item \code{\link[=mxFitFunctionMultigroup]{mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
+\item \code{\link[OpenMx:mxFitFunctionMultigroup]{OpenMx::mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
 Other Core Model Building Functions: 

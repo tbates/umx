@@ -19,13 +19,13 @@
 
 #' Convert a dataframe into a cov mxData object
 #'
-#' `xmu_DF_to_mxData_TypeCov` converts a dataframe into [mxData()] with `type="cov"` and `nrow = numObs`
+#' `xmu_DF_to_mxData_TypeCov` converts a dataframe into [OpenMx::mxData()] with `type="cov"` and `nrow = numObs`
 #' and optionally adding means.
 #'
 #' @param df the dataframe to covert to an mxData type cov object.
 #' @param columns = Which columns to keep (default is all).
 #' @param use = Default is "complete.obs".
-#' @return - [mxData()] of type = cov
+#' @return - [OpenMx::mxData()] of type = cov
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
@@ -53,7 +53,7 @@ xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "
 #' Get one or more columns from mzData or regular data.frame
 #'
 #' @description
-#' same effect as `df[, col]` but works for [mxData()] and check the names are present
+#' same effect as `df[, col]` but works for [OpenMx::mxData()] and check the names are present
 #'
 #' @param data mxData or data.frame
 #' @param col the name(s) of the column(s) to extract
@@ -209,7 +209,7 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
-#' @seealso - [OpenMx:: mxTryHard()]
+#' @seealso - [OpenMx::mxTryHard()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -436,7 +436,7 @@ xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
 #' @description
 #' Check data to see if model needs means.
 #'
-#' @param data [mxData()] to check.
+#' @param data [OpenMx::mxData()] to check.
 #' @param type of the data requested by the model.
 #' @param allContinuousMethod How data will be processed if used for WLS.
 #' @return - T/F
@@ -593,7 +593,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 
 #' Determine if a dataset will need statistics for the means if used in a WLS model.
 #'
-#' Given either a data.frame or raw `mxData`, this function determines whether [OpenMx:: mxFitFunctionWLS()]
+#' Given either a data.frame or raw `mxData`, this function determines whether [OpenMx::mxFitFunctionWLS()]
 #' will generate expectations for means.
 #' 
 #' All-continuous models processed using the "cumulants" method LACK means, while
@@ -601,12 +601,12 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 #' 
 #' When data are not all continuous, means are modeled and `allContinuousMethod` is ignored.
 #'
-#' @param data The raw data being used in a [OpenMx:: mxFitFunctionWLS()] model.
+#' @param data The raw data being used in a [OpenMx::mxFitFunctionWLS()] model.
 #' @param allContinuousMethod the method used to process data when all columns are continuous (default = "cumulants")
 #' @param verbose Whether or not to report diagnostics.
 #' @return - list describing the data.
 #' @family xmu internal not for end user
-#' @seealso - [OpenMx:: mxFitFunctionWLS()], [omxAugmentDataWithWLSSummary()]
+#' @seealso - [OpenMx::mxFitFunctionWLS()], [OpenMx::omxAugmentDataWithWLSSummary()]
 #' @export
 #' @md
 #' @examples
@@ -667,7 +667,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' from the dataframe.
 #' The most common use will be to give it a dataframe, and get back an `mxData` object of type raw, cov, cor (WLS is just raw).
 #'
-#' @param data A [data.frame()] or [mxData()]
+#' @param data A [data.frame()] or [OpenMx::mxData()]
 #' @param type What data type is wanted out c("Auto", "FIML", "cov", "cor", 'WLS', 'DWLS', 'ULS')
 #' @param manifests If set, only these variables will be retained.
 #' @param weight Passes weight values to mxData
@@ -676,7 +676,7 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
 #' @param verbose If verbose, report on columns kept and dropped (default FALSE)
 #' @param use When type = cov or cor, should this drop NAs? (use = "pairwise.complete.obs" by default, with a polite note)
-#' @return - [mxData()]
+#' @return - [OpenMx::mxData()]
 #' @export
 #' @family xmu internal not for end user
 #' @md
@@ -1334,7 +1334,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 
 #' xmuLabel_Matrix (not a user function)
 #'
-#' This function will label all the free parameters in an [OpenMx:: mxMatrix()]
+#' This function will label all the free parameters in an [OpenMx::mxMatrix()]
 #' 
 #' Model developers should just call [xmuLabel()]
 #'
@@ -1359,7 +1359,7 @@ xmu_simplex_corner <- function(x, start = .9) {
 #' @param verbose how much feedback to give
 #' @param labelFixedCells = FALSE
 #' @param overRideExisting Whether to overRideExisting (Default FALSE)
-#' @return - The labeled [OpenMx:: mxMatrix()]
+#' @return - The labeled [OpenMx::mxMatrix()]
 #' @family xmu internal not for end user
 #' @md
 #' @export
