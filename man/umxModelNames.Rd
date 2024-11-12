@@ -39,7 +39,7 @@ plot(super$CP1fac)
 }
 \seealso{
 \itemize{
-\item \code{\link[OpenMx:mxRename]{OpenMx:: mxRename()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
+\item \code{\link[OpenMx:mxRename]{OpenMx::mxRename()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 
 Other Miscellaneous Utility Functions: 

@@ -66,7 +66,7 @@ to a regular expression matching the labels you want to select. e.g. "G_to_.*" w
 \strong{Details}
 Internally, \code{umxSetParameters} is equivalent to a call to \code{omxSetParameters} where you
 have the ability to generate a pattern-based label list,
-and, because this can create duplicate labels, we also call \code{\link[OpenMx:omxAssignFirstParameters]{OpenMx:: omxAssignFirstParameters()}}
+and, because this can create duplicate labels, we also call \code{\link[OpenMx:omxAssignFirstParameters]{OpenMx::omxAssignFirstParameters()}}
 to equate the start values for parameters which now have identical labels.
 }
 \examples{

@@ -37,7 +37,7 @@ Try
 
 Tricky, but reporting variances and standardized thresholds is ideal.
 Guidance is to start with unit variances and thresholds within
-+/- 2 SD of the mean.
++/- 2 SD of the mean. Like \%p option in Classic Mx.
 }
 \examples{
 \dontrun{

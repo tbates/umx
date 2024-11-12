@@ -40,7 +40,7 @@ umxAlgebra(
 }
 \value{
 \itemize{
-\item \code{\link[OpenMx:mxAlgebra]{OpenMx:: mxAlgebra()}}
+\item \code{\link[OpenMx:mxAlgebra]{OpenMx::mxAlgebra()}}
 }
 }
 \description{

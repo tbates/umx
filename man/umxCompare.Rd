@@ -90,7 +90,7 @@ umxCompare(m1, m2, report = "html") # Open table in browser
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},\code{\link[OpenMx:mxCompare]{OpenMx:: mxCompare()}}
+\item \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},\code{\link[=umxCompare]{umxCompare()}}
 }
 
 Other Model Summary and Comparison: 

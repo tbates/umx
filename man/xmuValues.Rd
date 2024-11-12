@@ -7,7 +7,7 @@
 xmuValues(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE)
 }
 \arguments{
-\item{obj}{The RAM or matrix \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, or \code{\link[OpenMx:mxMatrix]{OpenMx:: mxMatrix()}} that you want to set start values for.}
+\item{obj}{The RAM or matrix \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, or \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}} that you want to set start values for.}
 
 \item{sd}{Optional Standard Deviation for start values}
 

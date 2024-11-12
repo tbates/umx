@@ -15,7 +15,7 @@ umxConfint(
 )
 }
 \arguments{
-\item{object}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, possibly already containing \code{\link[OpenMx:mxCI]{OpenMx:: mxCI()}}s that have been \code{\link[=mxRun]{mxRun()}} with intervals = TRUE))}
+\item{object}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, possibly already containing \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}}s that have been \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} with intervals = TRUE))}
 
 \item{parm}{Which parameters to get confidence intervals for. Can be "existing", "all", or one or more parameter names.}
 
@@ -43,7 +43,7 @@ To keep these, set wipeExistingRequests = FALSE.
 
 Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
 
-\emph{Note}: \code{\link[=confint]{confint()}} is an OpenMx function which will return SE-based CIs.
+\emph{Note}: OpenMx defines a \code{confint} function which will return SE-based CIs.
 
 If \code{parm} is empty, and \code{run = FALSE}, a message will alert you to set \code{run = TRUE}.
 }
