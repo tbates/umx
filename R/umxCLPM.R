@@ -24,7 +24,6 @@
 #' @param defn Optional definition variable.
 #' @param defto Optional variable to which to define.
 #' @param type The method for handling missing data ("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS").
-#' @param weight Optional weight variable.
 #' @param allContinuousMethod Method for handling continuous data ("cumulants", "marginals").
 #' 
 #' @return An OpenMx model object.
@@ -177,38 +176,37 @@ if ("dump" %in% batteries) return(data)
 	}  else if (model == "Hamaker2015") {
 
 		if (waves < 3) stop("Hamaker2015 requires at least 3 waves")
-
-			paths <- c(
-											# RANDOM INTERCEPTS
+			paths = c(
+				# RANDOM INTERCEPTS
 				umxPath("xir", xs, fixedAt = 1),
 				umxPath("yir", ys, fixedAt = 1),
-											# WITHIN MODEL
+				# WITHIN MODEL
 				umxPath(ps, xs, fixedAt = 1),
 				umxPath(us[2:waves], ps[2:waves], fixedAt=1),
 				umxPath(vs[2:waves], qs[2:waves], fixedAt=1),
 				umxPath(qs, ys, fixedAt = 1),
-											# CAUSAL
+				# CAUSAL
 				umxPath(ps[1:waves - 1], qs[2:waves], values = 0.2),
 				umxPath(qs[1:waves-1], ps[2:waves], values = 0.05),
-											# AR
+				# AR
 				umxPath(ps[1:waves - 1], ps[2:waves], values = 1, lbound = 0.00001),
 				umxPath(qs[1:waves - 1], qs[2:waves], values = 1, lbound = 0.00001),
-											# CORRELATIONS
-				umxPath(us[2:waves], with = vs[2:waves], value = 0.02), #, label = "uv"
+				# CORRELATIONS
+				umxPath(us[2:waves], with = vs[2:waves], values = 0.02),
 				umxPath(ps[1], with = qs[1], values = 0.08),
 				umxPath("xir", with = "yir", values = 0.08),
-											# UNCORRELATED VARIANCES
+				# UNCORRELATED VARIANCES
 				umxPath(var = c("xir", "yir"), values = 1),
 				umxPath(var = c(ps[1], qs[1]), values = 1),
-				umxPath(var= vs[2:waves], value=1), 
-				umxPath(var= us [2:waves], value=1),
-											# MEANS
+				umxPath(var= vs[2:waves] , values = 1),
+				umxPath(var= us [2:waves], values = 1),
+				# MEANS
 				umxPath(means = mean_names)
 			)
 
 		if (!missing(defn)) {
 			paths <- c(paths,
-			 umxPath("one", paste0("def_",defn), fixedAt = 1, label = paste0("data.", defn)),
+			 umxPath("one", paste0("def_",defn), fixedAt = 1, labels = paste0("data.", defn)),
 			 umxPath(fromEach = paste0("def_", defn), to = defto, values = 0.1))
 		}
 
@@ -241,7 +239,7 @@ if ("dump" %in% batteries) return(data)
 				umxPath(ps[1:waves - 1], ps[2:waves], values = .1, lbound = 0.00001),
 				umxPath(qs[1:waves - 1], qs[2:waves], values = .1, lbound = 0.00001),
 											# CORRELATIONS
-				umxPath(us[2:waves], with = vs[2:waves], value = 0.02), #, label = "uv"
+				umxPath(us[2:waves], with = vs[2:waves], values = 0.02),
 				umxPath(ps[1], with = qs[1], values = 0.02),
 				umxPath("xir", with = "yir", values = 0.02),
 											# MEANS
@@ -255,7 +253,7 @@ if ("dump" %in% batteries) return(data)
 
 		if (!missing(defn)) {
 			paths <- c(paths,
-			 umxPath("one", paste0("def_",defn), fixedAt = 1, label = paste0("data.", defn)),
+			 umxPath("one", paste0("def_",defn), fixedAt = 1, labels = paste0("data.", defn)),
 			 umxPath(fromEach = paste0("def_", defn), to = defto, values = 0.1))
 		}
 
@@ -275,40 +273,40 @@ if ("dump" %in% batteries) return(data)
 			umxPath("xir", xs, fixedAt = 1),
 			umxPath("yir", ys, fixedAt = 1),
 						# INSTRUMENTS
-			umxPath("PSx", ps, value = 0.05), #label = "psx"
-			umxPath("PSy", qs, value = 0.05), #label = "psy"
+			umxPath("PSx", ps, values = 0.05), #labels = "psx"
+			umxPath("PSy", qs, values = 0.05), #labels = "psy"
 						# WITHIN MODEL
 			umxPath(ps, xs, fixedAt = 1),
 			umxPath(us[2:waves], ps[2:waves], fixedAt=1),
 			umxPath(vs[2:waves], qs[2:waves], fixedAt=1),
 			umxPath(qs, ys, fixedAt = 1),
 						# IMMEDIATE
-			umxPath(ps[2:waves], qs[2:waves], value = 0.05), # label = "immedx"),
-			umxPath(qs[2:waves], ps[2:waves], value = 0.05), # label = "immedy"),
+			umxPath(ps[2:waves], qs[2:waves], values = 0.05), # labels = "immedx"),
+			umxPath(qs[2:waves], ps[2:waves], values = 0.05), # labels = "immedy"),
 						# CAUSAL
-			umxPath(ps[1:waves - 1], qs[2:waves], value = 0.05),
-			umxPath(qs[1:waves - 1], ps[2:waves], value = 0.05),
+			umxPath(ps[1:waves - 1], qs[2:waves], values = 0.05),
+			umxPath(qs[1:waves - 1], ps[2:waves], values = 0.05),
 						# AR
-			umxPath(ps[1:waves - 1], ps[2:waves], value = 0.05, lbound = 0.00001), #, label = "aux"),
-			umxPath(qs[1:waves - 1], qs[2:waves], value = 0.05, lbound = 0.00001),#, label = "auy"),
+			umxPath(ps[1:waves - 1], ps[2:waves], values = 0.05, lbound = 0.00001), #, labels = "aux"),
+			umxPath(qs[1:waves - 1], qs[2:waves], values = 0.05, lbound = 0.00001),#, labels = "auy"),
 						# CORRELATIONS
-			umxPath(us[2:waves], with = vs[2:waves], value = 0.02, label = "uv"),
-			umxPath(ps[1], with = qs[1], value = 0.5),
-			umxPath("xir", with = "yir", value = 0.5),
+			umxPath(us[2:waves], with = vs[2:waves], values = 0.02, labels = "uv"),
+			umxPath(ps[1], with = qs[1], values = 0.5),
+			umxPath("xir", with = "yir", values = 0.5),
 						# MEANS
 			umxPath(means = mean_names),
 						# UNCORRELATED VARIANCES
-			umxPath(var = c("xir", "yir"), value = 1),
-			umxPath(var =  vs[2:waves], value=1,  label = "vs"),
-			umxPath(var =  us[2:waves], value=1,  label = "us"),
+			umxPath(var = c("xir", "yir"), values = 1),
+			umxPath(var =  vs[2:waves], values = 1,  labels = "vs"),
+			umxPath(var =  us[2:waves], values = 1,  labels = "us"),
 			umxPath(v1m0= c("PSx", "PSy")),
-			umxPath("PSx", with = "PSy", value = 0.5),
-			umxPath(var = c(ps[1], qs[1]), value = 1)
+			umxPath("PSx", with = "PSy", values = 0.5),
+			umxPath(var = c(ps[1], qs[1]), values = 1)
 		)
 
 		if (!missing(defn)) {
 			paths <- c(paths,
-			 umxPath("one", paste0("def_",defn), fixedAt = 1, label = paste0("data.", defn)),
+			 umxPath("one", paste0("def_",defn), fixedAt = 1, labels = paste0("data.", defn)),
 			 umxPath(fromEach = paste0("def_", defn), to = defto, values = 0.1))
 		}
 
@@ -353,33 +351,33 @@ if (!sketch) m1  = xmu_safe_run_summary(m1, autoRun = autoRun,  summary = summar
 #' Relabel Factor Columns in a Data Frame
 #'
 #' @description
-#' This function modifies the levels of specified factor columns in a data frame. 
-#' It collapses levels that make up less than a specified proportion of total observations 
-#' into the previous level, ensuring a minimum number of levels remains. 
+#' This function modifies the levels of specified factor columns in a data.frame where the specified factor columns 
+#' have potentially collapsed levels based on the criteria provided.
+#' 
+#' Levels that make up less than a specified proportion of total observations are collapsed into the previous level,
+#' providing that a minimum number of levels remains. 
+#' 
 #' The levels of the remaining factor columns are synchronized with the updated levels of the first specified column.
-#' 
+#' Variables named in `cols` must be factors. Note too that prop uses e.g., .1 to stand for 10 percent.
+#'
 #' @param df A data frame containing the factor columns to be modified.
-#' @param cols A character vector specifying the names of the factor columns to relabel. 
-#'              All specified columns must be factors.
-#' @param prop A numeric value indicating the percentage of total observations 
-#'             below which levels will be collapsed into the previous level. Default is 0.1 (10%).
-#' @param min An integer indicating the minimum number of levels that must remain in the first specified column. 
-#'             Default is 8.
+#' @param cols A character vector specifying the names of the factor columns to relabel.
+#' @param prop A numeric value indicating the minimum proportion of observations for a level (default = .1)
+#' @param min Integer bounding the minimum remaining number of levels (Default 8).
 #' 
-#' @return A data frame with the same structure as the input, 
-#'         where the specified factor columns have potentially collapsed levels 
-#'         based on the criteria provided.
+#' @family xmu internal not for end user
+#' @return data.frame with the same structure as the input
 #' 
+#' @export
 #' @examples 
-#' df <- data.frame(
+#' df = data.frame(
 #'     group = factor(c("A", "B", "B", "C", "D", "E", "E", "E")),
 #'     score = c(10, 15, 15, 20, 25, 30, 30, 30)
 #' )
 #' 
 #' # Relabel factor columns
-#' df_releveled <- xmu_relevel_factors(df, cols = c("group"), prop = 0.1)
-#' 
-#' @export
+#' df_releveled = xmu_relevel_factors(df, cols = c("group"), prop = 0.2, min=2)
+#' df_releveled
 #'
 xmu_relevel_factors <- function(df, cols, prop = .1, min = 8) {
 
@@ -448,29 +446,26 @@ xmu_relevel_factors <- function(df, cols, prop = .1, min = 8) {
 #' Equate Threshold Values Across Columns in a Model
 #'
 #' @description
-#' This function sets the threshold values for multiple columns in a model 
-#' to be equal to the threshold values of the first specified column. 
-#' It is useful in contexts where consistent threshold values are needed 
-#' across different variables for statistical modeling.
+#' This function sets the threshold values for multiple columns in a model to be equal to the threshold values of the first specified column. 
+#' It is useful in contexts where consistent threshold values are needed across different variables for statistical modeling.
 #'
 #' @param model A model object that contains threshold values in its `deviations_for_thresh` slot. 
 #' @param x_cols A character vector specifying the names of the columns whose thresholds will be equated.
 #' 
 #' @return The modified model object with equated threshold values across the specified columns.
-#' 
-#' @examples 
-#' # Assume `my_model` is a previously defined model object with thresholds
-#' # and has columns "var1", "var2", and "var3" in deviations_for_thresh$values
-#' updated_model <- xmu_equate_threshold_values(my_model, x_cols = c("var1", "var2", "var3"))
-#' 
 #' @export
+#' @examples
+#' \dontrun{
+#' # Assumes `my_model` is a previously defined threshold model
+#' # and has columns "var1", "var2", and "var3" in deviations_for_thresh$values
+#' updated_model = xmu_equate_threshold_values(my_model, x_cols = c("var1", "var2", "var3"))
+#' }
+#' 
 xmu_equate_threshold_values <-  function(model, x_cols) {
-				# Set the thresholds for the first wave
+	# Set the thresholds for the first wave
 	first_wave <- model$deviations_for_thresh$values[, x_cols[1]]
-
-				# Apply the thresholds to all specified columns
+	# Apply the thresholds to all specified columns
 	model$deviations_for_thresh$values[, x_cols] <- first_wave
-
 	return(model)
 }
 
@@ -524,7 +519,7 @@ xmu_scale_wide_data <- function(data) {
   data$row_id <- seq_len(nrow(data))
 
   # Reshape to long format
-  data_long <- reshape(data, 
+  data_long <- stats::reshape(data, 
                        varying = colnames(data)[-ncol(data)],  # Exclude row_id
                        v.names = "value", 
                        timevar = "time", 
@@ -535,7 +530,7 @@ xmu_scale_wide_data <- function(data) {
   data_long$scaled_value <- scale(data_long$value)
 
   # Reshape back to wide format
-  data_wide <- reshape(data_long, 
+  data_wide <- stats::reshape(data_long, 
                        idvar = "row_id", 
                        timevar = "time", 
                        v.names = "scaled_value", 
