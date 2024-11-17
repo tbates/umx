@@ -1,5 +1,9 @@
 ## dev
+## umx 4.25.00
+* January 2025 R 4.4.X
+* IMPROVED: `umx_show` control over parameter colors, examples
 
+# Releases
 ## umx 4.21.00
 * November 2024 R 4.4.1
 * IMPROVED: `umx_scale_wide_twin` accepts sibs #253 from lf-araujo/patch-6
@@ -141,8 +145,6 @@
 * HELP: `umxRAM` sketch mode help
 * HELP: `umxCP` more refs for Rd
 * HELP: improvements
-
-# Releases
 
 ## umx 4.9.0
 * July 2021 R 4.1.0 (2021-06-27)
