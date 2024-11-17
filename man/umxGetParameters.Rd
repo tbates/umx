@@ -58,7 +58,7 @@ umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 }
 }
 \seealso{
-\code{\link[=omxGetParameters]{omxGetParameters()}}, \code{\link[=parameters]{parameters()}}
+\code{\link[OpenMx:omxGetParameters]{OpenMx::omxGetParameters()}}, \code{\link[=parameters]{parameters()}}
 
 Other Reporting Functions: 
 \code{\link{umx}},

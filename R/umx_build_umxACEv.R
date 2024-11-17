@@ -96,7 +96,7 @@
 #' Type I Error Rates and Parameter Bias in Multivariate Behavioral Genetic Models. *Behav Genet*, 
 #' **49**, 99-111. \doi{10.1007/s10519-018-9942-y}
 #' Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
-#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. <https://www.nature.com/articles/hdy1978101.pdf>
+#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
 #' @md
 #' @examples
 #' \dontrun{
@@ -688,7 +688,6 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 	}
 
 	rankVariables = paste("\t{rank = same; ", paste(selDVs[1:nVar], collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
-	# grep('a', latents, value= T)
 	rankA   = paste("\t{rank = min; ", paste(grep('A'   , latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[CE]', latents, value = TRUE), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	

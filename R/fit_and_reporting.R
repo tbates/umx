@@ -93,7 +93,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 # = Model Diagnostics =
 # =====================
 
-#' Diagnose problems in a model - this is a work in progress.
+#' Diagnose problems in a model - not working!
 #'
 #' The goal of this function **WILL BE** (not currently functional) to diagnose problems in
 #' a model and return suggestions to the user.
@@ -109,8 +109,8 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 #' 	* diagonalizeExpCov diagonal
 #' 	* [umx_is_ordered()]
 #'
-#' 	more tricky - we should really report the variances and the standardized thresholds.
-#' The guidance would be to try starting with unit variances and thresholds that are within
+#' Tricky, but reporting variances and standardized thresholds is ideal.
+#' Guidance is to start with unit variances and thresholds within
 #'  +/- 2 SD of the mean. Like %p option in Classic Mx.
 #' @param model an [OpenMx::mxModel()] to diagnose
 #' @param tryHard whether I should try and fix it? (defaults to FALSE)
@@ -213,8 +213,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' [umx_set_table_format()], or set `report= "html"` to open a
 #' table for pasting into a word processor.
 #' 
-#' `umxReduce` is a work in progress, with more automatic reductions coming as demand emerges.
-#' I am thinking for RAM models to drop NS paths, and report that test.
+#' `umxReduce` can be extended to new cases as demand emerges.
 #'
 #' @param model The [OpenMx::mxModel()] which will be reduced.
 #' @param report How to report the results. "html" = open in browser
@@ -2911,7 +2910,6 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
 	}
 	rankVariables = paste("\t{rank = same; ", paste(selDVs, collapse = "; "), "};\n") # {rank = same; v1T1; v2T1;}
-	# grep('a', latents, value=T)
 	rankA   = paste("\t{rank = min; ", paste(grep('a'   , latents, value = T), collapse = "; "), "};\n") # {rank=min; a1; a2}
 	rankCE  = paste("\t{rank = max; ", paste(grep('[ce]', latents, value = T), collapse = "; "), "};\n") # {rank=min; c1; e1}
 	label = model$name

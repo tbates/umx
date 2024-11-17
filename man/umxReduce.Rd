@@ -47,8 +47,7 @@ Specialized functions are called for different type of input:
 \code{\link[=umx_set_table_format]{umx_set_table_format()}}, or set \code{report= "html"} to open a
 table for pasting into a word processor.
 
-\code{umxReduce} is a work in progress, with more automatic reductions coming as demand emerges.
-I am thinking for RAM models to drop NS paths, and report that test.
+\code{umxReduce} can be extended to new cases as demand emerges.
 }
 \references{
 \itemize{
