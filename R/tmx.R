@@ -264,11 +264,12 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @param bootstrap_options border etc. Defaults to c("hover", "bordered", "condensed", "responsive")
 #' @param lightable_options Default is "striped"
 #' @param html_font Default is null. Set (e.g. "Optima") to override the style's default font.
+#' @param freeColor Default is "black" for free,  fixed is gray "#AAAAAA"
 #' @return None
-#' @md
 #' @export
 #' @family Reporting functions
-tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped")  UseMethod("tmx_show", x)
+#' @md
+tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("black", "#AAAAAA"))  UseMethod("tmx_show", x)
 
 # Define generic RMSEA...
 #' Show matrices of models in a easy-to-learn-from format. 
@@ -286,17 +287,41 @@ tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"),
 #' @param bootstrap_options border etc. Defaults to c("hover", "bordered", "condensed", "responsive")
 #' @param lightable_options Default is "striped"
 #' @param html_font Default is null. Set (e.g. "Optima") to override the style's default font.
+#' @param freeColor Default is "black" for free,  fixed is gray "#AAAAAA"
 #' @return None
-#' @md
 #' @export
 #' @family Reporting functions
-tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped"){
+#' @md
+#' @examples
+#' \dontrun{
+#' nameStr = c('x1', 'x2', 'g')
+#' amat = mxMatrix(type='Full', name='demo', nrow=2, ncol=3,
+#'   values=c(0, 0, 1,
+#'            0, 0, 0),
+#'   labels=c(NA   , NA, 'alice',
+#'            "bob", NA, 'bob'),
+#'   free=c(TRUE, FALSE, TRUE,
+#'          TRUE, TRUE , TRUE),
+#'   byrow=TRUE, dimnames=list(nameStr[1:2], nameStr)
+#' )
+#' amat
+#' tmx_show(amat, freeColor = c("green","red")) #green=#26D71E red=#D7261E
+#' tmx_show(amat, report = "markdown")
+#' tmx_show(amat, "labels", report = "markdown")
+#' tmx_show(amat, "labels", report = "markdown", show= "all")
+#' tmx_show(amat, na.print = "NA")
+#' tmx_show(amat, zero.print = "0.00", freeColor = c("green","red"))
+#' tmx_show(amat, style = "classic_2")
+#' tmx_show(amat, lightable_options = "hover")
+#' }
+#'
+tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("black", "#AAAAAA")){
 	what   = match.arg(what)
 	show   = match.arg(show)
 	report = match.arg(report)
 	style  = match.arg(style)
 	oldTableFormat = umx_set_table_format(report) # side effect
-	theMatrix = x # just to be clear what object we are processing
+	theMatrix = x # to be clear what object we are processing
 	if(report == "html"){
 		file = paste0(what, theMatrix$name, ".html")
 		# generate the free + value + popover label using kableExtra
@@ -308,7 +333,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 		
 		tb = kbl(values, caption = paste0(theMatrix$name, " matrix (", class, ")"), format = report)
 		# , paths fixed@0 left blank
-		tb = footnote(kable_input= tb, general = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
+		tb = footnote(kable_input= tb, general = paste0("Fixed and free cells colored by freeColor, e.g., black grey, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
 		tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 
 		matCols = dim(values)[[2]]
@@ -317,7 +342,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 		for (thisCol in (1 + offset):tabCols){
 			tb = column_spec(tb, thisCol,
 				# #666666 red= #D7261E green= #26D71E
-				color = ifelse(theMatrix$free[, (thisCol-offset)], "black", "#AAAAAA"),
+				color = ifelse(theMatrix$free[, (thisCol-offset)], freeColor[1], freeColor[2] ),
 				tooltip = labels[, (thisCol-offset)]
 			)
 		}
@@ -370,6 +395,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' @param bootstrap_options border etc. Defaults to c("hover", "bordered", "condensed", "responsive")
 #' @param lightable_options Default is "striped"
 #' @param html_font Default is null. Set (e.g. "Optima") to override the style's default font.
+#' @param freeColor Default is "black" for free,  fixed is gray "#AAAAAA"
 #' @return None
 #' @export
 #' @family Teaching and Testing functions
@@ -402,7 +428,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' tmx_show(m1, what = "free", matrices = "A", report= "markdown")
 #' }
 #'
-tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped") {
+tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("black", "#AAAAAA")) {
 	if(!umx_is_RAM(x)){
 		stop("Sorry, currently, tmx_show only knows how to display umxRAM models: You gave me a ", class(model)[[1]])
 	}
@@ -465,8 +491,7 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 				values[!free & values ==0] = zero.print
 				
 				tb = kbl(values, caption = paste0(w, " matrix (", class, ")"), format = report)
-				# , paths fixed@0 left blank
-				tb = footnote(kable_input= tb, general = paste0("Fixed cells in gray, free in black, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
+				tb = footnote(kable_input= tb, general = paste0("Fixed and free cells colored by freeColor, e.g., black grey, mouse-over to see labels, paths fixed@0 are shown as ", omxQuotes(zero.print)))
 				tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 
 				matCols = dim(values)[[2]]
@@ -475,7 +500,7 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 				for (thisCol in (1+offset):tabCols) {
 					tb = column_spec(tb, thisCol, 
 						# #666666 red= #D7261E green= #26D71E
-						color = ifelse(model$matrices[[w]]$free[, (thisCol-offset)], "black", "#AAAAAA"),
+						color = ifelse(model$matrices[[w]]$free[, (thisCol-offset)], freeColor[1], freeColor[2]),
 						tooltip = labels[, (thisCol-offset)]
 					)
 				}
