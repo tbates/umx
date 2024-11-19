@@ -18,8 +18,8 @@ jobs:
     steps:
       - uses: actions/cache@v3
       - uses: actions/checkout@v4
-      with:
-        path: ~/.R/library
+        with:
+          path: ~/.R/library
           key: ${{ runner.os }}-r-${{ matrix.r-version }}-${{ hashFiles('**/DESCRIPTION') }}
           restore-keys: |
             ${{ runner.os }}-r-${{ matrix.r-version }}-
