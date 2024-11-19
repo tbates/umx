@@ -287,7 +287,7 @@ tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"),
 #' @param bootstrap_options border etc. Defaults to c("hover", "bordered", "condensed", "responsive")
 #' @param lightable_options Default is "striped"
 #' @param html_font Default is null. Set (e.g. "Optima") to override the style's default font.
-#' @param freeColor Default is "black" for free,  fixed is gray "#AAAAAA"
+#' @param freeColor Default is green free red fixed.
 #' @return None
 #' @export
 #' @family Reporting functions
@@ -315,7 +315,7 @@ tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"),
 #' tmx_show(amat, lightable_options = "hover")
 #' }
 #'
-tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("black", "#AAAAAA")){
+tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("green", "red")){
 	what   = match.arg(what)
 	show   = match.arg(show)
 	report = match.arg(report)
