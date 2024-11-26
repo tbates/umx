@@ -3736,7 +3736,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", "examples" etc.
 #'
-#' @param what whether to "install", "release" to CRAN, "test", "check" test on "win" or "rhub", "spell", or "examples")).
+#' @param what whether to "install", "release" to CRAN, "test", test on "win", "spell", open "git" app, or run "examples")).
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
 #' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE).
@@ -3765,7 +3765,7 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "release")   # Release to CRAN
 #' # tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
+umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
 	what  = match.arg(what)
 	which = match.arg(which)
 	if(what == "load"){
@@ -3831,6 +3831,8 @@ umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep",
 		setwd(dir= pkg)
 		devtools::release(pkg = pkg, check = check, "--no-manual") # spelling = NULL		 
 		setwd(dir= oldDir)
+	} else if (what == "git"){
+		system(paste("open -a ", shQuote("GitHub Desktop.app")))
 	}else{
 		stop("I don't know how to ", what)
 	}

@@ -17,7 +17,7 @@
   style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
   bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
   lightable_options = "striped",
-  freeColor = c("black", "#AAAAAA")
+  freeColor = c("green", "red")
 )
 }
 \arguments{
@@ -45,7 +45,7 @@
 
 \item{lightable_options}{Default is "striped"}
 
-\item{freeColor}{Default is "black" for free,  fixed is gray "#AAAAAA"}
+\item{freeColor}{Default is green free red fixed.}
 }
 \value{
 None
@@ -54,24 +54,27 @@ None
 Show matrices of models in a easy-to-learn-from format.
 }
 \examples{
+\dontrun{
 nameStr = c('x1', 'x2', 'g')
 amat = mxMatrix(type='Full', name='demo', nrow=2, ncol=3,
   values=c(0, 0, 1,
            0, 0, 0),
   labels=c(NA   , NA, 'alice',
            "bob", NA, 'bob'),
-  free=c(TRUE, FALSE, FALSE,
+  free=c(TRUE, FALSE, TRUE,
          TRUE, TRUE , TRUE),
-  byrow=TRUE, dimnames=list(nameStr, nameStr)
+  byrow=TRUE, dimnames=list(nameStr[1:2], nameStr)
 )
 amat
-tmx_show(amat)
-tmx_show(amat, freeColor = c("black", "red"))
+tmx_show(amat, freeColor = c("green","red")) #green=#26D71E red=#D7261E
 tmx_show(amat, report = "markdown")
+tmx_show(amat, "labels", report = "markdown")
+tmx_show(amat, "labels", report = "markdown", show= "all")
 tmx_show(amat, na.print = "NA")
-tmx_show(amat, zero.print = "0.00")
-tmx_show(amat, style = "material_dark")
-tmx_show(amat, lightable_options = "")
+tmx_show(amat, zero.print = "0.00", freeColor = c("green","red"))
+tmx_show(amat, style = "classic_2")
+tmx_show(amat, lightable_options = "hover")
+}
 
 }
 \seealso{
