@@ -16,7 +16,7 @@ jobs:
       matrix:
         r-version: ['4.2', '4.4.1']
     steps:
-      - uses: actions/cache@v3
+      - uses: actions/checkout@v4
         with:
           path: ~/.R/library
           key: ${{ runner.os }}-r-${{ matrix.r-version }}-${{ hashFiles('**/DESCRIPTION') }}
