@@ -17,7 +17,7 @@
   style = c("paper", "material_dark", "classic", "classic_2", "minimal", "material"),
   bootstrap_options = c("hover", "bordered", "condensed", "responsive"),
   lightable_options = "striped",
-  freeColor = c("black", "#AAAAAA")
+  freeColor = c("green", "red")
 )
 }
 \arguments{
@@ -45,7 +45,7 @@
 
 \item{lightable_options}{Default is "striped"}
 
-\item{freeColor}{Default is "black" for free,  fixed is gray "#AAAAAA"}
+\item{freeColor}{Default is green free red fixed.}
 }
 \value{
 None

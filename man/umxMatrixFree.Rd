@@ -41,7 +41,7 @@ umxMatrixFree(
 In simulation studies, it is often necessary to rewrite the matrices while testing
 alternative specifications. This can become very tedious with increasing
 number of distinct specifications. This tool injects changes into umxMatrix so
-that this tasks gets more manageable. First, it sets byRow by default. Second,
+that this tasks gets more manageable. First, it sets byrow by default. Second,
 it infers the number of rows automatically. The user needs only passing ncol.
 Finally and most importantly this function disables auto-labeling, and whenever
 a label is set, that cell position will be freed. It is required to pass
