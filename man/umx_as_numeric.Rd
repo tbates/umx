@@ -17,7 +17,7 @@ umx_as_numeric(df, which = NULL, force = FALSE)
 - data.frame
 }
 \description{
-Convert each column of a dataframe to numeric
+Apply as.numeric to multiple columns of a dataframe.
 }
 \examples{
 # make mpg into string, and cyl into a factor

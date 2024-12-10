@@ -1992,7 +1992,7 @@ umx_apply <- function(FUN, of, by = c("columns", "rows"), ...) {
 
 #' umx_as_numeric
 #' 
-#' Convert each column of a dataframe to numeric
+#' Apply as.numeric to multiple columns of a dataframe.
 #'
 #' @param df A [data.frame()] to convert
 #' @param which which columns to convert (default (null) selects all)
@@ -6528,7 +6528,7 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 	return(df)
 }
 
-#' Change data family data from wide (2 twins per row) to long format.
+#' Change twin data from wide (2 twins per row) to long format.
 #'
 #' @description
 #' Just detects the data columns for twin 1, and twin 2, then returns them stacked
