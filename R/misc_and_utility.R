@@ -1747,11 +1747,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	allColNames = paste0(base, c(pos, rev), suffix)
 	df = data[ , allColNames, drop = FALSE]
 	if(!is.null(correctAnswer)){
-		dfDummy = matrix(nrow = nrow(df), ncol= ncol(df))
 		for (i in 1:nrow(df)) {
-			dfDummy[i,] = (df[i, ] == correctAnswer)
+			df[i, ] = (df[i, ] == correctAnswer)
 		}
-		df = dfDummy
 		if(verbose){
 			print(str(df))
 		}
