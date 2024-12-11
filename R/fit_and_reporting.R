@@ -4603,7 +4603,10 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		}
 		cat(o)
 		invisible(o)
-	}else if("data.frame" == class(obj)[[1]]){
+	}else if(class(obj)[[1]] %in% c("data.frame", "tbl_df") ) {
+		if(class(obj)[[1]] =="tbl_df"){
+			obj = data.frame(obj)
+		}
 		# Generate a summary of correlation and means
 		# TODO umxAPA could upgrade strings to factors here (instead of stopping)...
 		if(!any(is.na(cols))){
