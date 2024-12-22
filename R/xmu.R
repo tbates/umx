@@ -2471,7 +2471,7 @@ xmu_bracket_address2rclabel <- function(label, keepPrefix = TRUE) {
 #' @param label the label of the cell to interrogate for a CI, e.g. "ai_r1c1"
 #' @param prefix The submodel to look in (default = "top.")
 #' @param suffix The suffix for algebras when standardized (default = "_std")
-#' @param SEstyle If TRUE, report "b(se)" instead of b CI95\[l,u\] (default = FALSE)
+#' @param SEstyle If TRUE, report "b(se)" instead of b CI95\[l,u\] (default = FALSE) If "mxSE" compute these.
 #' @param digits Rounding digits.
 #' @param verbose = FALSE
 #' @return - the CI string, e.g. ".73\[-.20, .98\]" or .73(.10)
@@ -2503,55 +2503,61 @@ xmu_bracket_address2rclabel <- function(label, keepPrefix = TRUE) {
 #' }
 #'
 xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
-	# xmu_get_CI ?
-	# TODO xmu_get_CI: Look for CIs, if not found look for SEs, if not found compute with mxSE (high priority!)
+	# TODO xmu_get_CI: If SEstyle == "mxSE" then compute SEs with mxSE()
 	# TODO xmu_get_CI: Add choice of separator for CI (stash as preference) (easy)
-	if(!umx_has_CIs(model)){
+	if(!umx_has_CIs(model) && SEstyle != "mxSE"){
 		if(verbose){ message("no CIs") }
 		return(NA)
 	} else {
 		# We want "top.ai_std[1,1]" from "ai_r1c1"
 		# or...
 		result = tryCatch({
-			CIlist = model$output$confidenceIntervals
-			intervalNames = dimnames(CIlist)[[1]]
-			if(label %in% intervalNames){
-				# Easy case - the actual cell label was given, and will have been used by OpenMx to label the CI
-				check = label
-			}else{
-				# Probably an auto-bracket-labelled CI e.g. "top.A_std[1,3]", in which case label would be "A_r1c3"
-				# TODO this needs fixing.. what are we looking for?
-				dimIndex    = xmu_bracket_address2rclabel(label, keepPrefix = TRUE)
-				dimNoSuffix = xmu_bracket_address2rclabel(label, keepPrefix = FALSE)
+			if(SEstyle == "mxSE"){
+				# Get SE
+				stop("SEstyle == mxSE not implemented - let Tim know!")
+			   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
+			   return(APAstr)
+			} else {
+				CIlist = model$output$confidenceIntervals
+				intervalNames = dimnames(CIlist)[[1]]
+				if(label %in% intervalNames){
+					# Easy case - the actual cell label was given, and will have been used by OpenMx to label the CI
+					check = label
+				}else{
+					# Probably an auto-bracket-labelled CI e.g. "top.A_std[1,3]", in which case label would be "A_r1c3"
+					# TODO this needs fixing.. what are we looking for?
+					dimIndex    = xmu_bracket_address2rclabel(label, keepPrefix = TRUE)
+					dimNoSuffix = xmu_bracket_address2rclabel(label, keepPrefix = FALSE)
 				
 
-				if(dimIndex %in% intervalNames){
-					check = dimIndex
+					if(dimIndex %in% intervalNames){
+						check = dimIndex
+					} else {
+						check = dimNoSuffix
+					}
+				}
+				if(SEstyle){
+					est = CIlist[check, "estimate"]
+					if(is.na(CIlist[check, "lbound"])){
+						# no lbound found: use ubound to form SE (SE not defined if ubound also NA :-(
+						DIFF = (CIlist[check, "ubound"] - est)
+					} else if (is.na(CIlist[check, "ubound"])){
+						# lbound, but no ubound: use lbound to form SE
+						DIFF = (est - CIlist[check, "lbound"])
+					}else{
+						# Both bounds present: average to get an SE
+						DIFF = mean(c( (CIlist[check, "ubound"] - est), (est - CIlist[check, "lbound"]) ))
+					}
+				   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
 				} else {
-					check = dimNoSuffix
+				   APAstr = paste0(
+						umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
+						umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
+						umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
+				   )
 				}
+			   return(APAstr)
 			}
-			if(SEstyle){
-				est = CIlist[check, "estimate"]
-				if(is.na(CIlist[check, "lbound"])){
-					# no lbound found: use ubound to form SE (SE not defined if ubound also NA :-(
-					DIFF = (CIlist[check, "ubound"] - est)
-				} else if (is.na(CIlist[check, "ubound"])){
-					# lbound, but no ubound: use lbound to form SE
-					DIFF = (est - CIlist[check, "lbound"])
-				}else{
-					# Both bounds present: average to get an SE
-					DIFF = mean(c( (CIlist[check, "ubound"] - est), (est - CIlist[check, "lbound"]) ))
-				}
-			   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
-			} else {
-			   APAstr = paste0(
-					umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
-					umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
-					umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
-			   )
-			}
-		   return(APAstr) 
 		}, warning = function(cond) {
 			if(verbose){
 				message(paste0("warning ", cond, " for CI ", omxQuotes(label)))

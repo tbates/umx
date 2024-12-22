@@ -3120,12 +3120,21 @@ plot.MxModelGxE <- umxPlotGxE
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+	# TODO umxPlotCP: Add CIs to parameters!!
+	# Could get xmu_standardize_CP(model) to stash "x(SE)" string as values 
+	# OR
+	# look these up in this code
+	# model@submodels$top$cp_loadings@values = model$top$algebras$cp_loadings_std$result
+	# model@submodels$top$as@values = model$top$as_std$result # standardized as
+	# model@submodels$top$cs@values = model$top$cs_std$result # standardized cs
+	# model@submodels$top$es@values = model$top$es_std$result # standardized es
+	
 	format = match.arg(format)
 	model  = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
 
 	if(std){ model = xmu_standardize_CP(model) }
-
+		
 	nFac   = dim(model$top$a_cp$labels)[[1]]
 	nVar   = dim(model$top$as$values)[[1]]
 	selDVs = dimnames(model$MZ$data$observed)[[2]]
