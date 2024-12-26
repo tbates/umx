@@ -4351,7 +4351,7 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 		file   = "tmp.html"
 	}
 
-!is.na(file) && file == "markdown"
+# !is.na(file) && file == "markdown"
 
 	if(class(x)[[1]] != "data.frame"){
 		if(class(x)[[1]] == "matrix" | class(x)[[1]] == "numeric"){

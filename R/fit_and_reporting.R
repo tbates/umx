@@ -4668,24 +4668,28 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			# obj = update(obj, data = modelDF)
 			obj = update(obj, data = umx_scale(obj$model))
 		}
-		sumry = summary(obj)
-		conf  = confint(obj)
-		if(is.null(se)){
-			se = dimnames(sumry$coefficients)[[1]]
+		if(report=="html"){
+			umx_print(summary(obj)$coefficients, digits= digits, report = "html")
+		} else {
+			sumry = summary(obj)
+			conf  = confint(obj)
+			if(is.null(se)){
+				se = dimnames(sumry$coefficients)[[1]]
+			}
+			for (i in se) {
+				lower   = conf[i, 1]
+				upper   = conf[i, 2]
+				b_and_p = sumry$coefficients[i, ]
+				b       = b_and_p["Estimate"]
+				tval    = b_and_p["t value"]
+				pval    = b_and_p["Pr(>|t|)"]
+				cat(paste0(i, betaSymbol, round(b, digits), 
+					" ["  , round(lower, digits), commaSep, round(upper, digits), "], ",
+					"t = ", round(tval , digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
+				))
+			}
+			cat(paste0("R\u00B2 = ", round(sumry$r.squared, 3), " (adj = ", round(sumry$adj.r.squared, 3), ")"))
 		}
-		for (i in se) {
-			lower   = conf[i, 1]
-			upper   = conf[i, 2]
-			b_and_p = sumry$coefficients[i, ]
-			b       = b_and_p["Estimate"]
-			tval    = b_and_p["t value"]
-			pval    = b_and_p["Pr(>|t|)"]
-			cat(paste0(i, betaSymbol, round(b, digits), 
-				" ["  , round(lower, digits), commaSep, round(upper, digits), "], ",
-				"t = ", round(tval , digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
-			))
-		}
-		cat(paste0("R\u00B2 = ", round(sumry$r.squared, 3), " (adj = ", round(sumry$adj.r.squared, 3), ")"))
 		invisible(obj)
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table
