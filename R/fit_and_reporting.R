@@ -4669,7 +4669,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			obj = update(obj, data = umx_scale(obj$model))
 		}
 		if(report=="html"){
-			umx_print(summary(obj)$coefficients, digits= digits, report = "html")
+			tmp= data.frame(summary(obj)$coefficients)
+			names(tmp)= c("Estimate", "SE", "t-value", "p-value")
+			umx_print(tmp, digits= digits, report = "html")
 		} else {
 			sumry = summary(obj)
 			conf  = confint(obj)
