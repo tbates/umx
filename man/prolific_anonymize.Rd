@@ -7,8 +7,9 @@
 prolific_anonymize(
   df = NULL,
   PID = "PID",
-  extraColumns = NA,
-  baseOffset = 10000
+  alsoDrop = NA,
+  baseOffset = 10000,
+  extraColumns = "deprecated"
 )
 }
 \arguments{
@@ -16,9 +17,11 @@ prolific_anonymize(
 
 \item{PID}{The prolific ID col name to anonymize}
 
-\item{extraColumns}{Any  extra columns to delete (default NA)}
+\item{alsoDrop}{Any extra columns to delete (default NA)}
 
 \item{baseOffset}{The numeric to start renumbering PIDs from (default = 1e4)}
+
+\item{extraColumns}{A deprecated synonym for alsoDrop}
 }
 \value{
 \itemize{

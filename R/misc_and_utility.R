@@ -7751,8 +7751,9 @@ xmu_read.markdown <- function(file, stringsAsFactors = FALSE, strip.white = TRUE
 #'
 #' @param df Existing datafile to anonymize.
 #' @param PID The prolific ID col name to anonymize
-#' @param extraColumns Any  extra columns to delete (default NA)
+#' @param alsoDrop Any extra columns to delete (default NA)
 #' @param baseOffset The numeric to start renumbering PIDs from (default = 1e4)
+#' @param extraColumns A deprecated synonym for alsoDrop
 #' @return - [[data.frame]]
 #' @seealso - [prolific_check_ID()], [prolific_read_demog()], [umx_merge_randomized_columns()] 
 #' @export
@@ -7763,15 +7764,19 @@ xmu_read.markdown <- function(file, stringsAsFactors = FALSE, strip.white = TRUE
 #' \dontrun{
 #' tmp = prolific_anonymize(df, PID = "PID")
 #' }
-prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOffset = 1e4){
+prolific_anonymize <- function(df = NULL, PID = "PID", alsoDrop = NA, baseOffset = 1e4, extraColumns = "deprecated"){
 	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID", "PID")
+	if(extraColumns!= "deprecated"){
+		umx_msg("Polite message: in future, please use 'alsoDrop= ' in place of 'extraColumns' ")
+		alsoDrop = extraColumns
+	}
 	# cleanup revealingColumns
 	if(PID %in% revealingColumns){
 		revealingColumns = revealingColumns[!revealingColumns==PID]
 	}
 
 	isPIDInNames    = umx_check_names(PID, df, die = FALSE)
-	areExtrasFound = umx_check_names(extraColumns, df, die = TRUE)
+	areExtrasFound = umx_check_names(alsoDrop, df, die = TRUE)
 	
 	if(isPIDInNames){
 		# Anonymise the PID column
@@ -7793,7 +7798,7 @@ prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOf
 	}
 	
 	# clean up	
-	df = df[, names(df)[!names(df) %in% c(revealingColumns, extraColumns)]]
+	df = df[, names(df)[!names(df) %in% c(revealingColumns, alsoDrop)]]
 	message("OK, what's left now is:")
 	message(omxQuotes(names(df)))
 	invisible(df)

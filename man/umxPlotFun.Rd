@@ -12,6 +12,7 @@ umxPlotFun(
   ylab = NULL,
   title = NULL,
   logY = c("no", "log", "log10"),
+  logX = c("no", "log", "log10"),
   p = NULL
 )
 }
