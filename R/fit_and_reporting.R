@@ -3121,12 +3121,21 @@ plot.MxModelGxE <- umxPlotGxE
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+	# TODO umxPlotCP: Add CIs to parameters!!
+	# Could get xmu_standardize_CP(model) to stash "x(SE)" string as values 
+	# OR
+	# look these up in this code
+	# model@submodels$top$cp_loadings@values = model$top$algebras$cp_loadings_std$result
+	# model@submodels$top$as@values = model$top$as_std$result # standardized as
+	# model@submodels$top$cs@values = model$top$cs_std$result # standardized cs
+	# model@submodels$top$es@values = model$top$es_std$result # standardized es
+	
 	format = match.arg(format)
 	model  = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
 
 	if(std){ model = xmu_standardize_CP(model) }
-
+		
 	nFac   = dim(model$top$a_cp$labels)[[1]]
 	nVar   = dim(model$top$as$values)[[1]]
 	selDVs = dimnames(model$MZ$data$observed)[[2]]
@@ -4660,24 +4669,30 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			# obj = update(obj, data = modelDF)
 			obj = update(obj, data = umx_scale(obj$model))
 		}
-		sumry = summary(obj)
-		conf  = confint(obj)
-		if(is.null(se)){
-			se = dimnames(sumry$coefficients)[[1]]
+		if(report=="html"){
+			tmp= data.frame(summary(obj)$coefficients)
+			names(tmp)= c("Estimate", "SE", "t-value", "p-value")
+			umx_print(tmp, digits= digits, report = "html")
+		} else {
+			sumry = summary(obj)
+			conf  = confint(obj)
+			if(is.null(se)){
+				se = dimnames(sumry$coefficients)[[1]]
+			}
+			for (i in se) {
+				lower   = conf[i, 1]
+				upper   = conf[i, 2]
+				b_and_p = sumry$coefficients[i, ]
+				b       = b_and_p["Estimate"]
+				tval    = b_and_p["t value"]
+				pval    = b_and_p["Pr(>|t|)"]
+				cat(paste0(i, betaSymbol, round(b, digits), 
+					" ["  , round(lower, digits), commaSep, round(upper, digits), "], ",
+					"t = ", round(tval , digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
+				))
+			}
+			cat(paste0("R\u00B2 = ", round(sumry$r.squared, 3), " (adj = ", round(sumry$adj.r.squared, 3), ")"))
 		}
-		for (i in se) {
-			lower   = conf[i, 1]
-			upper   = conf[i, 2]
-			b_and_p = sumry$coefficients[i, ]
-			b       = b_and_p["Estimate"]
-			tval    = b_and_p["t value"]
-			pval    = b_and_p["Pr(>|t|)"]
-			cat(paste0(i, betaSymbol, round(b, digits), 
-				" ["  , round(lower, digits), commaSep, round(upper, digits), "], ",
-				"t = ", round(tval , digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
-			))
-		}
-		cat(paste0("R\u00B2 = ", round(sumry$r.squared, 3), " (adj = ", round(sumry$adj.r.squared, 3), ")"))
 		invisible(obj)
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table

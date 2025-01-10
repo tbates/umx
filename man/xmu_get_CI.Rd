@@ -25,7 +25,7 @@ xmu_get_CI(
 
 \item{digits}{Rounding digits.}
 
-\item{SEstyle}{If TRUE, report "b(se)" instead of b CI95[l,u] (default = FALSE)}
+\item{SEstyle}{If TRUE, report "b(se)" instead of b CI95[l,u] (default = FALSE) If "mxSE" compute these.}
 
 \item{verbose}{= FALSE}
 }

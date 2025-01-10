@@ -3171,8 +3171,9 @@ plot.percent <- function(x, ...) {
 #' umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
 #' }
 #'
-umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), p = NULL) {
+umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL) {
 	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
+	logX = xmu_match.arg(logX, c("no", "log", "log10"), check = FALSE)
 	
 	if(inherits(fun, "numeric")){
 		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
@@ -3207,6 +3208,9 @@ umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xla
 		p  = ggplot(data.frame(x = c(min, max)), aes(x) )
 		if(logY != "no"){
 			p = p + ggplot2::coord_trans(y = logY)
+		}
+		if(logX != "no"){
+			p = p + ggplot2::coord_trans(x = logX)
 		}
 		p    = p + ggplot2::stat_function(fun = fun[[1]])
 		xlab = ifelse(!is.null(xlab),  xlab , "X value")
@@ -4068,31 +4072,24 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 
 	for (r in 1:nRows) {
 		for (c in 1:nCols) {
-			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){
-				
+			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){				
 				# cell is in the target zone
 				if(!is.null(model)){
 					# Model available - look for CIs by label...
 					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
 					if(is.na(CIstr)){
+						# failed: fall back to parameter value from the matrix
 						value = umx_round(x$values[r,c], digits)
 					}else{
 						value = umx_round(CIstr, digits)
 					}
 				} else {
+					# Model note available do not look for CIs: just return parameter from matrix
 					if(is.numeric(x$values[r,c])){
 						value = umx_round(x$values[r,c], digits)
 					} else {
 						value = x$values[r,c]
 					}
-					# tryCatch({
-					#    value = umx_round(x$values[r,c], digits)
-					# }, warning = function() {
-					# }, error = function() {
-					# }, finally={
-					# 	value = x$values[r,c]
-					# })
-					# #
 				}
 
 				if(from == "rows"){
@@ -4354,7 +4351,7 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 		file   = "tmp.html"
 	}
 
-!is.na(file) && file == "markdown"
+# !is.na(file) && file == "markdown"
 
 	if(class(x)[[1]] != "data.frame"){
 		if(class(x)[[1]] == "matrix" | class(x)[[1]] == "numeric"){
@@ -7754,8 +7751,9 @@ xmu_read.markdown <- function(file, stringsAsFactors = FALSE, strip.white = TRUE
 #'
 #' @param df Existing datafile to anonymize.
 #' @param PID The prolific ID col name to anonymize
-#' @param extraColumns Any  extra columns to delete (default NA)
+#' @param alsoDrop Any extra columns to delete (default NA)
 #' @param baseOffset The numeric to start renumbering PIDs from (default = 1e4)
+#' @param extraColumns A deprecated synonym for alsoDrop
 #' @return - [[data.frame]]
 #' @seealso - [prolific_check_ID()], [prolific_read_demog()], [umx_merge_randomized_columns()] 
 #' @export
@@ -7766,15 +7764,19 @@ xmu_read.markdown <- function(file, stringsAsFactors = FALSE, strip.white = TRUE
 #' \dontrun{
 #' tmp = prolific_anonymize(df, PID = "PID")
 #' }
-prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOffset = 1e4){
+prolific_anonymize <- function(df = NULL, PID = "PID", alsoDrop = NA, baseOffset = 1e4, extraColumns = "deprecated"){
 	revealingColumns = c("StartDate", "EndDate", "Status", "IPAddress", "Progress", "Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId", "RecipientLastName", "RecipientFirstName", "RecipientEmail", "ExternalReference", "LocationLatitude", "LocationLongitude", "DistributionChannel", "UserLanguage", "QID1210817776", "PROLIFIC_PID", "PID")
+	if(extraColumns!= "deprecated"){
+		umx_msg("Polite message: in future, please use 'alsoDrop= ' in place of 'extraColumns' ")
+		alsoDrop = extraColumns
+	}
 	# cleanup revealingColumns
 	if(PID %in% revealingColumns){
 		revealingColumns = revealingColumns[!revealingColumns==PID]
 	}
 
 	isPIDInNames    = umx_check_names(PID, df, die = FALSE)
-	areExtrasFound = umx_check_names(extraColumns, df, die = TRUE)
+	areExtrasFound = umx_check_names(alsoDrop, df, die = TRUE)
 	
 	if(isPIDInNames){
 		# Anonymise the PID column
@@ -7796,7 +7798,7 @@ prolific_anonymize <- function(df = NULL, PID = "PID", extraColumns = NA, baseOf
 	}
 	
 	# clean up	
-	df = df[, names(df)[!names(df) %in% c(revealingColumns, extraColumns)]]
+	df = df[, names(df)[!names(df) %in% c(revealingColumns, alsoDrop)]]
 	message("OK, what's left now is:")
 	message(omxQuotes(names(df)))
 	invisible(df)
