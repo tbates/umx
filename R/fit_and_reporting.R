@@ -703,6 +703,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 			e_cp_free = gsub(pattern = patt, replacement= "top.e_cp[\\1,\\2]", template)[which(object$top$e_cp$free)]
 
 			CIs2Add = c(a_cp_free, c_cp_free, e_cp_free, cp_loadings_free, as_free, cs_free, es_free)
+			umx_msg(CIs2Add)
 			object = mxModel(object, mxCI(CIs2Add, interval = level))
 			message("added ", length(CIs2Add), " CIs")
 		} else {
@@ -777,7 +778,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 		'7' = 'The function derivatives returned by funcon or funobj appear to be incorrect.',
 		'8' = 'not used',
 		'9' = 'An input parameter was invalid')
-		if(!is.null(model_CI_OK) && any(model_CI_OK !=0) && showErrorCodes){
+		if(!all(is.null(model_CI_OK)) && (any(model_CI_OK !=0) |any(is.na(model_CI_OK))) && showErrorCodes){
 			codeList = c(model_CI_OK[,"lbound Code"], model_CI_OK[,"ubound Code"])
 			relevantCodes = unique(codeList); relevantCodes = relevantCodes[relevantCodes !=0]
 			for(i in relevantCodes) {
