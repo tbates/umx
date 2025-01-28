@@ -89,6 +89,22 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 	# p + annotate("text", 3, 30, label = expression(R^2 == beta + 1 ~ hello), family="Optima")
 }
 
+# umxPlotPredict(m3, xlab= "Predicted Support for Redistribution", ylab= "Actual Support for Redistribution")
+#
+# umxPlotPredict <- function(model, xlab = "Predicted outcome", ylab = "Actual outcome", x = 1.5, y = 4.5, r= FALSE) {
+# 	p  = qplot(predict(model), df$Redist) + geom_smooth(method = 'lm')
+# 	p  = p + labs(x= xlab, y= ylab)
+# 	if(r){
+# 		lab = paste0("r = ", round(summary(model)$adj.r.squared^.5, 3))
+# 	} else {
+# 		lab = paste0("r = ", round(summary(model)$adj.r.squared^.5, 3))
+# 	}
+# 	p  = p + cowplot::draw_label(lab, x = x, y = y, fontfamily = "Times", size = 12)
+# 	p  = p + theme_gray() # gray,bw,linedraw,light,dark,minimal,classic
+# 	p
+# }
+
+
 # =====================
 # = Model Diagnostics =
 # =====================
@@ -2155,20 +2171,15 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 	}
 	
-	# Rename for printing to console
+	# Rename for printing
 	names(tablePub) = c("Model", "EP", "\u0394 Fit" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model", "Fit units")
 
 	if(report == "inline"){ report= "markdown"}
 	if(!silent){
 		umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
+		umx_msg("Note: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -two \u00D7 log-likelihood of the model; \u0394 df = change in degrees of freedom with respect to the comparison model; \u0394 AIC = change in Akaike Information Criterion; 'Compared to' = a note to show which model formed the baseline for each model comparison.")
 	}
-	# htmlNames       = c("Model", "EP", "&Delta; -2LL", "&Delta; df", "p", "AIC", "&Delta AIC", "Compare with Model")
-	# if(report == "html"){
-	# 	tableHTML = tablePub
-	# 	names(tableHTML) = htmlNames
-	# 	print(xtable::xtable(tableHTML), type = "HTML", file = file, sanitize.text.function = function(x){x})
-	# 	umx_open(file)
-	# }
+
 	if(compareWeightedAIC){
 		modelList = c(base, comparison)
 		# get list of AICs
