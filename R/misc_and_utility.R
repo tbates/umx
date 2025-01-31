@@ -529,6 +529,31 @@ umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
 	}
 }
 
+#' Get the alpha text
+#'
+#' Get umx_alpha_text. Optionally SET it blank
+#'
+#' @param umx_alpha_text (if empty, returns the current value)
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current umx_alpha_text
+#' @export
+#' @family Get and set
+#' @examples
+#' library(umx)
+#' umx_get_alphas() # show current state
+#' umx_get_alphas("") # blank it
+umx_get_alphas <- function(umx_alpha_text = NULL, silent = FALSE) {
+	if(is.null( umx_default_separator)) {
+		if(!silent){
+			message("Current alpha text is", omxQuotes(getOption(" umx_alpha_text")) )
+		}
+		invisible(getOption("umx_alpha_text"))		
+	} else {
+			options("umx_alpha_text" =  umx_alpha_text)
+	}
+} # end umx_set_separator
+
+
 #' Set the separator
 #'
 #' Set umx_default_separator (used in CI\[low sep high\] ). Default = ","
@@ -550,9 +575,9 @@ umx_set_separator <- function( umx_default_separator = NULL, silent = FALSE) {
 		if(!silent){
 			message("Current separator is", omxQuotes(getOption(" umx_default_separator")) )
 		}
-		invisible(getOption(" umx_default_separator"))		
+		invisible(getOption("umx_default_separator"))		
 	} else {
-			options(" umx_default_separator" =  umx_default_separator)
+			options("umx_default_separator" =  umx_default_separator)
 	}
 } # end umx_set_separator
 
