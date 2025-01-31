@@ -2177,7 +2177,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(report == "inline"){ report= "markdown"}
 	if(!silent){
 		umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
-		print("Note: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -two \u00D7 log-likelihood of the model; \u0394 df = change in degrees of freedom with respect to the comparison model; \u0394 AIC = change in Akaike Information Criterion; 'Compared to' = a note to show which model formed the baseline for each model comparison.")
+		print("Note: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.")
 	}
 
 	if(compareWeightedAIC){
