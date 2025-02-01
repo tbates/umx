@@ -28,6 +28,7 @@ umx_set_separator(old)    # reinstate
 \seealso{
 Other Get and set: 
 \code{\link{umx}},
+\code{\link{umx_get_alphas}()},
 \code{\link{umx_get_checkpoint}()},
 \code{\link{umx_get_options}()},
 \code{\link{umx_set_auto_plot}()},
