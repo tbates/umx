@@ -1771,10 +1771,13 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	}
 	allColNames = paste0(base, c(pos, rev), suffix)
 	df = data[ , allColNames, drop = FALSE]
+    
 	if(!is.null(correctAnswer)){
 		for (i in 1:nrow(df)) {
-			df[i, ] = (df[i, ] == correctAnswer)
+            tmp = as.integer((df[i, ] == correctAnswer) & !is.na(df[i, ]))
+			df[i, ] = tmp
 		}
+        df = umx_as_numeric(df, force = TRUE)
 		if(verbose){
 			print(str(df))
 		}
@@ -1797,7 +1800,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	}
 
 	if(!is.null(correctAnswer)){
-		message("\nPolite note: I returned  the sum of correct Answers scored 1/0.")
+		message("\nPolite note: I returned the sum of correct Answers scored 1/0.")
 		scaleScore = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
 			scaleScore[i] = sum(df[i, ], na.rm = TRUE)
