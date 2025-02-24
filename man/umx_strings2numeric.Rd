@@ -19,8 +19,8 @@ umx_strings2numeric(df, cols = NA, mapStrings = NULL)
 }
 }
 \description{
-If you give one column name, this is changed to numeric, and returned as a \strong{vector}.
-If you give multiple column names, or don't set cols, each is changed to numeric, and the updated \strong{data.frame} is returned.
+If you give one column name, the column is converted from string to numeric, and returned as a \strong{vector}.
+If multiple column names are given (or cols is not set), each is converted, and an updated \strong{data.frame} returned.
 }
 \examples{
 tmp = data.frame(x=letters)

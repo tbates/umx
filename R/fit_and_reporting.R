@@ -81,28 +81,41 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 		p = p + cowplot::draw_label(lab, x = fitx, y = fity, fontfamily = "Times", size = 12)
 	}else if (method == "glm"){
 		# m1  = glm(.formula, data = data, family=family)
+		message("polite note: Currently, I only know how to do method = lm")
 	}else{
 		message("polite note: Currently, I only know how to do method = lm or glm")
 	}
-	p = p + theme_gray() # gray, bw, linedraw, light, dark, minimal, classic
+	p = p + theme_minimal() # gray, bw, linedraw, light, dark, minimal, classic
 	p
 	# p + annotate("text", 3, 30, label = expression(R^2 == beta + 1 ~ hello), family="Optima")
 }
 
-# umxPlotPredict(m3, xlab= "Predicted Support for Redistribution", ylab= "Actual Support for Redistribution")
-#
-# umxPlotPredict <- function(model, xlab = "Predicted outcome", ylab = "Actual outcome", x = 1.5, y = 4.5, r= FALSE) {
-# 	p  = qplot(predict(model), df$Redist) + geom_smooth(method = 'lm')
-# 	p  = p + labs(x= xlab, y= ylab)
-# 	if(r){
-# 		lab = paste0("r = ", round(summary(model)$adj.r.squared^.5, 3))
-# 	} else {
-# 		lab = paste0("r = ", round(summary(model)$adj.r.squared^.5, 3))
-# 	}
-# 	p  = p + cowplot::draw_label(lab, x = x, y = y, fontfamily = "Times", size = 12)
-# 	p  = p + theme_gray() # gray,bw,linedraw,light,dark,minimal,classic
-# 	p
-# }
+#' `umxPlotPredict` takes a model and plots the y value against predicted(y)
+#' @param model lm or other model that understands predict()
+#' @param xlab X-axis label (default x).
+#' @param ylab Y-axis label (default y).
+#' @param r2x x location for the fit summary.
+#' @param r2y y location for the fit summary.
+#' @param font_size Default 13
+#' @param font Default "Times"
+#' @return - plot you can edit.
+#' @export
+#' @family Plotting functions
+#' @seealso - [ggplot2::qplot()]
+#' @md
+#' @examples
+#' data(mtcars)
+#' tmp = lm(mpg ~ wt, data = mtcars)
+#' umxPlotPredict(tmp, fitx = 2, fity = 10)
+umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 1.5, r2y= 4.5, font_size = 13, font= "Times") {
+	r2 = paste0("r = ", round(summary(model)$adj.r.squared^.5, 2))
+	y_var = model.frame(model)[, 1]	
+	p = ggplot() + geom_point(aes(x = predict(model), y = y_var))
+	p = p + geom_smooth(aes(x = predict(model), y = y_var), method = "lm", se = TRUE, color = "blue")
+	p = p + labs(x= xlab, y= ylab)
+	p = p + cowplot::draw_label(r2, x = r2x, y = r2y, fontfamily = font, size = (font_size+1))
+	p + theme_minimal(base_size = font_size, base_family= font)	
+}
 
 
 # =====================
@@ -2177,7 +2190,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(report == "inline"){ report= "markdown"}
 	if(!silent){
 		umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
-		print("Note: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.")
+		cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")
 	}
 
 	if(compareWeightedAIC){

@@ -1490,8 +1490,8 @@ umx_factor <- umxFactor
 
 #' A wrapper to map columns of strings to numeric.
 #' 
-#' If you give one column name, this is changed to numeric, and returned as a **vector**.
-#' If you give multiple column names, or don't set cols, each is changed to numeric, and the updated **data.frame** is returned.
+#' If you give one column name, the column is converted from string to numeric, and returned as a **vector**.
+#' If multiple column names are given (or cols is not set), each is converted, and an updated **data.frame** returned.
 #' 
 #' @param df The df
 #' @param cols (optional) list of columns (default = use all)
