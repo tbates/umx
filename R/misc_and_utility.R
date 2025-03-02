@@ -6551,6 +6551,69 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 	return(df)
 }
 
+
+#' umx_wide2long
+#'
+#' @description Makes wide data long using reshape
+#' Hopefully a more robust interface to [reshape()]
+#' For twin data, this calls `umx_wide2longTwinData(data =data, sep = sep, verbose = verbose)`
+#'
+#' @details
+#' This is for processing data in which subjects (identified by a `idvar` column, have repeated measures on one or more outcomes.
+#' The goal is to make the data into long format, for passing to functions like [lme4::lmer()].
+#' You must: 
+#' 
+#' 1. Set `timevar`. This is a list of the conditions that you repeated. The name becomes a column in the long output. e.g., `list(difficulty = c("easy", "hard"))`
+#' 2. Set `repeated` This is a list of the measured outcomes, e.g. `list(DV = c("NASA1_frust", "NASA2_frust"), effort = c("NASA1_eff", "NASA2_eff"))`
+#' 3. Set `covs` This is vector of non-repeated non-varying IVs c("age", "sex", "IQ").
+#' 
+#' Table: The resulting output is like this:
+#' | **idvar** | **condition** | **Age** |**DV**|
+#' | ----- |:----------:| ---:| ---:|
+#' | 001   | "easy"     |  45 | 10   |
+#' | 001   | "hard"     |  45 | 75 |
+#' | 002   | "easy"     |  19 | 54   |
+#' | 002   | "hard"     |  19 | 74 |
+#'
+#' @param df A data.frame to make long.
+#' @param timevar A list of the conditions individuals are in that generate repeated measures, list(condition = c("control", "expt"))
+#' @param repeated A list of varied inputs and their levels: i.e., list(exam = c("easy", "hard"), ...)
+#' @param const = "IQ" A vector of variables that do not vary, e.g., height.
+#' @param covs A list of covariates c("Age", "Sex").
+#' @param idvar The column containing the unique ID of the subjects "PID".
+#' @param sep For twin data - calls = umx_wide2longTwinData default "_T"
+#' @param verbose Whether to be verbose (FALSE)
+#' @return - a long version of the df.
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - [reshape()]
+#' @md
+#' @examples
+#' \dontrun{
+#' timevar  = list(difficulty = c("easy", "hard"))
+#' repeated = list(frustration = c("NASA1_frustration", "NASA2_frustration"), effort = c("NASA1_effort", "NASA2_effort"))
+#' df.l     = umx_long2wide(timevar, repeated, covs = c("Conscientiousness", "Age", "Sex"), df = df, idvar = "PID")
+#' }
+umx_wide2long <- function(data = df, timevar = list(condition = c("control", "expt")), repeated = list(example = c("easyexample", "hardexample"), grade = c("grd1", "grd2")), covs = c("Age", "Sex"), idvar = "PID", sep = "_T", verbose = FALSE) {
+    if(repeated == list(example = c("easyexample", "hardexample"))){
+        message("Assuming twin data and calling umx_wide2longTwinData")
+        return(umx_wide2longTwinData(data =data, sep = sep, verbose = verbose))
+    }
+    # non-twin repeated measures data to make long
+    if(length(timevar!=1)){
+        stop("'timevar' list must have 1 item (which can contain multiple conditions), e.g., condition = c('control', 'expt')")
+    }
+	timevar  = names(timevar)[1]
+	times    =  as.character(unlist(timevar))
+	v.names  = names(repeated)
+	message(paste0("set v.names to: ", omxQuotes(v.names)))
+	needed   = c(idvar, covs, as.character(unlist(repeated)) )
+	umx_check_names(needed, data = df, die = TRUE)
+	df.l = reshape(df[,needed], idvar = idvar, varying = repeated, v.names = v.names, timevar = timevar, times  = times, direction = "long")	
+	return(df.l)
+
+}
+
 #' Change twin data from wide (2 twins per row) to long format.
 #'
 #' @description
@@ -6568,14 +6631,14 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #' @return - long-format dataframe
 #' @export
 #' @family Twin Data functions
-#' @seealso [reshape()], [umx_merge_randomized_columns()], [umx_select_valid()]
+#' @seealso [reshape()], [umx_wide2long()], [umx_merge_randomized_columns()], [umx_select_valid()]
 #' @examples
-#' long = umx_wide2long(data = twinData, sep = "")
-#' long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
+#' long = umx_wide2longTwinData(data = twinData, sep = "")
+#' long = umx_wide2longTwinData(data = twinData, sep = "", verbose = TRUE)
 #' str(long)
 #' str(twinData)
-umx_wide2long <- function(data, sep = "_T", verbose = FALSE) {
-	# TODO issue #82 umx_wide2long Assumes 2 twins: Generalize to unlimited family size.
+umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
+	# TODO issue #82 umx_wide2longTwinData Assumes 2 twins: Generalize to unlimited family size.
 
 	twinNames = umx_names(data, paste0(".", sep, "[1-9]$"))
 	nonTwinColNames = setdiff(umx_names(data), twinNames)

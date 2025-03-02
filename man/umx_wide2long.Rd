@@ -2,44 +2,88 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_wide2long}
 \alias{umx_wide2long}
-\title{Change twin data from wide (2 twins per row) to long format.}
+\title{umx_wide2long}
 \usage{
-umx_wide2long(data, sep = "_T", verbose = FALSE)
+umx_wide2long(
+  data = df,
+  timevar = list(condition = c("control", "expt")),
+  repeated = list(example = c("easyexample", "hardexample"), grade = c("grd1", "grd2")),
+  covs = c("Age", "Sex"),
+  idvar = "PID",
+  sep = "_T",
+  verbose = FALSE
+)
 }
 \arguments{
-\item{data}{a dataframe containing twin data.}
+\item{timevar}{A list of the conditions individuals are in that generate repeated measures, list(condition = c("control", "expt"))}
 
-\item{sep}{the string between the var name and twin suffix, i.e., var_T1 = _T}
+\item{repeated}{A list of varied inputs and their levels: i.e., list(exam = c("easy", "hard"), ...)}
 
-\item{verbose}{Report the non-twin and twin columns (default = FALSE).}
+\item{covs}{A list of covariates c("Age", "Sex").}
+
+\item{idvar}{The column containing the unique ID of the subjects "PID".}
+
+\item{sep}{For twin data - calls = umx_wide2longTwinData default "_T"}
+
+\item{verbose}{Whether to be verbose (FALSE)}
+
+\item{df}{A data.frame to make long.}
+
+\item{const}{= "IQ" A vector of variables that do not vary, e.g., height.}
 }
 \value{
-- long-format dataframe
+\itemize{
+\item a long version of the df.
+}
 }
 \description{
-Just detects the data columns for twin 1, and twin 2, then returns them stacked
-on top of each other (rbind) with the non-twin specific columns copied for each as well.
+Makes wide data long using reshape
+Hopefully a more robust interface to \code{\link[=reshape]{reshape()}}
+For twin data, this calls \code{umx_wide2longTwinData(data =data, sep = sep, verbose = verbose)}
+}
+\details{
+This is for processing data in which subjects (identified by a \code{idvar} column, have repeated measures on one or more outcomes.
+The goal is to make the data into long format, for passing to functions like \code{\link[lme4:lmer]{lme4::lmer()}}.
+You must:
+\enumerate{
+\item Set \code{timevar}. This is a list of the conditions that you repeated. The name becomes a column in the long output. e.g., \code{list(difficulty = c("easy", "hard"))}
+\item Set \code{repeated} This is a list of the measured outcomes, e.g. \code{list(DV = c("NASA1_frust", "NASA2_frust"), effort = c("NASA1_eff", "NASA2_eff"))}
+\item Set \code{covs} This is vector of non-repeated non-varying IVs c("age", "sex", "IQ").
+}
 
-*Note*, zygosity codings differ among labs. One scheme uses 1 = MZFF, 2 = MZMM, 3 = DZFF, 4 = DZMM, 
-5 = DZOS or DZFM, 6 = DZMF, with 9 = unknown, and then 50, 51,... for siblings.
-
-Typically, OS twins are ordered Female/Male.
+Table: The resulting output is like this:\tabular{lcrr}{
+   \strong{idvar} \tab \strong{condition} \tab \strong{Age} \tab \strong{DV} \cr
+   ID1 \tab "easy" \tab 45 \tab 1 \cr
+   ID1 \tab "hard" \tab 45 \tab 100 \cr
+}
 }
 \examples{
-long = umx_wide2long(data = twinData, sep = "")
-long = umx_wide2long(data = twinData, sep = "", verbose = TRUE)
-str(long)
-str(twinData)
+\dontrun{
+timevar  = list(difficulty = c("easy", "hard"))
+repeated = list(frustration = c("NASA1_frustration", "NASA2_frustration"), effort = c("NASA1_effort", "NASA2_effort"))
+df.l     = umx_long2wide(timevar, repeated, covs = c("Conscientiousness", "Age", "Sex"), df = df, idvar = "PID")
+}
 }
 \seealso{
-[reshape()], [umx_merge_randomized_columns()], [umx_select_valid()]
-
-Other Twin Data functions: 
-\code{\link{umx}},
-\code{\link{umx_long2wide}()},
-\code{\link{umx_make_TwinData}()},
-\code{\link{umx_make_twin_data_nice}()},
-\code{\link{umx_residualize}()},
-\code{\link{umx_scale_wide_twin_data}()}
+\itemize{
+\item \code{\link[=reshape]{reshape()}}
 }
-\concept{Twin Data functions}
+
+Other Miscellaneous Utility Functions: 
+\code{\link{install.OpenMx}()},
+\code{\link{libs}()},
+\code{\link{qm}()},
+\code{\link{umx}},
+\code{\link{umxLav2RAM}()},
+\code{\link{umxModelNames}()},
+\code{\link{umxRAM2Lav}()},
+\code{\link{umxVersion}()},
+\code{\link{umx_array_shift}()},
+\code{\link{umx_find_object}()},
+\code{\link{umx_lower.tri}()},
+\code{\link{umx_msg}()},
+\code{\link{umx_open_CRAN_page}()},
+\code{\link{umx_pad}()},
+\code{\link{umx_print}()}
+}
+\concept{Miscellaneous Utility Functions}

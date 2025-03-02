@@ -172,7 +172,7 @@ Other Twin Data functions:
 \code{\link{umx_make_twin_data_nice}()},
 \code{\link{umx_residualize}()},
 \code{\link{umx_scale_wide_twin_data}()},
-\code{\link{umx_wide2long}()}
+\code{\link{umx_wide2longTwinData}()}
 
 Other Miscellaneous Stats Functions: 
 \code{\link{FishersMethod}()},
@@ -304,7 +304,8 @@ Other Miscellaneous Utility Functions:
 \code{\link{umx_msg}()},
 \code{\link{umx_open_CRAN_page}()},
 \code{\link{umx_pad}()},
-\code{\link{umx_print}()}
+\code{\link{umx_print}()},
+\code{\link{umx_wide2long}()}
 
 Other datasets: 
 \code{\link{Fischbein_wt}},
