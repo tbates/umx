@@ -15,21 +15,19 @@ umx_wide2long(
 )
 }
 \arguments{
+\item{data}{A data.frame to make long.}
+
 \item{timevar}{A list of the conditions individuals are in that generate repeated measures, list(condition = c("control", "expt"))}
 
 \item{repeated}{A list of varied inputs and their levels: i.e., list(exam = c("easy", "hard"), ...)}
 
-\item{covs}{A list of covariates c("Age", "Sex").}
+\item{covs}{A vector of variables that do not vary, e.g., c("Age", "Sex", "IQ").}
 
 \item{idvar}{The column containing the unique ID of the subjects "PID".}
 
 \item{sep}{For twin data - calls = umx_wide2longTwinData default "_T"}
 
 \item{verbose}{Whether to be verbose (FALSE)}
-
-\item{df}{A data.frame to make long.}
-
-\item{const}{= "IQ" A vector of variables that do not vary, e.g., height.}
 }
 \value{
 \itemize{
@@ -53,14 +51,19 @@ You must:
 
 Table: The resulting output is like this:\tabular{lcrr}{
    \strong{idvar} \tab \strong{condition} \tab \strong{Age} \tab \strong{DV} \cr
-   ID1 \tab "easy" \tab 45 \tab 1 \cr
-   ID1 \tab "hard" \tab 45 \tab 100 \cr
+   001 \tab "easy" \tab 45 \tab 10 \cr
+   001 \tab "hard" \tab 45 \tab 75 \cr
+   002 \tab "easy" \tab 19 \tab 54 \cr
+   002 \tab "hard" \tab 19 \tab 74 \cr
 }
 }
 \examples{
 \dontrun{
 timevar  = list(difficulty = c("easy", "hard"))
-repeated = list(frustration = c("NASA1_frustration", "NASA2_frustration"), effort = c("NASA1_effort", "NASA2_effort"))
+repeated = list(
+   frustration = c("NASA1_frustration", "NASA2_frustration"), 
+   effort      = c("NASA1_effort", "NASA2_effort")
+)
 df.l     = umx_long2wide(timevar, repeated, covs = c("Conscientiousness", "Age", "Sex"), df = df, idvar = "PID")
 }
 }

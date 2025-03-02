@@ -77,10 +77,10 @@
 #' @importFrom graphics plot abline
 #' @importFrom methods as getSlots is slotNames setClass
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
-#' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm
-#' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq
+#' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm reshape
+#' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq predict
 #' @importFrom stats qnorm quantile reformulate residuals rnorm runif sd
-#' @importFrom stats setNames update var delete.response terms
+#' @importFrom stats setNames update var delete.response terms model.frame
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv read.delim
@@ -95,7 +95,7 @@
 #' @importFrom ggplot2 geom_point geom_ribbon geom_segment geom_smooth  geom_vline arrow unit
 #' @importFrom ggplot2 aes aes_string annotate coord_cartesian element_blank element_text 
 #' @importFrom ggplot2 ggtitle xlab ylab scale_fill_hue expand_limits position_dodge 
-#' @importFrom ggplot2 theme_bw theme_gray  
+#' @importFrom ggplot2 theme_bw theme_gray theme_minimal
 #' @importFrom cowplot draw_label plot_grid ggdraw 
 #' @importFrom knitr kable
 #' @importFrom kableExtra kbl add_footnote column_spec footnote

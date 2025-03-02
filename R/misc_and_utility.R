@@ -543,9 +543,9 @@ umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
 #' umx_get_alphas() # show current state
 #' umx_get_alphas("") # blank it
 umx_get_alphas <- function(umx_alpha_text = NULL, silent = FALSE) {
-	if(is.null( umx_default_separator)) {
+	if(is.null(umx_alpha_text)) {
 		if(!silent){
-			message("Current alpha text is", omxQuotes(getOption(" umx_alpha_text")) )
+			message("Current alpha text is", omxQuotes(getOption("umx_alpha_text")) )
 		}
 		invisible(getOption("umx_alpha_text"))		
 	} else {
@@ -3179,7 +3179,8 @@ plot.percent <- function(x, ...) {
 #' @param xlab = Optional x axis label.
 #' @param ylab = Optional y axis label.
 #' @param title Optional title for the plot.
-#' @param logY  Set to, e.g. "log" to set COORDINATE of y to log.
+#' @param logX Set to, e.g. "log" to set COORDINATE of x to log.
+#' @param logY Set to, e.g. "log" to set COORDINATE of y to log.
 #' @param p  Optional plot onto which to draw the function.
 #' @return - A ggplot graph
 #' @export
@@ -6575,11 +6576,10 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #' | 002   | "easy"     |  19 | 54   |
 #' | 002   | "hard"     |  19 | 74 |
 #'
-#' @param df A data.frame to make long.
+#' @param data A data.frame to make long.
 #' @param timevar A list of the conditions individuals are in that generate repeated measures, list(condition = c("control", "expt"))
 #' @param repeated A list of varied inputs and their levels: i.e., list(exam = c("easy", "hard"), ...)
-#' @param const = "IQ" A vector of variables that do not vary, e.g., height.
-#' @param covs A list of covariates c("Age", "Sex").
+#' @param covs A vector of variables that do not vary, e.g., c("Age", "Sex", "IQ").
 #' @param idvar The column containing the unique ID of the subjects "PID".
 #' @param sep For twin data - calls = umx_wide2longTwinData default "_T"
 #' @param verbose Whether to be verbose (FALSE)
@@ -6591,7 +6591,10 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #' @examples
 #' \dontrun{
 #' timevar  = list(difficulty = c("easy", "hard"))
-#' repeated = list(frustration = c("NASA1_frustration", "NASA2_frustration"), effort = c("NASA1_effort", "NASA2_effort"))
+#' repeated = list(
+#'    frustration = c("NASA1_frustration", "NASA2_frustration"), 
+#'    effort      = c("NASA1_effort", "NASA2_effort")
+#' )
 #' df.l     = umx_long2wide(timevar, repeated, covs = c("Conscientiousness", "Age", "Sex"), df = df, idvar = "PID")
 #' }
 umx_wide2long <- function(data = df, timevar = list(condition = c("control", "expt")), repeated = list(example = c("easyexample", "hardexample"), grade = c("grd1", "grd2")), covs = c("Age", "Sex"), idvar = "PID", sep = "_T", verbose = FALSE) {
@@ -6608,8 +6611,8 @@ umx_wide2long <- function(data = df, timevar = list(condition = c("control", "ex
 	v.names  = names(repeated)
 	message(paste0("set v.names to: ", omxQuotes(v.names)))
 	needed   = c(idvar, covs, as.character(unlist(repeated)) )
-	umx_check_names(needed, data = df, die = TRUE)
-	df.l = reshape(df[,needed], idvar = idvar, varying = repeated, v.names = v.names, timevar = timevar, times  = times, direction = "long")	
+	umx_check_names(needed, data = data, die = TRUE)
+	df.l = reshape(data[,needed], idvar = idvar, varying = repeated, v.names = v.names, timevar = timevar, times  = times, direction = "long")	
 	return(df.l)
 
 }

@@ -31,6 +31,8 @@ umxPlotFun(
 
 \item{logY}{Set to, e.g. "log" to set COORDINATE of y to log.}
 
+\item{logX}{Set to, e.g. "log" to set COORDINATE of x to log.}
+
 \item{p}{Optional plot onto which to draw the function.}
 }
 \value{
