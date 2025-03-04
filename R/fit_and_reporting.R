@@ -30,8 +30,8 @@
 #' @param xlab X-axis label (default y).
 #' @param ylab Y-axis label (default y).
 #' @param title Graph title. Default =  paste0(y, " as a function of ", x)
-#' @param fitx x location for the fit summary (default 1).
-#' @param fity y location for the fit summary (default 2).
+#' @param r2x x location for the fit summary (default 1).
+#' @param r2y y location for the fit summary (default 2).
 #' @param geom_point  show points? (TRUE) 
 #' @param method Method for fitting curve (default = lm)
 #' @param family for glm default = "gaussian"
@@ -42,9 +42,9 @@
 #' @md
 #' @examples
 #' data(mtcars)
-#' umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
-#' umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
-umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), fitx=NA, fity=NA, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
+#' umxPlot(mpg ~ wt, data = mtcars, r2x = 2, r2y = 10)
+#' umxPlot(x = "wt", y = "mpg", mtcars, r2x = 2, r2y = 10)
+umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), r2x=NA, r2y=NA, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
 	method = match.arg(method)
 	family = match.arg(family)
 	if(inherits(x, "formula")){
@@ -68,9 +68,9 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 		p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method)
 	}
 	# data[,x]
-	if(is.na(fitx)){
-		fitx = min(data[,x])
-		fity = max(data[,y])
+	if(is.na(r2x)){
+		r2x = min(data[,x])
+		r2y = max(data[,y])
 	}
 
 	if(method == "lm"){
@@ -78,7 +78,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 		r2  = round(summary(m1)$r.squared, 3)
 		lab = bquote(R^2 == .(r2))
 		p = p + labs(x= xlab, y= ylab, title= title)
-		p = p + cowplot::draw_label(lab, x = fitx, y = fity, fontfamily = "Times", size = 12)
+		p = p + cowplot::draw_label(lab, x = r2x, y = r2y, fontfamily = "Times", size = 12)
 	}else if (method == "glm"){
 		# m1  = glm(.formula, data = data, family=family)
 		message("polite note: Currently, I only know how to do method = lm")
@@ -106,7 +106,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 #' @examples
 #' data(mtcars)
 #' tmp = lm(mpg ~ wt, data = mtcars)
-#' umxPlotPredict(tmp, fitx = 2, fity = 10)
+#' umxPlotPredict(tmp, r2x = 2, r2y = 10)
 umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 1.5, r2y= 4.5, font_size = 13, font= "Times") {
 	r2 = paste0("r = ", round(summary(model)$adj.r.squared^.5, 2))
 	y_var = model.frame(model)[, 1]	

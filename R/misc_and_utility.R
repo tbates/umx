@@ -215,7 +215,7 @@ libs <- function(... , force.update = FALSE) {
 			}
 			library(pack, character.only = TRUE)
 		}, warning = function(warn) {
-			umx_msg("Who's, Z?")
+            cat("polite note: ", warn$message)
 		}, error = function(err) {
 			cat(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you"))
 		    install.packages(pack)
@@ -6595,10 +6595,10 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #'    frustration = c("NASA1_frustration", "NASA2_frustration"), 
 #'    effort      = c("NASA1_effort", "NASA2_effort")
 #' )
-#' df.l     = umx_long2wide(timevar, repeated, covs = c("Conscientiousness", "Age", "Sex"), df = df, idvar = "PID")
+#' df.l = umx_long2wide(data, timevar, repeated, covs = c("Age"), idvar = "PID")
 #' }
 umx_wide2long <- function(data = df, timevar = list(condition = c("control", "expt")), repeated = list(example = c("easyexample", "hardexample"), grade = c("grd1", "grd2")), covs = c("Age", "Sex"), idvar = "PID", sep = "_T", verbose = FALSE) {
-    if(repeated == list(example = c("easyexample", "hardexample"))){
+    if(identical(names(repeated), c("example", "grade"))){
         message("Assuming twin data and calling umx_wide2longTwinData")
         return(umx_wide2longTwinData(data =data, sep = sep, verbose = verbose))
     }

@@ -40,7 +40,7 @@ umxPlotPredict(
 \examples{
 data(mtcars)
 tmp = lm(mpg ~ wt, data = mtcars)
-umxPlotPredict(tmp, fitx = 2, fity = 10)
+umxPlotPredict(tmp, r2x = 2, r2y = 10)
 }
 \seealso{
 \itemize{

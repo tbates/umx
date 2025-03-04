@@ -64,7 +64,7 @@ repeated = list(
    frustration = c("NASA1_frustration", "NASA2_frustration"), 
    effort      = c("NASA1_effort", "NASA2_effort")
 )
-df.l     = umx_long2wide(timevar, repeated, covs = c("Conscientiousness", "Age", "Sex"), df = df, idvar = "PID")
+df.l = umx_long2wide(data, timevar, repeated, covs = c("Age"), idvar = "PID")
 }
 }
 \seealso{

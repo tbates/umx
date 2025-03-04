@@ -11,8 +11,8 @@ umxPlot(
   xlab = x,
   ylab = y,
   title = paste0(y, " as a function of ", x),
-  fitx = NA,
-  fity = NA,
+  r2x = NA,
+  r2y = NA,
   geom_point = TRUE,
   method = c("lm", "auto", "loess", "glm", "gam"),
   family = c("gaussian", "binomial", "Gamma", "inverse", "poisson", "quasi",
@@ -32,9 +32,9 @@ umxPlot(
 
 \item{title}{Graph title. Default =  paste0(y, " as a function of ", x)}
 
-\item{fitx}{x location for the fit summary (default 1).}
+\item{r2x}{x location for the fit summary (default 1).}
 
-\item{fity}{y location for the fit summary (default 2).}
+\item{r2y}{y location for the fit summary (default 2).}
 
 \item{geom_point}{show points? (TRUE)}
 
@@ -60,8 +60,8 @@ of \code{\link[=reformulate]{reformulate()}} programmatic variables?
 }
 \examples{
 data(mtcars)
-umxPlot(mpg ~ wt, data = mtcars, fitx = 2, fity = 10)
-umxPlot(x = "wt", y = "mpg", mtcars, fitx = 2, fity = 10)
+umxPlot(mpg ~ wt, data = mtcars, r2x = 2, r2y = 10)
+umxPlot(x = "wt", y = "mpg", mtcars, r2x = 2, r2y = 10)
 }
 \seealso{
 \itemize{

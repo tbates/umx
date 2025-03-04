@@ -2,7 +2,7 @@
 New features and miscellaneous help and improvements.
 
 ## Test environments
-* MacOS 14.0, R version 4.4.4
+* MacOS 15.4, R version 4.4.3
 * Win64 R Under development (unstable) (2025-03-01 r87860 ucrt)
 * 64-bit Linux, R version 4.4.4
 
