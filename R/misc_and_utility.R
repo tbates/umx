@@ -215,10 +215,10 @@ libs <- function(... , force.update = FALSE) {
 			}
 			library(pack, character.only = TRUE)
 		}, warning = function(warn) {
-            cat("polite note: ", warn$message)
+			cat("polite note: ", warn$message)
 		}, error = function(err) {
 			cat(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you"))
-		    install.packages(pack)
+			install.packages(pack)
 			library(pack, character.only = TRUE)
 		}, finally={
 
@@ -1153,8 +1153,8 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 	XMatrix = cbind(XMatrixF, XMatrixF %*% fixedBMatrixF + (XMatrixF*Z) %*% randomBMatrixF + UMatrixF)
 
 	BMatrix = matrix(c( 1, .6, .7, .8,  0,  0,  0,  0,  0,  0,  0,  0,
-	                     0,  0,  0,  0,  1, .5, .6, .7,  0,  0,  0,  0,
-	                     0,  0,  0,  0,  0,  0,  0,  0,  1, .7, .6, .5), numberFactors, numberIndicators, byrow=TRUE)
+						 0,  0,  0,  0,  1, .5, .6, .7,  0,  0,  0,  0,
+						 0,  0,  0,  0,  0,  0,  0,  0,  1, .7, .6, .5), numberFactors, numberIndicators, byrow=TRUE)
 	UMatrix = matrix(rnorm(nSubjects*numberIndicators, mean=0, sd=1), nSubjects, numberIndicators)
 	YMatrix = XMatrix %*% BMatrix + UMatrix
 	dimnames(YMatrix) = list(NULL, paste("X", 1:numberIndicators, sep=""))
@@ -1764,20 +1764,20 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 			message("If there are reverse items, you must set 'max' (the highest possible score for an item) in umx_score_scale (note: min defaults to 1)")
 			print(table(data[ , paste0(base, rev[1], suffix)] ))
 			stop("FYI, the max appears to be ", max(maxs))
-        }
+		}
 		revItems = data[,paste0(base, rev, suffix), drop = FALSE]
 		revItems = (max + min) - revItems
 		data[ , paste0(base, rev)] = revItems
 	}
 	allColNames = paste0(base, c(pos, rev), suffix)
 	df = data[ , allColNames, drop = FALSE]
-    
+	
 	if(!is.null(correctAnswer)){
 		for (i in 1:nrow(df)) {
-            tmp = as.integer((df[i, ] == correctAnswer) & !is.na(df[i, ]))
+			tmp = as.integer((df[i, ] == correctAnswer) & !is.na(df[i, ]))
 			df[i, ] = tmp
 		}
-        df = umx_as_numeric(df, force = TRUE)
+		df = umx_as_numeric(df, force = TRUE)
 		if(verbose){
 			print(str(df))
 		}
@@ -1863,10 +1863,10 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("umx_vers", "OpenMx_vers")) {
 	return = match.arg(return)
 	umx_vers = try(packageVersion("umx"))
-    if (verbose) {
-        msg = paste0("umx version: ", umx_vers)
-        message(msg)
-    }
+	if (verbose) {
+		msg = paste0("umx version: ", umx_vers)
+		message(msg)
+	}
 	if(!is.null(min)){
 		if(umx_vers >= min){
 			message("umx version is recent enough")
@@ -1880,9 +1880,9 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("um
 		model = NULL
 	}
 	OpenMx_vers = mxVersion(model = model, verbose = verbose)	
-    if (verbose) {
+	if (verbose) {
 		message('Open the CRAN page for any package with umx_open_CRAN_page()\nYou can update OpenMx with:\ninstall.OpenMx(c("NPSOL", "travis", "CRAN", "open travis build page")')
-    }
+	}
 
 	if(return == "umx"){
 		invisible(umx_vers)
@@ -1926,13 +1926,13 @@ umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 		# 3. print data on current version and load
 		result = tryCatch({
 			ver  = packageVersion(p)
-		    print(ver)
-		    library(p, character.only = TRUE)
+			print(ver)
+			library(p, character.only = TRUE)
 		}, warning = function(x) {
-		    cat(p, "might not be installed locally:\n")
+			cat(p, "might not be installed locally:\n")
 			print(x)
 		}, error = function(x) {
-		    cat(p, "might not be installed locally:\n")
+			cat(p, "might not be installed locally:\n")
 			print(x)
 		}, finally = {
 			#
@@ -1956,35 +1956,35 @@ umx_open_CRAN_page <- function(package = "umx", inst=FALSE) {
 #' umx_pad(1:3, 3)
 umx_pad <- function(x, n) {
   if (is.data.frame(x)) {
-    nrow = nrow(x)
-    attr(x, "row.names") = 1:n
-    for( i in 1:ncol(x) ) {
-      x[[i]] = c( x[[i]], rep(NA, times = n - nrow) )
-    }
-    return(x)
+	nrow = nrow(x)
+	attr(x, "row.names") = 1:n
+	for( i in 1:ncol(x) ) {
+	  x[[i]] = c( x[[i]], rep(NA, times = n - nrow) )
+	}
+	return(x)
   } else if (is.list(x)) {
-    if (missing(n)) {
-      max_len = max( sapply( x, length ) )
-      return( lapply(x, function(xx) {
-        return( c(xx, rep(NA, times=max_len-length(xx))) )
-      }))
-    } else {
-      return( lapply(x, function(xx) {
-        if (n > length(xx)) {
-          return( c(xx, rep(NA, times=n-length(xx))) )
-        } else {
-          return(xx)
-        }
-      }))
-    }
+	if (missing(n)) {
+	  max_len = max( sapply( x, length ) )
+	  return( lapply(x, function(xx) {
+		return( c(xx, rep(NA, times=max_len-length(xx))) )
+	  }))
+	} else {
+	  return( lapply(x, function(xx) {
+		if (n > length(xx)) {
+		  return( c(xx, rep(NA, times=n-length(xx))) )
+		} else {
+		  return(xx)
+		}
+	  }))
+	}
   } else if (is.matrix(x)) {
-    return( rbind( x, matrix(NA, nrow=n-nrow(x), ncol=ncol(x)) ) )
+	return( rbind( x, matrix(NA, nrow=n-nrow(x), ncol=ncol(x)) ) )
   } else {
-    if (n > length(x)) {
+	if (n > length(x)) {
 			return( c( x, rep(NA, n-length(x)) ) ) 
-    } else {
-      return(x)
-    }
+	} else {
+	  return(x)
+	}
   } 
 }
 
@@ -2155,11 +2155,11 @@ umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE,
 		if(is.null(to)){
 			stop("Please set to to a valid replacement string!")
 		}
-	    nameVector = umx_names(data)
-	    if (is.null(nameVector)) {
-	        stop(paste0("umx_rename requires a dataframe or something else with names(), ", 
-	            umx_str_from_object(data), " is a ", typeof(data)))
-	    }
+		nameVector = umx_names(data)
+		if (is.null(nameVector)) {
+			stop(paste0("umx_rename requires a dataframe or something else with names(), ", 
+				umx_str_from_object(data), " is a ", typeof(data)))
+		}
 		new_names = gsub(regex, to, nameVector)
 		if(test){
 			message("The following changes would be made (set test =FALSE to actually make them)")
@@ -2199,13 +2199,13 @@ umx_rename <- function(data, from = NULL, to = NULL, regex = NULL, test = FALSE,
 
 		if(anyDuplicated(names_to_replace)) {
 		  err = paste("You are trying to update the following names more than once:", 
-		           paste(names_to_replace[duplicated(names_to_replace)], collapse = ", "))
+				   paste(names_to_replace[duplicated(names_to_replace)], collapse = ", "))
 		  stop(err)
 		}
 
 		if(anyDuplicated(new_names_to_try)) {
 		  err = paste("You have the following duplicates in your to list:", 
-		         	paste(new_names_to_try[duplicated(new_names_to_try)], collapse = ", ")
+					paste(new_names_to_try[duplicated(new_names_to_try)], collapse = ", ")
 		)
 		  stop(err)
 		}
@@ -2613,7 +2613,7 @@ umx_make_sql_from_excel <- function(theFile = "Finder") {
 	expect8 = c("itemText", "direction", "scale", "type")
 	if(!all(expect8 %in% names(df))){
 		stop(paste("I expected the following required column names:\n", omxQuotes(expect8), "\nYou gave me:", 
-		    omxQuotes(names(df))), call. = FALSE)
+			omxQuotes(names(df))), call. = FALSE)
 	}
 
 	nItems = dim(df)[1]
@@ -3385,7 +3385,7 @@ print.oddsratio <- function(x, digits = 3, ...) {
 	}
 	cat(sprintf(paste0("%", charLen, "s = ", ORstring), "OR"), fill= TRUE)
 	cat("polite note: Remember OR is sensitive to base rate: A given odds ratio can represent very different degrees of association/correlation")
-    invisible(x)
+	invisible(x)
 }
 
 
@@ -3549,8 +3549,8 @@ SE_from_p <- function(beta = NULL, p = NULL, SE = NULL, lower = NULL, upper = NU
 			}
 			SE = (upper - lower)/(2*1.96)
 		}
-	 	z = beta/SE
-	 	p_value = exp(-0.717 * z - 0.416 * z^2)
+		z = beta/SE
+		p_value = exp(-0.717 * z - 0.416 * z^2)
 		return(c(p_value = p_value))
 	}
 }
@@ -3574,44 +3574,44 @@ specify_decimal <- function(x, k){
 #' data(mtcars)
 #' reliability(cov(mtcars))
 reliability <-function (S){
-     reliab <- function(S, R) {
-         k         = dim(S)[1]
-         ones      = rep(1, k)
-         v         = as.vector(ones %*% S %*% ones)
-         alpha     = (k/(k - 1)) * (1 - (1/v) * sum(diag(S)))
-         rbar      = mean(R[lower.tri(R)])
-         std.alpha = k * rbar/(1 + (k - 1) * rbar)
-         c(alpha = alpha, std.alpha = std.alpha)
-     }
-     result = list()
-     if ((!is.numeric(S)) || !is.matrix(S) || (nrow(S) != ncol(S)) || any(abs(S - t(S)) > max(abs(S)) * 1e-10) || nrow(S) < 2)
-         stop("argument must be a square, symmetric, numeric covariance matrix")
-     k = dim(S)[1]
-     s = sqrt(diag(S))
-     R = S/(s %o% s)
-     rel = reliab(S, R)
-     result$alpha = rel[1]
-     result$st.alpha = rel[2]
-     if (k < 3) {
-         warning("there are fewer than 3 items in the scale")
-         return(invisible(NULL))
-     }
-     rel = matrix(0, k, 3)
-     for (i in 1:k) {
-         rel[i, c(1, 2)] = reliab(S[-i, -i], R[-i, -i])
-         a = rep(0, k)
-         b = rep(1, k)
-         a[i] = 1
-         b[i] = 0
-         cov = a %*% S %*% b
-         var = b %*% S %*% b
-         rel[i, 3] = cov/(sqrt(var * S[i, i]))
-     }
-     rownames(rel) = rownames(S)
-     colnames(rel) = c("Alpha", "Std.Alpha", "r(item, total)")
-     result$rel.matrix = rel
-     class(result) = "reliability"
-     result
+	 reliab <- function(S, R) {
+		 k         = dim(S)[1]
+		 ones      = rep(1, k)
+		 v         = as.vector(ones %*% S %*% ones)
+		 alpha     = (k/(k - 1)) * (1 - (1/v) * sum(diag(S)))
+		 rbar      = mean(R[lower.tri(R)])
+		 std.alpha = k * rbar/(1 + (k - 1) * rbar)
+		 c(alpha = alpha, std.alpha = std.alpha)
+	 }
+	 result = list()
+	 if ((!is.numeric(S)) || !is.matrix(S) || (nrow(S) != ncol(S)) || any(abs(S - t(S)) > max(abs(S)) * 1e-10) || nrow(S) < 2)
+		 stop("argument must be a square, symmetric, numeric covariance matrix")
+	 k = dim(S)[1]
+	 s = sqrt(diag(S))
+	 R = S/(s %o% s)
+	 rel = reliab(S, R)
+	 result$alpha = rel[1]
+	 result$st.alpha = rel[2]
+	 if (k < 3) {
+		 warning("there are fewer than 3 items in the scale")
+		 return(invisible(NULL))
+	 }
+	 rel = matrix(0, k, 3)
+	 for (i in 1:k) {
+		 rel[i, c(1, 2)] = reliab(S[-i, -i], R[-i, -i])
+		 a = rep(0, k)
+		 b = rep(1, k)
+		 a[i] = 1
+		 b[i] = 0
+		 cov = a %*% S %*% b
+		 var = b %*% S %*% b
+		 rel[i, 3] = cov/(sqrt(var * S[i, i]))
+	 }
+	 rownames(rel) = rownames(S)
+	 colnames(rel) = c("Alpha", "Std.Alpha", "r(item, total)")
+	 result$rel.matrix = rel
+	 class(result) = "reliability"
+	 result
 }
 
 #' Print a scale "reliability" object
@@ -3631,11 +3631,11 @@ reliability <-function (S){
 #' data(mtcars)
 #' reliability(cov(mtcars))
 print.reliability <- function (x, digits = 4, ...){
-     cat(paste("Alpha reliability = ", round(x$alpha, digits), "\n"))
-     cat(paste("Standardized alpha = ", round(x$st.alpha, digits), "\n"))
-     cat("\nReliability deleting each item in turn:\n")
-     print(round(x$rel.matrix, digits))
-     invisible(x)
+	 cat(paste("Alpha reliability = ", round(x$alpha, digits), "\n"))
+	 cat(paste("Standardized alpha = ", round(x$st.alpha, digits), "\n"))
+	 cat("\nReliability deleting each item in turn:\n")
+	 print(round(x$rel.matrix, digits))
+	 invisible(x)
 }
 
 #' Convert Radians to Degrees
@@ -4410,8 +4410,8 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 		x[is.na(x)] = na.print		
 		x[(x == 0)] = zero.print
 
-	    if (is.numeric(x) || is.complex(x)){
-	        print(x, quote = quote, right = TRUE, ...)
+		if (is.numeric(x) || is.complex(x)){
+			print(x, quote = quote, right = TRUE, ...)
 		} else if(report == "html"){
 			# From report = "html"
 			if(both){ print(kable(x, caption= caption, format="pipe")) }
@@ -4429,12 +4429,12 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 				R2HTML::HTML(x, file = file, Border = 0, append = append, sortableDF = sortableDF)
 				system(paste0("open ", file))
 			}
-	    }else{
+		}else{
 			# markdown/latex
 			x = kbl(x, caption = caption, format=report)
 			print(x)
-	    }
-	    invisible(x)
+		}
+		invisible(x)
 	}
 } # end umx_print
 
@@ -4820,7 +4820,7 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
 #' umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
 umx_is_MxData <- function(x) {
-    if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic", "MxDataLegacyWLS") ) {
+	if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic", "MxDataLegacyWLS") ) {
 		TRUE
 	} else {
 		FALSE
@@ -5444,9 +5444,9 @@ umx2ord <- umx_cont_2_quantiles
 #' umx_has_square_brackets("[hello]")
 #' umx_has_square_brackets("goodbye")
 umx_has_square_brackets <- function (input) {
-    match1 = grep("[", input, fixed = TRUE)
-    match2 = grep("]", input, fixed = TRUE)
-    return(length(match1) > 0 && length(match2) > 0)
+	match1 = grep("[", input, fixed = TRUE)
+	match2 = grep("]", input, fixed = TRUE)
+	return(length(match1) > 0 && length(match2) > 0)
 }
 
 #' Convert a string to an OpenMx algebra
@@ -6598,14 +6598,14 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #' df.l = umx_long2wide(data, timevar, repeated, covs = c("Age"), idvar = "PID")
 #' }
 umx_wide2long <- function(data = df, timevar = list(condition = c("control", "expt")), repeated = list(example = c("easyexample", "hardexample"), grade = c("grd1", "grd2")), covs = c("Age", "Sex"), idvar = "PID", sep = "_T", verbose = FALSE) {
-    if(identical(names(repeated), c("example", "grade"))){
-        message("Assuming twin data and calling umx_wide2longTwinData")
-        return(umx_wide2longTwinData(data =data, sep = sep, verbose = verbose))
-    }
-    # non-twin repeated measures data to make long
-    if(length(timevar!=1)){
-        stop("'timevar' list must have 1 item (which can contain multiple conditions), e.g., condition = c('control', 'expt')")
-    }
+	if(identical(names(repeated), c("example", "grade"))){
+		message("Assuming twin data and calling umx_wide2longTwinData")
+		return(umx_wide2longTwinData(data =data, sep = sep, verbose = verbose))
+	}
+	# non-twin repeated measures data to make long
+	if(length(timevar!=1)){
+		stop("'timevar' list must have 1 item (which can contain multiple conditions), e.g., condition = c('control', 'expt')")
+	}
 	timevar  = names(timevar)[1]
 	times    =  as.character(unlist(timevar))
 	v.names  = names(repeated)
@@ -7129,7 +7129,7 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 			}
 			if(is.null(DD)){DD = 0}
 			if(!isTRUE(all.equal(sum(c(AA, CC, DD, EE)), 1))){
-			 	stop("Hmm, AA + CC + DD + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)\n",
+				stop("Hmm, AA + CC + DD + EE must sum to 1, unless you don't want them to (in which case set sum2one = FALSE)\n",
 					 "You gave me AA =  ", AA, ", CC =  ", CC, ", DD =  ", DD, ",and EE =  ", EE, "\n",
 					 "which sum to ", sum(c(AA, CC, DD, EE)) )
 			}
@@ -7454,7 +7454,7 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
   # requires mvtnorm & polycor
   # requires data frame or matrix
   if((is.data.frame(dataset)+is.matrix(dataset))==0){
-    warning("Data must be a data frame or matrix")
+	warning("Data must be a data frame or matrix")
   }
   # organization
   row = dim(dataset)[1] # number of rows
@@ -7462,16 +7462,16 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
   col = dim(dataset)[2] # number of columns
   del = is.na(dataset)  # records position of NAs in dataset
   if(n != row){
-    select = round(runif(n, 0.5, row+.49),0)
-    del    = del[select,]
+	select = round(runif(n, 0.5, row+.49),0)
+	del    = del[select,]
   }
   num = rep(NA, col)    # see what's not a factor
   ord = rep(NA, col)    # see what's an ordered factor
 
   # which columns are numeric (the others are factors)?
   for (i in 1:col){
-    num[i] = is.numeric(dataset[,i])
-    ord[i] = is.ordered(dataset[,i])
+	num[i] = is.numeric(dataset[,i])
+	ord[i] = is.ordered(dataset[,i])
   }
 
   # check for unordered factors
@@ -7479,28 +7479,28 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
   unorder  = sum(location)
 
   if(unorder>0)warning(
-    paste("Unordered factor detected in variable(s):", 
-      names(dataset)[location]
-    )
+	paste("Unordered factor detected in variable(s):", 
+	  names(dataset)[location]
+	)
   )
 
   # if everything is numeric, don't invoke polycor
   if(sum(!num) == 0){
-    # generate data with rmvnorm
+	# generate data with rmvnorm
 	# depends on mvtnorm::rmvnorm
-    fake = mvtnorm::rmvnorm(n, apply(dataset, 2, mean, na.rm = TRUE), cov(dataset, use = "pairwise.complete.obs"), mvt.method)
+	fake = mvtnorm::rmvnorm(n, apply(dataset, 2, mean, na.rm = TRUE), cov(dataset, use = "pairwise.complete.obs"), mvt.method)
 
-    # round the data to the requested digits
-    fake <- round(fake, digits)
+	# round the data to the requested digits
+	fake <- round(fake, digits)
 
-    # insert the missing data, if so requested
-    if(use.miss == TRUE)(fake[del] <- NA)
+	# insert the missing data, if so requested
+	if(use.miss == TRUE)(fake[del] <- NA)
 
-    # give the variables names, if so requested
-    if(use.names == TRUE)(names(fake) <- names(dataset))
+	# give the variables names, if so requested
+	if(use.names == TRUE)(names(fake) <- names(dataset))
 
-    # return the new data
-    return(fake)
+	# return the new data
+	return(fake)
   }
 
   # if there are factors, we start here
@@ -7533,38 +7533,38 @@ umx_make_fake_data <- function(dataset, digits = 2, n = NA, use.names = TRUE, us
 
   # turn the required continuous variables into factors
   for (i in (1:col)[!num]){
-    # the original data for this column
-    old <- dataset[,i]
+	# the original data for this column
+	old <- dataset[,i]
    
-    # the new data for this column, omiting NAs
-    new <- fake[!is.na(fake[,i]),i]
+	# the new data for this column, omiting NAs
+	new <- fake[!is.na(fake[,i]),i]
 
-    # what are the levels of the original factor?
-    lev <- levels(old)
+	# what are the levels of the original factor?
+	lev <- levels(old)
 
-    # establish cutpoints in new variable from cdf of old factor
-    cut <- cumsum(table(old))/(sum(!is.na(old)))
+	# establish cutpoints in new variable from cdf of old factor
+	cut <- cumsum(table(old))/(sum(!is.na(old)))
 
-    # put continuous variable into a matrix, repeating value across columns
-    wide <- matrix(new, length(new), length(lev))
+	# put continuous variable into a matrix, repeating value across columns
+	wide <- matrix(new, length(new), length(lev))
 
-    # put the cutpoints in a matrix, repeating the cut point values across rows
-    crit <- matrix(quantile(new, cut), length(new), length(lev), byrow=TRUE)
+	# put the cutpoints in a matrix, repeating the cut point values across rows
+	crit <- matrix(quantile(new, cut), length(new), length(lev), byrow=TRUE)
 
-    # for each value (row of the wide matrix), 
-    # how many cutpoints is the value greater than?
-    # number of cutpoints surpassed=category
-    fake[!is.na(fake[,i]),i] <- apply(wide>crit, 1, sum)
+	# for each value (row of the wide matrix), 
+	# how many cutpoints is the value greater than?
+	# number of cutpoints surpassed=category
+	fake[!is.na(fake[,i]),i] <- apply(wide>crit, 1, sum)
 
-    # make it a factor
-    fake[,i] <- factor(fake[,i], ordered=TRUE)
+	# make it a factor
+	fake[,i] <- factor(fake[,i], ordered=TRUE)
 
-    # give the new factor the same levels as the old variable
-    if(length(levels(fake[,i]))!=length(lev))message(
-      paste("Fewer categories in simulated variable", 
-      names(fake)[i], "than in input variable", names(dataset)[i]))
-    if(use.levels==TRUE&(length(levels(fake[,i]))==length(lev))){
-      levels(fake[,i]) <- lev} else (levels(fake[,i]) <- 1:length(lev))
+	# give the new factor the same levels as the old variable
+	if(length(levels(fake[,i]))!=length(lev))message(
+	  paste("Fewer categories in simulated variable", 
+	  names(fake)[i], "than in input variable", names(dataset)[i]))
+	if(use.levels==TRUE&(length(levels(fake[,i]))==length(lev))){
+	  levels(fake[,i]) <- lev} else (levels(fake[,i]) <- 1:length(lev))
   }
 
   # Round the data to the requested digits
@@ -7820,18 +7820,18 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 }
 
 xmu_read.markdown <- function(file, stringsAsFactors = FALSE, strip.white = TRUE, ...){
-    if (length(file) > 1) {
-        lines <- file
-    } else if (grepl('\n', file)) {
-        con <- textConnection(file)
-        lines <- readLines(con)
-        close(con)
-    } else {
-        lines <- readLines(file)
-    }
-    lines <- lines[!grepl('^[[:blank:]+-=:_|]*$', lines)]
-    lines <- gsub('(^\\s*?\\|)|(\\|\\s*?$)', '', lines)
-    read.delim(text = paste(lines, collapse = '\n'), sep = '|', stringsAsFactors = stringsAsFactors, strip.white = strip.white, ...)
+	if (length(file) > 1) {
+		lines <- file
+	} else if (grepl('\n', file)) {
+		con <- textConnection(file)
+		lines <- readLines(con)
+		close(con)
+	} else {
+		lines <- readLines(file)
+	}
+	lines <- lines[!grepl('^[[:blank:]+-=:_|]*$', lines)]
+	lines <- gsub('(^\\s*?\\|)|(\\|\\s*?$)', '', lines)
+	read.delim(text = paste(lines, collapse = '\n'), sep = '|', stringsAsFactors = stringsAsFactors, strip.white = strip.white, ...)
 }
 
 #' Clean up a prolific file for sharing by removing anonymity-compromising columns.
@@ -7973,22 +7973,22 @@ prolific_check_ID <- function(IDs, df, IDcol = "PROLIFIC_PID") {
 umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 	# modified from John Fox's sem package, to remove dependency on X11
 	# depends on Matrix::nearPD
-    elements = scan(file=file)
-    m = length(elements)
-    d = if (diag) 1 else -1
-    n = floor((sqrt(1 + 8*m) - d)/2)
+	elements = scan(file=file)
+	m = length(elements)
+	d = if (diag) 1 else -1
+	n = floor((sqrt(1 + 8*m) - d)/2)
 	if(is.null(names)){
 		names = paste0("X", 1:n)
 	}else if(length(names) != n){
 		message("names ignored as you provided ", length(names), " but the data are n = ", n, " wide.")
 		names = paste0("X", 1:n)
 	}
-    if (m != n*(n + d)/2){
-        stop("wrong number of elements (cannot make square matrix)")
+	if (m != n*(n + d)/2){
+		stop("wrong number of elements (cannot make square matrix)")
 	}
-    X = diag(n)
-    X[upper.tri(X, diag=diag)] = elements
-    rownames(X) = colnames(X) = names
+	X = diag(n)
+	X[upper.tri(X, diag=diag)] = elements
+	rownames(X) = colnames(X) = names
 	X = t(X)
 	otherTri = t(X)
 	X[upper.tri(X, diag=F)] = otherTri[upper.tri(otherTri, diag=F)]
@@ -8003,13 +8003,13 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 	}
 	return(X)
 }
-    
+	
 #' Make pairs of  bin & continuous columns to represent censored data
 #'
-#' Takes a dataframe of left-censored variables (vars with a floor effect) and does two things to it:
+#' Takes a dataframe of right or left-censored variables (vars with a floor/ceiling effect) and does two things to it:
 #' 1. It creates new binary (1/0) copies of each column (with the suffix "bin"). These contain 0 where
-#'    the variable is below the minimum and NA otherwise.
-#' 2. In each existing variable, it sets all instances of min for that var to NA
+#'    the variable is below the minimum and NA otherwise. The second variable receives a suffix "cont".
+#' 2. By default, in each existing variable, it sets all instances of min for that var to NA
 #' 
 #' @param data A [data.frame()] to convert
 #' @param vars The variables to process
@@ -8026,52 +8026,64 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 #' tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
 #' df = xmu_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
 #' df[order(df$mpg), 12:15]
-xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes=NULL){
-	if(!is.null(suffixes)){
-		umx_check(length(suffixes) < 3, "stop", "suffixes must have length == 2")
-		longVars = umx_paste_names(vars, suffixes = suffixes)
-	}else{
-		longVars = vars
-	}
-	umx_check_names(longVars, data = data, die = TRUE)
-	if(!is.null(suffixes)){
-		# Get minimum scores from a long version of the vars
-		for (i in 1:length(suffixes)) {
-			vars_Ti = umx_paste_names(vars, suffixes = suffixes[i])
-			if(i == 1){
-				tmp = data[, vars_Ti, drop = FALSE]
-				names(tmp) = vars
-			} else {
-				tmp2 = data[, vars_Ti, drop = FALSE]
-				names(tmp2) = vars
-				tmp = rbind(tmp, tmp2)
-			}
-		}
-		listOfMins = umx_apply(min, tmp, by = "columns", na.rm = TRUE)
-	} else {
-		listOfMins = umx_apply(min, data[, vars, drop = FALSE], by = "columns", na.rm = TRUE)
-	}
-	# blank suffix to make this work when there is none
-	if(is.null(suffixes)){ suffixes = ""}
-	var_i = 1
-	for (var in vars) {
-		for (thisSuffix in suffixes) {
-			thisVarName = paste0(var, thisSuffix)
-			thisBinName = paste0(var, "bin", thisSuffix)
-			data[,thisBinName] = (data[, thisVarName] <= listOfMins[var_i])
-			data[,thisBinName] = mxFactor(data[, thisBinName], c(TRUE, FALSE), c("low", "high"))
+xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes = NULL, censp = NULL, type = "low") {
+	  if (!is.null(suffixes)) {
+		  umx_check(length(suffixes) < 3, "stop", "suffixes must have length == 2")
+		  longVars = umx_paste_names(vars, suffixes = suffixes)
+	  } else {
+		  longVars = vars
+	  }
+	  umx_check_names(longVars, data = data, die = TRUE)
 
-			# Set NA if FALSE
-			lowScores = data[,thisBinName] == "low"
-			lowScoreRows = which(lowScores)
-			data[lowScoreRows, thisVarName] = NA
-			nonLowScoreRows = which(!lowScores)
-			data[nonLowScoreRows, thisBinName] = NA
-		}
-		var_i = var_i + 1
-	}
-	return(data)
-}
+	  # Validate type
+	  if (!type %in% c("low", "high")) {
+		  stop("type must be either 'low' or 'high'")
+	  }
+
+	  censp_absent = missing(censp)
+	  var_i = 1
+	  if (is.null(suffixes)) suffixes = ""
+
+	  for (var in vars) {
+		  for (thisSuffix in suffixes) {
+			  thisVarName = paste0(var, thisSuffix)
+			  thisBinName = paste0(var, "bin", thisSuffix)
+			  thisContName = paste0(var, "cont", thisSuffix)  # Name of the continuous variable
+
+			  if (type == "low") {
+				  validData <- !is.na(data[[thisVarName]])
+
+				  if (censp_absent) {
+					  censp = min(data[[thisVarName]], na.rm = TRUE)  # Get minimum excluding NAs
+				  }
+				  data[[thisBinName]] <- (data[[thisVarName]] <= censp)
+			  } else {  # type == "high"
+				  if (is.null(censp)) {
+					  censp = max(data[[thisVarName]], na.rm = TRUE)  # Get maximum excluding NAs
+				  }
+				  data[[thisBinName]] <- (data[[thisVarName]] > censp)
+			  }
+
+			  # Convert to factor
+			  data[[thisBinName]] <- factor(data[[thisBinName]], levels = c(TRUE, FALSE), labels = c("low", "high"), ordered = T)
+
+			  # Handle NA assignment
+			  if (type == "low") 
+				  lowScores <- data[[thisBinName]] == "low" 
+			  else 
+				  lowScores <- data[[thisBinName]] == "high"
+
+			  # Assign NA based on scores
+			  lowScoreRows <- which(lowScores)
+			  data[lowScoreRows, thisVarName] <- NA
+			  nonLowScoreRows <- which(!lowScores)
+			  data[nonLowScoreRows, thisBinName] <- NA
+			  colnames(data)[colnames(data) == thisVarName] <- thisContName  # Rename column
+		  }
+		  var_i = var_i + 1
+	  }
+	  return(data)
+  }
 
 #' Create a matrix of correlations for variables of diverse types (binary, ordinal, continuous)
 #'
@@ -8589,13 +8601,13 @@ xmu_standardize_RAM <- function(model, ...) {
 		model[[nameS]]$values[,] = stdS
 		if (!is.na(nameM)){model[[nameM]]$values[,] = rep(0, length(InvSD))}
 	}, warning = function(cond) {
-	    # warning-handler-code
-        message(cond)
+		# warning-handler-code
+		message(cond)
 	}, error = function(cond) {
-	    cat("The model could not be standardized")
-        message(cond)
+		cat("The model could not be standardized")
+		message(cond)
 	}, finally = {
-	    # cleanup-code
+		# cleanup-code
 	})
 	# Return the model
 	invisible(model)
@@ -8777,7 +8789,7 @@ xmu_standardize_IP <- function(model, ...){
 		model$top$ai$values = model$top$ai_std$result # standardized ai
 		model$top$ci$values = model$top$ci_std$result # standardized ci
 		model$top$ei$values = model$top$ei_std$result # standardized ei
-	    # Standardized specific coefficients
+		# Standardized specific coefficients
 		model$top$as$values = model$top$as_std$result # standardized as
 		model$top$cs$values = model$top$cs_std$result # standardized cs
 		model$top$es$values = model$top$es_std$result # standardized es
@@ -8840,7 +8852,7 @@ xmu_standardize_CP <- function(model, ...){
 		as_std = SD %*% as; # Standardized path coefficients (nVar specific factors matrices)
 		cs_std = SD %*% cs;
 		es_std = SD %*% es;
-	    # Standardized common and specific path coefficients
+		# Standardized common and specific path coefficients
 		model$top$cp_loadings$values = std_commonLoadings # standardized cp loadings
 		model$top$as$values = as_std # standardized as
 		model$top$cs$values = cs_std # standardized cs
