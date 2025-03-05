@@ -49,10 +49,7 @@
 #' hamaker <- umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt)
 #' }
 
-umxCLPM <- function(waves, name = NULL, model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"), data = NULL, counts = NULL,summary = !umx_set_silent(silent = TRUE), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), verbose = FALSE, batteries = c("scale", "ordinaloptim"), std = FALSE, ivs = NULL, defn = NULL, defto = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),  allContinuousMethod = c("cumulants", "marginals") ) {
-
-				# check if the list is even number of items
-	if (length(setdiff(colnames(data), c(ivs,defn))) %% 2 != 0) stop("Data columns must be an even number of items")
+umxCLPM <- function(data = NULL,waves, name = NULL, model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),  counts = NULL,summary = !umx_set_silent(silent = TRUE), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), verbose = FALSE, batteries = c("scale", "ordinaloptim"), std = FALSE, ivs = NULL, defn = NULL, defto = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),  allContinuousMethod = c("cumulants", "marginals") ) {
 
 		if (!(model %in% c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"))) stop("Model must be one of Hamaker2015, Heise1969, IV_RI_CLPM, or STARTS1995")
 
@@ -111,13 +108,13 @@ umxCLPM <- function(waves, name = NULL, model = c("Hamaker2015", "Heise1969", "S
 
 		first_half <- cols_to_process[1:(length(cols_to_process)/2)]
 		if (all(sapply(data[, first_half], is.numeric))) {
-			data[, first_half] <- xmu_scale_wide_data(data[, first_half])
+			data <- umx_scale_wide_twin_data(data=data, varsToScale = gsub(".$", "", first_half),sep="", twins = 1:waves)
 			if (verbose) message("Scaling X data")
 		} 
 			 # Process second half of the columns
 	second_half <- cols_to_process[((length(cols_to_process)/2) + 1):length(cols_to_process)]
 	if (all(sapply(data[, second_half], is.numeric))) {
-	 data[, second_half] <- xmu_scale_wide_data(data[, second_half])
+	 data <- umx_scale_wide_twin_data(data=data,varsToScale = gsub(".$", "", second_half), sep="", twins = 1:waves)
 	 if (verbose) message("Scaling Y data")
  }
 }
@@ -341,8 +338,6 @@ if ("dump" %in% batteries) return(data)
 	}
 }
 
-m1 = as(m1, "MxModel") 
-
 if (!sketch) m1  = xmu_safe_run_summary(m1, autoRun = autoRun,  summary = summary, tryHard =  tryHard, std = std)
 
 	return(m1)
@@ -469,78 +464,3 @@ xmu_equate_threshold_values <-  function(model, x_cols) {
 	return(model)
 }
 
-#' Scale Wide Data Function
-#'
-#' This function scales the values in a wide format data frame and returns
-#' a scaled wide format data frame with the same structure as the original,
-#' excluding the original non-numeric values.
-#'
-#' @param data A data frame with at least two columns. The columns to be scaled
-#' should contain numeric values.
-#'
-#' @return A data frame with the same number of columns as the input data frame,
-#' containing the scaled values. The resulting column names will match
-#' the original data column names, excluding any non-numeric columns.
-#'
-#' @details 
-#' The function first checks if the input is a data frame and that it contains 
-#' at least two columns. It then adds a row identifier (`row_id`) to facilitate 
-#' reshaping. The data is reshaped to a long format, where the numeric values are 
-#' scaled using the `scale` function. After scaling, the function reshapes the data 
-#' back to wide format. The resultant scaled values replace the original values, 
-#' and any identifiers or non-numeric columns are removed.
-#'
-#' @examples
-#' # Example usage
-#' data <- data.frame(
-#'   time1 = c(2, 4, 6, 8, 10),
-#'   time2 = c(5, 7, 9, 11, 13),
-#'   time3 = c(1, 3, 5, 7, 9)
-#' )
-#' scaled_data <- xmu_scale_wide_data(data)
-#' print(scaled_data)
-#'
-#' @seealso
-#' \code{\link{scale}} for details on the scaling method used.
-#'
-#' @export
-xmu_scale_wide_data <- function(data) {
-  # Ensure data is a data frame
-  if (!is.data.frame(data)) {
-    stop("Input data must be a data frame.")
-  }
-
-  # Check if there are sufficient columns
-  if (ncol(data) < 2) {
-    stop("Input data must have at least two columns.")
-  }
-
-  # Add row ID
-  data$row_id <- seq_len(nrow(data))
-
-  # Reshape to long format
-  data_long <- stats::reshape(data, 
-                       varying = colnames(data)[-ncol(data)],  # Exclude row_id
-                       v.names = "value", 
-                       timevar = "time", 
-                       times = colnames(data)[-ncol(data)],  # Exclude row_id
-                       direction = "long")
-
-  # Scale the values
-  data_long$scaled_value <- scale(data_long$value)
-
-  # Reshape back to wide format
-  data_wide <- stats::reshape(data_long, 
-                       idvar = "row_id", 
-                       timevar = "time", 
-                       v.names = "scaled_value", 
-                       direction = "wide")
-
-  # Remove the row ID
-  data_wide$row_id <- NULL
-  data_wide$value <- NULL
-  data_wide$id <- NULL
-  names(data_wide) <- colnames(data)[-ncol(data)]
-
-  return(data_wide)
-}
