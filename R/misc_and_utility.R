@@ -8014,6 +8014,8 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 #' @param data A [data.frame()] to convert
 #' @param vars The variables to process
 #' @param suffixes Suffixes if the data are family (wide, more than one persona on a row)
+#' @param censp Optional censoring point 
+#' @param type Either "low" or "high" (default = "low"). Low for left-censored, high for right-censored.
 #' @return - copy of the dataframe with new binary variables and censoring
 #' @export
 #' @family xmu internal not for end user
