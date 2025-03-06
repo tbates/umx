@@ -5,21 +5,30 @@
 \title{Extends Mendelian randomization with the twin design to test evidence of causality}
 \usage{
 umxMRDoC(
+  data = NULL,
   pheno,
-  prss,
+  prss = NULL,
   mzData = NULL,
   dzData = NULL,
-  data = NULL,
-  zyg = NULL,
+  sibsData = NULL,
+  zygosity = "zygosity",
   sep = "_T",
   summary = !umx_set_silent(silent = TRUE),
   name = NULL,
   autoRun = getOption("umx_auto_run"),
+  sibs = FALSE,
+  type = "FIML",
   tryHard = c("no", "yes", "ordinal", "search"),
-  optimizer = NULL
+  optimizer = NULL,
+  covar = NULL,
+  batteries = c("scale"),
+  method = "Mehta",
+  verbose = FALSE
 )
 }
 \arguments{
+\item{data}{= NULL If building the MZ and DZ datasets internally from a complete data set.}
+
 \item{pheno}{Phenotypes of interest, order matters ("exposure", "outcome")}
 
 \item{prss}{Polygenic score(s). If a single one is passed MRDoC is run, MRDoC2 otherwise.}
@@ -28,9 +37,9 @@ umxMRDoC(
 
 \item{dzData}{The DZ dataframe}
 
-\item{data}{= NULL If building the MZ and DZ datasets internally from a complete data set.}
+\item{sibsData}{The unrelated sibs dataframe, requires "sibs" as an extra zygosity level.}
 
-\item{zyg}{= "zygosity" (for the data= method of using this function)}
+\item{zygosity}{= "zygosity" (for the data= method of using this function)}
 
 \item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
 
@@ -40,9 +49,19 @@ umxMRDoC(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
+\item{type}{Basic switch for estimation type. WLS tends to work really well in MRDoC, it saves you time.}
+
 \item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
+
+\item{covar}{= Covariates that will be regressed on X and Y phenotypes.}
+
+\item{batteries}{Batteries included, currently scales continuos variables by default, "dump" will return data for inspection. Use NULL for disabling all.}
+
+\item{method}{Method for handling ordinal variables, defaults to Mehta.}
+
+\item{verbose}{Outputs the pre-processing steps/warnings.}
 }
 \value{
 \itemize{
@@ -74,7 +93,7 @@ dzData  = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 # = 2. Make a MRDoC2 model   =
 # ============================
 out = umxMRDoC(mzData = mzData, dzData = dzData,  
-pheno = c("varA1", "varA2"), prss = c("varB1", "varA3") )
+pheno = c("varA1", "varA2"), prss = c("varB1", "varB2") )
 }
 }
 \references{

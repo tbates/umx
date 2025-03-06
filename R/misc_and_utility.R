@@ -215,7 +215,7 @@ libs <- function(... , force.update = FALSE) {
 			}
 			library(pack, character.only = TRUE)
 		}, warning = function(warn) {
-			cat("polite note: ", warn$message)
+            cat("polite note: ", warn$message)
 		}, error = function(err) {
 			cat(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you"))
 			install.packages(pack)

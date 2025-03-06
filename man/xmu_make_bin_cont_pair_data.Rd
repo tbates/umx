@@ -4,7 +4,13 @@
 \alias{xmu_make_bin_cont_pair_data}
 \title{Make pairs of  bin & continuous columns to represent censored data}
 \usage{
-xmu_make_bin_cont_pair_data(data, vars = NULL, suffixes = NULL)
+xmu_make_bin_cont_pair_data(
+  data,
+  vars = NULL,
+  suffixes = NULL,
+  censp = NULL,
+  type = "low"
+)
 }
 \arguments{
 \item{data}{A [data.frame()] to convert}
@@ -12,15 +18,19 @@ xmu_make_bin_cont_pair_data(data, vars = NULL, suffixes = NULL)
 \item{vars}{The variables to process}
 
 \item{suffixes}{Suffixes if the data are family (wide, more than one persona on a row)}
+
+\item{censp}{Optional censoring point}
+
+\item{type}{Either "low" or "high" (default = "low"). Low for left-censored, high for right-censored.}
 }
 \value{
 - copy of the dataframe with new binary variables and censoring
 }
 \description{
-Takes a dataframe of left-censored variables (vars with a floor effect) and does two things to it:
+Takes a dataframe of right or left-censored variables (vars with a floor/ceiling effect) and does two things to it:
 1. It creates new binary (1/0) copies of each column (with the suffix "bin"). These contain 0 where
-   the variable is below the minimum and NA otherwise.
-2. In each existing variable, it sets all instances of min for that var to NA
+   the variable is below the minimum and NA otherwise. The second variable receives a suffix "cont".
+2. By default, in each existing variable, it sets all instances of min for that var to NA
 }
 \examples{
 df = xmu_make_bin_cont_pair_data(mtcars, vars = c("mpg"))

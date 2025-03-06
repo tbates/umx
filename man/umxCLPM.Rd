@@ -5,10 +5,10 @@
 \title{Runs cross-lagged panel models}
 \usage{
 umxCLPM(
+  data = NULL,
   waves,
   name = NULL,
   model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),
-  data = NULL,
   counts = NULL,
   summary = !umx_set_silent(silent = TRUE),
   autoRun = getOption("umx_auto_run"),
@@ -24,13 +24,13 @@ umxCLPM(
 )
 }
 \arguments{
+\item{data}{Data frame for the analysis.}
+
 \item{waves}{Number of waves of data.}
 
 \item{name}{The name of the model (defaults to "Heise1969", "Hamaker2015", "STARTS1995" or "IV_RI_CLPM").}
 
 \item{model}{Model type ("Hamaker2015", "Heise1969", "STARTS1995", or "IV_RI_CLPM").}
-
-\item{data}{Data frame for the analysis.}
 
 \item{counts}{Optional vector of count data columns.}
 
