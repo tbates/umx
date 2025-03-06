@@ -104,6 +104,7 @@ Other xmu internal not for end user:
 \code{\link{xmu_twin_add_WeightMatrices}()},
 \code{\link{xmu_twin_check}()},
 \code{\link{xmu_twin_get_var_names}()},
-\code{\link{xmu_twin_upgrade_selDvs2SelVars}()}
+\code{\link{xmu_twin_upgrade_selDvs2SelVars}()},
+\code{\link{xmu_update_covar}()}
 }
 \concept{xmu internal not for end user}
