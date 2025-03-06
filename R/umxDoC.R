@@ -655,7 +655,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message(paste("Output for Model: ", thisFit$name))
-			umxSummaryDoC(thisFit, digits = digits, file = file, returnStd = returnStd, showRg = showRg, comparison = comparison, std = std, CIs = CIs)
+			umxSummaryDoC(thisFit, digits = digits, comparison = comparison, file = file, returnStd = returnStd, showRg = showRg, report = report, comparison = comparison, std = std, CIs = CIs)
 		}
 	} else {
 		umx_check_model(model, "MxModelDoC", beenRun = TRUE, callingFn = "umxSummaryDoC")
@@ -676,23 +676,21 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 			# model = xmu_standardize_Doc(model) # Make a standardized copy of model
 		}
 
-		# Chol= umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE, auto=F); Chol = mxRun(Chol)
-
 		means = model$top$Means$values
 		colnames(means) = selDVs[1:nVar]
-		umx_print(means)
 		message("Table: Means")
+		umx_print(means)
 		
 		betaNames  = as.vector(model$top$beta$labels)
 		betaValues = as.vector(model$top$beta$values)
-		umx_print(data.frame(beta = betaNames, value = betaValues))
 		message("Table: Causal paths")
+		umx_print(data.frame(beta = betaNames, value = betaValues))
 
 		ptable = summary(model)$parameters
-		umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 		message("Table: Parameter list")
+		umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 
-		return()
+		return("I returned from line 693, which is where implementation of umxSummary for DoC models is up to :-)")
 		# model$top$beta$labels[model$top$beta$free]
 		# umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 

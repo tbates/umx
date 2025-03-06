@@ -202,7 +202,7 @@ DZ = mxModel(DZ ,dCov1, dCov2)
     model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c("MZ", "DZ")))
     model = omxAssignFirstParameters(model)
     if (missing(covar)) model = mxAutoStart(model)
-    #model = as(model, "MxModelDoC")
+    model = as(model, "MxModelDoC")
     model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE, summary = FALSE)
     return(model)
   }
