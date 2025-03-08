@@ -93,11 +93,10 @@ umxDoC2 <- function (name = "DoC", var1Indicators, var2Indicators,covar=NULL, mz
     ## Manifest mean = (Lambda * ( (I-B)~ * mu ))'  
 
 if (colTypes$nOrdVars > 0){
-        ty = umxThresholdMatrix( rbind(mzdata), fullVarNames = colTypes$factorVarNames, #,dzdata
-                            sep = "_T", method="Mehta")
+        ty = umxThresholdMatrix(rbind(mzData), fullVarNames = colTypes$factorVarNames, sep = "_T", method="Mehta")
         ordinalPresent = TRUE
 
- objMZ       <- mxExpectationNormal( covariance="expCovMZ", means="expMean", dimnames=selVars ,
+ objMZ <- mxExpectationNormal( covariance="expCovMZ", means="expMean", dimnames=selVars ,
       thresholds="top.threshMat",
        threshnames = colTypes$factorVarNames)
 
