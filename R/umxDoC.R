@@ -655,7 +655,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message(paste("Output for Model: ", thisFit$name))
-			umxSummaryDoC(thisFit, digits = digits, comparison = comparison, file = file, returnStd = returnStd, showRg = showRg, report = report, comparison = comparison, std = std, CIs = CIs)
+			umxSummaryDoC(thisFit, digits = digits, comparison = comparison, file = file, returnStd = returnStd, showRg = showRg, report = report, std = std, CIs = CIs)
 		}
 	} else {
 		umx_check_model(model, "MxModelDoC", beenRun = TRUE, callingFn = "umxSummaryDoC")
