@@ -102,6 +102,31 @@
 #' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
 
 utils::globalVariables(c(
+	## from Doc 
+	"top.ManMean",
+	'top.bCov',
+	 'top.meanT1',
+	 'top.meanT2MZ',
+	 'top.meanT2DZ',
+	 'top.meanT2sib',
+	'psi_a',
+	'psi_c',
+	'psi_e',
+	'unitM',
+	'Mean',
+	'FacMean',
+	 'B',
+	 'lamba',
+	 'solvBE',
+	 'psi_a',
+	 'psi_c',
+	 'psi_e',
+	 'filter',
+	 'Ts_',
+	 'K',
+	 'CovMZ_',
+	
+	## from main umx files
 	"xFamMean", "Bwithin",
 	"xDiff",
 	"yDiff",

@@ -118,10 +118,10 @@ if (colTypes$nOrdVars > 0){
     dCov2 <- mxMatrix( type = "Full", nrow = nCov, ncol = 1, free = FALSE,
                       labels = paste("data.", paste(c(rep(covar)), c(2), sep = "_T"), sep = ""),
                       name = "dCov2" )
-    expMean<-mxAlgebra(name = "expMean", cbind(  top.ManMean +t(top.bCov%*%dCov1),
+    expMean<-mxAlgebra(name = "expMean", cbind(top.ManMean +t(top.bCov%*%dCov1),
                                                top.ManMean +t(top.bCov%*%dCov2)))
   } else {
-    expMean  	<- mxAlgebra( expression= cbind(top.ManMean,top.ManMean), name="expMean" ) 
+    expMean <- mxAlgebra( expression= cbind(top.ManMean,top.ManMean), name="expMean" ) 
   } 
 
 
