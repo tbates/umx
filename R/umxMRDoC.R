@@ -463,7 +463,7 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 							),
 						),
 					umxMatrix("lamba", type = "Diag", nrow = 4, ncol = 4,
-						free = c(F, F, T, T), labels = c("σ1", "σ2", "σ3", "σ4"),
+						free = c(FALSE, FALSE, TRUE, TRUE), labels = c("o1", "o2", "o3", "o4"),
 						values = c(1, 1, 1, 1)
 						),
 					mxAlgebra('solvBE'  , expression =  solve(I - B) ),
