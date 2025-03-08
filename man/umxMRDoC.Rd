@@ -100,7 +100,7 @@ pheno = c("varA1", "varA2"), prss = c("varB1", "varB2") )
 }
 \references{
 \itemize{
-\item Minica CC, Dolan CV, Boomsma DI, et al. (2018) Extending Causality Tests with Genetic Instruments: An Integration of Mendelian Randomization with the Classical Twin Design. Behavior Genetics 48(4): 337–349. \doi{10.1007/s10519-018-9904-4}
+\item Minica CC, Dolan CV, Boomsma DI, et al. (2018) Extending Causality Tests with Genetic Instruments: An Integration of Mendelian Randomization with the Classical Twin Design. Behavior Genetics 48(4): 337-349. \doi{10.1007/s10519-018-9904-4}
 }
 \itemize{
 \item McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. \emph{Perspectives on Psychological Science}, \strong{5}, 546-556. \doi{10.1177/1745691610383511}

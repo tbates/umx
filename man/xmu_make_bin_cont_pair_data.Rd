@@ -41,7 +41,7 @@ df[order(df$mpgcont), c("mpgcont","mpgbin")]
 tmp = mtcars; tmp$mpg[tmp$mpg<=15]=15
 tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
 df = xmu_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
-df[order(df$mpgcont_T1), 13:16]
+df[order(df$mpgcont_T1), c("mpgcont_T2", "mpgcont_T1", "mpgbin_T1", "mpgbin_T2")]
 }
 \seealso{
 Other xmu internal not for end user: 

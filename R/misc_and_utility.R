@@ -8028,7 +8028,7 @@ umx_read_lower <- function(file= "", diag= TRUE, names= NULL, ensurePD= FALSE){
 #' tmp = mtcars; tmp$mpg[tmp$mpg<=15]=15
 #' tmp$mpg_T1 = tmp$mpg_T2 = tmp$mpg
 #' df = xmu_make_bin_cont_pair_data(tmp, vars = c("mpg"), suffixes = c("_T1", "_T2"))
-#' df[order(df$mpgcont_T1), 13:16]
+#' df[order(df$mpgcont_T1), c("mpgcont_T2", "mpgcont_T1", "mpgbin_T1", "mpgbin_T2")]
 xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes = NULL, censp = NULL, type = "low") {
 	  if (!is.null(suffixes)) {
 		  umx_check(length(suffixes) < 3, "stop", "suffixes must have length == 2")
