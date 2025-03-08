@@ -11,12 +11,12 @@
 #' @export
 #' @family xmu internal not for end user
 #' @examples
-#' data(docData) 
-#' df = docData
-#' Add some missing data 
-#' df$varA1_T1[1:5] <- NA
-#' df <- xmu_update_covar(df, covar = "varA1", pheno = "varB1")
-#' head(df)
+#' # data(docData) 
+#' # df = docData
+#' # Add some missing data 
+#' # df$varA1_T1[1:5] <- NA
+#' # df <- xmu_update_covar(df, covar = "varA1", pheno = "varB1")
+#' # head(df)
 xmu_update_covar <- function(data, covar, pheno, sep = "_T") {
   if (!is.null(covar)) {
 	for (cov in covar) {
