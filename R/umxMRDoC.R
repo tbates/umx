@@ -11,23 +11,25 @@
 #'
 #' This function applies both the MRDoC model and the MRDoC2 model depending on how many PRSs are passed as arguments.
 #' 
-#' @param name The name of the model (defaults to either "MRDoC" or "MRDoC2).
+#' @param data = NULL If building the MZ and DZ datasets internally from a complete data set.
 #' @param pheno Phenotypes of interest, order matters ("exposure", "outcome")
 #' @param prss Polygenic score(s). If a single one is passed MRDoC is run, MRDoC2 otherwise. 
-#' @param dzData The DZ dataframe
 #' @param mzData The MZ dataframe
+
+#' @param dzData The DZ dataframe
+#' @param name The name of the model (defaults to either "MRDoC" or "MRDoC2).
 #' @param sibsData The unrelated sibs dataframe, requires "sibs" as an extra zygosity level.
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search".
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param summary Optionally show a summary.
-#' @param data = NULL If building the MZ and DZ datasets internally from a complete data set.
-#' @param zygosity = "zygosity" (for the data= method of using this function)
+#' @param zygosity = "zygosity" (for the data= method of using this function).
 #' @param covar = Covariates that will be regressed on X and Y phenotypes.
 #' @param method Method for handling ordinal variables, defaults to Mehta.
 #' @param verbose Outputs the pre-processing steps/warnings.
-#' @param batteries Batteries included, currently scales continuos variables by default, "dump" will return data for inspection. Use NULL for disabling all.
+#' @param batteries Batteries included, currently scales continuous variables by default, "dump" will return data for inspection. Use NULL for disabling all.
+#' @param sibs NEEDS DOCUMENTING (FALSE)
 #' @param type Basic switch for estimation type. WLS tends to work really well in MRDoC, it saves you time. 
 #' @return - [OpenMx::mxModel()] of subclass MxModelMRDoC
 #' @export
@@ -53,11 +55,7 @@
 #' out = umxMRDoC(mzData = mzData, dzData = dzData,  
 #'	pheno = c("varA1", "varA2"), prss = c("varB1", "varB2") )
 #'}
-umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NULL, sibsData = NULL,  zygosity = "zygosity",
-	sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL,
-	autoRun = getOption("umx_auto_run"), sibs = FALSE, type = "FIML",
-	tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL,  covar = NULL, batteries = c("scale"),
-	method = "Mehta", verbose = FALSE) {
+umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NULL, sibsData = NULL,  zygosity = "zygosity", sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), sibs = FALSE, type = "FIML", tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL,  covar = NULL, batteries = c("scale"), method = "Mehta", verbose = FALSE) {
 
 	#umx_set_silent(silent = TRUE)
 	tryHard = match.arg(tryHard)

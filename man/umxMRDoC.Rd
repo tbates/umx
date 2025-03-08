@@ -39,7 +39,7 @@ umxMRDoC(
 
 \item{sibsData}{The unrelated sibs dataframe, requires "sibs" as an extra zygosity level.}
 
-\item{zygosity}{= "zygosity" (for the data= method of using this function)}
+\item{zygosity}{= "zygosity" (for the data= method of using this function).}
 
 \item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
 
@@ -49,15 +49,17 @@ umxMRDoC(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
+\item{sibs}{NEEDS DOCUMENTING (FALSE)}
+
 \item{type}{Basic switch for estimation type. WLS tends to work really well in MRDoC, it saves you time.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search".}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
 \item{covar}{= Covariates that will be regressed on X and Y phenotypes.}
 
-\item{batteries}{Batteries included, currently scales continuos variables by default, "dump" will return data for inspection. Use NULL for disabling all.}
+\item{batteries}{Batteries included, currently scales continuous variables by default, "dump" will return data for inspection. Use NULL for disabling all.}
 
 \item{method}{Method for handling ordinal variables, defaults to Mehta.}
 
