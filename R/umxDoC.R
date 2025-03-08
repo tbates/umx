@@ -211,8 +211,8 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 	# obj = lme(IQ ~ deltaX   , random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
 
 	# Begg & Parides (2008) Model #3 
-	# h(E[Yij|Xij;X􏰄i)=􏰀2 +􏰁2Xij +􏰂2X􏰄i
-	# X&‌#772;
+	# h(E[Yij|Xij;X.i)=.2 +.2Xij +.2X.i
+	# X&772;
 	
 	obj = lme(IQ ~ SOSeffort           , random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
 	obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
@@ -290,7 +290,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDiscTwin()]
-#' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496–499. Eds. Brian S. Everitt & David C. Howell.
+#' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496-499. Eds. Brian S. Everitt & David C. Howell.
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' * Rasmussen, S. H. R., Ludeke, S., & Hjelmborg, J. V. B. (2019). A major limitation of the direction of causation model: non-shared environmental confounding. *Twin Res Hum Genet*, **22**, 1-13. \doi{10.1017/thg.2018.67}
 #' @md
@@ -515,12 +515,12 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' }
 umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
 	message("beta code")
-	# 1. ✓ draw latents
-	# 2. ✓ draw manifests,
-	# 3. ✓ draw ace to latents
-	# 4. ✓ draw specifics to manifests (? or omit?)
-	# 5. ✓ connect latents to manifests using free elements of columns of FacLoad
-	# 6. add causal paths between latents
+	# 1. draw latents
+	# 2. draw manifests,
+	# 3. draw ace to latents
+	# 4. draw specifics to manifests (? or omit?)
+	# 5. connect latents to manifests using free elements of columns of FacLoad
+	# 6. x add causal paths between latents
 
 	format = match.arg(format)
 	model = x # just to emphasise that x has to be a model 
