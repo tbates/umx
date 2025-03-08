@@ -35,7 +35,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()]
-#' @references - Minica CC, Dolan CV, Boomsma DI, et al. (2018) Extending Causality Tests with Genetic Instruments: An Integration of Mendelian Randomization with the Classical Twin Design. Behavior Genetics 48(4): 337–349. \doi{10.1007/s10519-018-9904-4}
+#' @references - Minica CC, Dolan CV, Boomsma DI, et al. (2018) Extending Causality Tests with Genetic Instruments: An Integration of Mendelian Randomization with the Classical Twin Design. Behavior Genetics 48(4): 337-349. \doi{10.1007/s10519-018-9904-4}
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' * Castro-de-Araujo LFS, Singh M, Zhou Y, et al. (2022) MR-DoC2: Bidirectional Causal Modeling with Instrumental Variables and Data from Relatives. Behavior Genetics. \doi{10.1007/s10519-022-10122-x}
 #' @md
@@ -197,7 +197,7 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 					),
 			umxMatrix("lamba",
 				type = "Diag", nrow = 3, ncol = 3, byrow = TRUE,
-				free = c(F, F, T), labels = c("σ1", "σ2", "σ3"),
+				free = c(FALSE, FALSE, TRUE), labels = c("σ1", "σ2", "σ3"),
 				values = c(1, 1, 1)
 				),
 			mxAlgebra('solvBE'  , expression =  solve(I - B) ),
