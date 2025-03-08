@@ -67,7 +67,7 @@ umxDoC2 <- function (name = "DoC", var1Indicators, var2Indicators,covar=NULL, mz
                    nSib = nSib, optimizer = optimizer)
 
 
-    ## Λ FacLoad - factor loadings from the latent true scores or common pathways to the observed variables
+    # Lambda FacLoad - factor loadings from the latent true scores or common pathways to the observed variables
     FacLoad     <- umxMatrix("FacLoad",type="Full", nrow=nVar, ncol=nLat)
     FacLoad$free[1:nLat1, 1] = TRUE
     FacLoad$values[1:nLat1, 1] = 1
@@ -76,21 +76,21 @@ umxDoC2 <- function (name = "DoC", var1Indicators, var2Indicators,covar=NULL, mz
     FacLoad$lbound[1:nLat1, 1] = .00001 
     FacLoad$lbound[(nLat1 + 1):(nLat1 + nLat2), 2] = .00001
 
-    ## ϵ epsilon - measurement error/residuals or transient variance in each observed/manifest item/variable (not explained by the latent true scores)
+    ## epsilon - measurement error/residuals or transient variance in each observed/manifest item/variable (not explained by the latent true scores)
     ## Expected covariance for mutiple indicator DOC model
-    ## Λ * (I-Β)~ * Ψ * (I-Β)~' * Λ' + ϵ
-    ## Λ = FacLoad - factor loadings
+    ## Lambda * (I-B)~ * Psi * (I-B)~' * Lambda' + epsilon
+    ## Lambda = FacLoad - factor loadings
     ## I = Identity matrix
-    ## Β = causal parameters
-    ## ϵ = epsilon - measurement error/residuals
+    ## B = causal parameters
+    ## epsilon = epsilon - measurement error/residuals
 
     ## Standardized variance Components
     rowVC      <- rep('VC', nVar)
     colVC      <- rep(c('A','C','E','SA','SC','SE'),each=nVar)
     ## Latent true score means for autoregression component
-    ## Mean matrix = μ
-    ## Factor mean = ((I-Β)~ * μ)'   Adjusts each mean for contribution from causal pathway
-    ## Manifest mean = (Λ * ( (I-Β)~ * μ ))'  
+    ## Mean matrix = mu
+    ## Factor mean = ((I-B)~ * mu)'   Adjusts each mean for contribution from causal pathway
+    ## Manifest mean = (Lambda * ( (I-B)~ * mu ))'  
 
 if (colTypes$nOrdVars > 0){
         ty = umxThresholdMatrix( rbind(mzdata), fullVarNames = colTypes$factorVarNames, #,dzdata
