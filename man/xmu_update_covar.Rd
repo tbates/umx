@@ -24,12 +24,12 @@ twin phenotype to NA. This avoids removing rows with missing data in the covaria
 affect the estimation.
 }
 \examples{
-data(docData) 
-df = docData
-Add some missing data 
-df$varA1_T1[1:5] <- NA
-df <- xmu_update_covar(df, covar = "varA1", pheno = "varB1")
-head(df)
+# data(docData) 
+# df = docData
+# Add some missing data 
+# df$varA1_T1[1:5] <- NA
+# df <- xmu_update_covar(df, covar = "varA1", pheno = "varB1")
+# head(df)
 }
 \seealso{
 Other xmu internal not for end user: 
