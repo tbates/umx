@@ -47,12 +47,9 @@ Imports:
 	hrbrthemes,
 	openxlsx,
 	paran,
-	psych,
-	foreign,
-	psychTools,
-	pwr,
-	rmarkdown
+	psych
 Suggests:
+	rmarkdown,
 	cocor,
 	devtools,
 	rhub,
