@@ -100,7 +100,7 @@ umxPower(m1, "X_with_Y", explore = TRUE)
 umxPower(m1, "X_with_Y", n = 90, method = "empirical")
 # power is .823
 # Test using pwr library r.test doing the same thing.
-pwr.r.test(r = .3, n = 90)
+pwr::pwr.r.test(r = .3, n = 90)
 #           n = 90
 #           r = 0.3
 #   sig.level = 0.05

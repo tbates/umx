@@ -1,5 +1,6 @@
 ## Changes
-New features and miscellaneous help and improvements.
+Turned off tests for CRAN
+New features, miscellaneous help, improvements.
 
 ## Test environments
 * MacOS 15.4, R version 4.4.3
