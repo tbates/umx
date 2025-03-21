@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxPlotPredict}
 \alias{umxPlotPredict}
-\title{\code{umxPlotPredict} takes a model and plots the y value against predicted(y)}
+\title{\code{umxPlotPredict} Take a model and plot the y against predicted(y)}
 \usage{
 umxPlotPredict(
   model,
@@ -11,6 +11,7 @@ umxPlotPredict(
   r2x = 1.5,
   r2y = 4.5,
   font_size = 13,
+  rsq = FALSE,
   font = "Times"
 )
 }
@@ -27,6 +28,8 @@ umxPlotPredict(
 
 \item{font_size}{Default 13}
 
+\item{rsq}{R^2 or r (defaults to FALSE = r)}
+
 \item{font}{Default "Times"}
 }
 \value{
@@ -35,7 +38,7 @@ umxPlotPredict(
 }
 }
 \description{
-\code{umxPlotPredict} takes a model and plots the y value against predicted(y)
+\code{umxPlotPredict} is a function which
 }
 \examples{
 data(mtcars)
