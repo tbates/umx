@@ -205,8 +205,17 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 #' remove.packages()
 #' }
 libs <- function(... , force.update = FALSE) {
-	dot.items = list(...) # grab all the dot items
-	dot.items = unlist(dot.items) # In case any dot items are lists
+	# Capture the unevaluated arguments as a list of symbols
+	lib_names <- rlang::ensyms(...)
+
+	# Convert symbols to character strings
+	lib_names <- sapply(lib_names, as.character)
+
+	# Load the libraries
+	# lapply(lib_names, library, character.only = TRUE)
+
+	# dot.items = list(...) # grab all the dot items
+	# dot.items = unlist(dot.items) # In case any dot items are lists
 	
 	for (pack in dot.items) {
 		result = tryCatch({
