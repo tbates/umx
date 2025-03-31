@@ -48,6 +48,43 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 	invisible(marketCap)
 }
 
+#' Compute the net present value of a future income stream
+#'
+#' @description
+#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
+#' Better to use a more powerful online site.
+#'
+#' @details
+#' Revenue stream is discounted back to a present day cash amount which is equivalent.
+#' 
+#' @param cashflow Value of expected recurring payment
+#' @param discount Percent return to discount against (.05 = 5%)
+#' @param periods How many periods the stream delivers, e.g., (90-65) for 25 of a pension.
+#' @param PE of the company
+#' @param symbol Currency
+#' @param use reporting values in "B" (billion) or "M" (millions)
+#' @return - value
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @md
+#' @examples
+#' fin_net_present_value(27e3, .05, 25)
+#'
+fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, symbol = NULL) {
+	if(is.null(symbol)){symbol = umx_set_dollar_symbol(silent=TRUE)}
+	
+	cashflows   = rep(income, periods)
+	timePeriods = seq(1, periods)
+	discount_factors = 1/(1+discount_rate)^timePeriods
+	present_values = cashflows*discount_factors
+	pv = sum(present_values)
+	cat("\nBased on a discount rate of ", discount_rate*100, "%, an income of ", bucks(income, symbol, cat=TRUE), " for ", periods, " years, has a net present value of \n", sep="")
+	cat("\n", bucks(pv, symbol))
+
+	invisible(pv)
+}
+
 #' Compute the future value and gain of an investment
 #'
 #' @description
