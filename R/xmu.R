@@ -16,6 +16,36 @@
 # = FNS NOT USED DIRECTLY BY USERS SUBJECT TO ARBITRARY CHANGE AND DEPRECATION !!  =
 # ==================================================================================
 
+#' Data helper function to swap blocks of data from one set of columns to another.
+#'
+#' Swap a block of rows of a dataset between two sets of variables (typically twin 1 and twin 2)
+#'
+#' @param theData A data frame to swap within.
+#' @param rowSelector Rows to swap between first and second set of columns.
+#' @param T1Names The first set of columns.
+#' @param T2Names The second set of columns.
+#' @return - dataframe
+#' @family xmu internal not for end user
+#' @export
+#' @seealso - [subset()]
+#' @md
+#' @examples
+#' test = data.frame(
+#' a = paste0("a", 1:10),
+#' b = paste0("b", 1:10),
+#' c = paste0("c", 1:10),
+#' d = paste0("d", 1:10), stringsAsFactors = FALSE)
+#' xmu_data_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
+#' xmu_data_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
+#'
+xmu_data_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
+	theRows = theData[rowSelector,]
+	old_BlockTwo = theRows[,T2Names]
+	theRows[,T1Names] -> theRows[, T2Names]
+	theRows[,T1Names] = old_BlockTwo
+	theData[rowSelector,] = theRows
+	return(theData)
+}
 
 #' Convert a dataframe into a cov mxData object
 #'
@@ -2053,6 +2083,283 @@ xmuMakeOneHeadedPathsFromPathList <- function(sourceList, destinationList) {
 # ====================
 # = GRAPHVIZ HELPERS =
 # ====================
+
+#' Helper to make the list of vars and their shapes for a graphviz string
+#'
+#' @description
+#' Helper to make a graphviz rank string defining the latent, manifest, and means and their shapes
+#'
+#' @param latents list of latent variables (including "one")
+#' @param manifests list of manifest variables
+#' @param preOut existing output string (pasted in front of this: "" by default).
+#' @return string
+#' @export
+#' @family Graphviz
+#' @seealso - [xmu_dot_rank()]
+#' @examples
+#' xmu_dot_define_shapes(c("as1"), c("E", "N"))
+xmu_dot_define_shapes <- function(latents, manifests, preOut= "") {
+	latents   = unique(latents)
+	manifests = unique(manifests)
+	preOut    = paste0(preOut, "\n# Latents\n")
+	for(var in latents) {
+		if(var == "one"){
+			preOut = paste0(preOut, "\t", var, " [shape = triangle];\n")
+		} else {
+			preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		}
+	}
+	preOut = paste0(preOut, "\n# Manifests\n")
+	for(thisManifest in manifests) {
+	   preOut = paste0(preOut, "\t", thisManifest, " [shape = square];\n")
+	}
+	return(preOut)
+}
+
+#' Helper to make a graphviz rank string
+#'
+#' Given a list of names, this filters the list, and returns a graphviz string to force them into the given rank.
+#' e.g. `"{rank=same; as1};"`
+#'
+#' @param vars a list of strings
+#' @param pattern regular expression to filter vars
+#' @param rank "same", "max", "min"
+#' @return string
+#' @export
+#' @family Graphviz
+#' @seealso - [xmu_dot_define_shapes()]
+#' @md
+#' @examples
+#' xmu_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
+xmu_dot_rank <- function(vars, pattern, rank) {
+	formatted = paste(namez(vars, pattern), collapse = "; ")
+	ranks = paste0("{rank=", rank, "; ", formatted, "};\n")
+	return(ranks)
+}
+
+#' Return dot code for paths in a matrix
+#'
+#' @description
+#' Return dot code for paths in a matrix is a function which walks the rows and cols of a matrix.
+#' At each free cell, it creates a dot-string specifying the relevant path, e.g.:
+#'
+#' \code{ai1 -> var1 [label=".35"]}
+#'
+#' Its main use is to correctly generate paths (and their sources and sink objects) 
+#' without depending on the label of the parameter.
+#' 
+#' It is highly customizable:
+#' 
+#' 1. You can specify which cells to inspect, e.g. "lower".
+#' 2. You can choose how to interpret path direction, from = "cols".
+#' 3. You can choose the label for the from to ends of the path (by default, the matrix name is used).
+#' 4. Offer up a list of from and toLabel which will be indexed into for source and sink
+#' 5. You can set the number of arrows on a path (e.g. both).
+#' 6. If `type` is set, then sources and sinks added manifests and/or latents output (p)
+#' 
+#' Finally, you can pass in previous output and new paths will be concatenated to these.
+#' 
+#' @param x a [umxMatrix()] to make paths from.
+#' @param from one of "rows", "columns"
+#' @param cells which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
+#' @param arrows "forward" "both" or "back"
+#' @param fromLabel = NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list. "one" is special.
+#' @param toLabel = NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list.
+#' @param showFixed = FALSE.
+#' @param digits to round values to (default = 2).
+#' @param fromType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
+#' @param toType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
+#' @param model If you want to get CIs, you can pass in the model (default = NULL).
+#' @param SEstyle If TRUE, CIs shown as "b(SE)" ("b \[l,h\]" if FALSE (default)). Ignored if model NULL.
+#' @param p input to build on. list(str = "", latents = c(), manifests = c())
+#' @return - list(str = "", latents = c(), manifests = c())
+#' @export
+#' @family Graphviz
+#' @seealso - [plot()]
+#' @md
+#' @examples
+#'
+#' # test with a 1 * 1
+#' a_cp = umxMatrix("a_cp", "Lower", 1, 1, free = TRUE, values = pi)
+#' out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "both")
+#' cat(out$str) # a_cp -> a_cp [dir = both label="2"];
+#' out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "forward",
+#' 	fromLabel = "fromMe", toLabel = "toYou", 
+#' 	fromType  = "latent", toType  = "manifest", digits = 3, SEstyle = TRUE
+#' 	)
+#' cat(out$str) # fromMe -> toYou [dir = forward label="3.142"];
+#' cat(out$latent) # fromMe
+#' cat(out$manifest) # toYou
+#' 
+#' # Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
+#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
+#'
+#' # Get dot strings for lower triangle (default from and to based on row and column number)
+#' out = xmu_dot_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
+#' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
+#'
+#' # one arrow (the default = "forward")
+#' out = xmu_dot_mat2dot(a_cp, cells = "lower", from = "cols")
+#' cat(out$str) # a_cp1 -> a_cp2 [dir = forward label="2"];
+#'
+#' # label to (rows) using var names
+#'
+#' out = xmu_dot_mat2dot(a_cp, toLabel= paste0("v", 1:3), cells = "lower", from = "cols")
+#' umx_msg(out$str) # a_cp1 -> v2 [dir = forward label="2"] ...
+#' 
+#' # First call also inits the plot struct
+#' out = xmu_dot_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
+#' out = xmu_dot_mat2dot(a_cp, from = "rows", cells = "diag", 
+#' 		toLabel= "common", toType = "manifest", p = out)
+#' umx_msg(out$str); umx_msg(out$manifests); umx_msg(out$latents)
+#' 
+#' # ================================
+#' # = Add found sinks to manifests =
+#' # ================================
+#' out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+#' 		toLabel= c('a','b','c'), toType= "manifest");
+#' umx_msg(out$manifests)
+#'
+#' # ================================
+#' # = Add found sources to latents =
+#' # ================================
+#' out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
+#' 		toLabel= c('a','b','c'), fromType= "latent");
+#' umx_msg(out$latents)
+#' 
+#' 
+#' # ========================
+#' # = Label a means matrix =
+#' # ========================
+#' 
+#' tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
+#' out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
+#' 	fromLabel= "one", toLabel= c("v1", "v2")
+#' )
+#' cat(out$str)
+#'
+#' \dontrun{
+#' # ==============================================
+#' # = Get a string which includes CI information =
+#' # ==============================================
+#' data(demoOneFactor)
+#' latents = c("g"); manifests = names(demoOneFactor)
+#' m1 = umxRAM("xmu_dot", data = demoOneFactor, type = "cov",
+#' 	umxPath(latents, to = manifests),
+#' 	umxPath(var = manifests),
+#' 	umxPath(var = latents, fixedAt = 1.0)
+#' )
+#' m1 = umxCI(m1, run= "yes")
+#' out = xmu_dot_mat2dot(m1$A, from = "cols", cells = "any", 
+#'       toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
+#' umx_msg(out$str); umx_msg(out$latents)
+#' 
+#' }
+#'
+xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
+	from   = match.arg(from)
+	cells  = match.arg(cells)
+	arrows = match.arg(arrows)
+	# Get default from and to labels if custom not set
+	if(is.null(fromLabel)){ fromLabel = x$name }
+	if(is.null(toLabel))  { toLabel   = x$name }
+
+	if(inherits(x, "MxAlgebra")){
+		# convert to a matrix
+		tmp = x$result
+		x   = umxMatrix(x$name, "Full", dim(tmp)[1], dim(tmp)[2], free = TRUE, values = tmp)
+	}
+
+	nRows = nrow(x)
+	nCols = ncol(x)
+ 
+	# Get parameter value and make the plot string
+	# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
+	# Also fails to understand not using _std?
+
+	for (r in 1:nRows) {
+		for (c in 1:nCols) {
+			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){				
+				# cell is in the target zone
+				if(!is.null(model)){
+					# Model available - look for CIs by label...
+					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
+					if(is.na(CIstr)){
+						# failed: fall back to parameter value from the matrix
+						value = umx_round(x$values[r,c], digits)
+					}else{
+						value = umx_round(CIstr, digits)
+					}
+				} else {
+					# Model note available do not look for CIs: just return parameter from matrix
+					if(is.numeric(x$values[r,c])){
+						value = umx_round(x$values[r,c], digits)
+					} else {
+						value = x$values[r,c]
+					}
+				}
+
+				if(from == "rows"){
+					sourceIndex = r; sinkIndex = c; fromWidth = nRows; toWidth = nCols
+				} else { # from cols
+					sourceIndex = c; sinkIndex = r; fromWidth = nCols; toWidth = nRows
+				}
+
+				if(length(fromLabel) == 1){
+					if(fromLabel == "one"){
+						thisFrom = "one"
+					} else if(fromWidth > 1){
+						thisFrom = paste0(fromLabel, sourceIndex)
+					}else{
+						thisFrom = fromLabel[sourceIndex]						
+					}
+				} else {
+					thisFrom = fromLabel[sourceIndex]
+				}
+
+				if(length(toLabel) == 1){
+					if(toLabel == "one"){
+						thisTo = "one"
+					} else if(toWidth > 1){
+						thisTo = paste0(toLabel, sinkIndex)
+					}else{
+						thisTo = toLabel[sinkIndex]						
+					}
+				} else {
+					thisTo = toLabel[sinkIndex]
+				}
+
+				# Show fixed cells if non-0
+				if(x$free[r,c] || (showFixed && x$values[r,c] != 0)){
+					p$str = paste0(p$str, "\n", thisFrom, " -> ", thisTo, " [dir = ", arrows, " label=\"", value, "\"];")
+					if(!is.null(fromType)){
+						if(fromType == "latent"){
+							p$latents = c(p$latents, thisFrom)
+						} else if(fromType == "manifest"){
+							p$manifests = c(p$manifests, thisFrom)
+						}else{
+							stop("not sure what to do for fromType = ", fromType, ". Legal is latent or manifest")
+						}
+					}
+					if(!is.null(toType)){
+						if(toType == "latent"){
+							p$latents   = c(p$latents, thisTo)
+						} else if(toType == "manifest"){
+							p$manifests = c(p$manifests, thisTo)
+						}else{
+							stop("not sure what to do for fromType = ", toType, ". Legal is latent or manifest")
+						}
+					}
+				}
+			} else {
+				# fixed cell
+			}
+		}
+	}
+	p$latents   = unique(p$latents)
+	p$manifests = unique(p$manifests)	
+	return(p)
+}
 
 #' Internal umx function to help plotting graphviz
 #'

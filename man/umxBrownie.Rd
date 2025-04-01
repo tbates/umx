@@ -27,6 +27,7 @@ Other Miscellaneous Functions:
 \code{\link{deg2rad}()},
 \code{\link{fin_JustifiedPE}()},
 \code{\link{fin_NI}()},
+\code{\link{fin_expected}()},
 \code{\link{fin_interest}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_ticker}()},

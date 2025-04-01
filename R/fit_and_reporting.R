@@ -90,7 +90,10 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 	# p + annotate("text", 3, 30, label = expression(R^2 == beta + 1 ~ hello), family="Optima")
 }
 
-#' `umxPlotPredict` takes a model and plots the y value against predicted(y)
+
+#' `umxPlotPredict` Take a model and plot the y against predicted(y)
+#' @description
+#' `umxPlotPredict` is a function which
 #' @param model lm or other model that understands predict()
 #' @param xlab X-axis label (default x).
 #' @param ylab Y-axis label (default y).
@@ -98,6 +101,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 #' @param r2y y location for the fit summary.
 #' @param font_size Default 13
 #' @param font Default "Times"
+#' @param rsq R^2 or r (defaults to FALSE = r) 
 #' @return - plot you can edit.
 #' @export
 #' @family Plotting functions
@@ -107,13 +111,19 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 #' data(mtcars)
 #' tmp = lm(mpg ~ wt, data = mtcars)
 #' umxPlotPredict(tmp, r2x = 2, r2y = 10)
-umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 1.5, r2y= 4.5, font_size = 13, font= "Times") {
-	r2 = paste0("r = ", round(summary(model)$adj.r.squared^.5, 2))
+umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 1.5, r2y= 4.5, font_size = 13, rsq = FALSE, font= "Times") {
+	if(rsq){
+		# lab = paste0("R\u00B2 = ", round(summary(model)$adj.r.squared, 2))
+		lab = paste0("italic(R) ^ 2 == ", round(summary(model)$adj.r.squared, 2))
+	} else {
+		lab = paste0("italic(r) == ", round(summary(model)$adj.r.squared^.5, 2))
+	}
 	y_var = model.frame(model)[, 1]	
 	p = ggplot() + geom_point(aes(x = predict(model), y = y_var))
 	p = p + geom_smooth(aes(x = predict(model), y = y_var), method = "lm", se = TRUE, color = "blue")
 	p = p + labs(x= xlab, y= ylab)
-	p = p + cowplot::draw_label(r2, x = r2x, y = r2y, fontfamily = font, size = (font_size+1))
+	p = p + annotate("text", x = r2x, y = r2y, label = lab, parse = TRUE, family = font, size = (font_size/2))
+	# p = p + cowplot::draw_label(lab, x = r2x, y = r2y, fontfamily = font, size = (font_size+1))
 	p + theme_minimal(base_size = font_size, base_family= font)	
 }
 

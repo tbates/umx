@@ -49,58 +49,6 @@
 #      I know not, but I feel it so,
 #      and it tortures me.
 
-#' Justified P/E Ratio
-#'
-#' @description
-#' Compute the Justified P/E of a stock.
-#' Justified P/E = ( (DPS / EPS) * (1 + g)) / (k – g)
-#' DPS is the dividend per share, EPS is the earnings per share,
-#' g is the sustainable growth rate, and k is the required rate of return.
-#' @param Dividend The dividend.
-#' @param EPS The Earnings per Share.
-#' @param growthRate The growth rate.
-#' @param discountRate Your chosen discount rate.
-#' @param basePE The base PE.
-#' @param yrs Years.
-#' @return - A PE that is justified for this stock.
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
-#' @md
-#' @examples
-#' # fin_JustifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
-#' 
-fin_JustifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, discountRate = .12, basePE= 20, yrs=10) {
-	paste0("Based on growth (", growthRate*100, "% expected growth for ", yrs, " years and a base P/E of ",
-	basePE, "), the justified P/E would be: ", (growthRate * yrs) + basePE )
-	
-   # ((0.4 * 2) * (1 + 0.06)) / (0.1 - 0.06)
-   # ((Dividend/EPS) * (1 + growthRate)) / (k-growthRate)
-   # Justified P/E Ratio = 16.8
-}
-
-#' Open a ticker in yahoo finance.
-#'
-#' @description
-#' Open a stock ticker, currently in yahoo finance
-#'
-#' @param ticker A stock symbol to look up, e.g., "OXY"
-#' @return - Open a ticker in a finance site online
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
-#' @md
-#' @examples
-#' # Open $INTC in yahoo finance.
-#' \dontrun{
-#' fin_ticker("INTC")
-#' }
-
-fin_ticker <- function(ticker= "INTC") {
-	url =paste0("https://finance.yahoo.com/quote/", ticker)
-	# https://www.google.com/finance/quote/SWBI:NASDAQ
-	browseURL(url, browser = getOption("browser"))
-}
 
 #' Add a fit statistic to a ggplot
 #'
@@ -2731,573 +2679,6 @@ dl_from_dropbox <- function(x, key=NULL){
 # = Stats functions =
 # ===================
 
-# =======================
-# = Financial utilities =
-# =======================
-
-#' Work the valuation of a company
-#'
-#' @description
-#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
-#' Better to use a more powerful online site.
-#'
-#' @details
-#' Revenue is multiplied by opmargin to get a gross profit. From this the proportion specified in `expenses` is subtracted 
-#' and the resulting earnings turned into a price via the `PE`
-#' 
-#' @param revenue Revenue of the company
-#' @param opmargin Margin on operating revenue
-#' @param expenses Additional fixed costs
-#' @param PE of the company
-#' @param symbol Currency
-#' @param use reporting values in "B" (billion) or "M" (millions)
-#' @return - value
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
-#' @md
-#' @examples
-#' fin_valuation(rev=7e9, opmargin=.1, PE=33)
-#' # Market cap =  $18,480,000,000
-#' # (Based on PE= 33, operating Income of $0.70 B, and net income =$0.56B
-#'
-fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, symbol = "$", use = c("B", "M")) {
-	use = match.arg(use)
-	if(use=="B"){
-		divisor=1e9
-	} else {
-		divisor=1e6
-	}
-	operatingIncome = revenue * opmargin
-	netIncome = operatingIncome *(1-expenses)
-	marketCap = netIncome*PE
-	class(marketCap) = 'money'; attr(marketCap, 'symbol') = symbol
-	class(netIncome) = 'money'; attr(netIncome, 'symbol') = symbol
-	class(operatingIncome) = 'money'; attr(operatingIncome, 'symbol') = symbol
-	
-	cat("Market cap = ", print(marketCap, cat=F))
-	cat("\n(Based on PE= ", PE, ", operating Income of ", print(operatingIncome/divisor, cat=F), " ", use, ", and net income =", print(netIncome/divisor, cat=F), use, "\n", sep = "")
-
-	invisible(marketCap)
-}
-
-#' Compute the value of a principal & annual deposits at a compound interest over a number of years
-#' @description
-#' Allows you to determine the final value of an initial `principal` (with optional 
-#' periodic `deposits`), over a number of years (`yrs`) at a given rate of `interest`.
-#' Principal and deposits are optional. You control compounding periods each year (n) and whether deposits occur at the beginning or end of the year.
-#' The function outputs a nice table of annual returns, formats the total using a user-settable currency `symbol`. Can also `report` using a web table.
-#' 
-#' *notes*: Graham valuation: fair P/E = 9 + (1.5 * growth%). e.g.  $INTEL fair P/E = 9+.5*3 = 10.5 up to  9+2*10 = 29
-#' Can move the weighting between a conservative .5 and an optimistic 2 (in terms of how long the growth will last and how low the hurdle rate is)
-#' 
-#' 
-#' @param principal The initial investment at time 0 (default 100)
-#' @param deposits Optional periodic additional investment each *year*.
-#' @param interest Annual interest rate (default .05)
-#' @param inflate How much to inflate deposits over time (default 0)
-#' @param yrs Duration of the investment (default 10).
-#' @param n Compounding intervals per year (default 12 (monthly), use 365 for daily)
-#' @param when Deposits made at the "beginning" (of each year) or "end"
-#' @param symbol Currency symbol to embed in the result.
-#' @param report "markdown" or "html", 
-#' @param table Whether to print a table of annual returns (default TRUE)
-#' @param largest_with_cents Default = 0
-#' @param baseYear Default = current year (for table row labels)
-#' @param final if set (default = NULL), returns the rate required to turn principal into final after yrs (principal defaults to 1)
-#' @return - Value of balance after yrs of investment.
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_NI()], [fin_valuation()]
-#' @references - <https://en.wikipedia.org/wiki/Compound_interest>
-#' @md
-#' @examples
-#' \dontrun{
-#' # 1. Value of a principal after yrs years at 5% return, compounding monthly.
-#' # Report in browser as a nice table of annual returns and formatted totals.
-#' fin_interest(principal = 5000, interest = 0.05, rep= "html")
-#' }
-#'
-#' # Report as a nice markdown table
-#' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
-#'
-#' umx_set_dollar_symbol("£")
-#' # 2 What rate is needed to increase principal to final value in yrs time?
-#' fin_interest(final = 1.4, yrs=5)
-#' fin_interest(principal = 50, final=200, yrs = 5)
-#'
-#' # 3. What's the value of deposits of $100/yr after 10 years at 7% return?
-#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
-#'
-#' # 4. What's the value of $20k + $100/yr over 10 years at 7% return?
-#' fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="$")
-#'
-#' # 5. What is $10,000 invested at the end of each year for 5 years at 6%?
-#' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
-#'
-#' # 6. What will $20k be worth after 10 years at 15% annually (n=1)?
-#' fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
-#' # $466,986
-#'
-#' # manual equivalent
-#' sum(20e3*(1.15^(10:1))) # 466985.5
-#'
-#' # 7. Annual (rather than monthly) compounding (n=1)
-#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
-#' 
-#' # 8 Interest needed to increase principal to final value in yrs time.
-#' fin_interest(principal = 100, final=200, yrs = 5)
-#'
-fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
-	report = match.arg(report)
-	if(is.null(symbol)){symbol = umx_set_dollar_symbol(silent=TRUE)}
-	if(principal==0){
-		caption= paste0("Compounding ", bucks(deposits, symbol, cat=TRUE), " deposits over ", yrs, " years at ", interest*100, "% interest with ", inflate*100, "% inflation.")
-	} else {
-		caption= paste0("Compounding ", bucks(principal, symbol, cat=TRUE), " principle plus ", bucks(deposits, symbol, cat=TRUE), " annual deposits, ", interest * 100, "% interest and ", inflate*100, "% inflation.")
-	}
-
-	if(inflate != 0){
-		deposits = c(deposits, rep(deposits, times = yrs-1) *(1+inflate)^c(1:(yrs-1)))
-	}else{
-		deposits = rep(deposits, times = yrs)
-	}
-	if(!is.null(final)){
-		# final = prin*(1+rate)^y
-		if(principal==0){ principal=1 }
-		return((final/principal)^(1/(yrs+1))-1)
-		# rate is the years root of (final *prin?)
-	}
-
-	# 1. compute compounding rate per unit time n (allowing for zero interest so 1.0)
-	rate = ifelse(interest==0, 1, 1+(interest/n))
-
-	tableOut = data.frame(Year = NA, Deposits = NA, Interest = NA, Total_Deposits = NA, Total_Interest = NA, Total = scales::dollar(principal, prefix = symbol, largest_with_cents = 0))
-	balance  = principal
-	totalDeposits = 0
-	totalInterest = 0
-	for (yr in 1:yrs) {
-		# 1. Compute compounding rate per unit time n (allowing for zero interest so 1.0)
-		if(when == "beginning"){
-			# Deposits at the beginning of each year
-			thisInterest = ((balance + deposits[yr]) * rate^n) - (balance + deposits[yr])
-		} else {
-			# Deposits at the end of the year
-			thisInterest = (balance * rate^n) - balance
-		}
-		totalDeposits = (totalDeposits + deposits[yr])
-		totalInterest = (totalInterest + thisInterest)
-		balance       = (balance + deposits[yr] + thisInterest)
-		thisRow = c(Year=yr+baseYear, Deposit= deposits[yr], Interest = thisInterest, Total_Deposit = totalDeposits, Total_Interest = totalInterest, Total = balance)
-		thisRow = c(thisRow[1], scales::dollar(thisRow[-1], prefix = symbol, largest_with_cents = largest_with_cents))
-		tableOut = rbind(tableOut, thisRow)
-	}
-	if(table){
-		# principal = 0, deposits = 0, inflate = 0, interest = 0.05, yrs
-		umx_print(tableOut, justify = "right", caption = caption, report=report)
-	}
-
-	if(length(deposits)==1){
-		# 2. compute compounded value of the principal (initial deposit)
-		Compound_interest_for_principal = principal* rate^(n*yrs)
-
-		# 3. compute compounded value of the deposits
-
-		if(interest==0){
-			Future_value_of_a_series = deposits * yrs
-		} else {
-			# beginning: A = PMT * (((1 + r/n)^(nt) - 1) / (r/n))
-			# end      : A = PMT * (((1 + r/n)^(nt) - 1) / (r/n)) * (1+r/n)
-			if(when == "beginning"){
-				# deposits at the beginning of each year
-				periods = (yrs:1)*n
-				Future_value_of_a_series = sum(deposits*(rate^periods))
-			} else {
-				# deposits at the end of the year
-				periods = ((yrs-1):1)*n
-				Future_value_of_a_series = sum(deposits*(rate^periods)) + (1*deposits)
-			}
-		}
-
-		Total =  Compound_interest_for_principal+ Future_value_of_a_series
-	} else {
-		Total = balance
-	}
-	class(Total) = 'money'
-	attr(Total, 'symbol') = symbol
-	return(Total)
-}
-
-
-#' Compute NI given annual Earnings.
-#'
-#' @description
-#' Employees pay contributions at 12%% on annual earnings between £9,568 and £50,270. Above that you pay at 2%%. 
-#' Employers pay at 13.8%% on all annual earnings of more than £8,840, although there are different thresholds 
-#' for those under the age of 21 and for apprentices under the age of 25.
-#'
-#' @param annualEarnings Employee annual earnings.
-#' @param symbol Currency symbol to embed in the result.
-#' @return - NI
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_valuation()]
-#' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
-#' @md
-#' @examples
-#' fin_NI(42e3)
-#' fin_NI(142000)
-#'
-fin_NI <- function(annualEarnings, symbol = "\u00A3") {
-	if(annualEarnings < 50270){
-		employee = .12 * max(0, (annualEarnings- 9568))
-	} else {
-		employee = (.12 * (annualEarnings- 9568)) + (.02 * (annualEarnings-50270))
-	}
-	employer = .138 * max((annualEarnings - 8840), 0)
-
-	Total = employer + employee
-	class(Total) = 'money'
-	attr(Total, 'symbol') = symbol
-	cat(paste0("Employer pays ", bucks(employer, symbol = symbol, cat = FALSE), ", and employee pays ", bucks(employee, symbol = symbol, cat=FALSE),
-	 ". So ", round((employer+employee)/annualEarnings*100, 2),	" % total!\n")
-	 )
-	return(Total)
-}
-
-#' Print a money object
-#'
-#' @description Print function for "money" objects, e.g. [fin_interest()].
-#'
-#' @aliases bucks print
-#' @param x money object.
-#' @param symbol Default prefix if not set.
-#' @param big.mark option defaulting to ","
-#' @param decimal.mark option defaulting to "."
-#' @param trim option defaulting to TRUE
-#' @param largest_with_cents option defaulting to 1e+05
-#' @param negative_parens option defaulting to "hyphen"
-#' @param ... further arguments passed to or from other methods. also cat =F to return string
-#' @return - invisible
-#' @seealso - [umx::fin_percent()], [umx::fin_interest()], [scales::dollar()]
-#' @md
-# #' @family print
-#' @export
-#' @examples
-#' bucks(100 * 1.05^32)
-#' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
-#'
-bucks <- function(x, symbol = "$", big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = c("hyphen", "minus", "parens"), ...) {
-	dot.items = list(...) # grab all the dot items cat
-	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
-	if(is.null(dot.items[["cat"]])){
-		cat = TRUE
-	} else {
-		cat = FALSE
-		dot.items[["cat"]] = NULL
-	}
-
-	if(!is.null(attr(x, 'symbol')) ){
-		symbol = attr(x, 'symbol')
-	}
-	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = big.mark, decimal.mark = decimal.mark, trim =trim, largest_with_cents = largest_with_cents, style_negative = negative_parens, ...)
-	if(cat){
-		cat(formatted)
-	} else {
-		formatted
-	}
-}
-
-#' @export
-#' @method print money
-print.money <- bucks
-
-#' Compute the percent change needed to return to the original value after percent off (or on).
-#'
-#' @description
-#' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
-#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
-#' 
-#' `fin_percent(20)` yields $100 increased by 20% = $120 (Percent to reverse = -17%)
-#' 
-#' @param percent Change in percent (enter 10 for 10%, not 0.1)
-#' @param value Principal
-#' @param symbol value units (default = "$")
-#' @param digits Rounding of results (default 2 places)
-#' @param plot Whether to plot the result (default TRUE)
-#' @param logY Whether to plot y axis as log (TRUE)
-#' @return - new value and change required to return to baseline.
-#' @export
-#' @family Miscellaneous Functions
-#' @seealso - [fin_interest()]
-#' @md
-#' @examples
-#' # Percent needed to return to original value after 10% taken off
-#' fin_percent(-10)
-#'
-#' # Percent needed to return to original value after 10% added on
-#' fin_percent(10)
-#'
-#' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5)
-fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE, logY = TRUE) {
-	percent  = percent/100
-	newValue = value * (1 + percent)
-	percent_to_reverse = (value/newValue) - 1
-	class(newValue) = 'percent'
-	attr(newValue, 'oldValue') = value
-	attr(newValue, 'percent')  = percent
-	attr(newValue, 'digits')   = digits
-	attr(newValue, 'symbol')   = symbol
-	attr(newValue, 'percent_to_reverse') = percent_to_reverse
-
-	if(plot){
-		plot(newValue, logY = logY)
-	}else{
-		return(newValue)
-	}
-}
-
-
-#' Print a percent object
-#'
-#' Print method for "percent" objects: e.g. [umx::fin_percent()]. 
-#'
-#' @param x percent object.
-#' @param ... further arguments passed to or from other methods.
-#' @return - invisible
-#' @seealso - [umx::fin_percent()]
-#' @md
-#' @method print percent
-#' @export
-#' @examples
-#' # Percent needed to return to original value after 10% off
-#' fin_percent(-10)
-#' # Percent needed to return to original value after 10% on
-#' fin_percent(10)
-#'
-#' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5)
-#'
-print.percent <- function(x, ...) {
-	if(!is.null(attr(x, 'digits')) ){
-		digits = attr(x, 'digits')
-	}
-	oldValue = round(attr(x, 'oldValue'), digits)
-	percentChange  = attr(x, 'percent')
-	symbol   = attr(x, 'symbol')
-	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
-	dir = ifelse(percentChange < 0, "decreased", "increased")
-
-	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
-}
-
-#' Plot a percent change graph
-#'
-#' Plot method for "percent" objects: e.g. [umx::fin_percent()]. 
-#'
-#' @param x percent object.
-#' @param ... further arguments passed to or from other methods.
-#' @return - invisible
-#' @seealso - [umx::fin_percent()]
-#' @md
-#' @method plot percent
-#' @export
-#' @examples
-#' # Percent needed to return to original value after 10% off
-#' fin_percent(-10)
-#' # Percent needed to return to original value after 10% on
-#' tmp = fin_percent(10)
-#' plot(tmp)
-#'
-#' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5, logY = FALSE)
-#'
-plot.percent <- function(x, ...) {
-	tmp = list(...) # pull logY if passed in
-	logY = tmp$logY
-	symbol   = attr(x, 'symbol')
-	digits   = attr(x, 'digits')
-	oldValue = round(attr(x, 'oldValue'), digits)
-	percentChange  = attr(x, 'percent')	
-	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
-	dir = ifelse(percentChange < 0, "decreased", "increased")
-	# fnReversePercent(-.1)
-	fnReversePercent <- function(x) {
-		# 1/(1+.1)
-		percentOn = x/100
-		newValue = (1 + percentOn)
-		percent_to_reverse = 1-(1/newValue)
-		return(-percent_to_reverse*100)
-	}
-	# x range	= -100 (%) to +500 (%)?
-	# y = -100 to +200?
-	# y range	= -100 to +200?
-	if(percentChange>0){
-		p = ggplot(data.frame(x = c(0, 90)), aes(x))
-		lab = paste0(round(percentChange*100, 2), "% on = ", round(percent_to_reverse * 100, 2), "% off", sep = "")
-		labXpos = 50
-		labYpos = -20
-		logY = FALSE
-	} else {
-		p = ggplot(data.frame(x = c(-90, 0)), aes(x))
-		lab = paste0(round(percentChange*100, 2), "% off = ", round(percent_to_reverse * 100, 2), "% on", sep = "")
-		labXpos = -50
-		labYpos = 700
-	}
-	if(is.null(logY)||!(logY)){
-		p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10)
-		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = labYpos, color= "grey")
-		# hor & vert
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100, y=percent_to_reverse*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y=-10, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
-	} else {
-		p = p + ggplot2::scale_y_continuous(n.breaks = 8, trans="log10") + ggplot2::scale_x_continuous(n.breaks = 10) 
-		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = log10(labYpos), color= "grey")
-		# hor & vert
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100             , y= log10(percent_to_reverse*100), yend= log10(percent_to_reverse*100), alpha=.5, color = "lightgrey")
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y= -10, yend= log10(percent_to_reverse*100), alpha= .5, color = "lightgrey")
-	}
-	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
-	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(percentChange*100, " percent ", ifelse(percentChange>0, "on ", "off "), oldValue, " = ", (1+percentChange)*oldValue))
-	# p = p + ggplot2::geom_area() can't do with stat fun ...
-
-	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")
-
-	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
-		# p = p + hrbrthemes::theme_ipsum()
-		p = p + hrbrthemes::theme_ft_rc()
-	} else {
-		# p = p + ggplot2::theme_bw()
-		p = p + cowplot::theme_cowplot(font_size = 11)
-	}
-
-	
-	print(p)
-	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
-	invisible(p)
-}
-
-#' Easily plot functions in R
-#'
-#' @description
-#' A wrapper for [ggplot2::stat_function()]
-#'
-#' @details Easily plot a function - like sin, using ggplot.
-#'
-#' @param fun Function to plot. Also takes strings like "sin(x) + sqrt(1/x)".
-#' @param min x-range min.
-#' @param max x-range max.
-#' @param xlab = Optional x axis label.
-#' @param ylab = Optional y axis label.
-#' @param title Optional title for the plot.
-#' @param logX Set to, e.g. "log" to set COORDINATE of x to log.
-#' @param logY Set to, e.g. "log" to set COORDINATE of y to log.
-#' @param p  Optional plot onto which to draw the function.
-#' @return - A ggplot graph
-#' @export
-#' @family Plotting functions
-#' @seealso - [ggplot2::stat_function()]
-#' @md
-#' @examples
-#' \dontrun{
-#' # Uses fonts not available on CRAN
-#' umxPlotFun(sin, max= 2*pi)
-#' umxPlotFun("sqrt(1/x)", max= 2*pi)
-#' umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
-#' p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
-#' umxPlotFun(function(x){100^2-x^2}, p = p)
-#'
-#' # Controlling other plot features
-#' umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
-#' }
-#'
-umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL) {
-	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
-	logX = xmu_match.arg(logX, c("no", "log", "log10"), check = FALSE)
-	
-	if(inherits(fun, "numeric")){
-		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
-	} else if(inherits(fun, "character")){
-		make_function <- function(args, body, env = parent.frame()) {
-			args = as.pairlist(args)
-			eval(call("function", args, body), env)
-		}
-		funOut = c()
-		for (i in fun) {			
-			if(is.null(title)){ title = paste0("Plot of ", i) }
-			# failed ideas to format as latex...
-			# if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
-			# if(is.null(title)){ title = parse(text = paste0("Plot of ", i)) }
-			if(is.null(ylab)){ ylab = i}
-			thisFun = make_function(alist(x=NA), parse(text = i)[[1]] )
-			funOut = c(funOut, thisFun)
-		}
-		fun = funOut # 1 or more functions
-	}else{
-		# Got a bare function like sin
-		fun = list(fun)
-	}
-	# plot function 1
-	if(!is.null(p)){
-		if(is.na(max)){
-			p = p + ggplot2::stat_function(fun = fun[[1]])
-		} else {
-			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max))
-		}
-	}else{
-		p  = ggplot(data.frame(x = c(min, max)), aes(x) )
-		if(logY != "no"){
-			p = p + ggplot2::coord_trans(y = logY)
-		}
-		if(logX != "no"){
-			p = p + ggplot2::coord_trans(x = logX)
-		}
-		p    = p + ggplot2::stat_function(fun = fun[[1]])
-		xlab = ifelse(!is.null(xlab),  xlab , "X value")
-		if(is.null(ylab)){
-			if(length(as.character(quote(fun[[1]]))) == 1){
-				ylab = paste0(as.character(quote(fun[[1]]), " of x"))
-			} else {
-				ylab = paste0("Function of X")
-			}
-		}
-
-		if(is.null(title)){
-			if(length(as.character(quote(fun[[1]]))) == 1){
-				pref= "Plot of function: "
-			}else{
-				pref= "Plot of Functions: "
-			}
-			result = tryCatch({
-				title = expression(paste0(pref,fun[[1]]))
-			}, error = function() {
-				title = paste0(pref, as.character(quote(fun[[1]]), " function"))
-			})
-		}
-		p = p + labs(x = xlab, y = ylab, caption = title)
-	}
-	
-	
-	if(length(fun) > 1){
-		n= 1
-		colorList = c("red", "green", "blue")
-		for (i in fun[2:length(fun)]) {
-			p = p + ggplot2::stat_function(fun = i, color=colorList[n])
-			n=n+1
-		}
-	}
-	
-	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
-		p = p + hrbrthemes::theme_ipsum()
-	} else {
-		p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
-	}
-
-	print(p)
-	invisible(p)	
-}
-
 
 #' Compute odds ratio (OR)
 #'
@@ -3918,281 +3299,124 @@ umx_msg <- function(x) {
 	}
 }
 
-#' Helper to make the list of vars and their shapes for a graphviz string
+#' Easily plot functions in R
 #'
 #' @description
-#' Helper to make a graphviz rank string defining the latent, manifest, and means and their shapes
+#' A wrapper for [ggplot2::stat_function()]
 #'
-#' @param latents list of latent variables (including "one")
-#' @param manifests list of manifest variables
-#' @param preOut existing output string (pasted in front of this: "" by default).
-#' @return string
+#' @details Easily plot a function - like sin, using ggplot.
+#'
+#' @param fun Function to plot. Also takes strings like "sin(x) + sqrt(1/x)".
+#' @param min x-range min.
+#' @param max x-range max.
+#' @param xlab = Optional x axis label.
+#' @param ylab = Optional y axis label.
+#' @param title Optional title for the plot.
+#' @param logX Set to, e.g. "log" to set COORDINATE of x to log.
+#' @param logY Set to, e.g. "log" to set COORDINATE of y to log.
+#' @param p  Optional plot onto which to draw the function.
+#' @return - A ggplot graph
 #' @export
-#' @family Graphviz
-#' @seealso - [xmu_dot_rank()]
-#' @examples
-#' xmu_dot_define_shapes(c("as1"), c("E", "N"))
-xmu_dot_define_shapes <- function(latents, manifests, preOut= "") {
-	latents   = unique(latents)
-	manifests = unique(manifests)
-	preOut    = paste0(preOut, "\n# Latents\n")
-	for(var in latents) {
-		if(var == "one"){
-			preOut = paste0(preOut, "\t", var, " [shape = triangle];\n")
-		} else {
-			preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
-		}
-	}
-	preOut = paste0(preOut, "\n# Manifests\n")
-	for(thisManifest in manifests) {
-	   preOut = paste0(preOut, "\t", thisManifest, " [shape = square];\n")
-	}
-	return(preOut)
-}
-
-#' Helper to make a graphviz rank string
-#'
-#' Given a list of names, this filters the list, and returns a graphviz string to force them into the given rank.
-#' e.g. `"{rank=same; as1};"`
-#'
-#' @param vars a list of strings
-#' @param pattern regular expression to filter vars
-#' @param rank "same", "max", "min"
-#' @return string
-#' @export
-#' @family Graphviz
-#' @seealso - [xmu_dot_define_shapes()]
+#' @family Plotting functions
+#' @seealso - [ggplot2::stat_function()]
 #' @md
 #' @examples
-#' xmu_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
-xmu_dot_rank <- function(vars, pattern, rank) {
-	formatted = paste(namez(vars, pattern), collapse = "; ")
-	ranks = paste0("{rank=", rank, "; ", formatted, "};\n")
-	return(ranks)
-}
-
-#' Return dot code for paths in a matrix
-#'
-#' @description
-#' Return dot code for paths in a matrix is a function which walks the rows and cols of a matrix.
-#' At each free cell, it creates a dot-string specifying the relevant path, e.g.:
-#'
-#' \code{ai1 -> var1 [label=".35"]}
-#'
-#' Its main use is to correctly generate paths (and their sources and sink objects) 
-#' without depending on the label of the parameter.
-#' 
-#' It is highly customizable:
-#' 
-#' 1. You can specify which cells to inspect, e.g. "lower".
-#' 2. You can choose how to interpret path direction, from = "cols".
-#' 3. You can choose the label for the from to ends of the path (by default, the matrix name is used).
-#' 4. Offer up a list of from and toLabel which will be indexed into for source and sink
-#' 5. You can set the number of arrows on a path (e.g. both).
-#' 6. If `type` is set, then sources and sinks added manifests and/or latents output (p)
-#' 
-#' Finally, you can pass in previous output and new paths will be concatenated to these.
-#' 
-#' @param x a [umxMatrix()] to make paths from.
-#' @param from one of "rows", "columns"
-#' @param cells which cells to process: "any" (default), "diag", "lower", "upper". "left" is the left half (e.g. in a twin means matrix)
-#' @param arrows "forward" "both" or "back"
-#' @param fromLabel = NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list. "one" is special.
-#' @param toLabel = NULL. NULL = use matrix name (default). If one, if suffixed with index, length() > 1, index into list.
-#' @param showFixed = FALSE.
-#' @param digits to round values to (default = 2).
-#' @param fromType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
-#' @param toType one of "latent" or "manifest" NULL (default) = don't accumulate new names.
-#' @param model If you want to get CIs, you can pass in the model (default = NULL).
-#' @param SEstyle If TRUE, CIs shown as "b(SE)" ("b \[l,h\]" if FALSE (default)). Ignored if model NULL.
-#' @param p input to build on. list(str = "", latents = c(), manifests = c())
-#' @return - list(str = "", latents = c(), manifests = c())
-#' @export
-#' @family Graphviz
-#' @seealso - [plot()]
-#' @md
-#' @examples
-#'
-#' # test with a 1 * 1
-#' a_cp = umxMatrix("a_cp", "Lower", 1, 1, free = TRUE, values = pi)
-#' out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "both")
-#' cat(out$str) # a_cp -> a_cp [dir = both label="2"];
-#' out = xmu_dot_mat2dot(a_cp, cells = "lower_inc", from = "cols", arrows = "forward",
-#' 	fromLabel = "fromMe", toLabel = "toYou", 
-#' 	fromType  = "latent", toType  = "manifest", digits = 3, SEstyle = TRUE
-#' 	)
-#' cat(out$str) # fromMe -> toYou [dir = forward label="3.142"];
-#' cat(out$latent) # fromMe
-#' cat(out$manifest) # toYou
-#' 
-#' # Make a lower 3 * 3 value= 1:6 (1, 4, 6 on the diag)
-#' a_cp = umxMatrix("a_cp", "Lower", 3, 3, free = TRUE, values = 1:6)
-#'
-#' # Get dot strings for lower triangle (default from and to based on row and column number)
-#' out = xmu_dot_mat2dot(a_cp, cells = "lower", from = "cols", arrows = "both")
-#' cat(out$str) # a_cp1 -> a_cp2 [dir = both label="2"];
-#'
-#' # one arrow (the default = "forward")
-#' out = xmu_dot_mat2dot(a_cp, cells = "lower", from = "cols")
-#' cat(out$str) # a_cp1 -> a_cp2 [dir = forward label="2"];
-#'
-#' # label to (rows) using var names
-#'
-#' out = xmu_dot_mat2dot(a_cp, toLabel= paste0("v", 1:3), cells = "lower", from = "cols")
-#' umx_msg(out$str) # a_cp1 -> v2 [dir = forward label="2"] ...
-#' 
-#' # First call also inits the plot struct
-#' out = xmu_dot_mat2dot(a_cp, from = "rows", cells = "lower", arrows = "both", fromType = "latent")
-#' out = xmu_dot_mat2dot(a_cp, from = "rows", cells = "diag", 
-#' 		toLabel= "common", toType = "manifest", p = out)
-#' umx_msg(out$str); umx_msg(out$manifests); umx_msg(out$latents)
-#' 
-#' # ================================
-#' # = Add found sinks to manifests =
-#' # ================================
-#' out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
-#' 		toLabel= c('a','b','c'), toType= "manifest");
-#' umx_msg(out$manifests)
-#'
-#' # ================================
-#' # = Add found sources to latents =
-#' # ================================
-#' out = xmu_dot_mat2dot(a_cp, from= "rows", cells= "diag", 
-#' 		toLabel= c('a','b','c'), fromType= "latent");
-#' umx_msg(out$latents)
-#' 
-#' 
-#' # ========================
-#' # = Label a means matrix =
-#' # ========================
-#' 
-#' tmp = umxMatrix("expMean", "Full", 1, 4, free = TRUE, values = 1:4)
-#' out = xmu_dot_mat2dot(tmp, cells = "left", from = "rows",
-#' 	fromLabel= "one", toLabel= c("v1", "v2")
-#' )
-#' cat(out$str)
-#'
 #' \dontrun{
-#' # ==============================================
-#' # = Get a string which includes CI information =
-#' # ==============================================
-#' data(demoOneFactor)
-#' latents = c("g"); manifests = names(demoOneFactor)
-#' m1 = umxRAM("xmu_dot", data = demoOneFactor, type = "cov",
-#' 	umxPath(latents, to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = latents, fixedAt = 1.0)
-#' )
-#' m1 = umxCI(m1, run= "yes")
-#' out = xmu_dot_mat2dot(m1$A, from = "cols", cells = "any", 
-#'       toLabel= paste0("x", 1:5), fromType = "latent", model= m1);
-#' umx_msg(out$str); umx_msg(out$latents)
-#' 
+#' # Uses fonts not available on CRAN
+#' umxPlotFun(sin, max= 2*pi)
+#' umxPlotFun("sqrt(1/x)", max= 2*pi)
+#' umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
+#' p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
+#' umxPlotFun(function(x){100^2-x^2}, p = p)
+#'
+#' # Controlling other plot features
+#' umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
 #' }
 #'
-xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
-	from   = match.arg(from)
-	cells  = match.arg(cells)
-	arrows = match.arg(arrows)
-	# Get default from and to labels if custom not set
-	if(is.null(fromLabel)){ fromLabel = x$name }
-	if(is.null(toLabel))  { toLabel   = x$name }
-
-	if(inherits(x, "MxAlgebra")){
-		# convert to a matrix
-		tmp = x$result
-		x   = umxMatrix(x$name, "Full", dim(tmp)[1], dim(tmp)[2], free = TRUE, values = tmp)
+umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL) {
+	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
+	logX = xmu_match.arg(logX, c("no", "log", "log10"), check = FALSE)
+	
+	if(inherits(fun, "numeric")){
+		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
+	} else if(inherits(fun, "character")){
+		make_function <- function(args, body, env = parent.frame()) {
+			args = as.pairlist(args)
+			eval(call("function", args, body), env)
+		}
+		funOut = c()
+		for (i in fun) {			
+			if(is.null(title)){ title = paste0("Plot of ", i) }
+			# failed ideas to format as latex...
+			# if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
+			# if(is.null(title)){ title = parse(text = paste0("Plot of ", i)) }
+			if(is.null(ylab)){ ylab = i}
+			thisFun = make_function(alist(x=NA), parse(text = i)[[1]] )
+			funOut = c(funOut, thisFun)
+		}
+		fun = funOut # 1 or more functions
+	}else{
+		# Got a bare function like sin
+		fun = list(fun)
 	}
-
-	nRows = nrow(x)
-	nCols = ncol(x)
- 
-	# Get parameter value and make the plot string
-	# Convert address to [] address and look for a CI: not perfect, as CI might be label based?
-	# Also fails to understand not using _std?
-
-	for (r in 1:nRows) {
-		for (c in 1:nCols) {
-			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){				
-				# cell is in the target zone
-				if(!is.null(model)){
-					# Model available - look for CIs by label...
-					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
-					if(is.na(CIstr)){
-						# failed: fall back to parameter value from the matrix
-						value = umx_round(x$values[r,c], digits)
-					}else{
-						value = umx_round(CIstr, digits)
-					}
-				} else {
-					# Model note available do not look for CIs: just return parameter from matrix
-					if(is.numeric(x$values[r,c])){
-						value = umx_round(x$values[r,c], digits)
-					} else {
-						value = x$values[r,c]
-					}
-				}
-
-				if(from == "rows"){
-					sourceIndex = r; sinkIndex = c; fromWidth = nRows; toWidth = nCols
-				} else { # from cols
-					sourceIndex = c; sinkIndex = r; fromWidth = nCols; toWidth = nRows
-				}
-
-				if(length(fromLabel) == 1){
-					if(fromLabel == "one"){
-						thisFrom = "one"
-					} else if(fromWidth > 1){
-						thisFrom = paste0(fromLabel, sourceIndex)
-					}else{
-						thisFrom = fromLabel[sourceIndex]						
-					}
-				} else {
-					thisFrom = fromLabel[sourceIndex]
-				}
-
-				if(length(toLabel) == 1){
-					if(toLabel == "one"){
-						thisTo = "one"
-					} else if(toWidth > 1){
-						thisTo = paste0(toLabel, sinkIndex)
-					}else{
-						thisTo = toLabel[sinkIndex]						
-					}
-				} else {
-					thisTo = toLabel[sinkIndex]
-				}
-
-				# Show fixed cells if non-0
-				if(x$free[r,c] || (showFixed && x$values[r,c] != 0)){
-					p$str = paste0(p$str, "\n", thisFrom, " -> ", thisTo, " [dir = ", arrows, " label=\"", value, "\"];")
-					if(!is.null(fromType)){
-						if(fromType == "latent"){
-							p$latents = c(p$latents, thisFrom)
-						} else if(fromType == "manifest"){
-							p$manifests = c(p$manifests, thisFrom)
-						}else{
-							stop("not sure what to do for fromType = ", fromType, ". Legal is latent or manifest")
-						}
-					}
-					if(!is.null(toType)){
-						if(toType == "latent"){
-							p$latents   = c(p$latents, thisTo)
-						} else if(toType == "manifest"){
-							p$manifests = c(p$manifests, thisTo)
-						}else{
-							stop("not sure what to do for fromType = ", toType, ". Legal is latent or manifest")
-						}
-					}
-				}
+	# plot function 1
+	if(!is.null(p)){
+		if(is.na(max)){
+			p = p + ggplot2::stat_function(fun = fun[[1]])
+		} else {
+			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max))
+		}
+	}else{
+		p  = ggplot(data.frame(x = c(min, max)), aes(x) )
+		if(logY != "no"){
+			p = p + ggplot2::coord_trans(y = logY)
+		}
+		if(logX != "no"){
+			p = p + ggplot2::coord_trans(x = logX)
+		}
+		p    = p + ggplot2::stat_function(fun = fun[[1]])
+		xlab = ifelse(!is.null(xlab),  xlab , "X value")
+		if(is.null(ylab)){
+			if(length(as.character(quote(fun[[1]]))) == 1){
+				ylab = paste0(as.character(quote(fun[[1]]), " of x"))
 			} else {
-				# fixed cell
+				ylab = paste0("Function of X")
 			}
 		}
+
+		if(is.null(title)){
+			if(length(as.character(quote(fun[[1]]))) == 1){
+				pref= "Plot of function: "
+			}else{
+				pref= "Plot of Functions: "
+			}
+			result = tryCatch({
+				title = expression(paste0(pref,fun[[1]]))
+			}, error = function() {
+				title = paste0(pref, as.character(quote(fun[[1]]), " function"))
+			})
+		}
+		p = p + labs(x = xlab, y = ylab, caption = title)
 	}
-	p$latents   = unique(p$latents)
-	p$manifests = unique(p$manifests)	
-	return(p)
+	
+	
+	if(length(fun) > 1){
+		n= 1
+		colorList = c("red", "green", "blue")
+		for (i in fun[2:length(fun)]) {
+			p = p + ggplot2::stat_function(fun = i, color=colorList[n])
+			n=n+1
+		}
+	}
+	
+	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
+		p = p + hrbrthemes::theme_ipsum()
+	} else {
+		p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
+	}
+
+	print(p)
+	invisible(p)	
 }
 
 
@@ -6767,37 +5991,6 @@ umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "
 	return(df)
 }
 
-
-#' Data helper function to swap blocks of data from one set of columns to another.
-#'
-#' Swap a block of rows of a dataset between two sets of variables (typically twin 1 and twin 2)
-#'
-#' @param theData A data frame to swap within.
-#' @param rowSelector Rows to swap between first and second set of columns.
-#' @param T1Names The first set of columns.
-#' @param T2Names The second set of columns.
-#' @return - dataframe
-#' @family xmu internal not for end user
-#' @export
-#' @seealso - [subset()]
-#' @md
-#' @examples
-#' test = data.frame(
-#' a = paste0("a", 1:10),
-#' b = paste0("b", 1:10),
-#' c = paste0("c", 1:10),
-#' d = paste0("d", 1:10), stringsAsFactors = FALSE)
-#' xmu_data_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = "b", T2Names = "c")
-#' xmu_data_swap_a_block(test, rowSelector = c(1,2,3,6), T1Names = c("a","c"), T2Names = c("b","d"))
-#'
-xmu_data_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
-	theRows = theData[rowSelector,]
-	old_BlockTwo = theRows[,T2Names]
-	theRows[,T1Names] -> theRows[, T2Names]
-	theRows[,T1Names] = old_BlockTwo
-	theData[rowSelector,] = theRows
-	return(theData)
-}
 
 #' Update NA values in one column with valid entries from another
 #'
