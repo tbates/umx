@@ -21,8 +21,9 @@ libs(..., force.update = FALSE)
 }
 \examples{
 \dontrun{
-libs("umx", "OpenMx", "car")
-libs("umx", c("OpenMx", "car"))
+libs("car")
+libs(c("OpenMx", "car"))
+libs(OpenMx, car)
 remove.packages()
 }
 }

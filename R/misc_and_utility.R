@@ -200,24 +200,27 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 #' @md
 #' @examples
 #' \dontrun{
-#' libs("umx", "OpenMx", "car")
-#' libs("umx", c("OpenMx", "car"))
+#' libs("car")
+#' libs(c("OpenMx", "car"))
+#' libs(OpenMx, car)
 #' remove.packages()
 #' }
 libs <- function(... , force.update = FALSE) {
-	# Capture the unevaluated arguments as a list of symbols
-	lib_names <- rlang::ensyms(...)
-
-	# Convert symbols to character strings
-	lib_names <- sapply(lib_names, as.character)
-
-	# Load the libraries
-	# lapply(lib_names, library, character.only = TRUE)
-
-	# dot.items = list(...) # grab all the dot items
-	# dot.items = unlist(dot.items) # In case any dot items are lists
-	
-	for (pack in dot.items) {
+    # Capture the full call
+    call <- match.call(expand.dots = TRUE)
+  
+    # Extract arguments after the function name
+    args <- as.list(call)[-1]
+  
+    # If a single character vector was passed
+    if (length(args) == 1 && is.character(eval(args[[1]], envir = parent.frame()))) {
+      lib_names <- eval(args[[1]], envir = parent.frame())
+    } else {
+      # Convert unevaluated args to strings
+      lib_names <- sapply(args, deparse)
+    }
+  
+	for (pack in lib_names) {
 		result = tryCatch({
 			if(force.update){
 				install.packages(pack)
