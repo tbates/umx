@@ -73,11 +73,11 @@ fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 
 umx_set_dollar_symbol("£")
 # 2 What rate is needed to increase principal to final value in yrs time?
-fin_interest(final = 1.4, yrs=5)
+fin_interest(1, final = 1.4, yrs=5)
 fin_interest(principal = 50, final=200, yrs = 5)
 
 # 3. What's the value of deposits of $100/yr after 10 years at 7\% return?
-fin_interest(deposits = 100, interest = 0.07, yrs = 10, n = 12)
+fin_interest(0, deposits = 100, interest = 0.07, yrs = 10, n = 12)
 
 # 4. What's the value of $20k + $100/yr over 10 years at 7\% return?
 fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="$")
@@ -114,6 +114,7 @@ Other Miscellaneous Functions:
 \code{\link{fin_JustifiedPE}()},
 \code{\link{fin_NI}()},
 \code{\link{fin_expected}()},
+\code{\link{fin_net_present_value}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_ticker}()},
 \code{\link{fin_valuation}()},

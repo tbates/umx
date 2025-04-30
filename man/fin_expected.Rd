@@ -34,6 +34,7 @@ Other Miscellaneous Functions:
 \code{\link{fin_JustifiedPE}()},
 \code{\link{fin_NI}()},
 \code{\link{fin_interest}()},
+\code{\link{fin_net_present_value}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_ticker}()},
 \code{\link{fin_valuation}()},
