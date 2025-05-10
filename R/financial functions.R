@@ -92,6 +92,7 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #'
 #' @param current The current market value of the instrument
 #' @param fair The user's estimated fair value.
+#' @param ticker A lable for printing
 #' @param capital The cost of capital (defaults to .15)
 #' @return - expected gain
 #' @export
@@ -100,13 +101,19 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #' @md
 #' @examples
 #' fin_expected(15, 45)
-fin_expected <- function(current, fair, capital=.15) {
-	delta  = (fair-current)      ; cat("delta (fair-current)= $", delta, "\n")
-	growth = fair*capital        ; cat("growth = $", growth, "\n")
-	expectedGain = (growth+delta); cat("expected gain = $", expectedGain, "\n")
-	final  = fair*(1+capital)    ; cat("future value (final) = $", final, "\n")
-	cat("return = ", round(((final/current)-1)*100, 2), "%\n")
-	return(expectedGain)
+fin_expected <- function(current, fair, ticker = "", capital=.15, verb=F) {
+	delta  = (fair-current)      
+	growth = fair*capital        
+	expectedGain = (growth+delta)
+	final  = fair*(1+capital)    
+	cat(ticker, " return = ", round(((final/current)-1)*100, 0), "%\n")
+	if(verb){
+		cat("delta (fair-current)= $", delta, "\n")
+		cat("growth = $", growth, "\n")
+		cat("expected gain = $", expectedGain, "\n")
+		cat("future value (final) = $", final, "\n")
+	}
+	invisible(expectedGain)
 }
 
 
@@ -462,7 +469,7 @@ plot.percent <- function(x, ...) {
 	# x range	= -100 (%) to +500 (%)?
 	# y = -100 to +200?
 	# y range	= -100 to +200?
-	if(percentChange>0){
+	if(percentChange > 0){
 		p = ggplot(data.frame(x = c(0, 90)), aes(x))
 		lab = paste0(round(percentChange*100, 2), "% on = ", round(percent_to_reverse * 100, 2), "% off", sep = "")
 		labXpos = 50
@@ -488,7 +495,7 @@ plot.percent <- function(x, ...) {
 		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y= -10, yend= log10(percent_to_reverse*100), alpha= .5, color = "lightgrey")
 	}
 	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
-	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(percentChange*100, " percent ", ifelse(percentChange>0, "on ", "off "), oldValue, " = ", (1+percentChange)*oldValue))
+	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(round(percentChange*100, 2), "% ", ifelse(percentChange>0, "on ", "off "), oldValue, " = ", (1+percentChange)*oldValue))
 	# p = p + ggplot2::geom_area() can't do with stat fun ...
 
 	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")

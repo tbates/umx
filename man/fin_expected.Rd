@@ -4,12 +4,14 @@
 \alias{fin_expected}
 \title{Compute the future value and gain of an investment}
 \usage{
-fin_expected(current, fair, capital = 0.15)
+fin_expected(current, fair, ticker = "", capital = 0.15, verb = F)
 }
 \arguments{
 \item{current}{The current market value of the instrument}
 
 \item{fair}{The user's estimated fair value.}
+
+\item{ticker}{A lable for printing}
 
 \item{capital}{The cost of capital (defaults to .15)}
 }
@@ -34,6 +36,7 @@ Other Miscellaneous Functions:
 \code{\link{fin_JustifiedPE}()},
 \code{\link{fin_NI}()},
 \code{\link{fin_interest}()},
+\code{\link{fin_net_present_value}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_ticker}()},
 \code{\link{fin_valuation}()},

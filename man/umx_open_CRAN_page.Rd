@@ -40,6 +40,7 @@ Other Miscellaneous Utility Functions:
 \code{\link{umx_msg}()},
 \code{\link{umx_pad}()},
 \code{\link{umx_print}()},
-\code{\link{umx_wide2long}()}
+\code{\link{umx_wide2long}()},
+\code{\link{umx_wide4lmer}()}
 }
 \concept{Miscellaneous Utility Functions}

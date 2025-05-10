@@ -58,6 +58,7 @@ Other Miscellaneous Functions:
 \code{\link{fin_NI}()},
 \code{\link{fin_expected}()},
 \code{\link{fin_interest}()},
+\code{\link{fin_net_present_value}()},
 \code{\link{fin_ticker}()},
 \code{\link{fin_valuation}()},
 \code{\link{rad2deg}()},

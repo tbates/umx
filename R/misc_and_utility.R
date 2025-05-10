@@ -5552,6 +5552,50 @@ umxCov2cor <- function(x) {
 }
 
 
+#' Take a long dataframe and make it wide for repeated measures and multi-lvel modelin in R
+#'
+#' @description
+#' `umx_wide4lmer` from wide to long for repeated measures and multi-lvel modeling in R
+#' 
+#' Wraps reshape [stats::reshape()]
+#'
+#' @param repeated list of repeated measures each in list(y = c("y1", "y2")) form
+#' @param timevar list of conditions in form: list(cond = c("cont", "expt")),
+#' @param covs vector of covariates e.g., c("Age", "Sex", "Conscientiousness")
+#' @param idvar The variable which links repeated measures, e.g., "ID"
+#' @param data A (long-format) data file
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso - [umx_long2wide()]
+#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' \dontrun{
+#' covs = c("Age", "Sex", "Conscientiousness")
+#' timevar  = list(Difficulty = c("short", "long"))
+#' repeated = list(
+#' 	Frustration = c("NASA_Frustration1", "NASA_Frustration2"),
+#' 	Effort      = c("NASA_Effort1"     , "NASA_Effort2"),
+#' 	Efficacy    = c("NASA_Performance1", "NASA_Performance2"), 
+#' 	Howmany     = c("howmany_30secs"   , "howmany_60secs")
+#' )
+#' df.l = umx_wide4lmer(repeated = repeated, timevar = timevar, covs = covs, data = df, idvar = "PID")
+#' }
+umx_wide4lmer <- function(repeated = list(y = c("y1", "y2")), timevar = list(cond = c("cont", "expt")), covs = c("Age", "Sex", "Conscientiousness"), data = df, idvar = "PID") {
+	# time = list(difficulty = c("easy", "hard"))
+	# rep  = list(frustration = c("NASA1_frustration", "NASA2_frustration"), effort = c("NASA1_effort", "NASA2_effort"))
+	# df.l = mywide(rep, time, covs = c("Age", "Sex", "Conscientiousness"), df = df, idvar = "PID")
+	timevarName = names(timevar)[1]
+	times   = as.character(unlist(timevar))
+	v.names = names(repeated)
+	needed  = c(idvar, covs, as.character(unlist(repeated)) )
+	message(paste0("Polite note: I set the repeated measures (v.names) to: ", omxQuotes(v.names)))
+	message("The condition or time variable is '", timevarName, "' with levels:", omxQuotes(times))
+	umx_check_names(needed, data = data, die = TRUE)
+	df.l = reshape(data[,needed], idvar = idvar, varying = repeated, v.names = v.names, timevar = timevarName, times  = times, direction = "long")	
+	return(df.l)
+}
+
 
 #' Take a long twin-data file and make it wide (one family per row)
 #'
@@ -5572,7 +5616,7 @@ umxCov2cor <- function(x) {
 #' 
 #' *Note*: The functions assumes that if zygosity or any passalong variables are NA in the first
 #' family member, they are NA everywhere. i.e., it does not hunt for values that
-#' are present elsewhere to try and self-heal missing data.
+#' are present elsewhere or try and self-heal missing data.
 #'
 #' @param data The original (long-format) data file
 #' @param famID  The unique identifier for members of a family

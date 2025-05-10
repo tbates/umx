@@ -1,5 +1,4 @@
 ## Changes
-Turned off tests for CRAN
 New features, miscellaneous help, improvements.
 
 ## Test environments
