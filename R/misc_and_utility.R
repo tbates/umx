@@ -1768,7 +1768,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 	} else if(score == "max"){
 		scaleScore = rep(NA, nrow(df))
 		for (i in 1:nrow(df)) {
-			scaleScore[i] = max(df[i,], na.rm = TRUE)
+			temp = max(df[i,], na.rm = TRUE)
+			temp[is.infinite(temp)]= NA
+			scaleScore[i] = temp
 		}
 	}else if(score == "total"){
 		if(any(is.na(df))){
