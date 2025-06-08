@@ -1772,7 +1772,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		}
 	}else if(score == "total"){
 		if(any(is.na(df))){
-			message("\nPolite note: You asked for scale totals, but some subjects have missing data: Perhaps use means?...")
+			message("\nPolite note: You asked for scale totals, but some subjects have missing data: Perhaps use mean?...")
 		}
 		scaleScore = rowSums(df, na.rm = na.rm)
 	}else if(score == "errors"){

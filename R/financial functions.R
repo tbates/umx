@@ -94,14 +94,39 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #' @param fair The user's estimated fair value.
 #' @param ticker A lable for printing
 #' @param capital The cost of capital (defaults to .15)
+#' @param verb Verbose or concise (FALSE)
 #' @return - expected gain
 #' @export
 #' @family Miscellaneous Functions
 #' @seealso - [fin_interest()]
 #' @md
 #' @examples
-#' fin_expected(15, 45)
-fin_expected <- function(current, fair, ticker = "", capital=.15, verb=F) {
+#' 
+#' fin_expected(current= 114,fair=140,ticker="NVDA", capital=.15, verb=T)
+#' NVDA  return =  41 %
+#' delta (fair-current)= $ 26 
+#' growth = $ 21 
+#' expected gain = $ 47 
+#' future value (final) = $ 161 
+#' 
+#' fin_expected(24, 130, ticker="SMMT")
+#' SMMT  return =  523 %
+#' 
+#' fin_expected(24, 75, ticker="SMMT", verb=T)
+#' SMMT  return =  259 %
+#' delta (fair-current)= $ 51 
+#' growth = $ 11.25 
+#' expected gain = $ 62.25 
+#' future value (final) = $ 86.25 
+#' 
+#' fin_expected(750, 1000, ticker="LLY", verb=T)
+#' LLY  return =  53 %
+#' delta (fair-current)= $ 250
+#' growth = $ 150 
+#' expected gain = $ 400 
+#' future value (final) = $ 1150 
+#'
+fin_expected <- function(current=89, fair=140, ticker = "NVDA", capital=.15, verb = FALSE) {
 	delta  = (fair-current)      
 	growth = fair*capital        
 	expectedGain = (growth+delta)

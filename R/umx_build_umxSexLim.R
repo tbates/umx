@@ -870,12 +870,13 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
 	if(format != "current"){
+		tmp = umx_set_plot_format(silent=TRUE)
 		umx_set_plot_format(format)
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+		umx_set_plot_format(tmp)
+	}else{
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)		
 	}
-	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
-	# TODO umxPlotCP could tabulate thresholds?
-	# Process "_dev" (where are these?)
-	# cat(out$str)
 }
 
 #' @export

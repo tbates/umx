@@ -3223,11 +3223,14 @@ umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed =
 		out$str, "\n}"
 	)
 	
-	if(format != "current"){ umx_set_plot_format(format) }
-	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
-	# TODO umxPlotCP could tabulate thresholds?
-	# Process "_dev" (where are these?)
-	# cat(out$str)
+	if(format != "current"){
+		tmp = umx_set_plot_format(silent=TRUE)
+		umx_set_plot_format(format)
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+		umx_set_plot_format(tmp)
+	}else{
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)		
+	}
 }
 
 #' @export
@@ -3334,8 +3337,14 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 		out$str, "\n}"
 	)
 
-	if(format != "current"){ umx_set_plot_format(format) }
-	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+	if(format != "current"){
+		tmp = umx_set_plot_format(silent=TRUE)
+		umx_set_plot_format(format)
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+		umx_set_plot_format(tmp)
+	}else{
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)		
+	}
 }
 
 #' @export

@@ -531,8 +531,14 @@ umxPlotSimplex <- function(x = NA, file = "name", digits = 2, means = FALSE, std
 	# CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", digits = digits)
 
 	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", pre, ranks, out, "\n}");
-	if(format != "current"){ umx_set_plot_format(format)}
-	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+	if(format != "current"){
+		tmp = umx_set_plot_format(silent=TRUE)
+		umx_set_plot_format(format)
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+		umx_set_plot_format(tmp)
+	}else{
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)		
+	}
 }
 
 #' @export
