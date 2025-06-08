@@ -559,9 +559,11 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
 #' twinData[,c("ht1", "ht2")]= twinData[,c("ht1", "ht2")] * 100
 #' xmu_check_variance(twinData[, c("wt1", "ht1", "wt2", "ht2")])
-xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent=T)$minVar, maxVarRatio = umx_set_data_variance_check(silent=T)$maxVarRatio){
+xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent=TRUE)$minVar, maxVarRatio = umx_set_data_variance_check(silent=TRUE)$maxVarRatio){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
 	varList = umx_var(data, format = "diag")
+	umx_msg(minVar)
+	umx_msg(varList)
 	if(any(varList < minVar)){
 		# At least 1 small
 		message("Polite note: Variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
