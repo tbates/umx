@@ -4892,6 +4892,8 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 	report = match.arg(report)
 	# TODO cope with two group case.
 	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
+	
+	# Print the age
 	if(umx_check_names(age, data= data, die=FALSE)){
 		ageCol = data[, age]
 	} else if(umx_check_names(paste0(age, sep, 1), data= data, die=FALSE)){
@@ -4900,11 +4902,34 @@ umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = 
 		stop("Sorry: I can't find an age column called ", omxQuotes(age), " or ", omxQuotes(paste0(age, sep, 1)), " Set age= <name of your age column>")
 	}
 	cat(paste0("mean age ", round(mean(ageCol, na.rm = TRUE), 2), " (SD= ", round(sd(ageCol, na.rm = TRUE), 2), ")"))
+
+	junk = tryCatch({
+		cat(paste0("\n", sum(c(data[,"sex_T1"], data[,"sex_T2"]) == "F", na.rm=TRUE), " female\n"))
+		cat(paste0("\n", sum(c(data[,"sex_T1"], data[,"sex_T2"]) == "M", na.rm=TRUE), " male\n"))
+	}, warning = function(x) {
+	    print("polite note: I tried computing M F count using sex_T1 and sex_T2 but failed")
+	}, error = function(x) {
+	    print("polite note: I tried computing M F count using sex_T1 and sex_T2 but failed")
+	}, finally={
+	    # ignored
+	})
 	
-	
+	# Set up long data
 	selDVs = tvars(selVars, sep)
 	umx_check_names(selDVs, data = data, die = TRUE)
 	long = umx_wide2long(data= data[,selDVs], sep =sep)
+	
+	# Print Non-NA data for each pair of variables
+	pair_counts = matrix(NA, nrow = length(selVars), ncol = length(selVars), dimnames = list(selVars, selVars))
+	# Loop through all pairs of variables
+	for (i in 1:length(selVars)) {
+	  for (j in 1:length(selVars)) {
+	    # Count non-NA pairs
+	    pair_counts[i, j] <- sum(complete.cases(long[[selVars[i]]], long[[selVars[j]]]))
+	  }
+	}
+	print(kable(pair_counts, format = "markdown", align = "c"))
+
 	blob = rep(NA, length(selVars))	
 	if(is.null(MZ)){
 		df = data.frame(Var = blob, Mean = blob, SD = blob, rMZFF = blob, rMZMM = blob, rDZFF = blob, rDZMM = blob, rDZOS = blob, stringsAsFactors = FALSE)
