@@ -226,7 +226,7 @@ fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 
 	if(!is.null(final)){
 		# final = prin*(1+rate)^y
 		if(principal==0){ principal=1 }
-		return((final/principal)^(1/(yrs+1))-1)
+		return((final/principal)^(1/(yrs))-1)
 		# rate is the years root of (final *prin?)
 	}
 
