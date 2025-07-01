@@ -562,9 +562,9 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent=TRUE)$minVar, maxVarRatio = umx_set_data_variance_check(silent=TRUE)$maxVarRatio){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
 	varList = umx_var(data, format = "diag")
-	umx_msg(minVar)
-	umx_msg(varList)
 	if(any(varList < minVar)){
+		# umx_msg(minVar)
+		# umx_msg(varList)
 		# At least 1 small
 		message("Polite note: Variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
 			"You might want to express the variable in smaller units, e.g. multiply to use cm instead of metres.\n",
