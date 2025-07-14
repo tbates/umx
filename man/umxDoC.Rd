@@ -115,7 +115,7 @@ DoC = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
 }
 \references{
 \itemize{
-\item N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496-499. Eds. Brian S. Everitt & David C. Howell.
+\item Gillespie, N.A. and Martin, N.G. (2005). Direction of Causation Models. In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496-499. Eds. Brian S. Everitt & David C. Howell.
 }
 \itemize{
 \item McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. \emph{Perspectives on Psychological Science}, \strong{5}, 546-556. \doi{10.1177/1745691610383511}
@@ -124,7 +124,7 @@ DoC = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxDiscTwin]{umxDiscTwin()}}
+\item \code{\link[=umxDiscTwin]{umxDiscTwin()}}, \code{\link[=umxDiffMZ]{umxDiffMZ()}}, \code{\link[=umxMR]{umxMR()}}
 }
 
 Other Twin Modeling Functions: 

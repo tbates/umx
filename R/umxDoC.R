@@ -47,7 +47,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 	# 3. Make diff scores
 	df$xDiff = df[, x_T1] - df[, x_T2]
 	df$yDiff = df[, y_T1] - df[, y_T2]
-	df$xMean = df[, x_T1] + df[, x_T2]
+	df$xSum = abs(df[, x_T1] + df[, x_T2])
 	validRows = df[, zyg] %in% mzZygs
 	mzData = df[validRows, ]
 	
@@ -66,7 +66,9 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 	}else{
 		p = p + coord_cartesian(xlim = xylim, ylim = xylim, expand = FALSE)
 	}
-	
+	# tmp = lm(yDiff ~ xDiff, data = mzData, weights = xSum)
+	# print(summary(tmp))
+
 	# model = lm(yDiff ~ xDiff, data = mzData)
 	sumry  = summary(lm(yDiff ~ xDiff, data = mzData))
 	beta   = sumry$coefficients["xDiff", "Estimate"]
@@ -289,8 +291,8 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' @return - [OpenMx::mxModel()] of subclass MxModelDoC
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxDiscTwin()]
-#' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496-499. Eds. Brian S. Everitt & David C. Howell.
+#' @seealso - [umxDiscTwin()], [umxDiffMZ()], [umxMR()]
+#' @references - Gillespie, N.A. and Martin, N.G. (2005). Direction of Causation Models. In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496-499. Eds. Brian S. Everitt & David C. Howell.
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' * Rasmussen, S. H. R., Ludeke, S., & Hjelmborg, J. V. B. (2019). A major limitation of the direction of causation model: non-shared environmental confounding. *Twin Res Hum Genet*, **22**, 1-13. \doi{10.1017/thg.2018.67}
 #' @md
@@ -482,7 +484,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @return - Optionally return the dot code
 #' @export
 #' @family Plotting functions
-#' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()]
+#' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()], [umxDiscTwin()], [umxDiffMZ()], [umxMR()]
 #' @md
 #' @examples
 #'
@@ -618,7 +620,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' @return - optional [OpenMx::mxModel()]
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
+#' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()]
 #' @md
 #' @examples
 #' \dontrun{

@@ -89,7 +89,7 @@ umxCompare(B2A, A2B)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
+\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCP]{umxCP()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}
 }
 
 Other Twin Modeling Functions: 
