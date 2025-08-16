@@ -348,7 +348,7 @@ fin_NI <- function(annualEarnings, symbol = "\u00A3") {
 #' bucks(100 * 1.05^32)
 #' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 #'
-bucks <- function(x, symbol = "$", big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = c("hyphen", "minus", "parens"), ...) {
+bucks <- function(x, symbol = umx_set_dollar_symbol(silent=TRUE), big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = c("hyphen", "minus", "parens"), ...) {
 	dot.items = list(...) # grab all the dot items cat
 	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
 	if(is.null(dot.items[["cat"]])){
