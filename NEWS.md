@@ -1,8 +1,8 @@
 ## dev
 
 # Releases
-## umx 4.40.00
-* August 2025 R 4.4.X
+## umx 4.4.0
+* August 2025 R 4.5.0
 * NEW: `umx_wide4lmer` make data wide without having to understand the arcane reshape symbology
 * IMPROVED: `umxPlotPredict` can do R^2 or r, italic format
 * IMPROVED: `bucks` knows about `umx_set_dollar_symbol`.

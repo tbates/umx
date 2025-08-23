@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_wide4lmer}
 \alias{umx_wide4lmer}
-\title{Take a long dataframe and make it wide for repeated measures and multi-lvel modelin in R}
+\title{Take a long dataframe and make it wide for repeated measures and multi-level analysis}
 \usage{
 umx_wide4lmer(
   repeated = list(y = c("y1", "y2")),
@@ -24,7 +24,7 @@ umx_wide4lmer(
 \item{idvar}{The variable which links repeated measures, e.g., "ID"}
 }
 \description{
-\code{umx_wide4lmer} from wide to long for repeated measures and multi-lvel modeling in R
+\code{umx_wide4lmer} Transform data from wide to long format for repeated measures and multi-level modeling in R.
 
 Wraps reshape \code{\link[stats:reshape]{stats::reshape()}}
 }

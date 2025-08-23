@@ -57,12 +57,10 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @details
 #' Revenue stream is discounted back to a present day cash amount which is equivalent.
 #' 
-#' @param cashflow Value of expected recurring payment
-#' @param discount Percent return to discount against (.05 = 5%)
-#' @param periods How many periods the stream delivers, e.g., (90-65) for 25 of a pension.
-#' @param PE of the company
-#' @param symbol Currency
-#' @param use reporting values in "B" (billion) or "M" (millions)
+#' @param income Value of expected recurring payment
+#' @param discount_rate Percent return to discount against (.05 = 5%)
+#' @param periods How many periods the stream delivers, e.g., 25 years of pension.
+#' @param symbol Currency symbol to use
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
@@ -71,9 +69,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @examples
 #' fin_net_present_value(27e3, .05, 25)
 #'
-fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, symbol = NULL) {
-	if(is.null(symbol)){symbol = umx_set_dollar_symbol(silent=TRUE)}
-	
+fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, symbol = umx_set_dollar_symbol(silent=TRUE)) {	
 	cashflows   = rep(income, periods)
 	timePeriods = seq(1, periods)
 	discount_factors = 1/(1+discount_rate)^timePeriods
@@ -102,29 +98,29 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #' @md
 #' @examples
 #' 
-#' fin_expected(current= 114,fair=140,ticker="NVDA", capital=.15, verb=T)
-#' NVDA  return =  41 %
-#' delta (fair-current)= $ 26 
-#' growth = $ 21 
-#' expected gain = $ 47 
-#' future value (final) = $ 161 
+#' fin_expected(114,fair=140, ticker="NVDA", capital=.15, verb=TRUE)
+#' # NVDA  return =  41 %
+#' # delta (fair-current)= $ 26 
+#' # growth = $ 21 
+#' # expected gain = $ 47 
+#' # future value (final) = $ 161 
 #' 
 #' fin_expected(24, 130, ticker="SMMT")
-#' SMMT  return =  523 %
+#' # SMMT  return =  523 %
 #' 
-#' fin_expected(24, 75, ticker="SMMT", verb=T)
-#' SMMT  return =  259 %
-#' delta (fair-current)= $ 51 
-#' growth = $ 11.25 
-#' expected gain = $ 62.25 
-#' future value (final) = $ 86.25 
+#' fin_expected(24, 75, ticker="SMMT", verb=TRUE)
+#' # SMMT  return =  259 %
+#' # delta (fair-current)= $ 51 
+#' # growth = $ 11.25 
+#' # expected gain = $ 62.25 
+#' # future value (final) = $ 86.25 
 #' 
-#' fin_expected(750, 1000, ticker="LLY", verb=T)
-#' LLY  return =  53 %
-#' delta (fair-current)= $ 250
-#' growth = $ 150 
-#' expected gain = $ 400 
-#' future value (final) = $ 1150 
+#' fin_expected(750, 1000, ticker="LLY", verb=TRUE)
+#' # LLY  return =  53 %
+#' # delta (fair-current)= $ 250
+#' # growth = $ 150 
+#' # expected gain = $ 400 
+#' # future value (final) = $ 1150 
 #'
 fin_expected <- function(current=89, fair=140, ticker = "NVDA", capital=.15, verb = FALSE) {
 	delta  = (fair-current)      

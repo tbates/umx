@@ -5554,10 +5554,10 @@ umxCov2cor <- function(x) {
 }
 
 
-#' Take a long dataframe and make it wide for repeated measures and multi-lvel modelin in R
+#' Take a long dataframe and make it wide for repeated measures and multi-level analysis
 #'
 #' @description
-#' `umx_wide4lmer` from wide to long for repeated measures and multi-lvel modeling in R
+#' `umx_wide4lmer` Transform data from wide to long format for repeated measures and multi-level modeling in R.
 #' 
 #' Wraps reshape [stats::reshape()]
 #'
