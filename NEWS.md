@@ -1,8 +1,22 @@
 ## dev
-## umx 4.50.00
-* May 2025 R 4.4.X
 
 # Releases
+## umx 4.40.00
+* August 2025 R 4.4.X
+* NEW: `umx_wide4lmer` make data wide without having to understand the arcane reshape symbology
+* IMPROVED: `umxPlotPredict` can do R^2 or r, italic format
+* IMPROVED: `bucks` knows about `umx_set_dollar_symbol`.
+* IMPROVED: `umxSummarizeTwinData` wraps M/F reporting in a try-catch.
+* IMPROVED: `umxSummarizeTwinData` prints non-NA data for each twin group and each variable.
+* IMPROVED: `xmu_check_variance` conditionally reports too-small data variance.
+* IMPROVED: `umx_score_scale` handles INF in max mode.
+* IMPROVED: `umxDiffMZ` clean up.
+* IMPROVED: `umxGxEbiv` checks `selDefs` for user.
+* NEW: `fin_expected ` for expected return based on current and fair value and cost of capital.
+* NEW: `fin_valuation` computes net present value, gets  ticker, verbose mode.
+* IMPROVED: `fin_expected` gets verbose mode, new examples
+* FIXED: `fin_interest` off by 1 error for "final" mode.
+
 ## umx 4.30.00
 * March 2025 R 4.4.3
 * NEW: `umxPlotPredict` to plot predicted outcomes nicely with an R2

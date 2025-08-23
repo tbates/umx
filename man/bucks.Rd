@@ -7,7 +7,7 @@
 \usage{
 bucks(
   x,
-  symbol = "$",
+  symbol = umx_set_dollar_symbol(silent = TRUE),
   big.mark = ",",
   decimal.mark = ".",
   trim = TRUE,
