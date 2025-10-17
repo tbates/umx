@@ -88,7 +88,7 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #'
 #' @param current The current market value of the instrument
 #' @param fair The user's estimated fair value.
-#' @param ticker A lable for printing
+#' @param ticker A label for printing
 #' @param capital The cost of capital (defaults to .15)
 #' @param verb Verbose or concise (FALSE)
 #' @return - expected gain
@@ -521,13 +521,7 @@ plot.percent <- function(x, ...) {
 
 	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")
 
-	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
-		# p = p + hrbrthemes::theme_ipsum()
-		p = p + hrbrthemes::theme_ft_rc()
-	} else {
-		# p = p + ggplot2::theme_bw()
-		p = p + cowplot::theme_cowplot(font_size = 11)
-	}
+	p = p + cowplot::theme_cowplot(font_size = 11)
 
 	
 	print(p)

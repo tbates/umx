@@ -1,6 +1,9 @@
 ## dev
 
 # Releases
+## umx 4.5.0
+* October 2025 R 4.5.0
+* REMOVED: dependency on hrbrthemes
 ## umx 4.4.0
 * August 2025 R 4.5.0
 * NEW: `umx_wide4lmer` make data wide without having to understand the arcane reshape symbology

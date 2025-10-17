@@ -78,7 +78,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 	pvalStr = paste0(", p ", umxAPA(pvalue, addComparison = TRUE, digits = digits, report = "none"))
 	blurb  = umxAPA(beta, se=SE, report = "expression", suffix = pvalStr)
 	p = p + annotate("text", x = labxy[1], y = labxy[2], label = deparse(blurb), parse = TRUE)
-	p = p + theme_bw() # + hrbrthemes::theme_ipsum()
+	p = p + theme_bw()
 	print(p)
 }
 

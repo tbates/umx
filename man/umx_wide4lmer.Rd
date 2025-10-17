@@ -15,7 +15,7 @@ umx_wide4lmer(
 \arguments{
 \item{repeated}{list of repeated measures each in list(y = c("y1", "y2")) form}
 
-\item{timevar}{list of conditions in form: list(cond = c("cont", "expt")),}
+\item{timevar}{list of conditions in a list, e.g., list(condition = c("cont", "expt")),}
 
 \item{covs}{vector of covariates e.g., c("Age", "Sex", "Conscientiousness")}
 

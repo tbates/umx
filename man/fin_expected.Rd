@@ -17,7 +17,7 @@ fin_expected(
 
 \item{fair}{The user's estimated fair value.}
 
-\item{ticker}{A lable for printing}
+\item{ticker}{A label for printing}
 
 \item{capital}{The cost of capital (defaults to .15)}
 

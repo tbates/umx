@@ -44,7 +44,6 @@
 	umx_set_plot_format('DiagrammeR')
 	umx_set_dollar_symbol(umx.dollar.symbol = "\u00A3") # = GBP
 	umx_set_plot_file_suffix(umx.plot.suffix = "gv")
-	umx_set_plot_use_hrbrthemes(FALSE)
 	umx_set_silent(FALSE)
 
 	# if(is.null(getOption('knitr.table.format'))){

@@ -338,7 +338,6 @@ umx_get_options <- function() {
 	umx_set_auto_plot()
 	umx_set_plot_format()
 	umx_set_plot_file_suffix()
-	umx_set_plot_use_hrbrthemes()
 	umx_set_table_format()
 	umx_set_optimizer()
 	umx_set_auto_run() 
@@ -346,36 +345,6 @@ umx_get_options <- function() {
 	message(umx_set_cores(silent = TRUE), " cores will be used")	
 }
 
-#' Set theme system to use for plots.
-#'
-#' Set output file suffix (default = "gv", alternative is "dot"). If you call this with no
-#' value, it will return the current setting. If you call it with TRUE, it toggles the setting.
-#'
-#' @param umx.plot.use_hrbrthemes whether to them plots with hrbrthemes (if empty returns the current value)
-#' @param silent If TRUE, no message will be printed.
-#' @return - Current setting
-#' @export
-#' @family Get and set
-#' @md
-#' @examples
-#' umx_set_plot_use_hrbrthemes() # print current state
-#' old = umx_set_plot_use_hrbrthemes(silent = TRUE) # store current value
-#' umx_set_plot_use_hrbrthemes(TRUE)
-#' umx_set_plot_use_hrbrthemes(old) # reinstate
-umx_set_plot_use_hrbrthemes <- function(umx.plot.use_hrbrthemes = NULL, silent = FALSE) {
-	if(is.null(umx.plot.use_hrbrthemes)) {
-		if(!silent){
-			message("Currently option to use hrbrthemes for plots is", 
-				omxQuotes(getOption("umx.plot.use_hrbrthemes")),
-				". Valid options are TRUE or FALSE"
-			)
-		}
-		invisible(getOption("umx.plot.use_hrbrthemes"))
-	} else {
-		umx_check(umx.plot.use_hrbrthemes %in% c(TRUE, FALSE), "stop", "valid options are TRUE or FALSE)")
-		options("umx.plot.use_hrbrthemes" = umx.plot.use_hrbrthemes)
-	}
-}
 
 #' Set output suffix used in umx SEM diagram files saved to disk.
 #'
@@ -3411,11 +3380,7 @@ umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xla
 		}
 	}
 	
-	if(umx_set_plot_use_hrbrthemes(silent = TRUE)){
-		p = p + hrbrthemes::theme_ipsum()
-	} else {
-		p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
-	}
+	p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
 
 	print(p)
 	invisible(p)	
@@ -5562,7 +5527,7 @@ umxCov2cor <- function(x) {
 #' Wraps reshape [stats::reshape()]
 #'
 #' @param repeated list of repeated measures each in list(y = c("y1", "y2")) form
-#' @param timevar list of conditions in form: list(cond = c("cont", "expt")),
+#' @param timevar list of conditions in a list, e.g., list(condition = c("cont", "expt")),
 #' @param covs vector of covariates e.g., c("Age", "Sex", "Conscientiousness")
 #' @param idvar The variable which links repeated measures, e.g., "ID"
 #' @param data A (long-format) data file

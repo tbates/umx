@@ -1,10 +1,12 @@
 ## Changes
-New features, miscellaneous help, improvements.
+Reinstating this package it was archived (on 2025-09-09) due to `hrbrthemes` dependency being archived.
+
+I missed this if any notification was sent? Fixed now.
 
 ## Test environments
-* MacOS 15.4, R version 4.4.3
-* Win64 R Under development (unstable) (2025-03-01 r87860 ucrt)
-* 64-bit Linux, R version 4.4.4
+* MacOS 15.4, R version 4.5.0 (2025-04-11)
+* Win64 R Under development (unstable)
+* 64-bit Linux, R version 4.5.0
 
 ## R CMD check results
 * All OK
