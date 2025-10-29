@@ -1,4 +1,5 @@
 ## Changes
+Altered version from 4.59.00 to 4.59.0
 Reinstating this package it was archived (on 2025-09-09) due to `hrbrthemes` dependency being archived.
 
 I missed this if any notification was sent? Fixed now.
