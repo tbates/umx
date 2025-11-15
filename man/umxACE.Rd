@@ -102,7 +102,7 @@ non-additive genetic effects (D).
 
 The following figure shows the ACE model for one variable "x" as a path diagram:
 
-\if{html}{\figure{ACEunivariate.png}{options: width=50\% alt="Figure: ACE univariate.png"}}
+\if{html}{\figure{ACEunivariate.png}{options: style="width: 50\%;" alt="Figure: ACE univariate.png"}}
 \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
 
 \code{umxACE} allows multivariate analyses, and this brings us to the Cholesky part of the model.
@@ -111,7 +111,7 @@ The Cholesky decomposition creates as many latent A (and C and E) latent variabl
 from left to right, decomposes the variance in each phenotype into successively restricted
 factors. The following figure shows the multivariate ACE model for three variables:
 
-\if{html}{\figure{ACEmatrix.png}{options: width=50\% alt="Figure: ACE matrix.png"}}
+\if{html}{\figure{ACEmatrix.png}{options: style="width: 50\%;" alt="Figure: ACE matrix.png"}}
 \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
 
 In this ACE model of three phenotypes, the expected variance-covariance matrix of the original data
@@ -121,7 +121,7 @@ This lower-triangle decomposition feature of the Cholesky yields a model which i
 account for all the variance (with some restrictions) in the data and be solvable.
 
 This figure also contains the key to understanding how to modify models that \code{umxACE} produces
-using \code{umxModify()} to drop paths  by label like \code{"a_r1c1"}. \strong{nb}: Read the "Matrices and Labels in ACE model" section in details below...
+using \code{umxModify()} to drop paths  by label like \code{"a_r1c1"}. \strong{n.b.}: Read the "Matrices and Labels in ACE model" section in details below...
 
 \strong{NOTE}: Scroll down to details for how to use the function, a figure and multiple examples.
 }

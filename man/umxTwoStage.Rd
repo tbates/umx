@@ -51,7 +51,7 @@ analysis showing the utility of SEM over two-stage regression.
 
 The following figure shows how the MR model appears as a path diagram:
 
-\if{html}{\figure{TSLS.png}{options: width=50\% alt="Figure: Mendelian Randomization analysis.png"}}
+\if{html}{\figure{TSLS.png}{options: style="width: 50\%;" alt="Figure: Mendelian Randomization analysis.png"}}
 \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
 }
 \examples{

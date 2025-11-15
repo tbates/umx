@@ -45,13 +45,13 @@ umxDiffMZ(
 on a variable \code{x} asserted to be causal of an outcome variable \code{y} are tested for association with differences on y.
 The logic of the design is shown below:
 
-\if{html}{\figure{DiffMZRainMud.png}{options: width=50\% alt="Figure: MZ differences model"}}
+\if{html}{\figure{DiffMZRainMud.png}{options: style="width: 50\%;" alt="Figure: MZ differences model"}}
 \if{latex}{\figure{DiffMZRainMud.pdf}{options: width=7cm}}
 }
 \details{
-Example output is shown below, with the fitted line and fit inscribed. The plot is just a ggplot graph that is returned and can be edited and formatted.
+Example output is shown below, with the fitted line and fit inscribed. The plot is just a ggplot2 graph that is returned and can be edited and formatted.
 
-\if{html}{\figure{DiffMZexample.png}{options: width=50\% alt="Figure: MZ differences model"}}
+\if{html}{\figure{DiffMZexample.png}{options: style="width: 50\%;" alt="Figure: MZ differences model"}}
 \if{latex}{\figure{DiffMZexample.pdf}{options: width=7cm}}
 
 For a more sophisticated linear mixed model approach, see \code{\link[=umxDiscTwin]{umxDiscTwin()}}.

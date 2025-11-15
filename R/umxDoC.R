@@ -5,13 +5,13 @@
 #' on a variable `x` asserted to be causal of an outcome variable `y` are tested for association with differences on y.
 #' The logic of the design is shown below:
 #'
-#' \if{html}{\figure{DiffMZRainMud.png}{options: width=50% alt="Figure: MZ differences model"}}
+#' \if{html}{\figure{DiffMZRainMud.png}{options: style="width: 50\%;" alt="Figure: MZ differences model"}}
 #' \if{latex}{\figure{DiffMZRainMud.pdf}{options: width=7cm}}
 #'
 #' @details
-#' Example output is shown below, with the fitted line and fit inscribed. The plot is just a ggplot graph that is returned and can be edited and formatted.
+#' Example output is shown below, with the fitted line and fit inscribed. The plot is just a ggplot2 graph that is returned and can be edited and formatted.
 #'
-#' \if{html}{\figure{DiffMZexample.png}{options: width=50% alt="Figure: MZ differences model"}}
+#' \if{html}{\figure{DiffMZexample.png}{options: style="width: 50\%;" alt="Figure: MZ differences model"}}
 #' \if{latex}{\figure{DiffMZexample.pdf}{options: width=7cm}}
 #' 
 #' For a more sophisticated linear mixed model approach, see [umxDiscTwin()].
@@ -95,7 +95,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' If the population association reflects confounded genes or shared environments,
 #' then the association in MZ twins will reduce to zero/non-significance.
 #' 
-#' \if{html}{\figure{discordantCausalPatterns.png}{options: width=50% alt="Figure: Types of confounding"}}
+#' \if{html}{\figure{discordantCausalPatterns.png}{options: style="width: 50\%;" alt="Figure: Types of confounding"}}
 #' \if{latex}{\figure{discordantCausalPatterns.pdf}{options: width=7cm}}
 #' 
 #' The function uses the [nlme::lme()] function to compute the effect of the presumed causal variable on the outcome, 
@@ -105,7 +105,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' 
 #' **Example output from `umxDiscTwin`**
 #' 
-#' \if{html}{\figure{DiscTwinsExample.png}{options: width=50% alt="Figure: Causation in Discordant twins"}}
+#' \if{html}{\figure{DiscTwinsExample.png}{options: style="width: 50\%;" alt="Figure: Causation in Discordant twins"}}
 #' \if{latex}{\figure{DiscTwinsExample.pdf}{options: width=7cm}}
 #' 
 #' @param x Cause
@@ -272,7 +272,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' The following figure shows how the DoC model appears as a path diagram (for two latent variables X and Y,
 #' each with three indicators). Note: For pedagogical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.
 #' 
-#' \if{html}{\figure{DoC.png}{options: width=50% alt="Figure: Direction of Causation"}}
+#' \if{html}{\figure{DoC.png}{options: style="width: 50\%;" alt="Figure: Direction of Causation"}}
 #' \if{latex}{\figure{DoC.pdf}{options: width=7cm}}
 #'
 #' @param name The name of the model (defaults to "DOC").

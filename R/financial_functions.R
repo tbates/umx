@@ -142,8 +142,14 @@ fin_expected <- function(current=89, fair=140, ticker = "NVDA", capital=.15, ver
 #' @description
 #' Calculates the constant, period-over-period growth rate required for an
 #' investment to grow from a beginning value to an ending value over a
-#' specified number of periods. The formula is:
-#' $(Ending \, Value / Beginning \, Value)^{(1 / Num \, Years)} - 1$
+#' specified number of periods.
+#' Compound Annual Growth Rate (CAGR) is computed as:
+
+#' @details 
+#' The Compound Annual Growth Rate (CAGR) is computed as:
+#'  CAGR = (End value/Start value)^(1/t) - 1
+#' 
+#' Where \emph{t} is the number of years (periods).
 #'
 #' @param beginningValue A numeric value representing the start value. Must be positive.
 #' @param endingValue A numeric value representing the end value. Must be positive.

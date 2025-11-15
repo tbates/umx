@@ -21,8 +21,14 @@ A numeric value representing the Compound Annual Growth Rate as a
 \description{
 Calculates the constant, period-over-period growth rate required for an
 investment to grow from a beginning value to an ending value over a
-specified number of periods. The formula is:
-$(Ending \, Value / Beginning \, Value)^{(1 / Num \, Years)} - 1$
+specified number of periods.
+Compound Annual Growth Rate (CAGR) is computed as:
+}
+\details{
+The Compound Annual Growth Rate (CAGR) is computed as:
+ CAGR = (End value/Start value)^(1/t) - 1
+
+Where \emph{t} is the number of years (periods).
 }
 \note{
 This function includes input validation and will `stop()` with an error
