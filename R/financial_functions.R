@@ -149,10 +149,10 @@ fin_expected <- function(current=89, fair=140, ticker = "NVDA", capital=.15, ver
 #' 
 #' Where \emph{t} is the number of years (periods).
 #'
-#' @param beginningValue A numeric value representing the start value. Must be positive.
-#' @param endingValue A numeric value representing the end value. Must be positive.
-#' @param numYears A numeric value representing the number of periods (typically years).
-#'   Must be positive.
+#' @param beginningValue Starting value of investment
+#' @param endingValue Ending value of investment
+#' @param numYears Number of periods (e.g., years) elapsing from begin to end
+#' @param digits rounding the returned value (default = 3)
 #'
 #' @return A numeric value representing the Compound Annual Growth Rate as a 
 #'   decimal (e.g., 0.096 for 9.6%).
@@ -180,7 +180,7 @@ fin_expected <- function(current=89, fair=140, ticker = "NVDA", capital=.15, ver
 #' fin_CAGR(100, 150, -1) # Error: Inputs must be positive
 #' fin_CAGR("100", 150, 5) # Error: All inputs must be numeric
 #' }
-fin_CAGR = function(beginningValue, endingValue, numYears) {
+fin_CAGR = function(beginningValue, endingValue, numYears, digits=3) {
   # Ensure inputs are numeric
   if (!is.numeric(beginningValue) || !is.numeric(endingValue) || !is.numeric(numYears)) {
     stop("All inputs must be numeric.")
@@ -194,7 +194,7 @@ fin_CAGR = function(beginningValue, endingValue, numYears) {
   # Calculate the rate
   cagr = (endingValue / beginningValue)^(1 / numYears) - 1
   
-  return(cagr)
+  return(round(cagr, digits))
 }
 
 

@@ -4,15 +4,16 @@
 \alias{fin_CAGR}
 \title{Calculate Compound Annual Growth Rate (CAGR)}
 \usage{
-fin_CAGR(beginningValue, endingValue, numYears)
+fin_CAGR(beginningValue, endingValue, numYears, digits = 3)
 }
 \arguments{
-\item{beginningValue}{A numeric value representing the start value. Must be positive.}
+\item{beginningValue}{Starting value of investment}
 
-\item{endingValue}{A numeric value representing the end value. Must be positive.}
+\item{endingValue}{Ending value of investment}
 
-\item{numYears}{A numeric value representing the number of periods (typically years).
-Must be positive.}
+\item{numYears}{Number of periods (e.g., years) elapsing from begin to end}
+
+\item{digits}{rounding the returned value (default = 3)}
 }
 \value{
 A numeric value representing the Compound Annual Growth Rate as a 
