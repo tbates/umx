@@ -308,7 +308,6 @@ methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
 
-
 # ============================
 # = Core Modeling Functions =
 # ============================
