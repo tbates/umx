@@ -1,5 +1,5 @@
 ## Changes
-Converted figure widths to style as requested
+Converted figure widths to styles (not pixels) as requested. Thank you for the clear instructions on how to fix this problem!
 
 ## Test environments
 * MacOS 26.2, R version 4.5.2 (2025/10/31)
