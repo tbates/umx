@@ -2,6 +2,145 @@
 # = Financial utilities =
 # =======================
 
+#' Teaching function for options
+#'
+#' @description
+#' `fin_option` is a teaching function for understanding  vega etc.
+#'
+#' @param premium Cost to buy
+#' @param strike the strike price
+#' @param stock the current price
+#' @param delta the delta 
+#' @param years how far in time the LEAP ends.
+#' @return - value
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @md
+#' @examples
+#' fin_option(premium = 134, strike = 200, stock= 304)
+#'
+fin_option <- function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8) {
+  intrinsic = max(0, stock - strike)
+  extrinsic = premium - intrinsic
+  
+  cat(sprintf("You pay $%g for the right to buy a $%g stock for $%g anytime in the next %.1f years\n", premium, stock, strike, years))
+  cat("TODO = Theta (the wall) and Gamma (the accelerator)\n\n")
+  
+  cat(sprintf("Intrinsic value = $%g\n", intrinsic))
+  cat(sprintf("Extrinsic value = $%g   the rent\n", extrinsic))
+  cat(sprintf("rent = %.3f%% of current stock price (annualized)\n", 100 * (extrinsic / years) / stock))
+  cat(sprintf("leverage = %.2fx   the speedometer/Delta\n", (delta / premium) * stock))
+  
+  # Return values so you can use them in umx scripts
+  invisible(list(
+    intrinsic       = intrinsic,
+    extrinsic       = extrinsic,
+    rent_annual_pct = 100 * (extrinsic / years) / stock,
+    leverage        = (delta / premium) * stock
+  ))
+}
+  
+#' Compute the CAGR of a stock
+#'
+#' @description
+#' `fin_StockCAGR` uses stock info from Yahoo to work out the CAGR over time.
+#'
+#' @param priceSeries A price series using yahoo
+#' @param from The date in the series to start from (blank = all)
+#' @return - value
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @md
+#' @examples
+#' \dontrun{
+#' libs(c("quantmod", "ggplot2", "scales", "lubridate"))
+#' getSymbols(c("NVDA"), from = "2010-01-01", to = Sys.Date())
+#' startDate = "2016-01-01"
+#' nvdaCagr = fin_StockCAGR(NVDA, startDate)
+#' }
+fin_StockCAGR = function(priceSeries, from = "1900-01-01") {
+	# getSymbols(c("NVDA"), from = "2010-01-01", to = Sys.Date())
+	tickerName = deparse(substitute(priceSeries))   # this is the magic line you wanted
+  data = data.frame(
+    Date  = zoo::index(priceSeries),
+    Price = as.numeric(quantmod::Cl(priceSeries))
+  )
+  if(missing(from)){
+	  startDate   = zoo::index(priceSeries[1,])
+  } else {
+	  startDate   = as.Date(from)
+  }
+	dataFromWhen = data[data$Date >= startDate, ]
+  startPrice  = dataFromWhen$Price[1]
+  endPrice    = utils::tail(dataFromWhen$Price, 1)
+  yearsPassed = as.numeric(difftime(max(dataFromWhen$Date), startDate, units = "days")) / 365.25
+  cagr        = (endPrice / startPrice) ^ (1 / yearsPassed) - 1
+  
+  cat(sprintf("%s: %.1f%% CAGR ($%.2f --> $%.2f over %.2f years)\n", tickerName, cagr * 100, startPrice, endPrice, yearsPassed))
+  
+  tmp = list(
+    cagr       = cagr,
+    startPrice = startPrice,
+    endPrice   = endPrice,
+    years      = yearsPassed,
+    data       = data
+  )
+  invisible(tmp)
+}
+
+
+#' Work the carry cost of a house
+#'
+#' @description
+#' `fin_carryCost` uses the purchase price, holding expenses, appreciation, and opportunity cost to compute a carrying cost for a house purchase.
+#'
+#' @param property_cost Purchase price
+#' @param appreciation rate of property increase
+#' @param QQQ Opportunity cost of leaving money in the markets
+#' @param rent_saved But now you have to rent somewhere
+#' @param interest Cost of borrowing
+#' @param rates Council
+#' @param insurance The cost of property owners insurance
+#' @param maintenance New kitchen roof etc.
+#' @param years Holding time.
+#' @return - value
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @md
+#' @examples
+#' fin_carryCost(property_cost=1.2e6)
+#' fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
+#'
+fin_carryCost = function(property_cost, appreciation =.02, QQQ= .14, rent_saved= .04, interest= .06, rates= 5000, insurance = 2000, maintenance = .015, years=5){  
+  rent_saved  = property_cost * rent_saved
+  interest    = property_cost * interest
+  maintenance = property_cost * maintenance
+  appreciation = property_cost * (1+appreciation)^years
+  appreciation = appreciation*.97 # sale cost
+  QQQ = property_cost * (1+QQQ)^years
+  Carry_Cost  = (interest + rates + insurance + maintenance) - rent_saved
+  netnetCostOfBuying = (Carry_Cost*years) + QQQ - appreciation
+
+  if((Carry_Cost/property_cost) > .015){
+  	cat("Polite note: Carry Cost over the 1.5% threshold: **too high**\n\n")
+  }
+  cat(
+	  "Purchase Price = ", dollar(as.numeric(property_cost) , prefix = "$"), "\n",
+	  dollar(as.numeric(interest) , prefix = "$"),    "interest + ", 
+	  dollar(as.numeric(rates)    , prefix = "$"),    "rates + ", 
+	  dollar(as.numeric(insurance), prefix = "$"),    "insurance + ",
+	  dollar(as.numeric(maintenance) , prefix = "$"), "maintenance - ",
+	  dollar(as.numeric(rent_saved)  , prefix = "$"), "rent_saved\n", 
+	  dollar(as.numeric(appreciation), prefix = "$"), "appreciation\n", 
+	  "Missed market opportunity QQQ = ", dollar(as.numeric(QQQ), prefix = "$"), "\n",
+	  "Net net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), "\n"
+  )
+  invisible(netnetCostOfBuying)
+}
+
 #' Work the valuation of a company
 #'
 #' @description
@@ -222,6 +361,7 @@ fin_CAGR = function(beginningValue, endingValue, numYears, digits=3) {
 #' @param largest_with_cents Default = 0
 #' @param baseYear Default = current year (for table row labels)
 #' @param final if set (default = NULL), returns the rate required to turn principal into final after yrs (principal defaults to 1)
+#' @param deflate Final capital is inflation adjusted when inflation is non zero (default TRUE).
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
@@ -238,7 +378,7 @@ fin_CAGR = function(beginningValue, endingValue, numYears, digits=3) {
 #' # Report as a nice markdown table
 #' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 #'
-#' umx_set_dollar_symbol("£")
+#' umx_set_dollar_symbol("$")
 #' # 2 What rate is needed to increase principal to final value in yrs time?
 #' fin_interest(1, final = 1.4, yrs=5)
 #' fin_interest(principal = 50, final=200, yrs = 5)
@@ -265,7 +405,7 @@ fin_CAGR = function(beginningValue, endingValue, numYears, digits=3) {
 #' # 8 Interest needed to increase principal to final value in yrs time.
 #' fin_interest(principal = 100, final=200, yrs = 5)
 #'
-fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html")){
+fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html"), deflate = TRUE){
 	report = match.arg(report)
 	if(is.null(symbol)){symbol = umx_set_dollar_symbol(silent=TRUE)}
 	if(principal==0){
@@ -342,15 +482,19 @@ fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 
 	}
 	class(Total) = 'money'
 	attr(Total, 'symbol') = symbol
-	return(Total)
+	if(deflate){
+		return(Total/ (1+inflate)^yrs)
+	} else {
+		return(Total)
+	}
 }
 
 
 #' Compute NI given annual Earnings.
 #'
 #' @description
-#' Employees pay contributions at 12%% on annual earnings between £9,568 and £50,270. Above that you pay at 2%%. 
-#' Employers pay at 13.8%% on all annual earnings of more than £8,840, although there are different thresholds 
+#' Employees pay contributions at 12%% on annual earnings between GBP 9,568 and GBP 50,270. Above that you pay at 2%%. 
+#' Employers pay at 13.8%% on all annual earnings of more than GBP 8,840, although there are different thresholds 
 #' for those under the age of 21 and for apprentices under the age of 25.
 #'
 #' @param annualEarnings Employee annual earnings.
@@ -593,7 +737,7 @@ plot.percent <- function(x, ...) {
 #'
 #' @description
 #' Compute the Justified P/E of a stock.
-#' Justified P/E = ( (DPS / EPS) * (1 + g)) / (k – g)
+#' Justified P/E = ( (DPS / EPS) * (1 + g)) / (k - g)
 #' DPS is the dividend per share, EPS is the earnings per share,
 #' g is the sustainable growth rate, and k is the required rate of return.
 #' @param Dividend The dividend.

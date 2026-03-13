@@ -40,9 +40,12 @@ deg2rad(180) == pi # TRUE!
 Other Miscellaneous Functions: 
 \code{\link{fin_JustifiedPE}()},
 \code{\link{fin_NI}()},
+\code{\link{fin_StockCAGR}()},
+\code{\link{fin_carryCost}()},
 \code{\link{fin_expected}()},
 \code{\link{fin_interest}()},
 \code{\link{fin_net_present_value}()},
+\code{\link{fin_option}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_ticker}()},
 \code{\link{fin_valuation}()},

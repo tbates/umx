@@ -17,8 +17,8 @@ fin_NI(annualEarnings, symbol = "£")
 }
 }
 \description{
-Employees pay contributions at 12\%\% on annual earnings between £9,568 and £50,270. Above that you pay at 2\%\%.
-Employers pay at 13.8\%\% on all annual earnings of more than £8,840, although there are different thresholds
+Employees pay contributions at 12\%\% on annual earnings between GBP 9,568 and GBP 50,270. Above that you pay at 2\%\%.
+Employers pay at 13.8\%\% on all annual earnings of more than GBP 8,840, although there are different thresholds
 for those under the age of 21 and for apprentices under the age of 25.
 }
 \examples{
@@ -39,9 +39,12 @@ fin_NI(142000)
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
 \code{\link{fin_JustifiedPE}()},
+\code{\link{fin_StockCAGR}()},
+\code{\link{fin_carryCost}()},
 \code{\link{fin_expected}()},
 \code{\link{fin_interest}()},
 \code{\link{fin_net_present_value}()},
+\code{\link{fin_option}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_ticker}()},
 \code{\link{fin_valuation}()},

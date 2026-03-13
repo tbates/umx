@@ -1,6 +1,11 @@
 ## dev
 
 # Releases
+## umx 4.6.5
+* March 2026 R 4.5.0
+* NEW: `fin_cagr` 
+* NEW: `fin_???` 
+
 ## umx 4.5.0
 * October 2025 R 4.5.0
 * REMOVED: dependency on hrbrthemes

@@ -17,7 +17,8 @@ fin_interest(
   largest_with_cents = 0,
   baseYear = as.numeric(format(Sys.time(), "\%Y")),
   table = TRUE,
-  report = c("markdown", "html")
+  report = c("markdown", "html"),
+  deflate = TRUE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ fin_interest(
 \item{table}{Whether to print a table of annual returns (default TRUE)}
 
 \item{report}{"markdown" or "html",}
+
+\item{deflate}{Final capital is inflation adjusted when inflation is non zero (default TRUE).}
 }
 \value{
 \itemize{
@@ -71,7 +74,7 @@ fin_interest(principal = 5000, interest = 0.05, rep= "html")
 # Report as a nice markdown table
 fin_interest(principal = 5000, interest = 0.05, yrs = 10)
 
-umx_set_dollar_symbol("£")
+umx_set_dollar_symbol("$")
 # 2 What rate is needed to increase principal to final value in yrs time?
 fin_interest(1, final = 1.4, yrs=5)
 fin_interest(principal = 50, final=200, yrs = 5)
@@ -113,8 +116,11 @@ Other Miscellaneous Functions:
 \code{\link{deg2rad}()},
 \code{\link{fin_JustifiedPE}()},
 \code{\link{fin_NI}()},
+\code{\link{fin_StockCAGR}()},
+\code{\link{fin_carryCost}()},
 \code{\link{fin_expected}()},
 \code{\link{fin_net_present_value}()},
+\code{\link{fin_option}()},
 \code{\link{fin_percent}()},
 \code{\link{fin_ticker}()},
 \code{\link{fin_valuation}()},

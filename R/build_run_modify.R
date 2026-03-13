@@ -42,7 +42,7 @@
 .onAttach <- function(libname, pkgname){
 	# umx_set_condensed_slots(FALSE)
 	umx_set_plot_format('DiagrammeR')
-	umx_set_dollar_symbol(umx.dollar.symbol = "\u00A3") # = GBP
+	umx_set_dollar_symbol(umx.dollar.symbol = "$") # \u00A3 = GBP
 	umx_set_plot_file_suffix(umx.plot.suffix = "gv")
 	umx_set_silent(FALSE)
 
@@ -82,7 +82,11 @@
 #' @importFrom stats setNames update var delete.response terms model.frame
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
-#' @importFrom utils browseURL install.packages str read.csv read.delim
+#' @importFrom utils browseURL install.packages str read.csv read.delim 
+#' @importFrom utils tail
+#' @importFrom scales dollar
+#' @importFrom quantmod Cl
+#' @importFrom zoo index
 #' @importFrom MASS mvrnorm
 #' @importFrom nlme intervals lme
 #' @importFrom polycor hetcor
