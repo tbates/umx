@@ -20,24 +20,44 @@
 #' @examples
 #' fin_option(premium = 134, strike = 200, stock= 304)
 #'
-fin_option <- function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8) {
+fin_option = function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8) {
+  # Epistemic Check: Is the S&P 500 return (e.g. 10%) higher than the rent cost?
+  # Assumption: Linear decay, which we know is a simplification (Theta is not linear).
+  if(0){
+	  cat("TODO = Theta (the wall) and Gamma (the accelerator)\n")
+	  cat("It is vital to remember that these numbers are hypotheses based on a model, not absolute truths. They assume 'all other things being equal' (ceteris paribus), which rarely happens in a live market.")
+	  cat("\nReality is not normal, it's fat-tailed. And prediction is skewed\n\n")
+  }
+  
   intrinsic = max(0, stock - strike)
   extrinsic = premium - intrinsic
+  breakEven = strike + premium
   
-  cat(sprintf("You pay $%g for the right to buy a $%g stock for $%g anytime in the next %.1f years\n", premium, stock, strike, years))
-  cat("TODO = Theta (the wall) and Gamma (the accelerator)\n\n")
+  # Percent move required just to break even at expiry
+  pctToBreakEven = 100 * (breakEven - stock) / stock
   
-  cat(sprintf("Intrinsic value = $%g\n", intrinsic))
-  cat(sprintf("Extrinsic value = $%g   the rent\n", extrinsic))
-  cat(sprintf("rent = %.3f%% of current stock price (annualized)\n", 100 * (extrinsic / years) / stock))
-  cat(sprintf("leverage = %.2fx   the speedometer/Delta\n", (delta / premium) * stock))
+  # Annualized cost of the 'insurance/rent'
+  rentAnnualPct = 100 * (extrinsic / years) / stock
   
-  # Return values so you can use them in umx scripts
+  # Omega (Effective Leverage)
+  leverage = (delta * stock) / premium
+
+  cat("--- Fiduciary Analysis ---\n")
+  cat(sprintf("Current Stock: $%g | Strike: $%g | Total Cost Basis: $%g\n", stock, strike, breakEven))
+  cat(sprintf("Break-even Hurdle: %+.2f%% (Stock must reach $%g by year %.1f)\n", pctToBreakEven, breakEven, years))
+  cat(sprintf("Annualized Rent: %.2f%% (Compare vs S&P 500 Benchmark)\n", rentAnnualPct))
+  cat(sprintf("Effective Leverage (Omega): %.2fx\n", leverage))
+  
+  if(rentAnnualPct > 7) {
+    cat("!!! WARNING: High Rent. Ensure target growth exceeds benchmark + rent.\n")
+  }
+
   invisible(list(
-    intrinsic       = intrinsic,
-    extrinsic       = extrinsic,
-    rent_annual_pct = 100 * (extrinsic / years) / stock,
-    leverage        = (delta / premium) * stock
+    intrinsic      = intrinsic,
+    extrinsic      = extrinsic,
+    breakEven      = breakEven,
+    rent_annual_pct = rentAnnualPct,
+    leverage       = leverage
   ))
 }
   
