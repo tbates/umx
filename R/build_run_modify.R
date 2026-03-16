@@ -3788,7 +3788,6 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' 
 # type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
 umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, summary = !umx_set_silent(silent = TRUE), intervals = FALSE, optimizer = NULL, comparison = NULL){
-	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
 	# TODO: umxRun: Optimise for speed
 	tryHard    = match.arg(tryHard)
@@ -3806,7 +3805,24 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 	if(setValues){
 		model = xmuValues(model)
 	}
+
+	# Check if the model has been run
+	start2LL = if(!is.null(model$output)) model$output$Minus2LogLikelihood else NULL
+
 	model = xmu_safe_run_summary(model, autoRun = TRUE,  summary = summary, tryHard =  tryHard)
+
+	if(!is.null(start2LL)){
+		# 1. Was run
+		# 2. Has a previous -2LL
+		end2LL = model$output$Minus2LogLikelihood
+		if(!is.null(end2LL)){
+			# 3. Has a new -2LL
+			model@output$changeLL = end2LL - start2LL
+			if(summary){
+				message("Change in -2LL = ", round(model@output$changeLL, 3))
+			}
+		}
+	}
 
 	if(calc_sat){
 		if(umx_is_RAM(model)){
