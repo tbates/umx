@@ -1945,20 +1945,21 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 		thisName  = paramTable[i, "name"]
 		location  = omxLocateParameters(model, labels = thisName, free = NA)[1,]
 		thisModel = umxGetModel(model, targetModel = location$model)
-		latents   = umxGetLatents(thisModel)
-		manifests = umxGetManifests(thisModel)
-		Anames    = dimnames(thisModel$A)[[1]]
-		Snames    = dimnames(thisModel$S)[[1]]
 
 		# Set the type for this path
 		if(location$matrix == "M"){
 			paramTable[i, "type"] = "Mean"
 		} else if(location$matrix == "S"){ # 2 headed symmetric
-			from = Anames[location$col]
-			to   = Anames[location$row]
-			if(from  %in% latents){
-				if(to  %in% latents){
-					if(from == to){
+			# Use F to decide if from and to are latent (all 0 in F column) or manifest (some non-0 in F)
+			# location$col = from; location$row = to
+			# Safe to assume F exists in a RAM model?
+			F_vals = thisModel$F$values
+			fromLatent = all(F_vals[, location$col] == 0)
+			toLatent   = all(F_vals[, location$row] == 0)
+
+			if(fromLatent){
+				if(toLatent){
+					if(location$col == location$row){
 						paramTable[i, "type"] = "Factor Variance"
 					}else{
 						paramTable[i, "type"] = "Factor Cov"
@@ -1966,9 +1967,9 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 				}else{
 					paramTable[i, "type"] = "Latent-Manifest Cov"
 				}
-			} else { # from %in% manifests
-				if(to %in% manifests){
-					if(from == to){
+			} else { # from is manifest
+				if(!toLatent){ # to is manifest
+					if(location$col == location$row){
 						paramTable[i, "type"] = "Residual"
 					}else{
 						paramTable[i, "type"] = "Manifest Cov"						
@@ -1978,10 +1979,13 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 				}
 			}
 		} else if(location$matrix == "A"){
-			from = Anames[location$col]
-			to   = Anames[location$row]
-			if(from %in% latents){
-				if(to %in% latents){
+			# Use F to decide if from and to are latent (all 0 in F column) or manifest (some non-0 in F)
+			F_vals = thisModel$F$values
+			fromLatent = all(F_vals[, location$col] == 0)
+			toLatent   = all(F_vals[, location$row] == 0)
+
+			if(fromLatent){
+				if(toLatent){
 					paramTable[i, "type"] = "Factor to factor"
 				}else{
 					paramTable[i, "type"] = "Factor loading"					
