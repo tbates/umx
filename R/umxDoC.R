@@ -341,6 +341,12 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' }
 umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, data = NULL, zyg = "zygosity") {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
+	# Check for reserved names
+	reserved = c("a", "c", "e", "as", "cs", "es", "expMean", "a_cp", "c_cp", "e_cp")
+	if(any(c(var1Indicators, var2Indicators) %in% reserved)){
+		stop("Variable names cannot be any of: ", paste(reserved, collapse = ", "), ". These are reserved for internal matrices.")
+	}
+
 	if(name == "DoC"){name = ifelse(causal, "DoC", "Chol")}
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
@@ -367,6 +373,20 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 	mzData = xmu_make_mxData(mzData, manifests = selVars)
 	dzData = xmu_make_mxData(dzData, manifests = selVars)
 	xmu_twin_check(selDVs= c(var1Indicators,var2Indicators), sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
+
+	# Calculate start means from data
+	obsData = mzData$observed
+	# only do this for raw data (mzData$type == "raw")
+	if(!is.null(obsData) && mzData$type == "raw"){
+		# obsData is a matrix or data.frame
+		# T1 is selVars[1:nVar], T2 is selVars[(nVar+1):(2*nVar)]
+		meansT1 = colMeans(obsData[, selVars[1:nVar], drop=FALSE], na.rm = TRUE)
+		meansT2 = colMeans(obsData[, selVars[(nVar+1):(2*nVar)], drop=FALSE], na.rm = TRUE)
+		startMeans = (meansT1 + meansT2)/2
+		startMeans[is.na(startMeans)] = 0 # Fallback
+	} else {
+		startMeans = 0
+	}
 
 	# ========================
 	# = Make Factor Loadings =
@@ -429,8 +449,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		mxAlgebra(name= "expCovDZ", FacCovDZ + specCovDZ, dimnames = list(selVars, selVars)),
 		
 		# Means model
-		# TODO: Better starts for means... (easy)
-		umxMatrix(name= "Means", "Full", nrow= 1, ncol= nVar, free= TRUE, values= .1),
+		umxMatrix(name= "Means", "Full", nrow= 1, ncol= nVar, free= TRUE, values= startMeans),
 		mxAlgebra(name= "expMean", cbind(top.Means, top.Means))
 		# TODO Why not just make ncol = nCol*2 and allow label repeats the equate means? Alg might be more efficient?
 	)
@@ -656,7 +675,6 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 	message("Summary support for DoC models not complete yet. Feedback welcome at http://github.com/tbates/umx/issues if you are using this.")
 
 	# TODO: Allow "a2b" in place of causal to avoid the make/modify 2-step
-	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 	
@@ -711,7 +729,11 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		# Bind diags of a_cp, c and e columns into nFac-row matrix
 		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) 
 		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."), stringsAsFactors = FALSE);
-		names(commonACE) = c ("A", "C", "E")
+		commonACE_names = c("A", "C", "E")
+		if(!is.null(model$top$dzCr) && model$top$dzCr$values == .25){
+			commonACE_names = c("A", "D", "E")
+		}
+		names(commonACE) = commonACE_names
 		if(report == "html"){
 			umx_print(commonACE, digits = digits, zero.print = ".", file = "std_spec.html")
 		} else {
@@ -741,7 +763,11 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		cs = model$top$cs$values
 		es = model$top$es$values
 
-		specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')), stringsAsFactors = FALSE,
+		labList = c('a', 'c', 'e')
+		if(!is.null(model$top$dzCr) && model$top$dzCr$values == .25){
+			labList = c('a', 'd', 'e')
+		}
+		specifics = data.frame(row.names = paste0('Specific ', labList), stringsAsFactors = FALSE,
 			rbind(diag(as), 
 				  diag(cs),
 				  diag(es))
