@@ -1166,8 +1166,31 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		# handle labels as input
 		if (!regex) {
 			theLabels = update
-			# TODO: check the labels are present
+			# check the labels are present
 			# if not suggest reversal for with items
+			modelLabels = umxGetParameters(newModel)
+			if(!all(theLabels %in% modelLabels)){
+				# Some labels missing
+				missingLabels = theLabels[!theLabels %in% modelLabels]
+				msg = paste0("Some labels not found in model: ", paste(omxQuotes(missingLabels), collapse=", "))
+
+				# check for "with" items that are reversed
+				# e.g. looking for "a_with_b", but model has "b_with_a"
+				for(thisLabel in missingLabels){
+					if(grepl("_with_", thisLabel)){
+						# flip it
+						splitLabel = strsplit(thisLabel, "_with_")[[1]]
+						if(length(splitLabel) == 2){
+							flipLabel = paste0(splitLabel[2], "_with_", splitLabel[1])
+							if(flipLabel %in% modelLabels){
+								msg = paste0(msg, "\nFound ", omxQuotes(flipLabel), " in model: maybe you meant that instead of ", omxQuotes(thisLabel), "?")
+							}
+						}
+					}
+				}
+				stop(msg)
+			}
+
 			if(is.null(newlabels)){
 				newModel = omxSetParameters(newModel, labels = theLabels, free = free, values = value, name = name)
 			}else{
