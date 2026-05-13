@@ -5,7 +5,7 @@
 \title{Easily plot functions in R}
 \usage{
 umxPlotFun(
-  fun = c(dnorm, "sin(x) + sqrt(1/x)"),
+  fun = c("sin(x)", "cos(x)"),
   min = -1,
   max = 5,
   xlab = NULL,
@@ -17,53 +17,47 @@ umxPlotFun(
 )
 }
 \arguments{
-\item{fun}{Function to plot. Also takes strings like "sin(x) + sqrt(1/x)".}
+\item{fun}{Function(s) to plot. Takes strings like c("3 + sin(x)^2", "cos(x)") or function objects.}
 
 \item{min}{x-range min.}
 
 \item{max}{x-range max.}
 
-\item{xlab}{= Optional x axis label.}
+\item{xlab}{Optional x axis label.}
 
-\item{ylab}{= Optional y axis label.}
+\item{ylab}{Optional y axis label.}
 
 \item{title}{Optional title for the plot.}
 
-\item{logY}{Set to, e.g. "log" to set COORDINATE of y to log.}
+\item{logY}{Set to "log" or "log10" to transform y coordinate.}
 
-\item{logX}{Set to, e.g. "log" to set COORDINATE of x to log.}
+\item{logX}{Set to "log" or "log10" to transform x coordinate.}
 
-\item{p}{Optional plot onto which to draw the function.}
+\item{p}{Optional plot onto which to draw the function(s).}
 }
 \value{
-\itemize{
-\item A ggplot graph
-}
+A ggplot graph object
 }
 \description{
-A wrapper for \code{\link[ggplot2:geom_function]{ggplot2::stat_function()}}
+A wrapper for \code{\link[ggplot2:geom_function]{ggplot2::stat_function()}} that handles single or multiple functions.
 }
 \details{
-Easily plot a function - like sin, using ggplot.
+Easily plot functions—like sin or x^2—using ggplot. Accepts bare functions,
+strings, or lists of strings/functions. Automatically generates a legend when
+multiple functions are provided.
 }
 \examples{
 \dontrun{
-# Uses fonts not available on CRAN
-umxPlotFun(sin, max= 2*pi)
-umxPlotFun("sqrt(1/x)", max= 2*pi)
-umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
-p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
-umxPlotFun(function(x){100^2-x^2}, p = p)
+# Plotting multiple strings
+p = umxPlotFun(c("sin(x)", "cos(x)"), max = 2*pi)
 
-# Controlling other plot features
-umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
+# Providing a named list to control legend labels
+umxPlotFun(list(Sine = sin, Cosine = cos), max = 2*pi)
 }
 
 }
 \seealso{
-\itemize{
-\item \code{\link[ggplot2:geom_function]{ggplot2::stat_function()}}
-}
+\code{\link[ggplot2:geom_function]{ggplot2::stat_function()}}
 
 Other Plotting functions: 
 \code{\link{ggAddR}()},

@@ -2,6 +2,66 @@
 # = Financial utilities =
 # =======================
 
+#' NZ FIF Tax Offset & NAV Neutrality Calculator
+#'
+#' @param portfolioValue Total opening value of the portfolio on April 1st.
+#' @param marginRate The annual interest rate on the IBKR margin loan (e.g., 0.06).
+#' @param expectedReturn The expected annual growth of the asset (e.g., 0.11 for QQQ).
+#' @param taxRate The user's marginal tax rate (e.g., 0.39 or .3 (blended)).
+#' @param fifRate The FIF deemed rate of return (standard is 0.05).
+#'
+#' @return A ggplot object showing the net impact across LTV ratios.
+#' @export
+#' @family Miscellaneous Functions
+#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @md
+#' @examples
+#' # Example Usage:
+#' # My 2026 Strategy: $1.2M Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
+#' fin_FIF(portfolioValue = 1.2e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.32)
+fin_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
+  # 1. Core Logic (Dynamic Calculations)
+  # Ratio to zero out taxable income
+  ratioDeductionOnly = fifRate / marginRate
+  
+  # Ratio for NAV Neutrality (Growth + Tax Shield = Tax Bill)
+  # Net Benefit per $ of Loan = (Return + (Interest * TaxRate) - Interest)
+  netBenefitPerUnit = expectedReturn + (marginRate * taxRate) - marginRate
+  totalTaxBill = portfolioValue * fifRate * taxRate
+  ratioNavNeutral = totalTaxBill / (portfolioValue * netBenefitPerUnit)
+  
+  # 2. Data Generation for Visualization
+  # We generate a range from 0% to 150% of the Neutral Point for better scaling
+  maxRange = min(0.85, ratioNavNeutral * 2) 
+  ltvRange = seq(0, maxRange, length.out = 100)
+  
+  netImpact = sapply(ltvRange, function(r) {
+    loan    = portfolioValue * r
+    benefit = loan * netBenefitPerUnit
+    return(benefit - totalTaxBill)
+  })
+  
+  plotDf = data.frame(loanRatio = ltvRange, netGainLoss = netImpact)
+  
+  # 3. Build Plot (Line by Line)
+  p = ggplot(plotDf, aes(x = loanRatio, y = netGainLoss))
+  p = p + geom_line(color = "#2c3e50", size = 1.2)
+  p = p + geom_hline(yintercept = 0, linetype = "dashed", color = "#e74c3c")
+  p = p + geom_vline(xintercept = ratioNavNeutral, linetype = "dotted", color = "#27ae60")
+  p = p + scale_y_continuous(labels = scales::dollar)
+  p = p + scale_x_continuous(labels = scales::percent)
+  p = p + labs(
+    title = "NZ FIF Tax Offset Strategy: Net Asset Impact",
+    subtitle = paste0("Portfolio: $", format(portfolioValue, big.mark = ","), 
+                      " | Neutral LTV: ", round(ratioNavNeutral * 100, 2), "%"),
+    x = "Loan-to-Value (LTV) Ratio",
+    y = "Net Annual Gain/Loss vs. FIF Tax"
+  )
+  p = p + annotate("label", x = ratioNavNeutral, y = 0, label = paste0("NAV Neutral at ", round(ratioNavNeutral * 100, 1), "% LTV"), fill = "white", alpha = 0.8)
+  p = p + theme_minimal() 
+  # Return the plot
+  p
+}
 #' Teaching function for options
 #'
 #' @description
@@ -135,14 +195,14 @@ fin_StockCAGR = function(priceSeries, from = "1900-01-01") {
 #' fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
 #'
 fin_carryCost = function(property_cost, appreciation =.02, QQQ= .14, rent_saved= .04, interest= .06, rates= 5000, insurance = 2000, maintenance = .015, years=5){  
-  rent_saved  = property_cost * rent_saved
-  interest    = property_cost * interest
-  maintenance = property_cost * maintenance
-  appreciation = property_cost * (1+appreciation)^years
-  appreciation = appreciation*.97 # sale cost
-  QQQ = property_cost * (1+QQQ)^years
-  Carry_Cost  = (interest + rates + insurance + maintenance) - rent_saved
-  netnetCostOfBuying = (Carry_Cost*years) + QQQ - appreciation
+  rent_saved   = property_cost * rent_saved
+  interest     = property_cost * interest
+  maintenance  = property_cost * maintenance
+  QQQ          = (property_cost * (1+QQQ)^years) - property_cost
+  propAprec    = property_cost * ((1+appreciation)^years)
+  propAprec    = (propAprec*.97) - property_cost # sale cost
+  Carry_Cost   = (interest + rates + insurance + maintenance) - rent_saved
+  netnetCostOfBuying = (Carry_Cost*years) + QQQ - propAprec
 
   if((Carry_Cost/property_cost) > .015){
   	cat("Polite note: Carry Cost over the 1.5% threshold: **too high**\n\n")
@@ -154,8 +214,9 @@ fin_carryCost = function(property_cost, appreciation =.02, QQQ= .14, rent_saved=
 	  dollar(as.numeric(insurance), prefix = "$"),    "insurance + ",
 	  dollar(as.numeric(maintenance) , prefix = "$"), "maintenance - ",
 	  dollar(as.numeric(rent_saved)  , prefix = "$"), "rent_saved\n", 
-	  dollar(as.numeric(appreciation), prefix = "$"), "appreciation\n", 
-	  "Missed market opportunity QQQ = ", dollar(as.numeric(QQQ), prefix = "$"), "\n",
+	  "Annual carry cost = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
+	  "Property appreciation = ", dollar(as.numeric(propAprec), prefix = "$"), "\n",
+	  "Missed market gains  = ", dollar(as.numeric(QQQ), prefix = "$"), "\n",
 	  "Net net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), "\n"
   )
   invisible(netnetCostOfBuying)

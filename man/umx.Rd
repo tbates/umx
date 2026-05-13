@@ -6,18 +6,19 @@
 \alias{umx}
 \title{Functions for Structural Equation Modeling in OpenMx}
 \description{
-\code{umx} allows you to more easily build, run, modify, and report structural models,
-building on the OpenMx package.
-All core functions are organized into families, so they are easier to find
-(so if you know a function similar to what you are looking for, look at other members of its "family" at the bottom of its help file.
+\code{umx} allows you to more easily build, run, modify, and report
+structural models, building on the OpenMx package.
+All core functions are organized into families, so they are easier
+to find (so if you know a function similar to what you are looking for,
+look at other members of its "family" at the bottom of its help file.
 
 Please cite as: Bates, T. C., Neale, M. C., & Maes, H. H. (2019).
 umx: A library for Structural Equation and Twin Modelling in R.
 \emph{Twin Research and Human Genetics}, \strong{22}, 27-41. \doi{10.1017/thg.2019.2}.
 
-All the functions have full-featured and well commented examples, some even have \emph{figures},
-so use the help, even if you think it won't help :-)
-Have a look, for example at \code{\link[=umxRAM]{umxRAM()}}
+All functions have full-featured and well commented examples,
+some even have \emph{figures}, so use the help. Even if you think
+it won't help :-). Have a look, for example at \code{\link[=umxRAM]{umxRAM()}}
 
 Check out NEWS about new features at \code{news(package = "umx")}
 }
@@ -35,14 +36,15 @@ devtools::install_github("tbates/umx")
 \dontrun{
 require("umx")
 data(demoOneFactor)
-manifests = names(demoOneFactor)
-m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
-	umxPath("G", to = manifests),
-	umxPath(var = manifests),
-	umxPath(var = "G"  , fixedAt= 1)
+manifests <- names(demoOneFactor)
+m1 <- umxRAM("One Factor",
+    data = demoOneFactor, type = "cov",
+    umxPath("G", to = manifests),
+    umxPath(var = manifests),
+    umxPath(var = "G", fixedAt = 1)
 )
 
-# umx added informative labels, created starting values, 
+# umx added informative labels, created starting values,
 # Ran your model (if autoRun is on), and displayed a brief summary
 # including a comparison if you modified a model...!
 
@@ -50,11 +52,11 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type="cov",
 # We can choose std=T for standardized parameters and can also
 # filter out some types of parameter (e.g. means or residuals)
 
-umxSummary(m1, std = TRUE, residuals=FALSE)
+umxSummary(m1, std = TRUE, residuals = FALSE)
 
-# parameters() flexibly retrieves model coefficients. 
+# parameters() flexibly retrieves model coefficients.
 # For example just G-loadings greater than |.3| and rounded to 2-digits.
-parameters(m1, thresh="above", b=.3, pattern = "G_to.*", digits = 2)
+parameters(m1, thresh = "above", b = .3, pattern = "G_to.*", digits = 2)
 
 # (The built-in coef works as for lm etc.)
 coef(m1)
@@ -64,10 +66,10 @@ coef(m1)
 # ==================
 # umxModify modifies, renames, re-runs, and compares a model
 # Can we set the loading of x1 on G to zero? (nope...)
-m2 = umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X1", comparison = TRUE)
+m2 <- umxModify(m1, "G_to_x1", name = "no_effect_of_g_on_X1", comparison = TRUE)
 
 # note1: umxSetParameters can do this with some additional flexibility
-# note2 "comparison = TRUE" above is the same as calling 
+# note2 "comparison = TRUE" above is the same as calling
 # umxCompare, like this
 umxCompare(m1, m2)
 
@@ -80,8 +82,8 @@ umxCompare(m1, m2)
 confint(m1) # OpenMx's SE-based confidence intervals
 
 
-# umxConfint formats everything you need nicely, and allows adding CIs (with parm=)
-umxConfint(m1, parm = 'all', run = TRUE) # likelihood-based CIs
+# umxConfint formats everything nicely, and allows adding CIs (with parm=)
+umxConfint(m1, parm = "all", run = TRUE) # likelihood-based CIs
 
 # And make a Figure and open in browser
 plot(m1, std = TRUE)

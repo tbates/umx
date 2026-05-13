@@ -25,6 +25,7 @@ umxBrownie()
 
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
+\code{\link{fin_FIF}()},
 \code{\link{fin_JustifiedPE}()},
 \code{\link{fin_NI}()},
 \code{\link{fin_StockCAGR}()},

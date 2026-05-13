@@ -48,6 +48,7 @@ g is the sustainable growth rate, and k is the required rate of return.
 
 Other Miscellaneous Functions: 
 \code{\link{deg2rad}()},
+\code{\link{fin_FIF}()},
 \code{\link{fin_NI}()},
 \code{\link{fin_StockCAGR}()},
 \code{\link{fin_carryCost}()},

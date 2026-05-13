@@ -3273,117 +3273,126 @@ umx_msg <- function(x) {
 #' Easily plot functions in R
 #'
 #' @description
-#' A wrapper for [ggplot2::stat_function()]
+#' A wrapper for [ggplot2::stat_function()] that handles single or multiple functions.
 #'
-#' @details Easily plot a function - like sin, using ggplot.
+#' @details Easily plot functions—like sin or x^2—using ggplot. Accepts bare functions, 
+#' strings, or lists of strings/functions. Automatically generates a legend when 
+#' multiple functions are provided.
 #'
-#' @param fun Function to plot. Also takes strings like "sin(x) + sqrt(1/x)".
+#' @param fun Function(s) to plot. Takes strings like c("3 + sin(x)^2", "cos(x)") or function objects.
 #' @param min x-range min.
 #' @param max x-range max.
-#' @param xlab = Optional x axis label.
-#' @param ylab = Optional y axis label.
+#' @param xlab Optional x axis label.
+#' @param ylab Optional y axis label.
 #' @param title Optional title for the plot.
-#' @param logX Set to, e.g. "log" to set COORDINATE of x to log.
-#' @param logY Set to, e.g. "log" to set COORDINATE of y to log.
-#' @param p  Optional plot onto which to draw the function.
-#' @return - A ggplot graph
+#' @param logX Set to "log" or "log10" to transform x coordinate.
+#' @param logY Set to "log" or "log10" to transform y coordinate.
+#' @param p Optional plot onto which to draw the function(s).
+#' @return A ggplot graph object
 #' @export
 #' @family Plotting functions
-#' @seealso - [ggplot2::stat_function()]
+#' @seealso [ggplot2::stat_function()]
 #' @md
 #' @examples
 #' \dontrun{
-#' # Uses fonts not available on CRAN
-#' umxPlotFun(sin, max= 2*pi)
-#' umxPlotFun("sqrt(1/x)", max= 2*pi)
-#' umxPlotFun(sin, max= 2*pi, ylab="Output of sin", title="My Big Graph")
-#' p = umxPlotFun(function(x){x^2}, max= 100, title="Supply and demand")
-#' umxPlotFun(function(x){100^2-x^2}, p = p)
-#'
-#' # Controlling other plot features
-#' umxPlotFun(c("sin(x)", "x^3")) + ylim(c(-1,5)) 
+#' # Plotting multiple strings
+#' p = umxPlotFun(c("sin(x)", "cos(x)"), max = 2*pi)
+#' 
+#' # Providing a named list to control legend labels
+#' umxPlotFun(list(Sine = sin, Cosine = cos), max = 2*pi)
 #' }
 #'
-umxPlotFun <- function(fun= c(dnorm, "sin(x) + sqrt(1/x)"), min= -1, max= 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL) {
-	logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
-	logX = xmu_match.arg(logX, c("no", "log", "log10"), check = FALSE)
-	
-	if(inherits(fun, "numeric")){
-		stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
-	} else if(inherits(fun, "character")){
-		make_function <- function(args, body, env = parent.frame()) {
-			args = as.pairlist(args)
-			eval(call("function", args, body), env)
-		}
-		funOut = c()
-		for (i in fun) {			
-			if(is.null(title)){ title = paste0("Plot of ", i) }
-			# failed ideas to format as latex...
-			# if(is.null(title)){ title = parse(text=paste0("'Plot of '", expression(i) ) ) }
-			# if(is.null(title)){ title = parse(text = paste0("Plot of ", i)) }
-			if(is.null(ylab)){ ylab = i}
-			thisFun = make_function(alist(x=NA), parse(text = i)[[1]] )
-			funOut = c(funOut, thisFun)
-		}
-		fun = funOut # 1 or more functions
-	}else{
-		# Got a bare function like sin
-		fun = list(fun)
-	}
-	# plot function 1
-	if(!is.null(p)){
-		if(is.na(max)){
-			p = p + ggplot2::stat_function(fun = fun[[1]])
-		} else {
-			p = p + ggplot2::stat_function(fun = fun[[1]], xlim= c(min, max))
-		}
-	}else{
-		p  = ggplot(data.frame(x = c(min, max)), aes(x) )
-		if(logY != "no"){
-			p = p + ggplot2::coord_trans(y = logY)
-		}
-		if(logX != "no"){
-			p = p + ggplot2::coord_trans(x = logX)
-		}
-		p    = p + ggplot2::stat_function(fun = fun[[1]])
-		xlab = ifelse(!is.null(xlab),  xlab , "X value")
-		if(is.null(ylab)){
-			if(length(as.character(quote(fun[[1]]))) == 1){
-				ylab = paste0(as.character(quote(fun[[1]]), " of x"))
-			} else {
-				ylab = paste0("Function of X")
-			}
-		}
-
-		if(is.null(title)){
-			if(length(as.character(quote(fun[[1]]))) == 1){
-				pref= "Plot of function: "
-			}else{
-				pref= "Plot of Functions: "
-			}
-			result = tryCatch({
-				title = expression(paste0(pref,fun[[1]]))
-			}, error = function() {
-				title = paste0(pref, as.character(quote(fun[[1]]), " function"))
-			})
-		}
-		p = p + labs(x = xlab, y = ylab, caption = title)
-	}
-	
-	
-	if(length(fun) > 1){
-		n= 1
-		colorList = c("red", "green", "blue")
-		for (i in fun[2:length(fun)]) {
-			p = p + ggplot2::stat_function(fun = i, color=colorList[n])
-			n=n+1
-		}
-	}
-	
-	p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
-
-	print(p)
-	invisible(p)	
+umxPlotFun = function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL) {
+    logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
+    logX = xmu_match.arg(logX, c("no", "log", "log10"), check = FALSE)
+    
+    if (inherits(fun, "numeric")) {
+        stop("If you write a function symbolically, you need to put it in quotes, e.g. 'x^2'")
+    }
+    
+    # 1. Normalize 'fun' into a standard named list of functions
+    funcList = list()
+    funcNames = names(fun)
+    if (is.null(funcNames)) { funcNames = character(length(fun)) }
+    
+    if (is.character(fun)) {
+        for (i in seq_along(fun)) {
+            if (funcNames[i] == "") funcNames[i] = fun[i]
+            thisFun = function(x) {}
+            body(thisFun) = parse(text = fun[i])
+            funcList[[i]] = thisFun
+        }
+    } else if (is.function(fun)) {
+        funcList[[1]] = fun
+        if (funcNames[1] == "") funcNames[1] = "Function"
+    } else if (is.list(fun)) {
+        for (i in seq_along(fun)) {
+            if (is.character(fun[[i]])) {
+                if (funcNames[i] == "") funcNames[i] = fun[[i]]
+                thisFun = function(x) {}
+                body(thisFun) = parse(text = fun[[i]])
+                funcList[[i]] = thisFun
+            } else if (is.function(fun[[i]])) {
+                funcList[[i]] = fun[[i]]
+                if (funcNames[i] == "") funcNames[i] = paste("Function", i)
+            }
+        }
+    } else {
+        stop("fun must be a function, string, or list/vector of these.")
+    }
+    names(funcList) = funcNames
+    
+    # 2. Setup the base plot canvas
+    if (is.null(p)) {
+        p = ggplot2::ggplot(data.frame(x = c(min, max)), ggplot2::aes(x = x))
+        if (logY != "no") {
+            p = p + ggplot2::coord_trans(y = logY)
+        }
+        if (logX != "no") {
+            p = p + ggplot2::coord_trans(x = logX)
+        }
+    }
+    
+    # 3. Layer the functions
+    for (i in seq_along(funcList)) {
+        thisFun = funcList[[i]]
+        thisName = names(funcList)[i]
+        
+        # Inject the evaluated name into the aesthetic mapping to build the legend
+        if (is.na(max) && !is.null(p)) {
+            p = p + ggplot2::stat_function(fun = thisFun, ggplot2::aes(color = !!thisName))
+        } else {
+            p = p + ggplot2::stat_function(fun = thisFun, xlim = c(min, max), ggplot2::aes(color = !!thisName))
+        }
+    }
+    
+    # 4. Handle Labels and Theming
+    xlab = ifelse(!is.null(xlab), xlab, "X value")
+    
+    if (is.null(ylab)) {
+        ylab = ifelse(length(funcList) == 1, paste0(names(funcList)[1], " of x"), "Functions of X")
+    }
+    
+    if (is.null(title)) {
+        pref = ifelse(length(funcList) == 1, "Plot of function: ", "Plot of Functions: ")
+        # Truncate title if there are too many functions to display cleanly
+        if (length(funcList) > 3) {
+            title = paste0(pref, paste(names(funcList)[1:3], collapse = ", "), ", ...")
+        } else {
+            title = paste0(pref, paste(names(funcList), collapse = ", "))
+        }
+    }
+    
+    # Apply labels; set the legend title for 'color'
+    p = p + ggplot2::labs(x = xlab, y = ylab, title = title, color = "Legend")
+    p = p + cowplot::theme_cowplot(font_family = "Times", font_size = 12)
+    
+    # Remove legend entirely if only one function is plotted (cleaner UI)
+    if (length(funcList) == 1) {
+        p = p + ggplot2::theme(legend.position = "none")
+    }
+    
+    p
 }
 
 
@@ -4967,6 +4976,88 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 		return(data)
 	}
 }
+
+
+#' Yeo-Johnson transform wide twin data (Non-Destructive)
+#'
+#' @param varsToTransform The base names of the variables (e.g. "CAQ")
+#' @param sep The separator (e.g. "_T")
+#' @param data A wide dataframe
+#' @param twins Suffixes for twins (default 1:2)
+#' @param suffix The suffix to append to the transformed base name (default "_yj")
+#' @return dataframe with original and new transformed variables
+#' @export
+umx_yj_wide_twin_data = function(varsToTransform, sep, data, twins = 1:2, suffix = "_yj") {
+	if (!requireNamespace("bestNormalize", quietly = TRUE)) {
+		stop("Please install 'bestNormalize': libs('bestNormalize')")
+	}
+
+	if (length(sep) != 1) {
+		stop("I need one sep, you gave me ", length(sep))
+	}
+
+	for (varName in varsToTransform) {
+		# Construct original names to read (e.g., CAQ_T1, CAQ_T2)
+		oldNames = paste0(varName, sep, twins)
+		umx_check_names(oldNames, data)
+
+		# Construct new names to write (e.g., CAQ_yj_T1, CAQ_yj_T2)
+		newNames = paste0(varName, suffix, sep, twins)
+
+		# 1. Stack: Flatten across twins for a shared lambda estimate
+		combinedData = unlist(data[, oldNames])
+		
+		# 2. Transform: ML estimate of Yeo-Johnson transformation
+		yjFit = bestNormalize::yeojohnson(combinedData)
+		transformedStacked = predict(yjFit)
+
+		# 3. Pull Apart: Insert into new columns, preserving row integrity
+		# matrix() fills by column, matching the unlist() order for twins
+		data[, newNames] = matrix(transformedStacked, nrow = nrow(data), ncol = length(twins))
+	}
+
+	return(data)
+}
+
+
+#' Log-transform wide twin data with a positive shift
+#'
+#' @param varsToTransform The base names of the variables (e.g. "DEP")
+#' @param sep The separator (e.g. "_T")
+#' @param data A wide dataframe
+#' @param twins Suffixes for twins (default 1:2)
+#' @return dataframe with transformed variables
+#' @export
+umx_log_wide_twin_data = function(varsToTransform, sep, data, twins = 1:2) {
+	if (length(sep) != 1) {
+		stop("I need one sep, you gave me ", length(sep))
+	}
+
+	for (varName in varsToTransform) {
+		# Identify all columns for this trait (e.g., DEP_T1, DEP_T2)
+		traitCols = paste0(varName, sep, twins)
+		umx_check_names(traitCols, data)
+
+		# Flatten data to find the global minimum for this pair
+		combinedData = unlist(data[, traitCols])
+		combinedData = combinedData[is.numeric(combinedData)]
+		
+		if (length(combinedData) > 0) {
+			minVal = min(combinedData, na.rm = TRUE)
+			# Shift logic: Ensure the minimum value becomes 1.
+			shift = 1 - minVal
+			
+			for (col in traitCols) {
+				if (is.numeric(data[, col])) {
+					data[, col] = log(data[, col] + shift)
+				}
+			}
+		}
+	}
+
+	return(data)
+}
+
 
 #' Scale wide twin data
 #'
