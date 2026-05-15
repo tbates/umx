@@ -4978,22 +4978,51 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 }
 
 
-#' Yeo-Johnson transform wide twin data (Non-Destructive)
+#' Yeo-Johnson transform wide twin data (Non-destructive)
 #'
+#' @description
+#' `umx_yj_wide_twin_data` applies the Yeo-Johnson transformation to wide twin data.
+#' It "stacks" the data across twins (T1 and T2) to estimate a single optimal 
+#' Maximum Likelihood lambda parameter. This ensures that the transformation 
+#' is identical for both twins, preserving the twin covariance structure.
+#' 
+#' @details
+#' The Yeo-Johnson transformation is a power transform that handles zero and 
+#' negative values natively. It is often superior to `log(x+1)` because it 
+#' uses MLE to find the mathematically optimal power to minimize skewness.
+#' 
+#' When `verbose = TRUE`, the function reports the lambda value and provides 
+#' a diagnostic plot comparing the raw and transformed distributions.
+#'
+#' @param data A wide dataframe
 #' @param varsToTransform The base names of the variables (e.g. "CAQ")
 #' @param sep The separator (e.g. "_T")
-#' @param data A wide dataframe
 #' @param twins Suffixes for twins (default 1:2)
-#' @param suffix The suffix to append to the transformed base name (default "_yj")
-#' @return dataframe with original and new transformed variables
+#' @param suffix The suffix for the new transformed columns (default "_yj")
+#' @param verbose Whether to print parameters and plot distributions (default TRUE)
+#' @return - dataframe with original and new transformed variables
 #' @export
-umx_yj_wide_twin_data = function(varsToTransform, sep, data, twins = 1:2, suffix = "_yj") {
+#' @family Twin Data functions
+#' @references 
+#' * Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. *Biometrika*, 87(4), 954-959.
+#' * Cragg, J. G. (1971). Some Statistical Models for Limited Dependent Variables with Application to the Demand for Durable Goods. *Econometrica*, 39(5), 829-844.
+#' @md
+#' @examples
+#' # df = umx_yj_wide_twin_data(data = df, varsToTransform = c("CAQ"), sep = "_T")
+umx_yj_wide_twin_data = function(data, varsToTransform, sep = "_T",  twins = 1:2, suffix = "_yj", verbose= TRUE) {
 	if (!requireNamespace("bestNormalize", quietly = TRUE)) {
 		stop("Please install 'bestNormalize': libs('bestNormalize')")
 	}
 
 	if (length(sep) != 1) {
 		stop("I need one sep, you gave me ", length(sep))
+	}
+	if (verbose) {
+		# Setup a grid: 2 columns (Before/After), Rows = number of variables
+		# We save the old par to restore it later (Fiduciary duty to user's workspace)
+		oldpar = par(no.readonly = TRUE)
+		on.exit(par(oldpar))
+		par(mfrow = c(length(varsToTransform), 2), mar = c(4, 4, 2, 1))
 	}
 
 	for (varName in varsToTransform) {
@@ -5009,9 +5038,46 @@ umx_yj_wide_twin_data = function(varsToTransform, sep, data, twins = 1:2, suffix
 		
 		# 2. Transform: ML estimate of Yeo-Johnson transformation
 		yjFit = bestNormalize::yeojohnson(combinedData)
-		transformedStacked = predict(yjFit)
 
-		# 3. Pull Apart: Insert into new columns, preserving row integrity
+		# Extract Lambda
+		lambda = as.numeric(yjFit$lambda[1])
+		if (verbose) {
+			# Determine the 'meaning' of the lambda
+
+			# Logic for Interpretation
+			if (abs(lambda - 1.0) < 0.05) {
+							interp = "Identity (Negligible change; data were already normal)."
+						} else if (lambda <= 0.05 && lambda >= -0.05) {
+							interp = "Log-like (Strong compression of the right tail)."
+						} else if (lambda > 0.05 && lambda < 0.4) {
+							interp = "Strong power transform (Between Log and Square Root)."
+						} else if (abs(lambda - 0.5) < 0.1) {
+							interp = "Square Root-like (Moderate compression of the right tail)."
+						} else if (lambda >= 0.6 && lambda < 0.95) {
+							interp = "Gentle power transform (Slightly reducing right skew)."
+						} else if (lambda > 1.05) {
+							interp = "Left-skew correction (Expanding the right tail)."
+						} else if (lambda < -0.05) {
+							interp = "Aggressive Inverse-style transform (Handling extreme outliers)."
+						} else {
+							interp = "Custom power transform (Optimized for unique distribution)."
+						}
+
+			message(paste0("\n--- Yeo-Johnson Diagnostics for ", varName, " ---"))
+			message("Optimal Lambda: ", round(lambda, 3))
+			message("Interpretation: ", interp)
+			# 3. Plotting
+			# Plot 1: Original
+			hist(combinedData, main = paste("Raw:", varName), col = "lightgrey", xlab = "Raw Units")
+			
+			# Plot 2: Transformed
+			transformedStacked = predict(yjFit)
+			hist(transformedStacked, main = paste("YJ:", varName), col = "skyblue", xlab = "Transformed Units")
+			
+		}else{
+			transformedStacked = predict(yjFit)			
+		}
+		# 4. Pull Apart: Insert into new columns, preserving row integrity
 		# matrix() fills by column, matching the unlist() order for twins
 		data[, newNames] = matrix(transformedStacked, nrow = nrow(data), ncol = length(twins))
 	}

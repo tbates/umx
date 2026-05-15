@@ -44,6 +44,7 @@ Other Twin Data functions:
 \code{\link{umx_make_TwinData}()},
 \code{\link{umx_make_twin_data_nice}()},
 \code{\link{umx_residualize}()},
-\code{\link{umx_wide2longTwinData}()}
+\code{\link{umx_wide2longTwinData}()},
+\code{\link{umx_yj_wide_twin_data}()}
 }
 \concept{Twin Data functions}

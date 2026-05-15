@@ -2,24 +2,66 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_yj_wide_twin_data}
 \alias{umx_yj_wide_twin_data}
-\title{Yeo-Johnson transform wide twin data (Non-Destructive)}
+\title{Yeo-Johnson transform wide twin data (Non-destructive)}
 \usage{
-umx_yj_wide_twin_data(varsToTransform, sep, data, twins = 1:2, suffix = "_yj")
+umx_yj_wide_twin_data(
+  data,
+  varsToTransform,
+  sep = "_T",
+  twins = 1:2,
+  suffix = "_yj",
+  verbose = TRUE
+)
 }
 \arguments{
+\item{data}{A wide dataframe}
+
 \item{varsToTransform}{The base names of the variables (e.g. "CAQ")}
 
 \item{sep}{The separator (e.g. "_T")}
 
-\item{data}{A wide dataframe}
-
 \item{twins}{Suffixes for twins (default 1:2)}
 
-\item{suffix}{The suffix to append to the transformed base name (default "_yj")}
+\item{suffix}{The suffix for the new transformed columns (default "_yj")}
+
+\item{verbose}{Whether to print parameters and plot distributions (default TRUE)}
 }
 \value{
-dataframe with original and new transformed variables
+\itemize{
+\item dataframe with original and new transformed variables
+}
 }
 \description{
-Yeo-Johnson transform wide twin data (Non-Destructive)
+\code{umx_yj_wide_twin_data} applies the Yeo-Johnson transformation to wide twin data.
+It "stacks" the data across twins (T1 and T2) to estimate a single optimal
+Maximum Likelihood lambda parameter. This ensures that the transformation
+is identical for both twins, preserving the twin covariance structure.
 }
+\details{
+The Yeo-Johnson transformation is a power transform that handles zero and
+negative values natively. It is often superior to \code{log(x+1)} because it
+uses MLE to find the mathematically optimal power to minimize skewness.
+
+When \code{verbose = TRUE}, the function reports the lambda value and provides
+a diagnostic plot comparing the raw and transformed distributions.
+}
+\examples{
+# df = umx_yj_wide_twin_data(data = df, varsToTransform = c("CAQ"), sep = "_T")
+}
+\references{
+\itemize{
+\item Yeo, I. K., & Johnson, R. A. (2000). A new family of power transformations to improve normality or symmetry. \emph{Biometrika}, 87(4), 954-959.
+\item Cragg, J. G. (1971). Some Statistical Models for Limited Dependent Variables with Application to the Demand for Durable Goods. \emph{Econometrica}, 39(5), 829-844.
+}
+}
+\seealso{
+Other Twin Data functions: 
+\code{\link{umx}},
+\code{\link{umx_long2wide}()},
+\code{\link{umx_make_TwinData}()},
+\code{\link{umx_make_twin_data_nice}()},
+\code{\link{umx_residualize}()},
+\code{\link{umx_scale_wide_twin_data}()},
+\code{\link{umx_wide2longTwinData}()}
+}
+\concept{Twin Data functions}
