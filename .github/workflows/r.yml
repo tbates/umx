@@ -16,33 +16,34 @@ jobs:
       matrix:
         r-version: ['4.5.3']
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Cache R packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.R/library
-          key: ${{ runner.os }}-r-${{ matrix.r-version }}-${{ hashFiles('**/DESCRIPTION') }}
-          restore-keys: |
-            ${{ runner.os }}-r-${{ matrix.r-version }}-
-            ${{ runner.os }}-r-
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.r-version }}
+          use-public-rspm: true
 
-      - name: Install dependencies
-        run: |
-          install.packages(c("remotes", "rcmdcheck", "covr", "OpenMx", "mvtnorm", "DiagrammeRsvg", "rsvg", "rtf"), repos = "https://cloud.r-project.org/")
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
+      - name: Install Package Dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::remotes
+            any::rcmdcheck
+            any::covr
+            any::OpenMx
+            any::mvtnorm
+            any::DiagrammeRsvg
+            any::rsvg
+            any::rtf
+          needs: check
 
-      - name: Check package
-        run: |
-          rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
-          devtools::check()
-        shell: Rscript {0}
+      - name: Check Package Structure
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran")'
+          error-on: '"error"'
 
       - name: Code Coverage
         run: covr::codecov()
