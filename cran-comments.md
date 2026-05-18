@@ -1,5 +1,5 @@
 ## Changes
-Couple of new functions.
+New functions, cleanup for github
 
 ## Test environments
 * MacOS 26.2, R version 4.53

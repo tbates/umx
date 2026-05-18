@@ -332,11 +332,11 @@ Other Advanced Model Building Functions:
 
 Other contributors:
 \itemize{
+  \item Luis De Araujo \email{ldearaujo@unimelb.edu.au} [contributor]
   \item Nathan Gillespie \email{nathan.gillespie@vcuhealth.org} [witness]
   \item Hermine Maes \email{hmeaes@vcu.edu} [contributor]
   \item Michael C. Neale \email{neale@vcu.edu} [contributor]
   \item Joshua N. Pritikin \email{jpritikin@pobox.com} [contributor]
-  \item Luis De Araujo \email{ldearaujo@unimelb.edu.au} [contributor]
   \item Brenton Wiernik \email{wiernik@umn.edu} [contributor]
   \item Michael Zakharin \email{s1775682@sms.ed.ac.uk} [witness]
 }

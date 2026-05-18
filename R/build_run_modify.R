@@ -73,7 +73,7 @@
 #' @importFrom DiagrammeR DiagrammeR
 # #' @importFrom DiagrammeRsvg export_svg
 # #' @importFrom rsvg rsvg_png rsvg_pdf
-#' @importFrom graphics plot abline
+#' @importFrom graphics plot abline hist par
 #' @importFrom methods as getSlots is slotNames setClass
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm reshape

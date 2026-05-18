@@ -1,23 +1,39 @@
 bibentry(bibtype = "Article",
-	title = paste("umx: A library for Structural Equation and Twin Modelling in R"),
-	author = c(
-		person(c("Timothy", "C."), "Bates"),
-		person(c("Michael", "C."), "Neale"),
-		person(c("Hermine", "H."), "Maes")
-	),
-	journal   = "Twin Research and Human Genetics",
-	publisher = "Cambridge Press",
-	year  = 2019,
-	volume = "22",
-	pages = "27-41",
-	doi   = "10.1017/thg.2019.2",
-
-	mheader = "To cite package 'umx' in publications use:", 
-
-	textVersion = paste(
-		"Timothy C. Bates,",
-		"Michael C. Neale,", 
-		"Hermine H. Maes,",
-		"(2019). umx: A library for Structural Equation and Twin Modelling in R. Twin Research and Human Genetics,",
-		"22, 27-41. DOI:10.1017/thg.2019.2")
+  title = paste("umx: A library for Structural Equation and Twin Modelling in R"),
+  author = c(
+    person(c("Timothy", "C."), "Bates"),
+    person(c("Michael", "C."), "Neale"),
+    person(c("Hermine", "H."), "Maes")
+  ),
+  journal = "Twin Research and Human Genetics",
+  publisher = "Cambridge Press",
+  year = 2019,
+  volume = "22",
+  pages = "27-41",
+  doi = "10.1017/thg.2019.2",
+  mheader = "To cite package 'umx' in publications use:",
+  textVersion = paste(
+    "Timothy C. Bates,",
+    "Michael C. Neale,",
+    "Hermine H. Maes,",
+    "(2019). umx: A library for Structural Equation and Twin Modelling in R. Twin Research and Human Genetics,",
+    "22, 27-41. DOI:10.1017/thg.2019.2")
+)
+bibentry(bibtype = "Article",
+  title = "umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Ωnyx Integration, and Censored Distributions",
+  author = c(
+    person(c("Luis", "F.S."), "Castro-de-Araujo"),
+    person(c("Nathan", "A."), "Gillespie"),
+    person(c("Michael", "C."), "Neale"),
+    person(c("Timothy", "Charles"), "Bates")
+  ),
+  journal = "Twin Research and Human Genetics",
+  year = 2026,
+  pages = "1-6",
+  doi = "10.1017/thg.2026.10056",
+  header = "For the latest developments in umx (version 4.5), please also cite:",
+  textVersion = paste(
+    "Luis F.S. Castro-de-Araujo, Nathan A. Gillespie, Michael C. Neale, and Timothy Charles Bates",
+    "(2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Ωnyx Integration, and Censored Distributions.",
+    "Twin Research and Human Genetics, 1-6. DOI:10.1017/thg.2026.10056")
 )
