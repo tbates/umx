@@ -12,6 +12,8 @@ permissions:
 jobs:
   build:
     runs-on: macos-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     strategy:
       matrix:
         r-version: ['4.5.3']
@@ -36,6 +38,7 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
+            any::rtf
           needs: check
 
       - name: Check Package Structure
