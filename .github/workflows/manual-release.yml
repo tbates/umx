@@ -1,0 +1,36 @@
+name: Manual CRAN Release Tagger
+
+on:
+  workflow_dispatch: # This activates the manual "Run workflow" button in GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Version from DESCRIPTION
+        id: get_version
+        run: |
+          # Parse version directly from the local DESCRIPTION file
+          VERSION=$(grep '^Version:' DESCRIPTION | awk '{print $2}')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          release_name: Release v${{ steps.get_version.outputs.VERSION }}
+          body: |
+            Official release of version ${{ steps.get_version.outputs.VERSION }} on CRAN.
+          draft: false
+          prerelease: false
