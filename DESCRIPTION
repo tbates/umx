@@ -66,4 +66,4 @@ Enhances:
 	rsvg
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
-RoxygenNote: 7.3.3
+RoxygenNote: 8.0.0

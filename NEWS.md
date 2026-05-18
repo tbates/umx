@@ -1,10 +1,14 @@
 ## dev
 
 # Releases
-## umx 4.6.5
-* March 2026 R 4.5.0
-* NEW: `fin_cagr` 
-* NEW: `fin_???` 
+## umx 4.65.0
+* Date: 2026-05-20 R 4.6.0
+* NEW: `umx_log_wide_twin_data`
+* NEW: `umx_yj_wide_twin_data`
+* NEW: `fin_option` teaching about options
+* NEW: `fin_StockCAGR ` compute CAGR from stock feed
+* NEW: `fin_carryCost ` compute the rent vs. invest cost of shelter via carry cost concept
+* Minor:  clean up non Ascii characters for cran
 
 ## umx 4.5.0
 * October 2025 R 4.5.0
