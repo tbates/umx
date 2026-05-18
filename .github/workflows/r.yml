@@ -38,7 +38,6 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
-            any::rtf
           needs: check
 
       - name: Check Package Structure
