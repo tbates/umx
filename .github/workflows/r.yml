@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        r-version: ['4.2', '4.4.1']
+        r-version: ['4.5.3']
     steps:
       - uses: actions/checkout@v4
 
@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          install.packages(c("remotes", "rcmdcheck", "covr", "OpenMx", "mvtnorm", "DiagrammeRsvg", "rsvg"), repos = "https://cloud.r-project.org/")
+          install.packages(c("remotes", "rcmdcheck", "covr", "OpenMx", "mvtnorm", "DiagrammeRsvg", "rsvg", "rtf"), repos = "https://cloud.r-project.org/")
           remotes::install_deps(dependencies = TRUE)
         shell: Rscript {0}
 
