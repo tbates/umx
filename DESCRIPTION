@@ -28,6 +28,7 @@ Imports:
 	cowplot,
 	DiagrammeR,
 	ggplot2,
+	graphics,
 	kableExtra,
 	knitr,
 	lavaan,

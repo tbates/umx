@@ -289,7 +289,10 @@ utils::globalVariables(c(
 	'C_',
 	'E_',
 	'SPh',
-	'Smz_'
+	'Smz_',
+	# fin functions
+	'loanRatio',
+	'netGainLoss'
 	
 ))
 
