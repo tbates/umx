@@ -1,7 +1,7 @@
 name: Manual CRAN Release Tagger
 
 on:
-  workflow_dispatch: # This activates the manual "Run workflow" button in GitHub
+  workflow_dispatch: # Activates the manual button in the GitHub UI
 
 permissions:
   contents: write
@@ -18,18 +18,15 @@ jobs:
       - name: Extract Version from DESCRIPTION
         id: get_version
         run: |
-          # Parse version directly from the local DESCRIPTION file
           VERSION=$(grep '^Version:' DESCRIPTION | awk '{print $2}')
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.get_version.outputs.VERSION }}
-          release_name: Release v${{ steps.get_version.outputs.VERSION }}
+          name: Release v${{ steps.get_version.outputs.VERSION }}
           body: |
             Official release of version ${{ steps.get_version.outputs.VERSION }} on CRAN.
           draft: false
