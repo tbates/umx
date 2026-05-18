@@ -17,8 +17,8 @@
 #' @md
 #' @examples
 #' # Example Usage:
-#' # My 2026 Strategy: $1.2M Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
-#' fin_FIF(portfolioValue = 1.2e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.32)
+#' # 2026 Strategy: $500k Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
+#' fin_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
 fin_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
   # 1. Core Logic (Dynamic Calculations)
   # Ratio to zero out taxable income
@@ -45,7 +45,7 @@ fin_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate 
   
   # 3. Build Plot (Line by Line)
   p = ggplot(plotDf, aes(x = loanRatio, y = netGainLoss))
-  p = p + geom_line(color = "#2c3e50", size = 1.2)
+  p = p + geom_line(color = "#2c3e50", linewidth = 1.2)
   p = p + geom_hline(yintercept = 0, linetype = "dashed", color = "#e74c3c")
   p = p + geom_vline(xintercept = ratioNavNeutral, linetype = "dotted", color = "#27ae60")
   p = p + scale_y_continuous(labels = scales::dollar)

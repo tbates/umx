@@ -239,8 +239,8 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 
 	r_df$xLevel = factor(r_df$xLevel, levels = c("Pop", "DZ", "MZ"))
 	p = ggplot(r_df, aes(x = xLevel, y = Bwithin, fill = xLevel))
-	p = p + geom_bar(position = position_dodge(), stat = "identity", size = .3, colour = "black") # 3 = thin
-	p = p + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), size = .3, width = .2, position = position_dodge(.9)) # Thinner lines
+	p = p + geom_bar(position = position_dodge(), stat = "identity", linewidth = .3, colour = "black") # 3 = thin
+	p = p + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), linewidth = .3, width = .2, position = position_dodge(.9)) # Thinner lines
 	p = p + xlab("Zygosity") + ylab(expression(beta ~ or ~ beta ~ within ))
 	p = p + ggtitle(paste0("Estimated effect of ", x, " on ", y)) + theme_bw()
 	# p = p + scale_y_continuous(breaks = 0:20 * 4)

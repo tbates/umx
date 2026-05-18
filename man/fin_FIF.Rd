@@ -25,8 +25,8 @@ NZ FIF Tax Offset & NAV Neutrality Calculator
 }
 \examples{
 # Example Usage:
-# My 2026 Strategy: $1.2M Portfolio, 6.5\% IBKR Rate, 12\% Expected Return, 39\% Tax
-fin_FIF(portfolioValue = 1.2e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.32)
+# 2026 Strategy: $500k Portfolio, 6.5\% IBKR Rate, 12\% Expected Return, 39\% Tax
+fin_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
 }
 \seealso{
 \itemize{
