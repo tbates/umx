@@ -13,13 +13,13 @@
 #' @return A ggplot object showing the net impact across LTV ratios.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
 #' # Example Usage:
 #' # 2026 Strategy: $500k Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
-#' fin_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
-fin_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
+#' fin_tax_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
+fin_tax_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
   # 1. Core Logic (Dynamic Calculations)
   # Ratio to zero out taxable income
   ratioDeductionOnly = fifRate / marginRate
@@ -65,7 +65,7 @@ fin_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate 
 #' Teaching function for options
 #'
 #' @description
-#' `fin_option` is a teaching function for understanding  vega etc.
+#' `fin_stock_option` is a teaching function for understanding  vega etc.
 #'
 #' @param premium Cost to buy
 #' @param strike the strike price
@@ -75,12 +75,12 @@ fin_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate 
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
-#' fin_option(premium = 134, strike = 200, stock= 304)
+#' fin_stock_option(premium = 134, strike = 200, stock= 304)
 #'
-fin_option = function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8) {
+fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8) {
   # Epistemic Check: Is the S&P 500 return (e.g. 10%) higher than the rent cost?
   # Assumption: Linear decay, which we know is a simplification (Theta is not linear).
   if(0){
@@ -131,7 +131,7 @@ fin_option = function(premium = 134, strike = 200, stock = 304, delta = 0.85, ye
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
 #' \dontrun{
@@ -188,7 +188,7 @@ fin_StockCAGR = function(priceSeries, from = "1900-01-01") {
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
 #' fin_carryCost(property_cost=1.2e6)
@@ -225,7 +225,7 @@ fin_carryCost = function(property_cost, appreciation =.02, QQQ= .14, rent_saved=
 #' Work the valuation of a company
 #'
 #' @description
-#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
+#' `fin_stock_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
 #' Better to use a more powerful online site.
 #'
 #' @details
@@ -241,14 +241,14 @@ fin_carryCost = function(property_cost, appreciation =.02, QQQ= .14, rent_saved=
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
-#' fin_valuation(rev=7e9, opmargin=.1, PE=33)
+#' fin_stock_valuation(rev=7e9, opmargin=.1, PE=33)
 #' # Market cap =  $18,480,000,000
 #' # (Based on PE= 33, operating Income of $0.70 B, and net income =$0.56B
 #'
-fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, symbol = "$", use = c("B", "M")) {
+fin_stock_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, symbol = "$", use = c("B", "M")) {
 	use = match.arg(use)
 	if(use=="B"){
 		divisor=1e9
@@ -271,7 +271,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' Compute the net present value of a future income stream
 #'
 #' @description
-#' `fin_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
+#' `fin_stock_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
 #' Better to use a more powerful online site.
 #'
 #' @details
@@ -284,7 +284,7 @@ fin_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=30, sy
 #' @return - value
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_NI()], [fin_percent()]
+#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
 #' fin_net_present_value(27e3, .05, 25)
@@ -318,31 +318,31 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #' @md
 #' @examples
 #' 
-#' fin_expected(114,fair=140, ticker="NVDA", capital=.15, verb=TRUE)
+#' fin_stock_target(114,fair=140, ticker="NVDA", capital=.15, verb=TRUE)
 #' # NVDA  return =  41 %
 #' # delta (fair-current)= $ 26 
 #' # growth = $ 21 
 #' # expected gain = $ 47 
 #' # future value (final) = $ 161 
 #' 
-#' fin_expected(24, 130, ticker="SMMT")
+#' fin_stock_target(24, 130, ticker="SMMT")
 #' # SMMT  return =  523 %
 #' 
-#' fin_expected(24, 75, ticker="SMMT", verb=TRUE)
+#' fin_stock_target(24, 75, ticker="SMMT", verb=TRUE)
 #' # SMMT  return =  259 %
 #' # delta (fair-current)= $ 51 
 #' # growth = $ 11.25 
 #' # expected gain = $ 62.25 
 #' # future value (final) = $ 86.25 
 #' 
-#' fin_expected(750, 1000, ticker="LLY", verb=TRUE)
+#' fin_stock_target(750, 1000, ticker="LLY", verb=TRUE)
 #' # LLY  return =  53 %
 #' # delta (fair-current)= $ 250
 #' # growth = $ 150 
 #' # expected gain = $ 400 
 #' # future value (final) = $ 1150 
 #'
-fin_expected <- function(current=89, fair=140, ticker = "NVDA", capital=.15, verb = FALSE) {
+fin_stock_target <- function(current=89, fair=140, ticker = "NVDA", capital=.15, verb = FALSE) {
 	delta  = (fair-current)      
 	growth = fair*capital        
 	expectedGain = (growth+delta)
@@ -446,7 +446,7 @@ fin_CAGR = function(beginningValue, endingValue, numYears, digits=3) {
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_NI()], [fin_valuation()]
+#' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_tax_NI()], [fin_stock_valuation()]
 #' @references - <https://en.wikipedia.org/wiki/Compound_interest>
 #' @md
 #' @examples
@@ -571,7 +571,7 @@ fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 
 }
 
 
-#' Compute NI given annual Earnings.
+#' Compute UK NI given annual Earnings.
 #'
 #' @description
 #' Employees pay contributions at 12%% on annual earnings between GBP 9,568 and GBP 50,270. Above that you pay at 2%%. 
@@ -583,14 +583,14 @@ fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 
 #' @return - NI
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_valuation()]
+#' @seealso - [fin_interest()], [fin_percent()], [fin_stock_valuation()]
 #' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
 #' @md
 #' @examples
-#' fin_NI(42e3)
-#' fin_NI(142000)
+#' fin_tax_NI(42e3)
+#' fin_tax_NI(142000)
 #'
-fin_NI <- function(annualEarnings, symbol = "\u00A3") {
+fin_tax_NI <- function(annualEarnings, symbol = "\u00A3") {
 	if(annualEarnings < 50270){
 		employee = .12 * max(0, (annualEarnings- 9568))
 	} else {
@@ -830,12 +830,12 @@ plot.percent <- function(x, ...) {
 #' @return - A PE that is justified for this stock.
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
+#' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
 #' @md
 #' @examples
-#' # fin_JustifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
+#' # fin_stock_justifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
 #' 
-fin_JustifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, discountRate = .12, basePE= 20, yrs=10) {
+fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, discountRate = .12, basePE= 20, yrs=10) {
 	paste0("Based on growth (", growthRate*100, "% expected growth for ", yrs, " years and a base P/E of ",
 	basePE, "), the justified P/E would be: ", (growthRate * yrs) + basePE )
 	
@@ -853,7 +853,7 @@ fin_JustifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, discountRa
 #' @return - Open a ticker in a finance site online
 #' @export
 #' @family Miscellaneous Functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_NI()]
+#' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
 #' @md
 #' @examples
 #' # Open $INTC in yahoo finance.

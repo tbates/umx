@@ -50,22 +50,22 @@ fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=fin_NI]{fin_NI()}}, \code{\link[=fin_percent]{fin_percent()}}
+\item \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=fin_tax_NI]{fin_tax_NI()}}, \code{\link[=fin_percent]{fin_percent()}}
 }
 
 Other Miscellaneous Functions:
 \code{\link[=deg2rad]{deg2rad()}},
-\code{\link[=fin_FIF]{fin_FIF()}},
-\code{\link[=fin_JustifiedPE]{fin_JustifiedPE()}},
-\code{\link[=fin_NI]{fin_NI()}},
 \code{\link[=fin_StockCAGR]{fin_StockCAGR()}},
-\code{\link[=fin_expected]{fin_expected()}},
 \code{\link[=fin_interest]{fin_interest()}},
 \code{\link[=fin_net_present_value]{fin_net_present_value()}},
-\code{\link[=fin_option]{fin_option()}},
 \code{\link[=fin_percent]{fin_percent()}},
+\code{\link[=fin_stock_justifiedPE]{fin_stock_justifiedPE()}},
+\code{\link[=fin_stock_option]{fin_stock_option()}},
+\code{\link[=fin_stock_target]{fin_stock_target()}},
+\code{\link[=fin_stock_valuation]{fin_stock_valuation()}},
+\code{\link[=fin_tax_FIF]{fin_tax_FIF()}},
+\code{\link[=fin_tax_NI]{fin_tax_NI()}},
 \code{\link[=fin_ticker]{fin_ticker()}},
-\code{\link[=fin_valuation]{fin_valuation()}},
 \code{\link[=rad2deg]{rad2deg()}},
 \code{\link[=umxBrownie]{umxBrownie()}}
 }
