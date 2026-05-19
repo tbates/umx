@@ -158,11 +158,11 @@ umx_msg(out$str); umx_msg(out$latents)
 \item \code{\link[=plot]{plot()}}
 }
 
-Other Graphviz: 
-\code{\link{xmu_dot_define_shapes}()},
-\code{\link{xmu_dot_make_paths}()},
-\code{\link{xmu_dot_make_residuals}()},
-\code{\link{xmu_dot_maker}()},
-\code{\link{xmu_dot_rank}()}
+Other Graphviz:
+\code{\link[=xmu_dot_define_shapes]{xmu_dot_define_shapes()}},
+\code{\link[=xmu_dot_make_paths]{xmu_dot_make_paths()}},
+\code{\link[=xmu_dot_make_residuals]{xmu_dot_make_residuals()}},
+\code{\link[=xmu_dot_maker]{xmu_dot_maker()}},
+\code{\link[=xmu_dot_rank]{xmu_dot_rank()}}
 }
 \concept{Graphviz}

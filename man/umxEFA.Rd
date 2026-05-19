@@ -147,8 +147,8 @@ Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor anal
 \item \code{\link[=factanal]{factanal()}}, \code{\link[OpenMx:mxFactorScores]{OpenMx::mxFactorScores()}}
 }
 
-Other Super-easy helpers: 
+Other Super-easy helpers:
 \code{\link{umx}},
-\code{\link{umxTwoStage}()}
+\code{\link[=umxTwoStage]{umxTwoStage()}}
 }
 \concept{Super-easy helpers}

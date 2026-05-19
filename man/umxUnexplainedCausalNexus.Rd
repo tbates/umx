@@ -33,14 +33,14 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 \item \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}}, \code{\link[=umxCompare]{umxCompare()}}
 }
 
-Other Advanced Model Building Functions: 
+Other Advanced Model Building Functions:
 \code{\link{umx}},
-\code{\link{umxAlgebra}()},
-\code{\link{umxFixAll}()},
-\code{\link{umxJiggle}()},
-\code{\link{umxRun}()},
-\code{\link{umxThresholdMatrix}()},
-\code{\link{xmuLabel}()},
-\code{\link{xmuValues}()}
+\code{\link[=umxAlgebra]{umxAlgebra()}},
+\code{\link[=umxFixAll]{umxFixAll()}},
+\code{\link[=umxJiggle]{umxJiggle()}},
+\code{\link[=umxRun]{umxRun()}},
+\code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
+\code{\link[=xmuLabel]{xmuLabel()}},
+\code{\link[=xmuValues]{xmuValues()}}
 }
 \concept{Advanced Model Building Functions}

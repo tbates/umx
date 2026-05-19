@@ -96,21 +96,21 @@ m2 =  umxConfint(m1, "smart")
 \item \code{\link[stats:confint]{stats::confint()}}, \code{\link[OpenMx:mxSE]{OpenMx::mxSE()}}, \code{\link[=umxCI]{umxCI()}}, \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}}
 }
 
-Other Reporting functions: 
-\code{\link{RMSEA}()},
-\code{\link{RMSEA.MxModel}()},
-\code{\link{RMSEA.summary.mxmodel}()},
-\code{\link{extractAIC.MxModel}()},
-\code{\link{loadings}()},
-\code{\link{loadings.MxModel}()},
-\code{\link{residuals.MxModel}()},
-\code{\link{tmx_show}()},
-\code{\link{tmx_show.MxMatrix}()},
-\code{\link{umxCI}()},
-\code{\link{umxCI_boot}()},
-\code{\link{umxExpCov}()},
-\code{\link{umxExpMeans}()},
-\code{\link{umxFitIndices}()},
-\code{\link{umxRotate}()}
+Other Reporting functions:
+\code{\link[=RMSEA]{RMSEA()}},
+\code{\link[=RMSEA.MxModel]{RMSEA.MxModel()}},
+\code{\link[=RMSEA.summary.mxmodel]{RMSEA.summary.mxmodel()}},
+\code{\link[=extractAIC.MxModel]{extractAIC.MxModel()}},
+\code{\link[=loadings]{loadings()}},
+\code{\link[=loadings.MxModel]{loadings.MxModel()}},
+\code{\link[=residuals.MxModel]{residuals.MxModel()}},
+\code{\link[=tmx_show]{tmx_show()}},
+\code{\link[=tmx_show.MxMatrix]{tmx_show.MxMatrix()}},
+\code{\link[=umxCI]{umxCI()}},
+\code{\link[=umxCI_boot]{umxCI_boot()}},
+\code{\link[=umxExpCov]{umxExpCov()}},
+\code{\link[=umxExpMeans]{umxExpMeans()}},
+\code{\link[=umxFitIndices]{umxFitIndices()}},
+\code{\link[=umxRotate]{umxRotate()}}
 }
 \concept{Reporting functions}

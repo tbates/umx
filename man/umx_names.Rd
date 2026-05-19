@@ -116,15 +116,15 @@ namez(umxMatrix("bob", "Full", 3,3)$labels)
 And \code{\link[=umx_check_names]{umx_check_names()}} to check for existence of names in a dataframe.
 }
 
-Other String Functions: 
+Other String Functions:
 \code{\link{umx}},
-\code{\link{umx_explode}()},
-\code{\link{umx_explode_twin_names}()},
-\code{\link{umx_grep}()},
-\code{\link{umx_paste_names}()},
-\code{\link{umx_rot}()},
-\code{\link{umx_str_chars}()},
-\code{\link{umx_str_from_object}()},
-\code{\link{umx_trim}()}
+\code{\link[=umx_explode]{umx_explode()}},
+\code{\link[=umx_explode_twin_names]{umx_explode_twin_names()}},
+\code{\link[=umx_grep]{umx_grep()}},
+\code{\link[=umx_paste_names]{umx_paste_names()}},
+\code{\link[=umx_rot]{umx_rot()}},
+\code{\link[=umx_str_chars]{umx_str_chars()}},
+\code{\link[=umx_str_from_object]{umx_str_from_object()}},
+\code{\link[=umx_trim]{umx_trim()}}
 }
 \concept{String Functions}

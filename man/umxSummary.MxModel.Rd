@@ -120,11 +120,11 @@ Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
 \item \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Summary functions: 
-\code{\link{umxSummaryACEcov}()},
-\code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
-\code{\link{umxSummaryMRDoC}()}
+Other Summary functions:
+\code{\link[=umxSummaryACEcov]{umxSummaryACEcov()}},
+\code{\link[=umxSummaryCP]{umxSummaryCP()}},
+\code{\link[=umxSummaryGxE]{umxSummaryGxE()}},
+\code{\link[=umxSummaryIP]{umxSummaryIP()}},
+\code{\link[=umxSummaryMRDoC]{umxSummaryMRDoC()}}
 }
 \concept{Summary functions}

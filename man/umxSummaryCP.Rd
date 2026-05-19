@@ -90,11 +90,11 @@ umxSummary(m1, CIs = TRUE, file = NA);
 \item \code{\link{umxCP}()}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for IP, CP, GxE, SAT, and ACE models.
 }
 
-Other Summary functions: 
-\code{\link{umxSummary.MxModel}()},
-\code{\link{umxSummaryACEcov}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
-\code{\link{umxSummaryMRDoC}()}
+Other Summary functions:
+\code{\link[=umxSummary.MxModel]{umxSummary.MxModel()}},
+\code{\link[=umxSummaryACEcov]{umxSummaryACEcov()}},
+\code{\link[=umxSummaryGxE]{umxSummaryGxE()}},
+\code{\link[=umxSummaryIP]{umxSummaryIP()}},
+\code{\link[=umxSummaryMRDoC]{umxSummaryMRDoC()}}
 }
 \concept{Summary functions}

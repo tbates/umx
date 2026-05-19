@@ -98,11 +98,11 @@ umxSummaryGxE(m1, separateGraphs = FALSE)
 
 [umxSummary)]: R:umxSummary)
 
-Other Summary functions: 
-\code{\link{umxSummary.MxModel}()},
-\code{\link{umxSummaryACEcov}()},
-\code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryIP}()},
-\code{\link{umxSummaryMRDoC}()}
+Other Summary functions:
+\code{\link[=umxSummary.MxModel]{umxSummary.MxModel()}},
+\code{\link[=umxSummaryACEcov]{umxSummaryACEcov()}},
+\code{\link[=umxSummaryCP]{umxSummaryCP()}},
+\code{\link[=umxSummaryIP]{umxSummaryIP()}},
+\code{\link[=umxSummaryMRDoC]{umxSummaryMRDoC()}}
 }
 \concept{Summary functions}

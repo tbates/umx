@@ -34,13 +34,13 @@ str(twinData)
 \seealso{
 [reshape()], [umx_wide2long()], [umx_merge_randomized_columns()], [umx_select_valid()]
 
-Other Twin Data functions: 
+Other Twin Data functions:
 \code{\link{umx}},
-\code{\link{umx_long2wide}()},
-\code{\link{umx_make_TwinData}()},
-\code{\link{umx_make_twin_data_nice}()},
-\code{\link{umx_residualize}()},
-\code{\link{umx_scale_wide_twin_data}()},
-\code{\link{umx_yj_wide_twin_data}()}
+\code{\link[=umx_long2wide]{umx_long2wide()}},
+\code{\link[=umx_make_TwinData]{umx_make_TwinData()}},
+\code{\link[=umx_make_twin_data_nice]{umx_make_twin_data_nice()}},
+\code{\link[=umx_residualize]{umx_residualize()}},
+\code{\link[=umx_scale_wide_twin_data]{umx_scale_wide_twin_data()}},
+\code{\link[=umx_yj_wide_twin_data]{umx_yj_wide_twin_data()}}
 }
 \concept{Twin Data functions}

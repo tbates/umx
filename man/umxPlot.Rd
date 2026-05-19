@@ -50,7 +50,7 @@ umxPlot(
 \description{
 Want a figure for your paper or presentation but not the work of combining \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}},
 \code{\link[ggplot2:geom_smooth]{ggplot2::geom_smooth()}} and \code{method} options, plus \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}. Organizing \code{\link[ggplot2:labs]{ggplot2::labs()}} and its
-\code{x}, \code{y}, and \code{title} components. Adding your preferred theme like \code{\link[ggplot2:ggtheme]{ggplot2::theme_gray()}}, plus recalling
+\code{x}, \code{y}, and \code{title} components. Adding your preferred theme like \code{\link[ggplot2:theme_gray]{ggplot2::theme_gray()}}, plus recalling
 for \code{\link[cowplot:draw_label]{cowplot::draw_label()}}, and/or \code{\link[ggplot2:annotate]{ggplot2::annotate()}} to draw math-enabled labels on the plot, as well
 as the required \code{\link[=bquote]{bquote()}}, and extracting the relevant fit statistics from \code{\link[=lm]{lm()}} and the subsidiary tasks
 of \code{\link[=reformulate]{reformulate()}} programmatic variables?
@@ -68,23 +68,23 @@ umxPlot(x = "wt", y = "mpg", mtcars, r2x = 2, r2y = 10)
 \item \code{\link[ggplot2:qplot]{ggplot2::qplot()}}
 }
 
-Other Plotting functions: 
-\code{\link{ggAddR}()},
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
+Other Plotting functions:
+\code{\link[=ggAddR]{ggAddR()}},
+\code{\link[=plot.MxLISRELModel]{plot.MxLISRELModel()}},
+\code{\link[=plot.MxModel]{plot.MxModel()}},
+\code{\link[=plot.MxModelTwinMaker]{plot.MxModelTwinMaker()}},
 \code{\link{umx}},
-\code{\link{umxPlotACE}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
-\code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotPredict}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()}
+\code{\link[=umxPlotACE]{umxPlotACE()}},
+\code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
+\code{\link[=umxPlotACEv]{umxPlotACEv()}},
+\code{\link[=umxPlotCP]{umxPlotCP()}},
+\code{\link[=umxPlotDoC]{umxPlotDoC()}},
+\code{\link[=umxPlotFun]{umxPlotFun()}},
+\code{\link[=umxPlotGxE]{umxPlotGxE()}},
+\code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
+\code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotPredict]{umxPlotPredict()}},
+\code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
+\code{\link[=umxPlotSimplex]{umxPlotSimplex()}}
 }
 \concept{Plotting functions}

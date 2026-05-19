@@ -135,11 +135,11 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 }
 }
 \seealso{
-Other Core Model Building Functions: 
+Other Core Model Building Functions:
 \code{\link{umx}},
-\code{\link{umxMatrix}()},
-\code{\link{umxPath}()},
-\code{\link{umxRAM}()},
-\code{\link{umxSuperModel}()}
+\code{\link[=umxMatrix]{umxMatrix()}},
+\code{\link[=umxPath]{umxPath()}},
+\code{\link[=umxRAM]{umxRAM()}},
+\code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 \concept{Core Model Building Functions}

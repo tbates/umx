@@ -50,23 +50,23 @@ umxPlotPredict(tmp, r2x = 2, r2y = 10)
 \item \code{\link[ggplot2:qplot]{ggplot2::qplot()}}
 }
 
-Other Plotting functions: 
-\code{\link{ggAddR}()},
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
+Other Plotting functions:
+\code{\link[=ggAddR]{ggAddR()}},
+\code{\link[=plot.MxLISRELModel]{plot.MxLISRELModel()}},
+\code{\link[=plot.MxModel]{plot.MxModel()}},
+\code{\link[=plot.MxModelTwinMaker]{plot.MxModelTwinMaker()}},
 \code{\link{umx}},
-\code{\link{umxPlot}()},
-\code{\link{umxPlotACE}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
-\code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()}
+\code{\link[=umxPlot]{umxPlot()}},
+\code{\link[=umxPlotACE]{umxPlotACE()}},
+\code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
+\code{\link[=umxPlotACEv]{umxPlotACEv()}},
+\code{\link[=umxPlotCP]{umxPlotCP()}},
+\code{\link[=umxPlotDoC]{umxPlotDoC()}},
+\code{\link[=umxPlotFun]{umxPlotFun()}},
+\code{\link[=umxPlotGxE]{umxPlotGxE()}},
+\code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
+\code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
+\code{\link[=umxPlotSimplex]{umxPlotSimplex()}}
 }
 \concept{Plotting functions}

@@ -56,15 +56,15 @@ umxGetModel(m3, targetModel = "m1")
 \item \code{\link[=umxGetManifests]{umxGetManifests()}}, \code{\link[=umxRAM]{umxRAM()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 
-Other Reporting Functions: 
+Other Reporting Functions:
 \code{\link{umx}},
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetLatents}()},
-\code{\link{umxGetManifests}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umx_aggregate}()},
-\code{\link{umx_time}()}
+\code{\link[=umxAPA]{umxAPA()}},
+\code{\link[=umxFactorScores]{umxFactorScores()}},
+\code{\link[=umxGetLatents]{umxGetLatents()}},
+\code{\link[=umxGetManifests]{umxGetManifests()}},
+\code{\link[=umxGetParameters]{umxGetParameters()}},
+\code{\link[=umxParameters]{umxParameters()}},
+\code{\link[=umx_aggregate]{umx_aggregate()}},
+\code{\link[=umx_time]{umx_time()}}
 }
 \concept{Reporting Functions}

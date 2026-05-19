@@ -50,23 +50,23 @@ geometric_mean(c(1/100, 1/50))
 \item \code{\link[=harmonic_mean]{harmonic_mean()}}, \code{\link[=mean]{mean()}}
 }
 
-Other Miscellaneous Stats Functions: 
-\code{\link{FishersMethod}()},
-\code{\link{SE_from_p}()},
-\code{\link{harmonic_mean}()},
-\code{\link{oddsratio}()},
-\code{\link{reliability}()},
+Other Miscellaneous Stats Functions:
+\code{\link[=FishersMethod]{FishersMethod()}},
+\code{\link[=SE_from_p]{SE_from_p()}},
+\code{\link[=harmonic_mean]{harmonic_mean()}},
+\code{\link[=oddsratio]{oddsratio()}},
+\code{\link[=reliability]{reliability()}},
 \code{\link{umx}},
-\code{\link{umxCov2cor}()},
-\code{\link{umxHetCor}()},
-\code{\link{umxParan}()},
-\code{\link{umxWeightedAIC}()},
-\code{\link{umx_apply}()},
-\code{\link{umx_cor}()},
-\code{\link{umx_means}()},
-\code{\link{umx_r_test}()},
-\code{\link{umx_round}()},
-\code{\link{umx_scale}()},
-\code{\link{umx_var}()}
+\code{\link[=umxCov2cor]{umxCov2cor()}},
+\code{\link[=umxHetCor]{umxHetCor()}},
+\code{\link[=umxParan]{umxParan()}},
+\code{\link[=umxWeightedAIC]{umxWeightedAIC()}},
+\code{\link[=umx_apply]{umx_apply()}},
+\code{\link[=umx_cor]{umx_cor()}},
+\code{\link[=umx_means]{umx_means()}},
+\code{\link[=umx_r_test]{umx_r_test()}},
+\code{\link[=umx_round]{umx_round()}},
+\code{\link[=umx_scale]{umx_scale()}},
+\code{\link[=umx_var]{umx_var()}}
 }
 \concept{Miscellaneous Stats Functions}

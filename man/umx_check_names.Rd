@@ -55,28 +55,28 @@ umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 - <https://github.com/tbates/umx>
 }
 \seealso{
-Other Test: 
-\code{\link{umx_check}()},
-\code{\link{umx_check_OS}()},
-\code{\link{umx_check_model}()},
-\code{\link{umx_check_parallel}()},
-\code{\link{umx_has_CIs}()},
-\code{\link{umx_has_been_run}()},
-\code{\link{umx_has_means}()},
-\code{\link{umx_has_square_brackets}()},
-\code{\link{umx_is_MxData}()},
-\code{\link{umx_is_MxMatrix}()},
-\code{\link{umx_is_MxModel}()},
-\code{\link{umx_is_RAM}()},
-\code{\link{umx_is_cov}()}
+Other Test:
+\code{\link[=umx_check]{umx_check()}},
+\code{\link[=umx_check_OS]{umx_check_OS()}},
+\code{\link[=umx_check_model]{umx_check_model()}},
+\code{\link[=umx_check_parallel]{umx_check_parallel()}},
+\code{\link[=umx_has_CIs]{umx_has_CIs()}},
+\code{\link[=umx_has_been_run]{umx_has_been_run()}},
+\code{\link[=umx_has_means]{umx_has_means()}},
+\code{\link[=umx_has_square_brackets]{umx_has_square_brackets()}},
+\code{\link[=umx_is_MxData]{umx_is_MxData()}},
+\code{\link[=umx_is_MxMatrix]{umx_is_MxMatrix()}},
+\code{\link[=umx_is_MxModel]{umx_is_MxModel()}},
+\code{\link[=umx_is_RAM]{umx_is_RAM()}},
+\code{\link[=umx_is_cov]{umx_is_cov()}}
 
-Other Check or test: 
+Other Check or test:
 \code{\link{umx}},
-\code{\link{umx_is_class}()},
-\code{\link{umx_is_endogenous}()},
-\code{\link{umx_is_exogenous}()},
-\code{\link{umx_is_numeric}()},
-\code{\link{umx_is_ordered}()}
+\code{\link[=umx_is_class]{umx_is_class()}},
+\code{\link[=umx_is_endogenous]{umx_is_endogenous()}},
+\code{\link[=umx_is_exogenous]{umx_is_exogenous()}},
+\code{\link[=umx_is_numeric]{umx_is_numeric()}},
+\code{\link[=umx_is_ordered]{umx_is_ordered()}}
 }
 \concept{Check or test}
 \concept{Test}

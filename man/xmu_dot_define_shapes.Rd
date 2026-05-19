@@ -25,11 +25,11 @@ xmu_dot_define_shapes(c("as1"), c("E", "N"))
 \seealso{
 - [xmu_dot_rank()]
 
-Other Graphviz: 
-\code{\link{xmu_dot_make_paths}()},
-\code{\link{xmu_dot_make_residuals}()},
-\code{\link{xmu_dot_maker}()},
-\code{\link{xmu_dot_mat2dot}()},
-\code{\link{xmu_dot_rank}()}
+Other Graphviz:
+\code{\link[=xmu_dot_make_paths]{xmu_dot_make_paths()}},
+\code{\link[=xmu_dot_make_residuals]{xmu_dot_make_residuals()}},
+\code{\link[=xmu_dot_maker]{xmu_dot_maker()}},
+\code{\link[=xmu_dot_mat2dot]{xmu_dot_mat2dot()}},
+\code{\link[=xmu_dot_rank]{xmu_dot_rank()}}
 }
 \concept{Graphviz}

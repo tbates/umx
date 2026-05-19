@@ -49,11 +49,11 @@ Summarizes a MR Direction of Causation model, as returned by \code{\link[=umxMRD
 \item \code{\link{umxDoC}()}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}} work for DoC models.
 }
 
-Other Summary functions: 
-\code{\link{umxSummary.MxModel}()},
-\code{\link{umxSummaryACEcov}()},
-\code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()}
+Other Summary functions:
+\code{\link[=umxSummary.MxModel]{umxSummary.MxModel()}},
+\code{\link[=umxSummaryACEcov]{umxSummaryACEcov()}},
+\code{\link[=umxSummaryCP]{umxSummaryCP()}},
+\code{\link[=umxSummaryGxE]{umxSummaryGxE()}},
+\code{\link[=umxSummaryIP]{umxSummaryIP()}}
 }
 \concept{Summary functions}

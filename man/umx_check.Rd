@@ -31,19 +31,19 @@ umx_check(length(1:3)==3, "message", "item must have length == 3", "another comm
 umx_check(1==2, "message", "one must be 2", ". Another comment", "and another")
 }
 \seealso{
-Other Test: 
-\code{\link{umx_check_OS}()},
-\code{\link{umx_check_model}()},
-\code{\link{umx_check_names}()},
-\code{\link{umx_check_parallel}()},
-\code{\link{umx_has_CIs}()},
-\code{\link{umx_has_been_run}()},
-\code{\link{umx_has_means}()},
-\code{\link{umx_has_square_brackets}()},
-\code{\link{umx_is_MxData}()},
-\code{\link{umx_is_MxMatrix}()},
-\code{\link{umx_is_MxModel}()},
-\code{\link{umx_is_RAM}()},
-\code{\link{umx_is_cov}()}
+Other Test:
+\code{\link[=umx_check_OS]{umx_check_OS()}},
+\code{\link[=umx_check_model]{umx_check_model()}},
+\code{\link[=umx_check_names]{umx_check_names()}},
+\code{\link[=umx_check_parallel]{umx_check_parallel()}},
+\code{\link[=umx_has_CIs]{umx_has_CIs()}},
+\code{\link[=umx_has_been_run]{umx_has_been_run()}},
+\code{\link[=umx_has_means]{umx_has_means()}},
+\code{\link[=umx_has_square_brackets]{umx_has_square_brackets()}},
+\code{\link[=umx_is_MxData]{umx_is_MxData()}},
+\code{\link[=umx_is_MxMatrix]{umx_is_MxMatrix()}},
+\code{\link[=umx_is_MxModel]{umx_is_MxModel()}},
+\code{\link[=umx_is_RAM]{umx_is_RAM()}},
+\code{\link[=umx_is_cov]{umx_is_cov()}}
 }
 \concept{Test}

@@ -116,13 +116,13 @@ namez(wide)
 \item \code{\link[=merge]{merge()}}
 }
 
-Other Twin Data functions: 
+Other Twin Data functions:
 \code{\link{umx}},
-\code{\link{umx_make_TwinData}()},
-\code{\link{umx_make_twin_data_nice}()},
-\code{\link{umx_residualize}()},
-\code{\link{umx_scale_wide_twin_data}()},
-\code{\link{umx_wide2longTwinData}()},
-\code{\link{umx_yj_wide_twin_data}()}
+\code{\link[=umx_make_TwinData]{umx_make_TwinData()}},
+\code{\link[=umx_make_twin_data_nice]{umx_make_twin_data_nice()}},
+\code{\link[=umx_residualize]{umx_residualize()}},
+\code{\link[=umx_scale_wide_twin_data]{umx_scale_wide_twin_data()}},
+\code{\link[=umx_wide2longTwinData]{umx_wide2longTwinData()}},
+\code{\link[=umx_yj_wide_twin_data]{umx_yj_wide_twin_data()}}
 }
 \concept{Twin Data functions}

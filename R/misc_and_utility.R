@@ -3160,79 +3160,99 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "release")   # Release to CRAN
 #' # tmp = umx_make(what = "lastRhub") # View rhub result
 #' }
-umx_make <- function(what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git"), pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL, spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell=TRUE) {
+umx_make <- function(
+	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git"), 
+	pkg = "~/bin/umx", 
+	check = TRUE, 
+	run = FALSE, 
+	start = NULL, 
+	spelling = "en_US", 
+	which = c("win", "mac", "linux", "solaris"), 
+	run_dont_test = FALSE, 
+	spell = TRUE
+) {
 	what  = match.arg(what)
 	which = match.arg(which)
+	
+	# Normalized package path absolute resolution
+	pkgPath = normalizePath(pkg, mustWork = TRUE)
+	
 	if(what == "load"){
-		devtools::load_all(path = pkg)
-		changed = gert::git_status(repo = "~/bin/umx")
-		if(dim(changed)[1]>=1){
-			umx_print(gert::git_status(repo = pkg))
+		# STRATEGY: Document on load to ensure RoxygenNote matches local machine immediately
+		devtools::document(pkg = pkgPath)
+		devtools::load_all(path = pkgPath)
+		
+		changed = gert::git_status(repo = pkgPath)
+		if(nrow(changed) >= 1){
+			umx_print(changed)
 		}
+		
 	} else if(what == "quickInst"){
-		devtools::document(pkg = pkg);
-		devtools::install(pkg = pkg, quick = TRUE, dependencies= FALSE, upgrade= FALSE, build_vignettes = FALSE);
-		devtools::load_all(path = pkg)
-		changed = gert::git_status(repo = "~/bin/umx")
-		if(dim(changed)[1]>=1){
-			umx_print(gert::git_status(repo = pkg))
+		devtools::document(pkg = pkgPath)
+		devtools::install(pkg = pkgPath, quick = TRUE, dependencies = FALSE, upgrade = FALSE, build_vignettes = FALSE)
+		devtools::load_all(path = pkgPath)
+		
+		changed = gert::git_status(repo = pkgPath)
+		if(nrow(changed) >= 1){
+			umx_print(changed)
 		}
-	}else if(what == "install"){
-		devtools::document(pkg = pkg);
-		devtools::install(pkg = pkg);
-		devtools::load_all(path = pkg)
+		
+	} else if(what == "install"){
+		devtools::document(pkg = pkgPath)
+		devtools::install(pkg = pkgPath)
+		devtools::load_all(path = pkgPath)
+		
 	} else if (what == "spell"){
-		spelling::spell_check_package(pkg = pkg, vignettes = TRUE, use_wordlist = TRUE)
-	# }else if (what=="travisCI"){
-	# 	browseURL("https://www.travis-ci.com/tbates/umx")
-	}else if (what == "sitrep"){
-		devtools::dev_sitrep(pkg = pkg)
-	}else if (what == "deps_install"){
-		devtools::install_dev_deps(pkg=pkg)
-	} else if(what == "run_examples"){
-		devtools::run_examples(pkg = pkg, run = run, start = start)
+		spelling::spell_check_package(pkg = pkgPath, vignettes = TRUE, use_wordlist = TRUE)
+		
+	} else if (what == "sitrep"){
+		devtools::dev_sitrep(pkg = pkgPath)
+		
+	} else if (what == "deps_install"){
+		# STRATEGY: Swap from devtools to native pak engine for high-velocity installation
+		if(!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
+		pak::local_install_dev_deps(root = pkgPath)
+		
+	} else if(what == "examples"){ # Fixed name mismatch matching 'what' default
+		devtools::run_examples(pkg = pkgPath, run = run, start = start)
+		
 	} else if(what == "checkCRAN"){
-		devtools::check(pkg = pkg, run_dont_test = run_dont_test) # http://r-pkgs.had.co.nz/check.html
-	} else if (what =="win"){
-		devtools::check_win_devel(pkg = pkg)
-	} else if (what =="rhub"){
-		if(which == "mac"){
-			plat = "macos-highsierra-release-cran"
-			plat = "macos-m1-bigsur-release"
-		} else if(which=="linux") {
-			plat = "debian-gcc-patched"
-			# plat = "debian-clang-devel"
-		} else if(which=="win") {
-			plat = "windows-x86_64-devel" #"windows-x86_64-patched" 
-			# plat = "windows-x86_64-devel" # broken 2021-06-12
-		} else if (which=="solaris"){
-			plat = "solaris-x86-patched-ods"
-		}
-
-		cat("checking ", omxQuotes(pkg), "on", omxQuotes(plat))
-		if(spell){
-			devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE, env_vars = c(`_R_CHECK_FORCE_SUGGESTS_` = "true", `_R_CHECK_CRAN_INCOMING_USE_ASPELL_` = "false"))
-		}else{
-			devtools::check_rhub(pkg = pkg, platforms = plat, interactive = FALSE)
-		}
+		devtools::check(pkg = pkgPath, run_dont_test = run_dont_test, args = "--as-cran")
+		
+	} else if (what == "win"){
+		devtools::check_win_devel(pkg = pkgPath)
+		
+	} else if (what == "rhub"){
+		# STRATEGY: Update platforms to line up with the modernized R-Hub v2 matrix
+		plat = switch(which,
+			"mac"     = "macos",
+			"linux"   = "linux",
+			"win"     = "windows",
+			"solaris" = "solaris"
+		)
+		
+		cat("Checking", omxQuotes(pkgPath), "via modern rhub on platform:", omxQuotes(plat), "\n")
+		# R-Hub v2 uses rhub::rhub_check() nattily underneath devtools wrapping
+		devtools::check_rhub(pkg = pkgPath, platforms = plat, interactive = FALSE)
+		
 	} else if(what == "lastRhub"){
-			prev = rhub::list_package_checks(package = pkg, howmany = 4)
-			check_id = prev$id[1]
-			return(rhub::get_check(check_id))
-		}else if(what == "testthat"){
-			devtools::test(pkg = pkg)
+		# STRATEGY: R-Hub v2 modern check status retrieval
+		return(rhub::rhub_doctor())
+		
+	} else if (what == "testthat"){
+		devtools::test(pkg = pkgPath)
+		
 	} else if (what == "release"){
-		oldDir = getwd()
-		setwd(dir= pkg)
-		devtools::release(pkg = pkg, check = check, "--no-manual") # spelling = NULL		 
-		setwd(dir= oldDir)
+		# STRATEGY: Use withr to handle directories cleanly without risking breaking state on crash
+		withr::with_dir(pkgPath, {
+			devtools::release(pkg = pkgPath, check = check, args = "--no-manual")
+		})
+		
 	} else if (what == "git"){
-		system(paste("open -a ", shQuote("GitHub Desktop.app")))
-	}else{
-		stop("I don't know how to ", what)
+		# STRATEGY: Universal MacOS application opening protocol
+		system2("open", args = c("-a", "GitHub Desktop"))
 	}
 }
-
 
 # ================================
 # = Reporting & Graphing helpers =

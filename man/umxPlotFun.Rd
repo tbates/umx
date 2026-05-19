@@ -39,7 +39,7 @@ umxPlotFun(
 A ggplot graph object
 }
 \description{
-A wrapper for \code{\link[ggplot2:geom_function]{ggplot2::stat_function()}} that handles single or multiple functions.
+A wrapper for \code{\link[ggplot2:stat_function]{ggplot2::stat_function()}} that handles single or multiple functions.
 }
 \details{
 Easily plot functions—like sin or x^2—using ggplot. Accepts bare functions,
@@ -57,25 +57,25 @@ umxPlotFun(list(Sine = sin, Cosine = cos), max = 2*pi)
 
 }
 \seealso{
-\code{\link[ggplot2:geom_function]{ggplot2::stat_function()}}
+\code{\link[ggplot2:stat_function]{ggplot2::stat_function()}}
 
-Other Plotting functions: 
-\code{\link{ggAddR}()},
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
+Other Plotting functions:
+\code{\link[=ggAddR]{ggAddR()}},
+\code{\link[=plot.MxLISRELModel]{plot.MxLISRELModel()}},
+\code{\link[=plot.MxModel]{plot.MxModel()}},
+\code{\link[=plot.MxModelTwinMaker]{plot.MxModelTwinMaker()}},
 \code{\link{umx}},
-\code{\link{umxPlot}()},
-\code{\link{umxPlotACE}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotPredict}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()}
+\code{\link[=umxPlot]{umxPlot()}},
+\code{\link[=umxPlotACE]{umxPlotACE()}},
+\code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
+\code{\link[=umxPlotACEv]{umxPlotACEv()}},
+\code{\link[=umxPlotCP]{umxPlotCP()}},
+\code{\link[=umxPlotDoC]{umxPlotDoC()}},
+\code{\link[=umxPlotGxE]{umxPlotGxE()}},
+\code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
+\code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotPredict]{umxPlotPredict()}},
+\code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
+\code{\link[=umxPlotSimplex]{umxPlotSimplex()}}
 }
 \concept{Plotting functions}

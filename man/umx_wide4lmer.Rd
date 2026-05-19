@@ -51,22 +51,22 @@ df.l = umx_wide4lmer(repeated = repeated, timevar = timevar, covs = covs, data =
 \item \code{\link[=umx_long2wide]{umx_long2wide()}}
 }
 
-Other Miscellaneous Utility Functions: 
-\code{\link{install.OpenMx}()},
-\code{\link{libs}()},
-\code{\link{qm}()},
+Other Miscellaneous Utility Functions:
+\code{\link[=install.OpenMx]{install.OpenMx()}},
+\code{\link[=libs]{libs()}},
+\code{\link[=qm]{qm()}},
 \code{\link{umx}},
-\code{\link{umxLav2RAM}()},
-\code{\link{umxModelNames}()},
-\code{\link{umxRAM2Lav}()},
-\code{\link{umxVersion}()},
-\code{\link{umx_array_shift}()},
-\code{\link{umx_find_object}()},
-\code{\link{umx_lower.tri}()},
-\code{\link{umx_msg}()},
-\code{\link{umx_open_CRAN_page}()},
-\code{\link{umx_pad}()},
-\code{\link{umx_print}()},
-\code{\link{umx_wide2long}()}
+\code{\link[=umxLav2RAM]{umxLav2RAM()}},
+\code{\link[=umxModelNames]{umxModelNames()}},
+\code{\link[=umxRAM2Lav]{umxRAM2Lav()}},
+\code{\link[=umxVersion]{umxVersion()}},
+\code{\link[=umx_array_shift]{umx_array_shift()}},
+\code{\link[=umx_find_object]{umx_find_object()}},
+\code{\link[=umx_lower.tri]{umx_lower.tri()}},
+\code{\link[=umx_msg]{umx_msg()}},
+\code{\link[=umx_open_CRAN_page]{umx_open_CRAN_page()}},
+\code{\link[=umx_pad]{umx_pad()}},
+\code{\link[=umx_print]{umx_print()}},
+\code{\link[=umx_wide2long]{umx_wide2long()}}
 }
 \concept{Miscellaneous Utility Functions}

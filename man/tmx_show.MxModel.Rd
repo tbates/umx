@@ -91,8 +91,8 @@ tmx_show(m1, what = "free", matrices = "A", report= "markdown")
 }
 }
 \seealso{
-Other Teaching and Testing functions: 
-\code{\link{umxDiagnose}()},
-\code{\link{umxPower}()}
+Other Teaching and Testing functions:
+\code{\link[=umxDiagnose]{umxDiagnose()}},
+\code{\link[=umxPower]{umxPower()}}
 }
 \concept{Teaching and Testing functions}

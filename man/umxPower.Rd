@@ -142,8 +142,8 @@ umxPower(m1, update = c("c_r1c1"), method = 'empirical', n=90, explore = TRUE)
 \item \code{\link[=power.ACE.test]{power.ACE.test()}}, \code{\link[=umxRAM]{umxRAM()}}
 }
 
-Other Teaching and Testing functions: 
-\code{\link{tmx_show.MxModel}()},
-\code{\link{umxDiagnose}()}
+Other Teaching and Testing functions:
+\code{\link[=tmx_show.MxModel]{tmx_show.MxModel()}},
+\code{\link[=umxDiagnose]{umxDiagnose()}}
 }
 \concept{Teaching and Testing functions}

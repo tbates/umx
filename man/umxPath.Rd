@@ -254,11 +254,11 @@ plot(m1)
 \item \code{\link[OpenMx:mxPath]{OpenMx::mxPath()}}
 }
 
-Other Core Model Building Functions: 
+Other Core Model Building Functions:
 \code{\link{umx}},
-\code{\link{umxMatrix}()},
-\code{\link{umxModify}()},
-\code{\link{umxRAM}()},
-\code{\link{umxSuperModel}()}
+\code{\link[=umxMatrix]{umxMatrix()}},
+\code{\link[=umxModify]{umxModify()}},
+\code{\link[=umxRAM]{umxRAM()}},
+\code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 \concept{Core Model Building Functions}

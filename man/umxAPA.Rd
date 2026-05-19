@@ -154,15 +154,15 @@ umxAPA(m1)
 \seealso{
 \code{\link[=SE_from_p]{SE_from_p()}}
 
-Other Reporting Functions: 
+Other Reporting Functions:
 \code{\link{umx}},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetLatents}()},
-\code{\link{umxGetManifests}()},
-\code{\link{umxGetModel}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umx_aggregate}()},
-\code{\link{umx_time}()}
+\code{\link[=umxFactorScores]{umxFactorScores()}},
+\code{\link[=umxGetLatents]{umxGetLatents()}},
+\code{\link[=umxGetManifests]{umxGetManifests()}},
+\code{\link[=umxGetModel]{umxGetModel()}},
+\code{\link[=umxGetParameters]{umxGetParameters()}},
+\code{\link[=umxParameters]{umxParameters()}},
+\code{\link[=umx_aggregate]{umx_aggregate()}},
+\code{\link[=umx_time]{umx_time()}}
 }
 \concept{Reporting Functions}

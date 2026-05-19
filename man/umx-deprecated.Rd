@@ -13,7 +13,7 @@
 
 \code{stringToMxAlgebra} is deprecated: please use \code{\link[=umx_string_to_algebra]{umx_string_to_algebra()}} instead
 
-\code{genEpi_EvalQuote} is deprecated: please use \code{\link[OpenMx:mxEval]{OpenMx::mxEvalByName()}} instead
+\code{genEpi_EvalQuote} is deprecated: please use \code{\link[OpenMx:mxEvalByName]{OpenMx::mxEvalByName()}} instead
 
 \code{umxReportCIs} is deprecated: please use \code{\link[=umxCI]{umxCI()}} instead
 

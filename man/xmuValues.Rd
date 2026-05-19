@@ -68,14 +68,14 @@ xmuValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 \item Core functions:
 }
 
-Other Advanced Model Building Functions: 
+Other Advanced Model Building Functions:
 \code{\link{umx}},
-\code{\link{umxAlgebra}()},
-\code{\link{umxFixAll}()},
-\code{\link{umxJiggle}()},
-\code{\link{umxRun}()},
-\code{\link{umxThresholdMatrix}()},
-\code{\link{umxUnexplainedCausalNexus}()},
-\code{\link{xmuLabel}()}
+\code{\link[=umxAlgebra]{umxAlgebra()}},
+\code{\link[=umxFixAll]{umxFixAll()}},
+\code{\link[=umxJiggle]{umxJiggle()}},
+\code{\link[=umxRun]{umxRun()}},
+\code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
+\code{\link[=umxUnexplainedCausalNexus]{umxUnexplainedCausalNexus()}},
+\code{\link[=xmuLabel]{xmuLabel()}}
 }
 \concept{Advanced Model Building Functions}

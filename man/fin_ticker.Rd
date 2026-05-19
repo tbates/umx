@@ -28,20 +28,20 @@ fin_ticker("INTC")
 \item \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_NI]{fin_NI()}}
 }
 
-Other Miscellaneous Functions: 
-\code{\link{deg2rad}()},
-\code{\link{fin_FIF}()},
-\code{\link{fin_JustifiedPE}()},
-\code{\link{fin_NI}()},
-\code{\link{fin_StockCAGR}()},
-\code{\link{fin_carryCost}()},
-\code{\link{fin_expected}()},
-\code{\link{fin_interest}()},
-\code{\link{fin_net_present_value}()},
-\code{\link{fin_option}()},
-\code{\link{fin_percent}()},
-\code{\link{fin_valuation}()},
-\code{\link{rad2deg}()},
-\code{\link{umxBrownie}()}
+Other Miscellaneous Functions:
+\code{\link[=deg2rad]{deg2rad()}},
+\code{\link[=fin_FIF]{fin_FIF()}},
+\code{\link[=fin_JustifiedPE]{fin_JustifiedPE()}},
+\code{\link[=fin_NI]{fin_NI()}},
+\code{\link[=fin_StockCAGR]{fin_StockCAGR()}},
+\code{\link[=fin_carryCost]{fin_carryCost()}},
+\code{\link[=fin_expected]{fin_expected()}},
+\code{\link[=fin_interest]{fin_interest()}},
+\code{\link[=fin_net_present_value]{fin_net_present_value()}},
+\code{\link[=fin_option]{fin_option()}},
+\code{\link[=fin_percent]{fin_percent()}},
+\code{\link[=fin_valuation]{fin_valuation()}},
+\code{\link[=rad2deg]{rad2deg()}},
+\code{\link[=umxBrownie]{umxBrownie()}}
 }
 \concept{Miscellaneous Functions}

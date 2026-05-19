@@ -61,8 +61,8 @@ umxDiagnose(m1)
 }
 }
 \seealso{
-Other Teaching and Testing functions: 
-\code{\link{tmx_show.MxModel}()},
-\code{\link{umxPower}()}
+Other Teaching and Testing functions:
+\code{\link[=tmx_show.MxModel]{tmx_show.MxModel()}},
+\code{\link[=umxPower]{umxPower()}}
 }
 \concept{Teaching and Testing functions}

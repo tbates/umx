@@ -76,14 +76,14 @@ m1 = umxRun(m1, tryHard = "yes")
 }
 }
 \seealso{
-Other Advanced Model Building Functions: 
+Other Advanced Model Building Functions:
 \code{\link{umx}},
-\code{\link{umxAlgebra}()},
-\code{\link{umxFixAll}()},
-\code{\link{umxJiggle}()},
-\code{\link{umxThresholdMatrix}()},
-\code{\link{umxUnexplainedCausalNexus}()},
-\code{\link{xmuLabel}()},
-\code{\link{xmuValues}()}
+\code{\link[=umxAlgebra]{umxAlgebra()}},
+\code{\link[=umxFixAll]{umxFixAll()}},
+\code{\link[=umxJiggle]{umxJiggle()}},
+\code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
+\code{\link[=umxUnexplainedCausalNexus]{umxUnexplainedCausalNexus()}},
+\code{\link[=xmuLabel]{xmuLabel()}},
+\code{\link[=xmuValues]{xmuValues()}}
 }
 \concept{Advanced Model Building Functions}

@@ -58,43 +58,43 @@ table for pasting into a word processor.
 \seealso{
 \code{\link[=umxReduceGxE]{umxReduceGxE()}}, \code{\link[=umxReduceACE]{umxReduceACE()}}
 
-Other Model Summary and Comparison: 
+Other Model Summary and Comparison:
 \code{\link{umx}},
-\code{\link{umxCompare}()},
-\code{\link{umxEquate}()},
-\code{\link{umxMI}()},
-\code{\link{umxSetParameters}()},
-\code{\link{umxSummary}()}
+\code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxEquate]{umxEquate()}},
+\code{\link[=umxMI]{umxMI()}},
+\code{\link[=umxSetParameters]{umxSetParameters()}},
+\code{\link[=umxSummary]{umxSummary()}}
 
-Other Twin Modeling Functions: 
-\code{\link{power.ACE.test}()},
+Other Twin Modeling Functions:
+\code{\link[=power.ACE.test]{power.ACE.test()}},
 \code{\link{umx}},
-\code{\link{umxACE}()},
-\code{\link{umxACEcov}()},
-\code{\link{umxACEv}()},
-\code{\link{umxCP}()},
-\code{\link{umxDiffMZ}()},
-\code{\link{umxDiscTwin}()},
-\code{\link{umxDoC}()},
-\code{\link{umxDoCp}()},
-\code{\link{umxGxE}()},
-\code{\link{umxGxE_window}()},
-\code{\link{umxGxEbiv}()},
-\code{\link{umxIP}()},
-\code{\link{umxMRDoC}()},
-\code{\link{umxReduceACE}()},
-\code{\link{umxReduceGxE}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACE}()},
-\code{\link{umxSummaryACEv}()},
-\code{\link{umxSummaryDoC}()},
-\code{\link{umxSummaryGxEbiv}()},
-\code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()},
-\code{\link{umxTwinMaker}()}
+\code{\link[=umxACE]{umxACE()}},
+\code{\link[=umxACEcov]{umxACEcov()}},
+\code{\link[=umxACEv]{umxACEv()}},
+\code{\link[=umxCP]{umxCP()}},
+\code{\link[=umxDiffMZ]{umxDiffMZ()}},
+\code{\link[=umxDiscTwin]{umxDiscTwin()}},
+\code{\link[=umxDoC]{umxDoC()}},
+\code{\link[=umxDoCp]{umxDoCp()}},
+\code{\link[=umxGxE]{umxGxE()}},
+\code{\link[=umxGxE_window]{umxGxE_window()}},
+\code{\link[=umxGxEbiv]{umxGxEbiv()}},
+\code{\link[=umxIP]{umxIP()}},
+\code{\link[=umxMRDoC]{umxMRDoC()}},
+\code{\link[=umxReduceACE]{umxReduceACE()}},
+\code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}},
+\code{\link[=umxSexLim]{umxSexLim()}},
+\code{\link[=umxSimplex]{umxSimplex()}},
+\code{\link[=umxSummarizeTwinData]{umxSummarizeTwinData()}},
+\code{\link[=umxSummaryACE]{umxSummaryACE()}},
+\code{\link[=umxSummaryACEv]{umxSummaryACEv()}},
+\code{\link[=umxSummaryDoC]{umxSummaryDoC()}},
+\code{\link[=umxSummaryGxEbiv]{umxSummaryGxEbiv()}},
+\code{\link[=umxSummarySexLim]{umxSummarySexLim()}},
+\code{\link[=umxSummarySimplex]{umxSummarySimplex()}},
+\code{\link[=umxTwinMaker]{umxTwinMaker()}}
 }
 \concept{Model Summary and Comparison}
 \concept{Twin Modeling Functions}

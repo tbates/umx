@@ -82,15 +82,15 @@ umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 \item \code{\link[=umx_apply]{umx_apply()}}, \code{\link[=aggregate]{aggregate()}}
 }
 
-Other Reporting Functions: 
+Other Reporting Functions:
 \code{\link{umx}},
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetLatents}()},
-\code{\link{umxGetManifests}()},
-\code{\link{umxGetModel}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umx_time}()}
+\code{\link[=umxAPA]{umxAPA()}},
+\code{\link[=umxFactorScores]{umxFactorScores()}},
+\code{\link[=umxGetLatents]{umxGetLatents()}},
+\code{\link[=umxGetManifests]{umxGetManifests()}},
+\code{\link[=umxGetModel]{umxGetModel()}},
+\code{\link[=umxGetParameters]{umxGetParameters()}},
+\code{\link[=umxParameters]{umxParameters()}},
+\code{\link[=umx_time]{umx_time()}}
 }
 \concept{Reporting Functions}

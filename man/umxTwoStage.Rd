@@ -104,8 +104,8 @@ Assess Causality Using Observational Data. \emph{Journal of the American Society
 \item \code{\link[=umx_make_MR_data]{umx_make_MR_data()}}, \code{\link[=umxDiffMZ]{umxDiffMZ()}}, \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umxDiscTwin]{umxDiscTwin()}}
 }
 
-Other Super-easy helpers: 
+Other Super-easy helpers:
 \code{\link{umx}},
-\code{\link{umxEFA}()}
+\code{\link[=umxEFA]{umxEFA()}}
 }
 \concept{Super-easy helpers}

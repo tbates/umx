@@ -56,7 +56,7 @@ In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}, 496–49
 \item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=plot.MxModelDoC]{plot.MxModelDoC()}}, \code{\link[=umxSummary.MxModelDoC]{umxSummary.MxModelDoC()}}, \code{\link[=umxModify]{umxModify()}}
 }
 
-Other datasets: 
+Other datasets:
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
 \code{\link{iqdat}},

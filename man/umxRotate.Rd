@@ -32,21 +32,21 @@ umxRotate(
 See \code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}} to rotate the factor loadings of a \code{\link[=umxCP]{umxCP()}} model
 }
 \seealso{
-Other Reporting functions: 
-\code{\link{RMSEA}()},
-\code{\link{RMSEA.MxModel}()},
-\code{\link{RMSEA.summary.mxmodel}()},
-\code{\link{extractAIC.MxModel}()},
-\code{\link{loadings}()},
-\code{\link{loadings.MxModel}()},
-\code{\link{residuals.MxModel}()},
-\code{\link{tmx_show}()},
-\code{\link{tmx_show.MxMatrix}()},
-\code{\link{umxCI}()},
-\code{\link{umxCI_boot}()},
-\code{\link{umxConfint}()},
-\code{\link{umxExpCov}()},
-\code{\link{umxExpMeans}()},
-\code{\link{umxFitIndices}()}
+Other Reporting functions:
+\code{\link[=RMSEA]{RMSEA()}},
+\code{\link[=RMSEA.MxModel]{RMSEA.MxModel()}},
+\code{\link[=RMSEA.summary.mxmodel]{RMSEA.summary.mxmodel()}},
+\code{\link[=extractAIC.MxModel]{extractAIC.MxModel()}},
+\code{\link[=loadings]{loadings()}},
+\code{\link[=loadings.MxModel]{loadings.MxModel()}},
+\code{\link[=residuals.MxModel]{residuals.MxModel()}},
+\code{\link[=tmx_show]{tmx_show()}},
+\code{\link[=tmx_show.MxMatrix]{tmx_show.MxMatrix()}},
+\code{\link[=umxCI]{umxCI()}},
+\code{\link[=umxCI_boot]{umxCI_boot()}},
+\code{\link[=umxConfint]{umxConfint()}},
+\code{\link[=umxExpCov]{umxExpCov()}},
+\code{\link[=umxExpMeans]{umxExpMeans()}},
+\code{\link[=umxFitIndices]{umxFitIndices()}}
 }
 \concept{Reporting functions}

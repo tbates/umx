@@ -63,12 +63,12 @@ umxMI(m1, full = FALSE)
 \item \code{\link[OpenMx:mxMI]{OpenMx::mxMI()}}
 }
 
-Other Model Summary and Comparison: 
+Other Model Summary and Comparison:
 \code{\link{umx}},
-\code{\link{umxCompare}()},
-\code{\link{umxEquate}()},
-\code{\link{umxReduce}()},
-\code{\link{umxSetParameters}()},
-\code{\link{umxSummary}()}
+\code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxEquate]{umxEquate()}},
+\code{\link[=umxReduce]{umxReduce()}},
+\code{\link[=umxSetParameters]{umxSetParameters()}},
+\code{\link[=umxSummary]{umxSummary()}}
 }
 \concept{Model Summary and Comparison}

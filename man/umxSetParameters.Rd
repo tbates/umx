@@ -101,12 +101,12 @@ parameters(m2)
 \item \code{\link[=umxModify]{umxModify()}}, \code{\link[=xmuLabel]{xmuLabel()}}
 }
 
-Other Model Summary and Comparison: 
+Other Model Summary and Comparison:
 \code{\link{umx}},
-\code{\link{umxCompare}()},
-\code{\link{umxEquate}()},
-\code{\link{umxMI}()},
-\code{\link{umxReduce}()},
-\code{\link{umxSummary}()}
+\code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxEquate]{umxEquate()}},
+\code{\link[=umxMI]{umxMI()}},
+\code{\link[=umxReduce]{umxReduce()}},
+\code{\link[=umxSummary]{umxSummary()}}
 }
 \concept{Model Summary and Comparison}

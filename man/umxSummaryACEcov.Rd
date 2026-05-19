@@ -75,11 +75,11 @@ stdFit = umxSummary(m1, returnStd = TRUE)
 \item \code{\link[=umxACEcov]{umxACEcov()}}
 }
 
-Other Summary functions: 
-\code{\link{umxSummary.MxModel}()},
-\code{\link{umxSummaryCP}()},
-\code{\link{umxSummaryGxE}()},
-\code{\link{umxSummaryIP}()},
-\code{\link{umxSummaryMRDoC}()}
+Other Summary functions:
+\code{\link[=umxSummary.MxModel]{umxSummary.MxModel()}},
+\code{\link[=umxSummaryCP]{umxSummaryCP()}},
+\code{\link[=umxSummaryGxE]{umxSummaryGxE()}},
+\code{\link[=umxSummaryIP]{umxSummaryIP()}},
+\code{\link[=umxSummaryMRDoC]{umxSummaryMRDoC()}}
 }
 \concept{Summary functions}

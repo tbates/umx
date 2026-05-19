@@ -59,7 +59,7 @@ the MCV Twin Study. Medical College of Virginia.
 \url{https://pubmed.ncbi.nlm.nih.gov/10323623/}
 }
 \seealso{
-Other datasets: 
+Other datasets:
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
 \code{\link{docData}},

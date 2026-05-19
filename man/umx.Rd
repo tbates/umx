@@ -108,227 +108,232 @@ Useful links:
 }
 
 
-Other Core Model Building Functions: 
-\code{\link{umxMatrix}()},
-\code{\link{umxModify}()},
-\code{\link{umxPath}()},
-\code{\link{umxRAM}()},
-\code{\link{umxSuperModel}()}
+Other Core Model Building Functions:
+\code{\link[=umxMatrix]{umxMatrix()}},
+\code{\link[=umxModify]{umxModify()}},
+\code{\link[=umxPath]{umxPath()}},
+\code{\link[=umxRAM]{umxRAM()}},
+\code{\link[=umxSuperModel]{umxSuperModel()}}
 
-Other Model Summary and Comparison: 
-\code{\link{umxCompare}()},
-\code{\link{umxEquate}()},
-\code{\link{umxMI}()},
-\code{\link{umxReduce}()},
-\code{\link{umxSetParameters}()},
-\code{\link{umxSummary}()}
+Other Model Summary and Comparison:
+\code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxEquate]{umxEquate()}},
+\code{\link[=umxMI]{umxMI()}},
+\code{\link[=umxReduce]{umxReduce()}},
+\code{\link[=umxSetParameters]{umxSetParameters()}},
+\code{\link[=umxSummary]{umxSummary()}}
 
-Other Reporting Functions: 
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetLatents}()},
-\code{\link{umxGetManifests}()},
-\code{\link{umxGetModel}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umx_aggregate}()},
-\code{\link{umx_time}()}
+Other Reporting Functions:
+\code{\link[=umxAPA]{umxAPA()}},
+\code{\link[=umxFactorScores]{umxFactorScores()}},
+\code{\link[=umxGetLatents]{umxGetLatents()}},
+\code{\link[=umxGetManifests]{umxGetManifests()}},
+\code{\link[=umxGetModel]{umxGetModel()}},
+\code{\link[=umxGetParameters]{umxGetParameters()}},
+\code{\link[=umxParameters]{umxParameters()}},
+\code{\link[=umx_aggregate]{umx_aggregate()}},
+\code{\link[=umx_time]{umx_time()}}
 
-Other Super-easy helpers: 
-\code{\link{umxEFA}()},
-\code{\link{umxTwoStage}()}
+Other Super-easy helpers:
+\code{\link[=umxEFA]{umxEFA()}},
+\code{\link[=umxTwoStage]{umxTwoStage()}}
 
-Other Twin Modeling Functions: 
-\code{\link{power.ACE.test}()},
-\code{\link{umxACE}()},
-\code{\link{umxACEcov}()},
-\code{\link{umxACEv}()},
-\code{\link{umxCP}()},
-\code{\link{umxDiffMZ}()},
-\code{\link{umxDiscTwin}()},
-\code{\link{umxDoC}()},
-\code{\link{umxDoCp}()},
-\code{\link{umxGxE}()},
-\code{\link{umxGxE_window}()},
-\code{\link{umxGxEbiv}()},
-\code{\link{umxIP}()},
-\code{\link{umxMRDoC}()},
-\code{\link{umxReduce}()},
-\code{\link{umxReduceACE}()},
-\code{\link{umxReduceGxE}()},
-\code{\link{umxRotate.MxModelCP}()},
-\code{\link{umxSexLim}()},
-\code{\link{umxSimplex}()},
-\code{\link{umxSummarizeTwinData}()},
-\code{\link{umxSummaryACE}()},
-\code{\link{umxSummaryACEv}()},
-\code{\link{umxSummaryDoC}()},
-\code{\link{umxSummaryGxEbiv}()},
-\code{\link{umxSummarySexLim}()},
-\code{\link{umxSummarySimplex}()},
-\code{\link{umxTwinMaker}()}
+Other Twin Modeling Functions:
+\code{\link[=power.ACE.test]{power.ACE.test()}},
+\code{\link[=umxACE]{umxACE()}},
+\code{\link[=umxACEcov]{umxACEcov()}},
+\code{\link[=umxACEv]{umxACEv()}},
+\code{\link[=umxCP]{umxCP()}},
+\code{\link[=umxDiffMZ]{umxDiffMZ()}},
+\code{\link[=umxDiscTwin]{umxDiscTwin()}},
+\code{\link[=umxDoC]{umxDoC()}},
+\code{\link[=umxDoCp]{umxDoCp()}},
+\code{\link[=umxGxE]{umxGxE()}},
+\code{\link[=umxGxE_window]{umxGxE_window()}},
+\code{\link[=umxGxEbiv]{umxGxEbiv()}},
+\code{\link[=umxIP]{umxIP()}},
+\code{\link[=umxMRDoC]{umxMRDoC()}},
+\code{\link[=umxReduce]{umxReduce()}},
+\code{\link[=umxReduceACE]{umxReduceACE()}},
+\code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}},
+\code{\link[=umxSexLim]{umxSexLim()}},
+\code{\link[=umxSimplex]{umxSimplex()}},
+\code{\link[=umxSummarizeTwinData]{umxSummarizeTwinData()}},
+\code{\link[=umxSummaryACE]{umxSummaryACE()}},
+\code{\link[=umxSummaryACEv]{umxSummaryACEv()}},
+\code{\link[=umxSummaryDoC]{umxSummaryDoC()}},
+\code{\link[=umxSummaryGxEbiv]{umxSummaryGxEbiv()}},
+\code{\link[=umxSummarySexLim]{umxSummarySexLim()}},
+\code{\link[=umxSummarySimplex]{umxSummarySimplex()}},
+\code{\link[=umxTwinMaker]{umxTwinMaker()}}
 
-Other Twin Data functions: 
-\code{\link{umx_long2wide}()},
-\code{\link{umx_make_TwinData}()},
-\code{\link{umx_make_twin_data_nice}()},
-\code{\link{umx_residualize}()},
-\code{\link{umx_scale_wide_twin_data}()},
-\code{\link{umx_wide2longTwinData}()},
-\code{\link{umx_yj_wide_twin_data}()}
+Other Twin Data functions:
+\code{\link[=umx_long2wide]{umx_long2wide()}},
+\code{\link[=umx_make_TwinData]{umx_make_TwinData()}},
+\code{\link[=umx_make_twin_data_nice]{umx_make_twin_data_nice()}},
+\code{\link[=umx_residualize]{umx_residualize()}},
+\code{\link[=umx_scale_wide_twin_data]{umx_scale_wide_twin_data()}},
+\code{\link[=umx_wide2longTwinData]{umx_wide2longTwinData()}},
+\code{\link[=umx_yj_wide_twin_data]{umx_yj_wide_twin_data()}}
 
-Other Miscellaneous Stats Functions: 
-\code{\link{FishersMethod}()},
-\code{\link{SE_from_p}()},
-\code{\link{geometric_mean}()},
-\code{\link{harmonic_mean}()},
-\code{\link{oddsratio}()},
-\code{\link{reliability}()},
-\code{\link{umxCov2cor}()},
-\code{\link{umxHetCor}()},
-\code{\link{umxParan}()},
-\code{\link{umxWeightedAIC}()},
-\code{\link{umx_apply}()},
-\code{\link{umx_cor}()},
-\code{\link{umx_means}()},
-\code{\link{umx_r_test}()},
-\code{\link{umx_round}()},
-\code{\link{umx_scale}()},
-\code{\link{umx_var}()}
+Other Miscellaneous Stats Functions:
+\code{\link[=FishersMethod]{FishersMethod()}},
+\code{\link[=SE_from_p]{SE_from_p()}},
+\code{\link[=geometric_mean]{geometric_mean()}},
+\code{\link[=harmonic_mean]{harmonic_mean()}},
+\code{\link[=oddsratio]{oddsratio()}},
+\code{\link[=reliability]{reliability()}},
+\code{\link[=umxCov2cor]{umxCov2cor()}},
+\code{\link[=umxHetCor]{umxHetCor()}},
+\code{\link[=umxParan]{umxParan()}},
+\code{\link[=umxWeightedAIC]{umxWeightedAIC()}},
+\code{\link[=umx_apply]{umx_apply()}},
+\code{\link[=umx_cor]{umx_cor()}},
+\code{\link[=umx_means]{umx_means()}},
+\code{\link[=umx_r_test]{umx_r_test()}},
+\code{\link[=umx_round]{umx_round()}},
+\code{\link[=umx_scale]{umx_scale()}},
+\code{\link[=umx_var]{umx_var()}}
 
-Other Teaching and testing Functions: 
-\code{\link{tmx_genotypic_effect}()},
-\code{\link{tmx_is.identified}()}
+Other Teaching and testing Functions:
+\code{\link[=tmx_genotypic_effect]{tmx_genotypic_effect()}},
+\code{\link[=tmx_is.identified]{tmx_is.identified()}}
 
-Other Get and set: 
-\code{\link{umx_get_alphas}()},
-\code{\link{umx_get_checkpoint}()},
-\code{\link{umx_get_options}()},
-\code{\link{umx_set_auto_plot}()},
-\code{\link{umx_set_auto_run}()},
-\code{\link{umx_set_checkpoint}()},
-\code{\link{umx_set_condensed_slots}()},
-\code{\link{umx_set_cores}()},
-\code{\link{umx_set_data_variance_check}()},
-\code{\link{umx_set_dollar_symbol}()},
-\code{\link{umx_set_optimization_options}()},
-\code{\link{umx_set_optimizer}()},
-\code{\link{umx_set_plot_file_suffix}()},
-\code{\link{umx_set_plot_format}()},
-\code{\link{umx_set_separator}()},
-\code{\link{umx_set_silent}()},
-\code{\link{umx_set_table_format}()}
+Other Get and set:
+\code{\link[=umx_get_alphas]{umx_get_alphas()}},
+\code{\link[=umx_get_checkpoint]{umx_get_checkpoint()}},
+\code{\link[=umx_get_options]{umx_get_options()}},
+\code{\link[=umx_set_auto_plot]{umx_set_auto_plot()}},
+\code{\link[=umx_set_auto_run]{umx_set_auto_run()}},
+\code{\link[=umx_set_checkpoint]{umx_set_checkpoint()}},
+\code{\link[=umx_set_condensed_slots]{umx_set_condensed_slots()}},
+\code{\link[=umx_set_cores]{umx_set_cores()}},
+\code{\link[=umx_set_data_variance_check]{umx_set_data_variance_check()}},
+\code{\link[=umx_set_dollar_symbol]{umx_set_dollar_symbol()}},
+\code{\link[=umx_set_optimization_options]{umx_set_optimization_options()}},
+\code{\link[=umx_set_optimizer]{umx_set_optimizer()}},
+\code{\link[=umx_set_plot_file_suffix]{umx_set_plot_file_suffix()}},
+\code{\link[=umx_set_plot_format]{umx_set_plot_format()}},
+\code{\link[=umx_set_separator]{umx_set_separator()}},
+\code{\link[=umx_set_silent]{umx_set_silent()}},
+\code{\link[=umx_set_table_format]{umx_set_table_format()}}
 
-Other Check or test: 
-\code{\link{umx_check_names}()},
-\code{\link{umx_is_class}()},
-\code{\link{umx_is_endogenous}()},
-\code{\link{umx_is_exogenous}()},
-\code{\link{umx_is_numeric}()},
-\code{\link{umx_is_ordered}()}
+Other Check or test:
+\code{\link[=umx_check_names]{umx_check_names()}},
+\code{\link[=umx_is_class]{umx_is_class()}},
+\code{\link[=umx_is_endogenous]{umx_is_endogenous()}},
+\code{\link[=umx_is_exogenous]{umx_is_exogenous()}},
+\code{\link[=umx_is_numeric]{umx_is_numeric()}},
+\code{\link[=umx_is_ordered]{umx_is_ordered()}}
 
-Other Plotting functions: 
-\code{\link{ggAddR}()},
-\code{\link{plot.MxLISRELModel}()},
-\code{\link{plot.MxModel}()},
-\code{\link{plot.MxModelTwinMaker}()},
-\code{\link{umxPlot}()},
-\code{\link{umxPlotACE}()},
-\code{\link{umxPlotACEcov}()},
-\code{\link{umxPlotACEv}()},
-\code{\link{umxPlotCP}()},
-\code{\link{umxPlotDoC}()},
-\code{\link{umxPlotFun}()},
-\code{\link{umxPlotGxE}()},
-\code{\link{umxPlotGxEbiv}()},
-\code{\link{umxPlotIP}()},
-\code{\link{umxPlotPredict}()},
-\code{\link{umxPlotSexLim}()},
-\code{\link{umxPlotSimplex}()}
+Other Plotting functions:
+\code{\link[=ggAddR]{ggAddR()}},
+\code{\link[=plot.MxLISRELModel]{plot.MxLISRELModel()}},
+\code{\link[=plot.MxModel]{plot.MxModel()}},
+\code{\link[=plot.MxModelTwinMaker]{plot.MxModelTwinMaker()}},
+\code{\link[=umxPlot]{umxPlot()}},
+\code{\link[=umxPlotACE]{umxPlotACE()}},
+\code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
+\code{\link[=umxPlotACEv]{umxPlotACEv()}},
+\code{\link[=umxPlotCP]{umxPlotCP()}},
+\code{\link[=umxPlotDoC]{umxPlotDoC()}},
+\code{\link[=umxPlotFun]{umxPlotFun()}},
+\code{\link[=umxPlotGxE]{umxPlotGxE()}},
+\code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
+\code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotPredict]{umxPlotPredict()}},
+\code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
+\code{\link[=umxPlotSimplex]{umxPlotSimplex()}}
 
-Other Data Functions: 
-\code{\link{noNAs}()},
-\code{\link{prolific_anonymize}()},
-\code{\link{prolific_check_ID}()},
-\code{\link{prolific_read_demog}()},
-\code{\link{umxFactor}()},
-\code{\link{umxHetCor}()},
-\code{\link{umx_as_numeric}()},
-\code{\link{umx_cont_2_quantiles}()},
-\code{\link{umx_lower2full}()},
-\code{\link{umx_make_MR_data}()},
-\code{\link{umx_make_TwinData}()},
-\code{\link{umx_make_fake_data}()},
-\code{\link{umx_make_raw_from_cov}()},
-\code{\link{umx_merge_randomized_columns}()},
-\code{\link{umx_polychoric}()},
-\code{\link{umx_polypairwise}()},
-\code{\link{umx_polytriowise}()},
-\code{\link{umx_read_lower}()},
-\code{\link{umx_rename}()},
-\code{\link{umx_reorder}()},
-\code{\link{umx_score_scale}()},
-\code{\link{umx_select_valid}()},
-\code{\link{umx_stack}()},
-\code{\link{umx_strings2numeric}()}
+Other Data Functions:
+\code{\link[=noNAs]{noNAs()}},
+\code{\link[=prolific_anonymize]{prolific_anonymize()}},
+\code{\link[=prolific_check_ID]{prolific_check_ID()}},
+\code{\link[=prolific_read_demog]{prolific_read_demog()}},
+\code{\link[=umxFactor]{umxFactor()}},
+\code{\link[=umxHetCor]{umxHetCor()}},
+\code{\link[=umx_as_numeric]{umx_as_numeric()}},
+\code{\link[=umx_cont_2_quantiles]{umx_cont_2_quantiles()}},
+\code{\link[=umx_lower2full]{umx_lower2full()}},
+\code{\link[=umx_make_MR_data]{umx_make_MR_data()}},
+\code{\link[=umx_make_TwinData]{umx_make_TwinData()}},
+\code{\link[=umx_make_fake_data]{umx_make_fake_data()}},
+\code{\link[=umx_make_raw_from_cov]{umx_make_raw_from_cov()}},
+\code{\link[=umx_merge_randomized_columns]{umx_merge_randomized_columns()}},
+\code{\link[=umx_polychoric]{umx_polychoric()}},
+\code{\link[=umx_polypairwise]{umx_polypairwise()}},
+\code{\link[=umx_polytriowise]{umx_polytriowise()}},
+\code{\link[=umx_read_lower]{umx_read_lower()}},
+\code{\link[=umx_rename]{umx_rename()}},
+\code{\link[=umx_reorder]{umx_reorder()}},
+\code{\link[=umx_score_scale]{umx_score_scale()}},
+\code{\link[=umx_select_valid]{umx_select_valid()}},
+\code{\link[=umx_stack]{umx_stack()}},
+\code{\link[=umx_strings2numeric]{umx_strings2numeric()}}
 
-Other File Functions: 
-\code{\link{dl_from_dropbox}()},
-\code{\link{umx_file_load_pseudo}()},
-\code{\link{umx_make_sql_from_excel}()},
-\code{\link{umx_move_file}()},
-\code{\link{umx_open}()},
-\code{\link{umx_rename_file}()},
-\code{\link{umx_write_to_clipboard}()}
+Other File Functions:
+\code{\link[=dl_from_dropbox]{dl_from_dropbox()}},
+\code{\link[=umx_file_load_pseudo]{umx_file_load_pseudo()}},
+\code{\link[=umx_make_sql_from_excel]{umx_make_sql_from_excel()}},
+\code{\link[=umx_move_file]{umx_move_file()}},
+\code{\link[=umx_open]{umx_open()}},
+\code{\link[=umx_rename_file]{umx_rename_file()}},
+\code{\link[=umx_write_to_clipboard]{umx_write_to_clipboard()}}
 
-Other String Functions: 
-\code{\link{umx_explode}()},
-\code{\link{umx_explode_twin_names}()},
-\code{\link{umx_grep}()},
-\code{\link{umx_names}()},
-\code{\link{umx_paste_names}()},
-\code{\link{umx_rot}()},
-\code{\link{umx_str_chars}()},
-\code{\link{umx_str_from_object}()},
-\code{\link{umx_trim}()}
+Other String Functions:
+\code{\link[=umx_explode]{umx_explode()}},
+\code{\link[=umx_explode_twin_names]{umx_explode_twin_names()}},
+\code{\link[=umx_grep]{umx_grep()}},
+\code{\link[=umx_names]{umx_names()}},
+\code{\link[=umx_paste_names]{umx_paste_names()}},
+\code{\link[=umx_rot]{umx_rot()}},
+\code{\link[=umx_str_chars]{umx_str_chars()}},
+\code{\link[=umx_str_from_object]{umx_str_from_object()}},
+\code{\link[=umx_trim]{umx_trim()}}
 
-Other Miscellaneous Utility Functions: 
-\code{\link{install.OpenMx}()},
-\code{\link{libs}()},
-\code{\link{qm}()},
-\code{\link{umxLav2RAM}()},
-\code{\link{umxModelNames}()},
-\code{\link{umxRAM2Lav}()},
-\code{\link{umxVersion}()},
-\code{\link{umx_array_shift}()},
-\code{\link{umx_find_object}()},
-\code{\link{umx_lower.tri}()},
-\code{\link{umx_msg}()},
-\code{\link{umx_open_CRAN_page}()},
-\code{\link{umx_pad}()},
-\code{\link{umx_print}()},
-\code{\link{umx_wide2long}()},
-\code{\link{umx_wide4lmer}()}
+Other Miscellaneous Utility Functions:
+\code{\link[=install.OpenMx]{install.OpenMx()}},
+\code{\link[=libs]{libs()}},
+\code{\link[=qm]{qm()}},
+\code{\link[=umxLav2RAM]{umxLav2RAM()}},
+\code{\link[=umxModelNames]{umxModelNames()}},
+\code{\link[=umxRAM2Lav]{umxRAM2Lav()}},
+\code{\link[=umxVersion]{umxVersion()}},
+\code{\link[=umx_array_shift]{umx_array_shift()}},
+\code{\link[=umx_find_object]{umx_find_object()}},
+\code{\link[=umx_lower.tri]{umx_lower.tri()}},
+\code{\link[=umx_msg]{umx_msg()}},
+\code{\link[=umx_open_CRAN_page]{umx_open_CRAN_page()}},
+\code{\link[=umx_pad]{umx_pad()}},
+\code{\link[=umx_print]{umx_print()}},
+\code{\link[=umx_wide2long]{umx_wide2long()}},
+\code{\link[=umx_wide4lmer]{umx_wide4lmer()}}
 
-Other datasets: 
+Other datasets:
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
 \code{\link{docData}},
 \code{\link{iqdat}},
 \code{\link{us_skinfold_data}}
 
-Other Advanced Model Building Functions: 
-\code{\link{umxAlgebra}()},
-\code{\link{umxFixAll}()},
-\code{\link{umxJiggle}()},
-\code{\link{umxRun}()},
-\code{\link{umxThresholdMatrix}()},
-\code{\link{umxUnexplainedCausalNexus}()},
-\code{\link{xmuLabel}()},
-\code{\link{xmuValues}()}
+Other Advanced Model Building Functions:
+\code{\link[=umxAlgebra]{umxAlgebra()}},
+\code{\link[=umxFixAll]{umxFixAll()}},
+\code{\link[=umxJiggle]{umxJiggle()}},
+\code{\link[=umxRun]{umxRun()}},
+\code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
+\code{\link[=umxUnexplainedCausalNexus]{umxUnexplainedCausalNexus()}},
+\code{\link[=xmuLabel]{xmuLabel()}},
+\code{\link[=xmuValues]{xmuValues()}}
 }
 \author{
 \strong{Maintainer}: Timothy C. Bates \email{timothy.c.bates@gmail.com} (\href{https://orcid.org/0000-0002-1153-9007}{ORCID})
+
+Authors:
+\itemize{
+  \item Timothy C. Bates \email{timothy.c.bates@gmail.com} (\href{https://orcid.org/0000-0002-1153-9007}{ORCID})
+}
 
 Other contributors:
 \itemize{

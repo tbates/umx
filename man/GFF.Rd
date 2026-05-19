@@ -99,7 +99,7 @@ evaluations of family functioning and subjective wellbeing. Twin Research
 and Human Genetics, \strong{13}, 143-162. \doi{10.1375/twin.13.2.143}
 }
 \seealso{
-Other datasets: 
+Other datasets:
 \code{\link{Fischbein_wt}},
 \code{\link{docData}},
 \code{\link{iqdat}},

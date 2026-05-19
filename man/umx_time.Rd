@@ -69,15 +69,15 @@ umx_time('stop') # report the time since timer was restarted.
 }
 }
 \seealso{
-Other Reporting Functions: 
+Other Reporting Functions:
 \code{\link{umx}},
-\code{\link{umxAPA}()},
-\code{\link{umxFactorScores}()},
-\code{\link{umxGetLatents}()},
-\code{\link{umxGetManifests}()},
-\code{\link{umxGetModel}()},
-\code{\link{umxGetParameters}()},
-\code{\link{umxParameters}()},
-\code{\link{umx_aggregate}()}
+\code{\link[=umxAPA]{umxAPA()}},
+\code{\link[=umxFactorScores]{umxFactorScores()}},
+\code{\link[=umxGetLatents]{umxGetLatents()}},
+\code{\link[=umxGetManifests]{umxGetManifests()}},
+\code{\link[=umxGetModel]{umxGetModel()}},
+\code{\link[=umxGetParameters]{umxGetParameters()}},
+\code{\link[=umxParameters]{umxParameters()}},
+\code{\link[=umx_aggregate]{umx_aggregate()}}
 }
 \concept{Reporting Functions}

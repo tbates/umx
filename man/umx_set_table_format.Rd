@@ -36,23 +36,23 @@ umx_set_table_format(old)    # reinstate
 }
 }
 \seealso{
-Other Get and set: 
+Other Get and set:
 \code{\link{umx}},
-\code{\link{umx_get_alphas}()},
-\code{\link{umx_get_checkpoint}()},
-\code{\link{umx_get_options}()},
-\code{\link{umx_set_auto_plot}()},
-\code{\link{umx_set_auto_run}()},
-\code{\link{umx_set_checkpoint}()},
-\code{\link{umx_set_condensed_slots}()},
-\code{\link{umx_set_cores}()},
-\code{\link{umx_set_data_variance_check}()},
-\code{\link{umx_set_dollar_symbol}()},
-\code{\link{umx_set_optimization_options}()},
-\code{\link{umx_set_optimizer}()},
-\code{\link{umx_set_plot_file_suffix}()},
-\code{\link{umx_set_plot_format}()},
-\code{\link{umx_set_separator}()},
-\code{\link{umx_set_silent}()}
+\code{\link[=umx_get_alphas]{umx_get_alphas()}},
+\code{\link[=umx_get_checkpoint]{umx_get_checkpoint()}},
+\code{\link[=umx_get_options]{umx_get_options()}},
+\code{\link[=umx_set_auto_plot]{umx_set_auto_plot()}},
+\code{\link[=umx_set_auto_run]{umx_set_auto_run()}},
+\code{\link[=umx_set_checkpoint]{umx_set_checkpoint()}},
+\code{\link[=umx_set_condensed_slots]{umx_set_condensed_slots()}},
+\code{\link[=umx_set_cores]{umx_set_cores()}},
+\code{\link[=umx_set_data_variance_check]{umx_set_data_variance_check()}},
+\code{\link[=umx_set_dollar_symbol]{umx_set_dollar_symbol()}},
+\code{\link[=umx_set_optimization_options]{umx_set_optimization_options()}},
+\code{\link[=umx_set_optimizer]{umx_set_optimizer()}},
+\code{\link[=umx_set_plot_file_suffix]{umx_set_plot_file_suffix()}},
+\code{\link[=umx_set_plot_format]{umx_set_plot_format()}},
+\code{\link[=umx_set_separator]{umx_set_separator()}},
+\code{\link[=umx_set_silent]{umx_set_silent()}}
 }
 \concept{Get and set}
