@@ -3178,8 +3178,8 @@ umx_make <- function(
 	pkgPath = normalizePath(pkg, mustWork = TRUE)
 	
 	if(what == "load"){
-		# STRATEGY: Document on load to ensure RoxygenNote matches local machine immediately
-		devtools::document(pkg = pkgPath)
+		# STRATEGY: skip everything but code load (docs will get behind)
+		# devtools::document(pkg = pkgPath)
 		devtools::load_all(path = pkgPath)
 		
 		changed = gert::git_status(repo = pkgPath)
