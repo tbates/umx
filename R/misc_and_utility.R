@@ -3258,36 +3258,63 @@ umx_make <- function(
 # = Reporting & Graphing helpers =
 # ================================
 
-#' Print the name and compact contents of variable.
+#' Print the Name and Compact Contents of a Variable
 #'
-#' Helper function to ease debugging with console notes like:  "ObjectName = \<Object Value\>".
-#' This is primarily useful for inline debugging, where seeing, e.g., "nVar = 3" can be useful.
-#' The ability to say \code{umx_msg(nVar)} makes this easy.
+#' A highly utilitarian function for rapid inline debugging. \code{umx_msg} safely captures 
+#' the name of a variable (or expression) and prints its contents to the console via 
+#' \code{message()} (stderr), before invisibly returning the original object.
+#' 
+#' Because the return is invisible, you can wrap \code{umx_msg} around live assignments 
+#' or pipeline stages without breaking the logic. It safely handles \code{NULL} values, 
+#' multi-line expressions, and cleanly formats complex structures like data frames.
 #'
-#' @param  x the thing you want to pretty-print
-#' @return - NULL
+#' @param x An object, variable, or inline expression to be debug-printed.
+#' @return - Invisibly returns \code{x} (allowing inline pass-through).
 #' @export
 #' @family Miscellaneous Utility Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @md
 #' @examples
 #' a = "brian"
 #' umx_msg(a)
+#' 
+#' # Can be used inline without breaking assignment
+#' a = umx_msg(mtcars[1,2]^2)
+#' 
 #' b = c("brian", "sally", "jane")
 #' umx_msg(b)
-#' umx_msg(mtcars)
-umx_msg <- function(x) {
-	nm = deparse(substitute(x) )
-	if(any(is.data.frame(x))){
-		message(nm, " = ")
-		str(x)
+#' 
+#' # Safely handles missing data
+#' umx_msg(NULL)
+#' 
+#' # Cleanly routes dataframe structures to stderr
+#' umx_msg(mtcars[1:2, 1:3])
+umx_msg = function(x) {
+	# 1. Safely capture the name, flattening any multi-line deparse breaks
+	varName = paste0(deparse(substitute(x)), collapse = "")
+	
+	# 2. Explicitly trap NULLs (length == 0)
+	if(is.null(x)) {
+		message(varName, " = NULL")
+		return(invisible(x))
+	}
+	
+	# 3. Handle complex structures (added matrix/list safety)
+	if(is.data.frame(x) || is.matrix(x) || is.list(x)){
+		message(varName, " = ")
+		# Capture stdout from str() and force it cleanly into stderr
+		message(paste0(capture.output(str(x)), collapse = "\n"))
 	} else {
+		# 4. Handle standard vectors and scalars
 		if(length(x) > 1) {
-			message(nm, " = ", omxQuotes(x))	
+			message(varName, " = ", omxQuotes(x))	
 		} else {
-			message(nm, " = ", x)	
+			message(varName, " = ", x)	
 		}
 	}
+	
+	# 5. Return invisibly to allow inline wrapping:  a = umx_msg(b * 2)
+	invisible(x)
 }
 
 #' Easily plot functions in R

@@ -2,33 +2,47 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_msg}
 \alias{umx_msg}
-\title{Print the name and compact contents of variable.}
+\title{Print the Name and Compact Contents of a Variable}
 \usage{
 umx_msg(x)
 }
 \arguments{
-\item{x}{the thing you want to pretty-print}
+\item{x}{An object, variable, or inline expression to be debug-printed.}
 }
 \value{
 \itemize{
-\item NULL
+\item Invisibly returns \code{x} (allowing inline pass-through).
 }
 }
 \description{
-Helper function to ease debugging with console notes like:  "ObjectName = \<Object Value\>".
-This is primarily useful for inline debugging, where seeing, e.g., "nVar = 3" can be useful.
-The ability to say \code{umx_msg(nVar)} makes this easy.
+A highly utilitarian function for rapid inline debugging. \code{umx_msg} safely captures
+the name of a variable (or expression) and prints its contents to the console via
+\code{message()} (stderr), before invisibly returning the original object.
+}
+\details{
+Because the return is invisible, you can wrap \code{umx_msg} around live assignments
+or pipeline stages without breaking the logic. It safely handles \code{NULL} values,
+multi-line expressions, and cleanly formats complex structures like data frames.
 }
 \examples{
 a = "brian"
 umx_msg(a)
+
+# Can be used inline without breaking assignment
+a = umx_msg(mtcars[1,2]^2)
+
 b = c("brian", "sally", "jane")
 umx_msg(b)
-umx_msg(mtcars)
+
+# Safely handles missing data
+umx_msg(NULL)
+
+# Cleanly routes dataframe structures to stderr
+umx_msg(mtcars[1:2, 1:3])
 }
 \references{
 \itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
+\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 }
 \seealso{
