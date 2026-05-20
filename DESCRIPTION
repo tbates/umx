@@ -1,6 +1,6 @@
 Package: umx
-Version: 4.65.0
-Date: 2026-05-20
+Version: 4.70.0
+Date: 2026-07-20
 Title: Structural Equation Modeling and Twin Modeling in R
 Authors@R: c(
 	person(c("Timothy", "C."), "Bates"    , role = c("aut", "cre"), email = "timothy.c.bates@gmail.com", comment = c(ORCID = "0000-0002-1153-9007")),
@@ -21,6 +21,9 @@ Description: Quickly create, run, and report structural equation models, and twi
     See '?umx' for help, and umx_open_CRAN_page("umx") for NEWS.
     Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R.
     Twin Research and Human Genetics, 22, 27-41. <doi:10.1017/thg.2019.2>.
+    Luis F.S. Castro-de-Araujo, Nathan A. Gillespie, Michael C. Neale, and Timothy Charles Bates
+    (2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition
+    Variables, Ωnyx Integration, and Censored Distributions. Twin Research and Human Genetics, 1-6. <doi:10.1017/thg.2026.10056>.	
 Depends:
     R (>= 4.1.0),
     OpenMx (>= 2.20.0),

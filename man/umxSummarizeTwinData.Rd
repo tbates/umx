@@ -10,6 +10,7 @@ umxSummarizeTwinData(
   sep = "_T",
   zyg = "zygosity",
   age = "age",
+  sex = "sex",
   MZ = NULL,
   DZ = NULL,
   MZFF = "MZFF",
@@ -30,7 +31,9 @@ umxSummarizeTwinData(
 
 \item{zyg}{The zygosity column in the dataset (default "zygosity").}
 
-\item{age}{The age column in the dataset (default "age")}
+\item{age}{The age column in the dataset (default "age").}
+
+\item{sex}{The sex column in the dataset (default "sex").}
 
 \item{MZ}{Set level in zyg corresponding to MZ for two group case (defaults to using 5-group case).}
 
@@ -52,11 +55,12 @@ umxSummarizeTwinData(
 }
 \value{
 \itemize{
-\item formatted table, e.g. in markdown.
+\item Invisibly returns the formatted dataframe.
 }
 }
 \description{
-Produce a summary of wide-format twin data, showing the number of individuals, the mean and SD for each trait, and the correlation for each twin-type.
+Produce a summary of wide-format twin data, showing the number of individuals,
+the mean and SD for each trait, and the correlation and 95\% CI for each twin-type.
 
 Set MZ and DZ to summarize the two-group case.
 }

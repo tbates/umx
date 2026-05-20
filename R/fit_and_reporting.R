@@ -4859,14 +4859,16 @@ summaryAPA <- umxAPA
 #' Summarize twin data
 #'
 #' @description
-#' Produce a summary of wide-format twin data, showing the number of individuals, the mean and SD for each trait, and the correlation for each twin-type.
+#' Produce a summary of wide-format twin data, showing the number of individuals, 
+#' the mean and SD for each trait, and the correlation and 95% CI for each twin-type.
 #'
 #' Set MZ and DZ to summarize the two-group case.
 #' 
 #' @param data The twin data.
 #' @param selVars Collection of variables to report on, e.g. c("wt", "ht").
 #' @param sep  The separator string that will turn a variable name into a twin variable name, default= "_T" for wt_T1 and wt_T2.
-#' @param age The age column in the dataset (default "age")
+#' @param age The age column in the dataset (default "age").
+#' @param sex The sex column in the dataset (default "sex").
 #' @param zyg  The zygosity column in the dataset (default "zygosity").
 #' @param MZ Set level in zyg corresponding to MZ for two group case (defaults to using 5-group case).
 #' @param DZ Set level in zyg corresponding to DZ for two group case (defaults to using 5-group case).
@@ -4877,7 +4879,7 @@ summaryAPA <- umxAPA
 #' @param DZOS The level of zyg corresponding to DZ OS pairs: default= "DZOS".
 #' @param digits Rounding precision of the report (default 2).
 #' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
-#' @return - formatted table, e.g. in markdown.
+#' @return - Invisibly returns the formatted dataframe.
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxAPA()]
@@ -4888,107 +4890,112 @@ summaryAPA <- umxAPA
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
 #' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
-umxSummarizeTwinData <- function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", MZ = NULL, DZ = NULL, MZFF= "MZFF", DZFF= "DZFF", MZMM= "MZMM", DZMM= "DZMM", DZOS= "DZOS", digits = 2, report = c("markdown", "html")) {
+umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", sex = "sex", MZ = NULL, DZ = NULL, MZFF = "MZFF", DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS", digits = 2, report = c("markdown", "html")) {
 	report = match.arg(report)
-	# TODO cope with two group case.
-	# data = twinData; selVars = c("wt", "ht"); zyg = "zygosity"; sep = ""; digits = 2
 	
-	# Print the age
-	if(umx_check_names(age, data= data, die=FALSE)){
+	# 1. Age Extraction
+	if(umx_check_names(age, data = data, die = FALSE)){
 		ageCol = data[, age]
-	} else if(umx_check_names(paste0(age, sep, 1), data= data, die=FALSE)){
+	} else if(umx_check_names(paste0(age, sep, 1), data = data, die = FALSE)){
 		ageCol = data[, paste0(age, sep, 1)]
-	}else{
-		stop("Sorry: I can't find an age column called ", omxQuotes(age), " or ", omxQuotes(paste0(age, sep, 1)), " Set age= <name of your age column>")
+	} else {
+		stop("Cannot find age column. Checked for ", omxQuotes(age), " and ", omxQuotes(paste0(age, sep, 1)))
 	}
-	cat(paste0("mean age ", round(mean(ageCol, na.rm = TRUE), 2), " (SD= ", round(sd(ageCol, na.rm = TRUE), 2), ")"))
+	cat(paste0("Mean age = ", round(mean(ageCol, na.rm = TRUE), digits), " (SD = ", round(sd(ageCol, na.rm = TRUE), digits), ")\n"))
 
-	junk = tryCatch({
-		cat(paste0("\n", sum(c(data[,"sex_T1"], data[,"sex_T2"]) == "F", na.rm=TRUE), " female\n"))
-		cat(paste0("\n", sum(c(data[,"sex_T1"], data[,"sex_T2"]) == "M", na.rm=TRUE), " male\n"))
-	}, warning = function(x) {
-	    print("polite note: I tried computing M F count using sex_T1 and sex_T2 but failed")
-	}, error = function(x) {
-	    print("polite note: I tried computing M F count using sex_T1 and sex_T2 but failed")
-	}, finally={
-	    # ignored
-	})
+	# 2. Dynamic Sex Extraction
+	sex1 = paste0(sex, sep, 1)
+	sex2 = paste0(sex, sep, 2)
+	if(umx_check_names(c(sex1, sex2), data = data, die = FALSE)) {
+		cat(sum(c(data[,sex1], data[,sex2]) %in% c("F", "female", "Female"), na.rm = TRUE), "female\n")
+		cat(sum(c(data[,sex1], data[,sex2]) %in% c("M", "male", "Male"), na.rm = TRUE), "male\n")
+	} else {
+		message("Polite note: Could not find dynamic sex columns (", sex1, ", ", sex2, ") to compute M/F counts.")
+	}
 	
-	# Set up long data
+	# 3. Setup Long Data
 	selDVs = tvars(selVars, sep)
 	umx_check_names(selDVs, data = data, die = TRUE)
-	long = umx_wide2long(data= data[,selDVs], sep =sep)
+	long = umx_wide2long(data = data[, selDVs], sep = sep)
 	
-	# Print Non-NA data for each pair of variables
-	pair_counts = matrix(NA, nrow = length(selVars), ncol = length(selVars), dimnames = list(selVars, selVars))
-	# Loop through all pairs of variables
-	for (i in 1:length(selVars)) {
-	  for (j in 1:length(selVars)) {
-	    # Count non-NA pairs
-	    pair_counts[i, j] <- sum(complete.cases(long[[selVars[i]]], long[[selVars[j]]]))
-	  }
-	}
-	print(kable(pair_counts, format = "markdown", align = "c"))
+	# 4. High-Performance Pair Counts (Cross-product of non-NA indicators)
+	cat("\nPairwise Complete Cases:\n")
+	isPresent = !is.na(long[, selVars, drop = FALSE])
+	pairCounts = crossprod(isPresent)
+	print(kable(pairCounts, format = "markdown", align = "c"))
 
+	# Helper function to extract rigorous bracketed CIs and exact pair counts
+	get_r_ci = function(df_sub, v1, v2) {
+		# Strip to pairwise complete to avoid cor.test failing on small N
+		df_clean = na.omit(df_sub[, c(v1, v2)]) 
+		if(nrow(df_clean) < 3) return(list(str = NA, n = 0))
+		res = cor.test(df_clean[, 1], df_clean[, 2])
+		
+		# Format: .85 [.70, .92]
+		fmt = paste0("%.", digits, "f")
+		strFormat = paste0(fmt, " [", fmt, ", ", fmt, "]")
+		ci_str = sprintf(strFormat, res$estimate, res$conf.int[1], res$conf.int[2])
+		
+		# exact N pairs = degrees of freedom + 2 for Pearson
+		return(list(str = ci_str, n = res$parameter + 2))
+	}
+
+	# 5. Core DataFrame Assembly
 	blob = rep(NA, length(selVars))	
+	
 	if(is.null(MZ)){
+		# 5-Group Case
 		df = data.frame(Var = blob, Mean = blob, SD = blob, rMZFF = blob, rMZMM = blob, rDZFF = blob, rDZMM = blob, rDZOS = blob, stringsAsFactors = FALSE)
 		n = 1
 		for (varName in selVars){
-			# varName = "ht"
+			v1 = paste0(varName, sep, 1)
+			v2 = paste0(varName, sep, 2)
+			
 			df[n, "Var"]  = varName
-			df[n, "Mean"] = round(mean(long[,varName], na.rm = TRUE), digits)
-			df[n, "SD"]   = round(sd(long[,varName], na.rm = TRUE), digits)
-			rMZFF = cor.test(data = data[data[,zyg] %in% MZFF,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
-			rMZMM = cor.test(data = data[data[,zyg] %in% MZMM,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
-			rDZFF = cor.test(data = data[data[,zyg] %in% DZFF,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
-			rDZMM = cor.test(data = data[data[,zyg] %in% DZMM,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
-			rDZOS = cor.test(data = data[data[,zyg] %in% DZOS,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
-
-			df[n, "rMZFF"] = paste0(round(rMZFF$estimate, digits), " (", round((rMZFF$conf.int[2] - rMZFF$conf.int[1])/(1.96 * 2), digits), ")")
-			df[n, "rMZMM"] = paste0(round(rMZMM$estimate, digits), " (", round((rMZMM$conf.int[2] - rMZMM$conf.int[1])/(1.96 * 2), digits), ")")
-			df[n, "rDZFF"] = paste0(round(rDZFF$estimate, digits), " (", round((rDZFF$conf.int[2] - rDZFF$conf.int[1])/(1.96 * 2), digits), ")")
-			df[n, "rDZMM"] = paste0(round(rDZMM$estimate, digits), " (", round((rDZMM$conf.int[2] - rDZMM$conf.int[1])/(1.96 * 2), digits), ")")
-			df[n, "rDZOS"] = paste0(round(rDZOS$estimate, digits), " (", round((rDZOS$conf.int[2] - rDZOS$conf.int[1])/(1.96 * 2), digits), ")")
-			n = n+1
+			df[n, "Mean"] = round(mean(long[, varName], na.rm = TRUE), digits)
+			df[n, "SD"]   = round(sd(long[, varName], na.rm = TRUE), digits)
+			
+			df[n, "rMZFF"] = get_r_ci(data[data[,zyg] %in% MZFF,], v1, v2)$str
+			df[n, "rMZMM"] = get_r_ci(data[data[,zyg] %in% MZMM,], v1, v2)$str
+			df[n, "rDZFF"] = get_r_ci(data[data[,zyg] %in% DZFF,], v1, v2)$str
+			df[n, "rDZMM"] = get_r_ci(data[data[,zyg] %in% DZMM,], v1, v2)$str
+			df[n, "rDZOS"] = get_r_ci(data[data[,zyg] %in% DZOS,], v1, v2)$str
+			n = n + 1
 		}
-		nPerZyg = table(data[, zyg])
-		names(df) = namez(df, "(rMZFF)", paste0("\\1 (", nPerZyg["MZFF"],")"))
-		names(df) = namez(df, "(rDZFF)", paste0("\\1 (", nPerZyg["DZFF"],")"))
-		names(df) = namez(df, "(rMZMM)", paste0("\\1 (", nPerZyg["MZMM"],")"))
-		names(df) = namez(df, "(rDZMM)", paste0("\\1 (", nPerZyg["DZMM"],")"))
-		names(df) = namez(df, "(rDZOS)", paste0("\\1 (", nPerZyg["DZOS"],")"))
-	}else{
-		df = data.frame(Var = blob, Mean = blob, SD = blob, rMZ = blob, rDZ = blob, stringsAsFactors = FALSE)		
-		n = 1
-		for (varName in selVars){
-			# varName = "ht"
-			df[n, "Var"]  = varName
-			df[n, "Mean"] = round(mean(long[,varName], na.rm = TRUE), digits)
-			df[n, "SD"]   = round(sd(long[,varName], na.rm = TRUE), digits)
-			rMZ = cor.test(data = data[data[,zyg] %in% MZ,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
-			rDZ = cor.test(data = data[data[,zyg] %in% DZ,], as.formula(paste0("~ ", varName, sep, 1, "+", varName, sep, 2)))
-			df[n, "rMZ"] = paste0(round(rMZ$estimate, digits), " (", round((rMZ$conf.int[2] - rMZ$conf.int[1])/(1.96 * 2), digits), ")")
-			df[n, "rDZ"] = paste0(round(rDZ$estimate, digits), " (", round((rDZ$conf.int[2] - rDZ$conf.int[1])/(1.96 * 2), digits), ")")
-			df[n, "Var"] = paste0(df[n, "Var"], " (", rMZ$parameter, "/", rDZ$parameter, ")")
-			n = n+1
-		}
-		nPerZyg = data.frame(table(data[, zyg]))
-		print(names(df))
-		names(df) = namez(df, "(rMZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% MZ,"Freq"]),")"))
-		names(df) = namez(df, "(rDZ)", paste0("\\1 (", sum(nPerZyg[nPerZyg$Var1 %in% DZ,"Freq"]),")"))
+	} else {
+			# 2-Group Case
+			df = data.frame(Var = blob, "N_MZ_DZ" = blob, Mean = blob, SD = blob, rMZ = blob, rDZ = blob, stringsAsFactors = FALSE)		
+			n = 1
+			for (varName in selVars){
+				v1 = paste0(varName, sep, 1)
+				v2 = paste0(varName, sep, 2)
+			
+				df[n, "Var"]  = varName
+				df[n, "Mean"] = round(mean(long[, varName], na.rm = TRUE), digits)
+				df[n, "SD"]   = round(sd(long[, varName], na.rm = TRUE), digits)
+			
+				mzData = get_r_ci(data[data[,zyg] %in% MZ,], v1, v2)
+				dzData = get_r_ci(data[data[,zyg] %in% DZ,], v1, v2)
+			
+				# The dedicated, combined N column
+				df[n, "N_MZ_DZ"] = paste0(mzData$n, "/", dzData$n)
+			
+				df[n, "rMZ"] = mzData$str
+				df[n, "rDZ"] = dzData$str
+			
+				n = n + 1
+			}
+		
+			# Clean up the column header for the final print
+			names(df)[names(df) == "N_MZ_DZ"] = "N (MZ/DZ)"
 	}
 
-	umx_print(df, digits=digits, report = report)
-	print("note (n/n) = MZ/DZ complete pairs")
+	cat("\n")
+	umx_print(df, digits = digits, report = report)
+	cat("\nNote: Bracketed values denote 95% Confidence Intervals.\n")
+	if(!is.null(MZ)) cat("Note: (n = MZ/DZ) represents exact pairwise complete twin pairs for that variable.\n")
 	
-	# return(df)
-	# Calculate Mean Age and SD for men and women
-	# umx_aggregate(value ~ Sex, data = longformat, what = "mean_sd")
-	
-	# Calculate correlations, means and sd
-	# umxAPA(mzData[, allItemNames], use ="pairwise.complete.obs")
-	# umxAPA(dzData[, allItemNames], use ="pairwise.complete.obs")
+	invisible(df)
 }
 
 
