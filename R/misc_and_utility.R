@@ -8287,3 +8287,37 @@ xmu_standardize_CP <- function(model, ...){
 #' @export
 umx_standardize.MxModelCP <- xmu_standardize_CP
 
+
+#' umx_complete_dollar
+#'
+#' Modifies the macOS RGUI (R.app) to extend auto-completion.
+#' It appends a "$" and attempts completion again when no stem matches are found.
+#' Implemented by Simon Urbanek.
+#'
+#' @export
+#' @family Miscellaneous Functions
+umx_complete_dollar <- function() {
+	if (Sys.info()["sysname"] == "Darwin" && "tools:RGUI" %in% search()) {
+		tryCatch({
+			RGUI = as.environment("tools:RGUI")
+			RGUI$rcompgen.completion <- function(x) {
+				comp <- function(x) {
+					utils:::.assignLinebuffer(x)
+					utils:::.assignEnd(nchar(x))
+					utils:::.guessTokenFromLine()
+					utils:::.completeToken()
+					utils:::.CompletionEnv[["comps"]]
+				}
+				res <- unique(comp(x))
+				if (nzchar(x) && identical(res, x) && !identical(substr(x, nchar(x), nchar(x)), "$")) {
+					rc <- comp(paste0(x, "$"))
+					if (!identical(substr(rc, nchar(rc), nchar(rc)), "$")) res <- rc
+				}
+				res
+			}
+		}, error = function(e) {
+			# Silent fallback if environment modification fails
+		})
+	}
+}
+

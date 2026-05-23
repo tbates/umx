@@ -124,7 +124,7 @@ fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.
 #' Compute the CAGR of a stock
 #'
 #' @description
-#' `fin_StockCAGR` uses stock info from Yahoo to work out the CAGR over time.
+#' `fin_stock_CAGR` uses stock info from Yahoo to work out the CAGR over time.
 #'
 #' @param priceSeries A price series using yahoo
 #' @param from The date in the series to start from (blank = all)
@@ -138,9 +138,9 @@ fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.
 #' libs(c("quantmod", "ggplot2", "scales", "lubridate"))
 #' getSymbols(c("NVDA"), from = "2010-01-01", to = Sys.Date())
 #' startDate = "2016-01-01"
-#' nvdaCagr = fin_StockCAGR(NVDA, startDate)
+#' nvdaCagr = fin_stock_CAGR(NVDA, startDate)
 #' }
-fin_StockCAGR = function(priceSeries, from = "1900-01-01") {
+fin_stock_CAGR = function(priceSeries, from = "1900-01-01") {
 	# getSymbols(c("NVDA"), from = "2010-01-01", to = Sys.Date())
 	tickerName = deparse(substitute(priceSeries))   # this is the magic line you wanted
   data = data.frame(
@@ -858,10 +858,9 @@ fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, disc
 #' @examples
 #' # Open $INTC in yahoo finance.
 #' \dontrun{
-#' fin_ticker("INTC")
+#' fin_stock_ticker("INTC")
 #' }
-
-fin_ticker <- function(ticker= "INTC") {
+fin_stock_ticker <- function(ticker= "INTC") {
 	url =paste0("https://finance.yahoo.com/quote/", ticker)
 	# https://www.google.com/finance/quote/SWBI:NASDAQ
 	browseURL(url, browser = getOption("browser"))

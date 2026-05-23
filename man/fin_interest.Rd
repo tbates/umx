@@ -114,18 +114,19 @@ fin_interest(principal = 100, final=200, yrs = 5)
 
 Other Miscellaneous Functions:
 \code{\link[=deg2rad]{deg2rad()}},
-\code{\link[=fin_StockCAGR]{fin_StockCAGR()}},
 \code{\link[=fin_carryCost]{fin_carryCost()}},
 \code{\link[=fin_net_present_value]{fin_net_present_value()}},
 \code{\link[=fin_percent]{fin_percent()}},
+\code{\link[=fin_stock_CAGR]{fin_stock_CAGR()}},
 \code{\link[=fin_stock_justifiedPE]{fin_stock_justifiedPE()}},
 \code{\link[=fin_stock_option]{fin_stock_option()}},
 \code{\link[=fin_stock_target]{fin_stock_target()}},
+\code{\link[=fin_stock_ticker]{fin_stock_ticker()}},
 \code{\link[=fin_stock_valuation]{fin_stock_valuation()}},
 \code{\link[=fin_tax_FIF]{fin_tax_FIF()}},
 \code{\link[=fin_tax_NI]{fin_tax_NI()}},
-\code{\link[=fin_ticker]{fin_ticker()}},
 \code{\link[=rad2deg]{rad2deg()}},
-\code{\link[=umxBrownie]{umxBrownie()}}
+\code{\link[=umxBrownie]{umxBrownie()}},
+\code{\link[=umx_complete_dollar]{umx_complete_dollar()}}
 }
 \concept{Miscellaneous Functions}
