@@ -23,7 +23,7 @@ Description: Quickly create, run, and report structural equation models, and twi
     Twin Research and Human Genetics, 22, 27-41. <doi:10.1017/thg.2019.2>.
     Luis F.S. Castro-de-Araujo, Nathan A. Gillespie, Michael C. Neale, and Timothy Charles Bates
     (2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition
-    Variables, Ωnyx Integration, and Censored Distributions. Twin Research and Human Genetics, 1-6. <doi:10.1017/thg.2026.10056>.	
+    Variables, Onyx Integration, and Censored Distributions. Twin Research and Human Genetics, 1-6. <doi:10.1017/thg.2026.10056>.	
 Depends:
     R (>= 4.1.0),
     OpenMx (>= 2.20.0),

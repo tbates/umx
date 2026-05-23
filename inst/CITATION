@@ -20,7 +20,7 @@ bibentry(bibtype = "Article",
     "22, 27-41. DOI:10.1017/thg.2019.2")
 )
 bibentry(bibtype = "Article",
-  title = "umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Ωnyx Integration, and Censored Distributions",
+  title = "umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Onyx Integration, and Censored Distributions",
   author = c(
     person(c("Luis", "F.S."), "Castro-de-Araujo"),
     person(c("Nathan", "A."), "Gillespie"),
@@ -34,6 +34,6 @@ bibentry(bibtype = "Article",
   header = "For the latest developments in umx (version 4.5), please also cite:",
   textVersion = paste(
     "Luis F.S. Castro-de-Araujo, Nathan A. Gillespie, Michael C. Neale, and Timothy Charles Bates",
-    "(2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Ωnyx Integration, and Censored Distributions.",
+    "(2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Onyx Integration, and Censored Distributions.",
     "Twin Research and Human Genetics, 1-6. DOI:10.1017/thg.2026.10056")
 )
