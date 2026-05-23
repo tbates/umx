@@ -1853,9 +1853,15 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	}
 
 	selVars   = c(selDVs, selDefs)
-	obsMean   = mean(colMeans(mzData[,selDVs], na.rm = TRUE)); # Just one average mean for all twins
+	colTypes = umx_is_ordered(mzData[, selDVs, drop = FALSE], summaryObject = TRUE)
+	isBin    = isTRUE(colTypes$isBin[1])
+	isOrd    = isTRUE(colTypes$isOrd[1])
+	isFactor = isTRUE(colTypes$isFactor[1])
+
+	selVars   = c(selDVs, selDefs)
+	obsMean   = mean(umx_means(mzData[, selDVs, drop = FALSE], ordVar = 0, na.rm = TRUE))
 	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
-	rawVar    = diag(var(mzData[,selDVs], na.rm = TRUE))[1]
+	rawVar    = umx_var(mzData[, selDVs, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs", strict = FALSE)[1]
 	startMain = sqrt(c(.8, .0 ,.6) * rawVar)	
 	umx_check(!umx_is_cov(dzData, boolean = TRUE), "stop", "data must be raw for gxe")
 	
@@ -1874,6 +1880,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		message("Twins do not share the moderator... I will regress both twin's moderator from each twin, but you need to check this doesn't violate assumptions")
 	}
 	
+	threshName = ifelse(isFactor, "top.threshMat", as.character(NA))
+
 	model = mxModel(name,
 		mxModel("top",		
 			# ======================================
@@ -1898,20 +1906,26 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			mxAlgebra(name = "iSD", solve(sqrt(I * V)) ),
 
 			# Matrix & Algebra for intercept of the means vector
-			mxMatrix(name = "intercept", "Full", nrow = 1, ncol = nVar, free = TRUE, values = obsMean, labels = "mean"), # needs mods for multivariate!
+			mxMatrix(name = "intercept", "Full", nrow = 1, ncol = nVar, free = !isBin, values = ifelse(isBin, 0, obsMean), labels = "mean"), # needs mods for multivariate!
 
 			# Matrice for moderated the means model (algebars in the data models)
 			if(bModeratorsIdentical){
 				# Matrices for betas
 				list(
-					umxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "lin11"),
-					umxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0, labels = "quad11")
+					umxMatrix(name = "betaLin" , "Full", nrow = nVar, ncol = 1, free = !isBin, values = .0, labels = "lin11"),
+					umxMatrix(name = "betaQuad", "Full", nrow = nVar, ncol = 1, free = !isBin, values = .0, labels = "quad11")
 				)
 			}else{
 				list(
-					umxMatrix(name = "betaSelf"  , "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0), 
-					umxMatrix(name = "betaCoTwin", "Full", nrow = nVar, ncol = 1, free = TRUE, values = .0)
+					umxMatrix(name = "betaSelf"  , "Full", nrow = nVar, ncol = 1, free = !isBin, values = .0), 
+					umxMatrix(name = "betaCoTwin", "Full", nrow = nVar, ncol = 1, free = !isBin, values = .0)
 				)
+			},
+			if(isBin){
+				mxConstraint(V[1,1] == 1, name = "constrain_Bin_var_to_1")
+			},
+			if(isFactor){
+				umxThresholdMatrix(rbind(mzData, dzData), fullVarNames = selDVs, sep = sep, verbose = FALSE)
 			}
 		),
 		mxModel("MZ",
@@ -1960,7 +1974,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 			# Data & Objective
 			mxData(mzData, type = "raw"),
-			mxExpectationNormal("expCovMZ", means = "expMean", dimnames = selDVs), mxFitFunctionML()
+			mxExpectationNormal("expCovMZ", means = "expMean", dimnames = selDVs, thresholds = threshName), mxFitFunctionML()
 		),
 	    mxModel("DZ",
 			umxMatrix("DefT1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # twin1  c("data.divorce1")
@@ -2010,7 +2024,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 
 			# Data & Objective
 	    	mxData(dzData, type = "raw"),
-			mxExpectationNormal("expCovDZ", means = "expMean", dimnames = selDVs),
+			mxExpectationNormal("expCovDZ", means = "expMean", dimnames = selDVs, thresholds = threshName),
 			mxFitFunctionML()
 	    ),
 		mxFitFunctionMultigroup(c("MZ", "DZ"))

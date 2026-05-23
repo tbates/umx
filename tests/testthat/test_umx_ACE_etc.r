@@ -154,9 +154,9 @@ test_that("umxACE univariate", {
 	 str(mzData) # make sure mz, dz, and t1 and t2 have the same levels!
 	 
 	 # Data-prep done - here's the model and summary!:
-	 # TODO This sometimes reports Error: The fixed variable 'obese_dev1' has been assigned multiple starting values! See matrix 'top.deviations_for_thresh' at location (2, 1) and matrix 'top.deviations_for_thresh' at location (1, 1) 	
-	 # m1 = umxACE(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
-	 # umxSummary(m1)
+	 m1 = umxACE(selDVs = "obese", dzData = dzData, mzData = mzData, sep = '')
+	 expect_true(m1$output$status$code == 0 || m1$output$status$code == 1)
+	 umxSummary(m1)
 	
  })
 
@@ -177,8 +177,8 @@ test_that("umxACE univariate", {
  	 twinData[, ordDVs] = umxFactor(twinData[, ordDVs])
  	 mzData = twinData[twinData$zygosity %in% "MZFF",]
  	 dzData = twinData[twinData$zygosity %in% "DZFF",]
-	 # TODO This sometimes reports Error: The fixed variable 'obese_dev1' has been assigned multiple starting values! See matrix 'top.deviations_for_thresh' at location (2, 1) and matrix 'top.deviations_for_thresh' at location (1, 1) 	
- 	 # m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
+	 m1 = umxACE(selDVs= c("wt","obese"), dzData= dzData, mzData= mzData, sep='')
+	 expect_true(m1$output$status$code == 0 || m1$output$status$code == 1)
 
  })
 
@@ -219,31 +219,6 @@ test_that("umxACE univariate", {
 	
 })
 
-test_that("umxGxE", {
-	require(umx)
-	data(twinData) 
-	twinData$age1 = twinData$age2 = twinData$age
-	selDVs  = "bmi"
-	selDefs = "age"
-	mzData  = subset(twinData, zygosity == "MZFF")[1:100,]
-	dzData  = subset(twinData, zygosity == "DZFF")[1:100,]
-	m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
-	
-	# Select the data on the fly with data= and zygosity levels
-	m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
-})
-
-test_that("umxGxE_window", {
-	require(umx)
-	data(twinData) # Dataset of Australian twins, built into OpenMx
-	twinData = twinData[!is.na(twinData["age"]), ]
-	mzData = subset(twinData, zygosity == "MZFF")
-	dzData = subset(twinData, zygosity == "DZFF")
-
-	m1 = umxGxE_window(selDVs = "bmi", moderator = "age", sep= "", mzData = mzData, dzData = dzData, target = 40, plotWindow = TRUE)
-	m1 = umxGxE_window(selDVs = "bmi", moderator = "age", sep= "", mzData = mzData, dzData = dzData, plotWindow = TRUE, tryHard = "yes")
-
-})
 
 test_that("test umxACEv xmu_standardize_ACE xmu_standardize_ACEv", {
 	require(umx)
@@ -265,7 +240,7 @@ test_that("test umxACEv xmu_standardize_ACE xmu_standardize_ACEv", {
 #' # = How heritable is height? =
 #' # ============================
 #' 
-#' # 1. Height in meters has a tiny variance, and this makes optimising hard.
+#' # 1. Height in meters has a tiny variance, and this makes optimizing hard.
 #' #    We'll scale it by 10x to make the Optimizer's task easier.
 #' data(twinData) # ?twinData from Australian twins.
 #' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10

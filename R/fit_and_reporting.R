@@ -310,7 +310,8 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' model = umxReduce(model)
 #' }
 umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
-	report = match.arg(report)
+	report  = match.arg(report)
+	tryHard = match.arg(tryHard)
 	umx_is_MxModel(model)
 	if(inherits(model, "MxModelGxE")){
 		# Reduce GxE Model
@@ -3035,14 +3036,13 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 	cm  = model$top$matrices$cm$values
 	em  = model$top$matrices$em$values
 
-	tmp = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]
-	aSE = tmp[tmp$name=="a_r1c1", "Std.Error"]
-	cSE = tmp[tmp$name=="c_r1c1", "Std.Error"]
-	eSE = tmp[tmp$name=="e_r1c1", "Std.Error"]
-
-	amSE = tmp[tmp$name=="am_r1c1", "Std.Error"]
-	cmSE = tmp[tmp$name=="cm_r1c1", "Std.Error"]
-	emSE = tmp[tmp$name=="em_r1c1", "Std.Error"]
+	tmp  = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]
+	aSE  = ifelse("a_r1c1"  %in% tmp$name, tmp[tmp$name=="a_r1c1" , "Std.Error"], 0)
+	cSE  = ifelse("c_r1c1"  %in% tmp$name, tmp[tmp$name=="c_r1c1" , "Std.Error"], 0)
+	eSE  = ifelse("e_r1c1"  %in% tmp$name, tmp[tmp$name=="e_r1c1" , "Std.Error"], 0)
+	amSE = ifelse("am_r1c1" %in% tmp$name, tmp[tmp$name=="am_r1c1", "Std.Error"], 0)
+	cmSE = ifelse("cm_r1c1" %in% tmp$name, tmp[tmp$name=="cm_r1c1", "Std.Error"], 0)
+	emSE = ifelse("em_r1c1" %in% tmp$name, tmp[tmp$name=="em_r1c1", "Std.Error"], 0)
 
 	Va  = (c(a) + c(am) * defVarValues)^2
 	Vc  = (c(c) + c(cm) * defVarValues)^2
@@ -3080,7 +3080,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 
 
 		tmp = data.frame(cbind(defVarValues, outStd))
-		p = ggplot(data = tmp, ylim = c(0,1)) 
+		p = ggplot(data = tmp) + ggplot2::ylim(0, 1)
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
 		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))

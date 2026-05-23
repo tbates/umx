@@ -8313,6 +8313,21 @@ umx_complete_dollar <- function() {
 					rc <- comp(paste0(x, "$"))
 					if (!identical(substr(rc, nchar(rc), nchar(rc)), "$")) res <- rc
 				}
+				# If we have a unique function name, append "(" to place the cursor inside
+				if (length(res) == 1 && is.character(res) && nzchar(res) && !grepl("\\($", res)) {
+					is_func <- FALSE
+					if (exists(res, mode = "function")) {
+						is_func <- TRUE
+					} else if (grepl("::", res)) {
+						tryCatch({
+							obj <- eval(parse(text = res))
+							if (is.function(obj)) is_func <- TRUE
+						}, error = function(e) {})
+					}
+					if (is_func) {
+						res <- paste0(res, "()\002")
+					}
+				}
 				res
 			}
 		}, error = function(e) {
