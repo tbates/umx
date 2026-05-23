@@ -82,7 +82,7 @@
 #' @importFrom stats setNames update var delete.response terms model.frame
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
-#' @importFrom utils browseURL install.packages str read.csv read.delim 
+#' @importFrom utils browseURL install.packages str read.csv read.delim capture.output
 #' @importFrom utils tail
 #' @importFrom scales dollar
 #' @importFrom quantmod Cl

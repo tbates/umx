@@ -8302,11 +8302,12 @@ umx_complete_dollar <- function() {
 			RGUI = as.environment("tools:RGUI")
 			RGUI$rcompgen.completion <- function(x) {
 				comp <- function(x) {
-					utils:::.assignLinebuffer(x)
-					utils:::.assignEnd(nchar(x))
-					utils:::.guessTokenFromLine()
-					utils:::.completeToken()
-					utils:::.CompletionEnv[["comps"]]
+					utils_ns = asNamespace("utils")
+					utils_ns$.assignLinebuffer(x)
+					utils_ns$.assignEnd(nchar(x))
+					utils_ns$.guessTokenFromLine()
+					utils_ns$.completeToken()
+					utils_ns$.CompletionEnv[["comps"]]
 				}
 				res <- unique(comp(x))
 				if (nzchar(x) && identical(res, x) && !identical(substr(x, nchar(x), nchar(x)), "$")) {
