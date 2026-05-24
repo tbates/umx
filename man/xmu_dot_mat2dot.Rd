@@ -17,7 +17,8 @@ xmu_dot_mat2dot(
   digits = 2,
   model = NULL,
   SEstyle = FALSE,
-  p = list(str = "", latents = c(), manifests = c())
+  p = list(str = "", latents = c(), manifests = c()),
+  showCIs = TRUE
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ xmu_dot_mat2dot(
 \item{SEstyle}{If TRUE, CIs shown as "b(SE)" ("b [l,h]" if FALSE (default)). Ignored if model NULL.}
 
 \item{p}{input to build on. list(str = "", latents = c(), manifests = c())}
+
+\item{showCIs}{Whether to show confidence intervals (default = TRUE)}
 }
 \value{
 \itemize{

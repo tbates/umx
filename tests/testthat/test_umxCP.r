@@ -70,3 +70,35 @@ test_that("umxCP works", {
 	selDVs = c("gff", "fc", "qol", "hap", "sat", "AD")
 	m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = 3, correlatedA = TRUE, tryHard = "yes")
 })
+
+test_that("umxPlotCP with CIs works", {
+	require(umx)
+	data(GFF)
+	mzData = subset(GFF, zyg_2grp == "MZ")[1:60, ]
+	dzData = subset(GFF, zyg_2grp == "DZ")[1:60, ]
+	selDVs = c("gff", "fc", "qol")
+	m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 1, dzData = dzData, mzData = mzData, addCI = TRUE, autoRun = FALSE)
+	m1 = umxRun(m1)
+
+	# Mock some CIs
+	CIlist = m1@output$confidenceIntervals
+	if (is.null(CIlist)) {
+		CIlist = matrix(NA, nrow = 9, ncol = 3, dimnames = list(
+			c("a_cp_r1c1", "c_cp_r1c1", "e_cp_r1c1", "top.as_std[2,2]", "top.cs_std[2,2]", "top.es_std[2,2]", "top.cp_loadings_std[1,1]", "top.cp_loadings_std[2,1]", "top.cp_loadings_std[3,1]"),
+			c("lbound", "estimate", "ubound")
+		))
+	}
+	CIlist["top.cp_loadings_std[1,1]", ] = c(0.54, 0.70, 0.96)
+	CIlist["top.as_std[2,2]", ] = c(0.40, 0.51, 0.65)
+	CIlist["a_cp_r1c1", ] = c(0.80, 0.90, 0.98)
+	m1@output$confidenceIntervals = CIlist
+
+	digraph = umxPlotCP(m1, file = NA)
+	expect_true(grepl("0\\.90\n\\[-?0\\.80, 0\\.98\\]", digraph))
+	expect_true(grepl("0\\.70\n\\[-?0\\.54, 0\\.96\\]", digraph))
+	expect_true(grepl("0\\.51\n\\[-?0\\.40, 0\\.65\\]", digraph))
+
+	# Test SEstyle = "mxSE"
+	digraph_se = umxPlotCP(m1, SEstyle = "mxSE", file = NA)
+	expect_true(grepl("([0-9]+\\.[0-9]+)\n\\(([0-9]+\\.[0-9]+)\\)", digraph_se))
+})

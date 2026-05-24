@@ -15,6 +15,7 @@ umxPlotCP(
   format = c("current", "graphviz", "DiagrammeR"),
   SEstyle = FALSE,
   strip_zero = TRUE,
+  showCIs = TRUE,
   ...
 )
 }
@@ -36,6 +37,8 @@ umxPlotCP(
 \item{SEstyle}{report "b (se)" instead of "b [lower, upper]" when CIs are found (Default FALSE)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
+
+\item{showCIs}{Whether to show confidence intervals (default = TRUE)}
 
 \item{...}{Optional additional parameters}
 }

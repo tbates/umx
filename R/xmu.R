@@ -2174,6 +2174,7 @@ xmu_dot_rank <- function(vars, pattern, rank) {
 #' @param model If you want to get CIs, you can pass in the model (default = NULL).
 #' @param SEstyle If TRUE, CIs shown as "b(SE)" ("b \[l,h\]" if FALSE (default)). Ignored if model NULL.
 #' @param p input to build on. list(str = "", latents = c(), manifests = c())
+#' @param showCIs Whether to show confidence intervals (default = TRUE)
 #' @return - list(str = "", latents = c(), manifests = c())
 #' @export
 #' @family Graphviz
@@ -2258,7 +2259,7 @@ xmu_dot_rank <- function(vars, pattern, rank) {
 #' 
 #' }
 #'
-xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c())) {
+xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", "upper_inc", "any", "left"), from = c("rows", "cols"), fromLabel = NULL, toLabel = NULL, showFixed = FALSE, arrows = c("forward", "both", "back"), fromType = NULL, toType = NULL, digits = 2, model = NULL, SEstyle = FALSE, p = list(str = "", latents = c(), manifests = c()), showCIs = TRUE) {
 	from   = match.arg(from)
 	cells  = match.arg(cells)
 	arrows = match.arg(arrows)
@@ -2283,14 +2284,14 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 		for (c in 1:nCols) {
 			if(xmu_cell_is_on(r= r, c = c, where = cells, mat = x)){				
 				# cell is in the target zone
-				if(!is.null(model)){
+				if(!is.null(model) && showCIs){
 					# Model available - look for CIs by label...
 					CIstr = xmu_get_CI(model, label = x$labels[r,c], SEstyle = SEstyle, digits = digits)
 					if(is.na(CIstr)){
 						# failed: fall back to parameter value from the matrix
 						value = umx_round(x$values[r,c], digits)
 					}else{
-						value = umx_round(CIstr, digits)
+						value = CIstr
 					}
 				} else {
 					# Model note available do not look for CIs: just return parameter from matrix
@@ -2435,7 +2436,8 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 			# creates "yourFilename.gv.pdf"
 		}
 	} else {
-		return (cat(digraph));
+		cat(digraph)
+		return(invisible(digraph))
 	}
 }
 
@@ -2812,38 +2814,99 @@ xmu_bracket_address2rclabel <- function(label, keepPrefix = TRUE) {
 #' }
 #'
 xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 2, SEstyle = FALSE, verbose= FALSE){
-	# TODO xmu_get_CI: If SEstyle == "mxSE" then compute SEs with mxSE()
 	# TODO xmu_get_CI: Add choice of separator for CI (stash as preference) (easy)
 	if(!umx_has_CIs(model) && SEstyle != "mxSE"){
 		if(verbose){ message("no CIs") }
 		return(NA)
 	} else {
 		# We want "top.ai_std[1,1]" from "ai_r1c1"
-		# or...
 		result = tryCatch({
 			if(SEstyle == "mxSE"){
-				# Get SE
-				stop("SEstyle == mxSE not implemented - let Tim know!")
-			   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
-			   return(APAstr)
+				if (grepl("^(.+)_r([0-9]+)c([0-9]+)$", label)) {
+					mat_name = sub("^(.+)_r([0-9]+)c([0-9]+)$", "\\1", label)
+					row_num  = as.numeric(sub("^(.+)_r([0-9]+)c([0-9]+)$", "\\2", label))
+					col_num  = as.numeric(sub("^(.+)_r([0-9]+)c([0-9]+)$", "\\3", label))
+					
+					candidates = c(
+						paste0(prefix, mat_name, suffix, "[", row_num, ",", col_num, "]"),
+						paste0(prefix, mat_name, "[", row_num, ",", col_num, "]"),
+						paste0(mat_name, suffix, "[", row_num, ",", col_num, "]"),
+						paste0(mat_name, "[", row_num, ",", col_num, "]")
+					)
+				} else {
+					candidates = c(paste0(prefix, label), label)
+				}
+				
+				se  = NA
+				est = NA
+				for (candidate in candidates) {
+					se_val = tryCatch({
+						mxSE(candidate, model, silent = TRUE)[1, 1]
+					}, error = function(e) { NA })
+					
+					if (!is.na(se_val)) {
+						se = se_val
+						if (grepl("^(.+)\\[([0-9]+),([0-9]+)\\]$", candidate)) {
+							cand_mat = sub("^(.+)\\[([0-9]+),([0-9]+)\\]$", "\\1", candidate)
+							cand_row = as.numeric(sub("^(.+)\\[([0-9]+),([0-9]+)\\]$", "\\2", candidate))
+							cand_col = as.numeric(sub("^(.+)\\[([0-9]+),([0-9]+)\\]$", "\\3", candidate))
+							est = tryCatch({
+								mxEvalByName(cand_mat, model)[cand_row, cand_col]
+							}, error = function(e) { NA })
+						} else {
+							est = tryCatch({
+								mxEvalByName(candidate, model)[1, 1]
+							}, error = function(e) { NA })
+						}
+						break
+					}
+				}
+				
+				if (is.na(se) || is.na(est)) {
+					return(NA)
+				}
+				
+				APAstr = paste0(round(est, digits), "\n(", round(se, digits), ")")
+				return(APAstr)
 			} else {
 				CIlist = model$output$confidenceIntervals
 				intervalNames = dimnames(CIlist)[[1]]
 				if(label %in% intervalNames){
 					# Easy case - the actual cell label was given, and will have been used by OpenMx to label the CI
 					check = label
+				} else if (grepl("^(.+)_r([0-9]+)c([0-9]+)$", label)) {
+					# Convert e.g. "as_r1c1" to bracket addresses like "top.as_std[1,1]" or "top.as[1,1]"
+					mat_name = sub("^(.+)_r([0-9]+)c([0-9]+)$", "\\1", label)
+					row_num  = sub("^(.+)_r([0-9]+)c([0-9]+)$", "\\2", label)
+					col_num  = sub("^(.+)_r([0-9]+)c([0-9]+)$", "\\3", label)
+					
+					candidates = c(
+						paste0(prefix, mat_name, suffix, "[", row_num, ",", col_num, "]"),
+						paste0(prefix, mat_name, "[", row_num, ",", col_num, "]"),
+						paste0(mat_name, suffix, "[", row_num, ",", col_num, "]"),
+						paste0(mat_name, "[", row_num, ",", col_num, "]")
+					)
+					
+					match_idx = which(candidates %in% intervalNames)
+					if (length(match_idx) > 0) {
+						check = candidates[match_idx[1]]
+					} else {
+						check = label
+					}
 				}else{
 					# Probably an auto-bracket-labelled CI e.g. "top.A_std[1,3]", in which case label would be "A_r1c3"
 					# TODO this needs fixing.. what are we looking for?
 					dimIndex    = xmu_bracket_address2rclabel(label, keepPrefix = TRUE)
 					dimNoSuffix = xmu_bracket_address2rclabel(label, keepPrefix = FALSE)
-				
 
 					if(dimIndex %in% intervalNames){
 						check = dimIndex
 					} else {
 						check = dimNoSuffix
 					}
+				}
+				if (is.na(CIlist[check, "lbound"]) && is.na(CIlist[check, "ubound"])) {
+					return(NA)
 				}
 				if(SEstyle){
 					est = CIlist[check, "estimate"]
@@ -2857,12 +2920,12 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 						# Both bounds present: average to get an SE
 						DIFF = mean(c( (CIlist[check, "ubound"] - est), (est - CIlist[check, "lbound"]) ))
 					}
-				   APAstr = paste0(round(est, digits), " (", round(DIFF/(1.96 * 2), digits), ")")
+				   APAstr = paste0(round(est, digits), "\n(", round(DIFF/(1.96 * 2), digits), ")")
 				} else {
 				   APAstr = paste0(
-						umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "[",
-						umx_APA_pval(CIlist[check, "lbound"], min = -1, digits = digits)  , ",",
-						umx_APA_pval(CIlist[check, "ubound"], min = -1, digits = digits)  , "]"
+						umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "\n[",
+						umx_APA_pval(CIlist[check, "lbound"]  , min = -1, digits = digits)  , ", ",
+						umx_APA_pval(CIlist[check, "ubound"]  , min = -1, digits = digits)  , "]"
 				   )
 				}
 			   return(APAstr)

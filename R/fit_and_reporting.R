@@ -3130,6 +3130,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param format = c("current", "graphviz", "DiagrammeR") 
+#' @param showCIs Whether to show confidence intervals (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
@@ -3154,7 +3155,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' umxPlotCP(m1)
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, ...) {
 	# TODO umxPlotCP: Add CIs to parameters!!
 	# Could get xmu_standardize_CP(model) to stash "x(SE)" string as values 
 	# OR
@@ -3177,36 +3178,32 @@ umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed =
 	selDVs = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 
 	out = list(str = "", latents = c(), manifests = c())
-	# Process x_cp matrices
-	# 1. Collect latents on the diag
-	# from = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
-	# out = list(str = "", latents = c(), manifests = c())
-	out = xmu_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$a_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$c_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$e_cp, cells = "diag", from = "rows", toLabel = "common", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
 
 	# 2. Factor correlations on the lower
 	# from = "<name><rowNum>"; target = "<name><colNum>"
-	out = xmu_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
 
 	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
 	# out = list(str = "", latents = c(), manifests = c())
-	out = xmu_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", showFixed = showFixed, p= out)
+	out = xmu_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", showFixed = showFixed, p= out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
 	# from    = "common<c>"
 	# target  = selDVs[row]
 	# latents = append(latents, from)
 
 	# Process "as" matrix
-	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
 
 	# Process "expMean" 1 * nVar matrix
 	if(means){
 		# from = "one"; target = selDVs[c]
-		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
+		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
 	}
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
 	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
@@ -3226,10 +3223,12 @@ umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed =
 	if(format != "current"){
 		tmp = umx_set_plot_format(silent=TRUE)
 		umx_set_plot_format(format)
-		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+		res = withVisible(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
 		umx_set_plot_format(tmp)
+		if(res$visible) res$value else invisible(res$value)
 	}else{
-		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)		
+		res = withVisible(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
+		if(res$visible) res$value else invisible(res$value)
 	}
 }
 
