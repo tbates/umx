@@ -2,11 +2,16 @@
 ## umx 4.70.0
 * Date: 2026-05-20 R 4.6.0
 * NEW: `umx_log_wide_twin_data`
+* NEW: `umxGxE` handle ordinal DV
+* NEW: `umxPlotCP` Show CIs (or SEs via mxSE)
+* NEW: `umxPlotIP` Show CIs (or SEs via mxSE)
 * IMPROVED: `umxSummarizeTwinData` add a sex parameter, print mean age with SD, M/F counts, 95% CIs for correlations.
 * IMPROVED: `umx_msg` Refactored to improve debugging output and robustness
 * IMPROVED: `umx_make`Refactored to normalize package path, tidy function arguments, and use pkgPath throughout
+* IMPROVED: `umxDoC` Better mean starts
 * FIXED: Package testing on Github build working!
 * MINOR: rename several financial functions to clarify intent
+
 # Releases
 ## umx 4.65.0
 * Date: 2026-05-20 R 4.6.0
