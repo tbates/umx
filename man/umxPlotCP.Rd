@@ -20,7 +20,7 @@ umxPlotCP(
 )
 }
 \arguments{
-\item{x}{The Common Pathway \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to display graphically}
+\item{x}{The \code{\link[=umxCP]{umxCP()}} Common Pathway to display graphically}
 
 \item{means}{Whether to show means paths (defaults to FALSE)}
 
@@ -34,7 +34,7 @@ umxPlotCP(
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" when CIs are found (Default FALSE)}
+\item{SEstyle}{use mxSE "b (se)" instead of mxCI "b [lower, upper]" (Default FALSE)}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 

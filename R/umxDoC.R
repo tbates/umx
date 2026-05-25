@@ -321,7 +321,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' # = 3. Make the non-causal (Cholesky) and causal models =
 #' # =======================================================
 #' Chol = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
-#' # nb: DoC initially has causal paths fixed @0
+#' # note: DoC initially has causal paths fixed @0
 #' DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
 #' a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
 #' b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)
@@ -363,7 +363,8 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 	nLat1   = length(var1Indicators) # measures for factor 1
 	nLat2   = length(var2Indicators)
 	nVar    = nLat1 + nLat2
-	selVars = tvars(c(var1Indicators, var2Indicators), sep=sep)
+	selVars = tvars(c(var1Indicators, var2Indicators), sep = sep)
+	meanStarts = colMeans(mzData[, selVars[1:nVar]], na.rm = TRUE) # grab means using twin 1
 	mzData = xmu_make_mxData(mzData, manifests = selVars)
 	dzData = xmu_make_mxData(dzData, manifests = selVars)
 	xmu_twin_check(selDVs= c(var1Indicators,var2Indicators), sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
@@ -371,7 +372,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 	# ========================
 	# = Make Factor Loadings =
 	# ========================
-	# 1. Make matrix, initialised to fixed @ 0
+	# 1. Make matrix, initialized to fixed @ 0
 	FacLoad = umxMatrix(name="FacLoad", "Full", nrow=nVar, ncol=nLat, free= FALSE, values = 0)
 	# 2. Set FacLoad manifest loadings to pattern of 0 and 1
 	FacLoad$free[1:nLat1                  ,1] = TRUE
@@ -429,10 +430,9 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 		mxAlgebra(name= "expCovDZ", FacCovDZ + specCovDZ, dimnames = list(selVars, selVars)),
 		
 		# Means model
-		# TODO: Better starts for means... (easy)
-		umxMatrix(name= "Means", "Full", nrow= 1, ncol= nVar, free= TRUE, values= .1),
+		umxMatrix(name= "Means", "Full", nrow= 1, ncol= nVar, free= TRUE, values= meanStarts),
 		mxAlgebra(name= "expMean", cbind(top.Means, top.Means))
-		# TODO Why not just make ncol = nCol*2 and allow label repeats the equate means? Alg might be more efficient?
+		# TODO Why not just make ncol = nVar*2 and allow label repeats to equate means? Alg might be more efficient?
 	)
 
 	MZ = mxModel("MZ", mzData, mxExpectationNormal("top.expCovMZ", means= "top.expMean", dimnames= selVars), mxFitFunctionML() )

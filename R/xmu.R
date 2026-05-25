@@ -268,7 +268,6 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' }
 #'
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary"), refModels = NULL) {
-	# TODO xmu_safe_run_summary: Activate test examples
 	tryHard   = match.arg(tryHard)
 	returning = match.arg(returning)
 
@@ -1475,7 +1474,6 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 	if(!is.na(jiggle)){
 		mx_matrix$values <- umxJiggle(mx_matrix$values, mean = 0, sd = jiggle, dontTouch = drop) # Expecting sd
 	}
-	# TODO this might want something to equate values after jiggling around equal labels?
 	if(!is.na(boundDiag)){
 		diag(mx_matrix$lbound) <- boundDiag # bound diagonal to be positive 
 	}
@@ -1563,71 +1561,6 @@ xmu_cell_is_on <- function(r, c, where=c("diag", "lower", "lower_inc", "upper", 
 		stop("Where must be one of all, diag, lower, or upper. You gave me:", omxQuotes(where))
 	}
 	return(valid)
-}
-
-
-#' Make a deviation-based mxRAMObjective for ordinal models.
-#'
-#' Purpose: return a mxRAMObjective(A = "A", S = "S", F = "F", M = "M", thresholds = "thresh"), mxData(df, type = "raw")
-#' use-case see: umxMakeThresholdMatrix
-#'
-#' @param df a dataframe
-#' @param droplevels whether to droplevels or not
-#' @param verbose how verbose to be
-#' @return - list of matrices
-#' @export
-#' @family xmu internal not for end user
-xmuMakeDeviationThresholdsMatrices <- function(df, droplevels, verbose) {
-	# TODO xmuMakeDeviationThresholdsMatrices: Delete this function??
-	isOrdinalVariable = umx_is_ordered(df) 
-	if(sum(isOrdinalVariable) == 0){
-		stop("no ordinal variables found")
-	}
-	ordinalColumns = df[,isOrdinalVariable, drop = FALSE]
-	nOrdinal = ncol(ordinalColumns);
-	ordNameList = names(ordinalColumns);
-	levelList = rep(NA, nOrdinal)
-	for(n in 1:nOrdinal) {
-		levelList[n] = nlevels(ordinalColumns[, n])
-	}
-	maxThreshMinus1 = max(levelList) - 1
-	# For Multiplication
-	lowerOnes_for_thresh = mxMatrix(name = "lowerOnes_for_thresh", type = "Lower", nrow = maxThreshMinus1, ncol = maxThreshMinus1, free = FALSE, values = 1)
-	# Threshold deviation matrix
-	deviations_for_thresh = mxMatrix(name = "deviations_for_thresh", type = "Full", nrow = maxThreshMinus1, ncol = nOrdinal)
-	initialLowerLim  = -1
-	initialUpperLim  =  1
-	# Fill first row of deviations_for_thresh with useful lower thresholds, perhaps -1 or .5 SD (nthresh/2)
-	deviations_for_thresh$free[1,]   = TRUE
-	deviations_for_thresh$values[1,] = initialLowerLim # Start with an even -2. Might spread this a bit for different levels, or centre on 0 for 1 threshold
-	deviations_for_thresh$labels[1,] = paste("ThreshBaseline1", 1:nOrdinal, sep ="_")
-	deviations_for_thresh$lbound[1,] = -7 # baseline limit in SDs
-	deviations_for_thresh$ubound[1,] =  7 # baseline limit in SDs
-
-	for(n in 1:nOrdinal){
-		thisThreshMinus1 = levelList[n] -1
-		stepSize = (initialUpperLim-initialLowerLim)/thisThreshMinus1
-		deviations_for_thresh$values[2:thisThreshMinus1,n] = (initialUpperLim - initialLowerLim) / thisThreshMinus1
-		deviations_for_thresh$labels[2:thisThreshMinus1,n] = paste("ThreshDeviation", 2:thisThreshMinus1, n, sep = "_")
-		deviations_for_thresh$free  [2:thisThreshMinus1,n] = TRUE
-		deviations_for_thresh$lbound[2:thisThreshMinus1,n] = .001
-		if(thisThreshMinus1 < maxThreshMinus1) {
-			# pad the shorter var's excess rows with fixed@99 so humans can see them...
-			deviations_for_thresh$values[(thisThreshMinus1+1):maxThreshMinus1,n] <- (-99)
-
-			deviations_for_thresh$labels[(thisThreshMinus1+1):maxThreshMinus1,n] <- paste("unusedThresh", min(thisThreshMinus1 + 1, maxThreshMinus1), n, sep = "_")
-			deviations_for_thresh$free  [(thisThreshMinus1+1):maxThreshMinus1,n] <- F
-		}
-	}
-
-	threshNames = paste0("Threshold", 1:maxThreshMinus1)
-	thresholdsAlgebra = mxAlgebra(lowerOnes_for_thresh %*% deviations_for_thresh, dimnames = list(threshNames, ordNameList), name = "thresholdsAlgebra")
-	if(verbose){
-		cat("levels in each variable are:")
-		print(levelList)
-		print(paste("maxThresh - 1 = ", maxThreshMinus1))
-	}
-	return(list(lowerOnes_for_thresh, deviations_for_thresh, thresholdsAlgebra, mxRAMObjective(A="A", S="S", F="F", M="M", thresholds = "thresholdsAlgebra"), mxData(df, type = "raw")))
 }
 
 

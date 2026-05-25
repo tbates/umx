@@ -94,7 +94,7 @@ var2 = paste0("varB", 1:3)
 # = 3. Make the non-causal (Cholesky) and causal models =
 # =======================================================
 Chol = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= FALSE)
-# nb: DoC initially has causal paths fixed @0
+# note: DoC initially has causal paths fixed @0
 DoC  = umxDoC(var1= var1, var2= var2, mzData= mzData, dzData= dzData, causal= TRUE)
 a2b   = umxModify(DoC, "a2b", free = TRUE, name = "a2b"); summary(a2b)
 b2a   = umxModify(DoC, "b2a", free = TRUE, name = "b2a"); summary(b2a)

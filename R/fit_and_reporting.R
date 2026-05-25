@@ -1094,8 +1094,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 
 	if(is.null(refModels)) {
 		# SaturatedModels not passed in from outside, so get them from the model
-		# TODO umxSummary Improve efficiency: Compute summary only once by detecting when SaturatedLikelihood is missing
-		# m1$output$SaturatedLikelihood
 		modelSummary = summary(model)
 		if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
@@ -3121,12 +3119,12 @@ plot.MxModelGxE <- umxPlotGxE
 #' Options include digits (rounding), showing means or not, and which output format is desired.
 #'
 #' @aliases plot.MxModelCP
-#' @param x The Common Pathway [OpenMx::mxModel()] to display graphically
+#' @param x The [umxCP()] Common Pathway to display graphically
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
-#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" when CIs are found (Default FALSE)
+#' @param SEstyle use mxSE "b (se)" instead of mxCI "b \[lower, upper\]" (Default FALSE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param format = c("current", "graphviz", "DiagrammeR") 
@@ -3156,15 +3154,6 @@ plot.MxModelGxE <- umxPlotGxE
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
 umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, ...) {
-	# TODO umxPlotCP: Add CIs to parameters!!
-	# Could get xmu_standardize_CP(model) to stash "x(SE)" string as values 
-	# OR
-	# look these up in this code
-	# model@submodels$top$cp_loadings@values = model$top$algebras$cp_loadings_std$result
-	# model@submodels$top$as@values = model$top$as_std$result # standardized as
-	# model@submodels$top$cs@values = model$top$cs_std$result # standardized cs
-	# model@submodels$top$es@values = model$top$es_std$result # standardized es
-	
 	format = match.arg(format)
 	model  = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
@@ -3249,6 +3238,7 @@ plot.MxModelCP <- umxPlotCP
 #' @param format = c("current", "graphviz", "DiagrammeR")
 #' @param SEstyle Report "b (se)" instead of "b \[lower, upper\]" (Default)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param showCIs Whether to show confidence intervals (default = TRUE)
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
 #' @export
@@ -3268,7 +3258,7 @@ plot.MxModelCP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showFixed = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showFixed = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, ...) {
 	format = match.arg(format)
 	model = x # Just to emphasize that x has to be a model 
 	umx_check_model(model, "MxModelIP", callingFn = "umxPlotIP")
@@ -3286,37 +3276,23 @@ umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TR
 
 	out = list(str = "", latents = c(), manifests = c())
 
-	# TODO Check I am handling nFac > 1 properly!!
-
-	# from = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
-	# out = list(str = "", latents = c(), manifests = c())
-
 	# 1. Collect ai (the independent latent factors)
-	out = xmu_dot_mat2dot(model$top$ai, cells = "any", from = "cols", fromType = "latent", toLabel = selDVs, showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$ci, cells = "any", from = "cols", fromType = "latent", toLabel = selDVs, showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$ei, cells = "any", from = "cols", fromType = "latent", toLabel = selDVs, showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$ai, cells = "any", toLabel = selDVs, from = "cols", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$ci, cells = "any", toLabel = selDVs, from = "cols", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$ei, cells = "any", toLabel = selDVs, from = "cols", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+
 
 	# 2 collect as (the specific latent factors)
-	out = xmu_dot_mat2dot(model$top$as, cells = "diag", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$cs, cells = "diag", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$es, cells = "diag", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-
+	out = xmu_dot_mat2dot(model$top$as, cells = "diag", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$cs, cells = "diag", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
+	out = xmu_dot_mat2dot(model$top$es, cells = "diag", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
 
 	# Process "expMean" 1 * nVar matrix e.g. "expMean_gff_T1"
 	if(means){
-		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
+		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = SEstyle, digits = digits, showCIs = showCIs)
 	}
 	
 	# TODO: Could extract thresholds? "_dev[0-9]+$"
-
-	# TODO Add CIs to parameter values
-	# this code picks out the CIs if available... Now would need to be embedded in xmu_dot_mat2dot() now?
-	# CIstr = xmu_get_CI(model, label = thisParam, prefix = "top.", suffix = "_std", digits = digits, SEstyle = SEstyle, verbose = FALSE)
-	# CIstr = xmu_get_CI(model= tmp, label = "S[1,1]", prefix = "Holzinger_and_Swineford_1939.", SEstyle = TRUE, digits = 3)
-
-	# ==============
-	# = up to here =
-	# ==============
 
 	preOut = "\t# Latents\n"
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])

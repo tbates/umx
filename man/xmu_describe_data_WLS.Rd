@@ -78,7 +78,6 @@ Other xmu internal not for end user:
 \code{\link[=xmuLabel_Matrix]{xmuLabel_Matrix()}},
 \code{\link[=xmuLabel_RAM_Model]{xmuLabel_RAM_Model()}},
 \code{\link[=xmuMI]{xmuMI()}},
-\code{\link[=xmuMakeDeviationThresholdsMatrices]{xmuMakeDeviationThresholdsMatrices()}},
 \code{\link[=xmuMakeOneHeadedPathsFromPathList]{xmuMakeOneHeadedPathsFromPathList()}},
 \code{\link[=xmuMakeTwoHeadedPathsFromPathList]{xmuMakeTwoHeadedPathsFromPathList()}},
 \code{\link[=xmuMaxLevels]{xmuMaxLevels()}},
