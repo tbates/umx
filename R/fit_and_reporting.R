@@ -1127,70 +1127,79 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	if(!is.null(std)){
 		# nb: mxStandardizeRAMpaths returns the raw paths as well, so two birds, one stone.
 		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
-		nSubModels = length(model$submodels)
-		if(nSubModels > 0){
-			tmp = parameterTable
-			parameterTable = tmp[[1]]
-			if(nSubModels > 1){
-				for (i in 2:nSubModels) {
-					parameterTable = rbind(parameterTable, tmp[[i]])
-					# TODO: vertical merge, or show only model 1?
-				}			
-			}
-		}
-		#          name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
-		# 1  Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
-		# Raw.SE is new
-		names(parameterTable) = c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
-
-		if(matrixAddresses){
-			naming = c("name", "matrix", "row", "col")
-		} else {
-			naming = c("name")
-		}
-		# TODO: umxSummary add p value, perhaps CI?
-		# TODO: umxSummary block table into latents/resid/means etc.
 		
-		if(std == TRUE){
-			# TODO: should CI be here?
-			namesToShow = c(naming, "Std.Estimate", "Std.SE", "CI")
-		}else{ # must be raw
-			namesToShow = c(naming, "Estimate", "SE")					
+		# Helper to recursively flatten lists of dataframes returned by mxStandardizeRAMpaths
+		flatten_pTable <- function(x) {
+			if (is.data.frame(x)) {
+				return(x)
+			} else if (is.list(x)) {
+				if (length(x) == 0) return(NULL)
+				dfs = lapply(x, flatten_pTable)
+				dfs = dfs[vapply(dfs, is.data.frame, logical(1))]
+				if (length(dfs) > 0) {
+					return(do.call(rbind, dfs))
+				}
+			}
+			return(NULL)
 		}
+		
+		parameterTable = flatten_pTable(parameterTable)
 
-		if("CI" %in% namesToShow){
-			parameterTable$sig = TRUE
-			parameterTable$CI  = ""
-			for(i in 1:dim(parameterTable)[1]) {
-				# TODO we only show SE-based CI for std estimates so far
-				est   = parameterTable[i, "Std.Estimate"]
-				CI95  = parameterTable[i, "Std.SE"] * 1.96
-				bounds = c(est - CI95, est + CI95)
+		if (!is.null(parameterTable) && nrow(parameterTable) > 0) {
+			#          name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
+			# 1  Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
+			# Raw.SE is new
+			names(parameterTable) = c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
 
-				if(any(is.na(bounds))) {
-					# protect cases with SE == NA from evaluation for significance
-				} else {
-					if (any(bounds <= 0) & any(bounds >= 0)){
-						parameterTable[i, "sig"] = FALSE
-					}
-					if(est < 0){
-						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
+			if(matrixAddresses){
+				naming = c("name", "matrix", "row", "col")
+			} else {
+				naming = c("name")
+			}
+			# TODO: umxSummary add p value, perhaps CI?
+			# TODO: umxSummary block table into latents/resid/means etc.
+			
+			if(std == TRUE){
+				# TODO: should CI be here?
+				namesToShow = c(naming, "Std.Estimate", "Std.SE", "CI")
+			}else{ # must be raw
+				namesToShow = c(naming, "Estimate", "SE")					
+			}
+
+			if("CI" %in% namesToShow){
+				parameterTable$sig = TRUE
+				parameterTable$CI  = ""
+				for(i in 1:dim(parameterTable)[1]) {
+					# TODO we only show SE-based CI for std estimates so far
+					est   = parameterTable[i, "Std.Estimate"]
+					CI95  = parameterTable[i, "Std.SE"] * 1.96
+					bounds = c(est - CI95, est + CI95)
+
+					if(any(is.na(bounds))) {
+						# protect cases with SE == NA from evaluation for significance
 					} else {
-						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
+						if (any(bounds <= 0) & any(bounds >= 0)){
+							parameterTable[i, "sig"] = FALSE
+						}
+						if(est < 0){
+							parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
+						} else {
+							parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
+						}
 					}
 				}
 			}
+			if(filter == "NS") {
+				toShow = parameterTable[parameterTable$sig == FALSE, namesToShow]
+			} else if(filter == "SIG") {
+				toShow = parameterTable[parameterTable$sig == TRUE, namesToShow]
+			} else {
+				toShow = parameterTable[, namesToShow]
+			}
+			toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+			toShow = unique.data.frame(toShow[,c(namesToShow, "type")])
+			umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
 		}
-		if(filter == "NS") {
-			toShow = parameterTable[parameterTable$sig == FALSE, namesToShow]
-		} else if(filter == "SIG") {
-			toShow = parameterTable[parameterTable$sig == TRUE, namesToShow]
-		} else {
-			toShow = parameterTable[, namesToShow]
-		}
-		toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
-		toShow = unique.data.frame(toShow[,c(namesToShow, "type")])
-		umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
 	}
 	with(modelSummary, {
 		if(!is.finite(TLI)){
@@ -1239,7 +1248,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	}
 	
 	xmu_print_algebras(model)
-	if(!is.null(std)){ # return these as  invisible for the user to filter, sort etc.
+	if(!is.null(std) && !is.null(parameterTable) && nrow(parameterTable) > 0){ # return these as  invisible for the user to filter, sort etc.
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
 		}else if(filter == "SIG"){
@@ -1247,6 +1256,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		}else{
 			invisible(parameterTable[,namesToShow])
 		}
+	} else {
+		invisible(NULL)
 	}
 }
 

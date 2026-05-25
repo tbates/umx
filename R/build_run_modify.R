@@ -1024,7 +1024,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 			newModel = mxModel(newModel, thisModel)
 			suffix = suffix + 1
 		}
-		print(paste0("Polite note: Renamed sub-models with duplicate names, e.g. ", omxQuotes(dupes[1]), " -> ", omxQuotes(paste0(dupes[1], "_2"))))
+		print(paste0("Polite note from umxSuperModel: I renamed sub-models with duplicate names, e.g. ", omxQuotes(dupes[1]), " -> ", omxQuotes(paste0(dupes[1], "_2"))))
 	}
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, std = std)
 	invisible(newModel)

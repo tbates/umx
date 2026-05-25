@@ -214,3 +214,26 @@ test_that("RMSEA works", {
 	tmp = summary(m1)
 	RMSEA(tmp)
 })
+
+test_that("umxSummary works on supermodels", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	
+	m1 = umxRAM("m1", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	m1 = umxModify(m1, regex = "*", newlabels = "m1_\\1", autoRun = FALSE)
+	
+	m2 = umxRAM("m2", data = demoOneFactor, type = "cov",
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	m2 = umxModify(m2, regex = "*", newlabels = "m2_\\1", autoRun = FALSE)
+	
+	super = umxSuperModel("supermodel", m1, m2)
+	expect_error(umxSummary(super), NA)
+})
