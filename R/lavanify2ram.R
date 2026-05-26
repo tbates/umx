@@ -314,6 +314,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	if(lavaanMode == "sem"){
 		# model = "x1~b1*x2; B1_sq := b1^2"; std.lv=FALSE
 		tab = lavaan::lavaanify(model = model, ngroups = ngroups,
+			meanstructure   = (ngroups > 1),
 			int.ov.free     = TRUE,
 			int.lv.free     = FALSE,
 			std.lv          = std.lv,
@@ -329,7 +330,7 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 			# If TRUE, would fix mean, var, cov, of exogenous covariates to their sample values.			
 		)
 	}else	if(lavaanMode == "lavaan"){
-		tab = lavaan::lavaanify(model = model, ngroups = ngroups, group.equal = group.equal, std.lv = std.lv, auto.fix.first = !std.lv, fixed.x = FALSE)
+		tab = lavaan::lavaanify(model = model, ngroups = ngroups, group.equal = group.equal, meanstructure = (ngroups > 1), std.lv = std.lv, auto.fix.first = !std.lv, fixed.x = FALSE)
 	}else{
 		message("Only sem and lavaan (only what the user explicitly requests) are implemented as yet: What other modes would be useful?")		
 	}
@@ -353,7 +354,8 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 	# 3  3   B ~~   B    0     1     1    0     NA   1         .p3.
 
 	# Pull out group 0 (algebras) if found : might need to create in supergroup.
-	algebraRows = tab[tab$group == 0, ]
+	# Filter out user == 2 rows (auto-generated equality constraints from lavaanify)
+	algebraRows = tab[tab$group == 0 & tab$user != 2, ]
 	nAlg = nrow(algebraRows)
 
 	# Already have
@@ -402,10 +404,12 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 			modelName = gsub("(\\h+)", "_", modelName, perl = TRUE)
 			# Delete illegal characters
 			modelName = as.character(mxMakeNames(modelName))			
+			groupSuffix = paste0("_", groupLevels[groupNum])
 		}else{
 			modelName = name
+			groupSuffix = ""
 		}
-		m1 = umxRAM(modelName, plist, data = theseData, autoRun = FALSE, type = type, allContinuousMethod = allContinuousMethod)
+		m1 = umxRAM(modelName, plist, data = theseData, autoRun = FALSE, type = type, allContinuousMethod = allContinuousMethod, suffix = groupSuffix)
 		modelList = append(modelList, m1)
 	}
 
@@ -483,6 +487,9 @@ xmu_lavaan_process_group <- function(tab, groupNum){
 		free  = thisRow$free > 0 # in lavaan, free is a list of numbers: same for equated; 0 for free, distinct for unique
 		value = thisRow$ustart # often NA
 		label = thisRow$label  # likely ""
+		if(label == '') {
+			label = thisRow$plabel
+		}
 		label = xmu_clean_label(label, replace = "_")			
 		if(label == '') {label = NA}
 
