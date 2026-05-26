@@ -75,6 +75,16 @@ test_that("umxSummary works", {
 		umxPath(v1m0 = "G")
 	)
 	expect_error(regex= NA, {umxSummary(m1, std = TRUE, filter = "NS")})
+
+	# Test fallback logic in umxSummary when reference models/fit indices are not available
+	m2 = mxModel("fact", type="RAM", manifestVars=manifests, latentVars="G",
+		mxPath("G", to = manifests),
+		mxPath(manifests, arrows = 2),
+		mxPath("G", arrows = 2, free = FALSE, values = 1),
+		mxData(cov(demoOneFactor), type = "cov", numObs=500)
+	)
+	m2 = suppressWarnings(mxRun(m2, silent = TRUE))
+	expect_error(umxSummary(m2), NA)
 })
 
 test_that("umxSummaryACE works", {

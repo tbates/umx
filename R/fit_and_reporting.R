@@ -1201,47 +1201,66 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
 		}
 	}
-	with(modelSummary, {
-		if(!is.finite(TLI)){
-			TLI_OK = "OK"
-		} else {
-			if(TLI > .95) {
+	hasFitIndices = !is.null(modelSummary$TLI) && !is.null(modelSummary$CFI) && !is.null(modelSummary$RMSEA) && !is.null(modelSummary$Chi)
+	if(hasFitIndices) {
+		with(modelSummary, {
+			if(!is.finite(TLI)){
 				TLI_OK = "OK"
 			} else {
-				TLI_OK = "bad"
+				if(TLI > .95) {
+					TLI_OK = "OK"
+				} else {
+					TLI_OK = "bad"
+				}
 			}
-		}
-		if(!is.finite(RMSEA)) {
-			RMSEA_OK = "OK"
-		} else {
-			if(RMSEA < .06){
-			RMSEA_OK = "OK"
+			if(!is.finite(RMSEA)) {
+				RMSEA_OK = "OK"
 			} else {
-				RMSEA_OK = "bad"
+				if(RMSEA < .06){
+				RMSEA_OK = "OK"
+				} else {
+					RMSEA_OK = "bad"
+				}
 			}
-		}
-		if(report == "table"){
-			x = data.frame(cbind(model$name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
-			names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
-			print(x)
-		} else {
-			if(RMSEA_CI){
-				RMSEA_CI = RMSEA(modelSummary)$txt
+			if(report == "table"){
+				x = data.frame(cbind(model$name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
+				names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
+				print(x)
 			} else {
-				RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
+				if(RMSEA_CI){
+					RMSEA_CI = RMSEA(modelSummary)$txt
+				} else {
+					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
+				}
+				fitMsg = paste0("\nModel Fit: \u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
+					# "Chi2(", ChiDoF, ") = ", round(Chi, 2), # was A7
+					", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
+					"; CFI = "  , round(CFI, 3),
+					"; TLI = "  , round(TLI, 3),
+					"; ", RMSEA_CI
+				)
+				message(fitMsg)
+				if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
+				if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
 			}
-			fitMsg = paste0("\nModel Fit: \u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
-				# "Chi2(", ChiDoF, ") = ", round(Chi, 2), # was A7
-				", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
-				"; CFI = "  , round(CFI, 3),
-				"; TLI = "  , round(TLI, 3),
-				"; ", RMSEA_CI
-			)
-			message(fitMsg)
-			if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
-			if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
+		})
+	} else {
+		# Fallback if fit indices are not available
+		minus2LL = modelSummary$Minus2LogLikelihood
+		df = modelSummary$degreesOfFreedom
+		estimatedParameters = modelSummary$estimatedParameters
+		
+		# If estimatedParameters or minus2LL is not NULL/NA, calculate AIC
+		if (!is.null(minus2LL) && !is.na(minus2LL) && !is.null(estimatedParameters)) {
+			aic = minus2LL + 2 * estimatedParameters
+			fitMsg = paste0("\nModel Fit: -2LL = ", round(minus2LL, 2), 
+			                ", df = ", df, 
+			                ", AIC = ", round(aic, 2))
+		} else {
+			fitMsg = "\nModel Fit: Fit statistics not available (model may not have run successfully)."
 		}
-	})
+		message(fitMsg)
+	}
 	# TODO: umxSummary.MxRAMModel integrate interval printing into summary table
 	if(!is.null(model$output$confidenceIntervals)){
 		print(model$output$confidenceIntervals)

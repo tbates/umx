@@ -3808,7 +3808,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
 	# TODO: umxRun: Optimise for speed
-	tryHard    = match.arg(tryHard)
+	tryHard = match.arg(tryHard)
 
 	# =================
 	# = Set optimizer =
@@ -3823,7 +3823,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 	if(setValues){
 		model = xmuValues(model)
 	}
-	model = xmu_safe_run_summary(model, autoRun = TRUE,  summary = summary, tryHard =  tryHard)
+	model = xmu_safe_run_summary(model, autoRun = TRUE, intervals=intervals, summary = summary, tryHard =  tryHard)
 
 	if(calc_sat){
 		if(umx_is_RAM(model)){
