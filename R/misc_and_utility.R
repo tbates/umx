@@ -139,7 +139,7 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 #' @description
 #' `libs` allows loading multiple libraries in one call
 #'
-#' @param ... library names as strings, e.g. "pwr"
+#' @param ... library names as symbols/naked names, strings, or a vector of names
 #' @param force.update install.package even if present (to get new version) FALSE
 #' @return - nothing.
 #' @export
@@ -148,25 +148,27 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 #' @md
 #' @examples
 #' \dontrun{
+#' libs(ggplot2)
 #' libs("car")
 #' libs(c("OpenMx", "car"))
 #' libs(OpenMx, car)
 #' remove.packages()
 #' }
 libs <- function(... , force.update = FALSE) {
-    # Capture the full call
-    call <- match.call(expand.dots = TRUE)
-  
-    # Extract arguments after the function name
-    args <- as.list(call)[-1]
-  
-    # If a single character vector was passed
-    if (length(args) == 1 && is.character(eval(args[[1]], envir = parent.frame()))) {
-      lib_names <- eval(args[[1]], envir = parent.frame())
-    } else {
-      # Convert unevaluated args to strings
-      lib_names <- sapply(args, deparse)
-    }
+	args <- eval(substitute(alist(...)))
+	lib_names <- c()
+	for (arg in args) {
+		val <- tryCatch({
+			eval(arg, envir = parent.frame())
+		}, error = function(e) {
+			deparse(arg)
+		})
+		if (is.character(val)) {
+			lib_names <- c(lib_names, val)
+		} else {
+			lib_names <- c(lib_names, deparse(arg))
+		}
+	}
   
 	for (pack in lib_names) {
 		result = tryCatch({
@@ -862,11 +864,8 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' @examples
 #' library(umx)
 #' manifests = c("mpg", "disp", "gear")
-#' m1 = mxModel("ind", type = "RAM",
-#' 	manifestVars = manifests,
-#' 	mxPath(from = manifests, arrows = 2),
-#' 	mxPath(from = "one", to = manifests),
-#' 	mxData(mtcars[, manifests], type = "raw")
+#' m1 = umxRAM("ind", data = mxData(mtcars[, manifests], type = "raw"),
+#' 	umxPath(v.m. = manifests)
 #' )
 #' umx_set_cores() # print current value
 #' oldCores = umx_set_cores(silent = TRUE)  # store existing value

@@ -7,7 +7,7 @@
 libs(..., force.update = FALSE)
 }
 \arguments{
-\item{...}{library names as strings, e.g. "pwr"}
+\item{...}{library names as symbols/naked names, strings, or a vector of names}
 
 \item{force.update}{install.package even if present (to get new version) FALSE}
 }
@@ -21,6 +21,7 @@ libs(..., force.update = FALSE)
 }
 \examples{
 \dontrun{
+libs(ggplot2)
 libs("car")
 libs(c("OpenMx", "car"))
 libs(OpenMx, car)

@@ -24,11 +24,8 @@ set the number of cores (threads) used by OpenMx
 \examples{
 library(umx)
 manifests = c("mpg", "disp", "gear")
-m1 = mxModel("ind", type = "RAM",
-	manifestVars = manifests,
-	mxPath(from = manifests, arrows = 2),
-	mxPath(from = "one", to = manifests),
-	mxData(mtcars[, manifests], type = "raw")
+m1 = umxRAM("ind", data = mxData(mtcars[, manifests], type = "raw"),
+	umxPath(v.m. = manifests)
 )
 umx_set_cores() # print current value
 oldCores = umx_set_cores(silent = TRUE)  # store existing value
