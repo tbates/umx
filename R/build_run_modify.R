@@ -613,6 +613,19 @@ umxModel <- function(...) {
 #'
 umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
+	# Check for data/model objects passed in ... before unlist() flattens them
+	for (item in dot.items) {
+		thisIs = class(item)[1]
+		if (thisIs %in% c("data.frame", "matrix", "MxData")) {
+			stop("umxRAM can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+				 "You have given me a ", thisIs, " inside the path list. ",
+				 "To include data in umxRAM, please use the 'data = yourData' parameter, not inside the path list.", call. = FALSE)
+		} else if (thisIs == "MxModel") {
+			stop("umxRAM can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+				 "You have given me an MxModel inside the path list. ",
+				 "umxRAM does not support nesting MxModels directly. If you wanted a multi-group model, see ?umxSuperModel.", call. = FALSE)
+		}
+	}
 	dot.items = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
 	type       = match.arg(type)
 	tryHard    = match.arg(tryHard)
@@ -699,7 +712,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 			# Sometimes we get a list, so expand everything to a list.
 			thisItem = list(thisItem)
 		}
-		for (i in length(thisItem)) {
+		for (i in seq_along(thisItem)) {
 			thisIs = class(thisItem[[i]])[1]
 			if(thisIs == "MxPath"){
 				foundNames = append(foundNames, c(thisItem[[i]]$from, thisItem[[i]]$to))
@@ -716,11 +729,21 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 					if(length(tmp) > 0){
 						defnNames = append(defnNames, namez(tmp, "data\\.(.*)", replacement= "\\1"))
 					}
+				} else if (isS4(thisItem[[i]]) && grepl("^Mx", thisIs) && !thisIs %in% c("MxModel", "MxData")) {
+					# Valid OpenMx S4 object (MxConstraint, MxAlgebra, MxCI, etc.) - no path/matrix-label actions needed
 				} else {
-					# TODO: umxRAM currently not checking for unsupported items.
-					# stop("I can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
-					# "You have given me a", class(i)[1],"\n",
-					# " To include data in umxRAM, say 'data = yourData'")
+					if (thisIs %in% c("data.frame", "matrix", "MxData")) {
+						stop("umxRAM can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+							 "You have given me a ", thisIs, " inside the path list. ",
+							 "To include data in umxRAM, please use the 'data = yourData' parameter, not inside the path list.", call. = FALSE)
+					} else if (thisIs == "MxModel") {
+						stop("umxRAM can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+							 "You have given me an MxModel inside the path list. ",
+							 "umxRAM does not support nesting MxModels directly. If you wanted a multi-group model, see ?umxSuperModel.", call. = FALSE)
+					} else {
+						stop("umxRAM can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+							 "You have given me a ", thisIs, " which is not supported inside the RAM path list.", call. = FALSE)
+					}
 				}
 			}			
 		}
