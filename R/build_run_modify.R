@@ -1192,8 +1192,36 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		# handle labels as input
 		if (!regex) {
 			theLabels = update
-			# TODO: check the labels are present
-			# if not suggest reversal for with items
+			all_labels = names(omxGetParameters(newModel, free = NA))
+			bad_labels = theLabels[!(theLabels %in% all_labels)]
+			if(length(bad_labels) > 0){
+				msg = paste0("Some labels were not found in the model: ", paste(omxQuotes(bad_labels), collapse = ", "), "\n")
+				for(bad in bad_labels){
+					suggestions = c()
+					# Check for _with_ reversal
+					if(grepl("_with_", bad)){
+						parts = strsplit(bad, "_with_")[[1]]
+						if(length(parts) == 2){
+							reversed = paste0(parts[2], "_with_", parts[1])
+							if(reversed %in% all_labels){
+								suggestions = c(suggestions, reversed)
+							}
+						}
+					}
+					# Check for close matches (fuzzy matching)
+					dists = as.vector(adist(bad, all_labels))
+					close = all_labels[dists <= 2]
+					suggestions = c(suggestions, close)
+					suggestions = unique(suggestions)
+					if(length(suggestions) > 0){
+						msg = paste0(msg, "  * For ", omxQuotes(bad), ", did you mean: ", paste(omxQuotes(suggestions), collapse = " or "), "?\n")
+					} else {
+						msg = paste0(msg, "  * For ", omxQuotes(bad), ", no close matches were found.\n")
+					}
+				}
+				msg = paste0(msg, "Use parameters(model) to see all available labels.")
+				stop(msg, call. = FALSE)
+			}
 			if(is.null(newlabels)){
 				newModel = omxSetParameters(newModel, labels = theLabels, free = free, values = value, name = name)
 			}else{
