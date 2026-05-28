@@ -2,6 +2,31 @@
 # = Financial utilities =
 # =======================
 
+#' Set the symbol for money
+#'
+#' Set umx_set_dollar_symbol (used in e.g. [fin_interest()]
+#'
+#' @param umx.dollar.symbol symbol for money calculations.
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current umx.dollar.symbol
+#' @export
+#' @family Get and set
+#' @examples
+#' library(umx)
+#' umx_set_dollar_symbol() # show current state
+#' old = umx_set_dollar_symbol(silent=TRUE) # store existing value
+#' fin_interest(100)
+#' umx_set_dollar_symbol(old)    # reinstate
+umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
+	if(is.null(umx.dollar.symbol)) {
+		if(!silent){ message("Current format is ", omxQuotes(getOption("umx.dollar.symbol"))	) }
+		invisible(getOption("umx.dollar.symbol"))
+	} else {
+		options("umx.dollar.symbol" = umx.dollar.symbol)
+	}
+}
+
+
 #' NZ FIF Tax Offset & NAV Neutrality Calculator
 #'
 #' @param portfolioValue Total opening value of the portfolio on April 1st.
@@ -12,7 +37,7 @@
 #'
 #' @return A ggplot object showing the net impact across LTV ratios.
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
@@ -65,59 +90,118 @@ fin_tax_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifR
 #' Teaching function for options
 #'
 #' @description
-#' `fin_stock_option` is a teaching function for understanding  vega etc.
+#' `fin_stock_option` is a teaching function for understanding options (intrinsic/extrinsic value, annualized rent, leverage, and time decay).
 #'
-#' @param premium Cost to buy
-#' @param strike the strike price
-#' @param stock the current price
-#' @param delta the delta 
-#' @param years how far in time the LEAP ends.
-#' @return - value
+#' @param premium Cost to buy the option contract per share.
+#' @param strike The strike price of the option.
+#' @param stock The current stock price.
+#' @param delta The delta of the option (default = 0.85). Used to calculate effective leverage (Omega).
+#' @param years How far in time the option ends (e.g. 1.8 years for a LEAP).
+#' @param type Whether it is a "call" or "put" option.
+#' @return A list containing intrinsic value, extrinsic value, break-even price, annualized rent percent, effective leverage (Omega), and daily theta.
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
-#' fin_stock_option(premium = 134, strike = 200, stock= 304)
+#' # Call Option (In-The-Money LEAP)
+#' fin_stock_option(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8)
 #'
-fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8) {
-  # Epistemic Check: Is the S&P 500 return (e.g. 10%) higher than the rent cost?
-  # Assumption: Linear decay, which we know is a simplification (Theta is not linear).
-  if(0){
-	  cat("TODO = Theta (the wall) and Gamma (the accelerator)\n")
-	  cat("It is vital to remember that these numbers are hypotheses based on a model, not absolute truths. They assume 'all other things being equal' (ceteris paribus), which rarely happens in a live market.")
-	  cat("\nReality is not normal, it's fat-tailed. And prediction is skewed\n\n")
+#' # Put Option (Out-Of-The-Money)
+#' fin_stock_option(premium = 10, strike = 280, stock = 304, delta = -0.30, years = 0.5, type = "put")
+#'
+fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8, type = c("call", "put")) {
+  type = match.arg(type)
+
+  # Adjust default/positive delta if user specified a Put option
+  if (type == "put" && delta > 0) {
+    delta = -delta
+  }
+
+  # 1. Moneyness & Intrinsic/Break-even Calculations
+  if (stock > strike) {
+    moneyness = if (type == "call") "In-the-Money (ITM)" else "Out-of-the-Money (OTM)"
+    moneynessDiff = stock - strike
+  } else if (stock < strike) {
+    moneyness = if (type == "call") "Out-of-the-Money (OTM)" else "In-the-Money (ITM)"
+    moneynessDiff = strike - stock
+  } else {
+    moneyness = "At-the-Money (ATM)"
+    moneynessDiff = 0
+  }
+
+  if (type == "call") {
+    intrinsic = max(0, stock - strike)
+    breakEven = strike + premium
+    pctToBreakEven = 100 * (breakEven - stock) / stock
+    maxProfit = Inf
+    maxLoss = premium * 100
+  } else {
+    intrinsic = max(0, strike - stock)
+    breakEven = strike - premium
+    pctToBreakEven = 100 * (stock - breakEven) / stock
+    maxProfit = (strike - premium) * 100
+    maxLoss = premium * 100
+  }
+
+  extrinsic = premium - intrinsic
+  pctIntrinsic = 100 * intrinsic / premium
+  pctExtrinsic = 100 * extrinsic / premium
+
+  # 2. Annualized cost of the 'insurance/rent'
+  rentAnnualPct = 100 * (extrinsic / years) / stock
+
+  # 3. Omega (Effective Leverage)
+  leverage = (abs(delta) * stock) / premium
+
+  # 4. Daily Theta (Linear approximation)
+  thetaDaily = -extrinsic / (years * 365.25)
+
+  # 5. Output Results to Console
+  cat(sprintf("--- Option Analysis (%s Option) ---\n", toupper(type)))
+  cat(sprintf("Current Stock: $%.2f | Strike: $%.2f | Premium: $%.2f\n", stock, strike, premium))
+  cat(sprintf("Moneyness: %s by $%.2f (%.1f%% of stock price)\n", moneyness, moneynessDiff, 100 * moneynessDiff / stock))
+  cat(sprintf("Premium Breakdown: Intrinsic (Equity): %.1f%% | Extrinsic (Time Value/Rent): %.1f%%\n", pctIntrinsic, pctExtrinsic))
+  if (type == "call") {
+    cat(sprintf("Break-even Hurdle: %+.2f%% (Stock must reach $%.2f by year %.1f)\n", pctToBreakEven, breakEven, years))
+  } else {
+    cat(sprintf("Break-even Hurdle: %+.2f%% (Stock must drop to $%.2f by year %.1f)\n", -pctToBreakEven, breakEven, years))
+  }
+  cat(sprintf("Annualized Rent: %.2f%% of stock value per year (Compare vs S&P 500 Benchmark)\n", rentAnnualPct))
+  cat(sprintf("Effective Leverage (Omega): %.2fx (Delta: %.2f)\n", leverage, delta))
+  cat(sprintf("Linear Theta: -$%.4f per day (Note: actual Theta accelerates closer to expiry)\n", abs(thetaDaily)))
+  
+  # Contract pricing details
+  cat(sprintf("Contract Pricing: One standard contract (100 shares) costs $%.2f\n", premium * 100))
+  if (type == "call") {
+    cat(sprintf("  * Max Loss: $%.2f (100%% of premium)\n", maxLoss))
+    cat("  * Max Profit: Unlimited\n")
+  } else {
+    cat(sprintf("  * Max Loss: $%.2f (100%% of premium)\n", maxLoss))
+    cat(sprintf("  * Max Profit: $%.2f (if stock drops to $0)\n", maxProfit))
   }
   
-  intrinsic = max(0, stock - strike)
-  extrinsic = premium - intrinsic
-  breakEven = strike + premium
-  
-  # Percent move required just to break even at expiry
-  pctToBreakEven = 100 * (breakEven - stock) / stock
-  
-  # Annualized cost of the 'insurance/rent'
-  rentAnnualPct = 100 * (extrinsic / years) / stock
-  
-  # Omega (Effective Leverage)
-  leverage = (delta * stock) / premium
+  # Delta ITM probability proxy
+  cat(sprintf("Probability Proxy: Delta indicates an approx. %.0f%% chance of expiring In-the-Money.\n", abs(delta) * 100))
 
-  cat("--- Fiduciary Analysis ---\n")
-  cat(sprintf("Current Stock: $%g | Strike: $%g | Total Cost Basis: $%g\n", stock, strike, breakEven))
-  cat(sprintf("Break-even Hurdle: %+.2f%% (Stock must reach $%g by year %.1f)\n", pctToBreakEven, breakEven, years))
-  cat(sprintf("Annualized Rent: %.2f%% (Compare vs S&P 500 Benchmark)\n", rentAnnualPct))
-  cat(sprintf("Effective Leverage (Omega): %.2fx\n", leverage))
-  
-  if(rentAnnualPct > 7) {
+  if (rentAnnualPct > 7) {
     cat("!!! WARNING: High Rent. Ensure target growth exceeds benchmark + rent.\n")
+  }
+  if (pctExtrinsic == 100) {
+    cat("!!! NOTE: This option has 100% extrinsic value. If the stock does not move past the strike, the option will expire worthless.\n")
   }
 
   invisible(list(
-    intrinsic      = intrinsic,
-    extrinsic      = extrinsic,
-    breakEven      = breakEven,
+    intrinsic       = intrinsic,
+    extrinsic       = extrinsic,
+    breakEven       = breakEven,
     rent_annual_pct = rentAnnualPct,
-    leverage       = leverage
+    leverage        = leverage,
+    theta_daily     = thetaDaily,
+    moneyness       = moneyness,
+    pct_extrinsic   = pctExtrinsic,
+    max_loss        = maxLoss,
+    max_profit      = maxProfit
   ))
 }
   
@@ -130,7 +214,7 @@ fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.
 #' @param from The date in the series to start from (blank = all)
 #' @return - value
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
@@ -187,7 +271,7 @@ fin_stock_CAGR = function(priceSeries, from = "1900-01-01") {
 #' @param years Holding time.
 #' @return - value
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
@@ -240,7 +324,7 @@ fin_carryCost = function(property_cost, appreciation =.02, QQQ= .14, rent_saved=
 #' @param use reporting values in "B" (billion) or "M" (millions)
 #' @return - value
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
@@ -283,7 +367,7 @@ fin_stock_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=
 #' @param symbol Currency symbol to use
 #' @return - value
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
 #' @md
 #' @examples
@@ -313,7 +397,7 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #' @param verb Verbose or concise (FALSE)
 #' @return - expected gain
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()]
 #' @md
 #' @examples
@@ -380,6 +464,7 @@ fin_stock_target <- function(current=89, fair=140, ticker = "NVDA", capital=.15,
 #' @note This function includes input validation and will `stop()` with an error
 #'   if any inputs are non-numeric or non-positive.
 #'
+#' @family financial functions
 #' @export
 #'
 #' @examples
@@ -445,7 +530,7 @@ fin_CAGR = function(beginningValue, endingValue, numYears, digits=3) {
 #' @param deflate Final capital is inflation adjusted when inflation is non zero (default TRUE).
 #' @return - Value of balance after yrs of investment.
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_tax_NI()], [fin_stock_valuation()]
 #' @references - <https://en.wikipedia.org/wiki/Compound_interest>
 #' @md
@@ -582,7 +667,7 @@ fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 
 #' @param symbol Currency symbol to embed in the result.
 #' @return - NI
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_stock_valuation()]
 #' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
 #' @md
@@ -670,7 +755,7 @@ print.money <- bucks
 #' @param logY Whether to plot y axis as log (TRUE)
 #' @return - new value and change required to return to baseline.
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()]
 #' @md
 #' @examples
@@ -829,7 +914,7 @@ plot.percent <- function(x, ...) {
 #' @param yrs Years.
 #' @return - A PE that is justified for this stock.
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
 #' @md
 #' @examples
@@ -852,7 +937,7 @@ fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, disc
 #' @param ticker A stock symbol to look up, e.g., "OXY"
 #' @return - Open a ticker in a finance site online
 #' @export
-#' @family Miscellaneous Functions
+#' @family financial functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
 #' @md
 #' @examples

@@ -2361,7 +2361,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
 #'
 #' # ========================================================
-#' # = Use an lm-based age-residualisation approach instead =
+#' # = Use lm-based age residualisation approach instead =
 #' # ========================================================
 #'
 #' resid_data = umx_residualize("bmi", "age", suffixes = 1:2, twinData)
@@ -2379,7 +2379,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' # ===========================================================================
 #' selDVs  = "wt" # Set the DVs
 #' selCovs = "ht" # Set the COV
-#' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", sep = 1:2)
+#' selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes=1:2)
 #' mzData = subset(twinData, zygosity == "MZFF")
 #' dzData = subset(twinData, zygosity == "DZFF")
 #' m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,
@@ -2489,7 +2489,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 	}
 	DVvarStarts = matrix(DVvarStarts, nDV, nDV)
 	
-	# covs
+	# Covariates
 	covStarts = umx_var(mzData[, selCovs[1:nCov], drop = FALSE], format= "diag", ordVar = 1, use = "pairwise.complete.obs")
 	if(nCov == 1){
 		covStarts = sqrt(covStarts)

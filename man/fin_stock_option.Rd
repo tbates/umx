@@ -9,30 +9,35 @@ fin_stock_option(
   strike = 200,
   stock = 304,
   delta = 0.85,
-  years = 1.8
+  years = 1.8,
+  type = c("call", "put")
 )
 }
 \arguments{
-\item{premium}{Cost to buy}
+\item{premium}{Cost to buy the option contract per share.}
 
-\item{strike}{the strike price}
+\item{strike}{The strike price of the option.}
 
-\item{stock}{the current price}
+\item{stock}{The current stock price.}
 
-\item{delta}{the delta}
+\item{delta}{The delta of the option (default = 0.85). Used to calculate effective leverage (Omega).}
 
-\item{years}{how far in time the LEAP ends.}
+\item{years}{How far in time the option ends (e.g. 1.8 years for a LEAP).}
+
+\item{type}{Whether it is a "call" or "put" option.}
 }
 \value{
-\itemize{
-\item value
-}
+A list containing intrinsic value, extrinsic value, break-even price, annualized rent percent, effective leverage (Omega), and daily theta.
 }
 \description{
-\code{fin_stock_option} is a teaching function for understanding  vega etc.
+\code{fin_stock_option} is a teaching function for understanding options (intrinsic/extrinsic value, annualized rent, leverage, and time decay).
 }
 \examples{
-fin_stock_option(premium = 134, strike = 200, stock= 304)
+# Call Option (In-The-Money LEAP)
+fin_stock_option(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8)
+
+# Put Option (Out-Of-The-Money)
+fin_stock_option(premium = 10, strike = 280, stock = 304, delta = -0.30, years = 0.5, type = "put")
 
 }
 \seealso{
@@ -40,8 +45,8 @@ fin_stock_option(premium = 134, strike = 200, stock= 304)
 \item \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=fin_tax_NI]{fin_tax_NI()}}, \code{\link[=fin_percent]{fin_percent()}}
 }
 
-Other Miscellaneous Functions:
-\code{\link[=deg2rad]{deg2rad()}},
+Other financial functions:
+\code{\link[=fin_CAGR]{fin_CAGR()}},
 \code{\link[=fin_carryCost]{fin_carryCost()}},
 \code{\link[=fin_interest]{fin_interest()}},
 \code{\link[=fin_net_present_value]{fin_net_present_value()}},
@@ -52,9 +57,6 @@ Other Miscellaneous Functions:
 \code{\link[=fin_stock_ticker]{fin_stock_ticker()}},
 \code{\link[=fin_stock_valuation]{fin_stock_valuation()}},
 \code{\link[=fin_tax_FIF]{fin_tax_FIF()}},
-\code{\link[=fin_tax_NI]{fin_tax_NI()}},
-\code{\link[=rad2deg]{rad2deg()}},
-\code{\link[=umxBrownie]{umxBrownie()}},
-\code{\link[=umx_complete_dollar]{umx_complete_dollar()}}
+\code{\link[=fin_tax_NI]{fin_tax_NI()}}
 }
-\concept{Miscellaneous Functions}
+\concept{financial functions}

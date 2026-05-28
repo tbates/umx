@@ -53,8 +53,8 @@ fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
 \item \code{\link[=fin_interest]{fin_interest()}}, \code{\link[=fin_tax_NI]{fin_tax_NI()}}, \code{\link[=fin_percent]{fin_percent()}}
 }
 
-Other Miscellaneous Functions:
-\code{\link[=deg2rad]{deg2rad()}},
+Other financial functions:
+\code{\link[=fin_CAGR]{fin_CAGR()}},
 \code{\link[=fin_interest]{fin_interest()}},
 \code{\link[=fin_net_present_value]{fin_net_present_value()}},
 \code{\link[=fin_percent]{fin_percent()}},
@@ -65,9 +65,6 @@ Other Miscellaneous Functions:
 \code{\link[=fin_stock_ticker]{fin_stock_ticker()}},
 \code{\link[=fin_stock_valuation]{fin_stock_valuation()}},
 \code{\link[=fin_tax_FIF]{fin_tax_FIF()}},
-\code{\link[=fin_tax_NI]{fin_tax_NI()}},
-\code{\link[=rad2deg]{rad2deg()}},
-\code{\link[=umxBrownie]{umxBrownie()}},
-\code{\link[=umx_complete_dollar]{umx_complete_dollar()}}
+\code{\link[=fin_tax_NI]{fin_tax_NI()}}
 }
-\concept{Miscellaneous Functions}
+\concept{financial functions}

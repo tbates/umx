@@ -100,7 +100,7 @@ dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACEcov(selDVs = "bmi", selCovs = "age", dzData = dzData, mzData = mzData, sep = "")
 
 # ========================================================
-# = Use an lm-based age-residualisation approach instead =
+# = Use lm-based age residualisation approach instead =
 # ========================================================
 
 resid_data = umx_residualize("bmi", "age", suffixes = 1:2, twinData)
@@ -118,7 +118,7 @@ m3 = umxACE("raw_bmi", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "
 # ===========================================================================
 selDVs  = "wt" # Set the DVs
 selCovs = "ht" # Set the COV
-selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", sep = 1:2)
+selVars = umx_paste_names(selDVs, covNames = selCovs, sep = "", suffixes=1:2)
 mzData = subset(twinData, zygosity == "MZFF")
 dzData = subset(twinData, zygosity == "DZFF")
 m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs,

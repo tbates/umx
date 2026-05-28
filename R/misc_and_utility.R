@@ -436,29 +436,6 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 	}
 }
 
-#' Set the symbol for money
-#'
-#' Set umx_set_dollar_symbol (used in e.g. [fin_interest()]
-#'
-#' @param umx.dollar.symbol symbol for money calculations.
-#' @param silent If TRUE, no message will be printed.
-#' @return - Current umx.dollar.symbol
-#' @export
-#' @family Get and set
-#' @examples
-#' library(umx)
-#' umx_set_dollar_symbol() # show current state
-#' old = umx_set_dollar_symbol(silent=TRUE) # store existing value
-#' fin_interest(100)
-#' umx_set_dollar_symbol(old)    # reinstate
-umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
-	if(is.null(umx.dollar.symbol)) {
-		if(!silent){ message("Current format is ", omxQuotes(getOption("umx.dollar.symbol"))	) }
-		invisible(getOption("umx.dollar.symbol"))
-	} else {
-		options("umx.dollar.symbol" = umx.dollar.symbol)
-	}
-}
 
 #' Get the alpha text
 #'
