@@ -3265,7 +3265,7 @@ umx_make <- function(
 #' 
 #' # Cleanly routes dataframe structures to stderr
 #' umx_msg(mtcars[1:2, 1:3])
-umx_msg = function(x) {
+umx_msg <- function(x) {
 	# 1. Safely capture the name, flattening any multi-line deparse breaks
 	varName = paste0(deparse(substitute(x)), collapse = "")
 	
@@ -3325,7 +3325,7 @@ umx_msg = function(x) {
 #' umxPlotFun(list(Sine = sin, Cosine = cos), max = 2*pi)
 #' }
 #'
-umxPlotFun = function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL) {
+umxPlotFun <- function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL) {
     logY = xmu_match.arg(logY, c("no", "log", "log10"), check = FALSE)
     logX = xmu_match.arg(logX, c("no", "log", "log10"), check = FALSE)
     
@@ -5117,7 +5117,7 @@ umx_yj_wide_twin_data = function(data, varsToTransform, sep = "_T",  twins = 1:2
 #' @param twins Suffixes for twins (default 1:2)
 #' @return dataframe with transformed variables
 #' @export
-umx_log_wide_twin_data = function(varsToTransform, sep, data, twins = 1:2) {
+umx_log_wide_twin_data <- function(varsToTransform, sep, data, twins = 1:2) {
 	if (length(sep) != 1) {
 		stop("I need one sep, you gave me ", length(sep))
 	}

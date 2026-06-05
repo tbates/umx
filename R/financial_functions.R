@@ -44,7 +44,7 @@ umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
 #' # Example Usage:
 #' # 2026 Strategy: $500k Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
 #' fin_tax_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
-fin_tax_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
+fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
   # 1. Core Logic (Dynamic Calculations)
   # Ratio to zero out taxable income
   ratioDeductionOnly = fifRate / marginRate
@@ -110,7 +110,7 @@ fin_tax_FIF = function(portfolioValue, marginRate, expectedReturn, taxRate, fifR
 #' # Put Option (Out-Of-The-Money)
 #' fin_stock_option(premium = 10, strike = 280, stock = 304, delta = -0.30, years = 0.5, type = "put")
 #'
-fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8, type = c("call", "put")) {
+fin_stock_option <- function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8, type = c("call", "put")) {
   type = match.arg(type)
 
   # Adjust default/positive delta if user specified a Put option
@@ -224,7 +224,7 @@ fin_stock_option = function(premium = 134, strike = 200, stock = 304, delta = 0.
 #' startDate = "2016-01-01"
 #' nvdaCagr = fin_stock_CAGR(NVDA, startDate)
 #' }
-fin_stock_CAGR = function(priceSeries, from = "1900-01-01") {
+fin_stock_CAGR <- function(priceSeries, from = "1900-01-01") {
 	# getSymbols(c("NVDA"), from = "2010-01-01", to = Sys.Date())
 	tickerName = deparse(substitute(priceSeries))   # this is the magic line you wanted
   data = data.frame(
@@ -278,7 +278,7 @@ fin_stock_CAGR = function(priceSeries, from = "1900-01-01") {
 #' fin_carryCost(property_cost=1.2e6)
 #' fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
 #'
-fin_carryCost = function(property_cost, appreciation =.02, QQQ= .14, rent_saved= .04, interest= .06, rates= 5000, insurance = 2000, maintenance = .015, years=5){  
+fin_carryCost <- function(property_cost, appreciation =.02, QQQ= .14, rent_saved= .04, interest= .06, rates= 5000, insurance = 2000, maintenance = .015, years=5){  
   rent_saved   = property_cost * rent_saved
   interest     = property_cost * interest
   maintenance  = property_cost * maintenance
@@ -485,7 +485,7 @@ fin_stock_target <- function(current=89, fair=140, ticker = "NVDA", capital=.15,
 #' fin_CAGR(100, 150, -1) # Error: Inputs must be positive
 #' fin_CAGR("100", 150, 5) # Error: All inputs must be numeric
 #' }
-fin_CAGR = function(beginningValue, endingValue, numYears, digits=3) {
+fin_CAGR <- function(beginningValue, endingValue, numYears, digits=3) {
   # Ensure inputs are numeric
   if (!is.numeric(beginningValue) || !is.numeric(endingValue) || !is.numeric(numYears)) {
     stop("All inputs must be numeric.")
@@ -950,3 +950,316 @@ fin_stock_ticker <- function(ticker= "INTC") {
 	# https://www.google.com/finance/quote/SWBI:NASDAQ
 	browseURL(url, browser = getOption("browser"))
 }
+
+#' Black-Scholes Call Option Price and Greeks Calculator
+#'
+#' @description
+#' `fin_Greeks` calculates the theoretical European Call option price and its corresponding Greeks (Delta, Gamma, Theta, Vega, and Rho) using the Black-Scholes model.
+#'
+#' @param spotPrice The current price of the underlying asset.
+#' @param strikePrice The strike price of the option.
+#' @param daysToExpiry The number of days remaining until option expiration.
+#' @param riskFreeRate The annual risk-free interest rate (expressed as a decimal, default = 0.04 for 4%).
+#' @param impliedVol The annualized implied volatility (expressed as a decimal, default = 0.20 for 20%).
+#' @return A data frame containing:
+#' \itemize{
+#'   \item \code{price}: Theoretical Call option price
+#'   \item \code{delta}: Sensitivity of option price to underlying price (Delta)
+#'   \item \code{gamma}: Sensitivity of Delta to underlying price (Gamma)
+#'   \item \code{theta}: Daily time decay of option price (Theta)
+#'   \item \code{vega}: Sensitivity of option price to a 1% change in implied volatility
+#'   \item \code{rho}: Sensitivity of option price to a 1% change in risk-free interest rate
+#' }
+#' @export
+#' @family financial functions
+#' @md
+#' @examples
+#' fin_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, riskFreeRate = 0.04, impliedVol = 0.20)
+#'
+fin_Greeks <- function(spotPrice, strikePrice, daysToExpiry, riskFreeRate = 0.04, impliedVol = 0.20) {
+  supplied = names(as.list(match.call())[-1])
+  allArgs = c("spotPrice", "strikePrice", "daysToExpiry", "riskFreeRate", "impliedVol")
+  missingArgs = setdiff(allArgs, supplied)
+
+  if (length(missingArgs) > 0) {
+    cat("=== Option Parameter Definitions (Teaching Mode) ===\n")
+    if ("spotPrice" %in% missingArgs) {
+      cat("  * spotPrice    : The current price of the underlying asset.\n")
+    }
+    if ("strikePrice" %in% missingArgs) {
+      cat("  * strikePrice  : The strike price of the option (fixed exercise price).\n")
+    }
+    if ("daysToExpiry" %in% missingArgs) {
+      cat("  * daysToExpiry : Days remaining until option expiration.\n")
+    }
+    if ("riskFreeRate" %in% missingArgs) {
+      cat("  * riskFreeRate : Annual risk-free interest rate as a decimal (default = 0.04 for 4%).\n")
+    }
+    if ("impliedVol" %in% missingArgs) {
+      cat("  * impliedVol   : Annualized implied volatility as a decimal (default = 0.20 for 20%).\n")
+    }
+    cat("===================================================\n\n")
+
+    if ("spotPrice" %in% missingArgs) {
+      cat("No spotPrice supplied. Defaulting to spotPrice = 100.\n")
+      spotPrice = 100
+    }
+    if ("strikePrice" %in% missingArgs) {
+      cat("No strikePrice supplied. Defaulting to strikePrice = 100.\n")
+      strikePrice = 100
+    }
+    if ("daysToExpiry" %in% missingArgs) {
+      cat("No daysToExpiry supplied. Defaulting to daysToExpiry = 30.\n")
+      daysToExpiry = 30
+    }
+    cat("\n")
+  }
+
+  if (is.character(daysToExpiry) || inherits(daysToExpiry, "Date") || inherits(daysToExpiry, "POSIXt")) {
+    expiryDate = as.Date(daysToExpiry)
+    daysToExpiry = as.numeric(difftime(expiryDate, Sys.Date(), units = "days"))
+  }
+
+  impliedVol = fin_resolveVolatility(impliedVol, strikePrice, daysToExpiry)
+
+  t = daysToExpiry / 365
+  r = riskFreeRate
+  sigma = impliedVol
+
+  if (t <= 0) {
+    callPrice = max(0, spotPrice - strikePrice)
+    delta = if (spotPrice > strikePrice) 1.0 else if (spotPrice < strikePrice) 0.0 else 0.5
+    gamma = 0.0
+    theta = 0.0
+    vega = 0.0
+    rho = 0.0
+  } else {
+    d1 = (log(spotPrice / strikePrice) + (r + (sigma^2) / 2) * t) / (sigma * sqrt(t))
+    d2 = d1 - sigma * sqrt(t)
+
+    callPrice = spotPrice * pnorm(d1) - strikePrice * exp(-r * t) * pnorm(d2)
+    delta = pnorm(d1)
+    gamma = dnorm(d1) / (spotPrice * sigma * sqrt(t))
+    theta = (-(spotPrice * dnorm(d1) * sigma) / (2 * sqrt(t)) - r * strikePrice * exp(-r * t) * pnorm(d2)) / 365
+    vega = (spotPrice * sqrt(t) * dnorm(d1)) / 100
+    rho = (strikePrice * t * exp(-r * t) * pnorm(d2)) / 100
+  }
+
+  res = data.frame(
+    price = callPrice,
+    delta = delta,
+    gamma = gamma,
+    theta = theta,
+    vega = vega,
+    rho = rho
+  )
+  return(res)
+}
+
+#' Plot Option Delta and Gamma Curves
+#'
+#' @description
+#' `fin_plotGreekCurves` plots Call Option Delta and Gamma curves across a range of spot prices
+#' (from -30% to +30% of the strike price) to show how Delta accelerates and Gamma peaks.
+#'
+#' @param strikePrice The strike price of the option (default = 100 if omitted).
+#' @param daysToExpiry The number of days remaining until option expiration (default = 30).
+#' @param riskFreeRate The annual risk-free interest rate (default = 0.04).
+#' @param impliedVol The annualized implied volatility of the underlying asset (default = 0.20).
+#' @return A ggplot object visualizing Delta and Gamma.
+#' @export
+#' @family financial functions
+#' @md
+#' @examples
+#' \dontrun{
+#' fin_plotGreekCurves(strikePrice = 100)
+#' # Run with missing arguments to print definitions
+#' fin_plotGreekCurves()
+#' }
+#'
+fin_plotGreekCurves <- function(strikePrice, daysToExpiry = 30, riskFreeRate = 0.04, impliedVol = 0.20) {
+  supplied = names(as.list(match.call())[-1])
+  allArgs = c("strikePrice", "daysToExpiry", "riskFreeRate", "impliedVol")
+  missingArgs = setdiff(allArgs, supplied)
+
+  if (length(missingArgs) > 0) {
+    cat("=== Option Parameter Definitions (Teaching Mode) ===\n")
+    if ("strikePrice" %in% missingArgs) {
+      cat("  * strikePrice  : The strike price of the option (fixed exercise price).\n")
+    }
+    if ("daysToExpiry" %in% missingArgs) {
+      cat("  * daysToExpiry : Days remaining until option expiration (default = 30).\n")
+    }
+    if ("riskFreeRate" %in% missingArgs) {
+      cat("  * riskFreeRate : Annual risk-free interest rate as a decimal (default = 0.04 for 4%).\n")
+    }
+    if ("impliedVol" %in% missingArgs) {
+      cat("  * impliedVol   : Annualized implied volatility as a decimal (default = 0.20 for 20%).\n")
+    }
+    cat("===================================================\n\n")
+
+    if ("strikePrice" %in% missingArgs) {
+      cat("No strikePrice supplied. Defaulting to strikePrice = 100 for visualization.\n\n")
+      strikePrice = 100
+    }
+  }
+
+  if (is.character(daysToExpiry) || inherits(daysToExpiry, "Date") || inherits(daysToExpiry, "POSIXt")) {
+    expiryDate = as.Date(daysToExpiry)
+    daysToExpiry = as.numeric(difftime(expiryDate, Sys.Date(), units = "days"))
+  }
+
+  impliedVol = fin_resolveVolatility(impliedVol, strikePrice, daysToExpiry)
+
+  spotRange = seq(0.7 * strikePrice, 1.3 * strikePrice, length.out = 150)
+  
+  greeksList = lapply(spotRange, function(s) {
+    fin_Greeks(spotPrice = s, strikePrice = strikePrice, daysToExpiry = daysToExpiry, riskFreeRate = riskFreeRate, impliedVol = impliedVol)
+  })
+  
+  df = do.call(rbind, greeksList)
+  df$spot = spotRange
+
+  maxGamma       = max(df$gamma)
+  scaleFactor    = if (maxGamma > 0) 1 / maxGamma else 1
+  df$gammaScaled = df$gamma * scaleFactor
+
+  peakIndex = which.max(df$gamma)
+  peakSpot  = df$spot[peakIndex]
+  peakDelta = df$delta[peakIndex]
+  peakGamma = df$gamma[peakIndex]
+
+  p = ggplot(df, aes(x = spot))
+  p = p + geom_line(aes(y = delta, color = "Delta"), linewidth = 1.2)
+  p = p + geom_line(aes(y = gammaScaled, color = "Gamma"), linewidth = 1.2)
+  p = p + geom_vline(xintercept = peakSpot, linetype = "dashed", color = "gray40", alpha = 0.7)
+  p = p + geom_point(data = data.frame(spot = peakSpot, gammaScaled = peakGamma * scaleFactor), aes(x = spot, y = gammaScaled), color = "#D55E00", size = 3)
+  p = p + geom_point(data = data.frame(spot = peakSpot, delta = peakDelta), aes(x = spot, y = delta), color = "#0072B2", size = 3)
+  labelText = sprintf("Peak Gamma: %.4f at Spot = $%.2f\nDelta: %.2f (Acceleration Point)", peakGamma, peakSpot, peakDelta)
+  p = p + annotate("label", x = peakSpot, y = 0.5, label = labelText, fill = "white", color = "black", fontface = "bold", size = 3.5, alpha = 0.85, label.padding = unit(0.5, "lines"))
+  p = p + scale_y_continuous(name = "Delta (Probability Proxy / Position Size)", limits = c(0, 1), sec.axis = ggplot2::sec_axis(~ . / scaleFactor, name = "Gamma (Rate of Change of Delta)"))
+  p = p + scale_x_continuous(name = "Underlying Spot Price ($)")
+  p = p + ggplot2::scale_color_manual(name = "Greeks", values = c("Delta" = "#0072B2", "Gamma" = "#D55E00"))
+  titleText = sprintf("Delta & Gamma Sensitivity Curve (Strike = $%.2f, Expiry = %d Days)", strikePrice, daysToExpiry)
+  p = p + labs(title = titleText, subtitle = "Delta represents position sensitivity; Gamma peaks where Delta changes fastest (At-The-Money)", caption = "Model: Black-Scholes European Option Calculator")
+  p = p + theme_minimal(base_size = 11)
+  p = p + theme(legend.position = "bottom", plot.title = element_text(face = "bold", size = 12), axis.title.y.right = element_text(color = "#D55E00"), axis.title.y.left = element_text(color = "#0072B2"))
+  return(p)
+}
+
+#' Simulate and Compare LEAP Extrinsic Premium Decay
+#'
+#' @description
+#' `fin_LeapSimulateRoll` compares two European Call options over a 931-day horizon:
+#' one starting at a 0.80 Delta and another at a 0.95 Delta. It simulates how their extrinsic
+#' value (rent/time-decay premium) bleeds to 0 as time runs out, plotting the results side-by-side.
+#'
+#' @param spotPrice The constant price of the underlying asset (default = 100).
+#' @param impliedVol The constant implied volatility of the underlying asset (default = 0.20).
+#' @param riskFreeRate The annual risk-free interest rate (default = 0.04).
+#' @return A ggplot object comparing the extrinsic premium decay side-by-side.
+#' @export
+#' @family financial functions
+#' @md
+#' @examples
+#' \dontrun{
+#' fin_LeapSimulateRoll(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04)
+#' }
+#'
+fin_LeapSimulateRoll <- function(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04) {
+  impliedVol = fin_resolveVolatility(impliedVol, spotPrice, 931)
+  tInit = 931 / 365
+  r = riskFreeRate
+  sigma = impliedVol
+
+  d1_80 = qnorm(0.80)
+  strike80 = spotPrice * exp((r + (sigma^2) / 2) * tInit - d1_80 * sigma * sqrt(tInit))
+
+  d1_95 = qnorm(0.95)
+  strike95 = spotPrice * exp((r + (sigma^2) / 2) * tInit - d1_95 * sigma * sqrt(tInit))
+
+  daysSeq = seq(931, 0, by = -1)
+
+  simData = lapply(daysSeq, function(d) {
+    g80 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike80, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
+    intrinsic80 = max(0, spotPrice - strike80)
+    extrinsic80 = g80$price - intrinsic80
+
+    g95 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike95, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
+    intrinsic95 = max(0, spotPrice - strike95)
+    extrinsic95 = g95$price - intrinsic95
+
+    data.frame(
+      daysToExpiry = d,
+      extrinsic80 = extrinsic80,
+      extrinsic95 = extrinsic95,
+      theta80 = g80$theta,
+      theta95 = g95$theta
+    )
+  })
+
+  df = do.call(rbind, simData)
+
+  df80 = data.frame(
+    daysToExpiry = df$daysToExpiry,
+    position = "Delta 0.80 Option",
+    strike = strike80,
+    extrinsicValue = df$extrinsic80,
+    dailyTheta = df$theta80
+  )
+  df95 = data.frame(
+    daysToExpiry = df$daysToExpiry,
+    position = "Delta 0.95 Option",
+    strike = strike95,
+    extrinsicValue = df$extrinsic95,
+    dailyTheta = df$theta95
+  )
+
+  dfLong = rbind(df80, df95)
+
+  p = ggplot(dfLong, aes(x = daysToExpiry, y = extrinsicValue, color = position))
+  p = p + geom_line(linewidth = 1.2)
+  p = p + ggplot2::facet_wrap(~ position, scales = "fixed")
+  p = p + ggplot2::scale_x_reverse(name = "Days to Expiration (Time Running Out)")
+  p = p + scale_y_continuous(name = "Extrinsic Premium Value / Rent Remaining ($)")
+  p = p + ggplot2::scale_color_manual(values = c("Delta 0.80 Option" = "#E69F00", "Delta 0.95 Option" = "#56B4E9"))
+  
+  label80 = sprintf("Initial Strike: $%.2f\nMax Extrinsic: $%.2f", strike80, df$extrinsic80[1])
+  label95 = sprintf("Initial Strike: $%.2f\nMax Extrinsic: $%.2f", strike95, df$extrinsic95[1])
+  
+  annData = data.frame(
+    daysToExpiry = c(450, 450),
+    extrinsicValue = c(df$extrinsic80[1] * 0.5, df$extrinsic80[1] * 0.5),
+    position = c("Delta 0.80 Option", "Delta 0.95 Option"),
+    labelText = c(label80, label95)
+  )
+  
+  p = p + ggplot2::geom_label(data = annData, aes(label = labelText), color = "black", fill = "white", size = 3.5, fontface = "bold", label.padding = unit(0.5, "lines"), alpha = 0.9)
+  
+  p = p + labs(
+    title = "LEAP Extrinsic Premium Decay: Delta 0.80 vs Delta 0.95",
+    subtitle = "Deep ITM options (0.95 Delta) pay significantly less extrinsic rent, reducing time-decay risk.",
+    caption = "Constant Spot Price and Implied Volatility. Standard European Option Model."
+  )
+  
+  p = p + theme_minimal(base_size = 11)
+  
+  p = p + theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12),
+    plot.title = element_text(face = "bold", size = 13)
+  )
+
+  cat("=== LEAP Option Simulation Summary ===\n")
+  cat(sprintf("Spot Price: $%.2f | Implied Vol: %.0f%% | Risk-Free Rate: %.1f%%\n", spotPrice, impliedVol * 100, riskFreeRate * 100))
+  cat(sprintf("Option 1 (Delta 0.80): Strike = $%.2f | Start Extrinsic = $%.2f\n", strike80, df$extrinsic80[1]))
+  cat(sprintf("Option 2 (Delta 0.95): Strike = $%.2f | Start Extrinsic = $%.2f\n", strike95, df$extrinsic95[1]))
+  cat(sprintf("Rent Savings: 0.95 Delta Option saves $%.2f (%.1f%%) in extrinsic value compared to 0.80 Delta.\n",
+              df$extrinsic80[1] - df$extrinsic95[1],
+              100 * (df$extrinsic80[1] - df$extrinsic95[1]) / df$extrinsic80[1]))
+
+  return(p)
+}
+
+
+

@@ -54,10 +54,13 @@ fin_CAGR("100", 150, 5) # Error: All inputs must be numeric
 }
 \seealso{
 Other financial functions:
+\code{\link[=fin_Greeks]{fin_Greeks()}},
+\code{\link[=fin_LeapSimulateRoll]{fin_LeapSimulateRoll()}},
 \code{\link[=fin_carryCost]{fin_carryCost()}},
 \code{\link[=fin_interest]{fin_interest()}},
 \code{\link[=fin_net_present_value]{fin_net_present_value()}},
 \code{\link[=fin_percent]{fin_percent()}},
+\code{\link[=fin_plotGreekCurves]{fin_plotGreekCurves()}},
 \code{\link[=fin_stock_CAGR]{fin_stock_CAGR()}},
 \code{\link[=fin_stock_justifiedPE]{fin_stock_justifiedPE()}},
 \code{\link[=fin_stock_option]{fin_stock_option()}},
