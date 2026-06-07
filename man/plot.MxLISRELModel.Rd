@@ -62,8 +62,16 @@ then set \dQuote{change all}.
 The commercial application \dQuote{OmniGraffle} is great for editing these images.
 }
 \examples{
-# plot()
-# TODO get LISREL example model
+\dontrun{
+library(umx)
+data(demoOneFactor)
+manifests = names(demoOneFactor)
+m1 = umxLISREL("one_factor", data = demoOneFactor, type = "cov",
+               umxPath("G", to = manifests),
+               umxPath(var = manifests),
+               umxPath(var = "G", fixedAt = 1))
+plot(m1)
+}
 }
 \references{
 \itemize{

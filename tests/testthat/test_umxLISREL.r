@@ -60,3 +60,39 @@ test_that("umxLISREL works with raw data and automatically adds means", {
 	# Check summary runs
 	expect_error(umxSummary(m2), NA)
 })
+
+test_that("umxLISREL works with list override for manifestVars and latentVars", {
+	data(demoOneFactor)
+	m3 = umxLISREL("forced_exogenous", data = demoOneFactor,
+	               manifestVars = list(endogenous = c("x4", "x5"), exogenous = c("x1", "x2")),
+	               latentVars = list(endogenous = "G", exogenous = "xi"),
+	               umxPath("xi", to = c("x1", "x2")),
+	               umxPath("G", to = c("x4", "x5")),
+	               umxPath("xi", to = "G"),
+	               umxPath(var = c("x1", "x2", "x4", "x5")),
+	               umxPath(var = "xi", fixedAt = 1),
+	               umxPath(var = "G"),
+	               umxPath(means = c("x1", "x2", "x4", "x5")))
+	
+	expect_true(umx_is_LISREL(m3))
+	expect_equal(m3$expectation@LY, "LY")
+	expect_equal(m3$expectation@LX, "LX")
+	expect_equal(m3$expectation@BE, "BE")
+	expect_equal(m3$expectation@GA, "GA")
+	expect_error(umxSummary(m3), NA)
+})
+
+
+test_that("umxLISREL works with character vector manifestVars", {
+	data(demoOneFactor)
+	m4 = umxLISREL("subset_manifests", data = demoOneFactor,
+	               manifestVars = c("x1", "x2", "x3"),
+	               umxPath("G", to = c("x1", "x2", "x3")),
+	               umxPath(var = c("x1", "x2", "x3")),
+	               umxPath(var = "G", fixedAt = 1))
+	
+	expect_true(umx_is_LISREL(m4))
+	expect_equal(rownames(m4$LX$values), c("x1", "x2", "x3"))
+	expect_error(umxSummary(m4), NA)
+})
+

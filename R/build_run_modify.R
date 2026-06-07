@@ -929,6 +929,8 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' @param model NA, a name string, or an existing LISREL [OpenMx::mxModel()] to update.
 #' @param ... Path statements (`mxPath` or `umxPath`), matrices, etc., to add to the model.
 #' @param data Data frame, matrix, or `mxData` to use.
+#' @param manifestVars Optional list of endogenous/exogenous manifest variables, or character vector of manifest variables to partition.
+#' @param latentVars Optional list of endogenous/exogenous latent variables, or character vector of latent variables to partition.
 #' @param name Optional name for the model (defaults to the model's current name or 'm1').
 #' @param group Column name in data to partition data for multi-group models.
 #' @param group.equal Not implemented.
@@ -959,12 +961,32 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 #' library(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#' m1 = umxLISREL("one_factor", data = demoOneFactor, type = "cov",
+#' 
+#' # 1. LISREL model with covariance data
+#' m1 = umxLISREL("one_factor_cov", data = demoOneFactor, type = "cov",
 #'                umxPath("G", to = manifests),
 #'                umxPath(var = manifests),
 #'                umxPath(var = "G", fixedAt = 1))
+#' 
+#' # 2. LISREL model with raw data (means are automatically added)
+#' m2 = umxLISREL("one_factor_raw", data = demoOneFactor,
+#'                umxPath("G", to = manifests),
+#'                umxPath(var = manifests),
+#'                umxPath(var = "G", fixedAt = 1))
+#' 
+#' # 3. Forced exogenous manifests using manifestVars list override
+#' m3 = umxLISREL("forced_exogenous", data = demoOneFactor,
+#'                manifestVars = list(endogenous = c("x4", "x5"), exogenous = c("x1", "x2")),
+#'                latentVars = list(endogenous = "G", exogenous = "xi"),
+#'                umxPath("xi", to = c("x1", "x2")),
+#'                umxPath("G", to = c("x4", "x5")),
+#'                umxPath("xi", to = "G"),
+#'                umxPath(var = c("x1", "x2", "x4", "x5")),
+#'                umxPath(var = "xi", fixedAt = 1),
+#'                umxPath(var = "G"),
+#'                umxPath(means = c("x1", "x2", "x4", "x5")))
 #' }
-umxLISREL <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, printTab = FALSE) {
+umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentVars = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, printTab = FALSE) {
 	dotItems = list(...) # grab all the dot items: mxPaths, etc...
 	# Check for data/model objects passed in ... before unlist() flattens them
 	for (item in dotItems) {
@@ -1093,27 +1115,20 @@ umxLISREL <- function(model = NA, ..., data = NULL, name = NA, group = NULL, gro
 	# ====================================
 	# = Find latentVars and manifestVars =
 	# ====================================
-	# Get names from data (forms pool of potential usedManifests)
-	manifestVars = unique(na.omit(umx_names(data)))
-
 	# Omit NAs from found names (empty "to =" can generate these spuriously)
 	foundNames = unique(na.omit(foundNames))
 	defnNames  = unique(na.omit(defnNames))
 	targets    = unique(na.omit(targets))
-	
-	if(length(defnNames)>0){
+
+	if(length(defnNames) > 0){
 		# check'm if you've got'm
 		umx_check_names(defnNames, data = data, message = "note: used as definition variable, but not present in data")
 	}
-	# Anything else used as a path, but not found in the data (and not a key word like "one") must be a latent
-	latentVars = setdiff(foundNames, c(manifestVars, "one"))
 
-	# List up used and un-used Manifests
-	unusedManifests = setdiff(manifestVars, c(foundNames, defnNames))
-	if (!is.null(weight)) unusedManifests = setdiff(c(manifestVars, weight), c(foundNames, defnNames))
-
-	if(remove_unused_manifests & length(unusedManifests) > 0){
-		usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
+	# 1. Determine Manifests
+	if (is.list(manifestVars)) {
+		manifestList = manifestVars
+		usedManifests = c(manifestList$endogenous, manifestList$exogenous)
 		if (!is.null(weight)) {
 			myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = 
 				defnNames, verbose = verbose, weight = weight)
@@ -1122,63 +1137,99 @@ umxLISREL <- function(model = NA, ..., data = NULL, name = NA, group = NULL, gro
 				defnNames, verbose = verbose)
 		}
 	} else {
-		# keep everything
-		usedManifests = setdiff(manifestVars, defnNames)
-		myData = xmu_make_mxData(data= data, type = type, verbose = verbose, manifests = usedManifests, fullCovs = 
-			defnNames)
-	}
+		if (is.null(manifestVars)) {
+			manifestVarsPool = unique(na.omit(umx_names(data)))
+		} else {
+			manifestVarsPool = manifestVars
+		}
 
-	# Partition into endogenous and exogenous
-	# A latent variable is endogenous if it is targeted by another latent variable
-	endogenousLatents = c()
-	for (thisItem in dotItems) {
-		if (inherits(thisItem, "MxPath") && thisItem$arrows == 1) {
-			fromLatents = intersect(thisItem$from, latentVars)
-			toLatents   = intersect(thisItem$to, latentVars)
-			if (length(fromLatents) > 0 && length(toLatents) > 0) {
-				endogenousLatents = union(endogenousLatents, toLatents)
+		# List up used and un-used Manifests
+		unusedManifests = setdiff(manifestVarsPool, c(foundNames, defnNames))
+		if (!is.null(weight)) unusedManifests = setdiff(c(manifestVarsPool, weight), c(foundNames, defnNames))
+
+		if(remove_unused_manifests & length(unusedManifests) > 0){
+			usedManifests = setdiff(intersect(manifestVarsPool, foundNames), "one")
+			if (!is.null(weight)) {
+				myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = 
+					defnNames, verbose = verbose, weight = weight)
+			} else {
+				myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = 
+					defnNames, verbose = verbose)
 			}
+		} else {
+			# keep everything
+			usedManifests = setdiff(manifestVarsPool, defnNames)
+			myData = xmu_make_mxData(data = data, type = type, verbose = verbose, manifests = usedManifests, fullCovs = 
+				defnNames)
 		}
 	}
-	exogenousLatents = setdiff(latentVars, endogenousLatents)
 
-	# A manifest variable is endogenous if it is targeted by an endogenous latent or another manifest
-	endogenousManifests = c()
-	for (thisItem in dotItems) {
-		if (inherits(thisItem, "MxPath") && thisItem$arrows == 1) {
-			toManifests = intersect(thisItem$to, usedManifests)
-			if (length(toManifests) > 0) {
-				fromEndoLatents = intersect(thisItem$from, endogenousLatents)
-				fromManifests   = intersect(thisItem$from, usedManifests)
-				if (length(fromEndoLatents) > 0 || length(fromManifests) > 0) {
-					endogenousManifests = union(endogenousManifests, toManifests)
+	# 2. Determine Latents
+	if (is.list(latentVars)) {
+		latentList = latentVars
+		endogenousLatents = latentList$endogenous
+		exogenousLatents = latentList$exogenous
+		latentVarsPool = c(endogenousLatents, exogenousLatents)
+	} else {
+		if (is.null(latentVars)) {
+			latentVarsPool = setdiff(foundNames, c(usedManifests, "one"))
+		} else {
+			latentVarsPool = latentVars
+		}
+
+		# Partition latentVarsPool into endogenous and exogenous
+		# A latent variable is endogenous if it is targeted by another latent variable
+		endogenousLatents = c()
+		for (thisItem in dotItems) {
+			if (inherits(thisItem, "MxPath") && thisItem$arrows == 1) {
+				fromLatents = intersect(thisItem$from, latentVarsPool)
+				toLatents   = intersect(thisItem$to, latentVarsPool)
+				if (length(fromLatents) > 0 && length(toLatents) > 0) {
+					endogenousLatents = union(endogenousLatents, toLatents)
 				}
 			}
 		}
-	}
-	exogenousManifests = setdiff(usedManifests, endogenousManifests)
+		exogenousLatents = setdiff(latentVarsPool, endogenousLatents)
 
+		latentList = list()
+		if(length(endogenousLatents) > 0) latentList$endogenous = endogenousLatents
+		if(length(exogenousLatents) > 0) latentList$exogenous = exogenousLatents
+	}
+
+	# 3. Partition manifests if not already a list
+	if (!is.list(manifestVars)) {
+		# A manifest variable is endogenous if it is targeted by an endogenous latent or another manifest
+		endogenousManifests = c()
+		for (thisItem in dotItems) {
+			if (inherits(thisItem, "MxPath") && thisItem$arrows == 1) {
+				toManifests = intersect(thisItem$to, usedManifests)
+				if (length(toManifests) > 0) {
+					fromEndoLatents = intersect(thisItem$from, endogenousLatents)
+					fromManifests   = intersect(thisItem$from, usedManifests)
+					if (length(fromEndoLatents) > 0 || length(fromManifests) > 0) {
+						endogenousManifests = union(endogenousManifests, toManifests)
+					}
+				}
+			}
+		}
+		exogenousManifests = setdiff(usedManifests, endogenousManifests)
+
+		manifestList = list()
+		if(length(endogenousManifests) > 0) manifestList$endogenous = endogenousManifests
+		if(length(exogenousManifests) > 0) manifestList$exogenous = exogenousManifests
+	}
 
 	# Report which latents were created
-	nLatent = length(latentVars)
+	nLatent = length(latentVarsPool)
 	if (!umx_set_silent(silent=TRUE)) {
 		if(nLatent == 0){
 			# message("No latent variables were created.\n")
 		} else if (nLatent == 1){
-			message("A latent variable '", latentVars[1], "' was created. ")
+			message("A latent variable '", latentVarsPool[1], "' was created. ")
 		} else {
-			message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
+			message(nLatent, " latent variables were created:", paste(latentVarsPool, collapse = ", "), ". ")
 		}
 	}
-
-	# Assemble lists for LISREL
-	manifestList = list()
-	if(length(endogenousManifests) > 0) manifestList$endogenous = endogenousManifests
-	if(length(exogenousManifests) > 0) manifestList$exogenous = exogenousManifests
-
-	latentList = list()
-	if(length(endogenousLatents) > 0) latentList$endogenous = endogenousLatents
-	if(length(exogenousLatents) > 0) latentList$exogenous = exogenousLatents
 
 	# ==================
 	# = Assemble model =

@@ -2606,8 +2606,16 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @references - <https://github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
 #' @md
 #' @examples
-#' # plot()
-#' # TODO get LISREL example model
+#' \dontrun{
+#' library(umx)
+#' data(demoOneFactor)
+#' manifests = names(demoOneFactor)
+#' m1 = umxLISREL("one_factor", data = demoOneFactor, type = "cov",
+#'                umxPath("G", to = manifests),
+#'                umxPath(var = manifests),
+#'                umxPath(var = "G", fixedAt = 1))
+#' plot(m1)
+#' }
 plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = TRUE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min = NULL, same = NULL, max = NULL, ...) {
 	if(is.logical(splines)){ splines = ifelse(splines, "TRUE", "FALSE")}
 	splines = match.arg(splines)

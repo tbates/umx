@@ -8,6 +8,8 @@ umxLISREL(
   model = NA,
   ...,
   data = NULL,
+  manifestVars = NULL,
+  latentVars = NULL,
   name = NA,
   group = NULL,
   group.equal = NULL,
@@ -35,6 +37,10 @@ umxLISREL(
 \item{...}{Path statements (\code{mxPath} or \code{umxPath}), matrices, etc., to add to the model.}
 
 \item{data}{Data frame, matrix, or \code{mxData} to use.}
+
+\item{manifestVars}{Optional list of endogenous/exogenous manifest variables, or character vector of manifest variables to partition.}
+
+\item{latentVars}{Optional list of endogenous/exogenous latent variables, or character vector of latent variables to partition.}
 
 \item{name}{Optional name for the model (defaults to the model's current name or 'm1').}
 
@@ -88,10 +94,30 @@ runs the model, and displays summaries.
 library(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-m1 = umxLISREL("one_factor", data = demoOneFactor, type = "cov",
+
+# 1. LISREL model with covariance data
+m1 = umxLISREL("one_factor_cov", data = demoOneFactor, type = "cov",
                umxPath("G", to = manifests),
                umxPath(var = manifests),
                umxPath(var = "G", fixedAt = 1))
+
+# 2. LISREL model with raw data (means are automatically added)
+m2 = umxLISREL("one_factor_raw", data = demoOneFactor,
+               umxPath("G", to = manifests),
+               umxPath(var = manifests),
+               umxPath(var = "G", fixedAt = 1))
+
+# 3. Forced exogenous manifests using manifestVars list override
+m3 = umxLISREL("forced_exogenous", data = demoOneFactor,
+               manifestVars = list(endogenous = c("x4", "x5"), exogenous = c("x1", "x2")),
+               latentVars = list(endogenous = "G", exogenous = "xi"),
+               umxPath("xi", to = c("x1", "x2")),
+               umxPath("G", to = c("x4", "x5")),
+               umxPath("xi", to = "G"),
+               umxPath(var = c("x1", "x2", "x4", "x5")),
+               umxPath(var = "xi", fixedAt = 1),
+               umxPath(var = "G"),
+               umxPath(means = c("x1", "x2", "x4", "x5")))
 }
 }
 \references{
