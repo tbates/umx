@@ -68,6 +68,10 @@ umx_check_parallel()
 }
 }
 \seealso{
+\itemize{
+\item \code{\link[=umx_time]{umx_time()}}, \code{\link[=umx_set_cores]{umx_set_cores()}}
+}
+
 Other Test:
 \code{\link[=umx_check]{umx_check()}},
 \code{\link[=umx_check_OS]{umx_check_OS()}},

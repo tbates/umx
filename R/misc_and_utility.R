@@ -836,6 +836,7 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' @return - number of cores
 #' @export
 #' @family Get and set
+#' @seealso - [umx_time()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -1023,6 +1024,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @return None
 #' @export
 #' @family Test
+#' @seealso - [umx_time()], [umx_set_cores()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -3442,6 +3444,7 @@ umxPlotFun <- function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NU
 #' @return - invisible time string
 #' @export
 #' @family Reporting Functions
+#' @seealso - [umx_set_cores()], [umx_check_parallel()]
 #' @references - <https://github.com/tbates/umx>
 #' @md
 #' @examples
@@ -7964,6 +7967,9 @@ umx_standardize.default <- function(model, ...){
 #' 
 #' }
 xmu_standardize_RAM <- function(model, ...) {
+	if (!is.null(model$expectation) && class(model$expectation)[[1]] == "MxExpectationLISREL") {
+		return(xmu_standardize_LISREL(model, ...))
+	}
 	umx_check(umx_is_RAM(model), action="stop", message="xmu_standardize_RAM needs a RAM model")
 	umx_has_been_run(model)
 
@@ -8013,6 +8019,148 @@ xmu_standardize_RAM <- function(model, ...) {
 }
 #' @export
 umx_standardize.MxModel <- xmu_standardize_RAM
+
+#' xmu_standardize_LISREL
+#'
+#' Standardize a LISREL model
+#'
+#' @param model The [OpenMx::mxModel()] you wish to standardize
+#' @param ... Other options
+#' @family xmu internal not for end user
+#' @export
+#' @md
+xmu_standardize_LISREL <- function(model, ...) {
+	if (class(model$expectation)[[1]] != "MxExpectationLISREL") {
+		stop("xmu_standardize_LISREL needs a LISREL model")
+	}
+	umx_has_been_run(model)
+
+	tryCatch({
+		expect <- model$expectation
+		
+		getMatrixVal <- function(matName) {
+			if (is.null(matName) || is.na(matName)) return(NULL)
+			mat <- model[[matName]]
+			if (is.null(mat)) return(NULL)
+			val <- list(mat$values, mat$result)
+			val[[which.max(c(length(val[[1]]), length(val[[2]])))]]
+		}
+		
+		LX <- getMatrixVal(expect@LX)
+		LY <- getMatrixVal(expect@LY)
+		BE <- getMatrixVal(expect@BE)
+		GA <- getMatrixVal(expect@GA)
+		PH <- getMatrixVal(expect@PH)
+		PS <- getMatrixVal(expect@PS)
+		TD <- getMatrixVal(expect@TD)
+		TE <- getMatrixVal(expect@TE)
+		TH <- getMatrixVal(expect@TH)
+		TX <- getMatrixVal(expect@TX)
+		TY <- getMatrixVal(expect@TY)
+		KA <- getMatrixVal(expect@KA)
+		AL <- getMatrixVal(expect@AL)
+		
+		hasX <- !is.null(LX)
+		hasY <- !is.null(LY)
+		
+		if (hasX) {
+			SD_xi <- sqrt(diag(PH))
+			SD_xi <- ifelse(SD_xi <= 0, 0, SD_xi)
+			V_xi <- diag(SD_xi, nrow=length(SD_xi))
+			InvV_xi <- diag(ifelse(SD_xi == 0, 0, 1/SD_xi), nrow=length(SD_xi))
+		} else {
+			V_xi <- matrix(0, 0, 0)
+			InvV_xi <- matrix(0, 0, 0)
+			SD_xi <- numeric(0)
+		}
+		
+		if (hasY) {
+			I_BE <- diag(1, nrow=nrow(BE))
+			InvI_BE <- solve(I_BE - BE)
+			
+			if (hasX) {
+				cov_eta <- InvI_BE %*% (GA %*% PH %*% t(GA) + PS) %*% t(InvI_BE)
+			} else {
+				cov_eta <- InvI_BE %*% PS %*% t(InvI_BE)
+			}
+			
+			SD_eta <- sqrt(diag(cov_eta))
+			SD_eta <- ifelse(SD_eta <= 0, 0, SD_eta)
+			V_eta <- diag(SD_eta, nrow=length(SD_eta))
+			InvV_eta <- diag(ifelse(SD_eta == 0, 0, 1/SD_eta), nrow=length(SD_eta))
+		} else {
+			V_eta <- matrix(0, 0, 0)
+			InvV_eta <- matrix(0, 0, 0)
+			SD_eta <- numeric(0)
+		}
+		
+		if (hasY) {
+			cov_Y <- LY %*% cov_eta %*% t(LY) + TE
+			SD_Y <- sqrt(diag(cov_Y))
+			SD_Y <- ifelse(SD_Y <= 0, 0, SD_Y)
+			V_Y <- diag(SD_Y, nrow=length(SD_Y))
+			InvV_Y <- diag(ifelse(SD_Y == 0, 0, 1/SD_Y), nrow=length(SD_Y))
+		} else {
+			V_Y <- matrix(0, 0, 0)
+			InvV_Y <- matrix(0, 0, 0)
+			SD_Y <- numeric(0)
+		}
+		
+		if (hasX) {
+			cov_X <- LX %*% PH %*% t(LX) + TD
+			SD_X <- sqrt(diag(cov_X))
+			SD_X <- ifelse(SD_X <= 0, 0, SD_X)
+			V_X <- diag(SD_X, nrow=length(SD_X))
+			InvV_X <- diag(ifelse(SD_X == 0, 0, 1/SD_X), nrow=length(SD_X))
+		} else {
+			V_X <- matrix(0, 0, 0)
+			InvV_X <- matrix(0, 0, 0)
+			SD_X <- numeric(0)
+		}
+		
+		if (hasY) {
+			if (!is.null(model[[expect@LY]])) model[[expect@LY]]$values[,] <- InvV_Y %*% LY %*% V_eta
+			if (!is.null(model[[expect@BE]])) model[[expect@BE]]$values[,] <- InvV_eta %*% BE %*% V_eta
+			if (!is.null(model[[expect@PS]])) model[[expect@PS]]$values[,] <- InvV_eta %*% PS %*% InvV_eta
+			if (!is.null(model[[expect@TE]])) model[[expect@TE]]$values[,] <- InvV_Y %*% TE %*% InvV_Y
+			
+			if (!is.null(TY)) {
+				model[[expect@TY]]$values[,] <- InvV_Y %*% TY
+			}
+			if (!is.null(AL)) {
+				model[[expect@AL]]$values[,] <- InvV_eta %*% AL
+			}
+		}
+		
+		if (hasX) {
+			if (!is.null(model[[expect@LX]])) model[[expect@LX]]$values[,] <- InvV_X %*% LX %*% V_xi
+			if (!is.null(model[[expect@PH]])) model[[expect@PH]]$values[,] <- InvV_xi %*% PH %*% InvV_xi
+			if (!is.null(model[[expect@TD]])) model[[expect@TD]]$values[,] <- InvV_X %*% TD %*% InvV_X
+			
+			if (!is.null(TX)) {
+				model[[expect@TX]]$values[,] <- InvV_X %*% TX
+			}
+			if (!is.null(KA)) {
+				model[[expect@KA]]$values[,] <- InvV_xi %*% KA
+			}
+		}
+		
+		if (hasX && hasY) {
+			if (!is.null(model[[expect@GA]])) model[[expect@GA]]$values[,] <- InvV_eta %*% GA %*% V_xi
+			if (!is.null(model[[expect@TH]])) model[[expect@TH]]$values[,] <- InvV_X %*% TH %*% InvV_Y
+		}
+	}, warning = function(cond) {
+		message(cond)
+	}, error = function(cond) {
+		cat("The model could not be standardized")
+		message(cond)
+	}, finally = {
+	})
+	invisible(model)
+}
+
+#' @export
+umx_standardize.MxLISRELModel <- xmu_standardize_LISREL
 
 #' xmu_standardize_ACE
 #'
@@ -8302,7 +8450,7 @@ umx_complete_dollar <- function() {
 						}, error = function(e) {})
 					}
 					if (is_func) {
-						res <- paste0(res, "()\002")
+						res <- paste0(res, "(")
 					}
 				}
 				res

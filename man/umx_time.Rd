@@ -69,6 +69,10 @@ umx_time('stop') # report the time since timer was restarted.
 }
 }
 \seealso{
+\itemize{
+\item \code{\link[=umx_set_cores]{umx_set_cores()}}, \code{\link[=umx_check_parallel]{umx_check_parallel()}}
+}
+
 Other Reporting Functions:
 \code{\link{umx}},
 \code{\link[=umxAPA]{umxAPA()}},

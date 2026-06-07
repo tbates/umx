@@ -41,6 +41,10 @@ umx_set_cores(oldCores)    # reinstate old global value
 }
 }
 \seealso{
+\itemize{
+\item \code{\link[=umx_time]{umx_time()}}
+}
+
 Other Get and set:
 \code{\link{umx}},
 \code{\link[=umx_get_alphas]{umx_get_alphas()}},

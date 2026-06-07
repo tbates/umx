@@ -2567,8 +2567,207 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' # plot()
 #' # TODO get LISREL example model
 #' # Figure out how to map its matrices to plot. Don't do without establishing demand.
-plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = TRUE, ...) {
-	stop("Sorry, plot doesn't yet support LISREL models. I'd advise using umxRAM instead.")
+plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = TRUE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min = NULL, same = NULL, max = NULL, ...) {
+	if(is.logical(splines)){ splines = ifelse(splines, "TRUE", "FALSE")}
+	splines = match.arg(splines)
+
+	# loop over submodels
+	if(length(x@submodels)){
+		n = 1
+		for (sub in x@submodels) {
+			if(file == "name"){
+				thisFile = file
+			} else {
+				thisFile = paste0(file, "_group_", n)
+			}
+			plot(sub, std = std, fixed = fixed, means = means, digits = digits, file = thisFile, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min = min, same = same, max = max, ...)
+			n = n + 1
+		}
+	} else {
+		# ==========
+		# = Setup  =
+		# ==========
+		model   = x # just to be clear that x is a model
+		resid   = match.arg(resid)
+		labels  = match.arg(labels)
+		expect  = model$expectation
+
+		# Update values using compute = T to capture labels with [] references.
+		updateMatrixVals <- function(slotName) {
+			if (is.null(slotName) || is.na(slotName)) return()
+			if (!is.null(model[[slotName]])) {
+				model[[slotName]]$values[,] <<- mxEvalByName(slotName, model, compute = TRUE)
+			}
+		}
+		
+		updateMatrixVals(expect@LX)
+		updateMatrixVals(expect@LY)
+		updateMatrixVals(expect@BE)
+		updateMatrixVals(expect@GA)
+		updateMatrixVals(expect@PH)
+		updateMatrixVals(expect@PS)
+		updateMatrixVals(expect@TD)
+		updateMatrixVals(expect@TE)
+		updateMatrixVals(expect@TH)
+		updateMatrixVals(expect@TX)
+		updateMatrixVals(expect@TY)
+		updateMatrixVals(expect@KA)
+		updateMatrixVals(expect@AL)
+
+		if(std){ model = umx_standardize(model) }
+
+		# Extract manifests and latents
+		matLX <- if(!is.null(expect@LX) && !is.na(expect@LX)) model[[expect@LX]] else NULL
+		matLY <- if(!is.null(expect@LY) && !is.na(expect@LY)) model[[expect@LY]] else NULL
+		matBE <- if(!is.null(expect@BE) && !is.na(expect@BE)) model[[expect@BE]] else NULL
+		matGA <- if(!is.null(expect@GA) && !is.na(expect@GA)) model[[expect@GA]] else NULL
+		matPH <- if(!is.null(expect@PH) && !is.na(expect@PH)) model[[expect@PH]] else NULL
+		matPS <- if(!is.null(expect@PS) && !is.na(expect@PS)) model[[expect@PS]] else NULL
+		matTD <- if(!is.null(expect@TD) && !is.na(expect@TD)) model[[expect@TD]] else NULL
+		matTE <- if(!is.null(expect@TE) && !is.na(expect@TE)) model[[expect@TE]] else NULL
+		matTH <- if(!is.null(expect@TH) && !is.na(expect@TH)) model[[expect@TH]] else NULL
+		matTX <- if(!is.null(expect@TX) && !is.na(expect@TX)) model[[expect@TX]] else NULL
+		matTY <- if(!is.null(expect@TY) && !is.na(expect@TY)) model[[expect@TY]] else NULL
+		matKA <- if(!is.null(expect@KA) && !is.na(expect@KA)) model[[expect@KA]] else NULL
+		matAL <- if(!is.null(expect@AL) && !is.na(expect@AL)) model[[expect@AL]] else NULL
+
+		selDVs_x  <- if(!is.null(matLX)) rownames(matLX$values) else c()
+		selDVs_y  <- if(!is.null(matLY)) rownames(matLY$values) else c()
+		latents_xi  <- if(!is.null(matPH)) colnames(matPH$values) else (if(!is.null(matLX)) colnames(matLX$values) else c())
+		latents_eta <- if(!is.null(matPS)) colnames(matPS$values) else (if(!is.null(matLY)) colnames(matLY$values) else c())
+
+		latents = unique(c(latents_xi, latents_eta))
+		selDVs  = unique(c(selDVs_x, selDVs_y))
+
+		# ==================================
+		# = Get Asymmetric & Symmetric Paths =
+		# ==================================
+		out = "";
+		
+		# Asymmetric paths
+		if(!is.null(matLX)) {
+			out = xmu_dot_make_paths(matLX, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "LX paths", digits = digits)
+		}
+		if(!is.null(matLY)) {
+			out = xmu_dot_make_paths(matLY, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "LY paths", digits = digits)
+		}
+		if(!is.null(matBE)) {
+			out = xmu_dot_make_paths(matBE, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "BE paths", digits = digits)
+		}
+		if(!is.null(matGA)) {
+			out = xmu_dot_make_paths(matGA, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "GA paths", digits = digits)
+		}
+
+		# Symmetric paths (covariances)
+		if(!is.null(matPH)) {
+			out = xmu_dot_make_paths(matPH, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "PH covariances", digits = digits)
+		}
+		if(!is.null(matPS)) {
+			out = xmu_dot_make_paths(matPS, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "PS covariances", digits = digits)
+		}
+		if(!is.null(matTD)) {
+			out = xmu_dot_make_paths(matTD, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "TD covariances", digits = digits)
+		}
+		if(!is.null(matTE)) {
+			out = xmu_dot_make_paths(matTE, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "TE covariances", digits = digits)
+		}
+		if(!is.null(matTH)) {
+			p_th <- xmu_dot_mat2dot(matTH, cells = "any", from = "cols", fromLabel = colnames(matTH$values), toLabel = rownames(matTH$values), fromType = "manifest", toType = "manifest", arrows = "both", showFixed = fixed, p = list(str = out, latents = c(), manifests = c()))
+			out <- p_th$str
+		}
+
+		# Residuals / variances
+		variances     <- c()
+		varianceNames <- c()
+		
+		if(!is.null(matPH)) {
+			tmp <- xmu_dot_make_residuals(matPH, latents = latents_xi, fixed = fixed, digits = digits, resid = resid)
+			variances     <- c(variances, tmp$variances)
+			varianceNames <- c(varianceNames, tmp$varianceNames)
+		}
+		if(!is.null(matPS)) {
+			tmp <- xmu_dot_make_residuals(matPS, latents = latents_eta, fixed = fixed, digits = digits, resid = resid)
+			variances     <- c(variances, tmp$variances)
+			varianceNames <- c(varianceNames, tmp$varianceNames)
+		}
+		if(!is.null(matTD)) {
+			tmp <- xmu_dot_make_residuals(matTD, latents = NULL, fixed = fixed, digits = digits, resid = resid)
+			variances     <- c(variances, tmp$variances)
+			varianceNames <- c(varianceNames, tmp$varianceNames)
+		}
+		if(!is.null(matTE)) {
+			tmp <- xmu_dot_make_residuals(matTE, latents = NULL, fixed = fixed, digits = digits, resid = resid)
+			variances     <- c(variances, tmp$variances)
+			varianceNames <- c(varianceNames, tmp$varianceNames)
+		}
+
+		# =================
+		# = Define shapes =
+		# =================
+		preOut = paste0('\tsplines="', splines , '";\n\t# Latents\n')
+		for(var in latents) {
+		   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")
+		}
+
+		preOut = paste0(preOut, "\n\t# Manifests\n")
+		for(var in selDVs) {
+		   preOut = paste0(preOut, "\t", var, " [shape = square];\n")
+		}
+
+		# ================
+		# = handle means =
+		# ================
+		hasMeans <- !is.null(matTX) || !is.null(matTY) || !is.null(matKA) || !is.null(matAL)
+		if(hasMeans && means){
+			preOut = paste0(preOut, "\t one [shape = triangle];\n")
+			out = paste0(out, "\n\t# Means paths\n")
+			
+			p_means = list(str = out, latents = c(), manifests = c())
+			if (!is.null(matTX)) {
+				p_means <- xmu_dot_mat2dot(matTX, cells = "any", from = "cols", fromLabel = "one", toLabel = rownames(matTX$values), fromType = "latent", toType = "manifest", arrows = "forward", showFixed = fixed, p = p_means)
+			}
+			if (!is.null(matTY)) {
+				p_means <- xmu_dot_mat2dot(matTY, cells = "any", from = "cols", fromLabel = "one", toLabel = rownames(matTY$values), fromType = "latent", toType = "manifest", arrows = "forward", showFixed = fixed, p = p_means)
+			}
+			if (!is.null(matKA)) {
+				p_means <- xmu_dot_mat2dot(matKA, cells = "any", from = "cols", fromLabel = "one", toLabel = rownames(matKA$values), fromType = "latent", toType = "latent", arrows = "forward", showFixed = fixed, p = p_means)
+			}
+			if (!is.null(matAL)) {
+				p_means <- xmu_dot_mat2dot(matAL, cells = "any", from = "cols", fromLabel = "one", toLabel = rownames(matAL$values), fromType = "latent", toType = "latent", arrows = "forward", showFixed = fixed, p = p_means)
+			}
+			out <- p_means$str
+		}
+
+		# ===========================
+		# = Make the variance lines =
+		# ===========================
+		preOut = paste0(preOut, "\n\t#Variances/residuals\n")
+		for(var in variances) {
+		   preOut = paste0(preOut, "\t", var, ";\n")
+		}
+
+		# ======================
+		# = Set the ranks e.g. =
+		# ======================
+		if(hasMeans && means){ varianceNames <- append(varianceNames, "one") }
+
+		x_ranks = xmu_dot_move_ranks(max = max, min = min, same = same, old_min = latents, old_same = selDVs, old_max = varianceNames)
+		rankVariables = xmu_dot_rank_str(min = x_ranks$min, same = x_ranks$same, max = x_ranks$max)
+
+		# ===================================
+		# = Assemble full text to write out =
+		# ===================================
+		label = model$name
+		digraph = paste0(
+			"digraph G {\n    ", 
+			'label="', label, '";\n',
+			preOut, "\n",
+			out   , "\n",
+			rankVariables, "\n}"
+		)
+		message("\n?plot.MxLISRELModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
+		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+	}
 }
 
 #' Create and display a graphical path diagram for a model.
@@ -2643,6 +2842,9 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' } # end dontrun
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ...) {
+	if (!is.null(x$expectation) && class(x$expectation)[[1]] == "MxExpectationLISREL") {
+		return(plot.MxLISRELModel(x = x, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min = min, same = same, max = max, ...))
+	}
 	if(is.logical(splines)){ splines = ifelse(splines, "TRUE", "FALSE")}
 	splines = match.arg(splines)
 
