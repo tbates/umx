@@ -142,6 +142,7 @@ Other Super-easy helpers:
 Other Twin Modeling Functions:
 \code{\link[=power.ACE.test]{power.ACE.test()}},
 \code{\link[=umxACE]{umxACE()}},
+\code{\link[=umxACE_DE]{umxACE_DE()}},
 \code{\link[=umxACEcov]{umxACEcov()}},
 \code{\link[=umxACEv]{umxACEv()}},
 \code{\link[=umxCP]{umxCP()}},

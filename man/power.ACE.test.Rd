@@ -193,6 +193,7 @@ Power failure: why small sample size undermines the reliability of neuroscience.
 Other Twin Modeling Functions:
 \code{\link{umx}},
 \code{\link[=umxACE]{umxACE()}},
+\code{\link[=umxACE_DE]{umxACE_DE()}},
 \code{\link[=umxACEcov]{umxACEcov()}},
 \code{\link[=umxACEv]{umxACEv()}},
 \code{\link[=umxCP]{umxCP()}},

@@ -437,6 +437,7 @@ to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \doi{
 Other Twin Modeling Functions:
 \code{\link[=power.ACE.test]{power.ACE.test()}},
 \code{\link{umx}},
+\code{\link[=umxACE_DE]{umxACE_DE()}},
 \code{\link[=umxACEcov]{umxACEcov()}},
 \code{\link[=umxACEv]{umxACEv()}},
 \code{\link[=umxCP]{umxCP()}},
