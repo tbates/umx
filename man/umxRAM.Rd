@@ -332,6 +332,7 @@ m1 = umxRAM("tim", data = mtcars, weight= "cyl",
 
 Other Core Model Building Functions:
 \code{\link{umx}},
+\code{\link[=umxLISREL]{umxLISREL()}},
 \code{\link[=umxMatrix]{umxMatrix()}},
 \code{\link[=umxModify]{umxModify()}},
 \code{\link[=umxPath]{umxPath()}},

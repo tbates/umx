@@ -109,6 +109,7 @@ Useful links:
 
 
 Other Core Model Building Functions:
+\code{\link[=umxLISREL]{umxLISREL()}},
 \code{\link[=umxMatrix]{umxMatrix()}},
 \code{\link[=umxModify]{umxModify()}},
 \code{\link[=umxPath]{umxPath()}},

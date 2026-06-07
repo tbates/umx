@@ -917,6 +917,358 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	invisible(newModel)
 }
 
+
+#' Make a LISREL model analogous to umxRAM
+#'
+#' @description
+#' `umxLISREL` is a wrapper for [OpenMx::mxModel()] with `type="LISREL"`.
+#' It automatically partitions manifest and latent variables into endogenous and exogenous sets,
+#' inserts data, handles raw/covariance types, adds means if raw data are used, handles ordinal variables,
+#' runs the model, and displays summaries.
+#'
+#' @param model NA, a name string, or an existing LISREL [OpenMx::mxModel()] to update.
+#' @param ... Path statements (`mxPath` or `umxPath`), matrices, etc., to add to the model.
+#' @param data Data frame, matrix, or `mxData` to use.
+#' @param name Optional name for the model (defaults to the model's current name or 'm1').
+#' @param group Column name in data to partition data for multi-group models.
+#' @param group.equal Not implemented.
+#' @param suffix Suffix to append to parameter labels.
+#' @param comparison Compare the model to saturated models in summary (Default = TRUE).
+#' @param type Data type: "Auto" (guesses), "FIML", "cov", "cor", "WLS", "DWLS", "ULS".
+#' @param weight Weight column name.
+#' @param allContinuousMethod Method for continuous variables when WLS is used.
+#' @param autoRun Run the model (default = TRUE).
+#' @param tryHard How to run the model: "no", "yes", "ordinal", "search".
+#' @param std Standardize output (Default = FALSE).
+#' @param refModels Reference models for summary comparison.
+#' @param remove_unused_manifests Remove manifests not used in paths (Default = TRUE).
+#' @param independent Whether the model is independent (Default = NA).
+#' @param setValues Automatically set starting values (Default = TRUE).
+#' @param optimizer Set the optimizer to use.
+#' @param verbose Print diagnostic info.
+#' @param std.lv Standardize latent variables (Default = FALSE).
+#' @param printTab Print parameter table.
+#' @return A LISREL [OpenMx::mxModel()]
+#' @export
+#' @family Core Model Building Functions
+#' @seealso [umxRAM()], [plot.MxLISRELModel()], [xmu_standardize_LISREL()]
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @md
+#' @examples
+#' \dontrun{
+#' library(umx)
+#' data(demoOneFactor)
+#' manifests = names(demoOneFactor)
+#' m1 = umxLISREL("one_factor", data = demoOneFactor, type = "cov",
+#'                umxPath("G", to = manifests),
+#'                umxPath(var = manifests),
+#'                umxPath(var = "G", fixedAt = 1))
+#' }
+umxLISREL <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, printTab = FALSE) {
+	dotItems = list(...) # grab all the dot items: mxPaths, etc...
+	# Check for data/model objects passed in ... before unlist() flattens them
+	for (item in dotItems) {
+		thisIs = class(item)[1]
+		if (thisIs %in% c("data.frame", "matrix", "MxData")) {
+			stop("umxLISREL can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+				 "You have given me a ", thisIs, " inside the path list. ",
+				 "To include data in umxLISREL, please use the 'data = yourData' parameter, not inside the path list.", call. = FALSE)
+		} else if (thisIs == "MxModel") {
+			stop("umxLISREL can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+				 "You have given me an MxModel inside the path list. ",
+				 "umxLISREL does not support nesting MxModels directly. If you wanted a multi-group model, see ?umxSuperModel.", call. = FALSE)
+		}
+	}
+	dotItems = unlist(dotItems) # In case any dot items are lists of mxPaths, etc...
+	type       = match.arg(type)
+	tryHard    = match.arg(tryHard)
+	allContinuousMethod = match.arg(allContinuousMethod)
+
+	if(!is.null(weight)){
+		message("Polite note: Weight feature has not been tested: Models may have spurious fit, consider this feature alpha quality")
+	}
+	# if data provided check it isn't a tibble
+	if(!is.null(data)){
+		# avoid ingesting tibbles
+		if(inherits(data, "tbl")){
+			data = as.data.frame(data)
+		}
+	}
+
+	# =================
+	# = Set optimizer =
+	# =================
+	if(!is.null(optimizer)){
+		umx_set_optimizer(optimizer)
+	}
+	if(!is.null(group)){
+		if(!inherits(data, "data.frame")){
+			stop("Currently, for multiple groups, data must be a raw data.frame so I can subset it into multiple groups. You gave me a ", omxQuotes(class(data)))
+		}
+	}
+
+	# umxPath-based model
+	if(typeof(model) == "character"){
+		if(is.na(name)){
+			name = model
+		} else {
+			stop("If model is set to a string, don't pass in name as well...")
+		}
+	} else {
+		if(umx_is_LISREL(model)){
+			# message("Updating existing model")
+			if(is.na(name)){
+				name = model$name
+			}
+			if(is.null(data)){
+				newModel = mxModel(model, dotItems, name = name)
+			} else {
+				if(umx_is_MxData(data)){
+					newModel = mxModel(model, dotItems, data, name = name)
+				} else {
+					stop("Polite note: I don't know how to convert raw data into mxData to update your model - can you please do that for me and try again?")
+				}
+			}
+			newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, refModels = refModels, std = std)
+			return(newModel)
+		} else {
+			stop("First item must be either an existing LISREL model or a name string. You gave me a ", typeof(model))
+		}
+	}
+
+	umx_check(!is.null(data), "stop", "In umxLISREL, you must set 'data = '. If you're building a model with no data, use mxModel")
+
+	foundNames = c()
+	defnNames = c()
+	targets = c()
+	for (thisItem in dotItems) {
+		if(!is.list(thisItem)){
+			# Sometimes we get a list, so expand everything to a list.
+			thisItem = list(thisItem)
+		}
+		for (i in seq_along(thisItem)) {
+			thisIs = class(thisItem[[i]])[1]
+			if(thisIs == "MxPath"){
+				foundNames = append(foundNames, c(thisItem[[i]]$from, thisItem[[i]]$to))
+				if(thisItem[[i]]$arrows == 1){
+					targets = append(targets, thisItem[[i]]$to)
+				}
+				tmp = namez(thisItem[[i]]$labels, "data\\.")
+				if(length(tmp) > 0){
+					defnNames = append(defnNames, namez(tmp, "data\\.(.*)", replacement= "\\1"))
+				}
+			} else {
+				if(thisIs == "MxThreshold"){
+					# MxThreshold detected
+				} else if(umx_is_MxMatrix(thisItem[[i]])){
+					# matrix labels might refer to definition variables
+					tmp = namez(thisItem[[i]]$labels, "data\\.")
+					if(length(tmp) > 0){
+						defnNames = append(defnNames, namez(tmp, "data\\.(.*)", replacement= "\\1"))
+					}
+				} else if (isS4(thisItem[[i]]) && grepl("^Mx", thisIs) && !thisIs %in% c("MxModel", "MxData")) {
+					# Valid OpenMx S4 object (MxConstraint, MxAlgebra, MxCI, etc.) - no path/matrix-label actions needed
+				} else {
+					if (thisIs %in% c("data.frame", "matrix", "MxData")) {
+						stop("umxLISREL can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+							 "You have given me a ", thisIs, " inside the path list. ",
+							 "To include data in umxLISREL, please use the 'data = yourData' parameter, not inside the path list.", call. = FALSE)
+					} else if (thisIs == "MxModel") {
+						stop("umxLISREL can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+							 "You have given me an MxModel inside the path list. ",
+							 "umxLISREL does not support nesting MxModels directly. If you wanted a multi-group model, see ?umxSuperModel.", call. = FALSE)
+					} else {
+						stop("umxLISREL can only handle (u)mxPaths, (u)mxMatrices, mxConstraints, and mxThreshold() objects.\n",
+							 "You have given me a ", thisIs, " which is not supported inside the LISREL path list.", call. = FALSE)
+					}
+				}
+			}			
+		}
+	}
+
+	# ============================
+	# = All dotItems processed   =
+	# ============================
+
+	# ====================================
+	# = Find latentVars and manifestVars =
+	# ====================================
+	# Get names from data (forms pool of potential usedManifests)
+	manifestVars = unique(na.omit(umx_names(data)))
+
+	# Omit NAs from found names (empty "to =" can generate these spuriously)
+	foundNames = unique(na.omit(foundNames))
+	defnNames  = unique(na.omit(defnNames))
+	targets    = unique(na.omit(targets))
+	
+	if(length(defnNames)>0){
+		# check'm if you've got'm
+		umx_check_names(defnNames, data = data, message = "note: used as definition variable, but not present in data")
+	}
+	# Anything else used as a path, but not found in the data (and not a key word like "one") must be a latent
+	latentVars = setdiff(foundNames, c(manifestVars, "one"))
+
+	# List up used and un-used Manifests
+	unusedManifests = setdiff(manifestVars, c(foundNames, defnNames))
+	if (!is.null(weight)) unusedManifests = setdiff(c(manifestVars, weight), c(foundNames, defnNames))
+
+	if(remove_unused_manifests & length(unusedManifests) > 0){
+		usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
+		if (!is.null(weight)) {
+			myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = 
+				defnNames, verbose = verbose, weight = weight)
+		} else {
+			myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = 
+				defnNames, verbose = verbose)
+		}
+	} else {
+		# keep everything
+		usedManifests = setdiff(manifestVars, defnNames)
+		myData = xmu_make_mxData(data= data, type = type, verbose = verbose, manifests = usedManifests, fullCovs = 
+			defnNames)
+	}
+
+	# Partition into endogenous and exogenous
+	# A latent variable is endogenous if it is targeted by another latent variable
+	endogenousLatents = c()
+	for (thisItem in dotItems) {
+		if (inherits(thisItem, "MxPath") && thisItem$arrows == 1) {
+			fromLatents = intersect(thisItem$from, latentVars)
+			toLatents   = intersect(thisItem$to, latentVars)
+			if (length(fromLatents) > 0 && length(toLatents) > 0) {
+				endogenousLatents = union(endogenousLatents, toLatents)
+			}
+		}
+	}
+	exogenousLatents = setdiff(latentVars, endogenousLatents)
+
+	# A manifest variable is endogenous if it is targeted by an endogenous latent or another manifest
+	endogenousManifests = c()
+	for (thisItem in dotItems) {
+		if (inherits(thisItem, "MxPath") && thisItem$arrows == 1) {
+			toManifests = intersect(thisItem$to, usedManifests)
+			if (length(toManifests) > 0) {
+				fromEndoLatents = intersect(thisItem$from, endogenousLatents)
+				fromManifests   = intersect(thisItem$from, usedManifests)
+				if (length(fromEndoLatents) > 0 || length(fromManifests) > 0) {
+					endogenousManifests = union(endogenousManifests, toManifests)
+				}
+			}
+		}
+	}
+	exogenousManifests = setdiff(usedManifests, endogenousManifests)
+
+
+	# Report which latents were created
+	nLatent = length(latentVars)
+	if (!umx_set_silent(silent=TRUE)) {
+		if(nLatent == 0){
+			# message("No latent variables were created.\n")
+		} else if (nLatent == 1){
+			message("A latent variable '", latentVars[1], "' was created. ")
+		} else {
+			message(nLatent, " latent variables were created:", paste(latentVars, collapse = ", "), ". ")
+		}
+	}
+
+	# Assemble lists for LISREL
+	manifestList = list()
+	if(length(endogenousManifests) > 0) manifestList$endogenous = endogenousManifests
+	if(length(exogenousManifests) > 0) manifestList$exogenous = exogenousManifests
+
+	latentList = list()
+	if(length(endogenousLatents) > 0) latentList$endogenous = endogenousLatents
+	if(length(exogenousLatents) > 0) latentList$exogenous = exogenousLatents
+
+	# ==================
+	# = Assemble model =
+	# ==================
+
+	newModel = do.call("mxModel", list(name = name, type = "LISREL",
+		manifestVars = manifestList,
+		latentVars  = latentList,
+		independent = independent, dotItems)
+	)
+	# ============
+	# = Add data =
+	# ============
+	if (inherits(myData, "character")){
+		newModel = xmuLabel(newModel, suffix = suffix)
+		if(is.null(group)){
+			if(autoRun && umx_set_auto_plot(silent = TRUE)){
+				plot(newModel)
+			}
+			return(newModel)
+		}
+	}else{
+		newModel = mxModel(newModel, myData)
+	}
+	
+	# ==========================
+	# = Add means if necessary =
+	# ==========================
+	needsMeans = xmu_check_needs_means(data = myData, type = type, allContinuousMethod = allContinuousMethod)
+	# Check if means matrices (TY or TX) exist. In LISREL, if we add one path, it creates the matrix.
+	if(needsMeans && is.null(newModel$matrices$TX) && is.null(newModel$matrices$TY)){
+		message("You have raw data, but no means model. I added\n",
+		"mxPath('one', to = manifestVars)")
+		newModel = mxModel(newModel, mxPath("one", usedManifests))
+	}
+
+	# =========================
+	# = Labels and set values =
+	# =========================
+	suffix = ifelse(is.null(group), yes = suffix, no = paste0(suffix, "_GROUP"))
+	newModel = xmuLabel(newModel, suffix = suffix)
+	if(setValues){
+		newModel = xmuValues(newModel, onlyTouchZeros = TRUE)
+	}
+
+	if(any(umx_is_ordered(myData$observed))){
+		# For LISREL, set thresholds in the expectation
+		newModel$expectation$thresholds = "threshMat"
+		newModel = mxModel(newModel, umxThresholdMatrix(myData$observed, fullVarNames = usedManifests, verbose = TRUE))
+	}
+
+	# ==============================
+	# = Add mxFitFunction to model =
+	# ==============================
+	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
+		newModel = mxModel(newModel, mxFitFunctionWLS(type= type, allContinuousMethod = allContinuousMethod) )
+	}
+
+	# =====================
+	# = Handle group here =
+	# =====================
+	if(!is.null(group)){
+		modelList = list()
+		groupCol  = data[, group]
+		levelsOfGroup = unique(groupCol)
+		for (thisLevelOfGroup in levelsOfGroup) {
+			thisSubset = data[groupCol == thisLevelOfGroup, ]
+			if(remove_unused_manifests & length(unusedManifests) > 0){
+				myData = xmu_make_mxData(data = thisSubset, type = type, manifests = c(usedManifests, defnNames), verbose = FALSE)
+			} else {
+				myData = xmu_make_mxData(data= thisSubset, type = type, verbose = FALSE)
+			}
+			thisModel = mxModel(newModel, myData, name= paste0(name, "_", thisLevelOfGroup))
+
+			if(!is.null(group.equal)){
+				message("sorry, haven't implemented group.equal yet")
+			}else{
+				thisModel = umxSetParameters(thisModel, regex= "_GROUP$", newlabels= paste0("_", thisLevelOfGroup))
+			}
+
+			modelList = c(modelList, thisModel)
+		}
+		return(umxSuperModel(name = name, modelList, autoRun = autoRun, tryHard = tryHard, std = std))
+	}
+
+	newModel = omxAssignFirstParameters(newModel)
+	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, refModels = refModels, std = std)
+	invisible(newModel)
+}
+
 #' Make a multi-group model
 #'
 #' @description
@@ -3590,6 +3942,94 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		}
 		# TODO umxRAM A starts change from .9 to sqrt(.2*Variance)/nFactors
 		obj$A@values[freePaths] = .9
+		return(obj)
+	} else if (umx_is_LISREL(obj)) {
+		# This is a LISREL Model: Set sane starting values
+		if (length(obj$submodels) > 0) {
+			stop("xmuValues cannot yet handle sub-models for LISREL.")
+		}
+		if (is.null(obj$data)) {
+			stop("'model' does not contain any data")
+		}
+		
+		theData = obj$data$observed
+		type = obj$data$type
+		
+		manifestsY = if(!is.null(obj$LY)) rownames(obj$LY$values) else c()
+		manifestsX = if(!is.null(obj$LX)) rownames(obj$LX$values) else c()
+		latentsEta = if(!is.null(obj$LY)) colnames(obj$LY$values) else c()
+		latentsXi  = if(!is.null(obj$LX)) colnames(obj$LX$values) else c()
+		
+		# TE: residual variance of Y manifests
+		if(!is.null(obj$TE)) {
+			freeTE = diag(obj$TE$free) == TRUE
+			if(onlyTouchZeros) freeTE = freeTE & diag(obj$TE$values) == 0
+			if(length(manifestsY) > 0) {
+				varsY = umx_var(theData[, manifestsY, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+				diag(obj$TE@values)[freeTE] = varsY[freeTE]
+			}
+		}
+		
+		# TD: residual variance of X manifests
+		if(!is.null(obj$TD)) {
+			freeTD = diag(obj$TD$free) == TRUE
+			if(onlyTouchZeros) freeTD = freeTD & diag(obj$TD$values) == 0
+			if(length(manifestsX) > 0) {
+				varsX = umx_var(theData[, manifestsX, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs")
+				diag(obj$TD@values)[freeTD] = varsX[freeTD]
+			}
+		}
+		
+		# PS: residual variance of eta latents
+		if(!is.null(obj$PS)) {
+			freePS = diag(obj$PS$free) == TRUE
+			if(onlyTouchZeros) freePS = freePS & diag(obj$PS$values) == 0
+			diag(obj$PS@values)[freePS] = 1
+		}
+		
+		# PH: variance of xi latents
+		if(!is.null(obj$PH)) {
+			freePH = diag(obj$PH$free) == TRUE
+			if(onlyTouchZeros) freePH = freePH & diag(obj$PH$values) == 0
+			diag(obj$PH@values)[freePH] = 1
+		}
+		
+		# Path coefficients: LX, LY, BE, GA
+		for(matName in c("LX", "LY", "BE", "GA")) {
+			mat = obj[[matName]]
+			if(!is.null(mat)) {
+				freePaths = mat$free == TRUE
+				if(onlyTouchZeros) freePaths = freePaths & mat$values == 0
+				obj[[matName]]@values[freePaths] = 0.9
+			}
+		}
+		
+		# Means: TY, TX
+		if(!is.null(obj$TY) && length(manifestsY) > 0) {
+			meansY = umx_means(theData[, manifestsY, drop = FALSE], ordVar = 0, na.rm = TRUE)
+			freeTY = obj$TY$free[manifestsY, 1] == TRUE
+			if(onlyTouchZeros) freeTY = freeTY & obj$TY$values[manifestsY, 1] == 0
+			obj$TY@values[manifestsY, 1][freeTY] = meansY[freeTY]
+		}
+		if(!is.null(obj$TX) && length(manifestsX) > 0) {
+			meansX = umx_means(theData[, manifestsX, drop = FALSE], ordVar = 0, na.rm = TRUE)
+			freeTX = obj$TX$free[manifestsX, 1] == TRUE
+			if(onlyTouchZeros) freeTX = freeTX & obj$TX$values[manifestsX, 1] == 0
+			obj$TX@values[manifestsX, 1][freeTX] = meansX[freeTX]
+		}
+		
+		# Latent intercepts/means: AL, KA
+		if(!is.null(obj$AL)) {
+			freeAL = obj$AL$free == TRUE
+			if(onlyTouchZeros) freeAL = freeAL & obj$AL$values == 0
+			obj$AL@values[freeAL] = 0
+		}
+		if(!is.null(obj$KA)) {
+			freeKA = obj$KA$free == TRUE
+			if(onlyTouchZeros) freeKA = freeKA & obj$KA$values == 0
+			obj$KA@values[freeKA] = 0
+		}
+		
 		return(obj)
 	} else {
 		stop("'obj' must be an mxMatrix, a RAM model, or a simple number")

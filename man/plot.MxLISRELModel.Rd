@@ -64,7 +64,6 @@ The commercial application \dQuote{OmniGraffle} is great for editing these image
 \examples{
 # plot()
 # TODO get LISREL example model
-# Figure out how to map its matrices to plot. Don't do without establishing demand.
 }
 \references{
 \itemize{

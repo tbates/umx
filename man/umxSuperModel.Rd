@@ -112,6 +112,7 @@ umxModelNames(super)
 
 Other Core Model Building Functions:
 \code{\link{umx}},
+\code{\link[=umxLISREL]{umxLISREL()}},
 \code{\link[=umxMatrix]{umxMatrix()}},
 \code{\link[=umxModify]{umxModify()}},
 \code{\link[=umxPath]{umxPath()}},

@@ -256,6 +256,7 @@ plot(m1)
 
 Other Core Model Building Functions:
 \code{\link{umx}},
+\code{\link[=umxLISREL]{umxLISREL()}},
 \code{\link[=umxMatrix]{umxMatrix()}},
 \code{\link[=umxModify]{umxModify()}},
 \code{\link[=umxRAM]{umxRAM()}},

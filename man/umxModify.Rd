@@ -137,6 +137,7 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 \seealso{
 Other Core Model Building Functions:
 \code{\link{umx}},
+\code{\link[=umxLISREL]{umxLISREL()}},
 \code{\link[=umxMatrix]{umxMatrix()}},
 \code{\link[=umxPath]{umxPath()}},
 \code{\link[=umxRAM]{umxRAM()}},

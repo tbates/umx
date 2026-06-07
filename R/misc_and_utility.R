@@ -4244,6 +4244,30 @@ umx_is_RAM <- function(obj) {
 	}
 }
 
+#' umx_is_LISREL
+#'
+#' Utility function returning a binary answer to the question "Is this a LISREL model?"
+#'
+#' @param obj an object to be tested to see if it is an OpenMx LISREL [OpenMx::mxModel()]
+#' @return - Boolean
+#' @export
+#' @family Test
+#' @references - <https://github.com/tbates/umx>
+#' @md
+#' @examples
+#' \dontrun{
+#' # LISREL model example
+#' }
+umx_is_LISREL <- function(obj) {
+	if(!umx_is_MxModel(obj)){
+		return(FALSE)
+	} else if(class(obj)[[1]] == "MxLISRELModel"){
+		return(TRUE)
+	} else {
+		return(class(obj$expectation)[[1]] == "MxExpectationLISREL")
+	}
+}
+
 #' umx_is_MxModel
 #'
 #' Utility function returning a binary answer to the question "Is this an OpenMx model?"

@@ -1284,6 +1284,48 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 umxSummary.MxRAMModel <- umxSummary.MxModel
 
 
+#' umxSummary.MxLISRELModel
+#'
+#' umxSummary.MxLISRELModel handles summary formatting for LISREL models.
+#'
+#' @param model A LISREL [OpenMx::mxModel()] to summarize.
+#' @param refModels Reference models for comparison.
+#' @param std Whether to show standardized path values.
+#' @param digits Number of decimal places to round to.
+#' @param report Formatting style: markdown or html.
+#' @param means Whether to print means.
+#' @param residuals Whether to print residual covariances.
+#' @param SE Whether to show parameter Standard Errors.
+#' @param filter Filter criteria for parameters.
+#' @param RMSEA_CI Print RMSEA Confidence Interval.
+#' @param ... Extra arguments.
+#' @param matrixAddresses Print matrix addresses.
+#' @return - model
+#' @export
+#' @family Model Summary
+#' @seealso [umxLISREL()], [plot.MxLISRELModel()]
+#' @references <https://github.com/tbates/umx>
+#' @md
+umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means = TRUE, residuals = TRUE, SE = TRUE, filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, ..., matrixAddresses = FALSE) {
+	report = match.arg(report)
+	filter = match.arg(filter)
+	
+	message("?umxSummary options: std=T|F, digits=, report= 'html', filter= 'NS' & more")
+	umx_has_been_run(model, stop = TRUE)
+	
+	if (is.null(refModels)) {
+		modelSummary = summary(model)
+	} else if (refModels == FALSE) {
+		modelSummary = summary(model)
+	} else {
+		modelSummary = summary(model, refModels = refModels)
+	}
+	
+	print(modelSummary)
+	invisible(model)
+}
+
+
 #' Shows a compact, publication-style, summary of a umx Cholesky ACE model
 #'
 #' Summarize a fitted Cholesky model returned by [umxACE()]. Can control digits, report comparison model fits,
@@ -2566,7 +2608,6 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @examples
 #' # plot()
 #' # TODO get LISREL example model
-#' # Figure out how to map its matrices to plot. Don't do without establishing demand.
 plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = TRUE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min = NULL, same = NULL, max = NULL, ...) {
 	if(is.logical(splines)){ splines = ifelse(splines, "TRUE", "FALSE")}
 	splines = match.arg(splines)
