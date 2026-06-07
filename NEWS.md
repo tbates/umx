@@ -1,5 +1,7 @@
 ## dev
-* Date: 2026-05-20 R 4.6.0
+
+## umx 4.80.0
+* Date: 2026-06-08 R 4.6.0
 * NEW: `plot.MxLISRELModel`
 * NEW: `xmu_standardize_LISREL`
 * Refactor: financial utils

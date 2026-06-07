@@ -40,6 +40,14 @@
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
+\item{splines}{Whether to allow lines to curve: defaults to "TRUE" (nb: some models look better with "FALSE")}
+
+\item{min}{optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.}
+
+\item{same}{optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.}
+
+\item{max}{optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.}
+
 \item{...}{Optional parameters}
 }
 \description{

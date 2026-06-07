@@ -2598,6 +2598,10 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @param labels Whether to show labels on the paths. both will show both the parameter and the label. ("both", "none" or "labels")
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param splines Whether to allow lines to curve: defaults to "TRUE" (nb: some models look better with "FALSE")
+#' @param min optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.
+#' @param same optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.
+#' @param max optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [umx_set_auto_plot()], [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
