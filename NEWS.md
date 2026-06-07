@@ -1,4 +1,12 @@
 ## dev
+* Date: 2026-05-20 R 4.6.0
+* NEW: `plot.MxLISRELModel`
+* NEW: `xmu_standardize_LISREL`
+* Refactor: financial utils
+* IMPROVED: `umxModify` now validate labels and suggests fixes from similar names if not found. Prevents silent failures when calling omxSetParameters.
+* IMPROVED: `umxRAM` Validate dot items & fix loop with clearer error messages.
+* FIXED: `umx_paste_names` usage to use suffixes.
+
 ## umx 4.70.0
 * Date: 2026-05-20 R 4.6.0
 * NEW: `umxMeasurementInvariance` runs configural/metric/scalar/strict multi-group CFA sequences, returns comparison tables
