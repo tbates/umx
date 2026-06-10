@@ -256,18 +256,19 @@ test_that("umx_aggregate works with multiple variables", {
 	expect_equal(ncol(res_single), 2)
 	expect_true("4 (n = 11)" %in% res_single$cyl)
 	
-	# Multiple DVs via cbind
+	# Multiple DVs via cbind (Table 1 style: transposed)
 	res_multiple = umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, report = "txt")
 	expect_s3_class(res_multiple, "data.frame")
-	expect_equal(ncol(res_multiple), 3)
-	expect_named(res_multiple, c("cyl", "mpg", "qsec"))
-	expect_true("4 (n = 11)" %in% res_multiple$cyl)
+	expect_equal(ncol(res_multiple), 4) # Variable + 3 groups
+	expect_named(res_multiple, c("Variable", "4 (n = 11)", "6 (n = 7)", "8 (n = 14)"))
+	expect_equal(res_multiple$Variable, c("mpg", "qsec"))
 	
-	# Multiple DVs via addition
+	# Multiple DVs via addition (Table 1 style: transposed)
 	res_add = umx_aggregate(mpg + qsec ~ cyl, data = mtcars, report = "txt")
 	expect_s3_class(res_add, "data.frame")
-	expect_equal(ncol(res_add), 3)
-	expect_named(res_add, c("cyl", "mpg", "qsec"))
+	expect_equal(ncol(res_add), 4) # Variable + 3 groups
+	expect_named(res_add, c("Variable", "4 (n = 11)", "6 (n = 7)", "8 (n = 14)"))
+	expect_equal(res_add$Variable, c("mpg", "qsec"))
 	
 	# Markdown report format
 	res_md = umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, report = "markdown")
@@ -283,23 +284,10 @@ test_that("umx_aggregate works with multiple variables", {
 	expect_type(res_str_multiple, "character")
 	expect_equal(length(res_str_multiple), 6) # 3 cyl groups * 2 variables
 
-	# Stacked aggregation table output
-	res_stacked = umx_aggregate(mpg ~ gear + cyl, data = mtcars, stack = TRUE, report = "txt")
-	expect_s3_class(res_stacked, "data.frame")
-	expect_equal(ncol(res_stacked), 2)
-	expect_named(res_stacked, c("Variable", "mpg"))
-	expect_true("4 (n = 12)" %in% res_stacked$Variable) # gear = 4 has n=12 in mtcars
-	expect_true("6 (n = 7)" %in% res_stacked$Variable) # cyl = 6 has n=7 in mtcars
-
-	# Stacked aggregation with multiple DVs
-	res_stacked_multiple = umx_aggregate(cbind(mpg, qsec) ~ gear + cyl, data = mtcars, stack = TRUE, report = "txt")
-	expect_s3_class(res_stacked_multiple, "data.frame")
-	expect_equal(ncol(res_stacked_multiple), 3)
-	expect_named(res_stacked_multiple, c("Variable", "mpg", "qsec"))
-
-	# Stacked aggregation with output='string'
-	res_stacked_str = umx_aggregate(mpg ~ gear + cyl, data = mtcars, output = "string", stack = TRUE, report = "txt")
-	expect_type(res_stacked_str, "character")
-	# 3 gear groups + 3 cyl groups = 6 strings
-	expect_equal(length(res_stacked_str), 6)
+	# Dynamic One column generation with multiple DVs (Table 1 style)
+	res_one = umx_aggregate(cbind(mpg, qsec) ~ One, data = mtcars, report = "txt")
+	expect_s3_class(res_one, "data.frame")
+	expect_equal(ncol(res_one), 2) # Variable + 1 group
+	expect_named(res_one, c("Variable", "1 (n = 32)"))
+	expect_equal(res_one$Variable, c("mpg", "qsec"))
 })

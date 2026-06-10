@@ -4630,7 +4630,6 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @param digits to round results to.
 #' @param report Format for the table: Default is markdown.
 #' @param output Format for the results: "table" (default) or "string".
-#' @param stack Whether to stack the results vertically if multiple grouping variables are specified on the RHS (default = TRUE).
 #' @return - table or character vector of formatted strings
 #' @export
 #' @family Reporting Functions
@@ -4653,27 +4652,20 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' # turn off markdown
 #' umx_aggregate(mpg ~ cyl, data = mtcars, report = "txt")
 #' 
-#' # ============================================
-#' # = More than one item on the left hand side =
-#' # ============================================
+#' # =========================================================
+#' # = More than one item on the left hand side (Table 1 style)=
+#' # =========================================================
 #' umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, digits = 3)
-#' # Transpose table
-#' t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
 #' 
 #' # =========================
 #' # = Output as a string    =
 #' # =========================
 #' umx_aggregate(mpg ~ cyl, data = mtcars, output = "string")
 #' 
-#' # ==========================================
-#' # = Stacked aggregation on multiple IVs =
-#' # ==========================================
-#' umx_aggregate(mpg ~ One + cyl, data = mtcars, stack = TRUE)
-#' 
 #' \dontrun{
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
-umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt"), output = c("table", "string"), stack = TRUE) {
+umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt"), output = c("table", "string")) {
 	report = match.arg(report)
 	output = match.arg(output)
 	what = xmu_match.arg(what, c("mean_sd", "n"), check = FALSE)
@@ -4711,46 +4703,6 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 	vars = all.vars(formula[[2]])
 	rhs_vars = all.vars(formula[[3]])
 	rhs_str = deparse(formula[[3]])
-
-	# Process stacked aggregation if requested and multiple RHS variables exist
-	if (stack && length(rhs_vars) > 1) {
-		stacked_results = list()
-		for (r in rhs_vars) {
-			r_formula = as.formula(paste0(deparse(formula[[2]]), " ~ ", r))
-			tmp_r = umx_aggregate(r_formula, data = data, what = what, digits = digits, report = "txt", output = output, stack = FALSE)
-			
-			if (output == "string") {
-				stacked_results[[r]] = tmp_r
-			} else {
-				colnames(tmp_r)[1] = "Variable"
-				stacked_results[[r]] = tmp_r
-			}
-		}
-		
-		if (output == "string") {
-			combined_strings = unlist(stacked_results)
-			names(combined_strings) = NULL
-			
-			if(report == "html"){
-				umx_print(data.frame(String = combined_strings), digits = digits, report = report)
-			} else if(report == "markdown"){
-				return(paste(combined_strings, collapse = "\n\n"))
-			}else{
-				return(combined_strings)
-			}
-		} else {
-			combined_table = do.call(rbind, stacked_results)
-			rownames(combined_table) = NULL
-			
-			if(report == "html"){
-				umx_print(combined_table, digits = digits, report = report)
-			} else if(report == "markdown"){
-				return(kable(combined_table, format="pipe"))
-			}else{
-				return(combined_table)
-			}
-		}
-	}
 
 	if (output == "string") {
 		all_strings = c()
@@ -4793,20 +4745,11 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 				return(tmp)
 			}
 		} else {
-			# Process multiple DVs
+			# Process multiple DVs: construct transposed Table 1 style (DVs as rows, Group levels as columns)
 			results = list()
 			for (v in vars) {
 				v_formula = as.formula(paste0(v, " ~ ", rhs_str))
 				results[[v]] = aggregate(v_formula, FUN = FUN, data = data)
-			}
-			
-			# Merge all DV tables
-			combined = results[[1]]
-			if (length(results) > 1) {
-				for (i in 2:length(results)) {
-					group_cols = names(combined)[1:(ncol(combined) - 1)]
-					combined = merge(combined, results[[i]], by = group_cols, all = TRUE)
-				}
 			}
 			
 			# Compute overall group sizes
@@ -4815,21 +4758,31 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 			n_formula = as.formula(paste0(".dummy_n ~ ", rhs_str))
 			n_s = aggregate(n_formula, FUN = sum, data = data_copy)
 			
-			# Merge overall counts with combined table
-			k = ncol(combined) - length(vars)
-			group_cols = names(combined)[1:k]
-			combined = merge(combined, n_s, by = group_cols, all = TRUE)
+			# Construct transposed table: first column "Variable"
+			transposed = data.frame(Variable = vars, stringsAsFactors = FALSE)
+			n_groups = nrow(n_s)
 			
-			# Append counts suffix to the first column
-			combined[, 1] = paste0(as.character(combined[, 1]), " (n = ", combined$.dummy_n, ")")
-			combined$.dummy_n = NULL
+			# Add each group as a column
+			for (i in 1:n_groups) {
+				group_val_cols = 1:(ncol(n_s) - 1)
+				group_vals = paste(as.character(unlist(n_s[i, group_val_cols])), collapse = ", ")
+				col_name = paste0(group_vals, " (n = ", n_s[i, ncol(n_s)], ")")
+				
+				col_values = c()
+				for (v in vars) {
+					val = results[[v]][i, ncol(results[[v]])]
+					col_values = c(col_values, as.character(val))
+				}
+				
+				transposed[[col_name]] = col_values
+			}
 			
 			if(report == "html"){
-				umx_print(combined, digits = digits, report = report)
+				umx_print(transposed, digits = digits, report = report)
 			} else if(report == "markdown"){
-				return(kable(combined, format="pipe"))
+				return(kable(transposed, format="pipe"))
 			}else{
-				return(combined)
+				return(transposed)
 			}
 		}
 	}
