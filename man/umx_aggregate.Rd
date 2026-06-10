@@ -9,7 +9,8 @@ umx_aggregate(
   data = df,
   what = c("mean_sd", "n"),
   digits = 2,
-  report = c("markdown", "html", "txt")
+  report = c("markdown", "html", "txt"),
+  output = c("table", "string")
 )
 }
 \arguments{
@@ -22,10 +23,12 @@ umx_aggregate(
 \item{digits}{to round results to.}
 
 \item{report}{Format for the table: Default is markdown.}
+
+\item{output}{Format for the results: "table" (default) or "string".}
 }
 \value{
 \itemize{
-\item table
+\item table or character vector of formatted strings
 }
 }
 \description{
@@ -67,6 +70,11 @@ umx_aggregate(mpg ~ cyl, data = mtcars, report = "txt")
 umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, digits = 3)
 # Transpose table
 t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
+
+# =========================
+# = Output as a string    =
+# =========================
+umx_aggregate(mpg ~ cyl, data = mtcars, output = "string")
 
 \dontrun{
 umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)

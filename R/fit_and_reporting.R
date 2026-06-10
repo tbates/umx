@@ -4629,7 +4629,8 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @param what function to use. Default reports "mean (sd)".
 #' @param digits to round results to.
 #' @param report Format for the table: Default is markdown.
-#' @return - table
+#' @param output Format for the results: "table" (default) or "string".
+#' @return - table or character vector of formatted strings
 #' @export
 #' @family Reporting Functions
 #' @seealso - [umx_apply()], [aggregate()]
@@ -4658,19 +4659,18 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' # Transpose table
 #' t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
 #' 
+#' # =========================
+#' # = Output as a string    =
+#' # =========================
+#' umx_aggregate(mpg ~ cyl, data = mtcars, output = "string")
+#' 
 #' \dontrun{
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
-umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt")) {
+umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt"), output = c("table", "string")) {
 	report = match.arg(report)
+	output = match.arg(output)
 	what = xmu_match.arg(what, c("mean_sd", "n"), check = FALSE)
-	# TODO: add summaryBy ability to handle more than var on the left hand side
-	# 	output odds or odds ratios for binary?
-	# doBy::summaryBy(Sex_T1 + Sex_T2 ~ zyg, data = twinData, FUN = function(x) { round(c(
-	# 	n    = length(x),
-	# 	mean = mean(x, na.rm = T),
-	# 	sd   = sd(x, na.rm = T)), 2)
-	# })
 	# TODO: add "sep" to umx_aggregate to make wide data long for summary as in genEpi_TwinDescriptives
 	# genEpi_TwinDescriptives(mzData = twinData, dzData = NULL, selDVs = selDVs, groupBy = c("Sex_T1", "Sex_T2"), graph = F)
 	# genEpi_twinDescribe(twinData, varsToSummarize="Age", groupBy="Sex", suffix="_T")
@@ -4695,16 +4695,91 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 	} else if(what == "n"){
 		FUN = x_n
 	}
-	tmp = aggregate(formula, FUN = FUN, data = data)
-	n_s = aggregate(formula, FUN = x_n, data = data)
-	tmp = data.frame(tmp)
-	tmp[, 1] = paste0(as.character(tmp[, 1]), " (n = ", n_s[, 2], ")")
-	if(report == "html"){
-		umx_print(tmp, digits = digits, report = report)
-	} else if(report == "markdown"){
-		return(kable(tmp, format="pipe"))
-	}else{
-		return(tmp)
+
+	# Parse LHS
+	vars = all.vars(formula[[2]])
+	rhs_str = deparse(formula[[3]])
+
+	if (output == "string") {
+		all_strings = c()
+		for (v in vars) {
+			v_formula = as.formula(paste0(v, " ~ ", rhs_str))
+			tmp_v = aggregate(v_formula, FUN = FUN, data = data)
+			n_s = aggregate(v_formula, FUN = x_n, data = data)
+			
+			for (i in 1:nrow(tmp_v)) {
+				if (rhs_str == "One" || names(tmp_v)[1] == "One") {
+					group_str = ""
+				} else {
+					group_str = paste0(paste(tmp_v[i, 1:(ncol(tmp_v)-1)], collapse = ", "), ": ")
+				}
+				val = tmp_v[i, ncol(tmp_v)]
+				cnt = n_s[i, ncol(n_s)]
+				all_strings = c(all_strings, paste0(group_str, v, " was (n = ", cnt, ": ", val, ")"))
+			}
+		}
+		
+		if(report == "html"){
+			umx_print(data.frame(String = all_strings), digits = digits, report = report)
+		} else if(report == "markdown"){
+			return(paste(all_strings, collapse = "\n\n"))
+		}else{
+			return(all_strings)
+		}
+	} else {
+		# Process table output
+		if (length(vars) <= 1) {
+			tmp = aggregate(formula, FUN = FUN, data = data)
+			n_s = aggregate(formula, FUN = x_n, data = data)
+			tmp = data.frame(tmp)
+			tmp[, 1] = paste0(as.character(tmp[, 1]), " (n = ", n_s[, 2], ")")
+			if(report == "html"){
+				umx_print(tmp, digits = digits, report = report)
+			} else if(report == "markdown"){
+				return(kable(tmp, format="pipe"))
+			}else{
+				return(tmp)
+			}
+		} else {
+			# Process multiple DVs
+			results = list()
+			for (v in vars) {
+				v_formula = as.formula(paste0(v, " ~ ", rhs_str))
+				results[[v]] = aggregate(v_formula, FUN = FUN, data = data)
+			}
+			
+			# Merge all DV tables
+			combined = results[[1]]
+			if (length(results) > 1) {
+				for (i in 2:length(results)) {
+					group_cols = names(combined)[1:(ncol(combined) - 1)]
+					combined = merge(combined, results[[i]], by = group_cols, all = TRUE)
+				}
+			}
+			
+			# Compute overall group sizes
+			data_copy = data
+			data_copy$.dummy_n = 1
+			n_formula = as.formula(paste0(".dummy_n ~ ", rhs_str))
+			n_s = aggregate(n_formula, FUN = sum, data = data_copy)
+			
+			# Merge overall counts with combined table
+			k = ncol(combined) - length(vars)
+			group_cols = names(combined)[1:k]
+			combined = merge(combined, n_s, by = group_cols, all = TRUE)
+			
+			# Append counts suffix to the first column
+			combined[, 1] = paste0(as.character(combined[, 1]), " (n = ", combined$.dummy_n, ")")
+			combined$.dummy_n = NULL
+			
+			if(report == "html"){
+				umx_print(combined, digits = digits, report = report)
+			} else if(report == "markdown"){
+				return(kable(combined, format="pipe"))
+			}else{
+				return(combined)
+			}
+		}
 	}
 }
 

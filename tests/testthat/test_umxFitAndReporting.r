@@ -247,3 +247,39 @@ test_that("umxSummary works on supermodels", {
 	super = umxSuperModel("supermodel", m1, m2)
 	expect_error(umxSummary(super), NA)
 })
+
+test_that("umx_aggregate works with multiple variables", {
+	require(umx)
+	# Single DV
+	res_single = umx_aggregate(mpg ~ cyl, data = mtcars, report = "txt")
+	expect_s3_class(res_single, "data.frame")
+	expect_equal(ncol(res_single), 2)
+	expect_true("4 (n = 11)" %in% res_single$cyl)
+	
+	# Multiple DVs via cbind
+	res_multiple = umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, report = "txt")
+	expect_s3_class(res_multiple, "data.frame")
+	expect_equal(ncol(res_multiple), 3)
+	expect_named(res_multiple, c("cyl", "mpg", "qsec"))
+	expect_true("4 (n = 11)" %in% res_multiple$cyl)
+	
+	# Multiple DVs via addition
+	res_add = umx_aggregate(mpg + qsec ~ cyl, data = mtcars, report = "txt")
+	expect_s3_class(res_add, "data.frame")
+	expect_equal(ncol(res_add), 3)
+	expect_named(res_add, c("cyl", "mpg", "qsec"))
+	
+	# Markdown report format
+	res_md = umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, report = "markdown")
+	expect_type(res_md, "character")
+	
+	# String output format
+	res_str = umx_aggregate(mpg ~ cyl, data = mtcars, output = "string", report = "txt")
+	expect_type(res_str, "character")
+	expect_equal(length(res_str), 3)
+	expect_true(grepl("4: mpg was \\(n = 11:", res_str[1]))
+	
+	res_str_multiple = umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, output = "string", report = "txt")
+	expect_type(res_str_multiple, "character")
+	expect_equal(length(res_str_multiple), 6) # 3 cyl groups * 2 variables
+})
