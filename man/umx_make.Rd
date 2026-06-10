@@ -18,7 +18,7 @@ umx_make(
 )
 }
 \arguments{
-\item{what}{whether to "install", "release" to CRAN, "test", test on "win", "spell", open "git" app, or run "examples")).}
+\item{what}{whether to "update", "install", "release" to CRAN, "test", test on "win", "spell", open "git" app, or run "examples")).}
 
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 

@@ -3109,7 +3109,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", "examples" etc.
 #'
-#' @param what whether to "install", "release" to CRAN, "test", test on "win", "spell", open "git" app, or run "examples")).
+#' @param what whether to "update", "install", "release" to CRAN, "test", test on "win", "spell", open "git" app, or run "examples")).
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
 #' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE).
@@ -3226,7 +3226,10 @@ umx_make <- function(
 			devtools::release(pkg = pkgPath, check = check, args = "--no-manual")
 		})
 		
-	} else if (what == "git"){
+	} else if (what == "github"){
+		# STRATEGY: Universal MacOS application opening protocol
+		system2("open", args = c("-a", "GitHub Desktop"))
+	} else if (what == "update_from_github"){
 		# STRATEGY: Universal MacOS application opening protocol
 		system2("open", args = c("-a", "GitHub Desktop"))
 	}
