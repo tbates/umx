@@ -6,7 +6,8 @@
 \usage{
 umx_make(
   what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install",
-    "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git"),
+    "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git",
+    "dev"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,
@@ -18,7 +19,7 @@ umx_make(
 )
 }
 \arguments{
-\item{what}{whether to "update", "install", "release" to CRAN, "test", test on "win", "spell", open "git" app, or run "examples")).}
+\item{what}{whether to "load", "install", "quickInst", "release" to CRAN, "testthat", test on "win", "spell", open "git" app, install "dev" version, or run "examples".}
 
 \item{pkg}{the local path to your package. Defaults to my path to umx.}
 
@@ -56,6 +57,8 @@ Easily  run devtools "install", "release", "win", "examples" etc.
 # umx_make(what = "win")       # Check on win-builder
 # umx_make(what = "release")   # Release to CRAN
 # tmp = umx_make(what = "lastRhub") # View rhub result
+# umx_make(what = "git")       # Open Git Desktop app
+# umx_make(what = "dev")       # Install dev version from GitHub
 }
 }
 \references{

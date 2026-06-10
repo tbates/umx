@@ -3109,7 +3109,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @description
 #' Easily  run devtools "install", "release", "win", "examples" etc.
 #'
-#' @param what whether to "update", "install", "release" to CRAN, "test", test on "win", "spell", open "git" app, or run "examples")).
+#' @param what whether to "load", "install", "quickInst", "release" to CRAN, "testthat", test on "win", "spell", open "git" app, install "dev" version, or run "examples".
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
 #' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE).
@@ -3137,9 +3137,11 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "win")       # Check on win-builder
 #' # umx_make(what = "release")   # Release to CRAN
 #' # tmp = umx_make(what = "lastRhub") # View rhub result
+#' # umx_make(what = "git")       # Open Git Desktop app
+#' # umx_make(what = "dev")       # Install dev version from GitHub
 #' }
 umx_make <- function(
-	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git"), 
+	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git", "dev"), 
 	pkg = "~/bin/umx", 
 	check = TRUE, 
 	run = FALSE, 
@@ -3226,12 +3228,13 @@ umx_make <- function(
 			devtools::release(pkg = pkgPath, check = check, args = "--no-manual")
 		})
 		
-	} else if (what == "github"){
+	} else if (what == "git"){
 		# STRATEGY: Universal MacOS application opening protocol
 		system2("open", args = c("-a", "GitHub Desktop"))
-	} else if (what == "update_from_github"){
-		# STRATEGY: Universal MacOS application opening protocol
-		system2("open", args = c("-a", "GitHub Desktop"))
+	} else if (what == "dev"){
+		# STRATEGY: Install package development version from GitHub
+		if(!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
+		pak::pkg_install("tbates/umx")
 	}
 }
 
