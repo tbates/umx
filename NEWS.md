@@ -2,12 +2,16 @@
 
 ## umx 4.80.0
 * Date: 2026-06-08 R 4.6.0
-* NEW: `plot.MxLISRELModel`
-* NEW: `xmu_standardize_LISREL`
+* NEW: `plot` supports MxLISRELModels
+* NEW: `umxLISREL` make LISREL Models!
+* NEW: `xmu_standardize_LISREL` standardize LISREL models.
+* NEW: `umxACE_DE` double-entry ACE model
+* IMPROVED: `umx_make("dev")` will install development version of umx for user. 
+* IMPROVED: `umx_aggregate` support multiple DVs and output='string' for easier paste into procedure.
+* SAFE: `umxModify` now validate labels and suggests fixes from similar names if not found. Prevents silent failures when calling omxSetParameters.
+* SAFE: `umxRAM` Validate dot items & fix loop with clearer error messages.
+* SAFE: `umx_paste_names` usage to use suffixes.
 * Refactor: financial utils
-* IMPROVED: `umxModify` now validate labels and suggests fixes from similar names if not found. Prevents silent failures when calling omxSetParameters.
-* IMPROVED: `umxRAM` Validate dot items & fix loop with clearer error messages.
-* FIXED: `umx_paste_names` usage to use suffixes.
 
 ## umx 4.70.0
 * Date: 2026-05-20 R 4.6.0
