@@ -4630,6 +4630,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @param digits to round results to.
 #' @param report Format for the table: Default is markdown.
 #' @param output Format for the results: "table" (default) or "string".
+#' @param stack Whether to stack the results vertically if multiple grouping variables are specified on the RHS (default = TRUE).
 #' @return - table or character vector of formatted strings
 #' @export
 #' @family Reporting Functions
@@ -4664,16 +4665,26 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' # =========================
 #' umx_aggregate(mpg ~ cyl, data = mtcars, output = "string")
 #' 
+#' # ==========================================
+#' # = Stacked aggregation on multiple IVs =
+#' # ==========================================
+#' umx_aggregate(mpg ~ One + cyl, data = mtcars, stack = TRUE)
+#' 
 #' \dontrun{
 #' umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)
 #' }
-umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt"), output = c("table", "string")) {
+umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd", "n"), digits = 2, report = c("markdown", "html", "txt"), output = c("table", "string"), stack = TRUE) {
 	report = match.arg(report)
 	output = match.arg(output)
 	what = xmu_match.arg(what, c("mean_sd", "n"), check = FALSE)
 	# TODO: add "sep" to umx_aggregate to make wide data long for summary as in genEpi_TwinDescriptives
 	# genEpi_TwinDescriptives(mzData = twinData, dzData = NULL, selDVs = selDVs, groupBy = c("Sex_T1", "Sex_T2"), graph = F)
 	# genEpi_twinDescribe(twinData, varsToSummarize="Age", groupBy="Sex", suffix="_T")
+
+	# If 'One' is requested in the RHS but doesn't exist in the data, add it dynamically
+	if ("One" %in% all.vars(formula[[3]]) && !("One" %in% colnames(data))) {
+		data$One <- 1
+	}
 
 	mean_sd = function(x){
 		if(is.numeric(x)){
@@ -4696,9 +4707,50 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 		FUN = x_n
 	}
 
-	# Parse LHS
+	# Parse LHS and RHS
 	vars = all.vars(formula[[2]])
+	rhs_vars = all.vars(formula[[3]])
 	rhs_str = deparse(formula[[3]])
+
+	# Process stacked aggregation if requested and multiple RHS variables exist
+	if (stack && length(rhs_vars) > 1) {
+		stacked_results = list()
+		for (r in rhs_vars) {
+			r_formula = as.formula(paste0(deparse(formula[[2]]), " ~ ", r))
+			tmp_r = umx_aggregate(r_formula, data = data, what = what, digits = digits, report = "txt", output = output, stack = FALSE)
+			
+			if (output == "string") {
+				stacked_results[[r]] = tmp_r
+			} else {
+				colnames(tmp_r)[1] = "Variable"
+				stacked_results[[r]] = tmp_r
+			}
+		}
+		
+		if (output == "string") {
+			combined_strings = unlist(stacked_results)
+			names(combined_strings) = NULL
+			
+			if(report == "html"){
+				umx_print(data.frame(String = combined_strings), digits = digits, report = report)
+			} else if(report == "markdown"){
+				return(paste(combined_strings, collapse = "\n\n"))
+			}else{
+				return(combined_strings)
+			}
+		} else {
+			combined_table = do.call(rbind, stacked_results)
+			rownames(combined_table) = NULL
+			
+			if(report == "html"){
+				umx_print(combined_table, digits = digits, report = report)
+			} else if(report == "markdown"){
+				return(kable(combined_table, format="pipe"))
+			}else{
+				return(combined_table)
+			}
+		}
+	}
 
 	if (output == "string") {
 		all_strings = c()

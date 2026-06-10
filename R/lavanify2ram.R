@@ -8,8 +8,11 @@ xmu_lav_add_regression <- function(spec, Amat, op, m1, m2) {
 	  p1 = m1; p2 = m2
 	}
 	if (Amat$free[m2, m1]) {
-		if (Amat$labels[m2, m1] != paste0(m1, "_to_", m2)) {
-			spec = c(spec, paste(p2, op, Amat$labels[m2,m1], "*", p1))
+		label = Amat$labels[m2, m1]
+		is_default = (label == paste0(m1, "_to_", m2))
+		is_autogen = grepl("^p[0-9]+_$", label) || grepl("^_p[0-9]+_$", label)
+		if (!is_default && !is_autogen) {
+			spec = c(spec, paste(p2, op, label, "*", p1))
 		} else {
 			spec = c(spec, paste(p2, op, p1))
 		}

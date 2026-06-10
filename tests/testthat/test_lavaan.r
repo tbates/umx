@@ -9,11 +9,27 @@ test_that("umxLav2RAM and umxRAM2Lav work", {
 	xmu_lavaan_process_group(tab, groupNum = 1)
 	xmu_lavaan_process_group(tab, groupNum = 0)
 	
+	sanitize_labels <- function(model) {
+		if (!is.null(model$A)) {
+			a_labs = model$A$labels
+			a_labs[grepl("^p[0-9]+_$", a_labs) | grepl("^_p[0-9]+_$", a_labs)] = NA
+			model$A$labels = a_labs
+		}
+		if (!is.null(model$S)) {
+			s_labs = model$S$labels
+			s_labs[grepl("^p[0-9]+_$", s_labs) | grepl("^_p[0-9]+_$", s_labs)] = NA
+			model$S$labels = s_labs
+		}
+		return(model)
+	}
+
 	roundtrip <- function(modelStr, verbose=FALSE) {
 		m1 = umxLav2RAM(modelStr, autoRun=FALSE, printTab=FALSE, lavaanMode="lavaan")
 		lav = umxRAM2Lav(m1)
 		if (verbose) cat(lav)
 			m2 = umxLav2RAM(lav, autoRun=FALSE, printTab=FALSE, lavaanMode="lavaan")
+			m1 = sanitize_labels(m1)
+			m2 = sanitize_labels(m2)
 			expect_setequal(colnames(m1$F), colnames(m2$F))
 			expect_setequal(rownames(m1$F), rownames(m2$F))
 			perm = match(colnames(m1$F), colnames(m2$F))

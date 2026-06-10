@@ -10,7 +10,8 @@ umx_aggregate(
   what = c("mean_sd", "n"),
   digits = 2,
   report = c("markdown", "html", "txt"),
-  output = c("table", "string")
+  output = c("table", "string"),
+  stack = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ umx_aggregate(
 \item{report}{Format for the table: Default is markdown.}
 
 \item{output}{Format for the results: "table" (default) or "string".}
+
+\item{stack}{Whether to stack the results vertically if multiple grouping variables are specified on the RHS (default = TRUE).}
 }
 \value{
 \itemize{
@@ -75,6 +78,11 @@ t(umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars))
 # = Output as a string    =
 # =========================
 umx_aggregate(mpg ~ cyl, data = mtcars, output = "string")
+
+# ==========================================
+# = Stacked aggregation on multiple IVs =
+# ==========================================
+umx_aggregate(mpg ~ One + cyl, data = mtcars, stack = TRUE)
 
 \dontrun{
 umx_aggregate(cbind(moodAvg, mood) ~ condition, data = study1)

@@ -282,4 +282,24 @@ test_that("umx_aggregate works with multiple variables", {
 	res_str_multiple = umx_aggregate(cbind(mpg, qsec) ~ cyl, data = mtcars, output = "string", report = "txt")
 	expect_type(res_str_multiple, "character")
 	expect_equal(length(res_str_multiple), 6) # 3 cyl groups * 2 variables
+
+	# Stacked aggregation table output
+	res_stacked = umx_aggregate(mpg ~ gear + cyl, data = mtcars, stack = TRUE, report = "txt")
+	expect_s3_class(res_stacked, "data.frame")
+	expect_equal(ncol(res_stacked), 2)
+	expect_named(res_stacked, c("Variable", "mpg"))
+	expect_true("4 (n = 12)" %in% res_stacked$Variable) # gear = 4 has n=12 in mtcars
+	expect_true("6 (n = 7)" %in% res_stacked$Variable) # cyl = 6 has n=7 in mtcars
+
+	# Stacked aggregation with multiple DVs
+	res_stacked_multiple = umx_aggregate(cbind(mpg, qsec) ~ gear + cyl, data = mtcars, stack = TRUE, report = "txt")
+	expect_s3_class(res_stacked_multiple, "data.frame")
+	expect_equal(ncol(res_stacked_multiple), 3)
+	expect_named(res_stacked_multiple, c("Variable", "mpg", "qsec"))
+
+	# Stacked aggregation with output='string'
+	res_stacked_str = umx_aggregate(mpg ~ gear + cyl, data = mtcars, output = "string", stack = TRUE, report = "txt")
+	expect_type(res_stacked_str, "character")
+	# 3 gear groups + 3 cyl groups = 6 strings
+	expect_equal(length(res_stacked_str), 6)
 })

@@ -1958,7 +1958,9 @@ xmu_clean_label <- function(label, replace = "_") {
 	if(length(namez(label, pattern = "^data\\.")) > 0){
 		return(label) # defn var
 	} else {
-		return(namez(label, pattern = "\\.", replacement = replace, global = TRUE))
+		res = namez(label, pattern = "\\.", replacement = replace, global = TRUE)
+		res = sub("^[_.]+", "", res)
+		return(res)
 	}
 }
 
