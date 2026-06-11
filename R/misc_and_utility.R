@@ -6187,7 +6187,6 @@ umx_wide2long <- function(data = df, timevar = list(condition = c("control", "ex
 # )
 
 umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
-	# TODO issue #82 umx_wide2longTwinData Assumes 2 twins: Generalize to unlimited family size.
     # Find all variables ending with _T1, _T2, etc.
     twin_pattern = paste0(sep, "[1-9]$")
     twinNames    = umx_names(data, twin_pattern)
@@ -6197,44 +6196,34 @@ umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
       return(data)
     }
 
-    # Split into T1 and T2 (assumes only 2 twins for now)
-    T1 = umx_names(data, paste0(sep, "1$"))
-    T2 = umx_names(data, paste0(sep, "2$"))
-
-    nonTwinColNames = setdiff(names(data), c(T1, T2))
-
-    # Remove the twin suffix cleanly
-    T1base = sub(paste0(sep, "1$"), "", T1)
-    T2base = sub(paste0(sep, "2$"), "", T2)
-
-    if (!setequal(T1base, T2base)) {
-      stop("Oops: Twin variable names don't match after removing suffix")
-    }
-
-    # Build the two halves
-    b1 = data[, c(nonTwinColNames, T1), drop = FALSE]
-    b2 = data[, c(nonTwinColNames, T2), drop = FALSE]
+    # Extract base name and twin number
+    base_names = sub(paste0(sep, "[0-9]+$"), "", twin_cols)
+    twin_nums  = as.integer(sub(paste0(".*", sep, "([0-9]+)$"), "\\1", twin_cols))
   
-    names(b1) = c(nonTwinColNames, T1base)
-    names(b2) = c(nonTwinColNames, T1base)
+    unique_bases = unique(base_names)
+    max_twin     = max(twin_nums, na.rm = TRUE)
+  
+    non_twin_cols = setdiff(names(data), twin_cols)
 
-    # Combine
-    ld = rbind(b1, b2)
-  
-    # Add a twin indicator (very useful in long format)
-    ld$twin = rep(c(1, 2), each = nrow(data))
-  
+    ld = NULL # we'll build this up
+    for (i in seq_len(max_twin)) {
+      # Get the columns for this twin number
+      idx = which(twin_nums == i)
+      current_twin_cols = twin_cols[idx]
+      current_bases     = base_names[idx]
+      # Select the relevant columns
+      selected_cols = c(non_twin_cols, current_twin_cols)
+      slice = data[, selected_cols, drop = FALSE]
+      # Rename twin columns to their base names
+      names(slice) = c(non_twin_cols, current_bases)
+      # Add twin indicator
+      slice$twin = i
+      # Stack it
+      ld = rbind(ld, slice)
+    } 
     if (verbose) {
-      umx_msg(nonTwinColNames)
-      umx_msg(T1base)
-    }
-
-    # Warn if a non-twin column has the same name as a de-suffixed twin column
-    overlap = intersect(nonTwinColNames, T1base)
-    if (length(overlap) > 0) {
-      message("Warning: These columns already existed and will be duplicated: ", paste(overlap, collapse = ", "))
-    }
-  
+      message("Converted ", length(unique_bases), " twin variable(s) across up to ", max_twin, " twins per family.")
+    } 
     return(ld)
 }
 
