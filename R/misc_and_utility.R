@@ -6188,14 +6188,13 @@ umx_wide2long <- function(data = df, timevar = list(condition = c("control", "ex
 
 umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
     # Find all variables ending with _T1, _T2, etc.
-    twin_pattern = paste0(sep, "[1-9]$")
-    twinNames    = umx_names(data, twin_pattern)
-  
-    if (length(twinNames) == 0) {
-      warning("No twin variables found matching pattern: ", twin_pattern)
-      return(data)
-    }
+	twin_pattern = paste0(sep, "[0-9]+$")
+	twin_cols    = umx_names(data, twin_pattern)
 
+	if (length(twin_cols) == 0) {
+		warning("No columns matching the twin pattern found: ", twin_pattern)
+		return(data)
+	}
     # Extract base name and twin number
     base_names = sub(paste0(sep, "[0-9]+$"), "", twin_cols)
     twin_nums  = as.integer(sub(paste0(".*", sep, "([0-9]+)$"), "\\1", twin_cols))
