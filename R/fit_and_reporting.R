@@ -5262,10 +5262,9 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	long = umx_wide2longTwinData(data = data[, selDVs], sep = sep)
 
 	# 4. High-Performance Pair Counts (Cross-product of non-NA indicators)
-	cat("\nPairwise Complete Cases:\n")
 	isPresent = !is.na(long[, selVars, drop = FALSE])
 	pairCounts = crossprod(isPresent)
-	print(kable(pairCounts, format = "markdown", align = "c"))
+	umx_print(pairCounts, caption = "Pairwise Complete Cases", digits = digits, report = report)
 
 	# Helper function to extract rigorous bracketed CIs and exact pair counts
 	get_r_ci = function(df_sub, v1, v2) {
@@ -5334,7 +5333,7 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	}
 
 	cat("\n")
-	umx_print(df, digits = digits, report = report)
+	umx_print(df, caption = "Means, SDs, and twin-pair correlations by zygosity", digits = digits, report = report)
 	cat("\nNote: Bracketed values denote 95% Confidence Intervals.\n")
 	if(!is.null(MZ)) cat("Note: (n = MZ/DZ) represents exact pairwise complete twin pairs for that variable.\n")
 	
