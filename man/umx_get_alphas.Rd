@@ -25,6 +25,7 @@ umx_get_alphas("") # blank it
 \seealso{
 Other Get and set:
 \code{\link{umx}},
+\code{\link[=umx_detect_cores]{umx_detect_cores()}},
 \code{\link[=umx_get_checkpoint]{umx_get_checkpoint()}},
 \code{\link[=umx_get_options]{umx_get_options()}},
 \code{\link[=umx_set_auto_plot]{umx_set_auto_plot()}},

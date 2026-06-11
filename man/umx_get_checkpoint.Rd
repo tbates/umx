@@ -38,6 +38,7 @@ umx_get_checkpoint(model = m1)
 \seealso{
 Other Get and set:
 \code{\link{umx}},
+\code{\link[=umx_detect_cores]{umx_detect_cores()}},
 \code{\link[=umx_get_alphas]{umx_get_alphas()}},
 \code{\link[=umx_get_options]{umx_get_options()}},
 \code{\link[=umx_set_auto_plot]{umx_set_auto_plot()}},

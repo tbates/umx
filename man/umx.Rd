@@ -203,6 +203,7 @@ Other Teaching and testing Functions:
 \code{\link[=tmx_is.identified]{tmx_is.identified()}}
 
 Other Get and set:
+\code{\link[=umx_detect_cores]{umx_detect_cores()}},
 \code{\link[=umx_get_alphas]{umx_get_alphas()}},
 \code{\link[=umx_get_checkpoint]{umx_get_checkpoint()}},
 \code{\link[=umx_get_options]{umx_get_options()}},

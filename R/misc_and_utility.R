@@ -826,11 +826,67 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 	}
 }
 
+#' Detect number of CPU cores (including Performance cores)
+#'
+#' Detects the number of cores on the local machine. On hybrid architectures
+#' (like Apple Silicon or Intel Alder Lake+), it prioritizes detecting only 
+#' Performance (P) cores to avoid E-core bottlenecks in parallel loops.
+#'
+#' @param logical Whether to count logical cores (hyperthreaded) or physical cores. Default is FALSE (physical).
+#' @param p_cores Whether to prioritize detecting Performance (P) cores only on hybrid architectures. Default is TRUE.
+#' @return Integer count of cores.
+#' @export
+#' @family Get and set
+#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
+#' @md
+#' @examples
+#' umx_detect_cores() # physical cores (P-cores if hybrid)
+#' umx_detect_cores(logical = TRUE, p_cores = FALSE) # all logical cores
+umx_detect_cores <- function(logical = FALSE, p_cores = TRUE) {
+	# Default fallback to standard physical cores
+	fallback <- tryCatch(parallel::detectCores(logical = logical), error = function(e) 1)
+	if (is.na(fallback)) fallback <- 1
+
+	if (p_cores) {
+		# 1. macOS (Apple Silicon & hybrid Intel)
+		if (Sys.info()["sysname"] == "Darwin") {
+			res <- suppressWarnings(system("sysctl -n hw.perflevel0.physicalcpu", intern = TRUE, ignore.stderr = TRUE))
+			if (length(res) > 0) {
+				val <- as.integer(res)
+				if (!is.na(val) && val > 0) return(val)
+			}
+		}
+
+		# 2. Linux (Intel hybrid & ARM big.LITTLE architectures)
+		if (Sys.info()["sysname"] == "Linux") {
+			if (file.exists("/sys/devices/system/cpu/cpu_core/cpus")) {
+				p_cores_count <- tryCatch({
+					cpu_range <- readLines("/sys/devices/system/cpu/cpu_core/cpus", warn = FALSE)
+					parts <- strsplit(cpu_range, ",")[[1]]
+					count <- 0
+					for (part in parts) {
+						if (grepl("-", part)) {
+							rng <- as.integer(strsplit(part, "-")[[1]])
+							count <- count + (rng[2] - rng[1] + 1)
+						} else {
+							count <- count + 1
+						}
+					}
+					if (count > 0) count else NULL
+				}, error = function(e) NULL)
+				if (!is.null(p_cores_count)) return(p_cores_count)
+			}
+		}
+	}
+
+	return(fallback)
+}
+
 #' umx_set_cores
 #'
 #' set the number of cores (threads) used by OpenMx
 #'
-#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to `omxDetectCores()`.
+#' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to `umx_detect_cores()`.
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
 #' @param silent If TRUE, no message will be printed.
 #' @return - number of cores
@@ -848,15 +904,18 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' umx_set_cores() # print current value
 #' oldCores = umx_set_cores(silent = TRUE)  # store existing value
 #' umx_set_cores(omxDetectCores()) # set to max
-#' umx_set_cores(-1); umx_set_cores() # set to max
+#' umx_set_cores(-1); umx_set_cores() # set to max (performance cores)
 #' m1 = umx_set_cores(1, m1)  # set m1 usage to 1 core
 #' umx_set_cores(model = m1)  # show new value for m1
 #' umx_set_cores(oldCores)    # reinstate old global value
 umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
+	max_p_cores <- umx_detect_cores(p_cores = TRUE)
+	max_all_cores <- omxDetectCores()
+
 	if(is.na(cores)){
 		n = mxOption(model, "Number of Threads") # get the old value
 		if(!silent){
-			message(n, "/", omxDetectCores() )
+			message(n, "/", max_p_cores, " (P-cores / total: ", max_all_cores, ")")
 		}
 		return(n)
 	} else if(umx_is_MxModel(cores)) {
@@ -866,12 +925,11 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 			stop("cores must be a number. You gave me ", cores)
 		}
 		umx_check(isTRUE(all.equal(cores, as.integer(cores))), message = paste0("cores must be an integer. You gave me: ", cores))
-		if(cores > omxDetectCores() ){
-			
-			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", omxDetectCores() )
-			cores = omxDetectCores()
+		if(cores > max_all_cores ){
+			message("cores set to maximum available (request (", cores, ") exceeds number possible: ", max_all_cores)
+			cores = max_all_cores
 		} else if (cores < 1){
-			cores = omxDetectCores()
+			cores = max_p_cores
 		}
 		mxOption(model, "Number of Threads", cores)		
 	}
