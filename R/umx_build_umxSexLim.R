@@ -195,7 +195,7 @@
 #' # summary(m1)$Mi
 #' }
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar", "Scalar", "Homogeneity"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL){
-	message("umxSexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing")
+	message("umxSexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing on github.com/tbates/umx/issues")
 	A_or_C  = match.arg(A_or_C)
 	sexlim  = match.arg(sexlim)
 	tryHard = match.arg(tryHard)
@@ -207,7 +207,6 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 	# * Distinct male and female paths (i.e., quantitative differences)
 	# * Distinct between-variable Ra, Rc and Re for males and females
 	# * Male-Female correlations in DZO group between A (or C) factors (Rao/Rco) FREE
-	
 
 	nSib = 2 # Number of siblings in a twin pair
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzmData, mzData = mzmData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
@@ -243,14 +242,14 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	# Make Rao and Rco matrices 
 	if(A_or_C == "A"){
-		# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is symm)
+		# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is Symm)
 		# (labels trimmed to Ra at end)
 		# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag @1)
 		# 	Not sure why, as Symm can't become Full... so can't turn Ao into Co...
 		Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 		Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){
-		# Quantitative & Qualitative Sex Differences for C (Ra is symm, Rc is Full)
+		# Quantitative & Qualitative Sex Differences for C (Ra is Symm, Rc is Full)
 		Rao = umxMatrix("Rao", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 		Rco = umxMatrix("Rco", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 	}
@@ -837,7 +836,7 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 
 	# Process diag (a|c|e)(mf) matrices
 	# Am cells are Am1 -> selDVs[1]; Am2 -> selDVs[2], etc.
-	# TODO need a plain-matrix substitute here...(because sexlim uses algebras for most or what we need)
+	# TODO need a plain-matrix substitute here...(because sexlim uses algebras for most of what we need)
 	out = xmu_dot_mat2dot(Am, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
 	out = xmu_dot_mat2dot(Cm, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
 	out = xmu_dot_mat2dot(Em, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
