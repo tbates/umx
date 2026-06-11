@@ -581,7 +581,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	Rao = diag(model$top$Rao$values)
 	Rco = diag(model$top$Rco$values)
 
-	Estimates = data.frame(row.names=selDVs, cbind(Am, Af, Cm, Cf, Em, Ef, Rao, Rco), stringsAsFactors=FALSE)
+	Estimates = data.frame(row.names=selDVs, cbind(Am, Af, Cm, Cf, Em, Ef, Rao, Rco), stringsAsFactors = FALSE)
 	# Estimates = data.frame(cbind(Am, Af, Cm, Cf, Em, Ef, Rao, Rco))
 	if(model$top$dzCr$values == .25){
 		treo = c("a", "d", "e")
@@ -589,7 +589,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		treo = c("a", "c", "e")
 	}
 	names(Estimates) = c(paste0(rep(treo, each = 2), rep(c("m", "f"), times = 3)), "Rao", "Rco")
-	umx_print(Estimates, digits = digits, zero.print = zero.print, file=report,  append = FALSE, sortableDF = TRUE)
+	umx_print(Estimates, digits = digits, zero.print = zero.print, report=report,  append = FALSE, sortableDF = TRUE)
 	xmu_twin_print_means(model, digits = digits, report = report)
 	
 	if(extended == TRUE) {
@@ -775,24 +775,22 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' # ==========================
 #' # = Run univariate example =
 #' # ==========================
-#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun= FALSE,
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard="yes",
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
-#')
-#' m1 = mxTryHard(m1)
+#' )
 #' umxPlotSexLim(m1)
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
 umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
 	format = match.arg(format)
-	model = x # Just to emphasise that x has to be a model 
-	umx_check_model(model, "MxModelSexLim", callingFn= "umxPlotSexLim")
+	model = x # Just to emphasize that x has to be a model 
+	umx_check_model(model, "MxModelSexLim", callingFn = "umxPlotSexLim")
 	umx_has_been_run(model, stop = TRUE)
 	
 	selDVs  = dimnames(model$top$Vm)[[1]]
 	nVar    = length(selDVs)
-	
 	c_label = if (model$top$dzCr$values == 0.25) "d" else "c"
 	
 	# Helper to format values
@@ -958,12 +956,12 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	digraph = paste(dot_str, collapse = "\n")
 	
 	if(format != "current"){
-		tmp = umx_set_plot_format(silent=TRUE)
+		tmp = umx_set_plot_format(silent = TRUE)
 		umx_set_plot_format(format)
-		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+		print(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
 		umx_set_plot_format(tmp)
 	}else{
-		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)		
+		print(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
 	}
 	return(invisible(digraph))
 }
