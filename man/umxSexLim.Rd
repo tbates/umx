@@ -226,8 +226,9 @@ mzmData = mzmData, dzmData = dzmData,
 }
 \references{
 \itemize{
-\item Neale et al. (2006).
-Multivariate genetic analysis of sex-lim and GxE interaction. \emph{Twin Research & Human Genetics}, \strong{9}, pp. 481--489.
+\item Neale, M. C., Roysamb, E., Jacobson, K. (2006).
+Multivariate genetic analysis of sex-lim and G x E interaction.
+\emph{Twin Research & Human Genetics}, \strong{9}, pp. 481--489. \doi{10.1375/183242706778024937}
 }
 }
 \seealso{

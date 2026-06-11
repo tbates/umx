@@ -5236,12 +5236,15 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	# 1. Age Extraction
 	if(umx_check_names(age, data = data, die = FALSE)){
 		ageCol = data[, age]
+		cat(paste0("Mean age = ", round(mean(ageCol, na.rm = TRUE), digits), " (SD = ", round(sd(ageCol, na.rm = TRUE), digits), ")\n"))
 	} else if(umx_check_names(paste0(age, sep, 1), data = data, die = FALSE)){
 		ageCol = data[, paste0(age, sep, 1)]
+		cat(paste0("Mean age = ", round(mean(ageCol, na.rm = TRUE), digits), " (SD = ", round(sd(ageCol, na.rm = TRUE), digits), ")\n"))
 	} else {
-		stop("Cannot find age column. Checked for ", omxQuotes(age), " and ", omxQuotes(paste0(age, sep, 1)))
+		# stop("Cannot find age column. Checked for ", omxQuotes(age), " and ", omxQuotes(paste0(age, sep, 1)))
+		message("Polite note: Cannot find age column. Checked for ", omxQuotes(age), " and ", omxQuotes(paste0(age, sep, 1)))
 	}
-	cat(paste0("Mean age = ", round(mean(ageCol, na.rm = TRUE), digits), " (SD = ", round(sd(ageCol, na.rm = TRUE), digits), ")\n"))
+	# tolerate no age
 
 	# 2. Dynamic Sex Extraction
 	sex1 = paste0(sex, sep, 1)
@@ -5256,8 +5259,8 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	# 3. Setup Long Data
 	selDVs = tvars(selVars, sep)
 	umx_check_names(selDVs, data = data, die = TRUE)
-	long = umx_wide2long(data = data[, selDVs], sep = sep)
-	
+	long = umx_wide2longTwinData(data = data[, selDVs], sep = sep)
+
 	# 4. High-Performance Pair Counts (Cross-product of non-NA indicators)
 	cat("\nPairwise Complete Cases:\n")
 	isPresent = !is.na(long[, selVars, drop = FALSE])

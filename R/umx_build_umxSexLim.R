@@ -63,8 +63,9 @@
 #' @export 
 #' @seealso [umxSummarySexLim()], [umxPlotSexLim()]
 #' @family Twin Modeling Functions
-#' @references - Neale et al. (2006). 
-#' Multivariate genetic analysis of sex-lim and GxE interaction. *Twin Research & Human Genetics*, **9**, pp. 481--489.
+#' @references - Neale, M. C., Roysamb, E., Jacobson, K. (2006). 
+#' Multivariate genetic analysis of sex-lim and G x E interaction. 
+#' *Twin Research & Human Genetics*, **9**, pp. 481--489. \doi{10.1375/183242706778024937}
 #' @md
 #' @examples
 #  # =============================================
@@ -784,90 +785,178 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' plot(m1) # no need to remember a special name: plot works fine!
 #' }
 umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
-	message("no plots for umxPlotSexLim as yet.")
-	return()
-	# New plot functions no longer dependent on labels. This means they need to know about the correct matrices to examine.
-	# 1. a_cp_matrix = A latent (and correlations among latents)
-	# 	* These go from a_cp n=row TO common n= row
-	# 	* Or for off diag, from a_cp n=col TO a_cp n= row
-	# 2. Same again for c_cp_matrix, e_cp_matrix
-	# 3. cp_loadings common factor loadings
-
 	format = match.arg(format)
 	model = x # Just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelSexLim", callingFn= "umxPlotSexLim")
-
 	umx_has_been_run(model, stop = TRUE)
-	selVars = model$MZm$expectation$dims
+	
 	selDVs  = dimnames(model$top$Vm)[[1]]
 	nVar    = length(selDVs)
-
-	if(std){
-		# message("Standardized solution (top.[ACE][mf]Std  + R[ac]o matrices)")
-		Am = diag(as.matrix(model$top$AmStd$result))
-		Cm = diag(as.matrix(model$top$CmStd$result))
-		Em = diag(as.matrix(model$top$EmStd$result))
-		Af = diag(as.matrix(model$top$AfStd$result))
-		Cf = diag(as.matrix(model$top$CfStd$result))
-		Ef = diag(as.matrix(model$top$EfStd$result))
+	
+	c_label = if (model$top$dzCr$values == 0.25) "d" else "c"
+	
+	# Helper to format values
+	format_val <- function(val, digits, strip_zero) {
+		if (is.na(val)) return("")
+		s = sprintf(paste0("%.", digits, "f"), val)
+		if (strip_zero) {
+			s = gsub("^0\\.", ".", s)
+			s = gsub("^-0\\.", "-.", s)
+		}
+		return(s)
+	}
+	
+	# Extract path loadings
+	if (std) {
+		safe_sqrt_diag <- function(mat) {
+			val = diag(as.matrix(mat))
+			val[val < 0] = 0
+			sqrt(val)
+		}
+		am_val = safe_sqrt_diag(model$top$AmStd$result)
+		cm_val = safe_sqrt_diag(model$top$CmStd$result)
+		em_val = safe_sqrt_diag(model$top$EmStd$result)
+		af_val = safe_sqrt_diag(model$top$AfStd$result)
+		cf_val = safe_sqrt_diag(model$top$CfStd$result)
+		ef_val = safe_sqrt_diag(model$top$EfStd$result)
 	} else {
-		# message("Raw solution (top.[ACE][mf] + R[ac]o matrices)")
-		Am = diag(as.matrix(model$top$Am$result))
-		Cm = diag(as.matrix(model$top$Cm$result))
-		Em = diag(as.matrix(model$top$Em$result))
-		Af = diag(as.matrix(model$top$Af$result))
-		Cf = diag(as.matrix(model$top$Cf$result))
-		Ef = diag(as.matrix(model$top$Ef$result))
+		am_val = diag(model$top$am$values)
+		cm_val = diag(model$top$cm$values)
+		em_val = diag(model$top$em$values)
+		af_val = diag(model$top$af$values)
+		cf_val = diag(model$top$cf$values)
+		ef_val = diag(model$top$ef$values)
 	}
-
-	out = list(str = "", latents = c(), manifests = c())
-
-	# 1. Collect latents on the diag
-	# TODO sexlim plot: maybe just draw a?
-	#   a1f-> man1; a1m-> man1; a2f-> man2; a2m-> man2; a1f<-> c(a1m; a2m; a2f);
-
-	# from   = <name><rowNum>; target = common<colNum>; latents = append(latents, from)
-	# out = list(str = "", latents = c(), manifests = c())
-
-	# Values from, e.g. AmStd$result
-	# |    |   am|   af|cm |   cf|   em|  ef|  Rao| Rco|
-	# |:---|----:|----:|:--|----:|----:|---:|----:|---:|
-	# |bic | 0.77| 0.74|.  | 0.07| 0.23| 0.2| 0.87|   1|
-
-	# Process diag (a|c|e)(mf) matrices
-	# Am cells are Am1 -> selDVs[1]; Am2 -> selDVs[2], etc.
-	# TODO need a plain-matrix substitute here...(because sexlim uses algebras for most of what we need)
-	out = xmu_dot_mat2dot(Am, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
-	out = xmu_dot_mat2dot(Cm, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
-	out = xmu_dot_mat2dot(Em, cells = "diag", from = "cols", fromType = "latent", toLabel = selDVs, p = out)
-
-	# 2. On the lower
-	# from = "<name><rowNum>"; target = "<name><colNum>"
-	out = xmu_dot_mat2dot(model$top$a_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = xmu_dot_mat2dot(model$top$c_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-	out = xmu_dot_mat2dot(model$top$e_cp, cells = "lower", from = "cols", arrows = "both", p = out)
-
-	# Process "cp_loadings" nManifests * nFactors matrix: latents into common paths.
-	# out = list(str = "", latents = c(), manifests = c())
-	out = xmu_dot_mat2dot(model$top$cp_loadings, cells= "any", toLabel= selDVs, from= "cols", fromLabel= "common", fromType= "latent", p= out)
-	# from    = "common<c>"
-	# target  = selDVs[row]
-	# latents = append(latents, from)
-
-	# Process "as" matrix
-	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", p = out)
-
-	# Process "expMean" 1 * nVar matrix
-	if(means){
-		# from = "one"; target = selDVs[c]
-		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", p = out)
+	
+	# Build dot code
+	dot_str = c()
+	add_line <- function(...) {
+		dot_str <<- c(dot_str, paste0(...))
 	}
-	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
-	top     = xmu_dot_rank(out$latents, "^[ace]_cp", "min")
-	bottom  = xmu_dot_rank(out$latents, "^[ace]s[0-9]+$", "max")
-	digraph = paste0("digraph G {\nsplines=\"FALSE\";\n", preOut, top, bottom, out$str, "\n}");
+	
+	add_line("digraph G {")
+	add_line("\tlabel=\"", model$name, "\";")
+	add_line("\tsplines=\"FALSE\";")
+	
+	# 1. Male Subgraph
+	add_line("\tsubgraph cluster_male {")
+	add_line("\t\tlabel=\"Males\";")
+	add_line("\t\tstyle=dashed; color=blue;")
+	
+	# Define male manifests
+	for (i in 1:nVar) {
+		add_line("\t\tM_", selDVs[i], " [shape=box];")
+	}
+	
+	# Define male latents and paths
+	for (i in 1:nVar) {
+		a_node = paste0("am", i)
+		c_node = paste0("cm", i)
+		e_node = paste0("em", i)
+		
+		add_line("\t\t", a_node, " [shape=circle, label=\"a_m", i, "\"];")
+		add_line("\t\t", c_node, " [shape=circle, label=\"", c_label, "_m", i, "\"];")
+		add_line("\t\t", e_node, " [shape=circle, label=\"e_m", i, "\"];")
+		
+		add_line("\t\t", a_node, " -> M_", selDVs[i], " [label=\"", format_val(am_val[i], digits, strip_zero), "\"];")
+		add_line("\t\t", c_node, " -> M_", selDVs[i], " [label=\"", format_val(cm_val[i], digits, strip_zero), "\"];")
+		add_line("\t\t", e_node, " -> M_", selDVs[i], " [label=\"", format_val(em_val[i], digits, strip_zero), "\"];")
+	}
+	
+	# Ranks for males
+	add_line("\t\t{rank=same; ", paste0("M_", selDVs, collapse="; "), "}")
+	add_line("\t\t{rank=min; ", paste0("am", 1:nVar, collapse="; "), "}")
+	add_line("\t\t{rank=max; ", paste0(c("cm", "em"), rep(1:nVar, each=2), collapse="; "), "}")
+	
+	# Same-sex correlations for males
+	if (nVar > 1) {
+		Ram = model$top$Ram$values
+		Rcm = model$top$Rcm$values
+		Rem = model$top$Rem$values
+		for (i in 1:(nVar-1)) {
+			for (j in (i+1):nVar) {
+				if (Ram[i, j] != 0) {
+					add_line("\t\tam", i, " -> am", j, " [dir=both, style=dashed, label=\"", format_val(Ram[i, j], digits, strip_zero), "\"];")
+				}
+				if (Rcm[i, j] != 0) {
+					add_line("\t\tcm", i, " -> cm", j, " [dir=both, style=dashed, label=\"", format_val(Rcm[i, j], digits, strip_zero), "\"];")
+				}
+				if (Rem[i, j] != 0) {
+					add_line("\t\tem", i, " -> em", j, " [dir=both, style=dashed, label=\"", format_val(Rem[i, j], digits, strip_zero), "\"];")
+				}
+			}
+		}
+	}
+	add_line("\t}")
+	
+	# 2. Female Subgraph
+	add_line("\tsubgraph cluster_female {")
+	add_line("\t\tlabel=\"Females\";")
+	add_line("\t\tstyle=dashed; color=red;")
+	
+	# Define female manifests
+	for (i in 1:nVar) {
+		add_line("\t\tF_", selDVs[i], " [shape=box];")
+	}
+	
+	# Define female latents and paths
+	for (i in 1:nVar) {
+		a_node = paste0("af", i)
+		c_node = paste0("cf", i)
+		e_node = paste0("ef", i)
+		
+		add_line("\t\t", a_node, " [shape=circle, label=\"a_f", i, "\"];")
+		add_line("\t\t", c_node, " [shape=circle, label=\"", c_label, "_f", i, "\"];")
+		add_line("\t\t", e_node, " [shape=circle, label=\"e_f", i, "\"];")
+		
+		add_line("\t\t", a_node, " -> F_", selDVs[i], " [label=\"", format_val(af_val[i], digits, strip_zero), "\"];")
+		add_line("\t\t", c_node, " -> F_", selDVs[i], " [label=\"", format_val(cf_val[i], digits, strip_zero), "\"];")
+		add_line("\t\t", e_node, " -> F_", selDVs[i], " [label=\"", format_val(ef_val[i], digits, strip_zero), "\"];")
+	}
+	
+	# Ranks for females
+	add_line("\t\t{rank=same; ", paste0("F_", selDVs, collapse="; "), "}")
+	add_line("\t\t{rank=min; ", paste0("af", 1:nVar, collapse="; "), "}")
+	add_line("\t\t{rank=max; ", paste0(c("cf", "ef"), rep(1:nVar, each=2), collapse="; "), "}")
+	
+	# Same-sex correlations for females
+	if (nVar > 1) {
+		Raf = model$top$Raf$values
+		Rcf = model$top$Rcf$values
+		Ref = model$top$Ref$values
+		for (i in 1:(nVar-1)) {
+			for (j in (i+1):nVar) {
+				if (Raf[i, j] != 0) {
+					add_line("\t\taf", i, " -> af", j, " [dir=both, style=dashed, label=\"", format_val(Raf[i, j], digits, strip_zero), "\"];")
+				}
+				if (Rcf[i, j] != 0) {
+					add_line("\t\tcf", i, " -> cf", j, " [dir=both, style=dashed, label=\"", format_val(Rcf[i, j], digits, strip_zero), "\"];")
+				}
+				if (Ref[i, j] != 0) {
+					add_line("\t\tef", i, " -> ef", j, " [dir=both, style=dashed, label=\"", format_val(Ref[i, j], digits, strip_zero), "\"];")
+				}
+			}
+		}
+	}
+	add_line("\t}")
+	
+	# 3. Cross-sex correlations
+	Rao = model$top$Rao$values
+	Rco = model$top$Rco$values
+	for (i in 1:nVar) {
+		for (j in 1:nVar) {
+			if (Rao[i, j] != 0) {
+				add_line("\tam", i, " -> af", j, " [dir=both, style=dashed, constraint=false, color=purple, label=\"", format_val(Rao[i, j], digits, strip_zero), "\"];")
+			}
+			if (Rco[i, j] != 0) {
+				add_line("\tcm", i, " -> cf", j, " [dir=both, style=dashed, constraint=false, color=purple, label=\"", format_val(Rco[i, j], digits, strip_zero), "\"];")
+			}
+		}
+	}
+	
+	add_line("}")
+	digraph = paste(dot_str, collapse = "\n")
+	
 	if(format != "current"){
 		tmp = umx_set_plot_format(silent=TRUE)
 		umx_set_plot_format(format)
@@ -876,7 +965,7 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	}else{
 		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)		
 	}
+	return(invisible(digraph))
 }
 
-#' @export
 plot.MxModelSexLim <- umxPlotSexLim

@@ -6117,7 +6117,7 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #' }
 umx_wide2long <- function(data = df, timevar = list(condition = c("control", "expt")), repeated = list(example = c("easyexample", "hardexample"), grade = c("grd1", "grd2")), covs = c("Age", "Sex"), idvar = "PID", sep = "_T", verbose = FALSE) {
 	if(identical(names(repeated), c("example", "grade"))){
-		message("Assuming twin data and calling umx_wide2longTwinData")
+		message("repeated is not set: Assuming twin data and calling umx_wide2longTwinData")
 		return(umx_wide2longTwinData(data =data, sep = sep, verbose = verbose))
 	}
 	# non-twin repeated measures data to make long
@@ -6158,77 +6158,84 @@ umx_wide2long <- function(data = df, timevar = list(condition = c("control", "ex
 #' long = umx_wide2longTwinData(data = twinData, sep = "", verbose = TRUE)
 #' str(long)
 #' str(twinData)
+# long = reshape(data, v.names = "conc", idvar = "Subject", timevar = "time", direction = "long")
+# wide = reshape(Indometh, v.names = "conc", idvar = "Subject", timevar = "time", direction = "wide")
+
+# reshape(long,
+# 	v.names       = selVars,
+# 	idvar         = "id",
+# 	ids           = 1:NROW(data),
+# 	times         = seq_along(varying[[1]]),
+# 	drop          = NULL,
+# 	direction     = "wide",
+# 	new.row.names = NULL,
+# 	sep           = ".",
+# 	split         =
+# )
+#
+# reshape(wide,
+# 	varying       = NULL,
+# 	timevar       = "zygosity",
+# 	idvar         = c("famid", "twid"),
+# 	ids           = "_T". 1:NROW(data),
+# 	times         = seq_along(varying[[1]]),
+# 	drop          = NULL,
+# 	direction     = "long",
+# 	new.row.names = NULL,
+# 	sep           = ".",
+# 	split         =
+# )
+
 umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
 	# TODO issue #82 umx_wide2longTwinData Assumes 2 twins: Generalize to unlimited family size.
+    # Find all variables ending with _T1, _T2, etc.
+    twin_pattern = paste0(sep, "[1-9]$")
+    twinNames    = umx_names(data, twin_pattern)
+  
+    if (length(twinNames) == 0) {
+      warning("No twin variables found matching pattern: ", twin_pattern)
+      return(data)
+    }
 
-	twinNames = umx_names(data, paste0(".", sep, "[1-9]$"))
-	nonTwinColNames = setdiff(umx_names(data), twinNames)
-	# long = reshape(data, v.names = "conc", idvar = "Subject", timevar = "time", direction = "long")
-	# wide = reshape(Indometh, v.names = "conc", idvar = "Subject", timevar = "time", direction = "wide")
+    # Split into T1 and T2 (assumes only 2 twins for now)
+    T1 = umx_names(data, paste0(sep, "1$"))
+    T2 = umx_names(data, paste0(sep, "2$"))
 
-	# reshape(long,
-	# 	v.names       = selVars,
-	# 	idvar         = "id",
-	# 	ids           = 1:NROW(data),
-	# 	times         = seq_along(varying[[1]]),
-	# 	drop          = NULL,
-	# 	direction     = "wide",
-	# 	new.row.names = NULL,
-	# 	sep           = ".",
-	# 	split         =
-	# )
-	#
-	# reshape(wide,
-	# 	varying       = NULL,
-	# 	timevar       = "zygosity",
-	# 	idvar         = c("famid", "twid"),
-	# 	ids           = "_T". 1:NROW(data),
-	# 	times         = seq_along(varying[[1]]),
-	# 	drop          = NULL,
-	# 	direction     = "long",
-	# 	new.row.names = NULL,
-	# 	sep           = ".",
-	# 	split         =
-	# )
+    nonTwinColNames = setdiff(names(data), c(T1, T2))
 
-	# 1. get the suffixed names
-	T1 = umx_names(data, paste0(".", sep, "1"))
-	T2 = umx_names(data, paste0(".", sep, "2"))
-	# 1b and non-twin names
-	nonTwinColNames = setdiff(umx_names(data), c(T1, T2))
+    # Remove the twin suffix cleanly
+    T1base = sub(paste0(sep, "1$"), "", T1)
+    T2base = sub(paste0(sep, "2$"), "", T2)
 
-	# 2. Remove the suffixes
-	T1base = T1
-	T2base = T2
-	m = regexpr(paste0(sep, "1$"), T1base)
-	regmatches(T1base, m) = ""
-	m = regexpr(paste0(sep, "2$"), T2base)
-	regmatches(T2base, m) = ""
-	
-	# Check they're the same
-	if(!setequal(T1base, T2base)){
-		stop("Twin names don't match")
-	}
+    if (!setequal(T1base, T2base)) {
+      stop("Oops: Twin variable names don't match after removing suffix")
+    }
 
-	# 3. 
-	b1 = data[, c(nonTwinColNames, T1)]
-	b2 = data[, c(nonTwinColNames, T2)]
-	names(b1) = c(nonTwinColNames, T1base)
-	names(b2) = c(nonTwinColNames, T1base)
-	ld = rbind(b1, b2)
+    # Build the two halves
+    b1 = data[, c(nonTwinColNames, T1), drop = FALSE]
+    b2 = data[, c(nonTwinColNames, T2), drop = FALSE]
+  
+    names(b1) = c(nonTwinColNames, T1base)
+    names(b2) = c(nonTwinColNames, T1base)
 
-	twinColumns = T1base
-	if(verbose){
-		umx_msg(nonTwinColNames)
-		umx_msg(twinColumns)
-	}
-	if(length(intersect(nonTwinColNames, twinColumns)) > 0){
-		message("Hmm... A variable already existed matching one of the de-suffixed twin variables... 
-		A second column with the same name will be created. the issue is with:", 
-			omxQuotes(intersect(nonTwinColNames, twinColumns))
-		)
-	}
-	return(ld)
+    # Combine
+    ld = rbind(b1, b2)
+  
+    # Add a twin indicator (very useful in long format)
+    ld$twin = rep(c(1, 2), each = nrow(data))
+  
+    if (verbose) {
+      umx_msg(nonTwinColNames)
+      umx_msg(T1base)
+    }
+
+    # Warn if a non-twin column has the same name as a de-suffixed twin column
+    overlap = intersect(nonTwinColNames, T1base)
+    if (length(overlap) > 0) {
+      message("Warning: These columns already existed and will be duplicated: ", paste(overlap, collapse = ", "))
+    }
+  
+    return(ld)
 }
 
 #' Stack data like stack() does, with more control.
