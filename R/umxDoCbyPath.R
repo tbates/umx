@@ -383,9 +383,9 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, fixed = TRUE, means = TRU
 		# = Define shapes =
 		# =================
 		if(splines){
-			preOut = '\tsplines="TRUE";\n\t# Latents\n'
+			preOut = '\tsplines=true;\n\t# Latents\n'
 		} else {
-			preOut = '\tsplines="FALSE";\n\t# Latents\n'
+			preOut = '\tsplines=false;\n\t# Latents\n'
 		}
 		for(var in latents) {
 		   preOut = paste0(preOut, "\t", var, " [shape = circle];\n")

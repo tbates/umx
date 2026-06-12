@@ -834,7 +834,7 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	
 	add_line("digraph G {")
 	add_line("\tlabel=\"", model$name, "\";")
-	add_line("\tsplines=\"FALSE\";")
+	add_line("\tsplines=true;")
 	
 	# 1. Male Subgraph
 	add_line("\tsubgraph cluster_male {")
@@ -966,4 +966,6 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	return(invisible(digraph))
 }
 
+#' @export
 plot.MxModelSexLim <- umxPlotSexLim
+

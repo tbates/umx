@@ -67,12 +67,11 @@ dzoData = subset(us_skinfold_data, zyg == 5)
 # ==========================
 # = Run univariate example =
 # ==========================
-m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", autoRun= FALSE,
+m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard="yes",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
-m1 = mxTryHard(m1)
 umxPlotSexLim(m1)
 plot(m1) # no need to remember a special name: plot works fine!
 }
