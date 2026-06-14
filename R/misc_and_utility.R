@@ -170,20 +170,29 @@ libs <- function(... , force.update = FALSE) {
 		}
 	}
   
+	load_pack <- function(pack) {
+		withCallingHandlers({
+			library(pack, character.only = TRUE)
+		}, warning = function(warn) {
+			cat("polite note: ", warn$message, "\n")
+			invokeRestart("muffleWarning")
+		})
+	}
+
 	for (pack in lib_names) {
 		result = tryCatch({
 			if(force.update){
 				install.packages(pack)
 			}
-			library(pack, character.only = TRUE)
-		}, warning = function(warn) {
-            cat("polite note: ", warn$message)
+			load_pack(pack)
 		}, error = function(err) {
-			cat(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you"))
+			cat(paste0("I'll try and install.packages(", omxQuotes(pack), ") for you\n"))
 			install.packages(pack)
-			library(pack, character.only = TRUE)
-		}, finally={
-
+			tryCatch({
+				load_pack(pack)
+			}, error = function(e2) {
+				stop(paste0("Could not load or install package: ", pack))
+			})
 		})
 	}
 }
@@ -4301,7 +4310,7 @@ umx_is_RAM <- function(obj) {
 	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 	if(!umx_is_MxModel(obj)){
 		return(FALSE)
-	} else if(class(obj)[[1]] == "MxRAMModel"){
+	} else if(class(obj)[[1]] %in% c("MxRAMModel", "MxModelGSEM")){
 		return(TRUE)
 	} else {
 		return(class(obj$objective)[[1]] == "MxRAMObjective")
