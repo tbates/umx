@@ -192,4 +192,18 @@ test_that("xmu_cell_is_on", {
 	expect_error(xmu_cell_is_on(r=4,c = 3, "any", mat = a_cp))
 })
 
+test_that("libs loads packages via symbol and string", {
+	# Detach parallel if already attached to test it fresh
+	if ("package:parallel" %in% search()) {
+		detach("package:parallel")
+	}
+	libs(parallel)
+	expect_true("package:parallel" %in% search())
+	
+	detach("package:parallel")
+	libs("parallel")
+	expect_true("package:parallel" %in% search())
+})
+
+
 
