@@ -444,6 +444,8 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 	for (w in requestedMatrices) {
 		if(!is.null(model$matrices[[w]])){
 			matrices = c(matrices, w)
+		} else if (w %in% c("observed", "acov", "data.S", "data.V") && !is.null(model$data)) {
+			matrices = c(matrices, w)
 		}
 	}
 	
@@ -481,7 +483,31 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 		}
 	} else {
 		for (w in matrices) {
-			if(report == "html"){
+			if (w %in% c("observed", "acov", "data.S", "data.V")) {
+				if (w == "observed" || w == "data.S") {
+					mat_val <- model$data$observed
+					mat_name <- "Observed covariance matrix (data.S)"
+				} else {
+					mat_val <- model$data$acov
+					mat_name <- "Asymptotic covariance matrix (data.V)"
+				}
+				
+				if (is.null(mat_val)) {
+					message("\n", mat_name, " is not available in the model data.")
+					next
+				}
+				
+				if(report == "html"){
+					tb = kbl(umx_round(mat_val, digits), caption = mat_name, format = report)
+					tb = footnote(kable_input= tb, general = "Pre-computed genomic data matrix")
+					tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
+					print(tb)
+				} else {
+					message("\n", mat_name, ":")
+					umx_print(data.frame(mat_val), zero.print = zero.print, na.print = na.print, digits = digits, file= NA, report = report)
+				}
+			} else {
+				if(report == "html"){
 				file = paste0(what, w, ".html")
 				# generate the free + value + popover label using kableExtra
 				values = umx_round(model$matrices[[w]]$values, digits)
@@ -530,7 +556,8 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 				}
 				umx_print(tmp, zero.print = zero.print, na.print = na.print, digits = digits, file= NA, report = report)
 			}
-		} # for each matrix
+		}
+	} # for each matrix
 	}
 	umx_set_table_format(oldTableFormat) # side effect	
 }
