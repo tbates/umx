@@ -12,24 +12,3 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# An institution is the lengthened shadow of one man. Emerson.
-
-# TODO: define a folder structure for gsem projects in umx "project/data/"
-umx_CheckProject <- function(project_path = "/path/to/my/project") {
-    message("Status of Project folder: ")
-	# TODO: does the user have the downloaded HM3 files etc needed?
-	# TODO: is munge done? and they have the files needed for ldsc?
-	# TODO: is ldsc done and that object is ready?
-	# TODO: is the SNP file done?
-  }
-}
-
-umxGSEM_GetHapMap3RefList <- function(project_path = "/path/to/my/project") {
-	# promot user for project path (or default to tempdir() )if no project_path?
-  dest_file <- file.path(destination, "w_hm3.snplist")
-  if (!file.exists(dest_file)) {
-    message("Downloading HapMap3 reference list...")
-    download.file("https://raw.githubusercontent.com/bulik/ldsc/master/ldsc/w_hm3.snplist", destfile = dest_file)
-  }
-  return(dest_file)
-}
