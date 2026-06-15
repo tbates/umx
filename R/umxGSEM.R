@@ -73,8 +73,11 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' Munge Genomic SEM Summary Statistics
 #'
 #' @description
-#' `umxGSEM_munge` is a helper function to format and filter summary statistics files
+#' `umxGSEM_munge` allows you to format and filter summary statistics files
 #' for Genomic SEM / LDSC using the high-speed OpenMx C++ munging engine.
+#' munge creates the *.sumstats.gz files for [umxGSEM_ldsc()]
+#' 
+#' You first need to run umxGSEM_dl_RefList()] to grab the SNP ref list if oyu have not already.
 #'
 #' @details TBD
 #' umxGSEM_munge will intelligently search for synonyms for heading names:
