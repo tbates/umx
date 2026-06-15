@@ -430,7 +430,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #'
 tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("black", "#AAAAAA")) {
 	if(!umx_is_RAM(x)){
-		stop("Sorry, currently, tmx_show only knows how to display umxRAM models: You gave me a ", class(model)[[1]])
+		stop("Sorry, currently, tmx_show only knows how to display umxRAM models: You gave me a ", class(x)[[1]])
 	}
 	model = x
 	what   = match.arg(what)
@@ -444,7 +444,7 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 	for (w in requestedMatrices) {
 		if(!is.null(model$matrices[[w]])){
 			matrices = c(matrices, w)
-		} else if (w %in% c("observed", "acov", "data.S", "data.V") && !is.null(model$data)) {
+		} else if (w %in% c("observed", "acov", "data.S", "data.V", "V") && !is.null(model$data)) {
 			matrices = c(matrices, w)
 		}
 	}
@@ -483,7 +483,7 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 		}
 	} else {
 		for (w in matrices) {
-			if (w %in% c("observed", "acov", "data.S", "data.V")) {
+			if (w %in% c("observed", "acov", "data.S", "data.V", "V")) {
 				if (w == "observed" || w == "data.S") {
 					mat_val <- model$data$observed
 					mat_name <- "Observed covariance matrix (data.S)"
@@ -507,6 +507,9 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 					umx_print(data.frame(mat_val), zero.print = zero.print, na.print = na.print, digits = digits, file= NA, report = report)
 				}
 			} else {
+				if (w == "S" && !is.null(model$data) && !is.null(model$data$type) && model$data$type == "acov") {
+					message("Note: Showing RAM parameter matrix 'S' (residual variances/covariances). To show the observed genetic covariance matrix, use 'data.S' or 'observed'.")
+				}
 				if(report == "html"){
 				file = paste0(what, w, ".html")
 				# generate the free + value + popover label using kableExtra
@@ -560,4 +563,21 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 	} # for each matrix
 	}
 	umx_set_table_format(oldTableFormat) # side effect	
+}
+
+#' Show genomic SEM matrices
+#'
+#' @description
+#' `tmx_show` method for `MxModelGSEM` models to display structural parameter matrices
+#' and/or genomic S and V data matrices.
+#'
+#' @param x An \code{MxModelGSEM} model.
+#' @param what legal options are "values" (default), "free", or "labels".
+#' @param show filter on what to show c("all", "free", "fixed").
+#' @param matrices to show (default is c("S", "V", "A", "M")).
+#' @param ... Arguments passed to [tmx_show.MxModel()].
+#' @export
+#' @md
+tmx_show.MxModelGSEM <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "V", "A", "M"), ...) {
+	tmx_show.MxModel(x, what = what, show = show, matrices = matrices, ...)
 }
