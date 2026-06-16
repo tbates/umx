@@ -313,3 +313,65 @@ NULL
 NULL
 
 
+# ==========================================
+# = Anthropometric Genomic SEM LDSC data   =
+# ==========================================
+#' Anthropometric Genomic SEM LDSC dataset.
+#'
+#' A dataset containing the S and V matrices, LDSC intercepts, sample sizes (N), and SNP count (m) 
+#' for 9 anthropometric phenotypes: BMI, WHR, CO, Waist, Hip, Height, IHC, BL, and BW.
+#'
+#' @details
+#' The list contains the following elements:
+#' * `S`: 9x9 covariance matrix of the 9 phenotypes.
+#' * `V`: 45x45 sampling covariance matrix of the covariance/variance elements.
+#' * `I`: 9x9 matrix of LDSC intercepts.
+#' * `N`: 1x45 matrix of sample sizes for the covariance/variance elements.
+#' * `m`: Number of SNPs used (1,173,569).
+#'
+#' @docType data
+#' @keywords datasets
+#' @family datasets
+#' @name Anthro_LDSC
+#' @usage data(Anthro_LDSC)
+#' @format A list of matrices (S, V, I, N) and numeric values (m).
+#' @md
+#' @examples
+#' \dontrun{
+#' data(Anthro_LDSC)
+#' str(Anthro_LDSC)
+#' }
+NULL
+
+
+# ==========================================================
+# = Psychiatric & Educational Genomic SEM LDSC data         =
+# ==========================================================
+#' Psychiatric and educational attainment Genomic SEM LDSC dataset.
+#'
+#' A dataset containing the S and V matrices, LDSC intercepts, sample sizes (N), and SNP count (m)
+#' for 5 psychiatric and educational attainment phenotypes: SCZ, BIP, MDD, EA, and INSOM.
+#'
+#' @details
+#' The list contains the following elements:
+#' * `S`: 5x5 covariance matrix of the 5 phenotypes.
+#' * `V`: 15x15 sampling covariance matrix of the covariance/variance elements.
+#' * `I`: 5x5 matrix of LDSC intercepts.
+#' * `N`: 1x15 matrix of sample sizes for the covariance/variance elements.
+#' * `m`: Number of SNPs used.
+#'
+#' @docType data
+#' @keywords datasets
+#' @family datasets
+#' @name PSYCH_COV
+#' @usage data(PSYCH_COV)
+#' @format A list of matrices (S, V, I, N) and numeric values (m).
+#' @md
+#' @examples
+#' \dontrun{
+#' data(PSYCH_COV)
+#' str(PSYCH_COV)
+#' }
+NULL
+
+

@@ -314,8 +314,10 @@ Other Miscellaneous Utility Functions:
 \code{\link[=umx_wide4lmer]{umx_wide4lmer()}}
 
 Other datasets:
+\code{\link{Anthro_LDSC}},
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
+\code{\link{PSYCH_COV}},
 \code{\link{docData}},
 \code{\link{iqdat}},
 \code{\link{us_skinfold_data}}

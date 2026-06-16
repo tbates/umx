@@ -1,3 +1,17 @@
+#   Copyright 2007-2022 Timothy C. Bates
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+# 
+#        https://www.apache.org/licenses/LICENSE-2.0
+# 
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 # An institution is the lengthened shadow of one man. Emerson.
 
 # TODO: define a folder structure for gsem projects in umx "project/data/"
@@ -9,6 +23,60 @@ umx_CheckProject <- function(project_path = "/path/to/my/project") {
 	# TODO: is the SNP file done?
   }
 
+#' High-performance LD score regression (C++/OpenMP)
+#'
+#' A fast, native reimplementation of multivariate LD score regression
+#' using C++ and OpenMP. Designed to be compatible with
+#' [GenomicSEM::ldsc()] output while offering significantly better
+#' performance, especially with larger numbers of traits.
+#'
+#' @details
+#' S is A symmetric K×K matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h 
+#' 2). The off-diagonals contain the genetic covariances.
+#' 
+#' V is A symmetric M×M sampling covariance matrix, where M= (K\times(K+1))/2 (the number of unique elements in S).
+#' It contains the sampling variances of your heritabilities and genetic covariances on the diagonal, 
+#' and their sampling covariances on the off-diagonal.
+#' 
+#' I is a K×K matrix containing the LDSC intercepts 
+#' (cross-trait intercepts on the off-diagonal, single-trait intercepts on the diagonal) 
+#' used to quantify sample overlap and population stratification.
+#' 
+#' @param traits Character vector of paths to munged `.sumstats.gz` files.
+#' @param sample.prev Numeric vector of sample prevalences (proportion of cases).
+#'   Use `NA` or `0.5` for continuous traits.
+#' @param population.prev Numeric vector of population prevalences (for liability
+#'   scale transformation of binary traits). Use `NA` for continuous traits.
+#' @param ld Path to folder containing LD score files (e.g. `eur_w_ld_chr/`).
+#' @param wld Path to folder containing weight LD score files.
+#' @param trait.names Optional character vector of names for the traits. If `NULL`,
+#'   names are taken from the file names.
+#' @param sep_weights Logical. Whether to use separate weight LD scores (default `FALSE`).
+#' @param chr Number of chromosomes to use (default = 22).
+#' @param n.blocks Number of jackknife blocks to use when estimating the sampling
+#'   covariance matrix `V` (default = 200).
+#' @param ldsc.log Optional path to write an LDSC log file. If `NULL`, no log is written.
+#' @param stand Logical. If `TRUE`, also returns standardized results (genetic
+#'   correlations and their sampling covariance matrix).
+#' @param select Logical or numeric. Passed through to control SNP selection
+#'   (see GenomicSEM documentation).
+#' @param chisq.max Optional numeric. Maximum chi-square value allowed when
+#'   estimating the LD score regression (used for outlier control).
+#'
+#' @return A list with the following components:
+#' \describe{
+#'   \item{S}{Genetic covariance matrix (heritabilities on diagonal).}
+#'   \item{V}{Sampling covariance matrix of the elements of `S`.}
+#'   \item{I}{Matrix of LD score regression intercepts.}
+#'   \item{N}{Effective sample sizes used.}
+#'   \item{m}{Number of SNPs used in the regression.}
+#'   \item{...}{Additional components depending on `stand`.}
+#' }
+#' If `stand = TRUE`, the list also contains the genetic correlation matrix
+#' and its sampling covariance matrix.
+#' @export
+#' @family GSEM
+#' @seealso [GenomicSEM::ldsc()]
 umxGSEM_ldsc <- function (traits, sample.prev, population.prev, ld, wld, trait.names = NULL, 
     sep_weights = FALSE, chr = 22, n.blocks = 200, ldsc.log = NULL, 
     stand = FALSE, select = FALSE, chisq.max = NA) {
@@ -79,7 +147,8 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' 
 #' You first need to run umxGSEM_dl_RefList()] to grab the SNP ref list if oyu have not already.
 #'
-#' @details TBD
+#' @details
+#' 
 #' umxGSEM_munge will intelligently search for synonyms for heading names:
 #' SNP: snp, rsid, marker, snpid, rs, markername
 #' A1: a1, allele1, effect_allele, inc_allele, reference_allele
@@ -205,7 +274,7 @@ umxGSEM_munge <- function(files = NULL, hm3 = "w_hm3.snplist", Ns = NULL, trait.
 }
 
 
-umxGSEM_FindData <- function(mode = c("Benchmark", "Synthetic", "MissingData", "EBI", "ATLAS"), output_dir = getwd(), ...) {
+umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData", "EBI", "ATLAS"), output_dir = getwd(), ...) {
   mode = match.arg(mode)
   
   switch(mode,
@@ -231,7 +300,6 @@ umxGSEM_FindData <- function(mode = c("Benchmark", "Synthetic", "MissingData", "
   )
 }
 
-
 #' Fit genomic Structural Equation Models
 #'
 #' @description
@@ -240,13 +308,13 @@ umxGSEM_FindData <- function(mode = c("Benchmark", "Synthetic", "MissingData", "
 #' matrices (V) estimated from LD Score Regression (LDSC).
 #'
 #' @param model An OpenMx model, a list of umxPath's, or a lavaan-style model string.
-#' @param covstruc A list containing S (genetic covariance matrix) and V (sampling covariance matrix) as output by GenomicSEM's `ldsc` function. If provided, `S` and `V` are extracted from it.
-#' @param S A genetic covariance matrix.
-#' @param V A sampling covariance matrix (asymptotic covariance of S).
-#' @param estimation The estimation method. One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").
-#' @param name The name of the model (defaults to "gsem").
+#' @param covstruc list() of S (genetic covariance matrix) and V (sampling covariance matrix) as output by GenomicSEM's `ldsc` function. If provided, `S` and `V` are extracted from it.
+#' @param S Genetic covariance matrix (if covstruc not provided).
+#' @param V Sampling covariance matrix (asymptotic covariance of S). If covstruc not provided.
+#' @param estimation Method for estimation . One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").
+#' @param name The  model name (defaults to "gsem").
 #' @param numObs The dummy/actual sample size for WLS (defaults to 2, as commonly used in GenomicSEM DWLS).
-#' @param smooth whether to smooth non-positive definite matrices using [Matrix::nearPD()] (defaults to TRUE).
+#' @param smooth Whether to smooth non-positive definite matrices using [Matrix::nearPD()] (defaults to TRUE).
 #' @param autoRun Whether to run the model (defaults to getOption("umx_auto_run")).
 #' @param tryHard Method for fitting the model ("no", "yes", "ordinal", "search").
 #' @param ... Additional arguments passed to [umxRAM()].

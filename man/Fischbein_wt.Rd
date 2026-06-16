@@ -47,7 +47,9 @@ Fischbein, S. (1977). Intra-pair similarity in physical growth of monozygotic an
 }
 \seealso{
 Other datasets:
+\code{\link{Anthro_LDSC}},
 \code{\link{GFF}},
+\code{\link{PSYCH_COV}},
 \code{\link{docData}},
 \code{\link{iqdat}},
 \code{\link{umx}},

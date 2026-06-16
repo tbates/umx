@@ -47,8 +47,10 @@ Retrieved from <https://www.ncbi.nlm.nih.gov/pubmed/2712815>
 [umxSimplex()]
 
 Other datasets:
+\code{\link{Anthro_LDSC}},
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
+\code{\link{PSYCH_COV}},
 \code{\link{docData}},
 \code{\link{umx}},
 \code{\link{us_skinfold_data}}

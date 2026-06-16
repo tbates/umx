@@ -45,11 +45,13 @@ umxGSEM_munge(
 A character vector of paths to the munged files.
 }
 \description{
-\code{umxGSEM_munge} is a helper function to format and filter summary statistics files
+\code{umxGSEM_munge} allows you to format and filter summary statistics files
 for Genomic SEM / LDSC using the high-speed OpenMx C++ munging engine.
+munge creates the *.sumstats.gz files for \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}}
+
+You first need to run umxGSEM_dl_RefList()] to grab the SNP ref list if oyu have not already.
 }
 \details{
-TBD
 umxGSEM_munge will intelligently search for synonyms for heading names:
 SNP: snp, rsid, marker, snpid, rs, markername
 A1: a1, allele1, effect_allele, inc_allele, reference_allele

@@ -1,14 +1,23 @@
 ## dev
+## umx 4.90.0
+* Date: 2026-06-26 R 4.6.0
+* NEW: `umxCompare` supports WLS (with notes about interpreting fit indices)
+* NEW: `umxSummary` supports WLS (with notes about interpreting fit indices)
+* NEW: `xmu_make_mxData` has native support for acov (WLS) subsetting and reordering
+* NEW: `xmu_check_needs_means` updated to handle acov datasets gracefully.
+
+
+# Releases
 
 ## umx 4.80.0
 * Date: 2026-06-08 R 4.6.0
+* NEW: `umxACE_DE` double-entry ACE model for censored data.
 * NEW: `plot` supports MxLISRELModels
 * NEW: `umxLISREL` make LISREL Models!
 * NEW: `xmu_standardize_LISREL` standardize LISREL models.
-* NEW: `umxACE_DE` double-entry ACE model
 * IMPROVED: `umx_make("dev")` will install development version of umx for user. 
 * IMPROVED: `umx_aggregate` support multiple DVs and output='string' for easier paste into procedure.
-* SAFE: `umxModify` now validate labels and suggests fixes from similar names if not found. Prevents silent failures when calling omxSetParameters.
+* SAFE: `umxModify` now validates labels and suggests fixes from similar names if not found. Prevents silent failures when calling omxSetParameters.
 * SAFE: `umxRAM` Validate dot items & fix loop with clearer error messages.
 * SAFE: `umx_paste_names` usage to use suffixes.
 * Refactor: financial utils
@@ -30,7 +39,6 @@
 * FIXED: Package testing on Github build working!
 * MINOR: rename several financial functions to clarify intent
 
-# Releases
 ## umx 4.65.0
 * Date: 2026-05-20 R 4.6.0
 * NEW: `umx_log_wide_twin_data`

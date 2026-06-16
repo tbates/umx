@@ -527,6 +527,9 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 			return(TRUE)
 			# Note, auto will be FIML not WLS
 		}else if(type %in% c("WLS", "DWLS", "ULS")){
+			if (data$type == "acov") {
+				return(!is.null(data$means) && !is.na(data$means[[1]]))
+			}
 			tmp =xmu_describe_data_WLS(data, allContinuousMethod = allContinuousMethod)
 			return(tmp$hasMeans)
 		}else if(is.na(data$means[[1]])){
@@ -690,6 +693,38 @@ xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "ma
 		return(list(hasMeans = TRUE))
 	}
 }
+
+#' Check if a model is a WLS model
+#'
+#' @description
+#' `xmu_is_wls` is an internal function to check if a model (or any of its submodels) uses WLS/DWLS/ULS.
+#'
+#' @param model An [OpenMx::mxModel()]
+#' @return - Boolean
+#' @export
+#' @family xmu internal functions
+#' @md
+xmu_is_wls <- function(model) {
+	if (!umx_is_MxModel(model)) {
+		return(FALSE)
+	}
+	if (!is.null(model$fitfunction) && inherits(model$fitfunction, "MxFitFunctionWLS")) {
+		return(TRUE)
+	}
+	if (!is.null(model$data) && !is.null(model$data$type) && (model$data$type == "acov")) {
+		return(TRUE)
+	}
+	# Check submodels
+	if (length(model$submodels) > 0) {
+		for (subname in names(model$submodels)) {
+			if (xmu_is_wls(model$submodels[[subname]])) {
+				return(TRUE)
+			}
+		}
+	}
+	return(FALSE)
+}
+
 
 #' Upgrade a dataframe to an mxData type.
 #'
@@ -855,6 +890,47 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				xmu_check_variance(data$observed[, setdiff(namesNeeded, fullCovs), drop = FALSE])
 				# Trim down the data to include only the requested columns 
 				data$observed = data$observed[, namesNeeded, drop = FALSE]
+			} else if (data$type == "acov") {
+				# Trim down and reorder the observed covariance matrix
+				data$observed = umx_reorder(data$observed, namesNeeded)
+				# Trim down and reorder the acov and fullWeight matrices
+				if (!is.null(rownames(data$acov))) {
+					sep <- " "
+					first_name <- rownames(data$acov)[1]
+					if (grepl("\\.", first_name)) {
+						sep <- "."
+					} else if (grepl("_", first_name)) {
+						sep <- "_"
+					}
+					k <- length(namesNeeded)
+					keep_pairs <- c()
+					for (j in 1:k) {
+						for (i in j:k) {
+							pair1 <- paste(namesNeeded[i], namesNeeded[j], sep = sep)
+							pair2 <- paste(namesNeeded[j], namesNeeded[i], sep = sep)
+							if (pair1 %in% rownames(data$acov)) {
+								keep_pairs <- c(keep_pairs, pair1)
+							} else if (pair2 %in% rownames(data$acov)) {
+								keep_pairs <- c(keep_pairs, pair2)
+							}
+						}
+					}
+					# Subset using index mapping to be robust to missing dimnames on fullWeight
+					orig_names <- rownames(data$acov)
+					match_indices <- match(keep_pairs, orig_names)
+					match_indices <- match_indices[!is.na(match_indices)]
+					
+					data$acov <- data$acov[match_indices, match_indices, drop = FALSE]
+					if (!is.null(data$fullWeight)) {
+						if (!is.null(rownames(data$fullWeight))) {
+							# If fullWeight has dimnames, subset by matched names
+							data$fullWeight <- data$fullWeight[keep_pairs, keep_pairs, drop = FALSE]
+						} else if (nrow(data$fullWeight) == length(orig_names)) {
+							# Otherwise, subset by matching indices
+							data$fullWeight <- data$fullWeight[match_indices, match_indices, drop = FALSE]
+						}
+					}
+				}
 			}
 			if(!is.null(fullCovs)){
 				# drop rows with missing def vars or stop

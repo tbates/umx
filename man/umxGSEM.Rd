@@ -21,19 +21,19 @@ umxGSEM(
 \arguments{
 \item{model}{An OpenMx model, a list of umxPath's, or a lavaan-style model string.}
 
-\item{covstruc}{A list containing S (genetic covariance matrix) and V (sampling covariance matrix) as output by GenomicSEM's \code{ldsc} function. If provided, \code{S} and \code{V} are extracted from it.}
+\item{covstruc}{list() of S (genetic covariance matrix) and V (sampling covariance matrix) as output by GenomicSEM's \code{ldsc} function. If provided, \code{S} and \code{V} are extracted from it.}
 
-\item{S}{A genetic covariance matrix.}
+\item{S}{Genetic covariance matrix (if covstruc not provided).}
 
-\item{V}{A sampling covariance matrix (asymptotic covariance of S).}
+\item{V}{Sampling covariance matrix (asymptotic covariance of S). If covstruc not provided.}
 
-\item{estimation}{The estimation method. One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").}
+\item{estimation}{Method for estimation . One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").}
 
-\item{name}{The name of the model (defaults to "gsem").}
+\item{name}{The  model name (defaults to "gsem").}
 
 \item{numObs}{The dummy/actual sample size for WLS (defaults to 2, as commonly used in GenomicSEM DWLS).}
 
-\item{smooth}{whether to smooth non-positive definite matrices using \code{\link[Matrix:nearPD]{Matrix::nearPD()}} (defaults to TRUE).}
+\item{smooth}{Whether to smooth non-positive definite matrices using \code{\link[Matrix:nearPD]{Matrix::nearPD()}} (defaults to TRUE).}
 
 \item{autoRun}{Whether to run the model (defaults to getOption("umx_auto_run")).}
 

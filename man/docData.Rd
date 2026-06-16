@@ -57,8 +57,10 @@ In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}, 496–49
 }
 
 Other datasets:
+\code{\link{Anthro_LDSC}},
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
+\code{\link{PSYCH_COV}},
 \code{\link{iqdat}},
 \code{\link{umx}},
 \code{\link{us_skinfold_data}}

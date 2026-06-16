@@ -60,8 +60,10 @@ the MCV Twin Study. Medical College of Virginia.
 }
 \seealso{
 Other datasets:
+\code{\link{Anthro_LDSC}},
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
+\code{\link{PSYCH_COV}},
 \code{\link{docData}},
 \code{\link{iqdat}},
 \code{\link{umx}}

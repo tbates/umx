@@ -1002,6 +1002,14 @@ umxSummary.default <- function(model, ...){
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
 #' 
+#' **Interpreting fit statistics under WLS/DWLS**
+#' 
+#' Simulation studies show that CFI and TLI behave differently under DWLS/WLS than under ML, and conventional cutoffs (e.g., CFI > 0.95) do not transfer well (Shi et al., 2020). Incremental fit indices (CFI, TLI, NFI, etc.) rely on a comparison to the independence (null) model.
+#' Under WLS the weighting changes how that baseline behaves, so the usual interpretation breaks down.
+#' We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
+#' Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
+#' Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
+#' 
 #' **CIs and Identification**
 #' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 #' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
@@ -1240,8 +1248,12 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 					"; ", RMSEA_CI
 				)
 				message(fitMsg)
-				if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
-				if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
+				if (xmu_is_wls(model)) {
+					message("Note: For WLS/DWLS models, conventional fit index cutoffs (e.g. TLI > .95, RMSEA < .06) do not apply. See ?umxSummary for details.")
+				} else {
+					if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
+					if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
+				}
 			}
 		})
 	} else {
@@ -2109,8 +2121,15 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' 4. report = 'inline', will provide an English sentence suitable for a paper.
 #' 5. report = "html" opens a web table in your browser to paste into a word processor.
 #' 
-#' *Note*: If you leave comparison blank, it will just give fit info for the base model
-#'
+#' 
+#' **Interpreting fit statistics under WLS/DWLS**
+#' 
+#' Simulation studies show that CFI and TLI behave differently under DWLS/WLS than under ML, and conventional cutoffs (e.g., CFI > 0.95) do not transfer well (Shi et al., 2020). Incremental fit indices (CFI, TLI, NFI, etc.) rely on a comparison to the independence (null) model.
+#' Under WLS the weighting changes how that baseline behaves, so the usual interpretation breaks down.
+#' We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
+#' Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
+#' Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
+#' 
 #' @param base The base [OpenMx::mxModel()] for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
@@ -2269,9 +2288,42 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	names(tablePub) = c("Model", "EP", "\u0394 Fit" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model", "Fit units")
 
 	if(report == "inline"){ report= "markdown"}
+	
+	# Check if any model in the comparison is a WLS model
+	anyWLS = FALSE
+	checkModels = list()
+	if (is.list(base) && !umx_is_MxModel(base)) {
+		checkModels = c(checkModels, base)
+	} else if (!is.null(base)) {
+		checkModels = c(checkModels, list(base))
+	}
+	if (is.list(comparison) && !umx_is_MxModel(comparison)) {
+		checkModels = c(checkModels, comparison)
+	} else if (!is.null(comparison)) {
+		checkModels = c(checkModels, list(comparison))
+	}
+	
+	for (m in checkModels) {
+		if (umx_is_MxModel(m) && xmu_is_wls(m)) {
+			anyWLS = TRUE
+			break
+		}
+	}
+
 	if(!silent){
 		umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
-		cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")
+		if (anyWLS) {
+			units_val <- unique(tablePub$`Fit units`[!is.na(tablePub$`Fit units`)])
+			if (length(units_val) == 0) {
+				units_str <- "WLS discrepancy function"
+			} else {
+				units_str <- paste(units_val, collapse = ", ")
+			}
+			cat(paste0("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n"))
+			cat("Note: For WLS/DWLS models, conventional fit index cutoffs do not apply. See ?umxCompare for details.\n")
+		} else {
+			cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")
+		}
 	}
 
 	if(compareWeightedAIC){

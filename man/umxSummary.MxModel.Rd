@@ -61,6 +61,14 @@ RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI an
 
 Note: For some (multi-group) models, you will need to fall back on \code{\link[=summary]{summary()}}
 
+\strong{Interpreting fit statistics under WLS/DWLS}
+
+Simulation studies show that CFI and TLI behave differently under DWLS/WLS than under ML, and conventional cutoffs (e.g., CFI > 0.95) do not transfer well (Shi et al., 2020). Incremental fit indices (CFI, TLI, NFI, etc.) rely on a comparison to the independence (null) model.
+Under WLS the weighting changes how that baseline behaves, so the usual interpretation breaks down.
+We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
+Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
+Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
+
 \strong{CIs and Identification}
 This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
 These are used to derive confidence intervals based on the formula 95\%CI = estimate +/- 1.96*SE)

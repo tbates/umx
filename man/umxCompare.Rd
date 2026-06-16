@@ -44,7 +44,13 @@ umxCompare compares two or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s
 \item report = "html" opens a web table in your browser to paste into a word processor.
 }
 
-\emph{Note}: If you leave comparison blank, it will just give fit info for the base model
+\strong{Interpreting fit statistics under WLS/DWLS}
+
+Simulation studies show that CFI and TLI behave differently under DWLS/WLS than under ML, and conventional cutoffs (e.g., CFI > 0.95) do not transfer well (Shi et al., 2020). Incremental fit indices (CFI, TLI, NFI, etc.) rely on a comparison to the independence (null) model.
+Under WLS the weighting changes how that baseline behaves, so the usual interpretation breaks down.
+We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
+Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
+Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
 }
 \examples{
 \dontrun{

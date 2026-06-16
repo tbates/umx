@@ -80,3 +80,30 @@ test_that("umxGSEM_munge works correctly", {
 	expect_equal(basename(output_files), "mock_sumstats.sumstats.gz")
 	expect_true(file.exists(output_files))
 })
+
+test_that("Anthro_LDSC dataset loads and has correct structure", {
+	data("Anthro_LDSC", package = "umx")
+	expect_true(exists("Anthro_LDSC"))
+	expect_type(Anthro_LDSC, "list")
+	expect_equal(names(Anthro_LDSC), c("V", "S", "I", "N", "m"))
+	expect_equal(colnames(Anthro_LDSC$S), c("BMI", "WHR", "CO", "Waist", "Hip", "Height", "IHC", "BL", "BW"))
+	expect_equal(dim(Anthro_LDSC$V), c(45, 45))
+	expect_equal(dim(Anthro_LDSC$S), c(9, 9))
+	expect_equal(dim(Anthro_LDSC$I), c(9, 9))
+	expect_equal(dim(Anthro_LDSC$N), c(1, 45))
+	expect_equal(Anthro_LDSC$m, 1173569)
+})
+
+test_that("PSYCH_COV dataset loads and has correct structure", {
+	data("PSYCH_COV", package = "umx")
+	expect_true(exists("PSYCH_COV"))
+	expect_type(PSYCH_COV, "list")
+	expect_equal(names(PSYCH_COV), c("V", "S", "I", "N", "m"))
+	expect_equal(colnames(PSYCH_COV$S), c("SCZ", "BIP", "MDD", "EA", "INSOM"))
+	expect_equal(dim(PSYCH_COV$V), c(15, 15))
+	expect_equal(dim(PSYCH_COV$S), c(5, 5))
+	expect_equal(dim(PSYCH_COV$I), c(5, 5))
+	expect_equal(dim(PSYCH_COV$N), c(1, 15))
+})
+
+
