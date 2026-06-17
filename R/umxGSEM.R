@@ -34,7 +34,7 @@ umx_CheckProject <- function(project_path = "/path/to/my/project") {
 #' S is A symmetric K×K matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h 
 #' 2). The off-diagonals contain the genetic covariances.
 #' 
-#' V is A symmetric M×M sampling covariance matrix, where M= (K\times(K+1))/2 (the number of unique elements in S).
+#' V is A symmetric M×M sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
 #' It contains the sampling variances of your heritabilities and genetic covariances on the diagonal, 
 #' and their sampling covariances on the off-diagonal.
 #' 
