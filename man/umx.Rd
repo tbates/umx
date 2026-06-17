@@ -317,7 +317,7 @@ Other datasets:
 \code{\link{Anthro_LDSC}},
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
-\code{\link{PSYCH_COV}},
+\code{\link{Psych_LDSC}},
 \code{\link{docData}},
 \code{\link{iqdat}},
 \code{\link{us_skinfold_data}}

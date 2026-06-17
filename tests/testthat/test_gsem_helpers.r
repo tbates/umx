@@ -94,16 +94,16 @@ test_that("Anthro_LDSC dataset loads and has correct structure", {
 	expect_equal(Anthro_LDSC$m, 1173569)
 })
 
-test_that("PSYCH_COV dataset loads and has correct structure", {
-	data("PSYCH_COV", package = "umx")
-	expect_true(exists("PSYCH_COV"))
-	expect_type(PSYCH_COV, "list")
-	expect_equal(names(PSYCH_COV), c("V", "S", "I", "N", "m"))
-	expect_equal(colnames(PSYCH_COV$S), c("SCZ", "BIP", "MDD", "EA", "INSOM"))
-	expect_equal(dim(PSYCH_COV$V), c(15, 15))
-	expect_equal(dim(PSYCH_COV$S), c(5, 5))
-	expect_equal(dim(PSYCH_COV$I), c(5, 5))
-	expect_equal(dim(PSYCH_COV$N), c(1, 15))
+test_that("Psych_LDSC dataset loads and has correct structure", {
+	data("Psych_LDSC", package = "umx")
+	expect_true(exists("Psych_LDSC"))
+	expect_type(Psych_LDSC, "list")
+	expect_equal(names(Psych_LDSC), c("V", "S", "I", "N", "m"))
+	expect_equal(colnames(Psych_LDSC$S), c("SCZ", "BIP", "MDD", "EA", "INSOM"))
+	expect_equal(dim(Psych_LDSC$V), c(15, 15))
+	expect_equal(dim(Psych_LDSC$S), c(5, 5))
+	expect_equal(dim(Psych_LDSC$I), c(5, 5))
+	expect_equal(dim(Psych_LDSC$N), c(1, 15))
 })
 
 

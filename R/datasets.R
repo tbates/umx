@@ -363,14 +363,14 @@ NULL
 #' @docType data
 #' @keywords datasets
 #' @family datasets
-#' @name PSYCH_COV
-#' @usage data(PSYCH_COV)
+#' @name Psych_LDSC
+#' @usage data(Psych_LDSC)
 #' @format A list of matrices (S, V, I, N) and numeric values (m).
 #' @md
 #' @examples
 #' \dontrun{
-#' data(PSYCH_COV)
-#' str(PSYCH_COV)
+#' data(Psych_LDSC)
+#' str(Psych_LDSC)
 #' }
 NULL
 
