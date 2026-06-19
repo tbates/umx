@@ -61,6 +61,7 @@ table for pasting into a word processor.
 Other Model Summary and Comparison:
 \code{\link{umx}},
 \code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxCompare2]{umxCompare2()}},
 \code{\link[=umxEquate]{umxEquate()}},
 \code{\link[=umxMI]{umxMI()}},
 \code{\link[=umxSetParameters]{umxSetParameters()}},

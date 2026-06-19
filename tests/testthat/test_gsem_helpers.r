@@ -106,4 +106,69 @@ test_that("Psych_LDSC dataset loads and has correct structure", {
 	expect_equal(dim(Psych_LDSC$N), c(1, 15))
 })
 
+test_that("calculateStrictSb calculates strictly positive Satorra-Bentler difference test correctly", {
+	data("Psych_LDSC", package = "umx")
+	traits <- c("SCZ", "BIP")
+	m1 <- "
+	SCZ ~~ SCZ
+	BIP ~~ BIP
+	SCZ ~~ BIP
+	"
+	fit1 <- umxGSEM(m1, S = Psych_LDSC$S, V = Psych_LDSC$V, estimation = "DWLS", autoRun = TRUE)
+
+	m2 <- "
+	SCZ ~~ SCZ
+	BIP ~~ BIP
+	SCZ ~~ 0*BIP
+	"
+	fit2 <- umxGSEM(m2, S = Psych_LDSC$S, V = Psych_LDSC$V, estimation = "DWLS", autoRun = TRUE)
+
+	res <- calculateStrictSb(fit1, fit2)
+	expect_true(is.vector(res))
+	expect_equal(names(res), c("strictSbChisq", "deltaDf", "scalingFactor", "pValue"))
+	expect_equal(unname(res["deltaDf"]), 1)
+	expect_true(res["strictSbChisq"] > 0)
+	expect_true(res["scalingFactor"] > 0)
+	expect_true(res["pValue"] >= 0 && res["pValue"] <= 1)
+
+	# Verify nesting order check fails if order is reversed
+	expect_error(calculateStrictSb(fit2, fit1), "not nested in the correct order")
+})
+
+test_that("xmuCalculateSRMR calculates SRMR correctly", {
+	data("Psych_LDSC", package = "umx")
+	traits = c("SCZ", "BIP")
+	m1 = "
+	SCZ ~~ SCZ
+	BIP ~~ BIP
+	SCZ ~~ BIP
+	"
+	fit1 = umxGSEM(m1, S = Psych_LDSC$S, V = Psych_LDSC$V, estimation = "DWLS", autoRun = TRUE)
+	
+	srmr = xmuCalculateSRMR(fit1)
+	expect_true(is.numeric(srmr))
+	expect_false(is.na(srmr))
+	expect_true(srmr >= 0 && srmr <= 1)
+	
+	expect_equal(xmuCalculateSRMR(NULL), NA_real_)
+})
+
+test_that("xmu_pseudo_BIC calculates BIC correctly with custom sample size penalty", {
+	# Test with valid inputs
+	bicVal1 = xmu_pseudo_BIC(chisq = 10.0, k = 2, n = 100)
+	expect_equal(bicVal1, 10.0 + 2 * log(100))
+	
+	bicVal2 = xmuPseudoBic(chisq = 10.0, k = 2, n = 100)
+	expect_equal(bicVal2, 10.0 + 2 * log(100))
+	
+	# Test with vectors
+	bicVec = xmu_pseudo_BIC(chisq = c(10.0, 15.0), k = c(2, 3), n = 100)
+	expect_equal(bicVec, c(10.0 + 2 * log(100), 15.0 + 3 * log(100)))
+	
+	# Test with NAs
+	expect_equal(xmu_pseudo_BIC(NA, 2, 100), NA_real_)
+	expect_equal(xmu_pseudo_BIC(10, NA, 100), NA_real_)
+	expect_equal(xmu_pseudo_BIC(10, 2, NA), NA_real_)
+})
+
 

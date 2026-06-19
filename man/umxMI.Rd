@@ -66,6 +66,7 @@ umxMI(m1, full = FALSE)
 Other Model Summary and Comparison:
 \code{\link{umx}},
 \code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxCompare2]{umxCompare2()}},
 \code{\link[=umxEquate]{umxEquate()}},
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxSetParameters]{umxSetParameters()}},

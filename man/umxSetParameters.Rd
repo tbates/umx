@@ -104,6 +104,7 @@ parameters(m2)
 Other Model Summary and Comparison:
 \code{\link{umx}},
 \code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxCompare2]{umxCompare2()}},
 \code{\link[=umxEquate]{umxEquate()}},
 \code{\link[=umxMI]{umxMI()}},
 \code{\link[=umxReduce]{umxReduce()}},
