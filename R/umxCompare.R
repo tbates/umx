@@ -108,31 +108,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
 	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
-	# Pre Feb 2021 version 2.18.1.233
-	if(packageVersion("OpenMx") < "2.18.1.233"){
-		# old format mxCompare
-		tablePub = tableOut[, c("comparison", "ep", "diffLL" , "diffdf", "p", "AIC", "base")]
-		names(tablePub)     = c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base")
-		tablePub$fitUnits = ""
-	} else {
-		# new format mxCompare
-		tablePub = tableOut[, c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base", "fitUnits")]
-		# str(tmp@results)
-		# 'data.frame':	2 obs. of  13 variables:
-		#  $ base      : chr  "tim" "tim"
-		#  $ comparison: chr  NA "tim"
-		#  $ ep        : num  9 9
-		#  $ df        : num  87 87
-		#  $ diffdf    : num  NA 0
-		#  $ fit       : num  330 330
-		#  $ fitUnits  : chr  "-2lnL" "-2lnL"
-		#  $ diffFit   : num  NA 0
-		#  $ AIC       : num  348 348
-		#  $ p         : num  NA NA
-		#  $ minus2LL  : num  330 330
-		#  $ diffLL    : num  NA 0
-		#  $ SBchisq   : num  NA NA
-	}
+	tablePub = tableOut[, c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base", "fitUnits")]
 
 	# Subtract row-1 AIC from all values and place the resulting deltaAIC column after AIC 
 	tablePub$deltaAIC = tablePub[, "AIC"] - tablePub[1, "AIC"]
