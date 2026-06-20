@@ -51,22 +51,26 @@ matrices (V) estimated from LD Score Regression (LDSC).
 }
 \examples{
 \dontrun{
-# A simple heritability and genetic correlation example using simulated S and V
-traits <- c("T1", "T2")
-S <- matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
-V <- matrix(c(0.002, 0.001, 0.001,
-              0.001, 0.003, 0.001,
-              0.001, 0.001, 0.002), nrow = 3, ncol = 3)
-vech_names <- c("T1 T1", "T2 T1", "T2 T2")
-dimnames(V) <- list(vech_names, vech_names)
+# A simple heritability and genetic correlation example
 
-# Fit a simple bivariate correlation model
-model <- "
+# 1. Simulate S (Genetic covariance) and V (Sampling covariance) for a trait in twins 1 and 2
+traits = c("T1", "T2")
+S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
+V = matrix(c(0.002, 0.001, 0.001,
+             0.001, 0.003, 0.001,
+             0.001, 0.001, 0.002), nrow = 3, ncol = 3)
+# Label V
+vech_names = c("T1 T1", "T2 T1", "T2 T2")
+dimnames(V) = list(vech_names, vech_names)
+
+# 2. Describe a simple bivariate correlation model in lavaan-ish
+modelStr = "
 T1 ~~ T1
 T2 ~~ T2
 T1 ~~ T2
 "
-fit <- umxGSEM(model = model, S = S, V = V, estimation = "DWLS")
+# 3. Fit the model in umxGSEM
+fit = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
 umxSummary(fit)
 }
 }

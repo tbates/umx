@@ -104,10 +104,11 @@ parameters(m2)
 Other Model Summary and Comparison:
 \code{\link{umx}},
 \code{\link[=umxCompare]{umxCompare()}},
-\code{\link[=umxCompare2]{umxCompare2()}},
 \code{\link[=umxEquate]{umxEquate()}},
 \code{\link[=umxMI]{umxMI()}},
 \code{\link[=umxReduce]{umxReduce()}},
-\code{\link[=umxSummary]{umxSummary()}}
+\code{\link[=umxSummary]{umxSummary()}},
+\code{\link[=xmu_compare_WLS]{xmu_compare_WLS()}},
+\code{\link[=xmu_robust_fit]{xmu_robust_fit()}}
 }
 \concept{Model Summary and Comparison}

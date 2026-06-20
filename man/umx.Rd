@@ -118,12 +118,13 @@ Other Core Model Building Functions:
 
 Other Model Summary and Comparison:
 \code{\link[=umxCompare]{umxCompare()}},
-\code{\link[=umxCompare2]{umxCompare2()}},
 \code{\link[=umxEquate]{umxEquate()}},
 \code{\link[=umxMI]{umxMI()}},
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxSetParameters]{umxSetParameters()}},
-\code{\link[=umxSummary]{umxSummary()}}
+\code{\link[=umxSummary]{umxSummary()}},
+\code{\link[=xmu_compare_WLS]{xmu_compare_WLS()}},
+\code{\link[=xmu_robust_fit]{xmu_robust_fit()}}
 
 Other Reporting Functions:
 \code{\link[=umxAPA]{umxAPA()}},

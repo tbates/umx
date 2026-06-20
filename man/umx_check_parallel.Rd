@@ -81,6 +81,7 @@ Other Test:
 \code{\link[=umx_has_been_run]{umx_has_been_run()}},
 \code{\link[=umx_has_means]{umx_has_means()}},
 \code{\link[=umx_has_square_brackets]{umx_has_square_brackets()}},
+\code{\link[=umx_is_GSEM]{umx_is_GSEM()}},
 \code{\link[=umx_is_LISREL]{umx_is_LISREL()}},
 \code{\link[=umx_is_MxData]{umx_is_MxData()}},
 \code{\link[=umx_is_MxMatrix]{umx_is_MxMatrix()}},
