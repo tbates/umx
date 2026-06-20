@@ -708,23 +708,22 @@ xmu_is_wls <- function(model) {
 	if (!umx_is_MxModel(model)) {
 		return(FALSE)
 	}
+	# 1. Check fit function
 	if (!is.null(model$fitfunction) && inherits(model$fitfunction, "MxFitFunctionWLS")) {
 		return(TRUE)
 	}
-	if (!is.null(model$data) && !is.null(model$data$type) && (model$data$type == "acov")) {
+	# 2. Check data type safely (immune to NA and NULL)
+	if (identical(model$data$type, "acov")) {
 		return(TRUE)
 	}
-	# Check submodels
-	if (length(model$submodels) > 0) {
-		for (subname in names(model$submodels)) {
-			if (xmu_is_wls(model$submodels[[subname]])) {
-				return(TRUE)
-			}
+	# 3. Check submodels directly by value
+	for (sub in model$submodels) {
+		if (xmu_is_wls(sub)) {
+			return(TRUE)
 		}
 	}
 	return(FALSE)
 }
-
 
 #' Upgrade a dataframe to an mxData type.
 #'

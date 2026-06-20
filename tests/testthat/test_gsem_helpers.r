@@ -171,4 +171,24 @@ test_that("xmu_pseudo_BIC calculates BIC correctly with custom sample size penal
 	expect_equal(xmu_pseudo_BIC(10, 2, NA), NA_real_)
 })
 
+test_that("xmu_robust_fit computes WLS heritability fit indices correctly", {
+	data("Psych_LDSC", package = "umx")
+	traits = c("SCZ", "BIP")
+	m1 = "
+	SCZ ~~ SCZ
+	BIP ~~ BIP
+	SCZ ~~ BIP
+	"
+	fit1 = umxGSEM(m1, S = Psych_LDSC$S, V = Psych_LDSC$V, estimation = "DWLS", autoRun = TRUE)
+	
+	robustFit = xmu_robust_fit(fit1)
+	expect_true(is.list(robustFit))
+	expect_true(is.numeric(robustFit$CFI))
+	expect_true(is.numeric(robustFit$TLI))
+	expect_true(is.numeric(robustFit$RMSEA))
+	expect_false(is.na(robustFit$CFI))
+	expect_false(is.na(robustFit$TLI))
+	expect_false(is.na(robustFit$RMSEA))
+})
+
 

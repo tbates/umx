@@ -113,8 +113,8 @@ test_that("umxSummary and umxCompare handle WLS models correctly", {
 	# Verify xmu_is_wls detects it
 	expect_true(xmu_is_wls(fit1))
 	
-	# Verify umxSummary output prints the custom note rather than standard TLI/RMSEA alerts
-	expect_message(umxSummary(fit1), "For WLS/DWLS models, conventional fit index cutoffs")
+	# Verify umxSummary output prints the custom robust WLS note
+	expect_message(umxSummary(fit1), "Applying robust metrics")
 	
 	# Setup comparison model
 	m2 <- "
@@ -124,8 +124,8 @@ test_that("umxSummary and umxCompare handle WLS models correctly", {
 	"
 	fit2 <- umxGSEM(m2, S = S, V = V, estimation = "DWLS", autoRun = TRUE)
 	
-	# Verify umxSummary on fit2 (which has high RMSEA) prints the custom note and does NOT print "worse than desired"
-	expect_message(umxSummary(fit2), "For WLS/DWLS models, conventional fit index cutoffs")
+	# Verify umxSummary on fit2 (which has high RMSEA) prints the custom robust WLS note and does NOT print "worse than desired"
+	expect_message(umxSummary(fit2), "Applying robust metrics")
 	withCallingHandlers(
 		umxSummary(fit2),
 		message = function(m) {

@@ -87,14 +87,40 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			warning("Base model not run yet!")		
 		}
 	}
-	if(length(comparison) == 1) {
-		if(typeof(comparison) == "list"){
-			comparison = comparison[[1]]
-		}
-		if(!umx_has_been_run(comparison)){
-			warning("Comparison model has not been run!")		
+	if (umx_is_MxModel(comparison)) {
+		comparison = list(comparison)
+	}
+	if (!is.list(comparison)) {
+		stop("comparison must be a list or an MxModel")
+	}
+	for (comp in comparison) {
+		if (!umx_has_been_run(comp)) {
+			stop("Comparison model has not been run!")
 		}
 	}
+
+	baseIsWLS = xmu_is_wls(base)
+	if (baseIsWLS) {
+		if (!all(sapply(comparison, xmu_is_wls))) {
+			stop("umxCompare: Cannot compare a WLS model with an ML model.")
+		}
+		message("umxCompare: WLS models detected. Routing to Satorra-Bentler (2010) robust comparison engine...")
+		finalTableList = lapply(comparison, function(comp) {
+			xmu_compare_WLS(base = base, comparison = comp)
+		})
+		finalTable = do.call(rbind, finalTableList)
+		if (!silent) {
+			umx_print(finalTable, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
+			units_str = summary(base)$fitUnits
+			if (is.null(units_str) || length(units_str) == 0) {
+				units_str = "r'wr"
+			}
+			cat(paste0("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n"))
+			cat("Note: For WLS/DWLS models, conventional fit index cutoffs do not apply. See ?umxCompare for details.\n")
+		}
+		return(finalTable)
+	}
+
 	tableOut = mxCompare(base = base, comparison = comparison, all = all)
 	tableOut = as.data.frame(tableOut)
 
