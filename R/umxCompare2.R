@@ -469,17 +469,46 @@ xmu_build_independence_jacobian = function(K) {
 	return(jac)
 }
 
-#' xmu_robust_WLS_fit
+#' Calculate Satorra-Bentler Robust Fit Indices for WLS Models
 #'
 #' @description
-#' `xmu_robust_WLS_fit` calculates the Satorra-Bentler (2010) robust CFI, TLI, and RMSEA for a WLS model.
-#'
-#' @param model An evaluated OpenMx model.
-#' @return A list containing CFI, TLI, and RMSEA.
-#' @export
+#' Calculates Satorra-Bentler (2010) robust fit indices (CFI, TLI, RMSEA) and scaled
+#' chi-square statistics for Weighted Least Squares (WLS) models. This function
+#' bypasses the OpenMx optimizer for the baseline model, calculating the 
+#' unscaled fit natively in R to prevent validation errors with asymptotic 
+#' covariance matrices (such as those generated in Genomic SEM).
+#' 
+#' @details
+#' The function executes the following mathematical pipeline:
+#' \enumerate{
+#'   \item Extracts raw target \eqn{\chi^2}, degrees of freedom, and the implied Jacobian.
+#'   \item Extracts the Asymptotic Covariance (\eqn{V}) and Weight (\eqn{W}) matrices.
+#'   \item Builds the baseline independence Jacobian using \code{xmu_build_independence_jacobian}.
+#'   \item Calculates the baseline fit natively as \eqn{d_{ind}^T W d_{ind}}, where \eqn{d_{ind}} 
+#'         is the observed summary statistics vector with variances and means explicitly zeroed out.
+#'   \item Computes the Satorra-Bentler scaling factor (\eqn{c}) using the trace matrix formula:
+#'         \deqn{U = V W - V W \Delta (\Delta^T W \Delta)^{-1} \Delta^T W}
+#'   \item Computes scaled \eqn{\chi^2} values: \eqn{\chi^2_{scaled} = \chi^2_{raw} / c}.
+#'   \item Derives robust CFI, TLI, and RMSEA from these scaled values.
+#' }
+#' 
+#' @param model A fitted WLS \code{MxModel}.
+#' 
+#' @return A named list of robust statistics designed to patch directly into 
+#' the \code{umxSummary} output slots. Returns the following elements:
+#' \itemize{
+#'   \item \code{CFI}: Robust Comparative Fit Index
+#'   \item \code{TLI}: Robust Tucker-Lewis Index
+#'   \item \code{RMSEA}: Robust Root Mean Square Error of Approximation
+#'   \item \code{Chi}: Satorra-Bentler scaled target Chi-square
+#'   \item \code{ChiDoF}: Target model degrees of freedom
+#'   \item \code{p}: P-value for the scaled target Chi-square
+#' }
+#' 
+#' @seealso \code{\link{umxSummary}}, \code{\link{xmu_build_independence_jacobian}}
 #' @family Model Summary and Comparison
-#' @seealso - [umxSummary()]
 #' @references - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. Psychometrika, 75(2), 243-269.
+#' @export
 #' @md
 xmu_robust_WLS_fit = function(model) {
 	# Step A: Extract raw Chi-Square, df, and Jacobian
