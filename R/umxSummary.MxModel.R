@@ -2,29 +2,29 @@
 #'
 #' Report the fit of a model in a compact form suitable for a journal. 
 #' It reports parameters in a markdown or html table (optionally standardized), and fit indices
-#' RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI and TLI (incremental fit indices comparing model a model with the worst fit).
+#' RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI and TLI (incremental fit indices comparing a model with the worst fit).
 #' 
 #' `umxSummary` alerts you when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
 #' 
-#' **Interpreting fit statistics under WLS/DWLS**
+#' **Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)**
 #' 
-#' Simulation studies show that CFI and TLI behave differently under DWLS/WLS than under ML, and conventional cutoffs (e.g., CFI > 0.95) do not transfer well (Shi et al., 2020). Incremental fit indices (CFI, TLI, NFI, etc.) rely on a comparison to the independence (null) model.
-#' Under WLS the weighting changes how that baseline behaves, so the usual interpretation breaks down.
-#' We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
-#' Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
-#' Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
+#' Historically, simulation studies showed that CFI and TLI behaved differently under DWLS/WLS than under ML (Shi et al., 2020). Incremental fit indices rely on a comparison to the independence (null) model. Under legacy WLS implementations, the weighting matrix changed how that baseline behaved, causing conventional cutoffs (e.g., CFI > 0.95) to break down.
+#' 
+#' *Solution:* To resolve this, `umxSummary` (as part of the upcoming **GenomicMx** ecosystem) now automatically intercepts WLS models and computes **Satorra-Bentler (2010) robust fit indices** (Robust CFI, TLI, and RMSEA) natively. 
+#' 
+#' By calculating the unscaled baseline fit natively and applying Satorra-Bentler trace matrix scaling, `umx` restores the conventional interpretation of absolute and incremental fit metrics for summary-statistics and heritability models. You no longer need to strictly de-emphasize CFI/TLI when using WLS. (Note: While robust indices greatly improve comparability, best practice remains reporting multiple indices and inspecting residuals).
 #' 
 #' **CIs and Identification**
-#' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary
-#' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE)
+#' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary.
+#' These are used to derive confidence intervals based on the formula 95%CI = estimate +/- 1.96*SE.
 #' 
 #' Sometimes SEs appear NA. This may reflect a model which is not identified (see <http://davidakenny.net/cm/identify.htm>).
 #' This can include empirical under-identification - for instance two factors
-#' that are essentially identical in structure. use [OpenMx::mxCheckIdentification()] to check identification.
+#' that are essentially identical in structure. Use [OpenMx::mxCheckIdentification()] to check identification.
 #' 
-#' Solutions: If there are paths estimated at or close to zero suggests that fixing one or two of 
+#' Solutions: If there are paths estimated at or close to zero, this suggests that fixing one or two of 
 #' these to zero may fix the standard error calculation.
 #' 
 #' If factor loadings can flip sign and provide identical fit, this creates another form of 
@@ -42,17 +42,19 @@
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
 #' @param refModels Saturated models if needed for fit indices (see example below:
-#' 	If NULL will be computed on demand. If FALSE will not be computed.
+#'  If NULL will be computed on demand. If FALSE will not be computed.
 #' @param ... Other parameters to control model summary
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
 #' @family Summary functions
-#' @seealso - [umxRAM()]
+#' @seealso - [umxRAM()], [xmu_robust_WLS_fit()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Conventional criteria versus new alternatives. *Structural Equation Modeling*, **6**, 1-55. 
 #'
 #'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
-#'  with binary and continuous outcomes. University of California, Los Angeles, Los Angeles.
+#'  with binary and continuous outcomes. University of California, Los Angeles.
 #'  Retrieved from <https://www.statmodel.com/download/Yudissertation.pdf>
+#'  
+#'  - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. *Psychometrika*, **75**(2), 243-248.
 #' 
 #' <https://tbates.github.io>
 #' 
@@ -66,9 +68,9 @@
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
-#' 	umxPath("G", to = manifests),
-#' 	umxPath(var = manifests),
-#' 	umxPath(var = "G", fixedAt = 1)
+#'  umxPath("G", to = manifests),
+#'  umxPath(var = manifests),
+#'  umxPath(var = "G", fixedAt = 1)
 #' )
 #' umxSummary(m1, std = TRUE)
 #' # output as latex
@@ -80,13 +82,13 @@
 #' 
 #' # switch to a raw data model
 #' m1 = umxRAM("One Factor", data = demoOneFactor[1:100, ],
-#' 	umxPath("G", to = manifests),
-#' 	umxPath(v.m. = manifests),
-#' 	umxPath(v1m0 = "G")
+#'  umxPath("G", to = manifests),
+#'  umxPath(v.m. = manifests),
+#'  umxPath(v1m0 = "G")
 #' )
 #' umxSummary(m1, std = TRUE, filter = "NS")
 #' }
-#' 
+#'
 umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means= TRUE, residuals= TRUE, SE = TRUE, filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, ..., matrixAddresses = FALSE){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
