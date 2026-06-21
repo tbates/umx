@@ -1087,6 +1087,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	report   = match.arg(report)
 	filter   = match.arg(filter)
 	
+	reportedWLS = FALSE
 	message("?umxSummary options: std=T|F', digits=, report= 'html', filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
@@ -1108,9 +1109,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			refModels = tryCatch({
 				refModels = mxRefModels(model, run = TRUE)
 			}, warning = function(x) {
-			    print("Warning calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+			    print("Warning calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
 			}, error = function(x) {
-			    print("Error calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+			    print("Error calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
 			}, finally={
 			    # print("cleanup-code")
 			})
@@ -1129,6 +1130,15 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		modelSummary = summary(model) # Don't use or generate refModels		
 	}else{
 		modelSummary = summary(model, refModels = refModels) # Using refModels supplied by user
+	}
+
+	isWLS = xmu_is_wls(model)
+	if (isWLS) {
+		message("umxSummary: High-N WLS / Genomic SEM model detected. Applying robust metrics...")
+		robustFit = xmu_robust_WLS_fit(model)
+		modelSummary$CFI = robustFit$CFI
+		modelSummary$TLI = robustFit$TLI
+		modelSummary$RMSEA = robustFit$RMSEA
 	}
 
 	# DisplayColumns show
@@ -1209,69 +1219,71 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
 		}
 	}
-	hasFitIndices = !is.null(modelSummary$TLI) && !is.null(modelSummary$CFI) && !is.null(modelSummary$RMSEA) && !is.null(modelSummary$Chi)
-	if(hasFitIndices) {
-		with(modelSummary, {
-			if(!is.finite(TLI)){
-				TLI_OK = "OK"
-			} else {
-				if(TLI > .95) {
+	if (!reportedWLS) {
+		hasFitIndices = !is.null(modelSummary$TLI) && !is.null(modelSummary$CFI) && !is.null(modelSummary$RMSEA) && !is.null(modelSummary$Chi)
+		if(hasFitIndices) {
+			with(modelSummary, {
+				if(!is.finite(TLI)){
 					TLI_OK = "OK"
 				} else {
-					TLI_OK = "bad"
+					if(TLI > .95) {
+						TLI_OK = "OK"
+					} else {
+						TLI_OK = "bad"
+					}
 				}
-			}
-			if(!is.finite(RMSEA)) {
-				RMSEA_OK = "OK"
-			} else {
-				if(RMSEA < .06){
-				RMSEA_OK = "OK"
+				if(!is.finite(RMSEA)) {
+					RMSEA_OK = "OK"
 				} else {
-					RMSEA_OK = "bad"
+					if(RMSEA < .06){
+					RMSEA_OK = "OK"
+					} else {
+						RMSEA_OK = "bad"
+					}
 				}
-			}
-			if(report == "table"){
-				x = data.frame(cbind(model$name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
-				names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
-				print(x)
-			} else {
-				if(RMSEA_CI){
-					RMSEA_CI = RMSEA(modelSummary)$txt
+				if(report == "table"){
+					x = data.frame(cbind(model$name, round(Chi,2), formatC(p, format="g"), round(CFI,3), round(TLI,3), round(RMSEA, 3)))
+					names(x) = c("model","\u03C7","p","CFI", "TLI","RMSEA") # \u03A7 is unicode for chi
+					print(x)
 				} else {
-					RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
+					if(RMSEA_CI){
+						RMSEA_CI = RMSEA(modelSummary)$txt
+					} else {
+						RMSEA_CI = paste0("RMSEA = ", round(RMSEA, 3))
+					}
+					fitMsg = paste0("\nModel Fit: \u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
+						# "Chi2(", ChiDoF, ") = ", round(Chi, 2), # was A7
+						", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
+						"; CFI = "  , round(CFI, 3),
+						"; TLI = "  , round(TLI, 3),
+						"; ", RMSEA_CI
+					)
+					message(fitMsg)
+					if (xmu_is_wls(model)) {
+						message("Note: For WLS/DWLS models, conventional fit index cutoffs (e.g. TLI > .95, RMSEA < .06) do not apply. See ?umxSummary for details.")
+					} else {
+						if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
+						if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
+					}
 				}
-				fitMsg = paste0("\nModel Fit: \u03C7\u00B2(", ChiDoF, ") = ", round(Chi, 2), # was A7
-					# "Chi2(", ChiDoF, ") = ", round(Chi, 2), # was A7
-					", p "      , umx_APA_pval(p, .001, 3, addComparison = TRUE),
-					"; CFI = "  , round(CFI, 3),
-					"; TLI = "  , round(TLI, 3),
-					"; ", RMSEA_CI
-				)
-				message(fitMsg)
-				if (xmu_is_wls(model)) {
-					message("Note: For WLS/DWLS models, conventional fit index cutoffs (e.g. TLI > .95, RMSEA < .06) do not apply. See ?umxSummary for details.")
-				} else {
-					if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
-					if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
-				}
-			}
-		})
-	} else {
-		# Fallback if fit indices are not available
-		minus2LL = modelSummary$Minus2LogLikelihood
-		df = modelSummary$degreesOfFreedom
-		estimatedParameters = modelSummary$estimatedParameters
-		
-		# If estimatedParameters or minus2LL is not NULL/NA, calculate AIC
-		if (!is.null(minus2LL) && !is.na(minus2LL) && !is.null(estimatedParameters)) {
-			aic = minus2LL + 2 * estimatedParameters
-			fitMsg = paste0("\nModel Fit: -2LL = ", round(minus2LL, 2), 
-			                ", df = ", df, 
-			                ", AIC = ", round(aic, 2))
+			})
 		} else {
-			fitMsg = "\nModel Fit: Fit statistics not available (model may not have run successfully)."
+			# Fallback if fit indices are not available
+			minus2LL = modelSummary$Minus2LogLikelihood
+			df = modelSummary$degreesOfFreedom
+			estimatedParameters = modelSummary$estimatedParameters
+			
+			# If estimatedParameters or minus2LL is not NULL/NA, calculate AIC
+			if (!is.null(minus2LL) && !is.na(minus2LL) && !is.null(estimatedParameters)) {
+				aic = minus2LL + 2 * estimatedParameters
+				fitMsg = paste0("\nModel Fit: -2LL = ", round(minus2LL, 2), 
+				                ", df = ", df, 
+				                ", AIC = ", round(aic, 2))
+			} else {
+				fitMsg = "\nModel Fit: Fit statistics not available (model may not have run successfully)."
+			}
+			message(fitMsg)
 		}
-		message(fitMsg)
 	}
 	# TODO: umxSummary.MxRAMModel integrate interval printing into summary table
 	if(!is.null(model$output$confidenceIntervals)){
@@ -1294,6 +1306,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 
 #' @export
 umxSummary.MxRAMModel <- umxSummary.MxModel
+
+#' @export
+umxSummary.MxModelGSEM = umxSummary.MxModel
 
 
 #' umxSummary.MxLISRELModel
