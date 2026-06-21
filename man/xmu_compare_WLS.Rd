@@ -10,6 +10,8 @@ xmu_compare_WLS(baseModel, comparisonModel = NULL, bicPenaltyN = NULL)
 \item{baseModel}{a model}
 
 \item{comparisonModel}{a model}
+
+\item{bicPenaltyN}{The penalty-N to apply if a model has an extreme N (Like genomic SEM data) (default NULL)}
 }
 \value{
 \itemize{
@@ -18,6 +20,10 @@ xmu_compare_WLS(baseModel, comparisonModel = NULL, bicPenaltyN = NULL)
 }
 \description{
 xmu_compare_WLS is a helper function for umxCompare, called for WLS models.
+}
+\details{
+\code{xmu_compare_WLS} intercepts WLS models when they are being compared,
+and handles comparison statistics using modern robust fit indices.
 }
 \examples{
 \dontrun{
@@ -42,6 +48,6 @@ Other Model Summary and Comparison:
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxSetParameters]{umxSetParameters()}},
 \code{\link[=umxSummary]{umxSummary()}},
-\code{\link[=xmu_robust_fit]{xmu_robust_fit()}}
+\code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}}
 }
 \concept{Model Summary and Comparison}

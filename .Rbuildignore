@@ -6,3 +6,5 @@ developer
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^CRAN-SUBMISSION$
+^commonfactor\.R$
+^scratch$

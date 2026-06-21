@@ -38,7 +38,8 @@ A data frame containing:
 \code{fin_Greeks} calculates the theoretical European Call option price and its corresponding Greeks (Delta, Gamma, Theta, Vega, and Rho) using the Black-Scholes model.
 }
 \examples{
-fin_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, riskFreeRate = 0.04, impliedVol = 0.20)
+fin_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, 
+riskFreeRate = 0.04, impliedVol = 0.20)
 
 }
 \seealso{

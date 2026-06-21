@@ -105,8 +105,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			stop("umxCompare: Cannot compare a WLS model with an ML model.")
 		}
 		message("umxCompare: WLS models detected. Routing to Satorra-Bentler (2010) robust comparison engine...")
+		
 		finalTableList = lapply(comparison, function(comp) {
-			xmu_compare_WLS(base = base, comparison = comp)
+			xmu_compare_WLS(baseModel = base, comparisonModel = comp)
 		})
 		finalTable = do.call(rbind, finalTableList)
 		if (!silent) {

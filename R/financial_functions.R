@@ -974,7 +974,8 @@ fin_stock_ticker <- function(ticker= "INTC") {
 #' @family financial functions
 #' @md
 #' @examples
-#' fin_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, riskFreeRate = 0.04, impliedVol = 0.20)
+#' fin_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, 
+#'	riskFreeRate = 0.04, impliedVol = 0.20)
 #'
 fin_Greeks <- function(spotPrice, strikePrice, daysToExpiry, riskFreeRate = 0.04, impliedVol = 0.20) {
   supplied = names(as.list(match.call())[-1])

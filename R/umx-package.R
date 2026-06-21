@@ -84,6 +84,13 @@
 
 
 utils::globalVariables(c(
+	"daysToExpiry",
+	"extrinsicValue",
+	"position",
+	"labelText",
+	"spot",
+	"delta",
+	"gammaScaled",
 	## from Doc 
 	"top.ManMean",
 	'top.bCov',

@@ -107,6 +107,6 @@ Other Model Summary and Comparison:
 \code{\link[=umxSetParameters]{umxSetParameters()}},
 \code{\link[=umxSummary]{umxSummary()}},
 \code{\link[=xmu_compare_WLS]{xmu_compare_WLS()}},
-\code{\link[=xmu_robust_fit]{xmu_robust_fit()}}
+\code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}}
 }
 \concept{Model Summary and Comparison}
