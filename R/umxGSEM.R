@@ -326,22 +326,26 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' @md
 #' @examples
 #' \dontrun{
-#' # A simple heritability and genetic correlation example using simulated S and V
-#' traits <- c("T1", "T2")
-#' S <- matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
-#' V <- matrix(c(0.002, 0.001, 0.001,
-#'               0.001, 0.003, 0.001,
-#'               0.001, 0.001, 0.002), nrow = 3, ncol = 3)
-#' vech_names <- c("T1 T1", "T2 T1", "T2 T2")
-#' dimnames(V) <- list(vech_names, vech_names)
+#' # A simple heritability and genetic correlation example
 #'
-#' # Fit a simple bivariate correlation model
-#' model <- "
+#' # 1. Simulate S (Genetic covariance) and V (Sampling covariance) for a trait in twins 1 and 2
+#' traits = c("T1", "T2")
+#' S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
+#' V = matrix(c(0.002, 0.001, 0.001,
+#'              0.001, 0.003, 0.001,
+#'              0.001, 0.001, 0.002), nrow = 3, ncol = 3)
+#' # Label V
+#' vech_names = c("T1 T1", "T2 T1", "T2 T2")
+#' dimnames(V) = list(vech_names, vech_names)
+#'
+#' # 2. Describe a simple bivariate correlation model in lavaan-ish
+#' modelStr = "
 #' T1 ~~ T1
 #' T2 ~~ T2
 #' T1 ~~ T2
 #' "
-#' fit <- umxGSEM(model = model, S = S, V = V, estimation = "DWLS")
+#' # 3. Fit the model in umxGSEM
+#' fit = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
 #' umxSummary(fit)
 #' }
 umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("DWLS", "WLS", "ULS"), name = "gsem", numObs = 2, smooth = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), ...) {
@@ -427,9 +431,9 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		stop("No variables in S match manifest variables in the model.")
 	}
 	
-	S_subset <- S[keep_vars, keep_vars, drop = FALSE]
+	S_subset   <- S[keep_vars, keep_vars, drop = FALSE]
 	keep_pairs <- get_vech_names(keep_vars)
-	V_subset <- V[keep_pairs, keep_pairs, drop = FALSE]
+	V_subset   <- V[keep_pairs, keep_pairs, drop = FALSE]
 	
 	# Create the final model with subsetted heritabilities/covariances
 	final_model <- umxRAM(model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name, ...)
@@ -455,7 +459,53 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	if (autoRun) {
 		final_model <- umxRun(final_model, tryHard = tryHard)
 	}
-	
 	class(final_model) <- "MxModelGSEM"
 	return(final_model)
+}
+
+#' umx_is_GSEM
+#'
+#' Utility function returning a binary answer to the question "Is this a GSEM model?"
+#'
+#' @param obj an object to be tested to see if it is an OpenMx GSEM [OpenMx::mxModel()]
+#' @return - Boolean
+#' @export
+#' @family Test
+#' @references - <https://github.com/tbates/umx>
+#' @md
+#' @examples
+#' \dontrun{
+#' require(umx)
+#' # Make a simple heritability and genetic correlation GSEM model to test
+#' traits = c("T1", "T2")
+#' S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
+#' V = matrix(c(0.002, 0.001, 0.001,
+#'              0.001, 0.003, 0.001,
+#'              0.001, 0.001, 0.002), nrow = 3, ncol = 3)
+#' vech_names = c("T1 T1", "T2 T1", "T2 T2")
+#' dimnames(V) = list(vech_names, vech_names)
+#' modelStr = "
+#' T1 ~~ T1
+#' T2 ~~ T2
+#' T1 ~~ T2
+#' "
+#' m1 = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
+#'
+#' umx_is_GSEM(m1) # TRUE
+#' 
+#' if(umx_is_GSEM(m1)){
+#' 	message("nice RAM model you've got there!")
+#' }
+#' if(!umx_is_GSEM(m1)){
+#' 	message("model needs to be a GSEM model, you gave me a ", class(m1)[[1]])
+#' }
+#' }
+umx_is_GSEM <- function(obj) {
+	if(!umx_is_MxModel(obj)){
+		return(FALSE)
+	} else if(class(obj)[[1]] %in% c("MxModelGSEM")){
+		return(TRUE)
+	} else {
+		return(class(obj$objective)[[1]] == "MxRAMObjective")
+	}
 }
