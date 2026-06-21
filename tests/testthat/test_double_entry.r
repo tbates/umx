@@ -1,6 +1,6 @@
 library(testthat)
-library(umx)
 library(OpenMx)
+library(umx)
 
 context("umxACE_DE tests")
 

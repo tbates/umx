@@ -125,7 +125,7 @@ test_that("umxSummary and umxCompare handle WLS models correctly", {
 	fit2 <- umxGSEM(m2, S = S, V = V, estimation = "DWLS", autoRun = TRUE)
 	
 	# Verify umxSummary on fit2 (which has high RMSEA) prints the custom robust WLS note and does NOT print "worse than desired"
-	expect_message(umxSummary(fit2), "Applying robust metrics")
+	expect_message(umxSummary(fit2), "Applying SB-2010 robust metrics")
 	withCallingHandlers(
 		umxSummary(fit2),
 		message = function(m) {

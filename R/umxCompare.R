@@ -99,27 +99,56 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 	}
 
-	baseIsWLS = xmu_is_wls(base)
+	baseIsWLS  = xmu_is_wls(base)
+	baseHasJac = xmu_has_WLS_jacobian(base)
+
 	if (baseIsWLS) {
-		if (!all(sapply(comparison, xmu_is_wls))) {
-			stop("umxCompare: Cannot compare a WLS model with an ML model.")
-		}
-		message("umxCompare: WLS models detected. Routing to Satorra-Bentler (2010) robust comparison engine...")
-		
-		finalTableList = lapply(comparison, function(comp) {
-			xmu_compare_WLS(baseModel = base, comparisonModel = comp)
-		})
-		finalTable = do.call(rbind, finalTableList)
-		if (!silent) {
-			umx_print(finalTable, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
-			units_str = summary(base)$fitUnits
-			if (is.null(units_str) || length(units_str) == 0) {
-				units_str = "r'wr"
+		# 1. Enforce Homogeneity Constraint across all comparison models
+		for (comp in comparison) {
+			compIsWLS = xmu_is_wls(comp)
+			compHasJac = xmu_has_WLS_jacobian(comp)
+
+			if (!compIsWLS) {
+				stop("Engine Mismatch: Cannot compare a WLS model with an ML model.")
 			}
-			cat(paste0("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n"))
-			cat("Note: For WLS/DWLS models, conventional fit index cutoffs do not apply. See ?umxCompare for details.\n")
+			if (baseHasJac != compHasJac) {
+				stop("Engine Mismatch: Cannot compare a legacy OpenMx WLS model (no Jacobian) with a GenomicMx WLS model. Both models must use the same engine.")
+			}
 		}
-		return(finalTable)
+
+		# 2. Route based on Engine
+		if (baseHasJac) {
+			# Modern GenomicMx Route
+			message("umxCompare: GenomicMx WLS models detected. Routing to Satorra-Bentler (2010) robust comparison engine...")
+			finalTableList = lapply(comparison, function(comp) {
+				xmu_compare_WLS(baseModel = base, comparisonModel = comp)
+			})
+			finalTable = do.call(rbind, finalTableList)
+			
+			if (!silent) {
+				umx_print(finalTable, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
+				units_str = summary(base)$fitUnits
+				if (is.null(units_str) || length(units_str) == 0) {
+					units_str = "r'wr"
+				}
+				cat(paste0("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n"))
+				cat("Note: For WLS/DWLS models, conventional fit index cutoffs do not apply. See ?umxCompare for details.\n")
+			}
+			return(finalTable)
+			
+		} else {
+			# Legacy OpenMx Route
+			warning("Legacy OpenMx WLS engine detected (missing Jacobian). Chi-square difference tests are naive unadjusted subtractions and are statistically unreliable. Install GenomicMx for accurate Satorra-Bentler difference testing.", call. = FALSE)
+			# Do NOT return. Let execution fall through to standard mxCompare table logic below.
+		}
+		
+	} else {
+		# Base is ML. Ensure no comparison models are WLS to prevent reverse-mismatch.
+		for (comp in comparison) {
+			if (xmu_is_wls(comp)) {
+				stop("Engine Mismatch: Cannot compare an ML model with a WLS model.")
+			}
+		}
 	}
 
 	tableOut = mxCompare(base = base, comparison = comparison, all = all)
