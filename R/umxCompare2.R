@@ -1,16 +1,19 @@
-#' umxCompare2
+#' xmu_compare_WLS
 #'
 #' @description
-#' umxCompare2 is a function which
+#' xmu_compare_WLS is a helper function for umxCompare, called for WLS models.
 #'
 #' @details
-#'
+#' `xmu_compare_WLS` intercepts WLS models when they are being compared, 
+#' and handles comparison statistics using modern robust fit indices.
+#' 
 #' @param baseModel a model
 #' @param comparisonModel a model
+#' @param bicPenaltyN The penalty-N to apply if a model has an extreme N (Like genomic SEM data) (default NULL)
 #' @return - a table
 #' @export
 #' @family Model Summary and Comparison
-#' @seealso - [umxCompare()] [mxCompare()]
+#' @seealso - [umxCompare()] [OpenMx::mxCompare()]
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
@@ -18,12 +21,11 @@
 #' 
 #' }
 
-umxCompare2 = function(baseModel, comparisonModel = NULL, bicPenaltyN = NULL) {  
+xmu_compare_WLS = function(baseModel, comparisonModel = NULL, bicPenaltyN = NULL) {  
   # 1. Detect WLS and evaluate empirical N
   isWls     = xmu_is_wls(baseModel)
   actualN   = baseModel$data$numObs
-  isGenomic = isWls && (!is.null(actualN) && actualN > 50000)
-  # todo write xmu_is_GSEM
+  isGenomic = umx_is_GSEM(baseModel) | (isWls && (!is.null(actualN) && actualN > 50000))
   
   if (isWls) {
     if (is.null(bicPenaltyN)) {
@@ -31,9 +33,9 @@ umxCompare2 = function(baseModel, comparisonModel = NULL, bicPenaltyN = NULL) {
       if (isGenomic) {
         # The Genomic Rescue
         bicPenaltyN = 1000
-        message("umx Fiduciary Note: WLS evaluated with massive N.")
-        message("  * Traditional RMSEA is structurally optimistic and should be interpreted with caution.")
-        message(sprintf("  * BIC calculated using a penalized benchmark (N = %d) to prevent infinite-power overfitting.", bicPenaltyN))
+		message("umx Fiduciary Note: WLS evaluated with GSEM data or similar massive N.")
+		message("  * Traditional RMSEA is structurally optimistic and should be interpreted with caution.")
+		message(sprintf("  * BIC calculated using a penalized benchmark (N = %d) to prevent infinite-power overfitting.", bicPenaltyN))
       } else {
         # Standard WLS Fallback (Silent, expected behavior)
         bicPenaltyN = actualN
@@ -448,3 +450,256 @@ xmu_pseudo_BIC = function(chisq, k, n) {
 #' @rdname xmu_pseudo_BIC
 #' @export
 xmuPseudoBic = xmu_pseudo_BIC
+
+# Create the trivial independence model Jacobian in R
+xmu_build_independence_jacobian = function(K) {
+	e = K * (K + 1) / 2
+	jac = matrix(0, nrow = e, ncol = K)
+	idx = 1
+	paramIdx = 1
+	for (j in 1:K) {
+		for (i in j:K) {
+			if (i == j) {
+				jac[idx, paramIdx] = 1
+				paramIdx = paramIdx + 1
+			}
+			idx = idx + 1
+		}
+	}
+	return(jac)
+}
+
+#' xmu_robust_WLS_fit
+#'
+#' @description
+#' `xmu_robust_WLS_fit` calculates the Satorra-Bentler (2010) robust CFI, TLI, and RMSEA for a WLS model.
+#'
+#' @param model An evaluated OpenMx model.
+#' @return A list containing CFI, TLI, and RMSEA.
+#' @export
+#' @family Model Summary and Comparison
+#' @seealso - [umxSummary()]
+#' @references - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. Psychometrika, 75(2), 243-269.
+#' @md
+xmu_robust_WLS_fit = function(model) {
+	# Step A: Extract raw Chi-Square, df, and Jacobian
+	chisqTargetRaw = model$output$fit
+	if (is.null(chisqTargetRaw) || is.na(chisqTargetRaw)) {
+		chisqTargetRaw = model$fitfunction$result[1, 1]
+	}
+	
+	dfTarget = model$output$degreesOfFreedom
+	if (is.null(dfTarget) || is.na(dfTarget)) {
+		dfTarget = summary(model)$degreesOfFreedom
+	}
+	
+	jacTarget = model@output$implied_jacobian
+	if (is.null(jacTarget)) {
+		stop("Target model missing implied_jacobian.")
+	}
+	
+	# Step B: Extract raw Asymptotic Covariance (V) and Weight (W) matrices
+	weightMat = NULL
+	if (!is.null(model$data$fullWeight)) {
+		weightMat = model$data$fullWeight
+	} else if (!is.null(model$data$useWeight)) {
+		weightMat = model$data$useWeight
+	} else if (!is.null(model$data$observedStats$weight)) {
+		weightMat = model$data$observedStats$weight
+	} else if (!is.null(model$data$observedStats$useWeight)) {
+		weightMat = model$data$observedStats$useWeight
+	}
+	
+	if (is.null(weightMat) && inherits(model$data, "MxData")) {
+		if (.hasSlot(model$data, "fullWeight") && !is.null(model$data@fullWeight)) {
+			weightMat = model$data@fullWeight
+		} else if (.hasSlot(model$data, "useWeight") && !is.null(model$data@useWeight)) {
+			weightMat = model$data@useWeight
+		} else if (.hasSlot(model$data, "observedStats")) {
+			obsStats = model$data@observedStats
+			if (!is.null(obsStats$weight)) {
+				weightMat = obsStats$weight
+			} else if (!is.null(obsStats$useWeight)) {
+				weightMat = obsStats$useWeight
+			}
+		}
+		if (is.null(weightMat) && .hasSlot(model$data, "weight") && is.matrix(model$data@weight)) {
+			weightMat = model$data@weight
+		}
+	}
+	
+	asymCov = NULL
+	if (!is.null(model$data$acov)) {
+		asymCov = model$data$acov
+	} else if (!is.null(model$data$observedStats$asymCov)) {
+		asymCov = model$data$observedStats$asymCov
+	}
+	
+	if (is.null(asymCov) && inherits(model$data, "MxData")) {
+		if (.hasSlot(model$data, "acov") && !is.null(model$data@acov)) {
+			asymCov = model$data@acov
+		} else if (.hasSlot(model$data, "observedStats")) {
+			obsStats = model$data@observedStats
+			if (!is.null(obsStats$asymCov)) {
+				asymCov = obsStats$asymCov
+			}
+		}
+	}
+	
+	if (is.null(weightMat)) {
+		stop("Could not locate WLS Weight matrix (W).")
+	}
+	if (is.null(asymCov)) {
+		stop("Could not locate Asymptotic Covariance matrix (V).")
+	}
+	
+	# Calculate K (number of observed variables)
+	manifests = model@manifestVars
+	kVal = length(manifests)
+	if (kVal == 0) {
+		eVal = nrow(asymCov)
+		kVal = round((-1 + sqrt(1 + 8 * eVal)) / 2)
+	}
+	
+	# Step C: Call xmu_build_independence_jacobian(kVal)
+	jacInd = xmu_build_independence_jacobian(kVal)
+	
+	# Step D: Calculate Independence df
+	dfInd = kVal * (kVal + 1) / 2 - kVal
+	
+	# Step E/F: Native R baseline WLS fit calculation
+	# Extract observed covariance matrix and means (if any)
+	if (model$data$type == "raw") {
+		obsCov = cov(model$data$observed, use = "pairwise.complete.obs")
+		obsMeans = colMeans(model$data$observed, na.rm = TRUE)
+	} else {
+		obsCov = model$data$observed
+		obsMeans = model$data$means
+	}
+	obsCov = obsCov[manifests, manifests, drop = FALSE]
+	if (!is.null(obsMeans)) {
+		obsMeans = obsMeans[manifests]
+	}
+	
+	sVec = rep(0, nrow(asymCov))
+	rowNames = rownames(asymCov)
+	for (i in 1:length(rowNames)) {
+		name = rowNames[i]
+		if (grepl("^mean_", name)) {
+			varName = sub("^mean_", "", name)
+			sVec[i] = obsMeans[varName]
+		} else if (grepl("^one_to_", name)) {
+			varName = sub("^one_to_", "", name)
+			sVec[i] = obsMeans[varName]
+		} else if (name %in% manifests) {
+			sVec[i] = obsMeans[name]
+		} else {
+			parts = strsplit(name, "[ _]")[[1]]
+			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
+			if (length(parts) == 2) {
+				sVec[i] = obsCov[parts[1], parts[2]]
+			} else if (length(parts) == 1) {
+				sVec[i] = obsCov[parts[1], parts[1]]
+			}
+		}
+	}
+	
+	dInd = sVec
+	for (i in 1:length(rowNames)) {
+		name = rowNames[i]
+		isMean = grepl("^mean_", name) || grepl("^one_to_", name) || (name %in% manifests)
+		isVar = FALSE
+		if (!isMean) {
+			parts = strsplit(name, "[ _]")[[1]]
+			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
+			if (length(parts) == 2 && parts[1] == parts[2]) {
+				isVar = TRUE
+			} else if (length(parts) == 1) {
+				isVar = TRUE
+			}
+		}
+		if (isMean || isVar) {
+			dInd[i] = 0
+		}
+	}
+	
+	chisqIndRaw = as.numeric(t(dInd) %*% weightMat %*% dInd)
+	
+	# Align Jacobians
+	numManifests = length(model@manifestVars)
+	numCovs = (numManifests * (numManifests + 1)) / 2
+	
+	alignJacobian = function(jacMat, asymCovMat, numCovsVal) {
+		numMeans = nrow(jacMat) - numCovsVal
+		if (numMeans > 0) {
+			meanIdx = (numCovsVal + 1):nrow(jacMat)
+			covIdx = 1:numCovsVal
+			alignedJac = jacMat[c(meanIdx, covIdx), , drop = FALSE]
+		} else {
+			alignedJac = jacMat
+		}
+		rownames(alignedJac) = rownames(asymCovMat)
+		return(alignedJac)
+	}
+	
+	jacTargetAligned = alignJacobian(jacTarget, asymCov, numCovs)
+	jacTargetAligned = jacTargetAligned[rownames(asymCov), , drop = FALSE]
+	
+	jacIndAligned = jacInd
+	rownames(jacIndAligned) = rownames(asymCov)
+	
+	# Helper to invert matrix robustly
+	invertMatrix = function(x) {
+		inv = tryCatch({
+			chol2inv(chol(x))
+		}, error = function(e) {
+			tryCatch({
+				MASS::ginv(x)
+			}, error = function(e2) {
+				solve(x)
+			})
+		})
+		return(inv)
+	}
+	
+	# Trace helper for single model scaling factor
+	getScalingFactor = function(jacMat, asymCovMat, weightMatVal, dfVal) {
+		info = t(jacMat) %*% weightMatVal %*% jacMat
+		infoInv = invertMatrix(info)
+		vw = asymCovMat %*% weightMatVal
+		vwDelta = vw %*% jacMat
+		uMat = vw - vwDelta %*% infoInv %*% t(jacMat) %*% weightMatVal
+		traceVal = sum(diag(uMat))
+		scalingFactor = traceVal / dfVal
+		return(scalingFactor)
+	}
+	
+	cTarget = getScalingFactor(jacTargetAligned, asymCov, weightMat, dfTarget)
+	cInd = getScalingFactor(jacIndAligned, asymCov, weightMat, dfInd)
+	
+	chisqTargetScaled = chisqTargetRaw / cTarget
+	chisqIndScaled = chisqIndRaw / cInd
+	
+	# Robust CFI
+	cfiNum = max(chisqTargetScaled - dfTarget, 0)
+	cfiDenom = max(chisqIndScaled - dfInd, cfiNum, 0.0001)
+	cfiRobust = 1 - (cfiNum / cfiDenom)
+	
+	# Robust TLI
+	tliNum = (chisqTargetScaled - dfTarget) / dfTarget
+	tliDenom = (chisqIndScaled - dfInd) / dfInd
+	if (abs(tliDenom) < 1e-5) {
+		tliRobust = NA_real_
+	} else {
+		tliRobust = 1 - (tliNum / tliDenom)
+	}
+	
+	# Robust RMSEA
+	nVal = model$data$numObs
+	if (is.null(nVal) || is.na(nVal)) {
+		nVal = 1000
+	}
+	rmseaRobust = sqrt(max(chisqTargetScaled - dfTarget, 0) / (dfTarget * nVal))
+	
+	return(list(CFI = cfiRobust, TLI = tliRobust, RMSEA = rmseaRobust))
+}
