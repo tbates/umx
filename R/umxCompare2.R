@@ -701,5 +701,18 @@ xmu_robust_WLS_fit = function(model) {
 	}
 	rmseaRobust = sqrt(max(chisqTargetScaled - dfTarget, 0) / (dfTarget * nVal))
 	
-	return(list(CFI = cfiRobust, TLI = tliRobust, RMSEA = rmseaRobust))
+	return(list(
+	    CFI    = cfiRobust, 
+	    TLI    = tliRobust, 
+	    RMSEA  = rmseaRobust,
+	    Chi    = chisqTargetScaled,
+	    ChiDoF = dfTarget,
+	    p      = pchisq(chisqTargetScaled, dfTarget, lower.tail = FALSE)
+	))
+}
+
+
+xmu_has_WLS_jacobian <- function(model) {
+    # Returns TRUE if the model was run on GenomicMx and contains the Jacobian
+    return(!is.null(model$output$implied_jacobian))
 }
