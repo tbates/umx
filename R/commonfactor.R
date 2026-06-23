@@ -109,17 +109,21 @@ commonfactor <-function(covstruc, estimation="DWLS"){
 	rownames(S_LD) = colnames(S_LD)
 
 	##smooth to near positive definite if either V or S are non-positive definite
-	##smooth to near positive definite if either V or S are non-positive definite
-	ks = nrow(S_LD)
-	S_LDb = S_LD
-	smooth1 = ifelse(eigen(S_LD)$values[ks] <= 0, S_LD = as.matrix((nearPD(S_LD, corr = FALSE))$mat), S_LD = S_LD)
+	ks       = nrow(S_LD)
+	S_LDb    = S_LD
+	# Check and smooth S_LD
+	if (eigen(S_LD)$values[ks] <= 0) {
+		S_LD = as.matrix(Matrix::nearPD(S_LD, corr = FALSE)$mat)
+	}
 	LD_sdiff = max(abs(S_LD-S_LDb))
 
-	kv = nrow(V_LD)
-	V_LDb = V_LD
-	smooth2 = ifelse(eigen(V_LD)$values[kv] <= 0, V_LD = as.matrix((nearPD(V_LD, corr = FALSE))$mat), V_LD = V_LD)
+	kv        = nrow(V_LD)
+	V_LDb     = V_LD
+	# Check and smooth V_LD
+	if (eigen(V_LD)$values[kv] <= 0) {
+		V_LD = as.matrix(Matrix::nearPD(V_LD, corr = FALSE)$mat)
+	}
 	LD_sdiff2 = max(abs(V_LD-V_LDb))
-
 
 	SE_pre = matrix(0, k, k)
 	SE_pre[lower.tri(SE_pre,diag=TRUE)]  = sqrt(diag(V_LDb))

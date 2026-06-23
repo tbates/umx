@@ -45,10 +45,28 @@
 # MuMIn Weights  # Used in umxWeightedAIC
 #  methods::setClass is called during build not package source code.
 
+#' @importFrom cowplot draw_label plot_grid ggdraw 
 #' @importFrom DiagrammeR grViz
 #' @importFrom DiagrammeR DiagrammeR
+#' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
+#' @importFrom ggplot2 scale_x_continuous scale_x_continuous scale_y_continuous theme 
+#' @importFrom ggplot2 geom_abline geom_bar geom_curve geom_errorbar geom_hline geom_jitter geom_line 
+#' @importFrom ggplot2 geom_point geom_ribbon geom_segment geom_smooth  geom_vline arrow unit
+#' @importFrom ggplot2 aes aes_string annotate coord_cartesian element_blank element_text 
+#' @importFrom ggplot2 ggtitle xlab ylab scale_fill_hue expand_limits position_dodge 
+#' @importFrom ggplot2 theme_bw theme_gray theme_minimal
 #' @importFrom graphics plot abline hist par
+#' @importFrom kableExtra kbl add_footnote column_spec footnote
+#' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
+#' @importFrom knitr kable
 #' @importFrom methods as getSlots is slotNames setClass
+#' @importFrom MASS mvrnorm
+#' @importFrom Matrix nearPD
+#' @importFrom MuMIn Weights
+#' @importFrom nlme intervals lme
+#' @importFrom polycor hetcor
+#' @importFrom quantmod Cl
+#' @importFrom scales dollar
 #' @importFrom stats AIC C aggregate as.formula coef complete.cases
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm reshape
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq predict
@@ -58,29 +76,13 @@
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv read.delim capture.output
 #' @importFrom utils tail
-#' @importFrom scales dollar
-#' @importFrom quantmod Cl
-#' @importFrom zoo index
-#' @importFrom MASS mvrnorm
-#' @importFrom nlme intervals lme
-#' @importFrom polycor hetcor
 #' @importFrom xtable xtable
-#' @importFrom MuMIn Weights
-#' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
-#' @importFrom ggplot2 scale_x_continuous scale_x_continuous scale_y_continuous theme 
-#' @importFrom ggplot2 geom_abline geom_bar geom_curve geom_errorbar geom_hline geom_jitter geom_line 
-#' @importFrom ggplot2 geom_point geom_ribbon geom_segment geom_smooth  geom_vline arrow unit
-#' @importFrom ggplot2 aes aes_string annotate coord_cartesian element_blank element_text 
-#' @importFrom ggplot2 ggtitle xlab ylab scale_fill_hue expand_limits position_dodge 
-#' @importFrom ggplot2 theme_bw theme_gray theme_minimal
-#' @importFrom cowplot draw_label plot_grid ggdraw 
-#' @importFrom knitr kable
-#' @importFrom kableExtra kbl add_footnote column_spec footnote
-#' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
-
+#' @importFrom zoo index
+# old
 # #' @importFrom Base::charToRaw
 # #' @importFrom DiagrammeRsvg export_svg
 # #' @importFrom rsvg rsvg_png rsvg_pdf
+
 
 
 utils::globalVariables(c(
@@ -302,3 +304,7 @@ methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
 methods::setClass("MxModelGSEM"   , contains = "MxRAMModel")
 
+methods::setAs("MxRAMModel", "MxModelGSEM", function(from) {
+  class(from) = "MxModelGSEM"
+  return(from)
+})

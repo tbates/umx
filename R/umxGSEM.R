@@ -349,21 +349,21 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' umxSummary(fit)
 #' }
 umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("DWLS", "WLS", "ULS"), name = "gsem", numObs = 2, smooth = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), ...) {
+	tryHard    = match.arg(tryHard)
 	estimation = match.arg(estimation)
-	tryHard = match.arg(tryHard)
 	
-	# Extract S and V from covstruc if provided
+	# Extract S and V from covstruc if provided (currently accepts unnamed components/by order. Perhaps not safe!)
 	if (!is.null(covstruc)) {
 		if (is.list(covstruc)) {
 			if (!is.null(covstruc$S)) {
-				S <- covstruc$S
+				S = covstruc$S
 			} else if (length(covstruc) >= 2) {
-				S <- covstruc[[2]]
+				S = covstruc[[2]]
 			}
 			if (!is.null(covstruc$V)) {
-				V <- covstruc$V
+				V = covstruc$V
 			} else if (length(covstruc) >= 1) {
-				V <- covstruc[[1]]
+				V = covstruc[[1]]
 			}
 		}
 	}
@@ -372,94 +372,87 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		stop("You must provide BOTH the genetic covariance matrix S and the sampling covariance matrix V (either directly or via covstruc).")
 	}
 	
-	S <- as.matrix(S)
-	V <- as.matrix(V)
+	S = as.matrix(S)
+	V = as.matrix(V)
 	
 	if (is.null(colnames(S))) {
 		stop("S matrix must have column/row names matching the trait names.")
 	}
-	rownames(S) <- colnames(S)
+	rownames(S) = colnames(S)
 	
 	# Ensure V has the correct dimensions for S
-	k <- ncol(S)
-	z <- (k * (k + 1)) / 2
+	k = ncol(S)
+	z = (k * (k + 1)) / 2
 	if (ncol(V) != z || nrow(V) != z) {
 		stop(paste0("Dimensions of V (", nrow(V), "x", ncol(V), ") must match the number of non-redundant elements of S (", z, ")."))
 	}
 	
 	# Internal helper to construct lower-triangular pair names (column-major vech)
-	get_vech_names <- function(S_names) {
-		k <- length(S_names)
-		pairs <- c()
+	get_vech_names = function(S_names) {
+		k = length(S_names)
+		pairs = c()
 		for (j in 1:k) {
 			for (i in j:k) {
-				pairs <- c(pairs, paste(S_names[i], S_names[j], sep = " "))
+				pairs = c(pairs, paste(S_names[i], S_names[j], sep = " "))
 			}
 		}
 		return(pairs)
 	}
 	
 	# Label V rows and columns if not already labeled
-	vech_names <- get_vech_names(colnames(S))
+	vech_names = get_vech_names(colnames(S))
 	if (is.null(colnames(V)) || is.null(rownames(V))) {
-		colnames(V) <- vech_names
-		rownames(V) <- vech_names
-	}
-	
-	# Smooth S and V to near positive definite if needed/requested
-	if (smooth) {
-		if (!requireNamespace("Matrix", quietly = TRUE)) {
-			stop("The Matrix package is required for nearPD heritability smoothing. Please install it.")
-		}
-		if (eigen(S)$values[k] <= 0) {
-			message("S is not positive definite. Smoothing S using nearPD.")
-			S <- as.matrix(Matrix::nearPD(S, corr = FALSE)$mat)
-		}
-		if (eigen(V)$values[z] <= 0) {
-			message("V is not positive definite. Smoothing V using nearPD.")
-			V <- as.matrix(Matrix::nearPD(V, corr = FALSE)$mat)
-		}
+		colnames(V) = vech_names
+		rownames(V) = vech_names
 	}
 	
 	# Create a dummy model to discover manifest variables used in the model
-	dummy_model <- umxRAM(model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, ...)
-	keep_vars <- dummy_model$manifestVars
+	dummy_model = umxRAM(model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, ...)
+	keep_vars = dummy_model$manifestVars
 	
 	# Subset S and V to keep only the manifest variables in the model
-	keep_vars <- colnames(S)[colnames(S) %in% keep_vars]
+	keep_vars = colnames(S)[colnames(S) %in% keep_vars]
 	if (length(keep_vars) == 0) {
 		stop("No variables in S match manifest variables in the model.")
 	}
 	
-	S_subset   <- S[keep_vars, keep_vars, drop = FALSE]
-	keep_pairs <- get_vech_names(keep_vars)
-	V_subset   <- V[keep_pairs, keep_pairs, drop = FALSE]
+	S_subset   = S[keep_vars, keep_vars, drop = FALSE]
+	keep_pairs = get_vech_names(keep_vars)
+	V_subset   = V[keep_pairs, keep_pairs, drop = FALSE]
+
+	# Apply Triage Firewall strictly to the subsetted matrices
+	triageResult = xmu_gsem_triage(vMat = V_subset, sMat = S_subset, smooth = smooth)
+	V_subset = triageResult$V
+	S_subset = triageResult$S
 	
-	# Create the final model with subsetted heritabilities/covariances
-	final_model <- umxRAM(model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name, ...)
+	# Create the final model with triaged heritabilities/covariances
+	final_model = umxRAM(model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name, ...)
 	
 	# Compute weight matrix based on estimation type
 	if (estimation == "WLS") {
-		W <- solve(V_subset)
+		W = solve(V_subset)
 	} else if (estimation == "DWLS") {
-		W <- diag(1 / diag(V_subset), nrow = nrow(V_subset), ncol = ncol(V_subset))
+		W = diag(1 / diag(V_subset), nrow = nrow(V_subset), ncol = ncol(V_subset))
 	} else if (estimation == "ULS") {
-		W <- diag(1, nrow = nrow(V_subset), ncol = ncol(V_subset))
+		W = diag(1, nrow = nrow(V_subset), ncol = ncol(V_subset))
 	}
-	dimnames(W) <- dimnames(V_subset)
+	dimnames(W) = dimnames(V_subset)
 
 	# Replace standard covariance data with WLS acov data
-	wls_data <- mxData(observed = S_subset, type = "acov", acov = V_subset, fullWeight = W, numObs = numObs)
-	final_model$data <- wls_data
+	wls_data = mxData(observed = S_subset, type = "acov", acov = V_subset, fullWeight = W, numObs = numObs)
+	final_model$data = wls_data
 	
 	# Set the fit function to WLS
-	final_model <- mxModel(final_model, mxFitFunctionWLS(type = estimation))
+	final_model = mxModel(final_model, mxFitFunctionWLS(type = estimation))
 	
 	# Run model if autoRun is TRUE
 	if (autoRun) {
-		final_model <- umxRun(final_model, tryHard = tryHard)
+		final_model = umxRun(final_model, tryHard = tryHard)
 	}
-	class(final_model) <- "MxModelGSEM"
+	# Tag the model with the triage history so downstream functions can access it
+	attr(final_model, "gsem_triage") = triageResult
+	
+	final_model = as(final_model, "MxModelGSEM")
 	return(final_model)
 }
 
@@ -508,4 +501,49 @@ umx_is_GSEM <- function(obj) {
 	} else {
 		return(class(obj$objective)[[1]] == "MxRAMObjective")
 	}
+}
+
+xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, fatalTolerance = -0.05) {
+	# Check missingness first
+	if (any(is.na(vMat)) || any(is.na(sMat))) {
+		stop("Fatal Missingness: LDSC matrices contain raw NAs. The pairwise overlap between your cohorts is too sparse to compute covariance.")
+	}
+	
+	# Evaluate V matrix eigenvalues
+	vEigen   = eigen(vMat, symmetric = TRUE, only.values = TRUE)$values
+	minEigen = min(vEigen)
+	
+	# PD Check (Clean Matrix)
+	if (minEigen > 0) {
+		return(list(V = vMat, S = sMat, smoothed = FALSE, triageLevel = 0))
+	}
+	
+	# If matrix is NPD but user strictly disabled smoothing
+	if (!smooth) {
+		stop(paste0("Matrix is non-positive definite (min eigenvalue = ", round(minEigen, 4), "), and smooth = FALSE. Halting execution."))
+	}
+	
+	# Level 1: Microscopic ridge (Silent fix for floating-point artifacts)
+	if (minEigen > eigenTolerance) {
+		diag(vMat) = diag(vMat) + 1e-6
+		diag(sMat) = diag(sMat) + 1e-6 # Apply to S to maintain symmetry of adjustment
+		return(list(V = vMat, S = sMat, smoothed = TRUE, triageLevel = 1))
+	}
+	
+	# Level 2: nearPD Coercion (Alertable)
+	if (minEigen > fatalTolerance) {
+		warning("umxGSEM: Asymptotic covariance matrix (V) is non-positive definite. Applying nearPD coercion. Note: Resulting Satorra-Bentler corrections and standard errors will be artificially precise.", call. = FALSE)
+		
+		if (!requireNamespace("Matrix", quietly = TRUE)) {
+			stop("The Matrix package is required for nearPD heritability smoothing. Please install it.")
+		}
+		
+		vMatPD = as.matrix(Matrix::nearPD(vMat, corr = FALSE)$mat)
+		sMatPD = as.matrix(Matrix::nearPD(sMat, corr = FALSE)$mat)
+		
+		return(list(V = vMatPD, S = sMatPD, smoothed = TRUE, triageLevel = 2))
+	}
+	
+	# Level 3: Fatal Structural Deficiency
+	stop(paste0("Fatal Matrix Deficiency: V matrix is severely non-positive definite (minimum eigenvalue = ", round(minEigen, 4), "). The pairwise overlap between your cohorts is too sparse to support multivariable SEM. Do not proceed."))
 }

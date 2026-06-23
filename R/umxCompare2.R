@@ -20,125 +20,138 @@
 #' \dontrun{
 #' 
 #' }
-
 xmu_compare_WLS = function(baseModel, comparisonModel = NULL, bicPenaltyN = NULL) {  
-  # 1. Detect WLS and evaluate empirical N
-  isWls     = xmu_is_wls(baseModel)
-  actualN   = baseModel$data$numObs
-  isGenomic = umx_is_GSEM(baseModel) | (isWls && (!is.null(actualN) && actualN > 50000))
+	# 1. Evaluate Empirical N and GSEM Status
+	actualN   = baseModel$data$numObs
+	isGenomic = umx_is_GSEM(baseModel) | (!is.null(actualN) && actualN > 50000)
   
-  if (isWls) {
-    if (is.null(bicPenaltyN)) {
-      # AUTOMATIC ROUTING
-      if (isGenomic) {
-        # The Genomic Rescue
-        bicPenaltyN = 1000
-		message("umx Fiduciary Note: WLS evaluated with GSEM data or similar massive N.")
-		message("  * Traditional RMSEA is structurally optimistic and should be interpreted with caution.")
-		message(sprintf("  * BIC calculated using a penalized benchmark (N = %d) to prevent infinite-power overfitting.", bicPenaltyN))
-      } else {
-        # Standard WLS Fallback (Silent, expected behavior)
-        bicPenaltyN = actualN
-      }
-    } else {
-      # SCENARIO A: USER MANUAL OVERRIDE
-      message(sprintf("umx User Override: BIC calculated using custom penalty benchmark (N = %d).", bicPenaltyN))
-      
-      # Optional: Add a gentle warning if they are overriding a standard model
-      if (!is.null(actualN) && bicPenaltyN != actualN && !isGenomic) {
-        message(sprintf("  * Note: This diverges from the empirical model sample size (N = %d).", actualN))
-      }
-    }
-
-    message("umxGSEM routing: Applying high-N robust WLS comparison metrics...")
+	# 2. Pseudo-BIC Penalty Logic & Messaging
+	if (is.null(bicPenaltyN)) {
+		# AUTOMATIC ROUTING
+		if (isGenomic) {
+			bicPenaltyN = 1000
+			message("umx Fiduciary Note: Massive-N / GSEM model detected.")
+			message("  * Traditional RMSEA is structurally optimistic and should be interpreted with caution.")
+			message(sprintf("  * Pseudo-BIC calculated using a penalized benchmark (N = %d) to prevent infinite-power overfitting.", bicPenaltyN))
+		} else {
+			# Standard WLS Fallback (Silent, expected behavior)
+			bicPenaltyN = actualN
+		}
+	} else {
+		# USER MANUAL OVERRIDE
+		message(sprintf("umx User Override: Pseudo-BIC calculated using custom penalty benchmark (N = %d).", bicPenaltyN))
+		if (!is.null(actualN) && bicPenaltyN != actualN && !isGenomic) {
+			message(sprintf("  * Note: This diverges from the empirical model sample size (N = %d).", actualN))
+		}
+	}
     
     # 2. Extract our custom C++ cached Jacobian
-    # Using @ syntax for strict S4 slot extraction
-    baseJacobian = baseModel@output$implied_jacobian
-    
+	baseJacobian = baseModel@output$implied_jacobian
     if(is.null(baseJacobian)) {
-      warning("Base model missing cached Jacobian. Run model with umxGSEM() to enable strict Satorra-Bentler testing.")
-      return(umxCompare(baseModel, comparisonModel)) 
+      warning("Base model missing cached Jacobian. Run model with GenomicMx to enable strict Satorra-Bentler 2010 testing.")
     }
     
     # 3. Base Model Core Statistics
-    kBase = ncol(baseJacobian)
-    chisqBase = summary(baseModel)$Chi
-    if (is.null(chisqBase)) chisqBase = baseModel$fitfunction$result[1,1]
-
+	# If Jacobian is missing, fallback to standard parameter count
+	kBase = ifelse(!is.null(baseJacobian), ncol(baseJacobian), length(omxGetParameters(baseModel)))
+	
+	chisqBase = summary(baseModel)$Chi
+	if (is.null(chisqBase)) chisqBase = baseModel$fitfunction$result[1,1]
+	
     # Initialize vectors assuming only one model is passed
-    epVec = kBase
-    chisqVec = chisqBase
-    deltaEpVec = NA
+    epVec       = kBase
+    chisqVec    = chisqBase
+    deltaEpVec  = NA
     strictSbVec = NA
-    pVec = NA
+    pVec        = NA
 
     # 4. Nested Comparison Logic (If user provided a second model)
-    if (!is.null(comparisonModel)) {
-      compJacobian = comparisonModel@output$implied_jacobian
-      
-      if (is.null(compJacobian)) {
-        warning("Comparison model missing cached Jacobian. Cannot compute SB-2010.")
-        return(umxCompare(baseModel, comparisonModel)) 
-      }
-      
-      kComp = ncol(compJacobian)
-      chisqComp = summary(comparisonModel)$Chi
-      if (is.null(chisqComp)) chisqComp = comparisonModel$fitfunction$result[1,1]
-      
-      # Expand vectors for the two-model table
-      epVec = c(kBase, kComp)
-      chisqVec = c(chisqBase, chisqComp)
+	if (!is.null(comparisonModel)) {
+		compJacobian = comparisonModel@output$implied_jacobian
+		kComp = ifelse(!is.null(compJacobian), ncol(compJacobian), length(omxGetParameters(comparisonModel)))
+		
+		chisqComp = summary(comparisonModel)$Chi
+		if (is.null(chisqComp)) chisqComp = comparisonModel$fitfunction$result[1,1]
+		
+		epVec = c(kBase, kComp)
+		chisqVec = c(chisqBase, chisqComp)
 
-      # Auto-Routing Guard: Ensure baseModel (H1) is the larger model for SB math
-      sbResults = NULL
-      if (kBase > kComp) {
-        sbResults = calculateStrictSb(baseModel = baseModel, nestedModel = comparisonModel)
-      } else if (kComp > kBase) {
-        # User swapped order in console. Handle silently, math requires H1 > H0.
-        sbResults = calculateStrictSb(baseModel = comparisonModel, nestedModel = baseModel)
-      } else {
-        warning("Models have the same number of free parameters. Cannot compute nested SB difference.")
-      }
+		# Only attempt Satorra-Bentler if BOTH models have Jacobians
+		if (!is.null(baseJacobian) && !is.null(compJacobian)) {
+			sbResults = NULL
+			if (kBase > kComp) {
+				sbResults = calculateStrictSb(baseModel = baseModel, nestedModel = comparisonModel)
+			} else if (kComp > kBase) {
+				sbResults = calculateStrictSb(baseModel = comparisonModel, nestedModel = baseModel)
+			} else {
+				warning("Models have the same number of free parameters. Cannot compute nested SB difference.")
+			}
 
-      # Extract results if math fired successfully
-      if (!is.null(sbResults)) {
-        deltaEpVec = c(NA, sbResults["deltaDf"])
-        strictSbVec = c(NA, round(sbResults["strictSbChisq"], 3))
-        pVec = c(NA, round(sbResults["pValue"], 3))
-      } else {
-        deltaEpVec = c(NA, NA)
-        strictSbVec = c(NA, NA)
-        pVec = c(NA, NA)
-      }
-    }
+			if (!is.null(sbResults)) {
+				deltaEpVec  = c(NA, sbResults["deltaDf"])
+				strictSbVec = c(NA, round(sbResults["strictSbChisq"], 3))
+				pVec        = c(NA, round(sbResults["pValue"], 3))
+			} else {
+				deltaEpVec  = c(NA, NA)
+				strictSbVec = c(NA, NA)
+				pVec        = c(NA, NA)
+			}
+		} else {
+			# Graceful degradation for legacy WLS
+			message("umx Note: One or both models lack a cached Jacobian. Skipping strict Satorra-Bentler (2010) difference test.")
+			deltaEpVec  = c(NA, abs(kBase - kComp)) # Provide naive df difference
+			strictSbVec = c(NA, NA)
+			pVec        = c(NA, NA)
+		}
+	}
+
+    # 5. Calculate Absolute Fit Metrics
+	srmrBase = round(xmuCalculateSRMR(baseModel), 3)
+	if (!is.null(comparisonModel)) {
+		srmrComp = round(xmuCalculateSRMR(comparisonModel), 3)
+		srmrVec = c(srmrBase, srmrComp)
+	} else {
+		srmrVec = srmrBase
+	}
+	
+	# Secure BIC calculation protecting standard WLS models from bicPenaltyN
+	if (is.null(bicPenaltyN) || is.na(bicPenaltyN)) {
+		pseudoBicVec = rep(NA_real_, length(epVec))
+	} else {
+		pseudoBicVec = round(xmu_pseudo_BIC(chisq = chisqVec, k = epVec, n = bicPenaltyN), 2)
+	}
     
-    # 5. Calculate Absolute Fit Metrics (Placeholders for next step)
-    # srmrVec = calculate_srmr(baseModel, comparisonModel)
-    # pseudoBicVec = calculate_pseudo_bic(chisqVec, epVec, bicPenaltyN)
+	
+	# 6. Check for GSEM Triage Smoothing
+	baseSmoothed = FALSE
+	compSmoothed = FALSE
+
+	if (!is.null(attr(baseModel, "gsem_triage"))) {
+		baseSmoothed = attr(baseModel, "gsem_triage")$smoothed
+	}
+	if (!is.null(comparisonModel) && !is.null(attr(comparisonModel, "gsem_triage"))) {
+		compSmoothed = attr(comparisonModel, "gsem_triage")$smoothed
+	}
+
+	if (baseSmoothed || compSmoothed) {
+		message("umx Fiduciary Warning: One or more models were estimated using nearPD smoothed covariance matrices. Satorra-Bentler difference tests may report artificial precision.")
+	}
+
+	# 7. Construct the new, mathematically sound table
+	comparisonTable = data.frame(
+		Base             = baseModel$name,
+		Comparison       = ifelse(is.null(comparisonModel), "<NA>", comparisonModel$name),
+		ep               = epVec,
+		delta_ep         = deltaEpVec,
+		chisq_WLS        = round(chisqVec, 2),
+		Strict_SB        = strictSbVec,
+		p                = pVec,
+		SRMR             = srmrVec,
+		Pseudo_BIC       = pseudoBicVec,
+		stringsAsFactors = FALSE
+	)
     
-    srmrVec = rep(NA, length(epVec)) # Dummy pending SRMR
-    pseudoBicVec = rep(NA, length(epVec)) # Dummy pending Pseudo-BIC
-    
-    # 6. Construct the new, mathematically sound table
-    comparisonTable = data.frame(
-      Base = baseModel$name,
-      Comparison = ifelse(is.null(comparisonModel), "<NA>", comparisonModel$name),
-      ep = epVec,
-      delta_ep = deltaEpVec,
-      chisq_WLS = round(chisqVec, 2),
-      Strict_SB = strictSbVec,
-      p = pVec,
-      SRMR = srmrVec,
-      Pseudo_BIC = pseudoBicVec,
-      stringsAsFactors = FALSE
-    )
-    
-    return(comparisonTable)
-  }
-  
-  # 7. Standard routing for non-WLS models
-  return(umxCompare(baseModel, comparisonModel))
+	return(comparisonTable)
 }
 
 
@@ -314,11 +327,11 @@ calculateStrictSb = function(baseModel, nestedModel) {
 		return(chisqVal)
 	}
 
-	chisqBase = getChisq(baseModel)
+	chisqBase   = getChisq(baseModel)
 	chisqNested = getChisq(nestedModel)
 
 	# Calculate strictly positive scaled difference chi-square: T_d = (chisq_0 - chisq_1) / c_d
-	deltaChisq = chisqNested - chisqBase
+	deltaChisq    = chisqNested - chisqBase
 	strictSbChisq = deltaChisq / scalingFactor
 	
 	# Calculate p-value
@@ -342,7 +355,7 @@ calculateStrictSb = function(baseModel, nestedModel) {
 #' @param model An evaluated OpenMx model.
 #' @return The SRMR value as a numeric scalar, or NA if calculation fails.
 #' @export
-xmuCalculateSRMR = function(model) {
+xmuCalculateSRMR <- function(model) {
 	# Extract model-implied covariance matrix
 	impCov = tryCatch({
 		mxGetExpected(model, "covariance")
@@ -438,7 +451,7 @@ xmuCalculateSRMR = function(model) {
 #' @param n The sample size or penalty benchmark.
 #' @return A numeric vector of pseudo-BIC values.
 #' @export
-xmu_pseudo_BIC = function(chisq, k, n) {
+xmu_pseudo_BIC <- function(chisq, k, n) {
 	# Calculate BIC with a custom sample size penalty
 	# Formula: WLS_Chisq + k * ln(N)
 	if (any(is.na(c(chisq, k, n)))) {
@@ -452,7 +465,7 @@ xmu_pseudo_BIC = function(chisq, k, n) {
 xmuPseudoBic = xmu_pseudo_BIC
 
 # Create the trivial independence model Jacobian in R
-xmu_build_independence_jacobian = function(K) {
+xmu_build_independence_jacobian <- function(K) {
 	e = K * (K + 1) / 2
 	jac = matrix(0, nrow = e, ncol = K)
 	idx = 1
@@ -510,7 +523,7 @@ xmu_build_independence_jacobian = function(K) {
 #' @references - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. Psychometrika, 75(2), 243-269.
 #' @export
 #' @md
-xmu_robust_WLS_fit = function(model) {
+xmu_robust_WLS_fit <- function(model) {
 	# Step A: Extract raw Chi-Square, df, and Jacobian
 	chisqTargetRaw = model$output$fit
 	if (is.null(chisqTargetRaw) || is.na(chisqTargetRaw)) {
@@ -658,7 +671,7 @@ xmu_robust_WLS_fit = function(model) {
 	numManifests = length(model@manifestVars)
 	numCovs = (numManifests * (numManifests + 1)) / 2
 	
-	alignJacobian = function(jacMat, asymCovMat, numCovsVal) {
+	alignJacobian <- function(jacMat, asymCovMat, numCovsVal) {
 		numMeans = nrow(jacMat) - numCovsVal
 		if (numMeans > 0) {
 			meanIdx = (numCovsVal + 1):nrow(jacMat)
@@ -678,7 +691,7 @@ xmu_robust_WLS_fit = function(model) {
 	rownames(jacIndAligned) = rownames(asymCov)
 	
 	# Helper to invert matrix robustly
-	invertMatrix = function(x) {
+	invertMatrix <- function(x) {
 		inv = tryCatch({
 			chol2inv(chol(x))
 		}, error = function(e) {
@@ -692,7 +705,7 @@ xmu_robust_WLS_fit = function(model) {
 	}
 	
 	# Trace helper for single model scaling factor
-	getScalingFactor = function(jacMat, asymCovMat, weightMatVal, dfVal) {
+	getScalingFactor <- function(jacMat, asymCovMat, weightMatVal, dfVal) {
 		info = t(jacMat) %*% weightMatVal %*% jacMat
 		infoInv = invertMatrix(info)
 		vw = asymCovMat %*% weightMatVal
@@ -704,7 +717,7 @@ xmu_robust_WLS_fit = function(model) {
 	}
 	
 	cTarget = getScalingFactor(jacTargetAligned, asymCov, weightMat, dfTarget)
-	cInd = getScalingFactor(jacIndAligned, asymCov, weightMat, dfInd)
+	cInd    = getScalingFactor(jacIndAligned, asymCov, weightMat, dfInd)
 	
 	chisqTargetScaled = chisqTargetRaw / cTarget
 	chisqIndScaled = chisqIndRaw / cInd
