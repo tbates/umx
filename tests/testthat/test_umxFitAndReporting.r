@@ -3,9 +3,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umxFitAndReporting.r") 
 # test_package("umx")
 
-context("umxFitAndReporting_Functions")
-
-
 test_that("umxDiagnose works", {
 	require(umx)
 	data(demoOneFactor)

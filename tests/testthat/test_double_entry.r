@@ -1,8 +1,5 @@
-library(testthat)
-library(OpenMx)
 library(umx)
-
-context("umxACE_DE tests")
+library(testthat)
 
 test_that("umxACE_DE works with automatic suffix detection and equates paths", {
 	data(twinData)

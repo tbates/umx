@@ -1,8 +1,6 @@
 library(testthat)
 library(umx)
 
-context("Genomic SEM helper tests")
-
 test_that("umxGSEM_dl_RefList works correctly", {
 	# Setup temp directory for tests
 	tmp_dir <- file.path(tempdir(), "gsem_ref_list_test")

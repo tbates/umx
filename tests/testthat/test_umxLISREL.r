@@ -2,8 +2,6 @@ library(testthat)
 library(umx)
 library(OpenMx)
 
-context("umxLISREL tests")
-
 test_that("umxLISREL works with covariance data and automatic partitioning", {
 	vNames <- paste("v", as.character(1:6), sep="")
 	dimList <- list(vNames, vNames)

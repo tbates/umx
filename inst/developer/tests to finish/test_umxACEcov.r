@@ -2,7 +2,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umxACE.r") 
 # test_package("umx")
 library(umx)
-context("twin models")
 
 test_that("umxACEcov works", {
 	require(umx)

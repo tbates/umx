@@ -8,7 +8,6 @@
 # [] digits
 # [] Latents in RAM
 # [] Latents non-RAM !
-context("umx_score_scale()")
 
 test_that("umx_score_scale works", {
 	require(umx)

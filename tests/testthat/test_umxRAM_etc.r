@@ -2,8 +2,6 @@
 # library(umx)
 # test_active_file("~/bin/umx/tests/testthat/test_umxRAM_etc.r") 
 # test_package("umx")
-context("umxRAM()")
-
 test_that("umxRAM handles two covariates", {
 	# Test working with more than 1 covariate
 	require(umx)

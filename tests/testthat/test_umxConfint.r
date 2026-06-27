@@ -3,8 +3,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umxConfint.r") 
 # test_package("umx")
 
-context("umxConfint()")
-
 test_that("umxConfint works", {
 	require(umx)
 	data(demoOneFactor)

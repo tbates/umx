@@ -1,10 +1,7 @@
 library(testthat)
-library(OpenMx)
 library(umx)
 
-context("umxGSEM Triage Logic and xmu_gsem_triage tests")
-
-test_that("Direct testing of xmu_gsem_triage works", {
+test_that("umxGSEM Triage Logic Direct testing of xmu_gsem_triage works", {
   # Setup simple S and V dimensions
   sMat = diag(c(0.5, 0.5))
   

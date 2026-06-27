@@ -3,8 +3,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umx_has_CI.r") 
 # test_package("umx")
 
-context("umx umx_has_CIs Functions")
-
 test_that("umx_has_CIs works", {
 	require(umx)
 	data(demoOneFactor)

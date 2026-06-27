@@ -1,14 +1,13 @@
-# library(testthat)
-# library(umx)
 # test_file("~/bin/umx/tests/testthat/test_residuals.MxModel.r") 
-# test_package("umx")
+library(testthat)
+library(umx)
+
 # TODO make tests for residuals!
 # [] need to get the text output test working
 # [] need to test suppress,
 # [] digits
 # [] Latents in RAM
 # [] Latents non-RAM !
-context("residuals()")
 
 test_that("residuals.MxModel works", {
 	require(umx)

@@ -4,9 +4,6 @@
 # 
 # testthat::test_package("umx")
 
-context("umx datasets functions")
-
-
 test_that("umx_get_checkpoint", {
 	require(umx)
 	data(GFF)

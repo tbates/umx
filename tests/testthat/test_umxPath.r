@@ -2,9 +2,7 @@
 # library(umx)
 # test_file("~/bin/umx/tests/testthat/test_umxPath.r") 
 # test_package("umx")
-context("umxPath()")
-
-test_that("test umxPath", {	
+test_that("umxPath works", {	
 	require(umx)
 	data(demoOneFactor) # from OpenMx
 	latents  = c("G")

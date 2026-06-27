@@ -1,4 +1,3 @@
-context("umxMeasurementInvariance_Functions")
 
 test_that("umxMeasurementInvariance works", {
 	require(umx)

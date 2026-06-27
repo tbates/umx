@@ -4,8 +4,6 @@
 # 
 # testthat::test_package("umx")
 
-context("umxFactorScores")
-
 test_that("umx_scale works for different inputs", {
 	data(mtcars)
 	m1 = umxEFA(mtcars, factors = 2)

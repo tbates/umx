@@ -2,14 +2,12 @@ library(testthat)
 library(OpenMx)
 library(umx)
 
-context("umxSummary WLS Routing and xmu_robust_WLS_fit tests")
-
 # Helper function to run umxSummary and collect all messages and warnings
 # Using <- for function definition per AGENTS.md style constraints
 runSummaryCollectOutputs <- function(model, refModels = NULL) {
   msgs = character()
   warns = character()
-  
+
   withCallingHandlers({
     umxSummary(model, refModels = refModels)
   }, message = function(m) {
@@ -20,7 +18,7 @@ runSummaryCollectOutputs <- function(model, refModels = NULL) {
     warns <<- c(warns, w$message)
     invokeRestart("muffleWarning")
   })
-  
+
   list(messages = msgs, warnings = warns)
 }
 

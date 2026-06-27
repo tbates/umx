@@ -4,13 +4,11 @@
 # 
 # test_package("umx")
 
-context("umx_has type functions")
-
 require(umx)
 data(demoOneFactor)
-latents  = c("G")
+latents   = c("G")
 manifests = names(demoOneFactor)
-m1 <- mxModel("One Factor", type = "RAM", 
+m1 = mxModel("One Factor", type = "RAM", 
 	manifestVars = manifests, latentVars = latents, 
 	mxPath(from = latents, to = manifests),
 	mxPath(from = manifests, arrows = 2),
@@ -18,7 +16,7 @@ m1 <- mxModel("One Factor", type = "RAM",
 	mxData(cov(demoOneFactor), type = "cov", numObs = 500)
 )
 
-m2 <- mxModel(m1, 
+m2 = mxModel(m1, 
 	mxPath(from = "one", to = manifests),
 	mxData(demoOneFactor, type = "raw")
 )

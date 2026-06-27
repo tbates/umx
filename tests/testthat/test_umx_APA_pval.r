@@ -3,7 +3,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umx_APA_pval.r") 
 # 
 # test_package("umx")
-context("p-values")
 
 test_that("umx_APA_pval works for different values", {
 	expect_match(umx_APA_pval(p = .04, min = .05), "< 0.05")

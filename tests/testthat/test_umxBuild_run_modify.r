@@ -3,8 +3,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umxBuild_run_modify.r") 
 # test_package("umx")
 
-context("umx Build_run_modify Functions")
-
 test_that("umxEquate works", {
 	require(umx)
 	data(demoOneFactor)

@@ -3,8 +3,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umxPower.r") 
 # test_package("umx")
 
-context("umxPower()")
-
 test_that("umxPower works", {
 	# ===================================================
 	# = Power to detect correlation of .3 in 200 people =

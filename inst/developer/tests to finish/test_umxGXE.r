@@ -1,8 +1,7 @@
-# library(testthat)
 # test_file("~/bin/umx/tests/testthat/test_umxACE.r") 
 # test_package("umx")
 library(umx)
-context("twin models")
+library(testthat)
 
 test_that("umxGXE works", {
 	data(twinData) # ?twinData set from Australian twins.
