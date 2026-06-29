@@ -6,8 +6,8 @@
 \usage{
 umx_make(
   what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install",
-    "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git",
-    "dev"),
+    "checkCRAN", "testthat", "run_dontrun", "examples", "win", "rhub", "lastRhub",
+    "release", "git", "dev"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,
@@ -52,11 +52,12 @@ Easily  run devtools "install", "release", "win", "examples" etc.
 # umx_make(what = "sitrep")    # Are needed packages up to date?
 # umx_make(what = "deps_install") # Update needed packages
 # umx_make(what = "examples")  # Run the examples
+# umx_make(what = "run_dontrun") # Run the dontrun examples
 # umx_make(what = "checkCRAN") # Run R CMD check
 # umx_make(what = "rhub")      # Check on rhub
 # umx_make(what = "win")       # Check on win-builder
 # umx_make(what = "release")   # Release to CRAN
-# tmp = umx_make(what = "lastRhub") # View rhub result
+# tmp           = umx_make(what = "lastRhub") # View rhub result
 # umx_make(what = "git")       # Open Git Desktop app
 # umx_make(what = "dev")       # Install dev version from GitHub
 }

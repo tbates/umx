@@ -134,6 +134,18 @@ Will create this figure:
 \if{latex}{\figure{sketch.pdf}{options: width=7cm}}
 }
 \details{
+\strong{WLS}
+\code{umxRAM} supports WLS estimation via the \code{type} argument (\code{"WLS"}, \code{"DWLS"}, or \code{"ULS"}).
+
+\strong{Important for ordinal data}: If your data contains ordered factors, \code{umxRAM} will
+automatically create the necessary \code{mxThreshold} objects. You do not need to add them manually.
+
+For all-continuous data, use \code{allContinuousMethod} to control means modeling:
+\itemize{
+\item \code{"cumulants"} (default): Faster. No means model.
+\item \code{"marginals"}: Includes means and supports missing data.
+}
+
 \strong{Comparison for OpenMx users}
 
 \code{umxRAM} differs from \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} in the following ways:
@@ -160,7 +172,27 @@ and single-headed paths are set to a positive starting value (currently .9).
 \strong{Comparison with other software}
 
 Some SEM software does a lot of behind-the-scenes defaulting and path addition.
-If you want this, I'd say use \code{umxRAM} with lavaan string input.
+If you want this, \code{umxRAM} can read lavaan strings so you can carry on that way.
+
+\strong{WLS, DWLS, and ULS in \code{umxRAM} vs lavaan}
+
+\code{umxRAM} supports three weighted least squares estimators via the \code{type} argument.
+These control which weight matrix is used during estimation:
+
+\tabular{llll}{
+\strong{umx \code{type}} \tab \strong{Weight matrix} \tab \strong{Closest lavaan equivalent} \tab \strong{Typical use} \cr
+\code{"WLS"}        \tab Full weight matrix         \tab \code{estimator = "WLS"}          \tab Full-information WLS (computationally heavy) \cr
+\code{"DWLS"}       \tab Diagonal weight matrix     \tab \code{estimator = "DWLS"} or the estimation step of \code{"WLSMV"} \tab Most common for ordinal data \cr
+\code{"ULS"}        \tab Identity matrix            \tab \code{estimator = "ULS"}          \tab Simpler unweighted estimation \cr
+}
+
+\strong{Important notes:}
+\itemize{
+\item In lavaan, \code{WLSMV} combines diagonal weighting (\code{DWLS}-style estimation) with a mean-and-variance adjusted test statistic.
+In \code{umx}/\code{OpenMx}, the weighting is controlled by \code{type}, while robust corrections to the chi-square and standard errors
+are handled via its Jacobian, and information matrix.
+\item When using ordinal data, make sure your variables are \code{ordered} factors. \code{umxRAM} will then automatically create the required \code{mxThreshold} objects.
+}
 }
 \examples{
 \dontrun{
@@ -255,18 +287,47 @@ m1 = umxRAM("tim", data = myCov,
 	type = "WLS", allContinuousMethod = "cumulants",
  	umxPath(var = c("wt", "disp", "mpg")),
  	umxPath(c("wt", "disp"), to = "mpg"),
- 	umxPath("wt", with = "disp"),
-     umxPath(var = c("wt", "disp", "mpg"))
+ 	umxPath("wt", with = "disp")
  )
-# 2. Switch to marginals to support means
+# 2. Switch to marginals to support means in WLS model
  mw = umxRAM("raw", data = mtcars[, c("mpg", "wt", "disp")], 
 	type = "WLS", allContinuousMethod= "marginals",
  	umxPath(var = c("wt", "disp", "mpg")),
  	umxPath(c("wt", "disp"), to = "mpg"),
- 	umxPath("wt", with = "disp"),
-     umxPath(var = c("wt", "disp", "mpg"))
+ 	umxPath("wt", with = "disp")
  )
 
+##########################
+# Ordinal-data WLS model #
+##########################
+
+# 1. Generate Data
+set.seed(12345)
+n  = 800
+f  = rnorm(n)
+x1 = 0.75 * f + rnorm(n, sd = 0.66)
+x2 = 0.80 * f + rnorm(n, sd = 0.60)
+x3 = 0.70 * f + rnorm(n, sd = 0.71)
+x4 = 0.85 * f + rnorm(n, sd = 0.53)
+
+dat = data.frame(x1 = x1, x2 = x2, x3 = x3, x4 = x4)
+
+# Turn into ordered categorical (4 categories)
+dat[] = lapply(dat, function(x) cut(x, breaks = 4, labels = FALSE))
+dat[] = lapply(dat, ordered)
+
+# 1. Model in lavaan
+model = ' f =~ x1 + x2 + x3 + x4 '
+lav1  = cfa(model, data = dat, ordered = names(dat), estimator = "WLSMV")
+
+# 2. Model in umxRAM
+# todo: Note if not clear: Data can be raw, or mxData()
+# todo: implement m.v. as a synonym for v.m.?
+m1 = umxRAM("WLS_umx", data = dat, type = "WLS", allContinuousMethod = "cumulants",   # or "marginals"
+	umxPath("f", to = c("x1", "x2", "x3", "x4") ),
+	umxPath(v.m. = "f"),
+	umxPath(v.m. = c("x1", "x2", "x3", "x4"))
+)
 
 # ===============================
 # = Using umxRAM in Sketch mode =

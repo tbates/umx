@@ -3199,16 +3199,17 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "sitrep")    # Are needed packages up to date?
 #' # umx_make(what = "deps_install") # Update needed packages
 #' # umx_make(what = "examples")  # Run the examples
+#' # umx_make(what = "run_dontrun") # Run the dontrun examples
 #' # umx_make(what = "checkCRAN") # Run R CMD check
 #' # umx_make(what = "rhub")      # Check on rhub
 #' # umx_make(what = "win")       # Check on win-builder
 #' # umx_make(what = "release")   # Release to CRAN
-#' # tmp = umx_make(what = "lastRhub") # View rhub result
+#' # tmp           = umx_make(what = "lastRhub") # View rhub result
 #' # umx_make(what = "git")       # Open Git Desktop app
 #' # umx_make(what = "dev")       # Install dev version from GitHub
 #' }
 umx_make <- function(
-	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "examples", "win", "rhub", "lastRhub", "release", "git", "dev"), 
+	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "run_dontrun", "examples", "win", "rhub", "lastRhub", "release", "git", "dev"), 
 	pkg = "~/bin/umx", 
 	check = TRUE, 
 	run = FALSE, 
@@ -3233,7 +3234,6 @@ umx_make <- function(
 		if(nrow(changed) >= 1){
 			umx_print(changed)
 		}
-		
 	} else if(what == "quickInst"){
 		devtools::document(pkg = pkgPath)
 		devtools::install(pkg = pkgPath, quick = TRUE, dependencies = FALSE, upgrade = FALSE, build_vignettes = FALSE)
@@ -3243,32 +3243,24 @@ umx_make <- function(
 		if(nrow(changed) >= 1){
 			umx_print(changed)
 		}
-		
 	} else if(what == "install"){
 		devtools::document(pkg = pkgPath)
 		devtools::install(pkg = pkgPath)
 		devtools::load_all(path = pkgPath)
-		
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkgPath, vignettes = TRUE, use_wordlist = TRUE)
-		
 	} else if (what == "sitrep"){
 		devtools::dev_sitrep(pkg = pkgPath)
-		
 	} else if (what == "deps_install"){
 		# STRATEGY: Swap from devtools to native pak engine for high-velocity installation
 		if(!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
 		pak::local_install_dev_deps(root = pkgPath)
-		
 	} else if(what == "examples"){ # Fixed name mismatch matching 'what' default
 		devtools::run_examples(pkg = pkgPath, run = run, start = start)
-		
 	} else if(what == "checkCRAN"){
 		devtools::check(pkg = pkgPath, run_dont_test = run_dont_test, args = "--as-cran")
-		
 	} else if (what == "win"){
 		devtools::check_win_devel(pkg = pkgPath)
-		
 	} else if (what == "rhub"){
 		# STRATEGY: Update platforms to line up with the modernized R-Hub v2 matrix
 		plat = switch(which,
@@ -3277,24 +3269,23 @@ umx_make <- function(
 			"win"     = "windows",
 			"solaris" = "solaris"
 		)
-		
 		cat("Checking", omxQuotes(pkgPath), "via modern rhub on platform:", omxQuotes(plat), "\n")
 		# R-Hub v2 uses rhub::rhub_check() nattily underneath devtools wrapping
 		devtools::check_rhub(pkg = pkgPath, platforms = plat, interactive = FALSE)
-		
 	} else if(what == "lastRhub"){
 		# STRATEGY: R-Hub v2 modern check status retrieval
 		return(rhub::rhub_doctor())
-		
 	} else if (what == "testthat"){
 		devtools::test(pkg = pkgPath)
-		
+	} else if (what == "examples"){
+		devtools::run_examples(run_dontrun = FALSE, pkg = pkgPath)
+	} else if (what == "run_dontrun"){
+		devtools::run_examples(run_dontrun = TRUE, pkg = pkgPath)
 	} else if (what == "release"){
 		# STRATEGY: Use withr to handle directories cleanly without risking breaking state on crash
 		withr::with_dir(pkgPath, {
 			devtools::release(pkg = pkgPath, check = check, args = "--no-manual")
 		})
-		
 	} else if (what == "git"){
 		# STRATEGY: Universal MacOS application opening protocol
 		system2("open", args = c("-a", "GitHub Desktop"))

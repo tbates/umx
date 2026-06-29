@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxCompare.R
 \name{umxCompare}
 \alias{umxCompare}
-\title{Print a comparison table of one or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s, formatted nicely.}
+\title{Print a comparison table of two or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s, nicely formatted.}
 \usage{
 umxCompare(
   base = NULL,
@@ -37,10 +37,10 @@ create a web table and open your default browser.
 \description{
 umxCompare compares two or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s. It has several nice features:
 \enumerate{
-\item It supports direct control of rounding, and reports p-values rounded to APA style.
-\item It reports the table in your preferred format (default is markdown, options include latex).
-\item Table columns are arranged to make for easy comparison for readers.
-\item report = 'inline', will provide an English sentence suitable for a paper.
+\item Direct control of precision via digits=. p-values use APA style.
+\item Report = directs publication to your chosen format: markdown, html, latex.
+\item Columns arranged to make for easy visual comparison.
+\item report = 'inline', includes a summary sentence suitable for your report.
 \item report = "html" opens a web table in your browser to paste into a word processor.
 }
 
@@ -51,6 +51,21 @@ Under WLS the weighting changes how that baseline behaves, so the usual interpre
 We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
 Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
 Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
+}
+\details{
+\strong{Genomic SEM and Massive-N WLS Models}
+
+\code{umxCompare} automatically detects \code{MxModelGSEM} objects and massive-N (e.g., GSEM WLS models, applying a specialized comparison pipeline to protect against infinite-power artifacts:
+\itemize{
+\item \strong{Strict Satorra-Bentler (2010) Corrections}: For nested models, \code{umxCompare} extracts the implied Jacobians and computes a strict Satorra-Bentler scaled \eqn{\Delta \chi^2} difference test. This ensures \eqn{p}-values remain accurately calibrated when dropping paths in robust WLS frameworks.
+\item \strong{Pseudo-BIC (\eqn{N=1000} Penalty)}: Standard Information Criteria (AIC/BIC) break down at massive sample sizes (e.g., \eqn{N > 100,000}). AIC's \eqn{2k} penalty lacks sample size adjustment, leading to chronic overfitting, while standard BIC's \eqn{\ln(N)k} penalty dominates the discrepancy function, forcing the selection of overly simplistic models. \code{umxCompare} substitutes a Pseudo-BIC, capping the sample size penalty at a benchmark of \eqn{N = 1000} to balance parsimony and complexity.
+\item \strong{Absolute Fit Index Cutoffs}: Conventional absolute fit index cutoffs (e.g., TLI > .95, RMSEA < .06) do not mathematically apply to WLS models estimated from asymptotic covariance matrices. Users should rely on the Satorra-Bentler \eqn{p}-values for nested comparisons and SRMR for absolute fit.
+}
+
+\strong{Evaluating Fit in WLS/GSEM}
+Standard fit index cutoffs (e.g., Hu & Bentler, 1999) were developed for Maximum Likelihood estimation with continuous data and small sample sizes. Applying these strict cutoffs (CFI > .95, RMSEA < .06) to WLS/DWLS models—particularly those estimated from massive-N asymptotic covariance matrices like Genomic SEM—is mathematically invalid.
+
+In these frameworks, the baseline \eqn{\chi^2} is heavily inflated, severely distorting CFI, TLI, and RMSEA. For absolute model fit, users should rely on the Standardized Root Mean Square Residual (\strong{SRMR}), as it operates on the correlation metric and is robust to sample-size inflation. An SRMR value < 0.10 generally indicates acceptable residual structure. For model building, rely on the Satorra-Bentler (2010) scaled \eqn{p}-values for nested comparisons.
 }
 \examples{
 \dontrun{

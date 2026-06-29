@@ -4,7 +4,7 @@
 \alias{xmu_compare_WLS}
 \title{xmu_compare_WLS}
 \usage{
-xmu_compare_WLS(baseModel, comparisonModel = NULL, bicPenaltyN = NULL)
+xmu_compare_WLS(baseModel, comparisonModel = NULL)
 }
 \arguments{
 \item{baseModel}{a model}

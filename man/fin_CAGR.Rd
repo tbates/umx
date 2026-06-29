@@ -34,23 +34,15 @@ This function includes input validation and will `stop()` with an error
   if any inputs are non-numeric or non-positive.
 }
 \examples{
-# --- Basic Usage ---
 rate = fin_CAGR(beginningValue = 100, endingValue = 190, numYears = 7)
 print(rate)
-
-# --- Formatting as Percentage ---
-percent = paste0(round(rate * 100, 2), "\%")
-print(percent)
 
 # --- Example with a Loss ---
 fin_CAGR(100, 50, 5) 
 
-\dontrun{
-# --- Examples of what will fail ---
-fin_CAGR(0, 100, 5)  # Error: Inputs must be positive
-fin_CAGR(100, 150, -1) # Error: Inputs must be positive
-fin_CAGR("100", 150, 5) # Error: All inputs must be numeric
-}
+# --- Formatting as Percentage ---
+percent = paste0(round(rate * 100, 2), "\%")
+print(percent)
 }
 \seealso{
 Other financial functions:
