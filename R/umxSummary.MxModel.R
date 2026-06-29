@@ -145,17 +145,24 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	    # Check for GenomicMx engine via our new helper
 	    if (xmu_has_WLS_jacobian(model)) {
 	        message("umxSummary: Modern WLS model with Jacobian detected. Applying SB-2010 robust metrics...")
-	        robustFit = xmu_robust_WLS_fit(model)
+	        robustFit = NULL
+	        tryCatch({
+	            robustFit = xmu_robust_WLS_fit(model)
+	        }, error = function(e) {
+	            message(paste("umxSummary Note: Frontend Satorra-Bentler calculation skipped:", e$message))
+	        })
         
-	        # Patch incremental indices
-	        modelSummary$CFI   = robustFit$CFI
-	        modelSummary$TLI   = robustFit$TLI
-	        modelSummary$RMSEA = robustFit$RMSEA
-        
-	        # Patch the base Chi-square statistics
-	        modelSummary$Chi    = robustFit$Chi
-	        modelSummary$ChiDoF = robustFit$ChiDoF
-	        modelSummary$p      = robustFit$p
+	        if (!is.null(robustFit)) {
+	            # Patch incremental indices
+	            modelSummary$CFI   = robustFit$CFI
+	            modelSummary$TLI   = robustFit$TLI
+	            modelSummary$RMSEA = robustFit$RMSEA
+            
+	            # Patch the base Chi-square statistics
+	            modelSummary$Chi    = robustFit$Chi
+	            modelSummary$ChiDoF = robustFit$ChiDoF
+	            modelSummary$p      = robustFit$p
+	        }
         
 	    } else {
 	        # Legacy catch: Warn the user, leave modelSummary unadjusted
@@ -282,7 +289,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 					)
 					message(fitMsg)
 					if (xmu_is_wls(model)) {
-						message("Note: For WLS/DWLS models, conventional fit index cutoffs (e.g. TLI > .95, RMSEA < .06) do not apply. See ?umxSummary for details.")
+						if (umx_is_GSEM(model)) {
+							cat("\n*Statistical Note*: For GSEM models, evaluate absolute fit using SRMR (< 0.10) and CFI. Evaluate model improvements using change in CFI and change in SRMR (see ?umxCompare for details).\n")
+						} else {
+							cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not valid. Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
+						}
 					} else {
 						if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
 						if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}

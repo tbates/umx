@@ -20,109 +20,142 @@
 #' \dontrun{
 #' 
 #' }
-xmu_compare_WLS = function(baseModel, comparisonModel = NULL, bicPenaltyN = NULL) {  
+xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {  
 	# 1. Evaluate Empirical N and GSEM Status
-	actualN   = baseModel$data$numObs
-	isGenomic = umx_is_GSEM(baseModel) | (!is.null(actualN) && actualN > 50000)
+	actualN = baseModel$data$numObs
+	isGenomic = umx_is_GSEM(baseModel) | (!is.null(comparisonModel) && umx_is_GSEM(comparisonModel)) | (!is.null(actualN) && actualN > 50000)
   
-	# 2. Pseudo-BIC Penalty Logic & Messaging
-	if (is.null(bicPenaltyN)) {
-		# AUTOMATIC ROUTING
-		if (isGenomic) {
-			bicPenaltyN = 1000
-			message("umx Fiduciary Note: Massive-N / GSEM model detected.")
-			message("  * Traditional RMSEA is structurally optimistic and should be interpreted with caution.")
-			message(sprintf("  * Pseudo-BIC calculated using a penalized benchmark (N = %d) to prevent infinite-power overfitting.", bicPenaltyN))
-		} else {
-			# Standard WLS Fallback (Silent, expected behavior)
-			bicPenaltyN = actualN
-		}
-	} else {
-		# USER MANUAL OVERRIDE
-		message(sprintf("umx User Override: Pseudo-BIC calculated using custom penalty benchmark (N = %d).", bicPenaltyN))
-		if (!is.null(actualN) && bicPenaltyN != actualN && !isGenomic) {
-			message(sprintf("  * Note: This diverges from the empirical model sample size (N = %d).", actualN))
-		}
+	# 2. Extract our custom C++ cached Jacobian
+	baseJacobian = baseModel@output$implied_jacobian
+	if(is.null(baseJacobian)) {
+		warning("Base model missing cached Jacobian. Run model with GenomicMx to enable strict Satorra-Bentler 2010 testing.")
 	}
     
-    # 2. Extract our custom C++ cached Jacobian
-	baseJacobian = baseModel@output$implied_jacobian
-    if(is.null(baseJacobian)) {
-      warning("Base model missing cached Jacobian. Run model with GenomicMx to enable strict Satorra-Bentler 2010 testing.")
-    }
-    
-    # 3. Base Model Core Statistics
+	# 3. Base Model Core Statistics
 	# If Jacobian is missing, fallback to standard parameter count
 	kBase = ifelse(!is.null(baseJacobian), ncol(baseJacobian), length(omxGetParameters(baseModel)))
 	
-	chisqBase = summary(baseModel)$Chi
-	if (is.null(chisqBase)) chisqBase = baseModel$fitfunction$result[1,1]
-	
-    # Initialize vectors assuming only one model is passed
-    epVec       = kBase
-    chisqVec    = chisqBase
-    deltaEpVec  = NA
-    strictSbVec = NA
-    pVec        = NA
+	# Note: In ML we need to subtract the -2LLs of the model from a base model.
+	# In WLS: The discrepancy function inherently represents the squared, weighted differences between the observed and implied matrices.
+	# The raw value in fitfunction$result[1,1] is the unscaled chi-square. No saturated model comparison is required.
 
-    # 4. Nested Comparison Logic (If user provided a second model)
+	# Safely extract the final scaled discrepancies (Zero-cost preference)
+	chisqBase = baseModel$output$chi
+	if (is.null(chisqBase)) {
+		chisqBase = summary(baseModel)$Chi
+	}
+				
+	# Initialize vectors assuming only one model is passed
+	epVec = kBase
+	chisqVec = chisqBase
+	deltaDfVec = NA
+	diffFitVec = NA
+	pVec = NA
+
+	# 4. Nested Comparison Logic (If user provided a second model)
 	if (!is.null(comparisonModel)) {
 		compJacobian = comparisonModel@output$implied_jacobian
 		kComp = ifelse(!is.null(compJacobian), ncol(compJacobian), length(omxGetParameters(comparisonModel)))
 		
-		chisqComp = summary(comparisonModel)$Chi
-		if (is.null(chisqComp)) chisqComp = comparisonModel$fitfunction$result[1,1]
+		# The raw value in fitfunction$result[1,1] is the unscaled chi-square. No saturated model comparison is required.
+		chisqComp = comparisonModel$output$chi
+		if (is.null(chisqComp)) {
+			chisqComp = summary(comparisonModel)$Chi
+		}
 		
 		epVec = c(kBase, kComp)
 		chisqVec = c(chisqBase, chisqComp)
 
-		# Only attempt Satorra-Bentler if BOTH models have Jacobians
-		if (!is.null(baseJacobian) && !is.null(compJacobian)) {
-			sbResults = NULL
-			if (kBase > kComp) {
-				sbResults = calculateStrictSb(baseModel = baseModel, nestedModel = comparisonModel)
-			} else if (kComp > kBase) {
-				sbResults = calculateStrictSb(baseModel = comparisonModel, nestedModel = baseModel)
-			} else {
-				warning("Models have the same number of free parameters. Cannot compute nested SB difference.")
-			}
+		deltaDf = abs(kBase - kComp)
+		deltaDfVec = c(NA, deltaDf)
 
-			if (!is.null(sbResults)) {
-				deltaEpVec  = c(NA, sbResults["deltaDf"])
-				strictSbVec = c(NA, round(sbResults["strictSbChisq"], 3))
-				pVec        = c(NA, round(sbResults["pValue"], 3))
-			} else {
-				deltaEpVec  = c(NA, NA)
-				strictSbVec = c(NA, NA)
-				pVec        = c(NA, NA)
-			}
+		if (isGenomic) {
+			# Track B: Genomic WLS (Natively scaled GSEM chi-square difference)
+			message("umx Note: Genomic GSEM model detected. Reporting natively scaled GSEM difference.")
+			deltaChisq = abs(chisqComp - chisqBase)
+			diffFitVec = c(NA, round(deltaChisq, 3))
+			pValue = pchisq(deltaChisq, df = deltaDf, lower.tail = FALSE)
+			pVec = c(NA, round(pValue, 3))
 		} else {
-			# Graceful degradation for legacy WLS
-			message("umx Note: One or both models lack a cached Jacobian. Skipping strict Satorra-Bentler (2010) difference test.")
-			deltaEpVec  = c(NA, abs(kBase - kComp)) # Provide naive df difference
-			strictSbVec = c(NA, NA)
-			pVec        = c(NA, NA)
+			# Track A: Normal WLS (Satorra-Bentler difference test)
+			# Only attempt Satorra-Bentler if BOTH models have Jacobians
+			if (!is.null(baseJacobian) && !is.null(compJacobian)) {
+				sbResults = NULL
+				tryCatch({
+					if (kBase > kComp) {
+						sbResults = calculateStrictSb(baseModel = baseModel, nestedModel = comparisonModel)
+					} else if (kComp > kBase) {
+						sbResults = calculateStrictSb(baseModel = comparisonModel, nestedModel = baseModel)
+					} else {
+						warning("Models have the same number of free parameters. Cannot compute nested SB difference.", call. = FALSE)
+					}
+				}, error = function(e) {
+					warning(paste("Satorra-Bentler calculation failed:", e$message), call. = FALSE)
+				})
+
+				if (!is.null(sbResults) && !is.na(sbResults["strictSbChisq"])) {
+					diffFitVec = c(NA, round(sbResults["strictSbChisq"], 3))
+					pVec = c(NA, round(sbResults["pValue"], 3))
+				} else {
+					warning("Satorra-Bentler calculation failed: returned NA", call. = FALSE)
+					diffFitVec = c(NA, NA)
+					pVec = c(NA, NA)
+				}
+			} else {
+				# Graceful degradation for legacy WLS
+				message("umx Note: One or both models lack a cached Jacobian. Skipping strict Satorra-Bentler (2010) difference test.")
+				diffFitVec = c(NA, NA)
+				pVec = c(NA, NA)
+			}
 		}
 	}
 
-    # 5. Calculate Absolute Fit Metrics
+	# 5. Calculate Standard AIC using built-in OpenMx accessor
+	aicBase = tryCatch({ AIC(baseModel) }, error = function(e) { chisqBase + 2 * kBase })
+	if (!is.null(comparisonModel)) {
+		aicComp = tryCatch({ AIC(comparisonModel) }, error = function(e) { chisqComp + 2 * kComp })
+		aicVec = c(aicBase, aicComp)
+	} else {
+		aicVec = aicBase
+	}
+
+	# 6. Calculate CFI
+	getCfi <- function(model) {
+		cfiVal = NA_real_
+		if (xmu_has_WLS_jacobian(model)) {
+			tryCatch({
+				robustFit = xmu_robust_WLS_fit(model)
+				cfiVal = robustFit$CFI
+			}, error = function(e) {
+				cfiVal = summary(model)$CFI
+			})
+		} else {
+			cfiVal = summary(model)$CFI
+		}
+		return(cfiVal)
+	}
+	cfiBase = getCfi(baseModel)
+	if (!is.null(comparisonModel)) {
+		cfiComp = getCfi(comparisonModel)
+		cfiVec = c(cfiBase, cfiComp)
+		deltaCfiVec = c(NA, cfiComp - cfiBase)
+	} else {
+		cfiVec = cfiBase
+		deltaCfiVec = NA_real_
+	}
+
+	# 7. Calculate SRMR
 	srmrBase = round(xmuCalculateSRMR(baseModel), 3)
 	if (!is.null(comparisonModel)) {
 		srmrComp = round(xmuCalculateSRMR(comparisonModel), 3)
 		srmrVec = c(srmrBase, srmrComp)
+		deltaSrmrVec = c(NA, srmrComp - srmrBase)
 	} else {
 		srmrVec = srmrBase
+		deltaSrmrVec = NA_real_
 	}
 	
-	# Secure BIC calculation protecting standard WLS models from bicPenaltyN
-	if (is.null(bicPenaltyN) || is.na(bicPenaltyN)) {
-		pseudoBicVec = rep(NA_real_, length(epVec))
-	} else {
-		pseudoBicVec = round(xmu_pseudo_BIC(chisq = chisqVec, k = epVec, n = bicPenaltyN), 2)
-	}
-    
-	
-	# 6. Check for GSEM Triage Smoothing
+	# 8. Check for GSEM Triage Smoothing
 	baseSmoothed = FALSE
 	compSmoothed = FALSE
 
@@ -137,17 +170,20 @@ xmu_compare_WLS = function(baseModel, comparisonModel = NULL, bicPenaltyN = NULL
 		message("umx Fiduciary Warning: One or more models were estimated using nearPD smoothed covariance matrices. Satorra-Bentler difference tests may report artificial precision.")
 	}
 
-	# 7. Construct the new, mathematically sound table
 	comparisonTable = data.frame(
-		Base             = baseModel$name,
-		Comparison       = ifelse(is.null(comparisonModel), "<NA>", comparisonModel$name),
-		ep               = epVec,
-		delta_ep         = deltaEpVec,
-		chisq_WLS        = round(chisqVec, 2),
-		Strict_SB        = strictSbVec,
+		Model            = if(!is.null(comparisonModel)) c(baseModel$name, comparisonModel$name) else baseModel$name,
+		Compared_to      = if(!is.null(comparisonModel)) c("<NA>", baseModel$name) else "<NA>",
+		EP               = epVec,
+		Chi              = round(chisqVec, 2),
+		AIC              = round(aicVec, 2),
+		CFI              = round(cfiVec, 3),
+		delta_CFI        = round(deltaCfiVec, 3),
+		SRMR             = round(srmrVec, 3),
+		delta_SRMR       = round(deltaSrmrVec, 3),
+		delta_df         = deltaDfVec,
+		diffFit          = diffFitVec,
 		p                = pVec,
-		SRMR             = srmrVec,
-		Pseudo_BIC       = pseudoBicVec,
+		row.names        = NULL,
 		stringsAsFactors = FALSE
 	)
     
@@ -164,7 +200,7 @@ xmu_compare_WLS = function(baseModel, comparisonModel = NULL, bicPenaltyN = NULL
 #' @param nestedModel The nested model (fewer parameters)
 #' @return A named vector containing strictSbChisq, deltaDf, scalingFactor, and pValue.
 #' @export
-calculateStrictSb = function(baseModel, nestedModel) {
+calculateStrictSb <- function(baseModel, nestedModel) {
 	# 1. Extract Jacobians
 	jacBase = baseModel@output$implied_jacobian
 	jacNested = nestedModel@output$implied_jacobian
@@ -246,7 +282,7 @@ calculateStrictSb = function(baseModel, nestedModel) {
 	numManifests = length(baseModel@manifestVars)
 	numCovs = (numManifests * (numManifests + 1)) / 2
 
-	alignJacobian = function(jac, asymCov, numCovs) {
+	alignJacobian <- function(jac, asymCov, numCovs) {
 		numMeans = nrow(jac) - numCovs
 		if (numMeans > 0) {
 			# Shift the last 'numMeans' rows (the means) to the top
@@ -270,7 +306,7 @@ calculateStrictSb = function(baseModel, nestedModel) {
 	jacNested = jacNested[rownames(asymCov), , drop = FALSE]
 
 	# 4. Helper function to invert information matrices robustly
-	invertMatrix = function(x) {
+	invertMatrix <- function(x) {
 		inv = tryCatch({
 			chol2inv(chol(x))
 		}, error = function(e) {
@@ -305,44 +341,36 @@ calculateStrictSb = function(baseModel, nestedModel) {
 	# Degrees of freedom: d = k_1 - k_0 (difference in number of parameters)
 	deltaDf = ncol(jacBase) - ncol(jacNested)
 
-  # Calculate Satorra-Bentler scaling factor: c_d = tr(M_diff * V) / d
-  # Uses the fast 1-liner trace helper sum(diag())
+	# Calculate Satorra-Bentler scaling factor: c_d = tr(M_diff * V) / d
+	# Uses the fast 1-liner trace helper sum(diag())
 	traceVal = sum(diag(mDiff %*% asymCov))
 	scalingFactor = traceVal / deltaDf
 
-	# 6. Extract unscaled chi-square values
-	getChisq = function(model) {
-		modelSummary = summary(model)
-		chisqVal = modelSummary$Chi
-		if (is.null(chisqVal) || is.na(chisqVal)) {
-			chisqVal = model$fitfunction$result
-			if (is.matrix(chisqVal) || is.array(chisqVal)) {
-				chisqVal = chisqVal[1, 1]
-			}
-			numObs = model$data$numObs
-			if (!is.null(numObs) && !is.na(numObs)) {
-				chisqVal = chisqVal * numObs
-			}
+	# 6. Extract RAW unscaled discrepancy values
+	getRawFit <- function(model) {
+		rawFit = model$fitfunction$result
+		if (is.matrix(rawFit) || is.array(rawFit)) {
+			rawFit = rawFit[1, 1]
 		}
-		return(chisqVal)
+		return(rawFit)
 	}
 
-	chisqBase   = getChisq(baseModel)
-	chisqNested = getChisq(nestedModel)
+	rawBase   = getRawFit(baseModel)
+	rawNested = getRawFit(nestedModel)
 
-	# Calculate strictly positive scaled difference chi-square: T_d = (chisq_0 - chisq_1) / c_d
-	deltaChisq    = chisqNested - chisqBase
-	strictSbChisq = deltaChisq / scalingFactor
-	
-	# Calculate p-value
-	pValue = pchisq(strictSbChisq, df = deltaDf, lower.tail = FALSE)
+	# Calculate Satorra-Bentler strict nested difference: T_d = (T_0 - T_1) / c_d
+	deltaRaw      = rawNested - rawBase
+	strictSbChisq = deltaRaw / scalingFactor
+
+	# Calculate p-value (Ensure deltaDf is positive for the distribution check)
+	pValue = pchisq(strictSbChisq, df = abs(deltaDf), lower.tail = FALSE)
 
 	# Return results
 	results = c(
 		strictSbChisq = strictSbChisq,
-		deltaDf = deltaDf,
+		deltaDf       = deltaDf,
 		scalingFactor = scalingFactor,
-		pValue = pValue
+		pValue        = pValue
 	)
 	return(results)
 }
@@ -465,18 +493,37 @@ xmu_pseudo_BIC <- function(chisq, k, n) {
 xmuPseudoBic = xmu_pseudo_BIC
 
 # Create the trivial independence model Jacobian in R
-xmu_build_independence_jacobian <- function(K) {
-	e = K * (K + 1) / 2
-	jac = matrix(0, nrow = e, ncol = K)
-	idx = 1
-	paramIdx = 1
-	for (j in 1:K) {
-		for (i in j:K) {
-			if (i == j) {
-				jac[idx, paramIdx] = 1
-				paramIdx = paramIdx + 1
+xmu_build_independence_jacobian <- function(rowNames, manifests) {
+	P = length(rowNames)
+	free_rows = logical(P)
+	for (i in 1:P) {
+		name = rowNames[i]
+		isMean = grepl("^mean_", name) || grepl("^one_to_", name) || (name %in% manifests)
+		isThresh = grepl("t[0-9]+$", name)
+		isVar = FALSE
+		if (!isMean && !isThresh) {
+			parts = strsplit(name, "[ _]")[[1]]
+			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
+			if (length(parts) == 2 && parts[1] == parts[2]) {
+				isVar = TRUE
+			} else if (length(parts) == 1) {
+				isVar = TRUE
 			}
-			idx = idx + 1
+		}
+		if (isMean || isThresh || isVar) {
+			free_rows[i] = TRUE
+		}
+	}
+	
+	numFree = sum(free_rows)
+	jac = matrix(0, nrow = P, ncol = numFree)
+	rownames(jac) = rowNames
+	
+	colIdx = 1
+	for (i in 1:P) {
+		if (free_rows[i]) {
+			jac[i, colIdx] = 1
+			colIdx = colIdx + 1
 		}
 	}
 	return(jac)
@@ -530,10 +577,7 @@ xmu_robust_WLS_fit <- function(model) {
 		chisqTargetRaw = model$fitfunction$result[1, 1]
 	}
 	
-	dfTarget = model$output$degreesOfFreedom
-	if (is.null(dfTarget) || is.na(dfTarget)) {
-		dfTarget = summary(model)$degreesOfFreedom
-	}
+	dfTarget = xmu_extract_df(model)
 	
 	jacTarget = model@output$implied_jacobian
 	if (is.null(jacTarget)) {
@@ -595,6 +639,12 @@ xmu_robust_WLS_fit <- function(model) {
 		stop("Could not locate Asymptotic Covariance matrix (V).")
 	}
 	
+	if (nrow(jacTarget) != nrow(asymCov)) {
+		stop(sprintf("implied_jacobian row count (%d) does not match asymptotic covariance matrix row count (%d) (this occurs in ordinal WLS models).", nrow(jacTarget), nrow(asymCov)))
+	}
+	
+	rowNames = rownames(asymCov)
+	
 	# Calculate K (number of observed variables)
 	manifests = model@manifestVars
 	kVal = length(manifests)
@@ -603,25 +653,58 @@ xmu_robust_WLS_fit <- function(model) {
 		kVal = round((-1 + sqrt(1 + 8 * eVal)) / 2)
 	}
 	
-	# Step C: Call xmu_build_independence_jacobian(kVal)
-	jacInd = xmu_build_independence_jacobian(kVal)
+	# Step C: Call xmu_build_independence_jacobian(rowNames, manifests)
+	jacInd = xmu_build_independence_jacobian(rowNames, manifests)
 	
 	# Step D: Calculate Independence df
-	dfInd = kVal * (kVal + 1) / 2 - kVal
+	dfInd = nrow(asymCov) - ncol(jacInd)
 	
 	# Step E/F: Native R baseline WLS fit calculation
 	# Extract observed covariance matrix and means (if any)
+	obsCov = NULL
+	obsMeans = NULL
+	obsThresholds = NULL
 	if (model$data$type == "raw") {
-		obsCov = cov(model$data$observed, use = "pairwise.complete.obs")
-		obsMeans = colMeans(model$data$observed, na.rm = TRUE)
+		if (.hasSlot(model$data, "observedStats") && !is.null(model$data@observedStats)) {
+			obsCov = model$data@observedStats$cov
+			obsMeans = model$data@observedStats$means
+			obsThresholds = model$data@observedStats$thresholds
+		} else if (!is.null(model$data$observedStats)) {
+			obsCov = model$data$observedStats$cov
+			obsMeans = model$data$observedStats$means
+			obsThresholds = model$data$observedStats$thresholds
+		}
+		if (is.null(obsCov)) {
+			numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
+			if (ncol(numericData) > 0) {
+				obsCov = cov(numericData, use = "pairwise.complete.obs")
+			} else {
+				obsCov = matrix(NA_real_, nrow = length(manifests), ncol = length(manifests), dimnames = list(manifests, manifests))
+			}
+		}
+		if (is.null(obsMeans)) {
+			numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
+			if (ncol(numericData) > 0) {
+				obsMeans = colMeans(numericData, na.rm = TRUE)
+			} else {
+				obsMeans = rep(0, length(manifests))
+				names(obsMeans) = manifests
+			}
+		}
 	} else {
 		obsCov = model$data$observed
 		obsMeans = model$data$means
 	}
-	obsCov = obsCov[manifests, manifests, drop = FALSE]
+	
 	if (!is.null(obsMeans)) {
+		if (is.matrix(obsMeans) || is.array(obsMeans)) {
+			colNames = colnames(obsMeans)
+			obsMeans = as.vector(obsMeans)
+			names(obsMeans) = colNames
+		}
 		obsMeans = obsMeans[manifests]
 	}
+	obsCov = obsCov[manifests, manifests, drop = FALSE]
 	
 	sVec = rep(0, nrow(asymCov))
 	rowNames = rownames(asymCov)
@@ -635,6 +718,14 @@ xmu_robust_WLS_fit <- function(model) {
 			sVec[i] = obsMeans[varName]
 		} else if (name %in% manifests) {
 			sVec[i] = obsMeans[name]
+		} else if (grepl("t[0-9]+$", name)) {
+			varName = sub("t[0-9]+$", "", name)
+			threshNum = as.numeric(sub("^.*t", "", name))
+			if (!is.null(obsThresholds) && varName %in% colnames(obsThresholds)) {
+				sVec[i] = obsThresholds[threshNum, varName]
+			} else {
+				sVec[i] = NA_real_
+			}
 		} else {
 			parts = strsplit(name, "[ _]")[[1]]
 			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
@@ -650,8 +741,9 @@ xmu_robust_WLS_fit <- function(model) {
 	for (i in 1:length(rowNames)) {
 		name = rowNames[i]
 		isMean = grepl("^mean_", name) || grepl("^one_to_", name) || (name %in% manifests)
+		isThresh = grepl("t[0-9]+$", name)
 		isVar = FALSE
-		if (!isMean) {
+		if (!isMean && !isThresh) {
 			parts = strsplit(name, "[ _]")[[1]]
 			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
 			if (length(parts) == 2 && parts[1] == parts[2]) {
@@ -660,7 +752,7 @@ xmu_robust_WLS_fit <- function(model) {
 				isVar = TRUE
 			}
 		}
-		if (isMean || isVar) {
+		if (isMean || isVar || isThresh) {
 			dInd[i] = 0
 		}
 	}
@@ -672,6 +764,13 @@ xmu_robust_WLS_fit <- function(model) {
 	numCovs = (numManifests * (numManifests + 1)) / 2
 	
 	alignJacobian <- function(jacMat, asymCovMat, numCovsVal) {
+		if (nrow(jacMat) == nrow(asymCovMat)) {
+			alignedJac = jacMat
+			if (is.null(rownames(alignedJac))) {
+				rownames(alignedJac) = rownames(asymCovMat)
+			}
+			return(alignedJac)
+		}
 		numMeans = nrow(jacMat) - numCovsVal
 		if (numMeans > 0) {
 			meanIdx = (numCovsVal + 1):nrow(jacMat)
@@ -685,10 +784,33 @@ xmu_robust_WLS_fit <- function(model) {
 	}
 	
 	jacTargetAligned = alignJacobian(jacTarget, asymCov, numCovs)
-	jacTargetAligned = jacTargetAligned[rownames(asymCov), , drop = FALSE]
+	if (!is.null(rownames(asymCov))) {
+		targetNames = rownames(jacTargetAligned)
+		asymNames = rownames(asymCov)
+		if (!is.null(targetNames)) {
+			cleanTargetNames = gsub("^(Cov|Mean):", "", targetNames)
+			cleanAsymNames = gsub("^(Cov|Mean):", "", asymNames)
+			cleanTargetNames = gsub("^(cov|mean)_", "", cleanTargetNames)
+			cleanAsymNames = gsub("^(cov|mean)_", "", cleanAsymNames)
+			cleanTargetNames = gsub("[._:]", " ", cleanTargetNames)
+			cleanAsymNames = gsub("[._:]", " ", cleanAsymNames)
+			
+			idx = match(cleanAsymNames, cleanTargetNames)
+			if (!any(is.na(idx)) && length(idx) == nrow(jacTargetAligned)) {
+				jacTargetAligned = jacTargetAligned[idx, , drop = FALSE]
+				rownames(jacTargetAligned) = rownames(asymCov)
+			} else {
+				rownames(jacTargetAligned) = rownames(asymCov)
+			}
+		} else {
+			rownames(jacTargetAligned) = rownames(asymCov)
+		}
+	}
 	
 	jacIndAligned = jacInd
-	rownames(jacIndAligned) = rownames(asymCov)
+	if (!is.null(rownames(asymCov))) {
+		rownames(jacIndAligned) = rownames(asymCov)
+	}
 	
 	# Helper to invert matrix robustly
 	invertMatrix <- function(x) {
@@ -706,11 +828,14 @@ xmu_robust_WLS_fit <- function(model) {
 	
 	# Trace helper for single model scaling factor
 	getScalingFactor <- function(jacMat, asymCovMat, weightMatVal, dfVal) {
-		info = t(jacMat) %*% weightMatVal %*% jacMat
-		infoInv = invertMatrix(info)
-		vw = asymCovMat %*% weightMatVal
-		vwDelta = vw %*% jacMat
-		uMat = vw - vwDelta %*% infoInv %*% t(jacMat) %*% weightMatVal
+		if (is.null(dfVal) || is.na(dfVal) || dfVal <= 0) {
+			return(NA_real_)
+		}
+		info     = t(jacMat) %*% weightMatVal %*% jacMat
+		infoInv  = invertMatrix(info)
+		vw       = asymCovMat %*% weightMatVal
+		vwDelta  = vw %*% jacMat
+		uMat     = vw - vwDelta %*% infoInv %*% t(jacMat) %*% weightMatVal
 		traceVal = sum(diag(uMat))
 		scalingFactor = traceVal / dfVal
 		return(scalingFactor)
@@ -720,15 +845,15 @@ xmu_robust_WLS_fit <- function(model) {
 	cInd    = getScalingFactor(jacIndAligned, asymCov, weightMat, dfInd)
 	
 	chisqTargetScaled = chisqTargetRaw / cTarget
-	chisqIndScaled = chisqIndRaw / cInd
+	chisqIndScaled    = chisqIndRaw / cInd
 	
 	# Robust CFI
-	cfiNum = max(chisqTargetScaled - dfTarget, 0)
-	cfiDenom = max(chisqIndScaled - dfInd, cfiNum, 0.0001)
+	cfiNum    = max(chisqTargetScaled - dfTarget, 0)
+	cfiDenom  = max(chisqIndScaled - dfInd, cfiNum, 0.0001)
 	cfiRobust = 1 - (cfiNum / cfiDenom)
 	
 	# Robust TLI
-	tliNum = (chisqTargetScaled - dfTarget) / dfTarget
+	tliNum   = (chisqTargetScaled - dfTarget) / dfTarget
 	tliDenom = (chisqIndScaled - dfInd) / dfInd
 	if (abs(tliDenom) < 1e-5) {
 		tliRobust = NA_real_
@@ -757,4 +882,46 @@ xmu_robust_WLS_fit <- function(model) {
 xmu_has_WLS_jacobian <- function(model) {
     # Returns TRUE if the model was run on GenomicMx and contains the Jacobian
     return(!is.null(model$output$implied_jacobian))
+}
+
+xmu_extract_df <- function(model) {
+	# Extract native engine DF directly from the C++ WLS model output slot (zero cost)
+	dfNative = model$output$chiDoF
+	if (is.null(dfNative) || is.na(dfNative)) {
+		dfNative = summary(model)$degreesOfFreedom
+	}
+	
+	# TODO: this is probably not necessary, as acov appears to be working in OpenMx now
+	# Auto-Resolving Gate: Catch OpenMx acov bug (df <= 0)
+	if (is.null(dfNative) || is.na(dfNative) || dfNative < 0) {
+		if (!is.null(model$data) && identical(model$data$type, "acov")) {
+			
+			acovMat = NULL
+			
+			# 1. Safely probe for the standard acov slot (using S4 @ or list $)
+			if (isS4(model$data) && .hasSlot(model$data, "acov")) {
+				acovMat = model$data@acov
+			} else if (!isS4(model$data) && !is.null(model$data$acov)) {
+				acovMat = model$data$acov
+			}
+			
+			# 2. Safely probe for the nested observedStats$asymCov slot
+			if (is.null(acovMat)) {
+				if (isS4(model$data) && .hasSlot(model$data, "observedStats") && !is.null(model$data@observedStats$asymCov)) {
+					acovMat = model$data@observedStats$asymCov
+				} else if (!isS4(model$data) && !is.null(model$data$observedStats$asymCov)) {
+					acovMat = model$data$observedStats$asymCov
+				}
+			}
+			
+			# 3. Calculate and assert frontend math
+			if (!is.null(acovMat)) {
+				observedStats   = nrow(acovMat)
+				estimatedParams = length(omxGetParameters(model))
+				return(observedStats - estimatedParams)
+			}
+		}
+	}
+	
+	return(dfNative)
 }

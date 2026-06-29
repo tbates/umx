@@ -438,12 +438,19 @@ xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
 			b  = mxEvalByName(thisAlg, model)
 			if(dim(b)[1] == 1 && dim(b)[2] == 1){
 				# 1*1 algebra
-				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
-				p  = 2 * pnorm(abs(b/SE), lower.tail = FALSE)
-				SEstring = paste0(round(b, digits), "CI95[", round(b - (1.96 * SE), digits), commaSep, round(b + (1.96 * SE), digits), "]")
-				cat("Algebra", omxQuotes(thisAlg), " = ", SEstring, ". p-value ", umx_APA_pval(p, addComparison = TRUE), "\n", sep = "")
+				SE = tryCatch({
+					mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
+				}, error = function(e) {
+					NA_real_
+				})
+				if (is.na(SE)) {
+					cat("Algebra", omxQuotes(thisAlg), " = ", round(b, digits), "\n", sep = "")
+				} else {
+					p  = 2 * pnorm(abs(b/SE), lower.tail = FALSE)
+					SEstring = paste0(round(b, digits), "CI95[", round(b - (1.96 * SE), digits), commaSep, round(b + (1.96 * SE), digits), "]")
+					cat("Algebra", omxQuotes(thisAlg), " = ", SEstring, ". p-value ", umx_APA_pval(p, addComparison = TRUE), "\n", sep = "")
+				}
 			}else{
-				SE = mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
 				cat("Algebra", omxQuotes(thisAlg), ":\n", sep = "")
 				umx_print(umx_round(b, 3))
 			}

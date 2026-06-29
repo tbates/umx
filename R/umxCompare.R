@@ -1,12 +1,12 @@
-#' Print a comparison table of one or more [OpenMx::mxModel()]s, formatted nicely.
+#' Print a comparison table of two or more [OpenMx::mxModel()]s, nicely formatted.
 #'
 #' @description
 #' umxCompare compares two or more [OpenMx::mxModel()]s. It has several nice features:
 #' 
-#' 1. It supports direct control of rounding, and reports p-values rounded to APA style.
-#' 2. It reports the table in your preferred format (default is markdown, options include latex).
-#' 3. Table columns are arranged to make for easy comparison for readers.
-#' 4. report = 'inline', will provide an English sentence suitable for a paper.
+#' 1. Direct control of precision via digits=. p-values use APA style.
+#' 2. Report = directs publication to your chosen format: markdown, html, latex.
+#' 3. Columns arranged to make for easy visual comparison.
+#' 4. report = 'inline', includes a summary sentence suitable for your report.
 #' 5. report = "html" opens a web table in your browser to paste into a word processor.
 #' 
 #' 
@@ -17,6 +17,20 @@
 #' We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
 #' Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
 #' Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
+#' 
+#' @details
+#' **Genomic SEM and Massive-N WLS Models**
+#' 
+#' `umxCompare` automatically detects `MxModelGSEM` objects and massive-N (e.g., GSEM WLS models, applying a specialized comparison pipeline to protect against infinite-power artifacts:
+#' 
+#' * **Strict Satorra-Bentler (2010) Corrections**: For nested models, `umxCompare` extracts the implied Jacobians and computes a strict Satorra-Bentler scaled \eqn{\Delta \chi^2} difference test. This ensures \eqn{p}-values remain accurately calibrated when dropping paths in robust WLS frameworks.
+#' * **Pseudo-BIC (\eqn{N=1000} Penalty)**: Standard Information Criteria (AIC/BIC) break down at massive sample sizes (e.g., \eqn{N > 100,000}). AIC's \eqn{2k} penalty lacks sample size adjustment, leading to chronic overfitting, while standard BIC's \eqn{\ln(N)k} penalty dominates the discrepancy function, forcing the selection of overly simplistic models. `umxCompare` substitutes a Pseudo-BIC, capping the sample size penalty at a benchmark of \eqn{N = 1000} to balance parsimony and complexity.
+#' * **Absolute Fit Index Cutoffs**: Conventional absolute fit index cutoffs (e.g., TLI > .95, RMSEA < .06) do not mathematically apply to WLS models estimated from asymptotic covariance matrices. Users should rely on the Satorra-Bentler \eqn{p}-values for nested comparisons and SRMR for absolute fit.
+#'
+#' **Evaluating Fit in WLS/GSEM**
+#' Standard fit index cutoffs (e.g., Hu & Bentler, 1999) were developed for Maximum Likelihood estimation with continuous data and small sample sizes. Applying these strict cutoffs (CFI > .95, RMSEA < .06) to WLS/DWLS models—particularly those estimated from massive-N asymptotic covariance matrices like Genomic SEM—is mathematically invalid. 
+#' 
+#' In these frameworks, the baseline \eqn{\chi^2} is heavily inflated, severely distorting CFI, TLI, and RMSEA. For absolute model fit, users should rely on the Standardized Root Mean Square Residual (**SRMR**), as it operates on the correlation metric and is robust to sample-size inflation. An SRMR value < 0.10 generally indicates acceptable residual structure. For model building, rely on the Satorra-Bentler (2010) scaled \eqn{p}-values for nested comparisons.
 #' 
 #' @param base The base [OpenMx::mxModel()] for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
@@ -113,22 +127,59 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			}
 		}
 
-		# 2. Universal WLS Routing
-		finalTableList = lapply(comparison, function(comp) {
-			xmu_compare_WLS(baseModel = base, comparisonModel = comp)
-		})
-		finalTable = do.call(rbind, finalTableList)
+		# 1. Initialize an empty data frame to hold the master table
+		finalTable = data.frame()
+
+		# 2. Iterate explicitly through each model in the comparison list
+		for (i in seq_along(comparison)) {
 	
+			comp = comparison[[i]]
+	
+			# 3. Generate the table for this specific base vs. comparison pair
+			compTable = xmu_compare_WLS(baseModel = base, comparisonModel = comp)
+	
+			# DIAGNOSTIC: Print the isolated output before it gets smashed into the master table
+			# print(paste("Rows returned by xmu_compare_WLS for comparison", i, ":", nrow(compTable)))
+			# print(compTable)
+	
+			# 4. Bind it to the master table
+			if (nrow(finalTable) == 0) {
+				finalTable = compTable
+			} else {
+				finalTable = rbind(finalTable, compTable)
+			}
+		}
+
+		# TODO match the output as much as possible with what we do for ML (see further down)
+		# names(tablePub) = c("Model", "EP", "\u0394 Fit" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model", "Fit units")
 		if (!silent) {
 			umx_print(finalTable, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
 			units_str = summary(base)$fitUnits
 			if (is.null(units_str) || length(units_str) == 0) {
 				units_str = "r'wr"
 			}
-			cat(paste0("\n*Note*: EP = Estimated parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom; 'Compared to' = Baseline model.\n"))
-			cat("Note: For WLS/DWLS models, conventional fit index cutoffs do not apply. See ?umxCompare for details.\n")
+			actualN = base$data$numObs
+			isGenomic = umx_is_GSEM(base) | (!is.null(actualN) && actualN > 50000)
+			for (comp in comparison) {
+				if (umx_is_GSEM(comp)) {
+					isGenomic = TRUE
+				}
+			}
+
+			cat(paste0("\n*Note*: EP = Estimated Parameters; \u0394 df = Change in degrees of freedom.\n"))
+			cat("  - Chi: Baseline WLS chi-square fit statistic.\n")
+			cat("  - AIC: Akaike Information Criterion (lower is better).\n")
+			cat("  - CFI / delta_CFI: Comparative Fit Index and change in CFI.\n")
+			cat("  - SRMR / delta_SRMR: Standardized Root Mean Square Residual and change in SRMR.\n")
+			if (isGenomic) {
+				cat("  - diffFit: Natively scaled GSEM chi-square difference.\n")
+				cat("\n*Statistical Note*: For GSEM models, evaluate absolute fit using SRMR (< 0.10) and CFI. Evaluate model improvements using change in CFI and change in SRMR (see ?umxCompare for details).\n")
+			} else {
+				cat("  - diffFit: Satorra-Bentler (2010) strict \u0394 \u03C7\u00B2 for nested models.\n")
+				cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not valid. Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using diffFit (Satorra-Bentler (2010) strict \u0394 \u03C7\u00B2). (see ?umxCompare for details).\n")
+			}
 		}
-		return(finalTable)
+		return(invisible(finalTable))
 	} else {
 		# Base is ML. Ensure no comparison models are WLS to prevent reverse-mismatch.
 		for (comp in comparison) {
@@ -220,14 +271,15 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	if(!silent){
 		umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
 		if (anyWLS) {
-			units_val <- unique(tablePub$`Fit units`[!is.na(tablePub$`Fit units`)])
+			units_val = unique(tablePub$`Fit units`[!is.na(tablePub$`Fit units`)])
 			if (length(units_val) == 0) {
-				units_str <- "WLS discrepancy function"
+				units_str = "WLS discrepancy function"
 			} else {
-				units_str <- paste(units_val, collapse = ", ")
+				units_str = paste(units_val, collapse = ", ")
 			}
 			cat(paste0("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n"))
-			cat("Note: For WLS/DWLS models, conventional fit index cutoffs do not apply. See ?umxCompare for details.\n")
+			cat("\n*Statistical Note*: For WLS/GSEM models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not valid. Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
+
 		} else {
 			cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")
 		}
