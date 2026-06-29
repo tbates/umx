@@ -1,11 +1,11 @@
 ## dev
 ## umx 4.90.0
 * Date: 2026-06-26 R 4.6.0
-* NEW: `umxCompare` supports WLS (with notes about interpreting fit indices)
-* NEW: `umxSummary` supports WLS (with notes about interpreting fit indices)
+* IMPROVED: `umxCompare` support for WLS fit (with notes about interpreting fit indices)
+* NEW: `umxCompare` support for SB2010, robust fit measures.
+* IMPROVED: `umxSummary` support for WLS fit  (with notes about interpreting fit indices)
 * NEW: `xmu_make_mxData` has native support for acov (WLS) subsetting and reordering
 * NEW: `xmu_check_needs_means` updated to handle acov datasets gracefully.
-
 
 # Releases
 

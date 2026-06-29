@@ -1,8 +1,6 @@
+# "~/bin/umx/tests/testthat/test_umxCompare_WLS_routing.R"
 library(testthat)
-library(OpenMx)
 library(umx)
-
-context("umxCompare WLS Routing and Homogeneity Constraint tests")
 
 # Generate simple data for all models
 set.seed(123)
@@ -56,36 +54,35 @@ mLegacy2@output$implied_jacobian = NULL
 
 test_that("Engine Mismatch Errors (ML vs WLS) are thrown", {
   # WLS Base vs ML Comparison(s)
-  expect_error(umxCompare(mWls1, list(mMl1)), "Engine Mismatch: Cannot compare a WLS model with an ML model\\.")
-  expect_error(umxCompare(mWls1, list(mWls2, mMl1)), "Engine Mismatch: Cannot compare a WLS model with an ML model\\.")
+  expect_error(umxCompare(mWls1, mMl1), "Engine Mismatch: Cannot compare a WLS model with an ML model")
+  expect_error(umxCompare(mWls1, c(mWls2, mMl1)), "Engine Mismatch: Cannot compare a WLS model with an ML model")
 
   # ML Base vs WLS Comparison(s)
-  expect_error(umxCompare(mMl1, list(mWls1)), "Engine Mismatch: Cannot compare an ML model with a WLS model\\.")
-  expect_error(umxCompare(mMl1, list(mMl2, mWls1)), "Engine Mismatch: Cannot compare an ML model with a WLS model\\.")
+  expect_error(umxCompare(mMl1, mWls1), "Engine Mismatch: Cannot compare an ML model with a WLS model")
+  expect_error(umxCompare(mMl1, c(mMl2, mWls1)), "Engine Mismatch: Cannot compare an ML model with a WLS model")
 })
 
 test_that("Engine Mismatch Errors (Legacy WLS vs GenomicMx WLS) are thrown", {
   # GenomicMx Base vs Legacy WLS Comparison(s)
-  expect_error(umxCompare(mWls1, list(mLegacy1)), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model \\(no Jacobian\\) with a GenomicMx WLS model\\. Both models must use the same engine\\.")
-  expect_error(umxCompare(mWls1, list(mWls2, mLegacy1)), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model \\(no Jacobian\\) with a GenomicMx WLS model\\. Both models must use the same engine\\.")
+  expect_error(umxCompare(mWls1, mLegacy1), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model with a GenomicMx WLS model")
+  expect_error(umxCompare(mWls1, c(mWls2, mLegacy1)), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model with a GenomicMx WLS model")
 
   # Legacy WLS Base vs GenomicMx WLS Comparison(s)
-  expect_error(umxCompare(mLegacy1, list(mWls1)), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model \\(no Jacobian\\) with a GenomicMx WLS model\\. Both models must use the same engine\\.")
-  expect_error(umxCompare(mLegacy1, list(mLegacy2, mWls1)), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model \\(no Jacobian\\) with a GenomicMx WLS model\\. Both models must use the same engine\\.")
+  expect_error(umxCompare(mLegacy1, mWls1), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model with a GenomicMx WLS model")
+  expect_error(umxCompare(mLegacy1, c(mLegacy2, mWls1)), "Engine Mismatch: Cannot compare a legacy OpenMx WLS model with a GenomicMx WLS model")
 })
 
 test_that("Successful multi-model comparison routing works", {
   # All Modern WLS (GenomicMx)
-  expect_message(umxCompare(mWls1, list(mWls2), silent = TRUE), "GenomicMx WLS models detected")
-  modernTable = suppressMessages(umxCompare(mWls1, list(mWls2), silent = TRUE))
+  modernTable = umxCompare(mWls1, mWls2, silent = TRUE)
   expect_s3_class(modernTable, "data.frame")
 
   # All Legacy WLS
-  expect_warning(umxCompare(mLegacy1, list(mLegacy2), silent = TRUE), "Legacy OpenMx WLS engine detected \\(missing Jacobian\\)")
-  legacyTable = suppressWarnings(umxCompare(mLegacy1, list(mLegacy2), silent = TRUE))
+  expect_warning(umxCompare(mLegacy1, mLegacy2, silent = TRUE), "Base model missing cached Jacobian")
+  legacyTable = suppressWarnings(umxCompare(mLegacy1, mLegacy2, silent = TRUE))
   expect_s3_class(legacyTable, "data.frame")
 
   # All ML
-  mlTable = umxCompare(mMl1, list(mMl2), silent = TRUE)
+  mlTable = umxCompare(mMl1, mMl2, silent = TRUE)
   expect_s3_class(mlTable, "data.frame")
 })

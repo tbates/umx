@@ -1,8 +1,6 @@
 library(testthat)
 library(umx)
 
-context("umxGSEM tests")
-
 test_that("umxGSEM fits simple bivariate model and subsets correctly", {
 	# Setup simple bivariate heritability and correlation data
 	traits = c("T1", "T2")
@@ -114,7 +112,7 @@ test_that("umxSummary and umxCompare handle WLS models correctly", {
 	expect_true(xmu_is_wls(fit1))
 	
 	# Verify umxSummary output prints the custom robust WLS note
-	expect_message(umxSummary(fit1), "Applying robust metrics")
+	expect_message(umxSummary(fit1), "Applying SB-2010 robust metrics")
 	
 	# Setup comparison model
 	m2 <- "
@@ -138,9 +136,9 @@ test_that("umxSummary and umxCompare handle WLS models correctly", {
 	# Verify umxCompare prints the custom note about discrepancy fit units and cutoffs
 	compare_output <- capture.output(umxCompare(fit1, fit2))
 	
-	# Verify that WLS specific note is in the output, and not the default -2LL note
-	expect_true(any(grepl("change in fit \\(units: r'wr\\)", compare_output)))
-	expect_true(any(grepl("For WLS/DWLS models, conventional fit index cutoffs do not apply", compare_output)))
+	# Verify that WLS/GSEM specific note is in the output, and not the default -2LL note
+	expect_true(any(grepl("Change in degrees of freedom", compare_output)))
+	expect_true(any(grepl("For GSEM models, evaluate absolute fit using SRMR", compare_output)))
 	expect_false(any(grepl("change in -2 \u00D7 Log-Likelihood", compare_output)))
 })
 

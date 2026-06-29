@@ -468,23 +468,15 @@ fin_stock_target <- function(current=89, fair=140, ticker = "NVDA", capital=.15,
 #' @export
 #'
 #' @examples
-#' # --- Basic Usage ---
 #' rate = fin_CAGR(beginningValue = 100, endingValue = 190, numYears = 7)
 #' print(rate)
 #' 
+#' # --- Example with a Loss ---
+#' fin_CAGR(100, 50, 5) 
+#'
 #' # --- Formatting as Percentage ---
 #' percent = paste0(round(rate * 100, 2), "%")
 #' print(percent)
-#'
-#' # --- Example with a Loss ---
-#' fin_CAGR(100, 50, 5) 
-#' 
-#' \dontrun{
-#' # --- Examples of what will fail ---
-#' fin_CAGR(0, 100, 5)  # Error: Inputs must be positive
-#' fin_CAGR(100, 150, -1) # Error: Inputs must be positive
-#' fin_CAGR("100", 150, 5) # Error: All inputs must be numeric
-#' }
 fin_CAGR <- function(beginningValue, endingValue, numYears, digits=3) {
   # Ensure inputs are numeric
   if (!is.numeric(beginningValue) || !is.numeric(endingValue) || !is.numeric(numYears)) {
