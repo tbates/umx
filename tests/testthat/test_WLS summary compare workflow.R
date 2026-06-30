@@ -17,12 +17,12 @@ test_that("WLS summary and comparison works", {
 		mxData(observed = df, type = "raw"),
 		mxFitFunctionWLS()
 	)
+	mBase = mxRun(mBase, silent = TRUE)
 
 	m1 = umxRAM("WLS_Base", data = mxData(observed = df, type = "raw"),type = "DWLS",
 		umxPath(from = "x", to = "y"),
-		umxPath(with = c("x", "y"))
+		umxPath("x", with = "y")
 	)
-	mBase = mxRun(mBase, silent = TRUE)
 
 	# 3. Fit the Nested WLS Model (Drop the b1 path to 0)
 	mNested = mxModel(mBase, name = "WLS_Nested")
