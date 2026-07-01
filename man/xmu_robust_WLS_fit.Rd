@@ -48,7 +48,7 @@ is the observed summary statistics vector with variances and means explicitly ze
 }
 }
 \seealso{
-\code{\link{umxSummary}}, \code{\link{xmu_build_independence_jacobian}}
+\code{\link{umxSummary}}, \code{xmu_build_independence_jacobian}
 
 Other Model Summary and Comparison:
 \code{\link{umx}},

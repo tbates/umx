@@ -165,8 +165,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	        }
         
 	    } else {
-	        # Legacy catch: Warn the user, leave modelSummary unadjusted
-	        warning("Legacy OpenMx WLS engine detected (missing Jacobian). Fit statistics are unadjusted and unreliable. Install GenomicMx for accurate Satorra-Bentler WLS fit reporting.", call. = FALSE)
+	        # Legacy catch: Warn the user (once per session), leave modelSummary unadjusted
+	        if (is.null(getOption("umx_warned_legacy_wls")) || !getOption("umx_warned_legacy_wls")) {
+	            warning("Legacy OpenMx WLS engine detected (missing Jacobian). Fit statistics are unadjusted and unreliable. Install GenomicMx for accurate Satorra-Bentler WLS fit reporting.", call. = FALSE)
+	            options(umx_warned_legacy_wls = TRUE)
+	        }
 	    }
 	}
 	

@@ -10,8 +10,6 @@ xmu_compare_WLS(baseModel, comparisonModel = NULL)
 \item{baseModel}{a model}
 
 \item{comparisonModel}{a model}
-
-\item{bicPenaltyN}{The penalty-N to apply if a model has an extreme N (Like genomic SEM data) (default NULL)}
 }
 \value{
 \itemize{

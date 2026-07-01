@@ -9,7 +9,6 @@
 #' 
 #' @param baseModel a model
 #' @param comparisonModel a model
-#' @param bicPenaltyN The penalty-N to apply if a model has an extreme N (Like genomic SEM data) (default NULL)
 #' @return - a table
 #' @export
 #' @family Model Summary and Comparison
@@ -18,7 +17,7 @@
 #' @md
 #' @examples
 #' \dontrun{
-#' 
+#' # TODO
 #' }
 xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {  
 	# 1. Evaluate Empirical N and GSEM Status
@@ -28,7 +27,10 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 	# 2. Extract our custom C++ cached Jacobian
 	baseJacobian = baseModel@output$implied_jacobian
 	if(is.null(baseJacobian)) {
-		warning("Base model missing cached Jacobian. Run model with GenomicMx to enable strict Satorra-Bentler 2010 testing.")
+		if (is.null(getOption("umx_warned_legacy_wls")) || !getOption("umx_warned_legacy_wls")) {
+			warning("Base model missing cached Jacobian. Run model with GenomicMx to enable strict Satorra-Bentler 2010 testing.")
+			options(umx_warned_legacy_wls = TRUE)
+		}
 	}
     
 	# 3. Base Model Core Statistics
@@ -565,7 +567,7 @@ xmu_build_independence_jacobian <- function(rowNames, manifests) {
 #'   \item \code{p}: P-value for the scaled target Chi-square
 #' }
 #' 
-#' @seealso \code{\link{umxSummary}}, \code{\link{xmu_build_independence_jacobian}}
+#' @seealso \code{\link{umxSummary}}, \code{xmu_build_independence_jacobian}
 #' @family Model Summary and Comparison
 #' @references - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. Psychometrika, 75(2), 243-269.
 #' @export
