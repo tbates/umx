@@ -59,7 +59,7 @@
 #' @importFrom kableExtra kbl add_footnote column_spec footnote
 #' @importFrom kableExtra kable_classic kable_classic_2 kable_minimal kable_material kable_material_dark kable_paper
 #' @importFrom knitr kable
-#' @importFrom methods as getSlots is slotNames setClass
+#' @importFrom methods as getSlots is slotNames setClass .hasSlot
 #' @importFrom MASS mvrnorm
 #' @importFrom Matrix nearPD
 #' @importFrom MuMIn Weights
@@ -71,11 +71,11 @@
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm reshape
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq predict
 #' @importFrom stats qnorm quantile reformulate residuals rnorm runif sd
-#' @importFrom stats setNames update var delete.response terms model.frame
+#' @importFrom stats setNames update var delete.response terms model.frame fitted
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv read.delim capture.output
-#' @importFrom utils tail
+#' @importFrom utils tail adist download.file
 #' @importFrom xtable xtable
 #' @importFrom zoo index
 # old
@@ -83,9 +83,10 @@
 # #' @importFrom DiagrammeRsvg export_svg
 # #' @importFrom rsvg rsvg_png rsvg_pdf
 
-
-
 utils::globalVariables(c(
+	# data
+	"anthro",
+	
 	"daysToExpiry",
 	"extrinsicValue",
 	"position",

@@ -52,6 +52,9 @@ Imports:
 	xtable,
 	zoo
 Suggests:
+	GenomicSEM,
+	R.utils,
+	data.table,
 	bestNormalize,
 	cocor,
 	devtools,

@@ -79,6 +79,30 @@ xmuGSEM_write_independence_model <- function(S_LD, label1 = "V", label2 = "VF") 
 }
 
 commonfactor <-function(covstruc, estimation="DWLS"){
+	# helper defined elsewhere in GenomicSEM
+	.tryCatch.W.E <- function(expr) {
+	    wList = NULL
+    
+	    wHandler <- function(w) { 
+	        wList <<- w 
+	        invokeRestart("muffleWarning") 
+	    }
+    
+	    list(
+	        value = withCallingHandlers(tryCatch(expr, error = function(e) e), warning = wHandler), 
+	        warning = wList
+	    )
+	}
+	# # TODO 
+	# this would be nicer
+	# # Instead of: suppress = .tryCatch.W.E(sem(Model1, ...))
+	# tryCatch({
+	#     reorderModel = lavaan::sem(Model1, ...)
+	# }, error = function(e) {
+	#     warning("Model failed to converge")
+	#     return(e)
+	# })
+	
 	# "V" "S" "I" "N" "m"
 	time = proc.time()
 
@@ -101,7 +125,7 @@ commonfactor <-function(covstruc, estimation="DWLS"){
 	Model1 = xmuGSEM_write_common_factor(S_LD)
 	cat(Model1)
 	# Create independence model for calculation of CFI
-	modelCFI = write.null(k)
+	modelCFI = GenomicSEM::write.null(k)
 	cat(modelCFI)
 	return()
 	
@@ -137,64 +161,63 @@ commonfactor <-function(covstruc, estimation="DWLS"){
 	Z_diff[which(!is.finite(Z_diff))] = 0
 	Z_diff = max(Z_diff)
 	rm(V_LDb,S_LDb,Z_pre,Z_post)
-  
-  ##run model that specifies the factor structure so that lavaan knows how to rearrange the V (i.e., sampling covariance) matrix
-  #transform V_LD matrix into a diagonal weight matrix: 
-  z = (k*(k+1))/2
-  
-  ##save the ordering
-  order  = (1:nrow(V_LD))
 
-  orderCFI = (1:nrow(V_LD))
-  
-  ##reorder the weight (inverted V_LD) matrix
-  V_Reorder = V_LD[order,order]
-  W_Reorder = diag(z)
-  diag(W_Reorder) = diag(V_Reorder)
-  W_Reorder = solve(W_Reorder)
-  
-  ##reorder matrix for independence (i.e., null) model for CFI calculation
-  V_Reorder2  =  V_LD[orderCFI,orderCFI]
-  W_CFI = diag(z)
-  diag(W_CFI) = diag(V_Reorder2)
-  W_CFI<-solve(W_CFI)
+	##run model that specifies the factor structure so that lavaan knows how to rearrange the V (i.e., sampling covariance) matrix
+	#transform V_LD matrix into a diagonal weight matrix: 
+	z = (k*(k+1))/2
+
+	##save the ordering
+	order  = (1:nrow(V_LD))
+
+	orderCFI = (1:nrow(V_LD))
+
+	##reorder the weight (inverted V_LD) matrix
+	V_Reorder = V_LD[order,order]
+	W_Reorder = diag(z)
+	diag(W_Reorder) = diag(V_Reorder)
+	W_Reorder = solve(W_Reorder)
+
+	##reorder matrix for independence (i.e., null) model for CFI calculation
+	V_Reorder2  =  V_LD[orderCFI,orderCFI]
+	W_CFI = diag(z)
+	diag(W_CFI) = diag(V_Reorder2)
+	W_CFI<-solve(W_CFI)
   
 
     print("Running Model")    
     if(estimation == "DWLS"){
     ##run the model. save failed runs and run model. warning and error functions prevent loop from breaking if there is an error. 
-    empty<-.tryCatch.W.E(Model1_Results <- sem(Model1, sample.cov = S_LD, estimator = "DWLS",se="standard", WLS.V = W_Reorder, sample.nobs = 2, optim.dx.tol = .01))
+    empty<-.tryCatch.W.E(Model1_Results <- lavaan::sem(Model1, sample.cov = S_LD, estimator = "DWLS",se="standard", WLS.V = W_Reorder, sample.nobs = 2, optim.dx.tol = .01))
     }
     
     if(estimation == "ML"){
-      empty<-.tryCatch.W.E(Model1_Results <- sem(Model1, sample.cov = S_LD, estimator = "ML", sample.nobs = 200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
+      empty<-.tryCatch.W.E(Model1_Results <- lavaan::sem(Model1, sample.cov = S_LD, estimator = "ML", sample.nobs = 200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
     }
    
     empty$warning$message[1]<-ifelse(is.null(empty$warning$message), empty$warning$message[1]<-0, empty$warning$message[1])
     
     if(class(empty$value)[1] == "simpleError" | grepl("solution has NOT",  as.character(empty$warning)) == TRUE){
-      print("The common factor initially failed to converge. A lower bound of 0 on residual variances has been added to try and troubleshoot this.")
-      
-      #create unique combination of letters for residual variance parameter labels
-      n<-combn(letters,4)[,sample(1:14000, k, replace=FALSE)]
-      
-      Model3<-""
-      for (p in 1:k) {
-        linestart3a <- paste(colnames(S_LD)[p], " ~~ ",  paste(n[,p],collapse=""), "*", colnames(S_LD)[p], sep = "")
-        linestart3b <- paste(paste(n[,p],collapse=""), " > .0001", sep = "")
-        Model3<-paste(Model3, linestart3a, " \n ", linestart3b, " \n ", sep = "")}
-      
-      Model1<-paste(Model1,Model3)
-      
-      if(estimation == "DWLS"){
-      empty<-.tryCatch.W.E(Model1_Results <- sem(Model1, sample.cov = S_LD, estimator = "DWLS",se="standard", WLS.V = W_Reorder, sample.nobs = 2, optim.dx.tol = .01))
-      }
-      
-      if(estimation == "ML"){
-        empty<-.tryCatch.W.E(Model1_Results <- sem(Model1, sample.cov = S_LD, estimator = "ML", sample.nobs = 200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
-      }
-      
-    }else{}
+		print("The common factor initially failed to converge. A lower bound of 0 on residual variances has been added to try and troubleshoot this.")
+	  	# create unique combination of letters for residual variance parameter labels
+	  	n<-combn(letters,4)[,sample(1:14000, k, replace=FALSE)]
+	  	Model3<-""
+		for (p in 1:k) {
+			linestart3a <- paste(colnames(S_LD)[p], " ~~ ",  paste(n[,p],collapse=""), "*", colnames(S_LD)[p], sep = "")
+			linestart3b <- paste(paste(n[,p],collapse=""), " > .0001", sep = "")
+			Model3<-paste(Model3, linestart3a, " \n ", linestart3b, " \n ", sep = "")
+		}
+		Model1<-paste(Model1,Model3)
+
+		if(estimation == "DWLS"){
+			empty<-.tryCatch.W.E(Model1_Results <- lavaan::sem(Model1, sample.cov = S_LD, estimator = "DWLS",se="standard", WLS.V = W_Reorder, sample.nobs = 2, optim.dx.tol = .01))
+		}
+
+		if(estimation == "ML"){
+			empty<-.tryCatch.W.E(Model1_Results <- lavaan::sem(Model1, sample.cov = S_LD, estimator = "ML", sample.nobs = 200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
+		}
+	} else {
+	
+	}
     
     if(class(empty$value)[1] == "simpleError"){
       print("The common factor model failed to converge on a solution. Please try specifying an alternative model using the usermodel function.")
@@ -241,11 +264,11 @@ commonfactor <-function(covstruc, estimation="DWLS"){
     print("Calculating CFI")
     ##run independence model
     if(estimation == "DWLS"){
-      testCFI<-.tryCatch.W.E(fitCFI <- sem(modelCFI, sample.cov =  S_LD, estimator = "DWLS",se="standard", WLS.V = W_CFI, sample.nobs=2, optim.dx.tol = .01))
+      testCFI<-.tryCatch.W.E(fitCFI <- lavaan::sem(modelCFI, sample.cov =  S_LD, estimator = "DWLS",se="standard", WLS.V = W_CFI, sample.nobs=2, optim.dx.tol = .01))
     }
     
     if(estimation == "ML"){
-      testCFI<-.tryCatch.W.E(fitCFI <- sem(modelCFI, sample.cov =  S_LD, estimator = "ML",sample.nobs=200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
+      testCFI<-.tryCatch.W.E(fitCFI <- lavaan::sem(modelCFI, sample.cov =  S_LD, estimator = "ML",sample.nobs=200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
     }
     testCFI$warning$message[1]<-ifelse(is.null(testCFI$warning$message), testCFI$warning$message[1]<-"Safe", testCFI$warning$message[1])
     testCFI$warning$message[1]<-ifelse(is.na(inspect(fitCFI, "se")$theta[1,2]) == TRUE, testCFI$warning$message[1]<-"lavaan WARNING: model has NOT converged!", testCFI$warning$message[1])
@@ -262,11 +285,11 @@ commonfactor <-function(covstruc, estimation="DWLS"){
       ModelQ_CFI$ustart <- ModelQ_CFI$est
       
       if(estimation == "DWLS"){
-        testCFI2<-.tryCatch.W.E(ModelQ_Results_CFI <- sem(model = ModelQ_CFI, sample.cov = S_LD,se="standard", estimator = "DWLS", WLS.V = W_CFI, sample.nobs=2, optim.dx.tol = .01))
+        testCFI2<-.tryCatch.W.E(ModelQ_Results_CFI <- lavaan::sem(model = ModelQ_CFI, sample.cov = S_LD,se="standard", estimator = "DWLS", WLS.V = W_CFI, sample.nobs=2, optim.dx.tol = .01))
       }
       
       if(estimation == "ML"){
-        testCFI2<-.tryCatch.W.E(ModelQ_Results_CFI <- sem(model = ModelQ_CFI, sample.cov = S_LD, estimator = "ML", sample.nobs=200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
+        testCFI2<-.tryCatch.W.E(ModelQ_Results_CFI <- lavaan::sem(model = ModelQ_CFI, sample.cov = S_LD, estimator = "ML", sample.nobs=200, optim.dx.tol = .01,sample.cov.rescale=FALSE))
       }
       
       testCFI2$warning$message[1]<-ifelse(is.null(testCFI2$warning$message), testCFI2$warning$message[1]<-"Safe", testCFI2$warning$message[1])
@@ -349,53 +372,53 @@ commonfactor <-function(covstruc, estimation="DWLS"){
     W_stand<-solve(V_stand2[order,order])
     
     if(estimation == "DWLS"){
-        emptystand<-.tryCatch.W.E(Fit_stand <- sem(Model1, sample.cov = S_Stand, estimator = "DWLS",se="standard", WLS.V = W_stand, sample.nobs = 2, optim.dx.tol = .01)) 
+        emptystand<-.tryCatch.W.E(Fit_stand <- lavaan::sem(Model1, sample.cov = S_Stand, estimator = "DWLS",se="standard", WLS.V = W_stand, sample.nobs = 2, optim.dx.tol = .01)) 
     }
     
     if(estimation == "ML"){
-        emptystand<-.tryCatch.W.E(Fit_stand <- sem(Model1, sample.cov = S_Stand, estimator = "ML",  sample.nobs = 200, optim.dx.tol = .01,sample.cov.rescale=FALSE)) 
+        emptystand<-.tryCatch.W.E(Fit_stand <- lavaan::sem(Model1, sample.cov = S_Stand, estimator = "ML",  sample.nobs = 200, optim.dx.tol = .01,sample.cov.rescale=FALSE)) 
     }
     
-    ##perform same procedures for sandwich correction as in the unstandardized case
-    delt_stand <- lavInspect(Fit_stand, "delta") 
-    W_stand <- lavInspect(Fit_stand, "WLS.V") 
-    bread_stand <- solve(t(delt_stand)%*%W_stand %*%delt_stand)
+    # perform same procedures for sandwich correction as in the unstandardized case
+    delt_stand    <- lavInspect(Fit_stand, "delta") 
+    W_stand       <- lavInspect(Fit_stand, "WLS.V") 
+    bread_stand   <- solve(t(delt_stand)%*%W_stand %*%delt_stand)
     lettuce_stand <- W_stand%*%delt_stand
-    Vcov_stand<-as.matrix(V_stand[order,order])
-    Ohtt_stand <- bread_stand %*% t(lettuce_stand)%*%Vcov_stand%*%lettuce_stand%*%bread_stand
-    SE_stand <- as.matrix(sqrt(diag(Ohtt_stand)))
+    Vcov_stand    <- as.matrix(V_stand[order,order])
+    Ohtt_stand    <- bread_stand %*% t(lettuce_stand)%*%Vcov_stand%*%lettuce_stand%*%bread_stand
+    SE_stand      <- as.matrix(sqrt(diag(Ohtt_stand)))
     
-    unstand<-data.frame(inspect(Model1_Results, "list")[,c(2:4,8,14)])
-    unstand<-subset(unstand, unstand$free != 0)                    
-    unstand$free<-NULL
+    unstand       <- data.frame(inspect(Model1_Results, "list")[,c(2:4,8,14)])
+    unstand       <- subset(unstand, unstand$free != 0)                    
+    unstand$free  <- NULL
     
-    stand<-data.frame(inspect(Fit_stand,"list")[,c(8,14)])
-    stand<-subset(stand, stand$free != 0)
-    stand$free<-NULL
+    stand         <- data.frame(inspect(Fit_stand,"list")[,c(8,14)])
+    stand         <- subset(stand, stand$free != 0)
+    stand$free    <- NULL
 
-    chisq<-Q
-    df<-lavInspect(Model1_Results, "fit")["df"]
-    AIC<-(Q + 2*lavInspect(Model1_Results, "fit")["npar"])
-    SRMR<-lavInspect(Model1_Results, "fit")["srmr"]
+    chisq    <- Q
+    df       <- lavInspect(Model1_Results, "fit")["df"]
+    AIC      <- (Q + 2*lavInspect(Model1_Results, "fit")["npar"])
+    SRMR     <- lavInspect(Model1_Results, "fit")["srmr"]
     
-    modelfit<-cbind(chisq,df,AIC,CFI,SRMR)
-    results<-cbind(unstand,SE,stand,SE_stand)
+    modelfit <- cbind(chisq,df,AIC,CFI,SRMR)
+    results  <- cbind(unstand,SE,stand,SE_stand)
     
   ##name the columns of the results file
   colnames(results)=c("lhs","op","rhs","Unstandardized_Estimate","Unstandardized_SE","Standardized_Est","Standardized_SE")
   
   ##name model fit columns
   colnames(modelfit)=c("chisq","df","AIC","CFI","SRMR")
-  modelfit<-data.frame(modelfit)
-  modelfit$p_chisq<-ifelse(modelfit$chisq != 'NA', modelfit$p_chisq<-pchisq(modelfit$chisq, modelfit$df,lower.tail=FALSE), modelfit$p_chisq<-NA)
-  modelfit$chisq<-ifelse(modelfit$df == 0, modelfit$chisq == NA, modelfit$chisq)  
-  modelfit$AIC<-ifelse(modelfit$df == 0, modelfit$AIC == NA, modelfit$AIC)  
-  modelfit$p_chisq<-ifelse(modelfit$df == 0, modelfit$p_chisq == NA, modelfit$p_chisq)  
+  modelfit         <- data.frame(modelfit)
+  modelfit$p_chisq <- ifelse(modelfit$chisq != 'NA', modelfit$p_chisq<-pchisq(modelfit$chisq, modelfit$df,lower.tail=FALSE), modelfit$p_chisq<-NA)
+  modelfit$chisq   <- ifelse(modelfit$df == 0, modelfit$chisq == NA, modelfit$chisq)  
+  modelfit$AIC     <- ifelse(modelfit$df == 0, modelfit$AIC == NA, modelfit$AIC)  
+  modelfit$p_chisq <- ifelse(modelfit$df == 0, modelfit$p_chisq == NA, modelfit$p_chisq)  
   
-  order<-c(1,2,6,3,4,5)
-  modelfit<-modelfit[,order]
+  order    <- c(1,2,6,3,4,5)
+  modelfit <- modelfit[,order]
   
-  time_all<-proc.time()-time
+  time_all <- proc.time()-time
   print(time_all[3])
   
   
