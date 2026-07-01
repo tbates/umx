@@ -26,6 +26,7 @@ mWlsNested = mxModel("WLS_Nested", type="RAM",
 mWlsNested = mxRun(mWlsNested, silent = TRUE)
 
 test_that("Universal Routing works (Modern models with Jacobians)", {
+  skip_if_not(!is.null(mWlsBase@output$implied_jacobian), "Current OpenMx engine does not support WLS Jacobians (Legacy OpenMx)")
   res = xmu_compare_WLS(mWlsBase, mWlsNested)
   
   expect_s3_class(res, "data.frame")
@@ -74,6 +75,7 @@ test_that("Graceful Degradation works (Legacy WLS models missing Jacobians)", {
 })
 
 test_that("Standard AIC calculation works and Pseudo_BIC is purged", {
+  skip_if_not(!is.null(mWlsBase@output$implied_jacobian), "Current OpenMx engine does not support WLS Jacobians (Legacy OpenMx)")
   res = xmu_compare_WLS(mWlsBase, mWlsNested)
   
   # Verify that Pseudo_BIC column does not exist
