@@ -375,3 +375,63 @@ NULL
 NULL
 
 
+# ==========================================================
+# = Holzinger and Swineford (1939) WLS Ordinal Dataset    =
+# ==========================================================
+#' Holzinger and Swineford (1939) partitioned into ordered factors for WLS teaching.
+#'
+#' A dataset containing cognitive test scores `x1` to `x9` for 301 students from two schools. 
+#' This is a modified version of the classic [lavaan::HolzingerSwineford1939] dataset, 
+#' where the variables `x1` to `x9` have been converted into ordered factors (2, 3, or 4 categories) 
+#' using quantile-based cuts. It is designed for demonstrating and teaching Weighted Least Squares (WLS) 
+#' estimation with ordinal data.
+#'
+#' @details
+#' The variables are:
+#' * `id`: Student ID
+#' * `sex`: Gender (1 = male, 2 = female)
+#' * `ageyr`: Age in years
+#' * `agemo`: Age in months
+#' * `school`: School (Grant-White or Pasteur)
+#' * `grade`: Grade (7 or 8)
+#' * `x1`: Visual perception (2-category ordered factor)
+#' * `x2`: Cubes (2-category ordered factor)
+#' * `x3`: Lozenges (2-category ordered factor)
+#' * `x4`: Paragraph comprehension (3-category ordered factor)
+#' * `x5`: Sentence completion (3-category ordered factor)
+#' * `x6`: Word meaning (3-category ordered factor)
+#' * `x7`: Speeded addition (4-category ordered factor)
+#' * `x8`: Code (4-category ordered factor)
+#' * `x9`: Speeded counting of dots (4-category ordered factor)
+#'
+#' @docType data
+#' @keywords datasets
+#' @family datasets
+#' @name HSwls
+#' @usage data(HSwls)
+#' @format A data frame with 301 rows and 15 variables.
+#' @seealso [umxRAM()]
+#' @references Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. 
+#' *Supplementary Educational Monographs*, no. 48. Chicago: University of Chicago Press.
+#' @md
+#' @examples
+#' \dontrun{
+#' data(HSwls)
+#' # x1:x3 represent visual perception
+#' # x4:x6 represent verbal ability
+#' # x7:x9 represent speed
+#' m1 = umxRAM("WLS_HS", data = HSwls, type = "WLS",
+#'   umxPath(latent = c("visual", "verbal", "speed")),
+#'   umxPath("visual", to = c("x1", "x2", "x3")),
+#'   umxPath("verbal", to = c("x4", "x5", "x6")),
+#'   umxPath("speed", to = c("x7", "x8", "x9")),
+#'   umxPath(v.m. = c("visual", "verbal", "speed")),
+#'   umxPath(v.m. = c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9"))
+#' )
+#' m1 = mxRun(m1)
+#' umxSummary(m1)
+#' }
+NULL
+
+
+

@@ -63,6 +63,7 @@ Other datasets:
 \code{\link{Anthro_LDSC}},
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
+\code{\link{HSwls}},
 \code{\link{Psych_LDSC}},
 \code{\link{docData}},
 \code{\link{iqdat}},

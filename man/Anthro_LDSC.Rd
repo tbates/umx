@@ -34,6 +34,7 @@ str(Anthro_LDSC)
 Other datasets:
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
+\code{\link{HSwls}},
 \code{\link{Psych_LDSC}},
 \code{\link{docData}},
 \code{\link{iqdat}},
