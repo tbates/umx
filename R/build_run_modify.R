@@ -2934,6 +2934,37 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 	model$expectation$thresholds = "threshMat"
 	
 	model = mxModel(model, umxThresholdMatrix(model$data$observed, fullVarNames = model$manifestVars, verbose = verbose))
+	
+	# Verify that ordinal means and variances are free
+	if (!is.null(model$data) && !is.null(model$data$observed)) {
+		obsData = model$data$observed
+		manifests = model$manifestVars
+		
+		# Identify manifest variables that are ordered factors with >2 levels (ordinal)
+		isFactor = sapply(obsData[, manifests, drop = FALSE], is.factor)
+		factorVars = manifests[isFactor]
+		ordVars = factorVars[sapply(obsData[, factorVars, drop = FALSE], nlevels) > 2]
+		
+		if (length(ordVars) > 0) {
+			# 1. Check means in the M matrix
+			if (!is.null(model$M)) {
+				for (v in ordVars) {
+					if (!model$M$free[1, v]) {
+						warning("Mean of latent ordinal trait '", v, "' is fixed! For models with ordinal manifests, it is essential that you leave this FREE.")
+					}
+				}
+			}
+			# 2. Check variances in the S matrix
+			if (!is.null(model$S)) {
+				for (v in ordVars) {
+					if (!model$S$free[v, v]) {
+						warning("Variance of latent ordinal trait '", v, "' is fixed! For models with ordinal manifests, it is essential that you leave this FREE.")
+					}
+				}
+			}
+		}
+	}
+	
 	return(model)
 }
 

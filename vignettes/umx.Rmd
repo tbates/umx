@@ -1,0 +1,146 @@
+---
+title: "Getting Started with umx"
+subtitle: "Your first structural equation model using umxRAM() and umxSummary()"
+author: "Timothy C. Bates"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Getting Started with umx}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 5
+)
+library(umx)
+```
+
+## Introduction
+
+`umx` is a package that makes building, running, and reporting Structural Equation Models (SEM) fast and readable in R.
+
+This vignette shows a new user how to:
+
+1. Load classic data (Holzinger & Swineford, 1939)
+2. Build a simple one-factor model using `umxRAM()`
+3. View and interpret results using `umxSummary()`
+
+## The Holzinger and Swineford (1939) data
+
+This well-known dataset contains scores on nine cognitive tests for 301 school children. The variables `x1` to `x9` measure different aspects of cognitive ability.
+
+Because `umx` imports `lavaan`, the data is easy to load:
+
+```{r load-data}
+# Load the classic Holzinger & Swineford data (x1:x9)
+data("HolzingerSwineford1939", package = "lavaan")
+
+# Define the manifest (observed) variables
+manifests <- paste0("x", 1:9)
+
+# Quick look at the correlations
+round(cor(HolzingerSwineford1939[, manifests]), 2)
+```
+
+## Build a one-factor model with `umxRAM()`
+
+`umxRAM()` lets you describe models using simple `umxPath()` statements. Any variable name not in the data is treated as a latent variable.
+
+Here we build a model in which a single latent factor `G` (general ability) accounts for the covariances among x1 to x9.
+
+```{r build-model, results = "hide", message = FALSE}
+m1 <- umxRAM("Holzinger_1f", 
+  data = HolzingerSwineford1939,
+  
+  # Factor loadings (G predicts each x)
+  umxPath("G", to = manifests),
+  
+  # Residual variances for the observed variables
+  umxPath(var = manifests),
+  
+  # Fix the latent factor variance to 1 (for identification)
+  umxPath(var = "G", fixedAt = 1)
+)
+```
+
+That's it — `umxRAM()` automatically:
+
+- Detects manifests vs latents
+- Adds starting values
+- Runs the model
+- Produces an initial summary
+
+## View results with `umxSummary()`
+
+`umxSummary()` gives clean, publication-ready output.
+
+```{r summary-basic}
+umxSummary(m1)
+```
+
+### Standardized solution
+
+Add `std = TRUE` to see standardized estimates (very useful for interpretation):
+
+```{r summary-std}
+umxSummary(m1, std = TRUE)
+```
+
+The output includes:
+
+- A table of standardized loadings, variances, and means
+- Model fit information ($\chi^2$, CFI, TLI, RMSEA)
+- Helpful warnings when fit is poor
+
+> Note: A single-factor model is a poor fit to these data (as expected — the data were designed to measure three correlated abilities). This is intentional for demonstration: you can immediately see how `umxSummary()` highlights areas for model improvement.
+
+## Alternative: lavaan-style syntax
+
+`umxRAM()` also accepts lavaan model syntax directly:
+
+```{r lavaan-string, results = "hide", message = FALSE}
+m2 <- umxRAM("G =~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9", 
+             data = HolzingerSwineford1939)
+```
+
+```{r lavaan-summary}
+umxSummary(m2, std = TRUE)
+```
+
+This is handy when you already have a lavaan model string.
+
+## Plotting the model
+
+`umxRAM()` automatically plots the model when you run it interactively. You can also plot manually:
+
+```{r plot, fig.cap="Standardized one-factor Holzinger model"}
+plot(m1, std = TRUE)
+```
+
+## Next steps
+
+- Learn more about path specification: `?umxPath`
+- See all the options for `umxRAM()`: `?umxRAM`
+- Control output format: `?umxSummary`
+- Compare models: `?umxCompare`
+- For twin models see the twin modeling functions (`umxACE()`, etc.)
+
+Welcome to `umx`!
+
+## References
+
+Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. *Supplementary Educational Monographs*, 48. University of Chicago Press.
+```
+
+The content is written.
+
+I should also update DESCRIPTION to declare the VignetteBuilder.
+
+This is necessary for the vignette to be recognized.

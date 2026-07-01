@@ -74,4 +74,5 @@ Enhances:
 	rsvg
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
+VignetteBuilder: knitr
 RoxygenNote: 8.0.0
