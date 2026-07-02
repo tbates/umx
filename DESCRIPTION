@@ -74,4 +74,5 @@ Enhances:
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
 VignetteBuilder: knitr
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
