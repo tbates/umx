@@ -52,23 +52,22 @@ Imports:
 	xtable,
 	zoo
 Suggests:
-	GenomicSEM,
+	devtools,
+	pak,
+	spelling,
+	testthat,
+	withr,
 	R.utils,
 	data.table,
 	bestNormalize,
 	cocor,
-	devtools,
 	GPArotation,
-	pak,
 	parallel,
 	psychTools,
 	psych,
 	pwr,
 	rmarkdown,
-	rhub,
-	spelling,
-	testthat,
-	withr
+	rhub
 Enhances:
 	DiagrammeRsvg,
 	rsvg

@@ -323,7 +323,8 @@ lav1  = cfa(model, data = dat, ordered = names(dat), estimator = "WLSMV")
 # 2. Model in umxRAM
 # todo: Note if not clear: Data can be raw, or mxData()
 # todo: implement m.v. as a synonym for v.m.?
-m1 = umxRAM("WLS_umx", data = dat, type = "WLS", allContinuousMethod = "cumulants",   # or "marginals"
+m1 = umxRAM("WLS_umx", data = dat, type = "WLS", allContinuousMethod = "cumulants",
+ # or "marginals"
 	umxPath("f", to = c("x1", "x2", "x3", "x4") ),
 	umxPath(v.m. = "f"),
 	umxPath(v.m. = c("x1", "x2", "x3", "x4"))
@@ -338,7 +339,7 @@ m1 = umxRAM("what does unique pairs do, I wonder", data = c("A", "B", "C"),
    umxPath(unique.pairs = c("A", "B", "C"))
 )
 
-m1 = umxRAM("ring around the rosey", data = c("B", "C"),
+m1 = umxRAM("ring around the roses", data = c("B", "C"),
   umxPath(fromEach = c("A", "B", "C"))
 )
 
