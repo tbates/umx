@@ -82,7 +82,7 @@
 #' @return - EFA [OpenMx::mxModel()]
 #' @family Super-easy helpers
 #' @export
-#' @md
+
 #' @seealso - [factanal()], [OpenMx::mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>,
 #' 
@@ -285,7 +285,7 @@ umxFactanal <- umxEFA
 #' @family Reporting Functions
 #' @seealso - [OpenMx::mxFactorScores()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 2)
@@ -357,7 +357,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to 
 #' Assess Causality Using Observational Data. *Journal of the American Society of Nephrology*, **27**), 3253-3265. \doi{10.1681/ASN.2016010098}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # ====================================

@@ -61,7 +61,7 @@ xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
 }
 \seealso{
 \itemize{
-\item \code{\link[OpenMx:mxFitFunctionWLS]{OpenMx::mxFitFunctionWLS()}}, \code{\link[OpenMx:omxAugmentDataWithWLSSummary]{OpenMx::omxAugmentDataWithWLSSummary()}}
+\item \code{\link[OpenMx:mxFitFunctionWLS]{OpenMx::mxFitFunctionWLS()}}, See OpenMx internals for \code{omxAugmentDataWithWLSSummary} (used in WLS).
 }
 
 Other xmu internal not for end user:

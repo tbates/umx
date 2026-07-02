@@ -12,7 +12,9 @@ xmu_set_sep_from_suffix(sep, suffix)
 \item{suffix}{The suffix, defaults to 'deprecated'.}
 }
 \value{
-- sep
+\itemize{
+\item sep
+}
 }
 \description{
 Returns either suffix or sep, with a deprecation warning if suffix is set.

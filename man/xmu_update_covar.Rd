@@ -7,7 +7,7 @@
 xmu_update_covar(data, covar, pheno, sep = "_T")
 }
 \arguments{
-\item{data}{A [data.frame()] to convert}
+\item{data}{A \code{\link[=data.frame]{data.frame()}} to convert}
 
 \item{covar}{The covariates.}
 
@@ -16,7 +16,9 @@ xmu_update_covar(data, covar, pheno, sep = "_T")
 \item{sep}{The separator used in the column names (default = "_T")}
 }
 \value{
-- dataframe with updated covariates and phenotypes
+\itemize{
+\item dataframe with updated covariates and phenotypes
+}
 }
 \description{
 Takes a dataframe with twin data and updates the covariates to 99999 if missing and the corresponding

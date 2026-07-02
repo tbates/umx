@@ -14,7 +14,9 @@ prolific_check_ID(IDs, df, IDcol = "PROLIFIC_PID")
 \item{IDcol}{Name of prolific ID column (default PROLIFIC_PID)}
 }
 \value{
-- list of IDs in the dataframe
+\itemize{
+\item list of IDs in the dataframe
+}
 }
 \description{
 Participants may time-out on Prolific, but still complete on Qualtrics. This identifies them.
@@ -24,7 +26,9 @@ Participants may time-out on Prolific, but still complete on Qualtrics. This ide
 # prolific_check_ID(IDs, df)
 }
 \seealso{
-- [prolific_read_demog()], [prolific_anonymize()], [umx_merge_randomized_columns()] # [prolific_check_ID()]
+\itemize{
+\item \code{\link[=prolific_read_demog]{prolific_read_demog()}}, \code{\link[=prolific_anonymize]{prolific_anonymize()}}, \code{\link[=umx_merge_randomized_columns]{umx_merge_randomized_columns()}} # \code{\link[=prolific_check_ID]{prolific_check_ID()}}
+}
 
 Other Data Functions:
 \code{\link[=noNAs]{noNAs()}},

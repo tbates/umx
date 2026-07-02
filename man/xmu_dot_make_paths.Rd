@@ -33,7 +33,9 @@ xmu_dot_make_paths(
 \item{digits}{how many digits to report}
 }
 \value{
-- string
+\itemize{
+\item string
+}
 }
 \description{
 Makes graphviz paths

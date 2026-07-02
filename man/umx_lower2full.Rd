@@ -7,7 +7,7 @@
 umx_lower2full(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL)
 }
 \arguments{
-\item{lower.data}{An [OpenMx::mxMatrix()]}
+\item{lower.data}{An \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}}}
 
 \item{diag}{A boolean specifying whether the lower.data includes the diagonal}
 
@@ -16,15 +16,17 @@ umx_lower2full(lower.data, diag = NULL, byrow = TRUE, dimnames = NULL)
 \item{dimnames}{Optional dimnames for the matrix (defaults to NULL)}
 }
 \value{
-- [OpenMx::mxMatrix()]
+\itemize{
+\item \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}}
+}
 }
 \description{
 Takes a vector of the lower-triangle of cells in a matrix as you might read-in
-from a journal article), OR a matrix (for instance from a "lower" [OpenMx::mxMatrix()], 
+from a journal article), OR a matrix (for instance from a "lower" \code{\link[OpenMx:mxMatrix]{OpenMx::mxMatrix()}},
 and returns a full matrix, copying the lower triangle into the upper.
 }
 \details{
-*note*: Can also take lower data presented in the form of a data.frame. Note also, if 
+\emph{note}: Can also take lower data presented in the form of a data.frame. Note also, if
 presented with a full matrix, the function will return a matrix with  symmetry enforced. Can be
 handy when you have a "nearly-symmetrical" matrix (with differences in the tenth decimal place).
 }
@@ -96,7 +98,9 @@ umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
 
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Data Functions:

@@ -12,10 +12,12 @@ umx_set_dollar_symbol(umx.dollar.symbol = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx.dollar.symbol
+\itemize{
+\item Current umx.dollar.symbol
+}
 }
 \description{
-Set umx_set_dollar_symbol (used in e.g. [fin_interest()]
+Set umx_set_dollar_symbol (used in e.g. \code{\link[=fin_interest]{fin_interest()}}
 }
 \examples{
 library(umx)

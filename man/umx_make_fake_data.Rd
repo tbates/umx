@@ -36,16 +36,18 @@ umx_make_fake_data(
 \item{het.suppress}{Passed to hetcor (default = TRUE)}
 }
 \value{
-- new dataframe
+\itemize{
+\item new dataframe
+}
 }
 \description{
-This function takes as argument an existing dataset, which 
-must be either a matrix or a data frame. Each column of the 
-dataset must consist either of numeric variables or ordered 
-factors. When one or more ordered factors are included, 
-then a heterogeneous correlation matrix is computed using 
-John Fox's polycor package. Pairwise complete observations 
-are used for all covariances, and the exact pattern of 
+This function takes as argument an existing dataset, which
+must be either a matrix or a data frame. Each column of the
+dataset must consist either of numeric variables or ordered
+factors. When one or more ordered factors are included,
+then a heterogeneous correlation matrix is computed using
+John Fox's polycor package. Pairwise complete observations
+are used for all covariances, and the exact pattern of
 missing data present in the input is placed in the output,
 provided a new sample size is not requested. Warnings from
 the polycor::hetcor function are suppressed.
@@ -54,7 +56,7 @@ the polycor::hetcor function are suppressed.
 fakeCars = umx_make_fake_data(mtcars)
 }
 \seealso{
-[OpenMx::mxGenerateData()]
+\code{\link[OpenMx:mxGenerateData]{OpenMx::mxGenerateData()}}
 
 Other Data Functions:
 \code{\link[=noNAs]{noNAs()}},

@@ -30,11 +30,13 @@ umx_check_model(
 \item{callingFn}{= Name of the calling function to help the user locate the error.}
 }
 \value{
-- boolean
+\itemize{
+\item boolean
+}
 }
 \description{
-Allows the user to straight-forwardly require a specific model type (i.e., 
-"RAM", "LISREL", etc.), whether or not the model has data, if it has been run or not. 
+Allows the user to straight-forwardly require a specific model type (i.e.,
+"RAM", "LISREL", etc.), whether or not the model has data, if it has been run or not.
 You can also test whether is has a means model or not and (in future) test if it has submodels.
 }
 \examples{
@@ -60,7 +62,9 @@ umx_check_model(m1, hasData = TRUE)
 }
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test:

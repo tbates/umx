@@ -24,7 +24,9 @@ umx_polypairwise(
 \item{tryHard}{'no' uses normal mxRun (default), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
-- matrix of correlations
+\itemize{
+\item matrix of correlations
+}
 }
 \description{
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx, but pair by pair, not across the whole dataset at once.
@@ -41,7 +43,9 @@ cov2cor(x$R)
 cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \references{
-- Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
+\itemize{
+\item Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. \emph{Frontiers in Psychology}, \strong{7}, 528. \doi{10.3389/fpsyg.2016.00528}.
+}
 }
 \seealso{
 Other Data Functions:

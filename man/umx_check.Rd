@@ -21,7 +21,9 @@ umx_check(
 \item{...}{extra text will be pasted after the messages.}
 }
 \value{
-- boolean
+\itemize{
+\item boolean
+}
 }
 \description{
 Check that a test evaluates to TRUE. If not, stop, warn, or message the user

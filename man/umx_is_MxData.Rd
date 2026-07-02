@@ -10,7 +10,9 @@ umx_is_MxData(x)
 \item{x}{An object to test for being an MxData object}
 }
 \value{
-- Boolean
+\itemize{
+\item Boolean
+}
 }
 \description{
 Is the input an MxData?
@@ -22,7 +24,9 @@ umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
 umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test:

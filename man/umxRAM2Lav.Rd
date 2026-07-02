@@ -15,7 +15,7 @@ A lavaan syntax string, e.g. "A~~B"
 \description{
 Takes an OpenMx RAM model and creates the corresponding lavaan syntax string.
 
-This function is at the alpha quality stage, and **should be expected to have bugs**.
+This function is at the alpha quality stage, and \strong{should be expected to have bugs}.
 Also likely to change functionality and even parameters as new features are supported (e.g. groups)
 and lavaan-style strings exported. Several features are not yet supported. Let me know if you would like them.
 }
@@ -25,7 +25,9 @@ umxRAM2Lav(umxLav2RAM("x ~ y", autoRun = FALSE, printTab = FALSE, lavaanMode = "
 }
 }
 \seealso{
-- [umxLav2RAM()], [umxRAM()]
+\itemize{
+\item \code{\link[=umxLav2RAM]{umxLav2RAM()}}, \code{\link[=umxRAM]{umxRAM()}}
+}
 
 Other Miscellaneous Utility Functions:
 \code{\link[=install.OpenMx]{install.OpenMx()}},

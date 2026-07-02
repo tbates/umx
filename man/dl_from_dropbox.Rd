@@ -27,7 +27,9 @@ dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
 }
 }
 \references{
-- \url{https://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
+\itemize{
+\item \url{https://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
+}
 }
 \seealso{
 Other File Functions:

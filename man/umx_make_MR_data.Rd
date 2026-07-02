@@ -30,7 +30,9 @@ umx_make_MR_data(
 \item{seed}{value for the random number generator (Default 123)}
 }
 \value{
-- data.frame
+\itemize{
+\item data.frame
+}
 }
 \description{
 umx_make_MR_data returns a dataset containing 4 variables: A variable of interest (Y), a putative cause (X),

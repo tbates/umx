@@ -90,7 +90,7 @@
 #' @return - [OpenMx::mxModel()]s for top, MZ and DZ.
 #' @export
 #' @family xmu internal not for end user
-#' @md
+
 #' @examples
 # # TODO add tests with numObsMZ = NULL, numObsDZ = NULL, equateMeans = TRUE,
 # # TODO add tests with weightVar = NULL,  bVector = FALSE, 
@@ -317,7 +317,7 @@ xmu_make_TwinSuperModel <- function(name = "twin_super", mzData, dzData, selDVs,
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [xmu_make_TwinSuperModel()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #'  xmuTwinSuper_Continuous(name="twin_super", selVars = selVars, selCovs = selCovs, 
@@ -391,7 +391,7 @@ xmuTwinSuper_Continuous <- function(name= NULL, fullVars, fullCovs = NULL, sep, 
 #' @return - twin model
 #' @export
 #' @family xmu internal not for end user
-#' @md
+
 #' @examples
 #' #
 xmuTwinSuper_NoBinary <- function(name = NULL, fullVars, fullCovs = NULL, mzData, dzData, sep, nSib, equateMeans= TRUE, verbose=FALSE){
@@ -543,7 +543,7 @@ xmuTwinSuper_CovCor <- function(name=NULL, fullVars, mzData, dzData, type, numOb
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - called by [xmuTwinSuper_Continuous()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(twinData) # ?twinData from Australian twins.
@@ -615,7 +615,7 @@ xmuTwinUpgradeMeansToCovariateModel <- function(model, fullVars, fullCovs, nSib,
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [xmuTwinUpgradeMeansToCovariateModel()]
-#' @md
+
 #' @examples
 #' # xmu_twin_make_def_means_mats_and_alg(baseCovs= baseCovs, 
 #' #   fullVars = fullVars, nSib = nSib, sep= sep)
@@ -662,7 +662,7 @@ xmu_twin_make_def_means_mats_and_alg <- function(baseCovs, fullVars, nSib, sep) 
 #' @return - varStarts and meanStarts
 #' @export
 #' @family xmu internal not for end user
-#' @md
+
 #' @examples
 #' data(twinData)
 #' selDVs = c("wt", "ht")
@@ -794,7 +794,7 @@ xmu_starts <- function(mzData, dzData, selVars = selVars, sep = NULL, equateMean
 #' @return - model
 #' @export
 #' @family xmu internal not for end user
-#' @md
+
 #' @examples
 #' tmp = umx_make_twin_data_nice(data=twinData, sep="", zygosity="zygosity", numbering= 1:2)
 #' m1  = umxACE(selDVs = "wt", data = tmp, dzData = "DZFF", mzData = "MZFF", autoRun= FALSE)

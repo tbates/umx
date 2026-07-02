@@ -7,14 +7,16 @@
 umx_as_numeric(df, which = NULL, force = FALSE)
 }
 \arguments{
-\item{df}{A [data.frame()] to convert}
+\item{df}{A \code{\link[=data.frame]{data.frame()}} to convert}
 
 \item{which}{which columns to convert (default (null) selects all)}
 
 \item{force}{Whether to force conversion to numeric for non-numeric columns (defaults to FALSE)}
 }
 \value{
-- data.frame
+\itemize{
+\item data.frame
+}
 }
 \description{
 Apply as.numeric to multiple columns of a dataframe.
@@ -34,7 +36,9 @@ df = umx_as_numeric(df, force=TRUE); str(df)
 }
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Data Functions:

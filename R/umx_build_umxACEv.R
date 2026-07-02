@@ -97,7 +97,7 @@
 #' **49**, 99-111. \doi{10.1007/s10519-018-9942-y}
 #' Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' 
@@ -390,7 +390,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @family Twin Modeling Functions
 #' @seealso - [umxACEv()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -620,7 +620,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @export
 #' @family Plotting functions
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' 
 #' \dontrun{
@@ -723,7 +723,7 @@ plot.MxModelACEv <- umxPlotACEv
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' 
 #' \dontrun{

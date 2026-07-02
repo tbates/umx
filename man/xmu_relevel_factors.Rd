@@ -19,14 +19,14 @@ xmu_relevel_factors(df, cols, prop = 0.1, min = 8)
 data.frame with the same structure as the input
 }
 \description{
-This function modifies the levels of specified factor columns in a data.frame where the specified factor columns 
+This function modifies the levels of specified factor columns in a data.frame where the specified factor columns
 have potentially collapsed levels based on the criteria provided.
 
 Levels that make up less than a specified proportion of total observations are collapsed into the previous level,
-providing that a minimum number of levels remains. 
+providing that a minimum number of levels remains.
 
 The levels of the remaining factor columns are synchronized with the updated levels of the first specified column.
-Variables named in `cols` must be factors. Note too that prop uses e.g., .1 to stand for 10 percent.
+Variables named in \code{cols} must be factors. Note too that prop uses e.g., .1 to stand for 10 percent.
 }
 \examples{
 df = data.frame(

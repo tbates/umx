@@ -66,7 +66,7 @@
 #' @references - Neale, M. C., Roysamb, E., Jacobson, K. (2006). 
 #' Multivariate genetic analysis of sex-lim and G x E interaction. 
 #' *Twin Research & Human Genetics*, **9**, pp. 481--489. \doi{10.1375/183242706778024937}
-#' @md
+
 #' @examples
 #  # =============================================
 #  # = Run Qualitative Sex Differences ACE model =
@@ -450,7 +450,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @family Twin Modeling Functions
 #' @seealso - [umxSexLim()], [umxPlotSexLim()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # ======================================================
@@ -752,7 +752,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @seealso - [umxSexLim()], [umxSummarySexLim()]
 #' @family Plotting functions
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)

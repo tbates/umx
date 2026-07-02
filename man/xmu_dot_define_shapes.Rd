@@ -23,7 +23,9 @@ Helper to make a graphviz rank string defining the latent, manifest, and means a
 xmu_dot_define_shapes(c("as1"), c("E", "N"))
 }
 \seealso{
-- [xmu_dot_rank()]
+\itemize{
+\item \code{\link[=xmu_dot_rank]{xmu_dot_rank()}}
+}
 
 Other Graphviz:
 \code{\link[=xmu_dot_make_paths]{xmu_dot_make_paths()}},

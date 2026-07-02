@@ -21,10 +21,14 @@ data(mtcars)
 reliability(cov(mtcars))
 }
 \references{
-- <https://cran.r-project.org/package=Rcmdr>
+\itemize{
+\item \url{https://cran.r-project.org/package=Rcmdr}
+}
 }
 \seealso{
-- [umx::print.reliability()],
+\itemize{
+\item \code{\link[=print.reliability]{print.reliability()}},
+}
 
 Other Miscellaneous Stats Functions:
 \code{\link[=FishersMethod]{FishersMethod()}},

@@ -12,7 +12,9 @@ umx_get_alphas(umx_alpha_text = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx_alpha_text
+\itemize{
+\item Current umx_alpha_text
+}
 }
 \description{
 Get umx_alpha_text. Optionally SET it blank

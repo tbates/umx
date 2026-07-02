@@ -12,10 +12,12 @@ umx_explode_twin_names(df, sep = "_T")
 \item{sep}{text constant separating name from numeric 1:2 twin index.}
 }
 \value{
-- list(baseNames, sep, twinIndexes)
+\itemize{
+\item list(baseNames, sep, twinIndexes)
+}
 }
 \description{
-Break names like Dep_T1 into a list of base names, a separator, and a 
+Break names like Dep_T1 into a list of base names, a separator, and a
 vector of twin indexes. e.g.: c("Dep_T1", "Dep_T2", "Anx_T1", "Anx_T2") will become:
 
 list(baseNames = c("Dep", "Anx"), sep = "_T", twinIndexes = c(1,2))
@@ -37,7 +39,7 @@ umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
 }
 }
 \seealso{
-[umx_paste_names()]
+\code{\link[=umx_paste_names]{umx_paste_names()}}
 
 Other String Functions:
 \code{\link{umx}},

@@ -14,7 +14,9 @@ xmu_dot_rank_str(min = NULL, same = NULL, max = NULL)
 \item{max}{vars to group at bottom of plot}
 }
 \value{
-- GraphViz rank string
+\itemize{
+\item GraphViz rank string
+}
 }
 \description{
 xmu_dot_rank_str (not for end users)

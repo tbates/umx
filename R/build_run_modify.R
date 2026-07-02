@@ -60,7 +60,7 @@
 #' @family Core Model Building Functions
 #' @seealso [umxRAM()], [plot.MxLISRELModel()], [xmu_standardize_LISREL()]
 #' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -444,7 +444,7 @@ umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentV
 #' @family Core Model Building Functions
 #' @seealso - [OpenMx::mxFitFunctionMultigroup()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -608,7 +608,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @family Core Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -896,7 +896,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 #' @seealso - [umxPlotACE()], [umxSummaryACE()], [power.ACE.test()], [umxModify()]
 #' @references - Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
 #' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
-#' @md
+
 #' @examples
 #' \donttest{
 #' require(umx)
@@ -1300,7 +1300,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @family Twin Modeling Functions
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
 #'  **6**, 554-571. \doi{10.1375/twin.5.6.554}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -1636,7 +1636,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
 #' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
 #' *Behavior Genetics*, **45**, 581-96. \doi{10.1007/s10519-015-9732-8}.
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx);
@@ -1843,7 +1843,7 @@ umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzDa
 #' @return - [OpenMx::mxModel()] of subclass mxModel.ACEcov
 #' @export
 #' @family Twin Modeling Functions
-#' @md
+
 #' @references - Neale, M. C., & Martin, N. G. (1989). The effects of age, sex, 
 #' and genotype on self-report drunkenness following a challenge dose of alcohol. 
 #' *Behavior Genetics*, **19**, 63-78. \doi{10.1007/BF01065884}.
@@ -2242,7 +2242,7 @@ umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NU
 #' *Behavior Genetics*, **20**, 569-608. \doi{10.1007/BF01065873}.
 #' * <https://github.com/tbates/umx>
 #'
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # ========================================================
@@ -2621,7 +2621,7 @@ umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL,
 #' *Behavior Genetics*, **20**, 569-608. \doi{10.1007/BF01065873}.
 #' * <https://github.com/tbates/umx>
 #'
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2811,7 +2811,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 #' @return - Rotated solution
 #' @family Reporting functions
 #' @export
-#' @md
+
 umxRotate <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE, verbose = TRUE){
   UseMethod("umxRotate", model)
 } 
@@ -2844,7 +2844,7 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxCP()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # Rotate a CP solution(param)
@@ -2902,7 +2902,7 @@ umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHa
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxRAM()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(twinData)
@@ -2989,7 +2989,7 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 #' @seealso - Core functions:
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3243,7 +3243,7 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # ==============================================================
@@ -3340,7 +3340,7 @@ xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 #' @family Core Model Building Functions
 #' @seealso - [xmu_simplex_corner()], [OpenMx::mxMatrix()], [xmuLabel()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # ==================================================================================
@@ -3407,7 +3407,7 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @export
 #' @family Advanced Model Building Functions	
 #' @seealso - [umxMatrix()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' A = umxMatrix("A", "Full", nrow = 3, ncol = 3, values=2)
@@ -3456,7 +3456,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3561,7 +3561,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' @family Model Summary and Comparison
 #' @seealso - [umxModify()], [xmuLabel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3647,7 +3647,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @seealso [umxModify()], [umxCompare()]
 #' @family Model Summary and Comparison
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3740,7 +3740,7 @@ umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), v
 #' @export
 #' @family Advanced Model Building Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3836,7 +3836,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @seealso [OpenMx::mxThreshold()]
 #' @family Advanced Model Building Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #'
 #' # ============================
@@ -4385,7 +4385,7 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @family Core Model Building Functions
 #' @seealso - [OpenMx::mxPath()]
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #'
 #' # ==========================================

@@ -80,7 +80,7 @@
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE()] for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -100,7 +100,7 @@
 #' m1 = umxSimplex(selDVs = paste0("IQ_age", 1:3), 
 #'	dzData = dzData, mzData = mzData, tryHard = "yes")
 #' }
-#' @md
+
 umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equateMeans = TRUE, dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
 	message("Polite note: umxSimplex is in beta. Suggestions  always welcome")
 	# TODO: modernize
@@ -218,7 +218,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equ
 #' @family Twin Modeling Functions
 #' @seealso - [umxSimplex()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # 4 time model
@@ -444,7 +444,7 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, simplex, ACEv, or ACE model.
 #' @seealso - [umxSimplex()]
 #' @family Plotting functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -554,7 +554,7 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(iqdat)

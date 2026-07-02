@@ -14,7 +14,9 @@ umx_is_cov(data = NULL, boolean = FALSE, verbose = FALSE)
 \item{verbose}{How much feedback to give (default = FALSE)}
 }
 \value{
-- "raw", "cor", or "cov", (or if boolean, then T | F)
+\itemize{
+\item "raw", "cor", or "cov", (or if boolean, then T | F)
+}
 }
 \description{
 test if a data frame, matrix or mxData is type cov or cor, or is likely to be raw...
@@ -29,7 +31,9 @@ umx_is_cov(df, boolean = TRUE)
 umx_is_cov(mtcars, boolean = TRUE)
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test:

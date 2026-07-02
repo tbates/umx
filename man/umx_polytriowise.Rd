@@ -24,7 +24,9 @@ umx_polytriowise(
 \item{tryHard}{'no' uses normal mxRun (default), "yes" uses mxTryHard, and others used named versions: "mxTryHardOrdinal", "mxTryHardWideSearch"}
 }
 \value{
-- matrix of correlations
+\itemize{
+\item matrix of correlations
+}
 }
 \description{
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx.
@@ -40,7 +42,9 @@ cor(mtcars[, c("hp", "mpg", "am", "vs")])
 
 }
 \references{
-- \doi{10.3389/fpsyg.2016.00528}
+\itemize{
+\item \doi{10.3389/fpsyg.2016.00528}
+}
 }
 \seealso{
 Other Data Functions:

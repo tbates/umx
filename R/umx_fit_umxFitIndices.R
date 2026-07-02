@@ -45,7 +45,7 @@
 #' @export
 #' @family Reporting functions
 #' @author Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx)

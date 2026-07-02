@@ -7,7 +7,7 @@
 xmu_equate_threshold_values(model, x_cols)
 }
 \arguments{
-\item{model}{A model object that contains threshold values in its `deviations_for_thresh` slot.}
+\item{model}{A model object that contains threshold values in its \code{deviations_for_thresh} slot.}
 
 \item{x_cols}{A character vector specifying the names of the columns whose thresholds will be equated.}
 }
@@ -15,7 +15,7 @@ xmu_equate_threshold_values(model, x_cols)
 The modified model object with equated threshold values across the specified columns.
 }
 \description{
-This function sets the threshold values for multiple columns in a model to be equal to the threshold values of the first specified column. 
+This function sets the threshold values for multiple columns in a model to be equal to the threshold values of the first specified column.
 It is useful in contexts where consistent threshold values are needed across different variables for statistical modeling.
 }
 \examples{

@@ -39,7 +39,7 @@
 #' @export
 #' @family Plotting functions
 #' @seealso - [ggplot2::qplot()]
-#' @md
+
 #' @examples
 #' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, r2x = 2, r2y = 10)
@@ -106,7 +106,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 #' @export
 #' @family Plotting functions
 #' @seealso - [ggplot2::qplot()]
-#' @md
+
 #' @examples
 #' data(mtcars)
 #' tmp = lm(mpg ~ wt, data = mtcars)
@@ -158,7 +158,7 @@ umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 
 #' @export
 #' @family Teaching and Testing functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -200,7 +200,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @family Miscellaneous Stats Functions
 #' @seealso - [AIC()]
 #' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://pubmed.ncbi.nlm.nih.gov/15117008/}
-#' @md
+
 #' @examples
 #' l1 = lm(mpg~ wt + disp, data=mtcars)
 #' l2 = lm(mpg~ wt, data=mtcars)
@@ -268,7 +268,7 @@ umxWeightedAIC <- function(models, digits= 2) {
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 #'  *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
 #' @export
-#' @md
+
 umxReduce <- function(model, report = c("markdown", "inline", "html"), intervals = TRUE, testD = TRUE, baseFileName = "tmp", tryHard = "yes", silent=FALSE, ...){
 	UseMethod("umxReduce", model)
 }
@@ -304,7 +304,7 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' @seealso [umxReduce()], [umxReduceACE()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 #' *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}.
-#' @md
+
 #' @examples
 #' \dontrun{
 #' model = umxReduce(model)
@@ -399,7 +399,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @family Twin Modeling Functions
 #' @seealso [umxReduceGxE()], [umxReduce()]
 #' @references - Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(twinData)
@@ -524,7 +524,7 @@ umxReduce.MxModelACE <- umxReduceACE
 #' @export
 #' @family Reporting functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -591,7 +591,7 @@ residuals.MxModel <- function(object, digits = 2, suppress = NULL, reorder=NULL,
 #' @export
 #' @family Reporting functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 loadings <- function(x, ...) UseMethod("loadings")
 #' @export
 loadings.default <- function(x, ...) stats::loadings(x, ...) 
@@ -611,7 +611,7 @@ loadings.default <- function(x, ...) stats::loadings(x, ...)
 #' @family Reporting functions
 #' @seealso - [factanal()], [loadings()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' myVars = c("mpg", "disp", "hp", "wt", "qsec")
@@ -649,7 +649,7 @@ loadings.MxModel <- function(x, ...) {
 #' @family Reporting functions
 #' @seealso - [stats::confint()], [OpenMx::mxSE()], [umxCI()], [OpenMx::mxCI()]
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -863,7 +863,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' @seealso - [stats::confint()], [umxConfint()], [umxCI()], [umxModify()]
 #' @references - <https://github.com/tbates/umx>
 #' @export
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -981,7 +981,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #' @param model The [OpenMx::mxModel()] whose fit will be reported
 #' @param ... Other parameters to control model summary
 #' @family Model Summary and Comparison
-#' @md
+
 #' @export
 umxSummary <- function(model, ...){
 	UseMethod("umxSummary", model)
@@ -1015,7 +1015,7 @@ umxSummary.default <- function(model, ...){
 #' @family Model Summary
 #' @seealso [umxLISREL()], [plot.MxLISRELModel()]
 #' @references <https://github.com/tbates/umx>
-#' @md
+
 umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means = TRUE, residuals = TRUE, SE = TRUE, filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, ..., matrixAddresses = FALSE) {
 	report = match.arg(report)
 	filter = match.arg(filter)
@@ -1063,7 +1063,7 @@ umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digit
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE()], [plot.MxModelACE()], [umxModify()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -1283,7 +1283,7 @@ umxSummary.MxModelACE <- umxSummaryACE
 #' @family Summary functions
 #' @seealso - [umxACEcov()] 
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -1480,7 +1480,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @family Summary functions
 #' @seealso - \code{\link{umxCP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -1625,7 +1625,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @export
 #' @seealso - \code{\link{umxIP}()}, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -1750,7 +1750,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @export
 #' @seealso - [umxGxE()], [umxReduce()], [plot()], [umxSummary)] all work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # The total sample has been subdivided into a young cohort, 
@@ -1820,7 +1820,7 @@ umxSummary.MxModelGxE <- umxSummaryGxE
 #' @export
 #' @family Reporting Functions
 #' @seealso - [umxGetManifests()], [umxRAM()], [umxSuperModel()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -1876,7 +1876,7 @@ umxGetLatents <- function(model, targetModel = NULL) {
 #' @export
 #' @family Reporting Functions
 #' @seealso - [umxGetManifests()], [umxRAM()], [umxSuperModel()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -1932,7 +1932,7 @@ umxGetManifests <- function(model, targetModel = NULL) {
 #' @export
 #' @family Reporting Functions
 #' @seealso - [umxGetManifests()], [umxRAM()], [umxSuperModel()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -1997,7 +1997,7 @@ umxGetModel <- function(model, targetModel = NULL) {
 #' @export
 #' @seealso - [umxExpMeans()], [umxExpCov()]
 #' @family Reporting functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2121,7 +2121,7 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' @family umx S3 functions
 #' @family Plotting functions
 #' @references - <https://github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -2375,7 +2375,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
 #' @family Plotting functions
 #' @references - <https://github.com/tbates/umx>, <https://en.wikipedia.org/wiki/DOT_(graph_description_language)>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2591,7 +2591,7 @@ plot.MxRAMModel <- plot.MxModel
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxACE()]
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2664,7 +2664,7 @@ plot.MxModelACE <- umxPlotACE
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxACE()]
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2787,7 +2787,7 @@ plot.MxModelACEcov <- umxPlotACEcov
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxGxE()]
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -2934,7 +2934,7 @@ plot.MxModelGxE <- umxPlotGxE
 #' @seealso - [umxCP()]
 #' @family Plotting functions
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3044,7 +3044,7 @@ plot.MxModelCP <- umxPlotCP
 #' @seealso - [umxIP()]
 #' @family Plotting functions
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3144,7 +3144,7 @@ plot.MxModelIP <- umxPlotIP
 #' @family Model Summary and Comparison
 #' @references - <https://github.com/tbates/umx>
 #' @export
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3219,7 +3219,7 @@ umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToSho
 #' @family Advanced Model Building Functions
 #' @references - https://github.com/tbates/umx/
 #' @export
-#' @md
+
 #' @examples
 #' \dontrun{
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
@@ -3473,7 +3473,7 @@ umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 #' @family Reporting Functions
 #' @seealso - [umxGetParameters()], [umxSummary()], [namez()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3580,7 +3580,7 @@ parameters <- umxParameters
 #' @seealso [OpenMx::omxGetParameters()], [parameters()]
 #' @family Reporting Functions
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3663,7 +3663,7 @@ umxGetParameters <- function(inputTarget, regex = NA, free = NA, fetch = c("labe
 #' @return - AIC value
 #' @seealso - [AIC()], [umxCompare()], [logLik()]
 #' @family Reporting functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3698,7 +3698,7 @@ extractAIC.MxModel <- function(fit, scale, k, ...) {
 #' @export
 #' @family Reporting functions
 #' @seealso - [umxRun()], [umxCI_boot()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3772,7 +3772,7 @@ umxExpCov <- function(object, latents = FALSE, manifests = TRUE, digits = NULL, 
 #' @return - expected means
 #' @export
 #' @family Reporting functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3826,7 +3826,7 @@ umxExpMeans <- function(model, manifests = TRUE, latents = NULL, digits = NULL){
 #' @param ci.upper the upper CI to compute
 #' @param digits digits to show
 #' @return - RMSEA object containing value (and perhaps a CI)
-#' @md
+
 #' @export
 #' @family Reporting functions
 RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
@@ -3845,7 +3845,7 @@ RMSEA <- function(x, ci.lower, ci.upper, digits) UseMethod("RMSEA", x)
 #' @export
 #' @family Reporting functions
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3909,7 +3909,7 @@ RMSEA.MxModel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3) {
 #' @export
 #' @family Reporting functions
 #' @references - <https://github.com/simsem/semTools/wiki/Functions>, <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3948,7 +3948,7 @@ RMSEA.summary.mxmodel <- function(x, ci.lower = .025, ci.upper = .975, digits = 
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
 #' @seealso - [umx::RMSEA()], [print()]
-#' @md
+
 #' @method print RMSEA
 #' @export
 #' @examples
@@ -3998,7 +3998,7 @@ print.RMSEA <- function(x, ...) {
 #' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. \doi{10.2307/2681650}.
 #' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, 
 #' Vol. 1 - Adjustment during Army Life. Princeton, Princeton University Press.
-#' @md
+
 #' @examples
 #' FishersMethod(c(.041, .378))
 FishersMethod <- function(pvalues, ...){
@@ -4021,7 +4021,7 @@ FishersMethod <- function(pvalues, ...){
 #' @seealso - [harmonic_mean()], [mean()]
 #' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Geometric_mean>
-#' @md
+
 #' @examples
 #' geometric_mean(c(50, 100))
 #'
@@ -4060,7 +4060,7 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' @seealso - [geometric_mean()], [aggregate()]
 #' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Harmonic_mean>
-#' @md
+
 #' @examples
 #' # Harmonic means are suitable for ratios
 #' tmp = c(33/1, 23/1)
@@ -4104,7 +4104,7 @@ harmonic_mean = function(x, weights = NULL, na.rm = c(TRUE, FALSE)){
 #' @export
 #' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' umxAPA(mtcars[,1:3]) # uses umx_fun_mean_sd
 umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
@@ -4148,7 +4148,7 @@ umx_fun_mean_sd = function(x, na.rm = TRUE, digits = 2){
 #' @family Reporting Functions
 #' @seealso - [umx_apply()], [aggregate()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' # =====================================
 #' # = Basic use, compare with aggregate =
@@ -4318,7 +4318,7 @@ umx_aggregate <- function(formula = DV ~ condition, data = df, what = c("mean_sd
 #' @return - p-value formatted in APA style
 #' @export
 #' @seealso - [umxAPA()], [round()]
-#' @md
+
 #' @examples
 #' umx_APA_pval(.052347)
 #' umx_APA_pval(1.23E-3)
@@ -4412,7 +4412,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
 #' @references - <https://stats.oarc.ucla.edu/r/dae/logit-regression/>
-#' @md
+
 #' @examples
 #' 
 #' # ========================================
@@ -4737,7 +4737,7 @@ summaryAPA <- umxAPA
 #' @family Twin Modeling Functions
 #' @seealso - [umxAPA()]
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' data(twinData)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
@@ -4878,7 +4878,7 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 #' @return cocor result.
 #' @export
 #' @family Miscellaneous Stats Functions
-#' @md
+
 #' @examples
 #' # Is the correlation of mpg with cylinder count different from that 
 #' # obtaining between disp and hp?

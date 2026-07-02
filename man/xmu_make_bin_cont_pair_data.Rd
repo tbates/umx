@@ -13,7 +13,7 @@ xmu_make_bin_cont_pair_data(
 )
 }
 \arguments{
-\item{data}{A [data.frame()] to convert}
+\item{data}{A \code{\link[=data.frame]{data.frame()}} to convert}
 
 \item{vars}{The variables to process}
 
@@ -24,13 +24,17 @@ xmu_make_bin_cont_pair_data(
 \item{type}{Either "low" or "high" (default = "low"). Low for left-censored, high for right-censored.}
 }
 \value{
-- copy of the dataframe with new binary variables and censoring
+\itemize{
+\item copy of the dataframe with new binary variables and censoring
+}
 }
 \description{
 Takes a dataframe of right or left-censored variables (vars with a floor/ceiling effect) and does two things to it:
-1. It creates new binary (1/0) copies of each column (with the suffix "bin"). These contain 0 where
-   the variable is below the minimum and NA otherwise. The second variable receives a suffix "cont".
-2. By default, in each existing variable, it sets all instances of min for that var to NA
+\enumerate{
+\item It creates new binary (1/0) copies of each column (with the suffix "bin"). These contain 0 where
+the variable is below the minimum and NA otherwise. The second variable receives a suffix "cont".
+\item By default, in each existing variable, it sets all instances of min for that var to NA
+}
 }
 \examples{
 df = xmu_make_bin_cont_pair_data(mtcars, vars = c("mpg"))

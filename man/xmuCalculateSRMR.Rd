@@ -13,5 +13,5 @@ xmuCalculateSRMR(model)
 The SRMR value as a numeric scalar, or NA if calculation fails.
 }
 \description{
-`xmuCalculateSRMR` calculates the Standardized Root Mean Square Residual (SRMR) for an OpenMx model.
+\code{xmuCalculateSRMR} calculates the Standardized Root Mean Square Residual (SRMR) for an OpenMx model.
 }

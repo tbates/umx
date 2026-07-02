@@ -38,7 +38,7 @@
 #' @references - Minica CC, Dolan CV, Boomsma DI, et al. (2018) Extending Causality Tests with Genetic Instruments: An Integration of Mendelian Randomization with the Classical Twin Design. Behavior Genetics 48(4): 337-349. \doi{10.1007/s10519-018-9904-4}
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' * Castro-de-Araujo LFS, Singh M, Zhou Y, et al. (2022) MR-DoC2: Bidirectional Causal Modeling with Instrumental Variables and Data from Relatives. Behavior Genetics. \doi{10.1007/s10519-022-10122-x}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' 
@@ -896,7 +896,7 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 #' @export
 #' @family Summary functions
 #' @seealso - \code{\link{umxDoC}()}, [plot()], [umxSummary()] work for DoC models.
-#' @md
+
 umxSummaryMRDoC <- function(model, digits = 2, std = TRUE, CIs = FALSE, comparison = NULL, RMSEA_CI = FALSE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), ...) {
 
 	if (CIs){ model = umxCI(model, run = "if necessary")}

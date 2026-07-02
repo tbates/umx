@@ -12,7 +12,9 @@ umx_pad(x, n)
 \item{n}{The final length of each object.}
 }
 \value{
-- padded object
+\itemize{
+\item padded object
+}
 }
 \description{
 This function pads an R object (list, data.frame, matrix, atomic vector)
@@ -24,7 +26,9 @@ umx_pad(1:3, 4)
 umx_pad(1:3, 3)
 }
 \references{
-- \url{https://github.com/kevinushey/Kmisc/tree/master/man}
+\itemize{
+\item \url{https://github.com/kevinushey/Kmisc/tree/master/man}
+}
 }
 \seealso{
 Other Miscellaneous Utility Functions:

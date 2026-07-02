@@ -12,7 +12,9 @@ qm(..., rowMarker = "|")
 \item{rowMarker}{mark the end of each row}
 }
 \value{
-- matrix
+\itemize{
+\item matrix
+}
 }
 \description{
 Quickmatrix function

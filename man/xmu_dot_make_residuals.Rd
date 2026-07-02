@@ -24,7 +24,9 @@ xmu_dot_make_residuals(
 \item{resid}{How to show residuals and variances default is "circle". Other option is "line"}
 }
 \value{
-- list of variance names and variances
+\itemize{
+\item list of variance names and variances
+}
 }
 \description{
 xmu_dot_make_residuals (not for end users)

@@ -14,7 +14,9 @@ umx_means(df, ordVar = 0, na.rm = TRUE)
 \item{na.rm}{passed to mean - defaults to "na.rm"}
 }
 \value{
-- frame of means
+\itemize{
+\item frame of means
+}
 }
 \description{
 Helper to get means from a df that might contain ordered or string data.

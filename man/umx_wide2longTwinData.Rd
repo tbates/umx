@@ -14,13 +14,15 @@ umx_wide2longTwinData(data, sep = "_T", verbose = FALSE)
 \item{verbose}{Report the non-twin and twin columns (default = FALSE).}
 }
 \value{
-- long-format dataframe
+\itemize{
+\item long-format dataframe
+}
 }
 \description{
 Just detects the data columns for twin 1, and twin 2, then returns them stacked
 on top of each other (rbind) with the non-twin specific columns copied for each as well.
 
-*Note*, zygosity codings differ among labs. One scheme uses 1 = MZFF, 2 = MZMM, 3 = DZFF, 4 = DZMM, 
+\emph{Note}, zygosity codings differ among labs. One scheme uses 1 = MZFF, 2 = MZMM, 3 = DZFF, 4 = DZMM,
 5 = DZOS or DZFM, 6 = DZMF, with 9 = unknown, and then 50, 51,... for siblings.
 
 Typically, OS twins are ordered Female/Male.
@@ -32,7 +34,7 @@ str(long)
 str(twinData)
 }
 \seealso{
-[reshape()], [umx_wide2long()], [umx_merge_randomized_columns()], [umx_select_valid()]
+\code{\link[=reshape]{reshape()}}, \code{\link[=umx_wide2long]{umx_wide2long()}}, \code{\link[=umx_merge_randomized_columns]{umx_merge_randomized_columns()}}, \code{\link[=umx_select_valid]{umx_select_valid()}}
 
 Other Twin Data functions:
 \code{\link{umx}},

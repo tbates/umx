@@ -44,7 +44,7 @@
 #' In *Encyclopedia of Statistics in Behavioral Science*, **1**, 496–499. Eds. Brian S. Everitt & David C. Howell
 #' @usage data(docData)
 #' @format A data frame 6 manifests for each of two twins in 1400 families of MZ and DZ twins
-#' @md
+
 #' @examples
 #' data(docData)
 #' str(docData)
@@ -141,7 +141,7 @@ NULL
 #' M. (2010). Moderation of genetic factors by parental divorce in adolescents' 
 #' evaluations of family functioning and subjective wellbeing. Twin Research 
 #' and Human Genetics, **13**, 143-162. \doi{10.1375/twin.13.2.143}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # Twin 1 variables (end in '_T1')
@@ -201,7 +201,7 @@ NULL
 #' <https://pubmed.ncbi.nlm.nih.gov/10323623/>
 #' @usage data(us_skinfold_data)
 #' @format A data frame with 53940 twin families (1 per row) each twin measured on 10 variables.
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(us_skinfold_data)
@@ -303,7 +303,7 @@ NULL
 #' *Annals of Human Biology*, **4**. 417-430. \doi{10.1080/03014467700002401}
 #' @usage data(Fischbein_wt)
 #' @format A 6*6 correlation matrix based on n = 66 female subjects.
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(Fischbein_wt) # load the data
@@ -335,7 +335,7 @@ NULL
 #' @name Anthro_LDSC
 #' @usage data(Anthro_LDSC)
 #' @format A list of matrices (S, V, I, N) and numeric values (m).
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(Anthro_LDSC)
@@ -366,7 +366,7 @@ NULL
 #' @name Psych_LDSC
 #' @usage data(Psych_LDSC)
 #' @format A list of matrices (S, V, I, N) and numeric values (m).
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(Psych_LDSC)
@@ -413,7 +413,7 @@ NULL
 #' @seealso [umxRAM()]
 #' @references Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. 
 #' *Supplementary Educational Monographs*, no. 48. Chicago: University of Chicago Press.
-#' @md
+
 #' @examples
 #' \dontrun{
 #' data(HSwls)

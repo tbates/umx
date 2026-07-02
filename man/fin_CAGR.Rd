@@ -16,8 +16,8 @@ fin_CAGR(beginningValue, endingValue, numYears, digits = 3)
 \item{digits}{rounding the returned value (default = 3)}
 }
 \value{
-A numeric value representing the Compound Annual Growth Rate as a 
-  decimal (e.g., 0.096 for 9.6%).
+A numeric value representing the Compound Annual Growth Rate as a
+decimal (e.g., 0.096 for 9.6\%).
 }
 \description{
 Calculates the constant, period-over-period growth rate required for an
@@ -25,13 +25,13 @@ investment to grow from a beginning value to an ending value over a
 specified number of periods.
 
 The Compound Annual Growth Rate (CAGR) is computed as:
- CAGR = (End value/Start value)^(1/t) - 1
+CAGR = (End value/Start value)^(1/t) - 1
 
 Where \emph{t} is the number of years (periods).
 }
 \note{
-This function includes input validation and will `stop()` with an error
-  if any inputs are non-numeric or non-positive.
+This function includes input validation and will \code{stop()} with an error
+if any inputs are non-numeric or non-positive.
 }
 \examples{
 rate = fin_CAGR(beginningValue = 100, endingValue = 190, numYears = 7)

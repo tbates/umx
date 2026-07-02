@@ -12,19 +12,19 @@ data(iqdat)
 }
 \description{
 Measures of IQ across four ages in 261 pairs of identical twins and 301 pairs of fraternal (DZ) twins. (see details).
-It is used as data for the [umxSimplex()] examples.
+It is used as data for the \code{\link[=umxSimplex]{umxSimplex()}} examples.
 }
 \details{
 \itemize{
-  \item zygosity Zygosity (MZ or DZ)
-  \item IQ_age1_T1 T1 IQ measured at age 1
-  \item IQ_age2_T1 T1 IQ measured at age 2
-  \item IQ_age3_T1 T1 IQ measured at age 3
-  \item IQ_age4_T1 T1 IQ measured at age 4
-  \item IQ_age1_T2 T2 IQ measured at age 1
-  \item IQ_age2_T2 T2 IQ measured at age 2
-  \item IQ_age3_T2 T2 IQ measured at age 3
-  \item IQ_age4_T2 T2 IQ measured at age 4
+\item zygosity Zygosity (MZ or DZ)
+\item IQ_age1_T1 T1 IQ measured at age 1
+\item IQ_age2_T1 T1 IQ measured at age 2
+\item IQ_age3_T1 T1 IQ measured at age 3
+\item IQ_age4_T1 T1 IQ measured at age 4
+\item IQ_age1_T2 T2 IQ measured at age 1
+\item IQ_age2_T2 T2 IQ measured at age 2
+\item IQ_age3_T2 T2 IQ measured at age 3
+\item IQ_age4_T2 T2 IQ measured at age 4
 }
 }
 \examples{
@@ -39,12 +39,12 @@ par(mfrow = c(1, 1))  # back to as it was
 }
 }
 \references{
-Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for repeated measures: 
-application to two psychomotor measures of alcohol sensitivity in twins. *Behavior Genetics*, **19**, 79-96.
-Retrieved from <https://www.ncbi.nlm.nih.gov/pubmed/2712815>
+Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for repeated measures:
+application to two psychomotor measures of alcohol sensitivity in twins. \emph{Behavior Genetics}, \strong{19}, 79-96.
+Retrieved from \url{https://www.ncbi.nlm.nih.gov/pubmed/2712815}
 }
 \seealso{
-[umxSimplex()]
+\code{\link[=umxSimplex]{umxSimplex()}}
 
 Other datasets:
 \code{\link{Anthro_LDSC}},

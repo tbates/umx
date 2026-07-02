@@ -35,7 +35,7 @@
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxEbiv [OpenMx::mxModel()]
 #' @export
-#' @md
+
 #' @family Twin Modeling Functions
 #' @seealso - [plot()], [umxSummary()], [umxReduce()]
 #' @references
@@ -237,7 +237,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @export
 #' @seealso - \code{\link{umxGxEbiv}()}, [plot()], [umxSummary()] work for IP, CP, GxE, and ACE models.
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' data(twinData)
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "")
@@ -333,7 +333,7 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxGxEbiv()]
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' require(umx)
 #' data(twinData)

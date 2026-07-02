@@ -7,7 +7,9 @@
 umx_get_options()
 }
 \value{
-- message
+\itemize{
+\item message
+}
 }
 \description{
 Show the umx options. Useful for beginners to discover, or people like me to remember :-)

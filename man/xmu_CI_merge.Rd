@@ -12,7 +12,9 @@ xmu_CI_merge(m1, m2)
 \item{m2}{second copy of the model}
 }
 \value{
-- [OpenMx::mxModel()]
+\itemize{
+\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
+}
 }
 \description{
 if you compute some CIs in one model and some in another (copy of the same model, perhaps to get some parallelism),
@@ -24,7 +26,9 @@ xmu_CI_merge(m1, m2)
 }
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other xmu internal not for end user:

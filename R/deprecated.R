@@ -45,5 +45,5 @@
 #' @name umx-deprecated
 #' @family umx deprecated
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-#' @md
+
 NULL

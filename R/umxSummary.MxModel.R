@@ -61,7 +61,7 @@
 #' @export
 #' @import OpenMx
 #' @return - parameterTable returned invisibly, if estimates requested
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)

@@ -30,8 +30,8 @@ umx_check_names(
 \item{message}{Some helpful text to append when dieing.}
 }
 \description{
-Check if a list of names are in the [namez()] of a dataframe (or the [dimnames()] of a matrix), or the names of 
-the observed data of an [mzData()]
+Check if a list of names are in the \code{\link[=namez]{namez()}} of a dataframe (or the \code{\link[=dimnames]{dimnames()}} of a matrix), or the names of
+the observed data of an \code{\link[=mzData]{mzData()}}
 }
 \examples{
 require(umx)
@@ -52,7 +52,9 @@ umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 }
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Test:

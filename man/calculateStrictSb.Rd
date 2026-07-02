@@ -15,5 +15,5 @@ calculateStrictSb(baseModel, nestedModel)
 A named vector containing strictSbChisq, deltaDf, scalingFactor, and pValue.
 }
 \description{
-`calculateStrictSb` calculates the Satorra-Bentler (2010) strictly positive scaled difference chi-square test.
+\code{calculateStrictSb} calculates the Satorra-Bentler (2010) strictly positive scaled difference chi-square test.
 }

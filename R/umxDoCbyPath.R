@@ -20,7 +20,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # ================
@@ -122,7 +122,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 #' @family Twin Modeling Functions
 #' @seealso - [umxRAM()], [umxSuperModel()], [umxPath()]
 #' @references - [tutorials](https://tbates.github.io), [github](https://github.com/tbates/umx)
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # We'll make some ACE models, but first, let's clean up the twinData 
@@ -274,7 +274,7 @@ umxTwinMaker <- function(name = "m1", paths, t1_t2links = list('a'=c(1, .5), 'c'
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
 #' @family Plotting functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -481,7 +481,7 @@ plot.MxModelTwinMaker <- function(x = NA, std = FALSE, fixed = TRUE, means = TRU
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxTwinMaker()], [umxRAM()]
-#' @md
+
 #' @examples
 #' twin1PathList = c(
 #'	umxPath(v1m0 = c("a1", 'c1', "e1")),
@@ -521,7 +521,7 @@ xmu_path2twin <- function(paths, thisTwin = 1, sep = "_T"){
 #' @family xmu internal not for end user
 #' @seealso - [xmu_path2twin()], [umxTwinMaker()]
 #' @references - [tutorials](https://tbates.github.io), [github](https://github.com/tbates/umx)
-#' @md
+
 #' @examples
 #' xmu_path_regex(c("a", "one", "b"), pattern = "$", replacement = "_T1")
 #' # "a_T1" "one"  "b_T1"

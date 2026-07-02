@@ -12,7 +12,9 @@ umx_find_object(pattern = ".*", requiredClass = "MxModel")
 \item{requiredClass}{the class of object that will be matched}
 }
 \value{
-- a list of objects matching the class and name
+\itemize{
+\item a list of objects matching the class and name
+}
 }
 \description{
 Find objects of a given class, whose name matches a search string.
@@ -25,7 +27,9 @@ umx_find_object("", "MxModel") # all MxModels
 }
 }
 \references{
--
+\itemize{
+\item 
+}
 }
 \seealso{
 Other Miscellaneous Utility Functions:

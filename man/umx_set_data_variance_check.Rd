@@ -14,7 +14,9 @@ umx_set_data_variance_check(minVar = NULL, maxVarRatio = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- list of umx_minVar and umx_maxVarRatio settings
+\itemize{
+\item list of umx_minVar and umx_maxVarRatio settings
+}
 }
 \description{
 Set default for data checking in models like umxACE umxGxE etc.

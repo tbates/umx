@@ -12,10 +12,12 @@ umx_set_separator(umx_default_separator = NULL, silent = FALSE)
 \item{silent}{If TRUE, no message will be printed.}
 }
 \value{
-- Current umx_default_separator
+\itemize{
+\item Current umx_default_separator
+}
 }
 \description{
-Set umx_default_separator (used in CI\[low sep high\] ). Default = ","
+Set umx_default_separator (used in CI[low sep high] ). Default = ","
 }
 \examples{
 library(umx)

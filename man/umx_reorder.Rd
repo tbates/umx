@@ -14,7 +14,9 @@ umx_reorder(old, newOrder, force = FALSE)
 \item{force}{Just assume input is value (default = FALSE)}
 }
 \value{
-- the re-ordered/resized matrix
+\itemize{
+\item the re-ordered/resized matrix
+}
 }
 \description{
 Reorder the variables in a correlation matrix. Can also remove one or more variables from a matrix using this function.
@@ -26,7 +28,9 @@ umx_reorder(oldMatrix, newOrder = c("hp", "disp", "cyl")) # subset and reordered
 umx_reorder(oldMatrix, "hp") # edge-case of just 1-var
 }
 \references{
-- <https://github.com/tbates/umx>
+\itemize{
+\item \url{https://github.com/tbates/umx}
+}
 }
 \seealso{
 Other Data Functions:

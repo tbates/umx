@@ -21,31 +21,31 @@ umxGSEM_ldsc(
 )
 }
 \arguments{
-\item{traits}{Character vector of paths to munged `.sumstats.gz` files.}
+\item{traits}{Character vector of paths to munged \code{.sumstats.gz} files.}
 
 \item{sample.prev}{Numeric vector of sample prevalences (proportion of cases).
-Use `NA` or `0.5` for continuous traits.}
+Use \code{NA} or \code{0.5} for continuous traits.}
 
 \item{population.prev}{Numeric vector of population prevalences (for liability
-scale transformation of binary traits). Use `NA` for continuous traits.}
+scale transformation of binary traits). Use \code{NA} for continuous traits.}
 
-\item{ld}{Path to folder containing LD score files (e.g. `eur_w_ld_chr/`).}
+\item{ld}{Path to folder containing LD score files (e.g. \verb{eur_w_ld_chr/}).}
 
 \item{wld}{Path to folder containing weight LD score files.}
 
-\item{trait.names}{Optional character vector of names for the traits. If `NULL`,
+\item{trait.names}{Optional character vector of names for the traits. If \code{NULL},
 names are taken from the file names.}
 
-\item{sep_weights}{Logical. Whether to use separate weight LD scores (default `FALSE`).}
+\item{sep_weights}{Logical. Whether to use separate weight LD scores (default \code{FALSE}).}
 
 \item{chr}{Number of chromosomes to use (default = 22).}
 
 \item{n.blocks}{Number of jackknife blocks to use when estimating the sampling
-covariance matrix `V` (default = 200).}
+covariance matrix \code{V} (default = 200).}
 
-\item{ldsc.log}{Optional path to write an LDSC log file. If `NULL`, no log is written.}
+\item{ldsc.log}{Optional path to write an LDSC log file. If \code{NULL}, no log is written.}
 
-\item{stand}{Logical. If `TRUE`, also returns standardized results (genetic
+\item{stand}{Logical. If \code{TRUE}, also returns standardized results (genetic
 correlations and their sampling covariance matrix).}
 
 \item{select}{Logical or numeric. Passed through to control SNP selection
@@ -57,35 +57,35 @@ estimating the LD score regression (used for outlier control).}
 \value{
 A list with the following components:
 \describe{
-  \item{S}{Genetic covariance matrix (heritabilities on diagonal).}
-  \item{V}{Sampling covariance matrix of the elements of `S`.}
-  \item{I}{Matrix of LD score regression intercepts.}
-  \item{N}{Effective sample sizes used.}
-  \item{m}{Number of SNPs used in the regression.}
-  \item{...}{Additional components depending on `stand`.}
+\item{S}{Genetic covariance matrix (heritabilities on diagonal).}
+\item{V}{Sampling covariance matrix of the elements of \code{S}.}
+\item{I}{Matrix of LD score regression intercepts.}
+\item{N}{Effective sample sizes used.}
+\item{m}{Number of SNPs used in the regression.}
+\item{...}{Additional components depending on \code{stand}.}
 }
-If `stand = TRUE`, the list also contains the genetic correlation matrix
+If \code{stand = TRUE}, the list also contains the genetic correlation matrix
 and its sampling covariance matrix.
 }
 \description{
 A fast, native reimplementation of multivariate LD score regression
 using C++ and OpenMP. Designed to be compatible with
-[GenomicSEM::ldsc()] output while offering significantly better
+\code{\link[GenomicSEM:ldsc]{GenomicSEM::ldsc()}} output while offering significantly better
 performance, especially with larger numbers of traits.
 }
 \details{
-S is A symmetric K×K matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h 
+S is A symmetric K×K matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h
 2). The off-diagonals contain the genetic covariances.
 
 V is A symmetric M×M sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
-It contains the sampling variances of your heritabilities and genetic covariances on the diagonal, 
+It contains the sampling variances of your heritabilities and genetic covariances on the diagonal,
 and their sampling covariances on the off-diagonal.
 
-I is a K×K matrix containing the LDSC intercepts 
-(cross-trait intercepts on the off-diagonal, single-trait intercepts on the diagonal) 
+I is a K×K matrix containing the LDSC intercepts
+(cross-trait intercepts on the off-diagonal, single-trait intercepts on the diagonal)
 used to quantify sample overlap and population stratification.
 }
 \seealso{
-[GenomicSEM::ldsc()]
+\code{\link[GenomicSEM:ldsc]{GenomicSEM::ldsc()}}
 }
 \concept{GSEM}
