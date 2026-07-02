@@ -60,7 +60,7 @@
 #' @export
 #' @references - Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
 #'  [pdf](https://vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf)
-#' @md
+
 #' @examples
 #' library(umx);
 #' 
@@ -237,7 +237,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 #' @family Teaching and testing Functions
 #' @seealso - [OpenMx::mxCheckIdentification()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' tmx_is.identified(nVariables = 2, nFactors = 1) # FALSE
 #' tmx_is.identified(nVariables = 3, nFactors = 1) # TRUE
@@ -268,7 +268,7 @@ tmx_is.identified <- function(nVariables, nFactors){
 #' @return None
 #' @export
 #' @family Reporting functions
-#' @md
+
 tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("black", "#AAAAAA"))  UseMethod("tmx_show", x)
 
 # Define generic RMSEA...
@@ -291,7 +291,7 @@ tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"),
 #' @return None
 #' @export
 #' @family Reporting functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' nameStr = c('x1', 'x2', 'g')
@@ -400,7 +400,7 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' @export
 #' @family Teaching and Testing functions
 #' @references - <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -577,7 +577,7 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 #' @param matrices to show (default is c("S", "V", "A", "M")).
 #' @param ... Arguments passed to [tmx_show.MxModel()].
 #' @export
-#' @md
+
 tmx_show.MxModelGSEM <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "V", "A", "M"), ...) {
 	tmx_show.MxModel(x, what = what, show = show, matrices = matrices, ...)
 }

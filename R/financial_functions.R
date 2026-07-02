@@ -39,7 +39,7 @@ umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-#' @md
+
 #' @examples
 #' # Example Usage:
 #' # 2026 Strategy: $500k Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
@@ -102,7 +102,7 @@ fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fif
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-#' @md
+
 #' @examples
 #' # Call Option (In-The-Money LEAP)
 #' fin_stock_option(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8)
@@ -216,7 +216,7 @@ fin_stock_option <- function(premium = 134, strike = 200, stock = 304, delta = 0
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-#' @md
+
 #' @examples
 #' \dontrun{
 #' libs(c("quantmod", "ggplot2", "scales", "lubridate"))
@@ -273,7 +273,7 @@ fin_stock_CAGR <- function(priceSeries, from = "1900-01-01") {
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-#' @md
+
 #' @examples
 #' fin_carryCost(property_cost=1.2e6)
 #' fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
@@ -326,7 +326,7 @@ fin_carryCost <- function(property_cost, appreciation =.02, QQQ= .14, rent_saved
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-#' @md
+
 #' @examples
 #' fin_stock_valuation(rev=7e9, opmargin=.1, PE=33)
 #' # Market cap =  $18,480,000,000
@@ -369,7 +369,7 @@ fin_stock_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-#' @md
+
 #' @examples
 #' fin_net_present_value(27e3, .05, 25)
 #'
@@ -399,7 +399,7 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()]
-#' @md
+
 #' @examples
 #' 
 #' fin_stock_target(114,fair=140, ticker="NVDA", capital=.15, verb=TRUE)
@@ -525,7 +525,7 @@ fin_CAGR <- function(beginningValue, endingValue, numYears, digits=3) {
 #' @family financial functions
 #' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_tax_NI()], [fin_stock_valuation()]
 #' @references - <https://en.wikipedia.org/wiki/Compound_interest>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # 1. Value of a principal after yrs years at 5% return, compounding monthly.
@@ -662,7 +662,7 @@ fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_stock_valuation()]
 #' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
-#' @md
+
 #' @examples
 #' fin_tax_NI(42e3)
 #' fin_tax_NI(142000)
@@ -699,7 +699,7 @@ fin_tax_NI <- function(annualEarnings, symbol = "\u00A3") {
 #' @param ... further arguments passed to or from other methods. also cat =F to return string
 #' @return - invisible
 #' @seealso - [umx::fin_percent()], [umx::fin_interest()], [scales::dollar()]
-#' @md
+
 # #' @family print
 #' @export
 #' @examples
@@ -749,7 +749,7 @@ print.money <- bucks
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()]
-#' @md
+
 #' @examples
 #' # Percent needed to return to original value after 10% taken off
 #' fin_percent(-10)
@@ -786,7 +786,7 @@ fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TR
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
 #' @seealso - [umx::fin_percent()]
-#' @md
+
 #' @method print percent
 #' @export
 #' @examples
@@ -819,7 +819,7 @@ print.percent <- function(x, ...) {
 #' @param ... further arguments passed to or from other methods.
 #' @return - invisible
 #' @seealso - [umx::fin_percent()]
-#' @md
+
 #' @method plot percent
 #' @export
 #' @examples
@@ -908,7 +908,7 @@ plot.percent <- function(x, ...) {
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
-#' @md
+
 #' @examples
 #' # fin_stock_justifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
 #' 
@@ -931,7 +931,7 @@ fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, disc
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
-#' @md
+
 #' @examples
 #' # Open $INTC in yahoo finance.
 #' \dontrun{
@@ -964,7 +964,7 @@ fin_stock_ticker <- function(ticker= "INTC") {
 #' }
 #' @export
 #' @family financial functions
-#' @md
+
 #' @examples
 #' fin_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, 
 #'	riskFreeRate = 0.04, impliedVol = 0.20)
@@ -1062,7 +1062,7 @@ fin_Greeks <- function(spotPrice, strikePrice, daysToExpiry, riskFreeRate = 0.04
 #' @return A ggplot object visualizing Delta and Gamma.
 #' @export
 #' @family financial functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' fin_plotGreekCurves(strikePrice = 100)
@@ -1153,7 +1153,7 @@ fin_plotGreekCurves <- function(strikePrice, daysToExpiry = 30, riskFreeRate = 0
 #' @return A ggplot object comparing the extrinsic premium decay side-by-side.
 #' @export
 #' @family financial functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' fin_LeapSimulateRoll(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04)

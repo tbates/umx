@@ -46,7 +46,7 @@
 #' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
 #' @references - <https://github.com/tbates/umx>
 #' @export
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)

@@ -51,7 +51,7 @@
 #' Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. \doi{10.1017/thg.2019.2},
 #' <https://github.com/tbates/umx>, tutorial: <https://tbates.github.io>
 #'
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require("umx")

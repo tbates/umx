@@ -10,7 +10,7 @@
 #' @param daysToExpiry The number of days to expiration.
 #' @return A numeric volatility value.
 #' @export
-#' @md
+
 fin_resolveVolatility <- function(impliedVol, strikePrice, daysToExpiry) {
   if (!is.character(impliedVol)) {
     return(impliedVol)

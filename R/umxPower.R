@@ -51,7 +51,7 @@
 #' Power failure: why small sample size undermines the reliability of neuroscience. 
 #' *Nature Reviews Neuroscience*, **14**, 365-376. \doi{10.1038/nrn3475}
 #' @export
-#' @md
+
 #' @examples
 #'
 #' # =====================================================
@@ -265,7 +265,7 @@ power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "
 #' @seealso - [power.ACE.test()], [umxRAM()]
 #' @references - Miles, J. (2003). A framework for power analysis using a structural equation modelling procedure. *BMC Medical Research Methodology*, **3**, 27. \doi{10.1186/1471-2288-3-27}
 #' * [Superpower package](https://CRAN.R-project.org/package=Superpower)
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # ===================================================

@@ -9,7 +9,7 @@
 #' @family xmu internal not for end user
 #' @seealso - [umxRAM()], [OpenMx::mxModel()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' umxModel()
@@ -157,7 +157,7 @@ umxModel <- function(...) {
 #' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]
 #' @family Core Model Building Functions
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' 

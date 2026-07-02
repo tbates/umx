@@ -14,7 +14,7 @@
 #' @family Model Summary and Comparison
 #' @seealso - [umxCompare()] [OpenMx::mxCompare()]
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # TODO
@@ -571,7 +571,7 @@ xmu_build_independence_jacobian <- function(rowNames, manifests) {
 #' @family Model Summary and Comparison
 #' @references - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. Psychometrika, 75(2), 243-269.
 #' @export
-#' @md
+
 xmu_robust_WLS_fit <- function(model) {
 	# Step A: Extract raw Chi-Square, df, and Jacobian
 	chisqTargetRaw = model$output$fit

@@ -33,7 +33,7 @@
 #' Kenny, D.A., & Zautra, A. (1995). The trait-state-error model for multiwave data. *Journal of Consulting and Clinical Psychology*, **63**, 52–59. \doi{10.1037/0022-006X.63.1.52}
 #' Hamaker E.L., Kuiper R.M., & Grasman R. (2015). A critique of the cross-lagged panel model. *Psychological Methods*, **20**, 102–116. \doi{10.1037/a0038889}
 #' Heise D. R. (1970). Causal inference from panel data. *Sociological Methodology*, 2, 3–27. \doi{10.2307/270780}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' 

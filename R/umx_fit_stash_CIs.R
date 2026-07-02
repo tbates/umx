@@ -13,7 +13,7 @@
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxConfint()], [xmu_get_CI()]
-#' @md
+
 #' @references - <https://github.com/tbates/umx>
 #'
 xmu_CI_stash <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {

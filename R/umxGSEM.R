@@ -101,7 +101,7 @@ umxGSEM_ldsc <- function (traits, sample.prev, population.prev, ld, wld, trait.n
 #' @return Absolute path to the downloaded file.
 #' @export
 #' @family Genomic SEM Functions
-#' @md
+
 #' @examples
 #' \dontrun{
 #' project_path = "~/your/project"
@@ -173,7 +173,7 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' @return A character vector of paths to the munged files.
 #' @export
 #' @family Genomic SEM Functions
-#' @md
+
 umxGSEM_munge <- function(files = NULL, hm3 = "w_hm3.snplist", Ns = NULL, trait.names = NULL, info.filter = 0.9, maf.filter = 0.01, column.names = list(), output_dir = getwd(), cores = -1, overwrite = FALSE, ...) {
 	if (is.null(files)) {
 		stop("Provide a character vector of your summary statistics files, e.g., files = c('ed.txt', 'aut.txt')")
@@ -336,7 +336,7 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' @family Genomic SEM Functions
 #' @references
 #' Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, G. R., Mallard, T. T., Hill, W. D., ... & Tucker-Drob, E. M. (2019). Genomic structural equation modeling. *Nature Human Behaviour*, **3**, 513-525. \doi{10.1038/s41562-019-0566-x}
-#' @md
+
 #' @examples
 #' \dontrun{
 #' # A simple heritability and genetic correlation example
@@ -481,7 +481,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 #' @export
 #' @family Test
 #' @references - <https://github.com/tbates/umx>
-#' @md
+
 #' @examples
 #' \dontrun{
 #' require(umx)
