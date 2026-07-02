@@ -282,11 +282,11 @@ fin_carryCost <- function(property_cost, appreciation =.02, QQQ= .14, rent_saved
   rent_saved   = property_cost * rent_saved
   interest     = property_cost * interest
   maintenance  = property_cost * maintenance
-  QQQ          = (property_cost * (1+QQQ)^years) - property_cost
+  QQQgains     = (property_cost * (1+QQQ)^years) - property_cost
   propAprec    = property_cost * ((1+appreciation)^years)
   propAprec    = (propAprec*.97) - property_cost # sale cost
   Carry_Cost   = (interest + rates + insurance + maintenance) - rent_saved
-  netnetCostOfBuying = (Carry_Cost*years) + QQQ - propAprec
+  netnetCostOfBuying = (Carry_Cost*years) + QQQgains - propAprec
 
   if((Carry_Cost/property_cost) > .015){
   	cat("Polite note: Carry Cost over the 1.5% threshold: **too high**\n\n")
@@ -299,8 +299,8 @@ fin_carryCost <- function(property_cost, appreciation =.02, QQQ= .14, rent_saved
 	  dollar(as.numeric(maintenance) , prefix = "$"), "maintenance - ",
 	  dollar(as.numeric(rent_saved)  , prefix = "$"), "rent_saved\n", 
 	  "Annual carry cost = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
-	  "Property appreciation = ", dollar(as.numeric(propAprec), prefix = "$"), "\n",
-	  "Missed market gains  = ", dollar(as.numeric(QQQ), prefix = "$"), "\n",
+	  "Assumed appreciation of ", QQQ*100, "% in QQQ and ", dollar(as.numeric(propAprec), prefix = "$"), " /yr for property\n",
+	  "Missed market gains  = ", dollar(as.numeric(QQQgains), prefix = "$"), "\n",
 	  "Net net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), "\n"
   )
   invisible(netnetCostOfBuying)

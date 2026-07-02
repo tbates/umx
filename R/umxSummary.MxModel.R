@@ -295,7 +295,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 						if (umx_is_GSEM(model)) {
 							cat("\n*Statistical Note*: For GSEM models, evaluate absolute fit using SRMR (< 0.10) and CFI. Evaluate model improvements using change in CFI and change in SRMR (see ?umxCompare for details).\n")
 						} else {
-							cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not valid. Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
+							cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.\nEvaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
 						}
 					} else {
 						if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }

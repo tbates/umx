@@ -19,11 +19,7 @@ test_that("WLS in lavaan and umxRAM identical", {
 	dat[] = lapply(dat, function(x) cut(x, breaks = 4, labels = FALSE))
 	dat[] = lapply(dat, ordered)
 
-	# 1. Model in lavaan
-	model = ' f =~ x1 + x2 + x3 + x4 '
-	lav1  = cfa(model, data = dat, ordered = names(dat), estimator = "WLSMV")
-
-	# 2. Model in umxRAM
+	# 1. Model in umxRAM
 	# TODO: Note in WLS vignette if not clear: Data can be raw, or mxData()
 	# TODO: implement m.v. as a synonym for v.m.?
 	m1 = umxRAM("WLS_umx", data = dat, type = "WLS", allContinuousMethod = "cumulants",   # or "marginals"
@@ -31,6 +27,11 @@ test_that("WLS in lavaan and umxRAM identical", {
 		umxPath(v.m. = "f"),
 		umxPath(v.m. = c("x1", "x2", "x3", "x4"))
 	)
+
+	# 2. Model in lavaan
+	model = ' f =~ x1 + x2 + x3 + x4 '
+	lav1  = cfa(model, data = dat, ordered = names(dat), estimator = "WLSMV")
+
 	
 	# 3. Fit the Nested WLS Model (Drop the b1 path to 0)
 	mNested = mxModel(mBase, name = "WLS_Nested")

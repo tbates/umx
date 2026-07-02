@@ -444,7 +444,6 @@ umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentV
 #' @family Core Model Building Functions
 #' @seealso - [OpenMx::mxFitFunctionMultigroup()], [umxRAM()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -4081,7 +4080,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 	if(nOrdVars > 0){
 		if(verbose){
 			message(nOrdVars, " variables are ordinal (>2 levels). For these I will use Paras Mehta's 'fix first 2 thresholds' method.\n",
-			"It's ESSENTIAL that you leave the means and variances of the latent ordinal traits FREE!\n",
+			"It's ESSENTIAL that you leave the means and variances of the latent ordinal manifests FREE!\n",
 			"See ?umxThresholdMatrix")
 		}
 	}

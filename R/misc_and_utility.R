@@ -1857,7 +1857,7 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("um
 	}
 	OpenMx_vers = mxVersion(model = model, verbose = verbose)	
 	if (verbose) {
-		message('Open the CRAN page for any package with umx_open_CRAN_page()\nYou can update OpenMx with:\ninstall.OpenMx(c("NPSOL", "travis", "CRAN", "open travis build page")')
+		message('Open the CRAN page for any package with umx_open_CRAN_page()\nYou can update OpenMx with:\ninstall.OpenMx(c("CRAN", "open GitHub build page")')
 	}
 
 	if(return == "umx"){
@@ -3101,14 +3101,12 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #' @description
 #' You can install OpenMx, including the latest NPSOL-enabled build of OpenMx. Options are:
 #' 
-#' 1. "NPSOL": Install from our repository (default): This is where we maintain binaries supporting parallel processing and NPSOL.
-#' 2. "travis": Install the latest travis built (MacOS only).
-#' 3. "CRAN": Install from CRAN.
-#' 4. "open travis build page": Open the list of travis builds in a browser window.
+#' 1. "CRAN": Install from CRAN.
+#' 2. "open GitHub build page": Open the GitHub builder in a browser window.
 #'
 #'
 #' @aliases umx_update_OpenMx
-#' @param loc Version to get default is "NPSOL". "travis" (latest build),CRAN, list of builds.
+#' @param loc Version to get default is "CRAN".
 #' @param url Custom URL. On Mac, set this to "Finder" and the package selected in the Finder will be installed.
 #' @param repos Which repository to use (ignored currently).
 #' @param lib Where to install the package.
@@ -3120,17 +3118,12 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 
 #' @examples
 #' \dontrun{
-#' install.OpenMx() # gets the NPSOL version
-#' install.OpenMx("NPSOL") # gets the NPSOL version explicitly
+#' install.OpenMx() # gets the CRAN version
+#' install.OpenMx("open GitHub build page") # Open web page of GitHub builds
 #' install.OpenMx("CRAN") # Get the latest CRAN version
-#' install.OpenMx("open travis build page") # Open web page of travis builds
 #' }
-install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build page", "UVa"), url= NULL, lib, repos = getOption("repos")) {	
+install.OpenMx <- function(loc = c("CRAN", "open GitHub build page"), url= NULL, lib, repos = getOption("repos")) {	
 	loc = match.arg(loc)
-	if(loc == "UVa"){
-		loc = "NPSOL"
-		message("next time, use 'NPSOL' instead of 'UVa'")
-	}
 	oldTimeOut = getOption('timeout')
 	options(timeout=60*3)
 	if(!is.null(url)){
@@ -3148,22 +3141,16 @@ install.OpenMx <- function(loc = c("NPSOL", "travis", "CRAN", "open travis build
 			detach('package:OpenMx', unload = TRUE)
 		}
 		source("https://openmx.ssri.psu.edu/getOpenMx.R")
-		# was source("https://openmx.ssri.psu.edu/software/getOpenMx.R")
-		# was https://openmx.psyc.virginia.edu/getOpenMx.R
-		# was source("https://openmx.ssri.psu.edu/software/getOpenMx.R")		
 	}else if(loc == "travis"){
 		if(umx_check_OS("OSX")){
 			install.packages("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/OpenMx_latest.tgz")
-			# was ("https://openmx.psyc.virginia.edu/OpenMx2/bin/macosx/travis/OpenMx_latest.tgz")
-			# , lib = lib, repos=repos
-			# quit(save = "default")
 		} else {
 			stop(paste0("Sorry, travis builds are only available for MacOS :-("))
 		}
 	} else if(loc == "CRAN"){
 		install.packages("OpenMx", lib= lib, repos = repos)
-	} else if(loc == "open travis build page"){
-		browseURL("https://vipbg.vcu.edu/vipbg/OpenMx2/software/bin/macosx/travis/?C=M;O=D")
+	} else if(loc == "open GitHub build page"){
+		browseURL("https://github.com/tbates/GenomicMx/actions")
 	}
 	options(timeout=oldTimeOut)
 }

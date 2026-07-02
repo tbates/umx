@@ -176,7 +176,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				cat("\n*Statistical Note*: For GSEM models, evaluate absolute fit using SRMR (< 0.10) and CFI. Evaluate model improvements using change in CFI and change in SRMR (see ?umxCompare for details).\n")
 			} else {
 				cat("  - diffFit: Satorra-Bentler (2010) strict \u0394 \u03C7\u00B2 for nested models.\n")
-				cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not valid. Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using diffFit (Satorra-Bentler (2010) strict \u0394 \u03C7\u00B2). (see ?umxCompare for details).\n")
+				cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.\n",
+				" Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using diffFit (Satorra-Bentler (2010) strict \u0394 \u03C7\u00B2). (see ?umxCompare for details).\n")
 			}
 		}
 		return(invisible(finalTable))
@@ -278,7 +279,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				units_str = paste(units_val, collapse = ", ")
 			}
 			cat(paste0("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n"))
-			cat("\n*Statistical Note*: For WLS/GSEM models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not valid. Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
+			cat("\n*Statistical Note*: For WLS/GSEM models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.\n",
+			"Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
 
 		} else {
 			cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")

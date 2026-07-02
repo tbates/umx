@@ -6,14 +6,14 @@
 \title{Install OpenMx, with choice of builds}
 \usage{
 install.OpenMx(
-  loc = c("NPSOL", "travis", "CRAN", "open travis build page", "UVa"),
+  loc = c("CRAN", "open GitHub build page"),
   url = NULL,
   lib,
   repos = getOption("repos")
 )
 }
 \arguments{
-\item{loc}{Version to get default is "NPSOL". "travis" (latest build),CRAN, list of builds.}
+\item{loc}{Version to get default is "CRAN".}
 
 \item{url}{Custom URL. On Mac, set this to "Finder" and the package selected in the Finder will be installed.}
 
@@ -27,18 +27,15 @@ None
 \description{
 You can install OpenMx, including the latest NPSOL-enabled build of OpenMx. Options are:
 \enumerate{
-\item "NPSOL": Install from our repository (default): This is where we maintain binaries supporting parallel processing and NPSOL.
-\item "travis": Install the latest travis built (MacOS only).
 \item "CRAN": Install from CRAN.
-\item "open travis build page": Open the list of travis builds in a browser window.
+\item "open GitHub build page": Open the GitHub builder in a browser window.
 }
 }
 \examples{
 \dontrun{
-install.OpenMx() # gets the NPSOL version
-install.OpenMx("NPSOL") # gets the NPSOL version explicitly
+install.OpenMx() # gets the CRAN version
+install.OpenMx("open GitHub build page") # Open web page of GitHub builds
 install.OpenMx("CRAN") # Get the latest CRAN version
-install.OpenMx("open travis build page") # Open web page of travis builds
 }
 }
 \references{

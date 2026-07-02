@@ -7,13 +7,13 @@ test_that("umxGSEM Triage Logic Direct testing of xmu_gsem_triage works", {
   
   # 1. Clean Matrix (Level 0)
   vClean = diag(c(0.01, 0.01, 0.01))
-  res0 = xmu_gsem_triage(vMat = vClean, sMat = sMat)
+  res0 = umx:::xmu_gsem_triage(vMat = vClean, sMat = sMat)
   expect_equal(res0$triageLevel, 0)
   expect_equal(res0$smoothed, FALSE)
   
   # 2. Silent Ridge Fix (Level 1)
   vRidge = diag(c(0.01, 0.01, -1e-9))
-  res1 = xmu_gsem_triage(vMat = vRidge, sMat = sMat)
+  res1 = umx:::xmu_gsem_triage(vMat = vRidge, sMat = sMat)
   expect_equal(res1$triageLevel, 1)
   expect_equal(res1$smoothed, TRUE)
   # Verify that diagonals were adjusted by 1e-6
@@ -23,7 +23,7 @@ test_that("umxGSEM Triage Logic Direct testing of xmu_gsem_triage works", {
   # 3. nearPD Coercion (Level 2)
   vNearPD = diag(c(0.01, 0.01, -0.01))
   expect_warning({
-    res2 = xmu_gsem_triage(vMat = vNearPD, sMat = sMat)
+    res2 = umx:::xmu_gsem_triage(vMat = vNearPD, sMat = sMat)
   }, "Applying nearPD coercion")
   expect_equal(res2$triageLevel, 2)
   expect_equal(res2$smoothed, TRUE)
@@ -31,19 +31,19 @@ test_that("umxGSEM Triage Logic Direct testing of xmu_gsem_triage works", {
   # 4. Fatal Matrix Deficiency (Level 3)
   vFatal = diag(c(0.01, 0.01, -0.1))
   expect_error({
-    xmu_gsem_triage(vMat = vFatal, sMat = sMat)
+    umx:::xmu_gsem_triage(vMat = vFatal, sMat = sMat)
   }, "Fatal Matrix Deficiency: V matrix is severely non-positive definite")
   
   # 5. Missingness (NA) Catch
   vNA = diag(c(0.01, 0.01, 0.01))
   vNA[1, 2] = NA
   expect_error({
-    xmu_gsem_triage(vMat = vNA, sMat = sMat)
+    umx:::xmu_gsem_triage(vMat = vNA, sMat = sMat)
   }, "Fatal Missingness: LDSC matrices contain raw NAs")
   
   # 6. smooth = FALSE Override
   expect_error({
-    xmu_gsem_triage(vMat = vNearPD, sMat = sMat, smooth = FALSE)
+    umx:::xmu_gsem_triage(vMat = vNearPD, sMat = sMat, smooth = FALSE)
   }, "Matrix is non-positive definite.*and smooth = FALSE")
 })
 
