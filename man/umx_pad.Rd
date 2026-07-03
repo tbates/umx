@@ -41,6 +41,7 @@ Other Miscellaneous Utility Functions:
 \code{\link[=umxRAM2Lav]{umxRAM2Lav()}},
 \code{\link[=umxVersion]{umxVersion()}},
 \code{\link[=umx_array_shift]{umx_array_shift()}},
+\code{\link[=umx_data]{umx_data()}},
 \code{\link[=umx_find_object]{umx_find_object()}},
 \code{\link[=umx_lower.tri]{umx_lower.tri()}},
 \code{\link[=umx_msg]{umx_msg()}},

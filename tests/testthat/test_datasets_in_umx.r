@@ -14,4 +14,11 @@ test_that("umx_get_checkpoint", {
 	
 })
 
+test_that("umx_data lists datasets and vignettes neatly", {
+	outputLines = capture.output(umx_data())
+	expect_true(any(grepl("Data sets in package 'umx':", outputLines)))
+	expect_true(any(grepl("HSwls:", outputLines)))
+	expect_true(any(grepl("Vignettes in `umx` \\(access as vignette\\(\"name\", package=\"umx\"\\)\\)", outputLines)))
+})
+
 
