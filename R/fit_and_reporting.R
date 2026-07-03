@@ -702,7 +702,7 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 	}
 
 	# 1. remove existing CIs if requested to
-	if(wipeExistingRequests && (parm != "existing")){
+	if(wipeExistingRequests && (all(parm != "existing"))){
 		if(length(object$intervals)){
 			object = mxModel(object, remove = TRUE, object$intervals)
 			message("Removed existing CIs")
@@ -2407,12 +2407,13 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
 #' } # end dontrun
 #'
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ...) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ..., uncertainty = c("none", "SE", "RobustSE", "CI")) {
 	if (!is.null(x$expectation) && class(x$expectation)[[1]] == "MxExpectationLISREL") {
-		return(plot.MxLISRELModel(x = x, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min = min, same = same, max = max, ...))
+		return(plot.MxLISRELModel(x = x, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min = min, same = same, max = max, uncertainty = uncertainty, ...))
 	}
 	if(is.logical(splines)){ splines = ifelse(splines, "TRUE", "FALSE")}
 	splines = match.arg(splines)
+	uncertainty = match.arg(uncertainty)
 
 	# loop over submodels
 	if(length(x@submodels)){
@@ -2423,7 +2424,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			} else {
 				thisFile = paste0(file, "_group_", n)
 			}
-			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, ...)
+			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, uncertainty = uncertainty, ...)
 			n = n + 1
 		}
 	} else {
@@ -2436,8 +2437,43 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		latents = model@latentVars # 'vis', 'math', and 'text' 
 		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
+		# If RobustSE is requested, compute and assign robust covariance and standard errors
+		if (uncertainty == "RobustSE") {
+			if (is.null(model$data) || is.null(model$data$observed) || identical(model$data$type, "cov")) {
+				stop("Robust standard errors require raw data. The model has covariance or missing data.")
+			}
+			resRobust = imxRobustSE(model, details = TRUE)
+			model@output$vcov = resRobust$cov
+			model@output$standardErrors = resRobust$SE
+		}
+
+		# Compute standardized/raw paths and standard errors once using mxStandardizeRAMpaths
+		pt = NULL
+		if (uncertainty %in% c("SE", "RobustSE", "CI")) {
+			flatten_pTable <- function(obj) {
+				if (is.data.frame(obj)) {
+					return(obj)
+				} else if (is.list(obj)) {
+					if (length(obj) == 0) return(NULL)
+					dfs = lapply(obj, flatten_pTable)
+					dfs = dfs[vapply(dfs, is.data.frame, logical(1))]
+					if (length(dfs) > 0) {
+						return(do.call(rbind, dfs))
+					}
+				}
+				return(NULL)
+			}
+			hasVcov = !is.null(model$output$vcov)
+			pt = mxStandardizeRAMpaths(model, SE = hasVcov)
+			pt = flatten_pTable(pt)
+			if (!is.null(pt) && nrow(pt) > 0) {
+				names(pt) = c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
+			}
+		}
+		
+		cis = model$output$confidenceIntervals
+
 		# Update values using compute = T to capture labels with [] references.
-		# TODO: !!! Needs more work to sync with confidence intervals and SEs
 		model$S$values = mxEval(S, model, compute = TRUE)
 		model$A$values = mxEval(A, model, compute = TRUE)
 		if(!is.null(model$M)){
@@ -2450,16 +2486,16 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		# = Get Symmetric & Asymmetric Paths =
 		# ========================
 		out = "";
-		out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "Single arrow paths", digits = digits)
+		out = xmu_dot_make_paths(model$matrices$A, stringIn = out, heads = 1, fixed = fixed, labels = labels, comment = "Single arrow paths", digits = digits, pt = pt, std = std, uncertainty = uncertainty, cis = cis)
 		if(resid == "circle"){
-			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "Covariances", digits = digits)
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE, fixed = fixed, labels = labels, comment = "Covariances", digits = digits, pt = pt, std = std, uncertainty = uncertainty, cis = cis)
 		} else if(resid == "line"){
-			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = TRUE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits, pt = pt, std = std, uncertainty = uncertainty, cis = cis)
 		}else{
-			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits)		
+			out = xmu_dot_make_paths(model$matrices$S, stringIn = out, heads = 2, showResiduals = FALSE , fixed = fixed, labels = labels, comment = "Covariances & residuals", digits = digits, pt = pt, std = std, uncertainty = uncertainty, cis = cis)		
 		}
 		# TODO should xmu_dot_make_residuals handle fixed or not necessary?
-		tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid)
+		tmp = xmu_dot_make_residuals(model$matrices$S, latents = latents, digits = digits, resid = resid, pt = pt, std = std, uncertainty = uncertainty, cis = cis)
 		variances     = tmp$variances     # either "var_var textbox" or "var -> var port circles"
 		varianceNames = tmp$varianceNames # names of residuals/variances. EMPTY if using circles 
 		# =================

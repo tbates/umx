@@ -1,0 +1,165 @@
+---
+title: "Confidence Intervals and Standard Errors in SEM"
+subtitle: "Standard Errors, Robust SEs, and Profile Likelihood CIs in umx"
+author: "Timothy C. Bates"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Confidence Intervals and Standard Errors in SEM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 5
+)
+library(umx)
+library(OpenMx)
+```
+
+## Introduction
+
+Fitting a Structural Equation Model (SEM) yields **point estimates** (e.g., a path coefficient of $0.45$ or a variance component of $0.21$). However, scientific inference requires representing the **uncertainty** of these estimates. 
+
+`umx` (and `OpenMx` underneath) provides three primary ways to assess uncertainty:
+1. **Standard Maximum Likelihood Standard Errors** (Wald-based).
+2. **Robust Standard Errors** (Huber-White / "Sandwich" estimator).
+3. **Profile Likelihood Confidence Intervals** (likelihood-based).
+
+This vignette explains the differences between these methods, when to use each, and how to implement them in your `umx` workflow.
+
+---
+
+## 1. Point Estimates vs. Inference (SEs vs. CIs)
+
+### Standard Errors (Wald CIs)
+Standard errors represent the standard deviation of a parameter's sampling distribution. By default, packages construct **Wald confidence intervals** using the standard error:
+$$\hat{\theta} \pm z_{\alpha/2} \times \text{SE}$$
+
+* **Assumption:** The sampling distribution of the estimator is symmetric and normal.
+* **Limitations:** This assumption breaks down in several common scenarios:
+  * Small sample sizes.
+  * Parameters near boundaries (e.g., variances, which are bounded at 0).
+  * Highly non-linear parameter functions (e.g., indirect effects in mediation models).
+
+### Profile Likelihood Confidence Intervals
+Instead of assuming a normal distribution, **Profile Likelihood Confidence Intervals** construct the interval directly from the log-likelihood surface. 
+
+To find the lower boundary of a 95% profile CI for a parameter $\theta$:
+1. The parameter $\theta$ is fixed to a value below its maximum likelihood estimate (MLE).
+2. All other parameters in the model are re-optimized to find the maximum possible log-likelihood.
+3. Steps 1-2 are repeated until we find the point where the log-likelihood drops by exactly $\chi^2_1(0.95)/2 \approx 1.92$ units compared to the MLE.
+
+Because they re-optimize the model at each step, profile CIs:
+* Respect the asymmetry of the parameter space (e.g., a CI for variance might be $[0.02, 0.45]$ rather than $[-0.10, 0.35]$).
+* Do not rely on local curvature (Hessian matrix) at the MLE.
+* Restrict values to boundary constraints.
+
+---
+
+## 2. ML Standard Errors vs. Robust Standard Errors
+
+### Standard ML SEs
+Standard Maximum Likelihood standard errors are derived from the local curvature of the log-likelihood surface at the peak (the inverse of the Hessian matrix / information matrix).
+* **When to use:** When the data are multivariate normal, the model is correctly specified, and the sample size is large.
+
+### Robust Standard Errors (Sandwich Estimator)
+When data are non-normal, standard ML standard errors are typically underestimated, leading to inflated Type-I error rates. **Robust standard errors** (also called Huber-White or "sandwich" SEs) correct for this.
+The robust covariance matrix is calculated as:
+$$\text{Cov}_{\text{robust}} = H^{-1} B H^{-1}$$
+* **$H$ (The "Bread"):** The standard Hessian matrix (curvature of the likelihood surface).
+* **$B$ (The "Meat"):** The variability of the individual case-wise gradients.
+
+#### When to prefer Robust SEs:
+* Mild-to-moderate violation of multivariate normality.
+* Minor model misspecifications.
+* Clustered or nested data (if using a cluster-robust correction).
+
+#### Limitations:
+* Robust standard errors do not fix biased point estimates resulting from severe misspecification.
+* They can be unstable in small samples ($N < 100$).
+* They still rely on the Wald symmetry assumption for confidence intervals.
+
+---
+
+## 3. Practical Workflow in `umx`
+
+Let's illustrate these options using the built-in `demoOneFactor` dataset.
+
+### Step 1: Fit a Base Model
+We fit a simple one-factor model using `umxRAM()`. By default, `umxSummary()` reports standard ML standard errors.
+
+```{r fit_model, message=FALSE, warning=FALSE}
+# Load data
+data(demoOneFactor)
+manifests = names(demoOneFactor)
+
+# Fit model
+m1 = umxRAM("One_Factor_Model", data = demoOneFactor, type = "cov",
+	umxPath("g", to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = "g", fixedAt = 1)
+)
+```
+
+We can inspect the standard ML standard errors and Wald CIs:
+```{r summary_std, message=FALSE}
+umxSummary(m1, std = TRUE, showEstimates = "std")
+```
+
+### Step 2: Request Robust Standard Errors
+To obtain robust standard errors, we can apply the `imxRobustSE()` function from `OpenMx` to our fitted model:
+
+```{r robust_se, message=FALSE}
+# Compute robust standard errors
+m1Robust = imxRobustSE(m1)
+
+# Extract standard errors to compare
+stdSE = m1$output$standardErrors
+robustSE = m1Robust$output$standardErrors
+
+# Compare SEs side-by-side
+compareSE = data.frame(
+	Parameter = names(stdSE),
+	Standard_ML_SE = round(stdSE, 4),
+	Robust_SE = round(robustSE, 4)
+)
+print(compareSE)
+```
+
+If the robust standard errors are larger than the standard ML standard errors, it suggests that multivariate non-normality is present in your data.
+
+### Step 3: Compute Profile Likelihood Confidence Intervals
+Profile likelihood intervals are requested during model building or via `umxConfint()`. To compute CIs for specific paths (e.g., the loadings of $x1$ and $x2$ on $g$):
+
+```{r profile_ci, message=FALSE, warning=FALSE}
+# Request profile likelihood CIs for specific parameters
+m1CI = umxConfint(m1, parm = c("g_to_x1", "g_to_x2"), run = TRUE)
+
+# View summary showing profile CIs
+umxSummary(m1CI, showEstimates = "raw")
+```
+
+Note that the profile CIs are asymmetric and respect the shape of the likelihood surface.
+
+---
+
+## 4. Summary: When to Prefer Which?
+
+| Feature | Standard ML SEs | Robust SEs (Sandwich) | Profile Likelihood CIs |
+| :--- | :--- | :--- | :--- |
+| **Computational Cost** | Extremely low (one Hessian inversion) | Low (gradient calculations) | High (requires re-optimization) |
+| **Normality Assumption** | Strict | Relaxed | Strict (unless robust version used) |
+| **Handles Boundaries?** | No (can yield negative variances) | No | Yes (respects constraints) |
+| **Asymmetric CIs?** | No (always symmetric) | No | Yes (reflects log-likelihood shape) |
+| **Best For...** | Large samples, normal data | Non-normal data, rapid estimation | Key parameters, small samples, bounded parameters |
+
+### Recommendations for Reporting
+1. **Use Robust SEs** for general parameters (such as minor residual variances or covariances) if your data shows signs of non-normality.
+2. **Compute Profile Likelihood CIs** (using `umxConfint`) for your key structural parameters (e.g., hypothesized paths, mediation effects) to ensure your scientific inferences are robust to asymmetry and boundary conditions.

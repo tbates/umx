@@ -3232,7 +3232,7 @@ umx_make <- function(
 		}
 	} else if(what == "install"){
 		devtools::document(pkg = pkgPath)
-		devtools::install(pkg = pkgPath)
+		devtools::install(pkg = pkgPath, build_vignettes = TRUE)
 		devtools::load_all(path = pkgPath)
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkgPath, vignettes = TRUE, use_wordlist = TRUE)
@@ -3828,7 +3828,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' Check if a request name exists in a dataframe or related object
 #'
 #' Check if a list of names are in the [namez()] of a dataframe (or the [dimnames()] of a matrix), or the names of 
-#' the observed data of an [mzData()]
+#' the observed data of an [mxData()]
 #'
 #' @param namesNeeded Variable names to find (a dataframe is also allowed)
 #' @param data data.frame, matrix, or mxData to search in for names (default NA)
@@ -3836,7 +3836,7 @@ umx_check <- function(boolean.test, action = c("stop", "warning", "message"), me
 #' @param illegal Optional list of names which must NOT be present.
 #' @param no_others Whether to test that the data contain no columns in addition to those in namesNeeded (default FALSE)
 #' @param intersection Show the intersection of names
-#' @param message Some helpful text to append when dieing.
+#' @param message Some helpful text to append when dying.
 #' @family Test
 #' @export
 #' @family Check or test

@@ -19,7 +19,8 @@
   min = NULL,
   same = NULL,
   max = NULL,
-  ...
+  ...,
+  uncertainty = c("none", "SE", "RobustSE", "CI")
 )
 }
 \arguments{

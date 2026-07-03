@@ -17,7 +17,8 @@
   filter = c("ALL", "NS", "SIG"),
   RMSEA_CI = FALSE,
   ...,
-  matrixAddresses = FALSE
+  matrixAddresses = FALSE,
+  uncertainty = c("SE", "RobustSE", "CI", "none")
 )
 }
 \arguments{
@@ -36,7 +37,7 @@ If NULL will be computed on demand. If FALSE will not be computed.}
 
 \item{residuals}{Whether to include residuals in the summary (TRUE)}
 
-\item{SE}{Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.}
+\item{SE}{Deprecated. Please use \code{uncertainty} instead.}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
@@ -45,6 +46,8 @@ If NULL will be computed on demand. If FALSE will not be computed.}
 \item{...}{Other parameters to control model summary}
 
 \item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
+
+\item{uncertainty}{What type of parameter uncertainty to report: "SE" (default standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).}
 }
 \value{
 \itemize{

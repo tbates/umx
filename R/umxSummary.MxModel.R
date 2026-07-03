@@ -36,15 +36,16 @@
 #' @param std If TRUE, model is standardized (Default FALSE, NULL means "don't show").
 #' @param digits How many decimal places to report (Default 2)
 #' @param report If "html", then show results in browser (default = "markdown")
-#' @param SE Whether to compute SEs... defaults to TRUE. In rare cases, you might need to turn off to avoid errors.
+#' @param uncertainty What type of parameter uncertainty to report: "SE" (default standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @param means Whether to include means in the summary (TRUE)
 #' @param residuals Whether to include residuals in the summary (TRUE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
 #' @param RMSEA_CI Whether to compute the CI on RMSEA (Defaults to FALSE)
 #' @param refModels Saturated models if needed for fit indices (see example below:
 #'  If NULL will be computed on demand. If FALSE will not be computed.
-#' @param ... Other parameters to control model summary
 #' @param matrixAddresses Whether to show "matrix address" columns (Default = FALSE)
+#' @param SE Deprecated. Please use `uncertainty` instead.
+#' @param ... Other parameters to control model summary
 #' @family Summary functions
 #' @seealso - [umxRAM()], [xmu_robust_WLS_fit()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
@@ -89,12 +90,39 @@
 #' umxSummary(m1, std = TRUE, filter = "NS")
 #' }
 #'
-umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means= TRUE, residuals= TRUE, SE = TRUE, filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, ..., matrixAddresses = FALSE){
+umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means= TRUE, residuals= TRUE, uncertainty = c("SE", "RobustSE", "CI", "none"), filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, SE = TRUE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 	report   = match.arg(report)
 	filter   = match.arg(filter)
 	
+	# Handle deprecated SE parameter and map it to uncertainty
+	if (missing(uncertainty)) {
+		if (!missing(SE)) {
+			if (is.logical(SE)) {
+				uncertainty = ifelse(SE, "SE", "none")
+			} else {
+				uncertainty = SE
+			}
+		} else {
+			uncertainty = "SE"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
+
+	# If RobustSE is requested, compute and assign robust covariance and standard errors
+	if (uncertainty == "RobustSE") {
+		if (is.null(model$data) || is.null(model$data$observed) || identical(model$data$type, "cov")) {
+			stop("Robust standard errors require raw data. The model has covariance or missing data.")
+		}
+		resRobust = imxRobustSE(model, details = TRUE)
+		model@output$vcov = resRobust$cov
+		model@output$standardErrors = resRobust$SE
+	}
+
+	SE = (uncertainty %in% c("SE", "RobustSE", "CI")) && !is.null(model$output$vcov)
+
 	reportedWLS = FALSE
 	message("?umxSummary options: std=T|F', digits=, report= 'html', filter= 'NS' & more")
 	
@@ -210,30 +238,52 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			# TODO: umxSummary block table into latents/resid/means etc.
 			
 			if(std == TRUE){
-				# TODO: should CI be here?
-				namesToShow = c(naming, "Std.Estimate", "Std.SE", "CI")
+				if (uncertainty == "none") {
+					namesToShow = c(naming, "Std.Estimate")
+				} else if (uncertainty == "CI") {
+					namesToShow = c(naming, "Std.Estimate", "CI")
+				} else {
+					namesToShow = c(naming, "Std.Estimate", "Std.SE", "CI")
+				}
 			}else{ # must be raw
-				namesToShow = c(naming, "Estimate", "SE")					
+				if (uncertainty == "none") {
+					namesToShow = c(naming, "Estimate")
+				} else if (uncertainty == "CI") {
+					namesToShow = c(naming, "Estimate", "CI")
+				} else {
+					namesToShow = c(naming, "Estimate", "SE", "CI")
+				}
 			}
 
+			parameterTable$sig = TRUE
 			if("CI" %in% namesToShow){
-				parameterTable$sig = TRUE
 				parameterTable$CI  = ""
+				cis = model$output$confidenceIntervals
+				hasCIs = !is.null(cis) && (nrow(cis) > 0)
 				for(i in 1:dim(parameterTable)[1]) {
-					# TODO we only show SE-based CI for std estimates so far
-					est   = parameterTable[i, "Std.Estimate"]
-					CI95  = parameterTable[i, "Std.SE"] * 1.96
-					bounds = c(est - CI95, est + CI95)
-
-					if(any(is.na(bounds))) {
-						# protect cases with SE == NA from evaluation for significance
-					} else {
-						if (any(bounds <= 0) & any(bounds >= 0)){
-							parameterTable[i, "sig"] = FALSE
+					pName = parameterTable[i, "name"]
+					est   = parameterTable[i, ifelse(std, "Std.Estimate", "Estimate")]
+					
+					if (uncertainty == "CI" && hasCIs && (pName %in% rownames(cis))) {
+						lbound = cis[pName, "lbound"]
+						ubound = cis[pName, "ubound"]
+						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+						if (!is.na(lbound) && !is.na(ubound)) {
+							if (lbound <= 0 && ubound >= 0) {
+								parameterTable[i, "sig"] = FALSE
+							}
 						}
-						if(est < 0){
-							parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
+					} else {
+						seVal = suppressWarnings(as.numeric(parameterTable[i, ifelse(std, "Std.SE", "SE")]))
+						CI95  = seVal * 1.96
+						bounds = c(est - CI95, est + CI95)
+
+						if(any(is.na(bounds))) {
+							# protect cases with SE == NA from evaluation for significance
 						} else {
+							if (any(bounds <= 0) & any(bounds >= 0)){
+								parameterTable[i, "sig"] = FALSE
+							}
 							parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
 						}
 					}

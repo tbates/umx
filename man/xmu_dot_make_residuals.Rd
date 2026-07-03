@@ -9,7 +9,11 @@ xmu_dot_make_residuals(
   latents = NULL,
   fixed = TRUE,
   digits = 2,
-  resid = c("circle", "line")
+  resid = c("circle", "line"),
+  pt = NULL,
+  std = FALSE,
+  uncertainty = c("none", "SE", "RobustSE", "CI"),
+  cis = NULL
 )
 }
 \arguments{

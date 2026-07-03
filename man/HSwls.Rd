@@ -12,7 +12,7 @@ data(HSwls)
 }
 \description{
 A dataset containing cognitive test scores \code{x1} to \code{x9} for 301 students from two schools.
-This is a modified version of the classic \link[lavaan:HolzingerSwineford1939]{lavaan::HolzingerSwineford1939} dataset,
+This is a modified version of the classic \link[lavaan:HolzingerSwineford1939]{lavaan::HolzingerSwineford1939} or OpenMx's \link[OpenMx:HS.ability.data]{OpenMx::HS.ability.data} dataset (which contains the original continuous data),
 where the variables \code{x1} to \code{x9} have been converted into ordered factors (2, 3, or 4 categories)
 using quantile-based cuts. It is designed for demonstrating and teaching Weighted Least Squares (WLS)
 estimation with ordinal data.
@@ -60,7 +60,7 @@ Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stabil
 \emph{Supplementary Educational Monographs}, no. 48. Chicago: University of Chicago Press.
 }
 \seealso{
-\code{\link[=umxRAM]{umxRAM()}}
+\link[OpenMx:HS.ability.data]{OpenMx::HS.ability.data}, \code{\link[=umxRAM]{umxRAM()}}
 
 Other datasets:
 \code{\link{Anthro_LDSC}},

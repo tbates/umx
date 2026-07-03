@@ -2546,12 +2546,15 @@ xmu_dot_rank_str <- function(min = NULL, same = NULL, max = NULL) {
 #' @export
 #' @family xmu internal not for end user
 #' @family Graphviz
-xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits = 2, resid = c("circle", "line")) {
+xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits = 2, resid = c("circle", "line"), pt = NULL, std = FALSE, uncertainty = c("none", "SE", "RobustSE", "CI"), cis = NULL) {
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
 	mxMat_labels = mxMat$labels
 	mxMat_rows = dimnames(mxMat_free)[[1]]
 	mxMat_cols = dimnames(mxMat_free)[[2]]
+	uncertainty = match.arg(uncertainty)
+	matName = mxMat$name
+	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 
 	variances = c()
 	varianceNames = c()
@@ -2565,16 +2568,63 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 			if(thisPathFree){ prefix = "" } else { prefix = "@" }
 			if(thisPathFree | (thisPathVal !=0 && fixed)) {
 				if((to == from)) {
+					# Find matching row in pt
+					rowMatch = FALSE
+					if (!is.null(pt)) {
+						matchIdx = which(pt$matrix == matName & pt$row == to & pt$col == from)
+						if (length(matchIdx) == 1) {
+							rowMatch = TRUE
+							estVal = ifelse(std, pt[matchIdx, "Std.Estimate"], pt[matchIdx, "Estimate"])
+							seVal  = suppressWarnings(as.numeric(ifelse(std, pt[matchIdx, "Std.SE"], pt[matchIdx, "SE"])))
+						}
+					}
+					
+					# Format value string
+					valStr = prefix
+					if (rowMatch) {
+						estVal = round(estVal, digits)
+						if (uncertainty == "SE" || uncertainty == "RobustSE") {
+							if (!is.na(seVal)) {
+								valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
+							} else {
+								valStr = paste0(valStr, estVal)
+							}
+						} else if (uncertainty == "CI") {
+							lbound = NA
+							ubound = NA
+							pLabelName = pt[matchIdx, "name"]
+							if (!is.null(cis) && (pLabelName %in% rownames(cis))) {
+								lbound = cis[pLabelName, "lbound"]
+								ubound = cis[pLabelName, "ubound"]
+							}
+							if (is.na(lbound) || is.na(ubound)) {
+								if (!is.na(seVal)) {
+									lbound = estVal - 1.96 * seVal
+									ubound = estVal + 1.96 * seVal
+								}
+							}
+							if (!is.na(lbound) && !is.na(ubound)) {
+								valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+							} else {
+								valStr = paste0(valStr, estVal)
+							}
+						} else {
+							valStr = paste0(valStr, estVal)
+						}
+					} else {
+						valStr = paste0(valStr, thisPathVal)
+					}
+
 					if(resid =="circle"){
 						if(from %in% latents){
-							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=n, tailport=n]')
+							circleString = paste0(from, ' -> ', from, '[label="', valStr, '", dir=both, headport=n, tailport=n]')
 						} else {
-							circleString = paste0(from, ' -> ', from, '[label="', prefix, thisPathVal, '", dir=both, headport=s, tailport=s]')
+							circleString = paste0(from, ' -> ', from, '[label="', valStr, '", dir=both, headport=s, tailport=s]')
 						}
 						variances = append(variances, circleString)
 					} else if(resid =="line"){
 						varianceNames = append(varianceNames, paste0(from, '_var'))
-						variances = append(variances, paste0(from, '_var [label="', prefix, thisPathVal, '", shape = plaintext]'))
+						variances = append(variances, paste0(from, '_var [label="', valStr, '", shape = plaintext]'))
 					}					
 				}
 			}
@@ -2599,7 +2649,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 #' @export
 #' @family xmu internal not for end user
 #' @family Graphviz
-xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, labels = "labels", digits = 2) {
+xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, labels = "labels", digits = 2, pt = NULL, std = FALSE, uncertainty = c("none", "SE", "RobustSE", "CI"), cis = NULL) {
 	if(is.null(heads)){
 		stop("You must set 'heads' to 1 or 2 (was NULL)")
 	}
@@ -2611,6 +2661,10 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 	mxMat_labels = mxMat$labels
 	mxMat_rows   = dimnames(mxMat_free)[[1]]
 	mxMat_cols   = dimnames(mxMat_free)[[2]]
+	uncertainty = match.arg(uncertainty)
+	matName = mxMat$name
+	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
+
 	if(!is.null(comment)){
 		stringIn = paste0(stringIn, "\n\t# ", comment, "\n")
 	}
@@ -2624,21 +2678,63 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 				prefix        = ifelse(thisPathFree, "", "@")
 
 				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
-					# stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathVal, '"];\n')
+					# Find matching row in pt
+					rowMatch = FALSE
+					if (!is.null(pt)) {
+						matchIdx = which(pt$matrix == matName & pt$row == target & pt$col == source)
+						if (length(matchIdx) == 1) {
+							rowMatch = TRUE
+							estVal = ifelse(std, pt[matchIdx, "Std.Estimate"], pt[matchIdx, "Estimate"])
+							seVal  = suppressWarnings(as.numeric(ifelse(std, pt[matchIdx, "Std.SE"], pt[matchIdx, "SE"])))
+						}
+					}
+					
+					# Format value string
+					valStr = prefix
+					if (rowMatch) {
+						estVal = round(estVal, digits)
+						if (uncertainty == "SE" || uncertainty == "RobustSE") {
+							if (!is.na(seVal)) {
+								valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
+							} else {
+								valStr = paste0(valStr, estVal)
+							}
+						} else if (uncertainty == "CI") {
+							lbound = NA
+							ubound = NA
+							pLabelName = pt[matchIdx, "name"]
+							if (!is.null(cis) && (pLabelName %in% rownames(cis))) {
+								lbound = cis[pLabelName, "lbound"]
+								ubound = cis[pLabelName, "ubound"]
+							}
+							if (is.na(lbound) || is.na(ubound)) {
+								if (!is.na(seVal)) {
+									lbound = estVal - 1.96 * seVal
+									ubound = estVal + 1.96 * seVal
+								}
+							}
+							if (!is.na(lbound) && !is.na(ubound)) {
+								valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+							} else {
+								valStr = paste0(valStr, estVal)
+							}
+						} else {
+							valStr = paste0(valStr, estVal)
+						}
+					} else {
+						valStr = paste0(valStr, thisPathVal)
+					}
+
 					if(labels == "both"){
-						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
+						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathLabel, "=", valStr, "\"];\n")
 					} else if(labels == "labels"){
 						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, thisPathLabel, "\"];\n")
 					}else {
 						# labels = "none"
-						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, prefix, thisPathVal, "\"];\n")
+						stringIn = paste0(stringIn, "\t", source, " -> ", target, labelStub, valStr, "\"];\n")
 					}
 					
-				}else{
-					# not free and not non-0&&showfixed
-					# print(paste0("thisPathFree = ", thisPathFree , "fixed =", fixed, "; thisPathVal = ", thisPathVal, "\n"))
 				}
-				
 			}
 		}
 	} else {
@@ -2658,13 +2754,60 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 							stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")
 						}
 					} else {
+						# Find matching row in pt
+						rowMatch = FALSE
+						if (!is.null(pt)) {
+							matchIdx = which(pt$matrix == matName & pt$row == target & pt$col == source)
+							if (length(matchIdx) == 1) {
+								rowMatch = TRUE
+								estVal = ifelse(std, pt[matchIdx, "Std.Estimate"], pt[matchIdx, "Estimate"])
+								seVal  = suppressWarnings(as.numeric(ifelse(std, pt[matchIdx, "Std.SE"], pt[matchIdx, "SE"])))
+							}
+						}
+						
+						# Format value string
+						valStr = prefix
+						if (rowMatch) {
+							estVal = round(estVal, digits)
+							if (uncertainty == "SE" || uncertainty == "RobustSE") {
+								if (!is.na(seVal)) {
+									valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
+								} else {
+									valStr = paste0(valStr, estVal)
+								}
+							} else if (uncertainty == "CI") {
+								lbound = NA
+								ubound = NA
+								pLabelName = pt[matchIdx, "name"]
+								if (!is.null(cis) && (pLabelName %in% rownames(cis))) {
+									lbound = cis[pLabelName, "lbound"]
+									ubound = cis[pLabelName, "ubound"]
+								}
+								if (is.na(lbound) || is.na(ubound)) {
+									if (!is.na(seVal)) {
+										lbound = estVal - 1.96 * seVal
+										ubound = estVal + 1.96 * seVal
+									}
+								}
+								if (!is.na(lbound) && !is.na(ubound)) {
+									valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+								} else {
+									valStr = paste0(valStr, estVal)
+								}
+							} else {
+								valStr = paste0(valStr, estVal)
+							}
+						} else {
+							valStr = paste0(valStr, thisPathVal)
+						}
+
 						if(labels == "both"){
-							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "=", prefix, thisPathVal, "\"];\n")
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "=", valStr, "\"];\n")
 						} else if(labels == "labels"){
 							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', thisPathLabel, "\"];\n")
 						}else {
 							# labels = "none"
-							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', prefix, thisPathVal, "\"];\n")
+							stringIn = paste0(stringIn, "\t", source, " -> ", target, ' [dir=both, label="', valStr, "\"];\n")
 						}
 					}
 				}

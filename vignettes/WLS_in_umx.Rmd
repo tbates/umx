@@ -1,0 +1,172 @@
+---
+title: "Weighted Least Squares (WLS) in umx"
+subtitle: "Fitting and Interpreting Ordinal Factor Models"
+author: "Timothy C. Bates"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Weighted Least Squares (WLS) in umx}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 5
+)
+library(umx)
+library(OpenMx)
+library(lavaan)
+```
+
+## Introduction
+
+Most Structural Equation Models (SEMs) are fitted using **Maximum Likelihood (ML)**, which assumes that the manifest variables are continuous and multivariate normal. However, in behavioral genetics, psychology, and social sciences, variables are frequently categorical or ordinal (e.g., binary yes/no, or Likert scales).
+
+When manifest variables are ordinal, standard ML yields biased parameter estimates and severely underestimated standard errors. The standard solution is **Weighted Least Squares (WLS)**, which estimates thresholds for the ordinal indicators and fits the model to the resulting polychoric/tetrachoric correlation matrix.
+
+This vignette demonstrates how to fit and interpret a 1-factor model under different estimators (ML, full WLS, and Diagonally Weighted Least Squares) using the built-in Holzinger-Swineford ordinal dataset (`HSwls`) in `umx`.
+
+---
+
+## 1. The Holzinger-Swineford Ordinal Dataset (`HSwls`)
+
+The `HSwls` dataset contains cognitive test scores `x1` to `x9` for 301 students from two schools. In this version of the data, the variables `x1` to `x9` have been converted into ordered factors (with 2, 3, or 4 categories) using quantile-based cuts:
+
+* `x1` to `x3` represent visual ability (binary / 2 levels).
+* `x4` to `x6` represent verbal ability (3 levels).
+* `x7` to `x9` represent speed (4 levels).
+
+```{r load_data}
+data(HSwls, package = "umx")
+str(HSwls[, paste0("x", 1:9)])
+```
+
+---
+
+## 2. Fitting a 1-Factor Model under Three Estimators
+
+We will fit a 1-factor model (`g =~ x1 + ... + x9`) using three different estimators:
+1. **Maximum Likelihood (ML)**: Treats the ordinal indicators as continuous (incorrect but useful for comparison).
+2. **Full Weighted Least Squares (WLS)**: Uses the full asymptotic covariance matrix of thresholds/correlations.
+3. **Diagonally Weighted Least Squares (DWLS / WLSMV)**: Uses only the diagonal of the weight matrix (standard for modest sample sizes).
+
+In `umxRAM`, the estimator is requested using the `type` argument:
+* `type = "FIML"` (or `"Auto"` for continuous data) for ML.
+* `type = "WLS"` for Full WLS.
+* `type = "DWLS"` for Diagonally Weighted Least Squares.
+
+### 1. Maximum Likelihood (ML)
+First, we fit using ML by converting variables to numeric (to treat them as continuous):
+
+```{r fit_ml, message=FALSE, warning=FALSE}
+# Convert ordinal factors to numeric for ML estimation
+dfMl = HSwls
+dfMl[, paste0("x", 1:9)] = lapply(dfMl[, paste0("x", 1:9)], as.numeric)
+
+mML = umxRAM("One_Factor_ML", data = dfMl, type = "FIML",
+	umxPath("g", to = paste0("x", 1:9)),
+	umxPath(var = paste0("x", 1:9)),
+	umxPath(var = "g", fixedAt = 1)
+)
+```
+
+### 2. Full Weighted Least Squares (WLS)
+Next, we fit using the full WLS estimator on the original ordinal factors:
+
+```{r fit_wls, message=FALSE, warning=FALSE}
+mWLS = suppressWarnings(umxRAM("One_Factor_WLS", data = HSwls, type = "WLS",
+	umxPath("g", to = paste0("x", 1:9)),
+	umxPath(var = paste0("x", 1:9)),
+	umxPath(var = "g", fixedAt = 1)
+))
+```
+
+### 3. Diagonally Weighted Least Squares (DWLS)
+Finally, we fit using the DWLS estimator:
+
+```{r fit_dwls, message=FALSE, warning=FALSE}
+mDWLS = suppressWarnings(umxRAM("One_Factor_DWLS", data = HSwls, type = "DWLS",
+	umxPath("g", to = paste0("x", 1:9)),
+	umxPath(var = paste0("x", 1:9)),
+	umxPath(var = "g", fixedAt = 1)
+))
+```
+
+---
+
+## 3. Comparing Estimates and Standard Errors
+
+Let's extract and compare the standardized factor loadings across the three models:
+
+```{r compare_loadings, message=FALSE}
+# Extract standardized coefficients
+coefML = coef(mML)
+coefWLS = coef(mWLS)
+coefDWLS = coef(mDWLS)
+
+# Loadings list (paths from g to x1:x9)
+loadings = paste0("g_to_x", 1:9)
+
+# Align into a summary table
+compareTable = data.frame(
+	Path = loadings,
+	ML_Estimate = round(coefML[loadings], 3),
+	WLS_Estimate = round(coefWLS[loadings], 3),
+	DWLS_Estimate = round(coefDWLS[loadings], 3)
+)
+print(compareTable)
+```
+
+### Key Interpretations:
+* **Underestimated ML Loadings:** Treating ordinal indicators as continuous (ML) typically underestimates factor loadings because the non-linear categorization threshold is ignored.
+* **WLS vs. DWLS:** Both WLS and DWLS recover the true underlying latent relationships, but DWLS is often more stable and exhibits lower mean squared error in modest sample sizes ($N < 1000$).
+
+---
+
+## 4. Model Fit and Comparison under WLS
+
+### Fit Indices
+Conventional fit indices (CFI, TLI, RMSEA) are calculated using $\chi^2$. In WLS/DWLS, the discrepancy function is inflated by the weight matrix, causing standard fit index cutoffs (e.g., CFI $> 0.95$, RMSEA $< 0.06$) to be **invalid**. 
+
+When running `umxSummary()` on a WLS model, `umx` automatically uses **Satorra-Bentler (2010)** robust corrections to adjust fit statistics:
+
+```{r summary_wls, message=FALSE}
+umxSummary(mDWLS, std = TRUE, showEstimates = "std")
+```
+
+### Model Comparison
+When comparing nested WLS/DWLS models, we cannot simply subtract the raw chi-squares because the weight matrices differ between the models. `umxCompare()` automatically performs a **Strict Satorra-Bentler scaled difference test**:
+
+```{r nested_compare, message=FALSE, warning=FALSE}
+# Fit nested model (drop g to x1 loading)
+mDWLS_nested = suppressWarnings(umxModify(mDWLS, update = "g_to_x1", name = "Nested_DWLS"))
+
+# Compare models
+umxCompare(mDWLS, mDWLS_nested)
+```
+
+---
+
+## 5. Practical Considerations
+
+### 1. Sample Size Requirements
+* **Full WLS:** Requires a very large sample size ($N > 1000$, and often $N > 2000$ for models with many indicators). This is because the full asymptotic covariance matrix ($V$) grows rapidly with the number of thresholds, requiring a huge amount of data to estimate accurately. If $N$ is too small, $V$ becomes non-positive definite or highly unstable.
+* **DWLS:** Only uses the diagonal elements of $V$, meaning it requires much smaller sample sizes ($N > 200$) to achieve stable and accurate parameter estimates.
+
+### 2. Convergence Issues
+If a WLS model fails to converge:
+* Check for **empty threshold categories** (zero counts in a cell). If a category has zero observations, the threshold cannot be estimated. You may need to collapse adjacent categories.
+* Switch to **DWLS** if you are currently using full WLS.
+
+### 3. Reporting Guidelines
+When reporting WLS results in journals:
+1. Specify which estimator was used (e.g., "Diagonally Weighted Least Squares (DWLS) with robust standard errors").
+2. Report the **Satorra-Bentler robust $\chi^2$** and degrees of freedom.
+3. Report **SRMR** as the primary index of absolute fit (cutoff $< 0.08$ or $< 0.10$).
+4. Emphasize nested model comparison results using the **Satorra-Bentler difference test** (from `umxCompare`).

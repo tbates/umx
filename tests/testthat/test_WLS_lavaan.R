@@ -35,7 +35,7 @@ test_that("WLS in lavaan and umxRAM identical", {
 	# TODO compare results!
 	
 	# 3. Fit the Nested WLS Model (Drop the b1 path to 0)
-	m2 umxModify(m1, name = "WLS_Nested")
+	m2 = umxModify(m1, name = "WLS_Nested")
 
 	# 4. Fit an ML Model (Non-WLS)
 	m3 = umxRAM("ML_Base", mxData(observed = df, type = "raw"),

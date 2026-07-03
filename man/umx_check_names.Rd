@@ -27,11 +27,11 @@ umx_check_names(
 
 \item{intersection}{Show the intersection of names}
 
-\item{message}{Some helpful text to append when dieing.}
+\item{message}{Some helpful text to append when dying.}
 }
 \description{
 Check if a list of names are in the \code{\link[=namez]{namez()}} of a dataframe (or the \code{\link[=dimnames]{dimnames()}} of a matrix), or the names of
-the observed data of an \code{\link[=mzData]{mzData()}}
+the observed data of an \code{\link[OpenMx:mxData]{mxData()}}
 }
 \examples{
 require(umx)

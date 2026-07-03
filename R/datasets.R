@@ -381,7 +381,7 @@ NULL
 #' Holzinger and Swineford (1939) partitioned into ordered factors for WLS teaching.
 #'
 #' A dataset containing cognitive test scores `x1` to `x9` for 301 students from two schools. 
-#' This is a modified version of the classic [lavaan::HolzingerSwineford1939] dataset, 
+#' This is a modified version of the classic [lavaan::HolzingerSwineford1939] or OpenMx's [OpenMx::HS.ability.data] dataset (which contains the original continuous data),
 #' where the variables `x1` to `x9` have been converted into ordered factors (2, 3, or 4 categories) 
 #' using quantile-based cuts. It is designed for demonstrating and teaching Weighted Least Squares (WLS) 
 #' estimation with ordinal data.
@@ -410,7 +410,7 @@ NULL
 #' @name HSwls
 #' @usage data(HSwls)
 #' @format A data frame with 301 rows and 15 variables.
-#' @seealso [umxRAM()]
+#' @seealso [OpenMx::HS.ability.data], [umxRAM()]
 #' @references Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. 
 #' *Supplementary Educational Monographs*, no. 48. Chicago: University of Chicago Press.
 

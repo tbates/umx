@@ -12,7 +12,11 @@ xmu_dot_make_paths(
   comment = "More paths",
   showResiduals = TRUE,
   labels = "labels",
-  digits = 2
+  digits = 2,
+  pt = NULL,
+  std = FALSE,
+  uncertainty = c("none", "SE", "RobustSE", "CI"),
+  cis = NULL
 )
 }
 \arguments{
