@@ -26,6 +26,14 @@ xmu_dot_make_residuals(
 \item{digits}{How many digits to report}
 
 \item{resid}{How to show residuals and variances default is "circle". Other option is "line"}
+
+\item{pt}{Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)}
+
+\item{std}{Whether values should be standardized (defaults to FALSE)}
+
+\item{uncertainty}{Type of uncertainty to display (defaults to "none")}
+
+\item{cis}{Matrix of confidence intervals (defaults to NULL)}
 }
 \value{
 \itemize{

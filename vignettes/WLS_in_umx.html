@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Timothy C. Bates" />
+
+<meta name="date" content="2026-07-04" />
+
+<title>Weighted Least Squares (WLS) in umx</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Weighted Least Squares (WLS) in umx</h1>
+<h3 class="subtitle">Fitting and Interpreting Ordinal Factor Models</h3>
+<h4 class="author">Timothy C. Bates</h4>
+<h4 class="date">2026-07-04</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+<li><a href="#the-holzinger-swineford-ordinal-dataset-hswls" id="toc-the-holzinger-swineford-ordinal-dataset-hswls">1. The
+Holzinger-Swineford Ordinal Dataset (<code>HSwls</code>)</a></li>
+<li><a href="#fitting-a-1-factor-model-under-three-estimators" id="toc-fitting-a-1-factor-model-under-three-estimators">2. Fitting a
+1-Factor Model under Three Estimators</a>
+<ul>
+<li><a href="#maximum-likelihood-ml" id="toc-maximum-likelihood-ml">1.
+Maximum Likelihood (ML)</a></li>
+<li><a href="#full-weighted-least-squares-wls" id="toc-full-weighted-least-squares-wls">2. Full Weighted Least Squares
+(WLS)</a></li>
+<li><a href="#diagonally-weighted-least-squares-dwls" id="toc-diagonally-weighted-least-squares-dwls">3. Diagonally Weighted
+Least Squares (DWLS)</a></li>
+</ul></li>
+<li><a href="#comparing-estimates-and-standard-errors" id="toc-comparing-estimates-and-standard-errors">3. Comparing Estimates
+and Standard Errors</a>
+<ul>
+<li><a href="#key-interpretations" id="toc-key-interpretations">Key
+Interpretations:</a></li>
+</ul></li>
+<li><a href="#model-fit-and-comparison-under-wls" id="toc-model-fit-and-comparison-under-wls">4. Model Fit and Comparison
+under WLS</a>
+<ul>
+<li><a href="#fit-indices" id="toc-fit-indices">Fit Indices</a></li>
+<li><a href="#model-comparison" id="toc-model-comparison">Model
+Comparison</a></li>
+</ul></li>
+<li><a href="#practical-considerations" id="toc-practical-considerations">5. Practical Considerations</a>
+<ul>
+<li><a href="#sample-size-requirements" id="toc-sample-size-requirements">1. Sample Size Requirements</a></li>
+<li><a href="#convergence-issues" id="toc-convergence-issues">2.
+Convergence Issues</a></li>
+<li><a href="#reporting-guidelines" id="toc-reporting-guidelines">3.
+Reporting Guidelines</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Most Structural Equation Models (SEMs) are fitted using
+<strong>Maximum Likelihood (ML)</strong>, which assumes that the
+manifest variables are continuous and multivariate normal. However, in
+behavioral genetics, psychology, and social sciences, variables are
+frequently categorical or ordinal (e.g., binary yes/no, or Likert
+scales).</p>
+<p>When manifest variables are ordinal, standard ML yields biased
+parameter estimates and severely underestimated standard errors. The
+standard solution is <strong>Weighted Least Squares (WLS)</strong>,
+which estimates thresholds for the ordinal indicators and fits the model
+to the resulting polychoric/tetrachoric correlation matrix.</p>
+<p>This vignette demonstrates how to fit and interpret a 1-factor model
+under different estimators (ML, full WLS, and Diagonally Weighted Least
+Squares) using the built-in Holzinger-Swineford ordinal dataset
+(<code>HSwls</code>) in <code>umx</code>.</p>
+<hr />
+</div>
+<div id="the-holzinger-swineford-ordinal-dataset-hswls" class="section level2">
+<h2>1. The Holzinger-Swineford Ordinal Dataset (<code>HSwls</code>)</h2>
+<p>The <code>HSwls</code> dataset contains cognitive test scores
+<code>x1</code> to <code>x9</code> for 301 students from two schools. In
+this version of the data, the variables <code>x1</code> to
+<code>x9</code> have been converted into ordered factors (with 2, 3, or
+4 categories) using quantile-based cuts:</p>
+<ul>
+<li><code>x1</code> to <code>x3</code> represent visual ability (binary
+/ 2 levels).</li>
+<li><code>x4</code> to <code>x6</code> represent verbal ability (3
+levels).</li>
+<li><code>x7</code> to <code>x9</code> represent speed (4 levels).</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">data</span>(HSwls, <span class="at">package =</span> <span class="st">&quot;umx&quot;</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">str</span>(HSwls[, <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)])</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; &#39;data.frame&#39;:    301 obs. of  9 variables:</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;  $ x1: Ord.factor w/ 2 levels &quot;1&quot;&lt;&quot;2&quot;: 1 2 1 2 1 2 1 2 1 1 ...</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;  $ x2: Ord.factor w/ 2 levels &quot;1&quot;&lt;&quot;2&quot;: 2 1 1 2 1 1 1 2 1 1 ...</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt;  $ x3: Ord.factor w/ 2 levels &quot;1&quot;&lt;&quot;2&quot;: 1 1 1 2 1 2 1 1 1 1 ...</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="co">#&gt;  $ x4: Ord.factor w/ 3 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;: 1 1 1 1 1 1 2 3 1 1 ...</span></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="co">#&gt;  $ x5: Ord.factor w/ 3 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;: 3 1 1 2 1 1 3 2 3 2 ...</span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co">#&gt;  $ x6: Ord.factor w/ 3 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;: 1 1 1 2 3 1 3 1 3 3 ...</span></span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="co">#&gt;  $ x7: Ord.factor w/ 4 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;: 1 2 1 1 2 3 3 1 3 3 ...</span></span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="co">#&gt;  $ x8: Ord.factor w/ 4 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;: 3 4 1 2 4 4 4 2 1 1 ...</span></span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="co">#&gt;  $ x9: Ord.factor w/ 4 levels &quot;1&quot;&lt;&quot;2&quot;&lt;&quot;3&quot;&lt;&quot;4&quot;: 4 4 1 2 3 4 2 1 4 1 ...</span></span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a><span class="co">#&gt;   ..- attr(*, &quot;mxFactor&quot;)= logi TRUE</span></span></code></pre></div>
+<hr />
+</div>
+<div id="fitting-a-1-factor-model-under-three-estimators" class="section level2">
+<h2>2. Fitting a 1-Factor Model under Three Estimators</h2>
+<p>We will fit a 1-factor model (<code>g =~ x1 + ... + x9</code>) using
+three different estimators: 1. <strong>Maximum Likelihood (ML)</strong>:
+Treats the ordinal indicators as continuous (incorrect but useful for
+comparison). 2. <strong>Full Weighted Least Squares (WLS)</strong>: Uses
+the full asymptotic covariance matrix of thresholds/correlations. 3.
+<strong>Diagonally Weighted Least Squares (DWLS / WLSMV)</strong>: Uses
+only the diagonal of the weight matrix (standard for modest sample
+sizes).</p>
+<p>In <code>umxRAM</code>, the estimator is requested using the
+<code>type</code> argument: * <code>type = &quot;FIML&quot;</code> (or
+<code>&quot;Auto&quot;</code> for continuous data) for ML. *
+<code>type = &quot;WLS&quot;</code> for Full WLS. * <code>type = &quot;DWLS&quot;</code> for
+Diagonally Weighted Least Squares.</p>
+<div id="maximum-likelihood-ml" class="section level3">
+<h3>1. Maximum Likelihood (ML)</h3>
+<p>First, we fit using ML by converting variables to numeric (to treat
+them as continuous):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Convert ordinal factors to numeric for ML estimation</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>dfMl <span class="ot">=</span> HSwls</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>dfMl[, <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)] <span class="ot">=</span> <span class="fu">lapply</span>(dfMl[, <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)], as.numeric)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>mML <span class="ot">=</span> <span class="fu">umxRAM</span>(<span class="st">&quot;One_Factor_ML&quot;</span>, <span class="at">data =</span> dfMl, <span class="at">type =</span> <span class="st">&quot;FIML&quot;</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="st">&quot;g&quot;</span>, <span class="at">to =</span> <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">var =</span> <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)),</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">var =</span> <span class="st">&quot;g&quot;</span>, <span class="at">fixedAt =</span> <span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_ML&#39;</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; |   |name       | Estimate|SE    |CI                    |type            |</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|--------:|:-----|:---------------------|:---------------|</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |    0.200|0.03  |0.2 [0.14, 0.26]      |Factor loading  |</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |    0.159|0.031 |0.159 [0.099, 0.219]  |Factor loading  |</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |    0.112|0.031 |0.112 [0.051, 0.173]  |Factor loading  |</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |    0.630|0.046 |0.63 [0.539, 0.72]    |Factor loading  |</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |    0.647|0.044 |0.647 [0.561, 0.733]  |Factor loading  |</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; |6  |g_to_x6    |    0.658|0.043 |0.658 [0.573, 0.743]  |Factor loading  |</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt; |7  |g_to_x7    |    0.128|0.073 |0.128 [-0.015, 0.271] |Factor loading  |</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt; |8  |g_to_x8    |    0.135|0.071 |0.135 [-0.005, 0.275] |Factor loading  |</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; |9  |g_to_x9    |    0.314|0.071 |0.314 [0.176, 0.453]  |Factor loading  |</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt; |19 |g_with_g   |    1.000|0     |1 [1, 1]              |Factor Variance |</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; |20 |one_to_x1  |    1.455|0.029 |1.455 [1.399, 1.511]  |Mean            |</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt; |21 |one_to_x2  |    1.429|0.029 |1.429 [1.373, 1.484]  |Mean            |</span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt; |22 |one_to_x3  |    1.455|0.029 |1.455 [1.399, 1.511]  |Mean            |</span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt; |23 |one_to_x4  |    1.854|0.049 |1.854 [1.757, 1.95]   |Mean            |</span></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt; |24 |one_to_x5  |    1.900|0.048 |1.9 [1.807, 1.994]    |Mean            |</span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt; |25 |one_to_x6  |    1.980|0.047 |1.98 [1.887, 2.073]   |Mean            |</span></span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt; |26 |one_to_x7  |    2.462|0.066 |2.462 [2.332, 2.591]  |Mean            |</span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt; |27 |one_to_x8  |    2.488|0.065 |2.488 [2.362, 2.615]  |Mean            |</span></span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt; |28 |one_to_x9  |    2.475|0.065 |2.475 [2.348, 2.602]  |Mean            |</span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; |10 |x1_with_x1 |    0.208|0.018 |0.208 [0.173, 0.243]  |Residual        |</span></span>
+<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt; |11 |x2_with_x2 |    0.220|0.018 |0.22 [0.184, 0.256]   |Residual        |</span></span>
+<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a><span class="co">#&gt; |12 |x3_with_x3 |    0.235|0.019 |0.235 [0.197, 0.273]  |Residual        |</span></span>
+<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="co">#&gt; |13 |x4_with_x4 |    0.333|0.037 |0.333 [0.261, 0.405]  |Residual        |</span></span>
+<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a><span class="co">#&gt; |14 |x5_with_x5 |    0.269|0.033 |0.269 [0.205, 0.333]  |Residual        |</span></span>
+<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="co">#&gt; |15 |x6_with_x6 |    0.245|0.032 |0.245 [0.182, 0.307]  |Residual        |</span></span>
+<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a><span class="co">#&gt; |16 |x7_with_x7 |    1.295|0.106 |1.295 [1.088, 1.503]  |Residual        |</span></span>
+<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co">#&gt; |17 |x8_with_x8 |    1.242|0.102 |1.242 [1.043, 1.441]  |Residual        |</span></span>
+<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a><span class="co">#&gt; |18 |x9_with_x9 |    1.167|0.097 |1.167 [0.977, 1.358]  |Residual        |</span></span></code></pre></div>
+</div>
+<div id="full-weighted-least-squares-wls" class="section level3">
+<h3>2. Full Weighted Least Squares (WLS)</h3>
+<p>Next, we fit using the full WLS estimator on the original ordinal
+factors:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>mWLS <span class="ot">=</span> <span class="fu">suppressWarnings</span>(<span class="fu">umxRAM</span>(<span class="st">&quot;One_Factor_WLS&quot;</span>, <span class="at">data =</span> HSwls, <span class="at">type =</span> <span class="st">&quot;WLS&quot;</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="st">&quot;g&quot;</span>, <span class="at">to =</span> <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)),</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">var =</span> <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">var =</span> <span class="st">&quot;g&quot;</span>, <span class="at">fixedAt =</span> <span class="dv">1</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>))</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_WLS&#39;</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; |   |name       | Estimate|SE            |CI |type            |</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|--------:|:-------------|:--|:---------------|</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |    0.963|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |    0.622|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |    0.537|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |    0.945|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |    0.952|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; |6  |g_to_x6    |    0.926|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; |7  |g_to_x7    |    0.479|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; |8  |g_to_x8    |    0.544|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; |9  |g_to_x9    |    0.761|not_requested |   |Factor loading  |</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; |19 |g_with_g   |    1.000|not_requested |   |Factor Variance |</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; |20 |one_to_x1  |    0.081|not_requested |   |Mean            |</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; |21 |one_to_x2  |   -0.002|not_requested |   |Mean            |</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a><span class="co">#&gt; |22 |one_to_x3  |    0.050|not_requested |   |Mean            |</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a><span class="co">#&gt; |23 |one_to_x4  |    0.073|not_requested |   |Mean            |</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a><span class="co">#&gt; |24 |one_to_x5  |    0.023|not_requested |   |Mean            |</span></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a><span class="co">#&gt; |25 |one_to_x6  |   -0.020|not_requested |   |Mean            |</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a><span class="co">#&gt; |26 |one_to_x7  |   -0.001|not_requested |   |Mean            |</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a><span class="co">#&gt; |27 |one_to_x8  |    0.015|not_requested |   |Mean            |</span></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#&gt; |28 |one_to_x9  |    0.022|not_requested |   |Mean            |</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt; |10 |x1_with_x1 |    1.041|not_requested |   |Residual        |</span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co">#&gt; |11 |x2_with_x2 |    1.199|not_requested |   |Residual        |</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="co">#&gt; |12 |x3_with_x3 |    1.138|not_requested |   |Residual        |</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="co">#&gt; |13 |x4_with_x4 |    0.282|not_requested |   |Residual        |</span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="co">#&gt; |14 |x5_with_x5 |    0.219|not_requested |   |Residual        |</span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a><span class="co">#&gt; |15 |x6_with_x6 |    0.249|not_requested |   |Residual        |</span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="co">#&gt; |16 |x7_with_x7 |    0.657|not_requested |   |Residual        |</span></span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="co">#&gt; |17 |x8_with_x8 |    0.649|not_requested |   |Residual        |</span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a><span class="co">#&gt; |18 |x9_with_x9 |    0.442|not_requested |   |Residual        |</span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="co">#&gt; *Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.</span></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a><span class="co">#&gt; Evaluate absolute fit using SRMR (&lt; 0.10), and nested comparisons using the Strict Satorra-Bentler Δ χ². (see ?umxCompare for details).</span></span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a><span class="co">#&gt; Algebra&#39;threshMat&#39;:</span></span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a><span class="co">#&gt; |     |    x1|    x2|    x3|     x4|     x5|     x6|     x7|     x8|     x9|</span></span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a><span class="co">#&gt; |:----|-----:|-----:|-----:|------:|------:|------:|------:|------:|------:|</span></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a><span class="co">#&gt; |th_1 | 0.132| 0.282| 0.163| -0.129| -0.257| -0.388| -0.576| -0.656| -0.646|</span></span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="co">#&gt; |th_2 | 0.133| 0.283| 0.164|  0.518|  0.527|  0.443|  0.012|  0.012|  0.037|</span></span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a><span class="co">#&gt; |th_3 | 0.134| 0.284| 0.165|  0.519|  0.528|  0.444|  0.667|  0.721|  0.679|</span></span></code></pre></div>
+</div>
+<div id="diagonally-weighted-least-squares-dwls" class="section level3">
+<h3>3. Diagonally Weighted Least Squares (DWLS)</h3>
+<p>Finally, we fit using the DWLS estimator:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>mDWLS <span class="ot">=</span> <span class="fu">suppressWarnings</span>(<span class="fu">umxRAM</span>(<span class="st">&quot;One_Factor_DWLS&quot;</span>, <span class="at">data =</span> HSwls, <span class="at">type =</span> <span class="st">&quot;DWLS&quot;</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="st">&quot;g&quot;</span>, <span class="at">to =</span> <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)),</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">var =</span> <span class="fu">paste0</span>(<span class="st">&quot;x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)),</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">var =</span> <span class="st">&quot;g&quot;</span>, <span class="at">fixedAt =</span> <span class="dv">1</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>))</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_DWLS&#39;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; |   |name       |Estimate |SE            |CI |type            |</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|:--------|:-------------|:--|:---------------|</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |0.722    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |0.54     |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |0.437    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |0.798    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |0.826    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; |6  |g_to_x6    |0.854    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; |7  |g_to_x7    |0.224    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; |8  |g_to_x8    |0.269    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; |9  |g_to_x9    |0.433    |not_requested |   |Factor loading  |</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; |19 |g_with_g   |1        |not_requested |   |Factor Variance |</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; |20 |one_to_x1  |0.034    |not_requested |   |Mean            |</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; |21 |one_to_x2  |0.029    |not_requested |   |Mean            |</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co">#&gt; |22 |one_to_x3  |0.039    |not_requested |   |Mean            |</span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co">#&gt; |23 |one_to_x4  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co">#&gt; |24 |one_to_x5  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co">#&gt; |25 |one_to_x6  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="co">#&gt; |26 |one_to_x7  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a><span class="co">#&gt; |27 |one_to_x8  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co">#&gt; |28 |one_to_x9  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="co">#&gt; |10 |x1_with_x1 |1.124    |not_requested |   |Residual        |</span></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a><span class="co">#&gt; |11 |x2_with_x2 |1.216    |not_requested |   |Residual        |</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co">#&gt; |12 |x3_with_x3 |1.24     |not_requested |   |Residual        |</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="co">#&gt; |13 |x4_with_x4 |0.363    |not_requested |   |Residual        |</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="co">#&gt; |14 |x5_with_x5 |0.318    |not_requested |   |Residual        |</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a><span class="co">#&gt; |15 |x6_with_x6 |0.271    |not_requested |   |Residual        |</span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co">#&gt; |16 |x7_with_x7 |0.95     |not_requested |   |Residual        |</span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="co">#&gt; |17 |x8_with_x8 |0.928    |not_requested |   |Residual        |</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="co">#&gt; |18 |x9_with_x9 |0.813    |not_requested |   |Residual        |</span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co">#&gt; *Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.</span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co">#&gt; Evaluate absolute fit using SRMR (&lt; 0.10), and nested comparisons using the Strict Satorra-Bentler Δ χ². (see ?umxCompare for details).</span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co">#&gt; Algebra&#39;threshMat&#39;:</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a><span class="co">#&gt; |     |    x1|    x2|    x3|     x4|     x5|     x6|     x7|     x8|     x9|</span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="co">#&gt; |:----|-----:|-----:|-----:|------:|------:|------:|------:|------:|------:|</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a><span class="co">#&gt; |th_1 | 0.179| 0.251| 0.174| -0.129| -0.257| -0.388| -0.576| -0.656| -0.646|</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co">#&gt; |th_2 | 0.180| 0.252| 0.175|  0.518|  0.527|  0.443|  0.012|  0.012|  0.037|</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="co">#&gt; |th_3 | 0.181| 0.253| 0.176|  0.519|  0.528|  0.444|  0.677|  0.677|  0.677|</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="comparing-estimates-and-standard-errors" class="section level2">
+<h2>3. Comparing Estimates and Standard Errors</h2>
+<p>Let’s extract and compare the standardized factor loadings across the
+three models:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Extract standardized coefficients</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>coefML <span class="ot">=</span> <span class="fu">coef</span>(mML)</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>coefWLS <span class="ot">=</span> <span class="fu">coef</span>(mWLS)</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>coefDWLS <span class="ot">=</span> <span class="fu">coef</span>(mDWLS)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># Loadings list (paths from g to x1:x9)</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>loadings <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;g_to_x&quot;</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># Align into a summary table</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>compareTable <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>    <span class="at">Path =</span> loadings,</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>    <span class="at">ML_Estimate =</span> <span class="fu">round</span>(coefML[loadings], <span class="dv">3</span>),</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>    <span class="at">WLS_Estimate =</span> <span class="fu">round</span>(coefWLS[loadings], <span class="dv">3</span>),</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="at">DWLS_Estimate =</span> <span class="fu">round</span>(coefDWLS[loadings], <span class="dv">3</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>)</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="fu">print</span>(compareTable)</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="co">#&gt;            Path ML_Estimate WLS_Estimate DWLS_Estimate</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="co">#&gt; g_to_x1 g_to_x1       0.200        0.963         0.722</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co">#&gt; g_to_x2 g_to_x2       0.159        0.622         0.540</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co">#&gt; g_to_x3 g_to_x3       0.112        0.537         0.437</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co">#&gt; g_to_x4 g_to_x4       0.630        0.945         0.798</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co">#&gt; g_to_x5 g_to_x5       0.647        0.952         0.826</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co">#&gt; g_to_x6 g_to_x6       0.658        0.926         0.854</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co">#&gt; g_to_x7 g_to_x7       0.128        0.479         0.224</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a><span class="co">#&gt; g_to_x8 g_to_x8       0.135        0.544         0.269</span></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co">#&gt; g_to_x9 g_to_x9       0.314        0.761         0.433</span></span></code></pre></div>
+<div id="key-interpretations" class="section level3">
+<h3>Key Interpretations:</h3>
+<ul>
+<li><strong>Underestimated ML Loadings:</strong> Treating ordinal
+indicators as continuous (ML) typically underestimates factor loadings
+because the non-linear categorization threshold is ignored.</li>
+<li><strong>WLS vs. DWLS:</strong> Both WLS and DWLS recover the true
+underlying latent relationships, but DWLS is often more stable and
+exhibits lower mean squared error in modest sample sizes (<span class="math inline">\(N &lt; 1000\)</span>).</li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="model-fit-and-comparison-under-wls" class="section level2">
+<h2>4. Model Fit and Comparison under WLS</h2>
+<div id="fit-indices" class="section level3">
+<h3>Fit Indices</h3>
+<p>Conventional fit indices (CFI, TLI, RMSEA) are calculated using <span class="math inline">\(\chi^2\)</span>. In WLS/DWLS, the discrepancy
+function is inflated by the weight matrix, causing standard fit index
+cutoffs (e.g., CFI <span class="math inline">\(&gt; 0.95\)</span>, RMSEA
+<span class="math inline">\(&lt; 0.06\)</span>) to be
+<strong>invalid</strong>.</p>
+<p>When running <code>umxSummary()</code> on a WLS model,
+<code>umx</code> automatically uses <strong>Satorra-Bentler
+(2010)</strong> robust corrections to adjust fit statistics:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">umxSummary</span>(mDWLS, <span class="at">std =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; Warning in mxStandardizeRAMpaths(model, SE = SE): argument &#39;SE=TRUE&#39; requires model to have a nonempty &#39;vcov&#39; output slot, or a non-NULL value for argument &#39;cov&#39;; continuing with &#39;SE&#39; coerced to &#39;FALSE&#39;.</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; If you were not expecting this, your model may be underidentified.</span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_DWLS&#39;</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; |   |name       |Std.Estimate |Std.SE        |CI |type            |</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|:------------|:-------------|:--|:---------------|</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |0.56         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |0.44         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |0.37         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |0.8          |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |0.83         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; |6  |g_to_x6    |0.85         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; |7  |g_to_x7    |0.22         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; |8  |g_to_x8    |0.27         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; |9  |g_to_x9    |0.43         |not_requested |   |Factor loading  |</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; |19 |g_with_g   |1            |not_requested |   |Factor Variance |</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; |20 |one_to_x1  |0.03         |not_requested |   |Mean            |</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; |21 |one_to_x2  |0.02         |not_requested |   |Mean            |</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; |22 |one_to_x3  |0.03         |not_requested |   |Mean            |</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; |23 |one_to_x4  |0            |not_requested |   |Mean            |</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a><span class="co">#&gt; |24 |one_to_x5  |0            |not_requested |   |Mean            |</span></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co">#&gt; |25 |one_to_x6  |0            |not_requested |   |Mean            |</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a><span class="co">#&gt; |26 |one_to_x7  |0            |not_requested |   |Mean            |</span></span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a><span class="co">#&gt; |27 |one_to_x8  |0            |not_requested |   |Mean            |</span></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co">#&gt; |28 |one_to_x9  |0            |not_requested |   |Mean            |</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a><span class="co">#&gt; |10 |x1_with_x1 |0.68         |not_requested |   |Residual        |</span></span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a><span class="co">#&gt; |11 |x2_with_x2 |0.81         |not_requested |   |Residual        |</span></span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a><span class="co">#&gt; |12 |x3_with_x3 |0.87         |not_requested |   |Residual        |</span></span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a><span class="co">#&gt; |13 |x4_with_x4 |0.36         |not_requested |   |Residual        |</span></span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a><span class="co">#&gt; |14 |x5_with_x5 |0.32         |not_requested |   |Residual        |</span></span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="co">#&gt; |15 |x6_with_x6 |0.27         |not_requested |   |Residual        |</span></span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt; |16 |x7_with_x7 |0.95         |not_requested |   |Residual        |</span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co">#&gt; |17 |x8_with_x8 |0.93         |not_requested |   |Residual        |</span></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a><span class="co">#&gt; |18 |x9_with_x9 |0.81         |not_requested |   |Residual        |</span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a><span class="co">#&gt; *Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.</span></span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a><span class="co">#&gt; Evaluate absolute fit using SRMR (&lt; 0.10), and nested comparisons using the Strict Satorra-Bentler Δ χ². (see ?umxCompare for details).</span></span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a><span class="co">#&gt; Algebra&#39;threshMat&#39;:</span></span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-44"><a href="#cb6-44" tabindex="-1"></a><span class="co">#&gt; |     |    x1|    x2|    x3|     x4|     x5|     x6|     x7|     x8|     x9|</span></span>
+<span id="cb6-45"><a href="#cb6-45" tabindex="-1"></a><span class="co">#&gt; |:----|-----:|-----:|-----:|------:|------:|------:|------:|------:|------:|</span></span>
+<span id="cb6-46"><a href="#cb6-46" tabindex="-1"></a><span class="co">#&gt; |th_1 | 0.179| 0.251| 0.174| -0.129| -0.257| -0.388| -0.576| -0.656| -0.646|</span></span>
+<span id="cb6-47"><a href="#cb6-47" tabindex="-1"></a><span class="co">#&gt; |th_2 | 0.180| 0.252| 0.175|  0.518|  0.527|  0.443|  0.012|  0.012|  0.037|</span></span>
+<span id="cb6-48"><a href="#cb6-48" tabindex="-1"></a><span class="co">#&gt; |th_3 | 0.181| 0.253| 0.176|  0.519|  0.528|  0.444|  0.677|  0.677|  0.677|</span></span></code></pre></div>
+</div>
+<div id="model-comparison" class="section level3">
+<h3>Model Comparison</h3>
+<p>When comparing nested WLS/DWLS models, we cannot simply subtract the
+raw chi-squares because the weight matrices differ between the models.
+<code>umxCompare()</code> automatically performs a <strong>Strict
+Satorra-Bentler scaled difference test</strong>:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Fit nested model (drop g to x1 loading)</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>mDWLS_nested <span class="ot">=</span> <span class="fu">suppressWarnings</span>(<span class="fu">umxModify</span>(mDWLS, <span class="at">update =</span> <span class="st">&quot;g_to_x1&quot;</span>, <span class="at">name =</span> <span class="st">&quot;Nested_DWLS&quot;</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;Nested_DWLS&#39;</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; |   |name       |Estimate |SE            |CI |type            |</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|:--------|:-------------|:--|:---------------|</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x2    |0.503    |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x3    |0.377    |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x4    |0.789    |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x5    |0.838    |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x6    |0.871    |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt; |6  |g_to_x7    |0.24     |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt; |7  |g_to_x8    |0.269    |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; |8  |g_to_x9    |0.398    |not_requested |   |Factor loading  |</span></span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; |18 |g_with_g   |1        |not_requested |   |Factor Variance |</span></span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a><span class="co">#&gt; |19 |one_to_x1  |0.047    |not_requested |   |Mean            |</span></span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a><span class="co">#&gt; |20 |one_to_x2  |0.031    |not_requested |   |Mean            |</span></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="co">#&gt; |21 |one_to_x3  |0.04     |not_requested |   |Mean            |</span></span>
+<span id="cb7-21"><a href="#cb7-21" tabindex="-1"></a><span class="co">#&gt; |22 |one_to_x4  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb7-22"><a href="#cb7-22" tabindex="-1"></a><span class="co">#&gt; |23 |one_to_x5  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb7-23"><a href="#cb7-23" tabindex="-1"></a><span class="co">#&gt; |24 |one_to_x6  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb7-24"><a href="#cb7-24" tabindex="-1"></a><span class="co">#&gt; |25 |one_to_x7  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb7-25"><a href="#cb7-25" tabindex="-1"></a><span class="co">#&gt; |26 |one_to_x8  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb7-26"><a href="#cb7-26" tabindex="-1"></a><span class="co">#&gt; |27 |one_to_x9  |0        |not_requested |   |Mean            |</span></span>
+<span id="cb7-27"><a href="#cb7-27" tabindex="-1"></a><span class="co">#&gt; |9  |x1_with_x1 |1.125    |not_requested |   |Residual        |</span></span>
+<span id="cb7-28"><a href="#cb7-28" tabindex="-1"></a><span class="co">#&gt; |10 |x2_with_x2 |1.224    |not_requested |   |Residual        |</span></span>
+<span id="cb7-29"><a href="#cb7-29" tabindex="-1"></a><span class="co">#&gt; |11 |x3_with_x3 |1.25     |not_requested |   |Residual        |</span></span>
+<span id="cb7-30"><a href="#cb7-30" tabindex="-1"></a><span class="co">#&gt; |12 |x4_with_x4 |0.377    |not_requested |   |Residual        |</span></span>
+<span id="cb7-31"><a href="#cb7-31" tabindex="-1"></a><span class="co">#&gt; |13 |x5_with_x5 |0.297    |not_requested |   |Residual        |</span></span>
+<span id="cb7-32"><a href="#cb7-32" tabindex="-1"></a><span class="co">#&gt; |14 |x6_with_x6 |0.242    |not_requested |   |Residual        |</span></span>
+<span id="cb7-33"><a href="#cb7-33" tabindex="-1"></a><span class="co">#&gt; |15 |x7_with_x7 |0.942    |not_requested |   |Residual        |</span></span>
+<span id="cb7-34"><a href="#cb7-34" tabindex="-1"></a><span class="co">#&gt; |16 |x8_with_x8 |0.928    |not_requested |   |Residual        |</span></span>
+<span id="cb7-35"><a href="#cb7-35" tabindex="-1"></a><span class="co">#&gt; |17 |x9_with_x9 |0.842    |not_requested |   |Residual        |</span></span>
+<span id="cb7-36"><a href="#cb7-36" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-37"><a href="#cb7-37" tabindex="-1"></a><span class="co">#&gt; *Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.</span></span>
+<span id="cb7-38"><a href="#cb7-38" tabindex="-1"></a><span class="co">#&gt; Evaluate absolute fit using SRMR (&lt; 0.10), and nested comparisons using the Strict Satorra-Bentler Δ χ². (see ?umxCompare for details).</span></span>
+<span id="cb7-39"><a href="#cb7-39" tabindex="-1"></a><span class="co">#&gt; Algebra&#39;threshMat&#39;:</span></span>
+<span id="cb7-40"><a href="#cb7-40" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-41"><a href="#cb7-41" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-42"><a href="#cb7-42" tabindex="-1"></a><span class="co">#&gt; |     |    x1|    x2|    x3|     x4|     x5|     x6|     x7|     x8|     x9|</span></span>
+<span id="cb7-43"><a href="#cb7-43" tabindex="-1"></a><span class="co">#&gt; |:----|-----:|-----:|-----:|------:|------:|------:|------:|------:|------:|</span></span>
+<span id="cb7-44"><a href="#cb7-44" tabindex="-1"></a><span class="co">#&gt; |th_1 | 0.166| 0.249| 0.173| -0.129| -0.257| -0.388| -0.576| -0.656| -0.646|</span></span>
+<span id="cb7-45"><a href="#cb7-45" tabindex="-1"></a><span class="co">#&gt; |th_2 | 0.167| 0.250| 0.174|  0.518|  0.527|  0.443|  0.012|  0.012|  0.037|</span></span>
+<span id="cb7-46"><a href="#cb7-46" tabindex="-1"></a><span class="co">#&gt; |th_3 | 0.168| 0.251| 0.175|  0.519|  0.528|  0.444|  0.677|  0.677|  0.677|</span></span>
+<span id="cb7-47"><a href="#cb7-47" tabindex="-1"></a></span>
+<span id="cb7-48"><a href="#cb7-48" tabindex="-1"></a><span class="co"># Compare models</span></span>
+<span id="cb7-49"><a href="#cb7-49" tabindex="-1"></a><span class="fu">umxCompare</span>(mDWLS, mDWLS_nested)</span>
+<span id="cb7-50"><a href="#cb7-50" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-51"><a href="#cb7-51" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-52"><a href="#cb7-52" tabindex="-1"></a><span class="co">#&gt; Table: Table of Model Comparisons</span></span>
+<span id="cb7-53"><a href="#cb7-53" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-54"><a href="#cb7-54" tabindex="-1"></a><span class="co">#&gt; |Model           |Compared_to     | EP|    Chi|    AIC|CFI |delta_CFI | SRMR|delta_SRMR |delta_df |diffFit  |p  |</span></span>
+<span id="cb7-55"><a href="#cb7-55" tabindex="-1"></a><span class="co">#&gt; |:---------------|:---------------|--:|------:|------:|:---|:---------|----:|:----------|:--------|:--------|:--|</span></span>
+<span id="cb7-56"><a href="#cb7-56" tabindex="-1"></a><span class="co">#&gt; |One_Factor_DWLS |&lt;NA&gt;            | 33| 176.42| 242.42|0   |          | 0.13|           |         |         |   |</span></span>
+<span id="cb7-57"><a href="#cb7-57" tabindex="-1"></a><span class="co">#&gt; |Nested_DWLS     |One_Factor_DWLS | 32| 284.94| 348.94|0   |0         | 0.19|0.06       |1        |24327.71 |0  |</span></span>
+<span id="cb7-58"><a href="#cb7-58" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-59"><a href="#cb7-59" tabindex="-1"></a><span class="co">#&gt; *Note*: EP = Estimated Parameters; Δ df = Change in degrees of freedom.</span></span>
+<span id="cb7-60"><a href="#cb7-60" tabindex="-1"></a><span class="co">#&gt;   - Chi: Baseline WLS chi-square fit statistic.</span></span>
+<span id="cb7-61"><a href="#cb7-61" tabindex="-1"></a><span class="co">#&gt;   - AIC: Akaike Information Criterion (lower is better).</span></span>
+<span id="cb7-62"><a href="#cb7-62" tabindex="-1"></a><span class="co">#&gt;   - CFI / delta_CFI: Comparative Fit Index and change in CFI.</span></span>
+<span id="cb7-63"><a href="#cb7-63" tabindex="-1"></a><span class="co">#&gt;   - SRMR / delta_SRMR: Standardized Root Mean Square Residual and change in SRMR.</span></span>
+<span id="cb7-64"><a href="#cb7-64" tabindex="-1"></a><span class="co">#&gt;   - diffFit: Satorra-Bentler (2010) strict Δ χ² for nested models.</span></span>
+<span id="cb7-65"><a href="#cb7-65" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-66"><a href="#cb7-66" tabindex="-1"></a><span class="co">#&gt; *Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.</span></span>
+<span id="cb7-67"><a href="#cb7-67" tabindex="-1"></a><span class="co">#&gt;   Evaluate absolute fit using SRMR (&lt; 0.10), and nested comparisons using diffFit (Satorra-Bentler (2010) strict Δ χ²). (see ?umxCompare for details).</span></span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="practical-considerations" class="section level2">
+<h2>5. Practical Considerations</h2>
+<div id="sample-size-requirements" class="section level3">
+<h3>1. Sample Size Requirements</h3>
+<ul>
+<li><strong>Full WLS:</strong> Requires a very large sample size (<span class="math inline">\(N &gt; 1000\)</span>, and often <span class="math inline">\(N &gt; 2000\)</span> for models with many
+indicators). This is because the full asymptotic covariance matrix
+(<span class="math inline">\(V\)</span>) grows rapidly with the number
+of thresholds, requiring a huge amount of data to estimate accurately.
+If <span class="math inline">\(N\)</span> is too small, <span class="math inline">\(V\)</span> becomes non-positive definite or highly
+unstable.</li>
+<li><strong>DWLS:</strong> Only uses the diagonal elements of <span class="math inline">\(V\)</span>, meaning it requires much smaller
+sample sizes (<span class="math inline">\(N &gt; 200\)</span>) to
+achieve stable and accurate parameter estimates.</li>
+</ul>
+</div>
+<div id="convergence-issues" class="section level3">
+<h3>2. Convergence Issues</h3>
+<p>If a WLS model fails to converge: * Check for <strong>empty threshold
+categories</strong> (zero counts in a cell). If a category has zero
+observations, the threshold cannot be estimated. You may need to
+collapse adjacent categories. * Switch to <strong>DWLS</strong> if you
+are currently using full WLS.</p>
+</div>
+<div id="reporting-guidelines" class="section level3">
+<h3>3. Reporting Guidelines</h3>
+<p>When reporting WLS results in journals: 1. Specify which estimator
+was used (e.g., “Diagonally Weighted Least Squares (DWLS) with robust
+standard errors”). 2. Report the <strong>Satorra-Bentler robust <span class="math inline">\(\chi^2\)</span></strong> and degrees of freedom.
+3. Report <strong>SRMR</strong> as the primary index of absolute fit
+(cutoff <span class="math inline">\(&lt; 0.08\)</span> or <span class="math inline">\(&lt; 0.10\)</span>). 4. Emphasize nested model
+comparison results using the <strong>Satorra-Bentler difference
+test</strong> (from <code>umxCompare</code>).</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

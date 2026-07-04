@@ -13,7 +13,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(
+  knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 6,
@@ -33,6 +33,7 @@ Fitting a Structural Equation Model (SEM) yields **point estimates** (e.g., a pa
 3. **Profile Likelihood Confidence Intervals** (likelihood-based).
 
 This vignette explains the differences between these methods, when to use each, and how to implement them in your `umx` workflow.
+
 
 ---
 
@@ -95,40 +96,57 @@ Let's illustrate these options using the built-in `demoOneFactor` dataset.
 ### Step 1: Fit a Base Model
 We fit a simple one-factor model using `umxRAM()`. By default, `umxSummary()` reports standard ML standard errors.
 
-```{r fit_model, message=FALSE, warning=FALSE}
+
+```{r load_data, message=FALSE, warning=FALSE}
 # Load data
 data(demoOneFactor)
 manifests = names(demoOneFactor)
+```
 
 # Fit model
-m1 = umxRAM("One_Factor_Model", data = demoOneFactor, type = "cov",
+
+```{r ram, message=FALSE}
+m1 = umxRAM("One_Factor_Model", data = demoOneFactor, 
 	umxPath("g", to = manifests),
-	umxPath(var = manifests),
-	umxPath(var = "g", fixedAt = 1)
+	umxPath(v.m. = manifests),
+	umxPath(v1m0 = "g")
 )
 ```
 
 We can inspect the standard ML standard errors and Wald CIs:
-```{r summary_std, message=FALSE}
-umxSummary(m1, std = TRUE, showEstimates = "std")
+```{r summary_SE, message=FALSE}
+umxSummary(m1, std = TRUE, uncertainty = "SE")
 ```
 
 ### Step 2: Request Robust Standard Errors
-To obtain robust standard errors, we can apply the `imxRobustSE()` function from `OpenMx` to our fitted model:
+To obtain robust standard errors, we can use uncertainty = "RobustSE".
 
-```{r robust_se, message=FALSE}
 # Compute robust standard errors
+
+```{r robust_Robust, message=FALSE}
+umxSummary(m1, std = TRUE, uncertainty = "RobustSE")
+```
+
+We can also use `imxRobustSE()` from `OpenMx` on our fitted model, returning a vector of SEs:
+
+```{r imxRobust_se, message=FALSE}
 m1Robust = imxRobustSE(m1)
+```
+
+# Compute CI
+Finally we can extract profile-based confidence intervals (CI). These do not have to be symmetrical.
+
+```{r CI, message=FALSE}
+umxSummary(m1, std = TRUE, uncertainty = "CI")
 
 # Extract standard errors to compare
 stdSE = m1$output$standardErrors
-robustSE = m1Robust$output$standardErrors
 
 # Compare SEs side-by-side
 compareSE = data.frame(
-	Parameter = names(stdSE),
+	Parameter             = row.names(stdSE),
 	Standard_ML_SE = round(stdSE, 4),
-	Robust_SE = round(robustSE, 4)
+	Robust_SE           = round(m1Robust, 4)
 )
 print(compareSE)
 ```
@@ -138,12 +156,15 @@ If the robust standard errors are larger than the standard ML standard errors, i
 ### Step 3: Compute Profile Likelihood Confidence Intervals
 Profile likelihood intervals are requested during model building or via `umxConfint()`. To compute CIs for specific paths (e.g., the loadings of $x1$ and $x2$ on $g$):
 
-```{r profile_ci, message=FALSE, warning=FALSE}
+```{r profile_ci_specific, message=FALSE, warning=FALSE}
 # Request profile likelihood CIs for specific parameters
 m1CI = umxConfint(m1, parm = c("g_to_x1", "g_to_x2"), run = TRUE)
+```
 
 # View summary showing profile CIs
-umxSummary(m1CI, showEstimates = "raw")
+
+```{r summary_ci_print, message=FALSE}
+umxSummary(m1CI, uncertainty = "CI")
 ```
 
 Note that the profile CIs are asymmetric and respect the shape of the likelihood surface.

@@ -137,7 +137,7 @@ Conventional fit indices (CFI, TLI, RMSEA) are calculated using $\chi^2$. In WLS
 When running `umxSummary()` on a WLS model, `umx` automatically uses **Satorra-Bentler (2010)** robust corrections to adjust fit statistics:
 
 ```{r summary_wls, message=FALSE}
-umxSummary(mDWLS, std = TRUE, showEstimates = "std")
+umxSummary(mDWLS, std = TRUE)
 ```
 
 ### Model Comparison

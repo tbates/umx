@@ -2370,6 +2370,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param min optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.
 #' @param same optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.
 #' @param max optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.
+#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]

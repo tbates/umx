@@ -26,7 +26,7 @@ umx_data <- function() {
 	cat("\n")
 	
 	# Get vignettes
-	vignetteList = vignette(package = "umx")
+	vignetteList = utils::vignette(package = "umx")
 	vignetteResults = vignetteList$results
 	
 	cat("Vignettes in `umx` (access as vignette(\"name\", package=\"umx\"))\n")

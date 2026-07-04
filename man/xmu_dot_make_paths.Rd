@@ -35,6 +35,14 @@ xmu_dot_make_paths(
 \item{labels}{show labels on the path? ("none", "labels", "both")}
 
 \item{digits}{how many digits to report}
+
+\item{pt}{Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)}
+
+\item{std}{Whether values should be standardized (defaults to FALSE)}
+
+\item{uncertainty}{Type of uncertainty to display (defaults to "none")}
+
+\item{cis}{Matrix of confidence intervals (defaults to NULL)}
 }
 \value{
 \itemize{

@@ -13,12 +13,12 @@
   report = c("markdown", "html"),
   means = TRUE,
   residuals = TRUE,
-  SE = TRUE,
+  uncertainty = c("SE", "RobustSE", "CI", "none"),
   filter = c("ALL", "NS", "SIG"),
   RMSEA_CI = FALSE,
-  ...,
+  SE = TRUE,
   matrixAddresses = FALSE,
-  uncertainty = c("SE", "RobustSE", "CI", "none")
+  ...
 )
 }
 \arguments{
@@ -37,17 +37,17 @@ If NULL will be computed on demand. If FALSE will not be computed.}
 
 \item{residuals}{Whether to include residuals in the summary (TRUE)}
 
-\item{SE}{Deprecated. Please use \code{uncertainty} instead.}
+\item{uncertainty}{What type of parameter uncertainty to report: "SE" (default standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
 \item{RMSEA_CI}{Whether to compute the CI on RMSEA (Defaults to FALSE)}
 
-\item{...}{Other parameters to control model summary}
+\item{SE}{Deprecated. Please use \code{uncertainty} instead.}
 
 \item{matrixAddresses}{Whether to show "matrix address" columns (Default = FALSE)}
 
-\item{uncertainty}{What type of parameter uncertainty to report: "SE" (default standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).}
+\item{...}{Other parameters to control model summary}
 }
 \value{
 \itemize{

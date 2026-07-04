@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Timothy C. Bates" />
+
+<meta name="date" content="2026-07-04" />
+
+<title>Confidence Intervals and Standard Errors in SEM</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Confidence Intervals and Standard Errors in
+SEM</h1>
+<h3 class="subtitle">Standard Errors, Robust SEs, and Profile Likelihood
+CIs in umx</h3>
+<h4 class="author">Timothy C. Bates</h4>
+<h4 class="date">2026-07-04</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+<li><a href="#point-estimates-vs.-inference-ses-vs.-cis" id="toc-point-estimates-vs.-inference-ses-vs.-cis">1. Point Estimates
+vs. Inference (SEs vs. CIs)</a>
+<ul>
+<li><a href="#standard-errors-wald-cis" id="toc-standard-errors-wald-cis">Standard Errors (Wald CIs)</a></li>
+<li><a href="#profile-likelihood-confidence-intervals" id="toc-profile-likelihood-confidence-intervals">Profile Likelihood
+Confidence Intervals</a></li>
+</ul></li>
+<li><a href="#ml-standard-errors-vs.-robust-standard-errors" id="toc-ml-standard-errors-vs.-robust-standard-errors">2. ML Standard
+Errors vs. Robust Standard Errors</a>
+<ul>
+<li><a href="#standard-ml-ses" id="toc-standard-ml-ses">Standard ML
+SEs</a></li>
+<li><a href="#robust-standard-errors-sandwich-estimator" id="toc-robust-standard-errors-sandwich-estimator">Robust Standard
+Errors (Sandwich Estimator)</a></li>
+</ul></li>
+<li><a href="#practical-workflow-in-umx" id="toc-practical-workflow-in-umx">3. Practical Workflow in
+<code>umx</code></a>
+<ul>
+<li><a href="#step-1-fit-a-base-model" id="toc-step-1-fit-a-base-model">Step 1: Fit a Base Model</a></li>
+</ul></li>
+<li><a href="#fit-model" id="toc-fit-model">Fit model</a>
+<ul>
+<li><a href="#step-2-request-robust-standard-errors" id="toc-step-2-request-robust-standard-errors">Step 2: Request Robust
+Standard Errors</a></li>
+</ul></li>
+<li><a href="#compute-robust-standard-errors" id="toc-compute-robust-standard-errors">Compute robust standard
+errors</a></li>
+<li><a href="#compute-ci" id="toc-compute-ci">Compute CI</a>
+<ul>
+<li><a href="#step-3-compute-profile-likelihood-confidence-intervals" id="toc-step-3-compute-profile-likelihood-confidence-intervals">Step 3:
+Compute Profile Likelihood Confidence Intervals</a></li>
+</ul></li>
+<li><a href="#view-summary-showing-profile-cis" id="toc-view-summary-showing-profile-cis">View summary showing profile
+CIs</a>
+<ul>
+<li><a href="#summary-when-to-prefer-which" id="toc-summary-when-to-prefer-which">4. Summary: When to Prefer
+Which?</a>
+<ul>
+<li><a href="#recommendations-for-reporting" id="toc-recommendations-for-reporting">Recommendations for
+Reporting</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
+<p>Fitting a Structural Equation Model (SEM) yields <strong>point
+estimates</strong> (e.g., a path coefficient of <span class="math inline">\(0.45\)</span> or a variance component of <span class="math inline">\(0.21\)</span>). However, scientific inference
+requires representing the <strong>uncertainty</strong> of these
+estimates.</p>
+<p><code>umx</code> (and <code>OpenMx</code> underneath) provides three
+primary ways to assess uncertainty: 1. <strong>Standard Maximum
+Likelihood Standard Errors</strong> (Wald-based). 2. <strong>Robust
+Standard Errors</strong> (Huber-White / “Sandwich” estimator). 3.
+<strong>Profile Likelihood Confidence Intervals</strong>
+(likelihood-based).</p>
+<p>This vignette explains the differences between these methods, when to
+use each, and how to implement them in your <code>umx</code>
+workflow.</p>
+<hr />
+</div>
+<div id="point-estimates-vs.-inference-ses-vs.-cis" class="section level2">
+<h2>1. Point Estimates vs. Inference (SEs vs. CIs)</h2>
+<div id="standard-errors-wald-cis" class="section level3">
+<h3>Standard Errors (Wald CIs)</h3>
+<p>Standard errors represent the standard deviation of a parameter’s
+sampling distribution. By default, packages construct <strong>Wald
+confidence intervals</strong> using the standard error: <span class="math display">\[\hat{\theta} \pm z_{\alpha/2} \times
+\text{SE}\]</span></p>
+<ul>
+<li><strong>Assumption:</strong> The sampling distribution of the
+estimator is symmetric and normal.</li>
+<li><strong>Limitations:</strong> This assumption breaks down in several
+common scenarios:
+<ul>
+<li>Small sample sizes.</li>
+<li>Parameters near boundaries (e.g., variances, which are bounded at
+0).</li>
+<li>Highly non-linear parameter functions (e.g., indirect effects in
+mediation models).</li>
+</ul></li>
+</ul>
+</div>
+<div id="profile-likelihood-confidence-intervals" class="section level3">
+<h3>Profile Likelihood Confidence Intervals</h3>
+<p>Instead of assuming a normal distribution, <strong>Profile Likelihood
+Confidence Intervals</strong> construct the interval directly from the
+log-likelihood surface.</p>
+<p>To find the lower boundary of a 95% profile CI for a parameter <span class="math inline">\(\theta\)</span>: 1. The parameter <span class="math inline">\(\theta\)</span> is fixed to a value below its
+maximum likelihood estimate (MLE). 2. All other parameters in the model
+are re-optimized to find the maximum possible log-likelihood. 3. Steps
+1-2 are repeated until we find the point where the log-likelihood drops
+by exactly <span class="math inline">\(\chi^2_1(0.95)/2 \approx
+1.92\)</span> units compared to the MLE.</p>
+<p>Because they re-optimize the model at each step, profile CIs: *
+Respect the asymmetry of the parameter space (e.g., a CI for variance
+might be <span class="math inline">\([0.02, 0.45]\)</span> rather than
+<span class="math inline">\([-0.10, 0.35]\)</span>). * Do not rely on
+local curvature (Hessian matrix) at the MLE. * Restrict values to
+boundary constraints.</p>
+<hr />
+</div>
+</div>
+<div id="ml-standard-errors-vs.-robust-standard-errors" class="section level2">
+<h2>2. ML Standard Errors vs. Robust Standard Errors</h2>
+<div id="standard-ml-ses" class="section level3">
+<h3>Standard ML SEs</h3>
+<p>Standard Maximum Likelihood standard errors are derived from the
+local curvature of the log-likelihood surface at the peak (the inverse
+of the Hessian matrix / information matrix). * <strong>When to
+use:</strong> When the data are multivariate normal, the model is
+correctly specified, and the sample size is large.</p>
+</div>
+<div id="robust-standard-errors-sandwich-estimator" class="section level3">
+<h3>Robust Standard Errors (Sandwich Estimator)</h3>
+<p>When data are non-normal, standard ML standard errors are typically
+underestimated, leading to inflated Type-I error rates. <strong>Robust
+standard errors</strong> (also called Huber-White or “sandwich” SEs)
+correct for this. The robust covariance matrix is calculated as: <span class="math display">\[\text{Cov}_{\text{robust}} = H^{-1} B
+H^{-1}\]</span> * <strong><span class="math inline">\(H\)</span> (The
+“Bread”):</strong> The standard Hessian matrix (curvature of the
+likelihood surface). * <strong><span class="math inline">\(B\)</span>
+(The “Meat”):</strong> The variability of the individual case-wise
+gradients.</p>
+<div id="when-to-prefer-robust-ses" class="section level4">
+<h4>When to prefer Robust SEs:</h4>
+<ul>
+<li>Mild-to-moderate violation of multivariate normality.</li>
+<li>Minor model misspecifications.</li>
+<li>Clustered or nested data (if using a cluster-robust
+correction).</li>
+</ul>
+</div>
+<div id="limitations" class="section level4">
+<h4>Limitations:</h4>
+<ul>
+<li>Robust standard errors do not fix biased point estimates resulting
+from severe misspecification.</li>
+<li>They can be unstable in small samples (<span class="math inline">\(N
+&lt; 100\)</span>).</li>
+<li>They still rely on the Wald symmetry assumption for confidence
+intervals.</li>
+</ul>
+<hr />
+</div>
+</div>
+</div>
+<div id="practical-workflow-in-umx" class="section level2">
+<h2>3. Practical Workflow in <code>umx</code></h2>
+<p>Let’s illustrate these options using the built-in
+<code>demoOneFactor</code> dataset.</p>
+<div id="step-1-fit-a-base-model" class="section level3">
+<h3>Step 1: Fit a Base Model</h3>
+<p>We fit a simple one-factor model using <code>umxRAM()</code>. By
+default, <code>umxSummary()</code> reports standard ML standard
+errors.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Load data</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">data</span>(demoOneFactor)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>manifests <span class="ot">=</span> <span class="fu">names</span>(demoOneFactor)</span></code></pre></div>
+</div>
+</div>
+<div id="fit-model" class="section level1">
+<h1>Fit model</h1>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>m1 <span class="ot">=</span> <span class="fu">umxRAM</span>(<span class="st">&quot;One_Factor_Model&quot;</span>, <span class="at">data =</span> demoOneFactor, </span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="st">&quot;g&quot;</span>, <span class="at">to =</span> manifests),</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">v.m. =</span> manifests),</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    <span class="fu">umxPath</span>(<span class="at">v1m0 =</span> <span class="st">&quot;g&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>)</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_Model&#39;</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a><span class="co">#&gt; |   |name       | Estimate|SE    |CI                      |type            |</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|--------:|:-----|:-----------------------|:---------------|</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |    0.397|0.016 |0.397 [0.366, 0.427]    |Factor loading  |</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |    0.503|0.018 |0.503 [0.467, 0.539]    |Factor loading  |</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |    0.577|0.02  |0.577 [0.537, 0.617]    |Factor loading  |</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |    0.702|0.024 |0.702 [0.655, 0.749]    |Factor loading  |</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |    0.795|0.027 |0.795 [0.743, 0.848]    |Factor loading  |</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; |11 |g_with_g   |    1.000|0     |1 [1, 1]                |Factor Variance |</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; |12 |one_to_x1  |   -0.040|0.02  |-0.04 [-0.079, -0.001]  |Mean            |</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; |13 |one_to_x2  |   -0.046|0.024 |-0.046 [-0.093, 0.001]  |Mean            |</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; |14 |one_to_x3  |   -0.056|0.027 |-0.056 [-0.109, -0.002] |Mean            |</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; |15 |one_to_x4  |   -0.056|0.033 |-0.056 [-0.12, 0.008]   |Mean            |</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt; |16 |one_to_x5  |   -0.076|0.037 |-0.076 [-0.147, -0.004] |Mean            |</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt; |6  |x1_with_x1 |    0.041|0.003 |0.041 [0.035, 0.046]    |Residual        |</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; |7  |x2_with_x2 |    0.038|0.003 |0.038 [0.032, 0.043]    |Residual        |</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt; |8  |x3_with_x3 |    0.041|0.003 |0.041 [0.035, 0.047]    |Residual        |</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; |9  |x4_with_x4 |    0.039|0.003 |0.039 [0.033, 0.046]    |Residual        |</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt; |10 |x5_with_x5 |    0.036|0.004 |0.036 [0.029, 0.043]    |Residual        |</span></span></code></pre></div>
+<p>We can inspect the standard ML standard errors and Wald CIs:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">umxSummary</span>(m1, <span class="at">std =</span> <span class="cn">TRUE</span>, <span class="at">uncertainty =</span> <span class="st">&quot;SE&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_Model&#39;</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="co">#&gt; |   |name       | Std.Estimate|Std.SE |CI                  |type            |</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|------------:|:------|:-------------------|:---------------|</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |         0.89|0.01   |0.89 [0.87, 0.91]   |Factor loading  |</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |         0.93|0.01   |0.93 [0.92, 0.95]   |Factor loading  |</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |         0.94|0.01   |0.94 [0.93, 0.95]   |Factor loading  |</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |         0.96|0      |0.96 [0.95, 0.97]   |Factor loading  |</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |         0.97|0      |0.97 [0.97, 0.98]   |Factor loading  |</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt; |11 |g_with_g   |         1.00|0      |1 [1, 1]            |Factor Variance |</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; |12 |one_to_x1  |        -0.09|0.04   |-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; |13 |one_to_x2  |        -0.08|0.04   |-0.08 [-0.17, 0]    |Mean            |</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; |14 |one_to_x3  |        -0.09|0.04   |-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; |15 |one_to_x4  |        -0.08|0.04   |-0.08 [-0.16, 0.01] |Mean            |</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; |16 |one_to_x5  |        -0.09|0.04   |-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; |6  |x1_with_x1 |         0.21|0.02   |0.21 [0.17, 0.24]   |Residual        |</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#&gt; |7  |x2_with_x2 |         0.13|0.01   |0.13 [0.11, 0.15]   |Residual        |</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a><span class="co">#&gt; |8  |x3_with_x3 |         0.11|0.01   |0.11 [0.09, 0.13]   |Residual        |</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a><span class="co">#&gt; |9  |x4_with_x4 |         0.07|0.01   |0.07 [0.06, 0.09]   |Residual        |</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a><span class="co">#&gt; |10 |x5_with_x5 |         0.05|0.01   |0.05 [0.04, 0.07]   |Residual        |</span></span></code></pre></div>
+<div id="step-2-request-robust-standard-errors" class="section level3">
+<h3>Step 2: Request Robust Standard Errors</h3>
+<p>To obtain robust standard errors, we can use uncertainty =
+“RobustSE”.</p>
+</div>
+</div>
+<div id="compute-robust-standard-errors" class="section level1">
+<h1>Compute robust standard errors</h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">umxSummary</span>(m1, <span class="at">std =</span> <span class="cn">TRUE</span>, <span class="at">uncertainty =</span> <span class="st">&quot;RobustSE&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_Model&#39;</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co">#&gt; |   |name       | Std.Estimate|Std.SE |CI                  |type            |</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|------------:|:------|:-------------------|:---------------|</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |         0.89|0.01   |0.89 [0.87, 0.91]   |Factor loading  |</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |         0.93|0.01   |0.93 [0.92, 0.94]   |Factor loading  |</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |         0.94|0.01   |0.94 [0.93, 0.95]   |Factor loading  |</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |         0.96|0      |0.96 [0.95, 0.97]   |Factor loading  |</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |         0.97|0      |0.97 [0.97, 0.98]   |Factor loading  |</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt; |11 |g_with_g   |         1.00|0      |1 [1, 1]            |Factor Variance |</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; |12 |one_to_x1  |        -0.09|0.04   |-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; |13 |one_to_x2  |        -0.08|0.04   |-0.08 [-0.17, 0]    |Mean            |</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#&gt; |14 |one_to_x3  |        -0.09|0.04   |-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="co">#&gt; |15 |one_to_x4  |        -0.08|0.04   |-0.08 [-0.16, 0.01] |Mean            |</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co">#&gt; |16 |one_to_x5  |        -0.09|0.04   |-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co">#&gt; |6  |x1_with_x1 |         0.21|0.02   |0.21 [0.17, 0.24]   |Residual        |</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co">#&gt; |7  |x2_with_x2 |         0.13|0.01   |0.13 [0.11, 0.15]   |Residual        |</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co">#&gt; |8  |x3_with_x3 |         0.11|0.01   |0.11 [0.09, 0.13]   |Residual        |</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co">#&gt; |9  |x4_with_x4 |         0.07|0.01   |0.07 [0.06, 0.09]   |Residual        |</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co">#&gt; |10 |x5_with_x5 |         0.05|0.01   |0.05 [0.04, 0.06]   |Residual        |</span></span></code></pre></div>
+<p>We can also use <code>imxRobustSE()</code> from <code>OpenMx</code>
+on our fitted model, returning a vector of SEs:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>m1Robust <span class="ot">=</span> <span class="fu">imxRobustSE</span>(m1)</span></code></pre></div>
+</div>
+<div id="compute-ci" class="section level1">
+<h1>Compute CI</h1>
+<p>Finally we can extract profile-based confidence intervals (CI). These
+do not have to be symmetrical.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">umxSummary</span>(m1, <span class="at">std =</span> <span class="cn">TRUE</span>, <span class="at">uncertainty =</span> <span class="st">&quot;CI&quot;</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_Model&#39;</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt; |   |name       | Std.Estimate|CI                  |type            |</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|------------:|:-------------------|:---------------|</span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |         0.89|0.89 [0.87, 0.91]   |Factor loading  |</span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |         0.93|0.93 [0.92, 0.95]   |Factor loading  |</span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |         0.94|0.94 [0.93, 0.95]   |Factor loading  |</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |         0.96|0.96 [0.95, 0.97]   |Factor loading  |</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |         0.97|0.97 [0.97, 0.98]   |Factor loading  |</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a><span class="co">#&gt; |11 |g_with_g   |         1.00|1 [1, 1]            |Factor Variance |</span></span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a><span class="co">#&gt; |12 |one_to_x1  |        -0.09|-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a><span class="co">#&gt; |13 |one_to_x2  |        -0.08|-0.08 [-0.17, 0]    |Mean            |</span></span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a><span class="co">#&gt; |14 |one_to_x3  |        -0.09|-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co">#&gt; |15 |one_to_x4  |        -0.08|-0.08 [-0.16, 0.01] |Mean            |</span></span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co">#&gt; |16 |one_to_x5  |        -0.09|-0.09 [-0.18, 0]    |Mean            |</span></span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co">#&gt; |6  |x1_with_x1 |         0.21|0.21 [0.17, 0.24]   |Residual        |</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co">#&gt; |7  |x2_with_x2 |         0.13|0.13 [0.11, 0.15]   |Residual        |</span></span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co">#&gt; |8  |x3_with_x3 |         0.11|0.11 [0.09, 0.13]   |Residual        |</span></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co">#&gt; |9  |x4_with_x4 |         0.07|0.07 [0.06, 0.09]   |Residual        |</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="co">#&gt; |10 |x5_with_x5 |         0.05|0.05 [0.04, 0.07]   |Residual        |</span></span>
+<span id="cb6-24"><a href="#cb6-24" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" tabindex="-1"></a><span class="co"># Extract standard errors to compare</span></span>
+<span id="cb6-26"><a href="#cb6-26" tabindex="-1"></a>stdSE <span class="ot">=</span> m1<span class="sc">$</span>output<span class="sc">$</span>standardErrors</span>
+<span id="cb6-27"><a href="#cb6-27" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" tabindex="-1"></a><span class="co"># Compare SEs side-by-side</span></span>
+<span id="cb6-29"><a href="#cb6-29" tabindex="-1"></a>compareSE <span class="ot">=</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-30"><a href="#cb6-30" tabindex="-1"></a>    <span class="at">Parameter             =</span> <span class="fu">row.names</span>(stdSE),</span>
+<span id="cb6-31"><a href="#cb6-31" tabindex="-1"></a>    <span class="at">Standard_ML_SE =</span> <span class="fu">round</span>(stdSE, <span class="dv">4</span>),</span>
+<span id="cb6-32"><a href="#cb6-32" tabindex="-1"></a>    <span class="at">Robust_SE           =</span> <span class="fu">round</span>(m1Robust, <span class="dv">4</span>)</span>
+<span id="cb6-33"><a href="#cb6-33" tabindex="-1"></a>)</span>
+<span id="cb6-34"><a href="#cb6-34" tabindex="-1"></a><span class="fu">print</span>(compareSE)</span>
+<span id="cb6-35"><a href="#cb6-35" tabindex="-1"></a><span class="co">#&gt;             Parameter Standard_ML_SE Robust_SE</span></span>
+<span id="cb6-36"><a href="#cb6-36" tabindex="-1"></a><span class="co">#&gt; g_to_x1       g_to_x1         0.0155    0.0153</span></span>
+<span id="cb6-37"><a href="#cb6-37" tabindex="-1"></a><span class="co">#&gt; g_to_x2       g_to_x2         0.0182    0.0185</span></span>
+<span id="cb6-38"><a href="#cb6-38" tabindex="-1"></a><span class="co">#&gt; g_to_x3       g_to_x3         0.0204    0.0215</span></span>
+<span id="cb6-39"><a href="#cb6-39" tabindex="-1"></a><span class="co">#&gt; g_to_x4       g_to_x4         0.0240    0.0244</span></span>
+<span id="cb6-40"><a href="#cb6-40" tabindex="-1"></a><span class="co">#&gt; g_to_x5       g_to_x5         0.0266    0.0249</span></span>
+<span id="cb6-41"><a href="#cb6-41" tabindex="-1"></a><span class="co">#&gt; x1_with_x1 x1_with_x1         0.0028    0.0029</span></span>
+<span id="cb6-42"><a href="#cb6-42" tabindex="-1"></a><span class="co">#&gt; x2_with_x2 x2_with_x2         0.0028    0.0026</span></span>
+<span id="cb6-43"><a href="#cb6-43" tabindex="-1"></a><span class="co">#&gt; x3_with_x3 x3_with_x3         0.0031    0.0031</span></span>
+<span id="cb6-44"><a href="#cb6-44" tabindex="-1"></a><span class="co">#&gt; x4_with_x4 x4_with_x4         0.0034    0.0036</span></span>
+<span id="cb6-45"><a href="#cb6-45" tabindex="-1"></a><span class="co">#&gt; x5_with_x5 x5_with_x5         0.0037    0.0032</span></span>
+<span id="cb6-46"><a href="#cb6-46" tabindex="-1"></a><span class="co">#&gt; one_to_x1   one_to_x1         0.0199    0.0199</span></span>
+<span id="cb6-47"><a href="#cb6-47" tabindex="-1"></a><span class="co">#&gt; one_to_x2   one_to_x2         0.0241    0.0242</span></span>
+<span id="cb6-48"><a href="#cb6-48" tabindex="-1"></a><span class="co">#&gt; one_to_x3   one_to_x3         0.0273    0.0274</span></span>
+<span id="cb6-49"><a href="#cb6-49" tabindex="-1"></a><span class="co">#&gt; one_to_x4   one_to_x4         0.0326    0.0327</span></span>
+<span id="cb6-50"><a href="#cb6-50" tabindex="-1"></a><span class="co">#&gt; one_to_x5   one_to_x5         0.0366    0.0366</span></span></code></pre></div>
+<p>If the robust standard errors are larger than the standard ML
+standard errors, it suggests that multivariate non-normality is present
+in your data.</p>
+<div id="step-3-compute-profile-likelihood-confidence-intervals" class="section level3">
+<h3>Step 3: Compute Profile Likelihood Confidence Intervals</h3>
+<p>Profile likelihood intervals are requested during model building or
+via <code>umxConfint()</code>. To compute CIs for specific paths (e.g.,
+the loadings of <span class="math inline">\(x1\)</span> and <span class="math inline">\(x2\)</span> on <span class="math inline">\(g\)</span>):</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Request profile likelihood CIs for specific parameters</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>m1CI <span class="ot">=</span> <span class="fu">umxConfint</span>(m1, <span class="at">parm =</span> <span class="fu">c</span>(<span class="st">&quot;g_to_x1&quot;</span>, <span class="st">&quot;g_to_x2&quot;</span>), <span class="at">run =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt;         lbound estimate ubound lbound Code ubound Code</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt; g_to_x1  0.367    0.397  0.429           1           1</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt; g_to_x2  0.469    0.503  0.541           1           1</span></span></code></pre></div>
+</div>
+</div>
+<div id="view-summary-showing-profile-cis" class="section level1">
+<h1>View summary showing profile CIs</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="fu">umxSummary</span>(m1CI, <span class="at">uncertainty =</span> <span class="st">&quot;CI&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; Warning in mxStandardizeRAMpaths(model, SE = SE): argument &#39;SE=TRUE&#39; requires model to have a nonempty &#39;vcov&#39; output slot, or a non-NULL value for argument &#39;cov&#39;; continuing with &#39;SE&#39; coerced to &#39;FALSE&#39;.</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; If you were not expecting this, your model may be underidentified.</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; Table: Parameter loadings for model &#39;One_Factor_Model&#39;</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a><span class="co">#&gt; |   |name       | Estimate|CI               |type            |</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="co">#&gt; |:--|:----------|--------:|:----------------|:---------------|</span></span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a><span class="co">#&gt; |1  |g_to_x1    |     0.40|0.4 [0.37, 0.43] |Factor loading  |</span></span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a><span class="co">#&gt; |2  |g_to_x2    |     0.50|0.5 [0.47, 0.54] |Factor loading  |</span></span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="co">#&gt; |3  |g_to_x3    |     0.58|                 |Factor loading  |</span></span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#&gt; |4  |g_to_x4    |     0.70|                 |Factor loading  |</span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co">#&gt; |5  |g_to_x5    |     0.80|                 |Factor loading  |</span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#&gt; |11 |g_with_g   |     1.00|                 |Factor Variance |</span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#&gt; |12 |one_to_x1  |    -0.04|                 |Mean            |</span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt; |13 |one_to_x2  |    -0.05|                 |Mean            |</span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt; |14 |one_to_x3  |    -0.06|                 |Mean            |</span></span>
+<span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; |15 |one_to_x4  |    -0.06|                 |Mean            |</span></span>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; |16 |one_to_x5  |    -0.08|                 |Mean            |</span></span>
+<span id="cb8-21"><a href="#cb8-21" tabindex="-1"></a><span class="co">#&gt; |6  |x1_with_x1 |     0.04|                 |Residual        |</span></span>
+<span id="cb8-22"><a href="#cb8-22" tabindex="-1"></a><span class="co">#&gt; |7  |x2_with_x2 |     0.04|                 |Residual        |</span></span>
+<span id="cb8-23"><a href="#cb8-23" tabindex="-1"></a><span class="co">#&gt; |8  |x3_with_x3 |     0.04|                 |Residual        |</span></span>
+<span id="cb8-24"><a href="#cb8-24" tabindex="-1"></a><span class="co">#&gt; |9  |x4_with_x4 |     0.04|                 |Residual        |</span></span>
+<span id="cb8-25"><a href="#cb8-25" tabindex="-1"></a><span class="co">#&gt; |10 |x5_with_x5 |     0.04|                 |Residual        |</span></span>
+<span id="cb8-26"><a href="#cb8-26" tabindex="-1"></a><span class="co">#&gt;            lbound  estimate    ubound</span></span>
+<span id="cb8-27"><a href="#cb8-27" tabindex="-1"></a><span class="co">#&gt; g_to_x1 0.3674248 0.3967550 0.4286077</span></span>
+<span id="cb8-28"><a href="#cb8-28" tabindex="-1"></a><span class="co">#&gt; g_to_x2 0.4690729 0.5031576 0.5406039</span></span></code></pre></div>
+<p>Note that the profile CIs are asymmetric and respect the shape of the
+likelihood surface.</p>
+<hr />
+<div id="summary-when-to-prefer-which" class="section level2">
+<h2>4. Summary: When to Prefer Which?</h2>
+<table>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Feature</th>
+<th align="left">Standard ML SEs</th>
+<th align="left">Robust SEs (Sandwich)</th>
+<th align="left">Profile Likelihood CIs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>Computational Cost</strong></td>
+<td align="left">Extremely low (one Hessian inversion)</td>
+<td align="left">Low (gradient calculations)</td>
+<td align="left">High (requires re-optimization)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Normality Assumption</strong></td>
+<td align="left">Strict</td>
+<td align="left">Relaxed</td>
+<td align="left">Strict (unless robust version used)</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Handles Boundaries?</strong></td>
+<td align="left">No (can yield negative variances)</td>
+<td align="left">No</td>
+<td align="left">Yes (respects constraints)</td>
+</tr>
+<tr class="even">
+<td align="left"><strong>Asymmetric CIs?</strong></td>
+<td align="left">No (always symmetric)</td>
+<td align="left">No</td>
+<td align="left">Yes (reflects log-likelihood shape)</td>
+</tr>
+<tr class="odd">
+<td align="left"><strong>Best For…</strong></td>
+<td align="left">Large samples, normal data</td>
+<td align="left">Non-normal data, rapid estimation</td>
+<td align="left">Key parameters, small samples, bounded parameters</td>
+</tr>
+</tbody>
+</table>
+<div id="recommendations-for-reporting" class="section level3">
+<h3>Recommendations for Reporting</h3>
+<ol style="list-style-type: decimal">
+<li><strong>Use Robust SEs</strong> for general parameters (such as
+minor residual variances or covariances) if your data shows signs of
+non-normality.</li>
+<li><strong>Compute Profile Likelihood CIs</strong> (using
+<code>umxConfint</code>) for your key structural parameters (e.g.,
+hypothesized paths, mediation effects) to ensure your scientific
+inferences are robust to asymmetry and boundary conditions.</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

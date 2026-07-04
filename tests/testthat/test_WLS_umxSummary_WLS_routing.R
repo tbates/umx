@@ -8,18 +8,19 @@ runSummaryCollectOutputs <- function(model, refModels = NULL) {
   msgs = character()
   warns = character()
 
-  withCallingHandlers({
-    umxSummary(model, refModels = refModels)
-  }, message = function(m) {
-    # Using = for internal assignments per AGENTS.md style constraints
-    msgs <<- c(msgs, m$message)
-    invokeRestart("muffleMessage")
-  }, warning = function(w) {
-    warns <<- c(warns, w$message)
-    invokeRestart("muffleWarning")
+  out = capture.output({
+    withCallingHandlers({
+      umxSummary(model, refModels = refModels)
+    }, message = function(m) {
+      msgs <<- c(msgs, m$message)
+      invokeRestart("muffleMessage")
+    }, warning = function(w) {
+      warns <<- c(warns, w$message)
+      invokeRestart("muffleWarning")
+    })
   })
 
-  list(messages = msgs, warnings = warns)
+  list(messages = c(msgs, out), warnings = warns)
 }
 
 test_that("umxSummary Case 1: Modern WLS routing works", {
@@ -44,7 +45,7 @@ test_that("umxSummary Case 1: Modern WLS routing works", {
     res = runSummaryCollectOutputs(mBase)
     # Verify messages
     expect_true(any(grepl("Modern WLS model with Jacobian detected\\. Applying SB-2010 robust metrics", res$messages)))
-    expect_true(any(grepl("For WLS/DWLS models, conventional fit index cutoffs", res$messages)))
+    expect_true(any(grepl("conventional cutoffs for CFI, TLI, and RMSEA", res$messages)))
     expect_false(any(grepl("worse than desired", res$messages)))
     expect_equal(length(res$warnings), 0)
   } else {
@@ -251,7 +252,7 @@ test_that("xmu_robust_WLS_fit boundary and error handling works", {
   	return(scalingFactor)
   }
 
-  jacInd = xmu_build_independence_jacobian(2)
+  jacInd = xmu_build_independence_jacobian(rowNames, manifests)
   rownames(jacInd) = rownames(asymCov)
 
   cIndOrig = getScalingFactor(jacInd, asymCov, weightMat, 1)

@@ -2542,6 +2542,10 @@ xmu_dot_rank_str <- function(min = NULL, same = NULL, max = NULL) {
 #' @param fixed Whether to show fixed values or not
 #' @param digits How many digits to report
 #' @param resid How to show residuals and variances default is "circle". Other option is "line"
+#' @param pt Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)
+#' @param std Whether values should be standardized (defaults to FALSE)
+#' @param uncertainty Type of uncertainty to display (defaults to "none")
+#' @param cis Matrix of confidence intervals (defaults to NULL)
 #' @return - list of variance names and variances
 #' @export
 #' @family xmu internal not for end user
@@ -2645,6 +2649,10 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 #' @param showResiduals Whether to show residuals
 #' @param labels show labels on the path? ("none", "labels", "both")
 #' @param digits how many digits to report
+#' @param pt Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)
+#' @param std Whether values should be standardized (defaults to FALSE)
+#' @param uncertainty Type of uncertainty to display (defaults to "none")
+#' @param cis Matrix of confidence intervals (defaults to NULL)
 #' @return - string
 #' @export
 #' @family xmu internal not for end user

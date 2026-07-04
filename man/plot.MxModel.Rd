@@ -51,6 +51,8 @@
 \item{max}{optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.}
 
 \item{...}{Optional parameters}
+
+\item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).}
 }
 \description{
 \code{\link[=plot]{plot()}} produces SEM diagrams in graphviz format, and relies on \code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} to create the image.

@@ -2043,7 +2043,6 @@ umx_as_numeric <- function(df, which = NULL, force = FALSE) {
 #' @param requiredClass the class of object that will be matched
 #' @return - a list of objects matching the class and name
 #' @export
-#' @references - 
 #' @family Miscellaneous Utility Functions
 #' @examples
 #' \dontrun{
@@ -3196,7 +3195,7 @@ umx_update_OpenMx <- install.OpenMx
 #' # umx_make(what = "dev")       # Install dev version from GitHub
 #' }
 umx_make <- function(
-	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "run_dontrun", "examples", "win", "rhub", "lastRhub", "release", "git", "dev"), 
+	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "run_dontrun", "examples", "vignettes", "win", "rhub", "lastRhub", "release", "git", "dev"), 
 	pkg = "~/bin/umx", 
 	check = TRUE, 
 	run = FALSE, 
@@ -3232,10 +3231,12 @@ umx_make <- function(
 		}
 	} else if(what == "install"){
 		devtools::document(pkg = pkgPath)
-		devtools::install(pkg = pkgPath, build_vignettes = TRUE)
+		devtools::install(pkg = pkgPath, build_vignettes = FALSE)
 		devtools::load_all(path = pkgPath)
+	} else if (what == "vignettes"){
+		devtools::check(pkg = pkgPath, vignettes = TRUE)
 	} else if (what == "spell"){
-		spelling::spell_check_package(pkg = pkgPath, vignettes = TRUE, use_wordlist = TRUE)
+		spelling::spell_check_package(pkg = pkgPath, vignettes = FALSE, use_wordlist = TRUE)
 	} else if (what == "sitrep"){
 		devtools::dev_sitrep(pkg = pkgPath)
 	} else if (what == "deps_install"){

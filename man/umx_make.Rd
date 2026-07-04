@@ -6,8 +6,8 @@
 \usage{
 umx_make(
   what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install",
-    "checkCRAN", "testthat", "run_dontrun", "examples", "win", "rhub", "lastRhub",
-    "release", "git", "dev"),
+    "checkCRAN", "testthat", "run_dontrun", "examples", "vignettes", "win", "rhub",
+    "lastRhub", "release", "git", "dev"),
   pkg = "~/bin/umx",
   check = TRUE,
   run = FALSE,
