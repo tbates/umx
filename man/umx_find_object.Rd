@@ -26,11 +26,6 @@ umx_find_object("^m[0-9]") # mxModels beginning "m1" etc.
 umx_find_object("", "MxModel") # all MxModels
 }
 }
-\references{
-\itemize{
-\item 
-}
-}
 \seealso{
 Other Miscellaneous Utility Functions:
 \code{\link[=install.OpenMx]{install.OpenMx()}},

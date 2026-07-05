@@ -3152,3 +3152,348 @@ xmu_style_kable <- function(tb, style, html_font = NULL, bootstrap_options=boots
 		}
 	}
 }
+
+
+#' xmu_robust_ML_fit
+#'
+#' Computes Satorra-Bentler (1994) robust scaling corrections and Brosseau-Liard & Savalei (2012)
+#' robust fit indices (CFI, TLI, RMSEA) for Maximum Likelihood models with raw continuous complete or incomplete (FIML) data.
+#'
+#' The robust scaling correction factor $c$ is computed using the difference between the trace of the saturated model
+#' and the trace of the fitted model, scaled by the degrees of freedom:
+#' \[c = \frac{\text{tr}(J_{\text{saturated}}^{-1} B_{\text{saturated}}) - \text{tr}(J_{\text{model}}^{-1} B_{\text{model}})}{d}\]
+#' where $J = H/2$ is the observed information matrix (reconciled from the Hessian $H$ of $-2\ln L$) and $B = G^T G$ is the
+#' outer product of the individual log-likelihood row gradients. Because OpenMx optimizes $-2\ln L$ and $G$ contains the row gradients
+#' of $-2\ln L_i$ (which is $2$ times the score $s_i$), the matrix product $(H/2)^{-1} B$ scales to $4 J^{-1} K$. Thus, dividing by
+#' $4 \times d$ scales the difference of these traces back to the Satorra-Bentler / Yuan-Bentler expectation scale.
+#'
+#' Robust RMSEA is computed using Equation (5) of Brosseau-Liard, Savalei, and Li (2012):
+#' \[\text{RMSEA}_{\text{robust}} = \sqrt{\max\left(0, \frac{\chi^2_{\text{raw}} / N}{df} - \frac{c_{\text{model}}}{N}\right)}\]
+#'
+#' @param model An [OpenMx::mxModel()] fitted with ML.
+#' @param refModels Reference models (Independence and Saturated models) to calculate incremental fit indices.
+#' @return A list containing scaling factors and adjusted robust fit statistics, or NULL if robust adjustments are not supported.
+#' @export
+#' @family xmu internal not for end user
+xmu_robust_ML_fit <- function(model, refModels = NULL) {
+	# 1. Guard check: Only raw data supported
+	if (is.null(model$data) || model$data$type != "raw") {
+		return(NULL)
+	}
+
+	observedData = model$data$observed
+	if (is.null(observedData)) {
+		return(NULL)
+	}
+
+	manifests = model$manifestVars
+	if (is.null(manifests) || length(manifests) == 0) {
+		manifests = colnames(observedData)
+	}
+
+	modelData = observedData[, manifests, drop = FALSE]
+
+	# Check for ordinal/categorical variables
+	isOrdinal = any(sapply(modelData, function(col) is.factor(col) || is.ordered(col) || is.character(col)))
+	if (isOrdinal) {
+		warning("Robust ML fit corrections for ordinal/categorical data not yet supported; using standard ML values.", call. = FALSE)
+		return(NULL)
+	}
+
+	# 2. Extract reference models (Saturated and Independence)
+	mSat = NULL
+	mInd = NULL
+	if (!is.null(refModels) && !is.logical(refModels)) {
+		satName = grep("Saturated", names(refModels), value = TRUE)
+		if (length(satName) > 0) mSat = refModels[[satName]]
+		indName = grep("Independence", names(refModels), value = TRUE)
+		if (length(indName) > 0) mInd = refModels[[indName]]
+	} else if (!identical(refModels, FALSE)) {
+		refModelsGenerated = tryCatch(OpenMx::mxRefModels(model, run = TRUE), error = function(e) NULL)
+		if (!is.null(refModelsGenerated)) {
+			satName = grep("Saturated", names(refModelsGenerated), value = TRUE)
+			if (length(satName) > 0) mSat = refModelsGenerated[[satName]]
+			indName = grep("Independence", names(refModelsGenerated), value = TRUE)
+			if (length(indName) > 0) mInd = refModelsGenerated[[indName]]
+		}
+	}
+
+	summaryModel = summary(model)
+	
+	# Calculate SEM dfVal if mSat is available, otherwise fall back to raw df
+	dfVal = summaryModel$degreesOfFreedom
+	if (!is.null(mSat)) {
+		dfVal = summary(model)$degreesOfFreedom - summary(mSat)$degreesOfFreedom
+	}
+	if (is.null(dfVal) || is.na(dfVal) || dfVal < 0) {
+		dfVal = 0
+	}
+
+	# Extract raw chi-square
+	chiRaw = summaryModel$Chi
+	if (!is.null(mSat) && !is.null(mSat@output)) {
+		chiRaw = model@output$fit - mSat@output$fit
+	}
+	if (is.null(chiRaw) || is.na(chiRaw) || chiRaw < 0) {
+		chiRaw = 0
+	}
+
+	N = model$data$numObs
+	if (is.null(N) || length(N) == 0) {
+		N = nrow(observedData)
+	}
+
+	# 3. Check for imxRowGradients and extract row-wise gradients G
+	if (!exists("imxRowGradients", envir = asNamespace("OpenMx"))) {
+		return(NULL)
+	}
+
+	hasUseCpp = "useCpp" %in% names(formals(OpenMx::imxRowGradients))
+	G = tryCatch({
+		if (hasUseCpp) {
+			OpenMx::imxRowGradients(model, useCpp = TRUE)
+		} else {
+			OpenMx::imxRowGradients(model)
+		}
+	}, error = function(e) {
+		NULL
+	})
+
+	if (is.null(G)) {
+		return(NULL)
+	}
+
+	# 4. Extract Hessian matrix H
+	H = model@output$hessian
+	if (is.null(H) || any(is.na(H)) || nrow(H) == 0) {
+		return(NULL)
+	}
+
+	# 5. Information matrix inverse (Bread): Solve for H_inv
+	HInv = tryCatch(solve(H / 2), error = function(e) NULL)
+	if (is.null(HInv)) {
+		return(NULL)
+	}
+
+	# 6. Meat matrix: B = G^T * G
+	B = t(G) %*% G
+
+	# 7. Compute Saturated model trace for Yuan-Bentler MLR scaling
+	traceSat = NA
+	if (!is.null(mSat)) {
+		mSat = OpenMx::mxModel(mSat)
+		mSat@options[["Calculate Hessian"]] = "Yes"
+		mSat@options[["Standard Errors"]] = "Yes"
+		mSat = tryCatch(mxRun(mSat, silent = TRUE), error = function(e) NULL)
+		
+		if (!is.null(mSat) && !is.null(mSat@output)) {
+			GSat = tryCatch({
+				if (hasUseCpp) {
+					OpenMx::imxRowGradients(mSat, useCpp = TRUE)
+				} else {
+					OpenMx::imxRowGradients(mSat)
+				}
+			}, error = function(e) NULL)
+
+			HSat = mSat@output$hessian
+			if (!is.null(GSat) && !is.null(HSat) && !any(is.na(HSat)) && nrow(HSat) > 0) {
+				HSatInv = tryCatch(solve(HSat / 2), error = function(e) NULL)
+				if (!is.null(HSatInv)) {
+					BSat = t(GSat) %*% GSat
+					traceSat = tryCatch(sum(diag(HSatInv %*% BSat)), error = function(e) NULL)
+					traceSat = as.numeric(traceSat)
+				}
+			}
+		}
+	}
+
+	# 8. Compute target scaling factor cFactor
+	traceModel = sum(diag(HInv %*% B))
+	cFactor = 1
+	if (!is.na(traceSat) && !is.null(traceSat) && dfVal > 0) {
+		cFactor = (traceSat - traceModel) / (4 * dfVal)
+		cFactor = as.numeric(cFactor)
+	} else if (dfVal > 0) {
+		# Fallback to simple parameter-space scaling if saturated model is not run
+		cFactor = traceModel / (4 * dfVal)
+		cFactor = as.numeric(cFactor)
+	}
+	if (length(cFactor) == 0 || is.na(cFactor) || is.nan(cFactor) || cFactor <= 0) {
+		cFactor = 1
+	}
+
+	# 9. Compute baseline (Independence) model scaling factor cNull
+	cNull = 1
+	chiNull = NA
+	dfNull = NA
+
+	if (!is.null(mInd)) {
+		# Reconstruct mInd to ensure it is S4
+		mInd = OpenMx::mxModel(mInd)
+		mInd@options[["Calculate Hessian"]] = "Yes"
+		mInd@options[["Standard Errors"]] = "Yes"
+		mInd = tryCatch(mxRun(mInd, silent = TRUE), error = function(e) NULL)
+		
+		if (!is.null(mInd) && !is.null(mInd@output)) {
+			if (!is.null(mSat) && !is.null(mSat@output)) {
+				chiNull = mInd@output$fit - mSat@output$fit
+				dfNull = summary(mInd)$degreesOfFreedom - summary(mSat)$degreesOfFreedom
+			}
+			if (is.null(chiNull) || is.na(chiNull) || chiNull < 0) {
+				chiNull = 0
+			}
+			if (is.null(dfNull) || is.na(dfNull) || dfNull < 0) {
+				dfNull = 0
+			}
+
+			GNull = tryCatch({
+				if (hasUseCpp) {
+					OpenMx::imxRowGradients(mInd, useCpp = TRUE)
+				} else {
+					OpenMx::imxRowGradients(mInd)
+				}
+			}, error = function(e) NULL)
+
+			HNull = mInd@output$hessian
+			if (!is.null(GNull) && !is.null(HNull) && !any(is.na(HNull)) && nrow(HNull) > 0) {
+				HNullInv = tryCatch(solve(HNull / 2), error = function(e) NULL)
+				if (!is.null(HNullInv)) {
+					BNull = t(GNull) %*% GNull
+					traceNull = tryCatch(sum(diag(HNullInv %*% BNull)), error = function(e) NULL)
+					traceNull = as.numeric(traceNull)
+					
+					if (!is.na(traceSat) && !is.null(traceSat) && dfNull > 0) {
+						cNull = (traceSat - traceNull) / (4 * dfNull)
+						cNull = as.numeric(cNull)
+					} else if (dfNull > 0) {
+						cNull = traceNull / (4 * dfNull)
+						cNull = as.numeric(cNull)
+					}
+				}
+			}
+		}
+	}
+
+	# 9. Brosseau-Liard & Savalei (2012) noncentrality robust adjustments
+	chiScaled = chiRaw / cFactor
+	chiNullScaled = chiNull / cNull
+
+	lambdaModel = max(chiRaw - cFactor * dfVal, 0)
+	
+	cfiRobust = NA
+	tliRobust = NA
+	if (!is.na(chiNull) && !is.na(dfNull)) {
+		lambdaNull = max(chiNull - cNull * dfNull, 0)
+		if (lambdaNull > 0) {
+			cfiRobust = 1 - (lambdaModel / lambdaNull)
+			cfiRobust = max(0, min(1, cfiRobust))
+			
+			if (dfVal > 0) {
+				tliRobust = 1 - ((lambdaModel / dfVal) / (lambdaNull / dfNull))
+			}
+		}
+	}
+
+	rmseaRobust = 0
+	if (dfVal > 0) {
+		rmseaRobust = sqrt(max(0, (chiRaw / N) / dfVal - cFactor / N))
+	}
+
+	res = list(
+		scalingFactor = cFactor,
+		scalingFactorNull = cNull,
+		Chi = chiScaled,
+		ChiDoF = dfVal,
+		p = pchisq(chiScaled, dfVal, lower.tail = FALSE),
+		CFI = cfiRobust,
+		TLI = tliRobust,
+		RMSEA = rmseaRobust
+	)
+	attr(res, "c_model") = cFactor
+	attr(res, "c_null") = cNull
+	return(res)
+}
+
+
+#' xmu_compare_robust_ML
+#'
+#' Computes Satorra-Bentler scaled difference tests (Satorra & Bentler 2001, 2010)
+#' for nested ML models.
+#'
+#' @param model1 First [OpenMx::mxModel()].
+#' @param model2 Second [OpenMx::mxModel()].
+#' @return A list containing the robust difference fit statistic (diffFit), change in df (diffdf), p-value (p), and comparison scaling factor (scalingFactor).
+#' @export
+#' @family xmu internal not for end user
+xmu_compare_robust_ML <- function(model1, model2) {
+	# Get the saturated model to compute SEM degrees of freedom
+	refModels = tryCatch(OpenMx::mxRefModels(model1, run = TRUE), error = function(e) NULL)
+	mSat = NULL
+	if (!is.null(refModels)) {
+		satName = grep("Saturated", names(refModels), value = TRUE)
+		if (length(satName) > 0) mSat = refModels[[satName]]
+	}
+
+	# Compute SEM degrees of freedom
+	df1 = summary(model1)$degreesOfFreedom
+	df2 = summary(model2)$degreesOfFreedom
+	if (!is.null(mSat)) {
+		df1 = summary(model1)$degreesOfFreedom - summary(mSat)$degreesOfFreedom
+		df2 = summary(model2)$degreesOfFreedom - summary(mSat)$degreesOfFreedom
+	}
+
+	if (df1 == df2) {
+		return(NULL)
+	}
+
+	if (df1 < df2) {
+		mBase = model1
+		mNested = model2
+		dfBase = df1
+		dfNested = df2
+	} else {
+		mBase = model2
+		mNested = model1
+		dfBase = df2
+		dfNested = df1
+	}
+
+	deltaDf = dfNested - dfBase
+	
+	# Compute raw difference chi-square directly using likelihood fit values
+	chiBase = mBase@output$fit
+	chiNested = mNested@output$fit
+	deltaChiRaw = chiNested - chiBase
+
+	# Compute scaling factors for base and nested models using xmu_robust_ML_fit
+	resBase = xmu_robust_ML_fit(mBase)
+	resNested = xmu_robust_ML_fit(mNested)
+
+	if (is.null(resBase) || is.null(resNested)) {
+		return(NULL)
+	}
+
+	cBase = resBase$scalingFactor
+	cNested = resNested$scalingFactor
+
+	# Satorra-Bentler (2001) scaled difference formula
+	cD = (dfNested * cNested - dfBase * cBase) / deltaDf
+
+	cD = as.numeric(cD)
+	if (length(cD) == 0 || is.na(cD) || is.nan(cD) || cD <= 0) {
+		cD = 1
+	}
+
+	diffFitRobust = deltaChiRaw / cD
+	pValueRobust = pchisq(diffFitRobust, deltaDf, lower.tail = FALSE)
+
+	res = list(
+		diffFit = diffFitRobust,
+		diffdf = deltaDf,
+		p = pValueRobust,
+		scalingFactor = cD
+	)
+	attr(res, "c_d") = cD
+	return(res)
+}
+

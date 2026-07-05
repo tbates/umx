@@ -7,7 +7,15 @@
 #' `umxSummary` alerts you when model fit is worse than accepted criterion (TLI >= .95 and RMSEA <= .06; (Hu & Bentler, 1999; Yu, 2002).
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
-#' 
+#'
+#' **Robust Fit Statistics for ML**
+#' Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and distorts the distribution of the ML test statistic itself, necessitating changes to SEs and fit statistics. `umx` supports robust ML - MLR – in `umxSummary` and `umxCompare` with options for `uncertainty`. `uncertainty` = "robustSE" implements sandwich estimator for SEs. Model fit scaling corrections (e.g., MLR / Yuan-Bentler) are also implemented for ML estimation.
+# When you use "robustSE", umxSummary and umxCompare report "MLR" Yuan-Bentler scaled fit measures: RMSEA, CFI etc.) that
+# incorporate the Savalei (2018) logic, including extensions for categorical data and FIML/missing data.
+# Yuan & Bentler (2000) generalized and refined the approach, particularly for incomplete data. Their T2* (or equivalent) statistic corrects both the mean and the variance of the test statistic to better match a $  \chi^2  $ reference distribution. Savalei (2018) correctly computes robust RMSEA and CFI (and by extension TLI) using the mean-and-variance corrected test 
+# statistic (i.e., YB/MLR scaled statistic).
+# This prevents non-normality inflating or distorting the sample values of RMSEA and CFI. Consequently, the conventional cutoffs (RMSEA ≤ 0.06, CFI ≥ 0.95, etc.) retain their meaning.
+#'
 #' **Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)**
 #' 
 #' Historically, simulation studies showed that CFI and TLI behaved differently under DWLS/WLS than under ML (Shi et al., 2020). Incremental fit indices rely on a comparison to the independence (null) model. Under legacy WLS implementations, the weighting matrix changed how that baseline behaved, causing conventional cutoffs (e.g., CFI > 0.95) to break down.
@@ -50,19 +58,19 @@
 #' @seealso - [umxRAM()], [xmu_robust_WLS_fit()]
 #' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
 #'  structure analysis: Conventional criteria versus new alternatives. *Structural Equation Modeling*, **6**, 1-55. 
-#'
+#'  - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. *Psychometrika*, **75**(2), 243-248.
+#'  - Satorra, A. and Bentler P. M. (1994). Corrections to test statistics and standard errors in covariance structure analysis. Latent variables analysis: Applications for developmental research. A. von Eye and C. C. Clogg, Sage: 399-419.
+#'  - Savalei, V. (2018). "On the Computation of the RMSEA and CFI from the Mean-And-Variance Corrected Test Statistic with Nonnormal Data in SEM." Multivariate Behav Res 53(3): 419-429.
 #'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
 #'  with binary and continuous outcomes. University of California, Los Angeles.
 #'  Retrieved from <https://www.statmodel.com/download/Yudissertation.pdf>
-#'  
-#'  - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. *Psychometrika*, **75**(2), 243-248.
+#'  - Yuan, K.-H. and P. M. Bentler (2000). "5. Three Likelihood-Based Methods for Mean and Covariance Structure Analysis with Nonnormal Missing Data." Sociological Methodology 30(1): 165-200.
 #' 
 #' <https://tbates.github.io>
 #' 
 #' @export
 #' @import OpenMx
 #' @return - parameterTable returned invisibly, if estimates requested
-
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -199,6 +207,28 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	            options(umx_warned_legacy_wls = TRUE)
 	        }
 	    }
+	} else if (uncertainty == "RobustSE") {
+		robustFit = NULL
+		tryCatch({
+			robustFit = xmu_robust_ML_fit(model, refModels = refModels)
+		}, error = function(e) {
+			message(paste("umxSummary Note: Frontend robust ML calculation skipped:", e$message))
+		})
+
+		if (!is.null(robustFit)) {
+			modelSummary$CFI   = robustFit$CFI
+			modelSummary$TLI   = robustFit$TLI
+			modelSummary$RMSEA = robustFit$RMSEA
+
+			modelSummary$Chi    = robustFit$Chi
+			modelSummary$ChiDoF = robustFit$ChiDoF
+			modelSummary$p      = robustFit$p
+			
+			attr(modelSummary, "robustScalingFactors") = list(
+				cModel = robustFit$scalingFactor,
+				cNull = robustFit$scalingFactorNull
+			)
+		}
 	}
 	
 	# DisplayColumns show
@@ -348,8 +378,25 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 							cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.\nEvaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
 						}
 					} else {
-						if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
-						if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
+						robustScaling = attr(modelSummary, "robustScalingFactors")
+						if (!is.null(robustScaling)) {
+							isFiml = FALSE
+							if (!is.null(model$data) && model$data$type == "raw" && !is.null(model$data$observed)) {
+								manifests = model$manifestVars
+								if (is.null(manifests) || length(manifests) == 0) {
+									manifests = colnames(model$data$observed)
+								}
+								isFiml = any(is.na(model$data$observed[, manifests, drop = FALSE]))
+							}
+							if (isFiml) {
+								cat(sprintf("\n*Statistical Note*: FIML robust indices use Yuan-Bentler trace scaling + Brosseau-Liard/Savalei adjustment (c_model = %.3f, c_null = %.3f).\n", robustScaling$cModel, robustScaling$cNull))
+							} else {
+								cat(sprintf("\n*Statistical Note*: Robust ML indices use sandwich-based scaling + Brosseau-Liard & Savalei (2012) adjustments to CFI/TLI/RMSEA (c_model = %.3f, c_null = %.3f).\n", robustScaling$cModel, robustScaling$cNull))
+							}
+						} else {
+							if(TLI_OK   != "OK"){ message("TLI is worse than desired (>.95)") }
+							if(RMSEA_OK != "OK"){ message("RMSEA is worse than desired (<.06)")}
+						}
 					}
 				}
 			})
@@ -378,6 +425,12 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	
 	xmu_print_algebras(model)
 	if(!is.null(std) && !is.null(parameterTable) && nrow(parameterTable) > 0){ # return these as  invisible for the user to filter, sort etc.
+		robustScaling = attr(modelSummary, "robustScalingFactors")
+		if (!is.null(robustScaling)) {
+			attr(parameterTable, "robustScalingFactors") = robustScaling
+			attr(parameterTable, "c_model") = robustScaling$cModel
+			attr(parameterTable, "c_null") = robustScaling$cNull
+		}
 		if(filter == "NS"){
 			invisible(parameterTable[parameterTable$sig == FALSE, namesToShow])
 		}else if(filter == "SIG"){

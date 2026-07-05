@@ -42,6 +42,7 @@
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @param silent (don't print, just return the table as a dataframe (default = FALSE)
+#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @family Model Summary and Comparison
 #' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
 #' @references - <https://github.com/tbates/umx>
@@ -83,8 +84,9 @@
 #' umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
 #' umxCompare(m1, m2, report = "html") # Open table in browser
 #' }
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, silent = FALSE, file = "tmp.html") {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, silent = FALSE, file = "tmp.html", uncertainty = c("none", "SE", "RobustSE", "CI")) {
 	report = match.arg(report)
+	uncertainty = match.arg(uncertainty)
 	if(umx_is_MxModel(all)){
 		stop("Provide all comparison models as a c() (You provided a model as input to 'all', and I'm guessing that's a mistake)")
 	}
@@ -190,24 +192,31 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 	}
 
+	robustScalingFactors = list()
 	tableOut = mxCompare(base = base, comparison = comparison, all = all)
 	tableOut = as.data.frame(tableOut)
-
-	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf |p     |fit       |fitUnits |diffFit |chisq     |SBchisq |
-	# |:--------|:--------------|---:|:---------|:----|---------:|:---------|:-------|:-----|:---------|:--------|:-------|:---------|:-------|
-	# |DWLS     |               |  6 |          |0    | 12.00000 |          |        |      |0         |r'Wr     |        |0         |        |
-	# |DWLS     |drop_l2mpg     |  5 |          |1    | 14.49542 |          |1       |      |4.4954186 |r'Wr     |        |4.4954186 |        |
-	
-	# | base    | comparison    | ep | minus2LL | df  | AIC      | diffLL   | diffdf | p    |
-	#    1            2           3     4          5     6          7          8        9     
-	# | twinSat | <NA>          | 13 | 333.0781 | 149 | 35.07809 | NA       | NA     | NA   |
-	# | twinSat | betaSetToZero | 10 | 351.6486 | 152 | 47.64858 | 18.57049 | 3      | 0.01 |
 
 	tablePub = tableOut[, c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "base", "fitUnits")]
 
 	# Subtract row-1 AIC from all values and place the resulting deltaAIC column after AIC 
 	tablePub$deltaAIC = tablePub[, "AIC"] - tablePub[1, "AIC"]
 	tablePub = tablePub[,c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "deltaAIC", "base", "fitUnits")]
+
+	# Compute and patch robust Satorra-Bentler difference statistics if requested
+	if (uncertainty == "RobustSE") {
+		for (comp in comparison) {
+			resSb = xmu_compare_robust_ML(base, comp)
+			if (!is.null(resSb)) {
+				compName = comp$name
+				rowIdx = which(tablePub$comparison == compName)
+				if (length(rowIdx) == 1) {
+					tablePub[rowIdx, "diffFit"] = resSb$diffFit
+					tablePub[rowIdx, "p"] = resSb$p
+					robustScalingFactors[[compName]] = resSb$scalingFactor
+				}
+			}
+		}
+	}
 
 	# c("1: Comparison", "2: Base", "3: EP", "4: AIC", "5: &Delta; -2LL", "6: &Delta; df", "7: p")
 	# U+2206 = math delta
@@ -283,7 +292,12 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			"Evaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
 
 		} else {
-			cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")
+			if (length(robustScalingFactors) > 0) {
+				factorsStr = paste(sapply(names(robustScalingFactors), function(n) sprintf("%s (c_d = %.3f)", n, robustScalingFactors[[n]])), collapse = ", ")
+				cat(sprintf("\n*Statistical Note*: Robust ML difference tests use Satorra-Bentler (2001) scaled difference formula: %s.\n", factorsStr))
+			} else {
+				cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")
+			}
 		}
 	}
 

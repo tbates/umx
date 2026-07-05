@@ -64,6 +64,9 @@ RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI an
 
 Note: For some (multi-group) models, you will need to fall back on \code{\link[=summary]{summary()}}
 
+\strong{Robust Fit Statistics for ML}
+Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and distorts the distribution of the ML test statistic itself, necessitating changes to SEs and fit statistics. \code{umx} supports robust ML - MLR – in \code{umxSummary} and \code{umxCompare} with options for \code{uncertainty}. \code{uncertainty} = "robustSE" implements sandwich estimator for SEs. Model fit scaling corrections (e.g., MLR / Yuan-Bentler) are also implemented for ML estimation.
+
 \strong{Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)}
 
 Historically, simulation studies showed that CFI and TLI behaved differently under DWLS/WLS than under ML (Shi et al., 2020). Incremental fit indices rely on a comparison to the independence (null) model. Under legacy WLS implementations, the weighting matrix changed how that baseline behaved, causing conventional cutoffs (e.g., CFI > 0.95) to break down.
@@ -119,10 +122,13 @@ umxSummary(m1, std = TRUE, filter = "NS")
 \itemize{
 \item Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance
 structure analysis: Conventional criteria versus new alternatives. \emph{Structural Equation Modeling}, \strong{6}, 1-55.
+\item Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. \emph{Psychometrika}, \strong{75}(2), 243-248.
+\item Satorra, A. and Bentler P. M. (1994). Corrections to test statistics and standard errors in covariance structure analysis. Latent variables analysis: Applications for developmental research. A. von Eye and C. C. Clogg, Sage: 399-419.
+\item Savalei, V. (2018). "On the Computation of the RMSEA and CFI from the Mean-And-Variance Corrected Test Statistic with Nonnormal Data in SEM." Multivariate Behav Res 53(3): 419-429.
 \item Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
 with binary and continuous outcomes. University of California, Los Angeles.
 Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}
-\item Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. \emph{Psychometrika}, \strong{75}(2), 243-248.
+\item Yuan, K.-H. and P. M. Bentler (2000). "5. Three Likelihood-Based Methods for Mean and Covariance Structure Analysis with Nonnormal Missing Data." Sociological Methodology 30(1): 165-200.
 }
 
 \url{https://tbates.github.io}
