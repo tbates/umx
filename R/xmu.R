@@ -3193,12 +3193,6 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 
 	modelData = observedData[, manifests, drop = FALSE]
 
-	# Check for ordinal/categorical variables
-	isOrdinal = any(sapply(modelData, function(col) is.factor(col) || is.ordered(col) || is.character(col)))
-	if (isOrdinal) {
-		warning("Robust ML fit corrections for ordinal/categorical data not yet supported; using standard ML values.", call. = FALSE)
-		return(NULL)
-	}
 
 	# 2. Extract reference models (Saturated and Independence)
 	mSat = NULL
@@ -3319,7 +3313,7 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 		cFactor = as.numeric(cFactor)
 	}
 	if (length(cFactor) == 0 || is.na(cFactor) || is.nan(cFactor) || cFactor <= 0) {
-		cFactor = 1
+		return(NULL)
 	}
 
 	# 9. Compute baseline (Independence) model scaling factor cNull

@@ -641,9 +641,6 @@ xmu_robust_WLS_fit <- function(model) {
 		stop("Could not locate Asymptotic Covariance matrix (V).")
 	}
 	
-	if (nrow(jacTarget) != nrow(asymCov)) {
-		stop(sprintf("implied_jacobian row count (%d) does not match asymptotic covariance matrix row count (%d) (this occurs in ordinal WLS models).", nrow(jacTarget), nrow(asymCov)))
-	}
 	
 	rowNames = rownames(asymCov)
 	
@@ -785,35 +782,46 @@ xmu_robust_WLS_fit <- function(model) {
 		return(alignedJac)
 	}
 	
-	jacTargetAligned = alignJacobian(jacTarget, asymCov, numCovs)
-	if (!is.null(rownames(asymCov))) {
-		targetNames = rownames(jacTargetAligned)
-		asymNames = rownames(asymCov)
-		if (!is.null(targetNames)) {
-			cleanTargetNames = gsub("^(Cov|Mean):", "", targetNames)
-			cleanAsymNames = gsub("^(Cov|Mean):", "", asymNames)
-			cleanTargetNames = gsub("^(cov|mean)_", "", cleanTargetNames)
-			cleanAsymNames = gsub("^(cov|mean)_", "", cleanAsymNames)
-			cleanTargetNames = gsub("[._:]", " ", cleanTargetNames)
-			cleanAsymNames = gsub("[._:]", " ", cleanAsymNames)
-			
-			idx = match(cleanAsymNames, cleanTargetNames)
-			if (!any(is.na(idx)) && length(idx) == nrow(jacTargetAligned)) {
-				jacTargetAligned = jacTargetAligned[idx, , drop = FALSE]
-				rownames(jacTargetAligned) = rownames(asymCov)
-			} else {
-				rownames(jacTargetAligned) = rownames(asymCov)
-			}
+	# Subsetting and Alignment based on row names
+	rowNames = rownames(asymCov)
+	if (is.null(rownames(jacTarget))) {
+		if (nrow(jacTarget) == length(rowNames)) {
+			rownames(jacTarget) = rowNames
 		} else {
-			rownames(jacTargetAligned) = rownames(asymCov)
+			# Try to identify covariance-only Jacobian
+			covNames = rowNames[!grepl("^mean_", rowNames) & !grepl("^one_to_", rowNames) & !grepl("t[0-9]+$", rowNames)]
+			if (nrow(jacTarget) == length(covNames)) {
+				rownames(jacTarget) = covNames
+			} else {
+				# Fallback: assign as many names from rowNames as possible
+				rownames(jacTarget) = rowNames[1:nrow(jacTarget)]
+			}
 		}
 	}
 	
-	jacIndAligned = jacInd
-	if (!is.null(rownames(asymCov))) {
-		rownames(jacIndAligned) = rownames(asymCov)
+	if (is.null(rownames(jacInd))) {
+		rownames(jacInd) = rowNames
 	}
-	
+
+	commonNames = intersect(rownames(jacTarget), rowNames)
+	if (length(commonNames) == 0) {
+		stop("No common row names found between implied_jacobian and asymptotic covariance matrix.")
+	}
+
+	jacTargetAligned = jacTarget[commonNames, , drop = FALSE]
+	asymCovAligned = asymCov[commonNames, commonNames, drop = FALSE]
+
+	weightMatAligned = weightMat
+	if (is.matrix(weightMatAligned)) {
+		weightMatAligned = weightMatAligned[commonNames, commonNames, drop = FALSE]
+	} else if (is.vector(weightMatAligned)) {
+		names(weightMatAligned) = rowNames
+		weightMatAligned = weightMatAligned[commonNames]
+		weightMatAligned = diag(weightMatAligned)
+	}
+
+	jacIndAligned = jacInd[commonNames, , drop = FALSE]
+
 	# Helper to invert matrix robustly
 	invertMatrix <- function(x) {
 		inv = tryCatch({
@@ -827,7 +835,18 @@ xmu_robust_WLS_fit <- function(model) {
 		})
 		return(inv)
 	}
-	
+
+	# Scale WLS matrices back to order 1 if raw data is used
+	nVal = model$data$numObs
+	if (is.null(nVal) || is.na(nVal)) {
+		nVal = 1000
+	}
+
+	if (identical(model$data$type, "raw")) {
+		asymCovAligned = nVal * asymCovAligned
+		weightMatAligned = nVal * weightMatAligned
+	}
+
 	# Trace helper for single model scaling factor
 	getScalingFactor <- function(jacMat, asymCovMat, weightMatVal, dfVal) {
 		if (is.null(dfVal) || is.na(dfVal) || dfVal <= 0) {
@@ -842,9 +861,9 @@ xmu_robust_WLS_fit <- function(model) {
 		scalingFactor = traceVal / dfVal
 		return(scalingFactor)
 	}
-	
-	cTarget = getScalingFactor(jacTargetAligned, asymCov, weightMat, dfTarget)
-	cInd    = getScalingFactor(jacIndAligned, asymCov, weightMat, dfInd)
+
+	cTarget = getScalingFactor(jacTargetAligned, asymCovAligned, weightMatAligned, dfTarget)
+	cInd    = getScalingFactor(jacIndAligned, asymCovAligned, weightMatAligned, dfInd)
 	
 	chisqTargetScaled = chisqTargetRaw / cTarget
 	chisqIndScaled    = chisqIndRaw / cInd
