@@ -320,5 +320,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 		
 	}
+	if (length(robustScalingFactors) > 0) {
+		attr(tablePub, "robustScalingFactors") = robustScalingFactors
+		attr(tablePub, "c_d") = robustScalingFactors
+	}
 	invisible(tablePub)
 }

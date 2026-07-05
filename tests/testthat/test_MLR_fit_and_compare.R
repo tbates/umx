@@ -42,6 +42,10 @@ test_that("Robust ML fit statistics match lavaan MLM/MLR outputs for complete co
 	expect_equal(as.numeric(resUmx$TLI), lavTliRobust, tolerance = 1e-3)
 	expect_equal(as.numeric(resUmx$RMSEA), lavRmseaRobust, tolerance = 1e-3)
 
+	# Verify attributes are exposed
+	expect_equal(attr(resUmx, "c_model"), lavScaling, tolerance = 1e-3)
+	expect_true("c_null" %in% names(attributes(resUmx)))
+
 	# 5. Fit a nested model in lavaan (fixing loading of x4 to 1)
 	# We use std.lv = TRUE and free first loading to match umx specification exactly
 	lavModelNested = "f =~ NA*x1 + x2 + x3 + 1*x4"
@@ -60,34 +64,103 @@ test_that("Robust ML fit statistics match lavaan MLM/MLR outputs for complete co
 	# Numerical differences in Hessians (analytic vs finite difference SLSQP) warrant 15% tolerance
 	expect_equal(as.numeric(resUmxDiff$diffFit), lavDiffChisq, tolerance = 0.15)
 	expect_equal(as.numeric(resUmxDiff$p), lavDiffP, tolerance = 0.15)
+	expect_equal(attr(resUmxDiff, "c_d"), resUmxDiff$scalingFactor)
 })
 
-test_that("Robust ML fit statistics fall back gracefully on FIML and categorical data", {
-	# Setup complete data
+test_that("Robust ML fit statistics match lavaan outputs for FIML (missing data) cases", {
+	# 1. Generate data with missing values (low missingness ~10% MCAR)
+	set.seed(12345)
+	N = 200
+	f = rnorm(N)
+	x1 = 0.6 * f + rnorm(N, sd = 0.8)
+	x2 = 0.7 * f + rnorm(N, sd = 0.7)
+	x3 = 0.5 * f + rnorm(N, sd = 0.9)
+	x4 = 0.8 * f + rnorm(N, sd = 0.6)
+	dat = data.frame(x1 = x1, x2 = x2, x3 = x3, x4 = x4)
+	dat$x1[1:20] = NA  # 10% missingness
+
+	# 2. Fit in lavaan using MLR + FIML
+	fitLavFiml = cfa("f =~ x1 + x2 + x3 + x4", data = dat, estimator = "MLR", missing = "ML")
+	
+	lavScaling = as.numeric(fitMeasures(fitLavFiml, "chisq.scaling.factor"))
+	lavChisqScaled = as.numeric(fitMeasures(fitLavFiml, "chisq.scaled"))
+	lavCfiRobust = as.numeric(fitMeasures(fitLavFiml, "cfi.robust"))
+	lavTliRobust = as.numeric(fitMeasures(fitLavFiml, "tli.robust"))
+	lavRmseaRobust = as.numeric(fitMeasures(fitLavFiml, "rmsea.robust"))
+
+	# 3. Fit in umx
+	m1 = umxRAM("OneFactorFIML", data = dat,
+		umxPath("f", to = c("x1", "x2", "x3", "x4")),
+		umxPath(var = c("x1", "x2", "x3", "x4")),
+		umxPath(var = "f", fixedAt = 1)
+	)
+
+	# 4. Extract fit indices (with slightly higher tolerance for numerical FIML Hessians)
+	resUmx = xmu_robust_ML_fit(m1)
+	expect_false(is.null(resUmx))
+	expect_equal(as.numeric(resUmx$scalingFactor), lavScaling, tolerance = 0.01)
+	expect_equal(as.numeric(resUmx$Chi), lavChisqScaled, tolerance = 0.01)
+	expect_equal(as.numeric(resUmx$CFI), lavCfiRobust, tolerance = 0.01)
+	expect_equal(as.numeric(resUmx$TLI), lavTliRobust, tolerance = 0.01)
+	expect_equal(as.numeric(resUmx$RMSEA), lavRmseaRobust, tolerance = 0.01)
+
+	# 5. Fit nested model in lavaan and umx under FIML
+	fitLavFimlNested = cfa("f =~ NA*x1 + x2 + x3 + 1*x4", data = dat, estimator = "MLR", missing = "ML", std.lv = TRUE)
+	lavLrt = lavTestLRT(fitLavFiml, fitLavFimlNested, method = "satorra.bentler.2001")
+	lavDiffChisq = as.numeric(lavLrt[2, "Chisq diff"])
+	lavDiffP = as.numeric(lavLrt[2, "Pr(>Chisq)"])
+
+	m2 = umxModify(m1, update = "f_to_x4", value = 1, name = "OneFactorFIML_Nested", autoRun = TRUE)
+	resUmxDiff = xmu_compare_robust_ML(m1, m2)
+
+	expect_false(is.null(resUmxDiff))
+	expect_equal(as.numeric(resUmxDiff$diffFit), lavDiffChisq, tolerance = 0.15)
+	expect_equal(as.numeric(resUmxDiff$p), lavDiffP, tolerance = 0.15)
+})
+
+test_that("Robust ML fit statistics are stable under MAR and high missingness (35%)", {
+	# 1. Generate MAR missing data (x1 missingness conditional on x2 > 0)
+	set.seed(12345)
+	N = 250
+	f = rnorm(N)
+	x1 = 0.6 * f + rnorm(N, sd = 0.8)
+	x2 = 0.7 * f + rnorm(N, sd = 0.7)
+	x3 = 0.5 * f + rnorm(N, sd = 0.9)
+	x4 = 0.8 * f + rnorm(N, sd = 0.6)
+	dat = data.frame(x1 = x1, x2 = x2, x3 = x3, x4 = x4)
+	
+	# Set x1 to NA with 70% probability when x2 > 0
+	mar_idx = which(dat$x2 > 0)
+	set.seed(12345)
+	na_idx = sample(mar_idx, size = round(length(mar_idx) * 0.7))
+	dat$x1[na_idx] = NA # Yields ~35% total missingness
+
+	# 2. Fit in lavaan and umx
+	fitLavMar = cfa("f =~ x1 + x2 + x3 + x4", data = dat, estimator = "MLR", missing = "ML")
+	lavScaling = as.numeric(fitMeasures(fitLavMar, "chisq.scaling.factor"))
+	lavChisqScaled = as.numeric(fitMeasures(fitLavMar, "chisq.scaled"))
+	lavRmseaRobust = as.numeric(fitMeasures(fitLavMar, "rmsea.robust"))
+
+	m1 = umxRAM("OneFactorMAR", data = dat,
+		umxPath("f", to = c("x1", "x2", "x3", "x4")),
+		umxPath(var = c("x1", "x2", "x3", "x4")),
+		umxPath(var = "f", fixedAt = 1)
+	)
+
+	resUmx = xmu_robust_ML_fit(m1)
+	expect_false(is.null(resUmx))
+	expect_equal(as.numeric(resUmx$scalingFactor), lavScaling, tolerance = 0.01)
+	expect_equal(as.numeric(resUmx$Chi), lavChisqScaled, tolerance = 0.01)
+	expect_equal(as.numeric(resUmx$RMSEA), lavRmseaRobust, tolerance = 0.01)
+})
+
+test_that("Robust ML fit statistics fall back gracefully on categorical data", {
+	# Setup data
 	set.seed(12345)
 	N = 100
 	dat = data.frame(x1 = rnorm(N), x2 = rnorm(N), x3 = rnorm(N), x4 = rnorm(N))
 	
-	# Fit base model
-	mBase = umxRAM("BaseModel", data = dat,
-		umxPath(from = c("x1", "x2", "x3", "x4"), arrows = 2, free = TRUE, values = 1)
-	)
-
-	# 1. Incomplete Data (FIML) Case
-	datMissing = dat
-	datMissing$x1[1:5] = NA
-	mMissing = umxRAM("MissingModel", data = datMissing,
-		umxPath(from = c("x1", "x2", "x3", "x4"), arrows = 2, free = TRUE, values = 1)
-	)
-
-	# Verify FIML warning is triggered and returns NULL
-	expect_warning(
-		resFiml <- xmu_robust_ML_fit(mMissing),
-		"Robust ML fit corrections for FIML"
-	)
-	expect_true(is.null(resFiml))
-
-	# 2. Categorical/Ordinal Data Case
+	# Categorical/Ordinal Data Case
 	datOrdinal = dat
 	datOrdinal$x1 = as.ordered(cut(datOrdinal$x1, breaks = 3, labels = FALSE))
 	mOrdinal = umxRAM("OrdinalModel", data = datOrdinal,
@@ -120,12 +193,8 @@ test_that("Robust ML fit statistics handle boundary cases, small N, and R loop f
 	expect_true(is.na(resSmall$CFI) || (resSmall$CFI >= 0 && resSmall$CFI <= 1))
 
 	# 2. R Loop Fallback Verification (Mocking absence of useCpp signature)
-	# Temporarily mask hasUseCpp check behavior or force R loop fallback
-	# By invoking the gradients directly without useCpp check
 	hasUseCpp = "useCpp" %in% names(formals(OpenMx::imxRowGradients))
 	if (hasUseCpp) {
-		# Test that gradient call succeeds when explicitly bypassing C++ (falling back to R loops)
-		# R loop execution call
 		G_R = OpenMx::imxRowGradients(mSmall)
 		expect_true(nrow(G_R) == N)
 	}
