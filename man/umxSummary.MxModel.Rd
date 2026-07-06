@@ -71,9 +71,21 @@ Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, 
 
 Historically, simulation studies showed that CFI and TLI behaved differently under DWLS/WLS than under ML (Shi et al., 2020). Incremental fit indices rely on a comparison to the independence (null) model. Under legacy WLS implementations, the weighting matrix changed how that baseline behaved, causing conventional cutoffs (e.g., CFI > 0.95) to break down.
 
-\emph{Solution:} To resolve this, \code{umxSummary} (as part of the upcoming \strong{GenomicMx} ecosystem) now automatically intercepts WLS models and computes \strong{Satorra-Bentler (2010) robust fit indices} (Robust CFI, TLI, and RMSEA) natively.
+\emph{Solution:} \code{umxSummary} automatically intercepts WLS models (including summary-statistic / Genomic SEM inputs) and routes them through \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}}. That function computes an independence baseline natively in R and applies trace-matrix scaling corrections so that robust indices are interpretable alongside conventional ML practice.
 
-By calculating the unscaled baseline fit natively and applying Satorra-Bentler trace matrix scaling, \code{umx} restores the conventional interpretation of absolute and incremental fit metrics for summary-statistics and heritability models. You no longer need to strictly de-emphasize CFI/TLI when using WLS. (Note: While robust indices greatly improve comparability, best practice remains reporting multiple indices and inspecting residuals).
+\strong{Two statistic families (by design).} WLS output deliberately separates omnibus testing from incremental/absolute fit:
+\itemize{
+\item \strong{Displayed \eqn{\chi^2} and \eqn{p}-value} — always Satorra-Bentler (2010) scaled WLS test statistics, for both continuous and ordinal models.
+\item \strong{Displayed CFI, TLI, RMSEA} — robust indices corrected for WLS sampling behavior; branch depends on variable type (below).
+}
+
+\strong{Continuous WLS} (all manifests numeric, not \code{ordered}/\code{factor}): robust CFI, TLI, and RMSEA use the Satorra-Bentler (2010) scaled \eqn{\chi^2} pipeline. The printed \verb{*Statistical Note*} reminds users that raw WLS cutoffs do not apply; evaluate nested comparisons with Strict Satorra-Bentler \eqn{\Delta\chi^2} via \code{\link[=umxCompare]{umxCompare()}}.
+
+\strong{Ordinal / categorical WLS} (at least one manifest \code{ordered} or \code{factor} on raw data): robust CFI, TLI, and RMSEA use \strong{Savalei (2021)} catML mean-and-variance corrections (\eqn{XX_3} discrepancy at fixed WLS estimates plus \eqn{\hat{c}_3} sandwich scaling from OpenMx \code{asymCov}, \code{useWeight}, and \code{implied_jacobian}). The printed \verb{*Statistical Note*} reports \code{correction = Savalei2021} with \eqn{\hat{c}_{model}} and \eqn{\hat{c}_{null}}; \strong{Hu & Bentler (1999) conventional cutoffs apply to these robust indices} (CFI \eqn{\geq} 0.95, RMSEA \eqn{\leq} 0.06, etc.). Display \eqn{\chi^2} and \eqn{p} remain SB-scaled WLS omnibus tests—not catML-scaled.
+
+Requires OpenMx WLS models with \code{implied_jacobian} populated (standard after \code{mxRun} on WLS). If robust computation fails, \code{umxSummary} falls back to OpenMx \code{summary()} indices and emits a note.
+
+(Best practice: report multiple indices, inspect residuals, and use \code{\link[=umxCompare]{umxCompare()}} for nested model comparison.)
 
 \strong{CIs and Identification}
 This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary.
@@ -124,7 +136,9 @@ umxSummary(m1, std = TRUE, filter = "NS")
 structure analysis: Conventional criteria versus new alternatives. \emph{Structural Equation Modeling}, \strong{6}, 1-55.
 \item Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. \emph{Psychometrika}, \strong{75}(2), 243-248.
 \item Satorra, A. and Bentler P. M. (1994). Corrections to test statistics and standard errors in covariance structure analysis. Latent variables analysis: Applications for developmental research. A. von Eye and C. C. Clogg, Sage: 399-419.
-\item Savalei, V. (2018). "On the Computation of the RMSEA and CFI from the Mean-And-Variance Corrected Test Statistic with Nonnormal Data in SEM." Multivariate Behav Res 53(3): 419-429.
+\item Savalei, V. (2018). On the computation of the RMSEA and CFI from the mean-and-variance corrected test statistic with nonnormal data in SEM. \emph{Multivariate Behavioral Research}, \strong{53}(3), 419--429.
+\item Savalei, V. (2021). Improving fit indices in SEM with categorical data. \emph{Multivariate Behavioral Research}, \strong{56}(3), 390--407.
+\item Brosseau-Liard, P. E., & Savalei, V. (2012). Adjusting incremental fit indices for nonnormality. \emph{Multivariate Behavioral Research}, \strong{47}(5), 647--677.
 \item Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
 with binary and continuous outcomes. University of California, Los Angeles.
 Retrieved from \url{https://www.statmodel.com/download/Yudissertation.pdf}

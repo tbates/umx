@@ -2,53 +2,162 @@
 % Please edit documentation in R/umxCompare2.R
 \name{xmu_robust_WLS_fit}
 \alias{xmu_robust_WLS_fit}
-\title{Calculate Satorra-Bentler Robust Fit Indices for WLS Models}
+\title{Robust WLS fit statistics: Satorra-Bentler (2010) and Savalei (2021)}
 \usage{
 xmu_robust_WLS_fit(model)
 }
 \arguments{
-\item{model}{A fitted WLS \code{MxModel}.}
+\item{model}{A fitted WLS \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} with \code{implied_jacobian}.}
 }
 \value{
-A named list of robust statistics designed to patch directly into
-the \code{umxSummary} output slots. Returns the following elements:
-\itemize{
-\item \code{CFI}: Robust Comparative Fit Index
-\item \code{TLI}: Robust Tucker-Lewis Index
-\item \code{RMSEA}: Robust Root Mean Square Error of Approximation
-\item \code{Chi}: Satorra-Bentler scaled target Chi-square
-\item \code{ChiDoF}: Target model degrees of freedom
-\item \code{p}: P-value for the scaled target Chi-square
+A named list designed to patch directly into \code{\link[=umxSummary]{umxSummary()}} slots:
+\describe{
+\item{\code{CFI}, \code{TLI}, \code{RMSEA}}{Robust fit indices (SB2010 or
+Savalei2021 branch).}
+\item{\code{Chi}}{SB-scaled target \eqn{\chi^2} (display omnibus statistic).}
+\item{\code{ChiDoF}}{Target model test degrees of freedom.}
+\item{\code{p}}{Two-sided \eqn{p}-value for \code{Chi} under \eqn{\chi^2_{df}}.}
+\item{\code{scalingFactor}, \code{scalingFactorNull}}{SB trace factors
+\eqn{c_{model}} and \eqn{c_{null}} (always computed).}
+}
+\strong{Attributes} (read by \code{\link[=umxSummary]{umxSummary()}} for footnotes):
+\describe{
+\item{\code{correction}}{\code{"SB2010"} or \code{"Savalei2021"}.}
+\item{\code{c_model}}{Scaling factor used for robust target noncentrality
+(SB \eqn{c} or Savalei \eqn{\hat{c}_3}).}
+\item{\code{c_null}}{Scaling factor for null/independence noncentrality.}
+\item{\code{fMlTarget}, \code{fMlNull}}{catML \eqn{XX_3} components when
+Savalei branch runs; \code{NA_real_} otherwise.}
 }
 }
 \description{
-Calculates Satorra-Bentler (2010) robust fit indices (CFI, TLI, RMSEA) and scaled
-chi-square statistics for Weighted Least Squares (WLS) models. This function
-bypasses the OpenMx optimizer for the baseline model, calculating the
-unscaled fit natively in R to prevent validation errors with asymptotic
-covariance matrices (such as those generated in Genomic SEM).
+Computes robust fit indices and scaled test statistics for Weighted Least
+Squares (WLS / DWLS) models fitted in OpenMx. This is the engine behind
+WLS routing in \code{\link[=umxSummary]{umxSummary()}} and \code{\link[=umxCompare]{umxCompare()}}.
+
+The function \strong{intentionally uses two statistic families}:
+\itemize{
+\item \strong{Display omnibus test} (\code{Chi}, \code{ChiDoF}, \code{p}): always
+Satorra-Bentler (2010) scaled WLS \eqn{\chi^2}, regardless of whether
+manifests are continuous or ordinal.
+\item \strong{Robust incremental/absolute indices} (\code{CFI}, \code{TLI},
+\code{RMSEA}): Satorra-Bentler (2010) for continuous WLS; Savalei (2021)
+catML mean-and-variance corrections for ordinal/categorical WLS.
+}
+
+Independence (null) baseline fit is computed \strong{natively in R} (not via
+\code{mxRun}) so that asymptotic-covariance-only inputs (e.g. Genomic SEM /
+summary-statistic pipelines) do not trigger OpenMx validation errors.
 }
 \details{
-The function executes the following mathematical pipeline:
+\strong{Prerequisites.} The fitted model must expose
+\code{model@output$implied_jacobian}, plus WLS \code{asymCov} and
+\code{useWeight} (or equivalent) with consistent moment rownames. Without
+the Jacobian, the function stops with an error.
+
+\strong{Shared pipeline (both branches).}
 \enumerate{
-\item Extracts raw target \eqn{\chi^2}, degrees of freedom, and the implied Jacobian.
-\item Extracts the Asymptotic Covariance (\eqn{V}) and Weight (\eqn{W}) matrices.
-\item Builds the baseline independence Jacobian using \code{xmu_build_independence_jacobian}.
-\item Calculates the baseline fit natively as \eqn{d_{ind}^T W d_{ind}}, where \eqn{d_{ind}}
-is the observed summary statistics vector with variances and means explicitly zeroed out.
-\item Computes the Satorra-Bentler scaling factor (\eqn{c}) using the trace matrix formula:
-\deqn{U = V W - V W \Delta (\Delta^T W \Delta)^{-1} \Delta^T W}
-\item Computes scaled \eqn{\chi^2} values: \eqn{\chi^2_{scaled} = \chi^2_{raw} / c}.
-\item Derives robust CFI, TLI, and RMSEA from these scaled values.
+\item Extract raw target WLS \eqn{\chi^2_{raw}}, test df, and implied Jacobian
+\eqn{\Delta_{target}}.
+\item Align \eqn{\Delta}, \eqn{\Gamma} (\code{asymCov}), and \eqn{W}
+(\code{useWeight}) to a common moment ordering via
+\code{\link[=xmu_WLS_align_jacobian]{xmu_WLS_align_jacobian()}} and
+\code{\link[=xmu_WLS_align_weight]{xmu_WLS_align_weight()}}.
+\item Build independence Jacobian \eqn{\Delta_{ind}} with
+\code{xmu_build_independence_jacobian()} on the same moment set.
+\item Compute native independence discrepancy
+\eqn{\chi^2_{ind,raw} = d_{ind}' W d_{ind}}, where \eqn{d_{ind}} is
+the observed summary vector with means, variances, and thresholds zeroed
+(independence pattern).
+\item Scale matrices to sample size \eqn{n} for raw-data models.
+\item Compute Satorra-Bentler trace scaling factors
+\deqn{U = \Gamma W - \Gamma W \Delta (\Delta' W \Delta)^{-1} \Delta' W}
+\deqn{c = \mathrm{tr}(U) / df}
+for target (\eqn{c_{model}}) and independence (\eqn{c_{null}}) models.
+\item Form display statistics:
+\eqn{\chi^2_{SB} = \chi^2_{raw} / c_{model}}, with
+\eqn{p = 1 - F_{\chi^2_{df}}(\chi^2_{SB})}.
 }
+
+\strong{Branch A — Continuous WLS} (\code{correction = "SB2010"}).
+Detected when no manifest is \code{ordered} or \code{factor} on raw data
+(\code{\link[=xmu_is_ordinal_WLS]{xmu_is_ordinal_WLS()}} returns \code{FALSE}). Robust
+\code{CFI}, \code{TLI}, and \code{RMSEA} are derived from SB-scaled target and
+independence \eqn{\chi^2} and their dfs. Attributes \code{c_model} and
+\code{c_null} hold the SB trace factors.
+
+\strong{Branch B — Ordinal / categorical WLS} (\code{correction = "Savalei2021"}).
+Detected when at least one manifest is \code{ordered} or \code{factor}.
+Robust indices use the Brosseau-Liard / Savalei noncentrality form with catML
+ingredients evaluated at \strong{fixed} converged WLS estimates (no re-optimization):
+
+\strong{catML discrepancy \eqn{XX_3}.}
+\code{\link[=xmu_catml_discrepancy_at_WLS]{xmu_catml_discrepancy_at_WLS()}} builds a correlation-matrix ML scaffold
+(\code{\link[=xmu_catml_eval_model]{xmu_catml_eval_model()}}), runs reference models, and
+returns:
+\itemize{
+\item \code{fMlTarget} = \eqn{XX_3} (target minus saturated correlation fit)
+\item \code{fMlNull} = \eqn{XX_{3,null}} (independence minus saturated)
+}
+
+\strong{Savalei scaling \eqn{\hat{c}_3}.}
+\code{\link[=xmu_savalei_polycor_blocks]{xmu_savalei_polycor_blocks()}} assembles OpenMx-native polycor blocks:
+\describe{
+\item{\eqn{V}}{catML expected information at model-implied correlation
+(\code{\link[=xmu_catml_wls_v]{xmu_catml_wls_v()}}); not \code{asymCov} and not
+\code{solve(useWeight)}.}
+\item{\eqn{\Gamma_{poly}}}{Sample moment covariance:
+\eqn{n^2 \times} polycor block of per-observation \code{asymCov}.}
+\item{\eqn{W_{poly}}}{WLS weight polycor block at sample scale:
+\eqn{n \times} per-observation \code{useWeight}.}
+\item{\eqn{\Delta_{poly}}}{Polycor rows of aligned \code{implied_jacobian}
+(threshold rows excluded).}
+\item{\eqn{E^{-1}}}{\eqn{(\Delta_{full}' W_{full} \Delta_{full})^{-1}} from the
+identically scaled full weight matrix.}
+}
+Then \code{\link[=xmu_savalei_scaling_factor]{xmu_savalei_scaling_factor()}} computes
+\deqn{\hat{c}_3 = \frac{\mathrm{tr}(W_i U' V W_i U \, \Gamma_{poly})}{df_3}}
+with \eqn{W_i U = I - \Delta_{poly} E^{-1} \Delta_{poly}' W_{poly}}, and
+\code{\link[=xmu_savalei_null_scaling_factor]{xmu_savalei_null_scaling_factor()}} computes
+\eqn{\hat{c}_{3,null} = \mathrm{tr}(\Gamma_{poly}) / df_{3,null}}.
+
+Degrees of freedom: \eqn{df_3} = WLS model test df; \eqn{df_{3,null}} =
+number of polycorrelation moments (\code{length(polyNames)}). Jacobian-rank
+shortcuts (\code{\link[=xmu_catml_df3_diagnostic]{xmu_catml_df3_diagnostic()}}) are diagnostic only.
+
+Robust indices: \code{\link[=xmu_savalei_fit_cfi]{xmu_savalei_fit_cfi()}}, \code{\link[=xmu_savalei_fit_tli]{xmu_savalei_fit_tli()}},
+\code{\link[=xmu_savalei_fit_rmsea]{xmu_savalei_fit_rmsea()}} with \eqn{XX_3}, \eqn{\hat{c}_3}, \eqn{\hat{c}_{3,null}}.
+CFI is clamped to \eqn{[0, 1]}; TLI may slightly exceed 1 with excellent fit.
+If Savalei scaling fails, \eqn{\hat{c}_3} falls back to SB \eqn{c_{model}} (and
+null analogously).
+
+\strong{Cutoff guidance.} For ordinal WLS, Hu & Bentler (1999) conventional cutoffs
+(e.g. CFI \eqn{\geq} 0.95, RMSEA \eqn{\leq} 0.06) apply to the \strong{robust}
+\code{CFI}/\code{TLI}/\code{RMSEA} reported here—not to raw WLS \eqn{\chi^2}.
+Display \eqn{\chi^2} and \eqn{p} remain SB-scaled WLS omnibus tests.
+
+\strong{Software note.} Numeric values of \eqn{\hat{c}_3} may differ from other SEM
+packages because Jacobians and parameterizations differ across engines; umx
+uses OpenMx \code{implied_jacobian} and native \code{asymCov}/\code{useWeight}
+throughout. The goal is statistically correct evaluation under OpenMx, not
+bitwise replication of external implementations.
 }
 \references{
 \itemize{
-\item Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. Psychometrika, 75(2), 243-269.
+\item Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled
+difference chi-square test statistic. \emph{Psychometrika}, \strong{75}(2), 243--269.
+\item Savalei, V. (2021). Improving fit indices in SEM with categorical data.
+\emph{Multivariate Behavioral Research}, \strong{56}(3), 390--407.
+\item Brosseau-Liard, P. E., & Savalei, V. (2012). Adjusting incremental fit
+indices for nonnormality. \emph{Multivariate Behavioral Research}, \strong{47}(5), 647--677.
+\item Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance
+structure analysis. \emph{Structural Equation Modeling}, \strong{6}, 1--55.
 }
 }
 \seealso{
-\code{\link{umxSummary}}, \code{xmu_build_independence_jacobian}
+\code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxCompare]{umxCompare()}}, \code{xmu_build_independence_jacobian},
+\code{\link[=xmu_is_ordinal_WLS]{xmu_is_ordinal_WLS()}}, \code{\link[=xmu_catml_discrepancy_at_WLS]{xmu_catml_discrepancy_at_WLS()}},
+\code{\link[=xmu_savalei_polycor_blocks]{xmu_savalei_polycor_blocks()}}
 
 Other Model Summary and Comparison:
 \code{\link{umx}},

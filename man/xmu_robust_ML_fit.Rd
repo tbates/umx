@@ -16,7 +16,19 @@ A list containing scaling factors and adjusted robust fit statistics, or NULL if
 }
 \description{
 Computes Satorra-Bentler (1994) robust scaling corrections and Brosseau-Liard & Savalei (2012)
-robust fit indices (CFI, TLI, RMSEA) for Maximum Likelihood models with raw continuous complete data.
+robust fit indices (CFI, TLI, RMSEA) for Maximum Likelihood models with raw continuous complete or incomplete (FIML) data.
+}
+\details{
+The robust scaling correction factor $c$ is computed using the difference between the trace of the saturated model
+and the trace of the fitted model, scaled by the degrees of freedom:
+[c = \frac{\text{tr}(J_{\text{saturated}}^{-1} B_{\text{saturated}}) - \text{tr}(J_{\text{model}}^{-1} B_{\text{model}})}{d}]
+where $J = H/2$ is the observed information matrix (reconciled from the Hessian $H$ of $-2\ln L$) and $B = G^T G$ is the
+outer product of the individual log-likelihood row gradients. Because OpenMx optimizes $-2\ln L$ and $G$ contains the row gradients
+of $-2\ln L_i$ (which is $2$ times the score $s_i$), the matrix product $(H/2)^{-1} B$ scales to $4 J^{-1} K$. Thus, dividing by
+$4 \times d$ scales the difference of these traces back to the Satorra-Bentler / Yuan-Bentler expectation scale.
+
+Robust RMSEA is computed using Equation (5) of Brosseau-Liard, Savalei, and Li (2012):
+[\text{RMSEA}\emph{{\text{robust}} = \sqrt{\max\left(0, \frac{\chi^2}{\text{raw}} / N}{df} - \frac{c_{\text{model}}}{N}\right)}]
 }
 \seealso{
 Other xmu internal not for end user:
@@ -46,7 +58,15 @@ Other xmu internal not for end user:
 \code{\link[=xmu_CI_stash]{xmu_CI_stash()}},
 \code{\link[=xmu_DF_to_mxData_TypeCov]{xmu_DF_to_mxData_TypeCov()}},
 \code{\link[=xmu_PadAndPruneForDefVars]{xmu_PadAndPruneForDefVars()}},
+\code{\link[=xmu_WLS_align_jacobian]{xmu_WLS_align_jacobian()}},
+\code{\link[=xmu_WLS_align_weight]{xmu_WLS_align_weight()}},
+\code{\link[=xmu_WLS_polycor_names]{xmu_WLS_polycor_names()}},
 \code{\link[=xmu_bracket_address2rclabel]{xmu_bracket_address2rclabel()}},
+\code{\link[=xmu_catml_df3_diagnostic]{xmu_catml_df3_diagnostic()}},
+\code{\link[=xmu_catml_discrepancy_at_WLS]{xmu_catml_discrepancy_at_WLS()}},
+\code{\link[=xmu_catml_eval_model]{xmu_catml_eval_model()}},
+\code{\link[=xmu_catml_implied_correlation]{xmu_catml_implied_correlation()}},
+\code{\link[=xmu_catml_wls_v]{xmu_catml_wls_v()}},
 \code{\link[=xmu_cell_is_on]{xmu_cell_is_on()}},
 \code{\link[=xmu_check_levels_identical]{xmu_check_levels_identical()}},
 \code{\link[=xmu_check_needs_means]{xmu_check_needs_means()}},
@@ -63,6 +83,8 @@ Other xmu internal not for end user:
 \code{\link[=xmu_dot_rank_str]{xmu_dot_rank_str()}},
 \code{\link[=xmu_extract_column]{xmu_extract_column()}},
 \code{\link[=xmu_get_CI]{xmu_get_CI()}},
+\code{\link[=xmu_invert_matrix]{xmu_invert_matrix()}},
+\code{\link[=xmu_is_ordinal_WLS]{xmu_is_ordinal_WLS()}},
 \code{\link[=xmu_lavaan_process_group]{xmu_lavaan_process_group()}},
 \code{\link[=xmu_make_TwinSuperModel]{xmu_make_TwinSuperModel()}},
 \code{\link[=xmu_make_bin_cont_pair_data]{xmu_make_bin_cont_pair_data()}},
@@ -75,6 +97,12 @@ Other xmu internal not for end user:
 \code{\link[=xmu_rclabel_2_bracket_address]{xmu_rclabel_2_bracket_address()}},
 \code{\link[=xmu_relevel_factors]{xmu_relevel_factors()}},
 \code{\link[=xmu_safe_run_summary]{xmu_safe_run_summary()}},
+\code{\link[=xmu_savalei_fit_cfi]{xmu_savalei_fit_cfi()}},
+\code{\link[=xmu_savalei_fit_rmsea]{xmu_savalei_fit_rmsea()}},
+\code{\link[=xmu_savalei_fit_tli]{xmu_savalei_fit_tli()}},
+\code{\link[=xmu_savalei_null_scaling_factor]{xmu_savalei_null_scaling_factor()}},
+\code{\link[=xmu_savalei_polycor_blocks]{xmu_savalei_polycor_blocks()}},
+\code{\link[=xmu_savalei_scaling_factor]{xmu_savalei_scaling_factor()}},
 \code{\link[=xmu_set_sep_from_suffix]{xmu_set_sep_from_suffix()}},
 \code{\link[=xmu_show_fit_or_comparison]{xmu_show_fit_or_comparison()}},
 \code{\link[=xmu_simplex_corner]{xmu_simplex_corner()}},

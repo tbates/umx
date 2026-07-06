@@ -531,45 +531,802 @@ xmu_build_independence_jacobian <- function(rowNames, manifests) {
 	return(jac)
 }
 
-#' Calculate Satorra-Bentler Robust Fit Indices for WLS Models
+#' Align WLS implied Jacobian to asymptotic-covariance moment order
+#'
+#' OpenMx may store \code{implied_jacobian} rows in a different order than
+#' \code{observedStats$asymCov} (means after covariances in the Jacobian;
+#' mixed order in \code{asymCov}). This helper reorders Jacobian rows to match
+#' \code{asymCov} rownames and returns the intersection set used by all SB and
+#' Savalei matrix algebra in [xmu_robust_WLS_fit()].
+#'
+#' @param jacMat Implied Jacobian \eqn{\Delta} from \code{model@output$implied_jacobian}.
+#' @param asymCovMat Asymptotic covariance matrix \eqn{\Gamma} with moment rownames.
+#' @param numCovsVal Number of covariance/polycorrelation moments (for mean/cov
+#'   block reordering when Jacobian row count equals full moment count).
+#' @return List with \code{jac} (aligned Jacobian) and \code{commonNames} (moment
+#'   labels shared across \eqn{\Delta}, \eqn{\Gamma}, and \eqn{W}).
+#' @family xmu internal not for end user
+xmu_WLS_align_jacobian <- function(jacMat, asymCovMat, numCovsVal) {
+	rowNames = rownames(asymCovMat)
+	if (is.null(rowNames)) {
+		stop("Asymptotic covariance matrix missing rownames.")
+	}
+
+	if (is.null(rownames(jacMat))) {
+		if (nrow(jacMat) == length(rowNames)) {
+			rownames(jacMat) = rowNames
+		} else {
+			covNames = rowNames[!grepl("^mean_", rowNames) & !grepl("^one_to_", rowNames) & !grepl("t[0-9]+$", rowNames)]
+			if (nrow(jacMat) == length(covNames)) {
+				rownames(jacMat) = covNames
+			} else {
+				rownames(jacMat) = rowNames[seq_len(nrow(jacMat))]
+			}
+		}
+	}
+
+	if (nrow(jacMat) == length(rowNames)) {
+		numMeans = nrow(jacMat) - numCovsVal
+		if (numMeans > 0 && nrow(jacMat) > numCovsVal) {
+			meanIdx = (numCovsVal + 1):nrow(jacMat)
+			covIdx = seq_len(numCovsVal)
+			jacAligned = jacMat[c(meanIdx, covIdx), , drop = FALSE]
+		} else {
+			jacAligned = jacMat
+		}
+		rownames(jacAligned) = rowNames
+		return(list(jac = jacAligned, commonNames = rowNames))
+	}
+
+	commonNames = rowNames[rowNames %in% rownames(jacMat)]
+	if (length(commonNames) == 0) {
+		stop("No common row names found between implied_jacobian and asymptotic covariance matrix.")
+	}
+	jacAligned = jacMat[commonNames, , drop = FALSE]
+	return(list(jac = jacAligned, commonNames = commonNames))
+}
+
+#' Subset and align WLS weight matrix to common moment set
+#'
+#' Extracts the \eqn{W} block corresponding to \code{commonNames} from OpenMx
+#' \code{useWeight} or \code{fullWeight}. Accepts either a full matrix (with or
+#' without dimnames) or a named diagonal vector (expanded to \code{diag()}).
+#'
+#' @param weightMat WLS weight matrix or diagonal vector from \code{MxData}.
+#' @param commonNames Moment names shared by aligned \eqn{\Delta} and \eqn{\Gamma}.
+#' @param fullRowNames Full moment names from the asymptotic covariance matrix.
+#' @return Weight matrix \eqn{W} subset to \code{commonNames}.
+#' @family xmu internal not for end user
+xmu_WLS_align_weight <- function(weightMat, commonNames, fullRowNames) {
+	if (is.vector(weightMat)) {
+		if (is.null(names(weightMat))) {
+			names(weightMat) = fullRowNames
+		}
+		weightVec = weightMat[commonNames]
+		return(diag(weightVec))
+	}
+	if (is.matrix(weightMat)) {
+		if (is.null(rownames(weightMat)) && nrow(weightMat) == length(fullRowNames)) {
+			dimnames(weightMat) = list(fullRowNames, fullRowNames)
+		}
+		return(weightMat[commonNames, commonNames, drop = FALSE])
+	}
+	stop("Unsupported WLS weight matrix type.")
+}
+
+#' Detect ordinal or categorical WLS models
+#'
+#' Returns \code{TRUE} when the fitted model uses raw data and at least one
+#' manifest variable is stored as \code{ordered} or \code{factor}. This gate
+#' controls whether [xmu_robust_WLS_fit()] applies the Savalei (2021) branch
+#' rather than the Satorra-Bentler (2010) branch used for continuous WLS.
+#'
+#' @param model A fitted [OpenMx::mxModel()].
+#' @return Logical scalar.
+#' @family xmu internal not for end user
+xmu_is_ordinal_WLS <- function(model) {
+	manifests = model@manifestVars
+	if (is.null(manifests) || length(manifests) == 0) {
+		return(FALSE)
+	}
+	observedData = NULL
+	if (!is.null(model@data) && identical(model@data$type, "raw") && !is.null(model@data$observed)) {
+		observedData = model@data$observed
+	}
+	if (is.null(observedData)) {
+		return(FALSE)
+	}
+	any(vapply(manifests, function(manName) {
+		col = observedData[[manName]]
+		is.factor(col) || is.ordered(col)
+	}, logical(1)))
+}
+
+#' Polycorrelation moment names from WLS asymptotic-covariance labels
+#'
+#' Filters OpenMx WLS moment rownames to the polycorrelation subsystem used in
+#' Savalei (2021) corrections. Threshold rows (names ending in \code{t1},
+#' \code{t2}, \ldots) are excluded; means and variances are excluded by the
+#' naming pattern (they do not match the polycor regex filter).
+#'
+#' @param momentNames Character vector of \code{asymCov} rownames (aligned set).
+#' @return Character vector of polycorrelation-only moment names.
+#' @seealso [xmu_savalei_polycor_blocks()]
+#' @family xmu internal not for end user
+xmu_WLS_polycor_names <- function(momentNames) {
+	momentNames[!grepl("t[0-9]+$", momentNames)]
+}
+
+#' Invert a matrix with chol, then ginv, then solve fallbacks
+#' @param x Numeric matrix.
+#' @return Matrix inverse.
+#' @family xmu internal not for end user
+xmu_invert_matrix <- function(x) {
+	inv = tryCatch({
+		chol2inv(chol(x))
+	}, error = function(e) {
+		tryCatch({
+			MASS::ginv(x)
+		}, error = function(e2) {
+			solve(x)
+		})
+	})
+	return(inv)
+}
+
+#' catML expected information matrix (\eqn{V}) for correlation moments
+#'
+#' Computes the \strong{catML} \code{wls.v} matrix used in Savalei (2021)
+#' mean-and-variance corrections. This is \emph{not} the OpenMx WLS
+#' \code{asymCov} block and \emph{not} the WLS fitting weight matrix.
+#'
+#' The matrix is the expected Fisher information for the
+#' \eqn{p^*(p-1)/2} off-diagonal correlation parameters under a multivariate
+#' normal correlation model, evaluated at the \strong{model-implied} correlation
+#' matrix from the catML evaluation scaffold (correlation-matrix ML at fixed
+#' WLS estimates). Algebraically,
+#' \deqn{V = \tfrac{1}{2} D' (\Sigma^{-1} \otimes \Sigma^{-1}) D}
+#' where \eqn{D} is the duplication map from unique correlation elements to
+#' \code{vec}(\Sigma) and \eqn{\Sigma} is the implied correlation matrix.
+#'
+#' @param impliedCor Numeric symmetric correlation matrix (\eqn{p \times p}).
+#' @return Symmetric \eqn{p^* \times p^*} information matrix for polycorrelation
+#'   moments, where \eqn{p^* = p(p-1)/2}.
+#' @family xmu internal not for end user
+xmu_catml_wls_v <- function(impliedCor) {
+	impliedCor = as.matrix(impliedCor)
+	pVal = nrow(impliedCor)
+	if (pVal < 2) {
+		return(matrix(0, 0, 0))
+	}
+	sigmaInv = tryCatch(solve(impliedCor), error = function(e) xmu_invert_matrix(impliedCor))
+	pStar = pVal * (pVal - 1) / 2
+	dupMat = matrix(0, pVal * pVal, pStar)
+	colIdx = 1L
+	for (i in seq_len(pVal - 1L)) {
+		for (j in (i + 1L):pVal) {
+			dupMat[(j - 1L) * pVal + i, colIdx] = 1
+			dupMat[(i - 1L) * pVal + j, colIdx] = 1
+			colIdx = colIdx + 1L
+		}
+	}
+	kronMat = sigmaInv %x% sigmaInv
+	0.5 * t(dupMat) %*% kronMat %*% dupMat
+}
+
+#' Model-implied correlation matrix at fixed WLS estimates
+#'
+#' Extracts \eqn{\Sigma} from the correlation-matrix ML evaluation model built
+#' by [xmu_catml_eval_model()]. Parameters are fixed at the
+#' converged ordinal WLS solution; no re-optimization is performed. This
+#' implied matrix feeds [xmu_catml_wls_v()].
+#'
+#' @param model A fitted ordinal WLS [OpenMx::mxModel()].
+#' @return Model-implied correlation matrix, or \code{NULL} on failure.
+#' @seealso [xmu_catml_eval_model()], [xmu_catml_discrepancy_at_WLS()]
+#' @family xmu internal not for end user
+xmu_catml_implied_correlation <- function(model) {
+	mML = xmu_catml_eval_model(model)
+	if (is.null(mML)) {
+		return(NULL)
+	}
+	impliedCor = tryCatch(mxGetExpected(mML, "covariance"), error = function(e) NULL)
+	if (is.null(impliedCor) || !is.matrix(impliedCor) || nrow(impliedCor) < 2) {
+		return(NULL)
+	}
+	impliedCor
+}
+
+#' Polycorrelation-block Jacobian rank degrees of freedom (diagnostic)
+#'
+#' Computes polycorrelation-subsystem rank deficits
+#' \eqn{df_3 = p^* - \mathrm{rank}(\Delta_{poly})} and the analogous null rank.
+#' **Not used for final Savalei reporting** in [xmu_robust_WLS_fit()], which
+#' takes target \eqn{df_3} from the model test df and null \eqn{df_{3,null}}
+#' from the polycorrelation moment count. Retained for diagnostics and future
+#' extensions.
+#'
+#' @param jacPoly Polycorrelation rows of the implied Jacobian.
+#' @param jacIndPoly Independence Jacobian polycorrelation rows.
+#' @return List with \code{df3} and \code{df3Null}.
+#' @family xmu internal not for end user
+xmu_catml_df3_diagnostic <- function(jacPoly, jacIndPoly) {
+	nPoly = nrow(jacPoly)
+	if (nPoly == 0) {
+		return(list(df3 = NA_real_, df3Null = NA_real_))
+	}
+	df3 = nPoly - qr(jacPoly)$rank
+	df3Null = nPoly - qr(jacIndPoly)$rank
+	list(df3 = df3, df3Null = df3Null)
+}
+
+#' Build OpenMx-native polycorrelation blocks for the Savalei sandwich
+#'
+#' Assembles the \eqn{\Delta}, \eqn{\Gamma}, and \eqn{W} ingredients for the
+#' polycorrelation subsystem of Savalei (2021) \eqn{\hat{c}_3} (\code{c.hat3}),
+#' using matrices extracted from the \strong{same} fitted OpenMx WLS model at
+#' mutually consistent scales.
+#'
+#' @details
+#' **Why a separate builder?** Savalei's correction is evaluated on
+#' polycorrelations only (threshold rows excluded). Each matrix must refer to
+#' the same moment ordering (rownames from aligned \code{asymCov}) and the same
+#' sample size scaling.
+#'
+#' **Objects returned:**
+#' \describe{
+#'   \item{\code{jacPoly} (\eqn{\Delta_{poly}})}{
+#'     Rows of \code{model@output$implied_jacobian} corresponding to
+#'     polycorrelation moments (names not ending in \code{t1}, \code{t2}, etc.).
+#'     Columns are model parameters in OpenMx order. This is
+#'     \eqn{\partial s / \partial \theta} for the polycor block.
+#'   }
+#'   \item{\code{gammaPoly} (\eqn{\Gamma_{poly}})}{
+#'     Asymptotic covariance of the sample polycorrelation moments at sample
+#'     scale: \eqn{\Gamma_{poly} = n^2 \times V_{poly,per-obs}}, where
+#'     \eqn{V_{poly,per-obs}} is the polycorrelation block of OpenMx
+#'     \code{observedStats$asymCov} \emph{before} the global \eqn{n} scaling
+#'     applied to the full aligned matrices. This is the moment sampling
+#'     covariance; it is \strong{not} \code{solve(useWeight)}.
+#'   }
+#'   \item{\code{wPolyWiU} (\eqn{W_{poly}} in \eqn{W_i U})}{
+#'     Polycorrelation block of the WLS weight matrix at sample scale:
+#'     \eqn{W_{poly} = n \times W_{poly,per-obs}}, from \code{useWeight}. This
+#'     is paired with \eqn{E^{-1} = (\Delta_{full}' W_{full} \Delta_{full})^{-1}}
+#'     computed from the identically scaled full weight matrix.
+#'   }
+#' }
+#'
+#' @param asymCovAlignedPerObs Aligned per-observation asymptotic covariance
+#'   (\code{asymCov} subset to common moments, before \eqn{n} scaling).
+#' @param weightMatAlignedPerObs Aligned per-observation WLS weight (before
+#'   \eqn{n} scaling).
+#' @param jacTargetAligned Full aligned implied Jacobian (all moment rows).
+#' @param polyNames Character vector of polycorrelation moment names.
+#' @param nVal Sample size \eqn{n} (from \code{model@data@numObs}).
+#' @return List with \code{gammaPoly}, \code{wPolyWiU}, and \code{jacPoly}, or
+#'   \code{NULL} if any block is empty.
+#' @seealso [xmu_savalei_scaling_factor()],
+#'   [xmu_WLS_polycor_names()]
+#' @family xmu internal not for end user
+xmu_savalei_polycor_blocks <- function(asymCovAlignedPerObs, weightMatAlignedPerObs, jacTargetAligned, polyNames, nVal) {
+	if (length(polyNames) == 0) {
+		return(NULL)
+	}
+	gammaPoly = asymCovAlignedPerObs[polyNames, polyNames, drop = FALSE]
+	wPolyPerObs = weightMatAlignedPerObs[polyNames, polyNames, drop = FALSE]
+	jacPoly = jacTargetAligned[polyNames, , drop = FALSE]
+	if (nrow(gammaPoly) == 0 || nrow(wPolyPerObs) == 0 || nrow(jacPoly) == 0) {
+		return(NULL)
+	}
+	if (!is.null(nVal) && is.finite(nVal) && nVal > 0) {
+		gammaPoly = (nVal * nVal) * gammaPoly
+		wPolyWiU = nVal * wPolyPerObs
+	} else {
+		wPolyWiU = wPolyPerObs
+	}
+	list(gammaPoly = gammaPoly, wPolyWiU = wPolyWiU, jacPoly = jacPoly)
+}
+
+#' Savalei (2021) target scaling factor \eqn{\hat{c}_3} for ordinal WLS
+#'
+#' Computes the mean-and-variance correction used in robust CFI, TLI, and RMSEA
+#' for ordinal/categorical WLS models (Savalei, 2021; Brosseau-Liard & Savalei,
+#' 2012 noncentrality form).
+#'
+#' @details
+#' **Formula.** Let \eqn{W_i U = I - \Delta_{poly} E^{-1} \Delta_{poly}' W_{poly}}.
+#' Then
+#' \deqn{\hat{c}_3 = \frac{\mathrm{tr}\big( W_i U' \, V \, W_i U \, \Gamma_{poly} \big)}{df_3}}
+#' where:
+#' \itemize{
+#'   \item \eqn{V} = catML expected information ([xmu_catml_wls_v()])
+#'   \item \eqn{\Gamma_{poly}} = sample moment covariance from OpenMx \code{asymCov}
+#'   \item \eqn{W_{poly}} = WLS \code{useWeight} polycor block at sample scale
+#'   \item \eqn{E^{-1}} = \eqn{(\Delta_{full}' W_{full} \Delta_{full})^{-1}} from the
+#'         same fitted model and weight scaling
+#'   \item \eqn{df_3} = target model test df (not a polycor Jacobian rank shortcut)
+#' }
+#'
+#' **Design note.** \eqn{V} comes from the catML correlation scaffold; \eqn{\Gamma}
+#' and \eqn{W} come from the ordinal WLS fit. They are different statistical
+#' objects serving different roles in Savalei's correction. Do not substitute
+#' \code{asymCov} for \eqn{V}, or \code{solve(useWeight)} for \eqn{\Gamma}.
+#'
+#' @param jacFull Full aligned WLS Jacobian \eqn{\Delta_{full}} (all moments).
+#' @param jacPoly Polycorrelation rows \eqn{\Delta_{poly}}.
+#' @param vCatMlPoly catML \eqn{V} matrix (polycor block).
+#' @param gammaPoly Sample moment covariance \eqn{\Gamma_{poly}}.
+#' @param wPolyWiU WLS weight polycor block \eqn{W_{poly}} for the \eqn{W_i U} sandwich.
+#' @param wFullScaled Full aligned weight matrix at sample scale (\eqn{n \times} per-obs).
+#' @param dfCatMl Target model test degrees of freedom \eqn{df_3}.
+#' @return Numeric \eqn{\hat{c}_3}, or \code{NA_real_} if computation fails.
+#' @references Savalei, V. (2021). Improving fit indices in SEM with categorical
+#'   data. *Multivariate Behavioral Research*, **56**(3), 390--407.
+#' @family xmu internal not for end user
+xmu_savalei_scaling_factor <- function(jacFull, jacPoly, vCatMlPoly, gammaPoly, wPolyWiU, wFullScaled, dfCatMl) {
+	if (is.null(dfCatMl) || is.na(dfCatMl) || dfCatMl <= 0) {
+		return(NA_real_)
+	}
+	if (nrow(jacPoly) == 0 || nrow(gammaPoly) == 0 || nrow(vCatMlPoly) == 0 || nrow(wPolyWiU) == 0) {
+		return(NA_real_)
+	}
+	infoInv = xmu_invert_matrix(t(jacFull) %*% wFullScaled %*% jacFull)
+	wiU = diag(nrow(wPolyWiU)) - jacPoly %*% infoInv %*% t(jacPoly) %*% wPolyWiU
+	ksGamma = sum(diag(t(wiU) %*% vCatMlPoly %*% wiU %*% gammaPoly))
+	cHatGamma = ksGamma / dfCatMl
+	if (is.finite(cHatGamma) && cHatGamma > 0) {
+		return(cHatGamma)
+	}
+	return(NA_real_)
+}
+
+#' Savalei (2021) independence/null scaling factor \eqn{\hat{c}_{3,null}}
+#'
+#' Computes the null-model mean-and-variance correction used alongside
+#' \eqn{\hat{c}_3} in robust CFI and TLI:
+#' \deqn{\hat{c}_{3,null} = \frac{\mathrm{tr}(\Gamma_{poly})}{df_{3,null}}}
+#' where \eqn{df_{3,null}} is the number of polycorrelation moments (all
+#' off-diagonal correlations free under the independence baseline in the
+#' correlation subsystem).
+#'
+#' @param gammaPoly Polycorrelation sample-moment covariance \eqn{\Gamma_{poly}}.
+#' @param dfNullCatMl Null degrees of freedom \eqn{df_{3,null}} (typically
+#'   \code{length(polyNames)}).
+#' @return Numeric \eqn{\hat{c}_{3,null}}, or \code{NA_real_} on failure.
+#' @family xmu internal not for end user
+xmu_savalei_null_scaling_factor <- function(gammaPoly, dfNullCatMl) {
+	if (is.null(dfNullCatMl) || is.na(dfNullCatMl) || dfNullCatMl <= 0) {
+		return(NA_real_)
+	}
+	if (is.null(gammaPoly) || nrow(gammaPoly) == 0) {
+		return(NA_real_)
+	}
+	return(sum(diag(gammaPoly)) / dfNullCatMl)
+}
+
+#' Robust CFI from mean-and-variance corrected noncentrality (Savalei 2021 form)
+#'
+#' Implements the Brosseau-Liard / Savalei noncentrality formulation for robust
+#' CFI using catML discrepancy \eqn{XX_3} at fixed WLS estimates and scaling
+#' factors \eqn{\hat{c}_3}, \eqn{\hat{c}_{3,null}}. Used for ordinal WLS in
+#' [xmu_robust_WLS_fit()]; continuous WLS falls back to SB-scaled \eqn{\chi^2}.
+#'
+#' @param x2 Target catML discrepancy (or SB-scaled \eqn{\chi^2} for continuous).
+#' @param df Target model degrees of freedom.
+#' @param x2Null Independence/null catML discrepancy.
+#' @param dfNull Null model degrees of freedom.
+#' @param cHat Target scaling factor \eqn{\hat{c}_3}.
+#' @param cHatNull Null scaling factor \eqn{\hat{c}_{3,null}}.
+#' @return Robust CFI in \eqn{[0, 1]} (values slightly outside may occur for TLI).
+#' @family xmu internal not for end user
+xmu_savalei_fit_cfi <- function(x2, df, x2Null, dfNull, cHat = 1, cHatNull = 1) {
+	if (anyNA(c(x2, df, x2Null, dfNull, cHat, cHatNull))) {
+		return(NA_real_)
+	}
+	if (df > 0 && cHat != 1 && cHatNull != 1) {
+		t1 = max(c(x2 - (cHat * df), 0))
+		t2 = max(c(x2 - (cHat * df), x2Null - (cHatNull * dfNull), 0))
+	} else {
+		t1 = max(c(x2 - df, 0))
+		t2 = max(c(x2 - df, x2Null - dfNull, 0))
+	}
+	if (isTRUE(all.equal(t1, 0)) && isTRUE(all.equal(t2, 0))) {
+		return(1)
+	}
+	return(1 - t1 / t2)
+}
+
+#' Robust TLI from mean-and-variance corrected noncentrality (Savalei 2021 form)
+#'
+#' Companion to [xmu_savalei_fit_cfi()]. TLI is not bounded above by 1 under
+#' this correction; values slightly above 1 can occur with excellent fit.
+#'
+#' @inheritParams xmu_savalei_fit_cfi
+#' @return Robust TLI.
+#' @family xmu internal not for end user
+xmu_savalei_fit_tli <- function(x2, df, x2Null, dfNull, cHat = 1, cHatNull = 1) {
+	if (anyNA(c(x2, df, x2Null, dfNull, cHat, cHatNull))) {
+		return(NA_real_)
+	}
+	if (df > 0 && cHat != 1 && cHatNull != 1) {
+		t1 = (x2 - cHat * df) * dfNull
+		t2 = (x2Null - cHatNull * dfNull) * df
+	} else {
+		t1 = (x2 - df) * dfNull
+		t2 = (x2Null - dfNull) * df
+	}
+	if (df > 0 && abs(t2) > 0) {
+		return(1 - t1 / t2)
+	}
+	if (!is.finite(t1) || !is.finite(t2)) {
+		return(NA_real_)
+	}
+	return(1)
+}
+
+#' Robust RMSEA from mean-and-variance corrected noncentrality (Savalei 2021 form)
+#'
+#' \deqn{\mathrm{RMSEA}_{robust} = \sqrt{\max\left(\frac{XX_3/n}{df_3} - \frac{\hat{c}_3}{n}, 0\right)}}
+#' Uses catML \eqn{XX_3} and \eqn{\hat{c}_3} for ordinal WLS; continuous WLS
+#' uses SB-scaled target \eqn{\chi^2} and SB trace scaling.
+#'
+#' @param x2 Target discrepancy (\eqn{XX_3} or SB-scaled \eqn{\chi^2}).
+#' @param df Target degrees of freedom.
+#' @param nVal Sample size \eqn{n}.
+#' @param cHat Scaling factor \eqn{\hat{c}_3} (or SB \eqn{c} for continuous).
+#' @param gGroups Number of groups (default 1).
+#' @return Robust RMSEA (0 if \eqn{df = 0}).
+#' @family xmu internal not for end user
+xmu_savalei_fit_rmsea <- function(x2, df, nVal, cHat = 1, gGroups = 1L) {
+	if (length(x2) == 0 || is.null(nVal) || is.na(nVal) || nVal <= 0) {
+		return(NA_real_)
+	}
+	if (df > 0) {
+		return(sqrt(pmax((x2 / nVal) / df - cHat / nVal, 0)) * sqrt(gGroups))
+	}
+	return(0)
+}
+
+#' Build correlation-matrix ML evaluation model at fixed WLS estimates
+#'
+#' Constructs a correlation-matrix ML [OpenMx::mxModel()] with all parameters
+#' fixed at the converged ordinal WLS solution. This is the umx/OpenMx analogue
+#' of a \strong{catML evaluation scaffold}: a correlation-structure ML model
+#' used to evaluate discrepancy at fixed estimates, not to re-fit ordinal data
+#' under ML.
+#'
+#' @details
+#' The model uses \code{mxData(type = "cor")} with the observed polychoric
+#' correlation matrix from \code{observedStats$cov}, and RAM paths with
+#' \code{free = FALSE} for loadings, latent variances, and residual variances
+#' taken from the WLS solution. Thresholds and means are not part of this
+#' correlation scaffold; they enter the WLS fit separately.
+#'
+#' @param model A fitted ordinal WLS [OpenMx::mxModel()].
+#' @return Fitted correlation ML model (silent run), or \code{NULL} on failure.
+#' @seealso [xmu_catml_discrepancy_at_WLS()], [xmu_catml_implied_correlation()]
+#' @family xmu internal not for end user
+xmu_catml_eval_model <- function(model) {
+	tryCatch({
+		obsCor = NULL
+		numObs = NULL
+		if (inherits(model@data, "MxData") && .hasSlot(model@data, "observedStats") && !is.null(model@data@observedStats$cov)) {
+			obsCor = model@data@observedStats$cov
+			numObs = model@data@numObs
+		} else if (!is.null(model$data$observedStats$cov)) {
+			obsCor = model$data$observedStats$cov
+			numObs = model$data$numObs
+		}
+		if (is.null(obsCor) || is.null(numObs) || !is.finite(numObs) || numObs <= 0) {
+			return(NULL)
+		}
+		manifests = model@manifestVars
+		if (is.null(manifests) || length(manifests) == 0) {
+			return(NULL)
+		}
+		obsCor = obsCor[manifests, manifests, drop = FALSE]
+		latentVars = model@latentVars
+		if (is.null(latentVars)) {
+			latentVars = character(0)
+		}
+		pathList = list()
+		if (!is.null(model$A) && !is.null(model$S)) {
+			aMat = model$A
+			sMat = model$S
+			aRowNames = if (length(aMat$rownames) > 0) aMat$rownames else rownames(aMat$values)
+			aColNames = if (length(aMat$colnames) > 0) aMat$colnames else colnames(aMat$values)
+			sRowNames = if (length(sMat$rownames) > 0) sMat$rownames else rownames(sMat$values)
+			if (length(latentVars) > 0 && !is.null(aRowNames) && !is.null(aColNames)) {
+				for (lv in latentVars) {
+					rowIdx = match(manifests, aRowNames)
+					colIdx = match(lv, aColNames)
+					if (!any(is.na(rowIdx)) && !is.na(colIdx)) {
+						loadVals = as.numeric(aMat$values[rowIdx, colIdx])
+						if (length(loadVals) > 0 && all(is.finite(loadVals))) {
+							pathList = append(pathList, list(mxPath(from = lv, to = manifests, arrows = 1, free = FALSE, values = loadVals)))
+						}
+					}
+					sRowIdx = match(lv, sRowNames)
+					if (!is.na(sRowIdx) && isTRUE(sMat$free[sRowIdx, sRowIdx])) {
+						lvVarVal = sMat$values[sRowIdx, sRowIdx]
+						if (is.finite(lvVarVal) && lvVarVal > 0) {
+							pathList = append(pathList, list(mxPath(from = lv, arrows = 2, free = FALSE, values = lvVarVal)))
+						}
+					}
+				}
+			}
+			if (!is.null(sRowNames)) {
+				manIdx = match(manifests, sRowNames)
+				if (!any(is.na(manIdx))) {
+					residVals = diag(sMat$values[manIdx, manIdx, drop = FALSE])
+					if (length(residVals) > 0 && all(is.finite(residVals))) {
+						pathList = append(pathList, list(mxPath(from = manifests, arrows = 2, free = FALSE, values = residVals)))
+					}
+				}
+			}
+		}
+		if (length(pathList) == 0) {
+			pars = omxGetParameters(model)
+			if (is.null(pars) || length(pars) == 0) {
+				return(NULL)
+			}
+			if (length(latentVars) > 0) {
+				for (lv in latentVars) {
+					loadPat = paste0("^", lv, "_to_")
+					loadNames = grep(loadPat, names(pars), value = TRUE)
+					if (length(loadNames) > 0) {
+						loadVals = as.numeric(pars[loadNames])
+						loadTo = sub(paste0("^", lv, "_to_"), "", loadNames)
+						pathList = append(pathList, list(mxPath(from = lv, to = loadTo, arrows = 1, free = FALSE, values = loadVals)))
+					}
+					lvVarName = paste0(lv, "_with_", lv)
+					if (lvVarName %in% names(pars)) {
+						pathList = append(pathList, list(mxPath(from = lv, arrows = 2, free = FALSE, values = as.numeric(pars[lvVarName]))))
+					}
+				}
+			}
+			residNames = intersect(paste0(manifests, "_with_", manifests), names(pars))
+			if (length(residNames) > 0) {
+				residVals = as.numeric(pars[residNames])
+				pathList = append(pathList, list(mxPath(from = manifests, arrows = 2, free = FALSE, values = residVals)))
+			}
+		}
+		if (length(pathList) == 0) {
+			return(NULL)
+		}
+		mCor = do.call(mxModel, c(
+			list(
+				paste0(model$name, "_catML_eval"),
+				type = "RAM",
+				manifestVars = manifests,
+				latentVars = latentVars,
+				mxData(observed = obsCor, type = "cor", numObs = numObs),
+				mxFitFunctionML()
+			),
+			pathList
+		))
+		mxRun(mCor, silent = TRUE)
+	}, error = function(e) NULL)
+}
+
+#' Evaluate catML discrepancy (\eqn{XX_3}) at fixed WLS estimates
+#'
+#' Plugs converged ordinal WLS parameters into the correlation-matrix ML
+#' scaffold from [xmu_catml_eval_model()] and computes
+#' likelihood-ratio components relative to saturated and independence
+#' correlation reference models via [OpenMx::mxRefModels()].
+#'
+#' @details
+#' **Output components:**
+#' \describe{
+#'   \item{\code{fMlTarget}}{Target catML discrepancy \eqn{XX_3} (target minus
+#'     saturated correlation fit). This is the misfit measure entering robust
+#'     CFI, TLI, and RMSEA for ordinal WLS.}
+#'   \item{\code{fMlNull}}{Independence catML discrepancy \eqn{XX_{3,null}}
+#'     (independence minus saturated). Used in robust CFI/TLI denominators.}
+#' }
+#' Degrees of freedom for indices are taken from the WLS model test df in
+#' [xmu_robust_WLS_fit()], not from this function.
+#'
+#' @param model A fitted ordinal WLS [OpenMx::mxModel()].
+#' @return List with \code{fMlTarget}, \code{fMlNull}, \code{dfCatMl},
+#'   \code{dfNull}, or \code{NULL} on failure.
+#' @seealso [xmu_catml_eval_model()],
+#'   [xmu_catml_wls_v()]
+#' @family xmu internal not for end user
+xmu_catml_discrepancy_at_WLS <- function(model) {
+	tryCatch({
+		mML = xmu_catml_eval_model(model)
+		if (is.null(mML) || is.null(mML@output$fit) || !is.finite(mML@output$fit)) {
+			return(NULL)
+		}
+		refs = tryCatch(mxRefModels(mML, run = TRUE), error = function(e) NULL)
+		if (is.null(refs)) {
+			return(NULL)
+		}
+		satName = grep("Saturated", names(refs), value = TRUE)
+		if (length(satName) == 0) {
+			return(NULL)
+		}
+		mSat = refs[[satName[1]]]
+		if (is.null(mSat@output$fit) || !is.finite(mSat@output$fit)) {
+			return(NULL)
+		}
+		fMlTarget = mML@output$fit - mSat@output$fit
+		if (!is.finite(fMlTarget) || fMlTarget < 0) {
+			fMlTarget = 0
+		}
+		fMlNull = NA_real_
+		dfNull = NA_real_
+		indName = grep("Independence", names(refs), value = TRUE)
+		if (length(indName) > 0) {
+			mInd = refs[[indName[1]]]
+			if (!is.null(mInd@output$fit) && is.finite(mInd@output$fit)) {
+				fMlNull = mInd@output$fit - mSat@output$fit
+				if (!is.finite(fMlNull) || fMlNull < 0) {
+					fMlNull = 0
+				}
+			}
+		}
+		list(
+			fMlTarget = fMlTarget,
+			fMlNull = fMlNull,
+			dfCatMl = NA_real_,
+			dfNull = dfNull
+		)
+	}, error = function(e) NULL)
+}
+
+#' Robust WLS fit statistics: Satorra-Bentler (2010) and Savalei (2021)
 #'
 #' @description
-#' Calculates Satorra-Bentler (2010) robust fit indices (CFI, TLI, RMSEA) and scaled
-#' chi-square statistics for Weighted Least Squares (WLS) models. This function
-#' bypasses the OpenMx optimizer for the baseline model, calculating the 
-#' unscaled fit natively in R to prevent validation errors with asymptotic 
-#' covariance matrices (such as those generated in Genomic SEM).
-#' 
-#' @details
-#' The function executes the following mathematical pipeline:
-#' \enumerate{
-#'   \item Extracts raw target \eqn{\chi^2}, degrees of freedom, and the implied Jacobian.
-#'   \item Extracts the Asymptotic Covariance (\eqn{V}) and Weight (\eqn{W}) matrices.
-#'   \item Builds the baseline independence Jacobian using \code{xmu_build_independence_jacobian}.
-#'   \item Calculates the baseline fit natively as \eqn{d_{ind}^T W d_{ind}}, where \eqn{d_{ind}} 
-#'         is the observed summary statistics vector with variances and means explicitly zeroed out.
-#'   \item Computes the Satorra-Bentler scaling factor (\eqn{c}) using the trace matrix formula:
-#'         \deqn{U = V W - V W \Delta (\Delta^T W \Delta)^{-1} \Delta^T W}
-#'   \item Computes scaled \eqn{\chi^2} values: \eqn{\chi^2_{scaled} = \chi^2_{raw} / c}.
-#'   \item Derives robust CFI, TLI, and RMSEA from these scaled values.
-#' }
-#' 
-#' @param model A fitted WLS \code{MxModel}.
-#' 
-#' @return A named list of robust statistics designed to patch directly into 
-#' the \code{umxSummary} output slots. Returns the following elements:
+#' Computes robust fit indices and scaled test statistics for Weighted Least
+#' Squares (WLS / DWLS) models fitted in OpenMx. This is the engine behind
+#' WLS routing in [umxSummary()] and [umxCompare()].
+#'
+#' The function **intentionally uses two statistic families**:
 #' \itemize{
-#'   \item \code{CFI}: Robust Comparative Fit Index
-#'   \item \code{TLI}: Robust Tucker-Lewis Index
-#'   \item \code{RMSEA}: Robust Root Mean Square Error of Approximation
-#'   \item \code{Chi}: Satorra-Bentler scaled target Chi-square
-#'   \item \code{ChiDoF}: Target model degrees of freedom
-#'   \item \code{p}: P-value for the scaled target Chi-square
+#'   \item **Display omnibus test** (\code{Chi}, \code{ChiDoF}, \code{p}): always
+#'         Satorra-Bentler (2010) scaled WLS \eqn{\chi^2}, regardless of whether
+#'         manifests are continuous or ordinal.
+#'   \item **Robust incremental/absolute indices** (\code{CFI}, \code{TLI},
+#'         \code{RMSEA}): Satorra-Bentler (2010) for continuous WLS; Savalei (2021)
+#'         catML mean-and-variance corrections for ordinal/categorical WLS.
 #' }
-#' 
-#' @seealso \code{\link{umxSummary}}, \code{xmu_build_independence_jacobian}
+#'
+#' Independence (null) baseline fit is computed **natively in R** (not via
+#' \code{mxRun}) so that asymptotic-covariance-only inputs (e.g. Genomic SEM /
+#' summary-statistic pipelines) do not trigger OpenMx validation errors.
+#'
+#' @details
+#' **Prerequisites.** The fitted model must expose
+#' \code{model@output$implied_jacobian}, plus WLS \code{asymCov} and
+#' \code{useWeight} (or equivalent) with consistent moment rownames. Without
+#' the Jacobian, the function stops with an error.
+#'
+#' **Shared pipeline (both branches).**
+#' \enumerate{
+#'   \item Extract raw target WLS \eqn{\chi^2_{raw}}, test df, and implied Jacobian
+#'         \eqn{\Delta_{target}}.
+#'   \item Align \eqn{\Delta}, \eqn{\Gamma} (\code{asymCov}), and \eqn{W}
+#'         (\code{useWeight}) to a common moment ordering via
+#'         [xmu_WLS_align_jacobian()] and
+#'         [xmu_WLS_align_weight()].
+#'   \item Build independence Jacobian \eqn{\Delta_{ind}} with
+#'         \code{xmu_build_independence_jacobian()} on the same moment set.
+#'   \item Compute native independence discrepancy
+#'         \eqn{\chi^2_{ind,raw} = d_{ind}' W d_{ind}}, where \eqn{d_{ind}} is
+#'         the observed summary vector with means, variances, and thresholds zeroed
+#'         (independence pattern).
+#'   \item Scale matrices to sample size \eqn{n} for raw-data models.
+#'   \item Compute Satorra-Bentler trace scaling factors
+#'         \deqn{U = \Gamma W - \Gamma W \Delta (\Delta' W \Delta)^{-1} \Delta' W}
+#'         \deqn{c = \mathrm{tr}(U) / df}
+#'         for target (\eqn{c_{model}}) and independence (\eqn{c_{null}}) models.
+#'   \item Form display statistics:
+#'         \eqn{\chi^2_{SB} = \chi^2_{raw} / c_{model}}, with
+#'         \eqn{p = 1 - F_{\chi^2_{df}}(\chi^2_{SB})}.
+#' }
+#'
+#' **Branch A — Continuous WLS** (\code{correction = "SB2010"}).
+#' Detected when no manifest is \code{ordered} or \code{factor} on raw data
+#' ([xmu_is_ordinal_WLS()] returns \code{FALSE}). Robust
+#' \code{CFI}, \code{TLI}, and \code{RMSEA} are derived from SB-scaled target and
+#' independence \eqn{\chi^2} and their dfs. Attributes \code{c_model} and
+#' \code{c_null} hold the SB trace factors.
+#'
+#' **Branch B — Ordinal / categorical WLS** (\code{correction = "Savalei2021"}).
+#' Detected when at least one manifest is \code{ordered} or \code{factor}.
+#' Robust indices use the Brosseau-Liard / Savalei noncentrality form with catML
+#' ingredients evaluated at **fixed** converged WLS estimates (no re-optimization):
+#'
+#' \strong{catML discrepancy \eqn{XX_3}.}
+#' [xmu_catml_discrepancy_at_WLS()] builds a correlation-matrix ML scaffold
+#' ([xmu_catml_eval_model()]), runs reference models, and
+#' returns:
+#' \itemize{
+#'   \item \code{fMlTarget} = \eqn{XX_3} (target minus saturated correlation fit)
+#'   \item \code{fMlNull} = \eqn{XX_{3,null}} (independence minus saturated)
+#' }
+#'
+#' \strong{Savalei scaling \eqn{\hat{c}_3}.}
+#' [xmu_savalei_polycor_blocks()] assembles OpenMx-native polycor blocks:
+#' \describe{
+#'   \item{\eqn{V}}{catML expected information at model-implied correlation
+#'         ([xmu_catml_wls_v()]); not \code{asymCov} and not
+#'         \code{solve(useWeight)}.}
+#'   \item{\eqn{\Gamma_{poly}}}{Sample moment covariance:
+#'         \eqn{n^2 \times} polycor block of per-observation \code{asymCov}.}
+#'   \item{\eqn{W_{poly}}}{WLS weight polycor block at sample scale:
+#'         \eqn{n \times} per-observation \code{useWeight}.}
+#'   \item{\eqn{\Delta_{poly}}}{Polycor rows of aligned \code{implied_jacobian}
+#'         (threshold rows excluded).}
+#'   \item{\eqn{E^{-1}}}{\eqn{(\Delta_{full}' W_{full} \Delta_{full})^{-1}} from the
+#'         identically scaled full weight matrix.}
+#' }
+#' Then [xmu_savalei_scaling_factor()] computes
+#' \deqn{\hat{c}_3 = \frac{\mathrm{tr}(W_i U' V W_i U \, \Gamma_{poly})}{df_3}}
+#' with \eqn{W_i U = I - \Delta_{poly} E^{-1} \Delta_{poly}' W_{poly}}, and
+#' [xmu_savalei_null_scaling_factor()] computes
+#' \eqn{\hat{c}_{3,null} = \mathrm{tr}(\Gamma_{poly}) / df_{3,null}}.
+#'
+#' Degrees of freedom: \eqn{df_3} = WLS model test df; \eqn{df_{3,null}} =
+#' number of polycorrelation moments (\code{length(polyNames)}). Jacobian-rank
+#' shortcuts ([xmu_catml_df3_diagnostic()]) are diagnostic only.
+#'
+#' Robust indices: [xmu_savalei_fit_cfi()], [xmu_savalei_fit_tli()],
+#' [xmu_savalei_fit_rmsea()] with \eqn{XX_3}, \eqn{\hat{c}_3}, \eqn{\hat{c}_{3,null}}.
+#' CFI is clamped to \eqn{[0, 1]}; TLI may slightly exceed 1 with excellent fit.
+#' If Savalei scaling fails, \eqn{\hat{c}_3} falls back to SB \eqn{c_{model}} (and
+#' null analogously).
+#'
+#' **Cutoff guidance.** For ordinal WLS, Hu & Bentler (1999) conventional cutoffs
+#' (e.g. CFI \eqn{\geq} 0.95, RMSEA \eqn{\leq} 0.06) apply to the **robust**
+#' \code{CFI}/\code{TLI}/\code{RMSEA} reported here—not to raw WLS \eqn{\chi^2}.
+#' Display \eqn{\chi^2} and \eqn{p} remain SB-scaled WLS omnibus tests.
+#'
+#' **Software note.** Numeric values of \eqn{\hat{c}_3} may differ from other SEM
+#' packages because Jacobians and parameterizations differ across engines; umx
+#' uses OpenMx \code{implied_jacobian} and native \code{asymCov}/\code{useWeight}
+#' throughout. The goal is statistically correct evaluation under OpenMx, not
+#' bitwise replication of external implementations.
+#'
+#' @param model A fitted WLS [OpenMx::mxModel()] with \code{implied_jacobian}.
+#'
+#' @return A named list designed to patch directly into [umxSummary()] slots:
+#' \describe{
+#'   \item{\code{CFI}, \code{TLI}, \code{RMSEA}}{Robust fit indices (SB2010 or
+#'         Savalei2021 branch).}
+#'   \item{\code{Chi}}{SB-scaled target \eqn{\chi^2} (display omnibus statistic).}
+#'   \item{\code{ChiDoF}}{Target model test degrees of freedom.}
+#'   \item{\code{p}}{Two-sided \eqn{p}-value for \code{Chi} under \eqn{\chi^2_{df}}.}
+#'   \item{\code{scalingFactor}, \code{scalingFactorNull}}{SB trace factors
+#'         \eqn{c_{model}} and \eqn{c_{null}} (always computed).}
+#' }
+#' **Attributes** (read by [umxSummary()] for footnotes):
+#' \describe{
+#'   \item{\code{correction}}{\code{"SB2010"} or \code{"Savalei2021"}.}
+#'   \item{\code{c_model}}{Scaling factor used for robust target noncentrality
+#'         (SB \eqn{c} or Savalei \eqn{\hat{c}_3}).}
+#'   \item{\code{c_null}}{Scaling factor for null/independence noncentrality.}
+#'   \item{\code{fMlTarget}, \code{fMlNull}}{catML \eqn{XX_3} components when
+#'         Savalei branch runs; \code{NA_real_} otherwise.}
+#' }
+#'
+#' @seealso [umxSummary()], [umxCompare()], \code{xmu_build_independence_jacobian},
+#'   [xmu_is_ordinal_WLS()], [xmu_catml_discrepancy_at_WLS()],
+#'   [xmu_savalei_polycor_blocks()]
 #' @family Model Summary and Comparison
-#' @references - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. Psychometrika, 75(2), 243-269.
+#' @references
+#' - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled
+#'   difference chi-square test statistic. *Psychometrika*, **75**(2), 243--269.
+#' - Savalei, V. (2021). Improving fit indices in SEM with categorical data.
+#'   *Multivariate Behavioral Research*, **56**(3), 390--407.
+#' - Brosseau-Liard, P. E., & Savalei, V. (2012). Adjusting incremental fit
+#'   indices for nonnormality. *Multivariate Behavioral Research*, **47**(5), 647--677.
+#' - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance
+#'   structure analysis. *Structural Equation Modeling*, **6**, 1--55.
 #' @export
 
 xmu_robust_WLS_fit <- function(model) {
@@ -643,7 +1400,10 @@ xmu_robust_WLS_fit <- function(model) {
 	
 	
 	rowNames = rownames(asymCov)
-	
+	if (is.null(rowNames)) {
+		stop("Asymptotic covariance matrix missing rownames.")
+	}
+
 	# Calculate K (number of observed variables)
 	manifests = model@manifestVars
 	kVal = length(manifests)
@@ -651,14 +1411,23 @@ xmu_robust_WLS_fit <- function(model) {
 		eVal = nrow(asymCov)
 		kVal = round((-1 + sqrt(1 + 8 * eVal)) / 2)
 	}
-	
-	# Step C: Call xmu_build_independence_jacobian(rowNames, manifests)
+	numCovs = (kVal * (kVal + 1)) / 2
+
+	targetAlign = xmu_WLS_align_jacobian(jacTarget, asymCov, numCovs)
+	jacTargetAligned = targetAlign$jac
+	commonNames = targetAlign$commonNames
+
+	# Step C: Independence Jacobian on full moments, then subset to aligned set
 	jacInd = xmu_build_independence_jacobian(rowNames, manifests)
-	
-	# Step D: Calculate Independence df
-	dfInd = nrow(asymCov) - ncol(jacInd)
-	
-	# Step E/F: Native R baseline WLS fit calculation
+	jacIndAligned = jacInd[commonNames, , drop = FALSE]
+
+	asymCovAligned = asymCov[commonNames, commonNames, drop = FALSE]
+	weightMatAligned = xmu_WLS_align_weight(weightMat, commonNames, rowNames)
+
+	# Step D: Independence df on the aligned moment set
+	dfInd = length(commonNames) - ncol(jacIndAligned)
+
+	# Step E/F: Native R baseline WLS fit calculation (aligned moments)
 	# Extract observed covariance matrix and means (if any)
 	obsCov = NULL
 	obsMeans = NULL
@@ -705,10 +1474,9 @@ xmu_robust_WLS_fit <- function(model) {
 	}
 	obsCov = obsCov[manifests, manifests, drop = FALSE]
 	
-	sVec = rep(0, nrow(asymCov))
-	rowNames = rownames(asymCov)
-	for (i in 1:length(rowNames)) {
-		name = rowNames[i]
+	sVec = rep(0, length(commonNames))
+	for (i in seq_along(commonNames)) {
+		name = commonNames[i]
 		if (grepl("^mean_", name)) {
 			varName = sub("^mean_", "", name)
 			sVec[i] = obsMeans[varName]
@@ -737,8 +1505,8 @@ xmu_robust_WLS_fit <- function(model) {
 	}
 	
 	dInd = sVec
-	for (i in 1:length(rowNames)) {
-		name = rowNames[i]
+	for (i in seq_along(commonNames)) {
+		name = commonNames[i]
 		isMean = grepl("^mean_", name) || grepl("^one_to_", name) || (name %in% manifests)
 		isThresh = grepl("t[0-9]+$", name)
 		isVar = FALSE
@@ -756,87 +1524,13 @@ xmu_robust_WLS_fit <- function(model) {
 		}
 	}
 	
-	chisqIndRaw = as.numeric(t(dInd) %*% weightMat %*% dInd)
-	
-	# Align Jacobians
-	numManifests = length(model@manifestVars)
-	numCovs = (numManifests * (numManifests + 1)) / 2
-	
-	alignJacobian <- function(jacMat, asymCovMat, numCovsVal) {
-		if (nrow(jacMat) == nrow(asymCovMat)) {
-			alignedJac = jacMat
-			if (is.null(rownames(alignedJac))) {
-				rownames(alignedJac) = rownames(asymCovMat)
-			}
-			return(alignedJac)
-		}
-		numMeans = nrow(jacMat) - numCovsVal
-		if (numMeans > 0) {
-			meanIdx = (numCovsVal + 1):nrow(jacMat)
-			covIdx = 1:numCovsVal
-			alignedJac = jacMat[c(meanIdx, covIdx), , drop = FALSE]
-		} else {
-			alignedJac = jacMat
-		}
-		rownames(alignedJac) = rownames(asymCovMat)
-		return(alignedJac)
-	}
-	
-	# Subsetting and Alignment based on row names
-	rowNames = rownames(asymCov)
-	if (is.null(rownames(jacTarget))) {
-		if (nrow(jacTarget) == length(rowNames)) {
-			rownames(jacTarget) = rowNames
-		} else {
-			# Try to identify covariance-only Jacobian
-			covNames = rowNames[!grepl("^mean_", rowNames) & !grepl("^one_to_", rowNames) & !grepl("t[0-9]+$", rowNames)]
-			if (nrow(jacTarget) == length(covNames)) {
-				rownames(jacTarget) = covNames
-			} else {
-				# Fallback: assign as many names from rowNames as possible
-				rownames(jacTarget) = rowNames[1:nrow(jacTarget)]
-			}
-		}
-	}
-	
-	if (is.null(rownames(jacInd))) {
-		rownames(jacInd) = rowNames
-	}
+	chisqIndRaw = as.numeric(t(dInd) %*% weightMatAligned %*% dInd)
 
-	commonNames = intersect(rownames(jacTarget), rowNames)
-	if (length(commonNames) == 0) {
-		stop("No common row names found between implied_jacobian and asymptotic covariance matrix.")
-	}
+	polyNames = xmu_WLS_polycor_names(commonNames)
+	asymCovAlignedPerObs = asymCovAligned
+	weightMatAlignedPerObs = weightMatAligned
 
-	jacTargetAligned = jacTarget[commonNames, , drop = FALSE]
-	asymCovAligned = asymCov[commonNames, commonNames, drop = FALSE]
-
-	weightMatAligned = weightMat
-	if (is.matrix(weightMatAligned)) {
-		weightMatAligned = weightMatAligned[commonNames, commonNames, drop = FALSE]
-	} else if (is.vector(weightMatAligned)) {
-		names(weightMatAligned) = rowNames
-		weightMatAligned = weightMatAligned[commonNames]
-		weightMatAligned = diag(weightMatAligned)
-	}
-
-	jacIndAligned = jacInd[commonNames, , drop = FALSE]
-
-	# Helper to invert matrix robustly
-	invertMatrix <- function(x) {
-		inv = tryCatch({
-			chol2inv(chol(x))
-		}, error = function(e) {
-			tryCatch({
-				MASS::ginv(x)
-			}, error = function(e2) {
-				solve(x)
-			})
-		})
-		return(inv)
-	}
-
-	# Scale WLS matrices back to order 1 if raw data is used
+	# Scale WLS matrices to sample size for raw-data models
 	nVal = model$data$numObs
 	if (is.null(nVal) || is.na(nVal)) {
 		nVal = 1000
@@ -853,7 +1547,7 @@ xmu_robust_WLS_fit <- function(model) {
 			return(NA_real_)
 		}
 		info     = t(jacMat) %*% weightMatVal %*% jacMat
-		infoInv  = invertMatrix(info)
+		infoInv  = xmu_invert_matrix(info)
 		vw       = asymCovMat %*% weightMatVal
 		vwDelta  = vw %*% jacMat
 		uMat     = vw - vwDelta %*% infoInv %*% t(jacMat) %*% weightMatVal
@@ -867,36 +1561,124 @@ xmu_robust_WLS_fit <- function(model) {
 	
 	chisqTargetScaled = chisqTargetRaw / cTarget
 	chisqIndScaled    = chisqIndRaw / cInd
-	
-	# Robust CFI
-	cfiNum    = max(chisqTargetScaled - dfTarget, 0)
-	cfiDenom  = max(chisqIndScaled - dfInd, cfiNum, 0.0001)
-	cfiRobust = 1 - (cfiNum / cfiDenom)
-	
-	# Robust TLI
-	tliNum   = (chisqTargetScaled - dfTarget) / dfTarget
-	tliDenom = (chisqIndScaled - dfInd) / dfInd
-	if (abs(tliDenom) < 1e-5) {
-		tliRobust = NA_real_
-	} else {
-		tliRobust = 1 - (tliNum / tliDenom)
+
+	cfiRobust = NA_real_
+	tliRobust = NA_real_
+	rmseaRobust = NA_real_
+	correctionMethod = "SB2010"
+	fMlTarget = NA_real_
+	fMlNull = NA_real_
+	cHatSavalei = NA_real_
+	cHatNullSavalei = NA_real_
+
+	if (xmu_is_ordinal_WLS(model)) {
+		catMl = xmu_catml_discrepancy_at_WLS(model)
+		if (!is.null(catMl) && is.finite(catMl$fMlTarget)) {
+			correctionMethod = "Savalei2021"
+			fMlTarget = catMl$fMlTarget
+			fMlNull = catMl$fMlNull
+			dfCatMl = dfTarget
+			dfNullCatMl = length(polyNames)
+			dfRmsea = dfTarget
+			vCatMlPoly = NULL
+
+			savaleiBlocks = xmu_savalei_polycor_blocks(
+				asymCovAlignedPerObs = asymCovAlignedPerObs,
+				weightMatAlignedPerObs = weightMatAlignedPerObs,
+				jacTargetAligned = jacTargetAligned,
+				polyNames = polyNames,
+				nVal = if (identical(model$data$type, "raw")) nVal else 1
+			)
+			if (!is.null(savaleiBlocks)) {
+				impliedCor = xmu_catml_implied_correlation(model)
+				if (!is.null(impliedCor)) {
+					vCatMlPoly = xmu_catml_wls_v(impliedCor)
+				}
+				if (!is.null(vCatMlPoly) && nrow(vCatMlPoly) == length(polyNames)) {
+					cHatSavalei = xmu_savalei_scaling_factor(
+						jacFull = jacTargetAligned,
+						jacPoly = savaleiBlocks$jacPoly,
+						vCatMlPoly = vCatMlPoly,
+						gammaPoly = savaleiBlocks$gammaPoly,
+						wPolyWiU = savaleiBlocks$wPolyWiU,
+						wFullScaled = weightMatAligned,
+						dfCatMl = dfCatMl
+					)
+					cHatNullSavalei = xmu_savalei_null_scaling_factor(savaleiBlocks$gammaPoly, dfNullCatMl)
+				}
+			}
+
+			if (is.na(cHatSavalei) || !is.finite(cHatSavalei) || cHatSavalei <= 0) {
+				cHatSavalei = cTarget
+			}
+			if (is.na(cHatNullSavalei) || !is.finite(cHatNullSavalei) || cHatNullSavalei <= 0) {
+				cHatNullSavalei = cInd
+			}
+
+			xx3Null = if (is.finite(fMlNull)) fMlNull else chisqIndRaw
+			cfiRobust = xmu_savalei_fit_cfi(
+				x2 = fMlTarget, df = dfCatMl, x2Null = xx3Null, dfNull = dfNullCatMl,
+				cHat = cHatSavalei, cHatNull = cHatNullSavalei
+			)
+			tliRobust = xmu_savalei_fit_tli(
+				x2 = fMlTarget, df = dfCatMl, x2Null = xx3Null, dfNull = dfNullCatMl,
+				cHat = cHatSavalei, cHatNull = cHatNullSavalei
+			)
+			rmseaRobust = xmu_savalei_fit_rmsea(
+				x2 = fMlTarget, df = dfRmsea, nVal = nVal, cHat = cHatSavalei
+			)
+			if (!is.na(cfiRobust)) {
+				cfiRobust = max(0, min(1, cfiRobust))
+			}
+		}
 	}
-	
-	# Robust RMSEA
-	nVal = model$data$numObs
-	if (is.null(nVal) || is.na(nVal)) {
-		nVal = 1000
+
+	if (!identical(correctionMethod, "Savalei2021")) {
+		cfiNum    = max(chisqTargetScaled - dfTarget, 0)
+		cfiDenom  = max(chisqIndScaled - dfInd, cfiNum, 0.0001)
+		cfiRobust = 1 - (cfiNum / cfiDenom)
+
+		tliNum   = (chisqTargetScaled - dfTarget) / dfTarget
+		tliDenom = (chisqIndScaled - dfInd) / dfInd
+		if (abs(tliDenom) < 1e-5) {
+			tliRobust = NA_real_
+		} else {
+			tliRobust = 1 - (tliNum / tliDenom)
+		}
+
+		nVal = model$data$numObs
+		if (is.null(nVal) || is.na(nVal)) {
+			nVal = 1000
+		}
+		rmseaRobust = sqrt(max(chisqTargetScaled - dfTarget, 0) / (dfTarget * nVal))
 	}
-	rmseaRobust = sqrt(max(chisqTargetScaled - dfTarget, 0) / (dfTarget * nVal))
-	
-	return(list(
-	    CFI    = cfiRobust, 
-	    TLI    = tliRobust, 
-	    RMSEA  = rmseaRobust,
-	    Chi    = chisqTargetScaled,
-	    ChiDoF = dfTarget,
-	    p      = pchisq(chisqTargetScaled, dfTarget, lower.tail = FALSE)
-	))
+
+	res = list(
+		scalingFactor = cTarget,
+		scalingFactorNull = cInd,
+		CFI    = cfiRobust,
+		TLI    = tliRobust,
+		RMSEA  = rmseaRobust,
+		Chi    = chisqTargetScaled,
+		ChiDoF = dfTarget,
+		p      = pchisq(chisqTargetScaled, dfTarget, lower.tail = FALSE)
+	)
+	cModelAttr = cTarget
+	cNullAttr = cInd
+	if (identical(correctionMethod, "Savalei2021")) {
+		if (is.finite(cHatSavalei) && cHatSavalei > 0) {
+			cModelAttr = cHatSavalei
+		}
+		if (is.finite(cHatNullSavalei) && cHatNullSavalei > 0) {
+			cNullAttr = cHatNullSavalei
+		}
+	}
+	attr(res, "c_model") = cModelAttr
+	attr(res, "c_null") = cNullAttr
+	attr(res, "fMlTarget") = fMlTarget
+	attr(res, "fMlNull") = fMlNull
+	attr(res, "correction") = correctionMethod
+	return(res)
 }
 
 

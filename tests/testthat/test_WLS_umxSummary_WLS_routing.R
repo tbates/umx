@@ -254,8 +254,14 @@ test_that("xmu_robust_WLS_fit boundary and error handling works", {
 
   jacInd = xmu_build_independence_jacobian(rowNames, manifests)
   rownames(jacInd) = rownames(asymCov)
+  dfInd = nrow(asymCov) - ncol(jacInd)
+  nVal = mInd$data$numObs
+  weightForTrace = weightMat
+  if (is.null(rownames(weightForTrace)) && nrow(weightForTrace) == length(rowNames)) {
+    dimnames(weightForTrace) = list(rowNames, rowNames)
+  }
 
-  cIndOrig = getScalingFactor(jacInd, asymCov, weightMat, 1)
+  cIndOrig = getScalingFactor(jacInd, nVal * asymCov, nVal * weightForTrace, dfInd)
 
   scaleFactor = chisqIndRaw / cIndOrig
 
