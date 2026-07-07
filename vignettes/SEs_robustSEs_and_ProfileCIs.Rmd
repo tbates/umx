@@ -1,6 +1,6 @@
 ---
-title: "Confidence Intervals and Standard Errors in SEM"
-subtitle: "Standard Errors, Robust SEs, and Profile Likelihood CIs in umx"
+title: "Uncertainty in SEM"
+subtitle: "Standard Errors, Robust SEs (Maximum Likelihood Robust) and and Profile Likelihood CIs in umx"
 author: "Timothy C. Bates"
 date: "`r Sys.Date()`"
 output: 
@@ -25,15 +25,14 @@ library(OpenMx)
 
 ## Introduction
 
-Fitting a Structural Equation Model (SEM) yields **point estimates** (e.g., a path coefficient of $0.45$ or a variance component of $0.21$). However, scientific inference requires representing the **uncertainty** of these estimates. 
+Fitting a Structural Equation Model (SEM) yields **point estimates** (e.g., a path coefficient of $0.45$ or a variance component of $0.21$). However, scientific inference requires representing the **uncertainty** of these estimates. Moreover, we are interested in the fit of the model itself to the data.
 
-`umx` (and `OpenMx` underneath) provides three primary ways to assess uncertainty:
+`umx` (+ `OpenMx`) provides three primary ways to assess uncertainty:
 1. **Standard Maximum Likelihood Standard Errors** (Wald-based).
 2. **Robust Standard Errors** (Huber-White / "Sandwich" estimator).
 3. **Profile Likelihood Confidence Intervals** (likelihood-based).
 
 This vignette explains the differences between these methods, when to use each, and how to implement them in your `umx` workflow.
-
 
 ---
 
@@ -71,7 +70,9 @@ Standard Maximum Likelihood standard errors are derived from the local curvature
 * **When to use:** When the data are multivariate normal, the model is correctly specified, and the sample size is large.
 
 ### Robust Standard Errors (Sandwich Estimator)
-When data are non-normal, standard ML standard errors are typically underestimated, leading to inflated Type-I error rates. **Robust standard errors** (also called Huber-White or "sandwich" SEs) correct for this.
+When data are non-normal, standard ML standard errors are typically underestimated, leading to inflated Type-I error rates. 
+**Robust standard errors** (also called Huber-White or "sandwich" SEs) correct for this.
+
 The robust covariance matrix is calculated as:
 $$\text{Cov}_{\text{robust}} = H^{-1} B H^{-1}$$
 * **$H$ (The "Bread"):** The standard Hessian matrix (curvature of the likelihood surface).
@@ -79,7 +80,7 @@ $$\text{Cov}_{\text{robust}} = H^{-1} B H^{-1}$$
 
 #### When to prefer Robust SEs:
 * Mild-to-moderate violation of multivariate normality.
-* Minor model misspecifications.
+* Minor model miss-specifications.
 * Clustered or nested data (if using a cluster-robust correction).
 
 #### Limitations:
@@ -101,11 +102,8 @@ We fit a simple one-factor model using `umxRAM()`. By default, `umxSummary()` re
 # Load data
 data(demoOneFactor)
 manifests = names(demoOneFactor)
-```
 
 # Fit model
-
-```{r ram, message=FALSE}
 m1 = umxRAM("One_Factor_Model", data = demoOneFactor, 
 	umxPath("g", to = manifests),
 	umxPath(v.m. = manifests),
@@ -119,7 +117,7 @@ umxSummary(m1, std = TRUE, uncertainty = "SE")
 ```
 
 ### Step 2: Request Robust Standard Errors
-To obtain robust standard errors, we can use uncertainty = "RobustSE".
+To obtain robust standard errors, we can use `uncertainty = "RobustSE"`.
 
 # Compute robust standard errors
 

@@ -146,13 +146,13 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	SE = (uncertainty %in% c("SE", "RobustSE", "CI")) && !is.null(model$output$vcov)
 
 	reportedWLS = FALSE
-	message("?umxSummary options: std=T|F', digits=, report= 'html', filter= 'NS' & more")
+	message("?umxSummary options: std=T|F', digits=, report= 'html', uncertainty = \"RobustSE\", filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
 	if( filter != "ALL" & is.null(std) ) {
 		std = FALSE
 	}else if(!is.null(std)){
-		 if(SE == FALSE){
+		 if(SE == FALSE && !is.null(model$output$vcov)){
 			 # message("SE must be TRUE to show std, overriding to set SE = TRUE")
 			 SE = TRUE
 		 }

@@ -763,8 +763,33 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 		if(!umx_has_CIs(object, "intervals")) {
 			message("Polite note: This model has no CIs yet. Perhaps you wanted to use parm = 'all' to request CIs on all free parameters? Or list some path labels?")
 		}else{
+			# Helper to recursively restore vcov, standardErrors, and hessian from original model
+			restore_slots <- function(target, source) {
+				if (is.null(target@output$vcov) && !is.null(source@output$vcov)) {
+					target@output$vcov = source@output$vcov
+				}
+				if (is.null(target@output$standardErrors) && !is.null(source@output$standardErrors)) {
+					target@output$standardErrors = source@output$standardErrors
+				}
+				if (is.null(target@output$hessian) && !is.null(source@output$hessian)) {
+					target@output$hessian = source@output$hessian
+				}
+				if (length(target$submodels) > 0) {
+					for (subName in names(target$submodels)) {
+						if (subName %in% names(source$submodels)) {
+							target$submodels[[subName]] = restore_slots(target$submodels[[subName]], source$submodels[[subName]])
+						}
+					}
+				}
+				return(target)
+			}
+			
+			origObject = object
+			
 			# object = mxRun(object, intervals = TRUE)
 			object = omxRunCI(object, optimizer = optimizer)
+			
+			object = restore_slots(object, origObject)
 		}
 	}
 	# 4. Report CIs
