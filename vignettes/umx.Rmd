@@ -49,29 +49,24 @@ Because `umx` imports `OpenMx`, the data is easy to load:
 data("HS.ability.data")
 
 # Define the manifest (observed) variables
-manifests = paste0("x", 1:9)
-
+manifests = c("visual","cubes","flags","paragrap","sentence","wordm","addition","counting","straight")
 # Quick look at the correlations
-round(cor(HolzingerSwineford1939[, manifests]), 2)
+umx_cor(HS.ability.data[, manifests])
 ```
 ## Build a one-factor model with `umxRAM()`
 
 `umxRAM()` lets you describe models using simple `umxPath()` statements. Any variable name not in the data is treated as a latent variable.
 
-Here we build a model in which a single latent factor `G` (general ability) accounts for the covariances among x1 to x9.
+Here we build a model in which a single latent factor `g` (general ability) accounts for the covariances among the manifests.
 
 ```{r build-model, results = "hide", message = FALSE}
-m1 <- umxRAM("Holzinger_1f", 
-  data = HolzingerSwineford1939,
-  
+m1 = umxRAM("Holzinger_one_factor", data = HS.ability.data,
   # Factor loadings (G predicts each x)
-  umxPath("G", to = manifests),
-  
-  # Residual variances for the observed variables
-  umxPath(var = manifests),
-  
+  umxPath("g", to = manifests),
+  # Residual means and variances for the observed variables
+  umxPath(v.m. = manifests),
   # Fix the latent factor variance to 1 (for identification)
-  umxPath(var = "G", fixedAt = 1)
+  umxPath(v1m0 = "g")
 )
 ```
 
@@ -84,7 +79,7 @@ That's it — `umxRAM()` automatically:
 
 ## View results with `umxSummary()`
 
-`umxSummary()` gives clean, publication-ready output.
+`umxSummary()` gives clean, output. tip: report="html" gives a publication-ready table.
 
 ```{r summary-basic}
 umxSummary(m1)
@@ -92,7 +87,7 @@ umxSummary(m1)
 
 ### Standardized solution
 
-Add `std = TRUE` to see standardized estimates (very useful for interpretation):
+Add `std = TRUE` to see standardized estimates (useful for interpretation):
 
 ```{r summary-std}
 umxSummary(m1, std = TRUE)
@@ -111,22 +106,29 @@ The output includes:
 `umxRAM()` also accepts lavaan model syntax directly:
 
 ```{r lavaan-string, results = "hide", message = FALSE}
-m2 <- umxRAM("G =~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9", 
-             data = HolzingerSwineford1939)
+m2 <- umxRAM("g =~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9", 
+             data = HS.ability.data)
 ```
 
 ```{r lavaan-summary}
 umxSummary(m2, std = TRUE)
 ```
 
-This is handy when you already have a lavaan model string.
+This is handy when you have a lavaan model string from elsewhere.
 
 ## Plotting the model
 
-`umxRAM()` automatically plots the model when you run it interactively. You can also plot manually:
+You can plot the model manually:
 
 ```{r plot, fig.cap="Standardized one-factor Holzinger model"}
-plot(m1, std = TRUE)
+plot(m1, std = TRUE, means=FALSE)
+```
+
+We can also get robust measures of fit and uncertainty using uncertainty = "RobustSE". 
+These use sandwich-based scaling + Brosseau-Liard & Savalei (2012) adjustments to CFI/TLI/RMSEA
+
+```{r uncertainty}
+umxSummary(m1, std = TRUE, uncertainty = "RobustSE")
 ```
 
 ## Next steps
