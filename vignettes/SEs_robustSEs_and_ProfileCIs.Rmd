@@ -4,8 +4,13 @@ subtitle: "Standard Errors, Robust SEs (Maximum Likelihood Robust) and and Profi
 author: "Timothy C. Bates"
 date: "`r Sys.Date()`"
 output: 
-  rmarkdown::html_vignette:
-    toc: true
+	rmarkdown::html_vignette:
+	theme: darkly          # or flatly, slate, etc. (Bootswatch themes)
+	highlight: zenburn     # or breezedark, tango, pygments, kate, espresso, etc.
+	toc: true
+	toc_float: true
+	code_folding: hide     # optional nice-to-have
+	# css: custom.css        # optional, for further tweaks
 vignette: >
   %\VignetteIndexEntry{Confidence Intervals and Standard Errors in SEM}
   %\VignetteEngine{knitr::rmarkdown}

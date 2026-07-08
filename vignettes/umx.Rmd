@@ -4,13 +4,18 @@ subtitle: "Your first structural equation model using umxRAM() and umxSummary()"
 author: "Timothy C. Bates"
 date: "`r Sys.Date()`"
 output: 
-  rmarkdown::html_vignette:
-    toc: true
+	rmarkdown::html_vignette:
+	theme: darkly          # or flatly, slate, etc. (Bootswatch themes)
+	highlight: zenburn     # or breezedark, tango, pygments, kate, espresso, etc.
+	code_folding: hide     # optional nice-to-have
+	toc: true
+	toc_float: true
 vignette: >
   %\VignetteIndexEntry{Getting Started with umx}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
@@ -22,9 +27,10 @@ knitr::opts_chunk$set(
 library(umx)
 ```
 
+
 ## Introduction
 
-`umx` is a package that makes building, running, and reporting Structural Equation Models (SEM) fast and readable in R.
+`umx` is a package that makes building, running, and reporting Structural Equation Models (SEM) fast, efficient, and readable in R.
 
 This vignette shows a new user how to:
 
@@ -36,19 +42,18 @@ This vignette shows a new user how to:
 
 This well-known dataset contains scores on nine cognitive tests for 301 school children. The variables `x1` to `x9` measure different aspects of cognitive ability.
 
-Because `umx` imports `lavaan`, the data is easy to load:
+Because `umx` imports `OpenMx`, the data is easy to load:
 
 ```{r load-data}
-# Load the classic Holzinger & Swineford data (x1:x9)
-data("HolzingerSwineford1939", package = "lavaan")
+# Load the classic Holzinger Swineford 1939 data (x1:x9)
+data("HS.ability.data")
 
 # Define the manifest (observed) variables
-manifests <- paste0("x", 1:9)
+manifests = paste0("x", 1:9)
 
 # Quick look at the correlations
 round(cor(HolzingerSwineford1939[, manifests]), 2)
 ```
-
 ## Build a one-factor model with `umxRAM()`
 
 `umxRAM()` lets you describe models using simple `umxPath()` statements. Any variable name not in the data is treated as a latent variable.
