@@ -26,7 +26,7 @@ matrix from the catML evaluation scaffold (correlation-matrix ML at fixed
 WLS estimates). Algebraically,
 \deqn{V = \tfrac{1}{2} D' (\Sigma^{-1} \otimes \Sigma^{-1}) D}
 where \eqn{D} is the duplication map from unique correlation elements to
-\code{vec}(\Sigma) and \eqn{\Sigma} is the implied correlation matrix.
+\eqn{\mathrm{vec}(\Sigma)} and \eqn{\Sigma} is the implied correlation matrix.
 }
 \seealso{
 Other xmu internal not for end user:

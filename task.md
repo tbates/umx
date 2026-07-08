@@ -1,8 +1,0 @@
-- [x] Fix invalid nested code chunks in `vignettes/SEs_robustSEs_and_ProfileCIs.Rmd`
-- [x] Fix capitalized R static block and umxConfint multiple parameter crash in `vignettes/SEs_robustSEs_and_ProfileCIs.Rmd`
-- [x] Remove deprecated `showEstimates` from `vignettes/WLS_in_umx.Rmd`
-- [x] Document missing arguments (`pt`, `std`, `uncertainty`, `cis`) in `xmu_dot_make_paths` and `xmu_dot_make_residuals` in `R/xmu.R`
-- [x] Fix missing `update` in `umxModify` call in `tests/testthat/test_WLS_lavaan.R`
-- [x] Fix message capturing, regex text, and `xmu_build_independence_jacobian` arguments in `tests/testthat/test_WLS_umxSummary_WLS_routing.R`
-- [x] Verify both vignettes render successfully
-- [x] Verify all tests pass cleanly

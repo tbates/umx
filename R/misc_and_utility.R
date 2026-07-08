@@ -3234,7 +3234,7 @@ umx_make <- function(
 		devtools::install(pkg = pkgPath, build_vignettes = FALSE)
 		devtools::load_all(path = pkgPath)
 	} else if (what == "vignettes"){
-		devtools::check(pkg = pkgPath, vignettes = TRUE)
+		devtools::install(pkg = pkgPath, build_vignettes = TRUE)
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkgPath, vignettes = FALSE, use_wordlist = TRUE)
 	} else if (what == "sitrep"){

@@ -1,0 +1,182 @@
+---
+title: "Modification Indices in umx"
+subtitle: "Exploring model improvement suggestions with umxMI()"
+author: "Timothy C. Bates"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Modification Indices in umx}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.height = 5
+)
+library(umx)
+library(OpenMx)
+```
+
+## Introduction
+
+**Modification indices** (MIs) flag single parameters whose addition or removal would most improve model fit (if freed and the model re-estimated). They are useful for exploring *where* a misspecified model struggles, but they are **not** a substitute for theory-driven model comparison.
+
+`umxMI()` wraps [OpenMx::mxMI()](https://openmx.ssri.psu.edu/) and prints the largest indices (by default those above $\chi^2_1(0.01) = 6.63$). Use `full = FALSE` for a fast screen (only the tested parameter moves); `full = TRUE` is slower but allows all parameters to adjust.
+
+```{r note, echo = FALSE}
+# Post-hoc MI fishing is poor practice; use competing substantive models when you can.
+```
+
+This vignette walks through the classic Holzinger & Swineford (1939) data ([`HS.ability.data`](https://openmx.ssri.psu.edu/reference/HS.ability.data)), building increasingly adequate models and checking what `umxMI()` suggests at each step.
+
+## Data
+
+The nine tests we use are the standard teaching subset of `HS.ability.data`:
+
+```{r data-setup}
+data("HS.ability.data", package = "OpenMx")
+
+manifests = c("visual", "cubes", "flags", "paragrap", "sentence", "wordm",
+  "addition", "counting", "straight")
+
+visualItems = c("visual", "cubes", "flags")
+verbalItems = c("paragrap", "sentence", "wordm")
+speedItems  = c("addition", "counting", "straight")
+
+# Scale for stable optimization (recommended for this dataset in umx)
+df = umx_scale(HS.ability.data)
+```
+
+## One-factor model
+
+We begin with a single general factor `g` loading on all nine tests.
+
+```{r one-factor, results = "hide", message = FALSE}
+m1 = umxRAM("Holzinger_1f", data = df,
+  umxPath("g", to = manifests),
+  umxPath(v.m. = manifests),
+  umxPath(v1m0 = "g")
+)
+```
+
+```{r one-factor-summary}
+umxSummary(m1)
+```
+
+Fit is poor (as expected for a single factor on these data). What does `umxMI()` suggest?
+
+```{r one-factor-mi}
+umxMI(m1, full = FALSE)
+```
+
+Large indices often point to **within-domain residual covariances** (e.g. `flags_with_visual`) or **cross-domain loadings** that a single factor cannot represent. That pattern hints at multiple abilities rather than one `g`.
+
+## Three-factor model
+
+Holzinger and Swineford's data are usually modeled with three correlated abilities. We use the conventional lavaan names `spatial`, `verbal`, and `speed` for the visual, verbal, and speed domains (latent names must differ from manifest names such as `visual`).
+
+```{r three-factor, results = "hide", message = FALSE}
+model3f = "
+  spatial =~ visual + cubes + flags
+  verbal  =~ paragrap + sentence + wordm
+  speed   =~ addition + counting + straight
+"
+m3 = umxRAM(model3f, data = df, name = "Holzinger_3f")
+```
+
+```{r three-factor-summary}
+umxSummary(m3)
+```
+
+```{r three-factor-compare}
+umxCompare(m3, m1)
+```
+
+The three-factor model fits substantially better than the one-factor model. Remaining MI suggestions are smaller but still highlight residual associations not yet in the model:
+
+```{r three-factor-mi}
+umxMI(m3, full = FALSE)
+```
+
+## Bifactor model
+
+A bifactor model adds a general factor `g` alongside orthogonal specific factors. Here `g` loads on all measures; `spatial`, `verbal`, and `speed` load only on their domain items and are uncorrelated with each other and with `g`.
+
+```{r bifactor, results = "hide", message = FALSE}
+modelBifactor = "
+  g =~ visual + cubes + flags + paragrap + sentence + wordm + addition + counting + straight
+  spatial =~ visual + cubes + flags
+  verbal  =~ paragrap + sentence + wordm
+  speed   =~ addition + counting + straight
+  spatial ~~ 0*verbal + 0*speed + 0*g
+  verbal  ~~ 0*speed + 0*g
+  speed   ~~ 0*g
+"
+mBio = umxRAM(modelBifactor, data = df, name = "Holzinger_bifactor")
+```
+
+```{r bifactor-summary}
+umxSummary(mBio)
+```
+
+```{r bifactor-compare}
+umxCompare(mBio, m3)
+```
+
+```{r bifactor-mi}
+umxMI(mBio, full = FALSE)
+```
+
+For this bifactor solution, few (if any) indices exceed the 1% $\chi^2$ threshold — the model is already doing a good job, and remaining suggestions are minor.
+
+## Multi-group bifactor (sex differences)
+
+Finally, we fit the bifactor model separately by sex using the `Gender` column in `HS.ability.data` (`Female` / `Male`).
+
+```{r multi-group-fit, results = "hide", message = FALSE}
+mMG = umxRAM(modelBifactor, data = df, name = "Holzinger_bifactor_MG", group = "Gender")
+```
+
+```{r multi-group-summary}
+umxSummary(mMG)
+```
+
+Multi-group modification indices require **recent OpenMx** support inside `mxMI()`. Older releases errored on multi-group models. The chunk below is wrapped so the vignette still builds on CRAN if your installed OpenMx predates that support:
+
+```{r multi-group-mi, error = TRUE}
+mgMi = tryCatch(
+  umxMI(mMG, full = FALSE),
+  error = function(e) {
+    message(
+      "Multi-group umxMI() is not available with this OpenMx build.\n",
+      "Error was: ", conditionMessage(e), "\n",
+      "Install a current OpenMx release when available."
+    )
+    NULL
+  }
+)
+mgMi
+```
+
+When it runs successfully, parameter labels include group suffixes (e.g. `_Female`), highlighting paths whose addition or release might improve fit **in one sex** or **differentially** across groups.
+
+## Summary
+
+| Model | Role | Typical `umxMI()` story |
+|-------|------|-------------------------|
+| One-factor | Baseline | Large cross-domain / within-domain suggestions |
+| Three-factor | Substantive CFA | Better fit; smaller residual suggestions |
+| Bifactor | General + specific | Often few large indices when well specified |
+| Multi-group bifactor | Sex differences | Group-specific suggestions (needs current OpenMx) |
+
+**Take-home:** Use `umxMI()` to diagnose *where* a model misfits; prefer `umxCompare()` on **theory-driven** competing models for inference.
+
+## References
+
+Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. *Supplementary Educational Monographs*, 48. University of Chicago Press.

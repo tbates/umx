@@ -19,16 +19,16 @@ Computes Satorra-Bentler (1994) robust scaling corrections and Brosseau-Liard & 
 robust fit indices (CFI, TLI, RMSEA) for Maximum Likelihood models with raw continuous complete or incomplete (FIML) data.
 }
 \details{
-The robust scaling correction factor $c$ is computed using the difference between the trace of the saturated model
+The robust scaling correction factor \eqn{c} is computed using the difference between the trace of the saturated model
 and the trace of the fitted model, scaled by the degrees of freedom:
-[c = \frac{\text{tr}(J_{\text{saturated}}^{-1} B_{\text{saturated}}) - \text{tr}(J_{\text{model}}^{-1} B_{\text{model}})}{d}]
-where $J = H/2$ is the observed information matrix (reconciled from the Hessian $H$ of $-2\ln L$) and $B = G^T G$ is the
-outer product of the individual log-likelihood row gradients. Because OpenMx optimizes $-2\ln L$ and $G$ contains the row gradients
-of $-2\ln L_i$ (which is $2$ times the score $s_i$), the matrix product $(H/2)^{-1} B$ scales to $4 J^{-1} K$. Thus, dividing by
-$4 \times d$ scales the difference of these traces back to the Satorra-Bentler / Yuan-Bentler expectation scale.
+\deqn{c = \frac{\mathrm{tr}(J_{\mathrm{saturated}}^{-1} B_{\mathrm{saturated}}) - \mathrm{tr}(J_{\mathrm{model}}^{-1} B_{\mathrm{model}})}{d}}{c = (tr(J_saturated^-1 B_saturated) - tr(J_model^-1 B_model)) / d}
+where \eqn{J = H/2} is the observed information matrix (reconciled from the Hessian \eqn{H} of \eqn{-2\ln L}) and \eqn{B = G^T G} is the
+outer product of the individual log-likelihood row gradients. Because OpenMx optimizes \eqn{-2\ln L} and \eqn{G} contains the row gradients
+of \eqn{-2\ln L_i} (which is 2 times the score \eqn{s_i}), the matrix product \eqn{(H/2)^{-1} B} scales to \eqn{4 J^{-1} K}. Thus, dividing by
+\eqn{4 \times d} scales the difference of these traces back to the Satorra-Bentler / Yuan-Bentler expectation scale.
 
 Robust RMSEA is computed using Equation (5) of Brosseau-Liard, Savalei, and Li (2012):
-[\text{RMSEA}\emph{{\text{robust}} = \sqrt{\max\left(0, \frac{\chi^2}{\text{raw}} / N}{df} - \frac{c_{\text{model}}}{N}\right)}]
+\deqn{\mathrm{RMSEA}_{\mathrm{robust}} = \sqrt{\max\left(0, \frac{\chi^2_{\mathrm{raw}} / N}{df} - \frac{c_{\mathrm{model}}}{N}\right)}}{RMSEA_robust = sqrt(max(0, (chi^2_raw / N) / df - c_model / N))}
 }
 \seealso{
 Other xmu internal not for end user:

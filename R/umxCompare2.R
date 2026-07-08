@@ -687,7 +687,7 @@ xmu_invert_matrix <- function(x) {
 #' WLS estimates). Algebraically,
 #' \deqn{V = \tfrac{1}{2} D' (\Sigma^{-1} \otimes \Sigma^{-1}) D}
 #' where \eqn{D} is the duplication map from unique correlation elements to
-#' \code{vec}(\Sigma) and \eqn{\Sigma} is the implied correlation matrix.
+#' \eqn{\mathrm{vec}(\Sigma)} and \eqn{\Sigma} is the implied correlation matrix.
 #'
 #' @param impliedCor Numeric symmetric correlation matrix (\eqn{p \times p}).
 #' @return Symmetric \eqn{p^* \times p^*} information matrix for polycorrelation
