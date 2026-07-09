@@ -375,6 +375,36 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 	umx_set_table_format(oldTableFormat) # side effect
 }
 
+# Resolve modern summary-WLS / GSEM data matrices for tmx_show (observedStats only).
+xmu_tmx_data_matrix <- function(model, which) {
+	os = NULL
+	if (!is.null(model$data)) {
+		if (isS4(model$data) && .hasSlot(model$data, "observedStats") && length(model$data@observedStats)) {
+			os = model$data@observedStats
+		} else if (!is.null(model$data$observedStats)) {
+			os = model$data$observedStats
+		}
+	}
+	if (which %in% c("observed", "data.S")) {
+		mat = NULL
+		if (!is.null(os$cov)) {
+			mat = os$cov
+		} else if (!is.null(model$data$observed) && is.matrix(model$data$observed)) {
+			mat = model$data$observed
+		}
+		return(list(mat = mat, name = "Observed covariance (data.S)"))
+	}
+	if (which %in% c("data.V", "V", "asymCov")) {
+		mat = if (!is.null(os$asymCov)) os$asymCov else NULL
+		return(list(mat = mat, name = "Sampling covariance of residual moments (data.V / asymCov)"))
+	}
+	if (which %in% c("data.W", "useWeight")) {
+		mat = if (!is.null(os$useWeight)) os$useWeight else NULL
+		return(list(mat = mat, name = "WLS weight matrix (data.W / useWeight)"))
+	}
+	list(mat = NULL, name = which)
+}
+
 #' Show matrices of RAM models in a easy-to-learn-from format. 
 #'
 #' A great way to learn about models is to look at the matrix contents. `tmx_show` is designed to
@@ -386,7 +416,9 @@ tmx_show.MxMatrix <- function(x, what = c("values", "free", "labels", "nonzero_o
 #' @param x an object e.g. [umxRAM()] [umxMatrix()] from which to show parameters.
 #' @param what legal options are "values" (default), "free", or "labels").
 #' @param show filter on what to show c("all", "free", "fixed").
-#' @param matrices to show  (default is c("S", "A")). "thresholds" in beta.
+#' @param matrices to show (default is c("S", "A", "M")). Summary / genomic SEM data (modern observedStats):
+#'   \code{"data.S"} / \code{"observed"}, \code{"data.V"} / \code{"asymCov"}, \code{"data.W"} / \code{"useWeight"}.
+#'   Legacy OpenMx name \code{"acov"} is refused (it meant useWeight, not sampling covariance).
 #' @param digits precision to report. Default = round to 2 decimal places.
 #' @param na.print How to display NAs (default = "")
 #' @param zero.print How to display 0 values (default = ".")
@@ -438,17 +470,26 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 	report = match.arg(report)
 	style  = match.arg(style)
 	
-	# filter out non-empty matrices
+	# filter out non-empty matrices; resolve data.* names (modern observedStats only)
 	requestedMatrices = matrices
 	matrices = c()
 	for (w in requestedMatrices) {
-		if(!is.null(model$matrices[[w]])){
+		if (identical(w, "acov") || identical(w, "fullWeight")) {
+			stop(
+				"tmx_show: matrix name ", omxQuotes(w), " is not supported.\n",
+				"  OpenMx historically used 'acov' for useWeight (not the sampling covariance).\n",
+				"  Use clear names instead:\n",
+				"    data.S / observed  — observed covariance (e.g. LDSC S)\n",
+				"    data.V / asymCov   — sampling covariance of residual moments (LDSC V)\n",
+				"    data.W / useWeight — WLS weight matrix (DWLS: diag(1/diag(V)))",
+				call. = FALSE
+			)
+		}
+		if (!is.null(model$matrices[[w]])) {
 			matrices = c(matrices, w)
-		} else if (w %in% c("observed", "data.S", "data.V", "V", "asymCov") && !is.null(model$data)) {
+		} else if (!is.null(model$data) && w %in% c("observed", "data.S", "data.V", "V", "asymCov", "data.W", "useWeight")) {
+			# bare "V" only if no RAM matrix named V (checked above)
 			matrices = c(matrices, w)
-		} else if (identical(w, "acov") && !is.null(model$data)) {
-			# Removed synonym: "acov" was ambiguous (legacy OpenMx name trap)
-			message("tmx_show: matrix name 'acov' is no longer supported; use 'data.V' or 'asymCov' for the sampling covariance.")
 		}
 	}
 	
@@ -486,37 +527,30 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 		}
 	} else {
 		for (w in matrices) {
-			if (w %in% c("observed", "data.S", "data.V", "V", "asymCov")) {
-				if (w == "observed" || w == "data.S") {
-					mat_val <- NULL
-					if (!is.null(model$data$observedStats$cov)) {
-						mat_val <- model$data$observedStats$cov
-					} else if (!is.null(model$data$observed)) {
-						mat_val <- model$data$observed
-					}
-					mat_name <- "Observed covariance matrix (data.S)"
-				} else {
-					# Sampling / asymptotic cov of residual vector (modern observedStats only)
-					mat_val <- NULL
-					if (!is.null(model$data$observedStats$asymCov)) {
-						mat_val <- model$data$observedStats$asymCov
-					}
-					mat_name <- "Asymptotic covariance matrix (data.V / asymCov)"
-				}
+			if (w %in% c("observed", "data.S", "data.V", "V", "asymCov", "data.W", "useWeight")) {
+				resolved = xmu_tmx_data_matrix(model, w)
+				mat_val  = resolved$mat
+				mat_name = resolved$name
 				
 				if (is.null(mat_val)) {
-					message("\n", mat_name, " is not available in the model data.")
+					message("\n", mat_name, " is not available in the model data (need modern observedStats).")
 					next
+				}
+				# Sampling covs are often 1e-4..1e-6 — default digits=2 would print as all zeros
+				digitsData = digits
+				maxAbs = suppressWarnings(max(abs(mat_val), na.rm = TRUE))
+				if (is.finite(maxAbs) && maxAbs > 0 && maxAbs < 0.01) {
+					digitsData = max(digits, 6)
 				}
 				
 				if(report == "html"){
-					tb = kbl(umx_round(mat_val, digits), caption = mat_name, format = report)
-					tb = footnote(kable_input= tb, general = "Pre-computed genomic data matrix")
+					tb = kbl(umx_round(mat_val, digitsData), caption = mat_name, format = report)
+					tb = footnote(kable_input= tb, general = "Summary WLS / genomic SEM data matrix (observedStats)")
 					tb = xmu_style_kable(tb, style = style, html_font = html_font, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
 					print(tb)
 				} else {
 					message("\n", mat_name, ":")
-					umx_print(data.frame(mat_val), zero.print = zero.print, na.print = na.print, digits = digits, file= NA, report = report)
+					umx_print(data.frame(mat_val), zero.print = zero.print, na.print = na.print, digits = digitsData, file= NA, report = report)
 				}
 			} else {
 				if (w == "S" && !is.null(model$data) && !is.null(model$data$observedStats$cov)) {
