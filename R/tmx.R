@@ -444,8 +444,11 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 	for (w in requestedMatrices) {
 		if(!is.null(model$matrices[[w]])){
 			matrices = c(matrices, w)
-		} else if (w %in% c("observed", "acov", "data.S", "data.V", "V") && !is.null(model$data)) {
+		} else if (w %in% c("observed", "data.S", "data.V", "V", "asymCov") && !is.null(model$data)) {
 			matrices = c(matrices, w)
+		} else if (identical(w, "acov") && !is.null(model$data)) {
+			# Removed synonym: "acov" was ambiguous (legacy OpenMx name trap)
+			message("tmx_show: matrix name 'acov' is no longer supported; use 'data.V' or 'asymCov' for the sampling covariance.")
 		}
 	}
 	
@@ -483,13 +486,22 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 		}
 	} else {
 		for (w in matrices) {
-			if (w %in% c("observed", "acov", "data.S", "data.V", "V")) {
+			if (w %in% c("observed", "data.S", "data.V", "V", "asymCov")) {
 				if (w == "observed" || w == "data.S") {
-					mat_val <- model$data$observed
+					mat_val <- NULL
+					if (!is.null(model$data$observedStats$cov)) {
+						mat_val <- model$data$observedStats$cov
+					} else if (!is.null(model$data$observed)) {
+						mat_val <- model$data$observed
+					}
 					mat_name <- "Observed covariance matrix (data.S)"
 				} else {
-					mat_val <- model$data$acov
-					mat_name <- "Asymptotic covariance matrix (data.V)"
+					# Sampling / asymptotic cov of residual vector (modern observedStats only)
+					mat_val <- NULL
+					if (!is.null(model$data$observedStats$asymCov)) {
+						mat_val <- model$data$observedStats$asymCov
+					}
+					mat_name <- "Asymptotic covariance matrix (data.V / asymCov)"
 				}
 				
 				if (is.null(mat_val)) {
@@ -507,7 +519,7 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 					umx_print(data.frame(mat_val), zero.print = zero.print, na.print = na.print, digits = digits, file= NA, report = report)
 				}
 			} else {
-				if (w == "S" && !is.null(model$data) && !is.null(model$data$type) && model$data$type == "acov") {
+				if (w == "S" && !is.null(model$data) && !is.null(model$data$observedStats$cov)) {
 					message("Note: Showing RAM parameter matrix 'S' (residual variances/covariances). To show the observed genetic covariance matrix, use 'data.S' or 'observed'.")
 				}
 				if(report == "html"){

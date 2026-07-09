@@ -4108,9 +4108,10 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' umx_is_MxData(mtcars)
 #' umx_is_MxData(mxData(mtcars, type= "raw"))
 #' umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
-#' umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
+#' umx_is_MxData(mxData(na.omit(twinData[, c("wt1", "wt2")]), type = "raw"))
 umx_is_MxData <- function(x) {
-	if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic", "MxDataLegacyWLS") ) {
+	# MxDataLegacyWLS intentionally omitted: umx refuses type='acov' data
+	if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		TRUE
 	} else {
 		FALSE
@@ -4676,7 +4677,7 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 #' table(x)
 #' \dontrun{
 #' ggplot2::qplot(x$x)
-#' y = mxDataWLS(x, type = "WLS")
+#' y = mxData(x, type = "raw") # then fit with mxFitFunctionWLS / umxRAM type="WLS"
 #' }
 #' 
 #'# ===========================
@@ -5594,7 +5595,7 @@ umx_explode <- function(delimiter = character(), string) {
 #' # "zyg_6grp" "zyg_2grp" "divorce"
 #' umx_names(mxData(twinData[, c("wt1", "wt2")], type= "raw"))
 #' umx_names(mxData(cov(twinData[, c("wt1", "wt2")], use="comp"), type= "cov", numObs= 1000))
-#' umx_names(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
+#' umx_names(mxData(na.omit(twinData[, c("wt1", "wt2")]), type = "raw"))
 #' 
 #' namez(umxMatrix("bob", "Full", 3,3)$labels)
 #' 

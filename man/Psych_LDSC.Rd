@@ -28,6 +28,10 @@ The list contains the following elements:
 \dontrun{
 data(Psych_LDSC)
 str(Psych_LDSC)
+# Common factor of all five traits (Grotzinger et al. 2019 style DWLS GSEM)
+m1 = umxGSEM(model = "g ~= SCZ + BIP + MDD + EA + INSOM",
+             covstruc = Psych_LDSC, estimation = "DWLS")
+umxSummary(m1)
 }
 }
 \seealso{

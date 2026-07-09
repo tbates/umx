@@ -3074,12 +3074,23 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			# need to handle raw data that will be treated as WLS and not end up with means
 			if(type == "raw"){
 				covData = umx_var(df = theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs", allowCorForFactorCovs=TRUE)
-			}else if (type == "acov"){
-				covData = as.matrix(theData)
 			}else if (type %in% c("cov", "cor")){
 				covData = as.matrix(theData)
+			}else if (identical(type, "none") || identical(type, "acov")){
+				# type='none' often holds modern summary WLS (observedStats$cov). type='acov' is refused elsewhere.
+				if (identical(type, "acov")) {
+					stop("xmuValues: type='acov' is not supported. Use observedStats (cov/useWeight/asymCov) or type raw/cov/cor.", call. = FALSE)
+				}
+				osCov = tryCatch(obj$data$observedStats$cov, error = function(e) NULL)
+				if (!is.null(osCov) && is.matrix(osCov)) {
+					covData = as.matrix(osCov)
+				} else if (is.matrix(theData)) {
+					covData = as.matrix(theData)
+				} else {
+					stop("xmuValues: type='none' without observedStats$cov or a covariance matrix. Known types: raw, cov, cor, and summary WLS via observedStats.", call. = FALSE)
+				}
 			}else{
-				message("xmuValues can't recognise data of type ", type, ". I only know raw, cov, cor, and acov")
+				message("xmuValues can't recognise data of type ", omxQuotes(type), ". I know raw, cov, cor, and summary WLS (observedStats$cov).")
 				covData = as.matrix(theData)
 			}
 		} else {

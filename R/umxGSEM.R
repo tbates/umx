@@ -320,18 +320,42 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' **Engine Integration**
 #' `umxGSEM` automatically configures the C++ backend to cache the implied Jacobian matrix. This is a structural requirement for computing Satorra-Bentler (2010) scaled difference tests in `umxCompare`.
 #'
+#' **OpenMx WLS data (modern only)**
+#'
+#' Genomic SEM needs precomputed summary matrices \(S\) (genetic cov) and \(V\) (sampling cov of
+#' \(\mathrm{vech}(S)\)). OpenMx WLS consumes these via the **modern** `mxData` interface only:
+#'
+#' ```
+#' mxData(numObs = 1,
+#'        observedStats = list(cov = S, useWeight = W, asymCov = V))
+#' ```
+#'
+#' with `W = diag(1/diag(V))` for DWLS. `umxGSEM` also reorders `V` into OpenMx residual order
+#' (all variances, then free covariances) and sets dimnames `var_*` / `poly_*_*`.
+#'
+#' **umx hard-refuses** OpenMx `type = "acov"` / `MxDataLegacyWLS` data (historical name trap:
+#' `acov` meant useWeight; `fullWeight` meant asymCov). Do not construct that form; use
+#' `observedStats` as above or raw data + `type = "DWLS"`.
+#'
 #' @param model An OpenMx model, a list of umxPath's, or a lavaan-style model string.
 #' @param covstruc list() of S (genetic covariance matrix) and V (sampling covariance matrix) as output by GenomicSEM's `ldsc` function. If provided, `S` and `V` are extracted from it.
 #' @param S Genetic covariance matrix (if covstruc not provided).
 #' @param V Sampling covariance matrix (asymptotic covariance of S). If covstruc not provided.
-#' @param estimation Method for estimation . One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").
-#' @param name The  model name (defaults to "gsem").
-#' @param numObs The dummy/actual sample size for WLS (defaults to 2, as commonly used in GenomicSEM DWLS).
+#' @param estimation Method for estimation. One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").
+#' @param name The model name (defaults to "gsem").
+#' @param numObs Sample size passed to OpenMx for WLS bookkeeping. With LDSC `V` already on the
+#'   sampling-covariance scale, the GSEM \eqn{\chi^2} is \eqn{r'Wr}; use `numObs = 1` (default) so
+#'   OpenMx reports that quantity directly. Larger dummy `N` rescales the displayed fit without
+#'   changing point estimates.
 #' @param smooth Whether to smooth non-positive definite matrices using [Matrix::nearPD()] (defaults to TRUE).
 #' @param autoRun Whether to run the model (defaults to getOption("umx_auto_run")).
-#' @param tryHard Method for fitting the model ("no", "yes", "ordinal", "search").
+#' @param tryHard Method for fitting the model ("no", "yes", "ordinal", "search"). Defaults to `"yes"`
+#'   because DWLS on LDSC `V` often has multiple local minima.
+#' @param std.lv If `TRUE` (default), free the first factor loading and fix latent variances to 1
+#'   (unit-variance identification). Preferred for genetic covariance scale where unit-loading ID
+#'   often produces Heywood cases. Passed to [umxRAM()] / lavaan.
 #' @param ... Additional arguments passed to [umxRAM()].
-#' @return An [OpenMx::mxModel()] object.
+#' @return An [OpenMx::mxModel()] object of class `MxModelGSEM`.
 #' @export
 #' @family Genomic SEM Functions
 #' @references
@@ -339,33 +363,21 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 
 #' @examples
 #' \dontrun{
-#' # A simple heritability and genetic correlation example
+#' data(Psych_LDSC)
+#' # umx path style (~=) or lavaan (=~); unit-variance ID is the default
+#' m1 = umxGSEM(model = "g ~= SCZ + BIP + MDD + EA + INSOM",
+#'              covstruc = Psych_LDSC, estimation = "DWLS")
+#' umxSummary(m1)
 #'
-#' # 1. Simulate S (Genetic covariance) and V (Sampling covariance) for a trait in twins 1 and 2
-#' traits = c("T1", "T2")
-#' S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
-#' V = matrix(c(0.002, 0.001, 0.001,
-#'              0.001, 0.003, 0.001,
-#'              0.001, 0.001, 0.002), nrow = 3, ncol = 3)
-#' # Label V
-#' vech_names = c("T1 T1", "T2 T1", "T2 T2")
-#' dimnames(V) = list(vech_names, vech_names)
-#'
-#' # 2. Describe a simple bivariate correlation model in lavaan-ish
-#' modelStr = "
-#' T1 ~~ T1
-#' T2 ~~ T2
-#' T1 ~~ T2
-#' "
-#' # 3. Fit the model in umxGSEM
-#' fit = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
-#' umxSummary(fit)
+#' # Explicit lavaan (same model)
+#' m2 = umxGSEM(model = "g =~ NA*SCZ + BIP + MDD + EA + INSOM\ng ~~ 1*g",
+#'              covstruc = Psych_LDSC, estimation = "DWLS")
 #' }
-umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("DWLS", "WLS", "ULS"), name = "gsem", numObs = 2, smooth = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), ...) {
+umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("DWLS", "WLS", "ULS"), name = "gsem", numObs = 1, smooth = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search"), std.lv = TRUE, ...) {
 	tryHard    = match.arg(tryHard)
 	estimation = match.arg(estimation)
 	
-	# Extract S and V from covstruc if provided (currently accepts unnamed components/by order. Perhaps not safe!)
+	# Extract S and V from covstruc if provided (named components preferred; order V,S,... also accepted)
 	if (!is.null(covstruc)) {
 		if (is.list(covstruc)) {
 			if (!is.null(covstruc$S)) {
@@ -400,10 +412,15 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		stop(paste0("Dimensions of V (", nrow(V), "x", ncol(V), ") must match the number of non-redundant elements of S (", z, ")."))
 	}
 	
-	# Internal helper to construct lower-triangular pair names (column-major vech)
-	get_vech_names = function(S_names) {
+	# Accept umx path-style factor syntax (~=) as lavaan (=~)
+	if (is.character(model)) {
+		model = gsub("~=", "=~", model, fixed = TRUE)
+	}
+	
+	# GenomicSEM / R lower.tri order pair labels ("SCZ SCZ", "BIP SCZ", ...)
+	get_gsem_vech_names = function(S_names) {
 		k = length(S_names)
-		pairs = c()
+		pairs = character(0)
 		for (j in 1:k) {
 			for (i in j:k) {
 				pairs = c(pairs, paste(S_names[i], S_names[j], sep = " "))
@@ -412,64 +429,203 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		return(pairs)
 	}
 	
-	# Label V rows and columns if not already labeled
-	vech_names = get_vech_names(colnames(S))
+	# Label V rows/cols in GenomicSEM order if unlabeled
+	vech_names = get_gsem_vech_names(colnames(S))
 	if (is.null(colnames(V)) || is.null(rownames(V))) {
 		colnames(V) = vech_names
 		rownames(V) = vech_names
 	}
 	
-	# Create a dummy model to discover manifest variables used in the model
-	dummy_model = umxRAM(model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, ...)
+	# Build model string / discover manifests (std.lv default for genetic-scale identification)
+	ramDots = list(...)
+	if (is.null(ramDots$std.lv)) {
+		ramDots$std.lv = std.lv
+	}
+	dummy_model = do.call(umxRAM, c(list(model = model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE), ramDots))
 	keep_vars = dummy_model$manifestVars
 	
-	# Subset S and V to keep only the manifest variables in the model
+	# Subset S and V to manifests used in the model (preserve S column order)
 	keep_vars = colnames(S)[colnames(S) %in% keep_vars]
 	if (length(keep_vars) == 0) {
 		stop("No variables in S match manifest variables in the model.")
 	}
 	
 	S_subset   = S[keep_vars, keep_vars, drop = FALSE]
-	keep_pairs = get_vech_names(keep_vars)
-	V_subset   = V[keep_pairs, keep_pairs, drop = FALSE]
+	keep_pairs = get_gsem_vech_names(keep_vars)
+	# Map by name if V is already labeled; else assume GenomicSEM lower.tri order
+	if (all(keep_pairs %in% colnames(V))) {
+		V_subset = V[keep_pairs, keep_pairs, drop = FALSE]
+	} else {
+		# V unlabeled / full-order: take the matching lower.tri positions for keep_vars
+		full_pairs = get_gsem_vech_names(colnames(S))
+		if (is.null(colnames(V))) {
+			colnames(V) = full_pairs
+			rownames(V) = full_pairs
+		}
+		if (!all(keep_pairs %in% colnames(V))) {
+			stop("Could not align V rows/cols with S variable order. Provide V in GenomicSEM lower-triangle order with dimnames.")
+		}
+		V_subset = V[keep_pairs, keep_pairs, drop = FALSE]
+	}
 
-	# Apply Triage Firewall strictly to the subsetted matrices
+	# Apply Triage Firewall strictly to the subsetted matrices (GenomicSEM order)
 	triageResult = xmu_gsem_triage(vMat = V_subset, sMat = S_subset, smooth = smooth)
 	V_subset = triageResult$V
 	S_subset = triageResult$S
 	
-	# Create the final model with triaged heritabilities/covariances
-	final_model = umxRAM(model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name, ...)
+	# Reorder V into OpenMx WLS residual order: all variances, then strict lower-triangle covs.
+	# OpenMx also requires var_*/poly_* dimnames so useWeight lines up with the residual vector.
+	omxOrd = xmu_gsem_V_to_openmx_order(V_subset, colnames(S_subset))
+	V_omx = omxOrd$V
 	
-	# Compute weight matrix based on estimation type
+	# Weight matrix for estimation (OpenMx order)
 	if (estimation == "WLS") {
-		W = solve(V_subset)
+		W_omx = solve(V_omx)
 	} else if (estimation == "DWLS") {
-		W = diag(1 / diag(V_subset), nrow = nrow(V_subset), ncol = ncol(V_subset))
+		W_omx = diag(1 / diag(V_omx), nrow = nrow(V_omx), ncol = ncol(V_omx))
 	} else if (estimation == "ULS") {
-		W = diag(1, nrow = nrow(V_subset), ncol = ncol(V_subset))
+		W_omx = diag(1, nrow = nrow(V_omx), ncol = ncol(V_omx))
 	}
-	dimnames(W) = dimnames(V_subset)
+	dimnames(W_omx) = dimnames(V_omx)
 
-	# 2. STRICT ACOV TYPE: Required for WLS
-		wls_data = mxData(observed = S_subset, type = "acov", acov = V_subset, fullWeight = W, numObs = numObs)
+	# Structure from umxRAM (cov placeholder); WLS data injected next
+	final_model = do.call(umxRAM, c(list(model = model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name), ramDots))
 	
-	# 3. FORMAL S4 INJECTION: Triggers OpenMx to re-evaluate the data flags
+	# Eigen-based starts for free A loadings / residual vars (helps DWLS local minima)
+	final_model = xmu_gsem_set_starts(final_model, S_subset)
+
+	# Modern OpenMx observedStats API:
+	#   useWeight = W used in r'Wr (NOT the raw V)
+	#   asymCov   = sampling covariance of residual vector (for SEs)
+	# Legacy type="acov" swaps names (acov=useWeight, fullWeight=asymCov then inverted) — avoid it.
+	wls_data = mxData(numObs = numObs, observedStats = list(cov = S_subset, useWeight = W_omx, asymCov = V_omx))
 	final_model = mxModel(final_model, wls_data)
 	final_model = mxModel(final_model, mxFitFunctionWLS(type = estimation))
 
-	# 4. LABEL ENFORCEMENT
+	# Bound residual variances away from large negatives (Heywood / optim wander)
+	final_model = xmu_gsem_bound_residuals(final_model, lbound = 1e-8)
+
+	# Label enforcement
 	final_model = xmuLabel(final_model)
 
-	# Tag the model with the triage history so downstream functions can access it
+	# Tag triage history for umxCompare / diagnostics
 	attr(final_model, "gsem_triage") = triageResult
+	attr(final_model, "gsem_estimation") = estimation
 	final_model = as(final_model, "MxModelGSEM")
 
-	# Run model if autoRun is TRUE
 	if (autoRun) {
 		final_model = umxRun(final_model, tryHard = tryHard)
 	}
 	return(final_model)
+}
+
+# Convert GenomicSEM / R lower.tri(V) order → OpenMx WLS residual order with var_/poly_ names.
+# OpenMx residual vector (continuous, no means): diag(S), then S[i,j] for j < i (column-major strict lower).
+xmu_gsem_V_to_openmx_order <- function(V_gsem, traitNames) {
+	k = length(traitNames)
+	# Map GenomicSEM pair key -> index
+	gsem_keys = character(0)
+	for (j in 1:k) {
+		for (i in j:k) {
+			gsem_keys = c(gsem_keys, paste(traitNames[i], traitNames[j], sep = " "))
+		}
+	}
+	if (is.null(colnames(V_gsem))) {
+		colnames(V_gsem) = gsem_keys
+		rownames(V_gsem) = gsem_keys
+	}
+	# Build OpenMx order and names
+	omx_names = paste0("var_", traitNames)
+	omx_keys  = paste(traitNames, traitNames, sep = " ") # "SCZ SCZ", ...
+	if (k >= 2) {
+		for (j in 1:(k - 1)) {
+			for (i in (j + 1):k) {
+				omx_names = c(omx_names, paste0("poly_", traitNames[i], "_", traitNames[j]))
+				omx_keys  = c(omx_keys, paste(traitNames[i], traitNames[j], sep = " "))
+			}
+		}
+	}
+	# If V already has OpenMx-style names, keep as-is
+	if (all(omx_names %in% colnames(V_gsem))) {
+		V_omx = V_gsem[omx_names, omx_names, drop = FALSE]
+		return(list(V = V_omx, names = omx_names))
+	}
+	# Match GenomicSEM keys (allow either "A B" or existing colnames order)
+	if (all(omx_keys %in% colnames(V_gsem))) {
+		V_omx = V_gsem[omx_keys, omx_keys, drop = FALSE]
+	} else if (nrow(V_gsem) == length(gsem_keys)) {
+		# Assume matrix is already in GenomicSEM lower.tri order
+		colnames(V_gsem) = gsem_keys
+		rownames(V_gsem) = gsem_keys
+		V_omx = V_gsem[omx_keys, omx_keys, drop = FALSE]
+	} else {
+		stop("Cannot map V into OpenMx WLS order; check dimensions and dimnames.")
+	}
+	dimnames(V_omx) = list(omx_names, omx_names)
+	return(list(V = V_omx, names = omx_names, map_keys = omx_keys))
+}
+
+# Set free factor loadings / residual starts from first eigencomponent of S
+xmu_gsem_set_starts <- function(model, S) {
+	if (!is(model$A, "MxMatrix") || !is(model$S, "MxMatrix")) {
+		return(model)
+	}
+	man = model$manifestVars
+	lat = model$latentVars
+	if (length(man) == 0 || length(lat) == 0) {
+		return(model)
+	}
+	# 1-factor (or first latent) eigen starts
+	S_use = S[man, man, drop = FALSE]
+	# Guard PD for eigen
+	ev = tryCatch(eigen(cov2cor(S_use), symmetric = TRUE), error = function(e) NULL)
+	if (is.null(ev)) {
+		return(model)
+	}
+	lam = ev$vectors[, 1] * sqrt(max(ev$values[1], 0)) * sqrt(pmax(diag(S_use), 0))
+	if (lam[1] < 0) {
+		lam = -lam
+	}
+	theta = pmax(diag(S_use) - lam^2, 0.01 * diag(S_use), 1e-4)
+
+	A = model$A
+	Smat = model$S
+	# Free A paths from first latent to manifests
+	lat1 = lat[1]
+	if (lat1 %in% colnames(A$values)) {
+		for (i in seq_along(man)) {
+			rn = man[i]
+			if (isTRUE(A$free[rn, lat1])) {
+				A$values[rn, lat1] = lam[i]
+			}
+		}
+	}
+	# Free residual variances
+	for (i in seq_along(man)) {
+		rn = man[i]
+		if (isTRUE(Smat$free[rn, rn])) {
+			Smat$values[rn, rn] = theta[i]
+		}
+	}
+	model = mxModel(model, A, Smat)
+	return(model)
+}
+
+# Put a lower bound on free residual (manifest) variances
+xmu_gsem_bound_residuals <- function(model, lbound = 1e-8) {
+	if (!is(model$S, "MxMatrix")) {
+		return(model)
+	}
+	Smat = model$S
+	man = model$manifestVars
+	for (rn in man) {
+		if (isTRUE(Smat$free[rn, rn])) {
+			if (is.na(Smat$lbound[rn, rn]) || Smat$lbound[rn, rn] < lbound) {
+				Smat$lbound[rn, rn] = lbound
+			}
+		}
+	}
+	mxModel(model, Smat)
 }
 
 #' umx_is_GSEM
@@ -485,29 +641,36 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 #' @examples
 #' \dontrun{
 #' require(umx)
+#' # A genomic SEM example
+#  # load an ldsc object (contains: "V" "S" "I" "N" "m")
+#' data(Psych_LDSC)
+#' 
+#' m1 = umxGSEM(model = "F1 ~= SCZ +BIP +MDD +EA + INSOM", covstruc= Psych_LDSC, estimation = "DWLS")
+#' umxSummary(m1)
+#' 
+#' m2 = umxGSEM(model = "F1 =~ SCZ + BIP + MDD; INSOM ~ F1; EA ~ INSOM), covstruc= Psych_LDSC, estimation = "DWLS")
+#' umxSummary(m2)
+#' 
+#' umxCompare(m2, m1)
+#' 
 #' # Make a simple heritability and genetic correlation GSEM model to test
-#' traits = c("T1", "T2")
-#' S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
+#' traits = c("Trt1", "Trt2")
+#' S = matrix(c(0.25, 0.15,
+#' 				 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
 #' V = matrix(c(0.002, 0.001, 0.001,
 #'              0.001, 0.003, 0.001,
 #'              0.001, 0.001, 0.002), nrow = 3, ncol = 3)
-#' vech_names = c("T1 T1", "T2 T1", "T2 T2")
+#' vech_names = c("Trt1 Trt1", "Trt2 Trt1", "Trt2 Trt2")
 #' dimnames(V) = list(vech_names, vech_names)
 #' modelStr = "
-#' T1 ~~ T1
-#' T2 ~~ T2
-#' T1 ~~ T2
+#' Trt1 ~~ Trt1
+#' Trt2 ~~ Trt2
+#' Trt1 ~~ Trt2
 #' "
 #' m1 = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
 #'
+#' # minor helpers exist also:
 #' umx_is_GSEM(m1) # TRUE
-#' 
-#' if(umx_is_GSEM(m1)){
-#' 	message("nice RAM model you've got there!")
-#' }
-#' if(!umx_is_GSEM(m1)){
-#' 	message("model needs to be a GSEM model, you gave me a ", class(m1)[[1]])
-#' }
 #' }
 umx_is_GSEM <- function(obj) {
 	if(!umx_is_MxModel(obj)){

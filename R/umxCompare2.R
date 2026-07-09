@@ -223,60 +223,10 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 		stop("Models are not nested in the correct order: nestedModel must have fewer parameters than baseModel.")
 	}
 
-	# 2. Extract Weight (W) and Asymptotic Covariance (V) matrices
-	weightMat = NULL
-	if (!is.null(baseModel$data$fullWeight)) {
-		weightMat = baseModel$data$fullWeight
-	} else if (!is.null(baseModel$data$useWeight)) {
-		weightMat = baseModel$data$useWeight
-	} else if (!is.null(baseModel$data$observedStats$weight)) {
-		weightMat = baseModel$data$observedStats$weight
-	} else if (!is.null(baseModel$data$observedStats$useWeight)) {
-		weightMat = baseModel$data$observedStats$useWeight
-	}
-	
-	if (is.null(weightMat) && inherits(baseModel$data, "MxData")) {
-		if (.hasSlot(baseModel$data, "fullWeight") && !is.null(baseModel$data@fullWeight)) {
-			weightMat = baseModel$data@fullWeight
-		} else if (.hasSlot(baseModel$data, "useWeight") && !is.null(baseModel$data@useWeight)) {
-			weightMat = baseModel$data@useWeight
-		} else if (.hasSlot(baseModel$data, "observedStats")) {
-			obsStats = baseModel$data@observedStats
-			if (!is.null(obsStats$weight)) {
-				weightMat = obsStats$weight
-			} else if (!is.null(obsStats$useWeight)) {
-				weightMat = obsStats$useWeight
-			}
-		}
-		if (is.null(weightMat) && .hasSlot(baseModel$data, "weight") && is.matrix(baseModel$data@weight)) {
-			weightMat = baseModel$data@weight
-		}
-	}
-	
-	asymCov = NULL
-	if (!is.null(baseModel$data$acov)) {
-		asymCov = baseModel$data$acov
-	} else if (!is.null(baseModel$data$observedStats$asymCov)) {
-		asymCov = baseModel$data$observedStats$asymCov
-	}
-	
-	if (is.null(asymCov) && inherits(baseModel$data, "MxData")) {
-		if (.hasSlot(baseModel$data, "acov") && !is.null(baseModel$data@acov)) {
-			asymCov = baseModel$data@acov
-		} else if (.hasSlot(baseModel$data, "observedStats")) {
-			obsStats = baseModel$data@observedStats
-			if (!is.null(obsStats$asymCov)) {
-				asymCov = obsStats$asymCov
-			}
-		}
-	}
-
-	if (is.null(weightMat)) {
-		stop("Could not locate the WLS Weight matrix (W) in baseModel.")
-	}
-	if (is.null(asymCov)) {
-		stop("Could not locate the WLS Asymptotic Covariance matrix (V) in baseModel.")
-	}
+	# 2. Extract Weight (W) and Asymptotic Covariance (V) — modern observedStats first
+	wv = xmu_wls_extract_WV(baseModel, stop_if_missing = TRUE)
+	weightMat = wv$useWeight
+	asymCov   = wv$asymCov
 
 	# 3. Alignment Safety Guard: Deterministic Block-Shift
 	# OpenMx places means at the top of V. Our C++ places means at the bottom of the Jacobian.
@@ -407,7 +357,9 @@ xmuCalculateSRMR <- function(model) {
 	if (!is.null(model$data)) {
 		if (!is.null(model$data$observedStats$cov)) {
 			obsCov = model$data$observedStats$cov
-		} else if (model$data$type %in% c("cov", "acov")) {
+		} else if (identical(model$data$type, "cov") ||
+		           (is.matrix(model$data$observed) && !identical(model$data$type, "raw"))) {
+			# cov data or modern type=none with matrix observed
 			obsCov = model$data$observed
 		} else if (identical(model$data$type, "raw")) {
 			obsData = model$data$observed
@@ -586,10 +538,75 @@ xmu_WLS_align_jacobian <- function(jacMat, asymCovMat, numCovsVal) {
 	return(list(jac = jacAligned, commonNames = commonNames))
 }
 
+#' Extract WLS useWeight (W) and asymCov (Gamma) from an MxModel
+#'
+#' **Modern only:** reads \code{observedStats = list(cov=, useWeight=, asymCov=)}.
+#' OpenMx legacy \code{type="acov"} / \code{MxDataLegacyWLS} is refused (name trap).
+#'
+#' @param model An [OpenMx::mxModel()] with data.
+#' @param stop_if_missing If TRUE, stop when either matrix is missing.
+#' @return List with \code{useWeight}, \code{asymCov}, and optional \code{cov}.
+#' @family xmu internal not for end user
+xmu_wls_extract_WV <- function(model, stop_if_missing = TRUE) {
+	useWeight = NULL
+	asymCov   = NULL
+	obsCov    = NULL
+	if (is.null(model) || is.null(model$data)) {
+		if (stop_if_missing) {
+			stop("Model has no data; cannot extract WLS weight / asymptotic covariance matrices.")
+		}
+		return(list(useWeight = NULL, asymCov = NULL, cov = NULL))
+	}
+	data = model$data
+	if (inherits(data, "MxDataLegacyWLS") || identical(tryCatch(data$type, error = function(e) NULL), "acov")) {
+		if (exists("xmu_stop_legacy_acov", mode = "function")) {
+			xmu_stop_legacy_acov("xmu_wls_extract_WV")
+		}
+		stop("xmu_wls_extract_WV: type='acov' / MxDataLegacyWLS is not supported. Use observedStats useWeight + asymCov.", call. = FALSE)
+	}
+
+	os = NULL
+	if (isS4(data) && .hasSlot(data, "observedStats") && length(data@observedStats)) {
+		os = data@observedStats
+	} else if (!is.null(data$observedStats) && length(data$observedStats)) {
+		os = data$observedStats
+	}
+	if (!is.null(os)) {
+		if (!is.null(os$acov) || !is.null(os$fullWeight)) {
+			stop("xmu_wls_extract_WV: observedStats$acov / $fullWeight are not supported (legacy name trap). Use useWeight and asymCov.", call. = FALSE)
+		}
+		if (!is.null(os$useWeight)) {
+			useWeight = os$useWeight
+		} else if (!is.null(os$weight) && is.matrix(os$weight)) {
+			useWeight = os$weight
+		}
+		if (!is.null(os$asymCov)) {
+			asymCov = os$asymCov
+		}
+		if (!is.null(os$cov)) {
+			obsCov = os$cov
+		}
+	}
+
+	if (is.null(obsCov) && !is.null(data$observed) && is.matrix(data$observed)) {
+		obsCov = data$observed
+	}
+
+	if (stop_if_missing) {
+		if (is.null(useWeight)) {
+			stop("Could not locate observedStats$useWeight (W). Use mxData(numObs=N, observedStats=list(cov=S, useWeight=W, asymCov=V)).")
+		}
+		if (is.null(asymCov)) {
+			stop("Could not locate observedStats$asymCov (Gamma). Use mxData(numObs=N, observedStats=list(cov=S, useWeight=W, asymCov=V)).")
+		}
+	}
+	return(list(useWeight = useWeight, asymCov = asymCov, cov = obsCov))
+}
+
 #' Subset and align WLS weight matrix to common moment set
 #'
 #' Extracts the \eqn{W} block corresponding to \code{commonNames} from OpenMx
-#' \code{useWeight} or \code{fullWeight}. Accepts either a full matrix (with or
+#' \code{useWeight} (or a diagonal vector). Accepts either a full matrix (with or
 #' without dimnames) or a named diagonal vector (expanded to \code{diag()}).
 #'
 #' @param weightMat WLS weight matrix or diagonal vector from \code{MxData}.
@@ -1343,60 +1360,10 @@ xmu_robust_WLS_fit <- function(model) {
 		stop("Target model missing implied_jacobian.")
 	}
 	
-	# Step B: Extract raw Asymptotic Covariance (V) and Weight (W) matrices
-	weightMat = NULL
-	if (!is.null(model$data$fullWeight)) {
-		weightMat = model$data$fullWeight
-	} else if (!is.null(model$data$useWeight)) {
-		weightMat = model$data$useWeight
-	} else if (!is.null(model$data$observedStats$weight)) {
-		weightMat = model$data$observedStats$weight
-	} else if (!is.null(model$data$observedStats$useWeight)) {
-		weightMat = model$data$observedStats$useWeight
-	}
-	
-	if (is.null(weightMat) && inherits(model$data, "MxData")) {
-		if (.hasSlot(model$data, "fullWeight") && !is.null(model$data@fullWeight)) {
-			weightMat = model$data@fullWeight
-		} else if (.hasSlot(model$data, "useWeight") && !is.null(model$data@useWeight)) {
-			weightMat = model$data@useWeight
-		} else if (.hasSlot(model$data, "observedStats")) {
-			obsStats = model$data@observedStats
-			if (!is.null(obsStats$weight)) {
-				weightMat = obsStats$weight
-			} else if (!is.null(obsStats$useWeight)) {
-				weightMat = obsStats$useWeight
-			}
-		}
-		if (is.null(weightMat) && .hasSlot(model$data, "weight") && is.matrix(model$data@weight)) {
-			weightMat = model$data@weight
-		}
-	}
-	
-	asymCov = NULL
-	if (!is.null(model$data$acov)) {
-		asymCov = model$data$acov
-	} else if (!is.null(model$data$observedStats$asymCov)) {
-		asymCov = model$data$observedStats$asymCov
-	}
-	
-	if (is.null(asymCov) && inherits(model$data, "MxData")) {
-		if (.hasSlot(model$data, "acov") && !is.null(model$data@acov)) {
-			asymCov = model$data@acov
-		} else if (.hasSlot(model$data, "observedStats")) {
-			obsStats = model$data@observedStats
-			if (!is.null(obsStats$asymCov)) {
-				asymCov = obsStats$asymCov
-			}
-		}
-	}
-	
-	if (is.null(weightMat)) {
-		stop("Could not locate WLS Weight matrix (W).")
-	}
-	if (is.null(asymCov)) {
-		stop("Could not locate Asymptotic Covariance matrix (V).")
-	}
+	# Step B: Extract W and asymCov (modern observedStats first; legacy name-swap safe)
+	wv = xmu_wls_extract_WV(model, stop_if_missing = TRUE)
+	weightMat = wv$useWeight
+	asymCov   = wv$asymCov
 	
 	
 	rowNames = rownames(asymCov)
@@ -1694,35 +1661,19 @@ xmu_extract_df <- function(model) {
 		dfNative = summary(model)$degreesOfFreedom
 	}
 	
-	# TODO: this is probably not necessary, as acov appears to be working in OpenMx now
-	# Auto-Resolving Gate: Catch OpenMx acov bug (df <= 0)
+	# Frontend fallback when OpenMx reports non-positive df (common for some summary WLS setups)
 	if (is.null(dfNative) || is.na(dfNative) || dfNative < 0) {
-		if (!is.null(model$data) && identical(model$data$type, "acov")) {
-			
-			acovMat = NULL
-			
-			# 1. Safely probe for the standard acov slot (using S4 @ or list $)
-			if (isS4(model$data) && .hasSlot(model$data, "acov")) {
-				acovMat = model$data@acov
-			} else if (!isS4(model$data) && !is.null(model$data$acov)) {
-				acovMat = model$data$acov
-			}
-			
-			# 2. Safely probe for the nested observedStats$asymCov slot
-			if (is.null(acovMat)) {
-				if (isS4(model$data) && .hasSlot(model$data, "observedStats") && !is.null(model$data@observedStats$asymCov)) {
-					acovMat = model$data@observedStats$asymCov
-				} else if (!isS4(model$data) && !is.null(model$data$observedStats$asymCov)) {
-					acovMat = model$data$observedStats$asymCov
-				}
-			}
-			
-			# 3. Calculate and assert frontend math
-			if (!is.null(acovMat)) {
-				observedStats   = nrow(acovMat)
-				estimatedParams = length(omxGetParameters(model))
-				return(observedStats - estimatedParams)
-			}
+		wv = xmu_wls_extract_WV(model, stop_if_missing = FALSE)
+		# nrow(useWeight) or nrow(asymCov) = number of non-redundant residual moments
+		nMoments = NULL
+		if (!is.null(wv$useWeight)) {
+			nMoments = nrow(as.matrix(wv$useWeight))
+		} else if (!is.null(wv$asymCov)) {
+			nMoments = nrow(as.matrix(wv$asymCov))
+		}
+		if (!is.null(nMoments)) {
+			estimatedParams = length(omxGetParameters(model))
+			return(nMoments - estimatedParams)
 		}
 	}
 	

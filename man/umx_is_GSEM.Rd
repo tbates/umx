@@ -17,34 +17,6 @@ umx_is_GSEM(obj)
 \description{
 Utility function returning a binary answer to the question "Is this a GSEM model?"
 }
-\examples{
-\dontrun{
-require(umx)
-# Make a simple heritability and genetic correlation GSEM model to test
-traits = c("T1", "T2")
-S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
-V = matrix(c(0.002, 0.001, 0.001,
-             0.001, 0.003, 0.001,
-             0.001, 0.001, 0.002), nrow = 3, ncol = 3)
-vech_names = c("T1 T1", "T2 T1", "T2 T2")
-dimnames(V) = list(vech_names, vech_names)
-modelStr = "
-T1 ~~ T1
-T2 ~~ T2
-T1 ~~ T2
-"
-m1 = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
-
-umx_is_GSEM(m1) # TRUE
-
-if(umx_is_GSEM(m1)){
-	message("nice RAM model you've got there!")
-}
-if(!umx_is_GSEM(m1)){
-	message("model needs to be a GSEM model, you gave me a ", class(m1)[[1]])
-}
-}
-}
 \references{
 \itemize{
 \item \url{https://github.com/tbates/umx}

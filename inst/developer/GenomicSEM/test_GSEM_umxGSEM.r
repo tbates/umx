@@ -20,9 +20,13 @@ test_that("umxGSEM fits simple bivariate model and subsets correctly", {
 	fit = umxGSEM(m1, S = S, V = V, estimation = "DWLS", autoRun = TRUE)
 	
 	expect_s4_class(fit, "MxModelGSEM")
-	expect_equal(fit$data$type, "acov")
-	expect_equal(fit$data$observed, S)
-	expect_equal(fit$data$acov, V)
+	expect_false(identical(fit$data$type, "acov"))
+	expect_false(inherits(fit$data, "MxDataLegacyWLS"))
+	os = fit$data$observedStats
+	expect_equal(os$cov, S)
+	expect_true(!is.null(os$useWeight))
+	expect_true(!is.null(os$asymCov))
+	expect_equal(diag(os$useWeight), 1 / diag(os$asymCov), tolerance = 1e-10)
 	expect_s4_class(fit$fitfunction, "MxFitFunctionWLS")
 	expect_equal(fit$fitfunction$type, "DWLS")
 	
@@ -40,9 +44,9 @@ test_that("umxGSEM fits simple bivariate model and subsets correctly", {
 	
 	expect_s4_class(fit_subset, "MxModelGSEM")
 	expect_equal(fit_subset$manifestVars, c("T1", "T2"))
-	expect_equal(fit_subset$data$type, "acov")
-	expect_equal(fit_subset$data$observed, S) # should match 2x2 S of T1 and T2
-	expect_equal(fit_subset$data$acov, V) # should match 3x3 V of T1 and T2 pairs
+	expect_false(identical(fit_subset$data$type, "acov"))
+	expect_equal(fit_subset$data$observedStats$cov, S) # 2x2 S of T1 and T2
+	expect_equal(nrow(fit_subset$data$observedStats$asymCov), 3) # 3 unique pairs
 	
 	# Test tmx_show on genomic SEM matrices
 	tmx_show(fit, matrices = "data.S", report = "markdown")
@@ -51,46 +55,32 @@ test_that("umxGSEM fits simple bivariate model and subsets correctly", {
 	tmx_show(fit, report = "markdown")
 })
 
-test_that("umxRAM natively subsets and reorders acov type mxData", {
-	# Setup traits and covariance/weight matrices
+test_that("umxGSEM uses modern observedStats (useWeight + asymCov), not type=acov", {
 	traits3 <- c("T1", "T2", "T3")
 	S3 <- matrix(c(0.50, 0.20, 0.10,
 	               0.20, 0.60, 0.15,
 	               0.10, 0.15, 0.70), nrow = 3, ncol = 3, dimnames = list(traits3, traits3))
+	# 6 unique lower-tri elements for 3x3 S
 	V3 <- diag(c(0.01, 0.005, 0.002, 0.012, 0.004, 0.015))
 	vech_names3 <- c("T1 T1", "T2 T1", "T3 T1", "T2 T2", "T3 T2", "T3 T3")
 	dimnames(V3) <- list(vech_names3, vech_names3)
-	
-	# Pack into mxData of type acov
-	acov_data <- mxData(observed = S3, type = "acov", acov = V3, numObs = 100)
-	
-	# Model specification for a bivariate model of T2 and T1 (note reverse order)
+
 	model_str <- "
-	T2 ~~ T2
-	T1 ~~ T1
-	T2 ~~ T1
+	F1 =~ NA*T1 + T2 + T3
+	F1 ~~ 1*F1
 	"
-	
-	# Call umxRAM directly passing the full acov_data
-	fit <- umxRAM(model_str, data = acov_data, type = "DWLS", autoRun = FALSE)
-	
-	# Check that fit has only T1 and T2 manifestVars (alphabetical ordering)
-	expect_equal(fit$manifestVars, c("T1", "T2"))
-	
-	# Check that data was subsetted and reordered correctly:
-	# 1. Observed covariance matrix should be 2x2 and match T1 and T2
-	expected_S <- matrix(c(0.50, 0.20, 0.20, 0.60), nrow = 2, ncol = 2, dimnames = list(c("T1", "T2"), c("T1", "T2")))
-	expect_equal(fit$data$observed, expected_S)
-	
-	# 2. Asymptotic covariance matrix should be 3x3 with row/col names:
-	# "T1 T1", "T2 T1", "T2 T2"
-	expected_vech <- c("T1 T1", "T2 T1", "T2 T2")
-	expect_equal(rownames(fit$data$acov), expected_vech)
-	expect_equal(colnames(fit$data$acov), expected_vech)
-	# Check values are correct subset of V3 (T1 T1 = 0.01, T2 T1 = 0.005, T2 T2 = 0.012)
-	expected_V <- diag(c(0.01, 0.005, 0.012))
-	dimnames(expected_V) <- list(expected_vech, expected_vech)
-	expect_equal(fit$data$acov, expected_V)
+	fit <- umxGSEM(model = model_str, S = S3, V = V3, estimation = "DWLS", autoRun = FALSE, name = "g3")
+	expect_s4_class(fit, "MxModelGSEM")
+	# Modern path: no legacy type='acov'
+	expect_false(identical(fit$data$type, "acov"))
+	os <- fit$data$observedStats
+	expect_true(!is.null(os$cov))
+	expect_true(!is.null(os$useWeight))
+	expect_true(!is.null(os$asymCov))
+	# useWeight should be inverse of asymCov diagonal for DWLS
+	expect_equal(diag(os$useWeight), 1 / diag(os$asymCov), tolerance = 1e-10)
+	# OpenMx residual dimnames
+	expect_true(all(grepl("^(var_|poly_)", colnames(os$asymCov))))
 })
 
 test_that("umxSummary and umxCompare handle WLS models correctly", {
@@ -112,7 +102,7 @@ test_that("umxSummary and umxCompare handle WLS models correctly", {
 	expect_true(xmu_is_wls(fit1))
 	
 	# Verify umxSummary output prints the custom robust WLS note
-	expect_message(umxSummary(fit1), "Applying SB-2010 robust metrics")
+	expect_message(umxSummary(fit1), "Applying robust WLS fit metrics")
 	
 	# Setup comparison model
 	m2 <- "
@@ -123,7 +113,7 @@ test_that("umxSummary and umxCompare handle WLS models correctly", {
 	fit2 <- umxGSEM(m2, S = S, V = V, estimation = "DWLS", autoRun = TRUE)
 	
 	# Verify umxSummary on fit2 (which has high RMSEA) prints the custom robust WLS note and does NOT print "worse than desired"
-	expect_message(umxSummary(fit2), "Applying SB-2010 robust metrics")
+	expect_message(umxSummary(fit2), "Applying robust WLS fit metrics")
 	withCallingHandlers(
 		umxSummary(fit2),
 		message = function(m) {

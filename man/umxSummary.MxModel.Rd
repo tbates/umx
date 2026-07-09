@@ -37,7 +37,7 @@ If NULL will be computed on demand. If FALSE will not be computed.}
 
 \item{residuals}{Whether to include residuals in the summary (TRUE)}
 
-\item{uncertainty}{What type of parameter uncertainty to report: "SE" (default standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).}
+\item{uncertainty}{What type of uncertainty/inference packaging to report: \code{"SE"} (default SEs from the fit), \code{"RobustSE"} (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), \code{"CI"} (profile likelihood CIs), or \code{"none"}.}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
@@ -64,14 +64,22 @@ RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI an
 
 Note: For some (multi-group) models, you will need to fall back on \code{\link[=summary]{summary()}}
 
+\strong{Robust inference (\code{uncertainty = "RobustSE"})}
+
+This option means \strong{engine-appropriate robust inference}, not one sandwich formula for every fit type:
+\itemize{
+\item \strong{ML / FIML (raw continuous):} casewise score sandwich SEs via \code{\link[OpenMx:imxRobustSE]{OpenMx::imxRobustSE()}}, plus robust CFI/TLI/RMSEA via \code{\link[=xmu_robust_ML_fit]{xmu_robust_ML_fit()}} (Yuan–Bentler / Brosseau-Liard & Savalei scaling).
+\item \strong{WLS / DWLS / ULS:} do \strong{not} use the ML casewise sandwich. Parameter SEs are the usual \strong{WLS/GMM moment sandwich} already returned by OpenMx (\eqn{W}, \eqn{\Delta}, \eqn{\Gamma}). Robust CFI/TLI/RMSEA are applied when \code{output$implied_jacobian} is present via \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}} (Satorra–Bentler 2010 for continuous WLS; Savalei 2021 catML for ordinal WLS). A statistical note states that SEs are WLS asymptotic (moment sandwich).
+}
+
 \strong{Robust Fit Statistics for ML}
-Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and distorts the distribution of the ML test statistic itself, necessitating changes to SEs and fit statistics. \code{umx} supports robust ML - MLR – in \code{umxSummary} and \code{umxCompare} with options for \code{uncertainty}. \code{uncertainty} = "robustSE" implements sandwich estimator for SEs. Model fit scaling corrections (e.g., MLR / Yuan-Bentler) are also implemented for ML estimation.
+Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, \code{uncertainty = "RobustSE"} implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan–Bentler / Savalei 2018-style robust indices).
 
 \strong{Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)}
 
 Historically, simulation studies showed that CFI and TLI behaved differently under DWLS/WLS than under ML (Shi et al., 2020). Incremental fit indices rely on a comparison to the independence (null) model. Under legacy WLS implementations, the weighting matrix changed how that baseline behaved, causing conventional cutoffs (e.g., CFI > 0.95) to break down.
 
-\emph{Solution:} \code{umxSummary} automatically intercepts WLS models (including summary-statistic / Genomic SEM inputs) and routes them through \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}}. That function computes an independence baseline natively in R and applies trace-matrix scaling corrections so that robust indices are interpretable alongside conventional ML practice.
+\emph{Solution:} \code{umxSummary} intercepts WLS models (including summary-statistic / Genomic SEM inputs) and routes them through \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}} when a Jacobian is available. That function computes an independence baseline natively in R and applies trace-matrix scaling corrections so that robust indices are interpretable alongside conventional ML practice. Parameter SEs remain the OpenMx WLS moment sandwich (see \code{uncertainty = "RobustSE"} note above).
 
 \strong{Two statistic families (by design).} WLS output deliberately separates omnibus testing from incremental/absolute fit:
 \itemize{

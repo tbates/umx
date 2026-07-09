@@ -4,8 +4,13 @@
 * IMPROVED: `umxCompare` support for WLS fit (with notes about interpreting fit indices)
 * NEW: `umxCompare` support for SB2010, robust fit measures.
 * IMPROVED: `umxSummary` support for WLS fit  (with notes about interpreting fit indices)
-* NEW: `xmu_make_mxData` has native support for acov (WLS) subsetting and reordering
-* NEW: `xmu_check_needs_means` updated to handle acov datasets gracefully.
+* BREAKING: umx **no longer supports** OpenMx `type="acov"` / `MxDataLegacyWLS` data.
+  That interface historically swapped names (`acov` = useWeight, `fullWeight` = asymCov) and was a
+  silent mis-estimation hazard for genomic SEM / summary WLS. Use:
+  - raw data + `type="WLS"|"DWLS"|"ULS"`, or
+  - `mxData(numObs=N, observedStats=list(cov=S, useWeight=W, asymCov=V))` (see `?umxGSEM`).
+  Passing legacy acov data into `umxRAM` / `xmu_make_mxData` now **errors** with a migration message.
+* NEW: `xmu_make_mxData` subsets modern summary WLS `observedStats` (useWeight / asymCov).
 
 # Releases
 

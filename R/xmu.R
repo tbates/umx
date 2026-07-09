@@ -534,10 +534,16 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 			return(TRUE)
 			# Note, auto will be FIML not WLS
 		}else if(type %in% c("WLS", "DWLS", "ULS")){
-			if (data$type == "acov") {
-				return(!is.null(data$means) && !is.na(data$means[[1]]))
+			if (xmu_is_legacy_acov_data(data)) {
+				xmu_stop_legacy_acov("xmu_check_needs_means")
 			}
-			tmp =xmu_describe_data_WLS(data, allContinuousMethod = allContinuousMethod)
+			# Modern summary WLS via observedStats (type often "none")
+			if (!is.null(data$observedStats$useWeight) || !is.null(data$observedStats$asymCov) || !is.null(data$observedStats$cov)) {
+				hasMeansSlot = !is.null(data$means) && length(data$means) > 0 && !all(is.na(data$means))
+				hasMeansOs = !is.null(data$observedStats$means) && !all(is.na(data$observedStats$means))
+				return(isTRUE(hasMeansSlot || hasMeansOs))
+			}
+			tmp = xmu_describe_data_WLS(data, allContinuousMethod = allContinuousMethod)
 			return(tmp$hasMeans)
 		}else if(is.na(data$means[[1]])){
 			# cov data no means
@@ -719,17 +725,141 @@ xmu_is_wls <- function(model) {
 	if (!is.null(model$fitfunction) && inherits(model$fitfunction, "MxFitFunctionWLS")) {
 		return(TRUE)
 	}
-	# 2. Check data type safely (immune to NA and NULL)
-	if (identical(model$data$type, "acov")) {
-		return(TRUE)
+	# 2. Modern summary WLS: observedStats with useWeight / asymCov (type often "none")
+	if (!is.null(model$data)) {
+		if (xmu_is_legacy_acov_data(model$data)) {
+			xmu_stop_legacy_acov("xmu_is_wls")
+		}
+		os = NULL
+		if (isS4(model$data) && .hasSlot(model$data, "observedStats")) {
+			os = model$data@observedStats
+		} else if (!is.null(model$data$observedStats)) {
+			os = model$data$observedStats
+		}
+		if (!is.null(os) && (!is.null(os$useWeight) || !is.null(os$asymCov))) {
+			return(TRUE)
+		}
 	}
-	# 3. Check submodels directly by value
+	# 3. Check submodels
 	for (sub in model$submodels) {
 		if (xmu_is_wls(sub)) {
 			return(TRUE)
 		}
 	}
 	return(FALSE)
+}
+
+# OpenMx residual dimnames for continuous vars, no means: var_* then poly_*_*
+xmu_openmx_residual_names <- function(traitNames) {
+	nms = paste0("var_", traitNames)
+	k = length(traitNames)
+	if (k >= 2) {
+		for (j in 1:(k - 1)) {
+			for (i in (j + 1):k) {
+				nms = c(nms, paste0("poly_", traitNames[i], "_", traitNames[j]))
+			}
+		}
+	}
+	nms
+}
+
+# GenomicSEM / R lower.tri pair labels "A B"
+xmu_gsem_vech_names <- function(traitNames) {
+	pairs = character(0)
+	k = length(traitNames)
+	for (j in 1:k) {
+		for (i in j:k) {
+			pairs = c(pairs, paste(traitNames[i], traitNames[j], sep = " "))
+		}
+	}
+	pairs
+}
+
+# Hard refusal of OpenMx legacy type='acov' / MxDataLegacyWLS (name-trap for useWeight/asymCov).
+xmu_stop_legacy_acov <- function(where = "umx") {
+	stop(
+		where, " does not support OpenMx type='acov' / MxDataLegacyWLS data.\n",
+		"  That interface historically swapped names (acov meant useWeight; fullWeight meant asymCov).\n",
+		"  Use either:\n",
+		"    (1) raw data + type = 'WLS'|'DWLS'|'ULS' in umxRAM / twin models, or\n",
+		"    (2) mxData(numObs = N, observedStats = list(cov = S, useWeight = W, asymCov = V))\n",
+		"  For genomic SEM see ?umxGSEM. For OpenMx summary WLS see ?mxData / ?mxFitFunctionWLS.",
+		call. = FALSE
+	)
+}
+
+xmu_is_legacy_acov_data <- function(data) {
+	if (is.null(data)) {
+		return(FALSE)
+	}
+	# Detect even if umx_is_MxData() no longer treats LegacyWLS as supported mxData
+	if (inherits(data, "MxDataLegacyWLS")) {
+		return(TRUE)
+	}
+	tp = tryCatch({
+		if (isS4(data) && .hasSlot(data, "type")) data@type else data$type
+	}, error = function(e) NULL)
+	identical(tp, "acov")
+}
+
+# Subset modern observedStats cov / useWeight / asymCov to selected manifests
+xmu_subset_modern_wls_observedStats <- function(data, namesNeeded) {
+	os = data$observedStats
+	if (is.null(os)) {
+		return(data)
+	}
+	if (!is.null(os$cov) && is.matrix(os$cov)) {
+		have = intersect(namesNeeded, colnames(os$cov))
+		if (length(have) == 0) {
+			have = intersect(namesNeeded, rownames(os$cov))
+		}
+		if (length(have) > 0) {
+			os$cov = os$cov[have, have, drop = FALSE]
+			namesNeeded = have
+		}
+	}
+	if (!is.null(data$observed) && is.matrix(data$observed) && all(namesNeeded %in% colnames(data$observed))) {
+		data$observed = data$observed[namesNeeded, namesNeeded, drop = FALSE]
+	}
+	# Prefer OpenMx residual names; also try GSEM vech names
+	keep_omx = xmu_openmx_residual_names(namesNeeded)
+	keep_gsem = xmu_gsem_vech_names(namesNeeded)
+	subset_mat = function(M) {
+		if (is.null(M) || !is.matrix(M)) {
+			return(M)
+		}
+		rn = rownames(M)
+		if (is.null(rn)) {
+			rn = colnames(M)
+		}
+		if (is.null(rn)) {
+			return(M)
+		}
+		if (all(keep_omx %in% rn)) {
+			return(M[keep_omx, keep_omx, drop = FALSE])
+		}
+		if (all(keep_gsem %in% rn)) {
+			return(M[keep_gsem, keep_gsem, drop = FALSE])
+		}
+		# partial intersection
+		keep = rn[rn %in% c(keep_omx, keep_gsem)]
+		if (length(keep) > 0) {
+			return(M[keep, keep, drop = FALSE])
+		}
+		M
+	}
+	if (!is.null(os$useWeight)) {
+		os$useWeight = subset_mat(os$useWeight)
+	}
+	if (!is.null(os$asymCov)) {
+		os$asymCov = subset_mat(os$asymCov)
+	}
+	# Refuse deprecated observedStats keys (same footgun as type='acov')
+	if (!is.null(os$acov) || !is.null(os$fullWeight)) {
+		xmu_stop_legacy_acov("umx (observedStats$acov / $fullWeight)")
+	}
+	data$observedStats = os
+	data
 }
 
 #' Upgrade a dataframe to an mxData type.
@@ -815,6 +945,10 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		# Pass strings through
 		return(data)
 	}
+	# Refuse OpenMx legacy type='acov' before any name/column helpers touch it
+	if (xmu_is_legacy_acov_data(data)) {
+		xmu_stop_legacy_acov("xmu_make_mxData")
+	}
 
 	if(is.null(manifests)){
 		# Manifests not specified: retain all except illegal variables
@@ -886,8 +1020,10 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		}else{
 			stop("I don't know how to create data of type ", omxQuotes(type))
 		}
+	}else if(xmu_is_legacy_acov_data(data)){
+		xmu_stop_legacy_acov("xmu_make_mxData")
 	}else if(umx_is_MxData(data)){
-		# Already an mxData
+		# Already a supported mxData (raw/cov/cor/modern observedStats)
 		if(dropColumns){
 			if(data$type %in% c("cov", "cor")){
 				# Trim down the data to include only the requested columns				
@@ -896,47 +1032,9 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				xmu_check_variance(data$observed[, setdiff(namesNeeded, fullCovs), drop = FALSE])
 				# Trim down the data to include only the requested columns 
 				data$observed = data$observed[, namesNeeded, drop = FALSE]
-			} else if (data$type == "acov") {
-				# Trim down and reorder the observed covariance matrix
-				data$observed = umx_reorder(data$observed, namesNeeded)
-				# Trim down and reorder the acov and fullWeight matrices
-				if (!is.null(rownames(data$acov))) {
-					sep <- " "
-					first_name <- rownames(data$acov)[1]
-					if (grepl("\\.", first_name)) {
-						sep <- "."
-					} else if (grepl("_", first_name)) {
-						sep <- "_"
-					}
-					k <- length(namesNeeded)
-					keep_pairs <- c()
-					for (j in 1:k) {
-						for (i in j:k) {
-							pair1 <- paste(namesNeeded[i], namesNeeded[j], sep = sep)
-							pair2 <- paste(namesNeeded[j], namesNeeded[i], sep = sep)
-							if (pair1 %in% rownames(data$acov)) {
-								keep_pairs <- c(keep_pairs, pair1)
-							} else if (pair2 %in% rownames(data$acov)) {
-								keep_pairs <- c(keep_pairs, pair2)
-							}
-						}
-					}
-					# Subset using index mapping to be robust to missing dimnames on fullWeight
-					orig_names <- rownames(data$acov)
-					match_indices <- match(keep_pairs, orig_names)
-					match_indices <- match_indices[!is.na(match_indices)]
-					
-					data$acov <- data$acov[match_indices, match_indices, drop = FALSE]
-					if (!is.null(data$fullWeight)) {
-						if (!is.null(rownames(data$fullWeight))) {
-							# If fullWeight has dimnames, subset by matched names
-							data$fullWeight <- data$fullWeight[keep_pairs, keep_pairs, drop = FALSE]
-						} else if (nrow(data$fullWeight) == length(orig_names)) {
-							# Otherwise, subset by matching indices
-							data$fullWeight <- data$fullWeight[match_indices, match_indices, drop = FALSE]
-						}
-					}
-				}
+			} else if (!is.null(data$observedStats) && length(data$observedStats) > 0) {
+				# Modern summary WLS: observedStats list(cov, useWeight, asymCov)
+				data = xmu_subset_modern_wls_observedStats(data, namesNeeded)
 			}
 			if(!is.null(fullCovs)){
 				# drop rows with missing def vars or stop
