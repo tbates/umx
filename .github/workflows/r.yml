@@ -34,6 +34,9 @@ jobs:
           r-version: 'release'
           use-public-rspm: true
 
+      # Quick CI: no GenomicSEM (github install is slow/flaky; vignette is eval=FALSE).
+      # Vignettes are skipped here — modification_indices/profile-CI knit is multi-hour;
+      # full vignette build stays on weekly matrix / workflow_dispatch.
       - name: Install Package Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -45,13 +48,13 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
-            github::GenomicSEM/GenomicSEM
           needs: check
 
       - name: Check Package Structure
         uses: r-lib/actions/check-r-package@v2
         with:
-          args: 'c("--no-manual", "--as-cran")'
+          build_args: 'c("--no-manual", "--no-build-vignettes")'
+          args: 'c("--no-manual", "--as-cran", "--no-vignettes")'
           error-on: '"error"'
 
       - name: Code Coverage
@@ -83,6 +86,8 @@ jobs:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
 
+      # No GenomicSEM here: parity vs GenomicSEM is manual-only
+      # (inst/developer/GenomicSEM/; needs a pinned older lavaan). Not used by testthat.
       - name: Install Package Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -93,7 +98,6 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
-            github::GenomicSEM/GenomicSEM
           needs: check
 
       - name: Check Package Structure

@@ -7,7 +7,7 @@
 umxMI(
   model = NA,
   matrices = NA,
-  full = TRUE,
+  full = FALSE,
   numInd = NA,
   typeToShow = "both",
   decreasing = TRUE
@@ -18,7 +18,7 @@ umxMI(
 
 \item{matrices}{which matrices to test. The default (NA) will test A & S for RAM models}
 
-\item{full}{Change in fit allowing all parameters to move. If FALSE only the parameter under test can move.}
+\item{full}{If FALSE (default), only the parameter under test can move. If TRUE, all free parameters re-adjust (much slower).}
 
 \item{numInd}{How many modifications to report. Use -1 for all. Default (NA) will report all over 6.63 (p = .01)}
 
@@ -33,8 +33,8 @@ or dropped, would improve fit.
 \details{
 Notes:
 \enumerate{
-\item Runs much faster with full = FALSE (but this does not allow the model to re-fit around the newly-
-freed parameter).
+\item Default \code{full = FALSE} only moves the parameter under test (fast screen). Set \code{full = TRUE} to
+allow all free parameters to re-adjust (slower; closer to a full re-fit for each candidate).
 \item Compared to mxMI, this function returns top changes, and also suppresses the run message.
 \item Finally, of course: see the requirements for (legitimate) post-hoc modeling in \code{\link[OpenMx:mxMI]{OpenMx::mxMI()}}
 You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
@@ -50,7 +50,8 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath(var = manifests),
 	umxPath(var = "G", fixedAt = 1)
 )
-umxMI(m1, full = FALSE)
+umxMI(m1)
+umxMI(m1, full = TRUE)  # slower: allow all parameters to re-adjust
 }
 }
 \references{

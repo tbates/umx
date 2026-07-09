@@ -3195,16 +3195,16 @@ plot.MxModelIP <- umxPlotIP
 #'
 #' This function uses the mechanical modification-indices approach to detect single paths which, if added
 #' or dropped, would improve fit.
-#' 
+#'
 #' Notes:
-#' 1. Runs much faster with full = FALSE (but this does not allow the model to re-fit around the newly-
-#' freed parameter).
+#' 1. Default `full = FALSE` only moves the parameter under test (fast screen). Set `full = TRUE` to
+#'    allow all free parameters to re-adjust (slower; closer to a full re-fit for each candidate).
 #' 2. Compared to mxMI, this function returns top changes, and also suppresses the run message.
 #' 3. Finally, of course: see the requirements for (legitimate) post-hoc modeling in [OpenMx::mxMI()]
 #' You are almost certainly doing better science when testing competing models rather than modifying a model to fit.
 #' @param model An [OpenMx::mxModel()] for which to report modification indices
 #' @param matrices which matrices to test. The default (NA) will test A & S for RAM models
-#' @param full Change in fit allowing all parameters to move. If FALSE only the parameter under test can move.
+#' @param full If FALSE (default), only the parameter under test can move. If TRUE, all free parameters re-adjust (much slower).
 #' @param numInd How many modifications to report. Use -1 for all. Default (NA) will report all over 6.63 (p = .01)
 #' @param typeToShow Whether to shown additions or deletions (default = "both")
 #' @param decreasing How to sort (default = TRUE, decreasing)
@@ -3224,9 +3224,10 @@ plot.MxModelIP <- umxPlotIP
 #' 	umxPath(var = manifests),
 #' 	umxPath(var = "G", fixedAt = 1)
 #' )
-#' umxMI(m1, full = FALSE)
+#' umxMI(m1)
+#' umxMI(m1, full = TRUE)  # slower: allow all parameters to re-adjust
 #' }
-umxMI <- function(model = NA, matrices = NA, full = TRUE, numInd = NA, typeToShow = "both", decreasing = TRUE) {
+umxMI <- function(model = NA, matrices = NA, full = FALSE, numInd = NA, typeToShow = "both", decreasing = TRUE) {
 	if(typeToShow != "both"){
 		message("Only showing both add and remove is supported so far")
 	}

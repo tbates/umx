@@ -2,6 +2,15 @@
 ## umx 4.90.0
 * Date: 2026-07-10 R 4.6.0
 
+### Testing / CI
+* `tests/testthat.R`: run the suite on CI (`NOT_CRAN` / `CI`) and interactive local sessions; **skip all tests on CRAN**.
+* GenomicSEM / pinned-lavaan parity stays under `inst/developer/GenomicSEM/` (manual only — not CRAN, not GHA).
+* GitHub Actions quick job: no vignette build; no `GenomicSEM` install. Weekly/full matrix also drops GenomicSEM install.
+
+### umxMI
+* DEFAULT change: `umxMI(..., full = FALSE)` (fast screen). Pass `full = TRUE` for full re-adjustment MI.
+* Vignette multi-group example uses the **one-factor** model (not multi-group bifactor).
+
 ### Genomic SEM (status)
 * Structural GSEM (ready): `umxGSEM()` fits one model to LDSC S/V via modern OpenMx
   `observedStats = list(cov, useWeight, asymCov)` (DWLS default). Accepts lavaan/umx strings or
