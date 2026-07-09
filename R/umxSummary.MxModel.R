@@ -8,19 +8,22 @@
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
 #'
+#' **Robust inference (`uncertainty = "RobustSE"`)**
+#'
+#' This option means **engine-appropriate robust inference**, not one sandwich formula for every fit type:
+#' \itemize{
+#'   \item **ML / FIML (raw continuous):** casewise score sandwich SEs via [OpenMx::imxRobustSE()], plus robust CFI/TLI/RMSEA via [xmu_robust_ML_fit()] (Yuan–Bentler / Brosseau-Liard & Savalei scaling).
+#'   \item **WLS / DWLS / ULS:** do **not** use the ML casewise sandwich. Parameter SEs are the usual **WLS/GMM moment sandwich** already returned by OpenMx (\eqn{W}, \eqn{\Delta}, \eqn{\Gamma}). Robust CFI/TLI/RMSEA are applied when \code{output$implied_jacobian} is present via [xmu_robust_WLS_fit()] (Satorra–Bentler 2010 for continuous WLS; Savalei 2021 catML for ordinal WLS). A statistical note states that SEs are WLS asymptotic (moment sandwich).
+#' }
+#'
 #' **Robust Fit Statistics for ML**
-#' Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and distorts the distribution of the ML test statistic itself, necessitating changes to SEs and fit statistics. `umx` supports robust ML - MLR – in `umxSummary` and `umxCompare` with options for `uncertainty`. `uncertainty` = "robustSE" implements sandwich estimator for SEs. Model fit scaling corrections (e.g., MLR / Yuan-Bentler) are also implemented for ML estimation.
-# When you use "robustSE", umxSummary and umxCompare report "MLR" Yuan-Bentler scaled fit measures: RMSEA, CFI etc.) that
-# incorporate the Savalei (2018) logic, including extensions for categorical data and FIML/missing data.
-# Yuan & Bentler (2000) generalized and refined the approach, particularly for incomplete data. Their T2* (or equivalent) statistic corrects both the mean and the variance of the test statistic to better match a $  \chi^2  $ reference distribution. Savalei (2018) correctly computes robust RMSEA and CFI (and by extension TLI) using the mean-and-variance corrected test 
-# statistic (i.e., YB/MLR scaled statistic).
-# This prevents non-normality inflating or distorting the sample values of RMSEA and CFI. Consequently, the conventional cutoffs (RMSEA ≤ 0.06, CFI ≥ 0.95, etc.) retain their meaning.
+#' Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, `uncertainty = "RobustSE"` implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan–Bentler / Savalei 2018-style robust indices).
 #'
 #' **Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)**
 #' 
 #' Historically, simulation studies showed that CFI and TLI behaved differently under DWLS/WLS than under ML (Shi et al., 2020). Incremental fit indices rely on a comparison to the independence (null) model. Under legacy WLS implementations, the weighting matrix changed how that baseline behaved, causing conventional cutoffs (e.g., CFI > 0.95) to break down.
 #' 
-#' *Solution:* `umxSummary` automatically intercepts WLS models (including summary-statistic / Genomic SEM inputs) and routes them through [xmu_robust_WLS_fit()]. That function computes an independence baseline natively in R and applies trace-matrix scaling corrections so that robust indices are interpretable alongside conventional ML practice.
+#' *Solution:* `umxSummary` intercepts WLS models (including summary-statistic / Genomic SEM inputs) and routes them through [xmu_robust_WLS_fit()] when a Jacobian is available. That function computes an independence baseline natively in R and applies trace-matrix scaling corrections so that robust indices are interpretable alongside conventional ML practice. Parameter SEs remain the OpenMx WLS moment sandwich (see `uncertainty = "RobustSE"` note above).
 #' 
 #' **Two statistic families (by design).** WLS output deliberately separates omnibus testing from incremental/absolute fit:
 #' \itemize{
@@ -56,7 +59,7 @@
 #' @param std If TRUE, model is standardized (Default FALSE, NULL means "don't show").
 #' @param digits How many decimal places to report (Default 2)
 #' @param report If "html", then show results in browser (default = "markdown")
-#' @param uncertainty What type of parameter uncertainty to report: "SE" (default standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).
+#' @param uncertainty What type of uncertainty/inference packaging to report: `"SE"` (default SEs from the fit), `"RobustSE"` (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), `"CI"` (profile likelihood CIs), or `"none"`.
 #' @param means Whether to include means in the summary (TRUE)
 #' @param residuals Whether to include residuals in the summary (TRUE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
@@ -133,14 +136,23 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		uncertainty = match.arg(uncertainty)
 	}
 
-	# If RobustSE is requested, compute and assign robust covariance and standard errors
+	# RobustSE: engine-appropriate robust inference (not one sandwich for all fit types)
+	isWLS = xmu_is_wls(model)
 	if (uncertainty == "RobustSE") {
-		if (is.null(model$data) || is.null(model$data$observed) || identical(model$data$type, "cov")) {
-			stop("Robust standard errors require raw data. The model has covariance or missing data.")
+		if (isWLS) {
+			# Plan A: keep OpenMx WLS/GMM moment-sandwich SEs (already in output$vcov).
+			# Do not call imxRobustSE (casewise ML sandwich is wrong for WLS).
+			if (is.null(model$output$vcov)) {
+				warning("WLS model has no parameter covariance matrix in output; SEs unavailable. Run the model with standard errors enabled.", call. = FALSE)
+			}
+		} else {
+			if (is.null(model$data) || is.null(model$data$observed) || identical(model$data$type, "cov")) {
+				stop("Robust standard errors for ML require raw data. The model has covariance or missing data.")
+			}
+			resRobust = imxRobustSE(model, details = TRUE)
+			model@output$vcov = resRobust$cov
+			model@output$standardErrors = resRobust$SE
 		}
-		resRobust = imxRobustSE(model, details = TRUE)
-		model@output$vcov = resRobust$cov
-		model@output$standardErrors = resRobust$SE
 	}
 
 	SE = (uncertainty %in% c("SE", "RobustSE", "CI")) && !is.null(model$output$vcov)
@@ -190,11 +202,10 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		modelSummary = summary(model, refModels = refModels) # Using refModels supplied by user
 	}
 
-	isWLS = xmu_is_wls(model)
 	if (isWLS) {
 	    # Check for GenomicMx engine via our new helper
 	    if (xmu_has_WLS_jacobian(model)) {
-	        message("umxSummary: Modern WLS model with Jacobian detected. Applying SB-2010 robust metrics...")
+	        message("umxSummary: Modern WLS model with Jacobian detected. Applying robust WLS fit metrics...")
 	        robustFit = NULL
 	        tryCatch({
 	            robustFit = xmu_robust_WLS_fit(model)
@@ -399,6 +410,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 							cat(sprintf("\n*Statistical Note*: Ordinal WLS robust indices use Savalei (2021) cML corrections with catML scaling (c_model = %.3f, c_null = %.3f). Conventional Hu & Bentler (1999) cutoffs apply to these robust CFI/TLI/RMSEA values.\n", robustScaling$cModel, robustScaling$cNull))
 						} else {
 							cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.\nEvaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
+						}
+						if (identical(uncertainty, "RobustSE")) {
+							cat("*SEs*: WLS asymptotic (GMM moment sandwich using the weight matrix and asym. cov. of summary statistics). These are the usual OpenMx WLS SEs—not ML casewise sandwich SEs.\n")
 						}
 					} else {
 						robustScaling = attr(modelSummary, "robustScalingFactors")

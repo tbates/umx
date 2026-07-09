@@ -2463,14 +2463,20 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		latents = model@latentVars # 'vis', 'math', and 'text' 
 		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
-		# If RobustSE is requested, compute and assign robust covariance and standard errors
+		# RobustSE: ML casewise sandwich; for WLS keep OpenMx GMM/moment-sandwich SEs
 		if (uncertainty == "RobustSE") {
-			if (is.null(model$data) || is.null(model$data$observed) || identical(model$data$type, "cov")) {
-				stop("Robust standard errors require raw data. The model has covariance or missing data.")
+			if (xmu_is_wls(model)) {
+				if (is.null(model$output$vcov)) {
+					warning("WLS model has no parameter covariance matrix in output; SEs unavailable.", call. = FALSE)
+				}
+			} else {
+				if (is.null(model$data) || is.null(model$data$observed) || identical(model$data$type, "cov")) {
+					stop("Robust standard errors for ML require raw data. The model has covariance or missing data.")
+				}
+				resRobust = imxRobustSE(model, details = TRUE)
+				model@output$vcov = resRobust$cov
+				model@output$standardErrors = resRobust$SE
 			}
-			resRobust = imxRobustSE(model, details = TRUE)
-			model@output$vcov = resRobust$cov
-			model@output$standardErrors = resRobust$SE
 		}
 
 		# Compute standardized/raw paths and standard errors once using mxStandardizeRAMpaths
