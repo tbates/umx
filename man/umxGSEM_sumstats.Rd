@@ -24,30 +24,108 @@ Relative names are resolved under \code{baseDir} (default: working directory).}
 \item{ref}{Path or file name of 1000G reference with columns SNP, CHR, BP, MAF, A1, A2
 (resolved under \code{baseDir} when relative).}
 
-\item{trait.names}{Trait names (defaults to file basenames).}
+\item{trait.names}{Character vector of trait names for output columns (defaults to file basenames).}
 
-\item{se.logit}{Logical vector (one per trait): SE is on the logistic scale (default TRUE for case/control).}
+\item{se.logit}{Logical (or vector, one per trait). If \code{TRUE} (default), treat effects/SEs as
+logistic-scale log(OR) and apply the Genomic SEM continuous-scale transform.}
 
-\item{OLS}{Logical vector: continuous OLS traits.}
+\item{OLS}{Logical (or vector). If \code{TRUE}, treat the trait as continuous OLS and standardize
+with Z and total \code{N} (see Details).}
 
-\item{linprob}{Logical vector: back out logistic betas from Z and N.}
+\item{linprob}{Logical (or vector). If \code{TRUE}, recover continuous-scale effects from Z and
+effective \code{N} for binary traits (see Details).}
 
-\item{N}{Optional sample sizes (total for OLS; sum of effective N for binary linprob).}
+\item{N}{Optional numeric sample sizes (total N for OLS; sum of effective N for linprob).
+Recycled to \code{length(files)}.}
 
-\item{info.filter}{INFO threshold (default 0.6).}
+\item{info.filter}{Numeric INFO threshold (default \code{0.6}); applied when INFO is present.}
 
-\item{maf.filter}{MAF threshold applied to the reference (default 0.01).}
+\item{maf.filter}{Numeric MAF threshold applied to the reference (default \code{0.01}).}
 
 \item{baseDir}{Directory for relative \code{files} and \code{ref} (default \code{getwd()}). Absolute paths are left unchanged.}
 }
 \value{
-A data.frame with SNP, CHR, BP, MAF, A1, A2, and \verb{beta.*} / \verb{se.*} per trait.
+A \code{data.frame} with columns \code{SNP}, \code{CHR}, \code{BP}, \code{MAF}, \code{A1}, \code{A2}, and
+\verb{beta.<trait>} / \verb{se.<trait>} for each trait in \code{trait.names}, sorted by CHR/BP.
 }
 \description{
-Aligns per-trait GWAS files to a 1000 Genomes reference (allele match + MAF),
-converts ORs to log-scale when needed, and applies the continuous-scale
-transformation used in Genomic SEM (\code{beta} / \code{se} relative to unit-variance
-phenotypes). Output is ready for \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
+Aligns per-trait GWAS summary statistic files to a 1000 Genomes reference
+(allele match + MAF filter), converts odds ratios to the log scale when needed,
+and applies the continuous-scale transformation used in Genomic SEM so that
+effects and standard errors are on a unit-variance phenotype scale. The result
+is ready for \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
+
+The returned \code{data.frame} has columns \strong{SNP}, \strong{CHR}, \strong{BP}, \strong{MAF},
+\strong{A1}, \strong{A2}, and \strong{\verb{beta.*} / \verb{se.*} per trait} (listwise-complete SNPs
+present in the reference and in every trait file).
+}
+\details{
+\subsection{Example input (SCZ subset)}{
+
+Workshop-style GWAS files are whitespace-separated. A few lines of the package
+toy file \code{SCZ_subset.txt} look like:\tabular{lrrrllrrr}{
+   SNP \tab Freq.A1 \tab CHR \tab BP \tab A1 \tab A2 \tab OR \tab SE \tab P \cr
+   rs1000000 \tab 0.7763 \tab 12 \tab 126890980 \tab G \tab A \tab 1.0195 \tab 0.011559 \tab 0.0954 \cr
+   rs10000010 \tab 0.5099 \tab 4 \tab 21618674 \tab T \tab C \tab 0.9910 \tab 0.009582 \tab 0.3452 \cr
+   rs1000002 \tab 0.5199 \tab 3 \tab 183635768 \tab C \tab T \tab 1.0048 \tab 0.009435 \tab 0.6113 \cr
+}
+
+
+Column synonyms are resolved automatically (\code{SNP}/\code{rsid}, \code{OR}/\code{beta}/\code{effect},
+\code{SE}/\code{stderr}, \code{INFO}, \code{N}, allele columns, etc.). When the median effect is near 1,
+values are treated as odds ratios and logged.
+}
+
+\subsection{Example output}{
+
+After aligning SCZ, BIP, and MDD to a 1000G reference with \code{se.logit = TRUE}
+(toy subsets under \verb{inst/developer/GenomicSEM/}), the first rows resemble:\tabular{lrrrllrrrrrr}{
+   SNP \tab CHR \tab BP \tab MAF \tab A1 \tab A2 \tab beta.SCZ \tab se.SCZ \tab beta.BIP \tab se.BIP \tab beta.MDD \tab se.MDD \cr
+   rs1000073 \tab 1 \tab 157255396 \tab 0.417 \tab A \tab G \tab -0.00053 \tab 0.00543 \tab 0.00696 \tab 0.0133 \tab -0.00105 \tab 0.00447 \cr
+   rs1000050 \tab 1 \tab 162736463 \tab 0.147 \tab C \tab T \tab 0.00614 \tab 0.00742 \tab -0.0150 \tab 0.0182 \tab -0.00033 \tab 0.00700 \cr
+   rs1000053 \tab 2 \tab 12790328 \tab 0.090 \tab C \tab T \tab 0.00149 \tab 0.00915 \tab -0.0187 \tab 0.0240 \tab -0.00226 \tab 0.00744 \cr
+}
+
+
+Reference alleles and MAF come from \code{ref}; betas are flipped so that A1 matches the reference.
+SNPs that fail allele match, INFO, or listwise merge are dropped.
+}
+
+\subsection{Scale flags (\code{se.logit}, \code{OLS}, \code{linprob})}{
+
+Pass a single logical or a vector recycled to \code{length(files)}. For each trait,
+choose the treatment that matches how that GWAS was run:\tabular{lll}{
+   Flag \tab Typical traits \tab What it does \cr
+   \code{se.logit = TRUE} \tab Case/control logistic GWAS (default) \tab Treat \code{effect}/\code{SE} as log(OR) and SE on the logistic scale; transform both to the continuous scale used by Genomic SEM: divide by \(\sqrt{\beta^2 \mathrm{Var}(\mathrm{SNP}) + \pi^2/3}\), with \(\mathrm{Var}(\mathrm{SNP}) = 2p(1-p)\). \cr
+   \code{linprob = TRUE} \tab Binary traits lacking usable logistic SEs \tab Reconstruct Z from effect/SE when present, then back out continuous-scale beta and SE using effective sample size \code{N} (sum of effective Ns) and the same logistic-to-continuous adjustment. \cr
+   \code{OLS = TRUE} \tab Continuous phenotypes \tab Standardize using Z and total sample size \code{N} with SNP variance \(2p(1-p)\). \cr
+   \code{se.logit = FALSE} (and not OLS/linprob) \tab Non-standard OR-scale SEs \tab Alternate SE scaling for odds-ratio reported SEs; prefer \code{se.logit = TRUE} for ordinary logistic GWAS. \cr
+}
+
+}
+
+\subsection{Other parameters}{
+\itemize{
+\item \strong{\code{files}}: Paths (or basenames under \code{baseDir}) to one GWAS file per trait, in the
+same trait order you will use for LDSC / \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
+\item \strong{\code{ref}}: 1000 Genomes (or equivalent) reference table with columns
+\code{SNP}, \code{CHR}, \code{BP}, \code{MAF}, \code{A1}, \code{A2}. Used for allele alignment, MAF filter, and
+SNP annotation in the return value.
+\item \strong{\code{trait.names}}: Labels for \verb{beta.*} / \verb{se.*} columns (default: file basenames
+without extension). Must match LDSC trait names when you expand into GWAS.
+\item \strong{\code{N}}: Optional sample sizes, one per trait (or recycled). Required for meaningful
+\code{OLS} / \code{linprob} transforms (total N for OLS; effective N sum for linprob).
+\item \strong{\code{info.filter}}: Drop SNPs with INFO below this value when an INFO column is present
+(default \code{0.6}). Missing INFO is kept.
+\item \strong{\code{maf.filter}}: Drop reference SNPs with MAF below this threshold (default \code{0.01}).
+MAF is folded so it is at most 0.5.
+\item \strong{\code{baseDir}}: Directory prepended to relative \code{files} and \code{ref} paths. Absolute
+paths are left unchanged.
+}
+
+Processing is \strong{listwise}: a SNP must appear in the reference and in every trait file
+after QC. Expect a message like \verb{umxGSEM_sumstats: N SNPs after listwise merge with reference.}
+}
 }
 \examples{
 \dontrun{
@@ -57,10 +135,22 @@ snps = umxGSEM_sumstats(
   ref = "reference.1000G.subset.txt",
   trait.names = c("SCZ", "BIP", "MDD"),
   se.logit = TRUE,
-  baseDir = "~/bin/umx/inst/developer/GenomicSEM"
+  baseDir = "path/to/umx/inst/developer/GenomicSEM"
 )
 head(snps)
+# columns: SNP, CHR, BP, MAF, A1, A2, beta.SCZ, se.SCZ, beta.BIP, ...
 }
+}
+\references{
+Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, S. J., Mallard, T. T.,
+Hill, W. D., Ip, H. F., Marioni, R. E., McIntosh, A. M., Deary, I. J., Koellinger, P. D.,
+Harden, K. P., Nivard, M. G., & Tucker-Drob, E. M. (2019).
+Genomic structural equation modelling provides insights into the multivariate genetic
+architecture of complex traits. \emph{Nature Human Behaviour}, \strong{3}, 513–525.
+\doi{10.1038/s41562-019-0566-x}
+
+Tutorial materials and sumstats conventions follow the Genomic SEM documentation and
+workshops (see \url{https://github.com/GenomicSEM/GenomicSEM}).
 }
 \seealso{
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}, \code{\link[=umxGSEM]{umxGSEM()}}

@@ -639,40 +639,32 @@ xmu_gsem_bound_residuals <- function(model, lbound = 1e-8) {
 #' @export
 #' @family Test
 #' @references - <https://github.com/tbates/umx>
-
 #' @examples
 #' \dontrun{
 #' require(umx)
-#' # A genomic SEM example
-#  # load an ldsc object (contains: "V" "S" "I" "N" "m")
+#' # LDSC object (list with V, S, I, N, m)
 #' data(Psych_LDSC)
-#' 
-#' m1 = umxGSEM(model = "F1 ~= SCZ +BIP +MDD +EA + INSOM", covstruc= Psych_LDSC, estimation = "DWLS")
-#' umxSummary(m1)
-#' 
-#' m2 = umxGSEM(model = "F1 =~ SCZ + BIP + MDD; INSOM ~ F1; EA ~ INSOM), covstruc= Psych_LDSC, estimation = "DWLS")
-#' umxSummary(m2)
-#' 
+#'
+#' m1 = umxGSEM(model = "F1 ~= SCZ + BIP + MDD + EA + INSOM",
+#'              covstruc = Psych_LDSC, estimation = "DWLS")
+#' umx_is_GSEM(m1) # TRUE
+#'
+#' # lavaan-style paths (quote the model string carefully)
+#' m2 = umxGSEM(
+#'   model = "F1 =~ SCZ + BIP + MDD\nINSOM ~ F1\nEA ~ INSOM",
+#'   covstruc = Psych_LDSC, estimation = "DWLS")
 #' umxCompare(m2, m1)
-#' 
-#' # Make a simple heritability and genetic correlation GSEM model to test
+#'
+#' # Hand-built S/V heritability + genetic covariance
 #' traits = c("Trt1", "Trt2")
-#' S = matrix(c(0.25, 0.15,
-#' 				 0.15, 0.30), nrow = 2, ncol = 2, dimnames = list(traits, traits))
-#' V = matrix(c(0.002, 0.001, 0.001,
-#'              0.001, 0.003, 0.001,
-#'              0.001, 0.001, 0.002), nrow = 3, ncol = 3)
+#' S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2,
+#'            dimnames = list(traits, traits))
+#' V = diag(c(0.002, 0.003, 0.002))
 #' vech_names = c("Trt1 Trt1", "Trt2 Trt1", "Trt2 Trt2")
 #' dimnames(V) = list(vech_names, vech_names)
-#' modelStr = "
-#' Trt1 ~~ Trt1
-#' Trt2 ~~ Trt2
-#' Trt1 ~~ Trt2
-#' "
-#' m1 = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
-#'
-#' # minor helpers exist also:
-#' umx_is_GSEM(m1) # TRUE
+#' modelStr = "Trt1 ~~ Trt1\nTrt2 ~~ Trt2\nTrt1 ~~ Trt2"
+#' m0 = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
+#' umx_is_GSEM(m0)
 #' }
 umx_is_GSEM <- function(obj) {
 	if(!umx_is_MxModel(obj)){
@@ -735,27 +727,111 @@ xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, f
 
 #' Prepare multivariate SNP summary statistics for genomic SEM GWAS
 #'
-#' Aligns per-trait GWAS files to a 1000 Genomes reference (allele match + MAF),
-#' converts ORs to log-scale when needed, and applies the continuous-scale
-#' transformation used in Genomic SEM (`beta` / `se` relative to unit-variance
-#' phenotypes). Output is ready for [umxGSEM_GWAS()].
+#' @description
+#' Aligns per-trait GWAS summary statistic files to a 1000 Genomes reference
+#' (allele match + MAF filter), converts odds ratios to the log scale when needed,
+#' and applies the continuous-scale transformation used in Genomic SEM so that
+#' effects and standard errors are on a unit-variance phenotype scale. The result
+#' is ready for [umxGSEM_GWAS()].
+#'
+#' The returned `data.frame` has columns **SNP**, **CHR**, **BP**, **MAF**,
+#' **A1**, **A2**, and **`beta.*` / `se.*` per trait** (listwise-complete SNPs
+#' present in the reference and in every trait file).
+#'
+#' @details
+#' ## Example input (SCZ subset)
+#'
+#' Workshop-style GWAS files are whitespace-separated. A few lines of the package
+#' toy file `SCZ_subset.txt` look like:
+#'
+#' | SNP | Freq.A1 | CHR | BP | A1 | A2 | OR | SE | P |
+#' |:----|--------:|----:|---:|:---|:---|-----:|-------:|-------:|
+#' | rs1000000 | 0.7763 | 12 | 126890980 | G | A | 1.0195 | 0.011559 | 0.0954 |
+#' | rs10000010 | 0.5099 | 4 | 21618674 | T | C | 0.9910 | 0.009582 | 0.3452 |
+#' | rs1000002 | 0.5199 | 3 | 183635768 | C | T | 1.0048 | 0.009435 | 0.6113 |
+#'
+#' Column synonyms are resolved automatically (`SNP`/`rsid`, `OR`/`beta`/`effect`,
+#' `SE`/`stderr`, `INFO`, `N`, allele columns, etc.). When the median effect is near 1,
+#' values are treated as odds ratios and logged.
+#'
+#' ## Example output
+#'
+#' After aligning SCZ, BIP, and MDD to a 1000G reference with `se.logit = TRUE`
+#' (toy subsets under `inst/developer/GenomicSEM/`), the first rows resemble:
+#'
+#' | SNP | CHR | BP | MAF | A1 | A2 | beta.SCZ | se.SCZ | beta.BIP | se.BIP | beta.MDD | se.MDD |
+#' |:----|----:|---:|----:|:---|:---|---------:|-------:|---------:|-------:|---------:|-------:|
+#' | rs1000073 | 1 | 157255396 | 0.417 | A | G | -0.00053 | 0.00543 | 0.00696 | 0.0133 | -0.00105 | 0.00447 |
+#' | rs1000050 | 1 | 162736463 | 0.147 | C | T | 0.00614 | 0.00742 | -0.0150 | 0.0182 | -0.00033 | 0.00700 |
+#' | rs1000053 | 2 | 12790328 | 0.090 | C | T | 0.00149 | 0.00915 | -0.0187 | 0.0240 | -0.00226 | 0.00744 |
+#'
+#' Reference alleles and MAF come from `ref`; betas are flipped so that A1 matches the reference.
+#' SNPs that fail allele match, INFO, or listwise merge are dropped.
+#'
+#' ## Scale flags (`se.logit`, `OLS`, `linprob`)
+#'
+#' Pass a single logical or a vector recycled to `length(files)`. For each trait,
+#' choose the treatment that matches how that GWAS was run:
+#'
+#' | Flag | Typical traits | What it does |
+#' |:-----|:---------------|:-------------|
+#' | `se.logit = TRUE` | Case/control logistic GWAS (default) | Treat `effect`/`SE` as log(OR) and SE on the logistic scale; transform both to the continuous scale used by Genomic SEM: divide by \(\sqrt{\beta^2 \mathrm{Var}(\mathrm{SNP}) + \pi^2/3}\), with \(\mathrm{Var}(\mathrm{SNP}) = 2p(1-p)\). |
+#' | `linprob = TRUE` | Binary traits lacking usable logistic SEs | Reconstruct Z from effect/SE when present, then back out continuous-scale beta and SE using effective sample size `N` (sum of effective Ns) and the same logistic-to-continuous adjustment. |
+#' | `OLS = TRUE` | Continuous phenotypes | Standardize using Z and total sample size `N` with SNP variance \(2p(1-p)\). |
+#' | `se.logit = FALSE` (and not OLS/linprob) | Non-standard OR-scale SEs | Alternate SE scaling for odds-ratio reported SEs; prefer `se.logit = TRUE` for ordinary logistic GWAS. |
+#'
+#' ## Other parameters
+#'
+#' * **`files`**: Paths (or basenames under `baseDir`) to one GWAS file per trait, in the
+#'   same trait order you will use for LDSC / [umxGSEM_GWAS()].
+#' * **`ref`**: 1000 Genomes (or equivalent) reference table with columns
+#'   `SNP`, `CHR`, `BP`, `MAF`, `A1`, `A2`. Used for allele alignment, MAF filter, and
+#'   SNP annotation in the return value.
+#' * **`trait.names`**: Labels for `beta.*` / `se.*` columns (default: file basenames
+#'   without extension). Must match LDSC trait names when you expand into GWAS.
+#' * **`N`**: Optional sample sizes, one per trait (or recycled). Required for meaningful
+#'   `OLS` / `linprob` transforms (total N for OLS; effective N sum for linprob).
+#' * **`info.filter`**: Drop SNPs with INFO below this value when an INFO column is present
+#'   (default `0.6`). Missing INFO is kept.
+#' * **`maf.filter`**: Drop reference SNPs with MAF below this threshold (default `0.01`).
+#'   MAF is folded so it is at most 0.5.
+#' * **`baseDir`**: Directory prepended to relative `files` and `ref` paths. Absolute
+#'   paths are left unchanged.
+#'
+#' Processing is **listwise**: a SNP must appear in the reference and in every trait file
+#' after QC. Expect a message like `umxGSEM_sumstats: N SNPs after listwise merge with reference.`
 #'
 #' @param files Character vector of GWAS summary statistic file names or paths (same trait order as LDSC).
 #'   Relative names are resolved under `baseDir` (default: working directory).
 #' @param ref Path or file name of 1000G reference with columns SNP, CHR, BP, MAF, A1, A2
 #'   (resolved under `baseDir` when relative).
-#' @param trait.names Trait names (defaults to file basenames).
-#' @param se.logit Logical vector (one per trait): SE is on the logistic scale (default TRUE for case/control).
-#' @param OLS Logical vector: continuous OLS traits.
-#' @param linprob Logical vector: back out logistic betas from Z and N.
-#' @param N Optional sample sizes (total for OLS; sum of effective N for binary linprob).
-#' @param info.filter INFO threshold (default 0.6).
-#' @param maf.filter MAF threshold applied to the reference (default 0.01).
+#' @param trait.names Character vector of trait names for output columns (defaults to file basenames).
+#' @param se.logit Logical (or vector, one per trait). If `TRUE` (default), treat effects/SEs as
+#'   logistic-scale log(OR) and apply the Genomic SEM continuous-scale transform.
+#' @param OLS Logical (or vector). If `TRUE`, treat the trait as continuous OLS and standardize
+#'   with Z and total `N` (see Details).
+#' @param linprob Logical (or vector). If `TRUE`, recover continuous-scale effects from Z and
+#'   effective `N` for binary traits (see Details).
+#' @param N Optional numeric sample sizes (total N for OLS; sum of effective N for linprob).
+#'   Recycled to `length(files)`.
+#' @param info.filter Numeric INFO threshold (default `0.6`); applied when INFO is present.
+#' @param maf.filter Numeric MAF threshold applied to the reference (default `0.01`).
 #' @param baseDir Directory for relative `files` and `ref` (default `getwd()`). Absolute paths are left unchanged.
-#' @return A data.frame with SNP, CHR, BP, MAF, A1, A2, and `beta.*` / `se.*` per trait.
+#' @return A `data.frame` with columns `SNP`, `CHR`, `BP`, `MAF`, `A1`, `A2`, and
+#'   `beta.<trait>` / `se.<trait>` for each trait in `trait.names`, sorted by CHR/BP.
 #' @export
 #' @family Genomic SEM Functions
 #' @seealso [umxGSEM_GWAS()], [umxGSEM()]
+#' @references
+#' Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, S. J., Mallard, T. T.,
+#' Hill, W. D., Ip, H. F., Marioni, R. E., McIntosh, A. M., Deary, I. J., Koellinger, P. D.,
+#' Harden, K. P., Nivard, M. G., & Tucker-Drob, E. M. (2019).
+#' Genomic structural equation modelling provides insights into the multivariate genetic
+#' architecture of complex traits. *Nature Human Behaviour*, **3**, 513–525.
+#' \doi{10.1038/s41562-019-0566-x}
+#'
+#' Tutorial materials and sumstats conventions follow the Genomic SEM documentation and
+#' workshops (see <https://github.com/GenomicSEM/GenomicSEM>).
 #'
 #' @examples
 #' \dontrun{
@@ -765,9 +841,10 @@ xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, f
 #'   ref = "reference.1000G.subset.txt",
 #'   trait.names = c("SCZ", "BIP", "MDD"),
 #'   se.logit = TRUE,
-#'   baseDir = "~/bin/umx/inst/developer/GenomicSEM"
+#'   baseDir = "path/to/umx/inst/developer/GenomicSEM"
 #' )
 #' head(snps)
+#' # columns: SNP, CHR, BP, MAF, A1, A2, beta.SCZ, se.SCZ, beta.BIP, ...
 #' }
 umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OLS = FALSE, linprob = FALSE, N = NULL, info.filter = 0.6, maf.filter = 0.01, baseDir = getwd()) {
 	files = as.character(files)

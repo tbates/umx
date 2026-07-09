@@ -17,6 +17,34 @@ umx_is_GSEM(obj)
 \description{
 Utility function returning a binary answer to the question "Is this a GSEM model?"
 }
+\examples{
+\dontrun{
+require(umx)
+# LDSC object (list with V, S, I, N, m)
+data(Psych_LDSC)
+
+m1 = umxGSEM(model = "F1 ~= SCZ + BIP + MDD + EA + INSOM",
+             covstruc = Psych_LDSC, estimation = "DWLS")
+umx_is_GSEM(m1) # TRUE
+
+# lavaan-style paths (quote the model string carefully)
+m2 = umxGSEM(
+  model = "F1 =~ SCZ + BIP + MDD\nINSOM ~ F1\nEA ~ INSOM",
+  covstruc = Psych_LDSC, estimation = "DWLS")
+umxCompare(m2, m1)
+
+# Hand-built S/V heritability + genetic covariance
+traits = c("Trt1", "Trt2")
+S = matrix(c(0.25, 0.15, 0.15, 0.30), nrow = 2, ncol = 2,
+           dimnames = list(traits, traits))
+V = diag(c(0.002, 0.003, 0.002))
+vech_names = c("Trt1 Trt1", "Trt2 Trt1", "Trt2 Trt2")
+dimnames(V) = list(vech_names, vech_names)
+modelStr = "Trt1 ~~ Trt1\nTrt2 ~~ Trt2\nTrt1 ~~ Trt2"
+m0 = umxGSEM(model = modelStr, S = S, V = V, estimation = "DWLS")
+umx_is_GSEM(m0)
+}
+}
 \references{
 \itemize{
 \item \url{https://github.com/tbates/umx}
