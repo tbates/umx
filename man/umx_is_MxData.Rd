@@ -21,7 +21,7 @@ Is the input an MxData?
 umx_is_MxData(mtcars)
 umx_is_MxData(mxData(mtcars, type= "raw"))
 umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
-umx_is_MxData(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
+umx_is_MxData(mxData(na.omit(twinData[, c("wt1", "wt2")]), type = "raw"))
 }
 \references{
 \itemize{

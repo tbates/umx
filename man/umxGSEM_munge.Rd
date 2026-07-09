@@ -65,6 +65,8 @@ Nor just pruned SNPs.
 \seealso{
 Other Genomic SEM Functions:
 \code{\link[=umxGSEM]{umxGSEM()}},
-\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}}
+\code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
+\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 }
 \concept{Genomic SEM Functions}

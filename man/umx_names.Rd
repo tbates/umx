@@ -100,7 +100,7 @@ umx_names(GFF, "[^12bs]$") # doesn't end in `1`, `2`, `b`, or `s`
 # "zyg_6grp" "zyg_2grp" "divorce"
 umx_names(mxData(twinData[, c("wt1", "wt2")], type= "raw"))
 umx_names(mxData(cov(twinData[, c("wt1", "wt2")], use="comp"), type= "cov", numObs= 1000))
-umx_names(mxDataWLS(na.omit(twinData[, c("wt1", "wt2")]), type= "WLS"))
+umx_names(mxData(na.omit(twinData[, c("wt1", "wt2")]), type = "raw"))
 
 namez(umxMatrix("bob", "Full", 3,3)$labels)
 

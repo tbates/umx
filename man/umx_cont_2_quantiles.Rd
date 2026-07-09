@@ -46,7 +46,7 @@ str(x); levels(x)
 table(x)
 \dontrun{
 ggplot2::qplot(x$x)
-y = mxDataWLS(x, type = "WLS")
+y = mxData(x, type = "raw") # then fit with mxFitFunctionWLS / umxRAM type="WLS"
 }
 
 # ===========================

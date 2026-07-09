@@ -13,13 +13,16 @@ umxGSEM_sumstats(
   linprob = FALSE,
   N = NULL,
   info.filter = 0.6,
-  maf.filter = 0.01
+  maf.filter = 0.01,
+  baseDir = getwd()
 )
 }
 \arguments{
-\item{files}{Character vector of GWAS summary statistic paths (same trait order as LDSC).}
+\item{files}{Character vector of GWAS summary statistic file names or paths (same trait order as LDSC).
+Relative names are resolved under \code{baseDir} (default: working directory).}
 
-\item{ref}{Path to 1000G reference with columns SNP, CHR, BP, MAF, A1, A2.}
+\item{ref}{Path or file name of 1000G reference with columns SNP, CHR, BP, MAF, A1, A2
+(resolved under \code{baseDir} when relative).}
 
 \item{trait.names}{Trait names (defaults to file basenames).}
 
@@ -34,6 +37,8 @@ umxGSEM_sumstats(
 \item{info.filter}{INFO threshold (default 0.6).}
 
 \item{maf.filter}{MAF threshold applied to the reference (default 0.01).}
+
+\item{baseDir}{Directory for relative \code{files} and \code{ref} (default \code{getwd()}). Absolute paths are left unchanged.}
 }
 \value{
 A data.frame with SNP, CHR, BP, MAF, A1, A2, and \verb{beta.*} / \verb{se.*} per trait.
@@ -46,11 +51,14 @@ phenotypes). Output is ready for \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
 }
 \examples{
 \dontrun{
-dir = system.file("developer", "GenomicSEM", package = "umx")
-# or local: dir = "~/bin/umx/inst/developer/GenomicSEM"
-files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt"))
-ref   = file.path(dir, "reference.1000G.subset.txt")
-snps  = umxGSEM_sumstats(files, ref, trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE)
+# basenames only (files live in baseDir)
+snps = umxGSEM_sumstats(
+  files = c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt"),
+  ref = "reference.1000G.subset.txt",
+  trait.names = c("SCZ", "BIP", "MDD"),
+  se.logit = TRUE,
+  baseDir = "~/bin/umx/inst/developer/GenomicSEM"
+)
 head(snps)
 }
 }

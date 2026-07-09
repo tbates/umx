@@ -36,6 +36,8 @@ umxGSEM_dl_RefList(project_path = project_path)
 \seealso{
 Other Genomic SEM Functions:
 \code{\link[=umxGSEM]{umxGSEM()}},
-\code{\link[=umxGSEM_munge]{umxGSEM_munge()}}
+\code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
+\code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 }
 \concept{Genomic SEM Functions}

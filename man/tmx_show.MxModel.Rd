@@ -27,7 +27,9 @@
 
 \item{show}{filter on what to show c("all", "free", "fixed").}
 
-\item{matrices}{to show  (default is c("S", "A")). "thresholds" in beta.}
+\item{matrices}{to show (default is c("S", "A", "M")). Summary / genomic SEM data (modern observedStats):
+\code{"data.S"} / \code{"observed"}, \code{"data.V"} / \code{"asymCov"}, \code{"data.W"} / \code{"useWeight"}.
+Legacy OpenMx name \code{"acov"} is refused (it meant useWeight, not sampling covariance).}
 
 \item{digits}{precision to report. Default = round to 2 decimal places.}
 
