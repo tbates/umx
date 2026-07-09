@@ -3,26 +3,27 @@
 * Date: 2026-07-10 R 4.6.0
 
 ### Genomic SEM (status)
-* **Structural GSEM (ready):** `umxGSEM()` fits one model to LDSC `S`/`V` via modern OpenMx
-  `observedStats = list(cov, useWeight, asymCov)` (DWLS default). Accepts lavaan/umx strings **or**
+* Structural GSEM (ready): `umxGSEM()` fits one model to LDSC S/V via modern OpenMx
+  `observedStats = list(cov, useWeight, asymCov)` (DWLS default). Accepts lavaan/umx strings or
   existing `umxRAM`/`mxModel` structures. Residual order + diagonal DWLS weights match
   GenomicSEM `commonfactor` on `Psych_LDSC` (loadings/SEs to printed precision).
-* **SNP pipeline scaffold (R front end):**
-  - `umxGSEM_sumstats()` — allele-align GWAS files to a 1000G ref (`baseDir` for basenames).
-  - `umxGSEM_GWAS()` — per-SNP expand of `S`/`V`, DWLS fit, table of factor~SNP effects.
+* SNP pipeline scaffold (R front end):
+  - `umxGSEM_sumstats()`: allele-align GWAS files to a 1000G ref (`baseDir` for basenames).
+  - `umxGSEM_GWAS()`: per-SNP expand of S/V, DWLS fit, table of factor~SNP effects.
   - Smoke path: workshop SCZ/BIP/MDD subsets under `inst/developer/GenomicSEM/` + 3-trait
     block of `Psych_LDSC` (not full 5-trait; no EA/INSOM SNP toys).
-  - **Next (OpenMx rear end):** flatten model once, OpenMP over SNP blocks in C++
-    (`GsemImpliedStats` / DWLS), reassemble results — R `umxGSEM_GWAS` stays the API shell.
-* **Docs:** vignette `vignettes/umxGSEM_Psych_LDSC.Rmd` (Psych_LDSC decimal-match tables,
+  - Next (OpenMx rear end): flatten model once, OpenMP over SNP blocks in C++
+    (`GsemImpliedStats` / DWLS), reassemble results. R `umxGSEM_GWAS` stays the API shell.
+* Docs: vignette `vignettes/umxGSEM_Psych_LDSC.Rmd` (Psych_LDSC decimal-match tables,
   SNP data sources, production download notes).
-* **Rails:** hard-refuse OpenMx legacy `type="acov"` / `MxDataLegacyWLS` (name trap:
-  `acov` meant useWeight). Use raw + `type="WLS"|"DWLS"` or modern `observedStats`.
-* **Helpers:** `xmu_gsem_*` prepare/expand/WLS; `xmu_wls_extract_WV` modern-only;
-  `tmx_show` data.S / data.V / data.W (refuses `"acov"`).
+* Rails: hard-refuse OpenMx legacy `type="acov"` / `MxDataLegacyWLS` (name trap:
+  top-level `acov` meant useWeight, not asymptotic covariance). Use raw data +
+  `type="WLS"|"DWLS"`, or modern `observedStats`.
+* Helpers: `xmu_gsem_*` prepare/expand/WLS; `xmu_wls_extract_WV` modern-only;
+  `tmx_show` data.S / data.V / data.W (refuses name `"acov"`).
 
 ### WLS / reporting
-* IMPROVED: `umxCompare` / `umxSummary` WLS + SB-2010 / robust metrics notes for GSEM.
+* IMPROVED: `umxCompare` / `umxSummary` WLS + Satorra-Bentler 2010 / robust metrics notes for GSEM.
 * NEW: `xmu_make_mxData` subsets modern summary WLS `observedStats` (useWeight / asymCov).
 
 # Releases
