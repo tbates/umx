@@ -401,11 +401,8 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		keep_vars = setdiff(keep_vars, "SNP") # SNP is GWAS-only
 	} else if (is.character(model)) {
 		model = gsub("~=", "=~", model, fixed = TRUE)
-		ramDots = list(...)
-		if (is.null(ramDots$std.lv)) {
-			ramDots$std.lv = std.lv
-		}
-		dummy_model = do.call(umxRAM, c(list(model = model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE), ramDots))
+		# Discover manifests (cov placeholder; WLS data injected after triage)
+		dummy_model = umxRAM(model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, std.lv = std.lv, ...)
 		keep_vars = dummy_model$manifestVars
 	} else {
 		stop("umxGSEM: model must be a lavaan/umx model string or an mxModel/umxRAM object.")
@@ -431,11 +428,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 			stop("umxGSEM: model manifestVars must include all selected traits: ", paste(keep_vars, collapse = ", "))
 		}
 	} else {
-		ramDots = list(...)
-		if (is.null(ramDots$std.lv)) {
-			ramDots$std.lv = std.lv
-		}
-		final_model = do.call(umxRAM, c(list(model = model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name), ramDots))
+		final_model = umxRAM(model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name, std.lv = std.lv, ...)
 	}
 
 	final_model = xmu_gsem_set_starts(final_model, S_subset)
@@ -747,8 +740,10 @@ xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, f
 #' transformation used in Genomic SEM (`beta` / `se` relative to unit-variance
 #' phenotypes). Output is ready for [umxGSEM_GWAS()].
 #'
-#' @param files Character vector of GWAS summary statistic paths (same trait order as LDSC).
-#' @param ref Path to 1000G reference with columns SNP, CHR, BP, MAF, A1, A2.
+#' @param files Character vector of GWAS summary statistic file names or paths (same trait order as LDSC).
+#'   Relative names are resolved under `baseDir` (default: working directory).
+#' @param ref Path or file name of 1000G reference with columns SNP, CHR, BP, MAF, A1, A2
+#'   (resolved under `baseDir` when relative).
 #' @param trait.names Trait names (defaults to file basenames).
 #' @param se.logit Logical vector (one per trait): SE is on the logistic scale (default TRUE for case/control).
 #' @param OLS Logical vector: continuous OLS traits.
@@ -756,6 +751,7 @@ xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, f
 #' @param N Optional sample sizes (total for OLS; sum of effective N for binary linprob).
 #' @param info.filter INFO threshold (default 0.6).
 #' @param maf.filter MAF threshold applied to the reference (default 0.01).
+#' @param baseDir Directory for relative `files` and `ref` (default `getwd()`). Absolute paths are left unchanged.
 #' @return A data.frame with SNP, CHR, BP, MAF, A1, A2, and `beta.*` / `se.*` per trait.
 #' @export
 #' @family Genomic SEM Functions
@@ -763,18 +759,24 @@ xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, f
 #'
 #' @examples
 #' \dontrun{
-#' dir = system.file("developer", "GenomicSEM", package = "umx")
-#' # or local: dir = "~/bin/umx/inst/developer/GenomicSEM"
-#' files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt"))
-#' ref   = file.path(dir, "reference.1000G.subset.txt")
-#' snps  = umxGSEM_sumstats(files, ref, trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE)
+#' # basenames only (files live in baseDir)
+#' snps = umxGSEM_sumstats(
+#'   files = c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt"),
+#'   ref = "reference.1000G.subset.txt",
+#'   trait.names = c("SCZ", "BIP", "MDD"),
+#'   se.logit = TRUE,
+#'   baseDir = "~/bin/umx/inst/developer/GenomicSEM"
+#' )
 #' head(snps)
 #' }
-umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OLS = FALSE, linprob = FALSE, N = NULL, info.filter = 0.6, maf.filter = 0.01) {
+umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OLS = FALSE, linprob = FALSE, N = NULL, info.filter = 0.6, maf.filter = 0.01, baseDir = getwd()) {
 	files = as.character(files)
 	if (length(files) < 1) {
 		stop("Provide at least one GWAS file path.")
 	}
+	baseDir = path.expand(baseDir)
+	files = xmu_gsem_resolve_paths(files, baseDir)
+	ref = xmu_gsem_resolve_paths(ref, baseDir)
 	n = length(files)
 	if (is.null(trait.names)) {
 		trait.names = gsub("\\..*$", "", basename(files))
@@ -831,6 +833,21 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 	rownames(merged) = NULL
 	message("umxGSEM_sumstats: ", nrow(merged), " SNPs after listwise merge with reference.")
 	merged
+}
+
+# Resolve relative paths under baseDir; leave absolute paths alone
+xmu_gsem_resolve_paths <- function(paths, baseDir = getwd()) {
+	paths = as.character(paths)
+	out = character(length(paths))
+	for (i in seq_along(paths)) {
+		p = path.expand(paths[i])
+		if (grepl("^(/|[A-Za-z]:)", p)) {
+			out[i] = p
+		} else {
+			out[i] = file.path(path.expand(baseDir), p)
+		}
+	}
+	out
 }
 
 xmu_gsem_read_sumstats_table <- function(path) {
@@ -1062,7 +1079,21 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		model = paste0(model, "\nF1 ~ SNP\n")
 	}
 
-	results = vector("list", nSNP)
+	# Preallocate result columns (avoid do.call(rbind, ...) over list blobs)
+	out_SNP = character(nSNP)
+	out_CHR = if ("CHR" %in% names(SNPs)) SNPs$CHR[seq_len(nSNP)] else rep(NA, nSNP)
+	out_BP  = if ("BP" %in% names(SNPs)) SNPs$BP[seq_len(nSNP)] else rep(NA, nSNP)
+	out_MAF = SNPs$MAF[seq_len(nSNP)]
+	out_A1  = if ("A1" %in% names(SNPs)) as.character(SNPs$A1[seq_len(nSNP)]) else rep(NA_character_, nSNP)
+	out_A2  = if ("A2" %in% names(SNPs)) as.character(SNPs$A2[seq_len(nSNP)]) else rep(NA_character_, nSNP)
+	out_est = rep(NA_real_, nSNP)
+	out_se  = rep(NA_real_, nSNP)
+	out_Z   = rep(NA_real_, nSNP)
+	out_P   = rep(NA_real_, nSNP)
+	out_status = rep(NA_integer_, nSNP)
+	out_fail = rep(TRUE, nSNP)
+	out_warn = rep(NA_character_, nSNP)
+
 	oldAuto = getOption("umx_auto_plot")
 	options(umx_auto_plot = FALSE)
 	on.exit(options(umx_auto_plot = oldAuto), add = TRUE)
@@ -1071,6 +1102,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		if (!quiet && (i == 1L || i %% 50L == 0L || i == nSNP)) {
 			message("umxGSEM_GWAS: SNP ", i, " / ", nSNP)
 		}
+		out_SNP[i] = as.character(SNPs$SNP[i])
 		expn = xmu_gsem_expand_snp(
 			S_LD = S_LD, V_LD = V_LD, I_LD = I_LD,
 			beta_i = as.numeric(beta_SNP[i, ]),
@@ -1090,45 +1122,32 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 				std.lv = FALSE
 			)
 			# Silent run (avoid umxSummary spam in the SNP loop)
+			# TODO: replace R loop with OpenMx C++/OpenMP SNP stream (flatten once, block by core)
 			mxRun(m, silent = TRUE, suppressWarnings = TRUE)
 		}, error = function(e) e)
 
-		row = list(
-			SNP = SNPs$SNP[i],
-			CHR = if ("CHR" %in% names(SNPs)) SNPs$CHR[i] else NA,
-			BP = if ("BP" %in% names(SNPs)) SNPs$BP[i] else NA,
-			MAF = SNPs$MAF[i],
-			A1 = if ("A1" %in% names(SNPs)) as.character(SNPs$A1[i]) else NA_character_,
-			A2 = if ("A2" %in% names(SNPs)) as.character(SNPs$A2[i]) else NA_character_,
-			est = NA_real_,
-			se = NA_real_,
-			Z = NA_real_,
-			P = NA_real_,
-			status = NA_integer_,
-			fail = TRUE,
-			warning = NA_character_
-		)
 		if (inherits(fit, "error")) {
-			row$warning = conditionMessage(fit)
+			out_warn[i] = conditionMessage(fit)
 		} else {
-			row$fail = FALSE
-			row$status = tryCatch(fit$output$status$code, error = function(e) NA_integer_)
-			# Extract F1 <- SNP (A matrix path SNP -> F1 is F1 ~ SNP in lavaan = from SNP to F1 in RAM? )
-			# In lavaan F1 ~ SNP means SNP predicts F1: regression of F1 on SNP.
-			# In RAM: path from SNP to F1.
+			out_fail[i] = FALSE
+			out_status[i] = tryCatch(as.integer(fit$output$status$code), error = function(e) NA_integer_)
+			# F1 ~ SNP: RAM path from SNP to first latent
 			est_se = xmu_gsem_extract_snp_path(fit, traits)
-			row$est = est_se$est
-			row$se = est_se$se
-			if (is.finite(row$est) && is.finite(row$se) && row$se > 0) {
-				row$Z = row$est / row$se
-				row$P = 2 * stats::pnorm(-abs(row$Z))
+			out_est[i] = est_se$est
+			out_se[i] = est_se$se
+			if (is.finite(out_est[i]) && is.finite(out_se[i]) && out_se[i] > 0) {
+				out_Z[i] = out_est[i] / out_se[i]
+				out_P[i] = 2 * stats::pnorm(-abs(out_Z[i]))
 			}
 		}
-		results[[i]] = row
 	}
-	out = do.call(rbind.data.frame, results)
-	rownames(out) = NULL
-	out
+	data.frame(
+		SNP = out_SNP, CHR = out_CHR, BP = out_BP, MAF = out_MAF,
+		A1 = out_A1, A2 = out_A2,
+		est = out_est, se = out_se, Z = out_Z, P = out_P,
+		status = out_status, fail = out_fail, warning = out_warn,
+		stringsAsFactors = FALSE
+	)
 }
 
 # Build S and V including SNP (Genomic SEM ordering: SNP first, then traits)
