@@ -5,6 +5,8 @@
 * NEW: `umxCompare` support for SB2010, robust fit measures.
 * IMPROVED: `umxSummary` support for WLS fit  (with notes about interpreting fit indices)
 * NEW: vignette stub `vignettes/umxGSEM_Psych_LDSC.Rmd` — Psych_LDSC common-factor DWLS
+* NEW: `umxGSEM` accepts existing umxRAM/mxModel structures; `umxGSEM_sumstats` + `umxGSEM_GWAS` for SNP-level multivariate GWAS (toy SCZ/BIP/MDD subsets under inst/developer/GenomicSEM).
+
   decimal match vs GenomicSEM `commonfactor` (parameters/SEs); modern observedStats rails.
 * BREAKING: umx **no longer supports** OpenMx `type="acov"` / `MxDataLegacyWLS` data.
   That interface historically swapped names (`acov` = useWeight, `fullWeight` = asymCov) and was a

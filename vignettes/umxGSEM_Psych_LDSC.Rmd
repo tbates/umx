@@ -204,12 +204,36 @@ For umx, the matching **3-trait** genetic cov structure is the SCZ/BIP/MDD block
 
 Minimum columns before munge: **rsID, A1 (effect allele), A2, effect (beta or OR), P**. Sample size \(N\) (or effective \(N\)) is required for scaling.
 
-### What we will build toward in umx
+### umx API for SNPs (implemented)
 
-1. **`umxGSEM(model = umxRAM(...))`** — pass a RAM / path model, not only a lavaan string.  
-2. **SNP-augmented GSEM** — expand each SNP into the genetic cov structure (SNP–trait covariances from prepared sumstats + LDSC `S`/`V`), then fit DWLS once per SNP (or a batched OpenMx engine). Tutorial subsets first; full genome second.
+```{r gwas-smoke, eval = FALSE}
+# Toy files under inst/developer/GenomicSEM/ (or workshop Box pack)
+dir = system.file("developer", "GenomicSEM", package = "umx")
+snps = umxGSEM_sumstats(
+  files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
+  ref   = file.path(dir, "reference.1000G.subset.txt"),
+  trait.names = c("SCZ", "BIP", "MDD"),
+  se.logit = TRUE
+)
 
-Until that lands, use this vignette’s tables for **LDSC-only** verification, and the workshop Box pack for **tiny SNP** experiments against SCZ/BIP/MDD.
+# 3-trait LDSC block (match SNP trait order)
+S = as.matrix(Psych_LDSC$S); rownames(S) = colnames(S)
+traits = c("SCZ", "BIP", "MDD")
+cov3 = list(
+  S = S[traits, traits],
+  V = { V = as.matrix(Psych_LDSC$V)
+        dimnames(V) = list(xmu_gsem_vech_names(colnames(S)), xmu_gsem_vech_names(colnames(S)))
+        V[xmu_gsem_vech_names(traits), xmu_gsem_vech_names(traits)] },
+  I = { I = as.matrix(Psych_LDSC$I); dimnames(I) = list(colnames(S), colnames(S)); I[traits, traits] }
+)
+
+gwas = umxGSEM_GWAS(covstruc = cov3, SNPs = snps, maxSNPs = 50)
+head(gwas)
+```
+
+- **`umxGSEM()`** — one structural model (string **or** existing `umxRAM`/`mxModel`).
+- **`umxGSEM_sumstats()`** — allele-align + continuous-scale betas for multivariate GWAS.
+- **`umxGSEM_GWAS()`** — per-SNP expand `S`/`V`, DWLS fit, return SNP table (`est` = factor ~ SNP).
 
 ---
 
