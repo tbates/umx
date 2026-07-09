@@ -142,6 +142,77 @@ Re-run verification (maintainers): fit with `eval = TRUE` above; optionally comp
 
 ---
 
+## SNP summary data for multivariate GWAS (pipeline roadmap)
+
+Adding SNPs (GenomicSEM’s `sumstats` → `commonfactorGWAS` / `userGWAS`) needs **per-trait GWAS files** plus a **1000 Genomes MAF reference**. Built-in `Psych_LDSC` / `Anthro_LDSC` are **LDSC-only** (`S`, `V`, …); they do **not** ship SNP betas.
+
+### How this maps to our LDSC objects
+
+| umx object | Traits | Closest workshop object | SNP tutorial files |
+|------------|--------|-------------------------|--------------------|
+| `Psych_LDSC` | SCZ, BIP, MDD, **EA**, **INSOM** | `PRAC_COV` (5-trait user model) | Workshop has **no** bundled EA/INSOM SNP subsets for the 5-trait path model |
+| (3-trait subset of Psych) | SCZ, BIP, MDD only | `PSYCH_COV` | **Yes** — tutorial multivariate GWAS uses these three |
+| `Anthro_LDSC` | BMI, WHR, CO, Waist, Hip, Height, IHC, BL, BW | `Anthro_LDSC.RData` in workshop materials | Full anthropometric GWAS from original papers / consortia (not in the 1k SNP toy pack) |
+
+Workshop practical (IBG / Grotzinger materials):
+
+- Box mirror: <https://utexas.box.com/s/sounavy84gwygj0j2askcyaoo2ostbgu>  
+- Script: <https://ibg.colorado.edu/cdrom2021/Day06-nivard/GenomicSEM_practical/GenomicSEM_Practical.R>
+
+### Toy (subset) SNPs — for smoke tests only
+
+From the practical (order must match `ldsc` / `sumstats`):
+
+```text
+SCZ_subset.txt
+BIP_subset.txt
+MDD_subset.txt
+reference.1000G.subset.txt    # drastically reduced 1000G ref for MAF
+```
+
+Notes from the tutorial authors:
+
+- Subsets are on the order of **~1k SNPs** (munge/ldsc demo only).
+- For multivariate GWAS they still pair SNP files with a **full-SNP premade** `PSYCH_COV` LDSC object — i.e. subset SNPs are for `sumstats`/`commonfactorGWAS` smoke tests, not for rebuilding LDSC from scratch with only 1k SNPs.
+- Full reference: see wiki; full 1000G MAF file is **not** the `.subset` file.
+
+Example (GenomicSEM naming; umx will mirror later):
+
+```{r gsem-sumstats-toy, eval = FALSE}
+files       = c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")
+ref         = "reference.1000G.subset.txt"
+trait.names = c("SCZ", "BIP", "MDD")
+se.logit    = c(TRUE, TRUE, TRUE)
+# GenomicSEM::sumstats(files, ref, trait.names, se.logit = se.logit)
+# commonfactorGWAS(covstruc = PSYCH_COV, SNPs = p_sumstats, estimation = "DWLS")
+```
+
+For umx, the matching **3-trait** genetic cov structure is the SCZ/BIP/MDD block of `Psych_LDSC` (or a dedicated 3-trait LDSC when we ship one).
+
+### Full-fat SNPs — production
+
+1. **Download full GWAS summary statistics** for each trait from the original consortia (PGC for SCZ/BIP/MDD, SSGAC for EA, etc.). Do **not** use “top hits only” dumps.
+2. **Munge** to LDSC/HapMap3 format (`SNP`, `A1`, `A2`, `effect`, `P`, …) — in umx: `umxGSEM_dl_RefList()` + `umxGSEM_munge()` (OpenMx C++ munge). HapMap3 list: Zenodo `w_hm3.snplist` (see `?umxGSEM_dl_RefList`).
+3. **LD scores** for European-ancestry LDSC: `eur_w_ld_chr/` (Bulik-Sullivan / LDSC standard bundle; also linked from GenomicSEM install materials).
+4. **Run multivariable LDSC** → `covstruc` (`S`, `V`, `I`, `N`, `m`) — same shape as `Psych_LDSC`.
+5. **Prepare SNP file for SEM-GWAS** (`sumstats`-equivalent): align alleles to a **1000 Genomes Phase 3** reference used for SNP variance / MAF.  
+   Full ref download (GenomicSEM wiki):  
+   <https://utexas.box.com/s/vkd36n197m8klbaio3yzoxsee6sxo11v>  
+   (`reference.1000G.maf.0.005.txt` style; not the workshop `.subset`.)
+6. **Trait order** in munge / ldsc / sumstats / SEM-GWAS must stay identical.
+7. **Binary traits:** know whether SEs are logistic (`se.logit = TRUE` is common even when effects are ORs). Continuous traits: `OLS = TRUE` or standardized betas as appropriate.
+
+Minimum columns before munge: **rsID, A1 (effect allele), A2, effect (beta or OR), P**. Sample size \(N\) (or effective \(N\)) is required for scaling.
+
+### What we will build toward in umx
+
+1. **`umxGSEM(model = umxRAM(...))`** — pass a RAM / path model, not only a lavaan string.  
+2. **SNP-augmented GSEM** — expand each SNP into the genetic cov structure (SNP–trait covariances from prepared sumstats + LDSC `S`/`V`), then fit DWLS once per SNP (or a batched OpenMx engine). Tutorial subsets first; full genome second.
+
+Until that lands, use this vignette’s tables for **LDSC-only** verification, and the workshop Box pack for **tiny SNP** experiments against SCZ/BIP/MDD.
+
+---
+
 ## Session
 
 ```{r session, eval = TRUE}
