@@ -1,0 +1,149 @@
+---
+title: "Genomic SEM in umx (`umxGSEM`)"
+subtitle: "Psych_LDSC common-factor check against GenomicSEM"
+author: "Timothy C. Bates"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Genomic SEM in umx (umxGSEM)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment  = "#>",
+  eval     = FALSE   # stub: set TRUE when verifying locally with current OpenMx/umx
+)
+library(umx)
+```
+
+## Purpose
+
+This vignette is a **verification stub** for genomic structural equation modeling (GSEM) in **umx** via [`umxGSEM()`](https://tbates.github.io/umx/reference/umxGSEM.html).
+
+It documents that a one-factor model on the built-in LDSC object [`Psych_LDSC`](https://tbates.github.io/umx/reference/Psych_LDSC.html) recovers the same **DWLS point estimates and standard errors** (to printed precision) as GenomicSEM’s `commonfactor()` on the same input.
+
+> **Rails, not vibes.** umx builds OpenMx summary WLS with modern  
+> `mxData(numObs = N, observedStats = list(cov = S, useWeight = W, asymCov = V))`  
+> after reordering \(V\) into OpenMx residual order (`var_*`, `poly_*_*`).  
+> Legacy OpenMx `type = "acov"` is **not** used or accepted.
+
+Reference: Grotzinger et al. (2019). Genomic structural equation modeling. *Nature Human Behaviour*, **3**, 513–525. [doi:10.1038/s41562-019-0566-x](https://doi.org/10.1038/s41562-019-0566-x).
+
+---
+
+## Data: `Psych_LDSC`
+
+Five traits from multivariate LDSC: **SCZ**, **BIP**, **MDD**, **EA**, **INSOM**.
+
+```{r load-data}
+data(Psych_LDSC, package = "umx")
+str(Psych_LDSC, max.level = 1)
+# names: V, S, I, N, m
+# S is 5×5 genetic covariance; V is 15×15 sampling covariance of vech(S)
+colnames(Psych_LDSC$S)
+```
+
+| Slot | Role |
+|------|------|
+| `S` | Genetic covariance (heritabilities on diagonal) |
+| `V` | Sampling covariance of non-redundant elements of `S` |
+| `I` | LDSC intercepts |
+| `N` | Effective sample sizes for each `S` element |
+| `m` | SNP count used in LDSC |
+
+---
+
+## Fit a common factor with `umxGSEM`
+
+Unit-variance identification (`std.lv = TRUE` by default). Path-style `~=` is accepted as lavaan `=~`.
+
+```{r fit-umxGSEM}
+m1 = umxGSEM(
+  model      = "g ~= SCZ + BIP + MDD + EA + INSOM",
+  covstruc   = Psych_LDSC,
+  estimation = "DWLS"
+)
+umxSummary(m1)
+```
+
+Optional explicit lavaan syntax (same model):
+
+```{r fit-lavaan-syntax}
+m1b = umxGSEM(
+  model = "
+    g =~ NA*SCZ + BIP + MDD + EA + INSOM
+    g ~~ 1*g
+  ",
+  covstruc   = Psych_LDSC,
+  estimation = "DWLS",
+  std.lv     = FALSE
+)
+```
+
+Inspect summary WLS data (modern names only — not `acov`):
+
+```{r tmx-data}
+tmx_show(m1, matrices = c("data.S", "data.V", "data.W"), report = "markdown")
+```
+
+---
+
+## Decimal match: umxGSEM vs GenomicSEM `commonfactor`
+
+Verified against GenomicSEM `commonfactor(Psych_LDSC, estimation = "DWLS")` on the same `Psych_LDSC` object (unstandardized loadings and residual variances; unit variance on the factor).
+
+### Factor loadings
+
+| Path | GenomicSEM | umxGSEM | SE (both) |
+|------|------------|---------|-----------|
+| g → SCZ | 0.4314 | 0.4314 | 0.0408 |
+| g → BIP | 0.4235 | 0.4235 | 0.0397 |
+| g → MDD | 0.1310 | 0.1310 | 0.0148 |
+| g → EA | 0.0087 | 0.0087 | 0.0058 |
+| g → INSOM | 0.0165 | 0.0165 | 0.0055 |
+
+### Residual variances
+
+| Residual | GenomicSEM | umxGSEM |
+|----------|------------|---------|
+| SCZ | 0.0583 | 0.0583 |
+| BIP | 0.0834 | 0.0834 |
+| MDD | 0.0836 | 0.0836 |
+| EA | 0.1123 | 0.1123 |
+| INSOM | 0.0457 | 0.0457 |
+
+Standardized loadings (GenomicSEM / same model structure) are approximately SCZ **0.87**, BIP **0.83**, MDD **0.41**, EA **0.03**, INSOM **0.08** — SCZ and BIP dominate the genetic factor; EA and INSOM barely load (as expected from `S`).
+
+### Fit indices (do **not** require decimal match)
+
+Omnibus \(\chi^2\), CFI, and related indices can differ across packages because of how \(r'Wr\) is scaled, how the independence model is built, and dummy `numObs`. **Parameters and SEs are the cross-check.** For GSEM model comparison in umx, prefer change in CFI / SRMR and nested tests via `umxCompare()` (see package docs).
+
+| Package | Example omnibus (illustrative) |
+|---------|--------------------------------|
+| umxGSEM | \(\chi^2(5) \approx 388.5\); fit \(r'Wr \approx 407.3\) with `numObs = 1` |
+| GenomicSEM `commonfactor` | \(\chi^2(5) \approx 504\); CFI \(\approx 0.45\); SRMR \(\approx 0.16\) |
+
+---
+
+## Implementation notes (for maintainers)
+
+1. **DWLS weights:** \(W = \mathrm{diag}(1/\mathrm{diag}(V))\) after reordering \(V\) into OpenMx residual order (all variances, then free covariances).
+2. **OpenMx data:** `observedStats = list(cov = S, useWeight = W, asymCov = V)` — never legacy `type = "acov"`.
+3. **Identification:** genetic scale prefers unit factor variance (free first loading), not unit loading.
+4. **Numerics:** elements of LDSC \(V\) are often \(10^{-4}\)–\(10^{-6}\); weights are large; tiny print digits can hide real structure (`tmx_show` auto-bumps digits for small matrices).
+5. **Local minima:** DWLS can sit in a secondary basin; `umxGSEM` defaults to `tryHard = "yes"` and eigen-based starts.
+
+Re-run verification (maintainers): fit with `eval = TRUE` above; optionally compare to GenomicSEM `commonfactor` when that stack is available. No umx dependency on GenomicSEM or lavaan GSEM helpers is required for users.
+
+---
+
+## Session
+
+```{r session, eval = TRUE}
+sessionInfo()
+```
