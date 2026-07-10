@@ -392,24 +392,34 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	S = sv$S
 	V = sv$V
 
+	# Retain "SNP" as a manifest when it is present in S (umxGSEM_GWAS expand).
+	# Only drop SNP for pure structural GSEM (S has traits only).
+	snpInS = "SNP" %in% colnames(S)
+
 	isMx = umx_is_MxModel(model)
 	if (isMx) {
 		if (!is.null(model$data) && exists("xmu_is_legacy_acov_data", mode = "function") && xmu_is_legacy_acov_data(model$data)) {
 			xmu_stop_legacy_acov("umxGSEM")
 		}
 		# Keep model manifest order (OpenMx WLS matches cov to F by position; wrong order segfaults).
-		keep_vars = setdiff(model$manifestVars, "SNP") # SNP is GWAS-only
+		keep_vars = model$manifestVars
+		if (!snpInS) {
+			keep_vars = setdiff(keep_vars, "SNP")
+		}
 	} else if (is.character(model)) {
 		model = gsub("~=", "=~", model, fixed = TRUE)
 		# Discover manifests (cov placeholder; WLS data injected after triage)
 		dummy_model = umxRAM(model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, std.lv = std.lv, ...)
-		keep_vars = setdiff(dummy_model$manifestVars, "SNP")
+		keep_vars = dummy_model$manifestVars
+		if (!snpInS) {
+			keep_vars = setdiff(keep_vars, "SNP")
+		}
 	} else {
 		stop("umxGSEM: model must be a lavaan/umx model string or an mxModel/umxRAM object.")
 	}
 
 	if (length(keep_vars) == 0) {
-		stop("No manifest variables found in the model (aside from optional SNP).")
+		stop("No manifest variables found in the model.")
 	}
 	missing_traits = setdiff(keep_vars, colnames(S))
 	if (length(missing_traits) > 0) {
@@ -427,7 +437,10 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	# Structure: umxRAM from string, or inject data into existing MxModel
 	if (isMx) {
 		final_model = mxModel(model, name = name)
-		man_now = setdiff(final_model$manifestVars, "SNP")
+		man_now = final_model$manifestVars
+		if (!snpInS) {
+			man_now = setdiff(man_now, "SNP")
+		}
 		if (!identical(as.character(man_now), as.character(keep_vars))) {
 			stop("umxGSEM: internal mismatch between model manifestVars and WLS cov order.")
 		}
@@ -1301,6 +1314,12 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			est_se = xmu_gsem_extract_snp_path(fit, traits)
 			out_est[i] = est_se$est
 			out_se[i] = est_se$se
+			# Unreliable SE when optimizer did not converge cleanly
+			if (is.finite(out_status[i]) && !(out_status[i] %in% c(0L, 1L))) {
+				if (is.finite(out_se[i]) && is.finite(out_est[i]) && out_se[i] < 1e-3 * max(1e-6, abs(out_est[i]))) {
+					out_se[i] = NA_real_
+				}
+			}
 			if (is.finite(out_est[i]) && is.finite(out_se[i]) && out_se[i] > 0) {
 				out_Z[i] = out_est[i] / out_se[i]
 				out_P[i] = 2 * stats::pnorm(-abs(out_Z[i]))
@@ -1382,11 +1401,64 @@ xmu_gsem_expand_snp <- function(S_LD, V_LD, I_LD, beta_i, se_i, varSNP_i, varSNP
 	list(S = S_Full, V = V_Full)
 }
 
+# WLS sandwich SEs from implied_jacobian + useWeight + asymCov (when OpenMx omits SEs).
+xmu_gsem_wls_sandwich_se <- function(fit) {
+	J = fit@output$implied_jacobian
+	if (is.null(J) || !is.matrix(J) || ncol(J) < 1) {
+		return(NULL)
+	}
+	wv = tryCatch(xmu_wls_extract_WV(fit, stop_if_missing = TRUE), error = function(e) NULL)
+	if (is.null(wv)) {
+		return(NULL)
+	}
+	W = wv$useWeight
+	V = wv$asymCov
+	if (is.null(W) || is.null(V)) {
+		return(NULL)
+	}
+	if (!is.null(rownames(J)) && !is.null(rownames(W))) {
+		common = intersect(rownames(W), rownames(J))
+		if (length(common) < 1) {
+			return(NULL)
+		}
+		J = J[common, , drop = FALSE]
+		W = W[common, common, drop = FALSE]
+		V = V[common, common, drop = FALSE]
+	} else if (nrow(J) != nrow(W)) {
+		return(NULL)
+	}
+	info = t(J) %*% W %*% J
+	# Ridge if nearly singular (common when optim status is poor)
+	kap = tryCatch(kappa(info, exact = FALSE), error = function(e) Inf)
+	if (!is.finite(kap) || kap > 1e10) {
+		info = info + diag(max(1e-10, mean(abs(diag(info)), na.rm = TRUE) * 1e-8), nrow(info))
+	}
+	bread = tryCatch(solve(info), error = function(e) NULL)
+	if (is.null(bread)) {
+		return(NULL)
+	}
+	meat = t(J) %*% W %*% V %*% W %*% J
+	vcov_mat = bread %*% meat %*% bread
+	se = sqrt(pmax(diag(as.matrix(vcov_mat)), 0))
+	labs = names(omxGetParameters(fit))
+	if (length(labs) == length(se)) {
+		names(se) = labs
+	} else if (!is.null(colnames(J)) && length(colnames(J)) == length(se)) {
+		names(se) = colnames(J)
+	}
+	se
+}
+
 xmu_gsem_extract_snp_path <- function(fit, traits) {
 	# Prefer free A-path: F1 ~ SNP  (RAM: row = to = latent, col = from = SNP)
 	est = NA_real_
 	se = NA_real_
 	lat = if (length(fit$latentVars)) fit$latentVars[1] else NA_character_
+	# Prefer a factor named F1 when present
+	if ("F1" %in% fit$latentVars) {
+		lat = "F1"
+	}
+	lab = NA_character_
 	if (!is.null(fit$A) && !is.na(lat) && lat %in% rownames(fit$A$values) && "SNP" %in% colnames(fit$A$values)) {
 		est = fit$A$values[lat, "SNP"]
 		lab = fit$A$labels[lat, "SNP"]
@@ -1409,9 +1481,27 @@ xmu_gsem_extract_snp_path <- function(fit, traits) {
 			hit = which(matcol == "A" & ss$col == "SNP" & ss$row %in% fit$latentVars)
 			if (length(hit) >= 1) {
 				if (!is.finite(est)) est = ss$Estimate[hit[1]]
-				se = ss$Std.Error[hit[1]]
+				if (is.na(lab) && "name" %in% names(ss)) lab = ss$name[hit[1]]
+				secol = if ("Std.Error" %in% names(ss)) "Std.Error" else if ("Std.Error" %in% names(ss)) "Std.Error" else NULL
+				if (!is.null(secol)) se = ss[[secol]][hit[1]]
 			}
 		}
+	}
+	# Sandwich SE when OpenMx left Std.Error empty (common on some WLS runs)
+	if (!is.finite(se) && !is.na(lab) && nzchar(as.character(lab))) {
+		sand = xmu_gsem_wls_sandwich_se(fit)
+		if (!is.null(sand) && lab %in% names(sand)) {
+			se = as.numeric(sand[lab])
+		} else if (!is.null(sand) && length(sand) >= 1) {
+			cf = tryCatch(coef(fit), error = function(e) NULL)
+			if (!is.null(cf) && lab %in% names(cf) && length(sand) == length(cf)) {
+				se = as.numeric(sand)[match(lab, names(cf))]
+			}
+		}
+	}
+	# Drop numerical garbage (singular sandwich → absurd Z)
+	if (is.finite(se) && (se <= 0 || se < 1e-12 * max(1, abs(est)))) {
+		se = NA_real_
 	}
 	list(est = as.numeric(est)[1], se = as.numeric(se)[1])
 }
