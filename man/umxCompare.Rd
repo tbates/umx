@@ -47,28 +47,46 @@ umxCompare compares two or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s
 \item report = "html" opens a web table in your browser to paste into a word processor.
 }
 
-\strong{Interpreting fit statistics under WLS/DWLS}
+\strong{Interpreting fit under WLS/DWLS and Genomic SEM}
 
-Simulation studies show that CFI and TLI behave differently under DWLS/WLS than under ML, and conventional cutoffs (e.g., CFI > 0.95) do not transfer well (Shi et al., 2020). Incremental fit indices (CFI, TLI, NFI, etc.) rely on a comparison to the independence (null) model.
-Under WLS the weighting changes how that baseline behaves, so the usual interpretation breaks down.
-We advise de-emphasizing incremental fit indices (CFI, TLI), and to not use conventional cutoffs.
-Best practice is to report multiple indices and inspect residuals rather than relying on any single number.
-Absolute indices are preferred. SRMR tends to perform reasonably. RMSEA can be biased depending on model and sample sizes, and degree of misspecification. The RMSEA cutoff of <.06 developed for ML does not work the same way.
+Hu & Bentler (1999) style cutoffs (e.g. CFI > .95, RMSEA < .06) were developed for
+maximum likelihood with continuous data. They do \strong{not} transfer to WLS/DWLS
+(Shi et al., 2020), and still less to Genomic SEM (DWLS on LDSC genetic
+covariances with an estimated sampling covariance, often with bookkeeping \code{numObs = 1}).
+\itemize{
+\item \strong{Incremental indices (CFI, TLI, NFI, …)} compare the model to an independence
+baseline under the same weight matrix. That baseline behaves differently than under ML.
+Report CFI/TLI only \strong{descriptively}; do \strong{not} apply conventional cutoffs.
+\item \strong{Absolute fit: SRMR} (and residual matrices) is preferred. SRMR lives on a
+standardized residual metric and is less hostage to weight-matrix / N scaling.
+Rough guide: SRMR < 0.10 suggests acceptable residual structure (not a hard law).
+\item \strong{RMSEA} folds in chi-square scaling and N; it is often misleading for WLS and
+especially for GSEM. Do not use the ML cutoff of < .06.
+\item \strong{Nested model building:} prefer scaled chi-square difference tests and ΔSRMR
+over ΔCFI alone (see Details for what \code{umxCompare} computes).
+}
 }
 \details{
-\strong{Genomic SEM and Massive-N WLS Models}
-
-\code{umxCompare} automatically detects \code{MxModelGSEM} objects and massive-N (e.g., GSEM WLS models, applying a specialized comparison pipeline to protect against infinite-power artifacts:
+\strong{What \code{umxCompare} does for WLS}
 \itemize{
-\item \strong{Strict Satorra-Bentler (2010) Corrections}: For nested models, \code{umxCompare} extracts the implied Jacobians and computes a strict Satorra-Bentler scaled \eqn{\Delta \chi^2} difference test. This ensures \eqn{p}-values remain accurately calibrated when dropping paths in robust WLS frameworks.
-\item \strong{Pseudo-BIC (\eqn{N=1000} Penalty)}: Standard Information Criteria (AIC/BIC) break down at massive sample sizes (e.g., \eqn{N > 100,000}). AIC's \eqn{2k} penalty lacks sample size adjustment, leading to chronic overfitting, while standard BIC's \eqn{\ln(N)k} penalty dominates the discrepancy function, forcing the selection of overly simplistic models. \code{umxCompare} substitutes a Pseudo-BIC, capping the sample size penalty at a benchmark of \eqn{N = 1000} to balance parsimony and complexity.
-\item \strong{Absolute Fit Index Cutoffs}: Conventional absolute fit index cutoffs (e.g., TLI > .95, RMSEA < .06) do not mathematically apply to WLS models estimated from asymptotic covariance matrices. Users should rely on the Satorra-Bentler \eqn{p}-values for nested comparisons and SRMR for absolute fit.
+\item Refuses mixed WLS vs ML comparisons (same engine required).
+\item \strong{Continuous WLS} with cached \code{implied_jacobian}: nested \strong{Satorra–Bentler (2010)
+strict} scaled Δχ² (\code{diffFit} and p).
+\item \strong{Genomic SEM} (\code{MxModelGSEM}): nested difference on the \strong{GSEM DWLS chi-square
+scale} (same discrepancy as the structural fit; not a substitute for ML LRT).
+If LDSC matrices were \code{nearPD}-smoothed, a fiduciary warning notes that difference
+tests may look artificially precise.
+\item Table also reports \strong{SRMR / ΔSRMR} (preferred absolute residual summary) and
+\strong{CFI / ΔCFI} (descriptive only). AIC may appear but is not a primary GSEM decision
+rule under asymptotic / bookkeeping N.
 }
 
-\strong{Evaluating Fit in WLS/GSEM}
-Standard fit index cutoffs (e.g., Hu & Bentler, 1999) were developed for Maximum Likelihood estimation with continuous data and small sample sizes. Applying these strict cutoffs (CFI > .95, RMSEA < .06) to WLS/DWLS models—particularly those estimated from massive-N asymptotic covariance matrices like Genomic SEM—is mathematically invalid.
+\strong{Ordinal WLS} is a separate track: robust CFI/TLI/RMSEA use Savalei (2021) catML
+corrections in \code{\link[=umxSummary]{umxSummary()}}; Hu–Bentler cutoffs can apply to \strong{those} robust indices.
+That exception does \strong{not} apply to continuous WLS or Genomic SEM.
 
-In these frameworks, the baseline \eqn{\chi^2} is heavily inflated, severely distorting CFI, TLI, and RMSEA. For absolute model fit, users should rely on the Standardized Root Mean Square Residual (\strong{SRMR}), as it operates on the correlation metric and is robust to sample-size inflation. An SRMR value < 0.10 generally indicates acceptable residual structure. For model building, rely on the Satorra-Bentler (2010) scaled \eqn{p}-values for nested comparisons.
+Best practice: report estimates with SEs, SRMR (and residuals), nested SB/GSEM
+difference tests, and avoid single-number “good fit” claims from CFI or RMSEA.
 }
 \examples{
 \dontrun{

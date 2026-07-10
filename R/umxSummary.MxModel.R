@@ -21,23 +21,30 @@
 #'
 #' **Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)**
 #' 
-#' Historically, simulation studies showed that CFI and TLI behaved differently under DWLS/WLS than under ML (Shi et al., 2020). Incremental fit indices rely on a comparison to the independence (null) model. Under legacy WLS implementations, the weighting matrix changed how that baseline behaved, causing conventional cutoffs (e.g., CFI > 0.95) to break down.
-#' 
-#' *Solution:* `umxSummary` intercepts WLS models (including summary-statistic / Genomic SEM inputs) and routes them through [xmu_robust_WLS_fit()] when a Jacobian is available. That function computes an independence baseline natively in R and applies trace-matrix scaling corrections so that robust indices are interpretable alongside conventional ML practice. Parameter SEs remain the OpenMx WLS moment sandwich (see `uncertainty = "RobustSE"` note above).
-#' 
-#' **Two statistic families (by design).** WLS output deliberately separates omnibus testing from incremental/absolute fit:
+#' Simulation work shows CFI/TLI behave differently under DWLS/WLS than under ML
+#' (Shi et al., 2020): incremental indices use an independence baseline under the
+#' weight matrix, so conventional cutoffs (e.g. CFI > 0.95) break down for continuous WLS
+#' and Genomic SEM. Prefer **SRMR** and residual inspection for absolute fit; use
+#' [umxCompare()] for nested tests. See `?umxCompare` for the full guidance.
+#'
+#' *Implementation:* when a Jacobian is available, `umxSummary` routes WLS models
+#' through [xmu_robust_WLS_fit()] (independence baseline + trace scaling). Parameter SEs
+#' remain the OpenMx WLS moment sandwich (see `uncertainty = "RobustSE"` above). Robust
+#' CFI/TLI/RMSEA are **reported** for continuous WLS but should be treated as descriptive
+#' (no Hu–Bentler cutoffs). Genomic SEM has the same rule, with even less trust in RMSEA
+#' under bookkeeping N.
+#'
+#' **Two statistic families (by design).** WLS output separates omnibus testing from fit indices:
 #' \itemize{
-#'   \item **Displayed \eqn{\chi^2} and \eqn{p}-value** — always Satorra-Bentler (2010) scaled WLS test statistics, for both continuous and ordinal models.
-#'   \item **Displayed CFI, TLI, RMSEA** — robust indices corrected for WLS sampling behavior; branch depends on variable type (below).
+#'   \item **Displayed \eqn{\chi^2} and \eqn{p}** — Satorra–Bentler (2010) scaled WLS test when robust fit succeeds (continuous and ordinal).
+#'   \item **Displayed CFI, TLI, RMSEA** — robust/scaled indices; interpretation depends on continuous vs ordinal (below).
 #' }
-#' 
-#' **Continuous WLS** (all manifests numeric, not `ordered`/`factor`): robust CFI, TLI, and RMSEA use the Satorra-Bentler (2010) scaled \eqn{\chi^2} pipeline. The printed `*Statistical Note*` reminds users that raw WLS cutoffs do not apply; evaluate nested comparisons with Strict Satorra-Bentler \eqn{\Delta\chi^2} via [umxCompare()].
-#' 
-#' **Ordinal / categorical WLS** (at least one manifest `ordered` or `factor` on raw data): robust CFI, TLI, and RMSEA use **Savalei (2021)** catML mean-and-variance corrections (\eqn{XX_3} discrepancy at fixed WLS estimates plus \eqn{\hat{c}_3} sandwich scaling from OpenMx \code{asymCov}, \code{useWeight}, and \code{implied_jacobian}). The printed `*Statistical Note*` reports `correction = Savalei2021` with \eqn{\hat{c}_{model}} and \eqn{\hat{c}_{null}}; **Hu & Bentler (1999) conventional cutoffs apply to these robust indices** (CFI \eqn{\geq} 0.95, RMSEA \eqn{\leq} 0.06, etc.). Display \eqn{\chi^2} and \eqn{p} remain SB-scaled WLS omnibus tests—not catML-scaled.
-#' 
-#' Requires OpenMx WLS models with `implied_jacobian` populated (standard after `mxRun` on WLS). If robust computation fails, `umxSummary` falls back to OpenMx `summary()` indices and emits a note.
-#' 
-#' (Best practice: report multiple indices, inspect residuals, and use [umxCompare()] for nested model comparison.)
+#'
+#' **Continuous WLS** (all manifests numeric): SB (2010) scaled pipeline. Printed note: no conventional cutoffs; prefer SRMR; nested Strict SB via [umxCompare()].
+#'
+#' **Ordinal / categorical WLS** (at least one `ordered`/`factor` on raw data): robust CFI/TLI/RMSEA use **Savalei (2021)** catML corrections; **Hu & Bentler (1999) cutoffs may apply to those robust indices**. Display \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests—not catML-scaled.
+#'
+#' Requires `implied_jacobian` after `mxRun` on WLS. If robust computation fails, falls back to OpenMx `summary()` with a note.
 #' 
 #' **CIs and Identification**
 #' This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary.
@@ -213,9 +220,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	            # Avoid raw R errors ("replacement has length zero") in user-facing notes
 	            msg = conditionMessage(e)
 	            if (grepl("replacement has length zero|Could not locate observed covariance|dimnames do not cover", msg)) {
-	            	message("umxSummary Note: robust CFI/TLI/RMSEA (Satorra-Bentler) could not be computed for this WLS model; reporting unadjusted chi-square. Parameter estimates and SEs are unaffected. For genomic SEM, prefer SRMR and nested comparisons (see ?umxCompare).")
+	            	message("umxSummary Note: robust CFI/TLI/RMSEA could not be computed; reporting unadjusted chi-square. Estimates and SEs are unaffected. Prefer SRMR and nested umxCompare tests (see ?umxCompare).")
 	            } else {
-	            	message("umxSummary Note: robust CFI/TLI/RMSEA (Satorra-Bentler) skipped: ", msg)
+	            	message("umxSummary Note: robust CFI/TLI/RMSEA skipped: ", msg, " Prefer SRMR and nested umxCompare tests (see ?umxCompare).")
 	            }
 	        })
         
@@ -411,11 +418,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 					if (xmu_is_wls(model)) {
 						robustScaling = attr(modelSummary, "robustScalingFactors")
 						if (umx_is_GSEM(model)) {
-							cat("\n*Statistical Note*: For GSEM models, evaluate absolute fit using SRMR (< 0.10) and CFI. Evaluate model improvements using change in CFI and change in SRMR (see ?umxCompare for details).\n")
+							cat("\n*Statistical Note*: Genomic SEM — absolute fit: prefer SRMR (roughly < 0.10) and residual inspection. Nested models: use umxCompare (DWLS chi-square difference). De-emphasize CFI/TLI/RMSEA; do not apply Hu-Bentler cutoffs. See ?umxCompare.\n")
 						} else if (!is.null(robustScaling) && identical(robustScaling$correction, "Savalei2021")) {
 							cat(sprintf("\n*Statistical Note*: Ordinal WLS robust indices use Savalei (2021) cML corrections with catML scaling (c_model = %.3f, c_null = %.3f). Conventional Hu & Bentler (1999) cutoffs apply to these robust CFI/TLI/RMSEA values.\n", robustScaling$cModel, robustScaling$cNull))
 						} else {
-							cat("\n*Statistical Note*: For WLS models, due to weight-matrix and N-inflation, conventional cutoffs for CFI, TLI, and RMSEA are not applicable.\nEvaluate absolute fit using SRMR (< 0.10), and nested comparisons using the Strict Satorra-Bentler \u0394 \u03C7\u00B2. (see ?umxCompare for details).\n")
+							cat("\n*Statistical Note*: Continuous WLS/DWLS — conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use Strict Satorra-Bentler (2010) Delta chi-square via umxCompare. See ?umxCompare.\n")
 						}
 						if (identical(uncertainty, "RobustSE")) {
 							cat("*SEs*: WLS asymptotic (GMM moment sandwich using the weight matrix and asym. cov. of summary statistics). These are the usual OpenMx WLS SEs—not ML casewise sandwich SEs.\n")

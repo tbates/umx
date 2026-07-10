@@ -72,8 +72,8 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 		deltaDfVec = c(NA, deltaDf)
 
 		if (isGenomic) {
-			# Track B: Genomic WLS (Natively scaled GSEM chi-square difference)
-			message("umx Note: Genomic GSEM model detected. Reporting natively scaled GSEM difference.")
+			# Track B: Genomic SEM — difference of DWLS chi-squares on the GSEM scale
+			message("umx Note: Genomic SEM model detected. Nested diffFit uses the GSEM DWLS chi-square difference (not ML LRT). Prefer SRMR for absolute fit; de-emphasize CFI cutoffs (see ?umxCompare).")
 			deltaChisq = abs(chisqComp - chisqBase)
 			diffFitVec = c(NA, round(deltaChisq, 3))
 			pValue = pchisq(deltaChisq, df = deltaDf, lower.tail = FALSE)
