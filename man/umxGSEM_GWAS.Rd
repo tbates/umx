@@ -56,22 +56,18 @@ see e.g. \link{Psych_LDSC} for a packaged example and field definitions.
 \examples{
 \dontrun{
 data(Psych_LDSC)
-# Psych_LDSC fields: S (genetic cov), V (sampling cov), I (LDSC intercepts),
-# N (effective Ns), m (SNP count). See ?Psych_LDSC
+# Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named SCZ_SCZ, BIP_SCZ, ...
 dir = "~/bin/umx/inst/developer/GenomicSEM"
 snps = umxGSEM_sumstats(
   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
   ref = file.path(dir, "reference.1000G.subset.txt"),
   trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE
 )
-# 3-trait LDSC block matching SNP traits (keep I for GC)
-cov3 = list(
-  S = Psych_LDSC$S[1:3, 1:3],
-  V = Psych_LDSC$V[1:6, 1:6],
-  I = Psych_LDSC$I[1:3, 1:3]  # LDSC intercept matrix
-)
-gwas = umxGSEM_GWAS(covstruc = cov3, SNPs = snps, maxSNPs = 20)
+# Prefer full covstruc + traits= (correct V block). Do not use V[1:6, 1:6] on a 5-trait V.
+gwas = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
+  traits = c("SCZ", "BIP", "MDD"), maxSNPs = 20)
 head(gwas)
+# Or subset by pair names: vn = xmu_gsem_vech_names(c("SCZ","BIP","MDD")); V[vn, vn]
 }
 }
 \seealso{

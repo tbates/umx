@@ -564,8 +564,20 @@ xmu_gsem_subset_SV <- function(S, V, keep_vars) {
 		}
 	}
 	if (anyNA(orig_keys) || !all(orig_keys %in% colnames(V))) {
-		stop("Could not align V with S variable order for traits: ", paste(keep_vars, collapse = ", "),
-			". Provide V in GenomicSEM lower.tri order with dimnames matching S.")
+		need = xmu_gsem_vech_names(keep_vars)
+		have = colnames(V)
+		miss = need[is.na(match(need, have)) & is.na(match(gsub("_", " ", need, fixed = TRUE), have))]
+		# Common mistake: V[1:z, 1:z] on a larger LDSC V (wrong pairs; first z of 5-trait V != vech of 3 traits)
+		tip = paste0(
+			"Could not align V with S for traits: ", paste(keep_vars, collapse = ", "), ".\n",
+			"  Need pair names like: ", paste(need[seq_len(min(4L, length(need)))], collapse = ", "), if (length(need) > 4) ", ..." else "", "\n",
+			"  V has: ", if (is.null(have)) "(no dimnames)" else paste(have[seq_len(min(6L, length(have)))], collapse = ", "),
+			if (!is.null(have) && length(have) > 6) ", ..." else "", "\n",
+			"  Tip: pass the full LDSC list and use traits=c(...), or subset V by name:\n",
+			"    vn = xmu_gsem_vech_names(traits); V[vn, vn]\n",
+			"  Do not use V[1:z, 1:z] on a larger V — that is not the trait-block vech."
+		)
+		stop(tip, call. = FALSE)
 	}
 	V_subset = V[orig_keys, orig_keys, drop = FALSE]
 	# Rename to vech names in keep_vars order for downstream OpenMx residual reordering
@@ -1160,26 +1172,26 @@ xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TR
 #' @examples
 #' \dontrun{
 #' data(Psych_LDSC)
-#' # Psych_LDSC fields: S (genetic cov), V (sampling cov), I (LDSC intercepts),
-#' # N (effective Ns), m (SNP count). See ?Psych_LDSC
+#' # Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named SCZ_SCZ, BIP_SCZ, ...
 #' dir = "~/bin/umx/inst/developer/GenomicSEM"
 #' snps = umxGSEM_sumstats(
 #'   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
 #'   ref = file.path(dir, "reference.1000G.subset.txt"),
 #'   trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE
 #' )
-#' # 3-trait LDSC block matching SNP traits (keep I for GC)
-#' cov3 = list(
-#'   S = Psych_LDSC$S[1:3, 1:3],
-#'   V = Psych_LDSC$V[1:6, 1:6],
-#'   I = Psych_LDSC$I[1:3, 1:3]  # LDSC intercept matrix
-#' )
-#' gwas = umxGSEM_GWAS(covstruc = cov3, SNPs = snps, maxSNPs = 20)
+#' # Prefer full covstruc + traits= (correct V block). Do not use V[1:6, 1:6] on a 5-trait V.
+#' gwas = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
+#'   traits = c("SCZ", "BIP", "MDD"), maxSNPs = 20)
 #' head(gwas)
+#' # Or subset by pair names: vn = xmu_gsem_vech_names(c("SCZ","BIP","MDD")); V[vn, vn]
 #' }
 umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), SNPSE = 5e-4, maxSNPs = NULL, snpEffect = NULL, quiet = TRUE) {
 	estimation = match.arg(estimation)
 	GC = match.arg(GC)
+	# Fill missing dimnames when possible (GenomicSEM disk objects; not a fix for V[1:z,1:z] slices)
+	if (is.list(covstruc) && !is.null(covstruc$S)) {
+		covstruc = tryCatch(umxGSEM_name_ldsc(covstruc, overwrite = FALSE), error = function(e) covstruc)
+	}
 	sv = xmu_gsem_extract_SV(covstruc = covstruc)
 	S_LD = sv$S
 	V_LD = sv$V

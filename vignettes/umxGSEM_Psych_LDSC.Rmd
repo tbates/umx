@@ -216,20 +216,12 @@ snps = umxGSEM_sumstats(
   se.logit = TRUE
 )
 
-# 3-trait LDSC block (match SNP trait order)
-S = as.matrix(Psych_LDSC$S); rownames(S) = colnames(S)
-traits = c("SCZ", "BIP", "MDD")
-cov3 = list(
-  S = S[traits, traits],
-  V = { V = as.matrix(Psych_LDSC$V)
-        dimnames(V) = list(xmu_gsem_vech_names(colnames(S)), xmu_gsem_vech_names(colnames(S)))
-        V[xmu_gsem_vech_names(traits), xmu_gsem_vech_names(traits)] },
-  I = { I = as.matrix(Psych_LDSC$I); dimnames(I) = list(colnames(S), colnames(S)); I[traits, traits] }
-)
-
-gwas = umxGSEM_GWAS(covstruc = cov3, SNPs = snps, maxSNPs = 50)
+# Match SNP traits: pass full LDSC object + traits= (do not V[1:6,1:6] — wrong pairs)
+gwas = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
+  traits = c("SCZ", "BIP", "MDD"), maxSNPs = 50)
 head(gwas)
 ```
+
 
 - **`umxGSEM()`** — one structural model (string **or** existing `umxRAM`/`mxModel`).
 - **`umxGSEM_sumstats()`** — allele-align + continuous-scale betas for multivariate GWAS.
