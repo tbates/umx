@@ -18,7 +18,9 @@ umxGSEM_GWAS(
 )
 }
 \arguments{
-\item{covstruc}{LDSC list with \code{S}, \code{V}, and preferably \code{I} (for GC-corrected SEs).}
+\item{covstruc}{LDSC list with \code{S} (genetic covariance), \code{V} (sampling covariance of
+\(\mathrm{vech}(S)\)), and preferably \code{I} (LDSC intercept matrix, for GC-corrected SEs).
+See e.g. \link{Psych_LDSC} (\code{I} = intercepts / sample-overlap; also \code{N}, \code{m}).}
 
 \item{SNPs}{Data frame from \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}} (columns \verb{beta.*}, \verb{se.*}, \code{MAF}, \code{SNP}, …).}
 
@@ -47,32 +49,41 @@ Expands the LDSC genetic covariance structure with each SNP (using prepared
 betas from \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}), fits DWLS/WLS, and returns SNP-level results.
 For a default common-factor model, estimates \code{F1 ~ SNP}.
 }
+\details{
+The LDSC object is the usual GenomicSEM-style list (\code{S}, \code{V}, preferably \code{I});
+see e.g. \link{Psych_LDSC} for a packaged example and field definitions.
+}
 \examples{
 \dontrun{
 data(Psych_LDSC)
+# Psych_LDSC fields: S (genetic cov), V (sampling cov), I (LDSC intercepts),
+# N (effective Ns), m (SNP count). See ?Psych_LDSC
 dir = "~/bin/umx/inst/developer/GenomicSEM"
 snps = umxGSEM_sumstats(
   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
   ref = file.path(dir, "reference.1000G.subset.txt"),
   trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE
 )
-# 3-trait LDSC block matching SNP traits
+# 3-trait LDSC block matching SNP traits (keep I for GC)
 cov3 = list(
   S = Psych_LDSC$S[1:3, 1:3],
   V = Psych_LDSC$V[1:6, 1:6],
-  I = Psych_LDSC$I[1:3, 1:3]
+  I = Psych_LDSC$I[1:3, 1:3]  # LDSC intercept matrix
 )
 gwas = umxGSEM_GWAS(covstruc = cov3, SNPs = snps, maxSNPs = 20)
 head(gwas)
 }
 }
 \seealso{
-\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}, \code{\link[=umxGSEM]{umxGSEM()}}
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}, \code{\link[=umxGSEM]{umxGSEM()}}, \link{Psych_LDSC}
 
-Other Genomic SEM Functions:
+Other GSEM:
+\code{\link{Anthro_LDSC}},
+\code{\link{Psych_LDSC}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
 \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 }
-\concept{Genomic SEM Functions}
+\concept{GSEM}

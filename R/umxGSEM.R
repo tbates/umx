@@ -100,7 +100,7 @@ umxGSEM_ldsc <- function (traits, sample.prev, population.prev, ld, wld, trait.n
 #' @param overwrite Whether to force overwrite/re-download if the file already exists (defaults to FALSE).
 #' @return Absolute path to the downloaded file.
 #' @export
-#' @family Genomic SEM Functions
+#' @family GSEM
 
 #' @examples
 #' \dontrun{
@@ -172,7 +172,7 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' @param ... Additional arguments passed to \code{OpenMx::imxMunge()}.
 #' @return A character vector of paths to the munged files.
 #' @export
-#' @family Genomic SEM Functions
+#' @family GSEM
 
 umxGSEM_munge <- function(files = NULL, hm3 = "w_hm3.snplist", Ns = NULL, trait.names = NULL, info.filter = 0.9, maf.filter = 0.01, column.names = list(), output_dir = getwd(), cores = -1, overwrite = FALSE, ...) {
 	if (is.null(files)) {
@@ -340,7 +340,7 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' @param model A lavaan-style model string (also accepts umx `~=` loadings), **or** an existing
 #'   [OpenMx::mxModel()] / [umxRAM()] RAM model whose `manifestVars` name traits in `S`.
 #'   For SNP GWAS, use [umxGSEM_GWAS()] instead of passing SNPs here.
-#' @param covstruc list() of S (genetic covariance matrix) and V (sampling covariance matrix) as output by GenomicSEM's `ldsc` function. If provided, `S` and `V` are extracted from it.
+#' @param covstruc LDSC list with genetic covariance `S` and sampling covariance `V` (and typically `I`, `N`, `m`) as from GenomicSEM's `ldsc` / [umxGSEM_ldsc()] — see e.g. [Psych_LDSC]. If provided, `S` and `V` are extracted from it.
 #' @param S Genetic covariance matrix (if covstruc not provided).
 #' @param V Sampling covariance matrix (asymptotic covariance of S). If covstruc not provided.
 #' @param estimation Method for estimation. One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").
@@ -359,7 +359,7 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' @param ... Additional arguments passed to [umxRAM()].
 #' @return An [OpenMx::mxModel()] object of class `MxModelGSEM`.
 #' @export
-#' @family Genomic SEM Functions
+#' @family GSEM
 #' @references
 #' Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, G. R., Mallard, T. T., Hill, W. D., ... & Tucker-Drob, E. M. (2019). Genomic structural equation modeling. *Nature Human Behaviour*, **3**, 513-525. \doi{10.1038/s41562-019-0566-x}
 
@@ -820,7 +820,7 @@ xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, f
 #' @return A `data.frame` with columns `SNP`, `CHR`, `BP`, `MAF`, `A1`, `A2`, and
 #'   `beta.<trait>` / `se.<trait>` for each trait in `trait.names`, sorted by CHR/BP.
 #' @export
-#' @family Genomic SEM Functions
+#' @family GSEM
 #' @seealso [umxGSEM_GWAS()], [umxGSEM()]
 #' @references
 #' Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, S. J., Mallard, T. T.,
@@ -1066,7 +1066,12 @@ xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TR
 #' betas from [umxGSEM_sumstats()]), fits DWLS/WLS, and returns SNP-level results.
 #' For a default common-factor model, estimates \code{F1 ~ SNP}.
 #'
-#' @param covstruc LDSC list with `S`, `V`, and preferably `I` (for GC-corrected SEs).
+#' The LDSC object is the usual GenomicSEM-style list (`S`, `V`, preferably `I`);
+#' see e.g. [Psych_LDSC] for a packaged example and field definitions.
+#'
+#' @param covstruc LDSC list with `S` (genetic covariance), `V` (sampling covariance of
+#'   \(\mathrm{vech}(S)\)), and preferably `I` (LDSC intercept matrix, for GC-corrected SEs).
+#'   See e.g. [Psych_LDSC] (`I` = intercepts / sample-overlap; also `N`, `m`).
 #' @param SNPs Data frame from [umxGSEM_sumstats()] (columns `beta.*`, `se.*`, `MAF`, `SNP`, …).
 #' @param model Optional lavaan/umx string or mxModel. If `NULL`, builds
 #'   `F1 =~ NA*T1 + T2 + ...; F1 ~~ 1*F1; F1 ~ SNP` for traits in `S`.
@@ -1079,23 +1084,25 @@ xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TR
 #' @param quiet Suppress per-SNP messages.
 #' @return A data.frame of SNP results (`SNP`, `CHR`, `BP`, `MAF`, `est`, `se`, `Z`, `P`, `status`, …).
 #' @export
-#' @family Genomic SEM Functions
-#' @seealso [umxGSEM_sumstats()], [umxGSEM()]
+#' @family GSEM
+#' @seealso [umxGSEM_sumstats()], [umxGSEM()], [Psych_LDSC]
 #'
 #' @examples
 #' \dontrun{
 #' data(Psych_LDSC)
+#' # Psych_LDSC fields: S (genetic cov), V (sampling cov), I (LDSC intercepts),
+#' # N (effective Ns), m (SNP count). See ?Psych_LDSC
 #' dir = "~/bin/umx/inst/developer/GenomicSEM"
 #' snps = umxGSEM_sumstats(
 #'   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
 #'   ref = file.path(dir, "reference.1000G.subset.txt"),
 #'   trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE
 #' )
-#' # 3-trait LDSC block matching SNP traits
+#' # 3-trait LDSC block matching SNP traits (keep I for GC)
 #' cov3 = list(
 #'   S = Psych_LDSC$S[1:3, 1:3],
 #'   V = Psych_LDSC$V[1:6, 1:6],
-#'   I = Psych_LDSC$I[1:3, 1:3]
+#'   I = Psych_LDSC$I[1:3, 1:3]  # LDSC intercept matrix
 #' )
 #' gwas = umxGSEM_GWAS(covstruc = cov3, SNPs = snps, maxSNPs = 20)
 #' head(gwas)

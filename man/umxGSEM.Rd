@@ -24,7 +24,7 @@ umxGSEM(
 \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} / \code{\link[=umxRAM]{umxRAM()}} RAM model whose \code{manifestVars} name traits in \code{S}.
 For SNP GWAS, use \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}} instead of passing SNPs here.}
 
-\item{covstruc}{list() of S (genetic covariance matrix) and V (sampling covariance matrix) as output by GenomicSEM's \code{ldsc} function. If provided, \code{S} and \code{V} are extracted from it.}
+\item{covstruc}{LDSC list with genetic covariance \code{S} and sampling covariance \code{V} (and typically \code{I}, \code{N}, \code{m}) as from GenomicSEM's \code{ldsc} / \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}} — see e.g. \link{Psych_LDSC}. If provided, \code{S} and \code{V} are extracted from it.}
 
 \item{S}{Genetic covariance matrix (if covstruc not provided).}
 
@@ -116,10 +116,13 @@ m3 = umxGSEM(m0, covstruc = Psych_LDSC, estimation = "DWLS")
 Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, G. R., Mallard, T. T., Hill, W. D., ... & Tucker-Drob, E. M. (2019). Genomic structural equation modeling. \emph{Nature Human Behaviour}, \strong{3}, 513-525. \doi{10.1038/s41562-019-0566-x}
 }
 \seealso{
-Other Genomic SEM Functions:
+Other GSEM:
+\code{\link{Anthro_LDSC}},
+\code{\link{Psych_LDSC}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
 \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 }
-\concept{Genomic SEM Functions}
+\concept{GSEM}

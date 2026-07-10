@@ -155,10 +155,13 @@ workshops (see \url{https://github.com/GenomicSEM/GenomicSEM}).
 \seealso{
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}, \code{\link[=umxGSEM]{umxGSEM()}}
 
-Other Genomic SEM Functions:
+Other GSEM:
+\code{\link{Anthro_LDSC}},
+\code{\link{Psych_LDSC}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}}
 }
-\concept{Genomic SEM Functions}
+\concept{GSEM}

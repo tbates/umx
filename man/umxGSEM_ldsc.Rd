@@ -87,5 +87,14 @@ used to quantify sample overlap and population stratification.
 }
 \seealso{
 \code{\link[GenomicSEM:ldsc]{GenomicSEM::ldsc()}}
+
+Other GSEM:
+\code{\link{Anthro_LDSC}},
+\code{\link{Psych_LDSC}},
+\code{\link[=umxGSEM]{umxGSEM()}},
+\code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
+\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 }
 \concept{GSEM}

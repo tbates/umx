@@ -63,10 +63,13 @@ note: Ensure that the summary statistics are full, not "23&me" style "top x thou
 Nor just pruned SNPs.
 }
 \seealso{
-Other Genomic SEM Functions:
+Other GSEM:
+\code{\link{Anthro_LDSC}},
+\code{\link{Psych_LDSC}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 }
-\concept{Genomic SEM Functions}
+\concept{GSEM}

@@ -5,29 +5,38 @@
 \alias{Psych_LDSC}
 \title{Psychiatric and educational attainment Genomic SEM LDSC dataset.}
 \format{
-A list of matrices (S, V, I, N) and numeric values (m).
+A list with elements \code{S}, \code{V}, \code{I}, \code{N}, and \code{m} (see Details).
 }
 \usage{
 data(Psych_LDSC)
 }
 \description{
-A dataset containing the S and V matrices, LDSC intercepts, sample sizes (N), and SNP count (m)
-for 5 psychiatric and educational attainment phenotypes: SCZ, BIP, MDD, EA, and INSOM.
+A dataset containing the genetic covariance structure from LD score regression (LDSC)
+for 5 psychiatric and educational attainment phenotypes: \strong{SCZ}, \strong{BIP}, \strong{MDD},
+\strong{EA}, and \strong{INSOM}. This is the object shape returned by GenomicSEM / \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}}
+and the example \code{covstruc} used throughout the GSEM helpers (see also \link{Anthro_LDSC}).
 }
 \details{
-The list contains the following elements:
+LDSC list fields (GenomicSEM-style \code{ldsc} output):
 \itemize{
-\item \code{S}: 5x5 covariance matrix of the 5 phenotypes.
-\item \code{V}: 15x15 sampling covariance matrix of the covariance/variance elements.
-\item \code{I}: 5x5 matrix of LDSC intercepts.
-\item \code{N}: 1x15 matrix of sample sizes for the covariance/variance elements.
-\item \code{m}: Number of SNPs used.
+\item \strong{\code{S}}: \(5 \times 5\) genetic covariance matrix among the phenotypes
+(diagonals are SNP heritabilities on the LDSC scale).
+\item \strong{\code{V}}: \(15 \times 15\) sampling covariance of the unique elements of \code{S}
+(lower-triangle / \code{vech} order). Used as asymptotic covariance for WLS/DWLS.
+\item \strong{\code{I}}: \(5 \times 5\) \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
+(expected near 1 without confounding). Off-diagonal = cross-trait intercepts
+reflecting sample overlap. Preferred input for GC in \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
+\item \strong{\code{N}}: \(1 \times 15\) effective sample sizes for each unique \code{S} element.
+\item \strong{\code{m}}: Number of SNPs used in LDSC.
 }
 }
 \examples{
 \dontrun{
 data(Psych_LDSC)
-str(Psych_LDSC)
+str(Psych_LDSC, max.level = 1)
+names(Psych_LDSC) # "V" "S" "I" "N" "m"
+# I = LDSC intercept matrix (diag ~ 1; off-diag = sample overlap)
+round(Psych_LDSC$I, 3)
 # Common factor of all five traits (Grotzinger et al. 2019 style DWLS GSEM)
 m1 = umxGSEM(model = "g ~= SCZ + BIP + MDD + EA + INSOM",
              covstruc = Psych_LDSC, estimation = "DWLS")
@@ -35,6 +44,17 @@ umxSummary(m1)
 }
 }
 \seealso{
+\link{Anthro_LDSC}, \code{\link[=umxGSEM]{umxGSEM()}}, \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}, \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}}
+
+Other GSEM:
+\code{\link{Anthro_LDSC}},
+\code{\link[=umxGSEM]{umxGSEM()}},
+\code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
+\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
+\code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
+
 Other datasets:
 \code{\link{Anthro_LDSC}},
 \code{\link{Fischbein_wt}},
@@ -45,5 +65,6 @@ Other datasets:
 \code{\link{umx}},
 \code{\link{us_skinfold_data}}
 }
+\concept{GSEM}
 \concept{datasets}
 \keyword{datasets}

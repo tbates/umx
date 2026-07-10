@@ -5,32 +5,53 @@
 \alias{Anthro_LDSC}
 \title{Anthropometric Genomic SEM LDSC dataset.}
 \format{
-A list of matrices (S, V, I, N) and numeric values (m).
+A list with elements \code{S}, \code{V}, \code{I}, \code{N}, and \code{m} (see Details).
 }
 \usage{
 data(Anthro_LDSC)
 }
 \description{
-A dataset containing the S and V matrices, LDSC intercepts, sample sizes (N), and SNP count (m)
+A dataset containing the genetic covariance structure from LD score regression (LDSC)
 for 9 anthropometric phenotypes: BMI, WHR, CO, Waist, Hip, Height, IHC, BL, and BW.
+Same list layout as \link{Psych_LDSC} — pass the object as \code{covstruc} to \code{\link[=umxGSEM]{umxGSEM()}} or
+\code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
 }
 \details{
-The list contains the following elements:
+LDSC list fields (GenomicSEM-style \code{ldsc} output):
 \itemize{
-\item \code{S}: 9x9 covariance matrix of the 9 phenotypes.
-\item \code{V}: 45x45 sampling covariance matrix of the covariance/variance elements.
-\item \code{I}: 9x9 matrix of LDSC intercepts.
-\item \code{N}: 1x45 matrix of sample sizes for the covariance/variance elements.
-\item \code{m}: Number of SNPs used (1,173,569).
+\item \strong{\code{S}}: \(9 \times 9\) genetic covariance matrix among the phenotypes
+(diagonals are SNP heritabilities on the LDSC scale).
+\item \strong{\code{V}}: \(45 \times 45\) sampling covariance of the unique elements of \code{S}
+(lower-triangle / \code{vech} order). Used as asymptotic covariance for WLS/DWLS.
+\item \strong{\code{I}}: \(9 \times 9\) \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
+(expected near 1 without confounding; elevations can flag stratification).
+Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic
+control when expanding SNPs in \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
+\item \strong{\code{N}}: \(1 \times 45\) effective sample sizes for each unique \code{S} element.
+\item \strong{\code{m}}: Number of SNPs used in LDSC (here 1,173,569).
 }
 }
 \examples{
 \dontrun{
 data(Anthro_LDSC)
-str(Anthro_LDSC)
+str(Anthro_LDSC, max.level = 1)
+names(Anthro_LDSC) # S, V, I, N, m
+# I = LDSC intercepts (diag) and cross-trait intercepts (off-diag)
+Anthro_LDSC$I[1:3, 1:3]
 }
 }
 \seealso{
+\link{Psych_LDSC}, \code{\link[=umxGSEM]{umxGSEM()}}, \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}, \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}}
+
+Other GSEM:
+\code{\link{Psych_LDSC}},
+\code{\link[=umxGSEM]{umxGSEM()}},
+\code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
+\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
+\code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
+
 Other datasets:
 \code{\link{Fischbein_wt}},
 \code{\link{GFF}},
@@ -41,5 +62,6 @@ Other datasets:
 \code{\link{umx}},
 \code{\link{us_skinfold_data}}
 }
+\concept{GSEM}
 \concept{datasets}
 \keyword{datasets}

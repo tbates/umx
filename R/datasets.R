@@ -318,28 +318,39 @@ NULL
 # ==========================================
 #' Anthropometric Genomic SEM LDSC dataset.
 #'
-#' A dataset containing the S and V matrices, LDSC intercepts, sample sizes (N), and SNP count (m) 
+#' A dataset containing the genetic covariance structure from LD score regression (LDSC)
 #' for 9 anthropometric phenotypes: BMI, WHR, CO, Waist, Hip, Height, IHC, BL, and BW.
+#' Same list layout as [Psych_LDSC] — pass the object as `covstruc` to [umxGSEM()] or
+#' [umxGSEM_GWAS()].
 #'
 #' @details
-#' The list contains the following elements:
-#' * `S`: 9x9 covariance matrix of the 9 phenotypes.
-#' * `V`: 45x45 sampling covariance matrix of the covariance/variance elements.
-#' * `I`: 9x9 matrix of LDSC intercepts.
-#' * `N`: 1x45 matrix of sample sizes for the covariance/variance elements.
-#' * `m`: Number of SNPs used (1,173,569).
+#' LDSC list fields (GenomicSEM-style `ldsc` output):
+#' * **`S`**: \(9 \times 9\) genetic covariance matrix among the phenotypes
+#'   (diagonals are SNP heritabilities on the LDSC scale).
+#' * **`V`**: \(45 \times 45\) sampling covariance of the unique elements of `S`
+#'   (lower-triangle / `vech` order). Used as asymptotic covariance for WLS/DWLS.
+#' * **`I`**: \(9 \times 9\) **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
+#'   (expected near 1 without confounding; elevations can flag stratification).
+#'   Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic
+#'   control when expanding SNPs in [umxGSEM_GWAS()].
+#' * **`N`**: \(1 \times 45\) effective sample sizes for each unique `S` element.
+#' * **`m`**: Number of SNPs used in LDSC (here 1,173,569).
 #'
 #' @docType data
 #' @keywords datasets
+#' @family GSEM
 #' @family datasets
 #' @name Anthro_LDSC
 #' @usage data(Anthro_LDSC)
-#' @format A list of matrices (S, V, I, N) and numeric values (m).
-
+#' @format A list with elements `S`, `V`, `I`, `N`, and `m` (see Details).
+#' @seealso [Psych_LDSC], [umxGSEM()], [umxGSEM_GWAS()], [umxGSEM_ldsc()]
 #' @examples
 #' \dontrun{
 #' data(Anthro_LDSC)
-#' str(Anthro_LDSC)
+#' str(Anthro_LDSC, max.level = 1)
+#' names(Anthro_LDSC) # S, V, I, N, m
+#' # I = LDSC intercepts (diag) and cross-trait intercepts (off-diag)
+#' Anthro_LDSC$I[1:3, 1:3]
 #' }
 NULL
 
@@ -349,28 +360,38 @@ NULL
 # ==========================================================
 #' Psychiatric and educational attainment Genomic SEM LDSC dataset.
 #'
-#' A dataset containing the S and V matrices, LDSC intercepts, sample sizes (N), and SNP count (m)
-#' for 5 psychiatric and educational attainment phenotypes: SCZ, BIP, MDD, EA, and INSOM.
+#' A dataset containing the genetic covariance structure from LD score regression (LDSC)
+#' for 5 psychiatric and educational attainment phenotypes: **SCZ**, **BIP**, **MDD**,
+#' **EA**, and **INSOM**. This is the object shape returned by GenomicSEM / [umxGSEM_ldsc()]
+#' and the example `covstruc` used throughout the GSEM helpers (see also [Anthro_LDSC]).
 #'
 #' @details
-#' The list contains the following elements:
-#' * `S`: 5x5 covariance matrix of the 5 phenotypes.
-#' * `V`: 15x15 sampling covariance matrix of the covariance/variance elements.
-#' * `I`: 5x5 matrix of LDSC intercepts.
-#' * `N`: 1x15 matrix of sample sizes for the covariance/variance elements.
-#' * `m`: Number of SNPs used.
+#' LDSC list fields (GenomicSEM-style `ldsc` output):
+#' * **`S`**: \(5 \times 5\) genetic covariance matrix among the phenotypes
+#'   (diagonals are SNP heritabilities on the LDSC scale).
+#' * **`V`**: \(15 \times 15\) sampling covariance of the unique elements of `S`
+#'   (lower-triangle / `vech` order). Used as asymptotic covariance for WLS/DWLS.
+#' * **`I`**: \(5 \times 5\) **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
+#'   (expected near 1 without confounding). Off-diagonal = cross-trait intercepts
+#'   reflecting sample overlap. Preferred input for GC in [umxGSEM_GWAS()].
+#' * **`N`**: \(1 \times 15\) effective sample sizes for each unique `S` element.
+#' * **`m`**: Number of SNPs used in LDSC.
 #'
 #' @docType data
 #' @keywords datasets
+#' @family GSEM
 #' @family datasets
 #' @name Psych_LDSC
 #' @usage data(Psych_LDSC)
-#' @format A list of matrices (S, V, I, N) and numeric values (m).
-
+#' @format A list with elements `S`, `V`, `I`, `N`, and `m` (see Details).
+#' @seealso [Anthro_LDSC], [umxGSEM()], [umxGSEM_GWAS()], [umxGSEM_ldsc()]
 #' @examples
 #' \dontrun{
 #' data(Psych_LDSC)
-#' str(Psych_LDSC)
+#' str(Psych_LDSC, max.level = 1)
+#' names(Psych_LDSC) # "V" "S" "I" "N" "m"
+#' # I = LDSC intercept matrix (diag ~ 1; off-diag = sample overlap)
+#' round(Psych_LDSC$I, 3)
 #' # Common factor of all five traits (Grotzinger et al. 2019 style DWLS GSEM)
 #' m1 = umxGSEM(model = "g ~= SCZ + BIP + MDD + EA + INSOM",
 #'              covstruc = Psych_LDSC, estimation = "DWLS")
