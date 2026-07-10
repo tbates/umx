@@ -1395,29 +1395,30 @@ xmu_robust_WLS_fit <- function(model) {
 	dfInd = length(commonNames) - ncol(jacIndAligned)
 
 	# Step E/F: Native R baseline WLS fit calculation (aligned moments)
-	# Extract observed covariance matrix and means (if any)
+	# Extract observed covariance matrix and means (if any).
+	# Modern summary WLS / GSEM: type is often "none" with cov only in observedStats.
 	obsCov = NULL
 	obsMeans = NULL
 	obsThresholds = NULL
-	if (model$data$type == "raw") {
-		if (.hasSlot(model$data, "observedStats") && !is.null(model$data@observedStats)) {
-			obsCov = model$data@observedStats$cov
-			obsMeans = model$data@observedStats$means
-			obsThresholds = model$data@observedStats$thresholds
-		} else if (!is.null(model$data$observedStats)) {
-			obsCov = model$data$observedStats$cov
-			obsMeans = model$data$observedStats$means
-			obsThresholds = model$data$observedStats$thresholds
-		}
-		if (is.null(obsCov)) {
+	os = NULL
+	if (.hasSlot(model$data, "observedStats") && !is.null(model$data@observedStats)) {
+		os = model$data@observedStats
+	} else if (!is.null(model$data$observedStats)) {
+		os = model$data$observedStats
+	}
+	if (!is.null(os)) {
+		obsCov = os$cov
+		obsMeans = os$means
+		obsThresholds = os$thresholds
+	}
+	if (identical(model$data$type, "raw")) {
+		if (is.null(obsCov) && !is.null(model$data$observed)) {
 			numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
 			if (ncol(numericData) > 0) {
 				obsCov = cov(numericData, use = "pairwise.complete.obs")
-			} else {
-				obsCov = matrix(NA_real_, nrow = length(manifests), ncol = length(manifests), dimnames = list(manifests, manifests))
 			}
 		}
-		if (is.null(obsMeans)) {
+		if (is.null(obsMeans) && !is.null(model$data$observed)) {
 			numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
 			if (ncol(numericData) > 0) {
 				obsMeans = colMeans(numericData, na.rm = TRUE)
@@ -1427,8 +1428,16 @@ xmu_robust_WLS_fit <- function(model) {
 			}
 		}
 	} else {
-		obsCov = model$data$observed
-		obsMeans = model$data$means
+		# cov / means data, or type "none" summary WLS
+		if (is.null(obsCov)) {
+			obsCov = model$data$observed
+		}
+		if (is.null(obsMeans)) {
+			obsMeans = model$data$means
+		}
+	}
+	if (is.null(obsCov) || !is.matrix(obsCov)) {
+		stop("Could not locate observed covariance matrix for robust WLS fit (need data$observed or observedStats$cov).")
 	}
 	
 	if (!is.null(obsMeans)) {
@@ -1438,6 +1447,9 @@ xmu_robust_WLS_fit <- function(model) {
 			names(obsMeans) = colNames
 		}
 		obsMeans = obsMeans[manifests]
+	}
+	if (!all(manifests %in% colnames(obsCov)) || !all(manifests %in% rownames(obsCov))) {
+		stop("Observed covariance dimnames do not cover model manifests: ", paste(manifests, collapse = ", "))
 	}
 	obsCov = obsCov[manifests, manifests, drop = FALSE]
 	
@@ -1464,9 +1476,17 @@ xmu_robust_WLS_fit <- function(model) {
 			parts = strsplit(name, "[ _]")[[1]]
 			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
 			if (length(parts) == 2) {
-				sVec[i] = obsCov[parts[1], parts[2]]
+				if (all(parts %in% colnames(obsCov))) {
+					sVec[i] = obsCov[parts[1], parts[2]]
+				} else {
+					sVec[i] = NA_real_
+				}
 			} else if (length(parts) == 1) {
-				sVec[i] = obsCov[parts[1], parts[1]]
+				if (parts[1] %in% colnames(obsCov)) {
+					sVec[i] = obsCov[parts[1], parts[1]]
+				} else {
+					sVec[i] = NA_real_
+				}
 			}
 		}
 	}

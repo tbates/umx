@@ -210,7 +210,13 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	        tryCatch({
 	            robustFit = xmu_robust_WLS_fit(model)
 	        }, error = function(e) {
-	            message(paste("umxSummary Note: Frontend Satorra-Bentler calculation skipped:", e$message))
+	            # Avoid raw R errors ("replacement has length zero") in user-facing notes
+	            msg = conditionMessage(e)
+	            if (grepl("replacement has length zero|Could not locate observed covariance|dimnames do not cover", msg)) {
+	            	message("umxSummary Note: robust CFI/TLI/RMSEA (Satorra-Bentler) could not be computed for this WLS model; reporting unadjusted chi-square. Parameter estimates and SEs are unaffected. For genomic SEM, prefer SRMR and nested comparisons (see ?umxCompare).")
+	            } else {
+	            	message("umxSummary Note: robust CFI/TLI/RMSEA (Satorra-Bentler) skipped: ", msg)
+	            }
 	        })
         
 	        if (!is.null(robustFit)) {
