@@ -19,15 +19,15 @@ Same list layout as \link{Psych_LDSC} — pass the object as \code{covstruc} to 
 \details{
 LDSC list fields (GenomicSEM-style \code{ldsc} output):
 \itemize{
-\item \strong{\code{S}}: \(9 \times 9\) genetic covariance matrix among the phenotypes
+\item \strong{\code{S}}: 9 x 9 genetic covariance matrix among the phenotypes
 (diagonals are SNP heritabilities on the LDSC scale).
-\item \strong{\code{V}}: \(45 \times 45\) sampling covariance of the unique elements of \code{S}
+\item \strong{\code{V}}: 45 x 45 sampling covariance of the unique elements of \code{S}
 (lower-triangle / \code{vech} order). Used as asymptotic covariance for WLS/DWLS.
-\item \strong{\code{I}}: \(9 \times 9\) \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
+\item \strong{\code{I}}: 9 x 9 \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
 (expected near 1 without confounding; elevations can flag stratification).
 Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic
 control when expanding SNPs in \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
-\item \strong{\code{N}}: \(1 \times 45\) effective sample sizes for each unique \code{S} element.
+\item \strong{\code{N}}: 1 x 45 effective sample sizes for each unique \code{S} element.
 \item \strong{\code{m}}: Number of SNPs used in LDSC (here 1,173,569).
 }
 }

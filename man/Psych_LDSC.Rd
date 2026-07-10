@@ -19,14 +19,14 @@ and the example \code{covstruc} used throughout the GSEM helpers (see also \link
 \details{
 LDSC list fields (GenomicSEM-style \code{ldsc} output):
 \itemize{
-\item \strong{\code{S}}: \(5 \times 5\) genetic covariance matrix among the phenotypes
+\item \strong{\code{S}}: 5 x 5 genetic covariance matrix among the phenotypes
 (diagonals are SNP heritabilities on the LDSC scale).
-\item \strong{\code{V}}: \(15 \times 15\) sampling covariance of the unique elements of \code{S}
+\item \strong{\code{V}}: 15 x 15 sampling covariance of the unique elements of \code{S}
 (lower-triangle / \code{vech} order). Used as asymptotic covariance for WLS/DWLS.
-\item \strong{\code{I}}: \(5 \times 5\) \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
+\item \strong{\code{I}}: 5 x 5 \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
 (expected near 1 without confounding). Off-diagonal = cross-trait intercepts
 reflecting sample overlap. Preferred input for GC in \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
-\item \strong{\code{N}}: \(1 \times 15\) effective sample sizes for each unique \code{S} element.
+\item \strong{\code{N}}: 1 x 15 effective sample sizes for each unique \code{S} element.
 \item \strong{\code{m}}: Number of SNPs used in LDSC.
 }
 }

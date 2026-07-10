@@ -19,7 +19,7 @@ umxGSEM_GWAS(
 }
 \arguments{
 \item{covstruc}{LDSC list with \code{S} (genetic covariance), \code{V} (sampling covariance of
-\(\mathrm{vech}(S)\)), and preferably \code{I} (LDSC intercept matrix, for GC-corrected SEs).
+vech(S)), and preferably \code{I} (LDSC intercept matrix, for GC-corrected SEs).
 See e.g. \link{Psych_LDSC} (\code{I} = intercepts / sample-overlap; also \code{N}, \code{m}).}
 
 \item{SNPs}{Data frame from \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}} (columns \verb{beta.*}, \verb{se.*}, \code{MAF}, \code{SNP}, …).}

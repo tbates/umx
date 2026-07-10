@@ -96,9 +96,9 @@ SNPs that fail allele match, INFO, or listwise merge are dropped.
 Pass a single logical or a vector recycled to \code{length(files)}. For each trait,
 choose the treatment that matches how that GWAS was run:\tabular{lll}{
    Flag \tab Typical traits \tab What it does \cr
-   \code{se.logit = TRUE} \tab Case/control logistic GWAS (default) \tab Treat \code{effect}/\code{SE} as log(OR) and SE on the logistic scale; transform both to the continuous scale used by Genomic SEM: divide by \(\sqrt{\beta^2 \mathrm{Var}(\mathrm{SNP}) + \pi^2/3}\), with \(\mathrm{Var}(\mathrm{SNP}) = 2p(1-p)\). \cr
+   \code{se.logit = TRUE} \tab Case/control logistic GWAS (default) \tab Treat \code{effect}/\code{SE} as log(OR) and SE on the logistic scale; transform both to the continuous scale used by Genomic SEM: divide by sqrt(beta^2 * Var(SNP) + pi^2/3), with Var(SNP) = 2p(1-p). \cr
    \code{linprob = TRUE} \tab Binary traits lacking usable logistic SEs \tab Reconstruct Z from effect/SE when present, then back out continuous-scale beta and SE using effective sample size \code{N} (sum of effective Ns) and the same logistic-to-continuous adjustment. \cr
-   \code{OLS = TRUE} \tab Continuous phenotypes \tab Standardize using Z and total sample size \code{N} with SNP variance \(2p(1-p)\). \cr
+   \code{OLS = TRUE} \tab Continuous phenotypes \tab Standardize using Z and total sample size \code{N} with SNP variance 2p(1-p). \cr
    \code{se.logit = FALSE} (and not OLS/linprob) \tab Non-standard OR-scale SEs \tab Alternate SE scaling for odds-ratio reported SEs; prefer \code{se.logit = TRUE} for ordinary logistic GWAS. \cr
 }
 

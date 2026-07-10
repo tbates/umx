@@ -322,8 +322,8 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #'
 #' **OpenMx WLS data (modern only)**
 #'
-#' Genomic SEM needs precomputed summary matrices \(S\) (genetic cov) and \(V\) (sampling cov of
-#' \(\mathrm{vech}(S)\)). OpenMx WLS consumes these via the **modern** `mxData` interface only:
+#' Genomic SEM needs precomputed summary matrices S (genetic cov) and V (sampling cov of
+#' vech(S)). OpenMx WLS consumes these via the **modern** `mxData` interface only:
 #'
 #' ```
 #' mxData(numObs = 1,
@@ -843,9 +843,9 @@ xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, f
 #'
 #' | Flag | Typical traits | What it does |
 #' |:-----|:---------------|:-------------|
-#' | `se.logit = TRUE` | Case/control logistic GWAS (default) | Treat `effect`/`SE` as log(OR) and SE on the logistic scale; transform both to the continuous scale used by Genomic SEM: divide by \(\sqrt{\beta^2 \mathrm{Var}(\mathrm{SNP}) + \pi^2/3}\), with \(\mathrm{Var}(\mathrm{SNP}) = 2p(1-p)\). |
+#' | `se.logit = TRUE` | Case/control logistic GWAS (default) | Treat `effect`/`SE` as log(OR) and SE on the logistic scale; transform both to the continuous scale used by Genomic SEM: divide by sqrt(beta^2 * Var(SNP) + pi^2/3), with Var(SNP) = 2p(1-p). |
 #' | `linprob = TRUE` | Binary traits lacking usable logistic SEs | Reconstruct Z from effect/SE when present, then back out continuous-scale beta and SE using effective sample size `N` (sum of effective Ns) and the same logistic-to-continuous adjustment. |
-#' | `OLS = TRUE` | Continuous phenotypes | Standardize using Z and total sample size `N` with SNP variance \(2p(1-p)\). |
+#' | `OLS = TRUE` | Continuous phenotypes | Standardize using Z and total sample size `N` with SNP variance 2p(1-p). |
 #' | `se.logit = FALSE` (and not OLS/linprob) | Non-standard OR-scale SEs | Alternate SE scaling for odds-ratio reported SEs; prefer `se.logit = TRUE` for ordinary logistic GWAS. |
 #'
 #' ## Other parameters
@@ -1138,7 +1138,7 @@ xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TR
 #' see e.g. [Psych_LDSC] for a packaged example and field definitions.
 #'
 #' @param covstruc LDSC list with `S` (genetic covariance), `V` (sampling covariance of
-#'   \(\mathrm{vech}(S)\)), and preferably `I` (LDSC intercept matrix, for GC-corrected SEs).
+#'   vech(S)), and preferably `I` (LDSC intercept matrix, for GC-corrected SEs).
 #'   See e.g. [Psych_LDSC] (`I` = intercepts / sample-overlap; also `N`, `m`).
 #' @param SNPs Data frame from [umxGSEM_sumstats()] (columns `beta.*`, `se.*`, `MAF`, `SNP`, …).
 #' @param model Optional lavaan/umx string or mxModel. If `NULL`, builds

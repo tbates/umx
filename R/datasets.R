@@ -325,15 +325,15 @@ NULL
 #'
 #' @details
 #' LDSC list fields (GenomicSEM-style `ldsc` output):
-#' * **`S`**: \(9 \times 9\) genetic covariance matrix among the phenotypes
+#' * **`S`**: 9 x 9 genetic covariance matrix among the phenotypes
 #'   (diagonals are SNP heritabilities on the LDSC scale).
-#' * **`V`**: \(45 \times 45\) sampling covariance of the unique elements of `S`
+#' * **`V`**: 45 x 45 sampling covariance of the unique elements of `S`
 #'   (lower-triangle / `vech` order). Used as asymptotic covariance for WLS/DWLS.
-#' * **`I`**: \(9 \times 9\) **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
+#' * **`I`**: 9 x 9 **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
 #'   (expected near 1 without confounding; elevations can flag stratification).
 #'   Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic
 #'   control when expanding SNPs in [umxGSEM_GWAS()].
-#' * **`N`**: \(1 \times 45\) effective sample sizes for each unique `S` element.
+#' * **`N`**: 1 x 45 effective sample sizes for each unique `S` element.
 #' * **`m`**: Number of SNPs used in LDSC (here 1,173,569).
 #'
 #' @docType data
@@ -367,14 +367,14 @@ NULL
 #'
 #' @details
 #' LDSC list fields (GenomicSEM-style `ldsc` output):
-#' * **`S`**: \(5 \times 5\) genetic covariance matrix among the phenotypes
+#' * **`S`**: 5 x 5 genetic covariance matrix among the phenotypes
 #'   (diagonals are SNP heritabilities on the LDSC scale).
-#' * **`V`**: \(15 \times 15\) sampling covariance of the unique elements of `S`
+#' * **`V`**: 15 x 15 sampling covariance of the unique elements of `S`
 #'   (lower-triangle / `vech` order). Used as asymptotic covariance for WLS/DWLS.
-#' * **`I`**: \(5 \times 5\) **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
+#' * **`I`**: 5 x 5 **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
 #'   (expected near 1 without confounding). Off-diagonal = cross-trait intercepts
 #'   reflecting sample overlap. Preferred input for GC in [umxGSEM_GWAS()].
-#' * **`N`**: \(1 \times 15\) effective sample sizes for each unique `S` element.
+#' * **`N`**: 1 x 15 effective sample sizes for each unique `S` element.
 #' * **`m`**: Number of SNPs used in LDSC.
 #'
 #' @docType data
