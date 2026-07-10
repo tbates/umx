@@ -328,7 +328,7 @@ NULL
 #' * **`S`**: 9 x 9 genetic covariance matrix among the phenotypes
 #'   (diagonals are SNP heritabilities on the LDSC scale).
 #' * **`V`**: 45 x 45 sampling covariance of the unique elements of `S`
-#'   (lower-triangle / `vech` order). Used as asymptotic covariance for WLS/DWLS.
+#'   (lower-triangle / `vech` order; dimnames like `BMI_BMI`, `WHR_BMI`). Used as asymptotic covariance for WLS/DWLS.
 #' * **`I`**: 9 x 9 **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
 #'   (expected near 1 without confounding; elevations can flag stratification).
 #'   Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic
@@ -370,7 +370,7 @@ NULL
 #' * **`S`**: 5 x 5 genetic covariance matrix among the phenotypes
 #'   (diagonals are SNP heritabilities on the LDSC scale).
 #' * **`V`**: 15 x 15 sampling covariance of the unique elements of `S`
-#'   (lower-triangle / `vech` order). Used as asymptotic covariance for WLS/DWLS.
+#'   (lower-triangle / `vech` order; dimnames like `SCZ_SCZ`, `BIP_SCZ`). Used as asymptotic covariance for WLS/DWLS.
 #' * **`I`**: 5 x 5 **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
 #'   (expected near 1 without confounding). Off-diagonal = cross-trait intercepts
 #'   reflecting sample overlap. Preferred input for GC in [umxGSEM_GWAS()].

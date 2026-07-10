@@ -529,15 +529,28 @@ xmu_gsem_subset_SV <- function(S, V, keep_vars) {
 		colnames(V) = xmu_gsem_vech_names(full_names)
 		rownames(V) = colnames(V)
 	}
-	# Prefer keys against full S order (standard LDSC object)
-	gsem_pair_key = function(a, b, name_order) {
+	# Prefer keys against full S order (standard LDSC object).
+	# Labels: "A_B" (preferred) or legacy "A B" / either trait order.
+	gsem_pair_key = function(a, b, name_order, sep = "_") {
 		ia = match(a, name_order)
 		ib = match(b, name_order)
 		if (is.na(ia) || is.na(ib)) {
 			return(NA_character_)
 		}
 		# same convention as xmu_gsem_vech_names: higher index first
-		if (ia >= ib) paste(a, b, sep = " ") else paste(b, a, sep = " ")
+		if (ia >= ib) paste(a, b, sep = sep) else paste(b, a, sep = sep)
+	}
+	lookup_pair = function(a, b) {
+		cands = c(
+			gsem_pair_key(a, b, full_names, "_"),
+			gsem_pair_key(a, b, full_names, " "),
+			gsem_pair_key(a, b, keep_vars, "_"),
+			gsem_pair_key(a, b, keep_vars, " "),
+			paste(a, b, sep = "_"), paste(b, a, sep = "_"),
+			paste(a, b, sep = " "), paste(b, a, sep = " ")
+		)
+		hit = cands[!is.na(cands) & cands %in% colnames(V)]
+		if (length(hit)) hit[1] else NA_character_
 	}
 	k = length(keep_vars)
 	orig_keys = character(0)
@@ -546,19 +559,8 @@ xmu_gsem_subset_SV <- function(S, V, keep_vars) {
 		for (i in j:k) {
 			a = keep_vars[i]
 			b = keep_vars[j]
-			new_keys = c(new_keys, paste(a, b, sep = " "))
-			# Try full S naming, then keep_vars naming, then swapped
-			key = gsem_pair_key(a, b, full_names)
-			if (is.na(key) || !key %in% colnames(V)) {
-				key = gsem_pair_key(a, b, keep_vars)
-			}
-			if (is.na(key) || !key %in% colnames(V)) {
-				# last resort: either order present
-				alt1 = paste(a, b, sep = " ")
-				alt2 = paste(b, a, sep = " ")
-				if (alt1 %in% colnames(V)) key = alt1 else if (alt2 %in% colnames(V)) key = alt2 else key = NA_character_
-			}
-			orig_keys = c(orig_keys, key)
+			new_keys = c(new_keys, paste(a, b, sep = "_"))
+			orig_keys = c(orig_keys, lookup_pair(a, b))
 		}
 	}
 	if (anyNA(orig_keys) || !all(orig_keys %in% colnames(V))) {

@@ -12,7 +12,11 @@
 * Vignette multi-group example uses the **one-factor** model (not multi-group bifactor).
 
 ### Genomic SEM (status)
+* `Psych_LDSC` / `Anthro_LDSC`: dimnames on `S`, `I`, `V`, and `N` (`SCZ_SCZ`, `BIP_SCZ`, ...).
+* NEW: `umxGSEM_name_ldsc()` labels GenomicSEM-style lists from disk (pair names with `_`).
+* `xmu_gsem_vech_names()` uses underscore separators (still accepts legacy space labels).
 * Structural GSEM (ready): `umxGSEM()` fits one model to LDSC S/V via modern OpenMx
+
   `observedStats = list(cov, useWeight, asymCov)` (DWLS default). Accepts lavaan/umx strings or
   existing `umxRAM`/`mxModel` structures. Residual order + diagonal DWLS weights match
   GenomicSEM `commonfactor` on `Psych_LDSC` (loadings/SEs to printed precision).

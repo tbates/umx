@@ -22,7 +22,7 @@ LDSC list fields (GenomicSEM-style \code{ldsc} output):
 \item \strong{\code{S}}: 9 x 9 genetic covariance matrix among the phenotypes
 (diagonals are SNP heritabilities on the LDSC scale).
 \item \strong{\code{V}}: 45 x 45 sampling covariance of the unique elements of \code{S}
-(lower-triangle / \code{vech} order). Used as asymptotic covariance for WLS/DWLS.
+(lower-triangle / \code{vech} order; dimnames like \code{BMI_BMI}, \code{WHR_BMI}). Used as asymptotic covariance for WLS/DWLS.
 \item \strong{\code{I}}: 9 x 9 \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
 (expected near 1 without confounding; elevations can flag stratification).
 Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic
@@ -50,6 +50,7 @@ Other GSEM:
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
 \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
+\code{\link[=umxGSEM_name_ldsc]{umxGSEM_name_ldsc()}},
 \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 
 Other datasets:

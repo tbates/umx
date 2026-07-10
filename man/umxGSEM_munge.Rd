@@ -70,6 +70,7 @@ Other GSEM:
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
 \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
+\code{\link[=umxGSEM_name_ldsc]{umxGSEM_name_ldsc()}},
 \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
 }
 \concept{GSEM}
