@@ -397,22 +397,26 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		if (!is.null(model$data) && exists("xmu_is_legacy_acov_data", mode = "function") && xmu_is_legacy_acov_data(model$data)) {
 			xmu_stop_legacy_acov("umxGSEM")
 		}
-		keep_vars = model$manifestVars
-		keep_vars = setdiff(keep_vars, "SNP") # SNP is GWAS-only
+		# Keep model manifest order (OpenMx WLS matches cov to F by position; wrong order segfaults).
+		keep_vars = setdiff(model$manifestVars, "SNP") # SNP is GWAS-only
 	} else if (is.character(model)) {
 		model = gsub("~=", "=~", model, fixed = TRUE)
 		# Discover manifests (cov placeholder; WLS data injected after triage)
 		dummy_model = umxRAM(model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, std.lv = std.lv, ...)
-		keep_vars = dummy_model$manifestVars
+		keep_vars = setdiff(dummy_model$manifestVars, "SNP")
 	} else {
 		stop("umxGSEM: model must be a lavaan/umx model string or an mxModel/umxRAM object.")
 	}
 
-	# Subset S and V to manifests used in the model (preserve S column order)
-	keep_vars = colnames(S)[colnames(S) %in% keep_vars]
 	if (length(keep_vars) == 0) {
-		stop("No variables in S match manifest variables in the model.")
+		stop("No manifest variables found in the model (aside from optional SNP).")
 	}
+	missing_traits = setdiff(keep_vars, colnames(S))
+	if (length(missing_traits) > 0) {
+		stop("Model manifests not found in S/covstruc: ", paste(missing_traits, collapse = ", "),
+			". S traits: ", paste(colnames(S), collapse = ", "))
+	}
+	# Do NOT reorder keep_vars to colnames(S): WLS cov must match model$manifestVars / F order.
 
 	prep = xmu_gsem_prepare_WLS(S = S, V = V, keep_vars = keep_vars, estimation = estimation, smooth = smooth)
 	S_subset = prep$S
@@ -423,15 +427,30 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	# Structure: umxRAM from string, or inject data into existing MxModel
 	if (isMx) {
 		final_model = mxModel(model, name = name)
-		# Drop latents/paths for traits not in keep_vars are user's responsibility; data dims must match manifests used
-		if (!all(keep_vars %in% final_model$manifestVars)) {
-			stop("umxGSEM: model manifestVars must include all selected traits: ", paste(keep_vars, collapse = ", "))
+		man_now = setdiff(final_model$manifestVars, "SNP")
+		if (!identical(as.character(man_now), as.character(keep_vars))) {
+			stop("umxGSEM: internal mismatch between model manifestVars and WLS cov order.")
 		}
 	} else {
 		final_model = umxRAM(model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name, std.lv = std.lv, ...)
 	}
 
 	final_model = xmu_gsem_set_starts(final_model, S_subset)
+	# Align cov dimnames with model manifests (guard OpenMx backend)
+	if (!identical(colnames(S_subset), final_model$manifestVars)) {
+		# String-built models should already match; reindex if needed
+		man = final_model$manifestVars
+		if (!all(man %in% colnames(S_subset))) {
+			stop("umxGSEM: WLS cov traits do not cover model manifests: ", paste(man, collapse = ", "))
+		}
+		S_subset = S_subset[man, man, drop = FALSE]
+		# V/W are in OpenMx residual order for S_subset's previous trait order — rebuild if reordered
+		prep = xmu_gsem_prepare_WLS(S = S, V = V, keep_vars = man, estimation = estimation, smooth = smooth)
+		S_subset = prep$S
+		V_omx = prep$V_omx
+		W_omx = prep$W_omx
+		triageResult = prep$triage
+	}
 	wls_data    = mxData(numObs = numObs, observedStats = list(cov = S_subset, useWeight = W_omx, asymCov = V_omx))
 	final_model = mxModel(final_model, wls_data)
 	final_model = mxModel(final_model, mxFitFunctionWLS(type = estimation))
@@ -489,17 +508,66 @@ xmu_gsem_extract_SV <- function(covstruc = NULL, S = NULL, V = NULL, I = NULL) {
 }
 
 xmu_gsem_subset_SV <- function(S, V, keep_vars) {
-	keep_vars = colnames(S)[colnames(S) %in% keep_vars]
+	# Preserve keep_vars order (must match model manifest / F order for OpenMx WLS).
 	if (length(keep_vars) == 0) {
-		stop("No variables in S match requested trait names.")
+		stop("No trait names requested for S/V subset.")
+	}
+	keep_vars = as.character(keep_vars)
+	full_names = colnames(S)
+	missing = setdiff(keep_vars, full_names)
+	if (length(missing) > 0) {
+		stop("Traits not found in S: ", paste(missing, collapse = ", "),
+			". Available: ", paste(full_names, collapse = ", "))
 	}
 	S_subset = S[keep_vars, keep_vars, drop = FALSE]
-	keep_pairs = xmu_gsem_vech_names(keep_vars)
-	if (all(keep_pairs %in% colnames(V))) {
-		V_subset = V[keep_pairs, keep_pairs, drop = FALSE]
-	} else {
-		stop("Could not align V with S variable order. Provide V in GenomicSEM lower-triangle order with dimnames.")
+
+	# V is stored in GenomicSEM lower.tri order of the *full* S (or a prior subset).
+	# Pair labels are paste(name[i], name[j]) with i>=j in that naming order — not
+	# symmetric ("EA SCZ" vs "SCZ EA"). Map each pair under keep_vars order back to
+	# the key used when V was named from full_names (or existing colnames(V)).
+	if (is.null(colnames(V)) || is.null(rownames(V))) {
+		colnames(V) = xmu_gsem_vech_names(full_names)
+		rownames(V) = colnames(V)
 	}
+	# Prefer keys against full S order (standard LDSC object)
+	gsem_pair_key = function(a, b, name_order) {
+		ia = match(a, name_order)
+		ib = match(b, name_order)
+		if (is.na(ia) || is.na(ib)) {
+			return(NA_character_)
+		}
+		# same convention as xmu_gsem_vech_names: higher index first
+		if (ia >= ib) paste(a, b, sep = " ") else paste(b, a, sep = " ")
+	}
+	k = length(keep_vars)
+	orig_keys = character(0)
+	new_keys = character(0)
+	for (j in seq_len(k)) {
+		for (i in j:k) {
+			a = keep_vars[i]
+			b = keep_vars[j]
+			new_keys = c(new_keys, paste(a, b, sep = " "))
+			# Try full S naming, then keep_vars naming, then swapped
+			key = gsem_pair_key(a, b, full_names)
+			if (is.na(key) || !key %in% colnames(V)) {
+				key = gsem_pair_key(a, b, keep_vars)
+			}
+			if (is.na(key) || !key %in% colnames(V)) {
+				# last resort: either order present
+				alt1 = paste(a, b, sep = " ")
+				alt2 = paste(b, a, sep = " ")
+				if (alt1 %in% colnames(V)) key = alt1 else if (alt2 %in% colnames(V)) key = alt2 else key = NA_character_
+			}
+			orig_keys = c(orig_keys, key)
+		}
+	}
+	if (anyNA(orig_keys) || !all(orig_keys %in% colnames(V))) {
+		stop("Could not align V with S variable order for traits: ", paste(keep_vars, collapse = ", "),
+			". Provide V in GenomicSEM lower.tri order with dimnames matching S.")
+	}
+	V_subset = V[orig_keys, orig_keys, drop = FALSE]
+	# Rename to vech names in keep_vars order for downstream OpenMx residual reordering
+	dimnames(V_subset) = list(new_keys, new_keys)
 	list(S = S_subset, V = V_subset, keep_vars = keep_vars)
 }
 
