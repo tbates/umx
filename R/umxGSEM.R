@@ -1272,6 +1272,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	out_status = rep(NA_integer_, nSNP)
 	out_fail = rep(TRUE, nSNP)
 	out_warn = rep(NA_character_, nSNP)
+	out_se_source = rep(NA_character_, nSNP)
 
 	oldAuto = getOption("umx_auto_plot")
 	options(umx_auto_plot = FALSE)
@@ -1314,10 +1315,12 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			est_se = xmu_gsem_extract_snp_path(fit, traits)
 			out_est[i] = est_se$est
 			out_se[i] = est_se$se
+			out_se_source[i] = if (!is.null(est_se$se_source)) est_se$se_source else NA_character_
 			# Unreliable SE when optimizer did not converge cleanly
 			if (is.finite(out_status[i]) && !(out_status[i] %in% c(0L, 1L))) {
 				if (is.finite(out_se[i]) && is.finite(out_est[i]) && out_se[i] < 1e-3 * max(1e-6, abs(out_est[i]))) {
 					out_se[i] = NA_real_
+					out_se_source[i] = "dropped_bad_status"
 				}
 			}
 			if (is.finite(out_est[i]) && is.finite(out_se[i]) && out_se[i] > 0) {
@@ -1331,6 +1334,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		A1 = out_A1, A2 = out_A2,
 		est = out_est, se = out_se, Z = out_Z, P = out_P,
 		status = out_status, fail = out_fail, warning = out_warn,
+		se_source = out_se_source,
 		stringsAsFactors = FALSE
 	)
 }
@@ -1453,6 +1457,7 @@ xmu_gsem_extract_snp_path <- function(fit, traits) {
 	# Prefer free A-path: F1 ~ SNP  (RAM: row = to = latent, col = from = SNP)
 	est = NA_real_
 	se = NA_real_
+	se_source = NA_character_
 	lat = if (length(fit$latentVars)) fit$latentVars[1] else NA_character_
 	# Prefer a factor named F1 when present
 	if ("F1" %in% fit$latentVars) {
@@ -1468,9 +1473,11 @@ xmu_gsem_extract_snp_path <- function(fit, traits) {
 			rn = rownames(ses)
 			if (!is.null(rn) && lab %in% rn) {
 				se = as.numeric(ses[lab, 1])
+				if (is.finite(se)) se_source = "openmx"
 			} else if (lab %in% names(cf) && length(as.numeric(ses)) >= length(cf)) {
 				# OpenMx often returns SE in free-parameter order without rownames
 				se = as.numeric(ses)[match(lab, names(cf))]
+				if (is.finite(se)) se_source = "openmx"
 			}
 		}
 	}
@@ -1482,8 +1489,10 @@ xmu_gsem_extract_snp_path <- function(fit, traits) {
 			if (length(hit) >= 1) {
 				if (!is.finite(est)) est = ss$Estimate[hit[1]]
 				if (is.na(lab) && "name" %in% names(ss)) lab = ss$name[hit[1]]
-				secol = if ("Std.Error" %in% names(ss)) "Std.Error" else if ("Std.Error" %in% names(ss)) "Std.Error" else NULL
-				if (!is.null(secol)) se = ss[[secol]][hit[1]]
+				if ("Std.Error" %in% names(ss)) {
+					se = ss[["Std.Error"]][hit[1]]
+					if (is.finite(se)) se_source = "summary"
+				}
 			}
 		}
 	}
@@ -1492,16 +1501,19 @@ xmu_gsem_extract_snp_path <- function(fit, traits) {
 		sand = xmu_gsem_wls_sandwich_se(fit)
 		if (!is.null(sand) && lab %in% names(sand)) {
 			se = as.numeric(sand[lab])
+			if (is.finite(se)) se_source = "sandwich"
 		} else if (!is.null(sand) && length(sand) >= 1) {
 			cf = tryCatch(coef(fit), error = function(e) NULL)
 			if (!is.null(cf) && lab %in% names(cf) && length(sand) == length(cf)) {
 				se = as.numeric(sand)[match(lab, names(cf))]
+				if (is.finite(se)) se_source = "sandwich"
 			}
 		}
 	}
 	# Drop numerical garbage (singular sandwich → absurd Z)
 	if (is.finite(se) && (se <= 0 || se < 1e-12 * max(1, abs(est)))) {
 		se = NA_real_
+		se_source = "dropped_numeric"
 	}
-	list(est = as.numeric(est)[1], se = as.numeric(se)[1])
+	list(est = as.numeric(est)[1], se = as.numeric(se)[1], se_source = se_source)
 }
