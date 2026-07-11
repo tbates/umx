@@ -25,6 +25,9 @@ Goal: correctness vs GenomicSEM tutorials, then speed toward genome-wide SNP loo
 
 **Goal:** Prove we estimate the same SNP→factor effects (and SEs where defined) as the tutorial stack on a **small, fixed** SNP set.
 
+
+
+
 | Test                      | Input                            | Compare                                                                        |
 |:--------------------------|:---------------------------------|:-------------------------------------------------------------------------------|
 | Structural (already soft) | Psych_LDSC 5-trait CF            | loadings/SEs to printed precision                                              |
