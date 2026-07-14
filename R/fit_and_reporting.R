@@ -4987,3 +4987,26 @@ umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "g
 	}
 
 }
+
+#' Plot GWAS Results
+#'
+#' @description
+#' Generates a Manhattan or Q-Q plot for GWAS results. Requires the `ggwas` package.
+#' @param x A `umx_GWAS` object (returned by \code{\link{umxGSEM_GWAS}}).
+#' @param type Type of plot: "manhattan" (default) or "qq".
+#' @param ... Additional arguments passed to \code{\link[ggwas]{manhattan_plot}} or \code{\link[ggwas]{qq_plot}}.
+#' @return A `ggplot` object.
+#' @export
+#' @family Reporting Functions
+#' @md
+plot.umx_GWAS <- function(x, type = c("manhattan", "qq"), ...) {
+	if (!requireNamespace("ggwas", quietly = TRUE)) {
+		stop("The 'ggwas' package is required for plotting GWAS results. Install it with: devtools::install_github('bczech/ggwas')")
+	}
+	type = match.arg(type)
+	if (type == "manhattan") {
+		return(ggwas::manhattan_plot(x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", ...))
+	} else if (type == "qq") {
+		return(ggwas::qq_plot(x, p = "P", ...))
+	}
+}
