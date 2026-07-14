@@ -44,8 +44,8 @@ test_that("umxSummary Case 1: Modern WLS routing works", {
   if (hasJacobian) {
     res = runSummaryCollectOutputs(mBase)
     # Verify messages
-    expect_true(any(grepl("Modern WLS model with Jacobian detected\\. Applying SB-2010 robust metrics", res$messages)))
-    expect_true(any(grepl("conventional cutoffs for CFI, TLI, and RMSEA", res$messages)))
+    expect_true(any(grepl("Modern WLS model with Jacobian detected\\. Applying robust WLS fit metrics", c(res$messages, res$output))))
+    expect_true(any(grepl("conventional CFI", c(res$messages, res$output))))
     expect_false(any(grepl("worse than desired", res$messages)))
     expect_equal(length(res$warnings), 0)
   } else {
@@ -175,12 +175,12 @@ test_that("xmu_robust_WLS_fit boundary and error handling works", {
   # 2. Missing Weight matrix error
   mNoWeight = mBase
   mNoWeight$data@observedStats$useWeight = NULL
-  expect_error(xmu_robust_WLS_fit(mNoWeight), "Could not locate WLS Weight matrix \\(W\\)\\.")
+  expect_error(xmu_robust_WLS_fit(mNoWeight), "Could not locate observedStats\\$useWeight \\(W\\)\\. Use mxData\\(numObs=N, observedStats=list\\(cov=S, useWeight=W, asymCov=V\\)\\)\\.")
 
   # 3. Missing Asymmetric Covariance matrix error
   mNoAcov = mBase
   mNoAcov$data@observedStats$asymCov = NULL
-  expect_error(xmu_robust_WLS_fit(mNoAcov), "Could not locate Asymptotic Covariance matrix \\(V\\)\\.")
+  expect_error(xmu_robust_WLS_fit(mNoAcov), "Could not locate observedStats\\$asymCov \\(Gamma\\)\\. Use mxData\\(numObs=N, observedStats=list\\(cov=S, useWeight=W, asymCov=V\\)\\)\\.")
 
   # 4. Independent model used for TLI denominator scaling tests and N fallback test
   mInd = mxModel("WLS_Ind", type="RAM",

@@ -106,7 +106,7 @@ test_that("Genomic Track B routing and natively GSEM scaled difference works", {
   
   expect_message({
     res = xmu_compare_WLS(mGenomic, mNestedGenomic)
-  }, "Genomic GSEM model detected")
+  }, "Genomic SEM model detected")
   
   expect_equal(res$diffFit[2], 4.3) # 14.8 - 10.5
   expect_equal(res$delta_df[2], 1)
