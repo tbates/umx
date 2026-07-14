@@ -2,44 +2,7 @@
 # = GSEM Helpers ============================================================
 # ===========================================================================
 
-xmu_gsem_extract_SV <- function(covstruc = NULL, S = NULL, V = NULL, I = NULL) {
-	if (!is.null(covstruc)) {
-		if (is.list(covstruc)) {
-			if (!is.null(covstruc$S)) S = covstruc$S else if (length(covstruc) >= 2) S = covstruc[[2]]
-			if (!is.null(covstruc$V)) V = covstruc$V else if (length(covstruc) >= 1) V = covstruc[[1]]
-			if (!is.null(covstruc$I)) I = covstruc$I else if (length(covstruc) >= 3) I = covstruc[[3]]
-		}
-	}
-	if (is.null(S) || is.null(V)) {
-		stop("You must provide BOTH the genetic covariance matrix S and the sampling covariance matrix V (either directly or via covstruc).")
-	}
-	S = as.matrix(S)
-	V = as.matrix(V)
-	if (is.null(colnames(S))) {
-		stop("S matrix must have column/row names matching the trait names.")
-	}
-	rownames(S) = colnames(S)
-	k = ncol(S)
-	z = (k * (k + 1)) / 2
-	if (ncol(V) != z || nrow(V) != z) {
-		stop(paste0("Dimensions of V (", nrow(V), "x", ncol(V), ") must match non-redundant elements of S (", z, ")."))
-	}
-	vech_names = xmu_gsem_vech_names(colnames(S))
-	if (is.null(colnames(V)) || is.null(rownames(V))) {
-		colnames(V) = vech_names
-		rownames(V) = vech_names
-	} else if (!identical(colnames(V), vech_names)) {
-		stop("Legacy GenomicSEM naming detected in V matrix. Please upgrade your dataset to the OpenMx WLS protocol by running: your_data <- umxGSEM_label_ldsc(your_data)")
-	}
-	if (!is.null(I)) {
-		I = as.matrix(I)
-		if (is.null(colnames(I))) {
-			colnames(I) = colnames(S)
-			rownames(I) = colnames(S)
-		}
-	}
-	list(S = S, V = V, I = I)
-}
+
 
 xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
 	if (length(keep_vars) == 0) stop("No trait names requested for covstruc subset.")
@@ -103,6 +66,23 @@ xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
 	out
 }
 
+#' Prepare Data and Weight Matrices for GenomicSEM WLS/DWLS
+#'
+#' Subsets, smooths, and packages the genetic covariance (`S`) and sampling
+#' covariance (`V`) matrices into OpenMx-compatible inputs for `mxFitFunctionWLS`.
+#' 
+#' @param S A genetic covariance matrix.
+#' @param V A sampling covariance matrix representing the asymptotic covariance of `vech(S)`.
+#' @param keep_vars Character vector of traits to retain. Order must match model `manifestVars`.
+#' @param estimation Character string. Either `"DWLS"` (default), `"WLS"`, or `"ULS"`.
+#' @param smooth Logical. Should `S` and `V` be smoothed to nearest positive definite matrices if necessary? (Default `TRUE`).
+#' @return A list containing:
+#'   \item{S}{The subsetted, optionally smoothed genetic covariance matrix.}
+#'   \item{V_omx}{The subsetted, optionally smoothed sampling covariance matrix, formatted for OpenMx.}
+#'   \item{W_omx}{The weight matrix for OpenMx (`diag(1/diag(V))` for DWLS, `solve(V)` for WLS, identity for ULS).}
+#'   \item{triage}{The raw output from `xmu_gsem_triage` detailing what smoothing occurred.}
+#'   \item{keep_vars}{The valid subset of `keep_vars` actually processed.}
+#' @keywords internal
 xmu_gsem_prepare_WLS <- function(S, V, keep_vars, estimation = "DWLS", smooth = TRUE) {
 	covstruc = list(S = S, V = V)
 	sub = xmu_gsem_subset_covstruc(covstruc, keep_vars)

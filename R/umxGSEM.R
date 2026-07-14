@@ -388,13 +388,20 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	tryHard    = match.arg(tryHard)
 	estimation = match.arg(estimation)
 
-	sv = xmu_gsem_extract_SV(covstruc = covstruc, S = S, V = V)
-	S = sv$S
-	V = sv$V
+	if (is.null(covstruc)) {
+		if (is.null(S) || is.null(V)) {
+			stop("You must provide BOTH the genetic covariance matrix S and the sampling covariance matrix V (either directly or via covstruc).")
+		}
+		covstruc = list(S = S, V = V)
+	} else {
+		if (!is.null(S) || !is.null(V)) {
+			warning("covstruc provided; ignoring separate S and V arguments.", call. = FALSE)
+		}
+	}
 
 	# Retain "SNP" as a manifest when it is present in S (umxGSEM_GWAS expand).
 	# Only drop SNP for pure structural GSEM (S has traits only).
-	snpInS = "SNP" %in% colnames(S)
+	snpInS = "SNP" %in% colnames(covstruc$S)
 
 	isMx = umx_is_MxModel(model)
 	if (isMx) {
@@ -409,7 +416,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	} else if (is.character(model)) {
 		model = gsub("~=", "=~", model, fixed = TRUE)
 		# Discover manifests (cov placeholder; WLS data injected after triage)
-		dummy_model = umxRAM(model, data = mxData(S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, std.lv = std.lv, ...)
+		dummy_model = umxRAM(model, data = mxData(covstruc$S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, std.lv = std.lv, ...)
 		keep_vars = dummy_model$manifestVars
 		if (!snpInS) {
 			keep_vars = setdiff(keep_vars, "SNP")
@@ -421,14 +428,14 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	if (length(keep_vars) == 0) {
 		stop("No manifest variables found in the model.")
 	}
-	missing_traits = setdiff(keep_vars, colnames(S))
+	missing_traits = setdiff(keep_vars, colnames(covstruc$S))
 	if (length(missing_traits) > 0) {
 		stop("Model manifests not found in S/covstruc: ", paste(missing_traits, collapse = ", "),
-			". S traits: ", paste(colnames(S), collapse = ", "))
+			". S traits: ", paste(colnames(covstruc$S), collapse = ", "))
 	}
-	# Do NOT reorder keep_vars to colnames(S): WLS cov must match model$manifestVars / F order.
+	# Do NOT reorder keep_vars to colnames(covstruc$S): WLS cov must match model$manifestVars / F order.
 
-	prep = xmu_gsem_prepare_WLS(S = S, V = V, keep_vars = keep_vars, estimation = estimation, smooth = smooth)
+	prep = xmu_gsem_prepare_WLS(S = covstruc$S, V = covstruc$V, keep_vars = keep_vars, estimation = estimation, smooth = smooth)
 	S_subset = prep$S
 	V_omx    = prep$V_omx
 	W_omx    = prep$W_omx
@@ -458,7 +465,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		}
 		S_subset = S_subset[man, man, drop = FALSE]
 		# V/W are in OpenMx residual order for S_subset's previous trait order — rebuild if reordered
-		prep = xmu_gsem_prepare_WLS(S = S, V = V, keep_vars = man, estimation = estimation, smooth = smooth)
+		prep = xmu_gsem_prepare_WLS(S = covstruc$S, V = covstruc$V, keep_vars = man, estimation = estimation, smooth = smooth)
 		S_subset = prep$S
 		V_omx = prep$V_omx
 		W_omx = prep$W_omx
@@ -776,10 +783,12 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' head(gwas)
 #' # Or subset by pair names: vn = xmu_gsem_vech_names(c("SCZ","BIP","MDD")); V[vn, vn]
 #' }
-umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), SNPSE = 5e-4, maxSNPs = NULL, snpEffect = NULL, quiet = TRUE) {
+umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), SNPSE = 5e-4, maxSNPs = NULL, snpEffect = NULL, quiet = TRUE, force_fallback = FALSE) {
 	estimation = match.arg(estimation)
 	GC = match.arg(GC)
-	covstruc = xmu_gsem_extract_SV(covstruc = covstruc)
+	if (!is.list(covstruc) || is.null(covstruc$S) || is.null(covstruc$V)) {
+		stop("covstruc must be a list containing at least matrices S and V.")
+	}
 	if (is.null(covstruc$I)) {
 		covstruc$I = diag(ncol(covstruc$S))
 		dimnames(covstruc$I) = list(colnames(covstruc$S), colnames(covstruc$S))
@@ -847,12 +856,10 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	# Pre-flight: Build template model and optimize starting values
 	if (!quiet) message("umxGSEM_GWAS: Generating GWAS template and optimizing starting values...")
 	expn_dummy = xmu_gsem_expand_snp(covstruc, as.numeric(beta_SNP[1, ]), as.numeric(SE_SNP[1, ]), varSNP[1], varSNPSE2, GC, coords)
-	if (estimation %in% c("DWLS", "WLS")) {
-		wls_dummy  = xmu_gsem_prepare_WLS(expn_dummy$S, expn_dummy$V, c("SNP", traits), estimation)
-		m_template = tryCatch(umxGSEM(model = model, S = wls_dummy$S, V = wls_dummy$V_omx, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
-	} else {
-		m_template = tryCatch(umxGSEM(model = model, S = expn_dummy$S, V = expn_dummy$V, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
-	}
+	
+	# umxGSEM natively handles WLS preparation when estimation = "DWLS" or "WLS"
+	m_template = tryCatch(umxGSEM(model = model, S = expn_dummy$S, V = expn_dummy$V, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
+	
 	if (is.null(m_template)) {
 		stop("Failed to build GWAS template model. Please check your model specification.")
 	}
@@ -869,6 +876,13 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		# 2. Extract targets using a dummy template model
 		if (!is.null(m_meas) && inherits(m_meas, "MxModel")) {
 			
+			# Inject the pure measurement model parameters into m_template
+			# This ensures the fallback engine freezes the model at the true base estimates,
+			# not at the estimates perturbed by the dummy SNP during mxTryHard
+			if (!is.null(m_template$A) && !is.null(m_meas$A)) m_template$A$values[rownames(m_meas$A), colnames(m_meas$A)] = m_meas$A$values
+			if (!is.null(m_template$S) && !is.null(m_meas$S)) m_template$S$values[rownames(m_meas$S), colnames(m_meas$S)] = m_meas$S$values
+			if (!is.null(m_template$M) && !is.null(m_meas$M)) m_template$M$values[, colnames(m_meas$M)] = m_meas$M$values
+			
 			if (!is.null(m_template) && "SNP" %in% colnames(m_template$A$free)) {
 				targets = rownames(m_template$A$free)[m_template$A$free[, "SNP"]]
 				valid_targets = targets[targets %in% rownames(m_meas$A)]
@@ -881,8 +895,12 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 					H_raw = m_meas$F$values %*% solve(diag(nrow(m_meas$A)) - m_meas$A$values) %*% L
 					rownames(H_raw) = m_meas$manifestVars
 					H_raw = H_raw[traits, , drop = FALSE]
-					analytic_ok = TRUE
-					if (!quiet) message("umxGSEM_GWAS: Enabled Sub-10s Analytic WLS Engine.")
+					if (!force_fallback) {
+						analytic_ok = TRUE
+						if (!quiet) message("umxGSEM_GWAS: Enabled Sub-10s Analytic WLS Engine.")
+					} else {
+						if (!quiet) message("umxGSEM_GWAS: Analytic engine bypassed due to force_fallback = TRUE.")
+					}
 				}
 			}
 		}
@@ -1001,6 +1019,47 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 					S_subset = expn$S[m_template$manifestVars, m_template$manifestVars, drop=FALSE]
 					m = mxModel(m, mxData(S_subset, type = "cov", numObs = covstruc$N[1]))
 				}
+				
+				# Emulate the analytic engine: Freeze all measurement model parameters
+				# Only unfreeze paths directly involving the SNP, and reset their starting values to 0
+				if (!is.null(m$A)) {
+					is_snp_col = (colnames(m$A) == "SNP")
+					is_snp_row = (rownames(m$A) == "SNP")
+					if (any(is_snp_col) || any(is_snp_row)) {
+						snp_free_A = m$A$free
+						snp_free_A[!is_snp_row, !is_snp_col] = FALSE
+						m$A$free = snp_free_A
+						
+						# Reset SNP path starting values to 0 to escape local minima inherited from m_template
+						m$A$values[is_snp_row, ] = 0
+						m$A$values[, is_snp_col] = 0
+					}
+				}
+				if (!is.null(m$S)) {
+					is_snp_col = (colnames(m$S) == "SNP")
+					is_snp_row = (rownames(m$S) == "SNP")
+					if (any(is_snp_col) || any(is_snp_row)) {
+						snp_free_S = m$S$free
+						snp_free_S[!is_snp_row, !is_snp_col] = FALSE
+						m$S$free = snp_free_S
+						
+						# Fix SNP variance to the observed variance
+						if (any(is_snp_row) && any(is_snp_col)) {
+							if (!is.null(wls_i$S) && "SNP" %in% rownames(wls_i$S)) {
+								m$S$values[is_snp_row, is_snp_col] = wls_i$S["SNP", "SNP"]
+							}
+						}
+					}
+				}
+				if (!is.null(m$M)) {
+					is_snp_col = (colnames(m$M) == "SNP")
+					if (any(is_snp_col)) {
+						snp_free_M = m$M$free
+						snp_free_M[, !is_snp_col] = FALSE
+						m$M$free = snp_free_M
+					}
+				}
+				
 				# Silent run (avoid umxSummary spam in the SNP loop)
 				# TODO: replace R loop with OpenMx C++/OpenMP SNP stream (flatten once, block by core)
 				mxRun(m, silent = TRUE, suppressWarnings = TRUE)
