@@ -41,9 +41,12 @@ xmu_gsem_extract_SV <- function(covstruc = NULL, S = NULL, V = NULL, I = NULL) {
 	list(S = S, V = V, I = I)
 }
 
-xmu_gsem_subset_SV <- function(S, V, keep_vars) {
-	if (length(keep_vars) == 0) stop("No trait names requested for S/V subset.")
+xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
+	if (length(keep_vars) == 0) stop("No trait names requested for covstruc subset.")
 	keep_vars  = as.character(keep_vars)
+	S = covstruc$S
+	V = covstruc$V
+	I = covstruc$I
 	full_names = colnames(S)
 	missing    = setdiff(keep_vars, full_names)
 	if (length(missing) > 0) {
@@ -90,11 +93,19 @@ xmu_gsem_subset_SV <- function(S, V, keep_vars) {
 	
 	V_subset = V[orig_keys, orig_keys, drop = FALSE]
 	dimnames(V_subset) = list(need, need)
-	list(S = S_subset, V = V_subset, keep_vars = keep_vars)
+	
+	out = covstruc
+	out$S = S_subset
+	out$V = V_subset
+	if (!is.null(I)) {
+		out$I = I[keep_vars, keep_vars, drop = FALSE]
+	}
+	out
 }
 
 xmu_gsem_prepare_WLS <- function(S, V, keep_vars, estimation = "DWLS", smooth = TRUE) {
-	sub = xmu_gsem_subset_SV(S, V, keep_vars)
+	covstruc = list(S = S, V = V)
+	sub = xmu_gsem_subset_covstruc(covstruc, keep_vars)
 	triageResult = xmu_gsem_triage(vMat = sub$V, sMat = sub$S, smooth = smooth)
 	V_omx = triageResult$V
 	S_subset = triageResult$S
@@ -362,9 +373,9 @@ xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TR
 	out
 }
 
-xmu_gsem_expand_snp <- function(S_LD, V_LD, I_LD, beta_i, se_i, varSNP_i, varSNPSE2, GC = "standard", coords = NULL) {
-	k = ncol(S_LD)
-	traits = colnames(S_LD)
+xmu_gsem_expand_snp <- function(covstruc, beta_i, se_i, varSNP_i, varSNPSE2, GC = "standard", coords = NULL) {
+	k = ncol(covstruc$S)
+	traits = colnames(covstruc$S)
 	if (is.null(coords)) {
 		coords = as.matrix(expand.grid(seq_len(k), seq_len(k)))
 	}
@@ -375,19 +386,19 @@ xmu_gsem_expand_snp <- function(S_LD, V_LD, I_LD, beta_i, se_i, varSNP_i, varSNP
 		y = coords[p, 2]
 		if (GC == "conserv") {
 			if (x != y) {
-				V_SNP[x, y] = se_i[y] * se_i[x] * I_LD[x, y] * I_LD[x, x] * I_LD[y, y] * varSNP_i^2
+				V_SNP[x, y] = se_i[y] * se_i[x] * covstruc$I[x, y] * covstruc$I[x, x] * covstruc$I[y, y] * varSNP_i^2
 			} else {
-				V_SNP[x, x] = (se_i[x] * I_LD[x, x] * varSNP_i)^2
+				V_SNP[x, x] = (se_i[x] * covstruc$I[x, x] * varSNP_i)^2
 			}
 		} else if (GC == "standard") {
 			if (x != y) {
-				V_SNP[x, y] = se_i[y] * se_i[x] * I_LD[x, y] * sqrt(I_LD[x, x]) * sqrt(I_LD[y, y]) * varSNP_i^2
+				V_SNP[x, y] = se_i[y] * se_i[x] * covstruc$I[x, y] * sqrt(covstruc$I[x, x]) * sqrt(covstruc$I[y, y]) * varSNP_i^2
 			} else {
-				V_SNP[x, x] = (se_i[x] * sqrt(I_LD[x, x]) * varSNP_i)^2
+				V_SNP[x, x] = (se_i[x] * sqrt(covstruc$I[x, x]) * varSNP_i)^2
 			}
 		} else {
 			if (x != y) {
-				V_SNP[x, y] = se_i[y] * se_i[x] * I_LD[x, y] * varSNP_i^2
+				V_SNP[x, y] = se_i[y] * se_i[x] * covstruc$I[x, y] * varSNP_i^2
 			} else {
 				V_SNP[x, x] = (se_i[x] * varSNP_i)^2
 			}
@@ -400,7 +411,7 @@ xmu_gsem_expand_snp <- function(S_LD, V_LD, I_LD, beta_i, se_i, varSNP_i, varSNP
 		S_SNP[p + 1] = varSNP_i * beta_i[p]
 	}
 	S_Full = diag(k + 1)
-	S_Full[2:(k + 1), 2:(k + 1)] = S_LD
+	S_Full[2:(k + 1), 2:(k + 1)] = covstruc$S
 	S_Full[1:(k + 1), 1] = S_SNP
 	S_Full[1, 1:(k + 1)] = S_SNP
 	dimnames(S_Full) = list(c("SNP", traits), c("SNP", traits))
@@ -410,7 +421,7 @@ xmu_gsem_expand_snp <- function(S_LD, V_LD, I_LD, beta_i, se_i, varSNP_i, varSNP
 	V_Full = diag(nV)
 	V_Full[1, 1] = varSNPSE2
 	V_Full[2:(k + 1), 2:(k + 1)] = V_SNP
-	V_Full[(k + 2):nV, (k + 2):nV] = V_LD
+	V_Full[(k + 2):nV, (k + 2):nV] = covstruc$V
 	# Name V rows/cols with vech of [SNP, traits]
 	vnames = xmu_gsem_vech_names(c("SNP", traits))
 	dimnames(V_Full) = list(vnames, vnames)
@@ -489,7 +500,7 @@ xmu_gsem_check_format <- function(covstruc) {
 	}
 	expected_V_names = xmu_gsem_vech_names(colnames(covstruc$S))
 	if (!identical(colnames(covstruc$V), expected_V_names)) {
-		stop("Legacy GenomicSEM naming detected in V matrix. Please upgrade your dataset to the OpenMx protocol by running: your_data <- umxGSEM_rename_ldsc(your_data)")
+		stop("Legacy GenomicSEM naming detected in V matrix. Please upgrade your dataset to the OpenMx protocol by running: your_data <- umxGSEM_label_ldsc(your_data)")
 	}
 }
 

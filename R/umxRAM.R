@@ -549,6 +549,30 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		myData = xmu_make_mxData(data= data, type = type, verbose = verbose, manifests = usedManifests, fullCovs = 
             defnNames)
 	}
+	# ==========================================================
+	# = Topologically sort manifestVars and latentVars         =
+	# ==========================================================
+	all_nodes = c(latentVars, usedManifests)
+	if(length(all_nodes) > 1) {
+		from_list = character(0)
+		to_list   = character(0)
+		for(item in dot.items) {
+			if(inherits(item, "MxPath") && item@arrows == 1) {
+				for(f in item@from) {
+					for(t in item@to) {
+						from_list = c(from_list, f)
+						to_list   = c(to_list, t)
+					}
+				}
+			}
+		}
+		if(length(from_list) > 0) {
+			sorted_nodes = xmu_topo_sort(from_list, to_list, all_nodes)
+			latentVars    = intersect(sorted_nodes, latentVars)
+			usedManifests = intersect(sorted_nodes, usedManifests)
+		}
+	}
+
 	# ==================
 	# = Assemble model =
 	# ==================
