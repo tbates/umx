@@ -638,116 +638,7 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 	}
 }
 
-#' Determine if a dataset will need statistics for the means if used in a WLS model.
-#'
-#' Given either a data.frame or raw `mxData`, this function determines whether [OpenMx::mxFitFunctionWLS()]
-#' will generate expectations for means.
-#' 
-#' All-continuous models processed using the "cumulants" method LACK means, while
-#' all continuous processed with allContinuousMethod = "marginals" will HAVE means.
-#' 
-#' When data are not all continuous, means are modeled and `allContinuousMethod` is ignored.
-#'
-#' @param data The raw data being used in a [OpenMx::mxFitFunctionWLS()] model.
-#' @param allContinuousMethod the method used to process data when all columns are continuous (default = "cumulants")
-#' @param verbose Whether or not to report diagnostics.
-#' @return - list describing the data.
-#' @family xmu internal not for end user
-#' @seealso - [OpenMx::mxFitFunctionWLS()], See OpenMx internals for `omxAugmentDataWithWLSSummary` (used in WLS).
-#' @export
 
-#' @examples
-#'
-#' # ====================================
-#' # = All continuous, data.frame input =
-#' # ====================================
-#'
-#' tmp =xmu_describe_data_WLS(mtcars, allContinuousMethod= "cumulants", verbose = TRUE)
-#' tmp$hasMeans # FALSE - no means with cumulants
-#' tmp =xmu_describe_data_WLS(mtcars, allContinuousMethod= "marginals") 
-#' tmp$hasMeans # TRUE we get means with marginals
-#'
-#' # ==========================
-#' # = mxData object as input =
-#' # ==========================
-#' tmp = mxData(mtcars, type="raw")
-#' xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants", verbose = TRUE)$hasMeans # FALSE
-#' xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans  # TRUE
-#'
-#' # =======================================
-#' # = One var is a factor: Means modeled =
-#' # =======================================
-#' tmp = mtcars
-#' tmp$cyl = factor(tmp$cyl)
-#'xmu_describe_data_WLS(tmp, allContinuousMethod= "cumulants")$hasMeans # TRUE - always has means
-#'xmu_describe_data_WLS(tmp, allContinuousMethod= "marginals")$hasMeans # TRUE
-#' 
-xmu_describe_data_WLS <- function(data, allContinuousMethod = c("cumulants", "marginals"), verbose=FALSE){
-	allContinuousMethod = match.arg(allContinuousMethod)
-	if(inherits(data, "data.frame")){
-		# all good
-	} else if(inherits(data, "MxDataStatic") && data$type == "raw"){
-		data = data$observed
-	}else{
-		message("xmu_describe_data_WLS currently only knows how to process dataframes and mxData of type = 'raw'.\n",
-		"You offered up an object of class: ", omxQuotes(class(data)))
-	}
-
-	if(all(sapply(data, FUN= is.numeric))){
-		if(verbose){ print("all continuous") }
-
-		if(allContinuousMethod == "cumulants"){
-			return(list(hasMeans = FALSE))
-		} else {
-			return(list(hasMeans = TRUE))
-		}
-	}else{
-		# Data with any non-continuous vars have means under WLS
-		return(list(hasMeans = TRUE))
-	}
-}
-
-#' Check if a model is a WLS model
-#'
-#' @description
-#' `xmu_is_wls` is an internal function to check if a model (or any of its submodels) uses WLS/DWLS/ULS.
-#'
-#' @param model An [OpenMx::mxModel()]
-#' @return - Boolean
-#' @export
-#' @family xmu internal functions
-
-xmu_is_wls <- function(model) {
-	if (!umx_is_MxModel(model)) {
-		return(FALSE)
-	}
-	# 1. Check fit function
-	if (!is.null(model$fitfunction) && inherits(model$fitfunction, "MxFitFunctionWLS")) {
-		return(TRUE)
-	}
-	# 2. Modern summary WLS: observedStats with useWeight / asymCov (type often "none")
-	if (!is.null(model$data)) {
-		if (xmu_is_legacy_acov_data(model$data)) {
-			xmu_stop_legacy_acov("xmu_is_wls")
-		}
-		os = NULL
-		if (isS4(model$data) && .hasSlot(model$data, "observedStats")) {
-			os = model$data@observedStats
-		} else if (!is.null(model$data$observedStats)) {
-			os = model$data$observedStats
-		}
-		if (!is.null(os) && (!is.null(os$useWeight) || !is.null(os$asymCov))) {
-			return(TRUE)
-		}
-	}
-	# 3. Check submodels
-	for (sub in model$submodels) {
-		if (xmu_is_wls(sub)) {
-			return(TRUE)
-		}
-	}
-	return(FALSE)
-}
 
 # OpenMx residual dimnames for continuous vars, no means: var_* then poly_*_*
 xmu_openmx_residual_names <- function(traitNames) {
@@ -763,17 +654,21 @@ xmu_openmx_residual_names <- function(traitNames) {
 	nms
 }
 
-# Half-vectorized pair labels for LDSC V / N (column-major lower.tri incl. diagonal).
-# Default: "SCZ_SCZ", "BIP_SCZ", ... (underscore). Also accept OpenMx imxGsemVechNames.
+# Wrapper for OpenMx::omxNameWLS_V.
+# Generates native OpenMx WLS compliant names (var_X, poly_Y_X) instead of legacy GenomicSEM pair names.
 xmu_gsem_vech_names <- function(traitNames, sep = "_") {
-	if (exists("imxGsemVechNames", mode = "function")) {
-		return(imxGsemVechNames(traitNames, sep = sep))
+	if (exists("omxNameWLS_V", where = asNamespace("OpenMx"), mode = "function")) {
+		return(OpenMx::omxNameWLS_V(traitNames))
 	}
-	pairs = character(0)
-	k = length(traitNames)
-	for (j in seq_len(k)) {
-		for (i in j:k) {
-			pairs = c(pairs, paste(traitNames[i], traitNames[j], sep = sep))
+	# Fallback for pre-genomicSEM OpenMx
+	k <- length(traitNames)
+	pairs <- character(0)
+	if (k >= 1) {
+		for (j in seq_len(k)) {
+			for (i in j:k) {
+				if (i == j) pairs <- c(pairs, paste0("var_", traitNames[i]))
+				else pairs <- c(pairs, paste0("poly_", traitNames[i], "_", traitNames[j]))
+			}
 		}
 	}
 	pairs
@@ -915,64 +810,6 @@ xmu_is_legacy_acov_data <- function(data) {
 }
 
 # Subset modern observedStats cov / useWeight / asymCov to selected manifests
-xmu_subset_modern_wls_observedStats <- function(data, namesNeeded) {
-	os = data$observedStats
-	if (is.null(os)) {
-		return(data)
-	}
-	if (!is.null(os$cov) && is.matrix(os$cov)) {
-		have = intersect(namesNeeded, colnames(os$cov))
-		if (length(have) == 0) {
-			have = intersect(namesNeeded, rownames(os$cov))
-		}
-		if (length(have) > 0) {
-			os$cov = os$cov[have, have, drop = FALSE]
-			namesNeeded = have
-		}
-	}
-	if (!is.null(data$observed) && is.matrix(data$observed) && all(namesNeeded %in% colnames(data$observed))) {
-		data$observed = data$observed[namesNeeded, namesNeeded, drop = FALSE]
-	}
-	# Prefer OpenMx residual names; also try GSEM vech names
-	keep_omx = xmu_openmx_residual_names(namesNeeded)
-	keep_gsem = xmu_gsem_vech_names(namesNeeded)
-	subset_mat = function(M) {
-		if (is.null(M) || !is.matrix(M)) {
-			return(M)
-		}
-		rn = rownames(M)
-		if (is.null(rn)) {
-			rn = colnames(M)
-		}
-		if (is.null(rn)) {
-			return(M)
-		}
-		if (all(keep_omx %in% rn)) {
-			return(M[keep_omx, keep_omx, drop = FALSE])
-		}
-		if (all(keep_gsem %in% rn)) {
-			return(M[keep_gsem, keep_gsem, drop = FALSE])
-		}
-		# partial intersection
-		keep = rn[rn %in% c(keep_omx, keep_gsem)]
-		if (length(keep) > 0) {
-			return(M[keep, keep, drop = FALSE])
-		}
-		M
-	}
-	if (!is.null(os$useWeight)) {
-		os$useWeight = subset_mat(os$useWeight)
-	}
-	if (!is.null(os$asymCov)) {
-		os$asymCov = subset_mat(os$asymCov)
-	}
-	# Refuse deprecated observedStats keys (same footgun as type='acov')
-	if (!is.null(os$acov) || !is.null(os$fullWeight)) {
-		xmu_stop_legacy_acov("umx (observedStats$acov / $fullWeight)")
-	}
-	data$observedStats = os
-	data
-}
 
 #' Upgrade a dataframe to an mxData type.
 #'
