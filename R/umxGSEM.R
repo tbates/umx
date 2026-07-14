@@ -483,247 +483,12 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 # ---- shared GSEM helpers ----------------------------------------------------
 # (xmu_gsem_vech_names is defined in xmu.R)
 
-xmu_gsem_extract_SV <- function(covstruc = NULL, S = NULL, V = NULL, I = NULL) {
-	if (!is.null(covstruc)) {
-		if (is.list(covstruc)) {
-			if (!is.null(covstruc$S)) S = covstruc$S else if (length(covstruc) >= 2) S = covstruc[[2]]
-			if (!is.null(covstruc$V)) V = covstruc$V else if (length(covstruc) >= 1) V = covstruc[[1]]
-			if (!is.null(covstruc$I)) I = covstruc$I else if (length(covstruc) >= 3) I = covstruc[[3]]
-		}
-	}
-	if (is.null(S) || is.null(V)) {
-		stop("You must provide BOTH the genetic covariance matrix S and the sampling covariance matrix V (either directly or via covstruc).")
-	}
-	S = as.matrix(S)
-	V = as.matrix(V)
-	if (is.null(colnames(S))) {
-		stop("S matrix must have column/row names matching the trait names.")
-	}
-	rownames(S) = colnames(S)
-	k = ncol(S)
-	z = (k * (k + 1)) / 2
-	if (ncol(V) != z || nrow(V) != z) {
-		stop(paste0("Dimensions of V (", nrow(V), "x", ncol(V), ") must match non-redundant elements of S (", z, ")."))
-	}
-	vech_names = xmu_gsem_vech_names(colnames(S))
-	if (is.null(colnames(V)) || is.null(rownames(V))) {
-		colnames(V) = vech_names
-		rownames(V) = vech_names
-	}
-	if (!is.null(I)) {
-		I = as.matrix(I)
-		if (is.null(colnames(I))) {
-			colnames(I) = colnames(S)
-			rownames(I) = colnames(S)
-		}
-	}
-	list(S = S, V = V, I = I)
-}
 
-xmu_gsem_subset_SV <- function(S, V, keep_vars) {
-	# Preserve keep_vars order (must match model manifest / F order for OpenMx WLS).
-	if (length(keep_vars) == 0) {
-		stop("No trait names requested for S/V subset.")
-	}
-	keep_vars = as.character(keep_vars)
-	full_names = colnames(S)
-	missing = setdiff(keep_vars, full_names)
-	if (length(missing) > 0) {
-		stop("Traits not found in S: ", paste(missing, collapse = ", "),
-			". Available: ", paste(full_names, collapse = ", "))
-	}
-	S_subset = S[keep_vars, keep_vars, drop = FALSE]
 
-	# V is stored in GenomicSEM lower.tri order of the *full* S (or a prior subset).
-	# Pair labels are paste(name[i], name[j]) with i>=j in that naming order — not
-	# symmetric ("EA SCZ" vs "SCZ EA"). Map each pair under keep_vars order back to
-	# the key used when V was named from full_names (or existing colnames(V)).
-	if (is.null(colnames(V)) || is.null(rownames(V))) {
-		colnames(V) = xmu_gsem_vech_names(full_names)
-		rownames(V) = colnames(V)
-	}
-	# Prefer keys against full S order (standard LDSC object).
-	# Labels: "A_B" (preferred) or legacy "A B" / either trait order.
-	gsem_pair_key = function(a, b, name_order, sep = "_") {
-		ia = match(a, name_order)
-		ib = match(b, name_order)
-		if (is.na(ia) || is.na(ib)) {
-			return(NA_character_)
-		}
-		# same convention as xmu_gsem_vech_names: higher index first
-		if (ia >= ib) paste(a, b, sep = sep) else paste(b, a, sep = sep)
-	}
-	lookup_pair = function(a, b) {
-		cands = c(
-			gsem_pair_key(a, b, full_names, "_"),
-			gsem_pair_key(a, b, full_names, " "),
-			gsem_pair_key(a, b, keep_vars, "_"),
-			gsem_pair_key(a, b, keep_vars, " "),
-			paste(a, b, sep = "_"), paste(b, a, sep = "_"),
-			paste(a, b, sep = " "), paste(b, a, sep = " ")
-		)
-		hit = cands[!is.na(cands) & cands %in% colnames(V)]
-		if (length(hit)) hit[1] else NA_character_
-	}
-	k = length(keep_vars)
-	orig_keys = character(0)
-	new_keys = character(0)
-	for (j in seq_len(k)) {
-		for (i in j:k) {
-			a = keep_vars[i]
-			b = keep_vars[j]
-			new_keys = c(new_keys, paste(a, b, sep = "_"))
-			orig_keys = c(orig_keys, lookup_pair(a, b))
-		}
-	}
-	if (anyNA(orig_keys) || !all(orig_keys %in% colnames(V))) {
-		need = xmu_gsem_vech_names(keep_vars)
-		have = colnames(V)
-		miss = need[is.na(match(need, have)) & is.na(match(gsub("_", " ", need, fixed = TRUE), have))]
-		# Common mistake: V[1:z, 1:z] on a larger LDSC V (wrong pairs; first z of 5-trait V != vech of 3 traits)
-		tip = paste0(
-			"Could not align V with S for traits: ", paste(keep_vars, collapse = ", "), ".\n",
-			"  Need pair names like: ", paste(need[seq_len(min(4L, length(need)))], collapse = ", "), if (length(need) > 4) ", ..." else "", "\n",
-			"  V has: ", if (is.null(have)) "(no dimnames)" else paste(have[seq_len(min(6L, length(have)))], collapse = ", "),
-			if (!is.null(have) && length(have) > 6) ", ..." else "", "\n",
-			"  Tip: pass the full LDSC list and use traits=c(...), or subset V by name:\n",
-			"    vn = xmu_gsem_vech_names(traits); V[vn, vn]\n",
-			"  Do not use V[1:z, 1:z] on a larger V — that is not the trait-block vech."
-		)
-		stop(tip, call. = FALSE)
-	}
-	V_subset = V[orig_keys, orig_keys, drop = FALSE]
-	# Rename to vech names in keep_vars order for downstream OpenMx residual reordering
-	dimnames(V_subset) = list(new_keys, new_keys)
-	list(S = S_subset, V = V_subset, keep_vars = keep_vars)
-}
-
-xmu_gsem_prepare_WLS <- function(S, V, keep_vars, estimation = "DWLS", smooth = TRUE) {
-	sub = xmu_gsem_subset_SV(S, V, keep_vars)
-	triageResult = xmu_gsem_triage(vMat = sub$V, sMat = sub$S, smooth = smooth)
-	V_subset = triageResult$V
-	S_subset = triageResult$S
-	omxOrd = xmu_gsem_V_to_openmx_order(V_subset, colnames(S_subset))
-	V_omx = omxOrd$V
-	if (estimation == "WLS") {
-		W_omx = solve(V_omx)
-	} else if (estimation == "DWLS") {
-		W_omx = diag(1 / diag(V_omx), nrow = nrow(V_omx), ncol = ncol(V_omx))
-	} else {
-		W_omx = diag(1, nrow = nrow(V_omx), ncol = ncol(V_omx))
-	}
-	dimnames(W_omx) = dimnames(V_omx)
-	list(S = S_subset, V_omx = V_omx, W_omx = W_omx, triage = triageResult, keep_vars = sub$keep_vars)
-}
-
-# Convert GenomicSEM / R lower.tri(V) order → OpenMx WLS residual order with var_/poly_ names.
-# OpenMx residual vector (continuous, no means): diag(S), then S[i,j] for j < i (column-major strict lower).
-xmu_gsem_V_to_openmx_order <- function(V_gsem, traitNames) {
-	k = length(traitNames)
-	# Map GenomicSEM pair key -> index
-	gsem_keys = character(0)
-	for (j in 1:k) {
-		for (i in j:k) {
-			gsem_keys = c(gsem_keys, paste(traitNames[i], traitNames[j], sep = " "))
-		}
-	}
-	if (is.null(colnames(V_gsem))) {
-		colnames(V_gsem) = gsem_keys
-		rownames(V_gsem) = gsem_keys
-	}
-	# Build OpenMx order and names
-	omx_names = paste0("var_", traitNames)
-	omx_keys  = paste(traitNames, traitNames, sep = " ") # "SCZ SCZ", ...
-	if (k >= 2) {
-		for (j in 1:(k - 1)) {
-			for (i in (j + 1):k) {
-				omx_names = c(omx_names, paste0("poly_", traitNames[i], "_", traitNames[j]))
-				omx_keys  = c(omx_keys, paste(traitNames[i], traitNames[j], sep = " "))
-			}
-		}
-	}
-	# If V already has OpenMx-style names, keep as-is
-	if (all(omx_names %in% colnames(V_gsem))) {
-		V_omx = V_gsem[omx_names, omx_names, drop = FALSE]
-		return(list(V = V_omx, names = omx_names))
-	}
-	# Match GenomicSEM keys (allow either "A B" or existing colnames order)
-	if (all(omx_keys %in% colnames(V_gsem))) {
-		V_omx = V_gsem[omx_keys, omx_keys, drop = FALSE]
-	} else if (nrow(V_gsem) == length(gsem_keys)) {
-		# Assume matrix is already in GenomicSEM lower.tri order
-		colnames(V_gsem) = gsem_keys
-		rownames(V_gsem) = gsem_keys
-		V_omx = V_gsem[omx_keys, omx_keys, drop = FALSE]
-	} else {
-		stop("Cannot map V into OpenMx WLS order; check dimensions and dimnames.")
-	}
-	dimnames(V_omx) = list(omx_names, omx_names)
-	return(list(V = V_omx, names = omx_names, map_keys = omx_keys))
-}
 
 # Set free factor loadings / residual starts from first eigencomponent of S
-xmu_gsem_set_starts <- function(model, S) {
-	if (!is(model$A, "MxMatrix") || !is(model$S, "MxMatrix")) {
-		return(model)
-	}
-	man = model$manifestVars
-	lat = model$latentVars
-	if (length(man) == 0 || length(lat) == 0) {
-		return(model)
-	}
-	# 1-factor (or first latent) eigen starts
-	S_use = S[man, man, drop = FALSE]
-	# Guard PD for eigen
-	ev = tryCatch(eigen(cov2cor(S_use), symmetric = TRUE), error = function(e) NULL)
-	if (is.null(ev)) {
-		return(model)
-	}
-	lam = ev$vectors[, 1] * sqrt(max(ev$values[1], 0)) * sqrt(pmax(diag(S_use), 0))
-	if (lam[1] < 0) {
-		lam = -lam
-	}
-	theta = pmax(diag(S_use) - lam^2, 0.01 * diag(S_use), 1e-4)
-
-	A = model$A
-	Smat = model$S
-	# Free A paths from first latent to manifests
-	lat1 = lat[1]
-	if (lat1 %in% colnames(A$values)) {
-		for (i in seq_along(man)) {
-			rn = man[i]
-			if (isTRUE(A$free[rn, lat1])) {
-				A$values[rn, lat1] = lam[i]
-			}
-		}
-	}
-	# Free residual variances
-	for (i in seq_along(man)) {
-		rn = man[i]
-		if (isTRUE(Smat$free[rn, rn])) {
-			Smat$values[rn, rn] = theta[i]
-		}
-	}
-	model = mxModel(model, A, Smat)
-	return(model)
-}
 
 # Put a lower bound on free residual (manifest) variances
-xmu_gsem_bound_residuals <- function(model, lbound = 1e-8) {
-	if (!is(model$S, "MxMatrix")) {
-		return(model)
-	}
-	Smat = model$S
-	man = model$manifestVars
-	for (rn in man) {
-		if (isTRUE(Smat$free[rn, rn])) {
-			if (is.na(Smat$lbound[rn, rn]) || Smat$lbound[rn, rn] < lbound) {
-				Smat$lbound[rn, rn] = lbound
-			}
-		}
-	}
-	mxModel(model, Smat)
-}
 
 #' umx_is_GSEM
 #'
@@ -771,50 +536,6 @@ umx_is_GSEM <- function(obj) {
 	}
 }
 
-xmu_gsem_triage <- function(vMat, sMat, smooth = TRUE, eigenTolerance = -1e-8, fatalTolerance = -0.05) {
-	# Check missingness first
-	if (any(is.na(vMat)) || any(is.na(sMat))) {
-		stop("Fatal Missingness: LDSC matrices contain raw NAs. The pairwise overlap between your cohorts is too sparse to compute covariance.")
-	}
-	
-	# Evaluate V matrix eigenvalues
-	vEigen   = eigen(vMat, symmetric = TRUE, only.values = TRUE)$values
-	minEigen = min(vEigen)
-	
-	# PD Check (Clean Matrix)
-	if (minEigen > 0) {
-		return(list(V = vMat, S = sMat, smoothed = FALSE, triageLevel = 0))
-	}
-	
-	# If matrix is NPD but user strictly disabled smoothing
-	if (!smooth) {
-		stop(paste0("Matrix is non-positive definite (min eigenvalue = ", round(minEigen, 4), "), and smooth = FALSE. Halting execution."))
-	}
-	
-	# Level 1: Microscopic ridge (Silent fix for floating-point artifacts)
-	if (minEigen > eigenTolerance) {
-		diag(vMat) = diag(vMat) + 1e-6
-		diag(sMat) = diag(sMat) + 1e-6 # Apply to S to maintain symmetry of adjustment
-		return(list(V = vMat, S = sMat, smoothed = TRUE, triageLevel = 1))
-	}
-	
-	# Level 2: nearPD Coercion (Alertable)
-	if (minEigen > fatalTolerance) {
-		warning("umxGSEM: Asymptotic covariance matrix (V) is non-positive definite. Applying nearPD coercion. Note: Resulting Satorra-Bentler corrections and standard errors will be artificially precise.", call. = FALSE)
-		
-		if (!requireNamespace("Matrix", quietly = TRUE)) {
-			stop("The Matrix package is required for nearPD heritability smoothing. Please install it.")
-		}
-		
-		vMatPD = as.matrix(Matrix::nearPD(vMat, corr = FALSE)$mat)
-		sMatPD = as.matrix(Matrix::nearPD(sMat, corr = FALSE)$mat)
-		
-		return(list(V = vMatPD, S = sMatPD, smoothed = TRUE, triageLevel = 2))
-	}
-	
-	# Level 3: Fatal Structural Deficiency
-	stop(paste0("Fatal Matrix Deficiency: V matrix is severely non-positive definite (minimum eigenvalue = ", round(minEigen, 4), "). The pairwise overlap between your cohorts is too sparse to support multivariable SEM. Do not proceed."))
-}
 
 # =============================================================================
 # SNP preparation and multivariate GWAS (separate from structural umxGSEM)
@@ -1008,152 +729,9 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 }
 
 # Resolve relative paths under baseDir; leave absolute paths alone
-xmu_gsem_resolve_paths <- function(paths, baseDir = getwd()) {
-	paths = as.character(paths)
-	out = character(length(paths))
-	for (i in seq_along(paths)) {
-		p = path.expand(paths[i])
-		if (grepl("^(/|[A-Za-z]:)", p)) {
-			out[i] = p
-		} else {
-			out[i] = file.path(path.expand(baseDir), p)
-		}
-	}
-	out
-}
 
-xmu_gsem_read_sumstats_table <- function(path) {
-	path = path.expand(path)
-	if (!file.exists(path)) {
-		stop("File not found: ", path)
-	}
-	# White-space separated (tutorial files often lack separators in header display)
-	utils::read.table(path, header = TRUE, quote = "\"", fill = TRUE, stringsAsFactors = FALSE,
-		na.strings = c(".", "NA", ""))
-}
 
-xmu_gsem_rename_sumstats_cols <- function(df) {
-	nm = tolower(names(df))
-	map = list(
-		SNP = c("snp", "rsid", "marker", "snpid", "rs", "markername"),
-		A1 = c("a1", "allele1", "effect_allele", "inc_allele", "reference_allele"),
-		A2 = c("a2", "allele2", "non_effect_allele", "dec_allele", "other_allele"),
-		effect = c("effect", "or", "beta", "logor", "est", "estimate", "b"),
-		SE = c("se", "stderr", "standard_error", "std_err"),
-		P = c("p", "p-value", "pval", "p.value", "pvalue"),
-		N = c("n", "neff", "n_eff", "ncase", "samplesize"),
-		INFO = c("info", "impinfo", "r2"),
-		MAF = c("maf", "frq", "freq", "a1freq", "eaf")
-	)
-	out = list()
-	for (std in names(map)) {
-		hit = which(nm %in% map[[std]])
-		if (length(hit) >= 1) {
-			out[[std]] = df[[hit[1]]]
-		}
-	}
-	as.data.frame(out, stringsAsFactors = FALSE)
-}
 
-xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TRUE, OLS = FALSE, linprob = FALSE, N = NA, info.filter = 0.6) {
-	raw = xmu_gsem_read_sumstats_table(filename)
-	file = xmu_gsem_rename_sumstats_cols(raw)
-	need = c("SNP", "A1", "A2", "effect")
-	if (!all(need %in% names(file))) {
-		stop(filename, ": need columns for SNP, A1, A2, effect (OR/beta). Found: ", paste(names(raw), collapse = ", "))
-	}
-	if (!linprob && !"SE" %in% names(file) && !OLS) {
-		stop(filename, ": SE column required unless linprob/OLS-with-N.")
-	}
-	file$SNP = as.character(file$SNP)
-	file$A1 = toupper(as.character(file$A1))
-	file$A2 = toupper(as.character(file$A2))
-	file$effect = as.numeric(file$effect)
-	if ("SE" %in% names(file)) file$SE = as.numeric(file$SE)
-	if ("P" %in% names(file)) file$P = as.numeric(file$P)
-	if ("INFO" %in% names(file)) file$INFO = as.numeric(file$INFO)
-	if (!is.na(N)) file$N = N
-
-	# Drop multi-allelic duplicates
-	file = file[!(duplicated(file$SNP) | duplicated(file$SNP, fromLast = TRUE)), , drop = FALSE]
-
-	# Merge with reference (suffixes mark ref vs gwas alleles)
-	m = merge(ref, file, by = "SNP", suffixes = c(".ref", ".gwas"))
-	if (nrow(m) == 0) {
-		stop(filename, ": no SNPs left after merging with reference.")
-	}
-	a1r = m$A1.ref
-	a2r = m$A2.ref
-	a1g = m$A1.gwas
-	a2g = m$A2.gwas
-	maf = m$MAF
-	if (is.null(maf)) {
-		maf = m$MAF.ref
-	}
-	varSNP = 2 * as.numeric(maf) * (1 - as.numeric(maf))
-
-	effect = m$effect
-	# OR if median near 1
-	if (isTRUE(all.equal(round(stats::median(effect, na.rm = TRUE)), 1))) {
-		effect = log(effect)
-	}
-	# Flip to reference A1
-	flip = (a1r != a1g) & (a1r == a2g)
-	effect[flip] = -effect[flip]
-	# Drop allele mismatches
-	ok = !((a1r != a1g) & (a1r != a2g))
-	ok = ok & !((a2r != a2g) & (a2r != a1g))
-	m = m[ok, , drop = FALSE]
-	effect = effect[ok]
-	varSNP = varSNP[ok]
-	if ("SE" %in% names(m)) {
-		se = m$SE[ok]
-	} else {
-		se = rep(NA_real_, sum(ok))
-	}
-	if ("INFO" %in% names(m)) {
-		keepInfo = is.na(m$INFO[ok]) | m$INFO[ok] >= info.filter
-		m = m[keepInfo, , drop = FALSE]
-		effect = effect[keepInfo]
-		varSNP = varSNP[keepInfo]
-		se = se[keepInfo]
-	}
-	# Continuous-scale transform (Genomic SEM se.logit formula)
-	if (OLS && "N" %in% names(m)) {
-		# Z from effect/se if available else skip
-		Z = if (all(is.finite(se)) && all(se > 0)) effect / se else effect
-		effect = Z / sqrt(m$N * varSNP)
-		se = abs(effect / Z)
-		se[!is.finite(se)] = NA
-	} else if (linprob && "N" %in% names(m)) {
-		Z = if (all(is.finite(se)) && all(se > 0)) effect / se else effect
-		effect = Z / sqrt((m$N / 4) * varSNP)
-		se = 1 / sqrt((m$N / 4) * varSNP)
-		denom = sqrt(effect^2 * varSNP + (pi^2) / 3)
-		effect = effect / denom
-		se = se / denom
-	} else if (se.logit) {
-		denom = sqrt(effect^2 * varSNP + (pi^2) / 3)
-		effect = effect / denom
-		se = se / denom
-	} else {
-		# SE of OR: divide SE by exp(logOR)
-		denom = sqrt(effect^2 * varSNP + (pi^2) / 3)
-		effect = effect / denom
-		se = (se / exp(effect * denom)) / denom  # careful: effect already transformed
-		# Simpler: recompute from logOR before transform is cleaner
-	}
-	# Fix non-logit OR-SE branch more carefully was messy; tutorial uses se.logit=TRUE
-	out = data.frame(
-		SNP = m$SNP,
-		beta = effect,
-		se = se,
-		stringsAsFactors = FALSE
-	)
-	out = out[is.finite(out$beta) & is.finite(out$se) & out$se > 0, , drop = FALSE]
-	colnames(out) = c("SNP", paste0("beta.", trait.name), paste0("se.", trait.name))
-	out
-}
 
 #' Multivariate genomic SEM GWAS (SNP on a factor or user model)
 #'
@@ -1201,32 +779,20 @@ xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TR
 umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), SNPSE = 5e-4, maxSNPs = NULL, snpEffect = NULL, quiet = TRUE) {
 	estimation = match.arg(estimation)
 	GC = match.arg(GC)
-	# Fill missing dimnames when possible (GenomicSEM disk objects; not a fix for V[1:z,1:z] slices)
-	if (is.list(covstruc) && !is.null(covstruc$S)) {
-		covstruc = tryCatch(umxGSEM_name_ldsc(covstruc, overwrite = FALSE), error = function(e) covstruc)
-	}
-	sv = xmu_gsem_extract_SV(covstruc = covstruc)
-	S_LD = sv$S
-	V_LD = sv$V
-	I_LD = sv$I
-	if (is.null(I_LD)) {
-		I_LD = diag(ncol(S_LD))
-		dimnames(I_LD) = list(colnames(S_LD), colnames(S_LD))
+	covstruc = xmu_gsem_extract_SV(covstruc = covstruc)
+	if (is.null(covstruc$I)) {
+		covstruc$I = diag(ncol(covstruc$S))
+		dimnames(covstruc$I) = list(colnames(covstruc$S), colnames(covstruc$S))
 		if (!quiet) message("umxGSEM_GWAS: no I matrix in covstruc; using identity (GC limited).")
 	}
 	if (is.null(traits)) {
-		traits = colnames(S_LD)
+		traits = colnames(covstruc$S)
 	}
-	# Subset LDSC to requested traits
-	sub = xmu_gsem_subset_SV(S_LD, V_LD, traits)
-	S_LD = sub$S
-	V_LD = sub$V
-	traits = sub$keep_vars
-	I_LD = I_LD[traits, traits, drop = FALSE]
-	k = length(traits)
+	covstruc = xmu_gsem_subset_covstruc(covstruc, traits)
+	k      = length(traits)
 
 	beta_cols = paste0("beta.", traits)
-	se_cols = paste0("se.", traits)
+	se_cols   = paste0("se.", traits)
 	if (!all(beta_cols %in% colnames(SNPs)) || !all(se_cols %in% colnames(SNPs))) {
 		stop("SNPs must contain columns ", paste(c(beta_cols, se_cols), collapse = ", "),
 			". Run umxGSEM_sumstats() first.")
@@ -1238,12 +804,12 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	if (!is.null(maxSNPs)) {
 		SNPs = SNPs[seq_len(min(maxSNPs, nrow(SNPs))), , drop = FALSE]
 	}
-	nSNP = nrow(SNPs)
-	varSNP = 2 * SNPs$MAF * (1 - SNPs$MAF)
-	beta_SNP = as.matrix(SNPs[, beta_cols, drop = FALSE])
-	SE_SNP = as.matrix(SNPs[, se_cols, drop = FALSE])
+	nSNP      = nrow(SNPs)
+	varSNP    = 2 * SNPs$MAF * (1 - SNPs$MAF)
+	beta_SNP  = as.matrix(SNPs[, beta_cols, drop = FALSE])
+	SE_SNP    = as.matrix(SNPs[, se_cols, drop = FALSE])
 	varSNPSE2 = as.numeric(SNPSE)^2
-	coords = as.matrix(expand.grid(seq_len(k), seq_len(k)))
+	coords    = as.matrix(expand.grid(seq_len(k), seq_len(k)))
 
 	# Default common-factor + SNP (unit-loading ID like GenomicSEM commonfactorGWAS)
 	if (is.null(model)) {
@@ -1259,7 +825,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	}
 
 	# Preallocate result columns (avoid do.call(rbind, ...) over list blobs)
-	out_SNP = character(nSNP)
+	out_SNP = as.character(SNPs$SNP[seq_len(nSNP)])
 	out_CHR = if ("CHR" %in% names(SNPs)) SNPs$CHR[seq_len(nSNP)] else rep(NA, nSNP)
 	out_BP  = if ("BP" %in% names(SNPs)) SNPs$BP[seq_len(nSNP)] else rep(NA, nSNP)
 	out_MAF = SNPs$MAF[seq_len(nSNP)]
@@ -1278,58 +844,192 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	options(umx_auto_plot = FALSE)
 	on.exit(options(umx_auto_plot = oldAuto), add = TRUE)
 
+	# Pre-flight: Build template model and optimize starting values
+	if (!quiet) message("umxGSEM_GWAS: Generating GWAS template and optimizing starting values...")
+	expn_dummy = xmu_gsem_expand_snp(covstruc, as.numeric(beta_SNP[1, ]), as.numeric(SE_SNP[1, ]), varSNP[1], varSNPSE2, GC, coords)
+	if (estimation %in% c("DWLS", "WLS")) {
+		wls_dummy  = xmu_gsem_prepare_WLS(expn_dummy$S, expn_dummy$V, c("SNP", traits), estimation)
+		m_template = tryCatch(umxGSEM(model = model, S = wls_dummy$S, V = wls_dummy$V_omx, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
+	} else {
+		m_template = tryCatch(umxGSEM(model = model, S = expn_dummy$S, V = expn_dummy$V, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
+	}
+	if (is.null(m_template)) {
+		stop("Failed to build GWAS template model. Please check your model specification.")
+	}
+	m_template = mxTryHard(m_template, extraTries = 5, silent = TRUE)
+
+	# Pre-flight for Analytic WLS
+	analytic_ok = FALSE
+	H_raw = NULL; valid_targets = NULL
+	if ((estimation %in% c("DWLS", "WLS")) && is.character(model)) {
+		meas_model_str = paste(grep("SNP", strsplit(model, "\n")[[1]], value = TRUE, invert = TRUE), collapse = "\n")
+		# 1. Fit measurement model
+		m_meas = tryCatch(umxGSEM(model = meas_model_str, covstruc = covstruc, estimation = estimation, autoRun = TRUE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
+		
+		# 2. Extract targets using a dummy template model
+		if (!is.null(m_meas) && inherits(m_meas, "MxModel")) {
+			
+			if (!is.null(m_template) && "SNP" %in% colnames(m_template$A$free)) {
+				targets = rownames(m_template$A$free)[m_template$A$free[, "SNP"]]
+				valid_targets = targets[targets %in% rownames(m_meas$A)]
+				if (length(valid_targets) > 0 && length(valid_targets) == length(targets)) {
+					L = matrix(0, nrow = nrow(m_meas$A), ncol = length(valid_targets))
+					for (j in seq_along(valid_targets)) {
+						L[which(rownames(m_meas$A) == valid_targets[j]), j] = 1
+					}
+					# Total effects of target on manifests
+					H_raw = m_meas$F$values %*% solve(diag(nrow(m_meas$A)) - m_meas$A$values) %*% L
+					rownames(H_raw) = m_meas$manifestVars
+					H_raw = H_raw[traits, , drop = FALSE]
+					analytic_ok = TRUE
+					if (!quiet) message("umxGSEM_GWAS: Enabled Sub-10s Analytic WLS Engine.")
+				}
+			}
+		}
+	}
+
+	vectorized_ok = FALSE
+	if (analytic_ok && length(valid_targets) == 1) {
+		if (!quiet) message("umxGSEM_GWAS: Vectorizing math for ", nSNP, " SNPs.")
+		diag_I_LD = diag(covstruc$I)
+		
+		# GC weighting
+		if (GC == "standard") {
+			se_factor = sweep(SE_SNP, 2, sqrt(diag_I_LD), "*")
+		} else if (GC == "conserv") {
+			se_factor = sweep(SE_SNP, 2, diag_I_LD, "*")
+		} else {
+			se_factor = SE_SNP
+		}
+		
+		# v_snp_diag_mat is nSNP x k
+		v_snp_diag_mat = (se_factor * varSNP)^2 
+		
+		W_mat = 1 / v_snp_diag_mat
+		H_mat = sweep(matrix(1, nSNP, length(traits)), 2, as.numeric(H_raw), "*") * varSNP
+		
+		H2_W_sum = rowSums(H_mat^2 * W_mat)
+		S_obs_mat = sweep(beta_SNP, 1, varSNP, "*")
+		H_W_beta_sum = rowSums(H_mat * W_mat * S_obs_mat)
+		
+		out_est_vec = H_W_beta_sum / H2_W_sum
+		out_se_vec = sqrt(1 / H2_W_sum)
+		
+		out_est = out_est_vec
+		out_se = out_se_vec
+		out_status = rep(0L, nSNP)
+		out_fail = rep(FALSE, nSNP)
+		out_se_source = rep("analytic", nSNP)
+		
+		# Deal with bad SEs/NAs (where sum W -> 0 or NA)
+		bad_idx = is.na(out_est) | is.na(out_se) | !is.finite(out_est) | out_se <= 0
+		if (any(bad_idx)) {
+			out_est[bad_idx] = NA_real_
+			out_se[bad_idx] = NA_real_
+			out_status[bad_idx] = 3L
+			out_fail[bad_idx] = TRUE
+		}
+		
+		valid_Z = is.finite(out_est) & is.finite(out_se) & out_se > 0
+		out_Z[valid_Z] = out_est[valid_Z] / out_se[valid_Z]
+		out_P[valid_Z] = 2 * stats::pnorm(-abs(out_Z[valid_Z]))
+		
+		vectorized_ok = TRUE
+	}
+
 	for (i in seq_len(nSNP)) {
-		if (!quiet && (i == 1L || i %% 50L == 0L || i == nSNP)) {
+		if (vectorized_ok) next
+		
+		if (!quiet && (i == 1L || i %% 5000L == 0L || i == nSNP)) {
 			message("umxGSEM_GWAS: SNP ", i, " / ", nSNP)
 		}
 		out_SNP[i] = as.character(SNPs$SNP[i])
 		expn = xmu_gsem_expand_snp(
-			S_LD = S_LD, V_LD = V_LD, I_LD = I_LD,
+			covstruc = covstruc,
 			beta_i = as.numeric(beta_SNP[i, ]),
 			se_i = as.numeric(SE_SNP[i, ]),
 			varSNP_i = varSNP[i],
 			varSNPSE2 = varSNPSE2,
 			GC = GC, coords = coords
 		)
-		fit = tryCatch({
-			m = umxGSEM(
-				model = model,
-				S = expn$S, V = expn$V,
-				estimation = estimation,
-				name = paste0("gwas_", i),
-				autoRun = FALSE,
-				tryHard = "no",
-				std.lv = FALSE
-			)
-			# Silent run (avoid umxSummary spam in the SNP loop)
-			# TODO: replace R loop with OpenMx C++/OpenMP SNP stream (flatten once, block by core)
-			mxRun(m, silent = TRUE, suppressWarnings = TRUE)
-		}, error = function(e) e)
-
-		if (inherits(fit, "error")) {
-			out_warn[i] = conditionMessage(fit)
-		} else {
+		
+		if (analytic_ok) {
+			wls_data = xmu_gsem_prepare_WLS(expn$S, expn$V, c("SNP", traits), estimation)
+			all_names = colnames(wls_data$V_omx)
+			snp_cov_names = all_names[grepl("poly_", all_names) & grepl("SNP", all_names)]
+			
+			S_obs_snp = wls_data$S[traits, "SNP"]
+			W_snp = wls_data$W_omx[snp_cov_names, snp_cov_names]
+			if (!is.matrix(W_snp)) { W_snp = diag(W_snp, nrow=length(W_snp)) }
+			
+			H = H_raw * varSNP[i]
+			H_t_W = t(H) %*% W_snp
+			H_t_W_H = H_t_W %*% H
+			
+			res = tryCatch({
+				b = solve(H_t_W_H) %*% H_t_W %*% S_obs_snp
+				se = sqrt(diag(solve(H_t_W_H)))
+				# Extract target logic (usually "F1") matching xmu_gsem_extract_snp_path
+				target_idx = 1
+				if ("F1" %in% valid_targets) target_idx = which(valid_targets == "F1")
+				
+				list(est = b[target_idx, 1], se = se[target_idx], status = 0L)
+			}, error = function(e) list(est = NA_real_, se = NA_real_, status = 3L))
+			
+			out_est[i] = res$est
+			out_se[i] = res$se
+			out_status[i] = res$status
 			out_fail[i] = FALSE
-			out_status[i] = tryCatch(as.integer(fit$output$status$code), error = function(e) NA_integer_)
-			# F1 ~ SNP: RAM path from SNP to first latent
-			est_se = xmu_gsem_extract_snp_path(fit, traits)
-			out_est[i] = est_se$est
-			out_se[i] = est_se$se
-			out_se_source[i] = if (!is.null(est_se$se_source)) est_se$se_source else NA_character_
-			# Unreliable SE when optimizer did not converge cleanly
-			if (is.finite(out_status[i]) && !(out_status[i] %in% c(0L, 1L))) {
-				if (is.finite(out_se[i]) && is.finite(out_est[i]) && out_se[i] < 1e-3 * max(1e-6, abs(out_est[i]))) {
-					out_se[i] = NA_real_
-					out_se_source[i] = "dropped_bad_status"
-				}
-			}
+			out_se_source[i] = "analytic"
+			
 			if (is.finite(out_est[i]) && is.finite(out_se[i]) && out_se[i] > 0) {
 				out_Z[i] = out_est[i] / out_se[i]
 				out_P[i] = 2 * stats::pnorm(-abs(out_Z[i]))
 			}
+		} else {
+			fit = tryCatch({
+				m = m_template
+				m = mxModel(m, name = paste0("gwas_", i))
+				if (estimation %in% c("DWLS", "WLS")) {
+					wls_i = xmu_gsem_prepare_WLS(expn$S, expn$V, m_template$manifestVars, estimation)
+					if (estimation == "DWLS") {
+						m = mxModel(m, mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx, useWeight = wls_i$W_omx)))
+					} else {
+						m = mxModel(m, mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx)))
+					}
+				} else {
+					S_subset = expn$S[m_template$manifestVars, m_template$manifestVars, drop=FALSE]
+					m = mxModel(m, mxData(S_subset, type = "cov", numObs = covstruc$N[1]))
+				}
+				# Silent run (avoid umxSummary spam in the SNP loop)
+				# TODO: replace R loop with OpenMx C++/OpenMP SNP stream (flatten once, block by core)
+				mxRun(m, silent = TRUE, suppressWarnings = TRUE)
+			}, error = function(e) e)
+			if (inherits(fit, "error")) {
+				out_warn[i] = conditionMessage(fit)
+			} else {
+				out_fail[i] = FALSE
+				out_status[i] = tryCatch(as.integer(fit$output$status$code), error = function(e) NA_integer_)
+				# F1 ~ SNP: RAM path from SNP to first latent
+				est_se = xmu_gsem_extract_snp_path(fit, traits)
+				out_est[i] = est_se$est
+				out_se[i] = est_se$se
+				out_se_source[i] = if (!is.null(est_se$se_source)) est_se$se_source else NA_character_
+				# Unreliable SE when optimizer did not converge cleanly
+				if (is.finite(out_status[i]) && !(out_status[i] %in% c(0L, 1L))) {
+					if (is.finite(out_se[i]) && is.finite(out_est[i]) && out_se[i] < 1e-3 * max(1e-6, abs(out_est[i]))) {
+						out_se[i] = NA_real_
+						out_se_source[i] = "dropped_bad_status"
+					}
+				}
+				if (is.finite(out_est[i]) && is.finite(out_se[i]) && out_se[i] > 0) {
+					out_Z[i] = out_est[i] / out_se[i]
+					out_P[i] = 2 * stats::pnorm(-abs(out_Z[i]))
+				}
+			}
 		}
 	}
-	data.frame(
+	res = data.frame(
 		SNP = out_SNP, CHR = out_CHR, BP = out_BP, MAF = out_MAF,
 		A1 = out_A1, A2 = out_A2,
 		est = out_est, se = out_se, Z = out_Z, P = out_P,
@@ -1337,183 +1037,218 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		se_source = out_se_source,
 		stringsAsFactors = FALSE
 	)
+	class(res) = c("umx_GWAS", "data.frame")
+	res
 }
 
-# Build S and V including SNP (Genomic SEM ordering: SNP first, then traits)
-xmu_gsem_expand_snp <- function(S_LD, V_LD, I_LD, beta_i, se_i, varSNP_i, varSNPSE2, GC = "standard", coords = NULL) {
-	k = ncol(S_LD)
-	traits = colnames(S_LD)
-	if (is.null(coords)) {
-		coords = as.matrix(expand.grid(seq_len(k), seq_len(k)))
-	}
-	# V_SNP (k x k) sampling cov of SNP-trait genetic covariances
-	V_SNP = diag(k)
-	for (p in seq_len(nrow(coords))) {
-		x = coords[p, 1]
-		y = coords[p, 2]
-		if (GC == "conserv") {
-			if (x != y) {
-				V_SNP[x, y] = se_i[y] * se_i[x] * I_LD[x, y] * I_LD[x, x] * I_LD[y, y] * varSNP_i^2
-			} else {
-				V_SNP[x, x] = (se_i[x] * I_LD[x, x] * varSNP_i)^2
-			}
-		} else if (GC == "standard") {
-			if (x != y) {
-				V_SNP[x, y] = se_i[y] * se_i[x] * I_LD[x, y] * sqrt(I_LD[x, x]) * sqrt(I_LD[y, y]) * varSNP_i^2
-			} else {
-				V_SNP[x, x] = (se_i[x] * sqrt(I_LD[x, x]) * varSNP_i)^2
-			}
+
+#' Simulate GWAS Summary Statistics for Genomic SEM
+#'
+#' @description
+#' Generates a simulated summary statistics dataset (SNPs) suitable for testing \code{\link{umxGSEM_GWAS}}.
+#'
+#' @param n Number of SNPs to simulate. Default is 1,000,000.
+#' @param traits A character vector of traits to generate betas and SEs for.
+#' @param seed Random seed for reproducibility.
+#'
+#' @return A `data.frame` with columns for SNP, CHR, BP, A1, A2, MAF, and `beta.[trait]`/`se.[trait]` for each trait.
+#' @export
+#' @family Data Functions
+#' @md
+#' @examples
+#' snps = umxGSEM_sim_snps(n = 1000, traits = c("SCZ", "BIP", "MDD"))
+#' head(snps)
+#'
+umxGSEM_sim_snps <- function(n = 1000000, traits = c("SCZ", "BIP", "MDD"), seed = 42) {
+	if (!is.null(seed)) {
+		if (exists(".Random.seed", envir = .GlobalEnv)) {
+			old_seed <- get(".Random.seed", envir = .GlobalEnv)
+			on.exit(assign(".Random.seed", old_seed, envir = .GlobalEnv))
 		} else {
-			if (x != y) {
-				V_SNP[x, y] = se_i[y] * se_i[x] * I_LD[x, y] * varSNP_i^2
-			} else {
-				V_SNP[x, x] = (se_i[x] * varSNP_i)^2
-			}
+			on.exit(rm(".Random.seed", envir = .GlobalEnv))
 		}
+		set.seed(seed)
 	}
-	# S_Full
-	S_SNP = numeric(k + 1)
-	S_SNP[1] = varSNP_i
-	for (p in seq_len(k)) {
-		S_SNP[p + 1] = varSNP_i * beta_i[p]
+	
+	snps = data.frame(
+		SNP = paste0("rs", seq_len(n)),
+		CHR = sample(1:22, n, replace = TRUE),
+		BP  = sample(1:100000000, n, replace = TRUE),
+		A1  = sample(c("A", "C", "G", "T"), n, replace = TRUE),
+		A2  = sample(c("A", "C", "G", "T"), n, replace = TRUE),
+		MAF = runif(n, 0.01, 0.5),
+		stringsAsFactors = FALSE
+	)
+	
+	# Prevent A1 and A2 from being identical
+	same_allele = snps$A1 == snps$A2
+	if (any(same_allele)) {
+		alts = c("A", "C", "G", "T")
+		snps$A2[same_allele] = vapply(snps$A1[same_allele], function(a) {
+			sample(setdiff(alts, a), 1)
+		}, FUN.VALUE = character(1))
 	}
-	S_Full = diag(k + 1)
-	S_Full[2:(k + 1), 2:(k + 1)] = S_LD
-	S_Full[1:(k + 1), 1] = S_SNP
-	S_Full[1, 1:(k + 1)] = S_SNP
-	dimnames(S_Full) = list(c("SNP", traits), c("SNP", traits))
-
-	# V_Full in GenomicSEM lower.tri order of S_Full
-	nV = ((k + 1) * (k + 2)) / 2
-	V_Full = diag(nV)
-	V_Full[1, 1] = varSNPSE2
-	V_Full[2:(k + 1), 2:(k + 1)] = V_SNP
-	V_Full[(k + 2):nV, (k + 2):nV] = V_LD
-	# Name V rows/cols with vech of [SNP, traits]
-	vnames = xmu_gsem_vech_names(c("SNP", traits))
-	dimnames(V_Full) = list(vnames, vnames)
-
-	# Smooth if needed (triage will also run)
-	if (min(eigen(S_Full, only.values = TRUE)$values) <= 0) {
-		S_Full = as.matrix(Matrix::nearPD(S_Full, corr = FALSE)$mat)
-		dimnames(S_Full) = list(c("SNP", traits), c("SNP", traits))
+	
+	for (t in traits) {
+		# Tiny jitter so SNPs are mathematically unique
+		snps[[paste0("beta.", t)]] = rnorm(n, mean = 0, sd = 0.05)
+		snps[[paste0("se.", t)]] = abs(rnorm(n, mean = 0.01, sd = 0.005)) + 0.001
 	}
-	if (min(eigen(V_Full, only.values = TRUE)$values) <= 0) {
-		V_Full = as.matrix(Matrix::nearPD(V_Full, corr = FALSE)$mat)
-		dimnames(V_Full) = list(vnames, vnames)
-	}
-	list(S = S_Full, V = V_Full)
+	
+	return(snps)
 }
 
-# WLS sandwich SEs from implied_jacobian + useWeight + asymCov (when OpenMx omits SEs).
-xmu_gsem_wls_sandwich_se <- function(fit) {
-	J = fit@output$implied_jacobian
-	if (is.null(J) || !is.matrix(J) || ncol(J) < 1) {
-		return(NULL)
+#' Label or Assemble S, V, I, N into an LDSC-style covstruc list
+#'
+#' Takes an existing `covstruc` list (from GenomicSEM) OR loose `S` and `V` matrices,
+#' validates them, and applies strict OpenMx WLS-compliant dimnames (`var_X`, `poly_Y_X`).
+#' This guarantees that external GenomicSEM data correctly aligns with OpenMx's WLS engine.
+#'
+#' @param covstruc An optional list with at least matrix `S` (genetic covariance).
+#' @param S A genetic covariance matrix (if assembling from loose matrices).
+#' @param V An asymptotic covariance matrix (if assembling from loose matrices).
+#' @param I An optional intercept matrix.
+#' @param N An optional sample size matrix or vector.
+#' @param traits Character vector of trait names. Default: `colnames(S)`, else
+#'   `rownames(S)`, else `paste0("T", seq_len(ncol(S)))`.
+#' @param overwrite If `FALSE` (default), only fill missing dimnames; if `TRUE`,
+#'   replace existing dimnames.
+#' @return A list with matrices `S`, `V`, (and optionally `I`, `N`) properly labelled.
+#' @export
+#' @family GSEM
+#' @seealso [Psych_LDSC], [umxGSEM()]
+#' @examples
+#' data(Psych_LDSC)
+#' # Re-apply labels safely
+#' Psych_LDSC = umxGSEM_label_ldsc(Psych_LDSC)
+#' colnames(Psych_LDSC$V)[1:3]
+umxGSEM_label_ldsc <- function(covstruc = NULL, S = NULL, V = NULL, I = NULL, N = NULL, traits = NULL, overwrite = FALSE) {
+	if (is.null(covstruc)) {
+		if (is.null(S) || is.null(V)) stop("umxGSEM_label_ldsc: You must provide either a 'covstruc' list, or both 'S' and 'V' matrices.")
+		covstruc = list(S = S, V = V)
+		if (!is.null(I)) covstruc$I = I
+		if (!is.null(N)) covstruc$N = N
 	}
-	wv = tryCatch(xmu_wls_extract_WV(fit, stop_if_missing = TRUE), error = function(e) NULL)
-	if (is.null(wv)) {
-		return(NULL)
+	if (!is.list(covstruc) || is.null(covstruc$S)) stop("covstruc must be a list with a genetic covariance matrix S.")
+	
+	S_mat = as.matrix(covstruc$S)
+	k = ncol(S_mat)
+	if (is.null(traits)) {
+		traits = colnames(S_mat)
+		if (is.null(traits)) traits = rownames(S_mat)
+		if (is.null(traits)) traits = paste0("T", seq_len(k))
 	}
-	W = wv$useWeight
-	V = wv$asymCov
-	if (is.null(W) || is.null(V)) {
-		return(NULL)
+	traits = as.character(traits)
+	if (length(traits) != k) stop("traits must have length ncol(S) = ", k, ".")
+	
+	need_S = overwrite || is.null(colnames(S_mat)) || is.null(rownames(S_mat))
+	if (need_S) {
+		colnames(S_mat) = rownames(S_mat) = traits
+		covstruc$S = S_mat
+	} else {
+		traits = colnames(S_mat)
 	}
-	if (!is.null(rownames(J)) && !is.null(rownames(W))) {
-		common = intersect(rownames(W), rownames(J))
-		if (length(common) < 1) {
-			return(NULL)
-		}
-		J = J[common, , drop = FALSE]
-		W = W[common, common, drop = FALSE]
-		V = V[common, common, drop = FALSE]
-	} else if (nrow(J) != nrow(W)) {
-		return(NULL)
-	}
-	info = t(J) %*% W %*% J
-	# Ridge if nearly singular (common when optim status is poor)
-	kap = tryCatch(kappa(info, exact = FALSE), error = function(e) Inf)
-	if (!is.finite(kap) || kap > 1e10) {
-		info = info + diag(max(1e-10, mean(abs(diag(info)), na.rm = TRUE) * 1e-8), nrow(info))
-	}
-	bread = tryCatch(solve(info), error = function(e) NULL)
-	if (is.null(bread)) {
-		return(NULL)
-	}
-	meat = t(J) %*% W %*% V %*% W %*% J
-	vcov_mat = bread %*% meat %*% bread
-	se = sqrt(pmax(diag(as.matrix(vcov_mat)), 0))
-	labs = names(omxGetParameters(fit))
-	if (length(labs) == length(se)) {
-		names(se) = labs
-	} else if (!is.null(colnames(J)) && length(colnames(J)) == length(se)) {
-		names(se) = colnames(J)
-	}
-	se
-}
-
-xmu_gsem_extract_snp_path <- function(fit, traits) {
-	# Prefer free A-path: F1 ~ SNP  (RAM: row = to = latent, col = from = SNP)
-	est = NA_real_
-	se = NA_real_
-	se_source = NA_character_
-	lat = if (length(fit$latentVars)) fit$latentVars[1] else NA_character_
-	# Prefer a factor named F1 when present
-	if ("F1" %in% fit$latentVars) {
-		lat = "F1"
-	}
-	lab = NA_character_
-	if (!is.null(fit$A) && !is.na(lat) && lat %in% rownames(fit$A$values) && "SNP" %in% colnames(fit$A$values)) {
-		est = fit$A$values[lat, "SNP"]
-		lab = fit$A$labels[lat, "SNP"]
-		ses = fit$output$standardErrors
-		cf = tryCatch(coef(fit), error = function(e) NULL)
-		if (!is.null(ses) && !is.null(lab) && !is.na(lab) && !is.null(cf)) {
-			rn = rownames(ses)
-			if (!is.null(rn) && lab %in% rn) {
-				se = as.numeric(ses[lab, 1])
-				if (is.finite(se)) se_source = "openmx"
-			} else if (lab %in% names(cf) && length(as.numeric(ses)) >= length(cf)) {
-				# OpenMx often returns SE in free-parameter order without rownames
-				se = as.numeric(ses)[match(lab, names(cf))]
-				if (is.finite(se)) se_source = "openmx"
-			}
-		}
-	}
-	if (!is.finite(se)) {
-		ss = tryCatch(summary(fit)$parameters, error = function(e) NULL)
-		if (!is.null(ss) && nrow(ss) > 0) {
-			matcol = if ("matrix" %in% names(ss)) ss$matrix else ss$Matrix
-			hit = which(matcol == "A" & ss$col == "SNP" & ss$row %in% fit$latentVars)
-			if (length(hit) >= 1) {
-				if (!is.finite(est)) est = ss$Estimate[hit[1]]
-				if (is.na(lab) && "name" %in% names(ss)) lab = ss$name[hit[1]]
-				if ("Std.Error" %in% names(ss)) {
-					se = ss[["Std.Error"]][hit[1]]
-					if (is.finite(se)) se_source = "summary"
+	
+	if (exists("omxNameWLS_V", where = asNamespace("OpenMx"), mode = "function")) {
+		vech = OpenMx::omxNameWLS_V(traits)
+	} else {
+		k_len <- length(traits)
+		vech <- character(0)
+		if (k_len >= 1) {
+			for (j in seq_len(k_len)) {
+				for (i in j:k_len) {
+					if (i == j) vech <- c(vech, paste0("var_", traits[i]))
+					else vech <- c(vech, paste0("poly_", traits[i], "_", traits[j]))
 				}
 			}
 		}
 	}
-	# Sandwich SE when OpenMx left Std.Error empty (common on some WLS runs)
-	if (!is.finite(se) && !is.na(lab) && nzchar(as.character(lab))) {
-		sand = xmu_gsem_wls_sandwich_se(fit)
-		if (!is.null(sand) && lab %in% names(sand)) {
-			se = as.numeric(sand[lab])
-			if (is.finite(se)) se_source = "sandwich"
-		} else if (!is.null(sand) && length(sand) >= 1) {
-			cf = tryCatch(coef(fit), error = function(e) NULL)
-			if (!is.null(cf) && lab %in% names(cf) && length(sand) == length(cf)) {
-				se = as.numeric(sand)[match(lab, names(cf))]
-				if (is.finite(se)) se_source = "sandwich"
+	z = length(vech)
+
+	align_vech_matrix <- function(mat, vech, is_vector = FALSE) {
+		if (is_vector || (is.matrix(mat) && nrow(mat) == 1)) {
+			if (is.matrix(mat)) {
+				if (overwrite || is.null(colnames(mat))) { colnames(mat) = vech; return(mat) }
+				mat_names = colnames(mat)
+			} else {
+				if (overwrite || is.null(names(mat))) { names(mat) = vech; return(mat) }
+				mat_names = names(mat)
+			}
+		} else {
+			if (overwrite || is.null(colnames(mat))) { colnames(mat) = rownames(mat) = vech; return(mat) }
+			mat_names = colnames(mat)
+		}
+		orig_keys = character(0)
+		for (key in vech) {
+			if (key %in% mat_names) { orig_keys = c(orig_keys, key) }
+			else if (grepl("^poly_", key)) {
+				parts = strsplit(sub("^poly_", "", key), "_")[[1]]
+				rev_key = paste0("poly_", parts[2], "_", parts[1])
+				if (rev_key %in% mat_names) orig_keys = c(orig_keys, rev_key)
+				else {
+					l1 = paste0(parts[1], "_", parts[2])
+					l2 = paste0(parts[2], "_", parts[1])
+					if (l1 %in% mat_names) orig_keys = c(orig_keys, l1)
+					else if (l2 %in% mat_names) orig_keys = c(orig_keys, l2)
+					else orig_keys = c(orig_keys, NA_character_)
+				}
+			} else if (grepl("^var_", key)) {
+				l = sub("^var_", "", key)
+				if (l %in% mat_names) orig_keys = c(orig_keys, l)
+				else orig_keys = c(orig_keys, NA_character_)
+			} else orig_keys = c(orig_keys, NA_character_)
+		}
+		if (anyNA(orig_keys)) {
+			if (is_vector || (is.matrix(mat) && nrow(mat) == 1)) {
+				if (is.matrix(mat)) colnames(mat) = vech
+				else names(mat) = vech
+			} else colnames(mat) = rownames(mat) = vech
+			return(mat)
+		}
+		if (is_vector) {
+			mat = mat[orig_keys]
+			names(mat) = vech
+		} else if (is.matrix(mat) && nrow(mat) == 1) {
+			mat = mat[, orig_keys, drop = FALSE]
+			colnames(mat) = vech
+		} else {
+			mat = mat[orig_keys, orig_keys, drop = FALSE]
+			colnames(mat) = rownames(mat) = vech
+		}
+		mat
+	}
+
+	if (!is.null(covstruc$I) && is.matrix(covstruc$I)) {
+		I_mat = as.matrix(covstruc$I)
+		if (overwrite || is.null(colnames(I_mat)) || is.null(rownames(I_mat))) {
+			if (nrow(I_mat) == k && ncol(I_mat) == k) {
+				colnames(I_mat) = rownames(I_mat) = traits
+				covstruc$I = I_mat
 			}
 		}
 	}
-	# Drop numerical garbage (singular sandwich → absurd Z)
-	if (is.finite(se) && (se <= 0 || se < 1e-12 * max(1, abs(est)))) {
-		se = NA_real_
-		se_source = "dropped_numeric"
+	if (!is.null(covstruc$V) && is.matrix(covstruc$V)) {
+		V_mat = as.matrix(covstruc$V)
+		if (nrow(V_mat) == z && ncol(V_mat) == z) {
+			covstruc$V = align_vech_matrix(V_mat, vech, is_vector = FALSE)
+		} else warning("V is ", nrow(V_mat), "x", ncol(V_mat), " but k(k+1)/2 = ", z, "; left V dimnames unchanged.", call. = FALSE)
 	}
-	list(est = as.numeric(est)[1], se = as.numeric(se)[1], se_source = se_source)
+	if (!is.null(covstruc$N)) {
+		N_mat = covstruc$N
+		if (is.matrix(N_mat) && ncol(N_mat) == z) covstruc$N = align_vech_matrix(N_mat, vech, is_vector = FALSE)
+		else if (is.vector(N_mat) && length(N_mat) == z) covstruc$N = align_vech_matrix(N_mat, vech, is_vector = TRUE)
+	}
+	if (!is.null(covstruc$S_Stand) && is.matrix(covstruc$S_Stand)) {
+		Ss = as.matrix(covstruc$S_Stand)
+		if (overwrite || is.null(colnames(Ss))) {
+			if (ncol(Ss) == k) { colnames(Ss) = rownames(Ss) = traits; covstruc$S_Stand = Ss }
+		}
+	}
+	if (!is.null(covstruc$V_Stand) && is.matrix(covstruc$V_Stand)) {
+		Vs = as.matrix(covstruc$V_Stand)
+		if (nrow(Vs) == z && ncol(Vs) == z) covstruc$V_Stand = align_vech_matrix(Vs, vech, is_vector = FALSE)
+	}
+	covstruc
 }
+
+

@@ -1,51 +1,46 @@
 ## dev
-## umx 4.90.0
-* Date: 2026-07-10 R 4.6.0
+## umx 5.00.5 
+* Date: 2026-07-20 R 4.6.0
+* NEW: `mxRAM` now emits topologically sorted models automatically (great for optimizer, esp with hard models!)
+* NEW: LDSC object for GSEM with dimnames on `S`, `I`, `V`, and `N`.
+* NEW: `umxGSEM_name_ldsc()` labels GenomicSEM-style lists from disk.
+* NEW: `umxGSEM()` fits one model to LDSC S/V via modern OpenMx.
+* NEW: `umxGSEM()`Accepts lavaan/umx strings OR `umxRAM`/`mxModel` structures.
+* NEW: `umxGSEM_sumstats()` allele-align GWAS files to a 1000G ref (`baseDir` for basenames).
+* NEW: `umxGSEM_GWAS()` per-SNP expand of S/V, DWLS fit, table of factor~SNP effects.
+* NEW: SNP simulation! TODO what's it called?
+* NEW: Built-in SNPsubset data()
+* NEW: Built-in ldsc data("Psych_LDSC") data("Anthro_LDSC")
+* NEW: vignettes for WLS, umxRAM robust SEs, and GSEM!
+* NEW: comprehensive test suite!
 
-### Testing / CI
-* `tests/testthat.R`: run the suite on CI (`NOT_CRAN` / `CI`) and interactive local sessions; **skip all tests on CRAN**.
-* GenomicSEM / pinned-lavaan parity stays under `inst/developer/GenomicSEM/` (manual only — not CRAN, not GHA).
-* GitHub Actions quick job: no vignette build; no `GenomicSEM` install. Weekly/full matrix also drops GenomicSEM install.
-
-### umxMI
-* DEFAULT change: `umxMI(..., full = FALSE)` (fast screen). Pass `full = TRUE` for full re-adjustment MI.
-* Vignette multi-group example uses the **one-factor** model (not multi-group bifactor).
-
-### Genomic SEM (status)
-* `Psych_LDSC` / `Anthro_LDSC`: dimnames on `S`, `I`, `V`, and `N` (`SCZ_SCZ`, `BIP_SCZ`, ...).
-* NEW: `umxGSEM_name_ldsc()` labels GenomicSEM-style lists from disk (pair names with `_`).
-* `xmu_gsem_vech_names()` uses underscore separators (still accepts legacy space labels).
-* Structural GSEM (ready): `umxGSEM()` fits one model to LDSC S/V via modern OpenMx
-
-  `observedStats = list(cov, useWeight, asymCov)` (DWLS default). Accepts lavaan/umx strings or
-  existing `umxRAM`/`mxModel` structures. Residual order + diagonal DWLS weights match
-  GenomicSEM `commonfactor` on `Psych_LDSC` (loadings/SEs to printed precision).
-* SNP pipeline scaffold (R front end):
-  - `umxGSEM_sumstats()`: allele-align GWAS files to a 1000G ref (`baseDir` for basenames).
-  - `umxGSEM_GWAS()`: per-SNP expand of S/V, DWLS fit, table of factor~SNP effects.
-  - Smoke path: workshop SCZ/BIP/MDD subsets under `inst/developer/GenomicSEM/` + 3-trait
-    block of `Psych_LDSC` (not full 5-trait; no EA/INSOM SNP toys).
-  - Next (OpenMx rear end): flatten model once, OpenMP over SNP blocks in C++
-    (`GsemImpliedStats` / DWLS), reassemble results. R `umxGSEM_GWAS` stays the API shell.
-* Docs: vignette `vignettes/umxGSEM_Psych_LDSC.Rmd` (Psych_LDSC decimal-match tables,
-  SNP data sources, production download notes).
-* Rails: hard-refuse OpenMx legacy `type="acov"` / `MxDataLegacyWLS` (name trap:
-  top-level `acov` meant useWeight, not asymptotic covariance). Use raw data +
-  `type="WLS"|"DWLS"`, or modern `observedStats`.
-* Helpers: `xmu_gsem_*` prepare/expand/WLS; `xmu_wls_extract_WV` modern-only;
-  `tmx_show` data.S / data.V / data.W (refuses name `"acov"`).
-
-### WLS / reporting
+## umx 4.90.0 
+* Date: 2026-07-20 R 4.6.0
+* NEW: `umxMI` runs on multi-group models, and notes/skips un-identified changes.
+* NEW: `umxMI` Vignette inc. multi-group example.
+* IMPROVED: Helpers and main functions use modern WLS path only (hard refuse misleading name `"acov"`).
 * IMPROVED: `umxCompare` / `umxSummary` WLS + Satorra-Bentler 2010 / robust metrics notes for GSEM.
 * NEW: `xmu_make_mxData` subsets modern summary WLS `observedStats` (useWeight / asymCov).
+* NEW: Lots more `tests/testthat.R`
+
+
+TODO!!!
+ALLOW umxGSEM_GWAS to take a model = RAMmodel
+TODO: documented SNP data sources, production download notes.
+TODO: testthat Residual order + diagonal DWLS weights match
+  GenomicSEM `commonfactor` on `Psych_LDSC` (loadings/SEs to printed precision).
+
+TODO: (OpenMx rear end): flatten model once, OpenMP over SNP blocks in C++
+    (`GsemImpliedStats` / DWLS), reassemble results. R `umxGSEM_GWAS` stays the API shell.
+* TODO: rip out the acov pathway - it is a bear trap!! 
 
 # Releases
 
 ## umx 4.80.0
 * Date: 2026-06-08 R 4.6.0
 * NEW: `umxACE_DE` double-entry ACE model for censored data.
-* NEW: `plot` supports MxLISRELModels
 * NEW: `umxLISREL` make LISREL Models!
+* NEW: `plot` supports MxLISRELModels
 * NEW: `xmu_standardize_LISREL` standardize LISREL models.
 * IMPROVED: `umx_make("dev")` will install development version of umx for user. 
 * IMPROVED: `umx_aggregate` support multiple DVs and output='string' for easier paste into procedure.
