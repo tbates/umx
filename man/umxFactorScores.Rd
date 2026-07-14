@@ -58,6 +58,7 @@ x
 }
 
 Other Reporting Functions:
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link{umx}},
 \code{\link[=umxAPA]{umxAPA()}},
 \code{\link[=umxGetLatents]{umxGetLatents()}},

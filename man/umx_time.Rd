@@ -74,6 +74,7 @@ umx_time('stop') # report the time since timer was restarted.
 }
 
 Other Reporting Functions:
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link{umx}},
 \code{\link[=umxAPA]{umxAPA()}},
 \code{\link[=umxFactorScores]{umxFactorScores()}},

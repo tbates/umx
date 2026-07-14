@@ -61,6 +61,7 @@ umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 \code{\link[OpenMx:omxGetParameters]{OpenMx::omxGetParameters()}}, \code{\link[=parameters]{parameters()}}
 
 Other Reporting Functions:
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link{umx}},
 \code{\link[=umxAPA]{umxAPA()}},
 \code{\link[=umxFactorScores]{umxFactorScores()}},

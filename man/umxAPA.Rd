@@ -155,6 +155,7 @@ umxAPA(m1)
 \code{\link[=SE_from_p]{SE_from_p()}}
 
 Other Reporting Functions:
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link{umx}},
 \code{\link[=umxFactorScores]{umxFactorScores()}},
 \code{\link[=umxGetLatents]{umxGetLatents()}},

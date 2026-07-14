@@ -197,6 +197,7 @@ Other Data Functions:
 \code{\link[=prolific_read_demog]{prolific_read_demog()}},
 \code{\link{umx}},
 \code{\link[=umxFactor]{umxFactor()}},
+\code{\link[=umxGSEM_sim_snps]{umxGSEM_sim_snps()}},
 \code{\link[=umxHetCor]{umxHetCor()}},
 \code{\link[=umx_as_numeric]{umx_as_numeric()}},
 \code{\link[=umx_cont_2_quantiles]{umx_cont_2_quantiles()}},
