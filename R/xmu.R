@@ -656,7 +656,7 @@ xmu_openmx_residual_names <- function(traitNames) {
 
 # Wrapper for OpenMx::omxNameWLS_V.
 # Generates native OpenMx WLS compliant names (var_X, poly_Y_X) instead of legacy GenomicSEM pair names.
-xmu_gsem_vech_names <- function(traitNames, sep = "_") {
+xmu_gsem_vech_names <- function(traitNames) {
 	if (exists("omxNameWLS_V", where = asNamespace("OpenMx"), mode = "function")) {
 		return(OpenMx::omxNameWLS_V(traitNames))
 	}
@@ -674,113 +674,6 @@ xmu_gsem_vech_names <- function(traitNames, sep = "_") {
 	pairs
 }
 
-#' Label S, V, I, N in an LDSC-style covstruc list
-#'
-#' Assigns trait names to `S` and `I`, and half-vectorized pair names
-#' (e.g. `SCZ_SCZ`, `BIP_SCZ`) to `V` and `N`. Useful for objects saved from
-#' GenomicSEM (often unlabelled) or older umx `.rda` files.
-#'
-#' Pair order matches GenomicSEM / OpenMx `imxGsemVechNames()`: column-major
-#' lower triangle of `S` including the diagonal.
-#'
-#' @param covstruc A list with at least matrix `S` (genetic covariance). May include
-#'   `V`, `I`, `N`, and optionally `S_Stand` / `V_Stand`.
-#' @param traits Character vector of trait names. Default: `colnames(S)`, else
-#'   `rownames(S)`, else `paste0("T", seq_len(ncol(S)))`.
-#' @param sep Separator for pair labels (default `"_"`).
-#' @param overwrite If `FALSE` (default), only fill missing dimnames; if `TRUE`,
-#'   replace existing dimnames.
-#' @return The same list with dimnames set on present matrices.
-#' @export
-#' @family GSEM
-#' @seealso [Psych_LDSC], [umxGSEM()]
-#' @examples
-#' data(Psych_LDSC)
-#' # Re-apply labels (safe if already named)
-#' Psych_LDSC = umxGSEM_name_ldsc(Psych_LDSC)
-#' colnames(Psych_LDSC$V)[1:3]
-umxGSEM_name_ldsc <- function(covstruc, traits = NULL, sep = "_", overwrite = FALSE) {
-	if (!is.list(covstruc) || is.null(covstruc$S)) {
-		stop("covstruc must be a list with genetic covariance matrix S.")
-	}
-	S = as.matrix(covstruc$S)
-	k = ncol(S)
-	if (is.null(traits)) {
-		traits = colnames(S)
-		if (is.null(traits)) traits = rownames(S)
-		if (is.null(traits)) traits = paste0("T", seq_len(k))
-	}
-	traits = as.character(traits)
-	if (length(traits) != k) {
-		stop("traits must have length ncol(S) = ", k, ".")
-	}
-	need_S = overwrite || is.null(colnames(S)) || is.null(rownames(S))
-	if (need_S) {
-		colnames(S) = rownames(S) = traits
-		covstruc$S = S
-	} else {
-		traits = colnames(S)
-	}
-	vech = xmu_gsem_vech_names(traits, sep = sep)
-	z = length(vech)
-
-	if (!is.null(covstruc$I) && is.matrix(covstruc$I)) {
-		I = as.matrix(covstruc$I)
-		if (overwrite || is.null(colnames(I)) || is.null(rownames(I))) {
-			if (nrow(I) == k && ncol(I) == k) {
-				colnames(I) = rownames(I) = traits
-				covstruc$I = I
-			}
-		}
-	}
-	if (!is.null(covstruc$V) && is.matrix(covstruc$V)) {
-		V = as.matrix(covstruc$V)
-		if (overwrite || is.null(colnames(V)) || is.null(rownames(V))) {
-			if (nrow(V) == z && ncol(V) == z) {
-				colnames(V) = rownames(V) = vech
-				covstruc$V = V
-			} else {
-				warning("V is ", nrow(V), "x", ncol(V), " but k(k+1)/2 = ", z,
-					"; left V dimnames unchanged.", call. = FALSE)
-			}
-		}
-	}
-	if (!is.null(covstruc$N)) {
-		N = covstruc$N
-		if (is.matrix(N)) {
-			if (overwrite || is.null(colnames(N))) {
-				if (ncol(N) == z) {
-					colnames(N) = vech
-					covstruc$N = N
-				}
-			}
-		} else if (is.vector(N) && length(N) == z) {
-			if (overwrite || is.null(names(N))) {
-				names(N) = vech
-				covstruc$N = N
-			}
-		}
-	}
-	if (!is.null(covstruc$S_Stand) && is.matrix(covstruc$S_Stand)) {
-		Ss = as.matrix(covstruc$S_Stand)
-		if (overwrite || is.null(colnames(Ss))) {
-			if (ncol(Ss) == k) {
-				colnames(Ss) = rownames(Ss) = traits
-				covstruc$S_Stand = Ss
-			}
-		}
-	}
-	if (!is.null(covstruc$V_Stand) && is.matrix(covstruc$V_Stand)) {
-		Vs = as.matrix(covstruc$V_Stand)
-		if (overwrite || is.null(colnames(Vs))) {
-			if (nrow(Vs) == z && ncol(Vs) == z) {
-				colnames(Vs) = rownames(Vs) = vech
-				covstruc$V_Stand = Vs
-			}
-		}
-	}
-	covstruc
-}
 
 # Hard refusal of OpenMx legacy type='acov' / MxDataLegacyWLS (name-trap for useWeight/asymCov).
 xmu_stop_legacy_acov <- function(where = "umx") {
@@ -3536,5 +3429,59 @@ xmu_compare_robust_ML <- function(model1, model2) {
 	)
 	attr(res, "c_d") = cD
 	return(res)
+}
+
+#' Topologically sort a graph based on from and to paths
+#'
+#' @description
+#' Performs a topological sort on a set of nodes based on directional paths.
+#' In structural equation modeling, processing sources (exogenous variables) first and
+#' sinks (endogenous variables) last often ensures the `A` matrix is strictly lower
+#' triangular, which massively speeds up optimization and avoids local minima.
+#'
+#' @param from Character vector of source nodes.
+#' @param to Character vector of destination nodes.
+#' @param nodes Character vector of all nodes to sort.
+#' @return A character vector of the nodes sorted topologically. Nodes not involved in paths are appended.
+#' @export
+#' @family xmu internal not for end user
+xmu_topo_sort <- function(from, to, nodes) {
+	adj <- list()
+	in_degree <- stats::setNames(rep(0, length(nodes)), nodes)
+	for (n in nodes) adj[[n]] <- character(0)
+	
+	for (i in seq_along(from)) {
+		u <- from[i]
+		v <- to[i]
+		if (u %in% nodes && v %in% nodes) {
+			adj[[u]] <- c(adj[[u]], v)
+			in_degree[v] <- in_degree[v] + 1
+		}
+	}
+	
+	Q <- names(in_degree)[in_degree == 0]
+	sorted <- character(0)
+	
+	while(length(Q) > 0) {
+		u <- Q[1]
+		Q <- Q[-1]
+		sorted <- c(sorted, u)
+		
+		for (v in adj[[u]]) {
+			in_degree[v] <- in_degree[v] - 1
+			if (in_degree[v] == 0) {
+				Q <- c(Q, v)
+			}
+		}
+	}
+	
+	leftovers <- names(in_degree)[in_degree > 0]
+	
+	# Reverse the sort so that sinks come first and sources come last.
+	# Because OpenMx appends latent variables at the end, latent -> manifest paths
+	# are inherently upper-triangular (from > to). Reversing the topological sort
+	# guarantees manifest -> manifest paths are also upper-triangular, making
+	# the entire A matrix strictly upper-triangular for smooth optimization!
+	rev(c(sorted, leftovers))
 }
 
