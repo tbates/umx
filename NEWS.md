@@ -1,3 +1,11 @@
+gwas_mxrun vs gwas_analytic dummy SNP parity test (test_GSEM_goldens.R:301) failed. 
+
+```R
+	# Run Analytic DWLS
+	gwas_analytic = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps, traits = traits, estimation = "DWLS", quiet = TRUE)
+	gwas_mxrun    = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps, traits = traits, estimation = "DWLS", quiet = TRUE, model = m_meas)
+```
+
 ## dev
 ## umx 5.00.5 
 * Date: 2026-07-20 R 4.6.0

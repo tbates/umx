@@ -114,6 +114,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_standardize_Simplex]{xmu_standardize_Simplex()}},
 \code{\link[=xmu_starts]{xmu_starts()}},
 \code{\link[=xmu_summary_RAM_group_parameters]{xmu_summary_RAM_group_parameters()}},
+\code{\link[=xmu_topo_sort]{xmu_topo_sort()}},
 \code{\link[=xmu_twin_add_WeightMatrices]{xmu_twin_add_WeightMatrices()}},
 \code{\link[=xmu_twin_check]{xmu_twin_check()}},
 \code{\link[=xmu_twin_get_var_names]{xmu_twin_get_var_names()}},

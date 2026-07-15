@@ -11,10 +11,12 @@ umxGSEM_GWAS(
   estimation = c("DWLS", "WLS", "ULS"),
   traits = NULL,
   GC = c("standard", "conserv", "none"),
+  uncertainty = c("robustSE", "SE"),
   SNPSE = 5e-04,
   maxSNPs = NULL,
   snpEffect = NULL,
-  quiet = TRUE
+  quiet = TRUE,
+  force_fallback = FALSE
 )
 }
 \arguments{
