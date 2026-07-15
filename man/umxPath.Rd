@@ -107,9 +107,8 @@ To give a couple of the most common, time-saving examples:
 \itemize{
 \item \code{umxPath("A", with = "B",  fixedAt = 1)}
 \item \code{umxPath(var = c("A", "B"),  fixedAt = 1)}
-\item \code{umxPath(v.m. = manifests)}
-\item \code{umxPath(v1m0 = latents)}
-\item \code{umxPath(v1m0 = latents)}
+\item \code{umxPath(v.m. = manifests)}# free variance and mean estimation
+\item \code{umxPath(v1m0 = latents)} # fixed at var 1 mean 0
 \item \code{umxPath(means = manifests)}
 \item \code{umxPath(fromEach = c('A',"B","C"), to = c("y1","y2"))}
 \item \code{umxPath(unique.bivariate = c('A',"B","C"))}

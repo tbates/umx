@@ -213,7 +213,7 @@ test_that("umxGSEM_GWAS handles missing SE / bad status without constant-est bug
 	# se_source is openmx, sandwich, dropped_*, or NA
 	if (any(!is.na(gwas$se_source))) {
 		expect_true(all(gwas$se_source[!is.na(gwas$se_source)] %in%
-			c("openmx", "summary", "sandwich", "dropped_numeric", "dropped_bad_status", "analytic")))
+			c("openmx", "summary", "sandwich", "dropped_numeric", "dropped_bad_status", "analytic", "analytic_robust")))
 	}
 	# Distinct estimates across SNPs
 	expect_gt(length(unique(round(gwas$est, 7))), 1)

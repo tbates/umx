@@ -3042,45 +3042,23 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 		latents   = obj@latentVars
 		nVar      = length(manifests)
 
-		if(length(latents) > 0){
-			lats = (nVar + 1):(nVar + length(latents))
-			# The diagonal is variances
-			if(onlyTouchZeros) {
-				freePaths = (obj$matrices$S$free[lats, lats] == TRUE) & obj$matrices$S$values[lats, lats] == 0
-			} else {
-				freePaths = (obj$matrices$S$free[lats, lats] == TRUE)			
-			}
-			# set free latent variances to 1
-			obj$S$values[lats, lats][freePaths] = 1
-			offDiag = !diag(length(latents))
-			newOffDiags = obj$matrices$S$values[lats, lats][offDiag & freePaths]/3
-			obj$S@values[lats, lats][offDiag & freePaths] = newOffDiags			
-		}
+		varNames = dimnames(obj$matrices$S$values)[[1]]
+		if (is.null(varNames)) varNames = c(manifests, latents)
 		
-		if(nVar == 0){
-			# model with no manifests... nothing to set. Maybe it's a model with only defVars or something.
-			return(obj)
-		}
-		# =============
-		# = Set means =
-		# =============
-		# print(str(obj$data))
-		# umx_msg(obj$data$preferredFit)
-		# umx_msg(obj$data$.wlsContinuousType)
-
+		# Total variance map (latents default to 1.0)
+		total_vars = rep(1.0, length(varNames))
+		names(total_vars) = varNames
+		
+		# ==============
+		# = Set means  =
+		# ==============
 		if(is.null(obj$matrices$M)){
-			# no means: must be cov data?
-			# We are in a RAM model, so the data must be mxData: check the type, rather than guessing.
-			# need to handle raw data that will be treated as WLS and not end up with means
 			if(type == "raw"){
 				covData = umx_var(df = theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs", allowCorForFactorCovs=TRUE)
-			}else if (type %in% c("cov", "cor")){
+			} else if (type %in% c("cov", "cor")){
 				covData = as.matrix(theData)
-			}else if (identical(type, "none") || identical(type, "acov")){
-				# type='none' often holds modern summary WLS (observedStats$cov). type='acov' is refused elsewhere.
-				if (identical(type, "acov")) {
-					stop("xmuValues: type='acov' is not supported. Use observedStats (cov/useWeight/asymCov) or type raw/cov/cor.", call. = FALSE)
-				}
+			} else if (identical(type, "none") || identical(type, "acov")){
+				if (identical(type, "acov")) stop("xmuValues: type='acov' is not supported. Use observedStats (cov/useWeight/asymCov) or type raw/cov/cor.", call. = FALSE)
 				osCov = tryCatch(obj$data$observedStats$cov, error = function(e) NULL)
 				if (!is.null(osCov) && is.matrix(osCov)) {
 					covData = as.matrix(osCov)
@@ -3089,7 +3067,7 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 				} else {
 					stop("xmuValues: type='none' without observedStats$cov or a covariance matrix. Known types: raw, cov, cor, and summary WLS via observedStats.", call. = FALSE)
 				}
-			}else{
+			} else {
 				message("xmuValues can't recognise data of type ", omxQuotes(type), ". I know raw, cov, cor, and summary WLS (observedStats$cov).")
 				covData = as.matrix(theData)
 			}
@@ -3097,48 +3075,48 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 			dataMeans = umx_means(theData[, manifests, drop = FALSE], ordVar = 0, na.rm = TRUE)
 			freeManifestMeans = (obj$matrices$M$free[1, manifests] == TRUE)
 			obj$M@values[1, manifests][freeManifestMeans] = dataMeans[freeManifestMeans]
-			# covData = cov(theData, )
 			covData = umx_var(df = theData[, manifests, drop = FALSE], format = "full", ordVar = 1, use = "pairwise.complete.obs", allowCorForFactorCovs=TRUE)
 		}
-
+		
+		# Populate manifest variances into total_vars map
+		if (!is.null(covData) && is.matrix(covData) && nrow(covData) > 0) {
+			covNames = rownames(covData)
+			validNames = covNames[covNames %in% varNames]
+			total_vars[validNames] = diag(covData)[validNames]
+		}
+		
 		# ==========================================================
 		# = Fill the S (symmetrical) matrix with good start values =
 		# ==========================================================
-		# Set S diagonal (variances) where the cells are free.
-		# if(!is.null(dim(covData)) || length(covData) > 1){
-			# covData = diag(covData)
-		# } else {
-			# If this is one variable, leave alone: equivalent to a 1,1, matrix with the diag on the "diag", and zeros elsewhere
-		# }
-		# diag diag creates a matrix with all zeros off the diagonal
-		# covData = diag(diag(covData))
-
-		freePaths = diag(obj$S$free) == TRUE
-		if(onlyTouchZeros) {
-			freePaths = freePaths & diag(obj$S$values) == 0
+		# Set S diagonal (variances)
+		freeDiags = diag(obj$S$free) == TRUE
+		if(onlyTouchZeros) freeDiags = freeDiags & (diag(obj$S$values) == 0)
+		
+		# Set manifest residuals to 50% of observed variance, latents stay at 1.0
+		diag_scales = total_vars
+		valid_manifests = manifests[manifests %in% varNames]
+		diag_scales[valid_manifests] = 0.5 * diag_scales[valid_manifests]
+		diag(obj$S@values)[freeDiags] = diag_scales[freeDiags]
+		
+		# Set S off-diagonal (covariances)
+		if (onlyTouchZeros) {
+			freeOff = (obj$S$free == TRUE) & (obj$S$values == 0) & (!diag(length(varNames)))
+		} else {
+			freeOff = (obj$S$free == TRUE) & (!diag(length(varNames)))
 		}
-		diag(obj$S@values)[freePaths] = diag(covData)[freePaths]
-
-		# =======================
-		# = Set off-diag values =
-		# =======================
-		# TODO decide whether to leave this as independence, or set to non-zero covariances...
-		# and off diagonals to the observed covariance,
-		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		# obj$matrices$S$values[1:nVar, 1:nVar][freePaths] = (covData[freePaths]/2)
-		# offDiag = !diag(nVar)
-		# newOffDiags = obj$matrices$S$values[1:nVar, 1:nVar][offDiag & freePaths]/3
-		# obj$matrices$S$values[1:nVar, 1:nVar][offDiag & freePaths] = newOffDiags
-
+		cov_matrix = outer(total_vars, total_vars, function(r, c) 0.3 * sqrt(r * c))
+		obj$S@values[freeOff] = cov_matrix[freeOff]
+		
 		# ======================================================
-		# = Put modest starts into the asymmetric (one headed) =
+		# = Put scaled starts into the asymmetric (one headed) =
 		# ======================================================
 		freePaths = obj$matrices$A$free == TRUE
-		if(onlyTouchZeros){
-			freePaths = freePaths & obj$matrices$A$values == 0
-		}
-		# TODO umxRAM A starts change from .9 to sqrt(.2*Variance)/nFactors
-		obj$A@values[freePaths] = .9
+		if(onlyTouchZeros) freePaths = freePaths & (obj$matrices$A$values == 0)
+		
+		# Scale path = 0.5 * sqrt(Var(Row) / Var(Col))
+		scale_matrix = outer(total_vars, total_vars, function(r, c) 0.5 * sqrt(r / c))
+		obj$A@values[freePaths] = scale_matrix[freePaths]
+		
 		return(obj)
 	} else if (umx_is_LISREL(obj)) {
 		# This is a LISREL Model: Set sane starting values
@@ -4308,9 +4286,8 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #'
 #' * `umxPath("A", with = "B",  fixedAt = 1)`
 #' * `umxPath(var = c("A", "B"),  fixedAt = 1)`
-#' * `umxPath(v.m. = manifests)`
-#' * `umxPath(v1m0 = latents)`
-#' * `umxPath(v1m0 = latents)`
+#' * `umxPath(v.m. = manifests)`# free variance and mean estimation
+#' * `umxPath(v1m0 = latents)` # fixed at var 1 mean 0
 #' * `umxPath(means = manifests)`
 #' * `umxPath(fromEach = c('A',"B","C"), to = c("y1","y2"))`
 #' * `umxPath(unique.bivariate = c('A',"B","C"))`

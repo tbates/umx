@@ -419,31 +419,47 @@ xmu_gsem_expand_snp <- function(covstruc, beta_i, se_i, varSNP_i, varSNPSE2, GC 
 }
 
 
-xmu_gsem_extract_snp_path <- function(fit, traits) {
+xmu_gsem_extract_snp_path <- function(fit, traits, snpEffect = "SNP_to_F1") {
 	# Prefer free A-path: F1 ~ SNP  (RAM: row = to = latent, col = from = SNP)
 	est = NA_real_
 	se = NA_real_
 	se_source = NA_character_
-	lat = if (length(fit$latentVars)) fit$latentVars[1] else NA_character_
-	# Prefer a factor named F1 when present
-	if ("F1" %in% fit$latentVars) {
-		lat = "F1"
-	}
 	lab = NA_character_
-	if (!is.null(fit$A) && !is.na(lat) && lat %in% rownames(fit$A$values) && "SNP" %in% colnames(fit$A$values)) {
-		est = fit$A$values[lat, "SNP"]
-		lab = fit$A$labels[lat, "SNP"]
-		ses = fit$output$standardErrors
-		cf = tryCatch(coef(fit), error = function(e) NULL)
-		if (!is.null(ses) && !is.null(lab) && !is.na(lab) && !is.null(cf)) {
-			rn = rownames(ses)
-			if (!is.null(rn) && lab %in% rn) {
-				se = as.numeric(ses[lab, 1])
-				if (is.finite(se)) se_source = "openmx"
-			} else if (lab %in% names(cf) && length(as.numeric(ses)) >= length(cf)) {
-				# OpenMx often returns SE in free-parameter order without rownames
-				se = as.numeric(ses)[match(lab, names(cf))]
-				if (is.finite(se)) se_source = "openmx"
+	
+	# 1. First try to extract by explicitly provided snpEffect label (if valid in this model)
+	cf = tryCatch(coef(fit), error = function(e) NULL)
+	ses = fit$output$standardErrors
+	
+	if (!is.null(snpEffect) && !is.na(snpEffect) && !is.null(cf) && snpEffect %in% names(cf)) {
+		est = as.numeric(cf[snpEffect])
+		lab = snpEffect
+		rn = rownames(ses)
+		if (!is.null(rn) && lab %in% rn) {
+			se = as.numeric(ses[lab, 1])
+			if (is.finite(se)) se_source = "openmx"
+		} else if (lab %in% names(cf) && length(as.numeric(ses)) >= length(cf)) {
+			se = as.numeric(ses)[match(lab, names(cf))]
+			if (is.finite(se)) se_source = "openmx"
+		}
+	}
+	
+	# 2. Fallback to hardcoded row/col lookup
+	if (is.na(est)) {
+		lat = if (length(fit$latentVars)) fit$latentVars[1] else NA_character_
+		if ("F1" %in% fit$latentVars) lat = "F1"
+		
+		if (!is.null(fit$A) && !is.na(lat) && lat %in% rownames(fit$A$values) && "SNP" %in% colnames(fit$A$values)) {
+			est = fit$A$values[lat, "SNP"]
+			lab = fit$A$labels[lat, "SNP"]
+			if (!is.null(ses) && !is.null(lab) && !is.na(lab) && !is.null(cf)) {
+				rn = rownames(ses)
+				if (!is.null(rn) && lab %in% rn) {
+					se = as.numeric(ses[lab, 1])
+					if (is.finite(se)) se_source = "openmx"
+				} else if (lab %in% names(cf) && length(as.numeric(ses)) >= length(cf)) {
+					se = as.numeric(ses)[match(lab, names(cf))]
+					if (is.finite(se)) se_source = "openmx"
+				}
 			}
 		}
 	}

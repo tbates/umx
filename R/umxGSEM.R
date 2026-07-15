@@ -754,14 +754,16 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #'   See e.g. [Psych_LDSC] (`I` = intercepts / sample-overlap; also `N`, `m`).
 #' @param SNPs Data frame from [umxGSEM_sumstats()] (columns `beta.*`, `se.*`, `MAF`, `SNP`, …).
 #' @param model Optional lavaan/umx string or mxModel. If `NULL`, builds
-#'   `F1 =~ NA*T1 + T2 + ...; F1 ~~ 1*F1; F1 ~ SNP` for traits in `S`.
+#'  A RAM model with one latent (F1) loading on all the traits, and  "SNP" loading on F1
 #' @param estimation `"DWLS"` (default), `"WLS"`, or `"ULS"`.
-#' @param traits Trait names (order must match `beta.*` columns). Default: colnames of `S`.
+#' @param traits Trait names. Default: colnames of `covstruc$S`.
 #' @param GC Genomic control for SNP sampling variances: `"standard"`, `"conserv"`, or `"none"`.
-#' @param SNPSE SE used for SNP variance (treated as nearly fixed; default 5e-4).
+#' @param uncertainty Whether to compute the robust sandwich SE (`"robustSE"`, default) or naive SE (`"SE"`).
+#' @param SnpSamplingError SE used for SNP variance (treated as nearly fixed; default 5e-4).
 #' @param maxSNPs Optional limit for smoke tests.
-#' @param snpEffect Character; path to report (default `"F1 ~ SNP"` style match on A matrix).
+#' @param snpEffect Character; path label to extract from the model (default \code{"SNP_to_F1"}).
 #' @param quiet Suppress per-SNP messages.
+#' @param force_fallback Logical; internal use for testing to force the non-vectorized analytic path (default `FALSE`).
 #' @return A data.frame of SNP results (`SNP`, `CHR`, `BP`, `MAF`, `est`, `se`, `Z`, `P`, `status`, …).
 #' @export
 #' @family GSEM
@@ -769,23 +771,30 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #'
 #' @examples
 #' \dontrun{
+#' 1. load data
 #' data(Psych_LDSC)
-#' # Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named SCZ_SCZ, BIP_SCZ, ...
+#' # Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named var_SCZ, poly_BIP_SCZ, ...
+#' 
+#' # 2. build the snp data structure from your SNP data txt files, e.g.
 #' dir = "~/bin/umx/inst/developer/GenomicSEM"
 #' snps = umxGSEM_sumstats(
 #'   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
 #'   ref = file.path(dir, "reference.1000G.subset.txt"),
 #'   trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE
 #' )
-#' # Prefer full covstruc + traits= (correct V block). Do not use V[1:6, 1:6] on a 5-trait V.
-#' gwas = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
+#'
+#' # 3. Run the GWAS on your trait measurement model adding SNP effects into the latent structure
+#' GWAS = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
 #'   traits = c("SCZ", "BIP", "MDD"), maxSNPs = 20)
-#' head(gwas)
-#' # Or subset by pair names: vn = xmu_gsem_vech_names(c("SCZ","BIP","MDD")); V[vn, vn]
+#'
+#' # 4. Examine results and make a new drug or something useful!
+#' head(GWAS)
+#' plot(GWAS)
 #' }
-umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), SNPSE = 5e-4, maxSNPs = NULL, snpEffect = NULL, quiet = TRUE, force_fallback = FALSE) {
+umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), uncertainty = c("robustSE", "SE"), SnpSamplingError = 5e-4, maxSNPs = NULL, snpEffect = "SNP_to_F1", quiet = TRUE, force_fallback = FALSE) {
 	estimation = match.arg(estimation)
 	GC = match.arg(GC)
+	uncertainty = match.arg(uncertainty)
 	if (!is.list(covstruc) || is.null(covstruc$S) || is.null(covstruc$V)) {
 		stop("covstruc must be a list containing at least matrices S and V.")
 	}
@@ -817,20 +826,33 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	varSNP    = 2 * SNPs$MAF * (1 - SNPs$MAF)
 	beta_SNP  = as.matrix(SNPs[, beta_cols, drop = FALSE])
 	SE_SNP    = as.matrix(SNPs[, se_cols, drop = FALSE])
-	varSNPSE2 = as.numeric(SNPSE)^2
+	varSNPSE2 = as.numeric(SnpSamplingError)^2
 	coords    = as.matrix(expand.grid(seq_len(k), seq_len(k)))
 
-	# Default common-factor + SNP (unit-loading ID like GenomicSEM commonfactorGWAS)
+	# Pre-flight: Build template model and optimize starting values
+	if (!quiet) message("umxGSEM_GWAS: Generating GWAS template and optimizing starting values...")
+	expn_dummy = xmu_gsem_expand_snp(covstruc, as.numeric(beta_SNP[1, ]), as.numeric(SE_SNP[1, ]), varSNP[1], varSNPSE2, GC, coords)
+	
+	# Default common-factor + SNP
 	if (is.null(model)) {
-		rest = if (k > 1) paste0(" + ", paste(traits[-1], collapse = " + ")) else ""
-		model = paste0(
-			"F1 =~ 1*", traits[1], rest, "\n",
-			"F1 ~~ NA*F1\n",
-			"F1 ~ SNP\n"
+		model = umxRAM("gwas_template",
+			umxPath(from = "F1", to = traits),       # All factor loadings free
+			umxPath(var = traits),                   # Free trait residual variances
+			umxPath(var = "F1", fixedAt = 1),        # Fix factor variance to 1
+			umxPath(from = "SNP", to = "F1"),        # SNP effect
+			data = mxData(expn_dummy$S, type = "cov", numObs = 1),
+			type = "cov", autoRun = FALSE
 		)
-	} else if (is.character(model) && !grepl("SNP", model, fixed = TRUE)) {
-		warning("umxGSEM_GWAS: model string does not mention SNP; appending 'F1 ~ SNP'.", call. = FALSE)
-		model = paste0(model, "\nF1 ~ SNP\n")
+	} else if (is.character(model)) {
+		if (!grepl("SNP", model, fixed = TRUE)) {
+			warning("umxGSEM_GWAS: model string does not mention SNP; appending 'F1 ~ SNP'.", call. = FALSE)
+			model = paste0(model, "\nF1 ~ SNP\n")
+		}
+		model = umxRAM("gwas_template", model, data = mxData(expn_dummy$S, type = "cov", numObs = 1), type = "cov", autoRun = FALSE)
+	}
+
+	if (!"SNP" %in% model$manifestVars) {
+		stop("umxGSEM_GWAS: the model must include 'SNP' as a manifest variable.")
 	}
 
 	# Preallocate result columns (avoid do.call(rbind, ...) over list blobs)
@@ -847,16 +869,14 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	out_status = rep(NA_integer_, nSNP)
 	out_fail = rep(TRUE, nSNP)
 	out_warn = rep(NA_character_, nSNP)
+	out_Q_SNP = rep(NA_real_, nSNP)
+	out_Q_SNP_p = rep(NA_real_, nSNP)
 	out_se_source = rep(NA_character_, nSNP)
 
 	oldAuto = getOption("umx_auto_plot")
 	options(umx_auto_plot = FALSE)
 	on.exit(options(umx_auto_plot = oldAuto), add = TRUE)
 
-	# Pre-flight: Build template model and optimize starting values
-	if (!quiet) message("umxGSEM_GWAS: Generating GWAS template and optimizing starting values...")
-	expn_dummy = xmu_gsem_expand_snp(covstruc, as.numeric(beta_SNP[1, ]), as.numeric(SE_SNP[1, ]), varSNP[1], varSNPSE2, GC, coords)
-	
 	# umxGSEM natively handles WLS preparation when estimation = "DWLS" or "WLS"
 	m_template = tryCatch(umxGSEM(model = model, S = expn_dummy$S, V = expn_dummy$V, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
 	
@@ -868,10 +888,18 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	# Pre-flight for Analytic WLS
 	analytic_ok = FALSE
 	H_raw = NULL; valid_targets = NULL
-	if ((estimation %in% c("DWLS", "WLS")) && is.character(model)) {
-		meas_model_str = paste(grep("SNP", strsplit(model, "\n")[[1]], value = TRUE, invert = TRUE), collapse = "\n")
-		# 1. Fit measurement model
-		m_meas = tryCatch(umxGSEM(model = meas_model_str, covstruc = covstruc, estimation = estimation, autoRun = TRUE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
+	if (estimation %in% c("DWLS", "WLS")) {
+		# Extract measurement model directly from m_template by dropping 'SNP'
+		keep = c(m_template$latentVars, traits)
+		A = mxMatrix("Full", nrow = length(keep), ncol = length(keep), values = m_template$A$values[keep, keep], free = m_template$A$free[keep, keep], labels = m_template$A$labels[keep, keep], dimnames = list(keep, keep), name = "A")
+		S_mat = mxMatrix("Symm", nrow = length(keep), ncol = length(keep), values = m_template$S$values[keep, keep], free = m_template$S$free[keep, keep], labels = m_template$S$labels[keep, keep], dimnames = list(keep, keep), name = "S")
+		F_mat = mxMatrix("Full", nrow = length(traits), ncol = length(keep), values = m_template$F$values[traits, keep], free = FALSE, dimnames = list(traits, keep), name = "F")
+		
+		# 1. Fit measurement model on trait-only covstruc
+		m_meas = mxModel("meas_model", type = "RAM", manifestVars = traits, latentVars = m_template$latentVars, 
+			mxData(covstruc$S, type = "cov", numObs = 1), A, S_mat, F_mat, mxExpectationRAM("A", "S", "F"))
+		
+		m_meas = tryCatch(umxGSEM(model = m_meas, covstruc = covstruc, estimation = estimation, autoRun = TRUE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
 		
 		# 2. Extract targets using a dummy template model
 		if (!is.null(m_meas) && inherits(m_meas, "MxModel")) {
@@ -911,18 +939,26 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		if (!quiet) message("umxGSEM_GWAS: Vectorizing math for ", nSNP, " SNPs.")
 		diag_I_LD = diag(covstruc$I)
 		
-		# GC weighting
-		if (GC == "standard") {
-			se_factor = sweep(SE_SNP, 2, sqrt(diag_I_LD), "*")
-		} else if (GC == "conserv") {
-			se_factor = sweep(SE_SNP, 2, diag_I_LD, "*")
-		} else {
-			se_factor = SE_SNP
+		# Vectorized computation of robust sandwich SE and Q_SNP
+		# Construct constant sampling correlation/covariance matrix M
+		k = length(traits)
+		M = matrix(0, k, k)
+		for (x in 1:k) {
+			for (y in 1:k) {
+				if (GC == "conserv") {
+					if (x != y) M[x,y] = covstruc$I[x,y] * covstruc$I[x,x] * covstruc$I[y,y]
+					else M[x,x] = covstruc$I[x,x]^2
+				} else if (GC == "standard") {
+					if (x != y) M[x,y] = covstruc$I[x,y] * sqrt(covstruc$I[x,x]) * sqrt(covstruc$I[y,y])
+					else M[x,x] = covstruc$I[x,x]
+				} else {
+					M[x,y] = covstruc$I[x,y]
+				}
+			}
 		}
 		
-		# v_snp_diag_mat is nSNP x k
-		v_snp_diag_mat = (se_factor * varSNP)^2 
-		
+		# Bread of sandwich (H2_W_sum corresponds to bread inverse)
+		v_snp_diag_mat = sweep(SE_SNP^2, 2, diag(M), "*") * varSNP^2
 		W_mat = 1 / v_snp_diag_mat
 		H_mat = sweep(matrix(1, nSNP, length(traits)), 2, as.numeric(H_raw), "*") * varSNP
 		
@@ -931,19 +967,39 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		H_W_beta_sum = rowSums(H_mat * W_mat * S_obs_mat)
 		
 		out_est_vec = H_W_beta_sum / H2_W_sum
-		out_se_vec = sqrt(1 / H2_W_sum)
+		
+		# Robust SE (Sandwich)
+		if (uncertainty == "robustSE") {
+			G_mat = sweep(1 / SE_SNP, 2, as.numeric(H_raw) / diag(M), "*")
+			meat_vec = rowSums((G_mat %*% M) * G_mat)
+			out_se_vec = sqrt(meat_vec) / H2_W_sum
+			out_se_source = rep("analytic_robust", nSNP)
+		} else {
+			out_se_vec = sqrt(1 / H2_W_sum)
+			out_se_source = rep("analytic", nSNP)
+		}
+		
+		# Q_SNP Heterogeneity Statistic
+		R_mat = (beta_SNP - outer(out_est_vec, as.numeric(H_raw))) / SE_SNP
+		invM = solve(M)
+		out_Q_SNP_vec = rowSums((R_mat %*% invM) * R_mat)
+		df_Q = k - length(valid_targets)
+		out_Q_SNP_p_vec = stats::pchisq(out_Q_SNP_vec, df = df_Q, lower.tail = FALSE)
 		
 		out_est = out_est_vec
 		out_se = out_se_vec
+		out_Q_SNP = out_Q_SNP_vec
+		out_Q_SNP_p = out_Q_SNP_p_vec
 		out_status = rep(0L, nSNP)
 		out_fail = rep(FALSE, nSNP)
-		out_se_source = rep("analytic", nSNP)
 		
 		# Deal with bad SEs/NAs (where sum W -> 0 or NA)
 		bad_idx = is.na(out_est) | is.na(out_se) | !is.finite(out_est) | out_se <= 0
 		if (any(bad_idx)) {
 			out_est[bad_idx] = NA_real_
 			out_se[bad_idx] = NA_real_
+			out_Q_SNP[bad_idx] = NA_real_
+			out_Q_SNP_p[bad_idx] = NA_real_
 			out_status[bad_idx] = 3L
 			out_fail[bad_idx] = TRUE
 		}
@@ -986,19 +1042,38 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			
 			res = tryCatch({
 				b = solve(H_t_W_H) %*% H_t_W %*% S_obs_snp
-				se = sqrt(diag(solve(H_t_W_H)))
+				if (uncertainty == "robustSE") {
+					meat = H_t_W %*% wls_data$V_omx[snp_cov_names, snp_cov_names] %*% t(H_t_W)
+					cov_sandwich = solve(H_t_W_H) %*% meat %*% solve(H_t_W_H)
+					se = sqrt(diag(cov_sandwich))
+					se_source = "analytic_robust"
+				} else {
+					se = sqrt(diag(solve(H_t_W_H)))
+					se_source = "analytic"
+				}
+				
+				# Q_SNP Heterogeneity Statistic
+				residuals = S_obs_snp - (H %*% b)
+				V_snp = wls_data$V_omx[snp_cov_names, snp_cov_names]
+				if (!is.matrix(V_snp)) { V_snp = diag(V_snp, nrow=length(V_snp)) }
+				q_snp_val = as.numeric(t(residuals) %*% solve(V_snp) %*% residuals)
+				df_q = length(traits) - length(valid_targets)
+				q_snp_pval = stats::pchisq(q_snp_val, df = df_q, lower.tail = FALSE)
+				
 				# Extract target logic (usually "F1") matching xmu_gsem_extract_snp_path
 				target_idx = 1
 				if ("F1" %in% valid_targets) target_idx = which(valid_targets == "F1")
 				
-				list(est = b[target_idx, 1], se = se[target_idx], status = 0L)
-			}, error = function(e) list(est = NA_real_, se = NA_real_, status = 3L))
+				list(est = b[target_idx, 1], se = se[target_idx], q_snp = q_snp_val, q_snp_p = q_snp_pval, se_src = se_source, status = 0L)
+			}, error = function(e) list(est = NA_real_, se = NA_real_, q_snp = NA_real_, q_snp_p = NA_real_, se_src = NA_character_, status = 3L))
 			
 			out_est[i] = res$est
 			out_se[i] = res$se
+			out_Q_SNP[i] = res$q_snp
+			out_Q_SNP_p[i] = res$q_snp_p
 			out_status[i] = res$status
 			out_fail[i] = FALSE
-			out_se_source[i] = "analytic"
+			out_se_source[i] = res$se_src
 			
 			if (is.finite(out_est[i]) && is.finite(out_se[i]) && out_se[i] > 0) {
 				out_Z[i] = out_est[i] / out_se[i]
@@ -1070,7 +1145,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 				out_fail[i] = FALSE
 				out_status[i] = tryCatch(as.integer(fit$output$status$code), error = function(e) NA_integer_)
 				# F1 ~ SNP: RAM path from SNP to first latent
-				est_se = xmu_gsem_extract_snp_path(fit, traits)
+				est_se = xmu_gsem_extract_snp_path(fit, traits, snpEffect)
 				out_est[i] = est_se$est
 				out_se[i] = est_se$se
 				out_se_source[i] = if (!is.null(est_se$se_source)) est_se$se_source else NA_character_
@@ -1092,6 +1167,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		SNP = out_SNP, CHR = out_CHR, BP = out_BP, MAF = out_MAF,
 		A1 = out_A1, A2 = out_A2,
 		est = out_est, se = out_se, Z = out_Z, P = out_P,
+		Q_SNP = out_Q_SNP, Q_SNP_p = out_Q_SNP_p,
 		status = out_status, fail = out_fail, warning = out_warn,
 		se_source = out_se_source,
 		stringsAsFactors = FALSE

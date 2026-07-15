@@ -12,9 +12,9 @@ umxGSEM_GWAS(
   traits = NULL,
   GC = c("standard", "conserv", "none"),
   uncertainty = c("robustSE", "SE"),
-  SNPSE = 5e-04,
+  SnpSamplingError = 5e-04,
   maxSNPs = NULL,
-  snpEffect = NULL,
+  snpEffect = "SNP_to_F1",
   quiet = TRUE,
   force_fallback = FALSE
 )
@@ -27,21 +27,25 @@ See e.g. \link{Psych_LDSC} (\code{I} = intercepts / sample-overlap; also \code{N
 \item{SNPs}{Data frame from \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}} (columns \verb{beta.*}, \verb{se.*}, \code{MAF}, \code{SNP}, …).}
 
 \item{model}{Optional lavaan/umx string or mxModel. If \code{NULL}, builds
-\verb{F1 =~ NA*T1 + T2 + ...; F1 ~~ 1*F1; F1 ~ SNP} for traits in \code{S}.}
+A RAM model with one latent (F1) loading on all the traits, and  "SNP" loading on F1}
 
 \item{estimation}{\code{"DWLS"} (default), \code{"WLS"}, or \code{"ULS"}.}
 
-\item{traits}{Trait names (order must match \verb{beta.*} columns). Default: colnames of \code{S}.}
+\item{traits}{Trait names. Default: colnames of \code{covstruc$S}.}
 
 \item{GC}{Genomic control for SNP sampling variances: \code{"standard"}, \code{"conserv"}, or \code{"none"}.}
 
-\item{SNPSE}{SE used for SNP variance (treated as nearly fixed; default 5e-4).}
+\item{uncertainty}{Whether to compute the robust sandwich SE (\code{"robustSE"}, default) or naive SE (\code{"SE"}).}
+
+\item{SnpSamplingError}{SE used for SNP variance (treated as nearly fixed; default 5e-4).}
 
 \item{maxSNPs}{Optional limit for smoke tests.}
 
-\item{snpEffect}{Character; path to report (default \code{"F1 ~ SNP"} style match on A matrix).}
+\item{snpEffect}{Character; path label to extract from the model (default \code{"SNP_to_F1"}).}
 
 \item{quiet}{Suppress per-SNP messages.}
+
+\item{force_fallback}{Logical; internal use for testing to force the non-vectorized analytic path (default \code{FALSE}).}
 }
 \value{
 A data.frame of SNP results (\code{SNP}, \code{CHR}, \code{BP}, \code{MAF}, \code{est}, \code{se}, \code{Z}, \code{P}, \code{status}, …).
@@ -57,19 +61,25 @@ see e.g. \link{Psych_LDSC} for a packaged example and field definitions.
 }
 \examples{
 \dontrun{
+1. load data
 data(Psych_LDSC)
-# Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named SCZ_SCZ, BIP_SCZ, ...
+# Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named var_SCZ, poly_BIP_SCZ, ...
+
+# 2. build the snp data structure from your SNP data txt files, e.g.
 dir = "~/bin/umx/inst/developer/GenomicSEM"
 snps = umxGSEM_sumstats(
   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
   ref = file.path(dir, "reference.1000G.subset.txt"),
   trait.names = c("SCZ", "BIP", "MDD"), se.logit = TRUE
 )
-# Prefer full covstruc + traits= (correct V block). Do not use V[1:6, 1:6] on a 5-trait V.
-gwas = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
+
+# 3. Run the GWAS on your trait measurement model adding SNP effects into the latent structure
+GWAS = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
   traits = c("SCZ", "BIP", "MDD"), maxSNPs = 20)
-head(gwas)
-# Or subset by pair names: vn = xmu_gsem_vech_names(c("SCZ","BIP","MDD")); V[vn, vn]
+
+# 4. Examine results and make a new drug or something useful!
+head(GWAS)
+plot(GWAS)
 }
 }
 \seealso{
