@@ -16,10 +16,10 @@ test_that("prolific_scoring_stub works correctly", {
 		stringsAsFactors = FALSE
 	)
 	
-	# Capture the printed messages
-	output = capture.output({
+	# Capture the printed messages using testthat's capture_messages
+	output = capture_messages({
 		returnedDf = prolific_scoring_stub(dummyDf, deleteJunk = TRUE)
-	}, type = "message")
+	})
 	
 	# Verify that the age/sex conversion code is printed
 	expect_true(any(grepl("dummyDf\\$Age = as.numeric\\(dummyDf\\$Age\\)", output)))
@@ -27,8 +27,8 @@ test_that("prolific_scoring_stub works correctly", {
 	
 	# Verify scale options printed and sorted
 	expect_true(any(grepl("AntiNatalSTR =", output)))
-	# Verify the items are sorted negative -> neutral -> positive
-	expect_true(any(grepl("Neither agree nor disagree", output)))
+	# Verify the items are sorted negative -> neutral -> positive, specifically "Somewhat disagree" before "Neither agree nor disagree"
+	expect_true(any(grepl("AntiNatalSTR = c\\(\"Strongly disagree\", \"Somewhat disagree\", \"Neither agree nor disagree\", \"Somewhat agree\", \"Strongly agree\"\\)", output)))
 	
 	# Verify the umx_score_scale call output
 	expect_true(any(grepl("umx_score_scale\\(name = \"AntiNatal\"", output)))
@@ -46,3 +46,20 @@ test_that("prolific_scoring_stub works correctly", {
 	returnedDf2 = prolific_scoring_stub(dummyDf, deleteJunk = FALSE)
 	expect_true("StartDate" %in% names(returnedDf2))
 })
+
+test_that("prolific_scoring_stub handles scales with digits in the base name", {
+	# Create a dummy dataframe with Q1_2 through Q1_36
+	colNames = c("StartDate", "IPAddress", paste0("Q1_", 2:36))
+	dummyDf = as.data.frame(matrix("Strongly disagree", nrow = 2, ncol = length(colNames)))
+	names(dummyDf) = colNames
+	
+	output = capture_messages({
+		returnedDf = prolific_scoring_stub(dummyDf, deleteJunk = TRUE)
+	})
+	
+	# Verify that it grouped them into a single scale "Q1" with items 2:36
+	expect_true(any(grepl("Q1STR =", output)))
+	# The score call should contain base = "Q1_" and pos = 2:36
+	expect_true(any(grepl("umx_score_scale\\(name = \"Q1\", base = \"Q1_\", pos = 2:36", output)))
+})
+

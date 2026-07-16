@@ -63,7 +63,7 @@ test_that("Ordinal WLS Savalei indices match lavaan when umx fixes first loading
 	skip_if_not(!is.null(m1@output$implied_jacobian), "Current OpenMx engine does not support WLS Jacobians (Legacy OpenMx)")
 
 	expect_equal(m1@output$chiDoF, lav1@test[[1]]$df)
-	expect_false(m1$A$free[1, "f"])
+	expect_false(m1$A$free["x1", "f"])
 	expect_true(m1$S$free["f", "f"])
 	assertSavaleiParity(xmu_robust_WLS_fit(m1), lav1, "firstAt")
 })

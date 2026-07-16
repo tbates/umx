@@ -16,6 +16,7 @@ umxGSEM_GWAS(
   maxSNPs = NULL,
   snpEffect = "SNP_to_F1",
   quiet = TRUE,
+  fix_measurement = TRUE,
   force_fallback = FALSE
 )
 }
@@ -44,6 +45,8 @@ A RAM model with one latent (F1) loading on all the traits, and  "SNP" loading o
 \item{snpEffect}{Character; path label to extract from the model (default \code{"SNP_to_F1"}).}
 
 \item{quiet}{Suppress per-SNP messages.}
+
+\item{fix_measurement}{Logical; if TRUE (default), fixes the non-SNP measurement model parameters to their base optimized values when evaluating each SNP (only applies if analytic engine is bypassed).}
 
 \item{force_fallback}{Logical; internal use for testing to force the non-vectorized analytic path (default \code{FALSE}).}
 }

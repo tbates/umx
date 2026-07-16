@@ -55,6 +55,7 @@ Other Data Functions:
 \code{\link[=noNAs]{noNAs()}},
 \code{\link[=prolific_check_ID]{prolific_check_ID()}},
 \code{\link[=prolific_read_demog]{prolific_read_demog()}},
+\code{\link[=prolific_scoring_stub]{prolific_scoring_stub()}},
 \code{\link{umx}},
 \code{\link[=umxFactor]{umxFactor()}},
 \code{\link[=umxGSEM_sim_snps]{umxGSEM_sim_snps()}},

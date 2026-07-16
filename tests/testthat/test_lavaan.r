@@ -20,6 +20,11 @@ test_that("umxLav2RAM and umxRAM2Lav work", {
 			s_labs[grepl("^p[0-9]+_$", s_labs) | grepl("^_p[0-9]+_$", s_labs)] = NA
 			model$S$labels = s_labs
 		}
+		if (!is.null(model$M)) {
+			m_labs = model$M$labels
+			m_labs[grepl("^p[0-9]+_$", m_labs) | grepl("^_p[0-9]+_$", m_labs)] = NA
+			model$M$labels = m_labs
+		}
 		return(model)
 	}
 
