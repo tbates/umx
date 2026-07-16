@@ -4,6 +4,20 @@
 
 
 
+#' Subset a GenomicSEM Covariance Structure to Selected Traits
+#' 
+#' Filters a `covstruc` object containing genetic covariance ($S$), sampling 
+#' covariance ($V$), and optionally genomic control ($I$) matrices down to a 
+#' specified subset of traits. It ensures proper alignment of the vech-ordered 
+#' elements of the sampling covariance matrix $V$.
+#' 
+#' @param covstruc A list containing the genetic covariance matrix `$S`, the 
+#'   sampling covariance matrix `$V`, and optionally the genomic control matrix `$I`.
+#' @param keep_vars Character vector of trait names to retain in the subset.
+#' 
+#' @return A list in the same format as `covstruc` containing only the subsetted 
+#'   and aligned elements for the traits in `keep_vars`.
+#' @export
 xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
 	if (length(keep_vars) == 0) stop("No trait names requested for covstruc subset.")
 	keep_vars  = as.character(keep_vars)
@@ -71,8 +85,7 @@ xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
 #' Subsets, smooths, and packages the genetic covariance (`S`) and sampling
 #' covariance (`V`) matrices into OpenMx-compatible inputs for `mxFitFunctionWLS`.
 #' 
-#' @param S A genetic covariance matrix.
-#' @param V A sampling covariance matrix representing the asymptotic covariance of `vech(S)`.
+#' @param covstruc A list containing the genetic covariance matrix `$S` and its asymptotic covariance `$V`.
 #' @param keep_vars Character vector of traits to retain. Order must match model `manifestVars`.
 #' @param estimation Character string. Either `"DWLS"` (default), `"WLS"`, or `"ULS"`.
 #' @param smooth Logical. Should `S` and `V` be smoothed to nearest positive definite matrices if necessary? (Default `TRUE`).
@@ -83,8 +96,7 @@ xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
 #'   \item{triage}{The raw output from `xmu_gsem_triage` detailing what smoothing occurred.}
 #'   \item{keep_vars}{The valid subset of `keep_vars` actually processed.}
 #' @keywords internal
-xmu_gsem_prepare_WLS <- function(S, V, keep_vars, estimation = "DWLS", smooth = TRUE) {
-	covstruc = list(S = S, V = V)
+xmu_gsem_prepare_WLS <- function(covstruc, keep_vars, estimation = "DWLS", smooth = TRUE) {
 	sub = xmu_gsem_subset_covstruc(covstruc, keep_vars)
 	triageResult = xmu_gsem_triage(vMat = sub$V, sMat = sub$S, smooth = smooth)
 	V_omx = triageResult$V
@@ -353,6 +365,27 @@ xmu_gsem_sumstats_one_trait <- function(filename, ref, trait.name, se.logit = TR
 	out
 }
 
+#' Expand SNP Summary Statistics into a Full Covariance Matrix
+#' 
+#' Takes a baseline covariance structure (`covstruc`) of traits and incorporates the 
+#' summary statistics of a single SNP to produce a combined \eqn{(k+1) \times (k+1)} 
+#' covariance matrix (`S`) and corresponding asymptotic covariance matrix (`V`).
+#' 
+#' @param covstruc A list containing the base trait covariance matrix `$S` and its asymptotic covariance `$V`.
+#' @param beta_i Numeric vector of length $k$. The GWAS betas (effects) of the SNP on the $k$ traits.
+#' @param se_i Numeric vector of length $k$. The GWAS standard errors for the SNP on the $k$ traits.
+#' @param varSNP_i Numeric. The variance of the SNP (typically \eqn{2 \times MAF \times (1 - MAF)}).
+#' @param varSNPSE2 Numeric. The asymptotic variance of the SNP's variance estimate.
+#' @param GC Character. Genomic control method applied to the cross-trait sampling covariances. 
+#'   Options are `"standard"`, `"conserv"`, or `"none"`.
+#' @param coords Optional matrix mapping coordinates for the asymptotic covariance matrix.
+#' 
+#' @return A list containing:
+#' \itemize{
+#'   \item \code{S}: The expanded \eqn{(k+1) \times (k+1)} covariance matrix.
+#'   \item \code{V}: The expanded \eqn{((k+1)(k+2)/2) \times ((k+1)(k+2)/2)} asymptotic covariance matrix.
+#' }
+#' @export
 xmu_gsem_expand_snp <- function(covstruc, beta_i, se_i, varSNP_i, varSNPSE2, GC = "standard", coords = NULL) {
 	k = ncol(covstruc$S)
 	traits = colnames(covstruc$S)
@@ -419,6 +452,25 @@ xmu_gsem_expand_snp <- function(covstruc, beta_i, se_i, varSNP_i, varSNPSE2, GC 
 }
 
 
+#' Extract SNP Effect from a Fitted Model
+#' 
+#' Inspects a fitted `MxModel` (or model summary) and extracts the estimate and 
+#' standard error for the specified SNP path. Used internally by `umxGSEM_GWAS` 
+#' during the fallback/OpenMx standard loop.
+#' 
+#' @param fit A fitted `MxModel` or its summary object.
+#' @param traits Character vector of the base trait names.
+#' @param snpEffect Character string indicating the name of the parameter to extract. 
+#'   Defaults to `"SNP_to_F1"`.
+#' 
+#' @return A list containing:
+#' \itemize{
+#'   \item \code{est}: The parameter estimate.
+#'   \item \code{se}: The standard error of the estimate.
+#'   \item \code{se_source}: Character indicating the source of the SE (e.g., "openmx").
+#'   \item \code{lab}: The parameter label.
+#' }
+#' @export
 xmu_gsem_extract_snp_path <- function(fit, traits, snpEffect = "SNP_to_F1") {
 	# Prefer free A-path: F1 ~ SNP  (RAM: row = to = latent, col = from = SNP)
 	est = NA_real_
