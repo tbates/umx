@@ -763,6 +763,7 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' @param maxSNPs Optional limit for smoke tests.
 #' @param snpEffect Character; path label to extract from the model (default \code{"SNP_to_F1"}).
 #' @param quiet Suppress per-SNP messages.
+#' @param fix_measurement Logical; if TRUE (default), fixes the non-SNP measurement model parameters to their base optimized values when evaluating each SNP (only applies if analytic engine is bypassed).
 #' @param force_fallback Logical; internal use for testing to force the non-vectorized analytic path (default `FALSE`).
 #' @return A data.frame of SNP results (`SNP`, `CHR`, `BP`, `MAF`, `est`, `se`, `Z`, `P`, `status`, …).
 #' @export
@@ -791,7 +792,7 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' head(GWAS)
 #' plot(GWAS)
 #' }
-umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), uncertainty = c("robustSE", "SE"), SnpSamplingError = 5e-4, maxSNPs = NULL, snpEffect = "SNP_to_F1", quiet = TRUE, force_fallback = FALSE) {
+umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), uncertainty = c("robustSE", "SE"), SnpSamplingError = 5e-4, maxSNPs = NULL, snpEffect = "SNP_to_F1", quiet = TRUE, fix_measurement = TRUE, force_fallback = FALSE) {
 	estimation = match.arg(estimation)
 	GC = match.arg(GC)
 	uncertainty = match.arg(uncertainty)
@@ -1097,41 +1098,43 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 				
 				# Emulate the analytic engine: Freeze all measurement model parameters
 				# Only unfreeze paths directly involving the SNP, and reset their starting values to 0
-				if (!is.null(m$A)) {
-					is_snp_col = (colnames(m$A) == "SNP")
-					is_snp_row = (rownames(m$A) == "SNP")
-					if (any(is_snp_col) || any(is_snp_row)) {
-						snp_free_A = m$A$free
-						snp_free_A[!is_snp_row, !is_snp_col] = FALSE
-						m$A$free = snp_free_A
-						
-						# Reset SNP path starting values to 0 to escape local minima inherited from m_template
-						m$A$values[is_snp_row, ] = 0
-						m$A$values[, is_snp_col] = 0
+				if (fix_measurement) {
+					if (!is.null(m$A)) {
+						is_snp_col = (colnames(m$A) == "SNP")
+						is_snp_row = (rownames(m$A) == "SNP")
+						if (any(is_snp_col) || any(is_snp_row)) {
+							snp_free_A = m$A$free
+							snp_free_A[!is_snp_row, !is_snp_col] = FALSE
+							m$A$free = snp_free_A
+							
+							# Reset SNP path starting values to 0 to escape local minima inherited from m_template
+							m$A$values[is_snp_row, ] = 0
+							m$A$values[, is_snp_col] = 0
+						}
 					}
-				}
-				if (!is.null(m$S)) {
-					is_snp_col = (colnames(m$S) == "SNP")
-					is_snp_row = (rownames(m$S) == "SNP")
-					if (any(is_snp_col) || any(is_snp_row)) {
-						snp_free_S = m$S$free
-						snp_free_S[!is_snp_row, !is_snp_col] = FALSE
-						m$S$free = snp_free_S
-						
-						# Fix SNP variance to the observed variance
-						if (any(is_snp_row) && any(is_snp_col)) {
-							if (!is.null(wls_i$S) && "SNP" %in% rownames(wls_i$S)) {
-								m$S$values[is_snp_row, is_snp_col] = wls_i$S["SNP", "SNP"]
+					if (!is.null(m$S)) {
+						is_snp_col = (colnames(m$S) == "SNP")
+						is_snp_row = (rownames(m$S) == "SNP")
+						if (any(is_snp_col) || any(is_snp_row)) {
+							snp_free_S = m$S$free
+							snp_free_S[!is_snp_row, !is_snp_col] = FALSE
+							m$S$free = snp_free_S
+							
+							# Fix SNP variance to the observed variance
+							if (any(is_snp_row) && any(is_snp_col)) {
+								if (!is.null(wls_i$S) && "SNP" %in% rownames(wls_i$S)) {
+									m$S$values[is_snp_row, is_snp_col] = wls_i$S["SNP", "SNP"]
+								}
 							}
 						}
 					}
-				}
-				if (!is.null(m$M)) {
-					is_snp_col = (colnames(m$M) == "SNP")
-					if (any(is_snp_col)) {
-						snp_free_M = m$M$free
-						snp_free_M[, !is_snp_col] = FALSE
-						m$M$free = snp_free_M
+					if (!is.null(m$M)) {
+						is_snp_col = (colnames(m$M) == "SNP")
+						if (any(is_snp_col)) {
+							snp_free_M = m$M$free
+							snp_free_M[, !is_snp_col] = FALSE
+							m$M$free = snp_free_M
+						}
 					}
 				}
 				

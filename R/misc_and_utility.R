@@ -8533,3 +8533,217 @@ umx_complete_dollar <- function() {
 	}
 }
 
+
+#' prolific_scoring_stub
+#'
+#' Automatically generates a scoring stub for scales in a Prolific/Qualtrics dataset.
+#'
+#' @param df The data frame imported from Qualtrics/Prolific.
+#' @param deleteJunk Logical. If TRUE, return the dataframe with the metadata/junk columns removed. (default = FALSE)
+#' @return The data frame (invisibly). If deleteJunk = TRUE, junk columns are removed.
+#' @export
+#' @family Data Functions
+#' @references - \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+#' @examples
+#' \dontrun{
+#' prolific_scoring_stub(df, deleteJunk = FALSE)
+#' }
+prolific_scoring_stub <- function(df = NULL, deleteJunk = FALSE) {
+	if (is.null(df)) {
+		stop("Please provide a valid dataframe.")
+	}
+	
+	dfName = deparse(substitute(df))
+	if (length(dfName) > 1 || !grepl("^[a-zA-Z_][a-zA-Z0-9._]*$", dfName)) {
+		dfName = "df"
+	}
+	
+	qualtricsJunk = c(
+		"StartDate", "EndDate", "Status", "IPAddress", "Progress",
+		"Duration..in.seconds.", "Finished", "RecordedDate", "ResponseId",
+		"RecipientLastName", "RecipientFirstName", "RecipientEmail",
+		"ExternalReference", "LocationLatitude", "LocationLongitude",
+		"DistributionChannel", "UserLanguage"
+	)
+	
+	# Identify columns matching the metadata list or ^QID[0-9]+$
+	allColNames = names(df)
+	isJunk = allColNames %in% qualtricsJunk | grepl("^QID[0-9]+$", allColNames)
+	junkCols = allColNames[isJunk]
+	candidateCols = allColNames[!isJunk]
+	
+	# Helper to format contiguous/non-contiguous items
+	formatItems <- function(items) {
+		items = sort(as.integer(items))
+		if (length(items) == 0) {
+			return("NULL")
+		}
+		if (length(items) == 1) {
+			return(as.character(items))
+		}
+		if (all(diff(items) == 1)) {
+			return(paste0(items[1], ":", items[length(items)]))
+		} else {
+			return(paste0("c(", paste(items, collapse = ", "), ")"))
+		}
+	}
+	
+	# Helper to score Likert options for sorting
+	scoreOption <- function(opt) {
+		optLower = tolower(opt)
+		score = 0
+		
+		# Check polarity
+		isNeg = grepl("disagree|disapprove|false|no|never|rarely|unlikely|bad|negative", optLower)
+		isPos = grepl("agree|approve|true|yes|always|often|likely|good|positive", optLower)
+		isNeu = grepl("neither|neutral|somewhat|slightly|moderately|sometimes|undecided|uncertain|medium|average", optLower)
+		
+		if (isNeg) {
+			score = -10
+			if (grepl("strongly|very|extremely|completely|definitely", optLower)) {
+				score = score - 5
+			}
+			if (grepl("somewhat|slightly|moderately|mildly", optLower)) {
+				score = score + 5
+			}
+		} else if (isPos) {
+			score = 10
+			if (grepl("strongly|very|extremely|completely|definitely", optLower)) {
+				score = score + 5
+			}
+			if (grepl("somewhat|slightly|moderately|mildly", optLower)) {
+				score = score - 5
+			}
+		} else if (isNeu) {
+			score = 0
+		} else {
+			# Fallbacks for other scale types
+			if (grepl("never", optLower)) score = -10
+			if (grepl("rarely|seldom", optLower)) score = -5
+			if (grepl("sometimes|occasionally", optLower)) score = 0
+			if (grepl("often|frequently", optLower)) score = 5
+			if (grepl("always|constantly", optLower)) score = 10
+		}
+		return(score)
+	}
+	
+	# Helper to sort Likert options
+	smartSortOptions <- function(options) {
+		options = options[!is.na(options) & options != ""]
+		if (length(options) == 0) {
+			return(character(0))
+		}
+		asNums = suppressWarnings(as.numeric(options))
+		if (!any(is.na(asNums))) {
+			return(options[order(asNums)])
+		}
+		scores = sapply(options, scoreOption)
+		return(options[order(scores, options)])
+	}
+	
+	# Age and Sex detection and recoding
+	recodingCode = character(0)
+	ageIdx = grep("^age$", candidateCols, ignore.case = TRUE)
+	if (length(ageIdx) > 0) {
+		ageCol = candidateCols[ageIdx[1]]
+		if (is.character(df[[ageCol]]) || is.factor(df[[ageCol]])) {
+			recodingCode = c(recodingCode, paste0(dfName, "$", ageCol, " = as.numeric(", dfName, "$", ageCol, ")"))
+		}
+	}
+	sexIdx = grep("^sex$", candidateCols, ignore.case = TRUE)
+	if (length(sexIdx) > 0) {
+		sexCol = candidateCols[sexIdx[1]]
+		if (is.character(df[[sexCol]])) {
+			recodingCode = c(recodingCode, paste0(dfName, "$", sexCol, " = as.factor(", dfName, "$", sexCol, ")"))
+		}
+	}
+	
+	# Print age/sex recoding if found
+	if (length(recodingCode) > 0) {
+		message("# Recode demographic columns to numeric/factor")
+		message(paste(recodingCode, collapse = "\n"))
+		message("")
+	}
+	
+	# Extract bases and item numbers
+	matches = regexec("^(.*?[._-]?)([0-9]+)$", candidateCols)
+	matchedList = regmatches(candidateCols, matches)
+	
+	bases = character(0)
+	itemsByBase = list()
+	
+	for (i in seq_along(matchedList)) {
+		m = matchedList[[i]]
+		if (length(m) == 3) {
+			base = m[2]
+			itemNum = as.integer(m[3])
+			colName = candidateCols[i]
+			
+			if (!base %in% bases) {
+				bases = c(bases, base)
+				itemsByBase[[base]] = list(items = integer(0), columns = character(0))
+			}
+			itemsByBase[[base]]$items = c(itemsByBase[[base]]$items, itemNum)
+			itemsByBase[[base]]$columns = c(itemsByBase[[base]]$columns, colName)
+		}
+	}
+	
+	# Filter scale bases which have at least 2 items
+	detectedScales = character(0)
+	for (base in bases) {
+		items = itemsByBase[[base]]$items
+		cols = itemsByBase[[base]]$columns
+		if (length(items) >= 2) {
+			# Sort both items and corresponding column names by item number
+			ord = order(items)
+			items = items[ord]
+			cols = cols[ord]
+			
+			cleanName = gsub("[._-]$", "", base)
+			strVarName = paste0(cleanName, "STR")
+			
+			# Extract responses across all items in scale
+			allResponses = unlist(lapply(cols, function(c) as.character(df[[c]])))
+			uniqueResponses = unique(allResponses)
+			uniqueResponses = uniqueResponses[!is.na(uniqueResponses) & uniqueResponses != ""]
+			sortedResponses = smartSortOptions(uniqueResponses)
+			
+			# Generate options string
+			optStr = paste0(strVarName, " = ", paste(deparse(sortedResponses), collapse = ""))
+			
+			# Generate umx_score_scale call
+			posStr = formatItems(items)
+			maxVal = length(sortedResponses)
+			if (maxVal == 0) {
+				maxVal = "NULL"
+			}
+			
+			scoreCall = paste0(
+				dfName, " = umx_score_scale(name = ", deparse(cleanName),
+				", base = ", deparse(base),
+				", pos = ", posStr,
+				", rev = NULL, min = 1, max = ", maxVal,
+				", data = ", dfName,
+				", score = \"mean\", mapStrings = ", strVarName,
+				", na.rm = TRUE, alpha = TRUE)"
+			)
+			
+			message(optStr)
+			message(scoreCall)
+			message("")
+			detectedScales = c(detectedScales, cleanName)
+		}
+	}
+	
+	if (length(detectedScales) == 0) {
+		message("# No multi-item scales detected.")
+	}
+	
+	if (deleteJunk) {
+		remainingCols = allColNames[!allColNames %in% junkCols]
+		invisible(df[, remainingCols, drop = FALSE])
+	} else {
+		invisible(df)
+	}
+}
+
