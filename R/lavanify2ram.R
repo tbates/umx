@@ -60,7 +60,24 @@ umxRAM2Lav <- function(model) {
 	pars      = fdn[[2]]
 	spec      = c()
 	for (l1 in latents){
+		# Find the fixed-to-1 indicator, if any, to write it first.
+		# This ensures lavaan's auto.fix.first matches the original model's fixed indicator.
+		fixedIndicator = NULL
+		otherIndicators = c()
 		for (m1 in manifests){
+			hasPath = Amat$free[m1, l1] || (Amat$values[m1, l1] != 0)
+			if (hasPath) {
+				isFixedToOne = (!Amat$free[m1, l1]) && (Amat$values[m1, l1] == 1)
+				if (isFixedToOne && is.null(fixedIndicator)) {
+					fixedIndicator = m1
+				} else {
+					otherIndicators = c(otherIndicators, m1)
+				}
+			}
+		}
+		
+		allIndicators = c(fixedIndicator, otherIndicators)
+		for (m1 in allIndicators){
 			spec = xmu_lav_add_regression(spec, Amat, "=~", l1, m1)
 		}
 	}
