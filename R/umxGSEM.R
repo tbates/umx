@@ -435,7 +435,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	}
 	# Do NOT reorder keep_vars to colnames(covstruc$S): WLS cov must match model$manifestVars / F order.
 
-	prep = xmu_gsem_prepare_WLS(S = covstruc$S, V = covstruc$V, keep_vars = keep_vars, estimation = estimation, smooth = smooth)
+	prep = xmu_gsem_prepare_WLS(covstruc = covstruc, keep_vars = keep_vars, estimation = estimation, smooth = smooth)
 	S_subset = prep$S
 	V_omx    = prep$V_omx
 	W_omx    = prep$W_omx
@@ -465,7 +465,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		}
 		S_subset = S_subset[man, man, drop = FALSE]
 		# V/W are in OpenMx residual order for S_subset's previous trait order — rebuild if reordered
-		prep = xmu_gsem_prepare_WLS(S = covstruc$S, V = covstruc$V, keep_vars = man, estimation = estimation, smooth = smooth)
+		prep = xmu_gsem_prepare_WLS(covstruc = covstruc, keep_vars = man, estimation = estimation, smooth = smooth)
 		S_subset = prep$S
 		V_omx = prep$V_omx
 		W_omx = prep$W_omx
@@ -846,10 +846,9 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		)
 	} else if (is.character(model)) {
 		if (!grepl("SNP", model, fixed = TRUE)) {
-			warning("umxGSEM_GWAS: model string does not mention SNP; appending 'F1 ~ SNP'.", call. = FALSE)
-			model = paste0(model, "\nF1 ~ SNP\n")
+			stop("umxGSEM_GWAS: 'SNP' not found in your custom model string. Please explicitly specify the path (e.g., 'F1 ~ SNP' or 'Trait ~ SNP') in your model string.")
 		}
-		model = umxRAM("gwas_template", model, data = mxData(expn_dummy$S, type = "cov", numObs = 1), type = "cov", autoRun = FALSE)
+		model = umxRAM(model = model, name = "gwas_template", data = mxData(expn_dummy$S, type = "cov", numObs = 1), type = "cov", autoRun = FALSE)
 	}
 
 	if (!"SNP" %in% model$manifestVars) {
@@ -892,13 +891,18 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	if (estimation %in% c("DWLS", "WLS")) {
 		# Extract measurement model directly from m_template by dropping 'SNP'
 		keep = c(m_template$latentVars, traits)
-		A = mxMatrix("Full", nrow = length(keep), ncol = length(keep), values = m_template$A$values[keep, keep], free = m_template$A$free[keep, keep], labels = m_template$A$labels[keep, keep], dimnames = list(keep, keep), name = "A")
-		S_mat = mxMatrix("Symm", nrow = length(keep), ncol = length(keep), values = m_template$S$values[keep, keep], free = m_template$S$free[keep, keep], labels = m_template$S$labels[keep, keep], dimnames = list(keep, keep), name = "S")
+		A     = mxMatrix("Full", nrow = length(keep)  , ncol = length(keep), values = m_template$A$values[keep, keep]  , free = m_template$A$free[keep, keep], labels = m_template$A$labels[keep, keep], dimnames = list(keep, keep), name = "A")
+		S_mat = mxMatrix("Symm", nrow = length(keep)  , ncol = length(keep), values = m_template$S$values[keep, keep]  , free = m_template$S$free[keep, keep], labels = m_template$S$labels[keep, keep], dimnames = list(keep, keep), name = "S")
 		F_mat = mxMatrix("Full", nrow = length(traits), ncol = length(keep), values = m_template$F$values[traits, keep], free = FALSE, dimnames = list(traits, keep), name = "F")
 		
 		# 1. Fit measurement model on trait-only covstruc
 		m_meas = mxModel("meas_model", type = "RAM", manifestVars = traits, latentVars = m_template$latentVars, 
-			mxData(covstruc$S, type = "cov", numObs = 1), A, S_mat, F_mat, mxExpectationRAM("A", "S", "F"))
+			mxData(covstruc$S, type = "cov", numObs = 1), 
+			A, 
+			S_mat, 
+			F_mat, 
+			mxExpectationRAM("A", "S", "F")
+		)
 		
 		m_meas = tryCatch(umxGSEM(model = m_meas, covstruc = covstruc, estimation = estimation, autoRun = TRUE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
 		
@@ -1012,8 +1016,159 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		vectorized_ok = TRUE
 	}
 
+	cpp_loop_ok = FALSE
+	if (!vectorized_ok && estimation %in% c("DWLS", "WLS")) {
+		if (!quiet) message("umxGSEM_GWAS: Vectorizing math using OpenMx C++ loop for ", nSNP, " SNPs.")
+		
+		expn1 = xmu_gsem_expand_snp(covstruc, as.numeric(beta_SNP[1, ]), as.numeric(SE_SNP[1, ]), varSNP[1], varSNPSE2[1], GC = GC, coords = coords)
+		
+		wls_full = xmu_gsem_prepare_WLS(covstruc = expn1, keep_vars = c(traits, "SNP"), estimation = estimation)
+		
+		# Vectorize S_obs and W_obs
+		S_obs_k = as.matrix(beta_SNP)
+		S_obs = sweep(S_obs_k, 1, varSNP, "*")
+		
+		k_traits = length(traits)
+		M = matrix(0, k_traits, k_traits)
+		for (x in 1:k_traits) {
+			for (y in 1:k_traits) {
+				if (GC == "conserv") {
+					if (x != y) M[x,y] = covstruc$I[x,y] * covstruc$I[x,x] * covstruc$I[y,y]
+					else M[x,x] = covstruc$I[x,x]^2
+				} else if (GC == "standard") {
+					if (x != y) M[x,y] = covstruc$I[x,y] * sqrt(covstruc$I[x,x]) * sqrt(covstruc$I[y,y])
+					else M[x,x] = covstruc$I[x,x]
+				} else {
+					M[x,y] = covstruc$I[x,y]
+				}
+			}
+		}
+		M_inv = solve(M)
+		se_mat = as.matrix(SE_SNP)
+		inv_se = 1 / se_mat
+		
+		W_obs = matrix(0, nrow=nSNP, ncol=k_traits*k_traits)
+		for(j in 1:k_traits) {
+			for(l in 1:k_traits) {
+				col_idx = l + (j - 1) * k_traits
+				W_obs[, col_idx] = M_inv[l, j] * inv_se[, l] * inv_se[, j] / (varSNP^2)
+			}
+		}
+		
+		W_varSNP = 1 / varSNPSE2
+		if (length(W_varSNP) == 1) W_varSNP = rep(W_varSNP, nSNP)
+		
+		m = m_template
+		wls_data = mxData(
+			wls_full$S, type="cov", numObs = covstruc$N[1], 
+			acov = wls_full$V_omx, fullWeight = wls_full$W_omx
+		)
+		m = mxModel(m, wls_data, mxFitFunctionWLS(type = estimation))
+
+		
+		if (fix_measurement) {
+			if (!is.null(m$A)) {
+				is_snp_col = (colnames(m$A) == "SNP")
+				is_snp_row = (rownames(m$A) == "SNP")
+				if (any(is_snp_col) || any(is_snp_row)) {
+					snp_free_A = m$A$free
+					snp_free_A[!is_snp_row, !is_snp_col] = FALSE
+					m$A$free = snp_free_A
+					
+					m$A$values[is_snp_row, ] = 0
+					m$A$values[, is_snp_col] = 0
+				}
+			}
+			if (!is.null(m$S)) {
+				is_snp_col = (colnames(m$S) == "SNP")
+				is_snp_row = (rownames(m$S) == "SNP")
+				if (any(is_snp_col) || any(is_snp_row)) {
+					snp_free_S = m$S$free
+					snp_free_S[!is_snp_row, !is_snp_col] = FALSE
+					m$S$free = snp_free_S
+					
+					if (any(is_snp_row) && any(is_snp_col)) {
+						if (!is.null(wls_full$S) && "SNP" %in% rownames(wls_full$S)) {
+							m$S$values[is_snp_row, is_snp_col] = wls_full$S["SNP", "SNP"]
+						}
+					}
+				}
+			}
+			if (!is.null(m$M)) {
+				is_snp_col = (colnames(m$M) == "SNP")
+				if (any(is_snp_col)) {
+					snp_free_M = m$M$free
+					snp_free_M[, !is_snp_col] = FALSE
+					m$M$free = snp_free_M
+				}
+			}
+		}
+		
+		subplan = mxComputeSequence(list(
+			mxComputeGradientDescent(),
+			mxComputeStandardError()
+		))
+		
+		target_params = rep(NA_character_, length(valid_targets))
+		if (!is.null(m$A) && "SNP" %in% colnames(m$A)) {
+			for (k in seq_along(valid_targets)) {
+				lab = m$A$labels[valid_targets[k], "SNP"]
+				if (!is.na(lab) && nzchar(lab)) {
+					target_params[k] = lab
+				} else {
+					target_params[k] = valid_targets[k]
+				}
+			}
+		} else {
+			target_params = valid_targets
+		}
+
+		m = mxModel(m, mxComputeGSEMLoop(
+			step = subplan,
+			S_obs = S_obs,
+			W_obs = W_obs,
+			W_varSNP = W_varSNP,
+			targets = target_params
+		))
+		
+		fit = mxRun(m, silent = FALSE, suppressWarnings = FALSE)
+		
+		print("DEBUG: class(fit)")
+		print(class(fit))
+		
+		out_SNP = as.character(SNPs$SNP)
+		
+		print("DEBUG: str(fit$compute$output)")
+		print(str(fit$compute$output))
+		
+		if (!is.null(fit$compute$output$gsem_est)) {
+			est_mat = fit$compute$output$gsem_est
+			se_mat = fit$compute$output$gsem_se
+			status_vec = fit$compute$output$gsem_status
+			
+			out_est = est_mat[, 1]
+			out_se = se_mat[, 1]
+			out_status = status_vec
+			out_fail = (out_status != 0L & out_status != 1L)
+			out_se_source = rep("cpp_loop", nSNP)
+			
+			bad_se = is.finite(out_status) & out_fail & (is.finite(out_se) & is.finite(out_est) & out_se < 1e-3 * pmax(1e-6, abs(out_est)))
+			out_se[bad_se] = NA_real_
+			out_se_source[bad_se] = "dropped_bad_status"
+			
+			valid_Z = is.finite(out_est) & is.finite(out_se) & out_se > 0
+			out_Z[valid_Z] = out_est[valid_Z] / out_se[valid_Z]
+			out_P[valid_Z] = 2 * stats::pnorm(-abs(out_Z[valid_Z]))
+		} else {
+			out_fail = rep(TRUE, nSNP)
+			out_warn = rep("C++ loop failed to return results", nSNP)
+		}
+		
+		cpp_loop_ok = TRUE
+	}
+
 	for (i in seq_len(nSNP)) {
-		if (vectorized_ok) next
+		if (vectorized_ok || cpp_loop_ok) next
 		
 		if (!quiet && (i == 1L || i %% 5000L == 0L || i == nSNP)) {
 			message("umxGSEM_GWAS: SNP ", i, " / ", nSNP)
@@ -1029,7 +1184,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		)
 		
 		if (analytic_ok) {
-			wls_data = xmu_gsem_prepare_WLS(expn$S, expn$V, c("SNP", traits), estimation)
+			wls_data = xmu_gsem_prepare_WLS(covstruc = expn, keep_vars = c("SNP", traits), estimation = estimation)
 			all_names = colnames(wls_data$V_omx)
 			snp_cov_names = all_names[grepl("poly_", all_names) & grepl("SNP", all_names)]
 			
@@ -1082,16 +1237,17 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			}
 		} else {
 			fit = tryCatch({
-				m = m_template
 				m = mxModel(m, name = paste0("gwas_", i))
 				if (estimation %in% c("DWLS", "WLS")) {
-					wls_i = xmu_gsem_prepare_WLS(expn$S, expn$V, m_template$manifestVars, estimation)
-					if (estimation == "DWLS") {
-						m = mxModel(m, mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx, useWeight = wls_i$W_omx)))
+					wls_i = xmu_gsem_prepare_WLS(covstruc = expn, keep_vars = m_template$manifestVars, estimation = estimation)
+					if (!is.null(wls_i$W_omx)) {
+						wls_data = mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx, useWeight = wls_i$W_omx))
 					} else {
-						m = mxModel(m, mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx)))
+						wls_data = mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx))
 					}
-				} else {
+					m = mxModel(m, wls_data, mxFitFunctionWLS(type = estimation))
+				}
+ else {
 					S_subset = expn$S[m_template$manifestVars, m_template$manifestVars, drop=FALSE]
 					m = mxModel(m, mxData(S_subset, type = "cov", numObs = covstruc$N[1]))
 				}
