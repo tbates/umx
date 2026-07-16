@@ -8593,12 +8593,14 @@ prolific_scoring_stub <- function(df = NULL, deleteJunk = FALSE) {
 		optLower = tolower(opt)
 		score = 0
 		
-		# Check polarity
+		# Check neutral first to prevent "Neither agree nor disagree" matching "disagree"
+		isNeu = grepl("neither|neutral|undecided|uncertain|dont know|don't know|no opinion|unopinionated", optLower)
 		isNeg = grepl("disagree|disapprove|false|no|never|rarely|unlikely|bad|negative", optLower)
 		isPos = grepl("agree|approve|true|yes|always|often|likely|good|positive", optLower)
-		isNeu = grepl("neither|neutral|somewhat|slightly|moderately|sometimes|undecided|uncertain|medium|average", optLower)
 		
-		if (isNeg) {
+		if (isNeu) {
+			score = 0
+		} else if (isNeg) {
 			score = -10
 			if (grepl("strongly|very|extremely|completely|definitely", optLower)) {
 				score = score - 5
@@ -8614,8 +8616,6 @@ prolific_scoring_stub <- function(df = NULL, deleteJunk = FALSE) {
 			if (grepl("somewhat|slightly|moderately|mildly", optLower)) {
 				score = score - 5
 			}
-		} else if (isNeu) {
-			score = 0
 		} else {
 			# Fallbacks for other scale types
 			if (grepl("never", optLower)) score = -10
@@ -8666,26 +8666,40 @@ prolific_scoring_stub <- function(df = NULL, deleteJunk = FALSE) {
 	}
 	
 	# Extract bases and item numbers
-	matches = regexec("^(.*?[._-]?)([0-9]+)$", candidateCols)
-	matchedList = regmatches(candidateCols, matches)
-	
 	bases = character(0)
 	itemsByBase = list()
 	
-	for (i in seq_along(matchedList)) {
-		m = matchedList[[i]]
+	for (i in seq_along(candidateCols)) {
+		colName = candidateCols[i]
+		# 1. Try matching with a delimiter followed by digits at the end
+		m = regmatches(colName, regexec("^(.*[._-])([0-9]+)$", colName))[[1]]
 		if (length(m) == 3) {
 			base = m[2]
 			itemNum = as.integer(m[3])
-			colName = candidateCols[i]
-			
-			if (!base %in% bases) {
-				bases = c(bases, base)
-				itemsByBase[[base]] = list(items = integer(0), columns = character(0))
+		} else {
+			# 2. Try matching with non-digits followed by digits at the end
+			m = regmatches(colName, regexec("^([^0-9]+)([0-9]+)$", colName))[[1]]
+			if (length(m) == 3) {
+				base = m[2]
+				itemNum = as.integer(m[3])
+			} else {
+				# 3. Fallback: match any characters followed by digits
+				m = regmatches(colName, regexec("^(.*)([0-9]+)$", colName))[[1]]
+				if (length(m) == 3) {
+					base = m[2]
+					itemNum = as.integer(m[3])
+				} else {
+					next
+				}
 			}
-			itemsByBase[[base]]$items = c(itemsByBase[[base]]$items, itemNum)
-			itemsByBase[[base]]$columns = c(itemsByBase[[base]]$columns, colName)
 		}
+		
+		if (!base %in% bases) {
+			bases = c(bases, base)
+			itemsByBase[[base]] = list(items = integer(0), columns = character(0))
+		}
+		itemsByBase[[base]]$items = c(itemsByBase[[base]]$items, itemNum)
+		itemsByBase[[base]]$columns = c(itemsByBase[[base]]$columns, colName)
 	}
 	
 	# Filter scale bases which have at least 2 items
