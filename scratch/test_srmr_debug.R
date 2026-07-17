@@ -32,7 +32,7 @@ imxCalculateSRMR_debug = function(model) {
 	if (!is.null(model$data)) {
 		if (!is.null(model$data$observedStats$cov)) {
 			obsCov = model$data$observedStats$cov
-		} else if (model$data$type %in% c("cov", "acov")) {
+		} else if (model$data$type %in% c("cov", "cor")) {
 			obsCov = model$data$observed
 		} else if (identical(model$data$type, "raw")) {
 			obsData = model$data$observed

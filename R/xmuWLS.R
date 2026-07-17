@@ -259,7 +259,7 @@ xmu_WLS_align_jacobian <- function(jacMat, asymCovMat, numCovsVal) {
 #' Extract WLS useWeight (W) and asymCov (Gamma) from an MxModel
 #'
 #' **Modern only:** reads \code{observedStats = list(cov=, useWeight=, asymCov=)}.
-#' OpenMx legacy \code{type="acov"} / \code{MxDataLegacyWLS} is refused (name trap).
+#' OpenMx legacy \code{type="acov"} / \code{"none"} / \code{MxDataLegacyWLS} is refused forever.
 #'
 #' @param model An [OpenMx::mxModel()] with data.
 #' @param stop_if_missing If TRUE, stop when either matrix is missing.
@@ -276,11 +276,11 @@ xmu_wls_extract_WV <- function(model, stop_if_missing = TRUE) {
 		return(list(useWeight = NULL, asymCov = NULL, cov = NULL))
 	}
 	data = model$data
-	if (inherits(data, "MxDataLegacyWLS") || identical(tryCatch(data$type, error = function(e) NULL), "acov")) {
+	if (exists("xmu_is_legacy_acov_data", mode = "function") && xmu_is_legacy_acov_data(data)) {
 		if (exists("xmu_stop_legacy_acov", mode = "function")) {
 			xmu_stop_legacy_acov("xmu_wls_extract_WV")
 		}
-		stop("xmu_wls_extract_WV: type='acov' / MxDataLegacyWLS is not supported. Use observedStats useWeight + asymCov.", call. = FALSE)
+		stop("xmu_wls_extract_WV: legacy WLS data API is not supported. Use type='summary' with observedStats useWeight + asymCov.", call. = FALSE)
 	}
 
 	os = NULL
@@ -701,7 +701,7 @@ xmu_robust_WLS_fit <- function(model) {
 
 	# Step E/F: Native R baseline WLS fit calculation (aligned moments)
 	# Extract observed covariance matrix and means (if any).
-	# Modern summary WLS / GSEM: type is often "none" with cov only in observedStats.
+	# Modern summary WLS / GSEM: type is "summary" with cov in observedStats.
 	obsCov = NULL
 	obsMeans = NULL
 	obsThresholds = NULL
@@ -733,7 +733,7 @@ xmu_robust_WLS_fit <- function(model) {
 			}
 		}
 	} else {
-		# cov / means data, or type "none" summary WLS
+		# cov / means data, or type "summary" with cov only in observedStats
 		if (is.null(obsCov)) {
 			obsCov = model$data$observed
 		}
@@ -1060,7 +1060,7 @@ xmu_is_wls <- function(model) {
 	if (!is.null(model$fitfunction) && inherits(model$fitfunction, "MxFitFunctionWLS")) {
 		return(TRUE)
 	}
-	# 2. Modern summary WLS: observedStats with useWeight / asymCov (type often "none")
+	# 2. Modern summary WLS: observedStats with useWeight / asymCov (type = "summary")
 	if (!is.null(model$data)) {
 		if (xmu_is_legacy_acov_data(model$data)) {
 			xmu_stop_legacy_acov("xmu_is_wls")

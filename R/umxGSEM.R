@@ -326,16 +326,17 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' vech(S)). OpenMx WLS consumes these via the **modern** `mxData` interface only:
 #'
 #' ```
-#' mxData(numObs = 1,
+#' mxData(numObs = 1, type = "summary",
 #'        observedStats = list(cov = S, useWeight = W, asymCov = V))
 #' ```
 #'
 #' with `W = diag(1/diag(V))` for DWLS. `umxGSEM` also reorders `V` into OpenMx residual order
 #' (all variances, then free covariances) and sets dimnames `var_*` / `poly_*_*`.
 #'
-#' **umx hard-refuses** OpenMx `type = "acov"` / `MxDataLegacyWLS` data (historical name trap:
-#' `acov` meant useWeight; `fullWeight` meant asymCov). Do not construct that form; use
-#' `observedStats` as above or raw data + `type = "DWLS"`.
+#' **umx hard-refuses forever** the removed OpenMx WLS data interface
+#' (`type = "acov"` / `"none"`, `MxDataLegacyWLS`, top-level `acov=`/`fullWeight=`, or
+#' `observedStats$acov`/`$fullWeight` — historical name trap: `acov` meant useWeight).
+#' Use `observedStats` as above or raw data + `type = "DWLS"`.
 #'
 #' @param model A lavaan-style model string (also accepts umx `~=` loadings), **or** an existing
 #'   [OpenMx::mxModel()] / [umxRAM()] RAM model whose `manifestVars` name traits in `S`.
@@ -471,7 +472,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		W_omx = prep$W_omx
 		triageResult = prep$triage
 	}
-	wls_data    = mxData(numObs = numObs, observedStats = list(cov = S_subset, useWeight = W_omx, asymCov = V_omx))
+	wls_data    = mxData(numObs = numObs, type = "summary", observedStats = list(cov = S_subset, useWeight = W_omx, asymCov = V_omx))
 	final_model = mxModel(final_model, wls_data)
 	final_model = mxModel(final_model, mxFitFunctionWLS(type = estimation))
 	final_model = xmu_gsem_bound_residuals(final_model, lbound = 1e-8)
@@ -1060,8 +1061,13 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		
 		m = m_template
 		wls_data = mxData(
-			wls_full$S, type="cov", numObs = covstruc$N[1], 
-			acov = wls_full$V_omx, fullWeight = wls_full$W_omx
+			numObs = covstruc$N[1],
+			type = "summary",
+			observedStats = list(
+				cov = wls_full$S,
+				useWeight = wls_full$W_omx,
+				asymCov = wls_full$V_omx
+			)
 		)
 		m = mxModel(m, wls_data, mxFitFunctionWLS(type = estimation))
 
@@ -1241,9 +1247,9 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 				if (estimation %in% c("DWLS", "WLS")) {
 					wls_i = xmu_gsem_prepare_WLS(covstruc = expn, keep_vars = m_template$manifestVars, estimation = estimation)
 					if (!is.null(wls_i$W_omx)) {
-						wls_data = mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx, useWeight = wls_i$W_omx))
+						wls_data = mxData(numObs = covstruc$N[1], type = "summary", observedStats = list(cov = wls_i$S, useWeight = wls_i$W_omx, asymCov = wls_i$V_omx))
 					} else {
-						wls_data = mxData(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx))
+						wls_data = mxData(numObs = covstruc$N[1], type = "summary", observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx))
 					}
 					m = mxModel(m, wls_data, mxFitFunctionWLS(type = estimation))
 				}

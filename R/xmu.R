@@ -537,7 +537,7 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 			if (xmu_is_legacy_acov_data(data)) {
 				xmu_stop_legacy_acov("xmu_check_needs_means")
 			}
-			# Modern summary WLS via observedStats (type often "none")
+			# Modern summary WLS via observedStats (type = "summary")
 			if (!is.null(data$observedStats$useWeight) || !is.null(data$observedStats$asymCov) || !is.null(data$observedStats$cov)) {
 				hasMeansSlot = !is.null(data$means) && length(data$means) > 0 && !all(is.na(data$means))
 				hasMeansOs = !is.null(data$observedStats$means) && !all(is.na(data$observedStats$means))
@@ -675,14 +675,16 @@ xmu_gsem_vech_names <- function(traitNames) {
 }
 
 
-# Hard refusal of OpenMx legacy type='acov' / MxDataLegacyWLS (name-trap for useWeight/asymCov).
+# Hard refusal of OpenMx legacy WLS data API (removed forever; modern route only).
 xmu_stop_legacy_acov <- function(where = "umx") {
 	stop(
-		where, " does not support OpenMx type='acov' / MxDataLegacyWLS data.\n",
+		where, " does not support the removed OpenMx WLS data interface ",
+		"(type='acov' / type='none' / MxDataLegacyWLS / observedStats$acov|$fullWeight).\n",
 		"  That interface historically swapped names (acov meant useWeight; fullWeight meant asymCov).\n",
 		"  Use either:\n",
 		"    (1) raw data + type = 'WLS'|'DWLS'|'ULS' in umxRAM / twin models, or\n",
-		"    (2) mxData(numObs = N, observedStats = list(cov = S, useWeight = W, asymCov = V))\n",
+		"    (2) mxData(numObs = N, type = 'summary',\n",
+		"              observedStats = list(cov = S, useWeight = W, asymCov = V))\n",
 		"  For genomic SEM see ?umxGSEM. For OpenMx summary WLS see ?mxData / ?mxFitFunctionWLS.",
 		call. = FALSE
 	)
@@ -699,7 +701,16 @@ xmu_is_legacy_acov_data <- function(data) {
 	tp = tryCatch({
 		if (isS4(data) && .hasSlot(data, "type")) data@type else data$type
 	}, error = function(e) NULL)
-	identical(tp, "acov")
+	if (identical(tp, "acov") || identical(tp, "none")) {
+		return(TRUE)
+	}
+	os = tryCatch({
+		if (isS4(data) && .hasSlot(data, "observedStats")) data@observedStats else data$observedStats
+	}, error = function(e) NULL)
+	if (!is.null(os) && (!is.null(os$acov) || !is.null(os$fullWeight))) {
+		return(TRUE)
+	}
+	FALSE
 }
 
 # Subset modern observedStats cov / useWeight / asymCov to selected manifests
@@ -787,7 +798,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		# Pass strings through
 		return(data)
 	}
-	# Refuse OpenMx legacy type='acov' before any name/column helpers touch it
+	# Refuse removed OpenMx WLS data API before any name/column helpers touch it
 	if (xmu_is_legacy_acov_data(data)) {
 		xmu_stop_legacy_acov("xmu_make_mxData")
 	}
@@ -874,7 +885,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				xmu_check_variance(data$observed[, setdiff(namesNeeded, fullCovs), drop = FALSE])
 				# Trim down the data to include only the requested columns 
 				data$observed = data$observed[, namesNeeded, drop = FALSE]
-			} else if (!is.null(data$observedStats) && length(data$observedStats) > 0) {
+			} else if (identical(data$type, "summary") || (!is.null(data$observedStats) && length(data$observedStats) > 0)) {
 				# Modern summary WLS: observedStats list(cov, useWeight, asymCov)
 				data = xmu_subset_modern_wls_observedStats(data, namesNeeded)
 			}

@@ -4110,7 +4110,7 @@ umx_means <- function(df, ordVar = 0, na.rm = TRUE) {
 #' umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
 #' umx_is_MxData(mxData(na.omit(twinData[, c("wt1", "wt2")]), type = "raw"))
 umx_is_MxData <- function(x) {
-	# MxDataLegacyWLS intentionally omitted: umx refuses type='acov' data
+	# MxDataLegacyWLS intentionally omitted: umx hard-refuses removed type='acov'/'none' WLS data
 	if(class(x)[1] %in%  c("MxNonNullData", "MxDataStatic") ) {
 		TRUE
 	} else {
