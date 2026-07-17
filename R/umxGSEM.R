@@ -877,14 +877,21 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	oldAuto = getOption("umx_auto_plot")
 	options(umx_auto_plot = FALSE)
 	on.exit(options(umx_auto_plot = oldAuto), add = TRUE)
+	oldSilent = umx_set_silent(TRUE, silent = TRUE)
+	on.exit(umx_set_silent(oldSilent, silent = TRUE), add = TRUE)
 
 	# umxGSEM natively handles WLS preparation when estimation = "DWLS" or "WLS"
-	m_template = tryCatch(umxGSEM(model = model, S = expn_dummy$S, V = expn_dummy$V, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
+	m_template_err = NULL
+	m_template = tryCatch(
+		umxGSEM(model = model, S = expn_dummy$S, V = expn_dummy$V, estimation = estimation, autoRun = FALSE, quiet = TRUE, std.lv = FALSE),
+		error = function(e) { m_template_err <<- conditionMessage(e); NULL }
+	)
 	
 	if (is.null(m_template)) {
-		stop("Failed to build GWAS template model. Please check your model specification.")
+		msg = if (is.null(m_template_err) || !nzchar(m_template_err)) "unknown error" else m_template_err
+		stop("Failed to build GWAS template model: ", msg, call. = FALSE)
 	}
-	m_template = mxTryHard(m_template, extraTries = 5, silent = TRUE)
+	m_template = suppressWarnings(mxTryHard(m_template, extraTries = 5, silent = TRUE, checkHess = FALSE, bestInitsOutput = FALSE))
 
 	# Pre-flight for Analytic WLS
 	analytic_ok = FALSE
@@ -896,7 +903,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		S_mat = mxMatrix("Symm", nrow = length(keep)  , ncol = length(keep), values = m_template$S$values[keep, keep]  , free = m_template$S$free[keep, keep], labels = m_template$S$labels[keep, keep], dimnames = list(keep, keep), name = "S")
 		F_mat = mxMatrix("Full", nrow = length(traits), ncol = length(keep), values = m_template$F$values[traits, keep], free = FALSE, dimnames = list(traits, keep), name = "F")
 		
-		# 1. Fit measurement model on trait-only covstruc
+		# 1. Fit measurement model on trait-only covstruc (no umxSummary: autoRun=FALSE + silent tryHard)
 		m_meas = mxModel("meas_model", type = "RAM", manifestVars = traits, latentVars = m_template$latentVars, 
 			mxData(covstruc$S, type = "cov", numObs = 1), 
 			A, 
@@ -905,7 +912,11 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			mxExpectationRAM("A", "S", "F")
 		)
 		
-		m_meas = tryCatch(umxGSEM(model = m_meas, covstruc = covstruc, estimation = estimation, autoRun = TRUE, quiet = TRUE, std.lv = FALSE), error = function(e) NULL)
+		m_meas = tryCatch({
+			mm = umxGSEM(model = m_meas, covstruc = covstruc, estimation = estimation, autoRun = FALSE, tryHard = "no", quiet = TRUE, std.lv = FALSE)
+			# Point estimates suffice for H_raw; do not require a usable Hessian
+			suppressWarnings(mxTryHard(mm, extraTries = 5, silent = TRUE, checkHess = FALSE, bestInitsOutput = FALSE))
+		}, error = function(e) NULL)
 		
 		# 2. Extract targets using a dummy template model
 		if (!is.null(m_meas) && inherits(m_meas, "MxModel")) {
@@ -1018,12 +1029,13 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	}
 
 	cpp_loop_ok = FALSE
-	if (!vectorized_ok && estimation %in% c("DWLS", "WLS")) {
-		if (!quiet) message("umxGSEM_GWAS: Vectorizing math using OpenMx C++ loop for ", nSNP, " SNPs.")
+	hasCppLoop = exists("mxComputeGSEMLoop", mode = "function")
+	if (!vectorized_ok && estimation %in% c("DWLS", "WLS") && hasCppLoop) {
+		if (!quiet) message("umxGSEM_GWAS: OpenMx C++ SNP loop for ", nSNP, " SNPs.")
 		
 		expn1 = xmu_gsem_expand_snp(covstruc, as.numeric(beta_SNP[1, ]), as.numeric(SE_SNP[1, ]), varSNP[1], varSNPSE2[1], GC = GC, coords = coords)
 		
-		wls_full = xmu_gsem_prepare_WLS(covstruc = expn1, keep_vars = c(traits, "SNP"), estimation = estimation)
+		wls_full = xmu_gsem_prepare_WLS(S = expn1$S, V = expn1$V, keep_vars = c(traits, "SNP"), estimation = estimation)
 		
 		# Vectorize S_obs and W_obs
 		S_obs_k = as.matrix(beta_SNP)
@@ -1117,37 +1129,33 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		
 		target_params = rep(NA_character_, length(valid_targets))
 		if (!is.null(m$A) && "SNP" %in% colnames(m$A)) {
-			for (k in seq_along(valid_targets)) {
-				lab = m$A$labels[valid_targets[k], "SNP"]
+			for (kk in seq_along(valid_targets)) {
+				lab = m$A$labels[valid_targets[kk], "SNP"]
 				if (!is.na(lab) && nzchar(lab)) {
-					target_params[k] = lab
+					target_params[kk] = lab
 				} else {
-					target_params[k] = valid_targets[k]
+					target_params[kk] = valid_targets[kk]
 				}
 			}
 		} else {
 			target_params = valid_targets
 		}
 
-		m = mxModel(m, mxComputeGSEMLoop(
+		loopArgs = list(
 			step = subplan,
 			S_obs = S_obs,
 			W_obs = W_obs,
 			W_varSNP = W_varSNP,
 			targets = target_params
-		))
+		)
+		if ("varSNP" %in% names(formals(mxComputeGSEMLoop))) {
+			loopArgs$varSNP = as.numeric(varSNP)
+		}
+		m = mxModel(m, do.call(mxComputeGSEMLoop, loopArgs))
 		
-		fit = mxRun(m, silent = FALSE, suppressWarnings = FALSE)
+		fit = tryCatch(mxRun(m, silent = TRUE, suppressWarnings = TRUE), error = function(e) e)
 		
-		print("DEBUG: class(fit)")
-		print(class(fit))
-		
-		out_SNP = as.character(SNPs$SNP)
-		
-		print("DEBUG: str(fit$compute$output)")
-		print(str(fit$compute$output))
-		
-		if (!is.null(fit$compute$output$gsem_est)) {
+		if (!inherits(fit, "error") && !is.null(fit$compute$output$gsem_est)) {
 			est_mat = fit$compute$output$gsem_est
 			se_mat = fit$compute$output$gsem_se
 			status_vec = fit$compute$output$gsem_status
@@ -1165,12 +1173,13 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			valid_Z = is.finite(out_est) & is.finite(out_se) & out_se > 0
 			out_Z[valid_Z] = out_est[valid_Z] / out_se[valid_Z]
 			out_P[valid_Z] = 2 * stats::pnorm(-abs(out_Z[valid_Z]))
-		} else {
-			out_fail = rep(TRUE, nSNP)
-			out_warn = rep("C++ loop failed to return results", nSNP)
+			cpp_loop_ok = TRUE
+		} else if (!quiet) {
+			msg = if (inherits(fit, "error")) conditionMessage(fit) else "C++ loop returned no gsem_est"
+			message("umxGSEM_GWAS: C++ SNP loop unavailable (", msg, "); using per-SNP R path.")
 		}
-		
-		cpp_loop_ok = TRUE
+	} else if (!vectorized_ok && estimation %in% c("DWLS", "WLS") && !hasCppLoop && !quiet) {
+		message("umxGSEM_GWAS: mxComputeGSEMLoop not in this OpenMx build; using per-SNP R path.")
 	}
 
 	for (i in seq_len(nSNP)) {
@@ -1190,7 +1199,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		)
 		
 		if (analytic_ok) {
-			wls_data = xmu_gsem_prepare_WLS(covstruc = expn, keep_vars = c("SNP", traits), estimation = estimation)
+			wls_data = xmu_gsem_prepare_WLS(S = expn$S, V = expn$V, keep_vars = c("SNP", traits), estimation = estimation)
 			all_names = colnames(wls_data$V_omx)
 			snp_cov_names = all_names[grepl("poly_", all_names) & grepl("SNP", all_names)]
 			
@@ -1243,17 +1252,24 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			}
 		} else {
 			fit = tryCatch({
-				m = mxModel(m, name = paste0("gwas_", i))
+				# Always start from clean template (never reuse a failed C++-loop model)
+				m = mxModel(m_template, name = paste0("gwas_", i))
+				m@compute = NULL
 				if (estimation %in% c("DWLS", "WLS")) {
-					wls_i = xmu_gsem_prepare_WLS(covstruc = expn, keep_vars = m_template$manifestVars, estimation = estimation)
-					if (!is.null(wls_i$W_omx)) {
-						wls_data = mxData(numObs = covstruc$N[1], type = "summary", observedStats = list(cov = wls_i$S, useWeight = wls_i$W_omx, asymCov = wls_i$V_omx))
+					wls_i = xmu_gsem_prepare_WLS(S = expn$S, V = expn$V, keep_vars = m_template$manifestVars, estimation = estimation)
+					# Ensure DWLS weight is strictly diagonal (OpenMx rejects off-diagonals)
+					W_use = wls_i$W_omx
+					if (!is.null(W_use) && estimation == "DWLS") {
+						W_use = diag(diag(as.matrix(W_use)), nrow = nrow(W_use), ncol = ncol(W_use))
+						dimnames(W_use) = dimnames(wls_i$W_omx)
+					}
+					if (!is.null(W_use)) {
+						wls_data = mxData(numObs = covstruc$N[1], type = "summary", observedStats = list(cov = wls_i$S, useWeight = W_use, asymCov = wls_i$V_omx))
 					} else {
 						wls_data = mxData(numObs = covstruc$N[1], type = "summary", observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx))
 					}
 					m = mxModel(m, wls_data, mxFitFunctionWLS(type = estimation))
-				}
- else {
+				} else {
 					S_subset = expn$S[m_template$manifestVars, m_template$manifestVars, drop=FALSE]
 					m = mxModel(m, mxData(S_subset, type = "cov", numObs = covstruc$N[1]))
 				}
@@ -1550,5 +1566,303 @@ umxGSEM_label_ldsc <- function(covstruc = NULL, S = NULL, V = NULL, I = NULL, N 
 	}
 	covstruc
 }
+
+# =============================================================================
+# umxSummary for GSEM/LDSC covstruc lists and WLS mxData (observedStats)
+# =============================================================================
+
+#' Test whether an object is a Genomic SEM / LDSC covariance structure list
+#'
+#' @param x Object to test.
+#' @return Logical: TRUE if `x` is a list with matrix elements `S` and `V`.
+#' @keywords internal
+xmu_is_gsem_covstruc <- function(x) {
+	is.list(x) && !is.null(x$S) && is.matrix(x$S) && !is.null(x$V) && is.matrix(x$V)
+}
+
+#' Format a numeric matrix for [umx_print]
+#'
+#' @param M Matrix or vector.
+#' @param rowName Header for the row-name column (default `" "`).
+#' @return data.frame with an explicit first column of row labels.
+#' @keywords internal
+xmu_matrix_for_print <- function(M, rowName = " ") {
+	if (is.null(M)) {
+		return(NULL)
+	}
+	if (is.vector(M) && !is.matrix(M)) {
+		nm = names(M)
+		M = matrix(as.numeric(M), nrow = 1L)
+		if (!is.null(nm)) {
+			colnames(M) = nm
+		}
+		rownames(M) = "value"
+	}
+	M = as.matrix(M)
+	rn = rownames(M)
+	if (is.null(rn)) {
+		rn = as.character(seq_len(nrow(M)))
+	}
+	cn = colnames(M)
+	if (is.null(cn)) {
+		cn = as.character(seq_len(ncol(M)))
+	}
+	df = data.frame(rn, M, check.names = FALSE, stringsAsFactors = FALSE)
+	names(df) = c(rowName, cn)
+	rownames(df) = NULL
+	df
+}
+
+#' Print one named matrix block for covstruc / WLS data summaries
+#'
+#' @param M Matrix.
+#' @param title Caption / section title.
+#' @param digits Rounding digits.
+#' @param report `"markdown"` or `"html"`.
+#' @param rowName First-column header for row labels.
+#' @keywords internal
+xmu_umxSummary_print_matrix <- function(M, title, digits = 3, report = c("markdown", "html"), rowName = " ") {
+	report = match.arg(report)
+	if (is.null(M)) {
+		return(invisible(NULL))
+	}
+	df = xmu_matrix_for_print(M, rowName = rowName)
+	if (is.null(df)) {
+		return(invisible(NULL))
+	}
+	# Round numeric columns only
+	for (j in seq_along(df)) {
+		if (is.numeric(df[[j]])) {
+			df[[j]] = round(df[[j]], digits)
+		}
+	}
+	umx_print(df, digits = digits, caption = title, report = report, na.print = "NA", zero.print = "0")
+	invisible(df)
+}
+
+#' Summarize a Genomic SEM / LDSC covariance structure (covstruc)
+#'
+#' Pretty-prints the trait list and the main LDSC/GSEM matrices (`S`, `I`, `V`,
+#' `N`, and scalar `m`) for objects like [Psych_LDSC] or the return value of
+#' [umxGSEM_ldsc()] / [imxLDSC()]. Tables use markdown or HTML via [umx_print].
+#'
+#' @param model A covstruc list with at least matrices `S` (genetic cov) and
+#'   `V` (sampling cov of vech(S)). Optional: `I`, `N`, `m`, `S_Stand`, `V_Stand`.
+#' @param digits Rounding for printed cells (default 3).
+#' @param report `"markdown"` (default) or `"html"` (browser-friendly kable).
+#' @param matrices Character vector of which components to show (default
+#'   `c("S", "I", "V", "N")`). Unknown names are ignored. Scalar `m` is always
+#'   mentioned in the header when present.
+#' @param ... Not used (S3 compatibility).
+#' @return Invisibly returns the input `model` (covstruc).
+#' @export
+#' @method umxSummary list
+#' @family GSEM
+#' @family Model Summary
+#' @seealso [umxSummary.MxDataStatic()], [Psych_LDSC], [umxGSEM()], [umx_print]
+#' @examples
+#' data(Psych_LDSC)
+#' umxSummary(Psych_LDSC)
+#' \dontrun{
+#' umxSummary(Psych_LDSC, report = "html")
+#' }
+umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), matrices = c("S", "I", "V", "N"), ...) {
+	report = match.arg(report)
+	if (!xmu_is_gsem_covstruc(model)) {
+		stop(
+			"umxSummary() for lists expects a GSEM/LDSC covstruc: a list with matrices S and V\n",
+			"  (e.g. data(Psych_LDSC); umxSummary(Psych_LDSC)).\n",
+			"  This list has names: ", paste(names(model), collapse = ", "),
+			call. = FALSE
+		)
+	}
+	S = as.matrix(model$S)
+	traits = colnames(S)
+	if (is.null(traits)) {
+		traits = rownames(S)
+	}
+	if (is.null(traits)) {
+		traits = paste0("T", seq_len(ncol(S)))
+	}
+	k = length(traits)
+	z = k * (k + 1L) / 2L
+
+	cat("\n")
+	cat("### Genomic SEM / LDSC covariance structure\n\n")
+	cat(sprintf("- **Traits (k = %d):** %s\n", k, paste(traits, collapse = ", ")))
+	cat(sprintf("- **vech(S) length:** %d unique elements (lower triangle including diagonal)\n", z))
+	if (!is.null(model$m)) {
+		cat(sprintf("- **SNPs used in LDSC (m):** %s\n", paste(as.character(model$m), collapse = ", ")))
+	}
+	cat("\n")
+	cat("These matrices feed OpenMx WLS via modern `mxData`:\n\n")
+	cat("```r\n")
+	cat("mxData(numObs = N, type = \"summary\",\n")
+	cat("       observedStats = list(cov = S, useWeight = W, asymCov = V))\n")
+	cat("# DWLS: W = diag(1/diag(V));  WLS: W = solve(V)\n")
+	cat("```\n\n")
+
+	want = unique(as.character(matrices))
+	# Always print S first if requested
+	if ("S" %in% want && !is.null(model$S)) {
+		xmu_umxSummary_print_matrix(
+			model$S, digits = digits, report = report, rowName = "Trait",
+			title = "S: Genetic covariance matrix (LDSC; diagonal ≈ SNP heritability on LDSC scale)"
+		)
+		cat("\n")
+	}
+	if ("I" %in% want && !is.null(model$I)) {
+		xmu_umxSummary_print_matrix(
+			model$I, digits = digits, report = report, rowName = "Trait",
+			title = "I: LDSC intercept matrix (diag ≈ 1; off-diag = sample overlap / confounding)"
+		)
+		cat("\n")
+	}
+	if ("V" %in% want && !is.null(model$V)) {
+		xmu_umxSummary_print_matrix(
+			model$V, digits = digits, report = report, rowName = "vech",
+			title = "V: Sampling covariance of vech(S) (asymptotic cov / asymCov for WLS; residual-pair labels)"
+		)
+		cat("\n")
+	}
+	if ("N" %in% want && !is.null(model$N)) {
+		xmu_umxSummary_print_matrix(
+			model$N, digits = digits, report = report, rowName = " ",
+			title = "N: Effective sample size for each unique S element (vech order)"
+		)
+		cat("\n")
+	}
+	if ("S_Stand" %in% want && !is.null(model$S_Stand)) {
+		xmu_umxSummary_print_matrix(
+			model$S_Stand, digits = digits, report = report, rowName = "Trait",
+			title = "S_Stand: Standardized genetic covariance / correlation (if provided)"
+		)
+		cat("\n")
+	}
+	if ("V_Stand" %in% want && !is.null(model$V_Stand)) {
+		xmu_umxSummary_print_matrix(
+			model$V_Stand, digits = digits, report = report, rowName = "vech",
+			title = "V_Stand: Sampling covariance of standardized S elements (if provided)"
+		)
+		cat("\n")
+	}
+
+	invisible(model)
+}
+
+#' Summarize WLS / summary-statistic [OpenMx::mxData] objects
+#'
+#' Explains modern OpenMx WLS data for users who have not seen `type = "summary"`
+#' and `observedStats` (`cov`, `useWeight`, `asymCov`). Works for
+#' `MxDataStatic` from [OpenMx::mxData] (including GSEM-style summary data).
+#'
+#' @param model An [OpenMx::mxData] object (`MxDataStatic`).
+#' @param digits Rounding for printed cells (default 3).
+#' @param report `"markdown"` (default) or `"html"`.
+#' @param matrices Which observedStats blocks to print: any of
+#'   `c("cov", "useWeight", "asymCov", "means", "thresholds")`.
+#'   Default prints `cov`, `useWeight`, and `asymCov` when present.
+#' @param ... Not used (S3 compatibility).
+#' @return Invisibly returns the input `model`.
+#' @export
+#' @method umxSummary MxDataStatic
+#' @family GSEM
+#' @family Model Summary
+#' @seealso [umxSummary.list()], [mxData], [mxFitFunctionWLS], [umxGSEM]
+#' @examples
+#' data(Psych_LDSC)
+#' S = Psych_LDSC$S[1:3, 1:3]
+#' V = Psych_LDSC$V[1:6, 1:6]
+#' W = diag(1 / diag(V))
+#' dimnames(W) = dimnames(V)
+#' d = mxData(numObs = 1, type = "summary",
+#'            observedStats = list(cov = S, useWeight = W, asymCov = V))
+#' umxSummary(d)
+umxSummary.MxDataStatic <- function(model, digits = 3, report = c("markdown", "html"),
+	matrices = c("cov", "useWeight", "asymCov"), ...) {
+	report = match.arg(report)
+	dtype = tryCatch(model$type, error = function(e) NA_character_)
+	numObs = tryCatch(model$numObs, error = function(e) NA_real_)
+	os = tryCatch(model$observedStats, error = function(e) NULL)
+	if (is.null(os) || length(os) == 0) {
+		os = list()
+	}
+
+	cat("\n")
+	cat("### OpenMx WLS / summary data (`mxData`)\n\n")
+	cat(sprintf("- **type:** `%s`\n", dtype))
+	if (is.finite(numObs)) {
+		cat(sprintf("- **numObs:** %s\n", format(numObs, scientific = FALSE)))
+	}
+
+	# Trait / residual labels
+	traits = NULL
+	if (!is.null(os$cov) && is.matrix(os$cov)) {
+		traits = colnames(os$cov)
+		if (is.null(traits)) {
+			traits = rownames(os$cov)
+		}
+	}
+	if (is.null(traits) && !is.null(model$observed) && is.matrix(model$observed)) {
+		traits = colnames(model$observed)
+	}
+	if (!is.null(traits) && length(traits) > 0) {
+		cat(sprintf("- **Variables / traits (k = %d):** %s\n", length(traits), paste(traits, collapse = ", ")))
+	}
+
+	hasW = !is.null(os$useWeight)
+	hasV = !is.null(os$asymCov)
+	hasCov = !is.null(os$cov)
+	cat(sprintf("- **observedStats present:** cov=%s, useWeight=%s, asymCov=%s",
+		hasCov, hasW, hasV))
+	if (!is.null(os$means)) cat(", means=TRUE")
+	if (!is.null(os$thresholds)) cat(", thresholds=TRUE")
+	cat("\n\n")
+
+	cat("**How to read this structure (modern WLS route)**\n\n")
+	cat("| Slot | Role |\n|------|------|\n")
+	cat("| `observedStats$cov` | Observed (or genetic) covariance of variables |\n")
+	cat("| `observedStats$useWeight` | WLS weight **W** (DWLS: diagonal; WLS: dense) |\n")
+	cat("| `observedStats$asymCov` | Sampling covariance of residual moments (often called **V** / NACOV) |\n")
+	cat("| `type = \"summary\"` | No raw rows; moments only (GSEM / LDSC style) |\n\n")
+	cat("Legacy `type=\"acov\"` / top-level `acov=` formals are removed; do not use them.\n\n")
+
+	want = unique(as.character(matrices))
+	titles = c(
+		cov = "observedStats$cov: observed / genetic covariance of variables",
+		useWeight = "observedStats$useWeight: WLS weight matrix W (estimation metric)",
+		asymCov = "observedStats$asymCov: asymptotic sampling cov of residual moments (V)",
+		means = "observedStats$means: observed means (if modelled)",
+		thresholds = "observedStats$thresholds: ordinal thresholds in the data (if present)"
+	)
+
+	for (key in want) {
+		mat = os[[key]]
+		if (is.null(mat)) {
+			next
+		}
+		ttl = if (!is.null(titles[[key]])) titles[[key]] else paste0("observedStats$", key)
+		rowLab = if (key %in% c("useWeight", "asymCov")) "moment" else "var"
+		xmu_umxSummary_print_matrix(mat, title = ttl, digits = digits, report = report, rowName = rowLab)
+		cat("\n")
+	}
+
+	# If type is cov/cor with observed matrix but no observedStats cov printed
+	if (!hasCov && !is.null(model$observed) && is.matrix(model$observed) && "cov" %in% want) {
+		xmu_umxSummary_print_matrix(
+			model$observed,
+			title = paste0("observed: type='", dtype, "' covariance/correlation matrix"),
+			digits = digits, report = report, rowName = "var"
+		)
+		cat("\n")
+	}
+
+	invisible(model)
+}
+
+# Alias if class is plain MxData in some builds
+#' @export
+#' @method umxSummary MxData
+umxSummary.MxData <- umxSummary.MxDataStatic
 
 

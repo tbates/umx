@@ -96,7 +96,14 @@ xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
 #'   \item{triage}{The raw output from `xmu_gsem_triage` detailing what smoothing occurred.}
 #'   \item{keep_vars}{The valid subset of `keep_vars` actually processed.}
 #' @keywords internal
-xmu_gsem_prepare_WLS <- function(covstruc, keep_vars, estimation = "DWLS", smooth = TRUE) {
+xmu_gsem_prepare_WLS <- function(covstruc = NULL, keep_vars, estimation = "DWLS", smooth = TRUE, S = NULL, V = NULL) {
+	# Accept either covstruc=list(S,V) or S= + V= (legacy positional form was S, V, keep_vars)
+	if (is.null(covstruc)) {
+		if (is.null(S) || is.null(V)) {
+			stop("xmu_gsem_prepare_WLS: provide covstruc=list(S,V) or both S= and V=")
+		}
+		covstruc = list(S = S, V = V)
+	}
 	sub = xmu_gsem_subset_covstruc(covstruc, keep_vars)
 	triageResult = xmu_gsem_triage(vMat = sub$V, sMat = sub$S, smooth = smooth)
 	V_omx = triageResult$V
