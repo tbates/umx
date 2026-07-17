@@ -1,14 +1,7 @@
-gwas_mxrun vs gwas_analytic dummy SNP parity test (test_GSEM_goldens.R:301) failed. 
-
-```R
-	# Run Analytic DWLS
-	gwas_analytic = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps, traits = traits, estimation = "DWLS", quiet = TRUE)
-	gwas_mxrun    = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps, traits = traits, estimation = "DWLS", quiet = TRUE, model = m_meas)
-```
-
 ## dev
 ## umx 5.00.5 
 * Date: 2026-07-20 R 4.6.0
+* NEW: `umxSummary` for covstruc/`mxData` Nice for understanding the new covstruc format from built in Psych_LDSC
 * NEW: `mxRAM` now emits topologically sorted models automatically (great for optimizer, esp with hard models!)
 * NEW: LDSC object for GSEM with dimnames on `S`, `I`, `V`, and `N`.
 * NEW: `umxGSEM_name_ldsc()` labels GenomicSEM-style lists from disk.
