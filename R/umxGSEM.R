@@ -1653,6 +1653,7 @@ xmu_umxSummary_print_matrix <- function(M, title, digits = 3, report = c("markdo
 #' @param matrices Character vector of which components to show (default
 #'   `c("S", "I", "V", "N")`). Unknown names are ignored. Scalar `m` is always
 #'   mentioned in the header when present.
+#' @param traits Optional character vector of trait names to subset (default = NULL, which shows all).
 #' @param ... Not used (S3 compatibility).
 #' @return Invisibly returns the input `model` (covstruc).
 #' @export
@@ -1666,7 +1667,7 @@ xmu_umxSummary_print_matrix <- function(M, title, digits = 3, report = c("markdo
 #' \dontrun{
 #' umxSummary(Psych_LDSC, report = "html")
 #' }
-umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), matrices = c("S", "I", "V", "N"), ...) {
+umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), matrices = c("S", "I", "V", "N"), traits = NULL, ...) {
 	report = match.arg(report)
 	if (!xmu_is_gsem_covstruc(model)) {
 		stop(
@@ -1676,8 +1677,14 @@ umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), m
 			call. = FALSE
 		)
 	}
+
+	if (!is.null(traits)) {
+		model = xmu_gsem_subset_covstruc(model, keep_vars = traits)
+	}
+
 	S = as.matrix(model$S)
 	traits = colnames(S)
+
 	if (is.null(traits)) {
 		traits = rownames(S)
 	}

@@ -35,6 +35,8 @@ reflecting sample overlap. Preferred input for GC in \code{\link[=umxGSEM_GWAS]{
 data(Psych_LDSC)
 str(Psych_LDSC, max.level = 1)
 names(Psych_LDSC) # "V" "S" "I" "N" "m"
+# Pretty-print S, I, V, … (see also umxSummary on WLS mxData)
+umxSummary(Psych_LDSC)
 # I = LDSC intercept matrix (diag ~ 1; off-diag = sample overlap)
 round(Psych_LDSC$I, 3)
 # Common factor of all five traits (Grotzinger et al. 2019 style DWLS GSEM)
@@ -54,7 +56,9 @@ Other GSEM:
 \code{\link[=umxGSEM_label_ldsc]{umxGSEM_label_ldsc()}},
 \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
-\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}},
+\code{\link[=umxSummary.MxDataStatic]{umxSummary.MxDataStatic()}},
+\code{\link[=umxSummary.list]{umxSummary.list()}}
 
 Other datasets:
 \code{\link{Anthro_LDSC}},

@@ -8761,3 +8761,59 @@ prolific_scoring_stub <- function(df = NULL, deleteJunk = FALSE) {
 	}
 }
 
+
+#' Easily open vignettes (tutorials) for a package
+#'
+#' @description
+#' Present the user with a list of available vignettes (tutorials) for a package,
+#' prompt them to select one by number, and open the selected vignette.
+#'
+#' @param package The name of the package. Can be a character string or an unquoted name (default = "umx").
+#' @return None
+#' @export
+#' @family Utility Functions
+#' @seealso - [vignette()]
+#' @examples
+#' \dontrun{
+#' # Open a tutorial from umx
+#' umx_tutorials()
+#' 
+#' # Open a tutorial from another package, e.g. ggplot2
+#' umx_tutorials(ggplot2)
+#' }
+umx_tutorials <- function(package = "umx") {
+	if (missing(package)) {
+		pkg_name <- "umx"
+	} else {
+		pkg_name <- tryCatch({
+			val <- eval(substitute(package), parent.frame())
+			if (is.character(val)) val else deparse(substitute(package))
+		}, error = function(e) {
+			deparse(substitute(package))
+		})
+	}
+
+	# Get the list of vignettes
+	vinst <- utils::vignette(package = pkg_name)
+	
+	if (nrow(vinst$results) == 0) {
+		message("No vignettes (tutorials) found for package '", pkg_name, "'.")
+		return(invisible(NULL))
+	}
+	
+	# Present menu
+	choices <- vinst$results[, "Title"]
+	choice <- utils::menu(choices, title = paste0("\nTutorials in '", pkg_name, "':"))
+	
+	if (choice > 0) {
+		# Open selected vignette
+		topic <- vinst$results[choice, "Item"]
+		message("Opening vignette '", topic, "'...")
+		utils::vignette(topic, package = pkg_name)
+	} else {
+		message("No tutorial selected.")
+	}
+	return(invisible(NULL))
+}
+
+

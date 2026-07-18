@@ -16,7 +16,7 @@ List with \code{useWeight}, \code{asymCov}, and optional \code{cov}.
 }
 \description{
 \strong{Modern only:} reads \code{observedStats = list(cov=, useWeight=, asymCov=)}.
-OpenMx legacy \code{type="acov"} / \code{MxDataLegacyWLS} is refused (name trap).
+OpenMx legacy \code{type="acov"} / \code{"none"} / \code{MxDataLegacyWLS} is refused forever.
 }
 \seealso{
 Other xmu internal not for end user:

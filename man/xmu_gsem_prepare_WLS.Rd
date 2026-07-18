@@ -4,12 +4,17 @@
 \alias{xmu_gsem_prepare_WLS}
 \title{Prepare Data and Weight Matrices for GenomicSEM WLS/DWLS}
 \usage{
-xmu_gsem_prepare_WLS(S, V, keep_vars, estimation = "DWLS", smooth = TRUE)
+xmu_gsem_prepare_WLS(
+  covstruc = NULL,
+  keep_vars,
+  estimation = "DWLS",
+  smooth = TRUE,
+  S = NULL,
+  V = NULL
+)
 }
 \arguments{
-\item{S}{A genetic covariance matrix.}
-
-\item{V}{A sampling covariance matrix representing the asymptotic covariance of \code{vech(S)}.}
+\item{covstruc}{A list containing the genetic covariance matrix \verb{$S} and its asymptotic covariance \verb{$V}.}
 
 \item{keep_vars}{Character vector of traits to retain. Order must match model \code{manifestVars}.}
 

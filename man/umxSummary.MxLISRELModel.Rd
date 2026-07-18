@@ -57,5 +57,9 @@ umxSummary.MxLISRELModel handles summary formatting for LISREL models.
 }
 \seealso{
 \code{\link[=umxLISREL]{umxLISREL()}}, \code{\link[=plot.MxLISRELModel]{plot.MxLISRELModel()}}
+
+Other Model Summary:
+\code{\link[=umxSummary.MxDataStatic]{umxSummary.MxDataStatic()}},
+\code{\link[=umxSummary.list]{umxSummary.list()}}
 }
 \concept{Model Summary}

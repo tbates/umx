@@ -56,6 +56,8 @@ Other GSEM:
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
 \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
-\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}}
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}},
+\code{\link[=umxSummary.MxDataStatic]{umxSummary.MxDataStatic()}},
+\code{\link[=umxSummary.list]{umxSummary.list()}}
 }
 \concept{GSEM}
