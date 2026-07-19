@@ -1,6 +1,8 @@
 ## dev
 ## umx 5.00.5 
 * Date: 2026-07-20 R 4.6.0
+* IMPROVED: `umxRAM` now adds the fixes means for binary vars at 0 when adding these for a wayward user doing WLS with raw data.
+* IMPROVED: `umxRAM` now shows the user the correct mxPath to add for WLS means.
 * NEW: `umxSummary` for covstruc/`mxData` Nice for understanding the new covstruc format from built in Psych_LDSC
 * NEW: `mxRAM` now emits topologically sorted models automatically (great for optimizer, esp with hard models!)
 * NEW: LDSC object for GSEM with dimnames on `S`, `I`, `V`, and `N`.

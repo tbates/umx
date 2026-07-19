@@ -605,12 +605,39 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# = Add means if necessary =
 	# ==========================
 	# Note: WLS data will be mxData(..., type = "raw") at this stage.
-	# Add means if data are raw and means not requested by user
 	needsMeans = xmu_check_needs_means(data = myData, type = type, allContinuousMethod = allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
-		message("You have raw data, but no means model. I added\n",
-		"mxPath('one', to = manifestVars)")
-		newModel = mxModel(newModel, mxPath("one", usedManifests))
+		# Check for binary variables
+		summaryObj = umx_is_ordered(myData$observed[, usedManifests, drop = FALSE], summaryObject = TRUE)
+		binVars = summaryObj$binVarNames
+		nonBinVars = setdiff(usedManifests, binVars)
+		
+		if (length(binVars) > 0) {
+			binVarsStr = if (length(binVars) == 1) paste0("\"", binVars, "\"") else paste0("c(", paste0("\"", binVars, "\"", collapse = ", "), ")")
+			
+			if (length(nonBinVars) > 0) {
+				nonBinVarsStr = if (length(nonBinVars) == 1) paste0("\"", nonBinVars, "\"") else paste0("c(", paste0("\"", nonBinVars, "\"", collapse = ", "), ")")
+				message("You have raw data, but no means model. I added free means for continuous/ordinal variables:\n",
+				        "  umxPath(\"one\", to = ", nonBinVarsStr, ")")
+			} else {
+				message("You have raw data, but no means model.")
+			}
+			
+			message("WLS/DWLS/ULS model: I detected binary variable(s): ", paste(binVars, collapse = ", "), 
+			        ".\nTheir expected mean(s) must be fixed at zero for identification. I added:\n",
+			        "  umxPath(\"one\", to = ", binVarsStr, ", fixedAt = 0)")
+			
+			newPaths = list()
+			if (length(nonBinVars) > 0) {
+				newPaths[[length(newPaths) + 1]] = mxPath("one", to = nonBinVars)
+			}
+			newPaths[[length(newPaths) + 1]] = mxPath("one", to = binVars, free = FALSE, values = 0)
+			newModel = mxModel(newModel, newPaths)
+		} else {
+			message("You have raw data, but no means model. I added\n",
+			        "mxPath('one', to = manifestVars)")
+			newModel = mxModel(newModel, mxPath("one", usedManifests))
+		}
 	}
 
 	# =========================

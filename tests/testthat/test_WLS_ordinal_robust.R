@@ -51,3 +51,27 @@ test_that("Ordinal WLS Satorra-Bentler robust fit statistics and difference test
     expect_true(is.na(comp$p[2]))
   }
 })
+
+test_that("Raw WLS binary variables mean handling in umxRAM works", {
+  data(HSwls, package = "umx")
+  
+  # Run umxRAM and capture model
+  mDWLS = suppressMessages(umxRAM("One_Factor_DWLS", data = HSwls, type = "DWLS",
+       umxPath("g", to = paste0("x", 1:9)),
+       umxPath(var = paste0("x", 1:9)),
+       umxPath(var = "g", fixedAt = 1)
+  ))
+  
+  # Verify that binary variables x1, x2, x3 have their expected means fixed to 0
+  expect_false(mDWLS$M$free[1, "x1"])
+  expect_false(mDWLS$M$free[1, "x2"])
+  expect_false(mDWLS$M$free[1, "x3"])
+  
+  expect_equivalent(mDWLS$M$values[1, "x1"], 0)
+  expect_equivalent(mDWLS$M$values[1, "x2"], 0)
+  expect_equivalent(mDWLS$M$values[1, "x3"], 0)
+  
+  # Verify that ordinal variables x4 to x9 have free expected means
+  expect_true(mDWLS$M$free[1, "x4"])
+  expect_true(mDWLS$M$free[1, "x9"])
+})
