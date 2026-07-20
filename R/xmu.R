@@ -2345,6 +2345,13 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @family Graphviz
 
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
+	if (is.logical(file) && !is.na(file)) {
+		if (file) {
+			file = "name"
+		} else {
+			file = NA
+		}
+	}
 	if(strip_zero){
 		# strip leading "0." (pad "@0.5" to "@50")
 		# a1 -> ht1 [label = "@-0.92"];
@@ -2407,6 +2414,23 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 		cat(digraph)
 		return(invisible(digraph))
 	}
+}
+
+#' Check if OpenMx supports type = "summary" in mxData
+#'
+#' @description
+#' Helper function to verify if the installed version of OpenMx supports summary data types.
+#' @return - Boolean
+#' @export
+#' @family xmu internal not for end user
+xmu_has_summary_mxData <- function() {
+	res = tryCatch({
+		d = OpenMx::mxData(type = "summary", observedStats = list(cov = matrix(1)), numObs = 1)
+		TRUE
+	}, error = function(e) {
+		FALSE
+	})
+	return(res)
 }
 
 

@@ -6,6 +6,7 @@ library(testthat)
 library(umx)
 
 options(umx_auto_plot = FALSE)
+skip_if_not(xmu_has_summary_mxData(), "OpenMx fork with type='summary' support is required")
 fixture_dir = testthat::test_path("fixtures", "gsem")
 
 # -----------------------------------------------------------------------------

@@ -389,6 +389,10 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	tryHard    = match.arg(tryHard)
 	estimation = match.arg(estimation)
 
+	if (!xmu_has_summary_mxData()) {
+		stop("This feature requires the 'tbates' fork of OpenMx to support modern summary WLS data (type = 'summary'). Please update OpenMx by running:\n  remotes::install_github('tbates/OpenMx')", call. = FALSE)
+	}
+
 	if (is.null(covstruc)) {
 		if (is.null(S) || is.null(V)) {
 			stop("You must provide BOTH the genetic covariance matrix S and the sampling covariance matrix V (either directly or via covstruc).")

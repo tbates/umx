@@ -22,8 +22,7 @@
 #' and the specific factor loadings for the censored column are fixed to 0.
 #'
 #' @param name The name of the model (defaults to "ACE").
-#' @param selDVs The variables to include from the data: preferably base names (e.g. "ht") 
-#' which will be expanded using doubleEntrySuffix.
+#' @param selDVs The prepared variables to include from the data: must be paired continuous/censored variable names (e.g. c("ht_cont", "ht_cens")). Prep data using umx_make_double_entry_data() first.
 #' @param selCovs (optional) covariates to include from the data (do not include sep in names)
 #' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1".
 #' @param dzData The DZ dataframe.
@@ -51,7 +50,10 @@
 #' @return - [OpenMx::mxModel()] of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxACE()], [umxSummary()], [plot()]
+#' @seealso - [umx_make_double_entry_data()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
+#' \dontrun{
+#' #TBD
+#' }
 umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
@@ -87,31 +89,17 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 		dataCols = colnames(mzData)
 	}
 
-	# Auto-detect double entry variables and expand them
+	# Verify double entry variables are pre-prepared using umx_make_double_entry_data
 	if (is.null(sep)) {
 		sep = "_T"
 	}
 	
-	newSelDVs = c()
-	doubleEntryPairs = list()
-	
-	# Detect if the user passed base variable names that need expansion
 	for (v in selDVs) {
-		contName = paste0(v, doubleEntrySuffix[1])
-		censName = paste0(v, doubleEntrySuffix[2])
-		contExists = any(grepl(paste0("^", contName, "(", sep, "[1-9])?$"), dataCols))
-		censExists = any(grepl(paste0("^", censName, "(", sep, "[1-9])?$"), dataCols))
-		
-		if (contExists && censExists) {
-			newSelDVs = c(newSelDVs, contName, censName)
-		} else {
-			newSelDVs = c(newSelDVs, v)
+		if (!endsWith(v, doubleEntrySuffix[1]) && !endsWith(v, doubleEntrySuffix[2])) {
+			stop("Polite note: Please prep your data for this function using umx_make_double_entry_data()")
 		}
 	}
-	selDVs = newSelDVs
-
-	# Also scan the resulting list to find already-expanded pairs
-	# (e.g. if they passed c("X_cont", "X_cens") directly)
+	
 	doubleEntryPairs = list()
 	i = 1
 	while (i < length(selDVs)) {
@@ -129,6 +117,11 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 			}
 		}
 		i = i + 1
+	}
+	
+	pairedVars = unlist(doubleEntryPairs)
+	if (length(pairedVars) != length(selDVs) || !all(selDVs %in% pairedVars)) {
+		stop("Polite note: Please prep your data for this function using umx_make_double_entry_data()")
 	}
 
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
@@ -261,4 +254,105 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 	model = as(model, "MxModelACE") # set class so that S3 plot() dispatches
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE, intervals = intervals)
 	return(model)
+}
+
+#' Prepare data for Double-Entry Censored Twin Models
+#'
+#' @description
+#' Helper to split one or more variables in a twin dataset into a paired
+#' continuous column (holding non-censored values) and an ordered factor column
+#' (indicating censoring status), ready for \code{umxACE_DE}.
+#'
+#' @param data The dataframe to process.
+#' @param cols A named list of variables and their censoring rules.
+#' @param doubleEntrySuffix Suffixes for the continuous and censored columns (default = c("_cont", "_cens")).
+#' @param sep Suffix/separator for twin indices (default = "_T").
+#' @param nSib Number of siblings/twins (default = 2).
+#' @param levels The factor levels for the censored column (default = c("normal", "censored")).
+#' @return The modified dataframe with expanded double-entry pairs.
+#' @export
+#' @family Twin Modeling Functions
+#' @examples
+#' # Example: censor wt at floor 0
+#' # data = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
+umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c("_cont", "_cens"), sep = "_T", nSib = 2, levels = c("normal", "censored")) {
+	if (is.null(cols)) {
+		return(data)
+	}
+	
+	# Avoid ingesting tibbles
+	if ("tbl" %in% class(data)) {
+		data = as.data.frame(data)
+	}
+	
+	for (varName in names(cols)) {
+		rule = cols[[varName]]
+		
+		# Find if twin columns exist (e.g. v1_T1, v1_T2)
+		twinColsFound = FALSE
+		targetCols = character(0)
+		suffixes = character(0)
+		
+		for (s in 1:nSib) {
+			colName = paste0(varName, sep, s)
+			if (colName %in% colnames(data)) {
+				twinColsFound = TRUE
+				targetCols = c(targetCols, colName)
+				suffixes = c(suffixes, paste0(sep, s))
+			}
+		}
+		
+		# If no twin columns, fall back to single column (non-twin data)
+		if (!twinColsFound && varName %in% colnames(data)) {
+			targetCols = varName
+			suffixes = ""
+		}
+		
+		for (idx in seq_along(targetCols)) {
+			colName = targetCols[idx]
+			sSuffix = suffixes[idx]
+			
+			x = data[[colName]]
+			cens = rep(FALSE, length(x))
+			
+			if (is.function(rule)) {
+				cens = rule(x)
+			} else if (is.numeric(rule)) {
+				if (length(rule) == 1) {
+					cens = (!is.na(x) & (x <= rule))
+				} else if (length(rule) == 2) {
+					cens = (!is.na(x) & (x >= rule[1] & x <= rule[2]))
+				}
+			} else if (is.character(rule)) {
+				cleanRule = trimws(rule)
+				if (grepl("\\bx\\b", cleanRule)) {
+					cens = eval(parse(text = cleanRule))
+				} else {
+					cens = eval(parse(text = paste0("x ", cleanRule)))
+				}
+			}
+			
+			# Ensure NA values are preserved
+			cens[is.na(x)] = NA
+			
+			# Generate continuous and censored column names
+			if (sSuffix == "") {
+				contCol = paste0(varName, doubleEntrySuffix[1])
+				censCol = paste0(varName, doubleEntrySuffix[2])
+			} else {
+				# E.g. wt_cont_T1 and wt_cens_T1
+				contCol = paste0(varName, doubleEntrySuffix[1], sSuffix)
+				censCol = paste0(varName, doubleEntrySuffix[2], sSuffix)
+			}
+			
+			# Create continuous column
+			data[[contCol]] = ifelse(is.na(cens) | cens, NA_real_, x)
+			
+			# Create censored column (ordered factor)
+			censFactor = ifelse(is.na(cens), NA_character_, ifelse(cens, levels[2], levels[1]))
+			data[[censCol]] = factor(censFactor, levels = levels, ordered = TRUE)
+		}
+	}
+	
+	return(data)
 }

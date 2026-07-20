@@ -1,5 +1,6 @@
 test_that("umxGSEM_std works correctly with Delta-method scaling", {
 	require(umx)
+	skip_if_not(xmu_has_summary_mxData(), "OpenMx fork with type='summary' support is required")
 	
 	# 1. Set up a 2-trait covariance structure
 	# S matrix
