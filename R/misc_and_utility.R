@@ -1516,14 +1516,15 @@ umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
 #' A wrapper to make paran easier to use.
 #' Just automates applying [complete.cases()]
 #' 
-#' @param df The df (just the relevant columns)
+#' @param df The df (just the relevant columns) or a covariance/correlation matrix.
 #' @param cols (optional) list of columns (default = use all)
 #' @param graph Whether to graph.
 #' @param mapStrings optional mapping if cols are strings
+#' @param n optional number of observations (required if passing a covariance/correlation matrix)
 #' @return - nothing
 #' @export
 #' @family Miscellaneous Stats Functions
-
+#' 
 #' @examples
 #' library(psych)
 #' library(psychTools)
@@ -1531,25 +1532,38 @@ umx_strings2numeric <- function(df, cols= NA, mapStrings = NULL) {
 #' umxParan(bfi[, paste0("A", 1:5)])
 #' umxParan(bfi, cols= paste0("A", 1:5))
 #' # umxParan(bfi, paste0("AB", 1))
-umxParan <- function(df, cols= NA, graph = TRUE, mapStrings = NULL) {
-	if(!all(is.na(cols))){
-		umx_check_names(cols, data = df)
-		df = df[, cols]
-	}
-	if(!is.null(mapStrings)){
-		for (thisCol in names(df)){
-			unique_values = unique(df[, thisCol, drop = TRUE])
-			unique_values = unique_values[!is.na(unique_values)]
-			if(any(!(unique_values %in% mapStrings))){
-				notFound = unique_values[which(!(unique_values %in% mapStrings))]
-				stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
-			}
-			tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
-			df[, thisCol] = as.numeric(as.character(tmp))
+umxParan <- function(df, cols = NA, graph = TRUE, mapStrings = NULL, n = NULL) {
+	isCov = umx_is_cov(df, boolean = TRUE)
+	
+	if (isCov) {
+		if (is.null(n)) {
+			stop("You must specify the number of observations 'n' when passing a covariance/correlation matrix to umxParan.")
 		}
+		if (!all(is.na(cols))) {
+			umx_check_names(cols, data = df)
+			df = df[cols, cols]
+		}
+		df = cov2cor(df)
+		paran::paran(mat = df, n = n, graph = graph)
+	} else {
+		if (!all(is.na(cols))) {
+			umx_check_names(cols, data = df)
+			df = df[, cols]
+		}
+		if (!is.null(mapStrings)) {
+			for (thisCol in names(df)) {
+				unique_values = unique(df[, thisCol, drop = TRUE])
+				unique_values = unique_values[!is.na(unique_values)]
+				if (any(!(unique_values %in% mapStrings))) {
+					notFound = unique_values[which(!(unique_values %in% mapStrings))]
+					stop("Some values in column ", omxQuotes(thisCol), " not in mapStrings, e.g.. :", omxQuotes(notFound))
+				}
+				tmp = factor(df[, thisCol, drop = TRUE], levels = mapStrings, labels = 1: length(mapStrings))
+				df[, thisCol] = as.numeric(as.character(tmp))
+			}
+		}
+		paran::paran(df[complete.cases(df), ], graph = graph)
 	}
-
-	paran::paran(df[complete.cases(df), ], graph = graph)
 }
 
 #' Score a psychometric scale by summing normal and reversed items. 
@@ -7703,9 +7717,40 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 	}
 
 	if(is.matrix(lower.data)||is.data.frame(lower.data)){
+		nr = nrow(lower.data)
+		nc = ncol(lower.data)
+		if(nr != nc){
+			if(nc == nr - 1){
+				# Omitted the last column
+				message(sprintf("Padded %d x %d input matrix with NA to make it square", nr, nc))
+				new_name = paste0("v", nr)
+				if(!is.null(colnames(lower.data))){
+					if(all(colnames(lower.data) == paste0("v", 1:nc))){
+						new_name = paste0("v", nr)
+					} else if(!is.null(rownames(lower.data)) && length(rownames(lower.data)) == nr) {
+						new_name = rownames(lower.data)[nr]
+					} else {
+						new_name = paste0("col", nr)
+					}
+				}
+				if(is.data.frame(lower.data)){
+					lower.data[[new_name]] = rep(NA, nr)
+				} else {
+					lower.data = cbind(lower.data, rep(NA, nr))
+					if(!is.null(colnames(lower.data))){
+						colnames(lower.data)[nr] = new_name
+					}
+				}
+			} else {
+				stop(sprintf("Input matrix/data.frame must be square, but is %d x %d", nr, nc))
+			}
+		}
+		mat = as.matrix(lower.data)
+		if(!diag) {
+			diag(mat) = 1
+		}
 		# Copy the transpose of the lower triangle to the
 		# upper triangle
-		mat = lower.data
 		mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
 	} else {
 		len = length(lower.data)
@@ -8486,6 +8531,212 @@ xmu_standardize_CP <- function(model, ...){
 umx_standardize.MxModelCP <- xmu_standardize_CP
 
 
+#' xmu_parse_completion_context
+#'
+#' Parse the current console line buffer to extract the function name,
+#' argument name, and argument value prefix under completion.
+#'
+#' @param line The current command line buffer string.
+#' @param end The integer position of the cursor in the line buffer.
+#' @return A list containing the parsed context (`funName`, `argName`, `valPrefix`, `hasQuote`, `quoteChar`), or `NULL` if not in an argument value completion context.
+xmu_parse_completion_context <- function(line, end) {
+	utils_ns = asNamespace("utils")
+	
+	inside_quotes = utils_ns$isInsideQuotes()
+	
+	if (inside_quotes) {
+		fullToken = utils_ns$.guessTokenFromLine(update = FALSE)
+		clean_line = substr(line, 1L, fullToken$start - 1L)
+		val_prefix = fullToken$token
+		has_quote = TRUE
+		quote_char = substr(line, fullToken$start, fullToken$start)
+	} else {
+		clean_line = substr(line, 1L, end)
+		val_prefix = utils_ns$.CompletionEnv[["token"]]
+		has_quote = FALSE
+		quote_char = NULL
+	}
+	
+	# walk backwards to find matching open parenthesis '('
+	nesting = 0
+	open_paren_idx = NULL
+	
+	n_clean = nchar(clean_line)
+	if (n_clean < 1) return(NULL)
+	
+	for (i in seq(n_clean, 1, by = -1)) {
+		char = substr(clean_line, i, i)
+		if (char == ")") {
+			nesting = nesting + 1
+		} else if (char == "(") {
+			if (nesting == 0) {
+				open_paren_idx = i
+				break
+			} else {
+				nesting = nesting - 1
+			}
+		}
+	}
+	
+	if (is.null(open_paren_idx)) return(NULL)
+	
+	prefix_part = substr(clean_line, 1, open_paren_idx - 1)
+	fun_match = regexpr("[a-zA-Z0-9_.:]+$", prefix_part)
+	if (fun_match > 0) {
+		fun_name = substr(prefix_part, fun_match, nchar(prefix_part))
+	} else {
+		return(NULL)
+	}
+	
+	inside = substr(clean_line, open_paren_idx + 1, n_clean)
+	
+	# Walk backwards to find the last '='
+	eq_idx = NULL
+	nesting = 0
+	if (nchar(inside) > 0) {
+		for (i in seq(nchar(inside), 1, by = -1)) {
+			char = substr(inside, i, i)
+			if (char == ")") {
+				nesting = nesting + 1
+			} else if (char == "(") {
+				nesting = nesting - 1
+			} else if (char == "=") {
+				if (nesting == 0) {
+					eq_idx = i
+					break
+				}
+			} else if (char == ",") {
+				if (nesting == 0) {
+					break
+				}
+			}
+		}
+	}
+	
+	if (is.null(eq_idx)) return(NULL)
+	
+	arg_part = substr(inside, 1, eq_idx - 1)
+	arg_match = regexpr("[a-zA-Z0-9_.]+$", trimws(arg_part))
+	if (arg_match > 0) {
+		arg_name = substr(trimws(arg_part), arg_match, nchar(trimws(arg_part)))
+	} else {
+		return(NULL)
+	}
+	
+	return(list(
+		funName = fun_name,
+		argName = arg_name,
+		valPrefix = val_prefix,
+		hasQuote = has_quote,
+		quoteChar = quote_char
+	))
+}
+
+#' xmu_custom_completer
+#'
+#' A custom autocompletion function for R console. It intercepts the tab-completion
+#' process and suggests default values/options (from `c(...)` or logical vectors)
+#' for function arguments when completing an argument value.
+#'
+#' @param env The completion environment (usually `utils:::.CompletionEnv`).
+#' @return NULL (called for its side effects of modifying `env[["comps"]]`).
+xmu_custom_completer <- function(env) {
+	line = env[["linebuffer"]]
+	end = env[["end"]]
+	
+	ctx = xmu_parse_completion_context(line, end)
+	
+	# We also need to get the old_completer to fall back if needed
+	old_completer = utils::rc.getOption("custom.completer")
+	
+	# Check if we should fall back
+	# Note: prevent infinite recursion if old_completer points to this function
+	is_recursive = !is.null(old_completer) && (
+		identical(old_completer, xmu_custom_completer) || 
+		identical(old_completer, get("xmu_custom_completer", envir = asNamespace("umx")))
+	)
+	
+	if (is.null(ctx)) {
+		if (is.function(old_completer) && !is_recursive) {
+			return(old_completer(env))
+		} else {
+			return(utils:::.completeToken(custom = FALSE))
+		}
+	}
+	
+	# Try to find function object
+	funObj = tryCatch(eval(parse(text = ctx$funName), envir = .GlobalEnv), error = function(e) {
+		parts = strsplit(ctx$funName, "::")[[1]]
+		if (length(parts) == 2) {
+			tryCatch(getExportedValue(parts[1], parts[2]), error = function(e) NULL)
+		} else {
+			tryCatch(get(ctx$funName, mode = "function"), error = function(e) NULL)
+		}
+	})
+	
+	if (!is.function(funObj)) {
+		if (is.function(old_completer) && !is_recursive) {
+			return(old_completer(env))
+		} else {
+			return(utils:::.completeToken(custom = FALSE))
+		}
+	}
+	
+	frms = formals(funObj)
+	if (!(ctx$argName %in% names(frms))) {
+		if (is.function(old_completer) && !is_recursive) {
+			return(old_completer(env))
+		} else {
+			return(utils:::.completeToken(custom = FALSE))
+		}
+	}
+	
+	arg_val = frms[[ctx$argName]]
+	options = NULL
+	should_quote = FALSE
+	
+	if (is.call(arg_val) && as.character(arg_val[[1]]) == "c") {
+		options = tryCatch(eval(arg_val), error = function(e) NULL)
+		if (is.character(options)) should_quote = TRUE
+	} else if (is.character(arg_val)) {
+		options = arg_val
+		should_quote = TRUE
+	} else if (is.logical(arg_val)) {
+		options = c("TRUE", "FALSE")
+		should_quote = FALSE
+	} else if (is.numeric(arg_val)) {
+		options = arg_val
+		should_quote = FALSE
+	}
+	
+	if (is.null(options)) {
+		if (is.function(old_completer) && !is_recursive) {
+			return(old_completer(env))
+		} else {
+			return(utils:::.completeToken(custom = FALSE))
+		}
+	}
+	
+	options = as.character(options)
+	matched = options[startsWith(options, ctx$valPrefix)]
+	if (length(matched) == 0) {
+		env[["comps"]] = character()
+		return()
+	}
+	
+	if (should_quote) {
+		if (ctx$hasQuote) {
+			formatted = paste0(matched, ctx$quoteChar)
+		} else {
+			formatted = paste0('"', matched, '"')
+		}
+	} else {
+		formatted = matched
+	}
+	
+	env[["comps"]] = formatted
+}
+
 #' umx_complete_dollar
 #'
 #' Modifies the macOS RGUI (R.app) to extend auto-completion.
@@ -8495,6 +8746,9 @@ umx_standardize.MxModelCP <- xmu_standardize_CP
 #' @export
 #' @family Miscellaneous Functions
 umx_complete_dollar <- function() {
+	# Register custom completer for RStudio and other general R consoles
+	utils::rc.options(custom.completer = xmu_custom_completer)
+
 	if (Sys.info()["sysname"] == "Darwin" && "tools:RGUI" %in% search()) {
 		tryCatch({
 			RGUI = as.environment("tools:RGUI")

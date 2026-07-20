@@ -3482,7 +3482,26 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 	if(setValues){
 		model = xmuValues(model)
 	}
+	
+	was_run = umx_has_been_run(model)
+	old_fit = NULL
+	if(was_run){
+		old_fit = tryCatch(model$output$fit, error = function(e) NULL)
+	}
+
 	model = xmu_safe_run_summary(model, autoRun = TRUE, intervals=intervals, summary = summary, tryHard =  tryHard)
+
+	if(was_run && !is.null(old_fit)){
+		new_fit = tryCatch(model$output$fit, error = function(e) NULL)
+		if(!is.null(new_fit) && !is.na(old_fit) && !is.na(new_fit)){
+			diff_fit = old_fit - new_fit
+			if(xmu_is_wls(model)){
+				message(sprintf("Change in WLS Chi-Square (old - new) = %.3f", diff_fit))
+			} else {
+				message(sprintf("Change in -2LL (old - new) = %.3f", diff_fit))
+			}
+		}
+	}
 
 	if(calc_sat){
 		if(umx_has_been_run(model) && !xmu_is_wls(model)){
