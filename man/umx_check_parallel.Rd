@@ -5,7 +5,7 @@
 \title{Check if OpenMx is using OpenMP, test cores, and get timings}
 \usage{
 umx_check_parallel(
-  nCores = c(1, omxDetectCores()),
+  nCores = c(1, umx_detect_cores()),
   testScript = NULL,
   rowwiseParallel = TRUE,
   nSubjects = 1000,
@@ -35,6 +35,8 @@ Quad-core i7 desktop and then a quad i7 2018 MacBook Pro
 
 \tabular{rllll}{
 Date       \tab Version         \tab Cores \tab Time              \tab     Notes               \cr
+2026-07-28 \tab 2.5.6.19 (git)  \tab 5     \tab 00 min 36.00 sec  \tab \eqn{\Delta}: 58\% (SLSQP M3 Pro laptop)  \cr
+2026-07-28 \tab 2.5.6.19 (git)  \tab 1     \tab 01 min 02.00 sec  \tab (SLSQP M3 Pro laptop)  \cr
 2021-07-28 \tab 2.19.6.19 (git) \tab 8     \tab 00 min 42.98 sec  \tab \eqn{\Delta}:-80 (SLSQP laptop (55 sec under NPSOL))  \cr
 2021-07-28 \tab 2.19.6.19 (git) \tab 1     \tab 02 min 03 sec     \tab (SLSQP on laptop)       \cr
 2020-08-09 \tab 2.17.3  (git)   \tab 1     \tab 01 min 52 sec     \tab (CSOLNP on laptop)      \cr

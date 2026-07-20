@@ -37,6 +37,7 @@ umxGSEM_dl_RefList(project_path = project_path)
 Other GSEM:
 \code{\link{Anthro_LDSC}},
 \code{\link{Psych_LDSC}},
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_label_ldsc]{umxGSEM_label_ldsc()}},

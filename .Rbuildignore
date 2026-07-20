@@ -2,7 +2,9 @@ AGENTS.md
 .github
 .travis.yml
 ^CRAN-RELEASE$
-developer
+^inst/developer/function_ideas
+^inst/developer/tests to finish
+^inst/developer/.*\.gstencil$
 ^cran-comments\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$

@@ -50,6 +50,7 @@ umxSummary(m1)
 
 Other GSEM:
 \code{\link{Anthro_LDSC}},
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},

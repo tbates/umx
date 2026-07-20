@@ -3294,14 +3294,6 @@ xmuLabel <- function(obj, suffix = "", baseName = NA, setfree = FALSE, drop = 0,
 	}
 }
 
-# TODO implement umxDefVar
-# umxDefVar(selDefs[1], name ="mod1"){
-# umxDefVar(colName = selDefs[1], name ="mod1"){
-# 	# "data.defmod1"
-# 	# TODO handle vector of colNames, return list of matrices
-# 	umxMatrix(name, "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", colName))
-# }
-
 #' Make a mxMatrix with automatic labels. Also takes name as the first parameter for more readable code.
 #'
 #' @description
@@ -3493,13 +3485,15 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 	model = xmu_safe_run_summary(model, autoRun = TRUE, intervals=intervals, summary = summary, tryHard =  tryHard)
 
 	if(calc_sat){
-		if(umx_is_RAM(model)){
-			if(model$data$type == "raw"){
-				# If we have a RAM model with raw data, compute the saturated and independence models
-				# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
-				ref_models = mxRefModels(model, run = TRUE)
-				model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
-				model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(ref_models$Saturated))
+		if(umx_has_been_run(model) && !xmu_is_wls(model)){
+			if(umx_is_RAM(model)){
+				if(model$data$type == "raw"){
+					# If we have a RAM model with raw data, compute the saturated and independence models
+					# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
+					ref_models = mxRefModels(model, run = TRUE)
+					model@output$IndependenceLikelihood = as.numeric(-2 * logLik(ref_models$Independence))
+					model@output$SaturatedLikelihood    = as.numeric(-2 * logLik(ref_models$Saturated))
+				}
 			}
 		}
 	}
@@ -3929,7 +3923,6 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' 
 umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("Mehta", "allFree"), threshMatName = "threshMat", l_u_bound = c(NA, NA), droplevels = FALSE, verbose = FALSE, selDVs= "deprecated"){
 	# TODO: umxThresholdMatrix: priority A: Move to a more robust way to detect twin than just the sep isn't NULL??
-	# TODO: Consider changing from "threshMat" to "Thresholds" to match what mxModel does with mxThresholds internally now...
 	method = match.arg(method)
 	if(method=="allFree"){
 		verbose = FALSE

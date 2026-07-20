@@ -3,19 +3,16 @@
 #' @description
 #' `xmu_make_TwinSuperModel` makes basic twin model containing `top`, `MZ`, and `DZ` models. It intelligently handles thresholds for 
 #' ordinal data, and means model for covariates matrices in the twin models if needed.
-#' 
-#' It's the replacement for `xmu_assemble_twin_supermodel` approach.
 #'
 #' @details
-#' `xmu_make_TwinSuperModel` is used in twin models (e.g.[umxCP()], [umxACE()] and [umxACEv()] and will be added to the other models: [umxGxE()], [umxIP()], 
-#' simplifying code maintenance.
+#' `xmu_make_TwinSuperModel` is used in twin models (e.g.[umxCP()], [umxACE()] and [umxACEv()] 
+#' and will be added to the other models: [umxGxE()], [umxIP()], simplifying code maintenance.
 #' 
 #' It takes `mzData` and `dzData`, a list of the `selDVs` to analyse and optional `selCovs` (as well as `sep` and `nSib`), along with other 
 #' relevant information such as whether the user wants to `equateMeans`.
 #' It can also handle a `weightVar`.
 #' 
 #' If covariates are passed in these are included in the means model (via a call to `xmuTwinUpgradeMeansToCovariateModel`.
-#' 
 #' 
 #' **Modeling**
 #' 
@@ -185,8 +182,6 @@
 #'
 xmu_make_TwinSuperModel <- function(name = "twin_super", mzData, dzData, selDVs, selCovs= NULL, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), numObsMZ = NULL, numObsDZ = NULL, nSib = 2, equateMeans = TRUE, weightVar = NULL, bVector = FALSE, dropMissingDef = TRUE, verbose= FALSE) {
 	# TODO for xmu_make_TwinSuperModel
-	# TODO: 1. xmu_make_TwinSuperModel Add selCovs
-	# TODO: 2. xmu_make_TwinSuperModel Add beta matrix for fixed covariates in means.
 	# TODO: 4. xmu_make_TwinSuperModel more tests in a test page
 
 	# *Note*: If dropping this into an existing model, all your code setting: nVar, selVars, used

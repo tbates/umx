@@ -45,6 +45,7 @@ Anthro_LDSC$I[1:3, 1:3]
 
 Other GSEM:
 \code{\link{Psych_LDSC}},
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},

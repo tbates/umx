@@ -4992,13 +4992,25 @@ umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "g
 #'
 #' @description
 #' Generates a Manhattan or Q-Q plot for GWAS results. Requires the `ggwas` package.
+#' @details
+#' See ?manhattan_plot for more parameters. Key ones include chromosomes to restrict chromosomes, highlight_snps to highlight a SNP,
+#' label_top_n, downsample (TRUE), and downsample_n (2e+05), title = NULL
 #' @param x A `umx_GWAS` object (returned by \code{\link{umxGSEM_GWAS}}).
 #' @param type Type of plot: "manhattan" (default) or "qq".
 #' @param ... Additional arguments passed to \code{\link[ggwas]{manhattan_plot}} or \code{\link[ggwas]{qq_plot}}.
 #' @return A `ggplot` object.
 #' @export
 #' @family Reporting Functions
-#' @md
+#' @family GSEM
+#' @examples
+#' \dontrun{
+#' data(example_gwas, package = "ggwas")
+#' plot.umx_GWAS(example_gwas, type= "manhattan")
+#' plot.umx_GWAS(example_gwas, label_top_n = 5) + theme_nature()
+#' plot.umx_GWAS(example_gwas, colors = gwas_palette("nejm")) + theme_science()
+#' plot.umx_GWAS(example_gwas, chromosomes= 1:7, label_top_n= 3) + theme_science()
+#' plot.umx_GWAS(example_gwas, type= "qq")
+#' }
 plot.umx_GWAS <- function(x, type = c("manhattan", "qq"), ...) {
 	if (!requireNamespace("ggwas", quietly = TRUE)) {
 		stop("The 'ggwas' package is required for plotting GWAS results. Install it with: devtools::install_github('bczech/ggwas')")

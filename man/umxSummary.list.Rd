@@ -9,6 +9,7 @@
   digits = 3,
   report = c("markdown", "html"),
   matrices = c("S", "I", "V", "N"),
+  traits = NULL,
   ...
 )
 }
@@ -24,6 +25,8 @@
 \code{c("S", "I", "V", "N")}). Unknown names are ignored. Scalar \code{m} is always
 mentioned in the header when present.}
 
+\item{traits}{Optional character vector of trait names to subset (default = NULL, which shows all).}
+
 \item{...}{Not used (S3 compatibility).}
 }
 \value{
@@ -38,6 +41,7 @@ Pretty-prints the trait list and the main LDSC/GSEM matrices (\code{S}, \code{I}
 data(Psych_LDSC)
 umxSummary(Psych_LDSC)
 \dontrun{
+umxSummary(Psych_LDSC, traits= c("MDD", "SCZ"), digits=5)
 umxSummary(Psych_LDSC, report = "html")
 }
 }
@@ -47,6 +51,7 @@ umxSummary(Psych_LDSC, report = "html")
 Other GSEM:
 \code{\link{Anthro_LDSC}},
 \code{\link{Psych_LDSC}},
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},

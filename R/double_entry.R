@@ -28,6 +28,7 @@
 #' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1".
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
+#' @param doubleEntrySuffix Suffixes for the continuous and censored variables (default = c("_cont", "_cens")).
 #' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 #' @param data If provided, dzData and mzData are treated as levels of zyg to select() MZ and DZ data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
@@ -47,12 +48,10 @@
 #' @param boundDiag Numeric lbound for diagonal of the a, c, and e matrices. Defaults to 0.
 #' @param addStd Whether to add the algebras to compute a std model (defaults to TRUE).
 #' @param addCI Whether to add intervals to compute CIs (defaults to TRUE).
-#' @param doubleEntrySuffix Suffixes for the continuous and censored variables (default = c("_cont", "_cens")).
 #' @return - [OpenMx::mxModel()] of subclass mxModel.ACE
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE()], [umxSummary()], [plot()]
-
 umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
@@ -96,7 +95,7 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 	newSelDVs = c()
 	doubleEntryPairs = list()
 	
-	# Try to detect if the user passed base variable names that need expansion
+	# Detect if the user passed base variable names that need expansion
 	for (v in selDVs) {
 		contName = paste0(v, doubleEntrySuffix[1])
 		censName = paste0(v, doubleEntrySuffix[2])
@@ -156,7 +155,7 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 			cbind(hAC, hAC, ACE))
 		)
 	}else{
-		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2024, best tim :-)")
+		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2030, best tim :-)")
 	}
 	
 	top = mxModel(model$top,

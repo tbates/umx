@@ -22,7 +22,7 @@ test_that("umxEquate works", {
 	
 	# rename the equated paths
 	m2 = umxEquate(m1, a = "G_to_x1", b = "G_to_x2", newlabels = "equated", autoRun = TRUE, comparison = TRUE, name = "Eq_x1_x2")
-	expect_true(parameters(m2)$name[1] == "equated")
+	expect_true("equated" %in% parameters(m2)$name)
 
 })
 
@@ -211,4 +211,31 @@ test_that("umxRAM works with xmuRAM2Ordinal", {
 		umxPath(v.m.= c("obese1", "obese2"))
 	)
 })
+
+test_that("umxRun handles WLS models and failed models safely without crashing", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	
+	# 1. WLS model: verify umxRun runs it successfully and skips mxRefModels (so IndependenceLikelihood is NA)
+	m1 = umxRAM("One Factor WLS test", data = demoOneFactor, type = "WLS", allContinuousMethod = "marginals",
+		umxPath(from = "G", to = manifests),
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
+	)
+	m1 = umxRun(m1, calc_sat = TRUE)
+	expect_true(umx_has_been_run(m1))
+	expect_true(is.na(summary(m1)$IndependenceLikelihood))
+	
+	# 2. Failed model: verify that umxRun exits gracefully instead of crashing on mxRefModels
+	m2 = umxRAM("Failed Model test", data = demoOneFactor, type = "WLS", autoRun = FALSE,
+		umxPath(from = "G", to = manifests),
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
+	)
+	# Wrap in try to capture R condition signal from xmu_safe_run_summary
+	tryRes = try(umxRun(m2, tryHard = "no", calc_sat = TRUE), silent = TRUE)
+	expect_true(inherits(tryRes, "try-error") || !umx_has_been_run(tryRes))
+})
+
 

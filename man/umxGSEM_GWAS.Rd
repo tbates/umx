@@ -66,9 +66,11 @@ see e.g. \link{Psych_LDSC} for a packaged example and field definitions.
 \dontrun{
 1. load data
 data(Psych_LDSC)
+# Have a quick look if you like
 # Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named var_SCZ, poly_BIP_SCZ, ...
+umxSummary(Psych_LDSC)
 
-# 2. build the snp data structure from your SNP data txt files, e.g.
+#' # 2. build the snp data structure from your SNP data txt files, e.g.
 dir = "~/bin/umx/inst/developer/GenomicSEM"
 snps = umxGSEM_sumstats(
   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
@@ -82,7 +84,41 @@ GWAS = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
 
 # 4. Examine results and make a new drug or something useful!
 head(GWAS)
-plot(GWAS)
+# Manhattan Plot (default)
+plot(gwas_res)
+plot(example_gwas, chromosomes= 1, label_top_n= 4, title="IQ GWAS") + theme_plos()
+volcano_plot(example_gwas, size_by = "AF", label_top_n = 3)
+
+# Q-Q Plot
+plot(gwas_res, type = "qq")
+
+# ================
+# = Another demo =
+# ================
+# 1. Load the reference LDSC covariance structure
+data(Psych_LDSC, package = "umx")
+
+# 2. Generate a million simulated SNPs
+traits = c("SCZ", "BIP", "MDD")
+t0 = Sys.time()
+snps = umxGSEM_sim_snps(n = 1e6, traits = traits)
+print(Sys.time() - t0)
+
+# 3. Run the GWAS and time it
+t0 = Sys.time()
+gwas_res = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps, traits = traits)
+print(Sys.time() - t0)
+
+# 4. View the results
+head(gwas_res)
+# Manhattan Plot (default)
+plot(gwas_res)
+plot(example_gwas, chromosomes= 1, label_top_n= 4, title="IQ GWAS") + theme_plos()
+volcano_plot(example_gwas, size_by = "AF", label_top_n = 3)
+
+# Q-Q Plot
+plot(gwas_res, type = "qq")
+
 }
 }
 \seealso{
@@ -91,6 +127,7 @@ plot(GWAS)
 Other GSEM:
 \code{\link{Anthro_LDSC}},
 \code{\link{Psych_LDSC}},
+\code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
 \code{\link[=umxGSEM_label_ldsc]{umxGSEM_label_ldsc()}},

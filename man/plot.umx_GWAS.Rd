@@ -19,6 +19,20 @@ A \code{ggplot} object.
 \description{
 Generates a Manhattan or Q-Q plot for GWAS results. Requires the \code{ggwas} package.
 }
+\details{
+See ?manhattan_plot for more parameters. Key ones include chromosomes to restrict chromosomes, highlight_snps to highlight a SNP,
+label_top_n, downsample (TRUE), and downsample_n (2e+05), title = NULL
+}
+\examples{
+\dontrun{
+data(example_gwas, package = "ggwas")
+plot.umx_GWAS(example_gwas, type= "manhattan")
+plot.umx_GWAS(example_gwas, label_top_n = 5) + theme_nature()
+plot.umx_GWAS(example_gwas, colors = gwas_palette("nejm")) + theme_science()
+plot.umx_GWAS(example_gwas, chromosomes= 1:7, label_top_n= 3) + theme_science()
+plot.umx_GWAS(example_gwas, type= "qq")
+}
+}
 \seealso{
 Other Reporting Functions:
 \code{\link{umx}},
@@ -31,5 +45,19 @@ Other Reporting Functions:
 \code{\link[=umxParameters]{umxParameters()}},
 \code{\link[=umx_aggregate]{umx_aggregate()}},
 \code{\link[=umx_time]{umx_time()}}
+
+Other GSEM:
+\code{\link{Anthro_LDSC}},
+\code{\link{Psych_LDSC}},
+\code{\link[=umxGSEM]{umxGSEM()}},
+\code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
+\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_label_ldsc]{umxGSEM_label_ldsc()}},
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
+\code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
+\code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}},
+\code{\link[=umxSummary.MxDataStatic]{umxSummary.MxDataStatic()}},
+\code{\link[=umxSummary.list]{umxSummary.list()}}
 }
+\concept{GSEM}
 \concept{Reporting Functions}

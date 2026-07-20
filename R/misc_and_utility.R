@@ -1062,6 +1062,8 @@ umx_get_checkpoint <- function(model = NULL) {
 #' 
 #' \tabular{rllll}{
 #'	Date       \tab Version         \tab Cores \tab Time              \tab     Notes               \cr
+#'	2026-07-28 \tab 2.5.6.19 (git)  \tab 5     \tab 00 min 36.00 sec  \tab \eqn{\Delta}: 58% (SLSQP M3 Pro laptop)  \cr
+#'	2026-07-28 \tab 2.5.6.19 (git)  \tab 1     \tab 01 min 02.00 sec  \tab (SLSQP M3 Pro laptop)  \cr
 #'	2021-07-28 \tab 2.19.6.19 (git) \tab 8     \tab 00 min 42.98 sec  \tab \eqn{\Delta}:-80 (SLSQP laptop (55 sec under NPSOL))  \cr
 #'	2021-07-28 \tab 2.19.6.19 (git) \tab 1     \tab 02 min 03 sec     \tab (SLSQP on laptop)       \cr
 #'	2020-08-09 \tab 2.17.3  (git)   \tab 1     \tab 01 min 52 sec     \tab (CSOLNP on laptop)      \cr
@@ -1099,7 +1101,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' # In 2016 1core took 1 minute
 #' umx_check_parallel()
 #' }
-umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000, optimizer=NULL) {
+umx_check_parallel <- function(nCores = c(1, umx_detect_cores()), testScript = NULL, rowwiseParallel = TRUE, nSubjects = 1000, optimizer=NULL) {
 	if(!is.null(optimizer)){
 		oldOpt = umx_set_optimizer()
 		umx_set_optimizer(optimizer)
@@ -1111,7 +1113,7 @@ umx_check_parallel <- function(nCores = c(1, omxDetectCores()), testScript = NUL
 	if( (length(nCores) == 1) && (nCores == -1)){
 		nCores = omxDetectCores()
 	}
-	message("You have been using ", oldCores, " of ", omxDetectCores(), " available cores (0 means max - 1)")
+	message("You have been using ", oldCores, " of ", umx_detect_cores(), " available performance cores (0 means max - 1)")
 	message("I will now set cores to ", omxQuotes(nCores), " (they will be reset after) and run a script that hits that many cores if possible.\n",
 	"Check CPU while it's running and see if R is pegging the processor.")
 	set.seed(10)

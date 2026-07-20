@@ -775,9 +775,11 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' \dontrun{
 #' 1. load data
 #' data(Psych_LDSC)
+#' # Have a quick look if you like
 #' # Psych_LDSC fields: S, V, I, N, m (see ?Psych_LDSC). V pairs are named var_SCZ, poly_BIP_SCZ, ...
-#' 
-#' # 2. build the snp data structure from your SNP data txt files, e.g.
+#' umxSummary(Psych_LDSC)
+#'
+#' #' # 2. build the snp data structure from your SNP data txt files, e.g.
 #' dir = "~/bin/umx/inst/developer/GenomicSEM"
 #' snps = umxGSEM_sumstats(
 #'   files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
@@ -791,7 +793,41 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #'
 #' # 4. Examine results and make a new drug or something useful!
 #' head(GWAS)
-#' plot(GWAS)
+#' # Manhattan Plot (default)
+#' plot(gwas_res)
+#' plot(example_gwas, chromosomes= 1, label_top_n= 4, title="IQ GWAS") + theme_plos()
+#' volcano_plot(example_gwas, size_by = "AF", label_top_n = 3)
+#' 
+#' # Q-Q Plot
+#' plot(gwas_res, type = "qq")
+#' 
+#' # ================
+#' # = Another demo =
+#' # ================
+#' # 1. Load the reference LDSC covariance structure
+#' data(Psych_LDSC, package = "umx")
+#' 
+#' # 2. Generate a million simulated SNPs
+#' traits = c("SCZ", "BIP", "MDD")
+#' t0 = Sys.time()
+#' snps = umxGSEM_sim_snps(n = 1e6, traits = traits)
+#' print(Sys.time() - t0)
+#' 
+#' # 3. Run the GWAS and time it
+#' t0 = Sys.time()
+#' gwas_res = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps, traits = traits)
+#' print(Sys.time() - t0)
+#' 
+#' # 4. View the results
+#' head(gwas_res)
+#' # Manhattan Plot (default)
+#' plot(gwas_res)
+#' plot(example_gwas, chromosomes= 1, label_top_n= 4, title="IQ GWAS") + theme_plos()
+#' volcano_plot(example_gwas, size_by = "AF", label_top_n = 3)
+#' 
+#' # Q-Q Plot
+#' plot(gwas_res, type = "qq")
+#' 
 #' }
 umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), uncertainty = c("robustSE", "SE"), SnpSamplingError = 5e-4, maxSNPs = NULL, snpEffect = "SNP_to_F1", quiet = TRUE, fix_measurement = TRUE, force_fallback = FALSE) {
 	estimation = match.arg(estimation)
@@ -1665,6 +1701,7 @@ xmu_umxSummary_print_matrix <- function(M, title, digits = 3, report = c("markdo
 #' data(Psych_LDSC)
 #' umxSummary(Psych_LDSC)
 #' \dontrun{
+#' umxSummary(Psych_LDSC, traits= c("MDD", "SCZ"), digits=5)
 #' umxSummary(Psych_LDSC, report = "html")
 #' }
 umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), matrices = c("S", "I", "V", "N"), traits = NULL, ...) {

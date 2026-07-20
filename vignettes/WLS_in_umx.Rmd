@@ -93,10 +93,21 @@ Finally, we fit using the DWLS estimator:
 ```{r fit_dwls, message=FALSE, warning=FALSE}
 mDWLS = suppressWarnings(umxRAM("One_Factor_DWLS", data = HSwls, type = "DWLS",
 	umxPath("g", to = paste0("x", 1:9)),
-	umxPath(var = paste0("x", 1:9)),
 	umxPath(var = "g", fixedAt = 1)
+	umxPath(var = paste0("x", 1:9)),
+	umxPath(means = paste0("x", 1:9)),
+	umxPath(means = paste0("x", 1:9)),
+	umxPath("one", to = c("x9", "x8", "x7", "x6", "x5", "x4"))
+	# for binary variables, expected mean(s) must be fixed at zero for identification.
+	umxPath("one", to = c("x3", "x2", "x1"), fixedAt = 0)
 ))
 ```
+
+**Note**, you will see a negative TLI which might surprise you.
+
+This model is *Severely Misspecified*. The HSwls data is the Holzinger and Swineford dataset, which consists of 3 distinct, robust cognitive factors (Visual, Verbal, and Speed).
+
+Forcing these 9 variables into a single common factor results in severe misspecification. Because the model fails to capture the true multi-dimensional structure of the data, the target model's fit is extremely poor ($\chi^2$ = 306.98 on 32 degrees of freedom), pushing the TLI well below zero.
 
 ---
 
@@ -106,8 +117,8 @@ Let's extract and compare the standardized factor loadings across the three mode
 
 ```{r compare_loadings, message=FALSE}
 # Extract standardized coefficients
-coefML = coef(mML)
-coefWLS = coef(mWLS)
+coefML   = coef(mML)
+coefWLS  = coef(mWLS)
 coefDWLS = coef(mDWLS)
 
 # Loadings list (paths from g to x1:x9)
@@ -116,8 +127,8 @@ loadings = paste0("g_to_x", 1:9)
 # Align into a summary table
 compareTable = data.frame(
 	Path = loadings,
-	ML_Estimate = round(coefML[loadings], 3),
-	WLS_Estimate = round(coefWLS[loadings], 3),
+	ML_Estimate   = round(coefML[loadings], 3),
+	WLS_Estimate  = round(coefWLS[loadings], 3),
 	DWLS_Estimate = round(coefDWLS[loadings], 3)
 )
 print(compareTable)

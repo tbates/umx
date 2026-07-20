@@ -64,12 +64,10 @@ xmu_make_TwinSuperModel(
 \description{
 \code{xmu_make_TwinSuperModel} makes basic twin model containing \code{top}, \code{MZ}, and \code{DZ} models. It intelligently handles thresholds for
 ordinal data, and means model for covariates matrices in the twin models if needed.
-
-It's the replacement for \code{xmu_assemble_twin_supermodel} approach.
 }
 \details{
-\code{xmu_make_TwinSuperModel} is used in twin models (e.g.\code{\link[=umxCP]{umxCP()}}, \code{\link[=umxACE]{umxACE()}} and \code{\link[=umxACEv]{umxACEv()}} and will be added to the other models: \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxIP]{umxIP()}},
-simplifying code maintenance.
+\code{xmu_make_TwinSuperModel} is used in twin models (e.g.\code{\link[=umxCP]{umxCP()}}, \code{\link[=umxACE]{umxACE()}} and \code{\link[=umxACEv]{umxACEv()}}
+and will be added to the other models: \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxIP]{umxIP()}}, simplifying code maintenance.
 
 It takes \code{mzData} and \code{dzData}, a list of the \code{selDVs} to analyse and optional \code{selCovs} (as well as \code{sep} and \code{nSib}), along with other
 relevant information such as whether the user wants to \code{equateMeans}.
