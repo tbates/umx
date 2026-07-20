@@ -1,8 +1,10 @@
 ## dev
 ## umx 5.00.5 
 * Date: 2026-07-20 R 4.6.0
-* IMPROVED: `umxRAM` now adds the fixes means for binary vars at 0 when adding these for a wayward user doing WLS with raw data.
-* IMPROVED: `umxRAM` now shows the user the correct mxPath to add for WLS means.
+
+* NEW: `umx_tutorials` to let users list and open package vignettes interactively.
+* NEW: `xmu_gsem_subset_covstruc`
+* NEW: `umxGSEM_std` function to standardize GSEM S and V matrices (Delta method) and scale intercepts.
 * NEW: `umxSummary` for covstruc/`mxData` Nice for understanding the new covstruc format from built in Psych_LDSC
 * NEW: `mxRAM` now emits topologically sorted models automatically (great for optimizer, esp with hard models!)
 * NEW: LDSC object for GSEM with dimnames on `S`, `I`, `V`, and `N`.
@@ -16,6 +18,16 @@
 * NEW: Built-in ldsc data("Psych_LDSC") data("Anthro_LDSC")
 * NEW: vignettes for WLS, umxRAM robust SEs, and GSEM!
 * NEW: comprehensive test suite!
+* IMPROVED: `umxRun` shows fit change for run models. messages distinguish WLS Chi-Square vs -2LL.
+* IMPROVED: `umxStart` values are MUCH better.
+* IMPROVED: `umxParan` takes cov input (and n)
+* IMPROVED: `umx_lower2full` preserves names, pads non-square input.
+* IMPROVED: `umx_complete_dollar` makes console autocomplete MUCH BETTER.
+* IMPROVED: `umxACE_DE`: Added doubleEntrySuffix parameter and improve detection logic
+* IMPROVED: `plot.umx_GWAS` `umxGSEM` Expand and clarify docs and examples for GWAS plotting
+* IMPROVED: `vignette` WLS example code, notes on misspecification, formatting).
+* IMPROVED: `umxRAM` now adds the fixes means for binary vars at 0 when adding these for a wayward user doing WLS with raw data.
+* IMPROVED: `umxRAM` now shows the user the correct mxPath to add for WLS means.
 
 ## umx 4.90.0 
 * Date: 2026-07-20 R 4.6.0
