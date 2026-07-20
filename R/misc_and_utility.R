@@ -1541,6 +1541,9 @@ umxParan <- function(df, cols = NA, graph = TRUE, mapStrings = NULL, n = NULL) {
 		}
 		if (!all(is.na(cols))) {
 			umx_check_names(cols, data = df)
+			if (!is.null(colnames(df))) {
+				rownames(df) = colnames(df)
+			}
 			df = df[cols, cols]
 		}
 		df = cov2cor(df)
@@ -7752,6 +7755,11 @@ umx_lower2full <- function(lower.data, diag = NULL, byrow = TRUE, dimnames = NUL
 		# Copy the transpose of the lower triangle to the
 		# upper triangle
 		mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
+		if(!is.null(colnames(mat))){
+			if(is.null(rownames(mat)) || all(rownames(mat) == as.character(1:nrow(mat)))){
+				rownames(mat) = colnames(mat)
+			}
+		}
 	} else {
 		len = length(lower.data)
 		if(diag) {

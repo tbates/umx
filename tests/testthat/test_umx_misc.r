@@ -59,7 +59,7 @@ test_that("xmu_standardize_ACEcov", {
 	dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
 	m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE)
 	fit = xmu_standardize_ACEcov(m1)
-
+	expect_true(!is.null(fit))
 })
 
 test_that("test umx_check_names", {
@@ -103,7 +103,7 @@ test_that("umx_get_checkpoint", {
 		umxPath(var     = manifests),
 		umxPath(var     = "G", fixedAt = 1)
 	)
-	umx_get_checkpoint(model = m1)
+	expect_error(umx_get_checkpoint(model = m1), regexp = NA)
 })
 
 test_that("standardize", {
@@ -118,7 +118,7 @@ test_that("standardize", {
 	)
 	m1 = xmu_standardize_RAM(m1)
 	m1 = umx_standardize(m1)
-	umxSummary(m1)
+	expect_error(umxSummary(m1), regexp = NA)
 })
 
 test_that("umx_is_exogenous umx_is_endogenous", {
@@ -168,7 +168,8 @@ test_that("umx_explode_twin_names", {
 	x[x < 0] = 0; y[y < 0] = 0
 	umx_explode_twin_names(data.frame(x_T1  = x, x_T2  = y), sep = "_T")
 	umx_explode_twin_names(data.frame(x_T11 = x, x_T22 = y), sep = "_T")
-	umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
+	res = umx_explode_twin_names(c("x_T11", "x_T22"), sep = "_T")
+	expect_true(!is.null(res))
 })
 
 test_that("umx_check", {
@@ -277,6 +278,12 @@ test_that("umxParan works with both data frames and covariance matrices", {
 	
 	# 4. Test error when n is not specified for a covariance matrix
 	expect_error(umxParan(cov_mat, graph = FALSE), regexp = "You must specify the number of observations")
+	
+	# 5. Test covariance matrix with row/column name mismatch (numbers vs chars)
+	cov_mismatch = cov_mat
+	rownames(cov_mismatch) = as.character(1:nrow(cov_mismatch))
+	res_mismatch = umxParan(cov_mismatch, cols = manifests[1:2], n = nrow(df), graph = FALSE)
+	expect_equal(length(res_mismatch$Ev), 2)
 })
 
 

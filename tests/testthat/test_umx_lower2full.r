@@ -115,7 +115,8 @@ test_that("testing umx_lower2full", {
 	res = expect_message(umx_lower2full(df[paste0("v", 1:2)], diag = FALSE), "Padded 3 x 2 input matrix with NA to make it square")
 	
 	expect_equal(dim(res), c(3, 3))
-	expect_true(isSymmetric(unname(res)))
+	expect_equal(rownames(res), colnames(res))
+	expect_true(isSymmetric(res))
 	expect_equal(as.numeric(diag(res)), c(1, 1, 1))
 	expect_equal(as.numeric(res[2, 1]), 0.5)
 	expect_equal(as.numeric(res[1, 2]), 0.5)
