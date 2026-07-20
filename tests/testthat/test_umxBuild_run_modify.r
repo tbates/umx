@@ -238,4 +238,20 @@ test_that("umxRun handles WLS models and failed models safely without crashing",
 	expect_true(inherits(tryRes, "try-error") || !umx_has_been_run(tryRes))
 })
 
+test_that("umxRun prints change in fit statistic when re-running a model", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	
+	m1 = umxRAM("Fit Change test", data = demoOneFactor, type = "cov", autoRun = FALSE,
+		umxPath("G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	m1 = umxRun(m1)
+	
+	# Verify that re-running m1 outputs the message with change in -2LL
+	expect_message(umxRun(m1), "Change in -2LL \\(old - new\\) = ")
+})
+
 

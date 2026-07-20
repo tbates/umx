@@ -132,8 +132,8 @@ test_that("umx_is_exogenous umx_is_endogenous", {
 	)
 	expect_null(umx_is_exogenous(m1 , manifests_only = TRUE))
 	expect_equal(umx_is_exogenous(m1 , manifests_only = FALSE), "G")
-	expect_equal(umx_is_endogenous(m1, manifests_only = TRUE), paste0("x", 1:5) )
-	expect_equal(umx_is_endogenous(m1, manifests_only = FALSE), paste0("x", 1:5) )
+	expect_equal(sort(umx_is_endogenous(m1, manifests_only = TRUE)), paste0("x", 1:5) )
+	expect_equal(sort(umx_is_endogenous(m1, manifests_only = FALSE)), paste0("x", 1:5) )
 	expect_true(umx_has_been_run(m1))
 })
 
@@ -202,6 +202,85 @@ test_that("libs loads packages via symbol and string", {
 	libs("parallel")
 	expect_true("package:parallel" %in% search())
 })
+
+test_that("console autocompletion for argument values works", {
+	# Assign dummy function to .GlobalEnv for completion lookup
+	assign("dummy_make", function(what = c("load", "quickInst", "install", "spell"), equateMeans = TRUE) {}, envir = .GlobalEnv)
+	on.exit(rm("dummy_make", envir = .GlobalEnv))
+	
+	utils_ns = asNamespace("utils")
+	
+	# Scenario 1: Inside quotes
+	line = 'dummy_make(what = "q'
+	utils_ns$.assignLinebuffer(line)
+	utils_ns$.assignEnd(nchar(line))
+	utils_ns$.guessTokenFromLine()
+	
+	# Register custom completer
+	utils::rc.options(custom.completer = xmu_custom_completer)
+	utils_ns$.completeToken(custom = TRUE)
+	expect_equal(utils_ns$.CompletionEnv[["comps"]], 'quickInst"')
+	
+	# Scenario 2: Plain token
+	line = 'dummy_make(what = q'
+	utils_ns$.assignLinebuffer(line)
+	utils_ns$.assignEnd(nchar(line))
+	utils_ns$.guessTokenFromLine()
+	utils_ns$.completeToken(custom = TRUE)
+	expect_equal(utils_ns$.CompletionEnv[["comps"]], '"quickInst"')
+	
+	# Scenario 3: Empty token
+	line = 'dummy_make(what = '
+	utils_ns$.assignLinebuffer(line)
+	utils_ns$.assignEnd(nchar(line))
+	utils_ns$.guessTokenFromLine()
+	utils_ns$.completeToken(custom = TRUE)
+	expect_equal(utils_ns$.CompletionEnv[["comps"]], c('"load"', '"quickInst"', '"install"', '"spell"'))
+	
+	# Scenario 4: Logical argument
+	line = 'dummy_make(equateMeans = T'
+	utils_ns$.assignLinebuffer(line)
+	utils_ns$.assignEnd(nchar(line))
+	utils_ns$.guessTokenFromLine()
+	utils_ns$.completeToken(custom = TRUE)
+	expect_equal(utils_ns$.CompletionEnv[["comps"]], 'TRUE')
+	
+	# Scenario 5: Right after open parenthesis (empty inside)
+	line = 'dummy_make('
+	utils_ns$.assignLinebuffer(line)
+	utils_ns$.assignEnd(nchar(line))
+	utils_ns$.guessTokenFromLine()
+	utils_ns$.completeToken(custom = TRUE)
+	# Should fall back to standard argument completions
+	expect_true("what=" %in% utils_ns$.CompletionEnv[["comps"]])
+})
+
+test_that("umxParan works with both data frames and covariance matrices", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	df = demoOneFactor[, manifests[1:3]]
+	
+	# 1. Test raw data
+	res_df = umxParan(df, graph = FALSE)
+	expect_true(res_df$Retained >= 0)
+	
+	# 2. Test covariance matrix with n specified
+	cov_mat = cov(df)
+	res_cov = umxParan(cov_mat, n = nrow(df), graph = FALSE)
+	expect_true(res_cov$Retained >= 0)
+	expect_equal(res_df$Ev, res_cov$Ev)
+	
+	# 3. Test covariance matrix with cols specified
+	res_cov_cols = umxParan(cov_mat, cols = manifests[1:2], n = nrow(df), graph = FALSE)
+	expect_equal(length(res_cov_cols$Ev), 2)
+	
+	# 4. Test error when n is not specified for a covariance matrix
+	expect_error(umxParan(cov_mat, graph = FALSE), regexp = "You must specify the number of observations")
+})
+
+
+
 
 
 

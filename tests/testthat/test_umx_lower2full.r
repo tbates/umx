@@ -104,5 +104,23 @@ test_that("testing umx_lower2full", {
 	)
 	expect_warning(umx_lower2full(tmp, diag = TRUE))
 	
+	# Test non-square data.frame with diagonal missing (diag = FALSE)
+	df = data.frame(
+		characteristic = c("v1_var", "v2_var", "v3_var"),
+		v1 = c(NA, 0.5, 0.3),
+		v2 = c(NA, NA, 0.2)
+	)
 	
+	# Verify that a message is outputted about padding the 3x2 matrix
+	res = expect_message(umx_lower2full(df[paste0("v", 1:2)], diag = FALSE), "Padded 3 x 2 input matrix with NA to make it square")
+	
+	expect_equal(dim(res), c(3, 3))
+	expect_true(isSymmetric(unname(res)))
+	expect_equal(as.numeric(diag(res)), c(1, 1, 1))
+	expect_equal(as.numeric(res[2, 1]), 0.5)
+	expect_equal(as.numeric(res[1, 2]), 0.5)
+	expect_equal(as.numeric(res[3, 1]), 0.3)
+	expect_equal(as.numeric(res[1, 3]), 0.3)
+	expect_equal(as.numeric(res[3, 2]), 0.2)
+	expect_equal(as.numeric(res[2, 3]), 0.2)
 })
