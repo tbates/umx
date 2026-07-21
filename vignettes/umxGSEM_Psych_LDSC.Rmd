@@ -1,5 +1,5 @@
 ---
-title: "Genomic SEM in umx (`umxGSEM`)"
+title: "Genomic SEM in umx (umxGSEM)"
 subtitle: "Psych_LDSC common-factor check against GenomicSEM"
 author: "Timothy C. Bates"
 date: "`r Sys.Date()`"
@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
   eval     = FALSE   # stub: set TRUE when verifying locally with current OpenMx/umx
 )
 library(umx)
+umx_set_auto_plot(FALSE)
 ```
 
 ## Purpose

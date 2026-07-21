@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 )
 library(umx)
 library(OpenMx)
-library(lavaan)
+umx_set_auto_plot(FALSE)
 ```
 
 ## Introduction
@@ -61,104 +61,48 @@ In `umxRAM`, the estimator is requested using the `type` argument:
 * `type = "WLS"` for Full WLS.
 * `type = "DWLS"` for Diagonally Weighted Least Squares.
 
-### 1. Maximum Likelihood (ML)
-First, we fit using ML by converting variables to numeric (to treat them as continuous):
+### Live demo: DWLS only (package-check friendly)
 
-```{r fit_ml, message=FALSE, warning=FALSE}
-# Convert ordinal factors to numeric for ML estimation
+Full WLS and continuous-ML-on-ordinal demos are slower (polychoric prep + denser weights). For CRAN/check we fit **DWLS** once on a compact 6-indicator, two-factor model. Run the larger 9-variable / full-WLS variants locally with `eval = TRUE` in the optional chunks below.
+
+```{r fit_dwls, message=FALSE, warning=FALSE}
+# Six ordinal indicators, two factors (smaller than full 9-variable 1-factor)
+mDWLS = suppressWarnings(umxRAM("Two_Factor_DWLS", data = HSwls, type = "DWLS",
+	umxPath("visual", to = c("x1", "x2", "x3")),
+	umxPath("verbal", to = c("x4", "x5", "x6")),
+	umxPath(var = c("x1", "x2", "x3", "x4", "x5", "x6")),
+	umxPath(var = c("visual", "verbal"), fixedAt = 1),
+	umxPath("visual", with = "verbal"),
+	# Binary indicators: means fixed at 0 for identification under DWLS
+	umxPath("one", to = c("x1", "x2", "x3"), fixedAt = 0),
+	umxPath("one", to = c("x4", "x5", "x6"))
+))
+umxSummary(mDWLS, std = TRUE, refModels = FALSE)
+```
+
+Optional larger demos (not run during package check):
+
+```{r fit_ml_wls_optional, eval = FALSE}
 dfMl = HSwls
 dfMl[, paste0("x", 1:9)] = lapply(dfMl[, paste0("x", 1:9)], as.numeric)
-
 mML = umxRAM("One_Factor_ML", data = dfMl, type = "FIML",
 	umxPath("g", to = paste0("x", 1:9)),
 	umxPath(var = paste0("x", 1:9)),
 	umxPath(var = "g", fixedAt = 1)
 )
-```
-
-### 2. Full Weighted Least Squares (WLS)
-Next, we fit using the full WLS estimator on the original ordinal factors:
-
-```{r fit_wls, message=FALSE, warning=FALSE}
-mWLS = suppressWarnings(umxRAM("One_Factor_WLS", data = HSwls, type = "WLS",
+mWLS = umxRAM("One_Factor_WLS", data = HSwls, type = "WLS",
 	umxPath("g", to = paste0("x", 1:9)),
 	umxPath(var = paste0("x", 1:9)),
 	umxPath(var = "g", fixedAt = 1)
-))
-```
-
-### 3. Diagonally Weighted Least Squares (DWLS)
-Finally, we fit using the DWLS estimator:
-
-```{r fit_dwls, message=FALSE, warning=FALSE}
-mDWLS = suppressWarnings(umxRAM("One_Factor_DWLS", data = HSwls, type = "DWLS",
-	umxPath("g", to = paste0("x", 1:9)),
-	umxPath(var = "g", fixedAt = 1)
-	umxPath(var = paste0("x", 1:9)),
-	umxPath(means = paste0("x", 1:9)),
-	umxPath(means = paste0("x", 1:9)),
-	umxPath("one", to = c("x9", "x8", "x7", "x6", "x5", "x4"))
-	# for binary variables, expected mean(s) must be fixed at zero for identification.
-	umxPath("one", to = c("x3", "x2", "x1"), fixedAt = 0)
-))
-```
-
-**Note**, you will see a negative TLI which might surprise you.
-
-This model is *Severely Misspecified*. The HSwls data is the Holzinger and Swineford dataset, which consists of 3 distinct, robust cognitive factors (Visual, Verbal, and Speed).
-
-Forcing these 9 variables into a single common factor results in severe misspecification. Because the model fails to capture the true multi-dimensional structure of the data, the target model's fit is extremely poor ($\chi^2$ = 306.98 on 32 degrees of freedom), pushing the TLI well below zero.
-
----
-
-## 3. Comparing Estimates and Standard Errors
-
-Let's extract and compare the standardized factor loadings across the three models:
-
-```{r compare_loadings, message=FALSE}
-# Extract standardized coefficients
-coefML   = coef(mML)
-coefWLS  = coef(mWLS)
-coefDWLS = coef(mDWLS)
-
-# Loadings list (paths from g to x1:x9)
-loadings = paste0("g_to_x", 1:9)
-
-# Align into a summary table
-compareTable = data.frame(
-	Path = loadings,
-	ML_Estimate   = round(coefML[loadings], 3),
-	WLS_Estimate  = round(coefWLS[loadings], 3),
-	DWLS_Estimate = round(coefDWLS[loadings], 3)
 )
-print(compareTable)
 ```
 
-### Key Interpretations:
-* **Underestimated ML Loadings:** Treating ordinal indicators as continuous (ML) typically underestimates factor loadings because the non-linear categorization threshold is ignored.
-* **WLS vs. DWLS:** Both WLS and DWLS recover the true underlying latent relationships, but DWLS is often more stable and exhibits lower mean squared error in modest sample sizes ($N < 1000$).
+### Nested comparison under DWLS
 
----
-
-## 4. Model Fit and Comparison under WLS
-
-### Fit Indices
-Conventional fit indices (CFI, TLI, RMSEA) are calculated using $\chi^2$. In WLS/DWLS, the discrepancy function is inflated by the weight matrix, causing standard fit index cutoffs (e.g., CFI $> 0.95$, RMSEA $< 0.06$) to be **invalid**. 
-
-When running `umxSummary()` on a WLS model, `umx` automatically uses **Satorra-Bentler (2010)** robust corrections to adjust fit statistics:
-
-```{r summary_wls, message=FALSE}
-umxSummary(mDWLS, std = TRUE)
-```
-
-### Model Comparison
-When comparing nested WLS/DWLS models, we cannot simply subtract the raw chi-squares because the weight matrices differ between the models. `umxCompare()` automatically performs a **Strict Satorra-Bentler scaled difference test**:
+`umxCompare()` uses a strict Satorra–Bentler scaled difference when Jacobians are available (GenomicMx OpenMx). Keep the nested drop small:
 
 ```{r nested_compare, message=FALSE, warning=FALSE}
-# Fit nested model (drop g to x1 loading)
-mDWLS_nested = suppressWarnings(umxModify(mDWLS, update = "g_to_x1", name = "Nested_DWLS"))
-
-# Compare models
+mDWLS_nested = suppressWarnings(umxModify(mDWLS, update = "visual_to_x1", name = "Nested_DWLS"))
 umxCompare(mDWLS, mDWLS_nested)
 ```
 

@@ -13,7 +13,7 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
-  knitr::opts_chunk$set(
+knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.width = 6,
@@ -21,6 +21,7 @@ vignette: >
 )
 library(umx)
 library(OpenMx)
+umx_set_auto_plot(FALSE)
 ```
 
 ## Introduction
@@ -131,41 +132,29 @@ We can also use `imxRobustSE()` from `OpenMx` on our fitted model, returning a v
 m1Robust = imxRobustSE(m1)
 ```
 
-# Compute CI
-Finally we can extract profile-based confidence intervals (CI). These do not have to be symmetrical.
+# Compare SEs
+If robust SEs are larger than standard ML SEs, that often signals non-normality or other sandwich inflation.
 
-```{r CI, message=FALSE}
-umxSummary(m1, std = TRUE, uncertainty = "CI")
-
-# Extract standard errors to compare
+```{r compare_se, message=FALSE}
 stdSE = m1$output$standardErrors
-
-# Compare SEs side-by-side
 compareSE = data.frame(
-	Parameter             = row.names(stdSE),
-	Standard_ML_SE = round(stdSE, 4),
-	Robust_SE           = round(m1Robust, 4)
+	Parameter = row.names(stdSE),
+	Standard_ML_SE = round(as.numeric(stdSE), 4),
+	Robust_SE = round(as.numeric(m1Robust), 4)
 )
 print(compareSE)
 ```
 
-If the robust standard errors are larger than the standard ML standard errors, it suggests that multivariate non-normality is present in your data.
+### Step 3: Profile likelihood CIs (optional / local)
 
-### Step 3: Compute Profile Likelihood Confidence Intervals
-Profile likelihood intervals are requested during model building or via `umxConfint()`. To compute CIs for specific paths (e.g., the loadings of $x1$ and $x2$ on $g$):
+Profile CIs re-optimize the model many times and can dominate package-check time. Demo locally with one or two parameters:
 
-```{r profile_ci_specific, message=FALSE, warning=FALSE}
-# Request profile likelihood CIs for specific parameters
+```{r profile_ci_specific, eval = FALSE}
 m1CI = umxConfint(m1, parm = c("g_to_x1", "g_to_x2"), run = TRUE)
-```
-
-# View summary showing profile CIs
-
-```{r summary_ci_print, message=FALSE}
 umxSummary(m1CI, uncertainty = "CI")
 ```
 
-Note that the profile CIs are asymmetric and respect the shape of the likelihood surface.
+Profile CIs are typically asymmetric and respect the likelihood surface and bounds.
 
 ---
 

@@ -21,6 +21,8 @@ knitr::opts_chunk$set(
   fig.height = 5
 )
 library(umx)
+# CRAN/check: auto-plot / DiagrammeR can hang non-interactive sessions for many minutes
+umx_set_auto_plot(FALSE)
 ```
 
 
@@ -114,43 +116,32 @@ This is handy when you have a lavaan model string from elsewhere.
 
 ## Plotting the model
 
-You can plot the model manually:
+You can plot a fitted model (not run during package check — DiagrammeR/htmlwidgets can be slow or hang headless):
 
-```{r plot, fig.cap="Standardized one-factor Holzinger model"}
-plot(m1, std = TRUE, means=FALSE)
+```{r plot, eval = FALSE, fig.cap="Standardized one-factor Holzinger model"}
+plot(m1, std = TRUE, means = FALSE)
 ```
 
-We can also get robust measures of fit and uncertainty using `uncertainty = "RobustSE"`. 
+We can also get robust measures of fit and uncertainty using `uncertainty = "RobustSE"`.
 These use sandwich-based scaling + Brosseau-Liard & Savalei (2012) adjustments to CFI/TLI/RMSEA:
 
-```{r uncertainty}
-umxSummary(m1, std = TRUE, uncertainty = "RobustSE")
+```{r uncertainty, message = FALSE}
+umxSummary(m1, std = TRUE, uncertainty = "RobustSE", refModels = FALSE)
 ```
 
-## Robust Standard Errors with Categorical Data
+## Robust standard errors with categorical data
 
-With categorical or ordinal data, treating variables as continuous can bias standard errors and fit statistics. `umx` supports robust standard errors (sandwich estimation) for ordinal models.
+With ordinal data, sandwich / robust SEs are available after fitting. A full three-factor ordinal FIML demo is in the WLS vignette (`vignette("WLS_in_umx")`); it is not re-run here so package checks stay under CRAN time limits.
 
-Here we use `umxRAM()` to build a three-factor model (visual, textual, and speed loading on `x1:x3`, `x4:x6`, and `x7:x9` respectively) using the categorical Holzinger-Swineford dataset (`HSwls`), where the variables are coded as ordered factors:
+Example pattern (run locally):
 
-```{r fit-ordinal, message = FALSE, warning = FALSE}
+```{r fit-ordinal, eval = FALSE}
 data("HSwls", package = "umx")
-
-# Fit the three-factor model using FIML (Default type)
 m3 = umxRAM("
   visual  =~ x1 + x2 + x3
   textual =~ x4 + x5 + x6
   speed   =~ x7 + x8 + x9
 ", data = HSwls)
-```
-
-Now we compare the standard errors using standard maximum likelihood standard errors (`uncertainty = "SE"`) versus robust sandwich standard errors (`uncertainty = "RobustSE"`). We specify `refModels = FALSE` to skip the slow computation of the saturated and independence baseline models:
-
-```{r compare-se}
-# Summary with standard SEs
-umxSummary(m3, std = TRUE, uncertainty = "SE", refModels = FALSE)
-
-# Summary with robust SEs
 umxSummary(m3, std = TRUE, uncertainty = "RobustSE", refModels = FALSE)
 ```
 

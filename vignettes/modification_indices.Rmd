@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 )
 library(umx)
 library(OpenMx)
+umx_set_auto_plot(FALSE)
 ```
 
 ## Introduction
@@ -100,15 +101,14 @@ umxCompare(m3, m1)
 
 The three-factor model fits substantially better than the one-factor model. Remaining MI suggestions are smaller but still highlight residual associations not yet in the model:
 
-```{r three-factor-mi}
-umxMI(m3)
-```
+Remaining MIs on the three-factor model are usually smaller (run `umxMI(m3)` locally if you want the full table).
 
-## Bifactor model
+## Bifactor and multi-group (local demos)
 
-A bifactor model adds a general factor `g` alongside orthogonal specific factors. Here `g` loads on all measures; `spatial`, `verbal`, and `speed` load only on their domain items and are uncorrelated with each other and with `g`.
+Bifactor and multi-group `umxMI()` examples are useful locally but slow for CRAN package checks (extra models + many MI candidates). Patterns:
 
-```{r bifactor, results = "hide", message = FALSE}
+```{r bifactor-multigroup-demo, eval = FALSE}
+# Bifactor
 modelBifactor = "
   g =~ visual + cubes + flags + paragrap + sentence + wordm + addition + counting + straight
   spatial =~ visual + cubes + flags
@@ -119,56 +119,16 @@ modelBifactor = "
   speed   ~~ 0*g
 "
 mBio = umxRAM(modelBifactor, data = df, name = "Holzinger_bifactor")
-```
-
-```{r bifactor-summary}
-umxSummary(mBio)
-```
-
-```{r bifactor-compare}
-umxCompare(mBio, m3)
-```
-
-```{r bifactor-mi}
 umxMI(mBio)
-```
 
-For this bifactor solution, few (if any) indices exceed the 1% $\chi^2$ threshold — the model is already doing a good job, and remaining suggestions are minor.
-
-## Multi-group one-factor (sex differences)
-
-Finally, we re-use the **one-factor** model (not the bifactor) separately by sex via the `Gender` column in `HS.ability.data` (`Female` / `Male`). Keeping the multi-group MI example small avoids a combinatorial explosion of candidates while still showing group-labelled paths.
-
-```{r multi-group-fit, results = "hide", message = FALSE}
+# Multi-group one-factor by sex (needs recent OpenMx mxMI multigroup support)
 mMG = umxRAM("Holzinger_1f_MG", data = df, group = "Gender",
   umxPath("g", to = manifests),
   umxPath(v.m. = manifests),
   umxPath(v1m0 = "g")
 )
+umxMI(mMG)
 ```
-
-```{r multi-group-summary}
-umxSummary(mMG, refModels = FALSE)
-```
-
-Multi-group modification indices require **recent OpenMx** support inside `mxMI()`. Older releases errored on multi-group models. The chunk below is wrapped so the vignette still builds if your installed OpenMx predates that support:
-
-```{r multi-group-mi, error = TRUE}
-mgMi = tryCatch(
-  umxMI(mMG),
-  error = function(e) {
-    message(
-      "Multi-group umxMI() is not available with this OpenMx build.\n",
-      "Error was: ", conditionMessage(e), "\n",
-      "Install a current OpenMx release when available."
-    )
-    NULL
-  }
-)
-mgMi
-```
-
-When it runs successfully, parameter labels include group suffixes (e.g. `_Female`), highlighting paths whose addition or release might improve fit **in one sex** or **differentially** across groups.
 
 ## Summary
 
@@ -176,8 +136,7 @@ When it runs successfully, parameter labels include group suffixes (e.g. `_Femal
 |-------|------|-------------------------|
 | One-factor | Baseline | Large cross-domain / within-domain suggestions |
 | Three-factor | Substantive CFA | Better fit; smaller residual suggestions |
-| Bifactor | General + specific | Often few large indices when well specified |
-| Multi-group one-factor | Sex differences | Group-specific suggestions (needs current OpenMx) |
+| Bifactor / multi-group | Extensions | Run locally (`eval = TRUE` above) when needed |
 
 **Take-home:** Use `umxMI()` to diagnose *where* a model misfits; prefer `umxCompare()` on **theory-driven** competing models for inference.
 

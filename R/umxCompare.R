@@ -36,10 +36,10 @@
 #'   - Table **Chi** is the same Satorra–Bentler (2010) scaled omnibus as [umxSummary()]
 #'     (\eqn{F/c} from `output$fit`), **not** OpenMx Browne residual `output$chi`
 #'     (those two differ under DWLS). Saturated residual df reports Chi = 0, CFI = 1, RMSEA = 0.
-#'   - Nested **diffFit** is SB-2010 scaled \(\Delta F = F_{\mathrm{nested}} - F_{\mathrm{base}}\)
+#'   - Nested **diffFit** is SB-2010 scaled \eqn{\Delta F = F_{nested} - F_{base}}
 #'     (requires both models at comparable minima of the same WLS objective: same moments,
-#'     `useWeight`, and \(N\)). If \(F_{\mathrm{nested}} < F_{\mathrm{base}}\) (often multigroup
-#'     optimization), diffFit is **NA** with a warning — not a negative χ² with p = 1.
+#'     `useWeight`, and \eqn{N}). If \eqn{F_{nested} < F_{base}} (often multigroup
+#'     optimization), diffFit is **NA** with a warning — not a negative chi-square with p = 1.
 #' * **Genomic SEM** (`MxModelGSEM`): nested difference on the **GSEM DWLS chi-square
 #'   scale** (same discrepancy as the structural fit; not a substitute for ML LRT).
 #'   If LDSC matrices were `nearPD`-smoothed, a fiduciary warning notes that difference

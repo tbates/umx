@@ -75,10 +75,10 @@ over ΔCFI alone (see Details for what \code{umxCompare} computes).
 \item Table \strong{Chi} is the same Satorra–Bentler (2010) scaled omnibus as \code{\link[=umxSummary]{umxSummary()}}
 (\eqn{F/c} from \code{output$fit}), \strong{not} OpenMx Browne residual \code{output$chi}
 (those two differ under DWLS). Saturated residual df reports Chi = 0, CFI = 1, RMSEA = 0.
-\item Nested \strong{diffFit} is SB-2010 scaled \(\Delta F = F_{\mathrm{nested}} - F_{\mathrm{base}}\)
+\item Nested \strong{diffFit} is SB-2010 scaled \eqn{\Delta F = F_{nested} - F_{base}}
 (requires both models at comparable minima of the same WLS objective: same moments,
-\code{useWeight}, and \(N\)). If \(F_{\mathrm{nested}} < F_{\mathrm{base}}\) (often multigroup
-optimization), diffFit is \strong{NA} with a warning — not a negative χ² with p = 1.
+\code{useWeight}, and \eqn{N}). If \eqn{F_{nested} < F_{base}} (often multigroup
+optimization), diffFit is \strong{NA} with a warning — not a negative chi-square with p = 1.
 }
 \item \strong{Genomic SEM} (\code{MxModelGSEM}): nested difference on the \strong{GSEM DWLS chi-square
 scale} (same discrepancy as the structural fit; not a substitute for ML LRT).
