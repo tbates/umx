@@ -36,8 +36,7 @@ umxACE_DE(
 \arguments{
 \item{name}{The name of the model (defaults to "ACE").}
 
-\item{selDVs}{The variables to include from the data: preferably base names (e.g. "ht")
-which will be expanded using doubleEntrySuffix.}
+\item{selDVs}{Base names of variables to model. Include fully observed continuous traits by base name (e.g. \code{"ht"}). Include each censored trait as an adjacent pair of prepped names (e.g. \verb{"wt_cont", "wt_cens"}). Prep censored data with \code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}} first.}
 
 \item{selCovs}{(optional) covariates to include from the data (do not include sep in names)}
 
@@ -98,10 +97,79 @@ using a "double-entry" strategy. Each censored variable is represented by a pair
 one continuous (holding non-censored values) and one binary/ordinal (holding the censored indicator).
 The path coefficients (A, C, E) are constrained to be equal across the two paired columns,
 and the specific factor loadings for the censored column are fixed to 0.
+
+Fully continuous variables may be mixed with double-entry pairs in \code{selDVs}
+(e.g. \code{c("ht", "wt_cont", "wt_cens")}). Prep only the censored traits with
+\code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}. At least one contiguous \verb{_cont}/\verb{_cens} pair is required;
+for all-continuous models use \code{\link[=umxACE]{umxACE()}}.
+}
+\examples{
+\donttest{
+require(umx)
+data(twinData)
+
+# Height fully observed; weight only recorded for higher-BMI people (others coded 0).
+# twinData BMI rarely exceeds classical overweight (25); use upper BMI quantile as threshold.
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+bmiCut = quantile(c(twinData$bmi1, twinData$bmi2), probs = 0.8, na.rm = TRUE)
+clinic = twinData
+for (s in 1:2) {
+	bmiCol = paste0("bmi", s)
+	wtCol  = paste0("wt", s)
+	notWeighed = !is.na(clinic[[bmiCol]]) & clinic[[bmiCol]] < bmiCut
+	clinic[[wtCol]][notWeighed] = 0
+}
+
+# Double-entry prep for weight only (floor at 0 -> wt_cont* / wt_cens*)
+prep = umx_make_double_entry_data(clinic, cols = list(wt = 0), sep = "")
+mzData = prep[prep$zygosity \%in\% "MZFF", ]
+dzData = prep[prep$zygosity \%in\% "DZFF", ]
+
+# 1. Correct mixed model: continuous height + double-entry censored weight
+mDE = umxACE_DE(
+	name = "htWtDE",
+	selDVs = c("ht", "wt_cont", "wt_cens"),
+	sep = "",
+	mzData = mzData,
+	dzData = dzData,
+	addCI = FALSE,
+	tryHard = "yes"
+)
+umxSummary(mDE, std = TRUE)
+
+# 2. Gold standard: uncensored bivariate ACE on true height and weight
+mzTrue = twinData[twinData$zygosity \%in\% "MZFF", ]
+dzTrue = twinData[twinData$zygosity \%in\% "DZFF", ]
+mTrue = umxACE(
+	name = "htWtTrue",
+	selDVs = c("ht", "wt"),
+	sep = "",
+	mzData = mzTrue,
+	dzData = dzTrue,
+	addCI = FALSE,
+	tryHard = "yes"
+)
+umxSummary(mTrue, std = TRUE)
+
+# 3. Mistaken analysis: treat 0 (not weighed) as a real continuous weight
+mzNaive = clinic[clinic$zygosity \%in\% "MZFF", ]
+dzNaive = clinic[clinic$zygosity \%in\% "DZFF", ]
+mNaive = umxACE(
+	name = "htWtNaive0",
+	selDVs = c("ht", "wt"),
+	sep = "",
+	mzData = mzNaive,
+	dzData = dzNaive,
+	addCI = FALSE,
+	tryHard = "yes"
+)
+umxSummary(mNaive, std = TRUE)
+# Expect naive mean(wt) pulled toward 0 and distorted A/E vs mTrue; prefer mDE when zeros mean censored.
+}
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxACE]{umxACE()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=plot]{plot()}}
+\item \code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}, \code{\link[=umxACE]{umxACE()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
 }
 
 Other Twin Modeling Functions:
@@ -133,6 +201,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxSummaryGxEbiv]{umxSummaryGxEbiv()}},
 \code{\link[=umxSummarySexLim]{umxSummarySexLim()}},
 \code{\link[=umxSummarySimplex]{umxSummarySimplex()}},
-\code{\link[=umxTwinMaker]{umxTwinMaker()}}
+\code{\link[=umxTwinMaker]{umxTwinMaker()}},
+\code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}
 }
 \concept{Twin Modeling Functions}

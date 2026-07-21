@@ -114,6 +114,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_dot_rank_str]{xmu_dot_rank_str()}},
 \code{\link[=xmu_extract_column]{xmu_extract_column()}},
 \code{\link[=xmu_get_CI]{xmu_get_CI()}},
+\code{\link[=xmu_has_summary_mxData]{xmu_has_summary_mxData()}},
 \code{\link[=xmu_invert_matrix]{xmu_invert_matrix()}},
 \code{\link[=xmu_is_ordinal_WLS]{xmu_is_ordinal_WLS()}},
 \code{\link[=xmu_lavaan_process_group]{xmu_lavaan_process_group()}},

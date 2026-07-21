@@ -147,6 +147,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxSummaryDoC]{umxSummaryDoC()}},
 \code{\link[=umxSummaryGxEbiv]{umxSummaryGxEbiv()}},
 \code{\link[=umxSummarySexLim]{umxSummarySexLim()}},
-\code{\link[=umxSummarySimplex]{umxSummarySimplex()}}
+\code{\link[=umxSummarySimplex]{umxSummarySimplex()}},
+\code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}
 }
 \concept{Twin Modeling Functions}

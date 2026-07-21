@@ -171,7 +171,8 @@ Other Twin Modeling Functions:
 \code{\link[=umxSummaryGxEbiv]{umxSummaryGxEbiv()}},
 \code{\link[=umxSummarySexLim]{umxSummarySexLim()}},
 \code{\link[=umxSummarySimplex]{umxSummarySimplex()}},
-\code{\link[=umxTwinMaker]{umxTwinMaker()}}
+\code{\link[=umxTwinMaker]{umxTwinMaker()}},
+\code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}
 
 Other Twin Data functions:
 \code{\link[=umx_long2wide]{umx_long2wide()}},

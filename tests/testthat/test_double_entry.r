@@ -20,13 +20,19 @@ test_that("umxACE_DE works with prepped data and equates paths", {
 	mzData = twinData[twinData$zygosity %in% "MZFF", ]
 	dzData = twinData[twinData$zygosity %in% "DZFF", ]
  
-	# 1. Verify diagnostic error when passing unprepared base name
+	# 1. Require at least one double-entry pair (pure continuous alone -> use umxACE)
 	expect_error(
 		umxACE_DE(selDVs = "wt", sep = "", dzData = dzData, mzData = mzData),
-		regexp = "Polite note: Please prep your data for this function using umx_make_double_entry_data"
+		regexp = "requires at least one double-entry pair"
 	)
 
-	# 2. Verify success when passing prepped variables directly
+	# 2. Orphan _cont without adjacent _cens
+	expect_error(
+		umxACE_DE(selDVs = "wt_cont", sep = "", dzData = dzData, mzData = mzData),
+		regexp = "needs an adjacent"
+	)
+
+	# 3. Verify success when passing prepped variables directly
 	m1 = umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", dzData = dzData, mzData = mzData)
 	
 	expect_true(inherits(m1, "MxModel"))
@@ -46,6 +52,39 @@ test_that("umxACE_DE works with prepped data and equates paths", {
 	
 	# Verify summary works
 	expect_error(umxSummary(m1), NA)
+})
+
+test_that("umxACE_DE allows continuous traits mixed with double-entry pairs", {
+	data(twinData)
+	twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+	twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
+	cuts = quantile(twinData$wt1, probs = 0.2, na.rm = TRUE)
+	prepData = umx_make_double_entry_data(twinData, cols = list(wt = cuts), sep = "")
+	mzData = prepData[prepData$zygosity %in% "MZFF", ]
+	dzData = prepData[prepData$zygosity %in% "DZFF", ]
+
+	mMix = umxACE_DE(
+		name = "htWtDE",
+		selDVs = c("ht", "wt_cont", "wt_cens"),
+		sep = "",
+		dzData = dzData,
+		mzData = mzData,
+		addCI = FALSE,
+		tryHard = "yes"
+	)
+	expect_true(inherits(mMix, "MxModel"))
+	expect_true(is.finite(mMix$output$Minus2LogLikelihood))
+	# 3 traits per person: ht, wt_cont, wt_cens
+	expect_equal(nrow(mMix$top$a$values), 3L)
+	# Double-entry equate: wt_cens (row 3) shares labels with wt_cont (row 2) for cols 1:2; diag fixed
+	for (matName in c("a", "c", "e")) {
+		expect_equal(mMix$top[[matName]]$labels[3, 1], mMix$top[[matName]]$labels[2, 1])
+		expect_equal(mMix$top[[matName]]$labels[3, 2], mMix$top[[matName]]$labels[2, 2])
+		expect_equal(mMix$top[[matName]]$free[3, 3], FALSE)
+		expect_equal(mMix$top[[matName]]$values[3, 3], 0)
+	}
+	# Continuous ht (row 1) keeps free diagonal
+	expect_equal(mMix$top$a$free[1, 1], TRUE)
 })
 
 test_that("umx_make_double_entry_data works with various censoring rules and integrates with umxACE_DE", {
