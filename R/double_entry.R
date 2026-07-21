@@ -21,8 +21,13 @@
 #' The path coefficients (A, C, E) are constrained to be equal across the two paired columns, 
 #' and the specific factor loadings for the censored column are fixed to 0.
 #'
+#' Fully continuous variables may be mixed with double-entry pairs in `selDVs`
+#' (e.g. `c("ht", "wt_cont", "wt_cens")`). Prep only the censored traits with
+#' [umx_make_double_entry_data()]. At least one contiguous `_cont`/`_cens` pair is required;
+#' for all-continuous models use [umxACE()].
+#'
 #' @param name The name of the model (defaults to "ACE").
-#' @param selDVs The prepared variables to include from the data: must be paired continuous/censored variable names (e.g. c("ht_cont", "ht_cens")). Prep data using umx_make_double_entry_data() first.
+#' @param selDVs Base names of variables to model. Include fully observed continuous traits by base name (e.g. `"ht"`). Include each censored trait as an adjacent pair of prepped names (e.g. `"wt_cont", "wt_cens"`). Prep censored data with [umx_make_double_entry_data()] first.
 #' @param selCovs (optional) covariates to include from the data (do not include sep in names)
 #' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1".
 #' @param dzData The DZ dataframe.
@@ -51,8 +56,68 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umx_make_double_entry_data()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
-#' \dontrun{
-#' #TBD
+#' @examples
+#' \donttest{
+#' require(umx)
+#' data(twinData)
+#'
+#' # Height fully observed; weight only recorded for higher-BMI people (others coded 0).
+#' # twinData BMI rarely exceeds classical overweight (25); use upper BMI quantile as threshold.
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' bmiCut = quantile(c(twinData$bmi1, twinData$bmi2), probs = 0.8, na.rm = TRUE)
+#' clinic = twinData
+#' for (s in 1:2) {
+#' 	bmiCol = paste0("bmi", s)
+#' 	wtCol  = paste0("wt", s)
+#' 	notWeighed = !is.na(clinic[[bmiCol]]) & clinic[[bmiCol]] < bmiCut
+#' 	clinic[[wtCol]][notWeighed] = 0
+#' }
+#'
+#' # Double-entry prep for weight only (floor at 0 -> wt_cont* / wt_cens*)
+#' prep = umx_make_double_entry_data(clinic, cols = list(wt = 0), sep = "")
+#' mzData = prep[prep$zygosity %in% "MZFF", ]
+#' dzData = prep[prep$zygosity %in% "DZFF", ]
+#'
+#' # 1. Correct mixed model: continuous height + double-entry censored weight
+#' mDE = umxACE_DE(
+#' 	name = "htWtDE",
+#' 	selDVs = c("ht", "wt_cont", "wt_cens"),
+#' 	sep = "",
+#' 	mzData = mzData,
+#' 	dzData = dzData,
+#' 	addCI = FALSE,
+#' 	tryHard = "yes"
+#' )
+#' umxSummary(mDE, std = TRUE)
+#'
+#' # 2. Gold standard: uncensored bivariate ACE on true height and weight
+#' mzTrue = twinData[twinData$zygosity %in% "MZFF", ]
+#' dzTrue = twinData[twinData$zygosity %in% "DZFF", ]
+#' mTrue = umxACE(
+#' 	name = "htWtTrue",
+#' 	selDVs = c("ht", "wt"),
+#' 	sep = "",
+#' 	mzData = mzTrue,
+#' 	dzData = dzTrue,
+#' 	addCI = FALSE,
+#' 	tryHard = "yes"
+#' )
+#' umxSummary(mTrue, std = TRUE)
+#'
+#' # 3. Mistaken analysis: treat 0 (not weighed) as a real continuous weight
+#' mzNaive = clinic[clinic$zygosity %in% "MZFF", ]
+#' dzNaive = clinic[clinic$zygosity %in% "DZFF", ]
+#' mNaive = umxACE(
+#' 	name = "htWtNaive0",
+#' 	selDVs = c("ht", "wt"),
+#' 	sep = "",
+#' 	mzData = mzNaive,
+#' 	dzData = dzNaive,
+#' 	addCI = FALSE,
+#' 	tryHard = "yes"
+#' )
+#' umxSummary(mNaive, std = TRUE)
+#' # Expect naive mean(wt) pulled toward 0 and distorted A/E vs mTrue; prefer mDE when zeros mean censored.
 #' }
 umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
 	tryHard = match.arg(tryHard)
@@ -89,39 +154,41 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 		dataCols = colnames(mzData)
 	}
 
-	# Verify double entry variables are pre-prepared using umx_make_double_entry_data
+	# Parse selDVs: pure continuous base names and/or adjacent double-entry pairs
 	if (is.null(sep)) {
 		sep = "_T"
 	}
-	
-	for (v in selDVs) {
-		if (!endsWith(v, doubleEntrySuffix[1]) && !endsWith(v, doubleEntrySuffix[2])) {
-			stop("Polite note: Please prep your data for this function using umx_make_double_entry_data()")
-		}
-	}
-	
+	s1 = doubleEntrySuffix[1]
+	s2 = doubleEntrySuffix[2]
 	doubleEntryPairs = list()
 	i = 1
-	while (i < length(selDVs)) {
+	while (i <= length(selDVs)) {
 		v1 = selDVs[i]
-		v2 = selDVs[i + 1]
-		s1 = doubleEntrySuffix[1]
-		s2 = doubleEntrySuffix[2]
-		if (endsWith(v1, s1) && endsWith(v2, s2)) {
+		if (endsWith(v1, s1)) {
+			# Continuous half of a double-entry pair: next name must be matching _cens
+			if (i >= length(selDVs)) {
+				stop("Polite note: Double-entry variable '", v1, "' needs an adjacent '", s2, "' partner (e.g. c(\"wt_cont\", \"wt_cens\")). Prep with umx_make_double_entry_data().")
+			}
+			v2 = selDVs[i + 1]
+			if (!endsWith(v2, s2)) {
+				stop("Polite note: '", v1, "' must be followed immediately by its '", s2, "' partner (got '", v2, "'). Prep with umx_make_double_entry_data().")
+			}
 			prefix1 = substr(v1, 1, nchar(v1) - nchar(s1))
 			prefix2 = substr(v2, 1, nchar(v2) - nchar(s2))
-			if (prefix1 == prefix2) {
-				doubleEntryPairs[[length(doubleEntryPairs) + 1]] = c(v1, v2)
-				i = i + 2
-				next
+			if (prefix1 != prefix2) {
+				stop("Polite note: Double-entry pair prefixes must match: '", v1, "' and '", v2, "'. Prep with umx_make_double_entry_data().")
 			}
+			doubleEntryPairs[[length(doubleEntryPairs) + 1]] = c(v1, v2)
+			i = i + 2
+		} else if (endsWith(v1, s2)) {
+			stop("Polite note: '", v1, "' must be preceded immediately by its '", s1, "' partner (e.g. c(\"wt_cont\", \"wt_cens\")). Prep with umx_make_double_entry_data().")
+		} else {
+			# Fully observed continuous trait (base name expanded via sep)
+			i = i + 1
 		}
-		i = i + 1
 	}
-	
-	pairedVars = unlist(doubleEntryPairs)
-	if (length(pairedVars) != length(selDVs) || !all(selDVs %in% pairedVars)) {
-		stop("Polite note: Please prep your data for this function using umx_make_double_entry_data()")
+	if (length(doubleEntryPairs) < 1) {
+		stop("Polite note: umxACE_DE requires at least one double-entry pair (e.g. c(\"wt_cont\", \"wt_cens\")). Prep censored traits with umx_make_double_entry_data(). For all-continuous ACE models use umxACE().")
 	}
 
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
@@ -273,8 +340,11 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 #' @export
 #' @family Twin Modeling Functions
 #' @examples
-#' # Example: censor wt at floor 0
-#' # data = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
+#' data(twinData)
+#' # Left-censor weight at 0 (or any floor): creates wt_cont1/2 and wt_cens1/2
+#' prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
+#' # Then: umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", ...)
+#' # Mix with continuous traits: umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
 umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c("_cont", "_cens"), sep = "_T", nSib = 2, levels = c("normal", "censored")) {
 	if (is.null(cols)) {
 		return(data)
