@@ -607,36 +607,40 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# Note: WLS data will be mxData(..., type = "raw") at this stage.
 	needsMeans = xmu_check_needs_means(data = myData, type = type, allContinuousMethod = allContinuousMethod)
 	if(needsMeans && is.null(newModel$matrices$M)){
-		# Check for binary variables
+		# Continuous + ordinal: free means. Binary: mean@0 and residual@1 (Mehta/binary ID).
 		summaryObj = umx_is_ordered(myData$observed[, usedManifests, drop = FALSE], summaryObject = TRUE)
-		binVars = summaryObj$binVarNames
+		binVars = intersect(summaryObj$binVarNames, usedManifests)
 		nonBinVars = setdiff(usedManifests, binVars)
-		
+		noteBits = character(0)
+
+		newPaths = list()
+		if (length(nonBinVars) > 0) {
+			newPaths[[length(newPaths) + 1]] = mxPath("one", to = nonBinVars)
+			noteBits = c(noteBits, paste0("free means for ", paste(nonBinVars, collapse = ", ")))
+		}
 		if (length(binVars) > 0) {
-			binVarsStr = if (length(binVars) == 1) paste0("\"", binVars, "\"") else paste0("c(", paste0("\"", binVars, "\"", collapse = ", "), ")")
-			
-			if (length(nonBinVars) > 0) {
-				nonBinVarsStr = if (length(nonBinVars) == 1) paste0("\"", nonBinVars, "\"") else paste0("c(", paste0("\"", nonBinVars, "\"", collapse = ", "), ")")
-				message("You have raw data, but no means model. I added free means for continuous/ordinal variables:\n",
-				        "  umxPath(\"one\", to = ", nonBinVarsStr, ")")
-			} else {
-				message("You have raw data, but no means model.")
-			}
-			
-			message("WLS/DWLS/ULS model: I detected binary variable(s): ", paste(binVars, collapse = ", "), 
-			        ".\nTheir expected mean(s) must be fixed at zero for identification. I added:\n",
-			        "  umxPath(\"one\", to = ", binVarsStr, ", fixedAt = 0)")
-			
-			newPaths = list()
-			if (length(nonBinVars) > 0) {
-				newPaths[[length(newPaths) + 1]] = mxPath("one", to = nonBinVars)
-			}
 			newPaths[[length(newPaths) + 1]] = mxPath("one", to = binVars, free = FALSE, values = 0)
+			noteBits = c(noteBits, paste0("binary mean@0 for ", paste(binVars, collapse = ", ")))
+		}
+		if (length(newPaths) > 0) {
 			newModel = mxModel(newModel, newPaths)
-		} else {
-			message("You have raw data, but no means model. I added\n",
-			        "mxPath('one', to = manifestVars)")
-			newModel = mxModel(newModel, mxPath("one", usedManifests))
+		}
+		# Binary residual variance fixed at 1 when S cell exists or must be added
+		if (length(binVars) > 0) {
+			for (v in binVars) {
+				if (!is.null(newModel$S) && !is.null(dimnames(newModel$S$values)) && v %in% rownames(newModel$S$values)) {
+					if (isTRUE(newModel$S$free[v, v]) || !isTRUE(all.equal(as.numeric(newModel$S$values[v, v]), 1))) {
+						newModel$S$free[v, v] = FALSE
+						newModel$S$values[v, v] = 1
+					}
+				} else {
+					newModel = mxModel(newModel, mxPath(from = v, arrows = 2, free = FALSE, values = 1))
+				}
+			}
+			noteBits = c(noteBits, paste0("binary residual@1 for ", paste(binVars, collapse = ", ")))
+		}
+		if (length(noteBits) > 0) {
+			message("umx note: no means model; added ", paste(noteBits, collapse = "; "), " (see ?umxThresholdMatrix).")
 		}
 	}
 
@@ -650,7 +654,7 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	}
 
 	if(any(umx_is_ordered(myData$observed))){
-		newModel = xmuRAM2Ordinal(newModel, verbose = TRUE)
+		newModel = xmuRAM2Ordinal(newModel, verbose = FALSE)
 	}
 
 	# ==============================

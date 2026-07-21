@@ -2923,7 +2923,7 @@ umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHa
 #' 	umxPath(v.m.= c("obese1", "obese2"))
 #' )
 #' }
-xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
+xmuRAM2Ordinal <- function(model, verbose = FALSE, name = NULL) {
 	if(!umx_is_RAM(model)){
 		stop("xmuRAM2Ordinal only works with RAM models, sorry.")
 	}
@@ -2932,39 +2932,214 @@ xmuRAM2Ordinal <- function(model, verbose = TRUE, name = NULL) {
 	}
 	model$expectation$thresholds = "threshMat"
 	
+	# Threshold construction quiet by default; ID notes from xmu_threshold_id_RAM when parameters change
 	model = mxModel(model, umxThresholdMatrix(model$data$observed, fullVarNames = model$manifestVars, verbose = verbose))
-	
-	# Verify that ordinal means and variances are free
-	if (!is.null(model$data) && !is.null(model$data$observed)) {
-		obsData = model$data$observed
-		manifests = model$manifestVars
-		
-		# Identify manifest variables that are ordered factors with >2 levels (ordinal)
-		isFactor = sapply(obsData[, manifests, drop = FALSE], is.factor)
-		factorVars = manifests[isFactor]
-		ordVars = factorVars[sapply(obsData[, factorVars, drop = FALSE], nlevels) > 2]
-		
-		if (length(ordVars) > 0) {
-			# 1. Check means in the M matrix
-			if (!is.null(model$M)) {
-				for (v in ordVars) {
-					if (!model$M$free[1, v]) {
-						warning("Mean of latent ordinal trait '", v, "' is fixed! For models with ordinal manifests, it is essential that you leave this FREE.")
-					}
+	model = xmu_threshold_id_RAM(model, action = "fix", verbose = TRUE)
+	return(model)
+}
+
+#' Enforce or check Mehta/binary identification for threshold RAM models
+#'
+#' For binary manifests: latent mean fixed at 0 and residual variance fixed at 1.
+#' For ordinal manifests (>2 levels, Mehta): mean and residual variance free.
+#' Continuous manifests are left unchanged. Does not rewrite path labels.
+#'
+#' @param model An OpenMx RAM [OpenMx::mxModel()] with data and (typically) thresholds.
+#' @param action `"fix"` (default) corrects free/values; `"check"` only warns.
+#' @param verbose If TRUE (default), emit one line when parameters are fixed/freed or when check finds problems. Silent when already correct.
+#' @return The model (modified if `action = "fix"`).
+#' @export
+#' @family xmu internal not for end user
+#' @seealso [umxThresholdMatrix()], [xmuRAM2Ordinal()], [umxRAM()]
+xmu_threshold_id_RAM <- function(model, action = c("fix", "check"), verbose = TRUE) {
+	action = match.arg(action)
+	if (!umx_is_RAM(model)) {
+		stop("xmu_threshold_id_RAM only works with RAM models.")
+	}
+	if (is.null(model$data) || is.null(model$data$observed) || model$data$type != "raw") {
+		return(model)
+	}
+	manifests = model$manifestVars
+	if (length(manifests) < 1) {
+		return(model)
+	}
+	obsCols = intersect(manifests, colnames(model$data$observed))
+	if (length(obsCols) < 1) {
+		return(model)
+	}
+	summaryObj = umx_is_ordered(model$data$observed[, obsCols, drop = FALSE], summaryObject = TRUE)
+	binVars = intersect(summaryObj$binVarNames, manifests)
+	ordVars = intersect(summaryObj$ordVarNames, manifests)
+
+	if (length(binVars) < 1 && length(ordVars) < 1) {
+		return(model)
+	}
+
+	fixedMean = character(0)
+	fixedVar = character(0)
+	freedMean = character(0)
+	freedVar = character(0)
+	problems = character(0)
+
+	# ---------- Binary: mean@0, residual@1 ----------
+	for (v in binVars) {
+		if (is.null(model$M) || is.null(dimnames(model$M$values)) || !(v %in% colnames(model$M$values))) {
+			problems = c(problems, paste0(v, " (binary: missing mean path)"))
+		} else {
+			meanOk = isFALSE(model$M$free[1, v]) && isTRUE(all.equal(as.numeric(model$M$values[1, v]), 0))
+			if (!meanOk) {
+				if (action == "fix") {
+					model$M$free[1, v] = FALSE
+					model$M$values[1, v] = 0
+					fixedMean = c(fixedMean, v)
+				} else {
+					problems = c(problems, paste0(v, " (binary mean should be fixed at 0)"))
 				}
 			}
-			# 2. Check variances in the S matrix
-			if (!is.null(model$S)) {
-				for (v in ordVars) {
-					if (!model$S$free[v, v]) {
-						warning("Variance of latent ordinal trait '", v, "' is fixed! For models with ordinal manifests, it is essential that you leave this FREE.")
-					}
+		}
+		if (is.null(model$S) || is.null(dimnames(model$S$values)) || !(v %in% rownames(model$S$values))) {
+			if (action == "fix") {
+				model = mxModel(model, mxPath(from = v, arrows = 2, free = FALSE, values = 1))
+				fixedVar = c(fixedVar, v)
+			} else {
+				problems = c(problems, paste0(v, " (binary residual missing; should be fixed at 1)"))
+			}
+		} else {
+			varOk = isFALSE(model$S$free[v, v]) && isTRUE(all.equal(as.numeric(model$S$values[v, v]), 1))
+			if (!varOk) {
+				if (action == "fix") {
+					model$S$free[v, v] = FALSE
+					model$S$values[v, v] = 1
+					fixedVar = c(fixedVar, v)
+				} else {
+					problems = c(problems, paste0(v, " (binary residual should be fixed at 1)"))
 				}
 			}
 		}
 	}
-	
+
+	# ---------- Ordinal (Mehta): free mean and residual ----------
+	for (v in ordVars) {
+		if (!is.null(model$M) && !is.null(dimnames(model$M$values)) && (v %in% colnames(model$M$values))) {
+			if (!isTRUE(model$M$free[1, v])) {
+				if (action == "fix") {
+					model$M$free[1, v] = TRUE
+					freedMean = c(freedMean, v)
+				} else {
+					problems = c(problems, paste0(v, " (ordinal mean should be free; Mehta)"))
+				}
+			}
+		} else {
+			problems = c(problems, paste0(v, " (ordinal: missing mean path)"))
+		}
+		if (!is.null(model$S) && !is.null(dimnames(model$S$values)) && (v %in% rownames(model$S$values))) {
+			if (!isTRUE(model$S$free[v, v])) {
+				if (action == "fix") {
+					model$S$free[v, v] = TRUE
+					freedVar = c(freedVar, v)
+				} else {
+					problems = c(problems, paste0(v, " (ordinal residual should be free; Mehta)"))
+				}
+			}
+		} else {
+			problems = c(problems, paste0(v, " (ordinal: missing residual path)"))
+		}
+	}
+
+	if (verbose) {
+		bits = character(0)
+		if (length(fixedMean) > 0) {
+			bits = c(bits, paste0("binary mean@0: ", paste(unique(fixedMean), collapse = ", ")))
+		}
+		if (length(fixedVar) > 0) {
+			bits = c(bits, paste0("binary residual@1: ", paste(unique(fixedVar), collapse = ", ")))
+		}
+		if (length(freedMean) > 0) {
+			bits = c(bits, paste0("freed ordinal mean: ", paste(unique(freedMean), collapse = ", ")))
+		}
+		if (length(freedVar) > 0) {
+			bits = c(bits, paste0("freed ordinal residual: ", paste(unique(freedVar), collapse = ", ")))
+		}
+		if (length(bits) > 0) {
+			message("umx note: ", paste(bits, collapse = "; "), " (see ?umxThresholdMatrix).")
+		}
+		if (action == "check" && length(problems) > 0) {
+			warning("umx threshold ID: ", paste(problems, collapse = "; "), " (see ?umxThresholdMatrix).", call. = FALSE)
+		}
+	}
 	return(model)
+}
+
+#' Verify twin-model threshold identification (means / binary Vtot constraint)
+#'
+#' Does not modify the model or rewrite twin mean labels. Emits at most one warning
+#' if binary means are free, ordinal means are fixed, or the binary Vtot==1 machinery is missing.
+#'
+#' @param model A twin super-model with `top` (typically from [xmu_make_TwinSuperModel()]).
+#' @param fullVars Character vector of full twin variable names (e.g. `wt_T1`, `wt_T2`).
+#' @param verbose If TRUE, warn on problems; silent when OK.
+#' @return Invisibly, a character vector of problem strings (empty if OK).
+#' @export
+#' @family xmu internal not for end user
+xmu_threshold_id_twin_check <- function(model, fullVars, verbose = TRUE) {
+	problems = character(0)
+	if (is.null(model$top) || is.null(model$MZ$data) || is.null(model$MZ$data$observed)) {
+		return(invisible(problems))
+	}
+	obs = model$MZ$data$observed
+	useVars = intersect(fullVars, colnames(obs))
+	if (length(useVars) < 1) {
+		return(invisible(problems))
+	}
+	summaryObj = umx_is_ordered(obs[, useVars, drop = FALSE], summaryObject = TRUE)
+	binVars = intersect(summaryObj$binVarNames, useVars)
+	ordVars = intersect(summaryObj$ordVarNames, useVars)
+
+	if (length(binVars) < 1 && length(ordVars) < 1) {
+		return(invisible(problems))
+	}
+
+	if (!is.null(model$top$expMean)) {
+		em = model$top$expMean
+		meanNames = colnames(em$free)
+		if (is.null(meanNames)) {
+			meanNames = dimnames(em$free)[[2]]
+		}
+		for (v in binVars) {
+			if (!is.null(meanNames) && v %in% meanNames) {
+				if (isTRUE(em$free[1, v])) {
+					problems = c(problems, paste0(v, " binary mean free (should be fixed)"))
+				}
+			}
+		}
+		for (v in ordVars) {
+			if (!is.null(meanNames) && v %in% meanNames) {
+				if (!isTRUE(em$free[1, v])) {
+					problems = c(problems, paste0(v, " ordinal mean fixed (should be free; Mehta)"))
+				}
+			}
+		}
+	} else if (length(binVars) + length(ordVars) > 0) {
+		problems = c(problems, "top.expMean missing for ordinal/binary model")
+	}
+
+	if (length(binVars) > 0) {
+		hasBinId = !is.null(model$top$binLabels) ||
+			(!is.null(model$top$matrices) && !is.null(model$top$matrices$binLabels)) ||
+			!is.null(model$top$constrain_Bin_var_to_1)
+		if (!hasBinId && !is.null(model$top$constraints)) {
+			cn = names(model$top$constraints)
+			hasBinId = any(cn == "constrain_Bin_var_to_1") || any(grepl("Bin_var|binLabels", cn, ignore.case = TRUE))
+		}
+		if (!hasBinId) {
+			problems = c(problems, "binary Vtot==1 identification (binLabels / constrain_Bin_var_to_1) not found")
+		}
+	}
+
+	if (verbose && length(problems) > 0) {
+		warning("umx twin threshold ID: ", paste(problems, collapse = "; "), " (see ?umxThresholdMatrix).", call. = FALSE)
+	}
+	invisible(problems)
 }
 
 #' xmuValues: Set values in RAM model, matrix, or path
@@ -4008,26 +4183,8 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 	if((nOrdVars + nBinVars) < 1){
 		warning("No ordinal or binary variables in dataframe (or possibly a factor but with only 1 level): no need to call umxThresholdMatrix")
 		return(NA) # Probably OK to set thresholds matrix to NA in mxExpectation()
-	} else {
-		if(verbose){
-			theMsg = paste0("object ", omxQuotes(threshMatName), " created to handle")
-			if(nSib == 2){
-				if(nOrdVars > 0){
-					theMsg = paste0(theMsg, ": ", nOrdVars/nSib, " pair(s) of ordinal variables:", omxQuotes(ordVarNames), "\n")
-				}
-				if(nBinVars > 0){
-					theMsg = paste0(theMsg, ": ", nBinVars/nSib, " pair(s) of binary variables:", omxQuotes(binVarNames), "\n")
-				}
-			} else {
-				if(nOrdVars > 0){
-					theMsg = paste0(theMsg, ": ", nOrdVars, " ordinal variables:", omxQuotes(ordVarNames), "\n")
-				}
-				if(nBinVars > 0){
-					theMsg = paste0(theMsg, ": ", nBinVars, " binary variables:", omxQuotes(binVarNames), "\n")
-				}
-			}
-			message(theMsg)
-		}
+	} else if(verbose){
+		message(threshMatName, ": ", nBinVars, " binary, ", nOrdVars, " ordinal (Mehta first-2 thresholds fixed when nThresh>1).")
 	}
 
 	# =================================
@@ -4069,23 +4226,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		dimnames = list(paste0("th_", 1:maxThresh), factorVarNames)
 	)
 
-	# ====================
-	# = talk to the user =
-	# ====================
-	if(nBinVars > 0){
-		if(verbose){
-			message(sum(isBin), " trait(s) are binary: ", omxQuotes(binVarNames),
-			"\nFor these, you you MUST fix the mean and variance of the latent traits driving each variable (usually 0 & 1 respectively) .\n",
-			"See ?umxThresholdMatrix")
-		}
-	}
-	if(nOrdVars > 0){
-		if(verbose){
-			message(nOrdVars, " variables are ordinal (>2 levels). For these I will use Paras Mehta's 'fix first 2 thresholds' method.\n",
-			"It's ESSENTIAL that you leave the means and variances of the latent ordinal manifests FREE!\n",
-			"See ?umxThresholdMatrix")
-		}
-	}
+	# Identification lectures removed: high-level builders call xmu_threshold_id_RAM / twin supers.
 	if(minLevels == 1){
 		warning("You seem to have a trait with only one category: ", omxQuotes(xmuMinLevels(df, what = "name")), "... makes it a bit futile to model it?")
 		stop("Stopping, as I can't handle trait with no variance.")
@@ -4182,10 +4323,6 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 		threshMat$values[, thisVarName] = values
 	} # end for each factor variable
 
-	if(verbose) {
-		message("Using deviation-based model: Thresholds will be in ", omxQuotes(threshMatName), " based on deviations in ", omxQuotes("deviations_for_thresh"))
-	}
-	
 	# ==========================
 	# = Adding deviation model =
 	# ==========================
