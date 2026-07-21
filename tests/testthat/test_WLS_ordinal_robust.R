@@ -70,8 +70,47 @@ test_that("Raw WLS binary variables mean handling in umxRAM works", {
   expect_equivalent(mDWLS$M$values[1, "x1"], 0)
   expect_equivalent(mDWLS$M$values[1, "x2"], 0)
   expect_equivalent(mDWLS$M$values[1, "x3"], 0)
+
+  # Binary residual variance fixed at 1
+  expect_false(mDWLS$S$free["x1", "x1"])
+  expect_false(mDWLS$S$free["x2", "x2"])
+  expect_false(mDWLS$S$free["x3", "x3"])
+  expect_equivalent(mDWLS$S$values["x1", "x1"], 1)
+  expect_equivalent(mDWLS$S$values["x3", "x3"], 1)
   
-  # Verify that ordinal variables x4 to x9 have free expected means
+  # Verify that ordinal variables x4 to x9 have free expected means and residuals
   expect_true(mDWLS$M$free[1, "x4"])
   expect_true(mDWLS$M$free[1, "x9"])
+  expect_true(mDWLS$S$free["x4", "x4"])
+  expect_true(mDWLS$S$free["x9", "x9"])
+})
+
+test_that("umxRAM fixes binary ID even when user requests free v.m.", {
+  data(HSwls, package = "umx")
+  m1 = suppressMessages(umxRAM("vm_bin", data = HSwls[1:300, ], type = "FIML", autoRun = FALSE,
+    umxPath("g", to = paste0("x", 1:3)),
+    umxPath(v.m. = paste0("x", 1:3)),
+    umxPath(var = "g", fixedAt = 1)
+  ))
+  expect_false(m1$M$free[1, "x1"])
+  expect_equivalent(m1$M$values[1, "x1"], 0)
+  expect_false(m1$S$free["x1", "x1"])
+  expect_equivalent(m1$S$values["x1", "x1"], 1)
+})
+
+test_that("xmu_threshold_id_RAM is silent when already identified", {
+  data(HSwls, package = "umx")
+  m1 = suppressMessages(umxRAM("id_ok", data = HSwls[1:200, ], type = "FIML", autoRun = FALSE,
+    umxPath("g", to = paste0("x", 1:3)),
+    umxPath(var = paste0("x", 1:3), fixedAt = 1),
+    umxPath(means = paste0("x", 1:3), fixedAt = 0),
+    umxPath(var = "g", fixedAt = 1)
+  ))
+  # Re-run identification: should not message when already correct
+  msgs = capture.output({
+    m2 = xmu_threshold_id_RAM(m1, action = "fix", verbose = TRUE)
+  }, type = "message")
+  expect_length(msgs, 0)
+  expect_false(m2$M$free[1, "x1"])
+  expect_false(m2$S$free["x1", "x1"])
 })

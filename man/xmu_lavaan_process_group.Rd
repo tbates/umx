@@ -121,6 +121,8 @@ Other xmu internal not for end user:
 \code{\link[=xmu_start_value_list]{xmu_start_value_list()}},
 \code{\link[=xmu_starts]{xmu_starts()}},
 \code{\link[=xmu_summary_RAM_group_parameters]{xmu_summary_RAM_group_parameters()}},
+\code{\link[=xmu_threshold_id_RAM]{xmu_threshold_id_RAM()}},
+\code{\link[=xmu_threshold_id_twin_check]{xmu_threshold_id_twin_check()}},
 \code{\link[=xmu_topo_sort]{xmu_topo_sort()}},
 \code{\link[=xmu_twin_add_WeightMatrices]{xmu_twin_add_WeightMatrices()}},
 \code{\link[=xmu_twin_check]{xmu_twin_check()}},
