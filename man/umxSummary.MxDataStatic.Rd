@@ -21,9 +21,11 @@
 
 \item{matrices}{Which observedStats blocks to print: any of
 \code{c("cov", "useWeight", "asymCov", "means", "thresholds")}.
-Default prints \code{cov}, \code{useWeight}, and \code{asymCov} when present.}
+Default prints \code{cov}, \code{useWeight}, and \code{asymCov} when present.
+For LDSC-shaped content, extra args are passed through to \code{\link[=umxSummary.list]{umxSummary.list()}}
+(e.g. \code{matrices = c("S","I","V")}).}
 
-\item{...}{Not used (S3 compatibility).}
+\item{...}{Passed to \code{\link[=umxSummary.list]{umxSummary.list()}} when LDSC-shaped \code{observedStats} is detected.}
 }
 \value{
 Invisibly returns the input \code{model}.
@@ -32,6 +34,14 @@ Invisibly returns the input \code{model}.
 Explains modern OpenMx WLS data for users who have not seen \code{type = "summary"}
 and \code{observedStats} (\code{cov}, \code{useWeight}, \code{asymCov}). Works for
 \code{MxDataStatic} from \link[OpenMx:mxData]{OpenMx::mxData} (including GSEM-style summary data).
+}
+\details{
+If \code{observedStats} still holds \strong{LDSC/GSEM covstruc keys} (\code{S}, \code{V}, …)
+rather than modern WLS keys — e.g.
+\code{mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)} —
+OpenMx stores those names as-is (it does \strong{not} map \code{S}→\code{cov} or
+\code{V}→\code{asymCov}). This method detects that case, prints the LDSC content via
+\code{\link[=umxSummary.list]{umxSummary.list()}}, and notes how to build a runnable WLS \code{mxData}.
 }
 \examples{
 data(Psych_LDSC)

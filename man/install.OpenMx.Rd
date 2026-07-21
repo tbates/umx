@@ -3,48 +3,57 @@
 \name{install.OpenMx}
 \alias{install.OpenMx}
 \alias{umx_update_OpenMx}
-\title{Install OpenMx, with choice of builds}
+\title{Install OpenMx (CRAN or GenomicMx binary build)}
 \usage{
 install.OpenMx(
-  loc = c("CRAN", "open GitHub build page"),
+  loc = c("CRAN", "GenomicMx", "open release page", "source"),
   url = NULL,
   lib,
   repos = getOption("repos")
 )
 }
 \arguments{
-\item{loc}{Version to get default is "CRAN".}
+\item{loc}{Which build to get (default \code{"CRAN"}).}
 
-\item{url}{Custom URL. On Mac, set this to "Finder" and the package selected in the Finder will be installed.}
+\item{url}{Custom URL or local path. On Mac, \code{"Finder"} uses the package selected
+in the Finder; \code{""} opens a file chooser.}
 
-\item{lib}{Where to install the package.}
+\item{lib}{Where to install the package (passed to \code{\link[=install.packages]{install.packages()}}).}
 
-\item{repos}{Which repository to use (ignored currently).}
+\item{repos}{CRAN repository (for \code{loc = "CRAN"}).}
 }
 \value{
-None
+None (called for side effects).
 }
 \description{
-You can install OpenMx, including the latest NPSOL-enabled build of OpenMx. Options are:
+Install stock \strong{CRAN} OpenMx, or the \strong{GenomicMx} OpenMx build maintained for
+umx WLS/GSEM (Jacobians, modern \code{type="summary"} WLS data, multigroup stack).
+The GenomicMx build uses the same R package name \code{OpenMx} and \strong{replaces}
+whatever OpenMx is in the target library (same pattern as the old NPSOL binaries).
+
+Options for \code{loc}:
 \enumerate{
-\item "CRAN": Install from CRAN.
-\item "open GitHub build page": Open the GitHub builder in a browser window.
+\item \code{"CRAN"} (default): install from CRAN (safe for ML/twin-only work).
+\item \code{"GenomicMx"}: download the latest platform binary from
+\href{https://github.com/tbates/GenomicMx/releases}{GitHub Releases} when available.
+\item \code{"open release page"}: open the Releases page in a browser.
+\item \code{"source"}: install from the GenomicMx GitHub source (requires build tools).
 }
 }
 \examples{
 \dontrun{
-install.OpenMx() # gets the CRAN version
-install.OpenMx("open GitHub build page") # Open web page of GitHub builds
-install.OpenMx("CRAN") # Get the latest CRAN version
+install.OpenMx()                      # CRAN OpenMx
+install.OpenMx("GenomicMx")           # GenomicMx binary when published
+install.OpenMx("open release page") # browse releases
 }
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
+\item \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/GenomicMx}
 }
 }
 \seealso{
-\code{\link[=umxVersion]{umxVersion()}}
+\code{\link[=umxVersion]{umxVersion()}}, \code{\link[=xmu_openmx_engine_status]{xmu_openmx_engine_status()}}
 
 Other Miscellaneous Utility Functions:
 \code{\link[=libs]{libs()}},

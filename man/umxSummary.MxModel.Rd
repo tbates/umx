@@ -96,7 +96,11 @@ under bookkeeping N.
 \item \strong{Displayed CFI, TLI, RMSEA} — robust/scaled indices; interpretation depends on continuous vs ordinal (below).
 }
 
-\strong{Continuous WLS} (all manifests numeric): SB (2010) scaled pipeline. Printed note: no conventional cutoffs; prefer SRMR; nested Strict SB via \code{\link[=umxCompare]{umxCompare()}}.
+\strong{Continuous WLS} (all manifests numeric): SB (2010) scaled pipeline
+(\eqn{\chi^2 = F/c} from \code{output$fit}, same Chi as \code{\link[=umxCompare]{umxCompare()}} when Jacobians
+are present). Saturated residual df (ChiDoF = 0): Chi = 0, p = NA, CFI = TLI = 1,
+RMSEA = 0 (not NA). Printed note: no conventional cutoffs; prefer SRMR; nested
+Strict SB via \code{\link[=umxCompare]{umxCompare()}}.
 
 \strong{Ordinal / categorical WLS} (at least one \code{ordered}/\code{factor} on raw data): robust CFI/TLI/RMSEA use \strong{Savalei (2021)} catML corrections; \strong{Hu & Bentler (1999) cutoffs may apply to those robust indices}. Display \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests—not catML-scaled.
 

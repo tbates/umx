@@ -70,8 +70,16 @@ over ΔCFI alone (see Details for what \code{umxCompare} computes).
 \strong{What \code{umxCompare} does for WLS}
 \itemize{
 \item Refuses mixed WLS vs ML comparisons (same engine required).
-\item \strong{Continuous WLS} with cached \code{implied_jacobian}: nested \strong{Satorra–Bentler (2010)
-strict} scaled Δχ² (\code{diffFit} and p).
+\item \strong{Continuous WLS} with cached \code{implied_jacobian}:
+\itemize{
+\item Table \strong{Chi} is the same Satorra–Bentler (2010) scaled omnibus as \code{\link[=umxSummary]{umxSummary()}}
+(\eqn{F/c} from \code{output$fit}), \strong{not} OpenMx Browne residual \code{output$chi}
+(those two differ under DWLS). Saturated residual df reports Chi = 0, CFI = 1, RMSEA = 0.
+\item Nested \strong{diffFit} is SB-2010 scaled \(\Delta F = F_{\mathrm{nested}} - F_{\mathrm{base}}\)
+(requires both models at comparable minima of the same WLS objective: same moments,
+\code{useWeight}, and \(N\)). If \(F_{\mathrm{nested}} < F_{\mathrm{base}}\) (often multigroup
+optimization), diffFit is \strong{NA} with a warning — not a negative χ² with p = 1.
+}
 \item \strong{Genomic SEM} (\code{MxModelGSEM}): nested difference on the \strong{GSEM DWLS chi-square
 scale} (same discrepancy as the structural fit; not a substitute for ML LRT).
 If LDSC matrices were \code{nearPD}-smoothed, a fiduciary warning notes that difference

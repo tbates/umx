@@ -7,16 +7,22 @@
 xmu_wls_extract_WV(model, stop_if_missing = TRUE)
 }
 \arguments{
-\item{model}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} with data.}
+\item{model}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} with data (or multigroup children with data).}
 
 \item{stop_if_missing}{If TRUE, stop when either matrix is missing.}
 }
 \value{
-List with \code{useWeight}, \code{asymCov}, and optional \code{cov}.
+List with \code{useWeight}, \code{asymCov}, optional \code{cov}, and
+\code{nGroups} (integer).
 }
 \description{
 \strong{Modern only:} reads \code{observedStats = list(cov=, useWeight=, asymCov=)}.
 OpenMx legacy \code{type="acov"} / \code{"none"} / \code{MxDataLegacyWLS} is refused forever.
+}
+\details{
+For multigroup models with data only on submodels, returns \strong{block-diagonal}
+\code{useWeight} and \code{asymCov} across groups (row/column names prefixed
+by group name when more than one group contributes).
 }
 \seealso{
 Other xmu internal not for end user:
@@ -118,6 +124,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_twin_get_var_names]{xmu_twin_get_var_names()}},
 \code{\link[=xmu_twin_make_def_means_mats_and_alg]{xmu_twin_make_def_means_mats_and_alg()}},
 \code{\link[=xmu_twin_upgrade_selDvs2SelVars]{xmu_twin_upgrade_selDvs2SelVars()}},
-\code{\link[=xmu_update_covar]{xmu_update_covar()}}
+\code{\link[=xmu_update_covar]{xmu_update_covar()}},
+\code{\link[=xmu_wls_display_chi]{xmu_wls_display_chi()}}
 }
 \concept{xmu internal not for end user}

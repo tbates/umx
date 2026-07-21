@@ -32,7 +32,11 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 	baseJacobian = baseModel@output$implied_jacobian
 	if(is.null(baseJacobian)) {
 		if (is.null(getOption("umx_warned_legacy_wls")) || !getOption("umx_warned_legacy_wls")) {
-			warning("Base model missing cached Jacobian. Run model with GenomicMx to enable strict Satorra-Bentler 2010 testing.")
+			warning(
+				"Base model missing cached WLS Jacobian. ",
+				xmu_openmx_install_message("Strict Satorra-Bentler (2010) nested tests"),
+				call. = FALSE
+			)
 			options(umx_warned_legacy_wls = TRUE)
 		}
 	}
@@ -43,12 +47,23 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 	
 	# Note: In ML we need to subtract the -2LLs of the model from a base model.
 	# In WLS: The discrepancy function inherently represents the squared, weighted differences between the observed and implied matrices.
-	# The raw value in fitfunction$result[1,1] is the unscaled chi-square. No saturated model comparison is required.
+	# Continuous WLS Chi for the table is SB-scaled output$fit (via xmu_wls_display_chi), not Browne output$chi.
+	# GSEM track keeps output$chi (DWLS structural scale).
 
-	# Safely extract the final scaled discrepancies (Zero-cost preference)
-	chisqBase = baseModel$output$chi
-	if (is.null(chisqBase)) {
-		chisqBase = summary(baseModel)$Chi
+	if (isGenomic) {
+		chisqBase = baseModel$output$chi
+		if (is.null(chisqBase)) {
+			chisqBase = summary(baseModel)$Chi
+		}
+		cfiBase = NA_real_
+		tryCatch({
+			dispBase = xmu_wls_display_chi(baseModel)
+			cfiBase = dispBase$CFI
+		}, error = function(e) NULL)
+	} else {
+		dispBase = xmu_wls_display_chi(baseModel)
+		chisqBase = dispBase$Chi
+		cfiBase = dispBase$CFI
 	}
 				
 	# Initialize vectors assuming only one model is passed
@@ -63,10 +78,20 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 		compJacobian = comparisonModel@output$implied_jacobian
 		kComp = ifelse(!is.null(compJacobian), ncol(compJacobian), length(omxGetParameters(comparisonModel)))
 		
-		# The raw value in fitfunction$result[1,1] is the unscaled chi-square. No saturated model comparison is required.
-		chisqComp = comparisonModel$output$chi
-		if (is.null(chisqComp)) {
-			chisqComp = summary(comparisonModel)$Chi
+		if (isGenomic) {
+			chisqComp = comparisonModel$output$chi
+			if (is.null(chisqComp)) {
+				chisqComp = summary(comparisonModel)$Chi
+			}
+			cfiComp = NA_real_
+			tryCatch({
+				dispComp = xmu_wls_display_chi(comparisonModel)
+				cfiComp = dispComp$CFI
+			}, error = function(e) NULL)
+		} else {
+			dispComp = xmu_wls_display_chi(comparisonModel)
+			chisqComp = dispComp$Chi
+			cfiComp = dispComp$CFI
 		}
 		
 		epVec = c(kBase, kComp)
@@ -103,48 +128,38 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 					diffFitVec = c(NA, round(sbResults["strictSbChisq"], 3))
 					pVec = c(NA, round(sbResults["pValue"], 3))
 				} else {
-					warning("Satorra-Bentler calculation failed: returned NA", call. = FALSE)
+					# Non-monotone F or failed algebra: leave NA (calculateStrictSb already warned when applicable)
+					if (is.null(sbResults) || is.null(attr(sbResults, "nonMonotoneF")) || !isTRUE(attr(sbResults, "nonMonotoneF"))) {
+						warning("Satorra-Bentler calculation failed: returned NA", call. = FALSE)
+					}
 					diffFitVec = c(NA, NA)
 					pVec = c(NA, NA)
 				}
 			} else {
 				# Graceful degradation for legacy WLS
-				message("umx Note: One or both models lack a cached Jacobian. Skipping strict Satorra-Bentler (2010) difference test.")
+				message(
+					"umx Note: One or both models lack a cached Jacobian. Skipping strict Satorra-Bentler (2010) difference test.\n",
+					xmu_openmx_install_message("Strict Satorra-Bentler nested WLS comparison")
+				)
 				diffFitVec = c(NA, NA)
 				pVec = c(NA, NA)
 			}
 		}
 	}
 
-	# 5. Calculate Standard AIC using built-in OpenMx accessor
-	aicBase = tryCatch({ AIC(baseModel) }, error = function(e) { chisqBase + 2 * kBase })
+	# 5. AIC on the same Chi scale as the table (Chi + 2*EP)
+	aicBase = as.numeric(chisqBase) + 2 * kBase
 	if (!is.null(comparisonModel)) {
-		aicComp = tryCatch({ AIC(comparisonModel) }, error = function(e) { chisqComp + 2 * kComp })
+		aicComp = as.numeric(chisqComp) + 2 * kComp
 		aicVec = c(aicBase, aicComp)
 	} else {
 		aicVec = aicBase
 	}
 
-	# 6. Calculate CFI
-	getCfi <- function(model) {
-		cfiVal = NA_real_
-		if (xmu_has_WLS_jacobian(model)) {
-			tryCatch({
-				robustFit = xmu_robust_WLS_fit(model)
-				cfiVal = robustFit$CFI
-			}, error = function(e) {
-				cfiVal = summary(model)$CFI
-			})
-		} else {
-			cfiVal = summary(model)$CFI
-		}
-		return(cfiVal)
-	}
-	cfiBase = getCfi(baseModel)
+	# 6. CFI from display path (already extracted with Chi above)
 	if (!is.null(comparisonModel)) {
-		cfiComp = getCfi(comparisonModel)
 		cfiVec = c(cfiBase, cfiComp)
-		deltaCfiVec = c(NA, cfiComp - cfiBase)
+		deltaCfiVec = c(NA, as.numeric(cfiComp) - as.numeric(cfiBase))
 	} else {
 		cfiVec = cfiBase
 		deltaCfiVec = NA_real_
@@ -199,6 +214,63 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 xmu_has_WLS_jacobian <- function(model) {
     # Returns TRUE if the model was run on GenomicMx and contains the Jacobian
     return(!is.null(model$output$implied_jacobian))
+}
+
+#' Display chi-square and AFIs for a WLS model (shared by summary and compare)
+#'
+#' When \code{output$implied_jacobian} is present, returns Satorra–Bentler (2010)
+#' scaled statistics from [xmu_robust_WLS_fit()] (including saturated df=0
+#' convention: Chi=0, CFI/TLI=1, RMSEA=0). Otherwise falls back to OpenMx
+#' \code{summary()} Browne residual chi-square.
+#'
+#' @param model A run MxModel (typically WLS/DWLS).
+#' @return Named list with \code{Chi}, \code{ChiDoF}, \code{p}, \code{CFI},
+#'   \code{TLI}, \code{RMSEA}, and \code{source} one of
+#'   \code{"SB2010"}, \code{"saturated"}, \code{"OpenMx"}.
+#' @family xmu internal not for end user
+#' @seealso [xmu_robust_WLS_fit()], [xmu_compare_WLS()], [umxSummary()]
+xmu_wls_display_chi <- function(model) {
+	out = list(
+		Chi = NA_real_,
+		ChiDoF = NA_real_,
+		p = NA_real_,
+		CFI = NA_real_,
+		TLI = NA_real_,
+		RMSEA = NA_real_,
+		source = "OpenMx"
+	)
+	if (xmu_has_WLS_jacobian(model)) {
+		robustFit = tryCatch(xmu_robust_WLS_fit(model), error = function(e) NULL)
+		if (!is.null(robustFit)) {
+			out$Chi = robustFit$Chi
+			out$ChiDoF = robustFit$ChiDoF
+			out$p = robustFit$p
+			out$CFI = robustFit$CFI
+			out$TLI = robustFit$TLI
+			out$RMSEA = robustFit$RMSEA
+			correction = attr(robustFit, "correction")
+			if (!is.null(correction) && identical(correction, "saturated")) {
+				out$source = "saturated"
+			} else {
+				out$source = "SB2010"
+			}
+			return(out)
+		}
+	}
+	modelSummary = tryCatch(summary(model), error = function(e) NULL)
+	if (!is.null(modelSummary)) {
+		out$Chi = modelSummary$Chi
+		out$ChiDoF = if (!is.null(modelSummary$ChiDoF)) modelSummary$ChiDoF else modelSummary$degreesOfFreedom
+		out$p = modelSummary$p
+		out$CFI = modelSummary$CFI
+		out$TLI = modelSummary$TLI
+		out$RMSEA = modelSummary$RMSEA
+	} else if (!is.null(model$output$chi)) {
+		out$Chi = model$output$chi
+		out$ChiDoF = model$output$chiDoF
+	}
+	out$source = "OpenMx"
+	return(out)
 }
 
 #' Align WLS implied Jacobian to asymptotic-covariance moment order
@@ -256,64 +328,176 @@ xmu_WLS_align_jacobian <- function(jacMat, asymCovMat, numCovsVal) {
 	return(list(jac = jacAligned, commonNames = commonNames))
 }
 
+#' Models that hold WLS data (top-level or multigroup children)
+#'
+#' Multigroup `umxRAM(..., group=)` containers often have `model$data = NULL`
+#' with each group's raw/summary data on `model$submodels`.
+#'
+#' @param model An [OpenMx::mxModel()].
+#' @return List of models that each have non-null `$data`.
+#' @keywords internal
+xmu_wls_data_models <- function(model) {
+	if (is.null(model)) {
+		return(list())
+	}
+	if (!is.null(model$data)) {
+		return(list(model))
+	}
+	out = list()
+	if (length(model$submodels) > 0) {
+		for (sm in model$submodels) {
+			out = c(out, xmu_wls_data_models(sm))
+		}
+	}
+	out
+}
+
+#' Block-diagonal combine of square matrices (unique dimnames)
+#'
+#' @param mats List of square matrices.
+#' @param namePrefix Optional character vector of prefixes (one per matrix).
+#' @return One block-diagonal matrix.
+#' @keywords internal
+xmu_wls_block_diag <- function(mats, namePrefix = NULL) {
+	mats = Filter(Negate(is.null), mats)
+	if (length(mats) == 0) {
+		return(NULL)
+	}
+	if (length(mats) == 1L) {
+		return(mats[[1]])
+	}
+	sizes = vapply(mats, nrow, integer(1))
+	n = sum(sizes)
+	out = matrix(0, n, n)
+	rn = character(n)
+	pos = 0L
+	for (i in seq_along(mats)) {
+		M = as.matrix(mats[[i]])
+		k = nrow(M)
+		idx = (pos + 1L):(pos + k)
+		out[idx, idx] = M
+		rni = rownames(M)
+		if (is.null(rni)) {
+			rni = paste0("m", seq_len(k))
+		}
+		if (!is.null(namePrefix) && length(namePrefix) >= i && nzchar(namePrefix[i])) {
+			rni = paste0(namePrefix[i], ".", rni)
+		}
+		rn[idx] = rni
+		pos = pos + k
+	}
+	dimnames(out) = list(rn, rn)
+	out
+}
+
 #' Extract WLS useWeight (W) and asymCov (Gamma) from an MxModel
 #'
 #' **Modern only:** reads \code{observedStats = list(cov=, useWeight=, asymCov=)}.
 #' OpenMx legacy \code{type="acov"} / \code{"none"} / \code{MxDataLegacyWLS} is refused forever.
 #'
-#' @param model An [OpenMx::mxModel()] with data.
+#' For multigroup models with data only on submodels, returns **block-diagonal**
+#' \code{useWeight} and \code{asymCov} across groups (row/column names prefixed
+#' by group name when more than one group contributes).
+#'
+#' @param model An [OpenMx::mxModel()] with data (or multigroup children with data).
 #' @param stop_if_missing If TRUE, stop when either matrix is missing.
-#' @return List with \code{useWeight}, \code{asymCov}, and optional \code{cov}.
+#' @return List with \code{useWeight}, \code{asymCov}, optional \code{cov}, and
+#'   \code{nGroups} (integer).
 #' @family xmu internal not for end user
 xmu_wls_extract_WV <- function(model, stop_if_missing = TRUE) {
 	useWeight = NULL
 	asymCov   = NULL
 	obsCov    = NULL
-	if (is.null(model) || is.null(model$data)) {
+	nGroups   = 1L
+
+	dataModels = xmu_wls_data_models(model)
+	if (length(dataModels) == 0) {
 		if (stop_if_missing) {
-			stop("Model has no data; cannot extract WLS weight / asymptotic covariance matrices.")
+			stop("Model has no data (including multigroup submodels); cannot extract WLS weight / asymptotic covariance matrices.")
 		}
-		return(list(useWeight = NULL, asymCov = NULL, cov = NULL))
-	}
-	data = model$data
-	if (exists("xmu_is_legacy_acov_data", mode = "function") && xmu_is_legacy_acov_data(data)) {
-		if (exists("xmu_stop_legacy_acov", mode = "function")) {
-			xmu_stop_legacy_acov("xmu_wls_extract_WV")
-		}
-		stop("xmu_wls_extract_WV: legacy WLS data API is not supported. Use type='summary' with observedStats useWeight + asymCov.", call. = FALSE)
-	}
-	dataType = tryCatch({
-		if (isS4(data) && .hasSlot(data, "type")) data@type else data$type
-	}, error = function(e) NULL)
-	if (identical(dataType, "summary") && exists("xmu_require_summary_mxData", mode = "function")) {
-		xmu_require_summary_mxData("xmu_wls_extract_WV")
+		return(list(useWeight = NULL, asymCov = NULL, cov = NULL, nGroups = 0L))
 	}
 
-	os = NULL
-	if (isS4(data) && .hasSlot(data, "observedStats") && length(data@observedStats)) {
-		os = data@observedStats
-	} else if (!is.null(data$observedStats) && length(data$observedStats)) {
-		os = data$observedStats
-	}
-	if (!is.null(os)) {
-		if (!is.null(os$acov) || !is.null(os$fullWeight)) {
-			stop("xmu_wls_extract_WV: observedStats$acov / $fullWeight are not supported (legacy name trap). Use useWeight and asymCov.", call. = FALSE)
+	extract_one = function(m) {
+		data = m$data
+		if (exists("xmu_is_legacy_acov_data", mode = "function") && xmu_is_legacy_acov_data(data)) {
+			if (exists("xmu_stop_legacy_acov", mode = "function")) {
+				xmu_stop_legacy_acov("xmu_wls_extract_WV")
+			}
+			stop("xmu_wls_extract_WV: legacy WLS data API is not supported. Use type='summary' with observedStats useWeight + asymCov.", call. = FALSE)
 		}
-		if (!is.null(os$useWeight)) {
-			useWeight = os$useWeight
-		} else if (!is.null(os$weight) && is.matrix(os$weight)) {
-			useWeight = os$weight
+		dataType = tryCatch({
+			if (isS4(data) && .hasSlot(data, "type")) data@type else data$type
+		}, error = function(e) NULL)
+		if (identical(dataType, "summary") && exists("xmu_require_summary_mxData", mode = "function")) {
+			xmu_require_summary_mxData("xmu_wls_extract_WV")
 		}
-		if (!is.null(os$asymCov)) {
-			asymCov = os$asymCov
+		os = NULL
+		if (isS4(data) && .hasSlot(data, "observedStats") && length(data@observedStats)) {
+			os = data@observedStats
+		} else if (!is.null(data$observedStats) && length(data$observedStats)) {
+			os = data$observedStats
 		}
-		if (!is.null(os$cov)) {
-			obsCov = os$cov
+		uw = NULL; ac = NULL; oc = NULL
+		if (!is.null(os)) {
+			if (!is.null(os$acov) || !is.null(os$fullWeight)) {
+				stop("xmu_wls_extract_WV: observedStats$acov / $fullWeight are not supported (legacy name trap). Use useWeight and asymCov.", call. = FALSE)
+			}
+			if (!is.null(os$useWeight)) {
+				uw = os$useWeight
+			} else if (!is.null(os$weight) && is.matrix(os$weight)) {
+				uw = os$weight
+			}
+			if (!is.null(os$asymCov)) {
+				ac = os$asymCov
+			}
+			if (!is.null(os$cov)) {
+				oc = os$cov
+			}
+			# DWLS diagonal W often lacks dimnames; align to asymCov residual labels
+			if (!is.null(uw) && !is.null(ac) && is.null(rownames(uw)) && !is.null(rownames(ac)) &&
+			    nrow(uw) == nrow(ac) && ncol(uw) == ncol(ac)) {
+				dimnames(uw) = dimnames(ac)
+			} else if (!is.null(uw) && !is.null(ac) && is.null(rownames(uw)) && !is.null(colnames(ac)) &&
+			           nrow(uw) == nrow(ac) && ncol(uw) == ncol(ac)) {
+				dimnames(uw) = list(colnames(ac), colnames(ac))
+			}
 		}
+		if (is.null(oc) && !is.null(data$observed) && is.matrix(data$observed)) {
+			oc = data$observed
+		}
+		list(useWeight = uw, asymCov = ac, cov = oc, name = m$name)
 	}
 
-	if (is.null(obsCov) && !is.null(data$observed) && is.matrix(data$observed)) {
-		obsCov = data$observed
+	if (length(dataModels) == 1L) {
+		one = extract_one(dataModels[[1]])
+		useWeight = one$useWeight
+		asymCov = one$asymCov
+		obsCov = one$cov
+		nGroups = 1L
+	} else {
+		nGroups = length(dataModels)
+		piecesW = list()
+		piecesV = list()
+		prefixes = character(nGroups)
+		for (i in seq_along(dataModels)) {
+			one = extract_one(dataModels[[i]])
+			if (stop_if_missing) {
+				if (is.null(one$useWeight)) {
+					stop("Could not locate observedStats$useWeight (W) in group ", omxQuotes(dataModels[[i]]$name), ".")
+				}
+				if (is.null(one$asymCov)) {
+					stop("Could not locate observedStats$asymCov (Gamma) in group ", omxQuotes(dataModels[[i]]$name), ".")
+				}
+			}
+			piecesW[[i]] = one$useWeight
+			piecesV[[i]] = one$asymCov
+			prefixes[i] = dataModels[[i]]$name
+		}
+		useWeight = xmu_wls_block_diag(piecesW, namePrefix = prefixes)
+		asymCov = xmu_wls_block_diag(piecesV, namePrefix = prefixes)
+		# obsCov is group-specific; leave NULL for multigroup (robust path uses V/W)
+		obsCov = NULL
 	}
 
 	if (stop_if_missing) {
@@ -324,7 +508,7 @@ xmu_wls_extract_WV <- function(model, stop_if_missing = TRUE) {
 			stop("Could not locate observedStats$asymCov (Gamma). Use mxData(numObs=N, observedStats=list(cov=S, useWeight=W, asymCov=V)).")
 		}
 	}
-	return(list(useWeight = useWeight, asymCov = asymCov, cov = obsCov))
+	return(list(useWeight = useWeight, asymCov = asymCov, cov = obsCov, nGroups = nGroups))
 }
 
 #' Subset and align WLS weight matrix to common moment set
@@ -671,25 +855,77 @@ xmu_robust_WLS_fit <- function(model) {
 		stop("Target model missing implied_jacobian.")
 	}
 	
-	# Step B: Extract W and asymCov (modern observedStats first; legacy name-swap safe)
+	# Step B: Extract W and asymCov (modern observedStats; multigroup → block-diagonal)
+	# (Saturated early-return comes after this so missing W/Γ still error.)
 	wv = xmu_wls_extract_WV(model, stop_if_missing = TRUE)
 	weightMat = wv$useWeight
 	asymCov   = wv$asymCov
-	
+	nGroups   = if (!is.null(wv$nGroups)) wv$nGroups else 1L
+
+	# Saturated / non-positive residual df: SB scaling is undefined.
+	# Report SEM convention (Chi=0, perfect incremental AFIs) rather than NA.
+	if (!is.null(dfTarget) && is.finite(dfTarget) && dfTarget <= 0) {
+		rawF = as.numeric(chisqTargetRaw)
+		if (is.finite(rawF) && rawF > 1e-4) {
+			warning("Saturated residual df (ChiDoF <= 0) but WLS discrepancy F is not near zero (F = ",
+				signif(rawF, 4), "). Optimizer may not have reached a global minimum; nested tests may be invalid.",
+				call. = FALSE)
+		}
+		res = list(
+			scalingFactor = NA_real_,
+			scalingFactorNull = NA_real_,
+			CFI = 1,
+			TLI = 1,
+			RMSEA = 0,
+			Chi = 0,
+			ChiDoF = dfTarget,
+			p = NA_real_
+		)
+		attr(res, "c_model") = NA_real_
+		attr(res, "c_null") = NA_real_
+		attr(res, "fMlTarget") = NA_real_
+		attr(res, "fMlNull") = NA_real_
+		attr(res, "correction") = "saturated"
+		return(res)
+	}
+
+	# Multigroup: require stacked Jacobian (GenomicMx stacks one block per WLS RAM group)
+	if (nGroups > 1L) {
+		nMoments = nrow(asymCov)
+		if (nrow(jacTarget) != nMoments) {
+			stop("Multigroup WLS robust CFI/TLI/RMSEA need a stacked implied_jacobian matching all groups' moments (got Jacobian ",
+				nrow(jacTarget), " x ", ncol(jacTarget), " vs stacked moments ", nMoments,
+				").\n", xmu_openmx_install_message("Multigroup WLS robust fit (stacked Jacobian)"))
+		}
+		if (is.null(rownames(jacTarget)) && !is.null(rownames(asymCov))) {
+			rownames(jacTarget) = rownames(asymCov)
+		}
+	}
 	
 	rowNames = rownames(asymCov)
 	if (is.null(rowNames)) {
 		stop("Asymptotic covariance matrix missing rownames.")
 	}
 
-	# Calculate K (number of observed variables)
+	# Calculate K (number of observed variables) — single-group heuristic
 	manifests = model@manifestVars
+	if ((is.null(manifests) || length(manifests) == 0) && nGroups > 1L) {
+		# Take manifests from first data-bearing group
+		dms = xmu_wls_data_models(model)
+		if (length(dms) > 0) {
+			manifests = dms[[1]]@manifestVars
+		}
+	}
 	kVal = length(manifests)
 	if (kVal == 0) {
-		eVal = nrow(asymCov)
+		eVal = if (nGroups > 1L) nrow(asymCov) / nGroups else nrow(asymCov)
 		kVal = round((-1 + sqrt(1 + 8 * eVal)) / 2)
 	}
 	numCovs = (kVal * (kVal + 1)) / 2
+	if (nGroups > 1L) {
+		# Alignment is by name only; numCovs reordering heuristic is single-group
+		numCovs = nrow(asymCov)
+	}
 
 	targetAlign = xmu_WLS_align_jacobian(jacTarget, asymCov, numCovs)
 	jacTargetAligned = targetAlign$jac
@@ -708,95 +944,179 @@ xmu_robust_WLS_fit <- function(model) {
 	# Step E/F: Native R baseline WLS fit calculation (aligned moments)
 	# Extract observed covariance matrix and means (if any).
 	# Modern summary WLS / GSEM: type is "summary" with cov in observedStats.
+	# Multigroup: build a named stacked residual moment vector instead of one obsCov.
 	obsCov = NULL
 	obsMeans = NULL
 	obsThresholds = NULL
 	os = NULL
-	if (.hasSlot(model$data, "observedStats") && !is.null(model$data@observedStats)) {
-		os = model$data@observedStats
-	} else if (!is.null(model$data$observedStats)) {
-		os = model$data$observedStats
-	}
-	if (!is.null(os)) {
-		obsCov = os$cov
-		obsMeans = os$means
-		obsThresholds = os$thresholds
-	}
-	if (identical(model$data$type, "raw")) {
-		if (is.null(obsCov) && !is.null(model$data$observed)) {
-			numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
-			if (ncol(numericData) > 0) {
-				obsCov = cov(numericData, use = "pairwise.complete.obs")
+	sVecStacked = NULL
+	dataIsRaw = FALSE
+	nVal = NA_real_
+
+	if (nGroups > 1L) {
+		dms = xmu_wls_data_models(model)
+		sList = list()
+		nSum = 0
+		anyRaw = FALSE
+		for (i in seq_along(dms)) {
+			sm = dms[[i]]
+			d = sm$data
+			osi = NULL
+			if (isS4(d) && .hasSlot(d, "observedStats") && length(d@observedStats)) {
+				osi = d@observedStats
+			} else if (!is.null(d$observedStats)) {
+				osi = d$observedStats
+			}
+			if (is.null(osi$cov) || !is.matrix(osi$cov)) {
+				stop("Multigroup WLS robust fit: group ", omxQuotes(sm$name), " lacks observedStats$cov.")
+			}
+			# Residual moment order matching asymCov colnames for this group
+			gNames = colnames(osi$asymCov)
+			if (is.null(gNames)) gNames = colnames(osi$useWeight)
+			if (is.null(gNames)) {
+				stop("Multigroup WLS robust fit: group ", omxQuotes(sm$name), " asymCov/useWeight lack dimnames.")
+			}
+			sv = rep(0, length(gNames))
+			names(sv) = paste0(sm$name, ".", gNames)
+			covg = osi$cov
+			meansg = osi$means
+			for (j in seq_along(gNames)) {
+				nm = gNames[j]
+				if (grepl("^var_", nm)) {
+					v = sub("^var_", "", nm)
+					if (v %in% colnames(covg)) sv[j] = covg[v, v]
+				} else if (grepl("^poly_", nm)) {
+					rest = sub("^poly_", "", nm)
+					parts = strsplit(rest, "_", fixed = TRUE)[[1]]
+					if (length(parts) >= 2) {
+						# poly_A_B : last token is second var; rest is first (handles multi-underscore rare)
+						b = parts[length(parts)]
+						a = paste(parts[-length(parts)], collapse = "_")
+						if (a %in% colnames(covg) && b %in% colnames(covg)) {
+							sv[j] = covg[a, b]
+						}
+					}
+				} else if (grepl("^mean_|^one_to_", nm) && !is.null(meansg)) {
+					v = sub("^mean_|^one_to_", "", nm)
+					if (v %in% names(meansg)) sv[j] = meansg[v]
+					else if (is.matrix(meansg) && v %in% colnames(meansg)) sv[j] = meansg[1, v]
+				}
+			}
+			sList[[i]] = sv
+			if (identical(d$type, "raw")) {
+				anyRaw = TRUE
+				nSum = nSum + if (!is.null(d$numObs) && is.finite(d$numObs)) d$numObs else nrow(d$observed)
+			} else if (!is.null(d$numObs) && is.finite(d$numObs)) {
+				nSum = nSum + d$numObs
 			}
 		}
-		if (is.null(obsMeans) && !is.null(model$data$observed)) {
-			numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
-			if (ncol(numericData) > 0) {
-				obsMeans = colMeans(numericData, na.rm = TRUE)
-			} else {
-				obsMeans = rep(0, length(manifests))
-				names(obsMeans) = manifests
+		sVecStacked = unlist(sList)
+		dataIsRaw = anyRaw
+		nVal = if (nSum > 0) nSum else 1000
+	} else if (!is.null(model$data)) {
+		if (.hasSlot(model$data, "observedStats") && !is.null(model$data@observedStats)) {
+			os = model$data@observedStats
+		} else if (!is.null(model$data$observedStats)) {
+			os = model$data$observedStats
+		}
+		if (!is.null(os)) {
+			obsCov = os$cov
+			obsMeans = os$means
+			obsThresholds = os$thresholds
+		}
+		if (identical(model$data$type, "raw")) {
+			dataIsRaw = TRUE
+			if (is.null(obsCov) && !is.null(model$data$observed)) {
+				numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
+				if (ncol(numericData) > 0) {
+					obsCov = cov(numericData, use = "pairwise.complete.obs")
+				}
+			}
+			if (is.null(obsMeans) && !is.null(model$data$observed)) {
+				numericData = model$data$observed[, sapply(model$data$observed, is.numeric), drop = FALSE]
+				if (ncol(numericData) > 0) {
+					obsMeans = colMeans(numericData, na.rm = TRUE)
+				} else {
+					obsMeans = rep(0, length(manifests))
+					names(obsMeans) = manifests
+				}
+			}
+		} else {
+			# cov / means data, or type "summary" with cov only in observedStats
+			if (is.null(obsCov)) {
+				obsCov = model$data$observed
+			}
+			if (is.null(obsMeans)) {
+				obsMeans = model$data$means
 			}
 		}
-	} else {
-		# cov / means data, or type "summary" with cov only in observedStats
-		if (is.null(obsCov)) {
-			obsCov = model$data$observed
-		}
-		if (is.null(obsMeans)) {
-			obsMeans = model$data$means
+		nVal = model$data$numObs
+		if (is.null(nVal) || is.na(nVal)) {
+			nVal = 1000
 		}
 	}
-	if (is.null(obsCov) || !is.matrix(obsCov)) {
+	if (is.null(sVecStacked) && (is.null(obsCov) || !is.matrix(obsCov))) {
 		stop("Could not locate observed covariance matrix for robust WLS fit (need data$observed or observedStats$cov).")
 	}
 	
-	if (!is.null(obsMeans)) {
-		if (is.matrix(obsMeans) || is.array(obsMeans)) {
-			colNames = colnames(obsMeans)
-			obsMeans = as.vector(obsMeans)
-			names(obsMeans) = colNames
-		}
-		obsMeans = obsMeans[manifests]
-	}
-	if (!all(manifests %in% colnames(obsCov)) || !all(manifests %in% rownames(obsCov))) {
-		stop("Observed covariance dimnames do not cover model manifests: ", paste(manifests, collapse = ", "))
-	}
-	obsCov = obsCov[manifests, manifests, drop = FALSE]
-	
-	sVec = rep(0, length(commonNames))
-	for (i in seq_along(commonNames)) {
-		name = commonNames[i]
-		if (grepl("^mean_", name)) {
-			varName = sub("^mean_", "", name)
-			sVec[i] = obsMeans[varName]
-		} else if (grepl("^one_to_", name)) {
-			varName = sub("^one_to_", "", name)
-			sVec[i] = obsMeans[varName]
-		} else if (name %in% manifests) {
-			sVec[i] = obsMeans[name]
-		} else if (grepl("t[0-9]+$", name)) {
-			varName = sub("t[0-9]+$", "", name)
-			threshNum = as.numeric(sub("^.*t", "", name))
-			if (!is.null(obsThresholds) && varName %in% colnames(obsThresholds)) {
-				sVec[i] = obsThresholds[threshNum, varName]
-			} else {
-				sVec[i] = NA_real_
+	if (!is.null(sVecStacked)) {
+		# Multigroup: residual moment vector already named group.moment
+		sVec = as.numeric(sVecStacked[commonNames])
+		if (length(sVec) != length(commonNames) || any(is.na(sVec) & !is.na(match(commonNames, names(sVecStacked))))) {
+			# fall back to positional match when names differ slightly
+			sVec = as.numeric(sVecStacked[seq_along(commonNames)])
+			if (length(sVec) != length(commonNames)) {
+				stop("Multigroup WLS robust fit: could not align stacked residual moments to commonNames.")
 			}
-		} else {
-			parts = strsplit(name, "[ _]")[[1]]
-			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
-			if (length(parts) == 2) {
-				if (all(parts %in% colnames(obsCov))) {
-					sVec[i] = obsCov[parts[1], parts[2]]
+		}
+	} else {
+		if (!is.null(obsMeans)) {
+			if (is.matrix(obsMeans) || is.array(obsMeans)) {
+				colNames = colnames(obsMeans)
+				obsMeans = as.vector(obsMeans)
+				names(obsMeans) = colNames
+			}
+			obsMeans = obsMeans[manifests]
+		}
+		if (!all(manifests %in% colnames(obsCov)) || !all(manifests %in% rownames(obsCov))) {
+			stop("Observed covariance dimnames do not cover model manifests: ", paste(manifests, collapse = ", "))
+		}
+		obsCov = obsCov[manifests, manifests, drop = FALSE]
+	
+		sVec = rep(0, length(commonNames))
+		for (i in seq_along(commonNames)) {
+			name = commonNames[i]
+			if (grepl("^mean_", name)) {
+				varName = sub("^mean_", "", name)
+				sVec[i] = obsMeans[varName]
+			} else if (grepl("^one_to_", name)) {
+				varName = sub("^one_to_", "", name)
+				sVec[i] = obsMeans[varName]
+			} else if (name %in% manifests) {
+				sVec[i] = obsMeans[name]
+			} else if (grepl("t[0-9]+$", name)) {
+				varName = sub("t[0-9]+$", "", name)
+				threshNum = as.numeric(sub("^.*t", "", name))
+				if (!is.null(obsThresholds) && varName %in% colnames(obsThresholds)) {
+					sVec[i] = obsThresholds[threshNum, varName]
 				} else {
 					sVec[i] = NA_real_
 				}
-			} else if (length(parts) == 1) {
-				if (parts[1] %in% colnames(obsCov)) {
-					sVec[i] = obsCov[parts[1], parts[1]]
-				} else {
-					sVec[i] = NA_real_
+			} else {
+				parts = strsplit(name, "[ _]")[[1]]
+				parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
+				if (length(parts) == 2) {
+					if (all(parts %in% colnames(obsCov))) {
+						sVec[i] = obsCov[parts[1], parts[2]]
+					} else {
+						sVec[i] = NA_real_
+					}
+				} else if (length(parts) == 1) {
+					if (parts[1] %in% colnames(obsCov)) {
+						sVec[i] = obsCov[parts[1], parts[1]]
+					} else {
+						sVec[i] = NA_real_
+					}
 				}
 			}
 		}
@@ -805,15 +1125,19 @@ xmu_robust_WLS_fit <- function(model) {
 	dInd = sVec
 	for (i in seq_along(commonNames)) {
 		name = commonNames[i]
-		isMean = grepl("^mean_", name) || grepl("^one_to_", name) || (name %in% manifests)
-		isThresh = grepl("t[0-9]+$", name)
+		# Multigroup: strip group prefix before classifying moment type
+		nameBare = sub("^[^.]+\\.", "", name)
+		isMean = grepl("^mean_", nameBare) || grepl("^one_to_", nameBare) || (nameBare %in% manifests)
+		isThresh = grepl("t[0-9]+$", nameBare)
 		isVar = FALSE
 		if (!isMean && !isThresh) {
-			parts = strsplit(name, "[ _]")[[1]]
+			parts = strsplit(nameBare, "[ _]")[[1]]
 			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
 			if (length(parts) == 2 && parts[1] == parts[2]) {
 				isVar = TRUE
 			} else if (length(parts) == 1) {
+				isVar = TRUE
+			} else if (grepl("^var_", nameBare)) {
 				isVar = TRUE
 			}
 		}
@@ -828,15 +1152,31 @@ xmu_robust_WLS_fit <- function(model) {
 	asymCovAlignedPerObs = asymCovAligned
 	weightMatAlignedPerObs = weightMatAligned
 
-	# Scale WLS matrices to sample size for raw-data models
-	nVal = model$data$numObs
+	# Scale WLS matrices to sample size for raw-data models (match OpenMx fit units).
+	# Multigroup: scale each diagonal block by that group's N (already in blockdiag order).
 	if (is.null(nVal) || is.na(nVal)) {
 		nVal = 1000
 	}
 
-	if (identical(model$data$type, "raw")) {
+	if (nGroups == 1L && isTRUE(dataIsRaw)) {
 		asymCovAligned = nVal * asymCovAligned
 		weightMatAligned = nVal * weightMatAligned
+	} else if (nGroups > 1L && isTRUE(dataIsRaw)) {
+		dms = xmu_wls_data_models(model)
+		pos = 0L
+		for (sm in dms) {
+			d = sm$data
+			ng = if (!is.null(d$numObs) && is.finite(d$numObs)) as.numeric(d$numObs) else nrow(d$observed)
+			k = nrow(d$observedStats$asymCov)
+			if (is.null(k) || !is.finite(k)) {
+				k = nrow(d$observedStats$useWeight)
+			}
+			if (!is.finite(ng) || ng <= 0 || is.null(k) || !is.finite(k)) next
+			idx = (pos + 1L):(pos + k)
+			asymCovAligned[idx, idx] = asymCovAligned[idx, idx] * ng
+			weightMatAligned[idx, idx] = weightMatAligned[idx, idx] * ng
+			pos = pos + k
+		}
 	}
 
 	# Trace helper for single model scaling factor

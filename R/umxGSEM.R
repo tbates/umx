@@ -1805,13 +1805,22 @@ umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), m
 #' and `observedStats` (`cov`, `useWeight`, `asymCov`). Works for
 #' `MxDataStatic` from [OpenMx::mxData] (including GSEM-style summary data).
 #'
+#' If `observedStats` still holds **LDSC/GSEM covstruc keys** (`S`, `V`, …)
+#' rather than modern WLS keys — e.g.
+#' `mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)` —
+#' OpenMx stores those names as-is (it does **not** map `S`→`cov` or
+#' `V`→`asymCov`). This method detects that case, prints the LDSC content via
+#' [umxSummary.list()], and notes how to build a runnable WLS `mxData`.
+#'
 #' @param model An [OpenMx::mxData] object (`MxDataStatic`).
 #' @param digits Rounding for printed cells (default 3).
 #' @param report `"markdown"` (default) or `"html"`.
 #' @param matrices Which observedStats blocks to print: any of
 #'   `c("cov", "useWeight", "asymCov", "means", "thresholds")`.
 #'   Default prints `cov`, `useWeight`, and `asymCov` when present.
-#' @param ... Not used (S3 compatibility).
+#'   For LDSC-shaped content, extra args are passed through to [umxSummary.list()]
+#'   (e.g. `matrices = c("S","I","V")`).
+#' @param ... Passed to [umxSummary.list()] when LDSC-shaped `observedStats` is detected.
 #' @return Invisibly returns the input `model`.
 #' @export
 #' @method umxSummary MxDataStatic
@@ -1837,16 +1846,58 @@ umxSummary.MxDataStatic <- function(model, digits = 3, report = c("markdown", "h
 		os = list()
 	}
 
+	hasW = !is.null(os$useWeight)
+	hasAsym = !is.null(os$asymCov)
+	hasCov = !is.null(os$cov)
+	# LDSC/GSEM list stuffed into observedStats without mapping to modern WLS keys
+	isLdscShaped = xmu_is_gsem_covstruc(os) && !hasCov && !hasW && !hasAsym
+
 	cat("\n")
 	cat("### OpenMx WLS / summary data (`mxData`)\n\n")
 	cat(sprintf("- **type:** `%s`\n", dtype))
 	if (is.finite(numObs)) {
 		cat(sprintf("- **numObs:** %s\n", format(numObs, scientific = FALSE)))
+		if (isLdscShaped) {
+			cat("  (bookkeeping N for WLS; LDSC effective Ns live in covstruc `$N`, not necessarily here)\n")
+		}
 	}
 
-	# Trait / residual labels
+	osKeys = names(os)
+	if (is.null(osKeys)) {
+		osKeys = character(0)
+	}
+	cat(sprintf("- **observedStats keys:** %s\n",
+		if (length(osKeys)) paste(osKeys, collapse = ", ") else "(none)"))
+
+	if (isLdscShaped) {
+		cat("\n")
+		cat("**Note:** `observedStats` holds LDSC/GSEM covstruc fields (`S`, `V`, …), not modern WLS slots.\n")
+		cat("OpenMx does **not** auto-map `S`→`cov` or `V`→`asymCov`. This object is **not** a runnable\n")
+		cat("WLS summary dataset until remapped, e.g.:\n\n")
+		cat("```r\n")
+		cat("S = os$S; V = os$V\n")
+		cat("W = diag(1 / diag(V)); dimnames(W) = dimnames(V)  # DWLS\n")
+		cat("mxData(numObs = 1, type = \"summary\",\n")
+		cat("       observedStats = list(cov = S, useWeight = W, asymCov = V))\n")
+		cat("# or: umxGSEM(..., covstruc = Psych_LDSC) which builds this for you\n")
+		cat("```\n")
+		# Print LDSC content (list method); pass matrices= only if user overrode defaults
+		extra = list(...)
+		listMatrices = if (!is.null(extra$matrices)) {
+			extra$matrices
+		} else if (!identical(matrices, c("cov", "useWeight", "asymCov"))) {
+			matrices
+		} else {
+			c("S", "I", "V", "N")
+		}
+		extra$matrices = NULL
+		do.call(umxSummary.list, c(list(model = os, digits = digits, report = report, matrices = listMatrices), extra))
+		return(invisible(model))
+	}
+
+	# Trait / residual labels (modern WLS keys)
 	traits = NULL
-	if (!is.null(os$cov) && is.matrix(os$cov)) {
+	if (hasCov && is.matrix(os$cov)) {
 		traits = colnames(os$cov)
 		if (is.null(traits)) {
 			traits = rownames(os$cov)
@@ -1859,11 +1910,8 @@ umxSummary.MxDataStatic <- function(model, digits = 3, report = c("markdown", "h
 		cat(sprintf("- **Variables / traits (k = %d):** %s\n", length(traits), paste(traits, collapse = ", ")))
 	}
 
-	hasW = !is.null(os$useWeight)
-	hasV = !is.null(os$asymCov)
-	hasCov = !is.null(os$cov)
-	cat(sprintf("- **observedStats present:** cov=%s, useWeight=%s, asymCov=%s",
-		hasCov, hasW, hasV))
+	cat(sprintf("- **modern WLS slots:** cov=%s, useWeight=%s, asymCov=%s",
+		hasCov, hasW, hasAsym))
 	if (!is.null(os$means)) cat(", means=TRUE")
 	if (!is.null(os$thresholds)) cat(", thresholds=TRUE")
 	cat("\n\n")
@@ -1872,9 +1920,8 @@ umxSummary.MxDataStatic <- function(model, digits = 3, report = c("markdown", "h
 	cat("| Slot | Role |\n|------|------|\n")
 	cat("| `observedStats$cov` | Observed (or genetic) covariance of variables |\n")
 	cat("| `observedStats$useWeight` | WLS weight **W** (DWLS: diagonal; WLS: dense) |\n")
-	cat("| `observedStats$asymCov` | Sampling covariance of residual moments (often called **V** / NACOV) |\n")
+	cat("| `observedStats$asymCov` | Sampling covariance of residual moments (often **V** / NACOV) |\n")
 	cat("| `type = \"summary\"` | No raw rows; moments only (GSEM / LDSC style) |\n\n")
-	cat("Legacy `type=\"acov\"` / top-level `acov=` formals are removed; do not use them.\n\n")
 
 	want = unique(as.character(matrices))
 	titles = c(

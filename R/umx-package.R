@@ -34,6 +34,23 @@
 	umx_set_table_format("markdown")
 	umx_complete_dollar()
 	packageStartupMessage("For an overview type '?umx'")
+	# Soft note when OpenMx is stock/CRAN (not GenomicMx-capable). Never block attach.
+	startupNote = getOption("umx.genomicMx.startup")
+	if (is.null(startupNote)) {
+		startupNote = interactive()
+	}
+	if (isTRUE(startupNote) && isTRUE(getOption("umx.warned_openmx_engine")) != TRUE) {
+		st = tryCatch(xmu_openmx_engine_status(), error = function(e) NULL)
+		if (!is.null(st) && !isTRUE(st$ok)) {
+			packageStartupMessage(
+				"Note: OpenMx on this machine appears to be a stock/legacy build. ",
+				"For umx WLS/GSEM (SB fit, stacked multigroup Jacobian), install the GenomicMx OpenMx binary: ",
+				"install.OpenMx(\"GenomicMx\"). ",
+				"Silence with options(umx.genomicMx.startup = FALSE)."
+			)
+			options(umx.warned_openmx_engine = TRUE)
+		}
+	}
 }
 
 

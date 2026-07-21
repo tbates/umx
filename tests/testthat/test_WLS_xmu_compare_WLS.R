@@ -44,7 +44,9 @@ test_that("Universal Routing works (Modern models with Jacobians)", {
   # Assert new columns are populated
   expect_false(is.na(res$AIC[2]))
   expect_false(is.na(res$CFI[2]))
-  expect_true(is.na(res$delta_CFI[2]))
+  # Nested row carries CFI change vs base (base row has NA delta_CFI)
+  expect_true(is.na(res$delta_CFI[1]))
+  expect_false(is.na(res$delta_CFI[2]))
   expect_false(is.na(res$delta_SRMR[2]))
 })
 

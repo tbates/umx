@@ -40,7 +40,11 @@
 #'   \item **Displayed CFI, TLI, RMSEA** — robust/scaled indices; interpretation depends on continuous vs ordinal (below).
 #' }
 #'
-#' **Continuous WLS** (all manifests numeric): SB (2010) scaled pipeline. Printed note: no conventional cutoffs; prefer SRMR; nested Strict SB via [umxCompare()].
+#' **Continuous WLS** (all manifests numeric): SB (2010) scaled pipeline
+#' (\eqn{\chi^2 = F/c} from `output$fit`, same Chi as [umxCompare()] when Jacobians
+#' are present). Saturated residual df (ChiDoF = 0): Chi = 0, p = NA, CFI = TLI = 1,
+#' RMSEA = 0 (not NA). Printed note: no conventional cutoffs; prefer SRMR; nested
+#' Strict SB via [umxCompare()].
 #'
 #' **Ordinal / categorical WLS** (at least one `ordered`/`factor` on raw data): robust CFI/TLI/RMSEA use **Savalei (2021)** catML corrections; **Hu & Bentler (1999) cutoffs may apply to those robust indices**. Display \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests—not catML-scaled.
 #'
@@ -210,19 +214,23 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	}
 
 	if (isWLS) {
-	    # Check for GenomicMx engine via our new helper
+	    # GenomicMx / modern OpenMx: implied_jacobian present → SB/robust WLS AFIs when computable
 	    if (xmu_has_WLS_jacobian(model)) {
-	        message("umxSummary: Modern WLS model with Jacobian detected. Applying robust WLS fit metrics...")
 	        robustFit = NULL
 	        tryCatch({
 	            robustFit = xmu_robust_WLS_fit(model)
 	        }, error = function(e) {
-	            # Avoid raw R errors ("replacement has length zero") in user-facing notes
+	            # Avoid raw R errors in user-facing notes
 	            msg = conditionMessage(e)
-	            if (grepl("replacement has length zero|Could not locate observed covariance|dimnames do not cover", msg)) {
-	            	message("umxSummary Note: robust CFI/TLI/RMSEA could not be computed; reporting unadjusted chi-square. Estimates and SEs are unaffected. Prefer SRMR and nested umxCompare tests (see ?umxCompare).")
+	            if (grepl("replacement has length zero|Could not locate observed covariance|dimnames do not cover|Multigroup WLS robust", msg)) {
+	            	# Multigroup or incomplete stack: quiet note once, not a stack of debug lines
+	            	if (grepl("Multigroup WLS robust", msg)) {
+	            		message("umxSummary Note: Multigroup WLS robust CFI/TLI/RMSEA not available yet (need stacked Jacobian across groups). Estimates and SEs are unaffected.")
+	            	} else {
+	            		message("umxSummary Note: robust CFI/TLI/RMSEA could not be computed; reporting unadjusted chi-square. Estimates and SEs are unaffected.")
+	            	}
 	            } else {
-	            	message("umxSummary Note: robust CFI/TLI/RMSEA skipped: ", msg, " Prefer SRMR and nested umxCompare tests (see ?umxCompare).")
+	            	message("umxSummary Note: robust CFI/TLI/RMSEA skipped: ", msg)
 	            }
 	        })
         
@@ -247,7 +255,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	    } else {
 	        # Legacy catch: Warn the user (once per session), leave modelSummary unadjusted
 	        if (is.null(getOption("umx_warned_legacy_wls")) || !getOption("umx_warned_legacy_wls")) {
-	            warning("Legacy OpenMx WLS engine detected (missing Jacobian). Fit statistics are unadjusted and unreliable. Install GenomicMx for accurate Satorra-Bentler WLS fit reporting.", call. = FALSE)
+	            warning(
+	            	"Legacy OpenMx WLS engine detected (missing Jacobian). Fit statistics are unadjusted and unreliable.\n",
+	            	xmu_openmx_install_message("WLS robust CFI/TLI/RMSEA and SB chi-square"),
+	            	call. = FALSE
+	            )
 	            options(umx_warned_legacy_wls = TRUE)
 	        }
 	    }

@@ -661,7 +661,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# = Add mxFitFunction to model =
 	# ==============================
 	if(type %in%  c('WLS', 'DWLS', 'ULS')) {
-		# message("data treated as ", omxQuotes(type), ". allContinuousMethod = ", omxQuotes(allContinuousMethod))
 		# Replace newModel fit functions
 		# Still mxExpectationNormal and means not affected (either has or lacks means matrix already).
 		newModel = mxModel(newModel, mxFitFunctionWLS(type= type, allContinuousMethod = allContinuousMethod) )

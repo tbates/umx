@@ -139,6 +139,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_twin_make_def_means_mats_and_alg]{xmu_twin_make_def_means_mats_and_alg()}},
 \code{\link[=xmu_twin_upgrade_selDvs2SelVars]{xmu_twin_upgrade_selDvs2SelVars()}},
 \code{\link[=xmu_update_covar]{xmu_update_covar()}},
+\code{\link[=xmu_wls_display_chi]{xmu_wls_display_chi()}},
 \code{\link[=xmu_wls_extract_WV]{xmu_wls_extract_WV()}}
 }
 \concept{xmu internal not for end user}

@@ -1,11 +1,18 @@
 #' calculateStrictSb
 #'
 #' @description
-#' `calculateStrictSb` calculates the Satorra-Bentler (2010) strictly positive scaled difference chi-square test.
+#' `calculateStrictSb` calculates the Satorra-Bentler (2010) scaled difference
+#' chi-square test (the “strictly positive” design relative to SB-2001, which
+#' can yield a negative scaling constant \(c_d\)). The returned statistic is
+#' only interpretable when both models share the same WLS moments, weight
+#' matrix, and \(N\), and when the freer model’s optimized discrepancy is not
+#' larger than the nested model’s (\(F_{\mathrm{nested}} \ge F_{\mathrm{base}}\)).
+#' Non-monotone \(F\) (typically failed optimization) returns `NA` with a warning.
 #'
 #' @param baseModel The base model (more parameters)
 #' @param nestedModel The nested model (fewer parameters)
 #' @return A named vector containing strictSbChisq, deltaDf, scalingFactor, and pValue.
+#'   May carry attribute \code{nonMonotoneF = TRUE} when \(\Delta F < 0\).
 #' @export
 calculateStrictSb <- function(baseModel, nestedModel) {
 	# 1. Extract Jacobians
@@ -28,96 +35,172 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 		stop("Models are not nested in the correct order: nestedModel must have fewer parameters than baseModel.")
 	}
 
-	# 2. Extract Weight (W) and Asymptotic Covariance (V) — modern observedStats first
+	# 2. Extract Weight (W) and Asymptotic Covariance (V) — modern observedStats;
+	# multigroup: block-diagonal across groups (same as xmu_robust_WLS_fit).
 	wv = xmu_wls_extract_WV(baseModel, stop_if_missing = TRUE)
 	weightMat = wv$useWeight
 	asymCov   = wv$asymCov
+	nGroups   = if (!is.null(wv$nGroups)) wv$nGroups else 1L
 
-	# 3. Alignment Safety Guard: Deterministic Block-Shift
-	# OpenMx places means at the top of V. Our C++ places means at the bottom of the Jacobian.
-	# We shift the bottom K rows to the top to achieve perfect alignment without fragile string matching.
-	numManifests = length(baseModel@manifestVars)
-	numCovs = (numManifests * (numManifests + 1)) / 2
-
-	alignJacobian <- function(jac, asymCov, numCovs) {
-		numMeans = nrow(jac) - numCovs
-		if (numMeans > 0) {
-			# Shift the last 'numMeans' rows (the means) to the top
-			meanIdx = (numCovs + 1):nrow(jac)
-			covIdx = 1:numCovs
-			alignedJac = jac[c(meanIdx, covIdx), , drop = FALSE]
-		} else {
-			# No means present, order is already identical
-			alignedJac = jac
-		}
-		# Force the rownames to match V so downstream math executes cleanly
-		rownames(alignedJac) = rownames(asymCov)
-		return(alignedJac)
+	if (is.null(rownames(asymCov))) {
+		stop("Asymptotic covariance matrix missing rownames; cannot align Jacobian for SB-2010.")
+	}
+	# DWLS useWeight often lacks dimnames — copy from asymCov when congruent
+	if (is.null(rownames(weightMat)) && nrow(weightMat) == nrow(asymCov) && ncol(weightMat) == ncol(asymCov)) {
+		dimnames(weightMat) = dimnames(asymCov)
 	}
 
-	jacBase = alignJacobian(jacBase, asymCov, numCovs)
-	jacNested = alignJacobian(jacNested, asymCov, numCovs)
+	# 3. Align Jacobians to V/W moment order
+	# Multigroup / named residuals: align by name (stacked group.moment labels).
+	# Single-group continuous: optional means block-shift when names missing.
+	alignJacobian <- function(jac, asymCov, nGroups) {
+		rn = rownames(asymCov)
+		if (is.null(rownames(jac)) && nrow(jac) == length(rn)) {
+			rownames(jac) = rn
+		}
+		if (!is.null(rownames(jac)) && all(rn %in% rownames(jac))) {
+			return(jac[rn, , drop = FALSE])
+		}
+		# Single-group block-shift fallback (means at bottom of jac → top of V)
+		if (nGroups <= 1L) {
+			numManifests = length(baseModel@manifestVars)
+			if (numManifests < 1) {
+				numManifests = round((-1 + sqrt(1 + 8 * nrow(jac))) / 2)
+			}
+			numCovs = (numManifests * (numManifests + 1)) / 2
+			numMeans = nrow(jac) - numCovs
+			if (numMeans > 0 && numCovs > 0 && (numMeans + numCovs) == nrow(jac)) {
+				meanIdx = (numCovs + 1):nrow(jac)
+				covIdx = 1:numCovs
+				jac = jac[c(meanIdx, covIdx), , drop = FALSE]
+			}
+			if (nrow(jac) == length(rn)) {
+				rownames(jac) = rn
+				return(jac)
+			}
+		}
+		stop("Cannot align implied_jacobian (", nrow(jac), " x ", ncol(jac),
+			") to asymCov moments (", length(rn), ").")
+	}
 
-	# Execute alignment safety guard subsetting to satisfy user requirements
-	jacBase = jacBase[rownames(asymCov), , drop = FALSE]
-	jacNested = jacNested[rownames(asymCov), , drop = FALSE]
+	jacBase = alignJacobian(jacBase, asymCov, nGroups)
+	jacNested = alignJacobian(jacNested, asymCov, nGroups)
 
-	# 4. Helper function to invert information matrices robustly
-	# xmu_invert_matrix
-	# 5. Projection Matrix Algebra (Satorra & Bentler, 2010)
-	
-	# Calculate Information Matrix for base model: Delta_1^T * W * Delta_1
+	commonNames = rownames(asymCov)
+	weightMat = weightMat[commonNames, commonNames, drop = FALSE]
+	asymCov = asymCov[commonNames, commonNames, drop = FALSE]
+	jacBase = jacBase[commonNames, , drop = FALSE]
+	jacNested = jacNested[commonNames, , drop = FALSE]
+
+	# Scale raw-data V/W to sample units (single-group or per multigroup block)
+	dataModels = xmu_wls_data_models(baseModel)
+	if (nGroups == 1L && length(dataModels) == 1L) {
+		d = dataModels[[1]]$data
+		if (identical(d$type, "raw")) {
+			nVal = if (!is.null(d$numObs) && is.finite(d$numObs)) as.numeric(d$numObs) else nrow(d$observed)
+			if (is.finite(nVal) && nVal > 0) {
+				weightMat = weightMat * nVal
+				asymCov = asymCov * nVal
+			}
+		}
+	} else if (nGroups > 1L) {
+		pos = 0L
+		for (sm in dataModels) {
+			d = sm$data
+			ng = if (!is.null(d$numObs) && is.finite(d$numObs)) as.numeric(d$numObs) else if (!is.null(d$observed)) nrow(d$observed) else NA_real_
+			k = if (!is.null(d$observedStats$asymCov)) nrow(d$observedStats$asymCov) else nrow(d$observedStats$useWeight)
+			if (!is.finite(ng) || ng <= 0 || is.null(k) || !is.finite(k)) next
+			if (identical(d$type, "raw")) {
+				idx = (pos + 1L):(pos + k)
+				weightMat[idx, idx] = weightMat[idx, idx] * ng
+				asymCov[idx, idx] = asymCov[idx, idx] * ng
+			}
+			pos = pos + k
+		}
+	}
+
+	# 4–5. Projection matrix algebra (Satorra & Bentler, 2010)
 	infoBase = t(jacBase) %*% weightMat %*% jacBase
 	infoBaseInv = xmu_invert_matrix(infoBase)
-	
-	# Calculate Projection Matrix M_1: W - W * Delta_1 * (Delta_1^T * W * Delta_1)^-1 * Delta_1^T * W
 	mBase = weightMat - weightMat %*% jacBase %*% infoBaseInv %*% t(jacBase) %*% weightMat
 
-	# Calculate Information Matrix for nested model: Delta_0^T * W * Delta_0
 	infoNested = t(jacNested) %*% weightMat %*% jacNested
 	infoNestedInv = xmu_invert_matrix(infoNested)
-	
-	# Calculate Projection Matrix M_0: W - W * Delta_0 * (Delta_0^T * W * Delta_0)^-1 * Delta_0^T * W
 	mNested = weightMat - weightMat %*% jacNested %*% infoNestedInv %*% t(jacNested) %*% weightMat
 
-	# Calculate difference matrix: M_diff = M_0 - M_1
 	mDiff = mNested - mBase
-
-	# Degrees of freedom: d = k_1 - k_0 (difference in number of parameters)
 	deltaDf = ncol(jacBase) - ncol(jacNested)
 
-	# Calculate Satorra-Bentler scaling factor: c_d = tr(M_diff * V) / d
-	# Uses the fast 1-liner trace helper sum(diag())
 	traceVal = sum(diag(mDiff %*% asymCov))
 	scalingFactor = traceVal / deltaDf
 
-	# 6. Extract RAW unscaled discrepancy values
+	# 6. RAW unscaled discrepancies (output$fit = N * r'Wr; same scale on both models)
 	getRawFit <- function(model) {
-		rawFit = model$fitfunction$result
-		if (is.matrix(rawFit) || is.array(rawFit)) {
-			rawFit = rawFit[1, 1]
+		rawFit = model$output$fit
+		if (is.null(rawFit) || is.na(rawFit)) {
+			rawFit = model$fitfunction$result
+			if (is.matrix(rawFit) || is.array(rawFit)) {
+				rawFit = rawFit[1, 1]
+			}
 		}
-		return(rawFit)
+		return(as.numeric(rawFit))
 	}
 
 	rawBase   = getRawFit(baseModel)
 	rawNested = getRawFit(nestedModel)
 
-	# Calculate Satorra-Bentler strict nested difference: T_d = (T_0 - T_1) / c_d
-	deltaRaw      = rawNested - rawBase
-	strictSbChisq = deltaRaw / scalingFactor
+	if (!is.finite(rawBase) || !is.finite(rawNested)) {
+		warning("Non-finite WLS fit on base or nested model; cannot compute SB-2010 difference.", call. = FALSE)
+		return(c(
+			strictSbChisq = NA_real_,
+			deltaDf       = deltaDf,
+			scalingFactor = scalingFactor,
+			pValue        = NA_real_
+		))
+	}
 
-	# Calculate p-value (Ensure deltaDf is positive for the distribution check)
+	deltaRaw = rawNested - rawBase
+	# Nested-monotone under fixed s, W, N at global mins: deltaRaw >= 0.
+	# Small negative noise → 0; clear violation → NA (do not report negative chi-square / p = 1).
+	tol = 1e-6 * max(1, abs(rawBase), abs(rawNested))
+	if (deltaRaw < -tol) {
+		warning("WLS discrepancy F is smaller for the nested model than for the freer base (F_nested = ",
+			signif(rawNested, 6), ", F_base = ", signif(rawBase, 6),
+			"). Nested Satorra-Bentler Delta chi-square is not interpretable; check optimization or nesting (same useWeight, moments, and N).",
+			call. = FALSE)
+		res = c(
+			strictSbChisq = NA_real_,
+			deltaDf       = deltaDf,
+			scalingFactor = scalingFactor,
+			pValue        = NA_real_
+		)
+		attr(res, "nonMonotoneF") = TRUE
+		return(res)
+	}
+	if (deltaRaw < 0) {
+		deltaRaw = 0
+	}
+
+	if (!is.finite(scalingFactor) || scalingFactor <= 0) {
+		warning("Non-positive or non-finite SB-2010 scaling factor (tr(M_diff * Gamma)/df); cannot scale Delta chi-square.",
+			call. = FALSE)
+		return(c(
+			strictSbChisq = NA_real_,
+			deltaDf       = deltaDf,
+			scalingFactor = scalingFactor,
+			pValue        = NA_real_
+		))
+	}
+
+	strictSbChisq = deltaRaw / scalingFactor
 	pValue = pchisq(strictSbChisq, df = abs(deltaDf), lower.tail = FALSE)
 
-	# Return results
-	results = c(
+	c(
 		strictSbChisq = strictSbChisq,
 		deltaDf       = deltaDf,
 		scalingFactor = scalingFactor,
 		pValue        = pValue
 	)
-	return(results)
 }
 
 #' xmuCalculateSRMR
@@ -218,21 +301,28 @@ xmuCalculateSRMR <- function(model) {
 
 
 # Create the trivial independence model Jacobian in R
+# rowNames may be multigroup-prefixed (e.g. "DWLS_1.var_mpg"); strip first "group." segment for typing.
 xmu_build_independence_jacobian <- function(rowNames, manifests) {
 	P = length(rowNames)
 	free_rows = logical(P)
 	for (i in 1:P) {
 		name = rowNames[i]
-		isMean = grepl("^mean_", name) || grepl("^one_to_", name) || (name %in% manifests)
-		isThresh = grepl("t[0-9]+$", name)
+		nameBare = sub("^[^.]+\\.", "", name)
+		# If stripping removed nothing useful (no dot), nameBare == name
+		isMean = grepl("^mean_", nameBare) || grepl("^one_to_", nameBare) || (nameBare %in% manifests) || grepl("^Mean:", nameBare)
+		isThresh = grepl("t[0-9]+$", nameBare)
 		isVar = FALSE
 		if (!isMean && !isThresh) {
-			parts = strsplit(name, "[ _]")[[1]]
-			parts = parts[!parts %in% c("var", "poly", "cov", "with", "to")]
-			if (length(parts) == 2 && parts[1] == parts[2]) {
+			if (grepl("^var_", nameBare) || grepl("^Cov:([^_]+)_\\1$", nameBare)) {
 				isVar = TRUE
-			} else if (length(parts) == 1) {
-				isVar = TRUE
+			} else {
+				parts = strsplit(nameBare, "[ _]")[[1]]
+				parts = parts[!parts %in% c("var", "poly", "cov", "with", "to", "Cov:")]
+				if (length(parts) == 2 && parts[1] == parts[2]) {
+					isVar = TRUE
+				} else if (length(parts) == 1) {
+					isVar = TRUE
+				}
 			}
 		}
 		if (isMean || isThresh || isVar) {
