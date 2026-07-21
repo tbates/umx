@@ -97,6 +97,34 @@ test_that("umxSummaryACE works", {
 	expect_error(regex = NA, {umxSummaryACE(m1, returnStd = TRUE)})
 })
 
+test_that("xmu_dot_maker coerces logical/NULL file (options umx_auto_plot = FALSE)", {
+	require(umx)
+	# Minimal model shell for model$name only
+	m = mxModel("dotTest")
+	dg = "digraph G {\n a;\n}\n"
+
+	# FALSE / NULL must not hit cat(..., file = FALSE) or grViz
+	expect_error(regex = NA, {
+		out = xmu_dot_maker(m, file = FALSE, digraph = dg, strip_zero = FALSE)
+	})
+	expect_error(regex = NA, {
+		out = xmu_dot_maker(m, file = NULL, digraph = dg, strip_zero = FALSE)
+	})
+	expect_error(regex = NA, {
+		out = xmu_dot_maker(m, file = NA, digraph = dg, strip_zero = FALSE)
+	})
+
+	# Integration: summary with options(umx_auto_plot = FALSE)
+	oldPlot = getOption("umx_auto_plot")
+	on.exit(options(umx_auto_plot = oldPlot), add = TRUE)
+	options(umx_auto_plot = FALSE)
+	data(twinData)
+	mzData = subset(twinData, zygosity == "MZFF")
+	dzData = subset(twinData, zygosity == "DZFF")
+	m1 = umxACE(selDVs = "bmi", sep = "", dzData = dzData, mzData = mzData, autoRun = TRUE)
+	expect_error(umxSummaryACE(m1), regex = NA)
+})
+
 test_that("umxPlotACE works", {
 	require(umx)
 	data(twinData)

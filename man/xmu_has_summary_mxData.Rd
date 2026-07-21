@@ -4,17 +4,23 @@
 \alias{xmu_has_summary_mxData}
 \title{Check if OpenMx supports type = "summary" in mxData}
 \usage{
-xmu_has_summary_mxData()
+xmu_has_summary_mxData(force = FALSE)
+}
+\arguments{
+\item{force}{If TRUE, re-probe and refresh the cache (default FALSE).}
 }
 \value{
-\itemize{
-\item Boolean
-}
+Logical.
 }
 \description{
-Helper function to verify if the installed version of OpenMx supports summary data types.
+Probe whether the installed OpenMx build accepts modern summary WLS data
+(\code{mxData(..., type = "summary", observedStats = list(cov=, useWeight=, asymCov=))}).
+CRAN OpenMx historically did not; the \code{tbates/OpenMx} fork does.
+Result is cached in \code{options("umx.xmu_has_summary_mxData")} after the first probe.
 }
 \seealso{
+\code{\link[=xmu_require_summary_mxData]{xmu_require_summary_mxData()}}, \code{\link[=xmu_mxData_summary]{xmu_mxData_summary()}}
+
 Other xmu internal not for end user:
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
@@ -74,12 +80,14 @@ Other xmu internal not for end user:
 \code{\link[=xmu_make_bin_cont_pair_data]{xmu_make_bin_cont_pair_data()}},
 \code{\link[=xmu_make_mxData]{xmu_make_mxData()}},
 \code{\link[=xmu_match.arg]{xmu_match.arg()}},
+\code{\link[=xmu_mxData_summary]{xmu_mxData_summary()}},
 \code{\link[=xmu_name_from_lavaan_str]{xmu_name_from_lavaan_str()}},
 \code{\link[=xmu_path2twin]{xmu_path2twin()}},
 \code{\link[=xmu_path_regex]{xmu_path_regex()}},
 \code{\link[=xmu_print_algebras]{xmu_print_algebras()}},
 \code{\link[=xmu_rclabel_2_bracket_address]{xmu_rclabel_2_bracket_address()}},
 \code{\link[=xmu_relevel_factors]{xmu_relevel_factors()}},
+\code{\link[=xmu_require_summary_mxData]{xmu_require_summary_mxData()}},
 \code{\link[=xmu_robust_ML_fit]{xmu_robust_ML_fit()}},
 \code{\link[=xmu_safe_run_summary]{xmu_safe_run_summary()}},
 \code{\link[=xmu_savalei_fit_cfi]{xmu_savalei_fit_cfi()}},

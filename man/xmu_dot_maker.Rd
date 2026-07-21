@@ -9,7 +9,7 @@ xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 \arguments{
 \item{model}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to get the name from}
 
-\item{file}{Either "name" (use model name) or a file name}
+\item{file}{Plot destination: \code{"name"} (temp/model name), a path string, \code{NA}/\code{NULL} (print digraph only, no file), or logical (\code{TRUE} → \code{"name"}, \code{FALSE} → off). Often passed as \code{getOption("umx_auto_plot")}.}
 
 \item{digraph}{Graphviz code for a model}
 
@@ -21,7 +21,9 @@ xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 }
 }
 \description{
-Helper to print a digraph to file and open it
+Helper to print a digraph to file and open it.
+Safe with \code{options(umx_auto_plot = FALSE)} / \code{TRUE}: logical and \code{NULL} \code{file}
+values are coerced before any \code{cat(..., file = )} or DiagrammeR call.
 }
 \seealso{
 Other xmu internal not for end user:
@@ -83,12 +85,14 @@ Other xmu internal not for end user:
 \code{\link[=xmu_make_bin_cont_pair_data]{xmu_make_bin_cont_pair_data()}},
 \code{\link[=xmu_make_mxData]{xmu_make_mxData()}},
 \code{\link[=xmu_match.arg]{xmu_match.arg()}},
+\code{\link[=xmu_mxData_summary]{xmu_mxData_summary()}},
 \code{\link[=xmu_name_from_lavaan_str]{xmu_name_from_lavaan_str()}},
 \code{\link[=xmu_path2twin]{xmu_path2twin()}},
 \code{\link[=xmu_path_regex]{xmu_path_regex()}},
 \code{\link[=xmu_print_algebras]{xmu_print_algebras()}},
 \code{\link[=xmu_rclabel_2_bracket_address]{xmu_rclabel_2_bracket_address()}},
 \code{\link[=xmu_relevel_factors]{xmu_relevel_factors()}},
+\code{\link[=xmu_require_summary_mxData]{xmu_require_summary_mxData()}},
 \code{\link[=xmu_robust_ML_fit]{xmu_robust_ML_fit()}},
 \code{\link[=xmu_safe_run_summary]{xmu_safe_run_summary()}},
 \code{\link[=xmu_savalei_fit_cfi]{xmu_savalei_fit_cfi()}},

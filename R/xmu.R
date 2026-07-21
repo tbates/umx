@@ -802,6 +802,13 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 	if (xmu_is_legacy_acov_data(data)) {
 		xmu_stop_legacy_acov("xmu_make_mxData")
 	}
+	# Modern summary WLS needs fork OpenMx; fail early with install hint (not type='none' fallback)
+	dataTypeEarly = tryCatch({
+		if (isS4(data) && .hasSlot(data, "type")) data@type else data$type
+	}, error = function(e) NULL)
+	if (identical(dataTypeEarly, "summary")) {
+		xmu_require_summary_mxData("xmu_make_mxData (type = 'summary')")
+	}
 
 	if(is.null(manifests)){
 		# Manifests not specified: retain all except illegal variables
@@ -887,6 +894,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 				data$observed = data$observed[, namesNeeded, drop = FALSE]
 			} else if (identical(data$type, "summary") || (!is.null(data$observedStats) && length(data$observedStats) > 0)) {
 				# Modern summary WLS: observedStats list(cov, useWeight, asymCov)
+				xmu_require_summary_mxData("xmu_make_mxData (summary observedStats)")
 				data = xmu_subset_modern_wls_observedStats(data, namesNeeded)
 			}
 			if(!is.null(fullCovs)){
@@ -2335,9 +2343,12 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' Internal umx function to help plotting graphviz
 #'
 #' @description
-#' Helper to print a digraph to file and open it
-#' @param model An [OpenMx::mxModel()] to get the name from 
-#' @param file Either "name" (use model name) or a file name
+#' Helper to print a digraph to file and open it.
+#' Safe with `options(umx_auto_plot = FALSE)` / `TRUE`: logical and `NULL` `file`
+#' values are coerced before any `cat(..., file = )` or DiagrammeR call.
+#'
+#' @param model An [OpenMx::mxModel()] to get the name from
+#' @param file Plot destination: `"name"` (temp/model name), a path string, `NA`/`NULL` (print digraph only, no file), or logical (`TRUE` → `"name"`, `FALSE` → off). Often passed as `getOption("umx_auto_plot")`.
 #' @param digraph Graphviz code for a model
 #' @param strip_zero Whether to remove the leading "0." in digits in the diagram
 #' @return - optionally returns the digraph text.
@@ -2345,8 +2356,11 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @family Graphviz
 
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
-	if (is.logical(file) && !is.na(file)) {
-		if (file) {
+	# Coerce logical / NULL from options(umx_auto_plot = FALSE) etc. before cat(file=) or grViz
+	if (is.null(file)) {
+		file = NA
+	} else if (is.logical(file) && length(file) == 1L && !is.na(file)) {
+		if (isTRUE(file)) {
 			file = "name"
 		} else {
 			file = NA
@@ -2419,18 +2433,75 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 #' Check if OpenMx supports type = "summary" in mxData
 #'
 #' @description
-#' Helper function to verify if the installed version of OpenMx supports summary data types.
-#' @return - Boolean
+#' Probe whether the installed OpenMx build accepts modern summary WLS data
+#' (`mxData(..., type = "summary", observedStats = list(cov=, useWeight=, asymCov=))`).
+#' CRAN OpenMx historically did not; the `tbates/OpenMx` fork does.
+#' Result is cached in `options("umx.xmu_has_summary_mxData")` after the first probe.
+#'
+#' @param force If TRUE, re-probe and refresh the cache (default FALSE).
+#' @return Logical.
 #' @export
 #' @family xmu internal not for end user
-xmu_has_summary_mxData <- function() {
+#' @seealso [xmu_require_summary_mxData()], [xmu_mxData_summary()]
+xmu_has_summary_mxData <- function(force = FALSE) {
+	if (!isTRUE(force)) {
+		cached = getOption("umx.xmu_has_summary_mxData", default = NULL)
+		if (!is.null(cached)) {
+			return(isTRUE(cached))
+		}
+	}
 	res = tryCatch({
-		d = OpenMx::mxData(type = "summary", observedStats = list(cov = matrix(1)), numObs = 1)
+		OpenMx::mxData(type = "summary", observedStats = list(cov = matrix(1, 1, 1)), numObs = 1)
 		TRUE
 	}, error = function(e) {
 		FALSE
 	})
+	options("umx.xmu_has_summary_mxData" = res)
 	return(res)
+}
+
+#' Require OpenMx support for type = "summary" mxData
+#'
+#' @description
+#' Stops with a polite install hint if [xmu_has_summary_mxData()] is FALSE.
+#' Call at the entry of any feature that builds modern summary WLS data.
+#' Do **not** fall back to legacy `type = "none"` / `"acov"` — that API is refused forever in umx.
+#'
+#' @param where Short label for the call site (default `"This feature"`).
+#' @return Invisibly `TRUE` when supported.
+#' @export
+#' @family xmu internal not for end user
+#' @seealso [xmu_has_summary_mxData()], [xmu_mxData_summary()]
+xmu_require_summary_mxData <- function(where = "This feature") {
+	if (!xmu_has_summary_mxData()) {
+		stop(
+			where,
+			" requires the 'tbates' fork of OpenMx to support modern summary WLS data (type = 'summary'). ",
+			"CRAN OpenMx does not provide this API, and umx no longer supports the removed legacy WLS ",
+			"interfaces (type = 'none' / 'acov'). Please update OpenMx by running:\n",
+			"  remotes::install_github('tbates/OpenMx')",
+			call. = FALSE
+		)
+	}
+	invisible(TRUE)
+}
+
+#' Create mxData(type = "summary") with an OpenMx capability guard
+#'
+#' @description
+#' Wrapper around `OpenMx::mxData(..., type = "summary", observedStats = ...)` that
+#' calls [xmu_require_summary_mxData()] first so CRAN OpenMx fails with a clear message
+#' instead of a low-level OpenMx error.
+#'
+#' @param numObs Number of observations.
+#' @param observedStats Named list, typically `list(cov = S, useWeight = W, asymCov = V)`.
+#' @param ... Reserved for future `mxData` arguments (currently unused).
+#' @return An [OpenMx::mxData()] object.
+#' @export
+#' @family xmu internal not for end user
+xmu_mxData_summary <- function(numObs, observedStats, ...) {
+	xmu_require_summary_mxData("mxData(type = 'summary')")
+	OpenMx::mxData(numObs = numObs, type = "summary", observedStats = observedStats, ...)
 }
 
 

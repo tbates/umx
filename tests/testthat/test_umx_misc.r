@@ -9,6 +9,23 @@ test_that("umx_scale works for different inputs", {
 	expect_equal(deg2rad(180),pi)
 })
 
+test_that("OpenMx type=summary capability helpers guard CRAN OpenMx", {
+	expect_true(is.logical(xmu_has_summary_mxData()))
+	# When capability is forced off, require/stop with install hint (no silent type='none' fallback)
+	old = getOption("umx.xmu_has_summary_mxData")
+	on.exit(options(umx.xmu_has_summary_mxData = old), add = TRUE)
+	options(umx.xmu_has_summary_mxData = FALSE)
+	expect_error(xmu_require_summary_mxData("umxGSEM"), regexp = "tbates/OpenMx")
+	expect_error(xmu_mxData_summary(1, list(cov = matrix(1))), regexp = "type = 'summary'")
+	# Restore by re-probe
+	options(umx.xmu_has_summary_mxData = NULL)
+	if (xmu_has_summary_mxData(force = TRUE)) {
+		expect_true(xmu_require_summary_mxData("test"))
+		d = xmu_mxData_summary(5, list(cov = matrix(1, 1, 1, dimnames = list("a", "a"))))
+		expect_equal(d$type, "summary")
+	}
+})
+
 test_that("umx_scale works for different inputs", {
 	# ==============================
 	# = no error on expected input =
