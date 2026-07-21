@@ -389,9 +389,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	tryHard    = match.arg(tryHard)
 	estimation = match.arg(estimation)
 
-	if (!xmu_has_summary_mxData()) {
-		stop("This feature requires the 'tbates' fork of OpenMx to support modern summary WLS data (type = 'summary'). Please update OpenMx by running:\n  remotes::install_github('tbates/OpenMx')", call. = FALSE)
-	}
+	xmu_require_summary_mxData("umxGSEM")
 
 	if (is.null(covstruc)) {
 		if (is.null(S) || is.null(V)) {
@@ -476,7 +474,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		W_omx = prep$W_omx
 		triageResult = prep$triage
 	}
-	wls_data    = mxData(numObs = numObs, type = "summary", observedStats = list(cov = S_subset, useWeight = W_omx, asymCov = V_omx))
+	wls_data    = xmu_mxData_summary(numObs = numObs, observedStats = list(cov = S_subset, useWeight = W_omx, asymCov = V_omx))
 	final_model = mxModel(final_model, wls_data)
 	final_model = mxModel(final_model, mxFitFunctionWLS(type = estimation))
 	final_model = xmu_gsem_bound_residuals(final_model, lbound = 1e-8)
@@ -834,9 +832,13 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' 
 #' }
 umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), uncertainty = c("robustSE", "SE"), SnpSamplingError = 5e-4, maxSNPs = NULL, snpEffect = "SNP_to_F1", quiet = TRUE, fix_measurement = TRUE, force_fallback = FALSE) {
+	# Fail before SNP loop if summary WLS is requested without fork OpenMx
 	estimation = match.arg(estimation)
 	GC = match.arg(GC)
 	uncertainty = match.arg(uncertainty)
+	if (estimation %in% c("DWLS", "WLS")) {
+		xmu_require_summary_mxData("umxGSEM_GWAS")
+	}
 	if (!is.list(covstruc) || is.null(covstruc$S) || is.null(covstruc$V)) {
 		stop("covstruc must be a list containing at least matrices S and V.")
 	}
@@ -1112,9 +1114,8 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		if (length(W_varSNP) == 1) W_varSNP = rep(W_varSNP, nSNP)
 		
 		m = m_template
-		wls_data = mxData(
+		wls_data = xmu_mxData_summary(
 			numObs = covstruc$N[1],
-			type = "summary",
 			observedStats = list(
 				cov = wls_full$S,
 				useWeight = wls_full$W_omx,
@@ -1304,9 +1305,9 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 						dimnames(W_use) = dimnames(wls_i$W_omx)
 					}
 					if (!is.null(W_use)) {
-						wls_data = mxData(numObs = covstruc$N[1], type = "summary", observedStats = list(cov = wls_i$S, useWeight = W_use, asymCov = wls_i$V_omx))
+						wls_data = xmu_mxData_summary(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, useWeight = W_use, asymCov = wls_i$V_omx))
 					} else {
-						wls_data = mxData(numObs = covstruc$N[1], type = "summary", observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx))
+						wls_data = xmu_mxData_summary(numObs = covstruc$N[1], observedStats = list(cov = wls_i$S, asymCov = wls_i$V_omx))
 					}
 					m = mxModel(m, wls_data, mxFitFunctionWLS(type = estimation))
 				} else {

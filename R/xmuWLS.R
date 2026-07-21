@@ -282,6 +282,12 @@ xmu_wls_extract_WV <- function(model, stop_if_missing = TRUE) {
 		}
 		stop("xmu_wls_extract_WV: legacy WLS data API is not supported. Use type='summary' with observedStats useWeight + asymCov.", call. = FALSE)
 	}
+	dataType = tryCatch({
+		if (isS4(data) && .hasSlot(data, "type")) data@type else data$type
+	}, error = function(e) NULL)
+	if (identical(dataType, "summary") && exists("xmu_require_summary_mxData", mode = "function")) {
+		xmu_require_summary_mxData("xmu_wls_extract_WV")
+	}
 
 	os = NULL
 	if (isS4(data) && .hasSlot(data, "observedStats") && length(data@observedStats)) {
