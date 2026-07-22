@@ -1,0 +1,47 @@
+digraph G {
+    label="Holzinger_one_factor";
+	splines="TRUE";
+	# Latents
+	g [shape = circle];
+
+	# Manifests
+	straight [shape = square];
+	counting [shape = square];
+	addition [shape = square];
+	wordm [shape = square];
+	sentence [shape = square];
+	paragrap [shape = square];
+	flags [shape = square];
+	cubes [shape = square];
+	visual [shape = square];
+
+	#Variances/residuals
+	straight -> straight[label="0.91", dir=both, headport=s, tailport=s];
+	counting -> counting[label="0.96", dir=both, headport=s, tailport=s];
+	addition -> addition[label="0.97", dir=both, headport=s, tailport=s];
+	wordm -> wordm[label="0.3", dir=both, headport=s, tailport=s];
+	sentence -> sentence[label="0.29", dir=both, headport=s, tailport=s];
+	paragrap -> paragrap[label="0.28", dir=both, headport=s, tailport=s];
+	flags -> flags[label="0.95", dir=both, headport=s, tailport=s];
+	cubes -> cubes[label="0.95", dir=both, headport=s, tailport=s];
+	visual -> visual[label="0.81", dir=both, headport=s, tailport=s];
+	g -> g[label="@1", dir=both, headport=n, tailport=n];
+
+
+	# Single arrow paths
+	g -> straight [label="0.31"];
+	g -> counting [label="0.2"];
+	g -> addition [label="0.18"];
+	g -> wordm [label="0.84"];
+	g -> sentence [label="0.84"];
+	g -> paragrap [label="0.85"];
+	g -> flags [label="0.22"];
+	g -> cubes [label="0.22"];
+	g -> visual [label="0.44"];
+
+	# Covariances
+
+	{rank=min; g};
+	{rank=same; straight counting addition wordm sentence paragrap flags cubes visual};
+
+}

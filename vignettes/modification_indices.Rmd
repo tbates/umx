@@ -30,15 +30,9 @@ umx_set_auto_plot(FALSE)
 
 `umxMI()` wraps [OpenMx::mxMI()](https://openmx.ssri.psu.edu/) and prints the largest indices (by default those above $\chi^2_1(0.01) = 6.63$). By default `full = FALSE` (only the tested parameter moves — fast). Set `full = TRUE` to allow all free parameters to re-adjust (slower).
 
-```{r note, echo = FALSE}
-# Post-hoc MI fishing is poor practice; use competing substantive models when you can.
-```
-
-This vignette walks through the classic Holzinger & Swineford (1939) data ([`HS.ability.data`](https://openmx.ssri.psu.edu/reference/HS.ability.data)), building increasingly adequate models and checking what `umxMI()` suggests at each step.
+This vignette uses the classic Holzinger & Swineford (1939) data ([`HS.ability.data`](https://openmx.ssri.psu.edu/reference/HS.ability.data)): fit a deliberately poor **one-factor** model (the worst of the usual teaching sequence), run **one** `umxMI()` call, then show a better three-factor alternative with `umxCompare()` (no second MI pass).
 
 ## Data
-
-The nine tests we use are the standard teaching subset of `HS.ability.data`:
 
 ```{r data-setup}
 data("HS.ability.data", package = "OpenMx")
@@ -46,17 +40,11 @@ data("HS.ability.data", package = "OpenMx")
 manifests = c("visual", "cubes", "flags", "paragrap", "sentence", "wordm",
   "addition", "counting", "straight")
 
-visualItems = c("visual", "cubes", "flags")
-verbalItems = c("paragrap", "sentence", "wordm")
-speedItems  = c("addition", "counting", "straight")
-
 # Scale for stable optimization (recommended for this dataset in umx)
 df = umx_scale(HS.ability.data)
 ```
 
-## One-factor model
-
-We begin with a single general factor `g` loading on all nine tests.
+## One-factor model (worst fit → one MI call)
 
 ```{r one-factor, results = "hide", message = FALSE}
 m1 = umxRAM("Holzinger_1f", data = df,
@@ -66,21 +54,21 @@ m1 = umxRAM("Holzinger_1f", data = df,
 )
 ```
 
-```{r one-factor-summary}
-umxSummary(m1)
+```{r one-factor-summary, message = FALSE}
+umxSummary(m1, refModels = FALSE)
 ```
 
 Fit is poor (as expected for a single factor on these data). What does `umxMI()` suggest?
 
-```{r one-factor-mi}
+```{r one-factor-mi, message = FALSE}
 umxMI(m1)
 ```
 
 Large indices often point to **within-domain residual covariances** (e.g. `flags_with_visual`) or **cross-domain loadings** that a single factor cannot represent. That pattern hints at multiple abilities rather than one `g`.
 
-## Three-factor model
+## Three-factor alternative (no second MI)
 
-Holzinger and Swineford's data are usually modeled with three correlated abilities. We use the conventional lavaan names `spatial`, `verbal`, and `speed` for the visual, verbal, and speed domains (latent names must differ from manifest names such as `visual`).
+Holzinger and Swineford's data are usually modeled with three correlated abilities:
 
 ```{r three-factor, results = "hide", message = FALSE}
 model3f = "
@@ -91,24 +79,20 @@ model3f = "
 m3 = umxRAM(model3f, data = df, name = "Holzinger_3f")
 ```
 
-```{r three-factor-summary}
-umxSummary(m3)
+```{r three-factor-summary, message = FALSE}
+umxSummary(m3, refModels = FALSE)
 ```
 
-```{r three-factor-compare}
+```{r three-factor-compare, message = FALSE}
 umxCompare(m3, m1)
 ```
 
-The three-factor model fits substantially better than the one-factor model. Remaining MI suggestions are smaller but still highlight residual associations not yet in the model:
+The three-factor model fits substantially better. Remaining residual associations are typically smaller; run `umxMI(m3)` locally if you want that table.
 
-Remaining MIs on the three-factor model are usually smaller (run `umxMI(m3)` locally if you want the full table).
-
-## Bifactor and multi-group (local demos)
-
-Bifactor and multi-group `umxMI()` examples are useful locally but slow for CRAN package checks (extra models + many MI candidates). Patterns:
+## Bifactor / multi-group (optional, local)
 
 ```{r bifactor-multigroup-demo, eval = FALSE}
-# Bifactor
+# Bifactor + umxMI, or multi-group one-factor by sex
 modelBifactor = "
   g =~ visual + cubes + flags + paragrap + sentence + wordm + addition + counting + straight
   spatial =~ visual + cubes + flags
@@ -121,7 +105,6 @@ modelBifactor = "
 mBio = umxRAM(modelBifactor, data = df, name = "Holzinger_bifactor")
 umxMI(mBio)
 
-# Multi-group one-factor by sex (needs recent OpenMx mxMI multigroup support)
 mMG = umxRAM("Holzinger_1f_MG", data = df, group = "Gender",
   umxPath("g", to = manifests),
   umxPath(v.m. = manifests),
@@ -132,11 +115,11 @@ umxMI(mMG)
 
 ## Summary
 
-| Model | Role | Typical `umxMI()` story |
-|-------|------|-------------------------|
-| One-factor | Baseline | Large cross-domain / within-domain suggestions |
-| Three-factor | Substantive CFA | Better fit; smaller residual suggestions |
-| Bifactor / multi-group | Extensions | Run locally (`eval = TRUE` above) when needed |
+| Model | Role |
+|-------|------|
+| One-factor | Baseline misspecification; **one** `umxMI()` call |
+| Three-factor | Theory-driven improvement via `umxCompare()` |
+| Bifactor / multi-group | Optional local demos |
 
 **Take-home:** Use `umxMI()` to diagnose *where* a model misfits; prefer `umxCompare()` on **theory-driven** competing models for inference.
 

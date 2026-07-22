@@ -26,102 +26,90 @@ umx_set_auto_plot(FALSE)
 
 ## Introduction
 
-Most Structural Equation Models (SEMs) are fitted using **Maximum Likelihood (ML)**, which assumes that the manifest variables are continuous and multivariate normal. However, in behavioral genetics, psychology, and social sciences, variables are frequently categorical or ordinal (e.g., binary yes/no, or Likert scales).
+Most Structural Equation Models (SEMs) are fitted using **Maximum Likelihood (ML)**, which assumes that the manifest variables are continuous and multivariate normal. In psychology and related fields, indicators are often **ordinal** (binary or Likert). Standard ML on integer codes is biased; **weighted least squares** (WLS / DWLS) fits thresholds and polychoric structure instead.
 
-When manifest variables are ordinal, standard ML yields biased parameter estimates and severely underestimated standard errors. The standard solution is **Weighted Least Squares (WLS)**, which estimates thresholds for the ordinal indicators and fits the model to the resulting polychoric/tetrachoric correlation matrix.
-
-This vignette demonstrates how to fit and interpret a 1-factor model under different estimators (ML, full WLS, and Diagonally Weighted Least Squares) using the built-in Holzinger-Swineford ordinal dataset (`HSwls`) in `umx`.
+This vignette shows a compact **DWLS** example on three binary visual tests from `HSwls`. Full WLS (dense weight matrix) is slower and is left as an optional local chunk.
 
 ---
 
-## 1. The Holzinger-Swineford Ordinal Dataset (`HSwls`)
+## 1. Data: three ordinal visual items
 
-The `HSwls` dataset contains cognitive test scores `x1` to `x9` for 301 students from two schools. In this version of the data, the variables `x1` to `x9` have been converted into ordered factors (with 2, 3, or 4 categories) using quantile-based cuts:
-
-* `x1` to `x3` represent visual ability (binary / 2 levels).
-* `x4` to `x6` represent verbal ability (3 levels).
-* `x7` to `x9` represent speed (4 levels).
+`HSwls` stores `x1`–`x9` as ordered factors. Here we use only the three **visual** items (`x1`–`x3`, two levels each):
 
 ```{r load_data}
 data(HSwls, package = "umx")
-str(HSwls[, paste0("x", 1:9)])
+items = c("x1", "x2", "x3")
+str(HSwls[, items])
 ```
 
 ---
 
-## 2. Fitting a 1-Factor Model under Three Estimators
+## 2. Estimators in `umxRAM`
 
-We will fit a 1-factor model (`g =~ x1 + ... + x9`) using three different estimators:
-1. **Maximum Likelihood (ML)**: Treats the ordinal indicators as continuous (incorrect but useful for comparison).
-2. **Full Weighted Least Squares (WLS)**: Uses the full asymptotic covariance matrix of thresholds/correlations.
-3. **Diagonally Weighted Least Squares (DWLS / WLSMV)**: Uses only the diagonal of the weight matrix (standard for modest sample sizes).
+| `type` | Role |
+|--------|------|
+| `"FIML"` / `"Auto"` | ML (continuous; not appropriate for ordered factors as-is) |
+| `"WLS"` | Full WLS (dense `useWeight`) — large models need big $N$ |
+| `"DWLS"` | Diagonally weighted least squares (default practical choice) |
 
-In `umxRAM`, the estimator is requested using the `type` argument:
-* `type = "FIML"` (or `"Auto"` for continuous data) for ML.
-* `type = "WLS"` for Full WLS.
-* `type = "DWLS"` for Diagonally Weighted Least Squares.
+### Live demo: one-factor DWLS on three binary items
 
-### Live demo: DWLS only (package-check friendly)
+Binary indicators under DWLS need **means fixed at 0** for identification (thresholds free). One clean mean path per indicator — no duplicates.
 
-Full WLS and continuous-ML-on-ordinal demos are slower (polychoric prep + denser weights). For CRAN/check we fit **DWLS** once on a compact 6-indicator, two-factor model. Run the larger 9-variable / full-WLS variants locally with `eval = TRUE` in the optional chunks below.
-
-```{r fit_dwls, message=FALSE, warning=FALSE}
-# Six ordinal indicators, two factors (smaller than full 9-variable 1-factor)
-mDWLS = suppressWarnings(umxRAM("Two_Factor_DWLS", data = HSwls, type = "DWLS",
-	umxPath("visual", to = c("x1", "x2", "x3")),
-	umxPath("verbal", to = c("x4", "x5", "x6")),
-	umxPath(var = c("x1", "x2", "x3", "x4", "x5", "x6")),
-	umxPath(var = c("visual", "verbal"), fixedAt = 1),
-	umxPath("visual", with = "verbal"),
-	# Binary indicators: means fixed at 0 for identification under DWLS
-	umxPath("one", to = c("x1", "x2", "x3"), fixedAt = 0),
-	umxPath("one", to = c("x4", "x5", "x6"))
-))
+```{r fit_dwls, message = FALSE, warning = FALSE}
+mDWLS = umxRAM("Visual_1f_DWLS", data = HSwls, type = "DWLS",
+	umxPath("visual", to = items),
+	umxPath(var = items),
+	umxPath(var = "visual", fixedAt = 1),
+	# identification for binary: latent residual means fixed at 0
+	umxPath("one", to = items, fixedAt = 0)
+)
 umxSummary(mDWLS, std = TRUE, refModels = FALSE)
 ```
 
-Optional larger demos (not run during package check):
+### Nested comparison
 
-```{r fit_ml_wls_optional, eval = FALSE}
-dfMl = HSwls
-dfMl[, paste0("x", 1:9)] = lapply(dfMl[, paste0("x", 1:9)], as.numeric)
-mML = umxRAM("One_Factor_ML", data = dfMl, type = "FIML",
-	umxPath("g", to = paste0("x", 1:9)),
-	umxPath(var = paste0("x", 1:9)),
-	umxPath(var = "g", fixedAt = 1)
-)
-mWLS = umxRAM("One_Factor_WLS", data = HSwls, type = "WLS",
-	umxPath("g", to = paste0("x", 1:9)),
-	umxPath(var = paste0("x", 1:9)),
-	umxPath(var = "g", fixedAt = 1)
-)
+Drop one loading and compare with the Satorra–Bentler (2010) path when Jacobians are available (GenomicMx OpenMx):
+
+```{r nested_compare, message = FALSE, warning = FALSE}
+# Free loading label is typically visual_to_x1 (umx path naming)
+labs = names(omxGetParameters(mDWLS))
+dropLab = labs[grepl("visual_to_x1|x1$", labs)][1]
+mNested = umxModify(mDWLS, update = dropLab, name = "drop_x1", tryHard = "no")
+umxCompare(mDWLS, mNested)
 ```
 
-### Nested comparison under DWLS
+### Optional: full WLS (local only)
 
-`umxCompare()` uses a strict Satorra–Bentler scaled difference when Jacobians are available (GenomicMx OpenMx). Keep the nested drop small:
+Full WLS builds a dense weight matrix and is slower; not run during package check:
 
-```{r nested_compare, message=FALSE, warning=FALSE}
-mDWLS_nested = suppressWarnings(umxModify(mDWLS, update = "visual_to_x1", name = "Nested_DWLS"))
-umxCompare(mDWLS, mDWLS_nested)
+```{r fit_wls_optional, eval = FALSE}
+mWLS = umxRAM("Visual_1f_WLS", data = HSwls, type = "WLS",
+	umxPath("visual", to = items),
+	umxPath(var = items),
+	umxPath(var = "visual", fixedAt = 1),
+	umxPath("one", to = items, fixedAt = 0)
+)
+umxSummary(mWLS, std = TRUE, refModels = FALSE)
 ```
 
 ---
 
-## 5. Practical Considerations
+## 3. Practical notes
 
-### 1. Sample Size Requirements
-* **Full WLS:** Requires a very large sample size ($N > 1000$, and often $N > 2000$ for models with many indicators). This is because the full asymptotic covariance matrix ($V$) grows rapidly with the number of thresholds, requiring a huge amount of data to estimate accurately. If $N$ is too small, $V$ becomes non-positive definite or highly unstable.
-* **DWLS:** Only uses the diagonal elements of $V$, meaning it requires much smaller sample sizes ($N > 200$) to achieve stable and accurate parameter estimates.
+### Sample size
+* **Full WLS:** often needs large $N$ as the asymptotic covariance of residual moments grows with thresholds and correlations.
+* **DWLS:** uses the diagonal of the weight matrix; more stable at modest $N$.
 
-### 2. Convergence Issues
-If a WLS model fails to converge:
-* Check for **empty threshold categories** (zero counts in a cell). If a category has zero observations, the threshold cannot be estimated. You may need to collapse adjacent categories.
-* Switch to **DWLS** if you are currently using full WLS.
+### Convergence
+* Empty threshold categories → collapse levels.
+* Prefer DWLS if full WLS is unstable.
 
-### 3. Reporting Guidelines
-When reporting WLS results in journals:
-1. Specify which estimator was used (e.g., "Diagonally Weighted Least Squares (DWLS) with robust standard errors").
-2. Report the **Satorra-Bentler robust $\chi^2$** and degrees of freedom.
-3. Report **SRMR** as the primary index of absolute fit (cutoff $< 0.08$ or $< 0.10$).
-4. Emphasize nested model comparison results using the **Satorra-Bentler difference test** (from `umxCompare`).
+### Reporting
+1. State the estimator (e.g. DWLS with robust / SB adjustments).
+2. Prefer **SRMR** for absolute residual fit under continuous WLS guidance; use SB nested tests via `umxCompare()` rather than raw $\Delta\chi^2$ of unadjusted statistics.
+3. Conventional CFI/TLI cutoffs do not transfer cleanly to continuous WLS (see `?umxCompare`).
+
+## References
+
+See `?umxRAM`, `?umxSummary`, `?umxCompare`, and the GenomicMx OpenMx WLS/Jacobian notes for engine requirements.

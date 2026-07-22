@@ -1092,7 +1092,7 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @param optimizer Set optimizer, e.g., "NPSOL")
 #' @return None
 #' @export
-#' @family Test
+#' @family Miscellaneous Functions
 #' @seealso - [umx_time()], [umx_set_cores()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
 
@@ -3435,7 +3435,6 @@ umx_make <- function(
 	} else if (what == "sitrep"){
 		devtools::dev_sitrep(pkg = pkgPath)
 	} else if (what == "deps_install"){
-		# STRATEGY: Swap from devtools to native pak engine for high-velocity installation
 		if(!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
 		pak::local_install_dev_deps(root = pkgPath)
 	} else if(what == "examples"){ # Fixed name mismatch matching 'what' default
@@ -3445,7 +3444,6 @@ umx_make <- function(
 	} else if (what == "win"){
 		devtools::check_win_devel(pkg = pkgPath)
 	} else if (what == "rhub"){
-		# STRATEGY: Update platforms to line up with the modernized R-Hub v2 matrix
 		plat = switch(which,
 			"mac"     = "macos",
 			"linux"   = "linux",
@@ -3477,6 +3475,191 @@ umx_make <- function(
 		if(!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
 		pak::pkg_install("tbates/umx")
 	}
+}
+
+#' Developer "make" helper for local OpenMx / GenomicMx
+#'
+#' @description
+#' Maintainer utility (lives in **umx**, not the OpenMx package). Mirrors
+#' [umx_make()] but prefers OpenMx's **Makefile** for compile/install (C++,
+#' OpenMP, NPSOL vs CRAN build). Use **devtools** for win-builder and package
+#' hygiene. Does **not** use `devtools::load_all()` for OpenMx (DLL / S4 load
+#' issues); after install, restart R or `library(OpenMx)`.
+#'
+#' Immediate workflow:
+#' 1. `mx_make()` or `mx_make("install")` — local `make install` (NPSOL when the
+#'    Makefile is so configured).
+#' 2. `mx_make("win")` — `devtools::check_win_devel()` for the source tree.
+#'
+#' @param what Target. One of:
+#'   \describe{
+#'     \item{\code{"install"} / \code{"NPSOL"}}{\code{make install} (NPSOL-capable tree when available).}
+#'     \item{\code{"cran-install"}}{\code{make cran-install} (no NPSOL).}
+#'     \item{\code{"build"}}{\code{make build} (local binary package).}
+#'     \item{\code{"check"}}{\code{make cran-check}.}
+#'     \item{\code{"win"}}{\code{devtools::check_win_devel(pkg)}.}
+#'     \item{\code{"spell"}, \code{"sitrep"}, \code{"deps_install"}, \code{"testthat"}, \code{"git"}}{Same idea as [umx_make()].}
+#'     \item{\code{"GenomicMx"}}{[install.OpenMx()] prebuilt binary from GitHub Releases.}
+#'     \item{\code{"help"}}{List \code{mx_make} targets and run \code{make help}.}
+#'   }
+#' @param pkg Path to the OpenMx source tree (default \code{"~/bin/OpenMx"}).
+#' @param deploymentTarget macOS \code{MACOSX_DEPLOYMENT_TARGET} for gfortran/clang
+#'   (default \code{"14.0"}). Ignored on non-darwin.
+#' @param openmp Logical; pass \code{OPENMP=yes} or \code{OPENMP=no} to make (default TRUE).
+#' @return Invisibly \code{NULL}, or the result of a returning target (e.g. sitrep).
+#' @export
+#' @family xmu internal not for end user
+#' @seealso [umx_make()], [install.OpenMx()], [xmu_openmx_engine_status()]
+#' @references - <https://github.com/tbates/GenomicMx>, OpenMx \code{Makefile}
+#'
+#' @examples
+#' \dontrun{
+#' mx_make()                 # make install (local OpenMx; NPSOL if Makefile enables it)
+#' mx_make("cran-install")
+#' mx_make("win")            # check_win_devel
+#' mx_make("spell")
+#' mx_make("sitrep")
+#' mx_make("deps_install")
+#' mx_make("GenomicMx")      # prebuilt binary via install.OpenMx
+#' mx_make("NPSOL")          # alias of install
+#' mx_make("help")
+#' }
+mx_make <- function(
+	what = c("install", "NPSOL", "cran-install", "build", "check", "win", "spell", "sitrep", "deps_install", "testthat", "git", "GenomicMx", "help"),
+	pkg = "~/bin/OpenMx",
+	deploymentTarget = "14.0",
+	openmp = TRUE
+) {
+	what = match.arg(what)
+	pkgPath = normalizePath(path.expand(pkg), mustWork = TRUE)
+
+	descFile = file.path(pkgPath, "DESCRIPTION")
+	if (!file.exists(descFile)) {
+		stop("No DESCRIPTION in ", pkgPath, call. = FALSE)
+	}
+	pkgName = tryCatch(read.dcf(descFile, fields = "Package")[1, 1], error = function(e) NA_character_)
+	if (is.na(pkgName) || !identical(as.character(pkgName), "OpenMx")) {
+		stop("mx_make expects an OpenMx source tree (DESCRIPTION Package: OpenMx). Got: ",
+			omxQuotes(pkgName), " at ", pkgPath, call. = FALSE)
+	}
+
+	# ---- housekeeping / binary (no make) ------------------------------------
+	if (what == "help") {
+		message("mx_make targets: install, NPSOL, cran-install, build, check, win, spell, sitrep, deps_install, testthat, git, GenomicMx, help")
+		message("Default pkg = ", pkgPath)
+		message("Makefile help:")
+		xmu_mx_make_run(pkgPath, "help", deploymentTarget = deploymentTarget, openmp = openmp, stopOnError = FALSE)
+		return(invisible(NULL))
+	}
+	if (what == "win") {
+		if (!requireNamespace("devtools", quietly = TRUE)) {
+			stop("mx_make(\"win\") needs devtools. install.packages(\"devtools\")", call. = FALSE)
+		}
+		message("Submitting win-builder (devel) for ", pkgPath)
+		return(invisible(devtools::check_win_devel(pkg = pkgPath)))
+	}
+	if (what == "spell") {
+		if (!requireNamespace("spelling", quietly = TRUE)) {
+			stop("mx_make(\"spell\") needs spelling. install.packages(\"spelling\")", call. = FALSE)
+		}
+		return(invisible(spelling::spell_check_package(pkg = pkgPath, vignettes = FALSE, use_wordlist = TRUE)))
+	}
+	if (what == "sitrep") {
+		if (!requireNamespace("devtools", quietly = TRUE)) {
+			stop("mx_make(\"sitrep\") needs devtools. install.packages(\"devtools\")", call. = FALSE)
+		}
+		return(invisible(devtools::dev_sitrep(pkg = pkgPath)))
+	}
+	if (what == "deps_install") {
+		if (requireNamespace("pak", quietly = TRUE)) {
+			return(invisible(pak::local_install_dev_deps(root = pkgPath)))
+		}
+		if (!requireNamespace("devtools", quietly = TRUE)) {
+			stop("mx_make(\"deps_install\") needs pak or devtools.", call. = FALSE)
+		}
+		return(invisible(devtools::install_deps(pkg = pkgPath, dependencies = TRUE)))
+	}
+	if (what == "testthat") {
+		if (!requireNamespace("devtools", quietly = TRUE)) {
+			stop("mx_make(\"testthat\") needs devtools. install.packages(\"devtools\")", call. = FALSE)
+		}
+		tt = file.path(pkgPath, "tests", "testthat")
+		if (!dir.exists(tt)) {
+			message("No tests/testthat in ", pkgPath, ". For model suite see make test / inst/tools/testModels.R")
+			return(invisible(NULL))
+		}
+		return(invisible(devtools::test(pkg = pkgPath)))
+	}
+	if (what == "git") {
+		system2("open", args = c("-a", "GitHub Desktop"))
+		return(invisible(NULL))
+	}
+	if (what == "GenomicMx") {
+		install.OpenMx("GenomicMx")
+		return(invisible(NULL))
+	}
+
+	# ---- Makefile targets ----------------------------------------------------
+	makeTarget = switch(what,
+		"install" = "install",
+		"NPSOL" = "install",
+		"cran-install" = "cran-install",
+		"build" = "build",
+		"check" = "cran-check",
+		stop("Unhandled mx_make target: ", what, call. = FALSE)
+	)
+	if (identical(what, "NPSOL")) {
+		message("NPSOL: using make install (Makefile enables NPSOL when present in the tree).")
+	}
+	status = xmu_mx_make_run(pkgPath, makeTarget, deploymentTarget = deploymentTarget, openmp = openmp, stopOnError = TRUE)
+	if (makeTarget %in% c("install", "cran-install")) {
+		message("Done. Restart R (or detach/reload) then library(OpenMx). Check with umxVersion() / xmu_openmx_engine_status().")
+	}
+	invisible(status)
+}
+
+#' Run a Makefile target in an OpenMx source tree
+#'
+#' @param pkgPath Absolute path to OpenMx sources.
+#' @param makeTarget Makefile target name (e.g. \code{"install"}).
+#' @param deploymentTarget macOS deployment target string.
+#' @param openmp Logical OPENMP flag for make.
+#' @param stopOnError If TRUE, stop on non-zero exit.
+#' @return Integer exit status from \code{system2}.
+#' @keywords internal
+xmu_mx_make_run <- function(pkgPath, makeTarget, deploymentTarget = "14.0", openmp = TRUE, stopOnError = TRUE) {
+	if (!nzchar(Sys.which("make"))) {
+		stop("make not found on PATH. Install Xcode CLT / build tools.", call. = FALSE)
+	}
+	makefile = file.path(pkgPath, "Makefile")
+	if (!file.exists(makefile)) {
+		stop("No Makefile in ", pkgPath, call. = FALSE)
+	}
+	oldWd = getwd()
+	on.exit(setwd(oldWd), add = TRUE)
+	setwd(pkgPath)
+
+	oldDep = Sys.getenv("MACOSX_DEPLOYMENT_TARGET", unset = NA_character_)
+	on.exit({
+		if (is.na(oldDep)) {
+			Sys.unsetenv("MACOSX_DEPLOYMENT_TARGET")
+		} else {
+			Sys.setenv(MACOSX_DEPLOYMENT_TARGET = oldDep)
+		}
+	}, add = TRUE)
+	if (.Platform$OS.type == "unix" && grepl("darwin", R.version$os, ignore.case = TRUE)) {
+		Sys.setenv(MACOSX_DEPLOYMENT_TARGET = as.character(deploymentTarget))
+	}
+
+	openmpArg = if (isTRUE(openmp)) "OPENMP=yes" else "OPENMP=no"
+	args = c(openmpArg, makeTarget)
+	message("In ", pkgPath, ": make ", paste(args, collapse = " "))
+	status = system2("make", args = args)
+	if (stopOnError && !identical(as.integer(status), 0L)) {
+		stop("make ", makeTarget, " failed with status ", status,
+			". Try: mx_make(\"help\") or make help in ", pkgPath, call. = FALSE)
+	}
+	as.integer(status)
 }
 
 # ================================

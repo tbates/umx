@@ -145,13 +145,13 @@ compareSE = data.frame(
 print(compareSE)
 ```
 
-### Step 3: Profile likelihood CIs (optional / local)
+### Step 3: Profile likelihood CIs (two parameters)
 
-Profile CIs re-optimize the model many times and can dominate package-check time. Demo locally with one or two parameters:
+Profile CIs re-optimize the model many times, so keep the set small. Here we show **two** loadings:
 
-```{r profile_ci_specific, eval = FALSE}
+```{r profile_ci_specific, message = FALSE, warning = FALSE}
 m1CI = umxConfint(m1, parm = c("g_to_x1", "g_to_x2"), run = TRUE)
-umxSummary(m1CI, uncertainty = "CI")
+umxSummary(m1CI, uncertainty = "CI", refModels = FALSE)
 ```
 
 Profile CIs are typically asymmetric and respect the likelihood surface and bounds.

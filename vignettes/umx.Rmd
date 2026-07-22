@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
   fig.height = 5
 )
 library(umx)
-# CRAN/check: auto-plot / DiagrammeR can hang non-interactive sessions for many minutes
+# Never auto-open browser plots during package check
 umx_set_auto_plot(FALSE)
 ```
 
@@ -35,6 +35,9 @@ This vignette shows a new user how to:
 1. Load classic data (Holzinger & Swineford, 1939)
 2. Build a simple one-factor model using `umxRAM()`
 3. View and interpret results using `umxSummary()`
+4. Save a path diagram as a **PNG** (safe for non-interactive builds)
+
+Ordinal / WLS workflows are covered in `vignette("WLS_in_umx")`.
 
 ## The Holzinger and Swineford (1939) data
 
@@ -77,7 +80,7 @@ That's it — `umxRAM()` automatically:
 
 ## View results with `umxSummary()`
 
-`umxSummary()` gives clean, output. tip: report="html" gives a publication-ready table.
+`umxSummary()` gives clean output. Tip: `report = "html"` gives a publication-ready table.
 
 ```{r summary-basic}
 umxSummary(m1)
@@ -114,12 +117,45 @@ umxSummary(m2, std = TRUE)
 
 This is handy when you have a lavaan model string from elsewhere.
 
-## Plotting the model
+## Path diagram as PNG
 
-You can plot a fitted model (not run during package check — DiagrammeR/htmlwidgets can be slow or hang headless):
+Interactive browser plots (DiagrammeR widgets) can hang or stall non-interactive package checks. For vignettes and scripts, write a **PNG** via graphviz → SVG → PNG, then include it. Requires Suggested packages `DiagrammeR`, `DiagrammeRsvg`, and `rsvg`.
 
-```{r plot, eval = FALSE, fig.cap="Standardized one-factor Holzinger model"}
-plot(m1, std = TRUE, means = FALSE)
+```{r plot-png, fig.cap = "Standardized one-factor Holzinger model (PNG)", message = FALSE}
+# Prefer a stored PNG under vignettes/figures/ (no browser). Regenerate if missing.
+figDir = "figures"
+dir.create(figDir, showWarnings = FALSE)
+gvPath = file.path(figDir, "holzinger_one_factor.gv")
+pngPath = file.path(figDir, "holzinger_one_factor.png")
+if (!file.exists(pngPath)) {
+	# digraph only; capture.output silences plot()'s cat() of the graph
+	dot = NULL
+	utils::capture.output({
+		dot <<- plot(m1, std = TRUE, means = FALSE, file = NA)
+	})
+	cat(dot, file = gvPath)
+	# 1) Graphviz CLI
+	dotBin = Sys.which("dot")
+	if (nzchar(dotBin)) {
+		system2(dotBin, c("-Tpng", "-o", pngPath, gvPath), stdout = FALSE, stderr = FALSE)
+	}
+	# 2) DiagrammeR → SVG → PNG (Suggests: DiagrammeRsvg, rsvg)
+	if (!file.exists(pngPath) &&
+		requireNamespace("DiagrammeR", quietly = TRUE) &&
+		requireNamespace("DiagrammeRsvg", quietly = TRUE) &&
+		requireNamespace("rsvg", quietly = TRUE)) {
+		svgTxt = DiagrammeRsvg::export_svg(DiagrammeR::grViz(dot))
+		rsvg::rsvg_png(charToRaw(svgTxt), pngPath)
+	}
+}
+if (file.exists(pngPath)) {
+	knitr::include_graphics(pngPath)
+} else {
+	message(
+		"PNG plot unavailable (install graphviz `dot`, or DiagrammeR + DiagrammeRsvg + rsvg). ",
+		"Ship/regenerate ", pngPath, " under vignettes/figures/."
+	)
+}
 ```
 
 We can also get robust measures of fit and uncertainty using `uncertainty = "RobustSE"`.
@@ -129,22 +165,13 @@ These use sandwich-based scaling + Brosseau-Liard & Savalei (2012) adjustments t
 umxSummary(m1, std = TRUE, uncertainty = "RobustSE", refModels = FALSE)
 ```
 
-## Robust standard errors with categorical data
+## Ordinal and WLS models
 
-With ordinal data, sandwich / robust SEs are available after fitting. A full three-factor ordinal FIML demo is in the WLS vignette (`vignette("WLS_in_umx")`); it is not re-run here so package checks stay under CRAN time limits.
+For ordered factors, DWLS/WLS, and Satorra–Bentler nested tests, see:
 
-Example pattern (run locally):
-
-```{r fit-ordinal, eval = FALSE}
-data("HSwls", package = "umx")
-m3 = umxRAM("
-  visual  =~ x1 + x2 + x3
-  textual =~ x4 + x5 + x6
-  speed   =~ x7 + x8 + x9
-", data = HSwls)
-umxSummary(m3, std = TRUE, uncertainty = "RobustSE", refModels = FALSE)
+```r
+vignette("WLS_in_umx", package = "umx")
 ```
-
 
 ## Next steps
 
@@ -152,6 +179,7 @@ umxSummary(m3, std = TRUE, uncertainty = "RobustSE", refModels = FALSE)
 - See all the options for `umxRAM()`: `?umxRAM`
 - Control output format: `?umxSummary`
 - Compare models: `?umxCompare`
+- Uncertainty (SEs, robust SEs, profile CIs): `vignette("SEs_robustSEs_and_ProfileCIs", package = "umx")`
 - For twin models see the twin modeling functions (`umxACE()`, etc.)
 
 Welcome to `umx`!
