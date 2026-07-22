@@ -31,6 +31,7 @@ umxModel()
 }
 
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},
 \code{\link[=umx_fun_mean_sd]{umx_fun_mean_sd()}},

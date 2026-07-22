@@ -74,21 +74,10 @@ umx_check_parallel()
 \item \code{\link[=umx_time]{umx_time()}}, \code{\link[=umx_set_cores]{umx_set_cores()}}
 }
 
-Other Test:
-\code{\link[=umx_check]{umx_check()}},
-\code{\link[=umx_check_OS]{umx_check_OS()}},
-\code{\link[=umx_check_model]{umx_check_model()}},
-\code{\link[=umx_check_names]{umx_check_names()}},
-\code{\link[=umx_has_CIs]{umx_has_CIs()}},
-\code{\link[=umx_has_been_run]{umx_has_been_run()}},
-\code{\link[=umx_has_means]{umx_has_means()}},
-\code{\link[=umx_has_square_brackets]{umx_has_square_brackets()}},
-\code{\link[=umx_is_GSEM]{umx_is_GSEM()}},
-\code{\link[=umx_is_LISREL]{umx_is_LISREL()}},
-\code{\link[=umx_is_MxData]{umx_is_MxData()}},
-\code{\link[=umx_is_MxMatrix]{umx_is_MxMatrix()}},
-\code{\link[=umx_is_MxModel]{umx_is_MxModel()}},
-\code{\link[=umx_is_RAM]{umx_is_RAM()}},
-\code{\link[=umx_is_cov]{umx_is_cov()}}
+Other Miscellaneous Functions:
+\code{\link[=deg2rad]{deg2rad()}},
+\code{\link[=rad2deg]{rad2deg()}},
+\code{\link[=umxBrownie]{umxBrownie()}},
+\code{\link[=umx_complete_dollar]{umx_complete_dollar()}}
 }
-\concept{Test}
+\concept{Miscellaneous Functions}

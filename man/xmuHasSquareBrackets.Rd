@@ -22,6 +22,7 @@ xmuHasSquareBrackets("A[1,2]")
 }
 \seealso{
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

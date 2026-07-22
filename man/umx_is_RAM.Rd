@@ -47,7 +47,6 @@ Other Test:
 \code{\link[=umx_check_OS]{umx_check_OS()}},
 \code{\link[=umx_check_model]{umx_check_model()}},
 \code{\link[=umx_check_names]{umx_check_names()}},
-\code{\link[=umx_check_parallel]{umx_check_parallel()}},
 \code{\link[=umx_has_CIs]{umx_has_CIs()}},
 \code{\link[=umx_has_been_run]{umx_has_been_run()}},
 \code{\link[=umx_has_means]{umx_has_means()}},

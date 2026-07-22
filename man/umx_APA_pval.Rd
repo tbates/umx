@@ -40,6 +40,7 @@ umx_APA_pval(c(1.23E-3, .5), addComparison = TRUE)
 }
 
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_fun_mean_sd]{umx_fun_mean_sd()}},

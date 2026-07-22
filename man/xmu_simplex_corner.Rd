@@ -31,6 +31,7 @@ umx_print( xmu_simplex_corner(x, start = .9)$values, zero=".")
 }
 
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

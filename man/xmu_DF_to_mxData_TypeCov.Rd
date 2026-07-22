@@ -37,6 +37,7 @@ xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
 }
 \seealso{
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

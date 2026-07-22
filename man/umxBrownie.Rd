@@ -26,6 +26,7 @@ umxBrownie()
 Other Miscellaneous Functions:
 \code{\link[=deg2rad]{deg2rad()}},
 \code{\link[=rad2deg]{rad2deg()}},
+\code{\link[=umx_check_parallel]{umx_check_parallel()}},
 \code{\link[=umx_complete_dollar]{umx_complete_dollar()}}
 }
 \concept{Miscellaneous Functions}

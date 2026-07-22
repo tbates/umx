@@ -64,6 +64,7 @@ xmu_check_needs_means(tmp, allContinuousMethod= "marginals") # TRUE - always has
 }
 
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

@@ -25,6 +25,7 @@ Continuous manifests are left unchanged. Does not rewrite path labels.
 \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}}, \code{\link[=xmuRAM2Ordinal]{xmuRAM2Ordinal()}}, \code{\link[=umxRAM]{umxRAM()}}
 
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

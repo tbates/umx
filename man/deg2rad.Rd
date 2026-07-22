@@ -40,6 +40,7 @@ deg2rad(180) == pi # TRUE!
 Other Miscellaneous Functions:
 \code{\link[=rad2deg]{rad2deg()}},
 \code{\link[=umxBrownie]{umxBrownie()}},
+\code{\link[=umx_check_parallel]{umx_check_parallel()}},
 \code{\link[=umx_complete_dollar]{umx_complete_dollar()}}
 }
 \concept{Miscellaneous Functions}

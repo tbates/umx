@@ -30,6 +30,7 @@ correlation scaffold; they enter the WLS fit separately.
 \code{\link[=xmu_catml_discrepancy_at_WLS]{xmu_catml_discrepancy_at_WLS()}}, \code{\link[=xmu_catml_implied_correlation]{xmu_catml_implied_correlation()}}
 
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

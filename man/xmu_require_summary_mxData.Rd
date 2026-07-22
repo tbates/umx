@@ -21,6 +21,7 @@ Do \strong{not} fall back to legacy \code{type = "none"} / \code{"acov"} — tha
 \code{\link[=xmu_has_summary_mxData]{xmu_has_summary_mxData()}}, \code{\link[=xmu_mxData_summary]{xmu_mxData_summary()}}
 
 Other xmu internal not for end user:
+\code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

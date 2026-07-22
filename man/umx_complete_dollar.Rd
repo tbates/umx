@@ -15,6 +15,7 @@ Implemented by Simon Urbanek.
 Other Miscellaneous Functions:
 \code{\link[=deg2rad]{deg2rad()}},
 \code{\link[=rad2deg]{rad2deg()}},
-\code{\link[=umxBrownie]{umxBrownie()}}
+\code{\link[=umxBrownie]{umxBrownie()}},
+\code{\link[=umx_check_parallel]{umx_check_parallel()}}
 }
 \concept{Miscellaneous Functions}
