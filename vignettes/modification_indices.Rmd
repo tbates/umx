@@ -30,7 +30,7 @@ umx_set_auto_plot(FALSE)
 
 `umxMI()` wraps [OpenMx::mxMI()](https://openmx.ssri.psu.edu/) and prints the largest indices (by default those above $\chi^2_1(0.01) = 6.63$). By default `full = FALSE` (only the tested parameter moves — fast). Set `full = TRUE` to allow all free parameters to re-adjust (slower).
 
-This vignette uses the classic Holzinger & Swineford (1939) data ([`HS.ability.data`](https://openmx.ssri.psu.edu/reference/HS.ability.data)): fit a deliberately poor **one-factor** model (the worst of the usual teaching sequence), run **one** `umxMI()` call, then show a better three-factor alternative with `umxCompare()` (no second MI pass).
+This vignette uses the classic Holzinger & Swineford (1939) data (`HS.ability.data` in OpenMx): fit a deliberately poor **one-factor** model (the worst of the usual teaching sequence), run **one** `umxMI()` call, then show a better three-factor alternative with `umxCompare()` (no second MI pass).
 
 ## Data
 

@@ -24,9 +24,9 @@ umx_set_auto_plot(FALSE)
 
 ## Purpose
 
-This vignette is a **verification stub** for genomic structural equation modeling (GSEM) in **umx** via [`umxGSEM()`](https://tbates.github.io/umx/reference/umxGSEM.html).
+This vignette is a **verification stub** for genomic structural equation modeling (GSEM) in **umx** via `umxGSEM()`.
 
-It documents that a one-factor model on the built-in LDSC object [`Psych_LDSC`](https://tbates.github.io/umx/reference/Psych_LDSC.html) recovers the same **DWLS point estimates and standard errors** (to printed precision) as GenomicSEM’s `commonfactor()` on the same input.
+It documents that a one-factor model on the built-in LDSC object `Psych_LDSC` recovers the same **DWLS point estimates and standard errors** (to printed precision) as GenomicSEM's `commonfactor()` on the same input.
 
 > **Rails, not vibes.** umx builds OpenMx summary WLS with modern  
 > `mxData(numObs = N, observedStats = list(cov = S, useWeight = W, asymCov = V))`  
@@ -145,7 +145,7 @@ Re-run verification (maintainers): fit with `eval = TRUE` above; optionally comp
 
 ## SNP summary data for multivariate GWAS (pipeline roadmap)
 
-Adding SNPs (GenomicSEM’s `sumstats` → `commonfactorGWAS` / `userGWAS`) needs **per-trait GWAS files** plus a **1000 Genomes MAF reference**. Built-in `Psych_LDSC` / `Anthro_LDSC` are **LDSC-only** (`S`, `V`, …); they do **not** ship SNP betas.
+Adding SNPs (GenomicSEM's `sumstats` → `commonfactorGWAS` / `userGWAS`) needs **per-trait GWAS files** plus a **1000 Genomes MAF reference**. Built-in `Psych_LDSC` / `Anthro_LDSC` are **LDSC-only** (`S`, `V`, …); they do **not** ship SNP betas.
 
 ### How this maps to our LDSC objects
 
@@ -157,7 +157,7 @@ Adding SNPs (GenomicSEM’s `sumstats` → `commonfactorGWAS` / `userGWAS`) need
 
 Workshop practical (IBG / Grotzinger materials):
 
-- Box mirror: <https://utexas.box.com/s/sounavy84gwygj0j2askcyaoo2ostbgu>  
+- Box mirror: <https://utexas.app.box.com/s/sounavy84gwygj0j2askcyaoo2ostbgu>  
 - Script: <https://ibg.colorado.edu/cdrom2021/Day06-nivard/GenomicSEM_practical/GenomicSEM_Practical.R>
 
 ### Toy (subset) SNPs — for smoke tests only
@@ -198,7 +198,7 @@ For umx, the matching **3-trait** genetic cov structure is the SCZ/BIP/MDD block
 4. **Run multivariable LDSC** → `covstruc` (`S`, `V`, `I`, `N`, `m`) — same shape as `Psych_LDSC`.
 5. **Prepare SNP file for SEM-GWAS** (`sumstats`-equivalent): align alleles to a **1000 Genomes Phase 3** reference used for SNP variance / MAF.  
    Full ref download (GenomicSEM wiki):  
-   <https://utexas.box.com/s/vkd36n197m8klbaio3yzoxsee6sxo11v>  
+   <https://utexas.app.box.com/s/vkd36n197m8klbaio3yzoxsee6sxo11v>  
    (`reference.1000G.maf.0.005.txt` style; not the workshop `.subset`.)
 6. **Trait order** in munge / ldsc / sumstats / SEM-GWAS must stay identical.
 7. **Binary traits:** know whether SEs are logistic (`se.logit = TRUE` is common even when effects are ORs). Continuous traits: `OLS = TRUE` or standardized betas as appropriate.

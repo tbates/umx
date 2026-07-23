@@ -42,7 +42,7 @@ A ggplot graph object
 A wrapper for \code{\link[ggplot2:stat_function]{ggplot2::stat_function()}} that handles single or multiple functions.
 }
 \details{
-Easily plot functions—like sin or x^2—using ggplot. Accepts bare functions,
+Easily plot functions-like sin or x^2-using ggplot. Accepts bare functions,
 strings, or lists of strings/functions. Automatically generates a legend when
 multiple functions are provided.
 }

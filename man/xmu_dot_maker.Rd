@@ -9,7 +9,7 @@ xmu_dot_maker(model, file, digraph, strip_zero = TRUE)
 \arguments{
 \item{model}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to get the name from}
 
-\item{file}{Plot destination: \code{"name"} (temp/model name), a path string, \code{NA}/\code{NULL} (print digraph only, no file), or logical (\code{TRUE} → \code{"name"}, \code{FALSE} → off). Often passed as \code{getOption("umx_auto_plot")}.}
+\item{file}{Plot destination: \code{"name"} (temp/model name), a path string, \code{NA}/\code{NULL} (print digraph only, no file), or logical (\code{TRUE} -> \code{"name"}, \code{FALSE} -> off). Often passed as \code{getOption("umx_auto_plot")}.}
 
 \item{digraph}{Graphviz code for a model}
 

@@ -74,14 +74,14 @@ using C++ and OpenMP. Designed to be compatible with
 performance, especially with larger numbers of traits.
 }
 \details{
-S is A symmetric K×K matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h
+S is A symmetric KxK matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h
 2). The off-diagonals contain the genetic covariances.
 
-V is A symmetric M×M sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
+V is A symmetric MxM sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
 It contains the sampling variances of your heritabilities and genetic covariances on the diagonal,
 and their sampling covariances on the off-diagonal.
 
-I is a K×K matrix containing the LDSC intercepts
+I is a KxK matrix containing the LDSC intercepts
 (cross-trait intercepts on the off-diagonal, single-trait intercepts on the diagonal)
 used to quantify sample overlap and population stratification.
 }

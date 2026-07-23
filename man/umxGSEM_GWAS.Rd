@@ -25,7 +25,7 @@ umxGSEM_GWAS(
 vech(S)), and preferably \code{I} (LDSC intercept matrix, for GC-corrected SEs).
 See e.g. \link{Psych_LDSC} (\code{I} = intercepts / sample-overlap; also \code{N}, \code{m}).}
 
-\item{SNPs}{Data frame from \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}} (columns \verb{beta.*}, \verb{se.*}, \code{MAF}, \code{SNP}, …).}
+\item{SNPs}{Data frame from \code{\link[=umxGSEM_sumstats]{umxGSEM_sumstats()}} (columns \verb{beta.*}, \verb{se.*}, \code{MAF}, \code{SNP}, ...).}
 
 \item{model}{Optional lavaan/umx string or mxModel. If \code{NULL}, builds
 A RAM model with one latent (F1) loading on all the traits, and  "SNP" loading on F1}
@@ -51,7 +51,7 @@ A RAM model with one latent (F1) loading on all the traits, and  "SNP" loading o
 \item{force_fallback}{Logical; internal use for testing to force the non-vectorized analytic path (default \code{FALSE}).}
 }
 \value{
-A data.frame of SNP results (\code{SNP}, \code{CHR}, \code{BP}, \code{MAF}, \code{est}, \code{se}, \code{Z}, \code{P}, \code{status}, …).
+A data.frame of SNP results (\code{SNP}, \code{CHR}, \code{BP}, \code{MAF}, \code{est}, \code{se}, \code{Z}, \code{P}, \code{status}, ...).
 }
 \description{
 Expands the LDSC genetic covariance structure with each SNP (using prepared

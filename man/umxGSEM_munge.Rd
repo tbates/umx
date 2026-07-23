@@ -39,7 +39,7 @@ umxGSEM_munge(
 
 \item{overwrite}{Whether to overwrite existing munged files (defaults to FALSE).}
 
-\item{...}{Additional arguments passed to \code{OpenMx::imxMunge()}.}
+\item{...}{Additional arguments passed to OpenMx \code{imxMunge} when available (GenomicMx).}
 }
 \value{
 A character vector of paths to the munged files.

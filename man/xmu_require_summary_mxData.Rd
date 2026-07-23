@@ -15,7 +15,7 @@ Invisibly \code{TRUE} when supported.
 \description{
 Stops with a polite install hint if \code{\link[=xmu_has_summary_mxData]{xmu_has_summary_mxData()}} is FALSE.
 Call at the entry of any feature that builds modern summary WLS data.
-Do \strong{not} fall back to legacy \code{type = "none"} / \code{"acov"} — that API is refused forever in umx.
+Do \strong{not} fall back to legacy \code{type = "none"} / \code{"acov"} - that API is refused forever in umx.
 }
 \seealso{
 \code{\link[=xmu_has_summary_mxData]{xmu_has_summary_mxData()}}, \code{\link[=xmu_mxData_summary]{xmu_mxData_summary()}}

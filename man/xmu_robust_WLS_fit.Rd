@@ -79,14 +79,14 @@ for target (\eqn{c_{model}}) and independence (\eqn{c_{null}}) models.
 \eqn{p = 1 - F_{\chi^2_{df}}(\chi^2_{SB})}.
 }
 
-\strong{Branch A — Continuous WLS} (\code{correction = "SB2010"}).
+\strong{Branch A - Continuous WLS} (\code{correction = "SB2010"}).
 Detected when no manifest is \code{ordered} or \code{factor} on raw data
 (\code{\link[=xmu_is_ordinal_WLS]{xmu_is_ordinal_WLS()}} returns \code{FALSE}). Robust
 \code{CFI}, \code{TLI}, and \code{RMSEA} are derived from SB-scaled target and
 independence \eqn{\chi^2} and their dfs. Attributes \code{c_model} and
 \code{c_null} hold the SB trace factors.
 
-\strong{Branch B — Ordinal / categorical WLS} (\code{correction = "Savalei2021"}).
+\strong{Branch B - Ordinal / categorical WLS} (\code{correction = "Savalei2021"}).
 Detected when at least one manifest is \code{ordered} or \code{factor}.
 Robust indices use the Brosseau-Liard / Savalei noncentrality form with catML
 ingredients evaluated at \strong{fixed} converged WLS estimates (no re-optimization):
@@ -133,7 +133,7 @@ null analogously).
 
 \strong{Cutoff guidance.} For ordinal WLS, Hu & Bentler (1999) conventional cutoffs
 (e.g. CFI \eqn{\geq} 0.95, RMSEA \eqn{\leq} 0.06) apply to the \strong{robust}
-\code{CFI}/\code{TLI}/\code{RMSEA} reported here—not to raw WLS \eqn{\chi^2}.
+\code{CFI}/\code{TLI}/\code{RMSEA} reported here-not to raw WLS \eqn{\chi^2}.
 Display \eqn{\chi^2} and \eqn{p} remain SB-scaled WLS omnibus tests.
 
 \strong{Software note.} Numeric values of \eqn{\hat{c}_3} may differ from other SEM

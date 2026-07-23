@@ -68,12 +68,12 @@ Note: For some (multi-group) models, you will need to fall back on \code{\link[=
 
 This option means \strong{engine-appropriate robust inference}, not one sandwich formula for every fit type:
 \itemize{
-\item \strong{ML / FIML (raw continuous):} casewise score sandwich SEs via \code{\link[OpenMx:imxRobustSE]{OpenMx::imxRobustSE()}}, plus robust CFI/TLI/RMSEA via \code{\link[=xmu_robust_ML_fit]{xmu_robust_ML_fit()}} (Yuan–Bentler / Brosseau-Liard & Savalei scaling).
-\item \strong{WLS / DWLS / ULS:} do \strong{not} use the ML casewise sandwich. Parameter SEs are the usual \strong{WLS/GMM moment sandwich} already returned by OpenMx (\eqn{W}, \eqn{\Delta}, \eqn{\Gamma}). Robust CFI/TLI/RMSEA are applied when \code{output$implied_jacobian} is present via \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}} (Satorra–Bentler 2010 for continuous WLS; Savalei 2021 catML for ordinal WLS). A statistical note states that SEs are WLS asymptotic (moment sandwich).
+\item \strong{ML / FIML (raw continuous):} casewise score sandwich SEs via \code{\link[OpenMx:imxRobustSE]{OpenMx::imxRobustSE()}}, plus robust CFI/TLI/RMSEA via \code{\link[=xmu_robust_ML_fit]{xmu_robust_ML_fit()}} (Yuan-Bentler / Brosseau-Liard & Savalei scaling).
+\item \strong{WLS / DWLS / ULS:} do \strong{not} use the ML casewise sandwich. Parameter SEs are the usual \strong{WLS/GMM moment sandwich} already returned by OpenMx (\eqn{W}, \eqn{\Delta}, \eqn{\Gamma}). Robust CFI/TLI/RMSEA are applied when \code{output$implied_jacobian} is present via \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}} (Satorra-Bentler 2010 for continuous WLS; Savalei 2021 catML for ordinal WLS). A statistical note states that SEs are WLS asymptotic (moment sandwich).
 }
 
 \strong{Robust Fit Statistics for ML}
-Standard Maximum Likelihood (ML) is powerful and efficient, with χ2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, \code{uncertainty = "RobustSE"} implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan–Bentler / Savalei 2018-style robust indices).
+Standard Maximum Likelihood (ML) is powerful and efficient, with chi2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, \code{uncertainty = "RobustSE"} implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan-Bentler / Savalei 2018-style robust indices).
 
 \strong{Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)}
 
@@ -87,13 +87,13 @@ and Genomic SEM. Prefer \strong{SRMR} and residual inspection for absolute fit; 
 through \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}} (independence baseline + trace scaling). Parameter SEs
 remain the OpenMx WLS moment sandwich (see \code{uncertainty = "RobustSE"} above). Robust
 CFI/TLI/RMSEA are \strong{reported} for continuous WLS but should be treated as descriptive
-(no Hu–Bentler cutoffs). Genomic SEM has the same rule, with even less trust in RMSEA
+(no Hu-Bentler cutoffs). Genomic SEM has the same rule, with even less trust in RMSEA
 under bookkeeping N.
 
 \strong{Two statistic families (by design).} WLS output separates omnibus testing from fit indices:
 \itemize{
-\item \strong{Displayed \eqn{\chi^2} and \eqn{p}} — Satorra–Bentler (2010) scaled WLS test when robust fit succeeds (continuous and ordinal).
-\item \strong{Displayed CFI, TLI, RMSEA} — robust/scaled indices; interpretation depends on continuous vs ordinal (below).
+\item \strong{Displayed \eqn{\chi^2} and \eqn{p}} - Satorra-Bentler (2010) scaled WLS test when robust fit succeeds (continuous and ordinal).
+\item \strong{Displayed CFI, TLI, RMSEA} - robust/scaled indices; interpretation depends on continuous vs ordinal (below).
 }
 
 \strong{Continuous WLS} (all manifests numeric): SB (2010) scaled pipeline
@@ -102,7 +102,7 @@ are present). Saturated residual df (ChiDoF = 0): Chi = 0, p = NA, CFI = TLI = 1
 RMSEA = 0 (not NA). Printed note: no conventional cutoffs; prefer SRMR; nested
 Strict SB via \code{\link[=umxCompare]{umxCompare()}}.
 
-\strong{Ordinal / categorical WLS} (at least one \code{ordered}/\code{factor} on raw data): robust CFI/TLI/RMSEA use \strong{Savalei (2021)} catML corrections; \strong{Hu & Bentler (1999) cutoffs may apply to those robust indices}. Display \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests—not catML-scaled.
+\strong{Ordinal / categorical WLS} (at least one \code{ordered}/\code{factor} on raw data): robust CFI/TLI/RMSEA use \strong{Savalei (2021)} catML corrections; \strong{Hu & Bentler (1999) cutoffs may apply to those robust indices}. Display \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests-not catML-scaled.
 
 Requires \code{implied_jacobian} after \code{mxRun} on WLS. If robust computation fails, falls back to OpenMx \code{summary()} with a note.
 

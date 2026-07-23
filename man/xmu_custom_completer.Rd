@@ -7,7 +7,7 @@
 xmu_custom_completer(env)
 }
 \arguments{
-\item{env}{The completion environment (usually \code{utils:::.CompletionEnv}).}
+\item{env}{The completion environment (utils internal CompletionEnv).}
 }
 \value{
 NULL (called for its side effects of modifying \code{env[["comps"]]}).

@@ -36,11 +36,11 @@ and \code{observedStats} (\code{cov}, \code{useWeight}, \code{asymCov}). Works f
 \code{MxDataStatic} from \link[OpenMx:mxData]{OpenMx::mxData} (including GSEM-style summary data).
 }
 \details{
-If \code{observedStats} still holds \strong{LDSC/GSEM covstruc keys} (\code{S}, \code{V}, …)
-rather than modern WLS keys — e.g.
-\code{mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)} —
-OpenMx stores those names as-is (it does \strong{not} map \code{S}→\code{cov} or
-\code{V}→\code{asymCov}). This method detects that case, prints the LDSC content via
+If \code{observedStats} still holds \strong{LDSC/GSEM covstruc keys} (\code{S}, \code{V}, ...)
+rather than modern WLS keys - e.g.
+\code{mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)} -
+OpenMx stores those names as-is (it does \strong{not} map \code{S}->\code{cov} or
+\code{V}->\code{asymCov}). This method detects that case, prints the LDSC content via
 \code{\link[=umxSummary.list]{umxSummary.list()}}, and notes how to build a runnable WLS \code{mxData}.
 }
 \examples{
@@ -49,9 +49,13 @@ S = Psych_LDSC$S[1:3, 1:3]
 V = Psych_LDSC$V[1:6, 1:6]
 W = diag(1 / diag(V))
 dimnames(W) = dimnames(V)
+\dontrun{
+# Needs modern OpenMx/GenomicMx (type = "summary" pure observedStats).
+# CRAN OpenMx historically used type = "none" for this layout.
 d = mxData(numObs = 1, type = "summary",
            observedStats = list(cov = S, useWeight = W, asymCov = V))
 umxSummary(d)
+}
 }
 \seealso{
 \code{\link[=umxSummary.list]{umxSummary.list()}}, \link[OpenMx:mxData]{mxData}, \link[OpenMx:mxFitFunctionWLS]{mxFitFunctionWLS}, \link{umxGSEM}

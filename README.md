@@ -18,7 +18,7 @@
 
 You should cite: Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). umx: A library for Structural Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. [DOI:10.1017/thg.2019.2](https://doi.org/10.1017/thg.2019.2)
 
-And   Luis F.S. Castro-de-Araujo, Nathan A. Gillespie, Michael C. Neale, and Timothy Charles Bates (2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Onyx Integration, and Censored Distributions. _Twin Research and Human Genetics_, 1-6. [DOI:10.1017/thg.2026.10056](https://10.1017/thg.2026.10056)
+And   Luis F.S. Castro-de-Araujo, Nathan A. Gillespie, Michael C. Neale, and Timothy Charles Bates (2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Onyx Integration, and Censored Distributions. _Twin Research and Human Genetics_, 1-6. [DOI:10.1017/thg.2026.10056](https://doi.org/10.1017/thg.2026.10056)
 
 
 

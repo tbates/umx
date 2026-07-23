@@ -29,7 +29,7 @@ tmx_genotypic_effect(p = 0.75, q = (1 - p), a = 0.5, d = 0, m = 0, show = TRUE)
 you can interactively explore the effects of allele frequency, additive variance, and
 \href{https://en.wikipedia.org/wiki/Dominance_(genetics)}{dominance}.
 
-This function lets you explore the simplest two–allele system (\code{B} and \code{b}), with three possible
+This function lets you explore the simplest two-allele system (\code{B} and \code{b}), with three possible
 genotypes, \code{BB}, \code{Bb}, and \code{bb}.
 
 The point between the two homozygotes is \code{m} -- the mean effect of the homozygous genotypes.

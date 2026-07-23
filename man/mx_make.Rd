@@ -44,9 +44,9 @@ issues); after install, restart R or \code{library(OpenMx)}.
 
 Immediate workflow:
 \enumerate{
-\item \code{mx_make()} or \code{mx_make("install")} — local \verb{make install} (NPSOL when the
+\item \code{mx_make()} or \code{mx_make("install")} - local \verb{make install} (NPSOL when the
 Makefile is so configured).
-\item \code{mx_make("win")} — \code{devtools::check_win_devel()} for the source tree.
+\item \code{mx_make("win")} - \code{devtools::check_win_devel()} for the source tree.
 }
 }
 \examples{

@@ -13,7 +13,7 @@ data(Anthro_LDSC)
 \description{
 A dataset containing the genetic covariance structure from LD score regression (LDSC)
 for 9 anthropometric phenotypes: BMI, WHR, CO, Waist, Hip, Height, IHC, BL, and BW.
-Same list layout as \link{Psych_LDSC} — pass the object as \code{covstruc} to \code{\link[=umxGSEM]{umxGSEM()}} or
+Same list layout as \link{Psych_LDSC} - pass the object as \code{covstruc} to \code{\link[=umxGSEM]{umxGSEM()}} or
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
 }
 \details{

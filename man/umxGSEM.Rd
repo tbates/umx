@@ -24,7 +24,7 @@ umxGSEM(
 \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} / \code{\link[=umxRAM]{umxRAM()}} RAM model whose \code{manifestVars} name traits in \code{S}.
 For SNP GWAS, use \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}} instead of passing SNPs here.}
 
-\item{covstruc}{LDSC list with genetic covariance \code{S} and sampling covariance \code{V} (and typically \code{I}, \code{N}, \code{m}) as from GenomicSEM's \code{ldsc} / \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}} — see e.g. \link{Psych_LDSC}. If provided, \code{S} and \code{V} are extracted from it.}
+\item{covstruc}{LDSC list with genetic covariance \code{S} and sampling covariance \code{V} (and typically \code{I}, \code{N}, \code{m}) as from GenomicSEM's \code{ldsc} / \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}} - see e.g. \link{Psych_LDSC}. If provided, \code{S} and \code{V} are extracted from it.}
 
 \item{S}{Genetic covariance matrix (if covstruc not provided).}
 
@@ -88,7 +88,7 @@ with \code{W = diag(1/diag(V))} for DWLS. \code{umxGSEM} also reorders \code{V} 
 
 \strong{umx hard-refuses forever} the removed OpenMx WLS data interface
 (\code{type = "acov"} / \code{"none"}, \code{MxDataLegacyWLS}, top-level \verb{acov=}/\verb{fullWeight=}, or
-\code{observedStats$acov}/\verb{$fullWeight} — historical name trap: \code{acov} meant useWeight).
+\code{observedStats$acov}/\verb{$fullWeight} - historical name trap: \code{acov} meant useWeight).
 Use \code{observedStats} as above or raw data + \code{type = "DWLS"}.
 }
 \examples{

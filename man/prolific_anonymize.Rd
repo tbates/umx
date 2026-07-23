@@ -34,7 +34,7 @@ subject anonymity when shared.
 \code{prolific_anonymize} replaces PIDs with a simple numeric sequence, preserving
 repeated measures in long data, and removing other columns.
 You can delete additional  columns by adding them to \code{extraColumns}. It is ideal for use
-when sharing data to \url{https://researchbox.org} which enforces anonymization.
+when sharing data to ResearchBox (researchbox.org) which enforces anonymization.
 }
 \examples{
 \dontrun{

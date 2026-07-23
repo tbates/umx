@@ -146,7 +146,7 @@ Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, S. J., Mallard, T. T.
 Hill, W. D., Ip, H. F., Marioni, R. E., McIntosh, A. M., Deary, I. J., Koellinger, P. D.,
 Harden, K. P., Nivard, M. G., & Tucker-Drob, E. M. (2019).
 Genomic structural equation modelling provides insights into the multivariate genetic
-architecture of complex traits. \emph{Nature Human Behaviour}, \strong{3}, 513–525.
+architecture of complex traits. \emph{Nature Human Behaviour}, \strong{3}, 513-525.
 \doi{10.1038/s41562-019-0566-x}
 
 Tutorial materials and sumstats conventions follow the Genomic SEM documentation and

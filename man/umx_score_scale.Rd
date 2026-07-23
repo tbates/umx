@@ -184,7 +184,7 @@ bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrin
 \item Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, \url{https://CRAN.R-project.org/package=psych} Version = 2.2.9.
 }
 \itemize{
-\item McNeish, D. (2018). Thanks coefficient alpha, we’ll take it from here. \emph{Psychological Methods}, \strong{23}, 412-433. \doi{10.1037/met0000144}.
+\item McNeish, D. (2018). Thanks coefficient alpha, we'll take it from here. \emph{Psychological Methods}, \strong{23}, 412-433. \doi{10.1037/met0000144}.
 }
 }
 \seealso{

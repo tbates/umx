@@ -11,7 +11,8 @@
 
 \item{type}{Type of plot: "manhattan" (default) or "qq".}
 
-\item{...}{Additional arguments passed to \code{\link[ggwas]{manhattan_plot}} or \code{\link[ggwas]{qq_plot}}.}
+\item{...}{Additional arguments passed to ggwas \code{manhattan_plot} or \code{qq_plot}
+(optional package; install from GitHub \code{bczech/ggwas} if needed).}
 }
 \value{
 A \code{ggplot} object.
@@ -25,12 +26,10 @@ label_top_n, downsample (TRUE), and downsample_n (2e+05), title = NULL
 }
 \examples{
 \dontrun{
-data(example_gwas, package = "ggwas")
-plot.umx_GWAS(example_gwas, type= "manhattan")
-plot.umx_GWAS(example_gwas, label_top_n = 5) + theme_nature()
-plot.umx_GWAS(example_gwas, colors = gwas_palette("nejm")) + theme_science()
-plot.umx_GWAS(example_gwas, chromosomes= 1:7, label_top_n= 3) + theme_science()
-plot.umx_GWAS(example_gwas, type= "qq")
+# Requires optional GitHub package ggwas (not on CRAN):
+#   remotes::install_github("bczech/ggwas")
+# data(example_gwas, package = "ggwas")
+# plot.umx_GWAS(example_gwas, type = "manhattan")
 }
 }
 \seealso{

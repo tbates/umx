@@ -15,7 +15,7 @@ Named list with \code{Chi}, \code{ChiDoF}, \code{p}, \code{CFI},
 \code{"SB2010"}, \code{"saturated"}, \code{"OpenMx"}.
 }
 \description{
-When \code{output$implied_jacobian} is present, returns Satorra–Bentler (2010)
+When \code{output$implied_jacobian} is present, returns Satorra-Bentler (2010)
 scaled statistics from \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}} (including saturated df=0
 convention: Chi=0, CFI/TLI=1, RMSEA=0). Otherwise falls back to OpenMx
 \code{summary()} Browne residual chi-square.

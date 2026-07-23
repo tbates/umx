@@ -54,7 +54,7 @@ maximum likelihood with continuous data. They do \strong{not} transfer to WLS/DW
 (Shi et al., 2020), and still less to Genomic SEM (DWLS on LDSC genetic
 covariances with an estimated sampling covariance, often with bookkeeping \code{numObs = 1}).
 \itemize{
-\item \strong{Incremental indices (CFI, TLI, NFI, …)} compare the model to an independence
+\item \strong{Incremental indices (CFI, TLI, NFI, ...)} compare the model to an independence
 baseline under the same weight matrix. That baseline behaves differently than under ML.
 Report CFI/TLI only \strong{descriptively}; do \strong{not} apply conventional cutoffs.
 \item \strong{Absolute fit: SRMR} (and residual matrices) is preferred. SRMR lives on a
@@ -62,8 +62,8 @@ standardized residual metric and is less hostage to weight-matrix / N scaling.
 Rough guide: SRMR < 0.10 suggests acceptable residual structure (not a hard law).
 \item \strong{RMSEA} folds in chi-square scaling and N; it is often misleading for WLS and
 especially for GSEM. Do not use the ML cutoff of < .06.
-\item \strong{Nested model building:} prefer scaled chi-square difference tests and ΔSRMR
-over ΔCFI alone (see Details for what \code{umxCompare} computes).
+\item \strong{Nested model building:} prefer scaled chi-square difference tests and DeltaSRMR
+over DeltaCFI alone (see Details for what \code{umxCompare} computes).
 }
 }
 \details{
@@ -72,29 +72,29 @@ over ΔCFI alone (see Details for what \code{umxCompare} computes).
 \item Refuses mixed WLS vs ML comparisons (same engine required).
 \item \strong{Continuous WLS} with cached \code{implied_jacobian}:
 \itemize{
-\item Table \strong{Chi} is the same Satorra–Bentler (2010) scaled omnibus as \code{\link[=umxSummary]{umxSummary()}}
+\item Table \strong{Chi} is the same Satorra-Bentler (2010) scaled omnibus as \code{\link[=umxSummary]{umxSummary()}}
 (\eqn{F/c} from \code{output$fit}), \strong{not} OpenMx Browne residual \code{output$chi}
 (those two differ under DWLS). Saturated residual df reports Chi = 0, CFI = 1, RMSEA = 0.
 \item Nested \strong{diffFit} is SB-2010 scaled \eqn{\Delta F = F_{nested} - F_{base}}
 (requires both models at comparable minima of the same WLS objective: same moments,
 \code{useWeight}, and \eqn{N}). If \eqn{F_{nested} < F_{base}} (often multigroup
-optimization), diffFit is \strong{NA} with a warning — not a negative chi-square with p = 1.
+optimization), diffFit is \strong{NA} with a warning - not a negative chi-square with p = 1.
 }
 \item \strong{Genomic SEM} (\code{MxModelGSEM}): nested difference on the \strong{GSEM DWLS chi-square
 scale} (same discrepancy as the structural fit; not a substitute for ML LRT).
 If LDSC matrices were \code{nearPD}-smoothed, a fiduciary warning notes that difference
 tests may look artificially precise.
-\item Table also reports \strong{SRMR / ΔSRMR} (preferred absolute residual summary) and
-\strong{CFI / ΔCFI} (descriptive only). AIC may appear but is not a primary GSEM decision
+\item Table also reports \strong{SRMR / DeltaSRMR} (preferred absolute residual summary) and
+\strong{CFI / DeltaCFI} (descriptive only). AIC may appear but is not a primary GSEM decision
 rule under asymptotic / bookkeeping N.
 }
 
 \strong{Ordinal WLS} is a separate track: robust CFI/TLI/RMSEA use Savalei (2021) catML
-corrections in \code{\link[=umxSummary]{umxSummary()}}; Hu–Bentler cutoffs can apply to \strong{those} robust indices.
+corrections in \code{\link[=umxSummary]{umxSummary()}}; Hu-Bentler cutoffs can apply to \strong{those} robust indices.
 That exception does \strong{not} apply to continuous WLS or Genomic SEM.
 
 Best practice: report estimates with SEs, SRMR (and residuals), nested SB/GSEM
-difference tests, and avoid single-number “good fit” claims from CFI or RMSEA.
+difference tests, and avoid single-number "good fit" claims from CFI or RMSEA.
 }
 \examples{
 \dontrun{

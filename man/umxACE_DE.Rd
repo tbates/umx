@@ -164,7 +164,7 @@ mNaive = umxACE(
 	tryHard = "yes"
 )
 umxSummary(mNaive, std = TRUE)
-# Expect naive mean(wt) pulled toward 0 and distorted A/E vs mTrue; prefer mDE when zeros mean censored.
+# Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
 }
 }
 \seealso{

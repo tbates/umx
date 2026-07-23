@@ -17,10 +17,10 @@ May carry attribute \code{nonMonotoneF = TRUE} when \eqn{\Delta F < 0}.
 }
 \description{
 \code{calculateStrictSb} calculates the Satorra-Bentler (2010) scaled difference
-chi-square test (the “strictly positive” design relative to SB-2001, which
+chi-square test (the "strictly positive" design relative to SB-2001, which
 can yield a negative scaling constant \eqn{c_d}). The returned statistic is
 only interpretable when both models share the same WLS moments, weight
-matrix, and \eqn{N}, and when the freer model’s optimized discrepancy is not
-larger than the nested model’s (\eqn{F_{nested} \ge F_{base}}).
+matrix, and \eqn{N}, and when the freer model's optimized discrepancy is not
+larger than the nested model's (\eqn{F_{nested} \ge F_{base}}).
 Non-monotone \eqn{F} (typically failed optimization) returns \code{NA} with a warning.
 }

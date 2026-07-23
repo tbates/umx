@@ -508,7 +508,7 @@ umxSummaryACEv <- function(model, digits = 2, comparison = NULL, std = TRUE, sho
 			# 1. Get labels that are free: doesn't matter if they're my format or not
 			# 2. Turn each into a bracket[la,ble] (or labels for equates)
 			# 3. get the value of the parameter
-			# 4. for tables, that’s it: just print them out
+			# 4. for tables, that's it: just print them out
 			# 5. for plots, tag labels with type+name of from- and to- vars
 			# 	* This requires some custom code for each model type.
 			# 6. Hence the xmu_CI_stash idea... if it would generalize.

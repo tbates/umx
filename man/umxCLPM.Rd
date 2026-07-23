@@ -84,8 +84,8 @@ hamaker <- umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt
 }
 }
 \references{
-Kenny, D.A., & Zautra, A. (1995). The trait-state-error model for multiwave data. \emph{Journal of Consulting and Clinical Psychology}, \strong{63}, 52–59. \doi{10.1037/0022-006X.63.1.52}
-Hamaker E.L., Kuiper R.M., & Grasman R. (2015). A critique of the cross-lagged panel model. \emph{Psychological Methods}, \strong{20}, 102–116. \doi{10.1037/a0038889}
-Heise D. R. (1970). Causal inference from panel data. \emph{Sociological Methodology}, 2, 3–27. \doi{10.2307/270780}
+Kenny, D.A., & Zautra, A. (1995). The trait-state-error model for multiwave data. \emph{Journal of Consulting and Clinical Psychology}, \strong{63}, 52-59. \doi{10.1037/0022-006X.63.1.52}
+Hamaker E.L., Kuiper R.M., & Grasman R. (2015). A critique of the cross-lagged panel model. \emph{Psychological Methods}, \strong{20}, 102-116. \doi{10.1037/a0038889}
+Heise D. R. (1970). Causal inference from panel data. \emph{Sociological Methodology}, 2, 3-27. \doi{10.2307/270780}
 }
 \concept{CLPM Functions}

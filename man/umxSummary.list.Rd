@@ -35,7 +35,7 @@ Invisibly returns the input \code{model} (covstruc).
 \description{
 Pretty-prints the trait list and the main LDSC/GSEM matrices (\code{S}, \code{I}, \code{V},
 \code{N}, and scalar \code{m}) for objects like \link{Psych_LDSC} or the return value of
-\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}} / \code{\link[OpenMx:imxLDSC]{imxLDSC()}}. Tables use markdown or HTML via \link{umx_print}.
+\code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}} (or OpenMx \code{imxLDSC} when present). Tables use markdown or HTML via \link{umx_print}.
 }
 \examples{
 data(Psych_LDSC)

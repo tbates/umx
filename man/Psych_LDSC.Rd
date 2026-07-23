@@ -35,7 +35,7 @@ reflecting sample overlap. Preferred input for GC in \code{\link[=umxGSEM_GWAS]{
 data(Psych_LDSC)
 str(Psych_LDSC, max.level = 1)
 names(Psych_LDSC) # "V" "S" "I" "N" "m"
-# Pretty-print S, I, V, … (see also umxSummary on WLS mxData)
+# Pretty-print S, I, V, ... (see also umxSummary on WLS mxData)
 umxSummary(Psych_LDSC)
 # I = LDSC intercept matrix (diag ~ 1; off-diag = sample overlap)
 round(Psych_LDSC$I, 3)

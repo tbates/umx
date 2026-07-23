@@ -41,7 +41,7 @@ par(mfrow = c(1, 1))  # back to as it was
 \references{
 Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for repeated measures:
 application to two psychomotor measures of alcohol sensitivity in twins. \emph{Behavior Genetics}, \strong{19}, 79-96.
-Retrieved from \url{https://www.ncbi.nlm.nih.gov/pubmed/2712815}
+Retrieved from \url{https://pubmed.ncbi.nlm.nih.gov/2712815/}
 }
 \seealso{
 \code{\link[=umxSimplex]{umxSimplex()}}
