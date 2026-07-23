@@ -54,7 +54,7 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 	es = paste0("es", 1:nVar)
 	
 	paths = c(
-		# 1. ✓ Make latent ace, as and l1 &l2
+		# 1. OK Make latent ace, as and l1 &l2
 		# ac and e & specifics
 		umxPath(v1m0 = c("a1", "a2", "c1", "c2", "e1", "e2")), 
 		# TODO: might want to fix ace to 1, AND fix LOADING of e @ 1
@@ -62,17 +62,17 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 		# trait latent variables
 		umxPath(v0m0 = c("l1", "l2")), # Get all their variance from ace
 
-		# 3. ✓ Load ace paths onto each latent
+		# 3. OK Load ace paths onto each latent
 		umxPath(c("a1", "c1"), to = "l1"),
 		umxPath(c("a2", "c2"), to = "l2"),
 		umxPath("e1", free = FALSE, values = 1, to = "l1", lbound = 1e-5),
 		umxPath("e2", free = FALSE, values = 1, to = "l2", lbound = 1e-5),
 
-		# 4. ✓ Add factor loadings from l1 and l2 onto manifests
+		# 4. OK Add factor loadings from l1 and l2 onto manifests
 		umxPath("l1", to = var1Indicators),
 		umxPath("l2", to = var2Indicators),
 
-		# 5. ✓ Load specifics onto var1 and var2 indicators
+		# 5. OK Load specifics onto var1 and var2 indicators
 		umxPath(as, to = c(var1Indicators, var2Indicators), values = .6),
 		umxPath(cs, to = c(var1Indicators, var2Indicators), values = .6),
 		umxPath(es, to = c(var1Indicators, var2Indicators), values = .6, lbound=1e-5),

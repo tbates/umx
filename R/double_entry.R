@@ -117,7 +117,7 @@
 #' 	tryHard = "yes"
 #' )
 #' umxSummary(mNaive, std = TRUE)
-#' # Expect naive mean(wt) pulled toward 0 and distorted A/E vs mTrue; prefer mDE when zeros mean censored.
+#' # Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
 #' }
 umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
 	tryHard = match.arg(tryHard)

@@ -2,11 +2,11 @@
 #'
 #' @description
 #' `calculateStrictSb` calculates the Satorra-Bentler (2010) scaled difference
-#' chi-square test (the “strictly positive” design relative to SB-2001, which
+#' chi-square test (the "strictly positive" design relative to SB-2001, which
 #' can yield a negative scaling constant \eqn{c_d}). The returned statistic is
 #' only interpretable when both models share the same WLS moments, weight
-#' matrix, and \eqn{N}, and when the freer model’s optimized discrepancy is not
-#' larger than the nested model’s (\eqn{F_{nested} \ge F_{base}}).
+#' matrix, and \eqn{N}, and when the freer model's optimized discrepancy is not
+#' larger than the nested model's (\eqn{F_{nested} \ge F_{base}}).
 #' Non-monotone \eqn{F} (typically failed optimization) returns `NA` with a warning.
 #'
 #' @param baseModel The base model (more parameters)
@@ -35,7 +35,7 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 		stop("Models are not nested in the correct order: nestedModel must have fewer parameters than baseModel.")
 	}
 
-	# 2. Extract Weight (W) and Asymptotic Covariance (V) — modern observedStats;
+	# 2. Extract Weight (W) and Asymptotic Covariance (V) - modern observedStats;
 	# multigroup: block-diagonal across groups (same as xmu_robust_WLS_fit).
 	wv = xmu_wls_extract_WV(baseModel, stop_if_missing = TRUE)
 	weightMat = wv$useWeight
@@ -45,7 +45,7 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 	if (is.null(rownames(asymCov))) {
 		stop("Asymptotic covariance matrix missing rownames; cannot align Jacobian for SB-2010.")
 	}
-	# DWLS useWeight often lacks dimnames — copy from asymCov when congruent
+	# DWLS useWeight often lacks dimnames - copy from asymCov when congruent
 	if (is.null(rownames(weightMat)) && nrow(weightMat) == nrow(asymCov) && ncol(weightMat) == ncol(asymCov)) {
 		dimnames(weightMat) = dimnames(asymCov)
 	}
@@ -61,7 +61,7 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 		if (!is.null(rownames(jac)) && all(rn %in% rownames(jac))) {
 			return(jac[rn, , drop = FALSE])
 		}
-		# Single-group block-shift fallback (means at bottom of jac → top of V)
+		# Single-group block-shift fallback (means at bottom of jac -> top of V)
 		if (nGroups <= 1L) {
 			numManifests = length(baseModel@manifestVars)
 			if (numManifests < 1) {
@@ -119,7 +119,7 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 		}
 	}
 
-	# 4–5. Projection matrix algebra (Satorra & Bentler, 2010)
+	# 4-5. Projection matrix algebra (Satorra & Bentler, 2010)
 	infoBase = t(jacBase) %*% weightMat %*% jacBase
 	infoBaseInv = xmu_invert_matrix(infoBase)
 	mBase = weightMat - weightMat %*% jacBase %*% infoBaseInv %*% t(jacBase) %*% weightMat
@@ -161,7 +161,7 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 
 	deltaRaw = rawNested - rawBase
 	# Nested-monotone under fixed s, W, N at global mins: deltaRaw >= 0.
-	# Small negative noise → 0; clear violation → NA (do not report negative chi-square / p = 1).
+	# Small negative noise -> 0; clear violation -> NA (do not report negative chi-square / p = 1).
 	tol = 1e-6 * max(1, abs(rawBase), abs(rawNested))
 	if (deltaRaw < -tol) {
 		warning("WLS discrepancy F is smaller for the nested model than for the freer base (F_nested = ",

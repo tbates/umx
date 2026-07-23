@@ -17,7 +17,7 @@
 #' (Shi et al., 2020), and still less to Genomic SEM (DWLS on LDSC genetic
 #' covariances with an estimated sampling covariance, often with bookkeeping `numObs = 1`).
 #'
-#' * **Incremental indices (CFI, TLI, NFI, …)** compare the model to an independence
+#' * **Incremental indices (CFI, TLI, NFI, ...)** compare the model to an independence
 #'   baseline under the same weight matrix. That baseline behaves differently than under ML.
 #'   Report CFI/TLI only **descriptively**; do **not** apply conventional cutoffs.
 #' * **Absolute fit: SRMR** (and residual matrices) is preferred. SRMR lives on a
@@ -25,35 +25,35 @@
 #'   Rough guide: SRMR < 0.10 suggests acceptable residual structure (not a hard law).
 #' * **RMSEA** folds in chi-square scaling and N; it is often misleading for WLS and
 #'   especially for GSEM. Do not use the ML cutoff of < .06.
-#' * **Nested model building:** prefer scaled chi-square difference tests and ΔSRMR
-#'   over ΔCFI alone (see Details for what `umxCompare` computes).
+#' * **Nested model building:** prefer scaled chi-square difference tests and DeltaSRMR
+#'   over DeltaCFI alone (see Details for what `umxCompare` computes).
 #'
 #' @details
 #' **What `umxCompare` does for WLS**
 #'
 #' * Refuses mixed WLS vs ML comparisons (same engine required).
 #' * **Continuous WLS** with cached `implied_jacobian`:
-#'   - Table **Chi** is the same Satorra–Bentler (2010) scaled omnibus as [umxSummary()]
+#'   - Table **Chi** is the same Satorra-Bentler (2010) scaled omnibus as [umxSummary()]
 #'     (\eqn{F/c} from `output$fit`), **not** OpenMx Browne residual `output$chi`
 #'     (those two differ under DWLS). Saturated residual df reports Chi = 0, CFI = 1, RMSEA = 0.
 #'   - Nested **diffFit** is SB-2010 scaled \eqn{\Delta F = F_{nested} - F_{base}}
 #'     (requires both models at comparable minima of the same WLS objective: same moments,
 #'     `useWeight`, and \eqn{N}). If \eqn{F_{nested} < F_{base}} (often multigroup
-#'     optimization), diffFit is **NA** with a warning — not a negative chi-square with p = 1.
+#'     optimization), diffFit is **NA** with a warning - not a negative chi-square with p = 1.
 #' * **Genomic SEM** (`MxModelGSEM`): nested difference on the **GSEM DWLS chi-square
 #'   scale** (same discrepancy as the structural fit; not a substitute for ML LRT).
 #'   If LDSC matrices were `nearPD`-smoothed, a fiduciary warning notes that difference
 #'   tests may look artificially precise.
-#' * Table also reports **SRMR / ΔSRMR** (preferred absolute residual summary) and
-#'   **CFI / ΔCFI** (descriptive only). AIC may appear but is not a primary GSEM decision
+#' * Table also reports **SRMR / DeltaSRMR** (preferred absolute residual summary) and
+#'   **CFI / DeltaCFI** (descriptive only). AIC may appear but is not a primary GSEM decision
 #'   rule under asymptotic / bookkeeping N.
 #'
 #' **Ordinal WLS** is a separate track: robust CFI/TLI/RMSEA use Savalei (2021) catML
-#' corrections in [umxSummary()]; Hu–Bentler cutoffs can apply to **those** robust indices.
+#' corrections in [umxSummary()]; Hu-Bentler cutoffs can apply to **those** robust indices.
 #' That exception does **not** apply to continuous WLS or Genomic SEM.
 #'
 #' Best practice: report estimates with SEs, SRMR (and residuals), nested SB/GSEM
-#' difference tests, and avoid single-number “good fit” claims from CFI or RMSEA.
+#' difference tests, and avoid single-number "good fit" claims from CFI or RMSEA.
 #'
 #' @param base The base [OpenMx::mxModel()] for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
@@ -202,10 +202,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			cat("  - AIC: Chi + 2*EP on the same Chi scale (convenience only for GSEM).\n")
 			if (isGenomic) {
 				cat("  - diffFit: nested difference on the GSEM DWLS chi-square scale.\n")
-				cat("\n*Statistical Note*: Genomic SEM — absolute fit: prefer SRMR (roughly < 0.10) and residual inspection. Nested models: use diffFit (DWLS chi-square difference). De-emphasize CFI/TLI/RMSEA; do not apply Hu-Bentler cutoffs. See ?umxCompare.\n")
+				cat("\n*Statistical Note*: Genomic SEM - absolute fit: prefer SRMR (roughly < 0.10) and residual inspection. Nested models: use diffFit (DWLS chi-square difference). De-emphasize CFI/TLI/RMSEA; do not apply Hu-Bentler cutoffs. See ?umxCompare.\n")
 			} else {
 				cat("  - diffFit: Satorra-Bentler (2010) scaled nested Delta chi-square when Jacobians are available and F is nested-monotone.\n")
-				cat("\n*Statistical Note*: Continuous WLS/DWLS — conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use Strict Satorra-Bentler (2010) Delta chi-square (diffFit). See ?umxCompare.\n")
+				cat("\n*Statistical Note*: Continuous WLS/DWLS - conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use Strict Satorra-Bentler (2010) Delta chi-square (diffFit). See ?umxCompare.\n")
 			}
 		}
 		return(invisible(finalTable))
@@ -314,7 +314,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				units_str = paste(units_val, collapse = ", ")
 			}
 			cat(paste0("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394 Fit = change in fit (units: ", units_str, "); \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n"))
-			cat("\n*Statistical Note*: WLS/GSEM — conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use scaled Delta chi-square (diffFit). De-emphasize incremental indices. See ?umxCompare.\n")
+			cat("\n*Statistical Note*: WLS/GSEM - conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use scaled Delta chi-square (diffFit). De-emphasize incremental indices. See ?umxCompare.\n")
 
 		} else {
 			if (length(robustScalingFactors) > 0) {

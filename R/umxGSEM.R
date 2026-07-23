@@ -31,14 +31,14 @@ umx_CheckProject <- function(project_path = "/path/to/my/project") {
 #' performance, especially with larger numbers of traits.
 #'
 #' @details
-#' S is A symmetric K×K matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h 
+#' S is A symmetric KxK matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h 
 #' 2). The off-diagonals contain the genetic covariances.
 #' 
-#' V is A symmetric M×M sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
+#' V is A symmetric MxM sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
 #' It contains the sampling variances of your heritabilities and genetic covariances on the diagonal, 
 #' and their sampling covariances on the off-diagonal.
 #' 
-#' I is a K×K matrix containing the LDSC intercepts 
+#' I is a KxK matrix containing the LDSC intercepts 
 #' (cross-trait intercepts on the off-diagonal, single-trait intercepts on the diagonal) 
 #' used to quantify sample overlap and population stratification.
 #' 
@@ -169,7 +169,7 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' @param output_dir Path to the directory where munged files should be saved. Defaults to `getwd()`.
 #' @param cores Number of CPU cores/threads to use. Defaults to -1 (uses all available threads).
 #' @param overwrite Whether to overwrite existing munged files (defaults to FALSE).
-#' @param ... Additional arguments passed to \code{OpenMx::imxMunge()}.
+#' @param ... Additional arguments passed to OpenMx \code{imxMunge} when available (GenomicMx).
 #' @return A character vector of paths to the munged files.
 #' @export
 #' @family GSEM
@@ -257,7 +257,12 @@ umxGSEM_munge <- function(files = NULL, hm3 = "w_hm3.snplist", Ns = NULL, trait.
 	setwd(output_dir)
 	
 	message("Passing files to high-speed OpenMx C++ munging engine...")
-	OpenMx::imxMunge(
+	# GenomicMx OpenMx export; look up by name so CRAN check does not require the symbol
+	imxMungeFun = get0("imxMunge", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
+	if (is.null(imxMungeFun)) {
+		stop("imxMunge is not available in this OpenMx build. Install GenomicMx OpenMx (see install.OpenMx(\"GenomicMx\")).", call. = FALSE)
+	}
+	imxMungeFun(
 		files = files, 
 		hm3 = hm3, 
 		trait.names = trait.names, 
@@ -335,13 +340,13 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #'
 #' **umx hard-refuses forever** the removed OpenMx WLS data interface
 #' (`type = "acov"` / `"none"`, `MxDataLegacyWLS`, top-level `acov=`/`fullWeight=`, or
-#' `observedStats$acov`/`$fullWeight` — historical name trap: `acov` meant useWeight).
+#' `observedStats$acov`/`$fullWeight` - historical name trap: `acov` meant useWeight).
 #' Use `observedStats` as above or raw data + `type = "DWLS"`.
 #'
 #' @param model A lavaan-style model string (also accepts umx `~=` loadings), **or** an existing
 #'   [OpenMx::mxModel()] / [umxRAM()] RAM model whose `manifestVars` name traits in `S`.
 #'   For SNP GWAS, use [umxGSEM_GWAS()] instead of passing SNPs here.
-#' @param covstruc LDSC list with genetic covariance `S` and sampling covariance `V` (and typically `I`, `N`, `m`) as from GenomicSEM's `ldsc` / [umxGSEM_ldsc()] — see e.g. [Psych_LDSC]. If provided, `S` and `V` are extracted from it.
+#' @param covstruc LDSC list with genetic covariance `S` and sampling covariance `V` (and typically `I`, `N`, `m`) as from GenomicSEM's `ldsc` / [umxGSEM_ldsc()] - see e.g. [Psych_LDSC]. If provided, `S` and `V` are extracted from it.
 #' @param S Genetic covariance matrix (if covstruc not provided).
 #' @param V Sampling covariance matrix (asymptotic covariance of S). If covstruc not provided.
 #' @param estimation Method for estimation. One of "DWLS", "WLS", or "ULS" (defaults to "DWLS").
@@ -467,7 +472,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 			stop("umxGSEM: WLS cov traits do not cover model manifests: ", paste(man, collapse = ", "))
 		}
 		S_subset = S_subset[man, man, drop = FALSE]
-		# V/W are in OpenMx residual order for S_subset's previous trait order — rebuild if reordered
+		# V/W are in OpenMx residual order for S_subset's previous trait order - rebuild if reordered
 		prep = xmu_gsem_prepare_WLS(covstruc = covstruc, keep_vars = man, estimation = estimation, smooth = smooth)
 		S_subset = prep$S
 		V_omx = prep$V_omx
@@ -653,7 +658,7 @@ umx_is_GSEM <- function(obj) {
 #' Hill, W. D., Ip, H. F., Marioni, R. E., McIntosh, A. M., Deary, I. J., Koellinger, P. D.,
 #' Harden, K. P., Nivard, M. G., & Tucker-Drob, E. M. (2019).
 #' Genomic structural equation modelling provides insights into the multivariate genetic
-#' architecture of complex traits. *Nature Human Behaviour*, **3**, 513–525.
+#' architecture of complex traits. *Nature Human Behaviour*, **3**, 513-525.
 #' \doi{10.1038/s41562-019-0566-x}
 #'
 #' Tutorial materials and sumstats conventions follow the Genomic SEM documentation and
@@ -755,7 +760,7 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' @param covstruc LDSC list with `S` (genetic covariance), `V` (sampling covariance of
 #'   vech(S)), and preferably `I` (LDSC intercept matrix, for GC-corrected SEs).
 #'   See e.g. [Psych_LDSC] (`I` = intercepts / sample-overlap; also `N`, `m`).
-#' @param SNPs Data frame from [umxGSEM_sumstats()] (columns `beta.*`, `se.*`, `MAF`, `SNP`, …).
+#' @param SNPs Data frame from [umxGSEM_sumstats()] (columns `beta.*`, `se.*`, `MAF`, `SNP`, ...).
 #' @param model Optional lavaan/umx string or mxModel. If `NULL`, builds
 #'  A RAM model with one latent (F1) loading on all the traits, and  "SNP" loading on F1
 #' @param estimation `"DWLS"` (default), `"WLS"`, or `"ULS"`.
@@ -768,7 +773,7 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' @param quiet Suppress per-SNP messages.
 #' @param fix_measurement Logical; if TRUE (default), fixes the non-SNP measurement model parameters to their base optimized values when evaluating each SNP (only applies if analytic engine is bypassed).
 #' @param force_fallback Logical; internal use for testing to force the non-vectorized analytic path (default `FALSE`).
-#' @return A data.frame of SNP results (`SNP`, `CHR`, `BP`, `MAF`, `est`, `se`, `Z`, `P`, `status`, …).
+#' @return A data.frame of SNP results (`SNP`, `CHR`, `BP`, `MAF`, `est`, `se`, `Z`, `P`, `status`, ...).
 #' @export
 #' @family GSEM
 #' @seealso [umxGSEM_sumstats()], [umxGSEM()], [Psych_LDSC]
@@ -1071,7 +1076,8 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 	}
 
 	cpp_loop_ok = FALSE
-	hasCppLoop = exists("mxComputeGSEMLoop", mode = "function")
+	mxComputeGSEMLoopFun = get0("mxComputeGSEMLoop", mode = "function", ifnotfound = NULL)
+	hasCppLoop = !is.null(mxComputeGSEMLoopFun)
 	if (!vectorized_ok && estimation %in% c("DWLS", "WLS") && hasCppLoop) {
 		if (!quiet) message("umxGSEM_GWAS: OpenMx C++ SNP loop for ", nSNP, " SNPs.")
 		
@@ -1189,10 +1195,10 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			W_varSNP = W_varSNP,
 			targets = target_params
 		)
-		if ("varSNP" %in% names(formals(mxComputeGSEMLoop))) {
+		if ("varSNP" %in% names(formals(mxComputeGSEMLoopFun))) {
 			loopArgs$varSNP = as.numeric(varSNP)
 		}
-		m = mxModel(m, do.call(mxComputeGSEMLoop, loopArgs))
+		m = mxModel(m, do.call(mxComputeGSEMLoopFun, loopArgs))
 		
 		fit = tryCatch(mxRun(m, silent = TRUE, suppressWarnings = TRUE), error = function(e) e)
 		
@@ -1506,8 +1512,9 @@ umxGSEM_label_ldsc <- function(covstruc = NULL, S = NULL, V = NULL, I = NULL, N 
 		traits = colnames(S_mat)
 	}
 	
-	if (exists("omxNameWLS_V", where = asNamespace("OpenMx"), mode = "function")) {
-		vech = OpenMx::omxNameWLS_V(traits)
+	nameWlsV = get0("omxNameWLS_V", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
+	if (is.function(nameWlsV)) {
+		vech = nameWlsV(traits)
 	} else {
 		k_len <- length(traits)
 		vech <- character(0)
@@ -1685,7 +1692,7 @@ xmu_umxSummary_print_matrix <- function(M, title, digits = 3, report = c("markdo
 #'
 #' Pretty-prints the trait list and the main LDSC/GSEM matrices (`S`, `I`, `V`,
 #' `N`, and scalar `m`) for objects like [Psych_LDSC] or the return value of
-#' [umxGSEM_ldsc()] / [imxLDSC()]. Tables use markdown or HTML via [umx_print].
+#' [umxGSEM_ldsc()] (or OpenMx \code{imxLDSC} when present). Tables use markdown or HTML via [umx_print].
 #'
 #' @param model A covstruc list with at least matrices `S` (genetic cov) and
 #'   `V` (sampling cov of vech(S)). Optional: `I`, `N`, `m`, `S_Stand`, `V_Stand`.
@@ -1756,14 +1763,14 @@ umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), m
 	if ("S" %in% want && !is.null(model$S)) {
 		xmu_umxSummary_print_matrix(
 			model$S, digits = digits, report = report, rowName = "Trait",
-			title = "S: Genetic covariance matrix (LDSC; diagonal ≈ SNP heritability on LDSC scale)"
+			title = "S: Genetic covariance matrix (LDSC; diagonal ~ SNP heritability on LDSC scale)"
 		)
 		cat("\n")
 	}
 	if ("I" %in% want && !is.null(model$I)) {
 		xmu_umxSummary_print_matrix(
 			model$I, digits = digits, report = report, rowName = "Trait",
-			title = "I: LDSC intercept matrix (diag ≈ 1; off-diag = sample overlap / confounding)"
+			title = "I: LDSC intercept matrix (diag ~ 1; off-diag = sample overlap / confounding)"
 		)
 		cat("\n")
 	}
@@ -1805,11 +1812,11 @@ umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), m
 #' and `observedStats` (`cov`, `useWeight`, `asymCov`). Works for
 #' `MxDataStatic` from [OpenMx::mxData] (including GSEM-style summary data).
 #'
-#' If `observedStats` still holds **LDSC/GSEM covstruc keys** (`S`, `V`, …)
-#' rather than modern WLS keys — e.g.
-#' `mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)` —
-#' OpenMx stores those names as-is (it does **not** map `S`→`cov` or
-#' `V`→`asymCov`). This method detects that case, prints the LDSC content via
+#' If `observedStats` still holds **LDSC/GSEM covstruc keys** (`S`, `V`, ...)
+#' rather than modern WLS keys - e.g.
+#' `mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)` -
+#' OpenMx stores those names as-is (it does **not** map `S`->`cov` or
+#' `V`->`asymCov`). This method detects that case, prints the LDSC content via
 #' [umxSummary.list()], and notes how to build a runnable WLS `mxData`.
 #'
 #' @param model An [OpenMx::mxData] object (`MxDataStatic`).
@@ -1833,9 +1840,13 @@ umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), m
 #' V = Psych_LDSC$V[1:6, 1:6]
 #' W = diag(1 / diag(V))
 #' dimnames(W) = dimnames(V)
+#' \dontrun{
+#' # Needs modern OpenMx/GenomicMx (type = "summary" pure observedStats).
+#' # CRAN OpenMx historically used type = "none" for this layout.
 #' d = mxData(numObs = 1, type = "summary",
 #'            observedStats = list(cov = S, useWeight = W, asymCov = V))
 #' umxSummary(d)
+#' }
 umxSummary.MxDataStatic <- function(model, digits = 3, report = c("markdown", "html"),
 	matrices = c("cov", "useWeight", "asymCov"), ...) {
 	report = match.arg(report)
@@ -1871,8 +1882,8 @@ umxSummary.MxDataStatic <- function(model, digits = 3, report = c("markdown", "h
 
 	if (isLdscShaped) {
 		cat("\n")
-		cat("**Note:** `observedStats` holds LDSC/GSEM covstruc fields (`S`, `V`, …), not modern WLS slots.\n")
-		cat("OpenMx does **not** auto-map `S`→`cov` or `V`→`asymCov`. This object is **not** a runnable\n")
+		cat("**Note:** `observedStats` holds LDSC/GSEM covstruc fields (`S`, `V`, ...), not modern WLS slots.\n")
+		cat("OpenMx does **not** auto-map `S`->`cov` or `V`->`asymCov`. This object is **not** a runnable\n")
 		cat("WLS summary dataset until remapped, e.g.:\n\n")
 		cat("```r\n")
 		cat("S = os$S; V = os$V\n")

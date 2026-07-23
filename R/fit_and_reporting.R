@@ -4064,7 +4064,7 @@ print.RMSEA <- function(x, ...) {
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @references - Fisher, R.A. (1925). *Statistical Methods for Research Workers*. Oliver and Boyd (Edinburgh). ISBN 0-05-002170-2.
-#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30–31. \doi{10.2307/2681650}.
+#' * Fisher, R. A (1948). "Questions and answers #14". *The American Statistician*. **2**: 30-31. \doi{10.2307/2681650}.
 #' * Stouffer, S. A. and Suchman, E. A. and DeVinney, L. C. and Star, S. A. and Williams, R. M. Jr. (1949) The American Soldier, 
 #' Vol. 1 - Adjustment during Army Life. Princeton, Princeton University Press.
 
@@ -4997,28 +4997,27 @@ umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "g
 #' label_top_n, downsample (TRUE), and downsample_n (2e+05), title = NULL
 #' @param x A `umx_GWAS` object (returned by \code{\link{umxGSEM_GWAS}}).
 #' @param type Type of plot: "manhattan" (default) or "qq".
-#' @param ... Additional arguments passed to \code{\link[ggwas]{manhattan_plot}} or \code{\link[ggwas]{qq_plot}}.
+#' @param ... Additional arguments passed to ggwas \code{manhattan_plot} or \code{qq_plot}
+#'   (optional package; install from GitHub \code{bczech/ggwas} if needed).
 #' @return A `ggplot` object.
 #' @export
 #' @family Reporting Functions
 #' @family GSEM
 #' @examples
 #' \dontrun{
-#' data(example_gwas, package = "ggwas")
-#' plot.umx_GWAS(example_gwas, type= "manhattan")
-#' plot.umx_GWAS(example_gwas, label_top_n = 5) + theme_nature()
-#' plot.umx_GWAS(example_gwas, colors = gwas_palette("nejm")) + theme_science()
-#' plot.umx_GWAS(example_gwas, chromosomes= 1:7, label_top_n= 3) + theme_science()
-#' plot.umx_GWAS(example_gwas, type= "qq")
+#' # Requires optional GitHub package ggwas (not on CRAN):
+#' #   remotes::install_github("bczech/ggwas")
+#' # data(example_gwas, package = "ggwas")
+#' # plot.umx_GWAS(example_gwas, type = "manhattan")
 #' }
 plot.umx_GWAS <- function(x, type = c("manhattan", "qq"), ...) {
 	if (!requireNamespace("ggwas", quietly = TRUE)) {
-		stop("The 'ggwas' package is required for plotting GWAS results. Install it with: devtools::install_github('bczech/ggwas')")
+		stop("The 'ggwas' package is required for plotting GWAS results. Install it with: remotes::install_github('bczech/ggwas')", call. = FALSE)
 	}
 	type = match.arg(type)
 	if (type == "manhattan") {
-		return(ggwas::manhattan_plot(x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", ...))
+		return(get("manhattan_plot", asNamespace("ggwas"))(x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", ...))
 	} else if (type == "qq") {
-		return(ggwas::qq_plot(x, p = "P", ...))
+		return(get("qq_plot", asNamespace("ggwas"))(x, p = "P", ...))
 	}
 }

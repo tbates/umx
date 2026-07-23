@@ -654,11 +654,12 @@ xmu_openmx_residual_names <- function(traitNames) {
 	nms
 }
 
-# Wrapper for OpenMx::omxNameWLS_V.
+# Wrapper for OpenMx omxNameWLS_V when exported (GenomicMx); else local fallback.
 # Generates native OpenMx WLS compliant names (var_X, poly_Y_X) instead of legacy GenomicSEM pair names.
 xmu_gsem_vech_names <- function(traitNames) {
-	if (exists("omxNameWLS_V", where = asNamespace("OpenMx"), mode = "function")) {
-		return(OpenMx::omxNameWLS_V(traitNames))
+	nameWlsV = get0("omxNameWLS_V", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
+	if (is.function(nameWlsV)) {
+		return(nameWlsV(traitNames))
 	}
 	# Fallback for pre-genomicSEM OpenMx
 	k <- length(traitNames)
@@ -2348,7 +2349,7 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' values are coerced before any `cat(..., file = )` or DiagrammeR call.
 #'
 #' @param model An [OpenMx::mxModel()] to get the name from
-#' @param file Plot destination: `"name"` (temp/model name), a path string, `NA`/`NULL` (print digraph only, no file), or logical (`TRUE` → `"name"`, `FALSE` → off). Often passed as `getOption("umx_auto_plot")`.
+#' @param file Plot destination: `"name"` (temp/model name), a path string, `NA`/`NULL` (print digraph only, no file), or logical (`TRUE` -> `"name"`, `FALSE` -> off). Often passed as `getOption("umx_auto_plot")`.
 #' @param digraph Graphviz code for a model
 #' @param strip_zero Whether to remove the leading "0." in digits in the diagram
 #' @return - optionally returns the digraph text.
@@ -2465,7 +2466,7 @@ xmu_has_summary_mxData <- function(force = FALSE) {
 #' @description
 #' Stops with a polite install hint if [xmu_has_summary_mxData()] is FALSE.
 #' Call at the entry of any feature that builds modern summary WLS data.
-#' Do **not** fall back to legacy `type = "none"` / `"acov"` — that API is refused forever in umx.
+#' Do **not** fall back to legacy `type = "none"` / `"acov"` - that API is refused forever in umx.
 #'
 #' @param where Short label for the call site (default `"This feature"`).
 #' @return Invisibly `TRUE` when supported.

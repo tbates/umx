@@ -16,7 +16,7 @@
 #' you can interactively explore the effects of allele frequency, additive variance, and 
 #' [dominance](https://en.wikipedia.org/wiki/Dominance_(genetics)).
 #' 
-#' This function lets you explore the simplest two–allele system (`B` and `b`), with three possible 
+#' This function lets you explore the simplest two-allele system (`B` and `b`), with three possible 
 #' genotypes, `BB`, `Bb`, and `bb`.
 #' 
 #' The point between the two homozygotes is `m` -- the mean effect of the homozygous genotypes. 
@@ -479,9 +479,9 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 				"tmx_show: matrix name ", omxQuotes(w), " is not supported.\n",
 				"  OpenMx historically used 'acov' for useWeight (not the sampling covariance).\n",
 				"  Use clear names instead:\n",
-				"    data.S / observed  — observed covariance (e.g. LDSC S)\n",
-				"    data.V / asymCov   — sampling covariance of residual moments (LDSC V)\n",
-				"    data.W / useWeight — WLS weight matrix (DWLS: diag(1/diag(V)))",
+				"    data.S / observed  - observed covariance (e.g. LDSC S)\n",
+				"    data.V / asymCov   - sampling covariance of residual moments (LDSC V)\n",
+				"    data.W / useWeight - WLS weight matrix (DWLS: diag(1/diag(V)))",
 				call. = FALSE
 			)
 		}
@@ -536,7 +536,7 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 					message("\n", mat_name, " is not available in the model data (need modern observedStats).")
 					next
 				}
-				# Sampling covs are often 1e-4..1e-6 — default digits=2 would print as all zeros
+				# Sampling covs are often 1e-4..1e-6 - default digits=2 would print as all zeros
 				digitsData = digits
 				maxAbs = suppressWarnings(max(abs(mat_val), na.rm = TRUE))
 				if (is.finite(maxAbs) && maxAbs > 0 && maxAbs < 0.01) {

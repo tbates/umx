@@ -108,7 +108,7 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 # #' @family Data Functions
 # #' @seealso - [MASS::boxcox()]
 # #' @references - Box, G. E. P. and Cox, D. R. (1964) An analysis of transformations (with discussion). 
-# #' *Journal of the Royal Statistical Society B*, **26**, 211–252. <https://www.jstor.org/stable/2984418>
+# #' *Journal of the Royal Statistical Society B*, **26**, 211-252. <https://www.jstor.org/stable/2984418>
 # 
 # #' @examples
 # #' tmp = log(1:100)
@@ -1608,7 +1608,7 @@ umxParan <- function(df, cols = NA, graph = TRUE, mapStrings = NULL, n = NULL) {
 #' @family Data Functions
 #' @seealso	umx_strings2numeric
 #' @references -  Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, <https://CRAN.R-project.org/package=psych> Version = 2.2.9.
-#' * McNeish, D. (2018). Thanks coefficient alpha, we’ll take it from here. *Psychological Methods*, **23**, 412-433. \doi{10.1037/met0000144}.
+#' * McNeish, D. (2018). Thanks coefficient alpha, we'll take it from here. *Psychological Methods*, **23**, 412-433. \doi{10.1037/met0000144}.
  
 #' @examples
 #' library(psych)
@@ -3187,7 +3187,7 @@ install.OpenMx <- function(loc = c("CRAN", "GenomicMx", "open release page", "so
 	if (loc == "open release page") {
 		browseURL(xmu_genomicmx_release_page_url())
 		message("Opened GenomicMx OpenMx releases. Download the binary for your OS/R version, then:\n",
-			"  install.packages(\"/path/to/OpenMx_….tgz\", repos = NULL)  # or .zip on Windows")
+			"  install.packages(\"/path/to/OpenMx_....tgz\", repos = NULL)  # or .zip on Windows")
 		return(invisible(NULL))
 	}
 
@@ -3195,11 +3195,11 @@ install.OpenMx <- function(loc = c("CRAN", "GenomicMx", "open release page", "so
 		if (!requireNamespace("remotes", quietly = TRUE)) {
 			stop("install.OpenMx(\"source\") needs the remotes package. install.packages(\"remotes\") first.", call. = FALSE)
 		}
-		message("Installing OpenMx from GitHub source (tbates/GenomicMx). This compiles C++ and may take several minutes.")
+		message("Installing OpenMx from GitHub source (tbates/OpenMx-tb). This compiles C++ and may take several minutes.")
 		if (missing(lib)) {
-			remotes::install_github("tbates/GenomicMx", upgrade = "never")
+			remotes::install_github("tbates/OpenMx-tb", upgrade = "never")
 		} else {
-			remotes::install_github("tbates/GenomicMx", upgrade = "never", lib = lib)
+			remotes::install_github("tbates/OpenMx-tb", upgrade = "never", lib = lib)
 		}
 		message("Done. Restart R, then library(OpenMx); library(umx). Check with umxVersion().")
 		return(invisible(NULL))
@@ -3236,7 +3236,8 @@ install.OpenMx <- function(loc = c("CRAN", "GenomicMx", "open release page", "so
 #' GitHub Releases page for GenomicMx OpenMx binaries
 #' @keywords internal
 xmu_genomicmx_release_page_url <- function() {
-	"https://github.com/tbates/GenomicMx/releases"
+	# Public fork/releases (update if the GitHub repo name changes)
+	"https://github.com/tbates/OpenMx-tb/releases"
 }
 
 #' Resolve a platform binary URL from the latest GenomicMx GitHub Release (if any)
@@ -3245,7 +3246,7 @@ xmu_genomicmx_release_page_url <- function() {
 #' @keywords internal
 xmu_genomicmx_binary_url <- function() {
 	# Base R only (no jsonlite dependency): pull latest release JSON and scrape asset URLs.
-	api = "https://api.github.com/repos/tbates/GenomicMx/releases/latest"
+	api = "https://api.github.com/repos/tbates/OpenMx-tb/releases/latest"
 	raw = tryCatch({
 		con = url(api, open = "rb")
 		on.exit(close(con), add = TRUE)
@@ -3255,7 +3256,7 @@ xmu_genomicmx_binary_url <- function() {
 		return(NULL)
 	}
 	# browser_download_url values in GitHub release JSON
-	urls = regmatches(raw, gregexpr("https://github.com/tbates/GenomicMx/releases/download/[^\"]+", raw))[[1]]
+	urls = regmatches(raw, gregexpr("https://github.com/tbates/OpenMx-tb/releases/download/[^\"]+", raw))[[1]]
 	urls = unique(urls)
 	if (!length(urls)) {
 		return(NULL)
@@ -3487,9 +3488,9 @@ umx_make <- function(
 #' issues); after install, restart R or `library(OpenMx)`.
 #'
 #' Immediate workflow:
-#' 1. `mx_make()` or `mx_make("install")` — local `make install` (NPSOL when the
+#' 1. `mx_make()` or `mx_make("install")` - local `make install` (NPSOL when the
 #'    Makefile is so configured).
-#' 2. `mx_make("win")` — `devtools::check_win_devel()` for the source tree.
+#' 2. `mx_make("win")` - `devtools::check_win_devel()` for the source tree.
 #'
 #' @param what Target. One of:
 #'   \describe{
@@ -3730,7 +3731,7 @@ umx_msg <- function(x) {
 #' @description
 #' A wrapper for [ggplot2::stat_function()] that handles single or multiple functions.
 #'
-#' @details Easily plot functions—like sin or x^2—using ggplot. Accepts bare functions, 
+#' @details Easily plot functions-like sin or x^2-using ggplot. Accepts bare functions, 
 #' strings, or lists of strings/functions. Automatically generates a legend when 
 #' multiple functions are provided.
 #'
@@ -7690,7 +7691,7 @@ xmu_read.markdown <- function(file, stringsAsFactors = FALSE, strip.white = TRUE
 #' `prolific_anonymize` replaces PIDs with a simple numeric sequence, preserving
 #' repeated measures in long data, and removing other columns.
 #' You can delete additional  columns by adding them to `extraColumns`. It is ideal for use 
-#' when sharing data to \url{https://researchbox.org} which enforces anonymization.
+#' when sharing data to ResearchBox (researchbox.org) which enforces anonymization.
 #'
 #' @param df Existing datafile to anonymize.
 #' @param PID The prolific ID col name to anonymize
@@ -8999,13 +9000,23 @@ xmu_parse_completion_context <- function(line, end) {
 	))
 }
 
+#' Fallback to utils internal token completer (no triple-colon in package code)
+#' @keywords internal
+xmu_utils_completeToken <- function(custom = FALSE) {
+	fun = get0(".completeToken", envir = asNamespace("utils"), inherits = FALSE, ifnotfound = NULL)
+	if (is.function(fun)) {
+		return(fun(custom = custom))
+	}
+	character(0)
+}
+
 #' xmu_custom_completer
 #'
 #' A custom autocompletion function for R console. It intercepts the tab-completion
 #' process and suggests default values/options (from `c(...)` or logical vectors)
 #' for function arguments when completing an argument value.
 #'
-#' @param env The completion environment (usually `utils:::.CompletionEnv`).
+#' @param env The completion environment (utils internal CompletionEnv).
 #' @return NULL (called for its side effects of modifying `env[["comps"]]`).
 xmu_custom_completer <- function(env) {
 	line = env[["linebuffer"]]
@@ -9027,7 +9038,7 @@ xmu_custom_completer <- function(env) {
 		if (is.function(old_completer) && !is_recursive) {
 			return(old_completer(env))
 		} else {
-			return(utils:::.completeToken(custom = FALSE))
+			return(xmu_utils_completeToken())
 		}
 	}
 	
@@ -9045,7 +9056,7 @@ xmu_custom_completer <- function(env) {
 		if (is.function(old_completer) && !is_recursive) {
 			return(old_completer(env))
 		} else {
-			return(utils:::.completeToken(custom = FALSE))
+			return(xmu_utils_completeToken())
 		}
 	}
 	
@@ -9054,7 +9065,7 @@ xmu_custom_completer <- function(env) {
 		if (is.function(old_completer) && !is_recursive) {
 			return(old_completer(env))
 		} else {
-			return(utils:::.completeToken(custom = FALSE))
+			return(xmu_utils_completeToken())
 		}
 	}
 	
@@ -9080,7 +9091,7 @@ xmu_custom_completer <- function(env) {
 		if (is.function(old_completer) && !is_recursive) {
 			return(old_completer(env))
 		} else {
-			return(utils:::.completeToken(custom = FALSE))
+			return(xmu_utils_completeToken())
 		}
 	}
 	

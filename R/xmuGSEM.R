@@ -63,7 +63,7 @@ xmu_gsem_subset_covstruc <- function(covstruc, keep_vars) {
 			"  V has: ", if (is.null(have)) "(no dimnames)" else paste(have[seq_len(min(6L, length(have)))], collapse = ", "),
 			if (!is.null(have) && length(have) > 6) ", ..." else "", "\n",
 			"  Tip: ensure your dataset was labeled natively with OpenMx residual names (var_X, poly_Y_X).\n",
-			"  Do not use V[1:z, 1:z] on a larger V — that is not the trait-block vech."
+			"  Do not use V[1:z, 1:z] on a larger V - that is not the trait-block vech."
 		)
 		stop(tip, call. = FALSE)
 	}
@@ -537,7 +537,7 @@ xmu_gsem_extract_snp_path <- function(fit, traits, snpEffect = "SNP_to_F1") {
 			}
 		}
 	}
-	# Drop numerical garbage (singular sandwich → absurd Z)
+	# Drop numerical garbage (singular sandwich -> absurd Z)
 	if (is.finite(se) && (se <= 0 || se < 1e-12 * max(1, abs(est)))) {
 		se = NA_real_
 		se_source = "dropped_numeric"

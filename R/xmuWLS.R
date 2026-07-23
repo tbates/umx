@@ -101,7 +101,7 @@ xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {
 		deltaDfVec = c(NA, deltaDf)
 
 		if (isGenomic) {
-			# Track B: Genomic SEM — difference of DWLS chi-squares on the GSEM scale
+			# Track B: Genomic SEM - difference of DWLS chi-squares on the GSEM scale
 			message("umx Note: Genomic SEM model detected. Nested diffFit uses the GSEM DWLS chi-square difference (not ML LRT). Prefer SRMR for absolute fit; de-emphasize CFI cutoffs (see ?umxCompare).")
 			deltaChisq = abs(chisqComp - chisqBase)
 			diffFitVec = c(NA, round(deltaChisq, 3))
@@ -218,7 +218,7 @@ xmu_has_WLS_jacobian <- function(model) {
 
 #' Display chi-square and AFIs for a WLS model (shared by summary and compare)
 #'
-#' When \code{output$implied_jacobian} is present, returns Satorra–Bentler (2010)
+#' When \code{output$implied_jacobian} is present, returns Satorra-Bentler (2010)
 #' scaled statistics from [xmu_robust_WLS_fit()] (including saturated df=0
 #' convention: Chi=0, CFI/TLI=1, RMSEA=0). Otherwise falls back to OpenMx
 #' \code{summary()} Browne residual chi-square.
@@ -741,14 +741,14 @@ xmu_catml_discrepancy_at_WLS <- function(model) {
 #'         \eqn{p = 1 - F_{\chi^2_{df}}(\chi^2_{SB})}.
 #' }
 #'
-#' **Branch A — Continuous WLS** (\code{correction = "SB2010"}).
+#' **Branch A - Continuous WLS** (\code{correction = "SB2010"}).
 #' Detected when no manifest is \code{ordered} or \code{factor} on raw data
 #' ([xmu_is_ordinal_WLS()] returns \code{FALSE}). Robust
 #' \code{CFI}, \code{TLI}, and \code{RMSEA} are derived from SB-scaled target and
 #' independence \eqn{\chi^2} and their dfs. Attributes \code{c_model} and
 #' \code{c_null} hold the SB trace factors.
 #'
-#' **Branch B — Ordinal / categorical WLS** (\code{correction = "Savalei2021"}).
+#' **Branch B - Ordinal / categorical WLS** (\code{correction = "Savalei2021"}).
 #' Detected when at least one manifest is \code{ordered} or \code{factor}.
 #' Robust indices use the Brosseau-Liard / Savalei noncentrality form with catML
 #' ingredients evaluated at **fixed** converged WLS estimates (no re-optimization):
@@ -795,7 +795,7 @@ xmu_catml_discrepancy_at_WLS <- function(model) {
 #'
 #' **Cutoff guidance.** For ordinal WLS, Hu & Bentler (1999) conventional cutoffs
 #' (e.g. CFI \eqn{\geq} 0.95, RMSEA \eqn{\leq} 0.06) apply to the **robust**
-#' \code{CFI}/\code{TLI}/\code{RMSEA} reported here—not to raw WLS \eqn{\chi^2}.
+#' \code{CFI}/\code{TLI}/\code{RMSEA} reported here-not to raw WLS \eqn{\chi^2}.
 #' Display \eqn{\chi^2} and \eqn{p} remain SB-scaled WLS omnibus tests.
 #'
 #' **Software note.** Numeric values of \eqn{\hat{c}_3} may differ from other SEM
@@ -855,8 +855,8 @@ xmu_robust_WLS_fit <- function(model) {
 		stop("Target model missing implied_jacobian.")
 	}
 	
-	# Step B: Extract W and asymCov (modern observedStats; multigroup → block-diagonal)
-	# (Saturated early-return comes after this so missing W/Γ still error.)
+	# Step B: Extract W and asymCov (modern observedStats; multigroup -> block-diagonal)
+	# (Saturated early-return comes after this so missing W/Gamma still error.)
 	wv = xmu_wls_extract_WV(model, stop_if_missing = TRUE)
 	weightMat = wv$useWeight
 	asymCov   = wv$asymCov
@@ -907,7 +907,7 @@ xmu_robust_WLS_fit <- function(model) {
 		stop("Asymptotic covariance matrix missing rownames.")
 	}
 
-	# Calculate K (number of observed variables) — single-group heuristic
+	# Calculate K (number of observed variables) - single-group heuristic
 	manifests = model@manifestVars
 	if ((is.null(manifests) || length(manifests) == 0) && nGroups > 1L) {
 		# Take manifests from first data-bearing group

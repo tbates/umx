@@ -41,7 +41,7 @@
 #' @name docData
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxSummary.MxModelDoC()], [umxModify()]
 #' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. 
-#' In *Encyclopedia of Statistics in Behavioral Science*, **1**, 496–499. Eds. Brian S. Everitt & David C. Howell
+#' In *Encyclopedia of Statistics in Behavioral Science*, **1**, 496-499. Eds. Brian S. Everitt & David C. Howell
 #' @usage data(docData)
 #' @format A data frame 6 manifests for each of two twins in 1400 families of MZ and DZ twins
 
@@ -251,7 +251,7 @@ NULL
 #' @name iqdat
 #' @references Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for repeated measures: 
 #' application to two psychomotor measures of alcohol sensitivity in twins. *Behavior Genetics*, **19**, 79-96.
-#' Retrieved from <https://www.ncbi.nlm.nih.gov/pubmed/2712815>
+#' Retrieved from <https://pubmed.ncbi.nlm.nih.gov/2712815/>
 #' @usage data(iqdat)
 #' @format A data frame with 562 rows (twin families). Nine measures on each twin.
 #' @seealso [umxSimplex()] 
@@ -320,7 +320,7 @@ NULL
 #'
 #' A dataset containing the genetic covariance structure from LD score regression (LDSC)
 #' for 9 anthropometric phenotypes: BMI, WHR, CO, Waist, Hip, Height, IHC, BL, and BW.
-#' Same list layout as [Psych_LDSC] — pass the object as `covstruc` to [umxGSEM()] or
+#' Same list layout as [Psych_LDSC] - pass the object as `covstruc` to [umxGSEM()] or
 #' [umxGSEM_GWAS()].
 #'
 #' @details
@@ -390,7 +390,7 @@ NULL
 #' data(Psych_LDSC)
 #' str(Psych_LDSC, max.level = 1)
 #' names(Psych_LDSC) # "V" "S" "I" "N" "m"
-#' # Pretty-print S, I, V, … (see also umxSummary on WLS mxData)
+#' # Pretty-print S, I, V, ... (see also umxSummary on WLS mxData)
 #' umxSummary(Psych_LDSC)
 #' # I = LDSC intercept matrix (diag ~ 1; off-diag = sample overlap)
 #' round(Psych_LDSC$I, 3)
