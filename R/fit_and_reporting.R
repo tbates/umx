@@ -5017,8 +5017,13 @@ plot.umx_GWAS <- function(x, type = c("manhattan", "qq"), ...) {
 	}
 	type = match.arg(type)
 	if (type == "manhattan") {
-		return(ggwas::manhattan_plot(x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", ...))
+		# TODO clean up when ggwas goes on cran
+		# 2. Dynamically extract the function to bypass CRAN's static namespace check
+		ggwas_manhattan_plot_fn <- utils::getFromNamespace("manhattan_plot", "ggwas")
+		# 3. Execute seamlessly
+		return(ggwas_manhattan_plot_fn(x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", ...))
 	} else if (type == "qq") {
-		return(ggwas::qq_plot(x, p = "P", ...))
+		ggwas_qq_plot_fn <- utils::getFromNamespace("qq_plot", "ggwas")
+		return(ggwas_qq_plot_fn(x, p = "P", ...))
 	}
 }

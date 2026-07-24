@@ -5,8 +5,8 @@
 \title{Developer "make" helper for local OpenMx / GenomicMx}
 \usage{
 mx_make(
-  what = c("install", "NPSOL", "cran-install", "build", "check", "win", "spell",
-    "sitrep", "deps_install", "testthat", "git", "GenomicMx", "help"),
+  what = c("install", "NPSOL", "cran-install", "build", "Rd", "check", "win", "spell",
+    "sitrep", "deps_install", "testthat", "git", "GenomicMx", "--help"),
   pkg = "~/bin/OpenMx",
   deploymentTarget = "14.0",
   openmp = TRUE
@@ -18,11 +18,12 @@ mx_make(
 \item{\code{"install"} / \code{"NPSOL"}}{\code{make install} (NPSOL-capable tree when available).}
 \item{\code{"cran-install"}}{\code{make cran-install} (no NPSOL).}
 \item{\code{"build"}}{\code{make build} (local binary package).}
+\item{\code{"Rd"}}{\code{make roxygen} (OpenMx \code{util/rox}; refresh man/*.Rd).}
 \item{\code{"check"}}{\code{make cran-check}.}
-\item{\code{"win"}}{\code{devtools::check_win_devel(pkg)}.}
+\item{\code{"win"}}{\code{devtools::check_win_devel(pkg)} — source tree at \code{pkg}.}
 \item{\code{"spell"}, \code{"sitrep"}, \code{"deps_install"}, \code{"testthat"}, \code{"git"}}{Same idea as \code{\link[=umx_make]{umx_make()}}.}
 \item{\code{"GenomicMx"}}{\code{\link[=install.OpenMx]{install.OpenMx()}} prebuilt binary from GitHub Releases.}
-\item{\code{"help"}}{List \code{mx_make} targets and run \code{make help}.}
+\item{\code{"help"} / \code{"--help"}}{List \code{mx_make} targets and run \code{make help}.}
 }}
 
 \item{pkg}{Path to the OpenMx source tree (default \code{"~/bin/OpenMx"}).}
@@ -40,26 +41,58 @@ Maintainer utility (lives in \strong{umx}, not the OpenMx package). Mirrors
 \code{\link[=umx_make]{umx_make()}} but prefers OpenMx's \strong{Makefile} for compile/install (C++,
 OpenMP, NPSOL vs CRAN build). Use \strong{devtools} for win-builder and package
 hygiene. Does \strong{not} use \code{devtools::load_all()} for OpenMx (DLL / S4 load
-issues); after install, restart R or \code{library(OpenMx)}.
+issues); after install, \strong{restart R} then \code{library(OpenMx)}.
 
-Immediate workflow:
+Two independent targets matter:
+\itemize{
+\item \strong{Installed library} — what \code{library(OpenMx)} runs. Updated only by
+\code{mx_make()} / \code{"install"} / \code{"cran-install"} / \code{"GenomicMx"} (or CRAN).
+\item \strong{Source tree at \code{pkg}} — what \code{"win"} packages for win-builder.
+Independent of whatever is currently installed in R.
+}
+}
+\section{Flight checklist}{
+
 \enumerate{
-\item \code{mx_make()} or \code{mx_make("install")} - local \verb{make install} (NPSOL when the
-Makefile is so configured).
-\item \code{mx_make("win")} - \code{devtools::check_win_devel()} for the source tree.
+\item \strong{Update Rd files} (after editing roxygen in \code{R/}):
+\code{mx_make("Rd")} — runs OpenMx \code{make roxygen} (\code{util/rox}:
+compile DLL + \code{roxygenize} rd). Do \strong{not} use bare
+\code{devtools::document()} on OpenMx; man pages are git-tracked and the
+Makefile owns the official path.
+\item \strong{Install this tree into R's library}:
+\code{mx_make()} or \code{mx_make("install")} (NPSOL when the Makefile
+enables it). Or \code{mx_make("cran-install")} without NPSOL.
+\item \strong{Restart R}, then verify identity:
+\code{library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")}.
+The path must be the library you just installed into (not a forgotten
+CRAN copy on another \code{.libPaths()} entry). Optional:
+\code{xmu_openmx_engine_status()} for GenomicMx capability.
+\item \strong{Win-builder} (same source tree, not the installed DLL):
+Prefer a clean commit if you care what is archived; then
+\code{mx_make("win")} — \code{devtools::check_win_devel(pkg)}.
+Local install is \strong{not} required for win-builder; only the files
+under \code{pkg} are uploaded.
+\item \strong{Prebuilt release binary} (not local WIP):
+\code{mx_make("GenomicMx")} → \code{\link[=install.OpenMx]{install.OpenMx()}} from GitHub Releases.
 }
 }
+
 \examples{
 \dontrun{
-mx_make()                 # make install (local OpenMx; NPSOL if Makefile enables it)
+# Flight checklist (local engine + win-builder)
+mx_make("Rd")             # util/rox: refresh man/*.Rd
+mx_make()                 # make install this tree into R library
+# restart R, then:
+# library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")
+mx_make("win")            # upload source tree to win-builder (devel)
+
 mx_make("cran-install")
-mx_make("win")            # check_win_devel
 mx_make("spell")
 mx_make("sitrep")
 mx_make("deps_install")
 mx_make("GenomicMx")      # prebuilt binary via install.OpenMx("GenomicMx")
 mx_make("NPSOL")          # alias of install
-mx_make("help")
+mx_make("--help")
 }
 }
 \references{

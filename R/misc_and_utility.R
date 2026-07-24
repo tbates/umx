@@ -3482,23 +3482,51 @@ umx_make <- function(
 #' [umx_make()] but prefers OpenMx's **Makefile** for compile/install (C++,
 #' OpenMP, NPSOL vs CRAN build). Use **devtools** for win-builder and package
 #' hygiene. Does **not** use `devtools::load_all()` for OpenMx (DLL / S4 load
-#' issues); after install, restart R or `library(OpenMx)`.
+#' issues); after install, **restart R** then `library(OpenMx)`.
 #'
-#' Immediate workflow:
-#' 1. `mx_make()` or `mx_make("install")` - local `make install` (NPSOL when the
-#'    Makefile is so configured).
-#' 2. `mx_make("win")` - `devtools::check_win_devel()` for the source tree.
+#' Two independent targets matter:
+#' \itemize{
+#'   \item \strong{Installed library} — what `library(OpenMx)` runs. Updated only by
+#'     `mx_make()` / `"install"` / `"cran-install"` / `"GenomicMx"` (or CRAN).
+#'   \item \strong{Source tree at \code{pkg}} — what `"win"` packages for win-builder.
+#'     Independent of whatever is currently installed in R.
+#' }
+#'
+#' @section Flight checklist:
+#' \enumerate{
+#'   \item \strong{Update Rd files} (after editing roxygen in \code{R/}):
+#'     \code{mx_make("Rd")} — runs OpenMx \code{make roxygen} (\code{util/rox}:
+#'     compile DLL + \code{roxygenize} rd). Do \strong{not} use bare
+#'     \code{devtools::document()} on OpenMx; man pages are git-tracked and the
+#'     Makefile owns the official path.
+#'   \item \strong{Install this tree into R's library}:
+#'     \code{mx_make()} or \code{mx_make("install")} (NPSOL when the Makefile
+#'     enables it). Or \code{mx_make("cran-install")} without NPSOL.
+#'   \item \strong{Restart R}, then verify identity:
+#'     \code{library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")}.
+#'     The path must be the library you just installed into (not a forgotten
+#'     CRAN copy on another \code{.libPaths()} entry). Optional:
+#'     \code{xmu_openmx_engine_status()} for GenomicMx capability.
+#'   \item \strong{Win-builder} (same source tree, not the installed DLL):
+#'     Prefer a clean commit if you care what is archived; then
+#'     \code{mx_make("win")} — \code{devtools::check_win_devel(pkg)}.
+#'     Local install is \strong{not} required for win-builder; only the files
+#'     under \code{pkg} are uploaded.
+#'   \item \strong{Prebuilt release binary} (not local WIP):
+#'     \code{mx_make("GenomicMx")} → [install.OpenMx()] from GitHub Releases.
+#' }
 #'
 #' @param what Target. One of:
 #'   \describe{
 #'     \item{\code{"install"} / \code{"NPSOL"}}{\code{make install} (NPSOL-capable tree when available).}
 #'     \item{\code{"cran-install"}}{\code{make cran-install} (no NPSOL).}
 #'     \item{\code{"build"}}{\code{make build} (local binary package).}
+#'     \item{\code{"Rd"}}{\code{make roxygen} (OpenMx \code{util/rox}; refresh man/*.Rd).}
 #'     \item{\code{"check"}}{\code{make cran-check}.}
-#'     \item{\code{"win"}}{\code{devtools::check_win_devel(pkg)}.}
+#'     \item{\code{"win"}}{\code{devtools::check_win_devel(pkg)} — source tree at \code{pkg}.}
 #'     \item{\code{"spell"}, \code{"sitrep"}, \code{"deps_install"}, \code{"testthat"}, \code{"git"}}{Same idea as [umx_make()].}
 #'     \item{\code{"GenomicMx"}}{[install.OpenMx()] prebuilt binary from GitHub Releases.}
-#'     \item{\code{"help"}}{List \code{mx_make} targets and run \code{make help}.}
+#'     \item{\code{"help"} / \code{"--help"}}{List \code{mx_make} targets and run \code{make help}.}
 #'   }
 #' @param pkg Path to the OpenMx source tree (default \code{"~/bin/OpenMx"}).
 #' @param deploymentTarget macOS \code{MACOSX_DEPLOYMENT_TARGET} for gfortran/clang
@@ -3507,23 +3535,28 @@ umx_make <- function(
 #' @return Invisibly \code{NULL}, or the result of a returning target (e.g. sitrep).
 #' @export
 #' @family xmu internal not for end user
-#' @seealso [umx_make()], [install.OpenMx()], [xmu_openmx_engine_status()]
+#' @seealso [umx::umx_make()], [umx::install.OpenMx()], [umx::xmu_openmx_engine_status()]
 #' @references - <https://github.com/tbates/umx/releases>, OpenMx \code{Makefile}
 #'
 #' @examples
 #' \dontrun{
-#' mx_make()                 # make install (local OpenMx; NPSOL if Makefile enables it)
+#' # Flight checklist (local engine + win-builder)
+#' mx_make("Rd")             # util/rox: refresh man/*.Rd
+#' mx_make()                 # make install this tree into R library
+#' # restart R, then:
+#' # library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")
+#' mx_make("win")            # upload source tree to win-builder (devel)
+#'
 #' mx_make("cran-install")
-#' mx_make("win")            # check_win_devel
 #' mx_make("spell")
 #' mx_make("sitrep")
 #' mx_make("deps_install")
 #' mx_make("GenomicMx")      # prebuilt binary via install.OpenMx("GenomicMx")
 #' mx_make("NPSOL")          # alias of install
-#' mx_make("help")
+#' mx_make("--help")
 #' }
 mx_make <- function(
-	what = c("install", "NPSOL", "cran-install", "build", "check", "win", "spell", "sitrep", "deps_install", "testthat", "git", "GenomicMx", "help"),
+	what = c("install", "NPSOL", "cran-install", "build", "Rd", "check", "win", "spell", "sitrep", "deps_install", "testthat", "git", "GenomicMx", "--help"),
 	pkg = "~/bin/OpenMx",
 	deploymentTarget = "14.0",
 	openmp = TRUE
@@ -3535,25 +3568,42 @@ mx_make <- function(
 	if (!file.exists(descFile)) {
 		stop("No DESCRIPTION in ", pkgPath, call. = FALSE)
 	}
-	pkgName = tryCatch(read.dcf(descFile, fields = "Package")[1, 1], error = function(e) NA_character_)
+	descFields = tryCatch(read.dcf(descFile, fields = c("Package", "Version")), error = function(e) NULL)
+	pkgName = if (!is.null(descFields)) descFields[1, "Package"] else NA_character_
+	pkgVers = if (!is.null(descFields)) descFields[1, "Version"] else NA_character_
 	if (is.na(pkgName) || !identical(as.character(pkgName), "OpenMx")) {
 		stop("mx_make expects an OpenMx source tree (DESCRIPTION Package: OpenMx). Got: ",
 			omxQuotes(pkgName), " at ", pkgPath, call. = FALSE)
 	}
 
 	# ---- housekeeping / binary (no make) ------------------------------------
-	if (what == "help") {
-		message("mx_make targets: install, NPSOL, cran-install, build, check, win, spell, sitrep, deps_install, testthat, git, GenomicMx, help")
+	if (what == "--help") {
+		message("mx_make targets: install, NPSOL, cran-install, build, Rd, check, win, spell, sitrep, deps_install, testthat, git, GenomicMx, --help")
 		message("Default pkg = ", pkgPath)
+		message("Installed library != win-builder tarball: install updates R; win packages the source tree at pkg.")
 		message("Makefile help:")
 		xmu_mx_make_run(pkgPath, "help", deploymentTarget = deploymentTarget, openmp = openmp, stopOnError = FALSE)
 		return(invisible(NULL))
+	}
+	if (what == "Rd") {
+		# OpenMx tracks man/*.Rd in git; official regen is make roxygen → util/rox
+		status = xmu_mx_make_run(pkgPath, "roxygen", deploymentTarget = deploymentTarget, openmp = openmp, stopOnError = TRUE)
+		message("Rd done (make roxygen / util/rox). Commit man/*.Rd if they changed.")
+		return(invisible(status))
 	}
 	if (what == "win") {
 		if (!requireNamespace("devtools", quietly = TRUE)) {
 			stop("mx_make(\"win\") needs devtools. install.packages(\"devtools\")", call. = FALSE)
 		}
-		message("Submitting win-builder (devel) for ", pkgPath)
+		message("Submitting win-builder (R-devel) for SOURCE TREE (not the installed library):")
+		message("  pkg = ", pkgPath)
+		if (!is.na(pkgVers)) message("  DESCRIPTION Version = ", pkgVers)
+		gitSha = xmu_mx_make_git_sha(pkgPath)
+		if (!is.na(gitSha)) message("  git HEAD = ", gitSha)
+		if (isTRUE(xmu_mx_make_git_dirty(pkgPath))) {
+			message("  WARNING: git working tree is dirty — uncommitted files are included in the tarball unless .Rbuildignore'd.")
+		}
+		message("  Local mx_make(\"install\") is NOT required for win-builder.")
 		return(invisible(devtools::check_win_devel(pkg = pkgPath)))
 	}
 	if (what == "spell") {
@@ -3611,9 +3661,46 @@ mx_make <- function(
 	}
 	status = xmu_mx_make_run(pkgPath, makeTarget, deploymentTarget = deploymentTarget, openmp = openmp, stopOnError = TRUE)
 	if (makeTarget %in% c("install", "cran-install")) {
-		message("Done. Restart R (or detach/reload) then library(OpenMx). Check with umxVersion() / xmu_openmx_engine_status().")
+		message("Done: make ", makeTarget, " for source tree ", pkgPath)
+		if (!is.na(pkgVers)) message("  DESCRIPTION Version = ", pkgVers)
+		gitSha = xmu_mx_make_git_sha(pkgPath)
+		if (!is.na(gitSha)) message("  git HEAD = ", gitSha)
+		instPath = tryCatch(find.package("OpenMx", quiet = TRUE), error = function(e) character(0))
+		if (length(instPath)) {
+			message("  find.package(\"OpenMx\") in THIS session (may still be a previously loaded copy): ", instPath[[1]])
+		}
+		message("  Restart R (do not use load_all for OpenMx), then:")
+		message("    library(OpenMx); packageVersion(\"OpenMx\"); find.package(\"OpenMx\")")
+		message("  Optional: umxVersion(); xmu_openmx_engine_status()")
 	}
 	invisible(status)
+}
+
+# Short git HEAD for an OpenMx source tree (internal)
+xmu_mx_make_git_sha <- function(pkgPath) {
+	if (!nzchar(Sys.which("git")) || !dir.exists(file.path(pkgPath, ".git"))) {
+		return(NA_character_)
+	}
+	sha = tryCatch(
+		system2("git", args = c("-C", pkgPath, "rev-parse", "--short", "HEAD"), stdout = TRUE, stderr = FALSE),
+		error = function(e) character(0)
+	)
+	if (!length(sha) || !nzchar(sha[[1]])) return(NA_character_)
+	sha[[1]]
+}
+
+# Whether OpenMx source tree has uncommitted changes (internal)
+xmu_mx_make_git_dirty <- function(pkgPath) {
+	if (!nzchar(Sys.which("git")) || !dir.exists(file.path(pkgPath, ".git"))) {
+		return(NA)
+	}
+	# porcelain empty ⇒ clean
+	out = tryCatch(
+		system2("git", args = c("-C", pkgPath, "status", "--porcelain"), stdout = TRUE, stderr = FALSE),
+		error = function(e) NULL
+	)
+	if (is.null(out)) return(NA)
+	length(out) > 0L && any(nzchar(out))
 }
 
 #' Run a Makefile target in an OpenMx source tree

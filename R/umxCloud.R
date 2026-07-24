@@ -130,7 +130,8 @@ umxCloud <- function(
 	dir.create(tempKeyDir, recursive = TRUE, showWarnings = FALSE)
 	privKeyPath = file.path(tempKeyDir, "id_rsa")
 	pubKeyPath = file.path(tempKeyDir, "id_rsa.pub")
-	ssh::ssh_key_generate(privKeyPath)
+	# credentials::ssh_keygen (re-exported by ssh); writes private key + ".pub"
+	ssh::ssh_keygen(privKeyPath)
 	pubKeyString = trimws(readLines(pubKeyPath, warn = FALSE)[1])
 
 	keyName = paste0("umx-key-", format(Sys.time(), "%Y%m%d%H%M%S"), "-", sample.int(1e6, 1))

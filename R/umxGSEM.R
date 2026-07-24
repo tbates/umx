@@ -27,7 +27,7 @@ umx_CheckProject <- function(project_path = "/path/to/my/project") {
 #'
 #' A fast, native reimplementation of multivariate LD score regression
 #' using C++ and OpenMP. Designed to be compatible with
-#' [GenomicSEM::ldsc()] output while offering significantly better
+#' GenomicSEM `ldsc()` output while offering significantly better
 #' performance, especially with larger numbers of traits.
 #'
 #' @details
@@ -76,7 +76,7 @@ umx_CheckProject <- function(project_path = "/path/to/my/project") {
 #' and its sampling covariance matrix.
 #' @export
 #' @family GSEM
-#' @seealso [GenomicSEM::ldsc()]
+#' @seealso ldsc() in the GenomicSEM package
 umxGSEM_ldsc <- function (traits, sample.prev, population.prev, ld, wld, trait.names = NULL, 
     sep_weights = FALSE, chr = 22, n.blocks = 200, ldsc.log = NULL, 
     stand = FALSE, select = FALSE, chisq.max = NA) {

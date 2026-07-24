@@ -70,7 +70,7 @@ and its sampling covariance matrix.
 \description{
 A fast, native reimplementation of multivariate LD score regression
 using C++ and OpenMP. Designed to be compatible with
-\code{\link[GenomicSEM:ldsc]{GenomicSEM::ldsc()}} output while offering significantly better
+GenomicSEM \code{ldsc()} output while offering significantly better
 performance, especially with larger numbers of traits.
 }
 \details{
@@ -86,7 +86,7 @@ I is a KxK matrix containing the LDSC intercepts
 used to quantify sample overlap and population stratification.
 }
 \seealso{
-\code{\link[GenomicSEM:ldsc]{GenomicSEM::ldsc()}}
+ldsc() in the GenomicSEM package
 
 Other GSEM:
 \code{\link{Anthro_LDSC}},

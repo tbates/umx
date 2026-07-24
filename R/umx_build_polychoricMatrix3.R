@@ -156,9 +156,25 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 	}
 	tnames = if (maxnThresh > 0) paste0("Threshold", 1:maxnThresh) else character(0)
 
+	# Empirical correlation starts (latent ranks for factors). Avoids optimizers walking
+	# into non-PD / log(-Inf) ordinal integration territory (esp. Windows tryHardOrdinal).
+	rStarts = diag(nVar)
+	for (i in 1:nVar) {
+		xi = if (isOrd[i]) as.numeric(data[, i]) else as.numeric(data[, i])
+		for (j in seq_len(i - 1L)) {
+			xj = if (isOrd[j]) as.numeric(data[, j]) else as.numeric(data[, j])
+			rij = suppressWarnings(stats::cor(xi, xj, use = "pairwise.complete.obs"))
+			if (!is.finite(rij)) {
+				rij = 0
+			}
+			rij = max(min(rij, 0.9), -0.9)
+			rStarts[i, j] = rStarts[j, i] = rij
+		}
+	}
+
 	# Define the model: ordinal/binary latent mean@0 residual@1; continuous free mean/SD
 	model = mxModel('model',
-		mxMatrix("Stand", name = "R", nrow = nVar, ncol = nVar, free = TRUE, labels = correlationLabels, values = 0, lbound = -.999999, ubound = .999999, dimnames = list(nameList, nameList)),
+		mxMatrix("Stand", name = "R", nrow = nVar, ncol = nVar, free = TRUE, labels = correlationLabels, values = rStarts, lbound = -.999999, ubound = .999999, dimnames = list(nameList, nameList)),
 		mxMatrix("Full", name = "M", nrow = 1, ncol = nVar, free = !isOrd, values = meanStarts, dimnames = list('Mean', nameList)),
 		mxMatrix("Diag", name = "StdDev", nrow = nVar, ncol = nVar, free = !isOrd, values = sdStarts, lbound = .01, dimnames = list(nameList, nameList))
 	)
@@ -192,28 +208,37 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 
 	# Run (tryHard already optimizes; only mxRun when tryHard == "no")
 	varMsg = paste(nameList, collapse = ", ")
+	okFit <- function(m) {
+		inherits(m, "MxModel") && umx_has_been_run(m) &&
+			!is.null(m$output$status$code) && isTRUE(m$output$status$code %in% c(0L, 1L, 6L))
+	}
 	safeRun <- function(model, how) {
+		# Suppress optimizer chatter; catch hard fails (e.g. Windows ordinal log(-Inf) integration)
 		out = tryCatch({
 			if (how == "no") {
-				mxRun(model, silent = TRUE)
+				suppressMessages(mxRun(model, silent = TRUE, suppressWarnings = TRUE))
 			} else if (how == "yes") {
-				mxTryHard(model, silent = TRUE, bestInitsOutput = FALSE)
+				suppressMessages(suppressWarnings(mxTryHard(model, silent = TRUE, bestInitsOutput = FALSE)))
 			} else if (how == "ordinal") {
-				mxTryHardOrdinal(model, silent = TRUE, bestInitsOutput = FALSE)
+				suppressMessages(suppressWarnings(mxTryHardOrdinal(model, silent = TRUE, bestInitsOutput = FALSE)))
 			} else if (how == "search") {
-				mxTryHardWideSearch(model, silent = TRUE, bestInitsOutput = FALSE)
+				suppressMessages(suppressWarnings(mxTryHardWideSearch(model, silent = TRUE, bestInitsOutput = FALSE)))
 			} else {
 				stop("tryHard = ", omxQuotes(how), " not known: use no, yes, ordinal, or search")
 			}
 		}, error = function(e) e)
 		out
 	}
-	fit = safeRun(model, tryHard)
-	# Fallback chain if first strategy fails (esp. mixed continuous/binary on stock OpenMx)
-	if (!inherits(fit, "MxModel") || is.null(fit$output) || !isTRUE(fit$output$status$code %in% c(0L, 1L))) {
-		for (how in setdiff(c("ordinal", "yes", "search", "no"), tryHard)) {
+	# Prefer a plain run with empirical starts first (often enough; avoids tryHardOrdinal jiggles on Windows)
+	fit = safeRun(model, "no")
+	if (!okFit(fit) && tryHard != "no") {
+		fit = safeRun(model, tryHard)
+	}
+	# Fallback chain if first strategies fail (mixed continuous/binary / Windows FIML)
+	if (!okFit(fit)) {
+		for (how in setdiff(c("yes", "ordinal", "search", "no"), tryHard)) {
 			fit2 = safeRun(model, how)
-			if (inherits(fit2, "MxModel") && !is.null(fit2$output) && isTRUE(fit2$output$status$code %in% c(0L, 1L))) {
+			if (okFit(fit2)) {
 				fit = fit2
 				break
 			}
@@ -227,7 +252,7 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 			". Ensure ordinal columns are ordered factors (umxFactor) and continuous columns have variance.", call. = FALSE)
 	}
 	if (!umx_has_been_run(fit)) {
-		fit = tryCatch(mxRun(fit, silent = TRUE), error = function(e) {
+		fit = tryCatch(suppressMessages(mxRun(fit, silent = TRUE, suppressWarnings = TRUE)), error = function(e) {
 			stop("umx_polychoric: failed to fit variables ", omxQuotes(varMsg), ": ", conditionMessage(e), call. = FALSE)
 		})
 	}
@@ -288,14 +313,18 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 #' @family Data Functions
 #' @references - Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 #' @examples
+#' \dontrun{
+#' # Mixed continuous + binary (polyserial / polychoric). Ordinal FIML can be
+#' # platform-sensitive; keep out of --run-donttest on win-builder.
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)
 #' tmp$vs = umxFactor(mtcars$vs)
 #' # Scale continuous only (leave ordered factors alone)
 #' tmp[, c("hp", "mpg")] = umx_scale(tmp[, c("hp", "mpg")])
-#' x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "ordinal")
+#' x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
 #' x$R
 #' cor(mtcars[, c("hp", "mpg", "am", "vs")])
+#' }
 umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any", tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
 
@@ -309,7 +338,9 @@ umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "
 	 for (var1 in 1:(nVar-1)) {
 		 for (var2 in (var1+1):(nVar)) {
 			pairCount = pairCount + 1
-			cat(c("\n\n",pairCount,names(data)[var1],names(data)[var2]))
+			if (interactive()) {
+				cat(c("\n\n", pairCount, names(data)[var1], names(data)[var2]))
+			}
 			if (use=="complete.obs"){
 				 tempData = data[stats::complete.cases(data[,c(var1,var2)]),c(var1,var2)]
 			}else{
