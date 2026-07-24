@@ -21,7 +21,8 @@ umxGxE(
   dzCr = 1,
   autoRun = getOption("umx_auto_run"),
   tryHard = c("no", "yes", "ordinal", "search"),
-  optimizer = NULL
+  optimizer = NULL,
+  selCovs = NULL
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ umxGxE(
 \item{tryHard}{Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "ordinal", "search".}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing)}
+
+\item{selCovs}{(optional) covariates to include in the means model (do not include sep in names)}
 }
 \value{
 \itemize{

@@ -1279,6 +1279,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @param name The name of the model (default= "G_by_E")
 #' @param selDVs The dependent variable (e.g. "IQ")
 #' @param selDefs The definition variable (e.g. "SES")
+#' @param selCovs (optional) covariates to include in the means model (do not include sep in names)
 #' @param sep How to expand selDVs into full names, i.e., "_T" makes "var" -> "var_T1" and "var_T2"
 #' @param dzData The DZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
 #' @param mzData The MZ dataframe containing the Twin 1 and Twin 2 DV and moderator (4 columns)
@@ -1341,7 +1342,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' # reporting these in a nice table.
 #' umxReduce(m1)
 #' }
-umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, selCovs = NULL) {
 
 	# ===================================================================
 	# = Thoughts about expanding covariate modelling here and elsewhere =
@@ -1410,13 +1411,23 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 		message("selDVs: ", omxQuotes(selDVs))
 	}
 
-	selVars   = c(selDVs, selDefs)
+	nCov = 0
+	if (!is.null(selCovs)) {
+		nCov = length(selCovs)
+		fullCovs = umx_paste_names(selCovs, sep = sep, suffixes = 1:2)
+		umx_check_names(fullCovs, mzData)
+		umx_check_names(fullCovs, dzData)
+		selVars = c(selDVs, selDefs, fullCovs)
+	} else {
+		fullCovs = NULL
+		selVars = c(selDVs, selDefs)
+	}
+
 	colTypes = umx_is_ordered(mzData[, selDVs, drop = FALSE], summaryObject = TRUE)
 	isBin    = isTRUE(colTypes$isBin[1])
 	isOrd    = isTRUE(colTypes$isOrd[1])
 	isFactor = isTRUE(colTypes$isFactor[1])
 
-	selVars   = c(selDVs, selDefs)
 	obsMean   = mean(umx_means(mzData[, selDVs, drop = FALSE], ordVar = 0, na.rm = TRUE))
 	nVar      = length(selDVs)/nSib; # number of dependent variables ** per INDIVIDUAL ( so times-2 for a family)**
 	rawVar    = umx_var(mzData[, selDVs, drop = FALSE], format = "diag", ordVar = 1, use = "pairwise.complete.obs", strict = FALSE)[1]
@@ -1427,8 +1438,8 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	dzData = dzData[ , selVars]
 	mzData = mzData[ , selVars]
 	
-	mzData = xmu_data_missing(mzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef, hint= "mzData")
-	dzData = xmu_data_missing(dzData, selVars = selDefs, sep = NULL, dropMissingDef = dropMissingDef, hint= "dzData")
+	mzData = xmu_data_missing(mzData, selVars = c(selDefs, fullCovs), sep = NULL, dropMissingDef = dropMissingDef, hint= "mzData")
+	dzData = xmu_data_missing(dzData, selVars = c(selDefs, fullCovs), sep = NULL, dropMissingDef = dropMissingDef, hint= "dzData")
 	
 	# =====================================
 	# = DO T1 and T2 share the moderator? =
@@ -1466,6 +1477,13 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# Matrix & Algebra for intercept of the means vector
 			mxMatrix(name = "intercept", "Full", nrow = 1, ncol = nVar, free = !isBin, values = ifelse(isBin, 0, obsMean), labels = "mean"), # needs mods for multivariate!
 
+			if (nCov > 0) {
+				betaLabels = paste0(selCovs, "_b_Var1")
+				meansBetas = umxMatrix("meansBetas", "Full", nrow = nCov, ncol = nVar, free = TRUE, labels = betaLabels, values = 0, lbound = -2, ubound = 2)
+				dimnames(meansBetas) = list(selCovs, selDVs[1])
+				meansBetas
+			},
+
 			# Matrice for moderated the means model (algebars in the data models)
 			if(bModeratorsIdentical){
 				# Matrices for betas
@@ -1490,22 +1508,42 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 			# Matrices for moderating/interacting variable
 			umxMatrix("DefT1", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[1])), # c("data.age1")
 			umxMatrix("DefT2", "Full", nrow=1, ncol=1, free=FALSE, labels = paste0("data.", selDefs[2])), # c("data.age2")
+			if (nCov > 0) {
+				list(
+					umxMatrix("T1DefVars", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", fullCovs[1:nCov])),
+					umxMatrix("T2DefVars", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", fullCovs[(nCov+1):(2*nCov)]))
+				)
+			},
 			# ====================================
 			# = Algebra for expected mean vector =
 			# ====================================
 
 			if(bModeratorsIdentical){
 				# do lm(DV ~ moderator + moderator^2)
-				mxAlgebra(name = "expMean", cbind(
-					top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2),
-					top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2))
-				)
+				if (nCov > 0) {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2) + (T1DefVars %*% top.meansBetas),
+						top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2) + (T2DefVars %*% top.meansBetas))
+					)
+				} else {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2),
+						top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2))
+					)
+				}
 			}else{
 				# do lm(DV ~ self moderator + co-twin moderator)
-				mxAlgebra(name = "expMean", cbind(
-					top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2),
-					top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1))
-				)
+				if (nCov > 0) {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2) + (T1DefVars %*% top.meansBetas),
+						top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1) + (T2DefVars %*% top.meansBetas))
+					)
+				} else {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2),
+						top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1))
+					)
+				}
 			}
 			,
 
@@ -1537,22 +1575,41 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 	    mxModel("DZ",
 			umxMatrix("DefT1", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[1])), # twin1  c("data.divorce1")
 			umxMatrix("DefT2", "Full", nrow=1, ncol=1, free=FALSE, labels=paste0("data.", selDefs[2])), # twin2  c("data.divorce2")
-
+			if (nCov > 0) {
+				list(
+					umxMatrix("T1DefVars", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", fullCovs[1:nCov])),
+					umxMatrix("T2DefVars", "Full", nrow = 1, ncol = nCov, free = FALSE, labels = paste0("data.", fullCovs[(nCov+1):(2*nCov)]))
+				)
+			},
 			# =================
 			# = Means Algebra =
 			# =================
 			if(bModeratorsIdentical){
 				# do lm(DV ~ moderator + moderator^2)
-				mxAlgebra(name = "expMean", cbind(
-					top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2),
-					top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2))
-				)
+				if (nCov > 0) {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2) + (T1DefVars %*% top.meansBetas),
+						top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2) + (T2DefVars %*% top.meansBetas))
+					)
+				} else {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaLin  %*% DefT1) + (top.betaQuad %*% DefT1^2),
+						top.intercept + (top.betaLin  %*% DefT2) + (top.betaQuad %*% DefT2^2))
+					)
+				}
 			}else{
 				# do lm(DV ~ self moderator + co-twin moderator)
-				mxAlgebra(name = "expMean", cbind(
-					top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2),
-					top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1))
-				)
+				if (nCov > 0) {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2) + (T1DefVars %*% top.meansBetas),
+						top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1) + (T2DefVars %*% top.meansBetas))
+					)
+				} else {
+					mxAlgebra(name = "expMean", cbind(
+						top.intercept + (top.betaSelf %*% DefT1) + (top.betaCoTwin %*% DefT2),
+						top.intercept + (top.betaSelf %*% DefT2) + (top.betaCoTwin %*% DefT1))
+					)
+				}
 			}
 			,
 			
