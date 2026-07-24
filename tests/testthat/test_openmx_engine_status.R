@@ -20,16 +20,24 @@ test_that("xmu_openmx_install_message mentions install.OpenMx GenomicMx", {
 	msg = xmu_openmx_install_message("Unit test feature")
 	expect_match(msg, "install.OpenMx\\(\"GenomicMx\"\\)")
 	expect_match(msg, "Unit test feature")
-	expect_match(msg, "tbates/GenomicMx")
+	expect_match(msg, "github.com/tbates/umx/releases")
+	expect_false(grepl("OpenMx/OpenMx", msg, fixed = TRUE))
+	expect_false(grepl("tbates/GenomicMx", msg, fixed = TRUE))
 })
 
 test_that("install.OpenMx accepts GenomicMx loc without installing", {
 	# match.arg only — do not network-install in CI
 	expect_error(install.OpenMx("not_a_build"), "should be one of")
-	# loc formals include GenomicMx
 	fmls = eval(formals(install.OpenMx)$loc)
 	expect_true("GenomicMx" %in% fmls)
 	expect_true("CRAN" %in% fmls)
+	expect_true("open release page" %in% fmls)
+	# Source "dev" path disabled while fork is private (public path = umx Releases binaries)
+	expect_false("dev" %in% fmls)
+})
+
+test_that("xmu_genomicmx_release_page_url points at umx releases", {
+	expect_equal(xmu_genomicmx_release_page_url(), "https://github.com/tbates/umx/releases")
 })
 
 test_that("startup silence option is respected conceptually", {

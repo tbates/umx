@@ -2436,7 +2436,8 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 #' @description
 #' Probe whether the installed OpenMx build accepts modern summary WLS data
 #' (`mxData(..., type = "summary", observedStats = list(cov=, useWeight=, asymCov=))`).
-#' CRAN OpenMx historically did not; the `tbates/OpenMx` fork does.
+#' CRAN OpenMx historically did not; the GenomicMx OpenMx build does
+#' (`install.OpenMx("GenomicMx")`, binaries from umx GitHub Releases).
 #' Result is cached in `options("umx.xmu_has_summary_mxData")` after the first probe.
 #'
 #' @param force If TRUE, re-probe and refresh the cache (default FALSE).
@@ -2477,10 +2478,10 @@ xmu_require_summary_mxData <- function(where = "This feature") {
 	if (!xmu_has_summary_mxData()) {
 		stop(
 			where,
-			" requires the 'tbates' fork of OpenMx to support modern summary WLS data (type = 'summary'). ",
+			" requires the GenomicMx OpenMx build for modern summary WLS data (type = 'summary'). ",
 			"CRAN OpenMx does not provide this API, and umx no longer supports the removed legacy WLS ",
 			"interfaces (type = 'none' / 'acov'). Please update OpenMx by running:\n",
-			"  remotes::install_github('tbates/OpenMx')",
+			"  install.OpenMx(\"GenomicMx\")   # binaries from https://github.com/tbates/umx/releases",
 			call. = FALSE
 		)
 	}

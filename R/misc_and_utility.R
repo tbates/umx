@@ -3124,37 +3124,45 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #' Install OpenMx (GenomicMx binary build)
 #'
 #' @description
-#' Install stock **CRAN** OpenMx, or the **GenomicMx** OpenMx build maintained for
-#' umx WLS/GSEM (Jacobians, modern `type="summary"` WLS data, multi-group stack).
-#' The GenomicMx build **replaces** whatever OpenMx is in the target library 
-#' (same pattern as the old NPSOL binaries).
+#' Install stock **CRAN** OpenMx, or the **GenomicMx** OpenMx build used by umx for
+#' modern WLS/GSEM (Jacobians, `type = "summary"` WLS data, multi-group stack).
+#' The GenomicMx build **replaces** whatever OpenMx is in the target library
+#' (same idea as the old NPSOL binary installs).
+#'
+#' **Public install path (everyone):** pre-built OpenMx package files published on the
+#' [umx GitHub Releases](https://github.com/tbates/umx/releases) page. Call
+#' `install.OpenMx("GenomicMx")` (the default). That is the supported way to get the
+#' GenomicMx engine while the OpenMx source tree lives privately on GitHub.
 #'
 #' Options for `loc`:
-#' 2. `"GenomicMx"`(default): download the latest platform binary from
-#'    [GitHub Releases](https://github.com/tbates/umx/releases) when available.
-#' 1. `"CRAN"`: install from CRAN (safe for ML/twin-only work).
-#' 3. `"open release page"`: open the Releases page in a browser.
-#' 4. `"dev"`: install from the GenomicMx GitHub source (requires build tools).
+#' 1. `"GenomicMx"` (**default**): download the latest platform binary from
+#'    [umx Releases](https://github.com/tbates/umx/releases) when available.
+#' 2. `"CRAN"`: install stock OpenMx from CRAN (enough for many twin/RAM models, not
+#'    the full GenomicMx WLS stack).
+#' 3. `"open release page"`: open the umx Releases page in a browser so you can pick a binary by hand.
+#'
+#' Source installs from a private GitHub fork are **not** offered here (they cannot work for
+#' general users). Maintainers building OpenMx locally should use [mx_make()] on their source tree.
 #'
 #' @aliases umx_update_OpenMx
-#' @param loc Which build to get (default `"CRAN"`).
-#' @param url Custom URL or local path. On Mac, `"Finder"` uses the package selected
-#'   in the Finder; `""` opens a file chooser.
+#' @param loc Which build to get (default `"GenomicMx"`).
+#' @param url Custom URL or local path to an OpenMx binary package. On Mac, `"Finder"` uses the
+#'   package selected in the Finder; `""` opens a file chooser.
 #' @param repos CRAN repository (for `loc = "CRAN"`).
 #' @param lib Where to install the package (passed to [install.packages()]).
 #' @return None (called for side effects).
 #' @export
-#' @seealso [umxVersion()], [xmu_openmx_engine_status()]
+#' @seealso [umxVersion()], [xmu_openmx_engine_status()], [mx_make()]
 #' @family Miscellaneous Utility Functions
-#' @references - <https://github.com/tbates/umx>, <https://github.com/tbates/GenomicMx>
-
+#' @references - <https://github.com/tbates/umx>, <https://github.com/tbates/umx/releases>
+#'
 #' @examples
 #' \dontrun{
-#' install.OpenMx()                      # CRAN OpenMx
-#' install.OpenMx("GenomicMx")           # GenomicMx binary when published
-#' install.OpenMx("open release page") # browse releases
+#' install.OpenMx("GenomicMx")           # GenomicMx OpenMx binary from umx Releases (default)
+#' install.OpenMx("open release page") # browse releases and install a file yourself
+#' install.OpenMx("CRAN")                # stock CRAN OpenMx only
 #' }
-install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page", "dev"), url = NULL, lib, repos = getOption("repos")) {
+install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page"), url = NULL, lib, repos = getOption("repos")) {
 	loc = match.arg(loc)
 	oldTimeOut = getOption("timeout")
 	options(timeout = 60 * 5)
@@ -3186,33 +3194,23 @@ install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page", "de
 
 	if (loc == "open release page") {
 		browseURL(xmu_genomicmx_release_page_url())
-		message("Opened GenomicMx OpenMx releases. Download the binary for your OS/R version, then:\n",
-			"  install.packages(\"/path/to/OpenMx_....tgz\", repos = NULL)  # or .zip on Windows")
+		message(
+			"Opened the umx Releases page (GenomicMx OpenMx binaries are attached there when published).\n",
+			"Download the asset for your OS/R version, then:\n",
+			"  install.packages(\"/path/to/OpenMx_....tgz\", repos = NULL)  # or .zip on Windows\n",
+			"Or retry: install.OpenMx(\"GenomicMx\")"
+		)
 		return(invisible(NULL))
 	}
 
-	if (loc == "dev") {
-		if (!requireNamespace("remotes", quietly = TRUE)) {
-			stop("install.OpenMx(\"source\") needs the remotes package. install.packages(\"remotes\") first.", call. = FALSE)
-		}
-		message("Installing OpenMx from GitHub source (tbates/GenomicMx). This compiles C++/Fortran and may take several minutes.")
-		if (missing(lib)) {
-			remotes::install_github("tbates/GenomicMx", upgrade = "never")
-		} else {
-			remotes::install_github("tbates/GenomicMx", upgrade = "never", lib = lib)
-		}
-		message("Done. Restart R, then library(OpenMx); library(umx). Check with umxVersion().")
-		return(invisible(NULL))
-	}
-
-	# loc == "GenomicMx"
+	# loc == "GenomicMx" (default): public binary install for everyone
 	binUrl = xmu_genomicmx_binary_url()
 	if (is.null(binUrl) || !nzchar(binUrl)) {
 		message(
-			"No prebuilt GenomicMx binary was resolved for this platform (or GitHub API was unreachable).\n",
-			"Opening the release page. Download the asset matching your OS and R version, then install with:\n",
+			"No prebuilt GenomicMx OpenMx binary was found for this platform (or GitHub was unreachable).\n",
+			"Opening the umx Releases page. Download the asset matching your OS and R version, then:\n",
 			"  install.packages(\"/path/to/binary\", repos = NULL)\n",
-			"Or build from source: install.OpenMx(\"source\")"
+			"Or: install.OpenMx(\"open release page\")"
 		)
 		browseURL(xmu_genomicmx_release_page_url())
 		return(invisible(NULL))
@@ -3224,30 +3222,28 @@ install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page", "de
 		install.packages(binUrl, repos = NULL, lib = lib)
 	}
 	message(
-		"Installed. This replaces OpenMx in the target library.\n",
+		"Installed GenomicMx OpenMx (this replaces OpenMx in the target library).\n",
 		"Restart R, then:\n  library(OpenMx); library(umx); umxVersion()\n",
-		"Reinstall CRAN OpenMx anytime with: install.OpenMx(\"CRAN\")"
+		"Stock CRAN OpenMx only: install.OpenMx(\"CRAN\")"
 	)
 	invisible(NULL)
 }
 
 # ---- GenomicMx OpenMx engine detection and install messaging -----------------
 
-#' GitHub Releases page for GenomicMx OpenMx binaries
+#' GitHub Releases page hosting GenomicMx OpenMx binaries
 #' @keywords internal
 xmu_genomicmx_release_page_url <- function() {
-	# Public fork/releases (TODO: update if the GitHub repo name changes)
-	# "https://github.com/tbates/GenomicMx/releases"
 	"https://github.com/tbates/umx/releases"
 }
 
-#' Resolve a platform binary URL from the latest GenomicMx GitHub Release (if any)
+#' Resolve a platform OpenMx binary URL from the latest umx GitHub Release
 #'
 #' Uses the GitHub API. Returns NULL when no matching asset is found.
+#' Assets should include "OpenMx" in the filename and end in .tgz / .tar.gz / .zip.
 #' @keywords internal
 xmu_genomicmx_binary_url <- function() {
 	# Base R only (no jsonlite dependency): pull latest release JSON and scrape asset URLs.
-	# api = "https://api.github.com/repos/tbates/GenomicMx/releases/latest"
 	api = "https://api.github.com/repos/tbates/umx/releases/latest"
 	raw = tryCatch({
 		con = url(api, open = "rb")
@@ -3257,8 +3253,6 @@ xmu_genomicmx_binary_url <- function() {
 	if (is.null(raw) || !nzchar(raw)) {
 		return(NULL)
 	}
-	# browser_download_url values in GitHub release JSON
-	# urls = regmatches(raw, gregexpr("https://github.com/tbates/GenomicMx/releases/download/[^\"]+", raw))[[1]]
 	urls = regmatches(raw, gregexpr("https://github.com/tbates/umx/releases/download/[^\"]+", raw))[[1]]
 	urls = unique(urls)
 	if (!length(urls)) {
@@ -3514,7 +3508,7 @@ umx_make <- function(
 #' @export
 #' @family xmu internal not for end user
 #' @seealso [umx_make()], [install.OpenMx()], [xmu_openmx_engine_status()]
-#' @references - <https://github.com/tbates/GenomicMx>, OpenMx \code{Makefile}
+#' @references - <https://github.com/tbates/umx/releases>, OpenMx \code{Makefile}
 #'
 #' @examples
 #' \dontrun{
@@ -3524,7 +3518,7 @@ umx_make <- function(
 #' mx_make("spell")
 #' mx_make("sitrep")
 #' mx_make("deps_install")
-#' mx_make("GenomicMx")      # prebuilt binary via install.OpenMx
+#' mx_make("GenomicMx")      # prebuilt binary via install.OpenMx("GenomicMx")
 #' mx_make("NPSOL")          # alias of install
 #' mx_make("help")
 #' }

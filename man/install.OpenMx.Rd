@@ -6,17 +6,17 @@
 \title{Install OpenMx (GenomicMx binary build)}
 \usage{
 install.OpenMx(
-  loc = c("GenomicMx", "CRAN", "open release page", "dev"),
+  loc = c("GenomicMx", "CRAN", "open release page"),
   url = NULL,
   lib,
   repos = getOption("repos")
 )
 }
 \arguments{
-\item{loc}{Which build to get (default \code{"CRAN"}).}
+\item{loc}{Which build to get (default \code{"GenomicMx"}).}
 
-\item{url}{Custom URL or local path. On Mac, \code{"Finder"} uses the package selected
-in the Finder; \code{""} opens a file chooser.}
+\item{url}{Custom URL or local path to an OpenMx binary package. On Mac, \code{"Finder"} uses the
+package selected in the Finder; \code{""} opens a file chooser.}
 
 \item{lib}{Where to install the package (passed to \code{\link[=install.packages]{install.packages()}}).}
 
@@ -26,34 +26,42 @@ in the Finder; \code{""} opens a file chooser.}
 None (called for side effects).
 }
 \description{
-Install stock \strong{CRAN} OpenMx, or the \strong{GenomicMx} OpenMx build maintained for
-umx WLS/GSEM (Jacobians, modern \code{type="summary"} WLS data, multi-group stack).
+Install stock \strong{CRAN} OpenMx, or the \strong{GenomicMx} OpenMx build used by umx for
+modern WLS/GSEM (Jacobians, \code{type = "summary"} WLS data, multi-group stack).
 The GenomicMx build \strong{replaces} whatever OpenMx is in the target library
-(same pattern as the old NPSOL binaries).
+(same idea as the old NPSOL binary installs).
+
+\strong{Public install path (everyone):} pre-built OpenMx package files published on the
+\href{https://github.com/tbates/umx/releases}{umx GitHub Releases} page. Call
+\code{install.OpenMx("GenomicMx")} (the default). That is the supported way to get the
+GenomicMx engine while the OpenMx source tree lives privately on GitHub.
 
 Options for \code{loc}:
-2. \code{"GenomicMx"}(default): download the latest platform binary from
-\href{https://github.com/tbates/umx/releases}{GitHub Releases} when available.
 \enumerate{
-\item \code{"CRAN"}: install from CRAN (safe for ML/twin-only work).
-\item \code{"open release page"}: open the Releases page in a browser.
-\item \code{"dev"}: install from the GenomicMx GitHub source (requires build tools).
+\item \code{"GenomicMx"} (\strong{default}): download the latest platform binary from
+\href{https://github.com/tbates/umx/releases}{umx Releases} when available.
+\item \code{"CRAN"}: install stock OpenMx from CRAN (enough for many twin/RAM models, not
+the full GenomicMx WLS stack).
+\item \code{"open release page"}: open the umx Releases page in a browser so you can pick a binary by hand.
 }
+
+Source installs from a private GitHub fork are \strong{not} offered here (they cannot work for
+general users). Maintainers building OpenMx locally should use \code{\link[=mx_make]{mx_make()}} on their source tree.
 }
 \examples{
 \dontrun{
-install.OpenMx()                      # CRAN OpenMx
-install.OpenMx("GenomicMx")           # GenomicMx binary when published
-install.OpenMx("open release page") # browse releases
+install.OpenMx("GenomicMx")           # GenomicMx OpenMx binary from umx Releases (default)
+install.OpenMx("open release page") # browse releases and install a file yourself
+install.OpenMx("CRAN")                # stock CRAN OpenMx only
 }
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/GenomicMx}
+\item \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/umx/releases}
 }
 }
 \seealso{
-\code{\link[=umxVersion]{umxVersion()}}, \code{\link[=xmu_openmx_engine_status]{xmu_openmx_engine_status()}}
+\code{\link[=umxVersion]{umxVersion()}}, \code{\link[=xmu_openmx_engine_status]{xmu_openmx_engine_status()}}, \code{\link[=mx_make]{mx_make()}}
 
 Other Miscellaneous Utility Functions:
 \code{\link[=libs]{libs()}},

@@ -2,11 +2,11 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_genomicmx_release_page_url}
 \alias{xmu_genomicmx_release_page_url}
-\title{GitHub Releases page for GenomicMx OpenMx binaries}
+\title{GitHub Releases page hosting GenomicMx OpenMx binaries}
 \usage{
 xmu_genomicmx_release_page_url()
 }
 \description{
-GitHub Releases page for GenomicMx OpenMx binaries
+GitHub Releases page hosting GenomicMx OpenMx binaries
 }
 \keyword{internal}

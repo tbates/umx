@@ -57,14 +57,14 @@ mx_make("win")            # check_win_devel
 mx_make("spell")
 mx_make("sitrep")
 mx_make("deps_install")
-mx_make("GenomicMx")      # prebuilt binary via install.OpenMx
+mx_make("GenomicMx")      # prebuilt binary via install.OpenMx("GenomicMx")
 mx_make("NPSOL")          # alias of install
 mx_make("help")
 }
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/GenomicMx}, OpenMx \code{Makefile}
+\item \url{https://github.com/tbates/umx/releases}, OpenMx \code{Makefile}
 }
 }
 \seealso{

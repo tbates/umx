@@ -15,7 +15,8 @@ Logical.
 \description{
 Probe whether the installed OpenMx build accepts modern summary WLS data
 (\code{mxData(..., type = "summary", observedStats = list(cov=, useWeight=, asymCov=))}).
-CRAN OpenMx historically did not; the \code{tbates/OpenMx} fork does.
+CRAN OpenMx historically did not; the GenomicMx OpenMx build does
+(\code{install.OpenMx("GenomicMx")}, binaries from umx GitHub Releases).
 Result is cached in \code{options("umx.xmu_has_summary_mxData")} after the first probe.
 }
 \seealso{

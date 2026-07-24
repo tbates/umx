@@ -19,7 +19,7 @@
 #'
 #' @section Step-by-Step Setup:
 #' \enumerate{
-#'   \item Create a Hetzner Cloud account at \url{https://console.hetzner.cloud/}
+#'   \item Create a Hetzner Cloud account at \url{https://console.hetzner.com/}
 #'     (complete verification; avoid VPN during signup if fraud checks fail).
 #'   \item Project → Security → API Tokens → Generate (Read & Write). Copy the token.
 #'   \item Store it in \code{.Renviron} (never commit the token):

@@ -2,11 +2,12 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_genomicmx_binary_url}
 \alias{xmu_genomicmx_binary_url}
-\title{Resolve a platform binary URL from the latest GenomicMx GitHub Release (if any)}
+\title{Resolve a platform OpenMx binary URL from the latest umx GitHub Release}
 \usage{
 xmu_genomicmx_binary_url()
 }
 \description{
 Uses the GitHub API. Returns NULL when no matching asset is found.
+Assets should include "OpenMx" in the filename and end in .tgz / .tar.gz / .zip.
 }
 \keyword{internal}
