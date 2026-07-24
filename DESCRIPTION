@@ -62,6 +62,7 @@ Suggests:
 	data.table,
 	bestNormalize,
 	cocor,
+	ggwas,
 	GPArotation,
 	parallel,
 	psychTools,

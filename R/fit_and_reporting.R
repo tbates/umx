@@ -5011,13 +5011,14 @@ umx_r_test <- function(data = NULL, vars = vars, alternative = c("two.sided", "g
 #' # plot.umx_GWAS(example_gwas, type = "manhattan")
 #' }
 plot.umx_GWAS <- function(x, type = c("manhattan", "qq"), ...) {
+	# Declared in DESCRIPTION Suggests (optional; install from GitHub until on CRAN)
 	if (!requireNamespace("ggwas", quietly = TRUE)) {
 		stop("The 'ggwas' package is required for plotting GWAS results. Install it with: remotes::install_github('bczech/ggwas')", call. = FALSE)
 	}
 	type = match.arg(type)
 	if (type == "manhattan") {
-		return(get("manhattan_plot", asNamespace("ggwas"))(x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", ...))
+		return(ggwas::manhattan_plot(x, chr = "CHR", bp = "BP", p = "P", snp = "SNP", ...))
 	} else if (type == "qq") {
-		return(get("qq_plot", asNamespace("ggwas"))(x, p = "P", ...))
+		return(ggwas::qq_plot(x, p = "P", ...))
 	}
 }
