@@ -6738,34 +6738,32 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 	return(data)
 }
 
-#' Simulate twin data with control over A, C, and E parameters, as well as moderation of A.
+#' Simulate twin data with control over A, C, and E (and D) parameters
 #' @description
-#' Makes MZ and DZ twin data, optionally with moderated A. By default, the three variance components must sum to 1.
-#' 
+#' Makes MZ and DZ twin data for standard ACE/ADE, fixed MZ/DZ correlations, thresholds,
+#' or **bivariate** GxE ([umxGxEbiv()]). By default, variance components must sum to 1.
+#'
+#' For **univariate** Purcell GxE data for [umxGxE()], use [umx_make_GxE_data()] instead
+#' (path form \(a + a_m M\), ground-truth attributes, optional age covariate phenotype).
+#' Passing the old univariate style `AA = c(avg = ..., min = ..., max = ...)` to this
+#' function is an error and points you to that helper.
+#'
 #' See examples for how to use this: it is pretty flexible.
-#' 
+#'
 #' If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2.
 #' **note**: the function was designed around nSib = 2 and var names = var_T1. It isn't yet smart enough to do, for instance
-#' scaling or shifting to make the min value 0 (normal for most traits we analyse) for nonstandard `varNames` and `nSib``. 
+#' scaling or shifting to make the min value 0 (normal for most traits we analyse) for nonstandard `varNames` and `nSib`.
 #'
 #' *Note*, if you want a power calculator, see [power.ACE.test()] and [umxPower()].
 #'
-#' 
+#'
 #' **Usage**
-#' 
+#'
 #' You must supply `nMZpairs` (you can omit `nDZpairs`).
 #' You can give any two of A, C, or E and the function deduces the missing parameter so `A+C+E == 1`.
-#' 
-#' **Moderation**
-#' 
-#' **Univariate GxE Data**
-#' To simulate data for `umxGxE`, offer up a list of the average, min and max values for `AA`, i.e., c(avg = .5, min = 0, max = 1).
-#' 
-#' `umx_make_TwinData` will return moderated data, with average value = avg, swinging
-#' down to min and up to max across 3-SDs of the moderator.
 #'
-#' **Bivariate GxE Data**
-#' 
+#' **Bivariate GxE Data** (for [umxGxEbiv()])
+#'
 #' To simulate data with a moderator that is not shared by both twins.
 #' Moderated heritability is specified via the bivariate relationship (AA, CC, EE) and two moderators in each component.
 #' AA   = list(a11 = .4, a12 = .1, a22 = .15)
@@ -6777,10 +6775,10 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #'
 #' @param nMZpairs Number of MZ pairs to simulate
 #' @param nDZpairs Number of DZ pairs to simulate (defaults to nMZpairs)
-#' @param AA value for A variance. NOTE: See options for use in GxE and Bivariate GxE
+#' @param AA value for A variance (scalar). For bivariate GxE, a list of Cholesky elements (see details).
 #' @param CC value for C variance.
 #' @param EE value for E variance.
-#' @param DD value for E variance.
+#' @param DD value for D variance (univariate ACE/ADE only).
 #' @param MZr If MZr and DZr are set (default = NULL), the function returns dataframes of the request n and correlation.
 #' @param DZr Set to return dataframe using MZr and Dzr (Default NULL)
 #' @param nSib Number of siblings in a family (default = 2). "3" = extra sib.
@@ -6790,17 +6788,17 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #' @param bivCmod Used for Bivariate GxE data: list(Beta_c1 = .025, Beta_c2 = .025)
 #' @param bivEmod Used for Bivariate GxE data: list(Beta_e1 = .025, Beta_e2 = .025)
 #' @param varNames name for variables (defaults to 'var')
-#' @param mean mean for traits (default = 0) (not applied to moderated cases)
-#' @param sd sd of traits (default = 1) (not applied to moderated cases)
+#' @param mean mean for traits (default = 0) (not applied to bivariate GxE)
+#' @param sd sd of traits (default = 1) (not applied to bivariate GxE)
 #' @param seed Allows user to set.seed() if wanting reproducible dataset
 #' @param empirical Passed to mvrnorm
 #' @param nThresh  If supplied, use as thresholds and return mxFactor output? (default is not to)
 #' @param sum2one  Whether to enforce AA + CC + EE summing the one (default = TRUE)
-#' @return - list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
+#' @return - data.frame with twin columns and zygosity (plus moderator columns for bivariate GxE)
 #' @export
 #' @family Twin Data functions
 #' @family Data Functions
-#' @seealso - [umxACE()], [umxGxE()], [umxGxEbiv()]
+#' @seealso - [umxACE()], [umx_make_GxE_data()], [umxGxE()], [umxGxEbiv()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
 
 #' @examples
@@ -6817,11 +6815,11 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #'
 #' mzData = tmp[tmp$zygosity == "MZ", ]
 #' dzData = tmp[tmp$zygosity == "DZ", ]
-#' str(mzData); str(dzData); 
+#' str(mzData); str(dzData);
 #' cov(mzData[, c("var_T1", "var_T2")])
 #' cov(dzData[, c("var_T1", "var_T2")])
 #' umxAPA(mzData[, c("var_T1", "var_T2")])
-#' 
+#'
 #' # Prefer to work in path coefficient values? (little a?)
 #' tmp    = umx_make_TwinData(2000, AA = .7^2, CC = .0)
 #' mzData = tmp[tmp$zygosity == "MZ", ]
@@ -6854,24 +6852,19 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #' cov(tmp[tmp$zygosity == "DZ", c("var_T1","var_T2")])
 #'
 #' # Not limited to unit variance
-#' tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE) 
+#' tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE)
 #' cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 #'
 #' # Output can be scaled (mean=0, std=1)
-#' tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
+#' tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE)
 #' cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 #'
-#' \dontrun{
-#' 
-#' # ===============
-#' # = GxE Example =
-#' # ===============
+#' # Univariate GxE for umxGxE: use umx_make_GxE_data() (not umx_make_TwinData)
+#' # df = umx_make_GxE_data(nMZpairs = 500, nDZpairs = 500, am = 0.15)
+#' # m1 = umxGxE(selDVs = "outcome", selDefs = "mod", sep = "_T",
+#' #   data = df, mzData = "MZ", dzData = "DZ")
 #'
-#' AA = c(avg = .5, min = .1, max = .8)
-#' tmp = umx_make_TwinData(nMZpairs = 140, nDZpairs = 240, AA = AA, CC = .35, EE = .65, scale= TRUE)
-#' mzData = tmp[tmp$zygosity == "MZ", ]
-#' dzData = tmp[tmp$zygosity == "DZ", ]
-#' m1 = umxGxE(selDVs = "var", selDefs = "M", sep = "_T", mzData = mzData, dzData = dzData)
+#' \dontrun{
 #'
 #' # =====================
 #' # = Threshold Example =
@@ -6894,16 +6887,16 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #' m1 = umxACE(selDVs= "IQ", data = tmp)
 #' m1 = umxACE(selDVs= "IQ", data = tmp, nSib=3)
 #' # TODO tmx_ examples of unmodeled D etc.
-#' 
+#'
 #' # Bivariate GxSES example (see umxGxEbiv)
-#' 
+#'
 #' AA   = list(a11 = .4, a12 = .1, a22 = .15)
 #' CC   = list(c11 = .2, c12 = .1, c22 = .10)
 #' EE   = list(e11 = .4, e12 = .3, e22 = .25)
 #' Amod = list(Beta_a1 = .025, Beta_a2 = .025)
 #' Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 #' Emod = list(Beta_e1 = .025, Beta_e2 = .025)
-#' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, 
+#' tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE,
 #' 			bivAmod = Amod, bivCmod =Cmod, bivEmod =Emod)
 #' str(tmp)
 #' # 'data.frame':	10000 obs. of  7 variables:
@@ -6914,18 +6907,11 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #' #  $ M_T2    : num  0.492 -0.405 -0.696 -0.829 -0.858 ...
 #' #  $ var_T2  : num  -0.502 -0.856 -0.154 0.065 -0.268 ...
 #' #  $ zygosity: Factor w/ 2 levels "MZ","DZ": 1 1 1 1 1 1 1 1 1 1 ...
-#' 
-#' # TODO tmx example showing how moderation of A introduces heteroscedasticity in a regression model:
-#' # More residual variance at one extreme of the x axis (moderator) 
-#' # m1 = lm(var_T1~ M_T1, data = x); 
-#' # x = rbind(tmp[[1]], tmp[[2]])
-#' # plot(residuals(m1)~ x$M_T1, data=x)
 #' }
 umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NULL, EE = NULL,  DD = NULL,  varNames = "var", MZr= NULL, DZr= MZr, nSib= 2, dzAr= .5, scale = FALSE, mean=0, sd=1, nThresh = NULL, sum2one = TRUE, bivAmod = NULL, bivCmod = NULL, bivEmod = NULL, seed = NULL, empirical = FALSE) {
 	if(!is.null(seed)){
 		set.seed(seed = seed)
 	}
-	# Function caps the moderator effect at -3 and +3 SD
 	if(!is.null(MZr)){
 		if(is.null(DZr)){
 			stop("Both MZr and DZr must be set if you want to generate data matching MZ and DZ correlations.")
@@ -7136,56 +7122,21 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 		colnames(mzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 		colnames(dzData) = c('defM_T1', 'defM_T2', 'M_T1', 'var_T1', 'M_T2', 'var_T2')
 	} else {
-		# Univariate Moderator
-		if(any(c(is.null(AA), is.null(CC), is.null(EE)))){
-			stop("For moderation, you must set all three of AA, CC, and EE")			
+		# Former univariate GxE path (AA = c(avg=, min=, max=)) removed.
+		oldUnivariateGxE = is.numeric(AA) && length(AA) > 1 && all(c("avg", "min", "max") %in% names(AA))
+		if (oldUnivariateGxE) {
+			stop(
+				"Univariate GxE simulation is no longer in umx_make_TwinData(). ",
+				"Use umx_make_GxE_data() for Purcell-path data for umxGxE() ",
+				"(e.g. umx_make_GxE_data(nMZpairs = 500, nDZpairs = 500, a = 0.5, c = 0.3, e = 0.6, am = 0.15))."
+			)
 		}
-		if(!is.null(DD)){
-			stop("DD (dominance) is only supported for straight ACE")
-		}
-		avgA = AA["avg"]
-		# minA applied at -3 SD
-		# maxA applied at +3 SD
-		SES_2_A_beta = (AA["max"] - AA["min"])/6
-
-		mzData = data.frame(T1 = rep(NA, nMZpairs), T2 = rep(NA, nMZpairs), M1 = rep(NA, nMZpairs), M2 = rep(NA, nMZpairs))
-		dzData = data.frame(T1 = rep(NA, nDZpairs), T2 = rep(NA, nDZpairs), M1 = rep(NA, nDZpairs), M2 = rep(NA, nDZpairs))
-		# ==========
-		# = Do MZs =
-		# ==========
-		SESlist = rnorm(n = nMZpairs, mean = 0, sd = 1)
-		j = 1
-		for (thisSES in SESlist) {
-			AA = max(0, (avgA + (thisSES * SES_2_A_beta)))
-			AC  = AA + CC
-			ACE = AA + CC + EE
-			mzCov = matrix(nrow = 2, byrow = TRUE, c(
-				ACE, AC,
-				AC , ACE)
-			);
-			mzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = mzCov, empirical = empirical);
-			mzData[j, ] = c(mzPair, thisSES, thisSES)
-			j = j + 1
-		}
-
-		# ==========
-		# = Do DZs =
-		# ==========
-		SESlist = rnorm(n = nDZpairs, mean = 0, sd = 1)
-		j = 1
-		for (thisSES in SESlist) {
-			AA = max(0, (avgA + (thisSES * SES_2_A_beta)))
-			hAC = (dzAr * AA) + CC
-			ACE = AA + CC + EE
-			dzCov = matrix(nrow = 2, byrow = TRUE, c(
-				ACE, hAC,
-				hAC, ACE)
-			);
-			dzPair = mvrnorm(n = 1, mu = c(0, 0), Sigma = dzCov, empirical = empirical);
-			dzData[j,] = c(dzPair, thisSES, thisSES)
-			j = j + 1
-		}
-		names(mzData) = names(dzData) = c(umx_paste_names(varNames, "_T"), "M_T1", "M_T2")
+		stop(
+			"umx_make_TwinData() could not interpret AA/CC/EE. ",
+			"For plain ACE/ADE use scalar AA, CC, EE (and optional DD). ",
+			"For bivariate GxE (umxGxEbiv) pass list AA/CC/EE plus bivAmod/bivCmod/bivEmod. ",
+			"For univariate umxGxE data use umx_make_GxE_data()."
+		)
 	}
 	if(!is.null(nThresh)){
 		tmp = rbind(mzData, dzData)

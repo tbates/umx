@@ -1,6 +1,13 @@
 library(umx)
 library(testthat)
 
+test_that("umx_make_TwinData rejects old univariate GxE AA=c(avg,min,max)", {
+	expect_error(
+		umx_make_TwinData(nMZpairs = 10, nDZpairs = 10, AA = c(avg = .5, min = .1, max = .8), CC = .3, EE = .2),
+		regexp = "umx_make_GxE_data"
+	)
+})
+
 test_that("umx_make_GxE_data has expected structure and truth attributes", {
 	df = umx_make_GxE_data(nMZpairs = 50, nDZpairs = 50, seed = 99)
 	expect_equal(nrow(df), 100L)

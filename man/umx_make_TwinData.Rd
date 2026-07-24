@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_make_TwinData}
 \alias{umx_make_TwinData}
-\title{Simulate twin data with control over A, C, and E parameters, as well as moderation of A.}
+\title{Simulate twin data with control over A, C, and E (and D) parameters}
 \usage{
 umx_make_TwinData(
   nMZpairs,
@@ -33,13 +33,13 @@ umx_make_TwinData(
 
 \item{nDZpairs}{Number of DZ pairs to simulate (defaults to nMZpairs)}
 
-\item{AA}{value for A variance. NOTE: See options for use in GxE and Bivariate GxE}
+\item{AA}{value for A variance (scalar). For bivariate GxE, a list of Cholesky elements (see details).}
 
 \item{CC}{value for C variance.}
 
 \item{EE}{value for E variance.}
 
-\item{DD}{value for E variance.}
+\item{DD}{value for D variance (univariate ACE/ADE only).}
 
 \item{varNames}{name for variables (defaults to 'var')}
 
@@ -53,9 +53,9 @@ umx_make_TwinData(
 
 \item{scale}{Whether to scale output to var=1 mean=0 (Default FALSE)}
 
-\item{mean}{mean for traits (default = 0) (not applied to moderated cases)}
+\item{mean}{mean for traits (default = 0) (not applied to bivariate GxE)}
 
-\item{sd}{sd of traits (default = 1) (not applied to moderated cases)}
+\item{sd}{sd of traits (default = 1) (not applied to bivariate GxE)}
 
 \item{nThresh}{If supplied, use as thresholds and return mxFactor output? (default is not to)}
 
@@ -73,17 +73,23 @@ umx_make_TwinData(
 }
 \value{
 \itemize{
-\item list of mzData and dzData dataframes containing T1 and T2 plus, if needed M1 and M2 (moderator values)
+\item data.frame with twin columns and zygosity (plus moderator columns for bivariate GxE)
 }
 }
 \description{
-Makes MZ and DZ twin data, optionally with moderated A. By default, the three variance components must sum to 1.
+Makes MZ and DZ twin data for standard ACE/ADE, fixed MZ/DZ correlations, thresholds,
+or \strong{bivariate} GxE (\code{\link[=umxGxEbiv]{umxGxEbiv()}}). By default, variance components must sum to 1.
+
+For \strong{univariate} Purcell GxE data for \code{\link[=umxGxE]{umxGxE()}}, use \code{\link[=umx_make_GxE_data]{umx_make_GxE_data()}} instead
+(path form \(a + a_m M\), ground-truth attributes, optional age covariate phenotype).
+Passing the old univariate style \code{AA = c(avg = ..., min = ..., max = ...)} to this
+function is an error and points you to that helper.
 
 See examples for how to use this: it is pretty flexible.
 
 If you provide 2 varNames, they will be used for twin 1 and twin 2. If you provide one, it will be expanded to var_T1 and var_T2.
 \strong{note}: the function was designed around nSib = 2 and var names = var_T1. It isn't yet smart enough to do, for instance
-scaling or shifting to make the min value 0 (normal for most traits we analyse) for nonstandard \code{varNames} and `nSib``.
+scaling or shifting to make the min value 0 (normal for most traits we analyse) for nonstandard \code{varNames} and \code{nSib}.
 
 \emph{Note}, if you want a power calculator, see \code{\link[=power.ACE.test]{power.ACE.test()}} and \code{\link[=umxPower]{umxPower()}}.
 
@@ -92,15 +98,7 @@ scaling or shifting to make the min value 0 (normal for most traits we analyse) 
 You must supply \code{nMZpairs} (you can omit \code{nDZpairs}).
 You can give any two of A, C, or E and the function deduces the missing parameter so \code{A+C+E == 1}.
 
-\strong{Moderation}
-
-\strong{Univariate GxE Data}
-To simulate data for \code{umxGxE}, offer up a list of the average, min and max values for \code{AA}, i.e., c(avg = .5, min = 0, max = 1).
-
-\code{umx_make_TwinData} will return moderated data, with average value = avg, swinging
-down to min and up to max across 3-SDs of the moderator.
-
-\strong{Bivariate GxE Data}
+\strong{Bivariate GxE Data} (for \code{\link[=umxGxEbiv]{umxGxEbiv()}})
 
 To simulate data with a moderator that is not shared by both twins.
 Moderated heritability is specified via the bivariate relationship (AA, CC, EE) and two moderators in each component.
@@ -125,7 +123,7 @@ str(tmp)
 
 mzData = tmp[tmp$zygosity == "MZ", ]
 dzData = tmp[tmp$zygosity == "DZ", ]
-str(mzData); str(dzData); 
+str(mzData); str(dzData);
 cov(mzData[, c("var_T1", "var_T2")])
 cov(dzData[, c("var_T1", "var_T2")])
 umxAPA(mzData[, c("var_T1", "var_T2")])
@@ -162,24 +160,19 @@ tmp = umx_make_TwinData(100, AA = 0.5, CC = 0.3) # omit any one of A, C, or E (s
 cov(tmp[tmp$zygosity == "DZ", c("var_T1","var_T2")])
 
 # Not limited to unit variance
-tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE) 
+tmp = umx_make_TwinData(100, AA = 3, CC = 2, EE = 3, sum2one = FALSE)
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
 # Output can be scaled (mean=0, std=1)
-tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE) 
+tmp = umx_make_TwinData(100, AA = .7, CC = .1, scale = TRUE)
 cov(tmp[tmp$zygosity == "MZ", c("var_T1","var_T2")])
 
+# Univariate GxE for umxGxE: use umx_make_GxE_data() (not umx_make_TwinData)
+# df = umx_make_GxE_data(nMZpairs = 500, nDZpairs = 500, am = 0.15)
+# m1 = umxGxE(selDVs = "outcome", selDefs = "mod", sep = "_T",
+#   data = df, mzData = "MZ", dzData = "DZ")
+
 \dontrun{
-
-# ===============
-# = GxE Example =
-# ===============
-
-AA = c(avg = .5, min = .1, max = .8)
-tmp = umx_make_TwinData(nMZpairs = 140, nDZpairs = 240, AA = AA, CC = .35, EE = .65, scale= TRUE)
-mzData = tmp[tmp$zygosity == "MZ", ]
-dzData = tmp[tmp$zygosity == "DZ", ]
-m1 = umxGxE(selDVs = "var", selDefs = "M", sep = "_T", mzData = mzData, dzData = dzData)
 
 # =====================
 # = Threshold Example =
@@ -211,7 +204,7 @@ EE   = list(e11 = .4, e12 = .3, e22 = .25)
 Amod = list(Beta_a1 = .025, Beta_a2 = .025)
 Cmod = list(Beta_c1 = .025, Beta_c2 = .025)
 Emod = list(Beta_e1 = .025, Beta_e2 = .025)
-tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE, 
+tmp = umx_make_TwinData(5000, AA =AA, CC = CC, EE = EE,
 			bivAmod = Amod, bivCmod =Cmod, bivEmod =Emod)
 str(tmp)
 # 'data.frame':	10000 obs. of  7 variables:
@@ -222,12 +215,6 @@ str(tmp)
 #  $ M_T2    : num  0.492 -0.405 -0.696 -0.829 -0.858 ...
 #  $ var_T2  : num  -0.502 -0.856 -0.154 0.065 -0.268 ...
 #  $ zygosity: Factor w/ 2 levels "MZ","DZ": 1 1 1 1 1 1 1 1 1 1 ...
-
-# TODO tmx example showing how moderation of A introduces heteroscedasticity in a regression model:
-# More residual variance at one extreme of the x axis (moderator) 
-# m1 = lm(var_T1~ M_T1, data = x); 
-# x = rbind(tmp[[1]], tmp[[2]])
-# plot(residuals(m1)~ x$M_T1, data=x)
 }
 }
 \references{
@@ -237,7 +224,7 @@ str(tmp)
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxACE]{umxACE()}}, \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxGxEbiv]{umxGxEbiv()}}
+\item \code{\link[=umxACE]{umxACE()}}, \code{\link[=umx_make_GxE_data]{umx_make_GxE_data()}}, \code{\link[=umxGxE]{umxGxE()}}, \code{\link[=umxGxEbiv]{umxGxEbiv()}}
 }
 
 Other Twin Data functions:
