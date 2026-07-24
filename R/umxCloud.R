@@ -60,7 +60,6 @@
 #'
 #' @return A fitted \code{umx} / \code{OpenMx} model object returned from the remote cloud instance.
 #'
-#' @import httr2 ssh jsonlite
 #' @export
 #'
 #' @examples

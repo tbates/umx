@@ -64,7 +64,7 @@ chosen so \(r(\texttt{outcomeAge\_T1}, \texttt{age\_T1}) \approx\) \code{targetA
 
 \item{ageSd}{SD of age (default 10).}
 
-\item{clipModerator}{If TRUE (default), clip moderator to \(\link{-3, 3}\).}
+\item{clipModerator}{If TRUE (default), clip moderator draws to the interval from -3 to 3.}
 }
 \value{
 data.frame with columns \code{zygosity}, \code{outcome_T1/T2},

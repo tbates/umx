@@ -64,12 +64,15 @@ Suggests:
 	cocor,
 	ggwas,
 	GPArotation,
+	httr2,
+	jsonlite,
 	parallel,
 	psychTools,
 	psych,
 	pwr,
 	rmarkdown,
-	rhub
+	rhub,
+	ssh
 Enhances:
 	DiagrammeRsvg,
 	rsvg
