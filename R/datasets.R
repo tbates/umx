@@ -459,6 +459,3 @@ NULL
 #' umxSummary(m1)
 #' }
 NULL
-
-
-

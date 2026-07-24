@@ -6,11 +6,40 @@
 #' of genetic (or environmental) influence varies parametrically (usually linear effects on path estimates)
 #' across levels of environment. umxGxE allows detecting,
 #' testing, and visualizing  G xE (or C or E x E) interaction forms.
-#' 
-#' The following figure the GxE model as a path diagram:
-#' 
+#'
+#' Paths are linear in the moderator \(M\): \(a_i = a + a_m M\) (and likewise for \(c\), \(e\)).
+#' Estimated main effects (\code{a}, \code{c}, \code{e}) and moderation slopes
+#' (\code{am}, \code{cm}, \code{em}) live on the \code{top} submodel.
+#'
+#' The following figure shows the GxE model as a path diagram:
+#'
 #' \if{html}{\figure{GxE.png}{options: style="width: 50\%;" alt="Figure: GxE.png"}}
 #' \if{latex}{\figure{GxE.pdf}{options: width=7cm}}
+#'
+#' @section Synthetic data and recovery checks:
+#' For benchmarking and teaching, generate wide twin data with known Purcell paths
+#' via [umx_make_GxE_data()]. That helper returns a data frame ready for
+#' \code{umxGxE} (columns \code{zygosity}, \code{outcome_T*}, \code{outcomeAge_T*},
+#' \code{mod_T*}, \code{age_T*}) plus attribute \code{"truth"} with the generative
+#' parameters. The attribute is ignored by fitting; use it only to compare estimates
+#' to ground truth, e.g. \code{attr(df, "truth")$am}.
+#'
+#' Defaults in the simulator: \(a=0.50\), \(c=0.30\), \(e=0.60\), \(a_m=0.15\),
+#' \(c_m=e_m=0\). Two phenotypes share the same latent ACE draws:
+#' \describe{
+#'   \item{\code{outcome}}{Pure GxE (no age mean effect). Fit with
+#'     \code{selDVs = "outcome"}, \code{selDefs = "mod"}.}
+#'   \item{\code{outcomeAge}}{Same residuals plus a mean effect of age
+#'     (target \(r \approx 0.2\) with age). Fit with
+#'     \code{selDVs = "outcomeAge"}, \code{selDefs = "mod"}, \code{selCovs = "age"}.}
+#' }
+#' Moderator and age are shared within family by default (\code{mod_T1 == mod_T2},
+#' \code{age_T1 == age_T2}).
+#'
+#' **Power:** Moderated ACE is low-powered. Even with thousands of pairs, recovery of
+#' \(a_m\) is noisy; large absolute error relative to the true slope is expected in
+#' single replications. Prefer \code{tryHard = "yes"}, adequate \(N\), and
+#' simulation studies rather than one-shot recovery demos.
 #'
 #' @param name The name of the model (default= "G_by_E")
 #' @param selDVs The dependent variable (e.g. "IQ")
@@ -22,7 +51,7 @@
 #' @param data If provided, dzData and mzData are treated as valid levels of zyg to select() data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
 #' @param digits Rounding precision for tables (default 3)
-#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note. 
+#' @param dropMissingDef Whether to automatically drop missing def var rows for the user (default = TRUE). You get a polite note.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param lboundACE If not NA, then lbound the main effects at this value (default = NA, can help to set this to 0)
@@ -32,29 +61,29 @@
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxE [OpenMx::mxModel()]
 #' @export
-#' @seealso [umxGxE_window()], [umxReduce()], [umxSummary()]
+#' @seealso [umx_make_GxE_data()], [umxGxE_window()], [umxReduce()], [umxSummary()]
 #' @family Twin Modeling Functions
 #' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
 #'  **6**, 554-571. \doi{10.1375/twin.5.6.554}
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' require(umx)
-#' data(twinData) 
+#' data(twinData)
 #' twinData$age1 = twinData$age2 = twinData$age
 #' selDVs  = "bmi"
 #' selDefs = "age"
 #' mzData  = subset(twinData, zygosity == "MZFF")[1:100,]
 #' dzData  = subset(twinData, zygosity == "DZFF")[1:100,]
 #' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
-#' 
+#'
 #' # Select the data on the fly with data= and zygosity levels
 #' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
-#' 
+#'
 #' # ===============================================================
 #' # = example with Twins having different values of the moderator =
 #' # ===============================================================
-#' 
+#'
 #' twinData$age1 = twinData$age2 = twinData$age
 #' tmp = twinData
 #' tmp$age2 = tmp$age2 +rnorm(n=length(tmp$age2))
@@ -63,20 +92,42 @@
 #' mzData = subset(tmp, zygosity == "MZFF")
 #' dzData = subset(tmp, zygosity == "DZFF")
 #' m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep= "", dzData= dzData, mzData= mzData, tryHard= "yes")
-#' 
+#'
 #' # ====================================
 #' # = Controlling output of umxSummary =
 #' # ====================================
 #' umxSummaryGxE(m1)
 #' umxSummary(m1, location = "topright")
 #' umxSummary(m1, separateGraphs = TRUE)
-#' 
+#'
 #' # # Test dropping moderation on a path
 #' m2 = umxModify(m1, regex = "am_.*", comparison = TRUE, tryHard = "yes")
-#' 
+#'
 #' # umxReduce knows how to test all relevant hypotheses for GxE models,
 #' # reporting these in a nice table.
 #' umxReduce(m1)
+#'
+#' # ============================================================
+#' # = Synthetic ground-truth data: umx_make_GxE_data + umxGxE =
+#' # ============================================================
+#' # Generate N pairs with known a, c, e, am (see attr(df, "truth"))
+#' df = umx_make_GxE_data(nMZpairs = 800, nDZpairs = 800, seed = 1)
+#' truth = attr(df, "truth")
+#' truth[c("a", "c", "e", "am", "cm", "em")]
+#'
+#' # Pure GxE phenotype (no age in means)
+#' mGxE = umxGxE(selDVs = "outcome", selDefs = "mod", sep = "_T",
+#'   data = df, mzData = "MZ", dzData = "DZ", tryHard = "yes")
+#' c(est_am = mGxE$top$am$values[1, 1], true_am = truth$am)
+#'
+#' # Same latents + age mean effect via selCovs
+#' mAge = umxGxE(selDVs = "outcomeAge", selDefs = "mod", selCovs = "age",
+#'   sep = "_T", data = df, mzData = "MZ", dzData = "DZ", tryHard = "yes")
+#'
+#' # Custom generative slopes (e.g. null am, nonzero em)
+#' df2 = umx_make_GxE_data(nMZpairs = 500, nDZpairs = 500,
+#'   am = 0, em = 0.10, seed = 2)
+#' attr(df2, "truth")[c("am", "em")]
 #' }
 umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, selCovs = NULL) {
 

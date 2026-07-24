@@ -7219,6 +7219,251 @@ umx_make_TwinData <- function(nMZpairs, nDZpairs = nMZpairs, AA = NULL, CC = NUL
 	# return(list(mzData = mzData, dzData = dzData))
 }
 
+#' Simulate ground-truth Purcell GxE twin data for benchmarking umxGxE
+#'
+#' Generates a wide twin data frame with known path coefficients in the
+#' Purcell (2002) moderated ACE form used by [umxGxE()]:
+#' \(a_i = a + a_m M\), and similarly for \(c\) and \(e\).
+#'
+#' Two outcomes share the same latent ACE draws and moderation:
+#' \describe{
+#'   \item{\code{outcome}}{GxE only (no age mean effect).}
+#'   \item{\code{outcomeAge}}{Same as \code{outcome} plus a mean effect of \code{age}
+#'     calibrated so the sample correlation with age is approximately \code{targetAgeCor}.}
+#' }
+#' Family-level moderator and age are shared by co-twins (\code{mod_T1 == mod_T2},
+#' \code{age_T1 == age_T2}) by default.
+#'
+#' @param nMZpairs Number of MZ pairs (default 2500).
+#' @param nDZpairs Number of DZ pairs (default 2500; total N = 5000 pairs).
+#' @param a Main additive path at \(M = 0\) (default 0.50).
+#' @param c Main common-environment path at \(M = 0\) (default 0.30).
+#' @param e Main unique-environment path at \(M = 0\) (default 0.60).
+#' @param am Additive moderation slope \(a_m\) / a-prime (default 0.15).
+#' @param cm Common-environment moderation slope (default 0).
+#' @param em Unique-environment moderation slope (default 0).
+#' @param betaAge Mean slope of age on \code{outcomeAge}. If \code{NULL} (default),
+#'   chosen so \(r(\texttt{outcomeAge\_T1}, \texttt{age\_T1}) \approx\) \code{targetAgeCor}.
+#' @param targetAgeCor Target correlation between \code{outcomeAge} and \code{age} when calibrating \code{betaAge} (default 0.2).
+#' @param seed Random seed (default 1).
+#' @param sharedModerator If TRUE (default), one moderator draw per family.
+#' @param sharedAge If TRUE (default), one age draw per family.
+#' @param dzAr DZ additive genetic correlation (default 0.5).
+#' @param mu Intercept for both outcomes (default 0).
+#' @param betaMod Mean effect of moderator on both outcomes (default 0).
+#' @param ageMean Mean of age in years (default 40).
+#' @param ageSd SD of age (default 10).
+#' @param clipModerator If TRUE (default), clip moderator draws to the interval from -3 to 3.
+#' @return data.frame with columns \code{zygosity}, \code{outcome_T1/T2},
+#'   \code{outcomeAge_T1/T2}, \code{mod_T1/T2}, \code{age_T1/T2}. Attribute
+#'   \code{"truth"} is a named list of generative parameters (\code{a}, \code{c},
+#'   \code{e}, \code{am}, \code{cm}, \code{em}, \code{betaAge_outcomeAge},
+#'   \code{cor_outcomeAge_age}, sample sizes, seed, etc.). Base R and
+#'   \code{umxGxE} ignore attributes on the data frame; use
+#'   \code{attr(df, "truth")} only for comparison to estimates.
+#' @export
+#' @family Data Functions
+#' @seealso [umxGxE()], [umx_make_TwinData()]
+#' @references Purcell, S. (2002). Variance components models for gene-environment
+#'   interaction in twin analysis. Twin Research, 5, 554-571. \doi{10.1375/twin.5.6.554}
+#' @examples
+#' df = umx_make_GxE_data(nMZpairs = 200, nDZpairs = 200, seed = 1)
+#' str(df)
+#' truth = attr(df, "truth")
+#' truth$am
+#' truth$a
+#' \dontrun{
+#' m1 = umxGxE(selDVs = "outcome", selDefs = "mod", sep = "_T",
+#'   data = df, mzData = "MZ", dzData = "DZ", tryHard = "yes")
+#' }
+umx_make_GxE_data <- function(
+	nMZpairs = 2500L,
+	nDZpairs = 2500L,
+	a = 0.50,
+	c = 0.30,
+	e = 0.60,
+	am = 0.15,
+	cm = 0.0,
+	em = 0.0,
+	betaAge = NULL,
+	targetAgeCor = 0.2,
+	seed = 1L,
+	sharedModerator = TRUE,
+	sharedAge = TRUE,
+	dzAr = 0.5,
+	mu = 0.0,
+	betaMod = 0.0,
+	ageMean = 40,
+	ageSd = 10,
+	clipModerator = TRUE
+) {
+	if (!is.null(seed)) {
+		set.seed(as.integer(seed))
+	}
+	nMZpairs = as.integer(nMZpairs)
+	nDZpairs = as.integer(nDZpairs)
+
+	simZyg <- function(nPairs, rA) {
+		# Family-level M and Age
+		if (sharedModerator) {
+			Mfam = rnorm(nPairs, 0, 1)
+			if (clipModerator) {
+				Mfam = pmin(3, pmax(-3, Mfam))
+			}
+			M1 = M2 = Mfam
+		} else {
+			M1 = rnorm(nPairs, 0, 1)
+			M2 = rnorm(nPairs, 0, 1)
+			if (clipModerator) {
+				M1 = pmin(3, pmax(-3, M1))
+				M2 = pmin(3, pmax(-3, M2))
+			}
+		}
+		if (sharedAge) {
+			ageFam = rnorm(nPairs, ageMean, ageSd)
+			age1 = age2 = ageFam
+		} else {
+			age1 = rnorm(nPairs, ageMean, ageSd)
+			age2 = rnorm(nPairs, ageMean, ageSd)
+		}
+		# Latents A (correlated), C (shared), E (unique)
+		if (abs(rA - 1) < 1e-12) {
+			Ashared = rnorm(nPairs)
+			A1 = A2 = Ashared
+		} else {
+			# Cholesky for bivariate normal with corr rA
+			z1 = rnorm(nPairs)
+			z2 = rnorm(nPairs)
+			A1 = z1
+			A2 = rA * z1 + sqrt(max(0, 1 - rA * rA)) * z2
+		}
+		Cshared = rnorm(nPairs)
+		C1 = C2 = Cshared
+		E1 = rnorm(nPairs)
+		E2 = rnorm(nPairs)
+
+		a1 = a + am * M1
+		c1 = c + cm * M1
+		e1 = e + em * M1
+		a2 = a + am * M2
+		c2 = c + cm * M2
+		e2 = e + em * M2
+
+		resid1 = a1 * A1 + c1 * C1 + e1 * E1
+		resid2 = a2 * A2 + c2 * C2 + e2 * E2
+		y1 = mu + betaMod * M1 + resid1
+		y2 = mu + betaMod * M2 + resid2
+
+		data.frame(
+			outcome_T1 = y1,
+			outcome_T2 = y2,
+			mod_T1 = M1,
+			mod_T2 = M2,
+			age_T1 = age1,
+			age_T2 = age2,
+			resid_T1 = resid1,
+			resid_T2 = resid2,
+			stringsAsFactors = FALSE
+		)
+	}
+
+	mzPart = simZyg(nMZpairs, rA = 1.0)
+	dzPart = simZyg(nDZpairs, rA = dzAr)
+	mzPart$zygosity = "MZ"
+	dzPart$zygosity = "DZ"
+	df = rbind(mzPart, dzPart)
+
+	# Calibrate age mean effect on residual-free outcome so cor(y+beta*age, age) ≈ target
+	if (is.null(betaAge)) {
+		# For Y = R + b*Age, cov(Y,Age) = cov(R,Age) + b Var(Age)
+		# cor = cov(Y,Age) / (sd(Y) sd(Age)); solve for b given target after adding b*Age
+		# Use twin 1 residual (independent of age by construction if age independent of latents)
+		R = df$resid_T1
+		Age = df$age_T1
+		vA = stats::var(Age)
+		# Iterate once or twice because sd(Y) depends on b
+		b = 0
+		for (iter in 1:5) {
+			Y = R + b * Age
+			# Want cor(Y, Age) = targetAgeCor
+			# cor = (cov(R,Age) + b vA) / (sd(Y) sd(Age))
+			sY = stats::sd(Y)
+			sAge = stats::sd(Age)
+			covRA = stats::cov(R, Age)
+			# target = (covRA + b * vA) / (sY * sAge)
+			# sY also depends on b: Var(Y) = Var(R) + b^2 Var(Age) + 2 b cov(R,Age)
+			# Solve quadratic for b to hit target approximately:
+			# target * sY * sAge = covRA + b * vA
+			# target^2 * Var(Y) * Var(Age) = (covRA + b vA)^2
+			t2 = targetAgeCor * targetAgeCor
+			vR = stats::var(R)
+			# t2 * (vR + b^2 vA + 2 b covRA) * vA = covRA^2 + 2 b covRA vA + b^2 vA^2
+			# Collect: b^2 * (t2 * vA * vA - vA^2) + b * (2 t2 vA covRA - 2 covRA vA) + t2 vR vA - covRA^2 = 0
+			# Wait Var(Y)*Var(Age)*t2 = (covRA + b vA)^2
+			# (vR + 2*b*covRA + b^2*vA) * vA * t2 = covRA^2 + 2*b*covRA*vA + b^2*vA^2
+			Acoef = t2 * vA * vA - vA * vA
+			Bcoef = 2 * t2 * vA * covRA - 2 * covRA * vA
+			Ccoef = t2 * vR * vA - covRA * covRA
+			# Acoef = vA^2 (t2 - 1) < 0 typically
+			if (abs(Acoef) < 1e-12) {
+				b = (targetAgeCor * sqrt(vR) * sqrt(vA) - covRA) / vA
+			} else {
+				disc = Bcoef * Bcoef - 4 * Acoef * Ccoef
+				if (disc < 0) {
+					b = targetAgeCor * stats::sd(R) / stats::sd(Age)
+				} else {
+					b1 = (-Bcoef + sqrt(disc)) / (2 * Acoef)
+					b2 = (-Bcoef - sqrt(disc)) / (2 * Acoef)
+					# pick root giving positive target-side correlation of correct sign
+					cand = c(b1, b2)
+					cors = sapply(cand, function(bb) stats::cor(R + bb * Age, Age))
+					b = cand[which.min(abs(cors - targetAgeCor))]
+				}
+			}
+		}
+		betaAge = as.numeric(b)
+	}
+
+	df$outcome_T1 = mu + betaMod * df$mod_T1 + df$resid_T1
+	df$outcome_T2 = mu + betaMod * df$mod_T2 + df$resid_T2
+	df$outcomeAge_T1 = df$outcome_T1 + betaAge * df$age_T1
+	df$outcomeAge_T2 = df$outcome_T2 + betaAge * df$age_T2
+
+	# Drop helper residual columns
+	df$resid_T1 = NULL
+	df$resid_T2 = NULL
+
+	df$zygosity = factor(df$zygosity, levels = c("MZ", "DZ"))
+	# Column order
+	df = df[, c(
+		"zygosity",
+		"outcome_T1", "outcome_T2",
+		"outcomeAge_T1", "outcomeAge_T2",
+		"mod_T1", "mod_T2",
+		"age_T1", "age_T2"
+	)]
+
+	corAchieved = stats::cor(df$outcomeAge_T1, df$age_T1)
+	attr(df, "truth") = list(
+		seed = seed,
+		nMZpairs = nMZpairs,
+		nDZpairs = nDZpairs,
+		a = a, c = c, e = e,
+		am = am, cm = cm, em = em,
+		mu = mu,
+		betaMod = betaMod,
+		betaAge_outcome = 0,
+		betaAge_outcomeAge = betaAge,
+		targetAgeCor = targetAgeCor,
+		cor_outcomeAge_age = corAchieved,
+		sharedModerator = sharedModerator,
+		sharedAge = sharedAge,
+		dzAr = dzAr,
+		model = "Purcell path GxE (umxGxE)"
+	)
+	return(df)
+}
+
 #' Simulate Mendelian Randomization data
 #'
 #' umx_make_MR_data returns a dataset containing 4 variables: A variable of interest (Y), a putative cause (X),
