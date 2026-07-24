@@ -2,102 +2,147 @@
 % Please edit documentation in R/umxCloud.R
 \name{umxCloud}
 \alias{umxCloud}
-\title{Run umx / OpenMx Models on High-Core Cloud Nodes via Hetzner & Docker}
+\title{Run umx / OpenMx models on ephemeral Hetzner Cloud multicore nodes}
 \usage{
 umxCloud(
   model,
-  data = NULL,
   apiToken = Sys.getenv("HETZNER_API_TOKEN"),
-  serverType = "ccx53",
-  dockerImage = "ghcr.io/timbates/umx-cloud:latest",
+  serverType = "cpx31",
+  dockerImage = "rocker/r-ver:4.4.2",
   location = "fsn1",
-  autoDestroy = TRUE
+  autoDestroy = TRUE,
+  tryHard = c("no", "yes", "ordinal", "search"),
+  maxBootMinutes = 15,
+  keepOnError = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{model}{A fitted or unfitted \code{umx} or \code{OpenMx} model object.}
+\item{model}{An \code{MxModel} (e.g. from \code{umxACE(..., autoRun = FALSE)}) with data attached.}
 
-\item{data}{Optional data frame if not already contained within the model object.}
+\item{apiToken}{Hetzner API token. Default \code{Sys.getenv("HETZNER_API_TOKEN")}.}
 
-\item{apiToken}{Character string. Your Hetzner API key. Defaults to \code{Sys.getenv("HETZNER_API_TOKEN")}.}
+\item{serverType}{Hetzner server type. Default \code{"cpx31"} (cheap smoke test).
+Use \code{"ccx33"}, \code{"ccx43"}, \code{"ccx53"}, or \code{"ccx63"} for dedicated cores.}
 
-\item{serverType}{Character. Instance size. Defaults to \code{"ccx53"} (32 Dedicated Cores).
-Options: \code{"ccx33"} (8 cores), \code{"ccx43"} (16 cores), \code{"ccx53"} (32 cores), \code{"ccx63"} (64 cores).}
+\item{dockerImage}{Docker image with R. Default public \code{"rocker/r-ver:4.4.2"}.
+OpenMx and umx are installed inside the container on first use if missing.}
 
-\item{dockerImage}{Character. The public Docker image containing R, OpenMx, and umx.
-Defaults to \code{"rocker/geospatial:latest"} or a dedicated custom umx registry image.}
+\item{location}{Datacenter: \code{"fsn1"}, \code{"nbg1"}, \code{"hel1"}, \code{"ash"}, etc. Default \code{"fsn1"}.}
 
-\item{location}{Character. Datacenter location: \code{"fsn1"} (Falkenstein, DE), \code{"nbg1"} (Nuremberg, DE),
-\code{"hel1"} (Helsinki, FI), or \code{"ash"} (Ashburn, VA, US). Defaults to \code{"fsn1"}.}
+\item{autoDestroy}{Destroy server and Hetzner SSH key on exit? Default \code{TRUE}.}
 
-\item{autoDestroy}{Logical. Self-destruct server on function completion or error? Defaults to \code{TRUE}.}
+\item{tryHard}{Passed to remote \code{\link{umxRun}}. Default \code{"no"} for smoke tests.}
+
+\item{maxBootMinutes}{Max minutes to wait for SSH + Docker readiness. Default 15.}
+
+\item{keepOnError}{If \code{TRUE}, do not destroy the server when the run fails (for SSH debug).
+Default \code{FALSE}. Prints host IP when keeping the server.}
+
+\item{verbose}{Print progress messages? Default \code{TRUE}.}
 }
 \value{
-A fitted \code{umx} / \code{OpenMx} model object returned from the remote cloud instance.
+Fitted \code{MxModel} from the remote run.
 }
 \description{
-\code{umxCloud} provisions an on-demand, high-performance Linux server on Hetzner Cloud,
-transfers model data over secure SSH, executes optimization inside a pre-built Docker container
-with full CPU core parallelization, retrieves the fitted model object, and automatically destroys
-the remote server to stop billing.
+\code{umxCloud} provisions an on-demand Linux server on Hetzner Cloud, transfers a model
+over SSH, runs optimization inside a Docker container, returns the fitted model, and
+(by default) destroys the server so billing stops when idle.
 }
 \details{
-\strong{Why use cloud compute for Structural Equation Modeling?}
-Heavy OpenMx / umx optimizations (e.g., high-dimensional RAM models, complex GxE interaction surfaces,
-or multi-thousand iteration bootstraps) are heavily bottlenecked by local physical core limits.
-\code{umxCloud} allows researchers to scale up to 32 or 64 dedicated physical AMD cores on demand for
-pennies per run without managing server infrastructure or compiling C++ dependencies from source.
+Designed for small labs that need more cores than a laptop for heavy OpenMx/umx fits
+(long \code{tryHard}, large raw FIML, bootstrap grids), without keeping a permanent server.
+
+\strong{First smoke test:} use a cheap shared type such as \code{serverType = "cpx31"}.
+First run often takes \strong{8–20 minutes} (VM boot, Docker install, image pull, install
+OpenMx/umx from binaries). After plumbing works, switch to dedicated \code{ccx*} types
+for real multicore jobs.
+
+The model must already contain its data (\code{mxData} / umx builders with data attached).
+There is no remote \code{data=} argument.
 }
-\section{Step-by-Step Setup Guide for New Users}{
+\section{Step-by-Step Setup}{
 
 \enumerate{
-\item \strong{Create a Hetzner Cloud Account:}
-\itemize{
-\item Visit \url{https://console.hetzner.cloud/}.
-\item Register for an account. \emph{Important:} Complete registration without an active VPN to pass fraud checks.
-\item Complete identity verification (requires credit card pre-authorization or photo ID).
-}
-\item \strong{Generate a Project API Token:}
-\itemize{
-\item Log into the Hetzner Console and create a Project (e.g., \code{"Academic Compute"}).
-\item In the left menu, go to \strong{Security} -> \strong{API Tokens} -> \strong{Generate API Token}.
-\item Select \strong{Read & Write} permissions, give it a name (e.g., \code{"umx_cloud"}), and click Generate.
-\item Copy the secret token string immediately.
-}
-\item \strong{Store Your Token Securely:}
-Do not hardcode API keys in R scripts. Store the token in your local \code{.Renviron} file:
+\item Create a Hetzner Cloud account at \url{https://console.hetzner.cloud/}
+(complete verification; avoid VPN during signup if fraud checks fail).
+\item Project → Security → API Tokens → Generate (Read & Write). Copy the token.
+\item Store it in \code{.Renviron} (never commit the token):
 \preformatted{
-    # In R console:
     usethis::edit_r_environ()
-    
-    # Add this line:
-    HETZNER_API_TOKEN="your_copied_secret_token_here"
+    # HETZNER_API_TOKEN="..."
     }
-Restart R for changes to take effect. \code{umxCloud} reads this variable automatically.
+Restart R. Confirm with \code{nzchar(Sys.getenv("HETZNER_API_TOKEN"))}.
+\item Install optional packages once: \code{install.packages(c("httr2", "ssh"))}.
 }
 }
 
-\section{Estimated Cost Metrics (Dedicated AMD EPYC Cores)}{
+\section{Cost notes (approximate, check Hetzner for current prices)}{
 
 \itemize{
-\item \strong{\code{ccx33} (8 Dedicated Cores / 32GB RAM):} ~€0.22 / hour (~$0.24 USD)
-\item \strong{\code{ccx53} (32 Dedicated Cores / 128GB RAM):} ~€0.86 / hour (~$0.93 USD)
-\item \strong{\code{ccx63} (64 Dedicated Cores / 256GB RAM):} ~€1.60 / hour (~$1.75 USD)
+\item \strong{Smoke test:} \code{cpx31} / similar shared — a few cents per short trial.
+\item \strong{\code{ccx33}} (8 dedicated cores): ~€0.22 / hour.
+\item \strong{\code{ccx53}} (32 dedicated cores): ~€0.86 / hour.
+\item \strong{\code{ccx63}} (64 dedicated cores): ~€1.60 / hour.
 }
+Default \code{autoDestroy = TRUE} deletes the server and temporary SSH key on exit
+(including errors), unless \code{keepOnError = TRUE} leaves the box for debugging.
 }
 
 \examples{
 \dontrun{
+# Requires HETZNER_API_TOKEN in .Renviron and packages httr2, ssh
 library(umx)
 data(twinData)
-mzData <- subset(twinData, zygosity == "MZFF")
-dzData <- subset(twinData, zygosity == "DZFF")
-selDVs <- c("bmi1", "bmi2")
+mz = twinData[twinData$zygosity == "MZFF", ][1:200, ]
+dz = twinData[twinData$zygosity == "DZFF", ][1:200, ]
+m0 = umxACE(
+  selDVs = c("bmi1", "bmi2"),
+  mzData = mz, dzData = dz, sep = "",
+  autoRun = FALSE
+)
+# Cheap first try (~cents). Watch Hetzner console: server should appear then vanish.
+m1 = umxCloud(m0, serverType = "cpx31", tryHard = "no")
+summary(m1)
 
-model <- umxACE(selDVs = selDVs, dzData = dzData, mzData = mzData, sep = "")
-
-# Run model on 32 dedicated cloud cores using token from .Renviron
-fittedModel <- umxCloud(model = model, serverType = "ccx53")
-summary(fittedModel)
+# After plumbing works, use dedicated cores for heavy jobs:
+# m1 = umxCloud(m0, serverType = "ccx53", tryHard = "yes")
 }
 }
+\seealso{
+\code{\link{umxRun}}, \code{\link{umxACE}}
+
+Other Twin Modeling Functions:
+\code{\link[=power.ACE.test]{power.ACE.test()}},
+\code{\link{umx}},
+\code{\link[=umxACE]{umxACE()}},
+\code{\link[=umxACE_DE]{umxACE_DE()}},
+\code{\link[=umxACEcov]{umxACEcov()}},
+\code{\link[=umxACEv]{umxACEv()}},
+\code{\link[=umxCP]{umxCP()}},
+\code{\link[=umxDiffMZ]{umxDiffMZ()}},
+\code{\link[=umxDiscTwin]{umxDiscTwin()}},
+\code{\link[=umxDoC]{umxDoC()}},
+\code{\link[=umxDoCp]{umxDoCp()}},
+\code{\link[=umxGxE]{umxGxE()}},
+\code{\link[=umxGxE_window]{umxGxE_window()}},
+\code{\link[=umxGxEbiv]{umxGxEbiv()}},
+\code{\link[=umxIP]{umxIP()}},
+\code{\link[=umxMRDoC]{umxMRDoC()}},
+\code{\link[=umxReduce]{umxReduce()}},
+\code{\link[=umxReduceACE]{umxReduceACE()}},
+\code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}},
+\code{\link[=umxSexLim]{umxSexLim()}},
+\code{\link[=umxSimplex]{umxSimplex()}},
+\code{\link[=umxSummarizeTwinData]{umxSummarizeTwinData()}},
+\code{\link[=umxSummaryACE]{umxSummaryACE()}},
+\code{\link[=umxSummaryACEv]{umxSummaryACEv()}},
+\code{\link[=umxSummaryDoC]{umxSummaryDoC()}},
+\code{\link[=umxSummaryGxEbiv]{umxSummaryGxEbiv()}},
+\code{\link[=umxSummarySexLim]{umxSummarySexLim()}},
+\code{\link[=umxSummarySimplex]{umxSummarySimplex()}},
+\code{\link[=umxTwinMaker]{umxTwinMaker()}},
+\code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}
+}
+\concept{Twin Modeling Functions}

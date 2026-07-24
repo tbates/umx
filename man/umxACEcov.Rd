@@ -146,6 +146,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxACE_DE]{umxACE_DE()}},
 \code{\link[=umxACEv]{umxACEv()}},
 \code{\link[=umxCP]{umxCP()}},
+\code{\link[=umxCloud]{umxCloud()}},
 \code{\link[=umxDiffMZ]{umxDiffMZ()}},
 \code{\link[=umxDiscTwin]{umxDiscTwin()}},
 \code{\link[=umxDoC]{umxDoC()}},

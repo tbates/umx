@@ -65,7 +65,6 @@ Suggests:
 	ggwas,
 	GPArotation,
 	httr2,
-	jsonlite,
 	parallel,
 	psychTools,
 	psych,

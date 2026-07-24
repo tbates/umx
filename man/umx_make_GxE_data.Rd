@@ -44,7 +44,7 @@ umx_make_GxE_data(
 \item{em}{Unique-environment moderation slope (default 0).}
 
 \item{betaAge}{Mean slope of age on \code{outcomeAge}. If \code{NULL} (default),
-chosen so \(r(\texttt{outcomeAge\_T1}, \texttt{age\_T1}) \approx\) \code{targetAgeCor}.}
+chosen so that the correlation r(outcomeAge_T1, age_T1) is approximately \code{targetAgeCor}.}
 
 \item{targetAgeCor}{Target correlation between \code{outcomeAge} and \code{age} when calibrating \code{betaAge} (default 0.2).}
 

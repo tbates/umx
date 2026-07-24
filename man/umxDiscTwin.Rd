@@ -94,6 +94,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxACEcov]{umxACEcov()}},
 \code{\link[=umxACEv]{umxACEv()}},
 \code{\link[=umxCP]{umxCP()}},
+\code{\link[=umxCloud]{umxCloud()}},
 \code{\link[=umxDiffMZ]{umxDiffMZ()}},
 \code{\link[=umxDoC]{umxDoC()}},
 \code{\link[=umxDoCp]{umxDoCp()}},

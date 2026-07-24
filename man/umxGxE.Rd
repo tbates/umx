@@ -98,7 +98,7 @@ Defaults in the simulator: \(a=0.50\), \(c=0.30\), \(e=0.60\), \(a_m=0.15\),
 \item{\code{outcome}}{Pure GxE (no age mean effect). Fit with
 \code{selDVs = "outcome"}, \code{selDefs = "mod"}.}
 \item{\code{outcomeAge}}{Same residuals plus a mean effect of age
-(target \(r \approx 0.2\) with age). Fit with
+(target correlation of approximately 0.2 with age). Fit with
 \code{selDVs = "outcomeAge"}, \code{selDefs = "mod"}, \code{selCovs = "age"}.}
 }
 Moderator and age are shared within family by default (\code{mod_T1 == mod_T2},
@@ -191,6 +191,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxACEcov]{umxACEcov()}},
 \code{\link[=umxACEv]{umxACEv()}},
 \code{\link[=umxCP]{umxCP()}},
+\code{\link[=umxCloud]{umxCloud()}},
 \code{\link[=umxDiffMZ]{umxDiffMZ()}},
 \code{\link[=umxDiscTwin]{umxDiscTwin()}},
 \code{\link[=umxDoC]{umxDoC()}},
