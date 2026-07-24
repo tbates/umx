@@ -37,6 +37,7 @@ jobs:
       # Quick CI: no GenomicSEM (github install is slow/flaky; vignette is eval=FALSE).
       # Vignettes are skipped here — modification_indices/profile-CI knit is multi-hour;
       # full vignette build stays on weekly matrix / workflow_dispatch.
+      # ggwas is Suggests + Remotes (GitHub-only until on CRAN); pin github:: so pak does not look on CRAN.
       - name: Install Package Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -48,6 +49,7 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
+            github::bczech/ggwas
           needs: check
 
       - name: Check Package Structure
@@ -98,6 +100,7 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
+            github::bczech/ggwas
           needs: check
 
       - name: Check Package Structure

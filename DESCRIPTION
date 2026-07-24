@@ -73,6 +73,9 @@ Suggests:
 Enhances:
 	DiagrammeRsvg,
 	rsvg
+# Optional GitHub-only Suggests (not on CRAN). Used by pak / remotes / GHA;
+# CRAN ignores this field. Remove when ggwas is on CRAN.
+Remotes: bczech/ggwas
 BugReports: https://github.com/tbates/umx/issues
 LazyData: true
 VignetteBuilder: knitr
