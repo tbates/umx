@@ -32,13 +32,15 @@ umx_polytriowise(
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx.
 }
 \examples{
+\dontrun{
 tmp = mtcars
 tmp$am = umxFactor(mtcars$am)
 tmp$vs = umxFactor(mtcars$vs)
-tmp = umx_scale(tmp)
-x = umx_polytriowise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+tmp[, c("hp", "mpg")] = umx_scale(tmp[, c("hp", "mpg")])
+x = umx_polytriowise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "ordinal")
 x$R
 cor(mtcars[, c("hp", "mpg", "am", "vs")])
+}
 
 }
 \references{

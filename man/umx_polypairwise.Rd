@@ -32,14 +32,13 @@ umx_polypairwise(
 Compute polychoric/polyserial/Pearson correlations with FIML in OpenMx, but pair by pair, not across the whole dataset at once.
 }
 \examples{
-umx_set_optimizer("SLSQP")
 tmp = mtcars
 tmp$am = umxFactor(mtcars$am)
 tmp$vs = umxFactor(mtcars$vs)
-tmp = umx_scale(tmp)
-x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+# Scale continuous only (leave ordered factors alone)
+tmp[, c("hp", "mpg")] = umx_scale(tmp[, c("hp", "mpg")])
+x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "ordinal")
 x$R
-cov2cor(x$R)
 cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 \references{

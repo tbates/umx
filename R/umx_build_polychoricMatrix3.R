@@ -23,184 +23,254 @@
 #' 
 umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard      = match.arg(tryHard)
+	if (!is.data.frame(data)) {
+		data = as.data.frame(data)
+	}
 	nVar         = ncol(data)
 	nameList     = names(data)
-	nThresh      = vector(mode = "integer", nVar)
-	isOrd        = vector(mode = "logical", nVar)
-	ordnameList  = vector(mode = "character", nVar)
-	contnameList = vector(mode = "character", nVar)
-	nContinuous  = nOrdinal = 0
+	if (is.null(nameList) || any(!nzchar(nameList))) {
+		nameList = paste0("V", seq_len(nVar))
+		names(data) = nameList
+	}
+	nThresh      = integer(nVar)
+	isOrd        = logical(nVar)
+	ordnameList  = character(0)
+	contnameList = character(0)
 
-	# Figure out which variables are ordinal factors
-	correlationLabels = matrix(NA, nrow = nVar, ncol = nVar)
+	# Figure out which variables are ordinal factors (index nThresh by column i, not ordinal count)
+	correlationLabels = matrix(NA_character_, nrow = nVar, ncol = nVar)
 	for (i in 1:nVar) {
-	    if (is.factor(data[,i])){
-	        nOrdinal = nOrdinal + 1
-	        nThresh[nOrdinal] = length(table(data[, i])) - 1
-	        ordnameList[nOrdinal] = nameList[i]
-	        isOrd[i] = TRUE
-	    } else {
-	        nContinuous = nContinuous + 1
-	        nThresh[i] = 0
-	        contnameList[nContinuous] = nameList[i]
-	        isOrd[i] = FALSE
-	    }
-		# Label correlation parameters
-	    for (k in 1:nVar) {
-	        if (i > k) {
-				  correlationLabels[i, k] = paste("r", i, k)
-				  correlationLabels[k, i] = paste("r", i, k)
-	        }
-	   }
-	}
-	if (nOrdinal > 0) {
-		ordnameList = ordnameList[1:nOrdinal]
-	} else {
-		ordnameList = NULL
-	}
-	if (nContinuous > 0) {
-		contnameList = contnameList[1:nContinuous]
-	} else {
-		contnameList = NULL
-	}
-
-	# Find largest number of thresholds of all the ordinal variables
-	maxnThresh = max(nThresh)
-
-	# Populate matrix with threshold deviations, starting threshold 1 at -1 and putting maximum at +1
-	# for efficiency, we could take a better guess to start with
-	minThresh = (-.5)
-	maxthresh =   .5
-
-	# Construct either threshold deviation matrix or threshold direct estimate matrix - as long as there's at least one ordinal variable
-	if (nOrdinal > 0){
-	    if (useDeviations) {
-	            thresholdDeviationValues     = matrix(0, nrow = maxnThresh, ncol = nOrdinal)
-	            thresholdDeviationValues[1,] = minThresh
-	            thresholdDeviationLbounds    = matrix(nrow = maxnThresh, ncol = nOrdinal)
-	            thresholdDeviationLabels     = matrix(nrow = maxnThresh, ncol = nOrdinal)
-	            thresholdDeviationLabels[1,] = paste("ThresholdDeviation ", 1, 1:nOrdinal)
-	            thresholdDeviationFree       = matrix(F, nrow = maxnThresh, ncol = nOrdinal)
-	            thresholdDeviationFree[1,]   = TRUE
-	            iordvar                      = 0
-				for (i in 1:nVar) { 
-	            	if (isOrd[i]) {
-	                    iordvar = iordvar + 1
-	                    if(nThresh[iordvar]>1) {
-	                        for (j in 2:nThresh[iordvar]) {
-	                                thresholdDeviationValues[j,iordvar] = (maxthresh - minThresh) / nThresh[iordvar]
-	                                thresholdDeviationLbounds[j,iordvar] = .001
-	                                thresholdDeviationLabels[j,iordvar] = paste("ThresholdDeviation ", j, iordvar)
-	                                thresholdDeviationFree[j,iordvar] = TRUE
-	                            }
-	                    }
-	                }
-				}
-	        } else {
-				# no deviations
-	            thresholdDirectEstimatesValues     = matrix(0,nrow=maxnThresh, ncol=nOrdinal)
-	            thresholdDirectEstimatesLbounds    = matrix(-Inf,nrow=maxnThresh, ncol=nOrdinal)
-	            thresholdDirectEstimatesLabels     = matrix(nrow=maxnThresh, ncol=nOrdinal)
-	            thresholdDirectEstimatesFree       = matrix(F,nrow=maxnThresh, ncol=nOrdinal)
-	            thresholdDirectEstimatesValues[1,] = minThresh
-	            thresholdDirectEstimatesLabels[1,] = paste("ThresholdDirectEstimates ", 1, 1:nOrdinal)
-	            thresholdDirectEstimatesFree[1,]   = TRUE
-	            iordvar = 0
-	            for (i in 1:nVar) { 
-	                    if (isOrd[i]) {
-	                        iordvar = iordvar + 1
-	                        if(nThresh[iordvar]>1){
-	                                for (j in 2:nThresh[iordvar]){
-	                                        thresholdDirectEstimatesValues[j,iordvar] = minThresh + (j-1) * ((maxthresh - minThresh) / nThresh[iordvar])
-	                                        thresholdDirectEstimatesLabels[j,iordvar] = paste("ThresholdDirectEstimate ", j, iordvar)
-	                                        thresholdDirectEstimatesFree[j,iordvar] = TRUE
-	                                }
-	                        }
-	                  }
-	            }
-	     }
-	}
-	nameList = names(data)
-	tnames = paste("Threshold",1:maxnThresh,sep='')
-
-	# Define the model
-	model = mxModel('model',
-		mxMatrix("Stand", name = "R", nrow = nVar, ncol = nVar, free=TRUE, labels=correlationLabels, lbound=-.999999999, ubound=.999999999, dimnames=list(nameList, nameList)),
-		mxMatrix("Full" , name = "M", nrow = 1, ncol = nVar, free=!isOrd, dimnames = list('Mean', nameList)),
-		mxMatrix("Diag", name = "StdDev", nrow = nVar, ncol = nVar, free=!isOrd, values=1, lbound=.01, dimnames=list(nameList, nameList))
-	)	
-	model$expCov = mxAlgebra(StdDev %&% R, dimnames=list(nameList,nameList))
-
-	# Algebra to compute Threshold matrix
-	if (nOrdinal > 0){
-		if (useDeviations) {
-			model = mxModel(model, 
-				# For Multiplication
-				mxMatrix("Lower", name="UnitLower", nrow = maxnThresh, ncol = maxnThresh, free=F, values=1),
-				# Threshold differences:
-				mxMatrix("Full", name="thresholdDeviations", nrow = maxnThresh, ncol = nOrdinal, free=thresholdDeviationFree, values=thresholdDeviationValues, lbound=thresholdDeviationLbounds, labels = thresholdDeviationLabels),
-				mxAlgebra(UnitLower %*% thresholdDeviations, dimnames=list(tnames,ordnameList), name="thresholds")
-			)
+		if (is.factor(data[, i])) {
+			if (!is.ordered(data[, i])) {
+				data[, i] = mxFactor(data[, i], levels = levels(data[, i]))
+			}
+			nThresh[i] = nlevels(data[, i]) - 1L
+			if (nThresh[i] < 1L) {
+				stop("umx_polychoric: factor ", omxQuotes(nameList[i]), " has fewer than 2 levels.")
+			}
+			ordnameList = c(ordnameList, nameList[i])
+			isOrd[i] = TRUE
 		} else {
-			model = mxModel(model, mxMatrix("Full", name="thresholds", ncol = nOrdinal, nrow = maxnThresh, free=thresholdDirectEstimatesFree, values=thresholdDirectEstimatesValues, lbound=thresholdDirectEstimatesLbounds, labels = thresholdDirectEstimatesLabels))
-			dimnames(model$thresholds) = list(tnames, ordnameList)
-	    }
-	}
-
-	# Define the objective function
-	if (nOrdinal > 0){
-	    expectation = mxExpectationNormal(covariance= "expCov", means="M", thresholds="thresholds", threshnames=ordnameList)
-	}else{
-	    expectation = mxExpectationNormal(covariance= "expCov", means="M")
-	}
-
-	# Add the expectation function and the data to the model
-	model = mxModel(model, 
-		expectation, 
-		mxFitFunctionML(), 
-		mxData(data, type= "raw")
-	)
-
-	# Run the job
-	if(tryHard == "no"){
-		# model = mxRun(model)
-	} else if (tryHard == "yes"){
-		model = mxTryHard(model)
-		# model = mxRun(model)
-	} else if (tryHard == "ordinal"){
-		model = mxTryHardOrdinal(model)
-		# model = mxRun(model)
-	} else if (tryHard == "search"){
-		model = mxTryHardWideSearch(model)
-	}else{
-		stop("tryHard = ", omxQuotes(tryHard), " not known: use no, yes, ordinal, or search")
-	}
-	model = mxRun(model)
-
-	# Populate seMatrix for return
-	seMatrix = matrix(NA, nVar, nVar)
-	k = 0
-	for (i in 1:nVar){
-		for (j in i:nVar){
-			if(i != j) {
-				k = k+1
-				seMatrix[i,j] = model@output$standardErrors[k]
-				seMatrix[j,i] = model@output$standardErrors[k]
+			nThresh[i] = 0L
+			contnameList = c(contnameList, nameList[i])
+			isOrd[i] = FALSE
+		}
+		for (k in 1:nVar) {
+			if (i > k) {
+				correlationLabels[i, k] = paste0("r", i, k)
+				correlationLabels[k, i] = paste0("r", i, k)
 			}
 		}
 	}
-	# Add dimnames to thresholds, which oddly are not in model$thresholds' output
-	if(nOrdinal > 0) {
-		if(useDeviations){
-			thresholds = matrix(model@output$algebras$model.thresholds, nrow=maxnThresh, ncol=nOrdinal, dimnames=list(tnames,ordnameList))     
-		} else{
-			thresholds = matrix(model@output$matrices$model.thresholds, nrow=maxnThresh, ncol=nOrdinal, dimnames=list(tnames,ordnameList))     
+	nOrdinal = sum(isOrd)
+	nContinuous = sum(!isOrd)
+	if (nOrdinal == 0) {
+		ordnameList = NULL
+	}
+	if (nContinuous == 0) {
+		contnameList = NULL
+	}
+
+	# Empirical starts: continuous means/SDs; ordinal thresholds from marginal proportions
+	meanStarts = numeric(nVar)
+	sdStarts = rep(1, nVar)
+	for (i in 1:nVar) {
+		if (!isOrd[i]) {
+			meanStarts[i] = mean(as.numeric(data[, i]), na.rm = TRUE)
+			sdi = stats::sd(as.numeric(data[, i]), na.rm = TRUE)
+			sdStarts[i] = if (is.finite(sdi) && sdi > 0.01) sdi else 1
 		}
-	}else{
+	}
+
+	# Largest number of thresholds among ordinal variables
+	maxnThresh = if (nOrdinal > 0) max(nThresh) else 0L
+
+	# Threshold starts from cumulative proportions (avoids log(-Inf) integration crashes on sparse pairs)
+	xmu_thresh_starts_from_data <- function(x) {
+		tab = table(x, useNA = "no")
+		if (sum(tab) < 1) {
+			return(rep(0, max(1, nlevels(x) - 1L)))
+		}
+		cum = cumsum(as.numeric(tab)) / sum(tab)
+		# Drop final 1.0; map empty tails away from +/- Inf
+		z = stats::qnorm(pmin(pmax(cum[-length(cum)], 1e-6), 1 - 1e-6))
+		z[!is.finite(z)] = 0
+		z
+	}
+
+	if (nOrdinal > 0) {
+		if (useDeviations) {
+			thresholdDeviationValues  = matrix(0, nrow = maxnThresh, ncol = nOrdinal)
+			thresholdDeviationLbounds = matrix(NA_real_, nrow = maxnThresh, ncol = nOrdinal)
+			thresholdDeviationLabels  = matrix(NA_character_, nrow = maxnThresh, ncol = nOrdinal)
+			thresholdDeviationFree    = matrix(FALSE, nrow = maxnThresh, ncol = nOrdinal)
+			iordvar = 0L
+			for (i in 1:nVar) {
+				if (isOrd[i]) {
+					iordvar = iordvar + 1L
+					nt = nThresh[i]
+					zStarts = xmu_thresh_starts_from_data(data[, i])
+					if (length(zStarts) < nt) {
+						zStarts = c(zStarts, seq_len(nt - length(zStarts)) * 0.2)
+					}
+					# Convert absolute thresholds to positive deviations
+					thresholdDeviationValues[1, iordvar] = zStarts[1]
+					thresholdDeviationFree[1, iordvar] = TRUE
+					thresholdDeviationLabels[1, iordvar] = paste("ThresholdDeviation", 1, iordvar)
+					if (nt > 1L) {
+						for (j in 2:nt) {
+							dev = zStarts[j] - zStarts[j - 1]
+							if (!is.finite(dev) || dev < 0.001) {
+								dev = 0.2
+							}
+							thresholdDeviationValues[j, iordvar] = dev
+							thresholdDeviationLbounds[j, iordvar] = 0.001
+							thresholdDeviationLabels[j, iordvar] = paste("ThresholdDeviation", j, iordvar)
+							thresholdDeviationFree[j, iordvar] = TRUE
+						}
+					}
+				}
+			}
+		} else {
+			thresholdDirectEstimatesValues  = matrix(0, nrow = maxnThresh, ncol = nOrdinal)
+			thresholdDirectEstimatesLbounds = matrix(-Inf, nrow = maxnThresh, ncol = nOrdinal)
+			thresholdDirectEstimatesLabels  = matrix(NA_character_, nrow = maxnThresh, ncol = nOrdinal)
+			thresholdDirectEstimatesFree    = matrix(FALSE, nrow = maxnThresh, ncol = nOrdinal)
+			iordvar = 0L
+			for (i in 1:nVar) {
+				if (isOrd[i]) {
+					iordvar = iordvar + 1L
+					nt = nThresh[i]
+					zStarts = xmu_thresh_starts_from_data(data[, i])
+					if (length(zStarts) < nt) {
+						zStarts = c(zStarts, seq_len(nt - length(zStarts)) * 0.2)
+					}
+					for (j in 1:nt) {
+						thresholdDirectEstimatesValues[j, iordvar] = zStarts[j]
+						thresholdDirectEstimatesLabels[j, iordvar] = paste("ThresholdDirectEstimate", j, iordvar)
+						thresholdDirectEstimatesFree[j, iordvar] = TRUE
+					}
+				}
+			}
+		}
+	}
+	tnames = if (maxnThresh > 0) paste0("Threshold", 1:maxnThresh) else character(0)
+
+	# Define the model: ordinal/binary latent mean@0 residual@1; continuous free mean/SD
+	model = mxModel('model',
+		mxMatrix("Stand", name = "R", nrow = nVar, ncol = nVar, free = TRUE, labels = correlationLabels, values = 0, lbound = -.999999, ubound = .999999, dimnames = list(nameList, nameList)),
+		mxMatrix("Full", name = "M", nrow = 1, ncol = nVar, free = !isOrd, values = meanStarts, dimnames = list('Mean', nameList)),
+		mxMatrix("Diag", name = "StdDev", nrow = nVar, ncol = nVar, free = !isOrd, values = sdStarts, lbound = .01, dimnames = list(nameList, nameList))
+	)
+	model$expCov = mxAlgebra(StdDev %&% R, dimnames = list(nameList, nameList), name = "expCov")
+
+	# Algebra to compute Threshold matrix
+	if (nOrdinal > 0) {
+		if (useDeviations) {
+			model = mxModel(model,
+				mxMatrix("Lower", name = "UnitLower", nrow = maxnThresh, ncol = maxnThresh, free = FALSE, values = 1),
+				mxMatrix("Full", name = "thresholdDeviations", nrow = maxnThresh, ncol = nOrdinal, free = thresholdDeviationFree, values = thresholdDeviationValues, lbound = thresholdDeviationLbounds, labels = thresholdDeviationLabels),
+				mxAlgebra(UnitLower %*% thresholdDeviations, dimnames = list(tnames, ordnameList), name = "thresholds")
+			)
+		} else {
+			model = mxModel(model, mxMatrix("Full", name = "thresholds", ncol = nOrdinal, nrow = maxnThresh, free = thresholdDirectEstimatesFree, values = thresholdDirectEstimatesValues, lbound = thresholdDirectEstimatesLbounds, labels = thresholdDirectEstimatesLabels))
+			dimnames(model$thresholds) = list(tnames, ordnameList)
+		}
+	}
+
+	if (nOrdinal > 0) {
+		expectation = mxExpectationNormal(covariance = "expCov", means = "M", thresholds = "thresholds", threshnames = ordnameList)
+	} else {
+		expectation = mxExpectationNormal(covariance = "expCov", means = "M")
+	}
+
+	model = mxModel(model,
+		expectation,
+		mxFitFunctionML(),
+		mxData(data, type = "raw")
+	)
+
+	# Run (tryHard already optimizes; only mxRun when tryHard == "no")
+	varMsg = paste(nameList, collapse = ", ")
+	safeRun <- function(model, how) {
+		out = tryCatch({
+			if (how == "no") {
+				mxRun(model, silent = TRUE)
+			} else if (how == "yes") {
+				mxTryHard(model, silent = TRUE, bestInitsOutput = FALSE)
+			} else if (how == "ordinal") {
+				mxTryHardOrdinal(model, silent = TRUE, bestInitsOutput = FALSE)
+			} else if (how == "search") {
+				mxTryHardWideSearch(model, silent = TRUE, bestInitsOutput = FALSE)
+			} else {
+				stop("tryHard = ", omxQuotes(how), " not known: use no, yes, ordinal, or search")
+			}
+		}, error = function(e) e)
+		out
+	}
+	fit = safeRun(model, tryHard)
+	# Fallback chain if first strategy fails (esp. mixed continuous/binary on stock OpenMx)
+	if (!inherits(fit, "MxModel") || is.null(fit$output) || !isTRUE(fit$output$status$code %in% c(0L, 1L))) {
+		for (how in setdiff(c("ordinal", "yes", "search", "no"), tryHard)) {
+			fit2 = safeRun(model, how)
+			if (inherits(fit2, "MxModel") && !is.null(fit2$output) && isTRUE(fit2$output$status$code %in% c(0L, 1L))) {
+				fit = fit2
+				break
+			}
+			if (inherits(fit2, "MxModel") && umx_has_been_run(fit2)) {
+				fit = fit2
+			}
+		}
+	}
+	if (!inherits(fit, "MxModel")) {
+		stop("umx_polychoric: failed to fit variables ", omxQuotes(varMsg),
+			". Ensure ordinal columns are ordered factors (umxFactor) and continuous columns have variance.", call. = FALSE)
+	}
+	if (!umx_has_been_run(fit)) {
+		fit = tryCatch(mxRun(fit, silent = TRUE), error = function(e) {
+			stop("umx_polychoric: failed to fit variables ", omxQuotes(varMsg), ": ", conditionMessage(e), call. = FALSE)
+		})
+	}
+	model = fit
+
+	# Populate seMatrix for return
+	seMatrix = matrix(NA_real_, nVar, nVar)
+	if (!is.null(model@output$standardErrors)) {
+		k = 0L
+		for (i in 1:nVar) {
+			for (j in i:nVar) {
+				if (i != j) {
+					k = k + 1L
+					if (k <= length(model@output$standardErrors)) {
+						seMatrix[i, j] = model@output$standardErrors[k]
+						seMatrix[j, i] = model@output$standardErrors[k]
+					}
+				}
+			}
+		}
+	}
+	if (nOrdinal > 0) {
+		if (useDeviations) {
+			thresholds = matrix(model@output$algebras$model.thresholds, nrow = maxnThresh, ncol = nOrdinal, dimnames = list(tnames, ordnameList))
+		} else {
+			thresholds = matrix(model@output$matrices$model.thresholds, nrow = maxnThresh, ncol = nOrdinal, dimnames = list(tnames, ordnameList))
+		}
+	} else {
 		thresholds = NULL
 	}
-	# Return results      
-	return(list(polychorics= model$expCov@result, thresholds= thresholds, polychoricStandardErrors= seMatrix, Minus2LogLikelihood= model@output$Minus2LogLikelihood, Hessian= model@output$calculatedHessian, estHessian= model@output$estimatedHessian, estimatedModel= model))
+	expCov = tryCatch(model$expCov$result, error = function(e) NULL)
+	if (is.null(expCov)) {
+		expCov = tryCatch(mxEval(expCov, model), error = function(e) matrix(NA_real_, nVar, nVar, dimnames = list(nameList, nameList)))
+	}
+	return(list(
+		polychorics = expCov,
+		thresholds = thresholds,
+		polychoricStandardErrors = seMatrix,
+		Minus2LogLikelihood = model@output$Minus2LogLikelihood,
+		Hessian = model@output$calculatedHessian,
+		estHessian = model@output$estimatedHessian,
+		estimatedModel = model
+	))
 }
 
 
@@ -218,14 +288,13 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 #' @family Data Functions
 #' @references - Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 #' @examples
-#' umx_set_optimizer("SLSQP")
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)
 #' tmp$vs = umxFactor(mtcars$vs)
-#' tmp = umx_scale(tmp)
-#' x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+#' # Scale continuous only (leave ordered factors alone)
+#' tmp[, c("hp", "mpg")] = umx_scale(tmp[, c("hp", "mpg")])
+#' x = umx_polypairwise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "ordinal")
 #' x$R
-#' cov2cor(x$R)
 #' cor(mtcars[, c("hp", "mpg", "am", "vs")])
 umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "any", tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
@@ -291,13 +360,15 @@ umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "
 #' @family Data Functions
 #' @references - \doi{10.3389/fpsyg.2016.00528}
 #' @examples
+#' \dontrun{
 #' tmp = mtcars
 #' tmp$am = umxFactor(mtcars$am)
 #' tmp$vs = umxFactor(mtcars$vs)
-#' tmp = umx_scale(tmp)
-#' x = umx_polytriowise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "yes")
+#' tmp[, c("hp", "mpg")] = umx_scale(tmp[, c("hp", "mpg")])
+#' x = umx_polytriowise(tmp[, c("hp", "mpg", "am", "vs")], tryHard = "ordinal")
 #' x$R
 #' cor(mtcars[, c("hp", "mpg", "am", "vs")])
+#' }
 #'
 umx_polytriowise <- function (data, useDeviations = TRUE, printFit = FALSE, use = "any", tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
