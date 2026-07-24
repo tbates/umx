@@ -65,6 +65,7 @@ Other Data Functions:
 \code{\link[=umx_as_numeric]{umx_as_numeric()}},
 \code{\link[=umx_cont_2_quantiles]{umx_cont_2_quantiles()}},
 \code{\link[=umx_lower2full]{umx_lower2full()}},
+\code{\link[=umx_make_GxE_data]{umx_make_GxE_data()}},
 \code{\link[=umx_make_TwinData]{umx_make_TwinData()}},
 \code{\link[=umx_make_fake_data]{umx_make_fake_data()}},
 \code{\link[=umx_make_raw_from_cov]{umx_make_raw_from_cov()}},
