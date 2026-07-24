@@ -3,10 +3,10 @@
 \name{install.OpenMx}
 \alias{install.OpenMx}
 \alias{umx_update_OpenMx}
-\title{Install OpenMx (CRAN or GenomicMx binary build)}
+\title{Install OpenMx (GenomicMx binary build)}
 \usage{
 install.OpenMx(
-  loc = c("CRAN", "GenomicMx", "open release page", "source"),
+  loc = c("GenomicMx", "CRAN", "open release page", "dev"),
   url = NULL,
   lib,
   repos = getOption("repos")
@@ -27,17 +27,17 @@ None (called for side effects).
 }
 \description{
 Install stock \strong{CRAN} OpenMx, or the \strong{GenomicMx} OpenMx build maintained for
-umx WLS/GSEM (Jacobians, modern \code{type="summary"} WLS data, multigroup stack).
-The GenomicMx build uses the same R package name \code{OpenMx} and \strong{replaces}
-whatever OpenMx is in the target library (same pattern as the old NPSOL binaries).
+umx WLS/GSEM (Jacobians, modern \code{type="summary"} WLS data, multi-group stack).
+The GenomicMx build \strong{replaces} whatever OpenMx is in the target library
+(same pattern as the old NPSOL binaries).
 
 Options for \code{loc}:
+2. \code{"GenomicMx"}(default): download the latest platform binary from
+\href{https://github.com/tbates/umx/releases}{GitHub Releases} when available.
 \enumerate{
-\item \code{"CRAN"} (default): install from CRAN (safe for ML/twin-only work).
-\item \code{"GenomicMx"}: download the latest platform binary from
-\href{https://github.com/tbates/GenomicMx/releases}{GitHub Releases} when available.
+\item \code{"CRAN"}: install from CRAN (safe for ML/twin-only work).
 \item \code{"open release page"}: open the Releases page in a browser.
-\item \code{"source"}: install from the GenomicMx GitHub source (requires build tools).
+\item \code{"dev"}: install from the GenomicMx GitHub source (requires build tools).
 }
 }
 \examples{

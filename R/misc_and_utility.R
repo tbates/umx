@@ -3121,20 +3121,20 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 # = Developer functions =
 # =======================
 
-#' Install OpenMx (CRAN or GenomicMx binary build)
+#' Install OpenMx (GenomicMx binary build)
 #'
 #' @description
 #' Install stock **CRAN** OpenMx, or the **GenomicMx** OpenMx build maintained for
-#' umx WLS/GSEM (Jacobians, modern `type="summary"` WLS data, multigroup stack).
-#' The GenomicMx build uses the same R package name `OpenMx` and **replaces**
-#' whatever OpenMx is in the target library (same pattern as the old NPSOL binaries).
+#' umx WLS/GSEM (Jacobians, modern `type="summary"` WLS data, multi-group stack).
+#' The GenomicMx build **replaces** whatever OpenMx is in the target library 
+#' (same pattern as the old NPSOL binaries).
 #'
 #' Options for `loc`:
-#' 1. `"CRAN"` (default): install from CRAN (safe for ML/twin-only work).
-#' 2. `"GenomicMx"`: download the latest platform binary from
-#'    [GitHub Releases](https://github.com/tbates/GenomicMx/releases) when available.
+#' 2. `"GenomicMx"`(default): download the latest platform binary from
+#'    [GitHub Releases](https://github.com/tbates/umx/releases) when available.
+#' 1. `"CRAN"`: install from CRAN (safe for ML/twin-only work).
 #' 3. `"open release page"`: open the Releases page in a browser.
-#' 4. `"source"`: install from the GenomicMx GitHub source (requires build tools).
+#' 4. `"dev"`: install from the GenomicMx GitHub source (requires build tools).
 #'
 #' @aliases umx_update_OpenMx
 #' @param loc Which build to get (default `"CRAN"`).
@@ -3154,7 +3154,7 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #' install.OpenMx("GenomicMx")           # GenomicMx binary when published
 #' install.OpenMx("open release page") # browse releases
 #' }
-install.OpenMx <- function(loc = c("CRAN", "GenomicMx", "open release page", "source"), url = NULL, lib, repos = getOption("repos")) {
+install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page", "dev"), url = NULL, lib, repos = getOption("repos")) {
 	loc = match.arg(loc)
 	oldTimeOut = getOption("timeout")
 	options(timeout = 60 * 5)
@@ -3191,15 +3191,15 @@ install.OpenMx <- function(loc = c("CRAN", "GenomicMx", "open release page", "so
 		return(invisible(NULL))
 	}
 
-	if (loc == "source") {
+	if (loc == "dev") {
 		if (!requireNamespace("remotes", quietly = TRUE)) {
 			stop("install.OpenMx(\"source\") needs the remotes package. install.packages(\"remotes\") first.", call. = FALSE)
 		}
-		message("Installing OpenMx from GitHub source (tbates/OpenMx-tb). This compiles C++ and may take several minutes.")
+		message("Installing OpenMx from GitHub source (tbates/GenomicMx). This compiles C++/Fortran and may take several minutes.")
 		if (missing(lib)) {
-			remotes::install_github("tbates/OpenMx-tb", upgrade = "never")
+			remotes::install_github("tbates/GenomicMx", upgrade = "never")
 		} else {
-			remotes::install_github("tbates/OpenMx-tb", upgrade = "never", lib = lib)
+			remotes::install_github("tbates/GenomicMx", upgrade = "never", lib = lib)
 		}
 		message("Done. Restart R, then library(OpenMx); library(umx). Check with umxVersion().")
 		return(invisible(NULL))
@@ -3236,8 +3236,9 @@ install.OpenMx <- function(loc = c("CRAN", "GenomicMx", "open release page", "so
 #' GitHub Releases page for GenomicMx OpenMx binaries
 #' @keywords internal
 xmu_genomicmx_release_page_url <- function() {
-	# Public fork/releases (update if the GitHub repo name changes)
-	"https://github.com/tbates/OpenMx-tb/releases"
+	# Public fork/releases (TODO: update if the GitHub repo name changes)
+	# "https://github.com/tbates/GenomicMx/releases"
+	"https://github.com/tbates/umx/releases"
 }
 
 #' Resolve a platform binary URL from the latest GenomicMx GitHub Release (if any)
@@ -3246,7 +3247,8 @@ xmu_genomicmx_release_page_url <- function() {
 #' @keywords internal
 xmu_genomicmx_binary_url <- function() {
 	# Base R only (no jsonlite dependency): pull latest release JSON and scrape asset URLs.
-	api = "https://api.github.com/repos/tbates/OpenMx-tb/releases/latest"
+	# api = "https://api.github.com/repos/tbates/GenomicMx/releases/latest"
+	api = "https://api.github.com/repos/tbates/umx/releases/latest"
 	raw = tryCatch({
 		con = url(api, open = "rb")
 		on.exit(close(con), add = TRUE)
@@ -3256,7 +3258,8 @@ xmu_genomicmx_binary_url <- function() {
 		return(NULL)
 	}
 	# browser_download_url values in GitHub release JSON
-	urls = regmatches(raw, gregexpr("https://github.com/tbates/OpenMx-tb/releases/download/[^\"]+", raw))[[1]]
+	# urls = regmatches(raw, gregexpr("https://github.com/tbates/GenomicMx/releases/download/[^\"]+", raw))[[1]]
+	urls = regmatches(raw, gregexpr("https://github.com/tbates/umx/releases/download/[^\"]+", raw))[[1]]
 	urls = unique(urls)
 	if (!length(urls)) {
 		return(NULL)
