@@ -30,7 +30,7 @@
 #'   \item{\code{outcome}}{Pure GxE (no age mean effect). Fit with
 #'     \code{selDVs = "outcome"}, \code{selDefs = "mod"}.}
 #'   \item{\code{outcomeAge}}{Same residuals plus a mean effect of age
-#'     (target \(r \approx 0.2\) with age). Fit with
+#'     (target correlation of approximately 0.2 with age). Fit with
 #'     \code{selDVs = "outcomeAge"}, \code{selDefs = "mod"}, \code{selCovs = "age"}.}
 #' }
 #' Moderator and age are shared within family by default (\code{mod_T1 == mod_T2},
