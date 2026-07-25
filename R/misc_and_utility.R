@@ -3486,16 +3486,16 @@ umx_make <- function(
 #'
 #' Two independent targets matter:
 #' \itemize{
-#'   \item \strong{Installed library} — what `library(OpenMx)` runs. Updated only by
+#'   \item \strong{Installed library} -- what `library(OpenMx)` runs. Updated only by
 #'     `mx_make()` / `"install"` / `"cran-install"` / `"GenomicMx"` (or CRAN).
-#'   \item \strong{Source tree at \code{pkg}} — what `"win"` packages for win-builder.
+#'   \item \strong{Source tree at \code{pkg}} -- what `"win"` packages for win-builder.
 #'     Independent of whatever is currently installed in R.
 #' }
 #'
 #' @section Flight checklist:
 #' \enumerate{
 #'   \item \strong{Update Rd files} (after editing roxygen in \code{R/}):
-#'     \code{mx_make("Rd")} — runs OpenMx \code{make roxygen} (\code{util/rox}:
+#'     \code{mx_make("Rd")} -- runs OpenMx \code{make roxygen} (\code{util/rox}:
 #'     compile DLL + \code{roxygenize} rd). Do \strong{not} use bare
 #'     \code{devtools::document()} on OpenMx; man pages are git-tracked and the
 #'     Makefile owns the official path.
@@ -3509,11 +3509,11 @@ umx_make <- function(
 #'     \code{xmu_openmx_engine_status()} for GenomicMx capability.
 #'   \item \strong{Win-builder} (same source tree, not the installed DLL):
 #'     Prefer a clean commit if you care what is archived; then
-#'     \code{mx_make("win")} — \code{devtools::check_win_devel(pkg)}.
+#'     \code{mx_make("win")} -- \code{devtools::check_win_devel(pkg)}.
 #'     Local install is \strong{not} required for win-builder; only the files
 #'     under \code{pkg} are uploaded.
 #'   \item \strong{Prebuilt release binary} (not local WIP):
-#'     \code{mx_make("GenomicMx")} → [install.OpenMx()] from GitHub Releases.
+#'     \code{mx_make("GenomicMx")} -> [install.OpenMx()] from GitHub Releases.
 #' }
 #'
 #' @param what Target. One of:
@@ -3523,7 +3523,7 @@ umx_make <- function(
 #'     \item{\code{"build"}}{\code{make build} (local binary package).}
 #'     \item{\code{"Rd"}}{\code{make roxygen} (OpenMx \code{util/rox}; refresh man/*.Rd).}
 #'     \item{\code{"check"}}{\code{make cran-check}.}
-#'     \item{\code{"win"}}{\code{devtools::check_win_devel(pkg)} — source tree at \code{pkg}.}
+#'     \item{\code{"win"}}{\code{devtools::check_win_devel(pkg)} -- source tree at \code{pkg}.}
 #'     \item{\code{"spell"}, \code{"sitrep"}, \code{"deps_install"}, \code{"testthat"}, \code{"git"}}{Same idea as [umx_make()].}
 #'     \item{\code{"GenomicMx"}}{[install.OpenMx()] prebuilt binary from GitHub Releases.}
 #'     \item{\code{"help"} / \code{"--help"}}{List \code{mx_make} targets and run \code{make help}.}
@@ -3532,6 +3532,9 @@ umx_make <- function(
 #' @param deploymentTarget macOS \code{MACOSX_DEPLOYMENT_TARGET} for gfortran/clang
 #'   (default \code{"14.0"}). Ignored on non-darwin.
 #' @param openmp Logical; pass \code{OPENMP=yes} or \code{OPENMP=no} to make (default TRUE).
+#' @param email Optional. For \code{what = "win"} only: override the win-builder results address
+#'   (otherwise devtools uses DESCRIPTION Maintainer -- e.g. upstream OpenMx goes to Kirkpatrick).
+#'   Example: \code{mx_make("win", pkg = "~/bin/OpenMx-upstream-wincheck", email = "you@example.com")}.
 #' @return Invisibly \code{NULL}, or the result of a returning target (e.g. sitrep).
 #' @export
 #' @family xmu internal not for end user
@@ -3546,6 +3549,8 @@ umx_make <- function(
 #' # restart R, then:
 #' # library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")
 #' mx_make("win")            # upload source tree to win-builder (devel)
+#' mx_make("win", pkg = "~/bin/OpenMx-upstream-wincheck",
+#'         email = "timothy.c.bates@gmail.com")  # results to you, not DESCRIPTION Maintainer
 #'
 #' mx_make("cran-install")
 #' mx_make("spell")
@@ -3559,7 +3564,8 @@ mx_make <- function(
 	what = c("install", "NPSOL", "cran-install", "build", "Rd", "check", "win", "spell", "sitrep", "deps_install", "testthat", "git", "GenomicMx", "--help"),
 	pkg = "~/bin/OpenMx",
 	deploymentTarget = "14.0",
-	openmp = TRUE
+	openmp = TRUE,
+	email = NULL
 ) {
 	what = match.arg(what)
 	pkgPath = normalizePath(path.expand(pkg), mustWork = TRUE)
@@ -3586,7 +3592,7 @@ mx_make <- function(
 		return(invisible(NULL))
 	}
 	if (what == "Rd") {
-		# OpenMx tracks man/*.Rd in git; official regen is make roxygen → util/rox
+		# OpenMx tracks man/*.Rd in git; official regen is make roxygen -> util/rox
 		status = xmu_mx_make_run(pkgPath, "roxygen", deploymentTarget = deploymentTarget, openmp = openmp, stopOnError = TRUE)
 		message("Rd done (make roxygen / util/rox). Commit man/*.Rd if they changed.")
 		return(invisible(status))
@@ -3601,10 +3607,15 @@ mx_make <- function(
 		gitSha = xmu_mx_make_git_sha(pkgPath)
 		if (!is.na(gitSha)) message("  git HEAD = ", gitSha)
 		if (isTRUE(xmu_mx_make_git_dirty(pkgPath))) {
-			message("  WARNING: git working tree is dirty — uncommitted files are included in the tarball unless .Rbuildignore'd.")
+			message("  WARNING: git working tree is dirty -- uncommitted files are included in the tarball unless .Rbuildignore'd.")
+		}
+		if (!is.null(email) && nzchar(email)) {
+			message("  email (results) = ", email, " (override; not DESCRIPTION Maintainer)")
+		} else {
+			message("  email (results) = DESCRIPTION Maintainer (pass email= to override)")
 		}
 		message("  Local mx_make(\"install\") is NOT required for win-builder.")
-		return(invisible(devtools::check_win_devel(pkg = pkgPath)))
+		return(invisible(devtools::check_win_devel(pkg = pkgPath, email = email)))
 	}
 	if (what == "spell") {
 		if (!requireNamespace("spelling", quietly = TRUE)) {
@@ -3694,7 +3705,7 @@ xmu_mx_make_git_dirty <- function(pkgPath) {
 	if (!nzchar(Sys.which("git")) || !dir.exists(file.path(pkgPath, ".git"))) {
 		return(NA)
 	}
-	# porcelain empty ⇒ clean
+	# porcelain empty => clean
 	out = tryCatch(
 		system2("git", args = c("-C", pkgPath, "status", "--porcelain"), stdout = TRUE, stderr = FALSE),
 		error = function(e) NULL
@@ -7405,7 +7416,7 @@ umx_make_GxE_data <- function(
 	dzPart$zygosity = "DZ"
 	df = rbind(mzPart, dzPart)
 
-	# Calibrate age mean effect on residual-free outcome so cor(y+beta*age, age) ≈ target
+	# Calibrate age mean effect on residual-free outcome so cor(y+beta*age, age) ~ target
 	if (is.null(betaAge)) {
 		# For Y = R + b*Age, cov(Y,Age) = cov(R,Age) + b Var(Age)
 		# cor = cov(Y,Age) / (sd(Y) sd(Age)); solve for b given target after adding b*Age

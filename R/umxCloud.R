@@ -10,7 +10,7 @@
 #' (long \code{tryHard}, large raw FIML, bootstrap grids), without keeping a permanent server.
 #'
 #' \strong{First smoke test:} use a cheap shared type such as \code{serverType = "cpx31"}.
-#' First run often takes \strong{8–20 minutes} (VM boot, Docker install, image pull, install
+#' First run often takes \strong{8-20 minutes} (VM boot, Docker install, image pull, install
 #' OpenMx/umx from binaries). After plumbing works, switch to dedicated \code{ccx*} types
 #' for real multicore jobs.
 #'
@@ -21,7 +21,7 @@
 #' \enumerate{
 #'   \item Create a Hetzner Cloud account at \url{https://console.hetzner.com/}
 #'     (complete verification; avoid VPN during signup if fraud checks fail).
-#'   \item Project → Security → API Tokens → Generate (Read & Write). Copy the token.
+#'   \item Project -> Security -> API Tokens -> Generate (Read & Write). Copy the token.
 #'   \item Store it in \code{.Renviron} (never commit the token):
 #'     \preformatted{
 #'     usethis::edit_r_environ()
@@ -33,10 +33,10 @@
 #'
 #' @section Cost notes (approximate, check Hetzner for current prices):
 #' \itemize{
-#'   \item \strong{Smoke test:} \code{cpx31} / similar shared — a few cents per short trial.
-#'   \item \strong{\code{ccx33}} (8 dedicated cores): ~€0.22 / hour.
-#'   \item \strong{\code{ccx53}} (32 dedicated cores): ~€0.86 / hour.
-#'   \item \strong{\code{ccx63}} (64 dedicated cores): ~€1.60 / hour.
+#'   \item \strong{Smoke test:} \code{cpx31} / similar shared -- a few cents per short trial.
+#'   \item \strong{\code{ccx33}} (8 dedicated cores): ~EUR0.22 / hour.
+#'   \item \strong{\code{ccx53}} (32 dedicated cores): ~EUR0.86 / hour.
+#'   \item \strong{\code{ccx63}} (64 dedicated cores): ~EUR1.60 / hour.
 #' }
 #' Default \code{autoDestroy = TRUE} deletes the server and temporary SSH key on exit
 #' (including errors), unless \code{keepOnError = TRUE} leaves the box for debugging.

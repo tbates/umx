@@ -26,7 +26,7 @@ test_that("xmu_openmx_install_message mentions install.OpenMx GenomicMx", {
 })
 
 test_that("install.OpenMx accepts GenomicMx loc without installing", {
-	# match.arg only — do not network-install in CI
+	# match.arg only -- do not network-install in CI
 	expect_error(install.OpenMx("not_a_build"), "should be one of")
 	fmls = eval(formals(install.OpenMx)$loc)
 	expect_true("GenomicMx" %in% fmls)

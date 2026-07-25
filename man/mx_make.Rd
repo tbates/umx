@@ -9,7 +9,8 @@ mx_make(
     "sitrep", "deps_install", "testthat", "git", "GenomicMx", "--help"),
   pkg = "~/bin/OpenMx",
   deploymentTarget = "14.0",
-  openmp = TRUE
+  openmp = TRUE,
+  email = NULL
 )
 }
 \arguments{
@@ -20,7 +21,7 @@ mx_make(
 \item{\code{"build"}}{\code{make build} (local binary package).}
 \item{\code{"Rd"}}{\code{make roxygen} (OpenMx \code{util/rox}; refresh man/*.Rd).}
 \item{\code{"check"}}{\code{make cran-check}.}
-\item{\code{"win"}}{\code{devtools::check_win_devel(pkg)} — source tree at \code{pkg}.}
+\item{\code{"win"}}{\code{devtools::check_win_devel(pkg)} -- source tree at \code{pkg}.}
 \item{\code{"spell"}, \code{"sitrep"}, \code{"deps_install"}, \code{"testthat"}, \code{"git"}}{Same idea as \code{\link[=umx_make]{umx_make()}}.}
 \item{\code{"GenomicMx"}}{\code{\link[=install.OpenMx]{install.OpenMx()}} prebuilt binary from GitHub Releases.}
 \item{\code{"help"} / \code{"--help"}}{List \code{mx_make} targets and run \code{make help}.}
@@ -32,6 +33,10 @@ mx_make(
 (default \code{"14.0"}). Ignored on non-darwin.}
 
 \item{openmp}{Logical; pass \code{OPENMP=yes} or \code{OPENMP=no} to make (default TRUE).}
+
+\item{email}{Optional. For \code{what = "win"} only: override the win-builder results address
+(otherwise devtools uses DESCRIPTION Maintainer -- e.g. upstream OpenMx goes to Kirkpatrick).
+Example: \code{mx_make("win", pkg = "~/bin/OpenMx-upstream-wincheck", email = "you@example.com")}.}
 }
 \value{
 Invisibly \code{NULL}, or the result of a returning target (e.g. sitrep).
@@ -45,9 +50,9 @@ issues); after install, \strong{restart R} then \code{library(OpenMx)}.
 
 Two independent targets matter:
 \itemize{
-\item \strong{Installed library} — what \code{library(OpenMx)} runs. Updated only by
+\item \strong{Installed library} -- what \code{library(OpenMx)} runs. Updated only by
 \code{mx_make()} / \code{"install"} / \code{"cran-install"} / \code{"GenomicMx"} (or CRAN).
-\item \strong{Source tree at \code{pkg}} — what \code{"win"} packages for win-builder.
+\item \strong{Source tree at \code{pkg}} -- what \code{"win"} packages for win-builder.
 Independent of whatever is currently installed in R.
 }
 }
@@ -55,7 +60,7 @@ Independent of whatever is currently installed in R.
 
 \enumerate{
 \item \strong{Update Rd files} (after editing roxygen in \code{R/}):
-\code{mx_make("Rd")} — runs OpenMx \code{make roxygen} (\code{util/rox}:
+\code{mx_make("Rd")} -- runs OpenMx \code{make roxygen} (\code{util/rox}:
 compile DLL + \code{roxygenize} rd). Do \strong{not} use bare
 \code{devtools::document()} on OpenMx; man pages are git-tracked and the
 Makefile owns the official path.
@@ -69,11 +74,11 @@ CRAN copy on another \code{.libPaths()} entry). Optional:
 \code{xmu_openmx_engine_status()} for GenomicMx capability.
 \item \strong{Win-builder} (same source tree, not the installed DLL):
 Prefer a clean commit if you care what is archived; then
-\code{mx_make("win")} — \code{devtools::check_win_devel(pkg)}.
+\code{mx_make("win")} -- \code{devtools::check_win_devel(pkg)}.
 Local install is \strong{not} required for win-builder; only the files
 under \code{pkg} are uploaded.
 \item \strong{Prebuilt release binary} (not local WIP):
-\code{mx_make("GenomicMx")} → \code{\link[=install.OpenMx]{install.OpenMx()}} from GitHub Releases.
+\code{mx_make("GenomicMx")} -> \code{\link[=install.OpenMx]{install.OpenMx()}} from GitHub Releases.
 }
 }
 
@@ -85,6 +90,8 @@ mx_make()                 # make install this tree into R library
 # restart R, then:
 # library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")
 mx_make("win")            # upload source tree to win-builder (devel)
+mx_make("win", pkg = "~/bin/OpenMx-upstream-wincheck",
+        email = "timothy.c.bates@gmail.com")  # results to you, not DESCRIPTION Maintainer
 
 mx_make("cran-install")
 mx_make("spell")
