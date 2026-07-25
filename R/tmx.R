@@ -227,9 +227,11 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 #' Test if a factor model is identified
 #'
 #' @description
-#' Test if a factor model is identified by establishing if the number of variables is equal too or grater than
-#' the number of model parameters. See also [OpenMx::mxCheckIdentification()] for checking actual models.
-#'
+#' Test if an ORTHOGONAL factor model is identified by establishing if the number of variables is equal-to or greater than
+#' the number of model parameters.
+#' 
+#' This standard formula to check if the degrees of freedom for an EFA with **orthogonal** factors are greater than or equal to zero.
+#' See also [OpenMx::mxCheckIdentification()] for checking model identification.
 #' @param nVariables the number of variables measured.
 #' @param nFactors the number of factors posited.
 #' @return - Binary

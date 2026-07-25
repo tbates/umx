@@ -933,13 +933,17 @@ fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, disc
 #' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
 
 #' @examples
-#' # Open $INTC in yahoo finance.
+#' # Open $NVDA in google, MRVL in yahoo finance.
 #' \dontrun{
-#' fin_stock_ticker("INTC")
+#' fin_stock_ticker("NVDA")
+#' fin_stock_ticker("MRVL", provider= "YAHOO")
 #' }
-fin_stock_ticker <- function(ticker= "INTC") {
-	url =paste0("https://finance.yahoo.com/quote/", ticker)
-	# https://www.google.com/finance/quote/SWBI:NASDAQ
+fin_stock_ticker <- function(ticker= "NVDA", exchange = "NASDAQ", provider= c("GOOGLE", "YAHOO")) {
+	if(provider=="GOOGLE"){
+		url =paste0("https://www.google.com/finance/quote/", ticker, ":", exchange)
+	} else {
+		url =paste0("https://finance.yahoo.com/quote/", ticker)
+	}
 	browseURL(url, browser = getOption("browser"))
 }
 

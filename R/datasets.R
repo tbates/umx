@@ -440,22 +440,24 @@ NULL
 #' @seealso [OpenMx::HS.ability.data], [umxRAM()]
 #' @references Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. 
 #' *Supplementary Educational Monographs*, no. 48. Chicago: University of Chicago Press.
-
 #' @examples
 #' \dontrun{
 #' data(HSwls)
 #' # x1:x3 represent visual perception
 #' # x4:x6 represent verbal ability
 #' # x7:x9 represent speed
-#' m1 = umxRAM("WLS_HS", data = HSwls, type = "WLS",
-#'   umxPath(latent = c("visual", "verbal", "speed")),
-#'   umxPath("visual", to = c("x1", "x2", "x3")),
-#'   umxPath("verbal", to = c("x4", "x5", "x6")),
-#'   umxPath("speed", to = c("x7", "x8", "x9")),
+#' 
+#' m1 = umxRAM("WLS_HS", data = HSwls, type = "DWLS",
+#'
 #'   umxPath(v.m. = c("visual", "verbal", "speed")),
+#'   umxPath(from = "visual", to = c("x1", "x2", "x3")),
+#'   umxPath(from = "verbal", to = c("x4", "x5", "x6")),
+#'   umxPath(from = "speed" , to = c("x7", "x8", "x9")),
+#'
+#'   umxPath(unique.bivariate = c("visual", "verbal", "speed")),
 #'   umxPath(v.m. = c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9"))
 #' )
-#' m1 = mxRun(m1)
-#' umxSummary(m1)
+#' plot(m1, means=FALSE, std=TRUE, splines=FALSE, min = c("visual", "verbal", "speed"))
+#' umxSummary(m1, uncertainty= "RobustSE")
 #' }
 NULL
