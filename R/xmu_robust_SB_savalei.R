@@ -365,7 +365,7 @@ xmu_catml_implied_correlation <- function(model) {
 	if (is.null(impliedCor) || !is.matrix(impliedCor) || nrow(impliedCor) < 2) {
 		return(NULL)
 	}
-	impliedCor
+	cov2cor(impliedCor)
 }
 
 #' Polycorrelation-block Jacobian rank degrees of freedom (diagnostic)
@@ -661,83 +661,43 @@ xmu_catml_eval_model <- function(model) {
 		if (is.null(latentVars)) {
 			latentVars = character(0)
 		}
-		pathList = list()
-		if (!is.null(model$A) && !is.null(model$S)) {
-			aMat = model$A
-			sMat = model$S
-			aRowNames = if (length(aMat$rownames) > 0) aMat$rownames else rownames(aMat$values)
-			aColNames = if (length(aMat$colnames) > 0) aMat$colnames else colnames(aMat$values)
-			sRowNames = if (length(sMat$rownames) > 0) sMat$rownames else rownames(sMat$values)
-			if (length(latentVars) > 0 && !is.null(aRowNames) && !is.null(aColNames)) {
-				for (lv in latentVars) {
-					rowIdx = match(manifests, aRowNames)
-					colIdx = match(lv, aColNames)
-					if (!any(is.na(rowIdx)) && !is.na(colIdx)) {
-						loadVals = as.numeric(aMat$values[rowIdx, colIdx])
-						if (length(loadVals) > 0 && all(is.finite(loadVals))) {
-							pathList = append(pathList, list(mxPath(from = lv, to = manifests, arrows = 1, free = FALSE, values = loadVals)))
-						}
-					}
-					sRowIdx = match(lv, sRowNames)
-					if (!is.na(sRowIdx) && isTRUE(sMat$free[sRowIdx, sRowIdx])) {
-						lvVarVal = sMat$values[sRowIdx, sRowIdx]
-						if (is.finite(lvVarVal) && lvVarVal > 0) {
-							pathList = append(pathList, list(mxPath(from = lv, arrows = 2, free = FALSE, values = lvVarVal)))
-						}
-					}
-				}
-			}
-			if (!is.null(sRowNames)) {
-				manIdx = match(manifests, sRowNames)
-				if (!any(is.na(manIdx))) {
-					residVals = diag(sMat$values[manIdx, manIdx, drop = FALSE])
-					if (length(residVals) > 0 && all(is.finite(residVals))) {
-						pathList = append(pathList, list(mxPath(from = manifests, arrows = 2, free = FALSE, values = residVals)))
-					}
-				}
-			}
-		}
-		if (length(pathList) == 0) {
-			pars = omxGetParameters(model)
-			if (is.null(pars) || length(pars) == 0) {
+		if (!is.null(model$A) && !is.null(model$S) && !is.null(model$F)) {
+			impl = tryCatch(mxGetExpected(model, "covariance"), error = function(e) NULL)
+			if (is.null(impl)) {
 				return(NULL)
 			}
-			if (length(latentVars) > 0) {
-				for (lv in latentVars) {
-					loadPat = paste0("^", lv, "_to_")
-					loadNames = grep(loadPat, names(pars), value = TRUE)
-					if (length(loadNames) > 0) {
-						loadVals = as.numeric(pars[loadNames])
-						loadTo = sub(paste0("^", lv, "_to_"), "", loadNames)
-						pathList = append(pathList, list(mxPath(from = lv, to = loadTo, arrows = 1, free = FALSE, values = loadVals)))
-					}
-					lvVarName = paste0(lv, "_with_", lv)
-					if (lvVarName %in% names(pars)) {
-						pathList = append(pathList, list(mxPath(from = lv, arrows = 2, free = FALSE, values = as.numeric(pars[lvVarName]))))
-					}
-				}
-			}
-			residNames = intersect(paste0(manifests, "_with_", manifests), names(pars))
-			if (length(residNames) > 0) {
-				residVals = as.numeric(pars[residNames])
-				pathList = append(pathList, list(mxPath(from = manifests, arrows = 2, free = FALSE, values = residVals)))
-			}
-		}
-		if (length(pathList) == 0) {
-			return(NULL)
-		}
-		mCor = do.call(mxModel, c(
-			list(
+			impl = impl[manifests, manifests, drop = FALSE]
+			scalingVec = sqrt(pmax(diag(impl), .Machine$double.eps))
+			
+			allVars = c(manifests, latentVars)
+			scaleDiag = rep(1.0, length(allVars))
+			names(scaleDiag) = allVars
+			scaleDiag[manifests] = scalingVec
+			
+			aVals = model$A$values[allVars, allVars, drop = FALSE]
+			sVals = model$S$values[allVars, allVars, drop = FALSE]
+			fVals = model$F$values[manifests, allVars, drop = FALSE]
+			
+			aValsScaled = diag(1/scaleDiag) %*% aVals %*% diag(scaleDiag)
+			sValsScaled = diag(1/scaleDiag) %*% sVals %*% diag(1/scaleDiag)
+			dimnames(aValsScaled) = list(allVars, allVars)
+			dimnames(sValsScaled) = list(allVars, allVars)
+			
+			mCor = mxModel(
 				paste0(model$name, "_catML_eval"),
 				type = "RAM",
 				manifestVars = manifests,
 				latentVars = latentVars,
 				mxData(observed = obsCor, type = "cor", numObs = numObs),
+				mxMatrix(type = "Full", free = FALSE, values = aValsScaled, name = "A", dimnames = list(allVars, allVars)),
+				mxMatrix(type = "Symm", free = FALSE, values = sValsScaled, name = "S", dimnames = list(allVars, allVars)),
+				mxMatrix(type = "Full", free = FALSE, values = fVals, name = "F", dimnames = list(manifests, allVars)),
 				mxFitFunctionML()
-			),
-			pathList
-		))
-		mxRun(mCor, silent = TRUE)
+			)
+			mxRun(mCor, silent = TRUE)
+		} else {
+			NULL
+		}
 	}, error = function(e) NULL)
 }
 
