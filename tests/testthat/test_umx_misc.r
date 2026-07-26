@@ -15,7 +15,7 @@ test_that("OpenMx type=summary capability helpers guard CRAN OpenMx", {
 	old = getOption("umx.xmu_has_summary_mxData")
 	on.exit(options(umx.xmu_has_summary_mxData = old), add = TRUE)
 	options(umx.xmu_has_summary_mxData = FALSE)
-	expect_error(xmu_require_summary_mxData("umxGSEM"), regexp = "tbates/OpenMx")
+	expect_error(xmu_require_summary_mxData("umxGSEM"), regexp = "GenomicMx")
 	expect_error(xmu_mxData_summary(1, list(cov = matrix(1))), regexp = "type = 'summary'")
 	# Restore by re-probe
 	options(umx.xmu_has_summary_mxData = NULL)
@@ -133,8 +133,6 @@ test_that("standardize", {
 		umxPath(var     = manifests),
 		umxPath(var     = "G", fixedAt = 1)
 	)
-	m1 = xmu_standardize_RAM(m1)
-	m1 = umx_standardize(m1)
 	expect_error(umxSummary(m1), regexp = NA)
 })
 

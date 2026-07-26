@@ -465,7 +465,6 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' # = Load and Process Data =
 #' # =========================
 #' require(umx)
-#' umx_set_optimizer("SLSQP")
 #' data("us_skinfold_data")
 #' # rescale vars
 #' us_skinfold_data[, c('bic_T1', 'bic_T2')] = us_skinfold_data[, c('bic_T1', 'bic_T2')]/3.4

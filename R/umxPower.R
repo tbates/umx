@@ -51,7 +51,6 @@
 #' Power failure: why small sample size undermines the reliability of neuroscience. 
 #' *Nature Reviews Neuroscience*, **14**, 365-376. \doi{10.1038/nrn3475}
 #' @export
-
 #' @examples
 #'
 #' # =====================================================

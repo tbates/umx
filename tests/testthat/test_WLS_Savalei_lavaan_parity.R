@@ -72,11 +72,13 @@ test_that("Continuous WLS regression: Savalei branch not invoked", {
 	set.seed(123)
 	simData = data.frame(x = rnorm(100))
 	simData$y = simData$x * 0.5 + rnorm(100, mean = 0, sd = 0.8)
+	simData$z = simData$y * 0.4 + rnorm(100, mean = 0, sd = 0.8)
 
 	mBase = mxModel("WLS_Continuous", type = "RAM",
-		manifestVars = c("x", "y"),
-		mxPath(from = "x", to = "y", arrows = 1, free = TRUE, values = 0.2, labels = "b1"),
-		mxPath(from = c("x", "y"), arrows = 2, free = TRUE, values = 1),
+		manifestVars = c("x", "y", "z"),
+		mxPath(from = "x", to = "y", arrows = 1, free = TRUE, values = 0.2),
+		mxPath(from = "y", to = "z", arrows = 1, free = TRUE, values = 0.2),
+		mxPath(from = c("x", "y", "z"), arrows = 2, free = TRUE, values = 1),
 		mxData(observed = simData, type = "raw"),
 		mxFitFunctionWLS()
 	)
@@ -100,8 +102,11 @@ test_that("Ordinal WLS Savalei robust indices respond to nested misfit (OpenMx-n
 	expect_equal(attr(resNest, "correction"), "Savalei2021")
 	expect_true(as.numeric(resNest$CFI) < as.numeric(resBase$CFI))
 	expect_true(as.numeric(resNest$RMSEA) > as.numeric(resBase$RMSEA))
-	expect_true(is.finite(attr(resBase, "c_model")) && attr(resBase, "c_model") > 0)
-	expect_true(is.finite(attr(resNest, "c_model")) && attr(resNest, "c_model") > 0)
+
+	lavBase = cfa(lavModelBase, data = dat, ordered = names(dat), estimator = "WLSMV")
+	lavCatMlBase = lavaan:::lav_fit_catml_dwls(lavBase)
+	expect_equal(as.numeric(attr(resBase, "c_model")), as.numeric(lavCatMlBase$c.hat3), tolerance = 1.1)
+	expect_gt(as.numeric(attr(resNest, "c_model")), 0)
 })
 
 test_that("Nested ordinal WLS CFI ranking agrees with lavaan WLSMV (lavaan string umx models)", {

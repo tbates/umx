@@ -43,10 +43,14 @@ test_that("xmuCalculateSRMR computes exact known standardized residuals", {
   )
   mWLS = mxRun(mWLS, silent=TRUE)
   
-  wls_srmr = xmuCalculateSRMR(mWLS)
+  wlsSrmr = xmuCalculateSRMR(mWLS)
   
-  # We don't need a specific value here, we just need to know it didn't crash
-  # and returned a valid numeric probability space [0, 1].
-  expect_true(is.numeric(wls_srmr), info="WLS SRMR did not return a number")
-  expect_true(wls_srmr >= 0 && wls_srmr <= 1, info="WLS SRMR is outside [0,1] bounds")
+  # Manually compute SRMR from raw data covariance and model expectation
+  obsCor = cov2cor(cov(dat))
+  implCor = cov2cor(mxGetExpected(mWLS, "covariance"))
+  diffCor = obsCor - implCor
+  p = 2
+  srmrManual = sqrt(sum(diffCor[lower.tri(diffCor, diag = TRUE)]^2) / (p * (p + 1) / 2))
+  
+  expect_equal(wlsSrmr, srmrManual, tolerance = 1e-5, info = "WLS SRMR does not match manual correlation residual calculation")
 })

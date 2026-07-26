@@ -45,8 +45,12 @@
 #' are present). Saturated residual df (ChiDoF = 0): Chi = 0, p = NA, CFI = TLI = 1,
 #' RMSEA = 0 (not NA). Printed note: no conventional cutoffs; prefer SRMR; nested
 #' Strict SB via [umxCompare()].
-#'
-#' **Ordinal / categorical WLS** (at least one `ordered`/`factor` on raw data): robust CFI/TLI/RMSEA use **Savalei (2021)** catML corrections; **Hu & Bentler (1999) cutoffs may apply to those robust indices**. Display \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests-not catML-scaled.
+#' **Ordinal / categorical WLS** (at least one `ordered`/`factor` on raw data): robust CFI/TLI/RMSEA use **Savalei (2021)** catML (Categorical Maximum Likelihood) corrections; **Hu & Bentler (1999) cutoffs (CFI > .95, RMSEA < .06) apply to these robust indices**. Displayed \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests.
+#' \itemize{
+#'   \item **catML (Categorical Maximum Likelihood):** Evaluates parameter estimates inside a Maximum Likelihood correlation scaffold to obtain non-inflated fit indices for ordinal data.
+#'   \item **\eqn{c_{\text{model}}} and \eqn{c_{\text{null}}}:** Mean-and-variance scaling correction multipliers for model and baseline discrepancies (values near 1.0 indicate sample sampling variability matches standard ML expectations; values > 1.0 adjust for categorical overdispersion).
+#'   \item **Suggested Manuscript Copy:** *"Model fit was evaluated using DWLS with robust categorical ML fit indices (Savalei, 2021; CFI = X.XX, RMSEA = X.XX)."*
+#' }
 #'
 #' Requires `implied_jacobian` after `mxRun` on WLS. If robust computation fails, falls back to OpenMx `summary()` with a note.
 #' 
@@ -432,12 +436,12 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 						if (umx_is_GSEM(model)) {
 							cat("\n*Statistical Note*: Genomic SEM - absolute fit: prefer SRMR (roughly < 0.10) and residual inspection. Nested models: use umxCompare (DWLS chi-square difference). De-emphasize CFI/TLI/RMSEA; do not apply Hu-Bentler cutoffs. See ?umxCompare.\n")
 						} else if (!is.null(robustScaling) && identical(robustScaling$correction, "Savalei2021")) {
-							cat(sprintf("\n*Statistical Note*: Ordinal WLS robust indices use Savalei (2021) cML corrections with catML scaling (c_model = %.3f, c_null = %.3f). Conventional Hu & Bentler (1999) cutoffs apply to these robust CFI/TLI/RMSEA values.\n", robustScaling$cModel, robustScaling$cNull))
+							cat(sprintf("\n*Statistical Note*: Ordinal WLS robust fit (Savalei (2021) categorical ML scaling (c_model = %.3f, c_null = %.3f). Unlike unscaled WLSMV which lacks this calibration, Standard Hu & Bentler (1999) cutoffs apply (CFI > .95, RMSEA < .06).\n", robustScaling$cModel, robustScaling$cNull))
 						} else {
 							cat("\n*Statistical Note*: Continuous WLS/DWLS - conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use Strict Satorra-Bentler (2010) Delta chi-square via umxCompare. See ?umxCompare.\n")
 						}
 						if (identical(uncertainty, "RobustSE")) {
-							cat("*SEs*: WLS asymptotic (GMM moment sandwich using the weight matrix and asym. cov. of summary statistics). These are the usual OpenMx WLS SEs-not ML casewise sandwich SEs.\n")
+							cat("*SEs*: WLS robust SEs (sandwich estimator using asymptotic covariance of summary statistics).\n")
 						}
 					} else {
 						robustScaling = attr(modelSummary, "robustScalingFactors")

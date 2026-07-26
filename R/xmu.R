@@ -204,13 +204,40 @@ xmu_twin_upgrade_selDvs2SelVars <- function(selDVs, sep, nSib) {
 #'
 xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 	if(is.null(comparison)){
-		# \u00d7 = times sign
-		message(paste0(model$name, " -2 \u00d7 log(Likelihood) = ", round(-2 * logLik(model), digits = digits)) )
+		mSum = summary(model)
+		minus2LL = mSum$Minus2LogLikelihood
+		if (is.null(minus2LL) || is.na(minus2LL)) {
+			minus2LL = -2 * as.numeric(logLik(model))
+		}
+		df  = mSum$degreesOfFreedom
+		ep  = mSum$estimatedParameters
+		aic = mSum$AIC.submodels
+		bic = mSum$BIC.submodels
+		if (is.null(aic) || is.na(aic)) {
+			if (!is.null(minus2LL) && !is.null(ep)) {
+				aic = minus2LL + 2 * ep
+			}
+		}
+		if (is.null(bic) || is.na(bic)) {
+			if (!is.null(minus2LL) && !is.null(ep) && !is.null(mSum$numObs)) {
+				bic = minus2LL + log(mSum$numObs) * ep
+			}
+		}
+		fitTable = data.frame(
+			Model = model$name,
+			EP = ifelse(is.null(ep), NA_integer_, ep),
+			`-2LL` = ifelse(is.null(minus2LL), NA_real_, round(minus2LL, digits)),
+			df = ifelse(is.null(df), NA_integer_, df),
+			AIC = ifelse(is.null(aic), NA_real_, round(aic, digits)),
+			BIC = ifelse(is.null(bic), NA_real_, round(bic, digits)),
+			check.names = FALSE,
+			stringsAsFactors = FALSE
+		)
+		umx_print(fitTable, digits = digits, caption = paste0("Model Fit Summary for '", model$name, "'"))
 	} else {
 		if(!umx_is_MxModel(comparison)){
 			stop("xmu_show_fit_or_comparison: 'comparison' must be a model (or left NULL). You gave me a ", class(comparison)[[1]])
 		}
-		message("Comparison of model with parent model:")
 		umxCompare(comparison, model, digits = digits)
 	}		
 }
@@ -1213,7 +1240,6 @@ xmu_check_levels_identical <- function(df, selDVs, sep, action = c("stop", "igno
 #' @return - The labeled [OpenMx::mxModel()]
 #' @family xmu internal not for end user
 #' @export
-
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1255,7 +1281,6 @@ xmuLabel_MATRIX_Model <- function(model, suffix = "", verbose = TRUE) {
 #' @return - The labeled [OpenMx::mxModel()]
 #' @family xmu internal not for end user
 #' @export
-
 #' @examples
 #' require(umx); data(demoOneFactor)
 #' # raw but no means

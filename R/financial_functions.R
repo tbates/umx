@@ -939,7 +939,8 @@ fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, disc
 #' fin_stock_ticker("MRVL", provider= "YAHOO")
 #' }
 fin_stock_ticker <- function(ticker= "NVDA", exchange = "NASDAQ", provider= c("GOOGLE", "YAHOO")) {
-	if(provider=="GOOGLE"){
+	provider = match.arg(provider)
+	if(provider ==	"GOOGLE"){
 		url =paste0("https://www.google.com/finance/quote/", ticker, ":", exchange)
 	} else {
 		url =paste0("https://finance.yahoo.com/quote/", ticker)

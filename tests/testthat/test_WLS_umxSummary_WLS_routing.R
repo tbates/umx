@@ -43,8 +43,10 @@ test_that("umxSummary Case 1: Modern WLS routing works", {
   hasJacobian = !is.null(mBase$output$implied_jacobian)
   if (hasJacobian) {
     res = runSummaryCollectOutputs(mBase)
-    # Verify messages
-    expect_true(any(grepl("Modern WLS model with Jacobian detected\\. Applying robust WLS fit metrics", c(res$messages, res$output))))
+    robustFit = xmu_robust_WLS_fit(mBase)
+    expect_false(is.null(robustFit))
+    expect_gt(robustFit$CFI, 0.8)
+    expect_true(any(grepl("Continuous WLS/DWLS", c(res$messages, res$output))))
     expect_true(any(grepl("conventional CFI", c(res$messages, res$output))))
     expect_false(any(grepl("worse than desired", res$messages)))
     expect_equal(length(res$warnings), 0)

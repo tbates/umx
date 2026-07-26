@@ -17,8 +17,11 @@ tmx_is.identified(nVariables, nFactors)
 }
 }
 \description{
-Test if a factor model is identified by establishing if the number of variables is equal too or grater than
-the number of model parameters. See also \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}} for checking actual models.
+Test if an ORTHOGONAL factor model is identified by establishing if the number of variables is equal-to or greater than
+the number of model parameters.
+
+This standard formula to check if the degrees of freedom for an EFA with \strong{orthogonal} factors are greater than or equal to zero.
+See also \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}} for checking model identification.
 }
 \examples{
 tmx_is.identified(nVariables = 2, nFactors = 1) # FALSE

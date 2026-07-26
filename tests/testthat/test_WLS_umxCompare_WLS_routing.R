@@ -83,7 +83,7 @@ test_that("Successful multi-model comparison routing works", {
 
   # All Legacy WLS
   options(umx_warned_legacy_wls = FALSE) # Reset to ensure warning fires
-  expect_warning(umxCompare(mLegacy1, mLegacy2, silent = TRUE), "Base model missing cached Jacobian")
+  expect_warning(umxCompare(mLegacy1, mLegacy2, silent = TRUE), "Base model missing cached WLS Jacobian")
   legacyTable = suppressWarnings(umxCompare(mLegacy1, mLegacy2, silent = TRUE))
   expect_s3_class(legacyTable, "data.frame")
 

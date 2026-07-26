@@ -4,7 +4,11 @@
 \alias{fin_stock_ticker}
 \title{Open a ticker in yahoo finance.}
 \usage{
-fin_stock_ticker(ticker = "INTC")
+fin_stock_ticker(
+  ticker = "NVDA",
+  exchange = "NASDAQ",
+  provider = c("GOOGLE", "YAHOO")
+)
 }
 \arguments{
 \item{ticker}{A stock symbol to look up, e.g., "OXY"}
@@ -18,9 +22,10 @@ fin_stock_ticker(ticker = "INTC")
 Open a stock ticker, currently in yahoo finance
 }
 \examples{
-# Open $INTC in yahoo finance.
+# Open $NVDA in google, MRVL in yahoo finance.
 \dontrun{
-fin_stock_ticker("INTC")
+fin_stock_ticker("NVDA")
+fin_stock_ticker("MRVL", provider= "YAHOO")
 }
 }
 \seealso{

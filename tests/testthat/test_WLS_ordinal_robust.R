@@ -40,10 +40,9 @@ test_that("Ordinal WLS Satorra-Bentler robust fit statistics and difference test
   # Check if Jacobian is present to determine if robust metrics should be calculated or NA
   hasJacobian = !is.null(m1$output$implied_jacobian)
   if (hasJacobian) {
-    # Assert robust CFI is not NA
-    expect_false(is.na(comp$CFI[1]))
-    expect_false(is.na(comp$diffFit[2]))
-    expect_false(is.na(comp$p[2]))
+    expect_gt(comp$CFI[1], 0.85)
+    expect_gt(comp$diffFit[2], 0)
+    expect_true(comp$p[2] >= 0 && comp$p[2] <= 1)
   } else {
     # Under legacy OpenMx, robust fit metrics return NA
     expect_true(is.na(comp$CFI[1]))

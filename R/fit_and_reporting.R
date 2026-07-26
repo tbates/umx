@@ -888,7 +888,6 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 #' @seealso - [stats::confint()], [umxConfint()], [umxCI()], [umxModify()]
 #' @references - <https://github.com/tbates/umx>
 #' @export
-
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3006,7 +3005,6 @@ plot.MxModelGxE <- umxPlotGxE
 #' @examples
 #' \dontrun{
 #' require(umx)
-#' umx_set_optimizer("SLSQP")
 #' data(GFF)
 #' mzData = subset(GFF, zyg_2grp == "MZ")
 #' dzData = subset(GFF, zyg_2grp == "DZ")
@@ -3212,7 +3210,6 @@ plot.MxModelIP <- umxPlotIP
 #' @family Model Summary and Comparison
 #' @references - <https://github.com/tbates/umx>
 #' @export
-
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -3288,7 +3285,6 @@ umxMI <- function(model = NA, matrices = NA, full = FALSE, numInd = NA, typeToSh
 #' @family Advanced Model Building Functions
 #' @references - https://github.com/tbates/umx/
 #' @export
-
 #' @examples
 #' \dontrun{
 #' umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)

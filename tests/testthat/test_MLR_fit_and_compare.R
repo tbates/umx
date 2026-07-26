@@ -173,7 +173,9 @@ test_that("Robust ML fit statistics fall back gracefully on categorical data", {
 		expect_true(is.null(resOrdinal))
 	} else {
 		expect_type(resOrdinal, "list")
-		expect_true(is.numeric(resOrdinal$scalingFactor) && resOrdinal$scalingFactor > 0)
+		cModelFormula = as.numeric(resOrdinal$scalingFactor)
+		expect_gt(cModelFormula, 0.1)
+		expect_lt(cModelFormula, 10.0)
 	}
 })
 
@@ -187,11 +189,11 @@ test_that("Robust ML fit statistics handle boundary cases, small N, and R loop f
 		umxPath(var = c("x", "y"), free = TRUE, values = 1)
 	)
 	
-	# Verify it does not crash and returns valid robust metrics
+	# Verify it returns valid robust metrics and scaling factor within theoretical bounds
 	resSmall = xmu_robust_ML_fit(mSmall)
 	expect_type(resSmall, "list")
-	expect_true(resSmall$scalingFactor > 0)
-	# CFI can be NA or numeric for saturated models
+	expect_gt(resSmall$scalingFactor, 0.1)
+	expect_lt(resSmall$scalingFactor, 10.0)
 	expect_true(is.na(resSmall$CFI) || (resSmall$CFI >= 0 && resSmall$CFI <= 1))
 
 	# 2. R Loop Fallback Verification (Mocking absence of useCpp signature)

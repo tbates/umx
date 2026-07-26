@@ -26,6 +26,18 @@
 #' [umx_make_double_entry_data()]. At least one contiguous `_cont`/`_cens` pair is required;
 #' for all-continuous models use [umxACE()].
 #'
+#' @details
+#' Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
+#' one continuous (\code{_cont}) and one binary/ordinal factor (\code{_cens}).
+#'
+#' \strong{Likelihood Evaluation & Missingness Structure:}
+#' Each individual contributes exactly one non-missing likelihood element for the censored trait:
+#' \itemize{
+#'   \item \strong{Non-censored cases} (\eqn{x > \textrm{cut}}): \code{_cont} contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}, while \code{_cens} is set to \code{NA}.
+#'   \item \strong{Censored cases} (\eqn{x \le \textrm{cut}}): \code{_cont} is set to \code{NA}, while \code{_cens} contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}.
+#' }
+#' Leaving \code{_cens} non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
+#'
 #' @param name The name of the model (defaults to "ACE").
 #' @param selDVs Base names of variables to model. Include fully observed continuous traits by base name (e.g. `"ht"`). Include each censored trait as an adjacent pair of prepped names (e.g. `"wt_cont", "wt_cens"`). Prep censored data with [umx_make_double_entry_data()] first.
 #' @param selCovs (optional) covariates to include from the data (do not include sep in names)
@@ -37,7 +49,6 @@
 #' @param data If provided, dzData and mzData are treated as levels of zyg to select() MZ and DZ data sets (default = NULL)
 #' @param zyg If data provided, this column is used to select rows by zygosity (Default = "zygosity")
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
-#' @param residualizeContinuousVars Not yet implemented.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
@@ -61,10 +72,12 @@
 #' require(umx)
 #' data(twinData)
 #'
-#' # Height fully observed; weight only recorded for higher-BMI people (others coded 0).
+#' # Toy example: Height fully observed; weight recorded only for higher-BMI people (others coded 0).
 #' # twinData BMI rarely exceeds classical overweight (25); use upper BMI quantile as threshold.
-#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+#' 
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10 # cms
 #' bmiCut = quantile(c(twinData$bmi1, twinData$bmi2), probs = 0.8, na.rm = TRUE)
+#' 
 #' clinic = twinData
 #' for (s in 1:2) {
 #' 	bmiCol = paste0("bmi", s)
@@ -73,59 +86,52 @@
 #' 	clinic[[wtCol]][notWeighed] = 0
 #' }
 #'
-#' # Double-entry prep for weight only (floor at 0 -> wt_cont* / wt_cens*)
-#' prep = umx_make_double_entry_data(clinic, cols = list(wt = 0), sep = "")
+#' # Double-entry prep for weight (floor at 0) Creates "wt_cont*" and "wt_cens*"
+#' prep = umx_make_double_entry_data(clinic, cols = list(wt = "<= 0"), sep = "")
+#' 
 #' mzData = prep[prep$zygosity %in% "MZFF", ]
 #' dzData = prep[prep$zygosity %in% "DZFF", ]
 #'
 #' # 1. Correct mixed model: continuous height + double-entry censored weight
-#' mDE = umxACE_DE(
-#' 	name = "htWtDE",
-#' 	selDVs = c("ht", "wt_cont", "wt_cens"),
-#' 	sep = "",
-#' 	mzData = mzData,
-#' 	dzData = dzData,
-#' 	addCI = FALSE,
-#' 	tryHard = "yes"
+#' mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
+#' 	selDVs = c("ht", "wt_cont", "wt_cens"), addCI = FALSE, tryHard = "yes"
 #' )
-#' umxSummary(mDE, std = TRUE)
+#'
+#' Table: Standardized parameter estimates from DE Cholesky ACE: A additive genetic; C: common; E: unique.
+#' 
+#' |        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
+#' |:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
+#' |ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
+#' |wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
+#' |wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
+#' 
+#' umxSummary(mDE_NA, std = TRUE)
 #'
 #' # 2. Gold standard: uncensored bivariate ACE on true height and weight
 #' mzTrue = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzTrue = twinData[twinData$zygosity %in% "DZFF", ]
-#' mTrue = umxACE(
-#' 	name = "htWtTrue",
-#' 	selDVs = c("ht", "wt"),
-#' 	sep = "",
-#' 	mzData = mzTrue,
-#' 	dzData = dzTrue,
-#' 	addCI = FALSE,
-#' 	tryHard = "yes"
-#' )
+#' mTrue  = umxACE("htWtTrue", selDVs = c("ht", "wt"), mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
+#' 
+#' Table: Standardized parameter estimates from 2-factor Cholesky ACE: A: additive genetic; C: common; E: unique.
+#' 
+#' |   |    a1|a2    |     c1|c2 |    e1|e2    |
+#' |:--|-----:|:-----|------:|:--|-----:|:-----|
+#' |ht | 0.899|      |  0.252|   | 0.357|      |
+#' |wt | 0.419|0.766 | -0.049|.  | 0.074|0.479 |
+#'
 #' umxSummary(mTrue, std = TRUE)
 #'
 #' # 3. Mistaken analysis: treat 0 (not weighed) as a real continuous weight
 #' mzNaive = clinic[clinic$zygosity %in% "MZFF", ]
 #' dzNaive = clinic[clinic$zygosity %in% "DZFF", ]
-#' mNaive = umxACE(
-#' 	name = "htWtNaive0",
-#' 	selDVs = c("ht", "wt"),
-#' 	sep = "",
-#' 	mzData = mzNaive,
-#' 	dzData = dzNaive,
-#' 	addCI = FALSE,
-#' 	tryHard = "yes"
-#' )
+#' mNaive = umxACE("htWtNaive0", selDVs= c("ht", "wt"), mzData= mzNaive, dzData= dzNaive, sep ="",tryHard = "yes")
 #' umxSummary(mNaive, std = TRUE)
 #' # Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
 #' }
-umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
+umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
-	if(residualizeContinuousVars){
-		stop("residualizing (as opposed to modelling) continuous variables not implemented yet: just set to FALSE for now")
-	}
 
 	if(dzCr == .25 & (name == "ACE")){ name = "ADE" }
 
@@ -330,12 +336,22 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 #' continuous column (holding non-censored values) and an ordered factor column
 #' (indicating censoring status), ready for \code{umxACE_DE}.
 #'
+#' @details
+#' Double-entry data preparation creates paired continuous (\code{_cont}) and ordinal factor (\code{_cens}) columns for censored traits.
+#'
+#' To prevent likelihood double-counting during FIML estimation:
+#' \itemize{
+#'   \item Non-censored observations (\eqn{x > \textrm{cut}}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
+#'   \item Censored observations (\eqn{x \le \textrm{cut}}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
+#' }
+#' This ensures each case contributes exactly one mutually exclusive likelihood component (either continuous PDF or ordinal CDF threshold probability).
+#'
 #' @param data The dataframe to process.
 #' @param cols A named list of variables and their censoring rules.
 #' @param doubleEntrySuffix Suffixes for the continuous and censored columns (default = c("_cont", "_cens")).
 #' @param sep Suffix/separator for twin indices (default = "_T").
 #' @param nSib Number of siblings/twins (default = 2).
-#' @param levels The factor levels for the censored column (default = c("normal", "censored")).
+#' @param levels The factor levels for the censored column (default = c("continuous", "censored")).
 #' @return The modified dataframe with expanded double-entry pairs.
 #' @export
 #' @family Twin Modeling Functions
@@ -345,7 +361,7 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 #' prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
 #' # Then: umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", ...)
 #' # Mix with continuous traits: umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
-umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c("_cont", "_cens"), sep = "_T", nSib = 2, levels = c("normal", "censored")) {
+umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c("_cont", "_cens"), sep = "_T", nSib = 2, levels = c("cont", "censored")) {
 	if (is.null(cols)) {
 		return(data)
 	}
@@ -415,11 +431,11 @@ umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c(
 				censCol = paste0(varName, doubleEntrySuffix[2], sSuffix)
 			}
 			
-			# Create continuous column
+			# Create continuous column (NA if censored or missing)
 			data[[contCol]] = ifelse(is.na(cens) | cens, NA_real_, x)
 			
-			# Create censored column (ordered factor)
-			censFactor = ifelse(is.na(cens), NA_character_, ifelse(cens, levels[2], levels[1]))
+			# Create censored column (ordered factor: NA for continuous/non-censored rows)
+			censFactor = ifelse(is.na(cens) | !cens, NA_character_, levels[2])
 			data[[censCol]] = factor(censFactor, levels = levels, ordered = TRUE)
 		}
 	}

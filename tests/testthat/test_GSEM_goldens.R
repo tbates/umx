@@ -245,11 +245,11 @@ test_that("xmu_gsem_extract_snp_path works", {
 	fit = mxRun(m, silent = TRUE, suppressWarnings = TRUE)
 	expect_false(is.null(fit$output$implied_jacobian))
 	es = umx:::xmu_gsem_extract_snp_path(fit, traits)
+	expect_true(!is.null(es))
 	expect_true(is.finite(es$est))
-	# SE may be openmx or sandwich
 	if (is.finite(es$se)) {
-		expect_true(es$se > 0)
-		expect_true(es$se_source %in% c("openmx", "summary", "sandwich"))
+		expect_gt(es$se, 0)
+		expect_equal(es$se_source, "openmx")
 	}
 })
 

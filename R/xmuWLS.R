@@ -1336,7 +1336,6 @@ xmu_robust_WLS_fit <- function(model) {
 #' @family xmu internal not for end user
 #' @seealso - [OpenMx::mxFitFunctionWLS()], See OpenMx internals for `omxAugmentDataWithWLSSummary` (used in WLS).
 #' @export
-
 #' @examples
 #'
 #' # ====================================

@@ -448,8 +448,7 @@ NULL
 #' # x7:x9 represent speed
 #' 
 #' m1 = umxRAM("WLS_HS", data = HSwls, type = "DWLS",
-#'
-#'   umxPath(v.m. = c("visual", "verbal", "speed")),
+#'   umxPath(v1m0 = c("visual", "verbal", "speed")),
 #'   umxPath(from = "visual", to = c("x1", "x2", "x3")),
 #'   umxPath(from = "verbal", to = c("x4", "x5", "x6")),
 #'   umxPath(from = "speed" , to = c("x7", "x8", "x9")),

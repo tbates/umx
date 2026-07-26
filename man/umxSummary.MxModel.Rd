@@ -101,8 +101,12 @@ under bookkeeping N.
 are present). Saturated residual df (ChiDoF = 0): Chi = 0, p = NA, CFI = TLI = 1,
 RMSEA = 0 (not NA). Printed note: no conventional cutoffs; prefer SRMR; nested
 Strict SB via \code{\link[=umxCompare]{umxCompare()}}.
-
-\strong{Ordinal / categorical WLS} (at least one \code{ordered}/\code{factor} on raw data): robust CFI/TLI/RMSEA use \strong{Savalei (2021)} catML corrections; \strong{Hu & Bentler (1999) cutoffs may apply to those robust indices}. Display \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests-not catML-scaled.
+\strong{Ordinal / categorical WLS} (at least one \code{ordered}/\code{factor} on raw data): robust CFI/TLI/RMSEA use \strong{Savalei (2021)} catML (Categorical Maximum Likelihood) corrections; \strong{Hu & Bentler (1999) cutoffs (CFI > .95, RMSEA < .06) apply to these robust indices}. Displayed \eqn{\chi^2}/\eqn{p} remain SB-scaled WLS omnibus tests.
+\itemize{
+\item \strong{catML (Categorical Maximum Likelihood):} Evaluates parameter estimates inside a Maximum Likelihood correlation scaffold to obtain non-inflated fit indices for ordinal data.
+\item \strong{\eqn{c_{\text{model}}} and \eqn{c_{\text{null}}}:} Mean-and-variance scaling correction multipliers for model and baseline discrepancies (values near 1.0 indicate sample sampling variability matches standard ML expectations; values > 1.0 adjust for categorical overdispersion).
+\item \strong{Suggested Manuscript Copy:} \emph{"Model fit was evaluated using DWLS with robust categorical ML fit indices (Savalei, 2021; CFI = X.XX, RMSEA = X.XX)."}
+}
 
 Requires \code{implied_jacobian} after \code{mxRun} on WLS. If robust computation fails, falls back to OpenMx \code{summary()} with a note.
 

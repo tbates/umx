@@ -152,7 +152,7 @@ ggAddR <- function(model, effect = NA, xloc=8, yloc= 10) {
 #' libs("car")
 #' libs(c("OpenMx", "car"))
 #' libs(OpenMx, car)
-#' remove.packages()
+#' # remove.packages()
 #' }
 libs <- function(... , force.update = FALSE) {
 	args <- eval(substitute(alist(...)))
@@ -1225,7 +1225,6 @@ umx_check_parallel <- function(nCores = c(1, umx_detect_cores()), testScript = N
 #' @family Advanced Model Building Functions
 #' @references - <https://github.com/tbates/umx>
 #' @export
-
 #' @examples
 #' \dontrun{
 #' mat1 = umxJiggle(mat1)
@@ -2338,7 +2337,6 @@ umxBrownie <- function() {
 #' @family File Functions
 #' @return None
 #' @export
-
 #' @examples
 #' \dontrun{
 #' # "Season 01" --> "S01" in current folder in MacOS Finder
@@ -4119,7 +4117,6 @@ umx_time <- function(x = NA, formatStr = c("simple", "std", "custom %H %M %OS3")
 #' @seealso [umx_msg()], [umx_set_table_format()] 
 #' @family Miscellaneous Utility Functions
 #' @export
-
 #' @examples
 #' data(mtcars)
 #' umx_print(mtcars[1:10,], digits = 2, zero.print = ".", justify = "left")
@@ -8246,7 +8243,6 @@ xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes = NULL, cens
 #' @family Data Functions
 #' @family Miscellaneous Stats Functions
 #' @export
-
 #' @examples
 #' umxHetCor(mtcars[,c("mpg", "am")])
 #' umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
@@ -8726,7 +8722,6 @@ umx_standardize.default <- function(model, ...){
 #' @family xmu internal not for end user
 #' @references - <https://github.com/tbates/umx>
 #' @export
-
 #' @examples
 #' \dontrun{
 #' require(umx)

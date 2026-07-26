@@ -91,7 +91,12 @@ test_that("umxSummaryACE works", {
 	mzData = subset(twinData, zygosity == "MZFF")
 	dzData = subset(twinData, zygosity == "DZFF")
 	m1 = umxACE(selDVs = "bmi", sep="", dzData = dzData, mzData = mzData)
-	umxSummary(m1)
+	out = capture.output(umxSummary(m1))
+	expect_true(any(grepl("Model Fit Summary", out)))
+	expect_true(any(grepl("-2LL", out)))
+	expect_true(any(grepl("AIC", out)))
+	expect_true(any(grepl("BIC", out)))
+	expect_true(any(grepl("EP", out)))
 	umxSummaryACE(m1, file = NA);
 	umxSummaryACE(m1, file = "name", std = TRUE)
 	expect_error(regex = NA, {umxSummaryACE(m1, returnStd = TRUE)})

@@ -25,7 +25,7 @@ libs(ggplot2)
 libs("car")
 libs(c("OpenMx", "car"))
 libs(OpenMx, car)
-remove.packages()
+# remove.packages()
 }
 }
 \seealso{

@@ -97,9 +97,10 @@ manifests = names(demoOneFactor)
 
 # 1. LISREL model with covariance data
 m1 = umxLISREL("one_factor_cov", data = demoOneFactor, type = "cov",
-               umxPath("G", to = manifests),
-               umxPath(var = manifests),
-               umxPath(var = "G", fixedAt = 1))
+	umxPath("G", to = manifests),
+	umxPath(var = manifests),
+	umxPath(var = "G", fixedAt = 1)
+)
 
 # 2. LISREL model with raw data (means are automatically added)
 m2 = umxLISREL("one_factor_raw", data = demoOneFactor,
