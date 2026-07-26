@@ -1,6 +1,9 @@
+library(testthat)
+library(umx)
+
+skip_if_not(xmu_has_summary_mxData(), "OpenMx fork with type='summary' support is required")
+
 test_that("umxGSEM_std works correctly with Delta-method scaling", {
-	require(umx)
-	skip_if_not(xmu_has_summary_mxData(), "OpenMx fork with type='summary' support is required")
 	
 	# 1. Set up a 2-trait covariance structure
 	# S matrix
@@ -48,8 +51,6 @@ test_that("umxGSEM_std works correctly with Delta-method scaling", {
 })
 
 test_that("umxGSEM commonfactor model standardized loading parity test", {
-	skip_on_cran()
-	require(umx)
 	data(Psych_LDSC, package = "umx")
 	psychLDSCLabeled = umxGSEM_label_ldsc(Psych_LDSC, overwrite = TRUE)
 	

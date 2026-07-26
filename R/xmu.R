@@ -187,7 +187,7 @@ xmu_twin_upgrade_selDvs2SelVars <- function(selDVs, sep, nSib) {
 #' Show model logLik of model or print comparison table
 #'
 #' @description
-#' Just a helper to show the logLik of a model or print a comparison table. 
+#' Just a helper to show the fit of a model or print a comparison table. 
 #'
 #' @param model an [OpenMx::mxModel()] to report on
 #' @param comparison If not NULL, used as comparison model
@@ -2456,7 +2456,7 @@ xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	}
 }
 
-#' Check if OpenMx supports type = "summary" in mxData
+#' Check if this version of OpenMx supports modern WLS (mxData of type = "summary")
 #'
 #' @description
 #' Probe whether the installed OpenMx build accepts modern summary WLS data
