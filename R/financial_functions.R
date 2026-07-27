@@ -927,6 +927,8 @@ fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, disc
 #' Open a stock ticker, currently in yahoo finance
 #'
 #' @param ticker A stock symbol to look up, e.g., "OXY"
+#' @param exchange Stock exchange code (default = "NASDAQ").
+#' @param provider Financial data provider site ("GOOGLE" or "YAHOO", default = "GOOGLE").
 #' @return - Open a ticker in a finance site online
 #' @export
 #' @family financial functions
