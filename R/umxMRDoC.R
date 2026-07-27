@@ -901,7 +901,7 @@ umxSummaryMRDoC <- function(model, digits = 2, std = TRUE, CIs = FALSE, comparis
 
 	if (CIs){ model = umxCI(model, run = "if necessary")}
 
-	model_summary = summary(model, refModels = mxRefModels(model, run = TRUE, beginMessage = FALSE))
+	model_summary = summary(model, refModels = xmu_mxRefModels(model, run = TRUE, beginMessage = FALSE))
 
 	if (CIs == TRUE) {
 		tmp = cbind(model_summary$parameters, model_summary$CI) 

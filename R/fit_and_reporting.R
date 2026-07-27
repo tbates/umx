@@ -2637,6 +2637,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	}
 } # end plot.MxModel
 
+#' @rdname plot.MxModel
 #' @export
 plot.MxRAMModel <- plot.MxModel
 
@@ -3941,13 +3942,12 @@ RMSEA.MxModel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3) {
 		# no ref models in summary... compute them
 		# no SaturatedLikelihood, compute refModels
 		refModels = tryCatch({
-		    refModels = mxRefModels(model, run = TRUE, beginMessage = FALSE)
-		}, warning = function(x) {
-		    print("warning in RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
+		    xmu_mxRefModels(model, run = TRUE, beginMessage = FALSE)
+		 }, warning = function(x) {
+			 print("warning in RMSEA.MxModel calling mxRefModels")
 		}, error = function(x) {
-		    print("error RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
-		}, finally={
-		    # print("cleanup-code")
+		    print("error RMSEA.MxModel calling mxRefModels")
+		    NULL
 		})
 		if(!inherits(refModels, "list")){
 			modelSummary = summary(model)

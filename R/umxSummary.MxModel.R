@@ -191,13 +191,12 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
 			refModels = tryCatch({
-				refModels = mxRefModels(model, run = TRUE, beginMessage = FALSE)
-			}, warning = function(x) {
-			    print("Warning calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
+				xmu_mxRefModels(model, run = TRUE, beginMessage = FALSE)
+			 }, warning = function(x) {
+				 print("warning in RMSEA.MxModel calling mxRefModels")
 			}, error = function(x) {
 			    print("Error calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
-			}, finally={
-			    # print("cleanup-code")
+			    NULL
 			})
 
 			if(!inherits(refModels, "list")){
@@ -210,7 +209,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			# TODO model with no data - no saturated solution?
 			# message("Top model doesn't contain data. You may get extra information from summary() rather than umxSummary()")
 		}
-	} else if (refModels == FALSE){
+	} else if (is.logical(refModels) && !refModels){
 		modelSummary = summary(model) # Don't use or generate refModels		
 	}else{
 		modelSummary = summary(model, refModels = refModels) # Using refModels supplied by user

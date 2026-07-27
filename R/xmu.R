@@ -242,6 +242,31 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 	}		
 }
 
+#' Generate reference models safely across OpenMx versions
+#'
+#' @description
+#' `xmu_mxRefModels` wraps [OpenMx::mxRefModels()], conditionally passing `beginMessage`
+#' and `silent` parameters only if supported by the installed version of `OpenMx`.
+#'
+#' @param x An [OpenMx::mxModel()] to generate reference models for.
+#' @param run Logical. Whether to run the reference models (default = TRUE).
+#' @param ... Extra arguments passed to modern [OpenMx::mxRefModels()].
+#' @param beginMessage Logical. Whether to show `Running Saturated...` messages (default = FALSE).
+#' @param silent Logical. Whether to run reference models silently (default = FALSE).
+#' @param distribution passed along
+#' @param equateThresholds passed along
+#' @return - Reference models list
+#' @importFrom methods formalArgs
+#' @export
+#' @family xmu internal not for end user
+xmu_mxRefModels <- function(x, run = FALSE, ..., beginMessage = FALSE, silent = FALSE, distribution = "default", equateThresholds = TRUE){
+	if ("beginMessage" %in% methods::formalArgs(OpenMx::mxRefModels)) {
+		mxRefModels(x, run = run, beginMessage = beginMessage, silent = silent, distribution = distribution, equateThresholds = equateThresholds, ...)
+	} else {
+		mxRefModels(x, run = run, distribution = distribution, equateThresholds = equateThresholds)
+	}
+}
+
 #' Safely run and summarize a model
 #'
 #' @description
@@ -267,7 +292,6 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [OpenMx::mxTryHard()]
-
 #' @examples
 #' \dontrun{
 #' tmp = mtcars
@@ -291,7 +315,6 @@ xmu_show_fit_or_comparison <- function(model, comparison = NULL, digits = 2) {
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, intervals = TRUE)
 #' # Run + Summary + no comparison
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
-#' 
 #' }
 #'
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary"), refModels = NULL) {
@@ -3323,7 +3346,7 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 		indName = grep("Independence", names(refModels), value = TRUE)
 		if (length(indName) > 0) mInd = refModels[[indName]]
 	} else if (!identical(refModels, FALSE)) {
-		refModelsGenerated = tryCatch(OpenMx::mxRefModels(model, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
+		refModelsGenerated = tryCatch(xmu_mxRefModels(model, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
 		if (!is.null(refModelsGenerated)) {
 			satName = grep("Saturated", names(refModelsGenerated), value = TRUE)
 			if (length(satName) > 0) mSat = refModelsGenerated[[satName]]
@@ -3541,7 +3564,7 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 #' @family xmu internal not for end user
 xmu_compare_robust_ML <- function(model1, model2) {
 	# Get the saturated model to compute SEM degrees of freedom
-	refModels = tryCatch(OpenMx::mxRefModels(model1, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
+	refModels = tryCatch(xmu_mxRefModels(model1, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
 	mSat = NULL
 	if (!is.null(refModels)) {
 		satName = grep("Saturated", names(refModels), value = TRUE)
