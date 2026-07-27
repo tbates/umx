@@ -3347,7 +3347,7 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 		if (length(indName) > 0) mInd = refModels[[indName]]
 	} else if (!identical(refModels, FALSE)) {
 		refModelsGenerated = tryCatch(xmu_mxRefModels(model, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
-		if (!is.null(refModelsGenerated)) {
+		if(!is.null(refModelsGenerated)){
 			satName = grep("Saturated", names(refModelsGenerated), value = TRUE)
 			if (length(satName) > 0) mSat = refModelsGenerated[[satName]]
 			indName = grep("Independence", names(refModelsGenerated), value = TRUE)
