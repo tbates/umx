@@ -128,12 +128,12 @@
 #' umxSummary(mNaive, std = TRUE)
 #' # Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
 #' }
-umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
+umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = "_T", data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 
-	if(dzCr == .25 & (name == "ACE")){ name = "ADE" }
+	if(dzCr == .25 & (name == "ACE_DE")){ name = "ADE_DE" }
 
 	# if data provided create twin files 
 	if(!is.null(data)){
@@ -161,9 +161,6 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 	}
 
 	# Parse selDVs: pure continuous base names and/or adjacent double-entry pairs
-	if (is.null(sep)) {
-		sep = "_T"
-	}
 	s1 = doubleEntrySuffix[1]
 	s2 = doubleEntrySuffix[2]
 	doubleEntryPairs = list()
@@ -207,13 +204,13 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 	nVar  = length(selVars)/nSib; # Number of dependent variables per **INDIVIDUAL**
 
 	if(nSib==2){
-		expCovMZ = mxAlgebra(rbind (cbind(ACE,  AC), cbind( AC, ACE)), dimnames = list(selVars, selVars), name = "expCovMZ")
-		expCovDZ = mxAlgebra(rbind (cbind(ACE, hAC), cbind(hAC, ACE)), dimnames = list(selVars, selVars), name = "expCovDZ")
+		expCovMZ = mxAlgebra(name = "expCovMZ", rbind(cbind(ACE,  AC), cbind( AC, ACE)), dimnames = list(selVars, selVars))
+		expCovDZ = mxAlgebra(name = "expCovDZ", rbind(cbind(ACE, hAC), cbind(hAC, ACE)), dimnames = list(selVars, selVars))
 	} else if (nSib==3) {
 		expCovMZ = mxAlgebra(name="expCovMZ", dimnames = list(selVars, selVars), rbind(
 			cbind(ACE,  AC, hAC),
-		    cbind(AC , ACE, hAC),
-		    cbind(hAC, hAC, ACE))
+			cbind(AC , ACE, hAC),
+			cbind(hAC, hAC, ACE))
 		)
 		expCovDZ = mxAlgebra(name= "expCovDZ", dimnames = list(selVars, selVars), rbind(
 			cbind(ACE, hAC, hAC),
@@ -324,7 +321,7 @@ umxACE_DE <- function(name = "ACE", selDVs, selCovs = NULL, dzData = NULL, mzDat
 	}
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
-	model = as(model, "MxModelACE") # set class so that S3 plot() dispatches
+	model = as(model, "MxModelACE_DE") # set class so that S3 plot() and umxSummary dispatch
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE, intervals = intervals)
 	return(model)
 }
@@ -442,3 +439,270 @@ umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c(
 	
 	return(data)
 }
+
+#' Plot a double-entry censored twin model (umxACE_DE)
+#'
+#' `umxPlotACE_DE` renders a GraphViz diagram for a [umxACE_DE()] model.
+#' It automatically filters out the redundant continuous partner (`_cont`) of each double-entry pair,
+#' plotting only the censored trait (`_cens`) and any unpaired continuous variables.
+#'
+#' @param x An [OpenMx::mxModel()] of class `MxModelACE_DE` to plot.
+#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model.
+#' @param digits How many decimals to include in path loadings (default is 2).
+#' @param means Whether to show means paths (default is FALSE).
+#' @param std Whether to standardize the model (default is TRUE).
+#' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE).
+#' @param showFixed Whether to draw fixed parameters (default = FALSE).
+#' @param ... Additional (optional) parameters passed to `xmu_dot_maker()`.
+#' @return - optionally returns the dot code string.
+#' @export
+#' @family Plotting functions
+#' @seealso - [plot()], [umxSummary()], [umxACE_DE()]
+#' @references - <https://github.com/tbates/umx>
+umxPlotACE_DE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, showFixed = FALSE, ...) {
+	model = x
+	if(std){ model = xmu_standardize_ACE(model) }
+
+	selDVs = dimnames(model$MZ$data$observed)[[2]]
+	nVar   = dim(model$top$a$values)[[1]]
+	allDVs = sub("(_T)?[0-9]$", "", selDVs[1:(nVar)])
+
+	# Identify double-entry _cont variables to omit
+	omitIdx = grep("_cont$", allDVs)
+	if(length(omitIdx) > 0){
+		keepIdx = setdiff(1:nVar, omitIdx)
+	} else {
+		keepIdx = 1:nVar
+	}
+
+	keepDVs = allDVs[keepIdx]
+
+	nKeep = length(keepIdx)
+	keepColIdx = 1:nKeep
+
+	# Subset matrices to keepIdx (rows) and keepColIdx (cols) via umxMatrix
+	aMat = umxMatrix("a", type = "Lower", nrow = nKeep, ncol = nKeep,
+		free   = model$top$a$free[keepIdx, keepColIdx, drop = FALSE],
+		values = model$top$a$values[keepIdx, keepColIdx, drop = FALSE],
+		labels = model$top$a$labels[keepIdx, keepColIdx, drop = FALSE]
+	)
+	cMat = umxMatrix("c", type = "Lower", nrow = nKeep, ncol = nKeep,
+		free   = model$top$c$free[keepIdx, keepColIdx, drop = FALSE],
+		values = model$top$c$values[keepIdx, keepColIdx, drop = FALSE],
+		labels = model$top$c$labels[keepIdx, keepColIdx, drop = FALSE]
+	)
+	eMat = umxMatrix("e", type = "Lower", nrow = nKeep, ncol = nKeep,
+		free   = model$top$e$free[keepIdx, keepColIdx, drop = FALSE],
+		values = model$top$e$values[keepIdx, keepColIdx, drop = FALSE],
+		labels = model$top$e$labels[keepIdx, keepColIdx, drop = FALSE]
+	)
+
+	out = list(str = "", latents = c(), manifests = c())
+
+	out = xmu_dot_mat2dot(aMat, cells = "lower_inc", from = "cols", toLabel = keepDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(cMat, cells = "lower_inc", from = "cols", toLabel = keepDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(eMat, cells = "lower_inc", from = "cols", toLabel = keepDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, p = out)
+
+	if(means){
+		if(!is.null(model$top$intercept)){
+			interceptMat = umxMatrix("intercept", type = "Full", nrow = 1, ncol = nKeep,
+				free   = model$top$intercept$free[1, keepIdx, drop = FALSE],
+				values = model$top$intercept$values[1, keepIdx, drop = FALSE],
+				labels = model$top$intercept$labels[1, keepIdx, drop = FALSE]
+			)
+			out = xmu_dot_mat2dot(interceptMat, cells = "left", toLabel = keepDVs, from = "rows", fromLabel = "one", fromType = "latent", toType = "manifest", showFixed = showFixed, p = out)
+		}
+	}
+
+
+	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = out$manifests)
+	same    = xmu_dot_rank(out$manifests, ".", rank = "same")
+	top     = xmu_dot_rank(out$latents, "^a", rank = "min")
+	bottom  = xmu_dot_rank(out$latents, "^[ce]", rank = "max")
+
+	label   = model$name
+	splines = "FALSE"
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', label, '";\n\t',
+		"splines = \"", splines, "\";\n",
+		preOut, out$str, same, top, bottom, "\n}"
+	)
+
+	message("\n?umxPlotACE_DE options: std=T/F, means=T/F, digits=n, strip_zero=T/F, file=, min=, max =")
+	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+}
+
+#' @export
+plot.MxModelACE_DE <- umxPlotACE_DE
+
+
+#' Present results of a double-entry twin ACE model (umxACE_DE)
+#'
+#' Summarize a double-entry censored twin ACE model as returned by [umxACE_DE()].
+#' Automatically filters out redundant `_cont` rows and fixed-zero factor columns from parameter tables,
+#' while displaying all means (`_cont` mean and `_cens` threshold).
+#'
+#' @param model A fitted [OpenMx::mxModel()] of class `MxModelACE_DE` to summarize.
+#' @param digits How many decimals to print (default = 2).
+#' @param comparison Optional comparison model (default = NULL).
+#' @param std Whether to standardize parameter estimates (default = TRUE).
+#' @param showRg Whether to show genetic correlations (default = FALSE).
+#' @param CIs Whether to compute and report confidence intervals (default = TRUE).
+#' @param report Format to report tables: "markdown" or "html" (default = "markdown").
+#' @param file The name of the dot file to write (default = getOption("umx_auto_plot")).
+#' @param returnStd Whether to return standardized model (default = FALSE).
+#' @param extended Whether to print raw path estimates alongside standardized (default = FALSE).
+#' @param zero.print Character to print for zeroes (default = ".").
+#' @param ... Additional arguments.
+#' @return - optionally returns parameter estimates table dataframe.
+#' @export
+#' @family Reporting functions
+#' @seealso - [umxACE_DE()], [plot.MxModelACE_DE()], [umxSummary()]
+#' @references - <https://github.com/tbates/umx>
+umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+	report = match.arg(report)
+	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
+
+	if(typeof(model) == "list"){ # call self recursively
+		for(thisFit in model) {
+			message("Output for Model: ", thisFit$name)
+			umxSummaryACE_DE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
+		}
+	} else {
+		umx_has_been_run(model, stop = TRUE)
+		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+		selDVs = xmu_twin_get_var_names(model, trim= TRUE, twinOneOnly= TRUE)
+		nVar   = length(selDVs)
+
+		# Identify double-entry _cont variables to omit
+		omitIdx = grep("_cont$", selDVs)
+		if(length(omitIdx) > 0){
+			keepIdx = setdiff(1:nVar, omitIdx)
+		} else {
+			keepIdx = 1:nVar
+		}
+		nKeep      = length(keepIdx)
+		keepColIdx = 1:nKeep
+		keepDVs    = selDVs[keepIdx]
+
+		a = mxEval(top.a, model) # Path coefficients
+		c = mxEval(top.c, model)
+		e = mxEval(top.e, model)
+		A = mxEval(top.A, model) # Variances
+		C = mxEval(top.C, model)
+		E = mxEval(top.E, model)
+
+		if(std){
+			caption = paste0("Standardized parameter estimates from a ", nKeep, "-trait double-entry Cholesky ACE model. ")
+			Vtot = A + C + E;            # Total variance
+			I    = diag(nVar);           # nVar Identity matrix
+			SD   = solve(sqrt(I * Vtot)) # Inverse of diagonal matrix of standard deviations
+
+			a_std  = SD %*% a; # Standardized path coefficients
+			c_std  = SD %*% c;
+			e_std  = SD %*% e;
+			aClean = a_std
+			cClean = c_std
+			eClean = e_std
+		} else {
+			caption = paste0("Raw parameter estimates from a ", nKeep, "-trait double-entry Cholesky ACE model. ")
+			aClean = a
+			cClean = c
+			eClean = e
+		}
+
+		aClean[upper.tri(aClean)] = NA
+		cClean[upper.tri(cClean)] = NA
+		eClean[upper.tri(eClean)] = NA
+
+		aSub = aClean[keepIdx, keepColIdx, drop = FALSE]
+		cSub = cClean[keepIdx, keepColIdx, drop = FALSE]
+		eSub = eClean[keepIdx, keepColIdx, drop = FALSE]
+
+		Estimates = data.frame(cbind(aSub, cSub, eSub), row.names = keepDVs, stringsAsFactors = FALSE);
+
+		if(model$top$dzCr$values == .25){
+			colNames = c("a", "d", "e")
+			caption = paste0(caption, "A: additive genetic; D: dominance effects; E: unique environment.")
+		} else {
+			colNames = c("a", "c", "e")
+			caption = paste0(caption, "A: additive genetic; C: common environment; E: unique environment.")
+		}
+		names(Estimates) = paste0(rep(colNames, each = nKeep), rep(1:nKeep));
+		umx_print(Estimates, digits = digits, caption = caption, report = report, zero.print = zero.print)
+		xmu_twin_print_means(model = model, report = report)
+
+		if(extended == TRUE) {
+			aSubRaw = a[keepIdx, keepColIdx, drop = FALSE]
+			cSubRaw = c[keepIdx, keepColIdx, drop = FALSE]
+			eSubRaw = e[keepIdx, keepColIdx, drop = FALSE]
+			aSubRaw[upper.tri(aSubRaw)] = NA
+			cSubRaw[upper.tri(cSubRaw)] = NA
+			eSubRaw[upper.tri(eSubRaw)] = NA
+			unStandardizedEstimates = data.frame(cbind(aSubRaw, cSubRaw, eSubRaw), row.names = keepDVs);
+			names(unStandardizedEstimates) = paste0(rep(colNames, each = nKeep), rep(1:nKeep));
+			umx_print(unStandardizedEstimates, caption = "Unstandardized Cholesky ACE model path coefficients", digits = digits, zero.print = zero.print)
+		}
+
+		hasCIs = umx_has_CIs(model)
+		if(hasCIs & CIs) {
+			message("Creating CI-based report!")
+			CIlist = data.frame(model$output$confidenceIntervals)
+			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
+			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
+			CIlist$fullName = row.names(CIlist)
+
+			rows = dim(model$top$matrices$a$labels)[1]
+			cols = dim(model$top$matrices$a$labels)[2]
+			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
+
+			labelList = imxGenerateLabels(model)
+			rowCount  = dim(CIlist)[1]
+			for(n in 1:rowCount) {
+				thisName = row.names(CIlist)[n]
+				if(!umx_has_square_brackets(thisName)) {
+					nameParts = labelList[which(row.names(labelList) == thisName),]
+					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
+				}
+				fullName = CIlist$fullName[n]
+
+				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName)
+				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
+				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
+				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
+				thisString = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
+
+				if(grepl("^a", thisMatrixName)) {
+					a_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^c", thisMatrixName)){
+					c_CI[thisMatrixRow, thisMatrixCol] = thisString
+				} else if(grepl("^e", thisMatrixName)){
+					e_CI[thisMatrixRow, thisMatrixCol] = thisString
+				}
+			}
+
+			a_CISub = a_CI[keepIdx, keepColIdx, drop = FALSE]
+			c_CISub = c_CI[keepIdx, keepColIdx, drop = FALSE]
+			e_CISub = e_CI[keepIdx, keepColIdx, drop = FALSE]
+
+			Estimates = data.frame(cbind(a_CISub, c_CISub, e_CISub), row.names = keepDVs, stringsAsFactors = FALSE)
+			names(Estimates) = paste0(rep(colNames, each = nKeep), rep(1:nKeep));
+			umx_print(Estimates, digits = digits, zero.print = zero.print, report=report, file = "tmpCI.html")
+			xmu_twin_print_means(model, digits = digits, report = report)
+		}
+	}
+
+	if(!is.na(file)) {
+		umxPlotACE_DE(model, file = file, std = std)
+	}
+	if(returnStd) {
+		xmu_standardize_ACE(model)
+	}else{
+		invisible(Estimates)
+	}
+}
+
+#' @export
+umxSummary.MxModelACE_DE <- umxSummaryACE_DE
+

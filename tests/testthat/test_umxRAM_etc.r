@@ -185,6 +185,22 @@ test_that("testing Rsw data", {
 	# mpg  "mpg_with_mpg"  "mpg_with_wt" "disp_with_mpg"
 	# wt   "mpg_with_wt"   "wt_with_wt"  "b1"
 	# disp "disp_with_mpg" "b1"          "disp_with_disp"
-	 parameters(m1)
+	 # =================================================
+	 # = Test plot.MxRAMModel with NA values & std=TRUE =
+	 # =================================================
+	 data(HS.ability.data)
+	 df = HS.ability.data
+	 verbal = c("general", "paragrap", "sentence")
+	 space  = c("visual", "cubes", "flags")
+	 manifests = c(verbal, space)
+	 m2 = umxRAM("three Factor", data = df,
+	 	umxPath(v1m0 = "G", "S", "V"),
+	 	umxPath(v.m. = manifests),
+	 	umxPath(from = "S", to = space),
+	 	umxPath(from = "V", to = verbal),
+	 	umxPath(from = "G", to = manifests)
+	 )
+	 expect_error(plot(m2, means = FALSE, std = TRUE), NA)
  })
+
 

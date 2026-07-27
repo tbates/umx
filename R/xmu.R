@@ -604,21 +604,68 @@ xmu_check_needs_means <- function(data, type = c("Auto", "FIML", "cov", "cor", "
 xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent=TRUE)$minVar, maxVarRatio = umx_set_data_variance_check(silent=TRUE)$maxVarRatio){
 	# data = twinData[, c("wt1","ht1", "wt2", "ht2")]; minVar = .1
 	varList = umx_var(data, format = "diag")
-	if(any(varList < minVar)){
-		# umx_msg(minVar)
-		# umx_msg(varList)
-		# At least 1 small
-		message("Polite note: Variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
-			"You might want to express the variable in smaller units, e.g. multiply to use cm instead of metres.\n",
-			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")		
+	varList = varList[!is.na(varList) & varList > 0]
+	if(length(varList) < 1){
+		return(invisible())
 	}
-	if(max(varList)/min(varList) > maxVarRatio){
+
+	alreadyWarned = getOption("umx_last_variance_warnings")
+
+	if(any(varList < minVar)){
+		minMsg = paste0("Polite note: Variance of variable(s) ", omxQuotes(names(which(varList < minVar))), " is < ", minVar, ".\n",
+			"You might want to express the variable in smaller units, e.g. multiply to use cm instead of metres.\n",
+			"Alternatively umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
+		if(!(minMsg %in% alreadyWarned)){
+			options(umx_last_variance_warnings = c(alreadyWarned, minMsg))
+			message(minMsg)
+		}
+	}
+
+	if(length(varList) >= 2 && (max(varList)/min(varList) > maxVarRatio)){
 		# At least 1 big difference in variance
-		message("Polite note: Variance of variable(s) ", omxQuotes(names(which.max(varList))), " is more than ", maxVarRatio, " times that of ", omxQuotes(names(which.min(varList))), ".\n",
-			"You might want scale the less variable manifests to get all variables on similar scales.\n",
-			"Alternatively, umx_scale() for data already in long-format, or umx_scale_wide_twin_data for wide data might be useful.")
+		highVars = names(varList[varList > min(varList) * maxVarRatio])
+		lowVars  = names(varList[varList < max(varList) / maxVarRatio])
+
+		pairs = c()
+		usedLow = c()
+		for(h in highVars){
+			hSuffix = sub("^.*([0-9]|_T[0-9])$", "\\1", h)
+			matchedLow = NULL
+			for(l in lowVars){
+				if(!(l %in% usedLow)){
+					lSuffix = sub("^.*([0-9]|_T[0-9])$", "\\1", l)
+					if(hSuffix != h && lSuffix != l && hSuffix == lSuffix){
+						matchedLow = l
+						break
+					}
+				}
+			}
+			if(is.null(matchedLow)){
+				unused = setdiff(lowVars, usedLow)
+				if(length(unused) > 0){
+					matchedLow = unused[1]
+				} else {
+					matchedLow = names(which.min(varList))
+				}
+			}
+			usedLow = c(usedLow, matchedLow)
+			pairs = c(pairs, paste0("'", h, "' var > ", maxVarRatio, " times that of '", matchedLow, "'"))
+		}
+
+		pairStr = paste(pairs, collapse = ", ")
+		ratioMsg = paste0("Polite note: Variance of variables differ by more than ", maxVarRatio, "x:\n(",
+			pairStr, ").\n",
+			"Model fitting is easier when variables are on similar scales. For data already in long-format umx_scale(), or umx_scale_wide_twin_data for wide data might be useful.")
+
+		currentWarned = getOption("umx_last_variance_warnings")
+		if(!(ratioMsg %in% currentWarned)){
+			options(umx_last_variance_warnings = c(currentWarned, ratioMsg))
+			message(ratioMsg)
+		}
 	}
 }
+
+
 
 
 #' Drop rows with missing definition variables
@@ -2643,7 +2690,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 			thisPathVal   = round(mxMat_vals[to, from], digits)
 
 			if(thisPathFree){ prefix = "" } else { prefix = "@" }
-			if(thisPathFree | (thisPathVal !=0 && fixed)) {
+			if (isTRUE(thisPathFree || (fixed && (!is.na(thisPathVal) && thisPathVal != 0)))) {
 				if((to == from)) {
 					# Find matching row in pt
 					rowMatch = FALSE
@@ -2758,7 +2805,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 				labelStub     = ' [label="'
 				prefix        = ifelse(thisPathFree, "", "@")
 
-				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
+				if (isTRUE(thisPathFree || (fixed && (!is.na(thisPathVal) && thisPathVal != 0)))) {
 					# Find matching row in pt
 					rowMatch = FALSE
 					if (!is.null(pt)) {
@@ -2829,7 +2876,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 
 				if(thisPathFree){ prefix = "" } else { prefix = "@" }
 
-				if(thisPathFree | ((fixed & (thisPathVal != 0))) ) {
+				if (isTRUE(thisPathFree || (fixed && (!is.na(thisPathVal) && thisPathVal != 0)))) {
 					if(target == source) {
 						if(showResiduals){
 							stringIn = paste0(stringIn, "\t", source, "_var -> ", target, ";\n")

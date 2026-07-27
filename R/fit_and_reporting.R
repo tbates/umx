@@ -1285,6 +1285,8 @@ umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 #' @export
 umxSummary.MxModelACE <- umxSummaryACE
 
+
+
 #' Present results of a twin ACE-model with covariates in table and graphical forms.
 #'
 #' Summarize a Cholesky model with random-effects covariates, as returned by [umxACEcov()]
@@ -2444,7 +2446,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	if(length(x@submodels)){
 		n = 1
 		for (sub in x@submodels) {
-			if(file == "name"){
+			if(!is.na(file) && file == "name"){
 				thisFile = file
 			} else {
 				thisFile = paste0(file, "_group_", n)
@@ -2712,6 +2714,7 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 
 #' @export
 plot.MxModelACE <- umxPlotACE
+
 
 #' Make a graphical display of an ACE model with covariates.
 #'

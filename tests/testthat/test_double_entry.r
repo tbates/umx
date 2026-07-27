@@ -36,6 +36,7 @@ test_that("umxACE_DE works with prepped data and equates paths", {
 	m1 = umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", dzData = dzData, mzData = mzData)
 	
 	expect_true(inherits(m1, "MxModel"))
+	expect_true(inherits(m1, "MxModelACE_DE"))
 	expect_equal(class(m1$MZ$expectation)[[1]], "MxExpectationNormal")
 	
 	# Verify that matrix values and labels are equated for the pair
@@ -52,6 +53,11 @@ test_that("umxACE_DE works with prepped data and equates paths", {
 	
 	# Verify summary works
 	expect_error(umxSummary(m1), NA)
+	
+	# Verify plot.MxModelACE_DE omits wt_cont and keeps wt_cens
+	dotOut = plot(m1)
+	expect_true(any(grepl("wt_cens", dotOut)))
+	expect_false(any(grepl("wt_cont", dotOut)))
 })
 
 test_that("umxACE_DE allows continuous traits mixed with double-entry pairs", {
@@ -85,6 +91,20 @@ test_that("umxACE_DE allows continuous traits mixed with double-entry pairs", {
 	}
 	# Continuous ht (row 1) keeps free diagonal
 	expect_equal(mMix$top$a$free[1, 1], TRUE)
+	
+	# Verify plot(mMix) keeps ht and wt_cens, omitting wt_cont
+	dotMix = plot(mMix)
+	expect_true(any(grepl("wt_cens", dotMix)))
+	expect_true(any(grepl("ht", dotMix)))
+	expect_false(any(grepl("wt_cont", dotMix)))
+
+	# Verify umxSummary(mMix) outputs filtered double-entry summary
+	sumOut = capture.output(umxSummary(mMix))
+	expect_true(any(grepl("double-entry Cholesky ACE model", sumOut)))
+	expect_true(any(grepl("wt_cens", sumOut)))
+	# Parameter table section (between Standardized and Means) should omit wt_cont
+	paramSec = sumOut[grep("Standardized parameter estimates", sumOut):grep("Means", sumOut)]
+	expect_false(any(grepl("wt_cont", paramSec)))
 })
 
 test_that("umx_make_double_entry_data works with various censoring rules and integrates with umxACE_DE", {
