@@ -27,5 +27,21 @@ test_that("testing xmu_make_mxData", {
 	tmp = xmu_make_mxData(data= mtcars, type = "cor")
 	# Pass string through
 	expect_equal(xmu_make_mxData(data= c("a", "b", "c"), type = "Auto"), c("a","b","c"))
-	
 })
+
+test_that("xmu_check_variance collates twin pairs and suppresses duplicate warnings", {
+	options(umx_last_variance_warnings = NULL)
+	df = data.frame(
+		wt1 = c(50, 60, 70), ht1 = c(0.01, 0.02, 0.015),
+		wt2 = c(55, 65, 75), ht2 = c(0.012, 0.022, 0.017)
+	)
+	msgs = capture_messages(xmu_check_variance(df, maxVarRatio = 100))
+	expect_true(any(grepl("Variance of variables differ by more than 100x", msgs)))
+	expect_true(any(grepl("'wt1' var > 100 times that of 'ht1'", msgs)))
+	expect_true(any(grepl("'wt2' var > 100 times that of 'ht2'", msgs)))
+
+	# Duplicate call on same variance structure produces no new messages
+	msgs2 = capture_messages(xmu_check_variance(df, maxVarRatio = 100))
+	expect_equal(length(msgs2), 0)
+})
+
