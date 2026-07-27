@@ -1044,7 +1044,6 @@ umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digit
 	report = match.arg(report)
 	filter = match.arg(filter)
 	
-	message("?umxSummary options: std=T|F, digits=, report= 'html', filter= 'NS' & more")
 	umx_has_been_run(model, stop = TRUE)
 	
 	if (is.null(refModels)) {
@@ -2707,7 +2706,6 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 		preOut, out$str, same, top, bottom, "\n}"
 	)
 
-	message("\n?umxPlotACE options: std=T/F, means=T/F, digits=n, strip_zero=T/F, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
  # end umxPlotACE
@@ -2826,7 +2824,6 @@ umxPlotACEcov <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		rankA,
 		rankCE, "\n}", sep=""
 	)
-	message("\n?umxPlotACEcov options: std=, means=, digits=, strip_zero=, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 } # end umxPlotACEcov
 
@@ -3944,11 +3941,11 @@ RMSEA.MxModel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3) {
 		# no ref models in summary... compute them
 		# no SaturatedLikelihood, compute refModels
 		refModels = tryCatch({
-		    refModels = mxRefModels(model, run = TRUE)
+		    refModels = mxRefModels(model, run = TRUE, beginMessage = FALSE)
 		}, warning = function(x) {
-		    print("warning in RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+		    print("warning in RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
 		}, error = function(x) {
-		    print("error RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs, including twin, and WLS https://github.com/OpenMx/OpenMx/issues/184")
+		    print("error RMSEA.MxModel calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
 		}, finally={
 		    # print("cleanup-code")
 		})

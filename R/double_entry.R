@@ -529,7 +529,6 @@ umxPlotACE_DE <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		preOut, out$str, same, top, bottom, "\n}"
 	)
 
-	message("\n?umxPlotACE_DE options: std=T/F, means=T/F, digits=n, strip_zero=T/F, file=, min=, max =")
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
 

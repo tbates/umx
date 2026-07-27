@@ -320,7 +320,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		
 		tryCatch({
 			if(tryHard == "no"){
-				model1 = mxRun(model1, beginMessage = !umx_set_silent(silent = TRUE), silent = umx_set_silent(silent = TRUE), intervals = intervals)
+				model1 = mxRun(model1, beginMessage = FALSE, silent = umx_set_silent(silent = TRUE), intervals = intervals)
 			} else if (tryHard == "mxTryHard"){
 				model1 = mxTryHard(model1, intervals = intervals)
 			} else if (tryHard == "mxTryHardOrdinal"){
@@ -3323,7 +3323,7 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 		indName = grep("Independence", names(refModels), value = TRUE)
 		if (length(indName) > 0) mInd = refModels[[indName]]
 	} else if (!identical(refModels, FALSE)) {
-		refModelsGenerated = tryCatch(OpenMx::mxRefModels(model, run = TRUE), error = function(e) NULL)
+		refModelsGenerated = tryCatch(OpenMx::mxRefModels(model, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
 		if (!is.null(refModelsGenerated)) {
 			satName = grep("Saturated", names(refModelsGenerated), value = TRUE)
 			if (length(satName) > 0) mSat = refModelsGenerated[[satName]]
@@ -3541,7 +3541,7 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 #' @family xmu internal not for end user
 xmu_compare_robust_ML <- function(model1, model2) {
 	# Get the saturated model to compute SEM degrees of freedom
-	refModels = tryCatch(OpenMx::mxRefModels(model1, run = TRUE), error = function(e) NULL)
+	refModels = tryCatch(OpenMx::mxRefModels(model1, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
 	mSat = NULL
 	if (!is.null(refModels)) {
 		satName = grep("Saturated", names(refModels), value = TRUE)

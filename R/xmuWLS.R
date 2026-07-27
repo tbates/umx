@@ -653,7 +653,7 @@ xmu_catml_discrepancy_at_WLS <- function(model) {
 		if (is.null(mML) || is.null(mML@output$fit) || !is.finite(mML@output$fit)) {
 			return(NULL)
 		}
-		refs = tryCatch(mxRefModels(mML, run = TRUE), error = function(e) NULL)
+		refs = tryCatch(mxRefModels(mML, run = TRUE, beginMessage = FALSE), error = function(e) NULL)
 		if (is.null(refs)) {
 			return(NULL)
 		}

@@ -173,7 +173,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	SE = (uncertainty %in% c("SE", "RobustSE", "CI")) && !is.null(model$output$vcov)
 
 	reportedWLS = FALSE
-	message("?umxSummary options: std=T|F', digits=, report= 'html', uncertainty = \"RobustSE\", filter= 'NS' & more")
 	
 	# If the filter is not default, user must want something: Assume it's what would have been the default...
 	if( filter != "ALL" & is.null(std) ) {
@@ -192,7 +191,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		if(is.na(modelSummary$SaturatedLikelihood)){
 			# no SaturatedLikelihood, compute refModels
 			refModels = tryCatch({
-				refModels = mxRefModels(model, run = TRUE)
+				refModels = mxRefModels(model, run = TRUE, beginMessage = FALSE)
 			}, warning = function(x) {
 			    print("Warning calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
 			}, error = function(x) {

@@ -580,8 +580,7 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed
 		out$str,
 		"\n", top, same, bottom, "\n}"
 	)
-	
-	cat("\n?umxPlotDoC options: std=, means=, digits=, strip_zero=, file=, min=, max =")
+
 	if(format != "current"){
 		tmp = umx_set_plot_format(silent=TRUE)
 		umx_set_plot_format(format)
