@@ -61,6 +61,7 @@ Other Reporting functions:
 \code{\link[=umxConfint]{umxConfint()}},
 \code{\link[=umxExpMeans]{umxExpMeans()}},
 \code{\link[=umxFitIndices]{umxFitIndices()}},
-\code{\link[=umxRotate]{umxRotate()}}
+\code{\link[=umxRotate]{umxRotate()}},
+\code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}}
 }
 \concept{Reporting functions}

@@ -3,9 +3,28 @@
 \name{plot.MxModel}
 \alias{plot.MxModel}
 \alias{plot}
+\alias{plot.MxRAMModel}
 \title{Create and display a graphical path diagram for a model.}
 \usage{
-\method{plot}{MxModel}(
+plot.MxModel(
+  x = NA,
+  std = FALSE,
+  fixed = TRUE,
+  means = TRUE,
+  digits = 2,
+  file = "name",
+  labels = c("none", "labels", "both"),
+  resid = c("circle", "line", "none"),
+  strip_zero = FALSE,
+  splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"),
+  min = NULL,
+  same = NULL,
+  max = NULL,
+  ...,
+  uncertainty = c("none", "SE", "RobustSE", "CI")
+)
+
+plot.MxRAMModel(
   x = NA,
   std = FALSE,
   fixed = TRUE,
@@ -121,6 +140,7 @@ Other Plotting functions:
 \code{\link{umx}},
 \code{\link[=umxPlot]{umxPlot()}},
 \code{\link[=umxPlotACE]{umxPlotACE()}},
+\code{\link[=umxPlotACE_DE]{umxPlotACE_DE()}},
 \code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
 \code{\link[=umxPlotACEv]{umxPlotACEv()}},
 \code{\link[=umxPlotCP]{umxPlotCP()}},

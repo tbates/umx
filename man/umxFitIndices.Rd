@@ -93,7 +93,8 @@ Other Reporting functions:
 \code{\link[=umxConfint]{umxConfint()}},
 \code{\link[=umxExpCov]{umxExpCov()}},
 \code{\link[=umxExpMeans]{umxExpMeans()}},
-\code{\link[=umxRotate]{umxRotate()}}
+\code{\link[=umxRotate]{umxRotate()}},
+\code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}}
 }
 \author{
 Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer

@@ -13,6 +13,7 @@ test_that("T1 — unit-diag + XX3 formula invariant", {
     umxPath(v.m. = paste0("x", 1:9))
   )
   skip_if_not(!is.null(m1@output$implied_jacobian), "Current OpenMx engine does not support WLS Jacobians (Legacy OpenMx)")
+  implWLS = mxGetExpected(m1, "covariance")
   expect_true(any(abs(diag(implWLS) - 1) > 0.05))
   
   mCat = umx:::xmu_catml_eval_model(m1)

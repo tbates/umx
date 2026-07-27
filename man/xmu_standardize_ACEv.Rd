@@ -98,6 +98,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_make_mxData]{xmu_make_mxData()}},
 \code{\link[=xmu_match.arg]{xmu_match.arg()}},
 \code{\link[=xmu_mxData_summary]{xmu_mxData_summary()}},
+\code{\link[=xmu_mxRefModels]{xmu_mxRefModels()}},
 \code{\link[=xmu_name_from_lavaan_str]{xmu_name_from_lavaan_str()}},
 \code{\link[=xmu_path2twin]{xmu_path2twin()}},
 \code{\link[=xmu_path_regex]{xmu_path_regex()}},

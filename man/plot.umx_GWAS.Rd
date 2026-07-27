@@ -4,7 +4,7 @@
 \alias{plot.umx_GWAS}
 \title{Plot GWAS Results}
 \usage{
-\method{plot}{umx_GWAS}(x, type = c("manhattan", "qq"), ...)
+plot.umx_GWAS(x, type = c("manhattan", "qq"), ...)
 }
 \arguments{
 \item{x}{A \code{umx_GWAS} object (returned by \code{\link{umxGSEM_GWAS}}).}

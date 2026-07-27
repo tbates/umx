@@ -201,6 +201,28 @@ test_that("testing Rsw data", {
 	 	umxPath(from = "G", to = manifests)
 	 )
 	 expect_error(plot(m2, means = FALSE, std = TRUE), NA)
+
+	 # =================================================
+	 # = Test NA-padded dataset fit indices reporting    =
+	 # =================================================
+	 vars = c("mpg", "cyl", "disp", "hp", "drat")
+	 tmp = as.data.frame(matrix(NA, ncol = ncol(mtcars), nrow = 32))
+	 colnames(tmp) = colnames(mtcars)
+	 tmp = rbind(mtcars, tmp)
+
+	 mNaPadded = umxRAM("NA padded test", data = tmp, tryHard = "yes",
+	 	umxPath("g", to = vars),
+	 	umxPath(v.m. = vars),                   
+	 	umxPath(v1m0 = "g")
+	 )
+	 expect_error(sNaPadded <- umxSummary(mNaPadded), NA)
+	 refs = xmu_mxRefModels(mNaPadded, run = TRUE)
+	 sMx = summary(mNaPadded, refModels = refs)
+	 expect_false(is.na(sMx$Chi[1]))
+	 expect_false(is.na(sMx$CFI))
+	 expect_false(is.na(sMx$TLI))
+	 expect_false(is.na(sMx$RMSEA[1]))
  })
+
 
 

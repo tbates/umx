@@ -5,7 +5,7 @@
 \alias{umxPlotMxModelTwinMaker}
 \title{Create and display a graphical path diagram for a path-based twin model.}
 \usage{
-\method{plot}{MxModelTwinMaker}(
+plot.MxModelTwinMaker(
   x = NA,
   std = FALSE,
   fixed = TRUE,
@@ -118,6 +118,7 @@ Other Plotting functions:
 \code{\link{umx}},
 \code{\link[=umxPlot]{umxPlot()}},
 \code{\link[=umxPlotACE]{umxPlotACE()}},
+\code{\link[=umxPlotACE_DE]{umxPlotACE_DE()}},
 \code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
 \code{\link[=umxPlotACEv]{umxPlotACEv()}},
 \code{\link[=umxPlotCP]{umxPlotCP()}},

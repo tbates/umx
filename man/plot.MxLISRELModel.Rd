@@ -4,7 +4,7 @@
 \alias{plot.MxLISRELModel}
 \title{Create and display a graphical path diagram for a LISREL model.}
 \usage{
-\method{plot}{MxLISRELModel}(
+plot.MxLISRELModel(
   x = NA,
   std = FALSE,
   fixed = TRUE,
@@ -98,6 +98,7 @@ Other Plotting functions:
 \code{\link{umx}},
 \code{\link[=umxPlot]{umxPlot()}},
 \code{\link[=umxPlotACE]{umxPlotACE()}},
+\code{\link[=umxPlotACE_DE]{umxPlotACE_DE()}},
 \code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
 \code{\link[=umxPlotACEv]{umxPlotACEv()}},
 \code{\link[=umxPlotCP]{umxPlotCP()}},

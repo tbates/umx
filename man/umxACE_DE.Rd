@@ -5,12 +5,12 @@
 \title{Build a Double-Entry Censored Data ACE twin model}
 \usage{
 umxACE_DE(
-  name = "ACE",
+  name = "ACE_DE",
   selDVs,
   selCovs = NULL,
   dzData = NULL,
   mzData = NULL,
-  sep = NULL,
+  sep = "_T",
   data = NULL,
   zyg = "zygosity",
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
@@ -142,27 +142,25 @@ mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
 	selDVs = c("ht", "wt_cont", "wt_cens"), addCI = FALSE, tryHard = "yes"
 )
 
-Table: Standardized parameter estimates from DE Cholesky ACE: A additive genetic; C: common; E: unique.
+# Table: Standardized parameter estimates from DE Cholesky ACE: A additive genetic; C: common; E: unique.
+# |        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
+# |:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
+# |ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
+# |wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
+# |wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
 
-|        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
-|:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
-|ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
-|wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
-|wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
-
-umxSummary(mDE_NA, std = TRUE)
+umxSummary(mDE, std = TRUE)
 
 # 2. Gold standard: uncensored bivariate ACE on true height and weight
 mzTrue = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzTrue = twinData[twinData$zygosity \%in\% "DZFF", ]
 mTrue  = umxACE("htWtTrue", selDVs = c("ht", "wt"), mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
 
-Table: Standardized parameter estimates from 2-factor Cholesky ACE: A: additive genetic; C: common; E: unique.
-
-|   |    a1|a2    |     c1|c2 |    e1|e2    |
-|:--|-----:|:-----|------:|:--|-----:|:-----|
-|ht | 0.899|      |  0.252|   | 0.357|      |
-|wt | 0.419|0.766 | -0.049|.  | 0.074|0.479 |
+# Table: Standardized parameter estimates from 2-factor Cholesky ACE: A: additive genetic; C: common; E: unique.
+# |   |    a1|a2    |     c1|c2 |    e1|e2    |
+# |:--|-----:|:-----|------:|:--|-----:|:-----|
+# |ht | 0.899|      |  0.252|   | 0.357|      |
+# |wt | 0.419|0.766 | -0.049|.  | 0.074|0.479 |
 
 umxSummary(mTrue, std = TRUE)
 

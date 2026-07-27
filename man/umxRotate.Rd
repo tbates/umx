@@ -47,6 +47,7 @@ Other Reporting functions:
 \code{\link[=umxConfint]{umxConfint()}},
 \code{\link[=umxExpCov]{umxExpCov()}},
 \code{\link[=umxExpMeans]{umxExpMeans()}},
-\code{\link[=umxFitIndices]{umxFitIndices()}}
+\code{\link[=umxFitIndices]{umxFitIndices()}},
+\code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}}
 }
 \concept{Reporting functions}

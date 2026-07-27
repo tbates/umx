@@ -12,6 +12,10 @@ fin_stock_ticker(
 }
 \arguments{
 \item{ticker}{A stock symbol to look up, e.g., "OXY"}
+
+\item{exchange}{Stock exchange code (default = "NASDAQ").}
+
+\item{provider}{Financial data provider site ("GOOGLE" or "YAHOO", default = "GOOGLE").}
 }
 \value{
 \itemize{

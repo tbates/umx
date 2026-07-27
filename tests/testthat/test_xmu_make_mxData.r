@@ -45,3 +45,22 @@ test_that("xmu_check_variance collates twin pairs and suppresses duplicate warni
 	expect_equal(length(msgs2), 0)
 })
 
+test_that("xmu_mxRun and xmu_mxRefModels execute safely", {
+	manifests = names(demoOneFactor)
+	latents = "g"
+	model = mxModel("OneFactorTest", type = "RAM",
+		manifestVars = manifests, latentVars = latents,
+		mxPath(from = latents, to = manifests),
+		mxPath(from = manifests, arrows = 2),
+		mxPath(from = latents, arrows = 2, free = FALSE, values = 1),
+		mxData(cov(demoOneFactor), type = "cov", numObs = 500)
+	)
+	fit = xmu_mxRun(model, beginMessage = FALSE)
+	expect_true(umx_has_been_run(fit))
+
+	refs = xmu_mxRefModels(fit, run = TRUE, beginMessage = FALSE)
+	expect_true(inherits(refs, "list"))
+	expect_true(any(grepl("Saturated", names(refs))))
+})
+
+

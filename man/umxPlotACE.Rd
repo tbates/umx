@@ -72,6 +72,7 @@ Other Plotting functions:
 \code{\link[=plot.MxModelTwinMaker]{plot.MxModelTwinMaker()}},
 \code{\link{umx}},
 \code{\link[=umxPlot]{umxPlot()}},
+\code{\link[=umxPlotACE_DE]{umxPlotACE_DE()}},
 \code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
 \code{\link[=umxPlotACEv]{umxPlotACEv()}},
 \code{\link[=umxPlotCP]{umxPlotCP()}},
