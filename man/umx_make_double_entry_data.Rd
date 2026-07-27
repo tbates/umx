@@ -10,7 +10,7 @@ umx_make_double_entry_data(
   doubleEntrySuffix = c("_cont", "_cens"),
   sep = "_T",
   nSib = 2,
-  levels = c("normal", "censored")
+  levels = c("cont", "censored")
 )
 }
 \arguments{
@@ -24,7 +24,7 @@ umx_make_double_entry_data(
 
 \item{nSib}{Number of siblings/twins (default = 2).}
 
-\item{levels}{The factor levels for the censored column (default = c("normal", "censored")).}
+\item{levels}{The factor levels for the censored column (default = c("continuous", "censored")).}
 }
 \value{
 The modified dataframe with expanded double-entry pairs.
@@ -33,6 +33,16 @@ The modified dataframe with expanded double-entry pairs.
 Helper to split one or more variables in a twin dataset into a paired
 continuous column (holding non-censored values) and an ordered factor column
 (indicating censoring status), ready for \code{umxACE_DE}.
+}
+\details{
+Double-entry data preparation creates paired continuous (\code{_cont}) and ordinal factor (\code{_cens}) columns for censored traits.
+
+To prevent likelihood double-counting during FIML estimation:
+\itemize{
+\item Non-censored observations (\eqn{x > \textrm{cut}}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
+\item Censored observations (\eqn{x \le \textrm{cut}}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
+}
+This ensures each case contributes exactly one mutually exclusive likelihood component (either continuous PDF or ordinal CDF threshold probability).
 }
 \examples{
 data(twinData)

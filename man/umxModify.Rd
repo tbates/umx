@@ -84,7 +84,6 @@ AND relabel cells (because the default value is 0, so it is ignored when using n
 \dontrun{
 require(umx)
 # First we'll just build a 1-factor model
-umx_set_optimizer("SLSQP")
 data(demoOneFactor)
 manifests = names(demoOneFactor)
 
@@ -121,7 +120,8 @@ labsToUpdate = c("G_to_x1", "G_to_x2")
 newLabel = "G_to_1_or_2"
 m2 = umxModify(m1, update = labsToUpdate, newlabels= newLabel, name = "equated", comparison = TRUE)
 
-# Advanced!
+# Advanced: Regular expressions
+
 # Regular expressions let you use pieces of the old names in creating new ones!
 searchString = "G_to_x([0-9])"
 newLabel = "loading_for_path\\\\1" # use value in regex group 1

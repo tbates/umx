@@ -17,7 +17,7 @@ xmu_show_fit_or_comparison(model, comparison = NULL, digits = 2)
 None
 }
 \description{
-Just a helper to show the logLik of a model or print a comparison table.
+Just a helper to show the fit of a model or print a comparison table.
 }
 \examples{
 \dontrun{

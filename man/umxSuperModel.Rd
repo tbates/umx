@@ -2,7 +2,7 @@
 % Please edit documentation in R/build_run_modify.R
 \name{umxSuperModel}
 \alias{umxSuperModel}
-\title{Make a multi-group model}
+\title{Make a multi-group (super) model}
 \usage{
 umxSuperModel(
   name = "super",

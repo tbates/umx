@@ -55,6 +55,27 @@ m1 = umxRAM("WLS_HS", data = HSwls, type = "DWLS",
 )
 plot(m1, means=FALSE, std=TRUE, splines=FALSE, min = c("visual", "verbal", "speed"))
 umxSummary(m1, uncertainty= "RobustSE")
+
+data(HS.ability.data)
+df = HS.ability.data
+
+verbal = c("general" , "paragrap", "sentence")
+space  = c("visual"  , "cubes"   , "flags"   )
+math   = c("addition", "code"    , "counting")
+
+manifests = c(verbal, space, math)
+out = factanal(df[, manifests], factors = 3, scores = "Bartlett", na.action = na.exclude)
+
+m1 = umxRAM("One Factor", data = df,
+	umxPath(v1m0 = "G"),
+	umxPath(v.m. = c(manifests, "V", "S", "M")),
+	umxPath(from = "V", to = verbal),
+	umxPath(from = "S", to = space),
+	umxPath(from = "M", to = math),
+
+	umxPath(from = "G", to = c("V", "S", "M"))
+)
+plot(m1, means=FALSE, std=TRUE, max= manifests, min="G", same= c("V", "S", "M"))
 }
 }
 \references{

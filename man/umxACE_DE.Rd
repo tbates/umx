@@ -22,7 +22,6 @@ umxACE_DE(
   intervals = FALSE,
   tryHard = c("no", "yes", "ordinal", "search"),
   optimizer = NULL,
-  residualizeContinuousVars = FALSE,
   nSib = 2,
   dzAr = 0.5,
   dzCr = 1,
@@ -68,8 +67,6 @@ umxACE_DE(
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 
-\item{residualizeContinuousVars}{Not yet implemented.}
-
 \item{nSib}{Number of siblings in a family (default = 2).}
 
 \item{dzAr}{The DZ genetic correlation (defaults to .5, vary to examine assortative mating).}
@@ -103,15 +100,29 @@ Fully continuous variables may be mixed with double-entry pairs in \code{selDVs}
 \code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}. At least one contiguous \verb{_cont}/\verb{_cens} pair is required;
 for all-continuous models use \code{\link[=umxACE]{umxACE()}}.
 }
+\details{
+Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
+one continuous (\code{_cont}) and one binary/ordinal factor (\code{_cens}).
+
+\strong{Likelihood Evaluation & Missingness Structure:}
+Each individual contributes exactly one non-missing likelihood element for the censored trait:
+\itemize{
+\item \strong{Non-censored cases} (\eqn{x > \textrm{cut}}): \code{_cont} contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}, while \code{_cens} is set to \code{NA}.
+\item \strong{Censored cases} (\eqn{x \le \textrm{cut}}): \code{_cont} is set to \code{NA}, while \code{_cens} contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}.
+}
+Leaving \code{_cens} non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
+}
 \examples{
 \donttest{
 require(umx)
 data(twinData)
 
-# Height fully observed; weight only recorded for higher-BMI people (others coded 0).
+# Toy example: Height fully observed; weight recorded only for higher-BMI people (others coded 0).
 # twinData BMI rarely exceeds classical overweight (25); use upper BMI quantile as threshold.
-twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10 # cms
 bmiCut = quantile(c(twinData$bmi1, twinData$bmi2), probs = 0.8, na.rm = TRUE)
+
 clinic = twinData
 for (s in 1:2) {
 	bmiCol = paste0("bmi", s)
@@ -120,49 +131,45 @@ for (s in 1:2) {
 	clinic[[wtCol]][notWeighed] = 0
 }
 
-# Double-entry prep for weight only (floor at 0 -> wt_cont* / wt_cens*)
-prep = umx_make_double_entry_data(clinic, cols = list(wt = 0), sep = "")
+# Double-entry prep for weight (floor at 0) Creates "wt_cont*" and "wt_cens*"
+prep = umx_make_double_entry_data(clinic, cols = list(wt = "<= 0"), sep = "")
+
 mzData = prep[prep$zygosity \%in\% "MZFF", ]
 dzData = prep[prep$zygosity \%in\% "DZFF", ]
 
 # 1. Correct mixed model: continuous height + double-entry censored weight
-mDE = umxACE_DE(
-	name = "htWtDE",
-	selDVs = c("ht", "wt_cont", "wt_cens"),
-	sep = "",
-	mzData = mzData,
-	dzData = dzData,
-	addCI = FALSE,
-	tryHard = "yes"
+mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
+	selDVs = c("ht", "wt_cont", "wt_cens"), addCI = FALSE, tryHard = "yes"
 )
-umxSummary(mDE, std = TRUE)
+
+Table: Standardized parameter estimates from DE Cholesky ACE: A additive genetic; C: common; E: unique.
+
+|        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
+|:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
+|ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
+|wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
+|wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
+
+umxSummary(mDE_NA, std = TRUE)
 
 # 2. Gold standard: uncensored bivariate ACE on true height and weight
 mzTrue = twinData[twinData$zygosity \%in\% "MZFF", ]
 dzTrue = twinData[twinData$zygosity \%in\% "DZFF", ]
-mTrue = umxACE(
-	name = "htWtTrue",
-	selDVs = c("ht", "wt"),
-	sep = "",
-	mzData = mzTrue,
-	dzData = dzTrue,
-	addCI = FALSE,
-	tryHard = "yes"
-)
+mTrue  = umxACE("htWtTrue", selDVs = c("ht", "wt"), mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
+
+Table: Standardized parameter estimates from 2-factor Cholesky ACE: A: additive genetic; C: common; E: unique.
+
+|   |    a1|a2    |     c1|c2 |    e1|e2    |
+|:--|-----:|:-----|------:|:--|-----:|:-----|
+|ht | 0.899|      |  0.252|   | 0.357|      |
+|wt | 0.419|0.766 | -0.049|.  | 0.074|0.479 |
+
 umxSummary(mTrue, std = TRUE)
 
 # 3. Mistaken analysis: treat 0 (not weighed) as a real continuous weight
 mzNaive = clinic[clinic$zygosity \%in\% "MZFF", ]
 dzNaive = clinic[clinic$zygosity \%in\% "DZFF", ]
-mNaive = umxACE(
-	name = "htWtNaive0",
-	selDVs = c("ht", "wt"),
-	sep = "",
-	mzData = mzNaive,
-	dzData = dzNaive,
-	addCI = FALSE,
-	tryHard = "yes"
-)
+mNaive = umxACE("htWtNaive0", selDVs= c("ht", "wt"), mzData= mzNaive, dzData= dzNaive, sep ="",tryHard = "yes")
 umxSummary(mNaive, std = TRUE)
 # Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
 }

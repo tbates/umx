@@ -53,7 +53,6 @@ Options include digits (rounding), showing means or not, and which output format
 \examples{
 \dontrun{
 require(umx)
-umx_set_optimizer("SLSQP")
 data(GFF)
 mzData = subset(GFF, zyg_2grp == "MZ")
 dzData = subset(GFF, zyg_2grp == "DZ")

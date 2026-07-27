@@ -100,7 +100,7 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 }
 }
 \description{
-This function is used to easily and compactly specify paths in models. In addition to
+umxPath is used to easily and compactly specify paths in models. In addition to
 \code{from} and \code{to}, it adds specialised parameters for variances (var), two headed paths (with) and means (mean).
 There are also new terms to describe fixing values: \code{fixedAt} and \code{fixFirst}.
 To give a couple of the most common, time-saving examples:

@@ -2,7 +2,7 @@
 % Please edit documentation in R/xmu.R
 \name{xmu_has_summary_mxData}
 \alias{xmu_has_summary_mxData}
-\title{Check if OpenMx supports type = "summary" in mxData}
+\title{Check if this version of OpenMx supports modern WLS (mxData of type = "summary")}
 \usage{
 xmu_has_summary_mxData(force = FALSE)
 }
