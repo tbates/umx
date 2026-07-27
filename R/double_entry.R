@@ -97,27 +97,25 @@
 #' 	selDVs = c("ht", "wt_cont", "wt_cens"), addCI = FALSE, tryHard = "yes"
 #' )
 #'
-#' Table: Standardized parameter estimates from DE Cholesky ACE: A additive genetic; C: common; E: unique.
+#' # Table: Standardized parameter estimates from DE Cholesky ACE: A additive genetic; C: common; E: unique.
+#' # |        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
+#' # |:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
+#' # |ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
+#' # |wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
+#' # |wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
 #' 
-#' |        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
-#' |:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
-#' |ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
-#' |wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
-#' |wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
-#' 
-#' umxSummary(mDE_NA, std = TRUE)
+#' umxSummary(mDE, std = TRUE)
 #'
 #' # 2. Gold standard: uncensored bivariate ACE on true height and weight
 #' mzTrue = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzTrue = twinData[twinData$zygosity %in% "DZFF", ]
 #' mTrue  = umxACE("htWtTrue", selDVs = c("ht", "wt"), mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
 #' 
-#' Table: Standardized parameter estimates from 2-factor Cholesky ACE: A: additive genetic; C: common; E: unique.
-#' 
-#' |   |    a1|a2    |     c1|c2 |    e1|e2    |
-#' |:--|-----:|:-----|------:|:--|-----:|:-----|
-#' |ht | 0.899|      |  0.252|   | 0.357|      |
-#' |wt | 0.419|0.766 | -0.049|.  | 0.074|0.479 |
+#' # Table: Standardized parameter estimates from 2-factor Cholesky ACE: A: additive genetic; C: common; E: unique.
+#' # |   |    a1|a2    |     c1|c2 |    e1|e2    |
+#' # |:--|-----:|:-----|------:|:--|-----:|:-----|
+#' # |ht | 0.899|      |  0.252|   | 0.357|      |
+#' # |wt | 0.419|0.766 | -0.049|.  | 0.074|0.479 |
 #'
 #' umxSummary(mTrue, std = TRUE)
 #'
@@ -532,6 +530,7 @@ umxPlotACE_DE <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 }
 
+#' @rdname umxPlotACE_DE
 #' @export
 plot.MxModelACE_DE <- umxPlotACE_DE
 
@@ -557,7 +556,7 @@ plot.MxModelACE_DE <- umxPlotACE_DE
 #' @return - optionally returns parameter estimates table dataframe.
 #' @export
 #' @family Reporting functions
-#' @seealso - [umxACE_DE()], [plot.MxModelACE_DE()], [umxSummary()]
+#' @seealso - [umxACE_DE()], [umxPlotACE_DE()], [umxSummary()]
 #' @references - <https://github.com/tbates/umx>
 umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
