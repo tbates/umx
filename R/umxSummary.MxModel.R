@@ -192,8 +192,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			# no SaturatedLikelihood, compute refModels
 			refModels = tryCatch({
 				xmu_mxRefModels(model, run = TRUE, beginMessage = FALSE)
-			 }, warning = function(x) {
-				 print("warning in RMSEA.MxModel calling mxRefModels")
 			}, error = function(x) {
 			    print("Error calling mxRefModels: mxRefModels can't handle all designs https://github.com/OpenMx/OpenMx/issues/184")
 			    NULL

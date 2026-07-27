@@ -3943,8 +3943,6 @@ RMSEA.MxModel <- function(x, ci.lower = .025, ci.upper = .975, digits = 3) {
 		# no SaturatedLikelihood, compute refModels
 		refModels = tryCatch({
 		    xmu_mxRefModels(model, run = TRUE, beginMessage = FALSE)
-		 }, warning = function(x) {
-			 print("warning in RMSEA.MxModel calling mxRefModels")
 		}, error = function(x) {
 		    print("error RMSEA.MxModel calling mxRefModels")
 		    NULL

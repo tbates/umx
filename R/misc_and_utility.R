@@ -3387,15 +3387,8 @@ umx_update_OpenMx <- install.OpenMx
 #' }
 umx_make <- function(
 	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "run_dontrun", "examples", "vignettes", "win", "rhub", "lastRhub", "release", "git", "dev"), 
-	pkg = "~/bin/umx", 
-	check = TRUE, 
-	run = FALSE, 
-	start = NULL, 
-	spelling = "en_US", 
-	which = c("win", "mac", "linux", "solaris"), 
-	run_dont_test = FALSE, 
-	spell = TRUE
-) {
+	pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL,  spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell = TRUE)
+	{
 	what  = match.arg(what)
 	which = match.arg(which)
 	
