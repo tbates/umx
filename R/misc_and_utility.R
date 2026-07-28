@@ -3160,7 +3160,7 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #' install.OpenMx("open release page") # browse releases and install a file yourself
 #' install.OpenMx("CRAN")                # stock CRAN OpenMx only
 #' }
-install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page"), url = NULL, lib, repos = getOption("repos")) {
+install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "CRAN"), url = NULL, lib, repos = getOption("repos")) {
 	loc = match.arg(loc)
 	oldTimeOut = getOption("timeout")
 	options(timeout = 60 * 5)
@@ -3180,17 +3180,33 @@ install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page"), ur
 		return(invisible(NULL))
 	}
 
-	if (loc == "CRAN") {
-		if (missing(lib)) {
-			install.packages("OpenMx", repos = repos)
-		} else {
-			install.packages("OpenMx", lib = lib, repos = repos)
+	if (loc == "GenomicMx") {
+		# public binary install for everyone
+		binUrl = xmu_genomicmx_binary_url()
+		if (is.null(binUrl) || !nzchar(binUrl)) {
+			message(
+				"No prebuilt GenomicMx OpenMx binary was found for this platform (or GitHub was unreachable).\n",
+				"Opening the umx Releases page. Download the asset matching your OS and R version, then:\n",
+				"  install.packages(\"/path/to/binary\", repos = NULL)\n",
+				"Or: install.OpenMx(\"open release page\")"
+			)
+			browseURL(xmu_genomicmx_release_page_url())
+			return(invisible(NULL))
 		}
-		message("Installed CRAN OpenMx. Restart R if OpenMx was already loaded.")
+		message("Installing GenomicMx OpenMx binary from:\n  ", binUrl)
+		if (missing(lib)) {
+			install.packages(binUrl, repos = NULL)
+		} else {
+			install.packages(binUrl, repos = NULL, lib = lib)
+		}
+		message(
+			"Installed GenomicMx OpenMx (this replaces OpenMx in the target library).\n",
+			"Restart R, then:\n  library(OpenMx); library(umx); umxVersion()\n",
+			"Stock CRAN OpenMx only: install.OpenMx(\"CRAN\")"
+		)
 		return(invisible(NULL))
 	}
-
-	if (loc == "open release page") {
+	if (loc == "open GenomicMx release page") {
 		browseURL(xmu_genomicmx_release_page_url())
 		message(
 			"Opened the umx Releases page (GenomicMx OpenMx binaries are attached there when published).\n",
@@ -3201,30 +3217,17 @@ install.OpenMx <- function(loc = c("GenomicMx", "CRAN", "open release page"), ur
 		return(invisible(NULL))
 	}
 
-	# loc == "GenomicMx" (default): public binary install for everyone
-	binUrl = xmu_genomicmx_binary_url()
-	if (is.null(binUrl) || !nzchar(binUrl)) {
-		message(
-			"No prebuilt GenomicMx OpenMx binary was found for this platform (or GitHub was unreachable).\n",
-			"Opening the umx Releases page. Download the asset matching your OS and R version, then:\n",
-			"  install.packages(\"/path/to/binary\", repos = NULL)\n",
-			"Or: install.OpenMx(\"open release page\")"
-		)
-		browseURL(xmu_genomicmx_release_page_url())
+
+	if (loc == "CRAN") {
+		if (missing(lib)) {
+			install.packages("OpenMx", repos = repos)
+		} else {
+			install.packages("OpenMx", lib = lib, repos = repos)
+		}
+		message("Installed CRAN OpenMx. Restart R if OpenMx was already loaded.")
 		return(invisible(NULL))
 	}
-	message("Installing GenomicMx OpenMx binary from:\n  ", binUrl)
-	if (missing(lib)) {
-		install.packages(binUrl, repos = NULL)
-	} else {
-		install.packages(binUrl, repos = NULL, lib = lib)
-	}
-	message(
-		"Installed GenomicMx OpenMx (this replaces OpenMx in the target library).\n",
-		"Restart R, then:\n  library(OpenMx); library(umx); umxVersion()\n",
-		"Stock CRAN OpenMx only: install.OpenMx(\"CRAN\")"
-	)
-	invisible(NULL)
+	
 }
 
 # ---- GenomicMx OpenMx engine detection and install messaging -----------------
@@ -3552,7 +3555,7 @@ umx_make <- function(
 #' mx_make("--help")
 #' }
 mx_make <- function(
-	what = c("install", "NPSOL", "cran-install", "build", "Rd", "check", "win", "spell", "sitrep", "deps_install", "testthat", "git", "GenomicMx", "--help"),
+	what = c("install", "NPSOL", "cran-install", "build", "Rd", "check", "win", "spell", "sitrep", "deps_install", "testthat", "git", "GenomicMx", "build_GenomicMx", "--help"),
 	pkg = "~/bin/OpenMx",
 	deploymentTarget = "14.0",
 	openmp = TRUE,
@@ -3646,6 +3649,48 @@ mx_make <- function(
 	}
 	if (what == "GenomicMx") {
 		install.OpenMx("GenomicMx")
+		return(invisible(NULL))
+	}
+
+	if (what == "build_GenomicMx") {
+		message("Building GenomicMx OpenMx from ", pkgPath, "...")
+		wd = getwd()
+		
+		# 1. Build Source Tarball
+		cmd_build = paste("R CMD build", shQuote(pkgPath))
+		message("Running: ", cmd_build)
+		if (system(cmd_build, intern = FALSE) != 0) stop("R CMD build failed.")
+		
+		tarball = list.files(path = wd, pattern = "^OpenMx_.*\\.tar\\.gz$", full.names = TRUE)
+		if (length(tarball) == 0) stop("Tarball not found after R CMD build.")
+		tarball = tarball[length(tarball)]
+		
+		# 2. Build Binary
+		cmd_inst = paste("R CMD INSTALL --build", shQuote(tarball))
+		message("Running: ", cmd_inst)
+		if (system(cmd_inst, intern = FALSE) != 0) stop("R CMD INSTALL --build failed.")
+		
+		bin_pattern = if (.Platform$OS.type == "windows") "^OpenMx_.*\\.zip$" else "^OpenMx_.*\\.tgz$"
+		binary = list.files(path = wd, pattern = bin_pattern, full.names = TRUE)
+		if (length(binary) == 0) stop("Binary not found after R CMD INSTALL --build.")
+		binary = binary[length(binary)]
+		
+		# 3. Upload to tbates/umx
+		message("Uploading ", basename(binary), " to tbates/umx latest release...")
+		if (requireNamespace("piggyback", quietly = TRUE)) {
+			piggyback::pb_upload(binary, repo = "tbates/umx", tag = "latest", overwrite = TRUE)
+		} else {
+			message("The 'piggyback' package is not installed. Checking for 'gh' CLI...")
+			if (Sys.which("gh") == "") {
+				stop(
+					"Upload failed: Neither the 'piggyback' R package nor the 'gh' command-line tool were found.\n",
+					"To fix this, please run: install.packages('piggyback')"
+				)
+			}
+			cmd_upload = paste("gh release upload latest", shQuote(binary), "--clobber --repo tbates/umx")
+			if (system(cmd_upload) != 0) stop("gh CLI upload failed.")
+		}
+		message("Done.")
 		return(invisible(NULL))
 	}
 
