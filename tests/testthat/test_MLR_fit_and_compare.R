@@ -164,7 +164,8 @@ test_that("Robust ML fit statistics fall back gracefully on categorical data", {
 	datOrdinal = dat
 	datOrdinal$x1 = as.ordered(cut(datOrdinal$x1, breaks = 3, labels = FALSE))
 	mOrdinal = umxRAM("OrdinalModel", data = datOrdinal,
-		umxPath(from = c("x1", "x2", "x3", "x4"), arrows = 2, free = TRUE, values = 1)
+		umxPath(var = c("x1", "x2", "x3", "x4"), values = 1),
+		umxPath(means = c("x1", "x2", "x3", "x4"), arrows = 2, free = TRUE, values = 1)
 	)
 
 	# Ordinal ML: attempt robust corrections; NULL fallback when scaling is invalid

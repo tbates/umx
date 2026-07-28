@@ -63,15 +63,18 @@ test_that("xmu_mxRefModels execute safely", {
 	expect_true(any(grepl("Saturated", names(refs))))
 
 	# Add NA data which will raise a warning in mxRefModels
+	vars = c("mpg", "cyl", "disp", "hp", "drat")
 	tmp = as.data.frame(matrix(NA, ncol = ncol(mtcars), nrow = 32))
 	colnames(tmp) = colnames(mtcars)
 	tmp = rbind(mtcars, tmp)
 
-	m2 = umxRAM("NA padded", data = tmp, tryHard = "yes",
+	m2 = umxRAM("NApadded", data = tmp, tryHard = "yes",
 		umxPath("g", to = vars),
 		umxPath(v.m. = vars),                   
 		umxPath(v1m0 = "g")
 	)
+	tmp = summary(m2)
+	umxSummary(m2)
 	# todo USELESS test - need to find a way to see in m2 if it has refModels
 	expect_true(umx_has_been_run(m2))
 
