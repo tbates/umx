@@ -49,7 +49,7 @@ test_that("T1: saturated continuous WLS reports Chi=0 and perfect AFIs (not NA)"
 	expect_equal(rf$RMSEA, 0)
 	expect_identical(attr(rf, "correction"), "saturated")
 
-	disp = xmu_wls_display_chi(mSat)
+	disp = umx:::xmu_wls_display_chi(mSat)
 	expect_equal(disp$Chi, 0)
 	expect_equal(disp$CFI, 1)
 	expect_equal(disp$source, "saturated")
@@ -93,7 +93,7 @@ test_that("T5: DWLS/WLS Browne output$chi can differ from SB display Chi when df
 	rf = xmu_robust_WLS_fit(mWlsNested)
 	browne = mWlsNested$output$chi
 	# Guard: compare table must not silently use Browne when SB is available
-	disp = xmu_wls_display_chi(mWlsNested)
+	disp = umx:::xmu_wls_display_chi(mWlsNested)
 	expect_equal(disp$Chi, rf$Chi)
 	expect_equal(disp$source, "SB2010")
 	# Under DWLS/WLS residual SE path, Browne residual often differs from SB-scaled F

@@ -38,17 +38,6 @@
 * NEW: `xmu_make_mxData` subsets modern summary WLS `observedStats` (useWeight / asymCov).
 * NEW: Lots more `tests/testthat.R`
 
-
-TODO!!!
-ALLOW umxGSEM_GWAS to take a model = RAMmodel
-TODO: documented SNP data sources, production download notes.
-TODO: testthat Residual order + diagonal DWLS weights match
-  GenomicSEM `commonfactor` on `Psych_LDSC` (loadings/SEs to printed precision).
-
-TODO: (OpenMx rear end): flatten model once, OpenMP over SNP blocks in C++
-    (`GsemImpliedStats` / DWLS), reassemble results. R `umxGSEM_GWAS` stays the API shell.
-* TODO: rip out the acov pathway - it is a bear trap!! 
-
 # Releases
 
 ## umx 4.80.0

@@ -190,21 +190,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 				}
 			}
 
-			cat(paste0("\n*Note*: EP = free parameters; delta_df = change in df.\n"))
 			if (isGenomic) {
-				cat("  - Chi: GSEM/DWLS chi-square scale for the model (OpenMx residual/structural chi).\n")
+				cat("\n*Note* EP: Estimated parameters; Chi: Browne (1984) residual chi-square; SRMR: Standardized Root Mean Square Residual; CFI: Comparative Fit Index; AIC: Akaike Information Criterion; diffFit: Browne (1984) residual chi-square difference test. See ?umxCompare for details.\n")
 			} else {
-				cat("  - Chi: Satorra-Bentler (2010) scaled WLS discrepancy (same as umxSummary; not Browne output$chi).\n")
-			}
-			cat("  - SRMR / delta_SRMR: preferred absolute residual summary and its change.\n")
-			cat("  - CFI / delta_CFI: descriptive only (no conventional cutoffs under WLS/GSEM).\n")
-			cat("  - AIC: Chi + 2*EP on the same Chi scale (convenience only for GSEM).\n")
-			if (isGenomic) {
-				cat("  - diffFit: nested difference on the GSEM DWLS chi-square scale.\n")
-				cat("\n*Statistical Note*: Genomic SEM - absolute fit: prefer SRMR (roughly < 0.10) and residual inspection. Nested models: use diffFit (DWLS chi-square difference). De-emphasize CFI/TLI/RMSEA; do not apply Hu-Bentler cutoffs. See ?umxCompare.\n")
-			} else {
-				cat("  - diffFit: Satorra-Bentler (2010) scaled nested Delta chi-square when Jacobians are available and F is nested-monotone.\n")
-				cat("\n*Statistical Note*: Continuous WLS/DWLS - conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use Strict Satorra-Bentler (2010) Delta chi-square (diffFit). See ?umxCompare.\n")
+				cat("\n*Note* EP: Estimated parameters; Chi: Satorra-Bentler (2010) scaled WLS chi-square; SRMR: Standardized Root Mean Square Residual; CFI: Comparative Fit Index; AIC: Akaike Information Criterion; diffFit: Satorra-Bentler (2010) scaled chi-square difference test. See ?umxCompare for details.\n")
 			}
 		}
 		return(invisible(finalTable))

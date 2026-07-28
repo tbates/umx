@@ -576,6 +576,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# ==================
 	# = Assemble model =
 	# ==================
+	if (type %in% c("WLS", "DWLS", "ULS") && !is.null(data) && inherits(data, "data.frame")) {
+		summaryObj = umx_is_ordered(data[, usedManifests, drop = FALSE], summaryObject = TRUE)
+		if (is.null(summaryObj$nFactors) || summaryObj$nFactors == 0) {
+			message("*Polite note*: Your data are continuous. WLS is typically reserved only for categorical data. Perhaps you want robust fit statistics? In that case remove the type= parameter and use robust methods in the summary: umxSummary(model, ..., uncertainty = \"RobustSE\").")
+		}
+	}
 
 	newModel = do.call("mxModel", list(name = name, type = "RAM",
 		manifestVars = usedManifests,

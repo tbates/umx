@@ -254,7 +254,7 @@ test_that("xmu_robust_WLS_fit boundary and error handling works", {
   	return(scalingFactor)
   }
 
-  jacInd = xmu_build_independence_jacobian(rowNames, manifests)
+  jacInd = umx:::xmu_build_independence_jacobian(rowNames, manifests)
   rownames(jacInd) = rownames(asymCov)
   dfInd = nrow(asymCov) - ncol(jacInd)
   nVal = mInd$data$numObs

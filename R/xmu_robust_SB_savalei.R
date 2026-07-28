@@ -143,6 +143,10 @@ calculateStrictSb <- function(baseModel, nestedModel) {
 				rawFit = rawFit[1, 1]
 			}
 		}
+		# Fallback to Browne residual chi-square if output$fit is missing (Legacy OpenMx paths)
+		if (is.null(rawFit) || is.na(rawFit)) {
+			rawFit = model$output$chi
+		}
 		return(as.numeric(rawFit))
 	}
 

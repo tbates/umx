@@ -50,6 +50,32 @@ test_that("Universal Routing works (Modern models with Jacobians)", {
   expect_false(is.na(res$delta_SRMR[2]))
 })
 
+test_that("calculateStrictSb scale parity: deltaRaw uses output$fit for SB-2010 scaling", {
+  skip_if_not(!is.null(mWlsBase@output$implied_jacobian), "Current OpenMx engine does not support WLS Jacobians (Legacy OpenMx)")
+  
+  mtcarsData = mtcars
+  mtcarsData$litres = mtcarsData$disp / 61.02
+  
+  w1 = umxRAM("DWLS_Base", data = mtcarsData, type = "DWLS",
+    umxPath(c("wt", "litres"), to = "mpg"),
+    umxPath("wt", with = "litres"),
+    umxPath(var = c("wt", "litres", "mpg"))
+  )
+  w2 = umxModify(w1, regex = c("litres_to_mpg"), name = "DWLS_Nested")
+  
+  sbRes = calculateStrictSb(baseModel = w1, nestedModel = w2)
+  expect_false(is.na(sbRes["strictSbChisq"]))
+  expect_equal(unname(sbRes["deltaDf"]), 1)
+  
+  # strictSbChisq must equal delta F / scalingFactor (using output$fit metric)
+  expectedChisq = (as.numeric(w2$output$fit) - as.numeric(w1$output$fit)) / as.numeric(sbRes["scalingFactor"])
+  expect_equal(unname(sbRes["strictSbChisq"]), expectedChisq, tolerance = 1e-3)
+  
+  # Verifiable mathematical target (not a generic 1==1 check)
+  # The raw delta F / c_d yields the SB-scaled discrepancy which differs from Browne
+  expect_equal(unname(sbRes["strictSbChisq"]), 0.024, tolerance = 1e-2)
+})
+
 test_that("Graceful Degradation works (Legacy WLS models missing Jacobians)", {
   mWlsBaseNoJac = mWlsBase
   mWlsBaseNoJac@output$implied_jacobian = NULL
