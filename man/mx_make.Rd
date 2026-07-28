@@ -6,7 +6,8 @@
 \usage{
 mx_make(
   what = c("install", "NPSOL", "cran-install", "build", "Rd", "check", "win", "spell",
-    "sitrep", "deps_install", "testthat", "git", "GenomicMx", "--help"),
+    "sitrep", "deps_install", "testthat", "git", "GenomicMx", "build_GenomicMx",
+    "--help"),
   pkg = "~/bin/OpenMx",
   deploymentTarget = "14.0",
   openmp = TRUE,

@@ -265,11 +265,15 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	    }
 	} else if (uncertainty == "RobustSE") {
 		robustFit = NULL
-		tryCatch({
-			robustFit = xmu_robust_ML_fit(model, refModels = refModels)
-		}, error = function(e) {
-			message(paste("umxSummary Note: Frontend robust ML calculation skipped:", e$message))
-		})
+		if (any(sapply(model$data$observed, is.ordered))) {
+			message("Polite note: Robust SEs applied, but MLR scaling is not defined for ordinal models, so overall fit CFI/RMSEA.Chi are not scaled")
+		} else {
+			tryCatch({
+				robustFit = xmu_robust_ML_fit(model, refModels = refModels)
+			}, error = function(e) {
+				message(paste("umxSummary Note: Frontend robust ML calculation skipped:", e$message))
+			})
+		}
 
 		if (!is.null(robustFit)) {
 			modelSummary$CFI   = robustFit$CFI
@@ -321,7 +325,6 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 				naming = c("name")
 			}
 			# TODO: umxSummary add p value, perhaps CI?
-			# TODO: umxSummary block table into latents/resid/means etc.
 			
 			if(std == TRUE){
 				if (uncertainty == "none") {

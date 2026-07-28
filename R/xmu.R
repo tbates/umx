@@ -3329,6 +3329,11 @@ xmu_robust_ML_fit <- function(model, refModels = NULL) {
 		return(NULL)
 	}
 
+	if (any(sapply(observedData, is.ordered))) {
+		warning("Robust ML (MLR) fit scaling is not statistically defined for ordinal FIML models. You should rely on the standard SEs (umx ordinal FIML is powerful), or perhaps explore bootstrapping or DWLS if appropriate.")
+		return(NULL)
+	}
+
 	manifests = model$manifestVars
 	if (is.null(manifests) || length(manifests) == 0) {
 		manifests = colnames(observedData)

@@ -3335,7 +3335,7 @@ xmu_openmx_install_message <- function(feature = NULL) {
 	} else {
 		"This umx feature needs the GenomicMx OpenMx build (WLS Jacobians / modern summary WLS).\n"
 	}
-	paste0(
+	msg = paste0(
 		hdr,
 		"Your OpenMx version: ", stVers, "\n",
 		"Install:\n",
@@ -3346,6 +3346,14 @@ xmu_openmx_install_message <- function(feature = NULL) {
 		"Silence the umx startup note with: options(umx.genomicMx.startup = FALSE)\n",
 		"See ?install.OpenMx"
 	)
+	class(msg) <- c("xmu_message", "character")
+	return(msg)
+}
+
+#' @exportS3Method print xmu_message
+print.xmu_message <- function(x, ...) {
+	cat(x, "\n")
+	invisible(x)
 }
 
 #' @export

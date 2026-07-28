@@ -168,16 +168,11 @@ test_that("Robust ML fit statistics fall back gracefully on categorical data", {
 		umxPath(means = c("x1", "x2", "x3", "x4"), arrows = 2, free = TRUE, values = 1)
 	)
 
-	# Ordinal ML: attempt robust corrections; NULL fallback when scaling is invalid
-	resOrdinal = xmu_robust_ML_fit(mOrdinal)
-	if (is.null(resOrdinal)) {
-		expect_true(is.null(resOrdinal))
-	} else {
-		expect_type(resOrdinal, "list")
-		cModelFormula = as.numeric(resOrdinal$scalingFactor)
-		expect_gt(cModelFormula, 0.1)
-		expect_lt(cModelFormula, 10.0)
-	}
+	# Ordinal ML: MLR is mathematically invalid for ordinal likelihoods
+	expect_warning({
+		resOrdinal = xmu_robust_ML_fit(mOrdinal)
+	}, "Robust ML \\(MLR\\) fit scaling is not statistically defined")
+	expect_true(is.null(resOrdinal))
 })
 
 test_that("Robust ML fit statistics handle boundary cases, small N, and R loop fallback", {

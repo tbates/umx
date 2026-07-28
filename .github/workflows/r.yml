@@ -56,8 +56,10 @@ jobs:
 
       - name: Get GenomicMx latest SHA
         id: genomicmx-sha
+        env:
+          PAT: ${{ secrets.PAT }}
         run: |
-          echo "sha=$(git ls-remote https://github.com/tbates/GenomicMx master | awk '{print $1}')" >> $GITHUB_OUTPUT
+          echo "sha=$(git ls-remote https://${PAT}@github.com/tbates/GenomicMx master | awk '{print $1}')" >> $GITHUB_OUTPUT
 
       - name: Cache GenomicMx Build
         id: cache-genomicmx
@@ -70,8 +72,9 @@ jobs:
         if: steps.cache-genomicmx.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT: ${{ secrets.PAT }}
         run: |
-          git clone --depth 1 https://github.com/tbates/GenomicMx
+          git clone --depth 1 https://${PAT}@github.com/tbates/GenomicMx
           R CMD build GenomicMx
           gh release upload latest OpenMx_*.tar.gz --clobber --repo tbates/umx || echo "Upload to latest release failed"
 

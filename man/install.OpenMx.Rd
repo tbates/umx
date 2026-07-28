@@ -6,7 +6,7 @@
 \title{Install OpenMx (GenomicMx binary build)}
 \usage{
 install.OpenMx(
-  loc = c("GenomicMx", "CRAN", "open release page"),
+  loc = c("GenomicMx", "open GenomicMx release page", "CRAN"),
   url = NULL,
   lib,
   repos = getOption("repos")
