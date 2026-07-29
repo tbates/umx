@@ -16,7 +16,7 @@ umxPlotACE_DE(
   ...
 )
 
-plot.MxModelACE_DE(
+\method{plot}{MxModelACE_DE}(
   x = NA,
   file = "name",
   digits = 2,

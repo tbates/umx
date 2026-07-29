@@ -5,7 +5,7 @@
 \alias{umxPlotMxModelTwinMaker}
 \title{Create and display a graphical path diagram for a path-based twin model.}
 \usage{
-plot.MxModelTwinMaker(
+\method{plot}{MxModelTwinMaker}(
   x = NA,
   std = FALSE,
   fixed = TRUE,

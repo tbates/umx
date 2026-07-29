@@ -312,7 +312,6 @@ methods::setClass("MxModelTwinMaker", contains = "MxModel")
 
 methods::setClass("MxModelACE"    , contains = "MxModel")
 methods::setClass("MxModelACE_DE" , contains = "MxModel")
-methods::setMethod("plot", signature(x = "MxModelACE_DE"), plot.MxModelACE_DE)
 methods::setClass("MxModelACEv"   , contains = "MxModelACE")
 
 

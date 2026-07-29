@@ -4,7 +4,7 @@
 \alias{plot.MxLISRELModel}
 \title{Create and display a graphical path diagram for a LISREL model.}
 \usage{
-plot.MxLISRELModel(
+\method{plot}{MxLISRELModel}(
   x = NA,
   std = FALSE,
   fixed = TRUE,

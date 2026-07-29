@@ -6,7 +6,7 @@
 \alias{plot.MxRAMModel}
 \title{Create and display a graphical path diagram for a model.}
 \usage{
-plot.MxModel(
+\method{plot}{MxModel}(
   x = NA,
   std = FALSE,
   fixed = TRUE,
@@ -24,7 +24,7 @@ plot.MxModel(
   uncertainty = c("none", "SE", "RobustSE", "CI")
 )
 
-plot.MxRAMModel(
+\method{plot}{MxRAMModel}(
   x = NA,
   std = FALSE,
   fixed = TRUE,
