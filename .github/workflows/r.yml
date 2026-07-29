@@ -79,7 +79,10 @@ jobs:
           PAT: ${{ secrets.PAT }}
         run: |
           git clone --depth 1 https://${PAT}@github.com/tbates/GenomicMx
-          R CMD build GenomicMx
+          cd GenomicMx
+          make cran-build
+          mv staging/OpenMx_*.tar.gz ../
+          cd ..
           gh release upload latest OpenMx_*.tar.gz --clobber --repo tbates/umx || echo "Upload to latest release failed"
 
       - name: Install GenomicMx
