@@ -12,3 +12,8 @@ CRAN-SUBMISSION
 /..Rcheck
 mess.md
 /scratch
+inst/developer/GenomicSEM/BIP_subset.txt
+inst/developer/GenomicSEM/MDD_subset.txt
+inst/developer/GenomicSEM/reference.1000G.subset.txt
+inst/developer/GenomicSEM/SCZ_BIP_MDD_sumstats.log
+inst/developer/GenomicSEM/SCZ_subset.txt
