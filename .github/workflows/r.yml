@@ -51,6 +51,10 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
+            any::RcppEigen
+            any::StanHeaders
+            any::BH
+            any::rpf
             github::bczech/ggwas
           needs: check
 
