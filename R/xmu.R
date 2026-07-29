@@ -2693,7 +2693,7 @@ xmu_dot_rank_str <- function(min = NULL, same = NULL, max = NULL) {
 #' @export
 #' @family xmu internal not for end user
 #' @family Graphviz
-xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits = 2, resid = c("circle", "line"), pt = NULL, std = FALSE, uncertainty = c("none", "SE", "RobustSE", "CI"), cis = NULL) {
+xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits = 2, resid = c("circle", "line"), pt = NULL, std = FALSE, uncertainty = c("none", "SE", "MLR", "CI"), cis = NULL) {
 	mxMat_vals   = mxMat$values
 	mxMat_free   = mxMat$free
 	mxMat_labels = mxMat$labels
@@ -2730,7 +2730,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 					valStr = prefix
 					if (rowMatch) {
 						estVal = round(estVal, digits)
-						if (uncertainty == "SE" || uncertainty == "RobustSE") {
+						if (uncertainty %in% c("SE", "MLR")) {
 							if (!is.na(seVal)) {
 								valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
 							} else {
@@ -2800,7 +2800,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 #' @export
 #' @family xmu internal not for end user
 #' @family Graphviz
-xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, labels = "labels", digits = 2, pt = NULL, std = FALSE, uncertainty = c("none", "SE", "RobustSE", "CI"), cis = NULL) {
+xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comment = "More paths", showResiduals = TRUE, labels = "labels", digits = 2, pt = NULL, std = FALSE, uncertainty = c("none", "SE", "MLR", "CI"), cis = NULL) {
 	if(is.null(heads)){
 		stop("You must set 'heads' to 1 or 2 (was NULL)")
 	}
@@ -2844,7 +2844,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 					valStr = prefix
 					if (rowMatch) {
 						estVal = round(estVal, digits)
-						if (uncertainty == "SE" || uncertainty == "RobustSE") {
+						if (uncertainty %in% c("SE", "MLR")) {
 							if (!is.na(seVal)) {
 								valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
 							} else {
@@ -2920,7 +2920,7 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 						valStr = prefix
 						if (rowMatch) {
 							estVal = round(estVal, digits)
-							if (uncertainty == "SE" || uncertainty == "RobustSE") {
+							if (uncertainty %in% c("SE", "MLR")) {
 								if (!is.na(seVal)) {
 									valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
 								} else {

@@ -766,7 +766,7 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' @param estimation `"DWLS"` (default), `"WLS"`, or `"ULS"`.
 #' @param traits Trait names. Default: colnames of `covstruc$S`.
 #' @param GC Genomic control for SNP sampling variances: `"standard"`, `"conserv"`, or `"none"`.
-#' @param uncertainty Whether to compute the robust sandwich SE (`"robustSE"`, default) or naive SE (`"SE"`).
+#' @param uncertainty Whether to compute the robust sandwich SE (`"MLR"`, default) or naive SE (`"SE"`).
 #' @param SnpSamplingError SE used for SNP variance (treated as nearly fixed; default 5e-4).
 #' @param maxSNPs Optional limit for smoke tests.
 #' @param snpEffect Character; path label to extract from the model (default \code{"SNP_to_F1"}).
@@ -836,7 +836,7 @@ umxGSEM_sumstats <- function(files, ref, trait.names = NULL, se.logit = TRUE, OL
 #' plot(gwas_res, type = "qq")
 #' 
 #' }
-umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), uncertainty = c("robustSE", "SE"), SnpSamplingError = 5e-4, maxSNPs = NULL, snpEffect = "SNP_to_F1", quiet = TRUE, fix_measurement = TRUE, force_fallback = FALSE) {
+umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "WLS", "ULS"), traits = NULL, GC = c("standard", "conserv", "none"), uncertainty = c("MLR", "SE"), SnpSamplingError = 5e-4, maxSNPs = NULL, snpEffect = "SNP_to_F1", quiet = TRUE, fix_measurement = TRUE, force_fallback = FALSE) {
 	# Fail before SNP loop if summary WLS is requested without fork OpenMx
 	estimation = match.arg(estimation)
 	GC = match.arg(GC)
@@ -1033,7 +1033,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 		out_est_vec = H_W_beta_sum / H2_W_sum
 		
 		# Robust SE (Sandwich)
-		if (uncertainty == "robustSE") {
+		if (uncertainty %in% c("MLR")) {
 			G_mat = sweep(1 / SE_SNP, 2, as.numeric(H_raw) / diag(M), "*")
 			meat_vec = rowSums((G_mat %*% M) * G_mat)
 			out_se_vec = sqrt(meat_vec) / H2_W_sum
@@ -1260,7 +1260,7 @@ umxGSEM_GWAS <- function(covstruc, SNPs, model = NULL, estimation = c("DWLS", "W
 			
 			res = tryCatch({
 				b = solve(H_t_W_H) %*% H_t_W %*% S_obs_snp
-				if (uncertainty == "robustSE") {
+				if (uncertainty %in% c("MLR")) {
 					meat = H_t_W %*% wls_data$V_omx[snp_cov_names, snp_cov_names] %*% t(H_t_W)
 					cov_sandwich = solve(H_t_W_H) %*% meat %*% solve(H_t_W_H)
 					se = sqrt(diag(cov_sandwich))

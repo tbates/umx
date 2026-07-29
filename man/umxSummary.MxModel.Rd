@@ -13,7 +13,7 @@
   report = c("markdown", "html"),
   means = TRUE,
   residuals = TRUE,
-  uncertainty = c("SE", "RobustSE", "CI", "none"),
+  uncertainty = c("SE", "MLR", "CI", "none"),
   filter = c("ALL", "NS", "SIG"),
   RMSEA_CI = FALSE,
   SE = TRUE,
@@ -37,7 +37,7 @@ If NULL will be computed on demand. If FALSE will not be computed.}
 
 \item{residuals}{Whether to include residuals in the summary (TRUE)}
 
-\item{uncertainty}{What type of uncertainty/inference packaging to report: \code{"SE"} (default SEs from the fit), \code{"RobustSE"} (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), \code{"CI"} (profile likelihood CIs), or \code{"none"}.}
+\item{uncertainty}{What type of uncertainty/inference packaging to report: \code{"SE"} (default SEs from the fit), \code{"MLR"} (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), \code{"CI"} (profile likelihood CIs), or \code{"none"}.}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
@@ -64,7 +64,7 @@ RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI an
 
 Note: For some (multi-group) models, you will need to fall back on \code{\link[=summary]{summary()}}
 
-\strong{Robust inference (\code{uncertainty = "RobustSE"})}
+\strong{Robust inference (\code{uncertainty = "MLR"})}
 
 This option means \strong{engine-appropriate robust inference}, not one sandwich formula for every fit type:
 \itemize{
@@ -73,7 +73,7 @@ This option means \strong{engine-appropriate robust inference}, not one sandwich
 }
 
 \strong{Robust Fit Statistics for ML}
-Standard Maximum Likelihood (ML) is powerful and efficient, with chi2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, \code{uncertainty = "RobustSE"} implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan-Bentler / Savalei 2018-style robust indices).
+Standard Maximum Likelihood (ML) is powerful and efficient, with chi2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, \code{uncertainty = "MLR"} implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan-Bentler / Savalei 2018-style robust indices).
 
 \strong{Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)}
 
@@ -85,7 +85,7 @@ and Genomic SEM. Prefer \strong{SRMR} and residual inspection for absolute fit; 
 
 \emph{Implementation:} when a Jacobian is available, \code{umxSummary} routes WLS models
 through \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}} (independence baseline + trace scaling). Parameter SEs
-remain the OpenMx WLS moment sandwich (see \code{uncertainty = "RobustSE"} above). Robust
+remain the OpenMx WLS moment sandwich (see \code{uncertainty = "MLR"} above). Robust
 CFI/TLI/RMSEA are \strong{reported} for continuous WLS but should be treated as descriptive
 (no Hu-Bentler cutoffs). Genomic SEM has the same rule, with even less trust in RMSEA
 under bookkeeping N.

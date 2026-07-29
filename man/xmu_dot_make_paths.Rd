@@ -15,7 +15,7 @@ xmu_dot_make_paths(
   digits = 2,
   pt = NULL,
   std = FALSE,
-  uncertainty = c("none", "SE", "RobustSE", "CI"),
+  uncertainty = c("none", "SE", "MLR", "CI"),
   cis = NULL
 )
 }

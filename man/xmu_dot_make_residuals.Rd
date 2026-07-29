@@ -12,7 +12,7 @@ xmu_dot_make_residuals(
   resid = c("circle", "line"),
   pt = NULL,
   std = FALSE,
-  uncertainty = c("none", "SE", "RobustSE", "CI"),
+  uncertainty = c("none", "SE", "MLR", "CI"),
   cis = NULL
 )
 }

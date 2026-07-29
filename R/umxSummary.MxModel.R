@@ -8,7 +8,7 @@
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
 #'
-#' **Robust inference (`uncertainty = "RobustSE"`)**
+#' **Robust inference (`uncertainty = "MLR"`)**
 #'
 #' This option means **engine-appropriate robust inference**, not one sandwich formula for every fit type:
 #' \itemize{
@@ -17,7 +17,7 @@
 #' }
 #'
 #' **Robust Fit Statistics for ML**
-#' Standard Maximum Likelihood (ML) is powerful and efficient, with chi2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, `uncertainty = "RobustSE"` implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan-Bentler / Savalei 2018-style robust indices).
+#' Standard Maximum Likelihood (ML) is powerful and efficient, with chi2, CFI, TLI, and RMSEA measures of fit. Non-normality and heteroscedasticity distort the sampling distribution of the scores and the ML test statistic itself, necessitating changes to SEs and fit statistics. For ML, `uncertainty = "MLR"` implements the sandwich estimator for SEs and MLR-style fit scaling (Yuan-Bentler / Savalei 2018-style robust indices).
 #'
 #' **Robust Fit Statistics for WLS/DWLS (The GenomicMx Ecosystem)**
 #' 
@@ -29,7 +29,7 @@
 #'
 #' *Implementation:* when a Jacobian is available, `umxSummary` routes WLS models
 #' through [xmu_robust_WLS_fit()] (independence baseline + trace scaling). Parameter SEs
-#' remain the OpenMx WLS moment sandwich (see `uncertainty = "RobustSE"` above). Robust
+#' remain the OpenMx WLS moment sandwich (see `uncertainty = "MLR"` above). Robust
 #' CFI/TLI/RMSEA are **reported** for continuous WLS but should be treated as descriptive
 #' (no Hu-Bentler cutoffs). Genomic SEM has the same rule, with even less trust in RMSEA
 #' under bookkeeping N.
@@ -74,7 +74,7 @@
 #' @param std If TRUE, model is standardized (Default FALSE, NULL means "don't show").
 #' @param digits How many decimal places to report (Default 2)
 #' @param report If "html", then show results in browser (default = "markdown")
-#' @param uncertainty What type of uncertainty/inference packaging to report: `"SE"` (default SEs from the fit), `"RobustSE"` (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), `"CI"` (profile likelihood CIs), or `"none"`.
+#' @param uncertainty What type of uncertainty/inference packaging to report: `"SE"` (default SEs from the fit), `"MLR"` (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), `"CI"` (profile likelihood CIs), or `"none"`.
 #' @param means Whether to include means in the summary (TRUE)
 #' @param residuals Whether to include residuals in the summary (TRUE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
@@ -130,7 +130,7 @@
 #' umxSummary(m1, std = TRUE, filter = "NS")
 #' }
 #'
-umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means= TRUE, residuals= TRUE, uncertainty = c("SE", "RobustSE", "CI", "none"), filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, SE = TRUE, matrixAddresses = FALSE, ...){
+umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means= TRUE, residuals= TRUE, uncertainty = c("SE", "MLR", "CI", "none"), filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, SE = TRUE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 	report   = match.arg(report)
@@ -153,7 +153,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 
 	# RobustSE: engine-appropriate robust inference (not one sandwich for all fit types)
 	isWLS = xmu_is_wls(model)
-	if (uncertainty == "RobustSE") {
+	if (uncertainty %in% c("MLR")) {
 		if (isWLS) {
 			# Plan A: keep OpenMx WLS/GMM moment-sandwich SEs (already in output$vcov).
 			# Do not call imxRobustSE (casewise ML sandwich is wrong for WLS).
@@ -170,7 +170,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		}
 	}
 
-	SE = (uncertainty %in% c("SE", "RobustSE", "CI")) && !is.null(model$output$vcov)
+	SE = (uncertainty %in% c("SE", "MLR", "CI")) && !is.null(model$output$vcov)
 
 	reportedWLS = FALSE
 	
@@ -263,7 +263,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	            options(umx_warned_legacy_wls = TRUE)
 	        }
 	    }
-	} else if (uncertainty == "RobustSE") {
+	} else if (uncertainty %in% c("MLR")) {
 		robustFit = NULL
 		if (any(sapply(model$data$observed, is.ordered))) {
 			message("Polite note: Robust SEs applied, but MLR scaling is not defined for ordinal models, so overall fit CFI/RMSEA.Chi are not scaled")
@@ -439,7 +439,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 						} else {
 							cat("\n*Statistical Note*: Continuous WLS/DWLS - conventional CFI/TLI/RMSEA cutoffs do not apply. Prefer SRMR for absolute fit; nested comparisons use Strict Satorra-Bentler (2010) Delta chi-square via umxCompare. See ?umxCompare.\n")
 						}
-						if (identical(uncertainty, "RobustSE")) {
+						if (uncertainty %in% c("MLR")) {
 							cat("*SEs*: WLS robust SEs (sandwich estimator using asymptotic covariance of summary statistics).\n")
 						}
 					} else {

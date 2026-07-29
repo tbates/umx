@@ -54,7 +54,7 @@ m1 = umxRAM("WLS_HS", data = HSwls, type = "DWLS",
   umxPath(v.m. = c("x1", "x2", "x3", "x4", "x5", "x6", "x7", "x8", "x9"))
 )
 plot(m1, means=FALSE, std=TRUE, splines=FALSE, min = c("visual", "verbal", "speed"))
-umxSummary(m1, uncertainty= "RobustSE")
+umxSummary(m1, uncertainty= "MLR")
 
 data(HS.ability.data)
 df = HS.ability.data

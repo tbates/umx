@@ -97,7 +97,7 @@
 #' 	selDVs = c("ht", "wt_cont", "wt_cens"), addCI = FALSE, tryHard = "yes"
 #' )
 #'
-#' # Table: Standardized parameter estimates from DE Cholesky ACE: A additive genetic; C: common; E: unique.
+#' # Table: Standardized parameter estimates from DE Cholesky ACE
 #' # |        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
 #' # |:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
 #' # |ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
@@ -109,9 +109,10 @@
 #' # 2. Gold standard: uncensored bivariate ACE on true height and weight
 #' mzTrue = twinData[twinData$zygosity %in% "MZFF", ]
 #' dzTrue = twinData[twinData$zygosity %in% "DZFF", ]
-#' mTrue  = umxACE("htWtTrue", selDVs = c("ht", "wt"), mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
+#' mTrue  = umxACE("htWtTrue", selDVs = c("ht", "wt"), 
+#'            mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
 #' 
-#' # Table: Standardized parameter estimates from 2-factor Cholesky ACE: A: additive genetic; C: common; E: unique.
+#' # Table: Standardized parameter estimates from 2-factor Cholesky ACE
 #' # |   |    a1|a2    |     c1|c2 |    e1|e2    |
 #' # |:--|-----:|:-----|------:|:--|-----:|:-----|
 #' # |ht | 0.899|      |  0.252|   | 0.357|      |
@@ -122,7 +123,8 @@
 #' # 3. Mistaken analysis: treat 0 (not weighed) as a real continuous weight
 #' mzNaive = clinic[clinic$zygosity %in% "MZFF", ]
 #' dzNaive = clinic[clinic$zygosity %in% "DZFF", ]
-#' mNaive = umxACE("htWtNaive0", selDVs= c("ht", "wt"), mzData= mzNaive, dzData= dzNaive, sep ="",tryHard = "yes")
+#' mNaive = umxACE("htWtNaive0", selDVs= c("ht", "wt"), 
+#'             mzData= mzNaive, dzData= dzNaive, sep ="",tryHard = "yes")
 #' umxSummary(mNaive, std = TRUE)
 #' # Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
 #' }

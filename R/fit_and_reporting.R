@@ -2387,6 +2387,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param fixed Whether to show fixed paths (defaults to TRUE)
 #' @param means Whether to show means or not (default = TRUE)
 #' @param digits The number of decimal places to add to the path coefficients
+#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param labels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
@@ -2395,7 +2396,6 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param min optional list of objects to group at the top of the plot. Default (NULL) chooses automatically.
 #' @param same optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.
 #' @param max optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.
-#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
@@ -2433,7 +2433,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
 #' } # end dontrun
 #'
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ..., uncertainty = c("none", "SE", "RobustSE", "CI")) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, uncertainty = c("none", "SE", "MLR", "CI"), file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ...) {
 	if (!is.null(x$expectation) && class(x$expectation)[[1]] == "MxExpectationLISREL") {
 		return(plot.MxLISRELModel(x = x, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min = min, same = same, max = max, uncertainty = uncertainty, ...))
 	}
@@ -2463,8 +2463,8 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		latents = model@latentVars # 'vis', 'math', and 'text' 
 		selDVs  = model@manifestVars # 'visual', 'cubes', 'paper', 'general', 'paragrap'...
 	
-		# RobustSE: ML casewise sandwich; for WLS keep OpenMx GMM/moment-sandwich SEs
-		if (uncertainty == "RobustSE") {
+		# MLR/RobustSE: ML casewise sandwich; for WLS keep OpenMx GMM/moment-sandwich SEs
+		if (uncertainty %in% c("MLR")) {
 			if (xmu_is_wls(model)) {
 				if (is.null(model$output$vcov)) {
 					warning("WLS model has no parameter covariance matrix in output; SEs unavailable.", call. = FALSE)
@@ -2481,7 +2481,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 
 		# Compute standardized/raw paths and standard errors once using mxStandardizeRAMpaths
 		pt = NULL
-		if (uncertainty %in% c("SE", "RobustSE", "CI")) {
+		if (uncertainty %in% c("SE", "MLR", "CI")) {
 			flatten_pTable <- function(obj) {
 				if (is.data.frame(obj)) {
 					return(obj)

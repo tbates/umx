@@ -65,7 +65,7 @@
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
 #' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
 #' @param silent (don't print, just return the table as a dataframe (default = FALSE)
-#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).
+#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @family Model Summary and Comparison
 #' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
 #' @references - <https://github.com/tbates/umx>
@@ -106,7 +106,7 @@
 #' umxCompare(m1, m2, report = "inline") # Add English-sentence descriptions
 #' umxCompare(m1, m2, report = "html") # Open table in browser
 #' }
-umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, silent = FALSE, file = "tmp.html", uncertainty = c("none", "SE", "RobustSE", "CI")) {
+umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, report = c("markdown", "html", "inline"), compareWeightedAIC = FALSE, silent = FALSE, file = "tmp.html", uncertainty = c("none", "SE", "MLR", "CI")) {
 	report = match.arg(report)
 	uncertainty = match.arg(uncertainty)
 	if(umx_is_MxModel(all)){
@@ -217,7 +217,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	tablePub = tablePub[,c("comparison", "ep", "diffFit", "diffdf", "p", "AIC", "deltaAIC", "base", "fitUnits")]
 
 	# Compute and patch robust Satorra-Bentler difference statistics if requested
-	if (uncertainty == "RobustSE") {
+	if (uncertainty %in% c("MLR")) {
 		for (comp in comparison) {
 			resSb = xmu_compare_robust_ML(base, comp)
 			if (!is.null(resSb)) {

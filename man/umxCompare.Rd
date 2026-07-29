@@ -13,7 +13,7 @@ umxCompare(
   compareWeightedAIC = FALSE,
   silent = FALSE,
   file = "tmp.html",
-  uncertainty = c("none", "SE", "RobustSE", "CI")
+  uncertainty = c("none", "SE", "MLR", "CI")
 )
 }
 \arguments{
@@ -35,7 +35,7 @@ create a web table and open your default browser.
 
 \item{file}{file to write html too if report = "html" (defaults to "tmp.html")}
 
-\item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).}
+\item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).}
 }
 \description{
 umxCompare compares two or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s. It has several nice features:

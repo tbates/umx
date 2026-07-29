@@ -68,6 +68,7 @@ Suggests:
 	psychTools,
 	psych,
 	pwr,
+	piggyback,
 	rmarkdown,
 	rhub,
 	ssh

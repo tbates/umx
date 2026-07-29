@@ -12,6 +12,7 @@
   fixed = TRUE,
   means = TRUE,
   digits = 2,
+  uncertainty = c("none", "SE", "MLR", "CI"),
   file = "name",
   labels = c("none", "labels", "both"),
   resid = c("circle", "line", "none"),
@@ -20,8 +21,7 @@
   min = NULL,
   same = NULL,
   max = NULL,
-  ...,
-  uncertainty = c("none", "SE", "RobustSE", "CI")
+  ...
 )
 
 \method{plot}{MxRAMModel}(
@@ -30,6 +30,7 @@
   fixed = TRUE,
   means = TRUE,
   digits = 2,
+  uncertainty = c("none", "SE", "MLR", "CI"),
   file = "name",
   labels = c("none", "labels", "both"),
   resid = c("circle", "line", "none"),
@@ -38,8 +39,7 @@
   min = NULL,
   same = NULL,
   max = NULL,
-  ...,
-  uncertainty = c("none", "SE", "RobustSE", "CI")
+  ...
 )
 }
 \arguments{
@@ -52,6 +52,8 @@
 \item{means}{Whether to show means or not (default = TRUE)}
 
 \item{digits}{The number of decimal places to add to the path coefficients}
+
+\item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
@@ -70,8 +72,6 @@
 \item{max}{optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.}
 
 \item{...}{Optional parameters}
-
-\item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "RobustSE" (robust standard errors), "CI" (profile likelihood confidence intervals), or "none" (none).}
 }
 \description{
 \code{\link[=plot]{plot()}} produces SEM diagrams in graphviz format, and relies on \code{\link[DiagrammeR:DiagrammeR]{DiagrammeR::DiagrammeR()}} to create the image.

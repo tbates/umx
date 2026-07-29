@@ -11,7 +11,7 @@ umxGSEM_GWAS(
   estimation = c("DWLS", "WLS", "ULS"),
   traits = NULL,
   GC = c("standard", "conserv", "none"),
-  uncertainty = c("robustSE", "SE"),
+  uncertainty = c("MLR", "SE"),
   SnpSamplingError = 5e-04,
   maxSNPs = NULL,
   snpEffect = "SNP_to_F1",
@@ -36,7 +36,7 @@ A RAM model with one latent (F1) loading on all the traits, and  "SNP" loading o
 
 \item{GC}{Genomic control for SNP sampling variances: \code{"standard"}, \code{"conserv"}, or \code{"none"}.}
 
-\item{uncertainty}{Whether to compute the robust sandwich SE (\code{"robustSE"}, default) or naive SE (\code{"SE"}).}
+\item{uncertainty}{Whether to compute the robust sandwich SE (\code{"MLR"}, default) or naive SE (\code{"SE"}).}
 
 \item{SnpSamplingError}{SE used for SNP variance (treated as nearly fixed; default 5e-4).}
 
