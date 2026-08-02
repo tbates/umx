@@ -212,10 +212,38 @@ xmu_threshold_id_twin_check <- function(model, fullVars, verbose = TRUE) {
 		if (is.null(meanNames)) {
 			meanNames = dimnames(em$free)[[2]]
 		}
+		deMeta = attr(model, "umxDE")
+		fixedCutBases = character(0)
+		if (!is.null(deMeta$fixedCuts)) {
+			fixedCutBases = names(deMeta$fixedCuts)
+		}
+		devFree = NULL
+		if (!is.null(model$top$deviations_for_thresh)) {
+			devFree = model$top$deviations_for_thresh$free
+		}
 		for (v in binVars) {
 			if (!is.null(meanNames) && v %in% meanNames) {
 				if (isTRUE(em$free[1, v])) {
-					problems = c(problems, paste0(v, " binary mean free (should be fixed)"))
+					# Allow free binary mean when DE fixed-threshold Tobit ID is active:
+					# (1) attr(model,"umxDE")$fixedCuts names this base, or
+					# (2) structure fallback: this column's threshold free flag is FALSE.
+					allowFreeMean = FALSE
+					if (length(fixedCutBases) > 0) {
+						for (b in fixedCutBases) {
+							if (identical(v, b) || startsWith(v, paste0(b, "_")) || grepl(paste0("^", b, "[0-9]+$"), v)) {
+								allowFreeMean = TRUE
+								break
+							}
+						}
+					}
+					if (!allowFreeMean && !is.null(devFree) && v %in% colnames(devFree)) {
+						if (!isTRUE(devFree[1, v])) {
+							allowFreeMean = TRUE
+						}
+					}
+					if (!allowFreeMean) {
+						problems = c(problems, paste0(v, " binary mean free (should be fixed)"))
+					}
 				}
 			}
 		}
