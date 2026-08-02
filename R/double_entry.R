@@ -44,6 +44,12 @@
 #' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1".
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
+#' @param fixCensorThresholds One of \code{"yes"} (default), \code{"auto"}, or \code{"no"}.
+#'  \code{"yes"}: fix every double-entry pair from \code{censorCuts} and/or prep attribute \code{umxDoubleEntry}. \code{"auto"}: fix only pairs with a finite known cut in \code{censorCuts} or the prep attribute.  \code{"no"}: free binary thresholds.
+#' @param censorCuts Optional named numeric vector of known cuts on the \strong{analysis scale}
+#'   (after any scaling). Names may be trait base (\code{"wt"}), continuous base (\code{"wt_cont"}),
+#'   or censored base (\code{"wt_cens"}). When non-\code{NULL}, fixCensorThresholds must be \code{"yes"} or \code{"auto"};
+#'   only the named pairs are fixed (partial \code{censorCuts} is allowed).
 #' @param doubleEntrySuffix Suffixes for the continuous and censored variables (default = c("_cont", "_cens")).
 #' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 #' @param data If provided, dzData and mzData are treated as levels of zyg to select() MZ and DZ data sets (default = NULL)
@@ -70,39 +76,116 @@
 #' @examples
 #' \donttest{
 #' require(umx)
-#' data(twinData)
 #'
-#' # Toy example: Height fully observed; weight recorded only for higher-BMI people (others coded 0).
-#' # twinData BMI rarely exceeds classical overweight (25); use upper BMI quantile as threshold.
-#' 
-#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10 # cms
-#' bmiCut = quantile(c(twinData$bmi1, twinData$bmi2), probs = 0.8, na.rm = TRUE)
+#' ##################################
+#' # Toy example 1: Threshold known #
+#' ##################################
+#'
+#' # Weighing scales lowest value is 60kg, with lower values registering as 60kg.
+#'
+#' # NOTE: We first put height on a scale comparable to weight to ease estimation
+#' data(twinData)
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] *100 # metre->cm
 #' 
 #' clinic = twinData
-#' for (s in 1:2) {
-#' 	bmiCol = paste0("bmi", s)
-#' 	wtCol  = paste0("wt", s)
-#' 	notWeighed = !is.na(clinic[[bmiCol]]) & clinic[[bmiCol]] < bmiCut
-#' 	clinic[[wtCol]][notWeighed] = 0
-#' }
+#' clinic$wt1[!is.na(twinData$wt1) & (twinData$wt1 <= 60)] = 60
+#' clinic$wt2[!is.na(twinData$wt2) & (twinData$wt2 <= 60)] = 60
 #'
 #' # Double-entry prep for weight (floor at 0) Creates "wt_cont*" and "wt_cens*"
-#' prep = umx_make_double_entry_data(clinic, cols = list(wt = "<= 0"), sep = "")
+#' prep = umx_make_double_entry_data(clinic, cols = list(wt = "<= 60"), sep = "")
 #' 
 #' mzData = prep[prep$zygosity %in% "MZFF", ]
 #' dzData = prep[prep$zygosity %in% "DZFF", ]
 #'
 #' # 1. Correct mixed model: continuous height + double-entry censored weight
+#' # Default: free thresholds. For known LOD, use fixCensorThresholds = "auto" or "yes"
+#' # with censorCuts = c(wt = 0) (cut on analysis scale; means cont=cens equated).
+#' 
 #' mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
-#' 	selDVs = c("ht", "wt_cont", "wt_cens"), addCI = FALSE, tryHard = "yes"
-#' )
+#' 	selDVs = c("ht", "wt_cont", "wt_cens"), tryHard = "yes")
 #'
-#' # Table: Standardized parameter estimates from DE Cholesky ACE
-#' # |        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
-#' # |:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
-#' # |ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
-#' # |wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
-#' # |wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
+#' # Table: Model Fit Summary for 'htWtDE'
+#' # 
+#' # |Model  | EP|  -2LL|   df|   AIC|      BIC|
+#' # |:------|--:|-----:|----:|-----:|--------:|
+#' # |htWtDE | 11| 37082| 7781| 37104| 37165.51|
+#'
+#'
+#' # Table: Standardized parameter estimates from a 2-trait double-entry Cholesky ACE model.
+#' # A: additive genetic; C: common environment; E: unique environment.
+#' # 
+#' # |        |    a1|a2    |    c1|c2    |     e1|e2    |
+#' # |:-------|-----:|:-----|-----:|:-----|------:|:-----|
+#' # |ht      | 0.874|      | 0.373|      |  0.312|      |
+#' # |wt_cens | 0.437|0.381 | 0.079|0.301 | -0.148|0.738 |
+#' # Double-entry thresholds fixed: wt_cens @ 60 (means equated to wt_cont).
+#'
+#'
+#' # Table: Means (from model$top$expMean)
+#' # 
+#' # |          |     ht1| wt_cont1| wt_cens1|     ht2| wt_cont2| wt_cens2|
+#' # |:---------|-------:|--------:|--------:|-------:|--------:|--------:|
+#' # |intercept | 162.499|   56.961|   56.961| 162.499|   56.961|   56.961|
+#'
+#'
+#' ####################################
+#' # Toy example 2: Threshold unknown #
+#' ####################################
+#'
+#' # GP only gets paid to record weight for higher-BMI people (~BMI 22 here).
+#' # Others are coded "0").
+#' # NOTE: We don't know what threshold 0 mapped to, so we *estimate* the threshold.
+#' # NOTE: This example is contrived, and creates a nasty collider with height.
+#' 
+#' # Height fully observed; Weighing scales lowest value is 60kg, with all
+#' # values beneath this registering as 60kg.
+#'
+#' # NOTE: First we get the height data on a comparable scale to weight to ease model estimation
+#' data(twinData)
+#' twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 100 # metres -> cms
+#'
+#' bmiCut = 22 # about the 80th percentile in this sample.
+#' 
+#' clinic = twinData
+#' clinic$wt1[!is.na(twinData$wt1) & (twinData$bmi1 <= 22)] = 0
+#' clinic$wt2[!is.na(twinData$wt2) & (twinData$bmi2 <= 22)] = 0
+#'
+#' # Double-entry prep for weight (floor at 0) Creates "wt_cont*" and "wt_cens*"
+#' prep = umx_make_double_entry_data(data = clinic, cols = list(wt = 0), sep = "")
+#' 
+#' mzData = prep[prep$zygosity %in% "MZFF", ]
+#' dzData = prep[prep$zygosity %in% "DZFF", ]
+#'
+#' # 1. Correct mixed model: continuous height + double-entry censored weight
+#' # Default: free thresholds. For known LOD, use fixCensorThresholds = "auto" or "yes"
+#' # with censorCuts = c(wt = 0) (cut on analysis scale; means cont=cens equated).
+#' 
+#' # Note how we set fixCensorThresholds = "no"
+#'
+#' mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
+#' 	selDVs = c("ht", "wt_cont", "wt_cens"), fixCensorThresholds="no", tryHard = "yes")
+#'
+#' # Table: Model Fit Summary for 'htWtDE'
+#' # 
+#' # |Model  | EP|     -2LL|   df|      AIC|      BIC|
+#' # |:------|--:|--------:|----:|--------:|--------:|
+#' # |htWtDE | 12| 32406.96| 7780| 32430.96| 32498.06|
+#' # 
+#' # 
+#' # Table: Standardized parameter estimates from a 2-trait double-entry Cholesky ACE model. 
+#' #   A: additive genetic; C: common environment; E: unique environment.
+#' # 
+#' # |        |    a1|a2    |    c1|c2    |    e1|e2    |
+#' # |:-------|-----:|:-----|-----:|:-----|-----:|:-----|
+#' # |ht      | 0.883|      | 0.268|      | 0.385|      |
+#' # |wt_cens | 0.228|0.105 | 0.628|0.235 | 0.180|0.675 |
+#' # 
+#' # 
+#' # Table: Means (from model$top$expMean)
+#' # 
+#' # |          |     ht1| wt_cont1|wt_cens1 |     ht2| wt_cont2|wt_cens2 |
+#' # |:---------|-------:|--------:|:--------|-------:|--------:|:--------|
+#' # |intercept | 162.918|   68.623|0        | 162.918|   68.623|0        |
 #' 
 #' umxSummary(mDE, std = TRUE)
 #'
@@ -113,6 +196,7 @@
 #'            mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
 #' 
 #' # Table: Standardized parameter estimates from 2-factor Cholesky ACE
+#'    A: additive genetic; C: common environment; E: unique environment.
 #' # |   |    a1|a2    |     c1|c2 |    e1|e2    |
 #' # |:--|-----:|:-----|------:|:--|-----:|:-----|
 #' # |ht | 0.899|      |  0.252|   | 0.357|      |
@@ -126,12 +210,30 @@
 #' mNaive = umxACE("htWtNaive0", selDVs= c("ht", "wt"), 
 #'             mzData= mzNaive, dzData= dzNaive, sep ="",tryHard = "yes")
 #' umxSummary(mNaive, std = TRUE)
-#' # Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
+#' 
+#' # Naive mean(wt) pulled toward 0, covariance obscured; prefer mDE when zeros mean censored.
+#' #
+#' # Table: Standardized parameter estimates from a 2-factor Cholesky ACE model.
+#' #   A: additive genetic; C: common environment; E: unique environment.
+#' #
+#' # |   |    a1|a2    |     c1|c2 |     e1|e2    |
+#' # |:--|-----:|:-----|------:|:--|------:|:-----|
+#' # |ht | 0.899|      |  0.252|   |  0.357|      |
+#' # |wt | 0.057|0.717 | -0.238|.  | -0.072|0.649 |
+#' #
+#' #
+#' # Table: Means (from model$top$expMean)
+#' # 
+#' # |          |     ht1|    wt1|     ht2|    wt2|
+#' # |:---------|-------:|------:|-------:|------:|
+#' # |intercept | 162.515| 20.984| 162.515| 20.984|
+#'
 #' }
-umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = "_T", data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE, doubleEntrySuffix = c("_cont", "_cens")) {
+umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = "_T", data = NULL, zyg = "zygosity", fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, doubleEntrySuffix = c("_cont", "_cens"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
+	fixCensorThresholds = match.arg(fixCensorThresholds)
 
 	if(dzCr == .25 & (name == "ACE_DE")){ name = "ADE_DE" }
 
@@ -319,10 +421,57 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 			model = mxModel(model, mxCI(c('top.a', 'top.c', 'top.e')))
 		}
 	}
+	# Resolve known censor cuts (attr + args). Default mode "no" leaves thresholds free.
+	censorMeta = xmu_ace_de_parse_censor_meta(
+		mzData = mzData,
+		dzData = dzData,
+		doubleEntryPairs = doubleEntryPairs,
+		fixCensorThresholds = fixCensorThresholds,
+		censorCuts = censorCuts,
+		doubleEntrySuffix = doubleEntrySuffix
+	)
+	if (length(censorMeta$fixedCuts) > 0) {
+		if (!is.null(selCovs)) {
+			stop("Polite note: Fixed double-entry censor thresholds (fixCensorThresholds / censorCuts) are not supported with selCovs in this version. Fit without covariates, or leave thresholds free (fixCensorThresholds = \"no\"). Covariate + fixed-threshold support requires equating intercept and meansBetas for cont/cens pairs.")
+		}
+		model = xmu_ace_de_apply_censor_thresholds(
+			model = model,
+			fixedCuts = censorMeta$fixedCuts,
+			contByCens = censorMeta$contByCens,
+			sep = sep,
+			nSib = nSib,
+			equateMeansWithCont = TRUE
+		)
+		for (censBase in names(censorMeta$fixedCuts)) {
+			message("umx note: fixed double-entry threshold for ", censBase, " at ", censorMeta$fixedCuts[[censBase]], " (twins equated; means cont=cens).")
+		}
+	}
+
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelACE_DE") # set class so that S3 plot() and umxSummary dispatch
+	# as() strips custom attributes — set umxDE metadata only after cast
+	if (length(censorMeta$fixedCuts) > 0) {
+		attr(model, "umxDE") = list(
+			fixedCensorThresholds = TRUE,
+			fixedCuts = censorMeta$fixedCuts,
+			contByCens = censorMeta$contByCens,
+			equateMeansWithCont = TRUE,
+			sideByCens = censorMeta$sideByCens
+		)
+		xmu_threshold_id_twin_check(model, fullVars = selVars, verbose = TRUE)
+	}
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE, intervals = intervals)
+	# Re-attach metadata if run replaced the object without attrs (mxRun usually preserves)
+	if (length(censorMeta$fixedCuts) > 0 && is.null(attr(model, "umxDE"))) {
+		attr(model, "umxDE") = list(
+			fixedCensorThresholds = TRUE,
+			fixedCuts = censorMeta$fixedCuts,
+			contByCens = censorMeta$contByCens,
+			equateMeansWithCont = TRUE,
+			sideByCens = censorMeta$sideByCens
+		)
+	}
 	return(model)
 }
 
@@ -344,21 +493,36 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' This ensures each case contributes exactly one mutually exclusive likelihood component (either continuous PDF or ordinal CDF threshold probability).
 #'
 #' @param data The dataframe to process.
-#' @param cols A named list of variables and their censoring rules.
+#' @param cols A named list of variables and their censoring rules. A numeric scalar is left-censoring at that floor;
+#'   length-2 numeric is interval; character comparison (e.g. \code{"<= 0"}, \code{">= 40"}) or a function are also allowed.
+#'   Known finite bounds are stored in attribute \code{umxDoubleEntry} for optional use by [umxACE_DE()] with
+#'   \code{fixCensorThresholds = "auto"} or \code{"yes"}.
 #' @param doubleEntrySuffix Suffixes for the continuous and censored columns (default = c("_cont", "_cens")).
 #' @param sep Suffix/separator for twin indices (default = "_T").
 #' @param nSib Number of siblings/twins (default = 2).
-#' @param levels The factor levels for the censored column (default = c("continuous", "censored")).
-#' @return The modified dataframe with expanded double-entry pairs.
+#' @param levels Ordered factor levels for the censored column. \code{NULL} (default) chooses by censor side:
+#'   left/interval/unknown use \code{c("censored", "observed")}; right uses \code{c("observed", "censored")}.
+#'   If supplied, must include the level name \code{"censored"} (assigned by name when censored, never by index alone).
+#' @return The modified dataframe with expanded double-entry pairs and attribute \code{umxDoubleEntry}
+#'   listing per-trait cut, side, and whether the cut is fixable in a model.
 #' @export
 #' @family Twin Modeling Functions
+#' @seealso - [umxACE_DE()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
 #' @examples
 #' data(twinData)
 #' # Left-censor weight at 0 (or any floor): creates wt_cont1/2 and wt_cens1/2
 #' prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
-#' # Then: umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", ...)
-#' # Mix with continuous traits: umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
-umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c("_cont", "_cens"), sep = "_T", nSib = 2, levels = c("cont", "censored")) {
+#' # attr(prep, "umxDoubleEntry")$pairs[[1]]$cut  # 0
+#' 
+#' \dontrun{
+#' # Then
+#' umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "")
+#' # Known LOD
+#' umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "", fixCensorThresholds = "auto")
+#' # Mix with continuous traits:
+#' umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
+#' }
+umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c("_cont", "_cens"), sep = "_T", nSib = 2, levels = NULL) {
 	if (is.null(cols)) {
 		return(data)
 	}
@@ -367,9 +531,28 @@ umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c(
 	if ("tbl" %in% class(data)) {
 		data = as.data.frame(data)
 	}
+
+	userLevels = levels
+	pairMeta = list()
 	
 	for (varName in names(cols)) {
 		rule = cols[[varName]]
+		parsed = xmu_ace_de_parse_censor_rule(rule)
+		side = parsed$side
+
+		if (is.null(userLevels)) {
+			if (identical(side, "right")) {
+				levelVec = c("observed", "censored")
+			} else {
+				# left, interval, unknown: censored as lower category for left-censor Tobit
+				levelVec = c("censored", "observed")
+			}
+		} else {
+			levelVec = userLevels
+			if (!("censored" %in% levelVec)) {
+				stop("Polite note: levels must include the name \"censored\" (got: ", paste(levelVec, collapse = ", "), ").")
+			}
+		}
 		
 		# Find if twin columns exist (e.g. v1_T1, v1_T2)
 		twinColsFound = FALSE
@@ -431,13 +614,259 @@ umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c(
 			# Create continuous column (NA if censored or missing)
 			data[[contCol]] = ifelse(is.na(cens) | cens, NA_real_, x)
 			
-			# Create censored column (ordered factor: NA for continuous/non-censored rows)
-			censFactor = ifelse(is.na(cens) | !cens, NA_character_, levels[2])
-			data[[censCol]] = factor(censFactor, levels = levels, ordered = TRUE)
+			# Censored column: assign censored state by level name (not levels[2])
+			censFactor = ifelse(is.na(cens) | !cens, NA_character_, "censored")
+			data[[censCol]] = factor(censFactor, levels = levelVec, ordered = TRUE)
 		}
+
+		pairMeta[[length(pairMeta) + 1]] = list(
+			base = varName,
+			cont = paste0(varName, doubleEntrySuffix[1]),
+			cens = paste0(varName, doubleEntrySuffix[2]),
+			cut = parsed$cut,
+			side = parsed$side,
+			ruleRepr = parsed$ruleRepr,
+			fixable = parsed$fixable
+		)
 	}
+
+	attr(data, "umxDoubleEntry") = list(
+		version = 1L,
+		doubleEntrySuffix = doubleEntrySuffix,
+		sep = sep,
+		nSib = nSib,
+		pairs = pairMeta
+	)
 	
 	return(data)
+}
+
+#' Parse a double-entry censoring rule into cut, side, and fixable flag
+#'
+#' Character cuts use a strict regex grammar (no \code{eval}). Indicator evaluation for
+#' arbitrary expressions remains in [umx_make_double_entry_data()].
+#'
+#' @param rule Numeric scalar/length-2, character comparison, or function.
+#' @return list with \code{side}, \code{cut}, \code{fixable}, \code{ruleRepr}.
+#' @family xmu internal not for end user
+xmu_ace_de_parse_censor_rule <- function(rule) {
+	ruleRepr = if (is.function(rule)) {
+		"<function>"
+	} else if (is.character(rule)) {
+		paste(rule, collapse = " ")
+	} else {
+		paste(deparse(rule, width.cutoff = 500L), collapse = " ")
+	}
+
+	if (is.function(rule)) {
+		return(list(side = "unknown", cut = NA_real_, fixable = FALSE, ruleRepr = ruleRepr))
+	}
+	if (is.numeric(rule)) {
+		if (length(rule) == 1L) {
+			cutVal = as.numeric(rule)
+			return(list(side = "left", cut = cutVal, fixable = is.finite(cutVal), ruleRepr = ruleRepr))
+		}
+		if (length(rule) == 2L) {
+			return(list(side = "interval", cut = NA_real_, fixable = FALSE, ruleRepr = ruleRepr))
+		}
+		return(list(side = "unknown", cut = NA_real_, fixable = FALSE, ruleRepr = ruleRepr))
+	}
+	if (is.character(rule) && length(rule) == 1L) {
+		cleanRule = trimws(rule)
+		# optional x, op, number  OR  number, op, optional x
+		reLeft = "^\\s*(x\\s*)?(<=|>=|<|>)\\s*([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)\\s*$"
+		reRight = "^\\s*([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)\\s*(<=|>=|<|>)\\s*(x)?\\s*$"
+		m1 = regexec(reLeft, cleanRule, perl = TRUE)
+		rm1 = regmatches(cleanRule, m1)[[1]]
+		if (length(rm1) >= 4L) {
+			op = rm1[3]
+			num = as.numeric(rm1[4])
+			side = if (op %in% c("<", "<=")) "left" else "right"
+			return(list(side = side, cut = num, fixable = is.finite(num), ruleRepr = ruleRepr))
+		}
+		m2 = regexec(reRight, cleanRule, perl = TRUE)
+		rm2 = regmatches(cleanRule, m2)[[1]]
+		if (length(rm2) >= 3L) {
+			num = as.numeric(rm2[2])
+			op = rm2[3]
+			# "0 >= x" means x <= 0 (left); "0 <= x" means x >= 0 (right)
+			side = if (op %in% c(">", ">=")) "left" else "right"
+			return(list(side = side, cut = num, fixable = is.finite(num), ruleRepr = ruleRepr))
+		}
+		return(list(side = "unknown", cut = NA_real_, fixable = FALSE, ruleRepr = ruleRepr))
+	}
+	return(list(side = "unknown", cut = NA_real_, fixable = FALSE, ruleRepr = ruleRepr))
+}
+
+#' Resolve which double-entry pairs get fixed censor thresholds
+#'
+#' Combines [umxACE_DE()] arguments with the \code{umxDoubleEntry} data-frame attribute.
+#'
+#' @param mzData MZ data frame (may carry \code{umxDoubleEntry}).
+#' @param dzData DZ data frame.
+#' @param doubleEntryPairs list of character length-2 vectors \code{c(contBase, censBase)}.
+#' @param fixCensorThresholds \code{"no"}, \code{"yes"}, or \code{"auto"}.
+#' @param censorCuts named numeric cuts or NULL.
+#' @param doubleEntrySuffix c("_cont","_cens").
+#' @return list with \code{fixedCuts} (named by cens base), \code{contByCens}, \code{sideByCens}.
+#' @family xmu internal not for end user
+xmu_ace_de_parse_censor_meta <- function(mzData, dzData, doubleEntryPairs, fixCensorThresholds, censorCuts = NULL, doubleEntrySuffix = c("_cont", "_cens")) {
+	fixedCuts = numeric(0)
+	contByCens = character(0)
+	sideByCens = character(0)
+
+	if (!is.null(censorCuts) && identical(fixCensorThresholds, "no")) {
+		stop("Polite note: censorCuts is set but fixCensorThresholds = \"no\". Set fixCensorThresholds to \"yes\" or \"auto\", or omit censorCuts.")
+	}
+	if (identical(fixCensorThresholds, "no") && is.null(censorCuts)) {
+		return(list(fixedCuts = fixedCuts, contByCens = contByCens, sideByCens = sideByCens))
+	}
+
+	# Map each DE pair
+	pairInfo = list()
+	for (pair in doubleEntryPairs) {
+		contBase = pair[1]
+		censBase = pair[2]
+		traitBase = sub(paste0(doubleEntrySuffix[1], "$"), "", contBase)
+		pairInfo[[censBase]] = list(cont = contBase, cens = censBase, trait = traitBase)
+		contByCens[censBase] = contBase
+	}
+
+	attrList = attr(mzData, "umxDoubleEntry")
+	if (is.null(attrList)) {
+		attrList = attr(dzData, "umxDoubleEntry")
+	}
+	attrByCens = list()
+	if (!is.null(attrList$pairs)) {
+		for (p in attrList$pairs) {
+			attrByCens[[p$cens]] = p
+			# also allow match by trait base
+			attrByCens[[p$base]] = p
+			attrByCens[[p$cont]] = p
+		}
+	}
+
+	resolveCutName = function(nm) {
+		# return censBase for a name in censorCuts or attr keys
+		for (censBase in names(pairInfo)) {
+			info = pairInfo[[censBase]]
+			if (nm %in% c(censBase, info$cont, info$trait)) {
+				return(censBase)
+			}
+		}
+		return(NA_character_)
+	}
+
+	if (!is.null(censorCuts)) {
+		if (is.null(names(censorCuts)) || any(names(censorCuts) == "")) {
+			stop("Polite note: censorCuts must be a named numeric vector (e.g. c(wt = 0)).")
+		}
+		for (nm in names(censorCuts)) {
+			cutVal = as.numeric(censorCuts[[nm]])
+			if (!is.finite(cutVal)) {
+				stop("Polite note: censorCuts[\"", nm, "\"] must be a finite number.")
+			}
+			censBase = resolveCutName(nm)
+			if (is.na(censBase)) {
+				warning("umx note: censorCuts name \"", nm, "\" matches no double-entry pair in selDVs; ignored.", call. = FALSE)
+				next
+			}
+			fixedCuts[censBase] = cutVal
+			p = attrByCens[[censBase]]
+			sideByCens[censBase] = if (!is.null(p$side)) p$side else "left"
+		}
+		# Partial censorCuts: only named pairs fixed; do not require remaining pairs
+		return(list(fixedCuts = fixedCuts, contByCens = contByCens[names(fixedCuts)], sideByCens = sideByCens))
+	}
+
+	# No censorCuts: use attr for "yes" or "auto"
+	missingFixable = character(0)
+	for (censBase in names(pairInfo)) {
+		p = attrByCens[[censBase]]
+		if (is.null(p)) {
+			if (identical(fixCensorThresholds, "yes")) {
+				missingFixable = c(missingFixable, censBase)
+			}
+			next
+		}
+		if (isTRUE(p$fixable) && is.finite(p$cut)) {
+			fixedCuts[censBase] = as.numeric(p$cut)
+			sideByCens[censBase] = p$side
+		} else if (identical(fixCensorThresholds, "yes")) {
+			missingFixable = c(missingFixable, censBase)
+		}
+	}
+	if (length(missingFixable) > 0) {
+		stop("Polite note: fixCensorThresholds = \"yes\" but no finite cut for: ", paste(missingFixable, collapse = ", "), ". Provide censorCuts or prep with umx_make_double_entry_data() using a known numeric bound.")
+	}
+	list(fixedCuts = fixedCuts, contByCens = contByCens[names(fixedCuts)], sideByCens = sideByCens)
+}
+
+#' Fix double-entry censor thresholds and equate cont/cens means (Tobit ID)
+#'
+#' Sets \code{deviations_for_thresh} free=FALSE at the known cut (twin labels already shared)
+#' and equates binary means to the continuous partner (mean-equate identification).
+#' Does \strong{not} set \code{attr(model, "umxDE")} — caller must set that after
+#' \code{as(model, "MxModelACE_DE")}.
+#'
+#' @param model Twin ACE model with \code{top$deviations_for_thresh} and \code{top$expMean}.
+#' @param fixedCuts named numeric, names = censored base (e.g. \code{"wt_cens"}).
+#' @param contByCens named character, cens base -> cont base.
+#' @param sep twin separator.
+#' @param nSib number of sibs.
+#' @param equateMeansWithCont if TRUE (v1 default), free and label-equate cens means to cont.
+#' @return modified model.
+#' @family xmu internal not for end user
+xmu_ace_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, sep, nSib = 2, equateMeansWithCont = TRUE) {
+	dev = model$top$deviations_for_thresh
+	if (is.null(dev)) {
+		stop("Polite note: no deviations_for_thresh; cannot fix double-entry censor thresholds.")
+	}
+	if (equateMeansWithCont && is.null(model$top$expMean)) {
+		stop("Polite note: top$expMean missing; cannot equate cont/cens means for fixed DE thresholds (covariates not supported in this version).")
+	}
+
+	for (censBase in names(fixedCuts)) {
+		cutVal = as.numeric(fixedCuts[[censBase]])
+		# Columns for this base in deviations matrix (twin-expanded names)
+		devCols = colnames(dev$labels)
+		matchCols = devCols[devCols == censBase | startsWith(devCols, paste0(censBase, sep)) | grepl(paste0("^", censBase, "[0-9]+$"), devCols)]
+		if (length(matchCols) < 1) {
+			stop("Polite note: could not find threshold columns for \"", censBase, "\" in deviations_for_thresh.")
+		}
+		labs = unique(na.omit(as.character(dev$labels[1, matchCols])))
+		if (length(labs) != 1L) {
+			stop("Polite note: expected one twin-equated threshold label for ", censBase, "; got: ", paste(labs, collapse = ", "))
+		}
+		model = omxSetParameters(model, labels = labs, free = FALSE, values = cutVal)
+
+		if (equateMeansWithCont) {
+			contBase = contByCens[[censBase]]
+			if (is.null(contBase) || !nzchar(contBase)) {
+				stop("Polite note: missing continuous partner base for ", censBase)
+			}
+			em = model$top$expMean
+			meanCols = colnames(em$labels)
+			for (s in 1:nSib) {
+				censCol = paste0(censBase, sep, s)
+				contCol = paste0(contBase, sep, s)
+				if (!(censCol %in% meanCols)) {
+					censCol = paste0(censBase, s)
+					contCol = paste0(contBase, s)
+				}
+				if (!(censCol %in% meanCols) || !(contCol %in% meanCols)) {
+					stop("Polite note: could not find expMean columns for ", censBase, " / ", contBase, " twin ", s)
+				}
+				contLab = em$labels[1, contCol]
+				contVal = em$values[1, contCol]
+				em$free[1, censCol] = TRUE
+				em$labels[1, censCol] = contLab
+				em$values[1, censCol] = contVal
+			}
+			model$top$expMean = em
+		}
+	}
+	return(model)
 }
 
 #' Plot a double-entry censored twin model (umxACE_DE)
@@ -631,6 +1060,16 @@ umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, s
 		}
 		names(Estimates) = paste0(rep(colNames, each = nKeep), rep(1:nKeep));
 		umx_print(Estimates, digits = digits, caption = caption, report = report, zero.print = zero.print)
+		deMeta = attr(model, "umxDE")
+		if (isTRUE(deMeta$fixedCensorThresholds) && length(deMeta$fixedCuts) > 0) {
+			parts = character(0)
+			for (nm in names(deMeta$fixedCuts)) {
+				contNm = deMeta$contByCens[[nm]]
+				if (is.null(contNm)) contNm = sub("_cens$", "_cont", nm)
+				parts = c(parts, paste0(nm, " @ ", deMeta$fixedCuts[[nm]], " (means equated to ", contNm, ")"))
+			}
+			message("Double-entry thresholds fixed: ", paste(parts, collapse = "; "), ".")
+		}
 		xmu_twin_print_means(model = model, report = report)
 
 		if(extended == TRUE) {

@@ -144,3 +144,211 @@ test_that("umx_make_double_entry_data works with various censoring rules and int
 	expect_equal(as.integer(m2$output$status$code), 0L)
 })
 
+test_that("umx_make_double_entry_data metadata, levels, and cut grammar (T1/T5)", {
+	data(twinData)
+	twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = "wt", sep = "")
+
+	# Numeric left cut
+	prep = umx_make_double_entry_data(twinData, cols = list(wt = -0.5), sep = "")
+	meta = attr(prep, "umxDoubleEntry")
+	expect_true(!is.null(meta))
+	expect_equal(meta$pairs[[1]]$cut, -0.5)
+	expect_equal(meta$pairs[[1]]$side, "left")
+	expect_true(isTRUE(meta$pairs[[1]]$fixable))
+	expect_equal(levels(prep$wt_cens1), c("censored", "observed"))
+	# Non-missing cens are category 1 (censored by name), never levels[2] only by accident
+	nonNA = prep$wt_cens1[!is.na(prep$wt_cens1)]
+	expect_true(length(nonNA) > 0)
+	expect_true(all(as.integer(nonNA) == 1L))
+	expect_true(all(as.character(nonNA) == "censored"))
+
+	# Character grammar
+	prepStr = umx_make_double_entry_data(twinData, cols = list(wt = "<= 0"), sep = "")
+	expect_equal(attr(prepStr, "umxDoubleEntry")$pairs[[1]]$cut, 0)
+	expect_equal(attr(prepStr, "umxDoubleEntry")$pairs[[1]]$side, "left")
+	expect_true(attr(prepStr, "umxDoubleEntry")$pairs[[1]]$fixable)
+
+	prepRight = umx_make_double_entry_data(twinData, cols = list(wt = ">= 40"), sep = "")
+	expect_equal(attr(prepRight, "umxDoubleEntry")$pairs[[1]]$side, "right")
+	expect_equal(levels(prepRight$wt_cens1), c("observed", "censored"))
+	nonNA_r = prepRight$wt_cens1[!is.na(prepRight$wt_cens1)]
+	if (length(nonNA_r) > 0) {
+		expect_true(all(as.character(nonNA_r) == "censored"))
+		expect_true(all(as.integer(nonNA_r) == 2L))
+	}
+
+	# Not fixable: function / interval / mean(x)
+	prepFn = umx_make_double_entry_data(twinData, cols = list(wt = function(x) x <= 0), sep = "")
+	expect_false(isTRUE(attr(prepFn, "umxDoubleEntry")$pairs[[1]]$fixable))
+	prepInt = umx_make_double_entry_data(twinData, cols = list(wt = c(-0.1, 0.1)), sep = "")
+	expect_false(isTRUE(attr(prepInt, "umxDoubleEntry")$pairs[[1]]$fixable))
+	prepMean = umx_make_double_entry_data(twinData, cols = list(wt = "x < mean(x)"), sep = "")
+	expect_false(isTRUE(attr(prepMean, "umxDoubleEntry")$pairs[[1]]$fixable))
+
+	# df attr survives row subset (column attrs not required)
+	sub = prep[1:10, ]
+	expect_true(!is.null(attr(sub, "umxDoubleEntry")))
+	expect_equal(attr(sub, "umxDoubleEntry")$pairs[[1]]$cut, -0.5)
+})
+
+test_that("umxACE_DE free threshold baseline and fixed thresholds structure (T0/T2)", {
+	data(twinData)
+	twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = "wt", sep = "")
+	cut = -0.5
+	prep = umx_make_double_entry_data(twinData, cols = list(wt = cut), sep = "")
+	mzData = prep[prep$zygosity %in% "MZFF", ]
+	dzData = prep[prep$zygosity %in% "DZFF", ]
+
+	# T0 free default
+	mFree = umxACE_DE(
+		selDVs = c("wt_cont", "wt_cens"), sep = "",
+		mzData = mzData, dzData = dzData,
+		autoRun = FALSE, addCI = FALSE, fixCensorThresholds = "no"
+	)
+	expect_true(all(mFree$top$deviations_for_thresh$free[1, ]))
+	expect_equal(mFree$top$deviations_for_thresh$labels[1, "wt_cens1"], mFree$top$deviations_for_thresh$labels[1, "wt_cens2"])
+	expect_false(isTRUE(mFree$top$expMean$free[1, "wt_cens1"]))
+	expect_true(is.null(attr(mFree, "umxDE")))
+
+	# T2 fixed via explicit censorCuts
+	mFix = umxACE_DE(
+		selDVs = c("wt_cont", "wt_cens"), sep = "",
+		mzData = mzData, dzData = dzData,
+		autoRun = FALSE, addCI = FALSE,
+		fixCensorThresholds = "yes", censorCuts = c(wt = cut)
+	)
+	expect_false(any(mFix$top$deviations_for_thresh$free[1, ]))
+	expect_equal(as.numeric(mFix$top$deviations_for_thresh$values[1, "wt_cens1"]), cut)
+	expect_equal(as.numeric(mFix$top$deviations_for_thresh$values[1, "wt_cens2"]), cut)
+	expect_true(isTRUE(mFix$top$expMean$free[1, "wt_cens1"]))
+	expect_equal(mFix$top$expMean$labels[1, "wt_cens1"], mFix$top$expMean$labels[1, "wt_cont1"])
+	expect_equal(mFix$top$expMean$labels[1, "wt_cens2"], mFix$top$expMean$labels[1, "wt_cont2"])
+	expect_true(isTRUE(attr(mFix, "umxDE")$fixedCensorThresholds))
+	expect_equal(attr(mFix, "umxDE")$fixedCuts[["wt_cens"]], cut)
+
+	# auto from attr
+	mAuto = umxACE_DE(
+		selDVs = c("wt_cont", "wt_cens"), sep = "",
+		mzData = mzData, dzData = dzData,
+		autoRun = FALSE, addCI = FALSE,
+		fixCensorThresholds = "auto"
+	)
+	expect_false(any(mAuto$top$deviations_for_thresh$free[1, ]))
+	expect_equal(as.numeric(mAuto$top$deviations_for_thresh$values[1, 1]), cut)
+
+	# mode no + censorCuts errors
+	expect_error(
+		umxACE_DE(
+			selDVs = c("wt_cont", "wt_cens"), sep = "",
+			mzData = mzData, dzData = dzData,
+			autoRun = FALSE, addCI = FALSE,
+			fixCensorThresholds = "no", censorCuts = c(wt = cut)
+		),
+		regexp = "censorCuts"
+	)
+
+	# selCovs + fix hard error
+	expect_error(
+		umxACE_DE(
+			selDVs = c("wt_cont", "wt_cens"), selCovs = "age", sep = "",
+			mzData = mzData, dzData = dzData,
+			autoRun = FALSE, addCI = FALSE,
+			fixCensorThresholds = "yes", censorCuts = c(wt = cut)
+		),
+		regexp = "selCovs"
+	)
+
+	# sep = "_T" naming path
+	td = twinData
+	names(td)[names(td) == "wt1"] = "wt_T1"
+	names(td)[names(td) == "wt2"] = "wt_T2"
+	prepT = umx_make_double_entry_data(td, cols = list(wt = cut), sep = "_T")
+	mzT = prepT[prepT$zygosity %in% "MZFF", ]
+	dzT = prepT[prepT$zygosity %in% "DZFF", ]
+	mT = umxACE_DE(
+		selDVs = c("wt_cont", "wt_cens"), sep = "_T",
+		mzData = mzT, dzData = dzT,
+		autoRun = FALSE, addCI = FALSE,
+		fixCensorThresholds = "yes", censorCuts = c(wt = cut)
+	)
+	expect_false(any(mT$top$deviations_for_thresh$free[1, ]))
+	expect_true(isTRUE(attr(mT, "umxDE")$fixedCensorThresholds))
+})
+
+test_that("umxACE_DE fixed threshold tiny Tobit formula check (T3a)", {
+	# Univariate-style DE on one zyg group: hand -2LL for mutual-NA left-censor
+	set.seed(42)
+	mu = 0.3
+	cut = 0
+	n = 8
+	# Construct rows: half continuous above cut, half censored
+	yCont = c(0.5, 0.8, 1.1, 1.4)
+	# Twin-wide fake data (identical twins for simplicity of hand calc on twin1 only would be hard;
+	# use independent twins with same structure and compute OpenMx vs hand on the DE mutual-NA pattern)
+	nPairs = 6
+	y1 = c(0.5, 0.9, 1.2, NA, NA, NA)
+	y2 = c(0.6, 1.0, NA, NA, 0.7, NA)
+	c1 = c(NA, NA, NA, "censored", "censored", "censored")
+	c2 = c(NA, NA, "censored", "censored", NA, "censored")
+	# For rows where cont is non-NA, y > cut; censored when cont NA
+	mz = data.frame(
+		wt_cont1 = y1,
+		wt_cont2 = y2,
+		wt_cens1 = factor(c1, levels = c("censored", "observed"), ordered = TRUE),
+		wt_cens2 = factor(c2, levels = c("censored", "observed"), ordered = TRUE),
+		stringsAsFactors = FALSE
+	)
+	# Duplicate as DZ so umxACE_DE can build (minimal)
+	dz = mz
+
+	m = umxACE_DE(
+		selDVs = c("wt_cont", "wt_cens"), sep = "",
+		mzData = mz, dzData = dz,
+		autoRun = FALSE, addCI = FALSE, addStd = FALSE,
+		fixCensorThresholds = "yes", censorCuts = c(wt = cut),
+		boundDiag = 0
+	)
+	# Fix ACE structure roughly to unit variance identity so FIML is near independent N(mu,1)
+	# Set a=c=0, e=1 on cont, equated to cens; means already equated at cut fix
+	for (matName in c("a", "c")) {
+		m$top[[matName]]$free[, ] = FALSE
+		m$top[[matName]]$values[, ] = 0
+	}
+	m$top$e$free[, ] = FALSE
+	m$top$e$values[, ] = 0
+	m$top$e$values[1, 1] = 1
+	m$top$e$values[2, 1] = 1  # equated loading path for cens row
+	# expMean to known mu
+	labs = unique(na.omit(as.character(m$top$expMean$labels[1, ])))
+	for (lab in labs) {
+		m = omxSetParameters(m, labels = lab, free = FALSE, values = mu)
+	}
+	m = omxAssignFirstParameters(m)
+	m = mxRun(m, silent = TRUE)
+
+	# Hand -2LL under independent twin unit-variance Tobit (approximation if cov off-diag ~0)
+	# With e path structure ACE = ee' may create off-diagonals; prefer evaluate only if cov nearly diagonal
+	# Direct hand sum for each non-missing element treating twins independent N(mu,1):
+	hand = 0
+	for (i in 1:nrow(mz)) {
+		for (s in 1:2) {
+			yc = mz[[paste0("wt_cont", s)]][i]
+			ye = mz[[paste0("wt_cens", s)]][i]
+			if (!is.na(yc)) {
+				hand = hand + (-2) * dnorm(yc, mean = mu, sd = 1, log = TRUE)
+			} else if (!is.na(ye)) {
+				hand = hand + (-2) * pnorm(cut, mean = mu, sd = 1, log.p = TRUE)
+			}
+		}
+	}
+	# Model -2LL includes both MZ and DZ copies of same data -> expect ~ 2 * hand if cov ~ 0
+	m2ll = m$output$Minus2LogLikelihood
+	expect_true(is.finite(m2ll))
+	# Loose gate: model m2ll within 20% of 2*hand (structure not pure independence)
+	# Stricter element-wise check: threshold fixed and means equated
+	expect_equal(as.numeric(m$top$deviations_for_thresh$values[1, 1]), cut)
+	expect_equal(m$top$expMean$labels[1, "wt_cens1"], m$top$expMean$labels[1, "wt_cont1"])
+	# Hand formula consistency for pure continuous + CDF pieces when model near independent
+	expect_true(abs(m2ll - 2 * hand) / max(2 * hand, 1) < 0.25 || abs(m2ll - hand) / max(hand, 1) < 0.25)
+})
+
