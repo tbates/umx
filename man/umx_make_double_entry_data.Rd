@@ -10,13 +10,16 @@ umx_make_double_entry_data(
   doubleEntrySuffix = c("_cont", "_cens"),
   sep = "_T",
   nSib = 2,
-  levels = c("cont", "censored")
+  levels = NULL
 )
 }
 \arguments{
 \item{data}{The dataframe to process.}
 
-\item{cols}{A named list of variables and their censoring rules.}
+\item{cols}{A named list of variables and their censoring rules. A numeric scalar is left-censoring at that floor;
+length-2 numeric is interval; character comparison (e.g. \code{"<= 0"}, \code{">= 40"}) or a function are also allowed.
+Known finite bounds are stored in attribute \code{umxDoubleEntry} for optional use by \code{\link[=umxACE_DE]{umxACE_DE()}} with
+\code{fixCensorThresholds = "auto"} or \code{"yes"}.}
 
 \item{doubleEntrySuffix}{Suffixes for the continuous and censored columns (default = c("_cont", "_cens")).}
 
@@ -24,10 +27,13 @@ umx_make_double_entry_data(
 
 \item{nSib}{Number of siblings/twins (default = 2).}
 
-\item{levels}{The factor levels for the censored column (default = c("continuous", "censored")).}
+\item{levels}{Ordered factor levels for the censored column. \code{NULL} (default) chooses by censor side:
+left/interval/unknown use \code{c("censored", "observed")}; right uses \code{c("observed", "censored")}.
+If supplied, must include the level name \code{"censored"} (assigned by name when censored, never by index alone).}
 }
 \value{
-The modified dataframe with expanded double-entry pairs.
+The modified dataframe with expanded double-entry pairs and attribute \code{umxDoubleEntry}
+listing per-trait cut, side, and whether the cut is fixable in a model.
 }
 \description{
 Helper to split one or more variables in a twin dataset into a paired
@@ -48,10 +54,22 @@ This ensures each case contributes exactly one mutually exclusive likelihood com
 data(twinData)
 # Left-censor weight at 0 (or any floor): creates wt_cont1/2 and wt_cens1/2
 prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
-# Then: umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", ...)
-# Mix with continuous traits: umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
+# attr(prep, "umxDoubleEntry")$pairs[[1]]$cut  # 0
+
+\dontrun{
+# Then
+umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "")
+# Known LOD
+umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "", fixCensorThresholds = "auto")
+# Mix with continuous traits:
+umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
+}
 }
 \seealso{
+\itemize{
+\item \code{\link[=umxACE_DE]{umxACE_DE()}}, \code{\link[=umxACE]{umxACE()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
+}
+
 Other Twin Modeling Functions:
 \code{\link[=power.ACE.test]{power.ACE.test()}},
 \code{\link{umx}},

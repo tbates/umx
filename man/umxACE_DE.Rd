@@ -13,6 +13,9 @@ umxACE_DE(
   sep = "_T",
   data = NULL,
   zyg = "zygosity",
+  fixCensorThresholds = c("yes", "auto", "no"),
+  censorCuts = NULL,
+  doubleEntrySuffix = c("_cont", "_cens"),
   type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
   numObsDZ = NULL,
   numObsMZ = NULL,
@@ -28,8 +31,7 @@ umxACE_DE(
   weightVar = NULL,
   equateMeans = TRUE,
   addStd = TRUE,
-  addCI = TRUE,
-  doubleEntrySuffix = c("_cont", "_cens")
+  addCI = TRUE
 )
 }
 \arguments{
@@ -48,6 +50,16 @@ umxACE_DE(
 \item{data}{If provided, dzData and mzData are treated as levels of zyg to select() MZ and DZ data sets (default = NULL)}
 
 \item{zyg}{If data provided, this column is used to select rows by zygosity (Default = "zygosity")}
+
+\item{fixCensorThresholds}{One of \code{"yes"} (default), \code{"auto"}, or \code{"no"}.
+\code{"yes"}: fix every double-entry pair from \code{censorCuts} and/or prep attribute \code{umxDoubleEntry}. \code{"auto"}: fix only pairs with a finite known cut in \code{censorCuts} or the prep attribute.  \code{"no"}: free binary thresholds.}
+
+\item{censorCuts}{Optional named numeric vector of known cuts on the \strong{analysis scale}
+(after any scaling). Names may be trait base (\code{"wt"}), continuous base (\code{"wt_cont"}),
+or censored base (\code{"wt_cens"}). When non-\code{NULL}, fixCensorThresholds must be \code{"yes"} or \code{"auto"};
+only the named pairs are fixed (partial \code{censorCuts} is allowed).}
+
+\item{doubleEntrySuffix}{Suffixes for the continuous and censored variables (default = c("_cont", "_cens")).}
 
 \item{type}{Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")}
 
@@ -80,8 +92,6 @@ umxACE_DE(
 \item{addStd}{Whether to add the algebras to compute a std model (defaults to TRUE).}
 
 \item{addCI}{Whether to add intervals to compute CIs (defaults to TRUE).}
-
-\item{doubleEntrySuffix}{Suffixes for the continuous and censored variables (default = c("_cont", "_cens")).}
 }
 \value{
 \itemize{
@@ -115,39 +125,116 @@ Leaving \code{_cens} non-missing for observed continuous rows would double-count
 \examples{
 \donttest{
 require(umx)
+
+#################
+# Toy example 1 #
+#################
 data(twinData)
+# Height fully observed; Weighing scales lowest value is 60kg, with all
+# values beneath this registering as 60kg.
 
-# Toy example: Height fully observed; weight recorded only for higher-BMI people (others coded 0).
-# twinData BMI rarely exceeds classical overweight (25); use upper BMI quantile as threshold.
-
-twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10 # cms
-bmiCut = quantile(c(twinData$bmi1, twinData$bmi2), probs = 0.8, na.rm = TRUE)
+# NOTE: First put height on a scale comparable to weight to ease estimation
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 100 # metres -> cms
 
 clinic = twinData
-for (s in 1:2) {
-	bmiCol = paste0("bmi", s)
-	wtCol  = paste0("wt", s)
-	notWeighed = !is.na(clinic[[bmiCol]]) & clinic[[bmiCol]] < bmiCut
-	clinic[[wtCol]][notWeighed] = 0
-}
+clinic$wt1[!is.na(twinData$wt1) & (twinData$wt1 <= 60)] = 60
+clinic$wt2[!is.na(twinData$wt2) & (twinData$wt2 <= 60)] = 60
 
 # Double-entry prep for weight (floor at 0) Creates "wt_cont*" and "wt_cens*"
-prep = umx_make_double_entry_data(clinic, cols = list(wt = "<= 0"), sep = "")
+prep = umx_make_double_entry_data(clinic, cols = list(wt = "<= 60"), sep = "")
 
 mzData = prep[prep$zygosity \%in\% "MZFF", ]
 dzData = prep[prep$zygosity \%in\% "DZFF", ]
 
 # 1. Correct mixed model: continuous height + double-entry censored weight
-mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
-	selDVs = c("ht", "wt_cont", "wt_cens"), addCI = FALSE, tryHard = "yes"
-)
+# Default: free thresholds. For known LOD, use fixCensorThresholds = "auto" or "yes"
+# with censorCuts = c(wt = 0) (cut on analysis scale; means cont=cens equated).
 
-# Table: Standardized parameter estimates from DE Cholesky ACE
-# |        |    a1|a2    |a3 |    c1|c2    |c3 |    e1|e2    |e3 |
-# |:-------|-----:|:-----|:--|-----:|:-----|:--|-----:|:-----|:--|
-# |ht      | 0.866|      |   |  0.35|      |   | 0.358|      |   |
-# |wt_cont | 0.565|0.258 |   | -0.14|0.232 |   | 0.251|0.691 |   |
-# |wt_cens | 0.565|0.258 |.  | -0.14|0.232 |.  | 0.251|0.691 |.  |
+mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
+	selDVs = c("ht", "wt_cont", "wt_cens"), tryHard = "yes")
+
+# Table: Model Fit Summary for 'htWtDE'
+# 
+# |Model  | EP|  -2LL|   df|   AIC|      BIC|
+# |:------|--:|-----:|----:|-----:|--------:|
+# |htWtDE | 11| 37082| 7781| 37104| 37165.51|
+
+
+# Table: Standardized parameter estimates from a 2-trait double-entry Cholesky ACE model.
+# A: additive genetic; C: common environment; E: unique environment.
+# 
+# |        |    a1|a2    |    c1|c2    |     e1|e2    |
+# |:-------|-----:|:-----|-----:|:-----|------:|:-----|
+# |ht      | 0.874|      | 0.373|      |  0.312|      |
+# |wt_cens | 0.437|0.381 | 0.079|0.301 | -0.148|0.738 |
+# Double-entry thresholds fixed: wt_cens @ 60 (means equated to wt_cont).
+
+
+# Table: Means (from model$top$expMean)
+# 
+# |          |     ht1| wt_cont1| wt_cens1|     ht2| wt_cont2| wt_cens2|
+# |:---------|-------:|--------:|--------:|-------:|--------:|--------:|
+# |intercept | 162.499|   56.961|   56.961| 162.499|   56.961|   56.961|
+
+
+#################
+# Toy example 2: 
+#################
+
+# GP only gets paid to record weight for higher-BMI people (~BMI 22 here).
+# Others are coded "0").
+# NOTE: We don't know what threshold 0 mapped to, so we *estimate* the threshold.
+# NOTE: This example is contrived, and creates a nasty collider with height.
+
+# Height fully observed; Weighing scales lowest value is 60kg, with all
+# values beneath this registering as 60kg.
+
+# NOTE: First we get the height data on a comparable scale to weight to ease model estimation
+data(twinData)
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 100 # metres -> cms
+
+bmiCut = 22 # about the 80th percentile in this sample.
+
+clinic = twinData
+clinic$wt1[!is.na(twinData$wt1) & (twinData$bmi1 <= 22)] = 0
+clinic$wt2[!is.na(twinData$wt2) & (twinData$bmi2 <= 22)] = 0
+
+# Double-entry prep for weight (floor at 0) Creates "wt_cont*" and "wt_cens*"
+prep = umx_make_double_entry_data(data = clinic, cols = list(wt = 0), sep = "")
+
+mzData = prep[prep$zygosity \%in\% "MZFF", ]
+dzData = prep[prep$zygosity \%in\% "DZFF", ]
+
+# 1. Correct mixed model: continuous height + double-entry censored weight
+# Default: free thresholds. For known LOD, use fixCensorThresholds = "auto" or "yes"
+# with censorCuts = c(wt = 0) (cut on analysis scale; means cont=cens equated).
+
+# Note how we set fixCensorThresholds = "no"
+
+mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
+	selDVs = c("ht", "wt_cont", "wt_cens"), fixCensorThresholds="no", tryHard = "yes")
+
+# Table: Model Fit Summary for 'htWtDE'
+# 
+# |Model  | EP|     -2LL|   df|      AIC|      BIC|
+# |:------|--:|--------:|----:|--------:|--------:|
+# |htWtDE | 12| 32406.96| 7780| 32430.96| 32498.06|
+# 
+# 
+# Table: Standardized parameter estimates from a 2-trait double-entry Cholesky ACE model. 
+#   A: additive genetic; C: common environment; E: unique environment.
+# 
+# |        |    a1|a2    |    c1|c2    |    e1|e2    |
+# |:-------|-----:|:-----|-----:|:-----|-----:|:-----|
+# |ht      | 0.883|      | 0.268|      | 0.385|      |
+# |wt_cens | 0.228|0.105 | 0.628|0.235 | 0.180|0.675 |
+# 
+# 
+# Table: Means (from model$top$expMean)
+# 
+# |          |     ht1| wt_cont1|wt_cens1 |     ht2| wt_cont2|wt_cens2 |
+# |:---------|-------:|--------:|:--------|-------:|--------:|:--------|
+# |intercept | 162.918|   68.623|0        | 162.918|   68.623|0        |
 
 umxSummary(mDE, std = TRUE)
 
@@ -158,6 +245,7 @@ mTrue  = umxACE("htWtTrue", selDVs = c("ht", "wt"),
            mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
 
 # Table: Standardized parameter estimates from 2-factor Cholesky ACE
+   A: additive genetic; C: common environment; E: unique environment.
 # |   |    a1|a2    |     c1|c2 |    e1|e2    |
 # |:--|-----:|:-----|------:|:--|-----:|:-----|
 # |ht | 0.899|      |  0.252|   | 0.357|      |
@@ -171,7 +259,24 @@ dzNaive = clinic[clinic$zygosity \%in\% "DZFF", ]
 mNaive = umxACE("htWtNaive0", selDVs= c("ht", "wt"), 
             mzData= mzNaive, dzData= dzNaive, sep ="",tryHard = "yes")
 umxSummary(mNaive, std = TRUE)
-# Naive mean(wt) pulled toward 0; prefer mDE when zeros mean censored.
+
+# Naive mean(wt) pulled toward 0, covariance obscured; prefer mDE when zeros mean censored.
+#
+# Table: Standardized parameter estimates from a 2-factor Cholesky ACE model.
+#   A: additive genetic; C: common environment; E: unique environment.
+#
+# |   |    a1|a2    |     c1|c2 |     e1|e2    |
+# |:--|-----:|:-----|------:|:--|------:|:-----|
+# |ht | 0.899|      |  0.252|   |  0.357|      |
+# |wt | 0.057|0.717 | -0.238|.  | -0.072|0.649 |
+#
+#
+# Table: Means (from model$top$expMean)
+# 
+# |          |     ht1|    wt1|     ht2|    wt2|
+# |:---------|-------:|------:|-------:|------:|
+# |intercept | 162.515| 20.984| 162.515| 20.984|
+
 }
 }
 \seealso{
