@@ -8,9 +8,23 @@ on:
   schedule:
     # Daily check against CRAN OpenMx
     - cron: '0 0 * * *'
-    # Run full matrix every Monday at 06:00 UTC
-    - cron: '0 6 * * 1'
   workflow_dispatch:
+    inputs:
+      run_cran:
+        description: 'Run standard check against CRAN OpenMx'
+        type: boolean
+        required: true
+        default: true
+      run_genomicmx:
+        description: 'Build and check against GenomicMx (requires PAT)'
+        type: boolean
+        required: true
+        default: false
+      run_full_matrix:
+        description: 'Run full OS/R version matrix check against CRAN'
+        type: boolean
+        required: true
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,9 +34,59 @@ permissions:
   contents: read
 
 jobs:
-  # 1. Push/PR: Tests against GenomicMx private build
-  quick_genomicmx:
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
+  # 1. Standard: Check against stock CRAN OpenMx (Fast)
+  check_cran:
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request' ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.run_cran == 'true')
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up R (release)
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+          use-public-rspm: true
+
+      # Quick CI: no GenomicSEM (github install is slow/flaky; vignette is eval=FALSE).
+      # Vignettes are skipped here — modification_indices/profile-CI knit is multi-hour;
+      # full vignette build stays on weekly matrix / workflow_dispatch.
+      # ggwas is Suggests + Remotes (GitHub-only until on CRAN); pin github:: so pak does not look on CRAN.
+      - name: Install Package Dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::remotes
+            any::rcmdcheck
+            any::covr
+            any::OpenMx
+            any::mvtnorm
+            any::DiagrammeRsvg
+            any::rsvg
+            github::bczech/ggwas
+          needs: check
+
+      - name: Check Package Structure
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          build_args: 'c("--no-manual", "--no-build-vignettes")'
+          args: 'c("--no-manual", "--as-cran", "--no-vignettes")'
+          error-on: '"error"'
+
+      - name: Code Coverage
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        run: covr::codecov()
+        shell: Rscript {0}
+
+  # 2. Manual/On-Demand: Build and check against GenomicMx private build (slow)
+  check_genomicmx:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_genomicmx == 'true'
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -100,52 +164,9 @@ jobs:
         run: covr::codecov()
         shell: Rscript {0}
 
-
-  # 2. Daily: Tests against stock CRAN OpenMx
-  daily_cran:
-    if: github.event_name == 'schedule' && github.event.schedule == '0 0 * * *'
-    runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up R (release)
-        uses: r-lib/actions/setup-r@v2
-        with:
-          r-version: 'release'
-          use-public-rspm: true
-
-      # Quick CI: no GenomicSEM (github install is slow/flaky; vignette is eval=FALSE).
-      # Vignettes are skipped here — modification_indices/profile-CI knit is multi-hour;
-      # full vignette build stays on weekly matrix / workflow_dispatch.
-      # ggwas is Suggests + Remotes (GitHub-only until on CRAN); pin github:: so pak does not look on CRAN.
-      - name: Install Package Dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: |
-            any::remotes
-            any::rcmdcheck
-            any::covr
-            any::OpenMx
-            any::mvtnorm
-            any::DiagrammeRsvg
-            any::rsvg
-            github::bczech/ggwas
-          needs: check
-
-      - name: Check Package Structure
-        uses: r-lib/actions/check-r-package@v2
-        with:
-          build_args: 'c("--no-manual", "--no-build-vignettes")'
-          args: 'c("--no-manual", "--as-cran", "--no-vignettes")'
-          error-on: '"error"'
-
-
-  # 3. Weekly/Manual: Full OS Matrix testing against CRAN
+  # 3. Manual/On-Demand: Full OS Matrix testing against CRAN (expensive)
   full_matrix:
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 6 * * 1')
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_full_matrix == 'true'
     runs-on: ${{ matrix.config.os }}
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
