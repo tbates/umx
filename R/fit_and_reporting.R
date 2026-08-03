@@ -987,7 +987,7 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #' Shows a compact, publication-style, summary of umx models
 #'
 #' @description
-#' Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
+#' Report the fit of a RAM or other umx model (such as ACE, CP etc.)
 #' in a compact form suitable for reporting in a journal.
 #'
 #' See documentation for RAM models summary here: [umxSummary.MxModel()].
@@ -995,6 +995,8 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #' View documentation on the ACE model subclass here: [umxSummaryACE()].
 #' 
 #' View documentation on the ACEv model subclass here: [umxSummaryACEv()].
+#' 
+#' View documentation on the ACE_DE model subclass here: [umxSummaryACE_DE()].
 #' 
 #' View documentation on the IP model subclass here: [umxSummaryIP()].
 #' 
