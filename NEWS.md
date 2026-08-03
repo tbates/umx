@@ -2,9 +2,12 @@
 ## umx 5.00.5 
 * Date: 2026-07-20 R 4.6.0
 
-* NEW/FIXED: `umxACE_DE` double-entry ID: **never** force continuous trait variance to 1. All DE pairs release binary `Vtot==1`, share free cont/cens means; `fixCensorThresholds` fixes τ at known cut or leaves τ free (cut estimated in data units).
-* FIXED: multi-DE Cholesky zeroed entire cens **columns** (phantom free factors); `umxSummary`/`plot` use cont factor cols not `1:nKeep`; summary hard-stops on failed/unfitted models; tests cover two DE pairs free+fixed.
-* IMPROVED: `umx_make_double_entry_data` stores `attr(*, "umxDoubleEntry")` (cut/side/fixable); left-censor levels are `c("censored","observed")` with censored state assigned **by name** (not `levels[2]`). Free-threshold models may see τ sign/direction change; default still free τ.
+* NEW: `umxACE_DE` double-entry ID: overwrite Paras Mehta - avoids forcing continuous trait variance to 1. All DE pairs release binary `Vtot==1`, share free cont/cens means; `fixCensorThresholds` fixes thresh at known cut or leaves thresh free (cut estimated in data units).
+* FIXED: multi-DE Cholesky zeroed entire cens **columns** (phantom free factors);
+* FIXED: `umxSummary`/`plot` use cont factor cols not `1:nKeep`;
+* FIXED: summary hard-stops on failed/unfitted models;
+* TESTS: tests cover two DE pairs free+fixed.
+* IMPROVED: `umx_make_double_entry_data` stores `attr(*, "umxDoubleEntry")` (cut/side/fixable); left-censor levels are `c("censored","observed")` with censored state assigned **by name** (not `levels[2]`). Free-threshold models may see thresh sign/direction change; default still free thresh.
 * NEW: `umx_tutorials` to let users list and open package vignettes interactively.
 * NEW: `xmu_gsem_subset_covstruc`
 * NEW: `umxGSEM_std` function to standardize GSEM S and V matrices (Delta method) and scale intercepts.

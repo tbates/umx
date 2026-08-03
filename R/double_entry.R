@@ -81,7 +81,6 @@
 #' @family Twin Modeling Functions
 #' @seealso - [umx_make_double_entry_data()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
 #' @examples
-#' \donttest{
 #' ```R
 #' require(umx)
 #'
@@ -105,6 +104,7 @@
 #' mzData = prep[prep$zygosity %in% "MZFF", ]
 #' dzData = prep[prep$zygosity %in% "DZFF", ]
 #'
+#' \donttest{
 #' # 1. Correct mixed model: continuous height + double-entry censored weight
 #' # Default: free thresholds. For known LOD, use fixCensorThresholds = "auto" or "yes"
 #' # with censorCuts = c(wt = 0) (cut on analysis scale; means cont=cens equated).
@@ -1311,3 +1311,100 @@ umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, s
 #' @export
 umxSummary.MxModelACE_DE <- umxSummaryACE_DE
 
+
+
+#' Pretty-print method for double-entry censored datasets
+#'
+#' @param x A data frame prepared with [umx_make_double_entry_data()].
+#' @param n Number of data frame rows to display below summary table (default = 6).
+#' @param ... Additional arguments passed to print.
+#' @export
+#' Pretty-print method for double-entry censored datasets
+#'
+#' @param x A data frame prepared with [umx_make_double_entry_data()].
+#' @param n Number of data frame rows to display below summary table (default = 6).
+#' @param ... Additional arguments passed to print.
+#' @export
+#' Pretty-print method for double-entry censored datasets
+#'
+#' @param x A data frame prepared with [umx_make_double_entry_data()].
+#' @param n Number of data frame rows to display below summary table (default = 6).
+#' @param ... Additional arguments passed to print.
+#' @export
+print.umx_double_entry_data <- function(x, n = 6, ...) {
+    meta = attr(x, "umxDoubleEntry")
+    
+    if (is.null(meta) || is.null(meta$pairs)) {
+        # Fallback to standard data frame print if metadata missing
+        NextMethod("print")
+        return(invisible(x))
+    }
+    
+    cat("## Double-Entry Data Summary (umxACE_DE)\n\n")
+    cat(sprintf("* Dataset: %d rows x %d columns\n", nrow(x), ncol(x)))
+    cat(sprintf("* Twin Structure: nSib = %d, separator = \"%s\"\n", meta$nSib, meta$sep))
+    cat(sprintf("* Variable Suffixes: continuous = \"%s\", censored = \"%s\"\n\n", 
+                meta$doubleEntrySuffix[1], meta$doubleEntrySuffix[2]))
+    
+    rows = list()
+    for (p in meta$pairs) {
+        trait = p$base
+        
+        # Build candidate column lists: non-twin ("wt_cont") then twin ("wt_cont_T1", "wt_cont_T2")
+        contCandidates = c(p$cont, paste0(p$cont, meta$sep, 1:meta$nSib))
+        censCandidates = c(p$cens, paste0(p$cens, meta$sep, 1:meta$nSib))
+        
+        # Find which candidates actually exist in colnames(x)
+        foundIndices = which(contCandidates %in% colnames(x) | censCandidates %in% colnames(x))
+        
+        contCols = character(0)
+        censCols = character(0)
+        nCensVec = integer(0)
+        pctCensVec = character(0)
+        
+        for (idx in foundIndices) {
+            cnCont = contCandidates[idx]
+            cnCens = censCandidates[idx]
+            
+            if (cnCont %in% colnames(x) || cnCens %in% colnames(x)) {
+                contCols = c(contCols, cnCont)
+                censCols = c(censCols, cnCens)
+                
+                vCont = if (cnCont %in% colnames(x)) x[[cnCont]] else rep(NA, nrow(x))
+                vCens = if (cnCens %in% colnames(x)) x[[cnCens]] else rep(NA, nrow(x))
+                
+                # Valid cases: non-missing in either continuous or censored column
+                validMask = !is.na(vCont) | !is.na(vCens)
+                nValid    = sum(validMask)
+                
+                # Censored cases: marked 'censored' in ordinal column
+                nCens = sum(vCens == "censored", na.rm = TRUE)
+                pct   = if (nValid > 0) sprintf("%.1f%%", 100 * nCens / nValid) else "0.0%"
+                
+                nCensVec   = c(nCensVec, nCens)
+                pctCensVec = c(pctCensVec, pct)
+            }
+        }
+        
+        rows[[length(rows) + 1]] = data.frame(
+            Trait            = trait,
+            `Continuous Col` = paste(contCols, collapse = ", "),
+            `Censored Col`   = paste(censCols, collapse = ", "),
+            `Censor Rule`    = p$ruleRepr,
+            Side             = p$side,
+            `Cut Value`      = ifelse(is.na(p$cut), "NA", as.character(p$cut)),
+            `Fixed Cut?`     = ifelse(p$fixable, "Yes", "No"),
+            `N Censored`     = paste(nCensVec, collapse = " / "),
+            `% Censored`     = paste(pctCensVec, collapse = " / "),
+            check.names      = FALSE
+        )
+    }
+    
+    summaryTable = do.call(rbind, rows)
+    print(knitr::kable(summaryTable, format = "markdown"))
+    cat("\n---\n")
+    
+    # Display head of data frame
+    print(head(as.data.frame(x), n = n))
+    invisible(x)
+}
