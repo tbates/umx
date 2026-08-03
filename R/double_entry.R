@@ -25,11 +25,13 @@
 #' (e.g. `c("ht", "wt_cont", "wt_cens")`). Prep only the censored traits with
 #' [umx_make_double_entry_data()]. At least one contiguous `_cont`/`_cens` pair is required;
 #' for all-continuous models use [umxACE()].
+#' 
 #' **"Trust the Science" note**
 #'
-#' IF you known the floor, keep fixCensorThresholds = "yes" / "auto". 
-#' Estimated free cuts "wander". Free is only for unknown cut, and even then treat estimated thresholds
-#' with suspicion. Free threshold will "run" but it is **not great** at recovering the true floor/threshold.
+#' If you know the censoring value, keep fixCensorThresholds = "yes" / "auto" to lock that in.
+#' Estimated-free threshold can "wander" very wildly. Reserve it only for unknown cut, and even then treat 
+#' estimated thresholds with suspicion. Free threshold will "run" but it is **not great** at 
+#' recovering the true floor/threshold.
 #'
 #' @details
 #' Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
@@ -365,7 +367,7 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 			# Equate cens row to cont row for free loadings into this pair
 			for (c in 1:idx1) {
 				mat$labels[idx2, c] = mat$labels[idx1, c]
-				mat$free[idx2, c] = mat$free[idx1, c]
+				mat$free[idx2, c]   = mat$free[idx1, c]
 				mat$values[idx2, c] = mat$values[idx1, c]
 			}
 			# Zero entire lower-triangular column idx2 (phantom factor for multi-DE)
@@ -413,8 +415,8 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 	if(addStd){
 		newTop = mxModel(model$top,
 			umxMatrix("I", "Iden", nVar, nVar), # nVar Identity matrix
-			mxAlgebra(name = "Vtot", A + C+ E), # Total variance
-			mxAlgebra(name = "SD", solve(sqrt(I * Vtot))), # total variance --> 1/SD
+			mxAlgebra(name = "Vtot" , A + C+ E), # Total variance
+			mxAlgebra(name = "SD"   , solve(sqrt(I * Vtot))), # total variance --> 1/SD
 			mxAlgebra(name = "a_std", SD %*% a), # standardized a
 			mxAlgebra(name = "c_std", SD %*% c), # standardized c
 			mxAlgebra(name = "e_std", SD %*% e), # standardized e
@@ -433,7 +435,7 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 		}
 	}
 	# --- DE identification (post-supermodel; do not edit xmuTwinSuper_SomeBinary) ---
-	# Stock binary packaging forces mean@0 and Vtot==1 on _cens; path equating then
+	# Stock binary packaging forces mean@0 and Vtot ==1 on _cens; path equating then
 	# forces continuous partner variance to 1 (wrong for kg/cm). For every DE pair:
 	#   - release Vtot==1 so trait variance is free
 	#   - free shared mean cont=cens (one location in data units)
@@ -560,9 +562,11 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' 
 #' \dontrun{
 #' # Then
-#' umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "")
+#' selDVs = c("ht", "wt_cont", "wt_cens")
 #' # Known LOD
-#' umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "", fixCensorThresholds = "auto")
+#' umxACE_DE(data = prep, selDVs = selDVs, sep = "")
+#' # Un-known LOD
+#' umxACE_DE(data = prep, selDVs = selDVs, sep = "", fixCensorThresholds = "no")
 #' # Mix with continuous traits:
 #' umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
 #' }

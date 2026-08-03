@@ -109,6 +109,7 @@ Fully continuous variables may be mixed with double-entry pairs in \code{selDVs}
 (e.g. \code{c("ht", "wt_cont", "wt_cens")}). Prep only the censored traits with
 \code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}. At least one contiguous \verb{_cont}/\verb{_cens} pair is required;
 for all-continuous models use \code{\link[=umxACE]{umxACE()}}.
+
 \strong{"Trust the Science" note}
 
 IF you known the floor, keep fixCensorThresholds = "yes" / "auto".

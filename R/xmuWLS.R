@@ -855,7 +855,7 @@ xmu_robust_WLS_fit <- function(model) {
 		stop("Target model missing implied_jacobian.")
 	}
 	
-	# Step B: Extract W and asymCov (modern observedStats; multigroup -> block-diagonal)
+	# Step B: Extract W and asymCov (modern observedStats; multi-group -> block-diagonal)
 	# (Saturated early-return comes after this so missing W/Gamma still error.)
 	wv = xmu_wls_extract_WV(model, stop_if_missing = TRUE)
 	weightMat = wv$useWeight
@@ -889,13 +889,13 @@ xmu_robust_WLS_fit <- function(model) {
 		return(res)
 	}
 
-	# Multigroup: require stacked Jacobian (GenomicMx stacks one block per WLS RAM group)
+	# Multi-group: require stacked Jacobian (GenomicMx stacks one block per WLS RAM group)
 	if (nGroups > 1L) {
 		nMoments = nrow(asymCov)
 		if (nrow(jacTarget) != nMoments) {
-			stop("Multigroup WLS robust CFI/TLI/RMSEA need a stacked implied_jacobian matching all groups' moments (got Jacobian ",
+			stop("Multi-group WLS robust CFI/TLI/RMSEA need a stacked implied_jacobian matching all groups' moments (got Jacobian ",
 				nrow(jacTarget), " x ", ncol(jacTarget), " vs stacked moments ", nMoments,
-				").\n", xmu_openmx_install_message("Multigroup WLS robust fit (stacked Jacobian)"))
+				").\n", xmu_openmx_install_message("Multi-group WLS robust fit (stacked Jacobian)"))
 		}
 		if (is.null(rownames(jacTarget)) && !is.null(rownames(asymCov))) {
 			rownames(jacTarget) = rownames(asymCov)
@@ -944,7 +944,7 @@ xmu_robust_WLS_fit <- function(model) {
 	# Step E/F: Native R baseline WLS fit calculation (aligned moments)
 	# Extract observed covariance matrix and means (if any).
 	# Modern summary WLS / GSEM: type is "summary" with cov in observedStats.
-	# Multigroup: build a named stacked residual moment vector instead of one obsCov.
+	# Multi-group: build a named stacked residual moment vector instead of one obsCov.
 	obsCov = NULL
 	obsMeans = NULL
 	obsThresholds = NULL
@@ -968,13 +968,13 @@ xmu_robust_WLS_fit <- function(model) {
 				osi = d$observedStats
 			}
 			if (is.null(osi$cov) || !is.matrix(osi$cov)) {
-				stop("Multigroup WLS robust fit: group ", omxQuotes(sm$name), " lacks observedStats$cov.")
+				stop("Multi-group WLS robust fit: group ", omxQuotes(sm$name), " lacks observedStats$cov.")
 			}
 			# Residual moment order matching asymCov colnames for this group
 			gNames = colnames(osi$asymCov)
 			if (is.null(gNames)) gNames = colnames(osi$useWeight)
 			if (is.null(gNames)) {
-				stop("Multigroup WLS robust fit: group ", omxQuotes(sm$name), " asymCov/useWeight lack dimnames.")
+				stop("Multi-group WLS robust fit: group ", omxQuotes(sm$name), " asymCov/useWeight lack dimnames.")
 			}
 			sv = rep(0, length(gNames))
 			names(sv) = paste0(sm$name, ".", gNames)
@@ -1125,7 +1125,7 @@ xmu_robust_WLS_fit <- function(model) {
 	dInd = sVec
 	for (i in seq_along(commonNames)) {
 		name = commonNames[i]
-		# Multigroup: strip group prefix before classifying moment type
+		# Multi-group: strip group prefix before classifying moment type
 		nameBare = sub("^[^.]+\\.", "", name)
 		isMean = grepl("^mean_", nameBare) || grepl("^one_to_", nameBare) || (nameBare %in% manifests)
 		isThresh = grepl("t[0-9]+$", nameBare)
@@ -1153,7 +1153,7 @@ xmu_robust_WLS_fit <- function(model) {
 	weightMatAlignedPerObs = weightMatAligned
 
 	# Scale WLS matrices to sample size for raw-data models (match OpenMx fit units).
-	# Multigroup: scale each diagonal block by that group's N (already in blockdiag order).
+	# Multi-group: scale each diagonal block by that group's N (already in blockdiag order).
 	if (is.null(nVal) || is.na(nVal)) {
 		nVal = 1000
 	}
