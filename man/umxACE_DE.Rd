@@ -126,15 +126,15 @@ Leaving \code{_cens} non-missing for observed continuous rows would double-count
 \donttest{
 require(umx)
 
-#################
-# Toy example 1 #
-#################
-data(twinData)
-# Height fully observed; Weighing scales lowest value is 60kg, with all
-# values beneath this registering as 60kg.
+##################################
+# Toy example 1: Threshold known #
+##################################
 
-# NOTE: First put height on a scale comparable to weight to ease estimation
-twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 100 # metres -> cms
+# Weighing scales lowest value is 60kg, with lower values registering as 60kg.
+
+# NOTE: We first put height on a scale comparable to weight to ease estimation
+data(twinData)
+twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] *100 # metre->cm
 
 clinic = twinData
 clinic$wt1[!is.na(twinData$wt1) & (twinData$wt1 <= 60)] = 60
@@ -177,9 +177,9 @@ mDE = umxACE_DE(name = "htWtDE", mzData = mzData, dzData = dzData, sep = "",
 # |intercept | 162.499|   56.961|   56.961| 162.499|   56.961|   56.961|
 
 
-#################
-# Toy example 2: 
-#################
+####################################
+# Toy example 2: Threshold unknown #
+####################################
 
 # GP only gets paid to record weight for higher-BMI people (~BMI 22 here).
 # Others are coded "0").

@@ -12,7 +12,7 @@ umxSummary(model, ...)
 \item{...}{Other parameters to control model summary}
 }
 \description{
-Report the fit of a OpenMx model or specialized model class (such as ACE, CP etc.)
+Report the fit of a RAM or other umx model (such as ACE, CP etc.)
 in a compact form suitable for reporting in a journal.
 
 See documentation for RAM models summary here: \code{\link[=umxSummary.MxModel]{umxSummary.MxModel()}}.
@@ -20,6 +20,8 @@ See documentation for RAM models summary here: \code{\link[=umxSummary.MxModel]{
 View documentation on the ACE model subclass here: \code{\link[=umxSummaryACE]{umxSummaryACE()}}.
 
 View documentation on the ACEv model subclass here: \code{\link[=umxSummaryACEv]{umxSummaryACEv()}}.
+
+View documentation on the ACE_DE model subclass here: \code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}}.
 
 View documentation on the IP model subclass here: \code{\link[=umxSummaryIP]{umxSummaryIP()}}.
 

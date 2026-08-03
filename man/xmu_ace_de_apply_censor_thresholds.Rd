@@ -2,38 +2,47 @@
 % Please edit documentation in R/double_entry.R
 \name{xmu_ace_de_apply_censor_thresholds}
 \alias{xmu_ace_de_apply_censor_thresholds}
-\title{Fix double-entry censor thresholds and equate cont/cens means (Tobit ID)}
+\title{Apply double-entry mean/variance/threshold identification (post-supermodel)}
 \usage{
 xmu_ace_de_apply_censor_thresholds(
   model,
   fixedCuts,
   contByCens,
+  selDVs,
   sep,
   nSib = 2,
-  equateMeansWithCont = TRUE
+  equateMeansWithCont = TRUE,
+  freeVariance = TRUE,
+  equateMeansForAllPairs = TRUE
 )
 }
 \arguments{
 \item{model}{Twin ACE model with \code{top$deviations_for_thresh} and \code{top$expMean}.}
 
-\item{fixedCuts}{named numeric, names = censored base (e.g. \code{"wt_cens"}).}
+\item{fixedCuts}{named numeric cuts (may be empty \code{numeric(0)}).}
 
-\item{contByCens}{named character, cens base -> cont base.}
+\item{contByCens}{named character, cens base -> cont base (all DE pairs).}
+
+\item{selDVs}{base names per individual (Cholesky / \code{Vtot} row order).}
 
 \item{sep}{twin separator.}
 
 \item{nSib}{number of sibs.}
 
-\item{equateMeansWithCont}{if TRUE (v1 default), free and label-equate cens means to cont.}
+\item{equateMeansWithCont}{free and label-equate means for pairs in \code{fixedCuts}.}
+
+\item{freeVariance}{drop DE cens traits from \code{constrain_Bin_var_to_1}.}
+
+\item{equateMeansForAllPairs}{if TRUE, mean-equate every pair in \code{contByCens} (not only fixed cuts).}
 }
 \value{
 modified model.
 }
 \description{
-Sets \code{deviations_for_thresh} free=FALSE at the known cut (twin labels already shared)
-and equates binary means to the continuous partner (mean-equate identification).
-Does \strong{not} set \code{attr(model, "umxDE")} — caller must set that after
-\code{as(model, "MxModelACE_DE")}.
+For every DE pair in \code{contByCens}: release binary \code{Vtot==1} (continuous
+variance must not be forced to 1), and equate free means cont=cens.
+For names in \code{fixedCuts}, fix the twin-shared threshold at the known cut;
+other DE pairs keep a free threshold (cut estimated in data units).
 }
 \seealso{
 Other xmu internal not for end user:
@@ -69,6 +78,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_WLS_polycor_names]{xmu_WLS_polycor_names()}},
 \code{\link[=xmu_ace_de_parse_censor_meta]{xmu_ace_de_parse_censor_meta()}},
 \code{\link[=xmu_ace_de_parse_censor_rule]{xmu_ace_de_parse_censor_rule()}},
+\code{\link[=xmu_ace_de_release_binary_v1]{xmu_ace_de_release_binary_v1()}},
 \code{\link[=xmu_bracket_address2rclabel]{xmu_bracket_address2rclabel()}},
 \code{\link[=xmu_catml_df3_diagnostic]{xmu_catml_df3_diagnostic()}},
 \code{\link[=xmu_catml_discrepancy_at_WLS]{xmu_catml_discrepancy_at_WLS()}},

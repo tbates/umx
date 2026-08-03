@@ -213,9 +213,11 @@ xmu_threshold_id_twin_check <- function(model, fullVars, verbose = TRUE) {
 			meanNames = dimnames(em$free)[[2]]
 		}
 		deMeta = attr(model, "umxDE")
-		fixedCutBases = character(0)
-		if (!is.null(deMeta$fixedCuts)) {
-			fixedCutBases = names(deMeta$fixedCuts)
+		# DE pairs use free shared cont/cens means (not binary mean@0)
+		deMeanBases = character(0)
+		if (isTRUE(deMeta$freeVariance) || isTRUE(deMeta$equateMeansWithCont)) {
+			deMeanBases = unique(c(names(deMeta$fixedCuts), deMeta$freeThresholdPairs, names(deMeta$contByCens)))
+			deMeanBases = deMeanBases[!is.na(deMeanBases) & nzchar(as.character(deMeanBases))]
 		}
 		devFree = NULL
 		if (!is.null(model$top$deviations_for_thresh)) {
@@ -224,18 +226,16 @@ xmu_threshold_id_twin_check <- function(model, fullVars, verbose = TRUE) {
 		for (v in binVars) {
 			if (!is.null(meanNames) && v %in% meanNames) {
 				if (isTRUE(em$free[1, v])) {
-					# Allow free binary mean when DE fixed-threshold Tobit ID is active:
-					# (1) attr(model,"umxDE")$fixedCuts names this base, or
-					# (2) structure fallback: this column's threshold free flag is FALSE.
 					allowFreeMean = FALSE
-					if (length(fixedCutBases) > 0) {
-						for (b in fixedCutBases) {
+					if (length(deMeanBases) > 0) {
+						for (b in deMeanBases) {
 							if (identical(v, b) || startsWith(v, paste0(b, "_")) || grepl(paste0("^", b, "[0-9]+$"), v)) {
 								allowFreeMean = TRUE
 								break
 							}
 						}
 					}
+					# Structure fallback: threshold fixed (known cut) ⇒ free mean OK
 					if (!allowFreeMean && !is.null(devFree) && v %in% colnames(devFree)) {
 						if (!isTRUE(devFree[1, v])) {
 							allowFreeMean = TRUE
@@ -259,15 +259,39 @@ xmu_threshold_id_twin_check <- function(model, fullVars, verbose = TRUE) {
 	}
 
 	if (length(binVars) > 0) {
-		hasBinId = !is.null(model$top$binLabels) ||
-			(!is.null(model$top$matrices) && !is.null(model$top$matrices$binLabels)) ||
-			!is.null(model$top$constrain_Bin_var_to_1)
-		if (!hasBinId && !is.null(model$top$constraints)) {
-			cn = names(model$top$constraints)
-			hasBinId = any(cn == "constrain_Bin_var_to_1") || any(grepl("Bin_var|binLabels", cn, ignore.case = TRUE))
+		# DE pairs free continuous variance (not V=1). Exempt DE binaries from V=1 requirement.
+		needV1 = binVars
+		deMeta = attr(model, "umxDE")
+		deBases = character(0)
+		if (isTRUE(deMeta$freeVariance)) {
+			deBases = unique(c(names(deMeta$fixedCuts), deMeta$freeThresholdPairs, names(deMeta$contByCens)))
+			deBases = deBases[!is.na(deBases) & nzchar(deBases)]
 		}
-		if (!hasBinId) {
-			problems = c(problems, "binary Vtot==1 identification (binLabels / constrain_Bin_var_to_1) not found")
+		if (length(deBases) > 0) {
+			for (v in binVars) {
+				for (b in deBases) {
+					if (identical(v, b) || startsWith(v, paste0(b, "_")) || grepl(paste0("^", b, "[0-9]+$"), v)) {
+						needV1 = setdiff(needV1, v)
+						break
+					}
+				}
+			}
+		}
+		# Structure fallback: no binary V=1 constraint left
+		if (length(needV1) > 0 && is.null(model$top$constrain_Bin_var_to_1)) {
+			needV1 = character(0)
+		}
+		if (length(needV1) > 0) {
+			hasBinId = !is.null(model$top$binLabels) ||
+				(!is.null(model$top$matrices) && !is.null(model$top$matrices$binLabels)) ||
+				!is.null(model$top$constrain_Bin_var_to_1)
+			if (!hasBinId && !is.null(model$top$constraints)) {
+				cn = names(model$top$constraints)
+				hasBinId = any(cn == "constrain_Bin_var_to_1") || any(grepl("Bin_var|binLabels", cn, ignore.case = TRUE))
+			}
+			if (!hasBinId) {
+				problems = c(problems, "binary Vtot==1 identification (binLabels / constrain_Bin_var_to_1) not found")
+			}
 		}
 	}
 

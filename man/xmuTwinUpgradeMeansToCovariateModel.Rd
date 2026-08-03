@@ -89,6 +89,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_ace_de_apply_censor_thresholds]{xmu_ace_de_apply_censor_thresholds()}},
 \code{\link[=xmu_ace_de_parse_censor_meta]{xmu_ace_de_parse_censor_meta()}},
 \code{\link[=xmu_ace_de_parse_censor_rule]{xmu_ace_de_parse_censor_rule()}},
+\code{\link[=xmu_ace_de_release_binary_v1]{xmu_ace_de_release_binary_v1()}},
 \code{\link[=xmu_bracket_address2rclabel]{xmu_bracket_address2rclabel()}},
 \code{\link[=xmu_catml_df3_diagnostic]{xmu_catml_df3_diagnostic()}},
 \code{\link[=xmu_catml_discrepancy_at_WLS]{xmu_catml_discrepancy_at_WLS()}},
