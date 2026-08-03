@@ -340,7 +340,9 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 		expCovMZ, expCovDZ
 	)
 
-	# Apply equality constraints for double-entry pairs in top model
+	# Apply equality constraints for double-entry pairs in top model.
+	# Contiguous pair (cont, cens): same loadings; no residual on cens; entire "cens"
+	# factor column fixed at 0 (otherwise multi-DE leaves phantom free columns).
 	for (pair in doubleEntryPairs) {
 		v1 = pair[1]
 		v2 = pair[2]
@@ -354,18 +356,20 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 		
 		for (matName in c("a", "c", "e")) {
 			mat = top[[matName]]
-			# Equate columns c <= idx1
+			# Equate cens row to cont row for free loadings into this pair
 			for (c in 1:idx1) {
 				mat$labels[idx2, c] = mat$labels[idx1, c]
 				mat$free[idx2, c] = mat$free[idx1, c]
+				mat$values[idx2, c] = mat$values[idx1, c]
 			}
-			# Fix element (idx2, idx2) to 0
-			mat$free[idx2, idx2] = FALSE
-			mat$values[idx2, idx2] = 0
-			mat$labels[idx2, idx2] = as.character(NA)
-			mat$lbound[idx2, idx2] = as.numeric(NA)
-			mat$ubound[idx2, idx2] = as.numeric(NA)
-			
+			# Zero entire lower-triangular column idx2 (phantom factor for multi-DE)
+			for (r in idx2:nVar) {
+				mat$free[r, idx2] = FALSE
+				mat$values[r, idx2] = 0
+				mat$labels[r, idx2] = as.character(NA)
+				mat$lbound[r, idx2] = as.numeric(NA)
+				mat$ubound[r, idx2] = as.numeric(NA)
+			}
 			top[[matName]] = mat
 		}
 	}
@@ -387,14 +391,15 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 			model$top$c$lbound = newLbound
 			model$top$e$lbound = newLbound
 			
-			# Keep boundDiag off fixed 0 elements
+			# Keep boundDiag off fixed-zero DE cens columns
 			for (pair in doubleEntryPairs) {
-				v2 = pair[2]
-				idx2 = which(selDVs == v2)
+				idx2 = which(selDVs == pair[2])
 				if (length(idx2) > 0) {
-					model$top$a$lbound[idx2, idx2] = as.numeric(NA)
-					model$top$c$lbound[idx2, idx2] = as.numeric(NA)
-					model$top$e$lbound[idx2, idx2] = as.numeric(NA)
+					for (r in idx2:nVar) {
+						model$top$a$lbound[r, idx2] = as.numeric(NA)
+						model$top$c$lbound[r, idx2] = as.numeric(NA)
+						model$top$e$lbound[r, idx2] = as.numeric(NA)
+					}
 				}
 			}
 		}
@@ -421,7 +426,12 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 			model = mxModel(model, mxCI(c('top.a', 'top.c', 'top.e')))
 		}
 	}
-	# Resolve known censor cuts (attr + args). Default mode "no" leaves thresholds free.
+	# --- DE identification (post-supermodel; do not edit xmuTwinSuper_SomeBinary) ---
+	# Stock binary packaging forces mean@0 and Vtot==1 on _cens; path equating then
+	# forces continuous partner variance to 1 (wrong for kg/cm). For every DE pair:
+	#   - release Vtot==1 so trait variance is free
+	#   - free shared mean cont=cens (one location in data units)
+	#   - if known cut: fix threshold at c; else leave threshold free (estimate cut in data units)
 	censorMeta = xmu_ace_de_parse_censor_meta(
 		mzData = mzData,
 		dzData = dzData,
@@ -430,46 +440,74 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 		censorCuts = censorCuts,
 		doubleEntrySuffix = doubleEntrySuffix
 	)
-	if (length(censorMeta$fixedCuts) > 0) {
-		if (!is.null(selCovs)) {
-			stop("Polite note: Fixed double-entry censor thresholds (fixCensorThresholds / censorCuts) are not supported with selCovs in this version. Fit without covariates, or leave thresholds free (fixCensorThresholds = \"no\"). Covariate + fixed-threshold support requires equating intercept and meansBetas for cont/cens pairs.")
+	if (length(censorMeta$fixedCuts) > 0 && !is.null(selCovs)) {
+		stop("Polite note: Fixed double-entry censor thresholds (fixCensorThresholds / censorCuts) are not supported with selCovs in this version. Fit without covariates, or leave thresholds free (fixCensorThresholds = \"no\").")
+	}
+	# Map every DE pair cont/cens bases for mean equate + V release
+	allContByCens = character(0)
+	allCensBases = character(0)
+	for (pair in doubleEntryPairs) {
+		allContByCens[pair[2]] = pair[1]
+		allCensBases = c(allCensBases, pair[2])
+	}
+	# Fixed cuts only for named pairs; free τ for other DE pairs
+	fixedCuts = censorMeta$fixedCuts
+	# Optional free-τ starts from prep cuts (even when not fixing)
+	freeTauStarts = numeric(0)
+	attrList = attr(mzData, "umxDoubleEntry")
+	if (is.null(attrList)) attrList = attr(dzData, "umxDoubleEntry")
+	if (!is.null(attrList$pairs)) {
+		for (p in attrList$pairs) {
+			if (isTRUE(p$fixable) && is.finite(p$cut) && p$cens %in% names(allContByCens)) {
+				freeTauStarts[p$cens] = as.numeric(p$cut)
+			}
 		}
-		model = xmu_ace_de_apply_censor_thresholds(
-			model = model,
-			fixedCuts = censorMeta$fixedCuts,
-			contByCens = censorMeta$contByCens,
-			sep = sep,
-			nSib = nSib,
-			equateMeansWithCont = TRUE
-		)
-		for (censBase in names(censorMeta$fixedCuts)) {
-			message("umx note: fixed double-entry threshold for ", censBase, " at ", censorMeta$fixedCuts[[censBase]], " (twins equated; means cont=cens).")
-		}
+	}
+	model = xmu_ace_de_apply_censor_thresholds(
+		model = model,
+		fixedCuts = fixedCuts,
+		contByCens = allContByCens,
+		selDVs = selDVs,
+		sep = sep,
+		nSib = nSib,
+		equateMeansWithCont = TRUE,
+		freeVariance = TRUE,
+		equateMeansForAllPairs = TRUE,
+		freeTauStarts = freeTauStarts
+	)
+	for (censBase in names(fixedCuts)) {
+		message("umx note: fixed double-entry threshold for ", censBase, " at ", fixedCuts[[censBase]], " (means cont=cens; trait variance free).")
+	}
+	freeThreshPairs = setdiff(allCensBases, names(fixedCuts))
+	if (length(freeThreshPairs) > 0) {
+		message("umx note: free double-entry threshold(s) for ", paste(freeThreshPairs, collapse = ", "), " (means cont=cens; trait variance free — not binary V=1).")
 	}
 
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelACE_DE") # set class so that S3 plot() and umxSummary dispatch
 	# as() strips custom attributes — set umxDE metadata only after cast
-	if (length(censorMeta$fixedCuts) > 0) {
-		attr(model, "umxDE") = list(
-			fixedCensorThresholds = TRUE,
-			fixedCuts = censorMeta$fixedCuts,
-			contByCens = censorMeta$contByCens,
-			equateMeansWithCont = TRUE,
-			sideByCens = censorMeta$sideByCens
-		)
-		xmu_threshold_id_twin_check(model, fullVars = selVars, verbose = TRUE)
-	}
+	attr(model, "umxDE") = list(
+		fixedCensorThresholds = length(fixedCuts) > 0,
+		fixedCuts = fixedCuts,
+		contByCens = allContByCens,
+		equateMeansWithCont = TRUE,
+		freeVariance = TRUE,
+		sideByCens = censorMeta$sideByCens,
+		freeThresholdPairs = freeThreshPairs
+	)
+	xmu_threshold_id_twin_check(model, fullVars = selVars, verbose = TRUE)
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE, intervals = intervals)
 	# Re-attach metadata if run replaced the object without attrs (mxRun usually preserves)
-	if (length(censorMeta$fixedCuts) > 0 && is.null(attr(model, "umxDE"))) {
+	if (is.null(attr(model, "umxDE"))) {
 		attr(model, "umxDE") = list(
-			fixedCensorThresholds = TRUE,
-			fixedCuts = censorMeta$fixedCuts,
-			contByCens = censorMeta$contByCens,
+			fixedCensorThresholds = length(fixedCuts) > 0,
+			fixedCuts = fixedCuts,
+			contByCens = allContByCens,
 			equateMeansWithCont = TRUE,
-			sideByCens = censorMeta$sideByCens
+			freeVariance = TRUE,
+			sideByCens = censorMeta$sideByCens,
+			freeThresholdPairs = freeThreshPairs
 		)
 	}
 	return(model)
@@ -802,33 +840,43 @@ xmu_ace_de_parse_censor_meta <- function(mzData, dzData, doubleEntryPairs, fixCe
 	list(fixedCuts = fixedCuts, contByCens = contByCens[names(fixedCuts)], sideByCens = sideByCens)
 }
 
-#' Fix double-entry censor thresholds and equate cont/cens means (Tobit ID)
+#' Apply double-entry mean/variance/threshold identification (post-supermodel)
 #'
-#' Sets \code{deviations_for_thresh} free=FALSE at the known cut (twin labels already shared)
-#' and equates binary means to the continuous partner (mean-equate identification).
-#' Does \strong{not} set \code{attr(model, "umxDE")} — caller must set that after
-#' \code{as(model, "MxModelACE_DE")}.
+#' For every DE pair in \code{contByCens}: release binary \code{Vtot==1} (continuous
+#' variance must not be forced to 1), and equate free means cont=cens.
+#' For names in \code{fixedCuts}, fix the twin-shared threshold at the known cut;
+#' other DE pairs keep a free threshold (cut estimated in data units).
 #'
 #' @param model Twin ACE model with \code{top$deviations_for_thresh} and \code{top$expMean}.
-#' @param fixedCuts named numeric, names = censored base (e.g. \code{"wt_cens"}).
-#' @param contByCens named character, cens base -> cont base.
+#' @param fixedCuts named numeric cuts (may be empty \code{numeric(0)}).
+#' @param contByCens named character, cens base -> cont base (all DE pairs).
+#' @param selDVs base names per individual (Cholesky / \code{Vtot} row order).
 #' @param sep twin separator.
 #' @param nSib number of sibs.
-#' @param equateMeansWithCont if TRUE (v1 default), free and label-equate cens means to cont.
+#' @param equateMeansWithCont free and label-equate means for pairs in \code{fixedCuts}.
+#' @param freeVariance drop DE cens traits from \code{constrain_Bin_var_to_1}.
+#' @param equateMeansForAllPairs if TRUE, mean-equate every pair in \code{contByCens} (not only fixed cuts).
+#' @param freeTauStarts optional named numeric starts for free thresholds (data units); default continuous mean.
 #' @return modified model.
 #' @family xmu internal not for end user
-xmu_ace_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, sep, nSib = 2, equateMeansWithCont = TRUE) {
+xmu_ace_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, selDVs, sep, nSib = 2, equateMeansWithCont = TRUE, freeVariance = TRUE, equateMeansForAllPairs = TRUE, freeTauStarts = NULL) {
 	dev = model$top$deviations_for_thresh
 	if (is.null(dev)) {
-		stop("Polite note: no deviations_for_thresh; cannot fix double-entry censor thresholds.")
+		stop("Polite note: no deviations_for_thresh; cannot set double-entry thresholds.")
 	}
-	if (equateMeansWithCont && is.null(model$top$expMean)) {
-		stop("Polite note: top$expMean missing; cannot equate cont/cens means for fixed DE thresholds (covariates not supported in this version).")
+	if ((equateMeansWithCont || equateMeansForAllPairs) && is.null(model$top$expMean)) {
+		stop("Polite note: top$expMean missing; cannot equate cont/cens means (covariates not supported with DE ID fixes in this version).")
+	}
+	if (is.null(fixedCuts)) {
+		fixedCuts = numeric(0)
 	}
 
-	for (censBase in names(fixedCuts)) {
-		cutVal = as.numeric(fixedCuts[[censBase]])
-		# Columns for this base in deviations matrix (twin-expanded names)
+	vtotIdxToRelease = integer(0)
+	pairsToMeanEquate = if (isTRUE(equateMeansForAllPairs)) names(contByCens) else names(fixedCuts)
+
+	# 1) Thresholds: fix at known cut, or set free-τ start in data units (not 0.1)
+	#    Free τ at 0.1 with mean ~170 is infeasible and kills multi-DE optim.
+	for (censBase in names(contByCens)) {
 		devCols = colnames(dev$labels)
 		matchCols = devCols[devCols == censBase | startsWith(devCols, paste0(censBase, sep)) | grepl(paste0("^", censBase, "[0-9]+$"), devCols)]
 		if (length(matchCols) < 1) {
@@ -838,9 +886,41 @@ xmu_ace_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, sep
 		if (length(labs) != 1L) {
 			stop("Polite note: expected one twin-equated threshold label for ", censBase, "; got: ", paste(labs, collapse = ", "))
 		}
-		model = omxSetParameters(model, labels = labs, free = FALSE, values = cutVal)
+		if (censBase %in% names(fixedCuts)) {
+			model = omxSetParameters(model, labels = labs, free = FALSE, values = as.numeric(fixedCuts[[censBase]]))
+		} else {
+			# Free threshold in data units: start at prep cut if known, else continuous mean (never 0.1)
+			startTau = NA_real_
+			if (!is.null(freeTauStarts) && censBase %in% names(freeTauStarts) && is.finite(freeTauStarts[[censBase]])) {
+				startTau = as.numeric(freeTauStarts[[censBase]])
+			}
+			if (!is.finite(startTau)) {
+				contBase = contByCens[[censBase]]
+				em = model$top$expMean
+				meanCols = colnames(em$values)
+				for (s in 1:nSib) {
+					contCol = paste0(contBase, sep, s)
+					if (!(contCol %in% meanCols)) contCol = paste0(contBase, s)
+					if (contCol %in% meanCols) {
+						startTau = as.numeric(em$values[1, contCol])
+						break
+					}
+				}
+			}
+			if (!is.finite(startTau)) startTau = 0
+			model = omxSetParameters(model, labels = labs, free = TRUE, values = startTau)
+		}
+	}
 
-		if (equateMeansWithCont) {
+	# 2) Release V=1 and mean-equate for every DE pair (variance of weight/height is not 1)
+	for (censBase in names(contByCens)) {
+		idx = match(censBase, selDVs)
+		if (is.na(idx)) {
+			stop("Polite note: censored base \"", censBase, "\" not found in selDVs.")
+		}
+		vtotIdxToRelease = c(vtotIdxToRelease, as.integer(idx))
+
+		if (censBase %in% pairsToMeanEquate) {
 			contBase = contByCens[[censBase]]
 			if (is.null(contBase) || !nzchar(contBase)) {
 				stop("Polite note: missing continuous partner base for ", censBase)
@@ -866,6 +946,50 @@ xmu_ace_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, sep
 			model$top$expMean = em
 		}
 	}
+
+	if (isTRUE(freeVariance) && length(vtotIdxToRelease) > 0) {
+		model = xmu_ace_de_release_binary_v1(model, vtotIndices = unique(vtotIdxToRelease))
+	}
+	return(model)
+}
+
+#' Drop selected traits from binary Vtot==1 constraint (DE known-cut ID)
+#'
+#' Post-hoc edit of supermodel \code{binLabels} / \code{constrain_Bin_var_to_1} only.
+#' Does not change \code{xmuTwinSuper_SomeBinary}.
+#'
+#' @param model Twin model with \code{top$binLabels} (optional if already absent).
+#' @param vtotIndices Integer diagonal indices into \code{Vtot} to stop constraining at 1.
+#' @return modified model.
+#' @family xmu internal not for end user
+xmu_ace_de_release_binary_v1 <- function(model, vtotIndices) {
+	if (length(vtotIndices) < 1) {
+		return(model)
+	}
+	bl = model$top$binLabels
+	if (is.null(bl)) {
+		return(model)
+	}
+	oldLabs = as.character(bl$labels[, 1])
+	releaseSet = paste0("Vtot[", vtotIndices, ",", vtotIndices, "]")
+	keep = !(oldLabs %in% releaseSet)
+	nKeep = sum(keep)
+
+	# Remove old constraint and unit/bin label matrices, then rebuild if needed
+	top = model$top
+	top = mxModel(top, remove = TRUE, "constrain_Bin_var_to_1")
+	top = mxModel(top, remove = TRUE, "binLabels")
+	top = mxModel(top, remove = TRUE, "Unit_nBinx1")
+
+	if (nKeep > 0) {
+		newLabs = oldLabs[keep]
+		top = mxModel(top,
+			umxMatrix("binLabels", "Full", nrow = nKeep, ncol = 1, labels = newLabs),
+			umxMatrix("Unit_nBinx1", "Unit", nrow = nKeep, ncol = 1),
+			mxConstraint(name = "constrain_Bin_var_to_1", binLabels == Unit_nBinx1)
+		)
+	}
+	model = mxModel(model, top)
 	return(model)
 }
 
@@ -896,20 +1020,23 @@ umxPlotACE_DE <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	nVar   = dim(model$top$a$values)[[1]]
 	allDVs = sub("(_T)?[0-9]$", "", selDVs[1:(nVar)])
 
-	# Identify double-entry _cont variables to omit
-	omitIdx = grep("_cont$", allDVs)
-	if(length(omitIdx) > 0){
-		keepIdx = setdiff(1:nVar, omitIdx)
-	} else {
+	# Rows: drop _cont (plot cens + pure continuous). Cols: factor columns = pure + _cont (not cens phantoms).
+	contIdx = grep("_cont$", allDVs)
+	censIdx = grep("_cens$", allDVs)
+	pureIdx = setdiff(1:nVar, c(contIdx, censIdx))
+	keepIdx = sort(c(pureIdx, censIdx))
+	keepColIdx = sort(c(pureIdx, contIdx))
+	if (length(keepIdx) < 1) {
 		keepIdx = 1:nVar
+		keepColIdx = 1:nVar
 	}
-
+	if (length(keepColIdx) != length(keepIdx)) {
+		# Fallback: square on keepIdx if counts mismatch
+		keepColIdx = keepIdx
+	}
 	keepDVs = allDVs[keepIdx]
-
 	nKeep = length(keepIdx)
-	keepColIdx = 1:nKeep
 
-	# Subset matrices to keepIdx (rows) and keepColIdx (cols) via umxMatrix
 	aMat = umxMatrix("a", type = "Lower", nrow = nKeep, ncol = nKeep,
 		free   = model$top$a$free[keepIdx, keepColIdx, drop = FALSE],
 		values = model$top$a$values[keepIdx, keepColIdx, drop = FALSE],
@@ -999,21 +1126,30 @@ umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, s
 			umxSummaryACE_DE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
-		umx_has_been_run(model, stop = TRUE)
+		runOk = umx_has_been_run(model, stop = FALSE)
+		m2ll = tryCatch(model$output$Minus2LogLikelihood, error = function(e) NA_real_)
+		if (!runOk || is.null(m2ll) || length(m2ll) < 1 || !is.finite(m2ll[1])) {
+			stop("Polite note: model has not been run successfully (no usable fit). Cannot summarize. Check optimizer errors / starting values.")
+		}
 		xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 		selDVs = xmu_twin_get_var_names(model, trim= TRUE, twinOneOnly= TRUE)
 		nVar   = length(selDVs)
 
-		# Identify double-entry _cont variables to omit
-		omitIdx = grep("_cont$", selDVs)
-		if(length(omitIdx) > 0){
-			keepIdx = setdiff(1:nVar, omitIdx)
-		} else {
+		# Rows: drop _cont. Cols: pure continuous + _cont factor columns (not cens phantom cols).
+		contIdx = grep("_cont$", selDVs)
+		censIdx = grep("_cens$", selDVs)
+		pureIdx = setdiff(1:nVar, c(contIdx, censIdx))
+		keepIdx = sort(c(pureIdx, censIdx))
+		keepColIdx = sort(c(pureIdx, contIdx))
+		if (length(keepIdx) < 1) {
 			keepIdx = 1:nVar
+			keepColIdx = 1:nVar
 		}
-		nKeep      = length(keepIdx)
-		keepColIdx = 1:nKeep
-		keepDVs    = selDVs[keepIdx]
+		if (length(keepColIdx) != length(keepIdx)) {
+			keepColIdx = keepIdx
+		}
+		nKeep   = length(keepIdx)
+		keepDVs = selDVs[keepIdx]
 
 		a = mxEval(top.a, model) # Path coefficients
 		c = mxEval(top.c, model)
@@ -1066,7 +1202,7 @@ umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, s
 			for (nm in names(deMeta$fixedCuts)) {
 				contNm = deMeta$contByCens[[nm]]
 				if (is.null(contNm)) contNm = sub("_cens$", "_cont", nm)
-				parts = c(parts, paste0(nm, " @ ", deMeta$fixedCuts[[nm]], " (means equated to ", contNm, ")"))
+				parts = c(parts, paste0(nm, " @ ", deMeta$fixedCuts[[nm]], " (means equated to ", contNm, "; V free)"))
 			}
 			message("Double-entry thresholds fixed: ", paste(parts, collapse = "; "), ".")
 		}
