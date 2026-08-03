@@ -33,7 +33,8 @@ test_that("umxACE_DE works with prepped data and equates paths", {
 	)
 
 	# 3. Verify success when passing prepped variables directly
-	m1 = umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", dzData = dzData, mzData = mzData)
+	# Hand-built DE columns (no umxDoubleEntry cut meta): leave thresholds free
+	m1 = umxACE_DE(selDVs = c("wt_cont", "wt_cens"), sep = "", dzData = dzData, mzData = mzData, fixCensorThresholds = "no")
 	
 	expect_true(inherits(m1, "MxModel"))
 	expect_true(inherits(m1, "MxModelACE_DE"))
@@ -199,7 +200,7 @@ test_that("umxACE_DE free threshold baseline and fixed thresholds structure (T0/
 	mzData = prep[prep$zygosity %in% "MZFF", ]
 	dzData = prep[prep$zygosity %in% "DZFF", ]
 
-	# T0 free default
+	# T0 free threshold: still free τ, but variance NOT forced to 1; means cont=cens
 	mFree = umxACE_DE(
 		selDVs = c("wt_cont", "wt_cens"), sep = "",
 		mzData = mzData, dzData = dzData,
@@ -207,10 +208,12 @@ test_that("umxACE_DE free threshold baseline and fixed thresholds structure (T0/
 	)
 	expect_true(all(mFree$top$deviations_for_thresh$free[1, ]))
 	expect_equal(mFree$top$deviations_for_thresh$labels[1, "wt_cens1"], mFree$top$deviations_for_thresh$labels[1, "wt_cens2"])
-	expect_false(isTRUE(mFree$top$expMean$free[1, "wt_cens1"]))
-	expect_true(is.null(attr(mFree, "umxDE")))
+	expect_true(isTRUE(mFree$top$expMean$free[1, "wt_cens1"]))
+	expect_equal(mFree$top$expMean$labels[1, "wt_cens1"], mFree$top$expMean$labels[1, "wt_cont1"])
+	expect_true(is.null(mFree$top$constrain_Bin_var_to_1))
+	expect_true(isTRUE(attr(mFree, "umxDE")$freeVariance))
 
-	# T2 fixed via explicit censorCuts
+	# T2 fixed via explicit censorCuts: τ@cut, means equated, V=1 released
 	mFix = umxACE_DE(
 		selDVs = c("wt_cont", "wt_cens"), sep = "",
 		mzData = mzData, dzData = dzData,
@@ -224,7 +227,12 @@ test_that("umxACE_DE free threshold baseline and fixed thresholds structure (T0/
 	expect_equal(mFix$top$expMean$labels[1, "wt_cens1"], mFix$top$expMean$labels[1, "wt_cont1"])
 	expect_equal(mFix$top$expMean$labels[1, "wt_cens2"], mFix$top$expMean$labels[1, "wt_cont2"])
 	expect_true(isTRUE(attr(mFix, "umxDE")$fixedCensorThresholds))
+	expect_true(isTRUE(attr(mFix, "umxDE")$freeVariance))
 	expect_equal(attr(mFix, "umxDE")$fixedCuts[["wt_cens"]], cut)
+	# Sole DE binary: binary Vtot==1 constraint should be gone (fixed and free paths)
+	expect_true(is.null(mFix$top$constrain_Bin_var_to_1))
+	expect_true(is.null(mFix$top$binLabels))
+	expect_true(is.null(mFree$top$constrain_Bin_var_to_1))
 
 	# auto from attr
 	mAuto = umxACE_DE(
@@ -273,6 +281,79 @@ test_that("umxACE_DE free threshold baseline and fixed thresholds structure (T0/
 	)
 	expect_false(any(mT$top$deviations_for_thresh$free[1, ]))
 	expect_true(isTRUE(attr(mT, "umxDE")$fixedCensorThresholds))
+})
+
+test_that("umxACE_DE two DE pairs: no phantom cens columns; fixed and free run", {
+	data(twinData)
+	twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
+	htCut = as.numeric(quantile(c(twinData$ht1, twinData$ht2), 0.2, na.rm = TRUE))
+	wtCut = as.numeric(quantile(c(twinData$wt1, twinData$wt2), 0.2, na.rm = TRUE))
+	clinic = twinData
+	clinic$ht1[!is.na(clinic$ht1) & clinic$ht1 < htCut] = htCut
+	clinic$ht2[!is.na(clinic$ht2) & clinic$ht2 < htCut] = htCut
+	clinic$wt1[!is.na(clinic$wt1) & clinic$wt1 < wtCut] = wtCut
+	clinic$wt2[!is.na(clinic$wt2) & clinic$wt2 < wtCut] = wtCut
+	prep = umx_make_double_entry_data(clinic, cols = list(ht = htCut, wt = wtCut), sep = "")
+	mzData = prep[prep$zygosity %in% "MZFF", ]
+	dzData = prep[prep$zygosity %in% "DZFF", ]
+
+	# Structure: columns 2 and 4 (cens positions) fully fixed at 0 in a/c/e
+	m0 = umxACE_DE(
+		selDVs = c("ht_cont", "ht_cens", "wt_cont", "wt_cens"),
+		sep = "", mzData = mzData, dzData = dzData,
+		autoRun = FALSE, addCI = FALSE,
+		fixCensorThresholds = "yes",
+		censorCuts = c(ht = htCut, wt = wtCut)
+	)
+	for (matName in c("a", "c", "e")) {
+		expect_true(all(m0$top[[matName]]$free[, 2] == FALSE))
+		expect_true(all(m0$top[[matName]]$values[, 2] == 0))
+		expect_true(all(m0$top[[matName]]$free[, 4] == FALSE))
+		expect_true(all(m0$top[[matName]]$values[, 4] == 0))
+		expect_true(isTRUE(m0$top[[matName]]$free[1, 1]))
+		expect_true(isTRUE(m0$top[[matName]]$free[3, 3]))
+	}
+	expect_equal(as.numeric(m0$top$deviations_for_thresh$values[1, "ht_cens1"]), htCut)
+	expect_equal(as.numeric(m0$top$deviations_for_thresh$values[1, "wt_cens1"]), wtCut)
+	expect_true(is.null(m0$top$constrain_Bin_var_to_1))
+
+	mFix = umxACE_DE(
+		selDVs = c("ht_cont", "ht_cens", "wt_cont", "wt_cens"),
+		sep = "", mzData = mzData, dzData = dzData,
+		addCI = FALSE, tryHard = "yes",
+		fixCensorThresholds = "yes",
+		censorCuts = c(ht = htCut, wt = wtCut)
+	)
+	expect_true(is.finite(mFix$output$Minus2LogLikelihood))
+	expect_true(length(omxGetParameters(mFix)) > 0)
+	expect_error(umxSummary(mFix, std = TRUE, file = NA), NA)
+
+	mFree = umxACE_DE(
+		name = "fixCensorThresholds_no",
+		selDVs = c("ht_cont", "ht_cens", "wt_cont", "wt_cens"),
+		sep = "", mzData = mzData, dzData = dzData,
+		addCI = FALSE, tryHard = "yes",
+		fixCensorThresholds = "no"
+	)
+	expect_true(is.finite(mFree$output$Minus2LogLikelihood))
+	expect_true(length(omxGetParameters(mFree)) > 0)
+	expect_true(all(mFree$top$a$free[, 2] == FALSE))
+	expect_true(all(mFree$top$a$free[, 4] == FALSE))
+	expect_error(umxSummary(mFree, std = TRUE, file = NA), NA)
+})
+
+test_that("umxSummaryACE_DE refuses unfitted model cleanly", {
+	data(twinData)
+	twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = "wt", sep = "")
+	prep = umx_make_double_entry_data(twinData, cols = list(wt = -0.5), sep = "")
+	mzData = prep[prep$zygosity %in% "MZFF", ]
+	dzData = prep[prep$zygosity %in% "DZFF", ]
+	m = umxACE_DE(
+		selDVs = c("wt_cont", "wt_cens"), sep = "",
+		mzData = mzData, dzData = dzData,
+		autoRun = FALSE, addCI = FALSE, fixCensorThresholds = "no"
+	)
+	expect_error(umxSummary(m), regexp = "not been run successfully")
 })
 
 test_that("umxACE_DE fixed threshold tiny Tobit formula check (T3a)", {
