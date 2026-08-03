@@ -25,6 +25,11 @@
 #' (e.g. `c("ht", "wt_cont", "wt_cens")`). Prep only the censored traits with
 #' [umx_make_double_entry_data()]. At least one contiguous `_cont`/`_cens` pair is required;
 #' for all-continuous models use [umxACE()].
+#' **"Trust the Science" note**
+#'
+#' IF you known the floor, keep fixCensorThresholds = "yes" / "auto". 
+#' Estimated free cuts "wander". Free is only for unknown cut, and even then treat estimated thresholds
+#' with suspicion. Free threshold will "run" but it is **not great** at recovering the true floor/threshold.
 #'
 #' @details
 #' Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
@@ -75,6 +80,7 @@
 #' @seealso - [umx_make_double_entry_data()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
 #' @examples
 #' \donttest{
+#' ```R
 #' require(umx)
 #'
 #' ##################################
@@ -227,7 +233,7 @@
 #' # |          |     ht1|    wt1|     ht2|    wt2|
 #' # |:---------|-------:|------:|-------:|------:|
 #' # |intercept | 162.515| 20.984| 162.515| 20.984|
-#'
+#' ```
 #' }
 umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = "_T", data = NULL, zyg = "zygosity", fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, doubleEntrySuffix = c("_cont", "_cens"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 	tryHard = match.arg(tryHard)
@@ -1206,7 +1212,25 @@ umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, s
 			}
 			message("Double-entry thresholds fixed: ", paste(parts, collapse = "; "), ".")
 		}
-		xmu_twin_print_means(model = model, report = report)
+		# Means: omit _cens (equated to _cont); show pure continuous + _cont only
+		meanVals = NULL
+		meanCaption = NULL
+		if (!is.null(model$top$intercept)) {
+			meanVals = model$top$intercept$values
+			meanCaption = "Means (intercept; _cens columns omitted — equated to _cont)"
+		} else if (!is.null(model$top$expMean)) {
+			meanVals = model$top$expMean$values
+			meanCaption = "Means (from model$top$expMean; _cens omitted — equated to _cont)"
+		}
+		if (!is.null(meanVals)) {
+			cn = colnames(meanVals)
+			keepMean = !grepl("_cens", cn)
+			if (any(keepMean)) {
+				meanVals = meanVals[, keepMean, drop = FALSE]
+				row.names(meanVals) = "intercept"
+				umx_print(meanVals, digits = digits, caption = meanCaption, report = report, append = TRUE, sortableDF = TRUE)
+			}
+		}
 
 		if(extended == TRUE) {
 			aSubRaw = a[keepIdx, keepColIdx, drop = FALSE]
@@ -1264,7 +1288,9 @@ umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, s
 			Estimates = data.frame(cbind(a_CISub, c_CISub, e_CISub), row.names = keepDVs, stringsAsFactors = FALSE)
 			names(Estimates) = paste0(rep(colNames, each = nKeep), rep(1:nKeep));
 			umx_print(Estimates, digits = digits, zero.print = zero.print, report=report, file = "tmpCI.html")
-			xmu_twin_print_means(model, digits = digits, report = report)
+			if (!is.null(meanVals)) {
+				umx_print(meanVals, digits = digits, caption = meanCaption, report = report, append = TRUE, sortableDF = TRUE)
+			}
 		}
 	}
 

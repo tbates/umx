@@ -13,7 +13,8 @@ xmu_ace_de_apply_censor_thresholds(
   nSib = 2,
   equateMeansWithCont = TRUE,
   freeVariance = TRUE,
-  equateMeansForAllPairs = TRUE
+  equateMeansForAllPairs = TRUE,
+  freeTauStarts = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ xmu_ace_de_apply_censor_thresholds(
 \item{freeVariance}{drop DE cens traits from \code{constrain_Bin_var_to_1}.}
 
 \item{equateMeansForAllPairs}{if TRUE, mean-equate every pair in \code{contByCens} (not only fixed cuts).}
+
+\item{freeTauStarts}{optional named numeric starts for free thresholds (data units); default continuous mean.}
 }
 \value{
 modified model.

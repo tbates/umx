@@ -109,6 +109,11 @@ Fully continuous variables may be mixed with double-entry pairs in \code{selDVs}
 (e.g. \code{c("ht", "wt_cont", "wt_cens")}). Prep only the censored traits with
 \code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}. At least one contiguous \verb{_cont}/\verb{_cens} pair is required;
 for all-continuous models use \code{\link[=umxACE]{umxACE()}}.
+\strong{"Trust the Science" note}
+
+IF you known the floor, keep fixCensorThresholds = "yes" / "auto".
+Estimated free cuts "wander". Free is only for unknown cut, and even then treat estimated thresholds
+with suspicion. Free threshold will "run" but it is \strong{not great} at recovering the true floor/threshold.
 }
 \details{
 Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
@@ -124,6 +129,7 @@ Leaving \code{_cens} non-missing for observed continuous rows would double-count
 }
 \examples{
 \donttest{
+```R
 require(umx)
 
 ##################################
@@ -276,7 +282,7 @@ umxSummary(mNaive, std = TRUE)
 # |          |     ht1|    wt1|     ht2|    wt2|
 # |:---------|-------:|------:|-------:|------:|
 # |intercept | 162.515| 20.984| 162.515| 20.984|
-
+```
 }
 }
 \seealso{
