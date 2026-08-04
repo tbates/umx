@@ -386,7 +386,6 @@ NULL
 #' @format A list with elements `S`, `V`, `I`, `N`, and `m` (see Details).
 #' @seealso [Anthro_LDSC], [umxGSEM()], [umxGSEM_GWAS()], [umxGSEM_ldsc()]
 #' @examples
-#' \dontrun{
 #' data(Psych_LDSC)
 #' str(Psych_LDSC, max.level = 1)
 #' names(Psych_LDSC) # "V" "S" "I" "N" "m"
@@ -395,6 +394,7 @@ NULL
 #' # I = LDSC intercept matrix (diag ~ 1; off-diag = sample overlap)
 #' round(Psych_LDSC$I, 3)
 #' # Common factor of all five traits (Grotzinger et al. 2019 style DWLS GSEM)
+#' \dontrun{
 #' m1 = umxGSEM(model = "g ~= SCZ + BIP + MDD + EA + INSOM",
 #'              covstruc = Psych_LDSC, estimation = "DWLS")
 #' umxSummary(m1)
