@@ -81,7 +81,6 @@
 #' @family Twin Modeling Functions
 #' @seealso - [umx_make_double_entry_data()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
 #' @examples
-#' ```R
 #' require(umx)
 #'
 #' ##################################
@@ -235,7 +234,6 @@
 #' # |          |     ht1|    wt1|     ht2|    wt2|
 #' # |:---------|-------:|------:|-------:|------:|
 #' # |intercept | 162.515| 20.984| 162.515| 20.984|
-#' ```
 #' }
 umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = "_T", data = NULL, zyg = "zygosity", fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, doubleEntrySuffix = c("_cont", "_cens"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 	tryHard = match.arg(tryHard)
@@ -1313,18 +1311,6 @@ umxSummary.MxModelACE_DE <- umxSummaryACE_DE
 
 
 
-#' Pretty-print method for double-entry censored datasets
-#'
-#' @param x A data frame prepared with [umx_make_double_entry_data()].
-#' @param n Number of data frame rows to display below summary table (default = 6).
-#' @param ... Additional arguments passed to print.
-#' @export
-#' Pretty-print method for double-entry censored datasets
-#'
-#' @param x A data frame prepared with [umx_make_double_entry_data()].
-#' @param n Number of data frame rows to display below summary table (default = 6).
-#' @param ... Additional arguments passed to print.
-#' @export
 #' Pretty-print method for double-entry censored datasets
 #'
 #' @param x A data frame prepared with [umx_make_double_entry_data()].

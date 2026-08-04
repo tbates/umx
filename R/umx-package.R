@@ -92,7 +92,7 @@
 #' @importFrom utils combn data flush.console read.table txtProgressBar
 #' @importFrom utils globalVariables write.table packageVersion
 #' @importFrom utils browseURL install.packages str read.csv read.delim capture.output
-#' @importFrom utils tail adist download.file
+#' @importFrom utils head tail adist download.file
 #' @importFrom xtable xtable
 #' @importFrom zoo index
 # old

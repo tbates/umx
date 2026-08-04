@@ -130,7 +130,6 @@ Each individual contributes exactly one non-missing likelihood element for the c
 Leaving \code{_cens} non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
 }
 \examples{
-```R
 require(umx)
 
 ##################################
@@ -284,7 +283,6 @@ umxSummary(mNaive, std = TRUE)
 # |          |     ht1|    wt1|     ht2|    wt2|
 # |:---------|-------:|------:|-------:|------:|
 # |intercept | 162.515| 20.984| 162.515| 20.984|
-```
 }
 }
 \seealso{

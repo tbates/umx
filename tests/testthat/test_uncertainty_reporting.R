@@ -27,9 +27,9 @@ test_that("umxSummary and plot handle uncertainty reporting options correctly", 
 	expect_true("Std.SE" %in% names(tblSE))
 	expect_true("CI" %in% names(tblSE))
 
-	# uncertainty = "RobustSE" (Robust standard errors)
+	# uncertainty = "MLR" (Robust standard errors)
 	sumRobust = capture.output({
-		tblRobust = umxSummary(m1, std = TRUE, uncertainty = "RobustSE")
+		tblRobust = umxSummary(m1, std = TRUE, uncertainty = "MLR")
 	})
 	expect_true("Std.SE" %in% names(tblRobust))
 	expect_true("CI" %in% names(tblRobust))
@@ -52,8 +52,8 @@ test_that("umxSummary and plot handle uncertainty reporting options correctly", 
 	dotSE = plot(m1, uncertainty = "SE", file = NA)
 	expect_true(any(grepl("G -> x1 \\[label=\"[0-9.]+ \\([0-9.]+\\)\"\\]", dotSE)))
 
-	# uncertainty = "RobustSE"
-	dotRobust = plot(m1, uncertainty = "RobustSE", file = NA)
+	# uncertainty = "MLR"
+	dotRobust = plot(m1, uncertainty = "MLR", file = NA)
 	expect_true(any(grepl("G -> x1 \\[label=\"[0-9.]+ \\([0-9.]+\\)\"\\]", dotRobust)))
 
 	# uncertainty = "CI" (brackets showing profile CIs)

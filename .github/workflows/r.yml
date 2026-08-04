@@ -69,6 +69,7 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
+            any::lme4
             github::bczech/ggwas
           needs: check
 
@@ -119,6 +120,7 @@ jobs:
             any::StanHeaders
             any::BH
             any::rpf
+            any::lme4
             github::bczech/ggwas
           needs: check
 
@@ -199,6 +201,7 @@ jobs:
             any::mvtnorm
             any::DiagrammeRsvg
             any::rsvg
+            any::lme4
             github::bczech/ggwas
           needs: check
 
