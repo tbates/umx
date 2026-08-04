@@ -203,7 +203,7 @@
 #'            mzData = mzTrue, dzData = dzTrue, sep = "", tryHard = "yes")
 #' 
 #' # Table: Standardized parameter estimates from 2-factor Cholesky ACE
-#'    A: additive genetic; C: common environment; E: unique environment.
+#' #   A: additive genetic; C: common environment; E: unique environment.
 #' # |   |    a1|a2    |     c1|c2 |    e1|e2    |
 #' # |:--|-----:|:-----|------:|:--|-----:|:-----|
 #' # |ht | 0.899|      |  0.252|   | 0.357|      |

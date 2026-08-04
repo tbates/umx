@@ -31,7 +31,7 @@ test_that("install.OpenMx accepts GenomicMx loc without installing", {
 	fmls = eval(formals(install.OpenMx)$loc)
 	expect_true("GenomicMx" %in% fmls)
 	expect_true("CRAN" %in% fmls)
-	expect_true("open release page" %in% fmls)
+	expect_true("open GenomicMx release page" %in% fmls)
 	# Source "dev" path disabled while fork is private (public path = umx Releases binaries)
 	expect_false("dev" %in% fmls)
 })
