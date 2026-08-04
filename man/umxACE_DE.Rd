@@ -112,9 +112,10 @@ for all-continuous models use \code{\link[=umxACE]{umxACE()}}.
 
 \strong{"Trust the Science" note}
 
-IF you known the floor, keep fixCensorThresholds = "yes" / "auto".
-Estimated free cuts "wander". Free is only for unknown cut, and even then treat estimated thresholds
-with suspicion. Free threshold will "run" but it is \strong{not great} at recovering the true floor/threshold.
+If you know the censoring value, keep fixCensorThresholds = "yes" / "auto" to lock that in.
+Estimated-free threshold can "wander" very wildly. Reserve it only for unknown cut, and even then treat
+estimated thresholds with suspicion. Free threshold will "run" but it is \strong{not great} at
+recovering the true floor/threshold.
 }
 \details{
 Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
@@ -129,7 +130,6 @@ Each individual contributes exactly one non-missing likelihood element for the c
 Leaving \code{_cens} non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
 }
 \examples{
-\donttest{
 ```R
 require(umx)
 
@@ -153,6 +153,7 @@ prep = umx_make_double_entry_data(clinic, cols = list(wt = "<= 60"), sep = "")
 mzData = prep[prep$zygosity \%in\% "MZFF", ]
 dzData = prep[prep$zygosity \%in\% "DZFF", ]
 
+\donttest{
 # 1. Correct mixed model: continuous height + double-entry censored weight
 # Default: free thresholds. For known LOD, use fixCensorThresholds = "auto" or "yes"
 # with censorCuts = c(wt = 0) (cut on analysis scale; means cont=cens equated).

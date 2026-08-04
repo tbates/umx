@@ -58,9 +58,11 @@ prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
 
 \dontrun{
 # Then
-umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "")
+selDVs = c("ht", "wt_cont", "wt_cens")
 # Known LOD
-umxACE_DE(data = prep, selDVs = c("ht", "wt"), sep = "", fixCensorThresholds = "auto")
+umxACE_DE(data = prep, selDVs = selDVs, sep = "")
+# Un-known LOD
+umxACE_DE(data = prep, selDVs = selDVs, sep = "", fixCensorThresholds = "no")
 # Mix with continuous traits:
 umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
 }

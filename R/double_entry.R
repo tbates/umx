@@ -458,9 +458,9 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 		allContByCens[pair[2]] = pair[1]
 		allCensBases = c(allCensBases, pair[2])
 	}
-	# Fixed cuts only for named pairs; free τ for other DE pairs
+	# Fixed cuts only for named pairs; free tau for other DE pairs
 	fixedCuts = censorMeta$fixedCuts
-	# Optional free-τ starts from prep cuts (even when not fixing)
+	# Optional free-tau starts from prep cuts (even when not fixing)
 	freeTauStarts = numeric(0)
 	attrList = attr(mzData, "umxDoubleEntry")
 	if (is.null(attrList)) attrList = attr(dzData, "umxDoubleEntry")
@@ -488,13 +488,13 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 	}
 	freeThreshPairs = setdiff(allCensBases, names(fixedCuts))
 	if (length(freeThreshPairs) > 0) {
-		message("umx note: free double-entry threshold(s) for ", paste(freeThreshPairs, collapse = ", "), " (means cont=cens; trait variance free — not binary V=1).")
+		message("umx note: free double-entry threshold(s) for ", paste(freeThreshPairs, collapse = ", "), " (means cont=cens; trait variance free -- not binary V=1).")
 	}
 
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelACE_DE") # set class so that S3 plot() and umxSummary dispatch
-	# as() strips custom attributes — set umxDE metadata only after cast
+	# as() strips custom attributes -- set umxDE metadata only after cast
 	attr(model, "umxDE") = list(
 		fixedCensorThresholds = length(fixedCuts) > 0,
 		fixedCuts = fixedCuts,
@@ -884,8 +884,8 @@ xmu_ace_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, sel
 	vtotIdxToRelease = integer(0)
 	pairsToMeanEquate = if (isTRUE(equateMeansForAllPairs)) names(contByCens) else names(fixedCuts)
 
-	# 1) Thresholds: fix at known cut, or set free-τ start in data units (not 0.1)
-	#    Free τ at 0.1 with mean ~170 is infeasible and kills multi-DE optim.
+	# 1) Thresholds: fix at known cut, or set free-tau start in data units (not 0.1)
+	#    Free tau at 0.1 with mean ~170 is infeasible and kills multi-DE optim.
 	for (censBase in names(contByCens)) {
 		devCols = colnames(dev$labels)
 		matchCols = devCols[devCols == censBase | startsWith(devCols, paste0(censBase, sep)) | grepl(paste0("^", censBase, "[0-9]+$"), devCols)]
@@ -1221,10 +1221,10 @@ umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, s
 		meanCaption = NULL
 		if (!is.null(model$top$intercept)) {
 			meanVals = model$top$intercept$values
-			meanCaption = "Means (intercept; _cens columns omitted — equated to _cont)"
+			meanCaption = "Means (intercept; _cens columns omitted -- equated to _cont)"
 		} else if (!is.null(model$top$expMean)) {
 			meanVals = model$top$expMean$values
-			meanCaption = "Means (from model$top$expMean; _cens omitted — equated to _cont)"
+			meanCaption = "Means (from model$top$expMean; _cens omitted -- equated to _cont)"
 		}
 		if (!is.null(meanVals)) {
 			cn = colnames(meanVals)
