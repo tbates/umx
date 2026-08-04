@@ -1817,7 +1817,7 @@ umxSummary.list <- function(model, digits = 3, report = c("markdown", "html"), m
 #' `mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)` -
 #' OpenMx stores those names as-is (it does **not** map `S`->`cov` or
 #' `V`->`asymCov`). This method detects that case, prints the LDSC content via
-#' [umxSummary.list()], and notes how to build a runnable WLS `mxData`.
+#' [umxSummary.list()], and notes how to build a working WLS `mxData`.
 #'
 #' @param model An [OpenMx::mxData] object (`MxDataStatic`).
 #' @param digits Rounding for printed cells (default 3).

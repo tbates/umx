@@ -311,12 +311,11 @@ methods::setClass("MxModelMRDoC"    , contains = "MxModel")
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
 
 methods::setClass("MxModelACE"    , contains = "MxModel")
-methods::setClass("MxModelACE_DE" , contains = "MxModel")
 methods::setClass("MxModelACEv"   , contains = "MxModelACE")
-
-
 methods::setClass("MxModelACEcov" , contains = "MxModel")
 
+methods::setClass("MxModelACE_DE" , contains = "MxModel")
+methods::setClass("umx_double_entry_data", contains = "data.frame")
 
 methods::setClass("MxModelIP"     , contains = "MxModel")
 methods::setClass("MxModelCP"     , contains = "MxModel")
@@ -326,7 +325,8 @@ methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
 methods::setClass("MxModelGSEM"   , contains = "MxRAMModel")
 
-methods::setAs("MxRAMModel", "MxModelGSEM", function(from) {
-  class(from) = "MxModelGSEM"
-  return(from)
-})
+
+# methods::setAs("MxRAMModel", "MxModelGSEM", function(from) {
+#   class(from) = "MxModelGSEM"
+#   return(from)
+# })

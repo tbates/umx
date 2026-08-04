@@ -1317,7 +1317,7 @@ umxSummary.MxModelACE_DE <- umxSummaryACE_DE
 #' @param n Number of data frame rows to display below summary table (default = 6).
 #' @param ... Additional arguments passed to print.
 #' @export
-print.umx_double_entry_data <- function(x, n = 6, ...) {
+umxPrint_double_entry_data <- function(x, n = 6, ...) {
     meta = attr(x, "umxDoubleEntry")
     
     if (is.null(meta) || is.null(meta$pairs)) {
@@ -1394,3 +1394,5 @@ print.umx_double_entry_data <- function(x, n = 6, ...) {
     print(head(as.data.frame(x), n = n))
     invisible(x)
 }
+#' @export
+print.umx_double_entry_data <- umxPrint_double_entry_data

@@ -3,15 +3,17 @@ benchmarking
 darwin
 gfortran
 Makefile
+prebuilt
+Prebuilt
 roxygen
 sitrep
 WIP
 
 #umxCloud
-signup
-VPN
 Datacenter
+signup
 VM
+VPN
 
 #GSEM
 CHR
@@ -95,6 +97,7 @@ UI
 umxPath's
 
 
+#Journals
 Biometrika
 Econometrica
 Nephrology
@@ -251,6 +254,7 @@ Suchman
 tbates
 Timmerman
 Urbanek
+von
 Verhulst
 Visscher
 Vlaming
@@ -265,6 +269,47 @@ Zautra
 Zeeuw
 Zhou
 
+# xmuCalculateSRMR etc.
+asymCov
+autocompletion
+fixCensorThresholds
+Vtot
+diffdf
+fallbacks
+ginv
+noncentrality
+polycorrelation
+Polycorrelation
+polycorrelations
+Savalei's
+Satorra
+scalingFactor
+pValue
+strictSbChisq
+outcomeAge
+researchbox
+ResearchBox
+GMM
+AFIs
+calculateStrictSb
+casewise
+chol
+CompletionEnv
+deltaDf
+DeltaSRMR
+diffFit
+
+# tmx_show
+observedStats
+useWeight
+
+# umxCompare, plot
+nonnormal
+Nonnormal
+nonnormality
+MLR
+catML
+DeltaCFI
 paran
 pwr
 baseN_T1
@@ -296,6 +341,7 @@ ao
 APA
 app
 arg
+
 Arial
 arial
 assortative
