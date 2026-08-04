@@ -158,11 +158,11 @@ if (file.exists(pngPath)) {
 }
 ```
 
-We can also get robust measures of fit and uncertainty using `uncertainty = "RobustSE"`.
+We can also get robust measures of fit and uncertainty using `uncertainty = "MLR"`.
 These use sandwich-based scaling + Brosseau-Liard & Savalei (2012) adjustments to CFI/TLI/RMSEA:
 
 ```{r uncertainty, message = FALSE}
-umxSummary(m1, std = TRUE, uncertainty = "RobustSE", refModels = FALSE)
+umxSummary(m1, std = TRUE, uncertainty = "MLR", refModels = FALSE)
 ```
 
 ## Ordinal and WLS models

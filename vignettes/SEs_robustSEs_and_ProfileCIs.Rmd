@@ -118,12 +118,12 @@ umxSummary(m1, std = TRUE, uncertainty = "SE")
 ```
 
 ### Step 2: Request Robust Standard Errors
-To obtain robust standard errors, we can use `uncertainty = "RobustSE"`.
+To obtain robust standard errors, we can use `uncertainty = "MLR"`.
 
 # Compute robust standard errors
 
 ```{r robust_Robust, message=FALSE}
-umxSummary(m1, std = TRUE, uncertainty = "RobustSE")
+umxSummary(m1, std = TRUE, uncertainty = "MLR")
 ```
 
 We can also use `imxRobustSE()` from `OpenMx` on our fitted model, returning a vector of SEs:
