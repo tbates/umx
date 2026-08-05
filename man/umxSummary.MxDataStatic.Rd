@@ -41,7 +41,7 @@ rather than modern WLS keys - e.g.
 \code{mxData(type="summary", observedStats = Psych_LDSC, numObs = 2)} -
 OpenMx stores those names as-is (it does \strong{not} map \code{S}->\code{cov} or
 \code{V}->\code{asymCov}). This method detects that case, prints the LDSC content via
-\code{\link[=umxSummary.list]{umxSummary.list()}}, and notes how to build a runnable WLS \code{mxData}.
+\code{\link[=umxSummary.list]{umxSummary.list()}}, and notes how to build a working WLS \code{mxData}.
 }
 \examples{
 data(Psych_LDSC)

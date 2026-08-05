@@ -1394,5 +1394,6 @@ umxPrint_double_entry_data <- function(x, n = 6, ...) {
     print(head(as.data.frame(x), n = n))
     invisible(x)
 }
+#' @method print umx_double_entry_data
 #' @export
 print.umx_double_entry_data <- umxPrint_double_entry_data
