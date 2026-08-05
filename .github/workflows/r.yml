@@ -7,7 +7,7 @@ on:
     # branches: [ "master" ]
   schedule:
     # Daily check against CRAN OpenMx
-    - cron: '0 0 * * *'
+    # - cron: '0 0 * * *'
   workflow_dispatch:
     inputs:
       run_cran:
