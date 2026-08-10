@@ -259,6 +259,7 @@ Other Core Model Building Functions:
 \code{\link[=umxMatrix]{umxMatrix()}},
 \code{\link[=umxModify]{umxModify()}},
 \code{\link[=umxRAM]{umxRAM()}},
+\code{\link[=umxRAM_DE]{umxRAM_DE()}},
 \code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 \concept{Core Model Building Functions}

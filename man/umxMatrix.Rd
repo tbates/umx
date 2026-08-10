@@ -110,6 +110,7 @@ Other Core Model Building Functions:
 \code{\link[=umxModify]{umxModify()}},
 \code{\link[=umxPath]{umxPath()}},
 \code{\link[=umxRAM]{umxRAM()}},
+\code{\link[=umxRAM_DE]{umxRAM_DE()}},
 \code{\link[=umxSuperModel]{umxSuperModel()}}
 }
 \concept{Core Model Building Functions}
