@@ -102,32 +102,32 @@ only the named pairs are fixed (partial \code{censorCuts} is allowed).}
 \code{umxACE_DE} implements a twin model for handling censored/floor-effect variables
 using a "double-entry" strategy. Each censored variable is represented by a pair of columns:
 one continuous (holding non-censored values) and one binary/ordinal (holding the censored indicator).
-The path coefficients (A, C, E) are constrained to be equal across the two paired columns,
-and the specific factor loadings for the censored column are fixed to 0.
+The path coefficients (A, C, E) are constrained to be equal across the two paired columns.
 
 Fully continuous variables may be mixed with double-entry pairs in \code{selDVs}
-(e.g. \code{c("ht", "wt_cont", "wt_cens")}). Prep only the censored traits with
+(e.g. \code{c("ht", "wt_cont", "wt_cens")}). Prepare the censored traits with
 \code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}. At least one contiguous \verb{_cont}/\verb{_cens} pair is required;
 for all-continuous models use \code{\link[=umxACE]{umxACE()}}.
 
 \strong{"Trust the Science" note}
 
 If you know the censoring value, keep fixCensorThresholds = "yes" / "auto" to lock that in.
-Estimated-free threshold can "wander" very wildly. Reserve it only for unknown cut, and even then treat
+Estimated-free threshold can "wander" wildly. Reserve it only for unknown cut, and even then treat
 estimated thresholds with suspicion. Free threshold will "run" but it is \strong{not great} at
 recovering the true floor/threshold.
 }
 \details{
 Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
-one continuous (\code{_cont}) and one binary/ordinal factor (\code{_cens}).
+one continuous (\verb{_cont}) and one binary/ordinal factor (\verb{_cens}).
 
-\strong{Likelihood Evaluation & Missingness Structure:}
+\emph{Likelihood Evaluation & Missingness Structure:}
 Each individual contributes exactly one non-missing likelihood element for the censored trait:
 \itemize{
-\item \strong{Non-censored cases} (\eqn{x > \textrm{cut}}): \code{_cont} contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}, while \code{_cens} is set to \code{NA}.
-\item \strong{Censored cases} (\eqn{x \le \textrm{cut}}): \code{_cont} is set to \code{NA}, while \code{_cens} contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}.
+\item \strong{Non-censored cases} (\eqn{x > cut}{x > cut}): \verb{_cont} contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}{f(x)}, while \verb{_cens} is set to \code{NA}.
+\item \strong{Censored cases} (\eqn{x \le cut}{x <= cut}): \verb{_cont} is set to \code{NA}, while \verb{_cens} contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}{P(Y <= tau)}.
 }
-Leaving \code{_cens} non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
+
+Leaving \verb{_cens} non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)}{f(x)} and \eqn{P(Y > \tau)}{P(Y > tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
 }
 \examples{
 require(umx)
