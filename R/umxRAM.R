@@ -583,11 +583,12 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		}
 	}
 
-	newModel = do.call("mxModel", list(name = name, type = "RAM",
+	newModel = mxModel(name = name, type = "RAM",
 		manifestVars = usedManifests,
 		latentVars  = latentVars,
-		independent = independent, dot.items)
+		independent = independent, dot.items
 	)
+
 	# ============
 	# = Add data =
 	# ============
