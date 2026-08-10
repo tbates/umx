@@ -930,7 +930,7 @@ xmu_make_mxData <- function(data= NULL, type = c("Auto", "FIML", "cov", "cor", '
 		dropColumns = TRUE
 	}
 
-	if (class(data)[[1]] == "data.frame") {
+	if (inherits(data, "data.frame")) {
 		# check variance, excluding covariates
 		xmu_check_variance(data[, setdiff(namesNeeded, fullCovs), drop = FALSE])
 
