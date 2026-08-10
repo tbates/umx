@@ -28,21 +28,21 @@
 #' **"Trust the Science" note**
 #'
 #' If you know the censoring value, keep fixCensorThresholds = "yes" / "auto" to lock that in.
-#' Estimated-free threshold can "wander" very wildly. Reserve it only for unknown cut, and even then treat 
+#' Estimated-free threshold can "wander" wildly. Reserve it only for unknown cut, and even then treat 
 #' estimated thresholds with suspicion. Free threshold will "run" but it is **not great** at 
 #' recovering the true floor/threshold.
 #'
 #' @details
 #' Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
-#' one continuous (\code{_cont}) and one binary/ordinal factor (\code{_cens}).
+#' one continuous (`_cont`) and one binary/ordinal factor (`_cens`).
 #'
 #' *Likelihood Evaluation & Missingness Structure:*
 #' Each individual contributes exactly one non-missing likelihood element for the censored trait:
 #' 
-#'  * **Non-censored cases** (\eqn{x > \textrm{cut}}): \code{_cont} contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}, while \code{_cens} is set to \code{NA}.
-#'  * **Censored cases** (\eqn{x \le \textrm{cut}}): \code{_cont} is set to \code{NA}, while \code{_cens} contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}.
-#' }
-#' Leaving `_cens` non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
+#'  * **Non-censored cases** (\eqn{x > cut}{x > cut}): `_cont` contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}{f(x)}, while `_cens` is set to `NA`.
+#'  * **Censored cases** (\eqn{x \le cut}{x <= cut}): `_cont` is set to `NA`, while `_cens` contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}{P(Y <= tau)}.
+#'
+#' Leaving `_cens` non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)}{f(x)} and \eqn{P(Y > \tau)}{P(Y > tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
 #'
 #' @param name The name of the model (defaults to "ACE").
 #' @param selDVs Base names of variables to model. Include fully observed continuous traits by base name (e.g. `"ht"`). Include each censored trait as an adjacent pair of prepped names (e.g. `"wt_cont", "wt_cens"`). Prep censored data with [umx_make_double_entry_data()] first.
@@ -526,8 +526,7 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' (indicating censoring status), ready for \code{umxACE_DE}.
 #' 
 #' The function has flexible rules for censoring. You give a `list()` of columns, with the censoring rule for each, and the function creates new matching `var_cens` and `var_cont` columns. A rule can be a simple numeric value to cut at, e.g., `list(wt=0)`) for cut column `wt` at zero. More complex expressions should be in quotes `list(wt="<= cut")`.
-#' **Mutual-NA invariant enforced**: Each row contributes exactly *one* non-missing element per DE trait — continuous density `f(x)` or threshold CDF `P(Y≤τ)` — preventing double-counting. 
-#' \eqn{P(Y <= \tau)}
+#' **Mutual-NA invariant enforced**: Each row contributes exactly *one* non-missing element per DE trait — continuous density \eqn{f(x)}{f(x)} or threshold CDF \eqn{P(Y \le \tau)}{P(Y <= tau)} — preventing double-counting.
 #' On non-censored rows, the function sets the var_cont to the observed value and the var_cens value to NA. On censored rows, the continuous column is set to NA, and the correct value of an ordered factor `c("censored","observed")` is set in var_cens (integer 1). Right-censor `>=cut` flips levels to `c("observed","censored")` so censored = integer 2 (upper tail). `NA` in raw propagates to `NA` in both.
 #'
 #' @details
@@ -535,8 +534,8 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #'
 #' To prevent likelihood double-counting during FIML estimation:
 #'
-#' * Non-censored observations (\eqn{x > \textrm{cut}}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
-#' * Censored observations (\eqn{x \le \textrm{cut}}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
+#' * Non-censored observations (\eqn{x > cut}{x > cut}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
+#' * Censored observations (\eqn{x \le cut}{x <= cut}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
 #'
 #' This ensures each case contributes exactly one mutually exclusive likelihood component (either continuous PDF or ordinal CDF threshold probability).
 #'
@@ -557,12 +556,11 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE_DE()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
 #' @examples
-#' a = 2+2
+#' \dontrun{
 #' data(twinData)
 #' prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
 #' # attr(prep, "umxDoubleEntry")$pairs[[1]]$cut  # 0
 #' 
-#' \dontrun{
 #' # Then
 #' selDVs = c("ht", "wt_cont", "wt_cens")
 #' # Known LOD
@@ -570,7 +568,7 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' # Un-known LOD
 #' umxACE_DE(data = prep, selDVs = selDVs, sep = "", fixCensorThresholds = "no")
 #' # Mix with continuous traits:
-#' umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
+#' umxACE_DE(data = prep, selDVs = c("ht", "wt_cont", "wt_cens"))
 #' }
 umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c("_cont", "_cens"), sep = "_T", nSib = 2, levels = NULL) {
 	if (is.null(cols)) {
