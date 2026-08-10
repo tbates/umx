@@ -39,24 +39,28 @@ listing per-trait cut, side, and whether the cut is fixable in a model.
 Helper to split one or more variables in a twin dataset into a paired
 continuous column (holding non-censored values) and an ordered factor column
 (indicating censoring status), ready for \code{umxACE_DE}.
+
+The function has flexible rules for censoring. You give a \code{list()} of columns, with the censoring rule for each, and the function creates new matching \code{var_cens} and \code{var_cont} columns. A rule can be a simple numeric value to cut at, e.g., \code{list(wt=0)}) for cut column \code{wt} at zero. More complex expressions should be in quotes \code{list(wt="<= cut")}.
+\strong{Mutual-NA invariant enforced}: Each row contributes exactly \emph{one} non-missing element per DE trait — continuous density \eqn{f(x)}{f(x)} or threshold CDF \eqn{P(Y \le \tau)}{P(Y <= tau)} — preventing double-counting.
+On non-censored rows, the function sets the var_cont to the observed value and the var_cens value to NA. On censored rows, the continuous column is set to NA, and the correct value of an ordered factor \code{c("censored","observed")} is set in var_cens (integer 1). Right-censor \verb{>=cut} flips levels to \code{c("observed","censored")} so censored = integer 2 (upper tail). \code{NA} in raw propagates to \code{NA} in both.
 }
 \details{
 Double-entry data preparation creates paired continuous (\code{_cont}) and ordinal factor (\code{_cens}) columns for censored traits.
 
 To prevent likelihood double-counting during FIML estimation:
 \itemize{
-\item Non-censored observations (\eqn{x > \textrm{cut}}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
-\item Censored observations (\eqn{x \le \textrm{cut}}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
+\item Non-censored observations (\eqn{x > cut}{x > cut}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
+\item Censored observations (\eqn{x \le cut}{x <= cut}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
 }
+
 This ensures each case contributes exactly one mutually exclusive likelihood component (either continuous PDF or ordinal CDF threshold probability).
 }
 \examples{
+\dontrun{
 data(twinData)
-# Left-censor weight at 0 (or any floor): creates wt_cont1/2 and wt_cens1/2
 prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
 # attr(prep, "umxDoubleEntry")$pairs[[1]]$cut  # 0
 
-\dontrun{
 # Then
 selDVs = c("ht", "wt_cont", "wt_cens")
 # Known LOD
@@ -64,7 +68,7 @@ umxACE_DE(data = prep, selDVs = selDVs, sep = "")
 # Un-known LOD
 umxACE_DE(data = prep, selDVs = selDVs, sep = "", fixCensorThresholds = "no")
 # Mix with continuous traits:
-umxACE_DE(selDVs = c("ht", "wt_cont", "wt_cens"), ...)
+umxACE_DE(data = prep, selDVs = c("ht", "wt_cont", "wt_cens"))
 }
 }
 \seealso{
