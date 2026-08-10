@@ -4860,7 +4860,13 @@ umx_is_LISREL <- function(obj) {
 umx_is_MxModel <- function(obj, listOK = FALSE) {
 	if(is.list(obj)){
 		if(!listOK){
-			message("If you're expecting a list of models, set listOK = TRUE")
+			containsModel = FALSE
+			for (el in obj) {
+				if (isS4(el) && is(el, "MxModel")) { containsModel = TRUE; break }
+			}
+			if (containsModel) {
+				message("If you're expecting a list of models, set listOK = TRUE")
+			}
 			testVal = FALSE
 		}else{
 			n = 1

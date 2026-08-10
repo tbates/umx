@@ -86,9 +86,6 @@ umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentV
 	tryHard    = match.arg(tryHard)
 	allContinuousMethod = match.arg(allContinuousMethod)
 
-	if(!is.null(weight)){
-		message("Polite note: Weight feature has not been tested: Models may have spurious fit, consider this feature alpha quality")
-	}
 	# if data provided check it isn't a tibble
 	if(!is.null(data)){
 		# avoid ingesting tibbles
@@ -123,10 +120,10 @@ umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentV
 				name = model$name
 			}
 			if(is.null(data)){
-				newModel = mxModel(model, dotItems, name = name)
+				newModel = do.call(mxModel, c(list(model), dotItems, list(name = name)))
 			} else {
 				if(umx_is_MxData(data)){
-					newModel = mxModel(model, dotItems, data, name = name)
+					newModel = do.call(mxModel, c(list(model), dotItems, list(data, name = name)))
 				} else {
 					stop("Polite note: I don't know how to convert raw data into mxData to update your model - can you please do that for me and try again?")
 				}
@@ -315,10 +312,10 @@ umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentV
 	# = Assemble model =
 	# ==================
 
-	newModel = do.call("mxModel", list(name = name, type = "LISREL",
+	newModel = do.call(mxModel, c(list(name = name, type = "LISREL",
 		manifestVars = manifestList,
 		latentVars  = latentList,
-		independent = independent, dotItems)
+		independent = independent), dotItems)
 	)
 	# ============
 	# = Add data =

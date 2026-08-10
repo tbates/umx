@@ -133,7 +133,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 	}
 	
 	# multiple group fit function sums the likelihoods of its component models
-	newModel = mxModel(name, dot.items, mxFitFunctionMultigroup(modelNames))
+	newModel = do.call(mxModel, c(list(name), dot.items, list(mxFitFunctionMultigroup(modelNames))))
 	# Trundle through and make sure values with the same label have the same start value... means for instance.
 	newModel = omxAssignFirstParameters(newModel)
 	# 2. Find and change any duplicate model names inside the models

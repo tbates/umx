@@ -108,9 +108,6 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 	sCont = doubleEntrySuffix[1]
 	sCens = doubleEntrySuffix[2]
 
-	if (!is.null(weight)){
-		message("Polite note: Weight feature has not been tested: Models may have spurious fit, consider this feature alpha quality")
-	}
 	if (!is.null(data)){
 		# Preserve umxDoubleEntry attr across class coercions (data may be umx_double_entry_data or tbl)
 		savedDEattr = attr(data, "umxDoubleEntry")
@@ -149,10 +146,10 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 				name = model$name
 			}
 			if (is.null(data)){
-				newModel = mxModel(model, dot.items, name = name)
+				newModel = do.call(mxModel, c(list(model), dot.items, list(name = name)))
 			} else {
 				if (umx_is_MxData(data)){
-					newModel = mxModel(model, dot.items, data, name = name)
+					newModel = do.call(mxModel, c(list(model), dot.items, list(data, name = name)))
 				} else {
 					stop("Polite note: I don't know how to convert raw data into mxData to update your model - can you please do that for me and try again?")
 				}
@@ -353,10 +350,10 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 		}
 	}
 
-	newModel = mxModel(name = name, type = "RAM", myData,
+	newModel = do.call(mxModel, c(list(name = name, type = "RAM", myData,
 		manifestVars = usedManifests,
 		latentVars  = latentVars,
-		independent = independent, dot.items
+		independent = independent), dot.items)
 	)
 
 	# ==========================

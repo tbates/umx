@@ -368,9 +368,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	lavaanMode = match.arg(lavaanMode)
 	allContinuousMethod = match.arg(allContinuousMethod)
 
-	if(!is.null(weight)){
-		message("Polite note: Weight feature has not been tested: Models may have spurious fit, consider this feature alpha quality")
-	}
 	# if data provided check it isn't a tibble
 	if(!is.null(data)){
 		# avoid ingesting tibbles
@@ -421,10 +418,10 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 				name = model$name
 			}
 			if(is.null(data)){
-				newModel = mxModel(model, dot.items, name = name)
+				newModel = do.call(mxModel, c(list(model), dot.items, list(name = name)))
 			} else {
 				if(umx_is_MxData(data)){
-					newModel = mxModel(model, dot.items, data, name = name)
+					newModel = do.call(mxModel, c(list(model), dot.items, list(data, name = name)))
 				} else {
 					stop("Polite note: I don't know how to convert raw data into mxData to update your model - can you please do that for me and try again?")
 				}
@@ -583,11 +580,13 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		}
 	}
 
-	newModel = do.call("mxModel", list(name = name, type = "RAM",
+	# needed to flatten any lists in the input
+	newModel = do.call(mxModel, c(list(name = name, type = "RAM",
 		manifestVars = usedManifests,
 		latentVars  = latentVars,
-		independent = independent, dot.items)
+		independent = independent), dot.items)
 	)
+	
 	# ============
 	# = Add data =
 	# ============
