@@ -18,11 +18,10 @@
 #' `umxACE_DE` implements a twin model for handling censored/floor-effect variables
 #' using a "double-entry" strategy. Each censored variable is represented by a pair of columns:
 #' one continuous (holding non-censored values) and one binary/ordinal (holding the censored indicator).
-#' The path coefficients (A, C, E) are constrained to be equal across the two paired columns, 
-#' and the specific factor loadings for the censored column are fixed to 0.
+#' The path coefficients (A, C, E) are constrained to be equal across the two paired columns.
 #'
 #' Fully continuous variables may be mixed with double-entry pairs in `selDVs`
-#' (e.g. `c("ht", "wt_cont", "wt_cens")`). Prep only the censored traits with
+#' (e.g. `c("ht", "wt_cont", "wt_cens")`). Prepare the censored traits with
 #' [umx_make_double_entry_data()]. At least one contiguous `_cont`/`_cens` pair is required;
 #' for all-continuous models use [umxACE()].
 #' 
@@ -37,13 +36,13 @@
 #' Double-entry modeling represents a floor- or ceiling-censored trait using an adjacent pair of manifest columns:
 #' one continuous (\code{_cont}) and one binary/ordinal factor (\code{_cens}).
 #'
-#' \strong{Likelihood Evaluation & Missingness Structure:}
+#' *Likelihood Evaluation & Missingness Structure:*
 #' Each individual contributes exactly one non-missing likelihood element for the censored trait:
-#' \itemize{
-#'   \item \strong{Non-censored cases} (\eqn{x > \textrm{cut}}): \code{_cont} contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}, while \code{_cens} is set to \code{NA}.
-#'   \item \strong{Censored cases} (\eqn{x \le \textrm{cut}}): \code{_cont} is set to \code{NA}, while \code{_cens} contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}.
+#' 
+#'  * **Non-censored cases** (\eqn{x > \textrm{cut}}): \code{_cont} contains the observed numeric value evaluated via the continuous normal density \eqn{f(x)}, while \code{_cens} is set to \code{NA}.
+#'  * **Censored cases** (\eqn{x \le \textrm{cut}}): \code{_cont} is set to \code{NA}, while \code{_cens} contains the ordinal factor level evaluated via the cumulative threshold probability \eqn{P(Y \le \tau)}.
 #' }
-#' Leaving \code{_cens} non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
+#' Leaving `_cens` non-missing for observed continuous rows would double-count the tail density (evaluating both \eqn{f(x)} and \eqn{P(Y > \tau)} for the same individual), introducing artificial covariance dependencies and inflating density estimates.
 #'
 #' @param name The name of the model (defaults to "ACE").
 #' @param selDVs Base names of variables to model. Include fully observed continuous traits by base name (e.g. `"ht"`). Include each censored trait as an adjacent pair of prepped names (e.g. `"wt_cont", "wt_cens"`). Prep censored data with [umx_make_double_entry_data()] first.
@@ -525,15 +524,20 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' Helper to split one or more variables in a twin dataset into a paired
 #' continuous column (holding non-censored values) and an ordered factor column
 #' (indicating censoring status), ready for \code{umxACE_DE}.
+#' 
+#' The function has flexible rules for censoring. You give a `list()` of columns, with the censoring rule for each, and the function creates new matching `var_cens` and `var_cont` columns. A rule can be a simple numeric value to cut at, e.g., `list(wt=0)`) for cut column `wt` at zero. More complex expressions should be in quotes `list(wt="<= cut")`.
+#' **Mutual-NA invariant enforced**: Each row contributes exactly *one* non-missing element per DE trait — continuous density `f(x)` or threshold CDF `P(Y≤τ)` — preventing double-counting. 
+#' \eqn{P(Y <= \tau)}
+#' On non-censored rows, the function sets the var_cont to the observed value and the var_cens value to NA. On censored rows, the continuous column is set to NA, and the correct value of an ordered factor `c("censored","observed")` is set in var_cens (integer 1). Right-censor `>=cut` flips levels to `c("observed","censored")` so censored = integer 2 (upper tail). `NA` in raw propagates to `NA` in both.
 #'
 #' @details
 #' Double-entry data preparation creates paired continuous (\code{_cont}) and ordinal factor (\code{_cens}) columns for censored traits.
 #'
 #' To prevent likelihood double-counting during FIML estimation:
-#' \itemize{
-#'   \item Non-censored observations (\eqn{x > \textrm{cut}}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
-#'   \item Censored observations (\eqn{x \le \textrm{cut}}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
-#' }
+#'
+#' * Non-censored observations (\eqn{x > \textrm{cut}}) retain their numeric continuous score in \code{_cont}, while \code{_cens} is set to \code{NA}.
+#' * Censored observations (\eqn{x \le \textrm{cut}}) have \code{_cont} set to \code{NA}, while \code{_cens} records the ordinal censored status level.
+#'
 #' This ensures each case contributes exactly one mutually exclusive likelihood component (either continuous PDF or ordinal CDF threshold probability).
 #'
 #' @param data The dataframe to process.
@@ -553,8 +557,8 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE_DE()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
 #' @examples
+#' a = 2+2
 #' data(twinData)
-#' # Left-censor weight at 0 (or any floor): creates wt_cont1/2 and wt_cens1/2
 #' prep = umx_make_double_entry_data(twinData, cols = list(wt = 0), sep = "")
 #' # attr(prep, "umxDoubleEntry")$pairs[[1]]$cut  # 0
 #' 
@@ -572,7 +576,6 @@ umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c(
 	if (is.null(cols)) {
 		return(data)
 	}
-	
 	# Avoid ingesting tibbles
 	if ("tbl" %in% class(data)) {
 		data = as.data.frame(data)
