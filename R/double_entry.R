@@ -554,7 +554,7 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #'   listing per-trait cut, side, and whether the cut is fixable in a model.
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxACE_DE()], [umxACE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
+#' @seealso - [umxACE_DE()], [umxRAM_DE()], [plot()], [umxSummary()], [umxModify()], [umxCompare()]
 #' @examples
 #' \dontrun{
 #' data(twinData)
@@ -684,7 +684,7 @@ umx_make_double_entry_data <- function(data, cols = NULL, doubleEntrySuffix = c(
 		nSib = nSib,
 		pairs = pairMeta
 	)
-	
+	class(data) = c("umx_double_entry_data", "data.frame")	
 	return(data)
 }
 

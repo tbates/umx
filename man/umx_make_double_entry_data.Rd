@@ -73,7 +73,7 @@ umxACE_DE(data = prep, selDVs = c("ht", "wt_cont", "wt_cens"))
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxACE_DE]{umxACE_DE()}}, \code{\link[=umxACE]{umxACE()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
+\item \code{\link[=umxACE_DE]{umxACE_DE()}}, \code{\link[=umxRAM_DE]{umxRAM_DE()}}, \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}
 }
 
 Other Twin Modeling Functions:
