@@ -11,8 +11,6 @@
 #' As you can see from the examples below, most of the work is done by [umxPath()]. `umxRAM_DE` wraps these paths up, takes the `data =` input, and 
 #' then internally doubles the paths for DE variables, equates them and sets everything up. By default it will also run it.
 #' 
-#' Try it, or one of the several models in the examples at the bottom of this page.
-#' 
 #' **Gotchas**
 #' A common error is to include data in the main list, a bit like
 #' saying `lm(y ~ x + df)` instead of `lm(y ~ x, data = df)`.

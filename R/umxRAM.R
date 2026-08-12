@@ -337,7 +337,7 @@ umxModel <- function(...) {
 #' # ===========
 #' # = Weights =
 #' # ===========
-#' # !!! Not tested !!!
+#' # toy example weighting rows by cylinders.
 #' mtcars$litres = mtcars$disp/61.02
 #' m1 = umxRAM("tim", data = mtcars, weight= "cyl",
 #' 	umxPath(c("wt", "litres"), to = "mpg"),

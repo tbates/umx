@@ -7961,9 +7961,11 @@ prolific_read_demog <- function(file, base = "", df = NULL, by.df = "PROLIFIC_PI
 	if(verbose) print(namez(newdf))
 	allNames = umx_check_names(namesNeeded = c(vars,age, sex), data = newdf, message="Checking demographics col names", die=FALSE)
 	if(!allNames){
+		namesNeeded = c(vars,age, sex)
+		missing = namesNeeded[!namesNeeded %in% colnames(newdf)]
 		print(paste0("Asked for: ", omxQuotes(c(vars,age, sex))))
 		print(namez(newdf))
-		stop("At least one name missing")
+		stop(length(missing), " columns missing: ", paste(omxQuotes(missing), collapse=", "))
 	}
 
 	# Replace "CONSENT_REVOKED" with NA

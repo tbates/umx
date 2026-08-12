@@ -102,8 +102,6 @@ Fully continuous variables may be mixed with double-entry pairs. Prepare the cen
 As you can see from the examples below, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM_DE} wraps these paths up, takes the \verb{data =} input, and
 then internally doubles the paths for DE variables, equates them and sets everything up. By default it will also run it.
 
-Try it, or one of the several models in the examples at the bottom of this page.
-
 \strong{Gotchas}
 A common error is to include data in the main list, a bit like
 saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
@@ -139,6 +137,7 @@ tmp = umx_make_double_entry_data(tmp, cols = list(litres= 2), sep="", nSib=1)
 m1 = umxRAM_DE("test", data = tmp, DEvars = c("litres"),
 	umxPath("litres", to = "mpg"),
 	umxPath("wt", to = "mpg"),
+	umxPath("wt", with = "litres"),
 	umxPath(v.m. = c("litres", "wt", "mpg"))
 )
 
