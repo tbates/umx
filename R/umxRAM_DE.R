@@ -1,15 +1,15 @@
 #' Build and run path-based Double-entry SEM models including censored data
 #'
 #' @description
-#' `umxRAM_DE` expedites creation of structural equation models which include censored data, enabled by support for double-entry,
-#' style pairs of `var_cens` and `var_cont` columns. It handles the doubling of paths, all the complex threshold set up and equating of weights.
-#' Users still just used [umxPath()] to specify the model.
+#' `umxRAM_DE` expedites SEM with censored data. Each name in `DEvars` is a **latent** trait.
+#' Prepared `_cont` / `_cens` columns are indicators of that latent (loading fixed at 1, residual fixed at 0).
+#' Write ordinary [umxPath()] calls using the base name (e.g. `"litres"`). Do not Cartesian-expand to `_cont`/`_cens`.
 #' 
 #' Fully continuous variables may be mixed with double-entry pairs. Prepare the censored traits with
 #' [umx_make_double_entry_data()]. At least one `DEvar` is required.
 #'
 #' As you can see from the examples below, most of the work is done by [umxPath()]. `umxRAM_DE` wraps these paths up, takes the `data =` input, and 
-#' then internally doubles the paths for DE variables, equates them and sets everything up. By default it will also run it.
+#' then builds the latent measurement model for each DE trait and sets thresholds. By default it will also run it.
 #' 
 #' **Gotchas**
 #' A common error is to include data in the main list, a bit like
@@ -20,15 +20,11 @@
 #' If you are used to hacking a quick model with [lavaan string syntax][umxLav2RAM()], use [umxRAM()] at present. Likewise, if you are at the "sketching" stage of theory consideration, `umxRAM` supports that, umxRAM_DE does not.
 #' 
 #' @details
-#' **WLS**
-#' `umxRAM` supports WLS estimation via the `type` argument (`"WLS"`, `"DWLS"`, or `"ULS"`).
-#'
-#' **Important for ordinal data**: If your data contains ordered factors, `umxRAM` will
-#' automatically create the necessary `mxThreshold` objects. You **do not** need to add them manually.
-#'
-#' For all-continuous data, use `allContinuousMethod` to control means modeling:
-#' - `"cumulants"` (default): Faster. No means model.
-#' - `"marginals"`: Includes means and supports missing data.
+#' **WLS / cov / cor**
+#' `type = "WLS"`, `"DWLS"`, `"ULS"`, `"cov"`, or `"cor"` is not valid in `umxRAM_DE`.
+#' Double-entry needs raw-data FIML (each row is either the continuous density or the
+#' threshold CDF). Those types fit a correlation/moment structure and cannot use the
+#' mutual-NA `_cont`/`_cens` pattern. For WLS/cov/cor on ordinary (non-DE) data, use [umxRAM()].
 #'
 #' @param model A model to update (or set to string to use as name for new model)
 #' @param data data for the model. Can be an [OpenMx::mxData()] or a data.frame
@@ -38,12 +34,12 @@
 #' @param fixCensorThresholds One of `c("yes","auto","no")`. `"yes"` fix every DE pair from `censorCuts`/prep attr; `"auto"` fix only pairs with finite known cut; `"no"` free thresholds.
 #' @param censorCuts Optional named numeric vector of known cuts on analysis scale. Names may be base (`"litres"`), `"_cont"` or `"_cens"` form.
 #' @param sep Separator used in prep (default `NULL` infers from `attr(data,"umxDoubleEntry")$sep` or `""`).
-#' @param group (optional) Column name to use for a multi-group model (default = NULL)
+#' @param group (optional) Column name to use for a multi-group model (default = NULL). Fixed DE thresholds (known cut) are applied in every group.
 #' @param group.equal In multi-group models, what to equate across groups (default = NULL: all free)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model
-#' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
+#' @param type One of `"Auto"` or `"FIML"`. `"WLS"`, `"DWLS"`, `"ULS"`, `"cov"`, and `"cor"` are rejected (use [umxRAM()]).
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param weight Passes weight values to mxData
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
@@ -78,7 +74,7 @@
 #' 	umxPath(v.m. = c("litres", "wt", "mpg"))
 #' )
 #'
-umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySuffix = c("_cont", "_cens"), fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, sep = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
+umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySuffix = c("_cont", "_cens"), fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, sep = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	# Check for data/model objects passed in ... before unlist() flattens them
 	for (item in dot.items) {
@@ -193,16 +189,12 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 			stop("Polite note: censored column '", censCol, "' must be an ordered factor from umx_make_double_entry_data().")
 		}
 	}
-	# Type guard: WLS not supported with DE v1
-	if (type %in% c("WLS", "DWLS", "ULS") && length(DEvars) > 0) {
-		stop("Polite note: Fixed double-entry thresholds with type=\"", type, "\" are not supported in umxRAM_DE v1. Use type=\"Auto\"/\"FIML\".")
+	# Moment-structure types are not row-wise raw FIML; DE needs the latter.
+	if (type %in% c("WLS", "DWLS", "ULS", "cov", "cor")) {
+		stop("Polite note: type=\"", type, "\" is not valid for umxRAM_DE. Double-entry censoring needs raw-data FIML (each row contributes either the continuous density or the threshold CDF). WLS/DWLS/ULS/cov/cor fit a correlation/moment structure and cannot use that pattern (_cont and _cens are never jointly observed). For WLS, cov, or cor on ordinary (non-DE) data, use umxRAM().", call. = FALSE)
 	}
-	if (!is.null(group) && length(DEvars) > 0) {
-		# Allow group only if not fixing? For simplicity hard error as per plan
-		if (!identical(fixCensorThresholds, "no") || !is.null(censorCuts)) {
-			stop("Polite note: umxRAM_DE with group and DE fixed thresholds not supported in v1.")
-		}
-	}
+	# group= is allowed with fixed τ: the known cut is on the analysis scale and is
+	# the same in every group. group.equal (equating other parameters) is still unimplemented.
 
 	foundNames = c()
 	defnNames  = c()
@@ -253,15 +245,26 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 		if (endsWith(nm, sCont) || endsWith(nm, sCens)) {
 			baseTry = sub(paste0(sCont, "$"), "", sub(paste0(sCens, "$"), "", nm))
 			if (baseTry %in% DEvars) {
-				stop("Polite note: Use base name '", baseTry, "' in umxPath(), not '", nm, "'. umxRAM_DE will expand it to '", paste0(baseTry, sCont), "' and '", paste0(baseTry, sCens), "' automatically.")
+				stop("Polite note: Use base name '", baseTry, "' in umxPath(), not '", nm, "'. umxRAM_DE treats '", baseTry, "' as a latent; indicators '", paste0(baseTry, sCont), "' and '", paste0(baseTry, sCens), "' are created automatically.")
 			}
 		}
 	}
 
-	# Expand DE paths: Cartesian product for DE→DE = 4, one-sided DE = 2
-	dot.items = xmu_ram_de_expand_paths(dot.items, DEvars, doubleEntrySuffix)
+	# Measurement model: each DEvar is a latent; _cont/_cens are perfect indicators.
+	# User paths stay on the base name. Two DE traits share one latent–latent S cell
+	# (not a 4-way indicator Cartesian product).
+	for (b in DEvars) {
+		contCol = paste0(b, sCont)
+		censCol = paste0(b, sCens)
+		dot.items = c(dot.items, list(
+			mxPath(from = b, to = contCol, arrows = 1, free = FALSE, values = 1),
+			mxPath(from = b, to = censCol, arrows = 1, free = FALSE, values = 1),
+			mxPath(from = contCol, arrows = 2, free = FALSE, values = 0),
+			mxPath(from = censCol, arrows = 2, free = FALSE, values = 0)
+		))
+	}
 
-	# Recompute foundNames after expansion for manifest detection
+	# Recompute foundNames after injecting indicators
 	foundNames = c()
 	for (thisItem in dot.items) {
 		if (!is.list(thisItem)){
@@ -288,7 +291,8 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 	if (length(defnNames) > 0){
 		umx_check_names(defnNames, data = data, message = "note: used as definition variable, but not present in data")
 	}
-	latentVars = setdiff(foundNames, c(manifestVars, "one"))
+	# DEvars are latents even if a same-named raw column remains in the prep data
+	latentVars = unique(c(DEvars, setdiff(foundNames, c(manifestVars, "one"))))
 
 
 	nLatent = length(latentVars)
@@ -303,18 +307,20 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 	# ======================================
 	# = List up used and un-used Manifests =
 	# ======================================
-	unusedManifests = setdiff(manifestVars, c(foundNames, defnNames))
-	if (!is.null(weight)) unusedManifests = setdiff(c(manifestVars, weight), c(foundNames, defnNames))
+	unusedManifests = setdiff(manifestVars, c(foundNames, defnNames, DEvars))
+	if (!is.null(weight)) unusedManifests = setdiff(c(manifestVars, weight), c(foundNames, defnNames, DEvars))
 	if (remove_unused_manifests & length(unusedManifests) > 0){
-		usedManifests = setdiff(intersect(manifestVars, foundNames), "one")
-		if (!is.null(weight)) {
-			myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = defnNames, verbose = verbose, weight = weight)
-		} else {
-			myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = defnNames, verbose = verbose)
-		}
+		usedManifests = setdiff(intersect(manifestVars, foundNames), c("one", DEvars))
 	} else {
-		usedManifests = setdiff(manifestVars, defnNames)
-		myData = xmu_make_mxData(data= data, type = type, verbose = verbose, manifests = usedManifests, fullCovs = defnNames)
+		usedManifests = setdiff(manifestVars, c(defnNames, DEvars))
+	}
+	for (b in DEvars) {
+		usedManifests = unique(c(usedManifests, paste0(b, sCont), paste0(b, sCens)))
+	}
+	if (!is.null(weight)) {
+		myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = defnNames, verbose = verbose, weight = weight)
+	} else {
+		myData = xmu_make_mxData(data = data, type = type, manifests = usedManifests, fullCovs = defnNames, verbose = verbose)
 	}
 	# Topologically sort manifestVars and latentVars
 	all_nodes = c(latentVars, usedManifests)
@@ -392,6 +398,20 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 			message("umx note: no means model; added ", paste(noteBits, collapse = "; "), " (see ?umxThresholdMatrix).")
 		}
 	}
+	# Trait mean/var live on the DE latent (not on _cont/_cens indicators)
+	for (b in DEvars) {
+		hasVar = !is.null(newModel$S) && !is.null(dimnames(newModel$S$values)) && b %in% rownames(newModel$S$values) &&
+			(isTRUE(newModel$S$free[b, b]) || (is.finite(newModel$S$values[b, b]) && newModel$S$values[b, b] != 0))
+		if (!hasVar) {
+			newModel = mxModel(newModel, mxPath(from = b, arrows = 2, free = TRUE, values = 1))
+		}
+		if (needsMeans) {
+			hasMean = !is.null(newModel$M) && !is.null(dimnames(newModel$M$values)) && b %in% colnames(newModel$M$values)
+			if (!hasMean) {
+				newModel = mxModel(newModel, mxPath("one", to = b, free = TRUE, values = 0))
+			}
+		}
+	}
 
 	# =========================
 	# = Labels and set values =
@@ -411,16 +431,18 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 	# =========================================
 	# Early guard for type already done; now resolve cuts and apply RAM ID fixes
 	deMeta = xmu_ram_de_parse_censor_meta(data, DEvars, doubleEntrySuffix, fixCensorThresholds, censorCuts)
-	# Enforce hard error for WLS/group already, but also handle group expansion later
-	if (length(deMeta$fixedCuts) > 0 && !is.null(group)) {
-		stop("Polite note: Fixed double-entry thresholds with group not supported in umxRAM_DE v1.")
+	# Always map every DEvar (not only pairs with a fixed cut) so summary/plot and
+	# fixCensorThresholds="no" still equate means, variances, and loadings.
+	fullContByCens = character(0)
+	for (b in DEvars) {
+		fullContByCens[paste0(b, sCens)] = paste0(b, sCont)
 	}
-	newModel = xmu_ram_de_apply_censor_thresholds(newModel, deMeta$fixedCuts, deMeta$contByCens, DEvars, doubleEntrySuffix, sep)
+	newModel = xmu_ram_de_apply_censor_thresholds(newModel, deMeta$fixedCuts, fullContByCens, DEvars, doubleEntrySuffix, sep)
 	# Tag DE metadata for summary/plot
 	attr(newModel, "umxDE") = list(
 		fixedCensorThresholds = length(deMeta$fixedCuts) > 0,
 		fixedCuts = deMeta$fixedCuts,
-		contByCens = deMeta$contByCens,
+		contByCens = fullContByCens,
 		DEvars = DEvars,
 		doubleEntrySuffix = doubleEntrySuffix,
 		sideByCens = deMeta$sideByCens
@@ -453,9 +475,30 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 			} else {
 				thisModel = umxSetParameters(thisModel, regex= "_GROUP$", newlabels= paste0("_", thisLevelOfGroup))
 			}
+			# Re-assert DE measurement ID after clone/relabel (τ@cut is group-invariant)
+			thisModel = xmu_ram_de_apply_censor_thresholds(thisModel, deMeta$fixedCuts, fullContByCens, DEvars, doubleEntrySuffix, sep)
+			attr(thisModel, "umxDE") = list(
+				fixedCensorThresholds = length(deMeta$fixedCuts) > 0,
+				fixedCuts = deMeta$fixedCuts,
+				contByCens = fullContByCens,
+				DEvars = DEvars,
+				doubleEntrySuffix = doubleEntrySuffix,
+				sideByCens = deMeta$sideByCens
+			)
 			modelList = c(modelList, thisModel)
 		}
-		return(umxSuperModel(name = name, modelList, autoRun = autoRun, tryHard = tryHard, std = std))
+		mg = umxSuperModel(name = name, modelList, autoRun = autoRun, tryHard = tryHard, std = std)
+		if (is.null(attr(mg, "umxDE"))) {
+			attr(mg, "umxDE") = list(
+				fixedCensorThresholds = length(deMeta$fixedCuts) > 0,
+				fixedCuts = deMeta$fixedCuts,
+				contByCens = fullContByCens,
+				DEvars = DEvars,
+				doubleEntrySuffix = doubleEntrySuffix,
+				sideByCens = deMeta$sideByCens
+			)
+		}
+		return(mg)
 	}
 
 	newModel = omxAssignFirstParameters(newModel)
@@ -465,128 +508,13 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 		attr(newModel, "umxDE") = list(
 			fixedCensorThresholds = length(deMeta$fixedCuts) > 0,
 			fixedCuts = deMeta$fixedCuts,
-			contByCens = deMeta$contByCens,
+			contByCens = fullContByCens,
 			DEvars = DEvars,
 			doubleEntrySuffix = doubleEntrySuffix,
 			sideByCens = deMeta$sideByCens
 		)
 	}
 	invisible(newModel)
-}
-
-#' Expand DE paths with Cartesian product and label equating
-#'
-#' Internal helper for [umxRAM_DE()]. For each [OpenMx::mxPath()] that references a
-#' base name in `DEvars`, expands to 2 or 4 paths sharing the original labels
-#' (Cartesian product when both `from` and `to` contain DE bases). Pure continuous
-#' paths pass through unchanged.
-#'
-#' @param dot.items List of dot items (unlisted `mxPath` etc.).
-#' @param DEvars Character vector of base DE names.
-#' @param doubleEntrySuffix Suffix pair `c("_cont","_cens")`.
-#' @return Expanded list of dot items.
-#' @family xmu internal not for end user
-xmu_ram_de_expand_paths <- function(dot.items, DEvars, doubleEntrySuffix = c("_cont","_cens")) {
-	sCont = doubleEntrySuffix[1]
-	sCens = doubleEntrySuffix[2]
-	expanded = list()
-	for (item in dot.items) {
-		# Handle lists returned by umxPath(v.m.) etc that may have been flattened already
-		items = list()
-		if (is.list(item) && !inherits(item, "MxPath") && !isS4(item)) {
-			# unlikely after unlist, but keep safe
-			for (k in seq_along(item)) items[[length(items)+1]] = item[[k]]
-		} else {
-			items[[1]] = item
-		}
-		for (p in items) {
-			if (!inherits(p, "MxPath")) {
-				expanded[[length(expanded)+1]] = p
-				next
-			}
-			fromVec = p@from
-			toVec   = p@to
-			arrows  = p@arrows
-			# Disallow suffix leakage already checked, but keep safe
-			# Detect DE involvement (base names only)
-			fromIsDE = fromVec %in% DEvars
-			toIsDE   = toVec %in% DEvars
-			hasFromDE = any(fromIsDE)
-			hasToDE   = any(toIsDE)
-			if (!hasFromDE && !hasToDE) {
-				expanded[[length(expanded)+1]] = p
-				next
-			}
-			# Build expanded from/to combinations
-			# Helper to map a vector element to its _cont/_cens form if DE else itself
-			mapCont = function(vec) {
-				out = character(length(vec))
-				for (i in seq_along(vec)) {
-					v = vec[i]
-					if (v %in% DEvars) out[i] = paste0(v, sCont) else out[i] = v
-				}
-				return(out)
-			}
-			mapCens = function(vec) {
-				out = character(length(vec))
-				for (i in seq_along(vec)) {
-					v = vec[i]
-					if (v %in% DEvars) out[i] = paste0(v, sCens) else out[i] = v
-				}
-				return(out)
-			}
-			# Determine expansion count: Cartesian logic per your Q1
-			# - one side DE -> 2 paths (cont + cens on that side)
-			# - both sides DE -> 4 paths (cont/cens x cont/cens)
-			# Also need to handle connect modes: mxPath connect expands from×to via OpenMx.
-			# We preserve original p's connect semantics by emitting paths with same connect/arrows/free/labels
-			# but with from/to vectors mapped to cont/cens forms.
-			# For both-sides case, emit 4 separate MxPaths each with cont/cens combo.
-			if (hasFromDE && !hasToDE) {
-				pCont = p
-				pCont@from = mapCont(fromVec)
-				pCens = p
-				pCens@from = mapCens(fromVec)
-				pCens@labels = pCont@labels
-				# ensure free/values/lbound/ubound shared (already same object copy)
-				expanded[[length(expanded)+1]] = pCont
-				expanded[[length(expanded)+1]] = pCens
-			} else if (!hasFromDE && hasToDE) {
-				pCont = p
-				pCont@to = mapCont(toVec)
-				pCens = p
-				pCens@to = mapCens(toVec)
-				pCens@labels = pCont@labels
-				expanded[[length(expanded)+1]] = pCont
-				expanded[[length(expanded)+1]] = pCens
-			} else {
-				# both sides DE -> 4 combos (or 2 for diagonal var case)
-				isDiagVar = (arrows == 2 && identical(sort(fromVec), sort(toVec)) && length(fromVec) == length(toVec))
-				# Check if from and to are same set and connect single implies diagonal variances only
-				# For diagonal var, emit only cont_cont and cens_cens (2), sharing label
-				if (isDiagVar) {
-					pCC = p; pCC@from = mapCont(fromVec); pCC@to = mapCont(toVec)
-					pRR = p; pRR@from = mapCens(fromVec); pRR@to = mapCens(toVec)
-					lab = pCC@labels
-					pRR@labels = lab
-					expanded[[length(expanded)+1]] = pCC
-					expanded[[length(expanded)+1]] = pRR
-				} else {
-					pCC = p; pCC@from = mapCont(fromVec); pCC@to = mapCont(toVec)
-					pCR = p; pCR@from = mapCont(fromVec); pCR@to = mapCens(toVec)
-					pRC = p; pRC@from = mapCens(fromVec); pRC@to = mapCont(toVec)
-					pRR = p; pRR@from = mapCens(fromVec); pRR@to = mapCens(toVec)
-					lab = pCC@labels
-					pCR@labels = lab; pRC@labels = lab; pRR@labels = lab
-					expanded[[length(expanded)+1]] = pCC
-					expanded[[length(expanded)+1]] = pCR
-					expanded[[length(expanded)+1]] = pRC
-					expanded[[length(expanded)+1]] = pRR
-				}
-			}
-		}
-	}
-	return(expanded)
 }
 
 #' Parse censor cuts for single-group RAM DE
@@ -674,145 +602,123 @@ xmu_ram_de_parse_censor_meta <- function(data, DEvars, doubleEntrySuffix = c("_c
 	return(list(fixedCuts = fixedCuts, contByCens = contByCens[names(fixedCuts)], sideByCens = sideByCens))
 }
 
-#' Apply RAM DE threshold/mean/variance identification
+#' Apply RAM DE latent-trait identification
 #'
-#' For each `cens` in `contByCens`: release binary `mean@0`/`resid@1` and
-#' equate means/variances to `cont`. For `fixedCuts`, fix threshold at cut;
-#' otherwise leave free with sensible start.
+#' After [xmuRAM2Ordinal()] (which may set binary `mean@0` / `resid@1`), enforce
+#' the latent-trait measurement model: each `DEvars` base `x` has
+#' `A[x_cont, x] = A[x_cens, x] = 1`, indicator residuals and means at 0,
+#' trait mean/variance on the latent. Fix or free the `_cens` threshold.
 #'
 #' @param model RAM model after `xmuRAM2Ordinal`.
 #' @param fixedCuts Named numeric cuts (may be empty).
-#' @param contByCens Named character cens->cont for all DE pairs (or at least fixed ones).
-#' @param DEvars Base names.
+#' @param contByCens Named character cens->cont (unused for equate; kept for call signature).
+#' @param DEvars Base names (latents).
 #' @param doubleEntrySuffix Suffixes.
 #' @param sep Separator (unused but kept for parity).
 #' @return Modified model.
 #' @family xmu internal not for end user
 xmu_ram_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, DEvars, doubleEntrySuffix = c("_cont","_cens"), sep = "") {
 	if (is.null(fixedCuts)) fixedCuts = numeric(0)
-	if (length(contByCens) == 0 && length(fixedCuts) == 0) return(model)
-	# contByCens may be only fixed subset; expand to all DEvars for mean/var handling
 	sCont = doubleEntrySuffix[1]
 	sCens = doubleEntrySuffix[2]
-	fullContByCens = character(0)
-	for (b in DEvars) fullContByCens[paste0(b, sCens)] = paste0(b, sCont)
-	# For threshold fixing, need mapping for every DE cens
-	# Thresholds: in RAM, matrix "threshMat" (th_1 x nFactors) with dimnames 2 = factorVarNames
-	# Use omxSetParameters on threshold labels; also support direct threshMat edits
-	# Thresholds live in deviations_for_thresh (RAM) or threshMat (legacy)
 	threshMat = NULL
 	if (!is.null(model$deviations_for_thresh)) threshMat = model$deviations_for_thresh
 	else if (!is.null(model$threshMat)) threshMat = model$threshMat
-	for (cens in names(fullContByCens)) {
-		cont = fullContByCens[[cens]]
+	allLabs = tryCatch(names(omxGetParameters(model, free = NA)), error = function(e) character(0))
+	for (b in DEvars) {
+		cont = paste0(b, sCont)
+		cens = paste0(b, sCens)
+		# Loadings latent → indicators @ 1
+		if (!is.null(model$A) && !is.null(dimnames(model$A$values))) {
+			if (cont %in% rownames(model$A$values) && b %in% colnames(model$A$values)) {
+				model$A$free[cont, b] = FALSE
+				model$A$values[cont, b] = 1
+			}
+			if (cens %in% rownames(model$A$values) && b %in% colnames(model$A$values)) {
+				model$A$free[cens, b] = FALSE
+				model$A$values[cens, b] = 1
+			}
+		}
+		# Indicator residuals @ 0 (override binary resid@1). No A paths from indicators
+		# (outcomes attach to the latent, not to _cont/_cens).
+		if (!is.null(model$A) && !is.null(dimnames(model$A$values))) {
+			rA = rownames(model$A$values)
+			cA = colnames(model$A$values)
+			for (ind in c(cont, cens)) {
+				if (ind %in% cA) {
+					for (rr in rA) {
+						if (rr == ind) next
+						model$A$free[rr, ind] = FALSE
+						model$A$values[rr, ind] = 0
+					}
+				}
+			}
+		}
+		# Indicator residuals @ 0; no residual cov among any DE indicators
+		# (trait cov is S[latent_i, latent_j] only).
+		if (!is.null(model$S) && !is.null(dimnames(model$S$values))) {
+			if (cont %in% rownames(model$S$values)) {
+				model$S$free[cont, cont] = FALSE
+				model$S$values[cont, cont] = 0
+			}
+			if (cens %in% rownames(model$S$values)) {
+				model$S$free[cens, cens] = FALSE
+				model$S$values[cens, cens] = 0
+			}
+			indAll = character(0)
+			for (bb in DEvars) {
+				indAll = c(indAll, paste0(bb, sCont), paste0(bb, sCens))
+			}
+			sNames = rownames(model$S$values)
+			for (ii in seq_along(indAll)) {
+				for (jj in seq_along(indAll)) {
+					a = indAll[ii]
+					c2 = indAll[jj]
+					if (!(a %in% sNames) || !(c2 %in% sNames)) next
+					if (a == c2) next
+					model$S$free[a, c2] = FALSE
+					model$S$values[a, c2] = 0
+				}
+			}
+		}
+		# Indicator means @ 0 (trait mean is on the latent)
+		if (!is.null(model$M) && !is.null(dimnames(model$M$values))) {
+			if (cont %in% colnames(model$M$values)) {
+				model$M$free[1, cont] = FALSE
+				model$M$values[1, cont] = 0
+			}
+			if (cens %in% colnames(model$M$values)) {
+				model$M$free[1, cens] = FALSE
+				model$M$values[1, cens] = 0
+			}
+		}
+		# Threshold on cens
 		threshLab = paste0(cens, "_thresh1")
 		if (!is.null(threshMat) && !is.null(colnames(threshMat$labels)) && cens %in% colnames(threshMat$labels)) {
 			lab = threshMat$labels[1, cens]
 			if (!is.na(lab) && nzchar(lab)) threshLab = lab
 		}
-		allLabs = tryCatch(names(omxGetParameters(model)), error = function(e) character(0))
-		if (!(threshLab %in% allLabs)) next
+		startTau = 0
+		if (!is.null(model$M) && b %in% colnames(model$M$values)) {
+			muLat = as.numeric(model$M$values[1, b])
+			if (is.finite(muLat)) startTau = muLat
+		}
 		if (cens %in% names(fixedCuts)) {
-			model = omxSetParameters(model, labels = threshLab, free = FALSE, values = as.numeric(fixedCuts[[cens]]))
+			if (threshLab %in% allLabs) {
+				model = omxSetParameters(model, labels = threshLab, free = FALSE, values = as.numeric(fixedCuts[[cens]]))
+			} else if (!is.null(threshMat) && cens %in% colnames(threshMat$values)) {
+				model$deviations_for_thresh$free[1, cens] = FALSE
+				model$deviations_for_thresh$values[1, cens] = as.numeric(fixedCuts[[cens]])
+			}
 		} else {
-			startTau = NA_real_
-			if (!is.null(model$M) && cont %in% colnames(model$M$values)) {
-				startTau = as.numeric(model$M$values[1, cont])
-			}
-			if (!is.finite(startTau)) startTau = 0
-			model = omxSetParameters(model, labels = threshLab, free = TRUE, values = startTau)
-		}
-	}
-	# Means and variances: free M and S for cens and equate to cont
-	for (cens in names(fullContByCens)) {
-		cont = fullContByCens[[cens]]
-		if (!is.null(model$M) && !is.null(dimnames(model$M$values))) {
-			if (cens %in% colnames(model$M$values) && cont %in% colnames(model$M$values)) {
-				labCont = model$M$labels[1, cont]
-				valCont = model$M$values[1, cont]
-				if (is.na(labCont) || !nzchar(labCont)) {
-					labCont = paste0(cont, "_mean")
-					model$M$labels[1, cont] = labCont
-				}
-				model$M$free[1, cens] = TRUE
-				model$M$labels[1, cens] = labCont
-				model$M$values[1, cens] = valCont
+			if (threshLab %in% allLabs) {
+				model = omxSetParameters(model, labels = threshLab, free = TRUE, values = startTau)
+			} else if (!is.null(threshMat) && cens %in% colnames(threshMat$values)) {
+				model$deviations_for_thresh$free[1, cens] = TRUE
+				model$deviations_for_thresh$values[1, cens] = startTau
 			}
 		}
-		if (!is.null(model$S) && !is.null(dimnames(model$S$values))) {
-			if (cens %in% rownames(model$S$values) && cont %in% rownames(model$S$values)) {
-				labContVar = model$S$labels[cont, cont]
-				valContVar = model$S$values[cont, cont]
-				if (is.na(labContVar) || !nzchar(labContVar)) {
-					labContVar = paste0(cont, "_with_", cont)
-					model$S$labels[cont, cont] = labContVar
-				}
-				model$S$free[cens, cens] = TRUE
-				model$S$labels[cens, cens] = labContVar
-				if (is.finite(valContVar)) model$S$values[cens, cens] = valContVar
-				model$S$values[cens, cens] = model$S$values[cont, cont]
-				model$S$free[cens, cens] = TRUE
-			}
-			# Equate covariances involving DE: S[cont, v] == S[cens, v] for all v
-			if (cens %in% rownames(model$S$values) && cont %in% rownames(model$S$values)) {
-				rNames = rownames(model$S$labels)
-				for (v in rNames) {
-					if (v == cens || v == cont) next
-					# S is symmetric, but check both orderings: row cont vs cens
-					if (cont %in% rNames && v %in% rNames) {
-						# Check if either entry exists as free or labelled (both should exist as 0)
-						labContCov = model$S$labels[cont, v]
-						if (is.na(labContCov) || !nzchar(labContCov)) labContCov = model$S$labels[v, cont]
-						if (!is.na(labContCov) && nzchar(labContCov)) {
-							model$S$labels[cens, v] = labContCov
-							model$S$labels[v, cens] = labContCov
-							model$S$free[cens, v] = model$S$free[cont, v]
-							model$S$free[v, cens] = model$S$free[v, cont]
-							model$S$values[cens, v] = model$S$values[cont, v]
-							model$S$values[v, cens] = model$S$values[v, cont]
-						} else {
-							# If cont-v not yet labelled, check cens-v and copy to cont
-							labCensCov = model$S$labels[cens, v]
-							if (!is.na(labCensCov) && nzchar(labCensCov)) {
-								model$S$labels[cont, v] = labCensCov
-								model$S$labels[v, cont] = labCensCov
-							}
-						}
-					}
-					# Also handle case where both v and cont/cens are DE (both ends DE) – 4-way
-					# For two DE bases, the covariance between their cont/cens combos should all share one label
-					# This will be handled when iterating over second DE's cens
-				}
-			}
-		}
-	}
-	# Equate directed paths in A for DE: cont and cens share label (Cartesian for DE→DE =4, one-sided=2)
-	if (!is.null(model$A) && !is.null(dimnames(model$A$labels))) {
-		rNames = rownames(model$A$labels)
-		cNames = colnames(model$A$labels)
-		for (cens in names(fullContByCens)) {
-			cont = fullContByCens[[cens]]
-			# For each cell, map cens variant to cont variant and copy label
-			for (r in rNames) {
-				for (cc in cNames) {
-					rBase = r; cBase = cc
-					if (r == cens) rBase = cont
-					if (cc == cens) cBase = cont
-					# Need to handle case where both r and cc are cens variants? Already mapped to cont
-					# Only equate if current cell involves cens and the cont counterpart exists
-					if ((r == cens || cc == cens) && rBase %in% rNames && cBase %in% cNames) {
-						labCont = model$A$labels[rBase, cBase]
-						if (!is.na(labCont) && nzchar(labCont)) {
-							# Preserve original free/values but share label
-							model$A$labels[r, cc] = labCont
-							# Ensure free and values match cont counterpart
-							model$A$free[r, cc] = model$A$free[rBase, cBase]
-							model$A$values[r, cc] = model$A$values[rBase, cBase]
-						}
-					}
-				}
-			}
-		}
+		allLabs = tryCatch(names(omxGetParameters(model, free = NA)), error = function(e) allLabs)
 	}
 	return(model)
 }
