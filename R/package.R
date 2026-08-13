@@ -10,6 +10,10 @@
 #' Please cite as: Bates, T. C., Neale, M. C., & Maes, H. H. (2019).
 #' umx: A library for Structural Equation and Twin Modelling in R.
 #' *Twin Research and Human Genetics*, **22**, 27-41. \doi{10.1017/thg.2019.2}.
+#' and Castro-de-Araujo, L. F. S., Gillespie, N. A., Neale, M. C., & Bates, T. C. (2026).
+#' umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition
+#' Variables, Onyx Integration, and Censored Distributions.
+#' *Twin Research and Human Genetics*, 1-6. \doi{10.1017/thg.2026.10056}.
 #'
 #' All functions have full-featured and well commented examples,
 #' some even have *figures*, so use the help. Even if you think
@@ -49,6 +53,7 @@
 #'
 #' @references - Bates, T. C., Neale, M. C., & Maes, H. H. (2019). umx: A library for Structural
 #' Equation and Twin Modelling in R. *Twin Research and Human Genetics*, **22**, 27-41. \doi{10.1017/thg.2019.2},
+#' Castro-de-Araujo, L. F. S., Gillespie, N. A., Neale, M. C., & Bates, T. C. (2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Onyx Integration, and Censored Distributions. *Twin Research and Human Genetics*, 1-6. \doi{10.1017/thg.2026.10056},
 #' <https://github.com/tbates/umx>, tutorial: <https://tbates.github.io>
 #'
 
