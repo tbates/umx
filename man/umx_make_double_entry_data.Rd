@@ -41,7 +41,7 @@ continuous column (holding non-censored values) and an ordered factor column
 (indicating censoring status), ready for \code{umxACE_DE}.
 
 The function has flexible rules for censoring. You give a \code{list()} of columns, with the censoring rule for each, and the function creates new matching \code{var_cens} and \code{var_cont} columns. A rule can be a simple numeric value to cut at, e.g., \code{list(wt=0)}) for cut column \code{wt} at zero. More complex expressions should be in quotes \code{list(wt="<= cut")}.
-\strong{Mutual-NA invariant enforced}: Each row contributes exactly \emph{one} non-missing element per DE trait — continuous density \eqn{f(x)}{f(x)} or threshold CDF \eqn{P(Y \le \tau)}{P(Y <= tau)} — preventing double-counting.
+\strong{Mutual-NA invariant enforced}: Each row contributes exactly \emph{one} non-missing element per DE trait - continuous density \eqn{f(x)}{f(x)} or threshold CDF \eqn{P(Y \le \tau)}{P(Y <= tau)} - preventing double-counting.
 On non-censored rows, the function sets the var_cont to the observed value and the var_cens value to NA. On censored rows, the continuous column is set to NA, and the correct value of an ordered factor \code{c("censored","observed")} is set in var_cens (integer 1). Right-censor \verb{>=cut} flips levels to \code{c("observed","censored")} so censored = integer 2 (upper tail). \code{NA} in raw propagates to \code{NA} in both.
 }
 \details{

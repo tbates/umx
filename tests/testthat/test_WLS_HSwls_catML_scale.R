@@ -2,7 +2,7 @@ library(OpenMx)
 library(umx)
 library(testthat)
 
-test_that("T1 — unit-diag + XX3 formula invariant", {
+test_that("T1 - unit-diag + XX3 formula invariant", {
   data(HSwls, package = "umx")
   m1 = umxRAM("WLS_HS", data = HSwls, type = "DWLS",
     umxPath(v.m. = c("visual", "verbal", "speed")),
@@ -38,7 +38,7 @@ test_that("T1 — unit-diag + XX3 formula invariant", {
   expect_lt(abs(cm$fMlTarget - xx3Formula), abs(cm$fMlTarget - xx3Wrong))
 })
 
-test_that("T2 — indices not garbage on HSwls", {
+test_that("T2 - indices not garbage on HSwls", {
   data(HSwls, package = "umx")
   m1 = umxRAM("WLS_HS", data = HSwls, type = "DWLS",
     umxPath(v.m. = c("visual", "verbal", "speed")),
@@ -57,7 +57,7 @@ test_that("T2 — indices not garbage on HSwls", {
   expect_false(rf$CFI < 0.80 && rf$RMSEA > 0.18)
 })
 
-test_that("T3 — lavaan ballpark (if installed)", {
+test_that("T3 - lavaan ballpark (if installed)", {
   skip_if_not_installed("lavaan")
   library(lavaan)
   data(HSwls, package = "umx")
@@ -86,7 +86,7 @@ test_that("T3 — lavaan ballpark (if installed)", {
   expect_lt(abs(rf$RMSEA - lavRmseaRobust), 0.04)
 })
 
-test_that("T5 — implied_correlation is a correlation", {
+test_that("T5 - implied_correlation is a correlation", {
   data(HSwls, package = "umx")
   m1 = umxRAM("WLS_HS", data = HSwls, type = "DWLS",
     umxPath(v.m. = c("visual", "verbal", "speed")),

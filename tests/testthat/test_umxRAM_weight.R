@@ -121,7 +121,7 @@ test_that("umxRAM weight long-standing buglet: user example syntax is valid", {
 	data(mtcars)
 	tmp = mtcars
 	tmp$litres = tmp$disp / 61.02
-	# The issue had a typo "um  umxPath" – test the intended code runs without error
+	# The issue had a typo "um  umxPath" - test the intended code runs without error
 	m1 = umxRAM("testWeight", data = tmp, weight = "cyl",
 		umxPath(c("wt", "litres"), to = "mpg"),
 		umxPath("wt", with = "litres"),

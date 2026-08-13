@@ -323,10 +323,11 @@ methods::setClass("MxModelGxE"    , contains = "MxModel")
 methods::setClass("MxModelGxEbiv" , contains = "MxModelGxE")
 methods::setClass("MxModelSexLim" , contains = "MxModel")
 methods::setClass("MxModelSimplex", contains = "MxModel")
-methods::setClass("MxModelGSEM"   , contains = "MxRAMModel")
+methods::setClass("MxModelGSEM"   , contains = "MxModel")
 
-
-# methods::setAs("MxRAMModel", "MxModelGSEM", function(from) {
-#   class(from) = "MxModelGSEM"
-#   return(from)
-# })
+# umxGSEM builds via umxRAM (MxRAMModel). as() has no default RAM -> GSEM path
+# when GSEM contains MxModel (new() + RAM init is the empty-name crash).
+methods::setAs("MxRAMModel", "MxModelGSEM", function(from) {
+	class(from) = "MxModelGSEM"
+	from
+})

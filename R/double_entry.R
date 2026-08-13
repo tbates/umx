@@ -302,6 +302,18 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 	}
 
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = nSib, optimizer = optimizer)
+
+	censorMeta = xmu_ace_de_parse_censor_meta(
+		mzData = mzData,
+		dzData = dzData,
+		doubleEntryPairs = doubleEntryPairs,
+		fixCensorThresholds = fixCensorThresholds,
+		censorCuts = censorCuts,
+		doubleEntrySuffix = doubleEntrySuffix
+	)
+	if (length(censorMeta$fixedCuts) > 0 && !is.null(selCovs)) {
+		stop("Polite note: Fixed double-entry censor thresholds (fixCensorThresholds / censorCuts) are not supported with selCovs in this version. Fit without covariates, or leave thresholds free (fixCensorThresholds = \"no\").")
+	}
 		
 	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
 	selVars = xmu_twin_upgrade_selDvs2SelVars(selDVs = selDVs, sep = sep, nSib= nSib)
@@ -437,17 +449,6 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 	#   - release Vtot==1 so trait variance is free
 	#   - free shared mean cont=cens (one location in data units)
 	#   - if known cut: fix threshold at c; else leave threshold free (estimate cut in data units)
-	censorMeta = xmu_ace_de_parse_censor_meta(
-		mzData = mzData,
-		dzData = dzData,
-		doubleEntryPairs = doubleEntryPairs,
-		fixCensorThresholds = fixCensorThresholds,
-		censorCuts = censorCuts,
-		doubleEntrySuffix = doubleEntrySuffix
-	)
-	if (length(censorMeta$fixedCuts) > 0 && !is.null(selCovs)) {
-		stop("Polite note: Fixed double-entry censor thresholds (fixCensorThresholds / censorCuts) are not supported with selCovs in this version. Fit without covariates, or leave thresholds free (fixCensorThresholds = \"no\").")
-	}
 	# Map every DE pair cont/cens bases for mean equate + V release
 	allContByCens = character(0)
 	allCensBases = character(0)
@@ -526,7 +527,7 @@ umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mz
 #' (indicating censoring status), ready for \code{umxACE_DE}.
 #' 
 #' The function has flexible rules for censoring. You give a `list()` of columns, with the censoring rule for each, and the function creates new matching `var_cens` and `var_cont` columns. A rule can be a simple numeric value to cut at, e.g., `list(wt=0)`) for cut column `wt` at zero. More complex expressions should be in quotes `list(wt="<= cut")`.
-#' **Mutual-NA invariant enforced**: Each row contributes exactly *one* non-missing element per DE trait — continuous density \eqn{f(x)}{f(x)} or threshold CDF \eqn{P(Y \le \tau)}{P(Y <= tau)} — preventing double-counting.
+#' **Mutual-NA invariant enforced**: Each row contributes exactly *one* non-missing element per DE trait - continuous density \eqn{f(x)}{f(x)} or threshold CDF \eqn{P(Y \le \tau)}{P(Y <= tau)} - preventing double-counting.
 #' On non-censored rows, the function sets the var_cont to the observed value and the var_cens value to NA. On censored rows, the continuous column is set to NA, and the correct value of an ordered factor `c("censored","observed")` is set in var_cens (integer 1). Right-censor `>=cut` flips levels to `c("observed","censored")` so censored = integer 2 (upper tail). `NA` in raw propagates to `NA` in both.
 #'
 #' @details

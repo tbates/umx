@@ -29,10 +29,7 @@ umxRAM_DE(
   independent = NA,
   setValues = TRUE,
   optimizer = NULL,
-  verbose = FALSE,
-  std.lv = FALSE,
-  lavaanMode = c("sem", "lavaan"),
-  printTab = FALSE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -52,9 +49,9 @@ umxRAM_DE(
 
 \item{sep}{Separator used in prep (default \code{NULL} infers from \code{attr(data,"umxDoubleEntry")$sep} or \code{""}).}
 
-\item{name}{A friendly name for the model}
+\item{name}{A friendly name for the model.}
 
-\item{group}{(optional) Column name to use for a multi-group model (default = NULL)}
+\item{group}{(optional) Column name to use for a multi-group model (default = NULL). Fixed DE thresholds (known cut) are applied in every group.}
 
 \item{group.equal}{In multi-group models, what to equate across groups (default = NULL: all free)}
 
@@ -118,8 +115,8 @@ threshold CDF). Those types fit a correlation/moment structure and cannot use th
 mutual-NA \verb{_cont}/\verb{_cens} pattern. For WLS/cov/cor on ordinary (non-DE) data, use \code{\link[=umxRAM]{umxRAM()}}.
 }
 \examples{
-# Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
-# using the widely used `mtcars` data set.
+# Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and 
+# engine displacement (disp) using the widely used `mtcars` data set.
 
 # 1: Create the censored data
 # Just for a demo, we will create a censored litres column, censoring at 2.

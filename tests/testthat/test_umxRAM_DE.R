@@ -413,7 +413,7 @@ test_that("T8 two DE traits: one latent-latent S, no 4-way indicator paths", {
 	expect_false("litres" %in% m2$manifestVars)
 	expect_false("wt" %in% m2$manifestVars)
 
-	# Trait covariance is the single latent–latent cell
+	# Trait covariance is the single latent-latent cell
 	expect_true(isTRUE(m2$S$free["litres", "wt"]))
 	expect_true(isTRUE(m2$S$free["wt", "litres"]))
 	expect_equal(as.character(m2$S$labels["litres", "wt"]), as.character(m2$S$labels["wt", "litres"]))
@@ -424,8 +424,8 @@ test_that("T8 two DE traits: one latent-latent S, no 4-way indicator paths", {
 		for (j in 1:length(inds)) {
 			a = inds[i]
 			b = inds[j]
-			expect_false(isTRUE(m2$S$free[a, b]), info = paste0("S free ", a, "–", b))
-			expect_equal(as.numeric(m2$S$values[a, b]), 0, info = paste0("S value ", a, "–", b))
+			expect_false(isTRUE(m2$S$free[a, b]), info = paste0("S free ", a, "-", b))
+			expect_equal(as.numeric(m2$S$values[a, b]), 0, info = paste0("S value ", a, "-", b))
 		}
 	}
 
@@ -449,7 +449,7 @@ test_that("T8 two DE traits: one latent-latent S, no 4-way indicator paths", {
 	expect_true("wt_to_mpg" %in% names(pars))
 })
 
-test_that("T9 group= with fixed DE threshold applies τ@cut in every group", {
+test_that("T9 group= with fixed DE threshold applies thresh @ cut in every group", {
 	data(mtcars)
 	tmp = mtcars
 	tmp$litres = tmp$disp / 61.02
@@ -470,8 +470,8 @@ test_that("T9 group= with fixed DE threshold applies τ@cut in every group", {
 	for (nm in subNames) {
 		sm = mG$submodels[[nm]]
 		expect_true("litres" %in% sm$latentVars, info = nm)
-		expect_false(isTRUE(sm$deviations_for_thresh$free[1, "litres_cens"]), info = paste(nm, "τ free"))
-		expect_equal(as.numeric(sm$deviations_for_thresh$values[1, "litres_cens"]), cutLitres, info = paste(nm, "τ value"))
+		expect_false(isTRUE(sm$deviations_for_thresh$free[1, "litres_cens"]), info = paste(nm, "thresh free"))
+		expect_equal(as.numeric(sm$deviations_for_thresh$values[1, "litres_cens"]), cutLitres, info = paste(nm, "thresh value"))
 		expect_equal(as.numeric(sm$A$values["litres_cont", "litres"]), 1)
 		expect_equal(as.numeric(sm$S$values["litres_cens", "litres_cens"]), 0)
 	}

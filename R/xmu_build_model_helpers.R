@@ -235,7 +235,7 @@ xmu_threshold_id_twin_check <- function(model, fullVars, verbose = TRUE) {
 							}
 						}
 					}
-					# Structure fallback: threshold fixed (known cut) ⇒ free mean OK
+					# Structure fallback: threshold fixed (known cut) => free mean OK
 					if (!allowFreeMean && !is.null(devFree) && v %in% colnames(devFree)) {
 						if (!isTRUE(devFree[1, v])) {
 							allowFreeMean = TRUE

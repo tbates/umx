@@ -38,7 +38,7 @@
 #' @param group.equal In multi-group models, what to equate across groups (default = NULL: all free)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
-#' @param name A friendly name for the model
+#' @param name A friendly name for the model.
 #' @param type One of `"Auto"` or `"FIML"`. `"WLS"`, `"DWLS"`, `"ULS"`, `"cov"`, and `"cor"` are rejected (use [umxRAM()]).
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param weight Passes weight values to mxData
@@ -57,8 +57,8 @@
 #' @family Core Model Building Functions
 #' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @examples
-#' # Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)
-#' # using the widely used `mtcars` data set.
+#' # Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and 
+#' # engine displacement (disp) using the widely used `mtcars` data set.
 #' 
 #' # 1: Create the censored data
 #' # Just for a demo, we will create a censored litres column, censoring at 2.
@@ -74,7 +74,7 @@
 #' 	umxPath(v.m. = c("litres", "wt", "mpg"))
 #' )
 #'
-umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySuffix = c("_cont", "_cens"), fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, sep = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
+umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySuffix = c("_cont", "_cens"), fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, sep = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	# Check for data/model objects passed in ... before unlist() flattens them
 	for (item in dot.items) {
@@ -90,9 +90,12 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 		}
 	}
 	dot.items  = unlist(dot.items) # In case any dot items are lists of mxPaths, etc...
+	# Reject moment-structure types before match.arg so they are not listed as legal choices.
+	if (length(type) == 1L && type %in% c("WLS", "DWLS", "ULS", "cov", "cor")) {
+		stop("Polite note: type=\"", type, "\" is not valid for umxRAM_DE. Double-entry censoring needs raw-data FIML (each row contributes either the continuous density or the threshold CDF). WLS/DWLS/ULS/cov/cor fit a correlation/moment structure and cannot use that pattern (_cont and _cens are never jointly observed). For WLS, cov, or cor on ordinary (non-DE) data, use umxRAM().", call. = FALSE)
+	}
 	type       = match.arg(type)
 	tryHard    = match.arg(tryHard)
-	lavaanMode = match.arg(lavaanMode)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	fixCensorThresholds = match.arg(fixCensorThresholds)
 	doubleEntrySuffix = as.character(doubleEntrySuffix)
@@ -193,7 +196,7 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 	if (type %in% c("WLS", "DWLS", "ULS", "cov", "cor")) {
 		stop("Polite note: type=\"", type, "\" is not valid for umxRAM_DE. Double-entry censoring needs raw-data FIML (each row contributes either the continuous density or the threshold CDF). WLS/DWLS/ULS/cov/cor fit a correlation/moment structure and cannot use that pattern (_cont and _cens are never jointly observed). For WLS, cov, or cor on ordinary (non-DE) data, use umxRAM().", call. = FALSE)
 	}
-	# group= is allowed with fixed τ: the known cut is on the analysis scale and is
+	# group= is allowed with fixed thresh: the known cut is on the analysis scale and is
 	# the same in every group. group.equal (equating other parameters) is still unimplemented.
 
 	foundNames = c()
@@ -251,7 +254,7 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 	}
 
 	# Measurement model: each DEvar is a latent; _cont/_cens are perfect indicators.
-	# User paths stay on the base name. Two DE traits share one latent–latent S cell
+	# User paths stay on the base name. Two DE traits share one latent-latent S cell
 	# (not a 4-way indicator Cartesian product).
 	for (b in DEvars) {
 		contCol = paste0(b, sCont)
@@ -475,7 +478,7 @@ umxRAM_DE <- function(model = NA, ..., data = NULL, DEvars = NULL, doubleEntrySu
 			} else {
 				thisModel = umxSetParameters(thisModel, regex= "_GROUP$", newlabels= paste0("_", thisLevelOfGroup))
 			}
-			# Re-assert DE measurement ID after clone/relabel (τ@cut is group-invariant)
+			# Re-assert DE measurement ID after clone/relabel (thresh @ cut is group-invariant)
 			thisModel = xmu_ram_de_apply_censor_thresholds(thisModel, deMeta$fixedCuts, fullContByCens, DEvars, doubleEntrySuffix, sep)
 			attr(thisModel, "umxDE") = list(
 				fixedCensorThresholds = length(deMeta$fixedCuts) > 0,
@@ -628,7 +631,7 @@ xmu_ram_de_apply_censor_thresholds <- function(model, fixedCuts, contByCens, DEv
 	for (b in DEvars) {
 		cont = paste0(b, sCont)
 		cens = paste0(b, sCens)
-		# Loadings latent → indicators @ 1
+		# Loadings latent -> indicators @ 1
 		if (!is.null(model$A) && !is.null(dimnames(model$A$values))) {
 			if (cont %in% rownames(model$A$values) && b %in% colnames(model$A$values)) {
 				model$A$free[cont, b] = FALSE

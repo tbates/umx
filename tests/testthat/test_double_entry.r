@@ -200,7 +200,7 @@ test_that("umxACE_DE free threshold baseline and fixed thresholds structure (T0/
 	mzData = prep[prep$zygosity %in% "MZFF", ]
 	dzData = prep[prep$zygosity %in% "DZFF", ]
 
-	# T0 free threshold: still free τ, but variance NOT forced to 1; means cont=cens
+	# T0 free threshold: still free thresh, but variance NOT forced to 1; means cont=cens
 	mFree = umxACE_DE(
 		selDVs = c("wt_cont", "wt_cens"), sep = "",
 		mzData = mzData, dzData = dzData,
@@ -213,7 +213,7 @@ test_that("umxACE_DE free threshold baseline and fixed thresholds structure (T0/
 	expect_true(is.null(mFree$top$constrain_Bin_var_to_1))
 	expect_true(isTRUE(attr(mFree, "umxDE")$freeVariance))
 
-	# T2 fixed via explicit censorCuts: τ@cut, means equated, V=1 released
+	# T2 fixed via explicit censorCuts: thresh @ cut, means equated, V=1 released
 	mFix = umxACE_DE(
 		selDVs = c("wt_cont", "wt_cens"), sep = "",
 		mzData = mzData, dzData = dzData,
