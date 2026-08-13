@@ -8286,6 +8286,11 @@ xmu_make_bin_cont_pair_data <- function(data, vars = NULL, suffixes = NULL, cens
 #' 1. return just the correlations from John Fox's polycor::hetcor function
 #' 2. If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
 #'
+#' Factor columns with fewer than two observed (non-NA) levels are excluded from
+#' the hetcor call (polychoric/polyserial is undefined). Their diagonal is 1 and
+#' off-diagonals are 0. This is the double-entry `_cens` case: that column is only
+#' ever "censored" or NA, so there is no pair to estimate.
+#'
 #' @param data A [data.frame()] of columns for which to compute heterochoric correlations. OR an existing covariance matrix.
 #' @param ML Whether to use Maximum likelihood computation of correlations (default = FALSE)
 #' @param use How to handle missing data: Default= "pairwise.complete.obs". Alternative ="complete.obs".
@@ -8317,13 +8322,49 @@ umxHetCor <- function(data, ML = FALSE, use = c("pairwise.complete.obs", "comple
 			return(var(as.numeric(data[,1]), na.rm = TRUE))
 		}
 	} else {
-		hetc = hetcor(data, ML = ML, use = use, std.err = std.err)
+		# Skip factors with < 2 observed levels (undefined poly*; DE _cens is this case)
+		nCol = ncol(data)
+		colNames = colnames(data)
+		if (is.null(colNames)) colNames = as.character(seq_len(nCol))
+		keep = rep(TRUE, nCol)
+		for (j in seq_len(nCol)) {
+			x = data[[j]]
+			if (is.factor(x) || is.ordered(x)) {
+				obs = x[!is.na(x)]
+				nLev = length(unique(as.character(obs)))
+				if (nLev < 2L) {
+					keep[j] = FALSE
+					if (verbose) {
+						message("umxHetCor: skipping ", colNames[j], " (fewer than 2 observed levels)")
+					}
+				}
+			}
+		}
+		R = diag(nCol)
+		dimnames(R) = list(colNames, colNames)
+		if (sum(keep) == 0L) {
+			if (return == "correlations") {
+				return(R)
+			} else {
+				return(list(correlations = R, skipped = colNames))
+			}
+		}
+		if (sum(keep) == 1L) {
+			if (return == "correlations") {
+				return(R)
+			} else {
+				return(list(correlations = R, skipped = colNames[!keep]))
+			}
+		}
+		hetc = hetcor(data[, keep, drop = FALSE], ML = ML, use = use, std.err = std.err)
 		if(verbose){
 			print(hetc)
 		}
+		R[keep, keep] = hetc$correlations
 		if(return == "correlations"){
-			return(hetc$correlations)
+			return(R)
 		} else {
+			hetc$correlations = R
 			return(hetc)
 		}
 	}
