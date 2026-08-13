@@ -1,7 +1,6 @@
 # umx
 
 <!-- [![Build Status](https://www.travis-ci.com/tbates/umx.svg?branch=master)](https://www.travis-ci.com/tbates/umx) -->
-[![Codecov test coverage](https://codecov.io/gh/tbates/umx/branch/master/graph/badge.svg)](https://app.codecov.io/gh/tbates/umx?branch=master)
 ![Github commits](https://img.shields.io/github/commits-since/tbates/umx/latest.svg?colorB=green)
 [![cran version](http://www.r-pkg.org/badges/version/umx)](https://cran.r-project.org/package=umx)
 [![Monthly Downloads](https://cranlogs.r-pkg.org/badges/umx)](https://cranlogs.r-pkg.org/badges/umx)
@@ -10,7 +9,6 @@
 [![DOI](https://img.shields.io/badge/doi-10.1017/thg.2019.2-yellow.svg?style=flat)](https://doi.org/10.1017/thg.2019.2)
 [![License](https://img.shields.io/cran/l/umx.svg)](https://cran.r-project.org/package=umx)
 
-[Road map](https://github.com/tbates/umx/labels/enhancement), and [Tutorials](https://tbates.github.io) (let me know what you'd like, or perhaps a book?)
 
 `umx` is a package designed to make [structural equation modeling](https://en.wikipedia.org/wiki/Structural_equation_modeling) easier, from building, to modifying and reporting.
 
@@ -20,13 +18,15 @@ You should cite: Timothy C. Bates, Michael C. Neale, Hermine H. Maes, (2019). um
 
 And   Luis F.S. Castro-de-Araujo, Nathan A. Gillespie, Michael C. Neale, and Timothy Charles Bates (2026). umx version 4.5: Extending Twin and Path-Based SEM in R with CLPM, MR-DoC, Definition Variables, Onyx Integration, and Censored Distributions. _Twin Research and Human Genetics_, 1-6. [DOI:10.1017/thg.2026.10056](https://doi.org/10.1017/thg.2026.10056)
 
+**Overview**
+[Road map](https://github.com/tbates/umx/labels/enhancement), and [Tutorials](https://tbates.github.io).
 
 
 `umx` includes high-level functions for complex models such as multi-group twin models, as well as graphical model output.
 
 Install it from CRAN:
 
-```splus
+```R
 install.packages("umx")
 library(umx)
 ?umx
@@ -36,12 +36,12 @@ Most functions have extensive and practical examples (even figures for the twin 
 
 See what is on offer with '?umx'. There are online tutorials at  [tbates.github.io](http://tbates.github.io).
 
-`umx` stands for "user" OpenMx functions. It provides over 100 functions, but most importantly:
+`umx` stands for "user" OpenMx functions. For users, the two most import families in umx are:
 
-1. `umxRAM` that makes path-based SEM in R straightforward, with `umxSummary` and `plot` for table and graphical display of your models. It can also interpret basic lavaan if you get a script in that language.
+1. `umxRAM`. This makes path-based SEM in R straightforward, handling ordinal thresholds, start values, labels automatically. It can also interpret basic lavaan if you get a script in that language.
 2. A suite of twin modelling functions, such as `umxACE`.
 
-These are supported by many low-level functions automating activities such as parameter labels, start values etc., as well as helping with data-wrangling, journal-ready presentation (try `umxAPA()` among other tasks.
+Both suites are supported by `umxSummary` which generates publication-ready tables, and and `plot` which makes graphical display of your models easy and flexible. There are many other helpers for data-wrangling twin data, working with prolific, scoring scales, printing to models (try `umxAPA()`) among other tasks.
 
 Some highlights include:
 
