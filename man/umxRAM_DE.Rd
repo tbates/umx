@@ -18,7 +18,7 @@ umxRAM_DE(
   group.equal = NULL,
   suffix = "",
   comparison = TRUE,
-  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  type = c("Auto", "FIML"),
   weight = NULL,
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"),
@@ -62,7 +62,7 @@ umxRAM_DE(
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
-\item{type}{One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"}
+\item{type}{One of \code{"Auto"} or \code{"FIML"}. \code{"WLS"}, \code{"DWLS"}, \code{"ULS"}, \code{"cov"}, and \code{"cor"} are rejected (use \code{\link[=umxRAM]{umxRAM()}}).}
 
 \item{weight}{Passes weight values to mxData}
 
@@ -92,15 +92,15 @@ umxRAM_DE(
 }
 }
 \description{
-\code{umxRAM_DE} expedites creation of structural equation models which include censored data, enabled by support for double-entry,
-style pairs of \code{var_cens} and \code{var_cont} columns. It handles the doubling of paths, all the complex threshold set up and equating of weights.
-Users still just used \code{\link[=umxPath]{umxPath()}} to specify the model.
+\code{umxRAM_DE} expedites SEM with censored data. Each name in \code{DEvars} is a \strong{latent} trait.
+Prepared \verb{_cont} / \verb{_cens} columns are indicators of that latent (loading fixed at 1, residual fixed at 0).
+Write ordinary \code{\link[=umxPath]{umxPath()}} calls using the base name (e.g. \code{"litres"}). Do not Cartesian-expand to \verb{_cont}/\verb{_cens}.
 
 Fully continuous variables may be mixed with double-entry pairs. Prepare the censored traits with
 \code{\link[=umx_make_double_entry_data]{umx_make_double_entry_data()}}. At least one \code{DEvar} is required.
 
 As you can see from the examples below, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM_DE} wraps these paths up, takes the \verb{data =} input, and
-then internally doubles the paths for DE variables, equates them and sets everything up. By default it will also run it.
+then builds the latent measurement model for each DE trait and sets thresholds. By default it will also run it.
 
 \strong{Gotchas}
 A common error is to include data in the main list, a bit like
@@ -111,17 +111,11 @@ saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
 If you are used to hacking a quick model with \link[=umxLav2RAM]{lavaan string syntax}, use \code{\link[=umxRAM]{umxRAM()}} at present. Likewise, if you are at the "sketching" stage of theory consideration, \code{umxRAM} supports that, umxRAM_DE does not.
 }
 \details{
-\strong{WLS}
-\code{umxRAM} supports WLS estimation via the \code{type} argument (\code{"WLS"}, \code{"DWLS"}, or \code{"ULS"}).
-
-\strong{Important for ordinal data}: If your data contains ordered factors, \code{umxRAM} will
-automatically create the necessary \code{mxThreshold} objects. You \strong{do not} need to add them manually.
-
-For all-continuous data, use \code{allContinuousMethod} to control means modeling:
-\itemize{
-\item \code{"cumulants"} (default): Faster. No means model.
-\item \code{"marginals"}: Includes means and supports missing data.
-}
+\strong{WLS / cov / cor}
+\code{type = "WLS"}, \code{"DWLS"}, \code{"ULS"}, \code{"cov"}, or \code{"cor"} is not valid in \code{umxRAM_DE}.
+Double-entry needs raw-data FIML (each row is either the continuous density or the
+threshold CDF). Those types fit a correlation/moment structure and cannot use the
+mutual-NA \verb{_cont}/\verb{_cens} pattern. For WLS/cov/cor on ordinary (non-DE) data, use \code{\link[=umxRAM]{umxRAM()}}.
 }
 \examples{
 # Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and engine displacement (disp)

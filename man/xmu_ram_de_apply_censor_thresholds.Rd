@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxRAM_DE.R
 \name{xmu_ram_de_apply_censor_thresholds}
 \alias{xmu_ram_de_apply_censor_thresholds}
-\title{Apply RAM DE threshold/mean/variance identification}
+\title{Apply RAM DE latent-trait identification}
 \usage{
 xmu_ram_de_apply_censor_thresholds(
   model,
@@ -18,9 +18,9 @@ xmu_ram_de_apply_censor_thresholds(
 
 \item{fixedCuts}{Named numeric cuts (may be empty).}
 
-\item{contByCens}{Named character cens->cont for all DE pairs (or at least fixed ones).}
+\item{contByCens}{Named character cens->cont (unused for equate; kept for call signature).}
 
-\item{DEvars}{Base names.}
+\item{DEvars}{Base names (latents).}
 
 \item{doubleEntrySuffix}{Suffixes.}
 
@@ -30,9 +30,10 @@ xmu_ram_de_apply_censor_thresholds(
 Modified model.
 }
 \description{
-For each \code{cens} in \code{contByCens}: release binary \verb{mean@0}/\verb{resid@1} and
-equate means/variances to \code{cont}. For \code{fixedCuts}, fix threshold at cut;
-otherwise leave free with sensible start.
+After \code{\link[=xmuRAM2Ordinal]{xmuRAM2Ordinal()}} (which may set binary \verb{mean@0} / \verb{resid@1}), enforce
+the latent-trait measurement model: each \code{DEvars} base \code{x} has
+\code{A[x_cont, x] = A[x_cens, x] = 1}, indicator residuals and means at 0,
+trait mean/variance on the latent. Fix or free the \verb{_cens} threshold.
 }
 \seealso{
 Other xmu internal not for end user:
@@ -106,7 +107,6 @@ Other xmu internal not for end user:
 \code{\link[=xmu_path2twin]{xmu_path2twin()}},
 \code{\link[=xmu_path_regex]{xmu_path_regex()}},
 \code{\link[=xmu_print_algebras]{xmu_print_algebras()}},
-\code{\link[=xmu_ram_de_expand_paths]{xmu_ram_de_expand_paths()}},
 \code{\link[=xmu_ram_de_parse_censor_meta]{xmu_ram_de_parse_censor_meta()}},
 \code{\link[=xmu_rclabel_2_bracket_address]{xmu_rclabel_2_bracket_address()}},
 \code{\link[=xmu_relevel_factors]{xmu_relevel_factors()}},

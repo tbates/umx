@@ -89,7 +89,6 @@ Other xmu internal not for end user:
 \code{\link[=xmu_path_regex]{xmu_path_regex()}},
 \code{\link[=xmu_print_algebras]{xmu_print_algebras()}},
 \code{\link[=xmu_ram_de_apply_censor_thresholds]{xmu_ram_de_apply_censor_thresholds()}},
-\code{\link[=xmu_ram_de_expand_paths]{xmu_ram_de_expand_paths()}},
 \code{\link[=xmu_ram_de_parse_censor_meta]{xmu_ram_de_parse_censor_meta()}},
 \code{\link[=xmu_rclabel_2_bracket_address]{xmu_rclabel_2_bracket_address()}},
 \code{\link[=xmu_relevel_factors]{xmu_relevel_factors()}},

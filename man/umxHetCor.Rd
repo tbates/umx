@@ -41,6 +41,12 @@ umxHetCor(
 \item If you give it a covariance matrix, return the nearest positive-definite correlation matrix.
 }
 }
+\details{
+Factor columns with fewer than two observed (non-NA) levels are excluded from
+the hetcor call (polychoric/polyserial is undefined). Their diagonal is 1 and
+off-diagonals are 0. This is the double-entry \verb{_cens} case: that column is only
+ever "censored" or NA, so there is no pair to estimate.
+}
 \examples{
 umxHetCor(mtcars[,c("mpg", "am")])
 umxHetCor(mtcars[,c("mpg", "am")], treatAllAsFactor = TRUE, verbose = TRUE)
