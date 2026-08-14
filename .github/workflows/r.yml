@@ -11,12 +11,17 @@ on:
   workflow_dispatch:
     inputs:
       run_cran:
-        description: 'Run standard check against CRAN OpenMx'
+        description: 'CRAN OpenMx: stock OpenMx, required before any umx CRAN submission'
         type: boolean
         required: true
         default: true
-      run_genomicmx:
-        description: 'Build and check against GenomicMx (requires PAT)'
+      run_genomicmx_cached:
+        description: 'Cached GenomicMx: reuse last successful Fresh Unix library (no compile)'
+        type: boolean
+        required: true
+        default: false
+      run_genomicmx_fresh:
+        description: 'Fresh GenomicMx: compile current GenomicMx master, then save as the cached library (requires PAT)'
         type: boolean
         required: true
         default: false
@@ -32,6 +37,7 @@ concurrency:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
   # 1. Standard: Check against stock CRAN OpenMx (Fast)
@@ -42,11 +48,9 @@ jobs:
       github.event_name == 'schedule' ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.run_cran == 'true')
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up R (release)
         uses: r-lib/actions/setup-r@v2
@@ -79,26 +83,77 @@ jobs:
           args: 'c("--no-manual", "--as-cran", "--no-vignettes")'
           error-on: '"error"'
 
-  # 2. Manual/On-Demand: Build and check against GenomicMx private build (slow)
-  check_genomicmx:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_genomicmx == 'true'
+  # 2. Cached GenomicMx: last successful Fresh library. No compile.
+  check_genomicmx_cached:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_genomicmx_cached == 'true'
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up R (release)
+        id: setup-r
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: 'release'
           use-public-rspm: true
 
-      # Quick CI: no GenomicSEM (github install is slow/flaky; vignette is eval=FALSE).
-      # Vignettes are skipped here — modification_indices/profile-CI knit is multi-hour;
-      # full vignette build stays on weekly matrix / workflow_dispatch.
-      # ggwas is Suggests + Remotes (GitHub-only until on CRAN); pin github:: so pak does not look on CRAN.
+      - name: Install Package Dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::remotes
+            any::rcmdcheck
+            any::OpenMx
+            any::mvtnorm
+            any::DiagrammeRsvg
+            any::rsvg
+            any::lme4
+            github::bczech/ggwas
+          needs: check
+
+      - name: Restore last GenomicMx library
+        id: cache-genomicmx
+        uses: actions/cache/restore@v5
+        with:
+          path: ${{ env.R_LIBS_USER }}/OpenMx
+          key: genomicmx-lib-${{ runner.os }}-${{ steps.setup-r.outputs.installed-r-version }}-
+          restore-keys: |
+            genomicmx-lib-${{ runner.os }}-${{ steps.setup-r.outputs.installed-r-version }}-
+
+      - name: Require a cached GenomicMx library
+        if: steps.cache-genomicmx.outputs.cache-matched-key == ''
+        run: |
+          echo "No cached GenomicMx library for this OS/R version."
+          echo "Run this workflow with 'Fresh GenomicMx' once. After that job succeeds, Cached will reuse it."
+          exit 1
+
+      - name: Show GenomicMx version
+        run: |
+          Rscript -e 'cat("OpenMx", as.character(packageVersion("OpenMx")), "\n"); sha <- file.path(find.package("OpenMx"), "GENOMICMX_SHA"); if (file.exists(sha)) cat("GenomicMx SHA", readLines(sha, warn = FALSE), "\n")'
+
+      - name: Check Package Structure
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          build_args: 'c("--no-manual", "--no-build-vignettes")'
+          args: 'c("--no-manual", "--as-cran", "--no-vignettes")'
+          error-on: '"error"'
+
+  # 3. Fresh GenomicMx: compile current master, save library for Cached (slow)
+  check_genomicmx_fresh:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_genomicmx_fresh == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Set up R (release)
+        id: setup-r
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+          use-public-rspm: true
+
       - name: Install Package Dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -117,36 +172,30 @@ jobs:
             github::bczech/ggwas
           needs: check
 
-      - name: Get GenomicMx latest SHA
-        id: genomicmx-sha
+      - name: Compile and install GenomicMx
         env:
           PAT: ${{ secrets.PAT }}
         run: |
-          echo "sha=$(git ls-remote https://${PAT}@github.com/tbates/GenomicMx master | awk '{print $1}')" >> $GITHUB_OUTPUT
-
-      - name: Cache GenomicMx Build
-        id: cache-genomicmx
-        uses: actions/cache@v4
-        with:
-          path: OpenMx_*.tar.gz
-          key: genomicmx-${{ runner.os }}-${{ steps.genomicmx-sha.outputs.sha }}
-
-      - name: Build and Upload GenomicMx
-        if: steps.cache-genomicmx.outputs.cache-hit != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PAT: ${{ secrets.PAT }}
-        run: |
-          git clone --depth 1 https://${PAT}@github.com/tbates/GenomicMx
+          if [ -z "$PAT" ]; then
+            echo "secrets.PAT is empty; cannot clone private tbates/GenomicMx" >&2
+            exit 1
+          fi
+          git -c http.https://github.com/.extraheader= clone --depth 1 "https://x-access-token:${PAT}@github.com/tbates/GenomicMx"
+          SHA=$(git -C GenomicMx rev-parse HEAD)
+          echo "Cloned GenomicMx $SHA"
           cd GenomicMx
-          make cran-build
-          mv staging/OpenMx_*.tar.gz ../
-          cd ..
-          gh release upload latest OpenMx_*.tar.gz --clobber --repo tbates/umx || echo "Upload to latest release failed"
+          make cran-install
+          echo "$SHA" > "${R_LIBS_USER}/OpenMx/GENOMICMX_SHA"
 
-      - name: Install GenomicMx
+      - name: Save GenomicMx library for Cached
+        uses: actions/cache/save@v5
+        with:
+          path: ${{ env.R_LIBS_USER }}/OpenMx
+          key: genomicmx-lib-${{ runner.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ github.run_id }}
+
+      - name: Show GenomicMx version
         run: |
-          R CMD INSTALL OpenMx_*.tar.gz
+          Rscript -e 'cat("OpenMx", as.character(packageVersion("OpenMx")), "\n"); sha <- file.path(find.package("OpenMx"), "GENOMICMX_SHA"); if (file.exists(sha)) cat("GenomicMx SHA", readLines(sha, warn = FALSE), "\n")'
 
       - name: Check Package Structure
         uses: r-lib/actions/check-r-package@v2
@@ -155,12 +204,10 @@ jobs:
           args: 'c("--no-manual", "--as-cran", "--no-vignettes")'
           error-on: '"error"'
 
-  # 3. Manual/On-Demand: Full OS Matrix testing against CRAN (expensive)
+  # 4. Manual/On-Demand: Full OS Matrix testing against CRAN (expensive)
   full_matrix:
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_full_matrix == 'true'
     runs-on: ${{ matrix.config.os }}
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     strategy:
       fail-fast: false
       matrix:
@@ -172,7 +219,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up R ${{ matrix.config.r }}
         uses: r-lib/actions/setup-r@v2
