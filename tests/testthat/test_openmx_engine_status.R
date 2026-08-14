@@ -37,7 +37,7 @@ test_that("install.OpenMx accepts GenomicMx loc without installing", {
 })
 
 test_that("xmu_genomicmx_release_page_url points at umx releases", {
-	expect_equal(xmu_genomicmx_release_page_url(), "https://github.com/tbates/umx/releases")
+	expect_equal(xmu_genomicmx_release_page_url(), "https://github.com/tbates/umx/releases/tag/genomicmx")
 })
 
 test_that("startup silence option is respected conceptually", {
@@ -47,3 +47,32 @@ test_that("startup silence option is respected conceptually", {
 	options(umx.genomicMx.startup = FALSE)
 	expect_false(isTRUE(getOption("umx.genomicMx.startup")))
 })
+
+test_that("xmu_genomicmx_binary_url defaults to tag genomicmx and has verbose param", {
+	f = get("xmu_genomicmx_binary_url", envir = asNamespace("umx"))
+	fmls = formals(f)
+	expect_true("tag" %in% names(fmls))
+	expect_true("verbose" %in% names(fmls))
+	expect_equal(fmls$tag, "genomicmx")
+})
+
+test_that("xmu_genomicmx_binary_url returns NULL when GitHub is unreachable (no network in CI)", {
+	f = get("xmu_genomicmx_binary_url", envir = asNamespace("umx"))
+	res = f(tag = "does-not-exist-xyz-123", verbose = FALSE)
+	expect_null(res)
+})
+
+test_that("xmu_genomicmx_binary_url does not query /releases/latest", {
+	f = get("xmu_genomicmx_binary_url", envir = asNamespace("umx"))
+	bodyTxt = paste(deparse(body(f)), collapse = "\n")
+	expect_match(bodyTxt, "releases/tags")
+	expect_false(grepl("releases/latest", bodyTxt, fixed = TRUE))
+})
+
+test_that("resolver logic: no fallback across macOS arch or R version (body inspection)", {
+	f = get("xmu_genomicmx_binary_url", envir = asNamespace("umx"))
+	bodyTxt = paste(deparse(body(f)), collapse = "\n")
+	expect_match(bodyTxt, "R.*Phase 1 is R release only")
+	expect_match(bodyTxt, "no asset matching macOS arch")
+})
+

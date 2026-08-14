@@ -3127,17 +3127,19 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #' The GenomicMx build **replaces** whatever OpenMx is in the target library
 #' (same idea as the old NPSOL binary installs).
 #'
-#' **Public install path (everyone):** pre-built OpenMx package files published on the
-#' [umx GitHub Releases](https://github.com/tbates/umx/releases) page. Call
-#' `install.OpenMx("GenomicMx")` (the default). That is the supported way to get the
-#' GenomicMx engine while the OpenMx source tree lives privately on GitHub.
+#' **Public install path (everyone):** pre-built OpenMx binaries are published on the
+#' umx GitHub Release tag **genomicmx** (`https://github.com/tbates/umx/releases/tag/genomicmx`).
+#' Call `install.OpenMx("GenomicMx")` (the default). That is the supported way to get the
+#' GenomicMx engine while the OpenMx source tree lives privately on GitHub. Binaries are
+#' CRAN flavour (no NPSOL) and are built for R \code{release} on Linux x86_64, Windows x86_64,
+#' and macOS arm64 (Phase 1).
 #'
 #' Options for `loc`:
-#' 1. `"GenomicMx"` (**default**): download the latest platform binary from
-#'    [umx Releases](https://github.com/tbates/umx/releases) when available.
+#' 1. `"GenomicMx"` (**default**): download the platform binary for this OS/arch/R from the
+#'    \code{genomicmx} Release tag when available.
 #' 2. `"CRAN"`: install stock OpenMx from CRAN (enough for many twin/RAM models, not
 #'    the full GenomicMx WLS stack).
-#' 3. `"open release page"`: open the umx Releases page in a browser so you can pick a binary by hand.
+#' 3. `"open release page"`: open the umx GenomicMx Release tag in a browser so you can pick a binary by hand.
 #'
 #' Source installs from a private GitHub fork are **not** offered here (they cannot work for
 #' general users). Maintainers building OpenMx locally should use [mx_make()] on their source tree.
@@ -3152,7 +3154,7 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #' @export
 #' @seealso [umxVersion()], [xmu_openmx_engine_status()], [mx_make()]
 #' @family Miscellaneous Utility Functions
-#' @references - <https://github.com/tbates/umx>, <https://github.com/tbates/umx/releases>
+#' @references - <https://github.com/tbates/umx>, <https://github.com/tbates/umx/releases/tag/genomicmx>
 #'
 #' @examples
 #' \dontrun{
@@ -3181,23 +3183,39 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 	}
 
 	if (loc == "GenomicMx") {
-		# public binary install for everyone
+		# public binary install for everyone — resolver reads tag genomicmx
 		binUrl = xmu_genomicmx_binary_url()
 		if (is.null(binUrl) || !nzchar(binUrl)) {
+			rVer = paste(R.version$major, strsplit(R.version$minor, ".", fixed = TRUE)[[1]][1], sep = ".")
 			message(
-				"No prebuilt GenomicMx OpenMx binary was found for this platform (or GitHub was unreachable).\n",
-				"Opening the umx Releases page. Download the asset matching your OS and R version, then:\n",
+				"No prebuilt GenomicMx OpenMx binary was found for this platform/R (or GitHub was unreachable).\n",
+				"Platform: ", R.version$os, " arch ", R.version$arch, " R ", rVer, "\n",
+				"Opening the GenomicMx Release tag. Download the asset matching your OS/arch/R, then:\n",
 				"  install.packages(\"/path/to/binary\", repos = NULL)\n",
-				"Or: install.OpenMx(\"open release page\")"
+				"Or: install.OpenMx(\"open release page\")  # https://github.com/tbates/umx/releases/tag/genomicmx"
 			)
 			browseURL(xmu_genomicmx_release_page_url())
 			return(invisible(NULL))
 		}
 		message("Installing GenomicMx OpenMx binary from:\n  ", binUrl)
-		if (missing(lib)) {
-			install.packages(binUrl, repos = NULL)
-		} else {
-			install.packages(binUrl, repos = NULL, lib = lib)
+		installOk = tryCatch({
+			if (missing(lib)) {
+				install.packages(binUrl, repos = NULL)
+			} else {
+				install.packages(binUrl, repos = NULL, lib = lib)
+			}
+			TRUE
+		}, error = function(e) {
+			rVer = paste(R.version$major, strsplit(R.version$minor, ".", fixed = TRUE)[[1]][1], sep = ".")
+			message(
+				"Install failed: ", conditionMessage(e), "\n",
+				"Binary may not match your R version (Phase 1 publishes R release only; you have R ", rVer, ").\n",
+				"Download the matching asset from ", xmu_genomicmx_release_page_url(), " by hand, or use install.OpenMx(\"CRAN\")."
+			)
+			FALSE
+		})
+		if (!isTRUE(installOk)) {
+			return(invisible(NULL))
 		}
 		message(
 			"Installed GenomicMx OpenMx (this replaces OpenMx in the target library).\n",
@@ -3209,8 +3227,8 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 	if (loc == "open GenomicMx release page") {
 		browseURL(xmu_genomicmx_release_page_url())
 		message(
-			"Opened the umx Releases page (GenomicMx OpenMx binaries are attached there when published).\n",
-			"Download the asset for your OS/R version, then:\n",
+			"Opened the GenomicMx Release tag (binaries: https://github.com/tbates/umx/releases/tag/genomicmx).\n",
+			"Download the asset for your OS/arch/R, then:\n",
 			"  install.packages(\"/path/to/OpenMx_....tgz\", repos = NULL)  # or .zip on Windows\n",
 			"Or retry: install.OpenMx(\"GenomicMx\")"
 		)
@@ -3232,63 +3250,121 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 
 # ---- GenomicMx OpenMx engine detection and install messaging -----------------
 
-#' GitHub Releases page hosting GenomicMx OpenMx binaries
+#' GitHub Release tag hosting GenomicMx OpenMx binaries
+#'
+#' Binaries are attached to the umx Release with tag \code{genomicmx}
+#' (\code{https://github.com/tbates/umx/releases/tag/genomicmx}), not the
+#' rolling \code{/releases/latest} (which points at the newest umx CRAN tag).
+#' @return Character scalar URL.
 #' @keywords internal
 xmu_genomicmx_release_page_url <- function() {
-	"https://github.com/tbates/umx/releases"
+	"https://github.com/tbates/umx/releases/tag/genomicmx"
 }
 
-#' Resolve a platform OpenMx binary URL from the latest umx GitHub Release
+#' Resolve a platform GenomicMx binary URL from the umx Release tag
 #'
-#' Uses the GitHub API. Returns NULL when no matching asset is found.
-#' Assets should include "OpenMx" in the filename and end in .tgz / .tar.gz / .zip.
+#' Uses the GitHub API for the Release with tag \code{genomicmx} and returns a
+#' single download URL matching this session's OS, arch and R version. No new
+#' package dependencies (base R \code{url()} + regex on the JSON).
+#'
+#' Assets are expected to be named
+#' \code{OpenMx_<Version>_<SHA7>_<OS>_<Arch>_R<major>.<minor>.<ext>}
+#' (e.g. \code{OpenMx_2.50_abc1234_Linux_x86_64_R4.6.tgz}).
+#' The resolver prefers an exact \code{R<major>.<minor>} match and an exact arch
+#' match on macOS (arm64 vs x86_64); it does not fall back across arch or R.
+#' Legacy assets without an \code{R} token are still considered but ranked lower.
+#' Returns \code{NULL} when no matching asset is found or the API is unreachable.
+#' @param tag Release tag to query (default \code{"genomicmx"}).
+#' @param verbose Logical; if \code{TRUE}, message diagnostics on no match.
+#' @return Character scalar URL or \code{NULL}.
 #' @keywords internal
-xmu_genomicmx_binary_url <- function() {
-	# Base R only (no jsonlite dependency): pull latest release JSON and scrape asset URLs.
-	api = "https://api.github.com/repos/tbates/umx/releases/latest"
+xmu_genomicmx_binary_url <- function(tag = "genomicmx", verbose = getOption("umx.verbose", FALSE)) {
+	# Base R only (no jsonlite dependency): pull Release JSON and scrape asset URLs.
+	api = paste0("https://api.github.com/repos/tbates/umx/releases/tags/", tag)
 	raw = tryCatch({
 		con = url(api, open = "rb")
 		on.exit(close(con), add = TRUE)
 		readChar(con, nchars = 5e6, useBytes = TRUE)
 	}, error = function(e) NULL)
 	if (is.null(raw) || !nzchar(raw)) {
+		if (isTRUE(verbose)) {
+			message("xmu_genomicmx_binary_url: GitHub API unreachable for tag ", tag)
+		}
 		return(NULL)
 	}
 	urls = regmatches(raw, gregexpr("https://github.com/tbates/umx/releases/download/[^\"]+", raw))[[1]]
 	urls = unique(urls)
 	if (!length(urls)) {
+		if (isTRUE(verbose)) {
+			message("xmu_genomicmx_binary_url: no download URLs in Release ", tag)
+		}
 		return(NULL)
 	}
 	names = basename(urls)
-	os = .Platform$OS.type
+	# OS detection
+	osType = .Platform$OS.type
 	isMac = grepl("darwin", R.version$os, ignore.case = TRUE)
-	isWin = identical(os, "windows")
-	want = if (isWin) {
-		grepl("\\.zip$", names, ignore.case = TRUE) & grepl("OpenMx", names, ignore.case = TRUE)
-	} else if (isMac) {
-		grepl("\\.tgz$", names, ignore.case = TRUE) & grepl("OpenMx", names, ignore.case = TRUE)
+	isWin = identical(osType, "windows")
+	# Current session arch and R version (R4.6 not R4.6.1)
+	arch = R.version$arch
+	rVer = paste(R.version$major, strsplit(R.version$minor, ".", fixed = TRUE)[[1]][1], sep = ".")
+	rToken = paste0("R", rVer)
+	# Extension filter per OS (plan Phase 1: Linux .tgz after rename)
+	isOpenMx = grepl("OpenMx", names, ignore.case = TRUE)
+	if (isWin) {
+		extOk = grepl("\\.zip$", names, ignore.case = TRUE)
 	} else {
-		grepl("OpenMx", names, ignore.case = TRUE) & grepl("\\.(tar\\.gz|tgz)$", names, ignore.case = TRUE)
+		extOk = grepl("\\.tgz$", names, ignore.case = TRUE)
+		# accept legacy .tar.gz as fallback for older Linux assets
+		extOk = extOk | (!isWin && !isMac && grepl("\\.tar\\.gz$", names, ignore.case = TRUE))
 	}
-	if (!any(want)) {
+	candidate = isOpenMx & extOk
+	if (!any(candidate)) {
+		if (isTRUE(verbose)) {
+			message("xmu_genomicmx_binary_url: no OpenMx asset with correct extension for this OS")
+		}
 		return(NULL)
 	}
-	arch = R.version$arch
-	sub = names[want]
-	subUrls = urls[want]
-	if (isMac && grepl("aarch64|arm64", arch, ignore.case = TRUE)) {
-		arm = grepl("arm64|aarch64|apple", sub, ignore.case = TRUE)
-		if (any(arm)) {
-			return(subUrls[which(arm)[1]])
+	# R-version scoring: require exact R token when any asset carries an R token
+	hasRToken = grepl("R[0-9]+\\.[0-9]+", names, ignore.case = TRUE)
+	if (any(hasRToken[candidate])) {
+		hasExactR = grepl(rToken, names, fixed = TRUE)
+		candidate = candidate & hasExactR
+		if (!any(candidate)) {
+			if (isTRUE(verbose)) {
+				message("xmu_genomicmx_binary_url: no asset for R ", rVer, " (Phase 1 is R release only)")
+			}
+			return(NULL)
 		}
 	}
-	if (isMac && grepl("x86_64|amd64", arch, ignore.case = TRUE)) {
-		x86 = grepl("x86_64|amd64|intel", sub, ignore.case = TRUE)
-		if (any(x86)) {
-			return(subUrls[which(x86)[1]])
+	# Arch filtering on macOS: do not fall back across arm64/x86_64
+	if (isMac) {
+		isArmSession = grepl("aarch64|arm64", arch, ignore.case = TRUE)
+		isX86Session = grepl("x86_64|amd64", arch, ignore.case = TRUE)
+		subNames = names[candidate]
+		if (isArmSession) {
+			# drop any explicit x86_64/intel asset
+			isWrongArch = grepl("x86_64|amd64|intel", subNames, ignore.case = TRUE)
+			# but keep assets with no arch token (legacy)
+			hasArchToken = grepl("arm64|aarch64|x86_64|amd64|intel|apple", subNames, ignore.case = TRUE)
+			candidate[which(candidate)[isWrongArch & hasArchToken]] = FALSE
+		} else if (isX86Session) {
+			isWrongArch = grepl("arm64|aarch64|apple", subNames, ignore.case = TRUE)
+			hasArchToken = grepl("arm64|aarch64|x86_64|amd64|intel|apple", subNames, ignore.case = TRUE)
+			candidate[which(candidate)[isWrongArch & hasArchToken]] = FALSE
+		}
+		if (!any(candidate)) {
+			if (isTRUE(verbose)) {
+				message("xmu_genomicmx_binary_url: no asset matching macOS arch ", arch)
+			}
+			return(NULL)
 		}
 	}
-	subUrls[[1]]
+	# Prefer newest Version/SHA lexicographically (filenames sort by Version_SHA)
+	subUrls = urls[candidate]
+	subNames = names[candidate]
+	ord = order(subNames, decreasing = TRUE)
+	subUrls[ord[1]]
 }
 
 #' Detect whether loaded OpenMx is a GenomicMx-capable build

@@ -1,0 +1,195 @@
+name: Publish GenomicMx binaries
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: publish-genomicmx
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            display: Linux
+          - os: windows-latest
+            display: Windows
+          - os: macos-latest
+            display: macOS-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout umx (workflow host)
+        uses: actions/checkout@v5
+
+      - name: Set up R (release)
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: 'release'
+          use-public-rspm: true
+
+      - name: Install compile dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::RcppEigen
+            any::StanHeaders
+            any::BH
+            any::rpf
+
+      - name: Clone private GenomicMx
+        env:
+          PAT: ${{ secrets.PAT }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${PAT:-}" ]; then
+            echo "secrets.PAT is empty; cannot clone private tbates/GenomicMx" >&2
+            exit 1
+          fi
+          git -c http.https://github.com/.extraheader= clone --depth 1 "https://x-access-token:${PAT}@github.com/tbates/GenomicMx"
+          echo "Cloned GenomicMx $(git -C GenomicMx rev-parse HEAD)"
+
+      - name: Build binary (CRAN flavour)
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd GenomicMx
+          sh ./util/prep cran install
+          R CMD INSTALL --build .
+          echo "Build artifacts in GenomicMx/:"
+          ls -lh ./*.tgz ./*.zip ./*.tar.gz 2>/dev/null || true
+          echo "Build artifacts in parent:"
+          ls -lh ../*.tgz ../*.zip ../*.tar.gz 2>/dev/null || true
+
+      - name: Capture version and SHA (after prep)
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          SHA=$(git -C GenomicMx rev-parse HEAD)
+          SHA7=$(git -C GenomicMx rev-parse --short HEAD)
+          VER=$(grep '^Version:' GenomicMx/DESCRIPTION | awk '{print $2}')
+          RVER=$(Rscript --vanilla -e 'cat(paste(R.version$major, strsplit(R.version$minor, ".", fixed=TRUE)[[1]][1], sep="."))')
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "sha7=$SHA7" >> "$GITHUB_OUTPUT"
+          echo "ver=$VER" >> "$GITHUB_OUTPUT"
+          echo "rver=$RVER" >> "$GITHUB_OUTPUT"
+          echo "GenomicMx $VER @ $SHA7, R $RVER (post-prep)"
+
+      - name: Rename to canonical asset name
+        id: rename
+        shell: bash
+        run: |
+          set -euo pipefail
+          VER="${{ steps.meta.outputs.ver }}"
+          SHA7="${{ steps.meta.outputs.sha7 }}"
+          RVER="${{ steps.meta.outputs.rver }}"
+          OS="${{ matrix.display }}"
+
+          ARCH=$(Rscript --vanilla -e 'cat(R.version$arch)')
+          if echo "$ARCH" | grep -iq "aarch64\|arm64"; then ARCH="arm64"; else ARCH="x86_64"; fi
+
+          BIN=""
+          for pat in "GenomicMx/OpenMx_*.tar.gz" "GenomicMx/OpenMx_*.tgz" "GenomicMx/OpenMx_*.zip" "OpenMx_*.tar.gz" "OpenMx_*.tgz" "OpenMx_*.zip"; do
+            cand=$(ls -1 $pat 2>/dev/null | head -n 1 || true)
+            if [ -n "$cand" ]; then BIN="$cand"; break; fi
+          done
+          if [ -z "$BIN" ]; then
+            echo "No binary found after R CMD INSTALL --build" >&2
+            ls -lh GenomicMx/OpenMx_* 2>&1 | head -n 50
+            ls -lh OpenMx_* 2>&1 | head -n 50
+            exit 1
+          fi
+          echo "Found binary: $BIN"
+
+          case "$BIN" in
+            *.tar.gz) EXT="tgz" ;;
+            *.tgz)    EXT="tgz" ;;
+            *.zip)    EXT="zip" ;;
+            *)        EXT="${BIN##*.}" ;;
+          esac
+
+          case "$OS" in
+            Linux)       OS_TOKEN="Linux" ;;
+            Windows)     OS_TOKEN="Windows" ;;
+            macOS-arm64) OS_TOKEN="macOS" ;;
+            *)           OS_TOKEN="$OS" ;;
+          esac
+
+          CANON="OpenMx_${VER}_${SHA7}_${OS_TOKEN}_${ARCH}_R${RVER}.${EXT}"
+          echo "Renaming $BIN -> $CANON"
+          cp "$BIN" "$CANON"
+
+          if command -v sha256sum >/dev/null 2>&1; then
+            sha256sum "$CANON" > "${CANON}.sha256"
+          elif command -v shasum >/dev/null 2>&1; then
+            shasum -a 256 "$CANON" > "${CANON}.sha256"
+          else
+            openssl dgst -sha256 "$CANON" | awk '{print $2"  "$1}' | awk '{print $1"  '"$CANON"'"}' > "${CANON}.sha256" || true
+            if [ ! -s "${CANON}.sha256" ]; then
+              Rscript --vanilla -e "cat(tools::md5sum('${CANON}'), ' ', '${CANON}', '\n', sep='')" > "${CANON}.sha256" || true
+            fi
+          fi
+          cat "${CANON}.sha256" || true
+
+          {
+            echo "Version: $VER"
+            echo "SHA: ${{ steps.meta.outputs.sha }}"
+            echo "SHA7: $SHA7"
+            echo "OS: $OS_TOKEN"
+            echo "Arch: $ARCH"
+            echo "R: $RVER"
+            echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "Runner: ${{ matrix.os }}"
+            echo "File: $CANON"
+            cat "${CANON}.sha256" 2>/dev/null || true
+          } > "BUILD_INFO_${OS_TOKEN}_${ARCH}_R${RVER}.txt"
+          cat "BUILD_INFO_${OS_TOKEN}_${ARCH}_R${RVER}.txt"
+
+          echo "canon=$CANON" >> "$GITHUB_OUTPUT"
+          echo "buildinfo=BUILD_INFO_${OS_TOKEN}_${ARCH}_R${RVER}.txt" >> "$GITHUB_OUTPUT"
+          mkdir -p dist
+          cp "$CANON" "dist/"
+          cp "${CANON}.sha256" "dist/" 2>/dev/null || true
+          cp "BUILD_INFO_${OS_TOKEN}_${ARCH}_R${RVER}.txt" "dist/"
+
+      - name: Upload artifact for release
+        uses: actions/upload-artifact@v4
+        with:
+          name: genomicmx-${{ matrix.display }}
+          path: dist/*
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List assets
+        shell: bash
+        run: |
+          ls -R dist
+          echo "--- staging ---"
+          ls -lh dist/*
+
+      - name: Publish to umx Release tag genomicmx
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: genomicmx
+          name: GenomicMx binaries
+          body: "GenomicMx OpenMx binaries (CRAN flavour, no NPSOL) built from tbates/GenomicMx. Install with install.OpenMx('GenomicMx'). See BUILD_INFO files for SHA/R."
+          fail_on_unmatched_files: true
+          overwrite_files: true
+          generate_release_notes: false
+          files: dist/*

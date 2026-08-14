@@ -2,11 +2,16 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_genomicmx_release_page_url}
 \alias{xmu_genomicmx_release_page_url}
-\title{GitHub Releases page hosting GenomicMx OpenMx binaries}
+\title{GitHub Release tag hosting GenomicMx OpenMx binaries}
 \usage{
 xmu_genomicmx_release_page_url()
 }
+\value{
+Character scalar URL.
+}
 \description{
-GitHub Releases page hosting GenomicMx OpenMx binaries
+Binaries are attached to the umx Release with tag \code{genomicmx}
+(\code{https://github.com/tbates/umx/releases/tag/genomicmx}), not the
+rolling \code{/releases/latest} (which points at the newest umx CRAN tag).
 }
 \keyword{internal}

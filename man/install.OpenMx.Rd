@@ -31,18 +31,20 @@ modern WLS/GSEM (Jacobians, \code{type = "summary"} WLS data, multi-group stack)
 The GenomicMx build \strong{replaces} whatever OpenMx is in the target library
 (same idea as the old NPSOL binary installs).
 
-\strong{Public install path (everyone):} pre-built OpenMx package files published on the
-\href{https://github.com/tbates/umx/releases}{umx GitHub Releases} page. Call
-\code{install.OpenMx("GenomicMx")} (the default). That is the supported way to get the
-GenomicMx engine while the OpenMx source tree lives privately on GitHub.
+\strong{Public install path (everyone):} pre-built OpenMx binaries are published on the
+umx GitHub Release tag \strong{genomicmx} (\verb{https://github.com/tbates/umx/releases/tag/genomicmx}).
+Call \code{install.OpenMx("GenomicMx")} (the default). That is the supported way to get the
+GenomicMx engine while the OpenMx source tree lives privately on GitHub. Binaries are
+CRAN flavour (no NPSOL) and are built for R \code{release} on Linux x86_64, Windows x86_64,
+and macOS arm64 (Phase 1).
 
 Options for \code{loc}:
 \enumerate{
-\item \code{"GenomicMx"} (\strong{default}): download the latest platform binary from
-\href{https://github.com/tbates/umx/releases}{umx Releases} when available.
+\item \code{"GenomicMx"} (\strong{default}): download the platform binary for this OS/arch/R from the
+\code{genomicmx} Release tag when available.
 \item \code{"CRAN"}: install stock OpenMx from CRAN (enough for many twin/RAM models, not
 the full GenomicMx WLS stack).
-\item \code{"open release page"}: open the umx Releases page in a browser so you can pick a binary by hand.
+\item \code{"open release page"}: open the umx GenomicMx Release tag in a browser so you can pick a binary by hand.
 }
 
 Source installs from a private GitHub fork are \strong{not} offered here (they cannot work for
@@ -57,7 +59,7 @@ install.OpenMx("CRAN")                # stock CRAN OpenMx only
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/umx/releases}
+\item \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/umx/releases/tag/genomicmx}
 }
 }
 \seealso{

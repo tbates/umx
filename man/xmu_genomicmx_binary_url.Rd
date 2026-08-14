@@ -2,12 +2,33 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{xmu_genomicmx_binary_url}
 \alias{xmu_genomicmx_binary_url}
-\title{Resolve a platform OpenMx binary URL from the latest umx GitHub Release}
+\title{Resolve a platform GenomicMx binary URL from the umx Release tag}
 \usage{
-xmu_genomicmx_binary_url()
+xmu_genomicmx_binary_url(
+  tag = "genomicmx",
+  verbose = getOption("umx.verbose", FALSE)
+)
+}
+\arguments{
+\item{tag}{Release tag to query (default \code{"genomicmx"}).}
+
+\item{verbose}{Logical; if \code{TRUE}, message diagnostics on no match.}
+}
+\value{
+Character scalar URL or \code{NULL}.
 }
 \description{
-Uses the GitHub API. Returns NULL when no matching asset is found.
-Assets should include "OpenMx" in the filename and end in .tgz / .tar.gz / .zip.
+Uses the GitHub API for the Release with tag \code{genomicmx} and returns a
+single download URL matching this session's OS, arch and R version. No new
+package dependencies (base R \code{url()} + regex on the JSON).
+}
+\details{
+Assets are expected to be named
+\code{OpenMx_<Version>_<SHA7>_<OS>_<Arch>_R<major>.<minor>.<ext>}
+(e.g. \code{OpenMx_2.50_abc1234_Linux_x86_64_R4.6.tgz}).
+The resolver prefers an exact \code{R<major>.<minor>} match and an exact arch
+match on macOS (arm64 vs x86_64); it does not fall back across arch or R.
+Legacy assets without an \code{R} token are still considered but ranked lower.
+Returns \code{NULL} when no matching asset is found or the API is unreachable.
 }
 \keyword{internal}
