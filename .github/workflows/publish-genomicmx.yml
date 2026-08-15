@@ -85,37 +85,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          Rscript --vanilla <<'RS'
-          repos <- getOption("repos")
-          if (is.null(repos) || identical(unname(repos["CRAN"]), "@CRAN@") || !nzchar(unname(repos["CRAN"]))) {
-            options(repos = c(CRAN = "https://cloud.r-project.org"))
-          }
-          d <- read.dcf("GenomicMx/DESCRIPTION", fields = c("Imports", "LinkingTo"))
-          raw <- paste(na.omit(as.character(d[1, ])), collapse = ",")
-          raw <- gsub("\n", " ", raw)
-          parts <- trimws(strsplit(raw, ",", fixed = TRUE)[[1]])
-          base <- c("R", "base", "compiler", "datasets", "graphics", "grDevices", "grid", "methods", "parallel", "splines", "stats", "stats4", "tcltk", "tools", "utils")
-          need <- character()
-          for (part in parts) {
-            if (!nzchar(part)) next
-            pkg <- sub("[[:space:]]*\\(.*", "", part)
-            if (pkg %in% base) next
-            have <- tryCatch(utils::packageVersion(pkg), error = function(e) package_version("0"))
-            mm <- regmatches(part, regexec(">=[[:space:]]*([0-9][-.0-9]*)", part))[[1]]
-            if (length(mm) < 2) next
-            req <- package_version(chartr("-", ".", mm[2]))
-            cat(pkg, " have=", as.character(have), " need>=", as.character(req), "\n", sep = "")
-            if (have < req) {
-              need <- c(need, pkg)
-            }
-          }
-          if (length(need)) {
-            cat("Installing:", paste(unique(need), collapse = ", "), "\n")
-            install.packages(unique(need))
-          } else {
-            cat("All DESCRIPTION Imports/LinkingTo floors already satisfied\n")
-          }
-          RS
+          Rscript -e 'lib <- Sys.getenv("R_LIBS_USER"); if (!nzchar(lib)) lib <- .libPaths()[[1]]; dir.create(lib, recursive = TRUE, showWarnings = FALSE); pkgs <- c("Matrix","MASS","Rcpp","RcppEigen","RcppParallel","StanHeaders","BH","rpf","digest","lifecycle"); print(lib); print(pkgs); install.packages(pkgs, lib = lib, repos = "https://cloud.r-project.org")'
 
       - name: Build binary (CRAN flavour)
         shell: bash

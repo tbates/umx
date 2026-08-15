@@ -189,7 +189,7 @@ jobs:
           SHA=$(git -C GenomicMx rev-parse HEAD)
           echo "Cloned GenomicMx $SHA"
           cd GenomicMx
-          Rscript --vanilla -e 'repos <- getOption("repos"); if (is.null(repos) || identical(unname(repos["CRAN"]), "@CRAN@")) options(repos = c(CRAN = "https://cloud.r-project.org")); d <- read.dcf("DESCRIPTION", fields = c("Imports", "LinkingTo")); raw <- gsub("\n", " ", paste(na.omit(as.character(d[1, ])), collapse = ",")); parts <- trimws(strsplit(raw, ",", fixed = TRUE)[[1]]); base <- c("R","base","compiler","datasets","graphics","grDevices","grid","methods","parallel","splines","stats","stats4","tcltk","tools","utils"); need <- character(); for (part in parts) { if (!nzchar(part)) next; pkg <- sub("[[:space:]]*\\(.*", "", part); if (pkg %in% base) next; have <- tryCatch(utils::packageVersion(pkg), error = function(e) package_version("0")); mm <- regmatches(part, regexec(">=[[:space:]]*([0-9][-.0-9]*)", part))[[1]]; if (length(mm) < 2) next; req <- package_version(chartr("-", ".", mm[2])); if (have < req) need <- c(need, pkg) }; if (length(need)) install.packages(unique(need))'
+          Rscript -e 'lib <- Sys.getenv("R_LIBS_USER"); if (!nzchar(lib)) lib <- .libPaths()[[1]]; dir.create(lib, recursive = TRUE, showWarnings = FALSE); install.packages(c("Matrix","MASS","Rcpp","RcppEigen","RcppParallel","StanHeaders","BH","rpf","digest","lifecycle"), lib = lib, repos = "https://cloud.r-project.org")'
           make cran-install
           echo "$SHA" > "${R_LIBS_USER}/OpenMx/GENOMICMX_SHA"
 
