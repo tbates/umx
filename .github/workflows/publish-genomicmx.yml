@@ -41,6 +41,27 @@ jobs:
             any::StanHeaders
             any::BH
             any::rpf
+            any::RcppParallel
+
+      - name: Compile without debug symbols
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${HOME}/.R"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            MV="${HOME}/.R/Makevars.win"
+          else
+            MV="${HOME}/.R/Makevars"
+          fi
+          {
+            echo 'CXXFLAGS += -g0'
+            echo 'CXX11FLAGS += -g0'
+            echo 'CXX14FLAGS += -g0'
+            echo 'CXX17FLAGS += -g0'
+            echo 'CFLAGS += -g0'
+          } >> "$MV"
+          echo "Wrote $MV"
+          cat "$MV"
 
       - name: Clone private GenomicMx
         env:
@@ -61,11 +82,13 @@ jobs:
           set -euo pipefail
           cd GenomicMx
           sh ./util/prep cran install
-          R CMD INSTALL --build .
+          R CMD INSTALL --build --strip .
           echo "Build artifacts in GenomicMx/:"
           ls -lh ./*.tgz ./*.zip ./*.tar.gz 2>/dev/null || true
           echo "Build artifacts in parent:"
           ls -lh ../*.tgz ../*.zip ../*.tar.gz 2>/dev/null || true
+          echo "Installed OpenMx libs:"
+          Rscript --vanilla -e 'p <- system.file("libs", package = "OpenMx"); cat(p, "\n"); if (nzchar(p) && dir.exists(p)) { f <- list.files(p, full.names = TRUE); print(file.info(f)[, "size", drop = FALSE]) }'
 
       - name: Capture version and SHA (after prep)
         id: meta
@@ -76,11 +99,13 @@ jobs:
           SHA7=$(git -C GenomicMx rev-parse --short HEAD)
           VER=$(grep '^Version:' GenomicMx/DESCRIPTION | awk '{print $2}')
           RVER=$(Rscript --vanilla -e 'cat(paste(R.version$major, strsplit(R.version$minor, ".", fixed=TRUE)[[1]][1], sep="."))')
+          RPVER=$(Rscript --vanilla -e 'v <- as.character(utils::packageVersion("RcppParallel")); if (utils::packageVersion("RcppParallel") < "6.2.0") quit(save="no", status=1); cat(v)')
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           echo "sha7=$SHA7" >> "$GITHUB_OUTPUT"
           echo "ver=$VER" >> "$GITHUB_OUTPUT"
           echo "rver=$RVER" >> "$GITHUB_OUTPUT"
-          echo "GenomicMx $VER @ $SHA7, R $RVER (post-prep)"
+          echo "rpver=$RPVER" >> "$GITHUB_OUTPUT"
+          echo "GenomicMx $VER @ $SHA7, R $RVER, RcppParallel $RPVER (post-prep)"
 
       - name: Rename to canonical asset name
         id: rename
@@ -145,6 +170,7 @@ jobs:
             echo "OS: $OS_TOKEN"
             echo "Arch: $ARCH"
             echo "R: $RVER"
+            echo "RcppParallel: ${{ steps.meta.outputs.rpver }}"
             echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "Runner: ${{ matrix.os }}"
             echo "File: $CANON"
