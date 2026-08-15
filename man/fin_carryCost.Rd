@@ -13,7 +13,9 @@ fin_carryCost(
   rates = 5000,
   insurance = 2000,
   maintenance = 0.015,
-  years = 5
+  years = 5,
+  inflation = 0.025,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -27,18 +29,20 @@ fin_carryCost(
 
 \item{interest}{Cost of borrowing}
 
-\item{rates}{Council}
+\item{rates}{Council rates per year at t=1 (absolute).}
 
-\item{insurance}{The cost of property owners insurance}
+\item{insurance}{The cost of property owners insurance per year at t=1 (absolute).}
 
-\item{maintenance}{New kitchen roof etc.}
+\item{maintenance}{New kitchen roof etc. If <1, treated as rate of property_cost at t=1; if >=1, treated as absolute per year at t=1.}
 
-\item{years}{Holding time.}
+\item{years}{Holding time (integer >=1).}
+
+\item{inflation}{Annual inflation applied to rent, rates, insurance and maintenance (default .025). Set 0 to recover flat model. Property and QQQ remain compound totals.}
+
+\item{verbose}{Logical; if TRUE, print a one-line per-year schedule when years <= 20.}
 }
 \value{
-\itemize{
-\item value
-}
+Invisibly the total net cost of buying (scalar). When verbose is TRUE, also returns a schedule data.frame as attribute "schedule".
 }
 \description{
 \code{fin_carryCost} uses the purchase price, holding expenses, appreciation, and opportunity cost to compute a carrying cost for a house purchase.
@@ -46,6 +50,7 @@ fin_carryCost(
 \examples{
 fin_carryCost(property_cost=1.2e6)
 fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
+fin_carryCost(property_cost=1.2e6, inflation=0) # flat, recovers pre-inflation total
 
 }
 \seealso{

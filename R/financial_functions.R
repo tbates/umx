@@ -265,11 +265,13 @@ fin_stock_CAGR <- function(priceSeries, from = "1900-01-01") {
 #' @param QQQ Opportunity cost of leaving money in the markets
 #' @param rent_saved But now you have to rent somewhere
 #' @param interest Cost of borrowing
-#' @param rates Council
-#' @param insurance The cost of property owners insurance
-#' @param maintenance New kitchen roof etc.
-#' @param years Holding time.
-#' @return - value
+#' @param rates Council rates per year at t=1 (absolute).
+#' @param insurance The cost of property owners insurance per year at t=1 (absolute).
+#' @param maintenance New kitchen roof etc. If <1, treated as rate of property_cost at t=1; if >=1, treated as absolute per year at t=1.
+#' @param years Holding time (integer >=1).
+#' @param inflation Annual inflation applied to rent, rates, insurance and maintenance (default .025). Set 0 to recover flat model. Property and QQQ remain compound totals.
+#' @param verbose Logical; if TRUE, print a one-line per-year schedule when years <= 20.
+#' @return Invisibly the total net cost of buying (scalar). When verbose is TRUE, also returns a schedule data.frame as attribute "schedule".
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
@@ -277,32 +279,77 @@ fin_stock_CAGR <- function(priceSeries, from = "1900-01-01") {
 #' @examples
 #' fin_carryCost(property_cost=1.2e6)
 #' fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
+#' fin_carryCost(property_cost=1.2e6, inflation=0) # flat, recovers pre-inflation total
 #'
-fin_carryCost <- function(property_cost, appreciation =.02, QQQ= .14, rent_saved= .04, interest= .06, rates= 5000, insurance = 2000, maintenance = .015, years=5){  
-  rent_saved   = property_cost * rent_saved
-  interest     = property_cost * interest
-  maintenance  = property_cost * maintenance
-  QQQgains     = (property_cost * (1+QQQ)^years) - property_cost
-  propAprec    = property_cost * ((1+appreciation)^years)
-  propAprec    = (propAprec*.97) - property_cost # sale cost
-  Carry_Cost   = (interest + rates + insurance + maintenance) - rent_saved
-  netnetCostOfBuying = (Carry_Cost*years) + QQQgains - propAprec
+fin_carryCost <- function(property_cost, appreciation = .02, QQQ = .14, rent_saved = .04, interest = .06, rates = 5000, insurance = 2000, maintenance = .015, years = 5, inflation = .025, verbose = TRUE){
+  # base annual at t=1 (flat reference)
+  rent0       = property_cost * rent_saved
+  interest0   = property_cost * interest
+  if (maintenance < 1) {
+    maintenance0 = property_cost * maintenance
+  } else {
+    maintenance0 = maintenance
+  }
+  QQQgains  = (property_cost * (1+QQQ)^years) - property_cost
+  propAprec = property_cost * ((1+appreciation)^years)
+  propAprec = (propAprec*.97) - property_cost # 3% sale cost
+  # per-year carry with inflation on rent/rates/insurance/maintenance; interest fixed (opportunity on price)
+  annualCarry = numeric(years)
+  rentAnnual = numeric(years)
+  ratesAnnual = numeric(years)
+  insuranceAnnual = numeric(years)
+  maintenanceAnnual = numeric(years)
+  for (t in 1:years) {
+    infFactor = (1+inflation)^(t-1)
+    rentAnnual[t]       = rent0 * infFactor
+    ratesAnnual[t]      = rates * infFactor
+    insuranceAnnual[t]  = insurance * infFactor
+    maintenanceAnnual[t]= maintenance0 * infFactor
+    annualCarry[t]      = (interest0 + ratesAnnual[t] + insuranceAnnual[t] + maintenanceAnnual[t]) - rentAnnual[t]
+  }
+  totalCarry = sum(annualCarry)
+  flatCarry  = (interest0 + rates + insurance + maintenance0 - rent0) * years
+  netnetCostOfBuying = totalCarry + QQQgains - propAprec
+  # for reporting: keep original variable names for dollar formatting at t=1
+  rent_saved  = rent0
+  interest    = interest0
+  maintenance = maintenance0
+  Carry_Cost  = annualCarry[1]
 
   if((Carry_Cost/property_cost) > .015){
   	cat("Polite note: Carry Cost over the 1.5% threshold: **too high**\n\n")
   }
   cat(
 	  "Purchase Price = ", dollar(as.numeric(property_cost) , prefix = "$"), "\n",
-	  dollar(as.numeric(interest) , prefix = "$"),    "interest + ", 
-	  dollar(as.numeric(rates)    , prefix = "$"),    "rates + ", 
+	  dollar(as.numeric(interest) , prefix = "$"),    "interest + ",
+	  dollar(as.numeric(rates)    , prefix = "$"),    "rates + ",
 	  dollar(as.numeric(insurance), prefix = "$"),    "insurance + ",
 	  dollar(as.numeric(maintenance) , prefix = "$"), "maintenance - ",
-	  dollar(as.numeric(rent_saved)  , prefix = "$"), "rent_saved\n", 
-	  "Annual carry cost = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
-	  "Assumed appreciation of ", QQQ*100, "% in QQQ and ", dollar(as.numeric(propAprec), prefix = "$"), " /yr for property\n",
-	  "Missed market gains  = ", dollar(as.numeric(QQQgains), prefix = "$"), "\n",
-	  "Net net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), "\n"
+	  dollar(as.numeric(rent_saved)  , prefix = "$"), "rent_saved (t=1)\n",
+	  "Annual carry cost (t=1) = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
+	  "Assumed appreciation: QQQ ", QQQ*100, "% p.a., property ", appreciation*100, "% p.a. (net ", dollar(as.numeric(propAprec), prefix = "$"), " total after 3% sale cost over ", years, " years)\n",
+	  "Inflation on rent/rates/insurance/maintenance: ", inflation*100, "% p.a.\n",
+	  "Total carry (inflated) = ", dollar(as.numeric(totalCarry), prefix = "$"), " (flat would be ", dollar(as.numeric(flatCarry), prefix = "$"), ")\n",
+	  "Missed market gains  = ", dollar(as.numeric(QQQgains), prefix = "$"), " total over ", years, " years\n",
+	  "Net net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), " total over ", years, " years\n"
   )
+  if(isTRUE(verbose) && years <= 20 && years > 1){
+    cat("\nYear  Carry     Rent      Rates     Insurance Maintenance\n")
+    for(t in 1:years){
+      cat(sprintf("%4d %9s %9s %9s %9s %9s\n",
+        t,
+        dollar(as.numeric(annualCarry[t]), prefix="$"),
+        dollar(as.numeric(rentAnnual[t]), prefix="$"),
+        dollar(as.numeric(ratesAnnual[t]), prefix="$"),
+        dollar(as.numeric(insuranceAnnual[t]), prefix="$"),
+        dollar(as.numeric(maintenanceAnnual[t]), prefix="$")
+      ))
+    }
+  }
+  schedule = data.frame(year=1:years, carry=annualCarry, rent=rentAnnual, rates=ratesAnnual, insurance=insuranceAnnual, maintenance=maintenanceAnnual)
+  attr(netnetCostOfBuying, "schedule") = schedule
+  attr(netnetCostOfBuying, "totalCarry") = totalCarry
+  attr(netnetCostOfBuying, "flatCarry") = flatCarry
   invisible(netnetCostOfBuying)
 }
 

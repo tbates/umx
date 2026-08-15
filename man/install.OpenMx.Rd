@@ -48,11 +48,11 @@ the full GenomicMx WLS stack).
 }
 
 GenomicMx binaries are linked against \strong{oneTBB} and declare current-CRAN
-\code{Imports} floors (including \code{RcppParallel >= 6.2.0} and \code{Matrix >= 1.7-6}).
+\code{Imports} floors (including \verb{RcppParallel >= 6.2.0} and \code{Matrix >= 1.7-6}).
 \code{install.OpenMx("GenomicMx")} (and a custom \code{url} binary) upgrades those
 packages first. A \code{repos = NULL} binary install does not upgrade Imports, so
 R's recommended \code{Matrix} (often one patch behind CRAN) used to fail with
-\code{package 'Matrix' 1.7-5 was found, but >= 1.7.6 is required}. After the
+\verb{package 'Matrix' 1.7-5 was found, but >= 1.7.6 is required}. After the
 OpenMx files are in place, this function tries \code{loadNamespace("OpenMx")}
 when OpenMx is not already loaded. If OpenMx is already loaded, restart R
 to pick up the new \code{.so} / \code{.dll}.
