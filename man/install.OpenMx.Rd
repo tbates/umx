@@ -47,6 +47,15 @@ the full GenomicMx WLS stack).
 \item \code{"open release page"}: open the umx GenomicMx Release tag in a browser so you can pick a binary by hand.
 }
 
+GenomicMx binaries are linked against \strong{oneTBB}. \code{install.OpenMx("GenomicMx")} (and a
+custom \code{url} binary) first installs or upgrades \code{RcppParallel} to \verb{>= 6.2.0}. A
+\code{repos = NULL} binary install does not upgrade Imports, which is how an older
+\code{RcppParallel} (5.x, pre-oneTBB) produced a \code{dyn.load} symbol error after a
+successful unpack. After the OpenMx files are in place, this function tries
+\code{loadNamespace("OpenMx")} when OpenMx is not already loaded, so a TBB mismatch
+is printed in this session. If OpenMx is already loaded, restart R to pick up
+the new \code{.so} / \code{.dll}.
+
 Source installs from a private GitHub fork are \strong{not} offered here (they cannot work for
 general users). Maintainers building OpenMx locally should use \code{\link[=mx_make]{mx_make()}} on their source tree.
 }

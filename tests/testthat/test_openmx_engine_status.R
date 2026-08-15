@@ -36,6 +36,15 @@ test_that("install.OpenMx accepts GenomicMx loc without installing", {
 	expect_false("dev" %in% fmls)
 })
 
+test_that("install.OpenMx requires RcppParallel >= 6.2.0 and probes load", {
+	# Body inspection only -- do not network-install
+	bodyTxt = paste(deparse(body(install.OpenMx)), collapse = "\n")
+	expect_match(bodyTxt, "6.2.0")
+	expect_match(bodyTxt, "RcppParallel")
+	expect_match(bodyTxt, "loadNamespace")
+	expect_match(bodyTxt, "oneTBB")
+})
+
 test_that("xmu_genomicmx_release_page_url points at umx releases", {
 	expect_equal(xmu_genomicmx_release_page_url(), "https://github.com/tbates/umx/releases/tag/genomicmx")
 })

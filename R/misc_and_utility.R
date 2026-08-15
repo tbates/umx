@@ -3141,6 +3141,15 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #'    the full GenomicMx WLS stack).
 #' 3. `"open release page"`: open the umx GenomicMx Release tag in a browser so you can pick a binary by hand.
 #'
+#' GenomicMx binaries are linked against **oneTBB**. `install.OpenMx("GenomicMx")` (and a
+#' custom `url` binary) first installs or upgrades `RcppParallel` to `>= 6.2.0`. A
+#' `repos = NULL` binary install does not upgrade Imports, which is how an older
+#' `RcppParallel` (5.x, pre-oneTBB) produced a `dyn.load` symbol error after a
+#' successful unpack. After the OpenMx files are in place, this function tries
+#' `loadNamespace("OpenMx")` when OpenMx is not already loaded, so a TBB mismatch
+#' is printed in this session. If OpenMx is already loaded, restart R to pick up
+#' the new `.so` / `.dll`.
+#'
 #' Source installs from a private GitHub fork are **not** offered here (they cannot work for
 #' general users). Maintainers building OpenMx locally should use [mx_make()] on their source tree.
 #'
@@ -3168,6 +3177,28 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 	options(timeout = 60 * 5)
 	on.exit(options(timeout = oldTimeOut), add = TRUE)
 
+	# oneTBB ABI: GenomicMx OpenMx.so needs RcppParallel >= 6.2.0. repos=NULL does not upgrade Imports.
+	needRcppParallel = package_version("6.2.0")
+	installingGenomicMxBinary = !is.null(url) || identical(loc, "GenomicMx")
+	if (installingGenomicMxBinary) {
+		rpVer = tryCatch({
+			if (missing(lib)) {
+				utils::packageVersion("RcppParallel")
+			} else {
+				utils::packageVersion("RcppParallel", lib.loc = lib)
+			}
+		}, error = function(e) package_version("0"))
+		if (rpVer < needRcppParallel) {
+			message("RcppParallel ", rpVer, " is below ", needRcppParallel, " (oneTBB). Installing current CRAN RcppParallel...")
+			if (missing(lib)) {
+				install.packages("RcppParallel", repos = repos)
+			} else {
+				install.packages("RcppParallel", repos = repos, lib = lib)
+			}
+		}
+	}
+
+	didInstallBinary = FALSE
 	if (!is.null(url)) {
 		if (identical(url, "Finder")) {
 			umx_check_OS("OSX")
@@ -3177,12 +3208,15 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 			url = file.choose(new = FALSE)
 			message("Using selected file: ", url)
 		}
-		install.packages(url, repos = NULL, lib = if (!missing(lib)) lib else NULL)
-		message("Installed from URL/path. Restart R, then library(OpenMx); library(umx).")
-		return(invisible(NULL))
+		if (missing(lib)) {
+			install.packages(url, repos = NULL)
+		} else {
+			install.packages(url, repos = NULL, lib = lib)
+		}
+		didInstallBinary = TRUE
 	}
 
-	if (loc == "GenomicMx") {
+	if (!didInstallBinary && loc == "GenomicMx") {
 		# public binary install for everyone — resolver reads tag genomicmx
 		binUrl = xmu_genomicmx_binary_url()
 		if (is.null(binUrl) || !nzchar(binUrl)) {
@@ -3217,11 +3251,42 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 		if (!isTRUE(installOk)) {
 			return(invisible(NULL))
 		}
-		message(
-			"Installed GenomicMx OpenMx (this replaces OpenMx in the target library).\n",
-			"Restart R, then:\n  library(OpenMx); library(umx); umxVersion()\n",
-			"Stock CRAN OpenMx only: install.OpenMx(\"CRAN\")"
-		)
+		didInstallBinary = TRUE
+	}
+
+	if (didInstallBinary) {
+		if (isNamespaceLoaded("OpenMx")) {
+			message(
+				"Installed GenomicMx OpenMx (this replaces OpenMx in the target library).\n",
+				"OpenMx is already loaded in this session; restart R to pick up the new binary and TBB.\n",
+				"Then: library(OpenMx); library(umx); umxVersion()\n",
+				"Stock CRAN OpenMx only: install.OpenMx(\"CRAN\")"
+			)
+		} else {
+			loadErr = tryCatch({
+				if (missing(lib)) {
+					loadNamespace("OpenMx")
+				} else {
+					loadNamespace("OpenMx", lib.loc = lib)
+				}
+				NULL
+			}, error = function(e) e)
+			if (!is.null(loadErr)) {
+				message(
+					"Installed OpenMx files, but the package failed to load:\n  ",
+					conditionMessage(loadErr),
+					"\n  GenomicMx binaries need RcppParallel >= 6.2.0 (oneTBB). Try:\n",
+					"    install.packages(\"RcppParallel\")\n",
+					"  then restart R. Stock CRAN OpenMx: install.OpenMx(\"CRAN\")"
+				)
+			} else {
+				message(
+					"Installed GenomicMx OpenMx (this replaces OpenMx in the target library).\n",
+					"Restart R, then:\n  library(OpenMx); library(umx); umxVersion()\n",
+					"Stock CRAN OpenMx only: install.OpenMx(\"CRAN\")"
+				)
+			}
+		}
 		return(invisible(NULL))
 	}
 	if (loc == "open GenomicMx release page") {
