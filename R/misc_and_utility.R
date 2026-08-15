@@ -3141,14 +3141,15 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #'    the full GenomicMx WLS stack).
 #' 3. `"open release page"`: open the umx GenomicMx Release tag in a browser so you can pick a binary by hand.
 #'
-#' GenomicMx binaries are linked against **oneTBB**. `install.OpenMx("GenomicMx")` (and a
-#' custom `url` binary) first installs or upgrades `RcppParallel` to `>= 6.2.0`. A
-#' `repos = NULL` binary install does not upgrade Imports, which is how an older
-#' `RcppParallel` (5.x, pre-oneTBB) produced a `dyn.load` symbol error after a
-#' successful unpack. After the OpenMx files are in place, this function tries
-#' `loadNamespace("OpenMx")` when OpenMx is not already loaded, so a TBB mismatch
-#' is printed in this session. If OpenMx is already loaded, restart R to pick up
-#' the new `.so` / `.dll`.
+#' GenomicMx binaries are linked against **oneTBB** and declare current-CRAN
+#' `Imports` floors (including `RcppParallel >= 6.2.0` and `Matrix >= 1.7-6`).
+#' `install.OpenMx("GenomicMx")` (and a custom `url` binary) upgrades those
+#' packages first. A `repos = NULL` binary install does not upgrade Imports, so
+#' R's recommended `Matrix` (often one patch behind CRAN) used to fail with
+#' `package 'Matrix' 1.7-5 was found, but >= 1.7.6 is required`. After the
+#' OpenMx files are in place, this function tries `loadNamespace("OpenMx")`
+#' when OpenMx is not already loaded. If OpenMx is already loaded, restart R
+#' to pick up the new `.so` / `.dll`.
 #'
 #' Source installs from a private GitHub fork are **not** offered here (they cannot work for
 #' general users). Maintainers building OpenMx locally should use [mx_make()] on their source tree.
@@ -3177,23 +3178,38 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 	options(timeout = 60 * 5)
 	on.exit(options(timeout = oldTimeOut), add = TRUE)
 
-	# oneTBB ABI: GenomicMx OpenMx.so needs RcppParallel >= 6.2.0. repos=NULL does not upgrade Imports.
-	needRcppParallel = package_version("6.2.0")
+	# Keep floors in sync with OpenMx DESCRIPTION Imports/LinkingTo (2026-08-15 CRAN).
+	# repos=NULL does not upgrade Imports; R's recommended Matrix/MASS often lag one patch.
+	needPkgs = c(
+		Rcpp = "1.1.2",
+		RcppEigen = "0.3.4.0.2",
+		RcppParallel = "6.2.0",
+		StanHeaders = "2.32.10",
+		BH = "1.90.0-1",
+		rpf = "1.0.15",
+		Matrix = "1.7-6",
+		digest = "0.6.39",
+		MASS = "7.3-66",
+		lifecycle = "1.0.5"
+	)
 	installingGenomicMxBinary = !is.null(url) || identical(loc, "GenomicMx")
 	if (installingGenomicMxBinary) {
-		rpVer = tryCatch({
-			if (missing(lib)) {
-				utils::packageVersion("RcppParallel")
-			} else {
-				utils::packageVersion("RcppParallel", lib.loc = lib)
-			}
-		}, error = function(e) package_version("0"))
-		if (rpVer < needRcppParallel) {
-			message("RcppParallel ", rpVer, " is below ", needRcppParallel, " (oneTBB). Installing current CRAN RcppParallel...")
-			if (missing(lib)) {
-				install.packages("RcppParallel", repos = repos)
-			} else {
-				install.packages("RcppParallel", repos = repos, lib = lib)
+		for (pkg in names(needPkgs)) {
+			needVer = package_version(chartr("-", ".", needPkgs[[pkg]]))
+			haveVer = tryCatch({
+				if (missing(lib)) {
+					utils::packageVersion(pkg)
+				} else {
+					utils::packageVersion(pkg, lib.loc = lib)
+				}
+			}, error = function(e) package_version("0"))
+			if (haveVer < needVer) {
+				message(pkg, " ", haveVer, " is below ", needVer, ". Installing current CRAN ", pkg, "...")
+				if (missing(lib)) {
+					install.packages(pkg, repos = repos)
+				} else {
+					install.packages(pkg, repos = repos, lib = lib)
+				}
 			}
 		}
 	}
@@ -3275,8 +3291,8 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 				message(
 					"Installed OpenMx files, but the package failed to load:\n  ",
 					conditionMessage(loadErr),
-					"\n  GenomicMx binaries need RcppParallel >= 6.2.0 (oneTBB). Try:\n",
-					"    install.packages(\"RcppParallel\")\n",
+					"\n  GenomicMx binaries need current-CRAN Imports (RcppParallel >= 6.2.0 / oneTBB, Matrix >= 1.7-6, ...). Try:\n",
+					"    install.packages(c(\"RcppParallel\", \"Matrix\", \"MASS\"))\n",
 					"  then restart R. Stock CRAN OpenMx: install.OpenMx(\"CRAN\")"
 				)
 			} else {

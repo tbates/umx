@@ -41,8 +41,9 @@ test_that("install.OpenMx requires RcppParallel >= 6.2.0 and probes load", {
 	bodyTxt = paste(deparse(body(install.OpenMx)), collapse = "\n")
 	expect_match(bodyTxt, "6.2.0")
 	expect_match(bodyTxt, "RcppParallel")
+	expect_match(bodyTxt, "1.7-6")
+	expect_match(bodyTxt, "needPkgs")
 	expect_match(bodyTxt, "loadNamespace")
-	expect_match(bodyTxt, "oneTBB")
 })
 
 test_that("xmu_genomicmx_release_page_url points at umx releases", {
