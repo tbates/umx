@@ -301,6 +301,14 @@ test_that("umxParan works with both data frames and covariance matrices", {
 	expect_equal(length(res_mismatch$Ev), 2)
 })
 
+test_that("umxVersion(min = 3) is accepted and teaches the string form", {
+	# numeric min used to error in >= compare; coerce and note the current-version string
+	expect_message(umxVersion(min = 3, verbose = FALSE), regexp = "version string")
+	expect_message(umxVersion(min = 3, verbose = FALSE), regexp = as.character(packageVersion("umx")))
+	expect_error(umxVersion(min = 99, verbose = FALSE), regexp = "not recent enough")
+	expect_message(umxVersion(min = "1.0.0", verbose = FALSE), regexp = "recent enough")
+})
+
 
 
 

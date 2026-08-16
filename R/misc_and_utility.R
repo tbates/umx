@@ -1843,7 +1843,7 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 #' Essential for bug-reports! This function can also test for a minimum version.
 #'
 #' @param model Optional to show optimizer in this model
-#' @param min Optional minimum version string to test for, e.g. '2.7.0' (Default = NULL).
+#' @param min Optional minimum version to test for. Prefer a string such as `"4.70.0"`. A lone number like `3` is accepted (treated as `"3"`) with a note to use a string next time. Default `NULL` (no check).
 #' @param verbose = TRUE
 #' @param return Which package (umx or OpenMx) to 'return' version info for (Default = umx).
 #' @return - [OpenMx::mxModel()]
@@ -1854,6 +1854,9 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 
 #' @examples
 #' x = umxVersion(); x
+#' \dontrun{
+#' umxVersion(min = "4.70.0")
+#' }
 umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("umx_vers", "OpenMx_vers")) {
 	return = match.arg(return)
 	umx_vers = try(packageVersion("umx"))
@@ -1862,6 +1865,11 @@ umxVersion <- function (model = NULL, min = NULL, verbose = TRUE, return = c("um
 		message(msg)
 	}
 	if(!is.null(min)){
+		if (is.numeric(min) && length(min) == 1L) {
+			# package_version compare needs a string; teach the current-version form
+			message("Polite note: umxVersion(min = ) takes a version string, e.g. min = \"", as.character(umx_vers), "\". Treating this call as min = \"", as.character(min), "\".")
+			min = as.character(min)
+		}
 		if(umx_vers >= min){
 			message("umx version is recent enough")
 		} else {

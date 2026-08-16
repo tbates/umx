@@ -14,7 +14,7 @@ umxVersion(
 \arguments{
 \item{model}{Optional to show optimizer in this model}
 
-\item{min}{Optional minimum version string to test for, e.g. '2.7.0' (Default = NULL).}
+\item{min}{Optional minimum version to test for. Prefer a string such as \code{"4.70.0"}. A lone number like \code{3} is accepted (treated as \code{"3"}) with a note to use a string next time. Default \code{NULL} (no check).}
 
 \item{verbose}{= TRUE}
 
@@ -31,6 +31,9 @@ Essential for bug-reports! This function can also test for a minimum version.
 }
 \examples{
 x = umxVersion(); x
+\dontrun{
+umxVersion(min = "4.70.0")
+}
 }
 \references{
 \itemize{

@@ -275,7 +275,6 @@ fin_stock_CAGR <- function(priceSeries, from = "1900-01-01") {
 #' @export
 #' @family financial functions
 #' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-
 #' @examples
 #' fin_carryCost(property_cost=1.2e6)
 #' fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
@@ -316,6 +315,10 @@ fin_carryCost <- function(property_cost, appreciation = .02, QQQ = .14, rent_sav
   maintenance = maintenance0
   Carry_Cost  = annualCarry[1]
 
+  
+
+
+
   if((Carry_Cost/property_cost) > .015){
   	cat("Polite note: Carry Cost over the 1.5% threshold: **too high**\n\n")
   }
@@ -329,23 +332,22 @@ fin_carryCost <- function(property_cost, appreciation = .02, QQQ = .14, rent_sav
 	  "Annual carry cost (t=1) = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
 	  "Assumed appreciation: QQQ ", QQQ*100, "% p.a., property ", appreciation*100, "% p.a. (net ", dollar(as.numeric(propAprec), prefix = "$"), " total after 3% sale cost over ", years, " years)\n",
 	  "Inflation on rent/rates/insurance/maintenance: ", inflation*100, "% p.a.\n",
-	  "Total carry (inflated) = ", dollar(as.numeric(totalCarry), prefix = "$"), " (flat would be ", dollar(as.numeric(flatCarry), prefix = "$"), ")\n",
+	  "Total carry = ", dollar(as.numeric(totalCarry), prefix = "$"), ")\n",
 	  "Missed market gains  = ", dollar(as.numeric(QQQgains), prefix = "$"), " total over ", years, " years\n",
-	  "Net net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), " total over ", years, " years\n"
+	  "Net-net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), " total over ", years, " years\n"
   )
   if(isTRUE(verbose) && years <= 20 && years > 1){
-    cat("\nYear  Carry     Rent      Rates     Insurance Maintenance\n")
-    for(t in 1:years){
-      cat(sprintf("%4d %9s %9s %9s %9s %9s\n",
-        t,
-        dollar(as.numeric(annualCarry[t]), prefix="$"),
-        dollar(as.numeric(rentAnnual[t]), prefix="$"),
-        dollar(as.numeric(ratesAnnual[t]), prefix="$"),
-        dollar(as.numeric(insuranceAnnual[t]), prefix="$"),
-        dollar(as.numeric(maintenanceAnnual[t]), prefix="$")
-      ))
-    }
+    cashflowTable = data.frame(
+      Year        = 1:years,
+      Carry       = dollar(as.numeric(annualCarry[1:years]), accuracy = 1),
+      Rent        = dollar(as.numeric(rentAnnual[1:years]), accuracy = 1),
+      Rates       = dollar(as.numeric(ratesAnnual[1:years]), accuracy = 1),
+      Insurance   = dollar(as.numeric(insuranceAnnual[1:years]), accuracy = 1),
+      Maintenance = dollar(as.numeric(maintenanceAnnual[1:years]), accuracy = 1)
+    )  
+    print(knitr::kable(cashflowTable, align = "r"))
   }
+
   schedule = data.frame(year=1:years, carry=annualCarry, rent=rentAnnual, rates=ratesAnnual, insurance=insuranceAnnual, maintenance=maintenanceAnnual)
   attr(netnetCostOfBuying, "schedule") = schedule
   attr(netnetCostOfBuying, "totalCarry") = totalCarry

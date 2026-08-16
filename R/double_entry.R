@@ -50,12 +50,12 @@
 #' @param sep The separator in twin variable names, often "_T", e.g. "dep_T1".
 #' @param dzData The DZ dataframe.
 #' @param mzData The MZ dataframe.
-#' @param fixCensorThresholds One of \code{"yes"} (default), \code{"auto"}, or \code{"no"}.
-#'  \code{"yes"}: fix every double-entry pair from \code{censorCuts} and/or prep attribute \code{umxDoubleEntry}. \code{"auto"}: fix only pairs with a finite known cut in \code{censorCuts} or the prep attribute.  \code{"no"}: free binary thresholds.
-#' @param censorCuts Optional named numeric vector of known cuts on the \strong{analysis scale}
-#'   (after any scaling). Names may be trait base (\code{"wt"}), continuous base (\code{"wt_cont"}),
-#'   or censored base (\code{"wt_cens"}). When non-\code{NULL}, fixCensorThresholds must be \code{"yes"} or \code{"auto"};
-#'   only the named pairs are fixed (partial \code{censorCuts} is allowed).
+#' @param fixCensorThresholds One of `"yes"` (default), `"auto"`, or `"no"`.
+#'  `"yes"`: fix every double-entry pair from `censorCuts` and/or prep attribute `umxDoubleEntry`. `"auto"`: fix only pairs with a finite known cut in `censorCuts` or the prep attribute.  `"no"`: free binary thresholds.
+#' @param censorCuts Optional named numeric vector of known cuts on the **analysis scale**
+#'   (after any scaling). Names may be trait base (`"wt"`), continuous base (`"wt_cont"`),
+#'   or censored base (`"wt_cens"`). When non-`NULL`, fixCensorThresholds must be `"yes"` or `"auto"`;
+#'   only the named pairs are fixed (partial `censorCuts` is allowed).
 #' @param doubleEntrySuffix Suffixes for the continuous and censored variables (default = c("_cont", "_cens")).
 #' @param type Analysis method one of c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 #' @param data If provided, dzData and mzData are treated as levels of zyg to select() MZ and DZ data sets (default = NULL)
