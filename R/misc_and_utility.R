@@ -3637,42 +3637,38 @@ umx_make <- function(
 #' Developer "make" helper for local OpenMx / GenomicMx
 #'
 #' @description
-#' Maintainer utility (lives in **umx**, not the OpenMx package). Mirrors
-#' [umx_make()] but prefers OpenMx's **Makefile** for compile/install (C++,
+#' This is a utility function for the OpenMx package maintainer. For convenience,
+#' it lives in **umx**, not the OpenMx package). `mx_make` mirrors
+#' [umx_make()]. It uses OpenMx's **Makefile** to compile and install (C++,
 #' OpenMP, NPSOL vs CRAN build). Use **devtools** for win-builder and package
-#' hygiene. Does **not** use `devtools::load_all()` for OpenMx (DLL / S4 load
-#' issues); after install, **restart R** then `library(OpenMx)`.
+#' hygiene. 
+#' After install, **restart R** then `library(OpenMx)`. It does **not** use `devtools::load_all()`
+#' due to OpenMx (DLL / S4 load issues).
 #'
 #' Two independent targets matter:
-#' \itemize{
-#'   \item \strong{Installed library} -- what `library(OpenMx)` runs. Updated only by
+#'   * **Installed library** - what `library(OpenMx)` runs. Updated by
 #'     `mx_make()` / `"install"` / `"cran-install"` / `"GenomicMx"` (or CRAN).
-#'   \item \strong{Source tree at \code{pkg}} -- what `"win"` packages for win-builder.
+#'   * Source tree at `pkg` - what `"win"` packages for win-builder.
 #'     Independent of whatever is currently installed in R.
-#' }
 #'
 #' @section Flight checklist:
-#' \enumerate{
-#'   \item \strong{Update Rd files} (after editing roxygen in \code{R/}):
-#'     \code{mx_make("Rd")} -- runs OpenMx \code{make roxygen} (\code{util/rox}:
-#'     compile DLL + \code{roxygenize} rd). Do \strong{not} use bare
-#'     \code{devtools::document()} on OpenMx; man pages are git-tracked and the
-#'     Makefile owns the official path.
-#'   \item \strong{Install this tree into R's library}:
-#'     \code{mx_make()} or \code{mx_make("install")} (NPSOL when the Makefile
-#'     enables it). Or \code{mx_make("cran-install")} without NPSOL.
-#'   \item \strong{Restart R}, then verify identity:
-#'     \code{library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")}.
+#'
+#'   1. **Update Rd files** after editing roxygen in `R`:
+#'     mx_make("Rd") -- runs OpenMx `make roxygen` (`util/rox`):
+#'     compile DLL + \code{roxygenize} rd). Do **not** use bare
+#'     `devtools::document()` on OpenMx; man pages are git-tracked and the Makefile owns the official path.
+#'   2. **Install this tree into R's library**:
+#'     `mx_make()` or `mx_make("install")` (NPSOL when the Makefile enables it). Or `mx_make("cran-install")` without NPSOL.
+#'   3. **Restart R**, then verify identity:
+#'     `library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")`.
 #'     The path must be the library you just installed into (not a forgotten
-#'     CRAN copy on another \code{.libPaths()} entry). Optional:
-#'     \code{xmu_openmx_engine_status()} for GenomicMx capability.
-#'   \item \strong{Win-builder} (same source tree, not the installed DLL):
+#'     CRAN copy on another `.libPaths()` entry). Optional: `xmu_openmx_engine_status()` for GenomicMx capability.
+#'   4. **Win-builder** (same source tree, not the installed DLL):
 #'     Prefer a clean commit if you care what is archived; then
-#'     \code{mx_make("win")} -- \code{devtools::check_win_devel(pkg)}.
-#'     Local install is \strong{not} required for win-builder; only the files
-#'     under \code{pkg} are uploaded.
-#'   \item \strong{Prebuilt release binary} (not local WIP):
-#'     \code{mx_make("GenomicMx")} -> [install.OpenMx()] from GitHub Releases.
+#'     `mx_make("win")` -- `devtools::check_win_devel(pkg)`.
+#'     Local install is **not** required for win-builder; only the files under `pkg` are uploaded.
+#'   5. **Prebuilt release binary** (not local WIP (work in progress)):
+#'     `mx_make("GenomicMx")` -> [install.OpenMx()] from GitHub Releases.
 #' }
 #'
 #' @param what Target. One of:
@@ -3687,18 +3683,17 @@ umx_make <- function(
 #'     \item{\code{"GenomicMx"}}{[install.OpenMx()] prebuilt binary from GitHub Releases.}
 #'     \item{\code{"help"} / \code{"--help"}}{List \code{mx_make} targets and run \code{make help}.}
 #'   }
-#' @param pkg Path to the OpenMx source tree (default \code{"~/bin/OpenMx"}).
-#' @param deploymentTarget macOS \code{MACOSX_DEPLOYMENT_TARGET} for gfortran/clang
-#'   (default \code{"14.0"}). Ignored on non-darwin.
-#' @param openmp Logical; pass \code{OPENMP=yes} or \code{OPENMP=no} to make (default TRUE).
-#' @param email Optional. For \code{what = "win"} only: override the win-builder results address
+#' @param pkg Path to the OpenMx source tree (default `"~/bin/OpenMx"`).
+#' @param deploymentTarget macOS `MACOSX_DEPLOYMENT_TARGET` for gfortran/clang (default `"14.0"`). Ignored on non-darwin.
+#' @param openmp Logical; pass `OPENMP=yes` or `OPENMP=no` to make (default TRUE).
+#' @param email Optional. For `what = "win"` only: override the win-builder results address
 #'   (otherwise devtools uses DESCRIPTION Maintainer -- e.g. upstream OpenMx goes to Kirkpatrick).
-#'   Example: \code{mx_make("win", pkg = "~/bin/OpenMx-upstream-wincheck", email = "you@example.com")}.
-#' @return Invisibly \code{NULL}, or the result of a returning target (e.g. sitrep).
+#'   Example: `mx_make("win", pkg = "~/bin/OpenMx-upstream-wincheck", email = "you@example.com")`.
+#' @return Invisibly `NULL`, or the result of a returning target (e.g. sitrep).
 #' @export
 #' @family xmu internal not for end user
 #' @seealso [umx::umx_make()], [umx::install.OpenMx()], [umx::xmu_openmx_engine_status()]
-#' @references - <https://github.com/tbates/umx/releases>, OpenMx \code{Makefile}
+#' @references - <https://github.com/tbates/umx/releases>, OpenMx `Makefile`
 #'
 #' @examples
 #' \dontrun{

@@ -30,8 +30,7 @@ mx_make(
 
 \item{pkg}{Path to the OpenMx source tree (default \code{"~/bin/OpenMx"}).}
 
-\item{deploymentTarget}{macOS \code{MACOSX_DEPLOYMENT_TARGET} for gfortran/clang
-(default \code{"14.0"}). Ignored on non-darwin.}
+\item{deploymentTarget}{macOS \code{MACOSX_DEPLOYMENT_TARGET} for gfortran/clang (default \code{"14.0"}). Ignored on non-darwin.}
 
 \item{openmp}{Logical; pass \code{OPENMP=yes} or \code{OPENMP=no} to make (default TRUE).}
 
@@ -43,43 +42,42 @@ Example: \code{mx_make("win", pkg = "~/bin/OpenMx-upstream-wincheck", email = "y
 Invisibly \code{NULL}, or the result of a returning target (e.g. sitrep).
 }
 \description{
-Maintainer utility (lives in \strong{umx}, not the OpenMx package). Mirrors
-\code{\link[=umx_make]{umx_make()}} but prefers OpenMx's \strong{Makefile} for compile/install (C++,
+This is a utility function for the OpenMx package maintainer. For convenience,
+it lives in \strong{umx}, not the OpenMx package). \code{mx_make} mirrors
+\code{\link[=umx_make]{umx_make()}}. It uses OpenMx's \strong{Makefile} to compile and install (C++,
 OpenMP, NPSOL vs CRAN build). Use \strong{devtools} for win-builder and package
-hygiene. Does \strong{not} use \code{devtools::load_all()} for OpenMx (DLL / S4 load
-issues); after install, \strong{restart R} then \code{library(OpenMx)}.
+hygiene.
+After install, \strong{restart R} then \code{library(OpenMx)}. It does \strong{not} use \code{devtools::load_all()}
+due to OpenMx (DLL / S4 load issues).
 
 Two independent targets matter:
 \itemize{
-\item \strong{Installed library} -- what \code{library(OpenMx)} runs. Updated only by
+\item \strong{Installed library} - what \code{library(OpenMx)} runs. Updated by
 \code{mx_make()} / \code{"install"} / \code{"cran-install"} / \code{"GenomicMx"} (or CRAN).
-\item \strong{Source tree at \code{pkg}} -- what \code{"win"} packages for win-builder.
+\item Source tree at \code{pkg} - what \code{"win"} packages for win-builder.
 Independent of whatever is currently installed in R.
 }
 }
 \section{Flight checklist}{
 
 \enumerate{
-\item \strong{Update Rd files} (after editing roxygen in \code{R/}):
-\code{mx_make("Rd")} -- runs OpenMx \code{make roxygen} (\code{util/rox}:
+\item \strong{Update Rd files} after editing roxygen in \code{R}:
+mx_make("Rd") -- runs OpenMx \verb{make roxygen} (\code{util/rox}):
 compile DLL + \code{roxygenize} rd). Do \strong{not} use bare
-\code{devtools::document()} on OpenMx; man pages are git-tracked and the
-Makefile owns the official path.
+\code{devtools::document()} on OpenMx; man pages are git-tracked and the Makefile owns the official path.
 \item \strong{Install this tree into R's library}:
-\code{mx_make()} or \code{mx_make("install")} (NPSOL when the Makefile
-enables it). Or \code{mx_make("cran-install")} without NPSOL.
+\code{mx_make()} or \code{mx_make("install")} (NPSOL when the Makefile enables it). Or \code{mx_make("cran-install")} without NPSOL.
 \item \strong{Restart R}, then verify identity:
-\code{library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")}.
+\verb{library(OpenMx); packageVersion("OpenMx"); find.package("OpenMx")}.
 The path must be the library you just installed into (not a forgotten
-CRAN copy on another \code{.libPaths()} entry). Optional:
-\code{xmu_openmx_engine_status()} for GenomicMx capability.
+CRAN copy on another \code{.libPaths()} entry). Optional: \code{xmu_openmx_engine_status()} for GenomicMx capability.
 \item \strong{Win-builder} (same source tree, not the installed DLL):
 Prefer a clean commit if you care what is archived; then
 \code{mx_make("win")} -- \code{devtools::check_win_devel(pkg)}.
-Local install is \strong{not} required for win-builder; only the files
-under \code{pkg} are uploaded.
-\item \strong{Prebuilt release binary} (not local WIP):
+Local install is \strong{not} required for win-builder; only the files under \code{pkg} are uploaded.
+\item \strong{Prebuilt release binary} (not local WIP (work in progress)):
 \code{mx_make("GenomicMx")} -> \code{\link[=install.OpenMx]{install.OpenMx()}} from GitHub Releases.
+}
 }
 }
 

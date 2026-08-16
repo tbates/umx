@@ -33,6 +33,35 @@ jobs:
           r-version: 'release'
           use-public-rspm: true
 
+      - name: Install macOS OpenMP headers (mac.r-project.org)
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Apple clang disables -fopenmp; headers come from Simon Urbanek's LLVM libomp tarball.
+          # Link the CRAN R copy of libomp.dylib ($R_HOME/lib) so users need no Homebrew.
+          # https://mac.r-project.org/openmp/ — clang-1700+ needs LLVM 19.1.5.
+          CLANG_N=$(clang --version | sed -n 's/.*clang-\([0-9][0-9][0-9][0-9]\).*/\1/p' | head -n 1)
+          if [ -z "${CLANG_N}" ]; then CLANG_N=1700; fi
+          if [ "${CLANG_N}" -ge 1700 ]; then
+            TBALL="openmp-19.1.5-darwin20-Release.tar.gz"
+          elif [ "${CLANG_N}" -ge 1600 ]; then
+            TBALL="openmp-17.0.6-darwin20-Release.tar.gz"
+          elif [ "${CLANG_N}" -ge 1500 ]; then
+            TBALL="openmp-16.0.4-darwin20-Release.tar.gz"
+          else
+            TBALL="openmp-19.1.5-darwin20-Release.tar.gz"
+          fi
+          echo "Apple clang ${CLANG_N}; installing ${TBALL}"
+          curl -fsSL -o /tmp/openmp.tgz "https://mac.r-project.org/openmp/${TBALL}"
+          sudo tar fvxz /tmp/openmp.tgz -C /
+          test -f /usr/local/include/omp.h
+          ls -l /usr/local/include/omp.h
+          RH=$(R RHOME)
+          test -f "${RH}/lib/libomp.dylib"
+          echo "R libomp: ${RH}/lib/libomp.dylib"
+          otool -L "${RH}/lib/libomp.dylib" | head -n 8
+
       - name: Install compile dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
@@ -65,6 +94,15 @@ jobs:
             echo 'CXX17FLAGS += -g0'
             echo 'CFLAGS += -g0'
           } >> "$MV"
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            RH=$(R RHOME)
+            {
+              echo 'SHLIB_OPENMP_CFLAGS = -Xclang -fopenmp'
+              echo 'SHLIB_OPENMP_CXXFLAGS = -Xclang -fopenmp'
+              echo 'CPPFLAGS += -I/usr/local/include'
+              echo "LDFLAGS += -L${RH}/lib -lomp"
+            } >> "$MV"
+          fi
           echo "Wrote $MV"
           cat "$MV"
 
@@ -100,6 +138,28 @@ jobs:
           ls -lh ../*.tgz ../*.zip ../*.tar.gz 2>/dev/null || true
           echo "Installed OpenMx libs:"
           Rscript --vanilla -e 'p <- system.file("libs", package = "OpenMx"); cat(p, "\n"); if (nzchar(p) && dir.exists(p)) { f <- list.files(p, full.names = TRUE); print(file.info(f)[, "size", drop = FALSE]) }'
+
+      - name: Verify OpenMP
+        id: omp
+        shell: bash
+        run: |
+          set -euo pipefail
+          OMP=$(Rscript --vanilla -e 'loadNamespace("OpenMx"); cat(if (isTRUE(OpenMx:::imxHasOpenMP())) "yes" else "no")')
+          echo "OpenMP: ${OMP}"
+          echo "openmp=${OMP}" >> "$GITHUB_OUTPUT"
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            SO=$(Rscript --vanilla -e 'cat(system.file("libs", "OpenMx.so", package = "OpenMx"))')
+            echo "OpenMx.so: ${SO}"
+            otool -L "${SO}"
+            if ! otool -L "${SO}" | grep -q libomp; then
+              echo "Mac OpenMx.so is not linked to libomp" >&2
+              exit 1
+            fi
+            if [ "${OMP}" != "yes" ]; then
+              echo "imxHasOpenMP() is FALSE on macOS" >&2
+              exit 1
+            fi
+          fi
 
       - name: Capture version and SHA (after prep)
         id: meta
@@ -182,6 +242,7 @@ jobs:
             echo "Arch: $ARCH"
             echo "R: $RVER"
             echo "RcppParallel: ${{ steps.meta.outputs.rpver }}"
+            echo "OpenMP: ${{ steps.omp.outputs.openmp }}"
             echo "Date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "Runner: ${{ matrix.os }}"
             echo "File: $CANON"
