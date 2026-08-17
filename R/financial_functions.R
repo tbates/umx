@@ -942,32 +942,128 @@ plot.percent <- function(x, ...) {
 
 #' Justified P/E Ratio
 #'
-#' @description
-#' Compute the Justified P/E of a stock.
-#' Justified P/E = ( (DPS / EPS) * (1 + g)) / (k - g)
-#' DPS is the dividend per share, EPS is the earnings per share,
-#' g is the sustainable growth rate, and k is the required rate of return.
-#' @param Dividend The dividend.
-#' @param EPS The Earnings per Share.
-#' @param growthRate The growth rate.
-#' @param discountRate Your chosen discount rate.
-#' @param basePE The base PE.
-#' @param yrs Years.
-#' @return - A PE that is justified for this stock.
+#' Compute the Justified Price-to-Earnings (P/E) ratio for a stock using a single-stage or two-stage (high-growth + ROIC) Gordon Growth Model.
+#'
+#' @details
+#' Justified P/E represents the fundamental value multiple that a stock should trade at based on its payout ratio (or ROIC reinvestment),
+#' expected growth rate (\eqn{g}), and required rate of return / discount rate (\eqn{r}).
+#'
+#' **Single-Stage Model** (when \code{yearsHighGrowth = 0}):
+#' For stable-growth companies where \eqn{r > g}:
+#' \deqn{\text{Justified Trailing P/E} = \frac{\text{Payout Ratio} \times (1 + g)}{r - g}}
+#' \deqn{\text{Justified Leading P/E} = \frac{\text{Payout Ratio}}{r - g}}
+#'
+#' **Two-Stage Model** (when \code{yearsHighGrowth > 0}):
+#' For growth companies where high-growth rate \eqn{g_{\text{high}}} may exceed the cost of capital (\eqn{r}),
+#' payout ratio during high growth is derived from Return on Invested Capital (\eqn{\text{ROIC}}):
+#' \deqn{\text{Payout Ratio} = 1 - \frac{g}{\text{ROIC}} + \text{buybackYield}}
+#' Cash flows during the \code{yearsHighGrowth} period are discounted at rate \eqn{r}. After \code{yearsHighGrowth},
+#' growth transitions to \code{terminalGrowth} (\eqn{g_{\text{term}} < r}), and the terminal value is discounted back to present value.
+#'
+#' **Typical Values & Interpretation**:
+#' Typical justified P/E ratios for mature, stable-growth companies generally fall between 12 and 25.
+#' High-growth companies with high ROIC (e.g. 30%+ ROIC and 20% growth) justify 20x–30x+ P/E multiples.
+#'
+#' **Worked Example ($NVDA)**:
+#' Suppose Nvidia ($NVDA) has high growth of 20% (\eqn{g = 0.20}) for 5 years, high ROIC of 30% (\eqn{\text{ROIC} = 0.30}),
+#' cost of equity of 10% (\eqn{r = 0.10}), and long-term terminal growth of 3% (\eqn{g_{\text{term}} = 0.03}).
+#' The justified P/E is calculated as:
+#' \code{fin_stock_justifiedPE(EPS = 2.70, growthRate = 0.20, discountRate = 0.10, ROIC = 0.30, yearsHighGrowth = 5, terminalGrowth = 0.03)}
+#'
+#' @param dividend Dividend per share (\eqn{D_0} for trailing, \eqn{D_1} for leading). Default = 0.80. Ignored if \code{ROIC} is specified.
+#' @param EPS Earnings per share (\eqn{E_0} for trailing, \eqn{E_1} for leading). Default = 2.00.
+#' @param growthRate Sustainable growth rate (\eqn{g}), as a decimal (e.g. 0.20 for 20%). Default = 0.06.
+#' @param discountRate Required rate of return / cost of equity (\eqn{r}), as a decimal (e.g. 0.10 for 10%). Default = 0.10.
+#' @param buybackYield Net share repurchase yield added to payout ratio, as a decimal (e.g. 0.015 for 1.5%). Default = 0.
+#' @param ROIC Return on Invested Capital, as a decimal (e.g. 0.30 for 30%). If specified, payout ratio during high growth is derived as \eqn{1 - g/\text{ROIC}}.
+#' @param yearsHighGrowth Duration of high-growth phase in years (default = 0 for single-stage model). If \eqn{g \ge r} and \code{yearsHighGrowth == 0}, defaults to 5 years.
+#' @param terminalGrowth Long-term terminal growth rate after high-growth phase, as a decimal (e.g. 0.03 for 3%). Default = 0.03.
+#' @param type Character string indicating \code{"trailing"} (default) or \code{"leading"} P/E.
+#' @return Numeric justified P/E ratio.
 #' @export
 #' @family financial functions
+#' @references
+#' * Gordon, M. J. (1962). *The Investment, Financing, and Valuation of the Corporation*. R. D. Irwin.
+#' * Pinto, J. E., Henry, C., Robinson, T. R., & Stowe, J. D. (2020). *Equity Asset Valuation* (4th ed.). Wiley.
+#' * Mauboussin, M. J., & Rappaport, A. (2021). *Expectations Investing: Reading Stock Prices for Better Returns*. Columbia University Press.
 #' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
-
 #' @examples
-#' # fin_stock_justifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
+#' # Example 1: Standard trailing Justified P/E
+#' fin_stock_justifiedPE(dividend = 0.8, EPS = 2.0, growthRate = 0.06, discountRate = 0.10)
 #' 
-fin_stock_justifiedPE <- function(Dividend= .02, EPS = 1, growthRate = .08, discountRate = .12, basePE= 20, yrs=10) {
-	paste0("Based on growth (", growthRate*100, "% expected growth for ", yrs, " years and a base P/E of ",
-	basePE, "), the justified P/E would be: ", (growthRate * yrs) + basePE )
-	
-   # ((0.4 * 2) * (1 + 0.06)) / (0.1 - 0.06)
-   # ((Dividend/EPS) * (1 + growthRate)) / (k-growthRate)
-   # Justified P/E Ratio = 16.8
+#' # Example 2: Two-Stage growth model for 20% growth company with 30% ROIC for 5 years
+#' fin_stock_justifiedPE(EPS = 2.70, growthRate = 0.20, discountRate = 0.10, 
+#'                        ROIC = 0.30, yearsHighGrowth = 5, terminalGrowth = 0.03)
+#' 
+fin_stock_justifiedPE <- function(dividend = 0.80, EPS = 2.00, growthRate = 0.06, discountRate = 0.10, buybackYield = 0, ROIC = NULL, yearsHighGrowth = 0, terminalGrowth = 0.03, type = c("trailing", "leading")) {
+	type = match.arg(type)
+
+	if (EPS <= 0) {
+		stop("Polite note: EPS must be positive to compute a justified P/E ratio.")
+	}
+
+	# Auto-switch to two-stage model if growthRate >= discountRate and yearsHighGrowth == 0
+	if (growthRate >= discountRate && yearsHighGrowth == 0) {
+		yearsHighGrowth = 5
+	}
+
+	if (yearsHighGrowth > 0) {
+		if (terminalGrowth >= discountRate) {
+			stop("Polite note: terminalGrowth (", terminalGrowth, ") must be strictly less than discountRate (", discountRate, ").")
+		}
+
+		# High-growth payout ratio
+		if (!is.null(ROIC) && ROIC > 0) {
+			if (growthRate > ROIC) {
+				payoutHigh = buybackYield
+			} else {
+				payoutHigh = (1 - (growthRate / ROIC)) + buybackYield
+			}
+		} else {
+			payoutHigh = (dividend / EPS) + buybackYield
+		}
+		payoutHigh = max(0, min(1, payoutHigh))
+
+		# Terminal payout ratio (assuming ROIC fades to discountRate or standard terminal payout)
+		roicTerm = if (!is.null(ROIC)) max(ROIC, discountRate) else discountRate
+		payoutTerm = max(0, min(1, 1 - (terminalGrowth / roicTerm) + buybackYield))
+
+		# Calculate Present Value of High Growth Phase (normalized E0 = 1)
+		pvHigh = 0
+		currentE = 1
+		for (t in 1:yearsHighGrowth) {
+			currentE = currentE * (1 + growthRate)
+			cf_t = currentE * payoutHigh
+			pvHigh = pvHigh + (cf_t / ((1 + discountRate)^t))
+		}
+
+		# Terminal value at end of yearsHighGrowth
+		eN = currentE
+		peTerminal = (payoutTerm * (1 + terminalGrowth)) / (discountRate - terminalGrowth)
+		pvTerminal = (eN * peTerminal) / ((1 + discountRate)^yearsHighGrowth)
+
+		justifiedPE = pvHigh + pvTerminal
+
+	} else {
+		if (discountRate <= growthRate) {
+			stop("Polite note: discountRate (k = ", discountRate, ") must be strictly greater than growthRate (g = ", growthRate, ") for a single-stage model.")
+		}
+
+		if (!is.null(ROIC) && ROIC > 0) {
+			payoutRatio = (1 - (growthRate / ROIC)) + buybackYield
+		} else {
+			payoutRatio = (dividend / EPS) + buybackYield
+		}
+		payoutRatio = max(0, min(1, payoutRatio))
+
+		if (type == "trailing") {
+			justifiedPE = (payoutRatio * (1 + growthRate)) / (discountRate - growthRate)
+		} else {
+			justifiedPE = payoutRatio / (discountRate - growthRate)
+		}
+	}
+
+	return(justifiedPE)
 }
 
 #' Open a ticker in yahoo finance.

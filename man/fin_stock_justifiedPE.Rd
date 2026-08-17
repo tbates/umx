@@ -5,41 +5,83 @@
 \title{Justified P/E Ratio}
 \usage{
 fin_stock_justifiedPE(
-  Dividend = 0.02,
-  EPS = 1,
-  growthRate = 0.08,
-  discountRate = 0.12,
-  basePE = 20,
-  yrs = 10
+  dividend = 0.8,
+  EPS = 2,
+  growthRate = 0.06,
+  discountRate = 0.1,
+  buybackYield = 0,
+  ROIC = NULL,
+  yearsHighGrowth = 0,
+  terminalGrowth = 0.03,
+  type = c("trailing", "leading")
 )
 }
 \arguments{
-\item{Dividend}{The dividend.}
+\item{dividend}{Dividend per share (\eqn{D_0} for trailing, \eqn{D_1} for leading). Default = 0.80. Ignored if \code{ROIC} is specified.}
 
-\item{EPS}{The Earnings per Share.}
+\item{EPS}{Earnings per share (\eqn{E_0} for trailing, \eqn{E_1} for leading). Default = 2.00.}
 
-\item{growthRate}{The growth rate.}
+\item{growthRate}{Sustainable growth rate (\eqn{g}), as a decimal (e.g. 0.20 for 20\%). Default = 0.06.}
 
-\item{discountRate}{Your chosen discount rate.}
+\item{discountRate}{Required rate of return / cost of equity (\eqn{r}), as a decimal (e.g. 0.10 for 10\%). Default = 0.10.}
 
-\item{basePE}{The base PE.}
+\item{buybackYield}{Net share repurchase yield added to payout ratio, as a decimal (e.g. 0.015 for 1.5\%). Default = 0.}
 
-\item{yrs}{Years.}
+\item{ROIC}{Return on Invested Capital, as a decimal (e.g. 0.30 for 30\%). If specified, payout ratio during high growth is derived as \eqn{1 - g/\text{ROIC}}.}
+
+\item{yearsHighGrowth}{Duration of high-growth phase in years (default = 0 for single-stage model). If \eqn{g \ge r} and \code{yearsHighGrowth == 0}, defaults to 5 years.}
+
+\item{terminalGrowth}{Long-term terminal growth rate after high-growth phase, as a decimal (e.g. 0.03 for 3\%). Default = 0.03.}
+
+\item{type}{Character string indicating \code{"trailing"} (default) or \code{"leading"} P/E.}
 }
 \value{
-\itemize{
-\item A PE that is justified for this stock.
-}
+Numeric justified P/E ratio.
 }
 \description{
-Compute the Justified P/E of a stock.
-Justified P/E = ( (DPS / EPS) * (1 + g)) / (k - g)
-DPS is the dividend per share, EPS is the earnings per share,
-g is the sustainable growth rate, and k is the required rate of return.
+Compute the Justified Price-to-Earnings (P/E) ratio for a stock using a single-stage or two-stage (high-growth + ROIC) Gordon Growth Model.
+}
+\details{
+Justified P/E represents the fundamental value multiple that a stock should trade at based on its payout ratio (or ROIC reinvestment),
+expected growth rate (\eqn{g}), and required rate of return / discount rate (\eqn{r}).
+
+\strong{Single-Stage Model} (when \code{yearsHighGrowth = 0}):
+For stable-growth companies where \eqn{r > g}:
+\deqn{\text{Justified Trailing P/E} = \frac{\text{Payout Ratio} \times (1 + g)}{r - g}}
+\deqn{\text{Justified Leading P/E} = \frac{\text{Payout Ratio}}{r - g}}
+
+\strong{Two-Stage Model} (when \code{yearsHighGrowth > 0}):
+For growth companies where high-growth rate \eqn{g_{\text{high}}} may exceed the cost of capital (\eqn{r}),
+payout ratio during high growth is derived from Return on Invested Capital (\eqn{\text{ROIC}}):
+\deqn{\text{Payout Ratio} = 1 - \frac{g}{\text{ROIC}} + \text{buybackYield}}
+Cash flows during the \code{yearsHighGrowth} period are discounted at rate \eqn{r}. After \code{yearsHighGrowth},
+growth transitions to \code{terminalGrowth} (\eqn{g_{\text{term}} < r}), and the terminal value is discounted back to present value.
+
+\strong{Typical Values & Interpretation}:
+Typical justified P/E ratios for mature, stable-growth companies generally fall between 12 and 25.
+High-growth companies with high ROIC (e.g. 30\%+ ROIC and 20\% growth) justify 20x–30x+ P/E multiples.
+
+\strong{Worked Example ($NVDA)}:
+Suppose Nvidia ($NVDA) has high growth of 20\% (\eqn{g = 0.20}) for 5 years, high ROIC of 30\% (\eqn{\text{ROIC} = 0.30}),
+cost of equity of 10\% (\eqn{r = 0.10}), and long-term terminal growth of 3\% (\eqn{g_{\text{term}} = 0.03}).
+The justified P/E is calculated as:
+\code{fin_stock_justifiedPE(EPS = 2.70, growthRate = 0.20, discountRate = 0.10, ROIC = 0.30, yearsHighGrowth = 5, terminalGrowth = 0.03)}
 }
 \examples{
-# fin_stock_justifiedPE(Dividend= .8, EPS = 2, growthRate = .06, discountRate = .1)
+# Example 1: Standard trailing Justified P/E
+fin_stock_justifiedPE(dividend = 0.8, EPS = 2.0, growthRate = 0.06, discountRate = 0.10)
 
+# Example 2: Two-Stage growth model for 20\% growth company with 30\% ROIC for 5 years
+fin_stock_justifiedPE(EPS = 2.70, growthRate = 0.20, discountRate = 0.10, 
+                       ROIC = 0.30, yearsHighGrowth = 5, terminalGrowth = 0.03)
+
+}
+\references{
+\itemize{
+\item Gordon, M. J. (1962). \emph{The Investment, Financing, and Valuation of the Corporation}. R. D. Irwin.
+\item Pinto, J. E., Henry, C., Robinson, T. R., & Stowe, J. D. (2020). \emph{Equity Asset Valuation} (4th ed.). Wiley.
+\item Mauboussin, M. J., & Rappaport, A. (2021). \emph{Expectations Investing: Reading Stock Prices for Better Returns}. Columbia University Press.
+}
 }
 \seealso{
 \itemize{
