@@ -1052,9 +1052,17 @@ umx_get_checkpoint <- function(model = NULL) {
 	message("Checkpoint  Directory: ", mxOption(model, "Checkpoint Directory" ) )
 }
 
-#' Check if OpenMx is using OpenMP, test cores, and get timings
+#' Check that OpenMx is using OpenMP, test cores, and get timings
 #'
 #' Shows how many cores you are using, and runs a test script so user can check CPU usage.
+#' @param rowwiseParallel Logical. If `TRUE`, parallelises the likelihood
+#' row-wise *inside* each frontend evaluation. This cripples throughput:
+#' it shards the work into thousands of tiny tasks, pays OpenMP fork/join + 
+#' scheduling overhead per row, trashes cache locality, and load-balances
+#' poorly when rows differ in missingness/compute. The fast path parallelises
+#' once per evaluation (over blocks/cores), not per row. Defaults to
+#' `FALSE` elsewhere in \pkg{umx} for this reason; set to `FALSE`
+#' unless profiling a specific row kernel.
 #'
 #' @details
 #' Some historical (starting 2017-09-06) speeds on my late 2015 iMac, 3.3 GHz
@@ -1095,7 +1103,6 @@ umx_get_checkpoint <- function(model = NULL) {
 #' @family Miscellaneous Functions
 #' @seealso - [umx_time()], [umx_set_cores()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 #' @examples
 #' \dontrun{
 #' # In 2016 1core took 1 minute
