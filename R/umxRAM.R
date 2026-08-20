@@ -609,29 +609,54 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	# = Add means if necessary =
 	# ==========================
 	# Note: WLS data will be mxData(..., type = "raw") at this stage.
+	# OpenMx RAM: one path from "one" creates M for every node; the others sit at 0, not free.
+	# Do not treat "M exists" as "every manifest has a mean".
 	needsMeans = xmu_check_needs_means(data = myData, type = type, allContinuousMethod = allContinuousMethod)
-	if(needsMeans && is.null(newModel$matrices$M)){
+	if (needsMeans) {
 		# Continuous + ordinal: free means. Binary: mean@0 and residual@1 (Mehta/binary ID).
 		summaryObj = umx_is_ordered(myData$observed[, usedManifests, drop = FALSE], summaryObject = TRUE)
 		binVars = intersect(summaryObj$binVarNames, usedManifests)
 		nonBinVars = setdiff(usedManifests, binVars)
-		noteBits = character(0)
+		hadM = !is.null(newModel$matrices$M)
 
-		newPaths = list()
-		if (length(nonBinVars) > 0) {
-			newPaths[[length(newPaths) + 1]] = mxPath("one", to = nonBinVars)
-			noteBits = c(noteBits, paste0("free means for ", paste(nonBinVars, collapse = ", ")))
+		userMeanTo = character(0)
+		for (thisItem in dot.items) {
+			chunk = thisItem
+			if (!is.list(chunk) || is(chunk, "MxPath")) chunk = list(chunk)
+			for (j in seq_along(chunk)) {
+				p = chunk[[j]]
+				if (!is(p, "MxPath")) next
+				if ("one" %in% p$from && !is.null(p$to)) {
+					userMeanTo = c(userMeanTo, p$to)
+				}
+			}
 		}
-		if (length(binVars) > 0) {
-			newPaths[[length(newPaths) + 1]] = mxPath("one", to = binVars, free = FALSE, values = 0)
-			noteBits = c(noteBits, paste0("binary mean@0 for ", paste(binVars, collapse = ", ")))
+		if (hadM && !is.null(dimnames(newModel$M$values))) {
+			mNames = dimnames(newModel$M$values)[[2]]
+			for (nm in intersect(mNames, usedManifests)) {
+				if (isTRUE(newModel$M$free[1, nm])) userMeanTo = c(userMeanTo, nm)
+			}
+		}
+		userMeanTo = unique(na.omit(userMeanTo))
+		missingNonBin = setdiff(nonBinVars, userMeanTo)
+		missingBin = setdiff(binVars, userMeanTo)
+
+		noteBits = character(0)
+		newPaths = list()
+		if (length(missingNonBin) > 0) {
+			newPaths[[length(newPaths) + 1]] = mxPath("one", to = missingNonBin)
+			noteBits = c(noteBits, paste0("free means for ", paste(missingNonBin, collapse = ", ")))
+		}
+		if (length(missingBin) > 0) {
+			newPaths[[length(newPaths) + 1]] = mxPath("one", to = missingBin, free = FALSE, values = 0)
+			noteBits = c(noteBits, paste0("binary mean@0 for ", paste(missingBin, collapse = ", ")))
 		}
 		if (length(newPaths) > 0) {
 			newModel = mxModel(newModel, newPaths)
 		}
 		# Binary residual variance fixed at 1 when S cell exists or must be added
-		if (length(binVars) > 0) {
-			for (v in binVars) {
+		if (length(missingBin) > 0) {
+			for (v in missingBin) {
 				if (!is.null(newModel$S) && !is.null(dimnames(newModel$S$values)) && v %in% rownames(newModel$S$values)) {
 					if (isTRUE(newModel$S$free[v, v]) || !isTRUE(all.equal(as.numeric(newModel$S$values[v, v]), 1))) {
 						newModel$S$free[v, v] = FALSE
@@ -641,10 +666,16 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 					newModel = mxModel(newModel, mxPath(from = v, arrows = 2, free = FALSE, values = 1))
 				}
 			}
-			noteBits = c(noteBits, paste0("binary residual@1 for ", paste(binVars, collapse = ", ")))
+			noteBits = c(noteBits, paste0("binary residual@1 for ", paste(missingBin, collapse = ", ")))
 		}
 		if (length(noteBits) > 0) {
-			message("umx note: no means model; added ", paste(noteBits, collapse = "; "), " (see ?umxThresholdMatrix).")
+			if (!hadM) {
+				message("umx note: no means model; added ", paste(noteBits, collapse = "; "), " (see ?umxThresholdMatrix).")
+			} else {
+				had = paste(intersect(userMeanTo, usedManifests), collapse = ", ")
+				if (!nzchar(had)) had = "(none free)"
+				message("umx note: raw data need a mean for every manifest. You had a mean path for ", had, ". Added ", paste(noteBits, collapse = "; "), ".")
+			}
 		}
 	}
 
