@@ -35,15 +35,14 @@ umxModel <- function(...) {
 #' )
 #' ```
 #'
-#' As you can see, most of the work is done by [umxPath()]. `umxRAM` wraps these paths up, takes the `data =` input, and 
-#' then internally sets up all the labels and start values for the model, runs it, and calls [umxSummary()], and [plot.MxModel()].
+#' As you can see, most of the work is done by [umxPath()] (including setting labels). `umxRAM` wraps these paths up, takes the `data =` input, and 
+#' then internally sets sane start values. It also runs the model, and calls [umxSummary()].
 #' 
 #' Try it, or one of the several models in the examples at the bottom of this page.
 #' 
-#' A common error is to include data in the main list, a bit like
-#' saying `lm(y ~ x + df)` instead of `lm(y ~ x, data = df)`.
-#' 
 #' **nb**: Because it uses the presence of a variable in the data to detect if a variable is latent or not, `umxRAM` needs data at build time.
+#' Note also, a common error is to include data in the main list, a bit like saying `lm(y ~ x + df)` instead of `lm(y ~ x, data = df)`.
+#' 
 #'
 #' **String Syntax**
 #' 
