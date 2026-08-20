@@ -1484,6 +1484,7 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 #' @param lbound lower bounds for each path value
 #' @param ubound upper bounds for each path value
 #' @param hasMeans Used in 'forms' case to know whether the data have means or not.
+#' @param ... Not used. Caught to provide a polite message if a reversed form like \code{m.v.} is passed instead of \code{v.m.}.
 #' @return - 1 or more [OpenMx::mxPath()]s
 #' @export
 #' @family Core Model Building Functions
@@ -1575,7 +1576,20 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 #' plot(m1)
 #'
 #' }
-umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, v0m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL) {
+umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL, means = NULL, v1m0 = NULL, v.m. = NULL, v0m0 = NULL, v.m0 = NULL, v0m. = NULL, fixedAt = NULL, freeAt = NULL, firstAt = NULL, unique.bivariate = NULL, unique.pairs = NULL, fromEach = NULL, forms = NULL, Cholesky = NULL, defn = NULL, connect = c("single", "all.pairs", "all.bivariate", "unique.pairs", "unique.bivariate"), arrows = 1, free = TRUE, values = NA, labels = NA, lbound = NA, ubound = NA, hasMeans = NULL, ...) {
+	dotArgs = list(...)
+	if(length(dotArgs) > 0){
+		dotNames = names(dotArgs)
+		reversedMap = c("m0v1" = "v1m0", "m.v." = "v.m.", "m0v0" = "v0m0", "m0v." = "v.m0", "m.v0" = "v0m.")
+		hit = dotNames %in% names(reversedMap)
+		if(any(hit)){
+			bad = dotNames[which(hit)[1]]
+			good = reversedMap[[bad]]
+			stop(paste0("Polite note: '", bad, "' is not a valid argument. Did you mean '", good, "'? Please flip it: umxPath(", good, " = ...) . The form is v (variance) then m (mean), e.g. v.m. = c('x')."), call. = FALSE)
+		}
+		badAll = paste(dotNames, collapse = ", ")
+		stop(paste0("unused argument (", badAll, ")"), call. = FALSE)
+	}
 	connect = match.arg(connect) # Set to single if not overridden by user.
 	# xmu_string2path(from)
 	n = 0
