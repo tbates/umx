@@ -132,6 +132,9 @@
 #'
 umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means= TRUE, residuals= TRUE, uncertainty = c("SE", "MLR", "CI", "none"), filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, SE = TRUE, matrixAddresses = FALSE, ...){
 	# TODO make table take lists of models...
+	if (!is.null(model$fitfunction) && is(model$fitfunction, "MxFitFunctionGLM")) {
+		return(umxSummary.MxModelGLM(model, refModels = refModels, std = std, digits = digits, report = report, means = means, residuals = residuals, uncertainty = uncertainty, filter = filter, RMSEA_CI = RMSEA_CI, SE = SE, matrixAddresses = matrixAddresses, ...))
+	}
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 	report   = match.arg(report)
 	filter   = match.arg(filter)
@@ -503,6 +506,87 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		}else{
 			invisible(parameterTable[,namesToShow])
 		}
+	} else {
+		invisible(NULL)
+	}
+}
+
+#' Summary for a RAM model with mxFitFunctionGLM
+#'
+#' Parameter table and -2LL / AIC / BIC. No CFI/TLI/RMSEA (no saturated GLM
+#' pair yet). Nested tests: [umxCompare()] / AIC. Called from [umxSummary()]
+#' when the fit function is GLM; not a new S4 class.
+#'
+#' @param model an [OpenMx::mxModel()] with [OpenMx::mxFitFunctionGLM()]
+#' @param refModels ignored (no GLM saturated model yet)
+#' @param std ignored (the box is eta; standardization is not defined)
+#' @param digits rounding
+#' @param report "markdown" or "html"
+#' @param means unused (kept for umxSummary signature)
+#' @param residuals unused
+#' @param uncertainty "SE" (default) or "none"
+#' @param filter unused
+#' @param RMSEA_CI unused
+#' @param SE deprecated; use uncertainty
+#' @param matrixAddresses unused
+#' @param ... unused
+#' @return parameter table (invisibly)
+#' @exportS3Method umxSummary MxModelGLM
+#' @md
+umxSummary.MxModelGLM <- function(model, refModels = NULL, std = FALSE, digits = 2, report = c("markdown", "html"), means = TRUE, residuals = TRUE, uncertainty = c("SE", "MLR", "CI", "none"), filter = c("ALL", "NS", "SIG"), RMSEA_CI = FALSE, SE = TRUE, matrixAddresses = FALSE, ...) {
+	report = match.arg(report)
+	if (missing(uncertainty)) {
+		if (!missing(SE) && is.logical(SE) && !SE) {
+			uncertainty = "none"
+		} else {
+			uncertainty = "SE"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
+	umx_has_been_run(model, stop = TRUE)
+	if (isTRUE(std)) {
+		message("Polite note: standardized paths are not defined for GLM (the box is eta). Showing raw estimates.")
+	}
+	if (!is.null(refModels) && !isFALSE(refModels)) {
+		message("Polite note: GLM has no saturated/independence pair yet; ignoring refModels. Use umxCompare or AIC.")
+	}
+	modelSummary = summary(model)
+	pars = modelSummary$parameters
+	if (!is.null(pars) && nrow(pars) > 0) {
+		tab = data.frame(
+			name = pars$name,
+			Estimate = pars$Estimate,
+			SE = if ("Std.Error" %in% names(pars)) pars$Std.Error else NA_real_,
+			stringsAsFactors = FALSE
+		)
+		if (uncertainty == "none") {
+			umx_print(tab[, c("name", "Estimate")], digits = digits, report = report, caption = paste0("Parameters for GLM model ", omxQuotes(model$name)), na.print = "")
+		} else {
+			umx_print(tab, digits = digits, report = report, caption = paste0("Parameters for GLM model ", omxQuotes(model$name)), na.print = "")
+		}
+	}
+	minus2LL = modelSummary$Minus2LogLikelihood
+	nPar = modelSummary$estimatedParameters
+	aic = modelSummary$AIC
+	bic = modelSummary$BIC
+	nObs = NA
+	if (!is.null(model$data) && !is.null(model$data$numObs)) nObs = model$data$numObs
+	status = NA
+	if (!is.null(model$output$status$code)) status = model$output$status$code
+	fitBits = c()
+	if (!is.null(minus2LL) && is.finite(minus2LL)) fitBits = c(fitBits, paste0("-2LL = ", round(minus2LL, digits)))
+	if (!is.null(nPar)) fitBits = c(fitBits, paste0("k = ", nPar))
+	if (!is.null(aic) && is.finite(aic)) fitBits = c(fitBits, paste0("AIC = ", round(aic, digits)))
+	if (!is.null(bic) && is.finite(bic)) fitBits = c(fitBits, paste0("BIC = ", round(bic, digits)))
+	if (is.finite(nObs)) fitBits = c(fitBits, paste0("n = ", nObs))
+	if (length(status) == 1 && !is.na(status)) fitBits = c(fitBits, paste0("status = ", status))
+	if (length(fitBits) > 0) {
+		message(paste0("\nGLM fit: ", paste(fitBits, collapse = "; ")))
+	}
+	message("No CFI/TLI/RMSEA for GLM yet. Nested models: umxCompare / AIC.")
+	if (!is.null(pars) && nrow(pars) > 0) {
+		invisible(pars)
 	} else {
 		invisible(NULL)
 	}
