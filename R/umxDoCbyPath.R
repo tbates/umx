@@ -89,26 +89,26 @@ umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, 
 	return(model)
 }
 
-#' Make a twin model from the model describing just one person
+#' Make a twin model from a model describing just one person
 #'
 #' @description
-#' `xmu_path2twin` takes a collection of paths describing the model for 1 person
+#' `umxTwinMaker` takes a collection of paths describing the model for 1 person
 #' and returns a completed twin model. This consists of a [umxSuperModel()] containing
 #' `MZ` and `DZ` [umxRAM()] models.
 #'
 #' Pass into `umxTwinMaker`:
 #'
 #' 1. A list of `paths` making up the twin 1 model
-#' 2. In `t1_t2links`, a vector describing the component relationships connecting twin 1 to twin 2 
-#'  (The default here is 1 and .5 for the a, and, for c and e are 1 and 0 in both groups, respectively.
+#' 2. `t1_t2links`, a vector describing the component relationships connecting twin 1 to twin 2 
+#'  (The default works in most cases: 1 and .5 for a for MZ and DZ respectively, 1 for c and 0 for e.
 #'
 #' *Details*
 #'
-#' Some rules. All labels are expanded with a twin suffix: so "var1" -> "var1_T1" etc. so you
-#' provide the person-model using just the base name (and tell [umxTwinMaker()] how to expand it by providing a separator string).
+#' Some rules. All labels are expanded with a twin suffix: so "var1" -> "var1_T1" etc. You
+#' provide the person-model using *just the base name* `umxTwinMaker()` knows how to expand it using the separator string).
 #' 
-#' Rule 2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
-#' To avoid clashes, variables must not match the numbered variables in `t1_t2links`  - by default names like "a1" are reserved for ace.
+#' Second, the latent variables must match the base names given in t1_t2links (`a`, `c`, and `e`).
+#' To avoid clashes, manifests must *not* match variables in `t1_t2links`  - by default names like "a1" are reserved for ace.
 #' 
 #' @param name The name for the resulting [umxSuperModel()] (Default "m1").
 #' @param paths A vector of [umxPath()]s describing one person.
