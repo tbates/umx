@@ -96,15 +96,13 @@ using the widely used \code{mtcars} data set.
 )
 }\if{html}{\out{</div>}}
 
-As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}}. \code{umxRAM} wraps these paths up, takes the \verb{data =} input, and
-then internally sets up all the labels and start values for the model, runs it, and calls \code{\link[=umxSummary]{umxSummary()}}, and \code{\link[=plot.MxModel]{plot.MxModel()}}.
+As you can see, most of the work is done by \code{\link[=umxPath]{umxPath()}} (including setting labels). \code{umxRAM} wraps these paths up, takes the \verb{data =} input, and
+then internally sets sane start values. It also runs the model, and calls \code{\link[=umxSummary]{umxSummary()}}.
 
 Try it, or one of the several models in the examples at the bottom of this page.
 
-A common error is to include data in the main list, a bit like
-saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
-
 \strong{nb}: Because it uses the presence of a variable in the data to detect if a variable is latent or not, \code{umxRAM} needs data at build time.
+Note also, a common error is to include data in the main list, a bit like saying \code{lm(y ~ x + df)} instead of \code{lm(y ~ x, data = df)}.
 
 \strong{String Syntax}
 

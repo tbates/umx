@@ -38,6 +38,7 @@ Other Advanced Model Building Functions:
 \code{\link[=umxAlgebra]{umxAlgebra()}},
 \code{\link[=umxFixAll]{umxFixAll()}},
 \code{\link[=umxJiggle]{umxJiggle()}},
+\code{\link[=umxRAM_GLM]{umxRAM_GLM()}},
 \code{\link[=umxRun]{umxRun()}},
 \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
 \code{\link[=xmuLabel]{xmuLabel()}},

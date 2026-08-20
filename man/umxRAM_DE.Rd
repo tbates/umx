@@ -59,7 +59,7 @@ umxRAM_DE(
 
 \item{comparison}{Compare the new model to the old (if updating an existing model: default = TRUE)}
 
-\item{type}{One of \code{"Auto"} or \code{"FIML"}. \code{"WLS"}, \code{"DWLS"}, \code{"ULS"}, \code{"cov"}, and \code{"cor"} are rejected (use \code{\link[=umxRAM]{umxRAM()}}).}
+\item{type}{One of \code{"Auto"} or \code{"FIML"}. note: other types, e.g., \code{"WLS"} are rejected (use \code{\link[=umxRAM]{umxRAM()}}).}
 
 \item{weight}{Passes weight values to mxData}
 

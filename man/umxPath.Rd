@@ -32,7 +32,8 @@ umxPath(
   labels = NA,
   lbound = NA,
   ubound = NA,
-  hasMeans = NULL
+  hasMeans = NULL,
+  ...
 )
 }
 \arguments{
@@ -93,6 +94,8 @@ Latent variance is fixed at 0. Loading of path 1 is fixed at 1. unique.bivariate
 \item{ubound}{upper bounds for each path value}
 
 \item{hasMeans}{Used in 'forms' case to know whether the data have means or not.}
+
+\item{...}{Not used. Caught to provide a polite message if a reversed form like \code{m.v.} is passed instead of \code{v.m.}.}
 }
 \value{
 \itemize{

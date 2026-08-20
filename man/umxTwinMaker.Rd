@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxDoCbyPath.R
 \name{umxTwinMaker}
 \alias{umxTwinMaker}
-\title{Make a twin model from the model describing just one person}
+\title{Make a twin model from a model describing just one person}
 \usage{
 umxTwinMaker(
   name = "m1",
@@ -35,24 +35,24 @@ umxTwinMaker(
 }
 }
 \description{
-\code{xmu_path2twin} takes a collection of paths describing the model for 1 person
+\code{umxTwinMaker} takes a collection of paths describing the model for 1 person
 and returns a completed twin model. This consists of a \code{\link[=umxSuperModel]{umxSuperModel()}} containing
 \code{MZ} and \code{DZ} \code{\link[=umxRAM]{umxRAM()}} models.
 
 Pass into \code{umxTwinMaker}:
 \enumerate{
 \item A list of \code{paths} making up the twin 1 model
-\item In \code{t1_t2links}, a vector describing the component relationships connecting twin 1 to twin 2
-(The default here is 1 and .5 for the a, and, for c and e are 1 and 0 in both groups, respectively.
+\item \code{t1_t2links}, a vector describing the component relationships connecting twin 1 to twin 2
+(The default works in most cases: 1 and .5 for a for MZ and DZ respectively, 1 for c and 0 for e.
 }
 
 \emph{Details}
 
-Some rules. All labels are expanded with a twin suffix: so "var1" -> "var1_T1" etc. so you
-provide the person-model using just the base name (and tell \code{\link[=umxTwinMaker]{umxTwinMaker()}} how to expand it by providing a separator string).
+Some rules. All labels are expanded with a twin suffix: so "var1" -> "var1_T1" etc. You
+provide the person-model using \emph{just the base name} \code{umxTwinMaker()} knows how to expand it using the separator string).
 
-Rule 2: The latent a, c, and e latent variables must be labelled to match the base name given in t1_t2links.
-To avoid clashes, variables must not match the numbered variables in \code{t1_t2links}  - by default names like "a1" are reserved for ace.
+Second, the latent variables must match the base names given in t1_t2links (\code{a}, \code{c}, and \code{e}).
+To avoid clashes, manifests must \emph{not} match variables in \code{t1_t2links}  - by default names like "a1" are reserved for ace.
 }
 \examples{
 \dontrun{

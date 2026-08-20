@@ -49,6 +49,7 @@ Other Advanced Model Building Functions:
 \code{\link{umx}},
 \code{\link[=umxAlgebra]{umxAlgebra()}},
 \code{\link[=umxJiggle]{umxJiggle()}},
+\code{\link[=umxRAM_GLM]{umxRAM_GLM()}},
 \code{\link[=umxRun]{umxRun()}},
 \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
 \code{\link[=umxUnexplainedCausalNexus]{umxUnexplainedCausalNexus()}},

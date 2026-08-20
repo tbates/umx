@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_check_parallel}
 \alias{umx_check_parallel}
-\title{Check if OpenMx is using OpenMP, test cores, and get timings}
+\title{Check that OpenMx is using OpenMP, test cores, and get timings}
 \usage{
 umx_check_parallel(
   nCores = c(1, umx_detect_cores()),
