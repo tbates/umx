@@ -83,3 +83,34 @@ test_that("umxRAM_GLM observed predictor with large x matches glm and umxSummary
 	expect_false(grepl("mxRefModels", paste(out, collapse = "\n")))
 	expect_message(umxSummary(m), "-2LL")
 })
+
+test_that("umxRAM_GLM chain Petrol -> kms -> Poisson deaths runs", {
+	skip_if_not(exists("mxFamily", mode = "function"))
+	set.seed(95)
+	n = 60
+	petrol = rnorm(n)
+	kms = 0.2 + 0.5 * petrol + rnorm(n, 0, 0.4)
+	dat = data.frame(
+		DriversKilled = rpois(n, lambda = exp(0.3 + 0.4 * kms)),
+		kms1k = kms,
+		PetrolPrice = petrol
+	)
+	m = umxRAM_GLM("chain",
+		umxPath("one", to = "DriversKilled"),
+		umxPath("PetrolPrice", to = "kms1k"),
+		umxPath("kms1k", to = "DriversKilled"),
+		data = dat,
+		families = list(DriversKilled = poisson()),
+		autoRun = TRUE)
+	expect_false(isTRUE(m$S$free["PetrolPrice", "PetrolPrice"]))
+	expect_equal(as.numeric(m$S$values["PetrolPrice", "PetrolPrice"]), 0)
+	expect_true(isTRUE(m$S$free["kms1k", "kms1k"]))
+	expect_true(isTRUE(m$M$free[1, "kms1k"]))
+	expect_true(isTRUE(m$M$free[1, "DriversKilled"]))
+	expect_true(is.finite(as.numeric(m$output$fit)))
+	expect_true(as.numeric(m$output$fit) > 0 && as.numeric(m$output$fit) < 1e6)
+	expect_true(as.numeric(m$S$values["kms1k", "kms1k"]) > 0)
+	expect_true(abs(as.numeric(m$A$values["kms1k", "PetrolPrice"])) < 5)
+	expect_true(abs(as.numeric(m$A$values["DriversKilled", "kms1k"])) < 5)
+	expect_message(umxSummary(m), "Observed predictors")
+})

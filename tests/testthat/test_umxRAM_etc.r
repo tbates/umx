@@ -15,6 +15,19 @@ test_that("umxRAM handles two covariates", {
 	})
 })
 
+test_that("umxRAM adds missing manifest means when the user only set one intercept", {
+	require(umx)
+	dat = mtcars[1:30, c("mpg", "wt")]
+	m = umxRAM("partialMeans",
+		umxPath("wt", to = "mpg"),
+		umxPath("one", to = "mpg"),
+		umxPath(var = c("mpg", "wt")),
+		data = dat,
+		autoRun = FALSE)
+	expect_true(isTRUE(m$M$free[1, "mpg"]))
+	expect_true(isTRUE(m$M$free[1, "wt"]))
+})
+
 test_that("umxRAM works", {	
 	require(umx)
 	data(demoOneFactor) # from OpenMx

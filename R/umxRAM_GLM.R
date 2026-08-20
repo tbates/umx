@@ -83,6 +83,14 @@ umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NU
 	} else {
 		stop("umxRAM_GLM: data must be a data.frame or raw mxData", call. = FALSE)
 	}
+	# scale() leaves a 1-column matrix in the data.frame; mxData wants a numeric vector
+	obsNames = names(obs)
+	for (i in seq_along(obsNames)) {
+		col = obs[[i]]
+		if (is.matrix(col) && ncol(col) == 1) {
+			obs[[i]] = as.numeric(col)
+		}
+	}
 
 	# ---- families: named list, plus any mxFamily in ... ----
 	famList = list()
@@ -170,6 +178,7 @@ umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NU
 	usedManifests = setdiff(usedManifests, defnNames)
 	predOnly = setdiff(intersect(fromNames, dataNames), c(toNames, famNames, "one", defnNames))
 	predOnly = intersect(predOnly, usedManifests)
+	gaussNames = setdiff(usedManifests, c(famNames, predOnly))
 	if (length(usedManifests) < 1) {
 		stop("umxRAM_GLM: no manifest variables found in paths or families", call. = FALSE)
 	}
@@ -181,11 +190,20 @@ umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NU
 		latentVars = latentVars), keepDots, unname(famList)))
 	newModel = mxModel(newModel, myData)
 
-	# Means if missing (GLM linear predictors need them). Predictors are not outcomes.
+	# Means for modeled outcomes (family + Gaussian). Predictors are not outcomes.
+	meanTo = unique(c(famNames, gaussNames))
 	if (is.null(newModel$matrices$M)) {
-		meanTo = setdiff(usedManifests, predOnly)
 		if (length(meanTo) > 0) {
 			newModel = mxModel(newModel, mxPath("one", to = meanTo))
+		}
+	} else if (length(meanTo) > 0) {
+		haveMean = c()
+		if (!is.null(dimnames(newModel$M$values))) {
+			haveMean = dimnames(newModel$M$values)[[2]][which(newModel$M$free[1, ] | abs(newModel$M$values[1, ]) > 0)]
+		}
+		addMean = setdiff(meanTo, haveMean)
+		if (length(addMean) > 0) {
+			newModel = mxModel(newModel, mxPath("one", to = addMean))
 		}
 	}
 
@@ -212,7 +230,6 @@ umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NU
 		newModel$S$free[, nm] = FALSE
 	}
 	# Gaussian leftovers need a free residual variance if the user did not add umxPath(var=)
-	gaussNames = setdiff(usedManifests, c(famNames, predOnly))
 	for (nm in gaussNames) {
 		if (!nm %in% Snames) next
 		if (!isTRUE(newModel$S$free[nm, nm])) {
@@ -224,6 +241,9 @@ umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NU
 			} else if (newModel$S$values[nm, nm] == 0) {
 				newModel$S$values[nm, nm] = 1
 			}
+		}
+		if (is.na(newModel$S$lbound[nm, nm])) {
+			newModel$S$lbound[nm, nm] = 0
 		}
 	}
 
@@ -251,11 +271,13 @@ umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NU
 		}
 	}
 	# xmuValues uses Gaussian SEM starts (0.5 * sqrt(var_to/var_from)). That is
-	# exp() overflow on a log/logit box. Observed arrows into family items start at 0.
+	# exp() overflow on a log/logit box, and wild slopes when a predictor has tiny variance.
+	# Observed arrows into modeled outcomes start at 0.
 	if (setValues && !is.null(newModel$matrices$A)) {
 		Afrom = dimnames(newModel$A$values)[[2]]
 		obsFrom = intersect(Afrom, dataNames)
-		for (nm in famNames) {
+		modeled = unique(c(famNames, gaussNames))
+		for (nm in modeled) {
 			if (!nm %in% dimnames(newModel$A$values)[[1]]) next
 			for (fromNm in obsFrom) {
 				if (fromNm == nm) next

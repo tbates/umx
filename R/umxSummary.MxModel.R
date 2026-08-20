@@ -584,6 +584,23 @@ umxSummary.MxModelGLM <- function(model, refModels = NULL, std = FALSE, digits =
 	if (length(fitBits) > 0) {
 		message(paste0("\nGLM fit: ", paste(fitBits, collapse = "; ")))
 	}
+	predNames = c()
+	if (!is.null(model$S) && !is.null(dimnames(model$S$values))) {
+		sNames = dimnames(model$S$values)[[1]]
+		famN = c()
+		if (is(model$fitfunction, "MxFitFunctionGLM") && length(model$fitfunction$family) > 0) {
+			famN = names(model$fitfunction$family)
+		}
+		for (nm in sNames) {
+			if (nm %in% famN) next
+			if (!isTRUE(model$S$free[nm, nm]) && abs(model$S$values[nm, nm]) < 1e-12) {
+				predNames = c(predNames, nm)
+			}
+		}
+	}
+	if (length(predNames) > 0) {
+		message(paste0("Observed predictors (no mean/variance; arrows use the data column): ", paste(predNames, collapse = ", ")))
+	}
 	message("No CFI/TLI/RMSEA for GLM yet. Nested models: umxCompare / AIC.")
 	if (!is.null(pars) && nrow(pars) > 0) {
 		invisible(pars)
