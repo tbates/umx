@@ -39,7 +39,7 @@
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model.
-#' @param type One of `"Auto"` or `"FIML"`. `"WLS"`, `"DWLS"`, `"ULS"`, `"cov"`, and `"cor"` are rejected (use [umxRAM()]).
+#' @param type One of `"Auto"` or `"FIML"`. note: other types, e.g., `"WLS"` are rejected (use [umxRAM()]).
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param weight Passes weight values to mxData
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
