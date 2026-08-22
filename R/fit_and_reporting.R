@@ -44,7 +44,33 @@
 #' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, r2x = 2, r2y = 10)
 #' umxPlot(x = "wt", y = "mpg", mtcars, r2x = 2, r2y = 10)
-umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as a function of ", x), r2x=NA, r2y=NA, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
+umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x=NA, r2y=NA, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
+	# Polite catch for bare variable names: umxPlot(Weight, MPG.city, data=Cars93) -> suggest string or formula
+	# Must capture substitute() BEFORE any evaluation of x/y (e.g. inherits() would trigger 'object not found')
+	xSub = substitute(x)
+	ySub = substitute(y)
+	xIsBare = is.symbol(xSub)
+	yIsBare = is.symbol(ySub)
+	if(xIsBare || yIsBare){
+		xNm = if(xIsBare) paste(deparse(xSub), collapse="") else ""
+		yNm = if(yIsBare) paste(deparse(ySub), collapse="") else ""
+		# y may be missing (histogram) — handle that case
+		if(xIsBare && yIsBare){
+			stop(paste0("Polite note: Either use the name as a string \"", xNm, "\", or make x a formula, e.g., ", yNm, " ~ ", xNm), call. = FALSE)
+		} else if(xIsBare){
+			# need to check if x bare but y was a string already evaluated? In that case yIsBare FALSE but y is still a string
+			# Try to get y value if available
+			if(!is.null(y) && is.character(y)){
+				yNm2 = as.character(y)[1]
+				stop(paste0("Polite note: Either use the name as a string \"", xNm, "\", or make x a formula, e.g., ", yNm2, " ~ ", xNm), call. = FALSE)
+			}
+			stop(paste0("Polite note: Either use the name as a string \"", xNm, "\", or make x a formula, e.g., y ~ ", xNm), call. = FALSE)
+		} else if(yIsBare){
+			# x is already a string/formula, y is bare
+			xNm2 = if(is.character(x)) as.character(x)[1] else paste(deparse(xSub), collapse="")
+			stop(paste0("Polite note: Either use the name as a string \"", yNm, "\", or make x a formula, e.g., ", yNm, " ~ ", xNm2), call. = FALSE)
+		}
+	}
 	method = match.arg(method)
 	family = match.arg(family)
 	if(inherits(x, "formula")){
@@ -62,15 +88,43 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 		umx_check_names(c(x, y), data = data, die = TRUE)
 		.formula = reformulate(paste0(y, "~ ", x))	
 	}
-	if(geom_point){
-		p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method) + geom_point()
-	} else {
-		p = ggplot(data = data, aes_string(x, y)) + geom_smooth(method = method)
+	# defaults for labels (defer evaluation so bare names are caught above)
+	if(is.null(xlab)){
+		xlab = x
 	}
-	# data[,x]
-	if(is.na(r2x)){
-		r2x = min(data[,x])
-		r2y = max(data[,y])
+	if(is.null(ylab)){
+		ylab = y
+	}
+	if(is.null(title)){
+		title = paste0(y, " as a function of ", x)
+	}
+	if(geom_point){
+		p = ggplot(data = data, aes(x =.data[[x]], y =.data[[y]])) + geom_smooth(method = method) + geom_point()
+	} else {
+		p = ggplot(data = data, aes(x =.data[[x]], y =.data[[y]])) + geom_smooth(method = method)
+	}
+	# data[,x] — smarter R2 placement: inset from edges and left-aligned so label is fully visible
+	if(is.na(r2x) || is.na(r2y)){
+		xVals = data[,x]
+		yVals = data[,y]
+		xRng = range(xVals, na.rm = TRUE)
+		yRng = range(yVals, na.rm = TRUE)
+		xDiff = diff(xRng)
+		yDiff = diff(yRng)
+		if(is.na(r2x)){
+			if(is.finite(xDiff) && xDiff > 0){
+				r2x = xRng[1] + 0.10 * xDiff
+			} else {
+				r2x = xRng[1]
+			}
+		}
+		if(is.na(r2y)){
+			if(is.finite(yDiff) && yDiff > 0){
+				r2y = yRng[2] - 0.10 * yDiff
+			} else {
+				r2y = yRng[2]
+			}
+		}
 	}
 
 	if(method == "lm"){
@@ -78,7 +132,7 @@ umxPlot <- function(x, y= NULL, data, xlab= x, ylab = y, title = paste0(y, " as 
 		r2  = round(summary(m1)$r.squared, 3)
 		lab = bquote(R^2 == .(r2))
 		p = p + labs(x= xlab, y= ylab, title= title)
-		p = p + cowplot::draw_label(lab, x = r2x, y = r2y, fontfamily = "Times", size = 12)
+		p = p + cowplot::draw_label(lab, x = r2x, y = r2y, hjust = 0, vjust = 1, fontfamily = "Times", size = 12)
 	}else if (method == "glm"){
 		# m1  = glm(.formula, data = data, family=family)
 		message("polite note: Currently, I only know how to do method = lm")
