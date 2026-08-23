@@ -51,8 +51,10 @@ an \code{\link[OpenMx:MxModel]{MxModel()}} (invisibly if autoRun prints a summar
 Standalone counterpart to \code{\link[=umxRAM]{umxRAM()}} for conditional exponential-family
 manifests. Latents are anything in the paths that is not in \code{data}. Manifests
 are anything in the paths (or in \code{families}) that is in \code{data}. Residual \code{S}
-on family items is fixed at 0. Manifests not listed in \code{families} are
-Gaussian (free residual \code{S}). Does not call \code{\link[OpenMx:mxRefModels]{mxRefModels()}} (no CFI yet).
+on family items is fixed at 0. An observed column used only as \code{from} (a
+predictor) is not given residual \code{S} or a mean; the arrow uses that row's
+value. Manifests not listed in \code{families} that have residual \code{S} are
+Gaussian. Does not call \code{\link[OpenMx:mxRefModels]{mxRefModels()}} (no CFI yet).
 }
 \examples{
 \dontrun{

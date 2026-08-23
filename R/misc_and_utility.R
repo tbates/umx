@@ -4397,6 +4397,9 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 					x = footnote(kable_input= x, general = paste0("zero printed as ", omxQuotes(zero.print)))
 				}
 				x = xmu_style_kable(x, html_font = html_font, style = style, bootstrap_options= bootstrap_options, lightable_options = lightable_options, full_width = FALSE)
+				# strip knitr::kable_html padding " %s " inside <td>/<th> (trailing " " on each cell)
+				x = gsub("> ", ">", x, fixed = TRUE)
+				x = gsub(" </", "</", x, fixed = TRUE)
 				print(x)
 			} else {
 				# !kableExtra
