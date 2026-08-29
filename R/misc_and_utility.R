@@ -3653,7 +3653,7 @@ umx_make <- function(
 #'
 #' @description
 #' This is a utility function for the OpenMx package maintainer. For convenience,
-#' it lives in **umx**, not the OpenMx package). `mx_make` mirrors
+#' it lives in **umx**, not the OpenMx package. `mx_make` mirrors
 #' [umx_make()]. It uses OpenMx's **Makefile** to compile and install (C++,
 #' OpenMP, NPSOL vs CRAN build). Use **devtools** for win-builder and package
 #' hygiene. 
@@ -3669,9 +3669,8 @@ umx_make <- function(
 #' @section Flight checklist:
 #'
 #'   1. **Update Rd files** after editing roxygen in `R`:
-#'     mx_make("Rd") -- runs OpenMx `make roxygen` (`util/rox`):
-#'     compile DLL + \code{roxygenize} rd). Do **not** use bare
-#'     `devtools::document()` on OpenMx; man pages are git-tracked and the Makefile owns the official path.
+#'     `mx_make("Rd")` runs OpenMx `make roxygen` (`util/rox`: compile DLL + `roxygenize` rd).
+#'     Do **not** use bare `devtools::document()` on OpenMx; man pages are git-tracked and the Makefile owns the official path.
 #'   2. **Install this tree into R's library**:
 #'     `mx_make()` or `mx_make("install")` (NPSOL when the Makefile enables it). Or `mx_make("cran-install")` without NPSOL.
 #'   3. **Restart R**, then verify identity:
@@ -3684,7 +3683,6 @@ umx_make <- function(
 #'     Local install is **not** required for win-builder; only the files under `pkg` are uploaded.
 #'   5. **Prebuilt release binary** (not local WIP (work in progress)):
 #'     `mx_make("GenomicMx")` -> [install.OpenMx()] from GitHub Releases.
-#' }
 #'
 #' @param what Target. One of:
 #'   \describe{
