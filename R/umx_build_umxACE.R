@@ -496,6 +496,306 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 } # end umxACE
 
 
+#' Cholesky ACE twin model with mxFitFunctionGLM
+#'
+#' @description
+#' RAM MZ/DZ Cholesky ACE for exponential-family phenotypes. Not a
+#' patch on [umxACE()]: that function uses `mxExpectationNormal` and
+#' `a %*% t(a)` algebras, which GLM cannot use.
+#'
+#' Additive and shared factors have variance 1. MZ uses one shared `a_i` and
+#' (if `dzCr` is 1) one shared `c_i` per factor: two copies with correlation 1
+#' are singular for Laplace. DZ has `a_i_T1` with `a_i_T2` covariance `dzAr`.
+#' Unique `e` is always per twin. Loadings use umxACE labels `a_r{row}c{col}`.
+#' Off-diagonal `e` is the GLM analogue of E covariances (shared unique /
+#' measurement error). Family leftover is still independent given eta.
+#' Unique environment is the `e` latent **and** the family leftover. `nAGQ` is 1.
+#' Cholesky is `nVar`-general. MZ Laplace dimension is `4 * nVar` latents.
+#'
+#' **Bernoulli: fix e diagonal at 1.** Leftover (probit 1, logit \eqn{\pi^2/3})
+#' already sets the observation scale. Univariate ACE still has three variance
+#' components and only two twin correlations, so a free `e_ii` is not identified
+#' (`e` went to 0 and `a` was eaten). For binomial items, `e_rjc_j` is fixed at
+#' 1 (same idea as fixing unique scale in threshold ACE). Off-diagonal `e` stays
+#' free so multivariate unique covariance is not forced to 0. Do **not** set
+#' `e11` to leftover: that would double-count unique on eta. [umxSummaryACE_GLM()]
+#' still uses `E = ee' + D` for shares. Poisson keeps a free `e` diagonal
+#' (leftover is on the counts). Poisson ACE starts the Cholesky diagonals at
+#' \eqn{a=\sqrt{0.8}}, \eqn{e=\sqrt{0.2}}, `c` at 0.2 (80/20 A/E on eta; C not pinned to the floor) so
+#' the optimizer walks downhill from a genetic model. Free ACE diagonals have
+#' `lbound = 1e-4` so the derivative stays alive at the floor.
+#'
+#' **Gamma and inverse Gaussian: not for ACE.** Inverse Gaussian is the hitting-time
+#' law of Brownian motion with drift (reaction time, age of onset). Gamma is the
+#' constant-CV amount / duration model. Both need trial-level data and, for a
+#' process interpretation, structure on two parameters (mean and shape/lambda, or
+#' drift and barrier with diffusion scale fixed). Twin ACE is one phenotype per
+#' person, so those uses are out of scope. The wrapper still accepts the families:
+#' leftover shape (Gamma) or lambda (inverse Gaussian) is fixed at 1 (`phi = 1/theta`)
+#' unless you pass a numeric `theta`; a free `theta` label is rejected (collides
+#' with `e`). That is not the cognitive-psych constraint of fixing diffusion
+#' scale \eqn{\sigma}. Leave them in the too-hard box; use Poisson for counts and
+#' threshold [umxACE()] for binary.
+#'
+#' **Binomial `trials=` is not implemented.** [mxFamily()] can take `trials` as a
+#' raw-data column (`n` successes out of `n_i` trials per row). This wrapper does
+#' not: there is no `trials` argument, and MZ/DZ data are subset to the phenotype
+#' `_T1`/`_T2` columns, so any `n` columns are dropped. Binomial here is Bernoulli
+#' (`n = 1`) only. Grouped or item-sum binomials with a dynamic `n` cannot be
+#' wired. Most real binomial counts are overdispersed; there is no beta-binomial
+#' (or other extra-binomial leftover) to absorb that, so users will keep using
+#' liability [umxACE()] with more than one threshold, or a Gaussian for large
+#' counts. Negative binomial on the counts is the overdispersed alternative when
+#' there is no upper bound.
+#'
+#' **Hessian / standard errors stay off.** [umxRAM_GLM()] (no latents) yields finite
+#' SEs. Twin ACE always has several latents. On univariate Poisson, `n = 50` pairs
+#' gave a Hessian that was not positive definite and SEs all `NA` (optimizer status 6).
+#' At `n = 200` the Hessian was positive definite and SEs were finite, but SEs on
+#' `a` and `c` were about 1 on loadings of about 0.5, and status was still 6. Default
+#' remains `Calculate Hessian` / `Standard Errors` = `No`. After a fitted model,
+#' family-score SEs: `mxComputeOnce('fitfunction', 'information', 'meat')` then
+#' `mxComputeStandardError()`. Poisson intercept matches `glm()`; Poisson ACE
+#' intercept matches a pair bootstrap in tests.
+#'
+#' @param name model name (default "ACE_GLM")
+#' @param selDVs base phenotype names (sep expands to `_T1`/`_T2`). Cholesky is `nVar`-general.
+#' @param mzData MZ data.frame
+#' @param dzData DZ data.frame
+#' @param sep twin separator (default `"_T"`; must not be `""`)
+#' @param family `stats::family` or [mxFamily()] for the phenotype (both twins). Poisson is the intended ACE family. Binomial is Bernoulli only: `trials=` and per-row `n` columns are not implemented (see Details). Scale-identified (`e` diagonal fixed at 1) but leftover eats heritability — use threshold [umxACE()] for binary. Gamma and inverse Gaussian are accepted but not supported for ACE (trial-level process models; see Details).
+#' @param theta passed to [mxFamily()]. For Gamma, leftover shape; for inverse Gaussian, leftover lambda. Both fixed (default 1, `phi = 1`). A free-parameter label is rejected (collides with `e`). Not used for Poisson or binomial.
+#' @param nAGQ must be 1 (more than one latent)
+#' @param dzAr DZ additive genetic correlation (default 0.5)
+#' @param dzCr DZ C correlation (default 1; 0.25 for ADE)
+#' @param equateMeans equate T1/T2 intercepts (default TRUE)
+#' @param autoRun whether to run
+#' @param tryHard [xmu_safe_run_summary()] tryHard
+#' @return supermodel of class `MxModelACE_GLM`
+#' @family Twin Modeling Functions
+#' @export
+#' @seealso [umxACE()], [umxRAM_GLM()], [umxSummaryACE_GLM()], [umxPlotACE_GLM()]
+#' @md
+#' @examples
+#' \dontrun{
+#' set.seed(1)
+#' n = 40
+#' a = 0.4; c = 0.2; e = 0.5; b0 = 0.3
+#' simPair = function(rA, n) {
+#' 	A = rnorm(n)
+#' 	C = rnorm(n)
+#' 	E1 = rnorm(n)
+#' 	E2 = rnorm(n)
+#' 	A2 = rA * A + sqrt(1 - rA^2) * rnorm(n)
+#' 	y1 = rpois(n, lambda = exp(b0 + a * A + c * C + e * E1))
+#' 	y2 = rpois(n, lambda = exp(b0 + a * A2 + c * C + e * E2))
+#' 	data.frame(y_T1 = y1, y_T2 = y2)
+#' }
+#' mzData = simPair(1, n)
+#' dzData = simPair(0.5, n)
+#' m1 = umxACE_GLM(selDVs = "y", mzData = mzData, dzData = dzData, sep = "_T")
+#' }
+umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", family = stats::poisson(), theta = NULL, nAGQ = 1L, dzAr = 0.5, dzCr = 1, equateMeans = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search")) {
+	tryHard = match.arg(tryHard)
+	if (!exists("mxFamily", mode = "function")) {
+		stop("umxACE_GLM needs OpenMx with mxFamily() / mxFitFunctionGLM()", call. = FALSE)
+	}
+	if (is.null(sep) || !nzchar(sep)) {
+		stop("umxACE_GLM needs a non-empty sep (e.g. '_T'). umxTwinMaker path expansion cannot use sep=\"\".", call. = FALSE)
+	}
+	if (length(nAGQ) != 1 || is.na(nAGQ) || as.integer(nAGQ) != 1L) {
+		stop("umxACE_GLM has several ACE latents. nAGQ must be 1 (Laplace).", call. = FALSE)
+	}
+	if (inherits(mzData, "tbl")) mzData = as.data.frame(mzData)
+	if (inherits(dzData, "tbl")) dzData = as.data.frame(dzData)
+	xmu_twin_check(selDVs = selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = FALSE, nSib = 2)
+	selVars = xmu_twin_upgrade_selDvs2SelVars(selDVs = selDVs, sep = sep, nSib = 2)
+	nVar = length(selVars) / 2
+	if (nVar < 1) {
+		stop("umxACE_GLM needs at least one phenotype.", call. = FALSE)
+	}
+	if (length(selDVs) == nVar) {
+		bases = selDVs
+	} else {
+		bases = unique(namez(selVars, paste0(sep, "[12]$"), replacement = ""))
+		if (length(bases) != nVar) stop("selDVs must be the base phenotype name(s)", call. = FALSE)
+	}
+	t1n = paste0(bases, sep, "1")
+	t2n = paste0(bases, sep, "2")
+	need = c(t1n, t2n)
+	for (nm in need) {
+		if (!nm %in% names(mzData)) stop("MZ data missing column ", omxQuotes(nm), call. = FALSE)
+		if (!nm %in% names(dzData)) stop("DZ data missing column ", omxQuotes(nm), call. = FALSE)
+	}
+	mzUse = mzData[, need, drop = FALSE]
+	dzUse = dzData[, need, drop = FALSE]
+
+	# Family key (OpenMx names). Binomial: leftover already scales the observation
+	# model, so e_ii is fixed at 1. Gamma / inverse Gaussian: leftover is a free
+	# shape or lambda (phi = 1/theta) that collides with e; fix theta at 1 (phi = 1)
+	# unless the user passes a numeric theta. Free theta labels are rejected.
+	famKey = NA_character_
+	if (is(family, "MxFamily")) {
+		famKey = family@family
+	} else if (inherits(family, "family")) {
+		rawFam = tolower(family$family)
+		if (startsWith(rawFam, "negative binomial")) {
+			famKey = "negativebinomial"
+		} else if (rawFam %in% c("inverse.gaussian", "inverse gaussian")) {
+			famKey = "inversegaussian"
+		} else {
+			famKey = rawFam
+		}
+	}
+	isBinom = identical(famKey, "binomial")
+	isPoisson = identical(famKey, "poisson")
+	isDispGLM = famKey %in% c("gamma", "inversegaussian")
+	varLbound = 1e-4
+	# Poisson: start on a genetic ridge (A 80% / E 20% of eta). Other families keep 0.2.
+	if (isPoisson) {
+		aDiagStart = sqrt(0.8)
+		cDiagStart = 0.2
+		eDiagStart = sqrt(0.2)
+	} else {
+		aDiagStart = 0.2
+		cDiagStart = 0.2
+		eDiagStart = 0.2
+	}
+	if (isDispGLM) {
+		if (is.character(theta) && length(theta) == 1 && nzchar(theta)) {
+			stop("umxACE_GLM: a free theta label collides with latent e. Pass a positive number (default 1, GLM phi = 1/theta) so leftover is fixed and e is free.", call. = FALSE)
+		}
+		if (is(family, "MxFamily") && nzchar(family@thetaLabel)) {
+			stop("umxACE_GLM: a free theta label collides with latent e. Use a fixed Gamma shape / inverse-Gaussian lambda (default 1).", call. = FALSE)
+		}
+		if (is.null(theta)) theta = 1
+	}
+
+	famList = list()
+	for (nm in need) {
+		if (is(family, "MxFamily")) {
+			fam = family
+			fam@variable = nm
+			if (isDispGLM) {
+				fam@thetaLabel = ""
+				if (is.numeric(theta) && length(theta) == 1 && is.finite(theta) && theta > 0) {
+					fam@theta = as.numeric(theta)
+				} else if (!(is.finite(fam@theta) && fam@theta > 0)) {
+					fam@theta = 1
+				}
+			}
+			famList[[nm]] = fam
+		} else {
+			famList[[nm]] = mxFamily(nm, family, theta = theta)
+		}
+	}
+
+	# MZ: shared a_i and c_i (two copies with cor=1 are singular for Laplace).
+	# DZ: a_i_T1 with a_i_T2 = dzAr; c shared if dzCr==1 else two c with cor dzCr.
+	# e is always per twin (Cholesky within person). Labels a_r{row}c{col} as umxACE.
+	cholLab = function(pref, row, col) paste0(pref, "_r", row, "c", col)
+	loadPath = function(from, to, lab, onDiag, fixEdiag = FALSE, diagStart = 0.2) {
+		if (isTRUE(fixEdiag) && isTRUE(onDiag)) {
+			umxPath(from, to, labels = lab, values = 1, free = FALSE)
+		} else if (onDiag) {
+			umxPath(from, to, labels = lab, values = diagStart, lbound = varLbound)
+		} else {
+			umxPath(from, to, labels = lab, values = 0)
+		}
+	}
+	aMZ = paste0("a", 1:nVar)
+	cMZ = paste0("c", 1:nVar)
+	eT1 = paste0("e", 1:nVar, sep, "1")
+	eT2 = paste0("e", 1:nVar, sep, "2")
+	aT1 = paste0("a", 1:nVar, sep, "1")
+	aT2 = paste0("a", 1:nVar, sep, "2")
+	cT1 = paste0("c", 1:nVar, sep, "1")
+	cT2 = paste0("c", 1:nVar, sep, "2")
+	mzLats = c(aMZ, cMZ, eT1, eT2)
+	if (abs(dzCr - 1) < 1e-12) {
+		dzLats = c(aT1, aT2, cMZ, eT1, eT2)
+	} else {
+		dzLats = c(aT1, aT2, cT1, cT2, eT1, eT2)
+	}
+	meanLabsT1 = character(nVar)
+	meanLabsT2 = character(nVar)
+	for (j in 1:nVar) {
+		if (equateMeans) {
+			meanLabsT1[j] = paste0("one_to_", bases[j])
+			meanLabsT2[j] = paste0("one_to_", bases[j])
+		} else {
+			meanLabsT1[j] = paste0("one_to_", t1n[j])
+			meanLabsT2[j] = paste0("one_to_", t2n[j])
+		}
+	}
+	mzPaths = list(umxPath(v1m0 = mzLats), umxPath("one", to = c(t1n, t2n), labels = c(meanLabsT1, meanLabsT2)))
+	dzPaths = list(umxPath(v1m0 = dzLats), umxPath("one", to = c(t1n, t2n), labels = c(meanLabsT1, meanLabsT2)))
+	for (i in 1:nVar) {
+		for (j in i:nVar) {
+			onDiag = (j == i)
+			labA = cholLab("a", j, i)
+			mzPaths[[length(mzPaths) + 1]] = loadPath(aMZ[i], t1n[j], labA, onDiag, diagStart = aDiagStart)
+			mzPaths[[length(mzPaths) + 1]] = loadPath(aMZ[i], t2n[j], labA, onDiag, diagStart = aDiagStart)
+			dzPaths[[length(dzPaths) + 1]] = loadPath(aT1[i], t1n[j], labA, onDiag, diagStart = aDiagStart)
+			dzPaths[[length(dzPaths) + 1]] = loadPath(aT2[i], t2n[j], labA, onDiag, diagStart = aDiagStart)
+			labC = cholLab("c", j, i)
+			if (abs(dzCr - 1) < 1e-12) {
+				mzPaths[[length(mzPaths) + 1]] = loadPath(cMZ[i], t1n[j], labC, onDiag, diagStart = cDiagStart)
+				mzPaths[[length(mzPaths) + 1]] = loadPath(cMZ[i], t2n[j], labC, onDiag, diagStart = cDiagStart)
+				dzPaths[[length(dzPaths) + 1]] = loadPath(cMZ[i], t1n[j], labC, onDiag, diagStart = cDiagStart)
+				dzPaths[[length(dzPaths) + 1]] = loadPath(cMZ[i], t2n[j], labC, onDiag, diagStart = cDiagStart)
+			} else {
+				mzPaths[[length(mzPaths) + 1]] = loadPath(cMZ[i], t1n[j], labC, onDiag, diagStart = cDiagStart)
+				mzPaths[[length(mzPaths) + 1]] = loadPath(cMZ[i], t2n[j], labC, onDiag, diagStart = cDiagStart)
+				dzPaths[[length(dzPaths) + 1]] = loadPath(cT1[i], t1n[j], labC, onDiag, diagStart = cDiagStart)
+				dzPaths[[length(dzPaths) + 1]] = loadPath(cT2[i], t2n[j], labC, onDiag, diagStart = cDiagStart)
+			}
+			labE = cholLab("e", j, i)
+			mzPaths[[length(mzPaths) + 1]] = loadPath(eT1[i], t1n[j], labE, onDiag, fixEdiag = isBinom, diagStart = eDiagStart)
+			mzPaths[[length(mzPaths) + 1]] = loadPath(eT2[i], t2n[j], labE, onDiag, fixEdiag = isBinom, diagStart = eDiagStart)
+			dzPaths[[length(dzPaths) + 1]] = loadPath(eT1[i], t1n[j], labE, onDiag, fixEdiag = isBinom, diagStart = eDiagStart)
+			dzPaths[[length(dzPaths) + 1]] = loadPath(eT2[i], t2n[j], labE, onDiag, fixEdiag = isBinom, diagStart = eDiagStart)
+		}
+		dzPaths[[length(dzPaths) + 1]] = umxPath(aT1[i], with = aT2[i], free = FALSE, values = dzAr)
+		if (abs(dzCr - 1) >= 1e-12) {
+			dzPaths[[length(dzPaths) + 1]] = umxPath(cT1[i], with = cT2[i], free = FALSE, values = dzCr)
+		}
+	}
+
+	flattenPaths = function(pathList) {
+		out = list()
+		for (i in seq_along(pathList)) {
+			p = pathList[[i]]
+			if (is.list(p) && !is(p, "MxPath")) {
+				for (k in seq_along(p)) {
+					out[[length(out) + 1]] = p[[k]]
+				}
+			} else {
+				out[[length(out) + 1]] = p
+			}
+		}
+		out
+	}
+	mzPaths = flattenPaths(mzPaths)
+	dzPaths = flattenPaths(dzPaths)
+	MZ = do.call(umxRAM_GLM, c(list("MZ"), mzPaths, list(data = mzUse, families = famList, nAGQ = 1L, autoRun = FALSE, tryHard = "no")))
+	DZ = do.call(umxRAM_GLM, c(list("DZ"), dzPaths, list(data = dzUse, families = famList, nAGQ = 1L, autoRun = FALSE, tryHard = "no")))
+	MZ$fitfunction$nAGQ = 1L
+	DZ$fitfunction$nAGQ = 1L
+	MZ = mxOption(MZ, "Calculate Hessian", "No")
+	DZ = mxOption(DZ, "Calculate Hessian", "No")
+	MZ = mxOption(MZ, "Standard Errors", "No")
+	DZ = mxOption(DZ, "Standard Errors", "No")
+	model = umxSuperModel(name, MZ, DZ, autoRun = FALSE)
+	model = mxOption(model, "Calculate Hessian", "No")
+	model = mxOption(model, "Standard Errors", "No")
+	model = omxAssignFirstParameters(model)
+	model = as(model, "MxModelACE_GLM")
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = FALSE, comparison = FALSE, refModels = FALSE)
+	return(model)
+}
+
+
 #' Run a Cholesky with covariates that are random (in the expected covariance matrix)
 #'
 #' Often, researchers include covariates in 2-group Cholesky [umxACE()] twin models.

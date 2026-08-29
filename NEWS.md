@@ -1,7 +1,15 @@
 ## dev
+* NEW: `umxACE_GLM` Cholesky on `mxFitFunctionGLM` (`nVar`-general; MZ Laplace dimension `4 * nVar`). 3-trait Poisson recovers a diagonals / `a_r2c1` on eta. `plot()` / `umxPlotACE_GLM` is the compact a/c/e diagram (printed e is chol(ee'+D)).
+	* Binomial `e` diagonal fixed at 1 (scale). `trials=` / per-row `n` columns are not implemented (Bernoulli only; no beta-binomial).
+	* Poisson recovered a,c,e on eta. Hessian/SEs left off: n=50 Poisson ACE Hessian not PD (SEs NA); n=200 SEs finite but a/c SEs ~1. Family-score SEs: `mxComputeOnce('fitfunction', 'information', 'meat')` then `mxComputeStandardError()`. 
+	* Poisson ACE starts A/E diagonals at sqrt(0.8)/sqrt(0.2) (C at 0.2). Free ACE Cholesky diagonals have `lbound = 1e-4`.
+	* Gamma / inverse Gaussian leftover (shape / lambda) is fixed at 1 (`phi = 1/theta`) so it does not collide with `e`. Documented as not for ACE (trial-level RT / first-passage; twin ACE is one phenotype per person).
+	* Extra-Gaussian `e` Cholesky kept (unique covariance).
+	* `umxSummaryACE_GLM` uses `E = ee' + D` (`D = 1` probit, `pi^2/3` logit).
+	* `umxSummaryACE_GLM` bivariate prints `rA`, `rC`, `rE = cov2cor(E_total)` (unique correlation diluted by leftover; `rA` is not).
+
 ## umx 5.00.5 
 * Date: 2026-07-20 R 4.6.0
-
 * NEW: `umxACE_DE` double-entry ID: overwrite Paras Mehta - avoids forcing continuous trait variance to 1. All DE pairs release binary `Vtot==1`, share free cont/cens means; `fixCensorThresholds` fixes thresh at known cut or leaves thresh free (cut estimated in data units).
 * FIXED: multi-DE Cholesky zeroed entire cens **columns** (phantom free factors);
 * FIXED: `umxSummary`/`plot` use cont factor cols not `1:nKeep`;

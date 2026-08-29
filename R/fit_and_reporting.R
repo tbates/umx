@@ -1340,6 +1340,360 @@ umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 #' @export
 umxSummary.MxModelACE <- umxSummaryACE
 
+#' Summary for a GLM ACE twin model (Cholesky)
+#'
+#' Path loadings a, c, e on the eta scale, intercepts, -2LL / AIC. No CFI.
+#' Extra-Gaussian `e` paths stay in the model (residual unique covariance).
+#' For binomial items the e Cholesky diagonal is fixed at 1 (scale). Bernoulli
+#' leftover is **not** that path (`e11` = leftover would double-count). Leftover
+#' is added only in the E used for shares: `E = ee' + D`, with D = 1 (probit)
+#' or \eqn{\pi^2/3} (logit).
+#' The printed e matrix is the Cholesky of that `E`. Poisson has `D = 0`.
+#' Standardized values divide each row by that phenotype's eta-scale sd
+#' (sqrt of diag(A+C+E) with leftover in E). For two traits, prints `rA`,
+#' `rC`, and `rE = cov2cor(E_total)` so unique correlation is diluted by
+#' leftover on the diagonal (genetic `rA` is not).
+#'
+#' @param model a model from [umxACE_GLM()]
+#' @param digits rounding
+#' @param comparison optional comparison model for [umxCompare()]
+#' @param std if TRUE, report eta-scale variance shares
+#' @param report "markdown" or "html"
+#' @param ... unused
+#' @return parameter table (invisibly)
+#' @export
+#' @exportS3Method umxSummary MxModelACE_GLM
+#' @family Twin Modeling Functions
+#' @seealso [umxACE_GLM()]
+#' @md
+umxSummaryACE_GLM <- function(model, digits = 2, comparison = NULL, std = TRUE, report = c("markdown", "html"), ...) {
+	report = match.arg(report)
+	umx_has_been_run(model, stop = TRUE)
+	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
+	pars = omxGetParameters(model)
+	mzA = if (!is.null(model$MZ)) model$MZ$A else NULL
+	aceLabs = names(pars)[grepl("^[ace]_r[0-9]+c[0-9]+$", names(pars))]
+	if (!is.null(mzA) && !is.null(mzA$labels)) {
+		al = as.character(mzA$labels)
+		aceLabs = unique(c(aceLabs, al[grepl("^[ace]_r[0-9]+c[0-9]+$", al)]))
+	}
+	nVar = 1
+	if (length(aceLabs) > 0) {
+		nVar = max(as.integer(sub("^.*_r([0-9]+)c[0-9]+$", "\\1", aceLabs)))
+	}
+	fillChol = function(pref, nVar, pars, Amat = NULL) {
+		M = matrix(0, nVar, nVar)
+		for (i in 1:nVar) {
+			for (j in i:nVar) {
+				lab = paste0(pref, "_r", j, "c", i)
+				if (lab %in% names(pars)) {
+					M[j, i] = as.numeric(pars[lab])
+				} else if (!is.null(Amat) && !is.null(Amat$labels)) {
+					hit = which(Amat$labels == lab, arr.ind = TRUE)
+					if (length(hit) >= 2 || (is.matrix(hit) && nrow(hit) >= 1)) {
+						rr = if (is.matrix(hit)) hit[1, 1] else hit[1]
+						cc = if (is.matrix(hit)) hit[1, 2] else hit[2]
+						M[j, i] = as.numeric(Amat$values[rr, cc])
+					}
+				}
+			}
+		}
+		M
+	}
+	a = fillChol("a", nVar, pars, mzA)
+	c = fillChol("c", nVar, pars, mzA)
+	e = fillChol("e", nVar, pars, mzA)
+	mLab = names(pars)[grepl("^one_to_", names(pars))]
+	mu = if (length(mLab) >= 1) as.numeric(pars[mLab]) else rep(NA_real_, nVar)
+	if (length(mu) < nVar) mu = c(mu, rep(NA_real_, nVar - length(mu)))
+	leftoverOne = function(fam) {
+		if (is.null(fam) || !is(fam, "MxFamily")) return(0)
+		if (!identical(fam@family, "binomial")) return(0)
+		if (identical(fam@link, "probit")) return(1)
+		pi^2 / 3
+	}
+	D = rep(0, nVar)
+	mzMod = model$MZ
+	if (!is.null(mzMod) && is(mzMod$fitfunction, "MxFitFunctionGLM")) {
+		famList = mzMod$fitfunction$family
+		man = mzMod@manifestVars
+		if (length(man) >= nVar && is.list(famList)) {
+			for (j in 1:nVar) {
+				D[j] = leftoverOne(famList[[man[j]]])
+			}
+		}
+	}
+	A = a %*% t(a)
+	C = c %*% t(c)
+	E = e %*% t(e)
+	if (any(D > 0)) {
+		for (j in 1:nVar) {
+			E[j, j] = E[j, j] + D[j]
+		}
+		eDisp = tryCatch(t(chol(E)), error = function(err) {
+			e2 = e
+			for (j in 1:nVar) {
+				e2[j, j] = sqrt(max(e[j, j]^2 + D[j], 0))
+			}
+			e2
+		})
+	} else {
+		eDisp = e
+	}
+	Vdiag = diag(A + C + E)
+	if (isTRUE(std)) {
+		aShow = a
+		cShow = c
+		eShow = eDisp
+		for (j in 1:nVar) {
+			sdj = sqrt(max(Vdiag[j], 1e-12))
+			aShow[j, ] = a[j, ] / sdj
+			cShow[j, ] = c[j, ] / sdj
+			eShow[j, ] = eDisp[j, ] / sdj
+		}
+		if (any(D > 0)) {
+			caption = "GLM ACE eta-scale standardized paths (row / sd). Bernoulli leftover is in E (ee'+D), not an e path."
+		} else {
+			caption = "GLM ACE eta-scale standardized paths (row / sd). Poisson leftover is not on eta (D = 0)."
+		}
+	} else {
+		aShow = a
+		cShow = c
+		eShow = eDisp
+		if (any(D > 0)) {
+			caption = "GLM ACE raw Cholesky on eta. Printed e is chol(ee'+D); D is Bernoulli leftover."
+		} else {
+			caption = "GLM ACE raw Cholesky loadings on eta (latents variance 1). D = 0."
+		}
+	}
+	aShow[upper.tri(aShow)] = NA
+	cShow[upper.tri(cShow)] = NA
+	eShow[upper.tri(eShow)] = NA
+	Estimates = data.frame(cbind(aShow, cShow, eShow), stringsAsFactors = FALSE)
+	colNames = if (isTRUE(std)) c("a", "c", "e") else c("a", "c", "e")
+	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar, 3))
+	umx_print(Estimates, digits = digits, report = report, caption = caption, na.print = "")
+	if (nVar > 1) {
+		corFromCov = function(M) {
+			n = nrow(M)
+			R = matrix(NA_real_, n, n)
+			s = sqrt(pmax(diag(as.matrix(M)), 0))
+			for (i in 1:n) {
+				for (j in 1:n) {
+					if (s[i] > 1e-12 && s[j] > 1e-12) R[i, j] = M[i, j] / (s[i] * s[j])
+				}
+			}
+			R[upper.tri(R)] = NA
+			R
+		}
+		rA = corFromCov(A)
+		rC = corFromCov(C)
+		rE = corFromCov(E)
+		rgTab = data.frame(cbind(rA, rC, rE), stringsAsFactors = FALSE)
+		names(rgTab) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar, 3))
+		if (length(mLab) >= nVar) {
+			rownames(rgTab) = sub("^one_to_", "", mLab[seq_len(nVar)])
+		}
+		if (any(D > 0)) {
+			capRg = "Factor correlations. rE uses E_total = ee'+D (Bernoulli leftover on the diagonal; unique correlation is diluted). rA is not."
+		} else {
+			capRg = "Factor correlations from A, C, E on eta (D = 0)."
+		}
+		umx_print(rgTab, digits = digits, report = report, caption = capRg, na.print = "")
+	}
+	if (length(mLab) >= 1) {
+		muShow = mu[seq_len(min(nVar, length(mu)))]
+		muNames = mLab[seq_len(min(nVar, length(mLab)))]
+		message("Intercepts (eta): ", paste(paste0(muNames, " = ", round(muShow, digits)), collapse = "; "))
+	}
+	if (any(D > 0)) {
+		message("Bernoulli leftover on E diagonal (not a path): ", paste(round(D, digits), collapse = ", "), ". Extra-Gaussian e paths are residual unique covariance.")
+	}
+	minus2LL = NA
+	if (!is.null(model$output$Minus2LogLikelihood)) minus2LL = model$output$Minus2LogLikelihood
+	if (!is.finite(minus2LL) && !is.null(model$output$fit)) minus2LL = model$output$fit
+	nPar = length(pars)
+	aic = if (is.finite(minus2LL)) minus2LL + 2 * nPar else NA
+	status = if (!is.null(model$output$status$code)) model$output$status$code else NA
+	fitBits = c()
+	if (is.finite(minus2LL)) fitBits = c(fitBits, paste0("-2LL = ", round(minus2LL, digits)))
+	fitBits = c(fitBits, paste0("k = ", nPar))
+	if (is.finite(aic)) fitBits = c(fitBits, paste0("AIC = ", round(aic, digits)))
+	if (length(status) == 1 && !is.na(status)) fitBits = c(fitBits, paste0("status = ", status))
+	message(paste0("\nGLM ACE fit: ", paste(fitBits, collapse = "; ")))
+	message("No CFI/TLI/RMSEA for GLM ACE. Nested models: umxCompare / AIC.")
+	invisible(Estimates)
+}
+
+#' @export
+umxSummary.MxModelACE_GLM <- umxSummaryACE_GLM
+
+#' Plot a GLM ACE twin model
+#'
+#' GraphViz of the Cholesky on eta: same compact a/c/e-to-trait diagram as [umxPlotACE()],
+#' not the full twin RAM (no T1/T2 duplicate latents). Printed `e` is `chol(ee'+D)`
+#' when leftover is on eta (Bernoulli), matching [umxSummaryACE_GLM()].
+#'
+#' @param x a model from [umxACE_GLM()]
+#' @param file NA returns the dot string; `"name"` writes a file named after the model
+#' @param digits decimals on path labels (default 2)
+#' @param means show intercepts from `one` (default FALSE)
+#' @param std eta-scale row standardization (default TRUE), leftover included in E
+#' @param strip_zero strip leading 0. from labels (default TRUE)
+#' @param showFixed draw fixed non-zero paths (default TRUE so binomial `e` at 1 shows)
+#' @param ... unused
+#' @return dot string (invisibly) when `file` is NA
+#' @export
+#' @exportS3Method plot MxModelACE_GLM
+#' @family Plotting functions
+#' @seealso [umxACE_GLM()], [umxSummaryACE_GLM()], [umxPlotACE()]
+#' @aliases plot.MxModelACE_GLM
+#' @md
+umxPlotACE_GLM <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, showFixed = TRUE, ...) {
+	model = x
+	if (!is(model, "MxModelACE_GLM")) {
+		stop("umxPlotACE_GLM needs an MxModelACE_GLM (from umxACE_GLM()).", call. = FALSE)
+	}
+	pars = omxGetParameters(model)
+	mzA = if (!is.null(model$MZ)) model$MZ$A else NULL
+	aceLabs = names(pars)[grepl("^[ace]_r[0-9]+c[0-9]+$", names(pars))]
+	if (!is.null(mzA) && !is.null(mzA$labels)) {
+		al = as.character(mzA$labels)
+		aceLabs = unique(c(aceLabs, al[grepl("^[ace]_r[0-9]+c[0-9]+$", al)]))
+	}
+	nVar = 1
+	if (length(aceLabs) > 0) {
+		nVar = max(as.integer(sub("^.*_r([0-9]+)c[0-9]+$", "\\1", aceLabs)))
+	}
+	fillChol = function(pref, nVar, pars, Amat = NULL) {
+		M = matrix(0, nVar, nVar)
+		for (i in 1:nVar) {
+			for (j in i:nVar) {
+				lab = paste0(pref, "_r", j, "c", i)
+				if (lab %in% names(pars)) {
+					M[j, i] = as.numeric(pars[lab])
+				} else if (!is.null(Amat) && !is.null(Amat$labels)) {
+					hit = which(Amat$labels == lab, arr.ind = TRUE)
+					if (length(hit) >= 2 || (is.matrix(hit) && nrow(hit) >= 1)) {
+						rr = if (is.matrix(hit)) hit[1, 1] else hit[1]
+						cc = if (is.matrix(hit)) hit[1, 2] else hit[2]
+						M[j, i] = as.numeric(Amat$values[rr, cc])
+					}
+				}
+			}
+		}
+		M
+	}
+	a = fillChol("a", nVar, pars, mzA)
+	c = fillChol("c", nVar, pars, mzA)
+	e = fillChol("e", nVar, pars, mzA)
+	leftoverOne = function(fam) {
+		if (is.null(fam) || !is(fam, "MxFamily")) return(0)
+		if (!identical(fam@family, "binomial")) return(0)
+		if (identical(fam@link, "probit")) return(1)
+		pi^2 / 3
+	}
+	D = rep(0, nVar)
+	mzMod = model$MZ
+	if (!is.null(mzMod) && is(mzMod$fitfunction, "MxFitFunctionGLM")) {
+		famList = mzMod$fitfunction$family
+		man = mzMod@manifestVars
+		if (length(man) >= nVar && is.list(famList)) {
+			for (j in 1:nVar) {
+				D[j] = leftoverOne(famList[[man[j]]])
+			}
+		}
+	}
+	A = a %*% t(a)
+	C = c %*% t(c)
+	E = e %*% t(e)
+	if (any(D > 0)) {
+		for (j in 1:nVar) {
+			E[j, j] = E[j, j] + D[j]
+		}
+		eDisp = tryCatch(t(chol(E)), error = function(err) {
+			e2 = e
+			for (j in 1:nVar) {
+				e2[j, j] = sqrt(max(e[j, j]^2 + D[j], 0))
+			}
+			e2
+		})
+	} else {
+		eDisp = e
+	}
+	Vdiag = diag(A + C + E)
+	aShow = a
+	cShow = c
+	eShow = eDisp
+	if (isTRUE(std)) {
+		for (j in 1:nVar) {
+			sdj = sqrt(max(Vdiag[j], 1e-12))
+			aShow[j, ] = a[j, ] / sdj
+			cShow[j, ] = c[j, ] / sdj
+			eShow[j, ] = eDisp[j, ] / sdj
+		}
+	}
+	obsNames = NULL
+	if (!is.null(model$MZ) && !is.null(model$MZ$data) && !is.null(model$MZ$data$observed)) {
+		obsNames = colnames(model$MZ$data$observed)
+	}
+	if (is.null(obsNames) && !is.null(model$MZ)) obsNames = model$MZ@manifestVars
+	if (length(obsNames) >= nVar) {
+		selDVs = sub("(_T)?[0-9]$", "", obsNames[seq_len(nVar)])
+	} else {
+		selDVs = paste0("var", seq_len(nVar))
+	}
+	freeA = matrix(FALSE, nVar, nVar)
+	freeC = matrix(FALSE, nVar, nVar)
+	freeE = matrix(FALSE, nVar, nVar)
+	for (i in 1:nVar) {
+		for (j in i:nVar) {
+			freeA[j, i] = abs(aShow[j, i]) > 1e-8
+			freeC[j, i] = abs(cShow[j, i]) > 1e-8
+			freeE[j, i] = abs(eShow[j, i]) > 1e-8
+		}
+	}
+	aMat = umxMatrix("a", "Full", nVar, nVar, free = freeA, values = aShow)
+	cMat = umxMatrix("c", "Full", nVar, nVar, free = freeC, values = cShow)
+	eMat = umxMatrix("e", "Full", nVar, nVar, free = freeE, values = eShow)
+	out = list(str = "", latents = c(), manifests = c())
+	out = xmu_dot_mat2dot(aMat, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, p = out)
+	out = xmu_dot_mat2dot(cMat, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, p = out)
+	out = xmu_dot_mat2dot(eMat, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, p = out)
+	if (isTRUE(means)) {
+		mu = rep(0, nVar)
+		mLab = names(pars)[grepl("^one_to_", names(pars))]
+		if (length(mLab) >= 1) {
+			for (j in seq_len(min(nVar, length(mLab)))) {
+				mu[j] = as.numeric(pars[mLab[j]])
+			}
+		} else if (!is.null(model$MZ$M)) {
+			for (j in seq_len(min(nVar, ncol(model$MZ$M$values)))) {
+				mu[j] = as.numeric(model$MZ$M$values[1, j])
+			}
+		}
+		intMat = umxMatrix("intercept", "Full", 1, nVar, free = abs(mu) > 1e-8, values = matrix(mu, 1, nVar))
+		out = xmu_dot_mat2dot(intMat, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", toType = "manifest", showFixed = showFixed, digits = digits, p = out)
+	}
+	preOut = xmu_dot_define_shapes(latents = out$latents, manifests = out$manifests)
+	same = xmu_dot_rank(out$manifests, ".", rank = "same")
+	top = xmu_dot_rank(out$latents, "^a", rank = "min")
+	bottom = xmu_dot_rank(out$latents, "^[ce]", rank = "max")
+	digraph = paste0(
+		"digraph G {\n\t",
+		'label="', model$name, '";\n\t',
+		"splines = \"FALSE\";\n",
+		preOut, out$str, same, top, bottom, "\n}"
+	)
+	xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
+}
+
+#' @export
+#' @exportS3Method plot MxModelACE_GLM
+plot.MxModelACE_GLM <- umxPlotACE_GLM
+
+
+
 
 
 #' Present results of a twin ACE-model with covariates in table and graphical forms.
@@ -4525,6 +4879,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param means Whether or not to show means in a correlation table (Default TRUE)
 #' @param test If obj is a glm, which test to use to generate p-values options = "Chisq", "LRT", "Rao", "F", "Cp"
 #' @param suffix A string to append to the result. Mostly used with report = "expression"
+#' @param caption Optional caption for html/markdown tables. `NA` (default) auto-generates "Effects on y of a, b, and c" from `formula(obj)` for `lm`/`glm`; `NULL` suppresses caption; a string uses that text.
 #' @param cols Optional, pass in a list of column names when using umxAPA with a dataframe input.
 #' @return - string
 #' @export
@@ -4591,7 +4946,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(m1)
 #'
-umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="", cols=NA) {
+umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="", caption = NA, cols=NA) {
 	report     = match.arg(report)
 	test       = match.arg(test)
 	commaSep   = paste0(umx_set_separator(silent = TRUE), " ")
@@ -4663,7 +5018,11 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		} else {
 			output  = data.frame(cor_table, stringsAsFactors = FALSE)
 		}
-		umx_print(output, digits = digits, report = report)
+		captionToUse = caption
+		if(!is.null(captionToUse) && length(captionToUse)==1 && is.na(captionToUse)){
+			captionToUse = NULL
+		}
+		umx_print(output, digits = digits, report = report, caption = captionToUse)
 		if(anyNA(obj)){
 			message("Some rows in dataframe had missing values.")
 		}
@@ -4671,7 +5030,11 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		# Assume these are correlations or similar numbers
 		cor_table = umx_apply(round, obj, digits = digits) # round correlations
 		output = data.frame(cor_table)
-		umx_print(output, digits = digits, report = report)
+		captionToUse = caption
+		if(!is.null(captionToUse) && length(captionToUse)==1 && is.na(captionToUse)){
+			captionToUse = NULL
+		}
+		umx_print(output, digits = digits, report = report, caption = captionToUse)
 	} else if("lm" == class(obj)[[1]]) {
 		# Report lm summary table
 		if(std){
@@ -4685,9 +5048,28 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			obj = update(obj, data = umx_scale(obj$model))
 		}
 		if(report=="html"){
+			captionToUse = caption
+			if(!is.null(captionToUse) && length(captionToUse)==1 && is.na(captionToUse)){
+				f = tryCatch(stats::formula(obj), error=function(e) NULL)
+				if(!is.null(f) && length(f)==3){
+					dv = paste(deparse(f[[2]]), collapse="")
+					rhsTerms = attr(stats::terms(f), "term.labels")
+					if(length(rhsTerms)==0){
+						captionToUse = paste0("Effects on ", dv, " (intercept only)")
+					} else if(length(rhsTerms)==1){
+						captionToUse = paste0("Effects on ", dv, " of ", rhsTerms)
+					} else if(length(rhsTerms)==2){
+						captionToUse = paste0("Effects on ", dv, " of ", paste(rhsTerms, collapse=" and "))
+					} else {
+						captionToUse = paste0("Effects on ", dv, " of ", paste(rhsTerms[1:(length(rhsTerms)-1)], collapse=", "), ", and ", rhsTerms[length(rhsTerms)])
+					}
+				} else {
+					captionToUse = NULL
+				}
+			}
 			tmp= data.frame(summary(obj)$coefficients)
 			names(tmp)= c("Estimate", "SE", "t-value", "p-value")
-			umx_print(tmp, digits= digits, report = "html")
+			umx_print(tmp, digits= digits, report = "html", caption = captionToUse)
 		} else {
 			sumry = summary(obj)
 			conf  = confint(obj)

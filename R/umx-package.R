@@ -311,6 +311,7 @@ methods::setClass("MxModelMRDoC"    , contains = "MxModel")
 methods::setClass("MxModelTwinMaker", contains = "MxModel")
 
 methods::setClass("MxModelACE"    , contains = "MxModel")
+methods::setClass("MxModelACE_GLM", contains = "MxModel")
 methods::setClass("MxModelACEv"   , contains = "MxModelACE")
 methods::setClass("MxModelACEcov" , contains = "MxModel")
 
