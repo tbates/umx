@@ -68,6 +68,7 @@ Other Plotting functions:
 \code{\link[=umxPlot]{umxPlot()}},
 \code{\link[=umxPlotACE]{umxPlotACE()}},
 \code{\link[=umxPlotACE_DE]{umxPlotACE_DE()}},
+\code{\link[=umxPlotACE_GLM]{umxPlotACE_GLM()}},
 \code{\link[=umxPlotACEcov]{umxPlotACEcov()}},
 \code{\link[=umxPlotACEv]{umxPlotACEv()}},
 \code{\link[=umxPlotCP]{umxPlotCP()}},

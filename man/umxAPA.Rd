@@ -20,6 +20,7 @@ umxAPA(
   SEs = TRUE,
   means = TRUE,
   suffix = "",
+  caption = NA,
   cols = NA
 )
 }
@@ -53,6 +54,8 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \item{means}{Whether or not to show means in a correlation table (Default TRUE)}
 
 \item{suffix}{A string to append to the result. Mostly used with report = "expression"}
+
+\item{caption}{Optional caption for html/markdown tables. \code{NA} (default) auto-generates "Effects on y of a, b, and c" from \code{formula(obj)} for \code{lm}/\code{glm}; \code{NULL} suppresses caption; a string uses that text.}
 
 \item{cols}{Optional, pass in a list of column names when using umxAPA with a dataframe input.}
 }

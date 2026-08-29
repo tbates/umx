@@ -43,7 +43,7 @@ Invisibly \code{NULL}, or the result of a returning target (e.g. sitrep).
 }
 \description{
 This is a utility function for the OpenMx package maintainer. For convenience,
-it lives in \strong{umx}, not the OpenMx package). \code{mx_make} mirrors
+it lives in \strong{umx}, not the OpenMx package. \code{mx_make} mirrors
 \code{\link[=umx_make]{umx_make()}}. It uses OpenMx's \strong{Makefile} to compile and install (C++,
 OpenMP, NPSOL vs CRAN build). Use \strong{devtools} for win-builder and package
 hygiene.
@@ -62,9 +62,8 @@ Independent of whatever is currently installed in R.
 
 \enumerate{
 \item \strong{Update Rd files} after editing roxygen in \code{R}:
-mx_make("Rd") -- runs OpenMx \verb{make roxygen} (\code{util/rox}):
-compile DLL + \code{roxygenize} rd). Do \strong{not} use bare
-\code{devtools::document()} on OpenMx; man pages are git-tracked and the Makefile owns the official path.
+\code{mx_make("Rd")} runs OpenMx \verb{make roxygen} (\code{util/rox}: compile DLL + \code{roxygenize} rd).
+Do \strong{not} use bare \code{devtools::document()} on OpenMx; man pages are git-tracked and the Makefile owns the official path.
 \item \strong{Install this tree into R's library}:
 \code{mx_make()} or \code{mx_make("install")} (NPSOL when the Makefile enables it). Or \code{mx_make("cran-install")} without NPSOL.
 \item \strong{Restart R}, then verify identity:
@@ -77,7 +76,6 @@ Prefer a clean commit if you care what is archived; then
 Local install is \strong{not} required for win-builder; only the files under \code{pkg} are uploaded.
 \item \strong{Prebuilt release binary} (not local WIP (work in progress)):
 \code{mx_make("GenomicMx")} -> \code{\link[=install.OpenMx]{install.OpenMx()}} from GitHub Releases.
-}
 }
 }
 
