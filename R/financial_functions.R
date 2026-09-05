@@ -2,95 +2,321 @@
 # = Financial utilities =
 # =======================
 
-#' Set the symbol for money
-#'
-#' Set umx_set_dollar_symbol (used in e.g. [fin_interest()]
-#'
-#' @param umx.dollar.symbol symbol for money calculations.
-#' @param silent If TRUE, no message will be printed.
-#' @return - Current umx.dollar.symbol
-#' @export
-#' @family Get and set
-#' @examples
-#' library(umx)
-#' umx_set_dollar_symbol() # show current state
-#' old = umx_set_dollar_symbol(silent=TRUE) # store existing value
-#' fin_interest(100)
-#' umx_set_dollar_symbol(old)    # reinstate
-umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
-	if(is.null(umx.dollar.symbol)) {
-		if(!silent){ message("Current format is ", omxQuotes(getOption("umx.dollar.symbol"))	) }
-		invisible(getOption("umx.dollar.symbol"))
-	} else {
-		options("umx.dollar.symbol" = umx.dollar.symbol)
-	}
-}
 
 
-#' NZ FIF Tax Offset & NAV Neutrality Calculator
+#' Black-Scholes Call Option Price and Greeks Calculator
 #'
-#' @param portfolioValue Total opening value of the portfolio on April 1st.
-#' @param marginRate The annual interest rate on the IBKR margin loan (e.g., 0.06).
-#' @param expectedReturn The expected annual growth of the asset (e.g., 0.11 for QQQ).
-#' @param taxRate The user's marginal tax rate (e.g., 0.39 or .3 (blended)).
-#' @param fifRate The FIF deemed rate of return (standard is 0.05).
+#' @description
+#' `fin_options_Greeks` calculates the theoretical European Call option price and its corresponding Greeks (Delta, Gamma, Theta, Vega, and Rho) using the Black-Scholes model.
 #'
-#' @return A ggplot object showing the net impact across LTV ratios.
+#' @param spotPrice The current price of the underlying asset.
+#' @param strikePrice The strike price of the option.
+#' @param daysToExpiry The number of days remaining until option expiration.
+#' @param riskFreeRate The annual risk-free interest rate (expressed as a decimal, default = 0.04 for 4%).
+#' @param impliedVol The annualized implied volatility (expressed as a decimal, default = 0.20 for 20%).
+#' @return A data frame containing:
+#' \itemize{
+#'   \item \code{price}: Theoretical Call option price
+#'   \item \code{delta}: Sensitivity of option price to underlying price (Delta)
+#'   \item \code{gamma}: Sensitivity of Delta to underlying price (Gamma)
+#'   \item \code{theta}: Daily time decay of option price (Theta)
+#'   \item \code{vega}: Sensitivity of option price to a 1% change in implied volatility
+#'   \item \code{rho}: Sensitivity of option price to a 1% change in risk-free interest rate
+#' }
 #' @export
 #' @family financial functions
-#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-
 #' @examples
-#' # Example Usage:
-#' # 2026 Strategy: $500k Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
-#' fin_tax_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
-fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
-  # 1. Core Logic (Dynamic Calculations)
-  # Ratio to zero out taxable income
-  ratioDeductionOnly = fifRate / marginRate
+#' fin_options_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, 
+#'	riskFreeRate = 0.04, impliedVol = 0.20)
+#'
+fin_options_Greeks<- function(spotPrice, strikePrice, daysToExpiry, riskFreeRate = 0.04, impliedVol = 0.20) {
+  supplied = names(as.list(match.call())[-1])
+  allArgs = c("spotPrice", "strikePrice", "daysToExpiry", "riskFreeRate", "impliedVol")
+  missingArgs = setdiff(allArgs, supplied)
+
+  if (length(missingArgs) > 0) {
+    cat("=== Option Parameter Definitions (Teaching Mode) ===\n")
+    if ("spotPrice" %in% missingArgs) {
+      cat("  * spotPrice    : The current price of the underlying asset.\n")
+    }
+    if ("strikePrice" %in% missingArgs) {
+      cat("  * strikePrice  : The strike price of the option (fixed exercise price).\n")
+    }
+    if ("daysToExpiry" %in% missingArgs) {
+      cat("  * daysToExpiry : Days remaining until option expiration.\n")
+    }
+    if ("riskFreeRate" %in% missingArgs) {
+      cat("  * riskFreeRate : Annual risk-free interest rate as a decimal (default = 0.04 for 4%).\n")
+    }
+    if ("impliedVol" %in% missingArgs) {
+      cat("  * impliedVol   : Annualized implied volatility as a decimal (default = 0.20 for 20%).\n")
+    }
+    cat("===================================================\n\n")
+
+    if ("spotPrice" %in% missingArgs) {
+      cat("No spotPrice supplied. Defaulting to spotPrice = 100.\n")
+      spotPrice = 100
+    }
+    if ("strikePrice" %in% missingArgs) {
+      cat("No strikePrice supplied. Defaulting to strikePrice = 100.\n")
+      strikePrice = 100
+    }
+    if ("daysToExpiry" %in% missingArgs) {
+      cat("No daysToExpiry supplied. Defaulting to daysToExpiry = 30.\n")
+      daysToExpiry = 30
+    }
+    cat("\n")
+  }
+
+  if (is.character(daysToExpiry) || inherits(daysToExpiry, "Date") || inherits(daysToExpiry, "POSIXt")) {
+    expiryDate = as.Date(daysToExpiry)
+    daysToExpiry = as.numeric(difftime(expiryDate, Sys.Date(), units = "days"))
+  }
+
+  impliedVol = fin_resolveVolatility(impliedVol, strikePrice, daysToExpiry)
+
+  t = daysToExpiry / 365
+  r = riskFreeRate
+  sigma = impliedVol
+
+  if (t <= 0) {
+    callPrice = max(0, spotPrice - strikePrice)
+    delta = if (spotPrice > strikePrice) 1.0 else if (spotPrice < strikePrice) 0.0 else 0.5
+    gamma = 0.0
+    theta = 0.0
+    vega = 0.0
+    rho = 0.0
+  } else {
+    d1 = (log(spotPrice / strikePrice) + (r + (sigma^2) / 2) * t) / (sigma * sqrt(t))
+    d2 = d1 - sigma * sqrt(t)
+
+    callPrice = spotPrice * pnorm(d1) - strikePrice * exp(-r * t) * pnorm(d2)
+    delta = pnorm(d1)
+    gamma = dnorm(d1) / (spotPrice * sigma * sqrt(t))
+    theta = (-(spotPrice * dnorm(d1) * sigma) / (2 * sqrt(t)) - r * strikePrice * exp(-r * t) * pnorm(d2)) / 365
+    vega = (spotPrice * sqrt(t) * dnorm(d1)) / 100
+    rho = (strikePrice * t * exp(-r * t) * pnorm(d2)) / 100
+  }
+
+  res = data.frame(
+    price = callPrice,
+    delta = delta,
+    gamma = gamma,
+    theta = theta,
+    vega = vega,
+    rho = rho
+  )
+  return(res)
+}
+
+#' Plot Option Delta and Gamma Curves
+#'
+#' @description
+#' `fin_options_plotGreeks` plots Call Option Delta and Gamma curves across a range of spot prices
+#' (from -30% to +30% of the strike price) to show how Delta accelerates and Gamma peaks.
+#'
+#' @param strikePrice The strike price of the option (default = 100 if omitted).
+#' @param daysToExpiry The number of days remaining until option expiration (default = 30).
+#' @param riskFreeRate The annual risk-free interest rate (default = 0.04).
+#' @param impliedVol The annualized implied volatility of the underlying asset (default = 0.20).
+#' @return A ggplot object visualizing Delta and Gamma.
+#' @export
+#' @family financial functions
+#' @examples
+#' \dontrun{
+#' fin_options_plotGreeks(strikePrice = 100)
+#' # Run with missing arguments to print definitions
+#' fin_options_plotGreeks()
+#' }
+#'
+fin_options_plotGreeks <- function(strikePrice, daysToExpiry = 30, riskFreeRate = 0.04, impliedVol = 0.20) {
+  supplied = names(as.list(match.call())[-1])
+  allArgs = c("strikePrice", "daysToExpiry", "riskFreeRate", "impliedVol")
+  missingArgs = setdiff(allArgs, supplied)
+
+  if (length(missingArgs) > 0) {
+    cat("=== Option Parameter Definitions (Teaching Mode) ===\n")
+    if ("strikePrice" %in% missingArgs) {
+      cat("  * strikePrice  : The strike price of the option (fixed exercise price).\n")
+    }
+    if ("daysToExpiry" %in% missingArgs) {
+      cat("  * daysToExpiry : Days remaining until option expiration (default = 30).\n")
+    }
+    if ("riskFreeRate" %in% missingArgs) {
+      cat("  * riskFreeRate : Annual risk-free interest rate as a decimal (default = 0.04 for 4%).\n")
+    }
+    if ("impliedVol" %in% missingArgs) {
+      cat("  * impliedVol   : Annualized implied volatility as a decimal (default = 0.20 for 20%).\n")
+    }
+    cat("===================================================\n\n")
+
+    if ("strikePrice" %in% missingArgs) {
+      cat("No strikePrice supplied. Defaulting to strikePrice = 100 for visualization.\n\n")
+      strikePrice = 100
+    }
+  }
+
+  if (is.character(daysToExpiry) || inherits(daysToExpiry, "Date") || inherits(daysToExpiry, "POSIXt")) {
+    expiryDate = as.Date(daysToExpiry)
+    daysToExpiry = as.numeric(difftime(expiryDate, Sys.Date(), units = "days"))
+  }
+
+  impliedVol = fin_resolveVolatility(impliedVol, strikePrice, daysToExpiry)
+
+  spotRange = seq(0.7 * strikePrice, 1.3 * strikePrice, length.out = 150)
   
-  # Ratio for NAV Neutrality (Growth + Tax Shield = Tax Bill)
-  # Net Benefit per $ of Loan = (Return + (Interest * TaxRate) - Interest)
-  netBenefitPerUnit = expectedReturn + (marginRate * taxRate) - marginRate
-  totalTaxBill = portfolioValue * fifRate * taxRate
-  ratioNavNeutral = totalTaxBill / (portfolioValue * netBenefitPerUnit)
-  
-  # 2. Data Generation for Visualization
-  # We generate a range from 0% to 150% of the Neutral Point for better scaling
-  maxRange = min(0.85, ratioNavNeutral * 2) 
-  ltvRange = seq(0, maxRange, length.out = 100)
-  
-  netImpact = sapply(ltvRange, function(r) {
-    loan    = portfolioValue * r
-    benefit = loan * netBenefitPerUnit
-    return(benefit - totalTaxBill)
+  greeksList = lapply(spotRange, function(s) {
+    fin_Greeks(spotPrice = s, strikePrice = strikePrice, daysToExpiry = daysToExpiry, riskFreeRate = riskFreeRate, impliedVol = impliedVol)
   })
   
-  plotDf = data.frame(loanRatio = ltvRange, netGainLoss = netImpact)
-  
-  # 3. Build Plot (Line by Line)
-  p = ggplot(plotDf, aes(x = loanRatio, y = netGainLoss))
-  p = p + geom_line(color = "#2c3e50", linewidth = 1.2)
-  p = p + geom_hline(yintercept = 0, linetype = "dashed", color = "#e74c3c")
-  p = p + geom_vline(xintercept = ratioNavNeutral, linetype = "dotted", color = "#27ae60")
-  p = p + scale_y_continuous(labels = scales::dollar)
-  p = p + scale_x_continuous(labels = scales::percent)
-  p = p + labs(
-    title = "NZ FIF Tax Offset Strategy: Net Asset Impact",
-    subtitle = paste0("Portfolio: $", format(portfolioValue, big.mark = ","), 
-                      " | Neutral LTV: ", round(ratioNavNeutral * 100, 2), "%"),
-    x = "Loan-to-Value (LTV) Ratio",
-    y = "Net Annual Gain/Loss vs. FIF Tax"
-  )
-  p = p + annotate("label", x = ratioNavNeutral, y = 0, label = paste0("NAV Neutral at ", round(ratioNavNeutral * 100, 1), "% LTV"), fill = "white", alpha = 0.8)
-  p = p + theme_minimal() 
-  # Return the plot
-  p
+  df = do.call(rbind, greeksList)
+  df$spot = spotRange
+
+  maxGamma       = max(df$gamma)
+  scaleFactor    = if (maxGamma > 0) 1 / maxGamma else 1
+  df$gammaScaled = df$gamma * scaleFactor
+
+  peakIndex = which.max(df$gamma)
+  peakSpot  = df$spot[peakIndex]
+  peakDelta = df$delta[peakIndex]
+  peakGamma = df$gamma[peakIndex]
+
+  p = ggplot(df, aes(x = spot))
+  p = p + geom_line(aes(y = delta, color = "Delta"), linewidth = 1.2)
+  p = p + geom_line(aes(y = gammaScaled, color = "Gamma"), linewidth = 1.2)
+  p = p + geom_vline(xintercept = peakSpot, linetype = "dashed", color = "gray40", alpha = 0.7)
+  p = p + geom_point(data = data.frame(spot = peakSpot, gammaScaled = peakGamma * scaleFactor), aes(x = spot, y = gammaScaled), color = "#D55E00", size = 3)
+  p = p + geom_point(data = data.frame(spot = peakSpot, delta = peakDelta), aes(x = spot, y = delta), color = "#0072B2", size = 3)
+  labelText = sprintf("Peak Gamma: %.4f at Spot = $%.2f\nDelta: %.2f (Acceleration Point)", peakGamma, peakSpot, peakDelta)
+  p = p + annotate("label", x = peakSpot, y = 0.5, label = labelText, fill = "white", color = "black", fontface = "bold", size = 3.5, alpha = 0.85, label.padding = unit(0.5, "lines"))
+  p = p + scale_y_continuous(name = "Delta (Probability Proxy / Position Size)", limits = c(0, 1), sec.axis = ggplot2::sec_axis(~ . / scaleFactor, name = "Gamma (Rate of Change of Delta)"))
+  p = p + scale_x_continuous(name = "Underlying Spot Price ($)")
+  p = p + ggplot2::scale_color_manual(name = "Greeks", values = c("Delta" = "#0072B2", "Gamma" = "#D55E00"))
+  titleText = sprintf("Delta & Gamma Sensitivity Curve (Strike = $%.2f, Expiry = %d Days)", strikePrice, daysToExpiry)
+  p = p + labs(title = titleText, subtitle = "Delta represents position sensitivity; Gamma peaks where Delta changes fastest (At-The-Money)", caption = "Model: Black-Scholes European Option Calculator")
+  p = p + theme_minimal(base_size = 11)
+  p = p + theme(legend.position = "bottom", plot.title = element_text(face = "bold", size = 12), axis.title.y.right = element_text(color = "#D55E00"), axis.title.y.left = element_text(color = "#0072B2"))
+  return(p)
 }
+
+#' Simulate and Compare LEAP Extrinsic Premium Decay
+#'
+#' @description
+#' `fin_options_LeapSimulate` compares two European Call options over a 931-day horizon:
+#' one starting at a 0.80 Delta and another at a 0.95 Delta. It simulates how their extrinsic
+#' value (rent/time-decay premium) bleeds to 0 as time runs out, plotting the results side-by-side.
+#'
+#' @param spotPrice The constant price of the underlying asset (default = 100).
+#' @param impliedVol The constant implied volatility of the underlying asset (default = 0.20).
+#' @param riskFreeRate The annual risk-free interest rate (default = 0.04).
+#' @return A ggplot object comparing the extrinsic premium decay side-by-side.
+#' @export
+#' @family financial functions
+
+#' @examples
+#' \dontrun{
+#' fin_options_LeapSimulate(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04)
+#' }
+#'
+fin_options_LeapSimulate <- function(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04) {
+  impliedVol = fin_resolveVolatility(impliedVol, spotPrice, 931)
+  tInit = 931 / 365
+  r = riskFreeRate
+  sigma = impliedVol
+
+  d1_80 = qnorm(0.80)
+  strike80 = spotPrice * exp((r + (sigma^2) / 2) * tInit - d1_80 * sigma * sqrt(tInit))
+
+  d1_95 = qnorm(0.95)
+  strike95 = spotPrice * exp((r + (sigma^2) / 2) * tInit - d1_95 * sigma * sqrt(tInit))
+
+  daysSeq = seq(931, 0, by = -1)
+
+  simData = lapply(daysSeq, function(d) {
+    g80 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike80, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
+    intrinsic80 = max(0, spotPrice - strike80)
+    extrinsic80 = g80$price - intrinsic80
+
+    g95 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike95, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
+    intrinsic95 = max(0, spotPrice - strike95)
+    extrinsic95 = g95$price - intrinsic95
+
+    data.frame(
+      daysToExpiry = d,
+      extrinsic80 = extrinsic80,
+      extrinsic95 = extrinsic95,
+      theta80 = g80$theta,
+      theta95 = g95$theta
+    )
+  })
+
+  df = do.call(rbind, simData)
+
+  df80 = data.frame(
+    daysToExpiry = df$daysToExpiry,
+    position = "Delta 0.80 Option",
+    strike = strike80,
+    extrinsicValue = df$extrinsic80,
+    dailyTheta = df$theta80
+  )
+  df95 = data.frame(
+    daysToExpiry = df$daysToExpiry,
+    position = "Delta 0.95 Option",
+    strike = strike95,
+    extrinsicValue = df$extrinsic95,
+    dailyTheta = df$theta95
+  )
+
+  dfLong = rbind(df80, df95)
+
+  p = ggplot(dfLong, aes(x = daysToExpiry, y = extrinsicValue, color = position))
+  p = p + geom_line(linewidth = 1.2)
+  p = p + ggplot2::facet_wrap(~ position, scales = "fixed")
+  p = p + ggplot2::scale_x_reverse(name = "Days to Expiration (Time Running Out)")
+  p = p + scale_y_continuous(name = "Extrinsic Premium Value / Rent Remaining ($)")
+  p = p + ggplot2::scale_color_manual(values = c("Delta 0.80 Option" = "#E69F00", "Delta 0.95 Option" = "#56B4E9"))
+  
+  label80 = sprintf("Initial Strike: $%.2f\nMax Extrinsic: $%.2f", strike80, df$extrinsic80[1])
+  label95 = sprintf("Initial Strike: $%.2f\nMax Extrinsic: $%.2f", strike95, df$extrinsic95[1])
+  
+  annData = data.frame(
+    daysToExpiry = c(450, 450),
+    extrinsicValue = c(df$extrinsic80[1] * 0.5, df$extrinsic80[1] * 0.5),
+    position = c("Delta 0.80 Option", "Delta 0.95 Option"),
+    labelText = c(label80, label95)
+  )
+  
+  p = p + ggplot2::geom_label(data = annData, aes(label = labelText), color = "black", fill = "white", size = 3.5, fontface = "bold", label.padding = unit(0.5, "lines"), alpha = 0.9)
+  
+  p = p + labs(
+    title = "LEAP Extrinsic Premium Decay: Delta 0.80 vs Delta 0.95",
+    subtitle = "Deep ITM options (0.95 Delta) pay significantly less extrinsic rent, reducing time-decay risk.",
+    caption = "Constant Spot Price and Implied Volatility. Standard European Option Model."
+  )
+  
+  p = p + theme_minimal(base_size = 11)
+  
+  p = p + theme(
+    legend.position = "none",
+    strip.text = element_text(face = "bold", size = 12),
+    plot.title = element_text(face = "bold", size = 13)
+  )
+
+  cat("=== LEAP Option Simulation Summary ===\n")
+  cat(sprintf("Spot Price: $%.2f | Implied Vol: %.0f%% | Risk-Free Rate: %.1f%%\n", spotPrice, impliedVol * 100, riskFreeRate * 100))
+  cat(sprintf("Option 1 (Delta 0.80): Strike = $%.2f | Start Extrinsic = $%.2f\n", strike80, df$extrinsic80[1]))
+  cat(sprintf("Option 2 (Delta 0.95): Strike = $%.2f | Start Extrinsic = $%.2f\n", strike95, df$extrinsic95[1]))
+  cat(sprintf("Rent Savings: 0.95 Delta Option saves $%.2f (%.1f%%) in extrinsic value compared to 0.80 Delta.\n",
+              df$extrinsic80[1] - df$extrinsic95[1],
+              100 * (df$extrinsic80[1] - df$extrinsic95[1]) / df$extrinsic80[1]))
+
+  return(p)
+}
+
 #' Teaching function for options
 #'
 #' @description
-#' `fin_stock_option` is a teaching function for understanding options (intrinsic/extrinsic value, annualized rent, leverage, and time decay).
+#' `fin_options_teach` is a teaching function for understanding options (intrinsic/extrinsic value, annualized rent, leverage, and time decay).
 #'
 #' @param premium Cost to buy the option contract per share.
 #' @param strike The strike price of the option.
@@ -101,18 +327,16 @@ fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fif
 #' @return A list containing intrinsic value, extrinsic value, break-even price, annualized rent percent, effective leverage (Omega), and daily theta.
 #' @export
 #' @family financial functions
-#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-
+#' @seealso - [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
 #' @examples
 #' # Call Option (In-The-Money LEAP)
-#' fin_stock_option(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8)
+#' fin_options_teach(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8)
 #'
 #' # Put Option (Out-Of-The-Money)
-#' fin_stock_option(premium = 10, strike = 280, stock = 304, delta = -0.30, years = 0.5, type = "put")
+#' fin_options_teach(premium = 10, strike = 280, stock = 304, delta = -0.30, years = 0.5, type = "put")
 #'
-fin_stock_option <- function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8, type = c("call", "put")) {
+fin_options_teach <- function(premium = 134, strike = 200, stock = 304, delta = 0.85, years = 1.8, type = c("call", "put")) {
   type = match.arg(type)
-
   # Adjust default/positive delta if user specified a Put option
   if (type == "put" && delta > 0) {
     delta = -delta
@@ -215,8 +439,7 @@ fin_stock_option <- function(premium = 134, strike = 200, stock = 304, delta = 0
 #' @return - value
 #' @export
 #' @family financial functions
-#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-
+#' @seealso - [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
 #' @examples
 #' \dontrun{
 #' libs(c("quantmod", "ggplot2", "scales", "lubridate"))
@@ -224,7 +447,7 @@ fin_stock_option <- function(premium = 134, strike = 200, stock = 304, delta = 0
 #' startDate = "2016-01-01"
 #' nvdaCagr = fin_stock_CAGR(NVDA, startDate)
 #' }
-fin_stock_CAGR <- function(priceSeries, from = "1900-01-01") {
+fin_stock_CAGR<- function(priceSeries, from = "1900-01-01") {
 	# getSymbols(c("NVDA"), from = "2010-01-01", to = Sys.Date())
 	tickerName = deparse(substitute(priceSeries))   # this is the magic line you wanted
   data = data.frame(
@@ -254,107 +477,6 @@ fin_stock_CAGR <- function(priceSeries, from = "1900-01-01") {
   invisible(tmp)
 }
 
-
-#' Work the carry cost of a house
-#'
-#' @description
-#' `fin_carryCost` uses the purchase price, holding expenses, appreciation, and opportunity cost to compute a carrying cost for a house purchase.
-#'
-#' @param property_cost Purchase price
-#' @param appreciation rate of property increase
-#' @param QQQ Opportunity cost of leaving money in the markets
-#' @param rent_saved But now you have to rent somewhere
-#' @param interest Cost of borrowing
-#' @param rates Council rates per year at t=1 (absolute).
-#' @param insurance The cost of property owners insurance per year at t=1 (absolute).
-#' @param maintenance New kitchen roof etc. If <1, treated as rate of property_cost at t=1; if >=1, treated as absolute per year at t=1.
-#' @param years Holding time (integer >=1).
-#' @param inflation Annual inflation applied to rent, rates, insurance and maintenance (default .025). Set 0 to recover flat model. Property and QQQ remain compound totals.
-#' @param verbose Logical; if TRUE, print a one-line per-year schedule when years <= 20.
-#' @return Invisibly the total net cost of buying (scalar). When verbose is TRUE, also returns a schedule data.frame as attribute "schedule".
-#' @export
-#' @family financial functions
-#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-#' @examples
-#' fin_carryCost(property_cost=1.2e6)
-#' fin_carryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
-#' fin_carryCost(property_cost=1.2e6, inflation=0) # flat, recovers pre-inflation total
-#'
-fin_carryCost <- function(property_cost, appreciation = .02, QQQ = .14, rent_saved = .04, interest = .06, rates = 5000, insurance = 2000, maintenance = .015, years = 5, inflation = .025, verbose = TRUE){
-  # base annual at t=1 (flat reference)
-  rent0       = property_cost * rent_saved
-  interest0   = property_cost * interest
-  if (maintenance < 1) {
-    maintenance0 = property_cost * maintenance
-  } else {
-    maintenance0 = maintenance
-  }
-  QQQgains  = (property_cost * (1+QQQ)^years) - property_cost
-  propAprec = property_cost * ((1+appreciation)^years)
-  propAprec = (propAprec*.97) - property_cost # 3% sale cost
-  # per-year carry with inflation on rent/rates/insurance/maintenance; interest fixed (opportunity on price)
-  annualCarry = numeric(years)
-  rentAnnual = numeric(years)
-  ratesAnnual = numeric(years)
-  insuranceAnnual = numeric(years)
-  maintenanceAnnual = numeric(years)
-  for (t in 1:years) {
-    infFactor = (1+inflation)^(t-1)
-    rentAnnual[t]       = rent0 * infFactor
-    ratesAnnual[t]      = rates * infFactor
-    insuranceAnnual[t]  = insurance * infFactor
-    maintenanceAnnual[t]= maintenance0 * infFactor
-    annualCarry[t]      = (interest0 + ratesAnnual[t] + insuranceAnnual[t] + maintenanceAnnual[t]) - rentAnnual[t]
-  }
-  totalCarry = sum(annualCarry)
-  flatCarry  = (interest0 + rates + insurance + maintenance0 - rent0) * years
-  netnetCostOfBuying = totalCarry + QQQgains - propAprec
-  # for reporting: keep original variable names for dollar formatting at t=1
-  rent_saved  = rent0
-  interest    = interest0
-  maintenance = maintenance0
-  Carry_Cost  = annualCarry[1]
-
-  
-
-
-
-  if((Carry_Cost/property_cost) > .015){
-  	cat("Polite note: Carry Cost over the 1.5% threshold: **too high**\n\n")
-  }
-  cat(
-	  "Purchase Price = ", dollar(as.numeric(property_cost) , prefix = "$"), "\n",
-	  dollar(as.numeric(interest) , prefix = "$"),    "interest + ",
-	  dollar(as.numeric(rates)    , prefix = "$"),    "rates + ",
-	  dollar(as.numeric(insurance), prefix = "$"),    "insurance + ",
-	  dollar(as.numeric(maintenance) , prefix = "$"), "maintenance - ",
-	  dollar(as.numeric(rent_saved)  , prefix = "$"), "rent_saved (t=1)\n",
-	  "Annual carry cost (t=1) = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
-	  "Assumed appreciation: QQQ ", QQQ*100, "% p.a., property ", appreciation*100, "% p.a. (net ", dollar(as.numeric(propAprec), prefix = "$"), " total after 3% sale cost over ", years, " years)\n",
-	  "Inflation on rent/rates/insurance/maintenance: ", inflation*100, "% p.a.\n",
-	  "Total carry = ", dollar(as.numeric(totalCarry), prefix = "$"), ")\n",
-	  "Missed market gains  = ", dollar(as.numeric(QQQgains), prefix = "$"), " total over ", years, " years\n",
-	  "Net-net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), " total over ", years, " years\n"
-  )
-  if(isTRUE(verbose) && years <= 20 && years > 1){
-    cashflowTable = data.frame(
-      Year        = 1:years,
-      Carry       = dollar(as.numeric(annualCarry[1:years]), accuracy = 1),
-      Rent        = dollar(as.numeric(rentAnnual[1:years]), accuracy = 1),
-      Rates       = dollar(as.numeric(ratesAnnual[1:years]), accuracy = 1),
-      Insurance   = dollar(as.numeric(insuranceAnnual[1:years]), accuracy = 1),
-      Maintenance = dollar(as.numeric(maintenanceAnnual[1:years]), accuracy = 1)
-    )  
-    print(knitr::kable(cashflowTable, align = "r"))
-  }
-
-  schedule = data.frame(year=1:years, carry=annualCarry, rent=rentAnnual, rates=ratesAnnual, insurance=insuranceAnnual, maintenance=maintenanceAnnual)
-  attr(netnetCostOfBuying, "schedule") = schedule
-  attr(netnetCostOfBuying, "totalCarry") = totalCarry
-  attr(netnetCostOfBuying, "flatCarry") = flatCarry
-  invisible(netnetCostOfBuying)
-}
-
 #' Work the valuation of a company
 #'
 #' @description
@@ -374,8 +496,7 @@ fin_carryCost <- function(property_cost, appreciation = .02, QQQ = .14, rent_sav
 #' @return - value
 #' @export
 #' @family financial functions
-#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-
+#' @seealso - [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
 #' @examples
 #' fin_stock_valuation(rev=7e9, opmargin=.1, PE=33)
 #' # Market cap =  $18,480,000,000
@@ -401,43 +522,11 @@ fin_stock_valuation <- function(revenue=6e6*30e3, opmargin=.08, expenses=.2, PE=
 	invisible(marketCap)
 }
 
-#' Compute the net present value of a future income stream
-#'
-#' @description
-#' `fin_stock_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
-#' Better to use a more powerful online site.
-#'
-#' @details
-#' Revenue stream is discounted back to a present day cash amount which is equivalent.
-#' 
-#' @param income Value of expected recurring payment
-#' @param discount_rate Percent return to discount against (.05 = 5%)
-#' @param periods How many periods the stream delivers, e.g., 25 years of pension.
-#' @param symbol Currency symbol to use
-#' @return - value
-#' @export
-#' @family financial functions
-#' @seealso - [fin_interest()], [fin_tax_NI()], [fin_percent()]
-
-#' @examples
-#' fin_net_present_value(27e3, .05, 25)
-#'
-fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, symbol = umx_set_dollar_symbol(silent=TRUE)) {	
-	cashflows   = rep(income, periods)
-	timePeriods = seq(1, periods)
-	discount_factors = 1/(1+discount_rate)^timePeriods
-	present_values = cashflows*discount_factors
-	pv = sum(present_values)
-	cat("\nBased on a discount rate of ", discount_rate*100, "%, an income of ", bucks(income, symbol, cat=TRUE), " for ", periods, " years, has a net present value of \n", sep="")
-	cat("\n", bucks(pv, symbol))
-
-	invisible(pv)
-}
 
 #' Compute the future value and gain of an investment
 #'
 #' @description
-#' fin_expected takes a current and fair value, as well as a cost of capital, and returns the expected gain.
+#' fin_stock_target takes a current and fair value, as well as a cost of capital, and returns the expected gain.
 #'
 #' @param current The current market value of the instrument
 #' @param fair The user's estimated fair value.
@@ -447,10 +536,8 @@ fin_net_present_value <- function(income=27e3, discount_rate=.05, periods = 25, 
 #' @return - expected gain
 #' @export
 #' @family financial functions
-#' @seealso - [fin_interest()]
-
+#' @seealso - [fin_value_interest()]
 #' @examples
-#' 
 #' fin_stock_target(114,fair=140, ticker="NVDA", capital=.15, verb=TRUE)
 #' # NVDA  return =  41 %
 #' # delta (fair-current)= $ 26 
@@ -517,32 +604,28 @@ fin_stock_target <- function(current=89, fair=140, ticker = "NVDA", capital=.15,
 #' @export
 #'
 #' @examples
-#' rate = fin_CAGR(beginningValue = 100, endingValue = 190, numYears = 7)
+#' rate = fin_value_CAGR(beginningValue = 100, endingValue = 190, numYears = 7)
 #' print(rate)
 #' 
 #' # --- Example with a Loss ---
-#' fin_CAGR(100, 50, 5) 
+#' fin_value_CAGR(100, 50, 5) 
 #'
 #' # --- Formatting as Percentage ---
 #' percent = paste0(round(rate * 100, 2), "%")
 #' print(percent)
-fin_CAGR <- function(beginningValue, endingValue, numYears, digits=3) {
+fin_value_CAGR <- function(beginningValue, endingValue, numYears, digits=3) {
   # Ensure inputs are numeric
   if (!is.numeric(beginningValue) || !is.numeric(endingValue) || !is.numeric(numYears)) {
     stop("All inputs must be numeric.")
   }
-  
   # Ensure values are valid
   if (beginningValue <= 0 || endingValue <= 0 || numYears <= 0) {
     stop("Inputs must be positive values.")
   }
-
   # Calculate the rate
   cagr = (endingValue / beginningValue)^(1 / numYears) - 1
-  
   return(round(cagr, digits))
 }
-
 
 #' Compute the value of a principal & annual deposits at a compound interest over a number of years
 #' @description
@@ -572,47 +655,44 @@ fin_CAGR <- function(beginningValue, endingValue, numYears, digits=3) {
 #' @return - Value of balance after yrs of investment.
 #' @export
 #' @family financial functions
-#' @seealso - [umx_set_dollar_symbol()], [fin_percent()], [fin_tax_NI()], [fin_stock_valuation()]
+#' @seealso - [umx_set_dollar_symbol()], [fin_value_percent()], [fin_tax_NI()], [fin_stock_valuation()]
 #' @references - <https://en.wikipedia.org/wiki/Compound_interest>
-
 #' @examples
-#' \dontrun{
 #' # 1. Value of a principal after yrs years at 5% return, compounding monthly.
 #' # Report in browser as a nice table of annual returns and formatted totals.
-#' fin_interest(principal = 5000, interest = 0.05, rep= "html")
-#' }
+#' fin_value_interest(principal = 5000, interest = 0.05, rep= "html")
 #'
 #' # Report as a nice markdown table
-#' fin_interest(principal = 5000, interest = 0.05, yrs = 10)
+#' fin_value_interest(principal = 5000, interest = 0.05, yrs = 10)
 #'
 #' umx_set_dollar_symbol("$")
 #' # 2 What rate is needed to increase principal to final value in yrs time?
-#' fin_interest(1, final = 1.4, yrs=5)
-#' fin_interest(principal = 50, final=200, yrs = 5)
+#' fin_value_interest(1, final = 1.4, yrs=5)
+#' fin_value_interest(principal = 50, final=200, yrs = 5)
 #'
 #' # 3. What's the value of deposits of $100/yr after 10 years at 7% return?
-#' fin_interest(0, deposits = 100, interest = 0.07, yrs = 10, n = 12)
+#' fin_value_interest(0, deposits = 100, interest = 0.07, yrs = 10, n = 12)
 #'
 #' # 4. What's the value of $20k + $100/yr over 10 years at 7% return?
-#' fin_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="$")
+#' fin_value_interest(principal= 20e3, deposits= 100, interest= .07, yrs= 10, symbol="$")
 #'
 #' # 5. What is $10,000 invested at the end of each year for 5 years at 6%?
-#' fin_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
+#' fin_value_interest(deposits = 10e3, interest = 0.06, yrs = 5, n=1, when= "end")
 #'
 #' # 6. What will $20k be worth after 10 years at 15% annually (n=1)?
-#' fin_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
+#' fin_value_interest(deposits=20e3, interest = 0.15, yrs = 10, n=1, baseYear=1)
 #' # $466,986
 #'
 #' # manual equivalent
 #' sum(20e3*(1.15^(10:1))) # 466985.5
 #'
 #' # 7. Annual (rather than monthly) compounding (n=1)
-#' fin_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
+#' fin_value_interest(deposits = 100, interest = 0.07, yrs = 10, n=1)
 #' 
 #' # 8 Interest needed to increase principal to final value in yrs time.
-#' fin_interest(principal = 100, final=200, yrs = 5)
+#' fin_value_interest(principal = 100, final=200, yrs = 5)
 #'
-fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html"), deflate = TRUE){
+fin_value_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 0.05, yrs = 10, final= NULL, n = 12, when = "beginning", symbol = NULL, largest_with_cents = 0, baseYear= as.numeric(format(Sys.time(), "%Y")), table = TRUE, report= c("markdown", "html"), deflate = TRUE){
 	report = match.arg(report)
 	if(is.null(symbol)){symbol = umx_set_dollar_symbol(silent=TRUE)}
 	if(principal==0){
@@ -709,9 +789,8 @@ fin_interest <- function(principal = 100, deposits = 0, inflate = 0, interest = 
 #' @return - NI
 #' @export
 #' @family financial functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_stock_valuation()]
+#' @seealso - [fin_value_interest()], [fin_value_percent()], [fin_stock_valuation()]
 #' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
-
 #' @examples
 #' fin_tax_NI(42e3)
 #' fin_tax_NI(142000)
@@ -731,213 +810,6 @@ fin_tax_NI <- function(annualEarnings, symbol = "\u00A3") {
 	 ". So ", round((employer+employee)/annualEarnings*100, 2),	" % total!\n")
 	 )
 	return(Total)
-}
-
-#' Print a money object
-#'
-#' @description Print function for "money" objects, e.g. [fin_interest()].
-#'
-#' @aliases bucks print
-#' @param x money object.
-#' @param symbol Default prefix if not set.
-#' @param big.mark option defaulting to ","
-#' @param decimal.mark option defaulting to "."
-#' @param trim option defaulting to TRUE
-#' @param largest_with_cents option defaulting to 1e+05
-#' @param negative_parens option defaulting to "hyphen"
-#' @param ... further arguments passed to or from other methods. also cat =F to return string
-#' @return - invisible
-#' @seealso - [umx::fin_percent()], [umx::fin_interest()], [scales::dollar()]
-
-# #' @family print
-#' @export
-#' @examples
-#' bucks(100 * 1.05^32)
-#' fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
-#'
-bucks <- function(x, symbol = umx_set_dollar_symbol(silent=TRUE), big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = c("hyphen", "minus", "parens"), ...) {
-	dot.items = list(...) # grab all the dot items cat
-	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
-	if(is.null(dot.items[["cat"]])){
-		cat = TRUE
-	} else {
-		cat = FALSE
-		dot.items[["cat"]] = NULL
-	}
-
-	if(!is.null(attr(x, 'symbol')) ){
-		symbol = attr(x, 'symbol')
-	}
-	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = big.mark, decimal.mark = decimal.mark, trim =trim, largest_with_cents = largest_with_cents, style_negative = negative_parens, ...)
-	if(cat){
-		cat(formatted)
-	} else {
-		formatted
-	}
-}
-
-#' @export
-#' @method print money
-print.money <- bucks
-
-#' Compute the percent change needed to return to the original value after percent off (or on).
-#'
-#' @description
-#' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
-#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
-#' 
-#' `fin_percent(20)` yields $100 increased by 20% = $120 (Percent to reverse = -17%)
-#' 
-#' @param percent Change in percent (enter 10 for 10%, not 0.1)
-#' @param value Principal
-#' @param symbol value units (default = "$")
-#' @param digits Rounding of results (default 2 places)
-#' @param plot Whether to plot the result (default TRUE)
-#' @param logY Whether to plot y axis as log (TRUE)
-#' @return - new value and change required to return to baseline.
-#' @export
-#' @family financial functions
-#' @seealso - [fin_interest()]
-
-#' @examples
-#' # Percent needed to return to original value after 10% taken off
-#' fin_percent(-10)
-#'
-#' # Percent needed to return to original value after 10% added on
-#' fin_percent(10)
-#'
-#' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5)
-fin_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE, logY = TRUE) {
-	percent  = percent/100
-	newValue = value * (1 + percent)
-	percent_to_reverse = (value/newValue) - 1
-	class(newValue) = 'percent'
-	attr(newValue, 'oldValue') = value
-	attr(newValue, 'percent')  = percent
-	attr(newValue, 'digits')   = digits
-	attr(newValue, 'symbol')   = symbol
-	attr(newValue, 'percent_to_reverse') = percent_to_reverse
-
-	if(plot){
-		plot(newValue, logY = logY)
-	}else{
-		return(newValue)
-	}
-}
-
-
-#' Print a percent object
-#'
-#' Print method for "percent" objects: e.g. [umx::fin_percent()]. 
-#'
-#' @param x percent object.
-#' @param ... further arguments passed to or from other methods.
-#' @return - invisible
-#' @seealso - [umx::fin_percent()]
-
-#' @method print percent
-#' @export
-#' @examples
-#' # Percent needed to return to original value after 10% off
-#' fin_percent(-10)
-#' # Percent needed to return to original value after 10% on
-#' fin_percent(10)
-#'
-#' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5)
-#'
-print.percent <- function(x, ...) {
-	if(!is.null(attr(x, 'digits')) ){
-		digits = attr(x, 'digits')
-	}
-	oldValue = round(attr(x, 'oldValue'), digits)
-	percentChange  = attr(x, 'percent')
-	symbol   = attr(x, 'symbol')
-	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
-	dir = ifelse(percentChange < 0, "decreased", "increased")
-
-	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
-}
-
-#' Plot a percent change graph
-#'
-#' Plot method for "percent" objects: e.g. [umx::fin_percent()]. 
-#'
-#' @param x percent object.
-#' @param ... further arguments passed to or from other methods.
-#' @return - invisible
-#' @seealso - [umx::fin_percent()]
-
-#' @method plot percent
-#' @export
-#' @examples
-#' # Percent needed to return to original value after 10% off
-#' fin_percent(-10)
-#' # Percent needed to return to original value after 10% on
-#' tmp = fin_percent(10)
-#' plot(tmp)
-#'
-#' # Percent needed to return to original value after 50% off 34.50
-#' fin_percent(-50, value = 34.5, logY = FALSE)
-#'
-plot.percent <- function(x, ...) {
-	tmp = list(...) # pull logY if passed in
-	logY = tmp$logY
-	symbol   = attr(x, 'symbol')
-	digits   = attr(x, 'digits')
-	oldValue = round(attr(x, 'oldValue'), digits)
-	percentChange  = attr(x, 'percent')	
-	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
-	dir = ifelse(percentChange < 0, "decreased", "increased")
-	# fnReversePercent(-.1)
-	fnReversePercent <- function(x) {
-		# 1/(1+.1)
-		percentOn = x/100
-		newValue = (1 + percentOn)
-		percent_to_reverse = 1-(1/newValue)
-		return(-percent_to_reverse*100)
-	}
-	# x range	= -100 (%) to +500 (%)?
-	# y = -100 to +200?
-	# y range	= -100 to +200?
-	if(percentChange > 0){
-		p = ggplot(data.frame(x = c(0, 90)), aes(x))
-		lab = paste0(round(percentChange*100, 2), "% on = ", round(percent_to_reverse * 100, 2), "% off", sep = "")
-		labXpos = 50
-		labYpos = -20
-		logY = FALSE
-	} else {
-		p = ggplot(data.frame(x = c(-90, 0)), aes(x))
-		lab = paste0(round(percentChange*100, 2), "% off = ", round(percent_to_reverse * 100, 2), "% on", sep = "")
-		labXpos = -50
-		labYpos = 700
-	}
-	if(is.null(logY)||!(logY)){
-		p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10)
-		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = labYpos, color= "grey")
-		# hor & vert
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100, y=percent_to_reverse*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y=-10, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
-	} else {
-		p = p + ggplot2::scale_y_continuous(n.breaks = 8, trans="log10") + ggplot2::scale_x_continuous(n.breaks = 10) 
-		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = log10(labYpos), color= "grey")
-		# hor & vert
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100             , y= log10(percent_to_reverse*100), yend= log10(percent_to_reverse*100), alpha=.5, color = "lightgrey")
-		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y= -10, yend= log10(percent_to_reverse*100), alpha= .5, color = "lightgrey")
-	}
-	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
-	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(round(percentChange*100, 2), "% ", ifelse(percentChange>0, "on ", "off "), oldValue, " = ", (1+percentChange)*oldValue))
-	# p = p + ggplot2::geom_area() can't do with stat fun ...
-
-	# p = p + cowplot::draw_label("\u2B55", hjust=0, vjust=1, x = percentChange*100, y = percent_to_reverse*100, color = "lightblue")
-
-	p = p + cowplot::theme_cowplot(font_size = 11)
-
-	
-	print(p)
-	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
-	invisible(p)
 }
 
 #' Justified P/E Ratio
@@ -986,7 +858,7 @@ plot.percent <- function(x, ...) {
 #' * Gordon, M. J. (1962). *The Investment, Financing, and Valuation of the Corporation*. R. D. Irwin.
 #' * Pinto, J. E., Henry, C., Robinson, T. R., & Stowe, J. D. (2020). *Equity Asset Valuation* (4th ed.). Wiley.
 #' * Mauboussin, M. J., & Rappaport, A. (2021). *Expectations Investing: Reading Stock Prices for Better Returns*. Columbia University Press.
-#' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
+#' @seealso - [fin_value_interest()], [fin_value_percent()], [fin_tax_NI()]
 #' @examples
 #' # Example 1: Standard trailing Justified P/E
 #' fin_stock_justifiedPE(dividend = 0.8, EPS = 2.0, growthRate = 0.06, discountRate = 0.10)
@@ -1077,8 +949,7 @@ fin_stock_justifiedPE <- function(dividend = 0.80, EPS = 2.00, growthRate = 0.06
 #' @return - Open a ticker in a finance site online
 #' @export
 #' @family financial functions
-#' @seealso - [fin_interest()], [fin_percent()], [fin_tax_NI()]
-
+#' @seealso - [fin_value_interest()], [fin_value_percent()], [fin_tax_NI()]
 #' @examples
 #' # Open $NVDA in google, MRVL in yahoo finance.
 #' \dontrun{
@@ -1095,316 +966,399 @@ fin_stock_ticker <- function(ticker= "NVDA", exchange = "NASDAQ", provider= c("G
 	browseURL(url, browser = getOption("browser"))
 }
 
-#' Black-Scholes Call Option Price and Greeks Calculator
+#' NZ FIF Tax Offset & NAV Neutrality Calculator
+#' @param portfolioValue Total opening value of the portfolio on April 1st.
+#' @param marginRate The annual interest rate on the IBKR margin loan (e.g., 0.06).
+#' @param expectedReturn The expected annual growth of the asset (e.g., 0.11 for QQQ).
+#' @param taxRate The user's marginal tax rate (e.g., 0.39 or .3 (blended)).
+#' @param fifRate The FIF deemed rate of return (standard is 0.05).
 #'
-#' @description
-#' `fin_Greeks` calculates the theoretical European Call option price and its corresponding Greeks (Delta, Gamma, Theta, Vega, and Rho) using the Black-Scholes model.
-#'
-#' @param spotPrice The current price of the underlying asset.
-#' @param strikePrice The strike price of the option.
-#' @param daysToExpiry The number of days remaining until option expiration.
-#' @param riskFreeRate The annual risk-free interest rate (expressed as a decimal, default = 0.04 for 4%).
-#' @param impliedVol The annualized implied volatility (expressed as a decimal, default = 0.20 for 20%).
-#' @return A data frame containing:
-#' \itemize{
-#'   \item \code{price}: Theoretical Call option price
-#'   \item \code{delta}: Sensitivity of option price to underlying price (Delta)
-#'   \item \code{gamma}: Sensitivity of Delta to underlying price (Gamma)
-#'   \item \code{theta}: Daily time decay of option price (Theta)
-#'   \item \code{vega}: Sensitivity of option price to a 1% change in implied volatility
-#'   \item \code{rho}: Sensitivity of option price to a 1% change in risk-free interest rate
-#' }
+#' @return A ggplot object showing the net impact across LTV ratios.
 #' @export
 #' @family financial functions
-
+#' @seealso - [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
 #' @examples
-#' fin_Greeks(spotPrice = 100, strikePrice = 95, daysToExpiry = 30, 
-#'	riskFreeRate = 0.04, impliedVol = 0.20)
-#'
-fin_Greeks <- function(spotPrice, strikePrice, daysToExpiry, riskFreeRate = 0.04, impliedVol = 0.20) {
-  supplied = names(as.list(match.call())[-1])
-  allArgs = c("spotPrice", "strikePrice", "daysToExpiry", "riskFreeRate", "impliedVol")
-  missingArgs = setdiff(allArgs, supplied)
-
-  if (length(missingArgs) > 0) {
-    cat("=== Option Parameter Definitions (Teaching Mode) ===\n")
-    if ("spotPrice" %in% missingArgs) {
-      cat("  * spotPrice    : The current price of the underlying asset.\n")
-    }
-    if ("strikePrice" %in% missingArgs) {
-      cat("  * strikePrice  : The strike price of the option (fixed exercise price).\n")
-    }
-    if ("daysToExpiry" %in% missingArgs) {
-      cat("  * daysToExpiry : Days remaining until option expiration.\n")
-    }
-    if ("riskFreeRate" %in% missingArgs) {
-      cat("  * riskFreeRate : Annual risk-free interest rate as a decimal (default = 0.04 for 4%).\n")
-    }
-    if ("impliedVol" %in% missingArgs) {
-      cat("  * impliedVol   : Annualized implied volatility as a decimal (default = 0.20 for 20%).\n")
-    }
-    cat("===================================================\n\n")
-
-    if ("spotPrice" %in% missingArgs) {
-      cat("No spotPrice supplied. Defaulting to spotPrice = 100.\n")
-      spotPrice = 100
-    }
-    if ("strikePrice" %in% missingArgs) {
-      cat("No strikePrice supplied. Defaulting to strikePrice = 100.\n")
-      strikePrice = 100
-    }
-    if ("daysToExpiry" %in% missingArgs) {
-      cat("No daysToExpiry supplied. Defaulting to daysToExpiry = 30.\n")
-      daysToExpiry = 30
-    }
-    cat("\n")
-  }
-
-  if (is.character(daysToExpiry) || inherits(daysToExpiry, "Date") || inherits(daysToExpiry, "POSIXt")) {
-    expiryDate = as.Date(daysToExpiry)
-    daysToExpiry = as.numeric(difftime(expiryDate, Sys.Date(), units = "days"))
-  }
-
-  impliedVol = fin_resolveVolatility(impliedVol, strikePrice, daysToExpiry)
-
-  t = daysToExpiry / 365
-  r = riskFreeRate
-  sigma = impliedVol
-
-  if (t <= 0) {
-    callPrice = max(0, spotPrice - strikePrice)
-    delta = if (spotPrice > strikePrice) 1.0 else if (spotPrice < strikePrice) 0.0 else 0.5
-    gamma = 0.0
-    theta = 0.0
-    vega = 0.0
-    rho = 0.0
-  } else {
-    d1 = (log(spotPrice / strikePrice) + (r + (sigma^2) / 2) * t) / (sigma * sqrt(t))
-    d2 = d1 - sigma * sqrt(t)
-
-    callPrice = spotPrice * pnorm(d1) - strikePrice * exp(-r * t) * pnorm(d2)
-    delta = pnorm(d1)
-    gamma = dnorm(d1) / (spotPrice * sigma * sqrt(t))
-    theta = (-(spotPrice * dnorm(d1) * sigma) / (2 * sqrt(t)) - r * strikePrice * exp(-r * t) * pnorm(d2)) / 365
-    vega = (spotPrice * sqrt(t) * dnorm(d1)) / 100
-    rho = (strikePrice * t * exp(-r * t) * pnorm(d2)) / 100
-  }
-
-  res = data.frame(
-    price = callPrice,
-    delta = delta,
-    gamma = gamma,
-    theta = theta,
-    vega = vega,
-    rho = rho
-  )
-  return(res)
-}
-
-#' Plot Option Delta and Gamma Curves
-#'
-#' @description
-#' `fin_plotGreekCurves` plots Call Option Delta and Gamma curves across a range of spot prices
-#' (from -30% to +30% of the strike price) to show how Delta accelerates and Gamma peaks.
-#'
-#' @param strikePrice The strike price of the option (default = 100 if omitted).
-#' @param daysToExpiry The number of days remaining until option expiration (default = 30).
-#' @param riskFreeRate The annual risk-free interest rate (default = 0.04).
-#' @param impliedVol The annualized implied volatility of the underlying asset (default = 0.20).
-#' @return A ggplot object visualizing Delta and Gamma.
-#' @export
-#' @family financial functions
-
-#' @examples
-#' \dontrun{
-#' fin_plotGreekCurves(strikePrice = 100)
-#' # Run with missing arguments to print definitions
-#' fin_plotGreekCurves()
-#' }
-#'
-fin_plotGreekCurves <- function(strikePrice, daysToExpiry = 30, riskFreeRate = 0.04, impliedVol = 0.20) {
-  supplied = names(as.list(match.call())[-1])
-  allArgs = c("strikePrice", "daysToExpiry", "riskFreeRate", "impliedVol")
-  missingArgs = setdiff(allArgs, supplied)
-
-  if (length(missingArgs) > 0) {
-    cat("=== Option Parameter Definitions (Teaching Mode) ===\n")
-    if ("strikePrice" %in% missingArgs) {
-      cat("  * strikePrice  : The strike price of the option (fixed exercise price).\n")
-    }
-    if ("daysToExpiry" %in% missingArgs) {
-      cat("  * daysToExpiry : Days remaining until option expiration (default = 30).\n")
-    }
-    if ("riskFreeRate" %in% missingArgs) {
-      cat("  * riskFreeRate : Annual risk-free interest rate as a decimal (default = 0.04 for 4%).\n")
-    }
-    if ("impliedVol" %in% missingArgs) {
-      cat("  * impliedVol   : Annualized implied volatility as a decimal (default = 0.20 for 20%).\n")
-    }
-    cat("===================================================\n\n")
-
-    if ("strikePrice" %in% missingArgs) {
-      cat("No strikePrice supplied. Defaulting to strikePrice = 100 for visualization.\n\n")
-      strikePrice = 100
-    }
-  }
-
-  if (is.character(daysToExpiry) || inherits(daysToExpiry, "Date") || inherits(daysToExpiry, "POSIXt")) {
-    expiryDate = as.Date(daysToExpiry)
-    daysToExpiry = as.numeric(difftime(expiryDate, Sys.Date(), units = "days"))
-  }
-
-  impliedVol = fin_resolveVolatility(impliedVol, strikePrice, daysToExpiry)
-
-  spotRange = seq(0.7 * strikePrice, 1.3 * strikePrice, length.out = 150)
+#' # Example Usage:
+#' # 2026 Strategy: $500k Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
+#' fin_tax_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
+fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
+  # 1. Core Logic (Dynamic Calculations)
+  # Ratio to zero out taxable income
+  ratioDeductionOnly = fifRate / marginRate
   
-  greeksList = lapply(spotRange, function(s) {
-    fin_Greeks(spotPrice = s, strikePrice = strikePrice, daysToExpiry = daysToExpiry, riskFreeRate = riskFreeRate, impliedVol = impliedVol)
+  # Ratio for NAV Neutrality (Growth + Tax Shield = Tax Bill)
+  # Net Benefit per $ of Loan = (Return + (Interest * TaxRate) - Interest)
+  netBenefitPerUnit = expectedReturn + (marginRate * taxRate) - marginRate
+  totalTaxBill = portfolioValue * fifRate * taxRate
+  ratioNavNeutral = totalTaxBill / (portfolioValue * netBenefitPerUnit)
+  
+  # 2. Data Generation for Visualization
+  # We generate a range from 0% to 150% of the Neutral Point for better scaling
+  maxRange = min(0.85, ratioNavNeutral * 2) 
+  ltvRange = seq(0, maxRange, length.out = 100)
+  
+  netImpact = sapply(ltvRange, function(r) {
+    loan    = portfolioValue * r
+    benefit = loan * netBenefitPerUnit
+    return(benefit - totalTaxBill)
   })
   
-  df = do.call(rbind, greeksList)
-  df$spot = spotRange
-
-  maxGamma       = max(df$gamma)
-  scaleFactor    = if (maxGamma > 0) 1 / maxGamma else 1
-  df$gammaScaled = df$gamma * scaleFactor
-
-  peakIndex = which.max(df$gamma)
-  peakSpot  = df$spot[peakIndex]
-  peakDelta = df$delta[peakIndex]
-  peakGamma = df$gamma[peakIndex]
-
-  p = ggplot(df, aes(x = spot))
-  p = p + geom_line(aes(y = delta, color = "Delta"), linewidth = 1.2)
-  p = p + geom_line(aes(y = gammaScaled, color = "Gamma"), linewidth = 1.2)
-  p = p + geom_vline(xintercept = peakSpot, linetype = "dashed", color = "gray40", alpha = 0.7)
-  p = p + geom_point(data = data.frame(spot = peakSpot, gammaScaled = peakGamma * scaleFactor), aes(x = spot, y = gammaScaled), color = "#D55E00", size = 3)
-  p = p + geom_point(data = data.frame(spot = peakSpot, delta = peakDelta), aes(x = spot, y = delta), color = "#0072B2", size = 3)
-  labelText = sprintf("Peak Gamma: %.4f at Spot = $%.2f\nDelta: %.2f (Acceleration Point)", peakGamma, peakSpot, peakDelta)
-  p = p + annotate("label", x = peakSpot, y = 0.5, label = labelText, fill = "white", color = "black", fontface = "bold", size = 3.5, alpha = 0.85, label.padding = unit(0.5, "lines"))
-  p = p + scale_y_continuous(name = "Delta (Probability Proxy / Position Size)", limits = c(0, 1), sec.axis = ggplot2::sec_axis(~ . / scaleFactor, name = "Gamma (Rate of Change of Delta)"))
-  p = p + scale_x_continuous(name = "Underlying Spot Price ($)")
-  p = p + ggplot2::scale_color_manual(name = "Greeks", values = c("Delta" = "#0072B2", "Gamma" = "#D55E00"))
-  titleText = sprintf("Delta & Gamma Sensitivity Curve (Strike = $%.2f, Expiry = %d Days)", strikePrice, daysToExpiry)
-  p = p + labs(title = titleText, subtitle = "Delta represents position sensitivity; Gamma peaks where Delta changes fastest (At-The-Money)", caption = "Model: Black-Scholes European Option Calculator")
-  p = p + theme_minimal(base_size = 11)
-  p = p + theme(legend.position = "bottom", plot.title = element_text(face = "bold", size = 12), axis.title.y.right = element_text(color = "#D55E00"), axis.title.y.left = element_text(color = "#0072B2"))
-  return(p)
-}
-
-#' Simulate and Compare LEAP Extrinsic Premium Decay
-#'
-#' @description
-#' `fin_LeapSimulateRoll` compares two European Call options over a 931-day horizon:
-#' one starting at a 0.80 Delta and another at a 0.95 Delta. It simulates how their extrinsic
-#' value (rent/time-decay premium) bleeds to 0 as time runs out, plotting the results side-by-side.
-#'
-#' @param spotPrice The constant price of the underlying asset (default = 100).
-#' @param impliedVol The constant implied volatility of the underlying asset (default = 0.20).
-#' @param riskFreeRate The annual risk-free interest rate (default = 0.04).
-#' @return A ggplot object comparing the extrinsic premium decay side-by-side.
-#' @export
-#' @family financial functions
-
-#' @examples
-#' \dontrun{
-#' fin_LeapSimulateRoll(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04)
-#' }
-#'
-fin_LeapSimulateRoll <- function(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04) {
-  impliedVol = fin_resolveVolatility(impliedVol, spotPrice, 931)
-  tInit = 931 / 365
-  r = riskFreeRate
-  sigma = impliedVol
-
-  d1_80 = qnorm(0.80)
-  strike80 = spotPrice * exp((r + (sigma^2) / 2) * tInit - d1_80 * sigma * sqrt(tInit))
-
-  d1_95 = qnorm(0.95)
-  strike95 = spotPrice * exp((r + (sigma^2) / 2) * tInit - d1_95 * sigma * sqrt(tInit))
-
-  daysSeq = seq(931, 0, by = -1)
-
-  simData = lapply(daysSeq, function(d) {
-    g80 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike80, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
-    intrinsic80 = max(0, spotPrice - strike80)
-    extrinsic80 = g80$price - intrinsic80
-
-    g95 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike95, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
-    intrinsic95 = max(0, spotPrice - strike95)
-    extrinsic95 = g95$price - intrinsic95
-
-    data.frame(
-      daysToExpiry = d,
-      extrinsic80 = extrinsic80,
-      extrinsic95 = extrinsic95,
-      theta80 = g80$theta,
-      theta95 = g95$theta
-    )
-  })
-
-  df = do.call(rbind, simData)
-
-  df80 = data.frame(
-    daysToExpiry = df$daysToExpiry,
-    position = "Delta 0.80 Option",
-    strike = strike80,
-    extrinsicValue = df$extrinsic80,
-    dailyTheta = df$theta80
-  )
-  df95 = data.frame(
-    daysToExpiry = df$daysToExpiry,
-    position = "Delta 0.95 Option",
-    strike = strike95,
-    extrinsicValue = df$extrinsic95,
-    dailyTheta = df$theta95
-  )
-
-  dfLong = rbind(df80, df95)
-
-  p = ggplot(dfLong, aes(x = daysToExpiry, y = extrinsicValue, color = position))
-  p = p + geom_line(linewidth = 1.2)
-  p = p + ggplot2::facet_wrap(~ position, scales = "fixed")
-  p = p + ggplot2::scale_x_reverse(name = "Days to Expiration (Time Running Out)")
-  p = p + scale_y_continuous(name = "Extrinsic Premium Value / Rent Remaining ($)")
-  p = p + ggplot2::scale_color_manual(values = c("Delta 0.80 Option" = "#E69F00", "Delta 0.95 Option" = "#56B4E9"))
+  plotDf = data.frame(loanRatio = ltvRange, netGainLoss = netImpact)
   
-  label80 = sprintf("Initial Strike: $%.2f\nMax Extrinsic: $%.2f", strike80, df$extrinsic80[1])
-  label95 = sprintf("Initial Strike: $%.2f\nMax Extrinsic: $%.2f", strike95, df$extrinsic95[1])
-  
-  annData = data.frame(
-    daysToExpiry = c(450, 450),
-    extrinsicValue = c(df$extrinsic80[1] * 0.5, df$extrinsic80[1] * 0.5),
-    position = c("Delta 0.80 Option", "Delta 0.95 Option"),
-    labelText = c(label80, label95)
-  )
-  
-  p = p + ggplot2::geom_label(data = annData, aes(label = labelText), color = "black", fill = "white", size = 3.5, fontface = "bold", label.padding = unit(0.5, "lines"), alpha = 0.9)
-  
+  # 3. Build Plot (Line by Line)
+  p = ggplot(plotDf, aes(x = loanRatio, y = netGainLoss))
+  p = p + geom_line(color = "#2c3e50", linewidth = 1.2)
+  p = p + geom_hline(yintercept = 0, linetype = "dashed", color = "#e74c3c")
+  p = p + geom_vline(xintercept = ratioNavNeutral, linetype = "dotted", color = "#27ae60")
+  p = p + scale_y_continuous(labels = scales::dollar)
+  p = p + scale_x_continuous(labels = scales::percent)
   p = p + labs(
-    title = "LEAP Extrinsic Premium Decay: Delta 0.80 vs Delta 0.95",
-    subtitle = "Deep ITM options (0.95 Delta) pay significantly less extrinsic rent, reducing time-decay risk.",
-    caption = "Constant Spot Price and Implied Volatility. Standard European Option Model."
+    title = "NZ FIF Tax Offset Strategy: Net Asset Impact",
+    subtitle = paste0("Portfolio: $", format(portfolioValue, big.mark = ","), 
+                      " | Neutral LTV: ", round(ratioNavNeutral * 100, 2), "%"),
+    x = "Loan-to-Value (LTV) Ratio",
+    y = "Net Annual Gain/Loss vs. FIF Tax"
   )
-  
-  p = p + theme_minimal(base_size = 11)
-  
-  p = p + theme(
-    legend.position = "none",
-    strip.text = element_text(face = "bold", size = 12),
-    plot.title = element_text(face = "bold", size = 13)
-  )
-
-  cat("=== LEAP Option Simulation Summary ===\n")
-  cat(sprintf("Spot Price: $%.2f | Implied Vol: %.0f%% | Risk-Free Rate: %.1f%%\n", spotPrice, impliedVol * 100, riskFreeRate * 100))
-  cat(sprintf("Option 1 (Delta 0.80): Strike = $%.2f | Start Extrinsic = $%.2f\n", strike80, df$extrinsic80[1]))
-  cat(sprintf("Option 2 (Delta 0.95): Strike = $%.2f | Start Extrinsic = $%.2f\n", strike95, df$extrinsic95[1]))
-  cat(sprintf("Rent Savings: 0.95 Delta Option saves $%.2f (%.1f%%) in extrinsic value compared to 0.80 Delta.\n",
-              df$extrinsic80[1] - df$extrinsic95[1],
-              100 * (df$extrinsic80[1] - df$extrinsic95[1]) / df$extrinsic80[1]))
-
-  return(p)
+  p = p + annotate("label", x = ratioNavNeutral, y = 0, label = paste0("NAV Neutral at ", round(ratioNavNeutral * 100, 1), "% LTV"), fill = "white", alpha = 0.8)
+  p = p + theme_minimal() 
+  # Return the plot
+  p
 }
 
+#' Work the carry cost of a house
+#'
+#' @description
+#' `fin_value_CarryCost` uses the purchase price, holding expenses, appreciation, and opportunity cost to compute a carrying cost for a house purchase.
+#'
+#' @param property_cost Purchase price
+#' @param appreciation rate of property increase
+#' @param QQQ Opportunity cost of leaving money in the markets
+#' @param rent_saved But now you have to rent somewhere
+#' @param interest Cost of borrowing
+#' @param rates Council rates per year at t=1 (absolute).
+#' @param insurance The cost of property owners insurance per year at t=1 (absolute).
+#' @param maintenance New kitchen roof etc. If <1, treated as rate of property_cost at t=1; if >=1, treated as absolute per year at t=1.
+#' @param years Holding time (integer >=1).
+#' @param inflation Annual inflation applied to rent, rates, insurance and maintenance (default .025). Set 0 to recover flat model. Property and QQQ remain compound totals.
+#' @param verbose Logical; if TRUE, print a one-line per-year schedule when years <= 20.
+#' @return Invisibly the total net cost of buying (scalar). When verbose is TRUE, also returns a schedule data.frame as attribute "schedule".
+#' @export
+#' @family financial functions
+#' @seealso - [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
+#' @examples
+#' fin_value_CarryCost(property_cost=1.2e6)
+#' fin_value_CarryCost(property_cost=1.1e6, appreciation = .035, QQQ=.15, years=10)
+#' fin_value_CarryCost(property_cost=1.2e6, inflation=0) # flat, recovers pre-inflation total
+#'
+fin_value_CarryCost <- function(property_cost, appreciation = .02, QQQ = .14, rent_saved = .04, interest = .06, rates = 5000, insurance = 2000, maintenance = .015, years = 5, inflation = .025, verbose = TRUE){
+  # base annual at t=1 (flat reference)
+  rent0       = property_cost * rent_saved
+  interest0   = property_cost * interest
+  if (maintenance < 1) {
+    maintenance0 = property_cost * maintenance
+  } else {
+    maintenance0 = maintenance
+  }
+  QQQgains  = (property_cost * (1+QQQ)^years) - property_cost
+  propAprec = property_cost * ((1+appreciation)^years)
+  propAprec = (propAprec*.97) - property_cost # 3% sale cost
+  # per-year carry with inflation on rent/rates/insurance/maintenance; interest fixed (opportunity on price)
+  annualCarry = numeric(years)
+  rentAnnual = numeric(years)
+  ratesAnnual = numeric(years)
+  insuranceAnnual = numeric(years)
+  maintenanceAnnual = numeric(years)
+  for (t in 1:years) {
+    infFactor = (1+inflation)^(t-1)
+    rentAnnual[t]       = rent0 * infFactor
+    ratesAnnual[t]      = rates * infFactor
+    insuranceAnnual[t]  = insurance * infFactor
+    maintenanceAnnual[t]= maintenance0 * infFactor
+    annualCarry[t]      = (interest0 + ratesAnnual[t] + insuranceAnnual[t] + maintenanceAnnual[t]) - rentAnnual[t]
+  }
+  totalCarry = sum(annualCarry)
+  flatCarry  = (interest0 + rates + insurance + maintenance0 - rent0) * years
+  netnetCostOfBuying = totalCarry + QQQgains - propAprec
+  # for reporting: keep original variable names for dollar formatting at t=1
+  rent_saved  = rent0
+  interest    = interest0
+  maintenance = maintenance0
+  Carry_Cost  = annualCarry[1]
 
+  if((Carry_Cost/property_cost) > .015){
+  	cat("Polite note: Carry Cost over the 1.5% threshold: **too high**\n\n")
+  }
+  cat(
+	  "Purchase Price = ", dollar(as.numeric(property_cost) , prefix = "$"), "\n",
+	  dollar(as.numeric(interest) , prefix = "$"),    "interest + ",
+	  dollar(as.numeric(rates)    , prefix = "$"),    "rates + ",
+	  dollar(as.numeric(insurance), prefix = "$"),    "insurance + ",
+	  dollar(as.numeric(maintenance) , prefix = "$"), "maintenance - ",
+	  dollar(as.numeric(rent_saved)  , prefix = "$"), "rent_saved (t=1)\n",
+	  "Annual carry cost (t=1) = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
+	  "Assumed appreciation: QQQ ", QQQ*100, "% p.a., property ", appreciation*100, "% p.a. (net ", dollar(as.numeric(propAprec), prefix = "$"), " total after 3% sale cost over ", years, " years)\n",
+	  "Inflation on rent/rates/insurance/maintenance: ", inflation*100, "% p.a.\n",
+	  "Total carry = ", dollar(as.numeric(totalCarry), prefix = "$"), ")\n",
+	  "Missed market gains  = ", dollar(as.numeric(QQQgains), prefix = "$"), " total over ", years, " years\n",
+	  "Net-net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), " total over ", years, " years\n"
+  )
+  if(isTRUE(verbose) && years <= 20 && years > 1){
+    cashflowTable = data.frame(
+      Year        = 1:years,
+      Carry       = dollar(as.numeric(annualCarry[1:years]), accuracy = 1),
+      Rent        = dollar(as.numeric(rentAnnual[1:years]), accuracy = 1),
+      Rates       = dollar(as.numeric(ratesAnnual[1:years]), accuracy = 1),
+      Insurance   = dollar(as.numeric(insuranceAnnual[1:years]), accuracy = 1),
+      Maintenance = dollar(as.numeric(maintenanceAnnual[1:years]), accuracy = 1)
+    )  
+    print(knitr::kable(cashflowTable, align = "r"))
+  }
+
+  schedule = data.frame(year=1:years, carry=annualCarry, rent=rentAnnual, rates=ratesAnnual, insurance=insuranceAnnual, maintenance=maintenanceAnnual)
+  attr(netnetCostOfBuying, "schedule") = schedule
+  attr(netnetCostOfBuying, "totalCarry") = totalCarry
+  attr(netnetCostOfBuying, "flatCarry") = flatCarry
+  invisible(netnetCostOfBuying)
+}
+
+#' Compute the net present value of a future income stream.
+#' @description
+#' `fin_stock_valuation` uses the revenue, operating margin, expenses and PE to compute a market capitalization.
+#' Better to use a more powerful online site.
+#' @details
+#' Revenue stream is discounted back to a present day cash amount which is equivalent.
+#' @param income Value of expected recurring payment
+#' @param discount_rate Percent return to discount against (.05 = 5%)
+#' @param periods How many periods the stream delivers, e.g., 25 years of pension.
+#' @param symbol Currency symbol to use
+#' @return - value
+#' @export
+#' @family financial functions
+#' @seealso - [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
+#' @examples
+#' fin_value_NPV(27e3, .05, 25)
+#'
+fin_value_NPV <- function(income=27e3, discount_rate=.05, periods = 25, symbol = umx_set_dollar_symbol(silent=TRUE)) {	
+	cashflows   = rep(income, periods)
+	timePeriods = seq(1, periods)
+	discount_factors = 1/(1+discount_rate)^timePeriods
+	present_values = cashflows*discount_factors
+	pv = sum(present_values)
+	cat("\nBased on a discount rate of ", discount_rate*100, "%, an income of ", bucks(income, symbol, cat=TRUE), " for ", periods, " years, has a net present value of \n", sep="")
+	cat("\n", bucks(pv, symbol))
+	invisible(pv)
+}
+
+#' Compute the percent change needed to return to the original value after percent off (or on).
+#'
+#' @description
+#' Determine the percent change needed to "undo" an initial percent change. Has a plot function as well.
+#' If an amount of $100 has 20% added, what percent do we need to drop it by to return to the original value?
+#' 
+#' `fin_value_percent(20)` yields $100 increased by 20% = $120 (Percent to reverse = -17%)
+#' 
+#' @param percent Change in percent (enter 10 for 10%, not 0.1)
+#' @param value Principal
+#' @param symbol value units (default = "$")
+#' @param digits Rounding of results (default 2 places)
+#' @param plot Whether to plot the result (default TRUE)
+#' @param logY Whether to plot y axis as log (TRUE)
+#' @return - new value and change required to return to baseline.
+#' @export
+#' @family financial functions
+#' @seealso - [fin_value_interest()]
+#' @examples
+#' # Percent needed to return to original value after 10% taken off
+#' fin_value_percent(-10)
+#' # Percent needed to return to original value after 10% added on
+#' fin_value_percent(10)
+#' # Percent needed to return to original value after 50% off 34.50
+#' fin_value_percent(-50, value = 34.5)
+fin_value_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE, logY = TRUE) {
+	umx_aggregate()
+	percent  = percent/100
+	newValue = value * (1 + percent)
+	percent_to_reverse = (value/newValue) - 1
+	class(newValue) = 'percent'
+	attr(newValue, 'oldValue') = value
+	attr(newValue, 'percent')  = percent
+	attr(newValue, 'digits')   = digits
+	attr(newValue, 'symbol')   = symbol
+	attr(newValue, 'percent_to_reverse') = percent_to_reverse
+
+	if(plot){
+		plot(newValue, logY = logY)
+	}else{
+		return(newValue)
+	}
+}
+
+#' Print a percent object
+#'
+#' Print method for "percent" objects: e.g. [umx::fin_value_percent()].
+#' @param x percent object.
+#' @param ... further arguments passed to or from other methods.
+#' @return - invisible
+#' @seealso - [umx::fin_value_percent()]
+#' @method print percent
+#' @export
+#' @examples
+#' # Percent needed to return to original value after 10% off
+#' fin_value_percent(-10)
+#' # Percent needed to return to original value after 10% on
+#' fin_value_percent(10)
+#'
+#' # Percent needed to return to original value after 50% off 34.50
+#' fin_value_percent(-50, value = 34.5)
+#'
+print.percent <- function(x, ...) {
+	if(!is.null(attr(x, 'digits')) ){
+		digits = attr(x, 'digits')
+	}
+	oldValue = round(attr(x, 'oldValue'), digits)
+	percentChange  = attr(x, 'percent')
+	symbol   = attr(x, 'symbol')
+	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
+	dir = ifelse(percentChange < 0, "decreased", "increased")
+
+	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
+}
+
+#' Plot a percent change graph
+#'
+#' Plot method for "percent" objects: e.g. [umx::fin_value_percent()].
+#' @param x percent object.
+#' @param ... further arguments passed to or from other methods.
+#' @return - invisible
+#' @seealso - [umx::fin_value_percent()]
+#' @method plot percent
+#' @export
+#' @examples
+#' # Percent needed to return to original value after 10% off
+#' fin_value_percent(-10)
+#' # Percent needed to return to original value after 10% on
+#' tmp = fin_value_percent(10)
+#' plot(tmp)
+#'
+#' # Percent needed to return to original value after 50% off 34.50
+#' fin_value_percent(-50, value = 34.5, logY = FALSE)
+#'
+plot.percent <- function(x, ...) {
+	tmp = list(...) # pull logY if passed in
+	logY = tmp$logY
+	symbol   = attr(x, 'symbol')
+	digits   = attr(x, 'digits')
+	oldValue = round(attr(x, 'oldValue'), digits)
+	percentChange  = attr(x, 'percent')	
+	percent_to_reverse = round(attr(x, 'percent_to_reverse'), digits)
+	dir = ifelse(percentChange < 0, "decreased", "increased")
+	fnReversePercent <- function(x) {
+		# 1/(1+.1)
+		percentOn = x/100
+		newValue = (1 + percentOn)
+		percent_to_reverse = 1-(1/newValue)
+		return(-percent_to_reverse*100)
+	}
+	if(percentChange > 0){
+		p = ggplot(data.frame(x = c(0, 90)), aes(x))
+		lab = paste0(round(percentChange*100, 2), "% on = ", round(percent_to_reverse * 100, 2), "% off", sep = "")
+		labXpos = 50
+		labYpos = -20
+		logY = FALSE
+	} else {
+		p = ggplot(data.frame(x = c(-90, 0)), aes(x))
+		lab = paste0(round(percentChange*100, 2), "% off = ", round(percent_to_reverse * 100, 2), "% on", sep = "")
+		labXpos = -50
+		labYpos = 700
+	}
+	if(is.null(logY)||!(logY)){
+		p = p + ggplot2::scale_y_continuous(n.breaks = 8) + ggplot2::scale_x_continuous(n.breaks = 10)
+		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = labYpos, color= "grey")
+		# hor & vert
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100, y=percent_to_reverse*100, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y=-10, yend=percent_to_reverse*100, alpha=.5, color = "lightgrey")
+	} else {
+		p = p + ggplot2::scale_y_continuous(n.breaks = 8, trans="log10") + ggplot2::scale_x_continuous(n.breaks = 10) 
+		p = p + cowplot::draw_label(lab, vjust = 1, hjust = .5, x = labXpos, y = log10(labYpos), color= "grey")
+		# hor & vert
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=-100             , y= log10(percent_to_reverse*100), yend= log10(percent_to_reverse*100), alpha=.5, color = "lightgrey")
+		p = p + ggplot2::geom_segment(x = percentChange*100, xend=percentChange*100, y= -10, yend= log10(percent_to_reverse*100), alpha= .5, color = "lightgrey")
+	}
+	p = p + ggplot2::stat_function(fun = fnReversePercent, color= "lightblue")
+	p = p + labs(x = "Percent change", y = "Percent change to reverse", title = paste0(round(percentChange*100, 2), "% ", ifelse(percentChange>0, "on ", "off "), oldValue, " = ", (1+percentChange)*oldValue))
+	p = p + cowplot::theme_cowplot(font_size = 11)
+	print(p)
+	cat(symbol, oldValue, " ", dir , " by ", percentChange*100, "% = ", symbol, x, " (Percent to reverse = ", percent_to_reverse*100, "%)", sep="")
+	invisible(p)
+}
+
+#' Set the symbol for money
+#'
+#' Set umx_set_dollar_symbol (used in e.g. [fin_value_interest()]
+#'
+#' @param umx.dollar.symbol symbol for money calculations.
+#' @param silent If TRUE, no message will be printed.
+#' @return - Current umx.dollar.symbol
+#' @export
+#' @family Get and set
+#' @examples
+#' library(umx)
+#' umx_set_dollar_symbol() # show current state
+#' old = umx_set_dollar_symbol(silent=TRUE) # store existing value
+#' fin_value_interest(100)
+#' umx_set_dollar_symbol(old)    # reinstate
+umx_set_dollar_symbol <- function(umx.dollar.symbol = NULL, silent = FALSE) {
+	if(is.null(umx.dollar.symbol)) {
+		if(!silent){ message("Current format is ", omxQuotes(getOption("umx.dollar.symbol"))	) }
+		invisible(getOption("umx.dollar.symbol"))
+	} else {
+		options("umx.dollar.symbol" = umx.dollar.symbol)
+	}
+}
+
+#' Print a money object
+#'
+#' @description Print function for "money" objects, e.g. [fin_value_interest()].
+#'
+#' @aliases bucks print
+#' @param x money object.
+#' @param symbol Default prefix if not set.
+#' @param big.mark option defaulting to ","
+#' @param decimal.mark option defaulting to "."
+#' @param trim option defaulting to TRUE
+#' @param largest_with_cents option defaulting to 1e+05
+#' @param negative_parens option defaulting to "hyphen"
+#' @param ... further arguments passed to or from other methods. also cat =F to return string
+#' @return - invisible
+#' @seealso - [umx::fin_value_percent()], [umx::fin_value_interest()], [scales::dollar()]
+# #' @family print
+#' @export
+#' @examples
+#' bucks(100 * 1.05^32)
+#' fin_value_interest(deposits = 20e3, interest = 0.07, yrs = 20)
+#'
+bucks <- function(x, symbol = umx_set_dollar_symbol(silent=TRUE), big.mark = ",", decimal.mark = ".", trim = TRUE, largest_with_cents = 1e+05, negative_parens = c("hyphen", "minus", "parens"), ...) {
+	dot.items = list(...) # grab all the dot items cat
+	cat = ifelse(is.null(dot.items[["cat"]]), TRUE, dot.items[["cat"]])
+	if(is.null(dot.items[["cat"]])){
+		cat = TRUE
+	} else {
+		cat = FALSE
+		dot.items[["cat"]] = NULL
+	}
+
+	if(!is.null(attr(x, 'symbol')) ){
+		symbol = attr(x, 'symbol')
+	}
+	formatted = scales::dollar(as.numeric(x), prefix = symbol, big.mark = big.mark, decimal.mark = decimal.mark, trim =trim, largest_with_cents = largest_with_cents, style_negative = negative_parens, ...)
+	if(cat){
+		cat(formatted)
+	} else {
+		formatted
+	}
+}
+
+#' @export
+#' @method print money
+print.money <- bucks
 

@@ -4,13 +4,11 @@
 #' `fin_resolveVolatility` looks up the implied volatility of a ticker from its option chain
 #' closest to the target expiry and strike. If the retrieved IV is stale/zero (< 1%),
 #' it falls back to calculating the 90-day Historical Volatility (HV) of the stock.
-#'
 #' @param impliedVol Either a numeric value (returned directly) or a character stock symbol.
 #' @param strikePrice The strike price of the option.
 #' @param daysToExpiry The number of days to expiration.
 #' @return A numeric volatility value.
 #' @export
-
 fin_resolveVolatility <- function(impliedVol, strikePrice, daysToExpiry) {
   if (!is.character(impliedVol)) {
     return(impliedVol)
