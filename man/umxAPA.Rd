@@ -21,7 +21,8 @@ umxAPA(
   means = TRUE,
   suffix = "",
   caption = NA,
-  cols = NA
+  cols = NA,
+  stars = TRUE
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 \item{caption}{Optional caption for html/markdown tables. \code{NA} (default) auto-generates "Effects on y of a, b, and c" from \code{formula(obj)} for \code{lm}/\code{glm}; \code{NULL} suppresses caption; a string uses that text.}
 
 \item{cols}{Optional, pass in a list of column names when using umxAPA with a dataframe input.}
+
+\item{stars}{Whether to append significance stars to p-values ("\emph{" p < .05, "\strong{" p < .01, "}}" p < .001). Default \code{TRUE} (APA-7 table standard: * p < .05, ** p < .01, *** p < .001; set \code{stars=FALSE} to suppress stars; enable for reviewers who request them).}
 }
 \value{
 \itemize{

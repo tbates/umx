@@ -17,21 +17,21 @@
 }
 }
 \description{
-Plot method for "percent" objects: e.g. \code{\link[=fin_percent]{fin_percent()}}.
+Plot method for "percent" objects: e.g. \code{\link[=fin_value_percent]{fin_value_percent()}}.
 }
 \examples{
 # Percent needed to return to original value after 10\% off
-fin_percent(-10)
+fin_value_percent(-10)
 # Percent needed to return to original value after 10\% on
-tmp = fin_percent(10)
+tmp = fin_value_percent(10)
 plot(tmp)
 
 # Percent needed to return to original value after 50\% off 34.50
-fin_percent(-50, value = 34.5, logY = FALSE)
+fin_value_percent(-50, value = 34.5, logY = FALSE)
 
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}
+\item \code{\link[=fin_value_percent]{fin_value_percent()}}
 }
 }

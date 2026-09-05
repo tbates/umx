@@ -39,15 +39,15 @@ bucks(
 }
 }
 \description{
-Print function for "money" objects, e.g. \code{\link[=fin_interest]{fin_interest()}}.
+Print function for "money" objects, e.g. \code{\link[=fin_value_interest]{fin_value_interest()}}.
 }
 \examples{
 bucks(100 * 1.05^32)
-fin_interest(deposits = 20e3, interest = 0.07, yrs = 20)
+fin_value_interest(deposits = 20e3, interest = 0.07, yrs = 20)
 
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}, \code{\link[=fin_interest]{fin_interest()}}, \code{\link[scales:dollar]{scales::dollar()}}
+\item \code{\link[=fin_value_percent]{fin_value_percent()}}, \code{\link[=fin_value_interest]{fin_value_interest()}}, \code{\link[scales:dollar]{scales::dollar()}}
 }
 }

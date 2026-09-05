@@ -17,20 +17,20 @@
 }
 }
 \description{
-Print method for "percent" objects: e.g. \code{\link[=fin_percent]{fin_percent()}}.
+Print method for "percent" objects: e.g. \code{\link[=fin_value_percent]{fin_value_percent()}}.
 }
 \examples{
 # Percent needed to return to original value after 10\% off
-fin_percent(-10)
+fin_value_percent(-10)
 # Percent needed to return to original value after 10\% on
-fin_percent(10)
+fin_value_percent(10)
 
 # Percent needed to return to original value after 50\% off 34.50
-fin_percent(-50, value = 34.5)
+fin_value_percent(-50, value = 34.5)
 
 }
 \seealso{
 \itemize{
-\item \code{\link[=fin_percent]{fin_percent()}}
+\item \code{\link[=fin_value_percent]{fin_value_percent()}}
 }
 }

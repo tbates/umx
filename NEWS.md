@@ -1,4 +1,8 @@
 ## dev
+* NEW: `umxGSEM_dl_tutorial_files()` downloads the IBG/GenomicSEM ~45 MB tutorial pack (1k-SNP SCZ/BIP/MDD, 1000G subset, `w_hm3.snplist`, `eur_w_ld_chr/`) into `tools::R_user_dir("umx", "data")/GSEM_tutorial`. Production HapMap3 / Alkes LD scores / 1000G plink are documented, not auto-fetched. Removed `umxGSEM_dl_RefList`.
+* FIXED: `umxGSEM_munge` maps columns per file (tutorial BIP `snpid`/`pval` vs SCZ `SNP`/`P`). `\dontrun` example uses `umxGSEM_dl_tutorial_files()`.
+* NEW: `umxGSEM_ldsc()` calls OpenMx `imxLDSC` on munged `.sumstats.gz` and returns a labeled covstruc (`var_*` / `poly_*_*`) for [umxGSEM()].
+* FIXED: `umxGSEM` string parse uses a PD identity named by traits, not raw `S`. WLS still gets the real (possibly smoothed) `S`/`V`.
 * NEW: `umxACE_GLM` Cholesky on `mxFitFunctionGLM` (`nVar`-general; MZ Laplace dimension `4 * nVar`). 3-trait Poisson recovers a diagonals / `a_r2c1` on eta. `plot()` / `umxPlotACE_GLM` is the compact a/c/e diagram (printed e is chol(ee'+D)).
 	* Binomial `e` diagonal fixed at 1 (scale). `trials=` / per-row `n` columns are not implemented (Bernoulli only; no beta-binomial).
 	* Poisson recovered a,c,e on eta. Hessian/SEs left off: n=50 Poisson ACE Hessian not PD (SEs NA); n=200 SEs finite but a/c SEs ~1. Family-score SEs: `mxComputeOnce('fitfunction', 'information', 'meat')` then `mxComputeStandardError()`. 

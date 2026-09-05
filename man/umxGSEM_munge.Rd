@@ -21,7 +21,7 @@ umxGSEM_munge(
 \arguments{
 \item{files}{A character vector of summary statistics files to munge.}
 
-\item{hm3}{Path to the HapMap3 SNP reference list (e.g., as returned by \code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}}).}
+\item{hm3}{Path to the HapMap3 SNP reference list (e.g. \verb{$hm3} from \code{\link[=umxGSEM_dl_tutorial_files]{umxGSEM_dl_tutorial_files()}}, or a production \code{w_hm3.snplist}).}
 
 \item{Ns}{A numeric vector of sample sizes (one per file). If a single value is provided, it will be replicated for all files.}
 
@@ -47,9 +47,14 @@ A character vector of paths to the munged files.
 \description{
 \code{umxGSEM_munge} allows you to format and filter summary statistics files
 for Genomic SEM / LDSC using the high-speed OpenMx C++ munging engine.
-munge creates the *.sumstats.gz files for \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}}
+munge creates the *.sumstats.gz files for \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}}.
 
-You first need to run umxGSEM_dl_RefList()] to grab the SNP ref list if oyu have not already.
+For a tutorial run, \code{\link[=umxGSEM_dl_tutorial_files]{umxGSEM_dl_tutorial_files()}} supplies 1k-SNP sumstats plus \code{w_hm3.snplist}.
+For production, download full consortium sumstats and gunzip the Zenodo HapMap3 list
+(\verb{https://zenodo.org/records/7773502/files/w_hm3.snplist.gz}). Local ldsc also needs
+Alkes EUR LD scores (\verb{https://alkesgroup.broadinstitute.org/LDSCORE/eur_w_ld_chr.tar.bz2});
+skip that if you already have a covstruc such as \link{Psych_LDSC}. 1000G EUR plink (~10-20 GB)
+is only required if sumstats lack allele frequency and you need an FRQ filter.
 }
 \details{
 umxGSEM_munge will intelligently search for synonyms for heading names:
@@ -62,6 +67,19 @@ effect: effect, or, beta, logor, est, estimate
 note: Ensure that the summary statistics are full, not "23&me" style "top x thousand SNPs".
 Nor just pruned SNPs.
 }
+\examples{
+\dontrun{
+tut = umxGSEM_dl_tutorial_files()
+umxGSEM_munge(
+  files = tut$sumstats,
+  hm3 = tut$hm3,
+  Ns = c(105318, 16731, 173005),
+  trait.names = c("SCZ", "BIP", "MDD"),
+  output_dir = tut$dir,
+  overwrite = TRUE
+)
+}
+}
 \seealso{
 Other GSEM:
 \code{\link{Anthro_LDSC}},
@@ -69,7 +87,7 @@ Other GSEM:
 \code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
-\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_dl_tutorial_files]{umxGSEM_dl_tutorial_files()}},
 \code{\link[=umxGSEM_label_ldsc]{umxGSEM_label_ldsc()}},
 \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_std]{umxGSEM_std()}},

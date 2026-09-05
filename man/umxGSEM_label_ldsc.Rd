@@ -54,7 +54,7 @@ Other GSEM:
 \code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
-\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_dl_tutorial_files]{umxGSEM_dl_tutorial_files()}},
 \code{\link[=umxGSEM_ldsc]{umxGSEM_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
 \code{\link[=umxGSEM_std]{umxGSEM_std()}},

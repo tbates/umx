@@ -17,13 +17,13 @@ umx_set_dollar_symbol(umx.dollar.symbol = NULL, silent = FALSE)
 }
 }
 \description{
-Set umx_set_dollar_symbol (used in e.g. \code{\link[=fin_interest]{fin_interest()}}
+Set umx_set_dollar_symbol (used in e.g. \code{\link[=fin_value_interest]{fin_value_interest()}}
 }
 \examples{
 library(umx)
 umx_set_dollar_symbol() # show current state
 old = umx_set_dollar_symbol(silent=TRUE) # store existing value
-fin_interest(100)
+fin_value_interest(100)
 umx_set_dollar_symbol(old)    # reinstate
 }
 \seealso{

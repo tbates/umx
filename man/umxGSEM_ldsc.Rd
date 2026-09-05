@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxGSEM.R
 \name{umxGSEM_ldsc}
 \alias{umxGSEM_ldsc}
-\title{High-performance LD score regression (C++/OpenMP)}
+\title{Multivariate LD score regression (OpenMx C++ engine)}
 \usage{
 umxGSEM_ldsc(
   traits,
@@ -21,72 +21,87 @@ umxGSEM_ldsc(
 )
 }
 \arguments{
-\item{traits}{Character vector of paths to munged \code{.sumstats.gz} files.}
+\item{traits}{Character vector of paths to munged \code{.sumstats.gz} files
+(the return value of \code{\link[=umxGSEM_munge]{umxGSEM_munge()}}).}
 
-\item{sample.prev}{Numeric vector of sample prevalences (proportion of cases).
-Use \code{NA} or \code{0.5} for continuous traits.}
+\item{sample.prev}{Numeric vector of sample prevalences (cases / N).
+Use \code{NA} for continuous traits.}
 
-\item{population.prev}{Numeric vector of population prevalences (for liability
-scale transformation of binary traits). Use \code{NA} for continuous traits.}
+\item{population.prev}{Numeric vector of population prevalences for
+liability-scale conversion. Use \code{NA} for continuous traits.}
 
-\item{ld}{Path to folder containing LD score files (e.g. \verb{eur_w_ld_chr/}).}
+\item{ld}{Path to folder containing LD score files (e.g. \verb{eur_w_ld_chr/},
+or \verb{$ld} from \code{\link[=umxGSEM_dl_tutorial_files]{umxGSEM_dl_tutorial_files()}}).}
 
-\item{wld}{Path to folder containing weight LD score files.}
+\item{wld}{Path to weight LD score files. Ignored when \code{sep_weights = FALSE}
+(then \code{ld} is used for both, matching GenomicSEM).}
 
-\item{trait.names}{Optional character vector of names for the traits. If \code{NULL},
-names are taken from the file names.}
+\item{trait.names}{Optional names for the traits (default: munged file
+basenames with \code{.sumstats.gz} stripped).}
 
-\item{sep_weights}{Logical. Whether to use separate weight LD scores (default \code{FALSE}).}
+\item{sep_weights}{If \code{TRUE}, read regression weights from \code{wld} instead of \code{ld}.}
 
-\item{chr}{Number of chromosomes to use (default = 22).}
+\item{chr}{Highest chromosome to include when \code{select = FALSE} (default 22).}
 
-\item{n.blocks}{Number of jackknife blocks to use when estimating the sampling
-covariance matrix \code{V} (default = 200).}
+\item{n.blocks}{Jackknife blocks for \code{V} (default 200). Raised automatically
+when K > 18, as in GenomicSEM.}
 
-\item{ldsc.log}{Optional path to write an LDSC log file. If \code{NULL}, no log is written.}
+\item{ldsc.log}{Optional path prefix for a short text log. If \code{NULL}, no log
+file is written (unlike GenomicSEM, which always writes one).}
 
-\item{stand}{Logical. If \code{TRUE}, also returns standardized results (genetic
-correlations and their sampling covariance matrix).}
+\item{stand}{If \code{TRUE}, also return \code{S_Stand} / \code{V_Stand} (genetic correlations
+and their sampling covariance).}
 
-\item{select}{Logical or numeric. Passed through to control SNP selection
-(see GenomicSEM documentation).}
+\item{select}{Chromosome subset: \code{FALSE} (use \code{1:chr}), \code{"ODD"}, \code{"EVEN"}, or
+a numeric vector of chromosome numbers.}
 
-\item{chisq.max}{Optional numeric. Maximum chi-square value allowed when
-estimating the LD score regression (used for outlier control).}
+\item{chisq.max}{Optional chi-square outlier cutoff (\code{NA} = engine default).}
 }
 \value{
-A list with the following components:
-\describe{
-\item{S}{Genetic covariance matrix (heritabilities on diagonal).}
-\item{V}{Sampling covariance matrix of the elements of \code{S}.}
-\item{I}{Matrix of LD score regression intercepts.}
-\item{N}{Effective sample sizes used.}
-\item{m}{Number of SNPs used in the regression.}
-\item{...}{Additional components depending on \code{stand}.}
-}
-If \code{stand = TRUE}, the list also contains the genetic correlation matrix
-and its sampling covariance matrix.
+A list with \code{S}, \code{V}, \code{I}, \code{N}, \code{m} (and \code{S_Stand}/\code{V_Stand} if \code{stand}).
+Ready for \code{\link[=umxGSEM]{umxGSEM()}} / \code{\link[=umxGSEM_label_ldsc]{umxGSEM_label_ldsc()}}.
 }
 \description{
-A fast, native reimplementation of multivariate LD score regression
-using C++ and OpenMP. Designed to be compatible with
-GenomicSEM \code{ldsc()} output while offering significantly better
-performance, especially with larger numbers of traits.
+Runs multivariate LD score regression on munged \code{.sumstats.gz} files from
+\code{\link[=umxGSEM_munge]{umxGSEM_munge()}} via OpenMx \code{imxLDSC}. The return value is a umx covstruc:
+\code{S} and \code{I} named by trait, \code{V} / \code{N} named with OpenMx residual labels
+(\code{var_SCZ}, \code{poly_BIP_SCZ}, ...) so it can be passed to \code{\link[=umxGSEM]{umxGSEM()}} as
+\code{covstruc}.
 }
 \details{
-S is A symmetric KxK matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h
-2). The off-diagonals contain the genetic covariances.
+Tutorial 1k-SNP files will run but the estimates are not usable (too few
+SNPs). For a real structural model use full-sumstat ldsc or \link{Psych_LDSC}.
 
-V is A symmetric MxM sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
-It contains the sampling variances of your heritabilities and genetic covariances on the diagonal,
-and their sampling covariances on the off-diagonal.
-
-I is a KxK matrix containing the LDSC intercepts
-(cross-trait intercepts on the off-diagonal, single-trait intercepts on the diagonal)
-used to quantify sample overlap and population stratification.
+\code{S} is K x K genetic covariance (heritabilities on the diagonal).
+\code{V} is the sampling covariance of vech(\code{S}), length K(K+1)/2.
+\code{I} holds LDSC intercepts (sample overlap / stratification).
+Binary traits: supply both \code{sample.prev} and \code{population.prev} for liability
+scaling. Continuous traits: \code{NA} (a lone \code{0.5} with \code{population.prev = NA}
+is treated as continuous).
+}
+\examples{
+\dontrun{
+tut = umxGSEM_dl_tutorial_files()
+ss = umxGSEM_munge(
+  files = tut$sumstats, hm3 = tut$hm3,
+  Ns = c(105318, 16731, 173005),
+  trait.names = c("SCZ", "BIP", "MDD"),
+  output_dir = tut$dir, overwrite = TRUE
+)
+# Pedagogical only: ~1k SNPs. Use data(Psych_LDSC) for a real model.
+covstruc = umxGSEM_ldsc(
+  traits = ss,
+  sample.prev = c(0.39, 0.45, 0.35),
+  population.prev = c(0.01, 0.01, 0.16),
+  ld = tut$ld, wld = tut$ld,
+  trait.names = c("SCZ", "BIP", "MDD"),
+  n.blocks = 20
+)
+umxSummary(covstruc)
+}
 }
 \seealso{
-ldsc() in the GenomicSEM package
+\code{\link[=umxGSEM_munge]{umxGSEM_munge()}}, \code{\link[=umxGSEM]{umxGSEM()}}, \link{Psych_LDSC}
 
 Other GSEM:
 \code{\link{Anthro_LDSC}},
@@ -94,7 +109,7 @@ Other GSEM:
 \code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link[=umxGSEM]{umxGSEM()}},
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}},
-\code{\link[=umxGSEM_dl_RefList]{umxGSEM_dl_RefList()}},
+\code{\link[=umxGSEM_dl_tutorial_files]{umxGSEM_dl_tutorial_files()}},
 \code{\link[=umxGSEM_label_ldsc]{umxGSEM_label_ldsc()}},
 \code{\link[=umxGSEM_munge]{umxGSEM_munge()}},
 \code{\link[=umxGSEM_std]{umxGSEM_std()}},
