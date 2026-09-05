@@ -23,118 +23,343 @@ umx_CheckProject <- function(project_path = "/path/to/my/project") {
 	# TODO: is the SNP file done?
   }
 
-#' High-performance LD score regression (C++/OpenMP)
+#' Multivariate LD score regression (OpenMx C++ engine)
 #'
-#' A fast, native reimplementation of multivariate LD score regression
-#' using C++ and OpenMP. Designed to be compatible with
-#' GenomicSEM `ldsc()` output while offering significantly better
-#' performance, especially with larger numbers of traits.
+#' Runs multivariate LD score regression on munged `.sumstats.gz` files from
+#' [umxGSEM_munge()] via OpenMx `imxLDSC`. The return value is a umx covstruc:
+#' `S` and `I` named by trait, `V` / `N` named with OpenMx residual labels
+#' (`var_SCZ`, `poly_BIP_SCZ`, ...) so it can be passed to [umxGSEM()] as
+#' `covstruc`.
+#'
+#' Tutorial 1k-SNP files will run but the estimates are not usable (too few
+#' SNPs). For a real structural model use full-sumstat ldsc or [Psych_LDSC].
 #'
 #' @details
-#' S is A symmetric KxK matrix (where K is the number of traits). The diagonal contains the genetic variances (heritabilities, h 
-#' 2). The off-diagonals contain the genetic covariances.
-#' 
-#' V is A symmetric MxM sampling covariance matrix, where M= (K*(K+1))/2 (the number of unique elements in S).
-#' It contains the sampling variances of your heritabilities and genetic covariances on the diagonal, 
-#' and their sampling covariances on the off-diagonal.
-#' 
-#' I is a KxK matrix containing the LDSC intercepts 
-#' (cross-trait intercepts on the off-diagonal, single-trait intercepts on the diagonal) 
-#' used to quantify sample overlap and population stratification.
-#' 
-#' @param traits Character vector of paths to munged `.sumstats.gz` files.
-#' @param sample.prev Numeric vector of sample prevalences (proportion of cases).
-#'   Use `NA` or `0.5` for continuous traits.
-#' @param population.prev Numeric vector of population prevalences (for liability
-#'   scale transformation of binary traits). Use `NA` for continuous traits.
-#' @param ld Path to folder containing LD score files (e.g. `eur_w_ld_chr/`).
-#' @param wld Path to folder containing weight LD score files.
-#' @param trait.names Optional character vector of names for the traits. If `NULL`,
-#'   names are taken from the file names.
-#' @param sep_weights Logical. Whether to use separate weight LD scores (default `FALSE`).
-#' @param chr Number of chromosomes to use (default = 22).
-#' @param n.blocks Number of jackknife blocks to use when estimating the sampling
-#'   covariance matrix `V` (default = 200).
-#' @param ldsc.log Optional path to write an LDSC log file. If `NULL`, no log is written.
-#' @param stand Logical. If `TRUE`, also returns standardized results (genetic
-#'   correlations and their sampling covariance matrix).
-#' @param select Logical or numeric. Passed through to control SNP selection
-#'   (see GenomicSEM documentation).
-#' @param chisq.max Optional numeric. Maximum chi-square value allowed when
-#'   estimating the LD score regression (used for outlier control).
+#' `S` is K x K genetic covariance (heritabilities on the diagonal).
+#' `V` is the sampling covariance of vech(`S`), length K(K+1)/2.
+#' `I` holds LDSC intercepts (sample overlap / stratification).
+#' Binary traits: supply both `sample.prev` and `population.prev` for liability
+#' scaling. Continuous traits: `NA` (a lone `0.5` with `population.prev = NA`
+#' is treated as continuous).
 #'
-#' @return A list with the following components:
-#' \describe{
-#'   \item{S}{Genetic covariance matrix (heritabilities on diagonal).}
-#'   \item{V}{Sampling covariance matrix of the elements of `S`.}
-#'   \item{I}{Matrix of LD score regression intercepts.}
-#'   \item{N}{Effective sample sizes used.}
-#'   \item{m}{Number of SNPs used in the regression.}
-#'   \item{...}{Additional components depending on `stand`.}
-#' }
-#' If `stand = TRUE`, the list also contains the genetic correlation matrix
-#' and its sampling covariance matrix.
+#' @param traits Character vector of paths to munged `.sumstats.gz` files
+#'   (the return value of [umxGSEM_munge()]).
+#' @param sample.prev Numeric vector of sample prevalences (cases / N).
+#'   Use `NA` for continuous traits.
+#' @param population.prev Numeric vector of population prevalences for
+#'   liability-scale conversion. Use `NA` for continuous traits.
+#' @param ld Path to folder containing LD score files (e.g. `eur_w_ld_chr/`,
+#'   or `$ld` from [umxGSEM_dl_tutorial_files()]).
+#' @param wld Path to weight LD score files. Ignored when `sep_weights = FALSE`
+#'   (then `ld` is used for both, matching GenomicSEM).
+#' @param trait.names Optional names for the traits (default: munged file
+#'   basenames with `.sumstats.gz` stripped).
+#' @param sep_weights If `TRUE`, read regression weights from `wld` instead of `ld`.
+#' @param chr Highest chromosome to include when `select = FALSE` (default 22).
+#' @param n.blocks Jackknife blocks for `V` (default 200). Raised automatically
+#'   when K > 18, as in GenomicSEM.
+#' @param ldsc.log Optional path prefix for a short text log. If `NULL`, no log
+#'   file is written (unlike GenomicSEM, which always writes one).
+#' @param stand If `TRUE`, also return `S_Stand` / `V_Stand` (genetic correlations
+#'   and their sampling covariance).
+#' @param select Chromosome subset: `FALSE` (use `1:chr`), `"ODD"`, `"EVEN"`, or
+#'   a numeric vector of chromosome numbers.
+#' @param chisq.max Optional chi-square outlier cutoff (`NA` = engine default).
+#' @return A list with `S`, `V`, `I`, `N`, `m` (and `S_Stand`/`V_Stand` if `stand`).
+#'   Ready for [umxGSEM()] / [umxGSEM_label_ldsc()].
 #' @export
+#' @md
 #' @family GSEM
-#' @seealso ldsc() in the GenomicSEM package
-umxGSEM_ldsc <- function (traits, sample.prev, population.prev, ld, wld, trait.names = NULL, 
-    sep_weights = FALSE, chr = 22, n.blocks = 200, ldsc.log = NULL, 
-    stand = FALSE, select = FALSE, chisq.max = NA) {
-	
-	# TODO do the light-weight checks here to match GenomicSEM::ldsc
-	# TODO call OpenMx imxLDSC
-}
-
-
-
-#' Download HapMap3 Reference SNP list
-#'
-#' @description
-#' Helper function to download the HapMap3 SNP reference list (`w_hm3.snplist`) needed for munging
-#' summary statistics in Genomic SEM / LDSC.
-#'
-#' @details TBD
-#'
-#' @param project_path Path to the directory where the SNP list should be saved. Defaults to the current working directory.
-#' @param path2snplist URL to download the HapMap3 SNP list. Defaults to the bulik LDSC repository.
-#' @param overwrite Whether to force overwrite/re-download if the file already exists (defaults to FALSE).
-#' @return Absolute path to the downloaded file.
-#' @export
-#' @family GSEM
-
+#' @seealso [umxGSEM_munge()], [umxGSEM()], [Psych_LDSC]
 #' @examples
 #' \dontrun{
-#' project_path = "~/your/project"
-#' umxGSEM_dl_RefList(project_path = project_path)
+#' tut = umxGSEM_dl_tutorial_files()
+#' ss = umxGSEM_munge(
+#'   files = tut$sumstats, hm3 = tut$hm3,
+#'   Ns = c(105318, 16731, 173005),
+#'   trait.names = c("SCZ", "BIP", "MDD"),
+#'   output_dir = tut$dir, overwrite = TRUE
+#' )
+#' # Pedagogical only: ~1k SNPs. Use data(Psych_LDSC) for a real model.
+#' covstruc = umxGSEM_ldsc(
+#'   traits = ss,
+#'   sample.prev = c(0.39, 0.45, 0.35),
+#'   population.prev = c(0.01, 0.01, 0.16),
+#'   ld = tut$ld, wld = tut$ld,
+#'   trait.names = c("SCZ", "BIP", "MDD"),
+#'   n.blocks = 20
+#' )
+#' umxSummary(covstruc)
 #' }
-umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://zenodo.org/records/7773502/files/w_hm3.snplist.gz",  overwrite = FALSE) {    
-	project_path = path.expand(project_path)
-	# Create directory if it doesn't exist
-	if (!dir.exists(project_path)) {
-		dir.create(project_path, showWarnings = FALSE, recursive = TRUE)
+umxGSEM_ldsc <- function(traits, sample.prev, population.prev, ld, wld, trait.names = NULL,
+	sep_weights = FALSE, chr = 22, n.blocks = 200, ldsc.log = NULL,
+	stand = FALSE, select = FALSE, chisq.max = NA) {
+
+	imxLDSCFun = get0("imxLDSC", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
+	if (is.null(imxLDSCFun)) {
+		stop("imxLDSC is not available in this OpenMx build. Install GenomicMx OpenMx (see install.OpenMx(\"GenomicMx\")).", call. = FALSE)
 	}
-	# Target is the decompressed file
-	dest_file = file.path(project_path, "w_hm3.snplist")
-	temp_gz   = file.path(tempdir(), "w_hm3.snplist.gz")
-    
-	# Logic: Only download/extract if missing or overwrite requested
-	if (overwrite || !file.exists(dest_file) || file.info(dest_file)$size == 0) {
-		message("Downloading and decompressing HapMap3 reference list...")        
-		# Download compressed file to temp
-		download.file(path2snplist, destfile = temp_gz, mode = "wb")
-		# Decompress to final destination
-		R.utils::gunzip(temp_gz, destname = dest_file, overwrite = TRUE, remove = TRUE)        
-		# Integrity check: Does it have the expected header?
-		header = colnames(data.table::fread(dest_file, nrows = 0))
-		if (!"SNP" %in% header) {
-		   stop("Downloaded file structure invalid. Expected 'SNP' column.")
-		}else{
-			message("Nice: File structure valid")
+	if (length(traits) < 2L) {
+		stop("umxGSEM_ldsc requires 2 or more munged sumstats files.", call. = FALSE)
+	}
+	traits = normalizePath(as.character(traits), mustWork = TRUE)
+	ld = normalizePath(path.expand(ld), mustWork = TRUE)
+	if (!file.exists(file.path(ld, "1.l2.ldscore.gz"))) {
+		stop("ld folder must contain 1.l2.ldscore.gz (got ", ld, ").", call. = FALSE)
+	}
+	if (isTRUE(sep_weights)) {
+		wld = normalizePath(path.expand(wld), mustWork = TRUE)
+	} else {
+		wld = ld
+	}
+	if (is.null(trait.names)) {
+		trait.names = gsub("\\.sumstats\\.gz$", "", basename(traits), ignore.case = TRUE)
+		trait.names = gsub("\\..*$", "", trait.names)
+	}
+	if (length(trait.names) != length(traits)) {
+		stop("trait.names must have the same length as traits.", call. = FALSE)
+	}
+	if (length(sample.prev) == 1L) {
+		sample.prev = rep(sample.prev, length(traits))
+	}
+	if (length(population.prev) == 1L) {
+		population.prev = rep(population.prev, length(traits))
+	}
+	if (length(sample.prev) != length(traits) || length(population.prev) != length(traits)) {
+		stop("sample.prev and population.prev must have length 1 or length(traits).", call. = FALSE)
+	}
+	sample.prev = as.numeric(sample.prev)
+	population.prev = as.numeric(population.prev)
+	for (i in seq_along(traits)) {
+		if (isTRUE(all.equal(sample.prev[i], 0.5)) && (is.na(population.prev[i]))) {
+			sample.prev[i] = NA_real_
+		}
+	}
+	nTraits = length(traits)
+	if (nTraits > 18L) {
+		minBlocks = as.integer(((nTraits + 1L) * (nTraits + 2L)) / 2L) + 1L
+		if (n.blocks < minBlocks) {
+			n.blocks = minBlocks
+			warning("n.blocks raised to ", n.blocks, " because K > 18 (GenomicSEM jackknife rule).", call. = FALSE)
+		}
+	}
+	selectUse = select
+	if (isFALSE(select) && !identical(as.integer(chr), 22L)) {
+		selectUse = seq_len(as.integer(chr))
+	}
+
+	res = imxLDSCFun(
+		traits = traits,
+		sample.prev = sample.prev,
+		population.prev = population.prev,
+		ld = ld,
+		wld = wld,
+		trait.names = as.character(trait.names),
+		n.blocks = as.integer(n.blocks),
+		stand = isTRUE(stand),
+		select = selectUse,
+		chisq.max = as.numeric(chisq.max)
+	)
+	res = umxGSEM_label_ldsc(res, overwrite = TRUE)
+	need = c("S", "V")
+	missing = need[!need %in% names(res)]
+	if (length(missing) > 0L) {
+		stop("imxLDSC return is missing: ", paste(missing, collapse = ", "), call. = FALSE)
+	}
+	if (!is.null(ldsc.log)) {
+		logFile = if (grepl("\\.log$", ldsc.log)) ldsc.log else paste0(ldsc.log, "_ldsc.log")
+		lines = c(
+			paste0("umxGSEM_ldsc  traits=", paste(trait.names, collapse = ",")),
+			paste0("n.blocks=", n.blocks, "  m=", if (!is.null(res$m)) res$m else NA),
+			paste0("S dim=", paste(dim(res$S), collapse = "x"),
+				"  V dim=", paste(dim(res$V), collapse = "x"))
+		)
+		writeLines(lines, logFile)
+	}
+	res
+}
+
+#' Download tutorial-scale Genomic SEM files
+#'
+#' @description
+#' Fetches the IBG / GenomicSEM practical pack (~45 MB): 1k-SNP SCZ/BIP/MDD
+#' sumstats, a tiny 1000G MAF table, HapMap3 `w_hm3.snplist`, and EUR LD scores
+#' (`eur_w_ld_chr/`). That is enough to run [umxGSEM_munge()] and see ldsc on a
+#' toy SNP list. It is **not** a production data installer.
+#'
+#' Files land in `tools::R_user_dir("umx", "data")/GSEM_tutorial` unless `path`
+#' is set. Shipped 1k-SNP tables are copied from the installed package when
+#' present; LD scores and `w_hm3.snplist` come from the umx GitHub Release tag
+#' `gsem-tutorial`. Existing files are left alone unless `overwrite = TRUE`.
+#'
+#' **ldsc on these SNPs is pedagogical.** About 1k variants will not recover
+#' sensible heritabilities. For a real structural model use [Psych_LDSC] /
+#' [Anthro_LDSC] (or a covstruc from full-sumstat ldsc).
+#'
+#' **Production files (do not use this helper):**
+#' * Full GWAS sumstats from the relevant consortium (not "top hits").
+#' * HapMap3 list: `https://zenodo.org/records/7773502/files/w_hm3.snplist.gz`
+#'   (gunzip to `w_hm3.snplist`; header must include `SNP`).
+#' * Local ldsc only: Alkes EUR LD scores
+#'   `https://alkesgroup.broadinstitute.org/LDSCORE/eur_w_ld_chr.tar.bz2`
+#'   (~500 MB -> ~1.2 GB) and `weights_hm3_noMHC.tgz` (~150 MB). Ancestry must
+#'   match the GWAS. Skip if you already have a covstruc.
+#' * 1000G EUR plink (~10-20 GB) only if sumstats lack allele frequency and you
+#'   need an FRQ filter in munge. GenomicSEM's 1000G MAF table is the usual GSEM
+#'   path, not bim/bed/bam.
+#'
+#' @param path Directory to write into. Default:
+#'   `file.path(tools::R_user_dir("umx", "data"), "GSEM_tutorial")`.
+#' @param overwrite If `TRUE`, re-copy shipped tables and re-download the
+#'   Release tarball even when files already exist. Default `FALSE`.
+#' @param url Tarball URL, or a path to a local `.tar.gz`. Default is the
+#'   `gsem-tutorial` Release asset on `tbates/umx`.
+#' @return A named list of absolute paths: `dir`, `hm3`, `ld`, `sumstats`
+#'   (character vector of three subset files), `ref`.
+#' @export
+#' @md
+#' @family GSEM
+#' @seealso [umxGSEM_munge()], [umxGSEM()], [umxGSEM_GWAS()], [Psych_LDSC]
+#' @examples
+#' \dontrun{
+#' tut = umxGSEM_dl_tutorial_files()
+#' umxGSEM_munge(tut$sumstats, hm3 = tut$hm3, trait.names = c("SCZ", "BIP", "MDD"),
+#'   Ns = c(105318, 16731, 173005), output_dir = tut$dir)
+#' data(Psych_LDSC)
+#' m1 = umxGSEM("g ~= SCZ + BIP + MDD", covstruc = Psych_LDSC)
+#' }
+umxGSEM_dl_tutorial_files <- function(path = NULL, overwrite = FALSE, url = "https://github.com/tbates/umx/releases/download/gsem-tutorial/umxGSEM_tutorial.tar.gz") {
+	if (is.null(path)) {
+		path = file.path(tools::R_user_dir("umx", "data"), "GSEM_tutorial")
+	}
+	path = path.expand(path)
+	if (!dir.exists(path)) {
+		dir.create(path, showWarnings = FALSE, recursive = TRUE)
+	}
+	path = normalizePath(path, mustWork = TRUE)
+
+	subsetNames = c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")
+	refName = "reference.1000G.subset.txt"
+	ldDir = file.path(path, "eur_w_ld_chr")
+	hm3File = file.path(ldDir, "w_hm3.snplist")
+	ldSentinel = file.path(ldDir, c("1.l2.ldscore.gz", "1.l2.M_5_50"))
+
+	shippedDir = system.file("developer", "GenomicSEM", package = "umx")
+	for (fn in c(subsetNames, refName)) {
+		dest = file.path(path, fn)
+		if (!overwrite && file.exists(dest) && file.info(dest)$size > 0) {
+			next
+		}
+		src = if (nzchar(shippedDir)) file.path(shippedDir, fn) else ""
+		if (nzchar(src) && file.exists(src)) {
+			ok = file.copy(src, dest, overwrite = TRUE)
+			if (!isTRUE(ok)) {
+				stop("Could not copy ", fn, " to ", dest, call. = FALSE)
+			}
+		}
+	}
+
+	ldReady = dir.exists(ldDir) && file.exists(hm3File) && isTRUE(file.info(hm3File)$size > 0) && all(file.exists(ldSentinel))
+	if (overwrite || !ldReady) {
+		localTar = file.exists(url)
+		if (localTar) {
+			message("Unpacking GSEM tutorial files from ", url)
+			tmpTar = url
+		} else {
+			message("Downloading GSEM tutorial files from ", url)
+			oldTimeout = getOption("timeout")
+			if (is.numeric(oldTimeout) && oldTimeout < 600) {
+				options(timeout = 600)
+				on.exit(options(timeout = oldTimeout), add = TRUE)
+			}
+			tmpTar = tempfile("umxGSEM_tutorial", fileext = ".tar.gz")
+			on.exit(unlink(tmpTar), add = TRUE)
+			dl = tryCatch(
+				suppressWarnings(utils::download.file(url, destfile = tmpTar, mode = "wb", quiet = FALSE)),
+				error = function(e) e
+			)
+			dlFail = inherits(dl, "error") || !identical(dl, 0L) || !file.exists(tmpTar) || isTRUE(file.info(tmpTar)$size < 1000)
+			if (dlFail) {
+				stop(
+					"Could not download the GSEM tutorial pack.\n",
+					"  URL: ", url, "\n",
+					"  Publish the asset on GitHub Release tag gsem-tutorial, or pass url= to a local tarball.\n",
+					if (inherits(dl, "error")) paste0("  ", conditionMessage(dl), "\n") else "",
+					call. = FALSE
+				)
+			}
+		}
+		untarDir = file.path(tempdir(), paste0("umxGSEM_tutorial_untar_", Sys.getpid()))
+		if (dir.exists(untarDir)) {
+			unlink(untarDir, recursive = TRUE)
+		}
+		dir.create(untarDir, recursive = TRUE)
+		on.exit(unlink(untarDir, recursive = TRUE), add = TRUE)
+		utils::untar(tmpTar, exdir = untarDir)
+		srcRoot = untarDir
+		nested = file.path(untarDir, "umxGSEM_tutorial")
+		if (dir.exists(nested)) {
+			srcRoot = nested
+		}
+		srcLd = file.path(srcRoot, "eur_w_ld_chr")
+		if (dir.exists(srcLd)) {
+			if (!dir.exists(ldDir)) {
+				dir.create(ldDir, recursive = TRUE)
+			}
+			ldFiles = list.files(srcLd, all.files = FALSE, no.. = TRUE)
+			for (fn in ldFiles) {
+				if (grepl("^6_old\\.", fn)) {
+					next
+				}
+				ok = file.copy(file.path(srcLd, fn), file.path(ldDir, fn), overwrite = TRUE)
+				if (!isTRUE(ok[1])) {
+					stop("Failed to install ", fn, " into ", ldDir, call. = FALSE)
+				}
+			}
+		}
+		for (fn in c(subsetNames, refName, "README.txt")) {
+			src = file.path(srcRoot, fn)
+			if (file.exists(src)) {
+				file.copy(src, file.path(path, fn), overwrite = TRUE)
+			}
 		}
 	} else {
-		message("HapMap3 reference list already exists: ", dest_file)
+		message("GSEM tutorial LD scores already present: ", ldDir)
 	}
-	return(normalizePath(dest_file, mustWork = TRUE))
+
+	ldReady = dir.exists(ldDir) && file.exists(hm3File) && isTRUE(file.info(hm3File)$size > 0) && all(file.exists(ldSentinel))
+	if (!ldReady) {
+		stop(
+			"Tutorial pack is incomplete after download. Need ",
+			paste(c(hm3File, ldSentinel), collapse = ", "),
+			call. = FALSE
+		)
+	}
+	hdr = readLines(hm3File, n = 1L, warn = FALSE)
+	hdrTok = unlist(strsplit(trimws(hdr), "[[:space:]]+"))
+	if (!"SNP" %in% hdrTok) {
+		stop("w_hm3.snplist header has no SNP column: ", hm3File, call. = FALSE)
+	}
+
+	sumstats = file.path(path, subsetNames)
+	refFile = file.path(path, refName)
+	missingSub = sumstats[!file.exists(sumstats)]
+	if (length(missingSub) > 0L || !file.exists(refFile)) {
+		stop(
+			"Tutorial sumstats/ref missing in ", path, ": ",
+			paste(basename(c(missingSub, if (!file.exists(refFile)) refFile else character(0))), collapse = ", "),
+			call. = FALSE
+		)
+	}
+
+	message("GSEM tutorial files in ", path)
+	list(
+		dir = path,
+		hm3 = normalizePath(hm3File, mustWork = TRUE),
+		ld = normalizePath(ldDir, mustWork = TRUE),
+		sumstats = normalizePath(sumstats, mustWork = TRUE),
+		ref = normalizePath(refFile, mustWork = TRUE)
+	)
 }
 
 
@@ -143,9 +368,14 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' @description
 #' `umxGSEM_munge` allows you to format and filter summary statistics files
 #' for Genomic SEM / LDSC using the high-speed OpenMx C++ munging engine.
-#' munge creates the *.sumstats.gz files for [umxGSEM_ldsc()]
-#' 
-#' You first need to run umxGSEM_dl_RefList()] to grab the SNP ref list if oyu have not already.
+#' munge creates the *.sumstats.gz files for [umxGSEM_ldsc()].
+#'
+#' For a tutorial run, [umxGSEM_dl_tutorial_files()] supplies 1k-SNP sumstats plus `w_hm3.snplist`.
+#' For production, download full consortium sumstats and gunzip the Zenodo HapMap3 list
+#' (`https://zenodo.org/records/7773502/files/w_hm3.snplist.gz`). Local ldsc also needs
+#' Alkes EUR LD scores (`https://alkesgroup.broadinstitute.org/LDSCORE/eur_w_ld_chr.tar.bz2`);
+#' skip that if you already have a covstruc such as [Psych_LDSC]. 1000G EUR plink (~10-20 GB)
+#' is only required if sumstats lack allele frequency and you need an FRQ filter.
 #'
 #' @details
 #' 
@@ -160,7 +390,7 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' Nor just pruned SNPs.
 #'
 #' @param files A character vector of summary statistics files to munge.
-#' @param hm3 Path to the HapMap3 SNP reference list (e.g., as returned by [umxGSEM_dl_RefList()]).
+#' @param hm3 Path to the HapMap3 SNP reference list (e.g. `$hm3` from [umxGSEM_dl_tutorial_files()], or a production `w_hm3.snplist`).
 #' @param Ns A numeric vector of sample sizes (one per file). If a single value is provided, it will be replicated for all files.
 #' @param trait.names A character vector of names for the traits. Defaults to the basenames of the files.
 #' @param info.filter Info score threshold filter (defaults to 0.9).
@@ -172,7 +402,20 @@ umxGSEM_dl_RefList <- function(project_path = getwd(),  path2snplist = "https://
 #' @param ... Additional arguments passed to OpenMx \code{imxMunge} when available (GenomicMx).
 #' @return A character vector of paths to the munged files.
 #' @export
+#' @md
 #' @family GSEM
+#' @examples
+#' \dontrun{
+#' tut = umxGSEM_dl_tutorial_files()
+#' umxGSEM_munge(
+#'   files = tut$sumstats,
+#'   hm3 = tut$hm3,
+#'   Ns = c(105318, 16731, 173005),
+#'   trait.names = c("SCZ", "BIP", "MDD"),
+#'   output_dir = tut$dir,
+#'   overwrite = TRUE
+#' )
+#' }
 
 umxGSEM_munge <- function(files = NULL, hm3 = "w_hm3.snplist", Ns = NULL, trait.names = NULL, info.filter = 0.9, maf.filter = 0.01, column.names = list(), output_dir = getwd(), cores = -1, overwrite = FALSE, ...) {
 	if (is.null(files)) {
@@ -226,23 +469,6 @@ umxGSEM_munge <- function(files = NULL, hm3 = "w_hm3.snplist", Ns = NULL, trait.
 		return(mapping)
 	}
 	
-	# Merge auto-detected columns with user column.names
-	final_mappings <- list()
-	for (f in files) {
-		sample_data <- data.table::fread(f, nrows = 1)
-		detected <- detect_synonyms(colnames(sample_data))
-		# User-provided mappings override auto-detected ones
-		for (target in names(detected)) {
-			if (!target %in% names(column.names)) {
-				final_mappings[[target]] <- detected[[target]]
-			}
-		}
-	}
-	# Append user-provided mappings
-	for (name in names(column.names)) {
-		final_mappings[[name]] <- column.names[[name]]
-	}
-	
 	# 5. Multithreading config
 	if (cores > 0 || cores == -1) {
 		old_threads <- umx_set_cores(NA, silent = TRUE)
@@ -250,29 +476,39 @@ umxGSEM_munge <- function(files = NULL, hm3 = "w_hm3.snplist", Ns = NULL, trait.
 		on.exit(umx_set_cores(old_threads, silent = TRUE), add = TRUE)
 	}
 	
-	# 6. Execute imxMunge in the target output directory
-	# This forces imxMunge to write output files directly into output_dir
+	# 6. Execute imxMunge in the target output directory (one file at a time:
+	#    tutorial/consortium files often differ in header names; a single mapping
+	#    taken from the last file used to drop BIP-style snpid/pval columns).
 	curr_wd <- getwd()
 	on.exit(setwd(curr_wd), add = TRUE)
 	setwd(output_dir)
 	
 	message("Passing files to high-speed OpenMx C++ munging engine...")
-	# GenomicMx OpenMx export; look up by name so CRAN check does not require the symbol
 	imxMungeFun = get0("imxMunge", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
 	if (is.null(imxMungeFun)) {
 		stop("imxMunge is not available in this OpenMx build. Install GenomicMx OpenMx (see install.OpenMx(\"GenomicMx\")).", call. = FALSE)
 	}
-	imxMungeFun(
-		files = files, 
-		hm3 = hm3, 
-		trait.names = trait.names, 
-		N = Ns, 
-		info.filter = info.filter, 
-		maf.filter = maf.filter, 
-		column.names = final_mappings, 
-		overwrite = overwrite,
-		...
-	)
+	if (is.null(Ns)) {
+		Ns = rep(NA_real_, length(files))
+	}
+	for (i in seq_along(files)) {
+		sample_data = data.table::fread(files[i], nrows = 1)
+		fileMap = detect_synonyms(colnames(sample_data))
+		for (name in names(column.names)) {
+			fileMap[[name]] = column.names[[name]]
+		}
+		imxMungeFun(
+			files = files[i],
+			hm3 = hm3,
+			trait.names = trait.names[i],
+			N = Ns[i],
+			info.filter = info.filter,
+			maf.filter = maf.filter,
+			column.names = fileMap,
+			overwrite = overwrite,
+			...
+		)
+	}
 	
 	expected_outputs <- file.path(output_dir, paste0(trait.names, ".sumstats.gz"))
 	return(expected_outputs)
@@ -324,6 +560,11 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' 
 #' **Engine Integration**
 #' `umxGSEM` automatically configures the C++ backend to cache the implied Jacobian matrix. This is a structural requirement for computing Satorra-Bentler (2010) scaled difference tests in `umxCompare`.
+#'
+#' Tutorial files (1k-SNP sumstats, HapMap3 list, EUR LD scores) are fetched with
+#' [umxGSEM_dl_tutorial_files()]. Production HapMap3 / Alkes LD scores / 1000G plink
+#' are documented there; this helper does not download them. For a real model prefer
+#' [Psych_LDSC] rather than ldsc on the tutorial SNP list.
 #'
 #' **OpenMx WLS data (modern only)**
 #'
@@ -410,6 +651,16 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 	# Retain "SNP" as a manifest when it is present in S (umxGSEM_GWAS expand).
 	# Only drop SNP for pure structural GSEM (S has traits only).
 	snpInS = "SNP" %in% colnames(covstruc$S)
+	# umxRAM needs *names* in data to tell manifests from latents. type="cov" here is
+	# not the GSEM fit: WLS observedStats are injected after triage. Do not feed raw S
+	# (tutorial/ldsc S is often NPD; mxData would refuse before smooth=TRUE can run).
+	traitNames = colnames(covstruc$S)
+	if (is.null(traitNames)) {
+		traitNames = rownames(covstruc$S)
+	}
+	parseCov = diag(length(traitNames))
+	dimnames(parseCov) = list(traitNames, traitNames)
+	parseData = mxData(parseCov, type = "cov", numObs = numObs)
 
 	isMx = umx_is_MxModel(model)
 	if (isMx) {
@@ -423,8 +674,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 		}
 	} else if (is.character(model)) {
 		model = gsub("~=", "=~", model, fixed = TRUE)
-		# Discover manifests (cov placeholder; WLS data injected after triage)
-		dummy_model = umxRAM(model, data = mxData(covstruc$S, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, std.lv = std.lv, ...)
+		dummy_model = umxRAM(model, data = parseData, type = "cov", autoRun = FALSE, std.lv = std.lv, ...)
 		keep_vars = dummy_model$manifestVars
 		if (!snpInS) {
 			keep_vars = setdiff(keep_vars, "SNP")
@@ -460,7 +710,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 			stop("umxGSEM: internal mismatch between model manifestVars and WLS cov order.")
 		}
 	} else {
-		final_model = umxRAM(model, data = mxData(S_subset, type = "cov", numObs = numObs), type = "cov", autoRun = FALSE, name = name, std.lv = std.lv, ...)
+		final_model = umxRAM(model, data = parseData, type = "cov", autoRun = FALSE, name = name, std.lv = std.lv, ...)
 	}
 
 	final_model = xmu_gsem_set_starts(final_model, S_subset)
