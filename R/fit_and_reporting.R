@@ -4881,6 +4881,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param suffix A string to append to the result. Mostly used with report = "expression"
 #' @param caption Optional caption for html/markdown tables. `NA` (default) auto-generates "Effects on y of a, b, and c" from `formula(obj)` for `lm`/`glm`; `NULL` suppresses caption; a string uses that text.
 #' @param cols Optional, pass in a list of column names when using umxAPA with a dataframe input.
+#' @param stars Whether to append significance stars to p-values ("*" p < .05, "**" p < .01, "***" p < .001). Default `TRUE` (APA-7 table standard: * p < .05, ** p < .01, *** p < .001; set `stars=FALSE` to suppress stars; enable for reviewers who request them).
 #' @return - string
 #' @export
 #' @seealso [SE_from_p()]
@@ -4946,11 +4947,19 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' m1 = cor.test(~ wt1 + wt2, data = tmp)
 #' umxAPA(m1)
 #'
-umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="", caption = NA, cols=NA) {
+umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits = 2, use = "complete", min = .001, addComparison = NA, report = c("markdown", "html", "none", "expression"), lower = TRUE, test = c("Chisq", "LRT", "Rao", "F", "Cp"), SEs = TRUE, means = TRUE, suffix="", caption = NA, cols=NA, stars = TRUE) {
 	report     = match.arg(report)
 	test       = match.arg(test)
 	commaSep   = paste0(umx_set_separator(silent = TRUE), " ")
 	betaSymbol = ifelse(std, " \u03B2 = ", " B = ")
+	# helper for significance stars (reviewer-requested, e.g. .04 * , < .001 ***)
+	getStars = function(pval) {
+		if(!isTRUE(stars) || is.na(pval)) return("")
+		if(pval < .001) return("***")
+		if(pval < .01)  return("**")
+		if(pval < .05)  return("*")
+		return("")
+	}
 
 	if("htest" == class(obj)[[1]]){
 		# t.test
@@ -4961,7 +4970,8 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		if(obj$method ==  "Pearson's product-moment correlation"){
 			# cor.test
 			o = paste0("r = ", round(obj$estimate, digits), " [", round(obj$conf.int[1], digits), commaSep, round(obj$conf.int[2], digits), "]")
-			o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value))
+			star = getStars(obj$p.value)
+			o = paste0(o, ", t(", obj$parameter, ") = ", round(obj$statistic, digits),  ", p = ", umxAPA(obj$p.value), ifelse(star != "", paste0(" ", star), ""))
 		} else {
 			grpNames = names(obj$estimate)
 			if("mean difference" %in% grpNames){
@@ -4977,8 +4987,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 				}
 				o = paste0(descriptionTxt, omxQuotes(round(obj$estimate, digits)), "respectively. ")
 			}
+			star = getStars(obj$p.value)
 			o = paste0(o, "(CI[", round(obj$conf.int[1], 2), ", ", round(obj$conf.int[2], 2), "], ",
-				"t(", round(obj$parameter, 2), ") = ", round(obj$statistic, 2), ", p = ", umxAPA(obj$p.value), ")"
+				"t(", round(obj$parameter, 2), ") = ", round(obj$statistic, 2), ", p = ", umxAPA(obj$p.value), ifelse(star != "", paste0(" ", star), ""), ")"
 			)
 		}
 		cat(o)
@@ -5067,8 +5078,28 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 					captionToUse = NULL
 				}
 			}
-			tmp= data.frame(summary(obj)$coefficients)
+			tmp= data.frame(summary(obj)$coefficients, check.names=FALSE)
 			names(tmp)= c("Estimate", "SE", "t-value", "p-value")
+			if(isTRUE(stars)){
+				# add APA stars to p-value column for html tables: * p<.05, ** p<.01, *** p<.001
+				pvals = tmp[["p-value"]]
+				starsVec = vapply(pvals, getStars, character(1))
+				formatted = vapply(seq_along(pvals), function(k) paste0(umx_APA_pval(pvals[k], addComparison=TRUE), ifelse(starsVec[k]!="", paste0(" ", starsVec[k]), "")), character(1))
+				tmp[["p-value"]] = formatted
+				# html with APA footnote *p < .05. **p < .01. ***p < .001
+				if(requireNamespace("knitr", quietly=TRUE) && requireNamespace("kableExtra", quietly=TRUE)){
+					tmpRounded = umx_round(tmp, digits=digits, coerce=FALSE)
+					# umx_round skips character p-value column (already formatted with stars), so tmpRounded keeps formatted p-values
+					x = knitr::kable(tmpRounded, caption=captionToUse, format="html")
+					x = kableExtra::footnote(kable_input=x, general="*p < .05. **p < .01. ***p < .001")
+					x = xmu_style_kable(x, style="paper", bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options="striped", full_width=FALSE)
+					x = gsub("> ", ">", x, fixed=TRUE)
+					x = gsub(" </", "</", x, fixed=TRUE)
+					print(x)
+					print(knitr::kable(tmpRounded, caption=captionToUse, format="pipe"))
+					return(invisible(obj))
+				}
+			}
 			umx_print(tmp, digits= digits, report = "html", caption = captionToUse)
 		} else {
 			sumry = summary(obj)
@@ -5076,16 +5107,39 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 			if(is.null(se)){
 				se = dimnames(sumry$coefficients)[[1]]
 			}
-			for (i in se) {
+			# aligned output: two-pass collect then format
+			termVec = se
+			bStrVec = character(length(termVec))
+			loStrVec = character(length(termVec))
+			hiStrVec = character(length(termVec))
+			tStrVec = character(length(termVec))
+			pStrVec = character(length(termVec))
+			for (k in seq_along(termVec)) {
+				i = termVec[k]
 				lower   = conf[i, 1]
 				upper   = conf[i, 2]
 				b_and_p = sumry$coefficients[i, ]
 				b       = b_and_p["Estimate"]
 				tval    = b_and_p["t value"]
 				pval    = b_and_p["Pr(>|t|)"]
-				cat(paste0(i, betaSymbol, round(b, digits), 
-					" ["  , round(lower, digits), commaSep, round(upper, digits), "], ",
-					"t = ", round(tval , digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
+				bStrVec[k]  = sprintf(paste0("%0.", digits, "f"), b)
+				loStrVec[k] = sprintf(paste0("%0.", digits, "f"), lower)
+				hiStrVec[k] = sprintf(paste0("%0.", digits, "f"), upper)
+				tStrVec[k]  = sprintf(paste0("%0.", digits, "f"), tval)
+				pStrVec[k]  = umx_APA_pval(pval, addComparison = TRUE)
+				star = getStars(pval)
+				if(star != "") pStrVec[k] = paste0(pStrVec[k], " ", star)
+			}
+			termW = max(nchar(termVec))
+			bW = max(nchar(bStrVec))
+			loW = max(nchar(loStrVec))
+			hiW = max(nchar(hiStrVec))
+			tW = max(nchar(tStrVec))
+			for (k in seq_along(termVec)) {
+				cat(paste0(format(termVec[k], width = termW, justify = "left"), betaSymbol,
+					format(bStrVec[k], width = bW, justify = "right"),
+					" [", format(loStrVec[k], width = loW, justify = "right"), commaSep, format(hiStrVec[k], width = hiW, justify = "right"), "], ",
+					"t = ", format(tStrVec[k], width = tW, justify = "right"), ", p ", pStrVec[k], "\n"
 				))
 			}
 			cat(paste0("R\u00B2 = ", round(sumry$r.squared, 3), " (adj = ", round(sumry$adj.r.squared, 3), ")"))
@@ -5108,16 +5162,39 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		if(is.null(se)){
 			se = dimnames(model_coefficients)[[1]]
 		}
-		for (i in se) {
+		# aligned output: two-pass
+		termVec = se
+		bStrVec = character(length(termVec))
+		loStrVec = character(length(termVec))
+		hiStrVec = character(length(termVec))
+		zStrVec = character(length(termVec))
+		pStrVec = character(length(termVec))
+		for (k in seq_along(termVec)) {
+			i = termVec[k]
 			lower   = conf[i, 1]
 			upper   = conf[i, 2]
 			b_and_p = model_coefficients[i, ]
 			b       = b_and_p["Estimate"]
-			testStat    = b_and_p["z value"]
+			testStat = b_and_p["z value"]
 			pval    = b_and_p["Pr(>|z|)"]
-			cat(paste0(i, " log(odds) = ", round(b, digits), 
-			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
-			   "z = ", round(testStat, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE), "\n"
+			bStrVec[k]  = sprintf(paste0("%0.", digits, "f"), b)
+			loStrVec[k] = sprintf(paste0("%0.", digits, "f"), lower)
+			hiStrVec[k] = sprintf(paste0("%0.", digits, "f"), upper)
+			zStrVec[k]  = sprintf(paste0("%0.", digits, "f"), testStat)
+			pStrVec[k]  = umx_APA_pval(pval, addComparison = TRUE)
+				star = getStars(pval)
+				if(star != "") pStrVec[k] = paste0(pStrVec[k], " ", star)
+		}
+		termW = max(nchar(termVec))
+		bW = max(nchar(bStrVec))
+		loW = max(nchar(loStrVec))
+		hiW = max(nchar(hiStrVec))
+		zW = max(nchar(zStrVec))
+		for (k in seq_along(termVec)) {
+			cat(paste0(format(termVec[k], width = termW, justify = "left"), " log(odds) = ",
+			   format(bStrVec[k], width = bW, justify = "right"),
+			   " [", format(loStrVec[k], width = loW, justify = "right"), commaSep, format(hiStrVec[k], width = hiW, justify = "right"), "], ",
+			   "z = ", format(zStrVec[k], width = zW, justify = "right"), ", p ", pStrVec[k], "\n"
 			))
 		}
 		if(obj$family$family == "binomial"){
@@ -5154,17 +5231,41 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		if(is.null(se)){
 			se = dimnames(model_coefficients)[[1]]
 		}
-		for (i in se) {
-			# umx_msg(i)
+		# aligned output: two-pass
+		termVec = se
+		bStrVec = character(length(termVec))
+		loStrVec = character(length(termVec))
+		hiStrVec = character(length(termVec))
+		tStrVec = character(length(termVec))
+		pStrVec = character(length(termVec))
+		dfVec = character(length(termVec))
+		for (k in seq_along(termVec)) {
+			i = termVec[k]
 			lower = conf[i, "lower"]
 			upper = conf[i, "upper"]
 			b     = conf[i, "est."]
 			tval  = model_coefficients[i, "t-value"]
 			numDF = model_coefficients[i, "DF"]
 			pval  = model_coefficients[i, "p-value"]
-			cat(paste0(i, betaSymbol, round(b, digits), 
-			   " [", round(lower, digits), commaSep, round(upper, digits), "], ",
-			   "t(", numDF, ") = ", round(tval, digits), ", p ", umx_APA_pval(pval, addComparison = TRUE),"\n"
+			bStrVec[k]  = sprintf(paste0("%0.", digits, "f"), b)
+			loStrVec[k] = sprintf(paste0("%0.", digits, "f"), lower)
+			hiStrVec[k] = sprintf(paste0("%0.", digits, "f"), upper)
+			tStrVec[k]  = sprintf(paste0("%0.", digits, "f"), tval)
+			pStrVec[k]  = umx_APA_pval(pval, addComparison = TRUE)
+			star = getStars(pval)
+			if(star != "") pStrVec[k] = paste0(pStrVec[k], " ", star)
+			dfVec[k]    = as.character(numDF)
+		}
+		termW = max(nchar(termVec))
+		bW = max(nchar(bStrVec))
+		loW = max(nchar(loStrVec))
+		hiW = max(nchar(hiStrVec))
+		tW = max(nchar(tStrVec))
+		for (k in seq_along(termVec)) {
+			cat(paste0(format(termVec[k], width = termW, justify = "left"), betaSymbol,
+			   format(bStrVec[k], width = bW, justify = "right"),
+			   " [", format(loStrVec[k], width = loW, justify = "right"), commaSep, format(hiStrVec[k], width = hiW, justify = "right"), "], ",
+			   "t(", dfVec[k], ") = ", format(tStrVec[k], width = tW, justify = "right"), ", p ", pStrVec[k], "\n"
 			))
 		}
 		# return (possibly standardized) model
