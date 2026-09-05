@@ -162,7 +162,7 @@ Workshop practical (IBG / Grotzinger materials):
 
 ### Toy (subset) SNPs — for smoke tests only
 
-From the practical (order must match `ldsc` / `sumstats`):
+[umxGSEM_dl_tutorial_files()] copies the IBG practical 1k-SNP files (and EUR LD scores / HapMap3) into a cache directory. Order must match ldsc / sumstats:
 
 ```text
 SCZ_subset.txt
@@ -173,28 +173,27 @@ reference.1000G.subset.txt    # drastically reduced 1000G ref for MAF
 
 Notes from the tutorial authors:
 
-- Subsets are on the order of **~1k SNPs** (munge/ldsc demo only).
-- For multivariate GWAS they still pair SNP files with a **full-SNP premade** `PSYCH_COV` LDSC object — i.e. subset SNPs are for `sumstats`/`commonfactorGWAS` smoke tests, not for rebuilding LDSC from scratch with only 1k SNPs.
-- Full reference: see wiki; full 1000G MAF file is **not** the `.subset` file.
-
-Example (GenomicSEM naming; umx will mirror later):
+- Subsets are on the order of **~1k SNPs** (munge/ldsc demo only). ldsc on this list is pedagogical, not a result.
+- For multivariate GWAS they still pair SNP files with a **full-SNP premade** covstruc — in umx that is `data(Psych_LDSC)`, not ldsc rebuilt from 1k SNPs.
+- Full 1000G MAF file is **not** the `.subset` file.
 
 ```{r gsem-sumstats-toy, eval = FALSE}
-files       = c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")
-ref         = "reference.1000G.subset.txt"
-trait.names = c("SCZ", "BIP", "MDD")
-se.logit    = c(TRUE, TRUE, TRUE)
-# GenomicSEM::sumstats(files, ref, trait.names, se.logit = se.logit)
-# commonfactorGWAS(covstruc = PSYCH_COV, SNPs = p_sumstats, estimation = "DWLS")
+tut = umxGSEM_dl_tutorial_files()
+snps = umxGSEM_sumstats(
+  files = tut$sumstats,
+  ref = tut$ref,
+  trait.names = c("SCZ", "BIP", "MDD"),
+  se.logit = TRUE
+)
+gwas = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
+  traits = c("SCZ", "BIP", "MDD"), maxSNPs = 50)
 ```
-
-For umx, the matching **3-trait** genetic cov structure is the SCZ/BIP/MDD block of `Psych_LDSC` (or a dedicated 3-trait LDSC when we ship one).
 
 ### Full-fat SNPs — production
 
 1. **Download full GWAS summary statistics** for each trait from the original consortia (PGC for SCZ/BIP/MDD, SSGAC for EA, etc.). Do **not** use “top hits only” dumps.
-2. **Munge** to LDSC/HapMap3 format (`SNP`, `A1`, `A2`, `effect`, `P`, …) — in umx: `umxGSEM_dl_RefList()` + `umxGSEM_munge()` (OpenMx C++ munge). HapMap3 list: Zenodo `w_hm3.snplist` (see `?umxGSEM_dl_RefList`).
-3. **LD scores** for European-ancestry LDSC: `eur_w_ld_chr/` (Bulik-Sullivan / LDSC standard bundle; also linked from GenomicSEM install materials).
+2. **Munge** to LDSC/HapMap3 format (`SNP`, `A1`, `A2`, `effect`, `P`, …) with [umxGSEM_munge()]. HapMap3 list: Zenodo `https://zenodo.org/records/7773502/files/w_hm3.snplist.gz` (gunzip to `w_hm3.snplist`). Do not use [umxGSEM_dl_tutorial_files()] for this.
+3. **LD scores** for European-ancestry LDSC if you run ldsc locally: `https://alkesgroup.broadinstitute.org/LDSCORE/eur_w_ld_chr.tar.bz2` (~500 MB → ~1.2 GB) and `weights_hm3_noMHC.tgz` (~150 MB). Ancestry must match. Skip if you already have a covstruc.
 4. **Run multivariable LDSC** → `covstruc` (`S`, `V`, `I`, `N`, `m`) — same shape as `Psych_LDSC`.
 5. **Prepare SNP file for SEM-GWAS** (`sumstats`-equivalent): align alleles to a **1000 Genomes Phase 3** reference used for SNP variance / MAF.  
    Full ref download (GenomicSEM wiki):  
@@ -207,23 +206,9 @@ Minimum columns before munge: **rsID, A1 (effect allele), A2, effect (beta or OR
 
 ### umx API for SNPs (implemented)
 
-```{r gwas-smoke, eval = FALSE}
-# Toy files under inst/developer/GenomicSEM/ (or workshop Box pack)
-dir = system.file("developer", "GenomicSEM", package = "umx")
-snps = umxGSEM_sumstats(
-  files = file.path(dir, c("SCZ_subset.txt", "BIP_subset.txt", "MDD_subset.txt")),
-  ref   = file.path(dir, "reference.1000G.subset.txt"),
-  trait.names = c("SCZ", "BIP", "MDD"),
-  se.logit = TRUE
-)
+See the toy chunk above (`umxGSEM_dl_tutorial_files` → `umxGSEM_sumstats` → `umxGSEM_GWAS`). Pass `traits=` on the LDSC object; do not `V[1:6, 1:6]` (wrong pairs).
 
-# Match SNP traits: pass full LDSC object + traits= (do not V[1:6,1:6] — wrong pairs)
-gwas = umxGSEM_GWAS(covstruc = Psych_LDSC, SNPs = snps,
-  traits = c("SCZ", "BIP", "MDD"), maxSNPs = 50)
-head(gwas)
-```
-
-
+- **`umxGSEM_dl_tutorial_files()`** — cache the ~45 MB workshop pack (not production HapMap3 / Alkes / 1000G plink).
 - **`umxGSEM()`** — one structural model (string **or** existing `umxRAM`/`mxModel`).
 - **`umxGSEM_sumstats()`** — allele-align + continuous-scale betas for multivariate GWAS.
 - **`umxGSEM_GWAS()`** — per-SNP expand `S`/`V`, DWLS fit, return SNP table (`est` = factor ~ SNP).

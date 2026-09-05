@@ -1,33 +1,20 @@
 library(testthat)
 library(umx)
 
-test_that("umxGSEM_dl_RefList works correctly", {
-	# Setup temp directory for tests
-	tmp_dir <- file.path(tempdir(), "gsem_ref_list_test")
+test_that("umxGSEM_dl_tutorial_files skips download when LD scores are present", {
+	tmp_dir = file.path(tempdir(), "gsem_tutorial_test")
 	on.exit(unlink(tmp_dir, recursive = TRUE), add = TRUE)
-	
-	# 1. Check directory creation and download failure handling
-	# Since tmp_dir does not exist, calling the function should create it,
-	# and then fail to download from the invalid URL.
-	expect_error(
-		umxGSEM_dl_RefList(project_path = tmp_dir, path2snplist = "https://invalid.url/nonexistent_file.snplist")
-	)
-	expect_true(dir.exists(tmp_dir))
-	
-	# 2. Check cache mechanism
-	# Create a dummy w_hm3.snplist file
-	dest_file <- file.path(tmp_dir, "w_hm3.snplist")
-	writeLines("dummy snplist content", dest_file)
-	
-	# Calling it with overwrite = FALSE should hit cache and NOT try to download,
-	# so it won't throw an error even with an invalid URL.
-	path <- umxGSEM_dl_RefList(project_path = tmp_dir, path2snplist = "https://invalid.url/nonexistent_file.snplist", overwrite = FALSE)
-	expect_equal(normalizePath(path), normalizePath(dest_file))
-	
-	# 3. Check overwrite = TRUE bypasses cache and tries to download (and fails on invalid URL)
-	expect_error(
-		umxGSEM_dl_RefList(project_path = tmp_dir, path2snplist = "https://invalid.url/nonexistent_file.snplist", overwrite = TRUE)
-	)
+	dir.create(file.path(tmp_dir, "eur_w_ld_chr"), recursive = TRUE)
+	writeLines("SNP A1 A2", file.path(tmp_dir, "eur_w_ld_chr", "w_hm3.snplist"))
+	writeLines("100", file.path(tmp_dir, "eur_w_ld_chr", "1.l2.M_5_50"))
+	writeBin(raw(8), file.path(tmp_dir, "eur_w_ld_chr", "1.l2.ldscore.gz"))
+	badUrl = "https://invalid.example/umxGSEM_tutorial.tar.gz"
+	tut = umxGSEM_dl_tutorial_files(path = tmp_dir, overwrite = FALSE, url = badUrl)
+	expect_true(dir.exists(tut$dir))
+	expect_true(file.exists(tut$hm3))
+	expect_equal(length(tut$sumstats), 3L)
+	expect_true(file.exists(tut$ref))
+	expect_error(umxGSEM_dl_tutorial_files(path = tmp_dir, overwrite = TRUE, url = badUrl))
 })
 
 test_that("umxGSEM_munge works correctly", {
