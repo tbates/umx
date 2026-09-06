@@ -4,14 +4,14 @@
 # test_package("umx")
 test_that("fin_* works", {	
 	require(umx)
-	expect_equal(fin_CAGR(beginningValue = 100, endingValue = 190, numYears = 7), 0.096)
-	expect_equal(fin_CAGR(beginningValue = 100, endingValue = 50, numYears = 5), -0.129)
-	expect_equal(fin_CAGR(beginningValue = 100, endingValue = 50, numYears = 5, digits = 2), -0.13)
+	expect_equal(fin_value_CAGR(beginningValue = 100, endingValue = 190, numYears = 7), 0.096)
+	expect_equal(fin_value_CAGR(beginningValue = 100, endingValue = 50, numYears = 5), -0.129)
+	expect_equal(fin_value_CAGR(beginningValue = 100, endingValue = 50, numYears = 5, digits = 2), -0.13)
 	
 	# Error: Inputs must be positive
-	expect_error(fin_CAGR(beginningValue =  0   , endingValue = 50, numYears =  5), "Inputs must be positive values")
-	expect_error(fin_CAGR(beginningValue = 25   , endingValue = 50, numYears = -1), "Inputs must be positive values")
-	expect_error(fin_CAGR(beginningValue = "100", endingValue = 50, numYears = -1), "All inputs must be numeric")
+	expect_error(fin_value_CAGR(beginningValue =  0   , endingValue = 50, numYears =  5), "Inputs must be positive values")
+	expect_error(fin_value_CAGR(beginningValue = 25   , endingValue = 50, numYears = -1), "Inputs must be positive values")
+	expect_error(fin_value_CAGR(beginningValue = "100", endingValue = 50, numYears = -1), "All inputs must be numeric")
 	# fin_stock_justifiedPE tests
 	# Trailing: (0.4 * 1.06) / (0.10 - 0.06) = 0.424 / 0.04 = 10.6
 	expect_equal(fin_stock_justifiedPE(dividend = 0.8, EPS = 2.0, growthRate = 0.06, discountRate = 0.10, type = "trailing"), 10.6)
