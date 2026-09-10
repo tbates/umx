@@ -1,4 +1,9 @@
 ## dev
+* FIXED: `umx_is_GSEM()` is TRUE only for class `MxModelGSEM`. Ordinary RAM models are no longer treated as GSEM via `MxRAMObjective`.
+* FIXED: `tmx_show.MxModelGSEM` defaults to `A`, residual `S`, `data.S`, `data.V` (LDSC cov / sampling cov in `observedStats`). Bare `"V"` is not a RAM matrix.
+* SAFE: `inst/developer/GenomicSEM` (toy SNP subsets, developer tests) is `.Rbuildignore`d; tutorial files come from `umxGSEM_dl_tutorial_files()`, not the CRAN tarball.
+* SAFE: R CMD check — `mxFamily` via `get0` in `umxACE_GLM` / `umxRAM_GLM` (GenomicMx-only; not an OpenMx import). `umxPlot` imports ggplot2 `.data`.
+* FIXED: `umxCompare` / `xmu_compare_WLS` use GSEM DWLS chi-square only for `MxModelGSEM`. `numObs > 50000` no longer routes ordinary WLS onto the genomic track.
 * NEW: `umxGSEM_dl_tutorial_files()` downloads the IBG/GenomicSEM ~45 MB tutorial pack (1k-SNP SCZ/BIP/MDD, 1000G subset, `w_hm3.snplist`, `eur_w_ld_chr/`) into `tools::R_user_dir("umx", "data")/GSEM_tutorial`. Production HapMap3 / Alkes LD scores / 1000G plink are documented, not auto-fetched. Removed `umxGSEM_dl_RefList`.
 * FIXED: `umxGSEM_munge` maps columns per file (tutorial BIP `snpid`/`pval` vs SCZ `SNP`/`P`). `\dontrun` example uses `umxGSEM_dl_tutorial_files()`.
 * NEW: `umxGSEM_ldsc()` calls OpenMx `imxLDSC` on munged `.sumstats.gz` and returns a labeled covstruc (`var_*` / `poly_*_*`) for [umxGSEM()].
@@ -26,13 +31,13 @@
 * NEW: `umxSummary` for covstruc/`mxData` Nice for understanding the new covstruc format from built in Psych_LDSC
 * NEW: `mxRAM` now emits topologically sorted models automatically (great for optimizer, esp with hard models!)
 * NEW: LDSC object for GSEM with dimnames on `S`, `I`, `V`, and `N`.
-* NEW: `umxGSEM_name_ldsc()` labels GenomicSEM-style lists from disk.
+* NEW: `umxGSEM_label_ldsc()` labels GenomicSEM-style lists (`S`/`V`/`I`/`N`) with OpenMx residual names (`var_*` / `poly_*_*`).
 * NEW: `umxGSEM()` fits one model to LDSC S/V via modern OpenMx.
 * NEW: `umxGSEM()`Accepts lavaan/umx strings OR `umxRAM`/`mxModel` structures.
 * NEW: `umxGSEM_sumstats()` allele-align GWAS files to a 1000G ref (`baseDir` for basenames).
 * NEW: `umxGSEM_GWAS()` per-SNP expand of S/V, DWLS fit, table of factor~SNP effects.
-* NEW: SNP simulation! TODO what's it called?
-* NEW: Built-in SNPsubset data()
+* NEW: `umxGSEM_sim_snps()` fake `beta.*`/`se.*` table for `umxGSEM_GWAS()` smoke (not real GWAS).
+* NEW: Toy 1k-SNP SCZ/BIP/MDD + 1000G subset via `umxGSEM_dl_tutorial_files()` (not a `data()` object; munge/GWAS smoke only).
 * NEW: Built-in ldsc data("Psych_LDSC") data("Anthro_LDSC")
 * NEW: vignettes for WLS, umxRAM robust SEs, and GSEM!
 * NEW: comprehensive test suite!

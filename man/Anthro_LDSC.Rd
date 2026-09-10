@@ -17,12 +17,12 @@ Same list layout as \link{Psych_LDSC} - pass the object as \code{covstruc} to \c
 \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.
 }
 \details{
-LDSC list fields (GenomicSEM-style \code{ldsc} output):
+LDSC list fields (same \code{S}/\code{V}/\code{I}/\code{N}/\code{m} layout as GenomicSEM \code{ldsc}; \strong{\code{V} names are OpenMx residual labels}):
 \itemize{
 \item \strong{\code{S}}: 9 x 9 genetic covariance matrix among the phenotypes
 (diagonals are SNP heritabilities on the LDSC scale).
 \item \strong{\code{V}}: 45 x 45 sampling covariance of the unique elements of \code{S}
-(lower-triangle / \code{vech} order; dimnames like \code{BMI_BMI}, \code{WHR_BMI}). Used as asymptotic covariance for WLS/DWLS.
+(OpenMx vech order; dimnames like \code{var_BMI}, \code{poly_WHR_BMI}). Used as asymptotic covariance for WLS/DWLS. Not GenomicSEM \code{BMI_BMI} / \code{WHR_BMI}.
 \item \strong{\code{I}}: 9 x 9 \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
 (expected near 1 without confounding; elevations can flag stratification).
 Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic

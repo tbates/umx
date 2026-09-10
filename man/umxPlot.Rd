@@ -65,7 +65,7 @@ umxPlot(x = "wt", y = "mpg", mtcars, r2x = 2, r2y = 10)
 }
 \seealso{
 \itemize{
-\item \code{\link[ggplot2:qplot]{ggplot2::qplot()}}
+\item \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}
 }
 
 Other Plotting functions:

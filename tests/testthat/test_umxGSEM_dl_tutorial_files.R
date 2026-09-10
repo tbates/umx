@@ -3,7 +3,7 @@
 library(testthat)
 library(umx)
 
-test_that("umxGSEM_dl_tutorial_files copies subsets and skips download when ld present", {
+test_that("umxGSEM_dl_tutorial_files skips download when ld and subsets already present", {
 	tmpDir = file.path(tempdir(), paste0("gsem_tut_", as.integer(Sys.time())))
 	on.exit(unlink(tmpDir, recursive = TRUE), add = TRUE)
 	ldDir = file.path(tmpDir, "eur_w_ld_chr")
@@ -11,6 +11,10 @@ test_that("umxGSEM_dl_tutorial_files copies subsets and skips download when ld p
 	writeLines("SNP A1 A2", file.path(ldDir, "w_hm3.snplist"))
 	writeLines("100", file.path(ldDir, "1.l2.M_5_50"))
 	writeBin(raw(8), file.path(ldDir, "1.l2.ldscore.gz"))
+	writeLines("SNP\tA1\tA2\tP\tbeta", file.path(tmpDir, "SCZ_subset.txt"))
+	writeLines("SNP\tA1\tA2\tP\tbeta", file.path(tmpDir, "BIP_subset.txt"))
+	writeLines("SNP\tA1\tA2\tP\tbeta", file.path(tmpDir, "MDD_subset.txt"))
+	writeLines("SNP\tCHR\tBP\tMAF\tA1\tA2", file.path(tmpDir, "reference.1000G.subset.txt"))
 	badUrl = "https://invalid.example/umxGSEM_tutorial.tar.gz"
 	tut = umxGSEM_dl_tutorial_files(path = tmpDir, overwrite = FALSE, url = badUrl)
 	expect_type(tut, "list")

@@ -324,11 +324,11 @@ NULL
 #' [umxGSEM_GWAS()].
 #'
 #' @details
-#' LDSC list fields (GenomicSEM-style `ldsc` output):
+#' LDSC list fields (same `S`/`V`/`I`/`N`/`m` layout as GenomicSEM `ldsc`; **`V` names are OpenMx residual labels**):
 #' * **`S`**: 9 x 9 genetic covariance matrix among the phenotypes
 #'   (diagonals are SNP heritabilities on the LDSC scale).
 #' * **`V`**: 45 x 45 sampling covariance of the unique elements of `S`
-#'   (lower-triangle / `vech` order; dimnames like `BMI_BMI`, `WHR_BMI`). Used as asymptotic covariance for WLS/DWLS.
+#'   (OpenMx vech order; dimnames like `var_BMI`, `poly_WHR_BMI`). Used as asymptotic covariance for WLS/DWLS. Not GenomicSEM `BMI_BMI` / `WHR_BMI`.
 #' * **`I`**: 9 x 9 **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
 #'   (expected near 1 without confounding; elevations can flag stratification).
 #'   Off-diagonal = cross-trait intercepts reflecting sample overlap. Used for genomic
@@ -366,11 +366,11 @@ NULL
 #' and the example `covstruc` used throughout the GSEM helpers (see also [Anthro_LDSC]).
 #'
 #' @details
-#' LDSC list fields (GenomicSEM-style `ldsc` output):
+#' LDSC list fields (same `S`/`V`/`I`/`N`/`m` layout as GenomicSEM `ldsc`; **`V` names are OpenMx residual labels**):
 #' * **`S`**: 5 x 5 genetic covariance matrix among the phenotypes
 #'   (diagonals are SNP heritabilities on the LDSC scale).
 #' * **`V`**: 15 x 15 sampling covariance of the unique elements of `S`
-#'   (lower-triangle / `vech` order; dimnames like `SCZ_SCZ`, `BIP_SCZ`). Used as asymptotic covariance for WLS/DWLS.
+#'   (OpenMx vech order; dimnames like `var_SCZ`, `poly_BIP_SCZ`). Used as asymptotic covariance for WLS/DWLS. Not GenomicSEM `SCZ_SCZ` / `BIP_SCZ`.
 #' * **`I`**: 5 x 5 **LDSC intercept** matrix. Diagonal = per-trait LDSC intercepts
 #'   (expected near 1 without confounding). Off-diagonal = cross-trait intercepts
 #'   reflecting sample overlap. Preferred input for GC in [umxGSEM_GWAS()].

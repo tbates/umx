@@ -4,7 +4,10 @@ AGENTS.md
 ^CRAN-RELEASE$
 ^inst/developer/function_ideas
 ^inst/developer/tests to finish
+^inst/developer/GenomicSEM
+^inst/developer/plans
 ^inst/developer/.*\.gstencil$
+^inst/developer/.*\.graffle$
 ^cran-comments\.md$
 ^.*\.Rproj$
 ^\.Rproj\.user$

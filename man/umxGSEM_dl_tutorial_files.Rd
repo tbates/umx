@@ -15,8 +15,8 @@ umxGSEM_dl_tutorial_files(
 \item{path}{Directory to write into. Default:
 \code{file.path(tools::R_user_dir("umx", "data"), "GSEM_tutorial")}.}
 
-\item{overwrite}{If \code{TRUE}, re-copy shipped tables and re-download the
-Release tarball even when files already exist. Default \code{FALSE}.}
+\item{overwrite}{If \code{TRUE}, re-download the Release tarball even when files
+already exist. Default \code{FALSE}.}
 
 \item{url}{Tarball URL, or a path to a local \code{.tar.gz}. Default is the
 \code{gsem-tutorial} Release asset on \code{tbates/umx}.}
@@ -32,9 +32,9 @@ sumstats, a tiny 1000G MAF table, HapMap3 \code{w_hm3.snplist}, and EUR LD score
 toy SNP list. It is \strong{not} a production data installer.
 
 Files land in \code{tools::R_user_dir("umx", "data")/GSEM_tutorial} unless \code{path}
-is set. Shipped 1k-SNP tables are copied from the installed package when
-present; LD scores and \code{w_hm3.snplist} come from the umx GitHub Release tag
-\code{gsem-tutorial}. Existing files are left alone unless \code{overwrite = TRUE}.
+is set. 1k-SNP tables and LD scores come from the umx GitHub Release tag
+\code{gsem-tutorial} (not from the CRAN tarball). Existing files are left alone
+unless \code{overwrite = TRUE}.
 
 \strong{ldsc on these SNPs is pedagogical.} About 1k variants will not recover
 sensible heritabilities. For a real structural model use \link{Psych_LDSC} /
@@ -58,7 +58,7 @@ path, not bim/bed/bam.
 \dontrun{
 tut = umxGSEM_dl_tutorial_files()
 umxGSEM_munge(tut$sumstats, hm3 = tut$hm3, trait.names = c("SCZ", "BIP", "MDD"),
-  Ns = c(105318, 16731, 173005), output_dir = tut$dir)
+	Ns = c(105318, 16731, 173005), output_dir = tut$dir)
 data(Psych_LDSC)
 m1 = umxGSEM("g ~= SCZ + BIP + MDD", covstruc = Psych_LDSC)
 }

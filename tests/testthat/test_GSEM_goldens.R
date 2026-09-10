@@ -97,6 +97,27 @@ test_that("xmu_gsem_expand_snp matches hand formulas and golden S/V", {
 # Structural umxGSEM golden (Psych_LDSC common factor)
 # -----------------------------------------------------------------------------
 
+test_that("umx_is_GSEM is TRUE only for MxModelGSEM", {
+	expect_false(umx_is_GSEM(NULL))
+	expect_false(umx_is_GSEM(list(S = 1)))
+	cov2 = diag(2)
+	dimnames(cov2) = list(c("a", "b"), c("a", "b"))
+	ram = umxRAM("is_gsem_ram", data = mxData(cov2, type = "cov", numObs = 10), type = "cov", autoRun = FALSE,
+		umxPath("a", with = "b"),
+		umxPath(var = c("a", "b"))
+	)
+	expect_true(umx_is_RAM(ram))
+	expect_false(umx_is_GSEM(ram))
+	data(Psych_LDSC, package = "umx")
+	gsem = umxGSEM("g ~= SCZ + BIP + MDD", covstruc = Psych_LDSC, estimation = "DWLS",
+		autoRun = FALSE, tryHard = "no", name = "is_gsem_cf")
+	expect_s4_class(gsem, "MxModelGSEM")
+	expect_true(umx_is_GSEM(gsem))
+	expect_true(umx_is_RAM(gsem))
+	expect_equal(eval(formals(getS3method("tmx_show", "MxModelGSEM"))$matrices), c("A", "S", "data.S", "data.V"))
+	expect_error(tmx_show(gsem, report = "markdown"), NA)
+})
+
 test_that("umxGSEM Psych_LDSC commonfactor matches golden coefs", {
 	skip_on_cran()
 	gold = readRDS(file.path(fixture_dir, "commonfactor_psych_golden.rds"))

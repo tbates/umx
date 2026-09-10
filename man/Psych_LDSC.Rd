@@ -17,12 +17,12 @@ for 5 psychiatric and educational attainment phenotypes: \strong{SCZ}, \strong{B
 and the example \code{covstruc} used throughout the GSEM helpers (see also \link{Anthro_LDSC}).
 }
 \details{
-LDSC list fields (GenomicSEM-style \code{ldsc} output):
+LDSC list fields (same \code{S}/\code{V}/\code{I}/\code{N}/\code{m} layout as GenomicSEM \code{ldsc}; \strong{\code{V} names are OpenMx residual labels}):
 \itemize{
 \item \strong{\code{S}}: 5 x 5 genetic covariance matrix among the phenotypes
 (diagonals are SNP heritabilities on the LDSC scale).
 \item \strong{\code{V}}: 15 x 15 sampling covariance of the unique elements of \code{S}
-(lower-triangle / \code{vech} order; dimnames like \code{SCZ_SCZ}, \code{BIP_SCZ}). Used as asymptotic covariance for WLS/DWLS.
+(OpenMx vech order; dimnames like \code{var_SCZ}, \code{poly_BIP_SCZ}). Used as asymptotic covariance for WLS/DWLS. Not GenomicSEM \code{SCZ_SCZ} / \code{BIP_SCZ}.
 \item \strong{\code{I}}: 5 x 5 \strong{LDSC intercept} matrix. Diagonal = per-trait LDSC intercepts
 (expected near 1 without confounding). Off-diagonal = cross-trait intercepts
 reflecting sample overlap. Preferred input for GC in \code{\link[=umxGSEM_GWAS]{umxGSEM_GWAS()}}.

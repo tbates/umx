@@ -123,6 +123,20 @@ test_that("Triage attribute warning system works", {
   }, "estimated using nearPD smoothed covariance matrices")
 })
 
+test_that("large numObs does not select the genomic WLS track", {
+	skip_if_not(!is.null(mWlsBase@output$implied_jacobian), "Current OpenMx engine does not support WLS Jacobians (Legacy OpenMx)")
+	mBig = mWlsBase
+	mBig$data$numObs = 60000
+	mBigNested = mWlsNested
+	mBigNested$data$numObs = 60000
+	msgs = capture.output({
+		res = xmu_compare_WLS(mBig, mBigNested)
+	}, type = "message")
+	expect_false(any(grepl("Genomic SEM model detected", msgs, fixed = TRUE)))
+	expect_false(is.na(res$diffFit[2]))
+	expect_equal(res$delta_df[2], 1)
+})
+
 test_that("Genomic Track B routing and natively GSEM scaled difference works", {
   mGenomic = mWlsBase
   class(mGenomic) = "MxModelGSEM"

@@ -17,6 +17,10 @@ umx_is_GSEM(obj)
 \description{
 Utility function returning a binary answer to the question "Is this a GSEM model?"
 }
+\details{
+TRUE only for models of class \code{MxModelGSEM} (the class \code{\link[=umxGSEM]{umxGSEM()}} assigns).
+Ordinary RAM / \code{umxRAM} models are FALSE (they used to match via a leftover \code{MxRAMObjective} check).
+}
 \examples{
 \dontrun{
 require(umx)

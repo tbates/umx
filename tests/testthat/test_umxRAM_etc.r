@@ -50,6 +50,8 @@ test_that("umxRAM works", {
 	))
 	expect_equal(umx_is_RAM(m1), TRUE)
 	expect_equal(umx_is_RAM(m2), FALSE)
+	expect_false(umx_is_GSEM(m1))
+	expect_false(umx_is_GSEM(m2))
 })
 
 

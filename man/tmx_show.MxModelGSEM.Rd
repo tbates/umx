@@ -8,7 +8,7 @@
   x,
   what = c("values", "free", "labels", "nonzero_or_free"),
   show = c("free", "fixed", "all"),
-  matrices = c("S", "V", "A", "M"),
+  matrices = c("A", "S", "data.S", "data.V"),
   ...
 )
 }
@@ -19,11 +19,15 @@
 
 \item{show}{filter on what to show c("all", "free", "fixed").}
 
-\item{matrices}{to show (default is c("S", "V", "A", "M")).}
+\item{matrices}{to show (default \code{c("A", "S", "data.S", "data.V")}).}
 
 \item{...}{Arguments passed to \code{\link[=tmx_show.MxModel]{tmx_show.MxModel()}}.}
 }
 \description{
-\code{tmx_show} method for \code{MxModelGSEM} models to display structural parameter matrices
-and/or genomic S and V data matrices.
+\code{tmx_show} method for \code{MxModelGSEM} models.
+
+Default matrices: RAM paths (\code{A}), residual \code{S}, then LDSC data in
+\code{observedStats} (\code{data.S} = genetic cov, \code{data.V} = sampling cov of vech(S)).
+Bare \code{"V"} is not a RAM matrix; use \code{"data.V"} (the RAM method still aliases
+\code{"V"} to \code{asymCov} if you pass it). Means (\code{M}) are omitted unless requested.
 }
