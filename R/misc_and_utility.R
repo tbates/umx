@@ -2842,7 +2842,7 @@ print.oddsratio <- function(x, digits = 3, ...) {
 #' 
 #' To compute heterochoric correlations, see [umxHetCor()].
 #'
-#' *note*: The Hmisc package has a more robust function called `rcorr`.
+#' *note*: The Hmisc package has a robust function called `rcorr`.
 #'
 #' @param X a matrix or dataframe
 #' @param df the degrees of freedom for the test
@@ -2850,46 +2850,71 @@ print.oddsratio <- function(x, digits = 3, ...) {
 #' @param digits rounding of answers
 #' @param type Unused argument for future directions
 #' @return - Matrix of correlations and p-values
-#' @seealso umxHetCor
+#' @seealso [umxHetCor()], [cor.test()]
 #' @family Miscellaneous Stats Functions
 #' @export
-#' @references - <https://github.com/tbates/umx>
-
 #' @examples
 #' tmp = myFADataRaw[1:8,1:8]
 #' umx_cor(tmp)
 #' tmp$x1 = letters[1:8] # make one column non-numeric
 #' umx_cor(tmp)
-umx_cor <- function (X, df = nrow(X) - 2, use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2, type= c("r and p-value", "smart")) {
-	# see also
-	# Hmisc::rcorr()
-	use = match.arg(use)
-	message("TODO: umx_cor assumes no missing data, n is just nrow() !!")
-	# nVar    = dim(x)[2]
-	# nMatrix = diag(NA, nrow= nVar)
-	# for (i in 1:nVar) {
-	# 	x[,i]
-	# }
-	numericCols = rep(FALSE, ncol(X))
-	for (i in 1:ncol(X)) {
-		numericCols[i] = is.numeric(X[,i])
-	}
-	if(ncol(X) > sum(numericCols)){
-		message("dropped ", ncol(X) - sum(numericCols), " non-numeric column(s).")
-	}
-	
-	R     = cor(X[,numericCols], use = use)
-	above = upper.tri(R)
-	below = lower.tri(R)
-	r2    = R[above]^2
-	Fstat = r2 * df/(1 - r2)
-	R[row(R) == col(R)] <- NA # NA on the diagonal
-	R[above] = pf(Fstat, 1, df, lower.tail = FALSE)
-	R[below] = round(R[below], digits)
-	R[above] = round(R[above], digits)
-	# R[above] = paste("p=",round(R[above], digits))
-	message("lower tri  = correlation; upper tri = p-value")
-	return(R)
+#' umx_cor(~ x2 + x3, tmp)
+umx_cor = function(X, data = NULL, df = NULL, use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs", "na.or.complete"), digits = 2, type= c("r and p-value", "smart")) {
+  use = match.arg(use)
+  type = match.arg(type)
+
+  # formula interface: umx_cor(~ a + b, df) or umx_cor(~ a + b, data = df)
+  if(inherits(X, "formula")){
+    # support umx_cor(~ a+b, df) where 2nd arg is actually data
+    if(is.data.frame(data) == FALSE && is.data.frame(df)){
+      data = df
+      df = NULL
+    }
+    if(is.data.frame(data) == FALSE){
+      stop("formula interface needs data: umx_cor(~ a + b, data)")
+    }
+    vars = all.vars(X)
+    if(length(vars) == 0){
+      # ~. means all columns
+      X = data
+    }else{
+      # check exist
+      missing = setdiff(vars, names(data))
+      if(length(missing) > 0){
+        stop("variables not in data: ", paste(missing, collapse=", "))
+      }
+      X = data[, vars, drop = FALSE]
+    }
+    if(is.null(df)){
+      df = nrow(data) - 2
+    }
+  }else{
+    # X is data.frame / matrix
+    if(is.null(df)){
+      df = nrow(X) - 2
+    }
+  }
+
+  message("TODO: umx_cor assumes no missing data, n is just nrow()!!")
+
+  numericCols = rep(FALSE, ncol(X))
+  for(i in 1:ncol(X)){
+    numericCols[i] = is.numeric(X[,i])
+  }
+  if(ncol(X) > sum(numericCols)){
+    message("dropped ", ncol(X) - sum(numericCols), " non-numeric column(s).")
+  }
+
+  R = cor(X[,numericCols, drop=FALSE], use = use)
+  above = upper.tri(R)
+  below = lower.tri(R)
+  r2 = R[above]^2
+  Fstat = r2 * df/(1 - r2)
+  R[row(R) == col(R)] = NA
+  R[below] = round(R[below], digits)
+  R[above] = round(pf(Fstat, 1, df, lower.tail = FALSE), digits)
+  message("lower tri = correlation; upper tri = p-value")
+  return(R)
 }
 
 # Return the maximum value in a row
