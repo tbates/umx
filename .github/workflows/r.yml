@@ -109,6 +109,7 @@ jobs:
             any::DiagrammeRsvg
             any::rsvg
             any::lme4
+            any::RcppParallel
             github::bczech/ggwas
           needs: check
 
