@@ -24,9 +24,8 @@
 #' # TODO
 #' }
 xmu_compare_WLS <- function(baseModel, comparisonModel = NULL) {  
-	# 1. Evaluate Empirical N and GSEM Status
-	actualN = baseModel$data$numObs
-	isGenomic = umx_is_GSEM(baseModel) | (!is.null(comparisonModel) && umx_is_GSEM(comparisonModel)) | (!is.null(actualN) && actualN > 50000)
+	# GSEM nested tests: MxModelGSEM only (not a large-N heuristic).
+	isGenomic = umx_is_GSEM(baseModel) || (!is.null(comparisonModel) && umx_is_GSEM(comparisonModel))
   
 	# 2. Extract our custom C++ cached Jacobian
 	baseJacobian = baseModel@output$implied_jacobian
