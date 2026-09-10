@@ -166,7 +166,7 @@ fin_options_plotGreeks <- function(strikePrice, daysToExpiry = 30, riskFreeRate 
   spotRange = seq(0.7 * strikePrice, 1.3 * strikePrice, length.out = 150)
   
   greeksList = lapply(spotRange, function(s) {
-    fin_Greeks(spotPrice = s, strikePrice = strikePrice, daysToExpiry = daysToExpiry, riskFreeRate = riskFreeRate, impliedVol = impliedVol)
+    fin_options_Greeks(spotPrice = s, strikePrice = strikePrice, daysToExpiry = daysToExpiry, riskFreeRate = riskFreeRate, impliedVol = impliedVol)
   })
   
   df = do.call(rbind, greeksList)
@@ -233,11 +233,11 @@ fin_options_LeapSimulate <- function(spotPrice = 100, impliedVol = 0.20, riskFre
   daysSeq = seq(931, 0, by = -1)
 
   simData = lapply(daysSeq, function(d) {
-    g80 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike80, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
+    g80 = fin_options_Greeks(spotPrice = spotPrice, strikePrice = strike80, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
     intrinsic80 = max(0, spotPrice - strike80)
     extrinsic80 = g80$price - intrinsic80
 
-    g95 = fin_Greeks(spotPrice = spotPrice, strikePrice = strike95, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
+    g95 = fin_options_Greeks(spotPrice = spotPrice, strikePrice = strike95, daysToExpiry = d, riskFreeRate = r, impliedVol = sigma)
     intrinsic95 = max(0, spotPrice - strike95)
     extrinsic95 = g95$price - intrinsic95
 
@@ -966,63 +966,94 @@ fin_stock_ticker <- function(ticker= "NVDA", exchange = "NASDAQ", provider= c("G
 	browseURL(url, browser = getOption("browser"))
 }
 
-#' NZ FIF Tax Offset & NAV Neutrality Calculator
-#' @param portfolioValue Total opening value of the portfolio on April 1st.
-#' @param marginRate The annual interest rate on the IBKR margin loan (e.g., 0.06).
-#' @param expectedReturn The expected annual growth of the asset (e.g., 0.11 for QQQ).
-#' @param taxRate The user's marginal tax rate (e.g., 0.39 or .3 (blended)).
-#' @param fifRate The FIF deemed rate of return (standard is 0.05).
+#' NZ FIF tax offset: NAV-neutral leverage (FDR on the whole pile)
 #'
-#' @return A ggplot object showing the net impact across LTV ratios.
+#' Fair Dividend Rate tax is applied to **opening equity plus assets bought
+#' with the loan**. That is what anti-avoidance and common sense require: the
+#' extra US stock is a FIF interest too.
+#'
+#' Neutral loan / opening equity:
+#' \deqn{L/E = (f t) / (r - i(1-t) - f t)}
+#' When \eqn{f = i} (both 5%), the leftover on the loan collapses to
+#' \eqn{r - i}: interest deduction pays FDR on the borrowed slice, and the
+#' remaining spread pays FDR on the original book.
+#'
+#' LTV on the plot is loan / opening equity, not loan / total assets.
+#'
+#' @param portfolioValue Opening FIF value (1 April), before the new loan.
+#' @param marginRate IBKR (or other) annual margin rate (e.g. 0.05).
+#' @param expectedReturn Expected annual return of the asset (e.g. 0.12).
+#' @param taxRate Marginal tax rate (e.g. 0.38).
+#' @param fifRate FDR deemed rate (default 0.05).
+#' @return A ggplot of net annual impact vs LTV. Invisibly, a list with
+#'   `loan`, `assets`, `ltvOpening`, `fdrDrag`, `leftoverOnLoan`.
 #' @export
 #' @family financial functions
-#' @seealso - [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
+#' @seealso [fin_value_interest()], [fin_tax_NI()], [fin_value_percent()]
 #' @examples
-#' # Example Usage:
-#' # 2026 Strategy: $500k Portfolio, 6.5% IBKR Rate, 12% Expected Return, 39% Tax
-#' fin_tax_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
-fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {  
-  # 1. Core Logic (Dynamic Calculations)
-  # Ratio to zero out taxable income
-  ratioDeductionOnly = fifRate / marginRate
-  
-  # Ratio for NAV Neutrality (Growth + Tax Shield = Tax Bill)
-  # Net Benefit per $ of Loan = (Return + (Interest * TaxRate) - Interest)
-  netBenefitPerUnit = expectedReturn + (marginRate * taxRate) - marginRate
-  totalTaxBill = portfolioValue * fifRate * taxRate
-  ratioNavNeutral = totalTaxBill / (portfolioValue * netBenefitPerUnit)
-  
-  # 2. Data Generation for Visualization
-  # We generate a range from 0% to 150% of the Neutral Point for better scaling
-  maxRange = min(0.85, ratioNavNeutral * 2) 
-  ltvRange = seq(0, maxRange, length.out = 100)
-  
-  netImpact = sapply(ltvRange, function(r) {
-    loan    = portfolioValue * r
-    benefit = loan * netBenefitPerUnit
-    return(benefit - totalTaxBill)
-  })
-  
-  plotDf = data.frame(loanRatio = ltvRange, netGainLoss = netImpact)
-  
-  # 3. Build Plot (Line by Line)
-  p = ggplot(plotDf, aes(x = loanRatio, y = netGainLoss))
-  p = p + geom_line(color = "#2c3e50", linewidth = 1.2)
-  p = p + geom_hline(yintercept = 0, linetype = "dashed", color = "#e74c3c")
-  p = p + geom_vline(xintercept = ratioNavNeutral, linetype = "dotted", color = "#27ae60")
-  p = p + scale_y_continuous(labels = scales::dollar)
-  p = p + scale_x_continuous(labels = scales::percent)
-  p = p + labs(
-    title = "NZ FIF Tax Offset Strategy: Net Asset Impact",
-    subtitle = paste0("Portfolio: $", format(portfolioValue, big.mark = ","), 
-                      " | Neutral LTV: ", round(ratioNavNeutral * 100, 2), "%"),
-    x = "Loan-to-Value (LTV) Ratio",
-    y = "Net Annual Gain/Loss vs. FIF Tax"
-  )
-  p = p + annotate("label", x = ratioNavNeutral, y = 0, label = paste0("NAV Neutral at ", round(ratioNavNeutral * 100, 1), "% LTV"), fill = "white", alpha = 0.8)
-  p = p + theme_minimal() 
-  # Return the plot
-  p
+#' # $3.8m opening, 5% IBKR, 12% expected, 38% tax -> ~$1.03m loan, ~$4.83m assets
+#' fin_tax_FIF(portfolioValue = 3.8e6, marginRate = 0.05, expectedReturn = 0.12, taxRate = 0.38)
+fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {
+	fdrDrag = fifRate * taxRate
+	# Return on borrowed dollar, after interest, tax shield, and FDR on that dollar
+	leftoverOnLoan = expectedReturn - marginRate * (1 - taxRate) - fdrDrag
+	if (leftoverOnLoan <= 0) {
+		stop("Polite note: expectedReturn (", expectedReturn,
+			") cannot cover after-tax margin (", marginRate * (1 - taxRate),
+			") plus FDR drag (", fdrDrag,
+			"). Leverage cannot NAV-neutralise the pile.")
+	}
+	# L / opening equity
+	ratioNavNeutral = fdrDrag / leftoverOnLoan
+	loanNeutral = portfolioValue * ratioNavNeutral
+	assetsNeutral = portfolioValue + loanNeutral
+
+	maxRange = min(0.85, max(ratioNavNeutral * 2, 0.05))
+	ltvRange = seq(0, maxRange, length.out = 100)
+	netImpact = vapply(ltvRange, function(ltv) {
+		loan = portfolioValue * ltv
+		loan * leftoverOnLoan - portfolioValue * fdrDrag
+	}, numeric(1))
+	plotDf = data.frame(loanRatio = ltvRange, netGainLoss = netImpact)
+
+	p = ggplot(plotDf, aes(x = loanRatio, y = netGainLoss))
+	p = p + geom_line(color = "#2c3e50", linewidth = 1.2)
+	p = p + geom_hline(yintercept = 0, linetype = "dashed", color = "#e74c3c")
+	p = p + geom_vline(xintercept = ratioNavNeutral, linetype = "dotted", color = "#27ae60")
+	p = p + scale_y_continuous(labels = scales::dollar)
+	p = p + scale_x_continuous(labels = scales::percent)
+	p = p + labs(
+		title = "NZ FIF: net impact (FDR on equity + borrowed assets)",
+		subtitle = paste0(
+			"Opening ", scales::dollar(portfolioValue),
+			" | Neutral loan ", scales::dollar(loanNeutral),
+			" | Assets ", scales::dollar(assetsNeutral)
+		),
+		x = "Loan / opening equity",
+		y = "Net annual gain/loss vs FDR on the pile"
+	)
+	p = p + annotate("label", x = ratioNavNeutral, y = 0,
+		label = paste0("NAV-neutral at ", round(ratioNavNeutral * 100, 1), "% of opening"),
+		fill = "white", alpha = 0.8)
+	p = p + theme_minimal()
+
+	cat("=== NZ FIF (FDR on the whole pile) ===\n")
+	cat("Opening:       ", scales::dollar(portfolioValue), "\n", sep = "")
+	cat("Neutral loan:  ", scales::dollar(loanNeutral),
+		"  (", round(ratioNavNeutral * 100, 1), "% of opening)\n", sep = "")
+	cat("Assets:        ", scales::dollar(assetsNeutral), "\n", sep = "")
+	cat("FDR drag:      ", round(fdrDrag * 100, 2), "% of the pile\n", sep = "")
+	cat("Leftover/loan: ", round(leftoverOnLoan * 100, 2),
+		"%  (return - after-tax interest - FDR)\n", sep = "")
+
+	invisible(list(
+		loan = loanNeutral,
+		assets = assetsNeutral,
+		ltvOpening = ratioNavNeutral,
+		fdrDrag = fdrDrag,
+		leftoverOnLoan = leftoverOnLoan,
+		plot = p
+	))
 }
 
 #' Work the carry cost of a house
@@ -1175,7 +1206,6 @@ fin_value_NPV <- function(income=27e3, discount_rate=.05, periods = 25, symbol =
 #' # Percent needed to return to original value after 50% off 34.50
 #' fin_value_percent(-50, value = 34.5)
 fin_value_percent <- function(percent, value= 100, symbol = "$", digits = 2, plot = TRUE, logY = TRUE) {
-	umx_aggregate()
 	percent  = percent/100
 	newValue = value * (1 + percent)
 	percent_to_reverse = (value/newValue) - 1
