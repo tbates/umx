@@ -182,8 +182,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			if (is.null(units_str) || length(units_str) == 0) {
 				units_str = "r'wr"
 			}
-			actualN = base$data$numObs
-			isGenomic = umx_is_GSEM(base) | (!is.null(actualN) && actualN > 50000)
+			isGenomic = umx_is_GSEM(base)
 			for (comp in comparison) {
 				if (umx_is_GSEM(comp)) {
 					isGenomic = TRUE
