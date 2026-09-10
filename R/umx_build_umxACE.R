@@ -597,7 +597,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' }
 umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", family = stats::poisson(), theta = NULL, nAGQ = 1L, dzAr = 0.5, dzCr = 1, equateMeans = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search")) {
 	tryHard = match.arg(tryHard)
-	if (!exists("mxFamily", mode = "function")) {
+	mxFamilyFun = get0("mxFamily", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
+	if (is.null(mxFamilyFun)) {
 		stop("umxACE_GLM needs OpenMx with mxFamily() / mxFitFunctionGLM()", call. = FALSE)
 	}
 	if (is.null(sep) || !nzchar(sep)) {
@@ -686,7 +687,7 @@ umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", fam
 			}
 			famList[[nm]] = fam
 		} else {
-			famList[[nm]] = mxFamily(nm, family, theta = theta)
+			famList[[nm]] = mxFamilyFun(nm, family, theta = theta)
 		}
 	}
 
