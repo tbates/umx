@@ -2,7 +2,7 @@
 % Please edit documentation in R/financial_functions.R
 \name{fin_tax_FIF}
 \alias{fin_tax_FIF}
-\title{NZ FIF Tax Offset & NAV Neutrality Calculator}
+\title{NZ FIF tax offset: NAV-neutral leverage (FDR on the whole pile)}
 \usage{
 fin_tax_FIF(
   portfolioValue,
@@ -13,31 +13,39 @@ fin_tax_FIF(
 )
 }
 \arguments{
-\item{portfolioValue}{Total opening value of the portfolio on April 1st.}
+\item{portfolioValue}{Opening FIF value (1 April), before the new loan.}
 
-\item{marginRate}{The annual interest rate on the IBKR margin loan (e.g., 0.06).}
+\item{marginRate}{IBKR (or other) annual margin rate (e.g. 0.05).}
 
-\item{expectedReturn}{The expected annual growth of the asset (e.g., 0.11 for QQQ).}
+\item{expectedReturn}{Expected annual return of the asset (e.g. 0.12).}
 
-\item{taxRate}{The user's marginal tax rate (e.g., 0.39 or .3 (blended)).}
+\item{taxRate}{Marginal tax rate (e.g. 0.38).}
 
-\item{fifRate}{The FIF deemed rate of return (standard is 0.05).}
+\item{fifRate}{FDR deemed rate (default 0.05).}
 }
 \value{
-A ggplot object showing the net impact across LTV ratios.
+A ggplot of net annual impact vs LTV. Invisibly, a list with
+  \code{loan}, \code{assets}, \code{ltvOpening}, \code{fdrDrag}, \code{leftoverOnLoan}.
 }
 \description{
-NZ FIF Tax Offset & NAV Neutrality Calculator
+Fair Dividend Rate tax is applied to \strong{opening equity plus assets bought
+with the loan}. That is what anti-avoidance and common sense require: the
+extra US stock is a FIF interest too.
+
+Neutral loan / opening equity:
+\deqn{L/E = (f t) / (r - i(1-t) - f t)}
+When \eqn{f = i} (both 5\%), the leftover on the loan collapses to
+\eqn{r - i}: interest deduction pays FDR on the borrowed slice, and the
+remaining spread pays FDR on the original book.
+
+LTV on the plot is loan / opening equity, not loan / total assets.
 }
 \examples{
-# Example Usage:
-# 2026 Strategy: $500k Portfolio, 6.5\% IBKR Rate, 12\% Expected Return, 39\% Tax
-fin_tax_FIF(portfolioValue = .5e6, marginRate = 0.065, expectedReturn = 0.12,  taxRate = 0.39)
+# $3.8m opening, 5\% IBKR, 12\% expected, 38\% tax -> ~$1.03m loan, ~$4.83m assets
+fin_tax_FIF(portfolioValue = 3.8e6, marginRate = 0.05, expectedReturn = 0.12, taxRate = 0.38)
 }
 \seealso{
-\itemize{
-\item \code{\link[=fin_value_interest]{fin_value_interest()}}, \code{\link[=fin_tax_NI]{fin_tax_NI()}}, \code{\link[=fin_value_percent]{fin_value_percent()}}
-}
+\code{\link[=fin_value_interest]{fin_value_interest()}}, \code{\link[=fin_tax_NI]{fin_tax_NI()}}, \code{\link[=fin_value_percent]{fin_value_percent()}}
 
 Other financial functions:
 \code{\link[=fin_options_Greeks]{fin_options_Greeks()}},

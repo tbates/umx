@@ -1046,13 +1046,13 @@ fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fif
 	cat("Leftover/loan: ", round(leftoverOnLoan * 100, 2),
 		"%  (return - after-tax interest - FDR)\n", sep = "")
 
+	print(p)
 	invisible(list(
 		loan = loanNeutral,
 		assets = assetsNeutral,
 		ltvOpening = ratioNavNeutral,
 		fdrDrag = fdrDrag,
-		leftoverOnLoan = leftoverOnLoan,
-		plot = p
+		leftoverOnLoan = leftoverOnLoan
 	))
 }
 
