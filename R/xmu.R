@@ -737,18 +737,9 @@ xmu_data_missing <- function(data, selVars, sep= NULL, dropMissingDef = TRUE, hi
 
 
 
-# OpenMx residual dimnames for continuous vars, no means: var_* then poly_*_*
+# OpenMx residual dimnames for WLS V (same order as omxNameWLS_V / xmu_gsem_vech_names).
 xmu_openmx_residual_names <- function(traitNames) {
-	nms = paste0("var_", traitNames)
-	k = length(traitNames)
-	if (k >= 2) {
-		for (j in 1:(k - 1)) {
-			for (i in (j + 1):k) {
-				nms = c(nms, paste0("poly_", traitNames[i], "_", traitNames[j]))
-			}
-		}
-	}
-	nms
+	xmu_gsem_vech_names(traitNames)
 }
 
 # Wrapper for OpenMx omxNameWLS_V when exported (GenomicMx); else local fallback.
