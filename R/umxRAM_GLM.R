@@ -52,6 +52,10 @@
 #' }
 umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NULL, nAGQ = NA_integer_, name = NA, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), setValues = TRUE, suffix = "", verbose = FALSE) {
 	tryHard = match.arg(tryHard)
+	mxFamilyFun = get0("mxFamily", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
+	if (is.null(mxFamilyFun)) {
+		stop("umxRAM_GLM needs OpenMx with mxFamily() / mxFitFunctionGLM()", call. = FALSE)
+	}
 	dot.items = list(...)
 	for (item in dot.items) {
 		thisIs = class(item)[1]
@@ -109,7 +113,7 @@ umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NU
 					famList[[item[[k]]@variable]] = item[[k]]
 				}
 			} else {
-				famList[[nm]] = mxFamily(nm, item, theta = th)
+				famList[[nm]] = mxFamilyFun(nm, item, theta = th)
 			}
 		}
 	}
