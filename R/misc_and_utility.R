@@ -5807,8 +5807,9 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' 
 #' @details
 #' The Yeo-Johnson transformation is a power transform that handles zero and 
-#' negative values natively. It is often superior to `log(x+1)` because it 
-#' uses MLE to find the mathematically optimal power to minimize skewness.
+#' negative values natively. Lambda is estimated with `car::powerTransform(..., family = "yjPower")`
+#' on the stacked twin columns (one lambda for T1 and T2). It is often superior
+#' to `log(x+1)` because it uses MLE to find the mathematically optimal power to minimize skewness.
 #' 
 #' When `verbose = TRUE`, the function reports the lambda value and provides 
 #' a diagnostic plot comparing the raw and transformed distributions.
@@ -5829,8 +5830,8 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 #' @examples
 #' # df = umx_yj_wide_twin_data(data = df, varsToTransform = c("CAQ"), sep = "_T")
 umx_yj_wide_twin_data = function(data, varsToTransform, sep = "_T",  twins = 1:2, suffix = "_yj", verbose= TRUE) {
-	if (!requireNamespace("bestNormalize", quietly = TRUE)) {
-		stop("Please install 'bestNormalize': libs('bestNormalize')")
+	if (!requireNamespace("car", quietly = TRUE)) {
+		stop("Please install 'car': libs('car')")
 	}
 
 	if (length(sep) != 1) {
@@ -5855,11 +5856,15 @@ umx_yj_wide_twin_data = function(data, varsToTransform, sep = "_T",  twins = 1:2
 		# 1. Stack: Flatten across twins for a shared lambda estimate
 		combinedData = unlist(data[, oldNames])
 		
-		# 2. Transform: ML estimate of Yeo-Johnson transformation
-		yjFit = bestNormalize::yeojohnson(combinedData)
-
-		# Extract Lambda
-		lambda = as.numeric(yjFit$lambda[1])
+		# 2. Transform: ML Yeo-Johnson via car (same family as bestNormalize::yeojohnson,
+		# without that package's tidymodels Suggests tree).
+		ok = is.finite(combinedData)
+		if (!any(ok)) {
+			stop("No finite values to estimate Yeo-Johnson lambda for ", omxQuotes(varName))
+		}
+		pt = car::powerTransform(combinedData[ok], family = "yjPower")
+		lambda = as.numeric(pt$lambda[1])
+		transformedStacked = car::yjPower(combinedData, lambda)
 		if (verbose) {
 			# Determine the 'meaning' of the lambda
 
@@ -5888,13 +5893,7 @@ umx_yj_wide_twin_data = function(data, varsToTransform, sep = "_T",  twins = 1:2
 			# 3. Plotting
 			# Plot 1: Original
 			hist(combinedData, main = paste("Raw:", varName), col = "lightgrey", xlab = "Raw Units")
-			
-			# Plot 2: Transformed
-			transformedStacked = predict(yjFit)
 			hist(transformedStacked, main = paste("YJ:", varName), col = "skyblue", xlab = "Transformed Units")
-			
-		}else{
-			transformedStacked = predict(yjFit)			
 		}
 		# 4. Pull Apart: Insert into new columns, preserving row integrity
 		# matrix() fills by column, matching the unlist() order for twins

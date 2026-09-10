@@ -1,4 +1,5 @@
 ## dev
+* CHANGED: `umx_yj_wide_twin_data()` uses `car::powerTransform` / `yjPower` (Yeo-Johnson). Dropped Suggests `bestNormalize` (and its tidymodels-sized dependency tree).
 * CHANGED: `fin_tax_FIF()` applies FDR to opening equity **plus** assets bought with the loan (anti-avoidance / whole-pile). Neutral loan is \(L/E = ft / (r - i(1-t) - ft)\). Prints loan/assets; plot LTV is loan/opening.
 * FIXED: `umx_is_GSEM()` is TRUE only for class `MxModelGSEM`. Ordinary RAM models are no longer treated as GSEM via `MxRAMObjective`.
 * FIXED: `tmx_show.MxModelGSEM` defaults to `A`, residual `S`, `data.S`, `data.V` (LDSC cov / sampling cov in `observedStats`). Bare `"V"` is not a RAM matrix.

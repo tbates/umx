@@ -63,7 +63,7 @@ Suggests:
 	withr,
 	R.utils,
 	data.table,
-	bestNormalize,
+	car,
 	cocor,
 	GPArotation,
 	httr2,

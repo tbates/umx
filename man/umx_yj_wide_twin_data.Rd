@@ -39,8 +39,9 @@ is identical for both twins, preserving the twin covariance structure.
 }
 \details{
 The Yeo-Johnson transformation is a power transform that handles zero and
-negative values natively. It is often superior to \code{log(x+1)} because it
-uses MLE to find the mathematically optimal power to minimize skewness.
+negative values natively. Lambda is estimated with \code{car::powerTransform(..., family = "yjPower")}
+on the stacked twin columns (one lambda for T1 and T2). It is often superior
+to \code{log(x+1)} because it uses MLE to find the mathematically optimal power to minimize skewness.
 
 When \code{verbose = TRUE}, the function reports the lambda value and provides
 a diagnostic plot comparing the raw and transformed distributions.
