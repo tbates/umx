@@ -188,9 +188,9 @@ umxGSEM_ldsc <- function(traits, sample.prev, population.prev, ld, wld, trait.na
 #' toy SNP list. It is **not** a production data installer.
 #'
 #' Files land in `tools::R_user_dir("umx", "data")/GSEM_tutorial` unless `path`
-#' is set. Shipped 1k-SNP tables are copied from the installed package when
-#' present; LD scores and `w_hm3.snplist` come from the umx GitHub Release tag
-#' `gsem-tutorial`. Existing files are left alone unless `overwrite = TRUE`.
+#' is set. 1k-SNP tables and LD scores come from the umx GitHub Release tag
+#' `gsem-tutorial` (not from the CRAN tarball). Existing files are left alone
+#' unless `overwrite = TRUE`.
 #'
 #' **ldsc on these SNPs is pedagogical.** About 1k variants will not recover
 #' sensible heritabilities. For a real structural model use [Psych_LDSC] /
@@ -210,8 +210,8 @@ umxGSEM_ldsc <- function(traits, sample.prev, population.prev, ld, wld, trait.na
 #'
 #' @param path Directory to write into. Default:
 #'   `file.path(tools::R_user_dir("umx", "data"), "GSEM_tutorial")`.
-#' @param overwrite If `TRUE`, re-copy shipped tables and re-download the
-#'   Release tarball even when files already exist. Default `FALSE`.
+#' @param overwrite If `TRUE`, re-download the Release tarball even when files
+#'   already exist. Default `FALSE`.
 #' @param url Tarball URL, or a path to a local `.tar.gz`. Default is the
 #'   `gsem-tutorial` Release asset on `tbates/umx`.
 #' @return A named list of absolute paths: `dir`, `hm3`, `ld`, `sumstats`
@@ -224,11 +224,12 @@ umxGSEM_ldsc <- function(traits, sample.prev, population.prev, ld, wld, trait.na
 #' \dontrun{
 #' tut = umxGSEM_dl_tutorial_files()
 #' umxGSEM_munge(tut$sumstats, hm3 = tut$hm3, trait.names = c("SCZ", "BIP", "MDD"),
-#'   Ns = c(105318, 16731, 173005), output_dir = tut$dir)
+#' 	Ns = c(105318, 16731, 173005), output_dir = tut$dir)
 #' data(Psych_LDSC)
 #' m1 = umxGSEM("g ~= SCZ + BIP + MDD", covstruc = Psych_LDSC)
 #' }
-umxGSEM_dl_tutorial_files <- function(path = NULL, overwrite = FALSE, url = "https://github.com/tbates/umx/releases/download/gsem-tutorial/umxGSEM_tutorial.tar.gz") {
+umxGSEM_dl_tutorial_files <- function(path = NULL, overwrite = FALSE, 
+	url = "https://github.com/tbates/umx/releases/download/gsem-tutorial/umxGSEM_tutorial.tar.gz") {
 	if (is.null(path)) {
 		path = file.path(tools::R_user_dir("umx", "data"), "GSEM_tutorial")
 	}
@@ -260,7 +261,8 @@ umxGSEM_dl_tutorial_files <- function(path = NULL, overwrite = FALSE, url = "htt
 	}
 
 	ldReady = dir.exists(ldDir) && file.exists(hm3File) && isTRUE(file.info(hm3File)$size > 0) && all(file.exists(ldSentinel))
-	if (overwrite || !ldReady) {
+	subsetsReady = all(file.exists(file.path(path, subsetNames))) && file.exists(file.path(path, refName))
+	if (overwrite || !ldReady || !subsetsReady) {
 		localTar = file.exists(url)
 		if (localTar) {
 			message("Unpacking GSEM tutorial files from ", url)
@@ -759,9 +761,13 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 #'
 #' Utility function returning a binary answer to the question "Is this a GSEM model?"
 #'
+#' TRUE only for models of class `MxModelGSEM` (the class [umxGSEM()] assigns).
+#' Ordinary RAM / `umxRAM` models are FALSE (they used to match via a leftover `MxRAMObjective` check).
+#'
 #' @param obj an object to be tested to see if it is an OpenMx GSEM [OpenMx::mxModel()]
 #' @return - Boolean
 #' @export
+#' @md
 #' @family Test
 #' @references - <https://github.com/tbates/umx>
 #' @examples
@@ -792,13 +798,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 #' umx_is_GSEM(m0)
 #' }
 umx_is_GSEM <- function(obj) {
-	if(!umx_is_MxModel(obj)){
-		return(FALSE)
-	} else if(class(obj)[[1]] %in% c("MxModelGSEM")){
-		return(TRUE)
-	} else {
-		return(class(obj$objective)[[1]] == "MxRAMObjective")
-	}
+	umx_is_MxModel(obj) && inherits(obj, "MxModelGSEM")
 }
 
 
