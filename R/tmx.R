@@ -616,16 +616,21 @@ tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or
 #' Show genomic SEM matrices
 #'
 #' @description
-#' `tmx_show` method for `MxModelGSEM` models to display structural parameter matrices
-#' and/or genomic S and V data matrices.
+#' `tmx_show` method for `MxModelGSEM` models.
 #'
-#' @param x An \code{MxModelGSEM} model.
+#' Default matrices: RAM paths (`A`), residual `S`, then LDSC data in
+#' `observedStats` (`data.S` = genetic cov, `data.V` = sampling cov of vech(S)).
+#' Bare `"V"` is not a RAM matrix; use `"data.V"` (the RAM method still aliases
+#' `"V"` to `asymCov` if you pass it). Means (`M`) are omitted unless requested.
+#'
+#' @param x An `MxModelGSEM` model.
 #' @param what legal options are "values" (default), "free", or "labels".
 #' @param show filter on what to show c("all", "free", "fixed").
-#' @param matrices to show (default is c("S", "V", "A", "M")).
+#' @param matrices to show (default `c("A", "S", "data.S", "data.V")`).
 #' @param ... Arguments passed to [tmx_show.MxModel()].
 #' @export
+#' @md
 
-tmx_show.MxModelGSEM <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "V", "A", "M"), ...) {
+tmx_show.MxModelGSEM <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("A", "S", "data.S", "data.V"), ...) {
 	tmx_show.MxModel(x, what = what, show = show, matrices = matrices, ...)
 }
