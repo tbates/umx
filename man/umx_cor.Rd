@@ -6,7 +6,8 @@
 \usage{
 umx_cor(
   X,
-  df = nrow(X) - 2,
+  data = NULL,
+  df = NULL,
   use = c("pairwise.complete.obs", "complete.obs", "everything", "all.obs",
     "na.or.complete"),
   digits = 2,
@@ -35,21 +36,17 @@ For reporting correlations and their p-values in a compact table. Handles roundi
 \details{
 To compute heterochoric correlations, see \code{\link[=umxHetCor]{umxHetCor()}}.
 
-\emph{note}: The Hmisc package has a more robust function called \code{rcorr}.
+\emph{note}: The Hmisc package has a robust function called \code{rcorr}.
 }
 \examples{
 tmp = myFADataRaw[1:8,1:8]
 umx_cor(tmp)
 tmp$x1 = letters[1:8] # make one column non-numeric
 umx_cor(tmp)
-}
-\references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+umx_cor(~ x2 + x3, tmp)
 }
 \seealso{
-umxHetCor
+\code{\link[=umxHetCor]{umxHetCor()}}, \code{\link[=cor.test]{cor.test()}}
 
 Other Miscellaneous Stats Functions:
 \code{\link[=FishersMethod]{FishersMethod()}},

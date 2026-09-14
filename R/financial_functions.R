@@ -969,14 +969,16 @@ fin_stock_ticker <- function(ticker= "NVDA", exchange = "NASDAQ", provider= c("G
 #' NZ FIF tax offset: NAV-neutral leverage (FDR on the whole pile)
 #'
 #' Fair Dividend Rate tax is applied to **opening equity plus assets bought
-#' with the loan**. That is what anti-avoidance and common sense require: the
-#' extra US stock is a FIF interest too.
+#' with loan funds**.
 #'
 #' Neutral loan / opening equity:
-#' \deqn{L/E = (f t) / (r - i(1-t) - f t)}
-#' When \eqn{f = i} (both 5%), the leftover on the loan collapses to
-#' \eqn{r - i}: interest deduction pays FDR on the borrowed slice, and the
+#' \deqn{L/E = (f t) / (r - i(1-t) - f t)}{L/E = (f t) / (r - i(1-t) - f t)}
+#'
+#' When \eqn{f = i}{f = i} (both 5%), the leftover on the loan collapses to
+#' \eqn{r - i}{r - i}: interest deduction pays FDR on the borrowed slice, and the
 #' remaining spread pays FDR on the original book.
+#'
+#' \deqn{z = \frac{\bar{x} - \mu}{\sigma/\sqrt{n}}}{z = (xbar - mu)/(sigma/sqrt(n))}
 #'
 #' LTV on the plot is loan / opening equity, not loan / total assets.
 #'
@@ -993,7 +995,7 @@ fin_stock_ticker <- function(ticker= "NVDA", exchange = "NASDAQ", provider= c("G
 #' @examples
 #' # $3.8m opening, 5% IBKR, 12% expected, 38% tax -> ~$1.03m loan, ~$4.83m assets
 #' fin_tax_FIF(portfolioValue = 3.8e6, marginRate = 0.05, expectedReturn = 0.12, taxRate = 0.38)
-fin_tax_FIF <- function(portfolioValue, marginRate, expectedReturn, taxRate, fifRate = 0.05) {
+fin_tax_FIF <- function(portfolioValue=1.e6, marginRate=.056, expectedReturn = .12, taxRate = .38, fifRate = 0.05) {
 	fdrDrag = fifRate * taxRate
 	# Return on borrowed dollar, after interest, tax shield, and FDR on that dollar
 	leftoverOnLoan = expectedReturn - marginRate * (1 - taxRate) - fdrDrag

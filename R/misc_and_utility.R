@@ -5392,7 +5392,7 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 #' str(x); levels(x)
 #' table(x)
 #' \dontrun{
-#' ggplot2::qplot(x$x)
+#' hist(x$x)
 #' y = mxData(x, type = "raw") # then fit with mxFitFunctionWLS / umxRAM type="WLS"
 #' }
 #' 
@@ -6931,11 +6931,9 @@ umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
 }
 
 #' Stack data like stack() does, with more control.
-#'
 #' @description
 #' Operates like [stack()], but can preserve ("passalong") other variables on each row,
 #' and allows the user control over the values and group column names for ease of use.
-#'
 #' @param x a dataframe containing twin data.
 #' @param select The variables to stack (wide 2 long)
 #' @param passalong Variables to preserve on each row (e.g. age)
@@ -6945,16 +6943,14 @@ umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
 #' @export
 #' @family Data Functions
 #' @seealso [umx_wide2long()]
-
 #' @examples
-#' 
 #' # Base-R stack function
 #' df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
 #' 
 #' # umx_stack, with additional variables passed along 
 #' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 #' str(df) # ind is a factor, with levels select
-#' ggplot2::qplot(x = mpg, y= values, color=ind, data = df)
+#' ggplot(df, aes(x= mpg, y= values, colour= ind))+geom_point()+geom_smooth()
 umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "ind") {
 	# TODO: rewrite to create the full size in one go, and slot in blocks
 	# initialize new dataframe

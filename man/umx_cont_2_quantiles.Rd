@@ -45,7 +45,7 @@ x = data.frame(x)
 str(x); levels(x)
 table(x)
 \dontrun{
-ggplot2::qplot(x$x)
+hist(x$x)
 y = mxData(x, type = "raw") # then fit with mxFitFunctionWLS / umxRAM type="WLS"
 }
 

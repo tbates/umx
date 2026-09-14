@@ -27,14 +27,13 @@ Operates like \code{\link[=stack]{stack()}}, but can preserve ("passalong") othe
 and allows the user control over the values and group column names for ease of use.
 }
 \examples{
-
 # Base-R stack function
 df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
 
 # umx_stack, with additional variables passed along 
 df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 str(df) # ind is a factor, with levels select
-ggplot2::qplot(x = mpg, y= values, color=ind, data = df)
+ggplot(df, aes(x= mpg, y= values, colour= ind))+geom_point()+geom_smooth()
 }
 \seealso{
 \code{\link[=umx_wide2long]{umx_wide2long()}}
