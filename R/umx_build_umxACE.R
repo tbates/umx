@@ -537,7 +537,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' scale \eqn{\sigma}. Leave them in the too-hard box; use Poisson for counts and
 #' threshold [umxACE()] for binary.
 #'
-#' **Binomial `trials=` is not implemented.** [mxFamily()] can take `trials` as a
+#' **Binomial `trials=` is not implemented.** `mxFamily()` can take `trials` as a
 #' raw-data column (`n` successes out of `n_i` trials per row). This wrapper does
 #' not: there is no `trials` argument, and MZ/DZ data are subset to the phenotype
 #' `_T1`/`_T2` columns, so any `n` columns are dropped. Binomial here is Bernoulli
@@ -563,8 +563,8 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @param mzData MZ data.frame
 #' @param dzData DZ data.frame
 #' @param sep twin separator (default `"_T"`; must not be `""`)
-#' @param family `stats::family` or [mxFamily()] for the phenotype (both twins). Poisson is the intended ACE family. Binomial is Bernoulli only: `trials=` and per-row `n` columns are not implemented (see Details). Scale-identified (`e` diagonal fixed at 1) but leftover eats heritability — use threshold [umxACE()] for binary. Gamma and inverse Gaussian are accepted but not supported for ACE (trial-level process models; see Details).
-#' @param theta passed to [mxFamily()]. For Gamma, leftover shape; for inverse Gaussian, leftover lambda. Both fixed (default 1, `phi = 1`). A free-parameter label is rejected (collides with `e`). Not used for Poisson or binomial.
+#' @param family `stats::family` or `mxFamily()` for the phenotype (both twins). Poisson is the intended ACE family. Binomial is Bernoulli only: `trials=` and per-row `n` columns are not implemented (see Details). Scale-identified (`e` diagonal fixed at 1) but leftover eats heritability — use threshold [umxACE()] for binary. Gamma and inverse Gaussian are accepted but not supported for ACE (trial-level process models; see Details).
+#' @param theta passed to `mxFamily()`. For Gamma, leftover shape; for inverse Gaussian, leftover lambda. Both fixed (default 1, `phi = 1`). A free-parameter label is rejected (collides with `e`). Not used for Poisson or binomial.
 #' @param nAGQ must be 1 (more than one latent)
 #' @param dzAr DZ additive genetic correlation (default 0.5)
 #' @param dzCr DZ C correlation (default 1; 0.25 for ADE)

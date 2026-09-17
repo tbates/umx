@@ -195,13 +195,10 @@ NULL
 #' @family datasets
 #' @name us_skinfold_data
 #' @references Moskowitz, W. B., Schwartz, P. F., & Schieken, R. M. (1999).
-#' Childhood passive smoking, race, and coronary artery disease risk:
-#' the MCV Twin Study. Medical College of Virginia.
-#' *Archives of Pediatrics and Adolescent Medicine*, **153**, 446-453.
-#' <https://pubmed.ncbi.nlm.nih.gov/10323623/>
+#' Childhood passive smoking, race, and coronary artery disease risk: the MCV Twin Study. Medical College of Virginia.
+#' *Archives of Pediatrics and Adolescent Medicine*, **153**, 446-453. \doi{10.1001/archpedi.153.5.446}.
 #' @usage data(us_skinfold_data)
 #' @format A data frame with 53940 twin families (1 per row) each twin measured on 10 variables.
-
 #' @examples
 #' \dontrun{
 #' data(us_skinfold_data)
@@ -249,9 +246,9 @@ NULL
 #' @keywords datasets
 #' @family datasets
 #' @name iqdat
-#' @references Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for repeated measures: 
-#' application to two psychomotor measures of alcohol sensitivity in twins. *Behavior Genetics*, **19**, 79-96.
-#' Retrieved from <https://pubmed.ncbi.nlm.nih.gov/2712815/>
+#' @references Boomsma, D. I., Martin, N. G., & Molenaar, P. C. (1989). Factor and simplex models for
+#' repeated measures: application to two psychomotor measures of alcohol sensitivity in twins.
+#' *Behavior Genetics*, **19**, 79-96. \doi{10.1007/BF01065885}.
 #' @usage data(iqdat)
 #' @format A data frame with 562 rows (twin families). Nine measures on each twin.
 #' @seealso [umxSimplex()] 

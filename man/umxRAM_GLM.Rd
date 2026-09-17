@@ -22,15 +22,15 @@ umxRAM_GLM(
 \arguments{
 \item{model}{a model name (character). Updating an existing model is not supported.}
 
-\item{...}{\code{\link[=umxPath]{umxPath()}} / \code{\link[OpenMx:mxPath]{mxPath()}} objects, optional \code{\link[OpenMx:mxMatrix]{mxMatrix()}}, \code{\link[OpenMx:mxConstraint]{mxConstraint()}}, and \code{\link[OpenMx:mxFamily]{mxFamily()}} objects. Not data.}
+\item{...}{\code{\link[=umxPath]{umxPath()}} / \code{\link[OpenMx:mxPath]{mxPath()}} objects, optional \code{\link[OpenMx:mxMatrix]{mxMatrix()}}, \code{\link[OpenMx:mxConstraint]{mxConstraint()}}, and \code{mxFamily()} objects. Not data.}
 
 \item{data}{a data.frame or raw \code{\link[OpenMx:mxData]{mxData()}}. Required (used to detect manifests vs latents and to set starts).}
 
-\item{families}{named list of \code{stats::family} or \code{\link[OpenMx:mxFamily]{mxFamily()}} objects. Names are manifest variables. Items not listed are Gaussian.}
+\item{families}{named list of \code{stats::family} or \code{mxFamily()} objects. Names are manifest variables. Items not listed are Gaussian.}
 
 \item{theta}{optional named numeric (fixed) or character (free-parameter label) for NB size / Gamma shape / inverse-Gaussian lambda.}
 
-\item{nAGQ}{passed to \code{\link[OpenMx:mxFitFunctionGLM]{mxFitFunctionGLM()}}. \code{NA} (default) uses OpenMx's rule: 5 for binomial with one latent, else 1.}
+\item{nAGQ}{passed to \code{mxFitFunctionGLM()}. \code{NA} (default) uses OpenMx's rule: 5 for binomial with one latent, else 1.}
 
 \item{name}{optional name; if \code{NA}, \code{model} is used.}
 
@@ -68,7 +68,7 @@ m1 = umxRAM_GLM("poi",
 }
 }
 \seealso{
-\code{\link[=umxRAM]{umxRAM()}}, \code{\link[OpenMx:mxFamily]{mxFamily()}}, \code{\link[OpenMx:mxFitFunctionGLM]{mxFitFunctionGLM()}}
+\code{\link[=umxRAM]{umxRAM()}}, \code{mxFamily()}, \code{mxFitFunctionGLM()}
 
 Other Advanced Model Building Functions:
 \code{\link{umx}},

@@ -5,10 +5,10 @@
 \title{NZ FIF tax offset: NAV-neutral leverage (FDR on the whole pile)}
 \usage{
 fin_tax_FIF(
-  portfolioValue,
-  marginRate,
-  expectedReturn,
-  taxRate,
+  portfolioValue = 1e+06,
+  marginRate = 0.056,
+  expectedReturn = 0.12,
+  taxRate = 0.38,
   fifRate = 0.05
 )
 }

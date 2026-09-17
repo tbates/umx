@@ -31,9 +31,9 @@ umxACE_GLM(
 
 \item{sep}{twin separator (default \code{"_T"}; must not be \code{""})}
 
-\item{family}{\code{stats::family} or \code{\link[OpenMx:mxFamily]{mxFamily()}} for the phenotype (both twins). Poisson is the intended ACE family. Binomial is Bernoulli only: \verb{trials=} and per-row \code{n} columns are not implemented (see Details). Scale-identified (\code{e} diagonal fixed at 1) but leftover eats heritability — use threshold \code{\link[=umxACE]{umxACE()}} for binary. Gamma and inverse Gaussian are accepted but not supported for ACE (trial-level process models; see Details).}
+\item{family}{\code{stats::family} or \code{mxFamily()} for the phenotype (both twins). Poisson is the intended ACE family. Binomial is Bernoulli only: \verb{trials=} and per-row \code{n} columns are not implemented (see Details). Scale-identified (\code{e} diagonal fixed at 1) but leftover eats heritability — use threshold \code{\link[=umxACE]{umxACE()}} for binary. Gamma and inverse Gaussian are accepted but not supported for ACE (trial-level process models; see Details).}
 
-\item{theta}{passed to \code{\link[OpenMx:mxFamily]{mxFamily()}}. For Gamma, leftover shape; for inverse Gaussian, leftover lambda. Both fixed (default 1, \code{phi = 1}). A free-parameter label is rejected (collides with \code{e}). Not used for Poisson or binomial.}
+\item{theta}{passed to \code{mxFamily()}. For Gamma, leftover shape; for inverse Gaussian, leftover lambda. Both fixed (default 1, \code{phi = 1}). A free-parameter label is rejected (collides with \code{e}). Not used for Poisson or binomial.}
 
 \item{nAGQ}{must be 1 (more than one latent)}
 
@@ -89,7 +89,7 @@ with \code{e}). That is not the cognitive-psych constraint of fixing diffusion
 scale \eqn{\sigma}. Leave them in the too-hard box; use Poisson for counts and
 threshold \code{\link[=umxACE]{umxACE()}} for binary.
 
-\strong{Binomial \verb{trials=} is not implemented.} \code{\link[OpenMx:mxFamily]{mxFamily()}} can take \code{trials} as a
+\strong{Binomial \verb{trials=} is not implemented.} \code{mxFamily()} can take \code{trials} as a
 raw-data column (\code{n} successes out of \code{n_i} trials per row). This wrapper does
 not: there is no \code{trials} argument, and MZ/DZ data are subset to the phenotype
 \verb{_T1}/\verb{_T2} columns, so any \code{n} columns are dropped. Binomial here is Bernoulli

@@ -21,6 +21,25 @@ umx_set_optimizer(opt = NA, model = NULL, silent = FALSE)
 }
 \description{
 \code{umx_set_optimizer} provides an easy way to get and set the default optimizer.
+\code{umx} can use several optimizers: \code{SLSQP} (the default), \code{CSOLNP}, or \code{NPSOL}.
+\code{SLSQP} is often a good choice. \code{CSOLNP}often works well for ordinal models.
+\code{NPSOL} is proprietary. It is not in the CRAN version of OpenMx.
+However it can outperform other optimizers, esp. on CIs.
+}
+\details{
+A bare call simply shows the current optimizer:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{umx_set_optimizer()
+> Current Optimizer is: 'SLSQP'. Options are: 'CSOLNP', 'SLSQP', and 'NPSOL'
+}\if{html}{\out{</div>}}
+
+Set the optimizer by name. note: the old optimizer is returned,
+so you can stash it:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{oldOpt = umx_set_optimizer("CSOLNP")
+# ...
+umx_set_optimizer(oldOpt)
+}\if{html}{\out{</div>}}
 }
 \examples{
 library(umx)

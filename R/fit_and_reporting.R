@@ -250,22 +250,19 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 # =============================
 
 #' AIC weight-based conditional probabilities.
-#'
 #' @description
 #' Returns the best model by AIC, and computes the probabilities 
-#' according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 2004). 
-#'
+#' according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 2004).
 #' @param models a list of models to compare.
 #' @param digits (default 2)
 #' @return - Best model
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @seealso - [AIC()]
-#' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \url{https://pubmed.ncbi.nlm.nih.gov/15117008/}
-
+#' @references - Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \doi{10.3758/bf03206482}.
 #' @examples
-#' l1 = lm(mpg~ wt + disp, data=mtcars)
-#' l2 = lm(mpg~ wt, data=mtcars)
+#' l1 = lm(mpg~ wt + disp, data = mtcars)
+#' l2 = lm(mpg~ wt, data = mtcars)
 #' umxWeightedAIC(models = list(l1, l2))
 umxWeightedAIC <- function(models, digits= 2) {
 	if(inherits(models[[1]], "numeric")){
@@ -280,7 +277,6 @@ umxWeightedAIC <- function(models, digits= 2) {
 	aic.weights = round(MuMIn::Weights(AIClist), 2)
 	if(isS4(models[[1]]) & is(models[[1]], "MxModel")){
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		# Probabilities according to AIC Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(models)), " respectively are: ",
 			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
@@ -420,7 +416,6 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 		aic.weights = round(Weights(AIClist), 2)
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ",
@@ -549,7 +544,6 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	whichBest = which.min(AIC(ACE, ADE, CE, AE)[,"AIC"])[1]
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
 	message("Among ACE, ADE, CE, and AE models ", omxQuotes(bestModel$name), " fit best according to AIC.\n")
-	# Probabilities according to AIC MuMIn::Weights (Wagenmakers et al https://pubmed.ncbi.nlm.nih.gov/15117008/ )
 	if(testD){
 		aic.weights = round(Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
 		aic.names   = namez(c(ACE, ADE, CE, AE))

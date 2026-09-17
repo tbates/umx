@@ -24,11 +24,11 @@
 #' Gaussian. Does not call [mxRefModels()] (no CFI yet).
 #'
 #' @param model a model name (character). Updating an existing model is not supported.
-#' @param ... [umxPath()] / [mxPath()] objects, optional [mxMatrix()], [mxConstraint()], and [mxFamily()] objects. Not data.
+#' @param ... [umxPath()] / [mxPath()] objects, optional [mxMatrix()], [mxConstraint()], and `mxFamily()` objects. Not data.
 #' @param data a data.frame or raw [mxData()]. Required (used to detect manifests vs latents and to set starts).
-#' @param families named list of `stats::family` or [mxFamily()] objects. Names are manifest variables. Items not listed are Gaussian.
+#' @param families named list of `stats::family` or `mxFamily()` objects. Names are manifest variables. Items not listed are Gaussian.
 #' @param theta optional named numeric (fixed) or character (free-parameter label) for NB size / Gamma shape / inverse-Gaussian lambda.
-#' @param nAGQ passed to [mxFitFunctionGLM()]. `NA` (default) uses OpenMx's rule: 5 for binomial with one latent, else 1.
+#' @param nAGQ passed to `mxFitFunctionGLM()`. `NA` (default) uses OpenMx's rule: 5 for binomial with one latent, else 1.
 #' @param name optional name; if `NA`, `model` is used.
 #' @param autoRun whether to run (default [umx_set_auto_run()]).
 #' @param tryHard [xmu_safe_run_summary()] tryHard options.
@@ -38,7 +38,7 @@
 #' @return an [MxModel()] (invisibly if autoRun prints a summary)
 #' @family Advanced Model Building Functions
 #' @export
-#' @seealso [umxRAM()], [mxFamily()], [mxFitFunctionGLM()]
+#' @seealso [umxRAM()], `mxFamily()`, `mxFitFunctionGLM()`
 #' @md
 #' @examples
 #' \dontrun{

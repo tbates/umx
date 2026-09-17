@@ -517,7 +517,7 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 #' pair yet). Nested tests: [umxCompare()] / AIC. Called from [umxSummary()]
 #' when the fit function is GLM; not a new S4 class.
 #'
-#' @param model an [OpenMx::mxModel()] with [OpenMx::mxFitFunctionGLM()]
+#' @param model an [OpenMx::mxModel()] with `OpenMx::mxFitFunctionGLM()`
 #' @param refModels ignored (no GLM saturated model yet)
 #' @param std ignored (the box is eta; standardization is not defined)
 #' @param digits rounding

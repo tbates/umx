@@ -21,7 +21,7 @@
 )
 }
 \arguments{
-\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} with \code{\link[OpenMx:mxFitFunctionGLM]{OpenMx::mxFitFunctionGLM()}}}
+\item{model}{an \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} with \code{OpenMx::mxFitFunctionGLM()}}
 
 \item{refModels}{ignored (no GLM saturated model yet)}
 

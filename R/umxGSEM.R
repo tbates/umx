@@ -228,8 +228,10 @@ umxGSEM_ldsc <- function(traits, sample.prev, population.prev, ld, wld, trait.na
 #' data(Psych_LDSC)
 #' m1 = umxGSEM("g ~= SCZ + BIP + MDD", covstruc = Psych_LDSC)
 #' }
-umxGSEM_dl_tutorial_files <- function(path = NULL, overwrite = FALSE, 
-	url = "https://github.com/tbates/umx/releases/download/gsem-tutorial/umxGSEM_tutorial.tar.gz") {
+umxGSEM_dl_tutorial_files <- function(path = NULL, overwrite = FALSE, url= "default") {
+	if (url=="default") {
+		url = "https://github.com/tbates/umx/releases/download/gsem-tutorial/umxGSEM_tutorial.tar.gz"
+	}
 	if (is.null(path)) {
 		path = file.path(tools::R_user_dir("umx", "data"), "GSEM_tutorial")
 	}

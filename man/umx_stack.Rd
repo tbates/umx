@@ -33,7 +33,7 @@ df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
 # umx_stack, with additional variables passed along 
 df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 str(df) # ind is a factor, with levels select
-ggplot(df, aes(x= mpg, y= values, colour= ind))+geom_point()+geom_smooth()
+ggplot2::ggplot(df, ggplot2::aes(x= mpg, y= values, colour= ind))+ggplot2::geom_point()+ggplot2::geom_smooth()
 }
 \seealso{
 \code{\link[=umx_wide2long]{umx_wide2long()}}

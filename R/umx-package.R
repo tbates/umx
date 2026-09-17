@@ -68,8 +68,8 @@
 #' @importFrom ggplot2 ggplot qplot ggtitle ylab xlab labs
 #' @importFrom ggplot2 scale_x_continuous scale_x_continuous scale_y_continuous theme 
 #' @importFrom ggplot2 geom_abline geom_bar geom_curve geom_errorbar geom_hline geom_jitter geom_line 
-#' @importFrom ggplot2 geom_point geom_ribbon geom_segment geom_smooth  geom_vline arrow unit
-#' @importFrom ggplot2 aes .data annotate coord_cartesian element_blank element_text 
+#' @importFrom ggplot2 geom_point geom_ribbon geom_segment geom_smooth  geom_vline geom_histogram
+#' @importFrom ggplot2 aes .data annotate coord_cartesian element_blank element_text  arrow unit 
 #' @importFrom ggplot2 ggtitle xlab ylab scale_fill_hue expand_limits position_dodge 
 #' @importFrom ggplot2 theme_bw theme_gray theme_minimal
 #' @importFrom graphics plot abline hist par
@@ -84,7 +84,7 @@
 #' @importFrom polycor hetcor
 #' @importFrom quantmod Cl
 #' @importFrom scales dollar
-#' @importFrom stats AIC C aggregate as.formula coef complete.cases
+#' @importFrom stats AIC C aggregate as.formula coef complete.cases glm
 #' @importFrom stats confint cor cov cov.wt cov2cor df lm cor.test dnorm pnorm reshape
 #' @importFrom stats logLik na.exclude na.omit pchisq pf qchisq predict
 #' @importFrom stats qnorm quantile reformulate residuals rnorm runif sd

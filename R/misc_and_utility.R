@@ -793,7 +793,26 @@ umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA", "
 #' Set the optimizer in OpenMx
 #'
 #' `umx_set_optimizer` provides an easy way to get and set the default optimizer.
+#' `umx` can use several optimizers: `SLSQP` (the default), `CSOLNP`, or `NPSOL`.
+#' `SLSQP` is often a good choice. `CSOLNP`often works well for ordinal models. 
+#' `NPSOL` is proprietary. It is not in the CRAN version of OpenMx.
+#' However it can outperform other optimizers, esp. on CIs.
 #'
+#' A bare call simply shows the current optimizer:
+#'
+#' ```r
+#' umx_set_optimizer()
+#' > Current Optimizer is: 'SLSQP'. Options are: 'CSOLNP', 'SLSQP', and 'NPSOL'
+#' ```
+#' 
+#' Set the optimizer by name. note: the old optimizer is returned,
+#' so you can stash it:
+#' 
+#' ```r
+#' oldOpt = umx_set_optimizer("CSOLNP")
+#' # ...
+#' umx_set_optimizer(oldOpt)
+#' ```
 #' @param opt default (NA) returns current value. Current alternatives are
 #' "NPSOL" "SLSQP" and "CSOLNP".
 #' @param model A model for which to set the optimizer. Default (NULL) sets the optimizer globally.
@@ -802,7 +821,6 @@ umx_set_optimization_options <- function(opt = c("mvnRelEps", "mvnMaxPointsA", "
 #' @export
 #' @family Get and set
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 #' @examples
 #' library(umx)
 #' umx_set_optimizer() # print the existing state
@@ -891,9 +909,18 @@ umx_detect_cores <- function(logical = FALSE, p_cores = TRUE) {
 	return(fallback)
 }
 
-#' umx_set_cores
+#' Set the number of cores your models will use.
 #'
-#' set the number of cores (threads) used by OpenMx
+#' To take advantage of multiple cores
+#' ```R
+#' umx_set_cores()  # Show many cores are currently requested
+#' 5/5 (P-cores / total: 11)
+#' umx_set_cores(3) # Request use of 3 cores
+#' ```
+#'
+#' *note*: This function is smart: it will default to all performance cores
+#' (low power cores are typically so slow its not worth forcing the power
+#' cores to wait for them.
 #'
 #' @param cores number of cores to use. NA (the default) returns current value. "-1" will set to `umx_detect_cores()`.
 #' @param model an (optional) model to set. If left NULL, the global option is updated.
@@ -903,7 +930,6 @@ umx_detect_cores <- function(logical = FALSE, p_cores = TRUE) {
 #' @family Get and set
 #' @seealso - [umx_time()]
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 #' @examples
 #' library(umx)
 #' manifests = c("mpg", "disp", "gear")
@@ -3570,6 +3596,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param which What rhub platform to use? c("mac", "linux", "win").
 #' @param run_dont_test When checking.
 #' @param spell for rhub, check spelling? TRUE
+#' @param dependencies for "deps_install", what to install: NA (default) installs hard dependencies only (`Depends`, `Imports`, `LinkingTo`); TRUE adds `Suggests` and dev dependencies (fresh-machine setup); FALSE installs none. Passed to `pak::local_install_dev_deps()`.
 #' @return None
 #' @export
 #' @family xmu internal not for end user
@@ -3595,7 +3622,7 @@ umx_update_OpenMx <- install.OpenMx
 #' }
 umx_make <- function(
 	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "run_dontrun", "examples", "vignettes", "win", "rhub", "lastRhub", "release", "git", "dev"), 
-	pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL,  spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell = TRUE)
+	pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL,  spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell = TRUE, dependencies = NA)
 	{
 	what  = match.arg(what)
 	which = match.arg(which)
@@ -3630,10 +3657,43 @@ umx_make <- function(
 	} else if (what == "spell"){
 		spelling::spell_check_package(pkg = pkgPath, vignettes = FALSE, use_wordlist = TRUE)
 	} else if (what == "sitrep"){
-		devtools::dev_sitrep(pkg = pkgPath)
+		# Base-R sitrep over hard dependencies only: no Suggests sweep, no devtools.
+		sitrepDcf = read.dcf(file.path(pkgPath, "DESCRIPTION"))
+		sitrepName = unname(sitrepDcf[1L, "Package"])
+		depFields = intersect(c("Depends", "Imports", "LinkingTo"), colnames(sitrepDcf))
+		hardDeps = character()
+		if (length(depFields)) {
+			hardDeps = trimws(gsub("\\(.*\\)", "", unlist(strsplit(sitrepDcf[1L, depFields], ",", fixed = TRUE))))
+			hardDeps = sort(setdiff(hardDeps, c("", "R")))
+		}
+		message("R ", getRversion(), "; ", sitrepName, " hard dependencies (", length(hardDeps), "): ", paste(hardDeps, collapse = ", "))
+		missingDeps = character()
+		for (dep in hardDeps) {
+			if (!requireNamespace(dep, quietly = TRUE)) {
+				missingDeps = c(missingDeps, dep)
+			}
+		}
+		if (length(missingDeps)) {
+			message("Not installed: ", paste(missingDeps, collapse = ", "))
+		}
+		behindDeps = character()
+		outdated = tryCatch(utils::old.packages(), error = function(e) {
+			message("CRAN outdated-check skipped: ", conditionMessage(e))
+			NULL
+		})
+		if (!is.null(outdated)) {
+			behindDeps = sort(intersect(rownames(outdated), hardDeps))
+			for (dep in behindDeps) {
+				message(dep, " out of date (installed ", outdated[dep, "Installed"], ", CRAN ", outdated[dep, "ReposVer"], ")")
+			}
+		}
+		if (!length(missingDeps) && !length(behindDeps)) {
+			message("All hard dependencies up to date.")
+		}
+		message("To update, run umx_make(\"deps_install\")")
 	} else if (what == "deps_install"){
 		if(!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
-		pak::local_install_dev_deps(root = pkgPath)
+		pak::local_install_dev_deps(root = pkgPath, dependencies = dependencies)
 	} else if(what == "examples"){ # Fixed name mismatch matching 'what' default
 		devtools::run_examples(pkg = pkgPath, run = run, start = start)
 	} else if(what == "checkCRAN"){
@@ -6950,7 +7010,7 @@ umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
 #' # umx_stack, with additional variables passed along 
 #' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 #' str(df) # ind is a factor, with levels select
-#' ggplot(df, aes(x= mpg, y= values, colour= ind))+geom_point()+geom_smooth()
+#' ggplot2::ggplot(df, ggplot2::aes(x= mpg, y= values, colour= ind))+ggplot2::geom_point()+ggplot2::geom_smooth()
 umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "ind") {
 	# TODO: rewrite to create the full size in one go, and slot in blocks
 	# initialize new dataframe

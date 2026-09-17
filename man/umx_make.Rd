@@ -15,7 +15,8 @@ umx_make(
   spelling = "en_US",
   which = c("win", "mac", "linux", "solaris"),
   run_dont_test = FALSE,
-  spell = TRUE
+  spell = TRUE,
+  dependencies = NA
 )
 }
 \arguments{
@@ -36,6 +37,8 @@ umx_make(
 \item{run_dont_test}{When checking.}
 
 \item{spell}{for rhub, check spelling? TRUE}
+
+\item{dependencies}{for "deps_install", what to install: NA (default) installs hard dependencies only (\code{Depends}, \code{Imports}, \code{LinkingTo}); TRUE adds \code{Suggests} and dev dependencies (fresh-machine setup); FALSE installs none. Passed to \code{pak::local_install_dev_deps()}.}
 }
 \value{
 None
