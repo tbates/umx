@@ -184,8 +184,7 @@ umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 
 	p = ggplot() + geom_point(aes(x = predict(model), y = y_var))
 	p = p + geom_smooth(aes(x = predict(model), y = y_var), method = "lm", se = TRUE, color = "blue")
 	p = p + labs(x= xlab, y= ylab)
-	p = p + annotate("text", x = r2x, y = r2y, label = lab, parse = TRUE, family = font, size = (font_size/2))
-	# p = p + cowplot::draw_label(lab, x = r2x, y = r2y, fontfamily = font, size = (font_size+1))
+	p = p + annotate("text", x = r2x, y = r2y, label = lab, parse = TRUE, family = font, size = (font_size/2.6))
 	p + theme_minimal(base_size = font_size, base_family= font)	
 }
 
@@ -4486,8 +4485,19 @@ FishersMethod <- function(pvalues, ...){
 #'
 #' @description
 #' The Geometric mean is the nth-root of the product of \code{n} input values.
-#' Common uses include computing economic utility. For example, the geometric mean utility of
-#' \code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not 4.3 (the arithmetic mean of utility).
+#' Common uses include: 
+#' * Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. The arithmetic mean overstates performance when volatility is present (e.g., a +50% gain followed by a −50% loss leaves you with a 25% loss, even though the arithmetic average is 0%; the geometric mean correctly yields −29.29% per period, totaling −25%).
+#' * Utilitarian evaluation of value. For example, the geometric mean utility of \code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not the arithmetic mean: 4.3.
+#' * Proportional Scaling: Proportional growth of organisms and log-normally distributed physical phenomena.
+#' * Normalizing metrics measured on different scales: e.g., computer hardware so no single benchmark disproportionately skews the score.
+#'
+#' @details
+#' The geometric mean is defined as the \eqn{n}-th root of the product of \eqn{n} numbers:
+#' \deqn{G = \left( \prod_{i=1}^{n} x_i \right)^{\frac{1}{n}} = \sqrt[n]{x_1 x_2 \cdots x_n}}{G = (prod(x_i))^(1/n)}
+#'
+#' In practice, to prevent numerical overflow or underflow with large vectors, 
+#' it is calculated via the logarithmic transform:
+#' \deqn{\ln G = \frac{1}{n} \sum_{i=1}^{n} \ln(x_i) \implies G = \exp\left( \frac{1}{n} \sum_{i=1}^{n} \ln(x_i) \right)}{G = exp(mean(log(x)))}
 #'
 #' @param x A vector of values.
 #' @param na.rm remove NAs by default.
@@ -4496,28 +4506,30 @@ FishersMethod <- function(pvalues, ...){
 #' @seealso - [harmonic_mean()], [mean()]
 #' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Geometric_mean>
-
 #' @examples
-#' geometric_mean(c(50, 100))
-#'
+#' geometric_mean(c(1.02, 1.03, 1.1))
+#' # = 1.049
+#' 
 #' # For a given sum, geometric mean is maximised when all values are equal:
 #' geometric_mean(c(75,75))
+#' geometric_mean(c(50, 100))
 #'
-#' v = c(1, 149); c(sum(v), geometric_mean(v), mean(v), median(v))
-#' # 150.00000  12.20656  75.00000  75.00000
+#' v = c(1, 149, 500); round(c(geometric_mean(v), mean(v), median(v)), 0)
+#' # 42 217 149
+#'
+#' # Alternate form using mean of the logs
+#' exp(mean(log(c(50, 100))))
 #'
 #' # Underlying logic
 #' sqrt(50 * 100)
-#'
-#' # Alternate form using logs
-#' exp(mean(log(c(50 *100))))
 #' 
 #' # Reciprocal duality
 #' 1/geometric_mean(c(100, 50))
 #' geometric_mean(c(1/100, 1/50))
 geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
+    if (any(x <= 0)) stop("All values in x must be strictly positive.")
 	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)
-	exp(sum(log(x[x > 0]), na.rm = na.rm) / length(x))
+    exp(mean(log(x)), na.rm = na.rm)	
 }
 
 #' Harmonic Mean
@@ -4527,6 +4539,9 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio. 
 #' Also it is the correct mean for averaging speeds weighted for distance.
 #' 
+#' The harmonic mean is calculated using the following formula:
+#' \deqn{H = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}}{H = n / sum(1 / x_i)}
+#'
 #' @param x A vector of values to take the harmonic mean for
 #' @param weights Optional vector of weights.
 #' @param na.rm remove NAs (default = TRUE).
@@ -4535,22 +4550,23 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' @seealso - [geometric_mean()], [aggregate()]
 #' @family Miscellaneous Stats Functions
 #' @references - <https://en.wikipedia.org/wiki/Harmonic_mean>
-
 #' @examples
 #' # Harmonic means are suitable for ratios
 #' tmp = c(33/1, 23/1)
 #' harmonic_mean(tmp)
-#' 
+#'
 #' geometric_mean(tmp)
 #' mean(tmp)
 #'
 #' # Example with weights
 #' harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
+#'
 #' # If Jack travels outbound at 1 mph, and returns at 10 miles an hour, what is his average speed?
 #' harmonic_mean(c(1,10)) # 1.81 mph
-#' 
+#'
 harmonic_mean = function(x, weights = NULL, na.rm = c(TRUE, FALSE)){
 	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)
+	if (any(x <= 0)) stop("All values in x must be strictly positive.")
 	if(na.rm){
 		x = x[!is.na(x)]
 		weights = weights[!is.na(weights)]
