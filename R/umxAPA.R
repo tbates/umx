@@ -245,7 +245,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 				# add APA stars to p-value column for html tables: * p<.05, ** p<.01, *** p<.001
 				pvals     = tmp[["p-value"]]
 				starsVec  = vapply(pvals, getStars, character(1))
-				formatted = vapply(seq_along(pvals), function(k) paste0(umx_APA_pval(pvals[k], addComparison=TRUE), ifelse(starsVec[k]!="", paste0(" ", starsVec[k]), "")), character(1))
+				formatted = vapply(seq_along(pvals), function(k) paste0(umx_APA_pval(pvals[k]), ifelse(starsVec[k]!="", paste0(" ", starsVec[k]), "")), character(1))
 				tmp[["p-value"]] = formatted
 				# html with APA footnote *p < .05. **p < .01. ***p < .001
 				tmpRounded = umx_round(tmp, digits = digits, coerce = FALSE)
@@ -279,7 +279,7 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 				loStrVec[k] = sprintf(paste0("%0.", digits, "f"), lower)
 				hiStrVec[k] = sprintf(paste0("%0.", digits, "f"), upper)
 				tStrVec[k]  = sprintf(paste0("%0.", digits, "f"), tval)
-				pStrVec[k]  = umx_APA_pval(pval, addComparison = TRUE)
+				pStrVec[k]  = umx_APA_pval(pval)
 				star = getStars(pval)
 				if(star != "") pStrVec[k] = paste0(pStrVec[k], " ", star)
 			}
