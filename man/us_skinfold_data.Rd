@@ -53,10 +53,8 @@ par(mfrow = c(1, 1))  # back to as it was
 }
 \references{
 Moskowitz, W. B., Schwartz, P. F., & Schieken, R. M. (1999).
-Childhood passive smoking, race, and coronary artery disease risk:
-the MCV Twin Study. Medical College of Virginia.
-\emph{Archives of Pediatrics and Adolescent Medicine}, \strong{153}, 446-453.
-\url{https://pubmed.ncbi.nlm.nih.gov/10323623/}
+Childhood passive smoking, race, and coronary artery disease risk: the MCV Twin Study. Medical College of Virginia.
+\emph{Archives of Pediatrics and Adolescent Medicine}, \strong{153}, 446-453. \doi{10.1001/archpedi.153.5.446}.
 }
 \seealso{
 Other datasets:

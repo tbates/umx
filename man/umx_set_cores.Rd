@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_and_utility.R
 \name{umx_set_cores}
 \alias{umx_set_cores}
-\title{umx_set_cores}
+\title{Set the number of cores your models will use.}
 \usage{
 umx_set_cores(cores = NA, model = NULL, silent = FALSE)
 }
@@ -19,7 +19,17 @@ umx_set_cores(cores = NA, model = NULL, silent = FALSE)
 }
 }
 \description{
-set the number of cores (threads) used by OpenMx
+To take advantage of multiple cores
+
+\if{html}{\out{<div class="sourceCode R">}}\preformatted{umx_set_cores()  # Show many cores are currently requested
+5/5 (P-cores / total: 11)
+umx_set_cores(3) # Request use of 3 cores
+}\if{html}{\out{</div>}}
+}
+\details{
+\emph{note}: This function is smart: it will default to all performance cores
+(low power cores are typically so slow its not worth forcing the power
+cores to wait for them.
 }
 \examples{
 library(umx)

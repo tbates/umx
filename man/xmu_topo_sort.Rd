@@ -20,10 +20,27 @@ A character vector of the nodes sorted topologically. Nodes not involved in path
 Performs a topological sort on a set of nodes based on directional paths.
 In structural equation modeling, processing sources (exogenous variables) first and
 sinks (endogenous variables) last often ensures the \code{A} matrix is strictly lower
-triangular, which massively speeds up optimization and avoids local minima.
+triangular (Recursive (acyclic) models are those whose path matrix can be arranged lower triangular).
+This both speeds optimization (a triangular \code{A} inverts as a finite series (Bollen, 1989; Kahn, 1962; Neale et al., 2016).
+OpenMx detects when \code{A} is strictly lower-triangular and uses a finite series to invert \code{(I - A)}
+rather than (slower) general inversion.
+
+However, it also improves discovery: small but real path weights (such as we encounter in \code{\link[=umxGSEM]{umxGSEM()}}) get clean gradient signal
+instead of stalling at local minima in the dense coupled inverse. umx implements this rearrangement in \code{\link[=umxRAM]{umxRAM()}} and \code{\link[=umxRAM_DE]{umxRAM_DE()}}.
+}
+\references{
+\itemize{
+\item Bollen, K. A. (1989). \emph{Structural Equations with Latent Variables}. Wiley.
+\item Kahn, A. B. (1962). Topological sorting of large networks. \emph{Communications of the ACM}, \strong{5}, 558-562. \doi{10.1145/368996.369025}
+\item Neale, M. C., Hunter, M. D., Pritikin, J. N., Zahery, M., Brick, T. R., Kirkpatrick, R. M., Estabrook, R.,
+Bates, T. C., Maes, H. H., & Boker, S. M. (2016). OpenMx 2.0: Extended structural equation and statistical modeling.
+\emph{Psychometrika}. \doi{10.1007/s11336-014-9435-8}.
+}
 }
 \seealso{
 Other xmu internal not for end user:
+\code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},

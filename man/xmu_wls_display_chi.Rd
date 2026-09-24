@@ -24,6 +24,8 @@ convention: Chi=0, CFI/TLI=1, RMSEA=0). Otherwise falls back to OpenMx
 \code{\link[=xmu_robust_WLS_fit]{xmu_robust_WLS_fit()}}, \code{\link[=xmu_compare_WLS]{xmu_compare_WLS()}}, \code{\link[=umxSummary]{umxSummary()}}
 
 Other xmu internal not for end user:
+\code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},

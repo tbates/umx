@@ -108,6 +108,8 @@ mx_make("--help")
 \code{\link[=umx_make]{umx_make()}}, \code{\link[=install.OpenMx]{install.OpenMx()}}, \code{\link[=xmu_openmx_engine_status]{xmu_openmx_engine_status()}}
 
 Other xmu internal not for end user:
+\code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
 \code{\link[=umx_APA_pval]{umx_APA_pval()}},

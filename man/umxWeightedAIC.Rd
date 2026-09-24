@@ -21,13 +21,13 @@ Returns the best model by AIC, and computes the probabilities
 according to AIC weight-based conditional probabilities (Wagenmakers & Farrell, 2004).
 }
 \examples{
-l1 = lm(mpg~ wt + disp, data=mtcars)
-l2 = lm(mpg~ wt, data=mtcars)
+l1 = lm(mpg~ wt + disp, data = mtcars)
+l2 = lm(mpg~ wt, data = mtcars)
 umxWeightedAIC(models = list(l1, l2))
 }
 \references{
 \itemize{
-\item Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}. \strong{11}, 192-196. \url{https://pubmed.ncbi.nlm.nih.gov/15117008/}
+\item Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}. \strong{11}, 192-196. \doi{10.3758/bf03206482}.
 }
 }
 \seealso{

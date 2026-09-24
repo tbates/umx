@@ -36,6 +36,8 @@ Degrees of freedom for indices are taken from the WLS model test df in
 \code{\link[=xmu_catml_wls_v]{xmu_catml_wls_v()}}
 
 Other xmu internal not for end user:
+\code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},

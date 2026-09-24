@@ -69,6 +69,8 @@ xmu_get_CI(fit_IP, label = "ai_r1c1", prefix = "top.", SEstyle = TRUE, suffix = 
 }
 \seealso{
 Other xmu internal not for end user:
+\code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},

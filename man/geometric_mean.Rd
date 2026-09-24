@@ -18,23 +18,38 @@ geometric_mean(x, na.rm = c(TRUE, FALSE))
 }
 \description{
 The Geometric mean is the nth-root of the product of \code{n} input values.
-Common uses include computing economic utility. For example, the geometric mean utility of
-\code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not 4.3 (the arithmetic mean of utility).
+Common uses include:
+\itemize{
+\item Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. The arithmetic mean overstates performance when volatility is present (e.g., a +50\% gain followed by a −50\% loss leaves you with a 25\% loss, even though the arithmetic average is 0\%; the geometric mean correctly yields −29.29\% per period, totaling −25\%).
+\item Utilitarian evaluation of value. For example, the geometric mean utility of \code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not the arithmetic mean: 4.3.
+\item Proportional Scaling: Proportional growth of organisms and log-normally distributed physical phenomena.
+\item Normalizing metrics measured on different scales: e.g., computer hardware so no single benchmark disproportionately skews the score.
+}
+}
+\details{
+The geometric mean is defined as the \eqn{n}-th root of the product of \eqn{n} numbers:
+\deqn{G = \left( \prod_{i=1}^{n} x_i \right)^{\frac{1}{n}} = \sqrt[n]{x_1 x_2 \cdots x_n}}{G = (prod(x_i))^(1/n)}
+
+In practice, to prevent numerical overflow or underflow with large vectors,
+it is calculated via the logarithmic transform:
+\deqn{\ln G = \frac{1}{n} \sum_{i=1}^{n} \ln(x_i) \implies G = \exp\left( \frac{1}{n} \sum_{i=1}^{n} \ln(x_i) \right)}{G = exp(mean(log(x)))}
 }
 \examples{
-geometric_mean(c(50, 100))
+geometric_mean(c(1.02, 1.03, 1.1))
+# = 1.049
 
 # For a given sum, geometric mean is maximised when all values are equal:
 geometric_mean(c(75,75))
+geometric_mean(c(50, 100))
 
-v = c(1, 149); c(sum(v), geometric_mean(v), mean(v), median(v))
-# 150.00000  12.20656  75.00000  75.00000
+v = c(1, 149, 500); round(c(geometric_mean(v), mean(v), median(v)), 0)
+# 42 217 149
+
+# Alternate form using mean of the logs
+exp(mean(log(c(50, 100))))
 
 # Underlying logic
 sqrt(50 * 100)
-
-# Alternate form using logs
-exp(mean(log(c(50 *100))))
 
 # Reciprocal duality
 1/geometric_mean(c(100, 50))

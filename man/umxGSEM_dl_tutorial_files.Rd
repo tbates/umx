@@ -4,12 +4,7 @@
 \alias{umxGSEM_dl_tutorial_files}
 \title{Download tutorial-scale Genomic SEM files}
 \usage{
-umxGSEM_dl_tutorial_files(
-  path = NULL,
-  overwrite = FALSE,
-  url =
-    "https://github.com/tbates/umx/releases/download/gsem-tutorial/umxGSEM_tutorial.tar.gz"
-)
+umxGSEM_dl_tutorial_files(path = NULL, overwrite = FALSE, url = "default")
 }
 \arguments{
 \item{path}{Directory to write into. Default:
