@@ -26,4 +26,10 @@ xgh_get_current_branch(local_path)
 \itemize{
 \item \code{\link[=gh_open_PR_url]{gh_open_PR_url()}}
 }
+
+Other github:
+\code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
+\code{\link[=xgh_check_base_name]{xgh_check_base_name()}}
 }
+\concept{github}

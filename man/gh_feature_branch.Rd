@@ -52,6 +52,8 @@ You can then
 }
 
 Other github:
-\code{\link[=xgh_check_base_name]{xgh_check_base_name()}}
+\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
+\code{\link[=xgh_check_base_name]{xgh_check_base_name()}},
+\code{\link[=xgh_get_current_branch]{xgh_get_current_branch()}}
 }
 \concept{github}

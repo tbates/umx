@@ -64,4 +64,10 @@ gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, head_owner, loca
 \itemize{
 \item \code{\link[=gh_feature_branch]{gh_feature_branch()}}
 }
+
+Other github:
+\code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=xgh_check_base_name]{xgh_check_base_name()}},
+\code{\link[=xgh_get_current_branch]{xgh_get_current_branch()}}
 }
+\concept{github}

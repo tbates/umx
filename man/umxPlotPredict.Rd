@@ -8,8 +8,8 @@ umxPlotPredict(
   model,
   xlab = "Predicted Y",
   ylab = "Observed Y",
-  r2x = 1.5,
-  r2y = 4.5,
+  r2x = NULL,
+  r2y = NULL,
   font_size = 13,
   rsq = FALSE,
   font = "Times"
@@ -22,9 +22,9 @@ umxPlotPredict(
 
 \item{ylab}{Y-axis label (default y).}
 
-\item{r2x}{x location for the fit summary.}
+\item{r2x}{x location for the fit summary (default NULL guesses upper-left from the data and prints the guess).}
 
-\item{r2y}{y location for the fit summary.}
+\item{r2y}{y location for the fit summary (default NULL guesses upper-left from the data and prints the guess).}
 
 \item{font_size}{Default 13}
 
@@ -43,7 +43,8 @@ umxPlotPredict(
 \examples{
 data(mtcars)
 tmp = lm(mpg ~ wt, data = mtcars)
-umxPlotPredict(tmp, r2x = 2, r2y = 10)
+umxPlotPredict(tmp) # R^2 location guessed (upper-left) and printed
+umxPlotPredict(tmp, r2x = 25, r2y = 15)
 }
 \seealso{
 \itemize{
