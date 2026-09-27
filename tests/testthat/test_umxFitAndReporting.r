@@ -110,13 +110,13 @@ test_that("xmu_dot_maker coerces logical/NULL file (options umx_auto_plot = FALS
 
 	# FALSE / NULL must not hit cat(..., file = FALSE) or grViz
 	expect_error(regex = NA, {
-		out = xmu_dot_maker(m, file = FALSE, digraph = dg, strip_zero = FALSE)
+		out = umx:::xmu_dot_maker(m, file = FALSE, digraph = dg, strip_zero = FALSE)
 	})
 	expect_error(regex = NA, {
-		out = xmu_dot_maker(m, file = NULL, digraph = dg, strip_zero = FALSE)
+		out = umx:::xmu_dot_maker(m, file = NULL, digraph = dg, strip_zero = FALSE)
 	})
 	expect_error(regex = NA, {
-		out = xmu_dot_maker(m, file = NA, digraph = dg, strip_zero = FALSE)
+		out = umx:::xmu_dot_maker(m, file = NA, digraph = dg, strip_zero = FALSE)
 	})
 
 	# Integration: summary with options(umx_auto_plot = FALSE)
@@ -320,4 +320,51 @@ test_that("umx_aggregate works with multiple variables", {
 	expect_equal(ncol(res_one), 2) # Variable + 1 group
 	expect_named(res_one, c("Variable", "1 (n = 32)"))
 	expect_equal(res_one$Variable, c("mpg", "qsec"))
+})
+
+test_that("umxPlotPredict works", {
+	require(umx)
+	data(mtcars)
+	tmp = lm(mpg ~ wt, data = mtcars)
+	predVals = predict(tmp)
+	obsVals = mtcars$mpg
+	# NULL defaults guess upper-left and print the guess
+	out = capture.output(umxPlotPredict(tmp))
+	p = umxPlotPredict(tmp)
+	expect_true(ggplot2::is_ggplot(p))
+	expect_true(any(grepl("r2x= ", out, fixed = TRUE)))
+	expect_true(any(grepl("r2y= ", out, fixed = TRUE)))
+	grobLayer = p$layers[[3]]$geom_params
+	expect_equal(grobLayer$xmin, min(predVals) + 0.05 * (max(predVals) - min(predVals)))
+	expect_equal(grobLayer$ymin, max(obsVals) - 0.05 * (max(obsVals) - min(obsVals)))
+	expect_true(grobLayer$xmin < median(predVals))
+	expect_true(grobLayer$ymin > median(obsVals))
+	# label is a draw_label expression carrying font and size
+	expect_true(inherits(p$layers[[3]]$geom, "GeomCustomAnn"))
+	expect_true(is.expression(grobLayer$grob$label))
+	expect_equal(grobLayer$grob$gp$fontsize, 13)
+	expect_equal(grobLayer$grob$gp$fontfamily, "Times")
+	expect_match(deparse(grobLayer$grob$label), "italic(r)", fixed = TRUE)
+	rVal = round(summary(tmp)$adj.r.squared^.5, 2)
+	expect_match(deparse(grobLayer$grob$label), format(rVal), fixed = TRUE)
+	# points borrow the visreg look: small and mid-dark gray
+	expect_equal(p$layers[[1]]$aes_params$size, 0.8)
+	expect_equal(p$layers[[1]]$aes_params$colour, "gray50")
+	# rsq = TRUE labels R-squared instead of r
+	p2 = umxPlotPredict(tmp, rsq = TRUE, r2x = 25, r2y = 15)
+	expect_match(deparse(p2$layers[[3]]$geom_params$grob$label), "italic(R)", fixed = TRUE)
+	# explicit coordinates are respected and stay silent
+	outExplicit = capture.output(umxPlotPredict(tmp, r2x = 25, r2y = 15))
+	p3 = umxPlotPredict(tmp, r2x = 25, r2y = 15)
+	expect_equal(length(outExplicit), 0)
+	expect_equal(p3$layers[[3]]$geom_params$xmin, 25)
+	expect_equal(p3$layers[[3]]$geom_params$ymin, 15)
+	# a single NULL is guessed while the explicit value is kept and echoed
+	outMixed = capture.output(umxPlotPredict(tmp, r2x = 25))
+	p4 = umxPlotPredict(tmp, r2x = 25)
+	expect_true(any(grepl("r2x= 25", outMixed, fixed = TRUE)))
+	expect_equal(p4$layers[[3]]$geom_params$xmin, 25)
+	expect_true(p4$layers[[3]]$geom_params$ymin > median(obsVals))
+	# the plot renders without error
+	expect_error(ggplot2::ggplot_build(p), NA)
 })
