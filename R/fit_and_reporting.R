@@ -160,8 +160,8 @@ umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x
 #' @param model lm or other model that understands predict()
 #' @param xlab X-axis label (default x).
 #' @param ylab Y-axis label (default y).
-#' @param r2x x location for the fit summary.
-#' @param r2y y location for the fit summary.
+#' @param r2x x location for the fit summary (default NULL guesses upper-left from the data and prints the guess).
+#' @param r2y y location for the fit summary (default NULL guesses upper-left from the data and prints the guess).
 #' @param font_size Default 13
 #' @param font Default "Times"
 #' @param rsq R^2 or r (defaults to FALSE = r) 
@@ -172,8 +172,9 @@ umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x
 #' @examples
 #' data(mtcars)
 #' tmp = lm(mpg ~ wt, data = mtcars)
-#' umxPlotPredict(tmp, r2x = 2, r2y = 10)
-umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 1.5, r2y= 4.5, font_size = 13, rsq = FALSE, font= "Times") {
+#' umxPlotPredict(tmp) # R^2 location guessed (upper-left) and printed
+#' umxPlotPredict(tmp, r2x = 25, r2y = 15)
+umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= NULL, r2y= NULL, font_size = 13, rsq = FALSE, font= "Times") {
 	if(rsq){
 		# lab = paste0("R\u00B2 = ", round(summary(model)$adj.r.squared, 2))
 		lab = paste0("italic(R) ^ 2 == ", round(summary(model)$adj.r.squared, 2))
@@ -181,10 +182,15 @@ umxPlotPredict <- function(model, xlab= "Predicted Y", ylab= "Observed Y", r2x= 
 		lab = paste0("italic(r) == ", round(summary(model)$adj.r.squared^.5, 2))
 	}
 	y_var = model.frame(model)[, 1]	
-	p = ggplot() + geom_point(aes(x = predict(model), y = y_var))
+	if(is.null(r2x) || is.null(r2y)){
+		if(is.null(r2x)){ r2x = min(predict(model), na.rm = TRUE) + 0.05 * (max(predict(model), na.rm = TRUE) - min(predict(model), na.rm = TRUE)) }
+		if(is.null(r2y)){ r2y = max(y_var, na.rm = TRUE) - 0.05 * (max(y_var, na.rm = TRUE) - min(y_var, na.rm = TRUE)) }
+		cat("r2x= ", r2x, " r2y= ", r2y, "\n", sep = "")
+	}
+	p = ggplot() + geom_point(aes(x = predict(model), y = y_var), size = 0.8, color = "gray50")
 	p = p + geom_smooth(aes(x = predict(model), y = y_var), method = "lm", se = TRUE, color = "blue")
 	p = p + labs(x= xlab, y= ylab)
-	p = p + annotate("text", x = r2x, y = r2y, label = lab, parse = TRUE, family = font, size = (font_size/2.6))
+	p = p + cowplot::draw_label(parse(text = lab), x = r2x, y = r2y, fontfamily = font, size = font_size)
 	p + theme_minimal(base_size = font_size, base_family= font)	
 }
 
