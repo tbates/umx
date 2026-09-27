@@ -1,32 +1,45 @@
-# TODO 
+# ====================
+# = Could be in Rtim = #
+# ====================
+# gh_show_run_list
+# 	"gh run list --limit 100 --json databaseId -q '.[].databaseId' | xargs -I{}"
+# gh_remove_quarantine
+# 	"xattr -dr com.apple.quarantine ~/Downloads/TextMate.app"
+# gh_open_app_support
+# 	system2("open ~/Library/Application\ Support/TextMate")
 
-# gh_feature_branch(feature = "fix_em", base = "textmatelives/textmate/main", head_owner = "tbates", local_path = "~/bin/tm/bundle/")
+#= -TODO- =#
 
-# gh_open_PR_url
+gh_open_app_support <- function(){
+	system2("open ~/Library/Application\ Support/TextMate")
+}
 
-#' Open the github.com page for a PR
-#'
-#' @description
-#' `gh_open_PR_url` takes a base and head and opens the page for a PR on \{github.com}
-#'
-#' @param head_branch branch to pull the PR from (default `"textmate_fix_problem"`).
-#' @param base_owner upstream owner (default `"textmatelives"`).
-#' @param base_repo upstream respository to apply PR to (default `"textmate"`).
-#' @param base_branch branch name of the project base to apply the PR to (default `"main"`).
-#' @param head_owner user github owner.
-#' @return 
-#' @export
-#' @family github
-#' @seealso - [xgh_check_base_name()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
-#' @md
-#' @examples
-#' gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, head_owner)
-#' \dontrun{
-#' 
-#' }
-gh_open_PR_url <- function(head_branch = "textmate_fix_problem", base_owner= "textmatelives", base_repo= "textmate", base_branch= "main", head_owner= "tbates"){
-	# once the feature is written, this function would let the user open github to the correct page without having to navigate their imperfect GUI
+gh_remove_quarantine <- function(){
+	system2("xattr -dr com.apple.quarantine ~/Downloads/TextMate.app")
+}
+
+gh_sym_link_bundle <- function(which = "source.tmbundle", local_path = "~/bin/tm/bundles/", destination = "$HOME/Library/Application\ Support/TextMate/Bundles/"){
+	fullPath = paste0(local_path, which) # e.g., ~/bin/tm/bundles/GitHub-Markdown-Font-Settings.tmbundle
+	fullDest = paste0(destination, which) # e.g.,"$HOME/Library/Application Support/TextMate/Bundles/GitHub-Markdown-Font-Settings.tmbundle"
+	# todo checkExists(fullPath) exists
+	# todo checkExists(destination)
+	# todo check not already have bundle at dest
+	# todo check ln not already set
+	symlinkCommand = paste0("ln -s ", fullPath,  fullDest)
+	system2(symlinkCommand) 
+	cat("created:", symlinkCommand)
+}
+
+# git diff --name-only -z upstream/main main | xargs -0 git checkout main --
+
+gh_teardown <- function(which = "source.tmbundle", local_path = "~/bin/tm/bundles/", destination = ""){
+	fullPath = paste0(local_path, which)
+	# check(fullPath) exists
+ 	# cd GitHub-Markdown-Font-Settings.tmbundle
+	# git branch -r | grep font-menlo
+	# gh repo delete tbates/GitHub-Markdown-Font-Settings.tmbundle
+	# rm "$HOME/Library/Application Support/TextMate/Bundles/GitHub-Markdown-Font-Settings.tmbundle"
+	system2()
 }
 
 
@@ -60,29 +73,44 @@ gh_open_PR_url <- function(head_branch = "textmate_fix_problem", base_owner= "te
 #' 	gh_feature_branch("fix/font_issue", base = "textmatelives/textmate:main")
 #' }
 gh_feature_branch <- function(feature = "fix-piglet", base = "textmatelives/textmate:main", head_owner = "tbates", local_path = "~/bin/tm/bundles/"){
-	# reprocess "textmatelives/textmate:main"
-	# could invent branch name from local_path +  + feature
-	# could store head owner in a preference
-	# 1. Does fork at head_owner exist?
+	# TODO: could store head owner in a preference
+	# TODO: could invent branch name from local_path + feature Dumb???
+
+	# 1. reprocess "textmatelives/textmate:main"
+	baseStar = xgh_check_base_name(base = "textmatelives/textmate:main")
+	baseStar$owner  # e.g. "textmatelives"
+	baseStar$repo   # e.g. "textmate"
+	baseStar$branch # e.g. "main"
+
+	# 1. Does head_owner have a fork yet?
 	# 	* No: create it
 	# 	* Yes: use it
 	# 2. Has fork been cloned locally?
-	# 	* No: clone
+	# 	* No: clone to local_path
 	# 	* Yes: use it
-	xgh_check_base_name(base = "textmatelives/textmate:main")
-	head_branch = "textmate_fix_problem"
-		
-	return(result)
+	# 3. Checkout new feature branch (or code in main?)
+
+	# cd ~/bin/tm/bundles/GitHub-Markdown-Font-Settings.tmbundle
+	
+	# git fetch upstream
+	# git checkout -b font-menlo-1em upstream/main
+	# git checkout main -- "Preferences/Font Name and Size.tmPreferences" README.md
+	# git push -u origin font-menlo-1em, git checkout main
+	# git push -u origin font-menlo-1em
+	# git checkout font-menlo-1em
+
+	# 4. Switch to new feature branch
+
+	return("created ", head_owner, "/", feature, at )
 }
 
-
-#' Open a PR on github
-#' Maybe do this in umx where it can take parameters!!
-#' 
+#' Build and open the compare URL GitHub renders as a PR page.
+#'
 #' @description
-#' `gh_open_PR` takes the owner, repo and branch you want to push to, your owner name, repo and head branch you want to pull from, and opens github at the
-#' exact page you need.
+#' `gh_open_PR_url` takes the owner, repo and branch you want to open a PR on, along with your owner name, repo and
+#' head branch you want to pull from, and opens github at the exact page you need.
 #' 
+#' @details
 #' Before doing this, you want to
 #' 1. Fork to your account
 #' 2. Clone to your machine
@@ -90,40 +118,9 @@ gh_feature_branch <- function(feature = "fix-piglet", base = "textmatelives/text
 #' 4. Make a fix or feature branch and switch to it
 #' 5. Edit, commit, push, repeat: success!
 #' 6. Squash if necessary
-#' 7. pull request from your/branch to upstream/main
+#' 7. PR from your/branch to upstream/main
 #' 
-#' This `gh_open_PR_url` solves #7: pull requesting
-#'
-#' Other functions might include:
-#' * `gh_feature_branch`
-#' 
-#' 
-#' @details
-#'
-#' @param head_branch = "textmate_fix_problem"
-#' @param base_owner  = "textmatelives"
-#' @param base_repo   = "textmate"
-#' @param base_branch = "textmate/main"
-#' @param head_owner  = "tbates"
-#' @return - status
-#' @export
-#' @family xmu internal not for end user
-#' @seealso - [gh_open_PR_url()]
-#' @examples
-#' \dontrun{
-#' 	gh_open_PR_url(head_branch = "menlo-font")
-#' }
-gh_open_PR_url <- function(head_branch = "textmate_fix_problem", base_owner = "textmatelives", base_repo = "textmate", base_branch = "main", head_owner = "tbates") {
-	# could we fill head from the current repo?
-	# base-repo/compare/base-branch...head-owner:head-branch
-	paste0("github.com/", base_owner, "/", base_repo, "/compare/", base_branch, "...,", head_owner, ":", head_branch)
-}
-
-
-#' Build and open the compare URL GitHub renders as a PR page.
-#'
-#' @description
-#' `gh_open_PR_url` takes a head_branch, base_owner, base_repo, base_branch, head_owner, local_path, and browse to return a PR page.
+#' `gh_open_PR_url` solves #7: pull requesting
 #'
 #' @param head_branch Default `NULL`.
 #' @param base_owner Default `"textmatelives"`.
@@ -134,15 +131,12 @@ gh_open_PR_url <- function(head_branch = "textmate_fix_problem", base_owner = "t
 #' @param browse Default `TRUE`.
 #' @return - url
 #' @export
-#' @family
+#' @family github
 #' @seealso - [gh_feature_branch()]
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
 #' gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, head_owner, local_path, browse=FALSE)
-#' \dontrun{
-#' 
-#' }
 gh_open_PR_url <- function(head_branch = NULL, base_owner = "textmatelives", base_repo = "textmate", base_branch = "main", head_owner = "tbates", local_path = ".", browse=TRUE) {
 	if (is.null(head_branch) || is.na(head_branch) || head_branch == "") {
 		head_branch = xgh_get_current_branch(local_path)
@@ -160,9 +154,9 @@ gh_open_PR_url <- function(head_branch = NULL, base_owner = "textmatelives", bas
 	invisible(url)
 }
 
-# =================
+# =======================
 # = - xgh functions - = #
-# =================
+# =======================
 
 #' Get the current git branch
 #'
@@ -172,8 +166,8 @@ gh_open_PR_url <- function(head_branch = NULL, base_owner = "textmatelives", bas
 #' @param local_path Default `"."`.
 #' @return - current_branch name
 #' @export
-#' @family
-#' @seealso - [xgh_compare_url()]
+#' @family github
+#' @seealso - [gh_open_PR_url()]
 #' @md
 #' @examples
 #' \dontrun{

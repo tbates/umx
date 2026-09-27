@@ -446,30 +446,86 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 }
 
 
-#' Get the alpha text
+#' Accumulate scale reliabilities and report them as a table
 #'
-#' Get umx_alpha_text. Optionally SET it blank
+#' [umx_score_scale()] with `alpha = TRUE` prints reliability coefficients.
+#' `umx_scale_reliabilities()` collects these across scales, then reports them together.
 #'
-#' @param umx_alpha_text (if empty, returns the current value)
-#' @param silent If TRUE, no message will be printed.
-#' @return - Current umx_alpha_text
+#' To use, call with `"init"`, score your scales, then call with `"show"`.
+#' 
+#' @param action One of `"init"` (start or clear the store), `"add"` (append one row), or `"show"` (print and return the table). `"print"` is accepted as an alias of `"show"`. Default `"show"`.
+#' @param scale_name Name of the scale (single string, required when `action = "add"`).
+#' @param reliability Reliability value (single numeric, required when `action = "add"`).
+#' @param type Type of reliability. When `action = "add"`, a single string (required), e.g. `"alpha"`, `"omega_t"`, or `"omega_h"`. When `action = "show"`, an optional filter: one or more types to report (`NULL`, the default, reports all rows).
+#' @param report Format for the printed table: `"markdown"` or `"html"`.
+#' @param digits Decimal places for the printed table (default 2). Display only: stored values keep full precision.
+#' @return - invisible `data.frame` with columns `scale`, `reliability`, and `type`
 #' @export
 #' @family Get and set
 #' @examples
-#' library(umx)
-#' umx_get_alphas() # show current state
-#' umx_get_alphas("") # blank it
-umx_get_alphas <- function(umx_alpha_text = NULL, silent = FALSE) {
-	if(is.null(umx_alpha_text)) {
-		if(!silent){
-			message("Current alpha text is", omxQuotes(getOption("umx_alpha_text")) )
+#' umx_scale_reliabilities("init") # start with an empty store
+#' umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.72, type = "alpha")
+#' umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.75, type = "omega_t")
+#' umx_scale_reliabilities("show")
+#' umx_scale_reliabilities("show", type = "alpha") # just the alphas
+#' umx_scale_reliabilities("init") # clear the store
+#' \dontrun{
+#' data(bfi, package = "psychTools")
+#' umx_scale_reliabilities("init")
+#' bfi = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data = bfi, name = "A", alpha = TRUE)
+#' umx_scale_reliabilities("show")
+#' }
+umx_scale_reliabilities <- function(action = "show", scale_name = NULL, reliability = NULL, type = NULL, report = c("markdown", "html"), digits = 2) {
+	action = xmu_match.arg(action, c("init", "add", "show", "print"))
+	if(action == "print"){ action = "show" }
+	if(action == "init"){
+		relTable = data.frame(scale = character(), reliability = numeric(), type = character(), stringsAsFactors = FALSE)
+		options("umx_scale_reliabilities" = relTable)
+		invisible(relTable)
+	} else if(action == "add"){
+		if(is.null(scale_name) || length(scale_name) != 1L || !is.character(scale_name) || is.na(scale_name) || !nzchar(scale_name)){
+			stop("When action = 'add', scale_name must be a single non-empty string.")
 		}
-		invisible(getOption("umx_alpha_text"))		
+		if(is.null(reliability) || length(reliability) != 1L || !is.numeric(reliability)){
+			stop("When action = 'add', reliability must be a single numeric value.")
+		}
+		if(is.null(type) || length(type) != 1L || !is.character(type) || is.na(type) || !nzchar(type)){
+			stop("When action = 'add', type must be a single non-empty string, e.g. 'alpha', 'omega_t', or 'omega_h'.")
+		}
+		relTable = getOption("umx_scale_reliabilities")
+		if(is.null(relTable)){
+			relTable = data.frame(scale = character(), reliability = numeric(), type = character(), stringsAsFactors = FALSE)
+		}
+		relTable = relTable[!(relTable$scale == scale_name & relTable$type == type), , drop = FALSE]
+		newRow = data.frame(scale = scale_name, reliability = reliability, type = type, stringsAsFactors = FALSE)
+		relTable = rbind(relTable, newRow)
+		rownames(relTable) = NULL
+		options("umx_scale_reliabilities" = relTable)
+		invisible(relTable)
 	} else {
-			options("umx_alpha_text" =  umx_alpha_text)
+		if(!is.null(type)){
+			if(!is.character(type) || length(type) < 1L || any(is.na(type)) || any(!nzchar(type))){
+				stop("When action = 'show', type must be one or more non-empty strings, e.g. 'alpha'.")
+			}
+		}
+		relTable = getOption("umx_scale_reliabilities")
+		if(!is.null(relTable) && !is.null(type)){
+			relTable = relTable[relTable$type %in% type, , drop = FALSE]
+		}
+		if(is.null(relTable) || nrow(relTable) == 0L){
+			if(is.null(type)){
+				message("No scale reliabilities stored: call umx_scale_reliabilities('init'), score scales with alpha = TRUE, then umx_scale_reliabilities('show').")
+			} else {
+				message("No stored reliabilities of type ", paste(sQuote(type), collapse = ", "), ".")
+			}
+			relTable = data.frame(scale = character(), reliability = numeric(), type = character(), stringsAsFactors = FALSE)
+			invisible(relTable)
+		} else {
+			umx_print(relTable, report = report, digits = digits)
+			invisible(relTable)
+		}
 	}
-} # end umx_set_separator
-
+}
 
 #' Set the separator
 #'
@@ -490,7 +546,7 @@ umx_get_alphas <- function(umx_alpha_text = NULL, silent = FALSE) {
 umx_set_separator <- function( umx_default_separator = NULL, silent = FALSE) {
 	if(is.null( umx_default_separator)) {
 		if(!silent){
-			message("Current separator is", omxQuotes(getOption(" umx_default_separator")) )
+			message("Current separator is", omxQuotes(getOption("umx_default_separator")) )
 		}
 		invisible(getOption("umx_default_separator"))		
 	} else {
@@ -1628,7 +1684,7 @@ umxParan <- function(df, cols = NA, graph = TRUE, mapStrings = NULL, n = NULL) {
 #' @param name The name of the scale to be returned. Defaults to "`base`_score"
 #' @param na.rm Whether to delete NAs when computing scores (Default = TRUE) Note: Choice affects mean!
 #' @param minManifests How many missing items to tolerate for an individual (when score = factor)
-#' @param alpha print Reliability (omega and Cronbach's alpha) (TRUE)
+#' @param alpha Print reliability (omega and Cronbach's alpha, default = FALSE). If a store was started with [umx_scale_reliabilities()] `"init"`, the alpha and omega values are also added to that store.
 #' @param mapStrings Recoding input like "No"/"Maybe"/"Yes" into numeric values (0,1,2)
 #' @param correctAnswer Use when scoring items with one correct response (1/0).
 #' @param omegaNfactors Number of factors for the omega reliability (default = 1)
@@ -1808,7 +1864,8 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 		}
 	}
 	if(alpha){
-		print(reliability(cov(df, use = "pairwise.complete.obs")))
+		alphaOut = reliability(cov(df, use = "pairwise.complete.obs"))
+		print(alphaOut)
 		suppressWarnings({omegaOut = psych::omega(df, nfactors = omegaNfactors)})
 
 		if(verbose){
@@ -1820,6 +1877,15 @@ umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NU
 				cat(paste0("\u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
 			} else {
 				cat(paste0("\u03C9 h = ", round(omegaOut$omega_h, digits), "; \u03C9 t = ", round(omegaOut$omega.tot, digits), "\n"))
+			}
+		}
+		if(!is.null(getOption("umx_scale_reliabilities"))){
+			if(!is.null(alphaOut)){
+				umx_scale_reliabilities("add", scale_name = name, reliability = as.numeric(alphaOut$alpha), type = "alpha")
+			}
+			umx_scale_reliabilities("add", scale_name = name, reliability = as.numeric(omegaOut$omega.tot), type = "omega_t")
+			if(omegaNfactors > 1){
+				umx_scale_reliabilities("add", scale_name = name, reliability = as.numeric(omegaOut$omega_h), type = "omega_h")
 			}
 		}
 	}
