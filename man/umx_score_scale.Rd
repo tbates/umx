@@ -45,7 +45,7 @@ umx_score_scale(
 
 \item{minManifests}{How many missing items to tolerate for an individual (when score = factor)}
 
-\item{alpha}{print Reliability (omega and Cronbach's alpha) (TRUE)}
+\item{alpha}{Print reliability (omega and Cronbach's alpha, default = FALSE). If a store was started with \code{\link[=umx_scale_reliabilities]{umx_scale_reliabilities()}} \code{"init"}, the alpha and omega values are also added to that store.}
 
 \item{mapStrings}{Recoding input like "No"/"Maybe"/"Yes" into numeric values (0,1,2)}
 

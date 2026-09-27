@@ -20,8 +20,6 @@ Does not change \code{xmuTwinSuper_SomeBinary}.
 }
 \seealso{
 Other xmu internal not for end user:
-\code{\link[=gh_feature_branch]{gh_feature_branch()}},
-\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},

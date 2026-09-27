@@ -22,8 +22,6 @@ implied matrix feeds \code{\link[=xmu_catml_wls_v]{xmu_catml_wls_v()}}.
 \code{\link[=xmu_catml_eval_model]{xmu_catml_eval_model()}}, \code{\link[=xmu_catml_discrepancy_at_WLS]{xmu_catml_discrepancy_at_WLS()}}
 
 Other xmu internal not for end user:
-\code{\link[=gh_feature_branch]{gh_feature_branch()}},
-\code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=mx_make]{mx_make()}},
 \code{\link[=umxModel]{umxModel()}},
 \code{\link[=umxRenameMatrix]{umxRenameMatrix()}},
