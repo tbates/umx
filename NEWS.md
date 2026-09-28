@@ -1,15 +1,6 @@
 ## dev
-* CHANGED: `umx_yj_wide_twin_data()` uses `car::powerTransform` / `yjPower` (Yeo-Johnson). Dropped Suggests `bestNormalize` (and its tidymodels-sized dependency tree).
-* CHANGED: `fin_tax_FIF()` applies FDR to opening equity **plus** assets bought with the loan (anti-avoidance / whole-pile). Neutral loan is \(L/E = ft / (r - i(1-t) - ft)\). Prints loan/assets; plot LTV is loan/opening.
-* FIXED: `umx_is_GSEM()` is TRUE only for class `MxModelGSEM`. Ordinary RAM models are no longer treated as GSEM via `MxRAMObjective`.
-* FIXED: `tmx_show.MxModelGSEM` defaults to `A`, residual `S`, `data.S`, `data.V` (LDSC cov / sampling cov in `observedStats`). Bare `"V"` is not a RAM matrix.
-* SAFE: `inst/developer/GenomicSEM` (toy SNP subsets, developer tests) is `.Rbuildignore`d; tutorial files come from `umxGSEM_dl_tutorial_files()`, not the CRAN tarball.
-* SAFE: R CMD check — `mxFamily` via `get0` in `umxACE_GLM` / `umxRAM_GLM` (GenomicMx-only; not an OpenMx import). `umxPlot` imports ggplot2 `.data`.
-* FIXED: `umxCompare` / `xmu_compare_WLS` use GSEM DWLS chi-square only for `MxModelGSEM`. `numObs > 50000` no longer routes ordinary WLS onto the genomic track.
-* NEW: `umxGSEM_dl_tutorial_files()` downloads the IBG/GenomicSEM ~45 MB tutorial pack (1k-SNP SCZ/BIP/MDD, 1000G subset, `w_hm3.snplist`, `eur_w_ld_chr/`) into `tools::R_user_dir("umx", "data")/GSEM_tutorial`. Production HapMap3 / Alkes LD scores / 1000G plink are documented, not auto-fetched. Removed `umxGSEM_dl_RefList`.
-* FIXED: `umxGSEM_munge` maps columns per file (tutorial BIP `snpid`/`pval` vs SCZ `SNP`/`P`). `\dontrun` example uses `umxGSEM_dl_tutorial_files()`.
 * NEW: `umxGSEM_ldsc()` calls OpenMx `imxLDSC` on munged `.sumstats.gz` and returns a labeled covstruc (`var_*` / `poly_*_*`) for [umxGSEM()].
-* FIXED: `umxGSEM` string parse uses a PD identity named by traits, not raw `S`. WLS still gets the real (possibly smoothed) `S`/`V`.
+* NEW: `umxGSEM_dl_tutorial_files()` downloads the IBG/GenomicSEM ~45 MB tutorial pack (1k-SNP SCZ/BIP/MDD, 1000G subset, `w_hm3.snplist`, `eur_w_ld_chr/`) into `tools::R_user_dir("umx", "data")/GSEM_tutorial`. Production HapMap3 / Alkes LD scores / 1000G plink are documented, not auto-fetched. Removed `umxGSEM_dl_RefList`.
 * NEW: `umxACE_GLM` Cholesky on `mxFitFunctionGLM` (`nVar`-general; MZ Laplace dimension `4 * nVar`). 3-trait Poisson recovers a diagonals / `a_r2c1` on eta. `plot()` / `umxPlotACE_GLM` is the compact a/c/e diagram (printed e is chol(ee'+D)).
 	* Binomial `e` diagonal fixed at 1 (scale). `trials=` / per-row `n` columns are not implemented (Bernoulli only; no beta-binomial).
 	* Poisson recovered a,c,e on eta. Hessian/SEs left off: n=50 Poisson ACE Hessian not PD (SEs NA); n=200 SEs finite but a/c SEs ~1. Family-score SEs: `mxComputeOnce('fitfunction', 'information', 'meat')` then `mxComputeStandardError()`. 
@@ -18,6 +9,16 @@
 	* Extra-Gaussian `e` Cholesky kept (unique covariance).
 	* `umxSummaryACE_GLM` uses `E = ee' + D` (`D = 1` probit, `pi^2/3` logit).
 	* `umxSummaryACE_GLM` bivariate prints `rA`, `rC`, `rE = cov2cor(E_total)` (unique correlation diluted by leftover; `rA` is not).
+* NEW: `umx_scale_reliabilities` accumulates the reliabilities computed across calls to umx_score_scale() and can display them as a markdown table.
+* FIXED: `umxGSEM_munge` maps columns per file (tutorial BIP `snpid`/`pval` vs SCZ `SNP`/`P`). `\dontrun` example uses `umxGSEM_dl_tutorial_files()`.
+* FIXED: `umx_is_GSEM()` is TRUE only for class `MxModelGSEM`. Ordinary RAM models are no longer treated as GSEM via `MxRAMObjective`.
+* FIXED: `tmx_show.MxModelGSEM` defaults to `A`, residual `S`, `data.S`, `data.V` (LDSC cov / sampling cov in `observedStats`). Bare `"V"` is not a RAM matrix.
+* FIXED: `umxCompare` / `xmu_compare_WLS` use GSEM DWLS chi-square only for `MxModelGSEM`. `numObs > 50000` no longer routes ordinary WLS onto the genomic track.
+* FIXED: `umxGSEM` string parse uses a PD identity named by traits, not raw `S`. WLS still gets the real (possibly smoothed) `S`/`V`.
+* CHANGED: `umx_yj_wide_twin_data()` uses `car::powerTransform` / `yjPower` (Yeo-Johnson). Dropped Suggests `bestNormalize` (and its tidymodels-sized dependency tree).
+* CHANGED: `fin_tax_FIF()` applies FDR to opening equity **plus** assets bought with the loan (anti-avoidance / whole-pile). Neutral loan is \(L/E = ft / (r - i(1-t) - ft)\). Prints loan/assets; plot LTV is loan/opening.
+* SAFE: `inst/developer/GenomicSEM` (toy SNP subsets, developer tests) is `.Rbuildignore`d; tutorial files come from `umxGSEM_dl_tutorial_files()`, not the CRAN tarball.
+* SAFE: R CMD check — `mxFamily` via `get0` in `umxACE_GLM` / `umxRAM_GLM` (GenomicMx-only; not an OpenMx import). `umxPlot` imports ggplot2 `.data`.
 
 ## umx 5.00.5 
 * Date: 2026-07-20 R 4.6.0
