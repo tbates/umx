@@ -8372,14 +8372,14 @@ prolific_anonymize <- function(df = NULL, PID = "PID", alsoDrop = NA, baseOffset
 	}
 	# cleanup revealingColumns
 	if(PID %in% revealingColumns){
+		message("Keeping original PID column")
 		revealingColumns = revealingColumns[!revealingColumns==PID]
 	}
-
-	isPIDInNames    = umx_check_names(PID, df, die = FALSE)
+	isPIDInNames   = umx_check_names(PID, df, die = FALSE)
 	areExtrasFound = umx_check_names(alsoDrop, df, die = TRUE)
 	
 	if(isPIDInNames){
-		# Anonymise the PID column
+		# Anonymize the PID column
 		oldValues = df[,PID]
 		if(anyDuplicated(df[, PID])){
 			message("Some IDs were duplicates. That pattern will be preserved")
@@ -8389,15 +8389,16 @@ prolific_anonymize <- function(df = NULL, PID = "PID", alsoDrop = NA, baseOffset
 			df[,PID]  = lookuptbl[as.character(oldValues)]
 		} else {
 			message("No duplicates")
-			df[,PID] = c((baseOffset+1): (baseOffset + length(oldValues) ) )
+			newIDs   = c((baseOffset+1): (baseOffset + length(oldValues) ) )
+			df[,PID] = newIDs
 		}
 	} else {
+		message("No PID column in names: making one")
 		# PID was not found, assume this df has no ID column so invent one. But this is super unusal do tell the user!
 		df[,PID] = c((baseOffset+1): (baseOffset + dim(df)[1]) )
 		message("Polite note: I did not find a PID column. So I created one called ", PID, " and stored anonymous sequential number IDs there")
 	}
-	
-	# clean up	
+	# Clean up
 	df = df[, names(df)[!names(df) %in% c(revealingColumns, alsoDrop)]]
 	message("OK, what's left now is:")
 	message(omxQuotes(names(df)))
