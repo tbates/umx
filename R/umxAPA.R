@@ -209,6 +209,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		umx_print(output, digits = digits, report = report, caption = captionToUse)
 	} else if("lm" == class(obj)[[1]]) {
 		# Report lm summary table
+		if(!is.null(se) && !is.character(se) && !is.numeric(se)){
+			stop(paste0("umxAPA: did you pass the model twice, e.g. m1 |> umxAPA(m1)? Got an object of class '", class(se)[[1]], "' in se, but when obj is a model, se must be term name(s), e.g. umxAPA(model, 'wt'). When piping, omit it: m1 |> umxAPA(std = TRUE)."))
+		}
 		if(std){
 			# Should not touch the left-hand side variable, make sure factors are not touched, inc. binary variables
 			# see also summ(transform.response = TRUE)
@@ -300,6 +303,9 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		invisible(obj)
 	} else if("glm" == class(obj)[[1]]) {
 		# report glm summary table
+		if(!is.null(se) && !is.character(se) && !is.numeric(se)){
+			stop(paste0("umxAPA: did you pass the model twice, e.g. m1 |> umxAPA(m1)? Got an object of class '", class(se)[[1]], "' in se, but when obj is a model, se must be term name(s), e.g. umxAPA(model, 'wt'). When piping, omit it: m1 |> umxAPA(std = TRUE)."))
+		}
 		if(std){
 			message("TODO: not sure how to not scale the DV in this glm model: Don't trust this")
 			obj = update(obj, data = umx_scale(obj$model))
