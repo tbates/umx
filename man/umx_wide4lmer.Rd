@@ -60,6 +60,7 @@ Other Miscellaneous Utility Functions:
 \code{\link[=umxModelNames]{umxModelNames()}},
 \code{\link[=umxRAM2Lav]{umxRAM2Lav()}},
 \code{\link[=umxVersion]{umxVersion()}},
+\code{\link[=umx_ICA_report]{umx_ICA_report()}},
 \code{\link[=umx_array_shift]{umx_array_shift()}},
 \code{\link[=umx_data]{umx_data()}},
 \code{\link[=umx_find_object]{umx_find_object()}},
@@ -68,6 +69,7 @@ Other Miscellaneous Utility Functions:
 \code{\link[=umx_open_CRAN_page]{umx_open_CRAN_page()}},
 \code{\link[=umx_pad]{umx_pad()}},
 \code{\link[=umx_print]{umx_print()}},
+\code{\link[=umx_tail]{umx_tail()}},
 \code{\link[=umx_wide2long]{umx_wide2long()}}
 }
 \concept{Miscellaneous Utility Functions}

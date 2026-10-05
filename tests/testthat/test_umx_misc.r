@@ -309,6 +309,57 @@ test_that("umxVersion(min = 3) is accepted and teaches the string form", {
 	expect_message(umxVersion(min = "1.0.0", verbose = FALSE), regexp = "recent enough")
 })
 
+test_that("umx_tail returns the requested extreme rows", {
+	df = data.frame(
+		id = c("a", "b", "c", "d", "e", "f"),
+		score = c(1, 10, NA, -4, 3, 7),
+		extra = 11:16,
+		stringsAsFactors = FALSE
+	)
+	# non-NA scores: a=1, b=10, d=-4, e=3, f=7. Median is 3.
+
+	high = umx_tail(df, wag = "score", face = "id", n = 2, what = "high")
+	expect_equal(high$id, c("b", "f"))
+	expect_equal(high$score, c(10, 7))
+	expect_equal(names(high), c("id", "score"))
+
+	low = umx_tail(df, wag = "score", face = "id", n = 2, what = "low")
+	expect_equal(low$id, c("d", "a"))
+	expect_equal(low$score, c(-4, 1))
+
+	bothOdd = umx_tail(df, wag = "score", face = "id", n = 3, what = "both")
+	expect_equal(bothOdd$id, c("b", "f", "d"))
+
+	bothEven = umx_tail(df, wag = "score", face = "id", n = 4, what = "both")
+	expect_equal(bothEven$id, c("b", "f", "d", "a"))
+
+	absDev = umx_tail(df, wag = "score", face = "id", n = 2, what = "abs")
+	expect_equal(absDev$id, c("b", "d"))
+
+	already = umx_tail(df, wag = "score", face = c("id", "score"), n = 1, what = "high")
+	expect_equal(names(already), c("id", "score"))
+	expect_equal(already$id, "b")
+
+	allRows = umx_tail(df, wag = "score", face = "id", n = 10, what = "high")
+	expect_equal(allRows$id, c("b", "f", "e", "a", "d"))
+
+	allMissing = df
+	allMissing$score = NA_real_
+	empty = umx_tail(allMissing, wag = "score", face = "id", n = 3, what = "high")
+	expect_equal(nrow(empty), 0)
+	expect_equal(names(empty), c("id", "score"))
+
+	letters = df
+	letters$score = c("a", "b", "c", "d", "e", "f")
+	expect_error(umx_tail(letters, wag = "score", face = "id", what = "abs"), regexp = "numeric")
+
+	expect_error(umx_tail(df, wag = "nope", face = "id", n = 1), regexp = "not in data")
+	expect_error(umx_tail(df, wag = "score", face = "nope", n = 1), regexp = "not in data")
+	expect_error(umx_tail(df, wag = "score", face = "id", n = 0), regexp = "positive integer")
+	expect_error(umx_tail(1:5, wag = "score", face = "id"), regexp = "data.frame")
+	expect_error(umx_tail(df, wag = "score", face = "id", n = 2, report = "markdown"), regexp = NA)
+})
+
 
 
 
