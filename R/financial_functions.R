@@ -1085,8 +1085,8 @@ fin_tax_FIF <- function(portfolioValue=1.e6, marginRate=.056, expectedReturn = .
 #'
 fin_value_CarryCost <- function(property_cost, appreciation = .02, QQQ = .14, rent_saved = .04, interest = .06, rates = 5000, insurance = 2000, maintenance = .015, years = 5, inflation = .025, verbose = TRUE){
   # base annual at t=1 (flat reference)
-  rent0       = property_cost * rent_saved
-  interest0   = property_cost * interest
+  rent0     = property_cost * rent_saved
+  interest0 = property_cost * interest
   if (maintenance < 1) {
     maintenance0 = property_cost * maintenance
   } else {
@@ -1096,11 +1096,12 @@ fin_value_CarryCost <- function(property_cost, appreciation = .02, QQQ = .14, re
   propAprec = property_cost * ((1+appreciation)^years)
   propAprec = (propAprec*.97) - property_cost # 3% sale cost
   # per-year carry with inflation on rent/rates/insurance/maintenance; interest fixed (opportunity on price)
-  annualCarry = numeric(years)
-  rentAnnual = numeric(years)
-  ratesAnnual = numeric(years)
-  insuranceAnnual = numeric(years)
+  annualCarry       = numeric(years)
+  rentAnnual        = numeric(years)
+  ratesAnnual       = numeric(years)
+  insuranceAnnual   = numeric(years)
   maintenanceAnnual = numeric(years)
+  annualCarryCashNoInterest = numeric(years)
   for (t in 1:years) {
     infFactor = (1+inflation)^(t-1)
     rentAnnual[t]       = rent0 * infFactor
@@ -1108,10 +1109,11 @@ fin_value_CarryCost <- function(property_cost, appreciation = .02, QQQ = .14, re
     insuranceAnnual[t]  = insurance * infFactor
     maintenanceAnnual[t]= maintenance0 * infFactor
     annualCarry[t]      = (interest0 + ratesAnnual[t] + insuranceAnnual[t] + maintenanceAnnual[t]) - rentAnnual[t]
+    annualCarryCashNoInterest[t] = (ratesAnnual[t] + insuranceAnnual[t] + maintenanceAnnual[t]) - rentAnnual[t]
   }
   totalCarry = sum(annualCarry)
   flatCarry  = (interest0 + rates + insurance + maintenance0 - rent0) * years
-  netnetCostOfBuying = totalCarry + QQQgains - propAprec
+  netnetCostOfBuying = sum(annualCarryCashNoInterest) + (QQQgains - propAprec)
   # for reporting: keep original variable names for dollar formatting at t=1
   rent_saved  = rent0
   interest    = interest0
@@ -1131,9 +1133,9 @@ fin_value_CarryCost <- function(property_cost, appreciation = .02, QQQ = .14, re
 	  "Annual carry cost (t=1) = ", dollar(as.numeric(interest+ rates + insurance + maintenance -rent_saved), prefix = "$"), "\n",
 	  "Assumed appreciation: QQQ ", QQQ*100, "% p.a., property ", appreciation*100, "% p.a. (net ", dollar(as.numeric(propAprec), prefix = "$"), " total after 3% sale cost over ", years, " years)\n",
 	  "Inflation on rent/rates/insurance/maintenance: ", inflation*100, "% p.a.\n",
-	  "Total carry = ", dollar(as.numeric(totalCarry), prefix = "$"), ")\n",
+	  "Total carry = ", dollar(as.numeric(totalCarry), prefix = "$"), "\n",
 	  "Missed market gains  = ", dollar(as.numeric(QQQgains), prefix = "$"), " total over ", years, " years\n",
-	  "Net-net cost of Buying = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), " total over ", years, " years\n"
+	  "Net-net cost of cash purchase vs QQQ = ", dollar(as.numeric(netnetCostOfBuying), prefix = "$"), " total over ", years, " years\n"
   )
   if(isTRUE(verbose) && years <= 20 && years > 1){
     cashflowTable = data.frame(
@@ -1148,9 +1150,9 @@ fin_value_CarryCost <- function(property_cost, appreciation = .02, QQQ = .14, re
   }
 
   schedule = data.frame(year=1:years, carry=annualCarry, rent=rentAnnual, rates=ratesAnnual, insurance=insuranceAnnual, maintenance=maintenanceAnnual)
-  attr(netnetCostOfBuying, "schedule") = schedule
+  attr(netnetCostOfBuying, "schedule")   = schedule
   attr(netnetCostOfBuying, "totalCarry") = totalCarry
-  attr(netnetCostOfBuying, "flatCarry") = flatCarry
+  attr(netnetCostOfBuying, "flatCarry")  = flatCarry
   invisible(netnetCostOfBuying)
 }
 
