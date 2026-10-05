@@ -4564,6 +4564,118 @@ umx_print <- function (x, digits = getOption("digits"), caption = NULL, report =
 	}
 } # end umx_print
 
+#' Show the n most extreme rows of a data.frame
+#'
+#' @description
+#' Sort `data` on the column `wag` and keep the `n` most extreme rows.
+#' `what` chooses which extreme:
+#'
+#' * `high` (default): the largest values, largest first.
+#' * `low`: the smallest values, smallest first.
+#' * `both`: rows from both ends. An odd `n` gives the extra row to the high end. The high end is printed first (largest first), then the low end (smallest first).
+#' * `abs`: the rows with the largest absolute deviation from the median of `wag`. `wag` must be numeric. Ties keep their original relative order.
+#'
+#' Rows with `NA` in `wag` are left out of the ranking. The printed columns are `face`, in the order given, then `wag` if it is not already in `face`.
+#' Printing goes through [umx_print()]: markdown by default, or a browser table when `report = "html"`.
+#'
+#' @param data A data.frame.
+#' @param wag Column name to rank on. A single string.
+#' @param face Column names to display. A character vector.
+#' @param report `"markdown"` (default) or `"html"`. Passed to [umx_print()].
+#' @param n How many extreme rows to show. A single positive integer. Default is 6, the same as [utils::tail()].
+#' @param what Which extreme. One of `"high"`, `"low"`, `"both"`, `"abs"`.
+#' @return The selected rows and columns, invisibly. A data.frame.
+#' @export
+#' @family Miscellaneous Utility Functions
+#' @seealso [umx_print()]
+#' @md
+#' @examples
+#' data(mtcars)
+#' umx_tail(mtcars, wag = "mpg", face = c("cyl", "hp"), n = 3, what = "high")
+#' umx_tail(mtcars, wag = "mpg", face = c("cyl", "hp"), n = 4, what = "both")
+#' \dontrun{
+#' umx_tail(mtcars, wag = "mpg", face = c("cyl", "hp"), n = 3, report = "html")
+#' }
+umx_tail <- function(data, wag, face, report = c("markdown", "html"), n = 6, what = c("high", "low", "both", "abs")) {
+	report = match.arg(report)
+	what = match.arg(what)
+	if (!is.data.frame(data)) {
+		stop("umx_tail needs a data.frame. Got ", omxQuotes(class(data)[1]), ".")
+	}
+	if (length(wag) != 1 || !is.character(wag) || is.na(wag)) {
+		stop("wag must be a single column name.")
+	}
+	if (!wag %in% names(data)) {
+		stop("wag column ", omxQuotes(wag), " is not in data.")
+	}
+	if (!is.character(face) || length(face) < 1 || anyNA(face)) {
+		stop("face must be a character vector of column names.")
+	}
+	missingFace = setdiff(face, names(data))
+	if (length(missingFace) > 0) {
+		stop("face columns not in data: ", omxQuotes(missingFace), ".")
+	}
+	if (length(n) != 1 || !is.numeric(n) || is.na(n) || n < 1 || n != as.integer(n)) {
+		stop("n must be a single positive integer.")
+	}
+	n = as.integer(n)
+
+	wagValues = data[[wag]]
+	kept = which(!is.na(wagValues))
+	keptValues = wagValues[kept]
+	nAvail = length(kept)
+	nShow = min(n, nAvail)
+
+	if (nShow == 0) {
+		picked = integer(0)
+	} else if (what == "high") {
+		rankOrder = order(keptValues, decreasing = TRUE)
+		picked = kept[rankOrder[seq_len(nShow)]]
+	} else if (what == "low") {
+		rankOrder = order(keptValues, decreasing = FALSE)
+		picked = kept[rankOrder[seq_len(nShow)]]
+	} else if (what == "both") {
+		nLow = nShow %/% 2
+		nHigh = nShow - nLow
+		ascendingOrder = order(keptValues, decreasing = FALSE)
+		highLocal = seq.int(nAvail - nHigh + 1, nAvail)
+		if (nLow == 0) {
+			lowLocal = integer(0)
+		} else {
+			lowLocal = seq_len(nLow)
+		}
+		picked = kept[c(rev(ascendingOrder[highLocal]), ascendingOrder[lowLocal])]
+	} else {
+		if (!is.numeric(keptValues)) {
+			stop("what = \"abs\" needs a numeric wag column. ", omxQuotes(wag), " is ", omxQuotes(class(keptValues)[1]), ".")
+		}
+		medianWag = stats::median(keptValues)
+		absoluteDeviation = abs(keptValues - medianWag)
+		rankOrder = order(absoluteDeviation, decreasing = TRUE)
+		picked = kept[rankOrder[seq_len(nShow)]]
+	}
+
+	showCols = unique(c(face, wag))
+	out = data[picked, showCols, drop = FALSE]
+
+	if (nShow == 1) {
+		rowWord = "row"
+	} else {
+		rowWord = "rows"
+	}
+	if (what == "high") {
+		caption = paste0(nShow, " largest ", rowWord, " on ", wag)
+	} else if (what == "low") {
+		caption = paste0(nShow, " smallest ", rowWord, " on ", wag)
+	} else if (what == "both") {
+		caption = paste0(nShow, " ", rowWord, " from both tails of ", wag)
+	} else {
+		caption = paste0(nShow, " ", rowWord, " furthest from the median of ", wag)
+	}
+	umx_print(out, report = report, caption = caption)
+	invisible(out)
+}
+
 # ===========================
 # = Boolean check functions =
 # ===========================
