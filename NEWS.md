@@ -1,4 +1,5 @@
 ## dev
+* NEW: `gh_message_search()` lists commits whose message matches a regex, newest first, with the GitHub commit page. `open = 1` shows that row in the browser.
 * NEW: `umx_tail()` prints the `n` most extreme rows on a column. `what` is `high`, `low`, `both`, or `abs` (furthest from the median). Markdown by default; `report = "html"` opens the [umx_print()] table.
 * NEW: `umxGSEM_ldsc()` calls OpenMx `imxLDSC` on munged `.sumstats.gz` and returns a labeled covstruc (`var_*` / `poly_*_*`) for [umxGSEM()].
 * NEW: `umxGSEM_dl_tutorial_files()` downloads the IBG/GenomicSEM ~45 MB tutorial pack (1k-SNP SCZ/BIP/MDD, 1000G subset, `w_hm3.snplist`, `eur_w_ld_chr/`) into `tools::R_user_dir("umx", "data")/GSEM_tutorial`. Production HapMap3 / Alkes LD scores / 1000G plink are documented, not auto-fetched. Removed `umxGSEM_dl_RefList`.

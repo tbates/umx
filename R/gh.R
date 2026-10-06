@@ -14,13 +14,14 @@ gh_open_app_support <- function(){
 	system2("open ~/Library/Application\ Support/TextMate")
 }
 
-gh_remove_quarantine <- function(){
-	system2("xattr -dr com.apple.quarantine ~/Downloads/TextMate.app")
+gh_remove_quarantine <- function(path = "~/Downloads/TextMate.app"){
+	system2(paste0("xattr -dr com.apple.quarantine ", path))
 }
 
 gh_sym_link_bundle <- function(which = "source.tmbundle", local_path = "~/bin/tm/bundles/", destination = "$HOME/Library/Application\ Support/TextMate/Bundles/"){
 	fullPath = paste0(local_path, which) # e.g., ~/bin/tm/bundles/GitHub-Markdown-Font-Settings.tmbundle
 	fullDest = paste0(destination, which) # e.g.,"$HOME/Library/Application Support/TextMate/Bundles/GitHub-Markdown-Font-Settings.tmbundle"
+
 	# todo checkExists(fullPath) exists
 	# todo checkExists(destination)
 	# todo check not already have bundle at dest
@@ -41,8 +42,6 @@ gh_teardown <- function(which = "source.tmbundle", local_path = "~/bin/tm/bundle
 	# rm "$HOME/Library/Application Support/TextMate/Bundles/GitHub-Markdown-Font-Settings.tmbundle"
 	system2()
 }
-
-
 
 #' Make a feature branch on a github fork.
 #' 
@@ -154,6 +153,117 @@ gh_open_PR_url <- function(head_branch = NULL, base_owner = "textmatelives", bas
 	invisible(url)
 }
 
+#' Search commit messages and link the hits on GitHub.
+#'
+#' @description
+#' `gh_message_search` asks git for commits on the current branch whose
+#' message matches `regex`, and prints the newest `max` of them.
+#' `sort = "asc"` flips that set so the oldest of those hits is first.
+#'
+#' The pattern is applied to the whole commit message. Each row has a
+#' number, the date, a short sha, and the subject. The subject is only
+#' the first line, so the match may be further down the message.
+#' When `origin` is a GitHub remote, the row also has the commit page.
+#' Pass `open` as that row number to show it in the browser.
+#' The same page is `hits$url[n]` on the data.frame returned.
+#'
+#' `regex` is an extended regular expression (`git log -E --grep`).
+#' A plain word works as-is. `+`, `()`, and `|` are special; escape them
+#' to match those characters literally. Matching ignores case unless
+#' `ignore_case = FALSE`.
+#'
+#' @param regex Pattern matched against the commit message.
+#' @param repo Local checkout. Default `"~/bin/umx"`.
+#' @param max How many of the newest matches to keep. Default `10`.
+#' @param sort `"desc"` (newest first) or `"asc"`. Default `"desc"`.
+#' @param ignore_case Default `TRUE`.
+#' @param open Row number to open on GitHub. Default `NULL` (print only).
+#' @return A data.frame (invisibly) with columns `n`, `date`, `sha`, `short`, `subject`, `url`.
+#' @export
+#' @family github
+#' @md
+#' @examples
+#' \dontrun{
+#' hits <- gh_message_search("double entry")
+#' gh_message_search("double entry", open = 1)
+#' }
+gh_message_search <- function(regex, repo = "~/bin/umx", max = 10, sort = c("desc", "asc"), ignore_case = TRUE, open = NULL) {
+	sort = match.arg(sort)
+	if (length(regex) != 1L || is.na(regex) || !is.character(regex) || !nzchar(regex)) {
+		stop("regex must be one non-empty string.", call. = FALSE)
+	}
+	if (length(max) != 1L || is.na(max) || !is.numeric(max) || max < 1) {
+		stop("max must be a positive number.", call. = FALSE)
+	}
+	max = as.integer(max)
+	repo = path.expand(repo)
+	if (!dir.exists(repo)) {
+		stop("repo not found: ", repo, call. = FALSE)
+	}
+	inside = xgh_git(repo, c("rev-parse", "--is-inside-work-tree"))
+	if (!is.null(attr(inside, "status")) || !length(inside) || inside[1] != "true") {
+		stop("not a git repo: ", repo, call. = FALSE)
+	}
+
+	args = c("log", "-E", if (isTRUE(ignore_case)) "-i", paste0("--grep=", regex), paste0("--max-count=", max), "--date=short", "--pretty=format:%H%x09%h%x09%ad%x09%s")
+	log = xgh_git(repo, args)
+	status = attr(log, "status")
+	if (!is.null(status) && status != 0) {
+		stop(paste(log, collapse = "\n"), call. = FALSE)
+	}
+	blank = data.frame(n = integer(), date = character(), sha = character(), short = character(), subject = character(), url = character(), stringsAsFactors = FALSE)
+	if (!length(log) || (length(log) == 1L && !nzchar(log))) {
+		message("no commits match in ", repo)
+		return(invisible(blank))
+	}
+
+	parts = strsplit(log, "\t", fixed = TRUE)
+	bad = which(lengths(parts) < 4L)
+	if (length(bad)) {
+		stop("unexpected git log line: ", log[bad[1]], call. = FALSE)
+	}
+	sha = vapply(parts, `[`, "", 1L)
+	short = vapply(parts, `[`, "", 2L)
+	date = vapply(parts, `[`, "", 3L)
+	subject = vapply(parts, function(x) paste(x[4:length(x)], collapse = "\t"), "")
+	if (sort == "asc") {
+		sha = rev(sha); short = rev(short); date = rev(date); subject = rev(subject)
+	}
+
+	base = xgh_github_origin(repo)
+	url = if (is.na(base)) rep(NA_character_, length(sha)) else paste0(base, "/commit/", sha)
+	hits = data.frame(n = seq_along(sha), date = date, sha = sha, short = short, subject = subject, url = url, stringsAsFactors = FALSE)
+
+	cap = if (nrow(hits) < max) {
+		paste0(nrow(hits), if (nrow(hits) == 1L) " match" else " matches")
+	} else {
+		paste0(max, " newest matches")
+	}
+	if (sort == "asc") {
+		cap = paste0(cap, ", oldest first")
+	}
+	cat("\n", repo, "  (", cap, ")\n", sep = "")
+	for (i in seq_len(nrow(hits))) {
+		cat(sprintf("%2d  %s  %s  %s\n", hits$n[i], hits$date[i], hits$short[i], hits$subject[i]))
+		if (!is.na(hits$url[i])) {
+			cat("    ", hits$url[i], "\n", sep = "")
+		}
+	}
+	if (anyNA(hits$url)) {
+		cat("    origin is not a GitHub remote, so there is no commit page.\n")
+	}
+	if (!is.null(open)) {
+		if (length(open) != 1L || is.na(open) || !is.numeric(open) || open != as.integer(open) || open < 1 || open > nrow(hits)) {
+			stop("open must be a row number from 1 to ", nrow(hits), call. = FALSE)
+		}
+		if (is.na(hits$url[open])) {
+			stop("no GitHub URL for row ", open, call. = FALSE)
+		}
+		utils::browseURL(hits$url[open])
+	}
+	invisible(hits)
+}
+
 # =======================
 # = - xgh functions - = #
 # =======================
@@ -219,4 +329,37 @@ xgh_check_base_name <- function(base = "textmatelives/textmate:main") {
 		stop("base must look like \"owner/repo:branch\".", call. = FALSE)
 	}
 	list(owner = parts[1L], repo = parts[2L], branch = branch)
+}
+
+#' GitHub base URL for a repo's origin remote.
+#'
+#' @param repo Local checkout.
+#' @return `"https://github.com/owner/name"`, or `NA` when origin is not GitHub.
+#' @keywords internal
+xgh_github_origin <- function(repo) {
+	remote = xgh_git(repo, c("remote", "get-url", "origin"))
+	if (!is.null(attr(remote, "status")) || !length(remote) || remote[1] == "") {
+		return(NA_character_)
+	}
+	u = sub("\\.git$", "", remote[1])
+	if (grepl("^https://github.com/[^/]+/[^/]+$", u)) {
+		return(u)
+	}
+	if (grepl("^git@github.com:[^/]+/[^/]+$", u)) {
+		return(sub("^git@github.com:", "https://github.com/", u))
+	}
+	if (grepl("^ssh://git@github.com/[^/]+/[^/]+$", u)) {
+		return(sub("^ssh://git@github.com/", "https://github.com/", u))
+	}
+	NA_character_
+}
+
+#' Run git in a repo. This R's system2 pastes args into a shell command.
+#'
+#' @param repo Local checkout, passed to `git -C`.
+#' @param args Character vector of git arguments, quoted one by one.
+#' @return Character vector of output, with a `status` attribute on failure.
+#' @keywords internal
+xgh_git <- function(repo, args) {
+	suppressWarnings(system2("git", c(shQuote(c("-C", repo)), shQuote(args)), stdout = TRUE, stderr = TRUE))
 }
