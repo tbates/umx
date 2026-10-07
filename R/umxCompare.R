@@ -125,7 +125,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			warning("Base model not run yet!")		
 		}
 	}
-	if (umx_is_MxModel(comparison)) {
+	# A comparison list is already the models to walk. umx_is_MxModel()
+	# warns, and returns FALSE, when handed that list.
+	if (!is.list(comparison) && umx_is_MxModel(comparison)) {
 		comparison = list(comparison)
 	}
 	if (!is.list(comparison)) {
@@ -273,12 +275,12 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	# Check if any model in the comparison is a WLS model
 	anyWLS = FALSE
 	checkModels = list()
-	if (is.list(base) && !umx_is_MxModel(base)) {
+	if (is.list(base)) {
 		checkModels = c(checkModels, base)
 	} else if (!is.null(base)) {
 		checkModels = c(checkModels, list(base))
 	}
-	if (is.list(comparison) && !umx_is_MxModel(comparison)) {
+	if (is.list(comparison)) {
 		checkModels = c(checkModels, comparison)
 	} else if (!is.null(comparison)) {
 		checkModels = c(checkModels, list(comparison))
