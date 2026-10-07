@@ -135,7 +135,8 @@ gh_feature_branch <- function(feature = "fix-piglet", base = "textmatelives/text
 #' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
-#' gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, head_owner, local_path, browse=FALSE)
+#' gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, 
+	head_owner, local_path, browse = FALSE)
 gh_open_PR_url <- function(head_branch = NULL, base_owner = "textmatelives", base_repo = "textmate", base_branch = "main", head_owner = "tbates", local_path = ".", browse=TRUE) {
 	if (is.null(head_branch) || is.na(head_branch) || head_branch == "") {
 		head_branch = xgh_get_current_branch(local_path)

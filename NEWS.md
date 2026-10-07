@@ -1,4 +1,5 @@
 ## dev
+* FIXED: `umxCompare` no longer asks `umx_is_MxModel()` whether its comparison list is one model. That printed "set listOK = TRUE" before the comparison table. An `MxModel` is not a list, so `is.list()` is the test.
 * NEW: `gh_message_search()` lists commits whose message matches a regex, newest first, with the GitHub commit page. `open = 1` shows that row in the browser.
 * NEW: `umx_tail()` prints the `n` most extreme rows on a column. `what` is `high`, `low`, `both`, or `abs` (furthest from the median). Markdown by default; `report = "html"` opens the [umx_print()] table.
 * NEW: `umxGSEM_ldsc()` calls OpenMx `imxLDSC` on munged `.sumstats.gz` and returns a labeled covstruc (`var_*` / `poly_*_*`) for [umxGSEM()].

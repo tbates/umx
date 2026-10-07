@@ -7186,9 +7186,10 @@ umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
 #' df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
 #' 
 #' # umx_stack, with additional variables passed along 
-#' df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
+#' df = umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 #' str(df) # ind is a factor, with levels select
-#' ggplot2::ggplot(df, ggplot2::aes(x= mpg, y= values, colour= ind))+ggplot2::geom_point()+ggplot2::geom_smooth()
+#' p = ggplot2::ggplot(df, ggplot2::aes(x= mpg, y= values, colour= ind))
+#' p + ggplot2::geom_point()+ggplot2::geom_smooth()
 umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "ind") {
 	# TODO: rewrite to create the full size in one go, and slot in blocks
 	# initialize new dataframe
