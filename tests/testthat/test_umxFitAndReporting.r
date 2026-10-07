@@ -368,3 +368,46 @@ test_that("umxPlotPredict works", {
 	# the plot renders without error
 	expect_error(ggplot2::ggplot_build(p), NA)
 })
+
+test_that("geometric_mean works", {
+	require(umx)
+	# formula identities from the statistical definition
+	expect_equal(geometric_mean(c(50, 100)), sqrt(50 * 100))
+	expect_equal(geometric_mean(c(50, 100)), exp(mean(log(c(50, 100)))))
+	# documented goldens
+	expect_equal(geometric_mean(c(1.02, 1.03, 1.1)), 1.049, tolerance = 1e-3)
+	v = c(1, 149, 500)
+	expect_equal(round(c(geometric_mean(v), mean(v), median(v)), 0), c(42, 217, 149))
+	# reciprocal duality
+	expect_equal(1 / geometric_mean(c(100, 50)), geometric_mean(c(1/100, 1/50)))
+	# missing data: dropped by default, propagated with na.rm = FALSE
+	expect_equal(geometric_mean(c(50, 100, NA)), geometric_mean(c(50, 100)))
+	expect_true(is.na(geometric_mean(c(50, 100, NA), na.rm = FALSE)))
+	# non-positive input is an error, even alongside NAs
+	expect_error(geometric_mean(c(1, -2)), "strictly positive")
+	expect_error(geometric_mean(c(0, 1)), "strictly positive")
+	expect_error(geometric_mean(c(50, -100, NA)), "strictly positive")
+})
+
+test_that("harmonic_mean works", {
+	require(umx)
+	# formula identities from the statistical definition
+	expect_equal(harmonic_mean(c(33, 23)), 2 / (1/33 + 1/23))
+	expect_equal(harmonic_mean(c(33, 23)), 1 / mean(1 / c(33, 23)))
+	# documented goldens
+	expect_equal(harmonic_mean(c(1, 10)), 1.8182, tolerance = 1e-3)
+	w = c(.2, .8)
+	expect_equal(harmonic_mean(c(33, 23), weights = w), sum(w) / sum(w / c(33, 23)))
+	# missing data: dropped by default, propagated with na.rm = FALSE
+	expect_equal(harmonic_mean(c(33, 23, NA)), harmonic_mean(c(33, 23)))
+	expect_true(is.na(harmonic_mean(c(33, 23, NA), na.rm = FALSE)))
+	expect_true(is.na(harmonic_mean(c(33, 23, NA), weights = c(.2, .3, .5), na.rm = FALSE)))
+	# with weights, incomplete cases drop together so x and weights stay aligned
+	expect_equal(harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)), harmonic_mean(c(33, 23), weights = c(.2, .5)))
+	expect_equal(harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)), 25.18, tolerance = 1e-2)
+	expect_equal(harmonic_mean(c(33, 23), weights = c(.2, NA)), 33)
+	# error contract: non-positive input, and weights must match x in length
+	expect_error(harmonic_mean(c(33, -23)), "strictly positive")
+	expect_error(harmonic_mean(c(33, -23, NA)), "strictly positive")
+	expect_error(harmonic_mean(c(33, 23), weights = c(.2, .3, .5)), "same length")
+})

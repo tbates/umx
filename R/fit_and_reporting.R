@@ -4492,7 +4492,7 @@ FishersMethod <- function(pvalues, ...){
 #' @description
 #' The Geometric mean is the nth-root of the product of \code{n} input values.
 #' Common uses include: 
-#' * Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. The arithmetic mean overstates performance when volatility is present (e.g., a +50% gain followed by a −50% loss leaves you with a 25% loss, even though the arithmetic average is 0%; the geometric mean correctly yields −29.29% per period, totaling −25%).
+#' * Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. The arithmetic mean overstates performance when volatility is present (e.g., a +50% gain followed by a -50% loss leaves you with a 25% loss, even though the arithmetic average is 0%; the geometric mean correctly yields -29.29% per period, totaling -25%).
 #' * Utilitarian evaluation of value. For example, the geometric mean utility of \code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not the arithmetic mean: 4.3.
 #' * Proportional Scaling: Proportional growth of organisms and log-normally distributed physical phenomena.
 #' * Normalizing metrics measured on different scales: e.g., computer hardware so no single benchmark disproportionately skews the score.
@@ -4506,7 +4506,7 @@ FishersMethod <- function(pvalues, ...){
 #' \deqn{\ln G = \frac{1}{n} \sum_{i=1}^{n} \ln(x_i) \implies G = \exp\left( \frac{1}{n} \sum_{i=1}^{n} \ln(x_i) \right)}{G = exp(mean(log(x)))}
 #'
 #' @param x A vector of values.
-#' @param na.rm remove NAs by default.
+#' @param na.rm Remove NAs (default = TRUE). If FALSE, NA input returns NA (like [mean()]).
 #' @return - Geometric mean of x
 #' @export
 #' @seealso - [harmonic_mean()], [mean()]
@@ -4532,10 +4532,20 @@ FishersMethod <- function(pvalues, ...){
 #' # Reciprocal duality
 #' 1/geometric_mean(c(100, 50))
 #' geometric_mean(c(1/100, 1/50))
+#'
+#' # Missing data are dropped by default (na.rm = TRUE)
+#' geometric_mean(c(50, 100, NA)) # 70.7
+#' # With na.rm = FALSE, NA input gives NA, like mean()
+#' geometric_mean(c(50, 100, NA), na.rm = FALSE) # NA
+#' \dontrun{
+#' # Non-positive input is an error, even alongside NAs
+#' geometric_mean(c(50, -100))
+#' geometric_mean(c(50, -100, NA))
+#' }
 geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
-    if (any(x <= 0)) stop("All values in x must be strictly positive.")
-	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)
-    exp(mean(log(x)), na.rm = na.rm)	
+	na.rm = xmu_match.arg(na.rm, option_list = c(TRUE, FALSE), check = TRUE)
+	if (any(x <= 0, na.rm = TRUE)) stop("All values in x must be strictly positive.")
+	exp(mean(log(x), na.rm = na.rm))
 }
 
 #' Harmonic Mean
@@ -4549,8 +4559,8 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' \deqn{H = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}}{H = n / sum(1 / x_i)}
 #'
 #' @param x A vector of values to take the harmonic mean for
-#' @param weights Optional vector of weights.
-#' @param na.rm remove NAs (default = TRUE).
+#' @param weights Optional vector of weights, one per value in x.
+#' @param na.rm Remove NAs (default = TRUE). With weights, cases with NA in x or weights are dropped together so the two stay aligned. If FALSE, NA input returns NA.
 #' @return - Harmonic mean of x
 #' @export
 #' @seealso - [geometric_mean()], [aggregate()]
@@ -4570,12 +4580,31 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' # If Jack travels outbound at 1 mph, and returns at 10 miles an hour, what is his average speed?
 #' harmonic_mean(c(1,10)) # 1.81 mph
 #'
+#' # Missing data are dropped by default (na.rm = TRUE)
+#' harmonic_mean(c(33, 23, NA)) # 27.1
+#' harmonic_mean(c(33, 23, NA), na.rm = FALSE) # NA
+#' # With weights, incomplete cases are dropped together, keeping x and weights aligned
+#' harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)) # 25.18
+#' harmonic_mean(c(33, 23), weights = c(.2, NA)) # 33
+#' \dontrun{
+#' # weights must match x in length; non-positive input is an error
+#' harmonic_mean(c(33, 23), weights = c(.2, .3, .5))
+#' harmonic_mean(c(33, -23))
+#' }
+#'
 harmonic_mean = function(x, weights = NULL, na.rm = c(TRUE, FALSE)){
-	na.rm = xmu_match.arg(na.rm, option_list= c(TRUE, FALSE), check = TRUE)
-	if (any(x <= 0)) stop("All values in x must be strictly positive.")
+	na.rm = xmu_match.arg(na.rm, option_list = c(TRUE, FALSE), check = TRUE)
+	if(!is.null(weights) && length(weights) != length(x)) stop("weights must be the same length as x.")
+	if (any(x <= 0, na.rm = TRUE)) stop("All values in x must be strictly positive.")
 	if(na.rm){
-		x = x[!is.na(x)]
-		weights = weights[!is.na(weights)]
+		keep = !is.na(x)
+		if(!is.null(weights)){
+			keep = keep & !is.na(weights)
+		}
+		x = x[keep]
+		if(!is.null(weights)){
+			weights = weights[keep]
+		}
 	}
 	if(is.null(weights)){
 		# reciprocal of the arithmetic mean of the reciprocals of the input values
