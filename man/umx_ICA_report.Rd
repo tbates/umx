@@ -123,7 +123,7 @@ Each return is one observation. An open revise-and-resubmit is aged to
 whose \code{decision_type} is \code{accept} and whose \code{version_number} is greater
 than 1.
 \item Journal time for a finished paper: sum over its versions of
-(decision − arrived). Author gaps are not in that sum.
+(decision - arrived). Author gaps are not in that sum.
 \item Calendar time: first version \code{created_at} to the final decision. This is
 journal time plus author time.
 }

@@ -106,7 +106,7 @@
 #'   whose `decision_type` is `accept` and whose `version_number` is greater
 #'   than 1.
 #' * Journal time for a finished paper: sum over its versions of
-#'   (decision − arrived). Author gaps are not in that sum.
+#'   (decision - arrived). Author gaps are not in that sum.
 #' * Calendar time: first version `created_at` to the final decision. This is
 #'   journal time plus author time.
 #'
@@ -183,7 +183,7 @@ umx_ICA_report <- function(dataDir = "~/bin/ica/ICAdata", asOf = Sys.Date()) {
 	}
 	fmt = function(x, digits = 1) {
 		if (length(x) == 0 || all(is.na(x))) {
-			return("—")
+			return("-")
 		}
 		format(round(x, digits), nsmall = digits, trim = TRUE)
 	}
@@ -197,7 +197,7 @@ umx_ICA_report <- function(dataDir = "~/bin/ica/ICAdata", asOf = Sys.Date()) {
 	statRow = function(label, x) {
 		x = x[!is.na(x)]
 		cells = if (length(x) == 0) {
-			c("0", "—", "—", "—", "—")
+			c("0", "-", "-", "-", "-")
 		} else {
 			qs = stats::quantile(x, c(0.25, 0.75))
 			c(as.character(length(x)), fmt(mean(x)), fmt(stats::median(x)), fmt(qs[1]), fmt(qs[2]))
@@ -244,7 +244,7 @@ umx_ICA_report <- function(dataDir = "~/bin/ica/ICAdata", asOf = Sys.Date()) {
 	}
 	shortTitle = function(title, n = 52) {
 		title = gsub("[[:space:]]+", " ", title)
-		ifelse(nchar(title) <= n, title, paste0(substr(title, 1, n - 1), "…"))
+		ifelse(nchar(title) <= n, title, paste0(substr(title, 1, n - 1), "..."))
 	}
 
 	ms = readExport("manuscripts.csv")
@@ -678,7 +678,7 @@ umx_ICA_report <- function(dataDir = "~/bin/ica/ICAdata", asOf = Sys.Date()) {
 	)
 	if (nrow(authorGaps) > 0) {
 		slow = authorGaps[which.max(authorGaps$days), ]
-		page = c(page, paste0("<p>The longest completed return is ", fmt(slow$days), " days, on “", htmlEscape(slow$title), "”, decision ", format(slow$decidedAt, "%Y-%m-%d"), ", revision in on ", format(slow$returnedAt, "%Y-%m-%d"), ".</p>"))
+		page = c(page, paste0("<p>The longest completed return is ", fmt(slow$days), " days, on &ldquo;", htmlEscape(slow$title), "&rdquo;, decision ", format(slow$decidedAt, "%Y-%m-%d"), ", revision in on ", format(slow$returnedAt, "%Y-%m-%d"), ".</p>"))
 	}
 	page = c(page,
 		"<h2>Accepting a revision</h2>",
