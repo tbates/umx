@@ -52,6 +52,7 @@ You can then
 }
 
 Other github:
+\code{\link[=gh_message_search]{gh_message_search()}},
 \code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=xgh_check_base_name]{xgh_check_base_name()}},
 \code{\link[=xgh_get_current_branch]{xgh_get_current_branch()}}

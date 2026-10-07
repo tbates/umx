@@ -9,9 +9,9 @@ harmonic_mean(x, weights = NULL, na.rm = c(TRUE, FALSE))
 \arguments{
 \item{x}{A vector of values to take the harmonic mean for}
 
-\item{weights}{Optional vector of weights.}
+\item{weights}{Optional vector of weights, one per value in x.}
 
-\item{na.rm}{remove NAs (default = TRUE).}
+\item{na.rm}{Remove NAs (default = TRUE). With weights, cases with NA in x or weights are dropped together so the two stay aligned. If FALSE, NA input returns NA.}
 }
 \value{
 \itemize{
@@ -39,6 +39,18 @@ harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
 
 # If Jack travels outbound at 1 mph, and returns at 10 miles an hour, what is his average speed?
 harmonic_mean(c(1,10)) # 1.81 mph
+
+# Missing data are dropped by default (na.rm = TRUE)
+harmonic_mean(c(33, 23, NA)) # 27.1
+harmonic_mean(c(33, 23, NA), na.rm = FALSE) # NA
+# With weights, incomplete cases are dropped together, keeping x and weights aligned
+harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)) # 25.18
+harmonic_mean(c(33, 23), weights = c(.2, NA)) # 33
+\dontrun{
+# weights must match x in length; non-positive input is an error
+harmonic_mean(c(33, 23), weights = c(.2, .3, .5))
+harmonic_mean(c(33, -23))
+}
 
 }
 \references{

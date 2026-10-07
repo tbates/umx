@@ -9,7 +9,7 @@ geometric_mean(x, na.rm = c(TRUE, FALSE))
 \arguments{
 \item{x}{A vector of values.}
 
-\item{na.rm}{remove NAs by default.}
+\item{na.rm}{Remove NAs (default = TRUE). If FALSE, NA input returns NA (like \code{\link[=mean]{mean()}}).}
 }
 \value{
 \itemize{
@@ -20,7 +20,7 @@ geometric_mean(x, na.rm = c(TRUE, FALSE))
 The Geometric mean is the nth-root of the product of \code{n} input values.
 Common uses include:
 \itemize{
-\item Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. The arithmetic mean overstates performance when volatility is present (e.g., a +50\% gain followed by a −50\% loss leaves you with a 25\% loss, even though the arithmetic average is 0\%; the geometric mean correctly yields −29.29\% per period, totaling −25\%).
+\item Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. The arithmetic mean overstates performance when volatility is present (e.g., a +50\% gain followed by a -50\% loss leaves you with a 25\% loss, even though the arithmetic average is 0\%; the geometric mean correctly yields -29.29\% per period, totaling -25\%).
 \item Utilitarian evaluation of value. For example, the geometric mean utility of \code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not the arithmetic mean: 4.3.
 \item Proportional Scaling: Proportional growth of organisms and log-normally distributed physical phenomena.
 \item Normalizing metrics measured on different scales: e.g., computer hardware so no single benchmark disproportionately skews the score.
@@ -54,6 +54,16 @@ sqrt(50 * 100)
 # Reciprocal duality
 1/geometric_mean(c(100, 50))
 geometric_mean(c(1/100, 1/50))
+
+# Missing data are dropped by default (na.rm = TRUE)
+geometric_mean(c(50, 100, NA)) # 70.7
+# With na.rm = FALSE, NA input gives NA, like mean()
+geometric_mean(c(50, 100, NA), na.rm = FALSE) # NA
+\dontrun{
+# Non-positive input is an error, even alongside NAs
+geometric_mean(c(50, -100))
+geometric_mean(c(50, -100, NA))
+}
 }
 \references{
 \itemize{

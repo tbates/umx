@@ -53,7 +53,8 @@ Before doing this, you want to
 \code{gh_open_PR_url} solves #7: pull requesting
 }
 \examples{
-gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, head_owner, local_path, browse=FALSE)
+gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, 
+	 head_owner, local_path, browse = FALSE)
 }
 \references{
 \itemize{
@@ -67,6 +68,7 @@ gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, head_owner, loca
 
 Other github:
 \code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_message_search]{gh_message_search()}},
 \code{\link[=xgh_check_base_name]{xgh_check_base_name()}},
 \code{\link[=xgh_get_current_branch]{xgh_get_current_branch()}}
 }

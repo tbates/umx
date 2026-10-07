@@ -31,9 +31,10 @@ and allows the user control over the values and group column names for ease of u
 df = stack(mtcars, select = c("disp", "hp"), drop=FALSE)
 
 # umx_stack, with additional variables passed along 
-df= umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
+df = umx_stack(mtcars, select= c("disp", "hp"), passalong= "mpg")
 str(df) # ind is a factor, with levels select
-ggplot2::ggplot(df, ggplot2::aes(x= mpg, y= values, colour= ind))+ggplot2::geom_point()+ggplot2::geom_smooth()
+p = ggplot2::ggplot(df, ggplot2::aes(x= mpg, y= values, colour= ind))
+p + ggplot2::geom_point()+ggplot2::geom_smooth()
 }
 \seealso{
 \code{\link[=umx_wide2long]{umx_wide2long()}}

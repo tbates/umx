@@ -34,6 +34,7 @@ xgh_check_base_name("textmatelives/textmate:fix/browser_sorting")
 
 Other github:
 \code{\link[=gh_feature_branch]{gh_feature_branch()}},
+\code{\link[=gh_message_search]{gh_message_search()}},
 \code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=xgh_get_current_branch]{xgh_get_current_branch()}}
 }
