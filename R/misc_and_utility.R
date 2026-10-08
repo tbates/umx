@@ -6509,7 +6509,6 @@ umx_explode <- function(delimiter = character(), string) {
 #' And [umx_check_names()] to check for existence of names in a dataframe. 
 #' @family String Functions
 #' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 #' @examples
 #' # Names from a dataframe, with character matching
 #' umx_names(mtcars, "mpg") # only "mpg" matches this
@@ -6644,8 +6643,6 @@ namez <- umx_names
 #' @export
 #' @seealso [base::trimws()]
 #' @family String Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 #' @examples
 #' umx_trim(" dog") # "dog"
 #' trimws(" dog ", "l") # added by R in v 3.3.0
@@ -6674,8 +6671,6 @@ umx_trim <- function(string, removeThis = NULL) {
 #' @return - [OpenMx::mxModel()]
 #' @export
 #' @family String Functions
-#' @references - <https://tbates.github.io>
-
 #' @examples
 #' umx_rot(1:10)
 #' umx_rot(c(3,4,5,6,7))
@@ -6697,7 +6692,6 @@ umx_rot <- function(vec, na.last=FALSE){
 #' @return - first item of x
 #' @export
 #' @family Miscellaneous Utility Functions
-
 #' @examples
 #' x = c("Alice", "Bob", "Carol")
 #' umx_array_shift(x) # returns "Alice"
@@ -6725,7 +6719,6 @@ umx_array_shift <- function(x){
 #' @references - <https://github.com/tbates/umx>
 #' @examples
 #' umxCov2cor(cov(mtcars[,1:5]))
-
 umxCov2cor <- function(x) {
 	x = cov2cor(x)
 	x[lower.tri(x)] = t(x)[lower.tri(t(x))]
@@ -6748,8 +6741,6 @@ umxCov2cor <- function(x) {
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - [umx_long2wide()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
 #' @examples
 #' \dontrun{
 #' covs = c("Age", "Sex", "Conscientiousness")
@@ -6811,7 +6802,6 @@ umx_wide4lmer <- function(repeated = list(y = c("y1", "y2")), timevar = list(con
 #' @family Twin Data functions
 #' @seealso - [merge()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
 #' @examples
 #' \dontrun{
 #' # ==============================================
@@ -6978,7 +6968,6 @@ umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2kee
 #' @export
 #' @family Data Functions
 #' @seealso - [umx_long2wide()], [prolific_check_ID()], [prolific_read_demog()], [prolific_anonymize()]
-
 #' @examples
 #' \dontrun{
 #' fp = "~/Desktop/Political Ideology_September 13, 2022_10.47.xlsx"
@@ -7048,7 +7037,6 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso - [reshape()]
-
 #' @examples
 #' \dontrun{
 #' timevar  = list(difficulty = c("easy", "hard"))
@@ -7128,7 +7116,6 @@ umx_wide2long <- function(data = df, timevar = list(condition = c("control", "ex
 # 	sep           = ".",
 # 	split         =
 # )
-
 umx_wide2longTwinData <- function(data, sep = "_T", verbose = FALSE) {
     # Find all variables ending with _T1, _T2, etc.
 	twin_pattern = paste0(sep, "[0-9]+$")
@@ -7222,7 +7209,6 @@ umx_stack <- function(x, select, passalong, valuesName = "values", groupName = "
 #' @export
 #' @family Data Functions
 #' @seealso - [within()]
-
 #' @examples
 #' tmp = mtcars
 #' tmp$newDisp = tmp$disp
@@ -7276,7 +7262,6 @@ umx_select_valid <- function(col1, col2, bothways = FALSE, data) {
 #' @family Twin Data functions
 #' @seealso - [umx_wide2long()], [umx_long2wide()], 
 #' @references - [tutorials](https://tbates.github.io), [tbates/umx](https://github.com/tbates/umx)
-
 #' @examples
 #' data(twinData)
 #' tmp = twinData
@@ -7369,7 +7354,6 @@ umx_make_twin_data_nice <- function(data, sep = "", zygosity = "zygosity", numbe
 #' @family Data Functions
 #' @seealso - [umxACE()], [umx_make_GxE_data()], [umxGxE()], [umxGxEbiv()]
 #' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
 #' @examples
 #' # =====================================================================
 #' # = Basic Example, with all elements of std univariate data specified =
