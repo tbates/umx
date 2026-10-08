@@ -2936,7 +2936,8 @@ print.oddsratio <- function(x, digits = 3, ...) {
 #'
 #' *note*: The Hmisc package has a robust function called `rcorr`.
 #'
-#' @param X a matrix or dataframe
+#' @param X a formula, or matrix or dataframe
+#' @param data dataframe (IFF X is a formula)
 #' @param df the degrees of freedom for the test
 #' @param use how to handle missing data (defaults to pairwise complete)
 #' @param digits rounding of answers

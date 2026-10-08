@@ -14,7 +14,7 @@
 #'   Default is `~/bin/ica/ICAdata`. The files used are `manuscripts.csv`,
 #'   `decisions.csv`, `reviewer-invitations.csv`, and `reviews.csv`.
 #' @param asOf Date used to age manuscripts that are still in review or still
-#'   with the author. A `Date`, or something [as.Date()] can parse. Default is
+#'   with the author. A `Date`, or something [base::as.Date()] can parse. Default is
 #'   [Sys.Date()].
 #'
 #' @details
