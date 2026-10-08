@@ -26,11 +26,6 @@ fin_tax_NI(42e3)
 fin_tax_NI(142000)
 
 }
-\references{
-\itemize{
-\item \url{https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/}
-}
-}
 \seealso{
 \itemize{
 \item \code{\link[=fin_value_interest]{fin_value_interest()}}, \code{\link[=fin_value_percent]{fin_value_percent()}}, \code{\link[=fin_stock_valuation]{fin_stock_valuation()}}

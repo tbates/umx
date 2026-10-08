@@ -790,7 +790,6 @@ fin_value_interest <- function(principal = 100, deposits = 0, inflate = 0, inter
 #' @export
 #' @family financial functions
 #' @seealso - [fin_value_interest()], [fin_value_percent()], [fin_stock_valuation()]
-#' @references - <https://www.telegraph.co.uk/tax/tax-hacks/politicians-running-scared-long-overdue-national-insurance-overhaul/>
 #' @examples
 #' fin_tax_NI(42e3)
 #' fin_tax_NI(142000)

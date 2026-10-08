@@ -17,12 +17,10 @@
 # = Deprecated =
 # ==============
 
-
-#' Deprecated. May already stop() code and ask to be updated. May be dropped entirely in future.
+#' Deprecated. May already [stop()] code and ask to be updated. May be dropped entirely in future.
 #'
 #' @param ... the old function's parameters (now stripped out to avoid telling people how to do it the wrong way :-)
-#' @description 
-#' 
+#' @description
 #' `xmuMakeThresholdsMatrices` should be replaced with [umxThresholdMatrix()]
 #' 
 #' `umxTryHard` is deprecated: use [umxRun()] instead
@@ -33,7 +31,7 @@
 #'
 #' `umxReportCIs` is deprecated: please use [umxCI()] instead
 #'
-#' replace `umxReportFit` with [umxSummary()]
+#' Replace `umxReportFit` with [umxSummary()]
 #' 
 #' Replace `umxGraph_RAM` with [plot()]
 #'
@@ -41,9 +39,6 @@
 #'
 #' Replace `standardizeRAM` with [umx_standardize()]
 #' 
-#'
 #' @name umx-deprecated
 #' @family umx deprecated
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 NULL
