@@ -1,0 +1,1 @@
+saveRDS(c("Araujo", "CLPM", "DoC", "de"), ".aspell/umx.rds", version = 2L)
