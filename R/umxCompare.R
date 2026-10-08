@@ -139,11 +139,31 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 	}
 
-	baseIsWLS  = xmu_is_wls(base)
-	baseHasJac = xmu_has_WLS_jacobian(base)
+	# A base list longer than one is the models themselves. xmu_is_wls()
+	# calls umx_is_MxModel(), which warns and returns FALSE on that list.
+	baseModels = base
+	if (!is.list(baseModels)) {
+		baseModels = list(base)
+	}
+	nWlsBase = 0
+	for (b in baseModels) {
+		if (xmu_is_wls(b)) {
+			nWlsBase = nWlsBase + 1
+		}
+	}
+	if (nWlsBase > 0 && nWlsBase != length(baseModels)) {
+		stop("Engine Mismatch: Cannot compare a WLS model with an ML model.")
+	}
+	baseIsWLS = nWlsBase > 0
+	baseHasJac = xmu_has_WLS_jacobian(baseModels[[1]])
 
 	if (baseIsWLS) {
-		# 1. Enforce Homogeneity Constraint across all comparison models
+		# 1. Enforce Homogeneity Constraint across all base and comparison models
+		for (b in baseModels) {
+			if (baseHasJac != xmu_has_WLS_jacobian(b)) {
+				stop("Engine Mismatch: Cannot compare a legacy OpenMx WLS model with a GenomicMx WLS model. Both models must use the same engine.")
+			}
+		}
 		for (comp in comparison) {
 			if (!xmu_is_wls(comp)) {
 				stop("Engine Mismatch: Cannot compare a WLS model with an ML model.")
@@ -156,19 +176,28 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		# 1. Initialize an empty data frame to hold the master table
 		finalTable = data.frame()
 
-		# 2. Iterate explicitly through each model in the comparison list
-		for (i in seq_along(comparison)) {
-	
-			comp = comparison[[i]]
-	
-			# 3. Generate the table for this specific base vs. comparison pair
-			compTable = xmu_compare_WLS(baseModel = base, comparisonModel = comp)
-	
-			# DIAGNOSTIC: Print the isolated output before it gets smashed into the master table
-			# print(paste("Rows returned by xmu_compare_WLS for comparison", i, ":", nrow(compTable)))
-			# print(compTable)
-	
-			# 4. Bind it to the master table
+		# One base: every comparison against that base (previous behavior).
+		# Several bases: all=TRUE is every pair; all=FALSE cycles, as mxCompare does.
+		pairBase = list()
+		pairComp = list()
+		if (length(baseModels) == 1 || all) {
+			for (b in baseModels) {
+				for (comp in comparison) {
+					pairBase[[length(pairBase) + 1]] = b
+					pairComp[[length(pairComp) + 1]] = comp
+				}
+			}
+		} else {
+			maxLength = max(length(baseModels), length(comparison))
+			for (i in seq_len(maxLength)) {
+				pairBase[[i]] = baseModels[[(i - 1) %% length(baseModels) + 1]]
+				pairComp[[i]] = comparison[[(i - 1) %% length(comparison) + 1]]
+			}
+		}
+
+		# 2. Iterate explicitly through each base vs. comparison pair
+		for (i in seq_along(pairComp)) {
+			compTable = xmu_compare_WLS(baseModel = pairBase[[i]], comparisonModel = pairComp[[i]])
 			if (nrow(finalTable) == 0) {
 				finalTable = compTable
 			} else {
@@ -180,11 +209,16 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		# names(tablePub) = c("Model", "EP", "\u0394 Fit" , "\u0394 df" , "p", "AIC", "\u0394 AIC", "Compare with Model", "Fit units")
 		if (!silent) {
 			umx_print(finalTable, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
-			units_str = summary(base)$fitUnits
+			units_str = summary(baseModels[[1]])$fitUnits
 			if (is.null(units_str) || length(units_str) == 0) {
 				units_str = "r'wr"
 			}
-			isGenomic = umx_is_GSEM(base)
+			isGenomic = FALSE
+			for (b in baseModels) {
+				if (umx_is_GSEM(b)) {
+					isGenomic = TRUE
+				}
+			}
 			for (comp in comparison) {
 				if (umx_is_GSEM(comp)) {
 					isGenomic = TRUE
