@@ -15,7 +15,9 @@ umx_cor(
 )
 }
 \arguments{
-\item{X}{a matrix or dataframe}
+\item{X}{a formula, or matrix or dataframe}
+
+\item{data}{dataframe (IFF X is a formula)}
 
 \item{df}{the degrees of freedom for the test}
 

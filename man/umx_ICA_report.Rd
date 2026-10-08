@@ -12,7 +12,7 @@ Default is \verb{~/bin/ica/ICAdata}. The files used are \code{manuscripts.csv},
 \code{decisions.csv}, \code{reviewer-invitations.csv}, and \code{reviews.csv}.}
 
 \item{asOf}{Date used to age manuscripts that are still in review or still
-with the author. A \code{Date}, or something \code{\link[=as.Date]{as.Date()}} can parse. Default is
+with the author. A \code{Date}, or something \code{\link[base:as.Date]{base::as.Date()}} can parse. Default is
 \code{\link[=Sys.Date]{Sys.Date()}}.}
 }
 \value{
