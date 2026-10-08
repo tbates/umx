@@ -91,3 +91,23 @@ test_that("Successful multi-model comparison routing works", {
   mlTable = umxCompare(mMl1, mMl2, silent = TRUE)
   expect_s3_class(mlTable, "data.frame")
 })
+
+test_that("a base list longer than one does not ask for listOK", {
+  # c(m1, m2) is a list. umx_is_MxModel() on that list warns unless the
+  # caller already knows it is the model list.
+  mlMessages = capture.output(
+    mlTable <- umxCompare(c(mMl1, mMl2), c(mMl2), silent = TRUE),
+    type = "message"
+  )
+  expect_false(any(grepl("listOK", mlMessages)))
+  expect_s3_class(mlTable, "data.frame")
+  expect_true(nrow(mlTable) > 1)
+
+  wlsMessages = capture.output(
+    wlsTable <- umxCompare(c(mWls1, mWls1), c(mWls2), silent = TRUE),
+    type = "message"
+  )
+  expect_false(any(grepl("listOK", wlsMessages)))
+  expect_s3_class(wlsTable, "data.frame")
+  expect_true(nrow(wlsTable) > 1)
+})
