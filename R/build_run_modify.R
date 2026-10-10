@@ -1480,9 +1480,8 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 #' @export
 #' @family Core Model Building Functions
 #' @seealso - [OpenMx::mxPath()]
-#' @references - <https://tbates.github.io>
+#' @references <https://tbates.github.io>
 #' @examples
-#'
 #' # ==========================================
 #' # = Examples of each path type, and option =
 #' # ==========================================
