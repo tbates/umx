@@ -18,6 +18,20 @@ umx_names(
   global = FALSE,
   collapse = c("as.is", "vector", "formula")
 )
+
+namez(
+  df,
+  pattern = ".*",
+  replacement = NULL,
+  ignore.case = TRUE,
+  perl = FALSE,
+  value = TRUE,
+  fixed = FALSE,
+  useBytes = FALSE,
+  invert = FALSE,
+  global = FALSE,
+  collapse = c("as.is", "vector", "formula")
+)
 }
 \arguments{
 \item{df}{dataframe (or other objects, or a list of models) from which to get names.}
@@ -117,11 +131,11 @@ And \code{\link[=umx_check_names]{umx_check_names()}} to check for existence of 
 }
 
 Other String Functions:
+\code{\link[=tvars]{tvars()}},
 \code{\link{umx}},
 \code{\link[=umx_explode]{umx_explode()}},
 \code{\link[=umx_explode_twin_names]{umx_explode_twin_names()}},
 \code{\link[=umx_grep]{umx_grep()}},
-\code{\link[=umx_paste_names]{umx_paste_names()}},
 \code{\link[=umx_rot]{umx_rot()}},
 \code{\link[=umx_str_chars]{umx_str_chars()}},
 \code{\link[=umx_str_from_object]{umx_str_from_object()}},

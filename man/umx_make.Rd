@@ -10,7 +10,7 @@ umx_make(
     "lastRhub", "release", "git", "dev"),
   pkg = "~/bin/umx",
   check = TRUE,
-  run = FALSE,
+  runDontRun = FALSE,
   start = NULL,
   spelling = "en_US",
   which = c("win", "mac", "linux", "solaris"),
@@ -26,7 +26,7 @@ umx_make(
 
 \item{check}{Whether to run check on the package before release (default = TRUE).}
 
-\item{run}{If what is "examples", whether to also run examples marked don't run. (default FALSE).}
+\item{runDontRun}{If what is "examples", whether to also run examples marked don't run. (default FALSE).}
 
 \item{start}{If what is "examples", which function to start from (default (NULL) = beginning).}
 
@@ -63,11 +63,6 @@ Easily  run devtools "install", "release", "win", "examples" etc.
 # tmp           = umx_make(what = "lastRhub") # View rhub result
 # umx_make(what = "git")       # Open Git Desktop app
 # umx_make(what = "dev")       # Install dev version from GitHub
-}
-}
-\references{
-\itemize{
-\item \url{https://devtools.r-lib.org}, \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

@@ -3,9 +3,17 @@
 \name{umx_set_checkpoint}
 \alias{umx_set_checkpoint}
 \alias{umx_checkpoint}
-\title{umx_set_checkpoint}
+\title{Set the checkpoint status for a model or global options}
 \usage{
 umx_set_checkpoint(
+  interval = 1,
+  units = c("evaluations", "iterations", "minutes"),
+  prefix = "",
+  directory = getwd(),
+  model = NULL
+)
+
+umx_checkpoint(
   interval = 1,
   units = c("evaluations", "iterations", "minutes"),
   prefix = "",
@@ -51,11 +59,6 @@ m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 m1 = umx_set_checkpoint(model = m1)
 m1 = mxRun(m1)
 umx_checkpoint(0)
-}
-}
-\references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 }
 \seealso{

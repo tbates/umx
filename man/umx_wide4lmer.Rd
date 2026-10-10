@@ -41,11 +41,6 @@ repeated = list(
 df.l = umx_wide4lmer(repeated = repeated, timevar = timevar, covs = covs, data = df, idvar = "PID")
 }
 }
-\references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
-}
 \seealso{
 \itemize{
 \item \code{\link[=umx_long2wide]{umx_long2wide()}}

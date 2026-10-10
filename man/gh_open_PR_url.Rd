@@ -53,8 +53,9 @@ Before doing this, you want to
 \code{gh_open_PR_url} solves #7: pull requesting
 }
 \examples{
-gh_open_PR_url(head_branch, base_owner, base_repo, base_branch, 
-	 head_owner, local_path, browse = FALSE)
+\dontrun{
+gh_open_PR_url(head_branch="fix", browse = FALSE)
+}
 }
 \references{
 \itemize{

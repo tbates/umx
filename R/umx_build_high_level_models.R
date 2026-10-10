@@ -63,8 +63,6 @@
 #' 
 #' Thanks to @ConorDolan for code implementing the rotation matrix and other suggestions!
 #' 
-#' 
-#' @aliases umxFactanal umxEFA
 #' @param x Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.
 #' @param factors Either number of factors to request or a vector of factor names.
 #' @param data A dataframe you are modeling.
@@ -82,15 +80,10 @@
 #' @return - EFA [OpenMx::mxModel()]
 #' @family Super-easy helpers
 #' @export
-
 #' @seealso - [factanal()], [OpenMx::mxFactorScores()]
-#' @references - <https://github.com/tbates/umx>,
-#' 
+#' @references -
 #' Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. *British Journal of Statistical Psychology*, **17**, 65-70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
-#' 
 #' Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. *Psychometrika*, **23**, 187-200. \doi{10.1007/BF02289233}.
-#' 
-#'
 #' @examples
 #' \dontrun{
 #' myVars = c("mpg", "disp", "hp", "wt", "qsec")
@@ -267,6 +260,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	}
 }
 
+#' @rdname umxEFA
 #' @export
 umxFactanal <- umxEFA
 
@@ -338,8 +332,6 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' 
 #' \if{html}{\figure{TSLS.png}{options: style="width: 50\%;" alt="Figure: Mendelian Randomization analysis.png"}}
 #' \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
-
-#' @aliases umxMR
 #' @param formula The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.
 #' @param instruments A one-sided formula specifying instrumental variables (default = qtl).
 #' @param data Frame containing the variables in the model.
@@ -357,7 +349,6 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
 #' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to 
 #' Assess Causality Using Observational Data. *Journal of the American Society of Nephrology*, **27**), 3253-3265. \doi{10.1681/ASN.2016010098}
-
 #' @examples
 #' \dontrun{
 #' # ====================================
@@ -430,5 +421,6 @@ umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, std = FALSE, s
 	return(IVModel)
 }
 
+#' @rdname umxTwoStage
 #' @export
 umxMR <- umxTwoStage

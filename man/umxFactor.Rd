@@ -15,6 +15,17 @@ umxFactor(
   verbose = FALSE,
   sep = NA
 )
+
+umx_factor(
+  x = character(),
+  levels = NULL,
+  labels = levels,
+  exclude = NA,
+  ordered = TRUE,
+  collapse = FALSE,
+  verbose = FALSE,
+  sep = NA
+)
 }
 \arguments{
 \item{x}{A variable to recode as an mxFactor (see \code{\link[OpenMx:mxFactor]{OpenMx::mxFactor()}})}
@@ -68,11 +79,6 @@ x[x < 0] = 0; y[y < 0] = 0
 jnk = umxFactor(x); str(jnk)
 df  = data.frame(x = x, y = y)
 jnk = umxFactor(df); str(jnk)
-}
-\references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
 }
 \seealso{
 \itemize{

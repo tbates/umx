@@ -269,7 +269,7 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' l1 = lm(mpg~ wt + disp, data = mtcars)
 #' l2 = lm(mpg~ wt, data = mtcars)
 #' umxWeightedAIC(models = list(l1, l2))
-umxWeightedAIC <- function(models, digits= 2) {
+umxWeightedAIC <- function(models, digits = 2) {
 	if(inherits(models[[1]], "numeric")){
 		stop("Please input the list of models to compare as a list, i.e. models = list(model1, model2)")
 	}
@@ -279,12 +279,13 @@ umxWeightedAIC <- function(models, digits= 2) {
 	}
 	whichBest = which.min(AIClist)
 	bestModel = models[[whichBest]]
-	aic.weights = round(MuMIn::Weights(AIClist), 2)
+	aic.weights = round(aic_weights(AIClist), 2)
+	
 	if(isS4(models[[1]]) & is(models[[1]], "MxModel")){
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(models)), " respectively are: ",
-			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
+			omxQuotes(aic.weights), " Using aic_weights().")		
 	}else{
 		if("call" %in% names(bestModel)){
 			# ID = paste0("Model ", omxQuotes(bestModel$call))
@@ -421,7 +422,7 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		aic.weights = round(Weights(AIClist), 2)
+		aic.weights = round(aic_weights(AIClist), 2)
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ",
 			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC())."
@@ -550,10 +551,10 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
 	message("Among ACE, ADE, CE, and AE models ", omxQuotes(bestModel$name), " fit best according to AIC.\n")
 	if(testD){
-		aic.weights = round(Weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
+		aic.weights = round(aic_weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
 		aic.names   = namez(c(ACE, ADE, CE, AE))
 	} else {
-		aic.weights = round(Weights(AIC(ACE, CE, AE)[,"AIC"]), 2)
+		aic.weights = round(aic_weights(AIC(ACE, CE, AE)[,"AIC"]), 2)
 		aic.names   = namez(c(ACE, CE, AE))
 	}
 	message("Conditional AIC probability {Wagenmakers, 2004, 192-196} using MuMIn::Weights(AIC()) indicated relative model support for ", 
@@ -3722,7 +3723,6 @@ umxUnexplainedCausalNexus <- function(from, delta, to, model= NULL) {
 
 umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, meanOffsets = FALSE) {
 	# Usage: umxConditionalsFromModel(model, newData)
-	# Original author: [Timothy Brick](https://openmx.ssri.psu.edu/thread/2076)
 	# Called by: umxUnexplainedCausalNexus
 	# TODO: Special case for latent variables
 	expectation = model$objective
@@ -3786,7 +3786,6 @@ umxConditionalsFromModel <- function(model, newData = NULL, returnCovs = FALSE, 
 umxComputeConditionals <- function(sigma, mu, current, onlyMean = FALSE) {
 	# Usage: umxComputeConditionals(model, newData)
 	# Result is a replica of the newData data frame with missing values and (if a RAM model) latent variables populated.
-	# original author: [Timothy Brick](https://openmx.ssri.psu.edu/thread/2076)
 	# called by umxConditionalsFromModel()
 	if(dim(mu)[1] > dim(mu)[2] ) {
 		mu = t(mu)

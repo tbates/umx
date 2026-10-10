@@ -24,7 +24,6 @@
 #'    mean_sd \tab 6.19 (1.79) \tab  3.22 (0.98) \tab 20.09 (6.03)
 #'   }
 #'
-#' @aliases summaryAPA
 #' @param obj A model (e.g. [lm()], [nlme::lme()], [glm()], [t.test()]), beta-value, or [data.frame]
 #' @param se If obj is a beta, se treated as standard-error (returning a CI). 
 #' If obj is a model, used to select effect of interest (blank for all effects). 
@@ -491,5 +490,6 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 	}
 }
 
+#' @rdname umxAPA
 #' @export
 summaryAPA <- umxAPA

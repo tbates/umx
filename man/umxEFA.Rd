@@ -21,6 +21,23 @@ umxEFA(
   n.obs = NULL,
   covmat = NULL
 )
+
+umxFactanal(
+  x = NULL,
+  factors = NULL,
+  data = NULL,
+  scores = c("none", "ML", "WeightedML", "Regression"),
+  minManifests = NA,
+  rotation = c("varimax", "promax", "none"),
+  return = c("model", "loadings"),
+  report = c("markdown", "html"),
+  summary = FALSE,
+  name = "efa",
+  digits = 2,
+  tryHard = c("no", "yes", "ordinal", "search"),
+  n.obs = NULL,
+  covmat = NULL
+)
 }
 \arguments{
 \item{x}{Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.}
@@ -135,11 +152,10 @@ m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[
 }
 \references{
 \itemize{
-\item \url{https://github.com/tbates/umx},
+\item 
 }
 
 Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. \emph{British Journal of Statistical Psychology}, \strong{17}, 65-70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
-
 Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. \emph{Psychometrika}, \strong{23}, 187-200. \doi{10.1007/BF02289233}.
 }
 \seealso{

@@ -21,9 +21,8 @@ umx_apply(FUN, of, by = c("columns", "rows"), ...)
 }
 }
 \description{
-Tries to make apply more readable. so "mean of x by columns", instead of "of x, by 2, mean"
-Other functions to think of include:
-\code{\link[=cumsum]{cumsum()}}, \code{\link[=rowSums]{rowSums()}}, \code{\link[=colMeans]{colMeans()}}, etc.
+Tries to make \code{\link[=apply]{apply()}} more readable. so "mean of x by columns", instead of "x, 2, mean"
+Other functions you might use in \code{FUN} include \code{\link[=cumsum]{cumsum()}}, \code{\link[base:rowSums]{base::rowSums()}}, \code{\link[base:colMeans]{base::colMeans()}}, etc.
 }
 \examples{
 umx_apply(mean, mtcars, by = "columns")

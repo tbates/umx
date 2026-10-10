@@ -28,7 +28,7 @@ umx_set_auto_plot(FALSE)
 
 **Modification indices** (MIs) flag single parameters whose addition or removal would most improve model fit (if freed and the model re-estimated). They are useful for exploring *where* a misspecified model struggles, but they are **not** a substitute for theory-driven model comparison.
 
-`umxMI()` wraps [OpenMx::mxMI()](https://openmx.ssri.psu.edu/) and prints the largest indices (by default those above $\chi^2_1(0.01) = 6.63$). By default `full = FALSE` (only the tested parameter moves — fast). Set `full = TRUE` to allow all free parameters to re-adjust (slower).
+`umxMI()` wraps [OpenMx::mxMI()] and prints the largest indices (by default those above $\chi^2_1(0.01) = 6.63$). By default `full = FALSE` (only the tested parameter moves — fast). Set `full = TRUE` to allow all free parameters to re-adjust (slower).
 
 This vignette uses the classic Holzinger & Swineford (1939) data (`HS.ability.data` in OpenMx): fit a deliberately poor **one-factor** model (the worst of the usual teaching sequence), run **one** `umxMI()` call, then show a better three-factor alternative with `umxCompare()` (no second MI pass).
 
@@ -115,11 +115,11 @@ umxMI(mMG)
 
 ## Summary
 
-| Model | Role |
-|-------|------|
-| One-factor | Baseline misspecification; **one** `umxMI()` call |
-| Three-factor | Theory-driven improvement via `umxCompare()` |
-| Bifactor / multi-group | Optional local demos |
+| Model                  | Role                                              |
+|:-----------------------|:--------------------------------------------------|
+| One-factor             | Baseline misspecification; **one** `umxMI()` call |
+| Three-factor           | Theory-driven improvement via `umxCompare()`      |
+| Bifactor / multi-group | Optional local demos                              |
 
 **Take-home:** Use `umxMI()` to diagnose *where* a model misfits; prefer `umxCompare()` on **theory-driven** competing models for inference.
 

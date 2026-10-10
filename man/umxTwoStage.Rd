@@ -16,6 +16,18 @@ umxTwoStage(
   tryHard = c("no", "yes", "ordinal", "search"),
   ...
 )
+
+umxMR(
+  formula = Y ~ X,
+  instruments = ~qtl,
+  data,
+  std = FALSE,
+  subset,
+  contrasts = NULL,
+  name = "IV_model",
+  tryHard = c("no", "yes", "ordinal", "search"),
+  ...
+)
 }
 \arguments{
 \item{formula}{The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.}

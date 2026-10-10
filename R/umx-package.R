@@ -59,7 +59,6 @@
 # nlme intervals # Used in umxAPA
 # polycor hetcor # Used in umxHetCor
 # xtable xtable  # Used in umxCompare
-# MuMIn Weights  # Used in umxWeightedAIC
 #  methods::setClass is called during build not package source code.
 
 #' @importFrom cowplot draw_label plot_grid ggdraw 
@@ -79,7 +78,6 @@
 #' @importFrom methods as getSlots is slotNames setClass .hasSlot
 #' @importFrom MASS mvrnorm
 #' @importFrom Matrix nearPD
-#' @importFrom MuMIn Weights
 #' @importFrom nlme intervals lme
 #' @importFrom polycor hetcor
 #' @importFrom quantmod Cl

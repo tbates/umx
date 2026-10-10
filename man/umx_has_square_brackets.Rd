@@ -21,11 +21,6 @@ Helper function to check if a label has square brackets, e.g. "A[1,1]"
 umx_has_square_brackets("[hello]")
 umx_has_square_brackets("goodbye")
 }
-\references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
-}
 \seealso{
 Other Test:
 \code{\link[=umx_check]{umx_check()}},

@@ -50,6 +50,34 @@
 #      and it tortures me.
 
 
+#' Akaike weights for a set of models
+#'
+#' @description
+#' `aic_weights` converts a vector of AIC values into Akaike weights: the conditional probability that each model is the best in the set, given the data and the candidate models (Wagenmakers and Farrell, 2004).
+#'
+#' @details
+#' Weights are computed from AIC differences relative to the best model in the set:
+#'
+#' \deqn{w_i = \frac{\exp(-\Delta_i/2)}{\sum_j \exp(-\Delta_j/2)}, \quad \Delta_i = \mathrm{AIC}_i - \min(\mathrm{AIC})}
+#'
+#' The best model has `\Delta = 0` and therefore the largest weight. Weights sum to 1. A model 2 AIC units worse than the best has a likelihood ratio of `\exp(-1) \approx 0.37` relative to it, before normalisation across the set. The result is a statement about this candidate set only, not about the absolute probability that a model is true.
+#' $x^2 + y^2 = z^2$
+#' Replaces `MuMIn::Weights()`.
+#'
+#' @param x Numeric vector of AIC values, one per model. `NA` values are not dropped.
+#' @return Numeric vector of weights, the same length as `x`, summing to 1.
+#' @export
+#' @family Reporting Functions
+#' @md
+#' @examples
+#' aic_weights(c(100, 102, 110))
+#' # best model, 2 AIC worse, 10 AIC worse
+aic_weights <- function(x) {
+  x = as.numeric(x)
+  d = exp(-(x - min(x)) / 2)
+  d / sum(d)
+}
+
 #' Add a fit statistic to a ggplot
 #'
 #' @description
@@ -1026,11 +1054,10 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 	}
 }
 
-#' umx_set_checkpoint
+#' Set the checkpoint status for a model or global options
 #'
 #' Set the checkpoint status for a model or global options
 #'
-#' @aliases umx_set_checkpoint umx_checkpoint
 #' @param interval How many units between checkpoints: Default =  1.
 #' A value of zero sets always to 'No' (i.e., do not checkpoint all models during optimization)
 #' @param units units to count in: Default unit is 'evaluations' ('minutes' is also legal)
@@ -1040,8 +1067,6 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 #' @return - mxModel if provided
 #' @export
 #' @family Get and set
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 #' @examples
 #' 
 #' \dontrun{
@@ -1098,6 +1123,7 @@ umx_set_checkpoint <- function(interval = 1, units = c("evaluations", "iteration
 	}
 }
 
+#' @rdname umx_set_checkpoint
 #' @export
 umx_checkpoint <- umx_set_checkpoint
 
@@ -1109,8 +1135,6 @@ umx_checkpoint <- umx_set_checkpoint
 #' @return None
 #' @export
 #' @family Get and set
-#' @references - <https://tbates.github.io>
-
 #' @examples
 #' \dontrun{
 #' umx_get_checkpoint() # current global default
@@ -1444,7 +1468,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' A convenient version of [OpenMx::mxFactor()] supporting the common 
 #' case in which the factor levels are those in the variable.
 #'
-#' @aliases umx_factor
 #' @param x A variable to recode as an mxFactor (see [OpenMx::mxFactor()])
 #' @param levels (default NULL). Like [factor()] but UNLIKE [OpenMx::mxFactor()], 
 #' unique values will be used if levels not specified.
@@ -1459,8 +1482,6 @@ eddie_AddCIbyNumber <- function(model, labelRegex = "") {
 #' @export
 #' @family Data Functions
 #' @seealso - [umxFactanal()], [OpenMx::mxFactor()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
 #' @examples
 #' umxFactor(letters)
 #' umxFactor(letters, verbose = TRUE) # report coercions
@@ -1545,6 +1566,7 @@ umxFactor <- function(x = character(), levels= NULL, labels = levels, exclude = 
 	return(x)
 }
 
+#' @rdname umxFactor
 #' @export
 umx_factor <- umxFactor
 
@@ -2098,9 +2120,8 @@ umx_pad <- function(x, n) {
 
 #' umx_apply
 #'
-#' Tries to make apply more readable. so "mean of x by columns", instead of "of x, by 2, mean"
-#' Other functions to think of include:
-#' [cumsum()], [rowSums()], [colMeans()], etc.
+#' Tries to make [apply()] more readable. so "mean of x by columns", instead of "x, 2, mean"
+#' Other functions you might use in `FUN` include [cumsum()], [base::rowSums()], [base::colMeans()], etc.
 #'
 #' @param FUN The function to apply.
 #' @param of The dataframe to work with.
@@ -3287,7 +3308,6 @@ deg2rad <- function(deg) { deg * pi/ 180 }
 #' Source installs from a private GitHub fork are **not** offered here (they cannot work for
 #' general users). Maintainers building OpenMx locally should use [mx_make()] on their source tree.
 #'
-#' @aliases umx_update_OpenMx
 #' @param loc Which build to get (default `"GenomicMx"`).
 #' @param url Custom URL or local path to an OpenMx binary package. On Mac, `"Finder"` uses the
 #'   package selected in the Finder; `""` opens a file chooser.
@@ -3646,6 +3666,7 @@ print.xmu_message <- function(x, ...) {
 	invisible(x)
 }
 
+#' @rdname install.OpenMx
 #' @export
 umx_update_OpenMx <- install.OpenMx
 
@@ -3657,7 +3678,7 @@ umx_update_OpenMx <- install.OpenMx
 #' @param what whether to "load", "install", "quickInst", "release" to CRAN, "testthat", test on "win", "spell", open "git" app, install "dev" version, or run "examples".
 #' @param pkg the local path to your package. Defaults to my path to umx.
 #' @param check Whether to run check on the package before release (default = TRUE).
-#' @param run If what is "examples", whether to also run examples marked don't run. (default FALSE).
+#' @param runDontRun If what is "examples", whether to also run examples marked don't run. (default FALSE).
 #' @param start If what is "examples", which function to start from (default (NULL) = beginning).
 #' @param spelling Whether to check spelling before release (default = "en_US": set NULL to not check).
 #' @param which What rhub platform to use? c("mac", "linux", "win").
@@ -3667,8 +3688,6 @@ umx_update_OpenMx <- install.OpenMx
 #' @return None
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://devtools.r-lib.org>, <https://github.com/tbates/umx>
-
 #' @examples
 #' \dontrun{
 #' # umx_make()  # Just load new code (don't rebuild help etc)
@@ -3689,7 +3708,7 @@ umx_update_OpenMx <- install.OpenMx
 #' }
 umx_make <- function(
 	what = c("load", "quickInst", "install", "spell", "sitrep", "deps_install", "checkCRAN", "testthat", "run_dontrun", "examples", "vignettes", "win", "rhub", "lastRhub", "release", "git", "dev"), 
-	pkg = "~/bin/umx", check = TRUE, run = FALSE, start = NULL,  spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell = TRUE, dependencies = NA)
+	pkg = "~/bin/umx", check = TRUE, runDontRun = FALSE, start = NULL,  spelling = "en_US", which = c("win", "mac", "linux", "solaris"), run_dont_test = FALSE, spell = TRUE, dependencies = NA)
 	{
 	what  = match.arg(what)
 	which = match.arg(which)
@@ -3762,7 +3781,7 @@ umx_make <- function(
 		if(!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
 		pak::local_install_dev_deps(root = pkgPath, dependencies = dependencies)
 	} else if(what == "examples"){ # Fixed name mismatch matching 'what' default
-		devtools::run_examples(pkg = pkgPath, run = run, start = start)
+		devtools::run_examples(pkg = pkgPath, run = runDontRun, start = start)
 	} else if(what == "checkCRAN"){
 		devtools::check(pkg = pkgPath, run_dont_test = run_dont_test, args = "--as-cran")
 	} else if (what == "win"){
@@ -5614,7 +5633,6 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 #' \strong{Note}: Redundant quantiles are merged. i.e., if the same score identifies
 #' all deciles up to the fourth, then these will be merged into one bin, labeled "quantile4".
 #'
-#' @aliases umx2ord
 #' @param x a variable to recode as ordinal (email maintainer("umx") if you'd like this upgraded to handle df input)
 #' @param nlevels How many bins or levels (at most) to use (i.e., 10 = deciles)
 #' @param type what to return (Default is "mxFactor") options: "ordered" and "unordered")
@@ -5623,8 +5641,6 @@ umx_reorder <- function(old, newOrder, force=FALSE) {
 #' @return - recoded variable as an [OpenMx::mxFactor()]
 #' @export
 #' @family Data Functions
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
 #' @examples
 #' x = umx_cont_2_quantiles(rnorm(1000), nlevels = 10, verbose = TRUE)
 #' x = data.frame(x)
@@ -5697,6 +5713,7 @@ umx_cont_2_quantiles <- function(x, nlevels = NULL, type = c("mxFactor", "ordere
 	return(out)
 }
 
+#' @rdname umx_cont_2_quantiles
 #' @export
 umx2ord <- umx_cont_2_quantiles
 
@@ -5708,8 +5725,6 @@ umx2ord <- umx_cont_2_quantiles
 #' @return - boolean
 #' @export
 #' @family Test
-#' @references - <https://github.com/tbates/umx>
-
 #' @examples
 #' umx_has_square_brackets("[hello]")
 #' umx_has_square_brackets("goodbye")
@@ -6383,10 +6398,9 @@ umx_str_chars <- function(what, which) {
 #'
 #' @description
 #' It's easier to work with base names, rather than the twice-as-long hard-to-typo list of column names.
-#' `umx_paste_names` adds suffixes to names so you can work with that nice short list.
+#' `tvars` adds suffixes to names so you can work with that nice short list.
 #' So, you provide `bmi`, and you get back fully specified family-wise names: `c("bmi_T1", "bmi_T2")`
 #' 
-#' *note*: `tvars` is a shortcut for `umx_paste_names`
 #' 
 #' @details
 #' **Method 1**: *Use complete suffixes*
@@ -6394,9 +6408,7 @@ umx_str_chars <- function(what, which) {
 #' You can provide complete suffixes like "_T1" and "_T2". This has the benefit of being explicit
 #' and very general:
 #'
-#'     umx_paste_names(c("var1", "var2"), suffixes = c("_T1", "_T2"))
-#'
-#' *Note*: for quick typing, `tvars` is an alias for `umx_paste_names`
+#'     tvars(c("var1", "var2"), suffixes = c("_T1", "_T2"))
 #'
 #' **Method 2**: *Use sep and a suffix vector.*
 #' 
@@ -6404,18 +6416,17 @@ umx_str_chars <- function(what, which) {
 #' with a vector of suffixes. This has the benefit of showing what is varying:
 #' This is then suffixed with e.g. "1", "2".
 #'
-#'     umx_paste_names(c("var1", "var2"), sep = "_T", suffixes = 1:2)
+#'     tvars(c("var1", "var2"), sep = "_T", suffixes = 1:2)
 #'
 #' *Working with covariates*
 #' 
 #' If you are using [umxACEcov()], you **need** to keep all the covariates at the end of the list.
 #' Here's how:
 #' 
-#'     umx_paste_names(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)
+#'     `tvars(c("var1", "var2"), cov = c("cov1"), sep = "_T", suffixes = 1:2)`
 #' 
 #' *note*: in conventional twin models, the expCov matrix is T1 vars, followed by T2 vars. For covariates, you want
 #' T1vars, T2 vars, T1 covs, T2 covs. This is what `covNames` accomplishes.
-#' @aliases tvars
 #' @param varNames a list of _base_ names, e.g c("bmi", "IQ")
 #' @param sep A string separating the name and the twin suffix, e.g. "_T" (default is "")
 #' @param suffixes a list of terminal suffixes differentiating the twins default = 1:2)
@@ -6425,20 +6436,17 @@ umx_str_chars <- function(what, which) {
 #' @export
 #' @family String Functions
 #' @seealso [namez()] [umx_explode_twin_names()]
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
 #' @examples
 #' # two styles doing the same thing: first is more general
 #' umx_paste_names("bmi", suffixes = c("_T1", "_T2"))
-#' umx_paste_names("bmi", sep = "_T", suffixes = 1:2)
-#' varNames = umx_paste_names(c("N", "E", "O", "A", "C"), "_T", 1:2)
-#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
-#' umx_paste_names(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
+#' tvars("bmi", sep = "_T", suffixes = 1:2)
+#' varNames = tvars(c("N", "E", "O", "A", "C"), "_T", 1:2)
+#' tvars(c("IQ", "C"), cov = c("age"), sep = "_T", suffixes = 1:2)
+#' tvars(c("IQ", "C"), cov = c("age"), sep = "_T", prefix= "mean_")
 #' # For quick-typing, tvars is an alias for umx_paste_names
 #' tvars(c("IQ", "C"), cov = "age", sep = "_T", prefix= "mean_")
 #' tvars("IQ")
-
-umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
+tvars <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL, prefix = NULL) {
 	nameList = c()
 	if(is.null(varNames)){
 		nameList = NULL
@@ -6454,8 +6462,10 @@ umx_paste_names <- function(varNames, sep = "", suffixes = 1:2, covNames = NULL,
 	}
 	return(nameList)
 }
+
+#' @rdname tvars
 #' @export
-tvars <- umx_paste_names
+umx_paste_names <- tvars
 
 #' Explode a string (Like the php function `explode`)
 #'
@@ -6491,7 +6501,6 @@ umx_explode <- function(delimiter = character(), string) {
 #' 
 #' You can learn more about the matching options (like inverting the selection etc.) in the help for base-R [grep].
 #'
-#' @aliases namez
 #' @param df dataframe (or other objects, or a list of models) from which to get names.
 #' @param pattern Used to find only matching names (supports grep/regular expressions)
 #' @param replacement If not NULL, replaces the found string. Use backreferences ("\1" to "\9") to refer to (subexpressions).
@@ -6629,6 +6638,7 @@ umx_names <- function(df, pattern = ".*", replacement = NULL, ignore.case = TRUE
 	}
 }
 
+#' @rdname umx_names
 #' @export
 namez <- umx_names
 

@@ -58,6 +58,7 @@ x
 }
 
 Other Reporting Functions:
+\code{\link[=aic_weights]{aic_weights()}},
 \code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link{umx}},
 \code{\link[=umxAPA]{umxAPA()}},

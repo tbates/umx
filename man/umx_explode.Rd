@@ -30,11 +30,11 @@ umx_explode(" ", "cats and dogs") # [1] "cats" "and"  "dogs"
 }
 \seealso{
 Other String Functions:
+\code{\link[=tvars]{tvars()}},
 \code{\link{umx}},
 \code{\link[=umx_explode_twin_names]{umx_explode_twin_names()}},
 \code{\link[=umx_grep]{umx_grep()}},
 \code{\link[=umx_names]{umx_names()}},
-\code{\link[=umx_paste_names]{umx_paste_names()}},
 \code{\link[=umx_rot]{umx_rot()}},
 \code{\link[=umx_str_chars]{umx_str_chars()}},
 \code{\link[=umx_str_from_object]{umx_str_from_object()}},

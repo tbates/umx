@@ -30,11 +30,6 @@ umx_get_checkpoint(model = m1)
 }
 
 }
-\references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
-}
 \seealso{
 Other Get and set:
 \code{\link{umx}},

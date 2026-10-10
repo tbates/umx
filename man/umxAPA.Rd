@@ -24,6 +24,26 @@ umxAPA(
   cols = NA,
   stars = TRUE
 )
+
+summaryAPA(
+  obj = .Last.value,
+  se = NULL,
+  p = NULL,
+  std = FALSE,
+  digits = 2,
+  use = "complete",
+  min = 0.001,
+  addComparison = NA,
+  report = c("markdown", "html", "none", "expression"),
+  lower = TRUE,
+  test = c("Chisq", "LRT", "Rao", "F", "Cp"),
+  SEs = TRUE,
+  means = TRUE,
+  suffix = "",
+  caption = NA,
+  cols = NA,
+  stars = TRUE
+)
 }
 \arguments{
 \item{obj}{A model (e.g. \code{\link[=lm]{lm()}}, \code{\link[nlme:lme]{nlme::lme()}}, \code{\link[=glm]{glm()}}, \code{\link[=t.test]{t.test()}}), beta-value, or \link{data.frame}}
@@ -161,6 +181,7 @@ umxAPA(m1)
 \code{\link[=SE_from_p]{SE_from_p()}}
 
 Other Reporting Functions:
+\code{\link[=aic_weights]{aic_weights()}},
 \code{\link[=plot.umx_GWAS]{plot.umx_GWAS()}},
 \code{\link{umx}},
 \code{\link[=umxFactorScores]{umxFactorScores()}},

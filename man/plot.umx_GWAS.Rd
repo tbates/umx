@@ -34,6 +34,7 @@ label_top_n, downsample (TRUE), and downsample_n (2e+05), title = NULL
 }
 \seealso{
 Other Reporting Functions:
+\code{\link[=aic_weights]{aic_weights()}},
 \code{\link{umx}},
 \code{\link[=umxAPA]{umxAPA()}},
 \code{\link[=umxFactorScores]{umxFactorScores()}},

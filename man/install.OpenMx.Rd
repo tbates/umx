@@ -11,6 +11,13 @@ install.OpenMx(
   lib,
   repos = getOption("repos")
 )
+
+umx_update_OpenMx(
+  loc = c("GenomicMx", "open GenomicMx release page", "CRAN"),
+  url = NULL,
+  lib,
+  repos = getOption("repos")
+)
 }
 \arguments{
 \item{loc}{Which build to get (default \code{"GenomicMx"}).}

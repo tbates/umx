@@ -12,6 +12,14 @@ umx_cont_2_quantiles(
   verbose = FALSE,
   returnCutpoints = FALSE
 )
+
+umx2ord(
+  x,
+  nlevels = NULL,
+  type = c("mxFactor", "ordered", "unordered"),
+  verbose = FALSE,
+  returnCutpoints = FALSE
+)
 }
 \arguments{
 \item{x}{a variable to recode as ordinal (email maintainer("umx") if you'd like this upgraded to handle df input)}
@@ -66,11 +74,6 @@ x = umx_cont_2_quantiles(mtcars[, "mpg"], nlevels = 5) # quintiles
 x = umx2ord(mtcars[, "mpg"], nlevels = 5) # using shorter alias
 x = umx_cont_2_quantiles(mtcars[, "cyl"], nlevels = 10) # more levels than integers exist
 x = umx_cont_2_quantiles(rbinom(10000, 1, .5), nlevels = 2)
-}
-\references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
 }
 \seealso{
 Other Data Functions:

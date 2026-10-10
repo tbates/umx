@@ -358,7 +358,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
-		aic.weights = round(Weights(AIClist), 2)
+		aic.weights = round(aic_weights(AIClist), 2)
 		if(!silent){
 			cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 			cat("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
