@@ -58,9 +58,8 @@
 #' @return - optional plot
 #' @family Teaching and testing Functions
 #' @export
-#' @references - Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
+#' @references Neale, M. C. (2005). Quantitative Genetics. In Encyclopedia of Life Sciences. New York: John Wiley & Sons, Ltd.
 #'  [pdf](https://vipbg.vcu.edu/vipbg/Articles/2005_book_chapters_ascertainment_corrections.pdf)
-
 #' @examples
 #' library(umx);
 #' 
@@ -238,8 +237,7 @@ tmx_genotypic_effect <- function(p = .75, q = (1-p), a = .5, d = 0, m = 0, show 
 #' @export
 #' @family Teaching and testing Functions
 #' @seealso - [OpenMx::mxCheckIdentification()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' tmx_is.identified(nVariables = 2, nFactors = 1) # FALSE
 #' tmx_is.identified(nVariables = 3, nFactors = 1) # TRUE
@@ -293,7 +291,6 @@ tmx_show <- function(x, what = c("values", "free", "labels", "nonzero_or_free"),
 #' @return None
 #' @export
 #' @family Reporting functions
-
 #' @examples
 #' \dontrun{
 #' nameStr = c('x1', 'x2', 'g')
@@ -433,8 +430,7 @@ xmu_tmx_data_matrix <- function(model, which) {
 #' @return None
 #' @export
 #' @family Teaching and Testing functions
-#' @references - <https://tbates.github.io>
-
+#' @references <https://tbates.github.io>
 #' @examples
 #' \dontrun{
 #' require(umx)

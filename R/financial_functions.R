@@ -212,7 +212,6 @@ fin_options_plotGreeks <- function(strikePrice, daysToExpiry = 30, riskFreeRate 
 #' @return A ggplot object comparing the extrinsic premium decay side-by-side.
 #' @export
 #' @family financial functions
-
 #' @examples
 #' \dontrun{
 #' fin_options_LeapSimulate(spotPrice = 100, impliedVol = 0.20, riskFreeRate = 0.04)
@@ -656,7 +655,7 @@ fin_value_CAGR <- function(beginningValue, endingValue, numYears, digits=3) {
 #' @export
 #' @family financial functions
 #' @seealso - [umx_set_dollar_symbol()], [fin_value_percent()], [fin_tax_NI()], [fin_stock_valuation()]
-#' @references - <https://en.wikipedia.org/wiki/Compound_interest>
+#' @references <https://en.wikipedia.org/wiki/Compound_interest>
 #' @examples
 #' # 1. Value of a principal after yrs years at 5% return, compounding monthly.
 #' # Report in browser as a nice table of annual returns and formatted totals.

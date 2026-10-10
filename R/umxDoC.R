@@ -29,8 +29,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [umxDiscTwin()], [umxMR()]
-#' @references - De Moor, M. H., Boomsma, D. I., Stubbe, J. H., Willemsen, G., & de Geus, E. J. (2008). Testing causality in the association between regular exercise and symptoms of anxiety and depression. Archives of General Psychiatry, 65(8), 897-905. \doi{10.1001/archpsyc.65.8.897}.
-
+#' @references De Moor, M. H., Boomsma, D. I., Stubbe, J. H., Willemsen, G., & de Geus, E. J. (2008). Testing causality in the association between regular exercise and symptoms of anxiety and depression. Archives of General Psychiatry, 65(8), 897-905. \doi{10.1001/archpsyc.65.8.897}.
 #' @examples
 #' data(twinData)
 #' umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
@@ -121,10 +120,10 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [umxDiffMZ()], [umxMR()]
-#' @references - Begg, M. D., & Parides, M. K. (2003). Separation of individual-level and cluster-level covariate effects in regression analysis of correlated data. Stat Med, 22(16), 2591-2602. \doi{10.1002/sim.1524} 
+#' @references
+#' * Begg, M. D., & Parides, M. K. (2003). Separation of individual-level and cluster-level covariate effects in regression analysis of correlated data. Stat Med, 22(16), 2591-2602. \doi{10.1002/sim.1524} 
 #' * Bergen, S. E., Gardner, C. O., Aggen, S. H., & Kendler, K. S. (2008). Socioeconomic status and social support following illicit drug use: causal pathways or common liability? *Twin Res Hum Genet*, **11**, 266-274. \doi{10.1375/twin.11.3.266}
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
-
 #' @examples
 #' \dontrun{
 #' data(twinData)
@@ -292,13 +291,12 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDiscTwin()], [umxDiffMZ()], [umxMR()]
-#' @references - Gillespie, N.A. and Martin, N.G. (2005). Direction of Causation Models. In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496-499. Eds. Brian S. Everitt & David C. Howell.
+#' @references
+#' * Gillespie, N.A. and Martin, N.G. (2005). Direction of Causation Models. In *Encyclopedia of Statistics in Behavioral Science*, **1**. 496-499. Eds. Brian S. Everitt & David C. Howell.
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
 #' * Rasmussen, S. H. R., Ludeke, S., & Hjelmborg, J. V. B. (2019). A major limitation of the direction of causation model: non-shared environmental confounding. *Twin Res Hum Genet*, **22**, 1-13. \doi{10.1017/thg.2018.67}
-
 #' @examples
 #' \dontrun{
-#' 
 #' # ========================
 #' # = Does Rain cause Mud? =
 #' # ========================
@@ -480,12 +478,11 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" when CIs are found (Default FALSE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Other parameters to control model summary.
-#' @references - <https://tbates.github.io>
+#' @references <https://tbates.github.io>
 #' @return - Optionally return the dot code
 #' @export
 #' @family Plotting functions
 #' @seealso - [umxDoC()], [umxSummary.MxModelDoC()], [umxModify()], [umxDiscTwin()], [umxDiffMZ()], [umxMR()]
-
 #' @examples
 #'
 #' \dontrun{
@@ -620,7 +617,6 @@ plot.MxModelDoC <- umxPlotDoC
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxModify()], [umxCP()], [plot()], [umxSummary()]
-
 #' @examples
 #' \dontrun{
 #' # ================

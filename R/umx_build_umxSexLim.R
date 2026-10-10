@@ -63,10 +63,7 @@
 #' @export 
 #' @seealso [umxSummarySexLim()], [umxPlotSexLim()]
 #' @family Twin Modeling Functions
-#' @references - Neale, M. C., Roysamb, E., Jacobson, K. (2006). 
-#' Multivariate genetic analysis of sex-lim and G x E interaction. 
-#' *Twin Research & Human Genetics*, **9**, pp. 481--489. \doi{10.1375/183242706778024937}
-
+#' @references Neale, M. C., Roysamb, E., Jacobson, K. (2006). Multivariate genetic analysis of sex-lim and G x E interaction. *Twin Research & Human Genetics*, **9**, pp. 481--489. \doi{10.1375/183242706778024937}
 #' @examples
 #  # =============================================
 #  # = Run Qualitative Sex Differences ACE model =
@@ -449,8 +446,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxSexLim()], [umxPlotSexLim()]
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' # ======================================================
@@ -750,8 +746,7 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #' @export
 #' @seealso - [umxSexLim()], [umxSummarySexLim()]
 #' @family Plotting functions
-#' @references - <https://tbates.github.io>
-
+#' @references <https://tbates.github.io>
 #' @examples
 #' \dontrun{
 #' require(umx)

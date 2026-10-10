@@ -79,8 +79,7 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE()] for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @references - <https://github.com/tbates/umx>
-
+#' @references <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -217,8 +216,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equ
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxSimplex()]
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' # 4 time model
@@ -444,7 +442,6 @@ umxSummary.MxModelSimplex <- umxSummarySimplex
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, simplex, ACEv, or ACE model.
 #' @seealso - [umxSimplex()]
 #' @family Plotting functions
-
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -553,8 +550,7 @@ plot.MxModelSimplex <- umxPlotSimplex
 #' @return - Standardized Simplex [umxSimplex()] model
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' data(iqdat)

@@ -1021,7 +1021,7 @@ xmu_ace_de_release_binary_v1 <- function(model, vtotIndices) {
 #' @export
 #' @family Plotting functions
 #' @seealso - [plot()], [umxSummary()], [umxACE_DE()]
-#' @references - <https://github.com/tbates/umx>
+#' @references <https://github.com/tbates/umx>
 umxPlotACE_DE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, showFixed = FALSE, ...) {
 	model = x
 	if(std){ model = xmu_standardize_ACE(model) }
@@ -1125,7 +1125,7 @@ plot.MxModelACE_DE <- umxPlotACE_DE
 #' @export
 #' @family Reporting functions
 #' @seealso - [umxACE_DE()], [umxPlotACE_DE()], [umxSummary()]
-#' @references - <https://github.com/tbates/umx>
+#' @references <https://github.com/tbates/umx>
 umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")

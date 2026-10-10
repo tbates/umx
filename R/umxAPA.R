@@ -47,7 +47,7 @@
 #' @export
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
-#' @references - <https://stats.oarc.ucla.edu/r/dae/logit-regression/>
+#' @references <https://stats.oarc.ucla.edu/r/dae/logit-regression/>
 #' @examples
 #' 
 #' # ========================================

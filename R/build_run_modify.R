@@ -37,11 +37,11 @@
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
 #' @param std Show standardized parameters, raw (default), or just the fit indices (null)
-#' @return - [OpenMx::mxModel()]
+#' @return [OpenMx::mxModel()]
 #' @export
 #' @family Core Model Building Functions
-#' @seealso - [OpenMx::mxFitFunctionMultigroup()], [umxRAM()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
+#' @seealso [OpenMx::mxFitFunctionMultigroup()], [umxRAM()]
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' \dontrun{
 #' library(umx)
@@ -203,7 +203,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @param verbose How much feedback to give
 #' @return - [OpenMx::mxModel()]
 #' @family Core Model Building Functions
-#' @references - <https://github.com/tbates/umx>
+#' @references <https://github.com/tbates/umx>
 #' @export
 #' @examples
 #' \dontrun{
@@ -392,8 +392,7 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' **Orthogonal**: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
 #' 
 #' **Oblique**: "Promax", "promax", "oblimin", "simplimax", "bentlerQ", "geominQ", "biquartimin" and "cluster"
-#'
-#'
+#' 
 #' @details This works by taking the common-pathways loadings matrix from a solved [umxCP()] model, rotating these, placing
 #' them back into the loadings matrix, re-estimating the model with the parameters fixed at this rotation, then return the new model.
 #'
@@ -406,7 +405,6 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxCP()]
-
 #' @examples
 #' \dontrun{
 #' # Rotate a CP solution(param)
@@ -417,7 +415,6 @@ umxRotate.default <- function(model, rotation = c("varimax", "promax"),  tryHard
 #' selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 #' m1 = umxCP(selDVs = selDVs, nFac = 2, data = data, tryHard = "yes")
 #' m2 = umxRotate(m1, rotation = "varimax",  tryHard = "yes")
-#' 
 #' }
 umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHard = "yes", freeLoadingsAfter = TRUE, verbose = TRUE) {
 	rotation = match.arg(rotation)
@@ -480,8 +477,7 @@ umxRotate.MxModelCP <- function(model, rotation = c("varimax", "promax"),  tryHa
 #' @export
 #' @family Core Model Building Functions
 #' @seealso - [xmu_simplex_corner()], [OpenMx::mxMatrix()], [xmuLabel()], [umxRAM()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' \dontrun{
 #' # ==================================================================================
@@ -548,7 +544,6 @@ umxMatrix <- function(name = NA, type = "Full", nrow = NA, ncol = NA, free = FAL
 #' @export
 #' @family Advanced Model Building Functions	
 #' @seealso - [umxMatrix()]
-
 #' @examples
 #' \dontrun{
 #' A = umxMatrix("A", "Full", nrow = 3, ncol = 3, values=2)
@@ -595,7 +590,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' @param comparison Comparison model (will be used to drive umxCompare() after umxRun
 #' @return - [OpenMx::mxModel()]
 #' @family Advanced Model Building Functions
-#' @references - <https://github.com/tbates/umx>
+#' @references <https://github.com/tbates/umx>
 #' @export
 #' @examples
 #' \dontrun{
@@ -721,8 +716,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_s
 #' @export
 #' @family Model Summary and Comparison
 #' @seealso - [umxModify()], [xmuLabel()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -807,8 +801,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @export
 #' @seealso [umxModify()], [umxCompare()]
 #' @family Model Summary and Comparison
-#' @references - <https://github.com/tbates/umx>
-
+#' @references <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -900,8 +893,7 @@ umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), v
 #' @return - the fixed [OpenMx::mxModel()]
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -996,8 +988,7 @@ umxFixAll <- function(model, name = "_fixed", run = FALSE, verbose= FALSE){
 #' @export
 #' @seealso [OpenMx::mxThreshold()]
 #' @family Advanced Model Building Functions
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #'
 #' # ============================
@@ -1490,7 +1481,6 @@ umxThresholdMatrix <- function(df, fullVarNames = NULL, sep = NULL, method = c("
 #' @family Core Model Building Functions
 #' @seealso - [OpenMx::mxPath()]
 #' @references - <https://tbates.github.io>
-
 #' @examples
 #'
 #' # ==========================================

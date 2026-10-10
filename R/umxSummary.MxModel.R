@@ -86,20 +86,15 @@
 #' @param ... Other parameters to control model summary
 #' @family Summary functions
 #' @seealso - [umxRAM()], [xmu_robust_WLS_fit()]
-#' @references - Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance 
-#'  structure analysis: Conventional criteria versus new alternatives. *Structural Equation Modeling*, **6**, 1-55. 
-#'  - Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. *Psychometrika*, **75**(2), 243-248.
-#'  - Satorra, A. and Bentler P. M. (1994). Corrections to test statistics and standard errors in covariance structure analysis. Latent variables analysis: Applications for developmental research. A. von Eye and C. C. Clogg, Sage: 399-419.
-#'  - Savalei, V. (2018). On the computation of the RMSEA and CFI from the mean-and-variance corrected test statistic with nonnormal data in SEM. *Multivariate Behavioral Research*, **53**(3), 419--429.
-#'  - Savalei, V. (2021). Improving fit indices in SEM with categorical data. *Multivariate Behavioral Research*, **56**(3), 390--407.
-#'  - Brosseau-Liard, P. E., & Savalei, V. (2012). Adjusting incremental fit indices for nonnormality. *Multivariate Behavioral Research*, **47**(5), 647--677.
-#'  - Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models
-#'  with binary and continuous outcomes. University of California, Los Angeles.
-#'  Retrieved from <https://www.statmodel.com/download/Yudissertation.pdf>
-#'  - Yuan, K.-H. and P. M. Bentler (2000). "5. Three Likelihood-Based Methods for Mean and Covariance Structure Analysis with Nonnormal Missing Data." Sociological Methodology 30(1): 165-200.
-#' 
-#' <https://tbates.github.io>
-#' 
+#' @references
+#' * Hu, L., & Bentler, P. M. (1999). Cutoff criteria for fit indexes in covariance structure analysis: Conventional criteria versus new alternatives. *Structural Equation Modeling*, **6**, 1-55. 
+#' * Satorra, A., & Bentler, P. M. (2010). Ensuring positiveness of the scaled difference chi-square test statistic. *Psychometrika*, **75**(2), 243-248.
+#' * Satorra, A. and Bentler P. M. (1994). Corrections to test statistics and standard errors in covariance structure analysis. Latent variables analysis: Applications for developmental research. A. von Eye and C. C. Clogg, Sage: 399-419.
+#' * Savalei, V. (2018). On the computation of the RMSEA and CFI from the mean-and-variance corrected test statistic with nonnormal data in SEM. *Multivariate Behavioral Research*, **53**(3), 419--429.
+#' * Savalei, V. (2021). Improving fit indices in SEM with categorical data. *Multivariate Behavioral Research*, **56**(3), 390--407.
+#' * Brosseau-Liard, P. E., & Savalei, V. (2012). Adjusting incremental fit indices for nonnormality. *Multivariate Behavioral Research*, **47**(5), 647--677.
+#' * Yu, C.Y. (2002). Evaluating cutoff criteria of model fit indices for latent variable models with binary and continuous outcomes. University of California, Los Angeles. Retrieved from <https://www.statmodel.com/download/Yudissertation.pdf>
+#' * Yuan, K.-H. and P. M. Bentler (2000). "5. Three Likelihood-Based Methods for Mean and Covariance Structure Analysis with Nonnormal Missing Data." Sociological Methodology 30(1): 165-200.
 #' @export
 #' @import OpenMx
 #' @return - parameterTable returned invisibly, if estimates requested

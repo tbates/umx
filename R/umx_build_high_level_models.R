@@ -24,11 +24,11 @@
 #' As in [factanal()], you need only specify the number of factors and offer up
 #' some manifest data, e.g:
 #'                                                              
-#' \code{umxEFA(factors = 2, data = mtcars)}
+#' `umxEFA(factors = 2, data = mtcars`
 #' 
 #' Equivalently, you can also give a list of factor names:
 #' 
-#' \code{umxEFA(factors = c("g", "v"), data = mtcars)}
+#' `umxEFA(factors = c("g", "v"), data = mtcars)`
 #' 
 #' The factor model is implemented as a structural equation model, e.g.
 #' 
@@ -36,7 +36,7 @@
 #' \if{html}{\figure{umxEFA.png}{options: style="width: 50\%;" alt="Figure: umxEFA.png"}}
 #' \if{latex}{\figure{umxEFA.pdf}{options: width=7cm}}
 #' 
-#' You can request \code{scores} from the model. Unlike factanal, these can cope with missing data.
+#' You can request `scores` from the model. Unlike factanal, these can cope with missing data.
 #' 
 #' You can also rotate the factors using any rotation function.
 #' 
@@ -49,11 +49,10 @@
 #' **Oblique**: "Promax", "promax", "oblimin", "simplimax", "bentlerQ", "geominQ", "biquartimin" and "cluster"
 #' 
 #' 
-# #' For identification we need \ifelse{html}{{m<sup>2</sup>}{\eqn{m^2}} degrees of freedom. 
-#' For identification we need \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}} degrees of freedom. 
-#' We get m(m+1)/2 from fixing factor variances to 1 and covariances to 0.
-#' We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of
-#' the factor loadings component of the A matrix at 0.
+#' For identification we need \eqn{m^2} degrees of freedom.
+#' We get \eqn{m(m+1)/2} from fixing factor variances to 1 and covariances to `0`.
+#' We get another \eqn{m(m-1)/2} degrees of freedom by fixing the upper-right hand corner of
+#' the factor loadings component of the `A` matrix @ 0.
 #' 
 #' To aid optimization, manifest residual variances are `lbounded` at 0.
 #' 
@@ -63,8 +62,8 @@
 #' 
 #' Thanks to @ConorDolan for code implementing the rotation matrix and other suggestions!
 #' 
-#' @param x Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.
-#' @param factors Either number of factors to request or a vector of factor names.
+#' @param x Either data or Right-hand-side formula or a vector of variable names, or the `name` for the model.
+#' @param factors Either number of factors to extract or a vector of factor names.
 #' @param data A dataframe you are modeling.
 #' @param rotation A rotation to perform on the loadings (default  = "varimax" (orthogonal))
 #' @param scores Type of scores to produce, if any. The default is none, "Regression" gives Thompson's scores. Other options are 'ML', 'WeightedML', Partial matching allows these names to be abbreviated.
@@ -81,9 +80,9 @@
 #' @family Super-easy helpers
 #' @export
 #' @seealso - [factanal()], [OpenMx::mxFactorScores()]
-#' @references -
-#' Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. *British Journal of Statistical Psychology*, **17**, 65-70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
-#' Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. *Psychometrika*, **23**, 187-200. \doi{10.1007/BF02289233}.
+#' @references
+#' * Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. *British Journal of Statistical Psychology*, **17**, 65-70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
+#' * Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. *Psychometrika*, **23**, 187-200. \doi{10.1007/BF02289233}.
 #' @examples
 #' \dontrun{
 #' myVars = c("mpg", "disp", "hp", "wt", "qsec")
@@ -109,14 +108,13 @@
 #' x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 #' head(x)
 #' #       g
-#' # 1  -0.48059346
-#' # 2  -0.42354000
-#' # 3  -0.87078110
+#' # 1  -0.481
+#' # 2  -0.423
+#' # 3  -0.871
 #'
 #' m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 #' m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 #' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
-#' 
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
 	rotation = c("varimax", "promax", "none"), return = c("model", "loadings"), report = c("markdown", "html"), summary = FALSE, name = "efa", digits = 2, tryHard = c("no", "yes", "ordinal", "search"), n.obs = NULL, covmat = NULL){
@@ -278,15 +276,13 @@ umxFactanal <- umxEFA
 #' @export
 #' @family Reporting Functions
 #' @seealso - [OpenMx::mxFactorScores()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
 #' @examples
 #' \dontrun{
 #' m1 = umxEFA(mtcars, factors = 2)
 #' x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 #' 
 #' # =========================================================================
-#' # = histogram of F1 and plot of F1 against F2 showing they are orthogonal =
+#' # = Histogram of F1 and plot of F1 against F2 showing they are orthogonal =
 #' # =========================================================================
 #' hist(x$F1)
 #' plot(F1 ~ F2, data = x)
@@ -304,19 +300,9 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 	# Only need score from [nrow, nfac, c("Scores", "StandardErrors")]
 	out = scores[ , , return, drop = FALSE]
 	out = data.frame(out)
-	# make names always "F1", not "F1.Scores" "F1.StandardErrors"
+	# Make names always "F1", not "F1.Scores" "F1.StandardErrors"
 	names(out) <- dimnames(scores)[[2]]
 	return(out)
-
-	# if(dim(scores)[2] == 1){
-	# 	# simulate drop = FALSE if only 1 factor
-	# 	out = scores[ , 1, return]
-	# 	out = data.frame(out)
-	# 	names(out) <- dimnames(scores)[[2]]
-	# 	return(out)
-	# } else {
-	# 	return(scores[ , , return])
-	# }
 }
 
 
@@ -345,10 +331,10 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @export
 #' @family Super-easy helpers
 #' @seealso - [umx_make_MR_data()], [umxDiffMZ()], [umxDoC()], [umxDiscTwin()]
-#' @references - Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
+#' @references
+#' * Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) *Sociological Methodology*, Jossey-Bass.
 #' * Greene, W. H. (1993) *Econometric Analysis*, Second Edition, Macmillan.
-#' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to 
-#' Assess Causality Using Observational Data. *Journal of the American Society of Nephrology*, **27**), 3253-3265. \doi{10.1681/ASN.2016010098}
+#' * Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to Assess Causality Using Observational Data. *Journal of the American Society of Nephrology*, **27**), 3253-3265. \doi{10.1681/ASN.2016010098}
 #' @examples
 #' \dontrun{
 #' # ====================================

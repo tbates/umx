@@ -321,8 +321,7 @@ xmu_threshold_id_twin_check <- function(model, fullVars, verbose = TRUE) {
 #' @export
 #' @seealso - Core functions:
 #' @family Advanced Model Building Functions
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -565,8 +564,7 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 #' @return - [OpenMx::mxModel()]
 #' @export
 #' @family Advanced Model Building Functions
-#' @references - <https://github.com/tbates/umx>
-
+#' @references <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' # ==============================================================

@@ -55,7 +55,7 @@
 #' @export 
 #' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]
 #' @family Core Model Building Functions
-#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
+#' @references <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @examples
 #' # Here's a path example that models miles per gallon (mpg) as a function of weight (wt) and 
 #' # engine displacement (disp) using the widely used `mtcars` data set.

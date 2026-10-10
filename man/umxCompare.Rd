@@ -95,6 +95,22 @@ That exception does \strong{not} apply to continuous WLS or Genomic SEM.
 
 Best practice: report estimates with SEs, SRMR (and residuals), nested SB/GSEM
 difference tests, and avoid single-number "good fit" claims from CFI or RMSEA.
+
+\strong{Constraints and the EP column}
+
+EP is OpenMx's count of free parameters, \code{summary(model)$estimatedParameters}.
+Equality \code{\link[OpenMx:mxConstraint]{mxConstraint}}s are not removed from that count.
+OpenMx adds their rows to \code{observedStatistics}, and degrees of freedom already
+include them. A common-pathway model that sets each factor with \code{A + C + E = 1}
+can therefore show a larger EP than an independent-pathway model while \eqn{\Delta} df
+is 0. Both numbers are the OpenMx counts. When \code{sum(summary(model)$constraints)}
+is above 0, \code{umxCompare} adds one line for that model:
+
+\code{Note: df for 'CP' reflects 3 constraints: 51 estimated parameters (48 effective after constraints).}
+
+With \code{silent = TRUE}, the lines are \code{attr(table, "constraintNotes")}, one
+element per model. A comparison in which no model has an equality constraint does not
+set that attribute. Inequality constraints contribute 0 and do not produce a line.
 }
 \examples{
 \dontrun{

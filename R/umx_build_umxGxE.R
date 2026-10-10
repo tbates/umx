@@ -63,9 +63,7 @@
 #' @export
 #' @seealso [umx_make_GxE_data()], [umxGxE_window()], [umxReduce()], [umxSummary()]
 #' @family Twin Modeling Functions
-#' @references - Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*,
-#'  **6**, 554-571. \doi{10.1375/twin.5.6.554}
-#'
+#' @references Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. *Twin Research*, **6**, 554-571. \doi{10.1375/twin.5.6.554}
 #' @examples
 #' \dontrun{
 #' require(umx)
@@ -450,14 +448,9 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' @export
 #' @seealso [umxGxE()]
 #' @family Twin Modeling Functions
-#' @references - Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
-#' Complementary and competing factor analytic approaches for the investigation 
-#' of measurement invariance. *Review of Psychology*, **16**, 87--107. 
-#' 
-#' Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
-#' Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
-#' *Behavior Genetics*, **45**, 581-96. \doi{10.1007/s10519-015-9732-8}.
-#' 
+#' @references
+#' * Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009). Complementary and competing factor analytic approaches for the investigation of measurement invariance. *Review of Psychology*, **16**, 87--107. 
+#' * Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015). Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling. *Behavior Genetics*, **45**, 581-96. \doi{10.1007/s10519-015-9732-8}.
 #' @examples
 #' \dontrun{
 #' library(umx);

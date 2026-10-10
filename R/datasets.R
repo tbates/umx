@@ -40,11 +40,10 @@
 #' @family datasets
 #' @name docData
 #' @seealso - [umxDoC()], [plot.MxModelDoC()], [umxSummary.MxModelDoC()], [umxModify()]
-#' @references - N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. 
+#' @references N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models. 
 #' In *Encyclopedia of Statistics in Behavioral Science*, **1**, 496-499. Eds. Brian S. Everitt & David C. Howell
 #' @usage data(docData)
 #' @format A data frame 6 manifests for each of two twins in 1400 families of MZ and DZ twins
-
 #' @examples
 #' data(docData)
 #' str(docData)
@@ -141,7 +140,6 @@ NULL
 #' M. (2010). Moderation of genetic factors by parental divorce in adolescents' 
 #' evaluations of family functioning and subjective wellbeing. Twin Research 
 #' and Human Genetics, **13**, 143-162. \doi{10.1375/twin.13.2.143}
-
 #' @examples
 #' \dontrun{
 #' # Twin 1 variables (end in '_T1')
@@ -251,7 +249,7 @@ NULL
 #' *Behavior Genetics*, **19**, 79-96. \doi{10.1007/BF01065885}.
 #' @usage data(iqdat)
 #' @format A data frame with 562 rows (twin families). Nine measures on each twin.
-#' @seealso [umxSimplex()] 
+#' @seealso [umxSimplex()]
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -300,7 +298,6 @@ NULL
 #' *Annals of Human Biology*, **4**. 417-430. \doi{10.1080/03014467700002401}
 #' @usage data(Fischbein_wt)
 #' @format A 6*6 correlation matrix based on n = 66 female subjects.
-
 #' @examples
 #' \dontrun{
 #' data(Fischbein_wt) # load the data

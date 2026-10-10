@@ -8,7 +8,7 @@
 #' @return - list of output and diagnostics. matrix of correlations = $polychorics
 #' @export
 #' @family Data Functions
-#' @references - Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
+#' @references Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 #' @examples
 #' \dontrun{
 #' tmp = mtcars
@@ -311,7 +311,7 @@ umx_polychoric <- function(data, useDeviations = TRUE, tryHard = c("no", "yes", 
 #' @return - matrix of correlations
 #' @export
 #' @family Data Functions
-#' @references - Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
+#' @references Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. *Frontiers in Psychology*, **7**, 528. \doi{10.3389/fpsyg.2016.00528}.
 #' @examples
 #' \dontrun{
 #' # Mixed continuous + binary (polyserial / polychoric). Ordinal FIML can be
@@ -389,7 +389,7 @@ umx_polypairwise <- function (data, useDeviations= TRUE, printFit= FALSE, use= "
 #' @return - matrix of correlations
 #' @export
 #' @family Data Functions
-#' @references - \doi{10.3389/fpsyg.2016.00528}
+#' @references \doi{10.3389/fpsyg.2016.00528}
 #' @examples
 #' \dontrun{
 #' tmp = mtcars

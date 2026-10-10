@@ -124,5 +124,4 @@ umxMI(mMG)
 **Take-home:** Use `umxMI()` to diagnose *where* a model misfits; prefer `umxCompare()` on **theory-driven** competing models for inference.
 
 ## References
-
-Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. *Supplementary Educational Monographs*, 48. University of Chicago Press.
+Holzinger, K. J., & Swineford, F. (1939). A study in factor analysis: The stability of a bi-factor solution. *Supplementary Educational Monographs*, **48**. University of Chicago Press.

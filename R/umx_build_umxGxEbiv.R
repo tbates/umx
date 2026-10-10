@@ -236,8 +236,7 @@ umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NU
 #' @family Twin Modeling Functions
 #' @export
 #' @seealso - \code{\link{umxGxEbiv}()}, [plot()], [umxSummary()] work for IP, CP, GxE, and ACE models.
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' data(twinData)
 #' df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), sep = "")
@@ -332,8 +331,7 @@ umxSummary.MxModelGxEbiv <- umxSummaryGxEbiv
 #' @export
 #' @seealso - [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
 #' @seealso - [umxGxEbiv()]
-#' @references - <https://tbates.github.io>
-
+#' @references <https://tbates.github.io>
 #' @examples
 #' require(umx)
 #' data(twinData)

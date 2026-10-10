@@ -202,7 +202,6 @@ umxRAM2Lav <- function(model) {
 #' @export
 #' @family Miscellaneous Utility Functions
 #' @seealso [umxRAM2Lav()], [umxRAM()]
-
 #' @examples
 #' \dontrun{
 #' 
@@ -471,7 +470,6 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxLav2RAM()]
-
 #' @examples
 #' \dontrun{
 #' tab = lavaan::lavaanify("y~x")

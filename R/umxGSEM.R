@@ -613,7 +613,6 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' @family GSEM
 #' @references
 #' Grotzinger, A. D., Rhemtulla, M., de Vlaming, R., Ritchie, G. R., Mallard, T. T., Hill, W. D., ... & Tucker-Drob, E. M. (2019). Genomic structural equation modeling. *Nature Human Behaviour*, **3**, 513-525. \doi{10.1038/s41562-019-0566-x}
-
 #' @examples
 #' \dontrun{
 #' data(Psych_LDSC)
@@ -771,7 +770,7 @@ umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("
 #' @export
 #' @md
 #' @family Test
-#' @references - <https://github.com/tbates/umx>
+#' @references <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' require(umx)

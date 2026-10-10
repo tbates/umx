@@ -92,15 +92,12 @@
 #' @return - [OpenMx::mxModel()] subclass `mxModelACEv`
 #' @export
 #' @family Twin Modeling Functions
-#' @references - Verhulst, B., Prom-Wormley, E., Keller, M., Medland, S., & Neale, M. C. (2019).
-#' Type I Error Rates and Parameter Bias in Multivariate Behavioral Genetic Models. *Behav Genet*, 
+#' @references
+#' * Verhulst, B., Prom-Wormley, E., Keller, M., Medland, S., & Neale, M. C. (2019). Type I Error Rates and Parameter Bias in Multivariate Behavioral Genetic Models. *Behav Genet*, 
 #' **49**, 99-111. \doi{10.1007/s10519-018-9942-y}
-#' Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches 
-#' to the analysis of human behaviour. *Heredity*, **41**, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
-
+#' * Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches to the analysis of human behaviour. *Heredity*, **41**, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
 #' @examples
 #' \dontrun{
-#' 
 #' # ==============================
 #' # = Univariate model of weight =
 #' # ==============================
@@ -389,8 +386,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACEv()] 
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -619,8 +615,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @return - optionally return the dot code
 #' @export
 #' @family Plotting functions
-#' @references - <https://github.com/tbates/umx>
-
+#' @references <https://github.com/tbates/umx>
 #' @examples
 #' 
 #' \dontrun{
@@ -721,8 +716,7 @@ plot.MxModelACEv <- umxPlotACEv
 #' @return - A standardized [umxACEv()] model.
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://tbates.github.io>,  <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #' 
 #' \dontrun{

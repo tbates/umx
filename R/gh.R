@@ -132,7 +132,7 @@ gh_feature_branch <- function(feature = "fix-piglet", base = "textmatelives/text
 #' @export
 #' @family github
 #' @seealso - [gh_feature_branch()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @references \url{https://tbates.github.io}, [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
 #' \dontrun{
@@ -302,11 +302,11 @@ xgh_get_current_branch <- function(local_path = ".") {
 #' `list(owner = "textmatelives", repo = "textmate", branchname = "fix/browser_sorting")`.
 #'
 #' @param base A three-component branch name. Default `"textmatelives/textmate:main"`
-#' @return - list of components
+#' @return list of components
 #' @export
 #' @family github
-#' @seealso - [gh_feature_branch()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
+#' @seealso [gh_feature_branch()]
+#' @references \url{https://tbates.github.io}, [tutorials](https://github.com/tbates/umx)
 #' @md
 #' @examples
 #' xgh_check_base_name("textmatelives/textmate:fix/browser_sorting")

@@ -17,8 +17,7 @@
 #' @export
 #' @family Model Summary and Comparison
 #' @seealso - [umxCompare()] [OpenMx::mxCompare()]
-#' @references - [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
-
+#' @references [tutorials](https://tbates.github.io), [tutorials](https://github.com/tbates/umx)
 #' @examples
 #' \dontrun{
 #' # TODO

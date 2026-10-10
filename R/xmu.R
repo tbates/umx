@@ -28,7 +28,6 @@
 #' @family xmu internal not for end user
 #' @export
 #' @seealso - [subset()]
-
 #' @examples
 #' test = data.frame(
 #' a = paste0("a", 1:10),
@@ -58,8 +57,7 @@ xmu_data_swap_a_block <- function(theData, rowSelector, T1Names, T2Names) {
 #' @return - [OpenMx::mxData()] of type = cov
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' xmu_DF_to_mxData_TypeCov(mtcars, c("mpg", "hp"))
 xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "everything", "all.obs", "na.or.complete", "pairwise.complete.obs")) {
@@ -91,7 +89,6 @@ xmu_DF_to_mxData_TypeCov <- function(df, columns = NA, use = c("complete.obs", "
 #' @return - column of data
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' xmu_extract_column(mtcars, "wt")
 #' xmu_extract_column(mxData(mtcars, type = "raw"), "wt")
@@ -118,7 +115,6 @@ xmu_extract_column <- function(data, col, drop= FALSE) {
 #' @return - variable names from twin model
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' \dontrun{
 #' data(twinData) # ?twinData from Australian twins.
@@ -170,7 +166,6 @@ xmu_twin_get_var_names <- function(model, source = c("expCovMZ", "observed"), tr
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umx]
-
 #' @examples
 #' xmu_twin_upgrade_selDvs2SelVars("wt", NULL, 2)
 #'
@@ -196,7 +191,6 @@ xmu_twin_upgrade_selDvs2SelVars <- function(selDVs, sep, nSib) {
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxSummary()]
-
 #' @examples
 #' \dontrun{
 #' xmu_show_fit_or_comparison(model, comparison, digits=3)
@@ -461,7 +455,6 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxSummary()]
-
 #' @examples
 #' \dontrun{
 #' library(mlbench)
@@ -529,7 +522,6 @@ xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [xmu_make_mxData()]
-
 #' @examples
 #' xmu_check_needs_means(mtcars, type = "Auto")
 #' xmu_check_needs_means(mtcars, type = "FIML")
@@ -705,7 +697,6 @@ xmu_check_variance <- function(data, minVar = umx_set_data_variance_check(silent
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [complete.cases()]
-
 #' @examples
 #' tmp = mtcars; 
 #' tmp[1,]; tmp[1, "wt"] = NA
@@ -823,7 +814,6 @@ xmu_is_legacy_acov_data <- function(data) {
 #' @return - [OpenMx::mxData()]
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' # =========================
 #' # = Continuous ML example =
@@ -1039,8 +1029,7 @@ for you to pass in raw data, or an mxData, e.g.:\ndata = mxData(yourCov, type= '
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxRAM()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' "m1" == xmu_name_from_lavaan_str("x~~x")
 #' "bob" == xmu_name_from_lavaan_str(name = "bob")
@@ -1108,8 +1097,7 @@ xmu_set_sep_from_suffix <- function(sep, suffix) {
 #' @return None
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' library(umx)
 #' data(twinData)
@@ -1244,7 +1232,6 @@ xmu_twin_check <- function(selDVs, dzData = dzData, mzData = mzData, sep = NULL,
 #' @return None 
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' require(umx)
 #' data(twinData)
@@ -1468,7 +1455,6 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxMatrix()]
-
 #' @examples
 #' x = umxMatrix('test', 'Full', nrow = 4, ncol = 4)
 #' xmu_simplex_corner(x, start = .9)
@@ -1621,8 +1607,7 @@ xmuLabel_Matrix <- function(mx_matrix = NA, baseName = NA, setfree = FALSE, drop
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [xmuLabel()]
-#' @references - <https://github.com/tbates/umx>, <https://tbates.github.io>
-
+#' @references <https://github.com/tbates/umx>, <https://tbates.github.io>
 #' @examples
 #' xmu_cell_is_on(r = 3, c = 3, "lower")
 #' xmu_cell_is_on(r = 3, c = 3, "lower_inc")
@@ -1730,7 +1715,6 @@ xmu_start_value_list <- function(mean = 1, sd = NA, n = 1) {
 #' @return - [OpenMx::mxModel()]
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' require(umx)
 #' data(demoOneFactor)
@@ -1881,7 +1865,6 @@ xmuMI <- function(model, vector = TRUE) {
 #' @return - TRUE/FALSE
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' xmuHasSquareBrackets("A[1,2]")
 xmuHasSquareBrackets <- function (input) {
@@ -1903,7 +1886,6 @@ xmuHasSquareBrackets <- function (input) {
 #' @return - max number of levels in frame
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' xmuMaxLevels(mtcars) # NA = no ordinal vars
 #' xmuMaxLevels(umxFactor(mtcars))
@@ -1938,7 +1920,6 @@ xmuMaxLevels <- function(df, what = c("value", "name")) {
 #' @return - min number of levels in frame
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' xmuMinLevels(mtcars) # NA = no ordinal vars
 #' xmuMinLevels(umxFactor(mtcars))
@@ -1981,7 +1962,6 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxSummary()]
-
 #' @examples
 #' \dontrun{
 #' data(demoOneFactor)
@@ -2078,7 +2058,6 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [xmuLabel()]
-
 #' @examples
 #' xmu_clean_label("data.var", replace = "_")
 #' xmu_clean_label("my.var.lab", replace = "_")
@@ -2193,7 +2172,6 @@ xmu_dot_define_shapes <- function(latents, manifests, preOut= "") {
 #' @export
 #' @family Graphviz
 #' @seealso - [xmu_dot_define_shapes()]
-
 #' @examples
 #' xmu_dot_rank(c("as1"), "^[ace]s[0-9]+$", "same")
 xmu_dot_rank <- function(vars, pattern, rank) {
@@ -2242,7 +2220,6 @@ xmu_dot_rank <- function(vars, pattern, rank) {
 #' @export
 #' @family Graphviz
 #' @seealso - [plot()]
-
 #' @examples
 #'
 #' # test with a 1 * 1
@@ -2605,7 +2582,6 @@ xmu_mxData_summary <- function(numObs, observedStats, ...) {
 #' @return - list(min=min, same=same, max=max)
 #' @export
 #' @family xmu internal not for end user
-
 #' @examples
 #' old_min = c("min1", "min2")
 #' old_same = c("s1", "s2")
@@ -3022,8 +2998,7 @@ xmu_string2path <- function(from) {
 #' @return - label e.g. "ai\[1,1\]"
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @examples
 #' xmu_rclabel_2_bracket_address(label = "A_r1c1") #A[1,1]
 #' xmu_rclabel_2_bracket_address(label = "A_r10c1")
@@ -3053,8 +3028,7 @@ xmu_rclabel_2_bracket_address <- function(label, dotprefix = "", suffix = "") {
 #' @return - label e.g. "ai_r1c1"
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @examples
 #' xmu_bracket_address2rclabel(label = "A[1,1]")
 #' xmu_bracket_address2rclabel(label = "top.A[1,1]")
@@ -3090,8 +3064,7 @@ xmu_bracket_address2rclabel <- function(label, keepPrefix = TRUE) {
 #' @return - the CI string, e.g. ".73\[-.20, .98\]" or .73(.10)
 #' @export
 #' @family xmu internal not for end user
-#' @references - <https://tbates.github.io>, <https://github.com/tbates/umx>
-
+#' @references <https://tbates.github.io>, <https://github.com/tbates/umx>
 #' @examples
 #' \dontrun{
 #' require(umx); data(demoOneFactor)

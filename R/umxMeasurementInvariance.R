@@ -16,7 +16,6 @@
 #' @export
 #' @family Model Comparison
 #' @seealso - [umxRAM()], [umxCompare()]
-
 #' @examples
 #' \dontrun{
 #' data("HS.ability.data", package = "OpenMx")

@@ -21,7 +21,6 @@
 #' @return - [OpenMx::mxMatrix()]
 #' @export
 #' @seealso - [umxMatrix()]
-
 #' @examples
 #' \dontrun{
 #' 
