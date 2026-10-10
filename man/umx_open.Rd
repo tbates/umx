@@ -25,9 +25,7 @@ umx_open("~/bin/umx/R/misc_and_utility copy.r")
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 Other File Functions:

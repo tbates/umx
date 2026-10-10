@@ -77,9 +77,7 @@ plot(m1) # no need to remember a special name: plot works fine!
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

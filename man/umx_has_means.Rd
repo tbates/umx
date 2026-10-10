@@ -40,9 +40,7 @@ umx_has_means(m1)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Test:

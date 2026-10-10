@@ -55,9 +55,7 @@ It automatically filters out the redundant continuous partner (\verb{_cont}) of 
 plotting only the censored trait (\verb{_cens}) and any unpaired continuous variables.
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

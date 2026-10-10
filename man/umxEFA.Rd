@@ -40,9 +40,9 @@ umxFactanal(
 )
 }
 \arguments{
-\item{x}{Either 1: data, 2: Right-hand-side ~ formula , 3: Vector of variable names, or 4: Name for the model.}
+\item{x}{Either data or Right-hand-side formula or a vector of variable names, or the \code{name} for the model.}
 
-\item{factors}{Either number of factors to request or a vector of factor names.}
+\item{factors}{Either number of factors to extract or a vector of factor names.}
 
 \item{data}{A dataframe you are modeling.}
 
@@ -80,7 +80,7 @@ Perform full-information maximum-likelihood factor analysis on a data matrix.
 As in \code{\link[=factanal]{factanal()}}, you need only specify the number of factors and offer up
 some manifest data, e.g:
 
-\code{umxEFA(factors = 2, data = mtcars)}
+\verb{umxEFA(factors = 2, data = mtcars}
 
 Equivalently, you can also give a list of factor names:
 
@@ -102,10 +102,10 @@ Should work with rotations provided in \code{libs("GPArotation")} and \code{libs
 \strong{Orthogonal}: "varimax", "quartimax", "bentlerT", "equamax", "varimin", "geominT" and "bifactor"
 \strong{Oblique}: "Promax", "promax", "oblimin", "simplimax", "bentlerQ", "geominQ", "biquartimin" and "cluster"
 
-For identification we need \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}} degrees of freedom.
-We get m(m+1)/2 from fixing factor variances to 1 and covariances to 0.
-We get another m(m-1)/2 degrees of freedom by fixing the upper-right hand corner of
-the factor loadings component of the A matrix at 0.
+For identification we need \eqn{m^2} degrees of freedom.
+We get \eqn{m(m+1)/2} from fixing factor variances to 1 and covariances to \code{0}.
+We get another \eqn{m(m-1)/2} degrees of freedom by fixing the upper-right hand corner of
+the factor loadings component of the \code{A} matrix @ 0.
 
 To aid optimization, manifest residual variances are \code{lbounded} at 0.
 
@@ -140,23 +140,20 @@ names(x) # "loadings" "rotmat"
 x = umxEFA(name = "score", factors = "g", data = mtcars[, myVars], scores= "Regression")
 head(x)
 #       g
-# 1  -0.48059346
-# 2  -0.42354000
-# 3  -0.87078110
+# 1  -0.481
+# 2  -0.423
+# 3  -0.871
 
 m1 = umxEFA(myVars, factors = 2, data = mtcars, rotation = "promax")
 m1 = umxEFA(name = "named", factors = "g", data = mtcars[, myVars])
 m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
-
 }
 }
 \references{
 \itemize{
-\item 
+\item Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. \emph{British Journal of Statistical Psychology}, \strong{17}, 65-70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
+\item Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. \emph{Psychometrika}, \strong{23}, 187-200. \doi{10.1007/BF02289233}.
 }
-
-Hendrickson, A. E. and White, P. O. (1964). Promax: a quick method for rotation to orthogonal oblique structure. \emph{British Journal of Statistical Psychology}, \strong{17}, 65-70. \doi{10.1111/j.2044-8317.1964.tb00244.x}.
-Kaiser, H. F. (1958). The varimax criterion for analytic rotation in factor analysis. \emph{Psychometrika}, \strong{23}, 187-200. \doi{10.1007/BF02289233}.
 }
 \seealso{
 \itemize{

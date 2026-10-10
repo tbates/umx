@@ -29,9 +29,7 @@ umx_set_plot_file_suffix("gv")
 umx_set_plot_file_suffix(old) # reinstate
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

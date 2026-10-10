@@ -37,7 +37,7 @@ m1 = umxEFA(mtcars, factors = 2)
 x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 
 # =========================================================================
-# = histogram of F1 and plot of F1 against F2 showing they are orthogonal =
+# = Histogram of F1 and plot of F1 against F2 showing they are orthogonal =
 # =========================================================================
 hist(x$F1)
 plot(F1 ~ F2, data = x)
@@ -45,11 +45,6 @@ plot(F1 ~ F2, data = x)
 m1 = umxEFA(mtcars, factors = 1)
 x = umxFactorScores(m1, type = 'Regression', minManifests = 3)
 x
-}
-}
-\references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 }
 \seealso{

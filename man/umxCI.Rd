@@ -100,9 +100,7 @@ m1 = umxCI(m1, which = "a_r1c1", run = "yes")
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

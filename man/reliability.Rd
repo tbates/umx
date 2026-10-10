@@ -21,9 +21,7 @@ data(mtcars)
 reliability(cov(mtcars))
 }
 \references{
-\itemize{
-\item \url{https://cran.r-project.org/package=Rcmdr}
-}
+\url{https://cran.r-project.org/package=Rcmdr}
 }
 \seealso{
 \itemize{

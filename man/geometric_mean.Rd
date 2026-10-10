@@ -66,9 +66,7 @@ geometric_mean(c(50, -100, NA))
 }
 }
 \references{
-\itemize{
-\item \url{https://en.wikipedia.org/wiki/Geometric_mean}
-}
+\url{https://en.wikipedia.org/wiki/Geometric_mean}
 }
 \seealso{
 \itemize{

@@ -23,9 +23,7 @@ Utility function returning a binary answer to the question "Is this a LISREL mod
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Test:

@@ -40,9 +40,7 @@ RMSEA(tmp)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/simsem/semTools/wiki/Functions}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Reporting functions:

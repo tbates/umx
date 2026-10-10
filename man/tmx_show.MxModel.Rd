@@ -88,9 +88,7 @@ tmx_show(m1, what = "free", matrices = "A", report= "markdown")
 
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 Other Teaching and Testing functions:

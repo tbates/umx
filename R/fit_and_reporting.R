@@ -53,7 +53,7 @@ umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x
 	if(xIsBare || yIsBare){
 		xNm = if(xIsBare) paste(deparse(xSub), collapse="") else ""
 		yNm = if(yIsBare) paste(deparse(ySub), collapse="") else ""
-		# y may be missing (histogram) — handle that case
+		# y may be missing (histogram) - handle that case
 		if(xIsBare && yIsBare){
 			stop(paste0("Polite note: Either use the name as a string \"", xNm, "\", or make x a formula, e.g., ", yNm, " ~ ", xNm), call. = FALSE)
 		} else if(xIsBare){
@@ -109,7 +109,7 @@ umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x
 	if(geom_point){
 		p = p + geom_point()
 	}
-	# data[,x] — smarter R2 placement: inset from edges and left-aligned so label is fully visible
+	# data[,x] - smarter R2 placement: inset from edges and left-aligned so label is fully visible
 	if(is.na(r2x) || is.na(r2y)){
 		xVals = data[,x]
 		yVals = data[,y]

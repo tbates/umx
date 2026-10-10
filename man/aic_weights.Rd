@@ -29,7 +29,7 @@ aic_weights(c(100, 102, 110))
 # best model, 2 AIC worse, 10 AIC worse
 }
 \references{
-Wagenmakers, E. J., and Farrell, S. (2004). AIC model selection using Akaike weights. \emph{Psychonomic Bulletin & Review}, \strong{11}, 192–196. \doi{10.3758/BF03206482}
+Wagenmakers, E. J., and Farrell, S. (2004). AIC model selection using Akaike weights. \emph{Psychonomic Bulletin & Review}, \strong{11}, 192-196. \doi{10.3758/BF03206482}
 }
 \seealso{
 \code{\link[=umxWeightedAIC]{umxWeightedAIC()}}, \code{\link[=AIC]{AIC()}}

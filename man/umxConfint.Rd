@@ -87,9 +87,7 @@ m2 =  umxConfint(m1, "smart")
 
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

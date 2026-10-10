@@ -69,9 +69,7 @@ umx_is_ordered(tmp[, "cyl", drop= FALSE])
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Check or test:

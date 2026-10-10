@@ -69,7 +69,7 @@
 #' @export
 #' @family Reporting Functions
 #' @seealso [umxWeightedAIC()], [AIC()]
-#' @references Wagenmakers, E. J., and Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin & Review*, **11**, 192–196. \doi{10.3758/BF03206482}
+#' @references Wagenmakers, E. J., and Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin & Review*, **11**, 192-196. \doi{10.3758/BF03206482}
 #' @md
 #' @examples
 #' aic_weights(c(100, 102, 110))
@@ -1702,7 +1702,7 @@ umxParan <- function(df, cols = NA, graph = TRUE, mapStrings = NULL, n = NULL) {
 #' @export
 #' @family Data Functions
 #' @seealso	umx_strings2numeric
-#' @references* 
+#' @references
 #' * Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, <https://CRAN.R-project.org/package=psych> Version = 2.2.9.
 #' * McNeish, D. (2018). Thanks coefficient alpha, we'll take it from here. *Psychological Methods*, **23**, 412-433. \doi{10.1037/met0000144}.
 #' @examples
@@ -1801,7 +1801,7 @@ umxParan <- function(df, cols = NA, graph = TRUE, mapStrings = NULL, n = NULL) {
 #' bfi$As3 = factor(bfi$A3, levels = 1:6, labels = mapStrings)
 #' bfi$As4 = factor(bfi$A4, levels = 1:6, labels = mapStrings)
 #' bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
-#' bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
+#' bfi= umx_score_scale(name="A" , base="A" , pos=2:5, rev=1, max=6, data = bfi)
 #' bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
 umx_score_scale <- function(base= NULL, pos = NULL, rev = NULL, min= 1, max = NULL, data= NULL, score = c("total", "proportionCorrect", "errors", "mean", "max", "factor"), name = NULL, na.rm=TRUE, minManifests = NA, alpha = FALSE, mapStrings= NULL,  correctAnswer = NULL, omegaNfactors = 1, digits = 2, verbose = FALSE, suffix = "") {
 	score = match.arg(score)
@@ -3359,7 +3359,7 @@ install.OpenMx <- function(loc = c("GenomicMx", "open GenomicMx release page", "
 	}
 
 	if (!didInstallBinary && loc == "GenomicMx") {
-		# public binary install for everyone — resolver reads tag genomicmx
+		# public binary install for everyone: resolver reads tag genomicmx
 		binUrl = xmu_genomicmx_binary_url()
 		if (is.null(binUrl) || !nzchar(binUrl)) {
 			rVer = paste(R.version$major, strsplit(R.version$minor, ".", fixed = TRUE)[[1]][1], sep = ".")

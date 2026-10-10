@@ -66,9 +66,7 @@ summary(m1)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 Other Data Functions:

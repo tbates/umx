@@ -21,9 +21,7 @@ A version of \code{\link[=cov2cor]{cov2cor()}} that forces upper and lower trian
 umxCov2cor(cov(mtcars[,1:5]))
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \code{\link[=cov2cor]{cov2cor()}}

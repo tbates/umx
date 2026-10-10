@@ -46,9 +46,7 @@ umx_set_cores(model = m1)  # show new value for m1
 umx_set_cores(oldCores)    # reinstate old global value
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

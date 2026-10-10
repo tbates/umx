@@ -58,9 +58,7 @@ tmp = prolific_read_demog(fp, by.df = "PROLIFIC_PID", vars=c("Ethnicity.simplifi
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

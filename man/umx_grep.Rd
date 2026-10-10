@@ -48,9 +48,7 @@ umx_grep(spss_df, "labeltext", output = "name")
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

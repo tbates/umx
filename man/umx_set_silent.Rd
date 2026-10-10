@@ -35,9 +35,7 @@ umx_set_silent(old)   # reinstate
 umx_set_silent() # print existing value
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

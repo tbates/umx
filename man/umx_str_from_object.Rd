@@ -22,9 +22,7 @@ umx_str_from_object(mtcars)
 # "mtcars"
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other String Functions:

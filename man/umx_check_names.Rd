@@ -52,9 +52,7 @@ umx_check_names(c("bad_var_name", "x2"), data = demoOneFactor, die = TRUE)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Test:

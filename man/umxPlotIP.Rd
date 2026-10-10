@@ -63,9 +63,7 @@ umxPlotIP(model, file = NA)
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

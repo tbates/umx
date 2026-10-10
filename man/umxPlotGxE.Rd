@@ -61,9 +61,7 @@ umxPlotGxE(m1, moderatorValues=18:67)
 
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

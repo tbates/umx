@@ -55,9 +55,7 @@ umxMI(m1, full = TRUE)  # slower: allow all parameters to re-adjust
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

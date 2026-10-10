@@ -104,11 +104,8 @@ m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 \references{
 \itemize{
 \item Fox, J. (1979) Simultaneous equation models and two-stage least-squares. In Schuessler, K. F. (ed.) \emph{Sociological Methodology}, Jossey-Bass.
-}
-\itemize{
 \item Greene, W. H. (1993) \emph{Econometric Analysis}, Second Edition, Macmillan.
-\item Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to
-Assess Causality Using Observational Data. \emph{Journal of the American Society of Nephrology}, \strong{27}), 3253-3265. \doi{10.1681/ASN.2016010098}
+\item Sekula, P., Del Greco, M. F., Pattaro, C., & Kottgen, A. (2016). Mendelian Randomization as an Approach to Assess Causality Using Observational Data. \emph{Journal of the American Society of Nephrology}, \strong{27}), 3253-3265. \doi{10.1681/ASN.2016010098}
 }
 }
 \seealso{

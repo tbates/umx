@@ -46,9 +46,7 @@ tmp= umx_make_raw_from_cov(qm(1, .3| .3, 1), n=10, varNames= c("x", "y"))
 cov(tmp)
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

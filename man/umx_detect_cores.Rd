@@ -24,9 +24,7 @@ umx_detect_cores() # physical cores (P-cores if hybrid)
 umx_detect_cores(logical = TRUE, p_cores = FALSE) # all logical cores
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

@@ -44,9 +44,7 @@ umxPlotGxEbiv(m1, xlab = "wt", separateGraphs = TRUE, location = "topleft")
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

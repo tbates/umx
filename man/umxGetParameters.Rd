@@ -53,9 +53,7 @@ umxGetParameters(m1, regex = "x[1-3]_with_x[2-5]", free = TRUE)
 
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \code{\link[OpenMx:omxGetParameters]{OpenMx::omxGetParameters()}}, \code{\link[=parameters]{parameters()}}

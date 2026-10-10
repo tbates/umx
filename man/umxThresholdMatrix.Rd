@@ -177,9 +177,7 @@ all(tmp[[2]]$free)
 
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 \code{\link[OpenMx:mxThreshold]{OpenMx::mxThreshold()}}

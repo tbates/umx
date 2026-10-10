@@ -36,9 +36,7 @@ df = umx_as_numeric(df, force=TRUE); str(df)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Data Functions:

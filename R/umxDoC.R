@@ -51,7 +51,8 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 	mzData = df[validRows, ]
 	
 	# 4. Plot
-	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData)  + geom_jitter() # + geom_jitter(shape="circle open") # + geom_count(shape="circle open") 
+	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData)  + geom_jitter() 
+	# p = p + geom_jitter(shape="circle open") # + geom_count(shape="circle open")
 	# p = p + labs(title= "MZ twin intra-pair differences model", x = paste0(x, " \u0394 (Twin 1 - Twin 2)"), y = paste0(y, " \u0394 (Twin 1 - Twin 2)"))
 	p = p + labs(title= "MZ twin intra-pair differences model")
 	p = p + labs(x = paste("Difference in ", x, " (T1 - T2)")) 

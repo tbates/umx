@@ -62,9 +62,7 @@ umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
 umxDiffMZ(x="ht", y="wt", xylim = c( -2, 2), data = twinData, sep = "")
 }
 \references{
-\itemize{
-\item De Moor, M. H., Boomsma, D. I., Stubbe, J. H., Willemsen, G., & de Geus, E. J. (2008). Testing causality in the association between regular exercise and symptoms of anxiety and depression. Archives of General Psychiatry, 65(8), 897-905. \doi{10.1001/archpsyc.65.8.897}.
-}
+De Moor, M. H., Boomsma, D. I., Stubbe, J. H., Willemsen, G., & de Geus, E. J. (2008). Testing causality in the association between regular exercise and symptoms of anxiety and depression. Archives of General Psychiatry, 65(8), 897-905. \doi{10.1001/archpsyc.65.8.897}.
 }
 \seealso{
 \itemize{

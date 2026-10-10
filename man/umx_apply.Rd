@@ -32,9 +32,7 @@ umx_apply("mean", by = "rows", of = tmp)
 umx_apply("mean", by = "rows", of = tmp, na.rm = TRUE)
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

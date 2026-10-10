@@ -50,7 +50,6 @@ data(GFF)
 selDVs = c("gff", "fc", "qol", "hap", "sat", "AD") 
 m1 = umxCP(selDVs = selDVs, nFac = 2, data = data, tryHard = "yes")
 m2 = umxRotate(m1, rotation = "varimax",  tryHard = "yes")
-
 }
 }
 \seealso{

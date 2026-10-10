@@ -31,9 +31,7 @@ umx_set_plot_format("pdf")
 umx_set_plot_format(old) # reinstate
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

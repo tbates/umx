@@ -173,9 +173,7 @@ umxAPA(m1)
 
 }
 \references{
-\itemize{
-\item \url{https://stats.oarc.ucla.edu/r/dae/logit-regression/}
-}
+\url{https://stats.oarc.ucla.edu/r/dae/logit-regression/}
 }
 \seealso{
 \code{\link[=SE_from_p]{SE_from_p()}}

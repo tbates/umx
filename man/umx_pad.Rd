@@ -26,9 +26,7 @@ umx_pad(1:3, 4)
 umx_pad(1:3, 3)
 }
 \references{
-\itemize{
-\item \url{https://github.com/kevinushey/Kmisc/tree/master/man}
-}
+\url{https://github.com/kevinushey/Kmisc/tree/master/man}
 }
 \seealso{
 Other Miscellaneous Utility Functions:

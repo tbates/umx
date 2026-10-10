@@ -72,9 +72,7 @@ varStarts = umx_var(twinData[, c(ordDVs, "wt1", "wt2")],
 
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 Other Miscellaneous Stats Functions:

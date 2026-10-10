@@ -832,7 +832,7 @@ fin_tax_NI <- function(annualEarnings, symbol = "\u00A3") {
 #'
 #' **Typical Values & Interpretation**:
 #' Typical justified P/E ratios for mature, stable-growth companies generally fall between 12 and 25.
-#' High-growth companies with high ROIC (e.g. 30%+ ROIC and 20% growth) justify 20x–30x+ P/E multiples.
+#' High-growth companies with high ROIC (e.g. 30%+ ROIC and 20% growth) justify 20x-30x+ P/E multiples.
 #'
 #' **Worked Example ($NVDA)**:
 #' Suppose Nvidia ($NVDA) has high growth of 20% (\eqn{g = 0.20}) for 5 years, high ROIC of 30% (\eqn{\text{ROIC} = 0.30}),

@@ -42,9 +42,7 @@ umx_set_optimization_options("Parallel diagnostics", value = "Yes")
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

@@ -26,9 +26,7 @@ l2 = lm(mpg~ wt, data = mtcars)
 umxWeightedAIC(models = list(l1, l2))
 }
 \references{
-\itemize{
-\item Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}. \strong{11}, 192-196. \doi{10.3758/bf03206482}.
-}
+Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. \emph{Psychonomic Bulletin and Review}. \strong{11}, 192-196. \doi{10.3758/bf03206482}.
 }
 \seealso{
 \itemize{

@@ -130,9 +130,7 @@ m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", com
 
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Core Model Building Functions:

@@ -136,9 +136,7 @@ dzData = dzData, mzData = mzData, tryHard = "yes")
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

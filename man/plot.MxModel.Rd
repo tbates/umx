@@ -124,9 +124,7 @@ plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
 
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
-}
+\url{https://github.com/tbates/umx}, \url{https://en.wikipedia.org/wiki/DOT_(graph_description_language)}
 }
 \seealso{
 \itemize{

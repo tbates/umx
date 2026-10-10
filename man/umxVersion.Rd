@@ -36,9 +36,7 @@ umxVersion(min = "4.70.0")
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

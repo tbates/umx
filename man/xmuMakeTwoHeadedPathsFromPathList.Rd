@@ -63,6 +63,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_check_needs_means]{xmu_check_needs_means()}},
 \code{\link[=xmu_check_variance]{xmu_check_variance()}},
 \code{\link[=xmu_clean_label]{xmu_clean_label()}},
+\code{\link[=xmu_compare_constraint_note]{xmu_compare_constraint_note()}},
 \code{\link[=xmu_compare_robust_ML]{xmu_compare_robust_ML()}},
 \code{\link[=xmu_data_missing]{xmu_data_missing()}},
 \code{\link[=xmu_data_swap_a_block]{xmu_data_swap_a_block()}},

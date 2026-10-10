@@ -23,9 +23,7 @@ umx_str_chars(what, which)
 umx_str_chars("myFpassUword", c(3,8))
 }
 \references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{github}
-}
+\url{https://tbates.github.io}, \href{https://github.com/tbates/umx}{github}
 }
 \seealso{
 \itemize{

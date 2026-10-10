@@ -47,9 +47,7 @@ df = umx_scale(twinData,  attr= TRUE)
 plot(wt1 ~ wt2, data = df)
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 umx_scale_wide_twin_data scale

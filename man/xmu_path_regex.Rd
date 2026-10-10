@@ -32,9 +32,7 @@ xmu_path_regex(c("a", "one", "b"), pattern = "$", replacement = "_T1")
 # "a_T1" "one"  "b_T1"
 }
 \references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{github}
-}
+\href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{github}
 }
 \seealso{
 \itemize{
@@ -87,6 +85,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_check_needs_means]{xmu_check_needs_means()}},
 \code{\link[=xmu_check_variance]{xmu_check_variance()}},
 \code{\link[=xmu_clean_label]{xmu_clean_label()}},
+\code{\link[=xmu_compare_constraint_note]{xmu_compare_constraint_note()}},
 \code{\link[=xmu_compare_robust_ML]{xmu_compare_robust_ML()}},
 \code{\link[=xmu_data_missing]{xmu_data_missing()}},
 \code{\link[=xmu_data_swap_a_block]{xmu_data_swap_a_block()}},

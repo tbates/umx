@@ -109,10 +109,9 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [plot()], [umxSummary()], [umxCP()]
-#' @references * Kendler, K. S., Heath, A. C., Martin, N. G., & Eaves, L. J. (1987). Symptoms of anxiety and symptoms of depression. 
-#' Same genes, different environments? *Archives of General Psychiatry*, **44**, 451-457. \doi{10.1001/archpsyc.1987.01800170073010}.
-#' * McArdle, J. J., & Goldsmith, H. H. (1990). Alternative common factor models for multivariate biometric analyses.
-#' *Behavior Genetics*, **20**, 569-608. \doi{10.1007/BF01065873}.
+#' @references
+#' * Kendler, K. S., Heath, A. C., Martin, N. G., & Eaves, L. J. (1987). Symptoms of anxiety and symptoms of depression. Same genes, different environments? *Archives of General Psychiatry*, **44**, 451-457. \doi{10.1001/archpsyc.1987.01800170073010}.
+#' * McArdle, J. J., & Goldsmith, H. H. (1990). Alternative common factor models for multivariate biometric analyses. *Behavior Genetics*, **20**, 569-608. \doi{10.1007/BF01065873}.
 #' * <https://github.com/tbates/umx>
 #'
 #' @examples

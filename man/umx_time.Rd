@@ -64,9 +64,7 @@ umx_time('stop') # report the time since timer was restarted.
 
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

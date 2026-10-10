@@ -10,9 +10,7 @@ xgh_check_base_name(base = "textmatelives/textmate:main")
 \item{base}{A three-component branch name. Default \code{"textmatelives/textmate:main"}}
 }
 \value{
-\itemize{
-\item list of components
-}
+list of components
 }
 \description{
 \code{xgh_check_base_name} takes a full git branch address, validates it, and returns it
@@ -23,14 +21,10 @@ as a list. For example, "textmatelives/textmate:fix/browser_sorting" would retur
 xgh_check_base_name("textmatelives/textmate:fix/browser_sorting")
 }
 \references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
-}
+\url{https://tbates.github.io}, \href{https://github.com/tbates/umx}{tutorials}
 }
 \seealso{
-\itemize{
-\item \code{\link[=gh_feature_branch]{gh_feature_branch()}}
-}
+\code{\link[=gh_feature_branch]{gh_feature_branch()}}
 
 Other github:
 \code{\link[=gh_feature_branch]{gh_feature_branch()}},

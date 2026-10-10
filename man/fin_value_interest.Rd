@@ -101,9 +101,7 @@ fin_value_interest(principal = 100, final=200, yrs = 5)
 
 }
 \references{
-\itemize{
-\item \url{https://en.wikipedia.org/wiki/Compound_interest}
-}
+\url{https://en.wikipedia.org/wiki/Compound_interest}
 }
 \seealso{
 \itemize{

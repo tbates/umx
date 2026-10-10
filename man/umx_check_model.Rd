@@ -62,9 +62,7 @@ umx_check_model(m1, hasData = TRUE)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Test:

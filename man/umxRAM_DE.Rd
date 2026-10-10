@@ -134,9 +134,7 @@ m1 = umxRAM_DE("test", data = tmp, DEvars = c("litres"),
 
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 \code{\link[=umxPath]{umxPath()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=plot]{plot()}}, \code{\link[=parameters]{parameters()}}, \code{\link[=umxSuperModel]{umxSuperModel()}}, \code{\link[=umxLav2RAM]{umxLav2RAM()}}

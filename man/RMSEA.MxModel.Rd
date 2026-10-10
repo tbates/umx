@@ -50,9 +50,7 @@ RMSEA(m2)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Reporting functions:

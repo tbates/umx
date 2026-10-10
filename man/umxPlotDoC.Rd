@@ -81,9 +81,7 @@ plot(a2b)
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

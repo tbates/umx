@@ -24,9 +24,7 @@ umxUnexplainedCausalNexus(from="yrsEd", delta = .5, to = "income35", model)
 }
 }
 \references{
-\itemize{
-\item https://github.com/tbates/umx/
-}
+https://github.com/tbates/umx/
 }
 \seealso{
 \itemize{

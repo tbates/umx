@@ -25,9 +25,7 @@ umx_is_numeric(mtcars) # TRUE
 umx_is_numeric(mtcars, all=FALSE) # vector of TRUE
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

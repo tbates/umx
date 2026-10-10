@@ -46,10 +46,8 @@ text(x=-4, y=3, labels = paste0("r = ", tmp))
 par(mfrow = c(1, 1))  # back to as it was
 }
 \references{
-\itemize{
-\item N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models.
+N.A. Gillespie and N.G. Martin (2005). Direction of Causation Models.
 In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}, 496-499. Eds. Brian S. Everitt & David C. Howell
-}
 }
 \seealso{
 \itemize{

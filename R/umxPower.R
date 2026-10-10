@@ -44,15 +44,11 @@
 #' @return [OpenMx::mxPower()] object
 #' @family Twin Modeling Functions
 #' @seealso - [umxPower()], [OpenMx::mxPower()], [umxACE()] 
-#' @references * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design
-#' revisited: II detection of common environmental variance. *Twin Res Hum Genet*, **11**: 48-54.
-#' \doi{10.1375/twin.11.1.48}.
-#' * Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., and Munafo, M. R. (2013).
-#' Power failure: why small sample size undermines the reliability of neuroscience. 
-#' *Nature Reviews Neuroscience*, **14**, 365-376. \doi{10.1038/nrn3475}
+#' @references
+#' * Visscher, P.M., Gordon, S., Neale, M.C. (2008). Power of the classical twin design revisited: II detection of common environmental variance. *Twin Res Hum Genet*, **11**: 48-54. \doi{10.1375/twin.11.1.48}.
+#' * Button, K. S., Ioannidis, J. P., Mokrysz, C., Nosek, B. A., Flint, J., Robinson, E. S., and Munafo, M. R. (2013). Power failure: why small sample size undermines the reliability of neuroscience. *Nature Reviews Neuroscience*, **14**, 365-376. \doi{10.1038/nrn3475}
 #' @export
 #' @examples
-#'
 #' # =====================================================
 #' # = N for .8 power to detect a^2 = .5 equal MZ and DZ =
 #' # =====================================================

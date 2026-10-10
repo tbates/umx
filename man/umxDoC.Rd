@@ -71,7 +71,6 @@ each with three indicators). Note: For pedagogical reasons, only the model for 1
 }
 \examples{
 \dontrun{
-
 # ========================
 # = Does Rain cause Mud? =
 # ========================
@@ -116,8 +115,6 @@ DoC = umxDoC(var1= paste0("varA", 1:3), var2= paste0("varB", 1:3),
 \references{
 \itemize{
 \item Gillespie, N.A. and Martin, N.G. (2005). Direction of Causation Models. In \emph{Encyclopedia of Statistics in Behavioral Science}, \strong{1}. 496-499. Eds. Brian S. Everitt & David C. Howell.
-}
-\itemize{
 \item McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. \emph{Perspectives on Psychological Science}, \strong{5}, 546-556. \doi{10.1177/1745691610383511}
 \item Rasmussen, S. H. R., Ludeke, S., & Hjelmborg, J. V. B. (2019). A major limitation of the direction of causation model: non-shared environmental confounding. \emph{Twin Res Hum Genet}, \strong{22}, 1-13. \doi{10.1017/thg.2018.67}
 }

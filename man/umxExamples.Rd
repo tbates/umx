@@ -281,11 +281,9 @@ umx_set_auto_plot(TRUE)
 }
 }
 \references{
-\itemize{
-\item Bates, T. C., Neale, M. C., & Maes, H. H. (2019).
+Bates, T. C., Neale, M. C., & Maes, H. H. (2019).
 umx: A library for Structural Equation and Twin Modelling in R.
 \emph{Twin Research and Human Genetics}, \strong{22}, 27-41. \doi{10.1017/thg.2019.2}.
-}
 }
 \seealso{
 \itemize{

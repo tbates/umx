@@ -37,9 +37,7 @@ umx_is_class(twinData[,"zygosity", drop=FALSE], classes = "factor")
 umx_is_class(mtcars$mpg) # report class of this column (same as class(mpg))
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

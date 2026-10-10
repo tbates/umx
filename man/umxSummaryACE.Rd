@@ -75,9 +75,7 @@ stdFit = umxSummaryACE(m1, returnStd = TRUE);
 
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

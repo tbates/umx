@@ -59,9 +59,7 @@ xmuValues(14, sd = 1, n = 10) # Return vector of length 10, with mean 14 and sd 
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

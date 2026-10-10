@@ -27,9 +27,7 @@ Optionally warn or die on failure of the test
 umx_check_OS()
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 Other Test:

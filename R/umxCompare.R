@@ -61,7 +61,7 @@
 #' Equality [OpenMx::mxConstraint()]s are not removed from that count. OpenMx adds
 #' their rows to `observedStatistics`, and degrees of freedom already include them.
 #' A common-pathway model that sets each factor with `A + C + E = 1` can therefore
-#' show a larger EP than an independent-pathway model while `Δ df` is 0. Both
+#' show a larger EP than an independent-pathway model while \eqn{\Delta}{Delta} df is 0. Both
 #' numbers are the OpenMx counts. When `sum(summary(model)$constraints)` is above 0,
 #' `umxCompare` adds one line for that model:
 #'

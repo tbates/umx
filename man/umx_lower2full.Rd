@@ -98,9 +98,7 @@ umx_lower2full(tmp, byrow = FALSE, diag = TRUE)
 
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Data Functions:

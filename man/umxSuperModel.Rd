@@ -24,9 +24,7 @@ umxSuperModel(
 \item{std}{Show standardized parameters, raw (default), or just the fit indices (null)}
 }
 \value{
-\itemize{
-\item \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
-}
+\code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}
 }
 \description{
 \code{umxSuperModel} takes 1 or more models and wraps them in a supermodel with a
@@ -101,14 +99,10 @@ umxModelNames(super)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
-\itemize{
-\item \code{\link[OpenMx:mxFitFunctionMultigroup]{OpenMx::mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
-}
+\code{\link[OpenMx:mxFitFunctionMultigroup]{OpenMx::mxFitFunctionMultigroup()}}, \code{\link[=umxRAM]{umxRAM()}}
 
 Other Core Model Building Functions:
 \code{\link{umx}},

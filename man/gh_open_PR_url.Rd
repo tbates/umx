@@ -58,9 +58,7 @@ gh_open_PR_url(head_branch="fix", browse = FALSE)
 }
 }
 \references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
-}
+\url{https://tbates.github.io}, \href{https://github.com/tbates/umx}{tutorials}
 }
 \seealso{
 \itemize{

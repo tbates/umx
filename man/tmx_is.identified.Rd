@@ -30,9 +30,7 @@ tmx_is.identified(nVariables = 4, nFactors = 2) # FALSE
 tmx_is.identified(nVariables = 5, nFactors = 2) # TRUE
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
-}
+\url{https://github.com/tbates/umx}, \url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

@@ -53,9 +53,7 @@ levels(tmp$zygosity)
 
 }
 \references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tbates/umx}
-}
+\href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tbates/umx}
 }
 \seealso{
 \itemize{

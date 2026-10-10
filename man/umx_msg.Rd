@@ -41,9 +41,7 @@ umx_msg(NULL)
 umx_msg(mtcars[1:2, 1:3])
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Miscellaneous Utility Functions:

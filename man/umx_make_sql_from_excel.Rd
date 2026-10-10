@@ -52,9 +52,7 @@ umx_make_sql_from_excel("~/Desktop/test.xlsx") # provide a path
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other File Functions:

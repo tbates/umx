@@ -34,9 +34,7 @@ umx_is_endogenous(m1, manifests_only = FALSE)
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io}, \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Check or test:

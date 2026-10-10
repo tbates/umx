@@ -175,10 +175,7 @@ attr(df2, "truth")[c("am", "em")]
 }
 }
 \references{
-\itemize{
-\item Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research},
-\strong{6}, 554-571. \doi{10.1375/twin.5.6.554}
-}
+Purcell, S. (2002). Variance components models for gene-environment interaction in twin analysis. \emph{Twin Research}, \strong{6}, 554-571. \doi{10.1375/twin.5.6.554}
 }
 \seealso{
 \code{\link[=umx_make_GxE_data]{umx_make_GxE_data()}}, \code{\link[=umxGxE_window]{umxGxE_window()}}, \code{\link[=umxReduce]{umxReduce()}}, \code{\link[=umxSummary]{umxSummary()}}

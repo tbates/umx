@@ -56,9 +56,7 @@ umxDiagnose(m1)
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Teaching and Testing functions:

@@ -46,9 +46,7 @@ cor(mtcars[, c("hp", "mpg", "am", "vs")])
 }
 }
 \references{
-\itemize{
-\item Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. \emph{Frontiers in Psychology}, \strong{7}, 528. \doi{10.3389/fpsyg.2016.00528}.
-}
+Barendse, M. T., Ligtvoet, R., Timmerman, M. E., & Oort, F. J. (2016). Model Fit after Pairwise Maximum Likelihood. \emph{Frontiers in Psychology}, \strong{7}, 528. \doi{10.3389/fpsyg.2016.00528}.
 }
 \seealso{
 Other Data Functions:

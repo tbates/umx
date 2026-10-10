@@ -50,10 +50,8 @@ table for pasting into a word processor.
 \code{umxReduce} can be extended to new cases as demand emerges.
 }
 \references{
-\itemize{
-\item Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
+Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 \emph{Psychonomic Bulletin and Review}, \strong{11}, 192-196. \doi{10.3758/BF03206482}
-}
 }
 \seealso{
 \code{\link[=umxReduceGxE]{umxReduceGxE()}}, \code{\link[=umxReduceACE]{umxReduceACE()}}

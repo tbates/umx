@@ -44,9 +44,7 @@ cor(mtcars[, c("hp", "mpg", "am", "vs")])
 
 }
 \references{
-\itemize{
-\item \doi{10.3389/fpsyg.2016.00528}
-}
+\doi{10.3389/fpsyg.2016.00528}
 }
 \seealso{
 Other Data Functions:

@@ -54,9 +54,7 @@ harmonic_mean(c(33, -23))
 
 }
 \references{
-\itemize{
-\item \url{https://en.wikipedia.org/wiki/Harmonic_mean}
-}
+\url{https://en.wikipedia.org/wiki/Harmonic_mean}
 }
 \seealso{
 \itemize{

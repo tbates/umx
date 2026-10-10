@@ -31,9 +31,7 @@ umx_set_table_format("") # get available options
 umx_set_table_format(old)    # reinstate
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

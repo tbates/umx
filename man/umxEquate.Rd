@@ -94,9 +94,7 @@ parameters(m2)
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \code{\link[=umxModify]{umxModify()}}, \code{\link[=umxCompare]{umxCompare()}}

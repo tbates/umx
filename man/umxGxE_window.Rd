@@ -104,14 +104,9 @@ mxGxE_window(selDVs = selDVs, moderator = mod, mzData = mzData, dzData = dzData,
 }
 \references{
 \itemize{
-\item Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009)
-Complementary and competing factor analytic approaches for the investigation
-of measurement invariance. \emph{Review of Psychology}, \strong{16}, 87--107.
+\item Hildebrandt, A., Wilhelm, O, & Robitzsch, A. (2009). Complementary and competing factor analytic approaches for the investigation of measurement invariance. \emph{Review of Psychology}, \strong{16}, 87--107.
+\item Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015). Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling. \emph{Behavior Genetics}, \strong{45}, 581-96. \doi{10.1007/s10519-015-9732-8}.
 }
-
-Briley, D.A., Harden, K.P., Bates, T.C., Tucker-Drob, E.M. (2015).
-Nonparametric Estimates of Gene x Environment Interaction Using Local Structural Equation Modeling.
-\emph{Behavior Genetics}, \strong{45}, 581-96. \doi{10.1007/s10519-015-9732-8}.
 }
 \seealso{
 \code{\link[=umxGxE]{umxGxE()}}

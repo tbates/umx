@@ -55,9 +55,7 @@ Automatically filters out redundant \verb{_cont} rows and fixed-zero factor colu
 while displaying all means (\verb{_cont} mean and \verb{_cens} threshold).
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

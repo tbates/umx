@@ -29,9 +29,7 @@ and handles comparison statistics using modern robust fit indices.
 }
 }
 \references{
-\itemize{
-\item \href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
-}
+\href{https://tbates.github.io}{tutorials}, \href{https://github.com/tbates/umx}{tutorials}
 }
 \seealso{
 \itemize{

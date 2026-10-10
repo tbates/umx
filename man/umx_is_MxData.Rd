@@ -24,9 +24,7 @@ umx_is_MxData(mxData(cov(mtcars), type= "cov", numObs = 73))
 umx_is_MxData(mxData(na.omit(twinData[, c("wt1", "wt2")]), type = "raw"))
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Test:

@@ -176,14 +176,12 @@ bfi$As2 = factor(bfi$A2, levels = 1:6, labels = mapStrings)
 bfi$As3 = factor(bfi$A3, levels = 1:6, labels = mapStrings)
 bfi$As4 = factor(bfi$A4, levels = 1:6, labels = mapStrings)
 bfi$As5 = factor(bfi$A5, levels = 1:6, labels = mapStrings)
-bfi= umx_score_scale(name="A" , base="A", pos=2:5, rev=1, max=6, data=bfi)
+bfi= umx_score_scale(name="A" , base="A" , pos=2:5, rev=1, max=6, data = bfi)
 bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrings, data= bfi)
 }
 \references{
 \itemize{
 \item Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, \url{https://CRAN.R-project.org/package=psych} Version = 2.2.9.
-}
-\itemize{
 \item McNeish, D. (2018). Thanks coefficient alpha, we'll take it from here. \emph{Psychological Methods}, \strong{23}, 412-433. \doi{10.1037/met0000144}.
 }
 }

@@ -51,10 +51,8 @@ model = umxReduce(model)
 }
 }
 \references{
-\itemize{
-\item Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
+Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights.
 \emph{Psychonomic Bulletin and Review}, \strong{11}, 192-196. \doi{10.3758/BF03206482}.
-}
 }
 \seealso{
 \code{\link[=umxReduce]{umxReduce()}}, \code{\link[=umxReduceACE]{umxReduceACE()}}

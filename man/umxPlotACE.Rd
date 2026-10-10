@@ -52,9 +52,7 @@ plot(m1, std = FALSE) # don't standardize
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}
-}
+\url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

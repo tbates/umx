@@ -75,9 +75,7 @@ install.OpenMx("CRAN")                # stock CRAN OpenMx only
 }
 }
 \references{
-\itemize{
-\item \url{https://github.com/tbates/umx}, \url{https://github.com/tbates/umx/releases/tag/genomicmx}
-}
+\url{https://github.com/tbates/umx}, \url{https://github.com/tbates/umx/releases/tag/genomicmx}
 }
 \seealso{
 \code{\link[=umxVersion]{umxVersion()}}, \code{\link[=xmu_openmx_engine_status]{xmu_openmx_engine_status()}}, \code{\link[=mx_make]{mx_make()}}

@@ -27,9 +27,7 @@ umx_set_condensed_slots(TRUE) # update globally
 umx_set_condensed_slots(old) # set back
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
-}
+\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

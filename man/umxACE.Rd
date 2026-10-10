@@ -424,10 +424,8 @@ plot(m1)
 
 }
 \references{
-\itemize{
-\item Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
+Eaves, L. J., Last, K. A., Young, P. A., & Martin, N. G. (1978). Model-fitting approaches
 to the analysis of human behaviour. \emph{Heredity}, \strong{41}, 249-320. \doi{https://doi.org/10.1038/hdy.1978.101}
-}
 }
 \seealso{
 \itemize{
