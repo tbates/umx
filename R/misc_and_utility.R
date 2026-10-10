@@ -68,6 +68,8 @@
 #' @return Numeric vector of weights, the same length as `x`, summing to 1.
 #' @export
 #' @family Reporting Functions
+#' @seealso [umxWeightedAIC()], [AIC()]
+#' @references Wagenmakers, E. J., and Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin & Review*, **11**, 192–196. \doi{10.3758/BF03206482}
 #' @md
 #' @examples
 #' aic_weights(c(100, 102, 110))
