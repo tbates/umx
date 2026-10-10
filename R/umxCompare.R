@@ -55,6 +55,22 @@
 #' Best practice: report estimates with SEs, SRMR (and residuals), nested SB/GSEM
 #' difference tests, and avoid single-number "good fit" claims from CFI or RMSEA.
 #'
+#' **Constraints and the EP column**
+#'
+#' EP is OpenMx's count of free parameters, `summary(model)$estimatedParameters`.
+#' Equality [OpenMx::mxConstraint()]s are not removed from that count. OpenMx adds
+#' their rows to `observedStatistics`, and degrees of freedom already include them.
+#' A common-pathway model that sets each factor with `A + C + E = 1` can therefore
+#' show a larger EP than an independent-pathway model while `Δ df` is 0. Both
+#' numbers are the OpenMx counts. When `sum(summary(model)$constraints)` is above 0,
+#' `umxCompare` adds one line for that model:
+#'
+#' `Note: df for 'CP' reflects 3 constraints: 51 estimated parameters (48 effective after constraints).`
+#'
+#' With `silent = TRUE`, the lines are `attr(table, "constraintNotes")`, one element
+#' per model. A comparison in which no model has an equality constraint does not
+#' set that attribute. Inequality constraints contribute 0 and do not produce a line.
+#'
 #' @param base The base [OpenMx::mxModel()] for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
@@ -68,7 +84,7 @@
 #' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @family Model Summary and Comparison
 #' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
-#' @references - <https://github.com/tbates/umx>
+#' @references <https://github.com/tbates/umx>
 #' @export
 #' @examples
 #' \dontrun{
@@ -195,6 +211,8 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			}
 		}
 
+		constraintNotes = xmu_compare_constraint_note(c(baseModels, comparison))
+
 		# 2. Iterate explicitly through each base vs. comparison pair
 		for (i in seq_along(pairComp)) {
 			compTable = xmu_compare_WLS(baseModel = pairBase[[i]], comparisonModel = pairComp[[i]])
@@ -230,6 +248,12 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			} else {
 				cat("\n*Note* EP: Estimated parameters; Chi: Satorra-Bentler (2010) scaled WLS chi-square; SRMR: Standardized Root Mean Square Residual; CFI: Comparative Fit Index; AIC: Akaike Information Criterion; diffFit: Satorra-Bentler (2010) scaled chi-square difference test. See ?umxCompare for details.\n")
 			}
+			for (constraintNote in constraintNotes) {
+				cat("\n", constraintNote, "\n", sep = "")
+			}
+		}
+		if (length(constraintNotes) > 0) {
+			attr(finalTable, "constraintNotes") = constraintNotes
 		}
 		return(invisible(finalTable))
 	} else {
@@ -327,6 +351,14 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 	}
 
+	noteModels = comparison
+	if (is.list(base)) {
+		noteModels = c(base, noteModels)
+	} else if (!is.null(base)) {
+		noteModels = c(list(base), noteModels)
+	}
+	constraintNotes = xmu_compare_constraint_note(noteModels)
+
 	if(!silent){
 		umx_print(tablePub, digits = digits, zero.print = "0", caption = "Table of Model Comparisons", report = report)
 		if (anyWLS) {
@@ -346,6 +378,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			} else {
 				cat("\n*Note*: EP = Estimated (i.e. free) parameters; \u0394-2LL = change in -2 \u00D7 Log-Likelihood of the model; \u0394 df = Change in degrees of freedom with respect to the comparison model; \u0394 AIC = Change in Akaike Information Criterion; 'Compared to' = The baseline model for this comparison.\n")
 			}
+		}
+		for (constraintNote in constraintNotes) {
+			cat("\n", constraintNote, "\n", sep = "")
 		}
 	}
 
@@ -371,5 +406,59 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		attr(tablePub, "robustScalingFactors") = robustScalingFactors
 		attr(tablePub, "c_d") = robustScalingFactors
 	}
+	if (length(constraintNotes) > 0) {
+		attr(tablePub, "constraintNotes") = constraintNotes
+	}
 	invisible(tablePub)
+}
+
+#' Lines reconciling raw free parameters with equality constraints.
+#'
+#' OpenMx stores equality [OpenMx::mxConstraint()] rows in `summary(model)$constraints`
+#' and adds that total to `observedStatistics`. `estimatedParameters` stays the raw
+#' free-parameter count, which is also the EP column of [umxCompare()].
+#'
+#' @param models A list of [OpenMx::mxModel()] objects.
+#' @return A character vector, one line per model whose equality-constraint row count
+#' is not 0. An empty character vector when no model qualifies. Unrun models are skipped.
+#' @family xmu internal not for end user
+xmu_compare_constraint_note <- function(models) {
+	# Equality constraints are extra observed statistics, not fewer free parameters.
+	# sum(constraints) is that row count. Inequalities contribute 0.
+	notes = character()
+	seen = character()
+	for (m in models) {
+		if (!umx_is_MxModel(m)) {
+			next
+		}
+		if (!umx_has_been_run(m)) {
+			next
+		}
+		modelName = m$name
+		if (is.null(modelName) || is.na(modelName) || modelName %in% seen) {
+			next
+		}
+		seen = c(seen, modelName)
+		modelSummary = summary(m)
+		constraintRows = modelSummary$constraints
+		if (is.null(constraintRows) || length(constraintRows) == 0) {
+			next
+		}
+		nConstraints = sum(constraintRows)
+		epLive = modelSummary$estimatedParameters
+		if (!is.finite(nConstraints) || !is.finite(epLive) || nConstraints == 0) {
+			next
+		}
+		if (abs(nConstraints) == 1) {
+			constraintWord = "constraint"
+		} else {
+			constraintWord = "constraints"
+		}
+		epEffective = epLive - nConstraints
+		notes = c(notes, paste0(
+			"Note: df for '", modelName, "' reflects ", nConstraints, " ", constraintWord, ": ",
+			epLive, " estimated parameters (", epEffective, " effective after constraints)."
+		))
+	}
+	notes
 }
