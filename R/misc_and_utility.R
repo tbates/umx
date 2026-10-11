@@ -3779,9 +3779,16 @@ umx_make <- function(
 	} else if (what == "run_dontrun"){
 		devtools::run_examples(run_dontrun = TRUE, pkg = pkgPath)
 	} else if (what == "release"){
-		# STRATEGY: Use withr to handle directories cleanly without risking breaking state on crash
+		# devtools::release() has warned "deprecated" since 2.5.0. It still
+		# runs the checklist and uploads. usethis::use_release_issue() only
+		# opens a GitHub checklist. Muffle that one warning.
+		# The CRAN form also warns if maintainer given-name is length > 1
+		# (see Authors@R: "Timothy C." as one string).
 		withr::with_dir(pkgPath, {
-			devtools::release(pkg = pkgPath, check = check, args = "--no-manual")
+			withCallingHandlers(
+				devtools::release(pkg = pkgPath, check = check, args = "--no-manual"),
+				lifecycle_warning_deprecated = function(w) invokeRestart("muffleWarning")
+			)
 		})
 	} else if (what == "git"){
 		# STRATEGY: Universal MacOS application opening protocol

@@ -1,52 +1,40 @@
-## dev
-* FIXED: `umxCompare` no longer asks `umx_is_MxModel()` whether its comparison list is one model. That printed "set listOK = TRUE" before the comparison table. An `MxModel` is not a list, so `is.list()` is the test.
-* NEW: `gh_message_search()` lists commits whose message matches a regex, newest first, with the GitHub commit page. `open = 1` shows that row in the browser.
-* NEW: `umx_tail()` prints the `n` most extreme rows on a column. `what` is `high`, `low`, `both`, or `abs` (furthest from the median). Markdown by default; `report = "html"` opens the [umx_print()] table.
-* NEW: `umxGSEM_ldsc()` calls OpenMx `imxLDSC` on munged `.sumstats.gz` and returns a labeled covstruc (`var_*` / `poly_*_*`) for [umxGSEM()].
-* NEW: `umxGSEM_dl_tutorial_files()` downloads the IBG/GenomicSEM ~45 MB tutorial pack (1k-SNP SCZ/BIP/MDD, 1000G subset, `w_hm3.snplist`, `eur_w_ld_chr/`) into `tools::R_user_dir("umx", "data")/GSEM_tutorial`. Production HapMap3 / Alkes LD scores / 1000G plink are documented, not auto-fetched. Removed `umxGSEM_dl_RefList`.
-* NEW: `umxACE_GLM` Cholesky on `mxFitFunctionGLM` (`nVar`-general; MZ Laplace dimension `4 * nVar`). 3-trait Poisson recovers a diagonals / `a_r2c1` on eta. `plot()` / `umxPlotACE_GLM` is the compact a/c/e diagram (printed e is chol(ee'+D)).
-	* Binomial `e` diagonal fixed at 1 (scale). `trials=` / per-row `n` columns are not implemented (Bernoulli only; no beta-binomial).
-	* Poisson recovered a,c,e on eta. Hessian/SEs left off: n=50 Poisson ACE Hessian not PD (SEs NA); n=200 SEs finite but a/c SEs ~1. Family-score SEs: `mxComputeOnce('fitfunction', 'information', 'meat')` then `mxComputeStandardError()`. 
-	* Poisson ACE starts A/E diagonals at sqrt(0.8)/sqrt(0.2) (C at 0.2). Free ACE Cholesky diagonals have `lbound = 1e-4`.
-	* Gamma / inverse Gaussian leftover (shape / lambda) is fixed at 1 (`phi = 1/theta`) so it does not collide with `e`. Documented as not for ACE (trial-level RT / first-passage; twin ACE is one phenotype per person).
-	* Extra-Gaussian `e` Cholesky kept (unique covariance).
-	* `umxSummaryACE_GLM` uses `E = ee' + D` (`D = 1` probit, `pi^2/3` logit).
-	* `umxSummaryACE_GLM` bivariate prints `rA`, `rC`, `rE = cov2cor(E_total)` (unique correlation diluted by leftover; `rA` is not).
-* NEW: `umx_scale_reliabilities` accumulates the reliabilities computed across calls to umx_score_scale() and can display them as a markdown table.
-* FIXED: `umxGSEM_munge` maps columns per file (tutorial BIP `snpid`/`pval` vs SCZ `SNP`/`P`). `\dontrun` example uses `umxGSEM_dl_tutorial_files()`.
-* FIXED: `umx_is_GSEM()` is TRUE only for class `MxModelGSEM`. Ordinary RAM models are no longer treated as GSEM via `MxRAMObjective`.
-* FIXED: `tmx_show.MxModelGSEM` defaults to `A`, residual `S`, `data.S`, `data.V` (LDSC cov / sampling cov in `observedStats`). Bare `"V"` is not a RAM matrix.
-* FIXED: `umxCompare` / `xmu_compare_WLS` use GSEM DWLS chi-square only for `MxModelGSEM`. `numObs > 50000` no longer routes ordinary WLS onto the genomic track.
-* FIXED: `umxGSEM` string parse uses a PD identity named by traits, not raw `S`. WLS still gets the real (possibly smoothed) `S`/`V`.
-* CHANGED: `umx_yj_wide_twin_data()` uses `car::powerTransform` / `yjPower` (Yeo-Johnson). Dropped Suggests `bestNormalize` (and its tidymodels-sized dependency tree).
-* CHANGED: `fin_tax_FIF()` applies FDR to opening equity **plus** assets bought with the loan (anti-avoidance / whole-pile). Neutral loan is \(L/E = ft / (r - i(1-t) - ft)\). Prints loan/assets; plot LTV is loan/opening.
-* SAFE: `inst/developer/GenomicSEM` (toy SNP subsets, developer tests) is `.Rbuildignore`d; tutorial files come from `umxGSEM_dl_tutorial_files()`, not the CRAN tarball.
-* SAFE: R CMD check — `mxFamily` via `get0` in `umxACE_GLM` / `umxRAM_GLM` (GenomicMx-only; not an OpenMx import). `umxPlot` imports ggplot2 `.data`.
-
-## umx 5.00.5 
-* Date: 2026-07-20 R 4.6.0
+# Releases
+## umx 4.80.0: Over *80* new features, fixes, and improvements! 
+* Date: 2026-10-12 R 4.6.1
+* IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string, `Timothy C. Bates`.
+* BREAKING: Helpers and main functions use modern WLS path only (hard refuse misleading name `"acov"`).
 * NEW: `umxACE_DE` double-entry ID: overwrite Paras Mehta - avoids forcing continuous trait variance to 1. All DE pairs release binary `Vtot==1`, share free cont/cens means; `fixCensorThresholds` fixes thresh at known cut or leaves thresh free (cut estimated in data units).
-* FIXED: multi-DE Cholesky zeroed entire cens **columns** (phantom free factors);
-* FIXED: `umxSummary`/`plot` use cont factor cols not `1:nKeep`;
-* FIXED: summary hard-stops on failed/unfitted models;
-* TESTS: tests cover two DE pairs free+fixed.
-* IMPROVED: `umx_make_double_entry_data` stores `attr(*, "umxDoubleEntry")` (cut/side/fixable); left-censor levels are `c("censored","observed")` with censored state assigned **by name** (not `levels[2]`). Free-threshold models may see thresh sign/direction change; default still free thresh.
-* NEW: `umx_tutorials` to let users list and open package vignettes interactively.
+* NEW: `umxMI` runs on multi-group models, and notes/skips un-identified changes.
+* NEW: `umxMI` Vignette inc. multi-group example.
+* NEW: `xmu_make_mxData` subsets modern summary WLS `observedStats` (useWeight / asymCov).
 * NEW: `xmu_gsem_subset_covstruc`
 * NEW: `umxGSEM_std` function to standardize GSEM S and V matrices (Delta method) and scale intercepts.
 * NEW: `umxSummary` for covstruc/`mxData` Nice for understanding the new covstruc format from built in Psych_LDSC
 * NEW: `mxRAM` now emits topologically sorted models automatically (great for optimizer, esp with hard models!)
-* NEW: LDSC object for GSEM with dimnames on `S`, `I`, `V`, and `N`.
 * NEW: `umxGSEM_label_ldsc()` labels GenomicSEM-style lists (`S`/`V`/`I`/`N`) with OpenMx residual names (`var_*` / `poly_*_*`).
 * NEW: `umxGSEM()` fits one model to LDSC S/V via modern OpenMx.
 * NEW: `umxGSEM()`Accepts lavaan/umx strings OR `umxRAM`/`mxModel` structures.
 * NEW: `umxGSEM_sumstats()` allele-align GWAS files to a 1000G ref (`baseDir` for basenames).
 * NEW: `umxGSEM_GWAS()` per-SNP expand of S/V, DWLS fit, table of factor~SNP effects.
 * NEW: `umxGSEM_sim_snps()` fake `beta.*`/`se.*` table for `umxGSEM_GWAS()` smoke (not real GWAS).
+* NEW: `umxACE_DE` double-entry ACE model for censored data.
+* NEW: `umxLISREL` make LISREL Models!
+* NEW: `plot` supports MxLISRELModels
+* NEW: `xmu_standardize_LISREL` standardize LISREL models.
+* NEW: LDSC object for GSEM with dimnames on `S`, `I`, `V`, and `N`.
 * NEW: Toy 1k-SNP SCZ/BIP/MDD + 1000G subset via `umxGSEM_dl_tutorial_files()` (not a `data()` object; munge/GWAS smoke only).
 * NEW: Built-in ldsc data("Psych_LDSC") data("Anthro_LDSC")
 * NEW: vignettes for WLS, umxRAM robust SEs, and GSEM!
-* NEW: comprehensive test suite!
+* NEW: `umx_scale_reliabilities` accumulates the reliabilities computed across calls to `umx_score_scale()` as markdown table.
+* NEW: `umxMeasurementInvariance` runs configural/metric/scalar/strict multi-group CFA sequences, returns comparison tables
+* NEW: `umxGxE` handles ordinal DVs
+* NEW: `umxPlotCP` Show CIs (or SEs via mxSE)
+* NEW: `umxPlotIP` Show CIs (or SEs via mxSE)
+* IMPROVED: `umxCompare`: constraints affecting df now noted for user!
+* IMPROVED: `umx_make_double_entry_data` stores `attr(*, "umxDoubleEntry")` (cut/side/fixable); left-censor levels are `c("censored","observed")` with censored state assigned **by name** (not `levels[2]`). Free-threshold models may see thresh sign/direction change; default still free thresh.
+* NEW: `umx_tutorials` to let users list and open package vignettes interactively.
+* IMPROVED: `umxCompare` / `umxSummary` WLS + Satorra-Bentler 2010 / robust metrics notes for GSEM.
+* IMPROVED: comprehensive test suite!
 * IMPROVED: `umxRun` shows fit change for run models. messages distinguish WLS Chi-Square vs -2LL.
 * IMPROVED: `umxStart` values are MUCH better.
 * IMPROVED: `umxParan` takes cov input (and n)
@@ -57,60 +45,71 @@
 * IMPROVED: `vignette` WLS example code, notes on misspecification, formatting).
 * IMPROVED: `umxRAM` now adds the fixes means for binary vars at 0 when adding these for a wayward user doing WLS with raw data.
 * IMPROVED: `umxRAM` now shows the user the correct mxPath to add for WLS means.
-
-## umx 4.90.0 
-* Date: 2026-07-20 R 4.6.0
-* NEW: `umxMI` runs on multi-group models, and notes/skips un-identified changes.
-* NEW: `umxMI` Vignette inc. multi-group example.
-* IMPROVED: Helpers and main functions use modern WLS path only (hard refuse misleading name `"acov"`).
-* IMPROVED: `umxCompare` / `umxSummary` WLS + Satorra-Bentler 2010 / robust metrics notes for GSEM.
-* NEW: `xmu_make_mxData` subsets modern summary WLS `observedStats` (useWeight / asymCov).
-* NEW: Lots more `tests/testthat.R`
-
-# Releases
-
-## umx 4.80.0
-* Date: 2026-06-08 R 4.6.0
-* NEW: `umxACE_DE` double-entry ACE model for censored data.
-* NEW: `umxLISREL` make LISREL Models!
-* NEW: `plot` supports MxLISRELModels
-* NEW: `xmu_standardize_LISREL` standardize LISREL models.
 * IMPROVED: `umx_make("dev")` will install development version of umx for user. 
 * IMPROVED: `umx_aggregate` support multiple DVs and output='string' for easier paste into procedure.
-* SAFE: `umxModify` now validates labels and suggests fixes from similar names if not found. Prevents silent failures when calling omxSetParameters.
-* SAFE: `umxRAM` Validate dot items & fix loop with clearer error messages.
-* SAFE: `umx_paste_names` usage to use suffixes.
-* Refactor: financial utils
-
-## umx 4.70.0
-* Date: 2026-05-20 R 4.6.0
-* NEW: `umxMeasurementInvariance` runs configural/metric/scalar/strict multi-group CFA sequences, returns comparison tables
-* NEW: `umxGxE` handles ordinal DVs
-* NEW: `umxPlotCP` Show CIs (or SEs via mxSE)
-* NEW: `umxPlotIP` Show CIs (or SEs via mxSE)
-* FIXED: `umxSuperModel` handles more complex nested models.
 * IMPROVED: `umxRun` passes intervals argument through to `xmu_safe_run_summary`
 * IMPROVED: `umxSummary` now robust to models that lack standard fit indices.
 * IMPROVED: `umxSummarizeTwinData` add a sex parameter, print mean age with SD, M/F counts, 95% CIs for correlations.
 * IMPROVED: `umxDoC` Better mean starts
 * IMPROVED: `libs` now works with symbols as well as quoted strings
 * IMPROVED: `umx_msg` Refactored to improve debugging output and robustness
-* IMPROVED: `umx_make`Refactored to normalize package path, tidy function arguments, and use pkgPath throughout
+* IMPROVED: `umx_make`Refactored to normalize package path, tidy function arguments, and use pkgPath throughout.
+* IMPROVED: `umxPlotPredict` now locates "r= xx" string automatically.
+* IMPROVED: `umxAPA` has tabular output for lm etc.
+* IMPROVED: `xmu_topo_sort` documented (used to aid umxRAM optimization)
+* IMPROVED: `umx_cor` can take a formula
+* CHANGED: `fin_tax_FIF()` applies FDR to opening equity **plus** assets bought with the loan. Neutral loan is $L/E = ft / (r - i(1-t) - ft)$. Prints loan/assets; plot LTV is loan/opening.
+* BETA: `umxGSEM_ldsc()` calls OpenMx `imxLDSC` on munged `.sumstats.gz` and returns a labeled covstruc (`var_*` / `poly_*_*`) for [umxGSEM()].
+* BETA: `umxGSEM_dl_tutorial_files()`
+    * Downloads the IBG/GenomicSEM ~45 MB tutorial pack (1k-SNP SCZ/BIP/MDD, 1000G subset, `w_hm3.snplist`, `eur_w_ld_chr/`) into `tools::R_user_dir("umx", "data")/GSEM_tutorial`.
+    * Production HapMap3 / Alkes LD scores / 1000G plink are not auto-fetched.
+* BETA: `umxACE_GLM` Cholesky on `mxFitFunctionGLM` (`nVar`-general; MZ Laplace dimension `4 * nVar`). 3-trait Poisson recovers `a` diagonals / `a_r2c1` on eta. `plot()` / `umxPlotACE_GLM` is the compact a/c/e diagram (printed e is chol(ee'+D)).
+	* Binomial `e` diagonal fixed at 1 (scale). `trials=` / per-row `n` columns are not implemented (Bernoulli only; no beta-binomial).
+	* Poisson recovered a,c,e on eta. Hessian/SEs left off: n=50 Poisson ACE Hessian not PD (SEs NA); n=200 SEs finite but a/c SEs ~1. Family-score SEs: `mxComputeOnce('fitfunction', 'information', 'meat')` then `mxComputeStandardError()`. 
+	* Poisson ACE starts A/E diagonals at sqrt(0.8)/sqrt(0.2) (C at 0.2). Free ACE Cholesky diagonals have `lbound = 1e-4`.
+	* Gamma / inverse Gaussian leftover (shape / lambda) is fixed at 1 (`phi = 1/theta`) so it does not collide with `e`. Documented as not for ACE (trial-level RT / first-passage; twin ACE is one phenotype per person).
+	* Extra-Gaussian `e` Cholesky kept (unique covariance).
+	* `umxSummaryACE_GLM` uses `E = ee' + D` (`D = 1` probit, `pi^2/3` logit).
+	* `umxSummaryACE_GLM` bivariate prints `rA`, `rC`, `rE = cov2cor(E_total)` (unique correlation diluted by leftover; `rA` is not).
+* FIXED: `umxCompare` no longer asks `umx_is_MxModel()` whether its comparison list is one model. Avoids "set listOK = TRUE" print
+* FIXED: `umxCompare` / `xmu_compare_WLS` use GSEM DWLS chi-square only for `MxModelGSEM`. `numObs > 50000` no longer routes ordinary WLS onto the genomic track.
+* FIXED: `umxGSEM_munge` maps columns per file (tutorial BIP `snpid`/`pval` vs SCZ `SNP`/`P`). `\dontrun` example uses `umxGSEM_dl_tutorial_files()`.
+* FIXED: `umx_is_GSEM()` is TRUE only for class `MxModelGSEM`. Ordinary RAM models are no longer treated as GSEM via `MxRAMObjective`.
+* FIXED: `tmx_show.MxModelGSEM` defaults to `A`, residual `S`, `data.S`, `data.V` (LDSC cov / sampling cov in `observedStats`). Bare `"V"` is not a RAM matrix.
+* FIXED: `umxGSEM` string parse uses a PD identity named by traits, not raw `S`. WLS still gets the real (possibly smoothed) `S`/`V`.
+* FIXED: multi-DE Cholesky zeroed entire cens **columns** (phantom free factors);
+* FIXED: `umxSummary`/`plot` use cont factor cols not `1:nKeep`;
+* FIXED: summary hard-stops on failed/unfitted models;
+* FIXED: `umxSuperModel` handles more complex nested models.
 * FIXED: Package testing on Github build working!
+* FIXED: geometric and harmonic mean NA handling, inc. in weights
+* TESTS: tests cover two DE pairs free+fixed.
+* MISC: `umx_tail()` prints the `n` most extreme rows on a column. `what` is `high`, `low`, `both`, or `abs` (furthest from the median). Markdown by default; `report = "html"` opens the [umx_print()] table.
+* DEV: `gh_message_search()` lists commits whose message matches a regex, newest first, with the GitHub commit page. `open = 1` shows that row in the browser. Part of full git support.
+* ROBUSTNESS: `umx_yj_wide_twin_data()` uses `car::powerTransform` / `yjPower` (Yeo-Johnson). Dropped Suggests `bestNormalize` (and its large dependency tree).
+* ROBUSTNESS: Lots more `tests/testthat.R`
+* SAFE: `inst/developer/GenomicSEM` (toy SNP subsets, developer tests) is `.Rbuildignore`d; tutorial files come from `umxGSEM_dl_tutorial_files()`, not the CRAN tarball.
+* SAFE: R CMD check — `mxFamily` via `get0` in `umxACE_GLM` / `umxRAM_GLM` (GenomicMx-only). `umxPlot` imports ggplot2 `.data`.
+* SAFE: `umxModify` now validates labels and suggests fixes from similar names if not found. Prevents silent failures when calling omxSetParameters.
+* SAFE: `umxRAM` Validate dot items & fix loop with clearer error messages.
+* SAFE: `umx_paste_names` usage to use suffixes.
+* Refactor: financial utils
 * MINOR: rename several financial functions to clarify intent
+
 
 ## umx 4.65.0
 * Date: 2026-05-20 R 4.6.0
 * NEW: `umx_log_wide_twin_data`
 * NEW: `umx_yj_wide_twin_data`
-* NEW: `fin_option` teaching about options
-* NEW: `fin_StockCAGR ` compute CAGR from stock feed
-* NEW: `fin_carryCost ` compute the rent vs. invest cost of shelter via carry cost concept
+* OFFTOPIC: `fin_option` teaching about options
+* OFFTOPIC: `fin_StockCAGR ` compute CAGR from stock feed
+* OFFTOPIC: `fin_carryCost ` compute the rent vs. invest cost of shelter via carry cost concept
 * Minor:  clean up non Ascii characters for cran
 
 ## umx 4.5.0
 * October 2025 R 4.5.0
 * REMOVED: dependency on hrbrthemes
+
 ## umx 4.4.0
 * August 2025 R 4.5.0
 * NEW: `umx_wide4lmer` make data wide without having to understand the arcane reshape symbology

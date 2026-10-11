@@ -162,7 +162,6 @@ To create Cholesky-pattern connections:
 \verb{umxPath(Cholesky = c("A1", "A2"), to c("var1", "var2"))}
 }
 \examples{
-
 # ==========================================
 # = Examples of each path type, and option =
 # ==========================================
@@ -247,9 +246,7 @@ plot(m1)
 }
 }
 \references{
-\itemize{
-\item \url{https://tbates.github.io}
-}
+\url{https://tbates.github.io}
 }
 \seealso{
 \itemize{

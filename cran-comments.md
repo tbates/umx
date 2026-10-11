@@ -1,6 +1,6 @@
 ## Changes
-- Version jump in minor (submitted: 4.70.0, existing: 4.65.0) is intentional.
 - Significant changes to work with new genomics and WLS modelling features.
+- Version jump (submitted: 4.80.0, existing: 4.65.0) is intentional.
 - Possibly misspelled words in DESCRIPTION are correct: Araujo, CLPM, DoC, de
 
 ## Test environments
