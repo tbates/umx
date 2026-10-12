@@ -253,6 +253,34 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 # = Fit and Reporting Helpers =
 # =============================
 
+#' Akaike weights for a set of models
+#'
+#' @description
+#' `aic_weights` converts a vector of AIC values into Akaike weights: the conditional probability that each model is the best in the set, given the data and the candidate models (Wagenmakers and Farrell, 2004).
+#'
+#' @details
+#' Weights are computed from AIC differences relative to the best model in the set:
+#'
+#' \deqn{w_i = \frac{\exp(-\Delta_i/2)}{\sum_j \exp(-\Delta_j/2)}, \quad \Delta_i = \mathrm{AIC}_i - \min(\mathrm{AIC})}
+#'
+#' The best model has \eqn{\Delta = 0} and therefore the largest weight. Weights sum to 1. A model 2 AIC units worse than the best has a likelihood ratio of \eqn{\exp(-1) \approx 0.37} relative to it, before normalisation across the set. The result is a statement about this candidate set only, not about the absolute probability that a model is true.
+#'
+#' @param x Numeric vector of AIC values, one per model. `NA` values are not dropped.
+#' @return Numeric vector of weights, the same length as `x`, summing to 1.
+#' @export
+#' @family Reporting Functions
+#' @seealso [umxWeightedAIC()], [AIC()]
+#' @references Wagenmakers, E. J., and Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin & Review*, **11**, 192-196. \doi{10.3758/BF03206482}
+#' @md
+#' @examples
+#' aic_weights(c(100, 102, 110))
+#' # best model, 2 AIC worse, 10 AIC worse
+aic_weights <- function(x) {
+  x = as.numeric(x)
+  d = exp(-(x - min(x)) / 2)
+  d / sum(d)
+}
+
 #' AIC weight-based conditional probabilities.
 #' @description
 #' Returns the best model by AIC, and computes the probabilities 
@@ -263,10 +291,10 @@ umxDiagnose <- function(model, tryHard = FALSE, diagonalizeExpCov = FALSE){
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @seealso - [AIC()]
-#' @references Wagenmakers E.J., Farrell S. (2004), 192-196. AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \doi{10.3758/bf03206482}.
+#' @references Wagenmakers E.J., Farrell S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \doi{10.3758/bf03206482}.
 #' @examples
-#' l1 = lm(mpg~ wt + disp, data = mtcars)
-#' l2 = lm(mpg~ wt, data = mtcars)
+#' l1 = lm(mpg ~ wt + disp, data = mtcars)
+#' l2 = lm(mpg ~ wt, data = mtcars)
 #' umxWeightedAIC(models = list(l1, l2))
 umxWeightedAIC <- function(models, digits = 2) {
 	if(inherits(models[[1]], "numeric")){
@@ -294,7 +322,7 @@ umxWeightedAIC <- function(models, digits = 2) {
 		}
 		message(ID, " is the best fitting model according to AIC.")
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model are (for each model you gave me): ",
-			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")		
+			omxQuotes(aic.weights), " Using aic_weights(AIC()).")		
 		
 	}
 	invisible(bestModel)
@@ -389,15 +417,6 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		no_c_no_cem = umxModify(no_c_no_cm , update = "em_r1c1", name = "No_c_no_ce_mod"    , tryHard= tryHard)
 		no_c_no_mod = umxModify(no_c_no_cem, update = "am_r1c1", name = "No_c_no_moderation", tryHard= tryHard)
 
-		# if("testFor quad11 in parameters"){
-		# 	no_sq_mean  = umxModify(noACEmod, update = "quad11" , name = "No_mod_no_quad_mean", tryHard= tryHard)
-		# 	no_lin_mean = umxModify(noACEmod, update = "lin11"  , name = "No_mod_no_lin_mean" , tryHard= tryHard)
-		# 	nomeans     = umxModify(noACEmod, regex = "lin|quad", name = "No_mod_no_means_mod", tryHard= tryHard)
-		# } else {
-		# 	# likely has non-equal moderators don't bother trying to drop
-		# 	# betaSelf and betaCoTwin they are almost certainly necessary
-		# }
-
 		comparisons = c(
 			noAmod, noCmod, noEmod, noACEmod,
 			no_a_no_am, no_c_no_cm, no_c_no_cem,
@@ -423,7 +442,7 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		aic.weights = round(aic_weights(AIClist), 2)
 		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
 			omxQuotes(namez(modelList)), " respectively are: ",
-			omxQuotes(aic.weights), " Using MuMIn::Weights(AIC())."
+			omxQuotes(aic.weights), " Using aic_weights(AIC())."
 		)
 		if(intervals){
 			bestModel = mxRun(bestModel, intervals = intervals)
@@ -554,7 +573,7 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 		aic.weights = round(aic_weights(AIC(ACE, CE, AE)[,"AIC"]), 2)
 		aic.names   = namez(c(ACE, CE, AE))
 	}
-	message("Conditional AIC probability {Wagenmakers, 2004, 192-196} using MuMIn::Weights(AIC()) indicated relative model support for ", 
+	message("Conditional AIC probability {Wagenmakers, 2004, 192-196} using aic_weights(AIC()) indicated relative model support for ", 
 		omxQuotes(aic.names), " respectively as: ", omxQuotes(aic.weights))
 		message(paste0(aic.names," (", aic.weights, "%)"))
 	if(intervals){
