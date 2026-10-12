@@ -77,3 +77,11 @@ test_that("sitrep still reminds when CRAN is unreachable", {
 		}
 	)
 })
+
+test_that("umx_make never silences warnings in the release path", {
+	# Oct 2026: a withCallingHandlers(muffleWarning) here hid the devtools::release()
+	# deprecation warning AND every lifecycle deprecation raised during check. Gone on purpose.
+	body <- paste(deparse(umx_make), collapse = "\n")
+	expect_false(grepl("muffle", body, fixed = TRUE))
+	expect_false(grepl("withCallingHandlers", body, fixed = TRUE))
+})

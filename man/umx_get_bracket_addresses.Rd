@@ -19,7 +19,7 @@ umx_get_bracket_addresses(mat, free = NA, newName = NA)
 }
 }
 \description{
-Sometimes you want these :-) This also allows you to change the matrix name: useful for using mxMatrix addresses in an mxAlgebra.
+Sometimes you want these. Also allows you to change the matrix name: useful for using \code{mxMatrix} addresses in an \code{mxAlgebra}.
 }
 \examples{
 

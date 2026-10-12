@@ -36,7 +36,6 @@ Imports:
 	MASS,
 	Matrix,
 	methods,
-	MuMIn,
 	mvtnorm,
 	nlme,
 	openxlsx,
