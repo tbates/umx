@@ -570,68 +570,107 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' Detect number of CPU cores (including Performance cores)
 #'
 #' Detects the number of cores on the local machine. On hybrid architectures
-#' (like Apple Silicon or Intel Alder Lake+), it prioritizes detecting only 
+#' (like Apple Silicon or Intel Alder Lake+), it prioritizes detecting only
 #' Performance (P) cores to avoid E-core bottlenecks in parallel loops.
+#'
+#' A detector, not a decider: every probe is guarded, so this always returns a
+#' positive integer and never errors — worst case it falls back to
+#' [parallel::detectCores()].
+#'
+#' Method: on macOS (Apple Silicon), `hw.perflevel0` via sysctl — plus
+#' `hw.perflevel1` on M5 Pro/Max & M6, where perflevel0 holds the new "Super"
+#' tier (h/t Brian Ripley, CRAN), so fast cores = Super + Performance. On Linux
+#' there is no sysfs P-core flag, so P-cores are the online cores whose max
+#' frequency is the highest on the box (true for Intel hybrid and ARM
+#' big.LITTLE; degrades to all cores on homogeneous machines).
 #'
 #' @param logical Whether to count logical cores (hyperthreaded) or physical cores. Default is FALSE (physical).
 #' @param p_cores Whether to prioritize detecting Performance (P) cores only on hybrid architectures. Default is TRUE.
 #' @return Integer count of cores.
 #' @export
 #' @family Get and set
-#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
 #' umx_detect_cores() # physical cores (P-cores if hybrid)
 #' umx_detect_cores(logical = TRUE, p_cores = FALSE) # all logical cores
-umx_detect_cores <- function(logical = FALSE, p_cores = TRUE) {
-	# Default fallback to standard physical cores
-	fallback <- tryCatch(parallel::detectCores(logical = logical), error = function(e) 1)
-	if (is.na(fallback)) fallback <- 1
+umx_detect_cores = function(logical = FALSE, p_cores = TRUE) {
+	umx_check(logical %in%	c(TRUE, FALSE), "stop", "logical must be TRUE or FALSE")
+	umx_check(p_cores %in%	c(TRUE, FALSE), "stop", "p_cores must be TRUE or FALSE")
 
-	if (p_cores) {
-		# 1. macOS (Apple Silicon & hybrid Intel)
-		if (Sys.info()["sysname"] == "Darwin") {
-			res <- suppressWarnings(system("sysctl -n hw.perflevel0.physicalcpu", intern = TRUE, ignore.stderr = TRUE))
-			if (length(res) > 0) {
-				val <- as.integer(res)
-				if (!is.na(val) && val > 0) return(val)
-			}
-		}
+	# Safe fallback: whatever R itself can see; never NA, never < 1, never an error
+	fallback = tryCatch(parallel::detectCores(logical = logical), error = function(e) 1L)
+	if (is.na(fallback) || fallback < 1) fallback = 1L
 
-		# 2. Linux (Intel hybrid & ARM big.LITTLE architectures)
-		if (Sys.info()["sysname"] == "Linux") {
-			if (file.exists("/sys/devices/system/cpu/cpu_core/cpus")) {
-				p_cores_count <- tryCatch({
-					cpu_range <- readLines("/sys/devices/system/cpu/cpu_core/cpus", warn = FALSE)
-					parts <- strsplit(cpu_range, ",")[[1]]
-					count <- 0
-					for (part in parts) {
-						if (grepl("-", part)) {
-							rng <- as.integer(strsplit(part, "-")[[1]])
-							count <- count + (rng[2] - rng[1] + 1)
-						} else {
-							count <- count + 1
-						}
-					}
-					if (count > 0) count else NULL
-				}, error = function(e) NULL)
-				if (!is.null(p_cores_count)) return(p_cores_count)
-			}
+	# macOS probe as a closure: early return()s stay local, and the outer tryCatch
+	# turns any surprise into NULL. The sysctl probe itself can never throw:
+	# launch failure, unknown keys and unparsable output all degrade to NA.
+	macos_p_cores = function() {
+		sysctl_int = function(key) {
+			res = tryCatch(suppressWarnings(system(paste("sysctl -n", key), intern = TRUE, ignore.stderr = TRUE)), error = function(e) character(0))
+			if (!length(res)) return(NA_integer_)
+			val = suppressWarnings(as.integer(res[[1]]))
+			if (is.na(val)) NA_integer_ else val
 		}
+		kind = if (logical) "logicalcpu" else "physicalcpu"
+		p0 = sysctl_int(paste0("hw.perflevel0.", kind))
+		if (is.na(p0) || p0 < 1) return(NULL) # no perflevels: Intel Mac or unknown box
+		# Three perflevels = M5 Pro/Max or M6, where level 0 is the "Super" tier:
+		# fast cores are Super + Performance (per Brian Ripley, CRAN)
+		if (!is.na(sysctl_int("hw.perflevel2.physicalcpu"))) {
+			p1 = sysctl_int(paste0("hw.perflevel1.", kind))
+			if (!is.na(p1) && p1 > 0) return(p0 + p1)
+		}
+		return(p0)
 	}
 
+	# Linux probe as a closure. No sysfs flag marks P-cores, so use max frequency:
+	# on Intel hybrid and ARM big.LITTLE the P-cores are the ones clocked highest.
+	linux_p_cores = function() {
+		cpu_dirs = list.dirs("/sys/devices/system/cpu", recursive = FALSE, full.names = TRUE)
+		cpu_dirs = grep("/cpu[0-9]+$", cpu_dirs, value = TRUE)
+		if (!length(cpu_dirs)) return(NULL)
+		online = readLines("/sys/devices/system/cpu/online", warn = FALSE) # e.g. "0-7" or "0-3,8-11"
+		online_ids = integer(0)
+		for (part in strsplit(online, ",", fixed = TRUE)[[1]]) {
+			bounds = suppressWarnings(as.integer(strsplit(part, "-", fixed = TRUE)[[1]]))
+			online_ids = c(online_ids, if (length(bounds) == 2L) seq.int(bounds[1], bounds[2]) else bounds)
+		}
+		cpu_dirs = cpu_dirs[as.integer(sub(".*/cpu", "", cpu_dirs)) %in% online_ids]
+		if (!length(cpu_dirs)) return(NULL)
+		max_freq = vapply(cpu_dirs, function(d) {
+			f = file.path(d, "cpufreq", "cpuinfo_max_freq")
+			if (!file.exists(f)) return(NA_real_)
+			suppressWarnings(as.numeric(readLines(f, warn = FALSE)[1]))
+		}, numeric(1))
+		if (all(is.na(max_freq))) return(NULL) # no frequency info (some VMs/containers)
+		p_dirs = cpu_dirs[!is.na(max_freq) & max_freq == max(max_freq, na.rm = TRUE)]
+		if (logical) return(length(p_dirs))
+		ids = vapply(p_dirs, function(d) {
+			core = file.path(d, "topology", "core_id")
+			pkg  = file.path(d, "topology", "physical_package_id")
+			if (!file.exists(core) || !file.exists(pkg)) return(NA_character_)
+			paste(readLines(pkg, warn = FALSE)[1], readLines(core, warn = FALSE)[1], sep = ":")
+		}, character(1))
+		if (any(is.na(ids))) return(NULL)
+		length(unique(ids))
+	}
+
+	if (p_cores) {
+		sysname = Sys.info()[["sysname"]]
+		if (sysname == "Darwin") {
+			n = tryCatch(macos_p_cores(), error = function(e) NULL)
+			if (!is.null(n)) return(n)
+		}
+		if (sysname == "Linux") {
+			n = tryCatch(linux_p_cores(), error = function(e) NULL)
+			if (!is.null(n)) return(n)
+		}
+	}
 	return(fallback)
 }
 
 #' Set the number of cores your models will use.
 #'
-#' To take advantage of multiple cores
-#' ```R
-#' umx_set_cores()  # Show many cores are currently requested
-#' 5/5 (P-cores / total: 11)
-#' umx_set_cores(3) # Request use of 3 cores
-#' ```
-#'
-#' *note*: This function is smart: it will default to all performance cores
+#' *note*: This function is intelligent: it will default to all performance cores
 #' (low power cores are typically so slow its not worth forcing the power
 #' cores to wait for them.
 #'
@@ -642,23 +681,26 @@ umx_detect_cores <- function(logical = FALSE, p_cores = TRUE) {
 #' @export
 #' @family Get and set
 #' @seealso - [umx_time()]
-#' @references <https://tbates.github.io>,  <https://github.com/tbates/umx>
 #' @examples
+#' \dontrun{
 #' library(umx)
 #' manifests = c("mpg", "disp", "gear")
 #' m1 = umxRAM("ind", data = mxData(mtcars[, manifests], type = "raw"),
 #' 	umxPath(v.m. = manifests)
 #' )
 #' umx_set_cores() # print current value
+#' # 5/5 (P-cores / total: 11)
 #' oldCores = umx_set_cores(silent = TRUE)  # store existing value
 #' umx_set_cores(omxDetectCores()) # set to max
 #' umx_set_cores(-1); umx_set_cores() # set to max (performance cores)
 #' m1 = umx_set_cores(1, m1)  # set m1 usage to 1 core
 #' umx_set_cores(model = m1)  # show new value for m1
 #' umx_set_cores(oldCores)    # reinstate old global value
+#' umx_set_cores(3) # Request use of 3 cores
+#' }
 umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
-	max_p_cores <- umx_detect_cores(p_cores = TRUE)
-	max_all_cores <- omxDetectCores()
+	max_p_cores   = umx_detect_cores(p_cores = TRUE)
+	max_all_cores = omxDetectCores()
 
 	if(is.na(cores)){
 		n = mxOption(model, "Number of Threads") # get the old value
@@ -683,8 +725,6 @@ umx_set_cores <- function(cores = NA, model = NULL, silent = FALSE) {
 	}
 }
 
-#' Set the checkpoint status for a model or global options
-#'
 #' Set the checkpoint status for a model or global options
 #'
 #' @param interval How many units between checkpoints: Default =  1.
