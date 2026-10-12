@@ -10,10 +10,11 @@
 #' Strings may use arbitrary variable names: the sole right-hand-side symbol is
 #' plotted on the horizontal axis, e.g. `"100 - Q"` plots against `Q`. An equation
 #' left-hand side names the vertical axis, e.g. `"P = 100 - Q"` labels the y axis `P`.
-#' When the right-hand side has several symbols and no `x`, name the horizontal
-#' variable with `x`, e.g. `umxPlotFun("P = a*Q + b", x = "Q")`; remaining symbols
-#' must have values where the plot is drawn.
-#' Bind leftover symbols to values as arguments, e.g.
+#' When all but one right-hand-side symbol has a value, the free symbol takes
+#' the horizontal axis automatically, e.g. `umxPlotFun("alice = bob^2+c", c = 5)`
+#' plots against `bob`. Otherwise name the horizontal variable with `x`, e.g.
+#' `umxPlotFun("P = a*Q + b", x = "Q")`; remaining symbols must have values
+#' where the plot is drawn. Bind leftover symbols to values as arguments, e.g.
 #' `umxPlotFun("alice = bob^2+c", x = "bob", c = 5)`.
 #'
 #' @param fun Function(s) to plot. Takes strings like c("3 + sin(x)^2", "cos(x)"), equations like "P = 100 - Q", or function objects.
@@ -25,7 +26,7 @@
 #' @param logX Set to "log" or "log10" to transform x coordinate.
 #' @param logY Set to "log" or "log10" to transform y coordinate.
 #' @param p Optional plot onto which to draw the function(s).
-#' @param x Optional name of the horizontal-axis variable when a string has several right-hand-side symbols and no `x`, e.g. `x = "Q"`.
+#' @param x Optional name of the horizontal-axis variable when a string has several right-hand-side symbols and no `x`, e.g. `x = "Q"`. Not needed when values leave exactly one symbol free.
 #' @param ... Named single-number values for remaining right-hand-side symbols, e.g. `c = 5`. Names matching no plotted symbol warn.
 #' @return A ggplot graph object
 #' @export
@@ -48,6 +49,9 @@
 #'
 #' # Binding leftover symbols to values
 #' umxPlotFun("alice = bob^2+c", x = "bob", c = 5)
+#'
+#' # All-but-one bound: the free symbol takes the axis automatically
+#' umxPlotFun("alice = bob^2+c", c = 5)
 #' }
 #'
 umxPlotFun <- function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL, x = NULL, ...) {
@@ -109,10 +113,16 @@ umxPlotFun <- function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NU
                         stop(paste0("umxPlotFun: x = '", x, "' is not in '", rawString, "'. The variable there is '", xVar, "'."))
                     }
                 } else {
-                    if (is.null(x) || !(x %in% rhsVars)) {
-                        stop(paste0("umxPlotFun: '", rawString, "' contains several variables (", paste(rhsVars, collapse = ", "), ") and no 'x', so I can't tell which goes on the horizontal axis. Either write the horizontal variable as 'x', or name it with x, e.g. umxPlotFun('P = a*Q + b', x = 'Q'). Any other symbols must have values where the plot is drawn."))
-                    }
                     xVar = x
+                    if (is.null(x)) {
+                        unbound = setdiff(rhsVars, names(dotVals))
+                        if (length(unbound) == 1L) {
+                            xVar = unbound # all-but-one bound: the free symbol takes the axis
+                        }
+                    }
+                    if (is.null(xVar) || !(xVar %in% rhsVars)) {
+                        stop(paste0("umxPlotFun: '", rawString, "' contains several variables (", paste(rhsVars, collapse = ", "), ") and no 'x', so I can't tell which goes on the horizontal axis. Either bind every symbol but one to a value (e.g. c = 5) and I will plot the free one, write the horizontal variable as 'x', or name it with x, e.g. umxPlotFun('P = a*Q + b', x = 'Q')."))
+                    }
                 }
                 evalString = paste(deparse(do.call("substitute", list(parse(text = rhsString)[[1]], setNames(list(quote(x)), xVar)))), collapse = "\n")
             }
@@ -162,10 +172,16 @@ umxPlotFun <- function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NU
                             stop(paste0("umxPlotFun: x = '", x, "' is not in '", rawString, "'. The variable there is '", xVar, "'."))
                         }
                     } else {
-                        if (is.null(x) || !(x %in% rhsVars)) {
-                            stop(paste0("umxPlotFun: '", rawString, "' contains several variables (", paste(rhsVars, collapse = ", "), ") and no 'x', so I can't tell which goes on the horizontal axis. Either write the horizontal variable as 'x', or name it with x, e.g. umxPlotFun('P = a*Q + b', x = 'Q'). Any other symbols must have values where the plot is drawn."))
-                        }
                         xVar = x
+                        if (is.null(x)) {
+                            unbound = setdiff(rhsVars, names(dotVals))
+                            if (length(unbound) == 1L) {
+                                xVar = unbound # all-but-one bound: the free symbol takes the axis
+                            }
+                        }
+                        if (is.null(xVar) || !(xVar %in% rhsVars)) {
+                            stop(paste0("umxPlotFun: '", rawString, "' contains several variables (", paste(rhsVars, collapse = ", "), ") and no 'x', so I can't tell which goes on the horizontal axis. Either bind every symbol but one to a value (e.g. c = 5) and I will plot the free one, write the horizontal variable as 'x', or name it with x, e.g. umxPlotFun('P = a*Q + b', x = 'Q')."))
+                        }
                     }
                     evalString = paste(deparse(do.call("substitute", list(parse(text = rhsString)[[1]], setNames(list(quote(x)), xVar)))), collapse = "\n")
                 }

@@ -37,7 +37,7 @@ umxPlotFun(
 
 \item{p}{Optional plot onto which to draw the function(s).}
 
-\item{x}{Optional name of the horizontal-axis variable when a string has several right-hand-side symbols and no \code{x}, e.g. \code{x = "Q"}.}
+\item{x}{Optional name of the horizontal-axis variable when a string has several right-hand-side symbols and no \code{x}, e.g. \code{x = "Q"}. Not needed when values leave exactly one symbol free.}
 
 \item{...}{Named single-number values for remaining right-hand-side symbols, e.g. \code{c = 5}. Names matching no plotted symbol warn.}
 }
@@ -55,10 +55,11 @@ multiple functions are provided.
 Strings may use arbitrary variable names: the sole right-hand-side symbol is
 plotted on the horizontal axis, e.g. \code{"100 - Q"} plots against \code{Q}. An equation
 left-hand side names the vertical axis, e.g. \code{"P = 100 - Q"} labels the y axis \code{P}.
-When the right-hand side has several symbols and no \code{x}, name the horizontal
-variable with \code{x}, e.g. \code{umxPlotFun("P = a*Q + b", x = "Q")}; remaining symbols
-must have values where the plot is drawn.
-Bind leftover symbols to values as arguments, e.g.
+When all but one right-hand-side symbol has a value, the free symbol takes
+the horizontal axis automatically, e.g. \code{umxPlotFun("alice = bob^2+c", c = 5)}
+plots against \code{bob}. Otherwise name the horizontal variable with \code{x}, e.g.
+\code{umxPlotFun("P = a*Q + b", x = "Q")}; remaining symbols must have values
+where the plot is drawn. Bind leftover symbols to values as arguments, e.g.
 \code{umxPlotFun("alice = bob^2+c", x = "bob", c = 5)}.
 }
 \examples{
@@ -78,6 +79,9 @@ umxPlotFun("P = a*Q + b", x = "Q")
 
 # Binding leftover symbols to values
 umxPlotFun("alice = bob^2+c", x = "bob", c = 5)
+
+# All-but-one bound: the free symbol takes the axis automatically
+umxPlotFun("alice = bob^2+c", c = 5)
 }
 
 }

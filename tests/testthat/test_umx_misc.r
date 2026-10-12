@@ -414,6 +414,23 @@ test_that("umxPlotFun recodes arbitrary symbols to x", {
 
 	expect_warning(umxPlotFun("alice = bob^2+c", x = "bob", c = 5, C = 6), "not used")
 	expect_error(umxPlotFun("alice = bob^2+c", x = "bob", c = "hi"), "single numbers")
+
+	# All-but-one bound: the free symbol takes the axis automatically
+	p = umxPlotFun("alice = bob^2+c", c = 5, min = 0, max = 3)
+	expect_equal(p$labels$x, "bob")
+	expect_equal(p$labels$y, "alice")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, d$x^2 + 5)
+
+	p = umxPlotFun(list("alice = bob^2+c"), c = 5, min = 0, max = 3)
+	expect_equal(p$labels$x, "bob")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, d$x^2 + 5)
+
+	# Still ambiguous without x: nothing free, or several free
+	expect_error(umxPlotFun("alice = bob^2+c", bob = 2, c = 5), "can't tell")
+	expect_error(umxPlotFun("P = a*Q + b", a = 1), "can't tell")
+	expect_error(umxPlotFun("alice = bob^2+c", x = "nothere", c = 5), "can't tell")
 })
 
 
