@@ -360,6 +360,48 @@ test_that("umx_tail returns the requested extreme rows", {
 	expect_error(umx_tail(df, wag = "score", face = "id", n = 2, report = "markdown"), regexp = NA)
 })
 
+test_that("umxPlotFun recodes arbitrary symbols to x", {
+	p = umxPlotFun("P = 100 - Q", min = 0, max = 10)
+	expect_equal(p$labels$x, "Q")
+	expect_equal(p$labels$y, "P")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, 100 - d$x)
+
+	p = umxPlotFun("100 - Q", min = 0, max = 4)
+	expect_equal(p$labels$x, "Q")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, 100 - d$x)
+
+	p = umxPlotFun(list("P = 100 - Q"), min = 0, max = 4)
+	expect_equal(p$labels$x, "Q")
+	expect_equal(p$labels$y, "P")
+
+	p = umxPlotFun("y = x^2", min = 0, max = 3)
+	expect_equal(p$labels$y, "y")
+	expect_equal(p$labels$x, "X value")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, d$x^2)
+
+	expect_error(umxPlotFun("P = a*Q + b"), regexp = "x = 'Q'")
+	assign("plotFun_a", 2, envir = .GlobalEnv)
+	assign("plotFun_b", 10, envir = .GlobalEnv)
+	on.exit(rm(list = c("plotFun_a", "plotFun_b"), envir = .GlobalEnv), add = TRUE)
+	p = umxPlotFun("P = plotFun_a*Q + plotFun_b", x = "Q", min = 0, max = 5)
+	expect_equal(p$labels$x, "Q")
+	expect_equal(p$labels$y, "P")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, 2 * d$x + 10)
+
+	p = umxPlotFun("P = 100 - Q", xlab = "time", ylab = "profit")
+	expect_equal(p$labels$x, "time")
+	expect_equal(p$labels$y, "profit")
+
+	p = umxPlotFun(c("P = 100 - Q", "R = 50 - S"), min = 0, max = 5)
+	expect_equal(p$labels$x, "X value")
+
+	expect_error(umxPlotFun("P = 100 - Q", x = "Z"), regexp = "not in")
+})
+
 
 
 

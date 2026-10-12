@@ -13,11 +13,12 @@ umxPlotFun(
   title = NULL,
   logY = c("no", "log", "log10"),
   logX = c("no", "log", "log10"),
-  p = NULL
+  p = NULL,
+  x = NULL
 )
 }
 \arguments{
-\item{fun}{Function(s) to plot. Takes strings like c("3 + sin(x)^2", "cos(x)") or function objects.}
+\item{fun}{Function(s) to plot. Takes strings like c("3 + sin(x)^2", "cos(x)"), equations like "P = 100 - Q", or function objects.}
 
 \item{min}{x-range min.}
 
@@ -34,6 +35,8 @@ umxPlotFun(
 \item{logX}{Set to "log" or "log10" to transform x coordinate.}
 
 \item{p}{Optional plot onto which to draw the function(s).}
+
+\item{x}{Optional name of the horizontal-axis variable when a string has several right-hand-side symbols and no \code{x}, e.g. \code{x = "Q"}.}
 }
 \value{
 A ggplot graph object
@@ -45,6 +48,13 @@ A wrapper for \code{\link[ggplot2:stat_function]{ggplot2::stat_function()}} that
 Easily plot functions-like sin or x^2-using ggplot. Accepts bare functions,
 strings, or lists of strings/functions. Automatically generates a legend when
 multiple functions are provided.
+
+Strings may use arbitrary variable names: the sole right-hand-side symbol is
+plotted on the horizontal axis, e.g. \code{"100 - Q"} plots against \code{Q}. An equation
+left-hand side names the vertical axis, e.g. \code{"P = 100 - Q"} labels the y axis \code{P}.
+When the right-hand side has several symbols and no \code{x}, name the horizontal
+variable with \code{x}, e.g. \code{umxPlotFun("P = a*Q + b", x = "Q")}; remaining symbols
+must have values where the plot is drawn.
 }
 \examples{
 \dontrun{
@@ -53,6 +63,13 @@ p = umxPlotFun(c("sin(x)", "cos(x)"), max = 2*pi)
 
 # Providing a named list to control legend labels
 umxPlotFun(list(Sine = sin, Cosine = cos), max = 2*pi)
+
+# Arbitrary symbols: Q plots on x, P labels y
+umxPlotFun("P = 100 - Q")
+
+# Several right-hand-side symbols: name the x variable
+a = 2; b = 10
+umxPlotFun("P = a*Q + b", x = "Q")
 }
 
 }
