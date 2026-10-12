@@ -52,7 +52,7 @@ If the population association reflects confounded genes or shared environments,
 then the association in MZ twins will reduce to zero/non-significance.
 
 \if{html}{\figure{discordantCausalPatterns.png}{options: style="width: 50\%;" alt="Figure: Types of confounding"}}
-\if{latex}{\figure{discordantCausalPatterns.pdf}{options: width=7cm}}
+\if{latex}{\figure{discordantCausalPatterns.png}{options: width=7cm}}
 
 The function uses the \code{\link[nlme:lme]{nlme::lme()}} function to compute the effect of the presumed causal variable on the outcome,
 controlling, for mid-family score and with random means model using familyID. e.g.:
@@ -62,7 +62,7 @@ controlling, for mid-family score and with random means model using familyID. e.
 \strong{Example output from \code{umxDiscTwin}}
 
 \if{html}{\figure{DiscTwinsExample.png}{options: style="width: 50\%;" alt="Figure: Causation in Discordant twins"}}
-\if{latex}{\figure{DiscTwinsExample.pdf}{options: width=7cm}}
+\if{latex}{\figure{DiscTwinsExample.png}{options: width=7cm}}
 }
 \examples{
 \dontrun{

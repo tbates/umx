@@ -1945,7 +1945,6 @@ dl_from_dropbox <- function(x, key=NULL){
 #' @export
 #' @family Miscellaneous Stats Functions
 #' @seealso - [umx_r_test()]
-#' @references <https://stats.oarc.ucla.edu/r/dae/logit-regression/>, <https://tbates.github.io>
 #' @examples
 #' oddsratio(grp1 = c(1, 10), grp2 = c(3, 10))
 #' oddsratio(grp1 = 0.111, grp2 = 0.429)
@@ -5947,7 +5946,7 @@ umx_merge_randomized_columns <- function(colNames, df, levels = colNames, newVar
 #'
 #' @details
 #' This is for processing data in which subjects (identified by a `idvar` column, have repeated measures on one or more outcomes.
-#' The goal is to make the data into long format, for passing to functions like [lme4::lmer()].
+#' The goal is to make the data into long format, for passing to functions like `lmer`.
 #' You must: 
 #' 
 #' 1. Set `timevar`. This is a list of the conditions that you repeated. The name becomes a column in the long output. e.g., `list(difficulty = c("easy", "hard"))`

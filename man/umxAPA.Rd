@@ -172,9 +172,6 @@ m1 = cor.test(~ wt1 + wt2, data = tmp)
 umxAPA(m1)
 
 }
-\references{
-\url{https://stats.oarc.ucla.edu/r/dae/logit-regression/}
-}
 \seealso{
 \code{\link[=SE_from_p]{SE_from_p()}}
 

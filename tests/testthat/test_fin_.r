@@ -30,6 +30,3 @@ test_that("fin_* works", {
 	expect_error(fin_stock_justifiedPE(terminalGrowth = 0.12, discountRate = 0.10, yearsHighGrowth = 5), "terminalGrowth")
 	expect_error(fin_stock_justifiedPE(EPS = 0), "EPS must be positive")
 })
-
-
-

@@ -129,7 +129,7 @@ plot(m1, means = FALSE)
 Will create this figure:
 
 \if{html}{\figure{sketch.png}{options: alt="Figure: sketch.png"}}
-\if{latex}{\figure{sketch.pdf}{options: width=7cm}}
+\if{latex}{\figure{sketch.png}{options: width=7cm}}
 }
 \details{
 \strong{WLS}

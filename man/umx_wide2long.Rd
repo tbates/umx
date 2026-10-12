@@ -41,7 +41,7 @@ For twin data, this calls \code{umx_wide2longTwinData(data =data, sep = sep, ver
 }
 \details{
 This is for processing data in which subjects (identified by a \code{idvar} column, have repeated measures on one or more outcomes.
-The goal is to make the data into long format, for passing to functions like \code{\link[lme4:lmer]{lme4::lmer()}}.
+The goal is to make the data into long format, for passing to functions like \code{lmer}.
 You must:
 \enumerate{
 \item Set \code{timevar}. This is a list of the conditions that you repeated. The name becomes a column in the long output. e.g., \code{list(difficulty = c("easy", "hard"))}

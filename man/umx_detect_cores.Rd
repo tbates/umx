@@ -19,12 +19,21 @@ Detects the number of cores on the local machine. On hybrid architectures
 (like Apple Silicon or Intel Alder Lake+), it prioritizes detecting only
 Performance (P) cores to avoid E-core bottlenecks in parallel loops.
 }
+\details{
+A detector, not a decider: every probe is guarded, so this always returns a
+positive integer and never errors — worst case it falls back to
+\code{\link[parallel:detectCores]{parallel::detectCores()}}.
+
+Method: on macOS (Apple Silicon), \code{hw.perflevel0} via sysctl — plus
+\code{hw.perflevel1} on M5 Pro/Max & M6, where perflevel0 holds the new "Super"
+tier (h/t Brian Ripley, CRAN), so fast cores = Super + Performance. On Linux
+there is no sysfs P-core flag, so P-cores are the online cores whose max
+frequency is the highest on the box (true for Intel hybrid and ARM
+big.LITTLE; degrades to all cores on homogeneous machines).
+}
 \examples{
 umx_detect_cores() # physical cores (P-cores if hybrid)
 umx_detect_cores(logical = TRUE, p_cores = FALSE) # all logical cores
-}
-\references{
-\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 Other Get and set:

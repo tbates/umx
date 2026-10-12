@@ -17,7 +17,7 @@
 #' The following figure shows the ACE model for one variable "x" as a path diagram:
 #' 
 #' \if{html}{\figure{ACEunivariate.png}{options: style="width: 50\%;" alt="Figure: ACE univariate.png"}}
-#' \if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
+#' \if{latex}{\figure{ACEunivariate.png}{options: width=7cm}}
 #'
 #' `umxACE` allows multivariate analyses, and this brings us to the Cholesky part of the model.
 #' 
@@ -26,7 +26,7 @@
 #' factors. The following figure shows the multivariate ACE model for three variables:
 #' 
 #' \if{html}{\figure{ACEmatrix.png}{options: style="width: 50\%;" alt="Figure: ACE matrix.png"}}
-#' \if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
+#' \if{latex}{\figure{ACEmatrix.png}{options: width=7cm}}
 #'
 #' In this ACE model of three phenotypes, the expected variance-covariance matrix of the original data
 #' is the product of each lower Cholesky and its transform (i.e., `A = a %*% t(a)` summed for `A+C+E`.
@@ -808,7 +808,7 @@ umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", fam
 #' The following figure shows how the ACE model with random covariates appears as a path diagram:
 #' 
 #' \if{html}{\figure{ACEcovVarianceModel.png}{options: style="width: 50\%;" alt="Figure: ACEcovVarianceModel.png"}}
-#' \if{latex}{\figure{ACEcovVarianceModel.pdf}{options: width=7cm}}
+#' \if{latex}{\figure{ACEcovVarianceModel.png}{options: width=7cm}}
 #'
 #' 
 #' @param name The name of the model (defaults to"ACE").

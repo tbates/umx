@@ -14,7 +14,8 @@ umxPlotFun(
   logY = c("no", "log", "log10"),
   logX = c("no", "log", "log10"),
   p = NULL,
-  x = NULL
+  x = NULL,
+  ...
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ umxPlotFun(
 \item{p}{Optional plot onto which to draw the function(s).}
 
 \item{x}{Optional name of the horizontal-axis variable when a string has several right-hand-side symbols and no \code{x}, e.g. \code{x = "Q"}.}
+
+\item{...}{Named single-number values for remaining right-hand-side symbols, e.g. \code{c = 5}. Names matching no plotted symbol warn.}
 }
 \value{
 A ggplot graph object
@@ -55,6 +58,8 @@ left-hand side names the vertical axis, e.g. \code{"P = 100 - Q"} labels the y a
 When the right-hand side has several symbols and no \code{x}, name the horizontal
 variable with \code{x}, e.g. \code{umxPlotFun("P = a*Q + b", x = "Q")}; remaining symbols
 must have values where the plot is drawn.
+Bind leftover symbols to values as arguments, e.g.
+\code{umxPlotFun("alice = bob^2+c", x = "bob", c = 5)}.
 }
 \examples{
 \dontrun{
@@ -70,6 +75,9 @@ umxPlotFun("P = 100 - Q")
 # Several right-hand-side symbols: name the x variable
 a = 2; b = 10
 umxPlotFun("P = a*Q + b", x = "Q")
+
+# Binding leftover symbols to values
+umxPlotFun("alice = bob^2+c", x = "bob", c = 5)
 }
 
 }

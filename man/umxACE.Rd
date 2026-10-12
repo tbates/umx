@@ -103,7 +103,7 @@ non-additive genetic effects (D).
 The following figure shows the ACE model for one variable "x" as a path diagram:
 
 \if{html}{\figure{ACEunivariate.png}{options: style="width: 50\%;" alt="Figure: ACE univariate.png"}}
-\if{latex}{\figure{ACEunivariate.pdf}{options: width=7cm}}
+\if{latex}{\figure{ACEunivariate.png}{options: width=7cm}}
 
 \code{umxACE} allows multivariate analyses, and this brings us to the Cholesky part of the model.
 
@@ -112,7 +112,7 @@ from left to right, decomposes the variance in each phenotype into successively 
 factors. The following figure shows the multivariate ACE model for three variables:
 
 \if{html}{\figure{ACEmatrix.png}{options: style="width: 50\%;" alt="Figure: ACE matrix.png"}}
-\if{latex}{\figure{ACEmatrix.pdf}{options: width=7cm}}
+\if{latex}{\figure{ACEmatrix.png}{options: width=7cm}}
 
 In this ACE model of three phenotypes, the expected variance-covariance matrix of the original data
 is the product of each lower Cholesky and its transform (i.e., \code{A = a \%*\% t(a)} summed for \code{A+C+E}.

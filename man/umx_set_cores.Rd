@@ -19,34 +19,27 @@ umx_set_cores(cores = NA, model = NULL, silent = FALSE)
 }
 }
 \description{
-To take advantage of multiple cores
-
-\if{html}{\out{<div class="sourceCode R">}}\preformatted{umx_set_cores()  # Show many cores are currently requested
-5/5 (P-cores / total: 11)
-umx_set_cores(3) # Request use of 3 cores
-}\if{html}{\out{</div>}}
-}
-\details{
-\emph{note}: This function is smart: it will default to all performance cores
+\emph{note}: This function is intelligent: it will default to all performance cores
 (low power cores are typically so slow its not worth forcing the power
 cores to wait for them.
 }
 \examples{
+\dontrun{
 library(umx)
 manifests = c("mpg", "disp", "gear")
 m1 = umxRAM("ind", data = mxData(mtcars[, manifests], type = "raw"),
 	umxPath(v.m. = manifests)
 )
 umx_set_cores() # print current value
+# 5/5 (P-cores / total: 11)
 oldCores = umx_set_cores(silent = TRUE)  # store existing value
 umx_set_cores(omxDetectCores()) # set to max
 umx_set_cores(-1); umx_set_cores() # set to max (performance cores)
 m1 = umx_set_cores(1, m1)  # set m1 usage to 1 core
 umx_set_cores(model = m1)  # show new value for m1
 umx_set_cores(oldCores)    # reinstate old global value
+umx_set_cores(3) # Request use of 3 cores
 }
-\references{
-\url{https://tbates.github.io},  \url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{

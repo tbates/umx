@@ -81,7 +81,7 @@ Estimated main effects (\code{a}, \code{c}, \code{e}) and moderation slopes
 The following figure shows the GxE model as a path diagram:
 
 \if{html}{\figure{GxE.png}{options: style="width: 50\%;" alt="Figure: GxE.png"}}
-\if{latex}{\figure{GxE.pdf}{options: width=7cm}}
+\if{latex}{\figure{GxE.png}{options: width=7cm}}
 }
 \section{Synthetic data and recovery checks}{
 

@@ -37,9 +37,6 @@ oddsratio(grp1 = c(3, 10), grp2 = c(1, 10))
 oddsratio(grp1 = c(3, 10), grp2 = c(1, 10), alpha = .01)
 
 }
-\references{
-\url{https://stats.oarc.ucla.edu/r/dae/logit-regression/}, \url{https://tbates.github.io}
-}
 \seealso{
 \itemize{
 \item \code{\link[=umx_r_test]{umx_r_test()}}

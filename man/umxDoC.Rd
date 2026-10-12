@@ -67,7 +67,7 @@ The following figure shows how the DoC model appears as a path diagram (for two 
 each with three indicators). Note: For pedagogical reasons, only the model for 1 twin is shown, and only one DoC pathway drawn.
 
 \if{html}{\figure{DoC.png}{options: style="width: 50\%;" alt="Figure: Direction of Causation"}}
-\if{latex}{\figure{DoC.pdf}{options: width=7cm}}
+\if{latex}{\figure{DoC.png}{options: width=7cm}}
 }
 \examples{
 \dontrun{

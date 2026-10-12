@@ -47,7 +47,6 @@
 #' @export
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
-#' @references <https://stats.oarc.ucla.edu/r/dae/logit-regression/>
 #' @examples
 #' 
 #' # ========================================
@@ -344,10 +343,10 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 				if(star != "") pStrVec[k] = paste0(pStrVec[k], " ", star)
 		}
 		termW = max(nchar(termVec))
-		bW = max(nchar(bStrVec))
-		loW = max(nchar(loStrVec))
-		hiW = max(nchar(hiStrVec))
-		zW = max(nchar(zStrVec))
+		bW    = max(nchar(bStrVec))
+		loW   = max(nchar(loStrVec))
+		hiW   = max(nchar(hiStrVec))
+		zW    = max(nchar(zStrVec))
 		for (k in seq_along(termVec)) {
 			cat(paste0(format(termVec[k], width = termW, justify = "left"), " log(odds) = ",
 			   format(bStrVec[k], width = bW, justify = "right"),
@@ -358,7 +357,6 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		if(obj$family$family == "binomial"){
 			# https://stats.oarc.ucla.edu/r/dae/logit-regression/
 			cat("\nAs ORs (odds ratios, rather than log(odds)):\n")
-
 
 			model_ORs = exp(coef(obj)) # Odds Ratios OR
 			confOR    = exp(conf)

@@ -34,7 +34,7 @@
 #' 
 #'
 #' \if{html}{\figure{umxEFA.png}{options: style="width: 50\%;" alt="Figure: umxEFA.png"}}
-#' \if{latex}{\figure{umxEFA.pdf}{options: width=7cm}}
+#' \if{latex}{\figure{umxEFA.png}{options: width=7cm}}
 #' 
 #' You can request `scores` from the model. Unlike factanal, these can cope with missing data.
 #' 
@@ -317,7 +317,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' The following figure shows how the MR model appears as a path diagram:
 #' 
 #' \if{html}{\figure{TSLS.png}{options: style="width: 50\%;" alt="Figure: Mendelian Randomization analysis.png"}}
-#' \if{latex}{\figure{TSLS.pdf}{options: width=7cm}}
+#' \if{latex}{\figure{TSLS.png}{options: width=7cm}}
 #' @param formula The structural equation to be estimated (default = Y ~ X). A constant is implied if not explicitly deleted.
 #' @param instruments A one-sided formula specifying instrumental variables (default = qtl).
 #' @param data Frame containing the variables in the model.

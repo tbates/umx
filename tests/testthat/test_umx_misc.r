@@ -400,6 +400,20 @@ test_that("umxPlotFun recodes arbitrary symbols to x", {
 	expect_equal(p$labels$x, "X value")
 
 	expect_error(umxPlotFun("P = 100 - Q", x = "Z"), regexp = "not in")
+
+	p = umxPlotFun("alice = bob^2+c", x = "bob", c = 5, min = 0, max = 3)
+	expect_equal(p$labels$x, "bob")
+	expect_equal(p$labels$y, "alice")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, d$x^2 + 5)
+
+	p = umxPlotFun(list("alice = bob^2+c"), x = "bob", c = 5, min = 0, max = 3)
+	expect_equal(p$labels$y, "alice")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_equal(d$y, d$x^2 + 5)
+
+	expect_warning(umxPlotFun("alice = bob^2+c", x = "bob", c = 5, C = 6), "not used")
+	expect_error(umxPlotFun("alice = bob^2+c", x = "bob", c = "hi"), "single numbers")
 })
 
 

@@ -22,7 +22,7 @@
 #' **Simplex path diagram**:
 #' 
 #' \if{html}{\figure{simplex.png}{options: style="width: 50\%;" alt="Figure: simplex.png"}}
-#' \if{latex}{\figure{simplex.pdf}{options: width=7cm}}
+#' \if{latex}{\figure{simplex.png}{options: width=7cm}}
 #'
 #' **Data Input**
 #' Currently, the umxSimplex function accepts only raw data.
