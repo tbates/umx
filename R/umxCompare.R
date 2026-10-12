@@ -398,7 +398,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 			cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
 			cat("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
 				omxQuotes(namez(modelList)), " respectively are: ", 
-				omxQuotes(aic.weights), " Using MuMIn::Weights(AIC()).")	
+				omxQuotes(aic.weights), " Using aic_weights(AIC()).")	
 		}
 		
 	}
