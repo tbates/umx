@@ -1,6 +1,6 @@
 ## Changes
-- Significant changes to work with new genomics and WLS modelling features.
-- Version jump (submitted: 4.80.0, existing: 4.65.0) is intentional.
+- Removed errant MuMIn import from DESCRIPTION and errant LMER link in Rd
+- Reduced disk size of man/figures/
 - Possibly misspelled words in DESCRIPTION are correct: Araujo, CLPM, DoC, de
 
 ## Test environments
