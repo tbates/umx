@@ -577,12 +577,13 @@ umx_set_optimizer <- function(opt = NA, model = NULL, silent = FALSE) {
 #' positive integer and never errors — worst case it falls back to
 #' [parallel::detectCores()].
 #'
-#' Method: on macOS (Apple Silicon), `hw.perflevel0` via sysctl — plus
-#' `hw.perflevel1` on M5 Pro/Max & M6, where perflevel0 holds the new "Super"
-#' tier (h/t Brian Ripley, CRAN), so fast cores = Super + Performance. On Linux
-#' there is no sysfs P-core flag, so P-cores are the online cores whose max
-#' frequency is the highest on the box (true for Intel hybrid and ARM
-#' big.LITTLE; degrades to all cores on homogeneous machines).
+#' Method: on macOS, tiers are selected by NAME (`hw.perflevelN.name`), not rank:
+#' fast cores are tiers named "Super" or "Performance". Ranks shift yearly (L0 was
+#' Performance through M4, Super from M5 Pro/Max & M6 (h/t Brian Ripley, CRAN)),
+#' and M5/6 machines can have zero Efficiency cores, so rank-based rules
+#' undercount there. On Linux there is no sysfs P-core flag, so P-cores are the
+#' online cores whose max frequency is the highest on the box (true for Intel
+#' hybrid and ARM big.LITTLE; degrades to all cores on homogeneous machines).
 #'
 #' @param logical Whether to count logical cores (hyperthreaded) or physical cores. Default is FALSE (physical).
 #' @param p_cores Whether to prioritize detecting Performance (P) cores only on hybrid architectures. Default is TRUE.
@@ -601,7 +602,7 @@ umx_detect_cores = function(logical = FALSE, p_cores = TRUE) {
 	if (is.na(fallback) || fallback < 1) fallback = 1L
 
 	# macOS probe as a closure: early return()s stay local, and the outer tryCatch
-	# turns any surprise into NULL. The sysctl probe itself can never throw:
+	# turns any surprise into NULL. The sysctl probes themselves can never throw:
 	# launch failure, unknown keys and unparsable output all degrade to NA.
 	macos_p_cores = function() {
 		sysctl_int = function(key) {
@@ -610,16 +611,24 @@ umx_detect_cores = function(logical = FALSE, p_cores = TRUE) {
 			val = suppressWarnings(as.integer(res[[1]]))
 			if (is.na(val)) NA_integer_ else val
 		}
-		kind = if (logical) "logicalcpu" else "physicalcpu"
-		p0 = sysctl_int(paste0("hw.perflevel0.", kind))
-		if (is.na(p0) || p0 < 1) return(NULL) # no perflevels: Intel Mac or unknown box
-		# Three perflevels = M5 Pro/Max or M6, where level 0 is the "Super" tier:
-		# fast cores are Super + Performance (per Brian Ripley, CRAN)
-		if (!is.na(sysctl_int("hw.perflevel2.physicalcpu"))) {
-			p1 = sysctl_int(paste0("hw.perflevel1.", kind))
-			if (!is.na(p1) && p1 > 0) return(p0 + p1)
+		sysctl_str = function(key) {
+			res = tryCatch(suppressWarnings(system(paste("sysctl -n", key), intern = TRUE, ignore.stderr = TRUE)), error = function(e) character(0))
+			if (!length(res)) return(NA_character_)
+			trimws(res[[1]])
 		}
-		return(p0)
+		kind = if (logical) "logicalcpu" else "physicalcpu"
+		# Tier ranks shift yearly (L0 was Performance, now Super on M5/6),
+		# and M5/6 machines can have zero Efficiency cores: select by NAME.
+		nlevels = sysctl_int("hw.nperflevels")
+		if (is.na(nlevels) || nlevels < 1) return(NULL) # no perflevels: Intel Mac or unknown box
+		n = 0L
+		for (i in seq_len(nlevels)) {
+			nm = sysctl_str(paste0("hw.perflevel", i - 1L, ".name"))
+			if (is.na(nm) || !(nm %in% c("Performance", "Super"))) next
+			count = sysctl_int(paste0("hw.perflevel", i - 1L, ".", kind))
+			if (!is.na(count) && count > 0) n = n + count
+		}
+		if (n < 1) NULL else n
 	}
 
 	# Linux probe as a closure. No sysfs flag marks P-cores, so use max frequency:

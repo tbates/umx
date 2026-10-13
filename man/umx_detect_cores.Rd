@@ -24,12 +24,13 @@ A detector, not a decider: every probe is guarded, so this always returns a
 positive integer and never errors — worst case it falls back to
 \code{\link[parallel:detectCores]{parallel::detectCores()}}.
 
-Method: on macOS (Apple Silicon), \code{hw.perflevel0} via sysctl — plus
-\code{hw.perflevel1} on M5 Pro/Max & M6, where perflevel0 holds the new "Super"
-tier (h/t Brian Ripley, CRAN), so fast cores = Super + Performance. On Linux
-there is no sysfs P-core flag, so P-cores are the online cores whose max
-frequency is the highest on the box (true for Intel hybrid and ARM
-big.LITTLE; degrades to all cores on homogeneous machines).
+Method: on macOS, tiers are selected by NAME (\code{hw.perflevelN.name}), not rank:
+fast cores are tiers named "Super" or "Performance". Ranks shift yearly (L0 was
+Performance through M4, Super from M5 Pro/Max & M6 (h/t Brian Ripley, CRAN)),
+and M5/6 machines can have zero Efficiency cores, so rank-based rules
+undercount there. On Linux there is no sysfs P-core flag, so P-cores are the
+online cores whose max frequency is the highest on the box (true for Intel
+hybrid and ARM big.LITTLE; degrades to all cores on homogeneous machines).
 }
 \examples{
 umx_detect_cores() # physical cores (P-cores if hybrid)
