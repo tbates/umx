@@ -114,7 +114,7 @@ Requires \code{implied_jacobian} after \code{mxRun} on WLS. If robust computatio
 This function uses the standard errors reported by OpenMx to produce the CIs you see in umxSummary.
 These are used to derive confidence intervals based on the formula 95\%CI = estimate +/- 1.96*SE.
 
-Sometimes SEs appear NA. This may reflect a model which is not identified (see \url{http://davidakenny.net/cm/identify.htm}).
+Sometimes SEs appear NA. This may reflect a model which is not identified (see \url{https://davidakenny.net/cm/identify.htm}).
 This can include empirical under-identification - for instance two factors
 that are essentially identical in structure. Use \code{\link[OpenMx:mxCheckIdentification]{OpenMx::mxCheckIdentification()}} to check identification.
 

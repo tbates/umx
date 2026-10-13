@@ -26,9 +26,6 @@ dl_from_dropbox("https://dl.dropboxusercontent.com/s/7kauod48r9cfhwc/tinytwinDat
 dl_from_dropbox("tinytwinData.rda", key = "7kauod48r9cfhwc")
 }
 }
-\references{
-\url{https://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
-}
 \seealso{
 Other File Functions:
 \code{\link{umx}},
