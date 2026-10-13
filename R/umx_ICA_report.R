@@ -123,10 +123,10 @@
 #' @md
 #' @examples
 #' \dontrun{
-#' umx_ICA_report()
-#' umx_ICA_report(dataDir = "~/bin/ica/ICAdata")
+#' umx_scholastica_report()
+#' umx_scholastica_report(dataDir = "~/bin/ica/ICAdata")
 #' }
-umx_ICA_report <- function(dataDir = "~/bin/ica/ICAdata", asOf = Sys.Date()) {
+umx_scholastica_report <- function(dataDir = "~/bin/ica/ICAdata", asOf = Sys.Date()) {
 	dataDir = path.expand(dataDir)
 	asOf = as.Date(asOf)
 	if (length(dataDir) != 1 || !dir.exists(dataDir)) {
