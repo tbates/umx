@@ -1896,7 +1896,6 @@ umx_write_to_clipboard <- function(x) {
 #' @return None
 #' @export
 #' @family File Functions
-#' @references \url{https://thebiobucket.blogspot.kr/2013/04/download-files-from-dropbox.html}
 #' @examples
 #' \dontrun{
 #' dl_from_dropbox("https://dl.dropboxusercontent.com/s/7kauod48r9cfhwc/tinytwinData.rda")

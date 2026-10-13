@@ -1782,7 +1782,7 @@ umxPath <- function(from = NULL, to = NULL, with = NULL, var = NULL, cov = NULL,
 		# ====================
 		# = Handle formative =
 		# ====================
-		# http://davidakenny.net/cm/mvar.htm
+		# https://davidakenny.net/cm/mvar.htm
 
 		if(is.null(from)){
 			stop("You have to have offer up at least 3 unique 'from' variables to make a formative")
