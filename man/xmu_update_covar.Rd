@@ -4,7 +4,7 @@
 \alias{xmu_update_covar}
 \title{Update covariates in twin data sets to 99999 if missing and corresponding twin phenotype to NA}
 \usage{
-xmu_update_covar(data, covar, pheno, sep = "_T")
+xmu_update_covar(data, covar, pheno, sep = "_T", nSib = 2)
 }
 \arguments{
 \item{data}{A \code{\link[=data.frame]{data.frame()}} to convert}
@@ -14,6 +14,8 @@ xmu_update_covar(data, covar, pheno, sep = "_T")
 \item{pheno}{The phenotypes affected by covariates.}
 
 \item{sep}{The separator used in the column names (default = "_T")}
+
+\item{nSib}{Number of family members (default 2). With 3, member 3 (e.g. a sibling) is updated too.}
 }
 \value{
 \itemize{
