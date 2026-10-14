@@ -190,6 +190,7 @@ Other Advanced Model Building Functions:
 \code{\link[=umxRAM_GLM]{umxRAM_GLM()}},
 \code{\link[=umxRun]{umxRun()}},
 \code{\link[=umxUnexplainedCausalNexus]{umxUnexplainedCausalNexus()}},
+\code{\link[=umx_run]{umx_run()}},
 \code{\link[=xmuLabel]{xmuLabel()}},
 \code{\link[=xmuValues]{xmuValues()}}
 }
