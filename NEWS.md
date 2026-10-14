@@ -1,6 +1,7 @@
 # Releases
 ## umx 4.80.0: Over *80* new features, fixes, and improvements! 
 * Date: 2026-10-12 R 4.6.1
+* IMPROVED: `umxSummarizeTwinData()` binary/ordinal traits get proportion endorsed (SE), liability thresholds (SE), and polychoric twin correlations (via `umx_polychoric`); `show = "se"` for r (SE); MZ/DZ(/SIB) split by sex columns; grouped data (e.g. `dplyr::group_by`) or a `.group` column set the groups (no new dependencies). Continuous output unchanged. New alias `umx_summarise_twin_data()`. (Luis De Araujo)
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string, `Timothy C. Bates`.
 * BREAKING: Helpers and main functions use modern WLS path only (hard refuse misleading name `"acov"`).
 * NEW: `umxACE_DE` double-entry ID: overwrite Paras Mehta - avoids forcing continuous trait variance to 1. All DE pairs release binary `Vtot==1`, share free cont/cens means; `fixCensorThresholds` fixes thresh at known cut or leaves thresh free (cut estimated in data units).
