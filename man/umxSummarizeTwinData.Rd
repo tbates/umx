@@ -2,6 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxSummarizeTwinData}
 \alias{umxSummarizeTwinData}
+\alias{umx_summarise_twin_data}
 \title{Summarize twin data}
 \usage{
 umxSummarizeTwinData(
@@ -19,11 +20,37 @@ umxSummarizeTwinData(
   DZMM = "DZMM",
   DZOS = "DZOS",
   digits = 2,
-  report = c("markdown", "html")
+  report = c("markdown", "html"),
+  show = c("ci", "se"),
+  male = c("M", "male", "Male", "m"),
+  female = c("F", "female", "Female", "f"),
+  tryHard = c("no", "yes", "ordinal", "search")
+)
+
+umx_summarise_twin_data(
+  data = NULL,
+  selVars = NULL,
+  sep = "_T",
+  zyg = "zygosity",
+  age = "age",
+  sex = "sex",
+  MZ = NULL,
+  DZ = NULL,
+  MZFF = "MZFF",
+  DZFF = "DZFF",
+  MZMM = "MZMM",
+  DZMM = "DZMM",
+  DZOS = "DZOS",
+  digits = 2,
+  report = c("markdown", "html"),
+  show = c("ci", "se"),
+  male = c("M", "male", "Male", "m"),
+  female = c("F", "female", "Female", "f"),
+  tryHard = c("no", "yes", "ordinal", "search")
 )
 }
 \arguments{
-\item{data}{The twin data.}
+\item{data}{The twin data (wide: one row per family). Can be grouped, see details.}
 
 \item{selVars}{Collection of variables to report on, e.g. c("wt", "ht").}
 
@@ -52,6 +79,14 @@ umxSummarizeTwinData(
 \item{digits}{Rounding precision of the report (default 2).}
 
 \item{report}{What to return (default = 'markdown'). Use 'html' to open a web table.}
+
+\item{show}{Twin correlations as "ci" (default: r [95\% CI]) or "se": r (SE).}
+
+\item{male}{Values of sex coding males (default c("M", "male", "Male", "m")).}
+
+\item{female}{Values of sex coding females (default c("F", "female", "Female", "f")).}
+
+\item{tryHard}{Passed to \code{\link[=umx_polychoric]{umx_polychoric()}} for polychoric correlations (default "no").}
 }
 \value{
 \itemize{
@@ -60,22 +95,45 @@ umxSummarizeTwinData(
 }
 \description{
 Produce a summary of wide-format twin data, showing the number of individuals,
-the mean and SD for each trait, and the correlation and 95\% CI for each twin-type.
+descriptives for each trait, and the twin-pair correlation for each twin-type.
 
-Set MZ and DZ to summarize the two-group case.
+Continuous traits show the mean and SD, and Pearson correlations. Binary and ordinal traits
+(factors, or numeric 0/1 or 1/2) show the proportion endorsed (above the lowest category) with its SE,
+the liability thresholds with SEs, and polychoric correlations (via \code{\link[=umx_polychoric]{umx_polychoric()}}).
+}
+\details{
+\strong{Groups}: by default the 5-group case (MZFF, MZMM, DZFF, DZMM, DZOS) is used. Set MZ and DZ to summarize
+the two-group case. If \code{zyg} holds only MZ/DZ (and SIB) levels, and sex columns (e.g. \code{sex_T1}, \code{sex_T2}) are
+present, pairs are split by sex into MZFF, MZMM, DZFF, DZMM, DZOS (and SIBFF, SIBMM, SIBOS).
+If \code{data} are grouped (e.g. with \code{dplyr::group_by(zygosity, sex)}), the groups are used as they are, so no zyg
+or sex arguments are needed (no dplyr functions are called). A \code{.group} column is used if \code{zyg} is not found.
+
+\strong{Thresholds} are the ML estimates on the liability scale (mean 0, SD 1): \code{qnorm()} of the
+proportion at or below each category. SEs of proportions are cluster-robust over families
+(co-twins are not independent), and threshold SEs follow by the delta method.
 }
 \examples{
 data(twinData)
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
 MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
+
+# A binary trait: proportion endorsed (SE), threshold (SE), and polychoric twin correlations
+\dontrun{
+twinData$obese1 = as.numeric(twinData$bmi1 > 25)
+twinData$obese2 = as.numeric(twinData$bmi2 > 25)
+umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "obese"), show = "se")
+
+# Grouped data (e.g. dplyr::group_by(zygosity)) use their groups
+twinData |> dplyr::group_by(zygosity) |> umx_summarise_twin_data(sep = "", selVars = "wt")
+}
 }
 \references{
 \url{https://github.com/tbates/umx}
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxAPA]{umxAPA()}}
+\item \code{\link[=umxAPA]{umxAPA()}}, \code{\link[=umx_polychoric]{umx_polychoric()}}
 }
 
 Other Twin Modeling Functions:

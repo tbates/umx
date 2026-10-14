@@ -4878,12 +4878,25 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' Summarize twin data
 #'
 #' @description
-#' Produce a summary of wide-format twin data, showing the number of individuals, 
-#' the mean and SD for each trait, and the correlation and 95% CI for each twin-type.
+#' Produce a summary of wide-format twin data, showing the number of individuals,
+#' descriptives for each trait, and the twin-pair correlation for each twin-type.
 #'
-#' Set MZ and DZ to summarize the two-group case.
-#' 
-#' @param data The twin data.
+#' Continuous traits show the mean and SD, and Pearson correlations. Binary and ordinal traits
+#' (factors, or numeric 0/1 or 1/2) show the proportion endorsed (above the lowest category) with its SE,
+#' the liability thresholds with SEs, and polychoric correlations (via [umx_polychoric()]).
+#'
+#' @details
+#' **Groups**: by default the 5-group case (MZFF, MZMM, DZFF, DZMM, DZOS) is used. Set MZ and DZ to summarize
+#' the two-group case. If `zyg` holds only MZ/DZ (and SIB) levels, and sex columns (e.g. `sex_T1`, `sex_T2`) are
+#' present, pairs are split by sex into MZFF, MZMM, DZFF, DZMM, DZOS (and SIBFF, SIBMM, SIBOS).
+#' If `data` are grouped (e.g. with `dplyr::group_by(zygosity, sex)`), the groups are used as they are, so no zyg
+#' or sex arguments are needed (no dplyr functions are called). A `.group` column is used if `zyg` is not found.
+#'
+#' **Thresholds** are the ML estimates on the liability scale (mean 0, SD 1): `qnorm()` of the
+#' proportion at or below each category. SEs of proportions are cluster-robust over families
+#' (co-twins are not independent), and threshold SEs follow by the delta method.
+#'
+#' @param data The twin data (wide: one row per family). Can be grouped, see details.
 #' @param selVars Collection of variables to report on, e.g. c("wt", "ht").
 #' @param sep  The separator string that will turn a variable name into a twin variable name, default= "_T" for wt_T1 and wt_T2.
 #' @param age The age column in the dataset (default "age").
@@ -4898,19 +4911,43 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param DZOS The level of zyg corresponding to DZ OS pairs: default= "DZOS".
 #' @param digits Rounding precision of the report (default 2).
 #' @param report What to return (default = 'markdown'). Use 'html' to open a web table.
+#' @param show Twin correlations as "ci" (default: r \[95% CI\]) or "se": r (SE).
+#' @param male Values of sex coding males (default c("M", "male", "Male", "m")).
+#' @param female Values of sex coding females (default c("F", "female", "Female", "f")).
+#' @param tryHard Passed to [umx_polychoric()] for polychoric correlations (default "no").
 #' @return - Invisibly returns the formatted dataframe.
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxAPA()]
+#' @seealso - [umxAPA()], [umx_polychoric()]
 #' @references <https://github.com/tbates/umx>
 #' @examples
 #' data(twinData)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
 #' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
-umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", sex = "sex", MZ = NULL, DZ = NULL, MZFF = "MZFF", DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS", digits = 2, report = c("markdown", "html")) {
-	report = match.arg(report)
-	
+#'
+#' # A binary trait: proportion endorsed (SE), threshold (SE), and polychoric twin correlations
+#' \dontrun{
+#' twinData$obese1 = as.numeric(twinData$bmi1 > 25)
+#' twinData$obese2 = as.numeric(twinData$bmi2 > 25)
+#' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "obese"), show = "se")
+#'
+#' # Grouped data (e.g. dplyr::group_by(zygosity)) use their groups
+#' twinData |> dplyr::group_by(zygosity) |> umx_summarise_twin_data(sep = "", selVars = "wt")
+#' }
+umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", sex = "sex", MZ = NULL, DZ = NULL, MZFF = "MZFF", DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS", digits = 2, report = c("markdown", "html"), show = c("ci", "se"), male = c("M", "male", "Male", "m"), female = c("F", "female", "Female", "f"), tryHard = c("no", "yes", "ordinal", "search")) {
+	report  = match.arg(report)
+	show    = match.arg(show)
+	tryHard = match.arg(tryHard)
+
+	# Grouping (e.g. from dplyr::group_by) lives in attr(data, "groups"): keys plus a .rows list of row indices
+	groupAttr = attr(data, "groups")
+	# Plain data.frame, without calling tibble or dplyr: lazy tables are realized by their as.data.frame method
+	if(!is.data.frame(data)) data = as.data.frame(data)
+	attr(data, "groups") = NULL
+	class(data) = "data.frame"
+	if(!(zyg %in% names(data)) && (".group" %in% names(data))) zyg = ".group"
+
 	# 1. Age Extraction
 	if(umx_check_names(age, data = data, die = FALSE)){
 		ageCol = data[, age]
@@ -4919,21 +4956,20 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 		ageCol = data[, paste0(age, sep, 1)]
 		cat(paste0("Mean age = ", round(mean(ageCol, na.rm = TRUE), digits), " (SD = ", round(sd(ageCol, na.rm = TRUE), digits), ")\n"))
 	} else {
-		# stop("Cannot find age column. Checked for ", omxQuotes(age), " and ", omxQuotes(paste0(age, sep, 1)))
 		message("Polite note: Cannot find age column. Checked for ", omxQuotes(age), " and ", omxQuotes(paste0(age, sep, 1)))
 	}
-	# tolerate no age
 
 	# 2. Dynamic Sex Extraction
 	sex1 = paste0(sex, sep, 1)
 	sex2 = paste0(sex, sep, 2)
-	if(umx_check_names(c(sex1, sex2), data = data, die = FALSE)) {
-		cat(sum(c(data[,sex1], data[,sex2]) %in% c("F", "female", "Female"), na.rm = TRUE), "female\n")
-		cat(sum(c(data[,sex1], data[,sex2]) %in% c("M", "male", "Male"), na.rm = TRUE), "male\n")
+	hasSex = umx_check_names(c(sex1, sex2), data = data, die = FALSE)
+	if(hasSex) {
+		cat(sum(c(data[,sex1], data[,sex2]) %in% female, na.rm = TRUE), "female\n")
+		cat(sum(c(data[,sex1], data[,sex2]) %in% male, na.rm = TRUE), "male\n")
 	} else {
 		message("Polite note: Could not find dynamic sex columns (", sex1, ", ", sex2, ") to compute M/F counts.")
 	}
-	
+
 	# 3. Setup Long Data
 	selDVs = tvars(selVars, sep)
 	umx_check_names(selDVs, data = data, die = TRUE)
@@ -4944,79 +4980,147 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	pairCounts = crossprod(isPresent)
 	umx_print(pairCounts, caption = "Pairwise Complete Cases", digits = digits, report = report)
 
-	# Helper function to extract rigorous bracketed CIs and exact pair counts
-	get_r_ci = function(df_sub, v1, v2) {
-		# Strip to pairwise complete to avoid cor.test failing on small N
-		df_clean = na.omit(df_sub[, c(v1, v2)]) 
-		if(nrow(df_clean) < 3) return(list(str = NA, n = 0))
-		res = cor.test(df_clean[, 1], df_clean[, 2])
-		
-		# Format: .85 [.70, .92]
-		fmt = paste0("%.", digits, "f")
-		strFormat = paste0(fmt, " [", fmt, ", ", fmt, "]")
-		ci_str = sprintf(strFormat, res$estimate, res$conf.int[1], res$conf.int[2])
-		
-		# exact N pairs = degrees of freedom + 2 for Pearson
-		return(list(str = ci_str, n = res$parameter + 2))
+	# 5. Groups: a named list of row indices
+	if(!is.null(groupAttr)) {
+		keys   = setdiff(names(groupAttr), ".rows")
+		labels = do.call(paste, c(lapply(keys, function(k) as.character(groupAttr[[k]])), sep = "_"))
+		groups = stats::setNames(groupAttr$.rows, labels)
+	} else if(!is.null(MZ)) {
+		groups = list(MZ = which(data[, zyg] %in% MZ), DZ = which(data[, zyg] %in% DZ))
+	} else {
+		umx_check_names(zyg, data = data, die = TRUE)
+		z = as.character(data[, zyg])
+		fiveGroup = c(MZFF = MZFF, MZMM = MZMM, DZFF = DZFF, DZMM = DZMM, DZOS = DZOS)
+		sibGroup  = c("SIBFF", "SIBMM", "SIBOS")
+		if(any(z %in% fiveGroup)) {
+			groups = lapply(fiveGroup, function(g) which(z %in% g))
+			for (g in sibGroup[sibGroup %in% z]) groups[[g]] = which(z == g)
+		} else if(hasSex && all(toupper(stats::na.omit(unique(z))) %in% c("MZ", "DZ", "SIB"))) {
+			# Split MZ/DZ/SIB by sex
+			sexOf = function(x) ifelse(x %in% female, "F", ifelse(x %in% male, "M", NA))
+			s1 = sexOf(data[, sex1]); s2 = sexOf(data[, sex2])
+			pairSex = ifelse(s1 == "F" & s2 == "F", "FF", ifelse(s1 == "M" & s2 == "M", "MM", ifelse(!is.na(s1) & !is.na(s2), "OS", NA)))
+			pairLabel = paste0(toupper(z), pairSex)
+			pairLabel[is.na(z) | is.na(pairSex)] = NA
+			order  = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS", "SIBFF", "SIBMM", "SIBOS")
+			order  = order[order %in% pairLabel]
+			groups = stats::setNames(lapply(order, function(g) which(pairLabel == g)), order)
+		} else {
+			levs   = sort(unique(stats::na.omit(z)))
+			groups = stats::setNames(lapply(levs, function(g) which(z == g)), levs)
+		}
 	}
 
-	# 5. Core DataFrame Assembly
-	blob = rep(NA, length(selVars))	
-	
-	if(is.null(MZ)){
-		# 5-Group Case
-		df = data.frame(Var = blob, Mean = blob, SD = blob, rMZFF = blob, rMZMM = blob, rDZFF = blob, rDZMM = blob, rDZOS = blob, stringsAsFactors = FALSE)
-		n = 1
-		for (varName in selVars){
-			v1 = paste0(varName, sep, 1)
-			v2 = paste0(varName, sep, 2)
-			
-			df[n, "Var"]  = varName
-			df[n, "Mean"] = round(mean(long[, varName], na.rm = TRUE), digits)
-			df[n, "SD"]   = round(sd(long[, varName], na.rm = TRUE), digits)
-			
-			df[n, "rMZFF"] = get_r_ci(data[data[,zyg] %in% MZFF,], v1, v2)$str
-			df[n, "rMZMM"] = get_r_ci(data[data[,zyg] %in% MZMM,], v1, v2)$str
-			df[n, "rDZFF"] = get_r_ci(data[data[,zyg] %in% DZFF,], v1, v2)$str
-			df[n, "rDZMM"] = get_r_ci(data[data[,zyg] %in% DZMM,], v1, v2)$str
-			df[n, "rDZOS"] = get_r_ci(data[data[,zyg] %in% DZOS,], v1, v2)$str
-			n = n + 1
-		}
-	} else {
-			# 2-Group Case
-			df = data.frame(Var = blob, "N_MZ_DZ" = blob, Mean = blob, SD = blob, rMZ = blob, rDZ = blob, stringsAsFactors = FALSE)		
-			n = 1
-			for (varName in selVars){
-				v1 = paste0(varName, sep, 1)
-				v2 = paste0(varName, sep, 2)
-			
-				df[n, "Var"]  = varName
-				df[n, "Mean"] = round(mean(long[, varName], na.rm = TRUE), digits)
-				df[n, "SD"]   = round(sd(long[, varName], na.rm = TRUE), digits)
-			
-				mzData = get_r_ci(data[data[,zyg] %in% MZ,], v1, v2)
-				dzData = get_r_ci(data[data[,zyg] %in% DZ,], v1, v2)
-			
-				# The dedicated, combined N column
-				df[n, "N_MZ_DZ"] = paste0(mzData$n, "/", dzData$n)
-			
-				df[n, "rMZ"] = mzData$str
-				df[n, "rDZ"] = dzData$str
-			
-				n = n + 1
-			}
-		
-			# Clean up the column header for the final print
-			names(df)[names(df) == "N_MZ_DZ"] = "N (MZ/DZ)"
+	# 6. Helpers
+	fmtNum = function(x) ifelse(is.na(x), NA_character_, sprintf(paste0("%.", digits, "f"), x))
+	isOrdinalLike = function(x) {
+		if(is.factor(x)) return(length(levels(x)) >= 2)
+		u = unique(stats::na.omit(x))
+		is.numeric(x) && length(u) == 2 && (all(u %in% c(0, 1)) || all(u %in% c(1, 2)))
 	}
+	# Ordered factor with the same levels for both twins
+	asOrdered = function(x, levs) factor(as.character(x), levels = levs, ordered = TRUE)
+
+	# Proportion of family members with x <= k, with a cluster-robust (families) SE
+	clusterProp = function(ind1, ind2) {
+		y = rowSums(cbind(ind1, ind2), na.rm = TRUE)
+		n = rowSums(!is.na(cbind(ind1, ind2)))
+		keep = n > 0
+		y = y[keep]; n = n[keep]
+		G = length(n)
+		p = sum(y) / sum(n)
+		se = if(G > 1) sqrt(G / (G - 1) * sum((y - p * n)^2)) / sum(n) else NA_real_
+		c(p = p, se = se)
+	}
+
+	# Twin correlation within one group: Pearson for continuous, polychoric for ordinal
+	pairCor = function(sub, v1, v2, ordinal, levs) {
+		ok = stats::complete.cases(sub[, c(v1, v2)])
+		n  = sum(ok)
+		if(n < 3) return(list(str = NA_character_, n = n))
+		if(!ordinal) {
+			res = tryCatch(cor.test(sub[ok, v1], sub[ok, v2]), error = function(e) NULL)
+			if(is.null(res)) return(list(str = NA_character_, n = n))
+			r = unname(res$estimate); lo = res$conf.int[1]; hi = res$conf.int[2]
+			se = (hi - lo) / (2 * 1.96)
+		} else {
+			tmp = data.frame(a = asOrdered(sub[, v1], levs), b = asOrdered(sub[, v2], levs))
+			fit = tryCatch(suppressMessages(umx_polychoric(tmp, tryHard = tryHard)), error = function(e) NULL)
+			if(is.null(fit)) return(list(str = NA_character_, n = n))
+			r   = fit$polychorics[1, 2]
+			m   = fit$estimatedModel
+			lab = m$R$labels[2, 1]
+			SEs = m$output$standardErrors
+			se  = if(!is.null(SEs) && lab %in% rownames(SEs)) SEs[lab, 1] else NA_real_
+			lo  = r - 1.96 * se; hi = r + 1.96 * se
+		}
+		if(show == "se") {
+			str = if(is.na(se)) fmtNum(r) else paste0(fmtNum(r), " (", fmtNum(se), ")")
+		} else {
+			str = if(is.na(lo)) fmtNum(r) else paste0(fmtNum(r), " [", fmtNum(lo), ", ", fmtNum(hi), "]")
+		}
+		list(str = str, n = n)
+	}
+
+	# 7. Core DataFrame Assembly
+	twoGroup = !is.null(MZ) && is.null(groupAttr)
+	rNames   = paste0("r", names(groups))
+	df = data.frame(Var = selVars, Mean = NA_character_, SD = NA_character_, Thresholds = NA_character_, stringsAsFactors = FALSE)
+	if(twoGroup) df = cbind(df[, 1, drop = FALSE], "N_MZ_DZ" = NA_character_, df[, -1])
+	for (g in rNames) df[[g]] = NA_character_
+
+	for (n in seq_along(selVars)){
+		varName = selVars[n]
+		v1 = paste0(varName, sep, 1)
+		v2 = paste0(varName, sep, 2)
+		ordinal = isOrdinalLike(data[, v1]) && isOrdinalLike(data[, v2])
+		if(ordinal) {
+			levs = if(is.factor(data[, v1])) levels(data[, v1]) else sort(unique(stats::na.omit(c(data[, v1], data[, v2]))))
+			x1 = as.integer(asOrdered(data[, v1], levs)); x2 = as.integer(asOrdered(data[, v2], levs))
+			# Endorsed: above the lowest category
+			endorsed = clusterProp(x1 > 1, x2 > 1)
+			df[n, "Mean"] = paste0(fmtNum(endorsed["p"]), " (", fmtNum(endorsed["se"]), ")")
+			# Thresholds: qnorm(P(x <= k)), SE by the delta method
+			thresh = sapply(seq_len(length(levs) - 1), function(k) {
+				pk = clusterProp(x1 <= k, x2 <= k)
+				t  = stats::qnorm(pk["p"])
+				paste0(fmtNum(t), " (", fmtNum(pk["se"] / stats::dnorm(t)), ")")
+			})
+			df[n, "Thresholds"] = paste(thresh, collapse = "; ")
+		} else {
+			levs = NULL
+			df[n, "Mean"] = fmtNum(mean(long[, varName], na.rm = TRUE))
+			df[n, "SD"]   = fmtNum(sd(long[, varName], na.rm = TRUE))
+		}
+		nPairs = c()
+		for (g in names(groups)) {
+			res = pairCor(data[groups[[g]], , drop = FALSE], v1, v2, ordinal, levs)
+			df[n, paste0("r", g)] = res$str
+			nPairs = c(nPairs, res$n)
+		}
+		if(twoGroup) df[n, "N_MZ_DZ"] = paste0(nPairs, collapse = "/")
+	}
+	if(all(is.na(df$Thresholds))) {
+		# All continuous: numeric Mean and SD, as before
+		df$Thresholds = NULL
+		df$Mean = round(as.numeric(df$Mean), digits)
+		df$SD   = round(as.numeric(df$SD), digits)
+	}
+	if(all(is.na(df$SD))) df$SD = NULL
+	if(twoGroup) names(df)[names(df) == "N_MZ_DZ"] = "N (MZ/DZ)"
 
 	cat("\n")
 	umx_print(df, caption = "Means, SDs, and twin-pair correlations by zygosity", digits = digits, report = report)
-	cat("\nNote: Bracketed values denote 95% Confidence Intervals.\n")
-	if(!is.null(MZ)) cat("Note: (n = MZ/DZ) represents exact pairwise complete twin pairs for that variable.\n")
-	
+	if(show == "ci") cat("\nNote: Bracketed values denote 95% Confidence Intervals.\n") else cat("\nNote: Values in parentheses are standard errors.\n")
+	if(any(!is.na(df$Thresholds)) && !is.null(df$Thresholds)) cat("Note: For binary/ordinal traits, Mean is the proportion endorsed (SE), Thresholds are on the liability scale (SE), and r is polychoric.\n")
+	if(twoGroup) cat("Note: (n = MZ/DZ) represents exact pairwise complete twin pairs for that variable.\n")
+
 	invisible(df)
 }
+
+#' @rdname umxSummarizeTwinData
+#' @export
+umx_summarise_twin_data <- umxSummarizeTwinData
 
 
 #' Test the difference between correlations for significance.
