@@ -2,6 +2,7 @@
 % Please edit documentation in R/umxMRDoC.R
 \name{umxMRDoC}
 \alias{umxMRDoC}
+\alias{umx_mrdoc}
 \title{Extends Mendelian randomization with the twin design to test evidence of causality}
 \usage{
 umxMRDoC(
@@ -25,9 +26,31 @@ umxMRDoC(
   method = "Mehta",
   verbose = FALSE
 )
+
+umx_mrdoc(
+  data = NULL,
+  pheno,
+  prss = NULL,
+  mzData = NULL,
+  dzData = NULL,
+  sibsData = NULL,
+  zygosity = "zygosity",
+  sep = "_T",
+  summary = !umx_set_silent(silent = TRUE),
+  name = NULL,
+  autoRun = getOption("umx_auto_run"),
+  sibs = FALSE,
+  type = "FIML",
+  tryHard = c("no", "yes", "ordinal", "search"),
+  optimizer = NULL,
+  covar = NULL,
+  batteries = c("scale"),
+  method = "Mehta",
+  verbose = FALSE
+)
 }
 \arguments{
-\item{data}{= NULL If building the MZ and DZ datasets internally from a complete data set.}
+\item{data}{= NULL If building the MZ and DZ datasets internally from a complete data set. Can be grouped by zygosity (e.g. \code{dplyr::group_by(zygosity)}), or have a \code{.group} column, see details.}
 
 \item{pheno}{Phenotypes of interest, order matters ("exposure", "outcome")}
 
@@ -37,7 +60,7 @@ umxMRDoC(
 
 \item{dzData}{The DZ dataframe}
 
-\item{sibsData}{The unrelated sibs dataframe, requires "sibs" as an extra zygosity level.}
+\item{sibsData}{The sibling-pair dataframe (or, with \code{data}, the zygosity level for siblings; default "sibs" or "SIB" in any case).}
 
 \item{zygosity}{= "zygosity" (for the data= method of using this function).}
 
@@ -49,7 +72,7 @@ umxMRDoC(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{sibs}{NEEDS DOCUMENTING (FALSE)}
+\item{sibs}{Whether to model a twin-specific variance T, shared by co-born twins but not by siblings (default FALSE). Needs sibling data: a sibs group (\code{sibsData}, or a sibs level of zygosity) and/or trios.}
 
 \item{type}{Basic switch for estimation type. WLS tends to work really well in MRDoC, it saves you time.}
 
@@ -81,6 +104,17 @@ due to the instrumental variable approach included in the model.
 
 This function applies both the MRDoC model and the MRDoC2 model depending on how many PRSs are passed as arguments.
 }
+\details{
+\strong{Trios}: if the data contain a third family member (e.g. \code{varA1_T3}, with its own PRS), each family is modeled as
+twin 1, twin 2, and a non-twin sibling. The sibling's covariance with each twin is .5A + C (never T), and its PRS is kept
+in MZ families (only twin 2's PRS is dropped, as it equals twin 1's). Families without a sibling just have member 3 missing.
+Ordinal variables are not yet supported with trios.
+
+\strong{Groups}: with \code{data}, rows are split by zygosity into MZ, DZ, and (if \code{sibs}) sibs, matching levels in any case
+("MZ"/"mz", "DZ"/"dz", "sibs"/"SIB"), or the levels given in \code{mzData}, \code{dzData}, and \code{sibsData}. Grouped data
+(e.g. \code{data |> dplyr::group_by(zygosity) |> umxMRDoC(...)}) use their grouping column as \code{zygosity}, and a \code{.group} column
+is used if \code{zygosity} is not found. In both cases a sibling level sets \code{sibs = TRUE}. No dplyr functions are used.
+}
 \examples{
 \dontrun{
 
@@ -96,6 +130,11 @@ dzData  = subset(docData, zygosity \%in\% c("DZFF", "DZMM"))
 # ============================
 out = umxMRDoC(mzData = mzData, dzData = dzData,  
 pheno = c("varA1", "varA2"), prss = c("varB1", "varB2") )
+
+# Data grouped by zygosity, piped in
+docData$zyg = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
+out = docData |> dplyr::group_by(zyg) |>
+	umx_mrdoc(pheno = c("varA1", "varA2"), prss = c("varB1", "varB2"))
 }
 }
 \references{
@@ -107,7 +146,7 @@ pheno = c("varA1", "varA2"), prss = c("varB1", "varB2") )
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxDoC]{umxDoC()}}
+\item \code{\link[=umxDoC]{umxDoC()}}, \code{\link[=umx_mrdoc]{umx_mrdoc()}}
 }
 
 Other Twin Modeling Functions:
