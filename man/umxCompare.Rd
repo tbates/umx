@@ -29,13 +29,18 @@ umxCompare(
 create a web table and open your default browser.
 (handy for getting tables into Word, and other text systems!)}
 
-\item{compareWeightedAIC}{Show the Wagenmakers AIC weighted comparison (default = FALSE)}
+\item{compareWeightedAIC}{Show the Wagenmakers AIC weighted comparison, and return the best model by AIC (highest AIC weight) instead of the table (default = FALSE). ML models only.}
 
 \item{silent}{(don't print, just return the table as a dataframe (default = FALSE)}
 
 \item{file}{file to write html too if report = "html" (defaults to "tmp.html")}
 
 \item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).}
+}
+\value{
+\itemize{
+\item Invisibly, the comparison table (a data.frame), or, with \code{compareWeightedAIC = TRUE}, the best fitting model by AIC (the one with the highest AIC weight).
+}
 }
 \description{
 umxCompare compares two or more \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s. It has several nice features:

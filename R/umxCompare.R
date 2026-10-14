@@ -79,12 +79,13 @@
 #' create a web table and open your default browser.
 #' (handy for getting tables into Word, and other text systems!)
 #' @param file file to write html too if report = "html" (defaults to "tmp.html")
-#' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison (default = FALSE)
+#' @param compareWeightedAIC Show the Wagenmakers AIC weighted comparison, and return the best model by AIC (highest AIC weight) instead of the table (default = FALSE). ML models only.
 #' @param silent (don't print, just return the table as a dataframe (default = FALSE)
 #' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @family Model Summary and Comparison
 #' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
 #' @references <https://github.com/tbates/umx>
+#' @return - Invisibly, the comparison table (a data.frame), or, with `compareWeightedAIC = TRUE`, the best fitting model by AIC (the one with the highest AIC weight).
 #' @export
 #' @examples
 #' \dontrun{
@@ -255,6 +256,7 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		if (length(constraintNotes) > 0) {
 			attr(finalTable, "constraintNotes") = constraintNotes
 		}
+		if (compareWeightedAIC) message("Polite note: AIC weights need a likelihood, so compareWeightedAIC is ignored for WLS models: returning the comparison table.")
 		return(invisible(finalTable))
 	} else {
 		# Base is ML. Ensure no comparison models are WLS to prevent reverse-mismatch.
@@ -395,12 +397,11 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		bestModel = modelList[[whichBest]]
 		aic.weights = round(aic_weights(AIClist), 2)
 		if(!silent){
-			cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
+			cat("\nThe ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.\n")
 			cat("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
 				omxQuotes(namez(modelList)), " respectively are: ", 
-				omxQuotes(aic.weights), " Using aic_weights(AIC()).")	
+				omxQuotes(aic.weights), " Using aic_weights(AIC()).\n")
 		}
-		
 	}
 	if (length(robustScalingFactors) > 0) {
 		attr(tablePub, "robustScalingFactors") = robustScalingFactors
@@ -408,6 +409,10 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	if (length(constraintNotes) > 0) {
 		attr(tablePub, "constraintNotes") = constraintNotes
+	}
+	if (compareWeightedAIC) {
+		# Return the best model by AIC (highest AIC weight), e.g. to carry on with the retained model
+		return(invisible(bestModel))
 	}
 	invisible(tablePub)
 }
