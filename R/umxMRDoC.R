@@ -10,15 +10,26 @@
 #' due to the instrumental variable approach included in the model.
 #'
 #' This function applies both the MRDoC model and the MRDoC2 model depending on how many PRSs are passed as arguments.
-#' 
-#' @param data = NULL If building the MZ and DZ datasets internally from a complete data set.
+#'
+#' @details
+#' **Trios**: if the data contain a third family member (e.g. `varA1_T3`, with its own PRS), each family is modeled as
+#' twin 1, twin 2, and a non-twin sibling. The sibling's covariance with each twin is .5A + C (never T), and its PRS is kept
+#' in MZ families (only twin 2's PRS is dropped, as it equals twin 1's). Families without a sibling just have member 3 missing.
+#' Ordinal variables are not yet supported with trios.
+#'
+#' **Groups**: with `data`, rows are split by zygosity into MZ, DZ, and (if `sibs`) sibs, matching levels in any case
+#' ("MZ"/"mz", "DZ"/"dz", "sibs"/"SIB"), or the levels given in `mzData`, `dzData`, and `sibsData`. Grouped data
+#' (e.g. `data |> dplyr::group_by(zygosity) |> umxMRDoC(...)`) use their grouping column as `zygosity`, and a `.group` column
+#' is used if `zygosity` is not found. In both cases a sibling level sets `sibs = TRUE`. No dplyr functions are used.
+#'
+#' @param data = NULL If building the MZ and DZ datasets internally from a complete data set. Can be grouped by zygosity (e.g. `dplyr::group_by(zygosity)`), or have a `.group` column, see details.
 #' @param pheno Phenotypes of interest, order matters ("exposure", "outcome")
 #' @param prss Polygenic score(s). If a single one is passed MRDoC is run, MRDoC2 otherwise. 
 #' @param mzData The MZ dataframe
 
 #' @param dzData The DZ dataframe
 #' @param name The name of the model (defaults to either "MRDoC" or "MRDoC2).
-#' @param sibsData The unrelated sibs dataframe, requires "sibs" as an extra zygosity level.
+#' @param sibsData The sibling-pair dataframe (or, with `data`, the zygosity level for siblings; default "sibs" or "SIB" in any case).
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search".
@@ -29,12 +40,12 @@
 #' @param method Method for handling ordinal variables, defaults to Mehta.
 #' @param verbose Outputs the pre-processing steps/warnings.
 #' @param batteries Batteries included, currently scales continuous variables by default, "dump" will return data for inspection. Use NULL for disabling all.
-#' @param sibs NEEDS DOCUMENTING (FALSE)
+#' @param sibs Whether to model a twin-specific variance T, shared by co-born twins but not by siblings (default FALSE). Needs sibling data: a sibs group (`sibsData`, or a sibs level of zygosity) and/or trios.
 #' @param type Basic switch for estimation type. WLS tends to work really well in MRDoC, it saves you time. 
 #' @return - [OpenMx::mxModel()] of subclass MxModelMRDoC
 #' @export
 #' @family Twin Modeling Functions
-#' @seealso - [umxDoC()]
+#' @seealso - [umxDoC()], [umx_mrdoc()]
 #' @references
 #' * Minica CC, Dolan CV, Boomsma DI, et al. (2018) Extending Causality Tests with Genetic Instruments: An Integration of Mendelian Randomization with the Classical Twin Design. Behavior Genetics 48(4): 337-349. \doi{10.1007/s10519-018-9904-4}
 #' * McGue, M., Osler, M., & Christensen, K. (2010). Causal Inference and Observational Research: The Utility of Twins. *Perspectives on Psychological Science*, **5**, 546-556. \doi{10.1177/1745691610383511}
@@ -54,6 +65,11 @@
 #' # ============================
 #' out = umxMRDoC(mzData = mzData, dzData = dzData,  
 #'	pheno = c("varA1", "varA2"), prss = c("varB1", "varB2") )
+#'
+#' # Data grouped by zygosity, piped in
+#' docData$zyg = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
+#' out = docData |> dplyr::group_by(zyg) |>
+#' 	umx_mrdoc(pheno = c("varA1", "varA2"), prss = c("varB1", "varB2"))
 #'}
 umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NULL, sibsData = NULL,  zygosity = "zygosity", sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), sibs = FALSE, type = "FIML", tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL,  covar = NULL, batteries = c("scale"), method = "Mehta", verbose = FALSE) {
 
@@ -67,14 +83,36 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 		colTypes$nOrdVars = 0
 		if (missing(data) && missing(mzData) && missing(dzData)) sketch = TRUE
 
+		# Grouped data (e.g. dplyr::group_by(zygosity)) or a .group column set the zygosity column (no dplyr needed)
+		fromGroups = FALSE
+		if (!is.null(data)) {
+			groupKeys = setdiff(names(attr(data, "groups")), ".rows")
+			if (length(groupKeys) > 1) stop("Data are grouped by ", omxQuotes(groupKeys), ": group by zygosity only")
+			if (!is.data.frame(data)) data = as.data.frame(data)
+			attr(data, "groups") = NULL
+			class(data) = "data.frame"
+			if (length(groupKeys) == 1) {
+				zygosity = groupKeys
+				fromGroups = TRUE
+			} else if (!(zygosity %in% names(data)) && (".group" %in% names(data))) {
+				zygosity = ".group"
+				fromGroups = TRUE
+			}
+		}
+
+		# Trios: a non-twin sibling as member 3 (e.g. "varA1_T3")
+		hasMember3 = function(d) is.data.frame(d) && all(tvars(c(pheno, prss, covar), sep = sep, suffixes = 3) %in% names(d))
+		nSib = if (hasMember3(data) || (hasMember3(mzData) && hasMember3(dzData))) 3 else 2
+		if (nSib == 3) message("umxMRDoC: found member 3 (", omxQuotes(paste0(pheno[1], sep, 3)), "...): modeling twin + sibling trios")
+
 		if (!is.null(covar)) {
 			nCov   <- length(covar)
-			indVar <- paste(covar,c(rep(1,nCov),rep(2,nCov)),sep=sep)
+			indVar <- tvars(covar, sep = sep, suffixes = seq_len(nSib))
 		}
 
 	  if ("scale" %in% batteries && !sketch && !is.null(data)) {
 
-			data = umx_scale_wide_twin_data(data, varsToScale = c(pheno, prss), sep = sep, twins = 1:2)
+			data = umx_scale_wide_twin_data(data, varsToScale = c(pheno, prss), sep = sep, twins = seq_len(nSib))
 
   		if (verbose) message("Scaling all continuous data")
 			if ("dump" %in% batteries) return(data)
@@ -82,47 +120,57 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 
 		# Managing data
 		if (!is.null(data)) {
-			if ("tbl" %in% class(data)) {
-				data = as.data.frame(data)
+			# Levels: MZ, DZ, and sibs in any case (or as given)
+			levs   = unique(as.character(data[, zygosity]))
+			mzLev  = if (is.null(mzData))   levs[toupper(levs) == "MZ"] else mzData
+			dzLev  = if (is.null(dzData))   levs[toupper(levs) == "DZ"] else dzData
+			sibLev = if (is.null(sibsData)) levs[toupper(levs) %in% c("SIB", "SIBS")] else sibsData
+			if (fromGroups && missing(sibs) && length(sibLev)) {
+				sibs = TRUE
+				message("umxMRDoC: found sibling group ", omxQuotes(sibLev), " in ", omxQuotes(zygosity), ": setting sibs = TRUE")
 			}
-			mzData = data[data[, zygosity] %in% ifelse(is.null(mzData), "MZ", mzData), ]
-			dzData = data[data[, zygosity] %in% ifelse(is.null(dzData), "DZ", dzData), ]
-			if (sibs) sibsData = data[data[, zygosity] %in% ifelse(is.null(sibsData), "sibs", sibsData), ]
-
-			} else {
-				if ("tbl" %in% class(mzData)) {
-					mzData = as.data.frame(mzData)
-					dzData = as.data.frame(dzData)
-					if (sibs) sibsData = as.data.frame(sibsData)
-				}
+			mzData = data[data[, zygosity] %in% mzLev, ]
+			dzData = data[data[, zygosity] %in% dzLev, ]
+			sibsData = if (sibs) data[data[, zygosity] %in% sibLev, ] else NULL
+		} else {
+			if ("tbl" %in% class(mzData)) {
+				mzData = as.data.frame(mzData)
+				dzData = as.data.frame(dzData)
+				if (sibs && !is.null(sibsData)) sibsData = as.data.frame(sibsData)
 			}
+		}
+		# sibs = TRUE models the twin-specific variance T: identified by a group of sibling pairs, or by trios
+		sibGroup = sibs && is.data.frame(sibsData) && nrow(sibsData) > 0
+		if (sibs && !sibGroup && nSib == 2 && !sketch) stop("sibs = TRUE needs sibling data: sibsData, a sibs level of zygosity, or trios (members ", sep, "3)")
 
-			vnames = tvars(c(pheno, prss), sep = sep)
+			vnames    = tvars(c(pheno, prss), sep = sep)
+			vnamesAll = tvars(c(pheno, prss), sep = sep, suffixes = seq_len(nSib))
 
 			if (!sketch){
 				xmu_twin_check(
 					selDVs = c(pheno, prss),
 					sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE,
-					nSib = 2, optimizer = optimizer
+					nSib = nSib, optimizer = optimizer
 					)
 
 		# Find ordinal variables
-		colTypes = umx_is_ordered(xmu_extract_column(mzData, vnames),
+		colTypes = umx_is_ordered(xmu_extract_column(mzData, vnamesAll),
 			summaryObject= TRUE)
 
+		if (colTypes$nOrdVars > 0 && nSib == 3) stop("umxMRDoC: ordinal variables are not yet supported with trios (umxThresholdMatrix handles 1 or 2 family members)")
 		if (colTypes$nOrdVars > 0){
 			ty = umxThresholdMatrix( rbind(mzData,dzData), fullVarNames = colTypes$ordVarNames,
 				sep = sep, method=method)
-			if (sibs) {
+			if (sibGroup) {
 				ty = umxThresholdMatrix( rbind(mzData,dzData, sibsData), fullVarNames = colTypes$ordVarNames,
 					sep = sep, method=method)
 			}
 			ordinalPresent = TRUE
 		}
 
-		if (!missing(mzData)) {mzData = xmu_make_mxData(mzData, manifests = vnames, fullCovs = indVar)}
-		if (!missing(dzData)) {dzData = xmu_make_mxData(dzData, manifests = vnames, fullCovs = indVar)}
-		if (!missing(sibsData)) {sibsData = xmu_make_mxData(sibsData, manifests = vnames, fullCovs = indVar)}
+		if (!is.null(mzData)) {mzData = xmu_make_mxData(mzData, manifests = vnamesAll, fullCovs = indVar)}
+		if (!is.null(dzData)) {dzData = xmu_make_mxData(dzData, manifests = vnamesAll, fullCovs = indVar)}
+		if (sibGroup) {sibsData = xmu_make_mxData(sibsData, manifests = vnamesAll, fullCovs = indVar)}
 	}
 
 
@@ -315,18 +363,18 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
     
 		MZ = mxModel("MZ", expMeanMZ, expMZ, fit)
 		DZ = mxModel("DZ", expMeanDZ, expDZ, fit)
-		if (sibs) sibsM = mxModel("Sibs", expMeanSib, expSib, fit)
+		if (sibGroup) sibsM = mxModel("Sibs", expMeanSib, expSib, fit)
 
 		if (ordinalPresent)   top = mxModel(top, ty)
 
 		if (!sketch){
 			MZ = mxModel(MZ, mzData)
 			DZ = mxModel(DZ, dzData)
-			if (sibs) sibsM = mxModel(sibsM, sibsData)
+			if (sibGroup) sibsM = mxModel(sibsM, sibsData)
 		}
 
 		model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c( "MZ","DZ") ))
-		if (sibs) model = mxModel(name, top, MZ, DZ,sibsM, mxFitFunctionMultigroup(c( "MZ","DZ", "Sibs")) )
+		if (sibGroup) model = mxModel(name, top, MZ, DZ,sibsM, mxFitFunctionMultigroup(c( "MZ","DZ", "Sibs")) )
 
 		model = umxModify(model,  update = c("g2",   "covE"), autoRun = F)
 
@@ -376,7 +424,7 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 					dCov1, dCov2, bCov)
 				model$DZ = mxModel(model$DZ, expMeanDZ, expDZ, fit,
 					dCov1, dCov2, bCov)
-				if (sibs) {
+				if (sibGroup) {
 					model$Sibs =  mxModel(model$Sibs, expMeanSib, expSib, fit,
 						dCov1, dCov2, bCov)
 				}
@@ -583,18 +631,18 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 				MZ = mxModel("MZ", expMeanMZ, expMZ,  fit)
 				DZ = mxModel("DZ", expMeanDZ, expDZ,  fit)
 
-				if (sibs) sibsM = mxModel("Sibs", expMeanSib, expSib, fit)
+				if (sibGroup) sibsM = mxModel("Sibs", expMeanSib, expSib, fit)
 
 				if (ordinalPresent)   top = mxModel(top, ty)
 
 				if (!sketch){
 					MZ = mxModel(MZ, mzData)
 					DZ = mxModel(DZ, dzData)
-					if (sibs) sibsM = mxModel(sibsM, sibsData)
+					if (sibGroup) sibsM = mxModel(sibsM, sibsData)
 				}
 
 				model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c( "MZ","DZ") ))
-				if (sibs) model = mxModel(name, top, MZ, DZ,sibsM, mxFitFunctionMultigroup(c( "MZ","DZ", "Sibs")) )
+				if (sibGroup) model = mxModel(name, top, MZ, DZ,sibsM, mxFitFunctionMultigroup(c( "MZ","DZ", "Sibs")) )
 
 				model = umxModify(model,  update = c("b2", "b4"), autoRun = F)
 			if (!sketch) model = mxAutoStart(model)
@@ -638,7 +686,7 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 				dCov1, dCov2, bCov)
 			model$DZ = mxModel(model$DZ, expMeanDZ, expDZ, fit,
 				dCov1, dCov2, bCov)
-			if (sibs) {
+			if (sibGroup) {
 				model$Sibs =  mxModel(model$Sibs, expMeanSib, expSib, fit,
 					dCov1, dCov2, bCov)
 			}
@@ -807,17 +855,17 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 			MZ = mxModel("MZ", expMeanMZ, expMZ, fit)
 			DZ = mxModel("DZ", expMeanDZ, expDZ, fit)
 
-			if (sibs) sibsM = mxModel("Sibs", expMeanSib, expSib, fit)
+			if (sibGroup) sibsM = mxModel("Sibs", expMeanSib, expSib, fit)
 			if (ordinalPresent)   top = mxModel(top, ty)
 
 			if (!sketch){
 				MZ = mxModel(MZ, mzData)
 				DZ = mxModel(DZ, dzData)
-				if (sibs) sibsM = mxModel(sibsM, sibsData)
+				if (sibGroup) sibsM = mxModel(sibsM, sibsData)
 			}
 
 			model = mxModel(name, top, MZ, DZ, mxFitFunctionMultigroup(c( "MZ","DZ") ))
-			if (sibs) model = mxModel(name, top, MZ, DZ,sibsM, mxFitFunctionMultigroup(c( "MZ","DZ", "Sibs")) )
+			if (sibGroup) model = mxModel(name, top, MZ, DZ,sibsM, mxFitFunctionMultigroup(c( "MZ","DZ", "Sibs")) )
 
 			model = umxModify(model,  update = c("g2",  "covE"), autoRun = F)
 		if (!sketch) model = mxAutoStart(model)
@@ -857,7 +905,7 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 				dCov1, dCov2, bCov)
 			model$DZ = mxModel(model$DZ, expMeanDZ, expDZ, fit,
 				dCov1, dCov2, bCov)
-			if (sibs) {
+			if (sibGroup) {
 				model$Sibs =  mxModel(model$Sibs, expMeanSib, expSib, fit,
 					dCov1, dCov2, bCov)
 			}
@@ -866,6 +914,61 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 		} else {
 			stop("Only 1 or 2 PRSs are supported")
 		}
+
+	# ==================================================================
+	# = Trios: member 3 is a non-twin sibling. Its covariance with     =
+	# = each twin is .5A + C (K A + C with sibs): never T.             =
+	# ==================================================================
+	if (nSib == 3) {
+		nP      = 2 + length(prss)  # variables per person: X, Y, PRS(s)
+		prsT2   = if (length(prss)) nP + 2 + seq_along(prss) else integer(0) # twin 2 PRS: same as twin 1 in MZ pairs
+		keepMZ  = setdiff(seq_len(3 * nP), prsT2)
+		vnames3 = tvars(c(pheno, prss), sep = sep, suffixes = 1:3)
+		filter3 = mxMatrix(name = "filter3", type = "Full", nrow = length(keepMZ), ncol = 3 * nP, free = FALSE, values = diag(3 * nP)[keepMZ, , drop = FALSE])
+		if (sibs) {
+			CovMZ3 = mxAlgebra(name = "CovMZ3", filter3 %&% rbind(
+				cbind(A + C + E + Ts_, A + C + Ts_    , K %x% A + C),
+				cbind(A + C + Ts_    , A + C + E + Ts_, K %x% A + C),
+				cbind(K %x% A + C    , K %x% A + C    , A + C + E + Ts_)))
+			CovDZ3 = mxAlgebra(name = "CovDZ3", rbind(
+				cbind(A + C + E + Ts_  , K %x% A + C + Ts_, K %x% A + C),
+				cbind(K %x% A + C + Ts_, A + C + E + Ts_  , K %x% A + C),
+				cbind(K %x% A + C      , K %x% A + C      , A + C + E + Ts_)))
+			CovSib3 = mxAlgebra(name = "CovSib3", rbind(
+				cbind(A + C + E + Ts_, K %x% A + C    , K %x% A + C),
+				cbind(K %x% A + C    , A + C + E + Ts_, K %x% A + C),
+				cbind(K %x% A + C    , K %x% A + C    , A + C + E + Ts_)))
+			model = mxModel(model, mxModel(model$top, filter3, CovMZ3, CovDZ3, CovSib3))
+		} else {
+			CovMZ3 = mxAlgebra(name = "CovMZ3", filter3 %&% rbind(
+				cbind(A + C + E      , A + C          , 0.5 %x% A + C),
+				cbind(A + C          , A + C + E      , 0.5 %x% A + C),
+				cbind(0.5 %x% A + C  , 0.5 %x% A + C  , A + C + E)))
+			CovDZ3 = mxAlgebra(name = "CovDZ3", rbind(
+				cbind(A + C + E      , 0.5 %x% A + C  , 0.5 %x% A + C),
+				cbind(0.5 %x% A + C  , A + C + E      , 0.5 %x% A + C),
+				cbind(0.5 %x% A + C  , 0.5 %x% A + C  , A + C + E)))
+			model = mxModel(model, mxModel(model$top, filter3, CovMZ3, CovDZ3))
+		}
+
+		# Member 3 has the same means as twin 1 (all variables, incl. its own PRS)
+		if (is.null(covar)) {
+			expMeanMZ3  = mxAlgebra(name = "expMeanMZ" , cbind(top.meanT1, top.meanT2MZ , top.meanT1))
+			expMeanDZ3  = mxAlgebra(name = "expMeanDZ" , cbind(top.meanT1, top.meanT2DZ , top.meanT1))
+			expMeanSib3 = mxAlgebra(name = "expMeanSib", cbind(top.meanT1, top.meanT2sib, top.meanT1))
+			dCov3 = list()
+		} else {
+			dCov3 = mxMatrix(type = "Full", nrow = nCov, ncol = 1, free = FALSE, labels = paste0("data.", covar, sep, 3), name = "dCov3")
+			expMeanMZ3  = mxAlgebra(name = "expMeanMZ" , cbind(top.meanT1 + t(bCov %*% dCov1), top.meanT2MZ  + t(bCov[1:2,] %*% dCov2), top.meanT1 + t(bCov %*% dCov3)))
+			expMeanDZ3  = mxAlgebra(name = "expMeanDZ" , cbind(top.meanT1 + t(bCov %*% dCov1), top.meanT2DZ  + t(bCov %*% dCov2), top.meanT1 + t(bCov %*% dCov3)))
+			expMeanSib3 = mxAlgebra(name = "expMeanSib", cbind(top.meanT1 + t(bCov %*% dCov1), top.meanT2sib + t(bCov %*% dCov2), top.meanT1 + t(bCov %*% dCov3)))
+		}
+		model$MZ = mxModel(model$MZ, dCov3, expMeanMZ3, mxExpectationNormal("top.CovMZ3", means = "expMeanMZ", dimnames = vnames3[keepMZ]))
+		model$DZ = mxModel(model$DZ, dCov3, expMeanDZ3, mxExpectationNormal("top.CovDZ3", means = "expMeanDZ", dimnames = vnames3))
+		if (sibGroup) {
+			model$Sibs = mxModel(model$Sibs, dCov3, expMeanSib3, mxExpectationNormal("top.CovSib3", means = "expMeanSib", dimnames = vnames3))
+		}
+	}
 
 	model = as(model, "MxModelMRDoC") # set class so that S3s dispatch e.g. plot()
 
@@ -876,6 +979,10 @@ umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NU
 
 	return(model)
 }
+
+#' @rdname umxMRDoC
+#' @export
+umx_mrdoc <- umxMRDoC
 
 
 #' Present the results of a Mendelian Randomization Direction of Causation Model in a table
