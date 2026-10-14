@@ -292,7 +292,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	# DisplayColumns show
 	if(!is.null(std)){
 		# n.b: mxStandardizeRAMpaths returns the raw paths as well, so two birds, one stone.
-		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
+		# It needs RAM expectations: other models (e.g. mxMatrix/mxAlgebra) fall back to raw estimates below
+		parameterTable = tryCatch(mxStandardizeRAMpaths(model, SE = SE), error = function(e) NULL) # Compute standard errors
 		
 		# Helper to recursively flatten lists of dataframes returned by mxStandardizeRAMpaths
 		flatten_pTable <- function(x) {
@@ -310,6 +311,20 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 		}
 		
 		parameterTable = flatten_pTable(parameterTable)
+
+		# Not a RAM model: table the raw estimates (std needs RAM paths)
+		isRAMtable = !is.null(parameterTable) && nrow(parameterTable) > 0
+		if (!isRAMtable) {
+			pars = summary(model)$parameters
+			if (!is.null(pars) && nrow(pars) > 0) {
+				if (isTRUE(std)) message("Polite note: standardized estimates need a RAM model (mxStandardizeRAMpaths): showing raw estimates.")
+				std = FALSE
+				parameterTable = data.frame(label = pars$name, name = pars$name, matrix = pars$matrix, row = pars$row, col = pars$col,
+					Estimate = pars$Estimate, SE = pars$Std.Error, Std.Estimate = NA, Std.SE = NA, stringsAsFactors = FALSE)
+			} else {
+				parameterTable = NULL
+			}
+		}
 
 		if (!is.null(parameterTable) && nrow(parameterTable) > 0) {
 			#          name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
@@ -383,7 +398,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			} else {
 				toShow = parameterTable[, namesToShow]
 			}
-			toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+			if (isRAMtable) {
+				toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+			} else {
+				toShow$type = parameterTable[rownames(toShow), "matrix"]
+			}
 			toShow = unique.data.frame(toShow[,c(namesToShow, "type")])
 			umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
 		}

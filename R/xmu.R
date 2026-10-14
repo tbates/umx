@@ -314,6 +314,7 @@ xmu_mxRefModels <- function(x, run = FALSE, ..., beginMessage = FALSE, silent = 
 xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary"), refModels = NULL) {
 	tryHard   = match.arg(tryHard)
 	returning = match.arg(returning)
+	theSummary = NA
 
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -351,7 +352,8 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 			} else {
 				message("Error incurred trying to run model")
 			}
-			message(e)
+			# n.b.: message(e) would re-signal the error condition itself (aborting inside any tryCatch/try/knitr/testthat)
+			message(conditionMessage(e))
 		})
 	}
 
@@ -359,18 +361,18 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		# Not run, so don't summarise (will error)
 		theSummary = NA
 	} else if(summary){
-		tryCatch({
+		# A failing summary must not lose the fitted model: report and carry on
+		theSummary = tryCatch({
 			if(is.null(std)) {
-				theSummary = umxSummary(model1, std = NULL, digits = digits, refModels = refModels)	
+				umxSummary(model1, std = NULL, digits = digits, refModels = refModels)
 			} else if(std == "default"){
-				theSummary = umxSummary(model1, digits = digits, refModels = refModels)
+				umxSummary(model1, digits = digits, refModels = refModels)
 			} else {
-				theSummary = umxSummary(model1, std = std, digits = digits, refModels = refModels)
+				umxSummary(model1, std = std, digits = digits, refModels = refModels)
 			}
 		}, error = function(e) {
-			theSummary = NA
-			message("Error incurred trying to run umxSummary")
-			message(e)
+			message("Error incurred trying to run umxSummary: ", conditionMessage(e))
+			NA
 		})
 
 		tryCatch({
@@ -382,8 +384,7 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 				}
 			}
 		}, error = function(e) {
-			message("Error incurred trying to run umxCompare")
-			message(e)
+			message("Error incurred trying to run umxCompare: ", conditionMessage(e))
 		})
 
 	}
