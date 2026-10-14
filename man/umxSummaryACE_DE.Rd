@@ -78,6 +78,8 @@ Other Reporting functions:
 \code{\link[=umxExpCov]{umxExpCov()}},
 \code{\link[=umxExpMeans]{umxExpMeans()}},
 \code{\link[=umxFitIndices]{umxFitIndices()}},
-\code{\link[=umxRotate]{umxRotate()}}
+\code{\link[=umxRotate]{umxRotate()}},
+\code{\link[=umx_glance]{umx_glance()}},
+\code{\link[=umx_tidy]{umx_tidy()}}
 }
 \concept{Reporting functions}
