@@ -39,6 +39,7 @@ Other Advanced Model Building Functions:
 \code{\link[=umxRAM_GLM]{umxRAM_GLM()}},
 \code{\link[=umxRun]{umxRun()}},
 \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
+\code{\link[=umx_autostart]{umx_autostart()}},
 \code{\link[=xmuLabel]{xmuLabel()}},
 \code{\link[=xmuValues]{xmuValues()}}
 }

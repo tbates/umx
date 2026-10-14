@@ -70,6 +70,8 @@ Other Reporting functions:
 \code{\link[=umxExpMeans]{umxExpMeans()}},
 \code{\link[=umxFitIndices]{umxFitIndices()}},
 \code{\link[=umxRotate]{umxRotate()}},
-\code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}}
+\code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}},
+\code{\link[=umx_glance]{umx_glance()}},
+\code{\link[=umx_tidy]{umx_tidy()}}
 }
 \concept{Reporting functions}

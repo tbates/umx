@@ -94,7 +94,9 @@ Other Reporting functions:
 \code{\link[=umxExpCov]{umxExpCov()}},
 \code{\link[=umxExpMeans]{umxExpMeans()}},
 \code{\link[=umxRotate]{umxRotate()}},
-\code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}}
+\code{\link[=umxSummaryACE_DE]{umxSummaryACE_DE()}},
+\code{\link[=umx_glance]{umx_glance()}},
+\code{\link[=umx_tidy]{umx_tidy()}}
 }
 \author{
 Brenton M. Wiernik, Athanassios Protopapas, Paolo Ghisletta, Markus Brauer

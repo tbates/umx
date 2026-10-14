@@ -51,6 +51,7 @@ Other Advanced Model Building Functions:
 \code{\link[=umxRun]{umxRun()}},
 \code{\link[=umxThresholdMatrix]{umxThresholdMatrix()}},
 \code{\link[=umxUnexplainedCausalNexus]{umxUnexplainedCausalNexus()}},
+\code{\link[=umx_autostart]{umx_autostart()}},
 \code{\link[=xmuLabel]{xmuLabel()}},
 \code{\link[=xmuValues]{xmuValues()}}
 }
