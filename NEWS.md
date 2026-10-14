@@ -1,6 +1,7 @@
 # Releases
 ## umx 4.80.0: Over *80* new features, fixes, and improvements! 
 * Date: 2026-10-12 R 4.6.1
+* FIXED: `umxSummary()` fails safely on non-RAM models (e.g. `mxMatrix`/`mxAlgebra`): it reports raw estimates (with a note if `std = TRUE`) and the fit, instead of erroring in `mxStandardizeRAMpaths()`. `umxModify()` etc. no longer lose the fitted model when the summary fails: errors in the summary/compare step were re-thrown via `message(e)` inside any `try`/`tryCatch`/knitr/testthat. (Luis De Araujo)
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string, `Timothy C. Bates`.
 * BREAKING: Helpers and main functions use modern WLS path only (hard refuse misleading name `"acov"`).
 * NEW: `umxACE_DE` double-entry ID: overwrite Paras Mehta - avoids forcing continuous trait variance to 1. All DE pairs release binary `Vtot==1`, share free cont/cens means; `fixCensorThresholds` fixes thresh at known cut or leaves thresh free (cut estimated in data units).
