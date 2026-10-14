@@ -1,6 +1,7 @@
 # Releases
 ## umx 4.80.0: Over *80* new features, fixes, and improvements! 
 * Date: 2026-10-12 R 4.6.1
+* IMPROVED: `umx_long2wide()` accepts tibbles, data.tables, and lazy dtplyr/dbplyr pipelines (realized via their `as.data.frame()` method, no new dependencies). (Luis De Araujo)
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string, `Timothy C. Bates`.
 * BREAKING: Helpers and main functions use modern WLS path only (hard refuse misleading name `"acov"`).
 * NEW: `umxACE_DE` double-entry ID: overwrite Paras Mehta - avoids forcing continuous trait variance to 1. All DE pairs release binary `Vtot==1`, share free cont/cens means; `fixCensorThresholds` fixes thresh at known cut or leaves thresh free (cut estimated in data units).

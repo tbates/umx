@@ -15,7 +15,7 @@ umx_long2wide(
 )
 }
 \arguments{
-\item{data}{The original (long-format) data file}
+\item{data}{The original (long-format) data: a data.frame, or anything \code{\link[=as.data.frame]{as.data.frame()}} can realize (tibble, data.table, a lazy dtplyr or dbplyr pipeline).}
 
 \item{famID}{The unique identifier for members of a family}
 
