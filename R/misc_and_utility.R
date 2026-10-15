@@ -5724,7 +5724,7 @@ umx_wide4lmer <- function(repeated = list(y = c("y1", "y2")), timevar = list(con
 #' family member, they are NA everywhere. i.e., it does not hunt for values that
 #' are present elsewhere or try and self-heal missing data.
 #'
-#' @param data The original (long-format) data file
+#' @param data The original (long-format) data: a data.frame, or anything [as.data.frame()] can realize (tibble, data.table, a lazy dtplyr or dbplyr pipeline).
 #' @param famID  The unique identifier for members of a family
 #' @param twinID The twinID. Typically 1, 2, 50 51, etc...
 #' @param zygosity Typically MZFF, DZFF MZMM, DZMM DZOS
@@ -5792,6 +5792,8 @@ umx_wide4lmer <- function(repeated = list(y = c("y1", "y2")), timevar = list(con
 #' }
 #'
 umx_long2wide <- function(data, famID = NA, twinID = NA, zygosity = NA, vars2keep = NA, passalong = NA, twinIDs2keep=NA) {
+	# Plain data.frame: tibbles/data.tables index differently, and lazy (dtplyr/dbplyr) pipelines are realized by their as.data.frame method
+	data = as.data.frame(data)
 	umx_check_names(c(famID, twinID, zygosity), data = data, die = TRUE)
 	umx_check_names(passalong, data = data, die = TRUE)
 	levelsOfTwinID = unique(data[,twinID])
