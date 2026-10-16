@@ -43,7 +43,7 @@
 #' @param caption Optional caption for html/markdown tables. `NA` (default) auto-generates "Effects on y of a, b, and c" from `formula(obj)` for `lm`/`glm`; `NULL` suppresses caption; a string uses that text.
 #' @param cols Optional, pass in a list of column names when using umxAPA with a dataframe input.
 #' @param stars Whether to append significance stars to p-values ("*" p < .05, "**" p < .01, "***" p < .001). Default `TRUE` (APA-7 table standard: * p < .05, ** p < .01, *** p < .001; set `stars=FALSE` to suppress stars; enable for reviewers who request them).
-#' @return - string
+#' @return - string (for text summaries); the input object, invisibly, for models and anova tables
 #' @export
 #' @seealso [SE_from_p()]
 #' @family Reporting Functions
@@ -427,29 +427,31 @@ umxAPA <- function(obj = .Last.value, se = NULL, p = NULL, std = FALSE, digits =
 		# return (possibly standardized) model
 		invisible(obj)
 	} else if(inherits(obj, "anova")){
-	  # 2. check order
-	  bad_order = FALSE
-	  if(nrow(obj) >= 2 &&!is.na(obj$Df[2]) && obj$Df[2] < 0){
-	    bad_order = TRUE
-	    message("Note: anova has negative Df. For a cleaner table use anova(smaller, larger). Stats are identical, reporting |Df|.")
-	  }
+		# 2. check order
+		bad_order = FALSE
+		if(nrow(obj) >= 2 &&!is.na(obj$Df[2]) && obj$Df[2] < 0){
+			bad_order = TRUE
+			message("Note: anova has negative Df. For a cleaner table use anova(smaller, larger). Stats are identical, reporting |Df|.")
+		}
 
-	  # 3. nice sentence - works either order
-	  # full model's Res.Df is always the smaller one
-	  comp_row = nrow(obj) # last comparison
-	  df1      = abs(obj$Df[comp_row])
-	  df2      = min(obj$Res.Df, na.rm = TRUE) # df of full model
-	  Fval     = obj$F[comp_row]
-	  pval     = obj$`Pr(>F)`[comp_row]
+		# 3. nice sentence - works either order
+		# full model's Res.Df is always the smaller one
+		comp_row = nrow(obj) # last comparison
+		df1      = abs(obj$Df[comp_row])
+		df2      = min(obj$Res.Df, na.rm = TRUE) # df of full model
+		Fval     = obj$F[comp_row]
+		pval     = obj$`Pr(>F)`[comp_row]
 
-	  # APA p formatting
-	  p_str = umx_APA_pval(pval)
-	  apa = sprintf("F(%d, %d) = %.2f, p %s", df1, df2, Fval, ifelse(grepl("<", p_str), p_str, paste0("= ", p_str)))
+		# APA p formatting
+		p_str = umx_APA_pval(pval)
+		apa = sprintf("F(%d, %d) = %.2f, p %s", df1, df2, Fval, ifelse(grepl("<", p_str), p_str, paste0("= ", p_str)))
 
-	  was_str = ifelse(pval<.05, "significantly improved model fit", "did not significantly improve model fit")
-	  paste0("Adding the additional predictors ", was_str, ", ", apa, ".")
-	  # full sentence if you have heading
-	  # attr(obj, "heading") contains the two formulas
+		was_str = ifelse(pval<.05, "significantly improved model fit", "did not significantly improve model fit")
+		str = paste0("Adding the additional predictors ", was_str, ", ", apa, ".")
+		cat(str, "\n")
+		invisible(obj)
+		# full sentence if you have heading
+		# attr(obj, "heading") contains the two formulas
 	} else {
 		if(is.null(se)){
 			if(is.null(p)){
