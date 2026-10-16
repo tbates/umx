@@ -24,9 +24,12 @@
 #' 
 #' `umxPlot` just takes `y ~ x` (or "x" and "y" as strings), and gives you a nicely labelled plot, with a fitted line, the
 #' \ifelse{html}{\out{<em>R</em><sup>2</sup>}}{\eqn{R^2}} so readers can see how well this fitted. It knows how to put Greek symbols like \eqn{beta} into axes.
+#' With only `x`, discrete-like data (factors, strings, or 12 or fewer unique numbers)
+#' get a bar plot and continuous data a density plot; override with `type`. A bare
+#' vector or factor `data` is upgraded to a one-column data.frame named "x".
 #' @param x formula or (alternatively) x as string
 #' @param y variable as string.
-#' @param data The data for the graph.
+#' @param data The data for the graph. A bare vector or factor is upgraded to a one-column data.frame named "x".
 #' @param xlab X-axis label (default y).
 #' @param ylab Y-axis label (default y).
 #' @param title Graph title. Default =  paste0(y, " as a function of ", x)
@@ -35,6 +38,7 @@
 #' @param geom_point  show points? (TRUE) 
 #' @param method Method for fitting curve (default = lm)
 #' @param family for glm default = "gaussian"
+#' @param type Single-variable plot kind: "auto" (bar if discrete-like, density if continuous), or force "bar", "histogram", or "density".
 #' @return - plot you can edit.
 #' @export
 #' @family Plotting functions
@@ -43,7 +47,17 @@
 #' data(mtcars)
 #' umxPlot(mpg ~ wt, data = mtcars, r2x = 2, r2y = 10)
 #' umxPlot(x = "wt", y = "mpg", mtcars, r2x = 2, r2y = 10)
-umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x=NA, r2y=NA, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson")) {
+#' umxPlot(data = runif(100))
+#' umxPlot(x = "cyl", data = mtcars)
+#' umxPlot(x = "mpg", data = mtcars, type = "histogram")
+umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x=NA, r2y=NA, geom_point = TRUE, method = c("lm", "auto", "loess", "glm", "gam"), family = c("gaussian","binomial", "Gamma", "inverse", "poisson", "quasi", "quasibinomial", "quasipoisson"), type = c("auto", "bar", "histogram", "density")) {
+	# Upgrade a bare vector to a one-column data.frame named "x" (must precede substitute(): both it and inherits() fail on missing x)
+	if(!missing(data) && !is.data.frame(data) && ((is.atomic(data) && is.null(dim(data))) || is.factor(data))){
+		data = data.frame(x = data)
+		if(missing(x)){
+			x = "x"
+		}
+	}
 	# Polite catch for bare variable names: umxPlot(Weight, MPG.city, data=Cars93) -> suggest string or formula
 	# Must capture substitute() BEFORE any evaluation of x/y (e.g. inherits() would trigger 'object not found')
 	xSub = substitute(x)
@@ -72,6 +86,7 @@ umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x
 	}
 	method = match.arg(method)
 	family = match.arg(family)
+	type = match.arg(type)
 	if(inherits(x, "formula")){
 		.formula = x
 		tmp = attr(terms(x), "factors")
@@ -80,15 +95,21 @@ umxPlot <- function(x, y= NULL, data, xlab= NULL, ylab = NULL, title = NULL, r2x
 		x = tmp[2]
 		umx_check_names(c(x, y), data = data, die = TRUE)
 	} else if(is.null(y)){
-		# make a histogram
+		# single variable: bar plot if discrete-like, density plot if continuous
 		col = data[[x]]
 		is_disc = is.factor(col) || is.character(col) || is.ordered(col) || is.logical(col)
 		is_disc = is_disc || (is.numeric(col) && length(unique(na.omit(col))) <= 12)
-
-		if(is_disc){
-		  return(ggplot(data, aes(x =.data[[x]])) + geom_bar() + labs(x = x, title = title) )
+		if(type == "auto"){
+			plotType = ifelse(is_disc, "bar", "density")
 		} else {
-		  return(ggplot(data, aes(x =.data[[x]])) + geom_histogram(bins = 30) + labs(x = x, title = title) )
+			plotType = type
+		}
+		if(plotType == "bar"){
+			return(ggplot(data, aes(x =.data[[x]])) + ggplot2::geom_bar() + labs(x = x, title = title))
+		} else if(plotType == "histogram"){
+			return(ggplot(data, aes(x =.data[[x]])) + ggplot2::geom_histogram(bins = 30) + labs(x = x, title = title))
+		} else {
+			return(ggplot(data, aes(x =.data[[x]])) + ggplot2::geom_density() + labs(x = x, title = title))
 		}
 	} else {
 		# make formula from x and y strings
@@ -2538,15 +2559,10 @@ umxCI_boot <- function(model, rawData = NULL, type = c("par.expected", "par.obse
 #' 
 #' The underlying format is graphviz.
 #' If you use `umx_set_plot_format("graphviz")`, figures will open in a graphviz helper app (if installed).
-#' If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
-#' 
-#' On MacOS, you may need to associate the \sQuote{.gv} extension with your graphviz app.
-#' Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with}, 
-#' select graphviz.app (or OmniGraffle professional),
-#' then set \dQuote{change all}.
-#' 
-#' 
+#' If file is set, we will try and open an app to handle rendering the resulting file.
 #' The commercial application \dQuote{OmniGraffle} is great for editing these images.
+#' 
+#' You may need to associate the \sQuote{.gv} extension with your app (if you use that rather than the browser).
 #'
 #' @rdname plot.MxLISRELModel
 #' @param x A LISREL [OpenMx::mxModel()] from which to make a path diagram
@@ -2827,7 +2843,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' require(umx)
 #' data(demoOneFactor)
 #' manifests = names(demoOneFactor)
-#
+#'
 #' m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 #' 	umxPath("G", to = manifests),
 #' 	umxPath(var = manifests),
@@ -2850,7 +2866,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #'		umxPath("slope", to = manifests, arrows = 1, fixedAt = c(0,1,2,3,4))
 #' )
 #'
-#' plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
+#' plot(m1, means= FALSE, strip= TRUE, splines= "FALSE", max= "int")
 #' } # end dontrun
 #'
 plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, uncertainty = c("none", "SE", "MLR", "CI"), file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, ...) {
@@ -3053,6 +3069,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		)
 		message("\n?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
 		# cat(out)
+		# plot(),
 		xmu_dot_maker(model, file, digraph, strip_zero = strip_zero)
 	}
 } # end plot.MxModel
