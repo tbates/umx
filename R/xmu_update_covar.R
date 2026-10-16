@@ -7,6 +7,7 @@
 #' @param covar The covariates.
 #' @param pheno The phenotypes affected by covariates.
 #' @param sep The separator used in the column names (default = "_T")
+#' @param nSib Number of family members (default 2). With 3, member 3 (e.g. a sibling) is updated too.
 #' @return - dataframe with updated covariates and phenotypes
 #' @export
 #' @family xmu internal not for end user
@@ -17,7 +18,7 @@
 #' # df$varA1_T1[1:5] <- NA
 #' # df <- xmu_update_covar(df, covar = "varA1", pheno = "varB1")
 #' # head(df)
-xmu_update_covar <- function(data, covar, pheno, sep = "_T") {
+xmu_update_covar <- function(data, covar, pheno, sep = "_T", nSib = 2) {
   if (!is.null(covar)) {
 	for (cov in covar) {
 	  ind1 <- paste0(cov, sep, "1")
@@ -43,25 +44,15 @@ xmu_update_covar <- function(data, covar, pheno, sep = "_T") {
 	  }
 	}
 
-	# Convert remaining NAs in covariates to 99999 and set corresponding phenotype to NA
+	# Convert remaining NAs in covariates to 99999 and set corresponding phenotype to NA, for each family member
 	for (cov in covar) {
-	  ind1 <- paste0(cov, sep, "1")
-	  ind2 <- paste0(cov, sep, "2")
-
-	  # Replace remaining NAs in covariates with 99999
-	  na_indices1 <- is.na(data[[ind1]])
-	  na_indices2 <- is.na(data[[ind2]])
-
-	  data[[ind1]][na_indices1] <- 99999
-	  data[[ind2]][na_indices2] <- 99999
-
-	  # Set corresponding phenotype variables to NA
-	  for (p in pheno) {
-		p_var1 <- paste0(p, sep, "1")
-		p_var2 <- paste0(p, sep, "2")
-
-		data[[p_var1]][na_indices1] <- NA
-		data[[p_var2]][na_indices2] <- NA
+	  for (s in seq_len(nSib)) {
+		ind <- paste0(cov, sep, s)
+		na_indices <- is.na(data[[ind]])
+		data[[ind]][na_indices] <- 99999
+		for (p in pheno) {
+		  data[[paste0(p, sep, s)]][na_indices] <- NA
+		}
 	  }
 	}
   } else {
