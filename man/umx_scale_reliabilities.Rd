@@ -5,10 +5,10 @@
 \title{Accumulate scale reliabilities and report them as a table}
 \usage{
 umx_scale_reliabilities(
-  action = "show",
+  action = c("show", "init", "add", "print"),
   scale_name = NULL,
   reliability = NULL,
-  type = NULL,
+  type = c("omega_t", "alpha", "omega_h"),
   report = c("markdown", "html"),
   digits = 2
 )
@@ -20,7 +20,7 @@ umx_scale_reliabilities(
 
 \item{reliability}{Reliability value (single numeric, required when \code{action = "add"}).}
 
-\item{type}{Type of reliability. When \code{action = "add"}, a single string (required), e.g. \code{"alpha"}, \code{"omega_t"}, or \code{"omega_h"}. When \code{action = "show"}, an optional filter: one or more types to report (\code{NULL}, the default, reports all rows).}
+\item{type}{Type of reliability: one of \code{"omega_t"} (the default), \code{"alpha"}, or \code{"omega_h"}. When \code{action = "add"}, a single string. When \code{action = "show"}, an optional filter: one or more types to report (the default reports all rows).}
 
 \item{report}{Format for the printed table: \code{"markdown"} or \code{"html"}.}
 
@@ -39,18 +39,35 @@ umx_scale_reliabilities(
 To use, call with \code{"init"}, score your scales, then call with \code{"show"}.
 }
 \examples{
-umx_scale_reliabilities("init") # start with an empty store
-umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.72, type = "alpha")
-umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.75, type = "omega_t")
+# A simple walkthrough:
+umx_scale_reliabilities("init")
+umx_scale_reliabilities("add", scale_name="IQ", reliability=.946)
 umx_scale_reliabilities("show")
-umx_scale_reliabilities("show", type = "alpha") # just the alphas
-umx_scale_reliabilities("init") # clear the store
+# |scale | reliability|type    |
+# |:-----|-----------:|:-------|
+# |IQ    |       0.946|omega_t |
+
+# Using it in real life
 \dontrun{
 data(bfi, package = "psychTools")
 umx_scale_reliabilities("init")
-bfi = umx_score_scale("A", pos = 2:5, rev = 1, max = 6, data = bfi, name = "A", alpha = TRUE)
-umx_scale_reliabilities("show")
+bfi = umx_score_scale(name = "A", base= "A", pos = 2:5, rev = 1, max = 6, data = bfi, alpha = TRUE)
+bfi = umx_score_scale(name = "C", base= "C", pos = c(1:3), rev = c(4,5), max = 6, data = bfi, alpha = TRUE, score="mean")
+umx_scale_reliabilities("show", type = "alpha")
 }
+# |   |scale | reliability|type  |
+# |:--|:-----|-----------:|:-----|
+# |1  |A     |        0.70|alpha |
+# |3  |C     |        0.73|alpha |
+
+# More examples
+umx_scale_reliabilities("init") # start with an empty store
+umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.72, type = "alpha")
+umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.75, type = "omega_t")
+umx_scale_reliabilities("add", scale_name = "Extraversion", reliability = 0.81) # type defaults to "omega_t"
+umx_scale_reliabilities("show")
+umx_scale_reliabilities("show", type = "alpha") # just the alphas
+umx_scale_reliabilities("init") # clear the store
 }
 \seealso{
 Other Get and set:

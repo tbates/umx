@@ -84,7 +84,7 @@ Finally, set se to the CI c(lower, upper), to back out the SE.}
 }
 \value{
 \itemize{
-\item string
+\item string (for text summaries); the input object, invisibly, for models and anova tables
 }
 }
 \description{

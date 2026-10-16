@@ -94,6 +94,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxGxE_window]{umxGxE_window()}},
 \code{\link[=umxGxEbiv]{umxGxEbiv()}},
 \code{\link[=umxIP]{umxIP()}},
+\code{\link[=umxLGCM]{umxLGCM()}},
 \code{\link[=umxMRDoC]{umxMRDoC()}},
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxReduceACE]{umxReduceACE()}},
@@ -107,6 +108,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxSummaryACEv]{umxSummaryACEv()}},
 \code{\link[=umxSummaryDoC]{umxSummaryDoC()}},
 \code{\link[=umxSummaryGxEbiv]{umxSummaryGxEbiv()}},
+\code{\link[=umxSummaryLGCM]{umxSummaryLGCM()}},
 \code{\link[=umxSummarySexLim]{umxSummarySexLim()}},
 \code{\link[=umxSummarySimplex]{umxSummarySimplex()}},
 \code{\link[=umxTwinMaker]{umxTwinMaker()}}

@@ -69,6 +69,7 @@ Other Plotting functions:
 \code{\link[=umxPlotGxE]{umxPlotGxE()}},
 \code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
 \code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotLGCM]{umxPlotLGCM()}},
 \code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
 \code{\link[=umxPlotSimplex]{umxPlotSimplex()}}
 }

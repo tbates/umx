@@ -2418,7 +2418,6 @@ xmu_dot_mat2dot <- function(x, cells = c("diag", "lower", "lower_inc", "upper", 
 #' @return - optionally returns the digraph text.
 #' @family xmu internal not for end user
 #' @family Graphviz
-
 xmu_dot_maker <- function(model, file, digraph, strip_zero= TRUE){
 	# Coerce logical / NULL from options(umx_auto_plot = FALSE) etc. before cat(file=) or grViz
 	if (is.null(file)) {

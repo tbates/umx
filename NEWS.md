@@ -1,6 +1,7 @@
 # Releases
 ## umx 4.80.0: Over *80* new features, fixes, and improvements! 
 * Date: 2026-10-12 R 4.6.1
+* NEW: `umxLGCM()` biometric latent growth curve on age (definition variable) for twins and siblings: linear, exponential, logistic, or Gompertz shape, A/C/E(/T), invariant covariates, trios and SIB groups. `plot()` draws the model-implied growth curve with observed wave means; table output via `umxSummary()`. (Luis De Araujo)
 * IMPROVED: `umx_long2wide()` accepts tibbles, data.tables, and lazy dtplyr/dbplyr pipelines (realized via their `as.data.frame()` method, no new dependencies). (Luis De Araujo)
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string, `Timothy C. Bates`.
 * BREAKING: Helpers and main functions use modern WLS path only (hard refuse misleading name `"acov"`).

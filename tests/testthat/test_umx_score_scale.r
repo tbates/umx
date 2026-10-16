@@ -152,9 +152,14 @@ test_that("umx_scale_reliabilities accumulates reliabilities", {
 	umx_scale_reliabilities("init")
 	expect_equal(nrow(getOption("umx_scale_reliabilities")), 0)
 	expect_message(umx_scale_reliabilities("show"), "No scale reliabilities stored")
+	# add without type defaults to omega_t; unknown or multiple types fail
+	added = umx_scale_reliabilities("add", scale_name = "N", reliability = 0.5)
+	expect_equal(added[added$scale == "N", "type"], "omega_t")
+	umx_scale_reliabilities("init") # clear the default-type row
 	# bad inputs fail with informative errors
 	expect_error(umx_scale_reliabilities("explode"))
-	expect_error(umx_scale_reliabilities("add", scale_name = "N", reliability = 0.5))
+	expect_error(umx_scale_reliabilities("add", scale_name = "N", reliability = 0.5, type = "omega_x"), "must be one of")
+	expect_error(umx_scale_reliabilities("add", scale_name = "N", reliability = 0.5, type = c("alpha", "omega_t")), "must be one of")
 	expect_error(umx_scale_reliabilities("add", scale_name = "N", reliability = "high", type = "alpha"))
 	expect_error(umx_scale_reliabilities("show", type = 5))
 	# scoring with no initialized store leaves no store behind

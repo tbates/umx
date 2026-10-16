@@ -97,6 +97,7 @@ then set \dQuote{change all}.
 require(umx)
 data(demoOneFactor)
 manifests = names(demoOneFactor)
+
 m1 = umxRAM("One Factor", data = demoOneFactor, type = "cov",
 	umxPath("G", to = manifests),
 	umxPath(var = manifests),
@@ -119,7 +120,7 @@ m1 = umxRAM("grow", data = myGrowthMixtureData,
 	umxPath("slope", to = manifests, arrows = 1, fixedAt = c(0,1,2,3,4))
 )
 
-plot(m1, means=FALSE, strip=TRUE, splines="FALSE", max="int")
+plot(m1, means= FALSE, strip= TRUE, splines= "FALSE", max= "int")
 } # end dontrun
 
 }
@@ -148,6 +149,7 @@ Other Plotting functions:
 \code{\link[=umxPlotGxE]{umxPlotGxE()}},
 \code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
 \code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotLGCM]{umxPlotLGCM()}},
 \code{\link[=umxPlotPredict]{umxPlotPredict()}},
 \code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
 \code{\link[=umxPlotSimplex]{umxPlotSimplex()}}

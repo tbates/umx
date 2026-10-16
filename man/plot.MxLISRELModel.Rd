@@ -60,14 +60,10 @@
 
 The underlying format is graphviz.
 If you use \code{umx_set_plot_format("graphviz")}, figures will open in a graphviz helper app (if installed).
-If you use graphviz, we try and use that app, but YOU HAVE TO INSTALL IT!
-
-On MacOS, you may need to associate the \sQuote{.gv} extension with your graphviz app.
-Find the .gv file made by plot, get info (cmd-I), then choose \dQuote{open with},
-select graphviz.app (or OmniGraffle professional),
-then set \dQuote{change all}.
-
+If file is set, we will try and open an app to handle rendering the resulting file.
 The commercial application \dQuote{OmniGraffle} is great for editing these images.
+
+You may need to associate the \sQuote{.gv} extension with your app (if you use that rather than the browser).
 }
 \examples{
 \dontrun{
@@ -106,6 +102,7 @@ Other Plotting functions:
 \code{\link[=umxPlotGxE]{umxPlotGxE()}},
 \code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
 \code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotLGCM]{umxPlotLGCM()}},
 \code{\link[=umxPlotPredict]{umxPlotPredict()}},
 \code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
 \code{\link[=umxPlotSimplex]{umxPlotSimplex()}}

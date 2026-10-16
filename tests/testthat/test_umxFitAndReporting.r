@@ -411,3 +411,37 @@ test_that("harmonic_mean works", {
 	expect_error(harmonic_mean(c(33, -23, NA)), "strictly positive")
 	expect_error(harmonic_mean(c(33, 23), weights = c(.2, .3, .5)), "same length")
 })
+
+test_that("umxPlot single-x picks bar or density, upgrades vectors", {
+	p = umxPlot(data = runif(100))
+	expect_equal(p$labels$x, "x")
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatDensity")
+	d = ggplot2::ggplot_build(p)$data[[1]]
+	expect_true(all(d$y >= 0))
+
+	p = umxPlot(x = "cyl", data = mtcars)
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatCount")
+
+	p = umxPlot(data = factor(c("a", "b", "a")))
+	expect_equal(p$labels$x, "x")
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatCount")
+
+	p = umxPlot(data = sample(1:5, 200, TRUE))
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatCount")
+
+	p = umxPlot(data = 1:500)
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatDensity")
+
+	p = umxPlot(data = rep(1:12, 5))
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatCount")
+	p = umxPlot(data = rep(1:13, 5))
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatDensity")
+
+	p = umxPlot(x = "mpg", data = mtcars, type = "histogram")
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatBin")
+	p = umxPlot(x = "cyl", data = mtcars, type = "density")
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatDensity")
+
+	p = umxPlot(mpg ~ wt, data = mtcars)
+	expect_equal(class(p$layers[[1]]$stat)[1], "StatSmooth")
+})

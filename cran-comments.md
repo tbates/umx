@@ -1,7 +1,9 @@
 ## Changes
 - Removed errant MuMIn import from DESCRIPTION and errant LMER link in Rd
 - Reduced disk size of man/figures/
-- Possibly misspelled words in DESCRIPTION are correct: Araujo, CLPM, DoC, de
+- Improved umx_detect_cores() to work with new M5/6 class chips noted by Prof Ripley
+
+*note*: "Possibly misspelled words in DESCRIPTION" are all correct: Araujo, CLPM, DoC, de
 
 ## Test environments
 * MacOS 27.2, R version 4.6.1 (2026-06-24)

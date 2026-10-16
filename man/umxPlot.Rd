@@ -16,7 +16,8 @@ umxPlot(
   geom_point = TRUE,
   method = c("lm", "auto", "loess", "glm", "gam"),
   family = c("gaussian", "binomial", "Gamma", "inverse", "poisson", "quasi",
-    "quasibinomial", "quasipoisson")
+    "quasibinomial", "quasipoisson"),
+  type = c("auto", "bar", "histogram", "density")
 )
 }
 \arguments{
@@ -24,7 +25,7 @@ umxPlot(
 
 \item{y}{variable as string.}
 
-\item{data}{The data for the graph.}
+\item{data}{The data for the graph. A bare vector or factor is upgraded to a one-column data.frame named "x".}
 
 \item{xlab}{X-axis label (default y).}
 
@@ -41,6 +42,8 @@ umxPlot(
 \item{method}{Method for fitting curve (default = lm)}
 
 \item{family}{for glm default = "gaussian"}
+
+\item{type}{Single-variable plot kind: "auto" (bar if discrete-like, density if continuous), or force "bar", "histogram", or "density".}
 }
 \value{
 \itemize{
@@ -57,11 +60,17 @@ of \code{\link[=reformulate]{reformulate()}} programmatic variables?
 
 \code{umxPlot} just takes \code{y ~ x} (or "x" and "y" as strings), and gives you a nicely labelled plot, with a fitted line, the
 \ifelse{html}{\out{<em>R</em><sup>2</sup>}}{\eqn{R^2}} so readers can see how well this fitted. It knows how to put Greek symbols like \eqn{beta} into axes.
+With only \code{x}, discrete-like data (factors, strings, or 12 or fewer unique numbers)
+get a bar plot and continuous data a density plot; override with \code{type}. A bare
+vector or factor \code{data} is upgraded to a one-column data.frame named "x".
 }
 \examples{
 data(mtcars)
 umxPlot(mpg ~ wt, data = mtcars, r2x = 2, r2y = 10)
 umxPlot(x = "wt", y = "mpg", mtcars, r2x = 2, r2y = 10)
+umxPlot(data = runif(100))
+umxPlot(x = "cyl", data = mtcars)
+umxPlot(x = "mpg", data = mtcars, type = "histogram")
 }
 \seealso{
 \itemize{
@@ -85,6 +94,7 @@ Other Plotting functions:
 \code{\link[=umxPlotGxE]{umxPlotGxE()}},
 \code{\link[=umxPlotGxEbiv]{umxPlotGxEbiv()}},
 \code{\link[=umxPlotIP]{umxPlotIP()}},
+\code{\link[=umxPlotLGCM]{umxPlotLGCM()}},
 \code{\link[=umxPlotPredict]{umxPlotPredict()}},
 \code{\link[=umxPlotSexLim]{umxPlotSexLim()}},
 \code{\link[=umxPlotSimplex]{umxPlotSimplex()}}
