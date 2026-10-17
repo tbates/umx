@@ -762,6 +762,106 @@ umxParan <- function(df, cols = NA, graph = TRUE, mapStrings = NULL, n = NULL) {
 	}
 }
 
+#' Get base scale names from scored column names
+#'
+#' Strips trailing item numbers and an optional twin suffix (e.g. `_T1` / `_T2`)
+#' to return unique base scale names. Forgiving of pasted console output.
+#'
+#' @description
+#' Many `umx` scoring functions create columns like `Ryff36_T2`,
+#' `Wrosch_SelectivePrimary1_T2`, `Envy1_T2`. This helper removes the
+#' trailing `digits + [twinSuffix + digits]` to leave the base name,
+#' e.g. `Ryff`, `Wrosch_SelectivePrimary`, `Envy`.
+#'
+#' It also accepts a single character string that is a pasted R console
+#' dump, e.g. `[457] "Ryff36_T2" "Ryff37_T2"`, and will extract the
+#' quoted names first.
+#'
+#' A data.frame, or any other object with `names()`, is accepted in place of
+#' the character vector. The column names are used.
+#'
+#' `excluding` drops original column names before the base names are formed.
+#' A name that is not in that list stops the function. Base names are not
+#' exclusion keys: `"Envy"` does not drop `"Envy1_T2"`.
+#'
+#' @param names A character vector of column names, a single string containing
+#' pasted console output with quoted names, or a data.frame or other object
+#' with `names()`.
+#' @param excluding Character vector of original column names to drop.
+#' Default `NULL` drops nothing. Each name must be in the original list.
+#' Absent names are listed and the function stops.
+#' @param twinSuffix Character. The twin tag to strip along with trailing
+#' digits. Default `"_T"` matches `_T`, `_T1`, `_T2`. Set to `""` or `NULL`
+#' to only strip trailing digits. Case-sensitive. Default = `"_T"`.
+#' @return A character vector of unique base names, in order of first appearance.
+#' @examples
+#' nms = c("Ryff36_T2","Ryff37_T2","Ryff40","Wrosch_SelectivePrimary1_T2",
+#'          "Wrosch_SelectivePrimary2_T2","Envy1_T2","Envy2","Compassion1_T2")
+#' umx_score_scale_get_base_names(nms)
+#' # [1] "Ryff" "Wrosch_SelectivePrimary" "Envy" "Compassion"
+#'
+#' # drop original column names
+#' umx_score_scale_get_base_names(nms, excluding = c("Envy1_T2", "Envy2"))
+#' # [1] "Ryff" "Wrosch_SelectivePrimary" "Compassion"
+#'
+#' umx_score_scale_get_base_names(mtcars, c("wt"))
+#'
+#' # forgiving if twin suffix missing
+#' umx_score_scale_get_base_names(c("Ryff36","Ryff36_T2","Ryff36_T1"))
+#' # [1] "Ryff"
+#'
+#' # pasted console output
+#' txt = '[457] "Ryff36_T2" "Ryff37_T2" [461] "Ryff40_T2" "Envy1_T2"'
+#' umx_score_scale_get_base_names(txt)
+#'
+#' # custom twin tag
+#' umx_score_scale_get_base_names(c("Scale1_t2","Scale2_t2"), twinSuffix = "_t")
+#' @family Data Functions	
+#' @export
+umx_score_scale_get_base_names <- function(names, excluding = NULL, twinSuffix = "_T") {
+  if (is.character(names)) {
+    # If user pasted console dump: extract "quoted" names
+    if (length(names) == 1L && grepl('"', names, fixed = TRUE)) {
+      names = regmatches(names, gregexpr('(?<=")[^"]+(?=")', names, perl = TRUE))[[1]]
+    }
+  } else {
+    columnNames = names(names)
+    if (is.null(columnNames)) {
+      stop("names must be a character vector or an object with names(), not ", omxQuotes(class(names)[1]), call. = FALSE)
+    }
+    names = columnNames
+  }
+  if (length(names) == 0L) {
+    return(character(0))
+  }
+  if (!is.null(excluding) && length(excluding) > 0L) {
+    if (!is.character(excluding)) {
+      stop("excluding must be a character vector of original column names, not ", omxQuotes(class(excluding)[1]), call. = FALSE)
+    }
+    notFound = excluding[!(excluding %in% names)]
+    if (length(notFound) > 0L) {
+      stop("excluding names not found in the original list: ", omxQuotes(notFound), call. = FALSE)
+    }
+    names = names[!names %in% excluding]
+    if (length(names) == 0L) {
+      return(character(0))
+    }
+  }
+  
+  # Build pattern: \d+_T\d* | _T\d* | \d+
+  if (is.null(twinSuffix) || !nzchar(twinSuffix)) {
+    pat = "\\d+$"
+  } else {
+    esc = gsub("([][{}()+*^$|\\\\?.])", "\\\\\\1", twinSuffix, perl = TRUE)
+    pat = paste0("(?:\\d+", esc, "\\d*|", esc, "\\d*|\\d+)$")
+  }
+  
+  bases = sub(pat, "", names, perl = TRUE)
+  bases = sub("_+$", "", bases) # tidy "Envy_1_T2" -> "Envy"
+  unique(bases)
+}
+
+
 #' Score a psychometric scale by summing normal and reversed items. 
 #' 
 #' In the presence of NAs, `score= "mean"` and `score = "totals"` both return NA unless na.rm = TRUE.
