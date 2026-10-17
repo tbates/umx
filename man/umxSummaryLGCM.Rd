@@ -20,8 +20,7 @@ Invisibly, a list with the one-row fit table and the parameter table.
 \description{
 Table output for a model built by \code{\link[=umxLGCM]{umxLGCM()}}: -2LL, degrees of freedom, and AIC,
 plus the parameter estimates with standard errors. Saturated reference models are
-not meaningful with age definition variables, so no absolute fit indices are
-computed.
+not meaningful with age definition variables, so no absolute fit indices are computed.
 }
 \seealso{
 \itemize{

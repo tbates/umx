@@ -810,9 +810,9 @@ fin_tax_NI <- function(annualEarnings, symbol = "\u00A3") {
 	return(Total)
 }
 
-#' Justified P/E Ratio
+#' Justifiable P/E Ratio
 #'
-#' Compute the Justified Price-to-Earnings (P/E) ratio for a stock using a single-stage or two-stage (high-growth + ROIC) Gordon Growth Model.
+#' Compute the Justifiable Price-to-Earnings (P/E) ratio for a stock using a single-stage or two-stage (high-growth + ROIC) Gordon Growth Model.
 #'
 #' @details
 #' Justified P/E represents the fundamental value multiple that a stock should trade at based on its payout ratio (or ROIC reinvestment),

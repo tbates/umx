@@ -2,7 +2,7 @@
 % Please edit documentation in R/financial_functions.R
 \name{fin_stock_justifiedPE}
 \alias{fin_stock_justifiedPE}
-\title{Justified P/E Ratio}
+\title{Justifiable P/E Ratio}
 \usage{
 fin_stock_justifiedPE(
   dividend = 0.8,
@@ -39,7 +39,7 @@ fin_stock_justifiedPE(
 Numeric justified P/E ratio.
 }
 \description{
-Compute the Justified Price-to-Earnings (P/E) ratio for a stock using a single-stage or two-stage (high-growth + ROIC) Gordon Growth Model.
+Compute the Justifiable Price-to-Earnings (P/E) ratio for a stock using a single-stage or two-stage (high-growth + ROIC) Gordon Growth Model.
 }
 \details{
 Justified P/E represents the fundamental value multiple that a stock should trade at based on its payout ratio (or ROIC reinvestment),
