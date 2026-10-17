@@ -57,7 +57,7 @@ umxSummaryGxE(
 }
 }
 \description{
-Summarize a genetic moderation model, as returned by \code{\link[=umxGxE]{umxGxE()}}. Prints graphs of A, C, and E, standardized and raw.
+Summarize a genetic moderation model, as returned by \code{\link[=umxGxE]{umxGxE()}}. Prints the model fit (-2LL, df, AIC) and the parameter table, plus graphs of A, C, and E, standardized and raw.
 }
 \details{
 Note: see also \code{\link[=umxReduce]{umxReduce()}} which knows how to reduce a GxE model.

@@ -2199,7 +2199,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 
 #' Summarize a GxE model
 #'
-#' Summarize a genetic moderation model, as returned by [umxGxE()]. Prints graphs of A, C, and E, standardized and raw.
+#' Summarize a genetic moderation model, as returned by [umxGxE()]. Prints the model fit (-2LL, df, AIC) and the parameter table, plus graphs of A, C, and E, standardized and raw.
 #'
 #' Note: see also [umxReduce()] which knows how to reduce a GxE model.
 #'
@@ -2260,6 +2260,8 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 		message("umxSummaryGxE calls plot.MxModelGxE for a twin moderation plot. A use example is:\n umxSummaryGxE(m1, location = \"topleft\")")
 		stop();
 	}
+	fit = as.data.frame(suppressMessages(OpenMx::mxCompare(model)))
+	print(data.frame(model = model$name, minus2LL = fit$minus2LL, df = fit$df, AIC = fit$AIC, check.names = FALSE), digits = digits, row.names = FALSE)
 	tablePub = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]
 	if(report == "html"){
 		print(xtable::xtable(tablePub), type = "HTML", file = file, sanitize.text.function = function(x){x}, digits=3)
@@ -3365,10 +3367,20 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 			message('For gg, location of legend must be in "left", "right", "bottom", "top" or, e.g. c(.1, .9)')			
 		}
 		tmp = data.frame(cbind(defVarValues, out))
-		p = ggplot(data = tmp) 
-		p = p + geom_ribbon(aes(x = defVarValues, ymin = VeLower, ymax = VeUpper), alpha = .2, fill = "blue" , show.legend= FALSE, linetype= 0)
-		p = p + geom_ribbon(aes(x = defVarValues, ymin = VcLower, ymax = VcUpper), alpha = .2, fill = "green", show.legend= FALSE, linetype= 0)
-		p = p + geom_ribbon(aes(x = defVarValues, ymin = VaLower, ymax = VaUpper), alpha = .2, fill = "red"  , show.legend= FALSE, linetype= 0)
+		p = ggplot(data = tmp)
+		# CI bounds are NA when standard errors are unavailable: draw each ribbon only
+		# over finite bounds, so missing CIs never trigger "removed rows" warnings
+		ribbonIfFinite = function(ymin, ymax, ...) {
+			keep = is.finite(ymin) & is.finite(ymax)
+			if(!any(keep)) return(NULL)
+			geom_ribbon(aes(x = defVarValues[keep], ymin = ymin[keep], ymax = ymax[keep]), ...)
+		}
+		if(!any(is.finite(c(VeLower, VeUpper, VcLower, VcUpper, VaLower, VaUpper)))) {
+			message("umxPlotGxE: CIs not drawn: standard errors are not available")
+		}
+		p = p + ribbonIfFinite(VeLower, VeUpper, alpha = .2, fill = "blue" , show.legend= FALSE, linetype= 0)
+		p = p + ribbonIfFinite(VcLower, VcUpper, alpha = .2, fill = "green", show.legend= FALSE, linetype= 0)
+		p = p + ribbonIfFinite(VaLower, VaUpper, alpha = .2, fill = "red"  , show.legend= FALSE, linetype= 0)
 		# p = p + geom_line(aes(x=defVarValues, y = Vt, group = 4, colour = 'Vtot'))
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
@@ -3378,7 +3390,7 @@ umxPlotGxE <- function(x, xlab = NA, location = "topleft", separateGraphs = FALS
 
 
 		tmp = data.frame(cbind(defVarValues, outStd))
-		p = ggplot(data = tmp) + ggplot2::ylim(0, 1)
+		p = ggplot(data = tmp) + ggplot2::coord_cartesian(ylim = c(0, 1))
 		p = p + geom_line(aes(x=defVarValues, y = Va, group = 1, colour = 'Va'))
 		p = p + geom_line(aes(x=defVarValues, y = Vc, group = 2, colour = 'Vc'))
 		p = p + geom_line(aes(x=defVarValues, y = Ve, group = 3, colour = 'Ve'))

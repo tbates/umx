@@ -13,6 +13,11 @@ test_that("umxGxE", {
 	
 	# Select the data on the fly with data= and zygosity levels
 	m1 = umxGxE(selDVs= "bmi", selDefs= "age", sep="", dzData= "DZFF", mzData= "MZFF", data= twinData)
+
+	# Summary prints the fit row as well as the parameter table (plots need a device)
+	grDevices::pdf(NULL)
+	on.exit(grDevices::dev.off(), add = TRUE)
+	expect_output(umxSummaryGxE(m1), "minus2LL")
 })
 
 test_that("umxGxE ordinal", {
