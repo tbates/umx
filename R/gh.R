@@ -9,9 +9,19 @@
 # 	system2("open ~/Library/Application\ Support/TextMate")
 
 #= -TODO- =#
+# cd /path/to/your/r.tmbundle   # wherever the symlinked clone lives
+# git status                     # must be clean — nothing uncommitted
+# git log --oneline -5           # confirm nothing un-PR'd that you care about
+# git remote -v                  # check 'upstream' exists; if not:
+# # git remote add upstream https://github.com/textmatelives/r.tmbundle.git
+# git fetch upstream
+# git checkout main
+# git reset --hard upstream/main
+
 
 gh_open_app_support <- function(){
-	system2("open ~/Library/Application\ Support/TextMate")
+    targetPath = path.expand("~/Library/Application Support/TextMate")
+    system2("open", targetPath)
 }
 
 gh_remove_quarantine <- function(path = "~/Downloads/TextMate.app"){
