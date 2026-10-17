@@ -433,6 +433,22 @@ test_that("umxPlotFun recodes arbitrary symbols to x", {
 	expect_error(umxPlotFun("alice = bob^2+c", x = "nothere", c = 5), "can't tell")
 })
 
+test_that("umx_score_scale_get_base_names drops original names", {
+	nms = c("Ryff36_T2", "Ryff37_T2", "Envy1_T2", "Envy2", "Compassion1_T2")
+	dfScale = as.data.frame(matrix(1, nrow = 1, ncol = length(nms), dimnames = list(NULL, nms)))
+	expect_equal(umx_score_scale_get_base_names(nms), c("Ryff", "Envy", "Compassion"))
+	expect_equal(umx_score_scale_get_base_names(dfScale), c("Ryff", "Envy", "Compassion"))
+	expect_equal(umx_score_scale_get_base_names(nms, c("Envy1_T2", "Envy2")), c("Ryff", "Compassion"))
+	expect_equal(umx_score_scale_get_base_names(dfScale, c("Envy1_T2", "Envy2")), c("Ryff", "Compassion"))
+	expect_equal(umx_score_scale_get_base_names(nms, "Envy1_T2"), c("Ryff", "Envy", "Compassion"))
+	expect_equal(umx_score_scale_get_base_names(mtcars, c("wt")), setdiff(names(mtcars), "wt"))
+	expect_equal(umx_score_scale_get_base_names(c("Scale1_t2", "Scale2_t2"), twinSuffix = "_t"), "Scale")
+	expect_error(umx_score_scale_get_base_names(nms, c("Envy1_T2", "NoSuch")), regexp = "NoSuch")
+	expect_error(umx_score_scale_get_base_names(nms, "Envy"), regexp = "Envy")
+	expect_error(umx_score_scale_get_base_names(mtcars, "nope"), regexp = "nope")
+	expect_error(umx_score_scale_get_base_names(matrix(1:4, 2, dimnames = list(c("r1", "r2"), c("wt1", "wt2")))))
+})
+
 
 
 

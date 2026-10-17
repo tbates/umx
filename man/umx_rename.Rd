@@ -104,6 +104,7 @@ Other Data Functions:
 \code{\link[=umx_read_lower]{umx_read_lower()}},
 \code{\link[=umx_reorder]{umx_reorder()}},
 \code{\link[=umx_score_scale]{umx_score_scale()}},
+\code{\link[=umx_score_scale_get_base_names]{umx_score_scale_get_base_names()}},
 \code{\link[=umx_select_valid]{umx_select_valid()}},
 \code{\link[=umx_stack]{umx_stack()}},
 \code{\link[=umx_strings2numeric]{umx_strings2numeric()}}
