@@ -19,39 +19,194 @@
 # git reset --hard upstream/main
 
 
-gh_open_app_support <- function(){
+#' Open TextMate Application Support Directory
+#'
+#' Opens the user's TextMate Application Support directory in Finder and 
+#' brings the Finder application to the foreground.
+#'
+#' @details
+#' Expands the `~/Library/Application Support/TextMate` path and opens it using
+#' the macOS `open` utility. An AppleScript command is subsequently issued via
+#' `osascript` to bring Finder into active focus.
+#'
+#' @return Invisible `NULL`. Called for side effects.
+#' @family github
+#' @export
+ghOpenAppSupport <- function() {
     targetPath = path.expand("~/Library/Application Support/TextMate")
+    
+    if (!dir.exists(targetPath)) {
+        stop("Directory does not exist: ", targetPath)
+    }
+    
     system2("open", targetPath)
+    system2("osascript", c("-e", 'tell application "Finder" to activate'))
 }
 
-gh_remove_quarantine <- function(path = "~/Downloads/TextMate.app"){
-	system2(paste0("xattr -dr com.apple.quarantine ", path))
+#' Remove macOS Quarantine Attribute
+#'
+#' Recursively removes the `com.apple.quarantine` extended attribute from a 
+#' specified file or application bundle.
+#'
+#' @param path Character string. Path to the file or app bundle. Tildes are expanded.
+#' @return No return value, called for side effects.
+#' @family github
+#' @export
+ghRemoveQuarantine <- function(path = "~/Downloads/TextMate.app") {
+    targetPath = path.expand(path)
+    
+    if (!file.exists(targetPath)) {
+        stop("Target path does not exist: ", targetPath)
+    }
+    
+    system2("xattr", c("-dr", "com.apple.quarantine", targetPath))
 }
 
-gh_sym_link_bundle <- function(which = "source.tmbundle", local_path = "~/bin/tm/bundles/", destination = "$HOME/Library/Application\ Support/TextMate/Bundles/"){
-	fullPath = paste0(local_path, which) # e.g., ~/bin/tm/bundles/GitHub-Markdown-Font-Settings.tmbundle
-	fullDest = paste0(destination, which) # e.g.,"$HOME/Library/Application Support/TextMate/Bundles/GitHub-Markdown-Font-Settings.tmbundle"
-
-	# todo checkExists(fullPath) exists
-	# todo checkExists(destination)
-	# todo check not already have bundle at dest
-	# todo check ln not already set
-	symlinkCommand = paste0("ln -s ", fullPath,  fullDest)
-	system2(symlinkCommand) 
-	cat("created:", symlinkCommand)
+#' Symlink a Custom TextMate Bundle
+#'
+#' Creates a symbolic link from a local development bundle directory 
+#' into TextMate's active bundle directory.
+#'
+#' @param which Character string. Name of the `.tmbundle` file or folder.
+#' @param localPath Character string. Path to local bundles repository. 
+#'   Tildes are expanded.
+#' @param destination Character string. Path to TextMate's Bundles directory. 
+#'   Tildes are expanded.
+#' @return Invisible `NULL`. Called for side effects.
+#' @family github
+#' @export
+gh_SymLinkBundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bundles/", 
+    destination = "~/Library/Application Support/TextMate/Bundles/") {
+    fullPath = path.expand(file.path(localPath, which))
+    destDir  = path.expand(destination)
+    fullDest = file.path(destDir, which)
+    # 1. Check if source bundle exists
+    if (!file.exists(fullPath)) {
+        stop("Source bundle does not exist: ", fullPath)
+    }
+    # 2. Ensure destination directory exists (create it if missing)
+    if (!dir.exists(destDir)) {
+        dir.create(destDir, recursive = TRUE, showWarnings = FALSE)
+    }
+    # 3. Check existing destination state
+    if (file.exists(fullDest) || dir.exists(fullDest)) {
+        if (Sys.islink(fullDest)) {
+            currentLinkTarget = normalizePath(Sys.readlink(fullDest), mustWork = FALSE)
+            if (currentLinkTarget == normalizePath(fullPath, mustWork = FALSE)) {
+                message("Symlink already correctly configured for: ", which)
+                return(invisible(NULL))
+            } else {
+                stop("A symlink already exists at destination, but points elsewhere: ", currentLinkTarget)
+            }
+        } else {
+            stop("A non-symlink file or directory already occupies the destination path: ", fullDest)
+        }
+    }
+        # 4. Create the symbolic link safely using system2 vector arguments
+    res = system2("ln", c("-s", fullPath, fullDest))
+    
+    if (res == 0) {
+        cat("Created symlink:\n  ", fullDest, "\n  -> ", fullPath, "\n", sep = "")
+    } else {
+        stop("Failed to create symbolic link (exit code ", res, ")")
+    }
+    
+    invisible(NULL)
 }
 
 # git diff --name-only -z upstream/main main | xargs -0 git checkout main --
 
-gh_teardown <- function(which = "source.tmbundle", local_path = "~/bin/tm/bundles/", destination = ""){
-	fullPath = paste0(local_path, which)
-	# check(fullPath) exists
- 	# cd GitHub-Markdown-Font-Settings.tmbundle
-	# git branch -r | grep font-menlo
-	# gh repo delete tbates/GitHub-Markdown-Font-Settings.tmbundle
-	# rm "$HOME/Library/Application Support/TextMate/Bundles/GitHub-Markdown-Font-Settings.tmbundle"
-	system2()
+#' Teardown Local TextMate Bundle Fork and Symlink
+#'
+#' Removes the symlink from TextMate's Bundles directory, deletes the remote GitHub repository fork using the `gh` CLI, and optionally removes the local source directory.
+#'
+#' @param which Character string. Name of the `.tmbundle` directory.
+#' @param localPath Character string. Path to local bundles repository. Tildes are expanded.
+#' @param destination Character string. Path to TextMate's Bundles directory. Tildes are expanded.
+#' @param deleteLocal Logical. Whether to delete the local source folder (`fullPath`) after cleaning up. Default is `FALSE`.
+#' @param dryRun Logical. If `TRUE`, prints the actions that would be taken without deleting files or calling `gh repo delete`. Default is `FALSE`.
+#' @return Invisible `NULL`. Called for side effects.
+#' @family github
+#' @export
+#' \dontrun{
+#' ghTeardownBundle(which = "source.tmbundle", deleteLocal = FALSE, dryRun = TRUE)
+#' }
+ghTeardownBundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bundles/", 
+    destination = "~/Library/Application Support/TextMate/Bundles/", 
+	deleteLocal = FALSE, dryRun = TRUE) {
+
+    fullPath = path.expand(file.path(localPath, which))
+    destDir  = path.expand(destination)
+    fullDest = file.path(destDir, which)
+    
+    if (dryRun) {
+        cat("--- DRY RUN MODE ACTIVE ---\n")
+    }
+    
+    # 1. Remove the symlink if it exists
+    if (file.exists(fullDest) || nzchar(Sys.readlink(fullDest))) {
+        if (nzchar(Sys.readlink(fullDest))) {
+            if (dryRun) {
+                cat("[DRY RUN] Would remove symlink: ", fullDest, "\n")
+            } else {
+                unlink(fullDest)
+                cat("Removed symlink: ", fullDest, "\n")
+            }
+        } else {
+            warning("Destination exists but is not a symlink (skipped unlink): ", fullDest)
+        }
+    } else {
+        message("No symlink found at destination: ", fullDest)
+    }
+    
+    # 2. Handle remote GitHub repo deletion if the local repo exists
+    if (dir.exists(fullPath)) {
+        owd = setwd(fullPath)
+        on.exit(setwd(owd), add = TRUE)
+        
+        if (dir.exists(".git")) {
+            remoteUrl = system2("git", c("config", "--get", "remote.origin.url"), stdout = TRUE)
+            
+            if (length(remoteUrl) > 0 && nzchar(remoteUrl)) {
+                slug = sub(".*github\\.com[:/]([^/]+/[^\\.]+)(\\.git)?.*", "\\1", remoteUrl)
+                
+                if (nzchar(slug) && grepl("/", slug)) {
+                    if (dryRun) {
+                        cat("[DRY RUN] Would execute: gh repo delete ", slug, " --yes\n", sep = "")
+                    } else {
+                        cat("Deleting remote GitHub repository: ", slug, "\n")
+                        res = system2("gh", c("repo", "delete", slug, "--yes"))
+                        
+                        if (res != 0) {
+                            warning("Failed to delete remote repo via `gh`. Check your `gh` CLI auth status.")
+                        }
+                    }
+                } else {
+                    warning("Could not parse valid GitHub slug from remote URL: ", remoteUrl)
+                }
+            } else {
+                message("No remote origin URL found in local git config.")
+            }
+        } else {
+            message("Local directory is not a git repository: ", fullPath)
+        }
+        
+        # 3. Optionally clean up local directory
+        if (deleteLocal) {
+            setwd(owd) # Restore working directory before removing
+            if (dryRun) {
+                cat("[DRY RUN] Would delete local directory: ", fullPath, "\n")
+            } else {
+                unlink(fullPath, recursive = TRUE, force = TRUE)
+                cat("Removed local source directory: ", fullPath, "\n")
+            }
+        }
+    } else {
+        message("Local source path does not exist: ", fullPath)
+    }    
+    invisible(NULL)
 }
+
 
 #' Make a feature branch on a github fork.
 #' 

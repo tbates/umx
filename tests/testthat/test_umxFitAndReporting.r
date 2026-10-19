@@ -383,10 +383,13 @@ test_that("geometric_mean works", {
 	# missing data: dropped by default, propagated with na.rm = FALSE
 	expect_equal(geometric_mean(c(50, 100, NA)), geometric_mean(c(50, 100)))
 	expect_true(is.na(geometric_mean(c(50, 100, NA), na.rm = FALSE)))
+	# a 30% gain, a 20% gain, and a 30% loss
+	expect_equal(geometric_mean(c(1.3, 1.2, 0.7)), exp(mean(log(c(1.3, 1.2, 0.7)))))
 	# non-positive input is an error, even alongside NAs
-	expect_error(geometric_mean(c(1, -2)), "strictly positive")
-	expect_error(geometric_mean(c(0, 1)), "strictly positive")
-	expect_error(geometric_mean(c(50, -100, NA)), "strictly positive")
+	expect_error(geometric_mean(c(1.3, 1.2, -0.3)), "0.7, not -0.3")
+	expect_error(geometric_mean(c(1.3, 1.2, -0.3)), "-0.3 at position 3")
+	expect_error(geometric_mean(c(0, 1)), "zeros are not allowed")
+	expect_error(geometric_mean(c(50, -100, NA)), "-100 at position 2")
 })
 
 test_that("harmonic_mean works", {

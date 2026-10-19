@@ -20,7 +20,7 @@ geometric_mean(x, na.rm = c(TRUE, FALSE))
 The Geometric mean is the nth-root of the product of \code{n} input values.
 Common uses include:
 \itemize{
-\item Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. The arithmetic mean overstates performance when volatility is present (e.g., a +50\% gain followed by a -50\% loss leaves you with a 25\% loss, even though the arithmetic average is 0\%; the geometric mean correctly yields -29.29\% per period, totaling -25\%).
+\item Compound Annual Growth Rate (CAGR) & Financial Returns: Averaging investment yields over multiple periods. Enter each period as a multiplier, \code{1} plus the return: a 30\% loss is \code{0.7}, not \code{-0.3}. The arithmetic mean overstates performance when volatility is present. A +50\% gain followed by a -50\% loss is \code{c(1.5, 0.5)}. You finish at 75\% of the start, a 25\% loss, while the arithmetic mean of the two returns is 0\%. The geometric mean of the multipliers is \code{sqrt(1.5 * 0.5) = 0.866}, which is -13.4\% per period. Two periods at that rate reproduce the 25\% loss.
 \item Utilitarian evaluation of value. For example, the geometric mean utility of \code{c(1, 2, 10)} is \deqn{(1 * 2 * 10)^\frac{1}{3}} = 2.7 not the arithmetic mean: 4.3.
 \item Proportional Scaling: Proportional growth of organisms and log-normally distributed physical phenomena.
 \item Normalizing metrics measured on different scales: e.g., computer hardware so no single benchmark disproportionately skews the score.
@@ -59,9 +59,12 @@ geometric_mean(c(1/100, 1/50))
 geometric_mean(c(50, 100, NA)) # 70.7
 # With na.rm = FALSE, NA input gives NA, like mean()
 geometric_mean(c(50, 100, NA), na.rm = FALSE) # NA
+
+# A 30% gain, a 20% gain, and a 30% loss
+geometric_mean(c(1.3, 1.2, 0.7)) # 1.030
 \dontrun{
-# Non-positive input is an error, even alongside NAs
-geometric_mean(c(50, -100))
+# A negative multiplier is an error. -0.3 is a -130% return, not a 30% loss.
+geometric_mean(c(1.3, 1.2, -0.3))
 geometric_mean(c(50, -100, NA))
 }
 }
