@@ -398,7 +398,8 @@ test_that("harmonic_mean works", {
 	expect_equal(harmonic_mean(c(33, 23)), 2 / (1/33 + 1/23))
 	expect_equal(harmonic_mean(c(33, 23)), 1 / mean(1 / c(33, 23)))
 	# documented goldens
-	expect_equal(harmonic_mean(c(1, 10)), 1.8182, tolerance = 1e-3)
+	expect_equal(harmonic_mean(c(1, 10)), 2 / (1/1 + 1/10))
+	expect_equal(harmonic_mean(c(1, 10)), 1.818182, tolerance = 1e-6)
 	w = c(.2, .8)
 	expect_equal(harmonic_mean(c(33, 23), weights = w), sum(w) / sum(w / c(33, 23)))
 	# missing data: dropped by default, propagated with na.rm = FALSE
@@ -409,10 +410,18 @@ test_that("harmonic_mean works", {
 	expect_equal(harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)), harmonic_mean(c(33, 23), weights = c(.2, .5)))
 	expect_equal(harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)), 25.18, tolerance = 1e-2)
 	expect_equal(harmonic_mean(c(33, 23), weights = c(.2, NA)), 33)
-	# error contract: non-positive input, and weights must match x in length
-	expect_error(harmonic_mean(c(33, -23)), "strictly positive")
-	expect_error(harmonic_mean(c(33, -23, NA)), "strictly positive")
-	expect_error(harmonic_mean(c(33, 23), weights = c(.2, .3, .5)), "same length")
+	# a zero weight drops that one observation; the rest are unchanged
+	expect_equal(harmonic_mean(c(10, 20), weights = c(1, 0)), 10)
+	# error contract
+	expect_error(harmonic_mean(c(33, -23)), "-23 at position 2")
+	expect_error(harmonic_mean(c(33, -23, NA)), "positive rate or ratio")
+	expect_error(harmonic_mean(c(33, 0)), "reciprocal of 0")
+	expect_error(harmonic_mean(c(33, 23), weights = c(.2, .3, .5)), "length 3")
+	expect_error(harmonic_mean(c(33, 23), weights = c(.2, .3, .5)), "length 2")
+	expect_error(harmonic_mean(c(10, 20), weights = c(1, -0.5)), "negative weights")
+	expect_error(harmonic_mean(c(10, 20), weights = c(0, 0)), "sum to 0")
+	expect_warning(got <- harmonic_mean(c(NA_real_, NA_real_)), "no non-missing")
+	expect_true(is.na(got))
 })
 
 test_that("umxPlot single-x picks bar or density, upgrades vectors", {

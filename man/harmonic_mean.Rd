@@ -7,51 +7,56 @@
 harmonic_mean(x, weights = NULL, na.rm = c(TRUE, FALSE))
 }
 \arguments{
-\item{x}{A vector of values to take the harmonic mean for}
+\item{x}{Positive rates or ratios, such as speeds or P/E ratios.}
 
-\item{weights}{Optional vector of weights, one per value in x.}
+\item{weights}{Optional amounts of the denominator, one per value in \code{x}. For speeds, the distance of each leg. For P/E ratios, the money invested in each name. A zero drops that observation. Negative weights are an error.}
 
-\item{na.rm}{Remove NAs (default = TRUE). With weights, cases with NA in x or weights are dropped together so the two stay aligned. If FALSE, NA input returns NA.}
+\item{na.rm}{Remove NAs (default = TRUE). With weights, a missing value in \code{x} or in \code{weights} drops that case from both, so the two stay aligned. If FALSE, any NA returns NA. If TRUE and nothing remains, a warning is given and NA is returned.}
 }
 \value{
-\itemize{
-\item Harmonic mean of x
-}
+The harmonic mean of \code{x}.
 }
 \description{
-The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of the input values.
-Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio.
-Also it is the correct mean for averaging speeds weighted for distance.
-
-The harmonic mean is calculated using the following formula:
+The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals.
+Use it when you are averaging rates or ratios and the thing you add up is the denominator.
+\itemize{
+\item Speeds over a shared distance. Out at 1 mph and back at 10 mph, same distance each way, averages 1.818 mph, not 5.5. Weighting the two speeds by time spent would be the arithmetic mean, which answers a different question.
+\item A portfolio P/E when the same amount of money is invested in each name. The harmonic mean of the P/E ratios equals total price divided by total earnings. If the amounts of money differ, pass those amounts as \code{weights}. The weights are money invested, not share counts.
+}
+}
+\details{
+With no weights:
 \deqn{H = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}}{H = n / sum(1 / x_i)}
+
+With weights:
+\deqn{H = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}}{H = sum(w) / sum(w / x)}
+
+Every value in \code{x} must be strictly positive. A zero has an undefined reciprocal. A negative rate or ratio has no harmonic mean of this kind.
+A weight of zero drops that one observation. A negative weight is an error. After missing values are removed, the weights that remain must sum to more than zero.
 }
 \examples{
-# Harmonic means are suitable for ratios
-tmp = c(33/1, 23/1)
-harmonic_mean(tmp)
+# Same money invested in each name.
+harmonic_mean(c(33, 23)) # 27.11
+# Different amounts of money. Weights are the money, not the share counts.
+harmonic_mean(c(33, 23), weights = c(.2, .8)) # 24.48
 
-geometric_mean(tmp)
-mean(tmp)
-
-# Example with weights
-harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
-
-# If Jack travels outbound at 1 mph, and returns at 10 miles an hour, what is his average speed?
-harmonic_mean(c(1,10)) # 1.81 mph
+# Out and back over the same distance. Not the arithmetic mean of the two speeds.
+harmonic_mean(c(1, 10)) # 1.818 mph
 
 # Missing data are dropped by default (na.rm = TRUE)
-harmonic_mean(c(33, 23, NA)) # 27.1
+harmonic_mean(c(33, 23, NA)) # 27.11
 harmonic_mean(c(33, 23, NA), na.rm = FALSE) # NA
-# With weights, incomplete cases are dropped together, keeping x and weights aligned
+# A missing value drops that case from x and from weights together
 harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)) # 25.18
 harmonic_mean(c(33, 23), weights = c(.2, NA)) # 33
+# A zero weight drops that one observation
+harmonic_mean(c(10, 20), weights = c(1, 0)) # 10
 \dontrun{
-# weights must match x in length; non-positive input is an error
-harmonic_mean(c(33, 23), weights = c(.2, .3, .5))
+harmonic_mean(c(33, 0))
 harmonic_mean(c(33, -23))
+harmonic_mean(c(10, 20), weights = c(1, -0.5))
+harmonic_mean(c(33, 23), weights = c(.2, .3, .5))
 }
-
 }
 \references{
 \url{https://en.wikipedia.org/wiki/Harmonic_mean}

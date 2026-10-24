@@ -4587,68 +4587,112 @@ geometric_mean = function(x, na.rm = c(TRUE, FALSE)){
 #' Harmonic Mean
 #'
 #' @description
-#' The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals of the input values.
-#' Common uses include computing the mean of ratios, for instance the average P/E ratio in a portfolio. 
-#' Also it is the correct mean for averaging speeds weighted for distance.
-#' 
-#' The harmonic mean is calculated using the following formula:
+#' The harmonic mean is the reciprocal of the arithmetic mean of the reciprocals.
+#' Use it when you are averaging rates or ratios and the thing you add up is the denominator.
+#'
+#' * Speeds over a shared distance. Out at 1 mph and back at 10 mph, same distance each way, averages 1.818 mph, not 5.5. Weighting the two speeds by time spent would be the arithmetic mean, which answers a different question.
+#' * A portfolio P/E when the same amount of money is invested in each name. The harmonic mean of the P/E ratios equals total price divided by total earnings. If the amounts of money differ, pass those amounts as `weights`. The weights are money invested, not share counts.
+#'
+#' @details
+#' With no weights:
 #' \deqn{H = \frac{n}{\sum_{i=1}^{n} \frac{1}{x_i}}}{H = n / sum(1 / x_i)}
 #'
-#' @param x A vector of values to take the harmonic mean for
-#' @param weights Optional vector of weights, one per value in x.
-#' @param na.rm Remove NAs (default = TRUE). With weights, cases with NA in x or weights are dropped together so the two stay aligned. If FALSE, NA input returns NA.
-#' @return - Harmonic mean of x
+#' With weights:
+#' \deqn{H = \frac{\sum_{i=1}^{n} w_i}{\sum_{i=1}^{n} \frac{w_i}{x_i}}}{H = sum(w) / sum(w / x)}
+#'
+#' Every value in `x` must be strictly positive. A zero has an undefined reciprocal. A negative rate or ratio has no harmonic mean of this kind.
+#' A weight of zero drops that one observation. A negative weight is an error. After missing values are removed, the weights that remain must sum to more than zero.
+#'
+#' @param x Positive rates or ratios, such as speeds or P/E ratios.
+#' @param weights Optional amounts of the denominator, one per value in `x`. For speeds, the distance of each leg. For P/E ratios, the money invested in each name. A zero drops that observation. Negative weights are an error.
+#' @param na.rm Remove NAs (default = TRUE). With weights, a missing value in `x` or in `weights` drops that case from both, so the two stay aligned. If FALSE, any NA returns NA. If TRUE and nothing remains, a warning is given and NA is returned.
+#' @return The harmonic mean of `x`.
 #' @export
-#' @seealso - [geometric_mean()], [aggregate()]
+#' @seealso [geometric_mean()], [aggregate()]
 #' @family Miscellaneous Stats Functions
 #' @references <https://en.wikipedia.org/wiki/Harmonic_mean>
 #' @examples
-#' # Harmonic means are suitable for ratios
-#' tmp = c(33/1, 23/1)
-#' harmonic_mean(tmp)
+#' # Same money invested in each name.
+#' harmonic_mean(c(33, 23)) # 27.11
+#' # Different amounts of money. Weights are the money, not the share counts.
+#' harmonic_mean(c(33, 23), weights = c(.2, .8)) # 24.48
 #'
-#' geometric_mean(tmp)
-#' mean(tmp)
-#'
-#' # Example with weights
-#' harmonic_mean(c(33/1, 23/1), weights= c(.2, .8))
-#'
-#' # If Jack travels outbound at 1 mph, and returns at 10 miles an hour, what is his average speed?
-#' harmonic_mean(c(1,10)) # 1.81 mph
+#' # Out and back over the same distance. Not the arithmetic mean of the two speeds.
+#' harmonic_mean(c(1, 10)) # 1.818 mph
 #'
 #' # Missing data are dropped by default (na.rm = TRUE)
-#' harmonic_mean(c(33, 23, NA)) # 27.1
+#' harmonic_mean(c(33, 23, NA)) # 27.11
 #' harmonic_mean(c(33, 23, NA), na.rm = FALSE) # NA
-#' # With weights, incomplete cases are dropped together, keeping x and weights aligned
+#' # A missing value drops that case from x and from weights together
 #' harmonic_mean(c(33, NA, 23), weights = c(.2, .3, .5)) # 25.18
 #' harmonic_mean(c(33, 23), weights = c(.2, NA)) # 33
+#' # A zero weight drops that one observation
+#' harmonic_mean(c(10, 20), weights = c(1, 0)) # 10
 #' \dontrun{
-#' # weights must match x in length; non-positive input is an error
-#' harmonic_mean(c(33, 23), weights = c(.2, .3, .5))
+#' harmonic_mean(c(33, 0))
 #' harmonic_mean(c(33, -23))
+#' harmonic_mean(c(10, 20), weights = c(1, -0.5))
+#' harmonic_mean(c(33, 23), weights = c(.2, .3, .5))
 #' }
 #'
 harmonic_mean = function(x, weights = NULL, na.rm = c(TRUE, FALSE)){
 	na.rm = xmu_match.arg(na.rm, option_list = c(TRUE, FALSE), check = TRUE)
-	if(!is.null(weights) && length(weights) != length(x)) stop("weights must be the same length as x.")
-	if (any(x <= 0, na.rm = TRUE)) stop("All values in x must be strictly positive.")
-	if(na.rm){
+	showBad = function(values, where) {
+		nShow = min(length(where), 6)
+		bits = paste0(values[where][seq_len(nShow)], " at position ", where[seq_len(nShow)])
+		if (length(where) > nShow) bits = c(bits, paste0(length(where) - nShow, " more"))
+		paste(bits, collapse = "; ")
+	}
+	if (!is.null(weights) && length(weights) != length(x)) {
+		stop(paste0(
+			"harmonic_mean: weights must be the same length as x (weights has length ",
+			length(weights), ", x has length ", length(x), ")."
+		), call. = FALSE)
+	}
+	negative = which(x < 0)
+	if (length(negative) > 0) {
+		stop(paste0(
+			"harmonic_mean: negative values are not allowed (",
+			showBad(x, negative),
+			"). The harmonic mean averages reciprocals, so every value must be a positive rate or ratio (a speed, a P/E, a resistance). ",
+			"All values in x must be strictly positive."
+		), call. = FALSE)
+	}
+	zeros = which(x == 0)
+	if (length(zeros) > 0) {
+		stop(paste0(
+			"harmonic_mean: zeros are not allowed (",
+			showBad(x, zeros),
+			"). The reciprocal of 0 is undefined. All values in x must be strictly positive."
+		), call. = FALSE)
+	}
+	if (!is.null(weights)) {
+		negativeWeights = which(weights < 0)
+		if (length(negativeWeights) > 0) {
+			stop(paste0(
+				"harmonic_mean: negative weights are not allowed (",
+				showBad(weights, negativeWeights),
+				"). Weights are amounts of the denominator, such as distance for a speed or money invested for a P/E, and must be zero or positive."
+			), call. = FALSE)
+		}
+	}
+	if (na.rm) {
 		keep = !is.na(x)
-		if(!is.null(weights)){
-			keep = keep & !is.na(weights)
-		}
+		if (!is.null(weights)) keep = keep & !is.na(weights)
 		x = x[keep]
-		if(!is.null(weights)){
-			weights = weights[keep]
-		}
+		if (!is.null(weights)) weights = weights[keep]
 	}
-	if(is.null(weights)){
-		# reciprocal of the arithmetic mean of the reciprocals of the input values
-		h = 1/mean(1/x)
-	} else {
-		h = sum(weights)/sum(weights/x)
+	if (length(x) == 0) {
+		warning("harmonic_mean: no non-missing values left to average; returning NA", call. = FALSE)
+		return(NA_real_)
 	}
-	return(h)
+	if (is.null(weights)) {
+		return(1 / mean(1 / x))
+	}
+	if (!anyNA(weights) && sum(weights) == 0) {
+		stop("harmonic_mean: the weights that remain sum to 0, so there is nothing to average.", call. = FALSE)
+	}
+	sum(weights) / sum(weights / x)
 }
 
 #' Summarizing functions used in umx_aggregate and for umxAPA

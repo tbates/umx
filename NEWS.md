@@ -2,6 +2,7 @@
 ## umx 4.85.0: Dev
 * Date: 2026-10-12 R 4.6.1
 * IMPROVED: `geometric_mean()` tells you when a negative value is a return entered without adding 1 (a 30% loss is `0.7`, not `-0.3`). The help example for a +50% gain followed by a -50% loss now gives the geometric mean as -13.4% per period.
+* IMPROVED: `harmonic_mean()` rejects negative weights, names the bad value and its position, and the help states when the mean is the right one for speeds and for P/E ratios.
 * IMPROVED: `umx_score_scale_get_base_names()` accepts a data.frame, and `excluding =` drops original column names, stopping if any of those names are absent.
 * NEW: `umxLGCM()` biometric latent growth curve (age/tim def.var) for twins and siblings: linear, exponential, logistic, or Gompertz shape, A/C/E(/T), invariant covariates, trios and SIB groups. `plot()` draws the model-implied growth curve with observed wave means; table output via `umxSummary()`. (based on #282 @lf-araujo Luis De Araujo)
 * IMPROVED: `umx_long2wide()` converts tibbles, data.tables, and lazy dtplyr/dbplyr pipelines to `as.data.frame()` (@lf-araujo).
