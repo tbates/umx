@@ -57,7 +57,7 @@ test_that("umx_residualize accepts data first, as in a pipe", {
 	expect_equal(tmp |> umx_residualize("mpg", covs = c("cyl", "disp")), ref)
 	expect_equal(tmp |> umx_residualize(covs = c("cyl", "disp"), "mpg"), ref)
 	expect_equal(tmp |> umx_residualize(var = "mpg", c("cyl", "disp"), suffixes = c("_T1", "_T2")), refW)
-	# magrittr-style: named var and covs, so data lands in suffixes
+	# data first with named var and covs, so data lands in suffixes
 	expect_equal(umx_residualize(tmp, var = "mpg", covs = c("cyl", "disp")), ref)
 	expect_equal(umx_residualize(tmp, var = "mpg", cov = c("cyl", "disp")), ref)
 	# several DVs

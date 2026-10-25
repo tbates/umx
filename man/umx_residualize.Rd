@@ -75,7 +75,7 @@ df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 all(df1$hp == df2)
 
 # ====================================
-# = Pipe data in (base or magrittr) =
+# = Pipe data in (base pipe) =
 # ====================================
 r1 = mtcars |> umx_residualize("mpg", c("cyl", "disp"))
 r1 = mtcars |> umx_residualize(mpg ~ cyl + disp)

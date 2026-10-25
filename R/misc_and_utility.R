@@ -5012,7 +5012,7 @@ umx_is_numeric <- function(df, all = TRUE){
 #' all(df1$hp == df2)
 #'
 #' # ====================================
-#' # = Pipe data in (base or magrittr) =
+#' # = Pipe data in (base pipe) =
 #' # ====================================
 #' r1 = mtcars |> umx_residualize("mpg", c("cyl", "disp"))
 #' r1 = mtcars |> umx_residualize(mpg ~ cyl + disp)
@@ -5033,7 +5033,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 		for(i in seq_along(unnamed)) vals[unnamed[i]] = list(shifted[[i]])
 		var = vals$var; covs = vals$covs; suffixes = vals$suffixes; data = theData
 	}
-	# Lazy tables (e.g. dtplyr/dbplyr) are realized by their as.data.frame method
+	# Non-data.frame inputs are realized by their as.data.frame method
 	if(!is.data.frame(data) && !is.matrix(data)) data = as.data.frame(data)
 	# Check names
 	nVar = length(var)
