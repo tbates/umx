@@ -66,6 +66,10 @@ gh_open_PR_url(head_branch="fix", browse = FALSE)
 }
 
 Other github:
+\code{\link[=ghOpenAppSupport]{ghOpenAppSupport()}},
+\code{\link[=ghRemoveQuarantine]{ghRemoveQuarantine()}},
+\code{\link[=ghTeardownBundle]{ghTeardownBundle()}},
+\code{\link[=gh_SymLinkBundle]{gh_SymLinkBundle()}},
 \code{\link[=gh_feature_branch]{gh_feature_branch()}},
 \code{\link[=gh_message_search]{gh_message_search()}},
 \code{\link[=xgh_check_base_name]{xgh_check_base_name()}},

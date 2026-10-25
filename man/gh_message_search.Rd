@@ -54,6 +54,10 @@ gh_message_search("double entry", open = 1)
 }
 \seealso{
 Other github:
+\code{\link[=ghOpenAppSupport]{ghOpenAppSupport()}},
+\code{\link[=ghRemoveQuarantine]{ghRemoveQuarantine()}},
+\code{\link[=ghTeardownBundle]{ghTeardownBundle()}},
+\code{\link[=gh_SymLinkBundle]{gh_SymLinkBundle()}},
 \code{\link[=gh_feature_branch]{gh_feature_branch()}},
 \code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
 \code{\link[=xgh_check_base_name]{xgh_check_base_name()}},

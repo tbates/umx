@@ -128,6 +128,7 @@ gh_SymLinkBundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bu
 #' @return Invisible `NULL`. Called for side effects.
 #' @family github
 #' @export
+#' @examples
 #' \dontrun{
 #' ghTeardownBundle(which = "source.tmbundle", deleteLocal = FALSE, dryRun = TRUE)
 #' }

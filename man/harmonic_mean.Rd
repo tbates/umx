@@ -57,14 +57,13 @@ harmonic_mean(c(33, -23))
 harmonic_mean(c(10, 20), weights = c(1, -0.5))
 harmonic_mean(c(33, 23), weights = c(.2, .3, .5))
 }
+
 }
 \references{
 \url{https://en.wikipedia.org/wiki/Harmonic_mean}
 }
 \seealso{
-\itemize{
-\item \code{\link[=geometric_mean]{geometric_mean()}}, \code{\link[=aggregate]{aggregate()}}
-}
+\code{\link[=geometric_mean]{geometric_mean()}}, \code{\link[=aggregate]{aggregate()}}
 
 Other Miscellaneous Stats Functions:
 \code{\link[=FishersMethod]{FishersMethod()}},
