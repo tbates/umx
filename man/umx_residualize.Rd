@@ -15,7 +15,7 @@ regression \code{\link[=formula]{formula()}} containing var on the lhs, and covs
 \item{suffixes}{Suffixes that identify the variable for each twin, i.e. c("_T1", "_T2")
 Up to you to check all variables are present!}
 
-\item{data}{The dataframe containing all the variables}
+\item{data}{The dataframe containing all the variables. Can also be given first, e.g. piped: \code{df |> umx_residualize("mpg", c("cyl", "disp"))}}
 }
 \value{
 \itemize{
@@ -73,6 +73,12 @@ str(tmp[1:5, 12:17])
 df1 = umx_residualize(c("mpg", "hp"), cov = c("cyl", "disp"), data = tmp)
 df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 all(df1$hp == df2)
+
+# ====================================
+# = Pipe data in (base or magrittr) =
+# ====================================
+r1 = mtcars |> umx_residualize("mpg", c("cyl", "disp"))
+r1 = mtcars |> umx_residualize(mpg ~ cyl + disp)
 }
 \references{
 \url{https://tbates.github.io},  \url{https://github.com/tbates/umx}

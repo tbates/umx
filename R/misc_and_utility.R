@@ -4971,7 +4971,7 @@ umx_is_numeric <- function(df, all = TRUE){
 #' @param covs Covariates to residualize on.
 #' @param suffixes Suffixes that identify the variable for each twin, i.e. c("_T1", "_T2")
 #' Up to you to check all variables are present!
-#' @param data The dataframe containing all the variables
+#' @param data The dataframe containing all the variables. Can also be given first, e.g. piped: `df |> umx_residualize("mpg", c("cyl", "disp"))`
 #' @return - dataframe with var residualized in place (i.e under its original column name)
 #' @export
 #' @family Twin Data functions
@@ -5010,8 +5010,32 @@ umx_is_numeric <- function(df, all = TRUE){
 #' df1 = umx_residualize(c("mpg", "hp"), cov = c("cyl", "disp"), data = tmp)
 #' df2 = residuals(lm(hp ~ cyl + disp, data = tmp, na.action = na.exclude))
 #' all(df1$hp == df2)
+#'
+#' # ====================================
+#' # = Pipe data in (base or magrittr) =
+#' # ====================================
+#' r1 = mtcars |> umx_residualize("mpg", c("cyl", "disp"))
+#' r1 = mtcars |> umx_residualize(mpg ~ cyl + disp)
 umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
-	# Check names	
+	# Data given first (e.g. piped: df |> umx_residualize("mpg", "cyl")) lands in the first unnamed
+	# argument: take it as data, and move the other unnamed args back one slot
+	isData   = function(x) is.data.frame(x) || is.matrix(x) || is.list(x)
+	argNames = c("var", "covs", "suffixes", "data")
+	supplied = names(as.list(sys.call())[-1])
+	if(is.null(supplied)) supplied = rep("", length(as.list(sys.call())[-1]))
+	named    = argNames[stats::na.omit(pmatch(supplied[supplied != ""], argNames))]
+	if(!("data" %in% named) && (missing(data) || !isData(data))) {
+		unnamed = setdiff(argNames, named)
+		vals    = list(var = if(missing(var)) NULL else var, covs = covs, suffixes = suffixes, data = if(missing(data)) NULL else data)
+		if(!isData(vals[[unnamed[1]]])) stop("umx_residualize needs data: pass data = , or pipe a data.frame in as the first argument")
+		theData = vals[[unnamed[1]]]
+		shifted = c(vals[unnamed][-1], list(NULL))
+		for(i in seq_along(unnamed)) vals[unnamed[i]] = list(shifted[[i]])
+		var = vals$var; covs = vals$covs; suffixes = vals$suffixes; data = theData
+	}
+	# Lazy tables (e.g. dtplyr/dbplyr) are realized by their as.data.frame method
+	if(!is.data.frame(data) && !is.matrix(data)) data = as.data.frame(data)
+	# Check names
 	nVar = length(var)
 	if(nVar > 1 && !inherits(var, "formula")){
 		for (i in 1:nVar) {
@@ -5053,6 +5077,7 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 		} else {
 			tmp = data[,vars]
 		}
+		tmp = as.data.frame(tmp)
 		oldNAs = sum(is.na(tmp[,var]))
 		# If formula not provided, construct it from var and covs
 		if(is.null(form)){
@@ -5070,11 +5095,11 @@ umx_residualize <- function(var, covs = NULL, suffixes = NULL, data){
 			i = 1
 			nRows = nrow(data)
 			for (suff in suffixes) {
-				data[, paste0(var, suff)] = tmp[i:(i+nRows-1)]
+				data[, paste0(var, suff)] = as.numeric(tmp[i:(i+nRows-1)])
 				i = i + nRows
 			}
 		} else {
-			data[, var] = tmp
+			data[, var] = as.numeric(tmp)
 		}
 		return(data)
 	}
