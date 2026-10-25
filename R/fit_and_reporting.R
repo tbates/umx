@@ -4981,14 +4981,12 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' **Groups**: by default the 5-group case (MZFF, MZMM, DZFF, DZMM, DZOS) is used. Set MZ and DZ to summarize
 #' the two-group case. If `zyg` holds only MZ/DZ (and SIB) levels, and sex columns (e.g. `sex_T1`, `sex_T2`) are
 #' present, pairs are split by sex into MZFF, MZMM, DZFF, DZMM, DZOS (and SIBFF, SIBMM, SIBOS).
-#' If `data` are grouped (e.g. with `dplyr::group_by(zygosity, sex)`), the groups are used as they are, so no zyg
-#' or sex arguments are needed (no dplyr functions are called). A `.group` column is used if `zyg` is not found.
 #'
-#' **Thresholds** are the ML estimates on the liability scale (mean 0, SD 1): `qnorm()` of the
+#' **Thresholds** are the ML estimates on the liability scale (mean 0, SD 1), pooled over both twins: `qnorm()` of the
 #' proportion at or below each category. SEs of proportions are cluster-robust over families
 #' (co-twins are not independent), and threshold SEs follow by the delta method.
 #'
-#' @param data The twin data (wide: one row per family). Can be grouped, see details.
+#' @param data The twin data (wide: one row per family).
 #' @param selVars Collection of variables to report on, e.g. c("wt", "ht").
 #' @param sep  The separator string that will turn a variable name into a twin variable name, default= "_T" for wt_T1 and wt_T2.
 #' @param age The age column in the dataset (default "age").
@@ -5023,22 +5021,11 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' twinData$obese1 = as.numeric(twinData$bmi1 > 25)
 #' twinData$obese2 = as.numeric(twinData$bmi2 > 25)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "obese"), show = "se")
-#'
-#' # Grouped data (e.g. dplyr::group_by(zygosity)) use their groups
-#' twinData |> dplyr::group_by(zygosity) |> umx_summarise_twin_data(sep = "", selVars = "wt")
 #' }
 umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", sex = "sex", MZ = NULL, DZ = NULL, MZFF = "MZFF", DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS", digits = 2, report = c("markdown", "html"), show = c("ci", "se"), male = c("M", "male", "Male", "m"), female = c("F", "female", "Female", "f"), tryHard = c("no", "yes", "ordinal", "search")) {
 	report  = match.arg(report)
 	show    = match.arg(show)
 	tryHard = match.arg(tryHard)
-
-	# Grouping (e.g. from dplyr::group_by) lives in attr(data, "groups"): keys plus a .rows list of row indices
-	groupAttr = attr(data, "groups")
-	# Plain data.frame, without calling tibble or dplyr: lazy tables are realized by their as.data.frame method
-	if(!is.data.frame(data)) data = as.data.frame(data)
-	attr(data, "groups") = NULL
-	class(data) = "data.frame"
-	if(!(zyg %in% names(data)) && (".group" %in% names(data))) zyg = ".group"
 
 	# 1. Age Extraction
 	if(umx_check_names(age, data = data, die = FALSE)){
@@ -5073,11 +5060,7 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	umx_print(pairCounts, caption = "Pairwise Complete Cases", digits = digits, report = report)
 
 	# 5. Groups: a named list of row indices
-	if(!is.null(groupAttr)) {
-		keys   = setdiff(names(groupAttr), ".rows")
-		labels = do.call(paste, c(lapply(keys, function(k) as.character(groupAttr[[k]])), sep = "_"))
-		groups = stats::setNames(groupAttr$.rows, labels)
-	} else if(!is.null(MZ)) {
+	if(!is.null(MZ)) {
 		groups = list(MZ = which(data[, zyg] %in% MZ), DZ = which(data[, zyg] %in% DZ))
 	} else {
 		umx_check_names(zyg, data = data, die = TRUE)
@@ -5094,9 +5077,16 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 			pairSex = ifelse(s1 == "F" & s2 == "F", "FF", ifelse(s1 == "M" & s2 == "M", "MM", ifelse(!is.na(s1) & !is.na(s2), "OS", NA)))
 			pairLabel = paste0(toupper(z), pairSex)
 			pairLabel[is.na(z) | is.na(pairSex)] = NA
-			order  = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS", "SIBFF", "SIBMM", "SIBOS")
+			order  = c("MZFF", "MZMM", "DZFF", "DZMM", "DZOS", "MZOS", "SIBFF", "SIBMM", "SIBOS")
 			order  = order[order %in% pairLabel]
-			groups = stats::setNames(lapply(order, function(g) which(pairLabel == g)), order)
+			if(length(order) == 0) {
+				# Sex columns exist, but no codes matched male/female: fall back to unsplit levels
+				warning("umxSummarizeTwinData: no pair sexes recognized from ", omxQuotes(sex1), " and ", omxQuotes(sex2), "; using unsplit ", omxQuotes(zyg), " levels. Check the male and female codes.")
+				levs   = sort(unique(stats::na.omit(z)))
+				groups = stats::setNames(lapply(levs, function(g) which(z == g)), levs)
+			} else {
+				groups = stats::setNames(lapply(order, function(g) which(pairLabel == g)), order)
+			}
 		} else {
 			levs   = sort(unique(stats::na.omit(z)))
 			groups = stats::setNames(lapply(levs, function(g) which(z == g)), levs)
@@ -5139,11 +5129,9 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 			tmp = data.frame(a = asOrdered(sub[, v1], levs), b = asOrdered(sub[, v2], levs))
 			fit = tryCatch(suppressMessages(umx_polychoric(tmp, tryHard = tryHard)), error = function(e) NULL)
 			if(is.null(fit)) return(list(str = NA_character_, n = n))
-			r   = fit$polychorics[1, 2]
-			m   = fit$estimatedModel
-			lab = m$R$labels[2, 1]
-			SEs = m$output$standardErrors
-			se  = if(!is.null(SEs) && lab %in% rownames(SEs)) SEs[lab, 1] else NA_real_
+			r  = fit$polychorics[1, 2]
+			se = fit$polychoricStandardErrors[1, 2]
+			if(is.null(se)) se = NA_real_
 			lo  = r - 1.96 * se; hi = r + 1.96 * se
 		}
 		if(show == "se") {
@@ -5155,7 +5143,7 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	}
 
 	# 7. Core DataFrame Assembly
-	twoGroup = !is.null(MZ) && is.null(groupAttr)
+	twoGroup = !is.null(MZ)
 	rNames   = paste0("r", names(groups))
 	df = data.frame(Var = selVars, Mean = NA_character_, SD = NA_character_, Thresholds = NA_character_, stringsAsFactors = FALSE)
 	if(twoGroup) df = cbind(df[, 1, drop = FALSE], "N_MZ_DZ" = NA_character_, df[, -1])
@@ -5167,7 +5155,8 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 		v2 = paste0(varName, sep, 2)
 		ordinal = isOrdinalLike(data[, v1]) && isOrdinalLike(data[, v2])
 		if(ordinal) {
-			levs = if(is.factor(data[, v1])) levels(data[, v1]) else sort(unique(stats::na.omit(c(data[, v1], data[, v2]))))
+			levs = union(levels(data[, v1]), levels(data[, v2]))
+			if(is.null(levs)) levs = sort(unique(stats::na.omit(c(data[, v1], data[, v2]))))
 			x1 = as.integer(asOrdered(data[, v1], levs)); x2 = as.integer(asOrdered(data[, v2], levs))
 			# Endorsed: above the lowest category
 			endorsed = clusterProp(x1 > 1, x2 > 1)
@@ -5176,7 +5165,9 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 			thresh = sapply(seq_len(length(levs) - 1), function(k) {
 				pk = clusterProp(x1 <= k, x2 <= k)
 				t  = stats::qnorm(pk["p"])
-				paste0(fmtNum(t), " (", fmtNum(pk["se"] / stats::dnorm(t)), ")")
+				tSE = pk["se"] / stats::dnorm(t)
+				if(!is.finite(t)) tSE = NA_real_ # empty cell: threshold at +/-Inf
+				paste0(fmtNum(t), " (", fmtNum(tSE), ")")
 			})
 			df[n, "Thresholds"] = paste(thresh, collapse = "; ")
 		} else {
@@ -5209,10 +5200,6 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 
 	invisible(df)
 }
-
-#' @rdname umxSummarizeTwinData
-#' @export
-umx_summarise_twin_data <- umxSummarizeTwinData
 
 
 #' Test the difference between correlations for significance.

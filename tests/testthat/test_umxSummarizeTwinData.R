@@ -34,7 +34,7 @@ test_that("umxSummarizeTwinData reports endorsed (SE), thresholds (SE), and poly
 	expect_match(r$rMZ[2], "^[0-9.]+ \\([0-9.]+\\)$")
 })
 
-test_that("umxSummarizeTwinData splits MZ/DZ by sex, and uses grouped data or a .group column", {
+test_that("umxSummarizeTwinData splits MZ/DZ by sex", {
 	ref = quiet(umxSummarizeTwinData(twinData, sep = "", selVars = "wt"))
 
 	t3 = twinData
@@ -43,19 +43,13 @@ test_that("umxSummarizeTwinData splits MZ/DZ by sex, and uses grouped data or a 
 	t3$sex_2 = ifelse(t3$zygosity %in% c("MZFF", "DZFF"), "F", ifelse(t3$zygosity == "DZOS", "M", "M"))
 	r3 = quiet(umxSummarizeTwinData(t3, sep = "", selVars = "wt", zyg = "zyg2", sex = "sex_"))
 	expect_equal(r3, ref)
+})
 
-	# Mock of a grouped data frame (as dplyr::group_by makes it), without dplyr
-	g = twinData
-	rowsMZ = which(grepl("^MZ", g$zygosity)); rowsDZ = which(grepl("^DZ", g$zygosity))
-	attr(g, "groups") = data.frame(zygosity = c("MZ", "DZ"), .rows = I(list(rowsMZ, rowsDZ)))
-	class(g) = c("grouped_df", "tbl_df", "tbl", "data.frame")
-	r4 = quiet(g |> umx_summarise_twin_data(sep = "", selVars = "wt"))
-	expect_equal(names(r4), c("Var", "Mean", "SD", "rMZ", "rDZ"))
-	r4b = quiet(umxSummarizeTwinData(twinData, sep = "", selVars = "wt", MZ = c("MZFF", "MZMM"), DZ = c("DZFF", "DZMM", "DZOS")))
-	expect_equal(r4$rMZ, r4b$rMZ)
-
-	t5 = twinData
-	t5$.group = t5$zygosity
-	t5$zygosity = NULL
-	expect_equal(quiet(umxSummarizeTwinData(t5, sep = "", selVars = "wt")), ref)
+test_that("umxSummarizeTwinData warns and uses unsplit levels when sex codes match nothing", {
+	t = twinData
+	t$zyg2  = ifelse(grepl("^MZ", t$zygosity), "MZ", "DZ")
+	t$sex_1 = 1L
+	t$sex_2 = 2L
+	expect_warning(r <- quiet(umxSummarizeTwinData(t, sep = "", selVars = "wt", zyg = "zyg2", sex = "sex_")), "no pair sexes recognized")
+	expect_equal(names(r), c("Var", "Mean", "SD", "rDZ", "rMZ"))
 })
