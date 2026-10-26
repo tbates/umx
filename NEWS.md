@@ -1,6 +1,7 @@
 # Releases
 ## umx 4.85.0: Dev
 * Date: 2026-10-12 R 4.6.1
+* IMPROVED: `gh_message_search(search, regex = FALSE)` finds a commit id or literal message text. `regex = TRUE` uses an extended regular expression. A pasted subject that contains `*` stays literal.
 * IMPROVED: `geometric_mean()` tells you when a negative value is a return entered without adding 1 (a 30% loss is `0.7`, not `-0.3`). The help example for a +50% gain followed by a -50% loss now gives the geometric mean as -13.4% per period.
 * IMPROVED: `harmonic_mean()` rejects negative weights, names the bad value and its position, and the help states when the mean is the right one for speeds and for P/E ratios.
 * IMPROVED: `umx_score_scale_get_base_names()` accepts a data.frame, and `excluding =` drops original column names, stopping if any of those names are absent.
@@ -94,7 +95,7 @@
 * FIXED: geometric and harmonic mean NA handling, inc. in weights
 * TESTS: tests cover two DE pairs free+fixed.
 * MISC: `umx_tail()` prints the `n` most extreme rows on a column. `what` is `high`, `low`, `both`, or `abs` (furthest from the median). Markdown by default; `report = "html"` opens the [umx_print()] table.
-* DEV: `gh_message_search()` lists commits whose message matches a regex, newest first, with the GitHub commit page. `open = 1` shows that row in the browser. Part of full git support.
+* DEV: `gh_message_search()` lists commits whose message contains a literal string, newest first, with the GitHub commit page. A 4-64 hex string resolves to that commit. `open = 1` shows that row in the browser. Part of full git support.
 * ROBUSTNESS: `umx_yj_wide_twin_data()` uses `car::powerTransform` / `yjPower` (Yeo-Johnson). Dropped Suggests `bestNormalize` (and its large dependency tree).
 * ROBUSTNESS: Lots more `tests/testthat.R`
 * SAFE: `inst/developer/GenomicSEM` (toy SNP subsets, developer tests) is `.Rbuildignore`d; tutorial files come from `umxGSEM_dl_tutorial_files()`, not the CRAN tarball.

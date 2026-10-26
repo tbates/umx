@@ -2,19 +2,20 @@
 % Please edit documentation in R/gh.R
 \name{gh_message_search}
 \alias{gh_message_search}
-\title{Search commit messages and link the hits on GitHub.}
+\title{Search commit messages or a commit id, and link the hits on GitHub.}
 \usage{
 gh_message_search(
-  regex,
+  search,
   repo = "~/bin/umx",
   max = 10,
   sort = c("desc", "asc"),
   ignore_case = TRUE,
-  open = NULL
+  open = NULL,
+  regex = FALSE
 )
 }
 \arguments{
-\item{regex}{Pattern matched against the commit message.}
+\item{search}{Text to find in the commit message, or a commit id of 4 to 64 hex digits.}
 
 \item{repo}{Local checkout. Default \code{"~/bin/umx"}.}
 
@@ -25,31 +26,38 @@ gh_message_search(
 \item{ignore_case}{Default \code{TRUE}.}
 
 \item{open}{Row number to open on GitHub. Default \code{NULL} (print only).}
+
+\item{regex}{\code{TRUE} for an extended regular expression. Default \code{FALSE} (literal text).}
 }
 \value{
 A data.frame (invisibly) with columns \code{n}, \code{date}, \code{sha}, \code{short}, \code{subject}, \code{url}.
 }
 \description{
 \code{gh_message_search} asks git for commits on the current branch whose
-message matches \code{regex}, and prints the newest \code{max} of them.
+message contains \code{search}, and prints the newest \code{max} of them.
 \code{sort = "asc"} flips that set so the oldest of those hits is first.
 
-The pattern is applied to the whole commit message. Each row has a
+A \code{search} of 4 to 64 hex digits is tried as a commit id first
+(\verb{git rev-parse}). That commit is printed as one row, including when
+it is not on the current branch. If the id is not an object, the
+search falls through to the message grep. An ambiguous short id
+stops with git's message.
+
+The text is applied to the whole commit message. Each row has a
 number, the date, a short sha, and the subject. The subject is only
 the first line, so the match may be further down the message.
 When \code{origin} is a GitHub remote, the row also has the commit page.
 Pass \code{open} as that row number to show it in the browser.
 The same page is \code{hits$url[n]} on the data.frame returned.
 
-\code{regex} is an extended regular expression (\verb{git log -E --grep}).
-A plain word works as-is. \code{+}, \verb{()}, and \code{|} are special; escape them
-to match those characters literally. Matching ignores case unless
-\code{ignore_case = FALSE}.
+\code{regex = FALSE} (the default) treats \code{search} as literal text (\verb{git log -F --grep}). \code{*}, \code{+}, \verb{()}, and \code{|} match themselves. \code{regex = TRUE} treats \code{search} as an extended regular expression (\verb{git log -E --grep}). Matching ignores case unless \code{ignore_case = FALSE}.
 }
 \examples{
 \dontrun{
 hits <- gh_message_search("double entry")
 gh_message_search("double entry", open = 1)
+gh_message_search("4d395296", "~/bin/tm/textmate/")
+gh_message_search("open.app", regex = TRUE)
 }
 }
 \seealso{

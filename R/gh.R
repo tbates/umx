@@ -32,7 +32,7 @@
 #' @return Invisible `NULL`. Called for side effects.
 #' @family github
 #' @export
-ghOpenAppSupport <- function() {
+gh_openAppSupport <- function() {
     targetPath = path.expand("~/Library/Application Support/TextMate")
     
     if (!dir.exists(targetPath)) {
@@ -52,7 +52,7 @@ ghOpenAppSupport <- function() {
 #' @return No return value, called for side effects.
 #' @family github
 #' @export
-ghRemoveQuarantine <- function(path = "~/Downloads/TextMate.app") {
+gh_removeQuarantine <- function(path = "~/Downloads/TextMate.app") {
     targetPath = path.expand(path)
     
     if (!file.exists(targetPath)) {
@@ -75,7 +75,7 @@ ghRemoveQuarantine <- function(path = "~/Downloads/TextMate.app") {
 #' @return Invisible `NULL`. Called for side effects.
 #' @family github
 #' @export
-gh_SymLinkBundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bundles/", 
+gh_symLink_bundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bundles/", 
     destination = "~/Library/Application Support/TextMate/Bundles/") {
     fullPath = path.expand(file.path(localPath, which))
     destDir  = path.expand(destination)
@@ -132,7 +132,7 @@ gh_SymLinkBundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bu
 #' \dontrun{
 #' ghTeardownBundle(which = "source.tmbundle", deleteLocal = FALSE, dryRun = TRUE)
 #' }
-ghTeardownBundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bundles/", 
+gh_teardown_bundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/bundles/", 
     destination = "~/Library/Application Support/TextMate/Bundles/", 
 	deleteLocal = FALSE, dryRun = TRUE) {
 
@@ -321,31 +321,35 @@ gh_open_PR_url <- function(head_branch = NULL, base_owner = "textmatelives", bas
 	invisible(url)
 }
 
-#' Search commit messages and link the hits on GitHub.
+#' Search commit messages or a commit id, and link the hits on GitHub.
 #'
 #' @description
 #' `gh_message_search` asks git for commits on the current branch whose
-#' message matches `regex`, and prints the newest `max` of them.
+#' message contains `search`, and prints the newest `max` of them.
 #' `sort = "asc"` flips that set so the oldest of those hits is first.
 #'
-#' The pattern is applied to the whole commit message. Each row has a
+#' A `search` of 4 to 64 hex digits is tried as a commit id first
+#' (`git rev-parse`). That commit is printed as one row, including when
+#' it is not on the current branch. If the id is not an object, the
+#' search falls through to the message grep. An ambiguous short id
+#' stops with git's message.
+#'
+#' The text is applied to the whole commit message. Each row has a
 #' number, the date, a short sha, and the subject. The subject is only
 #' the first line, so the match may be further down the message.
 #' When `origin` is a GitHub remote, the row also has the commit page.
 #' Pass `open` as that row number to show it in the browser.
 #' The same page is `hits$url[n]` on the data.frame returned.
 #'
-#' `regex` is an extended regular expression (`git log -E --grep`).
-#' A plain word works as-is. `+`, `()`, and `|` are special; escape them
-#' to match those characters literally. Matching ignores case unless
-#' `ignore_case = FALSE`.
+#' `regex = FALSE` (the default) treats `search` as literal text (`git log -F --grep`). `*`, `+`, `()`, and `|` match themselves. `regex = TRUE` treats `search` as an extended regular expression (`git log -E --grep`). Matching ignores case unless `ignore_case = FALSE`.
 #'
-#' @param regex Pattern matched against the commit message.
+#' @param search Text to find in the commit message, or a commit id of 4 to 64 hex digits.
 #' @param repo Local checkout. Default `"~/bin/umx"`.
 #' @param max How many of the newest matches to keep. Default `10`.
 #' @param sort `"desc"` (newest first) or `"asc"`. Default `"desc"`.
 #' @param ignore_case Default `TRUE`.
 #' @param open Row number to open on GitHub. Default `NULL` (print only).
+#' @param regex `TRUE` for an extended regular expression. Default `FALSE` (literal text).
 #' @return A data.frame (invisibly) with columns `n`, `date`, `sha`, `short`, `subject`, `url`.
 #' @export
 #' @family github
@@ -354,11 +358,16 @@ gh_open_PR_url <- function(head_branch = NULL, base_owner = "textmatelives", bas
 #' \dontrun{
 #' hits <- gh_message_search("double entry")
 #' gh_message_search("double entry", open = 1)
+#' gh_message_search("4d395296", "~/bin/tm/textmate/")
+#' gh_message_search("open.app", regex = TRUE)
 #' }
-gh_message_search <- function(regex, repo = "~/bin/umx", max = 10, sort = c("desc", "asc"), ignore_case = TRUE, open = NULL) {
+gh_message_search <- function(search, repo = "~/bin/umx", max = 10, sort = c("desc", "asc"), ignore_case = TRUE, open = NULL, regex = FALSE) {
 	sort = match.arg(sort)
-	if (length(regex) != 1L || is.na(regex) || !is.character(regex) || !nzchar(regex)) {
-		stop("regex must be one non-empty string.", call. = FALSE)
+	if (length(search) != 1L || is.na(search) || !is.character(search) || !nzchar(search)) {
+		stop("search must be one non-empty string.", call. = FALSE)
+	}
+	if (length(regex) != 1L || is.na(regex) || !is.logical(regex)) {
+		stop("regex must be TRUE or FALSE.", call. = FALSE)
 	}
 	if (length(max) != 1L || is.na(max) || !is.numeric(max) || max < 1) {
 		stop("max must be a positive number.", call. = FALSE)
@@ -373,8 +382,24 @@ gh_message_search <- function(regex, repo = "~/bin/umx", max = 10, sort = c("des
 		stop("not a git repo: ", repo, call. = FALSE)
 	}
 
-	args = c("log", "-E", if (isTRUE(ignore_case)) "-i", paste0("--grep=", regex), paste0("--max-count=", max), "--date=short", "--pretty=format:%H%x09%h%x09%ad%x09%s")
-	log = xgh_git(repo, args)
+	log = NULL
+	commitId = grepl("^[0-9a-fA-F]{4,64}$", search)
+	if (commitId) {
+		resolved = xgh_git(repo, c("rev-parse", "--verify", "--end-of-options", paste0(search, "^{commit}")))
+		resolvedStatus = attr(resolved, "status")
+		if (is.null(resolvedStatus)) {
+			fullSha = resolved[grepl("^[0-9a-f]{40}$|^[0-9a-f]{64}$", resolved)]
+			if (length(fullSha) == 1L) {
+				log = xgh_git(repo, c("log", "-1", "--date=short", "--pretty=format:%H%x09%h%x09%ad%x09%s", "--end-of-options", fullSha))
+			}
+		} else if (length(resolved) && any(grepl("ambiguous", resolved, ignore.case = TRUE))) {
+			stop(paste(resolved, collapse = "\n"), call. = FALSE)
+		}
+	}
+	if (is.null(log)) {
+		args = c("log", if (isTRUE(regex)) "-E" else "-F", if (isTRUE(ignore_case)) "-i", paste0("--grep=", search), paste0("--max-count=", max), "--date=short", "--pretty=format:%H%x09%h%x09%ad%x09%s")
+		log = xgh_git(repo, args)
+	}
 	status = attr(log, "status")
 	if (!is.null(status) && status != 0) {
 		stop(paste(log, collapse = "\n"), call. = FALSE)
