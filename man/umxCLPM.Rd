@@ -2,11 +2,37 @@
 % Please edit documentation in R/umxCLPM.R
 \name{umxCLPM}
 \alias{umxCLPM}
+\alias{umx_CLPM}
 \title{Runs cross-lagged panel models}
 \usage{
 umxCLPM(
   data = NULL,
   waves,
+  X = NULL,
+  Y = NULL,
+  sep = "_W",
+  name = NULL,
+  model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),
+  counts = NULL,
+  summary = !umx_set_silent(silent = TRUE),
+  autoRun = getOption("umx_auto_run"),
+  tryHard = c("no", "yes", "ordinal", "search"),
+  verbose = FALSE,
+  batteries = c("scale", "ordinaloptim"),
+  std = FALSE,
+  ivs = NULL,
+  defn = NULL,
+  defto = NULL,
+  type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+  allContinuousMethod = c("cumulants", "marginals")
+)
+
+umx_CLPM(
+  data = NULL,
+  waves,
+  X = NULL,
+  Y = NULL,
+  sep = "_W",
   name = NULL,
   model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),
   counts = NULL,
@@ -24,9 +50,15 @@ umxCLPM(
 )
 }
 \arguments{
-\item{data}{Data frame for the analysis.}
+\item{data}{Data frame for the analysis. With \code{X} and \code{Y}, columns are selected by name; otherwise data must hold, in order, the \code{ivs}, the X waves, the Y waves (then \code{defn}). Grouped data (e.g. \code{dplyr::group_by(sex)}) or a \code{.group} column give a multigroup model, see details.}
 
 \item{waves}{Number of waves of data.}
+
+\item{X}{Base name of the first variable, e.g. "dep" for columns dep_W1, dep_W2, ... (with \code{sep}). If X and Y are not given, columns are taken by position.}
+
+\item{Y}{Base name of the second variable, e.g. "anx" for columns anx_W1, anx_W2, ...}
+
+\item{sep}{The separator between base names and wave numbers (default "_W": e.g. dep_W1).}
 
 \item{name}{The name of the model (defaults to "Heise1969", "Hamaker2015", "STARTS1995" or "IV_RI_CLPM").}
 
@@ -64,9 +96,16 @@ One way of assessing causal relationships is by introducing time into the analys
 \code{umxCLPM} implements three cross-lagged panel models (CLPM) from the literature.
 The first is the classic CLPM from Heise (1969), the second is the CLPM from Hamaker et al. (2015), and
 the third is the CLPM from STARTS (1995).
-You simply pass the number of waves and the data set along with the model you wish to run.
+You simply pass the number of waves, the two variables (\code{X} and \code{Y} base names), and the data set along with the model you wish to run.
 
 Sketch mode is available; if you pass column names to data, a model object is returned for manipulation later.
+}
+\details{
+\strong{Groups}: if \code{data} are grouped (e.g. \code{data |> dplyr::group_by(sex) |> umxCLPM(...)}, read from the \code{groups}
+attribute, so no dplyr functions are called), or have a \code{.group} column, a multigroup model is fitted with one CLPM per
+group, and all parameters free across groups (labels end in the group name). The grouping column(s) are not part of
+the selected columns. Equate parameters across groups afterwards with \code{\link[=umxModify]{umxModify()}} to test group differences.
+Count data and the "thresholds" battery are not yet supported with groups.
 }
 \examples{
 \dontrun{
@@ -81,6 +120,14 @@ dt <- docData[2:9]
 # = 2. Make a CLPM model     =
 # ============================
 hamaker <- umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt)
+
+# Select the variables by name: varA1_W1 ... varA1_W4 and varA2_W1 ... varA2_W4
+names(dt) = c(paste0("varA1_W", 1:4), paste0("varA2_W", 1:4))
+hamaker <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
+
+# Multigroup: one CLPM per zygosity group, from a .group column (or dplyr::group_by)
+dt$.group = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
+mg <- umx_CLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
 }
 }
 \references{

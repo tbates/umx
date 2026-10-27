@@ -5,14 +5,24 @@
 #' `umxCLPM` implements three cross-lagged panel models (CLPM) from the literature. 
 #' The first is the classic CLPM from Heise (1969), the second is the CLPM from Hamaker et al. (2015), and
 #' the third is the CLPM from STARTS (1995).
-#' You simply pass the number of waves and the data set along with the model you wish to run.
+#' You simply pass the number of waves, the two variables (`X` and `Y` base names), and the data set along with the model you wish to run.
 #' 
 #' Sketch mode is available; if you pass column names to data, a model object is returned for manipulation later. 
+#'
+#' @details
+#' **Groups**: if `data` are grouped (e.g. `data |> dplyr::group_by(sex) |> umxCLPM(...)`, read from the `groups`
+#' attribute, so no dplyr functions are called), or have a `.group` column, a multigroup model is fitted with one CLPM per
+#' group, and all parameters free across groups (labels end in the group name). The grouping column(s) are not part of
+#' the selected columns. Equate parameters across groups afterwards with [umxModify()] to test group differences.
+#' Count data and the "thresholds" battery are not yet supported with groups.
 #' 
 #' @param waves Number of waves of data.
+#' @param X Base name of the first variable, e.g. "dep" for columns dep_W1, dep_W2, ... (with `sep`). If X and Y are not given, columns are taken by position.
+#' @param Y Base name of the second variable, e.g. "anx" for columns anx_W1, anx_W2, ...
+#' @param sep The separator between base names and wave numbers (default "_W": e.g. dep_W1).
 #' @param name The name of the model (defaults to "Heise1969", "Hamaker2015", "STARTS1995" or "IV_RI_CLPM").
 #' @param model Model type ("Hamaker2015", "Heise1969", "STARTS1995", or "IV_RI_CLPM").
-#' @param data Data frame for the analysis.
+#' @param data Data frame for the analysis. With `X` and `Y`, columns are selected by name; otherwise data must hold, in order, the `ivs`, the X waves, the Y waves (then `defn`). Grouped data (e.g. `dplyr::group_by(sex)`) or a `.group` column give a multigroup model, see details.
 #' @param counts Optional vector of count data columns.
 #' @param summary Logical indicating whether to show a summary (default: TRUE if silent is not set).
 #' @param autoRun Logical indicating whether to run the model (default to getOption("umx_auto_run")).
@@ -46,32 +56,70 @@
 #' # = 2. Make a CLPM model     =
 #' # ============================
 #' hamaker <- umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt)
+#'
+#' # Select the variables by name: varA1_W1 ... varA1_W4 and varA2_W1 ... varA2_W4
+#' names(dt) = c(paste0("varA1_W", 1:4), paste0("varA2_W", 1:4))
+#' hamaker <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
+#'
+#' # Multigroup: one CLPM per zygosity group, from a .group column (or dplyr::group_by)
+#' dt$.group = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
+#' mg <- umx_CLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
 #' }
 
-umxCLPM <- function(data = NULL,waves, name = NULL, model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),  counts = NULL,summary = !umx_set_silent(silent = TRUE), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), verbose = FALSE, batteries = c("scale", "ordinaloptim"), std = FALSE, ivs = NULL, defn = NULL, defto = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),  allContinuousMethod = c("cumulants", "marginals") ) {
+umxCLPM <- function(data = NULL,waves, X = NULL, Y = NULL, sep = "_W", group = NULL, name = NULL, model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),  counts = NULL,summary = !umx_set_silent(silent = TRUE), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), verbose = FALSE, batteries = c("scale", "ordinaloptim"), std = FALSE, ivs = NULL, defn = NULL, defto = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),  allContinuousMethod = c("cumulants", "marginals") ) {
 
 		if (!(model %in% c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"))) stop("Model must be one of Hamaker2015, Heise1969, IV_RI_CLPM, or STARTS1995")
+		if (is.null(name)) name = model
 
 			sketch = FALSE
-		xs = sprintf("X%03d", 1:waves)
-		ys = sprintf("Y%03d", 1:waves)
-		ps = sprintf("p%03d", 1:waves)
-		qs = sprintf("q%03d", 1:waves)
-		us = sprintf("u%03d", 1:waves)
-		vs = sprintf("v%03d", 1:waves)
+		# Wave names, e.g. X_W1 ... X_W4 (or the X and Y base names given, e.g. dep_W1 ...)
+		byName = !is.null(X) || !is.null(Y)
+		if (byName && (is.null(X) || is.null(Y))) stop("umxCLPM: give both X and Y (base names, e.g. X = \"dep\", Y = \"anx\")")
+		xBase = if (byName) X else "X"
+		yBase = if (byName) Y else "Y"
+		xs = tvars(xBase, sep = sep, suffixes = 1:waves)
+		ys = tvars(yBase, sep = sep, suffixes = 1:waves)
+		ps = tvars("p", sep = sep, suffixes = 1:waves)
+		qs = tvars("q", sep = sep, suffixes = 1:waves)
+		us = tvars("u", sep = sep, suffixes = 1:waves)
+		vs = tvars("v", sep = sep, suffixes = 1:waves)
+
+		# Groups: grouped data (e.g. dplyr::group_by(sex)) or a .group column give a multigroup model (no dplyr needed)
+		groupVar = NULL
+		if(!missing(data)){
+			groupKeys = setdiff(names(attr(data, "groups")), ".rows")
+			if (!is.data.frame(data)) data = as.data.frame(data)
+			attr(data, "groups") = NULL
+			class(data) = "data.frame"
+			if (length(groupKeys) == 0 && ".group" %in% names(data)) groupKeys = ".group"
+			if (length(groupKeys)) {
+				groupCol = do.call(paste, c(lapply(groupKeys, function(k) as.character(data[[k]])), sep = "_"))
+				data = data[, setdiff(names(data), groupKeys), drop = FALSE]
+				groupVar = ".group"
+				message("umxCLPM: multigroup model by ", omxQuotes(groupKeys), ": groups ", omxQuotes(unique(groupCol)), " (all parameters free across groups)")
+				if (!missing(counts)) stop("umxCLPM: count data are not yet supported with groups")
+				if ("thresholds" %in% batteries) stop("umxCLPM: the 'thresholds' battery is not yet supported with groups")
+			}
+		}
 
 		if(missing(data)){
 			data = c(xs, ys)
 			mean_names = data 
 			sketch = TRUE
 		} else {
-			if (missing(defn)) {
-				colnames(data) = c(ivs, xs, ys)
-				mean_names = c(ivs, xs, ys)
+			mean_names = c(ivs, xs, ys)
+			if (byName) {
+				# Select columns by name: base name + sep + wave
+				umx_check_names(c(ivs, xs, ys, defn), data = data, die = TRUE)
+				data = data[, c(ivs, xs, ys, defn), drop = FALSE]
 			} else {
-				colnames(data) = c(ivs,xs, ys, defn)
-				mean_names = c(ivs, xs, ys)
+				# Columns by position: ivs, X waves, Y waves, (defn)
+				if (ncol(data) != length(c(ivs, xs, ys, defn))) {
+					stop(paste0("umxCLPM: data have ", ncol(data), " columns, but ivs, ", waves, " X waves, ", waves, " Y waves", if (length(defn)) ", and defn", " make ", length(c(ivs, xs, ys, defn)), ". Or give X and Y to select columns by name."), call. = FALSE)
+				}
+				colnames(data) = c(ivs, xs, ys, defn)
 			}
+			if (!is.null(groupVar)) data[[groupVar]] = groupCol
 		}
 
 		if (!missing(counts)) {
@@ -100,39 +148,28 @@ umxCLPM <- function(data = NULL,waves, name = NULL, model = c("Hamaker2015", "He
 			zeroInf = zi_counts)
 	} 
 
-	# Process first half of the columns
 	if ("scale" %in% batteries && !sketch) {
-				# Exclude columns defined in defn
-		cols_to_process <- setdiff(colnames(data), c(ivs,defn))
-
-		first_half <- cols_to_process[1:(length(cols_to_process)/2)]
-		if (all(sapply(data[, first_half], is.numeric))) {
-			data <- umx_scale_wide_twin_data(data=data, varsToScale = gsub(".$", "", first_half),sep="", twins = 1:waves)
+		if (all(sapply(data[, xs], is.numeric))) {
+			data <- umx_scale_wide_twin_data(data = data, varsToScale = xBase, sep = sep, twins = 1:waves)
 			if (verbose) message("Scaling X data")
-		} 
-			 # Process second half of the columns
-	second_half <- cols_to_process[((length(cols_to_process)/2) + 1):length(cols_to_process)]
-	if (all(sapply(data[, second_half], is.numeric))) {
-	 data <- umx_scale_wide_twin_data(data=data,varsToScale = gsub(".$", "", second_half), sep="", twins = 1:waves)
-	 if (verbose) message("Scaling Y data")
- }
-}
+		}
+		if (all(sapply(data[, ys], is.numeric))) {
+			data <- umx_scale_wide_twin_data(data = data, varsToScale = yBase, sep = sep, twins = 1:waves)
+			if (verbose) message("Scaling Y data")
+		}
+	}
 
 if ("dump" %in% batteries) return(data)
 
 	if ("ordinaloptim" %in% batteries && !sketch) {
-		# Exclude columns defined in defn
-		cols_to_process <- setdiff(colnames(data), c(ivs,defn))
-
-		first_half <- cols_to_process[1:(length(cols_to_process)/2)]
+		first_half  <- xs
+		second_half <- ys
 		if (all(sapply(data[, first_half], is.factor))) {
 			data[, first_half] <- xmu_relevel_factors(data[, first_half], cols = first_half, min = 7)
 			if (missing(tryHard)) tryHard = "ordinal"
 			if (verbose) message("Releveling X data. Levels: ", length(levels(data[,xs[1]])))
 		}
 
-			 # Process second half of the columns
-	second_half <- cols_to_process[((length(cols_to_process)/2) + 1):length(cols_to_process)]
 	if (all(sapply(data[, second_half], is.factor))) {
 	 data[, second_half] <- xmu_relevel_factors(data[, second_half], cols = second_half, min = 8)
 	 if (missing(tryHard)) tryHard = "ordinal"
@@ -147,6 +184,7 @@ if ("dump" %in% batteries) return(data)
 
 		m1 = umxRAM(name,
 			data = data,
+			group = groupVar,
 			autoRun = FALSE,
 			type = type,
 			allContinuousMethod = allContinuousMethod,
@@ -209,6 +247,7 @@ if ("dump" %in% batteries) return(data)
 		m1 = umxRAM(name,
 			paths,
 			data = data,
+			group = groupVar,
 			autoRun = FALSE,
 			type = type,
 			allContinuousMethod = allContinuousMethod)
@@ -256,6 +295,7 @@ if ("dump" %in% batteries) return(data)
 		m1 = umxRAM(name,
 			paths,
 			data = data,
+			group = groupVar,
 			autoRun = FALSE,
 			type = type,
 			allContinuousMethod = allContinuousMethod)
@@ -309,6 +349,7 @@ if ("dump" %in% batteries) return(data)
 					# Create a RAM model with the vectors
 		m1 <- umxRAM("IV_RI_CLPM",
 		 data = data,
+		 group = groupVar,
 		 type = type,
 		 allContinuousMethod = allContinuousMethod,
 		 autoRun = FALSE,
@@ -320,10 +361,8 @@ if ("dump" %in% batteries) return(data)
 		} 
 
 	if ("thresholds" %in% batteries) {
-		cols_to_process <- setdiff(colnames(data), c(ivs,defn))
-
-		first_half <- cols_to_process[1:(length(cols_to_process)/2)]
-		second_half <- cols_to_process[((length(cols_to_process)/2) + 1):length(cols_to_process)]
+		first_half  <- xs
+		second_half <- ys
 
 					# if first half is ordinal, then set thresholds with the equate_threshold_values function below
 		if (all(sapply(data[,first_half], is.factor))) {
@@ -341,6 +380,10 @@ if (!sketch) m1  = xmu_safe_run_summary(m1, autoRun = autoRun,  summary = summar
 
 	return(m1)
 }
+
+#' @rdname umxCLPM
+#' @export
+umx_CLPM <- umxCLPM
 
 #' Relabel Factor Columns in a Data Frame
 #'

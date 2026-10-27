@@ -10,6 +10,8 @@
 * IMPROVED: `umxSummarizeTwinData()` binary/ordinal traits get proportion endorsed (SE), liability thresholds (SE), and polychoric twin correlations (via `umx_polychoric`); `show = "se"` for r (SE); MZ/DZ(/SIB) split by sex columns. Continuous output unchanged. (#284 @lf-araujo Luis De Araujo)
 * IMPROVED: `umx_residualize()` takes data first, so it works in pipes (`df |> umx_residualize("mpg", c("cyl", "disp"))`). (#281 @lf-araujo Luis De Araujo)
 * IMPROVED: `tryHard = "auto"` (`umxRun` and all builders) picks `mxRun`, `mxTryHard`, or `mxTryHardOrdinal` to suit the model (thresholds, definition variables) and retries once on status code 6; new `umx_set_intervals()` session default for CIs. (#279 @lf-araujo Luis De Araujo)
+* IMPROVED: `umxCLPM()` takes `X` and `Y` base names (with `sep = "_W"`: e.g. `dep_W1`...) to select columns by name; `group =` fits a multigroup CLPM; default `name` now works for all models. (#286 @lf-araujo Luis De Araujo)
+* BREAKING: `umxCLPM()` wave names now come from `tvars()`: `X_W1` (was `X001`), latents `p_W1` (was `p001`), so labels are e.g. `p_W1_to_q_W2` (was `p001_to_q002`). Update any `umxModify()` regex using the old names.
 
 ## umx 4.80.1: Over *80* new features, fixes, and improvements! 
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string.
