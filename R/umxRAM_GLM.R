@@ -31,7 +31,7 @@
 #' @param nAGQ passed to `mxFitFunctionGLM()`. `NA` (default) uses OpenMx's rule: 5 for binomial with one latent, else 1.
 #' @param name optional name; if `NA`, `model` is used.
 #' @param autoRun whether to run (default [umx_set_auto_run()]).
-#' @param tryHard [xmu_safe_run_summary()] tryHard options.
+#' @param tryHard [xmu_safe_run_summary()] tryHard options, plus "auto" (picks to suit the model).
 #' @param setValues if TRUE, set start values (means by family; Gaussian residual variances from the data; GLM-item `S` at 0).
 #' @param suffix passed to [xmuLabel()].
 #' @param verbose currently unused; kept for umxRAM-like calling.
@@ -50,7 +50,7 @@
 #' 	families = list(y = poisson()),
 #' 	autoRun = TRUE)
 #' }
-umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NULL, nAGQ = NA_integer_, name = NA, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), setValues = TRUE, suffix = "", verbose = FALSE) {
+umxRAM_GLM <- function(model = NA, ..., data = NULL, families = NULL, theta = NULL, nAGQ = NA_integer_, name = NA, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), setValues = TRUE, suffix = "", verbose = FALSE) {
 	tryHard = match.arg(tryHard)
 	mxFamilyFun = get0("mxFamily", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
 	if (is.null(mxFamilyFun)) {

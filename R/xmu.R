@@ -311,9 +311,20 @@ xmu_mxRefModels <- function(x, run = FALSE, ..., beginMessage = FALSE, silent = 
 #' xmu_safe_run_summary(m1, m2, autoRun = TRUE, summary = TRUE, std = TRUE, comparison= FALSE)
 #' }
 #'
-xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary"), refModels = NULL) {
+xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard = c("no", "yes", "ordinal", "search", "auto"), summary = !umx_set_silent(silent=TRUE), std = "default", comparison = TRUE, digits = 3, intervals = FALSE, returning = c("model", "summary"), refModels = NULL) {
 	tryHard   = match.arg(tryHard)
 	returning = match.arg(returning)
+
+	autoRequested = (tryHard == "auto")
+	autoMessage = NULL
+	if(autoRequested){
+		hasOrd = tryCatch(imxHasThresholds(model1, submodels = TRUE), error = function(e) FALSE)
+		hasDef = tryCatch(imxHasDefinitionVariable(model1), error = function(e) FALSE)
+		tryHard = if(isTRUE(hasOrd)) "ordinal" else if(isTRUE(hasDef)) "yes" else "no"
+		autoRunner = c(ordinal = "mxTryHardOrdinal", yes = "mxTryHard", no = "mxRun")[tryHard]
+		autoWhy = if(isTRUE(hasOrd)) "thresholds" else if(isTRUE(hasDef)) "definition variables" else "continuous, no definition variables"
+		autoMessage = paste0("tryHard = \"auto\" (", autoWhy, "): running ", autoRunner)
+	}
 
 	if(tryHard == "yes"){
 		tryHard = "mxTryHard"
@@ -333,6 +344,9 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		summary = FALSE
 	}
 	if(autoRun){
+		if(autoRequested && summary){
+			message(autoMessage)
+		}
 		model1 = omxAssignFirstParameters(model1)
 		
 		tryCatch({
@@ -353,6 +367,9 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 			}
 			message(e)
 		})
+		if(autoRequested){
+			model1 = xmu_retry_if_status6(model1, function(m) mxTryHardOrdinal(m, intervals = intervals))
+		}
 	}
 
 	if(!umx_has_been_run(model1)){
@@ -392,6 +409,22 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 	} else {
 		invisible(theSummary)
 	}
+}
+
+#' Retry a status-6 model once with a harder runner
+#'
+#' `xmu_retry_if_status6` checks a run model's OpenMx status code. Status 6 means the optimizer stopped with a non-zero gradient. In that case the model is run once more with `runFun` (the caller passes `mxTryHardOrdinal`); otherwise the model is returned unchanged. Models with no usable output are returned unchanged.
+#'
+#' @param model An [OpenMx::mxModel()] that has been run.
+#' @param runFun A function of one argument (the model) returning a run model, used for the single retry.
+#' @return - The input model, or the retry result when the input status was 6.
+xmu_retry_if_status6 <- function(model, runFun) {
+	statusCode = tryCatch(model$output$status$code, error = function(e) NULL)
+	if(isTRUE(!is.na(statusCode)) && statusCode == 6L){
+		message("Status code 6 (non-zero gradient): retrying once with mxTryHardOrdinal")
+		model = runFun(model)
+	}
+	return(model)
 }
 
 # xmu_twin_print_means(model, digits = digits, report = report)

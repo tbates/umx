@@ -14,7 +14,7 @@ umxDoCp(
   name = "DoC",
   autoRun = getOption("umx_auto_run"),
   intervals = FALSE,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   optimizer = NULL
 )
 }
@@ -37,7 +37,7 @@ umxDoCp(
 
 \item{intervals}{Whether to run intervals (Default FALSE)}
 
-\item{tryHard}{Default "no" (valid = "yes", "ordinal", "search")}
+\item{tryHard}{Default "no" (valid = "yes", "ordinal", "search", "auto")}
 
 \item{optimizer}{Whether to set this for this run (Default no))}
 }

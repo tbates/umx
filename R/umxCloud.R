@@ -49,7 +49,7 @@
 #'   OpenMx and umx are installed inside the container on first use if missing.
 #' @param location Datacenter: \code{"fsn1"}, \code{"nbg1"}, \code{"hel1"}, \code{"ash"}, etc. Default \code{"fsn1"}.
 #' @param autoDestroy Destroy server and Hetzner SSH key on exit? Default \code{TRUE}.
-#' @param tryHard Passed to remote \code{\link{umxRun}}. Default \code{"no"} for smoke tests.
+#' @param tryHard Passed to remote \code{\link{umxRun}}. Default \code{"no"} for smoke tests; \code{"auto"} picks to suit the model.
 #' @param maxBootMinutes Max minutes to wait for SSH + Docker readiness. Default 15.
 #' @param keepOnError If \code{TRUE}, do not destroy the server when the run fails (for SSH debug).
 #'   Default \code{FALSE}. Prints host IP when keeping the server.
@@ -86,7 +86,7 @@ umxCloud <- function(
 	dockerImage = "rocker/r-ver:4.4.2",
 	location = "fsn1",
 	autoDestroy = TRUE,
-	tryHard = c("no", "yes", "ordinal", "search"),
+	tryHard = c("no", "yes", "ordinal", "search", "auto"),
 	maxBootMinutes = 15,
 	keepOnError = FALSE,
 	verbose = TRUE

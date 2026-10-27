@@ -31,7 +31,7 @@
 #' @param lboundM If !NA, then lbound the moderators at this value (default = NA)
 #' @param dropMissingDef Whether to automatically drop missing def var rows for the user (gives a warning) default = FALSE
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxEbiv [OpenMx::mxModel()]
 #' @export
@@ -68,7 +68,7 @@
 #' # TODO: teach umxReduce to test all relevant hypotheses for umxGxEbiv
 #' umxReduce(m1)
 #' }
-umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = 0, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxGxEbiv <- function(name = "GxEbiv", selDVs, selDefs, dzData, mzData, sep = NULL, lboundACE = 0, lboundM = NA, dropMissingDef = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL) {
 	tryHard = match.arg(tryHard)
 	nSib = 2
 	if(!is.null(optimizer)){umx_set_optimizer(optimizer)}

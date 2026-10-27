@@ -47,7 +47,7 @@
 #' @param equateResiduals Whether to equate wave residuals (default TRUE).
 #' @param chol Whether to fit Cholesky factors instead of direct symmetric (co)variances (default FALSE).
 #' @param autoRun Whether to run the model (default `getOption("umx_auto_run")`).
-#' @param tryHard How hard to try fitting (default "yes"; nonlinear loadings are start-value sensitive).
+#' @param tryHard How hard to try fitting (default "yes"; nonlinear loadings are start-value sensitive). "auto" picks to suit the model.
 #' @return Fitted [OpenMx::mxModel()] of subclass `MxModelLGCM`.
 #' @export
 #' @family Twin Modeling Functions
@@ -69,7 +69,7 @@
 #' m0 = umxLGCM(var = c("y1", "y2"), age = c("age1", "age2"), mzData = mkFam(50, 2), dzData = mkFam(50, 2), autoRun = FALSE)
 #' umxSummary(m0)
 #' }
-umxLGCM <- function(name = "LGCM", var, age, invariant = NULL, dzData = NULL, mzData = NULL, sibData = NULL, data = NULL, zyg = "zygosity", sep = "_T", link = c("linear", "exponential", "logistic", "gompertz"), quadratic = FALSE, dzAr = .5, dzCr = 1, tVar = FALSE, centerInvariant = TRUE, equateResiduals = TRUE, chol = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search")) {
+umxLGCM <- function(name = "LGCM", var, age, invariant = NULL, dzData = NULL, mzData = NULL, sibData = NULL, data = NULL, zyg = "zygosity", sep = "_T", link = c("linear", "exponential", "logistic", "gompertz"), quadratic = FALSE, dzAr = .5, dzCr = 1, tVar = FALSE, centerInvariant = TRUE, equateResiduals = TRUE, chol = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search", "auto")) {
 	link    = match.arg(link)
 	tryHard = match.arg(tryHard)
 	umx_check(length(var) == length(age), "stop", "var and age must have one entry per wave: you gave ", length(var), " var and ", length(age), " age")

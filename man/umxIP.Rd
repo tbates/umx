@@ -21,7 +21,7 @@ umxIP(
   numObsDZ = NULL,
   numObsMZ = NULL,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   optimizer = NULL,
   equateMeans = TRUE,
   weightVar = NULL,
@@ -65,7 +65,7 @@ umxIP(
 
 \item{autoRun}{Whether to run and return the model (default), or just to create and return without running.}
 
-\item{tryHard}{Whether to tryHard (default 'no' uses normal mxRun). options: "mxTryHard", "mxTryHardOrdinal", or "mxTryHardWideSearch"}
+\item{tryHard}{Whether to tryHard (default 'no' uses normal mxRun). options: "mxTryHard", "mxTryHardOrdinal", or "mxTryHardWideSearch". "auto" picks to suit the model.}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 

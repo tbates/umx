@@ -1,6 +1,6 @@
 umxDoC2 <- function (name = "DoC", var1Indicators, var2Indicators,covar=NULL, mzData = NULL, 
                        dzData = NULL, sep = "_T", causal = FALSE, autoRun = getOption("umx_auto_run"), 
-                       intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), 
+                       intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), 
                        optimizer = NULL, data = NULL, zyg = "zygosity", batteries = c("scale","ordinaloptim","upcovar"), verbose = FALSE) 
   {
     colTypes = NULL

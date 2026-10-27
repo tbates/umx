@@ -19,7 +19,7 @@ umxLISREL(
   weight = NULL,
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   std = FALSE,
   refModels = NULL,
   remove_unused_manifests = TRUE,
@@ -60,7 +60,7 @@ umxLISREL(
 
 \item{autoRun}{Run the model (default = TRUE).}
 
-\item{tryHard}{How to run the model: "no", "yes", "ordinal", "search".}
+\item{tryHard}{How to run the model: "no", "yes", "ordinal", "search", "auto" (picks to suit the model).}
 
 \item{std}{Standardize output (Default = FALSE).}
 

@@ -12,7 +12,7 @@ umxCLPM(
   counts = NULL,
   summary = !umx_set_silent(silent = TRUE),
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   verbose = FALSE,
   batteries = c("scale", "ordinaloptim"),
   std = FALSE,
@@ -38,7 +38,7 @@ umxCLPM(
 
 \item{autoRun}{Logical indicating whether to run the model (default to getOption("umx_auto_run")).}
 
-\item{tryHard}{Method for fitting the model ("no", "yes", "ordinal", "search").}
+\item{tryHard}{Method for fitting the model ("no", "yes", "ordinal", "search", "auto" (picks to suit the model)).}
 
 \item{verbose}{Logical to control verbose output (default: FALSE).}
 

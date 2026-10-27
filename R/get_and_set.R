@@ -407,6 +407,44 @@ umx_set_silent <- function(value = NA, silent = FALSE) {
 	invisible(oldValue)
 }
 
+#' Compute confidence intervals by default?
+#'
+#' Set the `intervals` default used by [umxRun()]. When `TRUE`, runs compute likelihood-based confidence intervals; when `FALSE` (the default), they do not.
+#'
+#' @details
+#' Under the hood, `umx_set_intervals` sets options("umx_intervals"). This can be set to either `TRUE` or `FALSE`.
+#'
+#' @param value Boolean stating if runs should compute intervals (TRUE).
+#' @param silent If TRUE, this function itself will just return the state of the option, with no user message.
+#' @return - Current intervals value
+#' @export
+#' @family Get and set
+#' @references <https://tbates.github.io>, <https://github.com/tbates/umx>
+#' @examples
+#' library(umx)
+#' old = umx_set_intervals() # print & store existing value
+#' umx_set_intervals(FALSE, silent = TRUE) # set to FALSE
+#' umx_set_intervals(old)   # reinstate
+#' umx_set_intervals() # print existing value
+umx_set_intervals <- function(value = NA, silent = FALSE) {
+	# initialize if needed
+	oldValue = getOption("umx_intervals")
+	if(is.null(oldValue)) {
+		oldValue = FALSE
+		options("umx_intervals" = FALSE)
+	}
+	if(is.na(value)) {
+		# get value
+		if(!silent){
+			message("Current intervals setting is ", omxQuotes(oldValue),".\nValid options are TRUE or FALSE.")
+		}
+	} else {
+		umx_check(value %in% c(TRUE, FALSE), "stop")
+		options("umx_intervals" = value)
+	}
+	invisible(oldValue)
+}
+
 #' Automatically run models?
 #'
 #' Set `autoRun` default for models like [umxRAM()], [umxACE()] etc.

@@ -136,7 +136,7 @@ umxModel <- function(...) {
 #' @param suffix String to append to each label (useful if model will be used in a multi-group model)
 #' @param name A friendly name for the model
 #' @param type One of "Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param weight Passes weight values to mxData
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param std Whether to show standardized estimates, raw (NULL print fit only)
@@ -344,7 +344,7 @@ umxModel <- function(...) {
 #'
 #' }
 #'
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	# Check for data/model objects passed in ... before unlist() flattens them
 	for (item in dot.items) {

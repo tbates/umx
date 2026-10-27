@@ -96,7 +96,7 @@
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param correlatedA Whether factors are allowed to correlate (not implemented yet: FALSE).
 #' @param autoRun Whether to run and return the model (default), or just to create and return without running.
-#' @param tryHard Whether to tryHard (default 'no' uses normal mxRun). options: "mxTryHard", "mxTryHardOrdinal", or "mxTryHardWideSearch"
+#' @param tryHard Whether to tryHard (default 'no' uses normal mxRun). options: "mxTryHard", "mxTryHardOrdinal", or "mxTryHardWideSearch". "auto" picks to suit the model.
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param weightVar If a weighting variable is provided, a vector objective will be used to weight the data. (default = NULL).
@@ -139,7 +139,7 @@
 #'		tryHard = "yes")
 #' umxCompare(m1, m2)
 #' }
-umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, equateMeans = TRUE, weightVar = NULL, addStd = TRUE, addCI = TRUE, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
+umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1, c=1, e=1), data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, correlatedA = FALSE, numObsDZ = NULL, numObsMZ = NULL, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL, equateMeans = TRUE, weightVar = NULL, addStd = TRUE, addCI = TRUE, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE) {
 	# TODO implement correlatedA
 	type                = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)

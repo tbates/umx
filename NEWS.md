@@ -9,6 +9,7 @@
 * IMPROVED: `umx_long2wide()` converts tibbles, data.tables, and lazy dtplyr/dbplyr pipelines to `as.data.frame()` (@lf-araujo).
 * IMPROVED: `umxSummarizeTwinData()` binary/ordinal traits get proportion endorsed (SE), liability thresholds (SE), and polychoric twin correlations (via `umx_polychoric`); `show = "se"` for r (SE); MZ/DZ(/SIB) split by sex columns. Continuous output unchanged. (#284 @lf-araujo Luis De Araujo)
 * IMPROVED: `umx_residualize()` takes data first, so it works in pipes (`df |> umx_residualize("mpg", c("cyl", "disp"))`). (#281 @lf-araujo Luis De Araujo)
+* IMPROVED: `tryHard = "auto"` (`umxRun` and all builders) picks `mxRun`, `mxTryHard`, or `mxTryHardOrdinal` to suit the model (thresholds, definition variables) and retries once on status code 6; new `umx_set_intervals()` session default for CIs. (#279 @lf-araujo Luis De Araujo)
 
 ## umx 4.80.1: Over *80* new features, fixes, and improvements! 
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string.

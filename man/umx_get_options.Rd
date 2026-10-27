@@ -30,6 +30,7 @@ Other Get and set:
 \code{\link[=umx_set_cores]{umx_set_cores()}},
 \code{\link[=umx_set_data_variance_check]{umx_set_data_variance_check()}},
 \code{\link[=umx_set_dollar_symbol]{umx_set_dollar_symbol()}},
+\code{\link[=umx_set_intervals]{umx_set_intervals()}},
 \code{\link[=umx_set_optimization_options]{umx_set_optimization_options()}},
 \code{\link[=umx_set_optimizer]{umx_set_optimizer()}},
 \code{\link[=umx_set_plot_file_suffix]{umx_set_plot_file_suffix()}},

@@ -72,7 +72,7 @@
 #' @param report Report as markdown to the console, or open a table in browser ("html")
 #' @param summary  run [umxSummary()] on the underlying umxRAM model? (Default = FALSE)
 #' @param name A name for your model (default = efa)
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param digits rounding (default = 2)
 #' @param n.obs Number of observations in if covmat provided (default = NA)
 #' @param covmat Covariance matrix of data you are modeling (not implemented)
@@ -117,7 +117,7 @@
 #' m1 = umxEFA(name = "by_number", factors = 2, rotation = "promax", data = mtcars[, myVars])
 #' }
 umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML', 'WeightedML', 'Regression'), minManifests = NA,
-	rotation = c("varimax", "promax", "none"), return = c("model", "loadings"), report = c("markdown", "html"), summary = FALSE, name = "efa", digits = 2, tryHard = c("no", "yes", "ordinal", "search"), n.obs = NULL, covmat = NULL){
+	rotation = c("varimax", "promax", "none"), return = c("model", "loadings"), report = c("markdown", "html"), summary = FALSE, name = "efa", digits = 2, tryHard = c("no", "yes", "ordinal", "search", "auto"), n.obs = NULL, covmat = NULL){
 	# TODO: umxEFA: Detect ordinal items and switch to DWLS?
 	rotation = xmu_match.arg(rotation, c("varimax", "promax", "none"), check = FALSE)
 	tryHard    = match.arg(tryHard)
@@ -324,7 +324,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' @param std Standardize the manifests before running model (default is FALSE)
 #' @param name The model name (default is "IVmodel")
 #' @param subset (optional) vector specifying a subset of observations to be used in fitting the model.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param contrasts An optional list (not supported)
 #' @param ...	arguments to be passed along. (not supported)
 #' @return - [OpenMx::mxModel()]
@@ -369,7 +369,7 @@ umxFactorScores <- function(model, type = c('ML', 'WeightedML', 'Regression'), m
 #' # Try with missing value for one subject: A benefit of the FIML approach in OpenMx.
 #' m3 = tsls(formula = Y ~ X, instruments = ~ qtl, data = (df[1, "qtl"] = NA))
 #' }
-umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, std = FALSE, subset, contrasts= NULL, name = "IV_model", tryHard = c("no", "yes", "ordinal", "search"), ...) {
+umxTwoStage <- function(formula= Y ~ X, instruments = ~qtl, data, std = FALSE, subset, contrasts= NULL, name = "IV_model", tryHard = c("no", "yes", "ordinal", "search", "auto"), ...) {
 	# tryHard = match.arg(tryHard)
 	umx_check(is.null(contrasts), "stop", "Contrasts not supported yet in umxMR: e-mail maintainer('umx') to prioritize")	
 	if(!inherits(formula, "formula")){

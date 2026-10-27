@@ -254,4 +254,111 @@ test_that("umxRun prints change in fit statistic when re-running a model", {
 	expect_message(umxRun(m1), "Change in -2LL \\(old - new\\) = ")
 })
 
+test_that("tryHard auto routes continuous, defvar, and ordinal models", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	m1 = umxRAM("auto cont", data = demoOneFactor, autoRun = FALSE,
+		umxPath("G", to = manifests),
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
+	)
+	expect_message(r1 <- umxRun(m1, tryHard = "auto", summary = TRUE), "running mxRun")
+	expect_equal(r1$output$status$code, 0)
+	expect_equal(r1$output$fit, mxRun(m1, silent = TRUE)$output$fit, tolerance = 1e-4)
+
+	set.seed(1)
+	dd = demoOneFactor
+	dd$age = rnorm(nrow(dd))
+	mDef = umxRAM("auto def", data = dd, autoRun = FALSE,
+		umxPath("G", to = manifests),
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G"),
+		umxPath(defn = "def", labels = "data.age"),
+		umxPath("def", to = "x1")
+	)
+	expect_message(rDef <- umxRun(mDef, tryHard = "auto", summary = TRUE), "running mxTryHard")
+	expect_equal(rDef$output$status$code, 0)
+
+	ordVars = manifests[1:3]
+	ord = demoOneFactor
+	for (v in ordVars) {
+		ord[[v]] = ordered(cut(ord[[v]], breaks = 3, labels = c("lo", "mid", "hi")))
+	}
+	mOrd = umxRAM("auto ord", data = ord[, ordVars], autoRun = FALSE,
+		umxPath("G", to = ordVars),
+		umxPath(v.m. = ordVars),
+		umxPath(v1m0 = "G")
+	)
+	expect_message(rOrd <- umxRun(mOrd, tryHard = "auto", summary = TRUE), "running mxTryHardOrdinal")
+	expect_equal(rOrd$output$status$code, 0)
+})
+
+test_that("builders accept tryHard auto and umxRun defaults are unchanged", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	ramAuto = umxRAM("auto plumbing", data = demoOneFactor, tryHard = "auto",
+		umxPath("G", to = manifests),
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
+	)
+	expect_equal(ramAuto$output$status$code, 0)
+	m1 = umxRAM("auto plumbing ref", data = demoOneFactor, autoRun = FALSE,
+		umxPath("G", to = manifests),
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
+	)
+	refFit = umxRun(m1, tryHard = "auto", summary = FALSE)
+	expect_equal(ramAuto$output$fit, refFit$output$fit, tolerance = 1e-4)
+	expect_equal(eval(formals(umxRun)$tryHard)[1], "yes")
+	expect_false(umx_set_intervals(silent = TRUE))
+})
+
+test_that("umx_set_intervals controls the umxRun intervals default", {
+	require(umx)
+	data(demoOneFactor)
+	oldIntervals = umx_set_intervals(silent = TRUE)
+	expect_error(umx_set_intervals("sometimes", silent = TRUE))
+	tryCatch({
+		umx_set_intervals(FALSE, silent = TRUE)
+		mCI = mxModel("CI tiny", type = "RAM", manifestVars = c("x1", "x2"), latentVars = "G",
+			mxPath("G", to = c("x1", "x2"), labels = c("l1", "l2")),
+			mxPath(c("x1", "x2"), arrows = 2, labels = c("e1", "e2")),
+			mxPath("G", arrows = 2, free = FALSE, values = 1),
+			mxData(cov(demoOneFactor[, c("x1", "x2")]), type = "cov", numObs = 500),
+			mxCI("l1")
+		)
+		rNoCI = umxRun(mCI, tryHard = "no", summary = FALSE)
+		expect_false(umx_has_CIs(rNoCI))
+		umx_set_intervals(TRUE, silent = TRUE)
+		rCI = umxRun(mCI, tryHard = "no", summary = FALSE)
+		expect_true(umx_has_CIs(rCI))
+	}, finally = {
+		umx_set_intervals(oldIntervals, silent = TRUE)
+	})
+})
+
+test_that("xmu_retry_if_status6 retries once on status 6 only", {
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	m1 = umxRAM("auto retry", data = demoOneFactor, autoRun = FALSE,
+		umxPath("G", to = manifests),
+		umxPath(v.m. = manifests),
+		umxPath(v1m0 = "G")
+	)
+	r1 = mxRun(m1, silent = TRUE)
+	called = 0
+	fakeRunner = function(m) { called <<- 1; m }
+	out = xmu_retry_if_status6(r1, fakeRunner)
+	expect_equal(called, 0)
+	expect_identical(out$output$fit, r1$output$fit)
+	tmpOutput = r1@output
+	tmpOutput$status$code = 6L
+	r1@output = tmpOutput
+	expect_message(out6 <- xmu_retry_if_status6(r1, fakeRunner), "retrying once")
+	expect_equal(called, 1)
+})
+
 

@@ -95,7 +95,7 @@
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
 #' @param dzCr The DZ "C" correlation (defaults to 1: set to .25 to make an ADE model).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ("yes") uses mxTryHard, "no" uses normal mxRun. Other options: "ordinal", "search"
+#' @param tryHard Default ("yes") uses mxTryHard, "no" uses normal mxRun. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param optimizer optionally set the optimizer (default NULL does nothing).
 #' @param weightVar If provided, a vector objective will be used to weight the data. (default = NULL).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
@@ -210,7 +210,7 @@
 #' tmp= namez(umx_lower.tri(m2$top$a_cp$labels), "a_cp", replace= "[ace]_cp")
 #' m3 = umxModify(m2, regex= tmp, comparison = TRUE)
 #' }
-umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedACE = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = "deprecated") {
+umxCP <- function(name = "CP", selDVs, selCovs=NULL, dzData= NULL, mzData= NULL, sep = NULL, nFac = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), data = NULL, zyg = "zygosity", allContinuousMethod = c("cumulants", "marginals"), correlatedACE = FALSE, dzAr= .5, dzCr= 1, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search", "auto"), optimizer = NULL, equateMeans= TRUE, weightVar = NULL, bVector = FALSE, boundDiag = 0, addStd = TRUE, addCI = TRUE, numObsDZ = NULL, numObsMZ = NULL, freeLowerA = FALSE, freeLowerC = FALSE, freeLowerE = FALSE, correlatedA = "deprecated") {
 	# TODO umxCP: Add covariates to means model: Will involve xmu_make_top_twin? also means model?
 	tryHard             = match.arg(tryHard)
 	type                = match.arg(type)

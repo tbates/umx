@@ -10,7 +10,7 @@ umxReduceGxE(
   intervals = TRUE,
   testD = TRUE,
   baseFileName = "tmp_gxe",
-  tryHard = c("yes", "no", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search", "auto"),
   silent = FALSE,
   ...
 )
@@ -26,7 +26,7 @@ umxReduceGxE(
 
 \item{baseFileName}{(optional) custom filename for html output (default = "tmp").}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{silent}{Default (FALSE)}
 

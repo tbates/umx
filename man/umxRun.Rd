@@ -6,12 +6,12 @@
 \usage{
 umxRun(
   model,
-  tryHard = c("yes", "no", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search", "auto"),
   calc_sat = TRUE,
   setValues = FALSE,
   setLabels = FALSE,
   summary = !umx_set_silent(silent = TRUE),
-  intervals = FALSE,
+  intervals = umx_set_intervals(silent = TRUE),
   optimizer = NULL,
   comparison = NULL
 )
@@ -19,7 +19,7 @@ umxRun(
 \arguments{
 \item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} you wish to run.}
 
-\item{tryHard}{How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"}
+\item{tryHard}{How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[OpenMx:mxData]{OpenMx::mxData()}} \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s)}
 
@@ -29,7 +29,7 @@ umxRun(
 
 \item{summary}{Whether to print summary or not (default = !umx_set_silent() )}
 
-\item{intervals}{Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE}
+\item{intervals}{Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE. Set the session default with \code{\link[=umx_set_intervals]{umx_set_intervals()}}.}
 
 \item{optimizer}{optional to set the optimizer.}
 
@@ -44,6 +44,9 @@ umxRun(
 \code{umxRun} is a version of \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} which can run also set start values, labels, and run multiple times
 It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 \strong{Note} this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
+}
+\details{
+\code{tryHard = "auto"} picks the runner to suit the model: \code{mxTryHardOrdinal} for models with thresholds, \code{mxTryHard} for models with definition variables, \code{mxRun} otherwise. The choice is announced with \code{message()} (when summaries are on). On status code 6 (non-zero gradient), the model is retried once with \code{mxTryHardOrdinal}.
 }
 \examples{
 \dontrun{

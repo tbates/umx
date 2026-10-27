@@ -17,7 +17,7 @@ umxACE_GLM(
   dzCr = 1,
   equateMeans = TRUE,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search")
+  tryHard = c("no", "yes", "ordinal", "search", "auto")
 )
 }
 \arguments{
@@ -45,7 +45,7 @@ umxACE_GLM(
 
 \item{autoRun}{whether to run}
 
-\item{tryHard}{\code{\link[=xmu_safe_run_summary]{xmu_safe_run_summary()}} tryHard}
+\item{tryHard}{\code{\link[=xmu_safe_run_summary]{xmu_safe_run_summary()}} tryHard, plus "auto" (picks to suit the model)}
 }
 \value{
 supermodel of class \code{MxModelACE_GLM}

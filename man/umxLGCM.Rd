@@ -24,7 +24,7 @@ umxLGCM(
   equateResiduals = TRUE,
   chol = FALSE,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("yes", "no", "ordinal", "search")
+  tryHard = c("yes", "no", "ordinal", "search", "auto")
 )
 }
 \arguments{
@@ -66,7 +66,7 @@ umxLGCM(
 
 \item{autoRun}{Whether to run the model (default \code{getOption("umx_auto_run")}).}
 
-\item{tryHard}{How hard to try fitting (default "yes"; nonlinear loadings are start-value sensitive).}
+\item{tryHard}{How hard to try fitting (default "yes"; nonlinear loadings are start-value sensitive). "auto" picks to suit the model.}
 }
 \value{
 Fitted \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} of subclass \code{MxModelLGCM}.

@@ -10,7 +10,7 @@ umxReduceACE(
   intervals = TRUE,
   testD = TRUE,
   baseFileName = "tmp",
-  tryHard = c("yes", "no", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search", "auto"),
   silent = FALSE,
   digits = 2,
   ...
@@ -27,7 +27,7 @@ umxReduceACE(
 
 \item{baseFileName}{(optional) custom filename for html output (defaults to "tmp")}
 
-\item{tryHard}{(default = "yes")}
+\item{tryHard}{(default = "yes"). "auto" picks to suit the model.}
 
 \item{silent}{Don't print the ACE models (default = FALSE)}
 

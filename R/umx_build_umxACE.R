@@ -109,7 +109,7 @@
 #' @param residualizeContinuousVars Not yet implemented.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param nSib Number of siblings in a family (default - 2). "3" = extra sib.
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
@@ -367,7 +367,7 @@
 #' plot(m1)
 #' }
 #'
-umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
+umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= NULL, sep = NULL, data = NULL, zyg = "zygosity", type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL, residualizeContinuousVars = FALSE, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
@@ -569,7 +569,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' @param dzCr DZ C correlation (default 1; 0.25 for ADE)
 #' @param equateMeans equate T1/T2 intercepts (default TRUE)
 #' @param autoRun whether to run
-#' @param tryHard [xmu_safe_run_summary()] tryHard
+#' @param tryHard [xmu_safe_run_summary()] tryHard, plus "auto" (picks to suit the model)
 #' @return supermodel of class `MxModelACE_GLM`
 #' @family Twin Modeling Functions
 #' @export
@@ -594,7 +594,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 #' dzData = simPair(0.5, n)
 #' m1 = umxACE_GLM(selDVs = "y", mzData = mzData, dzData = dzData, sep = "_T")
 #' }
-umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", family = stats::poisson(), theta = NULL, nAGQ = 1L, dzAr = 0.5, dzCr = 1, equateMeans = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search")) {
+umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", family = stats::poisson(), theta = NULL, nAGQ = 1L, dzAr = 0.5, dzCr = 1, equateMeans = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto")) {
 	tryHard = match.arg(tryHard)
 	mxFamilyFun = get0("mxFamily", envir = asNamespace("OpenMx"), inherits = FALSE, ifnotfound = NULL)
 	if (is.null(mxFamilyFun)) {
@@ -828,7 +828,7 @@ umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", fam
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param optimizer optionally set the optimizer. Default (NULL) does nothing.
 #' @return - [OpenMx::mxModel()] of subclass mxModel.ACEcov
 #' @export
@@ -880,7 +880,7 @@ umxACE_GLM <- function(name = "ACE_GLM", selDVs, mzData, dzData, sep = "_T", fam
 #'    dzData = dzData, mzData = mzData, sep = "", autoRun = TRUE
 #' )
 #' }
-umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxACEcov <- function(name = "ACEcov", selDVs, selCovs, dzData, mzData, sep = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), dzAr = .5, dzCr = 1, addStd = TRUE, addCI = TRUE, boundDiag = 0, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL) {
 	# TODO sub-class umxACEcov (random covariates) fn to support umxSummary and plot
 	
 	nSib = 2 # Number of siblings in a twin pair

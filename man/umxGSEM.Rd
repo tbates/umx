@@ -14,7 +14,7 @@ umxGSEM(
   numObs = 1,
   smooth = TRUE,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("yes", "no", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search", "auto"),
   std.lv = TRUE,
   ...
 )
@@ -43,7 +43,7 @@ changing point estimates.}
 
 \item{autoRun}{Whether to run the model (defaults to getOption("umx_auto_run")).}
 
-\item{tryHard}{Method for fitting the model ("no", "yes", "ordinal", "search"). Defaults to \code{"yes"}
+\item{tryHard}{Method for fitting the model ("no", "yes", "ordinal", "search", "auto"). Defaults to \code{"yes"}
 because DWLS on LDSC \code{V} often has multiple local minima.}
 
 \item{std.lv}{If \code{TRUE} (default), free the first factor loading and fix latent variances to 1

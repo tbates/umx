@@ -26,7 +26,7 @@ umxACEv(
   equateMeans = TRUE,
   bVector = FALSE,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   optimizer = NULL,
   nSib = 2
 )
@@ -74,7 +74,7 @@ umxACEv(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 

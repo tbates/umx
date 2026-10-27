@@ -17,7 +17,7 @@ umxEFA(
   summary = FALSE,
   name = "efa",
   digits = 2,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   n.obs = NULL,
   covmat = NULL
 )
@@ -34,7 +34,7 @@ umxFactanal(
   summary = FALSE,
   name = "efa",
   digits = 2,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   n.obs = NULL,
   covmat = NULL
 )
@@ -62,7 +62,7 @@ umxFactanal(
 
 \item{digits}{rounding (default = 2)}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{n.obs}{Number of observations in if covmat provided (default = NA)}
 

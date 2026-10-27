@@ -407,7 +407,7 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
 #' @param testD Whether to test ADE and DE models (TRUE)
 #' @param baseFileName (optional) custom filename for html output (default = "tmp").
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param silent Default (FALSE)
 #' @param ... Other parameters to control model summary.
 #' @return best model
@@ -420,7 +420,7 @@ umxReduce.default <- function(model, report = c("markdown", "inline", "html"), i
 #' \dontrun{
 #' model = umxReduce(model)
 #' }
-umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search"), silent = FALSE, ...) {
+umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp_gxe", tryHard = c("yes", "no", "ordinal", "search", "auto"), silent = FALSE, ...) {
 	report  = match.arg(report)
 	tryHard = match.arg(tryHard)
 	umx_is_MxModel(model)
@@ -491,7 +491,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' @param intervals Recompute CIs (if any included) on the best model (default = TRUE)
 #' @param testD Whether to test ADE and DE models (TRUE)
 #' @param baseFileName (optional) custom filename for html output (defaults to "tmp")
-#' @param tryHard (default = "yes")
+#' @param tryHard (default = "yes"). "auto" picks to suit the model.
 #' @param silent Don't print the ACE models (default = FALSE)
 #' @param digits rounding in printout (default = 2)
 #' @param ... Other parameters to control model summary
@@ -522,7 +522,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' m1 = umxACE(selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "", dzCr = .25)
 #' 
 #' }
-umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search"), silent=FALSE, digits = 2, ...) {
+umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search", "auto"), silent=FALSE, digits = 2, ...) {
 	# override umx_set_auto_run?
 	oldAutoRun = umx_set_auto_run(autoRun = TRUE)
 	

@@ -20,7 +20,7 @@ umxCP(
   dzAr = 0.5,
   dzCr = 1,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("yes", "no", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search", "auto"),
   optimizer = NULL,
   equateMeans = TRUE,
   weightVar = NULL,
@@ -68,7 +68,7 @@ omit sep in selDVs, i.e., just "dep" not c("dep_T1", "dep_T2").}
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{Default ("yes") uses mxTryHard, "no" uses normal mxRun. Other options: "ordinal", "search"}
+\item{tryHard}{Default ("yes") uses mxTryHard, "no" uses normal mxRun. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{optimizer}{optionally set the optimizer (default NULL does nothing).}
 

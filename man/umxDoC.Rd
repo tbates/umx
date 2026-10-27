@@ -14,7 +14,7 @@ umxDoC(
   causal = TRUE,
   autoRun = getOption("umx_auto_run"),
   intervals = FALSE,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   optimizer = NULL,
   data = NULL,
   zyg = "zygosity"
@@ -39,7 +39,7 @@ umxDoC(
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 

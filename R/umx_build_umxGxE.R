@@ -57,7 +57,7 @@
 #' @param lboundACE If not NA, then lbound the main effects at this value (default = NA, can help to set this to 0)
 #' @param lboundM   If not NA, then lbound the moderator effects at this value (default = NA, can help to set this to 0)
 #' @param autoRun Optionally run the model (default), or just to create it and return without running.
-#' @param tryHard Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "ordinal", "search".
+#' @param tryHard Optionally tryHard to get the model to converge (Default = 'no'). "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model).
 #' @param optimizer Optionally set the optimizer (default NULL does nothing)
 #' @return - GxE [OpenMx::mxModel()]
 #' @export
@@ -127,7 +127,7 @@
 #'   am = 0, em = 0.10, seed = 2)
 #' attr(df2, "truth")[c("am", "em")]
 #' }
-umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, selCovs = NULL) {
+umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL, data = NULL, zyg = "zygosity", digits = 3, lboundACE = NA, lboundM = NA, dropMissingDef = TRUE, dzAr = .5,  dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL, selCovs = NULL) {
 
 	if(dzCr == .25 & name == "G_by_E") name = "G_by_E_ADE"
 	tryHard = match.arg(tryHard)
@@ -442,7 +442,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' @param width An option to widen or narrow the window from its default (of 1)
 #' @param target A user-selected list of moderator values to test (default = NULL = explore the full range)
 #' @param plotWindow whether to plot the data window.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param return  whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")
 #' @return - Table of estimates of ACE along the moderator
 #' @export
@@ -493,7 +493,7 @@ umxGxE <- function(name = "G_by_E", selDVs, selDefs, dzData, mzData, sep = NULL,
 #' 	target = c(39,40,50), plotWindow = TRUE)
 #'
 #' }
-umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, tryHard = c("no", "yes", "ordinal", "search"), return = c("estimates","last_model")) {
+umxGxE_window <- function(selDVs = NULL, moderator = NULL, mzData = mzData, dzData = dzData, sep = NULL, weightCov = FALSE, target = NULL, width = 1, plotWindow = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), return = c("estimates","last_model")) {
 	return  = match.arg(return)
 	tryHard = match.arg(tryHard)
 	

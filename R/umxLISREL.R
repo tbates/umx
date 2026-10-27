@@ -20,7 +20,7 @@
 #' @param weight Weight column name.
 #' @param allContinuousMethod Method for continuous variables when WLS is used.
 #' @param autoRun Run the model (default = TRUE).
-#' @param tryHard How to run the model: "no", "yes", "ordinal", "search".
+#' @param tryHard How to run the model: "no", "yes", "ordinal", "search", "auto" (picks to suit the model).
 #' @param std Standardize output (Default = FALSE).
 #' @param refModels Reference models for summary comparison.
 #' @param remove_unused_manifests Remove manifests not used in paths (Default = TRUE).
@@ -66,7 +66,7 @@
 #'                umxPath(var = "G"),
 #'                umxPath(means = c("x1", "x2", "x4", "x5")))
 #' }
-umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentVars = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, printTab = FALSE) {
+umxLISREL <- function(model = NA, ..., data = NULL, manifestVars = NULL, latentVars = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, printTab = FALSE) {
 	dotItems = list(...) # grab all the dot items: mxPaths, etc...
 	# Check for data/model objects passed in ... before unlist() flattens them
 	for (item in dotItems) {

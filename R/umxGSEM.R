@@ -602,7 +602,7 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #'   changing point estimates.
 #' @param smooth Whether to smooth non-positive definite matrices using [Matrix::nearPD()] (defaults to TRUE).
 #' @param autoRun Whether to run the model (defaults to getOption("umx_auto_run")).
-#' @param tryHard Method for fitting the model ("no", "yes", "ordinal", "search"). Defaults to `"yes"`
+#' @param tryHard Method for fitting the model ("no", "yes", "ordinal", "search", "auto"). Defaults to `"yes"`
 #'   because DWLS on LDSC `V` often has multiple local minima.
 #' @param std.lv If `TRUE` (default), free the first factor loading and fix latent variances to 1
 #'   (unit-variance identification). Preferred for genetic covariance scale where unit-loading ID
@@ -634,7 +634,7 @@ umxGSEMprepFindData <- function(mode = c("Benchmark", "Synthetic", "MissingData"
 #' )
 #' m3 = umxGSEM(m0, covstruc = Psych_LDSC, estimation = "DWLS")
 #' }
-umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("DWLS", "WLS", "ULS"), name = "gsem", numObs = 1, smooth = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search"), std.lv = TRUE, ...) {
+umxGSEM <- function(model, covstruc = NULL, S = NULL, V = NULL, estimation = c("DWLS", "WLS", "ULS"), name = "gsem", numObs = 1, smooth = TRUE, autoRun = getOption("umx_auto_run"), tryHard = c("yes", "no", "ordinal", "search", "auto"), std.lv = TRUE, ...) {
 	tryHard    = match.arg(tryHard)
 	estimation = match.arg(estimation)
 

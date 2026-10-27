@@ -17,7 +17,7 @@ power.ACE.test(
   power = 0.8,
   method = c("ncp", "empirical"),
   search = FALSE,
-  tryHard = c("yes", "no", "ordinal", "search"),
+  tryHard = c("yes", "no", "ordinal", "search", "auto"),
   digits = 2,
   optimizer = NULL,
   nSim = 4000
@@ -48,7 +48,7 @@ power.ACE.test(
 
 \item{search}{Whether to return a search across power or just a point estimate (Default FALSE = point)}
 
-\item{tryHard}{Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)}
+\item{tryHard}{Whether to tryHard to find a solution (default = "yes", alternatives are "no"...). "auto" picks to suit the model.}
 
 \item{digits}{Rounding for reporting parameters (default 2)}
 

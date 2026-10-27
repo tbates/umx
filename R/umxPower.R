@@ -37,7 +37,7 @@
 #' @param value Value to set dropped path to (Default 0)
 #' @param search Whether to return a search across power or just a point estimate (Default FALSE = point)
 #' @param method How to estimate power: Default =  use non-centrality parameter ("ncp"). Alternative is "empirical"
-#' @param tryHard Whether to tryHard to find a solution (default = "yes", alternatives are "no"...)
+#' @param tryHard Whether to tryHard to find a solution (default = "yes", alternatives are "no"...). "auto" picks to suit the model.
 #' @param digits Rounding for reporting parameters (default 2)
 #' @param optimizer If set, will switch the optimizer.
 #' @param nSim Total number of pairs to simulate in the models (default = 4000)
@@ -137,7 +137,7 @@
 #'
 #' }
 #'
-power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "c", "a_after_dropping_c", "d"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("yes", "no", "ordinal", "search"), digits = 2, optimizer = NULL, nSim=4000){
+power.ACE.test <- function(AA= .5, CC= 0, EE= NULL, DD = NULL, update = c("a", "c", "a_after_dropping_c", "d"), value = 0, n = NULL, MZ_DZ_ratio = 1, sig.level = 0.05, power = .8, method = c("ncp", "empirical"), search = FALSE, tryHard = c("yes", "no", "ordinal", "search", "auto"), digits = 2, optimizer = NULL, nSim=4000){
 	# # TODO why not equivalent to this?
 	# # https://genepi.qimr.edu.au//general/TwinPowerCalculator/twinpower.cgi
 	#

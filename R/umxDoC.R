@@ -284,7 +284,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param data = NULL If building the MZ and DZ datasets internally from a complete data set.
 #' @param zyg = "zygosity" (for the data= method of using this function)
@@ -338,7 +338,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' 	  mzData= c("MZFF", "MZMM"), dzData= c("DZFF", "DZMM"), data = docData
 #' )
 #' }
-umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, data = NULL, zyg = "zygosity") {
+umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL, data = NULL, zyg = "zygosity") {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
 	if(name == "DoC"){name = ifelse(causal, "DoC", "Chol")}
 	tryHard = match.arg(tryHard)

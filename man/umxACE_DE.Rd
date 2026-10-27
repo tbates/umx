@@ -23,7 +23,7 @@ umxACE_DE(
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"),
   intervals = FALSE,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   optimizer = NULL,
   nSib = 2,
   dzAr = 0.5,
@@ -75,7 +75,7 @@ only the named pairs are fixed (partial \code{censorCuts} is allowed).}
 
 \item{intervals}{Whether to run mxCI confidence intervals (default = FALSE)}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 

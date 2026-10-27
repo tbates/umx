@@ -35,7 +35,7 @@
 #' @param name The name for the container model (default = 'super')
 #' @param ...  Models forming the multiple groups contained in the supermodel.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param std Show standardized parameters, raw (default), or just the fit indices (null)
 #' @return [OpenMx::mxModel()]
 #' @export
@@ -106,7 +106,7 @@
 #' super = umxSuperModel("myModel", m1, m2, autoRun = TRUE)
 #' umxModelNames(super)
 #' }
-umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), std = FALSE) {
+umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), std = FALSE) {
 	tryHard = match.arg(tryHard)
 	umx_check(boolean.test= is.character(name), action= "stop", message= "You need to set the name for the supermodel, i.e. add name = 'modelName' ")
 	dot.items = list(...) # grab all the dot items: models...	
@@ -197,7 +197,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @param name The name for the new model
 #' @param comparison Whether to run umxCompare() on the new and old models.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param master If you set master, then the update labels will be equated to these (i.e. replaced by them).
 #' @param intervals Whether to run confidence intervals (see [OpenMx::mxRun()])
 #' @param verbose How much feedback to give
@@ -253,7 +253,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' m2 = umxModify(m1, regex = searchString, newlabels= newLabel, name = "grep", comparison = TRUE)
 #' } # end dontrun
 #'
-umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), master = NULL, intervals = FALSE, verbose = FALSE) {
+umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value = 0, newlabels = NULL, freeToStart = NA, name = NULL, comparison = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), master = NULL, intervals = FALSE, verbose = FALSE) {
 	tryHard = match.arg(tryHard)
 	if(!is.null(name) && name == "guess"){
 		name = update[1]
@@ -580,14 +580,15 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' It can also calculate the saturated and independence likelihoods necessary for most fit indices.
 #' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 #' @param model The [OpenMx::mxModel()] you wish to run.
-#' @param tryHard  How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search"
+#' @param tryHard  How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search", "auto" (picks to suit the model)
 #' @param calc_sat Whether to calculate the saturated and independence models (for raw [OpenMx::mxData()] [OpenMx::mxModel()]s)
 #' @param setValues Whether to set the starting values of free parameters (default = FALSE)
 #' @param setLabels Whether to set the labels (default =  FALSE)
 #' @param optimizer optional to set the optimizer.
-#' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE
+#' @param intervals Whether to run mxCI confidence intervals (default = FALSE) intervals = FALSE. Set the session default with [umx_set_intervals()].
 #' @param summary Whether to print summary or not (default = !umx_set_silent() )
 #' @param comparison Comparison model (will be used to drive umxCompare() after umxRun
+#' @details `tryHard = "auto"` picks the runner to suit the model: `mxTryHardOrdinal` for models with thresholds, `mxTryHard` for models with definition variables, `mxRun` otherwise. The choice is announced with `message()` (when summaries are on). On status code 6 (non-zero gradient), the model is retried once with `mxTryHardOrdinal`.
 #' @return - [OpenMx::mxModel()]
 #' @family Advanced Model Building Functions
 #' @references <https://github.com/tbates/umx>
@@ -617,7 +618,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' }
 #' 
 # type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
-umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, summary = !umx_set_silent(silent = TRUE), intervals = FALSE, optimizer = NULL, comparison = NULL){
+umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search", "auto"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, summary = !umx_set_silent(silent = TRUE), intervals = umx_set_intervals(silent = TRUE), optimizer = NULL, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
 	# TODO: umxRun: Optimise for speed
@@ -794,7 +795,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' @param name    name for the returned model (optional: Leave empty to leave name unchanged)
 #' @param comparison Compare the new model to the old (if updating an existing model: default = TRUE)
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param master  synonym for 'a'
 #' @param slave   synonym for 'b'
 #' @return - [OpenMx::mxModel()]
@@ -826,7 +827,7 @@ umxSetParameters <- function(model, labels, free = NULL, values = NULL, newlabel
 #' )
 #' parameters(m2)
 #' }
-umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no", "yes", "ordinal", "search"), comparison = TRUE, master= NULL, slave= NULL) {
+umxEquate <- function(model, a, b, newlabels= NULL, free = c(TRUE, FALSE, NA), verbose = FALSE, name = NULL, autoRun = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), comparison = TRUE, master= NULL, slave= NULL) {
 	free = xmu_match.arg(free, c(TRUE, FALSE, NA)) # match.arg can't handle Boolean as options?
 	tryHard = match.arg(tryHard)
 

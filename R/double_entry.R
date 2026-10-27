@@ -63,7 +63,7 @@
 #' @param allContinuousMethod "cumulants" or "marginals". Used in all-continuous WLS data to determine if a means model needed.
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param intervals Whether to run mxCI confidence intervals (default = FALSE)
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param nSib Number of siblings in a family (default = 2).
 #' @param dzAr The DZ genetic correlation (defaults to .5, vary to examine assortative mating).
@@ -234,7 +234,7 @@
 #' # |:---------|-------:|------:|-------:|------:|
 #' # |intercept | 162.515| 20.984| 162.515| 20.984|
 #' }
-umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = "_T", data = NULL, zyg = "zygosity", fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, doubleEntrySuffix = c("_cont", "_cens"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
+umxACE_DE <- function(name = "ACE_DE", selDVs, selCovs = NULL, dzData = NULL, mzData = NULL, sep = "_T", data = NULL, zyg = "zygosity", fixCensorThresholds = c("yes", "auto", "no"), censorCuts = NULL, doubleEntrySuffix = c("_cont", "_cens"), type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), numObsDZ = NULL, numObsMZ = NULL, boundDiag = 0, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL, nSib = 2, dzAr = .5, dzCr = 1, weightVar = NULL, equateMeans = TRUE, addStd = TRUE, addCI = TRUE) {
 	tryHard = match.arg(tryHard)
 	type    = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)

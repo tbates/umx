@@ -13,7 +13,7 @@ umxTwoStage(
   subset,
   contrasts = NULL,
   name = "IV_model",
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   ...
 )
 
@@ -25,7 +25,7 @@ umxMR(
   subset,
   contrasts = NULL,
   name = "IV_model",
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   ...
 )
 }
@@ -44,7 +44,7 @@ umxMR(
 
 \item{name}{The model name (default is "IVmodel")}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{...}{arguments to be passed along. (not supported)}
 }

@@ -22,7 +22,7 @@ umxRAM_DE(
   weight = NULL,
   allContinuousMethod = c("cumulants", "marginals"),
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   std = FALSE,
   refModels = NULL,
   remove_unused_manifests = TRUE,
@@ -67,7 +67,7 @@ umxRAM_DE(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{std}{Whether to show standardized estimates, raw (NULL print fit only)}
 

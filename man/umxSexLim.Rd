@@ -18,7 +18,7 @@ umxSexLim(
   dzAr = 0.5,
   dzCr = 1,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   optimizer = NULL
 )
 }
@@ -49,7 +49,7 @@ umxSexLim(
 
 \item{autoRun}{Whether to mxRun the model (default TRUE: the estimated model will be returned).}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{optimizer}{optionally set the optimizer. Default (NULL) does nothing.}
 }

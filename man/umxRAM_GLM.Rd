@@ -13,7 +13,7 @@ umxRAM_GLM(
   nAGQ = NA_integer_,
   name = NA,
   autoRun = getOption("umx_auto_run"),
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   setValues = TRUE,
   suffix = "",
   verbose = FALSE
@@ -36,7 +36,7 @@ umxRAM_GLM(
 
 \item{autoRun}{whether to run (default \code{\link[=umx_set_auto_run]{umx_set_auto_run()}}).}
 
-\item{tryHard}{\code{\link[=xmu_safe_run_summary]{xmu_safe_run_summary()}} tryHard options.}
+\item{tryHard}{\code{\link[=xmu_safe_run_summary]{xmu_safe_run_summary()}} tryHard options, plus "auto" (picks to suit the model).}
 
 \item{setValues}{if TRUE, set start values (means by family; Gaussian residual variances from the data; GLM-item \code{S} at 0).}
 

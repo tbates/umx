@@ -86,7 +86,7 @@
 #' @param equateMeans Whether to equate the means across twins (defaults to TRUE).
 #' @param bVector Whether to compute row-wise likelihoods (defaults to FALSE).
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param nSib Number of sibs, default is 2. Working on 3 :-)
 #' @return - [OpenMx::mxModel()] subclass `mxModelACEv`
@@ -251,7 +251,7 @@
 #' umxSummary(m1, std = FALSE)
 #' }
 #' 
-umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL, nSib = 2) {
+umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, mzData, dzAr = .5, dzCr = 1, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), allContinuousMethod = c("cumulants", "marginals"), data = NULL, zyg = "zygosity", weightVar = NULL, numObsDZ = NULL, numObsMZ = NULL, addStd = TRUE, addCI = TRUE, boundDiag = NULL, equateMeans = TRUE, bVector = FALSE, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL, nSib = 2) {
 	type                = match.arg(type)
 	allContinuousMethod = match.arg(allContinuousMethod)
 	if(dzCr == .25 & name == "ACEv"){ name = "ADEv" }

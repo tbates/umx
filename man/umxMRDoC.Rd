@@ -18,7 +18,7 @@ umxMRDoC(
   autoRun = getOption("umx_auto_run"),
   sibs = FALSE,
   type = "FIML",
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   optimizer = NULL,
   covar = NULL,
   batteries = c("scale"),
@@ -53,7 +53,7 @@ umxMRDoC(
 
 \item{type}{Basic switch for estimation type. WLS tends to work really well in MRDoC, it saves you time.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search".}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model).}
 
 \item{optimizer}{Optionally set the optimizer (default NULL does nothing).}
 

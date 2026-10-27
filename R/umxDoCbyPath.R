@@ -14,7 +14,7 @@
 #' @param name = "DoC"
 #' @param autoRun Default: getOption("umx_auto_run")_
 #' @param intervals Whether to run intervals (Default FALSE)
-#' @param tryHard  Default "no" (valid = "yes", "ordinal", "search")
+#' @param tryHard  Default "no" (valid = "yes", "ordinal", "search", "auto")
 #' @param optimizer Whether to set this for this run (Default no))
 #' @return - [A direction of causation model with [umxPath()] statements.
 #' @export
@@ -34,7 +34,7 @@
 #' m1 = umxDoCp(var1, var2, mzData= mzData, dzData= dzData, sep = "_T", causal= TRUE)
 #' 
 #' }
-umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, name = "DoC", autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL) {
+umxDoCp <- function(var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, name = "DoC", autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL) {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")

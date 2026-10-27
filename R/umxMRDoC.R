@@ -21,7 +21,7 @@
 #' @param sibsData The unrelated sibs dataframe, requires "sibs" as an extra zygosity level.
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
-#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search".
+#' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model).
 #' @param optimizer Optionally set the optimizer (default NULL does nothing).
 #' @param summary Optionally show a summary.
 #' @param zygosity = "zygosity" (for the data= method of using this function).
@@ -55,7 +55,7 @@
 #' out = umxMRDoC(mzData = mzData, dzData = dzData,  
 #'	pheno = c("varA1", "varA2"), prss = c("varB1", "varB2") )
 #'}
-umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NULL, sibsData = NULL,  zygosity = "zygosity", sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), sibs = FALSE, type = "FIML", tryHard = c("no", "yes", "ordinal", "search"), optimizer = NULL,  covar = NULL, batteries = c("scale"), method = "Mehta", verbose = FALSE) {
+umxMRDoC <- function(data = NULL, pheno, prss = NULL, mzData = NULL, dzData = NULL, sibsData = NULL,  zygosity = "zygosity", sep = "_T", summary = !umx_set_silent(silent = TRUE), name = NULL, autoRun = getOption("umx_auto_run"), sibs = FALSE, type = "FIML", tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL,  covar = NULL, batteries = c("scale"), method = "Mehta", verbose = FALSE) {
 
 	#umx_set_silent(silent = TRUE)
 	tryHard = match.arg(tryHard)

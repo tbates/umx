@@ -14,7 +14,7 @@ umxGxE_window(
   target = NULL,
   width = 1,
   plotWindow = FALSE,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   return = c("estimates", "last_model")
 )
 }
@@ -38,7 +38,7 @@ e.g.: 'bmi' --> c("bmi_T1", "bmi_T2")}
 
 \item{plotWindow}{whether to plot the data window.}
 
-\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search"}
+\item{tryHard}{Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)}
 
 \item{return}{whether to return the last model (useful for specifiedTargets) or the list of estimates (default = "estimates")}
 }
