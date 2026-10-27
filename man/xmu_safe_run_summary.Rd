@@ -8,7 +8,7 @@ xmu_safe_run_summary(
   model1,
   model2 = NULL,
   autoRun = TRUE,
-  tryHard = c("no", "yes", "ordinal", "search"),
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
   summary = !umx_set_silent(silent = TRUE),
   std = "default",
   comparison = TRUE,

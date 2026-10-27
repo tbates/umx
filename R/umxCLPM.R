@@ -10,8 +10,7 @@
 #' Sketch mode is available; if you pass column names to data, a model object is returned for manipulation later. 
 #'
 #' @details
-#' **Groups**: if `data` are grouped (e.g. `data |> dplyr::group_by(sex) |> umxCLPM(...)`, read from the `groups`
-#' attribute, so no dplyr functions are called), or have a `.group` column, a multigroup model is fitted with one CLPM per
+#' **Groups**: if `group` names column(s) of `data`, a multigroup model is fitted with one CLPM per
 #' group, and all parameters free across groups (labels end in the group name). The grouping column(s) are not part of
 #' the selected columns. Equate parameters across groups afterwards with [umxModify()] to test group differences.
 #' Count data and the "thresholds" battery are not yet supported with groups.
@@ -20,9 +19,10 @@
 #' @param X Base name of the first variable, e.g. "dep" for columns dep_W1, dep_W2, ... (with `sep`). If X and Y are not given, columns are taken by position.
 #' @param Y Base name of the second variable, e.g. "anx" for columns anx_W1, anx_W2, ...
 #' @param sep The separator between base names and wave numbers (default "_W": e.g. dep_W1).
+#' @param group Column name(s) to use for a multi-group model (default = NULL: single group).
 #' @param name The name of the model (defaults to "Heise1969", "Hamaker2015", "STARTS1995" or "IV_RI_CLPM").
 #' @param model Model type ("Hamaker2015", "Heise1969", "STARTS1995", or "IV_RI_CLPM").
-#' @param data Data frame for the analysis. With `X` and `Y`, columns are selected by name; otherwise data must hold, in order, the `ivs`, the X waves, the Y waves (then `defn`). Grouped data (e.g. `dplyr::group_by(sex)`) or a `.group` column give a multigroup model, see details.
+#' @param data Data frame for the analysis. With `X` and `Y`, columns are selected by name; otherwise data must hold, in order, the `ivs`, the X waves, the Y waves (then `defn`).
 #' @param counts Optional vector of count data columns.
 #' @param summary Logical indicating whether to show a summary (default: TRUE if silent is not set).
 #' @param autoRun Logical indicating whether to run the model (default to getOption("umx_auto_run")).
@@ -61,14 +61,15 @@
 #' names(dt) = c(paste0("varA1_W", 1:4), paste0("varA2_W", 1:4))
 #' hamaker <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
 #'
-#' # Multigroup: one CLPM per zygosity group, from a .group column (or dplyr::group_by)
-#' dt$.group = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
-#' mg <- umx_CLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
+#' # Multigroup: one CLPM per zygosity group
+#' dt$zyg = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
+#' mg <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt, group = "zyg")
 #' }
 
 umxCLPM <- function(data = NULL,waves, X = NULL, Y = NULL, sep = "_W", group = NULL, name = NULL, model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),  counts = NULL,summary = !umx_set_silent(silent = TRUE), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), verbose = FALSE, batteries = c("scale", "ordinaloptim"), std = FALSE, ivs = NULL, defn = NULL, defto = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),  allContinuousMethod = c("cumulants", "marginals") ) {
 
 		if (!(model %in% c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"))) stop("Model must be one of Hamaker2015, Heise1969, IV_RI_CLPM, or STARTS1995")
+		model = match.arg(model)
 		if (is.null(name)) name = model
 
 			sketch = FALSE
@@ -84,22 +85,16 @@ umxCLPM <- function(data = NULL,waves, X = NULL, Y = NULL, sep = "_W", group = N
 		us = tvars("u", sep = sep, suffixes = 1:waves)
 		vs = tvars("v", sep = sep, suffixes = 1:waves)
 
-		# Groups: grouped data (e.g. dplyr::group_by(sex)) or a .group column give a multigroup model (no dplyr needed)
+		# Groups: a group column gives a multigroup model (mirrors umxRAM(group = ))
 		groupVar = NULL
-		if(!missing(data)){
-			groupKeys = setdiff(names(attr(data, "groups")), ".rows")
-			if (!is.data.frame(data)) data = as.data.frame(data)
-			attr(data, "groups") = NULL
-			class(data) = "data.frame"
-			if (length(groupKeys) == 0 && ".group" %in% names(data)) groupKeys = ".group"
-			if (length(groupKeys)) {
-				groupCol = do.call(paste, c(lapply(groupKeys, function(k) as.character(data[[k]])), sep = "_"))
-				data = data[, setdiff(names(data), groupKeys), drop = FALSE]
-				groupVar = ".group"
-				message("umxCLPM: multigroup model by ", omxQuotes(groupKeys), ": groups ", omxQuotes(unique(groupCol)), " (all parameters free across groups)")
-				if (!missing(counts)) stop("umxCLPM: count data are not yet supported with groups")
-				if ("thresholds" %in% batteries) stop("umxCLPM: the 'thresholds' battery is not yet supported with groups")
-			}
+		if(!is.null(group) && !missing(data)){
+			umx_check_names(group, data = data, die = TRUE)
+			groupCol = do.call(paste, c(lapply(group, function(k) as.character(data[[k]])), sep = "_"))
+			data = data[, setdiff(names(data), group), drop = FALSE]
+			groupVar = ".group"
+			message("umxCLPM: multigroup model by ", omxQuotes(group), ": groups ", omxQuotes(unique(groupCol)), " (all parameters free across groups)")
+			if (!missing(counts)) stop("umxCLPM: count data are not yet supported with groups")
+			if ("thresholds" %in% batteries) stop("umxCLPM: the 'thresholds' battery is not yet supported with groups")
 		}
 
 		if(missing(data)){
@@ -380,10 +375,6 @@ if (!sketch) m1  = xmu_safe_run_summary(m1, autoRun = autoRun,  summary = summar
 
 	return(m1)
 }
-
-#' @rdname umxCLPM
-#' @export
-umx_CLPM <- umxCLPM
 
 #' Relabel Factor Columns in a Data Frame
 #'

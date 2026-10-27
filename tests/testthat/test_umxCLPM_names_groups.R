@@ -3,7 +3,6 @@
 # test_file("~/bin/umx/tests/testthat/test_umxCLPM_names_groups.R")
 
 require(umx)
-umx_set_silent(TRUE)
 q = function(x) suppressMessages(suppressWarnings(x))
 data(docData)
 dt = docData[2:9]
@@ -28,12 +27,10 @@ test_that("umxCLPM selects X and Y by name, and names waves with sep", {
 	expect_error(umxCLPM(waves = 4, model = "Heise1969", data = dt[, 1:7]), "make 8")
 })
 
-test_that("umxCLPM fits a multigroup model from grouped data or a .group column", {
+test_that("umxCLPM fits a multigroup model from a group column", {
 	g = dn
 	g$zyg = zyg
-	attr(g, "groups") = data.frame(zyg = c("DZ", "MZ"), .rows = I(list(which(zyg == "DZ"), which(zyg == "MZ"))))
-	class(g) = c("grouped_df", "tbl_df", "tbl", "data.frame")
-	mg = q(g |> umx_CLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", batteries = NULL))
+	mg = q(umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = g, group = "zyg", batteries = NULL))
 	expect_setequal(names(mg@submodels), c("Hamaker2015_MZ", "Hamaker2015_DZ"))
 
 	# All parameters free across groups: -2LL is the sum of the separate group fits
@@ -42,10 +39,19 @@ test_that("umxCLPM fits a multigroup model from grouped data or a .group column"
 	}))
 	expect_equal(mg$output$fit, sepFit, tolerance = 1e-4)
 
+	# Without group =, extra columns are ignored and the model is single-group
 	d2 = dn
 	d2$.group = zyg
 	m2 = q(umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = d2, batteries = NULL))
-	expect_equal(m2$output$fit, mg$output$fit, tolerance = 1e-6)
+	expect_equal(length(m2@submodels), 0)
+	single = q(umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dn, batteries = NULL))
+	expect_equal(m2$output$fit, single$output$fit)
 
-	expect_error(q(umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = d2, batteries = "thresholds")), "not yet supported with groups")
+	expect_error(q(umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = g, group = "zyg", batteries = "thresholds")), "not yet supported with groups")
+	expect_error(umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = g, group = "nope"), "nope")
+})
+
+test_that("umxCLPM names a default model sketch after its type", {
+	sketch = umxCLPM(waves = 3, X = "a", Y = "b", sep = "_t")
+	expect_equal(sketch$name, "Hamaker2015")
 })
