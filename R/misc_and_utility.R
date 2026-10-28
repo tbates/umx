@@ -4272,6 +4272,10 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #'
 #' @param obj an object to be tested to see if it is an OpenMx RAM [OpenMx::mxModel()]
 #' @return - Boolean
+#' @details A multigroup (or other container) model counts as RAM when every
+#' expectation-bearing model in the tree is RAM: containers with no expectation
+#' of their own are transparent. Models with no expectations anywhere, and
+#' non-MxModel objects, return `FALSE`.
 #' @export
 #' @family Test
 #' @references <https://github.com/tbates/umx>
@@ -4295,14 +4299,30 @@ umx_is_ordered <- function(df, names = FALSE, strict = TRUE, binary.only = FALSE
 #' }
 #' }
 umx_is_RAM <- function(obj) {
-	# return((class(obj$objective)[1] == "MxRAMObjective" | class(obj$expectation)[1] == "MxExpectationRAM"))
 	if(!umx_is_MxModel(obj)){
 		return(FALSE)
 	} else if(class(obj)[[1]] %in% c("MxRAMModel", "MxModelGSEM")){
 		return(TRUE)
-	} else {
-		return(class(obj$objective)[[1]] == "MxRAMObjective")
 	}
+	# Walk the model and all submodels, checking expectation classes.
+	toCheck = list(obj)
+	sawExpectation = FALSE
+	while(length(toCheck) > 0){
+		node = toCheck[[1]]
+		toCheck = toCheck[-1]
+		nodeExp = node$expectation
+		if(!is.null(nodeExp)){
+			sawExpectation = TRUE
+			if(class(nodeExp)[[1]] != "MxExpectationRAM"){
+				return(FALSE)
+			}
+		}
+		nodeSubs = node$submodels
+		if(!is.null(nodeSubs) && length(nodeSubs) > 0){
+			toCheck = c(toCheck, nodeSubs)
+		}
+	}
+	return(sawExpectation)
 }
 
 #' umx_is_LISREL

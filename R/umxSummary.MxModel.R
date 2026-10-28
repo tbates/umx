@@ -8,6 +8,8 @@
 #' 
 #' Note: For some (multi-group) models, you will need to fall back on [summary()]
 #'
+#' Non-RAM models (matrix/algebra, LISREL, ...) show raw estimates from [summary()] in the same table: standardized estimates need a RAM model.
+#'
 #' **Robust inference (`uncertainty = "MLR"`)**
 #'
 #' This option means **engine-appropriate robust inference**, not one sandwich formula for every fit type:
@@ -291,25 +293,40 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 	
 	# DisplayColumns show
 	if(!is.null(std)){
-		# n.b: mxStandardizeRAMpaths returns the raw paths as well, so two birds, one stone.
-		parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
-		
-		# Helper to recursively flatten lists of dataframes returned by mxStandardizeRAMpaths
-		flatten_pTable <- function(x) {
-			if (is.data.frame(x)) {
-				return(x)
-			} else if (is.list(x)) {
-				if (length(x) == 0) return(NULL)
-				dfs = lapply(x, flatten_pTable)
-				dfs = dfs[vapply(dfs, is.data.frame, logical(1))]
-				if (length(dfs) > 0) {
-					return(do.call(rbind, dfs))
+		isRAMmodel = umx_is_RAM(model)
+		if(isRAMmodel){
+			# n.b: mxStandardizeRAMpaths returns the raw paths as well, so two birds, one stone.
+			parameterTable = mxStandardizeRAMpaths(model, SE = SE) # Compute standard errors
+
+			# Helper to recursively flatten lists of dataframes returned by mxStandardizeRAMpaths
+			flatten_pTable <- function(x) {
+				if (is.data.frame(x)) {
+					return(x)
+				} else if (is.list(x)) {
+					if (length(x) == 0) return(NULL)
+					dfs = lapply(x, flatten_pTable)
+					dfs = dfs[vapply(dfs, is.data.frame, logical(1))]
+					if (length(dfs) > 0) {
+						return(do.call(rbind, dfs))
+					}
 				}
+				return(NULL)
 			}
-			return(NULL)
+
+			parameterTable = flatten_pTable(parameterTable)
+		} else {
+			# Not a RAM model: table the raw estimates (std needs RAM paths)
+			pars = modelSummary$parameters
+			if(!is.null(pars) && nrow(pars) > 0){
+				if(isTRUE(std)){
+					message("Standardized estimates need a RAM model: showing raw estimates.")
+				}
+				std = FALSE
+				parameterTable = data.frame(label = pars$name, name = pars$name, matrix = pars$matrix, row = pars$row, col = pars$col, Estimate = pars$Estimate, SE = pars$Std.Error, Std.Estimate = NA, Std.SE = NA, stringsAsFactors = FALSE)
+			} else {
+				parameterTable = NULL
+			}
 		}
-		
-		parameterTable = flatten_pTable(parameterTable)
 
 		if (!is.null(parameterTable) && nrow(parameterTable) > 0) {
 			#          name    label  matrix   row         col    Raw.Value  Raw.SE   Std.Value    Std.SE
@@ -383,7 +400,11 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			} else {
 				toShow = parameterTable[, namesToShow]
 			}
-			toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+			if(isRAMmodel){
+				toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+			} else {
+				toShow$type = parameterTable[rownames(toShow), "matrix"]
+			}
 			toShow = unique.data.frame(toShow[,c(namesToShow, "type")])
 			umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
 		}

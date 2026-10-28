@@ -12,6 +12,7 @@
 * IMPROVED: `tryHard = "auto"` (`umxRun` and all builders) picks `mxRun`, `mxTryHard`, or `mxTryHardOrdinal` to suit the model (thresholds, definition variables) and retries once on status code 6; new `umx_set_intervals()` session default for CIs. (#279 @lf-araujo Luis De Araujo)
 * IMPROVED: `umxCLPM()` takes `X` and `Y` base names (with `sep = "_W"`: e.g. `dep_W1`...) to select columns by name; `group =` fits a multigroup CLPM; default `name` now works for all models. (#286 @lf-araujo Luis De Araujo)
 * BREAKING: `umxCLPM()` wave names now come from `tvars()`: `X_W1` (was `X001`), latents `p_W1` (was `p001`), so labels are e.g. `p_W1_to_q_W2` (was `p001_to_q002`). Update any `umxModify()` regex using the old names.
+* IMPROVED: `umxSummary()` shows raw estimates for non-RAM models (matrix/algebra, LISREL) instead of erroring; standardized estimates still need RAM. `umx_is_RAM()` now checks expectation classes across submodels, so multigroup RAM counts as RAM. `xmu_safe_run_summary()` keeps the fitted model when summary or compare fails. (#287 @lf-araujo Luis De Araujo)
 
 ## umx 4.80.1: Over *80* new features, fixes, and improvements! 
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string.

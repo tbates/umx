@@ -17,6 +17,12 @@ umx_is_RAM(obj)
 \description{
 Utility function returning a binary answer to the question "Is this a RAM model?"
 }
+\details{
+A multigroup (or other container) model counts as RAM when every
+expectation-bearing model in the tree is RAM: containers with no expectation
+of their own are transparent. Models with no expectations anywhere, and
+non-MxModel objects, return \code{FALSE}.
+}
 \examples{
 \dontrun{
 require(umx)

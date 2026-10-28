@@ -459,7 +459,7 @@ xmu_tmx_data_matrix <- function(model, which) {
 #' }
 #'
 tmx_show.MxModel <- function(x, what = c("values", "free", "labels", "nonzero_or_free"), show = c("free", "fixed", "all"), matrices = c("S", "A", "M"), digits = 2, report = c("html", "markdown"), na.print = "", zero.print = ".", html_font = NULL, style = c("paper","material_dark", "classic", "classic_2", "minimal", "material"), bootstrap_options=c("hover", "bordered", "condensed", "responsive"), lightable_options = "striped", freeColor = c("black", "#AAAAAA")) {
-	if(!umx_is_RAM(x)){
+	if(!umx_is_RAM(x) || length(x$submodels) > 0){
 		stop("Sorry, currently, tmx_show only knows how to display umxRAM models: You gave me a ", class(x)[[1]])
 	}
 	model = x

@@ -31,7 +31,7 @@
 #' )
 #' }
 xmuRAM2Ordinal <- function(model, verbose = FALSE, name = NULL) {
-	if(!umx_is_RAM(model)){
+	if(!umx_is_RAM(model) || length(model$submodels) > 0){
 		stop("xmuRAM2Ordinal only works with RAM models, sorry.")
 	}
 	if(!is.null(name)){

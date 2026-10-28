@@ -64,6 +64,8 @@ RMSEA (an absolute fit index, comparing the model to a perfect model) and CFI an
 
 Note: For some (multi-group) models, you will need to fall back on \code{\link[=summary]{summary()}}
 
+Non-RAM models (matrix/algebra, LISREL, ...) show raw estimates from \code{\link[=summary]{summary()}} in the same table: standardized estimates need a RAM model.
+
 \strong{Robust inference (\code{uncertainty = "MLR"})}
 
 This option means \strong{engine-appropriate robust inference}, not one sandwich formula for every fit type:

@@ -59,7 +59,7 @@ xmu_standardize_RAM <- function(model, ...) {
 	if (!is.null(model$expectation) && class(model$expectation)[[1]] == "MxExpectationLISREL") {
 		return(xmu_standardize_LISREL(model, ...))
 	}
-	umx_check(umx_is_RAM(model), action="stop", message="xmu_standardize_RAM needs a RAM model")
+	umx_check(umx_is_RAM(model) && length(model$submodels) == 0, action="stop", message="xmu_standardize_RAM needs a RAM model")
 	umx_has_been_run(model)
 
 	# mxStandardizeRAMpaths(model=, SE=, cov=)

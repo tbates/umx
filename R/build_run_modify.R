@@ -660,7 +660,7 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search", "auto")
 
 	if(calc_sat){
 		if(umx_has_been_run(model) && !xmu_is_wls(model)){
-			if(umx_is_RAM(model)){
+			if(umx_is_RAM(model) && !is.null(model$data)){
 				if(model$data$type == "raw"){
 					# If we have a RAM model with raw data, compute the saturated and independence models
 					# message("computing saturated and independence models so you have access to absolute fit indices for this raw-data model")
