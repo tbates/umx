@@ -457,6 +457,93 @@ gh_message_search <- function(search, repo = "~/bin/umx", max = 10, sort = c("de
 	invisible(hits)
 }
 
+#' Rebuild or staleness-check the cached GenomicMx binaries
+#'
+#' @description
+#' `gh_refresh_cached_GenomicMx` refreshes the GenomicMx OpenMx binaries cached
+#' in the `genomicmx` release of `tbates/umx`. With `check = FALSE` (default) it
+#' dispatches the `publish-genomicmx.yml` workflow to rebuild them. With
+#' `check = TRUE` it builds nothing: it lists which OpenMx commits the cache
+#' holds (with build dates) and says whether your local checkout is covered.
+#'
+#' @param check `FALSE` (default) to dispatch a rebuild, `TRUE` to only report staleness.
+#' @param repo Local OpenMx checkout used to read HEAD for the comparison. Default `"~/bin/OpenMx"`.
+#' @return With `check = TRUE`, a list with `cached` (data.frame of `hash` and `built` date),
+#' `local` (your checkout HEAD), and `stale` (one boolean). Otherwise the workflow-run output, invisibly.
+#' @export
+#' @family github
+#' @references \url{https://tbates.github.io}, [tutorials](https://github.com/tbates/umx)
+#' @md
+#' @examples
+#' \dontrun{
+#' # Is my checkout covered by the cache?
+#' gh_refresh_cached_GenomicMx(check = TRUE)
+#' # Rebuild the cache:
+#' # gh_refresh_cached_GenomicMx()
+#' }
+gh_refresh_cached_GenomicMx <- function(check = FALSE, repo = "~/bin/OpenMx") {
+	if (Sys.which("gh") == "") {
+		stop("gh_refresh_cached_GenomicMx needs the GitHub CLI: install `gh` and run `gh auth login`.", call. = FALSE)
+	}
+	if (isTRUE(check)) {
+		lines = suppressWarnings(system2("gh", c("release", "view", "genomicmx", "--repo", "tbates/umx", "--json", "assets"), stdout = TRUE, stderr = TRUE))
+		if (!is.null(attr(lines, "status"))) {
+			stop("Could not read the genomicmx release: ", paste(lines, collapse = " "), call. = FALSE)
+		}
+		# Base R only (no jsonlite): scrape asset names + upload dates from the JSON.
+		raw = paste(lines, collapse = " ")
+		grab <- function(key) {
+			m = gregexpr(paste0("\"", key, "\"\\s*:\\s*\"([^\"]+)\""), raw, perl = TRUE)[[1]]
+			vapply(regmatches(raw, list(m))[[1]], function(s) sub(paste0(".*\"", key, "\"\\s*:\\s*\""), "", s), character(1))
+		}
+		assetNames = unname(grab("name"))
+		assetBuilt = unname(grab("createdAt"))
+		if (!length(assetNames) || length(assetNames) != length(assetBuilt)) {
+			stop("Could not parse the genomicmx asset list.", call. = FALSE)
+		}
+		isBinary = grepl("^OpenMx_", assetNames)
+		cachedHashes = sub("^OpenMx_[^_]+_([0-9a-f]+)_.*$", "\\1", assetNames[isBinary])
+		builtDates = as.Date(substr(assetBuilt[isBinary], 1, 10))
+		uniqHashes = unique(cachedHashes)
+		newestBuilt = as.Date(rep(NA, length(uniqHashes)))
+		for (i in seq_along(uniqHashes)) {
+			newestBuilt[i] = max(builtDates[cachedHashes == uniqHashes[i]])
+		}
+		cachedInfo = data.frame(hash = uniqHashes, built = newestBuilt, stringsAsFactors = FALSE)
+		localFull = xgh_git(path.expand(repo), c("rev-parse", "HEAD"))
+		if (!is.null(attr(localFull, "status")) || !length(localFull) || localFull[1] == "") {
+			stop("Could not read HEAD of ", repo, call. = FALSE)
+		}
+		localFull = trimws(localFull[1])
+		localHead = substr(localFull, 1, 7)
+		isStale = !any(vapply(cachedInfo$hash, function(h) startsWith(localFull, h), logical(1)))
+		builtWord <- function(d) {
+			if (format(d, "%Y") == format(Sys.Date(), "%Y")) format(d, "%b %d") else format(d, "%b %d %Y")
+		}
+		builtWords = character(nrow(cachedInfo))
+		for (i in seq_len(nrow(cachedInfo))) {
+			builtWords[i] = builtWord(cachedInfo$built[i])
+		}
+		builtList = paste0(cachedInfo$hash, " (", builtWords, ")", collapse = ", ")
+		if (!nrow(cachedInfo)) {
+			builtList = "nothing"
+		}
+		if (isStale) {
+			message("Cache holds builds of ", builtList, ": local HEAD ", localHead, " is NOT in the cache. Run gh_refresh_cached_GenomicMx() to rebuild.")
+		} else {
+			message("Cache holds builds of ", builtList, ": local HEAD ", localHead, " is covered.")
+		}
+		return(list(cached = cachedInfo, local = localHead, stale = isStale))
+	} else {
+		out = suppressWarnings(system2("gh", c("workflow", "run", "publish-genomicmx.yml", "--repo", "tbates/umx"), stdout = TRUE, stderr = TRUE))
+		if (!is.null(attr(out, "status"))) {
+			stop("Could not dispatch the rebuild: ", paste(out, collapse = " "), call. = FALSE)
+		}
+		message("Rebuild dispatched. Watch it at https://github.com/tbates/umx/actions/workflows/publish-genomicmx.yml")
+		invisible(out)
+	}
+}
+
 # =======================
 # = - xgh functions - = #
 # =======================

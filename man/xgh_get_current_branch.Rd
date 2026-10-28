@@ -28,13 +28,14 @@ xgh_get_current_branch(local_path)
 }
 
 Other github:
-\code{\link[=ghOpenAppSupport]{ghOpenAppSupport()}},
-\code{\link[=ghRemoveQuarantine]{ghRemoveQuarantine()}},
-\code{\link[=ghTeardownBundle]{ghTeardownBundle()}},
-\code{\link[=gh_SymLinkBundle]{gh_SymLinkBundle()}},
 \code{\link[=gh_feature_branch]{gh_feature_branch()}},
 \code{\link[=gh_message_search]{gh_message_search()}},
+\code{\link[=gh_openAppSupport]{gh_openAppSupport()}},
 \code{\link[=gh_open_PR_url]{gh_open_PR_url()}},
+\code{\link[=gh_refresh_cached_GenomicMx]{gh_refresh_cached_GenomicMx()}},
+\code{\link[=gh_removeQuarantine]{gh_removeQuarantine()}},
+\code{\link[=gh_symLink_bundle]{gh_symLink_bundle()}},
+\code{\link[=gh_teardown_bundle]{gh_teardown_bundle()}},
 \code{\link[=xgh_check_base_name]{xgh_check_base_name()}}
 }
 \concept{github}

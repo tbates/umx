@@ -90,11 +90,15 @@ proportion at or below each category. SEs of proportions are cluster-robust over
 \examples{
 data(twinData)
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
+umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), show="SE")
 MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
 
-# A binary trait: proportion endorsed (SE), threshold (SE), and polychoric twin correlations
 \dontrun{
+# Open as web tables to copy into WORD PROCESSOR
+umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), report="html")
+
+# A binary trait: proportion endorsed (SE), threshold (SE), and polychoric twin correlations
 twinData$obese1 = as.numeric(twinData$bmi1 > 25)
 twinData$obese2 = as.numeric(twinData$bmi2 > 25)
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "obese"), show = "se")
