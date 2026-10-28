@@ -144,7 +144,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          OMP=$(Rscript --vanilla -e 'loadNamespace("OpenMx"); cat(if (isTRUE(OpenMx:::imxHasOpenMP())) "yes" else "no")')
+          OMP=$(Rscript --vanilla -e 'invisible(loadNamespace("OpenMx")); cat(if (isTRUE(OpenMx:::imxHasOpenMP())) "yes" else "no")')
           echo "OpenMP: ${OMP}"
           echo "openmp=${OMP}" >> "$GITHUB_OUTPUT"
           if [ "${{ runner.os }}" = "macOS" ]; then
