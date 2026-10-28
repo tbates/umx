@@ -37,7 +37,7 @@
 #' # Plotting multiple strings
 #' p = umxPlotFun(c("sin(x)", "cos(x)"), max = 2*pi)
 #' 
-#' # Providing a named list to control legend labels
+#' # Providing a named list to give legend labels
 #' umxPlotFun(list(Sine = sin, Cosine = cos), max = 2*pi)
 #'
 #' # Arbitrary symbols: Q plots on x, P labels y
@@ -48,10 +48,10 @@
 #' umxPlotFun("P = a*Q + b", x = "Q")
 #'
 #' # Binding leftover symbols to values
-#' umxPlotFun("alice = bob^2+c", x = "bob", c = 5)
+#' umxPlotFun("alice = r^2+c", x = "r", c = 5)
 #'
 #' # All-but-one bound: the free symbol takes the axis automatically
-#' umxPlotFun("alice = bob^2+c", c = 5)
+#' umxPlotFun("gamma = radius^2+c", c = 5)
 #' }
 #'
 umxPlotFun <- function(fun = c("sin(x)", "cos(x)"), min = -1, max = 5, xlab = NULL, ylab = NULL, title = NULL, logY = c("no", "log", "log10"), logX = c("no", "log", "log10"), p = NULL, x = NULL, ...) {
