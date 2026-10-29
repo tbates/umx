@@ -132,6 +132,24 @@ test_that("umxACE univariate", {
 	
  })
 
+test_that("umxReduceACE stops when the model has more than one phenotype", {
+	require(umx)
+	data(twinData)
+	twinData = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
+	mzData = twinData[twinData$zygosity %in% c("MZFF", "MZMM"), ]
+	dzData = twinData[twinData$zygosity %in% c("DZFF", "DZMM", "DZOS"), ]
+	mzData = mzData[1:80, ]
+	dzData = dzData[1:80, ]
+	m1 = umxACE(selDVs = c("ht", "wt"), sep = "", dzData = dzData, mzData = mzData, autoRun = FALSE)
+	autoRunBefore = getOption("umx_auto_run")
+	autoPlotBefore = getOption("umx_auto_plot")
+	silentBefore = getOption("umx_silent")
+	expect_error(umxReduce(m1), "umxReduceACE is for univariate models. This model has 2 variables. No nested models were fit.")
+	expect_identical(getOption("umx_auto_run"), autoRunBefore)
+	expect_identical(getOption("umx_auto_plot"), autoPlotBefore)
+	expect_identical(getOption("umx_silent"), silentBefore)
+})
+
  test_that("umxACE ordinal", {
  	require(umx)
 	 # ===================
@@ -232,6 +250,19 @@ test_that("test umxACEv xmu_standardize_ACE xmu_standardize_ACEv", {
 	umxPlotACEv(m1, std = FALSE) # Don't standardize
 	plot(m1, std = FALSE) # don't standardize
 	
+})
+
+test_that("umxPlotACEv means labels keep row and column indexes past 9", {
+	require(umx)
+	data(twinData)
+	mzData = twinData[twinData$zygosity %in% "MZFF", ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ]
+	m1 = umxACEv(selDVs = "bmi", sep = "", dzData = dzData, mzData = mzData, autoRun = FALSE)
+	m1$top$expMean$labels[1, 1] = "expMean_r10c3"
+	m1$top$expMean$labels[1, 2] = "expMean_r1c10"
+	got = umxPlotACEv(m1, std = FALSE, means = TRUE, file = NA)
+	expect_match(got, "expMean_r10c3 -> expMean_var3", fixed = TRUE)
+	expect_match(got, "expMean_r1c10 -> expMean_var10", fixed = TRUE)
 })
 
 
