@@ -608,7 +608,7 @@ umxSummary.MxModelACEv <- umxSummaryACEv
 #' @param x [umxACEv()] model to plot.
 #' @param file The name of the dot file to write: Default ("name") = use the name of the model. NA = don't plot.
 #' @param digits How many decimals to include in path loadings (default = 2)
-#' @param means Whether to show means paths (default = FALSE)
+#' @param means Whether to show means paths (default = FALSE). A non-ACE label `name_rRcC` is drawn to `name_varC`, and the column index keeps every digit, so `expMean_r10c3` goes to `expMean_var3` and `expMean_r1c10` goes to `expMean_var10`.
 #' @param std Whether to standardize the model (default = FALSE)
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param ... Additional (optional) parameters
@@ -652,7 +652,8 @@ umxPlotACEv <- function(x = NA, file = "name", digits = 2, means = FALSE, std = 
 			out = paste0(out, "\t", from, " -> ", target, " [dir=both, label = \"", value, "\"]", ";\n")
 		} else { # means probably
 			from   = thisParam;
-			target = sub('r([0-9])c([0-9])', 'var\\2', thisParam, perl=TRUE) 
+			# Column index is the variable. [0-9]+ keeps row 10 and column 10 as one index.
+			target = sub('r([0-9]+)c([0-9]+)', 'var\\2', thisParam, perl = TRUE) 
 			if(means){
 				out = paste0(out, "\t", from, " -> ", target, " [label = \"", value, "\"]", ";\n")
 			}
