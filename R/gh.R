@@ -274,7 +274,6 @@ gh_feature_branch <- function(feature = "fix-piglet", base = "textmatelives/text
 #' @description
 #' `gh_open_PR_url` takes the owner, repo and branch you want to open a PR on, along with your owner name, repo and
 #' head branch you want to pull from, and opens github at the exact page you need.
-#' 
 #' @details
 #' Before doing this, you want to
 #' 1. Fork to your account

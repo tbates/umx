@@ -1,6 +1,8 @@
 # Releases
 ## umx 4.85.0: Dev
 * Date: 2026-10-12 R 4.6.1
+* FIXED: `umxReduceACE()` stops when the model has more than one phenotype, before any nested model is fit.
+* FIXED: `umxPlotACEv(means = TRUE)` reads the whole row and column index in a `name_rRcC` label. `expMean_r10c3` is drawn to `expMean_var3`, and `expMean_r1c10` to `expMean_var10`.
 * IMPROVED: `gh_message_search(search, regex = FALSE)` finds a commit id or literal message text. `regex = TRUE` uses an extended regular expression. A pasted subject that contains `*` stays literal.
 * IMPROVED: `geometric_mean()` tells you when a negative value is a return entered without adding 1 (a 30% loss is `0.7`, not `-0.3`). The help example for a +50% gain followed by a -50% loss now gives the geometric mean as -13.4% per period.
 * IMPROVED: `harmonic_mean()` rejects negative weights, names the bad value and its position, and the help states when the mean is the right one for speeds and for P/E ratios.
@@ -13,6 +15,8 @@
 * IMPROVED: `umxCLPM()` takes `X` and `Y` base names (with `sep = "_W"`: e.g. `dep_W1`...) to select columns by name; `group =` fits a multigroup CLPM; default `name` now works for all models. (#286 @lf-araujo Luis De Araujo)
 * BREAKING: `umxCLPM()` wave names now come from `tvars()`: `X_W1` (was `X001`), latents `p_W1` (was `p001`), so labels are e.g. `p_W1_to_q_W2` (was `p001_to_q002`). Update any `umxModify()` regex using the old names.
 * IMPROVED: `umxSummary()` shows raw estimates for non-RAM models (matrix/algebra, LISREL) instead of erroring; standardized estimates still need RAM. `umx_is_RAM()` now checks expectation classes across submodels, so multigroup RAM counts as RAM. `xmu_safe_run_summary()` keeps the fitted model when summary or compare fails. (#287 @lf-araujo Luis De Araujo)
+* NEW: `umxAutoStart()` gives starting values via `mxAutoStart()`, including models with definition variables (each `data.*` cell is fixed at a placeholder in a clone, autostarted, and starts copied back by label). (autostart idea from #278 @lf-araujo Luis De Araujo)
+* BREAKING: `umxFitIndices()` takes one model or a list and returns a data.frame (one row per model, `$` access kept). `set = "core"` (default) gives the reportable handful, `"all"` everything, or name indices directly. Multigroup and definition-variable models supported (defvar-aware reference models; residual-based indices `NA` for multigroup). (glance idea from #278 @lf-araujo Luis De Araujo)
 
 ## umx 4.80.1: Over *80* new features, fixes, and improvements! 
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string.
