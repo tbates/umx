@@ -545,6 +545,123 @@ xmuValues <- function(obj = NA, sd = NA, n = 1, onlyTouchZeros = FALSE) {
 	}
 }
 
+#' Automatic starting values, including models with definition variables
+#'
+#' `umxAutoStart` gives a model starting values using [OpenMx::mxAutoStart()].
+#' Unlike `mxAutoStart`, it also handles models with definition variables:
+#' each `data.*` cell is fixed at a numeric placeholder in a clone, the clone
+#' is autostarted, and the starts are copied back by label. Models without
+#' definition variables go straight to `mxAutoStart()`.
+#'
+#' @param model An [OpenMx::mxModel()] to get starting values for.
+#' @param type Estimation type passed to [OpenMx::mxAutoStart()]: "ULS" (default) or "DWLS".
+#' @param placeholder How to fill definition-variable cells in the clone: "row1" (default), "mean", or "zero".
+#' @param row Row of the data used when `placeholder = "row1"` (default 1).
+#' @param alignEquated Whether to give equated parameters identical starts via [OpenMx::omxAssignFirstParameters()] (default TRUE).
+#' @param verbose Whether to report progress (default FALSE).
+#' @return - [OpenMx::mxModel()] with starting values.
+#' @export
+#' @family Advanced Model Building Functions
+#' @references <https://github.com/tbates/umx>
+#' @examples
+#' \dontrun{
+#' require(umx)
+#' data(demoOneFactor)
+#' demoOneFactor$age = rnorm(nrow(demoOneFactor))
+#' m1 = umxRAM("autostart_ex", data = demoOneFactor, autoRun = FALSE,
+#' 	umxPath("G", to = "x1"),
+#' 	umxPath(v.m. = "x1"),
+#' 	umxPath(v1m0 = "G"),
+#' 	umxPath(defn = "def", labels = "data.age"),
+#' 	umxPath("def", to = "x1")
+#' )
+#' m1 = umxAutoStart(m1)
+#' }
+umxAutoStart <- function(model, type = c("ULS", "DWLS"), placeholder = c("row1", "mean", "zero"), row = 1, alignEquated = TRUE, verbose = FALSE) {
+	type = match.arg(type)
+	placeholder = match.arg(placeholder)
+	if (!imxHasDefinitionVariable(model)) {
+		if (verbose) {
+			message("umxAutoStart: no definition variables found, calling mxAutoStart() directly.")
+		}
+		return(mxAutoStart(model, type = type))
+	}
+	if (verbose) {
+		message("umxAutoStart: definition variables detected, autostarting a placeholder clone.")
+	}
+	# Fix every "data.*" cell in a model and its submodels at a numeric placeholder
+	stripDefvars <- function(m) {
+		obs = NULL
+		if (!is.null(m$data) && m$data@type == "raw") {
+			obs = m$data@observed
+		}
+		rowVals = list()
+		colMeans = list()
+		if (!is.null(obs)) {
+			rowVals = as.list(obs[row, , drop = FALSE])
+			for (colName in names(obs)) {
+				if (is.numeric(obs[[colName]])) {
+					colMeans[[colName]] = mean(obs[[colName]], na.rm = TRUE)
+				}
+			}
+		}
+		for (mname in names(m@matrices)) {
+			M = m@matrices[[mname]]
+			labs = M@labels
+			if (is.null(labs)) next
+			sel = !is.na(labs) & grepl("^data\\.", labs)
+			if (!any(sel)) next
+			uniqLabs = unique(labs[sel])
+			labVals = numeric(length(uniqLabs))
+			for (i in seq_along(uniqLabs)) {
+				var = sub("^data\\.", "", uniqLabs[i])
+				if (placeholder == "zero") {
+					val = 0
+				} else {
+					colMean = colMeans[[var]]
+					rv = rowVals[[var]]
+					if (!is.numeric(rv)) {
+						rv = NULL
+					}
+					if (placeholder == "mean" || is.null(rv)) {
+						val = colMean
+					} else {
+						val = rv
+						if (is.na(val)) {
+							val = colMean
+						}
+					}
+					if (is.null(val) || is.na(val)) {
+						val = 0
+					}
+				}
+				labVals[i] = val
+			}
+			vals = M@values
+			vals[sel] = labVals[match(labs[sel], uniqLabs)]
+			M@labels[sel] = NA
+			M@free[sel] = FALSE
+			M@values = vals
+			m@matrices[[mname]] = M
+		}
+		for (sname in names(m@submodels)) {
+			m@submodels[[sname]] = stripDefvars(m@submodels[[sname]])
+		}
+		m
+	}
+	cleanModel = stripDefvars(mxModel(model))
+	autoClean = mxAutoStart(cleanModel, type = type)
+	newStarts = omxGetParameters(autoClean, free = TRUE)
+	if (verbose) {
+		message("umxAutoStart: transferring ", length(newStarts), " starting values.")
+	}
+	outModel = omxSetParameters(model, labels = names(newStarts), values = as.numeric(newStarts), indep = TRUE)
+	if (alignEquated) {
+		outModel = omxAssignFirstParameters(outModel)
+	}
+	outModel
+}
+
 #' xmuLabel: Add labels to a RAM model, matrix, or path
 #'
 #' xmuLabel adds labels to things, be it an: [OpenMx::mxModel()] (RAM or matrix based), an [OpenMx::mxPath()], or an [OpenMx::mxMatrix()]
