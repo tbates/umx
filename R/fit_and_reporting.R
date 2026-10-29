@@ -358,7 +358,7 @@ umxWeightedAIC <- function(models, digits = 2) {
 #'
 #' Specialized functions are called for different type of input:
 #' 1. **GxE model reduction** For [umxGxE()] models [umxReduceGxE()] is called.
-#' 2. **ACE model reduction** For [umxACE()] models,[umxReduceACE()] is called.
+#' 2. **ACE model reduction** For [umxACE()] models,[umxReduceACE()] is called. More than one phenotype stops before any nested model is fit.
 #' 
 #' `umxReduce` reports the results in a table. Set the format of the table with
 #' [umx_set_table_format()], or set `report= "html"` to open a
@@ -482,7 +482,7 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' testing dropping A and C, as well as an ADE or ACE model, displaying the results
 #' in a table, and returning the best model.
 #'
-#' It is designed for testing univariate models. You can offer up either the ACE or ADE base model.
+#' It stops when the model has more than one phenotype. No nested model is fit. You can offer up either the univariate ACE or ADE base model.
 #'
 #' Suggestions for more sophisticated automation welcomed!
 #'
@@ -523,11 +523,14 @@ umxReduce.MxModelGxE <- umxReduceGxE
 #' 
 #' }
 umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report"), intervals = TRUE, testD = TRUE, baseFileName = "tmp", tryHard = c("yes", "no", "ordinal", "search", "auto"), silent=FALSE, digits = 2, ...) {
-	# override umx_set_auto_run?
-	oldAutoRun = umx_set_auto_run(autoRun = TRUE)
-	
 	report  = match.arg(report)
 	tryHard = match.arg(tryHard)
+	nVar = nrow(model$top$a$values)
+	if(nVar != 1){
+		stop("umxReduceACE is for univariate models. This model has ", nVar, " variables. No nested models were fit.")
+	}
+	# override umx_set_auto_run?
+	oldAutoRun = umx_set_auto_run(autoRun = TRUE)
 	if(silent){
 		oldSilent = umx_set_silent(TRUE)
 	}else{
