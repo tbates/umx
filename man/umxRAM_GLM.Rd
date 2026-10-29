@@ -73,6 +73,7 @@ m1 = umxRAM_GLM("poi",
 Other Advanced Model Building Functions:
 \code{\link{umx}},
 \code{\link[=umxAlgebra]{umxAlgebra()}},
+\code{\link[=umxAutoStart]{umxAutoStart()}},
 \code{\link[=umxFixAll]{umxFixAll()}},
 \code{\link[=umxJiggle]{umxJiggle()}},
 \code{\link[=umxRun]{umxRun()}},

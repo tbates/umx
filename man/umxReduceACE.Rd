@@ -44,7 +44,7 @@ testing dropping A and C, as well as an ADE or ACE model, displaying the results
 in a table, and returning the best model.
 }
 \details{
-It is designed for testing univariate models. You can offer up either the ACE or ADE base model.
+It stops when the model has more than one phenotype. No nested model is fit. You can offer up either the univariate ACE or ADE base model.
 
 Suggestions for more sophisticated automation welcomed!
 }

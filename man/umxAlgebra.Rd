@@ -68,6 +68,7 @@ class(x$formula) # "call"
 
 Other Advanced Model Building Functions:
 \code{\link{umx}},
+\code{\link[=umxAutoStart]{umxAutoStart()}},
 \code{\link[=umxFixAll]{umxFixAll()}},
 \code{\link[=umxJiggle]{umxJiggle()}},
 \code{\link[=umxRAM_GLM]{umxRAM_GLM()}},

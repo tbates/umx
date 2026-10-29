@@ -2,40 +2,45 @@
 % Please edit documentation in R/umx_fit_umxFitIndices.R
 \name{umxFitIndices}
 \alias{umxFitIndices}
-\title{Get additional fit-indices for a model with umxFitIndices}
+\title{Get fit indices for models with umxFitIndices}
 \usage{
-umxFitIndices(model, ...)
+umxFitIndices(fits, set = c("core", "all"), ...)
 }
 \arguments{
-\item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} for which you want fit indices.}
+\item{fits}{One \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} or a list of them.}
 
-\item{...}{Additional parameters passed to \code{\link[OpenMx:summary.MxModel]{OpenMx::summary.MxModel()}}.}
+\item{set}{\code{"core"} (default) for the reportable handful, \code{"all"} for everything, or a character vector of index names.}
+
+\item{...}{Additional parameters passed to \code{\link[OpenMx:summary.MxModel]{OpenMx::summary.MxModel()}}. \code{refModels} supplied here are used as-is.}
 }
 \value{
-List of fit statistics
+A data.frame with a \code{model} column and one column per index, one row per model.
 }
 \description{
-Computes a variety of fit indices.
+Computes fit indices for one model or a list of models, returned as a
+data.frame with one row per model. \code{set = "core"} (default) gives the
+handful of indices worth reporting; \code{set = "all"} gives everything,
+including residual-based indices (SRMR, CRMR, SMAR, CMAR, etc.) for when
+Reviewer 2 wants something other than CFA/TLI/RMSEA.
 }
 \details{
-Note: This function is currently not robust across multi-group designs or
-definition variables. It is designed to provide residual-based fit indices
-(SRMR, CRMR, SMAR, CMAR, etc.) and less-often reported fit indices where
-Reviewer 2 wants something other than CFA/TLI/RMSEA.
+Multigroup and definition-variable models are supported. For multigroup
+models, residual-based and variable-count indices are \code{NA}.
 
 Fit information reported includes:
 
 \strong{Model characteristics}:
 numObs, estimated parameters,
 observed statistics, observed summary statistics,
--2*log(Likelihood), degrees of freedom
+-2*log(Likelihood), degrees of freedom,
+N_eff (likelihood-contributing rows; an independent check on \code{numObs})
 
 \strong{Chi-squared test}:
 Chi, ChiDoF, p (of Chi), ChiPerDoF,
 
 \strong{Noncentrality-based indices}:
-RMSEA, RMSEACI, RMSEANull, RMSEAClose (p value), independenceRMSEA,
-NCP, NCPCI, F0, F0CI, Mc (aka NCI, MFI)
+RMSEA, RMSEA_lo, RMSEA_hi, RMSEANull, RMSEAClose (p value), independenceRMSEA,
+NCP, NCP_lo, NCP_hi, F0, F0_lo, F0_hi, Mc (aka NCI, MFI)
 
 \strong{Comparative fit indices}:
 TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
@@ -44,9 +49,9 @@ TLI (aka NNFI), CFI, IFI, PRATIO, PCFI
 RMR, SRMR, SRMR_mplus, CRMR,
 MAR, SMAR, SMAR_mplus, CMAR
 
-\strong{Information-theory criteria} (computed using chi-square or -2LL; df or parameters penalties)
-AIC, AICc, BIC, SABIC, CAIC, BCC
-ECVI, ECVICI, MECVI, MECVICI
+\strong{Information-theory criteria} (chi-square and -2LL versions; df, parameters, and sample-size penalties)
+AIC, BIC (matching \code{summary()}), plus \verb{IC_<Chi|deviance>_<AIC|BIC|CAIC|BCC>_<df|par|sample>}
+ECVI, ECVI_lo, ECVI_hi, MECVI, MECVI_lo, MECVI_hi
 
 \strong{LISREL and other early fit indices} (we recommend not reporting these)
 GFI, AGFI, PGFI, GH, NFI, PNFI, RFI
@@ -74,6 +79,9 @@ m2 = umxRAM("m1", data = demoOneFactor,
 	umxPath(v1m0 = latents)
 )
 umxFitIndices(m1, refModels = mxRefModels(m2, run = TRUE))
+
+# A comparison table for several models, core indices only
+umxFitIndices(list(m1, m2))
 }
 
 }

@@ -40,7 +40,7 @@ Akaike weights are also reported showing relative support across models.
 Specialized functions are called for different type of input:
 \enumerate{
 \item \strong{GxE model reduction} For \code{\link[=umxGxE]{umxGxE()}} models \code{\link[=umxReduceGxE]{umxReduceGxE()}} is called.
-\item \strong{ACE model reduction} For \code{\link[=umxACE]{umxACE()}} models,\code{\link[=umxReduceACE]{umxReduceACE()}} is called.
+\item \strong{ACE model reduction} For \code{\link[=umxACE]{umxACE()}} models,\code{\link[=umxReduceACE]{umxReduceACE()}} is called. More than one phenotype stops before any nested model is fit.
 }
 
 \code{umxReduce} reports the results in a table. Set the format of the table with

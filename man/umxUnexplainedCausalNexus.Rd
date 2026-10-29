@@ -34,6 +34,7 @@ https://github.com/tbates/umx/
 Other Advanced Model Building Functions:
 \code{\link{umx}},
 \code{\link[=umxAlgebra]{umxAlgebra()}},
+\code{\link[=umxAutoStart]{umxAutoStart()}},
 \code{\link[=umxFixAll]{umxFixAll()}},
 \code{\link[=umxJiggle]{umxJiggle()}},
 \code{\link[=umxRAM_GLM]{umxRAM_GLM()}},

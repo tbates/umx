@@ -46,6 +46,7 @@ mxCompare(m1, m2)
 Other Advanced Model Building Functions:
 \code{\link{umx}},
 \code{\link[=umxAlgebra]{umxAlgebra()}},
+\code{\link[=umxAutoStart]{umxAutoStart()}},
 \code{\link[=umxJiggle]{umxJiggle()}},
 \code{\link[=umxRAM_GLM]{umxRAM_GLM()}},
 \code{\link[=umxRun]{umxRun()}},

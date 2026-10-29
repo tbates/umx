@@ -22,7 +22,7 @@ umxPlotACEv(
 
 \item{digits}{How many decimals to include in path loadings (default = 2)}
 
-\item{means}{Whether to show means paths (default = FALSE)}
+\item{means}{Whether to show means paths (default = FALSE). A non-ACE label \code{name_rRcC} is drawn to \code{name_varC}, and the column index keeps every digit, so \code{expMean_r10c3} goes to \code{expMean_var3} and \code{expMean_r1c10} goes to \code{expMean_var10}.}
 
 \item{std}{Whether to standardize the model (default = FALSE)}
 
