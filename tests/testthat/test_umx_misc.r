@@ -79,6 +79,22 @@ test_that("xmu_standardize_ACEcov", {
 	expect_true(!is.null(fit))
 })
 
+test_that("umxPlotACEcov means labels keep row and column indexes past 9", {
+	require(umx)
+	data(twinData)
+	selDVs  = c("bmi")
+	selCovs = c("ht")
+	selVars = umx_paste_names(c(selDVs, selCovs), sep = "", suffixes = 1:2)
+	mzData = subset(twinData, zyg == 1, selVars)[1:80, ]
+	dzData = subset(twinData, zyg == 3, selVars)[1:80, ]
+	m1 = umxACEcov(selDVs = selDVs, selCovs = selCovs, dzData = dzData, mzData = mzData, sep = "", autoRun = FALSE)
+	m1$top$expMean$labels[1, 1] = "expMean_r10c3"
+	m1$top$expMean$labels[1, 2] = "expMean_r1c10"
+	got = umxPlotACEcov(m1, std = FALSE, means = TRUE, file = NA)
+	expect_match(got, "expMean_r10c3 -> expMean_var3", fixed = TRUE)
+	expect_match(got, "expMean_r1c10 -> expMean_var10", fixed = TRUE)
+})
+
 test_that("test umx_check_names", {
 	require(umx)
 	data(demoOneFactor) # "x1" "x2" "x3" "x4" "x5"
