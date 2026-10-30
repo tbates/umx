@@ -13,9 +13,7 @@
 #' @export
 #' @family xmu internal not for end user
 #' @seealso - [umxConfint()], [xmu_get_CI()]
-
 #' @references <https://github.com/tbates/umx>
-#'
 xmu_CI_stash <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE) {
 	# model = cp3h
 	# TODO rationalize with xmu_get_CI
@@ -76,10 +74,6 @@ xmu_CI_stash <- function(model, digits = 3, dropZeros = FALSE, stdAlg2mat = TRUE
 		} else {
 			model@submodels[thisSub][[1]]@matrices[thisMat][[1]]$values[thisRow, thisCol] = CIString
 		}
-
-		# model@submodels["top"][[1]]@matrices["a_cp"][[1]]$values[1, 1]
-		# model@submodels[thisSub][[1]]@matrices[thisMat][[1]]$values[thisRow, thisCol] = CIString
-		# model@submodels$top@matrices[thisMat][[1]]$values[thisRow, thisCol] = CIString
 	}
 	return(model)
 }
