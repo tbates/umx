@@ -76,7 +76,7 @@
 #' @param std If TRUE, model is standardized (Default FALSE, NULL means "don't show").
 #' @param digits How many decimal places to report (Default 2)
 #' @param report If "html", then show results in browser (default = "markdown")
-#' @param uncertainty What type of uncertainty/inference packaging to report: `"SE"` (default SEs from the fit), `"MLR"` (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), `"CI"` (profile likelihood CIs), or `"none"`.
+#' @param uncertainty What type of uncertainty/inference packaging to report: `"SE"` (default SEs from the fit), `"MLR"` (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), `"CI"` (Wald interval from the reported SE), or `"none"`. A profile interval already stored on the model replaces that Wald interval for the raw parameter. Standardized tables keep the Wald interval: a raw profile interval is not the interval of the standardized path. `"none"` omits the interval column.
 #' @param means Whether to include means in the summary (TRUE)
 #' @param residuals Whether to include residuals in the summary (TRUE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
@@ -368,14 +368,25 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 					pName = parameterTable[i, "name"]
 					est   = parameterTable[i, ifelse(std, "Std.Estimate", "Estimate")]
 					
-					if (uncertainty == "CI" && hasCIs && (pName %in% rownames(cis))) {
-						lbound = cis[pName, "lbound"]
-						ubound = cis[pName, "ubound"]
+					profileKey = NULL
+					if (hasCIs && !isTRUE(std)) {
+						pLabel = parameterTable[i, "label"]
+						if (pName %in% rownames(cis)) {
+							profileKey = pName
+						} else if (length(pLabel) == 1 && !is.na(pLabel) && pLabel %in% rownames(cis)) {
+							profileKey = pLabel
+						}
+					}
+					lbound = NA
+					ubound = NA
+					if (!is.null(profileKey)) {
+						lbound = as.numeric(cis[profileKey, "lbound"])[1]
+						ubound = as.numeric(cis[profileKey, "ubound"])[1]
+					}
+					if (is.finite(lbound) && is.finite(ubound)) {
 						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
-						if (!is.na(lbound) && !is.na(ubound)) {
-							if (lbound <= 0 && ubound >= 0) {
-								parameterTable[i, "sig"] = FALSE
-							}
+						if (lbound <= 0 && ubound >= 0) {
+							parameterTable[i, "sig"] = FALSE
 						}
 					} else {
 						seVal = suppressWarnings(as.numeric(parameterTable[i, ifelse(std, "Std.SE", "SE")]))
