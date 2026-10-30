@@ -3,6 +3,13 @@
 * Date: 2026-10-12 R 4.6.1
 * FIXED: `umxReduceACE()` stops when the model has more than one phenotype, before any nested model is fit.
 * FIXED: `umxPlotACEv(means = TRUE)` reads the whole row and column index in a `name_rRcC` label. `expMean_r10c3` is drawn to `expMean_var3`, and `expMean_r1c10` to `expMean_var10`.
+* FIXED: `umxPlotACEcov(means = TRUE)` uses that same index pattern.
+* FIXED: `umxModify(intervals = TRUE)` runs confidence intervals already requested on the model. `intervals = FALSE` still refits without recomputing them. The requests stay on the model either way.
+* IMPROVED: `umxConfint(parm = "smart")` requests one profile interval per free cell of the standardized ACE and IP algebras, and per free parameter of a RAM model. CP is unchanged.
+* IMPROVED: `umxConfint(run = TRUE)` returns the model with the interval table and does not print that table. `umxConfint(run = FALSE)` still prints an existing table. `report = TRUE` prints after a run. `report = FALSE` stays quiet either way.
+* DEPRECATED: `umxCI()` warns and points to `umxConfint()`. The old function still adds, removes, and runs interval requests. `umxSummaryMRDoC(CIs = TRUE)` still calls it, so that summary warns too.
+* FIXED: `umxConfint(run = TRUE)` no longer writes the submodels back after the intervals are computed. That write copied nothing and OpenMx rejected it. The covariance matrix, standard errors, and Hessian are copied back onto the outer model, which is where `omxRunCI` drops them.
+* IMPROVED: Computed profile intervals are printed by `umxSummary()` and `plot()` for ACE, IP, CP, and RAM. ACE, IP, and CP draw the standardized cell. RAM draws the raw free-parameter interval, including when `uncertainty = "none"`, and does not place that raw interval on a standardized path. Nothing is computed at print time. `umxSummaryIP()` and `umxSummaryCP()` now default `CIs = TRUE` and no longer stop or overwrite the model when no interval has been computed.
 * IMPROVED: `gh_message_search(search, regex = FALSE)` finds a commit id or literal message text. `regex = TRUE` uses an extended regular expression. A pasted subject that contains `*` stays literal.
 * IMPROVED: `geometric_mean()` tells you when a negative value is a return entered without adding 1 (a 30% loss is `0.7`, not `-0.3`). The help example for a +50% gain followed by a -50% loss now gives the geometric mean as -13.4% per period.
 * IMPROVED: `harmonic_mean()` rejects negative weights, names the bad value and its position, and the help states when the mean is the right one for speeds and for P/E ratios.
