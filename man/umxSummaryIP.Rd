@@ -12,7 +12,7 @@ umxSummaryIP(
   std = TRUE,
   showRg = FALSE,
   comparison = NULL,
-  CIs = FALSE,
+  CIs = TRUE,
   returnStd = FALSE,
   report = c("markdown", "html"),
   ...
@@ -31,7 +31,7 @@ umxSummaryIP(
 
 \item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
 
-\item{CIs}{Confidence intervals (F)}
+\item{CIs}{Whether to print a profile interval that has already been computed (default TRUE). The printed tables are standardized, so the address is top.ai_std (and ci, ei, as, cs, es) when those algebras exist. No interval is computed here.}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 

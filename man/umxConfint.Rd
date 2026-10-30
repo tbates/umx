@@ -10,6 +10,7 @@ umxConfint(
   wipeExistingRequests = TRUE,
   level = 0.95,
   run = FALSE,
+  report = !run,
   showErrorCodes = FALSE,
   optimizer = c("SLSQP", "NPSOL", "CSOLNP", "current")
 )
@@ -17,13 +18,15 @@ umxConfint(
 \arguments{
 \item{object}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, possibly already containing \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}}s that have been \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} with intervals = TRUE))}
 
-\item{parm}{Which parameters to get confidence intervals for. Can be "existing", "all", or one or more parameter names.}
+\item{parm}{Which intervals to request. \code{"existing"} keeps the requests already on the model. \code{"all"} requests every free parameter label. \code{"smart"} requests one interval per free cell of the standardized algebras for CP, ACE, and IP (raw \code{a_cp}, \code{c_cp}, and \code{e_cp} for CP; the raw path matrices when no \code{*_std} algebra is present). For a RAM model, \code{"smart"} requests every free parameter label. One or more names request those labels.}
 
 \item{wipeExistingRequests}{Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').}
 
 \item{level}{The confidence level required (default = .95)}
 
 \item{run}{Whether to run the model (defaults to FALSE)}
+
+\item{report}{Whether to print the computed interval table. Defaults to TRUE when \code{run} is FALSE, and FALSE when \code{run} is TRUE.}
 
 \item{showErrorCodes}{(default = FALSE)}
 
@@ -41,7 +44,7 @@ Implements confidence interval function for umx models.
 Note: By default, requesting new CIs wipes the existing ones.
 To keep these, set wipeExistingRequests = FALSE.
 
-Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE .
+Because CIs can take time to run, by default only already-computed CIs will be reported. To run new CIs, set run = TRUE. \code{run = TRUE} does not print the table: the intervals are on the returned model for \code{\link[=umxSummary]{umxSummary()}} and \code{\link[=plot]{plot()}}. Pass \code{report = TRUE} to print the table as well. \code{run = FALSE} prints an existing table. Pass \code{report = FALSE} to return the model without printing.
 
 \emph{Note}: OpenMx defines a \code{confint} function which will return SE-based CIs.
 
@@ -61,11 +64,16 @@ m1 = umxRAM("OneFactor", data = demoOneFactor, type = "cov",
 
 m1 = umxConfint(m1, run = TRUE) # There are no existing CI requests...
 
-# Add a CI request for "G_to_x1", run, and report. Save with this CI computed
-m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE) 
+# Add a CI request for "G_to_x1" and compute it. The table is not printed.
+m2 = umxConfint(m1, parm = "G_to_x1", run = TRUE)
+umxSummary(m2)
+plot(m2)
 
 # Just print out any existing CIs
 umxConfint(m2)
+
+# Compute and print the table in the same call
+umxConfint(m2, run = TRUE, report = TRUE)
 
 # CI requests added for free matrix parameters. User prompted to set run = TRUE
 m3 = umxConfint(m1, "all")
@@ -80,9 +88,8 @@ tmp = umxConfint(m1, parm = "A", run = TRUE)
 # Wipe existing CIs, add G_to_x1
 tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE) 
 
-# For some twin models, a "smart" mode is implemented
-# note: only implemented for umxCP so far
-m2 =  umxConfint(m1, "smart")
+# smart: free standardized cells for CP, ACE, and IP; every free label for RAM
+m2 = umxConfint(m1, "smart")
 }
 
 }

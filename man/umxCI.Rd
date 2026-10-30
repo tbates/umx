@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxCI}
 \alias{umxCI}
-\title{Add (and, optionally, run) confidence intervals to a structural model.}
+\title{Deprecated. Use umxConfint().}
 \usage{
 umxCI(
   model = NULL,
@@ -39,8 +39,9 @@ umxCI(
 }
 }
 \description{
-\code{umxCI} adds \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}} calls for requested (default all) parameters in a model,
-runs these CIs if necessary, and reports them in a neat summary.
+\code{umxCI} is deprecated. Use \code{\link[=umxConfint]{umxConfint()}} for profile intervals, including \code{parm = "smart"} on ACE, IP, CP, and RAM.
+
+This function still adds \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}} requests for free parameter labels (the default), a name list, or a regular expression. It can remove requests. \code{run = "yes"} refits with \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}}. \code{\link[=umxConfint]{umxConfint()}} computes intervals with \code{\link[OpenMx:omxRunCI]{OpenMx::omxRunCI()}} and keeps the covariance matrix, standard errors, and Hessian.
 }
 \details{
 \code{umxCI} also reports if any problems were encountered. The codes are standard OpenMx errors and warnings

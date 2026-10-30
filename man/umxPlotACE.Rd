@@ -13,6 +13,8 @@ umxPlotACE(
   std = TRUE,
   strip_zero = TRUE,
   showFixed = FALSE,
+  format = c("current", "graphviz", "DiagrammeR"),
+  showCIs = TRUE,
   ...
 )
 }
@@ -30,6 +32,10 @@ umxPlotACE(
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
 \item{showFixed}{Whether too draw fixed parameters.}
+
+\item{format}{Output format: "current" (default), "graphviz", or "DiagrammeR".}
+
+\item{showCIs}{Whether to draw a profile interval that has already been computed (default TRUE). Intervals are looked up on the standardized diagram. std = FALSE keeps the point estimate. Means stay point estimates. This does not compute intervals.}
 
 \item{...}{Additional (optional) parameters}
 }

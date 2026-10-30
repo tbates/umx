@@ -37,7 +37,7 @@ If NULL will be computed on demand. If FALSE will not be computed.}
 
 \item{residuals}{Whether to include residuals in the summary (TRUE)}
 
-\item{uncertainty}{What type of uncertainty/inference packaging to report: \code{"SE"} (default SEs from the fit), \code{"MLR"} (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), \code{"CI"} (profile likelihood CIs), or \code{"none"}.}
+\item{uncertainty}{What type of uncertainty/inference packaging to report: \code{"SE"} (default SEs from the fit), \code{"MLR"} (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), \code{"CI"} (Wald interval from the reported SE), or \code{"none"}. A profile interval already stored on the model replaces that Wald interval for the raw parameter. Standardized tables keep the Wald interval: a raw profile interval is not the interval of the standardized path. \code{"none"} omits the interval column.}
 
 \item{filter}{whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)}
 
