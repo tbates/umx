@@ -2689,7 +2689,7 @@ xmu_dot_rank_str <- function(min = NULL, same = NULL, max = NULL) {
 #' @param resid How to show residuals and variances default is "circle". Other option is "line"
 #' @param pt Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)
 #' @param std Whether values should be standardized (defaults to FALSE)
-#' @param uncertainty Type of uncertainty to display (defaults to "none")
+#' @param uncertainty Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode. It is not drawn when `std` is TRUE.
 #' @param cis Matrix of confidence intervals (defaults to NULL)
 #' @return - list of variance names and variances
 #' @export
@@ -2728,40 +2728,53 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 						}
 					}
 					
-					# Format value string
+					# A computed profile interval belongs to the raw free parameter. It is drawn even when uncertainty is "none". It is not drawn on a standardized path.
 					valStr = prefix
+					profileLabel = thisPathLabel
 					if (rowMatch) {
-						estVal = round(estVal, digits)
-						if (uncertainty %in% c("SE", "MLR")) {
-							if (!is.na(seVal)) {
-								valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
-							} else {
-								valStr = paste0(valStr, estVal)
-							}
-						} else if (uncertainty == "CI") {
-							lbound = NA
-							ubound = NA
-							pLabelName = pt[matchIdx, "name"]
-							if (!is.null(cis) && (pLabelName %in% rownames(cis))) {
-								lbound = cis[pLabelName, "lbound"]
-								ubound = cis[pLabelName, "ubound"]
-							}
-							if (is.na(lbound) || is.na(ubound)) {
+						pLabelName = pt[matchIdx, "name"]
+						if (length(pLabelName) == 1 && !is.na(pLabelName)) {
+							profileLabel = pLabelName
+						}
+					}
+					profileHit = FALSE
+					if (!isTRUE(std) && length(profileLabel) == 1 && !is.na(profileLabel) && !is.null(cis) && profileLabel %in% rownames(cis)) {
+						lbound = as.numeric(cis[profileLabel, "lbound"])[1]
+						ubound = as.numeric(cis[profileLabel, "ubound"])[1]
+						if (is.finite(lbound) && is.finite(ubound)) {
+							ciEst = as.numeric(cis[profileLabel, "estimate"])[1]
+							shown = if (is.finite(ciEst)) round(ciEst, digits) else thisPathVal
+							valStr = paste0(valStr, shown, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+							profileHit = TRUE
+						}
+					}
+					if (!profileHit) {
+						if (rowMatch) {
+							estVal = round(estVal, digits)
+							if (uncertainty %in% c("SE", "MLR")) {
+								if (!is.na(seVal)) {
+									valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
+								} else {
+									valStr = paste0(valStr, estVal)
+								}
+							} else if (uncertainty == "CI") {
+								lbound = NA
+								ubound = NA
 								if (!is.na(seVal)) {
 									lbound = estVal - 1.96 * seVal
 									ubound = estVal + 1.96 * seVal
 								}
-							}
-							if (!is.na(lbound) && !is.na(ubound)) {
-								valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+								if (!is.na(lbound) && !is.na(ubound)) {
+									valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+								} else {
+									valStr = paste0(valStr, estVal)
+								}
 							} else {
 								valStr = paste0(valStr, estVal)
 							}
 						} else {
-							valStr = paste0(valStr, estVal)
+							valStr = paste0(valStr, thisPathVal)
 						}
-					} else {
-						valStr = paste0(valStr, thisPathVal)
 					}
 
 					if(resid =="circle"){
@@ -2796,7 +2809,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 #' @param digits how many digits to report
 #' @param pt Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)
 #' @param std Whether values should be standardized (defaults to FALSE)
-#' @param uncertainty Type of uncertainty to display (defaults to "none")
+#' @param uncertainty Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode. It is not drawn when `std` is TRUE.
 #' @param cis Matrix of confidence intervals (defaults to NULL)
 #' @return - string
 #' @export
@@ -2842,40 +2855,53 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 						}
 					}
 					
-					# Format value string
+					# A computed profile interval belongs to the raw free parameter. It is drawn even when uncertainty is "none". It is not drawn on a standardized path.
 					valStr = prefix
+					profileLabel = thisPathLabel
 					if (rowMatch) {
-						estVal = round(estVal, digits)
-						if (uncertainty %in% c("SE", "MLR")) {
-							if (!is.na(seVal)) {
-								valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
-							} else {
-								valStr = paste0(valStr, estVal)
-							}
-						} else if (uncertainty == "CI") {
-							lbound = NA
-							ubound = NA
-							pLabelName = pt[matchIdx, "name"]
-							if (!is.null(cis) && (pLabelName %in% rownames(cis))) {
-								lbound = cis[pLabelName, "lbound"]
-								ubound = cis[pLabelName, "ubound"]
-							}
-							if (is.na(lbound) || is.na(ubound)) {
+						pLabelName = pt[matchIdx, "name"]
+						if (length(pLabelName) == 1 && !is.na(pLabelName)) {
+							profileLabel = pLabelName
+						}
+					}
+					profileHit = FALSE
+					if (!isTRUE(std) && length(profileLabel) == 1 && !is.na(profileLabel) && !is.null(cis) && profileLabel %in% rownames(cis)) {
+						lbound = as.numeric(cis[profileLabel, "lbound"])[1]
+						ubound = as.numeric(cis[profileLabel, "ubound"])[1]
+						if (is.finite(lbound) && is.finite(ubound)) {
+							ciEst = as.numeric(cis[profileLabel, "estimate"])[1]
+							shown = if (is.finite(ciEst)) round(ciEst, digits) else thisPathVal
+							valStr = paste0(valStr, shown, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+							profileHit = TRUE
+						}
+					}
+					if (!profileHit) {
+						if (rowMatch) {
+							estVal = round(estVal, digits)
+							if (uncertainty %in% c("SE", "MLR")) {
+								if (!is.na(seVal)) {
+									valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
+								} else {
+									valStr = paste0(valStr, estVal)
+								}
+							} else if (uncertainty == "CI") {
+								lbound = NA
+								ubound = NA
 								if (!is.na(seVal)) {
 									lbound = estVal - 1.96 * seVal
 									ubound = estVal + 1.96 * seVal
 								}
-							}
-							if (!is.na(lbound) && !is.na(ubound)) {
-								valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+								if (!is.na(lbound) && !is.na(ubound)) {
+									valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+								} else {
+									valStr = paste0(valStr, estVal)
+								}
 							} else {
 								valStr = paste0(valStr, estVal)
 							}
 						} else {
-							valStr = paste0(valStr, estVal)
+							valStr = paste0(valStr, thisPathVal)
 						}
-					} else {
-						valStr = paste0(valStr, thisPathVal)
 					}
 
 					if(labels == "both"){
@@ -2918,40 +2944,53 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 							}
 						}
 						
-						# Format value string
+						# A computed profile interval belongs to the raw free parameter. It is drawn even when uncertainty is "none". It is not drawn on a standardized path.
 						valStr = prefix
+						profileLabel = thisPathLabel
 						if (rowMatch) {
-							estVal = round(estVal, digits)
-							if (uncertainty %in% c("SE", "MLR")) {
-								if (!is.na(seVal)) {
-									valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
-								} else {
-									valStr = paste0(valStr, estVal)
-								}
-							} else if (uncertainty == "CI") {
-								lbound = NA
-								ubound = NA
-								pLabelName = pt[matchIdx, "name"]
-								if (!is.null(cis) && (pLabelName %in% rownames(cis))) {
-									lbound = cis[pLabelName, "lbound"]
-									ubound = cis[pLabelName, "ubound"]
-								}
-								if (is.na(lbound) || is.na(ubound)) {
+							pLabelName = pt[matchIdx, "name"]
+							if (length(pLabelName) == 1 && !is.na(pLabelName)) {
+								profileLabel = pLabelName
+							}
+						}
+						profileHit = FALSE
+						if (!isTRUE(std) && length(profileLabel) == 1 && !is.na(profileLabel) && !is.null(cis) && profileLabel %in% rownames(cis)) {
+							lbound = as.numeric(cis[profileLabel, "lbound"])[1]
+							ubound = as.numeric(cis[profileLabel, "ubound"])[1]
+							if (is.finite(lbound) && is.finite(ubound)) {
+								ciEst = as.numeric(cis[profileLabel, "estimate"])[1]
+								shown = if (is.finite(ciEst)) round(ciEst, digits) else thisPathVal
+								valStr = paste0(valStr, shown, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+								profileHit = TRUE
+							}
+						}
+						if (!profileHit) {
+							if (rowMatch) {
+								estVal = round(estVal, digits)
+								if (uncertainty %in% c("SE", "MLR")) {
+									if (!is.na(seVal)) {
+										valStr = paste0(valStr, estVal, " (", round(seVal, digits), ")")
+									} else {
+										valStr = paste0(valStr, estVal)
+									}
+								} else if (uncertainty == "CI") {
+									lbound = NA
+									ubound = NA
 									if (!is.na(seVal)) {
 										lbound = estVal - 1.96 * seVal
 										ubound = estVal + 1.96 * seVal
 									}
-								}
-								if (!is.na(lbound) && !is.na(ubound)) {
-									valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+									if (!is.na(lbound) && !is.na(ubound)) {
+										valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+									} else {
+										valStr = paste0(valStr, estVal)
+									}
 								} else {
 									valStr = paste0(valStr, estVal)
 								}
 							} else {
-								valStr = paste0(valStr, estVal)
+								valStr = paste0(valStr, thisPathVal)
 							}
-						} else {
-							valStr = paste0(valStr, thisPathVal)
 						}
 
 						if(labels == "both"){
