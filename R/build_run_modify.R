@@ -199,7 +199,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' @param autoRun Whether to run the model (default), or just to create it and return without running.
 #' @param tryHard Default ('no') uses normal mxRun. "yes" uses mxTryHard. Other options: "ordinal", "search", "auto" (picks to suit the model)
 #' @param master If you set master, then the update labels will be equated to these (i.e. replaced by them).
-#' @param intervals Whether to run confidence intervals (see [OpenMx::mxRun()])
+#' @param intervals Whether to run confidence intervals already requested on the model (default FALSE). The requests stay either way. See [OpenMx::mxRun()].
 #' @param verbose How much feedback to give
 #' @return - [OpenMx::mxModel()]
 #' @family Core Model Building Functions
@@ -357,7 +357,7 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		newModel = mxModel(lastFit, update, name = name)
 	}
 	newModel = omxAssignFirstParameters(newModel)
-	newModel = xmu_safe_run_summary(newModel, lastFit, autoRun = autoRun, tryHard = tryHard, comparison = comparison)
+	newModel = xmu_safe_run_summary(newModel, lastFit, autoRun = autoRun, tryHard = tryHard, comparison = comparison, intervals = intervals)
 	return(newModel)
 }
 
@@ -613,11 +613,14 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' m1 = mxRun(m1, intervals = TRUE)
 #' residuals(m1, run = TRUE) # get CIs on all free parameters
 #' confint(m1) # OpenMx's SE-based CIs
-#' umxConfint(m1, run = TRUE) # get likelihood-based CIs on all free parameters
-#' m1 = umxRun(m1, tryHard = "yes")
-#' }
 #' 
-# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),
+#' # get likelihood-based CIs on all free parameters
+#' m1= umxConfint(m1, parm= "smart", run = TRUE) 
+#' umxSummary(m1)
+#'
+#' # Smart chooser for tryHard
+#' m1 = umxRun(m1, tryHard = "auto")
+#' }
 umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search", "auto"), calc_sat = TRUE, setValues = FALSE, setLabels = FALSE, summary = !umx_set_silent(silent = TRUE), intervals = umx_set_intervals(silent = TRUE), optimizer = NULL, comparison = NULL){
 	# TODO: umxRun: Return change in -2LL for models being re-run
 	# TODO: umxRun: Stash saturated model for re-use
