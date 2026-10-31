@@ -35,7 +35,7 @@ umxPlotACE(
 
 \item{format}{Output format: "current" (default), "graphviz", or "DiagrammeR".}
 
-\item{showCIs}{Whether to draw a profile interval that has already been computed (default TRUE). Intervals are looked up on the standardized diagram. std = FALSE keeps the point estimate. Means stay point estimates. This does not compute intervals.}
+\item{showCIs}{Whether to draw a profile interval that has already been computed (default TRUE). Intervals are looked up on the standardized diagram. \code{std = FALSE} keeps the point estimate. Means stay point estimates. This does not compute intervals.}
 
 \item{...}{Additional (optional) parameters}
 }

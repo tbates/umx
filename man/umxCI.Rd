@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{umxCI}
 \alias{umxCI}
-\title{Deprecated. Use umxConfint().}
+\title{Deprecated. Use \code{\link[=umxConfint]{umxConfint()}}.}
 \usage{
 umxCI(
   model = NULL,
@@ -40,10 +40,10 @@ umxCI(
 }
 \description{
 \code{umxCI} is deprecated. Use \code{\link[=umxConfint]{umxConfint()}} for profile intervals, including \code{parm = "smart"} on ACE, IP, CP, and RAM.
-
-This function still adds \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}} requests for free parameter labels (the default), a name list, or a regular expression. It can remove requests. \code{run = "yes"} refits with \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}}. \code{\link[=umxConfint]{umxConfint()}} computes intervals with \code{\link[OpenMx:omxRunCI]{OpenMx::omxRunCI()}} and keeps the covariance matrix, standard errors, and Hessian.
 }
 \details{
+This function still adds \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}} requests for free parameter labels (the default), a name list, or a regular expression. It can remove requests. \code{run = "yes"} refits with \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}}. \code{\link[=umxConfint]{umxConfint()}} computes intervals with \code{\link[OpenMx:omxRunCI]{OpenMx::omxRunCI()}} and keeps the covariance matrix, standard errors, and Hessian.
+
 \code{umxCI} also reports if any problems were encountered. The codes are standard OpenMx errors and warnings
 \itemize{
 \item 1: The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN)

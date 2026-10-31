@@ -114,7 +114,8 @@ mkFam = function(n, nSib) {
 	}
 	d
 }
-m0 = umxLGCM(var = c("y1", "y2"), age = c("age1", "age2"), mzData = mkFam(50, 2), dzData = mkFam(50, 2), autoRun = FALSE)
+m0 = umxLGCM(var = c("y1", "y2"), age = c("age1", "age2"),
+		mzData = mkFam(50, 2), dzData = mkFam(50, 2), autoRun = FALSE)
 umxSummary(m0)
 }
 }

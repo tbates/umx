@@ -18,7 +18,7 @@ umxConfint(
 \arguments{
 \item{object}{An \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}, possibly already containing \code{\link[OpenMx:mxCI]{OpenMx::mxCI()}}s that have been \code{\link[OpenMx:mxRun]{OpenMx::mxRun()}} with intervals = TRUE))}
 
-\item{parm}{Which intervals to request. \code{"existing"} keeps the requests already on the model. \code{"all"} requests every free parameter label. \code{"smart"} requests one interval per free cell of the standardized algebras for CP, ACE, and IP (raw \code{a_cp}, \code{c_cp}, and \code{e_cp} for CP; the raw path matrices when no \code{*_std} algebra is present). For a RAM model, \code{"smart"} requests every free parameter label. One or more names request those labels.}
+\item{parm}{Which intervals to request. \code{"existing"} keeps the requests already on the model. \code{"all"} requests every free parameter label. \code{"smart"} requests one interval per free cell of the standardized algebras for CP, ACE, and IP (raw \code{a_cp}, \code{c_cp}, and \code{e_cp} for CP; the raw path matrices when no \verb{*_std} algebra is present). For a RAM model, \code{"smart"} requests every free parameter label. One or more names request those labels.}
 
 \item{wipeExistingRequests}{Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').}
 

@@ -90,7 +90,7 @@ proportion at or below each category. SEs of proportions are cluster-robust over
 \examples{
 data(twinData)
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
-umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), show="SE")
+umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), show="se")
 MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
 

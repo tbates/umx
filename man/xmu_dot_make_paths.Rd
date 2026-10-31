@@ -40,7 +40,7 @@ xmu_dot_make_paths(
 
 \item{std}{Whether values should be standardized (defaults to FALSE)}
 
-\item{uncertainty}{Type of uncertainty to display (defaults to "none")}
+\item{uncertainty}{Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode. It is not drawn when \code{std} is TRUE.}
 
 \item{cis}{Matrix of confidence intervals (defaults to NULL)}
 }

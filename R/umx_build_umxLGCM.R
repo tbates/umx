@@ -389,10 +389,13 @@ umxLGCM <- function(name = "LGCM", var, age, invariant = NULL, dzData = NULL, mz
 #' 	}
 #' 	d
 #' }
-#' m0 = umxLGCM(var = c("y1", "y2"), age = c("age1", "age2"), mzData = mkFam(200, 2), dzData = mkFam(200, 2), autoRun = FALSE)
-#' m0 = omxSetParameters(m0, labels = c("A_1_1", "mu_Int", "mu_Shape"), values = c(.5, 1, -.5))
+#' m0 = umxLGCM(var = c("y1", "y2"), age = c("age1", "age2"),
+#' 		mzData = mkFam(200, 2), dzData = mkFam(200, 2), autoRun = FALSE)
+#' labs = c("A_1_1", "mu_Int", "mu_Shape")
+#' m0 = omxSetParameters(m0, labels = labs, values = c(.5, 1, -.5))
 #' sim = mxGenerateData(m0)
-#' m1 = umxLGCM(var = c("y1", "y2"), age = c("age1", "age2"), mzData = sim$MZ, dzData = sim$DZ, tryHard = "no")
+#' m1 = umxLGCM(var = c("y1", "y2"), age = c("age1", "age2"),
+#' 		mzData = sim$MZ, dzData = sim$DZ, tryHard = "no")
 #' plot(m1)
 #' }
 umxPlotLGCM <- function(x = NA, ageMin = NULL, ageMax = NULL, n = 100, observed = TRUE, ...) {
