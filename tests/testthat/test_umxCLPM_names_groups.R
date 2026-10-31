@@ -54,4 +54,5 @@ test_that("umxCLPM fits a multigroup model from a group column", {
 test_that("umxCLPM names a default model sketch after its type", {
 	sketch = umxCLPM(waves = 3, X = "a", Y = "b", sep = "_t")
 	expect_equal(sketch$name, "Hamaker2015")
+	expect_error(umxCLPM(waves = 3, X = "a", Y = "b", sep = "_t", model = "nope"), "should be one of")
 })

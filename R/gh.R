@@ -90,7 +90,7 @@ gh_symLink_bundle <- function(which = "source.tmbundle", localPath = "~/bin/tm/b
     }
     # 3. Check existing destination state
     if (file.exists(fullDest) || dir.exists(fullDest)) {
-        if (Sys.islink(fullDest)) {
+        if (nzchar(Sys.readlink(fullDest))) {
             currentLinkTarget = normalizePath(Sys.readlink(fullDest), mustWork = FALSE)
             if (currentLinkTarget == normalizePath(fullPath, mustWork = FALSE)) {
                 message("Symlink already correctly configured for: ", which)

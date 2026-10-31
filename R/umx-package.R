@@ -296,7 +296,12 @@ utils::globalVariables(c(
 	'Smz_',
 	# fin functions
 	'loanRatio',
-	'netGainLoss'
+	'netGainLoss',
+
+	# Used in umxLGCM (mxAlgebra cross-model refs and plot aes mappings)
+	'top.rate', 'top.mid', 'top.CovLat_MZ', 'top.CovLat_DZ', 'top.CovLat_SIB',
+	'top.Vtil', 'top.VsObs', 'top.MeanLat_tilde',
+	'age', 'y', 'group'
 	
 ))
 

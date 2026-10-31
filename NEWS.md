@@ -6,6 +6,7 @@
 * FIXED: `umxPlotACEcov(means = TRUE)` uses that same index pattern.
 * FIXED: `umxModify(intervals = TRUE)` runs confidence intervals already requested on the model. `intervals = FALSE` still refits without recomputing them. The requests stay on the model either way.
 * IMPROVED: `umxConfint(parm = "smart")` requests one profile interval per free cell of the standardized ACE and IP algebras, and per free parameter of a RAM model. CP is unchanged.
+* FIXED: `umxCLPM()` takes the default model through `match.arg` before any check. Omitting `model` names the sketch `Hamaker2015`. A name outside the four types is still rejected.
 * IMPROVED: `umxConfint(run = TRUE)` returns the model with the interval table and does not print that table. `umxConfint(run = FALSE)` still prints an existing table. `report = TRUE` prints after a run. `report = FALSE` stays quiet either way.
 * DEPRECATED: `umxCI()` warns and points to `umxConfint()`. The old function still adds, removes, and runs interval requests. `umxSummaryMRDoC(CIs = TRUE)` still calls it, so that summary warns too.
 * FIXED: `umxConfint(run = TRUE)` no longer writes the submodels back after the intervals are computed. That write copied nothing and OpenMx rejected it. The covariance matrix, standard errors, and Hessian are copied back onto the outer model, which is where `omxRunCI` drops them.

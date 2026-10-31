@@ -5142,7 +5142,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @examples
 #' data(twinData)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"))
-#' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), show="SE")
+#' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), show="se")
 #' MZs = c("MZMM", "MZFF"); DZs = c("DZFF","DZMM", "DZOS")
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs)
 #'
@@ -5179,7 +5179,7 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 		cat(sum(c(data[,sex1], data[,sex2]) %in% female, na.rm = TRUE), "female\n")
 		cat(sum(c(data[,sex1], data[,sex2]) %in% male, na.rm = TRUE), "male\n")
 	} else {
-		message("Polite note: Could not find dynamic sex columns (", sex1, ", ", sex2, ") to compute M/F counts.")
+		message("Polite note: No sex columns found (looked for ", omxQuotes(sex1), " and ", omxQuotes(sex2), "): skipping M/F counts. Add per-twin sex columns, or set sex= to their stem.")
 	}
 
 	# 3. Setup Long Data

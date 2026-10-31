@@ -140,7 +140,8 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 #' data(bfi, package = "psychTools")
 #' umx_scale_reliabilities("init")
 #' bfi = umx_score_scale(name = "A", base= "A", pos = 2:5, rev = 1, max = 6, data = bfi, alpha = TRUE)
-#' bfi = umx_score_scale(name = "C", base= "C", pos = c(1:3), rev = c(4,5), max = 6, data = bfi, alpha = TRUE, score="mean")
+#' bfi = umx_score_scale(name = "C", base= "C", pos = c(1:3), rev = c(4,5), max = 6,
+#' 		data = bfi, alpha = TRUE, score="mean")
 #' umx_scale_reliabilities("show", type = "alpha")
 #' }
 #' # |   |scale | reliability|type  |
@@ -152,7 +153,8 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 #' umx_scale_reliabilities("init") # start with an empty store
 #' umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.72, type = "alpha")
 #' umx_scale_reliabilities("add", scale_name = "Agreeableness", reliability = 0.75, type = "omega_t")
-#' umx_scale_reliabilities("add", scale_name = "Extraversion", reliability = 0.81) # type defaults to "omega_t"
+#' # type defaults to "omega_t"
+#' umx_scale_reliabilities("add", scale_name = "Extraversion", reliability = 0.81) 
 #' umx_scale_reliabilities("show")
 #' umx_scale_reliabilities("show", type = "alpha") # just the alphas
 #' umx_scale_reliabilities("init") # clear the store
