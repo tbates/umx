@@ -23,11 +23,7 @@ test_that("testing umxCLPM", {
 	expect_true(inherits(iv_ri, "MxModel"))
 
 	# Test for invalid model input
-	expect_error({
-		umxCLPM(waves = 4, name = "invalid_model", model = "InvalidModel")
-	}, "Model must be one of Hamaker2015, Heise1969, IV_RI_CLPM, or STARTS1995")
-	
-	
+	expect_error(umxCLPM(waves = 4, name = "invalid_model", model = "InvalidModel"), "should be one of")
 })
 
 
