@@ -50,22 +50,21 @@
 #' # = 1. Load Data =
 #' # ================
 #' data(docData)
-#' dt <- docData[2:9]
+#' dt = docData[2:9]
 #'
 #' # ============================
 #' # = 2. Make a CLPM model     =
 #' # ============================
-#' hamaker <- umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt)
+#' hamaker = umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt)
 #'
 #' # Select the variables by name: varA1_W1 ... varA1_W4 and varA2_W1 ... varA2_W4
 #' names(dt) = c(paste0("varA1_W", 1:4), paste0("varA2_W", 1:4))
-#' hamaker <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
+#' hamaker   = umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
 #'
 #' # Multigroup: one CLPM per zygosity group
 #' dt$zyg = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
-#' mg <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt, group = "zyg")
+#' mg = umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt, group = "zyg")
 #' }
-
 umxCLPM <- function(data = NULL,waves, X = NULL, Y = NULL, sep = "_W", group = NULL, name = NULL, model = c("Hamaker2015", "Heise1969", "STARTS1995", "IV_RI_CLPM"),  counts = NULL,summary = !umx_set_silent(silent = TRUE), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), verbose = FALSE, batteries = c("scale", "ordinaloptim"), std = FALSE, ivs = NULL, defn = NULL, defto = NULL, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"),  allContinuousMethod = c("cumulants", "marginals") ) {
 
 		model = match.arg(model)
