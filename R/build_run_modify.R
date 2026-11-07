@@ -164,6 +164,7 @@ umxSuperModel <- function(name = 'super', ..., autoRun = getOption("umx_auto_run
 #' 
 #' @details
 #' You can add paths, or other model elements, set path values (default is 0), or replace labels.
+#' On a GLM model, a predictor whose arrows are all fixed at 0 is removed before the run. OpenMx rejects that predictor: with no residual variance and no arrow into a modeled variable, it is neither a GLM outcome nor a Gaussian manifest.
 #' As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
 #' 
 #' `fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)`
@@ -355,6 +356,56 @@ umxModify <- function(lastFit, update = NULL, regex = FALSE, free = FALSE, value
 		# TODO umxModify: if object is RAM, add re-label and re-start new object?
 		if(is.null(name)){ name = NA } # i.e. do nothing
 		newModel = mxModel(lastFit, update, name = name)
+	}
+	# A fixed-at-0 arrow is indistinguishable from no arrow. OpenMx then rejects the predictor (no mxFamily, no residual S).
+	if (length(newModel@submodels) == 0 && !is.null(newModel$fitfunction) && is(newModel$fitfunction, "MxFitFunctionGLM") && !is.null(newModel$A) && !is.null(newModel$S)) {
+		famNames = names(newModel$fitfunction@family)
+		if (is.null(famNames)) famNames = character()
+		varNames = dimnames(newModel$A$values)[[1]]
+		dropNames = character()
+		if (!is.null(varNames)) {
+			for (nm in newModel@manifestVars) {
+				if (nm %in% famNames) next
+				if (!nm %in% varNames) next
+				sFree = newModel$S$free[nm, ]
+				sValue = newModel$S$values[nm, ]
+				storage.mode(sFree) = "logical"
+				if (any(sFree) || any(is.finite(sValue) & abs(sValue) > 1e-8)) next
+				points = FALSE
+				for (dest in varNames) {
+					if (dest == nm) next
+					destFree = as.logical(newModel$A$free[dest, nm])[1]
+					destValue = as.numeric(newModel$A$values[dest, nm])[1]
+					if (isTRUE(destFree) || (is.finite(destValue) && abs(destValue) > 1e-12)) points = TRUE
+				}
+				if (!points) dropNames = c(dropNames, nm)
+			}
+		}
+		if (length(dropNames) > 0) {
+			message("Removed ", paste(omxQuotes(dropNames), collapse = ", "), ": no remaining arrow into a modeled variable. A GLM predictor in that state cannot be kept.")
+			keepManifests = setdiff(newModel@manifestVars, dropNames)
+			keepVars = c(keepManifests, newModel@latentVars)
+			Aold = newModel$A
+			Sold = newModel$S
+			freeA = Aold$free[keepVars, keepVars, drop = FALSE]
+			freeS = Sold$free[keepVars, keepVars, drop = FALSE]
+			storage.mode(freeA) = "logical"
+			storage.mode(freeS) = "logical"
+			Anew = mxMatrix("Full", values = Aold$values[keepVars, keepVars, drop = FALSE], free = freeA, labels = Aold$labels[keepVars, keepVars, drop = FALSE], lbound = Aold$lbound[keepVars, keepVars, drop = FALSE], ubound = Aold$ubound[keepVars, keepVars, drop = FALSE], name = "A", byrow = FALSE, dimnames = list(keepVars, keepVars))
+			Snew = mxMatrix("Symm", values = Sold$values[keepVars, keepVars, drop = FALSE], free = freeS, labels = Sold$labels[keepVars, keepVars, drop = FALSE], lbound = Sold$lbound[keepVars, keepVars, drop = FALSE], ubound = Sold$ubound[keepVars, keepVars, drop = FALSE], name = "S", byrow = FALSE, dimnames = list(keepVars, keepVars))
+			Fnew = mxMatrix("Full", values = diag(nrow = length(keepManifests), ncol = length(keepVars)), free = FALSE, name = "F", dimnames = list(keepManifests, keepVars))
+			newModel@manifestVars = keepManifests
+			if (!is.null(newModel$M)) {
+				Mold = newModel$M
+				freeM = Mold$free[, keepVars, drop = FALSE]
+				storage.mode(freeM) = "logical"
+				Mnew = mxMatrix("Full", values = Mold$values[, keepVars, drop = FALSE], free = freeM, labels = Mold$labels[, keepVars, drop = FALSE], lbound = Mold$lbound[, keepVars, drop = FALSE], ubound = Mold$ubound[, keepVars, drop = FALSE], name = "M", dimnames = list(NULL, keepVars))
+				newModel = mxModel(newModel, Anew, Snew, Mnew, Fnew)
+			} else {
+				newModel = mxModel(newModel, Anew, Snew, Fnew)
+			}
+			if (length(newModel@output) > 0) newModel@output = list()
+		}
 	}
 	newModel = omxAssignFirstParameters(newModel)
 	newModel = xmu_safe_run_summary(newModel, lastFit, autoRun = autoRun, tryHard = tryHard, comparison = comparison, intervals = intervals)
@@ -581,7 +632,7 @@ umxAlgebra <- function(name = NA, expression, dimnames = NA, ..., joinKey=as.cha
 #' **Note** this is not needed for umxRAM models or twin models - it is just a convenience to get base OpenMx models to run.
 #' @param model The [OpenMx::mxModel()] you wish to run.
 #' @param tryHard  How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search", "auto" (picks to suit the model)
-#' @param calc_sat Whether to calculate the saturated and independence models (for raw [OpenMx::mxData()] [OpenMx::mxModel()]s)
+#' @param calc_sat Whether to calculate the saturated and independence models (for raw [OpenMx::mxData()] [OpenMx::mxModel()]s). GLM models are skipped: OpenMx has no saturated or independence reference model for [mxFitFunctionGLM()].
 #' @param setValues Whether to set the starting values of free parameters (default = FALSE)
 #' @param setLabels Whether to set the labels (default =  FALSE)
 #' @param optimizer optional to set the optimizer.
@@ -662,7 +713,9 @@ umxRun <- function(model, tryHard = c( "yes", "no", "ordinal", "search", "auto")
 	}
 
 	if(calc_sat){
-		if(umx_has_been_run(model) && !xmu_is_wls(model)){
+		# mxRefModels stops on MxFitFunctionGLM. That error used to abort umxRun after the fit had already been printed, so the assignment m = umxRun(m) never happened and the caller kept the unfitted model.
+		isGLM = !is.null(model$fitfunction) && is(model$fitfunction, "MxFitFunctionGLM")
+		if(!isGLM && umx_has_been_run(model) && !xmu_is_wls(model)){
 			if(umx_is_RAM(model) && !is.null(model$data)){
 				if(model$data$type == "raw"){
 					# If we have a RAM model with raw data, compute the saturated and independence models
