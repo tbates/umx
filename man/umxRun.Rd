@@ -21,7 +21,7 @@ umxRun(
 
 \item{tryHard}{How to tryHard. Default = "yes". Alternatives "no", "ordinal", "search", "auto" (picks to suit the model)}
 
-\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[OpenMx:mxData]{OpenMx::mxData()}} \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s)}
+\item{calc_sat}{Whether to calculate the saturated and independence models (for raw \code{\link[OpenMx:mxData]{OpenMx::mxData()}} \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}}s). GLM models are skipped: OpenMx has no saturated or independence reference model for \code{\link[OpenMx:mxFitFunctionGLM]{mxFitFunctionGLM()}}.}
 
 \item{setValues}{Whether to set the starting values of free parameters (default = FALSE)}
 

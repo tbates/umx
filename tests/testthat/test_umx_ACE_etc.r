@@ -634,3 +634,15 @@ test_that("umxPlotACEv means labels keep row and column indexes past 9", {
 #' dz = cov(twinData[twinData$zygosity %in% "DZFF", tvars(selDVs, "")], use = "complete")
 #' m1 = umxACEv(selDVs = selDVs, sep= "", dzData = dz, mzData= mz, numObsDZ= 569, numObsMZ= 351)
 #' umxSummary(m1, std = FALSE)
+test_that("umxSummaryACEv does not nag about file='markdown'", {
+	require(umx)
+	data(twinData)
+	mzData = twinData[twinData$zygosity %in% "MZFF", ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ]
+	oldSilent = umx_set_silent(TRUE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	m1 = umxACEv(selDVs = "bmi", sep = "", dzData = dzData, mzData = mzData)
+	out = capture.output(umxSummary(m1, std = TRUE), type = c("output", "message"))
+	expect_false(any(grepl("not file=", out, fixed = TRUE)))
+	expect_true(any(grepl("Standardized parameter estimates", out, fixed = TRUE)))
+})

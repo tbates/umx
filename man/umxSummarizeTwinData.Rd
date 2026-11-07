@@ -23,7 +23,8 @@ umxSummarizeTwinData(
   show = c("ci", "se"),
   male = c("M", "male", "Male", "m"),
   female = c("F", "female", "Female", "f"),
-  tryHard = c("no", "yes", "ordinal", "search")
+  tryHard = c("no", "yes", "ordinal", "search", "auto"),
+  showACE = FALSE
 )
 }
 \arguments{
@@ -63,7 +64,9 @@ umxSummarizeTwinData(
 
 \item{female}{Values of sex coding females (default c("F", "female", "Female", "f")).}
 
-\item{tryHard}{Passed to \code{\link[=umx_polychoric]{umx_polychoric()}} for polychoric correlations (default "no").}
+\item{tryHard}{Passed to \code{\link[=umx_polychoric]{umx_polychoric()}} for polychoric correlations, and to \code{\link[=umxACE]{umxACE()}} when \code{showACE} is TRUE (default "no").}
+
+\item{showACE}{Whether to add \code{a}, \code{c}, \code{e} columns with the standardized path coefficients from a univariate \code{\link[=umxACE]{umxACE()}} fit per variable (default FALSE).}
 }
 \value{
 \itemize{

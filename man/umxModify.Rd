@@ -60,6 +60,7 @@ umxModify allows you to modify, re-run and summarize an \code{\link[OpenMx:mxMod
 }
 \details{
 You can add paths, or other model elements, set path values (default is 0), or replace labels.
+On a GLM model, a predictor whose arrows are all fixed at 0 is removed before the run. OpenMx rejects that predictor: with no residual variance and no arrow into a modeled variable, it is neither a GLM outcome nor a Gaussian manifest.
 As an example, this one-liner drops a path labelled "Cs", and returns the updated model:
 
 \code{fit2 = umxModify(fit1, update = "Cs", name = "newModelName", comparison = TRUE)}

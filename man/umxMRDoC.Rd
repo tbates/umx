@@ -37,7 +37,7 @@ umxMRDoC(
 
 \item{dzData}{The DZ dataframe}
 
-\item{sibsData}{The unrelated sibs dataframe, requires "sibs" as an extra zygosity level.}
+\item{sibsData}{The sibling-pair dataframe (or, with \code{data}, the zygosity level for siblings; default "sibs" or "SIB" in any case).}
 
 \item{zygosity}{= "zygosity" (for the data= method of using this function).}
 
@@ -49,7 +49,7 @@ umxMRDoC(
 
 \item{autoRun}{Whether to run the model (default), or just to create it and return without running.}
 
-\item{sibs}{NEEDS DOCUMENTING (FALSE)}
+\item{sibs}{Whether to model a twin-specific variance T, shared by co-born twins but not by siblings (default FALSE). Needs sibling data: a sibs group (\code{sibsData}, or a sibs level of zygosity) and/or trios.}
 
 \item{type}{Basic switch for estimation type. WLS tends to work really well in MRDoC, it saves you time.}
 
@@ -80,6 +80,12 @@ trait 1 causes trait 2, vice-versa, or even reciprocal causation. This is robust
 due to the instrumental variable approach included in the model.
 
 This function applies both the MRDoC model and the MRDoC2 model depending on how many PRSs are passed as arguments.
+}
+\details{
+\strong{Trios}: if the data contain a third family member (e.g. \code{varA1_T3}, with its own PRS), each family is modeled as
+twin 1, twin 2, and a non-twin sibling. The sibling's covariance with each twin is .5A + C (never T), and its PRS is kept
+in MZ families (only twin 2's PRS is dropped, as it equals twin 1's). Families without a sibling just have member 3 missing.
+Ordinal variables are not yet supported with trios.
 }
 \examples{
 \dontrun{
