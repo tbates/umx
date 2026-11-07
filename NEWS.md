@@ -1,6 +1,11 @@
 # Releases
 ## umx 4.85.0: Dev
 * Date: 2026-10-12 R 4.6.1
+* NEW: `umxSummarizeTwinData(showACE = TRUE)` adds `a`, `c`, `e` columns with the standardized path coefficients from a univariate `umxACE()` fit per variable. MZ/DZ rows come from the `MZ =`/`DZ =` levels, or the standard groups in five-group mode. Ordinal traits are fitted as ordinal; a failed fit shows `NA`.
+* IMPROVED: `umxMRDoC()` models twin + sibling trios (member 3 detected from `_T3` columns: sibling covariance .5A + C, never T; T identified by trios alone). Zygosity levels in the `data =` path match in any case, multiple levels per group work, and rows with missing zygosity are excluded. `sibs = TRUE` without sibling data stops with an informative message. (Luis De Araujo)
+* NEW: `umxDummyCodeExogenousFactors()` replaces unordered exogenous factors in a single-group raw RAM model with the dummy columns `glm` would build. Ordered factors are left unchanged. Treatment, sum, Helmert, and polynomial contrasts are accepted. `reference` chooses the dropped level for treatment contrasts. The Dobson Poisson RCT matches `glm`.
+* FIXED: `umxRun()` no longer calls `mxRefModels()` on a GLM fit. That call stopped after the summary had printed, so `m = umxRun(m)` kept the unfitted model: `umxSummary()` reported no output, and `plot()` drew the zero starting values.
+* FIXED: `umxModify()` on a GLM model removes an exogenous predictor once every arrow from it is fixed at 0. OpenMx otherwise stops with "no mxFamily and no residual S", and the returned model is unfitted.
 * FIXED: `umxReduceACE()` stops when the model has more than one phenotype, before any nested model is fit.
 * FIXED: `umxPlotACEv(means = TRUE)` reads the whole row and column index in a `name_rRcC` label. `expMean_r10c3` is drawn to `expMean_var3`, and `expMean_r1c10` to `expMean_var10`.
 * FIXED: `umxPlotACEcov(means = TRUE)` uses that same index pattern.
