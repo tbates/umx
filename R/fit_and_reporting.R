@@ -5133,7 +5133,8 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' @param show Twin correlations as "ci" (default: r \[95% CI\]) or "se": r (SE).
 #' @param male Values of sex coding males (default c("M", "male", "Male", "m")).
 #' @param female Values of sex coding females (default c("F", "female", "Female", "f")).
-#' @param tryHard Passed to [umx_polychoric()] for polychoric correlations (default "no").
+#' @param tryHard Passed to [umx_polychoric()] for polychoric correlations, and to [umxACE()] when `showACE` is TRUE (default "no").
+#' @param showACE Whether to add `a`, `c`, `e` columns with the standardized path coefficients from a univariate [umxACE()] fit per variable (default FALSE).
 #' @return - Invisibly returns the formatted dataframe.
 #' @export
 #' @family Twin Modeling Functions
@@ -5155,7 +5156,7 @@ umx_APA_pval <- function(p, min = .001, digits = 3, addComparison = NA) {
 #' twinData$obese2 = as.numeric(twinData$bmi2 > 25)
 #' umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "obese"), show = "se")
 #' }
-umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", sex = "sex", MZ = NULL, DZ = NULL, MZFF = "MZFF", DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS", digits = 2, report = c("markdown", "html"), show = c("ci", "se"), male = c("M", "male", "Male", "m"), female = c("F", "female", "Female", "f"), tryHard = c("no", "yes", "ordinal", "search")) {
+umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "zygosity", age = "age", sex = "sex", MZ = NULL, DZ = NULL, MZFF = "MZFF", DZFF = "DZFF", MZMM = "MZMM", DZMM = "DZMM", DZOS = "DZOS", digits = 2, report = c("markdown", "html"), show = c("ci", "se"), male = c("M", "male", "Male", "m"), female = c("F", "female", "Female", "f"), tryHard = c("no", "yes", "ordinal", "search", "auto"), showACE = FALSE) {
 	report  = match.arg(report)
 	show    = match.arg(show)
 	tryHard = match.arg(tryHard)
@@ -5282,6 +5283,20 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	if(twoGroup) df = cbind(df[, 1, drop = FALSE], "N_MZ_DZ" = NA_character_, df[, -1])
 	for (g in rNames) df[[g]] = NA_character_
 
+	if(showACE) {
+		if(twoGroup) {
+			mzRows = groups$MZ; dzRows = groups$DZ
+		} else {
+			mzRows = unlist(groups[grepl("^MZ", names(groups))], use.names = FALSE)
+			dzRows = unlist(groups[grepl("^DZ", names(groups))], use.names = FALSE)
+		}
+		if(!length(mzRows) || !length(dzRows)) stop("showACE needs MZ and DZ rows: pass MZ = and DZ = levels, or use standard zygosity groups.")
+		oldSilent = umx_set_silent(TRUE)
+		on.exit(umx_set_silent(oldSilent), add = TRUE)
+		ace = matrix(NA_real_, nrow = length(selVars), ncol = 3, dimnames = list(NULL, c("a", "c", "e")))
+		aceFailed = 0L
+	}
+
 	for (n in seq_along(selVars)){
 		varName = selVars[n]
 		v1 = paste0(varName, sep, 1)
@@ -5315,6 +5330,20 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 			nPairs = c(nPairs, res$n)
 		}
 		if(twoGroup) df[n, "N_MZ_DZ"] = paste0(nPairs, collapse = "/")
+		if(showACE) {
+			mzSub = data[mzRows, , drop = FALSE]; dzSub = data[dzRows, , drop = FALSE]
+			if(ordinal) {
+				mzSub[, v1] = asOrdered(mzSub[, v1], levs); mzSub[, v2] = asOrdered(mzSub[, v2], levs)
+				dzSub[, v1] = asOrdered(dzSub[, v1], levs); dzSub[, v2] = asOrdered(dzSub[, v2], levs)
+			}
+			fit = NULL
+			invisible(capture.output(fit <- tryCatch(umxACE(paste0("ACE_", varName), selDVs = varName, mzData = mzSub, dzData = dzSub, sep = sep, tryHard = tryHard), error = function(e) NULL), type = c("output", "message")))
+			if(is.null(fit) || is.null(fit$output)) {
+				aceFailed = aceFailed + 1L
+			} else {
+				ace[n, ] = c(mxEval(top.a_std, fit)[1, 1], mxEval(top.c_std, fit)[1, 1], mxEval(top.e_std, fit)[1, 1])
+			}
+		}
 	}
 	if(all(is.na(df$Thresholds))) {
 		# All continuous: numeric Mean and SD, as before
@@ -5324,12 +5353,17 @@ umxSummarizeTwinData = function(data = NULL, selVars = NULL, sep = "_T", zyg = "
 	}
 	if(all(is.na(df$SD))) df$SD = NULL
 	if(twoGroup) names(df)[names(df) == "N_MZ_DZ"] = "N (MZ/DZ)"
+	if(showACE) {
+		df$a = round(ace[, "a"], digits); df$c = round(ace[, "c"], digits); df$e = round(ace[, "e"], digits)
+	}
 
 	cat("\n")
 	umx_print(df, caption = "Means, SDs, and twin-pair correlations by zygosity", digits = digits, report = report)
 	if(show == "ci") cat("\nNote: Bracketed values denote 95% Confidence Intervals.\n") else cat("\nNote: Values in parentheses are standard errors.\n")
 	if(any(!is.na(df$Thresholds)) && !is.null(df$Thresholds)) cat("Note: For binary/ordinal traits, Mean is the proportion endorsed (SE), Thresholds are on the liability scale (SE), and r is polychoric.\n")
 	if(twoGroup) cat("Note: (n = MZ/DZ) represents exact pairwise complete twin pairs for that variable.\n")
+	if(showACE) cat("Note: a, c, e are standardized path coefficients from a univariate ACE model per variable.\n")
+	if(showACE && aceFailed) cat("Note: ACE fit failed for ", aceFailed, " variable(s): shown as NA.\n")
 
 	invisible(df)
 }
