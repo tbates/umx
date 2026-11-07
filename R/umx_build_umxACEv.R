@@ -464,7 +464,7 @@ umxSummaryACEv <- function(model, digits = 2, comparison = NULL, std = TRUE, sho
 	}
 	names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar))
 
-	umx_print(Estimates, digits = digits, caption = caption, append=FALSE, sortableDF=TRUE, both=TRUE, na.print="NA", file=report, zero.print = zero.print)
+	umx_print(Estimates, digits = digits, caption = caption, append=FALSE, sortableDF=TRUE, both=TRUE, na.print="NA", report=report, zero.print = zero.print)
 	xmu_twin_print_means(model, digits = digits, report = report)
 	
 	if(extended == TRUE) {
