@@ -53,3 +53,28 @@ test_that("umxSummarizeTwinData warns and uses unsplit levels when sex codes mat
 	expect_warning(r <- quiet(umxSummarizeTwinData(t, sep = "", selVars = "wt", zyg = "zyg2", sex = "sex_")), "no pair sexes recognized")
 	expect_equal(names(r), c("Var", "Mean", "SD", "rDZ", "rMZ"))
 })
+
+test_that("umxSummarizeTwinData showACE matches direct umxACE fits", {
+	MZs = c("MZFF", "MZMM"); DZs = c("DZFF", "DZMM", "DZOS")
+	r = quiet(umxSummarizeTwinData(twinData, sep = "", selVars = c("wt", "ht"), MZ = MZs, DZ = DZs, showACE = TRUE))
+	expect_equal(names(r)[(length(names(r)) - 2):length(names(r))], c("a", "c", "e"))
+	mz = twinData[twinData$zygosity %in% MZs, ]; dz = twinData[twinData$zygosity %in% DZs, ]
+	oldSilent = umx_set_silent(TRUE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	m1 = quiet(umxACE("ACE_wt_check", selDVs = "wt", mzData = mz, dzData = dz, sep = ""))
+	expect_equal(r$a[1], round(OpenMx::mxEval(top.a_std, m1)[1, 1], 2))
+	expect_equal(r$c[1], round(OpenMx::mxEval(top.c_std, m1)[1, 1], 2))
+	expect_equal(r$e[1], round(OpenMx::mxEval(top.e_std, m1)[1, 1], 2))
+})
+
+test_that("umxSummarizeTwinData showACE fits ordinal rows, squares sum to 1", {
+	r = quiet(umxSummarizeTwinData(td, sep = "", selVars = "obese", MZ = c("MZFF", "MZMM"), DZ = c("DZFF", "DZMM", "DZOS"), showACE = TRUE))
+	expect_true(all(is.finite(c(r$a, r$c, r$e))))
+	expect_equal(r$a^2 + r$c^2 + r$e^2, 1, tolerance = 0.02)
+})
+
+test_that("umxSummarizeTwinData showACE works in five-group mode", {
+	r = quiet(umxSummarizeTwinData(twinData, sep = "", selVars = "wt", showACE = TRUE))
+	expect_true(all(c("a", "c", "e") %in% names(r)))
+	expect_true(all(is.finite(c(r$a, r$c, r$e))))
+})
