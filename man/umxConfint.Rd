@@ -12,7 +12,8 @@ umxConfint(
   run = FALSE,
   report = !run,
   showErrorCodes = FALSE,
-  optimizer = c("SLSQP", "NPSOL", "CSOLNP", "current")
+  optimizer = c("SLSQP", "NPSOL", "CSOLNP", "current"),
+  type = c("profile", "wald")
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ umxConfint(
 \item{showErrorCodes}{(default = FALSE)}
 
 \item{optimizer}{For difficult CIs, trying other optimizers can help!}
+
+\item{type}{Which intervals to compute: \code{"profile"} (default) runs likelihood-based intervals, repairing any mirror side by table surgery; \code{"wald"} reports estimate +- z * SE (fitted SEs, or delta-method SEs for algebra cells) with no refits, stored on the model for \code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}}.}
 }
 \value{
 \itemize{
@@ -38,7 +41,7 @@ umxConfint(
 }
 }
 \description{
-Implements confidence interval function for umx models.
+Implements confidence interval function for umx models, either likelihood-based (profile) intervals or Wald intervals from the standard errors.
 }
 \details{
 Note: By default, requesting new CIs wipes the existing ones.
@@ -49,6 +52,10 @@ Because CIs can take time to run, by default only already-computed CIs will be r
 \emph{Note}: OpenMx defines a \code{confint} function which will return SE-based CIs.
 
 If \code{parm} is empty, and \code{run = FALSE}, a message will alert you to set \code{run = TRUE}.
+
+With \code{type = "profile"}, each computed interval is checked for a mirror solution: the estimate is clearly not zero, the interval crosses zero, and one side is more than 3 times wider than the other. The wild side is then replaced by mirroring the narrow side's width, e.g. \code{0.74 [-0.84, 0.84]} becomes \code{0.74 [0.64, 0.84]}. Each repair prints a message and is stamped "(mirrored)" in the printed table. A crossing interval centered on zero instead of on its estimate (midpoint less than halfway from zero to the estimate) cannot be repaired and is left as computed, with a warning that it spans a mirror and is untrustworthy. Intervals centered on their estimate are left alone. A degenerate interval (a bound equal to the estimate, or non-finite) warns and is left as computed.
+
+With \code{type = "wald"}, each interval is estimate +- z * SE, with no refits. Free parameters use the fitted standard errors; algebra cells such as \code{parm = "smart"} on a twin model use delta-method SEs from \code{\link[OpenMx:mxSE]{OpenMx::mxSE()}}. Labels with no computable SE are skipped with a warning; if no interval computes, it stops. Wald intervals are stored on the model, with matching requests, so \code{\link[=plot]{plot()}} and \code{\link[=umxSummary]{umxSummary()}} draw them; a later profile run replaces them.
 }
 \examples{
 \dontrun{
@@ -90,6 +97,9 @@ tmp = umxConfint(m1, parm = "G_to_x1", run = TRUE, wipeExistingRequests = TRUE)
 
 # smart: free standardized cells for CP, ACE, and IP; every free label for RAM
 m2 = umxConfint(m1, "smart")
+
+# Wald intervals from the fitted standard errors, with no refits
+umxConfint(m2, parm = "all", type = "wald")
 }
 
 }

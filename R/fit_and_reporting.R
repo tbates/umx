@@ -726,7 +726,7 @@ loadings.MxModel <- function(x, ...) {
 
 #' Get confidence intervals from a umx model
 #'
-#' Implements confidence interval function for umx models.
+#' Implements confidence interval function for umx models, either likelihood-based (profile) intervals or Wald intervals from the standard errors.
 #' 
 #' Note: By default, requesting new CIs wipes the existing ones.
 #' To keep these, set wipeExistingRequests = FALSE.
@@ -737,6 +737,10 @@ loadings.MxModel <- function(x, ...) {
 #' 
 #' If `parm` is empty, and `run = FALSE`, a message will alert you to set `run = TRUE`. 
 #'
+#' With `type = "profile"`, each computed interval is checked for a mirror solution: the estimate is clearly not zero, the interval crosses zero, and one side is more than 3 times wider than the other. The wild side is then replaced by mirroring the narrow side's width, e.g. `0.74 [-0.84, 0.84]` becomes `0.74 [0.64, 0.84]`. Each repair prints a message and is stamped "(mirrored)" in the printed table. A crossing interval centered on zero instead of on its estimate (midpoint less than halfway from zero to the estimate) cannot be repaired and is left as computed, with a warning that it spans a mirror and is untrustworthy. Intervals centered on their estimate are left alone. A degenerate interval (a bound equal to the estimate, or non-finite) warns and is left as computed.
+#'
+#' With `type = "wald"`, each interval is estimate +- z * SE, with no refits. Free parameters use the fitted standard errors; algebra cells such as `parm = "smart"` on a twin model use delta-method SEs from [OpenMx::mxSE()]. Labels with no computable SE are skipped with a warning; if no interval computes, it stops. Wald intervals are stored on the model, with matching requests, so [plot()] and [umxSummary()] draw them; a later profile run replaces them.
+#'
 #' @param object An [OpenMx::mxModel()], possibly already containing [OpenMx::mxCI()]s that have been [OpenMx::mxRun()] with intervals = TRUE))
 #' @param parm Which intervals to request. `"existing"` keeps the requests already on the model. `"all"` requests every free parameter label. `"smart"` requests one interval per free cell of the standardized algebras for CP, ACE, and IP (raw `a_cp`, `c_cp`, and `e_cp` for CP; the raw path matrices when no `*_std` algebra is present). For a RAM model, `"smart"` requests every free parameter label. One or more names request those labels.
 #' @param level The confidence level required (default = .95)
@@ -745,6 +749,7 @@ loadings.MxModel <- function(x, ...) {
 #' @param wipeExistingRequests Whether to remove existing CIs when adding new ones (ignored if parm = 'existing').
 #' @param optimizer For difficult CIs, trying other optimizers can help!
 #' @param showErrorCodes (default = FALSE)
+#' @param type Which intervals to compute: `"profile"` (default) runs likelihood-based intervals, repairing any mirror side by table surgery; `"wald"` reports estimate +- z * SE (fitted SEs, or delta-method SEs for algebra cells) with no refits, stored on the model for [plot()] and [umxSummary()].
 #' @export
 #' @return - [OpenMx::mxModel()]
 #' @family Reporting functions
@@ -790,15 +795,164 @@ loadings.MxModel <- function(x, ...) {
 #' 
 #' # smart: free standardized cells for CP, ACE, and IP; every free label for RAM
 #' m2 = umxConfint(m1, "smart")
+#' 
+#' # Wald intervals from the fitted standard errors, with no refits
+#' umxConfint(m2, parm = "all", type = "wald")
 #' }
 #'
-umxConfint <- function(object, parm = c("existing", "all", "or one or more labels", "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, report = !run, showErrorCodes = FALSE, optimizer= c("SLSQP", "NPSOL", "CSOLNP", "current")) {
+umxConfint <- function(object, parm = c("existing", "all", "or one or more labels", "smart"), wipeExistingRequests = TRUE, level = 0.95, run = FALSE, report = !run, showErrorCodes = FALSE, optimizer= c("SLSQP", "NPSOL", "CSOLNP", "current"), type = c("profile", "wald")) {
+	type = match.arg(type)
 	optimizer = match.arg(optimizer)
 	if(optimizer == "current"){
 		# optimizer is sent to omxRunCI so set "current" to the actual name
 		optimizer = umx_set_optimizer(silent = TRUE)
 	}
 	parm = xmu_match.arg(parm, c("existing", "all", "or one or more labels", "smart"), check = FALSE)
+
+	# Smart labels for twin models, shared by profile requests and Wald intervals.
+	# RAM resolves smart to its free labels in each path below.
+	smartLabels = NULL
+	if(length(parm) == 1 && parm == "smart" && !umx_is_RAM(object)){
+		modelClass = class(object)[[1]]
+		stdTargets = NULL
+		if(modelClass == "MxModelCP"){
+			stdTargets = c(a_cp = "top.a_cp", c_cp = "top.c_cp", e_cp = "top.e_cp", cp_loadings = "top.cp_loadings_std", as = "top.as_std", cs = "top.cs_std", es = "top.es_std")
+		} else if(modelClass == "MxModelACE"){
+			if(is.null(object$top$a_std)){
+				stdTargets = c(a = "top.a", c = "top.c", e = "top.e")
+			} else {
+				stdTargets = c(a = "top.a_std", c = "top.c_std", e = "top.e_std")
+			}
+		} else if(modelClass == "MxModelIP"){
+			if(is.null(object$top$ai_std)){
+				stdTargets = c(ai = "top.ai", ci = "top.ci", ei = "top.ei", as = "top.as", cs = "top.cs", es = "top.es")
+			} else {
+				stdTargets = c(ai = "top.ai_std", ci = "top.ci_std", ei = "top.ei_std", as = "top.as_std", cs = "top.cs_std", es = "top.es_std")
+			}
+		}
+		if(is.null(stdTargets)){
+			stop("umxConfint(parm = 'smart') does not know class ", omxQuotes(modelClass), ". Use parm = 'all' or name the labels.")
+		}
+		# One label per free cell. The row and column come from the label, so indexes past 9 stay intact.
+		smartLabels = character(0)
+		for(matName in names(stdTargets)){
+			freeMat = object$top[[matName]]$free
+			template = umxMatrix("A", "Full", nrow(freeMat), ncol(freeMat))$labels
+			cells = gsub("^.*_r([0-9]+)c([0-9]+)$", paste0(stdTargets[[matName]], "[\\1,\\2]"), template)
+			smartLabels = c(smartLabels, cells[which(freeMat)])
+		}
+	}
+
+	if(type == "wald"){
+		if(length(parm) > 1 || !parm %in% c("existing", "all", "smart")){
+			waldLabels = parm
+		} else if(parm == "all"){
+			waldLabels = names(omxGetParameters(object, free = TRUE))
+		} else if(parm == "smart"){
+			if(umx_is_RAM(object)){
+				waldLabels = names(omxGetParameters(object, free = TRUE))
+			} else {
+				waldLabels = smartLabels
+			}
+		} else {
+			waldLabels = names(object$intervals)
+			if(length(waldLabels) == 0){
+				message("Polite note: This model has no CI requests yet. Perhaps you wanted parm = 'all' to get Wald intervals on all free parameters?")
+				return(invisible(object))
+			}
+		}
+		waldLabels = unique(waldLabels)
+		if(is.null(object$output) || is.null(object$output$standardErrors)){
+			stop("Polite note: This model has no standard errors yet. Fit it first (e.g. m1 = mxRun(m1)) so Wald intervals can be computed.", call. = FALSE)
+		}
+		freeEst = omxGetParameters(object, free = TRUE)
+		freeSE = object$output$standardErrors
+		if(length(freeSE) != length(freeEst)){
+			stop("Polite note: This model's standard errors do not line up with its free parameters, so Wald intervals cannot be computed.", call. = FALSE)
+		}
+		names(freeSE) = names(freeEst)
+		estVals = rep(NA_real_, length(waldLabels))
+		seVals = rep(NA_real_, length(waldLabels))
+		names(estVals) = waldLabels
+		names(seVals) = waldLabels
+		usedDelta = FALSE
+		for(waldLabel in waldLabels){
+			if(waldLabel %in% names(freeEst) && !is.na(freeSE[waldLabel])){
+				estVals[waldLabel] = freeEst[waldLabel]
+				seVals[waldLabel] = freeSE[waldLabel]
+			} else if(grepl("^(.+)\\[([0-9]+),([0-9]+)\\]$", waldLabel)){
+				deltaSE = suppressWarnings(tryCatch({ mxSE(waldLabel, object, silent = TRUE)[1, 1] }, error = function(e){ NA }))
+				deltaMat = sub("^(.+)\\[([0-9]+),([0-9]+)\\]$", "\\1", waldLabel)
+				deltaRow = as.numeric(sub("^(.+)\\[([0-9]+),([0-9]+)\\]$", "\\2", waldLabel))
+				deltaCol = as.numeric(sub("^(.+)\\[([0-9]+),([0-9]+)\\]$", "\\3", waldLabel))
+				deltaEst = tryCatch({ mxEvalByName(deltaMat, object)[deltaRow, deltaCol] }, error = function(e){ NA })
+				if(length(deltaSE) == 1 && length(deltaEst) == 1 && is.finite(deltaSE) && is.finite(deltaEst)){
+					estVals[waldLabel] = deltaEst
+					seVals[waldLabel] = deltaSE
+					usedDelta = TRUE
+				}
+			}
+		}
+		failedLabels = waldLabels[is.na(seVals)]
+		okLabels = waldLabels[!is.na(seVals)]
+		if(length(okLabels) == 0){
+			stop("Polite note: umxConfint(type = 'wald') needs a standard error for each requested interval. No SE for: ", paste(failedLabels, collapse = ", "), ". SEs exist for free parameters of a fitted model, and for algebra cells with delta-method SEs.", call. = FALSE)
+		}
+		if(length(failedLabels) > 0){
+			warning("umxConfint: no SE could be computed for ", paste(failedLabels, collapse = ", "), "; skipped.", call. = FALSE)
+		}
+		waldLabels = okLabels
+		estVals = estVals[okLabels]
+		seVals = seVals[okLabels]
+		if(usedDelta){
+			message("Polite note: Wald intervals for algebra cells use delta-method SEs from mxSE().")
+		}
+		zCrit = qnorm(1 - (1 - level)/2)
+		waldTable = cbind(lbound = estVals - zCrit * seVals, estimate = estVals, ubound = estVals + zCrit * seVals, se = seVals)
+		if(isTRUE(report)){
+			print(round(waldTable, 3))
+		}
+		# Store the Wald intervals on the model so plot() and umxSummary() draw them.
+		# A later profile run replaces them.
+		if(wipeExistingRequests){
+			if(length(object$intervals)){
+				object = mxModel(object, remove = TRUE, object$intervals)
+				message("Removed existing CIs")
+			}
+			ciTable = matrix(numeric(0), nrow = 0, ncol = 3, dimnames = list(NULL, c("lbound", "estimate", "ubound")))
+			codeTable = matrix(numeric(0), nrow = 0, ncol = 2, dimnames = list(NULL, c("lbound", "ubound")))
+		} else {
+			ciTable = object$output$confidenceIntervals
+			if(!is.matrix(ciTable) || !all(c("lbound", "estimate", "ubound") %in% colnames(ciTable))){
+				ciTable = matrix(numeric(0), nrow = 0, ncol = 3, dimnames = list(NULL, c("lbound", "estimate", "ubound")))
+			}
+			codeTable = object$output$confidenceIntervalCodes
+			if(!is.matrix(codeTable) || is.null(rownames(codeTable))){
+				codeTable = matrix(0, nrow = nrow(ciTable), ncol = 2, dimnames = list(rownames(ciTable), c("lbound", "ubound")))
+			}
+		}
+		for(waldLabel in waldLabels){
+			waldRow = c(waldTable[waldLabel, "lbound"], waldTable[waldLabel, "estimate"], waldTable[waldLabel, "ubound"])
+			if(waldLabel %in% rownames(ciTable)){
+				ciTable[waldLabel, ] = waldRow
+			} else {
+				ciTable = rbind(ciTable, matrix(waldRow, nrow = 1, dimnames = list(waldLabel, c("lbound", "estimate", "ubound"))))
+			}
+			if(waldLabel %in% rownames(codeTable)){
+				codeTable[waldLabel, ] = c(0, 0)
+			} else {
+				codeTable = rbind(codeTable, matrix(c(0, 0), nrow = 1, dimnames = list(waldLabel, c("lbound", "ubound"))))
+			}
+		}
+		object@output$confidenceIntervals = ciTable
+		object@output$confidenceIntervalCodes = codeTable
+		missingReq = waldLabels[!waldLabels %in% names(object$intervals)]
+		if(length(missingReq) > 0){
+			object = mxModel(object, mxCI(missingReq, interval = level))
+		}
+		message("umxConfint: stored ", length(waldLabels), " Wald intervals on the model for plot() and umxSummary(). These are Wald (SE-based), not profile, intervals.")
+		return(invisible(object))
+	}
 
 	# Upgrade "all" to "smart" for CP
 	if(class(object)[[1]] == "MxModelCP" && parm == "all"){
@@ -822,36 +976,10 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 		CIs_to_set = names(omxGetParameters(object, free = TRUE))
 		object = mxModel(object, mxCI(CIs_to_set, interval = level))
 	} else if (parm == "smart"){
-		modelClass = class(object)[[1]]
-		stdTargets = NULL
-		if(modelClass == "MxModelCP"){
-			stdTargets = c(a_cp = "top.a_cp", c_cp = "top.c_cp", e_cp = "top.e_cp", cp_loadings = "top.cp_loadings_std", as = "top.as_std", cs = "top.cs_std", es = "top.es_std")
-		} else if(modelClass == "MxModelACE"){
-			if(is.null(object$top$a_std)){
-				stdTargets = c(a = "top.a", c = "top.c", e = "top.e")
-			} else {
-				stdTargets = c(a = "top.a_std", c = "top.c_std", e = "top.e_std")
-			}
-		} else if(modelClass == "MxModelIP"){
-			if(is.null(object$top$ai_std)){
-				stdTargets = c(ai = "top.ai", ci = "top.ci", ei = "top.ei", as = "top.as", cs = "top.cs", es = "top.es")
-			} else {
-				stdTargets = c(ai = "top.ai_std", ci = "top.ci_std", ei = "top.ei_std", as = "top.as_std", cs = "top.cs_std", es = "top.es_std")
-			}
-		}
-		if(!is.null(stdTargets)){
-			# One request per free cell. The row and column come from the label, so indexes past 9 stay intact.
-			CIs2Add = character(0)
-			for(matName in names(stdTargets)){
-				freeMat = object$top[[matName]]$free
-				template = umxMatrix("A", "Full", nrow(freeMat), ncol(freeMat))$labels
-				cells = gsub("^.*_r([0-9]+)c([0-9]+)$", paste0(stdTargets[[matName]], "[\\1,\\2]"), template)
-				CIs2Add = c(CIs2Add, cells[which(freeMat)])
-			}
-		} else if(umx_is_RAM(object)){
+		if(umx_is_RAM(object)){
 			CIs2Add = names(omxGetParameters(object, free = TRUE))
 		} else {
-			stop("umxConfint(parm = 'smart') does not know class ", omxQuotes(modelClass), ". Use parm = 'all' or name the labels.")
+			CIs2Add = smartLabels
 		}
 		if(length(CIs2Add) == 0){
 			message("No free cells to add CIs for.")
@@ -890,6 +1018,45 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 			}
 		}
 	}
+	# 3b. Repair mirror solutions by table surgery (profile only): a clearly non-zero estimate
+	# whose interval crosses zero with one side more than 3x the other gets the wild side
+	# replaced by mirroring the narrow side. Idempotent: repaired intervals no longer cross zero.
+	# A crossing interval centered on zero instead of on its estimate warns and is left as computed.
+	mirroredLabels = character(0)
+	if(type == "profile" && umx_has_CIs(object, "output")){
+		ciTable = object$output$confidenceIntervals
+		if(is.matrix(ciTable) && all(c("lbound", "estimate", "ubound") %in% colnames(ciTable))){
+			for(ciRow in rownames(ciTable)){
+				lb = ciTable[ciRow, "lbound"]
+				est = ciTable[ciRow, "estimate"]
+				ub = ciTable[ciRow, "ubound"]
+				if(!all(is.finite(c(lb, est, ub))) || !(lb < est && est < ub)){
+					warning("umxConfint: the interval for ", ciRow, " [", round(lb, 3), ", ", round(ub, 3), "] (estimate ", round(est, 3), ") is degenerate; left as computed.", call. = FALSE)
+					next
+				}
+				if(lb < 0 && ub > 0 && est != 0){
+					lowerWidth = est - lb
+					upperWidth = ub - est
+					narrowWidth = min(lowerWidth, upperWidth)
+					wideWidth = max(lowerWidth, upperWidth)
+					midPoint = (lb + ub)/2
+					if(narrowWidth < abs(est) && wideWidth/narrowWidth > 3){
+						if(lowerWidth > upperWidth){
+							ciTable[ciRow, "lbound"] = est - upperWidth
+							message("umxConfint: mirrored the wild lower limit of ", ciRow, " from ", round(lb, 3), " to ", round(est - upperWidth, 3))
+						} else {
+							ciTable[ciRow, "ubound"] = est + lowerWidth
+							message("umxConfint: mirrored the wild upper limit of ", ciRow, " from ", round(ub, 3), " to ", round(est + lowerWidth, 3))
+						}
+						mirroredLabels = c(mirroredLabels, ciRow)
+					} else if(midPoint/est < 0.5){
+						warning("umxConfint: the interval for ", ciRow, " [", round(lb, 3), ", ", round(ub, 3), "] spans a mirror and is untrustworthy; left as computed.", call. = FALSE)
+					}
+				}
+			}
+			object@output$confidenceIntervals = ciTable
+		}
+	}
 	# 4. Report CIs
 	if(!umx_has_CIs(object, "both")) {
 		if(run == FALSE){
@@ -907,29 +1074,33 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 		# 1. Summarize model
 		model_summary = summary(object, verbose = TRUE)
 		# 2. Extract CIs and details, and arrange for merging
-		CIdetail = model_summary$CIdetail
-		CIdetail = CIdetail[, c("parameter", "value", "side", "diagnostic", "statusCode")]
-		CIdetail$diagnostic = as.character(CIdetail$diagnostic)
-		CIdetail$statusCode = as.character(CIdetail$statusCode)
-		CIdetail$diagnostic = namez(CIdetail$diagnostic, pattern = "alpha level not reached"         , replacement = "alpha hi")
-		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "infeasible non-linear constraint", replacement = "constrained")
-		CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "iteration limit/blue"            , replacement = "blue")
-
 		CIs = model_summary$CI
 		CIs$parameter = row.names(CIs)
 		row.names(CIs) = NULL
 		CIs = CIs[, c("parameter", "estimate", "lbound", "ubound", "note")]
-		intersect(names(CIdetail), names(CIs))
-		tmp = merge(CIs, CIdetail[CIdetail$side == "lower", ], by = "parameter", all.x = TRUE)
-		tmp = merge(tmp, CIdetail[CIdetail$side == "upper", ], by = "parameter", all.x = TRUE, suffixes = c(".lower",".upper"))
-		tmp$side.lower = NULL
-		tmp$side.upper = NULL
+		if(!is.null(model_summary$CIdetail)){
+			CIdetail = model_summary$CIdetail
+			CIdetail = CIdetail[, c("parameter", "value", "side", "diagnostic", "statusCode")]
+			CIdetail$diagnostic = as.character(CIdetail$diagnostic)
+			CIdetail$statusCode = as.character(CIdetail$statusCode)
+			CIdetail$diagnostic = namez(CIdetail$diagnostic, pattern = "alpha level not reached"         , replacement = "alpha hi")
+			CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "infeasible non-linear constraint", replacement = "constrained")
+			CIdetail$statusCode = namez(CIdetail$statusCode, pattern = "iteration limit/blue"            , replacement = "blue")
+
+			intersect(names(CIdetail), names(CIs))
+			tmp = merge(CIs, CIdetail[CIdetail$side == "lower", ], by = "parameter", all.x = TRUE)
+			tmp = merge(tmp, CIdetail[CIdetail$side == "upper", ], by = "parameter", all.x = TRUE, suffixes = c(".lower",".upper"))
+			tmp$side.lower = NULL
+			tmp$side.upper = NULL
+		}
 
 		# 3. Format CIs
 		model_CIs   = round(CIs[,c("lbound", "estimate", "ubound")], 3)
 		model_CI_OK = object$output$confidenceIntervalCodes
 		colnames(model_CI_OK) = c("lbound Code", "ubound Code")
 		model_CIs =	cbind(round(model_CIs, 3), model_CI_OK)
+		mirroredHere = rownames(model_CIs) %in% mirroredLabels
+		rownames(model_CIs)[mirroredHere] = paste0(rownames(model_CIs)[mirroredHere], " (mirrored)")
 		print(model_CIs)
 		npsolMessages = list(
 		'1' = 'The final iterate satisfies the optimality conditions to the accuracy requested, but the sequence of iterates has not yet converged. NPSOL was terminated because no further improvement could be made in the merit function (Mx status GREEN).',
