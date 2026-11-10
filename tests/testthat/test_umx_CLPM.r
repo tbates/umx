@@ -69,3 +69,33 @@ test_that("testing xmu_relevel_factors", {
 	expect_message(xmu_relevel_factors(df_low_levels, cols = c("group"), prop = 0.1, min = 3), 
 								 "Number of levels in the first column is less than 3. No changes made.")
 })
+
+test_that("xmu_relevel_factors applies the first column's collapsing to every column (longitudinal)", {
+	lv <- as.character(0:9)
+	# wave 1 is sparse above 5; the later waves have values in those levels too
+	w1 <- c(rep(0:5, each = 10), 6, 7, 8, 9)
+	w2 <- c(rep(0:5, each = 10), 9, 9, 8, 7)
+	w3 <- c(rep(0:5, each = 10), 6, 6, 6, 6)
+	df <- data.frame(
+		x1 = factor(w1, levels = lv, ordered = TRUE),
+		x2 = factor(w2, levels = lv, ordered = TRUE),
+		x3 = factor(w3, levels = lv, ordered = TRUE)
+	)
+	out <- xmu_relevel_factors(df, cols = c("x1", "x2", "x3"), prop = 0.05, min = 2)
+
+	# no observed value is lost at any wave
+	expect_equal(colSums(!is.na(out)), colSums(!is.na(df)))
+	# all waves share the same levels, and stay ordered
+	expect_true(all(sapply(out, function(x) identical(levels(x), levels(out$x1)))))
+	expect_true(all(sapply(out, is.ordered)))
+	# the same original score maps to the same category at every wave
+	pairs <- unique(rbind(
+		data.frame(raw = w1, new = as.character(out$x1)),
+		data.frame(raw = w2, new = as.character(out$x2)),
+		data.frame(raw = w3, new = as.character(out$x3))
+	))
+	expect_equal(anyDuplicated(pairs$raw), 0)
+	# sparse top levels of wave 1 are folded into 5, at every wave
+	expect_equal(levels(out$x1), as.character(0:5))
+	expect_true(all(as.character(out$x2[w2 > 5]) == "5"))
+})

@@ -25,7 +25,9 @@ have potentially collapsed levels based on the criteria provided.
 Levels that make up less than a specified proportion of total observations are collapsed into the previous level,
 providing that a minimum number of levels remains.
 
-The levels of the remaining factor columns are synchronized with the updated levels of the first specified column.
+Which levels to collapse is decided from the first column. The same collapsing is then applied to every
+column in \code{cols} (e.g., all waves of a longitudinal measure, or both twins), so the columns share levels and
+no observed value becomes \code{NA}.
 Variables named in \code{cols} must be factors. Note too that prop uses e.g., .1 to stand for 10 percent.
 }
 \examples{
