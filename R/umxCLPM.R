@@ -128,9 +128,9 @@ umxCLPM <- function(data = NULL,waves, X = NULL, Y = NULL, sep = "_W", group = N
 				if (verbose) message("X are count data")
 			} 
 
-		max_counts = sapply(data[,counts_names], max, na.rm = TRUE)
-		mu_counts = sapply(data[,counts_names], function(x) sum(x > 0, na.rm = TRUE))
-		zi_counts = sapply(data[,counts_names], function(x) mean(x == 0, na.rm = TRUE))  
+		max_counts  = sapply(data[,counts_names], max, na.rm = TRUE)
+		mu_counts   = sapply(data[,counts_names], function(x) sum(x > 0, na.rm = TRUE))
+		zi_counts   = sapply(data[,counts_names], function(x) mean(x == 0, na.rm = TRUE))  
 		size_counts = sapply(data[,counts_names], function(x) sd(x == 0, na.rm = TRUE))  
 
 		mxMNB = mxMarginalNegativeBinomial( # here you specify the distribution
