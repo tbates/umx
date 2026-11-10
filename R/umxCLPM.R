@@ -383,7 +383,9 @@ if (!sketch) m1  = xmu_safe_run_summary(m1, autoRun = autoRun,  summary = summar
 #' Levels that make up less than a specified proportion of total observations are collapsed into the previous level,
 #' providing that a minimum number of levels remains. 
 #' 
-#' The levels of the remaining factor columns are synchronized with the updated levels of the first specified column.
+#' Which levels to collapse is decided from the first column. The same collapsing is then applied to every
+#' column in `cols` (e.g., all waves of a longitudinal measure, or both twins), so the columns share levels and
+#' no observed value becomes `NA`.
 #' Variables named in `cols` must be factors. Note too that prop uses e.g., .1 to stand for 10 percent.
 #'
 #' @param df A data frame containing the factor columns to be modified.
@@ -424,47 +426,36 @@ xmu_relevel_factors <- function(df, cols, prop = .1, min = 8) {
 		stop("All columns must have the same number of levels")
 	}
 
-		# Get the levels of the first column
-	first_col_levels <- levels(df[[cols[1]]])
-
-		# Calculate the percentage of total observations for each level
+		# Calculate the percentage of total observations for each level (first column)
 	lev_perc <- table(df[[cols[1]]]) / length(df[[cols[1]]])
 
 		# Get the levels in order
 	ordered_levels <- levels(df[[cols[1]]])
 
-		# Initialize a new vector to hold the collapsed levels
-	new_vector <- df[[cols[1]]]
+		# map[old level] = level it is collapsed into (identity to start)
+	map <- stats::setNames(ordered_levels, ordered_levels)
 
-		# Loop over the levels
+		# Loop over the levels, from the top
 	for (i in length(ordered_levels):2) {
 		lev <- ordered_levels[i]
 				# If the level makes up less than prop of the observations
 		if (lev_perc[lev] < prop) {
-						# Find the previous level
-			prev_lev <- ordered_levels[i - 1]
-
-						# Collapse the level into the previous level
-			new_vector[new_vector == lev] <- prev_lev
+						# Collapse the level (and anything already folded into it) into the previous level
+			map[map == lev] <- ordered_levels[i - 1]
 		}
 
 				# Ensure there are at least `min` levels left
-		if (length(unique(new_vector)) <= min) break
+		if (length(unique(map[as.character(df[[cols[1]]])])) <= min) break
 	}
 
-		# Relevel the factor with the original order
-	df[[cols[1]]] <- factor(new_vector, levels = ordered_levels)
-
-		# Remove empty levels
-	df[[cols[1]]] <- droplevels(df[[cols[1]]])
-
-		# Apply the same levels to the remaining columns
-	for (col in cols[-1]) {
-		if (is.factor(df[[col]])) {
-			df[[col]] <- factor(df[[col]], levels = levels(df[[cols[1]]]))
-		}
+		# Apply the same mapping to every column (e.g. all waves, or both twins), so a
+		# value in a collapsed level at a later column is recoded rather than set to NA.
+	# Levels left after collapsing, minus any that are empty in every column.
+	recoded <- lapply(df[cols], function(x) unname(map[as.character(x)]))
+	kept <- ordered_levels[ordered_levels %in% unlist(recoded)]
+	for (col in cols) {
+		df[[col]] <- factor(recoded[[col]], levels = kept, ordered = is.ordered(df[[col]]))
 	}
-
 	return(df)
 }
 

@@ -1,6 +1,7 @@
 # Releases
 ## umx 4.85.0: Dev
 * Date: 2026-10-12 R 4.6.1
+* FIXED: `xmu_relevel_factors()` applies the collapsing decided from the first column to every column in `cols`. Before, the other columns only took the first column's reduced levels, so a value in a collapsed level (e.g., a high score at a later wave, or in the second twin) became `NA`. `umxCLPM()` and `umxDoC2()` relevel through this function. A level that is empty in the first column but observed in another is no longer dropped. (Luis De Araujo)
 * NEW: `umxSummarizeTwinData(showACE = TRUE)` adds `a`, `c`, `e` columns with the standardized path coefficients from a univariate `umxACE()` fit per variable. MZ/DZ rows come from the `MZ =`/`DZ =` levels, or the standard groups in five-group mode. Ordinal traits are fitted as ordinal; a failed fit shows `NA`.
 * IMPROVED: `umxMRDoC()` models twin + sibling trios (member 3 detected from `_T3` columns: sibling covariance .5A + C, never T; T identified by trios alone). Zygosity levels in the `data =` path match in any case, multiple levels per group work, and rows with missing zygosity are excluded. `sibs = TRUE` without sibling data stops with an informative message. (Luis De Araujo)
 * NEW: `umxDummyCodeExogenousFactors()` replaces unordered exogenous factors in a single-group raw RAM model with the dummy columns `glm` would build. Ordered factors are left unchanged. Treatment, sum, Helmert, and polynomial contrasts are accepted. `reference` chooses the dropped level for treatment contrasts. The Dobson Poisson RCT matches `glm`.
