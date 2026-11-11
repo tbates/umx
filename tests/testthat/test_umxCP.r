@@ -102,3 +102,34 @@ test_that("umxPlotCP with CIs works", {
 	digraph_se = umxPlotCP(m1, SEstyle = "mxSE", file = NA)
 	expect_true(grepl("([0-9]+\\.[0-9]+)\n\\(([0-9]+\\.[0-9]+)\\)", digraph_se))
 })
+
+test_that("umxSummaryCP uncertainty shows stored, computed, and SE intervals", {
+	require(umx)
+	data(GFF)
+	mzData = subset(GFF, zyg_2grp == "MZ")[1:60, ]
+	dzData = subset(GFF, zyg_2grp == "DZ")[1:60, ]
+	selDVs = c("gff", "fc", "qol")
+	m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 1, dzData = dzData, mzData = mzData)
+	# default with no stored intervals: computes Wald on the fly with a tip
+	fallbackMsg = testthat::capture_messages(fallbackOut <- capture.output(umxSummaryCP(m1, file = NA)))
+	expect_true(any(grepl("computing Wald intervals on the fly", fallbackMsg, fixed = TRUE)))
+	ciShown = any(grepl("[", fallbackOut, fixed = TRUE))
+	ciExplained = any(grepl("umxSummary note", fallbackMsg, fixed = TRUE))
+	expect_true(ciShown || ciExplained)
+	# stored intervals display without recomputing
+	CIlist = matrix(c(0.54, 0.70, 0.96), nrow = 1, dimnames = list("top.cp_loadings_std[1,1]", c("lbound", "estimate", "ubound")))
+	m1@output$confidenceIntervals = CIlist
+	storedMsg = testthat::capture_messages(storedOut <- capture.output(umxSummaryCP(m1, file = NA)))
+	expect_false(any(grepl("on the fly", storedMsg, fixed = TRUE)))
+	expect_true(any(grepl("0.7 [0.54, 0.96]", storedOut, fixed = TRUE)))
+	# none shows bare estimates, as does the deprecated alias
+	bareOut = capture.output(umxSummaryCP(m1, file = NA, uncertainty = "none"))
+	expect_false(any(grepl("[", bareOut, fixed = TRUE)))
+	aliasOut = capture.output(umxSummaryCP(m1, file = NA, CIs = FALSE))
+	expect_false(any(grepl("[", aliasOut, fixed = TRUE)))
+	# SE shows est (se)
+	seMsg = testthat::capture_messages(seOut <- capture.output(umxSummaryCP(m1, file = NA, uncertainty = "SE")))
+	seShown = any(grepl("[0-9] \\([0-9]", seOut))
+	seExplained = any(grepl("umxSummary note", seMsg, fixed = TRUE))
+	expect_true(seShown || seExplained)
+})

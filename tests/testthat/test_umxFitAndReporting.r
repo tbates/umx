@@ -102,6 +102,40 @@ test_that("umxSummaryACE works", {
 	expect_error(regex = NA, {umxSummaryACE(m1, returnStd = TRUE)})
 })
 
+test_that("umxSummaryACE uncertainty shows stored, computed, and SE intervals", {
+	require(umx)
+	data(twinData)
+	mzData = twinData[twinData$zygosity %in% "MZFF", ][1:40, ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ][1:40, ]
+	m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
+	# default with no stored intervals: computes Wald on the fly with a tip
+	fallbackMsg = testthat::capture_messages(fallbackOut <- capture.output(umxSummaryACE(m1, file = NA)))
+	expect_true(any(grepl("computing Wald intervals on the fly", fallbackMsg, fixed = TRUE)))
+	ciShown = any(grepl("[", fallbackOut, fixed = TRUE))
+	ciExplained = any(grepl("umxSummary note", fallbackMsg, fixed = TRUE))
+	expect_true(ciShown || ciExplained)
+	# stored intervals paste into the main table without recomputing
+	CIlist = matrix(c(0.54, 0.70, 0.96), nrow = 1, dimnames = list("top.a_std[1,1]", c("lbound", "estimate", "ubound")))
+	m1@output$confidenceIntervals = CIlist
+	storedMsg = testthat::capture_messages(storedOut <- capture.output(umxSummaryACE(m1, file = NA)))
+	expect_false(any(grepl("on the fly", storedMsg, fixed = TRUE)))
+	expect_true(any(grepl("0.7 [0.54, 0.96]", storedOut, fixed = TRUE)))
+	# none shows bare estimates, as does the deprecated alias
+	bareOut = capture.output(umxSummaryACE(m1, file = NA, uncertainty = "none"))
+	expect_false(any(grepl("[", bareOut, fixed = TRUE)))
+	aliasOut = capture.output(umxSummaryACE(m1, file = NA, CIs = FALSE))
+	expect_false(any(grepl("[", aliasOut, fixed = TRUE)))
+	# foreign stored rows are ignored, not fatal
+	CIlist = rbind(CIlist, matrix(c(0, 0, 0), nrow = 1, dimnames = list("top.expMean[1,1]", c("lbound", "estimate", "ubound"))))
+	m1@output$confidenceIntervals = CIlist
+	expect_error(umxSummaryACE(m1, file = NA), regex = NA)
+	# SE shows est (se)
+	seMsg = testthat::capture_messages(seOut <- capture.output(umxSummaryACE(m1, file = NA, uncertainty = "SE")))
+	seShown = any(grepl("[0-9] \\([0-9]", seOut))
+	seExplained = any(grepl("umxSummary note", seMsg, fixed = TRUE))
+	expect_true(seShown || seExplained)
+})
+
 test_that("xmu_dot_maker coerces logical/NULL file (options umx_auto_plot = FALSE)", {
 	require(umx)
 	# Minimal model shell for model$name only
@@ -171,6 +205,36 @@ test_that("umxSummaryIP works", {
 	m1 = umxIP(selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData)
 	expect_error(umxSummaryIP(m1), regex = NA)
 	expect_error(plot(m1), regex = NA)
+})
+
+test_that("umxSummaryIP uncertainty shows stored, computed, and SE intervals", {
+	require(umx)
+	data(twinData)
+	mzData = twinData[twinData$zygosity %in% "MZFF", ][1:40, ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ][1:40, ]
+	m1 = umxIP(selDVs = c("ht", "wt"), sep = "", dzData = dzData, mzData = mzData)
+	# default with no stored intervals: computes Wald on the fly with a tip
+	fallbackMsg = testthat::capture_messages(fallbackOut <- capture.output(umxSummaryIP(m1, file = NA)))
+	expect_true(any(grepl("computing Wald intervals on the fly", fallbackMsg, fixed = TRUE)))
+	ciShown = any(grepl("[", fallbackOut, fixed = TRUE))
+	ciExplained = any(grepl("umxSummary note", fallbackMsg, fixed = TRUE))
+	expect_true(ciShown || ciExplained)
+	# stored intervals paste into the tables without recomputing
+	CIlist = matrix(c(0.54, 0.70, 0.96), nrow = 1, dimnames = list("top.ai_std[1,1]", c("lbound", "estimate", "ubound")))
+	m1@output$confidenceIntervals = CIlist
+	storedMsg = testthat::capture_messages(storedOut <- capture.output(umxSummaryIP(m1, file = NA)))
+	expect_false(any(grepl("on the fly", storedMsg, fixed = TRUE)))
+	expect_true(any(grepl("0.7 [0.54, 0.96]", storedOut, fixed = TRUE)))
+	# none shows bare estimates, as does the deprecated alias
+	bareOut = capture.output(umxSummaryIP(m1, file = NA, uncertainty = "none"))
+	expect_false(any(grepl("[", bareOut, fixed = TRUE)))
+	aliasOut = capture.output(umxSummaryIP(m1, file = NA, CIs = FALSE))
+	expect_false(any(grepl("[", aliasOut, fixed = TRUE)))
+	# SE shows est (se)
+	seMsg = testthat::capture_messages(seOut <- capture.output(umxSummaryIP(m1, file = NA, uncertainty = "SE")))
+	seShown = any(grepl("[0-9] \\([0-9]", seOut))
+	seExplained = any(grepl("umxSummary note", seMsg, fixed = TRUE))
+	expect_true(seShown || seExplained)
 })
 
 test_that("umxExpCov works", {

@@ -1332,6 +1332,119 @@ umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digit
 }
 
 
+#' Resolve the interval table a twin summary should display
+#'
+#' Internal helper for [umxSummaryACE()], [umxSummaryCP()], and [umxSummaryIP()].
+#' For `what = "CI"`, returns the intervals already stored on the model, or
+#' computes fresh Wald intervals with [umxConfint()] when none are stored. For
+#' `what = "SE"`, always computes fresh Wald intervals and derives SEs from
+#' them: stored tables carry no type/level stamp, so only a table computed here
+#' at known level yields sound SEs.
+#'
+#' @param model A fitted twin model (MxModelACE, MxModelCP, or MxModelIP).
+#' @param what `"CI"` for an interval table, `"SE"` for per-cell standard errors.
+#' @return A list with `cis` (interval matrix or NULL) and `ses` (named standard
+#' errors or NULL). Exactly one is non-NULL, unless nothing could be computed.
+#' @family xmu internal not for end user
+#' @export
+#'
+xmu_twin_intervals <- function(model, what = c("CI", "SE")) {
+	what = match.arg(what)
+	cis = NULL
+	ses = NULL
+	stored = model$output$confidenceIntervals
+	haveStored = !is.null(stored) && is.matrix(stored) && nrow(stored) > 0
+	if(what == "CI" && haveStored){
+		cis = stored
+	} else {
+		if(what == "CI"){
+			message("Polite note: computing Wald intervals on the fly. Tip: umxConfint(model, parm = 'smart', type = 'wald') computes and stores these in the model to save time in future.")
+		}
+		# Messages suppressed: umxConfint announces intervals "stored on the model",
+		# but this copy is discarded after display. Warnings (e.g. skipped cells) still surface.
+		# Wipe is TRUE: the copy is discarded, so start from an empty table. Merging
+		# into a stored table could leave profile rows that SEs must never use.
+		fresh = tryCatch({
+			suppressMessages(umxConfint(model, parm = "smart", type = "wald", report = FALSE, wipeExistingRequests = TRUE))
+		}, error = function(e){
+			message("umxSummary note: ", conditionMessage(e))
+			return(NULL)
+		})
+		if(!is.null(fresh)){
+			freshTable = fresh$output$confidenceIntervals
+			if(!is.null(freshTable) && is.matrix(freshTable) && nrow(freshTable) > 0){
+				if(what == "CI"){
+					cis = freshTable
+				} else {
+					zCrit = qnorm(1 - (1 - 0.95)/2)
+					ses = (freshTable[, "ubound"] - freshTable[, "lbound"])/(2 * zCrit)
+					names(ses) = rownames(freshTable)
+				}
+			}
+		}
+	}
+	return(list(cis = cis, ses = ses))
+}
+
+#' Paste one interval or SE into a summary-table cell
+#'
+#' Internal helper for [umxSummaryACE()], [umxSummaryCP()], and [umxSummaryIP()].
+#' Replaces the per-summary paste loops. Leaves the cell untouched when the
+#' address has no interval, when values are not finite, or when the displayed
+#' cell itself is NA (e.g. structural upper-triangle NAs).
+#'
+#' @param df The data.frame table being built.
+#' @param i Row index of the cell.
+#' @param j Column index of the cell.
+#' @param address Bracket address to look up, e.g. "top.a_std[1,1]".
+#' @param info Display info as returned by [xmu_twin_intervals()]. NULL leaves
+#' the table untouched (the `uncertainty = "none"` path).
+#' @param digits Rounding digits.
+#' @param commaSep Separator between bounds, from [umx_set_separator()].
+#' @param style `"CI"` pastes `est [lb, ub]`; `"SE"` pastes `est (se)`.
+#' @return The data.frame, with the cell pasted or untouched.
+#' @family xmu internal not for end user
+#' @export
+#'
+xmu_paste_intervals <- function(df, i, j, address, info, digits = 2, commaSep = ", ", style = c("CI", "SE")) {
+	if(is.null(info)){
+		return(df)
+	}
+	style = match.arg(style)
+	cellEst = suppressWarnings(as.numeric(df[i, j]))
+	if(!is.finite(cellEst)){
+		return(df)
+	}
+	if(style == "CI"){
+		cis = info$cis
+		if(is.null(cis) || !address %in% rownames(cis)){
+			return(df)
+		}
+		lb = as.numeric(cis[address, "lbound"])[1]
+		ub = as.numeric(cis[address, "ubound"])[1]
+		est = as.numeric(cis[address, "estimate"])[1]
+		if(!is.finite(lb) || !is.finite(ub) || !is.finite(est)){
+			return(df)
+		}
+		pasted = paste0(round(est, digits), " [", round(lb, digits), commaSep, round(ub, digits), "]")
+	} else {
+		ses = info$ses
+		if(is.null(ses) || !address %in% names(ses)){
+			return(df)
+		}
+		se = ses[[address]]
+		if(!is.finite(se)){
+			return(df)
+		}
+		pasted = paste0(round(cellEst, digits), " (", round(se, digits), ")")
+	}
+	if(is.numeric(df[[j]])){
+		df[[j]] = format(round(df[[j]], digits), nsmall = digits, trim = TRUE, scientific = FALSE)
+	}
+	df[i, j] = pasted
+	return(df)
+}
+
 #' Shows a compact, publication-style, summary of a umx Cholesky ACE model
 #'
 #' Summarize a fitted Cholesky model returned by [umxACE()]. Can control digits, report comparison model fits,
@@ -1347,7 +1460,8 @@ umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digit
 #' @param comparison you can run mxCompare on a comparison model (NULL).
 #' @param std Whether to standardize the output (default = TRUE).
 #' @param showRg = whether to show the genetic correlations (FALSE).
-#' @param CIs Whether to show Confidence intervals if they exist (TRUE).
+#' @param CIs Deprecated. Please use `uncertainty` instead.
+#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, else Wald intervals computed on the fly), `"SE"` (delta-method standard errors, always computed on the fly), or `"none"`.
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE).
 #' @param report If "html", then open an html table of the results.
 #' @param file The name of the dot file for figure: "name" = use the name of the model.
@@ -1373,14 +1487,29 @@ umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digit
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
 #' 
-umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, uncertainty = c("CI", "SE", "none"), report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
+
+	# Handle deprecated CIs parameter and map it to uncertainty
+	if(missing(uncertainty)){
+		if(!missing(CIs)){
+			if(is.logical(CIs)){
+				uncertainty = ifelse(CIs, "CI", "none")
+			} else {
+				uncertainty = CIs
+			}
+		} else {
+			uncertainty = "CI"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
 
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message("Output for Model: ", thisFit$name)
-			umxSummaryACE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
+			umxSummaryACE(thisFit, digits = digits, file = file, showRg = showRg, std = std, comparison = comparison, CIs = CIs, uncertainty = uncertainty, returnStd = returnStd, extended = extended, zero.print = zero.print, report = report)
 		}
 	} else {
 		umx_has_been_run(model, stop = TRUE)
@@ -1431,6 +1560,21 @@ umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 			caption = paste0(caption, "A: additive genetic; C: common environment; E: unique environment.")
 		}
 		names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
+		twinInfo = NULL
+		if(uncertainty != "none"){
+			twinInfo = xmu_twin_intervals(model, what = uncertainty)
+		}
+		# Paste intervals into the main table. Displayed std cells match top.a_std etc.; raw display matches top.a etc.
+		aceSuffix = if(isTRUE(std) && !is.null(model$top$a_std)) "_std" else ""
+		aceMats = c("a", "c", "e")
+		for(m in 1:3){
+			for(r in 1:nVar){
+				for(c in 1:nVar){
+					address = paste0("top.", aceMats[m], aceSuffix, "[", r, ",", c, "]")
+					Estimates = xmu_paste_intervals(Estimates, r, (m - 1) * nVar + c, address, twinInfo, digits = digits, commaSep = commaSep, style = uncertainty)
+				}
+			}
+		}
 		umx_print(Estimates, digits = digits, caption = caption, report = report, zero.print = zero.print)
 		xmu_twin_print_means(model = model, report = report)
 
@@ -1464,71 +1608,6 @@ umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
 			umx_print(genetic_correlations, caption = "Genetic correlations", digits = digits, zero.print = zero.print)
 		}
-		hasCIs = umx_has_CIs(model)
-		if(hasCIs & CIs) {
-			# TODO umxACE CI code: Need to refactor into some function calls...
-			# TODO and then add to umxSummaryIP and CP
-			message("Creating CI-based report!")
-			# CIs exist, get lower and upper CIs as a dataframe
-			CIlist = data.frame(model$output$confidenceIntervals)
-			# Drop rows fixed to zero
-			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
-			# Discard rows named NA
-			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
-			# TODO fix for singleton CIs
-			# THIS IS NOT NEEDED: confidenceIntervals come with estimate in the middle now...
-			# These can be names ("top.a_std[1,1]") or labels ("a_r1c1")
-			# imxEvalByName finds them both
-			# outList = c();
-			# for(aName in row.names(CIlist)) {
-			# 	outList = append(outList, imxEvalByName(aName, model))
-			# }
-			# # Add estimates into the CIlist
-			# CIlist$estimate = outList
-			# reorder to match summary
-			# CIlist = CIlist[, c("lbound", "estimate", "ubound")]
-			CIlist$fullName = row.names(CIlist)
-			# Initialise empty matrices for the CI results
-			rows = dim(model$top$matrices$a$labels)[1]
-			cols = dim(model$top$matrices$a$labels)[2]
-			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
-
-			# Iterate over each CI
-			labelList = imxGenerateLabels(model)	
-			rowCount  = dim(CIlist)[1]
-			# return(CIlist)
-			for(n in 1:rowCount) { # n = 1
-				thisName = row.names(CIlist)[n] # thisName = "a11"
-					# Convert labels to [bracket] style
-					if(!umx_has_square_brackets(thisName)) {
-					nameParts = labelList[which(row.names(labelList) == thisName),]
-					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
-				}
-				fullName = CIlist$fullName[n]
-
-				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
-				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
-				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
-				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-				thisString = paste0(CIparts[1], " [",CIparts[2], commaSep, CIparts[3], "]")
-
-				if(grepl("^a", thisMatrixName)) {
-					a_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^c", thisMatrixName)){
-					c_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^e", thisMatrixName)){
-					e_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else{
-					stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
-				}
-			}
-			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
-			# TODO umxSummaryACE: Add option to use mxSE
-			Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = selDVs, stringsAsFactors = FALSE)
-			names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-			umx_print(Estimates, digits = digits, zero.print = zero.print,  report=report, file = "tmpCI.html")
-			xmu_twin_print_means(model, digits = digits, report = report)
-		} # end Use CIs
 	} # end list catcher?
 
 	if(!is.na(file) && typeof(model) != "list") {
@@ -2106,7 +2185,8 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param model A fitted [umxCP()] model to summarize
 #' @param digits Round to how many digits (default = 2)
 #' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
-#' @param CIs Whether to print a profile interval that has already been computed (default TRUE). No interval is computed here, and a model with no computed intervals prints the point estimate.
+#' @param CIs Deprecated. Please use `uncertainty` instead.
+#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, else Wald intervals computed on the fly), `"SE"` (delta-method standard errors, always computed on the fly), or `"none"`.
 #' @param showRg Whether to show the genetic correlations (default FALSE)
 #' @param comparison Run mxCompare on a comparison model (default NULL)
 #' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
@@ -2151,14 +2231,29 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' umxSummary(m1, CIs = TRUE, file = NA);
 #' }
 #'
-umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, ...) {
+umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, uncertainty = c("CI", "SE", "none"), showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, ...) {
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 	report = match.arg(report)
+
+	# Handle deprecated CIs parameter and map it to uncertainty
+	if(missing(uncertainty)){
+		if(!missing(CIs)){
+			if(is.logical(CIs)){
+				uncertainty = ifelse(CIs, "CI", "none")
+			} else {
+				uncertainty = CIs
+			}
+		} else {
+			uncertainty = "CI"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
 
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message(paste("Output for Model: ", omxQuotes(thisFit$name), "\n"))
-			umxSummaryCP(thisFit, digits = digits, file = file, returnStd = returnStd, showRg = showRg, comparison = comparison, std = std, CIs = CIs)
+			umxSummaryCP(thisFit, digits = digits, file = file, returnStd = returnStd, showRg = showRg, comparison = comparison, std = std, CIs = CIs, uncertainty = uncertainty)
 		}
 	} else {
 		umx_check_model(model, "MxModelCP", beenRun = TRUE, callingFn = "umxSummaryCP")
@@ -2171,9 +2266,9 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, showRg = FAL
 			model = xmu_standardize_CP(model) # Make a standardized copy of model
 		}
 		commaSep = paste0(umx_set_separator(silent = TRUE), " ")
-		cis = NULL
-		if(isTRUE(CIs) && !is.null(model$output$confidenceIntervals) && nrow(model$output$confidenceIntervals) > 0){
-			cis = model$output$confidenceIntervals
+		twinInfo = NULL
+		if(uncertainty != "none"){
+			twinInfo = xmu_twin_intervals(model, what = uncertainty)
 		}
 
 		# 1. Create Tables of Common Factor Paths
@@ -2187,23 +2282,11 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, showRg = FAL
 		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."), stringsAsFactors = FALSE);
 		names(commonACE) = c ("A", "C", "E")
 		# Common-factor ACE paths stay on the raw a_cp, c_cp, and e_cp algebras. Smart intervals use those addresses.
-		if(!is.null(cis)){
-			cpMats = c("a_cp", "c_cp", "e_cp")
-			for(i in 1:nFac){
-				for(j in 1:3){
-					address = paste0("top.", cpMats[j], "[", i, ",", i, "]")
-					if(address %in% rownames(cis)){
-						lb = as.numeric(cis[address, "lbound"])[1]
-						ub = as.numeric(cis[address, "ubound"])[1]
-						est = as.numeric(cis[address, "estimate"])[1]
-						if(is.finite(lb) && is.finite(ub) && is.finite(est)){
-							if(is.numeric(commonACE[[j]])){
-								commonACE[[j]] = format(round(commonACE[[j]], digits), nsmall = digits, trim = TRUE, scientific = FALSE)
-							}
-							commonACE[i, j] = paste0(round(est, digits), " [", round(lb, digits), commaSep, round(ub, digits), "]")
-						}
-					}
-				}
+		cpMats = c("a_cp", "c_cp", "e_cp")
+		for(i in 1:nFac){
+			for(j in 1:3){
+				address = paste0("top.", cpMats[j], "[", i, ",", i, "]")
+				commonACE = xmu_paste_intervals(commonACE, i, j, address, twinInfo, digits = digits, commaSep = commaSep, style = uncertainty)
 			}
 		}
 		umx_print(commonACE, digits = digits, zero.print = ".", report = report, caption = "Common Factor Paths")
@@ -2218,23 +2301,11 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, showRg = FAL
 		cp_loadings = data.frame(cp_loadings, row.names = selDVs, stringsAsFactors = FALSE);
 		names(cp_loadings) = paste0("CP", 1:length(names(cp_loadings)))
 		# Standardized loadings are requested as top.cp_loadings_std. Raw loadings use top.cp_loadings.
-		if(!is.null(cis)){
-			loadSuffix = if(isTRUE(std) && !is.null(model$top$cp_loadings_std)) "_std" else ""
-			for(r in 1:nVar){
-				for(c in 1:nFac){
-					address = paste0("top.cp_loadings", loadSuffix, "[", r, ",", c, "]")
-					if(address %in% rownames(cis)){
-						lb = as.numeric(cis[address, "lbound"])[1]
-						ub = as.numeric(cis[address, "ubound"])[1]
-						est = as.numeric(cis[address, "estimate"])[1]
-						if(is.finite(lb) && is.finite(ub) && is.finite(est)){
-							if(is.numeric(cp_loadings[[c]])){
-								cp_loadings[[c]] = format(round(cp_loadings[[c]], digits), nsmall = digits, trim = TRUE, scientific = FALSE)
-							}
-							cp_loadings[r, c] = paste0(round(est, digits), " [", round(lb, digits), commaSep, round(ub, digits), "]")
-						}
-					}
-				}
+		loadSuffix = if(isTRUE(std) && !is.null(model$top$cp_loadings_std)) "_std" else ""
+		for(r in 1:nVar){
+			for(c in 1:nFac){
+				address = paste0("top.cp_loadings", loadSuffix, "[", r, ",", c, "]")
+				cp_loadings = xmu_paste_intervals(cp_loadings, r, c, address, twinInfo, digits = digits, commaSep = commaSep, style = uncertainty)
 			}
 		}
 		umx_print(cp_loadings, digits = digits, zero.print = ".", report =report, caption = "Loadings of each trait on the Common Factors")
@@ -2251,24 +2322,12 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, showRg = FAL
 				  diag(es))
 		)
 		names(specifics) = selDVs
-		if(!is.null(cis)){
-			specMats = c("as", "cs", "es")
-			specSuffix = if(isTRUE(std) && !is.null(model$top$as_std)) "_std" else ""
-			for(s in 1:3){
-				for(i in 1:nVar){
-					address = paste0("top.", specMats[s], specSuffix, "[", i, ",", i, "]")
-					if(address %in% rownames(cis)){
-						lb = as.numeric(cis[address, "lbound"])[1]
-						ub = as.numeric(cis[address, "ubound"])[1]
-						est = as.numeric(cis[address, "estimate"])[1]
-						if(is.finite(lb) && is.finite(ub) && is.finite(est)){
-							if(is.numeric(specifics[[i]])){
-								specifics[[i]] = format(round(specifics[[i]], digits), nsmall = digits, trim = TRUE, scientific = FALSE)
-							}
-							specifics[s, i] = paste0(round(est, digits), " [", round(lb, digits), commaSep, round(ub, digits), "]")
-						}
-					}
-				}
+		specMats = c("as", "cs", "es")
+		specSuffix = if(isTRUE(std) && !is.null(model$top$as_std)) "_std" else ""
+		for(s in 1:3){
+			for(i in 1:nVar){
+				address = paste0("top.", specMats[s], specSuffix, "[", i, ",", i, "]")
+				specifics = xmu_paste_intervals(specifics, s, i, address, twinInfo, digits = digits, commaSep = commaSep, style = uncertainty)
 			}
 		}
 		umx_print(specifics, digits = digits, report = report, caption = "Specific-factor loadings", zero.print = ".")
@@ -2314,7 +2373,8 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @param std = Whether to show the standardized model (TRUE)
 #' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
-#' @param CIs Whether to print a profile interval that has already been computed (default TRUE). The printed tables are standardized, so the address is `top.ai_std` (and `ci`, `ei`, `as`, `cs`, `es`) when those algebras exist. No interval is computed here.
+#' @param CIs Deprecated. Please use `uncertainty` instead.
+#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, else Wald intervals computed on the fly), `"SE"` (delta-method standard errors, always computed on the fly), or `"none"`. The printed tables are standardized, so the address is `top.ai_std` (and `ci`, `ei`, `as`, `cs`, `es`) when those algebras exist.
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param report how to display the results ("html" will open in browser as table)
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
@@ -2336,8 +2396,23 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' plot(m1)
 #' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
-umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), std = TRUE, showRg = FALSE, comparison = NULL, CIs = TRUE, returnStd = FALSE, report = c("markdown", "html"), ...) {
+umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), std = TRUE, showRg = FALSE, comparison = NULL, CIs = TRUE, uncertainty = c("CI", "SE", "none"), returnStd = FALSE, report = c("markdown", "html"), ...) {
 	umx_check_model(model, "MxModelIP", beenRun = TRUE, callingFn = "umxSummaryIP")
+
+	# Handle deprecated CIs parameter and map it to uncertainty
+	if(missing(uncertainty)){
+		if(!missing(CIs)){
+			if(is.logical(CIs)){
+				uncertainty = ifelse(CIs, "CI", "none")
+			} else {
+				uncertainty = CIs
+			}
+		} else {
+			uncertainty = "CI"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
 	xmu_show_fit_or_comparison(model, comparison = comparison, digits = digits)
 
 	selDVs = dimnames(model$top.expCovMZ)[[1]]
@@ -2377,30 +2452,18 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 	x = sapply(FUN = seq_len, nFac)
 	names(std_Estimates) = c(paste0("ai", 1:nFac["a"]), paste0("ci", 1:nFac["c"]), paste0("ei", 1:nFac["e"]))
 	commaSep = paste0(umx_set_separator(silent = TRUE), " ")
-	cis = NULL
-	if(isTRUE(CIs) && !is.null(model$output$confidenceIntervals) && nrow(model$output$confidenceIntervals) > 0){
-		cis = model$output$confidenceIntervals
+	twinInfo = NULL
+	if(uncertainty != "none"){
+		twinInfo = xmu_twin_intervals(model, what = uncertainty)
 	}
 	# The table above is SD %*% ai, which is what top.ai_std stores. Fall back to the raw address when that algebra is absent.
 	stdSuffix = if(is.null(model$top$ai_std)) "" else "_std"
-	if(!is.null(cis)){
-		blockMats = c(rep("ai", nFac["a"]), rep("ci", nFac["c"]), rep("ei", nFac["e"]))
-		factorIndex = c(seq_len(nFac["a"]), seq_len(nFac["c"]), seq_len(nFac["e"]))
-		for(col in seq_along(blockMats)){
-			for(row in 1:nVar){
-				address = paste0("top.", blockMats[col], stdSuffix, "[", row, ",", factorIndex[col], "]")
-				if(address %in% rownames(cis)){
-					lb = as.numeric(cis[address, "lbound"])[1]
-					ub = as.numeric(cis[address, "ubound"])[1]
-					est = as.numeric(cis[address, "estimate"])[1]
-					if(is.finite(lb) && is.finite(ub) && is.finite(est)){
-						if(is.numeric(std_Estimates[[col]])){
-							std_Estimates[[col]] = format(round(std_Estimates[[col]], digits), nsmall = digits, trim = TRUE, scientific = FALSE)
-						}
-						std_Estimates[row, col] = paste0(round(est, digits), " [", round(lb, digits), commaSep, round(ub, digits), "]")
-					}
-				}
-			}
+	blockMats = c(rep("ai", nFac["a"]), rep("ci", nFac["c"]), rep("ei", nFac["e"]))
+	factorIndex = c(seq_len(nFac["a"]), seq_len(nFac["c"]), seq_len(nFac["e"]))
+	for(col in seq_along(blockMats)){
+		for(row in 1:nVar){
+			address = paste0("top.", blockMats[col], stdSuffix, "[", row, ",", factorIndex[col], "]")
+			std_Estimates = xmu_paste_intervals(std_Estimates, row, col, address, twinInfo, digits = digits, commaSep = commaSep, style = uncertainty)
 		}
 	}
 	umx_print(std_Estimates, digits = digits, zero.print = ".", report = report, caption = "General Independent Pathway path loadings")
@@ -2421,23 +2484,11 @@ umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), s
 		)
 	)
 	names(std_Specifics) = rowNames;
-	if(!is.null(cis)){
-		specMats = c("as", "cs", "es")
-		for(s in 1:3){
-			for(i in 1:nVar){
-				address = paste0("top.", specMats[s], stdSuffix, "[", i, ",", i, "]")
-				if(address %in% rownames(cis)){
-					lb = as.numeric(cis[address, "lbound"])[1]
-					ub = as.numeric(cis[address, "ubound"])[1]
-					est = as.numeric(cis[address, "estimate"])[1]
-					if(is.finite(lb) && is.finite(ub) && is.finite(est)){
-						if(is.numeric(std_Specifics[[i]])){
-							std_Specifics[[i]] = format(round(std_Specifics[[i]], digits), nsmall = digits, trim = TRUE, scientific = FALSE)
-						}
-						std_Specifics[s, i] = paste0(round(est, digits), " [", round(lb, digits), commaSep, round(ub, digits), "]")
-					}
-				}
-			}
+	specMats = c("as", "cs", "es")
+	for(s in 1:3){
+		for(i in 1:nVar){
+			address = paste0("top.", specMats[s], stdSuffix, "[", i, ",", i, "]")
+			std_Specifics = xmu_paste_intervals(std_Specifics, s, i, address, twinInfo, digits = digits, commaSep = commaSep, style = uncertainty)
 		}
 	}
 	umx_print(std_Specifics, digits = digits, zero.print = ".", report = report, caption = "Specific factor loadings")
