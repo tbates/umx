@@ -422,7 +422,7 @@ umxACE <- function(name = "ACE", selDVs, selCovs = NULL, dzData= NULL, mzData= N
 			cbind(hAC, hAC, ACE))
 		)
 	}else{
-		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2024, best tim :-)")
+		stop("3 sibs is experimental, but ", nSib, "? ... Maybe come back in 2028, best tim :-)")
 	}
 	
 	top = mxModel(model$top,
