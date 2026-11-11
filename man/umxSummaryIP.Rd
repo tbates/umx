@@ -13,6 +13,7 @@ umxSummaryIP(
   showRg = FALSE,
   comparison = NULL,
   CIs = TRUE,
+  uncertainty = c("CI", "SE", "none"),
   returnStd = FALSE,
   report = c("markdown", "html"),
   ...
@@ -31,7 +32,9 @@ umxSummaryIP(
 
 \item{comparison}{Whether to run mxCompare on a comparison model (NULL)}
 
-\item{CIs}{Whether to print a profile interval that has already been computed (default TRUE). The printed tables are standardized, so the address is \code{top.ai_std} (and \code{ci}, \code{ei}, \code{as}, \code{cs}, \code{es}) when those algebras exist. No interval is computed here.}
+\item{CIs}{Deprecated. Please use \code{uncertainty} instead.}
+
+\item{uncertainty}{What type of parameter uncertainty to report: \code{"CI"} (default; intervals already stored on the model, else Wald intervals computed on the fly), \code{"SE"} (delta-method standard errors, always computed on the fly), or \code{"none"}. The printed tables are standardized, so the address is \code{top.ai_std} (and \code{ci}, \code{ei}, \code{as}, \code{cs}, \code{es}) when those algebras exist.}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 

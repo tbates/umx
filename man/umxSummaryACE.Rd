@@ -12,6 +12,7 @@ umxSummaryACE(
   std = TRUE,
   showRg = FALSE,
   CIs = TRUE,
+  uncertainty = c("CI", "SE", "none"),
   report = c("markdown", "html"),
   file = getOption("umx_auto_plot"),
   returnStd = FALSE,
@@ -32,7 +33,9 @@ Defaults to NA = do not create plot output.}
 
 \item{showRg}{= whether to show the genetic correlations (FALSE).}
 
-\item{CIs}{Whether to show Confidence intervals if they exist (TRUE).}
+\item{CIs}{Deprecated. Please use \code{uncertainty} instead.}
+
+\item{uncertainty}{What type of parameter uncertainty to report: \code{"CI"} (default; intervals already stored on the model, else Wald intervals computed on the fly), \code{"SE"} (delta-method standard errors, always computed on the fly), or \code{"none"}.}
 
 \item{report}{If "html", then open an html table of the results.}
 

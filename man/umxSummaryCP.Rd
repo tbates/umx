@@ -10,6 +10,7 @@ umxSummaryCP(
   digits = 2,
   std = TRUE,
   CIs = TRUE,
+  uncertainty = c("CI", "SE", "none"),
   showRg = FALSE,
   comparison = NULL,
   report = c("markdown", "html"),
@@ -25,7 +26,9 @@ umxSummaryCP(
 
 \item{std}{Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)}
 
-\item{CIs}{Whether to print a profile interval that has already been computed (default TRUE). No interval is computed here, and a model with no computed intervals prints the point estimate.}
+\item{CIs}{Deprecated. Please use \code{uncertainty} instead.}
+
+\item{uncertainty}{What type of parameter uncertainty to report: \code{"CI"} (default; intervals already stored on the model, else Wald intervals computed on the fly), \code{"SE"} (delta-method standard errors, always computed on the fly), or \code{"none"}.}
 
 \item{showRg}{Whether to show the genetic correlations (default FALSE)}
 
