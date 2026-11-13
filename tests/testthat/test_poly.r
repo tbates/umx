@@ -1,9 +1,9 @@
 library(umx)
 library(testthat)
 
-umx_set_silent(TRUE)
-
 test_that("umx_polychoric work", {
+	oldSilent = umx_set_silent(TRUE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
 	tmp = mtcars
 	tmp$am = umxFactor(mtcars$am)
 	tmp$vs = umxFactor(mtcars$vs)

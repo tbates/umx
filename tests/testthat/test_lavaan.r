@@ -1,9 +1,9 @@
 library(umx)
 library(testthat)
 
-umx_set_silent(TRUE)
-
 test_that("umxLav2RAM and umxRAM2Lav work", {
+	oldSilent = umx_set_silent(TRUE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
 	umxRAM2Lav(umxLav2RAM("x ~ y", autoRun = FALSE, printTab = FALSE, lavaanMode = "lavaan"))
 	tab = lavaan::lavaanify("y~x")
 	xmu_lavaan_process_group(tab, groupNum = 1)
