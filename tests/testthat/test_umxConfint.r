@@ -160,6 +160,23 @@ test_that("summary and plot print a computed profile interval", {
 	expect_false(grepl("0.42 \\[0.11, 0.73\\]", ramStd))
 })
 
+test_that("xmu_get_CI derives the SE from a half-width", {
+	# Half-width 0.1 implies SE 0.1/1.96 = 0.05, not 0.1/3.92 = 0.03.
+	require(umx)
+	data(demoOneFactor)
+	manifests = names(demoOneFactor)
+	m1 = umxRAM("HalfWidth", data = demoOneFactor, type = "cov",
+		umxPath(from = "G", to = manifests),
+		umxPath(var = manifests),
+		umxPath(var = "G", fixedAt = 1)
+	)
+	m1 = mxModel(m1, mxCI("G_to_x1"))
+	out = m1@output
+	out$confidenceIntervals = matrix(c(0.9, 1.0, 1.1), nrow = 1, dimnames = list("G_to_x1", c("lbound", "estimate", "ubound")))
+	m1@output = out
+	expect_identical(xmu_get_CI(m1, label = "G_to_x1", SEstyle = TRUE, digits = 2), "1\n(0.05)")
+})
+
 test_that("umxConfint prints an existing table only when report is TRUE", {
 	require(umx)
 	data(demoOneFactor)
@@ -391,4 +408,23 @@ test_that("umxConfint smart stops politely on unknown classes", {
 	bareModel = mxModel("bare")
 	expect_error(umxConfint(bareModel, parm = "smart", type = "wald"), "does not know class")
 	expect_error(umxConfint(bareModel, parm = "smart"), "does not know class")
+})
+
+test_that("umxConfint wald expands whole-algebra labels", {
+	require(umx)
+	data(twinData)
+	mzData = twinData[twinData$zygosity %in% "MZFF", ][1:40, ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ][1:40, ]
+	m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
+	# explicit whole-algebra label expands to cells
+	w1 = suppressMessages(umxConfint(m1, parm = "top.a_std", type = "wald", report = FALSE))
+	expect_true("top.a_std[1,1]" %in% rownames(w1$output$confidenceIntervals))
+	# default (existing whole-algebra requests) works too
+	w2 = suppressMessages(umxConfint(m1, type = "wald", report = FALSE))
+	expect_true(all(c("top.a_std[1,1]", "top.c_std[1,1]", "top.e_std[1,1]") %in% rownames(w2$output$confidenceIntervals)))
+	# values agree with the delta method on the cell
+	wantSE = mxSE("top.a_std[1,1]", m1, silent = TRUE)[1, 1]
+	gotRow = w2$output$confidenceIntervals["top.a_std[1,1]", ]
+	expect_equal(unname(gotRow["ubound"] - gotRow["lbound"]), unname(2 * qnorm(0.975) * wantSE))
+	expect_equal(unname(gotRow["estimate"]), unname(mxEvalByName("top.a_std", m1)[1, 1]))
 })

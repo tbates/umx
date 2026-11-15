@@ -71,7 +71,7 @@ test_that("umxCP works", {
 	m1 = umxCP("new", selDVs = selDVs, sep = "_T", dzData = dzData, mzData = mzData, nFac = 3, correlatedA = TRUE, tryHard = "yes")
 })
 
-test_that("umxPlotCP with CIs works", {
+test_that("umxPlotCP with CIs and uncertainty works", {
 	require(umx)
 	data(GFF)
 	mzData = subset(GFF, zyg_2grp == "MZ")[1:60, ]
@@ -98,9 +98,35 @@ test_that("umxPlotCP with CIs works", {
 	expect_true(grepl("0\\.70\n\\[-?0\\.54, 0\\.96\\]", digraph))
 	expect_true(grepl("0\\.51\n\\[-?0\\.40, 0\\.65\\]", digraph))
 
-	# Test SEstyle = "mxSE"
-	digraph_se = umxPlotCP(m1, SEstyle = "mxSE", file = NA)
-	expect_true(grepl("([0-9]+\\.[0-9]+)\n\\(([0-9]+\\.[0-9]+)\\)", digraph_se))
+	# SEstyle is deprecated: maps to uncertainty = "SE" with identical output
+	depMsg = testthat::capture_messages(digraph_se <- umxPlotCP(m1, SEstyle = "mxSE", file = NA))
+	expect_true(any(grepl("deprecated", depMsg, fixed = TRUE)))
+	seRef = suppressMessages(umxPlotCP(m1, uncertainty = "SE", file = NA))
+	expect_identical(digraph_se, seRef)
+	# uncertainty = "SE" shows fresh SEs and ignores stored rows (one type per plot)
+	expect_false(grepl("\n(", digraph, fixed = TRUE))
+	seMsg = testthat::capture_messages(digraphSE <- umxPlotCP(m1, uncertainty = "SE", file = NA))
+	expect_false(grepl("0\\.90\n\\[-?0\\.80, 0\\.98\\]", digraphSE))
+	seShown = grepl("\n(", digraphSE, fixed = TRUE)
+	seExplained = any(grepl("umxPlotCP note", seMsg, fixed = TRUE))
+	expect_true(seShown || seExplained)
+	# uncertainty = "CI" shows stored intervals only; with nothing stored, a tip and a bare diagram
+	m1@output$confidenceIntervals = NULL
+	tipMsg = testthat::capture_messages(digraphCItip <- umxPlotCP(m1, uncertainty = "CI", file = NA))
+	expect_true(any(grepl("no stored intervals", tipMsg, fixed = TRUE)))
+	expect_false(grepl("\n[", digraphCItip, fixed = TRUE))
+	m1@output$confidenceIntervals = CIlist
+	digraphCI = umxPlotCP(m1, uncertainty = "CI", file = NA)
+	expect_true(grepl("0\\.90\n\\[-?0\\.80, 0\\.98\\]", digraphCI))
+	expect_true(grepl("0\\.70\n\\[-?0\\.54, 0\\.96\\]", digraphCI))
+	# std = FALSE stays bare: standardized intervals are never pasted on raw diagrams
+	expect_false(grepl("\n[", umxPlotCP(m1, std = FALSE, file = NA), fixed = TRUE))
+	expect_false(grepl("\n[", umxPlotCP(m1, std = FALSE, file = NA, uncertainty = "CI"), fixed = TRUE))
+	digRawSE = umxPlotCP(m1, std = FALSE, file = NA, uncertainty = "SE")
+	expect_false(grepl("\n[", digRawSE, fixed = TRUE))
+	expect_false(grepl("\n(", digRawSE, fixed = TRUE))
+	# junk level errors fast
+	expect_error(umxPlotCP(m1, uncertainty = "bogus", file = NA))
 })
 
 test_that("umxSummaryCP uncertainty shows stored, computed, and SE intervals", {
@@ -109,13 +135,16 @@ test_that("umxSummaryCP uncertainty shows stored, computed, and SE intervals", {
 	mzData = subset(GFF, zyg_2grp == "MZ")[1:60, ]
 	dzData = subset(GFF, zyg_2grp == "DZ")[1:60, ]
 	selDVs = c("gff", "fc", "qol")
-	m1 = umxCP("new", selDVs = selDVs, sep = "_T", nFac = 1, dzData = dzData, mzData = mzData)
-	# default with no stored intervals: computes Wald on the fly with a tip
-	fallbackMsg = testthat::capture_messages(fallbackOut <- capture.output(umxSummaryCP(m1, file = NA)))
-	expect_true(any(grepl("computing Wald intervals on the fly", fallbackMsg, fixed = TRUE)))
-	ciShown = any(grepl("[", fallbackOut, fixed = TRUE))
-	ciExplained = any(grepl("umxSummary note", fallbackMsg, fixed = TRUE))
-	expect_true(ciShown || ciExplained)
+	# Silent mode leaks across files in full-suite runs; force it off (restored on exit)
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	fitMsg = testthat::capture_messages(m1 <- umxCP("new", selDVs = selDVs, sep = "_T", nFac = 1, dzData = dzData, mzData = mzData))
+	# fit-time summary tips but never computes
+	expect_true(any(grepl("no stored intervals", fitMsg, fixed = TRUE)))
+	# default with no stored intervals: bare tables plus a tip, nothing computed
+	defaultMsg = testthat::capture_messages(defaultOut <- capture.output(umxSummaryCP(m1, file = NA)))
+	expect_true(any(grepl("no stored intervals", defaultMsg, fixed = TRUE)))
+	expect_false(any(grepl("[", defaultOut, fixed = TRUE)))
 	# stored intervals display without recomputing
 	CIlist = matrix(c(0.54, 0.70, 0.96), nrow = 1, dimnames = list("top.cp_loadings_std[1,1]", c("lbound", "estimate", "ubound")))
 	m1@output$confidenceIntervals = CIlist

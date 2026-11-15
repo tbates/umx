@@ -1,0 +1,45 @@
+test_that("umxPlotDoC uncertainty shows SE and CI", {
+	require(umx)
+	data(docData)
+	mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
+	dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
+	# Silent mode leaks across files in full-suite runs; force it off (restored on exit)
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	var1 = paste0("varA", 1:3)
+	var2 = paste0("varB", 1:3)
+	d1 = umxDoC(var1 = var1, var2 = var2, mzData = mzData, dzData = dzData, causal = TRUE)
+	freeLab = names(OpenMx::omxGetParameters(d1, free = TRUE))[1]
+	seProbe = suppressWarnings(tryCatch(OpenMx::mxSE(freeLab, d1, silent = TRUE)[1, 1], error = function(e) NA_real_))
+	testthat::skip_if_not(is.finite(seProbe), "mxSE unavailable on this build")
+	# default equals explicit none; junk level errors fast
+	m1 = testthat::capture_messages(digNone1 <- umxPlotDoC(d1, file = NA))
+	m2 = testthat::capture_messages(digNone2 <- umxPlotDoC(d1, file = NA, uncertainty = "none"))
+	expect_identical(digNone1, digNone2)
+	expect_error(testthat::capture_messages(umxPlotDoC(d1, file = NA, uncertainty = "bogus")))
+	# CI with nothing stored tips and stays bare
+	m3 = testthat::capture_messages(digCIbare <- umxPlotDoC(d1, file = NA, uncertainty = "CI"))
+	expect_true(any(grepl("no stored intervals", m3, fixed = TRUE)))
+	expect_false(grepl("\n[", digCIbare, fixed = TRUE))
+	# CI shows a stored row (requests accompany the table, as umxConfint leaves them)
+	d1 = mxModel(d1, mxCI("as_r1c1"))
+	out = d1@output
+	out$confidenceIntervals = matrix(c(0.11, 0.42, 0.73), nrow = 1, dimnames = list("as_r1c1", c("lbound", "estimate", "ubound")))
+	d1@output = out
+	m4 = testthat::capture_messages(digCI <- umxPlotDoC(d1, file = NA, uncertainty = "CI"))
+	expect_match(digCI, "0\\.42\\s*\n\\[0\\.11, 0\\.73\\]")
+	# SE shows est (se) and ignores stored rows (one type per plot)
+	expect_false(grepl("\n(", digNone1, fixed = TRUE))
+	m5 = testthat::capture_messages(digSE <- umxPlotDoC(d1, file = NA, uncertainty = "SE"))
+	expect_true(grepl("\n(", digSE, fixed = TRUE))
+	expect_false(grepl("0\\.42\\s*\n\\[0\\.11, 0\\.73\\]", digSE))
+	# showCIs hides stored rows; explicitly requested SEs still show
+	m6 = testthat::capture_messages(digHide <- umxPlotDoC(d1, file = NA, uncertainty = "CI", showCIs = FALSE))
+	expect_false(grepl("\n[", digHide, fixed = TRUE))
+	m7 = testthat::capture_messages(digSEhide <- umxPlotDoC(d1, file = NA, uncertainty = "SE", showCIs = FALSE))
+	expect_true(grepl("\n(", digSEhide, fixed = TRUE))
+	# SEstyle is deprecated: maps to uncertainty = "SE" with identical output
+	m8 = testthat::capture_messages(digDep <- umxPlotDoC(d1, SEstyle = "mxSE", file = NA))
+	expect_true(any(grepl("deprecated", m8, fixed = TRUE)))
+	expect_identical(digDep, digSE)
+})

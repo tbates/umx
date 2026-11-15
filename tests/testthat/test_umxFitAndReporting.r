@@ -107,13 +107,16 @@ test_that("umxSummaryACE uncertainty shows stored, computed, and SE intervals", 
 	data(twinData)
 	mzData = twinData[twinData$zygosity %in% "MZFF", ][1:40, ]
 	dzData = twinData[twinData$zygosity %in% "DZFF", ][1:40, ]
-	m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
-	# default with no stored intervals: computes Wald on the fly with a tip
-	fallbackMsg = testthat::capture_messages(fallbackOut <- capture.output(umxSummaryACE(m1, file = NA)))
-	expect_true(any(grepl("computing Wald intervals on the fly", fallbackMsg, fixed = TRUE)))
-	ciShown = any(grepl("[", fallbackOut, fixed = TRUE))
-	ciExplained = any(grepl("umxSummary note", fallbackMsg, fixed = TRUE))
-	expect_true(ciShown || ciExplained)
+	# Silent mode leaks across files in full-suite runs; force it off (restored on exit)
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	fitMsg = testthat::capture_messages(m1 <- umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData))
+	# fit-time summary tips but never computes
+	expect_true(any(grepl("no stored intervals", fitMsg, fixed = TRUE)))
+	# default with no stored intervals: bare tables plus a tip, nothing computed
+	defaultMsg = testthat::capture_messages(defaultOut <- capture.output(umxSummaryACE(m1, file = NA)))
+	expect_true(any(grepl("no stored intervals", defaultMsg, fixed = TRUE)))
+	expect_false(any(grepl("[", defaultOut, fixed = TRUE)))
 	# stored intervals paste into the main table without recomputing
 	CIlist = matrix(c(0.54, 0.70, 0.96), nrow = 1, dimnames = list("top.a_std[1,1]", c("lbound", "estimate", "ubound")))
 	m1@output$confidenceIntervals = CIlist
@@ -175,6 +178,38 @@ test_that("umxPlotACE works", {
 	 expect_error(plot(m1, std = FALSE), regex = NA)
 })
 
+test_that("umxPlotACE uncertainty shows SE and CI without touching the model", {
+	require(umx)
+	data(twinData)
+	mzData = subset(twinData, zygosity == "MZFF")
+	dzData = subset(twinData, zygosity == "DZFF")
+	# Silent mode leaks across files in full-suite runs; force it off (restored on exit)
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	m1 = umxACE(selDVs = "bmi", sep = "", dzData = dzData, mzData = mzData)
+	# default equals explicit none; junk level errors fast
+	expect_identical(umxPlotACE(m1, file = NA), umxPlotACE(m1, file = NA, uncertainty = "none"))
+	expect_error(umxPlotACE(m1, file = NA, uncertainty = "bogus"))
+	# SE shows est (se); the model keeps no stored table (fresh lives on a plot-local copy)
+	expect_false(grepl("\n(", umxPlotACE(m1, file = NA), fixed = TRUE))
+	seMsg = testthat::capture_messages(digraphSE <- umxPlotACE(m1, file = NA, uncertainty = "SE"))
+	seShown = grepl("\n(", digraphSE, fixed = TRUE)
+	seExplained = any(grepl("umxPlotACE note", seMsg, fixed = TRUE))
+	expect_true(seShown || seExplained)
+	expect_null(m1$output$confidenceIntervals)
+	# CI with nothing stored tips and stays bare
+	ciBareMsg = testthat::capture_messages(digraphCIbare <- umxPlotACE(m1, file = NA, uncertainty = "CI"))
+	expect_true(any(grepl("no stored intervals", ciBareMsg, fixed = TRUE)))
+	expect_false(grepl("\n[", digraphCIbare, fixed = TRUE))
+	# CI shows a stored row; SE never shows it as an interval (one type per plot)
+	m1@output$confidenceIntervals = matrix(c(0.54, 0.70, 0.96), nrow = 1, dimnames = list("top.a_std[1,1]", c("lbound", "estimate", "ubound")))
+	expect_match(umxPlotACE(m1, file = NA, uncertainty = "CI"), "0\\.70\\s*\n\\[0\\.54, 0\\.96\\]")
+	# std = FALSE stays bare (reference behavior for the CP/IP gate)
+	expect_false(grepl("\n[", umxPlotACE(m1, std = FALSE, file = NA), fixed = TRUE))
+	seStoredMsg = testthat::capture_messages(digraphSE2 <- umxPlotACE(m1, file = NA, uncertainty = "SE"))
+	expect_false(grepl("0\\.70\\s*\n\\[0\\.54, 0\\.96\\]", digraphSE2))
+})
+
 test_that("umxSummaryGxE works", {
 	require(umx)
 	data(twinData) 
@@ -193,6 +228,12 @@ test_that("umxSummaryGxE works", {
 	umxSummaryGxE(m1, location = "topright", gg=FALSE)
 	umxSummaryGxE(m1, location = "left")
 	umxSummaryGxE(m1, location = c(.1, .9))
+	# html report uses the standard styled table: console output, no files written
+	beforeFiles = list.files()
+	htmlOut = capture.output(umxSummaryGxE(m1, location = "topright", gg = FALSE, report = "html"))
+	expect_true(any(grepl("<table", htmlOut, fixed = TRUE)))
+	expect_false(any(c("GxEplot", "GxEplot.html", "GxE.html", "name") %in% list.files()))
+	expect_identical(setdiff(list.files(), beforeFiles), character(0))
 	expect_error(umxSummaryGxE(m1, separateGraphs = FALSE), regex = NA)
 })
 
@@ -212,13 +253,16 @@ test_that("umxSummaryIP uncertainty shows stored, computed, and SE intervals", {
 	data(twinData)
 	mzData = twinData[twinData$zygosity %in% "MZFF", ][1:40, ]
 	dzData = twinData[twinData$zygosity %in% "DZFF", ][1:40, ]
-	m1 = umxIP(selDVs = c("ht", "wt"), sep = "", dzData = dzData, mzData = mzData)
-	# default with no stored intervals: computes Wald on the fly with a tip
-	fallbackMsg = testthat::capture_messages(fallbackOut <- capture.output(umxSummaryIP(m1, file = NA)))
-	expect_true(any(grepl("computing Wald intervals on the fly", fallbackMsg, fixed = TRUE)))
-	ciShown = any(grepl("[", fallbackOut, fixed = TRUE))
-	ciExplained = any(grepl("umxSummary note", fallbackMsg, fixed = TRUE))
-	expect_true(ciShown || ciExplained)
+	# Silent mode leaks across files in full-suite runs; force it off (restored on exit)
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	fitMsg = testthat::capture_messages(m1 <- umxIP(selDVs = c("ht", "wt"), sep = "", dzData = dzData, mzData = mzData, tryHard="yes"))
+	# fit-time summary tips but never computes
+	expect_true(any(grepl("no stored intervals", fitMsg, fixed = TRUE)))
+	# default with no stored intervals: bare tables plus a tip, nothing computed
+	defaultMsg = testthat::capture_messages(defaultOut <- capture.output(umxSummaryIP(m1, file = NA)))
+	expect_true(any(grepl("no stored intervals", defaultMsg, fixed = TRUE)))
+	expect_false(any(grepl("[", defaultOut, fixed = TRUE)))
 	# stored intervals paste into the tables without recomputing
 	CIlist = matrix(c(0.54, 0.70, 0.96), nrow = 1, dimnames = list("top.ai_std[1,1]", c("lbound", "estimate", "ubound")))
 	m1@output$confidenceIntervals = CIlist
@@ -235,6 +279,47 @@ test_that("umxSummaryIP uncertainty shows stored, computed, and SE intervals", {
 	seShown = any(grepl("[0-9] \\([0-9]", seOut))
 	seExplained = any(grepl("umxSummary note", seMsg, fixed = TRUE))
 	expect_true(seShown || seExplained)
+})
+
+test_that("umxPlotIP uncertainty shows SE and CI matching the summary", {
+	require(umx)
+	data(twinData)
+	mzData = twinData[twinData$zygosity %in% "MZFF", ][1:40, ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ][1:40, ]
+	# Silent mode leaks across files in full-suite runs; force it off (restored on exit)
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	m1 = umxIP(selDVs = c("ht", "wt"), sep = "", dzData = dzData, mzData = mzData, tryHard="yes")
+	# default equals explicit none; junk level errors fast
+	expect_identical(umxPlotIP(m1, file = NA), umxPlotIP(m1, file = NA, uncertainty = "none"))
+	expect_error(umxPlotIP(m1, file = NA, uncertainty = "bogus"))
+	expect_false(grepl("\n(", umxPlotIP(m1, file = NA), fixed = TRUE))
+	expect_false(grepl("\n[", umxPlotIP(m1, file = NA), fixed = TRUE))
+	# SE shows est (se); the model keeps no stored table (fresh lives on a plot-local copy)
+	seMsg = testthat::capture_messages(digraphSE <- umxPlotIP(m1, file = NA, uncertainty = "SE"))
+	seShown = grepl("\n(", digraphSE, fixed = TRUE)
+	seExplained = any(grepl("umxPlotIP note", seMsg, fixed = TRUE))
+	expect_true(seShown || seExplained)
+	expect_null(m1$output$confidenceIntervals)
+	# CI shows stored intervals only: with nothing stored, a tip and a bare diagram
+	ciMsg = testthat::capture_messages(digraphCI <- umxPlotIP(m1, file = NA, uncertainty = "CI"))
+	expect_true(any(grepl("no stored intervals", ciMsg, fixed = TRUE)))
+	expect_false(grepl("\n[", digraphCI, fixed = TRUE))
+	# plot and summary SEs agree (shared fresh table, same rounding)
+	sumMsg = testthat::capture_messages(sumText <- paste(capture.output(umxSummaryIP(m1, file = NA, uncertainty = "SE")), collapse = "\n"))
+	normDots = function(z){ gsub("(^|\\()\\.", "\\10.", z) }
+	plotPairs = normDots(gsub("\n| ", "", regmatches(digraphSE, gregexpr("[0-9]*\\.[0-9]+\\n\\([0-9.]+\\)", digraphSE))[[1]]))
+	sumPairs = normDots(gsub(" ", "", regmatches(sumText, gregexpr("[0-9]+\\.[0-9]+ \\([0-9.]+\\)", sumText))[[1]]))
+	expect_true(length(intersect(plotPairs, sumPairs)) > 0 || seExplained)
+	# CI shows a stored row
+	m1@output$confidenceIntervals = matrix(c(0.15, 0.45, 0.75), nrow = 1, dimnames = list("top.ai_std[1,1]", c("lbound", "estimate", "ubound")))
+	expect_match(umxPlotIP(m1, file = NA, uncertainty = "CI"), "0\\.45\\s*\n\\[0\\.15, 0\\.75\\]")
+	# std = FALSE stays bare: standardized intervals are never pasted on raw diagrams
+	expect_false(grepl("\n[", umxPlotIP(m1, std = FALSE, file = NA), fixed = TRUE))
+	expect_false(grepl("\n[", umxPlotIP(m1, std = FALSE, file = NA, uncertainty = "CI"), fixed = TRUE))
+	digRawSE = umxPlotIP(m1, std = FALSE, file = NA, uncertainty = "SE")
+	expect_false(grepl("\n[", digRawSE, fixed = TRUE))
+	expect_false(grepl("\n(", digRawSE, fixed = TRUE))
 })
 
 test_that("umxExpCov works", {
@@ -316,7 +401,8 @@ test_that("RMSEA works", {
 		umxPath(var = "G", fixedAt = 1.0)
 	)
 	tmp = summary(m1)
-	RMSEA(tmp)
+	# Qualified: psych::RMSEA (attached by earlier files in suite runs) masks umx::RMSEA and rejects model input
+	expect_error(umx::RMSEA(tmp), regex = NA)
 })
 
 test_that("umxSummary works on supermodels", {
@@ -520,4 +606,28 @@ test_that("umxPlot single-x picks bar or density, upgrades vectors", {
 
 	p = umxPlot(mpg ~ wt, data = mtcars)
 	expect_equal(class(p$layers[[1]]$stat)[1], "StatSmooth")
+})
+
+test_that("xmu_aic_weights_table reports weights as a markdown table", {
+	lead = "Conditional AIC probability {Wagenmakers, 2004, 192-196} indicated relative model support as follows:"
+	got = xmu_aic_weights_table(c("Nonscalar", "Scalar", "Homogeneity"), c(100, 100, 102.77))
+	gotLines = strsplit(got, "\n", fixed = TRUE)[[1]]
+	# lead line, then a 3-line pipe table
+	expect_identical(gotLines[1], lead)
+	expect_identical(length(gotLines), 4L)
+	# header names in order, weights computed from the AICs
+	expect_true(grepl("| Nonscalar| Scalar| Homogeneity|", gotLines[2], fixed = TRUE))
+	expect_true(grepl("0.44", gotLines[4], fixed = TRUE))
+	expect_true(grepl("0.11", gotLines[4], fixed = TRUE))
+	# table body is what kable makes of the rounded weights
+	wantFrame = data.frame(Nonscalar = 0.44, Scalar = 0.44, Homogeneity = 0.11, check.names = FALSE)
+	expect_identical(gotLines[2:4], as.character(knitr::kable(wantFrame, format = "pipe")))
+})
+
+test_that("umxWeightedAIC reports weights as a markdown table", {
+	l1 = lm(mpg ~ wt + disp, data = mtcars)
+	l2 = lm(mpg ~ wt, data = mtcars)
+	wMsg = testthat::capture_messages(best <- umxWeightedAIC(models = list(l1, l2)))
+	expect_true(inherits(best, "lm"))
+	expect_true(any(grepl("| Model 1| Model 2|", wMsg, fixed = TRUE)))
 })

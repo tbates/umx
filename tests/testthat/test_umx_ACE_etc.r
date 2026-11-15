@@ -646,3 +646,28 @@ test_that("umxSummaryACEv does not nag about file='markdown'", {
 	expect_false(any(grepl("not file=", out, fixed = TRUE)))
 	expect_true(any(grepl("Standardized parameter estimates", out, fixed = TRUE)))
 })
+
+test_that("summaries do not plot unless file is passed", {
+	require(umx)
+	# all nine diagram summaries default file to NA (explicit file still plots)
+	sumFns = c("umxSummaryACE", "umxSummaryACEcov", "umxSummaryCP", "umxSummaryIP", "umxSummaryACEv", "umxSummaryACE_DE", "umxSummarySimplex", "umxSummarySexLim", "umxSummaryDoC")
+	for (fn in sumFns) {
+		expect_identical(eval(formals(get(fn))$file), NA)
+	}
+	data(twinData)
+	twinData[, c("ht1", "ht2")] = twinData[, c("ht1", "ht2")] * 10
+	mzData = twinData[twinData$zygosity %in% "MZFF", ]
+	dzData = twinData[twinData$zygosity %in% "DZFF", ]
+	m1 = umxACE(selDVs = "ht", sep = "", dzData = dzData, mzData = mzData)
+	# graphviz format writes real files, so absence/presence is observable
+	oldFormat = umx_set_plot_format(silent = TRUE)
+	umx_set_plot_format("graphviz", silent = TRUE)
+	on.exit(umx_set_plot_format(oldFormat, silent = TRUE), add = TRUE)
+	unlink(c("ACE.gv", "ACEoverride"))
+	umxSummaryACE(m1)
+	expect_false(file.exists("ACE.gv"))
+	umxSummaryACE(m1, file = "ACEoverride")
+	expect_true(file.exists("ACEoverride"))
+	expect_true(any(grepl("digraph", readLines("ACEoverride", warn = FALSE), fixed = TRUE)))
+	unlink(c("ACE.gv", "ACEoverride"))
+})

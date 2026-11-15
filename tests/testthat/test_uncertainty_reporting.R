@@ -27,12 +27,12 @@ test_that("umxSummary and plot handle uncertainty reporting options correctly", 
 	expect_true("Std.SE" %in% names(tblSE))
 	expect_true("CI" %in% names(tblSE))
 
-	# uncertainty = "MLR" (Robust standard errors)
+	# uncertainty = "MLR" (Robust standard errors only: no interval column)
 	sumRobust = capture.output({
 		tblRobust = umxSummary(m1, std = TRUE, uncertainty = "MLR")
 	})
 	expect_true("Std.SE" %in% names(tblRobust))
-	expect_true("CI" %in% names(tblRobust))
+	expect_false("CI" %in% names(tblRobust))
 
 	# uncertainty = "CI" (Profile likelihood CIs)
 	# Run profile CIs first
@@ -59,4 +59,29 @@ test_that("umxSummary and plot handle uncertainty reporting options correctly", 
 	# uncertainty = "CI" (brackets showing profile CIs)
 	dotCI = plot(m1CI, uncertainty = "CI", file = NA)
 	expect_true(any(grepl("G -> x1 \\[label=\"[0-9.]+ \\[[0-9.-]+, [0-9.-]+\\]\"\\]", dotCI)))
+
+	# uncertainty = "SE" wipes stored intervals from the display: one type per plot
+	dotSEstored = plot(m1CI, uncertainty = "SE", file = NA)
+	expect_false(any(grepl("\\[label=\"[0-9.]+ \\[", dotSEstored)))
+	expect_true(any(grepl("G -> x1 \\[label=\"[0-9.]+ \\([0-9.]+\\)\"\\]", dotSEstored)))
+
+	# uncertainty = "MLR" wipes stored intervals from the display: sandwich SEs only
+	dotMLRstored = plot(m1CI, uncertainty = "MLR", file = NA)
+	expect_false(any(grepl("\\[label=\"[0-9.]+ \\[", dotMLRstored)))
+	expect_true(any(grepl("G -> x1 \\[label=\"[0-9.]+ \\([0-9.]+\\)\"\\]", dotMLRstored)))
+
+	# uncertainty = "CI" shows stored intervals only: one mocked row fills exactly one cell, no Wald fills
+	mockOut = m1@output
+	mockOut$confidenceIntervals = matrix(c(0.11, 0.42, 0.73), nrow = 1, dimnames = list("G_to_x1", c("lbound", "estimate", "ubound")))
+	m1Mock = m1
+	m1Mock@output = mockOut
+	sumCImock = capture.output({
+		tblCImock = umxSummary(m1Mock, std = FALSE, uncertainty = "CI")
+	})
+	filledCI = tblCImock$CI[tblCImock$CI != ""]
+	expect_true(length(filledCI) == 1)
+	expect_true(any(grepl("[0.11, 0.73]", filledCI, fixed = TRUE)))
+	dotCImock = plot(m1Mock, uncertainty = "CI", file = NA)
+	expect_true(any(grepl("G -> x1 \\[label=\"0.42 \\[0.11, 0.73\\]\"\\]", dotCImock)))
+	expect_true(any(grepl("G -> x2 \\[label=\"[0-9.]+\"\\]", dotCImock)))
 })
