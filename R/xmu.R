@@ -466,6 +466,13 @@ xmu_twin_print_means <- function(model, digits = 3, report = c("markdown", "html
 			# expMeans
 			caption = "Means (from model$top$expMean)"
 			row.names(meanVals) = "intercept"
+		} else if(!is.null(model$top$expMeanGm)){
+			# SexLim: male and female means (DZO shares these by label; twin-2 cols repeat twin-1)
+			selDVs = dimnames(model$top$Vm)[[1]]
+			nVar = length(selDVs)
+			meanVals = rbind(model$top$expMeanGm$values[1, 1:nVar], model$top$expMeanGf$values[1, 1:nVar])
+			dimnames(meanVals) = list(c("male", "female"), selDVs)
+			caption = "Means (model$top$expMeanGm and expMeanGf; DZO shares these means)"
 		}else{
 			# no means
 		}
@@ -2689,7 +2696,7 @@ xmu_dot_rank_str <- function(min = NULL, same = NULL, max = NULL) {
 #' @param resid How to show residuals and variances default is "circle". Other option is "line"
 #' @param pt Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)
 #' @param std Whether values should be standardized (defaults to FALSE)
-#' @param uncertainty Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode. It is not drawn when `std` is TRUE.
+#' @param uncertainty Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode except "SE" and "MLR". It is not drawn when `std` is TRUE.
 #' @param cis Matrix of confidence intervals (defaults to NULL)
 #' @return - list of variance names and variances
 #' @export
@@ -2757,19 +2764,8 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 								} else {
 									valStr = paste0(valStr, estVal)
 								}
-							} else if (uncertainty == "CI") {
-								lbound = NA
-								ubound = NA
-								if (!is.na(seVal)) {
-									lbound = estVal - 1.96 * seVal
-									ubound = estVal + 1.96 * seVal
-								}
-								if (!is.na(lbound) && !is.na(ubound)) {
-									valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
-								} else {
-									valStr = paste0(valStr, estVal)
-								}
 							} else {
+								# "none", and "CI" without a stored interval, show the bare estimate
 								valStr = paste0(valStr, estVal)
 							}
 						} else {
@@ -2809,7 +2805,7 @@ xmu_dot_make_residuals <- function(mxMat, latents = NULL, fixed = TRUE, digits =
 #' @param digits how many digits to report
 #' @param pt Parameter table for lookup of estimates and SEs/CIs (defaults to NULL)
 #' @param std Whether values should be standardized (defaults to FALSE)
-#' @param uncertainty Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode. It is not drawn when `std` is TRUE.
+#' @param uncertainty Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode except "SE" and "MLR". It is not drawn when `std` is TRUE.
 #' @param cis Matrix of confidence intervals (defaults to NULL)
 #' @return - string
 #' @export
@@ -2884,19 +2880,8 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 								} else {
 									valStr = paste0(valStr, estVal)
 								}
-							} else if (uncertainty == "CI") {
-								lbound = NA
-								ubound = NA
-								if (!is.na(seVal)) {
-									lbound = estVal - 1.96 * seVal
-									ubound = estVal + 1.96 * seVal
-								}
-								if (!is.na(lbound) && !is.na(ubound)) {
-									valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
-								} else {
-									valStr = paste0(valStr, estVal)
-								}
 							} else {
+								# "none", and "CI" without a stored interval, show the bare estimate
 								valStr = paste0(valStr, estVal)
 							}
 						} else {
@@ -2973,19 +2958,8 @@ xmu_dot_make_paths <- function(mxMat, stringIn, heads = NULL, fixed = TRUE, comm
 									} else {
 										valStr = paste0(valStr, estVal)
 									}
-								} else if (uncertainty == "CI") {
-									lbound = NA
-									ubound = NA
-									if (!is.na(seVal)) {
-										lbound = estVal - 1.96 * seVal
-										ubound = estVal + 1.96 * seVal
-									}
-									if (!is.na(lbound) && !is.na(ubound)) {
-										valStr = paste0(valStr, estVal, " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
-									} else {
-										valStr = paste0(valStr, estVal)
-									}
 								} else {
+									# "none", and "CI" without a stored interval, show the bare estimate
 									valStr = paste0(valStr, estVal)
 								}
 							} else {
@@ -3269,7 +3243,8 @@ xmu_get_CI <- function(model, label, prefix = "top.", suffix = "_std", digits = 
 						# Both bounds present: average to get an SE
 						DIFF = mean(c( (CIlist[check, "ubound"] - est), (est - CIlist[check, "lbound"]) ))
 					}
-				   APAstr = paste0(round(est, digits), "\n(", round(DIFF/(1.96 * 2), digits), ")")
+				   # DIFF is a half-width, so divide by 1.96 (not 3.92) to recover the SE
+			   APAstr = paste0(round(est, digits), "\n(", round(DIFF/1.96, digits), ")")
 				} else {
 				   APAstr = paste0(
 						umx_APA_pval(CIlist[check, "estimate"], min = -1, digits = digits), "\n[",
