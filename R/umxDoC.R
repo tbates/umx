@@ -476,8 +476,10 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param format = c("current", "graphviz", "DiagrammeR")
-#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" when CIs are found (Default FALSE)
+#' @param SEstyle Deprecated. Please use `uncertainty` instead.
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param showCIs Whether to show intervals already stored on the model (default = TRUE). Intervals computed via `uncertainty` still show when this is FALSE.
+#' @param uncertainty What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (standard errors computed per cell with `mxSE()`), or "CI" (intervals already stored on the model, nothing computed here).
 #' @param ... Other parameters to control model summary.
 #' @references <https://tbates.github.io>
 #' @return - Optionally return the dot code
@@ -513,7 +515,7 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 #' plot(a2b)
 #' 
 #' }
-umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, ...) {
+umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = FALSE, showCIs = TRUE, uncertainty = c("none", "SE", "CI"), ...) {
 	message("beta code")
 	# 1. draw latents
 	# 2. draw manifests,
@@ -526,9 +528,33 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed
 	model = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelDoC", callingFn = "umxPlotDoC")
 
+	# Handle deprecated SEstyle parameter and map it to uncertainty
+	if(missing(uncertainty)){
+		if(!missing(SEstyle) && !identical(SEstyle, FALSE)){
+			message("Polite note: SEstyle is deprecated. Please use uncertainty = \"SE\" instead.")
+			uncertainty = "SE"
+		} else {
+			uncertainty = "none"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
+
 	if(std){
 		message("I'm sorry Dave, no std for DoC yet ;-(")
 		# model = xmu_standardize_DoC(model)
+	}
+
+	# Render flags for xmu_dot_mat2dot. SE computes genuine per-cell SEs (mxSE ignores
+	# stored tables); showCIs gates stored display only, so SE renders even when FALSE.
+	seStyle = FALSE
+	drawCIs = showCIs
+	if(uncertainty == "SE"){
+		seStyle = "mxSE"
+		drawCIs = TRUE
+	}
+	if(uncertainty == "CI" && isTRUE(showCIs) && !umx_has_CIs(model)){
+		message("Polite note: this model has no stored intervals to display. Tip: umxConfint(model, parm = 'all', type = 'wald') computes and stores Wald intervals.")
 	}
 
 	nFac   = dim(model$top$a_cp$labels)[[1]]
@@ -541,27 +567,27 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed
 
 	# Process [ace] matrices
 	# 1. Collect latents
-	out = xmu_dot_mat2dot(model$top$a, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$c, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$e, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$a, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = seStyle, showCIs = drawCIs)
+	out = xmu_dot_mat2dot(model$top$c, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = seStyle, showCIs = drawCIs)
+	out = xmu_dot_mat2dot(model$top$e, cells = "diag", from = "rows", toLabel = selLat, fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = seStyle, showCIs = drawCIs)
 
 	# 2. Process "FacLoad" nVar * nFac matrix of common latents onto manifests.
-	out = xmu_dot_mat2dot(model$top$FacLoad, cells= "any", toLabel= selDVs, from= "cols", fromLabel= selLat, fromType= "latent", showFixed = showFixed, p= out)
+	out = xmu_dot_mat2dot(model$top$FacLoad, cells= "any", toLabel= selDVs, from= "cols", fromLabel= selLat, fromType= "latent", showFixed = showFixed, p= out, model = model, SEstyle = seStyle, showCIs = drawCIs)
 
 	# 3. Process "as" matrix
-	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
-	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out)
+	out = xmu_dot_mat2dot(model$top$as, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = seStyle, showCIs = drawCIs)
+	out = xmu_dot_mat2dot(model$top$cs, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = seStyle, showCIs = drawCIs)
+	out = xmu_dot_mat2dot(model$top$es, cells = "any", toLabel = selDVs, from = "rows", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = seStyle, showCIs = drawCIs)
 
 	# betas are in model$top$beta$labels
 	#      [,1]  [,2]
 	# [1,] "a2a" "b2a"
 	# [2,] "a2b" "b2b"
-	out = xmu_dot_mat2dot(model$top$beta, cells = "any", toLabel = selLat, from = "cols", fromType = "latent", showFixed = showFixed, p = out, fromLabel=selLat)
+	out = xmu_dot_mat2dot(model$top$beta, cells = "any", toLabel = selLat, from = "cols", fromType = "latent", showFixed = showFixed, p = out, fromLabel=selLat, model = model, SEstyle = seStyle, showCIs = drawCIs)
 
 	# Process "expMean" 1 * nVar matrix # from = "one"; target = selDVs[c]
 	if(means){
-		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out)
+		out = xmu_dot_mat2dot(model$top$expMean, cells = "left", toLabel = selDVs, from = "rows", fromLabel = "one", fromType = "latent", showFixed = showFixed, p = out, model = model, SEstyle = seStyle, showCIs = drawCIs)
 	}
 	preOut  = xmu_dot_define_shapes(latents = out$latents, manifests = selDVs[1:nVar])
 	top     = xmu_dot_rank(out$latents, "^[ace][1-2]$"  , "min")
@@ -648,7 +674,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' umxCompare(B2A, A2B)
 #' 
 #' }
-umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, zero.print = ".", ...) {
+umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = NA, returnStd = FALSE, zero.print = ".", ...) {
 	message("Summary support for DoC models not complete yet. Feedback welcome at http://github.com/tbates/umx/issues if you are using this.")
 
 	# TODO: Allow "a2b" in place of causal to avoid the make/modify 2-step
