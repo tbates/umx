@@ -302,6 +302,28 @@ aic_weights <- function(x) {
   d / sum(d)
 }
 
+#' Akaike weights as a markdown table.
+#' @description
+#' `xmu_aic_weights_table` computes [aic_weights()] from a vector of AIC values and formats
+#' the result as a markdown pipe table (via [knitr::kable()]) with one column per model and one row of weights.
+#' @param names Character vector of model names, one per column, in candidate order.
+#' @param aicValues Numeric vector of AIC values, one per model, in the same order as `names`.
+#' @return A single string: a lead line naming the Wagenmakers & Farrell (2004) weights, a newline, then the table.
+#' @export
+#' @seealso [aic_weights()]
+#' @references Wagenmakers E.J., Farrell S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*. **11**, 192-196. \doi{10.3758/bf03206482}.
+#' @md
+#' @examples
+#' xmu_aic_weights_table(c("ACE", "AE"), c(100, 102))
+xmu_aic_weights_table <- function(names, aicValues) {
+	aic.weights = round(aic_weights(aicValues), 2)
+	wtb = as.data.frame(as.list(aic.weights), check.names = FALSE)
+	colnames(wtb) = names
+	lead = "Conditional AIC probability {Wagenmakers, 2004, 192-196} indicated relative model support as follows:"
+	tableText = paste0(kable(wtb, format = "pipe"), collapse = "\n")
+	paste0(lead, "\n", tableText)
+}
+
 #' AIC weight-based conditional probabilities.
 #' @description
 #' Returns the best model by AIC, and computes the probabilities 
@@ -327,13 +349,10 @@ umxWeightedAIC <- function(models, digits = 2) {
 	}
 	whichBest = which.min(AIClist)
 	bestModel = models[[whichBest]]
-	aic.weights = round(aic_weights(AIClist), 2)
 	
 	if(isS4(models[[1]]) & is(models[[1]], "MxModel")){
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
-			omxQuotes(namez(models)), " respectively are: ",
-			omxQuotes(aic.weights), " Using aic_weights().")		
+		message(xmu_aic_weights_table(namez(models), AIClist))
 	}else{
 		if("call" %in% names(bestModel)){
 			# ID = paste0("Model ", omxQuotes(bestModel$call))
@@ -342,8 +361,7 @@ umxWeightedAIC <- function(models, digits = 2) {
 			ID = paste0("Model ", whichBest)
 		}
 		message(ID, " is the best fitting model according to AIC.")
-		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model are (for each model you gave me): ",
-			omxQuotes(aic.weights), " Using aic_weights(AIC()).")		
+		message(xmu_aic_weights_table(paste0("Model ", seq_along(models)), AIClist))
 		
 	}
 	invisible(bestModel)
@@ -352,13 +370,14 @@ umxWeightedAIC <- function(models, digits = 2) {
 #' Reduce models, and report the results.
 #'
 #' @description
-#' Given a `umx` model (currently `umxACE` and `umxGxE` are supported - ask for more!)
-#' `umxReduce` will conduct a formalised reduction process. It will also report
-#' Akaike weights are also reported showing relative support across models.
+#' Given a `umxACE` univariate or `umxGxE` model, `umxReduce` will conduct a
+#' formalised reduction process. It will also report Akaike weights are also
+#' reported showing relative support across models.
 #'
 #' Specialized functions are called for different type of input:
 #' 1. **GxE model reduction** For [umxGxE()] models [umxReduceGxE()] is called.
-#' 2. **ACE model reduction** For [umxACE()] models,[umxReduceACE()] is called. More than one phenotype stops before any nested model is fit.
+#' 2. **ACE model reduction** For [umxACE()] models,[umxReduceACE()] is called.
+#' More than one phenotype stops before any nested model is fit.
 #' 
 #' `umxReduce` reports the results in a table. Set the format of the table with
 #' [umx_set_table_format()], or set `report= "html"` to open a
@@ -460,11 +479,7 @@ umxReduceGxE <- function(model, report = c("markdown", "inline", "html", "report
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
 		message("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-		aic.weights = round(aic_weights(AIClist), 2)
-		message("AIC weight-based conditional probabilities {Wagenmakers, 2004, 192-196} of being the best model for ", 
-			omxQuotes(namez(modelList)), " respectively are: ",
-			omxQuotes(aic.weights), " Using aic_weights(AIC())."
-		)
+		message(xmu_aic_weights_table(namez(modelList), AIClist))
 		if(intervals){
 			bestModel = mxRun(bestModel, intervals = intervals)
 		}
@@ -591,15 +606,13 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 	bestModel = list(ACE, ADE, CE, AE)[[whichBest]]
 	message("Among ACE, ADE, CE, and AE models ", omxQuotes(bestModel$name), " fit best according to AIC.\n")
 	if(testD){
-		aic.weights = round(aic_weights(AIC(ACE, ADE, CE, AE)[,"AIC"]), 2)
-		aic.names   = namez(c(ACE, ADE, CE, AE))
+		aic.values = AIC(ACE, ADE, CE, AE)[,"AIC"]
+		aic.names  = namez(c(ACE, ADE, CE, AE))
 	} else {
-		aic.weights = round(aic_weights(AIC(ACE, CE, AE)[,"AIC"]), 2)
-		aic.names   = namez(c(ACE, CE, AE))
+		aic.values = AIC(ACE, CE, AE)[,"AIC"]
+		aic.names  = namez(c(ACE, CE, AE))
 	}
-	message("Conditional AIC probability {Wagenmakers, 2004, 192-196} using aic_weights(AIC()) indicated relative model support for ", 
-		omxQuotes(aic.names), " respectively as: ", omxQuotes(aic.weights))
-		message(paste0(aic.names," (", aic.weights, "%)"))
+	message(xmu_aic_weights_table(aic.names, aic.values))
 	if(intervals){
 		bestModel = mxRun(bestModel, intervals = intervals)
 	}
@@ -611,6 +624,130 @@ umxReduceACE <- function(model, report = c("markdown", "inline", "html", "report
 }
 #' @export
 umxReduce.MxModelACE <- umxReduceACE
+
+#' Reduce a SexLimitation model.
+#'
+#' This function performs model reduction on [umxSexLim()] models,
+#' walking down the limitation ladder (Nonscalar: qualitative and
+#' quantitative sex differences; Scalar: quantitative differences only;
+#' Homogeneity: no sex limitation), displaying the fit costs in a table,
+#' and returning the best model.
+#'
+#' It stops when the model has more than one phenotype. No nested model is fit.
+#'
+#' @param model a univariate [umxSexLim()] model to reduce
+#' @param report How to report the results. "html" = open in browser
+#' @param intervals Recompute CIs (if any included) on the best model (default = FALSE: rerun with `intervals = TRUE` for a production paper)
+#' @param tryHard (default = "yes"). "auto" picks to suit the model.
+#' @param silent Don't print the nested models (default = FALSE)
+#' @param digits rounding in printout (default = 2)
+#' @param ... Other parameters to control model summary
+#' @return Best fitting model
+#' @export
+#' @family Twin Modeling Functions
+#' @seealso [umxReduceACE()], [umxReduce()]
+#' @references Wagenmakers, E.J., & Farrell, S. (2004). AIC model selection using Akaike weights. *Psychonomic Bulletin and Review*, **11**, 192-196. \doi{10.3758/BF03206482}
+#' @examples
+#' \dontrun{
+#' data("us_skinfold_data")
+#' mzmData = subset(us_skinfold_data, zyg == 1)
+#' mzfData = subset(us_skinfold_data, zyg == 2)
+#' dzmData = subset(us_skinfold_data, zyg == 3)
+#' dzfData = subset(us_skinfold_data, zyg == 4)
+#' dzoData = subset(us_skinfold_data, zyg == 5)
+#' m1 = umxSexLim(selDVs = "bic", sep = "_T", mzmData = mzmData, dzmData = dzmData, mzfData = mzfData, dzfData = dzfData, dzoData = dzoData)
+#' best = umxReduce(m1)
+#' umxSummary(best)
+#' }
+umxReduceSexLim <- function(model, report = c("markdown", "inline", "html", "report"), intervals = FALSE, tryHard = c("yes", "no", "ordinal", "search", "auto"), silent = FALSE, digits = 2, ...) {
+	report  = match.arg(report)
+	tryHard = match.arg(tryHard)
+	nVar = nrow(model$top$am$values)
+	if(nVar != 1){
+		stop("umxReduceSexLim is for univariate models. This model has ", nVar, " variables. No nested models were fit.")
+	}
+	# Detect starting rung from labels. Nonscalar has sex-suffixed R labels (Ram_/Raf_/Rao_);
+	# Scalar keeps sex-suffixed a/c/e labels with plain R labels; Homogeneity has neither.
+	allLabs = c(model$top$Ram$labels, model$top$Raf$labels, model$top$Rcm$labels, model$top$Rcf$labels, model$top$Rem$labels, model$top$Ref$labels, model$top$Rao$labels, model$top$Rco$labels, model$top$am$labels, model$top$af$labels, model$top$cm$labels, model$top$cf$labels, model$top$em$labels, model$top$ef$labels)
+	allLabs = allLabs[!is.na(allLabs)]
+	rung = "Homogeneity"
+	if(any(grepl("^[ace][fm]_", allLabs))){
+		rung = "Scalar"
+	}
+	if(any(grepl("^R[ace][fmo]_", allLabs))){
+		rung = "Nonscalar"
+	}
+	# Snapshot options directly: umx_set_auto_run() returns options() (a list),
+	# not the old boolean, so the naive oldX = setter() pattern cannot restore.
+	oldAutoRun = getOption("umx_auto_run", default = TRUE)
+	oldSilent = getOption("umx_silent", default = FALSE)
+	oldAutoPlot = getOption("umx_auto_plot")
+	if(is.null(oldAutoPlot)){
+		oldAutoPlot = NA
+	}
+	umx_set_auto_run(TRUE, silent = TRUE)
+	if(silent){
+		umx_set_silent(TRUE)
+	}
+	umx_set_auto_plot(FALSE, silent = TRUE)
+
+	if(rung == "Homogeneity"){
+		message("Model is already at Homogeneity: nothing left to reduce")
+		bestModel = model
+	}else{
+		rungs = list(model)
+		names(rungs) = model$name
+		if(rung == "Nonscalar"){
+			# Scalar: equate R across sexes (the builder regex already renames
+			# Rao_/Rco_ via its [f|m|o] class, so no matrix rebuild is needed
+			# and fitted values carry over as starts)
+			scalarModel = umxModify(model, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", autoRun = FALSE, name = "Scalar")
+			scalarModel = xmu_safe_run_summary(scalarModel, autoRun = TRUE, tryHard = tryHard)
+			rungs = c(rungs, list(scalarModel))
+			names(rungs)[length(rungs)] = "Scalar"
+			model = scalarModel
+		}
+		# Homogeneity: equate a/c/e across m & f (mirror umxSexLim builder)
+		homogModel = umxModify(model, regex = "^a[fm]_", newlabels = "a_", autoRun = FALSE)
+		homogModel = umxModify(homogModel, regex = "^c[fm]_", newlabels = "c_", autoRun = FALSE)
+		homogModel = umxModify(homogModel, regex = "^e[fm]_", newlabels = "e_", autoRun = FALSE, name = "Homogeneity")
+		homogModel = xmu_safe_run_summary(homogModel, autoRun = TRUE, tryHard = tryHard)
+		rungs = c(rungs, list(homogModel))
+		names(rungs)[length(rungs)] = "Homogeneity"
+
+		# = Show fit table =
+		if(model$top$dzCr$values == .25){
+			treo = c("A", "D", "E")
+		} else {
+			treo = c("A", "C", "E")
+		}
+		tmp = data.frame(matrix(nrow = length(rungs), ncol = 6))
+		names(tmp) = paste0(rep(treo, each = 2), rep(c("m", "f"), times = 3))
+		for(i in 1:length(rungs)){
+			tmp[i, ] = c(rungs[[i]]$top$AmStd$result, rungs[[i]]$top$AfStd$result, rungs[[i]]$top$CmStd$result, rungs[[i]]$top$CfStd$result, rungs[[i]]$top$EmStd$result, rungs[[i]]$top$EfStd$result)
+		}
+		biggles = umxCompare(rungs[[1]], rungs[2:length(rungs)], all = TRUE, report = report, silent = TRUE)
+		tmp2 = cbind(biggles[, 1, drop = FALSE], tmp, biggles[, 2:dim(biggles)[2]])
+		umx_print(tmp2, digits = digits, report = report)
+		whichBest = which.min(biggles$AIC)[1]
+		bestModel = rungs[[whichBest]]
+		rungNames = names(rungs)
+		message("Among ", paste(rungNames, collapse = ", "), " models ", omxQuotes(bestModel$name), " fit best according to AIC.\n")
+		message(xmu_aic_weights_table(rungNames, biggles$AIC))
+	}
+	if(intervals){
+		bestModel = mxRun(bestModel, intervals = intervals)
+	} else if(!silent){
+		message("Polite note: intervals = FALSE, so the winning model has no confidence intervals. Re-run umxReduce(..., intervals = TRUE) for a production paper.")
+	}
+	umx_set_auto_plot(oldAutoPlot, silent = TRUE)
+	umx_set_silent(oldSilent)
+	umx_set_auto_run(autoRun = oldAutoRun)
+
+	invisible(bestModel)
+}
+#' @export
+umxReduce.MxModelSexLim <- umxReduceSexLim
 
 #' Get residuals from an MxModel
 #'
@@ -742,7 +879,7 @@ loadings.MxModel <- function(x, ...) {
 #' With `type = "wald"`, each interval is estimate +- z * SE, with no refits. Free parameters use the fitted standard errors; algebra cells such as `parm = "smart"` on a twin model use delta-method SEs from [OpenMx::mxSE()]. Labels with no computable SE are skipped with a warning; if no interval computes, it stops. Wald intervals are stored on the model, with matching requests, so [plot()] and [umxSummary()] draw them; a later profile run replaces them.
 #'
 #' @param object An [OpenMx::mxModel()], possibly already containing [OpenMx::mxCI()]s that have been [OpenMx::mxRun()] with intervals = TRUE))
-#' @param parm Which intervals to request. `"existing"` keeps the requests already on the model. `"all"` requests every free parameter label. `"smart"` requests one interval per free cell of the standardized algebras for CP, ACE, and IP (raw `a_cp`, `c_cp`, and `e_cp` for CP; the raw path matrices when no `*_std` algebra is present). For a RAM model, `"smart"` requests every free parameter label. One or more names request those labels.
+#' @param parm Which intervals to request. `"existing"` keeps the requests already on the model. `"all"` requests every free parameter label. `"smart"` requests one interval per free cell of the standardized algebras for CP, ACE, and IP (raw `a_cp`, `c_cp`, and `e_cp` for CP; the raw path matrices when no `*_std` algebra is present). For a RAM model, `"smart"` requests every free parameter label. One or more names request those labels. For `type = "wald"`, whole-algebra labels are expanded to one interval per cell.
 #' @param level The confidence level required (default = .95)
 #' @param run Whether to run the model (defaults to FALSE)
 #' @param report Whether to print the computed interval table. Defaults to TRUE when `run` is FALSE, and FALSE when `run` is TRUE.
@@ -871,6 +1008,27 @@ umxConfint <- function(object, parm = c("existing", "all", "or one or more label
 			stop("Polite note: This model's standard errors do not line up with its free parameters, so Wald intervals cannot be computed.", call. = FALSE)
 		}
 		names(freeSE) = names(freeEst)
+		# Whole-algebra labels (e.g. "top.a_std" from existing mxCI requests) name
+		# no cell: expand them to per-cell bracket addresses for the delta lookup.
+		# Labels that do not evaluate stay as-is and fail politely below.
+		expandedLabels = character(0)
+		for(waldLabel in waldLabels){
+			if(waldLabel %in% names(freeEst) || grepl("^(.+)\\[([0-9]+),([0-9]+)\\]$", waldLabel)){
+				expandedLabels = c(expandedLabels, waldLabel)
+			} else {
+				labelDims = tryCatch(dim(suppressWarnings(mxEvalByName(waldLabel, object))), error = function(e){ NULL })
+				if(is.null(labelDims) || length(labelDims) != 2){
+					expandedLabels = c(expandedLabels, waldLabel)
+				} else {
+					for(r in seq_len(labelDims[1])){
+						for(c in seq_len(labelDims[2])){
+							expandedLabels = c(expandedLabels, paste0(waldLabel, "[", r, ",", c, "]"))
+						}
+					}
+				}
+			}
+		}
+		waldLabels = unique(expandedLabels)
 		estVals = rep(NA_real_, length(waldLabels))
 		seVals = rep(NA_real_, length(waldLabels))
 		names(estVals) = waldLabels
@@ -1332,34 +1490,37 @@ umxSummary.MxLISRELModel <- function(model, refModels = NULL, std = FALSE, digit
 }
 
 
-#' Resolve the interval table a twin summary should display
+#' Resolve the interval table a twin summary or plot should display
 #'
-#' Internal helper for [umxSummaryACE()], [umxSummaryCP()], and [umxSummaryIP()].
-#' For `what = "CI"`, returns the intervals already stored on the model, or
-#' computes fresh Wald intervals with [umxConfint()] when none are stored. For
-#' `what = "SE"`, always computes fresh Wald intervals and derives SEs from
-#' them: stored tables carry no type/level stamp, so only a table computed here
-#' at known level yields sound SEs.
+#' Internal helper for [umxSummaryACE()], [umxSummaryCP()], [umxSummaryIP()],
+#' [umxPlotACE()], [umxPlotCP()], and [umxPlotIP()].
+#' For `what = "CI"`, returns the intervals already stored on the model. Nothing
+#' is computed: a tip names [umxConfint()] when none are stored. For `what = "SE"`,
+#' always computes fresh Wald intervals and derives SEs from them: stored tables
+#' carry no type/level stamp, so only a table computed here at known level yields sound SEs.
 #'
 #' @param model A fitted twin model (MxModelACE, MxModelCP, or MxModelIP).
 #' @param what `"CI"` for an interval table, `"SE"` for per-cell standard errors.
-#' @return A list with `cis` (interval matrix or NULL) and `ses` (named standard
-#' errors or NULL). Exactly one is non-NULL, unless nothing could be computed.
+#' @param callingFn Name used to attribute the note when fresh intervals cannot be computed (default = "umxSummary"). Plots pass their own name.
+#' @return A list with `cis` (interval matrix or NULL), `ses` (named standard
+#' errors or NULL), and `fresh` (the fresh Wald interval matrix behind `ses`, or NULL).
 #' @family xmu internal not for end user
 #' @export
 #'
-xmu_twin_intervals <- function(model, what = c("CI", "SE")) {
+xmu_twin_intervals <- function(model, what = c("CI", "SE"), callingFn = "umxSummary") {
 	what = match.arg(what)
 	cis = NULL
 	ses = NULL
+	freshTable = NULL
 	stored = model$output$confidenceIntervals
 	haveStored = !is.null(stored) && is.matrix(stored) && nrow(stored) > 0
-	if(what == "CI" && haveStored){
-		cis = stored
-	} else {
-		if(what == "CI"){
-			message("Polite note: computing Wald intervals on the fly. Tip: umxConfint(model, parm = 'smart', type = 'wald') computes and stores these in the model to save time in future.")
+	if(what == "CI"){
+		if(haveStored){
+			cis = stored
+		} else {
+			message("Polite note: this model has no stored intervals to display. Tip: umxConfint(model, parm = 'smart', type = 'wald') computes and stores Wald intervals.")
 		}
+	} else {
 		# Messages suppressed: umxConfint announces intervals "stored on the model",
 		# but this copy is discarded after display. Warnings (e.g. skipped cells) still surface.
 		# Wipe is TRUE: the copy is discarded, so start from an empty table. Merging
@@ -1367,23 +1528,20 @@ xmu_twin_intervals <- function(model, what = c("CI", "SE")) {
 		fresh = tryCatch({
 			suppressMessages(umxConfint(model, parm = "smart", type = "wald", report = FALSE, wipeExistingRequests = TRUE))
 		}, error = function(e){
-			message("umxSummary note: ", conditionMessage(e))
+			message(callingFn, " note: ", conditionMessage(e))
 			return(NULL)
 		})
 		if(!is.null(fresh)){
-			freshTable = fresh$output$confidenceIntervals
-			if(!is.null(freshTable) && is.matrix(freshTable) && nrow(freshTable) > 0){
-				if(what == "CI"){
-					cis = freshTable
-				} else {
-					zCrit = qnorm(1 - (1 - 0.95)/2)
-					ses = (freshTable[, "ubound"] - freshTable[, "lbound"])/(2 * zCrit)
-					names(ses) = rownames(freshTable)
-				}
+			candidate = fresh$output$confidenceIntervals
+			if(!is.null(candidate) && is.matrix(candidate) && nrow(candidate) > 0){
+				freshTable = candidate
+				zCrit = qnorm(1 - (1 - 0.95)/2)
+				ses = (freshTable[, "ubound"] - freshTable[, "lbound"])/(2 * zCrit)
+				names(ses) = rownames(freshTable)
 			}
 		}
 	}
-	return(list(cis = cis, ses = ses))
+	return(list(cis = cis, ses = ses, fresh = freshTable))
 }
 
 #' Paste one interval or SE into a summary-table cell
@@ -1461,7 +1619,7 @@ xmu_paste_intervals <- function(df, i, j, address, info, digits = 2, commaSep = 
 #' @param std Whether to standardize the output (default = TRUE).
 #' @param showRg = whether to show the genetic correlations (FALSE).
 #' @param CIs Deprecated. Please use `uncertainty` instead.
-#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, else Wald intervals computed on the fly), `"SE"` (delta-method standard errors, always computed on the fly), or `"none"`.
+#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, nothing computed here), `"SE"` (delta-method standard errors, computed on the fly), or `"none"`.
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE).
 #' @param report If "html", then open an html table of the results.
 #' @param file The name of the dot file for figure: "name" = use the name of the model.
@@ -1487,7 +1645,7 @@ xmu_paste_intervals <- function(df, i, j, address, info, digits = 2, commaSep = 
 #' stdFit = umxSummaryACE(m1, returnStd = TRUE);
 #' }
 #' 
-umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, uncertainty = c("CI", "SE", "none"), report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, uncertainty = c("CI", "SE", "none"), report = c("markdown", "html"), file = NA, returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 
@@ -2012,7 +2170,7 @@ plot.MxModelACE_GLM <- umxPlotACE_GLM
 #' umxSummaryACEcov(m1, file = "name", std = TRUE)
 #' stdFit = umxSummary(m1, returnStd = TRUE)
 #' }
-umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, ...) {
+umxSummaryACEcov <- function(model, digits = 2, showRg = FALSE, std = TRUE, comparison = NULL, CIs = TRUE, zero.print = ".", report = c("markdown", "html"), file = NA, returnStd = FALSE, extended = FALSE, ...) {
 	umx_msg("Beta function!! Better to use umxACE() with covariates in the means, IMHO.")
 	report   = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
@@ -2186,7 +2344,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' @param digits Round to how many digits (default = 2)
 #' @param std Whether to show the standardized model (TRUE) (ignored: used extended = TRUE to get unstandardized)
 #' @param CIs Deprecated. Please use `uncertainty` instead.
-#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, else Wald intervals computed on the fly), `"SE"` (delta-method standard errors, always computed on the fly), or `"none"`.
+#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, nothing computed here), `"SE"` (delta-method standard errors, computed on the fly), or `"none"`.
 #' @param showRg Whether to show the genetic correlations (default FALSE)
 #' @param comparison Run mxCompare on a comparison model (default NULL)
 #' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
@@ -2231,7 +2389,7 @@ umxSummary.MxModelACEcov <- umxSummaryACEcov
 #' umxSummary(m1, CIs = TRUE, file = NA);
 #' }
 #'
-umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, uncertainty = c("CI", "SE", "none"), showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, ...) {
+umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, uncertainty = c("CI", "SE", "none"), showRg = FALSE, comparison = NULL, report = c("markdown", "html"), file = NA, returnStd = FALSE, ...) {
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 	report = match.arg(report)
 
@@ -2262,13 +2420,14 @@ umxSummaryCP <- function(model, digits = 2, std = TRUE, CIs = TRUE, uncertainty 
 		nVar   = length(selDVs)
 		nFac   = dim(model$top$matrices$a_cp)[[1]]	
 
-		if(any(c(std, returnStd))) {
-			model = xmu_standardize_CP(model) # Make a standardized copy of model
-		}
 		commaSep = paste0(umx_set_separator(silent = TRUE), " ")
 		twinInfo = NULL
 		if(uncertainty != "none"){
+			# Fresh intervals come from the fitted model: delta-method SEs are evaluated at the solution.
 			twinInfo = xmu_twin_intervals(model, what = uncertainty)
+		}
+		if(any(c(std, returnStd))) {
+			model = xmu_standardize_CP(model) # Make a standardized copy of model
 		}
 
 		# 1. Create Tables of Common Factor Paths
@@ -2374,7 +2533,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' @param showRg = whether to show the genetic correlations (FALSE)
 #' @param comparison Whether to run mxCompare on a comparison model (NULL)
 #' @param CIs Deprecated. Please use `uncertainty` instead.
-#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, else Wald intervals computed on the fly), `"SE"` (delta-method standard errors, always computed on the fly), or `"none"`. The printed tables are standardized, so the address is `top.ai_std` (and `ci`, `ei`, `as`, `cs`, `es`) when those algebras exist.
+#' @param uncertainty What type of parameter uncertainty to report: `"CI"` (default; intervals already stored on the model, nothing computed here), `"SE"` (delta-method standard errors, computed on the fly), or `"none"`. The printed tables are standardized, so the address is `top.ai_std` (and `ci`, `ei`, `as`, `cs`, `es`) when those algebras exist.
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param report how to display the results ("html" will open in browser as table)
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
@@ -2396,7 +2555,7 @@ umxSummary.MxModelCP <- umxSummaryCP
 #' plot(m1)
 #' umxSummaryIP(m1, digits = 2, file = "Figure3", showRg = FALSE, CIs = TRUE);
 #' }
-umxSummaryIP <- function(model, digits = 2, file = getOption("umx_auto_plot"), std = TRUE, showRg = FALSE, comparison = NULL, CIs = TRUE, uncertainty = c("CI", "SE", "none"), returnStd = FALSE, report = c("markdown", "html"), ...) {
+umxSummaryIP <- function(model, digits = 2, file = NA, std = TRUE, showRg = FALSE, comparison = NULL, CIs = TRUE, uncertainty = c("CI", "SE", "none"), returnStd = FALSE, report = c("markdown", "html"), ...) {
 	umx_check_model(model, "MxModelIP", beenRun = TRUE, callingFn = "umxSummaryIP")
 
 	# Handle deprecated CIs parameter and map it to uncertainty
@@ -2533,7 +2692,6 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' @param xlab label for the x-axis of plot
 #' @param digits round to how many digits (default = 2)
 #' @param location default = "topleft"
-#' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param returnStd Whether to return the standardized form of the model (default = FALSE)
 #' @param show not doing anything yet (required for all summary functions)
 #' @param ... Optional additional parameters
@@ -2548,7 +2706,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' # aged 18-30 years, and an older cohort aged 31 and above.
 #' # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
 #' # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
-#  # use ?twinData to learn about this data set.
+#' # use ?twinData to learn about this data set.
 #' require(umx)
 #' data(twinData) 
 #' twinData$age1 = twinData$age2 = twinData$age
@@ -2566,7 +2724,7 @@ umxSummary.MxModelIP <- umxSummaryIP
 #' umxSummaryGxE(m1, location = "topright")
 #' umxSummaryGxE(m1, separateGraphs = FALSE)
 #' }
-umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, gg=TRUE, file = getOption("umx_auto_plot"), returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL, ...) {
+umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "topleft", separateGraphs = FALSE, gg=TRUE, returnStd = NULL, std = NULL, reduce = FALSE, CIs = NULL, report = c("markdown", "html"), show= NULL, ...) {
 	report = match.arg(report)
 	umx_check(is.null(show), "stop", "For several years now, show has been deprecated in favor of std.\nTo continue, just use 'std = TRUE' instead of show='std'")
 	umx_has_been_run(model, stop = TRUE)
@@ -2582,13 +2740,7 @@ umxSummaryGxE <- function(model = NULL, digits = 2, xlab = NA, location = "tople
 	fit = as.data.frame(suppressMessages(OpenMx::mxCompare(model)))
 	print(data.frame(model = model$name, minus2LL = fit$minus2LL, df = fit$df, AIC = fit$AIC, check.names = FALSE), digits = digits, row.names = FALSE)
 	tablePub = summary(model)$parameters[, c("name", "Estimate", "Std.Error")]
-	if(report == "html"){
-		print(xtable::xtable(tablePub), type = "HTML", file = file, sanitize.text.function = function(x){x}, digits=3)
-		umx_open(file)
-	} else {
-		# markdown
-		umx_print(tablePub, digits = digits)
-	}
+	umx_print(tablePub, digits = digits, report = report)
 
 	umxPlotGxE(model, xlab = xlab, location = location, separateGraphs = separateGraphs, gg = gg)
 
@@ -3145,7 +3297,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param fixed Whether to show fixed paths (defaults to TRUE)
 #' @param means Whether to show means or not (default = TRUE)
 #' @param digits The number of decimal places to add to the path coefficients
-#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (Wald interval from the reported SE), or "none" (no Wald interval or SE). A profile interval already stored for a raw free parameter is drawn on that path, including when this is "none". Standardized diagrams do not use that raw interval.
+#' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile intervals already stored on the model, nothing computed here), or "none" (no Wald interval or SE). A profile interval already stored for a raw free parameter is drawn on that path, including when this is "none", except when this is "SE" or "MLR". Standardized diagrams do not use that raw interval.
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param labels Whether to show labels on the paths. "none", "labels", or "both" (parameter + label).
 #' @param resid How to show residuals and variances default is "circle". Options are "line" & "none"
@@ -3263,6 +3415,10 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		}
 		
 		cis = model$output$confidenceIntervals
+		if(uncertainty %in% c("SE", "MLR")){
+			# SE and MLR show SEs only: stored intervals are wiped from the display (the model is untouched).
+			cis = NULL
+		}
 
 		# Update values using compute = T to capture labels with [] references.
 		model$S$values = mxEval(S, model, compute = TRUE)
@@ -3423,7 +3579,8 @@ plot.MxRAMModel <- plot.MxModel
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param showFixed Whether too draw fixed parameters.
 #' @param format Output format: "current" (default), "graphviz", or "DiagrammeR".
-#' @param showCIs Whether to draw a profile interval that has already been computed (default TRUE). Intervals are looked up on the standardized diagram. `std = FALSE` keeps the point estimate. Means stay point estimates. This does not compute intervals.
+#' @param showCIs Whether to draw a profile interval that has already been computed (default TRUE). Intervals are looked up on the standardized diagram. `std = FALSE` keeps the point estimate. Means stay point estimates. This does not compute intervals. Fresh intervals from `uncertainty` still show when this is FALSE.
+#' @param uncertainty What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (delta-method standard errors, computed on the fly), or "CI" (intervals already stored on the model, nothing computed here).
 #' @param ... Additional (optional) parameters
 #' @return - optionally return the dot code
 #' @export
@@ -3440,9 +3597,10 @@ plot.MxRAMModel <- plot.MxModel
 #' m1 = umxACE("plotACE example", selDVs = "bmi", dzData = dzData, mzData = mzData, sep = "")
 #' plot(m1, std = FALSE) # don't standardize
 #' }
-umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, showFixed = FALSE, format = c("current", "graphviz", "DiagrammeR"), showCIs = TRUE, ...) {
+umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, strip_zero = TRUE, showFixed = FALSE, format = c("current", "graphviz", "DiagrammeR"), showCIs = TRUE, uncertainty = c("none", "SE", "CI"), ...) {
 	model = x # just to be clear that x is a model
 	format = match.arg(format)
+	uncertainty = match.arg(uncertainty)
 	if(std){model = xmu_standardize_ACE(model)}
 
 	nVar   = dim(model$top$a$values)[[1]]
@@ -3451,17 +3609,42 @@ umxPlotACE <- function(x = NA, file = "name", digits = 2, means = FALSE, std = T
 	out    = list(str = "", latents = c(), manifests = c())
 	# Profile intervals from umxConfint(parm = "smart") are on top.a_std / c_std / e_std.
 	# xmu_get_CI maps a_r1c1 to that standardized address, so the raw diagram stays a point estimate.
+	# Fresh intervals are standardized too: unstandardized diagrams stay bare of fresh values.
 	ciModel = NULL
 	drawCIs = FALSE
-	if(isTRUE(showCIs) && isTRUE(std)){
-		ciModel = model
-		drawCIs = TRUE
+	seStyle = FALSE
+	if(uncertainty == "SE" && isTRUE(std)){
+		# SEs come only from the fresh table: never derive them from stored rows.
+		# Fresh comes from x (as in umxSummaryACE), so plot and summary show the same values.
+		# Unstandardized diagrams stay bare: fresh intervals are standardized.
+		twinInfo = xmu_twin_intervals(x, what = "SE", callingFn = "umxPlotACE")
+		if(!is.null(twinInfo$fresh)){
+			seStyle = TRUE
+			ciModel = model
+			tmpOut = ciModel@output
+			tmpOut$confidenceIntervals = twinInfo$fresh
+			ciModel@output = tmpOut
+			drawCIs = TRUE
+		}
+	} else if(isTRUE(showCIs) && isTRUE(std)){
+		if(uncertainty == "CI"){
+			# CI shows whatever is stored; tip when nothing is stored.
+			twinInfo = xmu_twin_intervals(x, what = "CI", callingFn = "umxPlotACE")
+			if(!is.null(twinInfo$cis)){
+				ciModel = model
+				drawCIs = TRUE
+			}
+		} else {
+			# none: show whatever is stored
+			ciModel = model
+			drawCIs = TRUE
+		}
 	}
 
 	# 2. Factor correlations on the lower
-	out = xmu_dot_mat2dot(model$top$a, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, model = ciModel, showCIs = drawCIs, p = out)
-	out = xmu_dot_mat2dot(model$top$c, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, model = ciModel, showCIs = drawCIs, p = out)
-	out = xmu_dot_mat2dot(model$top$e, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, model = ciModel, showCIs = drawCIs, p = out)
+	out = xmu_dot_mat2dot(model$top$a, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, model = ciModel, SEstyle = seStyle, showCIs = drawCIs, p = out)
+	out = xmu_dot_mat2dot(model$top$c, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, model = ciModel, SEstyle = seStyle, showCIs = drawCIs, p = out)
+	out = xmu_dot_mat2dot(model$top$e, cells = "lower_inc", from = "cols", toLabel = selDVs, fromType = "latent", toType = "manifest", arrows = "forward", showFixed = showFixed, digits = digits, model = ciModel, SEstyle = seStyle, showCIs = drawCIs, p = out)
 
 	# Process "expMean" 1 * nVar matrix. Means are not part of the smart interval set.
 	if(means){
@@ -3787,11 +3970,12 @@ plot.MxModelGxE <- umxPlotGxE
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
-#' @param SEstyle use mxSE "b (se)" instead of mxCI "b \[lower, upper\]" (Default FALSE)
+#' @param SEstyle Deprecated. Please use `uncertainty` instead.
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param format = c("current", "graphviz", "DiagrammeR") 
-#' @param showCIs Whether to show confidence intervals (default = TRUE)
+#' @param showCIs Whether to show intervals already stored on the model (default = TRUE). Intervals are looked up on the standardized diagram: `std = FALSE` keeps point estimates. Intervals computed via `uncertainty` still show when this is FALSE.
+#' @param uncertainty What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (delta-method standard errors, computed on the fly), or "CI" (intervals already stored on the model, nothing computed here).
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
@@ -3814,13 +3998,53 @@ plot.MxModelGxE <- umxPlotGxE
 #' umxPlotCP(m1)
 #' plot(m1) # No need to remember a special name: plot works fine!
 #' }
-umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, ...) {
+umxPlotCP <- function(x = NA, means = FALSE, std = TRUE, digits = 2, showFixed = TRUE, file = "name", format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, uncertainty = c("none", "SE", "CI"), ...) {
 	format = match.arg(format)
 	model  = x # just to emphasise that x has to be a model 
 	umx_check_model(model, "MxModelCP", callingFn = "umxPlotCP")
 
+	# Handle deprecated SEstyle parameter and map it to uncertainty
+	if(missing(uncertainty)){
+		if(!missing(SEstyle) && !identical(SEstyle, FALSE)){
+			message("Polite note: SEstyle is deprecated. Please use uncertainty = \"SE\" instead.")
+			uncertainty = "SE"
+		} else {
+			uncertainty = "none"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
+
+	# Gate stored-interval lookup on std (as umxPlotACE does): standardized intervals
+	# must never be pasted onto an unstandardized diagram. Unstandardized diagrams stay bare.
+	if(!isTRUE(std)){
+		showCIs = FALSE
+	}
+
 	if(std){ model = xmu_standardize_CP(model) }
-		
+
+	# SEstyle (deprecated) is consumed above; from here SEstyle is the render flag for xmu_dot_mat2dot.
+	if(uncertainty == "SE" && isTRUE(std)){
+		# SEs come only from the fresh table: never derive them from stored rows.
+		# Fresh comes from x (as in umxSummaryCP), so plot and summary show the same values.
+		# Unstandardized diagrams stay bare: fresh intervals are standardized.
+		SEstyle = TRUE
+		twinInfo = xmu_twin_intervals(x, what = "SE", callingFn = "umxPlotCP")
+		if(is.null(twinInfo$fresh)){
+			showCIs = FALSE
+		} else {
+			tmpOut = model@output
+			tmpOut$confidenceIntervals = twinInfo$fresh
+			model@output = tmpOut
+		}
+	} else if(uncertainty == "CI" && isTRUE(showCIs)){
+		# CI shows whatever is stored (rendered by the path below); tip when nothing is stored.
+		twinInfo = xmu_twin_intervals(x, what = "CI", callingFn = "umxPlotCP")
+		if(is.null(twinInfo$cis)){
+			showCIs = FALSE
+		}
+	}
+
 	nFac   = dim(model$top$a_cp$labels)[[1]]
 	nVar   = dim(model$top$as$values)[[1]]
 	selDVs = dimnames(model$MZ$data$observed)[[2]]
@@ -3897,9 +4121,10 @@ plot.MxModelCP <- umxPlotCP
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param showFixed Whether to graph paths that are fixed but != 0 (default = TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR")
-#' @param SEstyle Report "b (se)" instead of "b \[lower, upper\]" (Default)
+#' @param SEstyle Deprecated. Please use `uncertainty` instead.
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
-#' @param showCIs Whether to show confidence intervals (default = TRUE)
+#' @param showCIs Whether to show intervals already stored on the model (default = TRUE). Intervals are looked up on the standardized diagram: `std = FALSE` keeps point estimates. Intervals computed via `uncertainty` still show when this is FALSE.
+#' @param uncertainty What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (delta-method standard errors, computed on the fly), or "CI" (intervals already stored on the model, nothing computed here).
 #' @param ... Optional additional parameters
 #' @return - optionally return the dot code
 #' @export
@@ -3918,13 +4143,53 @@ plot.MxModelCP <- umxPlotCP
 #' plot(model)
 #' umxPlotIP(model, file = NA)
 #' }
-umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showFixed = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, ...) {
+umxPlotIP <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE, showFixed = TRUE, format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, uncertainty = c("none", "SE", "CI"), ...) {
 	format = match.arg(format)
 	model = x # Just to emphasize that x has to be a model 
 	umx_check_model(model, "MxModelIP", callingFn = "umxPlotIP")
-	
+
+	# Handle deprecated SEstyle parameter and map it to uncertainty
+	if(missing(uncertainty)){
+		if(!missing(SEstyle) && !identical(SEstyle, FALSE)){
+			message("Polite note: SEstyle is deprecated. Please use uncertainty = \"SE\" instead.")
+			uncertainty = "SE"
+		} else {
+			uncertainty = "none"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
+
+	# Gate stored-interval lookup on std (as umxPlotACE does): standardized intervals
+	# must never be pasted onto an unstandardized diagram. Unstandardized diagrams stay bare.
+	if(!isTRUE(std)){
+		showCIs = FALSE
+	}
+
 	if(std){
 		model = xmu_standardize_IP(model)
+	}
+
+	# SEstyle (deprecated) is consumed above; from here SEstyle is the render flag for xmu_dot_mat2dot.
+	if(uncertainty == "SE" && isTRUE(std)){
+		# SEs come only from the fresh table: never derive them from stored rows.
+		# Fresh comes from x (as in umxSummaryIP), so plot and summary show the same values.
+		# Unstandardized diagrams stay bare: fresh intervals are standardized.
+		SEstyle = TRUE
+		twinInfo = xmu_twin_intervals(x, what = "SE", callingFn = "umxPlotIP")
+		if(is.null(twinInfo$fresh)){
+			showCIs = FALSE
+		} else {
+			tmpOut = model@output
+			tmpOut$confidenceIntervals = twinInfo$fresh
+			model@output = tmpOut
+		}
+	} else if(uncertainty == "CI" && isTRUE(showCIs)){
+		# CI shows whatever is stored (rendered by the path below); tip when nothing is stored.
+		twinInfo = xmu_twin_intervals(x, what = "CI", callingFn = "umxPlotIP")
+		if(is.null(twinInfo$cis)){
+			showCIs = FALSE
+		}
 	}
 
 	# 1. get vars from rows of as matrix
