@@ -76,7 +76,7 @@
 #' @param std If TRUE, model is standardized (Default FALSE, NULL means "don't show").
 #' @param digits How many decimal places to report (Default 2)
 #' @param report If "html", then show results in browser (default = "markdown")
-#' @param uncertainty What type of uncertainty/inference packaging to report: `"SE"` (default SEs from the fit), `"MLR"` (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available), `"CI"` (Wald interval from the reported SE), or `"none"`. A profile interval already stored on the model replaces that Wald interval for the raw parameter. Standardized tables keep the Wald interval: a raw profile interval is not the interval of the standardized path. `"none"` omits the interval column.
+#' @param uncertainty What type of uncertainty/inference packaging to report: `"SE"` (default SEs from the fit), `"MLR"` (engine-appropriate robust inference: ML casewise sandwich SEs + robust AFIs; for WLS, moment-sandwich SEs + robust WLS AFIs when available; no interval column), `"CI"` (profile intervals already stored on the model, nothing computed here), or `"none"`. Under `"SE"`, a profile interval already stored on the model replaces the Wald interval for the raw parameter; standardized `"SE"` tables keep the Wald interval, since a raw profile interval is not the interval of the standardized path. Under `"CI"`, only stored intervals are shown (nothing on standardized tables, where a raw interval would mislead). `"none"` omits the interval column.
 #' @param means Whether to include means in the summary (TRUE)
 #' @param residuals Whether to include residuals in the summary (TRUE)
 #' @param filter whether to show significant paths (SIG) or NS paths (NS) or all paths (ALL)
@@ -346,6 +346,8 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 					namesToShow = c(naming, "Std.Estimate")
 				} else if (uncertainty == "CI") {
 					namesToShow = c(naming, "Std.Estimate", "CI")
+				} else if (uncertainty == "MLR") {
+					namesToShow = c(naming, "Std.Estimate", "Std.SE")
 				} else {
 					namesToShow = c(naming, "Std.Estimate", "Std.SE", "CI")
 				}
@@ -354,16 +356,22 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 					namesToShow = c(naming, "Estimate")
 				} else if (uncertainty == "CI") {
 					namesToShow = c(naming, "Estimate", "CI")
+				} else if (uncertainty == "MLR") {
+					namesToShow = c(naming, "Estimate", "SE")
 				} else {
 					namesToShow = c(naming, "Estimate", "SE", "CI")
 				}
 			}
 
+			showCIcol = "CI" %in% namesToShow
 			parameterTable$sig = TRUE
-			if("CI" %in% namesToShow){
-				parameterTable$CI  = ""
+			# MLR shows no CI column, but significance is still assessed from its sandwich SEs (never from stored intervals).
+			if(showCIcol || uncertainty == "MLR"){
+				if(showCIcol){
+					parameterTable$CI  = ""
+				}
 				cis = model$output$confidenceIntervals
-				hasCIs = !is.null(cis) && (nrow(cis) > 0)
+				hasCIs = showCIcol && !is.null(cis) && (nrow(cis) > 0)
 				for(i in 1:dim(parameterTable)[1]) {
 					pName = parameterTable[i, "name"]
 					est   = parameterTable[i, ifelse(std, "Std.Estimate", "Estimate")]
@@ -384,11 +392,14 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 						ubound = as.numeric(cis[profileKey, "ubound"])[1]
 					}
 					if (is.finite(lbound) && is.finite(ubound)) {
-						parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+						if(showCIcol){
+							parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(lbound, digits), commaSep, round(ubound, digits), "]")
+						}
 						if (lbound <= 0 && ubound >= 0) {
 							parameterTable[i, "sig"] = FALSE
 						}
-					} else {
+					} else if (uncertainty != "CI") {
+						# CI shows stored intervals only: no Wald fills, and gaps stay unassessed.
 						seVal = suppressWarnings(as.numeric(parameterTable[i, ifelse(std, "Std.SE", "SE")]))
 						CI95  = seVal * 1.96
 						bounds = c(est - CI95, est + CI95)
@@ -399,7 +410,9 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 							if (any(bounds <= 0) & any(bounds >= 0)){
 								parameterTable[i, "sig"] = FALSE
 							}
-							parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
+							if(showCIcol){
+								parameterTable[i, "CI"] = paste0(round(est, digits), " [", round(est - CI95, digits), commaSep, round(est + CI95, digits), "]")
+							}
 						}
 					}
 				}
