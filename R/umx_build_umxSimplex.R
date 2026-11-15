@@ -13,6 +13,7 @@
 #' common or shared-environment (C) or non-additive genetic effects (D).
 #' 
 #' In the simplex model, these influences are modeled as a combination of:
+#' 
 #' * Innovations at a given time (`ai` `ci` and `ei` matrices).
 #' * Influences transmitted from previous time (`at`, `ct`, and `et` matrices).
 #' * Influences specific to a single time (`as`, `cs`, `es`).
@@ -25,26 +26,26 @@
 #' \if{latex}{\figure{simplex.png}{options: width=7cm}}
 #'
 #' **Data Input**
-#' Currently, the umxSimplex function accepts only raw data.
+#' Currently `umxSimplex` accepts only raw data.
 #' 
 #' **Ordinal Data**
-#' In an important capability, the model transparently handles ordinal (binary or multi-level
-#' ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
+#' The model transparently handles ordinal (binary or multi-level ordered factor data)
+#' inputs, and can handle mixtures of continuous, binary, and ordinal
 #' data in any combination.
 #' 
 #' **Additional features**
-#' The `umxSimplex` function supports varying the DZ genetic association (defaulting to .5)
-#' to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-#' from 1 (the default for modeling family-level effects shared 100% by twins in a pair),
+#' `umxSimplex` supports varying the DZ genetic association (defaulting to .5)
+#' to allow exploring assortative mating effects, as well as varying the DZ `C` factor
+#' from 1 (the default for modeling family-level effects shared fully by twins in a pair),
 #' to .25 to model dominance effects.
 #'
 #' **Matrices and Labels in the simplex model**
-#' A good way to see which matrices are used in umxSummary is to run an example model and plot it.
+#' A good way to see which matrices are used in `umxSummary` is to run an example model and plot it.
 #'
 #' The loadings specific to each time point are contained on the diagonals of matrices 
 #' `as`, `cs`, and `es`. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
 #' 
-#' All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
+#' All the shared matrices are in the model "top". So to see the 'as' values use:
 #' 
 #' `m1$top$as$values`
 #' 
@@ -56,7 +57,7 @@
 #' This has 1 row, and the columns are laid out for each variable for
 #' twin 1, followed by each variable for twin 2.
 #' 
-#' Thus, in a model where the means for twin 1 and twin 2 had been equated 
+#' Thus, in a model where the means for twin 1 and twin 2 are equated 
 #' (set = to T1), you could make them independent again with this script:
 #'
 #' `m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")`
@@ -79,7 +80,9 @@
 #' @export
 #' @family Twin Modeling Functions
 #' @seealso - [umxACE()] for more examples of twin modeling, [plot()], [umxSummary()] work for IP, CP, GxE, SAT, and ACE models.
-#' @references <https://github.com/tbates/umx>
+#' @references * Eaves, L. J., Long, J., & Heath, A. C. (1986). A theory of developmental change in
+#' quantitative phenotypes applied to cognitive development. *Behavior Genetics*, **16**, 143–162. \doi{10.1007/BF01065484}
+#' * Boomsma, D. I., & Molenaar, P. C. M. (1987). The genetic analysis of repeated measures. I. Simplex models. *Behavior Genetics*, **17**, 111–123. \doi{10.1007/BF01065991}
 #' @examples
 #' \dontrun{
 #' data(iqdat)
@@ -228,7 +231,7 @@ umxSimplex <- function(name = "simplex", selDVs, dzData, mzData, sep = "_T", equ
 #' m1= umxSimplex(selDVs= vars, sep= "_T", dzData= dzData, mzData= mzData, tryHard= "yes")
 #' umxSummary(m1, file = NA);
 #' }
-umxSummarySimplex <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
+umxSummarySimplex <- function(model, digits = 2, file = NA, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
 	# Depends on R2HTML::HTML
 	show = match.arg(show)
 	if(show != "std"){
