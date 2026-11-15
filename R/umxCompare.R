@@ -71,6 +71,10 @@
 #' per model. A comparison in which no model has an equality constraint does not
 #' set that attribute. Inequality constraints contribute 0 and do not produce a line.
 #'
+#' **Collating several calls**
+#'
+#' [umx_table_collate()] `"init"` starts a store. Each later `umxCompare()` appends its table, including a call with `silent = TRUE`. `"show"` prints the stacked rows. The first table fixes the column names and the engine (ML, MLR, or WLS). A later table that does not match is not stored, and this function stops. `Δ AIC` stays the value from the call that made the row.
+#'
 #' @param base The base [OpenMx::mxModel()] for comparison
 #' @param comparison The model (or list of models) which will be compared for fit with the base model (can be empty)
 #' @param all Whether to make all possible comparisons if there is more than one base model (defaults to T)
@@ -83,7 +87,7 @@
 #' @param silent (don't print, just return the table as a dataframe (default = FALSE)
 #' @param uncertainty What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile likelihood confidence intervals), or "none" (none).
 #' @family Model Summary and Comparison
-#' @seealso - [umxSummary()], [umxRAM()],[umxCompare()]
+#' @seealso - [umxSummary()], [umxRAM()], [umxCompare()], [umx_table_collate()]
 #' @references <https://github.com/tbates/umx>
 #' @export
 #' @examples
@@ -255,6 +259,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		if (length(constraintNotes) > 0) {
 			attr(finalTable, "constraintNotes") = constraintNotes
 		}
+		if (!is.null(getOption("umx_table_collate"))) {
+			umx_table_collate("add", table = finalTable, engine = "WLS")
+		}
 		return(invisible(finalTable))
 	} else {
 		# Base is ML. Ensure no comparison models are WLS to prevent reverse-mismatch.
@@ -393,12 +400,9 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 		}
 		whichBest = which.min(AIClist)
 		bestModel = modelList[[whichBest]]
-		aic.weights = round(aic_weights(AIClist), 2)
 		if(!silent){
-			cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.")
-			cat("AIC weight-based  {Wagenmakers, 2004, 192-196} conditional probabilities of being the best model for ", 
-				omxQuotes(namez(modelList)), " respectively are: ", 
-				omxQuotes(aic.weights), " Using aic_weights(AIC()).")	
+			cat("The ", omxQuotes(bestModel$name), " model is the best fitting model according to AIC.\n")
+			cat(xmu_aic_weights_table(namez(modelList), AIClist), "\n", sep = "")
 		}
 		
 	}
@@ -408,6 +412,13 @@ umxCompare <- function(base = NULL, comparison = NULL, all = TRUE, digits = 3, r
 	}
 	if (length(constraintNotes) > 0) {
 		attr(tablePub, "constraintNotes") = constraintNotes
+	}
+	if (!is.null(getOption("umx_table_collate"))) {
+		collateEngine = "ML"
+		if (uncertainty == "MLR") {
+			collateEngine = "MLR"
+		}
+		umx_table_collate("add", table = tablePub, engine = collateEngine)
 	}
 	invisible(tablePub)
 }
