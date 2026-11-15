@@ -1,4 +1,4 @@
-# TODO sexlim: This k scalar heterogeneity model is not yet implemented in umx.
+# TODO sexlim: Scalar and Homogeneity variants are less tested than Nonscalar.
 
 #' Multivariate sex limitation twin model
 #'
@@ -65,9 +65,10 @@
 #' @family Twin Modeling Functions
 #' @references Neale, M. C., Roysamb, E., Jacobson, K. (2006). Multivariate genetic analysis of sex-lim and G x E interaction. *Twin Research & Human Genetics*, **9**, pp. 481--489. \doi{10.1375/183242706778024937}
 #' @examples
-#  # =============================================
-#  # = Run Qualitative Sex Differences ACE model =
-#  # =============================================
+#' #  # =============================================
+#' #  # = Run Qualitative Sex Differences ACE model =
+#' #  # =============================================
+#' 
 #' # =========================
 #' # = Load and Process Data =
 #' # =========================
@@ -95,21 +96,22 @@
 #' # ==========================
 #' # = Run univariate example =
 #' # ==========================
-#' 
-#' m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
+#'
+#' m1 = umxSexLim(selDVs = "bic", A_or_C = "A", tryHard = "yes", sep = "_T",
+#'		sexlim = "Nonscalar",
 #'		mzmData = mzmData, dzmData = dzmData, 
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
 #')
 #'
 #' # Drop qualitative sex limitation
-#  Distinct af and am (and c and e), but shared Ra (and Rc and Re) between variables (same for males and females)
+#' # Distinct af and am (and c and e), but shared Ra (and Rc and Re) between variables
+#' # (same for males and females)
 #' m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
 #'
-#'
 #' # Equate a, ac, and try ace across m & f in scalar model
-#' m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual", comparison = TRUE)
-#' m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual", comparison = TRUE)
+#' m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual"  , comparison = TRUE)
+#' m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual" , comparison = TRUE)
 #' m1d = umxModify(m1c, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
 #' umxCompare(m1, c(m1a, m1b, m1c, m1d))
 #'
@@ -187,16 +189,14 @@
 #'	mzmData = mzmData, dzmData = dzmData, 
 #'  mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 #')
-#'
-#' # umxSummary(m1)
-#' # summary(m1)
-#' # summary(m1)$Mi
-#' }
+#'}
 umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfData, dzoData, sep = NA, A_or_C = c("A", "C"), sexlim = c("Nonscalar", "Scalar", "Homogeneity"), dzAr = .5, dzCr = 1, autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL){
-	message("umxSexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing on github.com/tbates/umx/issues")
 	A_or_C  = match.arg(A_or_C)
 	sexlim  = match.arg(sexlim)
 	tryHard = match.arg(tryHard)
+	if(sexlim != "Nonscalar" || A_or_C == "C"){
+		message("Polite note: umxSexLim with sexlim = '", sexlim, "' and A_or_C = '", A_or_C, "' is less tested. Please report issues at github.com/tbates/umx/issues")
+	}
 
 	# ================================
 	# = 1. Non-scalar Sex Limitation =
@@ -240,10 +240,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 
 	# Make Rao and Rco matrices 
 	if(A_or_C == "A"){
-		# Quantitative & Qualitative Sex Differences for A (Ra is Full, Rc is Symm)
-		# (labels trimmed to Ra at end)
-		# TODO: Check Stand (symmetric with 1's on diagonal) OK (was Symm + fix diag @1)
-		# 	Not sure why, as Symm can't become Full... so can't turn Ao into Co...
+		# Quantitative & Qualitative Sex Differences for A (labels trimmed to Ra at end)
 		Rao = umxMatrix("Rao", "Full" , nrow = nVar, ncol = nVar, free = TRUE, values =  1, lbound= -1, ubound= 1)
 		Rco = umxMatrix("Rco", "Stand", nrow = nVar, ncol = nVar, free = TRUE, values = .4, lbound= -1, ubound= 1)
 	} else if (A_or_C == "C"){
@@ -282,8 +279,7 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 			Rao, Rco,
 
 			# Algebras for Male and female variance components
-				# %&% pre- and post-multiplies,
-				# so (Ram %&%  am) == ("am %*% Ram %*%  am")
+				# %&% pre- and post-multiplies: Ram %&%  am == ("am %*% Ram %*%  am")
 			mxAlgebra(name = "Am", Ram %&% am),
 			mxAlgebra(name = "Cm", Rcm %&% cm),
 			mxAlgebra(name = "Em", Rem %&% em),
@@ -363,19 +359,19 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		# =================================
 		# = Non-scalar Sex Limitation (A) =
 		# =================================
-		# TODO: Quantitative & Qualitative Sex Differences for A || C.
+		# Quantitative & Qualitative Sex Differences for A or C.
 		# Male and female paths, plus Ra, Rc and Re between variables for males and females
 		# Male-Female correlations in DZO group between A factors Rao FREE
 		# Rc constrained across male, female and opposite-sex pairs
 
-		# Non-scalar (full) sex-lim label tweaks
+		# Non-scalar (full) sex-lim label pick Ra or Rc, and drop the sex codes on the other.
 		if(A_or_C == "A"){
-			# Convert Rc[fmo] => "Rc"		
+			# Convert Rc[fmo]_r1c1 => "Rc_r1c1"
 			if("^Rc[fmo](_.*)$" %in% umxGetParameters(model)){
 				model = umxModify(model, regex = "^Rc[fmo](_.*)$", newlabels = "Rc\\1", autoRun=FALSE)
 			}
 		}else if (A_or_C == "C"){
-			# Convert Ra[fmo] => "Ra"
+			# Convert Ra[fmo]_r1c1 => "Ra_r1c1"
 			if("^Ra[fmo](_.*)$" %in% umxGetParameters(model)){
 				model = umxModify(model, regex = "^Ra[fmo](_.*)$", newlabels = "Ra\\1", autoRun=FALSE)
 			}
@@ -396,24 +392,23 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 		model = umxModify(model, regex = "^(R[ace])[f|m|o]_", newlabels = "\\1_", autoRun = FALSE)
 
 		# 2. Replace opposite sex matrices (top.Rao and top.Rco) with labels that have no sex suffix 
-		#    (to match R[ace] same-sex) Both standardized
-		# TODO: Make this a regex also? "Rao_" --> "Ra_" "Rco_" --> "Rc_"
+		#    (to match same-sex Ra and Rc) Both standardized
 		model = mxModel(model, mxModel(model$top,
 			umxMatrix("Rao", "Stand", nrow = nVar, free = TRUE, values = .2, baseName = "Ra", lbound = -1, ubound = 1),
 			umxMatrix("Rco", "Stand", nrow = nVar, free = TRUE, values = .2, baseName = "Rc", lbound = -1, ubound = 1))
 		)
 		if(sexlim == "Homogeneity"){
 			# Equate [ace] across m & f in scalar model
-			model = umxModify(model, regex = "^a[fm]_", newlabels="a_", autoRun = FALSE)
-			model = umxModify(model, regex = "^c[fm]_", newlabels="c_", autoRun = FALSE)
-			model = umxModify(model, regex = "^e[fm]_", newlabels="e_", autoRun = FALSE)
-			# TODO: Implement transforms of correlated factors / factanal on factors...
+			model = umxModify(model, regex = "^a[fm]_", newlabels = "a_", autoRun = FALSE)
+			model = umxModify(model, regex = "^c[fm]_", newlabels = "c_", autoRun = FALSE)
+			model = umxModify(model, regex = "^e[fm]_", newlabels = "e_", autoRun = FALSE)
 		}
 	}
 
 	model = omxAssignFirstParameters(model)
 
-	# TODO: umxSexLim equate means would be expMeanGm, expMeanGf, expMeanGo
+	# issue #293 umxSexLim equate means would be expMeanGm, expMeanGf, expMeanGo
+
 	model = as(model, "MxModelSexLim") # Set class so umxSummary, plot, etc. work.
 	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard)
 	invisible(model)
@@ -499,14 +494,13 @@ umxSexLim <- function(name = "sexlim", selDVs, mzmData, dzmData, mzfData, dzfDat
 #' 	dzoData = dzoData
 #' )
 #' }
-umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"), comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), extended = FALSE, zero.print = ".", show = c("std", "raw"), returnStd = FALSE, ...) {
+umxSummarySexLim <- function(model, digits = 2, file = NA, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), extended = FALSE, zero.print = ".", show = c("std", "raw"), returnStd = FALSE, ...) {
 	show = match.arg(show, c("std", "raw"))
 	if(show != "std"){
 		std = FALSE
 	}
 
 	# Depends on R2HTML::HTML
-	message("umxSummarySexLim is a beta feature. Some things are broken. If any desired stats are not presented, let me know what's missing")
 	report = match.arg(report)
 
 	tmp_PrintAsUpperLower <- function(bottom, top, selDVs= NULL) {
@@ -556,7 +550,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 	}
 
 	if(std){
-		message("Standardized solution (top.[ACE][mf]Std  + R[ac]o matrices). Use std=F for raw variance.")
+		message("Standardized solution (top.[ACE][mf]Std  + R[ac]o matrices). Use std=FALSE for raw variance.")
 		Am = diag(as.matrix(model$top$AmStd$result))
 		Cm = diag(as.matrix(model$top$CmStd$result))
 		Em = diag(as.matrix(model$top$EmStd$result))
@@ -564,7 +558,7 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 		Cf = diag(as.matrix(model$top$CfStd$result))
 		Ef = diag(as.matrix(model$top$EfStd$result))
 	} else {
-		message("Raw solution (top.[ACE][mf] + R[ac]o matrices). Use std=T for standardized output.")
+		message("Raw solution (top.[ACE][mf] + R[ac]o matrices). Use std=TRUE for standardized output.")
 		Am = diag(as.matrix(model$top$Am$result))
 		Cm = diag(as.matrix(model$top$Cm$result))
 		Em = diag(as.matrix(model$top$Em$result))
@@ -626,93 +620,14 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 
 	}
 
-	hasCIs = umx_has_CIs(model)
-		if(hasCIs & CIs) {
-			# TODO umxACE CI code: Need to refactor into some function calls... and then add to umxSummaryIP and CP
-			message("Creating CI-based report!")
-			# CIs exist, get lower and upper CIs as a dataframe
-			CIlist = data.frame(model$output$confidenceIntervals)
-			# Drop rows fixed to zero
-			CIlist = CIlist[(CIlist$lbound != 0 & CIlist$ubound != 0),]
-			# discard rows named NA
-			CIlist = CIlist[!grepl("^NA", row.names(CIlist)), ]
-			# TODO fix for singleton CIs
-			# These can be names ("top.a_std[1,1]") or labels ("a11")
-			# imxEvalByName finds them both
-			# outList = c();
-			# for(aName in row.names(CIlist)) {
-			# 	outList <- append(outList, imxEvalByName(aName, model))
-			# }
-			# # Add estimates into the CIlist
-			# CIlist$estimate = outList
-			# reorder to match summary
-			CIlist <- CIlist[, c("lbound", "estimate", "ubound")] 
-			CIlist$fullName = row.names(CIlist)
-			# Initialise empty matrices for the CI results
-			rows = dim(model$top$matrices$a$labels)[1]
-			cols = dim(model$top$matrices$a$labels)[2]
-			a_CI = c_CI = e_CI = matrix(NA, rows, cols)
-
-			# iterate over each CI
-			labelList = imxGenerateLabels(model)			
-			rowCount = dim(CIlist)[1]
-			# return(CIlist)
-			for(n in 1:rowCount) { # n = 1
-				thisName = row.names(CIlist)[n] # thisName = "a11"
-					# convert labels to [bracket] style
-					if(!umx_has_square_brackets(thisName)) {
-					nameParts = labelList[which(row.names(labelList) == thisName),]
-					CIlist$fullName[n] = paste(nameParts$model, ".", nameParts$matrix, "[", nameParts$row, ",", nameParts$col, "]", sep = "")
-				}
-				fullName = CIlist$fullName[n]
-
-				thisMatrixName = sub(".*\\.([^\\.]*)\\[.*", replacement = "\\1", x = fullName) # .matrix[
-				thisMatrixRow  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\1", x = fullName))
-				thisMatrixCol  = as.numeric(sub(".*\\[(.*),(.*)\\]", replacement = "\\2", x = fullName))
-				CIparts    = round(CIlist[n, c("estimate", "lbound", "ubound")], digits)
-				thisString = paste0(CIparts[1], " [",CIparts[2], ", ",CIparts[3], "]")
-
-				if(grepl("^a", thisMatrixName)) {
-					a_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^c", thisMatrixName)){
-					c_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else if(grepl("^e", thisMatrixName)){
-					e_CI[thisMatrixRow, thisMatrixCol] = thisString
-				} else{
-					stop(paste("Illegal matrix name: must begin with a, c, or e. You sent: ", thisMatrixName))
-				}
-			}
-			# TODO Check the merge of a_, c_ and e_CI INTO the output table works with more than one variable
-			# TODO umxSummarySexLim: Add option to use mxSE
-			# print(a_CI)
-			# print(c_CI)
-			# print(e_CI)
-
-			message("TODO: umxSummary.MxModel.SexLim CI report not yet implemented - use summary")
-			# Estimates = data.frame(cbind(a_CI, c_CI, e_CI), row.names = rowNames, stringsAsFactors = FALSE)
-			# names(Estimates) = paste0(rep(colNames, each = nVar), rep(1:nVar));
-			# Estimates = umx_print(Estimates, digits = digits, zero.print = zero.print)
-			# if(report == "html"){
-				# depends on R2HTML::HTML
-				# R2HTML::HTML(Estimates, file = "tmpCI.html", Border = 0, append = F, sortableDF = T);
-				# umx_open("tmpCI.html")
-			# }
-			# CI_Fit = model
-			# CI_Fit$top$a$values = a_CI
-			# CI_Fit$top$c$values = c_CI
-			# CI_Fit$top$e$values = e_CI
-		} # end Use CIs
+	if(umx_has_CIs(model) & CIs) {
+		message("TODO: umxSummary.MxModel.SexLim CI report not yet implemented - use summary")
+	}
 	} # end list catcher?
 
 	if(!is.na(file)) {
 		# message("making dot file")
-		if(hasCIs & CIs){
-			# TODO turn plot of CI_Fit back on
-			# umxPlotSexLim(CI_Fit, file = file, std = FALSE)
-		} else {
-			# TODO ("plot() not implemented yet for sex lim!")
-			umxPlotSexLim(model, file = file, std = std)
-		}
+		umxPlotSexLim(model, file = file, std = std)
 	}
 	if(returnStd) {
 		if(CIs){
@@ -725,22 +640,22 @@ umxSummarySexLim <- function(model, digits = 2, file = getOption("umx_auto_plot"
 #' @export
 umxSummary.MxModelSexLim <- umxSummarySexLim
 
-# TODO: umxPlotSexLim Add SE-style code from plotCP
-
 #' Draw and display a graphical figure of a Sex limitation model
 #'
 #' Will plot a graphical figure for a sex limitation model.
 #' Options include `digits` (rounding), showing `means` or not, and which output `format` is desired.
 #'
 #' @aliases plot.MxModelSexLim
-#' @param x [OpenMx::mxModel()] to display graphically
+#' @param x [umxSexLim()] model to display graphically
 #' @param file The name of the dot file to write: NA = none; "name" = use the name of the model
 #' @param digits How many decimals to include in path loadings (defaults to 2)
 #' @param means Whether to show means paths (defaults to FALSE)
 #' @param std Whether to standardize the model (defaults to TRUE)
 #' @param format = c("current", "graphviz", "DiagrammeR") 
-#' @param SEstyle report "b (se)" instead of "b \[lower, upper\]" (Default)
+#' @param SEstyle Deprecated. Please use `uncertainty` instead.
 #' @param strip_zero Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)
+#' @param showCIs Whether to show intervals already stored on the model (default = TRUE). Intervals computed via `uncertainty` still show when this is FALSE.
+#' @param uncertainty What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (standard errors computed per cell with `mxSE()`), or "CI" (intervals already stored on the model, nothing computed here).
 #' @param ... Optional additional parameters
 #' @return - Optionally return the dot code
 #' @export
@@ -774,18 +689,40 @@ umxSummary.MxModelSexLim <- umxSummarySexLim
 #'		mzfData = mzfData, dzfData = dzfData, 
 #'		dzoData = dzoData
 #' )
-#' umxPlotSexLim(m1)
-#' plot(m1) # no need to remember a special name: plot works fine!
+#' plot(m1)
+#' # umxPlotSexLim(m1, means = TRUE) #full function name shows available options
 #' }
-umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, ...) {
+umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std = TRUE,  format = c("current", "graphviz", "DiagrammeR"), SEstyle = FALSE, strip_zero = TRUE, showCIs = TRUE, uncertainty = c("none", "SE", "CI"), ...) {
 	format = match.arg(format)
 	model = x # Just to emphasize that x has to be a model 
 	umx_check_model(model, "MxModelSexLim", callingFn = "umxPlotSexLim")
 	umx_has_been_run(model, stop = TRUE)
+
+	# Handle deprecated SEstyle parameter and map it to uncertainty
+	if (missing(uncertainty)) {
+		if (!missing(SEstyle) && !identical(SEstyle, FALSE)) {
+			message("Polite note: SEstyle is deprecated. Please use uncertainty = \"SE\" instead.")
+			uncertainty = "SE"
+		} else {
+			uncertainty = "none"
+		}
+	} else {
+		uncertainty = match.arg(uncertainty)
+	}
 	
 	selDVs  = dimnames(model$top$Vm)[[1]]
 	nVar    = length(selDVs)
 	c_label = if (model$top$dzCr$values == 0.25) "d" else "c"
+
+	stored = NULL
+	haveStored = FALSE
+	if (isTRUE(showCIs) && umx_has_CIs(model)) {
+		stored = model$output$confidenceIntervals
+		haveStored = TRUE
+	}
+	if (uncertainty == "CI" && isTRUE(showCIs) && !haveStored) {
+		message("Polite note: this model has no stored intervals to display. Tip: umxConfint(model, parm = 'all', type = 'wald') computes and stores Wald intervals.")
+	}
 	
 	# Helper to format values
 	format_val <- function(val, digits, strip_zero) {
@@ -796,6 +733,47 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 			s = gsub("^-0\\.", "-.", s)
 		}
 		return(s)
+	}
+
+	# Helper to append uncertainty to a formatted value. address is the raw label;
+	# stdAlgebra (e.g. "top.AmStd[1,1]") names the standardized variance for std display.
+	label_val <- function(val, address, stdAlgebra = NULL) {
+		base = format_val(val, digits, strip_zero)
+		if (uncertainty == "SE") {
+			# Genuine per-cell SEs: never derived from stored intervals.
+			seAddress = address
+			stdPath = isTRUE(std) && !is.null(stdAlgebra)
+			if (stdPath) {
+				seAddress = stdAlgebra
+			}
+			se = suppressWarnings(tryCatch({ mxSE(seAddress, model, silent = TRUE)[1, 1] }, error = function(e){ NA_real_ }))
+			if (!is.finite(se)) {
+				return(base)
+			}
+			if (stdPath) {
+				# Displayed value is sqrt(variance): delta method for the square root.
+				if (!is.finite(val) || val == 0) {
+					return(base)
+				}
+				se = se/(2 * val)
+			}
+			return(paste0(base, " (", format_val(se, digits, strip_zero), ")"))
+		}
+		if (uncertainty == "CI" && haveStored && !isTRUE(std)) {
+			# Stored intervals show on raw display only: a raw interval would mislabel a standardized value.
+			if (length(address) == 1 && !is.na(address) && address %in% rownames(stored)) {
+				lb = suppressWarnings(as.numeric(stored[address, "lbound"])[1])
+				ub = suppressWarnings(as.numeric(stored[address, "ubound"])[1])
+				if (is.finite(lb) && is.finite(ub)) {
+					ciEst = suppressWarnings(as.numeric(stored[address, "estimate"])[1])
+					if (is.finite(ciEst)) {
+						base = format_val(ciEst, digits, strip_zero)
+					}
+					return(paste0(base, " [", format_val(lb, digits, strip_zero), ", ", format_val(ub, digits, strip_zero), "]"))
+				}
+			}
+		}
+		return(base)
 	}
 	
 	# Extract path loadings
@@ -819,7 +797,11 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		cf_val = diag(model$top$cf$values)
 		ef_val = diag(model$top$ef$values)
 	}
-	
+
+	# Fitted twin-1 means (twin-2 columns share the labels; DZO reuses both sets)
+	meanM = as.numeric(model$top$expMeanGm$values[1, 1:nVar])
+	meanF = as.numeric(model$top$expMeanGf$values[1, 1:nVar])
+
 	# Build dot code
 	dot_str = c()
 	add_line <- function(...) {
@@ -850,9 +832,16 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		add_line("\t\t", c_node, " [shape=circle, label=\"", c_label, "_m", i, "\"];")
 		add_line("\t\t", e_node, " [shape=circle, label=\"e_m", i, "\"];")
 		
-		add_line("\t\t", a_node, " -> M_", selDVs[i], " [label=\"", format_val(am_val[i], digits, strip_zero), "\"];")
-		add_line("\t\t", c_node, " -> M_", selDVs[i], " [label=\"", format_val(cm_val[i], digits, strip_zero), "\"];")
-		add_line("\t\t", e_node, " -> M_", selDVs[i], " [label=\"", format_val(em_val[i], digits, strip_zero), "\"];")
+		add_line("\t\t", a_node, " -> M_", selDVs[i], " [label=\"", label_val(am_val[i], model$top$am$labels[i, i], paste0("top.AmStd[", i, ",", i, "]")), "\"];")
+		add_line("\t\t", c_node, " -> M_", selDVs[i], " [label=\"", label_val(cm_val[i], model$top$cm$labels[i, i], paste0("top.CmStd[", i, ",", i, "]")), "\"];")
+		add_line("\t\t", e_node, " -> M_", selDVs[i], " [label=\"", label_val(em_val[i], model$top$em$labels[i, i], paste0("top.EmStd[", i, ",", i, "]")), "\"];")
+	}
+
+	if (isTRUE(means)) {
+		add_line("\t\tone_m [shape=triangle];")
+		for (i in 1:nVar) {
+			add_line("\t\tone_m -> M_", selDVs[i], " [label=\"", label_val(meanM[i], model$top$expMeanGm$labels[1, i]), "\"];")
+		}
 	}
 	
 	# Ranks for males
@@ -868,13 +857,13 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		for (i in 1:(nVar-1)) {
 			for (j in (i+1):nVar) {
 				if (Ram[i, j] != 0) {
-					add_line("\t\tam", i, " -> am", j, " [dir=both, style=dashed, label=\"", format_val(Ram[i, j], digits, strip_zero), "\"];")
+					add_line("\t\tam", i, " -> am", j, " [dir=both, style=dashed, label=\"", label_val(Ram[i, j], model$top$Ram$labels[i, j]), "\"];")
 				}
 				if (Rcm[i, j] != 0) {
-					add_line("\t\tcm", i, " -> cm", j, " [dir=both, style=dashed, label=\"", format_val(Rcm[i, j], digits, strip_zero), "\"];")
+					add_line("\t\tcm", i, " -> cm", j, " [dir=both, style=dashed, label=\"", label_val(Rcm[i, j], model$top$Rcm$labels[i, j]), "\"];")
 				}
 				if (Rem[i, j] != 0) {
-					add_line("\t\tem", i, " -> em", j, " [dir=both, style=dashed, label=\"", format_val(Rem[i, j], digits, strip_zero), "\"];")
+					add_line("\t\tem", i, " -> em", j, " [dir=both, style=dashed, label=\"", label_val(Rem[i, j], model$top$Rem$labels[i, j]), "\"];")
 				}
 			}
 		}
@@ -901,9 +890,16 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		add_line("\t\t", c_node, " [shape=circle, label=\"", c_label, "_f", i, "\"];")
 		add_line("\t\t", e_node, " [shape=circle, label=\"e_f", i, "\"];")
 		
-		add_line("\t\t", a_node, " -> F_", selDVs[i], " [label=\"", format_val(af_val[i], digits, strip_zero), "\"];")
-		add_line("\t\t", c_node, " -> F_", selDVs[i], " [label=\"", format_val(cf_val[i], digits, strip_zero), "\"];")
-		add_line("\t\t", e_node, " -> F_", selDVs[i], " [label=\"", format_val(ef_val[i], digits, strip_zero), "\"];")
+		add_line("\t\t", a_node, " -> F_", selDVs[i], " [label=\"", label_val(af_val[i], model$top$af$labels[i, i], paste0("top.AfStd[", i, ",", i, "]")), "\"];")
+		add_line("\t\t", c_node, " -> F_", selDVs[i], " [label=\"", label_val(cf_val[i], model$top$cf$labels[i, i], paste0("top.CfStd[", i, ",", i, "]")), "\"];")
+		add_line("\t\t", e_node, " -> F_", selDVs[i], " [label=\"", label_val(ef_val[i], model$top$ef$labels[i, i], paste0("top.EfStd[", i, ",", i, "]")), "\"];")
+	}
+
+	if (isTRUE(means)) {
+		add_line("\t\tone_f [shape=triangle];")
+		for (i in 1:nVar) {
+			add_line("\t\tone_f -> F_", selDVs[i], " [label=\"", label_val(meanF[i], model$top$expMeanGf$labels[1, i]), "\"];")
+		}
 	}
 	
 	# Ranks for females
@@ -919,13 +915,13 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 		for (i in 1:(nVar-1)) {
 			for (j in (i+1):nVar) {
 				if (Raf[i, j] != 0) {
-					add_line("\t\taf", i, " -> af", j, " [dir=both, style=dashed, label=\"", format_val(Raf[i, j], digits, strip_zero), "\"];")
+					add_line("\t\taf", i, " -> af", j, " [dir=both, style=dashed, label=\"", label_val(Raf[i, j], model$top$Raf$labels[i, j]), "\"];")
 				}
 				if (Rcf[i, j] != 0) {
-					add_line("\t\tcf", i, " -> cf", j, " [dir=both, style=dashed, label=\"", format_val(Rcf[i, j], digits, strip_zero), "\"];")
+					add_line("\t\tcf", i, " -> cf", j, " [dir=both, style=dashed, label=\"", label_val(Rcf[i, j], model$top$Rcf$labels[i, j]), "\"];")
 				}
 				if (Ref[i, j] != 0) {
-					add_line("\t\tef", i, " -> ef", j, " [dir=both, style=dashed, label=\"", format_val(Ref[i, j], digits, strip_zero), "\"];")
+					add_line("\t\tef", i, " -> ef", j, " [dir=both, style=dashed, label=\"", label_val(Ref[i, j], model$top$Ref$labels[i, j]), "\"];")
 				}
 			}
 		}
@@ -938,10 +934,10 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	for (i in 1:nVar) {
 		for (j in 1:nVar) {
 			if (Rao[i, j] != 0) {
-				add_line("\tam", i, " -> af", j, " [dir=both, style=dashed, constraint=false, color=purple, label=\"", format_val(Rao[i, j], digits, strip_zero), "\"];")
+				add_line("\tam", i, " -> af", j, " [dir=both, style=dashed, constraint=false, color=purple, label=\"", label_val(Rao[i, j], model$top$Rao$labels[i, j]), "\"];")
 			}
 			if (Rco[i, j] != 0) {
-				add_line("\tcm", i, " -> cf", j, " [dir=both, style=dashed, constraint=false, color=purple, label=\"", format_val(Rco[i, j], digits, strip_zero), "\"];")
+				add_line("\tcm", i, " -> cf", j, " [dir=both, style=dashed, constraint=false, color=purple, label=\"", label_val(Rco[i, j], model$top$Rco$labels[i, j]), "\"];")
 			}
 		}
 	}
@@ -952,12 +948,13 @@ umxPlotSexLim <- function(x = NA, file = "name", digits = 2, means = FALSE, std 
 	if(format != "current"){
 		tmp = umx_set_plot_format(silent = TRUE)
 		umx_set_plot_format(format)
-		print(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
+		res = withVisible(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
 		umx_set_plot_format(tmp)
+		if(res$visible) res$value else invisible(res$value)
 	}else{
-		print(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
+		res = withVisible(xmu_dot_maker(model, file, digraph, strip_zero = strip_zero))
+		if(res$visible) res$value else invisible(res$value)
 	}
-	return(invisible(digraph))
 }
 
 #' @export
