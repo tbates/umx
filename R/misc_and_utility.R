@@ -899,7 +899,7 @@ umx_score_scale_get_base_names <- function(names, excluding = NULL, twinSuffix =
 #' @return - scores
 #' @export
 #' @family Data Functions
-#' @seealso	umx_strings2numeric
+#' @seealso	[umx_scale_reliabilities()], [umx_strings2numeric()]
 #' @references
 #' * Revelle, W. (2022) psych: Procedures for Personality and Psychological Research, Northwestern University, Evanston, Illinois, USA, <https://CRAN.R-project.org/package=psych> Version = 2.2.9.
 #' * McNeish, D. (2018). Thanks coefficient alpha, we'll take it from here. *Psychological Methods*, **23**, 412-433. \doi{10.1037/met0000144}.
