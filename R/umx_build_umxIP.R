@@ -146,7 +146,7 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	tryHard             = match.arg(tryHard)
 	nSib                = 2 # Number of siblings in a twin pair.
 
-	if(correlatedA){ message("Sorry, I haven't implemented correlated A yet in umxIP...") }
+	if(correlatedA){ message("Sorry, I haven't implemented correlated-A yet in umxIP...") }
 
 	# if data provided create twin files 
 	if(!is.null(data)){
@@ -167,6 +167,22 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 	# TODO umxIP: check covariates
 	xmu_twin_check(selDVs= selDVs, sep = sep, dzData = dzData, mzData = mzData, enforceSep = TRUE, nSib = nSib, optimizer = optimizer)
 
+	if(dzCr == .25 & (name == "IP")){
+		name = "IP_ADE"
+		if (length(nFac) == 1){
+			name = paste0(name, nFac, "fac")
+		}else{
+			name = paste0(name, paste0(c("a", "c", "e"), nFac, collapse = ""))
+		}
+	}else if(name == "IP"){
+		# Add nFac to base name if no user-set name provided.
+		if (length(nFac) == 1){
+			name = paste0(name, nFac, "fac")
+		}else{
+			name = paste0(name, paste0(c("a", "c", "e"), nFac, collapse = ""))
+		}
+	}
+
 	if(length(nFac) == 1){
 		nFac = c(a = nFac, c = nFac, e = nFac)
 	} else if (length(nFac) == 3){
@@ -180,16 +196,6 @@ umxIP <- function(name = "IP", selDVs, dzData, mzData, sep = NULL, nFac = c(a=1,
 		stop("nFac must be either 1 number or 3. You gave me ", length(nFac))
 	}
 
-	if(dzCr == .25 & (name == "IP")){
-		name = "IP_ADE"
-	}else if(name == "IP"){
-		# Add nFac to base name if no user-set name provided.
-		if (length(nFac) == 1){
-			name = paste0(name, nFac, "fac")
-		}else{
-			name = paste0(name, paste0(c("a", "c", "e"), nFac, collapse = ""))
-		}
-	}
 
 	# New-style build-block: Expand var names if necessary and make the basic components of a twin model
 	selVars = tvars(selDVs, sep = sep, suffixes = 1:nSib)
