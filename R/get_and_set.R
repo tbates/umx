@@ -125,6 +125,7 @@ umx_set_plot_format <- function(umx.plot.format = NULL, silent = FALSE) {
 #' @param digits Decimal places for the printed table (default 2). Display only: stored values keep full precision.
 #' @return - invisible `data.frame` with columns `scale`, `reliability`, and `type`
 #' @export
+#' @seealso	[umx_score_scale()], [umx_strings2numeric()]
 #' @family Get and set
 #' @examples
 #' # A simple walkthrough:
@@ -214,6 +215,184 @@ umx_scale_reliabilities <- function(action = c("show", "init", "add", "print"), 
 			invisible(relTable)
 		}
 	}
+}
+
+#' Stack [umxCompare()] tables from separate calls.
+#'
+#' `umxCompare()` prints one table per call. `umx_table_collate()` keeps those tables and prints them as one.
+#'
+#' Call `"init"`, run the comparisons, then call `"show"`. While the store is active, each [umxCompare()] appends the table it already built, including a call with `silent = TRUE`. That call still prints on its own unless `silent = TRUE`.
+#'
+#' The first table fixes the column names and the engine (`"ML"`, `"MLR"`, or `"WLS"`). A later table with different columns, or a different engine, is not stored. [umxCompare()] stops on that call. `"init"` starts a new store.
+#'
+#' Every data row is kept. A chained pair of calls, `umxCompare(m1, m2)` then `umxCompare(m2, m3)`, has four rows: `m1`, `m2` against `m1`, `m2` again as the next baseline, and `m3` against `m2`. The second `m2` row is the baseline for the second call.
+#'
+#' `Δ AIC`, `Δ Fit`, `Δ df`, and `p` stay the values from the call that made the row. They are not recomputed against the first row of the stacked table. On an ML table, `Compare with Model` names that baseline. On a WLS table, `Compared_to` does. A baseline row leaves that cell blank.
+#'
+#' `"show"` does not clear the store. `"init"` does. Equality-constraint lines and MLR scaling factors are kept with the store and printed again at `"show"`. The AIC-weights print from `compareWeightedAIC = TRUE` is not part of the stacked table.
+#'
+#' `p` on an ML table is already an APA string, rounded with the `digits` of that [umxCompare()] call. `"show"` cannot re-round it. Other numeric columns are stored at full precision. `digits` on `"show"` affects only the printed table.
+#'
+#' The store is one option, `umx_table_collate`. A second `"init"` replaces it. `"off"` drops the store so later [umxCompare()] calls are not appended. `"init"` leaves the store active, empty, and ready for the next comparison.
+#'
+#' @param action One of `"init"` (start or clear the store), `"add"` (append one comparison table), `"show"` (print and return the stacked table), or `"off"` (drop the store). `"print"` is an alias of `"show"`. Default `"show"`.
+#' @param table A `data.frame` to append. Required when `action = "add"`. [umxCompare()] passes the table it returns.
+#' @param engine Fit engine of `table`: `"ML"`, `"MLR"`, or `"WLS"`. Required for a check against the stored engine. `NULL` checks columns only. [umxCompare()] sets this.
+#' @param report Format for `"show"`: `"markdown"` or `"html"`.
+#' @param digits Decimal places for the printed table at `"show"` (default 3). Display only.
+#' @param file File for `report = "html"`. Passed to [umx_print()]. Default `"tmp.html"`.
+#' @return The stacked comparison `data.frame`, invisibly. Constraint lines are `attr(, "constraintNotes")` when any model has an equality constraint. MLR scaling factors are `attr(, "robustScalingFactors")`. `"init"`, and `"show"` when the store is empty, return a zero-row `data.frame`. `"off"` returns `NULL`.
+#' @export
+#' @family Get and set
+#' @seealso [umxCompare()], [umx_scale_reliabilities()], [umx_print()]
+#' @md
+#' @examples
+#' one = data.frame(Model = c("m1", "m2"), EP = c(4, 3), check.names = FALSE)
+#' two = data.frame(Model = c("m2", "m3"), EP = c(3, 2), check.names = FALSE)
+#' umx_table_collate("init")
+#' umx_table_collate("add", table = one, engine = "ML")
+#' umx_table_collate("add", table = two, engine = "ML")
+#' umx_table_collate("show")
+#' umx_table_collate("off")
+#'
+#' \dontrun{
+#' umx_table_collate("init")
+#' umxCompare(m1, m2)
+#' umxCompare(m2, m3)
+#' umx_table_collate("show", report = "html")
+#' umx_table_collate("off")
+#' }
+umx_table_collate <- function(action = c("show", "init", "add", "print", "off"), table = NULL, engine = NULL, report = c("markdown", "html"), digits = 3, file = "tmp.html") {
+	action = xmu_match.arg(action, c("show", "init", "add", "print", "off"))
+	if (action == "print") {
+		action = "show"
+	}
+	if (action == "off") {
+		options("umx_table_collate" = NULL)
+		return(invisible(NULL))
+	}
+	if (action == "init") {
+		store = list(
+			table = data.frame(),
+			engine = NA_character_,
+			constraintNotes = character(),
+			robustScalingFactors = list()
+		)
+		options("umx_table_collate" = store)
+		return(invisible(store$table))
+	}
+
+	store = getOption("umx_table_collate")
+	if (!is.null(store) && (!is.list(store) || is.null(store$table) || !is.data.frame(store$table))) {
+		stop("umx_table_collate store is not a table store. Call umx_table_collate('init').")
+	}
+
+	if (action == "add") {
+		if (is.null(store)) {
+			stop("Call umx_table_collate('init') before adding a table.")
+		}
+		if (!is.data.frame(table)) {
+			stop("When action = 'add', table must be a data.frame.")
+		}
+		if (ncol(table) == 0) {
+			stop("When action = 'add', table must have columns.")
+		}
+		if (!is.null(engine)) {
+			if (length(engine) != 1 || !is.character(engine) || is.na(engine) || !(engine %in% c("ML", "MLR", "WLS"))) {
+				stop("When action = 'add', engine must be one of 'ML', 'MLR', or 'WLS'.")
+			}
+		}
+
+		newNotes = attr(table, "constraintNotes")
+		if (is.null(newNotes)) {
+			newNotes = character()
+		}
+		newScaling = attr(table, "robustScalingFactors")
+		if (is.null(newScaling)) {
+			newScaling = list()
+		}
+
+		colList = list()
+		for (colName in names(table)) {
+			colList[[colName]] = table[[colName]]
+		}
+		bare = as.data.frame(colList, stringsAsFactors = FALSE, check.names = FALSE)
+		rownames(bare) = NULL
+
+		if (ncol(store$table) > 0 && !identical(names(store$table), names(bare))) {
+			stop(
+				"umx_table_collate cannot stack this table onto the stored one. Stored columns: ",
+				paste(names(store$table), collapse = ", "),
+				". New columns: ",
+				paste(names(bare), collapse = ", "),
+				"."
+			)
+		}
+		if (!is.na(store$engine) && !is.null(engine) && store$engine != engine) {
+			stop(
+				"umx_table_collate is storing ", store$engine,
+				" tables. This table is ", engine,
+				". Call umx_table_collate('init') to start a new store."
+			)
+		}
+
+		if (ncol(store$table) == 0) {
+			store$table = bare
+		} else {
+			store$table = rbind(store$table, bare)
+			rownames(store$table) = NULL
+		}
+		if (is.na(store$engine) && !is.null(engine)) {
+			store$engine = engine
+		}
+
+		store$constraintNotes = unique(c(store$constraintNotes, newNotes))
+		scalingNames = names(newScaling)
+		for (scalingName in scalingNames) {
+			if (scalingName %in% names(store$robustScalingFactors)) {
+				if (!isTRUE(all.equal(store$robustScalingFactors[[scalingName]], newScaling[[scalingName]]))) {
+					stop("umx_table_collate already has a different robust scaling factor for ", scalingName, ".")
+				}
+			} else {
+				store$robustScalingFactors[[scalingName]] = newScaling[[scalingName]]
+			}
+		}
+		options("umx_table_collate" = store)
+	} else {
+		report = match.arg(report)
+		if (is.null(store)) {
+			message("No comparison table store is active. Call umx_table_collate('init'), run umxCompare(), then umx_table_collate('show').")
+			return(invisible(data.frame()))
+		}
+		if (nrow(store$table) == 0) {
+			message("The comparison table store is empty. Run umxCompare(), then umx_table_collate('show').")
+			return(invisible(data.frame()))
+		}
+		umx_print(store$table, digits = digits, zero.print = "0", caption = "Collated model comparisons", report = report, file = file)
+		cat("\n*Note*: Rows are stacked in call order. A difference on a row belongs to the comparison named in that row ('Compare with Model' or 'Compared_to'). A baseline row leaves that cell blank. Delta AIC is the change from the baseline of the call that produced the row, not from the first row of this table.\n")
+		if (!is.na(store$engine) && store$engine == "MLR" && length(store$robustScalingFactors) > 0) {
+			parts = character()
+			scalingNames = names(store$robustScalingFactors)
+			for (scalingName in scalingNames) {
+				parts = c(parts, sprintf("%s (c_d = %.3f)", scalingName, store$robustScalingFactors[[scalingName]]))
+			}
+			cat(sprintf("\n*Statistical Note*: Robust ML difference tests use Satorra-Bentler (2001) scaled difference formula: %s.\n", paste(parts, collapse = ", ")))
+		}
+		for (constraintNote in store$constraintNotes) {
+			cat("\n", constraintNote, "\n", sep = "")
+		}
+	}
+
+	out = data.frame(store$table, check.names = FALSE, stringsAsFactors = FALSE)
+	rownames(out) = NULL
+	if (length(store$constraintNotes) > 0) {
+		attr(out, "constraintNotes") = store$constraintNotes
+	}
+	if (length(store$robustScalingFactors) > 0) {
+		attr(out, "robustScalingFactors") = store$robustScalingFactors
+		attr(out, "c_d") = store$robustScalingFactors
+	}
+	invisible(out)
 }
 
 #' Set the separator
