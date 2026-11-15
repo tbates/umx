@@ -1126,7 +1126,7 @@ plot.MxModelACE_DE <- umxPlotACE_DE
 #' @family Reporting functions
 #' @seealso - [umxACE_DE()], [umxPlotACE_DE()], [umxSummary()]
 #' @references <https://github.com/tbates/umx>
-umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
+umxSummaryACE_DE <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = NA, returnStd = FALSE, extended = FALSE, zero.print = ".", ...) {
 	report = match.arg(report)
 	commaSep = paste0(umx_set_separator(silent=TRUE), " ")
 
