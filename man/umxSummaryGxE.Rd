@@ -12,7 +12,6 @@ umxSummaryGxE(
   location = "topleft",
   separateGraphs = FALSE,
   gg = TRUE,
-  file = getOption("umx_auto_plot"),
   returnStd = NULL,
   std = NULL,
   reduce = FALSE,
@@ -34,8 +33,6 @@ umxSummaryGxE(
 \item{separateGraphs}{If TRUE, both std and raw plots in one figure (default FALSE)}
 
 \item{gg}{Whether to use ggplot to create the graphs (default TRUE)}
-
-\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 
@@ -68,6 +65,7 @@ Note: see also \code{\link[=umxReduce]{umxReduce()}} which knows how to reduce a
 # aged 18-30 years, and an older cohort aged 31 and above.
 # Cohort 1 Zygosity is coded as follows 1 == MZ females 2 == MZ males 
 # 3 == DZ females 4 == DZ males 5 == DZ opposite sex pairs
+# use ?twinData to learn about this data set.
 require(umx)
 data(twinData) 
 twinData$age1 = twinData$age2 = twinData$age

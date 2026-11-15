@@ -55,7 +55,7 @@
 
 \item{digits}{The number of decimal places to add to the path coefficients}
 
-\item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (Wald interval from the reported SE), or "none" (no Wald interval or SE). A profile interval already stored for a raw free parameter is drawn on that path, including when this is "none". Standardized diagrams do not use that raw interval.}
+\item{uncertainty}{What type of parameter uncertainty to report: "SE" (standard ML standard errors), "MLR" (robust standard errors and robust fit), "CI" (profile intervals already stored on the model, nothing computed here), or "none" (no Wald interval or SE). A profile interval already stored for a raw free parameter is drawn on that path, including when this is "none", except when this is "SE" or "MLR". Standardized diagrams do not use that raw interval.}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 

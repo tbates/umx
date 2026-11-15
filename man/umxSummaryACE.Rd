@@ -14,7 +14,7 @@ umxSummaryACE(
   CIs = TRUE,
   uncertainty = c("CI", "SE", "none"),
   report = c("markdown", "html"),
-  file = getOption("umx_auto_plot"),
+  file = NA,
   returnStd = FALSE,
   extended = FALSE,
   zero.print = ".",
@@ -35,7 +35,7 @@ Defaults to NA = do not create plot output.}
 
 \item{CIs}{Deprecated. Please use \code{uncertainty} instead.}
 
-\item{uncertainty}{What type of parameter uncertainty to report: \code{"CI"} (default; intervals already stored on the model, else Wald intervals computed on the fly), \code{"SE"} (delta-method standard errors, always computed on the fly), or \code{"none"}.}
+\item{uncertainty}{What type of parameter uncertainty to report: \code{"CI"} (default; intervals already stored on the model, nothing computed here), \code{"SE"} (delta-method standard errors, computed on the fly), or \code{"none"}.}
 
 \item{report}{If "html", then open an html table of the results.}
 

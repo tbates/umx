@@ -15,6 +15,7 @@ umxPlotACE(
   showFixed = FALSE,
   format = c("current", "graphviz", "DiagrammeR"),
   showCIs = TRUE,
+  uncertainty = c("none", "SE", "CI"),
   ...
 )
 }
@@ -35,7 +36,9 @@ umxPlotACE(
 
 \item{format}{Output format: "current" (default), "graphviz", or "DiagrammeR".}
 
-\item{showCIs}{Whether to draw a profile interval that has already been computed (default TRUE). Intervals are looked up on the standardized diagram. \code{std = FALSE} keeps the point estimate. Means stay point estimates. This does not compute intervals.}
+\item{showCIs}{Whether to draw a profile interval that has already been computed (default TRUE). Intervals are looked up on the standardized diagram. \code{std = FALSE} keeps the point estimate. Means stay point estimates. This does not compute intervals. Fresh intervals from \code{uncertainty} still show when this is FALSE.}
+
+\item{uncertainty}{What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (delta-method standard errors, computed on the fly), or "CI" (intervals already stored on the model, nothing computed here).}
 
 \item{...}{Additional (optional) parameters}
 }

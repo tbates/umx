@@ -8,7 +8,7 @@
 umxSummarySexLim(
   model,
   digits = 2,
-  file = getOption("umx_auto_plot"),
+  file = NA,
   comparison = NULL,
   std = TRUE,
   showRg = FALSE,

@@ -40,7 +40,7 @@ xmu_dot_make_paths(
 
 \item{std}{Whether values should be standardized (defaults to FALSE)}
 
-\item{uncertainty}{Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode. It is not drawn when \code{std} is TRUE.}
+\item{uncertainty}{Type of uncertainty to display (defaults to "none"). A computed profile interval on a raw free parameter is drawn in any mode except "SE" and "MLR". It is not drawn when \code{std} is TRUE.}
 
 \item{cis}{Matrix of confidence intervals (defaults to NULL)}
 }
@@ -121,6 +121,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_mxData_summary]{xmu_mxData_summary()}},
 \code{\link[=xmu_mxRefModels]{xmu_mxRefModels()}},
 \code{\link[=xmu_name_from_lavaan_str]{xmu_name_from_lavaan_str()}},
+\code{\link[=xmu_paste_intervals]{xmu_paste_intervals()}},
 \code{\link[=xmu_path2twin]{xmu_path2twin()}},
 \code{\link[=xmu_path_regex]{xmu_path_regex()}},
 \code{\link[=xmu_print_algebras]{xmu_print_algebras()}},
@@ -158,6 +159,7 @@ Other xmu internal not for end user:
 \code{\link[=xmu_twin_add_WeightMatrices]{xmu_twin_add_WeightMatrices()}},
 \code{\link[=xmu_twin_check]{xmu_twin_check()}},
 \code{\link[=xmu_twin_get_var_names]{xmu_twin_get_var_names()}},
+\code{\link[=xmu_twin_intervals]{xmu_twin_intervals()}},
 \code{\link[=xmu_twin_make_def_means_mats_and_alg]{xmu_twin_make_def_means_mats_and_alg()}},
 \code{\link[=xmu_twin_upgrade_selDvs2SelVars]{xmu_twin_upgrade_selDvs2SelVars()}},
 \code{\link[=xmu_update_covar]{xmu_update_covar()}},

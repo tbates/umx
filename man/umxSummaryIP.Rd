@@ -8,7 +8,7 @@
 umxSummaryIP(
   model,
   digits = 2,
-  file = getOption("umx_auto_plot"),
+  file = NA,
   std = TRUE,
   showRg = FALSE,
   comparison = NULL,
@@ -34,7 +34,7 @@ umxSummaryIP(
 
 \item{CIs}{Deprecated. Please use \code{uncertainty} instead.}
 
-\item{uncertainty}{What type of parameter uncertainty to report: \code{"CI"} (default; intervals already stored on the model, else Wald intervals computed on the fly), \code{"SE"} (delta-method standard errors, always computed on the fly), or \code{"none"}. The printed tables are standardized, so the address is \code{top.ai_std} (and \code{ci}, \code{ei}, \code{as}, \code{cs}, \code{es}) when those algebras exist.}
+\item{uncertainty}{What type of parameter uncertainty to report: \code{"CI"} (default; intervals already stored on the model, nothing computed here), \code{"SE"} (delta-method standard errors, computed on the fly), or \code{"none"}. The printed tables are standardized, so the address is \code{top.ai_std} (and \code{ci}, \code{ei}, \code{as}, \code{cs}, \code{es}) when those algebras exist.}
 
 \item{returnStd}{Whether to return the standardized form of the model (default = FALSE)}
 

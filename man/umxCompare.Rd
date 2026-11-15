@@ -111,6 +111,10 @@ numbers are the OpenMx counts. When \code{sum(summary(model)$constraints)} is ab
 With \code{silent = TRUE}, the lines are \code{attr(table, "constraintNotes")}, one element
 per model. A comparison in which no model has an equality constraint does not
 set that attribute. Inequality constraints contribute 0 and do not produce a line.
+
+\strong{Collating several calls}
+
+\code{\link[=umx_table_collate]{umx_table_collate()}} \code{"init"} starts a store. Each later \code{umxCompare()} appends its table, including a call with \code{silent = TRUE}. \code{"show"} prints the stacked rows. The first table fixes the column names and the engine (ML, MLR, or WLS). A later table that does not match is not stored, and this function stops. \eqn{\Delta}{Delta} AIC stays the value from the call that made the row.
 }
 \examples{
 \dontrun{
@@ -154,7 +158,7 @@ umxCompare(m1, m2, report = "html") # Open table in browser
 }
 \seealso{
 \itemize{
-\item \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},\code{\link[=umxCompare]{umxCompare()}}
+\item \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxRAM]{umxRAM()}},\code{\link[=umxCompare]{umxCompare()}}, \code{\link[=umx_table_collate]{umx_table_collate()}}
 }
 
 Other Model Summary and Comparison:

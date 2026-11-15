@@ -14,11 +14,13 @@ umxPlotSexLim(
   format = c("current", "graphviz", "DiagrammeR"),
   SEstyle = FALSE,
   strip_zero = TRUE,
+  showCIs = TRUE,
+  uncertainty = c("none", "SE", "CI"),
   ...
 )
 }
 \arguments{
-\item{x}{\code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} to display graphically}
+\item{x}{\code{\link[=umxSexLim]{umxSexLim()}} model to display graphically}
 
 \item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
@@ -30,9 +32,13 @@ umxPlotSexLim(
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{report "b (se)" instead of "b [lower, upper]" (Default)}
+\item{SEstyle}{Deprecated. Please use \code{uncertainty} instead.}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
+
+\item{showCIs}{Whether to show intervals already stored on the model (default = TRUE). Intervals computed via \code{uncertainty} still show when this is FALSE.}
+
+\item{uncertainty}{What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (standard errors computed per cell with \code{mxSE()}), or "CI" (intervals already stored on the model, nothing computed here).}
 
 \item{...}{Optional additional parameters}
 }
@@ -72,8 +78,8 @@ m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard="yes",
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
-umxPlotSexLim(m1)
-plot(m1) # no need to remember a special name: plot works fine!
+plot(m1)
+# umxPlotSexLim(m1, means = TRUE) #full function name shows available options
 }
 }
 \references{

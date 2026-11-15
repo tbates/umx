@@ -16,6 +16,7 @@ umxPlotCP(
   SEstyle = FALSE,
   strip_zero = TRUE,
   showCIs = TRUE,
+  uncertainty = c("none", "SE", "CI"),
   ...
 )
 }
@@ -34,11 +35,13 @@ umxPlotCP(
 
 \item{format}{= c("current", "graphviz", "DiagrammeR")}
 
-\item{SEstyle}{use mxSE "b (se)" instead of mxCI "b [lower, upper]" (Default FALSE)}
+\item{SEstyle}{Deprecated. Please use \code{uncertainty} instead.}
 
 \item{strip_zero}{Whether to strip the leading "0" and decimal point from parameter estimates (default = TRUE)}
 
-\item{showCIs}{Whether to show confidence intervals (default = TRUE)}
+\item{showCIs}{Whether to show intervals already stored on the model (default = TRUE). Intervals are looked up on the standardized diagram: \code{std = FALSE} keeps point estimates. Intervals computed via \code{uncertainty} still show when this is FALSE.}
+
+\item{uncertainty}{What type of parameter uncertainty to show: "none" (default; intervals already stored on the model, nothing computed here), "SE" (delta-method standard errors, computed on the fly), or "CI" (intervals already stored on the model, nothing computed here).}
 
 \item{...}{Optional additional parameters}
 }

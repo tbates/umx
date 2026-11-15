@@ -13,7 +13,7 @@ umxSummaryACEv(
   showRg = FALSE,
   CIs = TRUE,
   report = c("markdown", "html"),
-  file = getOption("umx_auto_plot"),
+  file = NA,
   returnStd = FALSE,
   extended = FALSE,
   zero.print = ".",

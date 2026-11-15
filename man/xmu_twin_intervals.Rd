@@ -2,26 +2,28 @@
 % Please edit documentation in R/fit_and_reporting.R
 \name{xmu_twin_intervals}
 \alias{xmu_twin_intervals}
-\title{Resolve the interval table a twin summary should display}
+\title{Resolve the interval table a twin summary or plot should display}
 \usage{
-xmu_twin_intervals(model, what = c("CI", "SE"))
+xmu_twin_intervals(model, what = c("CI", "SE"), callingFn = "umxSummary")
 }
 \arguments{
 \item{model}{A fitted twin model (MxModelACE, MxModelCP, or MxModelIP).}
 
 \item{what}{\code{"CI"} for an interval table, \code{"SE"} for per-cell standard errors.}
+
+\item{callingFn}{Name used to attribute the note when fresh intervals cannot be computed (default = "umxSummary"). Plots pass their own name.}
 }
 \value{
-A list with \code{cis} (interval matrix or NULL) and \code{ses} (named standard
-errors or NULL). Exactly one is non-NULL, unless nothing could be computed.
+A list with \code{cis} (interval matrix or NULL), \code{ses} (named standard
+errors or NULL), and \code{fresh} (the fresh Wald interval matrix behind \code{ses}, or NULL).
 }
 \description{
-Internal helper for \code{\link[=umxSummaryACE]{umxSummaryACE()}}, \code{\link[=umxSummaryCP]{umxSummaryCP()}}, and \code{\link[=umxSummaryIP]{umxSummaryIP()}}.
-For \code{what = "CI"}, returns the intervals already stored on the model, or
-computes fresh Wald intervals with \code{\link[=umxConfint]{umxConfint()}} when none are stored. For
-\code{what = "SE"}, always computes fresh Wald intervals and derives SEs from
-them: stored tables carry no type/level stamp, so only a table computed here
-at known level yields sound SEs.
+Internal helper for \code{\link[=umxSummaryACE]{umxSummaryACE()}}, \code{\link[=umxSummaryCP]{umxSummaryCP()}}, \code{\link[=umxSummaryIP]{umxSummaryIP()}},
+\code{\link[=umxPlotACE]{umxPlotACE()}}, \code{\link[=umxPlotCP]{umxPlotCP()}}, and \code{\link[=umxPlotIP]{umxPlotIP()}}.
+For \code{what = "CI"}, returns the intervals already stored on the model. Nothing
+is computed: a tip names \code{\link[=umxConfint]{umxConfint()}} when none are stored. For \code{what = "SE"},
+always computes fresh Wald intervals and derives SEs from them: stored tables
+carry no type/level stamp, so only a table computed here at known level yields sound SEs.
 }
 \seealso{
 Other xmu internal not for end user:
