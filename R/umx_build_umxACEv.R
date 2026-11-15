@@ -399,7 +399,7 @@ umxACEv <- function(name = "ACEv", selDVs, selCovs = NULL, sep = NULL, dzData, m
 #' umxSummary(m1, file = "name", std = TRUE)
 #' stdFit = umxSummary(m1, returnStd = TRUE)
 #' }
-umxSummaryACEv <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = getOption("umx_auto_plot"), returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
+umxSummaryACEv <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE, report = c("markdown", "html"), file = NA, returnStd = FALSE, extended = FALSE, zero.print = ".", show = c("std", "raw"), ...) {
 	show = match.arg(show, c("std", "raw"))
 	if(show != "std"){
 		std = FALSE
