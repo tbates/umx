@@ -54,6 +54,9 @@
 * IMPROVED: `umxSummary()` shows raw estimates for non-RAM models (matrix/algebra, LISREL) instead of erroring; standardized estimates still need RAM. `umx_is_RAM()` now checks expectation classes across submodels, so multigroup RAM counts as RAM. `xmu_safe_run_summary()` keeps the fitted model when summary or compare fails. (#287 @lf-araujo Luis De Araujo)
 * NEW: `umxAutoStart()` gives starting values via `mxAutoStart()`, including models with definition variables (each `data.*` cell is fixed at a placeholder in a clone, autostarted, and starts copied back by label). (autostart idea from #278 @lf-araujo Luis De Araujo)
 * BREAKING: `umxFitIndices()` takes one model or a list and returns a data.frame (one row per model, `$` access kept). `set = "core"` (default) gives the reportable handful, `"all"` everything, or name indices directly. Multigroup and definition-variable models supported (defvar-aware reference models; residual-based indices `NA` for multigroup). (glance idea from #278 @lf-araujo Luis De Araujo)
+* FIXED: `plot()` on a multigroup model discarded every submodel widget: only the help notes appeared and no diagram rendered. Each group now renders (one DiagrammeR per submodel), returned invisibly as a list.
+* FIXED: `plot()` help note printed once per submodel. One class-aware note per top-level call (names `?plot.MxModel`, or `?plot.MxLISRELModel` for LISREL-first groups); recursion passes `showNote = FALSE`.
+* FIXED: `xmu_standardize_RAM()` zeroed exogenous paths (same defect as `mxStandardizeRAMpaths`): exogenous slopes now standardize against observed SDs. Also fixed a missing-`obs` reference the `tryCatch` hid.
 
 ## umx 4.80.1: Over *80* new features, fixes, and improvements! 
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string.
