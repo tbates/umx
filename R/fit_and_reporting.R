@@ -3355,15 +3355,20 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	# loop over submodels
 	if(length(x@submodels)){
 		n = 1
+		plots = list()
 		for (sub in x@submodels) {
 			if(!is.na(file) && file == "name"){
 				thisFile = file
 			} else {
 				thisFile = paste0(file, "_group_", n)
 			}
-			plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, uncertainty = uncertainty, format = format, ...)
+			plots[[n]] = plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, uncertainty = uncertainty, format = format, ...)
+			if(inherits(plots[[n]], "htmlwidget")){
+				print(plots[[n]])
+			}
 			n = n + 1
 		}
+		invisible(plots)
 	} else {
 		# ==========
 		# = Setup  =

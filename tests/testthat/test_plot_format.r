@@ -51,3 +51,25 @@ test_that("plot passes format through multigroup recursion", {
 	plot(mg, format = "graphviz", file = NA)
 	expect_equal(umx_set_plot_format(silent = TRUE), "DiagrammeR")
 })
+
+test_that("plot returns one widget per submodel for multigroup models", {
+	# Defect: multigroup branch discarded each submodel widget, so R.app showed the help notes but no diagrams
+	data(demoOneFactor)
+	v = names(demoOneFactor)[1:3]
+	mkGroup = function(name, d) {
+		umxRAM(name, data = d[, v], autoRun = FALSE,
+			umxPath("G", to = v),
+			umxPath(v.m. = v),
+			umxPath(v1m0 = "G")
+		)
+	}
+	mg = umxSuperModel("plotmg_widgets", mkGroup("g1", demoOneFactor[1:250, ]), mkGroup("g2", demoOneFactor[251:500, ]))
+	oldFormat = umx_set_plot_format(silent = TRUE)
+	on.exit(umx_set_plot_format(oldFormat), add = TRUE)
+	umx_set_plot_format("DiagrammeR")
+	plots = plot(mg, format = "DiagrammeR")
+	expect_equal(length(plots), 2)
+	for(p in plots){
+		expect_true(inherits(p, "htmlwidget"))
+	}
+})
