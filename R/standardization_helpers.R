@@ -78,6 +78,29 @@ xmu_standardize_RAM <- function(model, ...) {
 		# Calculate the expected covariance matrix
 		IA = solve(I - A$values)
 		expCov = IA %*% S$values %*% t(IA)
+		# Exogenous covariates are zero-variance placeholder latents (fixed data.*
+		# means); standardizing by implied SD would zero their paths. Substitute
+		# the observed variance of the designated data column (raw data only).
+		# Anything unresolvable keeps implied 0 (previous behavior).
+		if (!is.na(nameM) && !is.null(model[[nameM]]$labels) && !is.null(model[[nameM]]$free) &&
+		    !is.null(model$data$observed) && !identical(model$data$type, "cov")) {
+			obs = model$data$observed
+			obsNames = colnames(obs)
+			mlab = model[[nameM]]$labels
+			mfree = model[[nameM]]$free
+			expVar = diag(expCov)
+			for (j in 1:length(expVar)) {
+				if (!isTRUE(expVar[j] == 0) || j > length(mlab)) next
+				lab = mlab[[j]]
+				parts = unlist(strsplit(lab, ".", fixed = TRUE))
+				isDV = (length(parts) == 2L && parts[[1]] == "data") || (length(parts) > 2L && parts[[2]] == "data")
+				if (!isTRUE(isDV) || isTRUE(mfree[[j]])) next
+				col = if (length(parts) == 2L) parts[[2]] else parts[[length(parts)]]
+				if (!(col %in% obsNames)) next
+				vObs = tryCatch(suppressWarnings(var(obs[[col]], na.rm = TRUE)), error = function(e) NA_real_)
+				if (isTRUE(is.finite(vObs)) && vObs > 0) expCov[j,j] = vObs
+			}
+		}
 		# Return 1/SD to a diagonal matrix
 		InvSD = 1/sqrt(diag(expCov))
 		# Give the inverse SDs names, because mxSummary treats column names as characters
