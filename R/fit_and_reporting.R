@@ -3307,6 +3307,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' @param same optional list of objects to group at the same rank in the plot. Default (NULL) chooses automatically.
 #' @param max optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.
 #' @param format Output format: "current" (default), "graphviz", or "DiagrammeR".
+#' @param showNote Whether to show the one-line pointer to the concrete plotting function (default = TRUE). Set FALSE automatically on recursion into submodels.
 #' @param ... Optional parameters
 #' @export
 #' @seealso - [umx_set_plot_format()], [plot.MxModel()], [umxPlotACE()], [umxPlotCP()], [umxPlotIP()], [umxPlotGxE()]
@@ -3343,7 +3344,7 @@ plot.MxLISRELModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, 
 #' plot(m1, means= FALSE, strip= TRUE, splines= "FALSE", max= "int")
 #' } # end dontrun
 #'
-plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, uncertainty = c("none", "SE", "MLR", "CI"), file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, format = c("current", "graphviz", "DiagrammeR"), ...) {
+plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits = 2, uncertainty = c("none", "SE", "MLR", "CI"), file = "name", labels = c("none", "labels", "both"), resid = c("circle", "line", "none"), strip_zero = FALSE, splines = c("TRUE", "FALSE", "compound", "ortho", "polyline"), min= NULL, same= NULL, max= NULL, format = c("current", "graphviz", "DiagrammeR"), showNote = TRUE, ...) {
 	if (!is.null(x$expectation) && class(x$expectation)[[1]] == "MxExpectationLISREL") {
 		return(plot.MxLISRELModel(x = x, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min = min, same = same, max = max, uncertainty = uncertainty, ...))
 	}
@@ -3352,6 +3353,19 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 	uncertainty = match.arg(uncertainty)
 	format = match.arg(format)
 
+	# One note per top-level call. Every typed model class has its own plot.* method,
+	# so reaching here means plot.MxModel (RAM diagram) is doing the rendering.
+	if(showNote){
+		noteModel = x
+		if(class(x)[1] == "MxModel" && length(x@submodels)){
+			noteModel = x@submodels[[1]]
+		}
+		if(!is.null(noteModel$expectation) && class(noteModel$expectation)[[1]] == "MxExpectationLISREL"){
+			message("\nLISREL model: see ?plot.MxLISRELModel for options")
+		} else {
+			message("\n?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
+		}
+	}
 	# loop over submodels
 	if(length(x@submodels)){
 		n = 1
@@ -3362,7 +3376,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			} else {
 				thisFile = paste0(file, "_group_", n)
 			}
-			plots[[n]] = plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, uncertainty = uncertainty, format = format, ...)
+			plots[[n]] = plot.MxModel(sub, std = std, fixed = fixed, means = means, digits = digits, file = file, labels = labels, resid = resid, strip_zero = strip_zero, splines = splines, min= min, same= same, max= max, uncertainty = uncertainty, format = format, showNote = FALSE, ...)
 			if(inherits(plots[[n]], "htmlwidget")){
 				print(plots[[n]])
 			}
@@ -3551,7 +3565,6 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 			out   , "\n",
 			rankVariables, "\n}"
 		)
-		message("\n?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
 		# cat(out)
 		# plot(),
 		if(format != "current"){
