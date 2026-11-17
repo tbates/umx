@@ -1434,11 +1434,37 @@ umxCI <- function(model = NULL, which = c("ALL", NA, "list of your making"), rem
 #' View documentation on the GxE model subclass here: [umxSummaryGxE()].
 #'
 #' @param model The [OpenMx::mxModel()] whose fit will be reported
-#' @param ... Other parameters to control model summary
+#' @param ... Other parameters to control model summary (including `showNote = FALSE` to silence the one-line pointer to the concrete summary function)
 #' @family Model Summary and Comparison
 
 #' @export
 umxSummary <- function(model, ...){
+	dots = list(...)
+	showNote = TRUE
+	if ("showNote" %in% names(dots)) showNote = isTRUE(dots$showNote)
+	if (showNote) {
+		methodFun = c(MxModelCP = "umxSummaryCP", MxModelIP = "umxSummaryIP",
+			MxModelACE = "umxSummaryACE", MxModelACE_DE = "umxSummaryACE_DE",
+			MxModelACE_GLM = "umxSummaryACE_GLM", MxModelACEcov = "umxSummaryACEcov",
+			MxModelACEv = "umxSummaryACEv", MxModelDoC = "umxSummaryDoC",
+			MxModelMRDoC = "umxSummaryMRDoC", MxModelGxE = "umxSummaryGxE",
+			MxModelGxEbiv = "umxSummaryGxEbiv", MxModelLGCM = "umxSummaryLGCM",
+			MxModelSexLim = "umxSummarySexLim", MxModelSimplex = "umxSummarySimplex",
+			MxLISRELModel = "umxSummary.MxLISRELModel", MxModelGLM = "umxSummary.MxModelGLM",
+			MxModel = "umxSummary.MxModel", MxRAMModel = "umxSummary.MxModel",
+			MxModelGSEM = "umxSummary.MxModel", MxData = "umxSummary.MxDataStatic",
+			MxDataStatic = "umxSummary.MxDataStatic", list = "umxSummary.list")
+		noteFun = NA_character_
+		for (cl in class(model)) {
+			if (cl %in% names(methodFun)) {
+				noteFun = methodFun[[cl]]
+				break
+			}
+		}
+		if (!is.na(noteFun)) {
+			message(paste0("\nUse ", noteFun, "(", deparse(substitute(model)), ") for the full parameter interface (see ?", noteFun, ")"))
+		}
+	}
 	UseMethod("umxSummary", model)
 }
 
@@ -1554,7 +1580,7 @@ xmu_twin_intervals <- function(model, what = c("CI", "SE"), callingFn = "umxSumm
 #' @param df The data.frame table being built.
 #' @param i Row index of the cell.
 #' @param j Column index of the cell.
-#' @param address Bracket address to look up, e.g. "top.a_std[1,1]".
+#' @param address Bracket address to look up, e.g. `"top.a_std[1,1]"`.
 #' @param info Display info as returned by [xmu_twin_intervals()]. NULL leaves
 #' the table untouched (the `uncertainty = "none"` path).
 #' @param digits Rounding digits.
@@ -3363,7 +3389,7 @@ plot.MxModel <- function(x = NA, std = FALSE, fixed = TRUE, means = TRUE, digits
 		if(!is.null(noteModel$expectation) && class(noteModel$expectation)[[1]] == "MxExpectationLISREL"){
 			message("\nLISREL model: see ?plot.MxLISRELModel for options")
 		} else {
-			message("\n?plot.MxModel options: std, means, digits, strip_zero, file, splines=T/F/ortho,..., min=, max =, same = , fixed, resid= 'circle|line|none'")
+			message(paste0("\nUse plot.MxModel(", deparse(substitute(x)), ") to customise options like std, means, digits etc."))
 		}
 	}
 	# loop over submodels
