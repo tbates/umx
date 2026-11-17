@@ -22,6 +22,7 @@
   same = NULL,
   max = NULL,
   format = c("current", "graphviz", "DiagrammeR"),
+  showNote = TRUE,
   ...
 )
 
@@ -41,6 +42,7 @@
   same = NULL,
   max = NULL,
   format = c("current", "graphviz", "DiagrammeR"),
+  showNote = TRUE,
   ...
 )
 }
@@ -74,6 +76,8 @@
 \item{max}{optional list of objects to group at the bottom of the plot. Default (NULL) chooses automatically.}
 
 \item{format}{Output format: "current" (default), "graphviz", or "DiagrammeR".}
+
+\item{showNote}{Whether to show the one-line pointer to the concrete plotting function (default = TRUE). Set FALSE automatically on recursion into submodels.}
 
 \item{...}{Optional parameters}
 }

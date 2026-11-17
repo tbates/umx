@@ -79,26 +79,26 @@ These combine to explain the causes of variance in the phenotype (see Figure).
 \if{latex}{\figure{simplex.png}{options: width=7cm}}
 
 \strong{Data Input}
-Currently, the umxSimplex function accepts only raw data.
+Currently \code{umxSimplex} accepts only raw data.
 
 \strong{Ordinal Data}
-In an important capability, the model transparently handles ordinal (binary or multi-level
-ordered factor data) inputs, and can handle mixtures of continuous, binary, and ordinal
+The model transparently handles ordinal (binary or multi-level ordered factor data)
+inputs, and can handle mixtures of continuous, binary, and ordinal
 data in any combination.
 
 \strong{Additional features}
-The \code{umxSimplex} function supports varying the DZ genetic association (defaulting to .5)
-to allow exploring assortative mating effects, as well as varying the DZ \dQuote{C} factor
-from 1 (the default for modeling family-level effects shared 100\% by twins in a pair),
+\code{umxSimplex} supports varying the DZ genetic association (defaulting to .5)
+to allow exploring assortative mating effects, as well as varying the DZ \code{C} factor
+from 1 (the default for modeling family-level effects shared fully by twins in a pair),
 to .25 to model dominance effects.
 
 \strong{Matrices and Labels in the simplex model}
-A good way to see which matrices are used in umxSummary is to run an example model and plot it.
+A good way to see which matrices are used in \code{umxSummary} is to run an example model and plot it.
 
 The loadings specific to each time point are contained on the diagonals of matrices
 \code{as}, \code{cs}, and \code{es}. So labels relevant to modifying these are of the form "as_r1c1", "as_r2c2" etc.
 
-All the shared matrices are in the model "top". So to see the 'as' values, you can simply execute:
+All the shared matrices are in the model "top". So to see the 'as' values use:
 
 \code{m1$top$as$values}
 
@@ -110,7 +110,7 @@ Less commonly-modified matrices are the mean matrix \code{expMean}.
 This has 1 row, and the columns are laid out for each variable for
 twin 1, followed by each variable for twin 2.
 
-Thus, in a model where the means for twin 1 and twin 2 had been equated
+Thus, in a model where the means for twin 1 and twin 2 are equated
 (set = to T1), you could make them independent again with this script:
 
 \code{m1$top$expMean$labels[1,4:6] = c("expMean_r1c4", "expMean_r1c5", "expMean_r1c6")}
@@ -136,7 +136,11 @@ dzData = dzData, mzData = mzData, tryHard = "yes")
 }
 }
 \references{
-\url{https://github.com/tbates/umx}
+\itemize{
+\item Eaves, L. J., Long, J., & Heath, A. C. (1986). A theory of developmental change in
+quantitative phenotypes applied to cognitive development. \emph{Behavior Genetics}, \strong{16}, 143–162. \doi{10.1007/BF01065484}
+\item Boomsma, D. I., & Molenaar, P. C. M. (1987). The genetic analysis of repeated measures. I. Simplex models. \emph{Behavior Genetics}, \strong{17}, 111–123. \doi{10.1007/BF01065991}
+}
 }
 \seealso{
 \itemize{
@@ -166,6 +170,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxReduceACE]{umxReduceACE()}},
 \code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxReduceSexLim]{umxReduceSexLim()}},
 \code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}},
 \code{\link[=umxSexLim]{umxSexLim()}},
 \code{\link[=umxSummarizeTwinData]{umxSummarizeTwinData()}},

@@ -100,6 +100,10 @@ scalar constant in one sex.
 \emph{General restrictions}: Assumes means and variances can be equated across birth order within zygosity groups.
 }
 \examples{
+#  # =============================================
+#  # = Run Qualitative Sex Differences ACE model =
+#  # =============================================
+
 # =========================
 # = Load and Process Data =
 # =========================
@@ -128,19 +132,21 @@ umxSummarizeTwinData(us_skinfold_data, selVars="bic",zyg="zyg", sep="_T",
 # = Run univariate example =
 # ==========================
 
-m1 = umxSexLim(selDVs = "bic", sep = "_T", A_or_C = "A", tryHard = "yes",
+m1 = umxSexLim(selDVs = "bic", A_or_C = "A", tryHard = "yes", sep = "_T",
+	sexlim = "Nonscalar",
 	mzmData = mzmData, dzmData = dzmData, 
 	mzfData = mzfData, dzfData = dzfData, 
 	dzoData = dzoData
 )
 
 # Drop qualitative sex limitation
+# Distinct af and am (and c and e), but shared Ra (and Rc and Re) between variables
+# (same for males and females)
 m1a = umxModify(m1, regex = "^Rao_", value=1, name = "no_qual", comparison = TRUE)
 
-
 # Equate a, ac, and try ace across m & f in scalar model
-m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual", comparison = TRUE)
-m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual", comparison = TRUE)
+m1b = umxModify(m1a, regex = "^a[fm]_", newlabels="a_", name = "eq_a_no_qual"  , comparison = TRUE)
+m1c = umxModify(m1b, regex = "^c[fm]_", newlabels="c_", name = "eq_ac_no_qual" , comparison = TRUE)
 m1d = umxModify(m1c, regex = "^e[fm]_", newlabels="e_", name = "eq_ace_no_qual", comparison = TRUE)
 umxCompare(m1, c(m1a, m1b, m1c, m1d))
 
@@ -218,10 +224,6 @@ m2 = umxSexLim(selDVs = selDVs, sep = "_T", A_or_C = "A", sexlim = "Nonscalar",
 mzmData = mzmData, dzmData = dzmData, 
  mzfData = mzfData, dzfData = dzfData, dzoData = dzoData
 )
-
-# umxSummary(m1)
-# summary(m1)
-# summary(m1)$Mi
 }
 }
 \references{
@@ -253,6 +255,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxReduceACE]{umxReduceACE()}},
 \code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxReduceSexLim]{umxReduceSexLim()}},
 \code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}},
 \code{\link[=umxSimplex]{umxSimplex()}},
 \code{\link[=umxSummarizeTwinData]{umxSummarizeTwinData()}},

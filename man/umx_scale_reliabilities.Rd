@@ -73,6 +73,8 @@ umx_scale_reliabilities("show", type = "alpha") # just the alphas
 umx_scale_reliabilities("init") # clear the store
 }
 \seealso{
+\code{\link[=umx_score_scale]{umx_score_scale()}}, \code{\link[=umx_strings2numeric]{umx_strings2numeric()}}
+
 Other Get and set:
 \code{\link{umx}},
 \code{\link[=umx_detect_cores]{umx_detect_cores()}},
@@ -92,6 +94,7 @@ Other Get and set:
 \code{\link[=umx_set_plot_format]{umx_set_plot_format()}},
 \code{\link[=umx_set_separator]{umx_set_separator()}},
 \code{\link[=umx_set_silent]{umx_set_silent()}},
-\code{\link[=umx_set_table_format]{umx_set_table_format()}}
+\code{\link[=umx_set_table_format]{umx_set_table_format()}},
+\code{\link[=umx_table_collate]{umx_table_collate()}}
 }
 \concept{Get and set}

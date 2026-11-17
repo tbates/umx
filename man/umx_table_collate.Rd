@@ -39,7 +39,7 @@ The first table fixes the column names and the engine (\code{"ML"}, \code{"MLR"}
 
 Every data row is kept. A chained pair of calls, \code{umxCompare(m1, m2)} then \code{umxCompare(m2, m3)}, has four rows: \code{m1}, \code{m2} against \code{m1}, \code{m2} again as the next baseline, and \code{m3} against \code{m2}. The second \code{m2} row is the baseline for the second call.
 
-\eqn{\Delta}{Delta} AIC, \eqn{\Delta}{Delta} Fit, \eqn{\Delta}{Delta} df, and \code{p} stay the values from the call that made the row. They are not recomputed against the first row of the stacked table. On an ML table, \code{Compare with Model} names that baseline. On a WLS table, \code{Compared_to} does. A baseline row leaves that cell blank.
+\verb{Δ AIC}, \verb{Δ Fit}, \verb{Δ df}, and \code{p} stay the values from the call that made the row. They are not recomputed against the first row of the stacked table. On an ML table, \verb{Compare with Model} names that baseline. On a WLS table, \code{Compared_to} does. A baseline row leaves that cell blank.
 
 \code{"show"} does not clear the store. \code{"init"} does. Equality-constraint lines and MLR scaling factors are kept with the store and printed again at \code{"show"}. The AIC-weights print from \code{compareWeightedAIC = TRUE} is not part of the stacked table.
 
@@ -65,8 +65,28 @@ umx_table_collate("off")
 }
 }
 \seealso{
-\code{\link[=umxCompare]{umxCompare()}},
+\code{\link[=umxCompare]{umxCompare()}}, \code{\link[=umx_scale_reliabilities]{umx_scale_reliabilities()}}, \code{\link[=umx_print]{umx_print()}}
+
+Other Get and set:
+\code{\link{umx}},
+\code{\link[=umx_detect_cores]{umx_detect_cores()}},
+\code{\link[=umx_get_checkpoint]{umx_get_checkpoint()}},
+\code{\link[=umx_get_options]{umx_get_options()}},
 \code{\link[=umx_scale_reliabilities]{umx_scale_reliabilities()}},
-\code{\link[=umx_print]{umx_print()}}
+\code{\link[=umx_set_auto_plot]{umx_set_auto_plot()}},
+\code{\link[=umx_set_auto_run]{umx_set_auto_run()}},
+\code{\link[=umx_set_checkpoint]{umx_set_checkpoint()}},
+\code{\link[=umx_set_condensed_slots]{umx_set_condensed_slots()}},
+\code{\link[=umx_set_cores]{umx_set_cores()}},
+\code{\link[=umx_set_data_variance_check]{umx_set_data_variance_check()}},
+\code{\link[=umx_set_dollar_symbol]{umx_set_dollar_symbol()}},
+\code{\link[=umx_set_intervals]{umx_set_intervals()}},
+\code{\link[=umx_set_optimization_options]{umx_set_optimization_options()}},
+\code{\link[=umx_set_optimizer]{umx_set_optimizer()}},
+\code{\link[=umx_set_plot_file_suffix]{umx_set_plot_file_suffix()}},
+\code{\link[=umx_set_plot_format]{umx_set_plot_format()}},
+\code{\link[=umx_set_separator]{umx_set_separator()}},
+\code{\link[=umx_set_silent]{umx_set_silent()}},
+\code{\link[=umx_set_table_format]{umx_set_table_format()}}
 }
 \concept{Get and set}

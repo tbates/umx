@@ -33,14 +33,15 @@ umxReduce(
 \item{...}{Other parameters to control model summary}
 }
 \description{
-Given a \code{umx} model (currently \code{umxACE} and \code{umxGxE} are supported - ask for more!)
-\code{umxReduce} will conduct a formalised reduction process. It will also report
-Akaike weights are also reported showing relative support across models.
+Given a \code{umxACE} univariate or \code{umxGxE} model, \code{umxReduce} will conduct a
+formalised reduction process. It will also report Akaike weights are also
+reported showing relative support across models.
 
 Specialized functions are called for different type of input:
 \enumerate{
 \item \strong{GxE model reduction} For \code{\link[=umxGxE]{umxGxE()}} models \code{\link[=umxReduceGxE]{umxReduceGxE()}} is called.
-\item \strong{ACE model reduction} For \code{\link[=umxACE]{umxACE()}} models,\code{\link[=umxReduceACE]{umxReduceACE()}} is called. More than one phenotype stops before any nested model is fit.
+\item \strong{ACE model reduction} For \code{\link[=umxACE]{umxACE()}} models,\code{\link[=umxReduceACE]{umxReduceACE()}} is called.
+More than one phenotype stops before any nested model is fit.
 }
 
 \code{umxReduce} reports the results in a table. Set the format of the table with
@@ -88,6 +89,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxMRDoC]{umxMRDoC()}},
 \code{\link[=umxReduceACE]{umxReduceACE()}},
 \code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxReduceSexLim]{umxReduceSexLim()}},
 \code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}},
 \code{\link[=umxSexLim]{umxSexLim()}},
 \code{\link[=umxSimplex]{umxSimplex()}},

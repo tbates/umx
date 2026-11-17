@@ -186,7 +186,7 @@ bfi= umx_score_scale(name="As", base="As", pos=2:5, rev=1, mapStrings = mapStrin
 }
 }
 \seealso{
-umx_strings2numeric
+\code{\link[=umx_scale_reliabilities]{umx_scale_reliabilities()}}, \code{\link[=umx_strings2numeric]{umx_strings2numeric()}}
 
 Other Data Functions:
 \code{\link[=noNAs]{noNAs()}},

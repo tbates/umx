@@ -80,6 +80,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxReduceACE]{umxReduceACE()}},
 \code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxReduceSexLim]{umxReduceSexLim()}},
 \code{\link[=umxSexLim]{umxSexLim()}},
 \code{\link[=umxSimplex]{umxSimplex()}},
 \code{\link[=umxSummarizeTwinData]{umxSummarizeTwinData()}},

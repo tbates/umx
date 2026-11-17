@@ -95,6 +95,7 @@ test_that("multigroup plot emits one note naming plot.MxModel", {
 	expect_equal(length(plots), 2)
 	expect_equal(nNotes, 1)
 	expect_true(grepl("plot.MxModel", noteText, fixed = TRUE))
+	expect_true(grepl("plot.MxModel(mg)", noteText, fixed = TRUE))
 })
 
 test_that("plot note names plot.MxModel for classes without a dedicated plotter", {

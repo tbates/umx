@@ -47,6 +47,7 @@ Other Get and set:
 \code{\link[=umx_set_plot_file_suffix]{umx_set_plot_file_suffix()}},
 \code{\link[=umx_set_plot_format]{umx_set_plot_format()}},
 \code{\link[=umx_set_silent]{umx_set_silent()}},
-\code{\link[=umx_set_table_format]{umx_set_table_format()}}
+\code{\link[=umx_set_table_format]{umx_set_table_format()}},
+\code{\link[=umx_table_collate]{umx_table_collate()}}
 }
 \concept{Get and set}

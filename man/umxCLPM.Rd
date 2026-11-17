@@ -93,20 +93,20 @@ Count data and the "thresholds" battery are not yet supported with groups.
 # = 1. Load Data =
 # ================
 data(docData)
-dt <- docData[2:9]
+dt = docData[2:9]
 
 # ============================
 # = 2. Make a CLPM model     =
 # ============================
-hamaker <- umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt)
+hamaker = umxCLPM(waves = 4, name = "mymodel", model = "Hamaker2015", data = dt)
 
 # Select the variables by name: varA1_W1 ... varA1_W4 and varA2_W1 ... varA2_W4
 names(dt) = c(paste0("varA1_W", 1:4), paste0("varA2_W", 1:4))
-hamaker <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
+hamaker   = umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt)
 
 # Multigroup: one CLPM per zygosity group
 dt$zyg = ifelse(grepl("^MZ", docData$zygosity), "MZ", "DZ")
-mg <- umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt, group = "zyg")
+mg = umxCLPM(waves = 4, X = "varA1", Y = "varA2", model = "Hamaker2015", data = dt, group = "zyg")
 }
 }
 \references{

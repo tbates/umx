@@ -22,7 +22,7 @@ xmu_paste_intervals(
 
 \item{j}{Column index of the cell.}
 
-\item{address}{Bracket address to look up, e.g. "top.a_std\link{1,1}".}
+\item{address}{Bracket address to look up, e.g. \code{"top.a_std[1,1]"}.}
 
 \item{info}{Display info as returned by \code{\link[=xmu_twin_intervals]{xmu_twin_intervals()}}. NULL leaves
 the table untouched (the \code{uncertainty = "none"} path).}

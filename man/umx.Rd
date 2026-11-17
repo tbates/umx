@@ -169,6 +169,7 @@ Other Twin Modeling Functions:
 \code{\link[=umxReduce]{umxReduce()}},
 \code{\link[=umxReduceACE]{umxReduceACE()}},
 \code{\link[=umxReduceGxE]{umxReduceGxE()}},
+\code{\link[=umxReduceSexLim]{umxReduceSexLim()}},
 \code{\link[=umxRotate.MxModelCP]{umxRotate.MxModelCP()}},
 \code{\link[=umxSexLim]{umxSexLim()}},
 \code{\link[=umxSimplex]{umxSimplex()}},
@@ -235,7 +236,8 @@ Other Get and set:
 \code{\link[=umx_set_plot_format]{umx_set_plot_format()}},
 \code{\link[=umx_set_separator]{umx_set_separator()}},
 \code{\link[=umx_set_silent]{umx_set_silent()}},
-\code{\link[=umx_set_table_format]{umx_set_table_format()}}
+\code{\link[=umx_set_table_format]{umx_set_table_format()}},
+\code{\link[=umx_table_collate]{umx_table_collate()}}
 
 Other Check or test:
 \code{\link[=umx_check_names]{umx_check_names()}},
