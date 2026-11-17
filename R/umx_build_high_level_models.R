@@ -242,7 +242,7 @@ umxEFA <- function(x = NULL, factors = NULL, data = NULL, scores = c("none", 'ML
 	}
 
 	if(summary){
-		umxSummary(m1, digits = digits, report = report);
+		umxSummary(m1, digits = digits, report = report, showNote = FALSE);
 	}
 	
 	if(scores != "none"){

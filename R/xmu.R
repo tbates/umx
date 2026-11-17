@@ -381,11 +381,11 @@ xmu_safe_run_summary <- function(model1, model2 = NULL, autoRun = TRUE, tryHard 
 		# A failing summary must not lose the fitted model: report and carry on
 		theSummary = tryCatch({
 			if(is.null(std)) {
-				umxSummary(model1, std = NULL, digits = digits, refModels = refModels)
+				umxSummary(model1, std = NULL, digits = digits, refModels = refModels, showNote = FALSE)
 			} else if(std == "default"){
-				umxSummary(model1, digits = digits, refModels = refModels)
+				umxSummary(model1, digits = digits, refModels = refModels, showNote = FALSE)
 			} else {
-				umxSummary(model1, std = std, digits = digits, refModels = refModels)
+				umxSummary(model1, std = std, digits = digits, refModels = refModels, showNote = FALSE)
 			}
 		}, error = function(e) {
 			message("Error incurred trying to run umxSummary")
