@@ -456,7 +456,11 @@ umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, d
 	# SDt = mxAlgebra(name= "SDt", solve(sqrt(Diag1 *Rt))) # Standardized deviations (inverse)
 	model = omxAssignFirstParameters(model)
 	model = as(model, "MxModelDoC") # set class so that S3s dispatch e.g. plot()
-	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE)
+	model = xmu_safe_run_summary(model, autoRun = autoRun, tryHard = tryHard, std = TRUE, summary = FALSE)
+	if (!umx_set_silent(silent = TRUE) && umx_has_been_run(model)) {
+		xmu_show_fit_or_comparison(model, comparison = NULL, digits = 3)
+		message("Showing fit only - call umxSummary() or plot() on the fitted model for full details.")
+	}
 	return(model)
 }
 
@@ -675,8 +679,6 @@ plot.MxModelDoC <- umxPlotDoC
 #' 
 #' }
 umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = NA, returnStd = FALSE, zero.print = ".", ...) {
-	message("Summary support for DoC models not complete yet. Feedback welcome at http://github.com/tbates/umx/issues if you are using this.")
-
 	# TODO: Allow "a2b" in place of causal to avoid the make/modify 2-step
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
 	report = match.arg(report)
@@ -702,7 +704,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 			# oldModel = model # Cache this in case we need it (CI stash model has string where values should be).
 			# model = xmu_CI_stash(model, digits = digits, dropZeros = TRUE, stdAlg2mat = TRUE)
 		} else if(any(c(std, returnStd))) {
-			message("Std not support for DoC models yet")
+			message("Std not supported for DoC models yet")
 			# model = xmu_standardize_Doc(model) # Make a standardized copy of model
 		}
 
@@ -720,92 +722,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		message("Table: Parameter list")
 		umx_print(ptable[, c("name", "Estimate", "Std.Error")])
 
-		return("I returned from line 693, which is where implementation of umxSummary for DoC models is up to :-)")
-		# model$top$beta$labels[model$top$beta$free]
-		# umx_print(ptable[, c("name", "Estimate", "Std.Error")])
-
-		# Print Common Factor paths
-		a_cp = model$top$a_cp$values # nFac * nFac matrix of path coefficients flowing into cp_loadings
-		c_cp = model$top$c_cp$values
-		e_cp = model$top$e_cp$values
-
-		# Common factor ACE inputs are std to 1
-		# Bind diags of a_cp, c and e columns into nFac-row matrix
-		commonACE = cbind(diag(a_cp), diag(c_cp), diag(e_cp)) 
-		commonACE = data.frame(commonACE, row.names = paste("Common.factor", 1:nFac, sep = "."), stringsAsFactors = FALSE);
-		names(commonACE) = c ("A", "C", "E")
-		if(report == "html"){
-			umx_print(commonACE, digits = digits, zero.print = ".", file = "std_spec.html")
-		} else {
-			umx_print(commonACE, digits = digits, zero.print = ".")
-		}
-		message("Table: Common Factor paths")
-		
-		if(class(model$top$matrices$a_cp)[1] == "LowerMatrix"){
-			message("You used correlated genetic inputs to the common factor. This is the a_cp matrix")
-			print(a_cp)
-		}
-		
-		# Get standardized loadings on Common factors
-		rowNames = sub("(_T)?1$", "", selDVs[1:nVar]) # Clean up names
-		cp_loadings = model$top$cp_loadings$values # nVar * nFac matrix
-		cp_loadings = data.frame(cp_loadings, row.names = rowNames, stringsAsFactors = FALSE);
-		names(cp_loadings) = paste0("CP", 1:length(names(cp_loadings)))
-		if(report == "html"){
-			umx_print(cp_loadings, digits = digits, zero.print = ".", file = "std_common.html");
-		} else {
-			umx_print(cp_loadings, digits = digits, zero.print = ".")
-		}
-		message("Table: Loading of each trait on the Common Factors")
-
-		# Specific path coefficients ready to be stacked together
-		as = model$top$as$values # Specific factor path coefficients
-		cs = model$top$cs$values
-		es = model$top$es$values
-
-		specifics = data.frame(row.names = paste0('Specific ', c('a', 'c', 'e')), stringsAsFactors = FALSE,
-			rbind(diag(as), 
-				  diag(cs),
-				  diag(es))
-		)
-		names(specifics) = rowNames;
-
-		if(report == "html"){
-			umx_print(specifics, digits = digits, zero.print = ".", file = "std_spec.html")
-		} else {
-			umx_print(specifics, digits = digits, zero.print = ".")
-		}
-		message("Table: Specific-factor loadings")
-		
-		if(showRg) {
-			# Pre & post multiply covariance matrix by inverse of standard deviations
-			A  = model$top$A$values # Variances
-			C  = model$top$C$values
-			E  = model$top$E$values
-			Vtot = A + C + E; # Total variance
-			nVarIden = diag(nVar)
-			NAmatrix <- matrix(NA, nVar, nVar);
-
-			rA = tryCatch(solve(sqrt(nVarIden * A)) %*% A %*% solve(sqrt(nVarIden * A)), error = function(err) return(NAmatrix)); # genetic correlations
-			rC = tryCatch(solve(sqrt(nVarIden * C)) %*% C %*% solve(sqrt(nVarIden * C)), error = function(err) return(NAmatrix)); # C correlations
-			rE = tryCatch(solve(sqrt(nVarIden * E)) %*% E %*% solve(sqrt(nVarIden * E)), error = function(err) return(NAmatrix)); # E correlations
-			genetic_correlations = data.frame(cbind(rA, rC, rE), row.names = rowNames);
-			# Make a table
-			names(genetic_correlations) = paste0(rep(c("rA", "rC", "rE"), each = nVar), rep(1:nVar));
-			if(report == "html"){
-				umx_print(genetic_correlations, digits = digits, zero.print = ".", file = "geneticCorrs.html")
-			} else {
-				umx_print(genetic_correlations, digits = digits, zero.print = ".")
-			}
-			message("Table: Genetic Correlations")
-			
-		}
-		if(!is.na(file)){
-			# umxPlotCP(model, file = file, digits = digits, std = FALSE, means = FALSE)
-		}
-		if(returnStd) {
-			invisible(model)
-		}
+		invisible(model)
 	}
 }
 
