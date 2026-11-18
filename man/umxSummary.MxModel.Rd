@@ -66,6 +66,8 @@ Note: For some (multi-group) models, you will need to fall back on \code{\link[=
 
 Non-RAM models (matrix/algebra, LISREL, ...) show raw estimates from \code{\link[=summary]{summary()}} in the same table: standardized estimates need a RAM model.
 
+RAM models with Pearson-selection (arrows=0) paths show them in a separate "Selection paths" block (raw estimates; standardized values are not defined).
+
 \strong{Robust inference (\code{uncertainty = "MLR"})}
 
 This option means \strong{engine-appropriate robust inference}, not one sandwich formula for every fit type:

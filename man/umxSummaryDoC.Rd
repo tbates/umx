@@ -30,7 +30,7 @@ umxSummaryDoC(
 
 \item{showRg}{= whether to show the genetic correlations (FALSE).}
 
-\item{CIs}{Whether to show Confidence intervals if they exist (TRUE).}
+\item{CIs}{Whether to show stored Confidence intervals if they exist (TRUE). Intervals must already be on the model (e.g. via \code{umxConfint()}); none are computed here.}
 
 \item{report}{Print tables to the console (as 'markdown'), or open in browser ('html')}
 

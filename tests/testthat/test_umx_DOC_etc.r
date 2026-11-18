@@ -9,7 +9,10 @@ test_that("testing umxDiffMZ", {
 	df = umx_scale_wide_twin_data(varsToScale= c("ht", "wt"), sep = "", data= twinData, twins = 1:2)
 	df$xDiff = df[, "ht1"] - df[, "ht2"]
 	df$yDiff = df[, "wt1"] - df[, "wt2"]
+	pdf(NULL)
+	on.exit(dev.off(), add = TRUE)
 	p = umxDiffMZ(x="ht", y="wt", labxy = c(x=-.4, y=1), data = subset(df, abs(yDiff - xDiff) < .09), sep = "")
+	expect_s3_class(p, "ggplot")
 	p = p + labs(
 		# title = "MZ twin intra-pair differences",
 		x     = "Difference in exposure to rain (T1 - T2)",

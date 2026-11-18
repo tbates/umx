@@ -34,3 +34,60 @@ test_that("umxDoC prints fit only with pointer note", {
 	expect_false(vis$visible)
 	expect_true(isS4(vis$value))
 })
+
+test_that("umxSummaryDoC list mode forwards args", {
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	data(docData)
+	mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
+	dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
+	var1 = paste0("varA", 1:3)
+	var2 = paste0("varB", 1:3)
+	d1 = umxDoC(var1 = var1, var2 = var2, mzData = mzData, dzData = dzData, causal = TRUE)
+	lmsgs = character(0)
+	lout = capture.output(withCallingHandlers(umxSummaryDoC(list(d1), zero.print = "ZERO"), message = function(m) {
+		lmsgs <<- c(lmsgs, conditionMessage(m))
+		invokeRestart("muffleMessage")
+	}), type = "output")
+	expect_true(any(grepl("Output for Model:", c(lout, lmsgs), fixed = TRUE)))
+})
+
+test_that("umxSummaryDoC shows stored intervals", {
+	oldSilent = umx_set_silent(FALSE)
+	on.exit(umx_set_silent(oldSilent), add = TRUE)
+	data(docData)
+	mzData = subset(docData, zygosity %in% c("MZFF", "MZMM"))
+	dzData = subset(docData, zygosity %in% c("DZFF", "DZMM"))
+	var1 = paste0("varA", 1:3)
+	var2 = paste0("varB", 1:3)
+	d1 = umxDoC(var1 = var1, var2 = var2, mzData = mzData, dzData = dzData, causal = TRUE)
+	tmsgs = character(0)
+	tout = capture.output(withCallingHandlers(umxSummaryDoC(d1), message = function(m) {
+		tmsgs <<- c(tmsgs, conditionMessage(m))
+		invokeRestart("muffleMessage")
+	}), type = "output")
+	expect_true(any(grepl("no stored intervals", c(tout, tmsgs), fixed = TRUE)))
+	out = d1@output
+	out$confidenceIntervals = matrix(c(0.11, 0.42, 0.73, 1.11, 1.42, 1.73), nrow = 2, byrow = TRUE,
+		dimnames = list(c("a2b", "as_r1c1"), c("lbound", "estimate", "ubound")))
+	d1@output = out
+	smsgs = character(0)
+	sout = capture.output(withCallingHandlers(umxSummaryDoC(d1), message = function(m) {
+		smsgs <<- c(smsgs, conditionMessage(m))
+		invokeRestart("muffleMessage")
+	}), type = "output")
+	sall = c(sout, smsgs)
+	expect_true(any(grepl("[0.11, 0.73]", sall, fixed = TRUE)))
+	expect_true(any(grepl("[1.11, 1.73]", sall, fixed = TRUE)))
+	expect_false(any(grepl("no stored intervals", sall, fixed = TRUE)))
+	d1w = umxConfint(d1, parm = "as_r1c1", type = "wald")
+	sp = summary(d1w)$parameters
+	sprow = sp[sp$name == "as_r1c1", ]
+	want = paste0("[", round(sprow$Estimate - qnorm(0.975) * sprow$Std.Error, 2), ", ", round(sprow$Estimate + qnorm(0.975) * sprow$Std.Error, 2), "]")
+	wmsgs = character(0)
+	wout = capture.output(withCallingHandlers(umxSummaryDoC(d1w), message = function(m) {
+		wmsgs <<- c(wmsgs, conditionMessage(m))
+		invokeRestart("muffleMessage")
+	}), type = "output")
+	expect_true(any(grepl(want, c(wout, wmsgs), fixed = TRUE)))
+})

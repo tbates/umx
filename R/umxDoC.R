@@ -35,7 +35,6 @@
 #' umxDiffMZ(x="ht", y="wt", labxy = c(-.5, 3), data = twinData, sep = "")
 #' umxDiffMZ(x="ht", y="wt", xylim = c( -2, 2), data = twinData, sep = "")
 umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = "zygosity", labxy = c(-1.2, 1.8),  xylim = c(NA, NA), digits = 2) {
-	message("umxDiffMZ is pre-alpha quality: Internals are stubs and parameter names may change!")
 	# 1. Expand names for ease of use
 	x_T1 = paste0(x, sep, 1); x_T2 = paste0(x, sep, 2)
 	y_T1 = paste0(y, sep, 1); y_T2 = paste0(y, sep, 2)
@@ -46,43 +45,41 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 	# 3. Make diff scores
 	df$xDiff = df[, x_T1] - df[, x_T2]
 	df$yDiff = df[, y_T1] - df[, y_T2]
-	df$xSum = abs(df[, x_T1] + df[, x_T2])
+	umx_check_names(zyg, data = df, message = c("Could not find your zygosity column ", omxQuotes(zyg)) )
 	validRows = df[, zyg] %in% mzZygs
 	mzData = df[validRows, ]
+	mzData = mzData[!is.na(mzData$xDiff) & !is.na(mzData$yDiff), ]
+	if(nrow(mzData) < 3){
+		stop("umxDiffMZ found fewer than 3 complete MZ pairs (check 'zyg' and 'mzZygs')")
+	}
 	
 	# 4. Plot
 	p = ggplot(aes(x = xDiff, y = yDiff), data = mzData)  + geom_jitter() 
-	# p = p + geom_jitter(shape="circle open") # + geom_count(shape="circle open")
-	# p = p + labs(title= "MZ twin intra-pair differences model", x = paste0(x, " \u0394 (Twin 1 - Twin 2)"), y = paste0(y, " \u0394 (Twin 1 - Twin 2)"))
 	p = p + labs(title= "MZ twin intra-pair differences model")
 	p = p + labs(x = paste("Difference in ", x, " (T1 - T2)")) 
 	p = p + labs(y = paste("Difference in ", y, " (T1 - T2)"))
 	p = p + geom_smooth()
-	# p = p + geom_abline(slope = 1, intercept = 0, linetype = "dotdash", color = "grey")
-	# p = p + geom_vline(xintercept = 0, linetype = "dotted", color = "grey")
+	p = p + geom_abline(slope = 1, intercept = 0, linetype = "dotdash", color = "grey")
+	p = p + geom_vline(xintercept = 0, linetype = "dotted", color = "grey")
 	p = p + geom_hline(yintercept = 0, linetype = "dotted", color = "grey")
 	if(any(is.na(xylim))){
 		#xylim not set or not valid
 	}else{
 		p = p + coord_cartesian(xlim = xylim, ylim = xylim, expand = FALSE)
 	}
-	# tmp = lm(yDiff ~ xDiff, data = mzData, weights = xSum)
-	# print(summary(tmp))
-
-	# model = lm(yDiff ~ xDiff, data = mzData)
 	sumry  = summary(lm(yDiff ~ xDiff, data = mzData))
 	beta   = sumry$coefficients["xDiff", "Estimate"]
 	SE     = sumry$coefficients["xDiff", "Std. Error"]
 	pvalue = sumry$coefficients["xDiff", "Pr(>|t|)"]
 	R2     = round(sumry$r.squared, 3)
-	pvalStr = paste0(", p ", umxAPA(pvalue, addComparison = TRUE, digits = digits, report = "none"))
+	pvalStr = paste0(", p ", umxAPA(pvalue, addComparison = TRUE, digits = digits, report = "none"), ", R2 = ", R2)
 	blurb  = umxAPA(beta, se=SE, report = "expression", suffix = pvalStr)
 	p = p + annotate("text", x = labxy[1], y = labxy[2], label = deparse(blurb), parse = TRUE)
 	p = p + theme_bw()
 	print(p)
 }
 
-#' Intra-pair association in MZ, DZ  twin models. (ALPHA quality!)
+#' Intra-pair association in MZ, DZ twin models.
 #'
 #' @description
 #' Testing causal claims is often difficult due to an inability to experimentally randomize traits and situations.
@@ -101,7 +98,7 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' The function uses the [nlme::lme()] function to compute the effect of the presumed causal variable on the outcome, 
 #' controlling, for mid-family score and with random means model using familyID. e.g.:
 #' 
-#' `mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1+FamMeanX|FAMID, data = umx_scale(MZ), na.action = "na.omit")`
+#' `mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1|FAMID, data = umx_scale(MZ), na.action = "na.omit")`
 #' 
 #' **Example output from `umxDiscTwin`**
 #' 
@@ -114,9 +111,11 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' @param mzZygs MZ zygosities c("MZFF", "MZMM")
 #' @param dzZygs DZ zygosities c("DZFF", "DZMM", "DZOS")
 #' @param FAMID The column containing family IDs (default = "FAMID")
-#' @param out Whether to return the table or the ggplot (if you want to decorate it)
-#' @param use NA handling in corr.test (default= "complete.obs")
+#' @param zyg The column containing zygosity (default = "zygosity")
+#' @param out What to return: the results "table", the "plot" (a ggplot you can decorate), or the fitted "model"s as a named list (Pop, DZ, MZ).
 #' @param sep The separator in twin variable names, default = "_T", e.g. "dep_T1".
+#' @param report How to print the results table: "markdown" (default), "html", or "none" to skip printing.
+#' @param digits Rounding for the printed table (default = 2). The returned table keeps full precision.
 #' @return - table of results
 #' @export
 #' @family Twin Modeling Functions
@@ -132,15 +131,15 @@ umxDiffMZ <- function(x, y, data, sep = "_T", mzZygs = c("MZFF", "MZMM"), zyg = 
 #' tmp = umxDiscTwin(x = "ht", y = "wt", data = twinData, sep="", FAMID = "fam")
 #' print(tmp, digits = 3)
 #' }
-umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", out = c("table", "plot", "model"), use = "complete.obs", sep = "_T") {
-	message("umxDiscTwin is pre-alpha quality: Internals are just stubs and parameter names may change!")
+umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF", "DZMM", "DZOS"), FAMID = "FAMID", zyg = "zygosity", out = c("table", "plot", "model"), sep = "_T", report = c("markdown", "html", "none"), digits = 2) {
 	out = match.arg(out)
+	report = match.arg(report)
 	
 	updateDB <- function(xLevel = "e.g. MZ", model, x, FamMeanX = "FamMeanX", group = NA, row = NULL, input = NULL) {
 		if(is.numeric(input)){
 			nrow = input
 			return(data.frame(
-				xLevel   = rep(NA,nrow), N         = rep(NA,nrow), 
+				xLevel   = rep(NA,nrow), N         = rep(NA,nrow), df        = rep(NA,nrow),
 				Bwithin  = rep(NA,nrow), ci.lower  = rep(NA,nrow), ci.upper = rep(NA,nrow),
 				tval     = rep(NA,nrow), pval      = rep(NA,nrow),
 				Bbetween = rep(NA,nrow), SEbetween = rep(NA,nrow)) 
@@ -151,7 +150,8 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 		conf = intervals(model, which = "fixed")[["fixed"]]
 		model_coefficients      = summary(model)$tTable
 		input[row, "xLevel"]    = xLevel               # e.g. "MZ"
-		input[row, "N"]         = model$fixDF$terms[x] # df
+		input[row, "N"]         = model$dims$N         # observations used in the fit
+		input[row, "df"]        = model$fixDF$terms[x]  # denominator df for the t-test
 		input[row, "Bwithin"]   = conf[x, "est." ]     # intra-pair effect
 		input[row, "ci.lower"]  = conf[x, "lower"]     # CI[lower]
 		input[row, "ci.upper"]  = conf[x, "upper"]     # CI[,upper]
@@ -188,71 +188,47 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 		umx_check_names(FAMID, data = data, message = c("Could not find your FAMID column ", omxQuotes('FAMID')) )
 		data$FAMID = data[, FAMID]
 	}
+	umx_check_names(zyg, data = data, message = c("Could not find your zygosity column ", omxQuotes(zyg)) )
 	neededVars = c(tvars(c(x, y, "deltaX"), sep = sep), "FAMID", "FamMeanX")
 	umx_check_names(neededVars, data = data)
 
-	popData = umx_wide2long(data = data[, neededVars], sep = sep)
-	dzData  = umx_wide2long(data = data[data$zyg %in% dzZygs, neededVars], sep = sep)
-	mzData  = umx_wide2long(data = data[data$zyg %in% mzZygs, neededVars], sep = sep)
+	popData = umx_wide2longTwinData(data = data[, neededVars], sep = sep)
+	dzData  = umx_wide2longTwinData(data = data[data[, zyg] %in% dzZygs, neededVars], sep = sep)
+	mzData  = umx_wide2longTwinData(data = data[data[, zyg] %in% mzZygs, neededVars], sep = sep)
 
 	# TODO create T1 for non-pair comparison
 
 	# 2. Run nlme::lme with formula created from user's x and y, e.g. : IQ ~ EffortMean + SOSeffort
 	formula = reformulate(termlabels = c("FamMeanX", x), response = y)
-
-	# obj = lme(reformulate(termlabels = x, response = y), random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(formula, random = ~ 1|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
-	# obj = lme(formula, random = ~ 1|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
-
-	# obj = lme(IQ ~ SOSeffort        , random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ deltaX + FamMeanX, random = ~ 1|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
-	# obj = lme(IQ ~ deltaX + FamMeanX, random = ~ 1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
-
-	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ deltaX   , random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= "deltaX", input = r_df)
-	# obj = lme(IQ ~ deltaX   , random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= "deltaX", input = r_df)
+	popFormula = reformulate(termlabels = x, response = y)
 
 	# Begg & Parides (2008) Model #3 
-	# h(E[Yij|Xij;X.i)=.2 +.2Xij +.2X.i
-	# X&772;
-	
-	obj = lme(IQ ~ SOSeffort           , random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
-	obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= x, input = r_df)
-
-	# also good
-	# obj = lme(IQ ~ SOSeffort           , random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ 1|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ 1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ" , model= obj, x= x, input = r_df)
-
-	# obj = lme(IQ ~ SOSeffort           , random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort + FamMeanX, random = ~ FamMeanX|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
-
-	# obj = lme(IQ ~ SOSeffort, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ FamMeanX|FAMID, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
-
-	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(dzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "DZ", model= obj, x= x, input = r_df)
-	# obj = lme(IQ ~ SOSeffort, random = ~ 1|FAMID/FamMeanX, data = umx_scale(mzData), na.action = "na.omit", control = list(opt= "optim")); r_df = updateDB(xLevel = "MZ", model= obj, x= x, input = r_df)
+	models = list()
+	obj = lme(popFormula, random = ~        1|FAMID, data = umx_scale(popData), na.action = "na.omit", control = list(opt= "optim")); models$Pop = obj; r_df = updateDB(xLevel = "Pop", model= obj, x= x, input = r_df)
+	obj = lme(formula   , random = ~        1|FAMID, data = umx_scale(dzData) , na.action = "na.omit", control = list(opt= "optim")); models$DZ  = obj; r_df = updateDB(xLevel = "DZ" , model= obj, x= x, input = r_df)
+	obj = lme(formula   , random = ~        1|FAMID, data = umx_scale(mzData) , na.action = "na.omit", control = list(opt= "optim")); models$MZ  = obj; r_df = updateDB(xLevel = "MZ" , model= obj, x= x, input = r_df)
 
 	r_df$xLevel = factor(r_df$xLevel, levels = c("Pop", "DZ", "MZ"))
 	p = ggplot(r_df, aes(x = xLevel, y = Bwithin, fill = xLevel))
 	p = p + geom_bar(position = position_dodge(), stat = "identity", linewidth = .3, colour = "black") # 3 = thin
 	p = p + geom_errorbar(aes(ymin = ci.lower, ymax = ci.upper), linewidth = .3, width = .2, position = position_dodge(.9)) # Thinner lines
-	p = p + xlab("Zygosity") + ylab(expression(beta ~ or ~ beta ~ within ))
+	p = p + xlab("Zygosity") + ylab("Effect (beta)")
 	p = p + ggtitle(paste0("Estimated effect of ", x, " on ", y)) + theme_bw()
 	# p = p + scale_y_continuous(breaks = 0:20 * 4)
 	# Legend label, use darker colors
-	p = p + scale_fill_hue(name= "Group", breaks= c("Pop", "MZ", "DZ"), labels= c("Unselected", "DZ within family", "MZ within family"))
+	p = p + scale_fill_hue(name= "Group", breaks= c("Pop", "DZ", "MZ"), labels= c("Unselected", "DZ within family", "MZ within family"))
 	print(p)
 	if(out == "plot"){
 		return(p)
 	} else if(out == "table"){
-		return(r_df)
+		if(report != "none"){
+			disp = r_df
+			disp$pval = umx_APA_pval(disp$pval)
+			umx_print(disp, digits = digits, report = report)
+		}
+		invisible(r_df)
 	} else if(out == "model"){
-		return(obj)
+		return(models)
 	}
 }
 
@@ -623,6 +599,37 @@ umxPlotDoC <- function(x = NA, means = FALSE, std = FALSE, digits = 2, showFixed
 plot.MxModelDoC <- umxPlotDoC
 
 
+#' Print stored confidence intervals of a fitted DoC model
+#'
+#' Prints intervals already stored on the model (e.g. by [umxConfint()]),
+#' or an honest note when the model carries no stored intervals.
+#' Intervals are never computed here: mxCI requests must be built by the
+#' caller because umxDoC re-runs its fitting code on any `mxRun()`.
+#'
+#' @param model A fitted [OpenMx::mxModel()] of class `MxModelDoC`.
+#' @param digits Rounding for the printed bounds.
+#' @return The printed data.frame, invisibly (NULL when no intervals exist).
+xmu_show_DoC_intervals <- function(model, digits = 2) {
+	ci = NULL
+	if(!is.null(model@output)){
+		ci = model@output$confidenceIntervals
+	}
+	if(is.null(ci) || !is.matrix(ci) || nrow(ci) < 1 || ncol(ci) < 2){
+		message("CIs not computed for this DoC model (no stored intervals)")
+		return(invisible(NULL))
+	}
+	rows = paste0("[", round(ci[, 1], digits), ", ", round(ci[, ncol(ci)], digits), "]")
+	parmNames = rownames(ci)
+	if(is.null(parmNames)){
+		parmNames = paste0("parm", seq_len(nrow(ci)))
+	}
+	out = data.frame(parameter = parmNames, CI = rows, stringsAsFactors = FALSE)
+	message("Table: Confidence intervals (stored)")
+	umx_print(out)
+	invisible(out)
+}
+
+
 #' Shows a compact, publication-style, summary of a umx Direction of Causation model
 #'
 #' Summarize a fitted model returned by [umxDoC()]. Can control digits, report comparison model fits,
@@ -637,7 +644,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' @param comparison Run mxCompare on a comparison model (default NULL)
 #' @param std Whether to standardize the output (default = TRUE).
 #' @param showRg = whether to show the genetic correlations (FALSE).
-#' @param CIs Whether to show Confidence intervals if they exist (TRUE).
+#' @param CIs Whether to show stored Confidence intervals if they exist (TRUE). Intervals must already be on the model (e.g. via `umxConfint()`); none are computed here.
 #' @param report Print tables to the console (as 'markdown'), or open in browser ('html')
 #' @param file The name of the dot file to write: "name" = use the name of the model.
 #' Defaults to NA = do not create plot output.
@@ -678,6 +685,7 @@ plot.MxModelDoC <- umxPlotDoC
 #' umxCompare(B2A, A2B)
 #' 
 #' }
+
 umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, showRg = FALSE, CIs = TRUE , report = c("markdown", "html"), file = NA, returnStd = FALSE, zero.print = ".", ...) {
 	# TODO: Allow "a2b" in place of causal to avoid the make/modify 2-step
 	# TODO: Detect value of DZ covariance, and if .25 set "C" to "D" in tables
@@ -687,7 +695,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 	if(typeof(model) == "list"){ # call self recursively
 		for(thisFit in model) {
 			message(paste("Output for Model: ", thisFit$name))
-			umxSummaryDoC(thisFit, digits = digits, comparison = comparison, file = file, returnStd = returnStd, showRg = showRg, report = report, std = std, CIs = CIs)
+			umxSummaryDoC(thisFit, digits = digits, comparison = comparison, file = file, returnStd = returnStd, showRg = showRg, report = report, std = std, CIs = CIs, zero.print = zero.print, ...)
 		}
 	} else {
 		umx_check_model(model, "MxModelDoC", beenRun = TRUE, callingFn = "umxSummaryDoC")
@@ -700,9 +708,7 @@ umxSummaryDoC <- function(model, digits = 2, comparison = NULL, std = TRUE, show
 		selDVs   = sub("(_T)?[0-9]$", "", selDVs) # trim "_Tn" from end
 
 		if(CIs){
-			message("CIs not supported for DoC models yet")
-			# oldModel = model # Cache this in case we need it (CI stash model has string where values should be).
-			# model = xmu_CI_stash(model, digits = digits, dropZeros = TRUE, stdAlg2mat = TRUE)
+			xmu_show_DoC_intervals(model, digits = digits)
 		} else if(any(c(std, returnStd))) {
 			message("Std not supported for DoC models yet")
 			# model = xmu_standardize_Doc(model) # Make a standardized copy of model

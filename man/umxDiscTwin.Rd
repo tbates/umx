@@ -2,7 +2,7 @@
 % Please edit documentation in R/umxDoC.R
 \name{umxDiscTwin}
 \alias{umxDiscTwin}
-\title{Intra-pair association in MZ, DZ  twin models. (ALPHA quality!)}
+\title{Intra-pair association in MZ, DZ twin models.}
 \usage{
 umxDiscTwin(
   x,
@@ -11,9 +11,11 @@ umxDiscTwin(
   mzZygs = c("MZFF", "MZMM"),
   dzZygs = c("DZFF", "DZMM", "DZOS"),
   FAMID = "FAMID",
+  zyg = "zygosity",
   out = c("table", "plot", "model"),
-  use = "complete.obs",
-  sep = "_T"
+  sep = "_T",
+  report = c("markdown", "html", "none"),
+  digits = 2
 )
 }
 \arguments{
@@ -29,11 +31,15 @@ umxDiscTwin(
 
 \item{FAMID}{The column containing family IDs (default = "FAMID")}
 
-\item{out}{Whether to return the table or the ggplot (if you want to decorate it)}
+\item{zyg}{The column containing zygosity (default = "zygosity")}
 
-\item{use}{NA handling in corr.test (default= "complete.obs")}
+\item{out}{What to return: the results "table", the "plot" (a ggplot you can decorate), or the fitted "model"s as a named list (Pop, DZ, MZ).}
 
 \item{sep}{The separator in twin variable names, default = "_T", e.g. "dep_T1".}
+
+\item{report}{How to print the results table: "markdown" (default), "html", or "none" to skip printing.}
+
+\item{digits}{Rounding for the printed table (default = 2). The returned table keeps full precision.}
 }
 \value{
 \itemize{
@@ -57,7 +63,7 @@ then the association in MZ twins will reduce to zero/non-significance.
 The function uses the \code{\link[nlme:lme]{nlme::lme()}} function to compute the effect of the presumed causal variable on the outcome,
 controlling, for mid-family score and with random means model using familyID. e.g.:
 
-\code{mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1+FamMeanX|FAMID, data = umx_scale(MZ), na.action = "na.omit")}
+\code{mzModel  = lme(fixed = y ~ x + FamMeanX, random = ~ 1|FAMID, data = umx_scale(MZ), na.action = "na.omit")}
 
 \strong{Example output from \code{umxDiscTwin}}
 

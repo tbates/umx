@@ -9,7 +9,7 @@ umxSummary(model, ...)
 \arguments{
 \item{model}{The \code{\link[OpenMx:mxModel]{OpenMx::mxModel()}} whose fit will be reported}
 
-\item{...}{Other parameters to control model summary}
+\item{...}{Other parameters to control model summary (including \code{showNote = FALSE} to silence the one-line pointer to the concrete summary function)}
 }
 \description{
 Report the fit of a RAM or other umx model (such as ACE, CP etc.)

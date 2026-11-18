@@ -9,6 +9,13 @@
 * FIXED: RAM `uncertainty = "MLR"` shows sandwich SEs only, in both `umxSummary()` (no interval column; significance assessed from the sandwich SEs) and `plot()` (stored intervals wiped from the display).
 * FIXED: RAM `uncertainty = "CI"` shows profile intervals already stored on the model, with no Wald fills, in both `umxSummary()` and `plot()`.
 * NEW: `umxPlotDoC()` takes `uncertainty = c("none", "SE", "CI")` (default `"none"`). `"SE"` shows genuine per-cell SEs via `mxSE()`; `"CI"` shows intervals already stored on the model. `SEstyle` is deprecated (maps to `"SE"`).
+* FIXED: `umxSummaryDoC()` shows confidence intervals already stored on the model (e.g. via `umxConfint()`), with an honest note when none exist, instead of `CIs not supported for DoC models yet`. Intervals are displayed only, never computed.
+* FIXED: `umxDiscTwin()` legend no longer swaps the MZ and DZ swatch labels; legend order now matches the x-axis (`Pop`, `DZ`, `MZ`).
+* FIXED: `umxDiscTwin()` fits its models from the `x` and `y` arguments instead of hardcoded `IQ`/`SOSeffort` stubs, and the zygosity column is settable via a new `zyg` parameter (default `"zygosity"`, matching `umxDoC()`).
+* FIXED: `umxDiscTwin()` uses random intercepts (`~1|FAMID`) instead of the unidentifiable random slope on the family mean, and no longer prints the `Assuming twin data` note (calls `umx_wide2longTwinData()` directly).
+* IMPROVED: `umxDiffMZ()` is validated and out of pre-alpha: the annotation shows R-squared, the identity and zero guides are restored, and bad `zyg`/empty MZ selections error honestly.
+* IMPROVED: `umxDiscTwin()` is out of pre-alpha: `out = "table"` prints a markdown table by default (new `report` = `"markdown"`/`"html"`/`"none"`, APA p-values, `digits` rounding) and returns the raw table invisibly; `N` now holds observations used (was denominator df); dead `use` parameter removed.
+* IMPROVED: `umxDiscTwin()` table gains a `df` column (denominator df for the t-test), `out = "model"` returns all three fits as a named list, and the plot y-axis reads `Effect (beta)`.
 * NEW: `umxPlotSexLim()` takes `uncertainty = c("none", "SE", "CI")` (default `"none"`). `"SE"` shows genuine per-cell SEs (standardized paths use the delta method for the square root); `"CI"` shows stored intervals on the raw display only. `SEstyle` is deprecated (maps to `"SE"`).
 * FIXED: `umxPlotSexLim(means = TRUE)` draws the fitted male and female means as triangle-to-manifest paths. `means = FALSE` output is unchanged.
 * FIXED: `umxPlotSexLim()` no longer prints the diagram on every call. Like the other twin plots, top-level calls display and nested calls (summaries, builders, `umxModify()`) stay silent.

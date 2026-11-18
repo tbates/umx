@@ -14,7 +14,7 @@ xmu_summary_RAM_group_parameters(
 \arguments{
 \item{model}{the model containing the parameters.}
 
-\item{paramTable}{The parameter table.}
+\item{paramTable}{The parameter table. Unlabeled rows are classified from their own matrix/row/col address when those columns are present.}
 
 \item{means}{Whether to show the means (FALSE)}
 
