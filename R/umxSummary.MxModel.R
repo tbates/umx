@@ -10,6 +10,8 @@
 #'
 #' Non-RAM models (matrix/algebra, LISREL, ...) show raw estimates from [summary()] in the same table: standardized estimates need a RAM model.
 #'
+#' RAM models with Pearson-selection (arrows=0) paths show them in a separate "Selection paths" block (raw estimates; standardized values are not defined).
+#'
 #' **Robust inference (`uncertainty = "MLR"`)**
 #'
 #' This option means **engine-appropriate robust inference**, not one sandwich formula for every fit type:
@@ -333,6 +335,52 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 			# 1  Dep.A[6,1]    age    A        mean_sdrr   age   -0.37       0.0284   -0.372350    .028
 			# Raw.SE is new
 			names(parameterTable) = c("label", "name", "matrix", "row", "col", "Estimate", "SE", "Std.Estimate", "Std.SE")
+			if (isRAMmodel) {
+				# Selection (arrows=0) paths live outside A/S/M (selectionVector),
+				# which is all mxStandardizeRAMpaths maps: append one row per free
+				# selectionVector cell per group (mirrors its columns; Std unavailable).
+				selBits = list()
+				for (g in xmu_model_groups(model)) {
+					gm = model
+					if (!identical(g, model@name)) gm = model[[g]]
+					selPlan = NULL
+					selVec = NULL
+					if (!is.null(gm$expectation)) selPlan = gm$expectation$selectionPlan
+					if (!is.null(gm[["selectionVector"]])) selVec = gm[["selectionVector"]]
+					if (is.null(selPlan) || is.null(selVec)) next
+					mname = "selectionVector"
+					addrPrefix = model@name
+					if (!identical(g, model@name)) {
+						mname = paste0(g, ".selectionVector")
+						addrPrefix = g
+					}
+					for (i in seq_len(nrow(selPlan))) {
+						lab = NA_character_
+						labs = selVec$labels
+						if (!is.null(labs) && length(labs) >= i) lab = as.vector(labs)[i]
+						if (length(lab) == 0L || is.na(lab)) lab = NA_character_
+						if (!is.na(lab)) {
+							hit = which(modelSummary$parameters$name == lab)
+						} else {
+							hit = which(modelSummary$parameters$matrix == mname &
+								as.character(modelSummary$parameters$row) == as.character(i) &
+								as.character(modelSummary$parameters$col) == "1")
+						}
+						if (length(hit) != 1L) next
+						prow = modelSummary$parameters[hit, ]
+						selBits[[length(selBits) + 1L]] = data.frame(
+							label = paste0(addrPrefix, ".selectionVector[", i, ",1]"),
+							name = lab, matrix = mname,
+							row = as.character(selPlan$from[i]), col = as.character(selPlan$to[i]),
+							Estimate = prow$Estimate, SE = prow$Std.Error,
+							Std.Estimate = NA_real_, Std.SE = NA_real_,
+							stringsAsFactors = FALSE)
+					}
+				}
+				if (length(selBits) > 0L) {
+					parameterTable = rbind(parameterTable, do.call(rbind, selBits))
+				}
+			}
 
 			if(matrixAddresses){
 				naming = c("name", "matrix", "row", "col")
@@ -418,19 +466,33 @@ umxSummary.MxModel <- function(model, refModels = NULL, std = FALSE, digits = 2,
 				}
 			}
 			if(filter == "NS") {
-				toShow = parameterTable[parameterTable$sig == FALSE, namesToShow]
+				filtTable = parameterTable[parameterTable$sig == FALSE, ]
 			} else if(filter == "SIG") {
-				toShow = parameterTable[parameterTable$sig == TRUE, namesToShow]
+				filtTable = parameterTable[parameterTable$sig == TRUE, ]
 			} else {
-				toShow = parameterTable[, namesToShow]
+				filtTable = parameterTable
 			}
+			selTable = NULL
+			if (isRAMmodel) {
+				selRows = grepl("(^|\\.)selectionVector$", filtTable$matrix)
+				if (any(selRows)) {
+					selTable = filtTable[selRows, ]
+					filtTable = filtTable[!selRows, ]
+				}
+			}
+			toShow = filtTable[, namesToShow]
 			if(isRAMmodel){
-				toShow = xmu_summary_RAM_group_parameters(model, toShow,  means= means, residuals = residuals)
+				groupCols = unique(c(namesToShow, "matrix", "row", "col"))
+				toShow = xmu_summary_RAM_group_parameters(model, filtTable[, groupCols],  means= means, residuals = residuals)
 			} else {
 				toShow$type = parameterTable[rownames(toShow), "matrix"]
 			}
 			toShow = unique.data.frame(toShow[,c(namesToShow, "type")])
 			umx_print(toShow, digits = digits, report = report, caption = paste0("Parameter loadings for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
+			if (!is.null(selTable) && nrow(selTable) > 0L) {
+				selShow = unique.data.frame(selTable[, namesToShow])
+				umx_print(selShow, digits = digits, report = report, caption = paste0("Selection paths for model ", omxQuotes(model$name)), na.print = "", zero.print = "0", justify = "none")
+			}
 		}
 	}
 	if (!reportedWLS) {

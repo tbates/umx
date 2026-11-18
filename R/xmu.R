@@ -1998,7 +1998,7 @@ xmuMinLevels <- function(df, what = c("value", "name")) {
 #' Makes understanding complex model output easier by grouping parameters are type: residuals, latent variance, factor loading etc.
 #'
 #' @param model the model containing the parameters.
-#' @param paramTable The parameter table.
+#' @param paramTable The parameter table. Unlabeled rows are classified from their own matrix/row/col address when those columns are present.
 #' @param means Whether to show the means (FALSE)
 #' @param residuals Whether to show the residuals (FALSE)
 #' @return - Sorted parameter table
@@ -2027,6 +2027,53 @@ xmu_summary_RAM_group_parameters <- function(model, paramTable,  means= FALSE, r
 	paramTable$type = "custom"
 	for (i in 1:dim(paramTable)[1]) {
 		thisName  = paramTable[i, "name"]
+		if ((length(thisName) != 1L || is.na(thisName)) && all(c("matrix", "row", "col") %in% names(paramTable))) {
+			# Unlabeled: locate() would match the first unlabeled cell anywhere
+			# (arbitrary type), so classify from the row's own address instead.
+			mx = paramTable[i, "matrix"]
+			from = paramTable[i, "col"]
+			to = paramTable[i, "row"]
+			if (!is.na(mx) && !is.na(from) && !is.na(to)) {
+				latents = unique(c(umxGetLatents(model), unlist(lapply(model@submodels, function(s) s$latentVars))))
+				manifests = unique(c(umxGetManifests(model), unlist(lapply(model@submodels, function(s) s$manifestVars))))
+				if (mx == "M") {
+					paramTable[i, "type"] = "Mean"
+				} else if (mx == "S") {
+					if (from %in% latents) {
+						if (to %in% latents) {
+							if (from == to) {
+								paramTable[i, "type"] = "Factor Variance"
+							} else {
+								paramTable[i, "type"] = "Factor Cov"
+							}
+						} else {
+							paramTable[i, "type"] = "Latent-Manifest Cov"
+						}
+					} else {
+						if (to %in% manifests) {
+							if (from == to) {
+								paramTable[i, "type"] = "Residual"
+							} else {
+								paramTable[i, "type"] = "Manifest Cov"
+							}
+						} else {
+							paramTable[i, "type"] = "Latent-Manifest Cov"
+						}
+					}
+				} else if (mx == "A") {
+					if (from %in% latents) {
+						if (to %in% latents) {
+							paramTable[i, "type"] = "Factor to factor"
+						} else {
+							paramTable[i, "type"] = "Factor loading"
+						}
+					} else {
+						paramTable[i, "type"] = "Manifest path"
+					}
+				}
+			}
+			next
+		}
 		location  = omxLocateParameters(model, labels = thisName, free = NA)[1,]
 		thisModel = umxGetModel(model, targetModel = location$model)
 		latents   = umxGetLatents(thisModel)
