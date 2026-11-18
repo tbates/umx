@@ -57,6 +57,7 @@
 * FIXED: `plot()` on a multigroup model discarded every submodel widget: only the help notes appeared and no diagram rendered. Each group now renders (one DiagrammeR per submodel), returned invisibly as a list.
 * FIXED: `plot()` help note printed once per submodel. One class-aware note per top-level call (names `?plot.MxModel`, or `?plot.MxLISRELModel` for LISREL-first groups); recursion passes `showNote = FALSE`.
 * FIXED: `xmu_standardize_RAM()` zeroed exogenous paths (same defect as `mxStandardizeRAMpaths`): exogenous slopes now standardize against observed SDs. Also fixed a missing-`obs` reference the `tryCatch` hid.
+* CHANGED: sketch builders (`umxRAM()`/`umxLav2RAM()` without data) no longer attempt auto-preview (it never rendered under DiagrammeR, only emitted the plot note). Plot explicitly with `plot()`.
 
 ## umx 4.80.1: Over *80* new features, fixes, and improvements! 
 * IMPROVED: `umx_make("release")` no longer prints the devtools `release()` deprecation. The CRAN upload name is one string.
