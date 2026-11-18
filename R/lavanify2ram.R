@@ -446,10 +446,6 @@ umxLav2RAM <- function(model = NA, data = "auto", group = NULL, group.equal= NUL
 
 	if (class(data)[[1]] == "character"){
 		# User is just running a trial model, with no data, but provided names for sketch mode
-		autoPlot = umx_set_auto_plot(silent = TRUE)
-		if(autoRun && autoPlot){
-			plot(model)
-		}
 		return(model)
 	}else{
 		model = omxAssignFirstParameters(model)

@@ -591,9 +591,6 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		# User is just running a trial model, with no data, but provided names for sketch mode
 		newModel = xmuLabel(newModel, suffix = suffix)
 		if(is.null(group)){
-			if(autoRun && umx_set_auto_plot(silent = TRUE)){
-				plot(newModel)
-			}
 			return(newModel)
 		} else {
 			# will be added to a super model, but no data needed/available to subset
