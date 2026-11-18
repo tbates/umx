@@ -3,7 +3,7 @@ library(umx)
 library(OpenMx)
 
 makeSelSingle = function() {
-	obsCov = matrix(c(1.0, 0.42, 0.02, 0.42, 1.0, 0.25, 0.02, 0.25, 1.0), 3, 3)
+	obsCov = matrix(c(1.0, 0.42, 0.02, 0.42, 1.0, 0.02, 0.02, 0.02, 1.0), 3, 3)
 	colnames(obsCov) = rownames(obsCov) = c("x1", "x2", "x3")
 	mxModel("selML", type = "RAM", manifestVars = c("x1", "x2", "x3"),
 		mxPath("x1", "x2", arrows = 0, free = TRUE, values = 0.3, labels = "s12"),

@@ -340,7 +340,7 @@ umxDiscTwin <- function(x, y, data, mzZygs = c("MZFF", "MZMM"), dzZygs = c("DZFF
 #' }
 umxDoC <- function(name = "DoC", var1Indicators, var2Indicators, mzData= NULL, dzData= NULL, sep = "_T", causal= TRUE, autoRun = getOption("umx_auto_run"), intervals = FALSE, tryHard = c("no", "yes", "ordinal", "search", "auto"), optimizer = NULL, data = NULL, zyg = "zygosity") {
 	# TODO: umxDoC add some name checking to avoid variables like "a1"
-	if(name == "DoC"){name = ifelse(causal, "DoC", "Chol")}
+	if(name == "DoC"){name = ifelse(causal, "DoC no causal", "Chol")}
 	tryHard = match.arg(tryHard)
 	umx_check(is.logical(causal), "stop", "causal must be TRUE or FALSE")
 		

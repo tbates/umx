@@ -119,3 +119,21 @@ test_that("plot note names plot.MxModel for classes without a dedicated plotter"
 	expect_equal(nNotes, 1)
 	expect_true(grepl("plot.MxModel", noteText, fixed = TRUE))
 })
+
+test_that("sketch builders return silently without auto-preview", {
+	# Defect: sketch auto-preview plot()ed and discarded the widget (note but no diagram)
+	oldAuto = umx_set_auto_plot(TRUE, silent = TRUE)
+	on.exit(umx_set_auto_plot(oldAuto, silent = TRUE), add = TRUE)
+	notes = character(0)
+	m1 = withCallingHandlers(umxRAM("GDP ~ 0.7*N_billionaires"), message = function(m) {
+		notes <<- c(notes, conditionMessage(m))
+		invokeRestart("muffleMessage")
+	})
+	m2 = withCallingHandlers(umxRAM("sk", umxPath("G", to = c("x", "y")), umxPath(var = c("x", "y")), data = c("x", "y")), message = function(m) {
+		notes <<- c(notes, conditionMessage(m))
+		invokeRestart("muffleMessage")
+	})
+	expect_false(any(grepl("customise options", notes, fixed = TRUE)))
+	expect_true(isS4(m1))
+	expect_true(isS4(m2))
+})
