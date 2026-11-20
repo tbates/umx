@@ -7105,6 +7105,69 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 	# save(MR_data, file = "~/bin/umx/data/MR_data.rda")
 }
 
+#' Simulate Pearson-Aitken selection demo data
+#'
+#' Simulates a population where IQ and C (correlation `r_IQ_C`) both cause EA,
+#' then selects the top-`prop` scorers on EA. In the selected sample, IQ and C
+#' show a spurious (collider-bias) correlation, which Pearson-Aitken selection
+#' models (see `umxRAM(selection=)` and [umxRAM-selection]) correct using the
+#' known population variance of EA (1.0 by construction).
+#'
+#' @param N Population size to simulate (default = 6000).
+#' @param IQ_on_EA Path from IQ to EA (default = 0.4).
+#' @param C_on_EA Path from C to EA (default = 0.2).
+#' @param r_IQ_C Population correlation of IQ and C (default = 0).
+#' @param prop Proportion kept by selecting top scorers on EA (default = 0.3).
+#' @param seed Random seed for reproducibility (default = 43, NULL = random).
+#' @return A list with `pop` (full population) and `sel` (selected sample),
+#'   data frames with columns IQ, C, EA.
+#' @family Data Functions
+#' @concept selection models
+#' @seealso [umxRAM()], [umx_concept_selection]
+#' @export
+#' @examples
+#' d = umx_make_selection_data()
+#' str(d$pop)
+#' cor(d$pop$IQ, d$pop$C) # ~0 in the population
+#' cor(d$sel$IQ, d$sel$C) # spurious negative in the selected sample
+#' \dontrun{
+#' m = umxRAM("selDemo", data = d$sel,
+#' 	umxPath(v.m. = c("IQ", "C", "EA")),
+#' 	umxPath(from = c("IQ", "C"), to = "EA"),
+#' 	umxPath("IQ", with = "C"),
+#' 	selection = list(var = "EA", popVar = 1.0))
+#' # C_with_IQ recovers ~0 (truth), not the selected-sample value
+#' }
+umx_make_selection_data <- function(N = 6000, IQ_on_EA = 0.4, C_on_EA = 0.2, r_IQ_C = 0, prop = 0.3, seed = 43) {
+	if (length(N) != 1 || !is.numeric(N) || !is.finite(N) || N <= 0) {
+		stop("N must be a single positive number of cases to simulate.", call. = FALSE)
+	}
+	if (length(r_IQ_C) != 1 || !is.numeric(r_IQ_C) || abs(r_IQ_C) >= 1) {
+		stop("r_IQ_C must be a single correlation between -1 and 1.", call. = FALSE)
+	}
+	varExpl = IQ_on_EA^2 + C_on_EA^2 + 2 * IQ_on_EA * C_on_EA * r_IQ_C
+	varE = 1 - varExpl
+	if (!is.finite(varE) || varE <= 0) {
+		stop("Loadings imply non-positive residual variance: reduce them.", call. = FALSE)
+	}
+	if (length(prop) != 1 || !is.numeric(prop) || !is.finite(prop) || prop <= 0 || prop >= 1) {
+		stop("prop must be a single proportion in (0, 1) to keep.", call. = FALSE)
+	}
+	if (!is.null(seed)) {
+		set.seed(seed)
+	}
+	Sigma = matrix(c(1, r_IQ_C, r_IQ_C, 1), 2, 2)
+	L = chol(Sigma)
+	z = matrix(rnorm(N * 2), ncol = 2) %*% L
+	IQ = z[, 1]
+	C = z[, 2]
+	EA = IQ_on_EA * IQ + C_on_EA * C + rnorm(N, 0, sqrt(varE))
+	pop = data.frame(IQ = IQ, C = C, EA = EA)
+	sel = pop[pop$EA > quantile(pop$EA, 1 - prop), ]
+	rownames(sel) = NULL
+	list(pop = pop, sel = sel)
+}
+
 #' umx_make_fake_data
 #'
 #' This function takes as argument an existing dataset, which 
