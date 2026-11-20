@@ -1450,6 +1450,36 @@ xmuLabel_RAM_Model <- function(model, suffix = "", labelFixedCells = TRUE, overR
 		model@matrices$S@labels[lower.tri(toGet)] = transpose_toGet[lower.tri(transpose_toGet)]
 	}
 
+	# ==================================
+	# = Add selection labels if needed =
+	# ==================================
+	# Selection (arrows=0) params live in selectionVector, outside A/S/M.
+	# Label sel_<var> (self-pair, matches umxRAM selection=) or
+	# sel_<A>_<B> (cross-pair, alphabetical like S labels). Same pair in
+	# more than one step gets _s<step> so steps never silently equate.
+	if (!is.null(model$selectionVector) && !is.null(model$expectation$selectionPlan) && nrow(model$expectation$selectionPlan) > 0) {
+		selPlan = model$expectation$selectionPlan
+		pairDup = duplicated(selPlan[, c("from", "to")]) | duplicated(selPlan[, c("from", "to")], fromLast = TRUE)
+		newLabels = character(nrow(selPlan))
+		for (rx in seq_len(nrow(selPlan))) {
+			orderedNames = sort(c(selPlan$from[rx], selPlan$to[rx]))
+			if (orderedNames[1] == orderedNames[2]) {
+				thisLabel = paste0("sel_", orderedNames[1])
+			} else {
+				thisLabel = paste0("sel_", orderedNames[1], "_", orderedNames[2])
+			}
+			if (pairDup[rx]) {
+				thisLabel = paste0(thisLabel, "_s", selPlan$step[rx])
+			}
+			newLabels[rx] = paste0(thisLabel, suffix)
+		}
+		curLabels = model$selectionVector$labels[, 1]
+		doLabel = labelFixedCells | model$selectionVector$free[, 1]
+		update = doLabel & (overRideExisting | is.na(curLabels))
+		curLabels[update] = newLabels[update]
+		model$selectionVector$labels[, 1] = curLabels
+	}
+
 	# ==============================
 	# = Add means labels if needed =
 	# ==============================
