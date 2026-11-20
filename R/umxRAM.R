@@ -150,6 +150,7 @@ umxModel <- function(...) {
 #' @param std.lv Whether to auto standardize latent variables when using string syntax (default = FALSE)
 #' @param lavaanMode Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)
 #' @param printTab (for string input, whether to output a table of paths (FALSE)
+#' @param selection Pearson-Aitken selection spec: `list(var = "EA", popVar = 1.0)` for one variable, `list(var = c("A", "B"), popCov = <k-by-k>)` for several. Declares the sample selected on `var` with known population (co)variance. `umxRAM` adds free `arrows=0` selected-variance paths plus a constraint equating the implied population moments to the known values (the identifying assumption). `popCov` takes a named matrix (`var` is then optional and inferred from the dimnames) or a length-k*k vector (`var` required); it must be symmetric and is reordered to `var` order. Means stay free but are saturated nuisance, not population quantities.
 #' @return - [OpenMx::mxModel()]
 #' @export 
 #' @seealso [umxPath()], [umxSummary()], [plot()], [parameters()], [umxSuperModel()], [umxLav2RAM()]
@@ -342,9 +343,24 @@ umxModel <- function(...) {
 #' 	umxPath(v.m. = c("wt", "litres", "mpg"))
 #' )
 #'
+#' # ========================
+#' # = Pearson-Aitken selection =
+#' # ========================
+#' # IQ and C are uncorrelated, but both cause EA. Selecting the top 30% on
+#' # EA induces a spurious negative IQ-C correlation (collider bias).
+#' # selection= recovers the population value given the known population Var(EA).
+#' sel = umx_make_selection_data()$sel
+#' msel = umxRAM("selDemo", data = sel,
+#' 	umxPath(v.m. = c("IQ", "C", "EA")),
+#' 	umxPath(from = c("IQ", "C"), to = "EA"),
+#' 	umxPath("IQ", with = "C"),
+#' 	selection = list(var = "EA", popVar = 1.0)
+#' )
+#' # C_with_IQ is ~0.005 (truth 0), not the selected-sample value (~-0.04)
+#'
 #' }
 #'
-umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE) {
+umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.equal = NULL, suffix = "", comparison = TRUE, type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS"), weight = NULL, allContinuousMethod = c("cumulants", "marginals"), autoRun = getOption("umx_auto_run"), tryHard = c("no", "yes", "ordinal", "search", "auto"), std = FALSE, refModels = NULL, remove_unused_manifests = TRUE, independent = NA, setValues = TRUE, optimizer = NULL, verbose = FALSE, std.lv = FALSE, lavaanMode = c("sem", "lavaan"), printTab = FALSE, selection = NULL) {
 	dot.items = list(...) # grab all the dot items: mxPaths, etc...
 	# Check for data/model objects passed in ... before unlist() flattens them
 	for (item in dot.items) {
@@ -364,6 +380,92 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	tryHard    = match.arg(tryHard)
 	lavaanMode = match.arg(lavaanMode)
 	allContinuousMethod = match.arg(allContinuousMethod)
+
+	# ============================
+	# = Validate selection spec  =
+	# ============================
+	# Pearson-Aitken selection: selection = list(var = "EA", popVar = 1.0) for
+	# one variable, or list(var = c("A", "B"), popCov = <k-by-k>) for several.
+	# umxRAM generates the arrows=0 selected (co)variance paths plus a constraint
+	# equating the implied population moments to the known values (see the hook
+	# after assembly). popCov normalizes to a named k-by-k here so the hook
+	# sees one type.
+	if (!is.null(selection)) {
+		if (!is.list(selection)) {
+			stop("selection= must be a list: list(var = \"EA\", popVar = 1.0) for one variable, or list(var = c(\"A\", \"B\"), popCov = <matrix>) for several.", call. = FALSE)
+		}
+		selVar = selection$var
+		popVar = selection$popVar
+		popCov = selection$popCov
+		if (!is.null(popVar) && !is.null(popCov)) {
+			stop("selection= takes popVar (one variable) or popCov (several variables), not both.", call. = FALSE)
+		}
+		if (!is.null(popCov)) {
+			if (is.null(selVar)) {
+				selVar = rownames(popCov)
+				if (is.null(selVar)) {
+					stop("selection= with a popCov vector needs var = c(...): only a named popCov matrix can infer them.", call. = FALSE)
+				}
+			}
+			if (!is.character(selVar)) {
+				stop("selection$var must be variable names (a character vector).", call. = FALSE)
+			}
+			k = length(selVar)
+			if (k < 2) {
+				stop("selection$popCov is for several variables: for one variable use popVar instead.", call. = FALSE)
+			}
+			if (anyDuplicated(selVar)) {
+				stop("selection$var must name distinct variables.", call. = FALSE)
+			}
+			if (is.matrix(popCov)) {
+				if (nrow(popCov) != k || ncol(popCov) != k) {
+					stop("selection$popCov must be a square k by k matrix with one row/col per selection variable: you gave ", nrow(popCov), " by ", ncol(popCov), " for ", k, " variables.", call. = FALSE)
+				}
+				if (is.null(rownames(popCov)) || is.null(colnames(popCov))) {
+					rownames(popCov) = selVar
+					colnames(popCov) = selVar
+				}
+				if (!identical(sort(rownames(popCov)), sort(selVar)) || !identical(sort(colnames(popCov)), sort(selVar))) {
+					stop("selection$popCov dimnames must name the selection variables on rows and columns: rows name ", paste(rownames(popCov), collapse = ", "), ".", call. = FALSE)
+				}
+				popCov = popCov[selVar, selVar]
+			} else if (is.numeric(popCov) && is.null(dim(popCov))) {
+				if (length(popCov) != k * k) {
+					stop("selection$popCov vector must have length k*k for k selection variables: you gave length ", length(popCov), " for ", k, " variables.", call. = FALSE)
+				}
+				popCov = matrix(popCov, k, k, dimnames = list(selVar, selVar))
+			} else {
+				stop("selection$popCov must be a numeric k by k matrix or a numeric length-k*k vector.", call. = FALSE)
+			}
+			if (!is.numeric(popCov) || any(!is.finite(popCov))) {
+				stop("selection$popCov must be numeric with all finite values.", call. = FALSE)
+			}
+			if (max(abs(popCov - t(popCov))) > 1e-8) {
+				stop("selection$popCov must be symmetric: it differs from its transpose by up to ", max(abs(popCov - t(popCov))), ".", call. = FALSE)
+			}
+			selection$var = selVar
+			selection$popCov = popCov
+		} else {
+			if (is.null(selVar) || is.null(popVar)) {
+				stop("selection= must be list(var = \"EA\", popVar = 1.0): the selection variable and its known population variance.", call. = FALSE)
+			}
+			if (!is.character(selVar)) {
+				stop("selection$var must be a variable name (a character string).", call. = FALSE)
+			}
+			if (length(selVar) != 1) {
+				stop("selection on more than one variable needs popCov, not popVar: give the known population covariance matrix.", call. = FALSE)
+			}
+			if (length(popVar) != 1 || !is.numeric(popVar) || !is.finite(popVar) || popVar <= 0) {
+				stop("selection$popVar must be a single positive number: the known population variance of ", omxQuotes(selection$var), ".", call. = FALSE)
+			}
+		}
+		if (!is.null(group)) {
+			stop("selection= is not yet implemented for group (multigroup) models.", call. = FALSE)
+		}
+		if (type %in% c("WLS", "DWLS", "ULS")) {
+			stop("selection= needs ML estimation (FIML/cov/cor): WLS-family types apply no selection correction.", call. = FALSE)
+		}
+	}
 
 	# if data provided check it isn't a tibble
 	if(!is.null(data)){
@@ -387,6 +489,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 
 	# lavaan string style model
 	if (is.character(model) && grepl(model, pattern = "(<|~|=~|~~|:=)")){
+		if (!is.null(selection)) {
+			stop("selection= is not yet implemented for lavaan-string models: build with umxPath instead.", call. = FALSE)
+		}
 		# Process lavaanString: need to modify so that all the RAM options are processed: 
 		# type = c("Auto", "FIML", "cov", "cor", "WLS", "DWLS", "ULS")
 		# show
@@ -410,6 +515,9 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		}
 	} else {
 		if(umx_is_RAM(model)){
+			if (!is.null(selection)) {
+				stop("selection= is only supported when building a new model, not when updating an existing one.", call. = FALSE)
+			}
 			# message("Updating existing model")
 			if(is.na(name)){
 				name = model$name
@@ -583,7 +691,177 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 		latentVars  = latentVars,
 		independent = independent), dot.items)
 	)
-	
+
+	# ======================================
+	# = Pearson-Aitken selection machinery =
+	# ======================================
+	# selection = list(var = "EA", popVar = 1.0): sample selected on var with
+	# known population variance popVar. Generates a free arrows=0 path for the
+	# selected variance plus a constraint equating the implied population
+	# variance to popVar (the identifying assumption).
+	if (!is.null(selection) && is.null(selection$popCov)) {
+		selVar = selection$var
+		popVar = selection$popVar
+		if (inherits(myData, "character")) {
+			stop("selection= needs data: sketch mode has none to start the selected variance from.", call. = FALSE)
+		}
+		if (!selVar %in% usedManifests) {
+			stop("selection var ", omxQuotes(selVar), " must appear in the model: give it variance/mean paths.", call. = FALSE)
+		}
+		for (thisItem in dot.items) {
+			chunk = thisItem
+			if (!is.list(chunk) || is(chunk, "MxPath")) chunk = list(chunk)
+			for (j in seq_along(chunk)) {
+				p = chunk[[j]]
+				if (is(p, "MxPath") && !is.null(p$arrows) && any(p$arrows == 0, na.rm = TRUE)) {
+					stop("selection= cannot be combined with hand-written arrows=0 paths: it generates its own.", call. = FALSE)
+				}
+			}
+		}
+		selLabel = paste0("sel_", selVar)
+		algName  = "popVar_sel"
+		tgtName  = "popVar_sel_target"
+		conName  = "sel_popVar"
+		iName    = "sel_I"
+		eName    = "sel_e"
+		taken = character(0)
+		for (thisItem in dot.items) {
+			chunk = thisItem
+			if (!is.list(chunk) || is(chunk, "MxPath")) chunk = list(chunk)
+			for (j in seq_along(chunk)) {
+				p = chunk[[j]]
+				if (is(p, "MxPath") && !is.null(p$labels)) {
+					taken = c(taken, p$labels)
+				} else if (is(p, "MxMatrix") || is(p, "MxAlgebra") || is(p, "MxConstraint")) {
+					taken = c(taken, p$name)
+				}
+			}
+		}
+		for (nm in c(selLabel, algName, tgtName, conName, iName, eName)) {
+			if (nm %in% taken) {
+				stop("selection= needs the name ", omxQuotes(nm), " but it is already used: please rename yours.", call. = FALSE)
+			}
+		}
+		obs = myData$observed
+		if (is.data.frame(obs)) {
+			selStart = var(obs[[selVar]], na.rm = TRUE)
+		} else {
+			selStart = obs[selVar, selVar]
+		}
+		if (!is.finite(selStart) || selStart <= 0) {
+			selStart = 1
+		}
+		aDim = rownames(newModel$A$values)
+		ai = match(selVar, aDim)
+		if (is.na(ai)) {
+			stop("selection var ", omxQuotes(selVar), " not found in the RAM matrices: internal error.", call. = FALSE)
+		}
+		eiVals = rep(0, length(aDim))
+		eiVals[ai] = 1
+		newModel = mxModel(newModel,
+			mxPath(from = selVar, arrows = 0, free = TRUE, values = selStart, labels = selLabel),
+			mxMatrix("Iden", length(aDim), length(aDim), name = iName),
+			mxMatrix("Full", length(aDim), 1, values = eiVals, free = FALSE, name = eName),
+			mxMatrix("Full", 1, 1, values = popVar, free = FALSE, name = tgtName),
+			mxAlgebra(t(sel_e) %*% (solve(sel_I - A) %&% S) %*% sel_e, name = algName),
+			mxConstraint(popVar_sel == popVar_sel_target, name = conName))
+	}
+
+	# Several variables: selection = list(var = c("A", "B"), popCov = <k-by-k>).
+	# Generates one free arrows=0 path per unique selected (co)variance plus a
+	# matrix constraint equating the implied population submatrix to popCov.
+	# Mirrors the single-var scaffolding above (kept byte-identical on purpose).
+	if (!is.null(selection) && !is.null(selection$popCov)) {
+		selVar = selection$var
+		popCov = selection$popCov
+		k = length(selVar)
+		if (inherits(myData, "character")) {
+			stop("selection= needs data: sketch mode has none to start the selected variances from.", call. = FALSE)
+		}
+		missing = setdiff(selVar, usedManifests)
+		if (length(missing) > 0) {
+			stop("selection var ", omxQuotes(paste(missing, collapse = ", ")), " must appear in the model: give it variance/mean paths.", call. = FALSE)
+		}
+		for (thisItem in dot.items) {
+			chunk = thisItem
+			if (!is.list(chunk) || is(chunk, "MxPath")) chunk = list(chunk)
+			for (j in seq_along(chunk)) {
+				p = chunk[[j]]
+				if (is(p, "MxPath") && !is.null(p$arrows) && any(p$arrows == 0, na.rm = TRUE)) {
+					stop("selection= cannot be combined with hand-written arrows=0 paths: it generates its own.", call. = FALSE)
+				}
+			}
+		}
+		iName   = "sel_I"
+		eName   = "sel_E"
+		algName = "impCov_sel"
+		vAlgName = "impCov_sel_vech"
+		vTgtName = "popCov_sel_vech"
+		conName = "sel_popCov"
+		taken = character(0)
+		for (thisItem in dot.items) {
+			chunk = thisItem
+			if (!is.list(chunk) || is(chunk, "MxPath")) chunk = list(chunk)
+			for (j in seq_along(chunk)) {
+				p = chunk[[j]]
+				if (is(p, "MxPath") && !is.null(p$labels)) {
+					taken = c(taken, p$labels)
+				} else if (is(p, "MxMatrix") || is(p, "MxAlgebra") || is(p, "MxConstraint")) {
+					taken = c(taken, p$name)
+				}
+			}
+		}
+		for (nm in c(iName, eName, algName, vAlgName, vTgtName, conName)) {
+			if (nm %in% taken) {
+				stop("selection= needs the name ", omxQuotes(nm), " but it is already used: please rename yours.", call. = FALSE)
+			}
+		}
+		obs = myData$observed
+		if (is.data.frame(obs)) {
+			obsSel = cov(obs[, selVar, drop = FALSE], use = "pairwise.complete.obs")
+		} else {
+			obsSel = obs[selVar, selVar]
+		}
+		for (i in seq_len(k)) {
+			for (j in seq_len(k)) {
+				if (!is.finite(obsSel[i, j])) {
+					obsSel[i, j] = as.numeric(i == j)
+				}
+			}
+		}
+		aDim = rownames(newModel$A$values)
+		ai = match(selVar, aDim)
+		if (any(is.na(ai))) {
+			stop("selection var ", omxQuotes(paste(selVar[is.na(ai)], collapse = ", ")), " not found in the RAM matrices: internal error.", call. = FALSE)
+		}
+		eiVals = matrix(0, length(aDim), k)
+		for (j in seq_along(ai)) {
+			eiVals[ai[j], j] = 1
+		}
+		pairFrom = character(0)
+		pairTo = character(0)
+		cells = character(0)
+		for (j in seq_len(k)) {
+			for (i in seq(j, k)) {
+				pairFrom = c(pairFrom, selVar[i])
+				pairTo = c(pairTo, selVar[j])
+				cells = c(cells, paste0("impCov_sel[", i, ",", j, "]"))
+			}
+		}
+		pairValues = obsSel[cbind(pairFrom, pairTo)]
+		vechTarget = popCov[cbind(pairFrom, pairTo)]
+		# Constrain the unique elements only: a whole-matrix constraint carries
+		# symmetric-duplicate rows, whose rank deficiency stops SLSQP (status 3).
+		newModel = mxModel(newModel,
+			mxPath(from = pairFrom, to = pairTo, connect = "single", arrows = 0, free = TRUE, values = pairValues),
+			mxMatrix("Iden", length(aDim), length(aDim), name = iName),
+			mxMatrix("Full", length(aDim), k, values = eiVals, free = FALSE, name = eName),
+			mxAlgebra(t(sel_E) %*% (solve(sel_I - A) %&% S) %*% sel_E, name = algName),
+			mxAlgebraFromString(paste0("rbind(", paste(cells, collapse = ", "), ")"), name = vAlgName),
+			mxMatrix("Full", length(cells), 1, values = vechTarget, free = FALSE, name = vTgtName),
+			mxConstraint(impCov_sel_vech == popCov_sel_vech, name = conName))
+	}
+
 	# ============
 	# = Add data =
 	# ============
@@ -736,3 +1014,48 @@ umxRAM <- function(model = NA, ..., data = NULL, name = NA, group = NULL, group.
 	newModel = xmu_safe_run_summary(newModel, autoRun = autoRun, tryHard = tryHard, refModels = refModels, std = std)
 	invisible(newModel)
 }
+
+#' Pearson-Aitken selection models in umxRAM
+#'
+#' @description
+#' When a sample is selected on a variable, bare correlations mislead: selecting
+#' high scorers on education (caused by IQ and C) induces a spurious negative
+#' IQ-C correlation (collider bias). Pearson-Aitken selection models recover the
+#' population moments given the known population variance of the selection
+#' variable. umx supports two patterns:
+#'
+#' * **Correction** (non-degenerate): `selection = list(var=, popVar=)` adds a
+#'   free `arrows=0` selected-variance path plus a constraint equating the
+#'   implied population variance to `popVar` (the identifying assumption).
+#'   Use [umx_make_selection_data()] to simulate the IQ/C/EA demo below.
+#'   For a selected SET (personnel battery hired on several tests),
+#'   `selection = list(var=, popCov=)` frees the whole selected submatrix
+#'   and constrains the implied population submatrix to `popCov`, recovering
+#'   each predictor's population validity (Schmidt & Hunter (1998) case).
+#' * **Assortment** (degenerate): hand-written `arrows=0` cross-covariances, as
+#'   in the Maes et al. (1998) spouse model ([maes1998]). Here the selection
+#'   set covers every variable, so no Aitken adjustment happens: the paths are
+#'   free covariances drawn without arrowheads.
+#'
+#' Means stay free but are saturated nuisance under selection, not population
+#' quantities: interpret covariances, not means.
+#'
+#' @name umx_concept_selection
+#' @aliases umxRAM-selection
+#' @concept selection models
+#' @concept Pearson-Aitken
+#' @family Concepts
+#' @seealso [umxRAM()], [umx_make_selection_data()], [umxPath()]
+#' @examples
+#' \dontrun{
+#' # Correction pattern: recover r(IQ, C) = 0 from the selected sample
+#' d = umx_make_selection_data()
+#' m = umxRAM("selDemo", data = d$sel,
+#' 	umxPath(v.m. = c("IQ", "C", "EA")),
+#' 	umxPath(from = c("IQ", "C"), to = "EA"),
+#' 	umxPath("IQ", with = "C"),
+#' 	selection = list(var = "EA", popVar = 1.0))
+#' # Assortment pattern: free cross-spouse covariances (full model in ?maes1998)
+#' data(maes1998)
+#' }
+NULL
