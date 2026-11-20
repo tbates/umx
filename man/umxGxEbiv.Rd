@@ -32,7 +32,7 @@ umxGxEbiv(
 
 \item{sep}{Expand variable base names, i.e., "_T" makes var -> var_T1 and var_T2}
 
-\item{lboundACE}{If !NA, then lbound the main effects at this value (default = NA)}
+\item{lboundACE}{If !NA, then lbound the main effects at this value (default = 0)}
 
 \item{lboundM}{If !NA, then lbound the moderators at this value (default = NA)}
 
@@ -105,7 +105,7 @@ power in G x E modelling of twin data. \emph{Behavior Genetics},
 }
 \seealso{
 \itemize{
-\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}, \code{\link[=umxReduce]{umxReduce()}}
+\item \code{\link[=plot]{plot()}}, \code{\link[=umxSummary]{umxSummary()}}
 }
 
 Other Twin Modeling Functions:

@@ -11,7 +11,6 @@ umxSummaryGxEbiv(
   xlab = NA,
   location = "topleft",
   separateGraphs = FALSE,
-  file = getOption("umx_auto_plot"),
   comparison = NULL,
   std = NULL,
   reduce = FALSE,
@@ -31,8 +30,6 @@ umxSummaryGxEbiv(
 \item{location}{default = "topleft"}
 
 \item{separateGraphs}{Std and raw plots in separate graphs? (default = FALSE)}
-
-\item{file}{The name of the dot file to write: NA = none; "name" = use the name of the model}
 
 \item{comparison}{mxCompare model with this model if offered up (default = NULL).}
 

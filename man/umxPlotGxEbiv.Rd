@@ -3,9 +3,16 @@
 \name{umxPlotGxEbiv}
 \alias{umxPlotGxEbiv}
 \alias{plot.MxModelGxEbiv}
-\title{Plot the results of a GxE univariate test for moderation of ACE components.}
+\title{Plot the results of a bivariate GxE test for moderation of ACE components.}
 \usage{
-umxPlotGxEbiv(x, xlab = NA, location = "topleft", separateGraphs = FALSE, ...)
+umxPlotGxEbiv(
+  x,
+  xlab = NA,
+  location = "topleft",
+  separateGraphs = FALSE,
+  moderatorValues = NULL,
+  ...
+)
 }
 \arguments{
 \item{x}{A fitted \code{\link[=umxGxEbiv]{umxGxEbiv()}} model to plot}
@@ -17,13 +24,15 @@ see ?legend for alternatives like bottomright}
 
 \item{separateGraphs}{(default = FALSE)}
 
+\item{moderatorValues}{Moderator values at which to plot (default = NULL, uses the observed values)}
+
 \item{...}{Optional additional parameters}
 }
 \value{
 None
 }
 \description{
-Plot GxE results (univariate environmental moderation of ACE components).
+Plot GxEbiv results (bivariate environmental moderation of ACE components).
 Options include plotting the raw and standardized graphs separately, or in a combined panel.
 You can also set the label for the x axis (xlab), and choose the location of the legend.
 }
@@ -32,7 +41,7 @@ require(umx)
 data(twinData)
 \dontrun{
 selDVs  = "wt"; selDefs = "ht"
-df = umx_scale_wide_twin_data(twinData, varsToScale = c("ht", "wt"), suffix = "")
+df = umx_scale_wide_twin_data(data = twinData, varsToScale = c("ht", "wt"), sep = "")
 mzData  = subset(df, zygosity \%in\%  c("MZFF", "MZMM"))
 dzData  = subset(df, zygosity \%in\%  c("DZFF", "DZMM", "DZOS"))
 

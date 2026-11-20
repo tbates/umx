@@ -27,7 +27,8 @@ umxRAM(
   verbose = FALSE,
   std.lv = FALSE,
   lavaanMode = c("sem", "lavaan"),
-  printTab = FALSE
+  printTab = FALSE,
+  selection = NULL
 )
 }
 \arguments{
@@ -76,6 +77,8 @@ umxRAM(
 \item{lavaanMode}{Defaults when building out string syntax default = "sem" (alternative is "lavaan", with very few defaults)}
 
 \item{printTab}{(for string input, whether to output a table of paths (FALSE)}
+
+\item{selection}{Pearson-Aitken selection spec: \code{list(var = "EA", popVar = 1.0)} for one variable, \verb{list(var = c("A", "B"), popCov = <k-by-k>)} for several. Declares the sample selected on \code{var} with known population (co)variance. \code{umxRAM} adds free \code{arrows=0} selected-variance paths plus a constraint equating the implied population moments to the known values (the identifying assumption). \code{popCov} takes a named matrix (\code{var} is then optional and inferred from the dimnames) or a length-k*k vector (\code{var} required); it must be symmetric and is reordered to \code{var} order. Means stay free but are saturated nuisance, not population quantities.}
 }
 \value{
 \itemize{
@@ -378,6 +381,21 @@ m1 = umxRAM("tim", data = mtcars, weight= "cyl",
 	umxPath("wt", with = "litres"),
 	umxPath(v.m. = c("wt", "litres", "mpg"))
 )
+
+# ========================
+# = Pearson-Aitken selection =
+# ========================
+# IQ and C are uncorrelated, but both cause EA. Selecting the top 30\% on
+# EA induces a spurious negative IQ-C correlation (collider bias).
+# selection= recovers the population value given the known population Var(EA).
+sel = umx_make_selection_data()$sel
+msel = umxRAM("selDemo", data = sel,
+	umxPath(v.m. = c("IQ", "C", "EA")),
+	umxPath(from = c("IQ", "C"), to = "EA"),
+	umxPath("IQ", with = "C"),
+	selection = list(var = "EA", popVar = 1.0)
+)
+# C_with_IQ is ~0.005 (truth 0), not the selected-sample value (~-0.04)
 
 }
 

@@ -65,6 +65,7 @@ Other datasets:
 \code{\link{Psych_LDSC}},
 \code{\link{docData}},
 \code{\link{iqdat}},
+\code{\link{maes1998}},
 \code{\link{umx}}
 }
 \concept{datasets}

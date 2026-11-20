@@ -286,6 +286,7 @@ Other Data Functions:
 \code{\link[=umx_make_TwinData]{umx_make_TwinData()}},
 \code{\link[=umx_make_fake_data]{umx_make_fake_data()}},
 \code{\link[=umx_make_raw_from_cov]{umx_make_raw_from_cov()}},
+\code{\link[=umx_make_selection_data]{umx_make_selection_data()}},
 \code{\link[=umx_merge_randomized_columns]{umx_merge_randomized_columns()}},
 \code{\link[=umx_polychoric]{umx_polychoric()}},
 \code{\link[=umx_polypairwise]{umx_polypairwise()}},
@@ -348,6 +349,7 @@ Other datasets:
 \code{\link{Psych_LDSC}},
 \code{\link{docData}},
 \code{\link{iqdat}},
+\code{\link{maes1998}},
 \code{\link{us_skinfold_data}}
 
 Other Advanced Model Building Functions:

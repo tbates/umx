@@ -137,3 +137,14 @@ test_that("sketch builders return silently without auto-preview", {
 	expect_true(isS4(m1))
 	expect_true(isS4(m2))
 })
+
+test_that("graphviz selection edge uses double quotes", {
+	m = mxModel("selgv", type = "RAM", manifestVars = c("IQ", "C", "EA"),
+		mxPath(c("IQ", "C", "EA"), arrows = 2),
+		mxPath(from = "EA", arrows = 0, free = TRUE, values = 0.26, labels = "selEA"))
+	d = plot(m, format = "graphviz", file = NA)
+	lines = strsplit(d, "\n")[[1]]
+	expect_true(any(grepl('dir="none"', lines, fixed = TRUE)))
+	expect_false(any(grepl("dir='none'", lines, fixed = TRUE)))
+	expect_true(any(grepl("EA -> EA [", lines, fixed = TRUE)))
+})

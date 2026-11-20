@@ -53,6 +53,7 @@ Other datasets:
 \code{\link{HSwls}},
 \code{\link{Psych_LDSC}},
 \code{\link{docData}},
+\code{\link{maes1998}},
 \code{\link{umx}},
 \code{\link{us_skinfold_data}}
 }

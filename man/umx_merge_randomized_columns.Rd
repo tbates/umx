@@ -74,6 +74,7 @@ Other Data Functions:
 \code{\link[=umx_make_TwinData]{umx_make_TwinData()}},
 \code{\link[=umx_make_fake_data]{umx_make_fake_data()}},
 \code{\link[=umx_make_raw_from_cov]{umx_make_raw_from_cov()}},
+\code{\link[=umx_make_selection_data]{umx_make_selection_data()}},
 \code{\link[=umx_polychoric]{umx_polychoric()}},
 \code{\link[=umx_polypairwise]{umx_polypairwise()}},
 \code{\link[=umx_polytriowise]{umx_polytriowise()}},
