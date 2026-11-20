@@ -475,3 +475,67 @@ NULL
 #' plot(m1, means=FALSE, std=TRUE, max= manifests, min="G", same= c("V", "S", "M"))
 #' }
 NULL
+
+# ===================================
+# = Maes 1998 assortative mating data =
+# ===================================
+
+#' Spouse correlations by diagnosis (Maes et al., 1998)
+#'
+#' 10x10 correlation matrices (5 diagnoses x wife/husband) from two
+#' population-based spouse samples (ABD and AFT), for assortative-mating
+#' (Pearson-selection) examples with `arrows=0` cross-spouse paths.
+#'
+#' @docType data
+#' @keywords datasets
+#' @family datasets
+#' @name maes1998
+#' @usage data(maes1998)
+#' @format A list with `abd` and `aft` 10x10 correlation matrices (variables
+#'   wifeALC ... wifePHO, husbandALC ... husbandPHO) and `nObs` (854, 568).
+#' @source Maes et al. (1998) Tables 2-3; values identical to OpenMx
+#'   `inst/models/passing/maes1998.R` lines 14-103, nObs from its lines 115/121.
+#' @seealso - [umx_concept_selection]
+#' @references Maes, H. H., Neale, M. C., Kendler, K. S., Hewitt, J. K.,
+#'   Silberg, J. L., Foley, D. L., ... & Eaves, L. J. (1998). Assortative
+#'   mating for major psychiatric diagnoses in two population-based samples.
+#'   *Psychological medicine*, **28**(6), 1389-1401.
+#' @examples
+#' data(maes1998)
+#' str(maes1998)
+#' # Small version first (2 diagnoses: easier to grok, same structure).
+#' allVars = colnames(maes1998$abd)
+#' twoVars = allVars[c(1:2, 6:7)]
+#' twoWife = twoVars[startsWith(twoVars, "wife")]
+#' twoHusband = twoVars[startsWith(twoVars, "husband")]
+#' m1 = mxModel("alc_gad",
+#' 	umxRAM("abd", data = mxData(maes1998$abd[twoVars, twoVars], type = "cov", numObs = maes1998$nObs[["abd"]]), autoRun = FALSE,
+#' 		umxPath(unique.bivariate = twoWife, lbound = -0.99, ubound = 0.99),
+#' 		umxPath(unique.bivariate = twoHusband, lbound = -0.99, ubound = 0.99),
+#' 		umxPath(twoWife, twoHusband, arrows = 0, connect = "unique.pairs", lbound = -0.99, ubound = 0.99),
+#' 		umxPath(var = twoVars, fixedAt = 1)),
+#' 	umxRAM("aft", data = mxData(maes1998$aft[twoVars, twoVars], type = "cov", numObs = maes1998$nObs[["aft"]]), autoRun = FALSE,
+#' 		umxPath(unique.bivariate = twoWife, lbound = -0.99, ubound = 0.99),
+#' 		umxPath(unique.bivariate = twoHusband, lbound = -0.99, ubound = 0.99),
+#' 		umxPath(twoWife, twoHusband, arrows = 0, connect = "unique.pairs", lbound = -0.99, ubound = 0.99),
+#' 		umxPath(var = twoVars, fixedAt = 1)),
+#' 	mxFitFunctionMultigroup(c("abd", "aft")))
+#' m1 = umxRun(m1) # Chi(14) = 51.08, CFI = 0.91
+#' # Full version in umxRAM syntax (cf. OpenMx maes1998.R).
+#' # Labels are automatic (selection paths get sel_ labels); the w/h/d tags
+#' # of the original script are unnecessary.
+#' wifeDiagnosis = allVars[startsWith(allVars, "wife")]
+#' husbandDiagnosis = allVars[startsWith(allVars, "husband")]
+#' abd = umxRAM("abd", data = mxData(maes1998$abd, type = "cov", numObs = maes1998$nObs[["abd"]]), autoRun = FALSE,
+#' 	umxPath(unique.bivariate = wifeDiagnosis, lbound = -0.99, ubound = 0.99),
+#' 	umxPath(unique.bivariate = husbandDiagnosis, lbound = -0.99, ubound = 0.99),
+#' 	umxPath(wifeDiagnosis, husbandDiagnosis, arrows = 0, connect = "unique.pairs", lbound = -0.99, ubound = 0.99),
+#' 	umxPath(var = allVars, fixedAt = 1))
+#' aft = umxRAM("aft", data = mxData(maes1998$aft, type = "cov", numObs = maes1998$nObs[["aft"]]), autoRun = FALSE,
+#' 	umxPath(unique.bivariate = wifeDiagnosis, lbound = -0.99, ubound = 0.99),
+#' 	umxPath(unique.bivariate = husbandDiagnosis, lbound = -0.99, ubound = 0.99),
+#' 	umxPath(wifeDiagnosis, husbandDiagnosis, arrows = 0, connect = "unique.pairs", lbound = -0.99, ubound = 0.99),
+#' 	umxPath(var = allVars, fixedAt = 1))
+#' fig6 = mxModel("fig6", abd, aft, mxFitFunctionMultigroup(c("abd", "aft")))
+#' fig6 = umxRun(fig6) # Chi(65) = 544.05, CFI = .876
+NULL
