@@ -7135,7 +7135,7 @@ umx_make_MR_data <- function(nSubjects = 1000, Vqtl = .02, bXY = 0.1, bUX = 0.5,
 #' 	umxPath(v.m. = c("IQ", "C", "EA")),
 #' 	umxPath(from = c("IQ", "C"), to = "EA"),
 #' 	umxPath("IQ", with = "C"),
-#' 	selection = list(var = "EA", popVar = 1.0))
+#' 	selection = list(varNames = "EA", popCov = 1.0))
 #' # C_with_IQ recovers ~0 (truth), not the selected-sample value
 #' }
 umx_make_selection_data <- function(N = 6000, IQ_on_EA = 0.4, C_on_EA = 0.2, r_IQ_C = 0, prop = 0.3, seed = 43) {

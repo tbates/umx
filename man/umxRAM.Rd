@@ -78,7 +78,7 @@ umxRAM(
 
 \item{printTab}{(for string input, whether to output a table of paths (FALSE)}
 
-\item{selection}{Pearson-Aitken selection spec: \code{list(var = "EA", popVar = 1.0)} for one variable, \verb{list(var = c("A", "B"), popCov = <k-by-k>)} for several. Declares the sample selected on \code{var} with known population (co)variance. \code{umxRAM} adds free \code{arrows=0} selected-variance paths plus a constraint equating the implied population moments to the known values (the identifying assumption). \code{popCov} takes a named matrix (\code{var} is then optional and inferred from the dimnames) or a length-k*k vector (\code{var} required); it must be symmetric and is reordered to \code{var} order. Means stay free but are saturated nuisance, not population quantities.}
+\item{selection}{Pearson-Aitken selection spec: \code{list(varNames=, popCov=)}. Declares the sample selected on \code{varNames} with known population (co)variance \code{popCov}: a scalar for one variable, or a k-by-k matrix / length-k*k vector for several. \code{umxRAM} adds free \code{arrows=0} selected (co)variance paths plus a constraint equating the implied population moments to \code{popCov} (the identifying assumption). \code{varNames} is required except with a named \code{popCov} matrix (inferred from dimnames); matrix input must be symmetric and is reordered to \code{varNames} order. Means stay free but are saturated nuisance, not population quantities.}
 }
 \value{
 \itemize{
@@ -393,7 +393,7 @@ msel = umxRAM("selDemo", data = sel,
 	umxPath(v.m. = c("IQ", "C", "EA")),
 	umxPath(from = c("IQ", "C"), to = "EA"),
 	umxPath("IQ", with = "C"),
-	selection = list(var = "EA", popVar = 1.0)
+	selection = list(varNames = "EA", popCov = 1.0)
 )
 # C_with_IQ is ~0.005 (truth 0), not the selected-sample value (~-0.04)
 

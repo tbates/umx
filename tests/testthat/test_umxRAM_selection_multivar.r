@@ -3,9 +3,9 @@ library(umx)
 library(OpenMx)
 
 # Feature: umxRAM selection= for several variables (Pearson-Aitken battery).
-# selection = list(var = c(...), popCov = <kx2>) recovers population validities
-# when the sample is selected on the whole set. popCov takes a named matrix
-# (var inferred from dimnames) or a length-k*k vector (var required).
+# selection = list(varNames = c(...), popCov = <k-by-k>) recovers population
+# validities when the sample is selected on the whole set. popCov takes a named
+# matrix (varNames inferred from dimnames) or a length-k*k vector (varNames required).
 # Schmidt & Hunter (1998), Table 1: COG .51, INT .51, BIO .35; COG-INT .30 and
 # COG-BIO .50 as reported alongside; INT-BIO .25 is ASSUMED for the sim.
 test_that("umxRAM selection recovers battery validities", {
@@ -32,7 +32,7 @@ test_that("umxRAM selection recovers battery validities", {
 	m1 = umxRAM("battery", data = sel, autoRun = TRUE,
 		umxPath(v.m. = c(tests, "PERF")),
 		umxPath(unique.bivariate = c(tests, "PERF")),
-		selection = list(var = tests, popCov = Rpop[tests, tests]))
+		selection = list(varNames = tests, popCov = Rpop[tests, tests]))
 	expect_equal(m1$output$status$code, 0)
 	cc = coef(m1)
 	v = m1$S$values
@@ -49,7 +49,7 @@ test_that("umxRAM selection recovers battery validities", {
 	m3 = umxRAM("batteryVec", data = sel, autoRun = TRUE,
 		umxPath(v.m. = c(tests, "PERF")),
 		umxPath(unique.bivariate = c(tests, "PERF")),
-		selection = list(var = tests, popCov = as.numeric(Rpop[tests, tests])))
+		selection = list(varNames = tests, popCov = as.numeric(Rpop[tests, tests])))
 	expect_equal(m3$output$status$code, 0)
 	cc3 = coef(m3)
 	v3 = m3$S$values
@@ -97,14 +97,14 @@ test_that("umxRAM selection infers var and reorders popCov", {
 	m4 = umxRAM("batteryReorder", data = sel, autoRun = FALSE,
 		umxPath(v.m. = c(tests, "PERF")),
 		umxPath(unique.bivariate = c(tests, "PERF")),
-		selection = list(var = tests, popCov = Rpop[rev(tests), rev(tests)]))
+		selection = list(varNames = tests, popCov = Rpop[rev(tests), rev(tests)]))
 	expect_equal(as.numeric(m4$popCov_sel_vech$values), wantVech)
 
 	# No dimnames: var supplies them.
 	m5 = umxRAM("batteryAttach", data = sel, autoRun = FALSE,
 		umxPath(v.m. = c(tests, "PERF")),
 		umxPath(unique.bivariate = c(tests, "PERF")),
-		selection = list(var = tests, popCov = unname(Rpop[tests, tests])))
+		selection = list(varNames = tests, popCov = unname(Rpop[tests, tests])))
 	expect_equal(as.numeric(m5$popCov_sel_vech$values), wantVech)
 })
 
@@ -115,31 +115,47 @@ test_that("umxRAM selection validates multi-var specs", {
 	okCov = matrix(c(1, .3, .5, .3, 1, .25, .5, .25, 1), 3, 3,
 		dimnames = list(tests, tests))
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = tests, popCov = c(1, .3, .3, 1))), "length")
+		autoRun = FALSE, selection = list(varNames = tests, popCov = c(1, .3, .3, 1))), "length")
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(popCov = c(1, .3, .3, 1))), "needs var")
+		autoRun = FALSE, selection = list(popCov = c(1, .3, .3, 1))), "needs varNames")
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = tests,
+		autoRun = FALSE, selection = list(varNames = tests,
 			popCov = { bad = okCov; rownames(bad)[3] = "XXX"; colnames(bad)[3] = "XXX"; bad })), "dimnames")
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = tests[1:2],
+		autoRun = FALSE, selection = list(varNames = tests[1:2],
 			popCov = matrix(c(1, .2, .3, 1), 2, 2, dimnames = list(tests[1:2], tests[1:2])))), "symmetric")
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = "COG", popVar = 1, popCov = okCov)), "both")
+		autoRun = FALSE, selection = list(varNames = "COG", popVar = 1, popCov = okCov)), "varNames")
+	# Unnamed 1-by-1 routes to the single-var path (sel_popVar constraint).
+	oneByOne = umxRAM("o", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		autoRun = FALSE, selection = list(varNames = "COG", popCov = matrix(1, 1, 1)))
+	expect_true(any(sapply(oneByOne$constraints, function(cc) cc$name) == "sel_popVar"))
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = "COG", popCov = matrix(1, 1, 1))), "popVar")
+		autoRun = FALSE, selection = list(varNames = tests[1:2], popCov = matrix(1:6, 2, 3))), "square")
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = tests[1:2], popCov = matrix(1:6, 2, 3))), "square")
-	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = tests[1:2],
+		autoRun = FALSE, selection = list(varNames = tests[1:2],
 			popCov = matrix(letters[1:4], 2, 2, dimnames = list(tests[1:2], tests[1:2])))), "numeric")
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = c("COG", "INT", "NOPE"), popCov = okCov)), "dimnames")
+		autoRun = FALSE, selection = list(varNames = c("COG", "INT", "NOPE"), popCov = okCov)), "dimnames")
 	unknownCov = okCov
 	rownames(unknownCov)[3] = "NOPE"
 	colnames(unknownCov)[3] = "NOPE"
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = c("COG", "INT", "NOPE"), popCov = unknownCov)), "NOPE")
+		autoRun = FALSE, selection = list(varNames = c("COG", "INT", "NOPE"), popCov = unknownCov)), "NOPE")
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
-		autoRun = FALSE, selection = list(var = c("COG", "COG", "INT"), popCov = okCov)), "distinct")
+		autoRun = FALSE, selection = list(varNames = c("COG", "COG", "INT"), popCov = okCov)), "distinct")
+	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		mxPath(from = "COG", arrows = 0), autoRun = FALSE,
+		selection = list(varNames = tests, popCov = okCov)), "arrows=0")
+	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		autoRun = FALSE, selection = list(popCov = 1.0)), "needs varNames")
+	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		autoRun = FALSE, selection = list(varNames = tests[1:2], popCov = c("a", "b", "c", "d"))), "numeric")
+	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		autoRun = FALSE, selection = list(varNames = tests, popCov = okCov), type = "WLS"), "WLS")
+	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		autoRun = FALSE, selection = list(varNames = tests, popCov = okCov), group = "zyg"), "group")
+	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		mxMatrix("Full", 1, 1, name = "sel_E"), autoRun = FALSE,
+		selection = list(varNames = tests, popCov = okCov)), "already used")
 })

@@ -4,7 +4,7 @@ library(OpenMx)
 
 # Feature: umxRAM top-level selection= spec (Pearson-Aitken). umxRAM generates
 # the arrows=0 selected-variance path plus an implied-population-variance
-# constraint from list(var=, popVar=). Bare/multi/unknown/group/WLS/sketch/
+# constraint from list(varNames=, popCov=). Bare/multi/unknown/group/WLS/sketch/
 # hand-arrows combos error clearly.
 test_that("umxRAM selection recovers the population covariance", {
 	sel = umx_make_selection_data()$sel
@@ -13,7 +13,7 @@ test_that("umxRAM selection recovers the population covariance", {
 		umxPath(from = c("IQ", "C"), to = "EA"),
 		umxPath("IQ", with = "C"),
 		autoRun = TRUE,
-		selection = list(var = "EA", popVar = 1.0))
+		selection = list(varNames = "EA", popCov = 1.0))
 	expect_equal(m$output$status$code, 0)
 	tab = summary(m)$parameters
 	expect_true(abs(tab$Estimate[tab$name == "C_with_IQ"]) < 0.05)
@@ -31,24 +31,44 @@ test_that("umxRAM selection validates its spec", {
 	sel = data.frame(IQ = IQ, C = C, EA = EA)
 	sel = sel[sel$EA > quantile(sel$EA, 0.7), ]
 	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
-		autoRun = FALSE, selection = "EA"), "popVar")
+		autoRun = FALSE, selection = "EA"), "must be a list")
 	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
-		autoRun = FALSE, selection = list(var = c("EA", "IQ"), popVar = 1)), "popCov")
+		autoRun = FALSE, selection = list(varNames = c("EA", "IQ"), popCov = 1)), "length")
 	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
-		autoRun = FALSE, selection = list(var = "nope", popVar = 1)), "nope")
+		autoRun = FALSE, selection = list(varNames = "nope", popCov = 1)), "nope")
 	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
-		autoRun = FALSE, selection = list(var = "EA", popVar = 1), group = "zyg"), "group")
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = 1), group = "zyg"), "group")
 	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
-		autoRun = FALSE, selection = list(var = "EA", popVar = 1), type = "WLS"), "WLS")
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = 1), type = "WLS"), "WLS")
 	expect_error(umxRAM("v", data = c("IQ", "C", "EA"), umxPath(v.m. = c("IQ", "C", "EA")),
-		autoRun = FALSE, selection = list(var = "EA", popVar = 1)), "data")
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = 1)), "data")
 	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
 		mxPath(from = "EA", arrows = 0), autoRun = FALSE,
-		selection = list(var = "EA", popVar = 1)), "arrows=0")
+		selection = list(varNames = "EA", popCov = 1)), "arrows=0")
 	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
-		autoRun = FALSE, selection = list(var = "EA", popVar = -1)), "positive")
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = -1)), "positive")
 	base = umxRAM("b", data = sel, umxPath(v.m. = c("IQ", "C", "EA")), autoRun = FALSE)
-	expect_error(umxRAM(base, selection = list(var = "EA", popVar = 1)), "updating")
+	expect_error(umxRAM(base, selection = list(varNames = "EA", popCov = 1)), "updating")
 	expect_error(umxRAM("EA ~ IQ + C", data = sel, autoRun = FALSE,
-		selection = list(var = "EA", popVar = 1)), "lavaan")
+		selection = list(varNames = "EA", popCov = 1)), "lavaan")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(var = "EA", popVar = 1)), "varNames")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(varNames = "EA")), "needs popCov")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(varNames = 3, popCov = 1)), "character")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(varNames = character(0), popCov = 1)), "at least one")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = diag(2))), "scalar")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = c(1, 1))), "scalar")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = "x")), "scalar")
+	bad1 = matrix(1, 1, 1, dimnames = list("XX", "XX"))
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = bad1)), "dimnames")
+	expect_error(umxRAM("v", data = sel, umxPath(v.m. = c("IQ", "C", "EA")),
+		mxMatrix("Full", 1, 1, name = "sel_e"), autoRun = FALSE,
+		selection = list(varNames = "EA", popCov = 1)), "already used")
 })

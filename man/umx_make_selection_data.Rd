@@ -47,7 +47,7 @@ m = umxRAM("selDemo", data = d$sel,
 	umxPath(v.m. = c("IQ", "C", "EA")),
 	umxPath(from = c("IQ", "C"), to = "EA"),
 	umxPath("IQ", with = "C"),
-	selection = list(var = "EA", popVar = 1.0))
+	selection = list(varNames = "EA", popCov = 1.0))
 # C_with_IQ recovers ~0 (truth), not the selected-sample value
 }
 }
