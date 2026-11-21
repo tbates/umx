@@ -72,3 +72,16 @@ test_that("umxRAM selection validates its spec", {
 		mxMatrix("Full", 1, 1, name = "sel_e"), autoRun = FALSE,
 		selection = list(varNames = "EA", popCov = 1)), "already used")
 })
+
+test_that("single-var selection algebra prints with caption", {
+	set.seed(7)
+	sel = data.frame(EA = rnorm(200))
+	m = umxRAM("v", data = sel, umxPath(v.m. = "EA"),
+		autoRun = FALSE, selection = list(varNames = "EA", popCov = 1.0))
+	out = capture.output(xmu_print_algebras(m))
+	expect_true(any(grepl("Model-implied population variance of the selection variable", out, fixed = TRUE)))
+	f = umxRAM("v", data = sel, umxPath(v.m. = "EA"),
+		autoRun = TRUE, selection = list(varNames = "EA", popCov = 1.0))
+	out = capture.output(xmu_print_algebras(f))
+	expect_true(any(grepl("1, CI95[1, 1]", out, fixed = TRUE)))
+})

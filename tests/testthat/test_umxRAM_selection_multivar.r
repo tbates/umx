@@ -44,6 +44,8 @@ test_that("umxRAM selection recovers battery validities", {
 	expect_true(any(sapply(m1$constraints, function(cc) cc$name) == "sel_popCov"))
 	expect_equal(as.numeric(mxEval(impCov_sel, m1, compute = TRUE)),
 		as.numeric(Rpop[tests, tests]), tolerance = 1e-3)
+	expect_equal(rownames(mxEval(impCov_sel, m1, compute = TRUE)), tests)
+	expect_equal(colnames(mxEval(impCov_sel, m1, compute = TRUE)), tests)
 
 	# Vector form fits the identical model: same validities out.
 	m3 = umxRAM("batteryVec", data = sel, autoRun = TRUE,
@@ -158,4 +160,24 @@ test_that("umxRAM selection validates multi-var specs", {
 	expect_error(umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
 		mxMatrix("Full", 1, 1, name = "sel_E"), autoRun = FALSE,
 		selection = list(varNames = tests, popCov = okCov)), "already used")
+})
+
+test_that("selection algebras print with captions", {
+	set.seed(7)
+	tiny = data.frame(COG = rnorm(200), INT = rnorm(200), BIO = rnorm(200), PERF = rnorm(200))
+	tests = c("COG", "INT", "BIO")
+	okCov = matrix(c(1, .3, .5, .3, 1, .25, .5, .25, 1), 3, 3,
+		dimnames = list(tests, tests))
+	u = umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		umxPath(unique.bivariate = c(tests, "PERF")),
+		autoRun = FALSE, selection = list(varNames = tests, popCov = okCov))
+	out = capture.output(xmu_print_algebras(u))
+	expect_true(any(grepl("not yet evaluated", out, fixed = TRUE)))
+	expect_false(any(grepl("impCov_sel_vech", out, fixed = TRUE)))
+	m = umxRAM("v", data = tiny, umxPath(v.m. = c(tests, "PERF")),
+		umxPath(unique.bivariate = c(tests, "PERF")),
+		autoRun = TRUE, selection = list(varNames = tests, popCov = okCov))
+	out = capture.output(xmu_print_algebras(m))
+	expect_true(any(grepl("Model-implied population covariance of the selection set", out, fixed = TRUE)))
+	expect_false(any(grepl("impCov_sel_vech", out, fixed = TRUE)))
 })

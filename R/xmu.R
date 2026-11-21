@@ -521,8 +521,21 @@ xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
 	if (length(model@algebras) > 0){
 		algNames = names(model@algebras)
 		for(thisAlg in algNames){
-			b  = mxEvalByName(thisAlg, model)
-			if(dim(b)[1] == 1 && dim(b)[2] == 1){
+			if (thisAlg == "impCov_sel_vech") {
+				next # internal unique-elements extractor: no information beyond impCov_sel
+			}
+			# Pre-run algebras are 0x0 (dimnamed ones error on lookup): note honestly.
+			b = tryCatch(mxEvalByName(thisAlg, model), error = function(e) NULL)
+			if (thisAlg == "impCov_sel") {
+				algHead = "Model-implied population covariance of the selection set (model$impCov_sel)"
+			} else if (thisAlg == "popVar_sel") {
+				algHead = "Model-implied population variance of the selection variable (model$popVar_sel)"
+			} else {
+				algHead = paste0("Algebra", omxQuotes(thisAlg))
+			}
+			if (is.null(b) || nrow(b) == 0 || ncol(b) == 0) {
+				cat(algHead, ": not yet evaluated (run the model first)\n", sep = "")
+			} else if(dim(b)[1] == 1 && dim(b)[2] == 1){
 				# 1*1 algebra
 				SE = tryCatch({
 					mxSE(thisAlg, model, silent = TRUE, forceName = TRUE)
@@ -530,14 +543,14 @@ xmu_print_algebras <- function(model, digits = 3, verbose = FALSE){
 					NA_real_
 				})
 				if (is.na(SE)) {
-					cat("Algebra", omxQuotes(thisAlg), " = ", round(b, digits), "\n", sep = "")
+					cat(algHead, " = ", round(b, digits), "\n", sep = "")
 				} else {
 					p  = 2 * pnorm(abs(b/SE), lower.tail = FALSE)
-					SEstring = paste0(round(b, digits), "CI95[", round(b - (1.96 * SE), digits), commaSep, round(b + (1.96 * SE), digits), "]")
-					cat("Algebra", omxQuotes(thisAlg), " = ", SEstring, ". p-value ", umx_APA_pval(p, addComparison = TRUE), "\n", sep = "")
+					SEstring = paste0(round(b, digits), ", CI95[", round(b - (1.96 * SE), digits), commaSep, round(b + (1.96 * SE), digits), "]")
+					cat(algHead, " = ", SEstring, ". p-value ", umx_APA_pval(p, addComparison = TRUE), "\n", sep = "")
 				}
 			}else{
-				cat("Algebra", omxQuotes(thisAlg), ":\n", sep = "")
+				cat(algHead, ":\n", sep = "")
 				umx_print(umx_round(b, 3))
 			}
 		}
