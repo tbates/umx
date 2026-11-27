@@ -174,7 +174,11 @@ umxFitIndices = function(fits, set = c("core", "all"), ...) {
       nManifest = NA_integer_
     }
   } else {
-    nManifest = NCOL(model$data$observed)
+    manifests = xmu_model_manifests(model)
+    if (is.null(manifests) || !length(manifests)) {
+      manifests = colnames(model$data$observed)
+    }
+    nManifest = if (length(manifests)) length(manifests) else NCOL(model$data$observed)
   }
   q = (nManifest * (nManifest + 1)) / 2
   if (isMulti) {
@@ -251,7 +255,8 @@ umxFitIndices = function(fits, set = c("core", "all"), ...) {
     } else {
       invSigS = solve(modelMatrices$estCov) %*% modelMatrices$obsCov
     }
-    GFI = 1 - tr(invSigS - IdManifest)^2 / tr(invSigS)^2
+    diffMat = invSigS - IdManifest
+    GFI = 1 - tr(diffMat %*% diffMat) / tr(invSigS %*% invSigS)
     AGFI =  1 - (q / dfChi) * (1 - GFI)
     PGFI =  GFI * dfChi / q
   } else {
@@ -468,30 +473,54 @@ xmu_model_manifests <- function(m) {
 }
 
 xmuModelMatrices = function(model, manifests) {
+  estCov = mxGetExpected(model, "covariance")
+  estCor = cov2cor(estCov)
+  estDims = colnames(estCov)
+  if (is.null(estDims) || !length(estDims)) {
+    estDims = manifests
+  }
   if (model$data$type == "raw"){
-    if (any(is.na(model$data$observed))) {
-      obsFiml = psych::corFiml(model$data$observed[,manifests], covar = TRUE)
+    obsData = model$data$observed[, estDims, drop = FALSE]
+    if (any(is.na(obsData))) {
+      obsFiml = psych::corFiml(obsData, covar = TRUE)
       obsCov = obsFiml$cov
       obsCor = obsFiml$cor
       obsMeans = obsFiml$mean
     } else {
-      obsCov = cov(model$data$observed[,manifests])
+      obsCov = cov(obsData)
       obsCor = cov2cor(obsCov)
-      obsMeans = colMeans(model$data$observed)
+      obsMeans = colMeans(obsData)
     }
   } else if (model$data$type == "cor") {
     obsCov = NA_real_
     obsCor = model$data$observed
+    if (!is.null(estDims) && !is.null(rownames(obsCor)) && all(estDims %in% rownames(obsCor))) {
+      obsCor = obsCor[estDims, estDims, drop = FALSE]
+    }
     obsMeans = model$data$means
   } else {
     obsCov = model$data$observed
+    if (!is.null(estDims) && !is.null(rownames(obsCov)) && all(estDims %in% rownames(obsCov))) {
+      obsCov = obsCov[estDims, estDims, drop = FALSE]
+    }
     obsCor = cov2cor(obsCov)
     obsMeans = model$data$means
   }
-  estCov = mxGetExpected(model, "covariance")
-  estCor = cov2cor(estCov)
   if(!(length(obsMeans) == 1 && is.na(obsMeans))) {
     estMeans = mxGetExpected(model, "means")
+    meanDims = colnames(estMeans)
+    if (is.null(meanDims) || !length(meanDims)) {
+      meanDims = estDims
+    }
+    if (!is.null(meanDims)) {
+      if (!is.null(names(obsMeans)) && all(meanDims %in% names(obsMeans))) {
+        obsMeans = obsMeans[meanDims]
+      } else if (!is.null(colnames(obsMeans)) && all(meanDims %in% colnames(obsMeans))) {
+        obsMeans = obsMeans[, meanDims, drop = TRUE]
+      }
+    }
+    obsMeans = as.numeric(obsMeans)
+    estMeans = as.numeric(estMeans)
   } else {
     estMeans = NA_real_
   }
@@ -539,20 +568,26 @@ xmuResiduals = function(obsCov, obsCor, obsMeans,
   # Correlation - EQS/Benter-style
   if (length(obsCov) == 1 && is.na(obsCov)) {
     cor.bentler = list(
-      Cov = matrix(NA_real_, nrow = nrow(obsCor), ncol = ncol(obsCov)),
+      Cov = matrix(NA_real_, nrow = nrow(obsCor), ncol = ncol(obsCor)),
       Means = rep(NA_real_, length(obsMeans))
     )
   } else {
     cor.bentler = list(
       Cov = (obsCov - estCov) / sqrt(diag(obsCov) %*% t(diag(obsCov))),
-      Means = ifelse(length(obsMeans) == 1 && is.na(obsMeans), NA_real_, (obsMeans - estMeans) / sqrt(diag(obsCov)))
+      Means = if (length(obsMeans) == 1 && is.na(obsMeans)) NA_real_ else (obsMeans - estMeans) / sqrt(diag(obsCov))
     )
   }
 
   # Correlation - Bollen-style
   cor.bollen = list(
     Cov = obsCor - estCor,
-    Means = ifelse(length(obsMeans) == 1 && is.na(obsMeans), NA_real_, obsMeans / sqrt(diag(obsCov)) - estMeans / sqrt(diag(estCov)))
+    Means = if (length(obsMeans) == 1 && is.na(obsMeans)) {
+      NA_real_
+    } else if (length(obsCov) == 1 && is.na(obsCov)) {
+      obsMeans - estMeans
+    } else {
+      obsMeans / sqrt(diag(obsCov)) - estMeans / sqrt(diag(estCov))
+    }
   )
 
   # Correlation - MPlus-style (for Information = Observed; http://www.statmodel.com/download/SRMR.pdf)
