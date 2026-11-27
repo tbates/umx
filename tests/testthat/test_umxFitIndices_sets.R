@@ -152,19 +152,94 @@ test_that("print shows one row transposed and many rows as a table", {
 
 test_that("SRMR and GFI match independent matrix formulas", {
 	data(demoOneFactor)
-	v = names(demoOneFactor)[1:3]
-	m1 = umxRAM("formula_ex", data = demoOneFactor[, v], type = "cov", autoRun = FALSE,
+	v = names(demoOneFactor)
+	S = cov(demoOneFactor)
+	m1 = umxRAM("formula_ex", data = mxData(S, type = "cov", numObs = 500), autoRun = FALSE,
 		umxPath("G", to = v),
 		umxPath(var = v),
 		umxPath(var = "G", fixedAt = 1)
 	)
 	m1 = mxRun(m1, silent = TRUE)
 	f = umxFitIndices(m1, set = "all")
-	O = m1$data$observed
 	E = mxGetExpected(m1, "covariance")
+	O = m1$data$observed[colnames(E), colnames(E)]
 	bent = (O - E) / sqrt(diag(O) %*% t(diag(O)))
 	low = lower.tri(O, diag = TRUE)
 	expect_equal(f$SRMR, sqrt(mean(bent[low]^2)))
 	invSigS = solve(E) %*% O
-	expect_equal(f$GFI, 1 - sum(diag(invSigS - diag(3)))^2 / sum(diag(invSigS))^2)
+	diffMat = invSigS - diag(length(v))
+	gfi_exp = 1 - sum(diag(diffMat %*% diffMat)) / sum(diag(invSigS %*% invSigS))
+	q = length(v) * (length(v) + 1) / 2
+	expect_equal(f$GFI, gfi_exp)
+	expect_equal(f$AGFI, 1 - (q / f$ChiDoF) * (1 - gfi_exp))
+	expect_equal(f$PGFI, gfi_exp * f$ChiDoF / q)
+	expect_true(f$SRMR < 0.01)
+	expect_true(f$GFI > 0.98 && f$GFI < 1)
+})
+
+test_that("GFI, AGFI, PGFI, and residual indices match lavaan on misspecified and raw models", {
+	skip_if_not_installed("lavaan")
+	hs_vars = paste0("x", 1:9)
+	hs_dat = lavaan::HolzingerSwineford1939[, hs_vars]
+	S_hs = cov(hs_dat) * (nrow(hs_dat) - 1) / nrow(hs_dat)
+	m_hs = umxRAM("hs_1f",
+		data = mxData(S_hs, type = "cov", numObs = nrow(hs_dat)),
+		umxPath("G", to = hs_vars),
+		umxPath(var = hs_vars),
+		umxPath(var = "G", fixedAt = 1),
+		autoRun = FALSE
+	)
+	m_hs = mxRun(m_hs, silent = TRUE)
+	f_hs = umxFitIndices(m_hs, set = c("RMR", "SRMR", "SRMR_mplus", "CRMR", "GFI", "AGFI", "PGFI"))
+	lav_hs = lavaan::cfa(
+		"G =~ x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9",
+		sample.cov = S_hs, sample.nobs = nrow(hs_dat),
+		sample.cov.rescale = FALSE, std.lv = TRUE
+	)
+	fm_hs = lavaan::fitMeasures(lav_hs)
+	gfi_key = if ("gfi_lisrel" %in% names(fm_hs)) "gfi_lisrel" else "gfi"
+	agfi_key = if ("agfi_lisrel" %in% names(fm_hs)) "agfi_lisrel" else "agfi"
+	expect_equal(f_hs$RMR, unname(fm_hs["rmr"]), tolerance = 1e-3)
+	expect_equal(f_hs$SRMR, unname(fm_hs["srmr_bentler"]), tolerance = 1e-3)
+	expect_equal(f_hs$SRMR_mplus, unname(fm_hs["srmr_mplus"]), tolerance = 1e-3)
+	expect_equal(f_hs$GFI, unname(fm_hs[gfi_key]), tolerance = 1e-3)
+	expect_equal(f_hs$AGFI, unname(fm_hs[agfi_key]), tolerance = 1e-3)
+	expect_equal(f_hs$PGFI, unname(fm_hs["pgfi"]), tolerance = 1e-3)
+
+	# Raw data with non-zero mean residuals across all manifests (verifies full mean residual vector)
+	data(demoOneFactor)
+	dd = demoOneFactor
+	dd$x2 = dd$x2 + 1.0
+	dd$x3 = dd$x3 - 1.5
+	v = names(demoOneFactor)
+	m_raw = umxRAM("raw_means_ex", data = dd, autoRun = FALSE,
+		umxPath("G", to = v),
+		umxPath(var = v),
+		umxPath(means = v, fixedAt = 0),
+		umxPath(v1m0 = "G")
+	)
+	m_raw = mxRun(m_raw, silent = TRUE)
+	f_raw = umxFitIndices(m_raw, set = c("RMR", "SRMR", "SRMR_mplus", "CRMR"))
+	E_raw = mxGetExpected(m_raw, "covariance")
+	dims_raw = colnames(E_raw)
+	O_raw = cov(dd[, dims_raw])
+	obs_m = colMeans(dd[, dims_raw])
+	est_m = as.numeric(mxGetExpected(m_raw, "means"))
+	bollen_m = obs_m / sqrt(diag(O_raw)) - est_m / sqrt(diag(E_raw))
+	bentler_m = (obs_m - est_m) / sqrt(diag(O_raw))
+	expect_equal(f_raw$CRMR, sqrt(mean(c(OpenMx::vech(cov2cor(O_raw) - cov2cor(E_raw)), bollen_m)^2)))
+	expect_equal(f_raw$SRMR, sqrt(mean(c(OpenMx::vech((O_raw - E_raw) / sqrt(diag(O_raw) %*% t(diag(O_raw)))), bentler_m)^2)))
+
+	# Correlation-matrix data does not error in xmuResiduals
+	m_cor = umxRAM("cor_ex",
+		data = mxData(cor(demoOneFactor), type = "cor", numObs = 500),
+		umxPath("G", to = v),
+		umxPath(var = v),
+		umxPath(var = "G", fixedAt = 1),
+		autoRun = FALSE
+	)
+	m_cor = suppressWarnings(mxRun(m_cor, silent = TRUE))
+	f_cor = umxFitIndices(m_cor, set = c("CRMR", "GFI", "AGFI", "PGFI"))
+	expect_true(is.finite(f_cor$CRMR) && f_cor$CRMR < 0.02)
+	expect_true(is.finite(f_cor$GFI) && f_cor$GFI > 0.98 && f_cor$GFI < 1)
 })
